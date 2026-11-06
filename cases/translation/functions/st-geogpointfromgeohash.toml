@@ -1,0 +1,25 @@
+category = "translation"
+construct = "sf.functions.st-geogpointfromgeohash"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_centre"
+description = "The centre of ezs42, rounded to 6 places. Catches: a corner of the cell returned instead of the centre, or longitude and latitude swapped"
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["'ezs42'"],
+]
+query = "SELECT ROUND(ST_X(ST_GEOGPOINTFROMGEOHASH(g)), 6) AS x, ROUND(ST_Y(ST_GEOGPOINTFROMGEOHASH(g)), 6) AS y FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_geohash"
+description = "A NULL geohash; the page does not say; the recording decides. Catches: an error, or an empty shape returned"
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ST_GEOGPOINTFROMGEOHASH(g) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

@@ -49,11 +49,22 @@ tags = ["error"]
 
 [[case]]
 id = "t005_null_expr1"
-description = "A NULL on either side, and a string that cannot be cast, which the page says is treated as NULL. Catches: the NULL read as 0, or an error for the string"
+description = "A NULL on either side next to a string that cannot be cast; Snowflake raised 100038 for the string, so it is not treated as NULL. Catches: the string read as NULL or 0"
 columns = [{ name = "x", type = "NUMBER(38,0)" }, { name = "v", type = "VARCHAR" }]
 rows = [
   ["NULL", "'x'"],
 ]
 query = "SELECT BITOR(x, 1) AS l, BITOR(1, x) AS r, BITOR(v, 1) AS s FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t006_null_expr1"
+description = "A NULL on either side alone; the page does not say; the recording decides. Catches: the NULL read as 0"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT BITOR(x, 1) AS l, BITOR(1, x) AS r FROM input"
 order = "ordered"
 tags = ["null"]

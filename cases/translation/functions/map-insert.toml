@@ -26,14 +26,14 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_null_key"
-description = "A NULL key, whose pair the page omits, and a SQL NULL value, which it inserts as a JSON null. Catches: the NULL-keyed pair inserted, or the NULL-valued pair omitted"
+description = "A NULL key and a SQL NULL value in one statement; Snowflake raised 220002 because a structured map with a non-nullable value type cannot take a NULL value. Catches: the NULL value inserted into the structured map, or silently dropped"
 columns = [{ name = "k", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
 rows = [
   ["NULL", "NULL"],
 ]
 query = "SELECT MAP_SIZE(MAP_INSERT(MAP_CONSTRUCT('a', 1, 'b', 2), k, 3)) AS null_key, MAP_SIZE(MAP_INSERT(MAP_CONSTRUCT('a', 1, 'b', 2), 'c', x)) AS null_value FROM input"
 order = "ordered"
-tags = ["null"]
+tags = ["error"]
 
 [[case]]
 id = "t004_existing_key"
@@ -45,3 +45,14 @@ rows = [
 query = "SELECT MAP_INSERT(MAP_CONSTRUCT('a', 1, 'b', 2), k, 5)::VARIANT AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["error"]
+
+[[case]]
+id = "t005_null_key"
+description = "A NULL key alone, whose pair the page omits. Catches: the NULL-keyed pair inserted, or an error raised"
+columns = [{ name = "k", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT MAP_SIZE(MAP_INSERT(MAP_CONSTRUCT('a', 1, 'b', 2), k, 3)) AS null_key FROM input"
+order = "ordered"
+tags = ["null"]

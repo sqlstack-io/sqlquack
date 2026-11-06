@@ -4099,12 +4099,23 @@ required = true
 [[obligation]]
 id = "sf.functions.bitand.t005"
 form = "sf.functions.bitand"
-kind = "null_argument"
-target = "expr1"
-note = "A NULL on either side, and a string that cannot be cast, which the page says is treated as NULL."
-catches = "the NULL read as 0, or an error for the string"
+kind = "error_parity"
+target = "error"
+note = "A NULL on either side next to a string that cannot be cast; Snowflake raised 100038 for the string, so it is not treated as NULL."
+catches = "the string read as NULL or 0"
 reading = "the page: the bitwise AND of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
 cases = ["cases/translation/functions/bitand.toml#t005_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitand.t006"
+form = "sf.functions.bitand"
+kind = "null_argument"
+target = "expr1"
+note = "A NULL on either side alone; the page does not say; the recording decides."
+catches = "the NULL read as 0"
+reading = "the page: the bitwise AND of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitand.toml#t006_null_expr1"]
 required = true
 
 [[obligation]]
@@ -4638,12 +4649,23 @@ required = true
 [[obligation]]
 id = "sf.functions.bitor.t005"
 form = "sf.functions.bitor"
-kind = "null_argument"
-target = "expr1"
-note = "A NULL on either side, and a string that cannot be cast, which the page says is treated as NULL."
-catches = "the NULL read as 0, or an error for the string"
+kind = "error_parity"
+target = "error"
+note = "A NULL on either side next to a string that cannot be cast; Snowflake raised 100038 for the string, so it is not treated as NULL."
+catches = "the string read as NULL or 0"
 reading = "the page: the bitwise OR of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
 cases = ["cases/translation/functions/bitor.toml#t005_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitor.t006"
+form = "sf.functions.bitor"
+kind = "null_argument"
+target = "expr1"
+note = "A NULL on either side alone; the page does not say; the recording decides."
+catches = "the NULL read as 0"
+reading = "the page: the bitwise OR of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitor.toml#t006_null_expr1"]
 required = true
 
 [[obligation]]
@@ -4880,12 +4902,23 @@ required = true
 [[obligation]]
 id = "sf.functions.bitxor.t005"
 form = "sf.functions.bitxor"
-kind = "null_argument"
-target = "expr1"
-note = "A NULL on either side, and a string that cannot be cast, which the page says is treated as NULL."
-catches = "the NULL read as 0, or an error for the string"
+kind = "error_parity"
+target = "error"
+note = "A NULL on either side next to a string that cannot be cast; Snowflake raised 100038 for the string, so it is not treated as NULL."
+catches = "the string read as NULL or 0"
 reading = "the page: the bitwise XOR of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
 cases = ["cases/translation/functions/bitxor.toml#t005_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitxor.t006"
+form = "sf.functions.bitxor"
+kind = "null_argument"
+target = "expr1"
+note = "A NULL on either side alone; the page does not say; the recording decides."
+catches = "the NULL read as 0"
+reading = "the page: the bitwise XOR of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitxor.toml#t006_null_expr1"]
 required = true
 
 [[obligation]]
@@ -7718,7 +7751,7 @@ id = "sf.functions.current-time.current-time.t003"
 form = "sf.functions.current-time.current-time"
 kind = "error_parity"
 target = "error"
-note = "Precision 10, outside the valid range 0 to 9 the page states."
+note = "Precision 10, outside the valid range 0 to 9 the page states; Snowflake refuses it when compiling."
 catches = "the precision clamped to 9"
 reading = "the page: the current TIME in the session time zone (UTC here), with an optional precision of 0 to 9 digits (default 9); callable without parentheses"
 cases = ["cases/translation/functions/current-time.current-time.toml#t003_precision_range"]
@@ -10245,7 +10278,7 @@ id = "sf.functions.getvariable.t002"
 form = "sf.functions.getvariable"
 kind = "null_argument"
 target = "name"
-note = "A NULL name; the page does not say; the recording decides."
+note = "A NULL name, written as a literal because Snowflake requires a constant name; the page does not say; the recording decides."
 catches = "an error where Snowflake returns NULL, or the reverse"
 reading = "the page: the value of the SQL variable named in upper case, as VARCHAR"
 cases = ["cases/translation/functions/getvariable.toml#t002_null_name"]
@@ -10447,6 +10480,1238 @@ note = "A real NULL in the data next to the NULL of a super-aggregate row."
 catches = "the bit computed as \"column IS NULL\" (1 for the data row whose a is NULL)"
 reading = "the page: 0 for a row grouped on the expression and 1 for a row that is not; with several expressions the bits form an integer with the first expression as the most significant bit"
 cases = ["cases/translation/functions/grouping-id.toml#t004_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-boundary.t001"
+form = "sf.functions.h3-cell-to-boundary"
+kind = "type_combination"
+target = "INTEGER"
+note = "A hexagon and a pentagon, measured by their point counts and by containing their own centre."
+catches = "the centroid returned instead of the boundary, or every cell drawn as a hexagon"
+reading = "the page: a GEOGRAPHY polygon for the boundary of the cell, from an INTEGER or hexadecimal VARCHAR ID"
+cases = ["cases/translation/functions/h3-cell-to-boundary.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-boundary.t002"
+form = "sf.functions.h3-cell-to-boundary"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The hexadecimal ID of the same hexagon, equal to the INTEGER result."
+catches = "the text read as a decimal number"
+reading = "the page: a GEOGRAPHY polygon for the boundary of the cell, from an INTEGER or hexadecimal VARCHAR ID"
+cases = ["cases/translation/functions/h3-cell-to-boundary.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-boundary.t003"
+form = "sf.functions.h3-cell-to-boundary"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY polygon for the boundary of the cell, from an INTEGER or hexadecimal VARCHAR ID"
+cases = ["cases/translation/functions/h3-cell-to-boundary.toml#t003_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-children.t001"
+form = "sf.functions.h3-cell-to-children"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "Children at resolutions 9, 10 and 11 of a resolution-9 cell: the cell itself, 7 and 49."
+catches = "the resolution read as a number of levels below the cell, or the cell left out at its own resolution"
+reading = "the page: an array of the INTEGER IDs of the children of the cell at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-cell-to-children.toml#t001_resolutions"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-children.t002"
+form = "sf.functions.h3-cell-to-children"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of the INTEGER IDs of the children of the cell at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-cell-to-children.toml#t002_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-children.t003"
+form = "sf.functions.h3-cell-to-children"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the INTEGER IDs of the children of the cell at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-cell-to-children.toml#t003_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-children-string.t001"
+form = "sf.functions.h3-cell-to-children-string"
+kind = "type_combination"
+target = "VARCHAR, INTEGER"
+note = "Children at resolutions 9, 10 and 11 of a resolution-9 cell: the cell itself, 7 and 49."
+catches = "the resolution read as a number of levels below the cell, or the cell left out at its own resolution"
+reading = "the page: an array of the VARCHAR IDs of the children of the cell at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-cell-to-children-string.toml#t001_resolutions"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-children-string.t002"
+form = "sf.functions.h3-cell-to-children-string"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of the VARCHAR IDs of the children of the cell at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-cell-to-children-string.toml#t002_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-children-string.t003"
+form = "sf.functions.h3-cell-to-children-string"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the VARCHAR IDs of the children of the cell at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-cell-to-children-string.toml#t003_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-parent.t001"
+form = "sf.functions.h3-cell-to-parent"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "The parent of a resolution-9 cell at resolutions 7 and 9."
+catches = "the resolution read as a number of levels up, or the hexadecimal form returned"
+reading = "the page: the parent cell at the target resolution (0 to 15; any other value is an error), INTEGER for an INTEGER ID and hexadecimal VARCHAR for a VARCHAR ID"
+cases = ["cases/translation/functions/h3-cell-to-parent.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-parent.t002"
+form = "sf.functions.h3-cell-to-parent"
+kind = "type_combination"
+target = "VARCHAR, INTEGER"
+note = "The parent of the hexadecimal ID at resolution 7."
+catches = "the INTEGER form returned for a VARCHAR ID"
+reading = "the page: the parent cell at the target resolution (0 to 15; any other value is an error), INTEGER for an INTEGER ID and hexadecimal VARCHAR for a VARCHAR ID"
+cases = ["cases/translation/functions/h3-cell-to-parent.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-parent.t003"
+form = "sf.functions.h3-cell-to-parent"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: the parent cell at the target resolution (0 to 15; any other value is an error), INTEGER for an INTEGER ID and hexadecimal VARCHAR for a VARCHAR ID"
+cases = ["cases/translation/functions/h3-cell-to-parent.toml#t003_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-parent.t004"
+form = "sf.functions.h3-cell-to-parent"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: the parent cell at the target resolution (0 to 15; any other value is an error), INTEGER for an INTEGER ID and hexadecimal VARCHAR for a VARCHAR ID"
+cases = ["cases/translation/functions/h3-cell-to-parent.toml#t004_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-point.t001"
+form = "sf.functions.h3-cell-to-point"
+kind = "type_combination"
+target = "INTEGER"
+note = "The centroid of C, rounded to 6 places."
+catches = "a boundary vertex returned instead of the centroid, or longitude and latitude swapped"
+reading = "the page: a GEOGRAPHY point at the centroid of the cell, from an INTEGER or hexadecimal VARCHAR ID"
+cases = ["cases/translation/functions/h3-cell-to-point.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-point.t002"
+form = "sf.functions.h3-cell-to-point"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The hexadecimal ID of the same cell, equal to the INTEGER result."
+catches = "the text read as a decimal number"
+reading = "the page: a GEOGRAPHY point at the centroid of the cell, from an INTEGER or hexadecimal VARCHAR ID"
+cases = ["cases/translation/functions/h3-cell-to-point.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-point.t003"
+form = "sf.functions.h3-cell-to-point"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: a GEOGRAPHY point at the centroid of the cell, from an INTEGER or hexadecimal VARCHAR ID"
+cases = ["cases/translation/functions/h3-cell-to-point.toml#t003_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-compact-cells.t001"
+form = "sf.functions.h3-compact-cells"
+kind = "type_combination"
+target = "ARRAY of INTEGER"
+note = "The 7 children of a cell and one child of a neighbouring cell, which compact to the parent and that child."
+catches = "the array returned unchanged, or the lone child merged into its parent"
+reading = "the page: an array of INTEGER IDs compacted to the fewest cells covering the same area; the input cells must be valid, of one resolution and not repeated; NULL gives NULL"
+cases = ["cases/translation/functions/h3-compact-cells.toml#t001_compact"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-compact-cells.t002"
+form = "sf.functions.h3-compact-cells"
+kind = "error_parity"
+target = "error"
+note = "Cells of two resolutions, which the page says the input must not contain."
+catches = "the cells compacted anyway"
+reading = "the page: an array of INTEGER IDs compacted to the fewest cells covering the same area; the input cells must be valid, of one resolution and not repeated; NULL gives NULL"
+cases = ["cases/translation/functions/h3-compact-cells.toml#t002_mixed_resolution"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-compact-cells.t003"
+form = "sf.functions.h3-compact-cells"
+kind = "error_parity"
+target = "error"
+note = "A repeated cell, which the page says is not allowed."
+catches = "the duplicate removed silently"
+reading = "the page: an array of INTEGER IDs compacted to the fewest cells covering the same area; the input cells must be valid, of one resolution and not repeated; NULL gives NULL"
+cases = ["cases/translation/functions/h3-compact-cells.toml#t003_duplicate"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-compact-cells.t004"
+form = "sf.functions.h3-compact-cells"
+kind = "null_argument"
+target = "array-of-cell-ids"
+note = "A NULL array, which the page says gives NULL without an error."
+catches = "an empty array returned"
+reading = "the page: an array of INTEGER IDs compacted to the fewest cells covering the same area; the input cells must be valid, of one resolution and not repeated; NULL gives NULL"
+cases = ["cases/translation/functions/h3-compact-cells.toml#t004_null_array_of_cell_ids"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-compact-cells-strings.t001"
+form = "sf.functions.h3-compact-cells-strings"
+kind = "type_combination"
+target = "ARRAY of VARCHAR"
+note = "The 7 children of a cell and one child of a neighbouring cell, which compact to the parent and that child."
+catches = "the array returned unchanged, or the lone child merged into its parent"
+reading = "the page: an array of VARCHAR IDs compacted to the fewest cells covering the same area; the input cells must be valid, of one resolution and not repeated; NULL gives NULL"
+cases = ["cases/translation/functions/h3-compact-cells-strings.toml#t001_compact"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-compact-cells-strings.t002"
+form = "sf.functions.h3-compact-cells-strings"
+kind = "error_parity"
+target = "error"
+note = "Cells of two resolutions, which the page says the input must not contain."
+catches = "the cells compacted anyway"
+reading = "the page: an array of VARCHAR IDs compacted to the fewest cells covering the same area; the input cells must be valid, of one resolution and not repeated; NULL gives NULL"
+cases = ["cases/translation/functions/h3-compact-cells-strings.toml#t002_mixed_resolution"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-compact-cells-strings.t003"
+form = "sf.functions.h3-compact-cells-strings"
+kind = "error_parity"
+target = "error"
+note = "A repeated cell, which the page says is not allowed."
+catches = "the duplicate removed silently"
+reading = "the page: an array of VARCHAR IDs compacted to the fewest cells covering the same area; the input cells must be valid, of one resolution and not repeated; NULL gives NULL"
+cases = ["cases/translation/functions/h3-compact-cells-strings.toml#t003_duplicate"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-compact-cells-strings.t004"
+form = "sf.functions.h3-compact-cells-strings"
+kind = "null_argument"
+target = "array-of-cell-ids"
+note = "A NULL array, which the page says gives NULL without an error."
+catches = "an empty array returned"
+reading = "the page: an array of VARCHAR IDs compacted to the fewest cells covering the same area; the input cells must be valid, of one resolution and not repeated; NULL gives NULL"
+cases = ["cases/translation/functions/h3-compact-cells-strings.toml#t004_null_array_of_cell_ids"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-coverage.t001"
+form = "sf.functions.h3-coverage"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A triangle inside one cell but away from its centroid, and a small square around the centroid: each is covered by that cell alone."
+catches = "only cells whose centroid is inside counted, which leaves the triangle uncovered"
+reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; an error when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-coverage.toml#t001_cover"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-coverage.t002"
+form = "sf.functions.h3-coverage"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A self-intersecting polygon kept with allow_invalid; the page gives NULL only where the coverage of an invalid shape cannot be computed, so the page does not say; the recording decides for this one."
+catches = "NULL where Snowflake computes a coverage, or the reverse"
+reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; an error when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-coverage.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-coverage.t003"
+form = "sf.functions.h3-coverage"
+kind = "error_parity"
+target = "error"
+note = "A 20-degree square at resolution 15, more cells than the limit, which the page says is an error."
+catches = "NULL returned"
+reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; an error when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-coverage.toml#t003_limit"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-coverage.t004"
+form = "sf.functions.h3-coverage"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; an error when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-coverage.toml#t004_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-coverage.t005"
+form = "sf.functions.h3-coverage"
+kind = "null_argument"
+target = "geography-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; an error when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-coverage.toml#t005_null_geography_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-coverage-strings.t001"
+form = "sf.functions.h3-coverage-strings"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A triangle inside one cell but away from its centroid, and a small square around the centroid: each is covered by that cell alone."
+catches = "only cells whose centroid is inside counted, which leaves the triangle uncovered"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; an error when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-coverage-strings.toml#t001_cover"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-coverage-strings.t002"
+form = "sf.functions.h3-coverage-strings"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A self-intersecting polygon kept with allow_invalid; the page gives NULL only where the coverage of an invalid shape cannot be computed, so the page does not say; the recording decides for this one."
+catches = "NULL where Snowflake computes a coverage, or the reverse"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; an error when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-coverage-strings.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-coverage-strings.t003"
+form = "sf.functions.h3-coverage-strings"
+kind = "error_parity"
+target = "error"
+note = "A 20-degree square at resolution 15, more cells than the limit, which the page says is an error."
+catches = "NULL returned"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; an error when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-coverage-strings.toml#t003_limit"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-coverage-strings.t004"
+form = "sf.functions.h3-coverage-strings"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; an error when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-coverage-strings.toml#t004_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-coverage-strings.t005"
+form = "sf.functions.h3-coverage-strings"
+kind = "null_argument"
+target = "geography-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; an error when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-coverage-strings.toml#t005_null_geography_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-get-resolution.t001"
+form = "sf.functions.h3-get-resolution"
+kind = "type_combination"
+target = "INTEGER"
+note = "Cells at resolutions 9, 10 and 0."
+catches = "a fixed resolution returned"
+reading = "the page: the resolution of the cell, an INTEGER from 0 to 15"
+cases = ["cases/translation/functions/h3-get-resolution.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-get-resolution.t002"
+form = "sf.functions.h3-get-resolution"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The hexadecimal IDs of cells at resolutions 9 and 0."
+catches = "the text read as a decimal number"
+reading = "the page: the resolution of the cell, an INTEGER from 0 to 15"
+cases = ["cases/translation/functions/h3-get-resolution.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-get-resolution.t003"
+form = "sf.functions.h3-get-resolution"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID; the page does not say; the recording decides."
+catches = "an error, or 0 returned"
+reading = "the page: the resolution of the cell, an INTEGER from 0 to 15"
+cases = ["cases/translation/functions/h3-get-resolution.toml#t003_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-disk.t001"
+form = "sf.functions.h3-grid-disk"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "k of 0, 1 and 2 around a hexagon: 1, 7 and 19 cells, including the cell itself."
+catches = "only the ring at distance k returned, or the cell left out"
+reading = "the page: an array of the cells within grid distance k (non-negative) of the cell, INTEGER for an INTEGER ID and hexadecimal VARCHAR for a VARCHAR ID"
+cases = ["cases/translation/functions/h3-grid-disk.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-disk.t002"
+form = "sf.functions.h3-grid-disk"
+kind = "type_combination"
+target = "VARCHAR, INTEGER"
+note = "A hexadecimal ID, whose disk holds hexadecimal IDs including a cell two steps away."
+catches = "INTEGER IDs returned for a VARCHAR ID"
+reading = "the page: an array of the cells within grid distance k (non-negative) of the cell, INTEGER for an INTEGER ID and hexadecimal VARCHAR for a VARCHAR ID"
+cases = ["cases/translation/functions/h3-grid-disk.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-disk.t003"
+form = "sf.functions.h3-grid-disk"
+kind = "error_parity"
+target = "error"
+note = "k = -1, which the page says must be non-negative."
+catches = "an empty array returned, or the sign ignored"
+reading = "the page: an array of the cells within grid distance k (non-negative) of the cell, INTEGER for an INTEGER ID and hexadecimal VARCHAR for a VARCHAR ID"
+cases = ["cases/translation/functions/h3-grid-disk.toml#t003_negative_k"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-disk.t004"
+form = "sf.functions.h3-grid-disk"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the cells within grid distance k (non-negative) of the cell, INTEGER for an INTEGER ID and hexadecimal VARCHAR for a VARCHAR ID"
+cases = ["cases/translation/functions/h3-grid-disk.toml#t004_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-distance.t001"
+form = "sf.functions.h3-grid-distance"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "A cell and a cell two steps away, both ways, and a cell with itself."
+catches = "a count of cells on the path (3) returned instead of steps, or direction-dependent results"
+reading = "the page: the grid distance in steps between two cells of the same resolution, from INTEGER or hexadecimal VARCHAR IDs"
+cases = ["cases/translation/functions/h3-grid-distance.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-distance.t002"
+form = "sf.functions.h3-grid-distance"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR"
+note = "The same pair as hexadecimal IDs."
+catches = "the text read as decimal numbers"
+reading = "the page: the grid distance in steps between two cells of the same resolution, from INTEGER or hexadecimal VARCHAR IDs"
+cases = ["cases/translation/functions/h3-grid-distance.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-distance.t003"
+form = "sf.functions.h3-grid-distance"
+kind = "error_parity"
+target = "error"
+note = "Cells of resolutions 9 and 10, which the page says must use the same resolution."
+catches = "a distance computed after converting one cell"
+reading = "the page: the grid distance in steps between two cells of the same resolution, from INTEGER or hexadecimal VARCHAR IDs"
+cases = ["cases/translation/functions/h3-grid-distance.toml#t003_mixed_resolution"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-distance.t004"
+form = "sf.functions.h3-grid-distance"
+kind = "null_argument"
+target = "cell-id-1"
+note = "A NULL first ID; the page does not say; the recording decides."
+catches = "an error, or 0 returned"
+reading = "the page: the grid distance in steps between two cells of the same resolution, from INTEGER or hexadecimal VARCHAR IDs"
+cases = ["cases/translation/functions/h3-grid-distance.toml#t004_null_cell_id_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-path.t001"
+form = "sf.functions.h3-grid-path"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "The path from a cell to a cell two steps away, as JSON text: 3 cells from the first to the second."
+catches = "the end cells left out, or the path reversed"
+reading = "the page: an array of the cells on the line between two cells of the same resolution, INTEGER for INTEGER IDs and hexadecimal VARCHAR for VARCHAR IDs"
+cases = ["cases/translation/functions/h3-grid-path.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-path.t002"
+form = "sf.functions.h3-grid-path"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR"
+note = "The same pair as hexadecimal IDs, which the page says give hexadecimal IDs."
+catches = "INTEGER IDs returned for VARCHAR IDs"
+reading = "the page: an array of the cells on the line between two cells of the same resolution, INTEGER for INTEGER IDs and hexadecimal VARCHAR for VARCHAR IDs"
+cases = ["cases/translation/functions/h3-grid-path.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-path.t003"
+form = "sf.functions.h3-grid-path"
+kind = "null_argument"
+target = "cell-id-1"
+note = "A NULL first ID; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the cells on the line between two cells of the same resolution, INTEGER for INTEGER IDs and hexadecimal VARCHAR for VARCHAR IDs"
+cases = ["cases/translation/functions/h3-grid-path.toml#t003_null_cell_id_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-int-to-string.t001"
+form = "sf.functions.h3-int-to-string"
+kind = "type_combination"
+target = "INTEGER"
+note = "Cells at resolutions 9 and 0."
+catches = "the decimal digits returned, or leading digits dropped"
+reading = "the page: the hexadecimal form of an INTEGER cell ID"
+cases = ["cases/translation/functions/h3-int-to-string.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-int-to-string.t002"
+form = "sf.functions.h3-int-to-string"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID; the page does not say; the recording decides."
+catches = "an error, or an empty string returned"
+reading = "the page: the hexadecimal form of an INTEGER cell ID"
+cases = ["cases/translation/functions/h3-int-to-string.toml#t002_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-is-pentagon.t001"
+form = "sf.functions.h3-is-pentagon"
+kind = "type_combination"
+target = "INTEGER"
+note = "A resolution-0 pentagon and a hexagon."
+catches = "every cell reported as a hexagon"
+reading = "the page: TRUE if the cell is a pentagon, otherwise FALSE; NULL gives NULL"
+cases = ["cases/translation/functions/h3-is-pentagon.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-is-pentagon.t002"
+form = "sf.functions.h3-is-pentagon"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The same cells as hexadecimal IDs."
+catches = "the text read as a decimal number"
+reading = "the page: TRUE if the cell is a pentagon, otherwise FALSE; NULL gives NULL"
+cases = ["cases/translation/functions/h3-is-pentagon.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-is-pentagon.t003"
+form = "sf.functions.h3-is-pentagon"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID, which the page says gives NULL without an error."
+catches = "FALSE returned"
+reading = "the page: TRUE if the cell is a pentagon, otherwise FALSE; NULL gives NULL"
+cases = ["cases/translation/functions/h3-is-pentagon.toml#t003_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-is-valid-cell.t001"
+form = "sf.functions.h3-is-valid-cell"
+kind = "type_combination"
+target = "INTEGER"
+note = "A valid cell, 0 and 123."
+catches = "any non-zero integer accepted, or an error for an invalid ID"
+reading = "the page: TRUE if the input is a valid H3 cell, otherwise FALSE; NULL gives NULL"
+cases = ["cases/translation/functions/h3-is-valid-cell.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-is-valid-cell.t002"
+form = "sf.functions.h3-is-valid-cell"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A valid hexadecimal ID, a non-hexadecimal string and the empty string."
+catches = "an error for text that is not hexadecimal"
+reading = "the page: TRUE if the input is a valid H3 cell, otherwise FALSE; NULL gives NULL"
+cases = ["cases/translation/functions/h3-is-valid-cell.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-is-valid-cell.t003"
+form = "sf.functions.h3-is-valid-cell"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID, which the page says gives NULL without an error."
+catches = "FALSE returned"
+reading = "the page: TRUE if the input is a valid H3 cell, otherwise FALSE; NULL gives NULL"
+cases = ["cases/translation/functions/h3-is-valid-cell.toml#t003_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-latlng-to-cell.t001"
+form = "sf.functions.h3-latlng-to-cell"
+kind = "type_combination"
+target = "FLOAT, FLOAT, INTEGER"
+note = "A point in San Francisco at resolutions 0, 9 and 15, the ends of the range and between."
+catches = "latitude and longitude swapped, or the resolution range cut short"
+reading = "the page: the INTEGER ID of the cell holding the latitude and longitude at the target resolution (0 to 15; any other value is an error); latitude and longitude outside their ranges are wrapped; NaN or Inf is an error"
+cases = ["cases/translation/functions/h3-latlng-to-cell.toml#t001_resolutions"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-latlng-to-cell.t002"
+form = "sf.functions.h3-latlng-to-cell"
+kind = "type_combination"
+target = "FLOAT, FLOAT, INTEGER"
+note = "The same point with 360 added to the longitude, which the page says is wrapped into range."
+catches = "an error for a longitude out of range, or another cell"
+reading = "the page: the INTEGER ID of the cell holding the latitude and longitude at the target resolution (0 to 15; any other value is an error); latitude and longitude outside their ranges are wrapped; NaN or Inf is an error"
+cases = ["cases/translation/functions/h3-latlng-to-cell.toml#t002_wrap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-latlng-to-cell.t003"
+form = "sf.functions.h3-latlng-to-cell"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: the INTEGER ID of the cell holding the latitude and longitude at the target resolution (0 to 15; any other value is an error); latitude and longitude outside their ranges are wrapped; NaN or Inf is an error"
+cases = ["cases/translation/functions/h3-latlng-to-cell.toml#t003_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-latlng-to-cell.t004"
+form = "sf.functions.h3-latlng-to-cell"
+kind = "error_parity"
+target = "error"
+note = "A NaN latitude, which the page says is an error."
+catches = "NULL or a cell returned"
+reading = "the page: the INTEGER ID of the cell holding the latitude and longitude at the target resolution (0 to 15; any other value is an error); latitude and longitude outside their ranges are wrapped; NaN or Inf is an error"
+cases = ["cases/translation/functions/h3-latlng-to-cell.toml#t004_nan"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-latlng-to-cell.t005"
+form = "sf.functions.h3-latlng-to-cell"
+kind = "null_argument"
+target = "latitude"
+note = "A NULL latitude; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: the INTEGER ID of the cell holding the latitude and longitude at the target resolution (0 to 15; any other value is an error); latitude and longitude outside their ranges are wrapped; NaN or Inf is an error"
+cases = ["cases/translation/functions/h3-latlng-to-cell.toml#t005_null_latitude"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-latlng-to-cell-string.t001"
+form = "sf.functions.h3-latlng-to-cell-string"
+kind = "type_combination"
+target = "FLOAT, FLOAT, INTEGER"
+note = "A point in San Francisco at resolutions 0, 9 and 15, the ends of the range and between."
+catches = "latitude and longitude swapped, or the resolution range cut short"
+reading = "the page: the hexadecimal VARCHAR ID of the cell holding the latitude and longitude at the target resolution (0 to 15; any other value is an error); latitude and longitude outside their ranges are wrapped; NaN or Inf is an error"
+cases = ["cases/translation/functions/h3-latlng-to-cell-string.toml#t001_resolutions"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-latlng-to-cell-string.t002"
+form = "sf.functions.h3-latlng-to-cell-string"
+kind = "type_combination"
+target = "FLOAT, FLOAT, INTEGER"
+note = "The same point with 360 added to the longitude, which the page says is wrapped into range."
+catches = "an error for a longitude out of range, or another cell"
+reading = "the page: the hexadecimal VARCHAR ID of the cell holding the latitude and longitude at the target resolution (0 to 15; any other value is an error); latitude and longitude outside their ranges are wrapped; NaN or Inf is an error"
+cases = ["cases/translation/functions/h3-latlng-to-cell-string.toml#t002_wrap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-latlng-to-cell-string.t003"
+form = "sf.functions.h3-latlng-to-cell-string"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: the hexadecimal VARCHAR ID of the cell holding the latitude and longitude at the target resolution (0 to 15; any other value is an error); latitude and longitude outside their ranges are wrapped; NaN or Inf is an error"
+cases = ["cases/translation/functions/h3-latlng-to-cell-string.toml#t003_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-latlng-to-cell-string.t004"
+form = "sf.functions.h3-latlng-to-cell-string"
+kind = "error_parity"
+target = "error"
+note = "A NaN latitude, which the page says is an error."
+catches = "NULL or a cell returned"
+reading = "the page: the hexadecimal VARCHAR ID of the cell holding the latitude and longitude at the target resolution (0 to 15; any other value is an error); latitude and longitude outside their ranges are wrapped; NaN or Inf is an error"
+cases = ["cases/translation/functions/h3-latlng-to-cell-string.toml#t004_nan"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-latlng-to-cell-string.t005"
+form = "sf.functions.h3-latlng-to-cell-string"
+kind = "null_argument"
+target = "latitude"
+note = "A NULL latitude; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: the hexadecimal VARCHAR ID of the cell holding the latitude and longitude at the target resolution (0 to 15; any other value is an error); latitude and longitude outside their ranges are wrapped; NaN or Inf is an error"
+cases = ["cases/translation/functions/h3-latlng-to-cell-string.toml#t005_null_latitude"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-point-to-cell.t001"
+form = "sf.functions.h3-point-to-cell"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A point in San Francisco, written longitude first, at resolutions 0 and 9."
+catches = "longitude and latitude swapped"
+reading = "the page: the INTEGER ID of the cell holding a GEOGRAPHY point at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-point-to-cell.toml#t001_point"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-point-to-cell.t002"
+form = "sf.functions.h3-point-to-cell"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: the INTEGER ID of the cell holding a GEOGRAPHY point at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-point-to-cell.toml#t002_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-point-to-cell.t003"
+form = "sf.functions.h3-point-to-cell"
+kind = "null_argument"
+target = "geography-point"
+note = "A NULL point; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: the INTEGER ID of the cell holding a GEOGRAPHY point at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-point-to-cell.toml#t003_null_geography_point"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-point-to-cell-string.t001"
+form = "sf.functions.h3-point-to-cell-string"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A point in San Francisco, written longitude first, at resolutions 0 and 9."
+catches = "longitude and latitude swapped"
+reading = "the page: the hexadecimal VARCHAR ID of the cell holding a GEOGRAPHY point at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-point-to-cell-string.toml#t001_point"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-point-to-cell-string.t002"
+form = "sf.functions.h3-point-to-cell-string"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: the hexadecimal VARCHAR ID of the cell holding a GEOGRAPHY point at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-point-to-cell-string.toml#t002_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-point-to-cell-string.t003"
+form = "sf.functions.h3-point-to-cell-string"
+kind = "null_argument"
+target = "geography-point"
+note = "A NULL point; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: the hexadecimal VARCHAR ID of the cell holding a GEOGRAPHY point at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-point-to-cell-string.toml#t003_null_geography_point"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-polygon-to-cells.t001"
+form = "sf.functions.h3-polygon-to-cells"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A triangle inside one cell but away from its centroid, which holds no centroid, and a small square around the centroid, which holds one."
+catches = "cells counted when their boundary intersects the polygon, which puts the cell in the triangle's result"
+reading = "the page: an array of the INTEGER IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-polygon-to-cells.toml#t001_centroids"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-polygon-to-cells.t002"
+form = "sf.functions.h3-polygon-to-cells"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of the INTEGER IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-polygon-to-cells.toml#t002_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-polygon-to-cells.t003"
+form = "sf.functions.h3-polygon-to-cells"
+kind = "null_argument"
+target = "geography-polygon"
+note = "A NULL polygon; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the INTEGER IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-polygon-to-cells.toml#t003_null_geography_polygon"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-polygon-to-cells-strings.t001"
+form = "sf.functions.h3-polygon-to-cells-strings"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A triangle inside one cell but away from its centroid, which holds no centroid, and a small square around the centroid, which holds one."
+catches = "cells counted when their boundary intersects the polygon, which puts the cell in the triangle's result"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-polygon-to-cells-strings.toml#t001_centroids"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-polygon-to-cells-strings.t002"
+form = "sf.functions.h3-polygon-to-cells-strings"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-polygon-to-cells-strings.toml#t002_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-polygon-to-cells-strings.t003"
+form = "sf.functions.h3-polygon-to-cells-strings"
+kind = "null_argument"
+target = "geography-polygon"
+note = "A NULL polygon; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-polygon-to-cells-strings.toml#t003_null_geography_polygon"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-string-to-int.t001"
+form = "sf.functions.h3-string-to-int"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Hexadecimal IDs at resolutions 9 and 0."
+catches = "the text read as a decimal number, or a value beyond 63 bits truncated"
+reading = "the page: the INTEGER form of a hexadecimal cell ID"
+cases = ["cases/translation/functions/h3-string-to-int.toml#t001_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-string-to-int.t002"
+form = "sf.functions.h3-string-to-int"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID; the page does not say; the recording decides."
+catches = "an error, or 0 returned"
+reading = "the page: the INTEGER form of a hexadecimal cell ID"
+cases = ["cases/translation/functions/h3-string-to-int.toml#t002_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-coverage.t001"
+form = "sf.functions.h3-try-coverage"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A triangle inside one cell but away from its centroid, and a small square around the centroid: each is covered by that cell alone."
+catches = "only cells whose centroid is inside counted, which leaves the triangle uncovered"
+reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-try-coverage.toml#t001_cover"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-coverage.t002"
+form = "sf.functions.h3-try-coverage"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A self-intersecting polygon kept with allow_invalid; the page gives NULL only where the coverage of an invalid shape cannot be computed, so the page does not say; the recording decides for this one."
+catches = "NULL where Snowflake computes a coverage, or the reverse"
+reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-try-coverage.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-coverage.t003"
+form = "sf.functions.h3-try-coverage"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A 20-degree square at resolution 15, more cells than the limit, which the page says gives NULL."
+catches = "an error raised"
+reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-try-coverage.toml#t003_limit"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-coverage.t004"
+form = "sf.functions.h3-try-coverage"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. The page says this holds for the TRY form too."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-try-coverage.toml#t004_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-coverage.t005"
+form = "sf.functions.h3-try-coverage"
+kind = "null_argument"
+target = "geography-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-try-coverage.toml#t005_null_geography_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-coverage-strings.t001"
+form = "sf.functions.h3-try-coverage-strings"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A triangle inside one cell but away from its centroid, and a small square around the centroid: each is covered by that cell alone."
+catches = "only cells whose centroid is inside counted, which leaves the triangle uncovered"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-try-coverage-strings.toml#t001_cover"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-coverage-strings.t002"
+form = "sf.functions.h3-try-coverage-strings"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A self-intersecting polygon kept with allow_invalid; the page gives NULL only where the coverage of an invalid shape cannot be computed, so the page does not say; the recording decides for this one."
+catches = "NULL where Snowflake computes a coverage, or the reverse"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-try-coverage-strings.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-coverage-strings.t003"
+form = "sf.functions.h3-try-coverage-strings"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A 20-degree square at resolution 15, more cells than the limit, which the page says gives NULL."
+catches = "an error raised"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-try-coverage-strings.toml#t003_limit"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-coverage-strings.t004"
+form = "sf.functions.h3-try-coverage-strings"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. The page says this holds for the TRY form too."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-try-coverage-strings.toml#t004_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-coverage-strings.t005"
+form = "sf.functions.h3-try-coverage-strings"
+kind = "null_argument"
+target = "geography-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-try-coverage-strings.toml#t005_null_geography_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-grid-distance.t001"
+form = "sf.functions.h3-try-grid-distance"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "A cell and a cell two steps away, both ways, and a cell with itself."
+catches = "a count of cells on the path (3) returned instead of steps, or direction-dependent results"
+reading = "the page: the grid distance in steps between two cells of the same resolution, from INTEGER or hexadecimal VARCHAR IDs; NULL where it cannot be computed, for example for non-neighbouring base cells"
+cases = ["cases/translation/functions/h3-try-grid-distance.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-grid-distance.t002"
+form = "sf.functions.h3-try-grid-distance"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR"
+note = "The same pair as hexadecimal IDs."
+catches = "the text read as decimal numbers"
+reading = "the page: the grid distance in steps between two cells of the same resolution, from INTEGER or hexadecimal VARCHAR IDs; NULL where it cannot be computed, for example for non-neighbouring base cells"
+cases = ["cases/translation/functions/h3-try-grid-distance.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-grid-distance.t003"
+form = "sf.functions.h3-try-grid-distance"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "Resolution-5 cells in San Francisco and Sydney, on non-neighbouring base cells, which the page says give NULL."
+catches = "an error raised, or a great-circle estimate returned"
+reading = "the page: the grid distance in steps between two cells of the same resolution, from INTEGER or hexadecimal VARCHAR IDs; NULL where it cannot be computed, for example for non-neighbouring base cells"
+cases = ["cases/translation/functions/h3-try-grid-distance.toml#t003_far"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-grid-distance.t004"
+form = "sf.functions.h3-try-grid-distance"
+kind = "null_argument"
+target = "cell-id-1"
+note = "A NULL first ID; the page does not say; the recording decides."
+catches = "an error, or 0 returned"
+reading = "the page: the grid distance in steps between two cells of the same resolution, from INTEGER or hexadecimal VARCHAR IDs; NULL where it cannot be computed, for example for non-neighbouring base cells"
+cases = ["cases/translation/functions/h3-try-grid-distance.toml#t004_null_cell_id_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-grid-path.t001"
+form = "sf.functions.h3-try-grid-path"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "The path from a cell to a cell two steps away, as JSON text: 3 cells from the first to the second."
+catches = "the end cells left out, or the path reversed"
+reading = "the page: an array of the cells on the line between two cells of the same resolution, INTEGER for INTEGER IDs and hexadecimal VARCHAR for VARCHAR IDs; NULL where it cannot be computed, for example for non-neighbouring base cells"
+cases = ["cases/translation/functions/h3-try-grid-path.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-grid-path.t002"
+form = "sf.functions.h3-try-grid-path"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR"
+note = "The same pair as hexadecimal IDs, which the page says give hexadecimal IDs."
+catches = "INTEGER IDs returned for VARCHAR IDs"
+reading = "the page: an array of the cells on the line between two cells of the same resolution, INTEGER for INTEGER IDs and hexadecimal VARCHAR for VARCHAR IDs; NULL where it cannot be computed, for example for non-neighbouring base cells"
+cases = ["cases/translation/functions/h3-try-grid-path.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-grid-path.t003"
+form = "sf.functions.h3-try-grid-path"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "Resolution-5 cells in San Francisco and Sydney, on non-neighbouring base cells, which the page says give NULL."
+catches = "an error raised, or a partial path returned"
+reading = "the page: an array of the cells on the line between two cells of the same resolution, INTEGER for INTEGER IDs and hexadecimal VARCHAR for VARCHAR IDs; NULL where it cannot be computed, for example for non-neighbouring base cells"
+cases = ["cases/translation/functions/h3-try-grid-path.toml#t003_far"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-grid-path.t004"
+form = "sf.functions.h3-try-grid-path"
+kind = "null_argument"
+target = "cell-id-1"
+note = "A NULL first ID; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the cells on the line between two cells of the same resolution, INTEGER for INTEGER IDs and hexadecimal VARCHAR for VARCHAR IDs; NULL where it cannot be computed, for example for non-neighbouring base cells"
+cases = ["cases/translation/functions/h3-try-grid-path.toml#t004_null_cell_id_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-polygon-to-cells.t001"
+form = "sf.functions.h3-try-polygon-to-cells"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A triangle inside one cell but away from its centroid, which holds no centroid, and a small square around the centroid, which holds one."
+catches = "cells counted when their boundary intersects the polygon, which puts the cell in the triangle's result"
+reading = "the page: an array of the INTEGER IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error; NULL where it cannot be computed"
+cases = ["cases/translation/functions/h3-try-polygon-to-cells.toml#t001_centroids"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-polygon-to-cells.t002"
+form = "sf.functions.h3-try-polygon-to-cells"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. The page says this holds for the TRY form too."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of the INTEGER IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error; NULL where it cannot be computed"
+cases = ["cases/translation/functions/h3-try-polygon-to-cells.toml#t002_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-polygon-to-cells.t003"
+form = "sf.functions.h3-try-polygon-to-cells"
+kind = "null_argument"
+target = "geography-polygon"
+note = "A NULL polygon; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the INTEGER IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error; NULL where it cannot be computed"
+cases = ["cases/translation/functions/h3-try-polygon-to-cells.toml#t003_null_geography_polygon"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-polygon-to-cells-strings.t001"
+form = "sf.functions.h3-try-polygon-to-cells-strings"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A triangle inside one cell but away from its centroid, which holds no centroid, and a small square around the centroid, which holds one."
+catches = "cells counted when their boundary intersects the polygon, which puts the cell in the triangle's result"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error; NULL where it cannot be computed"
+cases = ["cases/translation/functions/h3-try-polygon-to-cells-strings.toml#t001_centroids"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-polygon-to-cells-strings.t002"
+form = "sf.functions.h3-try-polygon-to-cells-strings"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. The page says this holds for the TRY form too."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error; NULL where it cannot be computed"
+cases = ["cases/translation/functions/h3-try-polygon-to-cells-strings.toml#t002_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-polygon-to-cells-strings.t003"
+form = "sf.functions.h3-try-polygon-to-cells-strings"
+kind = "null_argument"
+target = "geography-polygon"
+note = "A NULL polygon; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error; NULL where it cannot be computed"
+cases = ["cases/translation/functions/h3-try-polygon-to-cells-strings.toml#t003_null_geography_polygon"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-uncompact-cells.t001"
+form = "sf.functions.h3-uncompact-cells"
+kind = "type_combination"
+target = "ARRAY of INTEGER, INTEGER"
+note = "A resolution-9 cell and a resolution-10 cell expanded to resolution 10: 7 cells and the one already there."
+catches = "the finer cell expanded again, or dropped"
+reading = "the page: an array of INTEGER IDs expanded to the target resolution (0 to 15; any other value is an error); the input cells cannot have a higher resolution than the target; NULL gives NULL"
+cases = ["cases/translation/functions/h3-uncompact-cells.toml#t001_uncompact"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-uncompact-cells.t002"
+form = "sf.functions.h3-uncompact-cells"
+kind = "error_parity"
+target = "error"
+note = "A target resolution 8, coarser than the resolution-9 input, which the page says is not allowed."
+catches = "the parent returned"
+reading = "the page: an array of INTEGER IDs expanded to the target resolution (0 to 15; any other value is an error); the input cells cannot have a higher resolution than the target; NULL gives NULL"
+cases = ["cases/translation/functions/h3-uncompact-cells.toml#t002_coarser_target"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-uncompact-cells.t003"
+form = "sf.functions.h3-uncompact-cells"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of INTEGER IDs expanded to the target resolution (0 to 15; any other value is an error); the input cells cannot have a higher resolution than the target; NULL gives NULL"
+cases = ["cases/translation/functions/h3-uncompact-cells.toml#t003_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-uncompact-cells.t004"
+form = "sf.functions.h3-uncompact-cells"
+kind = "null_argument"
+target = "array-of-cell-ids"
+note = "A NULL array, which the page says gives NULL without an error."
+catches = "an empty array returned"
+reading = "the page: an array of INTEGER IDs expanded to the target resolution (0 to 15; any other value is an error); the input cells cannot have a higher resolution than the target; NULL gives NULL"
+cases = ["cases/translation/functions/h3-uncompact-cells.toml#t004_null_array_of_cell_ids"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-uncompact-cells-strings.t001"
+form = "sf.functions.h3-uncompact-cells-strings"
+kind = "type_combination"
+target = "ARRAY of VARCHAR, INTEGER"
+note = "A resolution-9 cell and a resolution-10 cell expanded to resolution 10: 7 cells and the one already there."
+catches = "the finer cell expanded again, or dropped"
+reading = "the page: an array of VARCHAR IDs expanded to the target resolution (0 to 15; any other value is an error); the input cells cannot have a higher resolution than the target; NULL gives NULL"
+cases = ["cases/translation/functions/h3-uncompact-cells-strings.toml#t001_uncompact"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-uncompact-cells-strings.t002"
+form = "sf.functions.h3-uncompact-cells-strings"
+kind = "error_parity"
+target = "error"
+note = "A target resolution 8, coarser than the resolution-9 input, which the page says is not allowed."
+catches = "the parent returned"
+reading = "the page: an array of VARCHAR IDs expanded to the target resolution (0 to 15; any other value is an error); the input cells cannot have a higher resolution than the target; NULL gives NULL"
+cases = ["cases/translation/functions/h3-uncompact-cells-strings.toml#t002_coarser_target"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-uncompact-cells-strings.t003"
+form = "sf.functions.h3-uncompact-cells-strings"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of VARCHAR IDs expanded to the target resolution (0 to 15; any other value is an error); the input cells cannot have a higher resolution than the target; NULL gives NULL"
+cases = ["cases/translation/functions/h3-uncompact-cells-strings.toml#t003_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-uncompact-cells-strings.t004"
+form = "sf.functions.h3-uncompact-cells-strings"
+kind = "null_argument"
+target = "array-of-cell-ids"
+note = "A NULL array, which the page says gives NULL without an error."
+catches = "an empty array returned"
+reading = "the page: an array of VARCHAR IDs expanded to the target resolution (0 to 15; any other value is an error); the input cells cannot have a higher resolution than the target; NULL gives NULL"
+cases = ["cases/translation/functions/h3-uncompact-cells-strings.toml#t004_null_array_of_cell_ids"]
 required = true
 
 [[obligation]]
@@ -12224,7 +13489,7 @@ id = "sf.functions.interpolate-bfill.interpolate-linear-over-order-by.t003"
 form = "sf.functions.interpolate-bfill.interpolate-linear-over-order-by"
 kind = "error_parity"
 target = "error"
-note = "A text column, which the page says INTERPOLATE_LINEAR does not accept."
+note = "A text column, which the page says INTERPOLATE_LINEAR does not accept; Snowflake compiles the call, so the error comes at run time."
 catches = "the text interpolated or copied"
 reading = "the page: each NULL replaced by linear interpolation between the neighbouring non-NULL values, by the distance in the single numeric, DATE or TIMESTAMP order key"
 cases = ["cases/translation/functions/interpolate-bfill.interpolate-linear-over-order-by.toml#t003_text"]
@@ -14636,10 +15901,10 @@ required = true
 [[obligation]]
 id = "sf.functions.map-insert.t003"
 form = "sf.functions.map-insert"
-kind = "null_argument"
-target = "key"
-note = "A NULL key, whose pair the page omits, and a SQL NULL value, which it inserts as a JSON null."
-catches = "the NULL-keyed pair inserted, or the NULL-valued pair omitted"
+kind = "error_parity"
+target = "error"
+note = "A NULL key and a SQL NULL value in one statement; Snowflake raised 220002 because a structured map with a non-nullable value type cannot take a NULL value."
+catches = "the NULL value inserted into the structured map, or silently dropped"
 reading = "the page: the map with a new key-value pair; an existing key is an error unless updateFlag is TRUE, which updates it; a NULL key is omitted; a SQL NULL value becomes a JSON null and is inserted"
 cases = ["cases/translation/functions/map-insert.toml#t003_null_key"]
 required = true
@@ -14653,6 +15918,17 @@ note = "An existing key without updateFlag, which the page says is an error."
 catches = "the value silently updated or kept"
 reading = "the page: the map with a new key-value pair; an existing key is an error unless updateFlag is TRUE, which updates it; a NULL key is omitted; a SQL NULL value becomes a JSON null and is inserted"
 cases = ["cases/translation/functions/map-insert.toml#t004_existing_key"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-insert.t005"
+form = "sf.functions.map-insert"
+kind = "null_argument"
+target = "key"
+note = "A NULL key alone, whose pair the page omits."
+catches = "the NULL-keyed pair inserted, or an error raised"
+reading = "the page: the map with a new key-value pair; an existing key is an error unless updateFlag is TRUE, which updates it; a NULL key is omitted; a SQL NULL value becomes a JSON null and is inserted"
+cases = ["cases/translation/functions/map-insert.toml#t005_null_key"]
 required = true
 
 [[obligation]]
@@ -16100,7 +17376,7 @@ id = "sf.functions.nth-value.t004"
 form = "sf.functions.nth-value"
 kind = "error_parity"
 target = "error"
-note = "n = 1001, above the limit of 1000 the page states."
+note = "n = 1001, above the limit of 1000 the page states; Snowflake refuses it when compiling."
 catches = "the call accepted"
 reading = "the page: the n-th value of the ordered window frame, FROM FIRST by default or FROM LAST; RESPECT NULLS by default; n cannot exceed 1000"
 cases = ["cases/translation/functions/nth-value.toml#t004_above_limit"]
@@ -16648,10 +17924,10 @@ required = true
 [[obligation]]
 id = "sf.functions.object-keys.t002"
 form = "sf.functions.object-keys"
-kind = "type_combination"
-target = "VARIANT holding an array"
-note = "A VARIANT holding an array; the page does not say; the recording decides."
-catches = "the indexes returned as keys"
+kind = "error_parity"
+target = "error"
+note = "A VARIANT holding an array; Snowflake raised 100071, failing to cast the array to OBJECT."
+catches = "the indexes returned as keys, or an empty array"
 reading = "the page: an ARRAY of the top-level keys of an OBJECT or a VARIANT holding one"
 cases = ["cases/translation/functions/object-keys.toml#t002_not_object"]
 required = true
@@ -22246,6 +23522,1403 @@ cases = ["cases/translation/functions/square.toml#t006_overflow_inf"]
 required = true
 
 [[obligation]]
+id = "sf.functions.st-geogfromgeohash.t001"
+form = "sf.functions.st-geogfromgeohash"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The cell of ezs42 contains a point inside it and not points just east of it or at the swapped coordinates."
+catches = "longitude and latitude swapped, or a point returned instead of the cell"
+reading = "the page: a GEOGRAPHY polygon for the geohash cell, using its first precision characters (1 to 20, default 20)"
+cases = ["cases/translation/functions/st-geogfromgeohash.toml#t001_cell"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geogfromgeohash.t002"
+form = "sf.functions.st-geogfromgeohash"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "A longer geohash cut to 5 characters equals the 5-character cell, and differs from it uncut."
+catches = "the precision ignored, or counted from the end"
+reading = "the page: a GEOGRAPHY polygon for the geohash cell, using its first precision characters (1 to 20, default 20)"
+cases = ["cases/translation/functions/st-geogfromgeohash.toml#t002_precision"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geogfromgeohash.t003"
+form = "sf.functions.st-geogfromgeohash"
+kind = "type_combination"
+target = "VARCHAR, NUMBER 1"
+note = "Precision 1, the smallest the page allows, gives the one-character cell."
+catches = "precision 1 rejected, or read as the whole hash"
+reading = "the page: a GEOGRAPHY polygon for the geohash cell, using its first precision characters (1 to 20, default 20)"
+cases = ["cases/translation/functions/st-geogfromgeohash.toml#t003_precision_min"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geogfromgeohash.t004"
+form = "sf.functions.st-geogfromgeohash"
+kind = "error_parity"
+target = "error"
+note = "Precision 0, below the range of 1 to 20 that the page allows."
+catches = "an empty or whole-world shape returned"
+reading = "the page: a GEOGRAPHY polygon for the geohash cell, using its first precision characters (1 to 20, default 20)"
+cases = ["cases/translation/functions/st-geogfromgeohash.toml#t004_precision_zero"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geogfromgeohash.t005"
+form = "sf.functions.st-geogfromgeohash"
+kind = "null_argument"
+target = "geohash"
+note = "A NULL geohash; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY polygon for the geohash cell, using its first precision characters (1 to 20, default 20)"
+cases = ["cases/translation/functions/st-geogfromgeohash.toml#t005_null_geohash"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geogpointfromgeohash.t001"
+form = "sf.functions.st-geogpointfromgeohash"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The centre of ezs42, rounded to 6 places."
+catches = "a corner of the cell returned instead of the centre, or longitude and latitude swapped"
+reading = "the page: a GEOGRAPHY point at the centre of the geohash cell"
+cases = ["cases/translation/functions/st-geogpointfromgeohash.toml#t001_centre"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geogpointfromgeohash.t002"
+form = "sf.functions.st-geogpointfromgeohash"
+kind = "null_argument"
+target = "geohash"
+note = "A NULL geohash; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY point at the centre of the geohash cell"
+cases = ["cases/translation/functions/st-geogpointfromgeohash.toml#t002_null_geohash"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromewkb.t001"
+form = "sf.functions.st-geographyfromwkb.st-geogfromewkb"
+kind = "type_combination"
+target = "VARCHAR"
+note = "WKB of a point as hex text, and EWKB with SRID 4326."
+catches = "longitude and latitude swapped, or the byte order misread"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromewkb.toml#t001_hex"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromewkb.t002"
+form = "sf.functions.st-geographyfromwkb.st-geogfromewkb"
+kind = "type_combination"
+target = "BINARY"
+note = "The same WKB as BINARY."
+catches = "BINARY input rejected, or read as hex text"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromewkb.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromewkb.t003"
+form = "sf.functions.st-geographyfromwkb.st-geogfromewkb"
+kind = "error_parity"
+target = "error"
+note = "EWKB with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromewkb.toml#t003_ewkb_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromewkb.t004"
+form = "sf.functions.st-geographyfromwkb.st-geogfromewkb"
+kind = "error_parity"
+target = "error"
+note = "Hex text too short to be WKB, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromewkb.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromewkb.t005"
+form = "sf.functions.st-geographyfromwkb.st-geogfromewkb"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon in WKB with allow_invalid TRUE, which the page says still returns a shape."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromewkb.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromewkb.t006"
+form = "sf.functions.st-geographyfromwkb.st-geogfromewkb"
+kind = "null_argument"
+target = "varchar-or-binary-expression"
+note = "A NULL input; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromewkb.toml#t006_null_varchar_or_binary_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromwkb.t001"
+form = "sf.functions.st-geographyfromwkb.st-geogfromwkb"
+kind = "type_combination"
+target = "VARCHAR"
+note = "WKB of a point as hex text, and EWKB with SRID 4326."
+catches = "longitude and latitude swapped, or the byte order misread"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromwkb.toml#t001_hex"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromwkb.t002"
+form = "sf.functions.st-geographyfromwkb.st-geogfromwkb"
+kind = "type_combination"
+target = "BINARY"
+note = "The same WKB as BINARY."
+catches = "BINARY input rejected, or read as hex text"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromwkb.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromwkb.t003"
+form = "sf.functions.st-geographyfromwkb.st-geogfromwkb"
+kind = "error_parity"
+target = "error"
+note = "EWKB with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromwkb.toml#t003_ewkb_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromwkb.t004"
+form = "sf.functions.st-geographyfromwkb.st-geogfromwkb"
+kind = "error_parity"
+target = "error"
+note = "Hex text too short to be WKB, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromwkb.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromwkb.t005"
+form = "sf.functions.st-geographyfromwkb.st-geogfromwkb"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon in WKB with allow_invalid TRUE, which the page says still returns a shape."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromwkb.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromwkb.t006"
+form = "sf.functions.st-geographyfromwkb.st-geogfromwkb"
+kind = "null_argument"
+target = "varchar-or-binary-expression"
+note = "A NULL input; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromwkb.toml#t006_null_varchar_or_binary_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromewkb.t001"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromewkb"
+kind = "type_combination"
+target = "VARCHAR"
+note = "WKB of a point as hex text, and EWKB with SRID 4326."
+catches = "longitude and latitude swapped, or the byte order misread"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromewkb.toml#t001_hex"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromewkb.t002"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromewkb"
+kind = "type_combination"
+target = "BINARY"
+note = "The same WKB as BINARY."
+catches = "BINARY input rejected, or read as hex text"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromewkb.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromewkb.t003"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromewkb"
+kind = "error_parity"
+target = "error"
+note = "EWKB with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromewkb.toml#t003_ewkb_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromewkb.t004"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromewkb"
+kind = "error_parity"
+target = "error"
+note = "Hex text too short to be WKB, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromewkb.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromewkb.t005"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromewkb"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon in WKB with allow_invalid TRUE, which the page says still returns a shape."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromewkb.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromewkb.t006"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromewkb"
+kind = "null_argument"
+target = "varchar-or-binary-expression"
+note = "A NULL input; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromewkb.toml#t006_null_varchar_or_binary_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromwkb.t001"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromwkb"
+kind = "type_combination"
+target = "VARCHAR"
+note = "WKB of a point as hex text, and EWKB with SRID 4326."
+catches = "longitude and latitude swapped, or the byte order misread"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromwkb.toml#t001_hex"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromwkb.t002"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromwkb"
+kind = "type_combination"
+target = "BINARY"
+note = "The same WKB as BINARY."
+catches = "BINARY input rejected, or read as hex text"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromwkb.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromwkb.t003"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromwkb"
+kind = "error_parity"
+target = "error"
+note = "EWKB with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromwkb.toml#t003_ewkb_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromwkb.t004"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromwkb"
+kind = "error_parity"
+target = "error"
+note = "Hex text too short to be WKB, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromwkb.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromwkb.t005"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromwkb"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon in WKB with allow_invalid TRUE, which the page says still returns a shape."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromwkb.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromwkb.t006"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromwkb"
+kind = "null_argument"
+target = "varchar-or-binary-expression"
+note = "A NULL input; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromwkb.toml#t006_null_varchar_or_binary_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromewkt.t001"
+form = "sf.functions.st-geographyfromwkt.st-geogfromewkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, written back as WKT."
+catches = "longitude and latitude swapped, or the line string reduced to a point"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromewkt.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromewkt.t002"
+form = "sf.functions.st-geographyfromwkt.st-geogfromewkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 4326, which the page accepts."
+catches = "the SRID prefix rejected, or kept in the shape text"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromewkt.toml#t002_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromewkt.t003"
+form = "sf.functions.st-geographyfromwkt.st-geogfromewkt"
+kind = "error_parity"
+target = "error"
+note = "EWKT with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromewkt.toml#t003_ewkt_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromewkt.t004"
+form = "sf.functions.st-geographyfromwkt.st-geogfromewkt"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromewkt.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromewkt.t005"
+form = "sf.functions.st-geographyfromwkt.st-geogfromewkt"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, which the page says still returns a shape, next to a valid square."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromewkt.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromewkt.t006"
+form = "sf.functions.st-geographyfromwkt.st-geogfromewkt"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromewkt.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromtext.t001"
+form = "sf.functions.st-geographyfromwkt.st-geogfromtext"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, written back as WKT."
+catches = "longitude and latitude swapped, or the line string reduced to a point"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromtext.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromtext.t002"
+form = "sf.functions.st-geographyfromwkt.st-geogfromtext"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 4326, which the page accepts."
+catches = "the SRID prefix rejected, or kept in the shape text"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromtext.toml#t002_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromtext.t003"
+form = "sf.functions.st-geographyfromwkt.st-geogfromtext"
+kind = "error_parity"
+target = "error"
+note = "EWKT with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromtext.toml#t003_ewkt_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromtext.t004"
+form = "sf.functions.st-geographyfromwkt.st-geogfromtext"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromtext.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromtext.t005"
+form = "sf.functions.st-geographyfromwkt.st-geogfromtext"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, which the page says still returns a shape, next to a valid square."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromtext.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromtext.t006"
+form = "sf.functions.st-geographyfromwkt.st-geogfromtext"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromtext.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromwkt.t001"
+form = "sf.functions.st-geographyfromwkt.st-geogfromwkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, written back as WKT."
+catches = "longitude and latitude swapped, or the line string reduced to a point"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromwkt.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromwkt.t002"
+form = "sf.functions.st-geographyfromwkt.st-geogfromwkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 4326, which the page accepts."
+catches = "the SRID prefix rejected, or kept in the shape text"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromwkt.toml#t002_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromwkt.t003"
+form = "sf.functions.st-geographyfromwkt.st-geogfromwkt"
+kind = "error_parity"
+target = "error"
+note = "EWKT with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromwkt.toml#t003_ewkt_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromwkt.t004"
+form = "sf.functions.st-geographyfromwkt.st-geogfromwkt"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromwkt.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromwkt.t005"
+form = "sf.functions.st-geographyfromwkt.st-geogfromwkt"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, which the page says still returns a shape, next to a valid square."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromwkt.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromwkt.t006"
+form = "sf.functions.st-geographyfromwkt.st-geogfromwkt"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromwkt.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromewkt.t001"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromewkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, written back as WKT."
+catches = "longitude and latitude swapped, or the line string reduced to a point"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromewkt.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromewkt.t002"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromewkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 4326, which the page accepts."
+catches = "the SRID prefix rejected, or kept in the shape text"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromewkt.toml#t002_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromewkt.t003"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromewkt"
+kind = "error_parity"
+target = "error"
+note = "EWKT with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromewkt.toml#t003_ewkt_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromewkt.t004"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromewkt"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromewkt.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromewkt.t005"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromewkt"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, which the page says still returns a shape, next to a valid square."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromewkt.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromewkt.t006"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromewkt"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromewkt.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromtext.t001"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromtext"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, written back as WKT."
+catches = "longitude and latitude swapped, or the line string reduced to a point"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromtext.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromtext.t002"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromtext"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 4326, which the page accepts."
+catches = "the SRID prefix rejected, or kept in the shape text"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromtext.toml#t002_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromtext.t003"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromtext"
+kind = "error_parity"
+target = "error"
+note = "EWKT with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromtext.toml#t003_ewkt_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromtext.t004"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromtext"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromtext.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromtext.t005"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromtext"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, which the page says still returns a shape, next to a valid square."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromtext.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromtext.t006"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromtext"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromtext.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromwkt.t001"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromwkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, written back as WKT."
+catches = "longitude and latitude swapped, or the line string reduced to a point"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromwkt.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromwkt.t002"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromwkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 4326, which the page accepts."
+catches = "the SRID prefix rejected, or kept in the shape text"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromwkt.toml#t002_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromwkt.t003"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromwkt"
+kind = "error_parity"
+target = "error"
+note = "EWKT with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromwkt.toml#t003_ewkt_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromwkt.t004"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromwkt"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromwkt.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromwkt.t005"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromwkt"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, which the page says still returns a shape, next to a valid square."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromwkt.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromwkt.t006"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromwkt"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromwkt.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromewkb.t001"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromewkb"
+kind = "type_combination"
+target = "VARCHAR"
+note = "WKB of a point as hex text, which the page says gets SRID 0, and EWKB with SRID 3857 (the page does not say; the recording decides on its SRID)."
+catches = "longitude and latitude swapped, or the byte order misread"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromewkb.toml#t001_hex"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromewkb.t002"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromewkb"
+kind = "type_combination"
+target = "BINARY"
+note = "The same WKB as BINARY."
+catches = "BINARY input rejected, or read as hex text"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromewkb.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromewkb.t003"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromewkb"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKB with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromewkb.toml#t003_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromewkb.t004"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromewkb"
+kind = "error_parity"
+target = "error"
+note = "Hex text too short to be WKB, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromewkb.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromewkb.t005"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromewkb"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon in WKB with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromewkb.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromewkb.t006"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromewkb"
+kind = "null_argument"
+target = "varchar-or-binary-expression"
+note = "A NULL input; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromewkb.toml#t006_null_varchar_or_binary_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromwkb.t001"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromwkb"
+kind = "type_combination"
+target = "VARCHAR"
+note = "WKB of a point as hex text, which the page says gets SRID 0, and EWKB with SRID 3857 (the page does not say; the recording decides on its SRID)."
+catches = "longitude and latitude swapped, or the byte order misread"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromwkb.toml#t001_hex"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromwkb.t002"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromwkb"
+kind = "type_combination"
+target = "BINARY"
+note = "The same WKB as BINARY."
+catches = "BINARY input rejected, or read as hex text"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromwkb.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromwkb.t003"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromwkb"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKB with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromwkb.toml#t003_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromwkb.t004"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromwkb"
+kind = "error_parity"
+target = "error"
+note = "Hex text too short to be WKB, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromwkb.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromwkb.t005"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromwkb"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon in WKB with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromwkb.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromwkb.t006"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromwkb"
+kind = "null_argument"
+target = "varchar-or-binary-expression"
+note = "A NULL input; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromwkb.toml#t006_null_varchar_or_binary_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromewkb.t001"
+form = "sf.functions.st-geometryfromwkb.st-geomfromewkb"
+kind = "type_combination"
+target = "VARCHAR"
+note = "WKB of a point as hex text, which the page says gets SRID 0, and EWKB with SRID 3857 (the page does not say; the recording decides on its SRID)."
+catches = "longitude and latitude swapped, or the byte order misread"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromewkb.toml#t001_hex"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromewkb.t002"
+form = "sf.functions.st-geometryfromwkb.st-geomfromewkb"
+kind = "type_combination"
+target = "BINARY"
+note = "The same WKB as BINARY."
+catches = "BINARY input rejected, or read as hex text"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromewkb.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromewkb.t003"
+form = "sf.functions.st-geometryfromwkb.st-geomfromewkb"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKB with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromewkb.toml#t003_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromewkb.t004"
+form = "sf.functions.st-geometryfromwkb.st-geomfromewkb"
+kind = "error_parity"
+target = "error"
+note = "Hex text too short to be WKB, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromewkb.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromewkb.t005"
+form = "sf.functions.st-geometryfromwkb.st-geomfromewkb"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon in WKB with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromewkb.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromewkb.t006"
+form = "sf.functions.st-geometryfromwkb.st-geomfromewkb"
+kind = "null_argument"
+target = "varchar-or-binary-expression"
+note = "A NULL input; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromewkb.toml#t006_null_varchar_or_binary_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromwkb.t001"
+form = "sf.functions.st-geometryfromwkb.st-geomfromwkb"
+kind = "type_combination"
+target = "VARCHAR"
+note = "WKB of a point as hex text, which the page says gets SRID 0, and EWKB with SRID 3857 (the page does not say; the recording decides on its SRID)."
+catches = "longitude and latitude swapped, or the byte order misread"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromwkb.toml#t001_hex"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromwkb.t002"
+form = "sf.functions.st-geometryfromwkb.st-geomfromwkb"
+kind = "type_combination"
+target = "BINARY"
+note = "The same WKB as BINARY."
+catches = "BINARY input rejected, or read as hex text"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromwkb.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromwkb.t003"
+form = "sf.functions.st-geometryfromwkb.st-geomfromwkb"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKB with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromwkb.toml#t003_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromwkb.t004"
+form = "sf.functions.st-geometryfromwkb.st-geomfromwkb"
+kind = "error_parity"
+target = "error"
+note = "Hex text too short to be WKB, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromwkb.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromwkb.t005"
+form = "sf.functions.st-geometryfromwkb.st-geomfromwkb"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon in WKB with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromwkb.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromwkb.t006"
+form = "sf.functions.st-geometryfromwkb.st-geomfromwkb"
+kind = "null_argument"
+target = "varchar-or-binary-expression"
+note = "A NULL input; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromwkb.toml#t006_null_varchar_or_binary_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromewkt.t001"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromewkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, which the page says get SRID 0."
+catches = "longitude and latitude swapped, or SRID 4326 assumed"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromewkt.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromewkt.t002"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromewkt"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKT with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromewkt.toml#t002_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromewkt.t003"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromewkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 3857, whose SRID the result keeps: the page example ST_GEOMETRYFROMEWKT('SRID=32633;...') returns SRID 32633."
+catches = "the SRID dropped to 0, the prefix rejected, or kept in the shape text"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromewkt.toml#t003_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromewkt.t004"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromewkt"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromewkt.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromewkt.t005"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromewkt"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromewkt.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromewkt.t006"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromewkt"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromewkt.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromtext.t001"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromtext"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, which the page says get SRID 0."
+catches = "longitude and latitude swapped, or SRID 4326 assumed"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromtext.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromtext.t002"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromtext"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKT with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromtext.toml#t002_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromtext.t003"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromtext"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 3857, whose SRID the result keeps: the page example ST_GEOMETRYFROMEWKT('SRID=32633;...') returns SRID 32633."
+catches = "the SRID dropped to 0, the prefix rejected, or kept in the shape text"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromtext.toml#t003_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromtext.t004"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromtext"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromtext.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromtext.t005"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromtext"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromtext.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromtext.t006"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromtext"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromtext.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromwkt.t001"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromwkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, which the page says get SRID 0."
+catches = "longitude and latitude swapped, or SRID 4326 assumed"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromwkt.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromwkt.t002"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromwkt"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKT with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromwkt.toml#t002_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromwkt.t003"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromwkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 3857, whose SRID the result keeps: the page example ST_GEOMETRYFROMEWKT('SRID=32633;...') returns SRID 32633."
+catches = "the SRID dropped to 0, the prefix rejected, or kept in the shape text"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromwkt.toml#t003_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromwkt.t004"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromwkt"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromwkt.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromwkt.t005"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromwkt"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromwkt.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromwkt.t006"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromwkt"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromwkt.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromewkt.t001"
+form = "sf.functions.st-geometryfromwkt.st-geomfromewkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, which the page says get SRID 0."
+catches = "longitude and latitude swapped, or SRID 4326 assumed"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromewkt.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromewkt.t002"
+form = "sf.functions.st-geometryfromwkt.st-geomfromewkt"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKT with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromewkt.toml#t002_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromewkt.t003"
+form = "sf.functions.st-geometryfromwkt.st-geomfromewkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 3857, whose SRID the result keeps: the page example ST_GEOMETRYFROMEWKT('SRID=32633;...') returns SRID 32633."
+catches = "the SRID dropped to 0, the prefix rejected, or kept in the shape text"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromewkt.toml#t003_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromewkt.t004"
+form = "sf.functions.st-geometryfromwkt.st-geomfromewkt"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromewkt.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromewkt.t005"
+form = "sf.functions.st-geometryfromwkt.st-geomfromewkt"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromewkt.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromewkt.t006"
+form = "sf.functions.st-geometryfromwkt.st-geomfromewkt"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromewkt.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromtext.t001"
+form = "sf.functions.st-geometryfromwkt.st-geomfromtext"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, which the page says get SRID 0."
+catches = "longitude and latitude swapped, or SRID 4326 assumed"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromtext.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromtext.t002"
+form = "sf.functions.st-geometryfromwkt.st-geomfromtext"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKT with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromtext.toml#t002_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromtext.t003"
+form = "sf.functions.st-geometryfromwkt.st-geomfromtext"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 3857, whose SRID the result keeps: the page example ST_GEOMETRYFROMEWKT('SRID=32633;...') returns SRID 32633."
+catches = "the SRID dropped to 0, the prefix rejected, or kept in the shape text"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromtext.toml#t003_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromtext.t004"
+form = "sf.functions.st-geometryfromwkt.st-geomfromtext"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromtext.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromtext.t005"
+form = "sf.functions.st-geometryfromwkt.st-geomfromtext"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromtext.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromtext.t006"
+form = "sf.functions.st-geometryfromwkt.st-geomfromtext"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromtext.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromwkt.t001"
+form = "sf.functions.st-geometryfromwkt.st-geomfromwkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, which the page says get SRID 0."
+catches = "longitude and latitude swapped, or SRID 4326 assumed"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromwkt.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromwkt.t002"
+form = "sf.functions.st-geometryfromwkt.st-geomfromwkt"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKT with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromwkt.toml#t002_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromwkt.t003"
+form = "sf.functions.st-geometryfromwkt.st-geomfromwkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 3857, whose SRID the result keeps: the page example ST_GEOMETRYFROMEWKT('SRID=32633;...') returns SRID 32633."
+catches = "the SRID dropped to 0, the prefix rejected, or kept in the shape text"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromwkt.toml#t003_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromwkt.t004"
+form = "sf.functions.st-geometryfromwkt.st-geomfromwkt"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromwkt.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromwkt.t005"
+form = "sf.functions.st-geometryfromwkt.st-geomfromwkt"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromwkt.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromwkt.t006"
+form = "sf.functions.st-geometryfromwkt.st-geomfromwkt"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromwkt.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
 id = "sf.functions.startswith.t001"
 form = "sf.functions.startswith"
 kind = "type_combination"
@@ -25438,6 +28111,171 @@ cases = ["cases/translation/functions/to-double.toml#t004_null_expr"]
 required = true
 
 [[obligation]]
+id = "sf.functions.to-geography.t001"
+form = "sf.functions.to-geography"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The same point as WKT, WKB hex, EWKT and EWKB with SRID 4326, and GeoJSON."
+catches = "a format rejected or misread, or longitude and latitude swapped in one of them"
+reading = "the page: a GEOGRAPHY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOMETRY with SRID 4326; an error if the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/to-geography.toml#t001_formats"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geography.t002"
+form = "sf.functions.to-geography"
+kind = "type_combination"
+target = "BINARY"
+note = "WKB as BINARY."
+catches = "BINARY input rejected, or read as hex text"
+reading = "the page: a GEOGRAPHY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOMETRY with SRID 4326; an error if the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/to-geography.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geography.t003"
+form = "sf.functions.to-geography"
+kind = "type_combination"
+target = "VARIANT"
+note = "A GeoJSON OBJECT in a VARIANT."
+catches = "the OBJECT rejected, or its text parsed as WKT"
+reading = "the page: a GEOGRAPHY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOMETRY with SRID 4326; an error if the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/to-geography.toml#t003_variant"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geography.t004"
+form = "sf.functions.to-geography"
+kind = "type_combination"
+target = "GEOMETRY"
+note = "A GEOMETRY with SRID 4326, which the page accepts."
+catches = "the GEOMETRY rejected, or its coordinates swapped"
+reading = "the page: a GEOGRAPHY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOMETRY with SRID 4326; an error if the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/to-geography.toml#t004_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geography.t005"
+form = "sf.functions.to-geography"
+kind = "error_parity"
+target = "error"
+note = "EWKT with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOMETRY with SRID 4326; an error if the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/to-geography.toml#t005_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geography.t006"
+form = "sf.functions.to-geography"
+kind = "error_parity"
+target = "error"
+note = "Text in none of the formats, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOMETRY with SRID 4326; an error if the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/to-geography.toml#t006_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geography.t007"
+form = "sf.functions.to-geography"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOMETRY with SRID 4326; an error if the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/to-geography.toml#t007_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geography.t008"
+form = "sf.functions.to-geography"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOMETRY with SRID 4326; an error if the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/to-geography.toml#t008_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geometry.t001"
+form = "sf.functions.to-geometry"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The same point as WKT, WKB hex and GeoJSON, which the page says get SRID 0."
+catches = "a format rejected, SRID 4326 assumed, or longitude and latitude swapped"
+reading = "the page: a GEOMETRY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOGRAPHY; GeoJSON, WKT and WKB without an srid argument get SRID 0; an error if the input cannot be parsed"
+cases = ["cases/translation/functions/to-geometry.toml#t001_formats"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geometry.t002"
+form = "sf.functions.to-geometry"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKT with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOGRAPHY; GeoJSON, WKT and WKB without an srid argument get SRID 0; an error if the input cannot be parsed"
+cases = ["cases/translation/functions/to-geometry.toml#t002_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geometry.t003"
+form = "sf.functions.to-geometry"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 3857, which the page says specifies the SRID to use, and EWKB with SRID 3857 (the page does not say; the recording decides on its SRID)."
+catches = "the EWKT SRID dropped to 0, or the prefix rejected"
+reading = "the page: a GEOMETRY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOGRAPHY; GeoJSON, WKT and WKB without an srid argument get SRID 0; an error if the input cannot be parsed"
+cases = ["cases/translation/functions/to-geometry.toml#t003_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geometry.t004"
+form = "sf.functions.to-geometry"
+kind = "type_combination"
+target = "GEOGRAPHY"
+note = "A GEOGRAPHY, which the page accepts; its example converts a GEOGRAPHY to a GEOMETRY with SRID 4326."
+catches = "the GEOGRAPHY rejected, SRID 0 returned, or its coordinates swapped"
+reading = "the page: a GEOMETRY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOGRAPHY; GeoJSON, WKT and WKB without an srid argument get SRID 0; an error if the input cannot be parsed"
+cases = ["cases/translation/functions/to-geometry.toml#t004_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geometry.t005"
+form = "sf.functions.to-geometry"
+kind = "error_parity"
+target = "error"
+note = "Text in none of the formats, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOGRAPHY; GeoJSON, WKT and WKB without an srid argument get SRID 0; an error if the input cannot be parsed"
+cases = ["cases/translation/functions/to-geometry.toml#t005_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geometry.t006"
+form = "sf.functions.to-geometry"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOGRAPHY; GeoJSON, WKT and WKB without an srid argument get SRID 0; an error if the input cannot be parsed"
+cases = ["cases/translation/functions/to-geometry.toml#t006_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geometry.t007"
+form = "sf.functions.to-geometry"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOGRAPHY; GeoJSON, WKT and WKB without an srid argument get SRID 0; an error if the input cannot be parsed"
+cases = ["cases/translation/functions/to-geometry.toml#t007_null_varchar_expression"]
+required = true
+
+[[obligation]]
 id = "sf.functions.to-ipaddress.t001"
 form = "sf.functions.to-ipaddress"
 kind = "type_combination"
@@ -25816,10 +28654,10 @@ required = true
 [[obligation]]
 id = "sf.functions.to-uuid.t002"
 form = "sf.functions.to-uuid"
-kind = "error_parity"
-target = "error"
-note = "A string one digit short of a UUID."
-catches = "NULL returned, or the string padded"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A string one digit short of a UUID, which Snowflake accepted and returned as text."
+catches = "an error raised, NULL returned, or the string padded"
 reading = "the page: a UUID from a string in UUID format; NULL gives NULL"
 cases = ["cases/translation/functions/to-uuid.toml#t002_invalid"]
 required = true
@@ -27015,6 +29853,94 @@ note = "A NULL string."
 catches = "zero returned"
 reading = "the page: as TO_DOUBLE on strings, but NULL on a conversion error; only string expressions are accepted"
 cases = ["cases/translation/functions/try-to-double.toml#t004_null_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-geography.t001"
+form = "sf.functions.try-to-geography"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The same point as WKT, WKB hex, EWKT and EWKB with SRID 4326, and GeoJSON."
+catches = "a format rejected or misread, or longitude and latitude swapped in one of them"
+reading = "the page: as TO_GEOGRAPHY, but NULL where the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/try-to-geography.toml#t001_formats"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-geography.t002"
+form = "sf.functions.try-to-geography"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Text in none of the formats and EWKT with SRID 3857, which the page says give NULL."
+catches = "an error raised, or the SRID 3857 point accepted"
+reading = "the page: as TO_GEOGRAPHY, but NULL where the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/try-to-geography.toml#t002_failures"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-geography.t003"
+form = "sf.functions.try-to-geography"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE."
+catches = "NULL returned for the bow tie despite allow_invalid"
+reading = "the page: as TO_GEOGRAPHY, but NULL where the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/try-to-geography.toml#t003_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-geography.t004"
+form = "sf.functions.try-to-geography"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: as TO_GEOGRAPHY, but NULL where the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/try-to-geography.toml#t004_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-geometry.t001"
+form = "sf.functions.try-to-geometry"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The same point as WKT, WKB hex and GeoJSON, with SRID 0."
+catches = "a format rejected, SRID 4326 assumed, or longitude and latitude swapped"
+reading = "the page: as TO_GEOMETRY, but NULL where TO_GEOMETRY would return an error"
+cases = ["cases/translation/functions/try-to-geometry.toml#t001_formats"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-geometry.t002"
+form = "sf.functions.try-to-geometry"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Text in none of the formats, which the page says gives NULL."
+catches = "an error raised"
+reading = "the page: as TO_GEOMETRY, but NULL where TO_GEOMETRY would return an error"
+cases = ["cases/translation/functions/try-to-geometry.toml#t002_failure"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-geometry.t003"
+form = "sf.functions.try-to-geometry"
+kind = "type_combination"
+target = "VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon with an srid and allow_invalid TRUE."
+catches = "NULL returned for the bow tie despite allow_invalid, or TRUE read as the srid"
+reading = "the page: as TO_GEOMETRY, but NULL where TO_GEOMETRY would return an error"
+cases = ["cases/translation/functions/try-to-geometry.toml#t003_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-geometry.t004"
+form = "sf.functions.try-to-geometry"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: as TO_GEOMETRY, but NULL where TO_GEOMETRY would return an error"
+cases = ["cases/translation/functions/try-to-geometry.toml#t004_null_varchar_expression"]
 required = true
 
 [[obligation]]
@@ -28412,7 +31338,7 @@ id = "sf.functions.vector-truncate.t002"
 form = "sf.functions.vector-truncate"
 kind = "error_parity"
 target = "error"
-note = "A dimension larger than the vector, which the page says is an error."
+note = "A dimension larger than the vector, which the page says is an error; Snowflake refuses it when compiling."
 catches = "the vector returned unchanged, or padded"
 reading = "the page: the first dimension elements, with the same values and types, not normalised; a dimension larger than the vector is an error; NULL gives NULL"
 cases = ["cases/translation/functions/vector-truncate.toml#t002_too_long"]
@@ -28423,8 +31349,8 @@ id = "sf.functions.vector-truncate.t003"
 form = "sf.functions.vector-truncate"
 kind = "null_argument"
 target = "vector"
-note = "A NULL vector and a NULL dimension, which the page says give NULL."
-catches = "an error, or the vector returned unchanged"
+note = "A NULL vector with a constant dimension, which Snowflake requires; the page says NULL gives NULL."
+catches = "an error, or an empty vector returned"
 reading = "the page: the first dimension elements, with the same values and types, not normalised; a dimension larger than the vector is an error; NULL gives NULL"
 cases = ["cases/translation/functions/vector-truncate.toml#t003_null_vector"]
 required = true

@@ -1,0 +1,83 @@
+category = "translation"
+construct = "sf.functions.to-geometry"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_formats"
+description = "The same point as WKT, WKB hex and GeoJSON, which the page says get SRID 0. Catches: a format rejected, SRID 4326 assumed, or longitude and latitude swapped"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POINT(10 20)'"],
+  ["'010100000000000000000024400000000000003440'"],
+  ["'{\"type\":\"Point\",\"coordinates\":[10,20]}'"],
+]
+query = "SELECT ordinal, ST_ASWKT(TO_GEOMETRY(v)) AS r, ST_SRID(TO_GEOMETRY(v)) AS srid FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_srid"
+description = "WKT with an srid argument. Catches: the srid argument ignored (SRID 0)"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POINT(10 20)'"],
+]
+query = "SELECT ST_SRID(TO_GEOMETRY(v, 3857)) AS srid FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_ewkt"
+description = "EWKT with SRID 3857, which the page says specifies the SRID to use, and EWKB with SRID 3857 (the page does not say; the recording decides on its SRID). Catches: the EWKT SRID dropped to 0, or the prefix rejected"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'SRID=3857;POINT(10 20)'"],
+  ["'0101000020110F000000000000000024400000000000003440'"],
+]
+query = "SELECT ordinal, ST_ASWKT(TO_GEOMETRY(v)) AS r, ST_SRID(TO_GEOMETRY(v)) AS srid FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_geography"
+description = "A GEOGRAPHY, which the page accepts; its example converts a GEOGRAPHY to a GEOMETRY with SRID 4326. Catches: the GEOGRAPHY rejected, SRID 0 returned, or its coordinates swapped"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POINT(10 20)'"],
+]
+query = "SELECT ST_ASWKT(TO_GEOMETRY(TO_GEOGRAPHY(v))) AS r, ST_SRID(TO_GEOMETRY(TO_GEOGRAPHY(v))) AS srid FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_unparsable"
+description = "Text in none of the formats, which the page says is an error. Catches: NULL returned, or the text read as an empty shape"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'not a shape'"],
+]
+query = "SELECT ST_ASWKT(TO_GEOMETRY(v)) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t006_allow_invalid"
+description = "A self-intersecting polygon with allow_invalid TRUE, alone and after an srid. Catches: the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POLYGON((0 0,10 10,10 0,0 10,0 0))'"],
+]
+query = "SELECT ST_ISVALID(TO_GEOMETRY(v, TRUE)) AS valid, ST_ISVALID(TO_GEOMETRY(v, 3857, TRUE)) AS valid_srid, ST_SRID(TO_GEOMETRY(v, 3857, TRUE)) AS srid FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t007_null_varchar_expression"
+description = "A NULL text; the page does not say; the recording decides. Catches: an error, or an empty shape returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TO_GEOMETRY(v) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]
