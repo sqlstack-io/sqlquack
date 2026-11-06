@@ -22246,6 +22246,1404 @@ cases = ["cases/translation/functions/square.toml#t006_overflow_inf"]
 required = true
 
 [[obligation]]
+id = "sf.functions.st-geogfromgeohash.t001"
+form = "sf.functions.st-geogfromgeohash"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The cell of ezs42 contains a point inside it and not points just east of it or at the swapped coordinates."
+catches = "longitude and latitude swapped, or a point returned instead of the cell"
+reading = "the page: a GEOGRAPHY polygon for the geohash cell, using its first precision characters (1 to 20, default 20)"
+cases = ["cases/translation/functions/st-geogfromgeohash.toml#t001_cell"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geogfromgeohash.t002"
+form = "sf.functions.st-geogfromgeohash"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "A longer geohash cut to 5 characters equals the 5-character cell, and differs from it uncut."
+catches = "the precision ignored, or counted from the end"
+reading = "the page: a GEOGRAPHY polygon for the geohash cell, using its first precision characters (1 to 20, default 20)"
+cases = ["cases/translation/functions/st-geogfromgeohash.toml#t002_precision"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geogfromgeohash.t003"
+form = "sf.functions.st-geogfromgeohash"
+kind = "boundary"
+subkind = "magnitude"
+target = "magnitude"
+note = "Precision 1, the smallest the page allows, gives the one-character cell."
+catches = "precision 1 rejected, or read as the whole hash"
+reading = "the page: a GEOGRAPHY polygon for the geohash cell, using its first precision characters (1 to 20, default 20)"
+cases = ["cases/translation/functions/st-geogfromgeohash.toml#t003_precision_min"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geogfromgeohash.t004"
+form = "sf.functions.st-geogfromgeohash"
+kind = "error_parity"
+target = "error"
+note = "Precision 0, below the range of 1 to 20 that the page allows."
+catches = "an empty or whole-world shape returned"
+reading = "the page: a GEOGRAPHY polygon for the geohash cell, using its first precision characters (1 to 20, default 20)"
+cases = ["cases/translation/functions/st-geogfromgeohash.toml#t004_precision_zero"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geogfromgeohash.t005"
+form = "sf.functions.st-geogfromgeohash"
+kind = "null_argument"
+target = "geohash"
+note = "A NULL geohash; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY polygon for the geohash cell, using its first precision characters (1 to 20, default 20)"
+cases = ["cases/translation/functions/st-geogfromgeohash.toml#t005_null_geohash"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geogpointfromgeohash.t001"
+form = "sf.functions.st-geogpointfromgeohash"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The centre of ezs42, rounded to 6 places."
+catches = "a corner of the cell returned instead of the centre, or longitude and latitude swapped"
+reading = "the page: a GEOGRAPHY point at the centre of the geohash cell"
+cases = ["cases/translation/functions/st-geogpointfromgeohash.toml#t001_centre"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geogpointfromgeohash.t002"
+form = "sf.functions.st-geogpointfromgeohash"
+kind = "null_argument"
+target = "geohash"
+note = "A NULL geohash; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY point at the centre of the geohash cell"
+cases = ["cases/translation/functions/st-geogpointfromgeohash.toml#t002_null_geohash"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromewkb.t001"
+form = "sf.functions.st-geographyfromwkb.st-geogfromewkb"
+kind = "type_combination"
+target = "VARCHAR"
+note = "WKB of a point as hex text, and EWKB with SRID 4326."
+catches = "longitude and latitude swapped, or the byte order misread"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromewkb.toml#t001_hex"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromewkb.t002"
+form = "sf.functions.st-geographyfromwkb.st-geogfromewkb"
+kind = "type_combination"
+target = "BINARY"
+note = "The same WKB as BINARY."
+catches = "BINARY input rejected, or read as hex text"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromewkb.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromewkb.t003"
+form = "sf.functions.st-geographyfromwkb.st-geogfromewkb"
+kind = "error_parity"
+target = "error"
+note = "EWKB with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromewkb.toml#t003_ewkb_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromewkb.t004"
+form = "sf.functions.st-geographyfromwkb.st-geogfromewkb"
+kind = "error_parity"
+target = "error"
+note = "Hex text too short to be WKB, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromewkb.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromewkb.t005"
+form = "sf.functions.st-geographyfromwkb.st-geogfromewkb"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon in WKB with allow_invalid TRUE, which the page says still returns a shape."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromewkb.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromewkb.t006"
+form = "sf.functions.st-geographyfromwkb.st-geogfromewkb"
+kind = "null_argument"
+target = "varchar-or-binary-expression"
+note = "A NULL input; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromewkb.toml#t006_null_varchar_or_binary_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromwkb.t001"
+form = "sf.functions.st-geographyfromwkb.st-geogfromwkb"
+kind = "type_combination"
+target = "VARCHAR"
+note = "WKB of a point as hex text, and EWKB with SRID 4326."
+catches = "longitude and latitude swapped, or the byte order misread"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromwkb.toml#t001_hex"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromwkb.t002"
+form = "sf.functions.st-geographyfromwkb.st-geogfromwkb"
+kind = "type_combination"
+target = "BINARY"
+note = "The same WKB as BINARY."
+catches = "BINARY input rejected, or read as hex text"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromwkb.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromwkb.t003"
+form = "sf.functions.st-geographyfromwkb.st-geogfromwkb"
+kind = "error_parity"
+target = "error"
+note = "EWKB with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromwkb.toml#t003_ewkb_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromwkb.t004"
+form = "sf.functions.st-geographyfromwkb.st-geogfromwkb"
+kind = "error_parity"
+target = "error"
+note = "Hex text too short to be WKB, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromwkb.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromwkb.t005"
+form = "sf.functions.st-geographyfromwkb.st-geogfromwkb"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon in WKB with allow_invalid TRUE, which the page says still returns a shape."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromwkb.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geogfromwkb.t006"
+form = "sf.functions.st-geographyfromwkb.st-geogfromwkb"
+kind = "null_argument"
+target = "varchar-or-binary-expression"
+note = "A NULL input; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geogfromwkb.toml#t006_null_varchar_or_binary_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromewkb.t001"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromewkb"
+kind = "type_combination"
+target = "VARCHAR"
+note = "WKB of a point as hex text, and EWKB with SRID 4326."
+catches = "longitude and latitude swapped, or the byte order misread"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromewkb.toml#t001_hex"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromewkb.t002"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromewkb"
+kind = "type_combination"
+target = "BINARY"
+note = "The same WKB as BINARY."
+catches = "BINARY input rejected, or read as hex text"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromewkb.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromewkb.t003"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromewkb"
+kind = "error_parity"
+target = "error"
+note = "EWKB with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromewkb.toml#t003_ewkb_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromewkb.t004"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromewkb"
+kind = "error_parity"
+target = "error"
+note = "Hex text too short to be WKB, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromewkb.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromewkb.t005"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromewkb"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon in WKB with allow_invalid TRUE, which the page says still returns a shape."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromewkb.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromewkb.t006"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromewkb"
+kind = "null_argument"
+target = "varchar-or-binary-expression"
+note = "A NULL input; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromewkb.toml#t006_null_varchar_or_binary_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromwkb.t001"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromwkb"
+kind = "type_combination"
+target = "VARCHAR"
+note = "WKB of a point as hex text, and EWKB with SRID 4326."
+catches = "longitude and latitude swapped, or the byte order misread"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromwkb.toml#t001_hex"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromwkb.t002"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromwkb"
+kind = "type_combination"
+target = "BINARY"
+note = "The same WKB as BINARY."
+catches = "BINARY input rejected, or read as hex text"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromwkb.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromwkb.t003"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromwkb"
+kind = "error_parity"
+target = "error"
+note = "EWKB with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromwkb.toml#t003_ewkb_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromwkb.t004"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromwkb"
+kind = "error_parity"
+target = "error"
+note = "Hex text too short to be WKB, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromwkb.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromwkb.t005"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromwkb"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon in WKB with allow_invalid TRUE, which the page says still returns a shape."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromwkb.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkb.st-geographyfromwkb.t006"
+form = "sf.functions.st-geographyfromwkb.st-geographyfromwkb"
+kind = "null_argument"
+target = "varchar-or-binary-expression"
+note = "A NULL input; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKB or EWKB, as BINARY or hex text without 0x; an error if it cannot be parsed or EWKB has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkb.st-geographyfromwkb.toml#t006_null_varchar_or_binary_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromewkt.t001"
+form = "sf.functions.st-geographyfromwkt.st-geogfromewkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, written back as WKT."
+catches = "longitude and latitude swapped, or the line string reduced to a point"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromewkt.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromewkt.t002"
+form = "sf.functions.st-geographyfromwkt.st-geogfromewkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 4326, which the page accepts."
+catches = "the SRID prefix rejected, or kept in the shape text"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromewkt.toml#t002_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromewkt.t003"
+form = "sf.functions.st-geographyfromwkt.st-geogfromewkt"
+kind = "error_parity"
+target = "error"
+note = "EWKT with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromewkt.toml#t003_ewkt_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromewkt.t004"
+form = "sf.functions.st-geographyfromwkt.st-geogfromewkt"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromewkt.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromewkt.t005"
+form = "sf.functions.st-geographyfromwkt.st-geogfromewkt"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, which the page says still returns a shape, next to a valid square."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromewkt.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromewkt.t006"
+form = "sf.functions.st-geographyfromwkt.st-geogfromewkt"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromewkt.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromtext.t001"
+form = "sf.functions.st-geographyfromwkt.st-geogfromtext"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, written back as WKT."
+catches = "longitude and latitude swapped, or the line string reduced to a point"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromtext.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromtext.t002"
+form = "sf.functions.st-geographyfromwkt.st-geogfromtext"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 4326, which the page accepts."
+catches = "the SRID prefix rejected, or kept in the shape text"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromtext.toml#t002_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromtext.t003"
+form = "sf.functions.st-geographyfromwkt.st-geogfromtext"
+kind = "error_parity"
+target = "error"
+note = "EWKT with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromtext.toml#t003_ewkt_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromtext.t004"
+form = "sf.functions.st-geographyfromwkt.st-geogfromtext"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromtext.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromtext.t005"
+form = "sf.functions.st-geographyfromwkt.st-geogfromtext"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, which the page says still returns a shape, next to a valid square."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromtext.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromtext.t006"
+form = "sf.functions.st-geographyfromwkt.st-geogfromtext"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromtext.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromwkt.t001"
+form = "sf.functions.st-geographyfromwkt.st-geogfromwkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, written back as WKT."
+catches = "longitude and latitude swapped, or the line string reduced to a point"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromwkt.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromwkt.t002"
+form = "sf.functions.st-geographyfromwkt.st-geogfromwkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 4326, which the page accepts."
+catches = "the SRID prefix rejected, or kept in the shape text"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromwkt.toml#t002_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromwkt.t003"
+form = "sf.functions.st-geographyfromwkt.st-geogfromwkt"
+kind = "error_parity"
+target = "error"
+note = "EWKT with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromwkt.toml#t003_ewkt_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromwkt.t004"
+form = "sf.functions.st-geographyfromwkt.st-geogfromwkt"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromwkt.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromwkt.t005"
+form = "sf.functions.st-geographyfromwkt.st-geogfromwkt"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, which the page says still returns a shape, next to a valid square."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromwkt.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geogfromwkt.t006"
+form = "sf.functions.st-geographyfromwkt.st-geogfromwkt"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geogfromwkt.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromewkt.t001"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromewkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, written back as WKT."
+catches = "longitude and latitude swapped, or the line string reduced to a point"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromewkt.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromewkt.t002"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromewkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 4326, which the page accepts."
+catches = "the SRID prefix rejected, or kept in the shape text"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromewkt.toml#t002_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromewkt.t003"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromewkt"
+kind = "error_parity"
+target = "error"
+note = "EWKT with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromewkt.toml#t003_ewkt_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromewkt.t004"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromewkt"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromewkt.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromewkt.t005"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromewkt"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, which the page says still returns a shape, next to a valid square."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromewkt.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromewkt.t006"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromewkt"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromewkt.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromtext.t001"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromtext"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, written back as WKT."
+catches = "longitude and latitude swapped, or the line string reduced to a point"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromtext.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromtext.t002"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromtext"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 4326, which the page accepts."
+catches = "the SRID prefix rejected, or kept in the shape text"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromtext.toml#t002_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromtext.t003"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromtext"
+kind = "error_parity"
+target = "error"
+note = "EWKT with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromtext.toml#t003_ewkt_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromtext.t004"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromtext"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromtext.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromtext.t005"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromtext"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, which the page says still returns a shape, next to a valid square."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromtext.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromtext.t006"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromtext"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromtext.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromwkt.t001"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromwkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, written back as WKT."
+catches = "longitude and latitude swapped, or the line string reduced to a point"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromwkt.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromwkt.t002"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromwkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 4326, which the page accepts."
+catches = "the SRID prefix rejected, or kept in the shape text"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromwkt.toml#t002_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromwkt.t003"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromwkt"
+kind = "error_parity"
+target = "error"
+note = "EWKT with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromwkt.toml#t003_ewkt_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromwkt.t004"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromwkt"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromwkt.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromwkt.t005"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromwkt"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, which the page says still returns a shape, next to a valid square."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromwkt.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geographyfromwkt.st-geographyfromwkt.t006"
+form = "sf.functions.st-geographyfromwkt.st-geographyfromwkt"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKT or EWKT text, longitude before latitude; an error if the text cannot be parsed or EWKT has an SRID other than 4326; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geographyfromwkt.st-geographyfromwkt.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromewkb.t001"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromewkb"
+kind = "type_combination"
+target = "VARCHAR"
+note = "WKB of a point as hex text, which the page says gets SRID 0, and EWKB with SRID 3857 (the page does not say; the recording decides on its SRID)."
+catches = "longitude and latitude swapped, or the byte order misread"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromewkb.toml#t001_hex"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromewkb.t002"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromewkb"
+kind = "type_combination"
+target = "BINARY"
+note = "The same WKB as BINARY."
+catches = "BINARY input rejected, or read as hex text"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromewkb.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromewkb.t003"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromewkb"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKB with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromewkb.toml#t003_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromewkb.t004"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromewkb"
+kind = "error_parity"
+target = "error"
+note = "Hex text too short to be WKB, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromewkb.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromewkb.t005"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromewkb"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon in WKB with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromewkb.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromewkb.t006"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromewkb"
+kind = "null_argument"
+target = "varchar-or-binary-expression"
+note = "A NULL input; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromewkb.toml#t006_null_varchar_or_binary_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromwkb.t001"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromwkb"
+kind = "type_combination"
+target = "VARCHAR"
+note = "WKB of a point as hex text, which the page says gets SRID 0, and EWKB with SRID 3857 (the page does not say; the recording decides on its SRID)."
+catches = "longitude and latitude swapped, or the byte order misread"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromwkb.toml#t001_hex"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromwkb.t002"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromwkb"
+kind = "type_combination"
+target = "BINARY"
+note = "The same WKB as BINARY."
+catches = "BINARY input rejected, or read as hex text"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromwkb.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromwkb.t003"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromwkb"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKB with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromwkb.toml#t003_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromwkb.t004"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromwkb"
+kind = "error_parity"
+target = "error"
+note = "Hex text too short to be WKB, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromwkb.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromwkb.t005"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromwkb"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon in WKB with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromwkb.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geometryfromwkb.t006"
+form = "sf.functions.st-geometryfromwkb.st-geometryfromwkb"
+kind = "null_argument"
+target = "varchar-or-binary-expression"
+note = "A NULL input; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geometryfromwkb.toml#t006_null_varchar_or_binary_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromewkb.t001"
+form = "sf.functions.st-geometryfromwkb.st-geomfromewkb"
+kind = "type_combination"
+target = "VARCHAR"
+note = "WKB of a point as hex text, which the page says gets SRID 0, and EWKB with SRID 3857 (the page does not say; the recording decides on its SRID)."
+catches = "longitude and latitude swapped, or the byte order misread"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromewkb.toml#t001_hex"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromewkb.t002"
+form = "sf.functions.st-geometryfromwkb.st-geomfromewkb"
+kind = "type_combination"
+target = "BINARY"
+note = "The same WKB as BINARY."
+catches = "BINARY input rejected, or read as hex text"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromewkb.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromewkb.t003"
+form = "sf.functions.st-geometryfromwkb.st-geomfromewkb"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKB with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromewkb.toml#t003_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromewkb.t004"
+form = "sf.functions.st-geometryfromwkb.st-geomfromewkb"
+kind = "error_parity"
+target = "error"
+note = "Hex text too short to be WKB, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromewkb.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromewkb.t005"
+form = "sf.functions.st-geometryfromwkb.st-geomfromewkb"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon in WKB with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromewkb.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromewkb.t006"
+form = "sf.functions.st-geometryfromwkb.st-geomfromewkb"
+kind = "null_argument"
+target = "varchar-or-binary-expression"
+note = "A NULL input; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromewkb.toml#t006_null_varchar_or_binary_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromwkb.t001"
+form = "sf.functions.st-geometryfromwkb.st-geomfromwkb"
+kind = "type_combination"
+target = "VARCHAR"
+note = "WKB of a point as hex text, which the page says gets SRID 0, and EWKB with SRID 3857 (the page does not say; the recording decides on its SRID)."
+catches = "longitude and latitude swapped, or the byte order misread"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromwkb.toml#t001_hex"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromwkb.t002"
+form = "sf.functions.st-geometryfromwkb.st-geomfromwkb"
+kind = "type_combination"
+target = "BINARY"
+note = "The same WKB as BINARY."
+catches = "BINARY input rejected, or read as hex text"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromwkb.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromwkb.t003"
+form = "sf.functions.st-geometryfromwkb.st-geomfromwkb"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKB with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromwkb.toml#t003_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromwkb.t004"
+form = "sf.functions.st-geometryfromwkb.st-geomfromwkb"
+kind = "error_parity"
+target = "error"
+note = "Hex text too short to be WKB, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromwkb.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromwkb.t005"
+form = "sf.functions.st-geometryfromwkb.st-geomfromwkb"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon in WKB with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromwkb.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkb.st-geomfromwkb.t006"
+form = "sf.functions.st-geometryfromwkb.st-geomfromwkb"
+kind = "null_argument"
+target = "varchar-or-binary-expression"
+note = "A NULL input; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKB or EWKB, as BINARY or hex text without 0x; WKB without an srid argument gets SRID 0; an error if it cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkb.st-geomfromwkb.toml#t006_null_varchar_or_binary_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromewkt.t001"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromewkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, which the page says get SRID 0."
+catches = "longitude and latitude swapped, or SRID 4326 assumed"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromewkt.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromewkt.t002"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromewkt"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKT with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromewkt.toml#t002_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromewkt.t003"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromewkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 3857, which a GEOMETRY may carry; the page does not say; the recording decides on the SRID of the result."
+catches = "the SRID prefix rejected, or kept in the shape text"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromewkt.toml#t003_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromewkt.t004"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromewkt"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromewkt.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromewkt.t005"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromewkt"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromewkt.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromewkt.t006"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromewkt"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromewkt.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromtext.t001"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromtext"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, which the page says get SRID 0."
+catches = "longitude and latitude swapped, or SRID 4326 assumed"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromtext.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromtext.t002"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromtext"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKT with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromtext.toml#t002_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromtext.t003"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromtext"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 3857, which a GEOMETRY may carry; the page does not say; the recording decides on the SRID of the result."
+catches = "the SRID prefix rejected, or kept in the shape text"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromtext.toml#t003_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromtext.t004"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromtext"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromtext.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromtext.t005"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromtext"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromtext.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromtext.t006"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromtext"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromtext.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromwkt.t001"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromwkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, which the page says get SRID 0."
+catches = "longitude and latitude swapped, or SRID 4326 assumed"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromwkt.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromwkt.t002"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromwkt"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKT with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromwkt.toml#t002_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromwkt.t003"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromwkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 3857, which a GEOMETRY may carry; the page does not say; the recording decides on the SRID of the result."
+catches = "the SRID prefix rejected, or kept in the shape text"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromwkt.toml#t003_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromwkt.t004"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromwkt"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromwkt.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromwkt.t005"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromwkt"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromwkt.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geometryfromwkt.t006"
+form = "sf.functions.st-geometryfromwkt.st-geometryfromwkt"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geometryfromwkt.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromewkt.t001"
+form = "sf.functions.st-geometryfromwkt.st-geomfromewkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, which the page says get SRID 0."
+catches = "longitude and latitude swapped, or SRID 4326 assumed"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromewkt.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromewkt.t002"
+form = "sf.functions.st-geometryfromwkt.st-geomfromewkt"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKT with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromewkt.toml#t002_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromewkt.t003"
+form = "sf.functions.st-geometryfromwkt.st-geomfromewkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 3857, which a GEOMETRY may carry; the page does not say; the recording decides on the SRID of the result."
+catches = "the SRID prefix rejected, or kept in the shape text"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromewkt.toml#t003_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromewkt.t004"
+form = "sf.functions.st-geometryfromwkt.st-geomfromewkt"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromewkt.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromewkt.t005"
+form = "sf.functions.st-geometryfromwkt.st-geomfromewkt"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromewkt.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromewkt.t006"
+form = "sf.functions.st-geometryfromwkt.st-geomfromewkt"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromewkt.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromtext.t001"
+form = "sf.functions.st-geometryfromwkt.st-geomfromtext"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, which the page says get SRID 0."
+catches = "longitude and latitude swapped, or SRID 4326 assumed"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromtext.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromtext.t002"
+form = "sf.functions.st-geometryfromwkt.st-geomfromtext"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKT with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromtext.toml#t002_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromtext.t003"
+form = "sf.functions.st-geometryfromwkt.st-geomfromtext"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 3857, which a GEOMETRY may carry; the page does not say; the recording decides on the SRID of the result."
+catches = "the SRID prefix rejected, or kept in the shape text"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromtext.toml#t003_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromtext.t004"
+form = "sf.functions.st-geometryfromwkt.st-geomfromtext"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromtext.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromtext.t005"
+form = "sf.functions.st-geometryfromwkt.st-geomfromtext"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromtext.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromtext.t006"
+form = "sf.functions.st-geometryfromwkt.st-geomfromtext"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromtext.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromwkt.t001"
+form = "sf.functions.st-geometryfromwkt.st-geomfromwkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A point and a line string in WKT, which the page says get SRID 0."
+catches = "longitude and latitude swapped, or SRID 4326 assumed"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromwkt.toml#t001_wkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromwkt.t002"
+form = "sf.functions.st-geometryfromwkt.st-geomfromwkt"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKT with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromwkt.toml#t002_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromwkt.t003"
+form = "sf.functions.st-geometryfromwkt.st-geomfromwkt"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT with SRID 3857, which a GEOMETRY may carry; the page does not say; the recording decides on the SRID of the result."
+catches = "the SRID prefix rejected, or kept in the shape text"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromwkt.toml#t003_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromwkt.t004"
+form = "sf.functions.st-geometryfromwkt.st-geomfromwkt"
+kind = "error_parity"
+target = "error"
+note = "Text that is not WKT, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromwkt.toml#t004_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromwkt.t005"
+form = "sf.functions.st-geometryfromwkt.st-geomfromwkt"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromwkt.toml#t005_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.st-geometryfromwkt.st-geomfromwkt.t006"
+form = "sf.functions.st-geometryfromwkt.st-geomfromwkt"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKT or EWKT text; WKT without an srid argument gets SRID 0; an error if the text cannot be parsed; allow_invalid TRUE returns a shape even when it is invalid"
+cases = ["cases/translation/functions/st-geometryfromwkt.st-geomfromwkt.toml#t006_null_varchar_expression"]
+required = true
+
+[[obligation]]
 id = "sf.functions.startswith.t001"
 form = "sf.functions.startswith"
 kind = "type_combination"
@@ -25438,6 +26836,171 @@ cases = ["cases/translation/functions/to-double.toml#t004_null_expr"]
 required = true
 
 [[obligation]]
+id = "sf.functions.to-geography.t001"
+form = "sf.functions.to-geography"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The same point as WKT, WKB hex, EWKT and EWKB with SRID 4326, and GeoJSON."
+catches = "a format rejected or misread, or longitude and latitude swapped in one of them"
+reading = "the page: a GEOGRAPHY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOMETRY with SRID 4326; an error if the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/to-geography.toml#t001_formats"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geography.t002"
+form = "sf.functions.to-geography"
+kind = "type_combination"
+target = "BINARY"
+note = "WKB as BINARY."
+catches = "BINARY input rejected, or read as hex text"
+reading = "the page: a GEOGRAPHY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOMETRY with SRID 4326; an error if the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/to-geography.toml#t002_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geography.t003"
+form = "sf.functions.to-geography"
+kind = "type_combination"
+target = "VARIANT"
+note = "A GeoJSON OBJECT in a VARIANT."
+catches = "the OBJECT rejected, or its text parsed as WKT"
+reading = "the page: a GEOGRAPHY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOMETRY with SRID 4326; an error if the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/to-geography.toml#t003_variant"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geography.t004"
+form = "sf.functions.to-geography"
+kind = "type_combination"
+target = "GEOMETRY"
+note = "A GEOMETRY with SRID 4326, which the page accepts."
+catches = "the GEOMETRY rejected, or its coordinates swapped"
+reading = "the page: a GEOGRAPHY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOMETRY with SRID 4326; an error if the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/to-geography.toml#t004_geometry"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geography.t005"
+form = "sf.functions.to-geography"
+kind = "error_parity"
+target = "error"
+note = "EWKT with SRID 3857, which the page says is an error."
+catches = "the point accepted in another SRID"
+reading = "the page: a GEOGRAPHY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOMETRY with SRID 4326; an error if the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/to-geography.toml#t005_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geography.t006"
+form = "sf.functions.to-geography"
+kind = "error_parity"
+target = "error"
+note = "Text in none of the formats, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOGRAPHY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOMETRY with SRID 4326; an error if the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/to-geography.toml#t006_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geography.t007"
+form = "sf.functions.to-geography"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE."
+catches = "the bow tie repaired or rejected despite allow_invalid"
+reading = "the page: a GEOGRAPHY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOMETRY with SRID 4326; an error if the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/to-geography.toml#t007_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geography.t008"
+form = "sf.functions.to-geography"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOMETRY with SRID 4326; an error if the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/to-geography.toml#t008_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geometry.t001"
+form = "sf.functions.to-geometry"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The same point as WKT, WKB hex and GeoJSON, which the page says get SRID 0."
+catches = "a format rejected, SRID 4326 assumed, or longitude and latitude swapped"
+reading = "the page: a GEOMETRY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOGRAPHY; GeoJSON, WKT and WKB without an srid argument get SRID 0; an error if the input cannot be parsed"
+cases = ["cases/translation/functions/to-geometry.toml#t001_formats"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geometry.t002"
+form = "sf.functions.to-geometry"
+kind = "type_combination"
+target = "VARCHAR, NUMBER"
+note = "WKT with an srid argument."
+catches = "the srid argument ignored (SRID 0)"
+reading = "the page: a GEOMETRY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOGRAPHY; GeoJSON, WKT and WKB without an srid argument get SRID 0; an error if the input cannot be parsed"
+cases = ["cases/translation/functions/to-geometry.toml#t002_srid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geometry.t003"
+form = "sf.functions.to-geometry"
+kind = "type_combination"
+target = "VARCHAR"
+note = "EWKT and EWKB with SRID 3857; the page does not say; the recording decides on the SRID of the result."
+catches = "the SRID prefix rejected"
+reading = "the page: a GEOMETRY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOGRAPHY; GeoJSON, WKT and WKB without an srid argument get SRID 0; an error if the input cannot be parsed"
+cases = ["cases/translation/functions/to-geometry.toml#t003_ewkt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geometry.t004"
+form = "sf.functions.to-geometry"
+kind = "type_combination"
+target = "GEOGRAPHY"
+note = "A GEOGRAPHY, which the page accepts; the page does not say; the recording decides on the SRID of the result."
+catches = "the GEOGRAPHY rejected, or its coordinates swapped"
+reading = "the page: a GEOMETRY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOGRAPHY; GeoJSON, WKT and WKB without an srid argument get SRID 0; an error if the input cannot be parsed"
+cases = ["cases/translation/functions/to-geometry.toml#t004_geography"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geometry.t005"
+form = "sf.functions.to-geometry"
+kind = "error_parity"
+target = "error"
+note = "Text in none of the formats, which the page says is an error."
+catches = "NULL returned, or the text read as an empty shape"
+reading = "the page: a GEOMETRY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOGRAPHY; GeoJSON, WKT and WKB without an srid argument get SRID 0; an error if the input cannot be parsed"
+cases = ["cases/translation/functions/to-geometry.toml#t005_unparsable"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geometry.t006"
+form = "sf.functions.to-geometry"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN; VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE, alone and after an srid."
+catches = "the bow tie repaired or rejected despite allow_invalid, or TRUE read as the srid"
+reading = "the page: a GEOMETRY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOGRAPHY; GeoJSON, WKT and WKB without an srid argument get SRID 0; an error if the input cannot be parsed"
+cases = ["cases/translation/functions/to-geometry.toml#t006_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-geometry.t007"
+form = "sf.functions.to-geometry"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOMETRY from WKT, WKB hex, EWKT, EWKB hex or GeoJSON text, BINARY WKB or EWKB, a GeoJSON OBJECT, or a GEOGRAPHY; GeoJSON, WKT and WKB without an srid argument get SRID 0; an error if the input cannot be parsed"
+cases = ["cases/translation/functions/to-geometry.toml#t007_null_varchar_expression"]
+required = true
+
+[[obligation]]
 id = "sf.functions.to-ipaddress.t001"
 form = "sf.functions.to-ipaddress"
 kind = "type_combination"
@@ -27015,6 +28578,94 @@ note = "A NULL string."
 catches = "zero returned"
 reading = "the page: as TO_DOUBLE on strings, but NULL on a conversion error; only string expressions are accepted"
 cases = ["cases/translation/functions/try-to-double.toml#t004_null_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-geography.t001"
+form = "sf.functions.try-to-geography"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The same point as WKT, WKB hex, EWKT and EWKB with SRID 4326, and GeoJSON."
+catches = "a format rejected or misread, or longitude and latitude swapped in one of them"
+reading = "the page: as TO_GEOGRAPHY, but NULL where the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/try-to-geography.toml#t001_formats"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-geography.t002"
+form = "sf.functions.try-to-geography"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Text in none of the formats and EWKT with SRID 3857, which the page says give NULL."
+catches = "an error raised, or the SRID 3857 point accepted"
+reading = "the page: as TO_GEOGRAPHY, but NULL where the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/try-to-geography.toml#t002_failures"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-geography.t003"
+form = "sf.functions.try-to-geography"
+kind = "type_combination"
+target = "VARCHAR, BOOLEAN"
+note = "A self-intersecting polygon with allow_invalid TRUE."
+catches = "NULL returned for the bow tie despite allow_invalid"
+reading = "the page: as TO_GEOGRAPHY, but NULL where the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/try-to-geography.toml#t003_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-geography.t004"
+form = "sf.functions.try-to-geography"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: as TO_GEOGRAPHY, but NULL where the input cannot be parsed or EWKT or EWKB has an SRID other than 4326"
+cases = ["cases/translation/functions/try-to-geography.toml#t004_null_varchar_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-geometry.t001"
+form = "sf.functions.try-to-geometry"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The same point as WKT, WKB hex and GeoJSON, with SRID 0."
+catches = "a format rejected, SRID 4326 assumed, or longitude and latitude swapped"
+reading = "the page: as TO_GEOMETRY, but NULL where TO_GEOMETRY would return an error"
+cases = ["cases/translation/functions/try-to-geometry.toml#t001_formats"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-geometry.t002"
+form = "sf.functions.try-to-geometry"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Text in none of the formats, which the page says gives NULL."
+catches = "an error raised"
+reading = "the page: as TO_GEOMETRY, but NULL where TO_GEOMETRY would return an error"
+cases = ["cases/translation/functions/try-to-geometry.toml#t002_failure"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-geometry.t003"
+form = "sf.functions.try-to-geometry"
+kind = "type_combination"
+target = "VARCHAR, NUMBER, BOOLEAN"
+note = "A self-intersecting polygon with an srid and allow_invalid TRUE."
+catches = "NULL returned for the bow tie despite allow_invalid, or TRUE read as the srid"
+reading = "the page: as TO_GEOMETRY, but NULL where TO_GEOMETRY would return an error"
+cases = ["cases/translation/functions/try-to-geometry.toml#t003_allow_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-to-geometry.t004"
+form = "sf.functions.try-to-geometry"
+kind = "null_argument"
+target = "varchar-expression"
+note = "A NULL text; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: as TO_GEOMETRY, but NULL where TO_GEOMETRY would return an error"
+cases = ["cases/translation/functions/try-to-geometry.toml#t004_null_varchar_expression"]
 required = true
 
 [[obligation]]
