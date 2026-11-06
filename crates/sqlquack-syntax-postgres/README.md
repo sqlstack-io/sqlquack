@@ -21,7 +21,7 @@ next top-level `;` is not checked further. The SQL/JSON and SQL/XML calls, `TREA
 
 | Gap | Construct |
 | --- | --- |
-| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, and `CREATE DATABASE` |
+| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, and `ALTER` of a table, foreign table, index, sequence, view or materialized view |
 | `copy_where` | `COPY … FROM … WHERE condition` |
 | `json`, `json_array`, `json_arrayagg`, `json_exists`, `json_object`, `json_objectagg`, `json_query`, `json_scalar`, `json_serialize`, `json_value`, `json_table` | the SQL/JSON call syntax |
 | `xmlconcat`, `xmlelement`, `xmlexists`, `xmlforest`, `xmlparse`, `xmlpi`, `xmlroot`, `xmlserialize`, `xmltable` | the SQL/XML call syntax |
@@ -81,3 +81,16 @@ PostgreSQL's `equal()` compares them, so `int` matches `integer` and `pg_catalog
 `CREATE DATABASE` becomes `CreateDatabase`, each option a `(name, value)` tuple in `properties`, in
 order. `CONNECTION LIMIT` is named `connection_limit`, as PostgreSQL names it; a value is a number,
 a string or word, a boolean, or `DEFAULT`.
+
+## ALTER
+
+`ALTER TABLE`, `FOREIGN TABLE`, `INDEX`, `SEQUENCE`, `VIEW` and `MATERIALIZED VIEW` become
+`AlterObject`, with the relation kind in `kind` and the relation in `name` (`ONLY` and `*` as
+`TableRef` keeps them). Each `alter_table_cmd` is a keyword tuple in `operands`, in source order,
+such as `(ADD COLUMN, columnDef)` or `(ALTER COLUMN, c, (SET STATISTICS, 16))`, with an empty
+`action`. A rename, `SET SCHEMA`, `[NO] DEPENDS ON EXTENSION`, `ATTACH` or `DETACH PARTITION`,
+`ALL IN TABLESPACE` and a sequence's `SeqOptList` name themselves in `action`, their values in
+`operands`. Numbers are kept as values, so `SET STATISTICS 0x10` equals `SET STATISTICS 16`.
+`ALTER` followed by a word no statement kind allows is refused (42601); other `ALTER` statements
+stay opaque gaps. The grammar's own errors are kept, including `NOT VALID` on `ALTER CONSTRAINT`
+(0A000), a column number out of range, and identity options `SET` cannot take.
