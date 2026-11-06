@@ -943,6 +943,24 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() 
             pointer: "/0/comment/this/tuple/expressions/1/data_type/name",
             expected_json: "\"d\"",
         },
+        ValueTestCase {
+            description: "COMMENT ON FUNCTION keeps an IN mode apart from no mode",
+            sql: "COMMENT ON FUNCTION f(IN a int) IS 'x'",
+            pointer: "/0/comment/this/function/args/0/tuple/expressions/0/var/this",
+            expected_json: "\"IN\"",
+        },
+        ValueTestCase {
+            description: "COMMENT ON FUNCTION reads IN OUT as INOUT, as PostgreSQL does",
+            sql: "COMMENT ON FUNCTION f(a IN OUT int) IS 'x'",
+            pointer: "/0/comment/this/function/args/0/tuple/expressions/0/var/this",
+            expected_json: "\"INOUT\"",
+        },
+        ValueTestCase {
+            description: "COMMENT ON FUNCTION without a mode keeps the bare argument",
+            sql: "COMMENT ON FUNCTION f(a int) IS 'x'",
+            pointer: "/0/comment/this/function/args/0/column_def/name/name",
+            expected_json: "\"a\"",
+        },
     ];
     for test_case in test_cases {
         let parsed = parse_strict(test_case.sql).expect(test_case.description);

@@ -28,7 +28,7 @@ next top-level `;` is not checked further. The SQL/JSON and SQL/XML calls, `TREA
 | `treat`, `merge_action` | `TREAT (… AS type)`, `MERGE_ACTION()` |
 | `is_json`, `is_document`, `is_normalized` | `IS [NOT] JSON …`, `IS [NOT] DOCUMENT`, `IS [NOT] [form] NORMALIZED` |
 | `setof` | `SETOF` in a type name |
-| `argument_mode`, `type_reference` | `IN`, `OUT`, `INOUT` before a routine argument, and `name%TYPE` as its type, in `COMMENT ON` |
+| `type_reference` | `name%TYPE` as a routine argument type in `COMMENT ON` |
 | `cte_search`, `cte_cycle` | `SEARCH` and `CYCLE` after a common table expression |
 | `set_operation_with_ties`, `set_operation_locking` | `FETCH … WITH TIES` and `FOR UPDATE`-style locking on a set operation |
 | `rows_from`, `ordinality`, `column_definition_list` | `ROWS FROM (…)`, `WITH ORDINALITY` on a special call, `AS (col type, …)` after a function |

@@ -4,7 +4,7 @@ use sqlquack_syntax::expressions::columns::models::ColumnDef;
 use sqlquack_syntax::expressions::functions::models::{Operator, WithinGroup};
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::operators::models::DotAccess;
-use sqlquack_syntax::expressions::statements::models::{Comment, Variadic};
+use sqlquack_syntax::expressions::statements::models::{Comment, Var, Variadic};
 use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::{DataType, Expression};
 
@@ -55,11 +55,18 @@ const ON_TABLE_KINDS: [&str; 3] = ["policy", "rule", "trigger"];
 /// Kinds named by `function_with_argtypes`.
 const ROUTINE_KINDS: [&str; 3] = ["function", "procedure", "routine"];
 
-/// `arg_class` keywords other than `VARIADIC`, which the shared tree cannot hold.
-const ARGUMENT_MODES: [&str; 3] = [IN_MODE, "out", "inout"];
+/// `arg_class` keywords; a mode other than `VARIADIC` pairs with its argument in a tuple.
+const ARGUMENT_MODES: [&str; 4] = ["variadic", IN_MODE, OUT_MODE, INOUT_MODE];
 
-/// The `arg_class` that `OUT` may follow, as `IN OUT`.
+/// The `arg_class` that `OUT` may follow, as `IN OUT`, which means `INOUT`.
 const IN_MODE: &str = "in";
+
+const OUT_MODE: &str = "out";
+
+const INOUT_MODE: &str = "inout";
+
+/// `VARIADIC` as `argument_class` gives it, which becomes a Variadic node.
+const VARIADIC_MODE: &str = "VARIADIC";
 
 /// `a.b.c` as an identifier with field accesses.
 fn dotted(parts: Vec<Identifier>) -> Expression {
@@ -312,49 +319,52 @@ impl Parser<'_> {
 
     /// `func_arg`: `[arg_class] [param_name] func_type`; a named argument is a column definition.
     fn func_arg(&mut self) -> Parsing<Expression> {
-        let start: usize = self.offset();
-        let variadic: bool = self.eat_argument_class(start)?;
+        let leading: Option<String> = self.argument_class();
         let named = self.attempt(|parser| {
             let name: Identifier = parser.name(is_type_function_name)?;
-            if !variadic {
-                parser.eat_argument_class(start)?;
-            }
+            let trailing: Option<String> = match leading {
+                Some(_) => None,
+                None => parser.argument_class(),
+            };
             let data_type: DataType = parser.func_type()?;
             match parser.is_char(',') || parser.is_char(')') || parser.kw("order") {
-                true => Ok((name, data_type)),
+                true => Ok((name, trailing, data_type)),
                 false => Err(parser.error()),
             }
         });
-        let argument: Expression = match named {
-            Ok((name, data_type)) => {
+        let (argument, mode): (Expression, Option<String>) = match named {
+            Ok((name, trailing, data_type)) => {
                 let mut definition: ColumnDef = ColumnDef::new(name.name.clone(), data_type);
                 definition.name = name;
-                Expression::ColumnDef(Box::new(definition))
+                (
+                    Expression::ColumnDef(Box::new(definition)),
+                    leading.or(trailing),
+                )
             }
-            Err(_) => Expression::DataType(self.func_type()?),
+            Err(_) => (Expression::DataType(self.func_type()?), leading),
         };
-        Ok(match variadic {
-            true => Expression::Variadic(Box::new(Variadic {
+        Ok(match mode.as_deref() {
+            None => argument,
+            Some(VARIADIC_MODE) => Expression::Variadic(Box::new(Variadic {
                 this: Box::new(argument),
             })),
-            false => argument,
+            Some(mode) => tuple(vec![
+                Expression::Var(Box::new(Var {
+                    this: mode.to_owned(),
+                })),
+                argument,
+            ]),
         })
     }
 
-    /// An `arg_class`, if next: whether it is `VARIADIC`; other modes are gaps the tree cannot hold.
-    fn eat_argument_class(&mut self, start: usize) -> Parsing<bool> {
-        if self.eat_kw("variadic") {
-            return Ok(true);
-        }
-        let Some(mode) = ARGUMENT_MODES.iter().find(|mode| self.kw(mode)) else {
-            return Ok(false);
-        };
+    /// An `arg_class`, if next: `VARIADIC`, `IN`, `OUT`, `INOUT`, or `IN OUT` as `INOUT`.
+    fn argument_class(&mut self) -> Option<String> {
+        let mode: &str = ARGUMENT_MODES.iter().find(|mode| self.kw(mode))?;
         self.at += 1;
-        if *mode == IN_MODE {
-            self.eat_kw("out");
-        }
-        self.gap("argument_mode", start);
-        Ok(false)
+        Some(match mode == IN_MODE && self.eat_kw(OUT_MODE) {
+            true => INOUT_MODE.to_uppercase(),
+            false => mode.to_uppercase(),
+        })
     }
 
     /// `func_type`: a `Typename`, or `[SETOF] name.attr...%TYPE`, which is a gap.
