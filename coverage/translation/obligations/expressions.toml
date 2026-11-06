@@ -6,13 +6,12 @@
 id = "sf.expressions.data-types-datetime.time.t001"
 form = "sf.expressions.data-types-datetime.time"
 kind = "type_combination"
-target = "TIME and TIME(3)"
-note = "TIME keeps all nine fractional digits by default; TIME(3) keeps three. Whether the cut rounds or truncates is not on the page, so the recording decides."
+target = "TIME, TIME(3) and TIME(0)"
+note = "TIME keeps all nine fractional digits by default; TIME(3) keeps three and TIME(0) none, read here as the nanosecond part, since the connector carries TIME only to microseconds. Whether the cut rounds or truncates is not on the page, so the recording decides."
 catches = "the default read as 6 digits or 0, or the precision ignored"
 reading = "the date and time page: TIME holds wall-clock HH:MI:SS with an optional precision of 0 to 9 fractional digits, 9 by default, between 00:00:00 and 23:59:59.999999999, with no time zone; TIMESTAMP is an alias of the TIMESTAMP_* type that TIMESTAMP_TYPE_MAPPING names, TIMESTAMP_NTZ by default, and takes the same optional precision"
-cases = []
+cases = ["cases/translation/expressions/data-types-datetime.time.toml#t001_precision"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.time.t002"
@@ -20,12 +19,11 @@ form = "sf.expressions.data-types-datetime.time"
 kind = "boundary"
 subkind = "magnitude"
 target = "00:00:00 and 23:59:59.999999999"
-note = "The page: TIME values lie between 00:00:00 and 23:59:59.999999999; both ends cast unchanged."
+note = "The page: TIME values lie between 00:00:00 and 23:59:59.999999999; both ends cast unchanged, read here as hour, second and nanosecond parts."
 catches = "the last nanosecond rounded to the next day, or cut to microseconds"
 reading = "the date and time page: TIME holds wall-clock HH:MI:SS with an optional precision of 0 to 9 fractional digits, 9 by default, between 00:00:00 and 23:59:59.999999999, with no time zone; TIMESTAMP is an alias of the TIMESTAMP_* type that TIMESTAMP_TYPE_MAPPING names, TIMESTAMP_NTZ by default, and takes the same optional precision"
-cases = []
+cases = ["cases/translation/expressions/data-types-datetime.time.toml#t002_range_edges"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.time.t003"
@@ -35,9 +33,8 @@ target = "NULL"
 note = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies."
 catches = "NULL replaced by a value, or the cast raising for NULL"
 reading = "the date and time page: TIME holds wall-clock HH:MI:SS with an optional precision of 0 to 9 fractional digits, 9 by default, between 00:00:00 and 23:59:59.999999999, with no time zone; TIMESTAMP is an alias of the TIMESTAMP_* type that TIMESTAMP_TYPE_MAPPING names, TIMESTAMP_NTZ by default, and takes the same optional precision"
-cases = []
+cases = ["cases/translation/expressions/data-types-datetime.time.toml#t003_null"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.timestamp.t001"
@@ -47,9 +44,8 @@ target = "TIMESTAMP under the default mapping"
 note = "The page: TIMESTAMP is TIMESTAMP_NTZ by default, so the wall-clock time is kept and equals the NTZ cast."
 catches = "TIMESTAMP read as a zoned type, so an offset is applied or the session zone attached"
 reading = "the date and time page: TIME holds wall-clock HH:MI:SS with an optional precision of 0 to 9 fractional digits, 9 by default, between 00:00:00 and 23:59:59.999999999, with no time zone; TIMESTAMP is an alias of the TIMESTAMP_* type that TIMESTAMP_TYPE_MAPPING names, TIMESTAMP_NTZ by default, and takes the same optional precision"
-cases = []
+cases = ["cases/translation/expressions/data-types-datetime.timestamp.toml#t001_alias_ntz"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.timestamp.t002"
@@ -59,9 +55,8 @@ target = "TIMESTAMP(3) and TIMESTAMP(0)"
 note = "The page: the precision is 0 to 9 fractional digits, 9 by default; whether the cut rounds or truncates is not on the page, so the recording decides."
 catches = "the precision ignored, or the default read as 6"
 reading = "the date and time page: TIME holds wall-clock HH:MI:SS with an optional precision of 0 to 9 fractional digits, 9 by default, between 00:00:00 and 23:59:59.999999999, with no time zone; TIMESTAMP is an alias of the TIMESTAMP_* type that TIMESTAMP_TYPE_MAPPING names, TIMESTAMP_NTZ by default, and takes the same optional precision"
-cases = []
+cases = ["cases/translation/expressions/data-types-datetime.timestamp.toml#t002_precision"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.timestamp.t003"
@@ -71,9 +66,8 @@ target = "NULL"
 note = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies."
 catches = "NULL replaced by a value, or the cast raising for NULL"
 reading = "the date and time page: TIME holds wall-clock HH:MI:SS with an optional precision of 0 to 9 fractional digits, 9 by default, between 00:00:00 and 23:59:59.999999999, with no time zone; TIMESTAMP is an alias of the TIMESTAMP_* type that TIMESTAMP_TYPE_MAPPING names, TIMESTAMP_NTZ by default, and takes the same optional precision"
-cases = []
+cases = ["cases/translation/expressions/data-types-datetime.timestamp.toml#t003_null"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-logical.t001"
@@ -83,21 +77,19 @@ target = "VARCHAR to BOOLEAN"
 note = "The page's twelve strings, in mixed case: the first six convert to TRUE and the last six to FALSE."
 catches = "only 'true' and 'false' accepted, or the match made case-sensitive"
 reading = "the logical data types page: BOOLEAN is TRUE, FALSE or NULL (unknown); CAST and TO_BOOLEAN convert the strings 'true', 't', 'yes', 'y', 'on', '1' to TRUE and 'false', 'f', 'no', 'n', 'off', '0' to FALSE, case-insensitively, and no other string; 0 converts to FALSE and any other number to TRUE; TRUE casts to 'true' and 1, FALSE to 'false' and 0"
-cases = []
+cases = ["cases/translation/expressions/data-types-logical.toml#t001_from_text"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-logical.t002"
 form = "sf.expressions.data-types-logical"
 kind = "type_combination"
-target = "NUMBER and FLOAT to BOOLEAN"
+target = "NUMBER to BOOLEAN"
 note = "The page: zero converts to FALSE and any non-zero value, negative or fractional, to TRUE."
 catches = "only 1 read as TRUE, or a fraction truncated to 0 first"
 reading = "the logical data types page: BOOLEAN is TRUE, FALSE or NULL (unknown); CAST and TO_BOOLEAN convert the strings 'true', 't', 'yes', 'y', 'on', '1' to TRUE and 'false', 'f', 'no', 'n', 'off', '0' to FALSE, case-insensitively, and no other string; 0 converts to FALSE and any other number to TRUE; TRUE casts to 'true' and 1, FALSE to 'false' and 0"
-cases = []
+cases = ["cases/translation/expressions/data-types-logical.toml#t002_from_number"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-logical.t003"
@@ -107,9 +99,8 @@ target = "BOOLEAN to VARCHAR and NUMBER"
 note = "The page: TRUE casts to 'true' and 1, FALSE to 'false' and 0."
 catches = "upper-case 'TRUE', or 't', or -1 for TRUE"
 reading = "the logical data types page: BOOLEAN is TRUE, FALSE or NULL (unknown); CAST and TO_BOOLEAN convert the strings 'true', 't', 'yes', 'y', 'on', '1' to TRUE and 'false', 'f', 'no', 'n', 'off', '0' to FALSE, case-insensitively, and no other string; 0 converts to FALSE and any other number to TRUE; TRUE casts to 'true' and 1, FALSE to 'false' and 0"
-cases = []
+cases = ["cases/translation/expressions/data-types-logical.toml#t003_to_text_and_number"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-logical.t004"
@@ -119,9 +110,8 @@ target = "VARCHAR that is not a boolean string"
 note = "The page: other text strings can't be converted to BOOLEAN, so the cast raises."
 catches = "the string read as FALSE or NULL"
 reading = "the logical data types page: BOOLEAN is TRUE, FALSE or NULL (unknown); CAST and TO_BOOLEAN convert the strings 'true', 't', 'yes', 'y', 'on', '1' to TRUE and 'false', 'f', 'no', 'n', 'off', '0' to FALSE, case-insensitively, and no other string; 0 converts to FALSE and any other number to TRUE; TRUE casts to 'true' and 1, FALSE to 'false' and 0"
-cases = []
+cases = ["cases/translation/expressions/data-types-logical.toml#t004_other_text"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-logical.t005"
@@ -131,9 +121,8 @@ target = "VARCHAR used as a BOOLEAN"
 note = "The page: implicitly, only 'true' and 'false' convert, case-insensitively, so a VARCHAR column in AND converts without a cast."
 catches = "the implicit conversion refused, or done case-sensitively"
 reading = "the logical data types page: BOOLEAN is TRUE, FALSE or NULL (unknown); CAST and TO_BOOLEAN convert the strings 'true', 't', 'yes', 'y', 'on', '1' to TRUE and 'false', 'f', 'no', 'n', 'off', '0' to FALSE, case-insensitively, and no other string; 0 converts to FALSE and any other number to TRUE; TRUE casts to 'true' and 1, FALSE to 'false' and 0"
-cases = []
+cases = ["cases/translation/expressions/data-types-logical.toml#t005_implicit_from_text"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-logical.t006"
@@ -143,9 +132,8 @@ target = "NUMBER used as a BOOLEAN"
 note = "The page: implicitly, zero converts to FALSE and any other number to TRUE."
 catches = "the implicit conversion refused, or only 1 read as TRUE"
 reading = "the logical data types page: BOOLEAN is TRUE, FALSE or NULL (unknown); CAST and TO_BOOLEAN convert the strings 'true', 't', 'yes', 'y', 'on', '1' to TRUE and 'false', 'f', 'no', 'n', 'off', '0' to FALSE, case-insensitively, and no other string; 0 converts to FALSE and any other number to TRUE; TRUE casts to 'true' and 1, FALSE to 'false' and 0"
-cases = []
+cases = ["cases/translation/expressions/data-types-logical.toml#t006_implicit_from_number"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-logical.t007"
@@ -155,9 +143,8 @@ target = "a BOOLEAN column or literal with ||"
 note = "The page: a BOOLEAN column or literal concatenated with || converts to 'true' or 'false'."
 catches = "upper-case TRUE, 't' or 1 in the text"
 reading = "the logical data types page: BOOLEAN is TRUE, FALSE or NULL (unknown); CAST and TO_BOOLEAN convert the strings 'true', 't', 'yes', 'y', 'on', '1' to TRUE and 'false', 'f', 'no', 'n', 'off', '0' to FALSE, case-insensitively, and no other string; 0 converts to FALSE and any other number to TRUE; TRUE casts to 'true' and 1, FALSE to 'false' and 0"
-cases = []
+cases = ["cases/translation/expressions/data-types-logical.toml#t007_implicit_to_text"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-logical.t008"
@@ -169,7 +156,7 @@ catches = "the comparison concatenated as 'false'"
 reading = "the logical data types page: BOOLEAN is TRUE, FALSE or NULL (unknown); CAST and TO_BOOLEAN convert the strings 'true', 't', 'yes', 'y', 'on', '1' to TRUE and 'false', 'f', 'no', 'n', 'off', '0' to FALSE, case-insensitively, and no other string; 0 converts to FALSE and any other number to TRUE; TRUE casts to 'true' and 1, FALSE to 'false' and 0"
 cases = []
 required = true
-held = "awaits a Snowflake receipt"
+held = "differs from Snowflake: SQLQuack translates 'A' || (0 = 1), which Snowflake refuses at compile time (001044, 42P13); reported to the product lane"
 
 [[obligation]]
 id = "sf.expressions.data-types-logical.t009"
@@ -179,9 +166,19 @@ target = "NULL"
 note = "NULL is the unknown BOOLEAN value, kept through the cast."
 catches = "NULL replaced by a value, or the cast raising for NULL"
 reading = "the logical data types page: BOOLEAN is TRUE, FALSE or NULL (unknown); CAST and TO_BOOLEAN convert the strings 'true', 't', 'yes', 'y', 'on', '1' to TRUE and 'false', 'f', 'no', 'n', 'off', '0' to FALSE, case-insensitively, and no other string; 0 converts to FALSE and any other number to TRUE; TRUE casts to 'true' and 1, FALSE to 'false' and 0"
-cases = []
+cases = ["cases/translation/expressions/data-types-logical.toml#t009_null"]
 required = true
-held = "awaits a Snowflake receipt"
+
+[[obligation]]
+id = "sf.expressions.data-types-logical.t010"
+form = "sf.expressions.data-types-logical"
+kind = "error_parity"
+target = "FLOAT to BOOLEAN"
+note = "The page's numeric conversion does not exclude FLOAT, but Snowflake refuses a FLOAT argument at compile time (recorded as 1007/22023, invalid type for parameter 'TO_BOOLEAN'); this case keeps that behaviour."
+catches = "the FLOAT converted as a number"
+reading = "the logical data types page: BOOLEAN is TRUE, FALSE or NULL (unknown); CAST and TO_BOOLEAN convert the strings 'true', 't', 'yes', 'y', 'on', '1' to TRUE and 'false', 'f', 'no', 'n', 'off', '0' to FALSE, case-insensitively, and no other string; 0 converts to FALSE and any other number to TRUE; TRUE casts to 'true' and 1, FALSE to 'false' and 0"
+cases = ["cases/translation/expressions/data-types-logical.toml#t010_from_float"]
+required = true
 
 [[obligation]]
 id = "sf.expressions.data-types-numeric.double.t001"
@@ -191,9 +188,8 @@ target = "DOUBLE, DOUBLE PRECISION, REAL"
 note = "The page: all three are FLOAT, so each equals the FLOAT cast of the same text, with full double precision."
 catches = "REAL read as a 32-bit float (0.1 losing digits), or a decimal type"
 reading = "the numeric data types page: INT, INTEGER, BIGINT, SMALLINT, TINYINT and BYTEINT are synonymous with NUMBER(38, 0), so each holds every integer of up to 38 digits; DOUBLE, DOUBLE PRECISION and REAL are synonymous with FLOAT, a 64-bit float with the special values 'NaN', 'inf' and '-inf' (quoted, case-insensitive), where 'NaN' equals 'NaN' and is greater than every other value, infinity included"
-cases = []
+cases = ["cases/translation/expressions/data-types-numeric.double.toml#t001_synonyms"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-numeric.double.t002"
@@ -203,9 +199,8 @@ target = "'NaN', 'inf' and '-inf' as DOUBLE"
 note = "The page: the quoted special values are case-insensitive; 'NaN' equals 'NaN' and is greater than infinity."
 catches = "NaN unequal to itself (IEEE), NaN smaller than infinity, or the mixed-case spellings rejected"
 reading = "the numeric data types page: INT, INTEGER, BIGINT, SMALLINT, TINYINT and BYTEINT are synonymous with NUMBER(38, 0), so each holds every integer of up to 38 digits; DOUBLE, DOUBLE PRECISION and REAL are synonymous with FLOAT, a 64-bit float with the special values 'NaN', 'inf' and '-inf' (quoted, case-insensitive), where 'NaN' equals 'NaN' and is greater than every other value, infinity included"
-cases = []
+cases = ["cases/translation/expressions/data-types-numeric.double.toml#t002_special_values"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-numeric.double.t003"
@@ -215,9 +210,8 @@ target = "NULL"
 note = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies."
 catches = "NULL replaced by a value, or the cast raising for NULL"
 reading = "the numeric data types page: INT, INTEGER, BIGINT, SMALLINT, TINYINT and BYTEINT are synonymous with NUMBER(38, 0), so each holds every integer of up to 38 digits; DOUBLE, DOUBLE PRECISION and REAL are synonymous with FLOAT, a 64-bit float with the special values 'NaN', 'inf' and '-inf' (quoted, case-insensitive), where 'NaN' equals 'NaN' and is greater than every other value, infinity included"
-cases = []
+cases = ["cases/translation/expressions/data-types-numeric.double.toml#t003_null"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-numeric.int.t001"
@@ -227,9 +221,8 @@ target = "INT, INTEGER, BIGINT, SMALLINT, TINYINT, BYTEINT"
 note = "A 21-digit integer cast to each spelling keeps every digit, since all are NUMBER(38, 0)."
 catches = "BIGINT read as 64-bit, or SMALLINT, TINYINT or BYTEINT as 16 or 8 bits (overflow or wrap-around)"
 reading = "the numeric data types page: INT, INTEGER, BIGINT, SMALLINT, TINYINT and BYTEINT are synonymous with NUMBER(38, 0), so each holds every integer of up to 38 digits; DOUBLE, DOUBLE PRECISION and REAL are synonymous with FLOAT, a 64-bit float with the special values 'NaN', 'inf' and '-inf' (quoted, case-insensitive), where 'NaN' equals 'NaN' and is greater than every other value, infinity included"
-cases = []
+cases = ["cases/translation/expressions/data-types-numeric.int.toml#t001_synonyms_wide"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-numeric.int.t002"
@@ -240,9 +233,8 @@ target = "38 nines as INT"
 note = "The page: the range of every integer type is -(10^38 - 1) to 10^38 - 1, so both ends cast unchanged."
 catches = "the value rejected or rounded through a float"
 reading = "the numeric data types page: INT, INTEGER, BIGINT, SMALLINT, TINYINT and BYTEINT are synonymous with NUMBER(38, 0), so each holds every integer of up to 38 digits; DOUBLE, DOUBLE PRECISION and REAL are synonymous with FLOAT, a 64-bit float with the special values 'NaN', 'inf' and '-inf' (quoted, case-insensitive), where 'NaN' equals 'NaN' and is greater than every other value, infinity included"
-cases = []
+cases = ["cases/translation/expressions/data-types-numeric.int.toml#t002_thirty_eight_digits"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-numeric.int.t003"
@@ -252,9 +244,8 @@ target = "10^38 as INT"
 note = "The page: the integer types hold at most 38 digits, so 10^38 is out of range and the cast raises."
 catches = "the value kept or rounded"
 reading = "the numeric data types page: INT, INTEGER, BIGINT, SMALLINT, TINYINT and BYTEINT are synonymous with NUMBER(38, 0), so each holds every integer of up to 38 digits; DOUBLE, DOUBLE PRECISION and REAL are synonymous with FLOAT, a 64-bit float with the special values 'NaN', 'inf' and '-inf' (quoted, case-insensitive), where 'NaN' equals 'NaN' and is greater than every other value, infinity included"
-cases = []
+cases = ["cases/translation/expressions/data-types-numeric.int.toml#t003_past_38_digits"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-numeric.int.t004"
@@ -264,9 +255,8 @@ target = "NULL"
 note = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies."
 catches = "NULL replaced by a value, or the cast raising for NULL"
 reading = "the numeric data types page: INT, INTEGER, BIGINT, SMALLINT, TINYINT and BYTEINT are synonymous with NUMBER(38, 0), so each holds every integer of up to 38 digits; DOUBLE, DOUBLE PRECISION and REAL are synonymous with FLOAT, a 64-bit float with the special values 'NaN', 'inf' and '-inf' (quoted, case-insensitive), where 'NaN' equals 'NaN' and is greater than every other value, infinity included"
-cases = []
+cases = ["cases/translation/expressions/data-types-numeric.int.toml#t004_null"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.array.t001"
@@ -276,9 +266,8 @@ target = "VARIANT to ARRAY"
 note = "A JSON array cast to ARRAY keeps its elements, nested and mixed-type ones included."
 catches = "the array flattened, or its elements turned to text"
 reading = "the semi-structured data types page: ARRAY and OBJECT types; ARRAY constants [<value>, ...] and OBJECT constants { <key>: <value>, ... } with string-literal keys and any expression as value, {} and [] empty, {*} building an OBJECT from the columns; array indexes are 0-based, nest as a[0][0], and an index past the end gives NULL; obj['key'] reads a value by key and equals obj:key"
-cases = []
+cases = ["cases/translation/expressions/data-types-semistructured.array.toml#t001_from_variant"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.array.t002"
@@ -288,9 +277,8 @@ target = "NULL"
 note = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies."
 catches = "NULL replaced by a value, or the cast raising for NULL"
 reading = "the semi-structured data types page: ARRAY and OBJECT types; ARRAY constants [<value>, ...] and OBJECT constants { <key>: <value>, ... } with string-literal keys and any expression as value, {} and [] empty, {*} building an OBJECT from the columns; array indexes are 0-based, nest as a[0][0], and an index past the end gives NULL; obj['key'] reads a value by key and equals obj:key"
-cases = []
+cases = ["cases/translation/expressions/data-types-semistructured.array.toml#t002_null"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.array-index-access.t001"
@@ -300,9 +288,8 @@ target = "a[0], a[2] and a[0][0]"
 note = "The page: indexes are 0-based, and arrays nest, so a[0][0] is the first element of the first element."
 catches = "a 1-based index, or the nested access refused"
 reading = "the semi-structured data types page: ARRAY and OBJECT types; ARRAY constants [<value>, ...] and OBJECT constants { <key>: <value>, ... } with string-literal keys and any expression as value, {} and [] empty, {*} building an OBJECT from the columns; array indexes are 0-based, nest as a[0][0], and an index past the end gives NULL; obj['key'] reads a value by key and equals obj:key"
-cases = []
+cases = ["cases/translation/expressions/data-types-semistructured.array-index-access.toml#t001_zero_based"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.array-index-access.t002"
@@ -313,9 +300,8 @@ target = "an index past the end"
 note = "The page: accessing an element beyond the end of an array returns NULL."
 catches = "an error, or the last element returned"
 reading = "the semi-structured data types page: ARRAY and OBJECT types; ARRAY constants [<value>, ...] and OBJECT constants { <key>: <value>, ... } with string-literal keys and any expression as value, {} and [] empty, {*} building an OBJECT from the columns; array indexes are 0-based, nest as a[0][0], and an index past the end gives NULL; obj['key'] reads a value by key and equals obj:key"
-cases = []
+cases = ["cases/translation/expressions/data-types-semistructured.array-index-access.toml#t002_past_end"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.array-index-access.t003"
@@ -325,9 +311,8 @@ target = "NULL array"
 note = "A NULL array beside a set one; indexing NULL gives NULL."
 catches = "a value read from NULL, or an error"
 reading = "the semi-structured data types page: ARRAY and OBJECT types; ARRAY constants [<value>, ...] and OBJECT constants { <key>: <value>, ... } with string-literal keys and any expression as value, {} and [] empty, {*} building an OBJECT from the columns; array indexes are 0-based, nest as a[0][0], and an index past the end gives NULL; obj['key'] reads a value by key and equals obj:key"
-cases = []
+cases = ["cases/translation/expressions/data-types-semistructured.array-index-access.toml#t003_null"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.colon-subscript-dot.t001"
@@ -337,9 +322,8 @@ target = "OBJECT constant"
 note = "The page's examples: {} is empty, {'key1': 'value1', 'key2': 'value2'} takes literals and {'key1': c + 1, 'key2': c + 2} expressions."
 catches = "the expressions taken as text, or {} read as NULL"
 reading = "the semi-structured data types page: ARRAY and OBJECT types; ARRAY constants [<value>, ...] and OBJECT constants { <key>: <value>, ... } with string-literal keys and any expression as value, {} and [] empty, {*} building an OBJECT from the columns; array indexes are 0-based, nest as a[0][0], and an index past the end gives NULL; obj['key'] reads a value by key and equals obj:key"
-cases = []
+cases = ["cases/translation/expressions/data-types-semistructured.colon-subscript-dot.toml#t001_constant"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.colon-subscript-dot.t002"
@@ -349,9 +333,8 @@ target = "{*}"
 note = "The page: {*} builds an OBJECT with the column names as keys and their values as values."
 catches = "the wildcard refused, or the keys written in another case"
 reading = "the semi-structured data types page: ARRAY and OBJECT types; ARRAY constants [<value>, ...] and OBJECT constants { <key>: <value>, ... } with string-literal keys and any expression as value, {} and [] empty, {*} building an OBJECT from the columns; array indexes are 0-based, nest as a[0][0], and an index past the end gives NULL; obj['key'] reads a value by key and equals obj:key"
-cases = []
+cases = ["cases/translation/expressions/data-types-semistructured.colon-subscript-dot.toml#t002_wildcard"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.colon-subscript-dot.t003"
@@ -361,9 +344,8 @@ target = "{t.*} over a join"
 note = "The page: the wildcard may be qualified with a table name or alias, taking only that table's columns."
 catches = "both tables' columns taken, or the qualifier refused"
 reading = "the semi-structured data types page: ARRAY and OBJECT types; ARRAY constants [<value>, ...] and OBJECT constants { <key>: <value>, ... } with string-literal keys and any expression as value, {} and [] empty, {*} building an OBJECT from the columns; array indexes are 0-based, nest as a[0][0], and an index past the end gives NULL; obj['key'] reads a value by key and equals obj:key"
-cases = []
+cases = ["cases/translation/expressions/data-types-semistructured.colon-subscript-dot.toml#t003_qualified_wildcard"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.colon-subscript-dot.t004"
@@ -373,9 +355,8 @@ target = "{* ILIKE 'col1%'}"
 note = "The page: ILIKE in an object constant keeps the columns whose names match the pattern."
 catches = "the pattern ignored, or matched case-sensitively"
 reading = "the semi-structured data types page: ARRAY and OBJECT types; ARRAY constants [<value>, ...] and OBJECT constants { <key>: <value>, ... } with string-literal keys and any expression as value, {} and [] empty, {*} building an OBJECT from the columns; array indexes are 0-based, nest as a[0][0], and an index past the end gives NULL; obj['key'] reads a value by key and equals obj:key"
-cases = []
+cases = ["cases/translation/expressions/data-types-semistructured.colon-subscript-dot.toml#t004_wildcard_ilike"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.colon-subscript-dot.t005"
@@ -385,9 +366,8 @@ target = "{* EXCLUDE col1} and {* EXCLUDE (col1, col2)}"
 note = "The page: EXCLUDE in an object constant leaves out one column, or a parenthesised list of columns."
 catches = "only the first excluded column left out, or EXCLUDE ignored"
 reading = "the semi-structured data types page: ARRAY and OBJECT types; ARRAY constants [<value>, ...] and OBJECT constants { <key>: <value>, ... } with string-literal keys and any expression as value, {} and [] empty, {*} building an OBJECT from the columns; array indexes are 0-based, nest as a[0][0], and an index past the end gives NULL; obj['key'] reads a value by key and equals obj:key"
-cases = []
+cases = ["cases/translation/expressions/data-types-semistructured.colon-subscript-dot.toml#t005_wildcard_exclude"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.colon-subscript-dot.t006"
@@ -399,7 +379,7 @@ catches = "the pair added to the wildcard object"
 reading = "the semi-structured data types page: ARRAY and OBJECT types; ARRAY constants [<value>, ...] and OBJECT constants { <key>: <value>, ... } with string-literal keys and any expression as value, {} and [] empty, {*} building an OBJECT from the columns; array indexes are 0-based, nest as a[0][0], and an index past the end gives NULL; obj['key'] reads a value by key and equals obj:key"
 cases = []
 required = true
-held = "SQLQuack rejects it at parse time (SQ0001), and a parse refusal does not count as a translation result yet; it also awaits a Snowflake receipt"
+held = "SQLQuack rejects it at parse time (SQ0001), and a parse refusal does not count as a translation result yet"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.colon-subscript-dot.t007"
@@ -411,7 +391,7 @@ catches = "both tables' columns merged into one object"
 reading = "the semi-structured data types page: ARRAY and OBJECT types; ARRAY constants [<value>, ...] and OBJECT constants { <key>: <value>, ... } with string-literal keys and any expression as value, {} and [] empty, {*} building an OBJECT from the columns; array indexes are 0-based, nest as a[0][0], and an index past the end gives NULL; obj['key'] reads a value by key and equals obj:key"
 cases = []
 required = true
-held = "SQLQuack rejects it at parse time (SQ0001), and a parse refusal does not count as a translation result yet; it also awaits a Snowflake receipt"
+held = "SQLQuack rejects it at parse time (SQ0001), and a parse refusal does not count as a translation result yet"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.colon-subscript-dot.t008"
@@ -421,9 +401,8 @@ target = "a NULL value"
 note = "The page: neither the key nor the value should be NULL; an expression value that is NULL in one row shows what Snowflake does with it, so the recording decides."
 catches = "a value where Snowflake records none, or the reverse"
 reading = "the semi-structured data types page: ARRAY and OBJECT types; ARRAY constants [<value>, ...] and OBJECT constants { <key>: <value>, ... } with string-literal keys and any expression as value, {} and [] empty, {*} building an OBJECT from the columns; array indexes are 0-based, nest as a[0][0], and an index past the end gives NULL; obj['key'] reads a value by key and equals obj:key"
-cases = []
+cases = ["cases/translation/expressions/data-types-semistructured.colon-subscript-dot.toml#t008_null_value"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.object.t001"
@@ -433,9 +412,8 @@ target = "VARIANT to OBJECT"
 note = "A JSON object cast to OBJECT keeps its keys and values, nested ones included."
 catches = "keys reordered into other values, or the object turned into text"
 reading = "the semi-structured data types page: ARRAY and OBJECT types; ARRAY constants [<value>, ...] and OBJECT constants { <key>: <value>, ... } with string-literal keys and any expression as value, {} and [] empty, {*} building an OBJECT from the columns; array indexes are 0-based, nest as a[0][0], and an index past the end gives NULL; obj['key'] reads a value by key and equals obj:key"
-cases = []
+cases = ["cases/translation/expressions/data-types-semistructured.object.toml#t001_from_variant"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.object.t002"
@@ -445,9 +423,8 @@ target = "NULL"
 note = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies."
 catches = "NULL replaced by a value, or the cast raising for NULL"
 reading = "the semi-structured data types page: ARRAY and OBJECT types; ARRAY constants [<value>, ...] and OBJECT constants { <key>: <value>, ... } with string-literal keys and any expression as value, {} and [] empty, {*} building an OBJECT from the columns; array indexes are 0-based, nest as a[0][0], and an index past the end gives NULL; obj['key'] reads a value by key and equals obj:key"
-cases = []
+cases = ["cases/translation/expressions/data-types-semistructured.object.toml#t002_null"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.object-key-access.t001"
@@ -457,9 +434,8 @@ target = "obj['key'] and obj:key"
 note = "The page: obj['thirteen'] and obj:thirteen return the same value."
 catches = "the bracket form refused, or the two giving different values"
 reading = "the semi-structured data types page: ARRAY and OBJECT types; ARRAY constants [<value>, ...] and OBJECT constants { <key>: <value>, ... } with string-literal keys and any expression as value, {} and [] empty, {*} building an OBJECT from the columns; array indexes are 0-based, nest as a[0][0], and an index past the end gives NULL; obj['key'] reads a value by key and equals obj:key"
-cases = []
+cases = ["cases/translation/expressions/data-types-semistructured.object-key-access.toml#t001_brackets_and_colon"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.object-key-access.t002"
@@ -469,9 +445,8 @@ target = "a key the object does not have"
 note = "A key absent from the object; the page gives no rule, so the recording decides (NULL or an error)."
 catches = "a value where Snowflake gives none, or the reverse"
 reading = "the semi-structured data types page: ARRAY and OBJECT types; ARRAY constants [<value>, ...] and OBJECT constants { <key>: <value>, ... } with string-literal keys and any expression as value, {} and [] empty, {*} building an OBJECT from the columns; array indexes are 0-based, nest as a[0][0], and an index past the end gives NULL; obj['key'] reads a value by key and equals obj:key"
-cases = []
+cases = ["cases/translation/expressions/data-types-semistructured.object-key-access.toml#t002_missing_key"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.object-key-access.t003"
@@ -481,9 +456,8 @@ target = "NULL object"
 note = "A NULL object beside a set one; a key of NULL gives NULL."
 catches = "a value read from NULL, or an error"
 reading = "the semi-structured data types page: ARRAY and OBJECT types; ARRAY constants [<value>, ...] and OBJECT constants { <key>: <value>, ... } with string-literal keys and any expression as value, {} and [] empty, {*} building an OBJECT from the columns; array indexes are 0-based, nest as a[0][0], and an index past the end gives NULL; obj['key'] reads a value by key and equals obj:key"
-cases = []
+cases = ["cases/translation/expressions/data-types-semistructured.object-key-access.toml#t003_null"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.subscript-dot.t001"
@@ -493,9 +467,8 @@ target = "ARRAY constant"
 note = "The page's examples: [] is empty, and [1, 'value1'] and [c + 1, c + 2] take literals and expressions."
 catches = "the expressions taken as text, or [] read as NULL"
 reading = "the semi-structured data types page: ARRAY and OBJECT types; ARRAY constants [<value>, ...] and OBJECT constants { <key>: <value>, ... } with string-literal keys and any expression as value, {} and [] empty, {*} building an OBJECT from the columns; array indexes are 0-based, nest as a[0][0], and an index past the end gives NULL; obj['key'] reads a value by key and equals obj:key"
-cases = []
+cases = ["cases/translation/expressions/data-types-semistructured.subscript-dot.toml#t001_constant"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-semistructured.subscript-dot.t002"
@@ -505,9 +478,8 @@ target = "a NULL element"
 note = "The page's example [12, 'twelve', NULL], with a column that is NULL in one row: the recording shows how a SQL NULL element is stored."
 catches = "the NULL element dropped, or the array itself made NULL"
 reading = "the semi-structured data types page: ARRAY and OBJECT types; ARRAY constants [<value>, ...] and OBJECT constants { <key>: <value>, ... } with string-literal keys and any expression as value, {} and [] empty, {*} building an OBJECT from the columns; array indexes are 0-based, nest as a[0][0], and an index past the end gives NULL; obj['key'] reads a value by key and equals obj:key"
-cases = []
+cases = ["cases/translation/expressions/data-types-semistructured.subscript-dot.toml#t002_null_element"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-text.dollar-quoted-string-constant.t001"
@@ -517,9 +489,8 @@ target = "quote and backslash"
 note = "The page: inside $$ a quote and a backslash are literal, so $$it's a\\n$$ is eight characters with a backslash, not a newline."
 catches = "the backslash read as an escape, or the quote ending the string"
 reading = "the string data types page: a string constant between $$ delimiters may hold quotes, backslashes, newlines and any other character except $$ without escaping, and is always read literally"
-cases = []
+cases = ["cases/translation/expressions/data-types-text.dollar-quoted-string-constant.toml#t001_literal"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-text.dollar-quoted-string-constant.t002"
@@ -529,9 +500,8 @@ target = "a newline inside $$"
 note = "The page: a newline inside $$ is kept as part of the string."
 catches = "the newline dropped or rejected"
 reading = "the string data types page: a string constant between $$ delimiters may hold quotes, backslashes, newlines and any other character except $$ without escaping, and is always read literally"
-cases = []
+cases = ["cases/translation/expressions/data-types-text.dollar-quoted-string-constant.toml#t002_newline"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-text.dollar-quoted-string-constant.t003"
@@ -541,9 +511,8 @@ target = "$$abc$$ and 'abc'"
 note = "The page: dollar-quoted and single-quoted constants denote the same string."
 catches = "the delimiters kept in the value"
 reading = "the string data types page: a string constant between $$ delimiters may hold quotes, backslashes, newlines and any other character except $$ without escaping, and is always read literally"
-cases = []
+cases = ["cases/translation/expressions/data-types-text.dollar-quoted-string-constant.toml#t003_equivalent"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-text.dollar-quoted-string-constant.t004"
@@ -553,9 +522,8 @@ target = "a single $ inside"
 note = "The page: any character except a pair of dollar signs may appear, so a single $ is part of the string."
 catches = "the single $ read as a delimiter"
 reading = "the string data types page: a string constant between $$ delimiters may hold quotes, backslashes, newlines and any other character except $$ without escaping, and is always read literally"
-cases = []
+cases = ["cases/translation/expressions/data-types-text.dollar-quoted-string-constant.toml#t004_lone_dollar"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.data-types-text.dollar-quoted-string-constant.t005"
@@ -566,9 +534,8 @@ target = "$$$$"
 note = "An empty dollar-quoted constant; the page does not mention it, so the recording decides."
 catches = "the empty string read as NULL, or the four dollars read as text"
 reading = "the string data types page: a string constant between $$ delimiters may hold quotes, backslashes, newlines and any other character except $$ without escaping, and is always read literally"
-cases = []
+cases = ["cases/translation/expressions/data-types-text.dollar-quoted-string-constant.toml#t005_empty"]
 required = true
-held = "awaits a Snowflake receipt"
 
 [[obligation]]
 id = "sf.expressions.operators-arithmetic.add.t001"
