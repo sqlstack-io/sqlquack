@@ -1271,3 +1271,105 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 
 [review.definitions]
 "pg.ddl.create-type.input-output" = "20716ea4ec963e9bc9f08b558b4daf5cd8466d166a93b1dc022307d580a66b1e"
+
+[[review]]
+id = "pg-auditor-ddl-014"
+reviewer_lane = "auditor"
+family = "ddl"
+parser_tree = "dcaf29316f2588c4d6ff64bb1a497563f5cf8ecf"
+reviewed_utc = "2026-11-06T13:48:55Z"
+verdict = "approved"
+forms = [
+  "pg.ddl.create-access-method",
+  "pg.ddl.create-cast.with-function",
+  "pg.ddl.create-cast.with-inout",
+  "pg.ddl.create-cast.without-function",
+  "pg.ddl.create-collation.from",
+  "pg.ddl.create-collation.name",
+  "pg.ddl.create-conversion",
+  "pg.ddl.create-domain",
+  "pg.ddl.create-event-trigger",
+  "pg.ddl.create-extension",
+  "pg.ddl.create-foreign-data-wrapper",
+  "pg.ddl.create-language.handler",
+  "pg.ddl.create-language.name",
+  "pg.ddl.create-operator",
+  "pg.ddl.create-operator-class",
+  "pg.ddl.create-operator-family",
+  "pg.ddl.create-publication",
+  "pg.ddl.create-schema.if-not-exists",
+  "pg.ddl.create-schema.if-not-exists-authorization",
+  "pg.ddl.create-server",
+  "pg.ddl.create-statistics.from-table-name",
+  "pg.ddl.create-statistics.table-name",
+  "pg.ddl.create-subscription",
+  "pg.ddl.create-tablespace",
+  "pg.ddl.create-text-search-configuration",
+  "pg.ddl.create-text-search-dictionary",
+  "pg.ddl.create-text-search-parser",
+  "pg.ddl.create-text-search-template",
+  "pg.ddl.create-transform",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree dcaf2931; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.ddl.create-access-method" = "5e9e50f116b87134fff9e69b0baf8e5cc5b9bd96cad58daae609d69b62f12a8b"
+"pg.ddl.create-cast.with-function" = "dcae83f76fcbf16f7b062b84ee5ebb816db7bc94a3db47652f45781e4cf76a1c"
+"pg.ddl.create-cast.with-inout" = "f8538ccec3d595946c622718efc376c553922f6d236f9e225b8a688a48d03ecb"
+"pg.ddl.create-cast.without-function" = "ef64a1e692695fb4889b017823818b8b07921e1df0a89c735ed5a68fb32f8aa7"
+"pg.ddl.create-collation.from" = "f8c5e5eb319657d2a1db1540d6b19659d83195dffa8f66f061e1c841921c5119"
+"pg.ddl.create-collation.name" = "1e9230ba5f4823de85e53cb9b952889c4b57c223fa7010d75c156a747f2a4176"
+"pg.ddl.create-conversion" = "5ffcd4981afc01268530d34cf3f0e89838c668ce3738782bf788270adc92e1da"
+"pg.ddl.create-domain" = "7896c6f6c473d7ecdd2bf6ac2e70522042284a1d21e0d26c4c9b52ee33cfee41"
+"pg.ddl.create-event-trigger" = "44905e6a86143200d26ca64b5258ccdb4552c09c6ca7d9d73d20a0476cfad55d"
+"pg.ddl.create-extension" = "30a2421cd7e24156848b8a9e0d7f4ce2f152bdd3b0276d5720ea80c51f27c54b"
+"pg.ddl.create-foreign-data-wrapper" = "9d98ccbcc56c0b26584ee913b2b00d2017a711f11a0ed5388031e101449d1a32"
+"pg.ddl.create-language.handler" = "a4db4a35f73b9ebb49ea72737cf520a074d3025a11f8f5880afc05641bf22a13"
+"pg.ddl.create-language.name" = "895ce45594bfc9eec9c4c00194b23c6d59100bbbfeda0dcd8fadd054aa129812"
+"pg.ddl.create-operator" = "56ca138e16e3062236ab164387251fe9a97f0eff44c3252e78cde0389696e11a"
+"pg.ddl.create-operator-class" = "10e0a1eaa2d0b1c8252ecab03660fd4c52e52ce9eba692a40e25554f896a499c"
+"pg.ddl.create-operator-family" = "56666e56f2670e967996b721e54276541d02aef069b100296a9740203ec47aa7"
+"pg.ddl.create-publication" = "af3d8df7c78be49b3f488f79b8f675ddf16d1ad26e40b70f709e7c24a15c977d"
+"pg.ddl.create-schema.if-not-exists" = "ba0f99bf8449fa792ee16dc4d359b6662b1b4b287059c4a0ddd07535f67c0fc1"
+"pg.ddl.create-schema.if-not-exists-authorization" = "45da124b6947798466285431c7526bbb9c76bc99afcb2521b728f58c4c7be2bd"
+"pg.ddl.create-server" = "d48a90c18d12c403f047771a0c1de4536d2913551edaee9aa2dd35c83aa6f675"
+"pg.ddl.create-statistics.from-table-name" = "1e7406d80801fe22aeaabeed4bbf5aebf66ef2d2af4822091fa524b32f9eee5f"
+"pg.ddl.create-statistics.table-name" = "5a2108effa5706e3421fc380b8412005bbe3f034797ef8812b44db6970143d2c"
+"pg.ddl.create-subscription" = "3574c10be4f2160eb43876b8c09a51d866b3e85aa7f353d18dabd9a5399958be"
+"pg.ddl.create-tablespace" = "8f386faea1464055e57f3f4a726b0cb3237f3b634787aa92ca38e11375e55182"
+"pg.ddl.create-text-search-configuration" = "3edd9eed84a9594f2c388074b39d35cec20b6aa0c599c4948dc593c3c64ef14a"
+"pg.ddl.create-text-search-dictionary" = "d0f52fb0cdd5dc66d782381aa0c031f0d3d2ce9ee5fd07943a9685ac03d6bd99"
+"pg.ddl.create-text-search-parser" = "cd94a9bc8feb05cab38756b2e5020b88a1d91876b7537832ed10dfd980f96c08"
+"pg.ddl.create-text-search-template" = "7392f8a3ec235af8eaa771e9cd01f0afb85db27bebaffb84c0239e00271387bc"
+"pg.ddl.create-transform" = "de2ea6d8034b488660d6c9447a13c3c87c01c04a1ad7e71d045de94300789931"
+
+[review.definitions]
+"pg.ddl.create-access-method" = "69fb4d8a38f307259c26f7851914cc29defe229451365458f71277d4d8470a71"
+"pg.ddl.create-cast.with-function" = "4a2b176e59b2ec898e4674419442a9e748d6d0893bd551e5548113fb80e50ea5"
+"pg.ddl.create-cast.with-inout" = "0cb0f2712ac1bd59c803352a5fd1f2720960651354c07dbda2439d11c413fb07"
+"pg.ddl.create-cast.without-function" = "b1f84b5b7243ab57d9f084f5c297f94d224084ead8996caf52cc90144bf4ee5b"
+"pg.ddl.create-collation.from" = "c2e338e516c0bc2c0c0ac8fd26238f80fed9af1d1eae59d7f5dc112c352c80c4"
+"pg.ddl.create-collation.name" = "19da7de45142617268a7bf7b6ef17584059b857fc18d8ab6bcd5bcb1a689e91e"
+"pg.ddl.create-conversion" = "f77e8fda4bbc6fe1cdb4f8bfcf02c7413ff517c198bffbf8bb3bba5fa31a1b6d"
+"pg.ddl.create-domain" = "c62c6bc2d580204d8b5609aa53d97df1b9c64a0957f4985c7930333057fa7ccf"
+"pg.ddl.create-event-trigger" = "ec113fde8afb1d7c3dc10ce51603183f563e6e911d39e01db36a614494ab5537"
+"pg.ddl.create-extension" = "4f5180396a305af382c2d515f8de706bc2afa30ad4e1d0ce760c4ba49dc4441c"
+"pg.ddl.create-foreign-data-wrapper" = "f23ea2178f0c2c2a61af93a561fd1958b999b9be829bd6db5350344b0ce954ae"
+"pg.ddl.create-language.handler" = "c02d69166a87e5ab1039a2ab49628f2f1eca2bcfda712db084d47cdfa8d80ead"
+"pg.ddl.create-language.name" = "f00e102df9a84039fc05a66a80652b7df01f051dcdabb7efaccee7ea8d395978"
+"pg.ddl.create-operator" = "d4e5f0b713e21b8ba728ffa830ac8b4696215da2c44d59c38fe4a778d60343d6"
+"pg.ddl.create-operator-class" = "7b5dc9e2273b677290078299f5574ad726ff3c6b0a4de411622ae8ccd0049010"
+"pg.ddl.create-operator-family" = "9e28aceff1f4acad87c54755a800b26d622045cf2c91911c08b46faee21b83f3"
+"pg.ddl.create-publication" = "c128a4b91fe7ac8af21cd11328ea3c2bb4852c92d8a1032b1766f930021ed23c"
+"pg.ddl.create-schema.if-not-exists" = "aacb7ee5ffe4ad753074fec5cbd0458187809127e534e028d068dce247c33908"
+"pg.ddl.create-schema.if-not-exists-authorization" = "a99c6a767e5a1671e894ca6680c5d567406b8095f95c3ebd3e982e92b03631e8"
+"pg.ddl.create-server" = "2e3eb75f9b4ad682e5dfaa35f8c6157a23613e48996a59eea9bfe8628828fa07"
+"pg.ddl.create-statistics.from-table-name" = "738d75eaa96794b8d3aba063c16af682d8f5d512e506bbef9d3efffff4abb1e5"
+"pg.ddl.create-statistics.table-name" = "65b1e1f82804a9b575ad3cfda41deda9133373a7a0cbd7acefc28ec51239ff6d"
+"pg.ddl.create-subscription" = "856c712c6190b960304af745b22d28d9312080cba8a858431ef6dbaebe90dd39"
+"pg.ddl.create-tablespace" = "a5d94276a0441ba96f814fc88ab8a3fce614486993d39fcd912055116c4763cb"
+"pg.ddl.create-text-search-configuration" = "54ea46225fdeaf9310e0ea02f6a2f6098f5d11bf208b2cdfb9b508fb6ebef4b8"
+"pg.ddl.create-text-search-dictionary" = "0803d76ffaeabd0274dcab10ee6c202f804bf55874bc89b936fa00f02997e704"
+"pg.ddl.create-text-search-parser" = "ce677f2dcbc6f05ddf6a011bd50b33b3c5d8b33caffffacf00989742b16a293c"
+"pg.ddl.create-text-search-template" = "93a9a4c653ca879d4daff53d499f877066d71cd058067399e5f9030f1ffca4a0"
+"pg.ddl.create-transform" = "597b5010e569290c480e7c09912c8ab8c4338c4b27c5746eb05e49270adf926c"
