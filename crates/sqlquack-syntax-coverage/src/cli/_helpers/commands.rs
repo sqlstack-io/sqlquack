@@ -10,20 +10,29 @@ use std::time::Duration;
 use serde_json::{Value, json};
 
 use crate::check::main::check_coverage::check_coverage;
-use crate::check::models::{CheckResult, FormResult, ObligationResult, Reason};
-use crate::cli::_helpers::local::{frozen_catalogue, parser_tree, snowflake_verdict};
+use crate::check::models::{
+    CheckResult, FormResult, LocalFailure, LocalVerdict, ObligationResult, Reason,
+};
+use crate::cli::_helpers::local::{
+    frozen_catalogue, parser_tree, postgres_verdict, snowflake_verdict,
+};
 use crate::cli::_helpers::output::{print, say};
 use crate::cli::_helpers::worker::Worker;
 use crate::cli::models::{Common, TranslationArguments};
-use crate::formats::constants::SNAPSHOT_FORMAT;
+use crate::formats::constants::{SNAPSHOT_FORMAT, SNOWFLAKE_DIALECT};
+use crate::formats::main::current_dialect::current_dialect;
 use crate::formats::main::load_coverage::load_coverage;
+use crate::formats::main::load_focus::load_focus;
 use crate::formats::main::obligation_form::obligation_form;
-use crate::formats::models::{Obligation, ObligationKind, Review, SyntaxCoverage};
+use crate::formats::models::{
+    FocusFile, LocalParser, Obligation, ObligationKind, Review, SyntaxCoverage,
+};
 use crate::report::main::diff_snapshots::diff_snapshots;
+use crate::report::main::focus_report::focus_report;
 use crate::report::main::snapshot::snapshot;
 use crate::report::main::summarize::summarize;
 use crate::report::main::tally_by::tally_by;
-use crate::report::models::{Snapshot, SnapshotDiff, Summary};
+use crate::report::models::{FocusReport, FocusedSummary, Snapshot, SnapshotDiff, Summary};
 use crate::translation::constants::TRANSLATION_DIR;
 use crate::translation::main::load_translation_files::load_translation_files;
 use crate::translation::main::measure_translation::measure_translation;
@@ -43,13 +52,17 @@ const PARSE_BOUND: Duration = Duration::from_secs(10);
 const PARSE_MEMORY_KIB: u64 = 4 * 1024 * 1024;
 
 /// The worker command: this binary, its memory bounded by the shell before it starts.
-fn worker_command(binary: PathBuf) -> Box<dyn Fn() -> Command> {
+fn worker_command(binary: PathBuf, local_parser: LocalParser) -> Box<dyn Fn() -> Command> {
+    let worker: &str = match local_parser {
+        LocalParser::Postgres => "parse-worker --postgres",
+        LocalParser::Snowflake | LocalParser::None => "parse-worker",
+    };
     Box::new(move || {
         let mut command = Command::new("sh");
         command
             .arg("-c")
             .arg(format!(
-                "ulimit -v {PARSE_MEMORY_KIB} && exec \"$0\" parse-worker"
+                "ulimit -v {PARSE_MEMORY_KIB} && exec \"$0\" {worker}"
             ))
             .arg(&binary);
         command
@@ -83,9 +96,16 @@ fn checked(coverage: &SyntaxCoverage) -> Result<CheckResult, ExitCode> {
         ));
         ExitCode::FAILURE
     })?;
-    let worker: RefCell<Worker> = RefCell::new(Worker::new(worker_command(binary), PARSE_BOUND));
-    let check: CheckResult = check_coverage(coverage, tree.as_deref(), &|sql| {
-        worker.borrow_mut().verdict(sql)
+    let local_parser: LocalParser = current_dialect().local_parser;
+    let worker: RefCell<Worker> = RefCell::new(Worker::new(
+        worker_command(binary, local_parser),
+        PARSE_BOUND,
+    ));
+    let check: CheckResult = check_coverage(coverage, tree.as_deref(), &|sql| match local_parser {
+        LocalParser::Snowflake | LocalParser::Postgres => worker.borrow_mut().verdict(sql),
+        LocalParser::None => LocalVerdict::Failed {
+            failure: LocalFailure::NoParser,
+        },
     });
     for problem in &check.problems {
         say(problem);
@@ -96,6 +116,21 @@ fn checked(coverage: &SyntaxCoverage) -> Result<CheckResult, ExitCode> {
         check.problems.len()
     ));
     Ok(check)
+}
+
+/// Fails a Snowflake-to-DuckDB measure on any other dialect's root.
+pub(crate) fn snowflake_only(command: &str) -> Result<(), ExitCode> {
+    let dialect = current_dialect();
+    match dialect.name == SNOWFLAKE_DIALECT {
+        true => Ok(()),
+        false => {
+            say(&format!(
+                "FAILED, {command} measures Snowflake conversion; this root is {}",
+                dialect.name
+            ));
+            Err(ExitCode::FAILURE)
+        }
+    }
 }
 
 fn exit(check: &CheckResult) -> ExitCode {
@@ -132,8 +167,19 @@ pub(crate) fn validate(common: &Common) -> Result<ExitCode, ExitCode> {
     Ok(ExitCode::SUCCESS)
 }
 
-pub(crate) fn summary(common: &Common) -> Result<ExitCode, ExitCode> {
-    let check: CheckResult = checked(&load(&common.root)?)?;
+pub(crate) fn summary(focus: Option<&Path>, common: &Common) -> Result<ExitCode, ExitCode> {
+    let coverage: SyntaxCoverage = load(&common.root)?;
+    let focus: Option<FocusFile> = match focus {
+        None => None,
+        Some(path) => Some(load_focus(path, &coverage).map_err(|problems| {
+            for problem in &problems {
+                say(problem);
+            }
+            say(&format!("FAILED, {} focus problems", problems.len()));
+            ExitCode::FAILURE
+        })?),
+    };
+    let check: CheckResult = checked(&coverage)?;
     let summary: Summary = summarize(&check);
     let total = &summary.total;
     let mut text: Vec<String> = vec![format!(
@@ -151,7 +197,44 @@ pub(crate) fn summary(common: &Common) -> Result<ExitCode, ExitCode> {
             .iter()
             .map(|(reason, count)| format!("  {reason:?}: {count} forms")),
     );
-    print(common.json, &summary, &text);
+    let Some(focus) = focus else {
+        print(common.json, &summary, &text);
+        return Ok(exit(&check));
+    };
+    let report: FocusReport = focus_report(&focus, &check);
+    text.push(format!(
+        "focus {}: {} of {} forms verified; obligations {}/{}",
+        report.dialect,
+        report.total.verified,
+        report.total.forms,
+        report.total.satisfied_obligations,
+        report.total.required_obligations
+    ));
+    text.extend(report.by_use.iter().map(|(letter, tally)| {
+        format!(
+            "  use {letter}: {} of {} forms verified",
+            tally.verified, tally.forms
+        )
+    }));
+    text.extend(report.forms.iter().map(|line| {
+        format!(
+            "  {} [{}] {:?} {}/{} {:?}",
+            line.form,
+            line.uses.join(""),
+            line.state,
+            line.satisfied_obligations,
+            line.required_obligations,
+            line.reasons
+        )
+    }));
+    print(
+        common.json,
+        &FocusedSummary {
+            summary,
+            focus: report,
+        },
+        &text,
+    );
     Ok(exit(&check))
 }
 
@@ -438,13 +521,17 @@ pub(crate) fn diff(
 }
 
 /// Reads one JSON string of SQL per line and prints the local verdict on each, flushed.
-pub(crate) fn parse_worker() -> Result<ExitCode, ExitCode> {
+pub(crate) fn parse_worker(postgres: bool) -> Result<ExitCode, ExitCode> {
+    let verdict_of: fn(&str) -> LocalVerdict = match postgres {
+        true => postgres_verdict,
+        false => snowflake_verdict,
+    };
     let stdout = std::io::stdout();
     for line in std::io::stdin().lock().lines() {
         let line: String = line.map_err(|_| ExitCode::FAILURE)?;
         let sql: String = serde_json::from_str(&line).map_err(|_| ExitCode::FAILURE)?;
         let verdict: String =
-            serde_json::to_string(&snowflake_verdict(&sql)).map_err(|_| ExitCode::FAILURE)?;
+            serde_json::to_string(&verdict_of(&sql)).map_err(|_| ExitCode::FAILURE)?;
         let mut out = stdout.lock();
         writeln!(out, "{verdict}")
             .and_then(|()| out.flush())
@@ -477,6 +564,7 @@ pub(crate) fn translation(
 ) -> Result<ExitCode, ExitCode> {
     let (sqlquack, family) = (&arguments.sqlquack, arguments.family.as_deref());
     let coverage: SyntaxCoverage = load(&common.root)?;
+    snowflake_only("translation")?;
     if family.is_some_and(|family| !coverage.catalogue.contains_key(family)) {
         say(&format!("FAILED, no family {}", family.unwrap_or_default()));
         return Err(ExitCode::FAILURE);

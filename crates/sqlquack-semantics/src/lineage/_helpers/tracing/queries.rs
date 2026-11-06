@@ -9,11 +9,13 @@ use sqlquack_syntax::expressions::queries::models::{Cte, OrderBy, Select, Union,
 
 use crate::lineage::_helpers::tracing::expressions::{expression_lineage, is_aggregate};
 use crate::lineage::_helpers::tracing::lineages::{combined, set_merged, traced_if, unresolved};
+use crate::lineage::_helpers::tracing::postgres_names::postgres_name;
 use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
 use crate::lineage::_helpers::tracing::sources::{from_sources, listed, values_query};
 use crate::lineage::_helpers::typing::rules::filtered_non_null;
 use crate::lineage::constants::{
-    DUCKDB_PROFILE, ORDINAL_BASE, RECURSION_LIMIT, SQL_STAR, SUBTOTAL_GROUPINGS, UNNAMED_CHARACTERS,
+    DUCKDB_PROFILE, ORDINAL_BASE, POSTGRES_PROFILE, RECURSION_LIMIT, SQL_STAR, SUBTOTAL_GROUPINGS,
+    UNNAMED_CHARACTERS,
 };
 use crate::lineage::models::{
     FromItems, Lineage, LineageContext, LineageScope, NamedQuery, Nullability, ResolvedQuery,
@@ -755,6 +757,7 @@ fn output_name(projection: &Expression, context: LineageContext<'_>) -> String {
             }
         }
         _ if context.profile.name() == DUCKDB_PROFILE => String::new(),
+        _ if context.profile.name() == POSTGRES_PROFILE => postgres_name(projection),
         _ => snowflake_name(projection, context).unwrap_or_default(),
     }
 }
