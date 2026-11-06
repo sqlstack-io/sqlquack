@@ -1,8 +1,9 @@
 //! The shapes of ids and timestamps.
 
+use crate::formats::_helpers::dialect::current_dialect;
 use crate::formats::constants::{
-    CASE_ID_LIMIT, DIGIT_PLACEHOLDER, FORM_ID_MIN_PARTS, FORM_PREFIX, OBLIGATION_DIGITS,
-    OBLIGATION_MARKER, SOURCE_PREFIX, UTC_SHAPE, UTC_SUFFIXES,
+    CASE_ID_LIMIT, DIGIT_PLACEHOLDER, FORM_ID_MIN_PARTS, OBLIGATION_DIGITS, OBLIGATION_MARKER,
+    SOURCE_PREFIX, UTC_SHAPE, UTC_SUFFIXES,
 };
 
 /// A lower-case name segment: letters, digits and inner hyphens or underscores.
@@ -30,11 +31,11 @@ pub(crate) fn is_obligation_number(text: &str) -> bool {
     })
 }
 
-/// `sf.<family>.<page-slug>[.<variant>…]`; no segment may read as an obligation number.
+/// `<dialect prefix>.<family>.<page-slug>[.<variant>…]`; no segment reads as an obligation number.
 pub(crate) fn is_form_id(id: &str, family: &str) -> bool {
     let parts: Vec<&str> = id.split('.').collect();
     parts.len() >= FORM_ID_MIN_PARTS
-        && parts[0] == FORM_PREFIX
+        && parts[0] == current_dialect().form_prefix
         && parts[1] == family
         && parts[2..]
             .iter()

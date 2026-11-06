@@ -1,0 +1,68 @@
+# Approvals by the independent syntax auditor (D235). Each listed form was read in full against its
+# PostgreSQL 18.6 documentation, its obligations, its cases with their PostgreSQL 18.6 receipts, and the
+# local parse trees. An approval holds while the form's definition hash and fingerprint are unchanged;
+# any change makes it stale until re-read. Entries are copied verbatim from the auditor's records on
+# wip/syntax-omission-audit (coverage/syntax/audits/pg-review-*.toml).
+
+[[review]]
+id = "pg-auditor-dml-001"
+reviewer_lane = "auditor"
+family = "dml"
+parser_tree = "6ba0c304312d074bf7620a74cc760722b322888d"
+reviewed_utc = "2026-11-06T07:48:06Z"
+verdict = "approved"
+forms = [
+  "pg.dml.copy.pre-7-3-from",
+  "pg.dml.copy.pre-7-3-to",
+  "pg.dml.copy.pre-9-0-from",
+  "pg.dml.copy.pre-9-0-to",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 6ba0c304; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.dml.copy.pre-7-3-from" = "3e6b0cf4fdde93f8d88a61a1438a300206bf0d1df431964f8ed14e4374369925"
+"pg.dml.copy.pre-7-3-to" = "79091f22bae6a053368f3075701244d9d30283c7a3adb1958df19679fefdf124"
+"pg.dml.copy.pre-9-0-from" = "b2e48eb0085d926e6cd5060ca0156ec84c81f01e5f7a2eb1461de14a384cabbc"
+"pg.dml.copy.pre-9-0-to" = "03183a5aec69d8872e6fdeafbeb03ba16187f044333e8b8bfd09683399d35a8e"
+
+[review.definitions]
+"pg.dml.copy.pre-7-3-from" = "2ea22902b8dfa0c40bbe82c70fe2a3ff3b7dc7db958314ae20cc38fcbaa5bbe6"
+"pg.dml.copy.pre-7-3-to" = "22cbf4b67db07477359e34f1f58ec4b955630afa826e95b6ec1b2c2d35cd3c9d"
+"pg.dml.copy.pre-9-0-from" = "bcda80f9d1e52716c42d1dbafea4eb5ac39e2bd984367fb13afef1683c21cd89"
+"pg.dml.copy.pre-9-0-to" = "75754882ccc1f4e448419f07ee7a3ca0be5efc0722e6877d13586098bf834a09"
+
+[[review]]
+id = "pg-auditor-dml-002"
+reviewer_lane = "auditor"
+family = "dml"
+parser_tree = "17b35dd8e162cf4f53a47da96498f6a4669a9164"
+reviewed_utc = "2026-11-06T08:23:56Z"
+verdict = "approved"
+forms = [
+  "pg.dml.truncate",
+]
+note = "Re-read in full after the parser fix for the batch-1 hold, against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 17b35dd8; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.dml.truncate" = "0f14d2044f7ed2d00497a7ec070306fdb8fcb45ac0c2ef7816fa960d140a4311"
+
+[review.definitions]
+"pg.dml.truncate" = "f42221b5a8e4fde5336f454914f7057bdadfdf85af8333706fb137d2d48dc54b"
+
+[[review]]
+id = "pg-auditor-dml-003"
+reviewer_lane = "auditor"
+family = "dml"
+parser_tree = "37050ece2046c9560a4ea42f87abfa43e1432125"
+reviewed_utc = "2026-11-06T08:56:35Z"
+verdict = "approved"
+forms = [
+  "pg.dml.copy.to",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 37050ece; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.dml.copy.to" = "f4cf57f27bf4a3446913c4883f8ba6015746bad86c8c7136b662542b2d5ec7a7"
+
+[review.definitions]
+"pg.dml.copy.to" = "b9601c2e9dd27a881b675b9c5f9ed36d2ca07528e83f65beee2e849732418a13"

@@ -12,12 +12,13 @@ use crate::lineage::_helpers::tracing::lineages::{combined, constant, traced_if,
 use crate::lineage::_helpers::tracing::queries::{expanded_star, resolved_query};
 use crate::lineage::_helpers::tracing::resolution::{column_lineage, key, positional_column};
 use crate::lineage::_helpers::typing::duckdb_types::cast_spelling;
+use crate::lineage::_helpers::typing::postgres_typing::postgres_cast_spelling;
 use crate::lineage::_helpers::typing::rules::{
     ValueType, computed_type, literal_type, mapped_timestamp, rendered_type, required_non_null,
 };
 use crate::lineage::constants::{
     AGGREGATE_FUNCTIONS, BOOLEAN_TYPE, DATE_PART_FUNCTIONS, DUCKDB_PROFILE, POSITIONAL_COLUMN_BASE,
-    SNOWFLAKE_JSON_HOLDERS, SNOWFLAKE_PROFILE, SNOWFLAKE_VARIANT_TYPE,
+    POSTGRES_PROFILE, SNOWFLAKE_JSON_HOLDERS, SNOWFLAKE_PROFILE, SNOWFLAKE_VARIANT_TYPE,
 };
 use crate::lineage::models::{
     Lineage, LineageContext, LineageScope, Nullability, ResolvedQuery, RowReads, TransformKind,
@@ -79,6 +80,7 @@ pub(crate) fn expression_lineage(
             let inner: Lineage = expression_lineage(&cast.this, scope, context);
             let target: Option<String> = match context.profile.name() {
                 DUCKDB_PROFILE => cast_spelling(&cast.to),
+                POSTGRES_PROFILE => postgres_cast_spelling(&cast.to),
                 _ => rendered_type(&cast.to),
             };
             let target: Option<Rc<str>> =

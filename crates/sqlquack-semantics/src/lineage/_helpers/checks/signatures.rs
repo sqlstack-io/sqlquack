@@ -333,7 +333,7 @@ pub(crate) fn check_call(
         name.as_str(),
         "coalesce" | "ifnull" | "nvl" | "greatest" | "least" | "nullif"
     ) {
-        let lenient: bool = name == NULLIF;
+        let lenient: bool = name == NULLIF && engine != Engine::Postgres;
         findings.extend(unify(&arguments, engine, family, (lenient, node)));
     }
     if matches!(node, Expression::Coalesce(_)) && arguments.is_empty() {

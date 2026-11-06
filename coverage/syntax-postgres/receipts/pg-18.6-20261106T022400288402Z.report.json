@@ -1,0 +1,29 @@
+{
+  "parser_checks": {
+    "do_block": 7363
+  },
+  "phases": {
+    "accepted": 346,
+    "runtime_error": 23,
+    "semantic_error": 2393,
+    "syntax_error": 4583,
+    "unsupported_feature": 18
+  },
+  "problems": [],
+  "receipts": 7363,
+  "refused": [
+    {
+      "case_id": "pg.ddl.create-function.sql-body-atomic.k165878311ab3",
+      "reason": "holds 2 statements, not one"
+    },
+    {
+      "case_id": "pg.ddl.create-function.sql-body-atomic.k56c9096c2c11",
+      "reason": "holds 2 statements, not one"
+    },
+    {
+      "case_id": "pg.ddl.create-procedure.sql-body-atomic.kb1e63914a044",
+      "reason": "holds 2 statements, not one"
+    }
+  ],
+  "run_id": "pg-18.6-20261106T022400288402Z"
+}

@@ -66,6 +66,22 @@ pub const OBLIGATION_ZERO: &str = "000";
 pub const INTERACTION_MEMBERS: usize = 2;
 /// The format every receipt declares.
 pub const RECEIPT_FORMAT: &str = "sqlquack-syntax-receipt/1";
+/// The receipt format of engines other than Snowflake: engine fields instead of the warehouse.
+pub const RECEIPT_FORMAT_ENGINE: &str = "sqlquack-syntax-receipt/2";
+/// A root's dialect settings; a root without one is the Snowflake root.
+pub const DIALECT_FILE: &str = "dialect.toml";
+/// The format a dialect file declares.
+pub const DIALECT_FORMAT: &str = "sqlquack-syntax-dialect/1";
+/// The dialect of a root without a dialect file.
+pub const SNOWFLAKE_DIALECT: &str = "snowflake";
+/// The parser crate a root's reviews bind to unless its dialect file names another.
+pub const SNOWFLAKE_PARSER_PATH: &str = "crates/sqlquack-syntax";
+/// The SQLBuild purposes a focus entry may name (A parsing … H the custom-rule API).
+pub const FOCUS_USES: [&str; 8] = ["A", "B", "C", "D", "E", "F", "G", "H"];
+/// The length of a SQLSTATE-style engine code.
+pub const ENGINE_CODE_LENGTH: usize = 5;
+/// Hex characters in a Git commit id.
+pub const GIT_COMMIT_LENGTH: usize = 40;
 /// The format every coverage snapshot, `baseline.json` included, declares.
 pub const SNAPSHOT_FORMAT: &str = "sqlquack-syntax-coverage-snapshot/1";
 /// The committed baseline the CI gate diffs against, relative to the coverage root.
