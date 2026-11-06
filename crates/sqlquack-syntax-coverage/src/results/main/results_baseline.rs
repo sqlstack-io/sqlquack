@@ -13,5 +13,7 @@ pub fn results_baseline(report: &ResultsReport) -> ResultsBaseline {
             .iter()
             .map(|form| (form.id.clone(), form.state))
             .collect(),
+        obligations: report.obligation_states.clone(),
+        retired: report.retired_obligations.clone(),
     }
 }

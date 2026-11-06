@@ -15,7 +15,7 @@ sqlquack function --name <NAME> --schema <SCHEMA> [OPTIONS] <BODY>
 ```
 
 ```bash
-sqlquack function --name NET_TOTAL --schema schema.json net_total.sql
+sqlquack function --name NET_TOTAL --schema schema.json --builtin-policy net_total.sql
 ```
 
 `BODY` is the file holding the function's body: a scalar function's expression, or a table

@@ -1,0 +1,75 @@
+category = "translation"
+construct = "sf.expressions.data-types-semistructured.colon-subscript-dot"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_constant"
+description = "The page's examples: {} is empty, {'key1': 'value1', 'key2': 'value2'} takes literals and {'key1': c + 1, 'key2': c + 2} expressions. Catches: the expressions taken as text, or {} read as NULL"
+columns = [{ name = "c", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+  ["10"],
+]
+query = "SELECT ordinal, {} AS e, {'key1': 'value1', 'key2': 'value2'} AS lit, {'key1': c + 1, 'key2': c + 2} AS expr FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_wildcard"
+description = "The page: {*} builds an OBJECT with the column names as keys and their values as values. Catches: the wildcard refused, or the keys written in another case"
+columns = [{ name = "col1", type = "NUMBER(38,0)" }, { name = "col2", type = "VARCHAR" }, { name = "other", type = "NUMBER(38,0)" }]
+rows = [
+  ["1", "'a'", "10"],
+  ["2", "NULL", "20"],
+]
+query = "SELECT ordinal, {*} AS r FROM (SELECT ordinal, col1, col2, other FROM input) ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_qualified_wildcard"
+description = "The page: the wildcard may be qualified with a table name or alias, taking only that table's columns. Catches: both tables' columns taken, or the qualifier refused"
+columns = [{ name = "col1", type = "NUMBER(38,0)" }, { name = "col2", type = "VARCHAR" }, { name = "other", type = "NUMBER(38,0)" }]
+rows = [
+  ["1", "'a'", "10"],
+  ["2", "NULL", "20"],
+]
+query = "SELECT t.ordinal, {d.*} AS r FROM input t JOIN (SELECT 1 AS k, 'x' AS v) d ON t.col1 = d.k ORDER BY t.ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_wildcard_ilike"
+description = "The page: ILIKE in an object constant keeps the columns whose names match the pattern. Catches: the pattern ignored, or matched case-sensitively"
+columns = [{ name = "col1", type = "NUMBER(38,0)" }, { name = "col2", type = "VARCHAR" }, { name = "other", type = "NUMBER(38,0)" }]
+rows = [
+  ["1", "'a'", "10"],
+  ["2", "NULL", "20"],
+]
+query = "SELECT ordinal, {* ILIKE 'col1%'} AS r FROM (SELECT ordinal, col1, col2, other FROM input) ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_wildcard_exclude"
+description = "The page: EXCLUDE in an object constant leaves out one column, or a parenthesised list of columns. Catches: only the first excluded column left out, or EXCLUDE ignored"
+columns = [{ name = "col1", type = "NUMBER(38,0)" }, { name = "col2", type = "VARCHAR" }, { name = "other", type = "NUMBER(38,0)" }]
+rows = [
+  ["1", "'a'", "10"],
+  ["2", "NULL", "20"],
+]
+query = "SELECT ordinal, {* EXCLUDE col1} AS one, {* EXCLUDE (col1, col2)} AS two FROM (SELECT ordinal, col1, col2, other FROM input) ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t008_null_value"
+description = "The page: neither the key nor the value should be NULL; an expression value that is NULL in one row shows what Snowflake does with it, so the recording decides. Catches: a value where Snowflake records none, or the reverse"
+columns = [{ name = "c", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["3"],
+]
+query = "SELECT ordinal, {'k': c, 'n': 1} AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

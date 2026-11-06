@@ -126,6 +126,7 @@ pub(crate) struct ColumnNameTestCase {
 pub(crate) struct PolicyFreeTestCase {
     pub(crate) description: &'static str,
     pub(crate) arguments: &'static [&'static str],
+    pub(crate) policy_file: Option<&'static str>,
     pub(crate) expected_exit_code: Option<i32>,
 }
 
@@ -292,4 +293,11 @@ pub(crate) struct SchemaErrorTestCase {
     pub(crate) description: &'static str,
     pub(crate) schema: &'static str,
     pub(crate) expected_error: &'static str,
+}
+
+/// Convert flags and the SQL convert prints under them, from standard output or `--json`'s `sql`.
+pub(crate) struct LayoutFlagsTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) flags: &'static [&'static str],
+    pub(crate) expected_sql: &'static str,
 }

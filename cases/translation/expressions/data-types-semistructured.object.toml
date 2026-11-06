@@ -1,0 +1,27 @@
+category = "translation"
+construct = "sf.expressions.data-types-semistructured.object"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_from_variant"
+description = "A JSON object cast to OBJECT keeps its keys and values, nested ones included. Catches: keys reordered into other values, or the object turned into text"
+columns = [{ name = "j", type = "VARCHAR" }]
+rows = [
+  ["'{\"a\": 1, \"b\": {\"c\": [2]}}'"],
+  ["'{}'"],
+]
+query = "SELECT ordinal, CAST(PARSE_JSON(j) AS OBJECT) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null"
+description = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies. Catches: NULL replaced by a value, or the cast raising for NULL"
+columns = [{ name = "j", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'{\"k\": 1}'"],
+]
+query = "SELECT ordinal, CAST(PARSE_JSON(j) AS OBJECT) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

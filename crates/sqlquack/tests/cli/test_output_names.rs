@@ -24,6 +24,44 @@ fn given_unaliased_items_when_converted_and_run_on_duckdb_then_they_take_snowfla
             expected_names: vec!["N\n  + 1".to_owned()],
         },
         ColumnNameTestCase {
+            description: "ROUND and the current-time items, named as recorded",
+            sql: "SELECT ROUND(n, 1), ROUND(n), round( n, 0 ), current_date(), CURRENT_DATE, \
+                  CURRENT_TIMESTAMP() FROM (SELECT 1.25 AS n) AS input",
+            flags: &[],
+            expected_names: vec![
+                "ROUND(N, 1)".to_owned(),
+                "ROUND(N)".to_owned(),
+                "ROUND( N, 0 )".to_owned(),
+                "CURRENT_DATE()".to_owned(),
+                "CURRENT_DATE".to_owned(),
+                "CURRENT_TIMESTAMP()".to_owned(),
+            ],
+        },
+        ColumnNameTestCase {
+            description: "an alias spelled as the current-time keyword runs on DuckDB",
+            sql: "SELECT CURRENT_DATE() AS current_date, CURRENT_TIMESTAMP() AS current_timestamp",
+            flags: &[],
+            expected_names: vec!["CURRENT_DATE".to_owned(), "CURRENT_TIMESTAMP".to_owned()],
+        },
+        ColumnNameTestCase {
+            description: "DISTINCT aggregates, named as recorded",
+            sql: "SELECT SUM(DISTINCT n), MAX(DISTINCT n) FROM (SELECT 1.25 AS n) AS input",
+            flags: &[],
+            expected_names: vec!["SUM(DISTINCT N)".to_owned(), "MAX(DISTINCT N)".to_owned()],
+        },
+        ColumnNameTestCase {
+            description: "COALESCE of three and of numbers, a text cast and a spaced call, as recorded",
+            sql: "SELECT COALESCE(n, 0, 1), COALESCE(1, 2), CAST(g AS INTEGER), lower(g ) \
+                  FROM (SELECT 1.25 AS n, '7' AS g) AS input",
+            flags: &[],
+            expected_names: vec![
+                "COALESCE(N, 0, 1)".to_owned(),
+                "COALESCE(1, 2)".to_owned(),
+                "CAST(G AS INTEGER)".to_owned(),
+                "LOWER(G )".to_owned(),
+            ],
+        },
+        ColumnNameTestCase {
             description: "numbers keep their written form, upper-cased",
             sql: "SELECT 1.50, 1e3, -2, NULL, false",
             flags: &[],
@@ -40,6 +78,25 @@ fn given_unaliased_items_when_converted_and_run_on_duckdb_then_they_take_snowfla
         assert_eq!(
             converted_column_names(test_case.sql, test_case.flags),
             test_case.expected_names,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_avg_distinct_of_a_number_when_converting_then_it_refuses() {
+    let test_cases = [ConvertTestCase {
+        description: "AVG(DISTINCT) of a NUMBER, which Snowflake types NUMBER(25,5) for NUMBER(10,2), refuses",
+        sql: "SELECT AVG(DISTINCT n) AS a FROM (SELECT 1.25 AS n) AS input",
+        flags: &[],
+        mention: "AVG(DISTINCT) of a NUMBER",
+        expected_outcome: convert_outcome(1, false),
+    }];
+    for test_case in test_cases {
+        assert_eq!(
+            run_convert(test_case.sql, test_case.flags, test_case.mention),
+            test_case.expected_outcome,
             "{}",
             test_case.description
         );
@@ -232,15 +289,22 @@ fn given_unaliased_items_no_receipt_names_when_converting_then_each_refuses_with
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
-            description: "ROUND, which no receipt names yet refuses with SQ0009",
-            sql: "SELECT ROUND(n, 1) FROM input",
+            description: "ROUND of an expression, which no receipt names, refuses with SQ0009",
+            sql: "SELECT ROUND(n + 1, 1) FROM input",
             flags: &["--schema", UNALIASED_SCHEMA],
             mention: UNVERIFIED_NAME,
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
-            description: "CURRENT_DATE(), which no receipt names yet refuses with SQ0009",
-            sql: "SELECT CURRENT_DATE() FROM input",
+            description: "CURRENT_TIMESTAMP without parentheses, which no receipt names, refuses with SQ0009",
+            sql: "SELECT CURRENT_TIMESTAMP FROM input",
+            flags: &["--schema", UNALIASED_SCHEMA],
+            mention: UNVERIFIED_NAME,
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "CURRENT_DATE( ) with a space, which no receipt names, refuses with SQ0009",
+            sql: "SELECT CURRENT_DATE( ) FROM input",
             flags: &["--schema", UNALIASED_SCHEMA],
             mention: UNVERIFIED_NAME,
             expected_outcome: convert_outcome(1, false),
