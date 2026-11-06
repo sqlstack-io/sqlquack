@@ -17,6 +17,7 @@ from scripts.family_cases.constants import (
     ZONED_LENIENT_FORMS,
     ZONED_LITERAL_TYPES,
     ZONED_LITERALS,
+    ZONED_NAIVE_COMPARISONS,
     ZONED_OFFSET_DIVERGENCE,
     ZONED_OFFSET_LITERALS,
     ZONED_OFFSET_PROJECTIONS,
@@ -185,7 +186,10 @@ def comparison_case(*, column_type: str, comparison: tuple[str, str]) -> Case:
         order="ordered",
         tags=("null", "boundary"),
         expected_divergence=(
-            ZONED_SUBMICRO_DIVERGENCE if comparison_slug in ZONED_TEXT_COMPARISONS else None
+            ZONED_SUBMICRO_DIVERGENCE
+            if comparison_slug in ZONED_TEXT_COMPARISONS
+            or (column_type, comparison_slug) in ZONED_NAIVE_COMPARISONS
+            else None
         ),
     )
 
