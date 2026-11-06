@@ -61,7 +61,7 @@ use crate::conversion::constants::{
     BARE_FRACTION, BARE_FRACTION_PATTERNS, CLOCK_FORMAT_FIELDS, CURRENT_TIME_RULE, DATE_ARITHMETIC,
     DATE_FORMAT_RULE, DATE_NAME, DATE_PART_RULE, DATE_PARTS, DAY_NAME_RULE, DECIMAL_EPOCH_RULE,
     FRACTIONAL_DATE_AMOUNT, FROM_PARTS, LAST_DAY_RULE, MAX_FRACTION_DIGITS_U8, MICROSECOND_DIGITS,
-    MONTH_ABBREVIATION, MONTH_NAME_FIELDS, NULL_BRANCHES, NUMBER_TEXT_FORMAT, OFFSET_FREE_UNITS,
+    MONTH_NAME_FIELDS, MONTH_NAME_FOLLOWERS, NULL_BRANCHES, NUMBER_TEXT_FORMAT, OFFSET_FREE_UNITS,
     RECORDED_TIME_ZONES, SCALE_DIGITS, TEMPORAL_TEXT_FIELDS, TEMPORAL_TEXT_FORMAT,
     TEMPORAL_TEXT_SEPARATORS, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC,
     TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TIMESTAMP_NTZ_NAME, TIMESTAMP_TIME_RULE,
@@ -1026,19 +1026,22 @@ fn strftime_pattern(format: &str, precision: Option<u8>) -> Option<String> {
     let mut rest = upper.as_str();
     let mut pattern = String::new();
     let mut last_letter: Option<char> = None;
-    let mut after_abbreviation = false;
+    let mut previous: Option<&str> = None;
     while !rest.is_empty() {
         let written = &format[format.len() - rest.len()..];
         if let Some(after) = rest.strip_prefix(BARE_FRACTION)
             && !after.starts_with(|next: char| next.is_ascii_digit())
         {
+            if !adjacency_recorded(previous, BARE_FRACTION) {
+                return None;
+            }
             let (_, digits) = BARE_FRACTION_PATTERNS
                 .iter()
                 .find(|(digits, _)| Some(*digits) == precision)?;
             pattern.push_str(digits);
             rest = after;
             last_letter = None;
-            after_abbreviation = false;
+            previous = Some(BARE_FRACTION);
             continue;
         }
         let field = TEMPORAL_TEXT_FIELDS
@@ -1047,7 +1050,7 @@ fn strftime_pattern(format: &str, precision: Option<u8>) -> Option<String> {
         match field {
             Some((token, replacement, _)) => {
                 if last_letter.is_some_and(|letter| token.starts_with(letter))
-                    || after_abbreviation
+                    || !adjacency_recorded(previous, token)
                     || (MONTH_NAME_FIELDS.contains(token) && !written.starts_with(token))
                 {
                     return None;
@@ -1055,11 +1058,11 @@ fn strftime_pattern(format: &str, precision: Option<u8>) -> Option<String> {
                 pattern.push_str(replacement);
                 rest = &rest[token.len()..];
                 last_letter = token.chars().last().filter(char::is_ascii_alphabetic);
-                after_abbreviation = *token == MONTH_ABBREVIATION;
+                previous = Some(token);
             }
             None => {
                 last_letter = None;
-                after_abbreviation = false;
+                previous = None;
                 let separator = rest.chars().next()?;
                 if !TEMPORAL_TEXT_SEPARATORS.contains(separator) {
                     return None;
@@ -1070,6 +1073,20 @@ fn strftime_pattern(format: &str, precision: Option<u8>) -> Option<String> {
         }
     }
     Some(pattern)
+}
+
+/// Whether `next` may follow the field `previous` with no separator between, as recordings show.
+fn adjacency_recorded(previous: Option<&str>, next: &str) -> bool {
+    match previous {
+        None => true,
+        Some(previous) => match MONTH_NAME_FOLLOWERS
+            .iter()
+            .find(|(name, _)| *name == previous)
+        {
+            Some((_, followers)) => followers.contains(&next),
+            None => !MONTH_NAME_FIELDS.contains(&next),
+        },
+    }
 }
 
 /// The value of up to two decimal digits.

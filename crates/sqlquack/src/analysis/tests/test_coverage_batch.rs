@@ -1607,6 +1607,31 @@ fn given_each_documented_format_element_when_writing_text_then_it_converts_as_re
             expected_outcome: Err("which no recording shows"),
         },
         FirstValueTestCase {
+            description: "bare FF directly after MON",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'MONFF') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "MMMM directly before YYYY, unrecorded",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'MMMMYYYY') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "bare FF directly after MMMM, unrecorded",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'MMMMFF') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "MON directly after DD, unrecorded",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'DDMON') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "MON after a separator still converts",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'MON-MM') AS v",
+            expected_outcome: Ok("Sep-09"),
+        },
+        FirstValueTestCase {
             description: "time fields of a DATE",
             sql: "SELECT TO_CHAR(DATE '2024-09-05', 'HH24 MI') AS v",
             expected_outcome: Err("which no recording shows"),
