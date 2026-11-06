@@ -133,7 +133,8 @@ function's output columns are not read as call syntax.
 
 An obligation keeps its id across rebuilds. `retired.toml` lists every id that has left the
 root, grouped by the commit that retired it, with the reason; the builder reserves those numbers,
-so they are never issued again, and fails if a retired id reappears in `obligations/`. Its
+so they are never issued again, and fails if a retired id reappears in `obligations/` or if a
+rebuild drops an id that `retired.toml` does not list, so a changed meaning always takes a new id. Its
 `[[reused]]` rows record the two ids that were issued again with a new meaning before retirement
 was recorded; both forms were approved with the new meaning, so those ids stay.
 

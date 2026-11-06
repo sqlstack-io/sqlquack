@@ -25,6 +25,8 @@ def _issued_ids(root: Path) -> set[str]:
     issued: set[str] = set()
     for family in FAMILIES:
         path: Path = root / OBLIGATIONS_DIR / f"{family}.toml"
+        if not path.exists():
+            continue
         rows: list[dict[str, object]] = tomllib.loads(path.read_text()).get("obligation", [])
         issued.update(str(row["id"]) for row in rows)
     return issued
@@ -36,6 +38,7 @@ def run_build(argv: list[str] | None = None) -> int:
     parser.add_argument("--root", type=Path, default=DEFAULT_ROOT)
     parser.add_argument("--focus", type=Path, default=DEFAULT_FOCUS)
     arguments: argparse.Namespace = parser.parse_args(argv)
+    previous: set[str] = _issued_ids(arguments.root)
     install()
     receipts: ReceiptView = receipt_view(arguments.root / RECEIPTS_DIR)
     focus: set[str] = set(focus_forms(arguments.focus))
@@ -44,7 +47,14 @@ def run_build(argv: list[str] | None = None) -> int:
             root=arguments.root, family=family, focus=focus, receipts=receipts
         )
         print(json.dumps({"family": family, "obligations": obligations, "cases": cases}))
-    reissued: set[str] = retired_ids(arguments.root) & _issued_ids(arguments.root)
+    retired: set[str] = retired_ids(arguments.root)
+    issued: set[str] = _issued_ids(arguments.root)
+    reissued: set[str] = retired & issued
     if reissued:
         raise ObligationError(f"retired obligation ids issued again: {sorted(reissued)}")
+    vanished: set[str] = previous - issued - retired
+    if vanished:
+        raise ObligationError(
+            f"obligation ids left the root without a tombstone: {sorted(vanished)}"
+        )
     return 0
