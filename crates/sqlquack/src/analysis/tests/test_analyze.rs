@@ -114,6 +114,11 @@ fn given_sql_and_a_schema_when_analyzing_then_it_converts_or_refuses_with_a_cate
             expected_summary: converted(),
         },
         AnalyzeTestCase {
+            description: "an unaliased literal carrying a comment has no recorded column name",
+            sql: "SELECT 'x' /* c */ FROM orders",
+            expected_summary: refused(RefusalCategory::MissingRule),
+        },
+        AnalyzeTestCase {
             description: "comments after select items and inside expressions are dropped",
             sql: "SELECT amount /* net */ + 1 AS gross, -- trailing\n customer_id -- last\n \
                   FROM orders -- source\n WHERE amount > 0",
