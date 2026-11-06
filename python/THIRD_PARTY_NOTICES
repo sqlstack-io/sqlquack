@@ -1,0 +1,169 @@
+Third-party notices
+===================
+
+sqlglot test suite
+------------------
+
+Case files under cases/imported/ whose `origin` field names sqlglot are derived from the test
+suite of sqlglot (https://github.com/tobymao/sqlglot), file tests/dialects/test_snowflake.py.
+Only the Snowflake SQL of each fixture is used as case input; SQLQuack records the expected
+answer from Snowflake itself. sqlglot's expected DuckDB output is kept in the `sqlglot_duckdb`
+field as reference side data only: it is never asserted, does not count toward verification and
+is not part of the case hash.
+
+The exact-check corpus corpora/polyglot-check/sqlglot.json holds the SQL of sqlglot's test
+fixtures at v30.14.0 (tests/fixtures/identity.sql, tests/test_parser.py and tests/dialects/),
+as extracted by polyglot's fixture tooling. polyglot, below, is itself inspired by sqlglot and
+ships sqlglot's licence. corpora/polyglot-check/sqlglot_postgres.json holds the SQL of
+tests/dialects/test_postgres.py at the same version, and corpora/polyglot-check/sqlglot_sqlite.json
+that of tests/dialects/test_sqlite.py.
+
+The referee corpus referee/corpora/sqlglot.json holds the query statements passed to
+`validate_identity` and `validate_all` in tests/dialects/test_snowflake.py at the sqlglot commit
+its `origin` field names. Only Snowflake's syntax verdict on each statement is recorded.
+
+sqlglot is distributed under the following licence:
+
+MIT License
+
+Copyright (c) 2026 Toby Mao
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+polyglot
+--------
+
+Parts of SQLQuack's tokenizer and parser, in crates/sqlquack-syntax and
+crates/sqlquack-syntax-derive, are derived from polyglot (https://github.com/tobilg/polyglot),
+as forked at https://github.com/sqlstack-io/polyglot. The exact-check corpus
+corpora/polyglot-check/polyglot_tests.json holds the SQL inputs of polyglot's tests.
+SQLQuack's DuckDB result-type rules, in crates/sqlquack-semantics/src/lineage/_helpers/duckdb_typing.rs
+and duckdb_types.rs, are ported from polyglot's engine type rules, and the fixture
+crates/sqlquack-semantics/src/lineage/tests/fixtures/duckdb_engine_types.json is polyglot's
+tests/fixtures/engine_types/duckdb.json, the result types DuckDB bound for its synthetic cases.
+
+polyglot is distributed under the following licence:
+
+MIT License
+
+Copyright (c) 2026 TobiLG <github@tobilg.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+PostgreSQL regression tests
+---------------------------
+
+corpora/polyglot-check/postgres_regress.json holds the SQL statements of PostgreSQL 17.2's
+regression tests (src/test/regress/sql at tag REL_17_2), split at top-level semicolons, with psql
+meta-commands dropped and a few statements left out. They are distributed under the PostgreSQL
+License:
+
+PostgreSQL Database Management System
+(formerly known as Postgres, then as Postgres95)
+
+Portions Copyright (c) 1996-2024, PostgreSQL Global Development Group
+
+Portions Copyright (c) 1994, The Regents of the University of California
+
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose, without fee, and without a written agreement
+is hereby granted, provided that the above copyright notice and this
+paragraph and the following two paragraphs appear in all copies.
+
+IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
+DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
+LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS
+DOCUMENTATION, EVEN IF THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATIONS TO
+PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+
+
+sqllogictest
+------------
+
+corpora/polyglot-check/sqllogictest.json holds SQL statements from sqllogictest
+(https://www.sqlite.org/sqllogictest), test/**/*.test: every hand-written statement under
+test/evidence/ that SQLite runs and a seeded random sample of the others. Its author offers it under
+any of the GNU General Public License, the BSD License, the MIT License or CC0, and requires no
+attribution; SQLQuack uses it under the MIT License:
+
+Copyright (c) 2008 D. Richard Hipp
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+associated documentation files (the "Software"), to deal in the Software without restriction,
+including without limitation the rights to use, copy, modify, merge, publish, distribute,
+sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or
+substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT
+OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+DuckDB
+------
+
+The sqlquack and sqlquack-cli wheels compile in DuckDB, from the sources the libduckdb-sys crate
+ships. DuckDB is distributed under the following licence:
+
+MIT License
+
+Copyright 2021-2026 Stichting DuckDB Foundation
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+associated documentation files (the "Software"), to deal in the Software without restriction,
+including without limitation the rights to use, copy, modify, merge, publish, distribute,
+sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial
+portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES
+OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

@@ -1,0 +1,22 @@
+name: Release Distributions
+
+# Release Please dispatches this for each release pull request. Publish uploads these
+# distributions once the release is tagged instead of rebuilding them, but only from a successful
+# run of this workflow whose commit has exactly the release tag's tree; otherwise it builds from
+# the tag.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  distributions:
+    name: Distributions
+    uses: ./.github/workflows/build-distributions.yml
+    with:
+      # Pin the dispatched commit so every job builds the tree this run is matched on.
+      ref: ${{ github.sha }}
+      upload: true
+      # Comfortably longer than a release pull request stays open before it is merged and published.
+      retention-days: 30
