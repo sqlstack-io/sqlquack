@@ -190,6 +190,14 @@ pub(crate) const ILIKE: &str = "ilike";
 pub(crate) const SECOND_FIELD: &str = "second";
 /// `FLOAT(p)` with at most this many bits is `real`; more is `double precision`.
 pub(crate) const FLOAT4_MAX_PRECISION: u32 = 24;
+/// `FLOAT(p)` takes at most this many bits; gram.y refuses more, and zero, with 22023.
+pub(crate) const FLOAT8_MAX_PRECISION: u32 = 53;
+/// The schema of the built-in types, which a qualified type name may name.
+pub(crate) const CATALOGUE_SCHEMA: &str = "pg_catalog";
+/// `numeric`, the one built-in generic type name taking two modifiers.
+pub(crate) const NUMERIC_TYPE: &str = "numeric";
+/// The most fractional-second digits a time, timestamp or interval keeps.
+pub(crate) const MAX_SECOND_PRECISION: u32 = 6;
 /// An `any_name` has at most this many dotted parts: catalog, schema and name.
 pub(crate) const MAX_QUALIFIED_NAME_PARTS: usize = 3;
 /// `implicit_row`: a parenthesized list is a row only with at least this many items.

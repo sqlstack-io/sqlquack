@@ -2,9 +2,11 @@
 
 use serde_json::Value;
 
+use crate::parse::main::format_type::format_type;
 use crate::parse::main::parse::parse;
+use crate::parse::main::parse_type::parse_type;
 use crate::parse::tests::test_types::{
-    ExpectedVerdict, ShapeTestCase, SpanTestCase, VerdictTestCase,
+    ExpectedVerdict, ShapeTestCase, SpanTestCase, TypeTextTestCase, VerdictTestCase,
 };
 
 #[test]
@@ -398,6 +400,24 @@ fn given_sql_when_parsing_then_the_tree_follows_postgresqls_grammar() {
             expected_node: "joined_table",
         },
         ShapeTestCase {
+            description: "SQLBuild's type marker is an annotation around its expression",
+            sql: "SELECT __polyglot_typed(t.x, 'varchar(5)') AS v FROM t",
+            pointer: "/0/select/expressions/0/alias/this/annotated",
+            expected_node: "type_assertion",
+        },
+        ShapeTestCase {
+            description: "SQLBuild's typed-like marker keeps the expression it is typed like",
+            sql: "SELECT __polyglot_typed_like(x, y + 1) FROM t",
+            pointer: "/0/select/expressions/0/annotated",
+            expected_node: "type_like",
+        },
+        ShapeTestCase {
+            description: "a type marker whose type text does not parse stays a call",
+            sql: "SELECT __polyglot_typed(x, 'int garbage') FROM t",
+            pointer: "/0/select/expressions/0",
+            expected_node: "function",
+        },
+        ShapeTestCase {
             description: "TRUNCATE keeps every relation after the first",
             sql: "TRUNCATE a, b",
             pointer: "/0/truncate/extra_tables/0",
@@ -444,6 +464,12 @@ fn given_sql_when_parsing_then_nodes_record_their_source_range_in_characters() {
             pointer: "/0/select/span",
             expected_span: [0, 40, 1, 41],
         },
+        SpanTestCase {
+            description: "a qualified star's qualifier covers every part of its name",
+            sql: "SELECT s.\"T\".* FROM s.\"T\"",
+            pointer: "/0/select/expressions/0/star/table/span",
+            expected_span: [7, 12, 1, 13],
+        },
     ];
     for test_case in test_cases {
         let parsed = parse(test_case.sql).expect(test_case.description);
@@ -459,6 +485,178 @@ fn given_sql_when_parsing_then_nodes_record_their_source_range_in_characters() {
         assert_eq!(
             span,
             Some(test_case.expected_span),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_type_string_when_parsed_and_formatted_then_it_reads_as_postgresqls_format_type() {
+    let test_cases = [
+        TypeTextTestCase {
+            description: "int",
+            text: "int",
+            expected_name: Ok("integer"),
+        },
+        TypeTextTestCase {
+            description: "int8",
+            text: "int8",
+            expected_name: Ok("bigint"),
+        },
+        TypeTextTestCase {
+            description: "float(24) is real",
+            text: "float(24)",
+            expected_name: Ok("real"),
+        },
+        TypeTextTestCase {
+            description: "float(25) is double",
+            text: "float(25)",
+            expected_name: Ok("double precision"),
+        },
+        TypeTextTestCase {
+            description: "float with no bits",
+            text: "float(0)",
+            expected_name: Err(false),
+        },
+        TypeTextTestCase {
+            description: "float with too many bits",
+            text: "float(54)",
+            expected_name: Err(false),
+        },
+        TypeTextTestCase {
+            description: "decimal with a precision only",
+            text: "decimal(10)",
+            expected_name: Ok("numeric(10,0)"),
+        },
+        TypeTextTestCase {
+            description: "numeric with spaces",
+            text: "numeric(18, 2)",
+            expected_name: Ok("numeric(18,2)"),
+        },
+        TypeTextTestCase {
+            description: "bare bit is one bit",
+            text: "bit",
+            expected_name: Ok("bit(1)"),
+        },
+        TypeTextTestCase {
+            description: "varbit with a length",
+            text: "varbit(5)",
+            expected_name: Ok("bit varying(5)"),
+        },
+        TypeTextTestCase {
+            description: "bare char is one character",
+            text: "char",
+            expected_name: Ok("character(1)"),
+        },
+        TypeTextTestCase {
+            description: "bare bpchar has no length",
+            text: "bpchar",
+            expected_name: Ok("bpchar"),
+        },
+        TypeTextTestCase {
+            description: "bpchar with a length",
+            text: "bpchar(3)",
+            expected_name: Ok("character(3)"),
+        },
+        TypeTextTestCase {
+            description: "national char varying",
+            text: "national char varying(4)",
+            expected_name: Ok("character varying(4)"),
+        },
+        TypeTextTestCase {
+            description: "upper-case varchar",
+            text: "VARCHAR(19)",
+            expected_name: Ok("character varying(19)"),
+        },
+        TypeTextTestCase {
+            description: "time with precision",
+            text: "time(3)",
+            expected_name: Ok("time(3) without time zone"),
+        },
+        TypeTextTestCase {
+            description: "timetz with precision",
+            text: "timetz(3)",
+            expected_name: Ok("time(3) with time zone"),
+        },
+        TypeTextTestCase {
+            description: "timestamp precision is capped",
+            text: "timestamp(8)",
+            expected_name: Ok("timestamp(6) without time zone"),
+        },
+        TypeTextTestCase {
+            description: "timestamptz",
+            text: "timestamptz",
+            expected_name: Ok("timestamp with time zone"),
+        },
+        TypeTextTestCase {
+            description: "an interval range",
+            text: "interval day to minute",
+            expected_name: Ok("interval day to minute"),
+        },
+        TypeTextTestCase {
+            description: "an interval range ending wrongly",
+            text: "interval year to day",
+            expected_name: Err(true),
+        },
+        TypeTextTestCase {
+            description: "array bounds are dropped",
+            text: "int[3][4]",
+            expected_name: Ok("integer[]"),
+        },
+        TypeTextTestCase {
+            description: "ARRAY spelling",
+            text: "integer array[5]",
+            expected_name: Ok("integer[]"),
+        },
+        TypeTextTestCase {
+            description: "an array of sized varchar",
+            text: "varchar(10)[]",
+            expected_name: Ok("character varying(10)[]"),
+        },
+        TypeTextTestCase {
+            description: "a catalogue-qualified sized name",
+            text: "pg_catalog.varchar(5)",
+            expected_name: Ok("character varying(5)"),
+        },
+        TypeTextTestCase {
+            description: "a quoted catalogue name",
+            text: "\"int4\"",
+            expected_name: Ok("integer"),
+        },
+        TypeTextTestCase {
+            description: "a quoted char is the one-byte type",
+            text: "\"char\"",
+            expected_name: Ok("\"char\""),
+        },
+        TypeTextTestCase {
+            description: "a type the tree has no node for",
+            text: "regclass",
+            expected_name: Ok("regclass"),
+        },
+        TypeTextTestCase {
+            description: "SETOF in a type string",
+            text: "setof int",
+            expected_name: Err(true),
+        },
+        TypeTextTestCase {
+            description: "trailing words",
+            text: "int garbage",
+            expected_name: Err(true),
+        },
+        TypeTextTestCase {
+            description: "an unclosed modifier list",
+            text: "varchar(",
+            expected_name: Err(true),
+        },
+    ];
+    for test_case in test_cases {
+        let name: Result<String, bool> = parse_type(test_case.text)
+            .map(|data_type| format_type(&data_type).unwrap_or_default())
+            .map_err(|error| error.syntax);
+        assert_eq!(
+            name.as_deref().map_err(|syntax| *syntax),
+            test_case.expected_name,
             "{}",
             test_case.description
         );

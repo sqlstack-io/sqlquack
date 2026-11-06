@@ -7,13 +7,20 @@ use sqlquack_syntax::expressions::operators::models::{NamedArgSeparator, NamedAr
 use sqlquack_syntax::expressions::queries::models::{
     Ordered, Over, WindowFrame, WindowFrameBound, WindowFrameExclude, WindowFrameKind,
 };
-use sqlquack_syntax::expressions::statements::models::Variadic;
+use sqlquack_syntax::expressions::statements::models::{Annotated, Variadic};
+use sqlquack_syntax::expressions::tree::constants::{
+    TYPED_EXPRESSION_FUNCTION, TYPED_LIKE_EXPRESSION_FUNCTION,
+};
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_col_id, is_type_function_name};
 use crate::parse::_helpers::tree::nodes::{
     aggregate, function, literal, ordered, over, star, window_function,
 };
+use crate::parse::main::parse_type::parse_type;
 use crate::scan::models::{Token, TokenKind};
+
+/// A type-assertion marker takes the expression and the type, or the expression it is typed like.
+const MARKER_ARITY: usize = 2;
 
 /// Calls written with keywords inside their parentheses (`func_expr_common_subexpr`).
 const SPECIAL_CALLS: [&str; 10] = [
@@ -34,6 +41,38 @@ const FRAME_WORDS: [&str; 4] = ["partition", "range", "rows", "groups"];
 
 fn call(name: &str, args: Vec<Expression>) -> Expression {
     Expression::Function(Box::new(function(vec![Identifier::new(name)], args)))
+}
+
+/// SQLBuild's analysis-only type assertion, `__polyglot_typed(expr, 'type')` or
+/// `__polyglot_typed_like(expr, like)`, lowered as sqlquack-syntax lowers it: an `Annotated`
+/// node around `expr`. A `__polyglot_typed` call whose type text does not parse stays a call.
+fn typed_marker(name: &[Identifier], args: &mut Vec<Expression>) -> Option<Expression> {
+    let [called] = name else {
+        return None;
+    };
+    if called.quoted || args.len() != MARKER_ARITY {
+        return None;
+    }
+    let (type_assertion, type_like) = if called.name == TYPED_EXPRESSION_FUNCTION {
+        let Some(Expression::Literal(asserted)) = args.last() else {
+            return None;
+        };
+        let Literal::String(text) = asserted.as_ref() else {
+            return None;
+        };
+        (Some(parse_type(text).ok()?), None)
+    } else if called.name == TYPED_LIKE_EXPRESSION_FUNCTION {
+        (None, args.pop().map(Box::new))
+    } else {
+        return None;
+    };
+    args.truncate(1);
+    Some(Expression::Annotated(Box::new(Annotated {
+        this: args.pop()?,
+        trailing_comments: Vec::new(),
+        type_assertion,
+        type_like,
+    })))
 }
 
 impl Parser<'_> {
@@ -104,6 +143,16 @@ impl Parser<'_> {
                 within = Some(sort);
             }
             (filter, window) = self.filter_and_window()?;
+        }
+        let plain: bool = !distinct
+            && !all_star
+            && !variadic
+            && order.is_empty()
+            && filter.is_none()
+            && within.is_none()
+            && window.is_none();
+        if plain && let Some(marker) = typed_marker(&name, &mut args) {
+            return Ok(marker);
         }
         let mut call = function(name, args);
         if all_star {

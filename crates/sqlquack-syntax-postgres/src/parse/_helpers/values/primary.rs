@@ -7,6 +7,7 @@ use sqlquack_syntax::expressions::operators::models::{
     ArraySlice, DotAccess, OverlapsExpr, Subscript,
 };
 use sqlquack_syntax::expressions::typed_functions::models::ArrayConstructor;
+use sqlquack_syntax::tokens::models::Span;
 
 use crate::parse::_helpers::tree::cursor::{
     Parser, Parsing, identifier, is_col_id, is_col_label, is_type_function_name,
@@ -291,6 +292,13 @@ impl Parser<'_> {
                 .join(".");
             let mut table: Identifier = Identifier::new(qualifier);
             table.quoted = parts.len() == 1 && parts[0].quoted;
+            table.span = match (parts.first().and_then(|part| part.span), parts.last()) {
+                (Some(first), Some(last)) => last.span.map(|last| Span {
+                    start: first.start,
+                    ..last
+                }),
+                _ => None,
+            };
             return self.after_star(star(Some(table)));
         }
         self.indirection(column_from(parts))
