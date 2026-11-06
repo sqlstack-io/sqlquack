@@ -1253,3 +1253,21 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.ddl.create-type.name" = "8d45337c9541421f2ff1cab47ffa36f1d5d3e654523af027d9b8e6221d49dcf9"
 "pg.ddl.create-foreign-table.server" = "559b932ffc1c5bc3f718546d04fabb408aceea232cf3f9e94cf27c2e451e9fc2"
 "pg.ddl.create-foreign-table.partition-of-server" = "58549b2d9413e19a078e3566879eb6f390792747528fe57e995c152f881d707d"
+
+[[review]]
+id = "pg-auditor-ddl-013"
+reviewer_lane = "auditor"
+family = "ddl"
+parser_tree = "de1cb0acfbb035764600cc916fd1fea6853d64e5"
+reviewed_utc = "2026-11-06T13:35:07Z"
+verdict = "approved"
+forms = [
+  "pg.ddl.create-type.input-output",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree de1cb0ac; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.ddl.create-type.input-output" = "596a6e57a67266964d9d8b8857a71c3e623901a286d1b1cb93035ef0e4cff175"
+
+[review.definitions]
+"pg.ddl.create-type.input-output" = "20716ea4ec963e9bc9f08b558b4daf5cd8466d166a93b1dc022307d580a66b1e"
