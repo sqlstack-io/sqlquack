@@ -46,6 +46,9 @@ pub const METADATA_EXTENSION: &str = "json";
 /// The length of a case hash in hexadecimal digits.
 pub const CASE_HASH_LENGTH: usize = 64;
 
+/// The case tag declaring that Snowflake is expected to raise an error.
+pub const ERROR_TAG: &str = "error";
+
 /// Quotes a project function's body in the Snowflake statement creating it.
 pub const FUNCTION_BODY_QUOTE: &str = "$$";
 /// The Snowflake Python runtime versions a case function may declare.

@@ -8,6 +8,7 @@ from pathlib import Path
 from sqlquack_record.recording.constants import (
     COMPILE_ERROR_KEY,
     EVIDENCE_FORMAT,
+    EXPECTED_ERROR_KEY,
     HASH_NAME_LENGTH,
     HEX_DIGITS,
     OPTIONAL_PENDING_KEYS,
@@ -37,6 +38,9 @@ def parse_pending(path: Path) -> PendingCase:
     compile_error: object = document.get(COMPILE_ERROR_KEY, False)
     if not isinstance(compile_error, bool):
         raise RecorderError(f"{path.name}: compile_error must be true or false")
+    expected_error: object = document.get(EXPECTED_ERROR_KEY, False)
+    if not isinstance(expected_error, bool):
+        raise RecorderError(f"{path.name}: expected_error must be true or false")
     setup: object = document.get(SETUP_KEY, [])
     if not isinstance(setup, list) or not all(isinstance(statement, str) for statement in setup):
         raise RecorderError(f"{path.name}: setup_sql must be a list of statements")
@@ -63,6 +67,7 @@ def parse_pending(path: Path) -> PendingCase:
             sorted((str(key), _value(path=path, value=value)) for key, value in pinned.items())
         ),
         compile_error=compile_error,
+        expected_error=expected_error,
     )
 
 

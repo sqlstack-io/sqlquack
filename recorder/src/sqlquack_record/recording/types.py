@@ -34,7 +34,7 @@ class WarehouseSession(Protocol):
         """Run statements in one request; `None` asks for a rerun one statement at a time."""
         ...
 
-    def run_one(self, statement: str) -> StatementResult:
+    def run_one(self, *, statement: str, expected_error: bool = False) -> StatementResult:
         """Run one statement; a recordable SQL error or an unrecordable result is the result."""
         ...
 

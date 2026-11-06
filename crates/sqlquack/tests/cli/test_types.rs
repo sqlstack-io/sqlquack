@@ -91,7 +91,7 @@ pub(crate) struct CoverageOutcome {
 
 pub(crate) struct PendingFlagsTestCase {
     pub(crate) description: &'static str,
-    pub(crate) expected_flags: Vec<(String, Option<bool>)>,
+    pub(crate) expected_flags: Vec<(String, Option<bool>, Option<bool>)>,
 }
 
 #[derive(Debug, PartialEq, Eq)]
