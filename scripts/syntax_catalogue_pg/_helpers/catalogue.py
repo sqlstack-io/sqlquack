@@ -26,6 +26,7 @@ from scripts.syntax_catalogue_pg._helpers.synopsis import (
     split_at,
 )
 from scripts.syntax_catalogue_pg.constants import (
+    ALIAS_SEPARATOR,
     ANCHOR_FIELD,
     CLASH_SIZE,
     DECISION_BLOCKS,
@@ -249,7 +250,7 @@ def type_groups(*, page: PgPage, text: str) -> list[FormGroup]:
         if body is None:
             raise CatalogueError(f"{page.id}: type table {table_id} not found")
         for name, aliases in TYPE_ROW.findall(body.group(1)):
-            names: list[str] = [name, *(aliases.split(",") if has_aliases else [])]
+            names: list[str] = [name, *(ALIAS_SEPARATOR.split(aliases) if has_aliases else [])]
             spellings: list[str] = [
                 normalize(synopsis_text(re.sub(r"</?type>", "", n))) for n in names if plain(n)
             ]

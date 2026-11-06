@@ -1,0 +1,14 @@
+{
+  "parser_checks": {
+    "do_block": 184
+  },
+  "phases": {
+    "accepted": 15,
+    "semantic_error": 82,
+    "syntax_error": 87
+  },
+  "problems": [],
+  "receipts": 184,
+  "refused": [],
+  "run_id": "pg-18.6-20261106T084132724585Z"
+}

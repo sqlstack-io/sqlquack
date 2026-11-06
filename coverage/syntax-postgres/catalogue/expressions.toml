@@ -101,9 +101,9 @@ source = "doc.functions-bitstring"
 anchor = "Syntax"
 kind = "special"
 grammar = [
-  "<bit> | <bit>",
+  "<bit> \"|\" <bit>",
 ]
-grammar_sha256 = "19c9263fd38a182cc31233fc562d2fbdc92bd6b556d2dcca601e2dfbf6fb6d54"
+grammar_sha256 = "14d98ed557d62717a2831266103832926f4378520aac5e0da50009481e5410f2"
 uses = []
 status = "catalogued"
 
@@ -1518,9 +1518,9 @@ source = "doc.datatype"
 anchor = "Data Types table"
 kind = "special"
 grammar = [
-  "{ numeric [ ( <p>, <s> ) ] | decimal [ ( <p> | <s> ) ] }",
+  "{ numeric [ ( <p>, <s> ) ] | decimal [ ( <p>, <s> ) ] }",
 ]
-grammar_sha256 = "048ba4656ff54dcf9447190982950760ecd5521cb5ac80e38b7211dd002dda0b"
+grammar_sha256 = "40662a81ee07e5fccf5f9028a744cf4ea320c457e3e7c24d919f59ad4419e727"
 uses = []
 status = "catalogued"
 
@@ -2724,9 +2724,9 @@ source = "doc.functions-math"
 anchor = "Syntax"
 kind = "special"
 grammar = [
-  "<integral_type> | <integral_type>",
+  "<integral_type> \"|\" <integral_type>",
 ]
-grammar_sha256 = "deabee81671e7234f7fed8b835045c489629c8f890944e890a73fc0edabd74bc"
+grammar_sha256 = "924f6705819658b34afbc34353d7b82461048d5ec560ac811e639dd9c81a6afa"
 uses = []
 status = "catalogued"
 
@@ -2922,9 +2922,9 @@ source = "doc.functions-net"
 anchor = "Syntax"
 kind = "special"
 grammar = [
-  "<inet> | <inet>",
+  "<inet> \"|\" <inet>",
 ]
-grammar_sha256 = "efffb893cef01ff102be62f026ce8116d707b90af5d5f9572a2965502e00742c"
+grammar_sha256 = "4e1d8cfeeab7947e6bb4ae964722020ecd774274fe1a1ac44f59677c289d5170"
 uses = []
 status = "catalogued"
 
@@ -3320,9 +3320,10 @@ anchor = "Array Constructors"
 kind = "special"
 grammar = [
   "ARRAY[ [ <expression> [, ...] ] ]",
-  "ARRAY[ [ <expression> [, ...] ] ] [, ...] ]",
+  "ARRAY[ ARRAY[ [ <expression> [, ...] ] ] [, ...] ]",
+  "ARRAY[ [ [ <expression> [, ...] ] ] [, ...] ]",
 ]
-grammar_sha256 = "a81dece4cd4405ebede140f5b24b32daab60029aca47b58e42743fdfb02b50dc"
+grammar_sha256 = "41ef64ea927401b4f4e5f2be1ba297ba63122a4ed909bd6ecba429ce47d6dcb4"
 uses = []
 status = "catalogued"
 

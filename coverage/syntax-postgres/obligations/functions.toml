@@ -13183,37 +13183,54 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.info.has-any-column-privilege.o026"
+id = "pg.functions.info.has-any-column-privilege.o036"
 kind = "option_present"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-any-column-privilege.o027"
+id = "pg.functions.info.has-any-column-privilege.o037"
 kind = "option_absent"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-any-column-privilege.o033"
+id = "pg.functions.info.has-any-column-privilege.o038"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <user name>"
+
+[[obligation]]
+id = "pg.functions.info.has-any-column-privilege.o039"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <oid>"
+
+[[obligation]]
+id = "pg.functions.info.has-any-column-privilege.o040"
 kind = "operand_type_class"
 required = true
-target = "<user name> in [ <user name> OR <oid> , ]"
+target = "<user name> in [ { <user name> | <oid> } , ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.info.has-any-column-privilege.o029"
-kind = "required_operand_missing"
-required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
-note = "omit <oid>"
-
-[[obligation]]
-id = "pg.functions.info.has-any-column-privilege.o030"
+id = "pg.functions.info.has-any-column-privilege.o041"
 kind = "operand_type_class"
 required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
+target = "<oid> in [ { <user name> | <oid> } , ]"
 note = "a valid operand"
+
+[[obligation]]
+id = "pg.functions.info.has-any-column-privilege.o042"
+kind = "alternative"
+required = true
+target = "{ <table text> | <oid> } → <table text>"
+
+[[obligation]]
+id = "pg.functions.info.has-any-column-privilege.o043"
+kind = "alternative"
+required = true
+target = "{ <table text> | <oid> } → <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-any-column-privilege.o034"
@@ -13221,13 +13238,6 @@ kind = "operand_type_class"
 required = true
 target = "<table text>"
 note = "a valid expression"
-
-[[obligation]]
-id = "pg.functions.info.has-any-column-privilege.o016"
-kind = "required_operand_missing"
-required = true
-target = "<oid>"
-note = "omit <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-any-column-privilege.o017"
@@ -13257,18 +13267,6 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "pg.functions.info.has-any-column-privilege.o031"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR in [ <user name> OR <oid> , ]"
-
-[[obligation]]
-id = "pg.functions.info.has-any-column-privilege.o032"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR"
-
-[[obligation]]
 id = "pg.functions.info.has-any-column-privilege.o021"
 kind = "negative_neighbour"
 required = true
@@ -13281,37 +13279,54 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.info.has-column-privilege.o034"
+id = "pg.functions.info.has-column-privilege.o047"
 kind = "option_present"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-column-privilege.o035"
+id = "pg.functions.info.has-column-privilege.o048"
 kind = "option_absent"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-column-privilege.o043"
+id = "pg.functions.info.has-column-privilege.o049"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <user name>"
+
+[[obligation]]
+id = "pg.functions.info.has-column-privilege.o050"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <oid>"
+
+[[obligation]]
+id = "pg.functions.info.has-column-privilege.o051"
 kind = "operand_type_class"
 required = true
-target = "<user name> in [ <user name> OR <oid> , ]"
+target = "<user name> in [ { <user name> | <oid> } , ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.info.has-column-privilege.o037"
-kind = "required_operand_missing"
-required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
-note = "omit <oid>"
-
-[[obligation]]
-id = "pg.functions.info.has-column-privilege.o038"
+id = "pg.functions.info.has-column-privilege.o052"
 kind = "operand_type_class"
 required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
+target = "<oid> in [ { <user name> | <oid> } , ]"
 note = "a valid operand"
+
+[[obligation]]
+id = "pg.functions.info.has-column-privilege.o053"
+kind = "alternative"
+required = true
+target = "{ <table text> | <oid> } → <table text>"
+
+[[obligation]]
+id = "pg.functions.info.has-column-privilege.o054"
+kind = "alternative"
+required = true
+target = "{ <table text> | <oid> } → <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-column-privilege.o044"
@@ -13321,13 +13336,6 @@ target = "<table text>"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.info.has-column-privilege.o016"
-kind = "required_operand_missing"
-required = true
-target = "<oid>"
-note = "omit <oid>"
-
-[[obligation]]
 id = "pg.functions.info.has-column-privilege.o017"
 kind = "operand_type_class"
 required = true
@@ -13335,18 +13343,23 @@ target = "<oid>"
 note = "a valid operand"
 
 [[obligation]]
+id = "pg.functions.info.has-column-privilege.o055"
+kind = "alternative"
+required = true
+target = "{ <column text> | <smallint> } → <column text>"
+
+[[obligation]]
+id = "pg.functions.info.has-column-privilege.o056"
+kind = "alternative"
+required = true
+target = "{ <column text> | <smallint> } → <smallint>"
+
+[[obligation]]
 id = "pg.functions.info.has-column-privilege.o045"
 kind = "operand_type_class"
 required = true
 target = "<column text>"
 note = "a valid expression"
-
-[[obligation]]
-id = "pg.functions.info.has-column-privilege.o022"
-kind = "required_operand_missing"
-required = true
-target = "<smallint>"
-note = "omit <smallint>"
 
 [[obligation]]
 id = "pg.functions.info.has-column-privilege.o039"
@@ -13376,22 +13389,10 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "pg.functions.info.has-column-privilege.o040"
+id = "pg.functions.info.has-column-privilege.o057"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required OR in [ <user name> OR <oid> , ]"
-
-[[obligation]]
-id = "pg.functions.info.has-column-privilege.o041"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR"
-
-[[obligation]]
-id = "pg.functions.info.has-column-privilege.o042"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR #2"
+note = "the form without its required { <column text> | <smallint> }"
 
 [[obligation]]
 id = "pg.functions.info.has-column-privilege.o027"
@@ -13406,37 +13407,54 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.info.has-database-privilege.o024"
+id = "pg.functions.info.has-database-privilege.o034"
 kind = "option_present"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-database-privilege.o025"
+id = "pg.functions.info.has-database-privilege.o035"
 kind = "option_absent"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-database-privilege.o031"
+id = "pg.functions.info.has-database-privilege.o036"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <user name>"
+
+[[obligation]]
+id = "pg.functions.info.has-database-privilege.o037"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <oid>"
+
+[[obligation]]
+id = "pg.functions.info.has-database-privilege.o038"
 kind = "operand_type_class"
 required = true
-target = "<user name> in [ <user name> OR <oid> , ]"
+target = "<user name> in [ { <user name> | <oid> } , ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.info.has-database-privilege.o027"
-kind = "required_operand_missing"
-required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
-note = "omit <oid>"
-
-[[obligation]]
-id = "pg.functions.info.has-database-privilege.o028"
+id = "pg.functions.info.has-database-privilege.o039"
 kind = "operand_type_class"
 required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
+target = "<oid> in [ { <user name> | <oid> } , ]"
 note = "a valid operand"
+
+[[obligation]]
+id = "pg.functions.info.has-database-privilege.o040"
+kind = "alternative"
+required = true
+target = "{ <database text> | <oid> } → <database text>"
+
+[[obligation]]
+id = "pg.functions.info.has-database-privilege.o041"
+kind = "alternative"
+required = true
+target = "{ <database text> | <oid> } → <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-database-privilege.o032"
@@ -13444,13 +13462,6 @@ kind = "operand_type_class"
 required = true
 target = "<database text>"
 note = "a valid expression"
-
-[[obligation]]
-id = "pg.functions.info.has-database-privilege.o016"
-kind = "required_operand_missing"
-required = true
-target = "<oid>"
-note = "omit <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-database-privilege.o017"
@@ -13480,18 +13491,6 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "pg.functions.info.has-database-privilege.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR in [ <user name> OR <oid> , ]"
-
-[[obligation]]
-id = "pg.functions.info.has-database-privilege.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR"
-
-[[obligation]]
 id = "pg.functions.info.has-database-privilege.o021"
 kind = "negative_neighbour"
 required = true
@@ -13504,37 +13503,54 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.info.has-foreign-data-wrapper-privilege.o024"
+id = "pg.functions.info.has-foreign-data-wrapper-privilege.o034"
 kind = "option_present"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-foreign-data-wrapper-privilege.o025"
+id = "pg.functions.info.has-foreign-data-wrapper-privilege.o035"
 kind = "option_absent"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-foreign-data-wrapper-privilege.o031"
+id = "pg.functions.info.has-foreign-data-wrapper-privilege.o036"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <user name>"
+
+[[obligation]]
+id = "pg.functions.info.has-foreign-data-wrapper-privilege.o037"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <oid>"
+
+[[obligation]]
+id = "pg.functions.info.has-foreign-data-wrapper-privilege.o038"
 kind = "operand_type_class"
 required = true
-target = "<user name> in [ <user name> OR <oid> , ]"
+target = "<user name> in [ { <user name> | <oid> } , ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.info.has-foreign-data-wrapper-privilege.o027"
-kind = "required_operand_missing"
-required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
-note = "omit <oid>"
-
-[[obligation]]
-id = "pg.functions.info.has-foreign-data-wrapper-privilege.o028"
+id = "pg.functions.info.has-foreign-data-wrapper-privilege.o039"
 kind = "operand_type_class"
 required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
+target = "<oid> in [ { <user name> | <oid> } , ]"
 note = "a valid operand"
+
+[[obligation]]
+id = "pg.functions.info.has-foreign-data-wrapper-privilege.o040"
+kind = "alternative"
+required = true
+target = "{ <fdw text> | <oid> } → <fdw text>"
+
+[[obligation]]
+id = "pg.functions.info.has-foreign-data-wrapper-privilege.o041"
+kind = "alternative"
+required = true
+target = "{ <fdw text> | <oid> } → <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-foreign-data-wrapper-privilege.o032"
@@ -13542,13 +13558,6 @@ kind = "operand_type_class"
 required = true
 target = "<fdw text>"
 note = "a valid expression"
-
-[[obligation]]
-id = "pg.functions.info.has-foreign-data-wrapper-privilege.o016"
-kind = "required_operand_missing"
-required = true
-target = "<oid>"
-note = "omit <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-foreign-data-wrapper-privilege.o017"
@@ -13578,18 +13587,6 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "pg.functions.info.has-foreign-data-wrapper-privilege.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR in [ <user name> OR <oid> , ]"
-
-[[obligation]]
-id = "pg.functions.info.has-foreign-data-wrapper-privilege.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR"
-
-[[obligation]]
 id = "pg.functions.info.has-foreign-data-wrapper-privilege.o021"
 kind = "negative_neighbour"
 required = true
@@ -13602,37 +13599,54 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.info.has-function-privilege.o024"
+id = "pg.functions.info.has-function-privilege.o034"
 kind = "option_present"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-function-privilege.o025"
+id = "pg.functions.info.has-function-privilege.o035"
 kind = "option_absent"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-function-privilege.o031"
+id = "pg.functions.info.has-function-privilege.o036"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <user name>"
+
+[[obligation]]
+id = "pg.functions.info.has-function-privilege.o037"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <oid>"
+
+[[obligation]]
+id = "pg.functions.info.has-function-privilege.o038"
 kind = "operand_type_class"
 required = true
-target = "<user name> in [ <user name> OR <oid> , ]"
+target = "<user name> in [ { <user name> | <oid> } , ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.info.has-function-privilege.o027"
-kind = "required_operand_missing"
-required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
-note = "omit <oid>"
-
-[[obligation]]
-id = "pg.functions.info.has-function-privilege.o028"
+id = "pg.functions.info.has-function-privilege.o039"
 kind = "operand_type_class"
 required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
+target = "<oid> in [ { <user name> | <oid> } , ]"
 note = "a valid operand"
+
+[[obligation]]
+id = "pg.functions.info.has-function-privilege.o040"
+kind = "alternative"
+required = true
+target = "{ <function text> | <oid> } → <function text>"
+
+[[obligation]]
+id = "pg.functions.info.has-function-privilege.o041"
+kind = "alternative"
+required = true
+target = "{ <function text> | <oid> } → <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-function-privilege.o032"
@@ -13640,13 +13654,6 @@ kind = "operand_type_class"
 required = true
 target = "<function text>"
 note = "a valid expression"
-
-[[obligation]]
-id = "pg.functions.info.has-function-privilege.o016"
-kind = "required_operand_missing"
-required = true
-target = "<oid>"
-note = "omit <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-function-privilege.o017"
@@ -13676,18 +13683,6 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "pg.functions.info.has-function-privilege.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR in [ <user name> OR <oid> , ]"
-
-[[obligation]]
-id = "pg.functions.info.has-function-privilege.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR"
-
-[[obligation]]
 id = "pg.functions.info.has-function-privilege.o021"
 kind = "negative_neighbour"
 required = true
@@ -13700,37 +13695,54 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.info.has-language-privilege.o024"
+id = "pg.functions.info.has-language-privilege.o034"
 kind = "option_present"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-language-privilege.o025"
+id = "pg.functions.info.has-language-privilege.o035"
 kind = "option_absent"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-language-privilege.o031"
+id = "pg.functions.info.has-language-privilege.o036"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <user name>"
+
+[[obligation]]
+id = "pg.functions.info.has-language-privilege.o037"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <oid>"
+
+[[obligation]]
+id = "pg.functions.info.has-language-privilege.o038"
 kind = "operand_type_class"
 required = true
-target = "<user name> in [ <user name> OR <oid> , ]"
+target = "<user name> in [ { <user name> | <oid> } , ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.info.has-language-privilege.o027"
-kind = "required_operand_missing"
-required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
-note = "omit <oid>"
-
-[[obligation]]
-id = "pg.functions.info.has-language-privilege.o028"
+id = "pg.functions.info.has-language-privilege.o039"
 kind = "operand_type_class"
 required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
+target = "<oid> in [ { <user name> | <oid> } , ]"
 note = "a valid operand"
+
+[[obligation]]
+id = "pg.functions.info.has-language-privilege.o040"
+kind = "alternative"
+required = true
+target = "{ <language text> | <oid> } → <language text>"
+
+[[obligation]]
+id = "pg.functions.info.has-language-privilege.o041"
+kind = "alternative"
+required = true
+target = "{ <language text> | <oid> } → <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-language-privilege.o032"
@@ -13738,13 +13750,6 @@ kind = "operand_type_class"
 required = true
 target = "<language text>"
 note = "a valid expression"
-
-[[obligation]]
-id = "pg.functions.info.has-language-privilege.o016"
-kind = "required_operand_missing"
-required = true
-target = "<oid>"
-note = "omit <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-language-privilege.o017"
@@ -13774,18 +13779,6 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "pg.functions.info.has-language-privilege.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR in [ <user name> OR <oid> , ]"
-
-[[obligation]]
-id = "pg.functions.info.has-language-privilege.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR"
-
-[[obligation]]
 id = "pg.functions.info.has-language-privilege.o021"
 kind = "negative_neighbour"
 required = true
@@ -13798,36 +13791,41 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.info.has-largeobject-privilege.o019"
+id = "pg.functions.info.has-largeobject-privilege.o028"
 kind = "option_present"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-largeobject-privilege.o020"
+id = "pg.functions.info.has-largeobject-privilege.o029"
 kind = "option_absent"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-largeobject-privilege.o025"
+id = "pg.functions.info.has-largeobject-privilege.o030"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <user name>"
+
+[[obligation]]
+id = "pg.functions.info.has-largeobject-privilege.o031"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <oid>"
+
+[[obligation]]
+id = "pg.functions.info.has-largeobject-privilege.o032"
 kind = "operand_type_class"
 required = true
-target = "<user name> in [ <user name> OR <oid> , ]"
+target = "<user name> in [ { <user name> | <oid> } , ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.info.has-largeobject-privilege.o022"
-kind = "required_operand_missing"
-required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
-note = "omit <oid>"
-
-[[obligation]]
-id = "pg.functions.info.has-largeobject-privilege.o023"
+id = "pg.functions.info.has-largeobject-privilege.o033"
 kind = "operand_type_class"
 required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
+target = "<oid> in [ { <user name> | <oid> } , ]"
 note = "a valid operand"
 
 [[obligation]]
@@ -13858,12 +13856,6 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "pg.functions.info.has-largeobject-privilege.o024"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR in [ <user name> OR <oid> , ]"
-
-[[obligation]]
 id = "pg.functions.info.has-largeobject-privilege.o016"
 kind = "negative_neighbour"
 required = true
@@ -13876,36 +13868,41 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.info.has-parameter-privilege.o019"
+id = "pg.functions.info.has-parameter-privilege.o028"
 kind = "option_present"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-parameter-privilege.o020"
+id = "pg.functions.info.has-parameter-privilege.o029"
 kind = "option_absent"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-parameter-privilege.o025"
+id = "pg.functions.info.has-parameter-privilege.o030"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <user name>"
+
+[[obligation]]
+id = "pg.functions.info.has-parameter-privilege.o031"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <oid>"
+
+[[obligation]]
+id = "pg.functions.info.has-parameter-privilege.o032"
 kind = "operand_type_class"
 required = true
-target = "<user name> in [ <user name> OR <oid> , ]"
+target = "<user name> in [ { <user name> | <oid> } , ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.info.has-parameter-privilege.o022"
-kind = "required_operand_missing"
-required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
-note = "omit <oid>"
-
-[[obligation]]
-id = "pg.functions.info.has-parameter-privilege.o023"
+id = "pg.functions.info.has-parameter-privilege.o033"
 kind = "operand_type_class"
 required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
+target = "<oid> in [ { <user name> | <oid> } , ]"
 note = "a valid operand"
 
 [[obligation]]
@@ -13936,12 +13933,6 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "pg.functions.info.has-parameter-privilege.o024"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR in [ <user name> OR <oid> , ]"
-
-[[obligation]]
 id = "pg.functions.info.has-parameter-privilege.o016"
 kind = "negative_neighbour"
 required = true
@@ -13954,37 +13945,54 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.info.has-schema-privilege.o024"
+id = "pg.functions.info.has-schema-privilege.o034"
 kind = "option_present"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-schema-privilege.o025"
+id = "pg.functions.info.has-schema-privilege.o035"
 kind = "option_absent"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-schema-privilege.o031"
+id = "pg.functions.info.has-schema-privilege.o036"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <user name>"
+
+[[obligation]]
+id = "pg.functions.info.has-schema-privilege.o037"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <oid>"
+
+[[obligation]]
+id = "pg.functions.info.has-schema-privilege.o038"
 kind = "operand_type_class"
 required = true
-target = "<user name> in [ <user name> OR <oid> , ]"
+target = "<user name> in [ { <user name> | <oid> } , ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.info.has-schema-privilege.o027"
-kind = "required_operand_missing"
-required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
-note = "omit <oid>"
-
-[[obligation]]
-id = "pg.functions.info.has-schema-privilege.o028"
+id = "pg.functions.info.has-schema-privilege.o039"
 kind = "operand_type_class"
 required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
+target = "<oid> in [ { <user name> | <oid> } , ]"
 note = "a valid operand"
+
+[[obligation]]
+id = "pg.functions.info.has-schema-privilege.o040"
+kind = "alternative"
+required = true
+target = "{ <schema text> | <oid> } → <schema text>"
+
+[[obligation]]
+id = "pg.functions.info.has-schema-privilege.o041"
+kind = "alternative"
+required = true
+target = "{ <schema text> | <oid> } → <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-schema-privilege.o032"
@@ -13992,13 +14000,6 @@ kind = "operand_type_class"
 required = true
 target = "<schema text>"
 note = "a valid expression"
-
-[[obligation]]
-id = "pg.functions.info.has-schema-privilege.o016"
-kind = "required_operand_missing"
-required = true
-target = "<oid>"
-note = "omit <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-schema-privilege.o017"
@@ -14028,18 +14029,6 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "pg.functions.info.has-schema-privilege.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR in [ <user name> OR <oid> , ]"
-
-[[obligation]]
-id = "pg.functions.info.has-schema-privilege.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR"
-
-[[obligation]]
 id = "pg.functions.info.has-schema-privilege.o021"
 kind = "negative_neighbour"
 required = true
@@ -14052,37 +14041,54 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.info.has-sequence-privilege.o024"
+id = "pg.functions.info.has-sequence-privilege.o034"
 kind = "option_present"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-sequence-privilege.o025"
+id = "pg.functions.info.has-sequence-privilege.o035"
 kind = "option_absent"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-sequence-privilege.o031"
+id = "pg.functions.info.has-sequence-privilege.o036"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <user name>"
+
+[[obligation]]
+id = "pg.functions.info.has-sequence-privilege.o037"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <oid>"
+
+[[obligation]]
+id = "pg.functions.info.has-sequence-privilege.o038"
 kind = "operand_type_class"
 required = true
-target = "<user name> in [ <user name> OR <oid> , ]"
+target = "<user name> in [ { <user name> | <oid> } , ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.info.has-sequence-privilege.o027"
-kind = "required_operand_missing"
-required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
-note = "omit <oid>"
-
-[[obligation]]
-id = "pg.functions.info.has-sequence-privilege.o028"
+id = "pg.functions.info.has-sequence-privilege.o039"
 kind = "operand_type_class"
 required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
+target = "<oid> in [ { <user name> | <oid> } , ]"
 note = "a valid operand"
+
+[[obligation]]
+id = "pg.functions.info.has-sequence-privilege.o040"
+kind = "alternative"
+required = true
+target = "{ <sequence text> | <oid> } → <sequence text>"
+
+[[obligation]]
+id = "pg.functions.info.has-sequence-privilege.o041"
+kind = "alternative"
+required = true
+target = "{ <sequence text> | <oid> } → <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-sequence-privilege.o032"
@@ -14090,13 +14096,6 @@ kind = "operand_type_class"
 required = true
 target = "<sequence text>"
 note = "a valid expression"
-
-[[obligation]]
-id = "pg.functions.info.has-sequence-privilege.o016"
-kind = "required_operand_missing"
-required = true
-target = "<oid>"
-note = "omit <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-sequence-privilege.o017"
@@ -14126,18 +14125,6 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "pg.functions.info.has-sequence-privilege.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR in [ <user name> OR <oid> , ]"
-
-[[obligation]]
-id = "pg.functions.info.has-sequence-privilege.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR"
-
-[[obligation]]
 id = "pg.functions.info.has-sequence-privilege.o021"
 kind = "negative_neighbour"
 required = true
@@ -14150,37 +14137,54 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.info.has-server-privilege.o024"
+id = "pg.functions.info.has-server-privilege.o034"
 kind = "option_present"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-server-privilege.o025"
+id = "pg.functions.info.has-server-privilege.o035"
 kind = "option_absent"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-server-privilege.o031"
+id = "pg.functions.info.has-server-privilege.o036"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <user name>"
+
+[[obligation]]
+id = "pg.functions.info.has-server-privilege.o037"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <oid>"
+
+[[obligation]]
+id = "pg.functions.info.has-server-privilege.o038"
 kind = "operand_type_class"
 required = true
-target = "<user name> in [ <user name> OR <oid> , ]"
+target = "<user name> in [ { <user name> | <oid> } , ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.info.has-server-privilege.o027"
-kind = "required_operand_missing"
-required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
-note = "omit <oid>"
-
-[[obligation]]
-id = "pg.functions.info.has-server-privilege.o028"
+id = "pg.functions.info.has-server-privilege.o039"
 kind = "operand_type_class"
 required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
+target = "<oid> in [ { <user name> | <oid> } , ]"
 note = "a valid operand"
+
+[[obligation]]
+id = "pg.functions.info.has-server-privilege.o040"
+kind = "alternative"
+required = true
+target = "{ <server text> | <oid> } → <server text>"
+
+[[obligation]]
+id = "pg.functions.info.has-server-privilege.o041"
+kind = "alternative"
+required = true
+target = "{ <server text> | <oid> } → <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-server-privilege.o032"
@@ -14188,13 +14192,6 @@ kind = "operand_type_class"
 required = true
 target = "<server text>"
 note = "a valid expression"
-
-[[obligation]]
-id = "pg.functions.info.has-server-privilege.o016"
-kind = "required_operand_missing"
-required = true
-target = "<oid>"
-note = "omit <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-server-privilege.o017"
@@ -14224,18 +14221,6 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "pg.functions.info.has-server-privilege.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR in [ <user name> OR <oid> , ]"
-
-[[obligation]]
-id = "pg.functions.info.has-server-privilege.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR"
-
-[[obligation]]
 id = "pg.functions.info.has-server-privilege.o021"
 kind = "negative_neighbour"
 required = true
@@ -14248,37 +14233,54 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.info.has-table-privilege.o024"
+id = "pg.functions.info.has-table-privilege.o034"
 kind = "option_present"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-table-privilege.o025"
+id = "pg.functions.info.has-table-privilege.o035"
 kind = "option_absent"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-table-privilege.o031"
+id = "pg.functions.info.has-table-privilege.o036"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <user name>"
+
+[[obligation]]
+id = "pg.functions.info.has-table-privilege.o037"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <oid>"
+
+[[obligation]]
+id = "pg.functions.info.has-table-privilege.o038"
 kind = "operand_type_class"
 required = true
-target = "<user name> in [ <user name> OR <oid> , ]"
+target = "<user name> in [ { <user name> | <oid> } , ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.info.has-table-privilege.o027"
-kind = "required_operand_missing"
-required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
-note = "omit <oid>"
-
-[[obligation]]
-id = "pg.functions.info.has-table-privilege.o028"
+id = "pg.functions.info.has-table-privilege.o039"
 kind = "operand_type_class"
 required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
+target = "<oid> in [ { <user name> | <oid> } , ]"
 note = "a valid operand"
+
+[[obligation]]
+id = "pg.functions.info.has-table-privilege.o040"
+kind = "alternative"
+required = true
+target = "{ <table text> | <oid> } → <table text>"
+
+[[obligation]]
+id = "pg.functions.info.has-table-privilege.o041"
+kind = "alternative"
+required = true
+target = "{ <table text> | <oid> } → <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-table-privilege.o032"
@@ -14286,13 +14288,6 @@ kind = "operand_type_class"
 required = true
 target = "<table text>"
 note = "a valid expression"
-
-[[obligation]]
-id = "pg.functions.info.has-table-privilege.o016"
-kind = "required_operand_missing"
-required = true
-target = "<oid>"
-note = "omit <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-table-privilege.o017"
@@ -14322,18 +14317,6 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "pg.functions.info.has-table-privilege.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR in [ <user name> OR <oid> , ]"
-
-[[obligation]]
-id = "pg.functions.info.has-table-privilege.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR"
-
-[[obligation]]
 id = "pg.functions.info.has-table-privilege.o021"
 kind = "negative_neighbour"
 required = true
@@ -14346,37 +14329,54 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.info.has-tablespace-privilege.o024"
+id = "pg.functions.info.has-tablespace-privilege.o034"
 kind = "option_present"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-tablespace-privilege.o025"
+id = "pg.functions.info.has-tablespace-privilege.o035"
 kind = "option_absent"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-tablespace-privilege.o031"
+id = "pg.functions.info.has-tablespace-privilege.o036"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <user name>"
+
+[[obligation]]
+id = "pg.functions.info.has-tablespace-privilege.o037"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <oid>"
+
+[[obligation]]
+id = "pg.functions.info.has-tablespace-privilege.o038"
 kind = "operand_type_class"
 required = true
-target = "<user name> in [ <user name> OR <oid> , ]"
+target = "<user name> in [ { <user name> | <oid> } , ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.info.has-tablespace-privilege.o027"
-kind = "required_operand_missing"
-required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
-note = "omit <oid>"
-
-[[obligation]]
-id = "pg.functions.info.has-tablespace-privilege.o028"
+id = "pg.functions.info.has-tablespace-privilege.o039"
 kind = "operand_type_class"
 required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
+target = "<oid> in [ { <user name> | <oid> } , ]"
 note = "a valid operand"
+
+[[obligation]]
+id = "pg.functions.info.has-tablespace-privilege.o040"
+kind = "alternative"
+required = true
+target = "{ <tablespace text> | <oid> } → <tablespace text>"
+
+[[obligation]]
+id = "pg.functions.info.has-tablespace-privilege.o041"
+kind = "alternative"
+required = true
+target = "{ <tablespace text> | <oid> } → <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-tablespace-privilege.o032"
@@ -14384,13 +14384,6 @@ kind = "operand_type_class"
 required = true
 target = "<tablespace text>"
 note = "a valid expression"
-
-[[obligation]]
-id = "pg.functions.info.has-tablespace-privilege.o016"
-kind = "required_operand_missing"
-required = true
-target = "<oid>"
-note = "omit <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-tablespace-privilege.o017"
@@ -14420,18 +14413,6 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "pg.functions.info.has-tablespace-privilege.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR in [ <user name> OR <oid> , ]"
-
-[[obligation]]
-id = "pg.functions.info.has-tablespace-privilege.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR"
-
-[[obligation]]
 id = "pg.functions.info.has-tablespace-privilege.o021"
 kind = "negative_neighbour"
 required = true
@@ -14444,37 +14425,54 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.info.has-type-privilege.o024"
+id = "pg.functions.info.has-type-privilege.o034"
 kind = "option_present"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-type-privilege.o025"
+id = "pg.functions.info.has-type-privilege.o035"
 kind = "option_absent"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.has-type-privilege.o031"
+id = "pg.functions.info.has-type-privilege.o036"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <user name>"
+
+[[obligation]]
+id = "pg.functions.info.has-type-privilege.o037"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <oid>"
+
+[[obligation]]
+id = "pg.functions.info.has-type-privilege.o038"
 kind = "operand_type_class"
 required = true
-target = "<user name> in [ <user name> OR <oid> , ]"
+target = "<user name> in [ { <user name> | <oid> } , ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.info.has-type-privilege.o027"
-kind = "required_operand_missing"
-required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
-note = "omit <oid>"
-
-[[obligation]]
-id = "pg.functions.info.has-type-privilege.o028"
+id = "pg.functions.info.has-type-privilege.o039"
 kind = "operand_type_class"
 required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
+target = "<oid> in [ { <user name> | <oid> } , ]"
 note = "a valid operand"
+
+[[obligation]]
+id = "pg.functions.info.has-type-privilege.o040"
+kind = "alternative"
+required = true
+target = "{ <type text> | <oid> } → <type text>"
+
+[[obligation]]
+id = "pg.functions.info.has-type-privilege.o041"
+kind = "alternative"
+required = true
+target = "{ <type text> | <oid> } → <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-type-privilege.o032"
@@ -14482,13 +14480,6 @@ kind = "operand_type_class"
 required = true
 target = "<type text>"
 note = "a valid expression"
-
-[[obligation]]
-id = "pg.functions.info.has-type-privilege.o016"
-kind = "required_operand_missing"
-required = true
-target = "<oid>"
-note = "omit <oid>"
 
 [[obligation]]
 id = "pg.functions.info.has-type-privilege.o017"
@@ -14516,18 +14507,6 @@ id = "pg.functions.info.has-type-privilege.o020"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
-
-[[obligation]]
-id = "pg.functions.info.has-type-privilege.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR in [ <user name> OR <oid> , ]"
-
-[[obligation]]
-id = "pg.functions.info.has-type-privilege.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR"
 
 [[obligation]]
 id = "pg.functions.info.has-type-privilege.o021"
@@ -16094,37 +16073,54 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "pg.functions.info.pg-has-role.o024"
+id = "pg.functions.info.pg-has-role.o034"
 kind = "option_present"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.pg-has-role.o025"
+id = "pg.functions.info.pg-has-role.o035"
 kind = "option_absent"
 required = true
-target = "[ <user name> OR <oid> , ]"
+target = "[ { <user name> | <oid> } , ]"
 
 [[obligation]]
-id = "pg.functions.info.pg-has-role.o031"
+id = "pg.functions.info.pg-has-role.o036"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <user name>"
+
+[[obligation]]
+id = "pg.functions.info.pg-has-role.o037"
+kind = "alternative"
+required = true
+target = "{ <user name> | <oid> } → <oid>"
+
+[[obligation]]
+id = "pg.functions.info.pg-has-role.o038"
 kind = "operand_type_class"
 required = true
-target = "<user name> in [ <user name> OR <oid> , ]"
+target = "<user name> in [ { <user name> | <oid> } , ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "pg.functions.info.pg-has-role.o027"
-kind = "required_operand_missing"
-required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
-note = "omit <oid>"
-
-[[obligation]]
-id = "pg.functions.info.pg-has-role.o028"
+id = "pg.functions.info.pg-has-role.o039"
 kind = "operand_type_class"
 required = true
-target = "<oid> in [ <user name> OR <oid> , ]"
+target = "<oid> in [ { <user name> | <oid> } , ]"
 note = "a valid operand"
+
+[[obligation]]
+id = "pg.functions.info.pg-has-role.o040"
+kind = "alternative"
+required = true
+target = "{ <role text> | <oid> } → <role text>"
+
+[[obligation]]
+id = "pg.functions.info.pg-has-role.o041"
+kind = "alternative"
+required = true
+target = "{ <role text> | <oid> } → <oid>"
 
 [[obligation]]
 id = "pg.functions.info.pg-has-role.o032"
@@ -16132,13 +16128,6 @@ kind = "operand_type_class"
 required = true
 target = "<role text>"
 note = "a valid expression"
-
-[[obligation]]
-id = "pg.functions.info.pg-has-role.o016"
-kind = "required_operand_missing"
-required = true
-target = "<oid>"
-note = "omit <oid>"
 
 [[obligation]]
 id = "pg.functions.info.pg-has-role.o017"
@@ -16166,18 +16155,6 @@ id = "pg.functions.info.pg-has-role.o020"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
-
-[[obligation]]
-id = "pg.functions.info.pg-has-role.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR in [ <user name> OR <oid> , ]"
-
-[[obligation]]
-id = "pg.functions.info.pg-has-role.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR"
 
 [[obligation]]
 id = "pg.functions.info.pg-has-role.o021"
@@ -17381,18 +17358,23 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "pg.functions.info.row-security-active.o014"
+kind = "alternative"
+required = true
+target = "{ <table text> | <oid> } → <table text>"
+
+[[obligation]]
+id = "pg.functions.info.row-security-active.o015"
+kind = "alternative"
+required = true
+target = "{ <table text> | <oid> } → <oid>"
+
+[[obligation]]
 id = "pg.functions.info.row-security-active.o013"
 kind = "operand_type_class"
 required = true
 target = "<table text>"
 note = "a valid expression"
-
-[[obligation]]
-id = "pg.functions.info.row-security-active.o008"
-kind = "required_operand_missing"
-required = true
-target = "<oid>"
-note = "omit <oid>"
 
 [[obligation]]
 id = "pg.functions.info.row-security-active.o009"
@@ -17406,12 +17388,6 @@ id = "pg.functions.info.row-security-active.o010"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
-
-[[obligation]]
-id = "pg.functions.info.row-security-active.o012"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required OR"
 
 [[obligation]]
 id = "pg.functions.info.row-security-active.o011"

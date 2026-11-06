@@ -217,9 +217,16 @@ FILLS: dict[str, str] = {
     "direction": "NEXT",
     "payload": "'p1'",
     "loid": "1",
+    "row_constructor": "ROW ( 1 , 2 )",
     **VALUE_FILLS,
 }
 FORM_FILLS: dict[str, dict[str, str]] = {
+    "pg.expressions.subquery.all-row": {"subquery": "SELECT 1 , 2"},
+    "pg.expressions.subquery.any-row": {"subquery": "SELECT 1 , 2"},
+    "pg.expressions.subquery.in-row": {"subquery": "SELECT 1 , 2"},
+    "pg.expressions.subquery.not-in-row": {"subquery": "SELECT 1 , 2"},
+    "pg.expressions.subquery.row-comparison": {"subquery": "SELECT 1 , 2"},
+    "pg.expressions.subquery.some-row": {"subquery": "SELECT 1 , 2"},
     "pg.security_admin.alter-default-privileges": {
         "abbreviated_grant_or_revoke": "GRANT SELECT ON TABLES TO PUBLIC"
     },
