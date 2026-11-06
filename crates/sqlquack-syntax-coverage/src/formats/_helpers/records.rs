@@ -2,6 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
+use crate::formats::_helpers::dialect::{current_dialect, known_family};
 use crate::formats::_helpers::hashes::{
     is_git_tree, is_sha256, session_sha256, setup_sha256, sha256_hex,
 };
@@ -9,8 +10,8 @@ use crate::formats::_helpers::ids::{
     is_case_id, is_form_id, is_rfc3339_utc, is_segment, is_source_id, is_utc,
 };
 use crate::formats::constants::{
-    DCM_LINE, DCM_POSITION, DEFINITION_SEPARATOR, FAMILIES, GRAMMAR_JOIN, HTTPS,
-    INTERACTION_MEMBERS, PROSE_HASH_PREFIX, RECEIPT_FORBIDDEN_TEXT, RECEIPT_FORMAT,
+    DCM_LINE, DCM_POSITION, DEFINITION_SEPARATOR, GRAMMAR_JOIN, HTTPS, INTERACTION_MEMBERS,
+    PROSE_HASH_PREFIX, RECEIPT_FORBIDDEN_TEXT, RECEIPT_FORMAT_ENGINE,
 };
 use crate::formats::main::obligation_form::obligation_form;
 use crate::formats::models::{
@@ -23,12 +24,61 @@ fn blank(text: &str) -> bool {
     text.trim().is_empty()
 }
 
-/// Whether `text` holds an account, host, URL or address.
-fn identifying(text: &str) -> bool {
+/// Whether `text` holds an account, host, URL or address; `/2` lets operator `@`s such as `@>` pass.
+fn identifying(text: &str, engine: bool) -> bool {
     let lower: String = text.to_ascii_lowercase();
     RECEIPT_FORBIDDEN_TEXT
         .iter()
-        .any(|forbidden| lower.contains(forbidden))
+        .any(|forbidden| match (engine, *forbidden) {
+            (true, "@") => address_at(&lower),
+            _ => lower.contains(forbidden),
+        })
+}
+
+/// Whether an `@` in `text` has a word character on both sides.
+fn address_at(text: &str) -> bool {
+    let word = |byte: &u8| byte.is_ascii_alphanumeric() || *byte == b'_';
+    text.as_bytes()
+        .windows(3)
+        .any(|three| three[1] == b'@' && word(&three[0]) && word(&three[2]))
+}
+
+/// The version fields a receipt of its format must carry, and those it must not.
+fn version_problems(receipt: &Receipt) -> Vec<String> {
+    let id: &str = &receipt.case_id;
+    let engine: [Option<&String>; 6] = [
+        receipt.engine.as_ref(),
+        receipt.engine_version.as_ref(),
+        receipt.engine_image_sha256.as_ref(),
+        receipt.engine_code.as_ref(),
+        receipt.parser_check.as_ref(),
+        receipt.parse_only_sqlstate.as_ref(),
+    ];
+    let valid: bool = match receipt.format == RECEIPT_FORMAT_ENGINE {
+        false => {
+            receipt
+                .warehouse_version
+                .as_deref()
+                .is_some_and(|v| !blank(v))
+                && engine.iter().all(Option::is_none)
+        }
+        true => {
+            receipt.warehouse_version.is_none()
+                && engine[..3]
+                    .iter()
+                    .all(|field| field.is_some_and(|v| !blank(v)))
+                && receipt.parser_check.as_deref().is_some_and(|check| {
+                    ["do_block", "sql_function", "whole_text"].contains(&check)
+                })
+        }
+    };
+    match valid {
+        true => Vec::new(),
+        false => vec![format!(
+            "receipt {id}: format /1 carries warehouse_version alone; /2 carries engine, \
+             engine_version, engine_image_sha256 and parser_check (do_block, sql_function or whole_text) instead"
+        )],
+    }
 }
 
 /// The family of a form id, whatever file it appears in.
@@ -56,7 +106,7 @@ pub(crate) fn check_source(source: &Source) -> Vec<String> {
     let family_valid: bool = match source.status {
         SourceStatus::OutOfScope => source.family.is_empty(),
         SourceStatus::Forms | SourceStatus::Restated | SourceStatus::NoSyntaxBlock => {
-            FAMILIES.contains(&source.family.as_str())
+            known_family(&source.family)
         }
     };
     if !family_valid {
@@ -263,6 +313,12 @@ pub(crate) fn check_case(case: &Case, family: &str) -> Vec<String> {
             "case {id}: needs obligation ids of family {family}"
         ));
     }
+    if case.capture.is_engine() != (current_dialect().receipt_format == RECEIPT_FORMAT_ENGINE) {
+        problems.push(format!(
+            "case {id}: receipt format /2 roots take exactly the engine captures \
+             execute_in_rolled_back_transaction and execute_autocommit_in_throwaway_database"
+        ));
+    }
     if case.stage.is_some() && case.expect != Some(Expect::Accept) {
         problems.push(format!(
             "case {id}: a stage is only for a case expected to be accepted"
@@ -282,10 +338,17 @@ pub(crate) fn check_case(case: &Case, family: &str) -> Vec<String> {
 pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
     let id: &str = &receipt.case_id;
     let mut problems: Vec<String> = Vec::new();
-    if receipt.format != RECEIPT_FORMAT {
+    let expected_format: &str = &current_dialect().receipt_format;
+    if receipt.format != expected_format {
         problems.push(format!(
-            "receipt {id}: format {} is not {RECEIPT_FORMAT}",
+            "receipt {id}: format {} is not {expected_format}",
             receipt.format
+        ));
+    }
+    problems.extend(version_problems(receipt));
+    if receipt.capture_method.is_engine() != (receipt.format == RECEIPT_FORMAT_ENGINE) {
+        problems.push(format!(
+            "receipt {id}: engine captures go with format /2 and only with it"
         ));
     }
     if !is_case_id(id) {
@@ -294,7 +357,7 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
         ));
     }
     problems.extend(dcm_problems(receipt));
-    let hashes: [Option<&String>; 11] = [
+    let hashes: [Option<&String>; 12] = [
         Some(&receipt.sql_sha256),
         Some(&receipt.setup_sha256),
         Some(&receipt.session_sha256),
@@ -306,6 +369,7 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
         receipt.input_sha256.as_ref(),
         receipt.supersedes_receipt_sha256.as_ref(),
         receipt.definition_file_sha256.as_ref(),
+        receipt.engine_image_sha256.as_ref(),
     ];
     if !hashes.iter().flatten().all(|hash| is_sha256(hash)) {
         problems.push(format!("receipt {id}: a hash is not a lower-case SHA-256"));
@@ -319,7 +383,7 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
         problems.push(format!("receipt {id}: recorded_at is not RFC 3339 in UTC"));
     }
     if blank(&receipt.run_id)
-        || blank(&receipt.warehouse_version)
+        || receipt.warehouse_version.as_deref().is_some_and(blank)
         || blank(&receipt.outcome)
         || blank(&receipt.phase_basis)
     {
@@ -339,10 +403,14 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
             "receipt {id}: a reason category needs its basis and a phase after parsing"
         ));
     }
-    let text: [Option<&String>; 13] = [
+    let text: [Option<&String>; 17] = [
         Some(&receipt.run_id),
         receipt.query_id.as_ref(),
-        Some(&receipt.warehouse_version),
+        receipt.warehouse_version.as_ref(),
+        receipt.engine.as_ref(),
+        receipt.engine_version.as_ref(),
+        receipt.engine_code.as_ref(),
+        receipt.parse_only_sqlstate.as_ref(),
         Some(&receipt.outcome),
         Some(&receipt.phase_basis),
         receipt.sqlstate.as_ref(),
@@ -377,7 +445,7 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
         .flatten()
         .copied()
         .chain(account_text)
-        .any(|field| identifying(field))
+        .any(|field| identifying(field, receipt.format == RECEIPT_FORMAT_ENGINE))
     {
         problems.push(format!(
             "receipt {id}: holds an account, host, URL or address"
@@ -494,7 +562,7 @@ pub(crate) fn check_review(review: &Review) -> Vec<String> {
                 && review.obligations_sha256.is_none()
         }
         family => {
-            FAMILIES.contains(&family)
+            known_family(family)
                 && review.sources_sha256.is_none()
                 && match review.definitions.is_empty() {
                     true => hash(&review.catalogue_sha256) && hash(&review.obligations_sha256),

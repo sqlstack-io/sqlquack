@@ -3,6 +3,7 @@
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
+use crate::cli::_helpers::commands::snowflake_only;
 use crate::cli::_helpers::output::{print, say};
 use crate::cli::models::Common;
 use crate::formats::main::load_coverage::load_coverage;
@@ -187,6 +188,7 @@ pub(crate) fn results(
         statements.display()
     ));
     let coverage = load_coverage(&common.root).map_err(|problems| fail(&problems))?;
+    snowflake_only("results")?;
     let directory: PathBuf = common
         .root
         .parent()

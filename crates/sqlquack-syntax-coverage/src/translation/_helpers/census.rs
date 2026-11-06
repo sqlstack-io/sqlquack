@@ -5,7 +5,7 @@ use std::path::Path;
 
 use serde_json::{Value, json};
 
-use crate::formats::constants::FAMILIES;
+use crate::formats::main::current_dialect::current_dialect;
 use crate::formats::models::SyntaxCoverage;
 use crate::translation::constants::CENSUS_DIR;
 use crate::translation::models::{CensusColumn, CensusEntry};
@@ -23,7 +23,7 @@ pub(crate) fn load_census(
         .collect();
     let mut entries: BTreeMap<String, CensusEntry> = BTreeMap::new();
     let mut problems: Vec<String> = Vec::new();
-    for family in FAMILIES {
+    for family in current_dialect().families.iter() {
         let path = root.join(CENSUS_DIR).join(format!("{family}.jsonl"));
         let Ok(text) = std::fs::read_to_string(&path) else {
             continue;
