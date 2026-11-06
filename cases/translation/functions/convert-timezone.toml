@@ -1,0 +1,111 @@
+category = "translation"
+construct = "sf.functions.convert-timezone"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_ntz"
+description = "Conversions between zones with whole and half-hour offsets. Catches: source and target swapped, or offsets applied with the wrong sign"
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2024-07-01 12:00:00'"],
+  ["'2024-01-01 00:15:00'"],
+]
+query = "SELECT CONVERT_TIMEZONE('America/Los_Angeles', 'UTC', t) AS la_utc, CONVERT_TIMEZONE('UTC', 'Asia/Kolkata', t) AS utc_in FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_offset_names"
+description = "Zone names in another case, and a fixed-offset name. Catches: zone names compared case-sensitively"
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2024-01-15 08:00:00'"],
+]
+query = "SELECT CONVERT_TIMEZONE('europe/paris', 'Etc/GMT+3', t) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_source_tz"
+description = "NULL source zone. Catches: NULL read as UTC"
+columns = [{ name = "z", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'UTC'"],
+]
+query = "SELECT CONVERT_TIMEZONE(z, 'Asia/Tokyo', '2024-01-01 00:00:00'::TIMESTAMP_NTZ) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_null_target_tz"
+description = "NULL target zone. Catches: NULL read as UTC"
+columns = [{ name = "z", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'UTC'"],
+]
+query = "SELECT CONVERT_TIMEZONE('Asia/Tokyo', z, '2024-01-01 00:00:00'::TIMESTAMP_NTZ) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_null_source_timestamp_ntz"
+description = "NULL timestamp. Catches: NULL read as the epoch"
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["NULL"],
+  ["'2024-01-01 00:00:00'"],
+]
+query = "SELECT CONVERT_TIMEZONE('UTC', 'Asia/Tokyo', t) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_dst"
+description = "Wall clocks in the spring gap and the autumn overlap of America/New_York, and either side. Catches: a fixed standard offset all year, or the overlap resolved to the other offset"
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2024-03-10 01:59:00'"],
+  ["'2024-03-10 02:30:00'"],
+  ["'2024-03-10 03:00:00'"],
+  ["'2024-11-03 01:30:00'"],
+  ["'2024-11-03 02:00:00'"],
+]
+query = "SELECT CONVERT_TIMEZONE('America/New_York', 'UTC', t) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t007_leap"
+description = "A conversion that crosses into 29 February. Catches: a skipped leap day"
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2024-02-28 20:00:00'"],
+]
+query = "SELECT CONVERT_TIMEZONE('UTC', 'Pacific/Kiritimati', t) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t008_bad_zone"
+description = "An unknown zone. Catches: UTC or NULL instead of an error"
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2024-01-01 00:00:00'"],
+]
+query = "SELECT CONVERT_TIMEZONE('Mars/Base', 'UTC', t) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t009_two_argument"
+description = "The two-argument form on a TIMESTAMP_TZ, which returns a TIMESTAMP_TZ in the target zone. Catches: the three-argument NTZ path (the wall clock read as UTC: 05:00 instead of 13:00 Kolkata), an NTZ result (r), or the right instant kept in the source or UTC offset (wall 23:30 or 07:30 instead of 13:00)"
+columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
+rows = [
+  ["'2024-12-31 23:30:00.250 -0800'"],
+  ["'2024-03-10 01:30:00 -0500'"],
+]
+query = "SELECT CONVERT_TIMEZONE('Asia/Kolkata', t) AS r, CAST(CONVERT_TIMEZONE('Asia/Kolkata', t) AS TIMESTAMP_NTZ) AS wall FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]

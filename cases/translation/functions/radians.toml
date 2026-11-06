@@ -1,0 +1,51 @@
+category = "translation"
+construct = "sf.functions.radians"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_float"
+description = "RADIANS of FLOAT values. Catches: DEGREES computed (the reverse conversion)"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["180"],
+  ["-90"],
+  ["45.5"],
+]
+query = "SELECT RADIANS(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_fixed"
+description = "RADIANS of NUMBER(12,4), converted to FLOAT. Catches: DEGREES computed (the reverse conversion); or the result left fixed-point"
+columns = [{ name = "x", type = "NUMBER(12,4)" }]
+rows = [
+  ["360.0000"],
+  ["-1.0000"],
+]
+query = "SELECT RADIANS(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null"
+description = "RADIANS of NULL. Catches: NULL turned into 0 or NaN"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT RADIANS(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_large"
+description = "Large degree values. Catches: x*pi computed before dividing by 180, overflowing where the result is finite"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1e308"],
+  ["-1.7e308"],
+]
+query = "SELECT RADIANS(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]

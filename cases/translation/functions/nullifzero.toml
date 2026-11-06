@@ -1,0 +1,41 @@
+category = "translation"
+construct = "sf.functions.nullifzero"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_number"
+description = "Zero with a scale and non-zero values. Catches: 0.00 not seen as zero, or the scale lost"
+columns = [{ name = "a", type = "NUMBER(10,2)" }]
+rows = [
+  ["0.00"],
+  ["-1.25"],
+  ["0.01"],
+]
+query = "SELECT NULLIFZERO(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_float"
+description = "Floating zero, negative zero and a tiny value. Catches: negative zero not seen as zero, or a tiny value rounded to zero"
+columns = [{ name = "a", type = "FLOAT" }]
+rows = [
+  ["0e0"],
+  ["'-0'"],
+  ["1e-300"],
+]
+query = "SELECT NULLIFZERO(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_expr"
+description = "NULL input. Catches: 0 returned for NULL (ZEROIFNULL semantics)"
+columns = [{ name = "a", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["5"],
+]
+query = "SELECT NULLIFZERO(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

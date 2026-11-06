@@ -1,0 +1,43 @@
+category = "translation"
+construct = "sf.functions.try-to-boolean"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_strings"
+description = "Accepted spellings in mixed case. Catches: only true and false accepted"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'YES'"],
+  ["'Off'"],
+  ["'t'"],
+  ["'n'"],
+  ["'1'"],
+  ["'0'"],
+]
+query = "SELECT TRY_TO_BOOLEAN(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_invalid"
+description = "Strings not in either list, including 2 and an empty string. Catches: an error raised, or 2 read as TRUE"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'maybe'"],
+  ["'2'"],
+  ["''"],
+]
+query = "SELECT TRY_TO_BOOLEAN(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_string_expr"
+description = "A NULL string. Catches: FALSE returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TRY_TO_BOOLEAN(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

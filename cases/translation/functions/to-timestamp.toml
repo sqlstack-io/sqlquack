@@ -1,0 +1,109 @@
+category = "translation"
+construct = "sf.functions.to-timestamp"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_number"
+description = "Whole seconds since the epoch. Catches: milliseconds assumed (1970-01-20 for 1700000000)"
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["1700000000"],
+  ["0"],
+  ["951782400"],
+]
+query = "SELECT TO_TIMESTAMP(n) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_scale"
+description = "Scales 3, 6 and 9. The constant argument is a literal per call, as Snowflake requires. Catches: the scale ignored (seconds) or applied as a power of the wrong base"
+columns = [{ name = "n1", type = "NUMBER(38,0)" }, { name = "n2", type = "NUMBER(38,0)" }, { name = "n3", type = "NUMBER(38,0)" }]
+rows = [
+  ["1700000000123", "1700000000123456", "1700000000123456789"],
+]
+query = "SELECT TO_TIMESTAMP(n1, 3) AS r1, TO_TIMESTAMP(n2, 6) AS r2, TO_TIMESTAMP(n3, 9) AS r3 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_decimal"
+description = "A fractional number of seconds, whose scale is kept. Catches: the fraction truncated"
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.50"],
+  ["86400.25"],
+]
+query = "SELECT TO_TIMESTAMP(n) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_variants"
+description = "TO_TIMESTAMP_NTZ, _LTZ and _TZ of the same number. Catches: the wrong result type among NTZ, LTZ and TZ"
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["1700000000"],
+]
+query = "SELECT TO_TIMESTAMP_NTZ(n) AS ntz, TO_TIMESTAMP_LTZ(n) AS ltz, TO_TIMESTAMP_TZ(n) AS tz FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_null_numeric_expr"
+description = "NULL number. Catches: NULL read as the epoch"
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["1"],
+]
+query = "SELECT TO_TIMESTAMP(n) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_null_scale"
+compile_error = true
+description = "A literal NULL scale. Snowflake needs an integer constant there and refuses NULL. Catches: NULL read as 0 instead of the error"
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT TO_TIMESTAMP(1700000000123, NULL) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t007_pre_epoch"
+description = "Negative values, before 1970. Catches: truncation toward zero for a negative fraction"
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["-1.00"],
+  ["-0.50"],
+]
+query = "SELECT TO_TIMESTAMP(n) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t008_leap"
+description = "The first second of 29 February 2024. Catches: a 365-day year in the conversion"
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["1709164800"],
+  ["1709251199"],
+]
+query = "SELECT TO_TIMESTAMP(n) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t009_varchar"
+description = "Strings with fractional seconds, an explicit format and an integer string. Catches: the fraction dropped, the format ignored, or an integer string read as a date"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'2024-02-29 13:05:09.123'"],
+]
+query = "SELECT TO_TIMESTAMP(a) AS r, TO_TIMESTAMP('29/02/2024 13:05', 'DD/MM/YYYY HH24:MI') AS f, TO_TIMESTAMP('1700000000') AS i FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]

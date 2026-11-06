@@ -1,0 +1,27 @@
+category = "translation"
+construct = "sf.functions.st-collect.st-collect"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_types"
+description = "Two points, two line strings, and a point with a line string, measured by GeoJSON type and point count. Catches: a GeometryCollection for matching types, or the second shape dropped"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["'POINT(1 2)'", "'POINT(3 4)'"],
+  ["'LINESTRING(0 0,1 1)'", "'LINESTRING(2 2,3 3)'"],
+  ["'POINT(1 2)'", "'LINESTRING(2 2,3 3)'"],
+]
+query = "SELECT ordinal, GET(ST_ASGEOJSON(ST_COLLECT(TO_GEOGRAPHY(v), TO_GEOGRAPHY(w))), 'type')::VARCHAR AS t, ST_NPOINTS(ST_COLLECT(TO_GEOGRAPHY(v), TO_GEOGRAPHY(w))) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_geography_expression_1"
+description = "A NULL first shape; the page does not say; the recording decides. Catches: an error, or a value returned"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'POINT(10 20)'"],
+]
+query = "SELECT ST_COLLECT(TO_GEOGRAPHY(v), TO_GEOGRAPHY(w)) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

@@ -1,0 +1,47 @@
+category = "translation"
+construct = "sf.functions.to-binary"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_formats"
+description = "The same bytes from HEX in lower case, from BASE64 and from UTF-8 text. Catches: the HEX digits read case-sensitively, or the text bytes taken as HEX"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'4a4B'"],
+]
+query = "SELECT TO_BINARY(v) AS hex, TO_BINARY('Sks=', 'BASE64') AS b64, TO_BINARY('JK', 'UTF-8') AS utf8 FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_empty"
+description = "An empty string; the page does not say; the recording decides whether it gives empty bytes or NULL. Catches: empty bytes where Snowflake returns NULL, or the reverse"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["''"],
+]
+query = "SELECT TO_BINARY(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]
+
+[[case]]
+id = "t003_invalid_hex"
+description = "Text that is not hexadecimal under the default format. Catches: NULL returned, or the text read as UTF-8"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'xyz'"],
+]
+query = "SELECT TO_BINARY(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_null_string_expr"
+description = "A NULL string. Catches: empty bytes returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TO_BINARY(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

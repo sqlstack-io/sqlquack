@@ -1,0 +1,51 @@
+category = "translation"
+construct = "sf.functions.split"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "Empty parts and a multi-character separator. Catches: empty parts dropped, or the separator read as a character set"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "d", type = "VARCHAR" }]
+rows = [
+  ["'a,b,,c,'", "','"],
+  ["'a<>b<c'", "'<>'"],
+]
+query = "SELECT SPLIT(a, d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_string"
+description = "NULL string. Catches: NULL read as empty ([\"\"])"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'a'"],
+]
+query = "SELECT SPLIT(a, ',') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t003_null_separator"
+description = "NULL separator. Catches: NULL read as empty"
+columns = [{ name = "d", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["','"],
+]
+query = "SELECT SPLIT('a,b', d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_empty"
+description = "An empty string and an empty separator: records what Snowflake returns. Catches: an empty array for an empty string, or a per-character split for an empty separator"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "d", type = "VARCHAR" }]
+rows = [
+  ["''", "','"],
+  ["'a,b'", "''"],
+]
+query = "SELECT SPLIT(a, d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

@@ -1,0 +1,99 @@
+category = "translation"
+construct = "sf.functions.sum.sum"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_number"
+description = "Integer groups, one summing past 2^63 within NUMBER(38,0). Catches: a 64-bit integer accumulator wrapping or overflowing"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "1"],
+  ["'q'", "7"],
+  ["'p'", "2"],
+  ["'p'", "2"],
+  ["'r'", "9000000000000000000"],
+  ["'r'", "9000000000000000000"],
+]
+query = "SELECT g, SUM(x) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_decimal"
+description = "Fixed-point values with two decimals. Catches: a FLOAT sum (3.7500000000000004 style digits) or the scale dropped"
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.25"],
+  ["2.50"],
+  ["0.01"],
+]
+query = "SELECT SUM(x) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_float"
+description = "Three FLOAT 0.1 values, whose sum is 0.30000000000000004 in every order. Catches: a decimal summation (exactly 0.3)"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.1"],
+  ["0.1"],
+  ["0.1"],
+]
+query = "SELECT SUM(x) AS r FROM input"
+order = "ordered"
+expected_divergence = "float_sum_order"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_varchar"
+description = "Numeric text, which the page says is cast to FLOAT. Catches: text rejected, or read as NUMBER (a fixed-point result type)"
+columns = [{ name = "x", type = "VARCHAR" }]
+rows = [
+  ["'1.5'"],
+  ["'2'"],
+  ["'-0.25'"],
+]
+query = "SELECT SUM(x) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_distinct"
+description = "DISTINCT on groups with duplicates. Catches: DISTINCT ignored (2 counted twice)"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "1"],
+  ["'q'", "7"],
+  ["'p'", "2"],
+  ["'p'", "2"],
+]
+query = "SELECT g, SUM(DISTINCT x) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "t006_null_expr1"
+description = "NULL rows beside values, and a group of only NULL. Catches: NULL read as 0 (a different average) or the all-NULL group giving 0"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "NULL"],
+  ["'q'", "NULL"],
+  ["'p'", "4"],
+  ["'p'", "NULL"],
+  ["'p'", "1"],
+]
+query = "SELECT g, SUM(x) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t007_empty_input"
+description = "No rows. Catches: an empty input giving 0 instead of NULL"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["5"],
+]
+query = "SELECT SUM(x) AS r FROM input WHERE ordinal < 0"
+order = "ordered"
+tags = ["empty-input"]

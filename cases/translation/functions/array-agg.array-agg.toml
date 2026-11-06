@@ -1,0 +1,96 @@
+category = "translation"
+construct = "sf.functions.array-agg.array-agg"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_ordered"
+description = "A descending order per group. Catches: ASC or input order"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "3"],
+  ["'q'", "9"],
+  ["'p'", "1"],
+  ["'p'", "2"],
+  ["'p'", "1"],
+]
+query = "SELECT g, ARRAY_AGG(x) WITHIN GROUP (ORDER BY x DESC) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_order_other"
+description = "Order by a second column. Catches: the values sorted by themselves"
+columns = [{ name = "x", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "3"],
+  ["'b'", "1"],
+  ["'c'", "2"],
+]
+query = "SELECT ARRAY_AGG(x) WITHIN GROUP (ORDER BY k) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_date"
+description = "DATE values in an ARRAY. Catches: dates rendered in another format inside the array"
+columns = [{ name = "x", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'2025-01-01'"],
+]
+query = "SELECT ARRAY_AGG(x) WITHIN GROUP (ORDER BY x) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_distinct"
+description = "DISTINCT with WITHIN GROUP on the same column. Catches: DISTINCT ignored"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "3"],
+  ["'q'", "9"],
+  ["'p'", "1"],
+  ["'p'", "2"],
+  ["'p'", "1"],
+]
+query = "SELECT g, ARRAY_AGG(DISTINCT x) WITHIN GROUP (ORDER BY x) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "t005_distinct_other_order"
+compile_error = true
+description = "DISTINCT with WITHIN GROUP on a different column, which the page says is an error. Catches: the array returned instead of the compilation error"
+columns = [{ name = "x", type = "NUMBER(38,0)" }, { name = "k", type = "NUMBER(38,0)" }]
+rows = [
+  ["1", "2"],
+  ["1", "1"],
+]
+query = "SELECT ARRAY_AGG(DISTINCT x) WITHIN GROUP (ORDER BY k) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t006_null_expr1"
+description = "NULL values, which are omitted, and a group of only NULL. Catches: NULL kept as an array element (DuckDB list() keeps it), or the all-NULL group giving NULL"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "NULL"],
+  ["'q'", "NULL"],
+  ["'p'", "2"],
+  ["'p'", "1"],
+]
+query = "SELECT g, ARRAY_AGG(x) WITHIN GROUP (ORDER BY x) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t007_empty_input"
+description = "No rows; the page gives an empty array. Catches: NULL instead of []"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT ARRAY_AGG(x) AS r FROM input WHERE ordinal < 0"
+order = "ordered"
+tags = ["empty-input"]

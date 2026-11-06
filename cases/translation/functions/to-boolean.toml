@@ -1,0 +1,66 @@
+category = "translation"
+construct = "sf.functions.to-boolean"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_strings"
+description = "Accepted spellings in mixed case. Catches: only true and false accepted, or the comparison case-sensitive"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'YES'"],
+  ["'Off'"],
+  ["'t'"],
+  ["'n'"],
+  ["'1'"],
+  ["'0'"],
+]
+query = "SELECT TO_BOOLEAN(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_numbers"
+description = "Zero, a negative fraction and a large number. Catches: only 1 read as TRUE, or a fraction rounded to 0 first"
+columns = [{ name = "x", type = "NUMBER(10,3)" }]
+rows = [
+  ["0"],
+  ["-0.500"],
+  ["2"],
+]
+query = "SELECT TO_BOOLEAN(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_invalid_string"
+description = "A string not in either list, which the page says is an error. Catches: NULL or FALSE returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'maybe'"],
+]
+query = "SELECT TO_BOOLEAN(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_nan"
+compile_error = true
+description = "A FLOAT NaN, which the page says is an error; Snowflake refuses the FLOAT argument when compiling. Catches: the FLOAT accepted and NaN read as TRUE, as for any non-zero number"
+columns = [{ name = "f", type = "DOUBLE" }]
+rows = [
+  ["'NaN'"],
+]
+query = "SELECT TO_BOOLEAN(f) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t005_null_string_or_numeric_expr"
+description = "A NULL, which the page says gives NULL without an error. Catches: FALSE returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TO_BOOLEAN(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

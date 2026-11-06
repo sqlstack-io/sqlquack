@@ -1,0 +1,37 @@
+category = "translation"
+construct = "sf.functions.try-to-ipaddress"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_valid"
+description = "A valid IPv6 address, compared as text. Catches: NULL for a valid address"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'2001:DB8::1'"],
+]
+query = "SELECT TO_VARCHAR(TRY_TO_IPADDRESS(v)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_invalid"
+description = "An octet above 255 and text that is not an address. Catches: an error raised"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'256.1.1.1'"],
+  ["'abc'"],
+]
+query = "SELECT TRY_TO_IPADDRESS(v) IS NULL AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_string_expr"
+description = "A NULL string. Catches: an error"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(TRY_TO_IPADDRESS(v)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

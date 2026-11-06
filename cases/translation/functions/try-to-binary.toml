@@ -1,0 +1,37 @@
+category = "translation"
+construct = "sf.functions.try-to-binary"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_valid"
+description = "Valid HEX and BASE64. Catches: NULL for valid input"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'4A4B'"],
+]
+query = "SELECT TRY_TO_BINARY(v) AS hex, TRY_TO_BINARY('Sks=', 'BASE64') AS b64 FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_invalid"
+description = "Invalid HEX, an odd number of HEX digits, and an unknown format name, which the page says gives NULL. Catches: an error raised"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'xyz'"],
+  ["'ABC'"],
+]
+query = "SELECT TRY_TO_BINARY(v) AS r, TRY_TO_BINARY('4A', 'OCTAL') AS f FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_string_expr"
+description = "A NULL string. Catches: empty bytes returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TRY_TO_BINARY(v) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

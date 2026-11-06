@@ -1,0 +1,51 @@
+category = "translation"
+construct = "sf.functions.tanh"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_float"
+description = "TANH of FLOAT values. Catches: SINH or a clamped value"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.5"],
+  ["-1"],
+  ["20"],
+]
+query = "SELECT TANH(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_fixed"
+description = "TANH of NUMBER(12,4), converted to FLOAT. Catches: SINH or a clamped value; or the result left fixed-point"
+columns = [{ name = "x", type = "NUMBER(12,4)" }]
+rows = [
+  ["0.5000"],
+  ["-2.0000"],
+]
+query = "SELECT TANH(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null"
+description = "TANH of NULL. Catches: NULL turned into 0 or NaN"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TANH(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_saturate"
+description = "Large arguments saturate to 1 and -1. Catches: NaN from exp overflow"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1000"],
+  ["-1000"],
+]
+query = "SELECT TANH(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]

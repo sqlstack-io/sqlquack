@@ -1,0 +1,69 @@
+category = "translation"
+construct = "sf.functions.year.weekiso"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_date"
+description = "WEEKISO of dates at year, ISO-week and leap boundaries. Catches: a Sunday-start week or week 0 for early January"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-12-30'"],
+  ["'2021-01-01'"],
+  ["'2023-01-01'"],
+  ["'2024-02-29'"],
+  ["'2026-12-31'"],
+]
+query = "SELECT WEEKISO(d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_timestamp_ntz"
+description = "WEEKISO of a timestamp just before midnight on Sunday 29 December 2024, the last day of ISO week 52. Catches: the timestamp rounded to the next day"
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2024-12-29 23:59:59.999'"],
+  ["'2024-03-01 00:00:00'"],
+]
+query = "SELECT WEEKISO(t) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_timestamp_tz"
+description = "WEEKISO of a TIMESTAMP_TZ whose UTC instant is in the next ISO week. Catches: the part taken from the UTC instant instead of the wall clock"
+columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
+rows = [
+  ["'2024-12-29 23:30:00.250 -0800'"],
+]
+query = "SELECT WEEKISO(t) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_date_or_timestamp_expr"
+description = "NULL next to a set date. Catches: NULL read as a default date (1970-01-01)"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["NULL"],
+  ["'2024-06-15'"],
+]
+query = "SELECT WEEKISO(d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_leap"
+description = "Days around 29 February in a leap and a common year. Catches: a 365-day year or a Julian 1900, which moves a Sunday/Monday edge after 29 February into the other week"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-03-03'"],
+  ["'2024-03-04'"],
+  ["'2004-03-01'"],
+  ["'1900-03-04'"],
+  ["'2000-03-05'"],
+  ["'2023-03-01'"],
+]
+query = "SELECT WEEKISO(d) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]

@@ -1,0 +1,41 @@
+category = "translation"
+construct = "sf.functions.md5-number-lower64"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "MD5_NUMBER_LOWER64 of ASCII and multi-byte text. Catches: another digest, the upper 64 bits, or Latin-1 bytes for \u00e9"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'Snowflake'"],
+  ["'\u00e9'"],
+  ["'AbCd0'"],
+]
+query = "SELECT MD5_NUMBER_LOWER64(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_msg"
+description = "NULL message next to a set one. Catches: NULL hashed as an empty string"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'a'"],
+]
+query = "SELECT MD5_NUMBER_LOWER64(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t003_high_bit"
+description = "Messages whose lower 64 bits have the top bit set (the empty string and 'x'), beside 'Snowflake', whose lower half 0x7fb8\u2026 does not. Catches: a signed 64-bit result (negative) or the other half of the digest"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["''"],
+  ["'Snowflake'"],
+  ["'x'"],
+]
+query = "SELECT MD5_NUMBER_LOWER64(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]

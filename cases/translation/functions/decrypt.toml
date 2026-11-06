@@ -1,0 +1,48 @@
+category = "translation"
+construct = "sf.functions.decrypt"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_round_trip"
+description = "Text encrypted and decrypted, converted back from BINARY with utf-8. Catches: the bytes returned as hex text"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'secret text'", "'pass phrase 1'"],
+  ["''", "''"],
+]
+query = "SELECT ordinal, TO_VARCHAR(DECRYPT(ENCRYPT(v, p), p), 'utf-8') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_aad_mismatch"
+description = "An AAD that differs from the one used to encrypt, which the page says fails. Catches: the value decrypted anyway"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'secret text'", "'pass phrase 1'"],
+]
+query = "SELECT DECRYPT(ENCRYPT(v, p, 'a1'), p, 'a2') AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t003_wrong_passphrase"
+description = "A passphrase other than the one used to encrypt. Catches: garbage bytes or NULL returned"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["'secret text'", "'pass phrase 1'"],
+]
+query = "SELECT DECRYPT(ENCRYPT(v, p), 'other') AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_null_value_to_decrypt"
+description = "A NULL value; the page does not say; the recording decides. Catches: an error where Snowflake returns NULL, or the reverse"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'p'"],
+]
+query = "SELECT DECRYPT(v::BINARY, p) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

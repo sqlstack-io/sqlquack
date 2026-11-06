@@ -1,0 +1,48 @@
+category = "translation"
+construct = "sf.functions.st-distance"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_geometry"
+description = "A 3-4-5 pair of points, and a point inside a polygon (0). Catches: the squared distance, or the distance to the boundary"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["'POINT(0 0)'", "'POINT(3 4)'"],
+  ["'POINT(5 5)'", "'POLYGON((0 0,10 0,10 10,0 10,0 0))'"],
+]
+query = "SELECT ordinal, ST_DISTANCE(TO_GEOMETRY(v), TO_GEOMETRY(w)) AS d FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_geography"
+description = "One degree of latitude in kilometres, rounded (111 on any earth model). Catches: degrees returned"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["'POINT(0 0)'", "'POINT(0 1)'"],
+]
+query = "SELECT ROUND(ST_DISTANCE(TO_GEOGRAPHY(v), TO_GEOGRAPHY(w)) / 1000) AS km FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_srid_mismatch"
+description = "GEOMETRY objects with SRIDs 0 and 3857, which the page says is an error. Catches: a result computed as if the SRIDs matched"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["'POINT(1 1)'", "'POLYGON((0 0,10 0,10 10,0 10,0 0))'"],
+]
+query = "SELECT ST_DISTANCE(TO_GEOMETRY(v), TO_GEOMETRY(w, 3857)) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_null_geography_expression_1"
+description = "A NULL point, which the page says gives NULL. Catches: an error, or 0 returned"
+columns = [{ name = "v", type = "VARCHAR" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'POINT(10 20)'"],
+]
+query = "SELECT ST_DISTANCE(TO_GEOGRAPHY(v), TO_GEOGRAPHY(w)) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

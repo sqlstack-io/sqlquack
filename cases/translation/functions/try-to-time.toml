@@ -1,0 +1,49 @@
+category = "translation"
+construct = "sf.functions.try-to-time"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_strings"
+description = "A time with nine fractional digits, and a 12-hour time with a format. Catches: the fraction truncated to milliseconds, or the afternoon read as morning"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'13:14:15.123456789'"],
+]
+query = "SELECT TO_VARCHAR(TRY_TO_TIME(v), 'HH24:MI:SS.FF9') AS iso, TO_VARCHAR(TRY_TO_TIME('01:02 PM', 'HH12:MI AM'), 'HH24:MI:SS.FF9') AS fmt FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_epoch_units"
+description = "Integer strings read as seconds and as milliseconds after midnight of the epoch. Catches: every integer read as seconds"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'3661'"],
+  ["'31536003661'"],
+]
+query = "SELECT TO_VARCHAR(TRY_TO_TIME(v), 'HH24:MI:SS.FF9') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t003_invalid"
+description = "Hour 25 and text that is not a time. Catches: an error raised, or the hour wrapped"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'25:00:00'"],
+  ["'abc'"],
+]
+query = "SELECT TO_VARCHAR(TRY_TO_TIME(v), 'HH24:MI:SS.FF9') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_string_expr"
+description = "A NULL string. Catches: midnight returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TO_VARCHAR(TRY_TO_TIME(v), 'HH24:MI:SS.FF9') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
