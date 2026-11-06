@@ -229,3 +229,6 @@ pub(crate) const VARBIT_TYPE: &str = "varbit";
 
 /// The catalogue name of `INTERVAL`.
 pub(crate) const INTERVAL_TYPE: &str = "interval";
+
+/// The length `BIT` and `CHARACTER` take without one, as gram.y gives them typmod 1.
+pub(crate) const DEFAULT_LENGTH: u32 = 1;

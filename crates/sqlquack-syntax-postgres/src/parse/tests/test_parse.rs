@@ -954,6 +954,42 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() 
             expected_json: "\"d\"",
         },
         ValueTestCase {
+            description: "BIT without a length is BIT(1), which casts '101' to B'1'",
+            sql: "SELECT CAST('101' AS BIT)",
+            pointer: "/0/select/expressions/0/cast/to",
+            expected_json: "{\"data_type\":\"bit\",\"length\":1}",
+        },
+        ValueTestCase {
+            description: "the type name \"bit\" takes no length, unlike the keyword BIT",
+            sql: "SELECT CAST('101' AS \"bit\")",
+            pointer: "/0/select/expressions/0/cast/to",
+            expected_json: "{\"data_type\":\"bit\",\"length\":null}",
+        },
+        ValueTestCase {
+            description: "the literal BIT '101' takes no length, as ConstBit clears it",
+            sql: "SELECT BIT '101'",
+            pointer: "/0/select/expressions/0/cast/to",
+            expected_json: "{\"data_type\":\"bit\",\"length\":null}",
+        },
+        ValueTestCase {
+            description: "CHAR without a length is CHAR(1), which casts 'ab' to 'a'",
+            sql: "SELECT CAST('ab' AS CHAR)",
+            pointer: "/0/select/expressions/0/cast/to",
+            expected_json: "{\"data_type\":\"char\",\"length\":1}",
+        },
+        ValueTestCase {
+            description: "NCHAR without a length is CHAR(1) too",
+            sql: "SELECT CAST('ab' AS NCHAR)",
+            pointer: "/0/select/expressions/0/cast/to",
+            expected_json: "{\"data_type\":\"char\",\"length\":1}",
+        },
+        ValueTestCase {
+            description: "the literal CHAR 'ab' takes no length, as ConstCharacter clears it",
+            sql: "SELECT CHAR 'ab'",
+            pointer: "/0/select/expressions/0/cast/to",
+            expected_json: "{\"data_type\":\"char\",\"length\":null}",
+        },
+        ValueTestCase {
             description: "SECURITY LABEL is kept apart from COMMENT by its kind",
             sql: "SECURITY LABEL ON TABLE s.t IS 'x'",
             pointer: "/0/comment/kind",
