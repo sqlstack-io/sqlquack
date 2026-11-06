@@ -35,4 +35,5 @@ rows = [
 ]
 query = "SELECT ARRAY_FLATTEN(ARRAY_CONSTRUCT(ARRAY_CONSTRUCT(1), IFF(x IS NULL, NULL, ARRAY_CONSTRUCT(x)))) AS r FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "json_fidelity"
 tags = ["null"]

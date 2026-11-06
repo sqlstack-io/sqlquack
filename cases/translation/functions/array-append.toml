@@ -36,4 +36,5 @@ rows = [
 ]
 query = "SELECT ARRAY_APPEND(PARSE_JSON(a), e) AS r, ARRAY_SIZE(ARRAY_APPEND(PARSE_JSON(a), e)) AS n FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "json_fidelity"
 tags = ["null"]

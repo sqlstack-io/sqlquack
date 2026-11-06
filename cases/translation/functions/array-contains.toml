@@ -48,4 +48,5 @@ rows = [
 ]
 query = "SELECT ARRAY_CONTAINS(NULL::VARIANT, ARRAY_CONSTRUCT(1, x)) AS r FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "json_fidelity"
 tags = ["null"]

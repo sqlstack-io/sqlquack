@@ -47,4 +47,5 @@ rows = [
 ]
 query = "SELECT ARRAYS_OVERLAP(PARSE_JSON(a), ARRAY_CONSTRUCT(2)) AS r, ARRAYS_OVERLAP(ARRAY_CONSTRUCT(x, 1), ARRAY_CONSTRUCT(x, 2)) AS n FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "json_fidelity"
 tags = ["null"]

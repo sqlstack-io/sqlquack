@@ -62,7 +62,8 @@ tags = ["error"]
 
 [[case]]
 id = "t006_unknown_method"
-description = "An unknown method. Catches: a fallback codec instead of an error"
+compile_error = true
+description = "An unknown method; Snowflake refuses it when compiling (SQLSTATE 42P19). Catches: a fallback codec instead of an error"
 columns = [{ name = "a", type = "BINARY" }]
 rows = [
   ["'051048656C6C6F'"],

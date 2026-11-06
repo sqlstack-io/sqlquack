@@ -73,7 +73,8 @@ tags = ["boundary", "empty"]
 
 [[case]]
 id = "t007_unknown_method"
-description = "An unknown method, which the page says fails. Catches: a fallback codec or NULL instead of an error"
+compile_error = true
+description = "An unknown method, which the page says fails; Snowflake refuses it when compiling (SQLSTATE 42P19). Catches: a fallback codec or NULL instead of an error"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["'ab'"],

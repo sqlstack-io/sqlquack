@@ -60,4 +60,5 @@ rows = [
 ]
 query = "SELECT EXP(x) AS r FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "numeric_range"
 tags = ["boundary"]

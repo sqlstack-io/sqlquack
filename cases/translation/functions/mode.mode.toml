@@ -73,6 +73,7 @@ rows = [
 ]
 query = "SELECT MODE(x) AS r FROM input WHERE ordinal < 0"
 order = "ordered"
+expected_divergence = "mode_of_no_rows"
 tags = ["empty-input"]
 
 [[case]]

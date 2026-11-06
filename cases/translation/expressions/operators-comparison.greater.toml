@@ -1,0 +1,69 @@
+category = "translation"
+construct = "sf.expressions.operators-comparison.greater"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_number_float"
+description = "An integer against a FLOAT: below, equal (1 and 1.0) and above, and a negative pair. Catches: a non-strict comparison (equal rows TRUE), or the operands swapped, or the FLOAT side truncated"
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "FLOAT" }]
+rows = [
+  ["1", "1.5"],
+  ["1", "1.0"],
+  ["2", "1.5"],
+  ["-3", "-2.5"],
+]
+query = "SELECT ordinal, a > b AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_varchar"
+description = "Strings: equal, a prefix, a lower-case letter against an upper-case one, and a trailing space; the page does not say how strings order, so the recording decides. Catches: a non-strict comparison (equal rows TRUE), or the operands swapped, or a case-insensitive or space-trimming comparison"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'abc'", "'abc'"],
+  ["'ab'", "'abc'"],
+  ["'a'", "'B'"],
+  ["'x '", "'x'"],
+]
+query = "SELECT ordinal, a > b AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_date_timestamp"
+description = "A date against a timestamp at its midnight and at noon the same day. Catches: a non-strict comparison (equal rows TRUE), or the operands swapped, or the timestamp truncated to its date"
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2024-01-01'", "'2024-01-01 00:00:00'"],
+  ["'2024-01-01'", "'2024-01-01 12:00:00'"],
+  ["'2024-01-02'", "'2024-01-01 12:00:00'"],
+]
+query = "SELECT ordinal, a > b AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_a"
+description = "NULL as a, beside a set row; the page does not say, so the recording decides. Catches: NULL compared as a value (FALSE or TRUE instead of NULL)"
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL", "1"],
+  ["NULL", "NULL"],
+  ["1", "1"],
+]
+query = "SELECT ordinal, a > b AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_null_b"
+description = "NULL as b, beside a set row; the page does not say, so the recording decides. Catches: NULL compared as a value (FALSE or TRUE instead of NULL)"
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["1", "NULL"],
+  ["2", "1"],
+]
+query = "SELECT ordinal, a > b AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

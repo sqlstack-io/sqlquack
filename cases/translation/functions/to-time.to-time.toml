@@ -59,6 +59,7 @@ rows = [
 ]
 query = "SELECT TO_TIME(a) AS r FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "date_text_spelling"
 tags = ["type-combination"]
 
 [[case]]

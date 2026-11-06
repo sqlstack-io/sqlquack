@@ -34,4 +34,5 @@ rows = [
 ]
 query = "SELECT ARRAY_CONSTRUCT(x, PARSE_JSON('null'), 7) AS r, ARRAY_SIZE(ARRAY_CONSTRUCT(x, PARSE_JSON('null'), 7)) AS n FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "json_fidelity"
 tags = ["null"]

@@ -42,6 +42,7 @@ rows = [
 ]
 query = "SELECT SUM(x) AS r FROM input"
 order = "ordered"
+expected_divergence = "float_sum_order"
 tags = ["type-combination"]
 
 [[case]]

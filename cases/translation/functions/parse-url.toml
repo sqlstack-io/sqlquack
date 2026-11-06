@@ -24,6 +24,7 @@ rows = [
 ]
 query = "SELECT PARSE_URL(a, 1) AS r FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "json_fidelity"
 tags = ["type-combination"]
 
 [[case]]

@@ -12,6 +12,7 @@ rows = [
 ]
 query = "SELECT ARRAY_SORT(ARRAY_EXCEPT(PARSE_JSON(a), PARSE_JSON(b))) AS r FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "json_fidelity"
 tags = ["type-combination"]
 
 [[case]]
@@ -23,6 +24,7 @@ rows = [
 ]
 query = "SELECT ARRAY_SIZE(ARRAY_EXCEPT(PARSE_JSON(a), PARSE_JSON(b))) AS n FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "json_fidelity"
 tags = ["type-combination"]
 
 [[case]]
@@ -34,6 +36,7 @@ rows = [
 ]
 query = "SELECT ARRAY_EXCEPT(PARSE_JSON(a), PARSE_JSON(b)) AS r FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "json_fidelity"
 tags = ["empty-input"]
 
 [[case]]

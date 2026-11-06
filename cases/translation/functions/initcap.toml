@@ -13,6 +13,7 @@ rows = [
 ]
 query = "SELECT INITCAP(a) AS r FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "initcap_text"
 tags = ["type-combination"]
 
 [[case]]
