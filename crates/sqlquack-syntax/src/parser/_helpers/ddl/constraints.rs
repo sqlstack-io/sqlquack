@@ -1603,6 +1603,11 @@ impl Parser {
             Some(crate::tokens::models::DialectType::Snowflake)
         ) {
             if let Some(expr) =
+                self.parse_snowflake_alter_governance(alter_table_modifier.is_some())?
+            {
+                return Ok(expr);
+            }
+            if let Some(expr) =
                 self.parse_alter_snowflake_table_action(alter_table_modifier.is_some())?
             {
                 return Ok(expr);

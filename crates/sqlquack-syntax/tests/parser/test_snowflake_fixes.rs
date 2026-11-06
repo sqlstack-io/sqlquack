@@ -786,7 +786,7 @@ fn given_a_snowflake_create_model_gateway_or_experiment_when_parsing_then_its_so
         SnowflakeVerdictTestCase {
             description: "keeps ALTER TABLE v1 MODIFY v1 SET MASKING POLICY v1 ;",
             sql: "ALTER TABLE v1 MODIFY v1 SET MASKING POLICY v1 ;",
-            expected_kind: Some("alter_table"),
+            expected_kind: Some("raw"),
         },
         SnowflakeVerdictTestCase {
             description: "keeps CREATE TABLE t1 ( a INT AS ( 1 ) ) ;",

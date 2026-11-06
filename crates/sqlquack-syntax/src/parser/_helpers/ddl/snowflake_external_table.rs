@@ -41,8 +41,17 @@ impl Parser {
     }
 
     /// Checks `( <query> )`, `$<variable>` or a string after USING TEMPLATE.
-    fn check_external_template(&mut self) -> Result<()> {
+    pub(super) fn check_external_template(&mut self) -> Result<()> {
         if self.match_token(TokenType::String) {
+            return Ok(());
+        }
+        let variable = matches!(
+            self.peek().token_type,
+            TokenType::Var | TokenType::Identifier
+        ) && self.peek().text.len() > 1
+            && self.peek().text.starts_with('$');
+        if variable {
+            self.skip();
             return Ok(());
         }
         if self.check(TokenType::Dollar) {

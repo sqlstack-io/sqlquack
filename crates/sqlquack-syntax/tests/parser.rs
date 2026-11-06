@@ -10,6 +10,8 @@ mod test_located;
 mod test_scripting;
 #[path = "parser/test_snowflake_alter.rs"]
 mod test_snowflake_alter;
+#[path = "parser/test_snowflake_alter_governance.rs"]
+mod test_snowflake_alter_governance;
 #[path = "parser/test_snowflake_alter_gaps.rs"]
 mod test_snowflake_alter_gaps;
 #[path = "parser/test_snowflake_create_clone.rs"]

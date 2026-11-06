@@ -44,24 +44,27 @@ impl Parser {
         }
         self.check_iceberg_object_name()?;
         let like = self.match_token(TokenType::Like);
-        let columns = !like && self.check(TokenType::LParen);
+        let template = !like && self.match_text_seq(&["USING", "TEMPLATE"]);
+        let columns = !like && !template && self.check(TokenType::LParen);
         let mut untyped = false;
         if like {
             self.check_iceberg_object_name()?;
+        } else if template {
+            self.check_external_template()?;
         } else if columns {
             untyped = self.check_table_elements()?;
         }
         while !self.is_at_end() && !self.check(TokenType::Semicolon) && !self.check(TokenType::As) {
             self.check_table_property()?;
         }
-        let query = !like && self.match_token(TokenType::As);
+        let query = !like && !template && self.match_token(TokenType::As);
         if query {
             if !self.check(TokenType::Select) && !self.check(TokenType::With) {
                 return Err(self.parse_error("Expected a query after AS"));
             }
             self.parse_statement()?;
         }
-        if !like && !columns && !query {
+        if !like && !template && !columns && !query {
             return Err(self.parse_error("Expected columns, LIKE or AS"));
         }
         if untyped && !query {
@@ -97,7 +100,7 @@ impl Parser {
     }
 
     /// Checks `<name> [<type>] [<column option> ...]`, returning whether the type is missing.
-    fn check_table_column(&mut self) -> Result<bool> {
+    pub(super) fn check_table_column(&mut self) -> Result<bool> {
         if !self.check(TokenType::QuotedIdentifier) {
             self.expect_external_name()?;
         } else {
@@ -116,7 +119,11 @@ impl Parser {
             }
             self.parse_data_type()?;
         }
-        while !self.check(TokenType::Comma) && !self.check(TokenType::RParen) {
+        while !self.check(TokenType::Comma)
+            && !self.check(TokenType::RParen)
+            && !self.check(TokenType::Semicolon)
+            && !self.is_at_end()
+        {
             self.check_column_option()?;
         }
         Ok(untyped)

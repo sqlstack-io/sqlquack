@@ -281,6 +281,8 @@ pub(crate) const SNOWFLAKE_TABLE_PROPERTY_KEYS: &[&str] = &[
     "ICEBERG_DEFAULT_DDL_COLLATION",
     "MAX_DATA_EXTENSION_TIME_IN_DAYS",
     "ROW_TIMESTAMP",
+    "TARGET_LAG",
+    "WAREHOUSE",
 ];
 
 /// The fields every semantic view verified query needs.

@@ -143,3 +143,47 @@ fn given_incomplete_snowflake_constraint_clauses_when_parsing_then_they_are_refu
         );
     }
 }
+
+#[test]
+fn given_snowflake_table_templates_and_conversions_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a template from a session variable (recorded OK)",
+            sql: "CREATE TABLE v1 USING TEMPLATE $v1 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a template from a string after $ (recorded errno 1003)",
+            sql: "CREATE TABLE v1 USING TEMPLATE $'v1' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a target lag and warehouse before AS (recorded OK)",
+            sql: "CREATE TABLE v1 CLUSTER BY ( 1 ) TARGET_LAG = '1 minute' WAREHOUSE = v1 AS SELECT 1 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a conversion to a managed Iceberg table (recorded OK)",
+            sql: "ALTER ICEBERG TABLE v1 CONVERT TO MANAGED BASE_LOCATION = m1 ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a conversion property with no value (recorded errno 1003)",
+            sql: "ALTER ICEBERG TABLE v1 CONVERT TO MANAGED BASE_LOCATION = ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a conversion of a plain table (recorded errno 1003)",
+            sql: "ALTER TABLE v1 CONVERT TO MANAGED ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
