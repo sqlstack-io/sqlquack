@@ -184,7 +184,12 @@ forms = ["sf.query.join.join"]
 
 [[link]]
 constructs = ["clause:join_using"]
-forms = ["sf.query.join.join"]
+forms = ["sf.query.join.join.syntax"]
+
+# The converter refuses the merged columns of SELECT * over a USING join at the star, so a refusal there names that form too.
+[[link]]
+constructs = ["node:star", "clause:join_using"]
+forms = ["sf.query.join.join.syntax"]
 
 [[link]]
 constructs = ["join:natural"]

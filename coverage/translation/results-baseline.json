@@ -14412,7 +14412,7 @@
     "sf.query.join-lateral": "refused",
     "sf.query.join.join": "refused",
     "sf.query.join.join-2": "refused",
-    "sf.query.join.join.syntax": "unmeasured",
+    "sf.query.join.join.syntax": "refused",
     "sf.query.limit.fetch": "refused",
     "sf.query.limit.limit": "refused",
     "sf.query.match-recognize.match-recognize-pattern-define-as": "unmeasured",
