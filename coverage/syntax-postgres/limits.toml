@@ -2670,6 +2670,384 @@ context = "raw"
 expect = "accept"
 stage = "semantic"
 
+[[limit]]
+form = "pg.ddl.alter-aggregate.owner-to"
+kind = "alternative"
+target = "<aggregate_signature>"
+note = "(*): an aggregate with no arguments"
+anchor = "doc.sql-alteraggregate / Synopsis"
+sql = "ALTER AGGREGATE t1 ( * ) OWNER TO CURRENT_USER"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-aggregate.owner-to"
+kind = "alternative"
+target = "<aggregate_signature>"
+note = "an ordered-set signature: direct arguments, then ORDER BY aggregated arguments"
+anchor = "doc.sql-alteraggregate / Synopsis"
+sql = "ALTER AGGREGATE t1 ( INT ORDER BY INT ) OWNER TO CURRENT_USER"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-aggregate.owner-to"
+kind = "alternative"
+target = "<aggregate_signature>"
+note = "ORDER BY with no direct arguments"
+anchor = "doc.sql-alteraggregate / Synopsis"
+sql = "ALTER AGGREGATE t1 ( ORDER BY INT ) OWNER TO CURRENT_USER"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-aggregate.rename-to"
+kind = "alternative"
+target = "<aggregate_signature>"
+note = "(*): an aggregate with no arguments"
+anchor = "doc.sql-alteraggregate / Synopsis"
+sql = "ALTER AGGREGATE t1 ( * ) RENAME TO t2"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-aggregate.rename-to"
+kind = "alternative"
+target = "<aggregate_signature>"
+note = "an ordered-set signature: direct arguments, then ORDER BY aggregated arguments"
+anchor = "doc.sql-alteraggregate / Synopsis"
+sql = "ALTER AGGREGATE t1 ( INT ORDER BY INT ) RENAME TO t2"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-aggregate.rename-to"
+kind = "alternative"
+target = "<aggregate_signature>"
+note = "ORDER BY with no direct arguments"
+anchor = "doc.sql-alteraggregate / Synopsis"
+sql = "ALTER AGGREGATE t1 ( ORDER BY INT ) RENAME TO t2"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-aggregate.set-schema"
+kind = "alternative"
+target = "<aggregate_signature>"
+note = "(*): an aggregate with no arguments"
+anchor = "doc.sql-alteraggregate / Synopsis"
+sql = "ALTER AGGREGATE t1 ( * ) SET SCHEMA s1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-aggregate.set-schema"
+kind = "alternative"
+target = "<aggregate_signature>"
+note = "an ordered-set signature: direct arguments, then ORDER BY aggregated arguments"
+anchor = "doc.sql-alteraggregate / Synopsis"
+sql = "ALTER AGGREGATE t1 ( INT ORDER BY INT ) SET SCHEMA s1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-aggregate.set-schema"
+kind = "alternative"
+target = "<aggregate_signature>"
+note = "ORDER BY with no direct arguments"
+anchor = "doc.sql-alteraggregate / Synopsis"
+sql = "ALTER AGGREGATE t1 ( ORDER BY INT ) SET SCHEMA s1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-function.called-on-null-input"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterfunction / Synopsis"
+sql = "ALTER FUNCTION t1 ( INT ) STRICT RESET ALL"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-function.cost"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterfunction / Synopsis"
+sql = "ALTER FUNCTION t1 ( INT ) COST 5 RESET ALL"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-function.immutable-stable-volatile"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterfunction / Synopsis"
+sql = "ALTER FUNCTION t1 ( INT ) IMMUTABLE RESET ALL"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-function.leakproof"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterfunction / Synopsis"
+sql = "ALTER FUNCTION t1 ( INT ) LEAKPROOF RESET ALL"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-function.parallel"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterfunction / Synopsis"
+sql = "ALTER FUNCTION t1 ( INT ) PARALLEL SAFE RESET ALL"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-function.reset"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterfunction / Synopsis"
+sql = "ALTER FUNCTION t1 ( INT ) RESET work_mem SECURITY DEFINER"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-function.reset-all"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterfunction / Synopsis"
+sql = "ALTER FUNCTION t1 ( INT ) RESET ALL STRICT"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-function.rows"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterfunction / Synopsis"
+sql = "ALTER FUNCTION t1 ( INT ) ROWS 5 RESET ALL"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-function.security-invoker-security-definer"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterfunction / Synopsis"
+sql = "ALTER FUNCTION t1 ( INT ) SECURITY DEFINER RESET ALL"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-function.set"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterfunction / Synopsis"
+sql = "ALTER FUNCTION t1 ( INT ) SET work_mem = '64MB' SECURITY DEFINER"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-function.set"
+kind = "operand_type_class"
+target = "<value>"
+note = "a string value"
+anchor = "doc.sql-alterfunction / Synopsis"
+sql = "ALTER FUNCTION t1 ( INT ) SET search_path TO 'pg_catalog'"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-function.set"
+kind = "operand_type_class"
+target = "<value>"
+note = "a list of values, a word and a string"
+anchor = "doc.sql-alterfunction / Synopsis"
+sql = "ALTER FUNCTION t1 ( INT ) SET search_path = s1, 'public'"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-function.set-from-current"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterfunction / Synopsis"
+sql = "ALTER FUNCTION t1 ( INT ) SET work_mem FROM CURRENT SECURITY DEFINER"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-function.support"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterfunction / Synopsis"
+sql = "ALTER FUNCTION t1 ( INT ) SUPPORT f2 RESET ALL"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-procedure.reset"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterprocedure / Synopsis"
+sql = "ALTER PROCEDURE t1 ( INT ) RESET work_mem SECURITY DEFINER"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-procedure.reset-all"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterprocedure / Synopsis"
+sql = "ALTER PROCEDURE t1 ( INT ) RESET ALL SECURITY DEFINER"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-procedure.security-invoker-security-definer"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterprocedure / Synopsis"
+sql = "ALTER PROCEDURE t1 ( INT ) SECURITY DEFINER RESET ALL"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-procedure.set"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterprocedure / Synopsis"
+sql = "ALTER PROCEDURE t1 ( INT ) SET work_mem = '64MB' SECURITY DEFINER"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-procedure.set"
+kind = "operand_type_class"
+target = "<value>"
+note = "a string value"
+anchor = "doc.sql-alterprocedure / Synopsis"
+sql = "ALTER PROCEDURE t1 ( INT ) SET search_path TO 'pg_catalog'"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-procedure.set"
+kind = "operand_type_class"
+target = "<value>"
+note = "a list of values, a word and a string"
+anchor = "doc.sql-alterprocedure / Synopsis"
+sql = "ALTER PROCEDURE t1 ( INT ) SET search_path = s1, 'public'"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-procedure.set-from-current"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterprocedure / Synopsis"
+sql = "ALTER PROCEDURE t1 ( INT ) SET work_mem FROM CURRENT SECURITY DEFINER"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-routine.cost"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterroutine / Synopsis"
+sql = "ALTER ROUTINE t1 ( INT ) COST 5 RESET ALL"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-routine.immutable-stable-volatile"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterroutine / Synopsis"
+sql = "ALTER ROUTINE t1 ( INT ) IMMUTABLE RESET ALL"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-routine.leakproof"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterroutine / Synopsis"
+sql = "ALTER ROUTINE t1 ( INT ) LEAKPROOF RESET ALL"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-routine.parallel"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterroutine / Synopsis"
+sql = "ALTER ROUTINE t1 ( INT ) PARALLEL SAFE RESET ALL"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-routine.reset"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterroutine / Synopsis"
+sql = "ALTER ROUTINE t1 ( INT ) RESET work_mem SECURITY DEFINER"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-routine.reset-all"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterroutine / Synopsis"
+sql = "ALTER ROUTINE t1 ( INT ) RESET ALL STRICT"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-routine.rows"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterroutine / Synopsis"
+sql = "ALTER ROUTINE t1 ( INT ) ROWS 5 RESET ALL"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-routine.security-invoker-security-definer"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterroutine / Synopsis"
+sql = "ALTER ROUTINE t1 ( INT ) SECURITY DEFINER RESET ALL"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-routine.set"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterroutine / Synopsis"
+sql = "ALTER ROUTINE t1 ( INT ) SET work_mem = '64MB' SECURITY DEFINER"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-routine.set"
+kind = "operand_type_class"
+target = "<value>"
+note = "a string value"
+anchor = "doc.sql-alterroutine / Synopsis"
+sql = "ALTER ROUTINE t1 ( INT ) SET search_path TO 'pg_catalog'"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-routine.set"
+kind = "operand_type_class"
+target = "<value>"
+note = "a list of values, a word and a string"
+anchor = "doc.sql-alterroutine / Synopsis"
+sql = "ALTER ROUTINE t1 ( INT ) SET search_path = s1, 'public'"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-routine.set-from-current"
+kind = "option_present"
+target = "[ ... ]"
+note = "two actions in one statement"
+anchor = "doc.sql-alterroutine / Synopsis"
+sql = "ALTER ROUTINE t1 ( INT ) SET work_mem FROM CURRENT SECURITY DEFINER"
+context = "raw"
+
 # DDL: derived negatives that are valid PostgreSQL, and obligations that do not apply.
 
 [[suppress]]
