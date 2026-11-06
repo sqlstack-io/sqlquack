@@ -15,7 +15,9 @@ use sqlquack_semantics::query_name_findings;
 use sqlquack_semantics::types::models::Schema;
 use sqlquack_syntax::{Dialect, ParseOptions};
 
-use crate::analysis::constants::{UNKNOWN_FUNCTION_FINDING, UNKNOWN_TABLE_FINDING};
+use crate::analysis::constants::{
+    AMBIGUOUS_COLUMN_FINDING, UNKNOWN_FUNCTION_FINDING, UNKNOWN_TABLE_FINDING,
+};
 
 /// The parse failure, what Snowflake would reject and, with `schema`, the names it lacks.
 pub fn check_source(sql: &str, schema: Option<&Schema>) -> Result<Vec<Diagnostic>, String> {
@@ -54,7 +56,7 @@ fn undeclared_names(sql: &str, schema: &Schema, lines: &SourceLines) -> Vec<Refu
         .collect()
 }
 
-/// The refusal for an unknown relation or function finding; other findings are not checked here.
+/// The refusal for an unknown relation or function, or an ambiguous column; other findings are not checked here.
 fn undeclared(finding: NameFinding, lines: &SourceLines) -> Option<Refusal> {
     let location = finding
         .span
@@ -72,6 +74,14 @@ fn undeclared(finding: NameFinding, lines: &SourceLines) -> Option<Refusal> {
             location,
             category: RefusalCategory::SnowflakeRejects,
             reason: format!("no Snowflake or schema function is named `{written}`"),
+        }),
+        AMBIGUOUS_COLUMN_FINDING => Some(Refusal {
+            construct: None,
+            location,
+            category: RefusalCategory::UnresolvedName,
+            reason: format!(
+                "column `{written}` is ambiguous: more than one relation in scope has it; qualify it"
+            ),
         }),
         _ => None,
     }

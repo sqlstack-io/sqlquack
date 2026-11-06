@@ -7,6 +7,8 @@ pub const STATEMENT_REFUSAL: &str = "statement";
 pub const UNKNOWN_TABLE_FINDING: &str = "E200";
 /// The name check's code for a call to a function neither Snowflake nor the schema declares.
 pub const UNKNOWN_FUNCTION_FINDING: &str = "E202";
+/// The name check's code for an unqualified column more than one relation in scope has.
+pub const AMBIGUOUS_COLUMN_FINDING: &str = "E221";
 
 /// The column a scalar SQL function body is converted as.
 pub const SCALAR_RESULT_COLUMN: &str = "RESULT";

@@ -2,10 +2,14 @@
 
 use sqlquack_syntax::Expression;
 
-use crate::diagnostics::constants::{DUPLICATE_ALIAS, PIVOT_CONSUMED_COLUMN};
+use crate::diagnostics::constants::{
+    DUPLICATE_ALIAS, LATERAL_FUNCTION_JOIN_CONDITION, PIVOT_CONSUMED_COLUMN,
+};
 use crate::parsing::main::node_location::node_location;
 use crate::parsing::models::{SourceLines, SourceLocation};
-use crate::refusals::_helpers::rejections::{duplicate_alias, pivot_consumed_column};
+use crate::refusals::_helpers::rejections::{
+    duplicate_alias, lateral_join_condition, pivot_consumed_column,
+};
 
 /// The keyword that starts a QUALIFY clause.
 const QUALIFY_KEYWORD: &str = "QUALIFY";
@@ -24,6 +28,9 @@ pub(crate) fn clause_location(
         Expression::Select(select) if name == DUPLICATE_ALIAS => duplicate_alias(select)?
             .span
             .map(|span| lines.location(span.start, span.end)),
+        Expression::Select(select) if name == LATERAL_FUNCTION_JOIN_CONDITION => {
+            node_location(lateral_join_condition(select)?, lines)
+        }
         Expression::Select(select) if name == PIVOT_CONSUMED_COLUMN => {
             pivot_consumed_column(select)?
                 .span

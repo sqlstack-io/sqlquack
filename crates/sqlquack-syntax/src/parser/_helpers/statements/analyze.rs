@@ -264,6 +264,7 @@ impl Parser {
             || self.check(TokenType::Unpivot) && !self.is_unpivot_clause_start()
             || self.check(TokenType::Partition)
             || self.limit_as_snowflake_alias()
+            || self.check(TokenType::Window) && self.applies_snowflake_context_rules()
             || self.check(TokenType::Window) && {
                 let next_pos = self.current + 1;
                 next_pos >= self.tokens.len()

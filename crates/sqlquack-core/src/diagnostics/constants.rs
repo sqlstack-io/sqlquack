@@ -94,6 +94,8 @@ pub const SET_OPERATION_CHAIN_HELP: &str = "split the chain: put at most 250 bra
 pub const TOO_MANY_ARGUMENTS: &str = "too_many_arguments";
 /// The name of the code of a read of a column a PIVOT consumed.
 pub const PIVOT_CONSUMED_COLUMN: &str = "pivot_consumed_column";
+/// The name of the code of a lateral table function joined with an ON condition.
+pub const LATERAL_FUNCTION_JOIN_CONDITION: &str = "lateral_function_join_condition";
 /// A relation or column name does not resolve.
 pub const UNRESOLVED_NAME: &str = "SQ0004";
 /// DuckDB cannot express the construct's meaning.
@@ -399,5 +401,18 @@ pub const CODES: &[CodeEntry] = &[
             Snowflake (Snowflake error 904, invalid identifier). This is checked when the PIVOT \
             is the only item in FROM, for names the SELECT list does not define as aliases.",
         example: r#"echo "SELECT order_id, total FROM orders PIVOT (SUM(total) FOR status IN ('shipped', 'pending')) AS p" | sqlquack check"#,
+    },
+    CodeEntry {
+        code: "SQ0209",
+        name: LATERAL_FUNCTION_JOIN_CONDITION,
+        alias: None,
+        title: "A lateral table function is joined with an ON condition",
+        help: Some(
+            "remove the ON clause: a lateral table function already reads the rows before it",
+        ),
+        explanation: "Snowflake joins a LATERAL table function such as FLATTEN to the rows before it \
+            by itself, and rejects the join when it also has an ON condition, even ON TRUE \
+            (Snowflake error 2, unsupported feature). Write the join without ON, or with a comma.",
+        example: r#"echo "SELECT e.event_id, f.value FROM events e JOIN LATERAL FLATTEN(input => e.payload) f ON TRUE" | sqlquack check"#,
     },
 ];

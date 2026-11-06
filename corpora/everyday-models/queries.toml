@@ -507,8 +507,8 @@ final as (
     left join customer_payments on customers.customer_id = customer_payments.customer_id
 )
 select * from final'''
-expect = "refused SQ0004 statement"
-expect_repository = "refused SQ0004 statement"
+expect = "check SQ0004"
+expect_repository = "check SQ0004"
 snowflake = "rejects 2028"
 
 [[query]]
@@ -2255,8 +2255,8 @@ sql = '''select
     f.value:sku::varchar as sku
 from events e
 inner join lateral flatten(input => e.payload:items) f on true'''
-expect = "refused SQ0008 node:column"
-expect_repository = "refused SQ0002 node:lateral"
+expect = "check SQ0209"
+expect_repository = "check SQ0209"
 snowflake = "rejects 2"
 
 [[query]]
@@ -3180,8 +3180,8 @@ sql = '''select
     avg(total) over w as running_avg
 from orders
 window w as (partition by customer_id order by ordered_at)'''
-expect = "refused SQ0002 node:select"
-expect_repository = "refused SQ0002 node:select"
+expect = "parse SQ0001"
+expect_repository = "parse SQ0001"
 snowflake = "rejects 1003"
 
 [[query]]
@@ -3381,8 +3381,8 @@ category = "dbt_pivot"
 sql = '''select customer_id, channel, total_web, total_store
 from (select customer_id, channel, total from orders)
 pivot (sum(total) for channel in ('web' as total_web, 'store' as total_store))'''
-expect = "refused SQ0003 node:pivot"
-expect_repository = "refused SQ0003 node:pivot"
+expect = "check SQ0208"
+expect_repository = "check SQ0208"
 snowflake = "rejects 904"
 
 [[query]]

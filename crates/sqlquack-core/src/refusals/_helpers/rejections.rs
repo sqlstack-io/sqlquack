@@ -7,7 +7,9 @@ use sqlquack_syntax::expressions::names::models::{Column, Identifier, Star};
 use sqlquack_syntax::expressions::queries::models::Select;
 use sqlquack_syntax::{Expression, ExpressionWalk};
 
-use crate::diagnostics::constants::{DUPLICATE_ALIAS, PIVOT_CONSUMED_COLUMN, TOO_MANY_ARGUMENTS};
+use crate::diagnostics::constants::{
+    DUPLICATE_ALIAS, LATERAL_FUNCTION_JOIN_CONDITION, PIVOT_CONSUMED_COLUMN, TOO_MANY_ARGUMENTS,
+};
 use crate::refusals::constants::SNOWFLAKE_FUNCTION_ARITIES;
 
 /// The registry name of the rejection a node causes, with the reason, if it causes one.
@@ -40,6 +42,14 @@ pub(crate) fn rejection(node: &Expression) -> Option<(&'static str, String)> {
                     DUPLICATE_ALIAS,
                     format!("the alias `{}` names two FROM items", alias.name),
                 )
+            })
+            .or_else(|| {
+                lateral_join_condition(select).map(|_| {
+                    (
+                        LATERAL_FUNCTION_JOIN_CONDITION,
+                        "a lateral table function is joined with an ON condition".to_owned(),
+                    )
+                })
             })
             .or_else(|| {
                 pivot_consumed_column(select).map(|column| {
@@ -87,6 +97,15 @@ pub(crate) fn duplicate_alias(select: &Select) -> Option<&Identifier> {
             _ => None,
         })
         .find(|alias| !seen.insert(stored_name(alias)))
+}
+
+/// The ON condition of the first join of a LATERAL table function, which Snowflake joins only without one.
+pub(crate) fn lateral_join_condition(select: &Select) -> Option<&Expression> {
+    select
+        .joins
+        .iter()
+        .filter(|join| matches!(join.this, Expression::Lateral(_)))
+        .find_map(|join| join.on.as_ref())
 }
 
 /// The first column a lone PIVOT aggregates or pivots on that its query still reads by that name.

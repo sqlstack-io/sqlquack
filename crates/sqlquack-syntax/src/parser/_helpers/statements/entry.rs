@@ -1610,7 +1610,7 @@ impl Parser {
 
     fn parse_select_windows(&mut self) -> Result<Option<Vec<NamedWindow>>> {
         Ok(
-            if self.check(TokenType::Window) && {
+            if !self.applies_snowflake_context_rules() && self.check(TokenType::Window) && {
                 let next_pos = self.current + 1;
                 next_pos < self.tokens.len()
                     && (self.tokens[next_pos].token_type == TokenType::Var

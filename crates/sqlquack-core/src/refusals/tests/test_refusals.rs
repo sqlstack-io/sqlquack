@@ -164,6 +164,24 @@ fn given_sql_snowflake_parses_then_rejects_when_refusing_then_each_rejection_is_
             expected_codes: vec![],
         },
         RejectionTestCase {
+            description: "a lateral table function joined with an ON condition is rejected",
+            sql: "SELECT 1 FROM events e INNER JOIN LATERAL FLATTEN(input => e.payload) f ON TRUE; \
+                  SELECT 1 FROM events e LEFT JOIN LATERAL FLATTEN(input => e.payload) f ON f.index = 0",
+            expected_rejections: vec![
+                "lateral_function_join_condition",
+                "lateral_function_join_condition",
+            ],
+            expected_codes: vec!["SQ0209", "SQ0209"],
+        },
+        RejectionTestCase {
+            description: "a lateral table function joined without ON, or a lateral subquery with ON, is not",
+            sql: "SELECT 1 FROM events e JOIN LATERAL FLATTEN(input => e.payload) f; \
+                  SELECT 1 FROM events e, LATERAL FLATTEN(input => e.payload) f; \
+                  SELECT 1 FROM events e JOIN LATERAL (SELECT 1 AS a) s ON TRUE",
+            expected_rejections: vec![],
+            expected_codes: vec![],
+        },
+        RejectionTestCase {
             description: "a star without ILIKE, or ILIKE without REPLACE or RENAME, is left to conversion",
             sql: "SELECT * REPLACE (price * 2 AS price) FROM orders; \
                   SELECT * ILIKE '%_id' FROM orders",

@@ -36,6 +36,7 @@ renumbered. See [Reading diagnostics](/docs/diagnostics/overview/) for the outpu
 | [`SQ0206`](#sq0206) | `duplicate_alias` | Two FROM items share one alias |
 | [`SQ0207`](#sq0207) | `too_many_arguments` | The call passes more arguments than the function takes |
 | [`SQ0208`](#sq0208) | `pivot_consumed_column` | The query reads a column its PIVOT consumed |
+| [`SQ0209`](#sq0209) | `lateral_function_join_condition` | A lateral table function is joined with an ON condition |
 
 ## Conversion
 
@@ -365,4 +366,18 @@ PIVOT replaces the column it aggregates and the column after FOR with one column
 
 ```sh
 echo "SELECT order_id, total FROM orders PIVOT (SUM(total) FOR status IN ('shipped', 'pending')) AS p" | sqlquack check
+```
+
+### SQ0209
+
+**A lateral table function is joined with an ON condition** (`lateral_function_join_condition`)
+
+Snowflake joins a LATERAL table function such as FLATTEN to the rows before it by itself, and rejects the join when it also has an ON condition, even ON TRUE (Snowflake error 2, unsupported feature). Write the join without ON, or with a comma.
+
+**Help:** remove the ON clause: a lateral table function already reads the rows before it
+
+**Example:**
+
+```sh
+echo "SELECT e.event_id, f.value FROM events e JOIN LATERAL FLATTEN(input => e.payload) f ON TRUE" | sqlquack check
 ```

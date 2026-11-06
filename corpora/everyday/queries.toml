@@ -3176,8 +3176,8 @@ expect_repository = "refused SQ0002 node:statement"
 [[query]]
 category = "invalid_semantics"
 sql = '''SELECT customer_id FROM orders o JOIN customers c ON o.customer_id = c.customer_id'''
-expect = "refused SQ0004 statement"
-expect_repository = "refused SQ0004 statement"
+expect = "check SQ0004"
+expect_repository = "check SQ0004"
 
 [[query]]
 category = "invalid_semantics"

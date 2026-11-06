@@ -23,3 +23,4 @@ SQ0205 unknown_function
 SQ0206 duplicate_alias
 SQ0207 too_many_arguments
 SQ0208 pivot_consumed_column
+SQ0209 lateral_function_join_condition

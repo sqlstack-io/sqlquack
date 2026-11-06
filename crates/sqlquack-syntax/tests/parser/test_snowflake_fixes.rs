@@ -1299,6 +1299,16 @@ fn given_an_operator_or_clause_snowflake_does_not_have_when_parsing_then_it_is_r
             expected_kind: Some("select"),
         },
         SnowflakeVerdictTestCase {
+            description: "a named WINDOW clause (recorded errno 1003 at the window's name)",
+            sql: "SELECT SUM ( 1 ) OVER w FROM t WINDOW w AS ( PARTITION BY 1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps a window function with its window written inline",
+            sql: "SELECT SUM ( 1 ) OVER ( PARTITION BY 1 ) FROM t ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
             description: "keeps a single = and IN or NOT IN before a list or a query",
             sql: "SELECT 1 FROM t WHERE a = 1 AND a IN ( 1 , 2 ) AND a NOT IN ( SELECT 1 ) ;",
             expected_kind: Some("select"),
