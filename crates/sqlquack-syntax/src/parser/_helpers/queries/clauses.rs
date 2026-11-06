@@ -1534,7 +1534,9 @@ impl Parser {
         }
 
         if self.match_token(TokenType::To) {
-            if self.check(TokenType::Var) && self.peek_text().eq_ignore_ascii_case("NEXT") {
+            let next = self.check(TokenType::Next)
+                || (self.check(TokenType::Var) && self.peek_text().eq_ignore_ascii_case("NEXT"));
+            if next {
                 if self.check_next(TokenType::Row) {
                     self.skip();
                     self.skip();
@@ -1557,7 +1559,12 @@ impl Parser {
             }
 
             if self.is_snowflake() {
-                let name = self.expect_identifier()?;
+                // Snowflake takes NEXT without ROW as the symbol itself, though it lexes as a keyword.
+                let name = if next {
+                    self.advance_text()?
+                } else {
+                    self.expect_identifier()?
+                };
                 return Ok(Some(MatchRecognizeAfter::To(Identifier::new(name))));
             }
 
