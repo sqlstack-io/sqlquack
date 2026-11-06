@@ -21,7 +21,7 @@ next top-level `;` is not checked further. The SQL/JSON and SQL/XML calls, `TREA
 
 | Gap | Construct |
 | --- | --- |
-| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, and `ALTER` of a table, foreign table, index, sequence, view or materialized view |
+| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, and `ALTER` of a table, foreign table, index, sequence, view, materialized view, function, procedure, routine or aggregate |
 | `copy_where` | `COPY … FROM … WHERE condition` |
 | `json`, `json_array`, `json_arrayagg`, `json_exists`, `json_object`, `json_objectagg`, `json_query`, `json_scalar`, `json_serialize`, `json_value`, `json_table` | the SQL/JSON call syntax |
 | `xmlconcat`, `xmlelement`, `xmlexists`, `xmlforest`, `xmlparse`, `xmlpi`, `xmlroot`, `xmlserialize`, `xmltable` | the SQL/XML call syntax |
@@ -91,6 +91,15 @@ such as `(ADD COLUMN, columnDef)` or `(ALTER COLUMN, c, (SET STATISTICS, 16))`, 
 `action`. A rename, `SET SCHEMA`, `[NO] DEPENDS ON EXTENSION`, `ATTACH` or `DETACH PARTITION`,
 `ALL IN TABLESPACE` and a sequence's `SeqOptList` name themselves in `action`, their values in
 `operands`. Numbers are kept as values, so `SET STATISTICS 0x10` equals `SET STATISTICS 16`.
-`ALTER` followed by a word no statement kind allows is refused (42601); other `ALTER` statements
+`ALTER FUNCTION`, `PROCEDURE`, `ROUTINE` and `AGGREGATE` also become `AlterObject`. The signature,
+as `COMMENT ON` builds it, is the first operand and its name parts are `name`, so `a.b.c.d` keeps
+`a.b` as the catalog. Options are tuples, as in `CREATE FUNCTION`, with an empty `action`; a rename, a
+new owner, `SET SCHEMA` and `[NO] DEPENDS ON EXTENSION` name themselves in `action`. `RESTRICT` changes
+nothing, as in PostgreSQL. In every routine, the special `SET` and `RESET` forms are the settings
+PostgreSQL's raw tree makes of them: `SET TIME ZONE 'x'` is `SET timezone = 'x'`, `LOCAL` and
+`DEFAULT` set the default, and `SCHEMA`, `NAMES`, `ROLE`, `SESSION AUTHORIZATION` and `XML OPTION`
+set `search_path`, `client_encoding`, `role`, `session_authorization` and `xmloption`.
+`SET CATALOG` is refused (0A000), as is a time zone interval with fields beyond `HOUR` and `MINUTE`
+(42601). `ALTER` followed by a word no statement kind allows is refused (42601); other `ALTER` statements
 stay opaque gaps. The grammar's own errors are kept, including `NOT VALID` on `ALTER CONSTRAINT`
 (0A000), a column number out of range, and identity options `SET` cannot take.

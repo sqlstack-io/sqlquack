@@ -148,7 +148,11 @@ const RESERVED_ROLE: &str = "none";
 const PUBLIC_ROLE: &str = "public";
 
 /// An `AlterObject` of `kind` naming `name`.
-fn alter(target: (&str, TableRef, bool), action: &str, operands: Vec<Expression>) -> Expression {
+pub(crate) fn alter(
+    target: (&str, TableRef, bool),
+    action: &str,
+    operands: Vec<Expression>,
+) -> Expression {
     let (kind, name, if_exists) = target;
     Expression::AlterObject(Box::new(AlterObject {
         kind: kind.to_owned(),
@@ -916,6 +920,6 @@ impl Parser<'_> {
 }
 
 /// A single name as an expression.
-fn name_from(identifier: Identifier) -> Expression {
+pub(crate) fn name_from(identifier: Identifier) -> Expression {
     Expression::Identifier(identifier)
 }

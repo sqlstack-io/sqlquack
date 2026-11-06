@@ -6,6 +6,7 @@ pub(crate) mod dml;
 pub(crate) mod from;
 pub(crate) mod objects;
 pub(crate) mod queries;
+pub(crate) mod routine_alters;
 pub(crate) mod routines;
 pub(crate) mod statements;
 pub(crate) mod tables;
