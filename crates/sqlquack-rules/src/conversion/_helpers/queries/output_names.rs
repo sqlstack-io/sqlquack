@@ -7,7 +7,7 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::constants::{
     OUTPUT_NAMED_AGGREGATES, OUTPUT_NAMED_ARITHMETIC, OUTPUT_NAMED_CAST_ENDINGS,
-    OUTPUT_NAMED_CURRENT_TIME, OUTPUT_NAMED_FUNCTIONS, OUTPUT_NAMED_ROUND,
+    OUTPUT_NAMED_FUNCTIONS,
 };
 
 /// Whether an unaliased item written as `text` has a shape whose name receipts record.
@@ -38,9 +38,12 @@ pub(crate) fn recorded_name_shape(item: &Value, text: &str) -> bool {
         }
         "function" if arguments.is_empty() => {
             only(&["name", "args", "no_parens"])
-                && OUTPUT_NAMED_CURRENT_TIME.contains(&text.to_ascii_uppercase().as_str())
+                && matches!(
+                    text.to_ascii_uppercase().as_str(),
+                    "CURRENT_DATE()" | "CURRENT_DATE" | "CURRENT_TIMESTAMP()"
+                )
         }
-        "function" if named(&[OUTPUT_NAMED_ROUND]) => {
+        "function" if named(&["ROUND"]) => {
             only(&["name", "args"])
                 && arguments.get(2).is_none()
                 && arguments.first().is_some_and(plain_column)

@@ -1998,8 +1998,3 @@ pub(crate) const OUTPUT_NAMED_FUNCTIONS: &[&str] = &["LOWER", "UPPER", "COALESCE
 pub(crate) const OUTPUT_NAMED_ARITHMETIC: &[&str] = &["add", "sub", "mul", "div"];
 /// The cast target spellings whose unaliased column names receipts record.
 pub(crate) const OUTPUT_NAMED_CAST_ENDINGS: &[&str] = &[" AS INTEGER)", "::INTEGER"];
-/// ROUND, whose unaliased column names receipts record for a column and an integer scale.
-pub(crate) const OUTPUT_NAMED_ROUND: &str = "ROUND";
-/// The current-time items, as written upper-cased, whose unaliased column names receipts record.
-pub(crate) const OUTPUT_NAMED_CURRENT_TIME: &[&str] =
-    &["CURRENT_DATE()", "CURRENT_DATE", "CURRENT_TIMESTAMP()"];
