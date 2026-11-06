@@ -165,6 +165,36 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
+            description: "CREATE EXTENSION ... FROM is refused in gram.y (0A000)",
+            sql: "CREATE EXTENSION e FROM x",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: false },
+        },
+        VerdictTestCase {
+            description: "CREATE SCHEMA IF NOT EXISTS takes no schema elements (0A000)",
+            sql: "CREATE SCHEMA IF NOT EXISTS s CREATE TABLE t (a int)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: false },
+        },
+        VerdictTestCase {
+            description: "a schema element cannot be CREATE TABLE AS",
+            sql: "CREATE SCHEMA s CREATE TABLE t AS SELECT 1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a rule action cannot be MERGE",
+            sql: "CREATE RULE r AS ON INSERT TO t DO (SELECT 1; MERGE INTO t USING s ON true WHEN MATCHED THEN DELETE)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a transform names FROM SQL and TO SQL at most once each",
+            sql: "CREATE TRANSFORM FOR int LANGUAGE l (FROM SQL WITH FUNCTION f, FROM SQL WITH FUNCTION g)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "OR REPLACE is refused where gram.y has none",
+            sql: "CREATE OR REPLACE CAST (int AS text) WITH INOUT",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
             description: "a composite type's name has at most three parts, as makeRangeVarFromAnyName reads it",
             sql: "CREATE TYPE a.b.c.d AS (x int)",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
@@ -1004,6 +1034,24 @@ fn given_sql_when_parsing_strictly_then_any_parser_error_refuses_it() {
 #[test]
 fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() {
     let test_cases = [
+        ValueTestCase {
+            description: "CREATE LANGUAGE without HANDLER is the CREATE EXTENSION gram.y makes of it",
+            sql: "CREATE OR REPLACE LANGUAGE l",
+            pointer: "/0/create_object/if_not_exists",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "a transform keeps FROM SQL before TO SQL, whichever is written first",
+            sql: "CREATE TRANSFORM FOR int LANGUAGE l (TO SQL WITH FUNCTION g, FROM SQL WITH FUNCTION f)",
+            pointer: "/0/create_object/operands/2/tuple/expressions/0/var/this",
+            expected_json: "\"FROM SQL\"",
+        },
+        ValueTestCase {
+            description: "CREATE SERVER stores VERSION NULL as no version",
+            sql: "CREATE SERVER s VERSION NULL FOREIGN DATA WRAPPER w",
+            pointer: "/0/create_object/operands/0/tuple/expressions/0/var/this",
+            expected_json: "\"FOREIGN DATA WRAPPER\"",
+        },
         ValueTestCase {
             description: "an index without USING records btree, as gram.y's DEFAULT_INDEX_TYPE does",
             sql: "CREATE INDEX i ON t (a)",

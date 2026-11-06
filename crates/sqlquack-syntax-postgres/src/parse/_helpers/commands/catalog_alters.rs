@@ -67,7 +67,7 @@ impl Parser<'_> {
     }
 
     /// One `opclass_item`: an operator, a support function, or `STORAGE`.
-    fn operator_class_item(&mut self) -> Parsing<Expression> {
+    pub(crate) fn operator_class_item(&mut self) -> Parsing<Expression> {
         if self.eat_kw("storage") {
             return Ok(clause(
                 "STORAGE",
@@ -116,7 +116,7 @@ impl Parser<'_> {
     }
 
     /// `name_list` without parentheses: `name, ...`.
-    fn bare_name_list(&mut self) -> Parsing<Expression> {
+    pub(crate) fn bare_name_list(&mut self) -> Parsing<Expression> {
         let names: Vec<Expression> =
             self.comma_list(|parser| Ok(name_from(parser.name(is_col_id)?)))?;
         Ok(tuple(names))
@@ -181,9 +181,14 @@ impl Parser<'_> {
             _ => return Err(self.error()),
         };
         self.at += 1;
+        Ok((action, self.publication_object_list()?))
+    }
+
+    /// `pub_obj_list`, each object given its kind by `preprocess_pubobj_list`.
+    pub(crate) fn publication_object_list(&mut self) -> Parsing<Vec<Expression>> {
         let objects: Vec<PublicationObject> =
             self.comma_list(|parser| parser.publication_object())?;
-        Ok((action, self.publication_objects(objects)?))
+        self.publication_objects(objects)
     }
 
     /// One `PublicationObjSpec`, as written.
@@ -313,7 +318,7 @@ impl Parser<'_> {
     }
 
     /// `opt_definition`: `WITH definition`, as one `WITH` clause, if written.
-    fn with_definition(&mut self) -> Parsing<Vec<Expression>> {
+    pub(crate) fn with_definition(&mut self) -> Parsing<Vec<Expression>> {
         match self.eat_kw("with") {
             true => Ok(vec![clause("WITH", self.options(false)?)]),
             false => Ok(Vec::new()),
@@ -336,7 +341,7 @@ impl Parser<'_> {
     }
 
     /// `opt_fdw_options`: `[NO] HANDLER` and `[NO] VALIDATOR`, in order.
-    fn fdw_options(&mut self) -> Parsing<Vec<Expression>> {
+    pub(crate) fn fdw_options(&mut self) -> Parsing<Vec<Expression>> {
         let mut values: Vec<Expression> = Vec::new();
         loop {
             let negated: bool = self.kw("no");
@@ -357,7 +362,7 @@ impl Parser<'_> {
     }
 
     /// `foreign_server_version`: `VERSION 'text'` or `VERSION NULL`, if written.
-    fn server_version(&mut self) -> Parsing<Vec<Expression>> {
+    pub(crate) fn server_version(&mut self) -> Parsing<Vec<Expression>> {
         if !self.eat_kw("version") {
             return Ok(Vec::new());
         }

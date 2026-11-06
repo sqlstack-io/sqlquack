@@ -21,7 +21,7 @@ next top-level `;` is not checked further. The SQL/JSON and SQL/XML calls, `TREA
 
 | Gap | Construct |
 | --- | --- |
-| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, `CREATE [OR REPLACE] [MATERIALIZED] VIEW`, `CREATE INDEX`, `SEQUENCE`, `TRIGGER`, `TYPE` and `FOREIGN TABLE`, and every `ALTER` other than `ALTER SYSTEM`, `ROLE`, `USER`, `GROUP`, `POLICY`, `USER MAPPING` and `DEFAULT PRIVILEGES` |
+| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, `CREATE [OR REPLACE] [MATERIALIZED] VIEW`, `CREATE INDEX`, `SEQUENCE`, `TRIGGER`, `TYPE` and `FOREIGN TABLE`, the catalog `CREATE` statements listed under their own heading, and every `ALTER` other than `ALTER SYSTEM`, `ROLE`, `USER`, `GROUP`, `POLICY`, `USER MAPPING` and `DEFAULT PRIVILEGES` |
 | `copy_where` | `COPY … FROM … WHERE condition` |
 | `json`, `json_array`, `json_arrayagg`, `json_exists`, `json_object`, `json_objectagg`, `json_query`, `json_scalar`, `json_serialize`, `json_value`, `json_table` | the SQL/JSON call syntax |
 | `xmlconcat`, `xmlelement`, `xmlexists`, `xmlforest`, `xmlparse`, `xmlpi`, `xmlroot`, `xmlserialize`, `xmltable` | the SQL/XML call syntax |
@@ -98,6 +98,23 @@ gram.y makes of it. A sequence's options are those of `ALTER SEQUENCE`. `CREATE 
 list in `properties`. `CREATE FOREIGN TABLE` becomes `CreateTable` with the `table_modifier`
 `FOREIGN` and `(SERVER, s)` and `OPTIONS` in `properties`. `CREATE ASSERTION` is parsed and refused
 (0A000). `CREATE` followed by a word no statement allows is refused (42601).
+
+## Catalog CREATE statements
+
+`CREATE ACCESS METHOD`, `CAST`, `COLLATION`, `[DEFAULT] CONVERSION`, `DOMAIN`, `EVENT TRIGGER`,
+`EXTENSION`, `FOREIGN DATA WRAPPER`, `LANGUAGE`, `OPERATOR`, `OPERATOR CLASS`, `OPERATOR FAMILY`,
+`PUBLICATION`, `RULE`, `SCHEMA`, `SERVER`, `STATISTICS`, `SUBSCRIPTION`, `TABLESPACE`, `TEXT SEARCH`
+and `TRANSFORM` become `CreateObject`, with each clause a keyword tuple in `operands`, in grammar
+order, and a definition list in `properties`. `DEFAULT` (conversions, operator classes) and `TRUSTED`
+(languages) are the `modifier`. gram.y's rewrites are kept: `CREATE [OR REPLACE] LANGUAGE l` without
+`HANDLER` is `CREATE EXTENSION [IF NOT EXISTS] l`; `PROCEDURAL`, `NO VALIDATOR`, `FOR SEARCH`,
+`DO ALSO`, `CREATE SERVER ... VERSION NULL` and empty rule actions add nothing; a domain's `COLLATE`
+comes before its constraints; a transform lists `FROM SQL` before `TO SQL`; and `COLLATION ... FROM`
+is its `from` element. Publication objects take their kind as in `ALTER PUBLICATION`. A rule action is
+a query, `INSERT`, `UPDATE`, `DELETE` or `(NOTIFY, channel [, payload])`. A schema element is
+`CREATE TABLE`, `INDEX`, `SEQUENCE`, `TRIGGER` or `VIEW`; a `GRANT` element is a `grant` gap until
+grants parse. `CREATE EXTENSION ... FROM` and schema elements after `IF NOT EXISTS` are refused
+(0A000), as are `OR REPLACE` and a persistence where gram.y has none (42601).
 
 ## ALTER
 

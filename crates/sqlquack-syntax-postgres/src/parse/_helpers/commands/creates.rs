@@ -35,7 +35,7 @@ const TRIGGER: &str = "TRIGGER";
 const TYPE: &str = "TYPE";
 
 /// `OptTemp` spellings, longest first, with the persistence each gives.
-const PERSISTENCES: [(&[&str], &str); 7] = [
+pub(crate) const PERSISTENCES: [(&[&str], &str); 7] = [
     (&["local", "temporary"], TEMPORARY),
     (&["local", "temp"], TEMPORARY),
     (&["global", "temporary"], TEMPORARY),
@@ -158,7 +158,7 @@ fn created(kind: &str, name: TableRef, prefix: CreatePrefix) -> CreateObject {
 
 impl Parser<'_> {
     /// Whether `words` follow at `offset`.
-    fn words_from(&self, offset: usize, words: &[&str]) -> bool {
+    pub(crate) fn words_from(&self, offset: usize, words: &[&str]) -> bool {
         for (index, word) in words.iter().enumerate() {
             if !self.kw_at(offset + index, word) {
                 return false;
@@ -295,7 +295,7 @@ impl Parser<'_> {
     }
 
     /// `[IF NOT EXISTS]`, consumed.
-    fn if_not_exists(&mut self) -> Parsing<bool> {
+    pub(crate) fn if_not_exists(&mut self) -> Parsing<bool> {
         if !(self.kw("if") && self.kw_at(1, "not")) {
             return Ok(false);
         }
@@ -305,7 +305,7 @@ impl Parser<'_> {
     }
 
     /// `WITH reloptions`, if written, as a `WITH` clause.
-    fn reloptions(&mut self) -> Parsing<Option<Expression>> {
+    pub(crate) fn reloptions(&mut self) -> Parsing<Option<Expression>> {
         match self.kw("with") && self.char_at(1, '(') {
             true => {
                 self.at += 1;
@@ -726,14 +726,20 @@ impl Parser<'_> {
         self.expect_kw("server")?;
         node.properties
             .push(clause("SERVER", vec![name_from(self.name(is_col_id)?)]));
-        if self.eat_kw("options") {
-            let options: Vec<Expression> = self.parenthesized(|parser| {
-                let name: Identifier = parser.name(is_col_label)?;
-                Ok(tuple(vec![Expression::Identifier(name), parser.sconst()?]))
-            })?;
-            node.properties.push(clause("OPTIONS", options));
-        }
+        node.properties.extend(self.create_generic_options()?);
         Ok(Expression::CreateTable(Box::new(node)))
+    }
+
+    /// `create_generic_options`: `OPTIONS ( name 'value', ... )`, if written.
+    pub(crate) fn create_generic_options(&mut self) -> Parsing<Option<Expression>> {
+        if !self.eat_kw("options") {
+            return Ok(None);
+        }
+        let options: Vec<Expression> = self.parenthesized(|parser| {
+            let name: Identifier = parser.name(is_col_label)?;
+            Ok(tuple(vec![Expression::Identifier(name), parser.sconst()?]))
+        })?;
+        Ok(Some(clause("OPTIONS", options)))
     }
 }
 
