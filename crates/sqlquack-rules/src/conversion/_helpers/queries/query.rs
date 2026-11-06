@@ -45,6 +45,8 @@ use sqlquack_semantics::scopes::main::star_relations::star_relations;
 use sqlquack_semantics::scopes::models::ScopeRelation;
 use sqlquack_semantics::types::models::ColumnSpec;
 
+/// The most characters Snowflake keeps of an unaliased item's text as its name, as recorded.
+const OUTPUT_NAME_MAX_CHARS: usize = 255;
 /// The SELECT clauses this rule converts; anything else set on the node is refused.
 const SELECT_FIELDS: &[&str] = &[
     "expressions",
@@ -660,9 +662,6 @@ fn convert_projection(
     }
 }
 
-/// The most characters Snowflake keeps of an unaliased item's text as its name, as recorded.
-const OUTPUT_NAME_MAX_CHARS: usize = 255;
-
 /// Snowflake's name for an unaliased item written as `text`: it upper-cased, cut at 255 characters.
 fn output_name(text: String) -> Option<String> {
     let recorded = !text.is_empty()
@@ -877,8 +876,7 @@ pub(crate) fn require_distinct_names(
     Ok(())
 }
 
-/// Whether every `'value'` in `source` written after `keyword` is spelled `keyword 'value'`, in
-/// any case with one space, so a typed literal's text, which the tree does not keep, is known.
+/// Whether every `'value'` after `keyword` in `source` is spelled `keyword 'value'` with one space.
 fn spelled_once(source: &str, keyword: &str, value: &str) -> bool {
     let quoted = format!("'{value}'");
     !value.contains(['\'', '\\'])

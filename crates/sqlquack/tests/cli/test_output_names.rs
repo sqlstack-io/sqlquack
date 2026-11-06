@@ -1,4 +1,4 @@
-use crate::helpers::{convert_outcome, converted_column_names, run_convert};
+use crate::helpers::{convert_outcome, converted_column_names, names, run_convert};
 use crate::test_types::{ColumnNameTestCase, ConvertTestCase};
 
 const UNALIASED_SCHEMA: &str = "tests/cli/fixtures/unaliased_items.json";
@@ -187,10 +187,6 @@ fn given_unaliased_expressions_from_the_receipts_when_run_on_duckdb_then_they_ta
             test_case.description
         );
     }
-}
-
-fn names(names: &[&str]) -> Vec<String> {
-    names.iter().map(|name| (*name).to_owned()).collect()
 }
 
 #[test]

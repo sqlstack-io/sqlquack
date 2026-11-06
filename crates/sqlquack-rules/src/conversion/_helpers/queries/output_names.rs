@@ -7,6 +7,8 @@ use crate::conversion::_helpers::support::tree::{
     unexpected_fields,
 };
 
+/// The field holding a cast's target type, which is named by its written text, not walked.
+const CAST_TARGET_FIELD: &str = "to";
 /// Functions and aggregates, called by name, whose unaliased column names receipts record.
 const NAMED_CALLS: &[&str] = &[
     "ABS",
@@ -118,14 +120,13 @@ fn named(node: &Value, text_of: &dyn Fn(&Value) -> Option<String>, depth: usize)
     }
 }
 
-/// Whether every node in `payload`'s fields is named; other fields must be scalars, and a cast's
-/// target type is named by its written text.
+/// Whether every node in `payload`'s fields is named, except a cast's target type and scalars.
 fn walked(payload: &Value, text_of: &dyn Fn(&Value) -> Option<String>, depth: usize) -> bool {
     let Some(fields) = payload.as_object() else {
         return payload.is_null();
     };
     fields.iter().all(|(key, value)| match value {
-        Value::Object(_) if key == "to" => true,
+        Value::Object(_) if key == CAST_TARGET_FIELD => true,
         Value::Object(_) | Value::Array(_) => all_named(value, text_of, depth),
         _ => true,
     })
