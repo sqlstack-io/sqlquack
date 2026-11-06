@@ -2,6 +2,7 @@
 
 pub(crate) mod alters;
 pub(crate) mod catalog_alters;
+pub(crate) mod catalog_creates;
 pub(crate) mod creates;
 pub(crate) mod definitions;
 pub(crate) mod dml;
