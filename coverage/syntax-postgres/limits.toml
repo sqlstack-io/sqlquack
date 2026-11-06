@@ -6910,6 +6910,36 @@ sql = "CREATE GROUP t1 IN ROLE"
 context = "raw"
 expect = "reject"
 
+# security_admin: batch-24 coverage notes on ALTER POLICY.
+
+[[limit]]
+form = "pg.security_admin.alter-policy.on-table-name"
+kind = "option_present"
+target = "[ WITH CHECK ( <check_expression> ) ]"
+note = "USING and WITH CHECK with different expressions, so a swap of the two shows (gram.y AlterPolicyStmt: RowSecurityOptionalExpr, RowSecurityOptionalWithCheck)"
+anchor = "doc.sql-alterpolicy / Synopsis"
+sql = "ALTER POLICY t1 ON t1 USING ( c1 = 1 ) WITH CHECK ( c2 > 2 )"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.alter-policy.on-table-name"
+kind = "option_present"
+target = "[ WITH CHECK ( <check_expression> ) ]"
+note = "a role list, then USING and WITH CHECK with different expressions"
+anchor = "doc.sql-alterpolicy / Synopsis"
+sql = "ALTER POLICY t1 ON t1 TO PUBLIC USING ( c1 IS NULL ) WITH CHECK ( c2 IN ( 1 , 2 ) )"
+context = "raw"
+
+[[limit]]
+form = "pg.security_admin.alter-policy.rename-to"
+kind = "negative_neighbour"
+target = "<table_name>"
+note = "the table name left out together with ON (gram.y AlterPolicyStmt has no RENAME without ON qualified_name); with ON kept, RENAME is read as the table name, see the suppression below"
+anchor = "doc.sql-alterpolicy / Synopsis"
+sql = "ALTER POLICY t1 RENAME TO v1"
+context = "raw"
+expect = "reject"
+
 # security_admin: derived negatives that are valid PostgreSQL, and obligations that do not apply.
 
 [[suppress]]

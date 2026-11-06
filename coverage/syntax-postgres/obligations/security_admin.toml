@@ -710,6 +710,22 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.security_admin.alter-policy.on-table-name.o042"
+kind = "option_present"
+required = true
+target = "[ WITH CHECK ( <check_expression> ) ]"
+anchor = "doc.sql-alterpolicy / Synopsis"
+note = "USING and WITH CHECK with different expressions, so a swap of the two shows (gram.y AlterPolicyStmt: RowSecurityOptionalExpr, RowSecurityOptionalWithCheck)"
+
+[[obligation]]
+id = "pg.security_admin.alter-policy.on-table-name.o043"
+kind = "option_present"
+required = true
+target = "[ WITH CHECK ( <check_expression> ) ]"
+anchor = "doc.sql-alterpolicy / Synopsis"
+note = "a role list, then USING and WITH CHECK with different expressions"
+
+[[obligation]]
 id = "pg.security_admin.alter-policy.rename-to.o001"
 kind = "positive"
 required = true
@@ -836,6 +852,14 @@ required = true
 target = "<new_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.security_admin.alter-policy.rename-to.o020"
+kind = "negative_neighbour"
+required = true
+target = "<table_name>"
+anchor = "doc.sql-alterpolicy / Synopsis"
+note = "the table name left out together with ON (gram.y AlterPolicyStmt has no RENAME without ON qualified_name); with ON kept, RENAME is read as the table name, see the suppression below"
 
 [[obligation]]
 id = "pg.security_admin.alter-role.rename-to.o001"
