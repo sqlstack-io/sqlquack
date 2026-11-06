@@ -1386,3 +1386,226 @@ fn given_urls_when_converting_parse_url_then_parts_and_parameters_are_read_as_re
         );
     }
 }
+
+#[test]
+fn given_each_documented_format_element_when_writing_text_then_it_converts_as_recorded_or_refuses()
+{
+    let test_cases = [
+        FirstValueTestCase {
+            description: "the four-digit year",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'YYYY') AS v",
+            expected_outcome: Ok("2024"),
+        },
+        FirstValueTestCase {
+            description: "the zero-padded month",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'MM') AS v",
+            expected_outcome: Ok("09"),
+        },
+        FirstValueTestCase {
+            description: "the zero-padded day",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'DD') AS v",
+            expected_outcome: Ok("05"),
+        },
+        FirstValueTestCase {
+            description: "MON, the month's abbreviation in title case",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'MON') AS v",
+            expected_outcome: Ok("Sep"),
+        },
+        FirstValueTestCase {
+            description: "MMMM, the month's full name, not MM twice",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'MMMM') AS v",
+            expected_outcome: Ok("September"),
+        },
+        FirstValueTestCase {
+            description: "MON between other fields",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'DD MON YYYY') AS v",
+            expected_outcome: Ok("05 Sep 2024"),
+        },
+        FirstValueTestCase {
+            description: "adjacent numeric fields",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'YYYYMMDD') AS v",
+            expected_outcome: Ok("20240905"),
+        },
+        FirstValueTestCase {
+            description: "the 24-hour hour",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'HH24') AS v",
+            expected_outcome: Ok("13"),
+        },
+        FirstValueTestCase {
+            description: "the minutes",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'MI') AS v",
+            expected_outcome: Ok("04"),
+        },
+        FirstValueTestCase {
+            description: "the seconds",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'SS') AS v",
+            expected_outcome: Ok("05"),
+        },
+        FirstValueTestCase {
+            description: "milliseconds",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'FF3') AS v",
+            expected_outcome: Ok("123"),
+        },
+        FirstValueTestCase {
+            description: "FF at the timestamp's precision",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'FF') AS v",
+            expected_outcome: Ok("123"),
+        },
+        FirstValueTestCase {
+            description: "MON of a timestamp",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'MON') AS v",
+            expected_outcome: Ok("Sep"),
+        },
+        FirstValueTestCase {
+            description: "MON in lower case, whose letter case no recording shows",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'mon') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "MMMM in mixed case",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'Mmmm') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "YY",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'YY') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "D",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'D') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "DY",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'DY') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "UUUU",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'UUUU') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "HH12",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'HH12') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "HH",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'HH') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "H24",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'H24') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "H12",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'H12') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "H",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'H') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "AM",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'HH12 AM') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "PM",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'HH12 PM') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "A",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'HH12 A') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "P",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'HH12 P') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "FF0",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'FF0') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "FF1",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'FF1') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "FF7",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'FF7') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "TZH:TZM",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'TZH:TZM') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "TZHTZM",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'TZHTZM') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "TZH",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'TZH') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "TZM",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'TZM') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "MMMMMM, which MMMM and MM would spell",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'MMMMMM') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "MM then MON, a run of M",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'MMMON') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "DDDD, which DD would match twice",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'DDDD') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "YYYYYYYY, which YYYY would match twice",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'YYYYYYYY') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "SSSS, which SS would match twice",
+            sql: "SELECT TO_CHAR('2024-09-05 13:04:05.123'::TIMESTAMP_NTZ(3), 'SSSS') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+        FirstValueTestCase {
+            description: "time fields of a DATE",
+            sql: "SELECT TO_CHAR(DATE '2024-09-05', 'HH24 MI') AS v",
+            expected_outcome: Err("which no recording shows"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

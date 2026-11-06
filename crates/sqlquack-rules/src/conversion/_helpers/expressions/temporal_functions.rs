@@ -61,11 +61,11 @@ use crate::conversion::constants::{
     BARE_FRACTION, BARE_FRACTION_PATTERNS, CLOCK_FORMAT_FIELDS, CURRENT_TIME_RULE, DATE_ARITHMETIC,
     DATE_FORMAT_RULE, DATE_NAME, DATE_PART_RULE, DATE_PARTS, DAY_NAME_RULE, DECIMAL_EPOCH_RULE,
     FRACTIONAL_DATE_AMOUNT, FROM_PARTS, LAST_DAY_RULE, MAX_FRACTION_DIGITS_U8, MICROSECOND_DIGITS,
-    NULL_BRANCHES, NUMBER_TEXT_FORMAT, OFFSET_FREE_UNITS, RECORDED_TIME_ZONES, SCALE_DIGITS,
-    TEMPORAL_TEXT_FIELDS, TEMPORAL_TEXT_FORMAT, TEMPORAL_TEXT_SEPARATORS, TEXT_TO_TIME_RULE,
-    TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE,
-    TIMESTAMP_NTZ_NAME, TIMESTAMP_TIME_RULE, TO_DATE_TEMPORAL, TO_TIMESTAMP_TEMPORAL,
-    UTC_OFFSET_ARITHMETIC, UTC_ZONE, ZONE_COLUMNS, ZONED_PARTS,
+    MONTH_NAME_FIELDS, NULL_BRANCHES, NUMBER_TEXT_FORMAT, OFFSET_FREE_UNITS, RECORDED_TIME_ZONES,
+    SCALE_DIGITS, TEMPORAL_TEXT_FIELDS, TEMPORAL_TEXT_FORMAT, TEMPORAL_TEXT_SEPARATORS,
+    TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC, TIME_ZONE_CONVERSION,
+    TIMESTAMP_FORMAT_RULE, TIMESTAMP_NTZ_NAME, TIMESTAMP_TIME_RULE, TO_DATE_TEMPORAL,
+    TO_TIMESTAMP_TEMPORAL, UTC_OFFSET_ARITHMETIC, UTC_ZONE, ZONE_COLUMNS, ZONED_PARTS,
 };
 use sqlquack_duckdb::raises::main::raised::raised;
 use sqlquack_policy::policy::constants::{
@@ -1024,7 +1024,9 @@ fn strftime_pattern(format: &str, precision: Option<u8>) -> Option<String> {
     let upper = format.to_ascii_uppercase();
     let mut rest = upper.as_str();
     let mut pattern = String::new();
+    let mut last_letter: Option<char> = None;
     while !rest.is_empty() {
+        let written = &format[format.len() - rest.len()..];
         if let Some(after) = rest.strip_prefix(BARE_FRACTION)
             && !after.starts_with(|next: char| next.is_ascii_digit())
         {
@@ -1033,6 +1035,7 @@ fn strftime_pattern(format: &str, precision: Option<u8>) -> Option<String> {
                 .find(|(digits, _)| Some(*digits) == precision)?;
             pattern.push_str(digits);
             rest = after;
+            last_letter = None;
             continue;
         }
         let field = TEMPORAL_TEXT_FIELDS
@@ -1040,10 +1043,17 @@ fn strftime_pattern(format: &str, precision: Option<u8>) -> Option<String> {
             .find(|(token, _, time)| rest.starts_with(token) && (with_time || !time));
         match field {
             Some((token, replacement, _)) => {
+                if last_letter.is_some_and(|letter| token.starts_with(letter))
+                    || (MONTH_NAME_FIELDS.contains(token) && !written.starts_with(token))
+                {
+                    return None;
+                }
                 pattern.push_str(replacement);
                 rest = &rest[token.len()..];
+                last_letter = token.chars().last().filter(char::is_ascii_alphabetic);
             }
             None => {
+                last_letter = None;
                 let separator = rest.chars().next()?;
                 if !TEMPORAL_TEXT_SEPARATORS.contains(separator) {
                     return None;
