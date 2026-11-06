@@ -15,6 +15,16 @@ use crate::parse::tests::test_types::{
 fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
     let test_cases = [
         VerdictTestCase {
+            description: "a database option names a keyword PostgreSQL lists, or an identifier",
+            sql: "CREATE DATABASE d LIMIT 5",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a database option takes a value",
+            sql: "CREATE DATABASE d OWNER",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
             description: "an aggregate argument cannot be OUT (0A000)",
             sql: "CREATE AGGREGATE a (OUT int) (sfunc = f, stype = int)",
             expected_verdict: ExpectedVerdict::Rejected { syntax: false },
@@ -1291,6 +1301,18 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() 
             sql: "COMMENT ON FUNCTION f(a int) IS 'x'",
             pointer: "/0/comment/this/function/args/0/column_def/name/name",
             expected_json: "\"a\"",
+        },
+        ValueTestCase {
+            description: "CONNECTION LIMIT is named connection_limit, as PostgreSQL names it",
+            sql: "CREATE DATABASE d WITH CONNECTION LIMIT = -1",
+            pointer: "/0/create_database/properties/0/tuple/expressions/0/identifier/name",
+            expected_json: "\"connection_limit\"",
+        },
+        ValueTestCase {
+            description: "a database option written DEFAULT keeps DEFAULT apart from a value",
+            sql: "CREATE DATABASE d TEMPLATE DEFAULT",
+            pointer: "/0/create_database/properties/0/tuple/expressions/1/var/this",
+            expected_json: "\"DEFAULT\"",
         },
         ValueTestCase {
             description: "the pre-8.2 CREATE AGGREGATE form is kept apart by its source",
