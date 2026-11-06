@@ -1105,6 +1105,12 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() 
             expected_json: "\"CURRENT_USER\"",
         },
         ValueTestCase {
+            description: "SETOF keeps an array type's bounds",
+            sql: "COMMENT ON FUNCTION f(SETOF int[3]) IS 'x'",
+            pointer: "/0/comment/this/function/args/0/data_type/name",
+            expected_json: "\"SETOF integer[3]\"",
+        },
+        ValueTestCase {
             description: "a policy without TO is for PUBLIC",
             sql: "CREATE POLICY p ON t",
             pointer: "/0/create_object/operands/3/tuple/expressions/1/tuple/expressions/0/var/this",
