@@ -2,7 +2,9 @@
 
 use serde_json::{Map, Value, json};
 use sqlquack_core::classification::models::{Construct, ConstructFamily};
-use sqlquack_core::diagnostics::constants::UNALIASED_OUTPUT_NAME_CONSTRUCT;
+use sqlquack_core::diagnostics::constants::{
+    REPEATED_RESULT_NAME, UNALIASED_OUTPUT_NAME_CONSTRUCT,
+};
 use sqlquack_core::provenance::constants::QUERY_CONSTRUCT;
 use sqlquack_core::provenance::models::ShapeArgument;
 use sqlquack_core::refusals::main::missing::missing;
@@ -20,14 +22,15 @@ use crate::conversion::_helpers::queries::clauses::{
 };
 use crate::conversion::_helpers::queries::group_all::group_all_positions;
 use crate::conversion::_helpers::queries::hierarchy::hierarchy;
+use crate::conversion::_helpers::queries::output_names::recorded_name_shape;
 use crate::conversion::_helpers::queries::set_operations::convert_set_operation;
 use crate::conversion::_helpers::queries::sources::convert_from;
 use crate::conversion::_helpers::support::scope::read_column;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Scope};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
-    Payload, field, flag, function_construct, identifier_name, list, node_construct, node_kind,
-    payload_object, require_understood,
+    LITERAL_NUMBER, LITERAL_STRING, Payload, field, flag, function_construct, identifier_name,
+    list, node_construct, node_kind, payload_object, require_understood,
 };
 use crate::conversion::constants::WINDOW_MARKER;
 use crate::conversion::constants::{
@@ -622,19 +625,74 @@ fn convert_projection(
         }
         Some((kind, _)) => {
             let emitted = convert_held(item, site)?;
-            if named {
-                let refusal = missing(
-                    Construct::new(ConstructFamily::Syntax, UNALIASED_OUTPUT_NAME_CONSTRUCT),
-                    format!("Snowflake names this `{kind}` column after its text"),
-                );
-                return Err(site.context.locator.placed(refusal, item));
+            if !named {
+                return Ok(vec![(None, emitted)]);
             }
-            Ok(vec![(None, emitted)])
+            let written = site
+                .context
+                .locator
+                .source_text(item)
+                .or_else(|| literal_text(item));
+            match written
+                .filter(|text| recorded_name_shape(item, text))
+                .and_then(output_name)
+            {
+                Some(name) => {
+                    let _rule = site.context.log.rule(ALIAS);
+                    Ok(vec![(Some(name), emitted)])
+                }
+                None => {
+                    let refusal = missing(
+                        Construct::new(ConstructFamily::Syntax, UNALIASED_OUTPUT_NAME_CONSTRUCT),
+                        format!("Snowflake names this `{kind}` column after its text"),
+                    );
+                    Err(site.context.locator.placed(refusal, item))
+                }
+            }
         }
         None => Err(missing(
             node_construct("unknown"),
             "a select item has an unexpected shape".to_owned(),
         )),
+    }
+}
+
+/// Snowflake's name for an unaliased item written as `text` in recorded spacing: it upper-cased.
+fn output_name(text: String) -> Option<String> {
+    let recorded = !text.is_empty()
+        && text.is_ascii()
+        && text.trim() == text
+        && !text.contains("--")
+        && !text.contains("/*")
+        && !text.contains(['\t', '\r'])
+        && !text.contains(" (")
+        && text.matches('\n').count() <= 1
+        && text
+            .split('\n')
+            .all(|line| !line.trim_start_matches(' ').contains("  "));
+    recorded.then(|| text.to_ascii_uppercase())
+}
+
+/// A literal's written text: a number as parsed, a plain string quoted, NULL, TRUE or FALSE.
+fn literal_text(item: &Value) -> Option<String> {
+    match node_kind(item)? {
+        ("literal", payload) => {
+            let value = payload.get("value")?.as_str()?;
+            match payload.get("literal_type")?.as_str()? {
+                LITERAL_NUMBER => Some(value.to_owned()),
+                LITERAL_STRING if !value.contains(['\'', '\\']) => Some(format!("'{value}'")),
+                _ => None,
+            }
+        }
+        ("boolean", payload) => Some(
+            match payload.get("value")?.as_bool()? {
+                true => "TRUE",
+                false => "FALSE",
+            }
+            .to_owned(),
+        ),
+        ("null", _) => Some("NULL".to_owned()),
+        _ => None,
     }
 }
 
@@ -785,7 +843,7 @@ pub(crate) fn require_distinct_names(columns: &[ColumnSpec]) -> Result<(), Refus
             .any(|earlier| earlier.name.eq_ignore_ascii_case(&column.name))
         {
             return Err(unresolved(format!(
-                "the result column name `{}` repeats, possibly differing only in case",
+                "the result column name `{}` {REPEATED_RESULT_NAME}",
                 column.name
             )));
         }

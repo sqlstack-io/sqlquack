@@ -20,8 +20,10 @@ sqlquack census target/compiled --schema schema.json --chain-models --json
 ```
 
 Each `.sql` file is one query, or one model compiled by
-[SQLBuild](https://github.com/sqlstack-io/sqlbuild); SQLBuild's reference calls are recognised.
-A directory is searched for `.sql` files.
+[SQLBuild](https://github.com/sqlstack-io/sqlbuild) or dbt; SQLBuild's reference calls are
+recognised. A directory is searched for `.sql` files. Compiled models name relations as
+`database.schema.table`; see [Schema files](/docs/schema/#naming-relations-and-columns) for how
+they resolve.
 
 ```console
 $ sqlquack census target/compiled/my_project/models --schema schema.json
@@ -47,8 +49,8 @@ file, model and relation names to the slowest files and the blockers.
 | `strict` | It converts and so does every model upstream of it. |
 | `with no named assumption` | The same counts, leaving out files that rely on an assumption such as `session_timezone_utc`. |
 
-With `--chain-models`, each converted file types the relation its file name references, and the
-files reading it convert again. A file reading a refused model is labelled
+With `--chain-models`, each converted file types the relation its file name references, read
+by any qualifier as dbt writes it, and the files reading it convert again. A file reading a refused model is labelled
 `upstream_refused:<model>`, and one reading a model the scan holds no file for,
 `upstream_missing:<relation>`.
 
