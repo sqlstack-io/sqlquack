@@ -5693,6 +5693,62 @@ cases = ["cases/translation/functions/cast.cast-as.toml#t005_null_source_expr"]
 required = true
 
 [[obligation]]
+id = "sf.functions.cast.cast-as.t006"
+form = "sf.functions.cast.cast-as"
+kind = "type_combination"
+target = "VARCHAR to BINARY"
+note = "Hex text in upper, lower and mixed case cast to BINARY under BINARY_INPUT_FORMAT HEX."
+catches = "the text's UTF-8 bytes taken instead of its hex digits, or the hex read case-sensitively"
+reading = "the page: converts the expression to the target type; a scale too small to hold the value rounds it; a precision too small raises an error; the binary input and output page: under BINARY_INPUT_FORMAT HEX (the default) each byte is two hex digits, 0 to 9 and A to F, and text to binary is case-insensitive"
+cases = ["cases/translation/functions/cast.cast-as.toml#t006_text_to_binary"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cast.cast-as.t007"
+form = "sf.functions.cast.cast-as"
+kind = "boundary"
+subkind = "empty_string"
+target = "empty_string"
+note = "Empty text and NULL cast to BINARY."
+catches = "empty text read as NULL, or NULL as an empty value"
+reading = "the page: converts the expression to the target type; a scale too small to hold the value rounds it; a precision too small raises an error; the binary input and output page: under BINARY_INPUT_FORMAT HEX (the default) each byte is two hex digits, 0 to 9 and A to F, and text to binary is case-insensitive"
+cases = ["cases/translation/functions/cast.cast-as.toml#t007_binary_empty_and_null"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cast.cast-as.t008"
+form = "sf.functions.cast.cast-as"
+kind = "error_parity"
+target = "error"
+note = "Hex text of odd length cast to BINARY. No page says what an odd digit count does; each byte being two digits, the receipt shows Snowflake raises (100115)."
+catches = "a padded or truncated byte returned instead of the error"
+reading = "the page: converts the expression to the target type; a scale too small to hold the value rounds it; a precision too small raises an error; the binary input and output page: under BINARY_INPUT_FORMAT HEX (the default) each byte is two hex digits, 0 to 9 and A to F, and text to binary is case-insensitive"
+cases = ["cases/translation/functions/cast.cast-as.toml#t008_binary_odd_length"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cast.cast-as.t009"
+form = "sf.functions.cast.cast-as"
+kind = "error_parity"
+target = "error"
+note = "Text with a non-hex character cast to BINARY, which Snowflake raises (100115)."
+catches = "the character skipped or read as 0"
+reading = "the page: converts the expression to the target type; a scale too small to hold the value rounds it; a precision too small raises an error; the binary input and output page: under BINARY_INPUT_FORMAT HEX (the default) each byte is two hex digits, 0 to 9 and A to F, and text to binary is case-insensitive"
+cases = ["cases/translation/functions/cast.cast-as.toml#t009_binary_invalid_digit"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cast.cast-as.t010"
+form = "sf.functions.cast.cast-as"
+kind = "error_parity"
+target = "error"
+note = "Two- and three-byte hex text cast to BINARY(2); the three-byte value raises (100145) and fails the query."
+catches = "the excess bytes silently truncated, or the declared length ignored"
+reading = "the page: converts the expression to the target type; a scale too small to hold the value rounds it; a precision too small raises an error; the text data types page: BINARY(N) declares the maximum number of bytes; the binary input and output page: under BINARY_INPUT_FORMAT HEX (the default) each byte is two hex digits, 0 to 9 and A to F, and text to binary is case-insensitive"
+cases = ["cases/translation/functions/cast.cast-as.toml#t010_binary_length"]
+required = true
+
+[[obligation]]
 id = "sf.functions.cast.double-colon.t001"
 form = "sf.functions.cast.double-colon"
 kind = "boundary"
@@ -5746,6 +5802,17 @@ note = "A NULL source."
 catches = "an error, or a default value such as 0"
 reading = "the page: converts the expression to the target type; a scale too small to hold the value rounds it; a precision too small raises an error"
 cases = ["cases/translation/functions/cast.double-colon.toml#t005_null_source_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.cast.double-colon.t006"
+form = "sf.functions.cast.double-colon"
+kind = "type_combination"
+target = "VARCHAR to BINARY"
+note = "Hex text cast to BINARY with ::, beside NULL."
+catches = ":: read differently from CAST, or the NULL not kept"
+reading = "the page: converts the expression to the target type; a scale too small to hold the value rounds it; a precision too small raises an error; the binary input and output page: under BINARY_INPUT_FORMAT HEX (the default) each byte is two hex digits, 0 to 9 and A to F, and text to binary is case-insensitive"
+cases = ["cases/translation/functions/cast.double-colon.toml#t006_text_to_binary"]
 required = true
 
 [[obligation]]
@@ -30932,6 +30999,17 @@ note = "A NULL string."
 catches = "an error"
 reading = "the page: like CAST, but NULL where the conversion fails; only string expressions are accepted, to VARCHAR, NUMBER, DOUBLE, BOOLEAN, DATE, TIME or a timestamp type"
 cases = ["cases/translation/functions/try-cast.toml#t005_null_source_string_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-cast.t006"
+form = "sf.functions.try-cast"
+kind = "type_combination"
+target = "VARCHAR to BINARY"
+note = "Valid hex, odd-length hex, a non-hex character and NULL under TRY_CAST to BINARY. The page does not list BINARY among the targets; the receipt shows Snowflake accepts it and returns NULL for the two invalid values."
+catches = "an error raised instead of NULL, or a partial value"
+reading = "the page: like CAST, but NULL where the conversion fails; only string expressions are accepted, to VARCHAR, NUMBER, DOUBLE, BOOLEAN, DATE, TIME or a timestamp type; the binary input and output page: under BINARY_INPUT_FORMAT HEX (the default) each byte is two hex digits, 0 to 9 and A to F, and text to binary is case-insensitive"
+cases = ["cases/translation/functions/try-cast.toml#t006_text_to_binary"]
 required = true
 
 [[obligation]]
