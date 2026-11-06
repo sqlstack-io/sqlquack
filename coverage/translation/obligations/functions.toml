@@ -7581,6 +7581,239 @@ cases = ["cases/translation/functions/cume-dist.toml#t003_null_order_expr"]
 required = true
 
 [[obligation]]
+id = "sf.functions.current-database.t001"
+form = "sf.functions.current-database"
+kind = "type_combination"
+target = "none"
+note = "The type of the name, and whether it is set; the session of the recording has a database in use, so the recording decides."
+catches = "a database name returned where Snowflake returns NULL, or the reverse"
+reading = "the page: the name of the database in use for the session, as VARCHAR"
+cases = ["cases/translation/functions/current-database.toml#t001_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.current-database.t002"
+form = "sf.functions.current-database"
+kind = "null_argument"
+target = "none"
+note = "The function takes no argument; a NULL value compared with its result gives NULL."
+catches = "FALSE returned"
+reading = "the page: the name of the database in use for the session, as VARCHAR"
+cases = ["cases/translation/functions/current-database.toml#t002_null_none"]
+required = true
+
+[[obligation]]
+id = "sf.functions.current-date.current-date.t001"
+form = "sf.functions.current-date.current-date"
+kind = "type_combination"
+target = "none"
+note = "The type, agreement with the date of CURRENT_TIMESTAMP in the UTC session, and a lower bound."
+catches = "a timestamp returned, or the date taken in another zone"
+reading = "the page: the current DATE in the session time zone (UTC here); callable without parentheses"
+cases = ["cases/translation/functions/current-date.current-date.toml#t001_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.current-date.current-date.t002"
+form = "sf.functions.current-date.current-date"
+kind = "null_argument"
+target = "none"
+note = "The function takes no argument; a NULL value compared with its result gives NULL."
+catches = "the comparison with NULL returning FALSE, or the NULL replaced by the current value"
+reading = "the page: the current DATE in the session time zone (UTC here); callable without parentheses"
+cases = ["cases/translation/functions/current-date.current-date.toml#t002_null_none"]
+required = true
+
+[[obligation]]
+id = "sf.functions.current-date.current-date.syntax.t001"
+form = "sf.functions.current-date.current-date.syntax"
+kind = "type_combination"
+target = "none"
+note = "The type, agreement with the date of CURRENT_TIMESTAMP in the UTC session, and a lower bound."
+catches = "a timestamp returned, or the date taken in another zone"
+reading = "the page: the current DATE in the session time zone (UTC here); callable without parentheses"
+cases = ["cases/translation/functions/current-date.current-date.syntax.toml#t001_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.current-date.current-date.syntax.t002"
+form = "sf.functions.current-date.current-date.syntax"
+kind = "null_argument"
+target = "none"
+note = "The function takes no argument; a NULL value compared with its result gives NULL."
+catches = "the comparison with NULL returning FALSE, or the NULL replaced by the current value"
+reading = "the page: the current DATE in the session time zone (UTC here); callable without parentheses"
+cases = ["cases/translation/functions/current-date.current-date.syntax.toml#t002_null_none"]
+required = true
+
+[[obligation]]
+id = "sf.functions.current-schema.t001"
+form = "sf.functions.current-schema"
+kind = "type_combination"
+target = "none"
+note = "The type of the name, and whether it is set; the session of the recording has a schema in use, so the recording decides."
+catches = "a schema name returned where Snowflake returns NULL, or the reverse"
+reading = "the page: the name of the schema in use for the session, as VARCHAR"
+cases = ["cases/translation/functions/current-schema.toml#t001_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.current-schema.t002"
+form = "sf.functions.current-schema"
+kind = "null_argument"
+target = "none"
+note = "The function takes no argument; a NULL value compared with its result gives NULL."
+catches = "FALSE returned"
+reading = "the page: the name of the schema in use for the session, as VARCHAR"
+cases = ["cases/translation/functions/current-schema.toml#t002_null_none"]
+required = true
+
+[[obligation]]
+id = "sf.functions.current-schemas.t001"
+form = "sf.functions.current-schemas"
+kind = "type_combination"
+target = "none"
+note = "The type, and whether the text parses as a JSON array."
+catches = "an ARRAY returned, or a single schema name"
+reading = "the page: the schemas in the session search path, as VARCHAR holding a JSON array"
+cases = ["cases/translation/functions/current-schemas.toml#t001_array"]
+required = true
+
+[[obligation]]
+id = "sf.functions.current-schemas.t002"
+form = "sf.functions.current-schemas"
+kind = "null_argument"
+target = "none"
+note = "The function takes no argument; a NULL value compared with its result gives NULL."
+catches = "FALSE returned"
+reading = "the page: the schemas in the session search path, as VARCHAR holding a JSON array"
+cases = ["cases/translation/functions/current-schemas.toml#t002_null_none"]
+required = true
+
+[[obligation]]
+id = "sf.functions.current-time.current-time.t001"
+form = "sf.functions.current-time.current-time"
+kind = "type_combination"
+target = "none"
+note = "The type, and agreement with the time of CURRENT_TIMESTAMP in the UTC session to within a minute."
+catches = "a timestamp returned, or the time taken in another zone"
+reading = "the page: the current TIME in the session time zone (UTC here), with an optional precision of 0 to 9 digits (default 9); callable without parentheses"
+cases = ["cases/translation/functions/current-time.current-time.toml#t001_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.current-time.current-time.t002"
+form = "sf.functions.current-time.current-time"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "Precision 0 and 3, whose unused fractional digits the page makes zero."
+catches = "the precision ignored (non-zero digits past the requested ones)"
+reading = "the page: the current TIME in the session time zone (UTC here), with an optional precision of 0 to 9 digits (default 9); callable without parentheses"
+cases = ["cases/translation/functions/current-time.current-time.toml#t002_precision"]
+required = true
+
+[[obligation]]
+id = "sf.functions.current-time.current-time.t003"
+form = "sf.functions.current-time.current-time"
+kind = "error_parity"
+target = "error"
+note = "Precision 10, outside the valid range 0 to 9 the page states."
+catches = "the precision clamped to 9"
+reading = "the page: the current TIME in the session time zone (UTC here), with an optional precision of 0 to 9 digits (default 9); callable without parentheses"
+cases = ["cases/translation/functions/current-time.current-time.toml#t003_precision_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.current-time.current-time.t004"
+form = "sf.functions.current-time.current-time"
+kind = "null_argument"
+target = "none"
+note = "The function takes no argument; a NULL value compared with its result gives NULL."
+catches = "the comparison with NULL returning FALSE, or the NULL replaced by the current value"
+reading = "the page: the current TIME in the session time zone (UTC here), with an optional precision of 0 to 9 digits (default 9); callable without parentheses"
+cases = ["cases/translation/functions/current-time.current-time.toml#t004_null_none"]
+required = true
+
+[[obligation]]
+id = "sf.functions.current-time.current-time.syntax.t001"
+form = "sf.functions.current-time.current-time.syntax"
+kind = "type_combination"
+target = "none"
+note = "The type, and agreement with the time of CURRENT_TIMESTAMP in the UTC session to within a minute."
+catches = "a timestamp returned, or the time taken in another zone"
+reading = "the page: the current TIME in the session time zone (UTC here), with an optional precision of 0 to 9 digits (default 9); callable without parentheses"
+cases = ["cases/translation/functions/current-time.current-time.syntax.toml#t001_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.current-time.current-time.syntax.t002"
+form = "sf.functions.current-time.current-time.syntax"
+kind = "null_argument"
+target = "none"
+note = "The function takes no argument; a NULL value compared with its result gives NULL."
+catches = "the comparison with NULL returning FALSE, or the NULL replaced by the current value"
+reading = "the page: the current TIME in the session time zone (UTC here), with an optional precision of 0 to 9 digits (default 9); callable without parentheses"
+cases = ["cases/translation/functions/current-time.current-time.syntax.toml#t002_null_none"]
+required = true
+
+[[obligation]]
+id = "sf.functions.current-timestamp.current-timestamp.t001"
+form = "sf.functions.current-timestamp.current-timestamp"
+kind = "type_combination"
+target = "none"
+note = "The type, which the page says is TIMESTAMP_LTZ whatever TIMESTAMP_TYPE_MAPPING says (NTZ here), and agreement with SYSDATE in the UTC session to within a minute."
+catches = "TIMESTAMP_NTZ returned under the type mapping, or the time taken in another zone"
+reading = "the page: the current time as TIMESTAMP_LTZ in the session time zone, whatever TIMESTAMP_TYPE_MAPPING says; an optional precision of 0 to 9 digits; callable without parentheses"
+cases = ["cases/translation/functions/current-timestamp.current-timestamp.toml#t001_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.current-timestamp.current-timestamp.t002"
+form = "sf.functions.current-timestamp.current-timestamp"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "Precision 0 and 3, whose unused fractional digits the page makes zero."
+catches = "the precision ignored"
+reading = "the page: the current time as TIMESTAMP_LTZ in the session time zone, whatever TIMESTAMP_TYPE_MAPPING says; an optional precision of 0 to 9 digits; callable without parentheses"
+cases = ["cases/translation/functions/current-timestamp.current-timestamp.toml#t002_precision"]
+required = true
+
+[[obligation]]
+id = "sf.functions.current-timestamp.current-timestamp.t003"
+form = "sf.functions.current-timestamp.current-timestamp"
+kind = "null_argument"
+target = "none"
+note = "The function takes no argument; a NULL value compared with its result gives NULL."
+catches = "the comparison with NULL returning FALSE, or the NULL replaced by the current value"
+reading = "the page: the current time as TIMESTAMP_LTZ in the session time zone, whatever TIMESTAMP_TYPE_MAPPING says; an optional precision of 0 to 9 digits; callable without parentheses"
+cases = ["cases/translation/functions/current-timestamp.current-timestamp.toml#t003_null_none"]
+required = true
+
+[[obligation]]
+id = "sf.functions.current-timestamp.current-timestamp.syntax.t001"
+form = "sf.functions.current-timestamp.current-timestamp.syntax"
+kind = "type_combination"
+target = "none"
+note = "The type, which the page says is TIMESTAMP_LTZ whatever TIMESTAMP_TYPE_MAPPING says (NTZ here), and agreement with SYSDATE in the UTC session to within a minute."
+catches = "TIMESTAMP_NTZ returned under the type mapping, or the time taken in another zone"
+reading = "the page: the current time as TIMESTAMP_LTZ in the session time zone, whatever TIMESTAMP_TYPE_MAPPING says; an optional precision of 0 to 9 digits; callable without parentheses"
+cases = ["cases/translation/functions/current-timestamp.current-timestamp.syntax.toml#t001_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.current-timestamp.current-timestamp.syntax.t002"
+form = "sf.functions.current-timestamp.current-timestamp.syntax"
+kind = "null_argument"
+target = "none"
+note = "The function takes no argument; a NULL value compared with its result gives NULL."
+catches = "the comparison with NULL returning FALSE, or the NULL replaced by the current value"
+reading = "the page: the current time as TIMESTAMP_LTZ in the session time zone, whatever TIMESTAMP_TYPE_MAPPING says; an optional precision of 0 to 9 digits; callable without parentheses"
+cases = ["cases/translation/functions/current-timestamp.current-timestamp.syntax.toml#t002_null_none"]
+required = true
+
+[[obligation]]
 id = "sf.functions.datasketches-hll-accumulate.t001"
 form = "sf.functions.datasketches-hll-accumulate"
 kind = "type_combination"
@@ -8662,6 +8895,83 @@ cases = ["cases/translation/functions/decompress-string.toml#t007_other_methods"
 required = true
 
 [[obligation]]
+id = "sf.functions.decrypt.t001"
+form = "sf.functions.decrypt"
+kind = "type_combination"
+target = "BINARY, VARCHAR"
+note = "Text encrypted and decrypted, converted back from BINARY with utf-8."
+catches = "the bytes returned as hex text"
+reading = "the page: the value decrypted with the passphrase as BINARY; the passphrase and any AAD must match those used to encrypt; a mismatch fails"
+cases = ["cases/translation/functions/decrypt.toml#t001_round_trip"]
+required = true
+
+[[obligation]]
+id = "sf.functions.decrypt.t002"
+form = "sf.functions.decrypt"
+kind = "error_parity"
+target = "error"
+note = "An AAD that differs from the one used to encrypt, which the page says fails."
+catches = "the value decrypted anyway"
+reading = "the page: the value decrypted with the passphrase as BINARY; the passphrase and any AAD must match those used to encrypt; a mismatch fails"
+cases = ["cases/translation/functions/decrypt.toml#t002_aad_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.decrypt.t003"
+form = "sf.functions.decrypt"
+kind = "error_parity"
+target = "error"
+note = "A passphrase other than the one used to encrypt."
+catches = "garbage bytes or NULL returned"
+reading = "the page: the value decrypted with the passphrase as BINARY; the passphrase and any AAD must match those used to encrypt; a mismatch fails"
+cases = ["cases/translation/functions/decrypt.toml#t003_wrong_passphrase"]
+required = true
+
+[[obligation]]
+id = "sf.functions.decrypt.t004"
+form = "sf.functions.decrypt"
+kind = "null_argument"
+target = "value-to-decrypt"
+note = "A NULL value; the page does not say; the recording decides."
+catches = "an error where Snowflake returns NULL, or the reverse"
+reading = "the page: the value decrypted with the passphrase as BINARY; the passphrase and any AAD must match those used to encrypt; a mismatch fails"
+cases = ["cases/translation/functions/decrypt.toml#t004_null_value_to_decrypt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.decrypt-raw.t001"
+form = "sf.functions.decrypt-raw"
+kind = "type_combination"
+target = "BINARY ciphertext, key, IV, AAD, tag"
+note = "ENCRYPT_RAW output decrypted with its own fields."
+catches = "the ciphertext returned unchanged"
+reading = "the page: the ciphertext decrypted with the BINARY key, IV, AAD and tag used to encrypt it, as BINARY"
+cases = ["cases/translation/functions/decrypt-raw.toml#t001_round_trip"]
+required = true
+
+[[obligation]]
+id = "sf.functions.decrypt-raw.t002"
+form = "sf.functions.decrypt-raw"
+kind = "error_parity"
+target = "error"
+note = "A different AAD, which the page says makes decryption fail."
+catches = "the bytes returned anyway"
+reading = "the page: the ciphertext decrypted with the BINARY key, IV, AAD and tag used to encrypt it, as BINARY"
+cases = ["cases/translation/functions/decrypt-raw.toml#t002_wrong_aad"]
+required = true
+
+[[obligation]]
+id = "sf.functions.decrypt-raw.t003"
+form = "sf.functions.decrypt-raw"
+kind = "null_argument"
+target = "value-to-decrypt"
+note = "A NULL ciphertext; the page does not say; the recording decides."
+catches = "an error where Snowflake returns NULL, or the reverse"
+reading = "the page: the ciphertext decrypted with the BINARY key, IV, AAD and tag used to encrypt it, as BINARY"
+cases = ["cases/translation/functions/decrypt-raw.toml#t003_null_value_to_decrypt"]
+required = true
+
+[[obligation]]
 id = "sf.functions.degrees.t001"
 form = "sf.functions.degrees"
 kind = "type_combination"
@@ -8962,6 +9272,94 @@ note = "An empty string against a set one."
 catches = "NULL or 0 instead of the other length"
 reading = "the page: two strings and an optional integer <max_distance>; a negative maximum gives 0; the result is LEAST(distance, max_distance)"
 cases = ["cases/translation/functions/editdistance.toml#t007_empty"]
+required = true
+
+[[obligation]]
+id = "sf.functions.encrypt.t001"
+form = "sf.functions.encrypt"
+kind = "type_combination"
+target = "BINARY, VARCHAR"
+note = "Text and an empty string encrypted as BINARY and decrypted, including with an empty passphrase, which the page allows."
+catches = "the bytes altered, or the empty passphrase rejected"
+reading = "the page: the VARCHAR or BINARY value encrypted with a key derived from the passphrase (default AES-GCM), as BINARY holding a random IV, the ciphertext and a tag; the passphrase may be empty"
+cases = ["cases/translation/functions/encrypt.toml#t001_round_trip"]
+required = true
+
+[[obligation]]
+id = "sf.functions.encrypt.t002"
+form = "sf.functions.encrypt"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR"
+note = "Two encryptions of the same value, which differ because the page says the IV is random, and the result type."
+catches = "a deterministic encryption (equal results), or VARCHAR returned"
+reading = "the page: the VARCHAR or BINARY value encrypted with a key derived from the passphrase (default AES-GCM), as BINARY holding a random IV, the ciphertext and a tag; the passphrase may be empty"
+cases = ["cases/translation/functions/encrypt.toml#t002_random_iv"]
+required = true
+
+[[obligation]]
+id = "sf.functions.encrypt.t003"
+form = "sf.functions.encrypt"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR, VARCHAR"
+note = "Additional authenticated data passed to both functions."
+catches = "the AAD ignored on encryption"
+reading = "the page: the VARCHAR or BINARY value encrypted with a key derived from the passphrase (default AES-GCM), as BINARY holding a random IV, the ciphertext and a tag; the passphrase may be empty"
+cases = ["cases/translation/functions/encrypt.toml#t003_aad"]
+required = true
+
+[[obligation]]
+id = "sf.functions.encrypt.t004"
+form = "sf.functions.encrypt"
+kind = "null_argument"
+target = "value-to-encrypt"
+note = "A NULL value; the page does not say; the recording decides."
+catches = "an encryption of empty input returned"
+reading = "the page: the VARCHAR or BINARY value encrypted with a key derived from the passphrase (default AES-GCM), as BINARY holding a random IV, the ciphertext and a tag; the passphrase may be empty"
+cases = ["cases/translation/functions/encrypt.toml#t004_null_value_to_encrypt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.encrypt-raw.t001"
+form = "sf.functions.encrypt-raw"
+kind = "type_combination"
+target = "BINARY key, IV and AAD"
+note = "A fixed 16-byte key, 12-byte IV and AAD, so the ciphertext and tag are deterministic; compared as hex."
+catches = "another mode used by default, or the fields swapped"
+reading = "the page: the BINARY value encrypted with a BINARY key and IV (12 bytes for GCM; NULL picks a random IV), default AES-GCM, returned as a VARIANT with iv, ciphertext and tag fields"
+cases = ["cases/translation/functions/encrypt-raw.toml#t001_fixed"]
+required = true
+
+[[obligation]]
+id = "sf.functions.encrypt-raw.t002"
+form = "sf.functions.encrypt-raw"
+kind = "type_combination"
+target = "BINARY key, IV"
+note = "The same call without a mode, which the page says uses AES-GCM."
+catches = "another default mode (a different ciphertext)"
+reading = "the page: the BINARY value encrypted with a BINARY key and IV (12 bytes for GCM; NULL picks a random IV), default AES-GCM, returned as a VARIANT with iv, ciphertext and tag fields"
+cases = ["cases/translation/functions/encrypt-raw.toml#t002_default_mode"]
+required = true
+
+[[obligation]]
+id = "sf.functions.encrypt-raw.t003"
+form = "sf.functions.encrypt-raw"
+kind = "error_parity"
+target = "error"
+note = "A 15-byte key, which fits no AES key length."
+catches = "the key padded or truncated"
+reading = "the page: the BINARY value encrypted with a BINARY key and IV (12 bytes for GCM; NULL picks a random IV), default AES-GCM, returned as a VARIANT with iv, ciphertext and tag fields"
+cases = ["cases/translation/functions/encrypt-raw.toml#t003_key_length"]
+required = true
+
+[[obligation]]
+id = "sf.functions.encrypt-raw.t004"
+form = "sf.functions.encrypt-raw"
+kind = "null_argument"
+target = "value-to-encrypt"
+note = "A NULL value; the page does not say; the recording decides."
+catches = "an encryption of empty input returned"
+reading = "the page: the BINARY value encrypted with a BINARY key and IV (12 bytes for GCM; NULL picks a random IV), default AES-GCM, returned as a VARIANT with iv, ciphertext and tag fields"
+cases = ["cases/translation/functions/encrypt-raw.toml#t004_null_value_to_encrypt"]
 required = true
 
 [[obligation]]
@@ -9796,6 +10194,61 @@ note = "A NULL value; the page does not say; the recording decides."
 catches = "0 returned"
 reading = "the page: the bit (0 or 1) at a position counted from 0 for the least significant bit up to 127"
 cases = ["cases/translation/functions/getbit.toml#t003_null_integer_expr"]
+required = true
+
+[[obligation]]
+id = "sf.functions.getdate.t001"
+form = "sf.functions.getdate"
+kind = "type_combination"
+target = "none"
+note = "The type, which the page says is TIMESTAMP_LTZ whatever TIMESTAMP_TYPE_MAPPING says (NTZ here), and agreement with SYSDATE in the UTC session to within a minute."
+catches = "TIMESTAMP_NTZ returned under the type mapping, or the time taken in another zone"
+reading = "the page: the current time as TIMESTAMP_LTZ in the session time zone, whatever TIMESTAMP_TYPE_MAPPING says; requires parentheses and takes no precision"
+cases = ["cases/translation/functions/getdate.toml#t001_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.getdate.t002"
+form = "sf.functions.getdate"
+kind = "error_parity"
+target = "error"
+note = "A precision argument, which the page says this alias does not support."
+catches = "the argument accepted as for CURRENT_TIMESTAMP"
+reading = "the page: the current time as TIMESTAMP_LTZ in the session time zone, whatever TIMESTAMP_TYPE_MAPPING says; requires parentheses and takes no precision"
+cases = ["cases/translation/functions/getdate.toml#t002_precision_arg"]
+required = true
+
+[[obligation]]
+id = "sf.functions.getdate.t003"
+form = "sf.functions.getdate"
+kind = "null_argument"
+target = "none"
+note = "The function takes no argument; a NULL value compared with its result gives NULL."
+catches = "the comparison with NULL returning FALSE, or the NULL replaced by the current value"
+reading = "the page: the current time as TIMESTAMP_LTZ in the session time zone, whatever TIMESTAMP_TYPE_MAPPING says; requires parentheses and takes no precision"
+cases = ["cases/translation/functions/getdate.toml#t003_null_none"]
+required = true
+
+[[obligation]]
+id = "sf.functions.getvariable.t001"
+form = "sf.functions.getvariable"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A variable name that no SET statement defined; the page does not say; the recording decides whether this is NULL or an error."
+catches = "NULL where Snowflake raises an error, or the reverse"
+reading = "the page: the value of the SQL variable named in upper case, as VARCHAR"
+cases = ["cases/translation/functions/getvariable.toml#t001_unset"]
+required = true
+
+[[obligation]]
+id = "sf.functions.getvariable.t002"
+form = "sf.functions.getvariable"
+kind = "null_argument"
+target = "name"
+note = "A NULL name; the page does not say; the recording decides."
+catches = "an error where Snowflake returns NULL, or the reverse"
+reading = "the page: the value of the SQL variable named in upper case, as VARCHAR"
+cases = ["cases/translation/functions/getvariable.toml#t002_null_name"]
 required = true
 
 [[obligation]]
@@ -13600,6 +14053,106 @@ note = "LN of 0 or a negative value is an error."
 catches = "NULL, NaN or -infinity instead of the error"
 reading = "the page: DECFLOAT returns DECFLOAT, otherwise FLOAT; the numeric category gives NUMBER and FLOAT arguments"
 cases = ["cases/translation/functions/ln.toml#t006_zero"]
+required = true
+
+[[obligation]]
+id = "sf.functions.localtime.localtime.t001"
+form = "sf.functions.localtime.localtime"
+kind = "type_combination"
+target = "none"
+note = "The type, and agreement with the time of CURRENT_TIMESTAMP in the UTC session to within a minute."
+catches = "a timestamp returned, or the time taken in another zone"
+reading = "the page: the current TIME in the session time zone (UTC here), with an optional precision of 0 to 9 digits (default 9); callable without parentheses"
+cases = ["cases/translation/functions/localtime.localtime.toml#t001_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.localtime.localtime.t002"
+form = "sf.functions.localtime.localtime"
+kind = "null_argument"
+target = "none"
+note = "The function takes no argument; a NULL value compared with its result gives NULL."
+catches = "the comparison with NULL returning FALSE, or the NULL replaced by the current value"
+reading = "the page: the current TIME in the session time zone (UTC here), with an optional precision of 0 to 9 digits (default 9); callable without parentheses"
+cases = ["cases/translation/functions/localtime.localtime.toml#t002_null_none"]
+required = true
+
+[[obligation]]
+id = "sf.functions.localtime.localtime.syntax.t001"
+form = "sf.functions.localtime.localtime.syntax"
+kind = "type_combination"
+target = "none"
+note = "The type, and agreement with the time of CURRENT_TIMESTAMP in the UTC session to within a minute."
+catches = "a timestamp returned, or the time taken in another zone"
+reading = "the page: the current TIME in the session time zone (UTC here), with an optional precision of 0 to 9 digits (default 9); callable without parentheses"
+cases = ["cases/translation/functions/localtime.localtime.syntax.toml#t001_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.localtime.localtime.syntax.t002"
+form = "sf.functions.localtime.localtime.syntax"
+kind = "null_argument"
+target = "none"
+note = "The function takes no argument; a NULL value compared with its result gives NULL."
+catches = "the comparison with NULL returning FALSE, or the NULL replaced by the current value"
+reading = "the page: the current TIME in the session time zone (UTC here), with an optional precision of 0 to 9 digits (default 9); callable without parentheses"
+cases = ["cases/translation/functions/localtime.localtime.syntax.toml#t002_null_none"]
+required = true
+
+[[obligation]]
+id = "sf.functions.localtimestamp.localtimestamp.t001"
+form = "sf.functions.localtimestamp.localtimestamp"
+kind = "type_combination"
+target = "none"
+note = "The type, which the page says is TIMESTAMP_LTZ whatever TIMESTAMP_TYPE_MAPPING says (NTZ here), and agreement with SYSDATE in the UTC session to within a minute."
+catches = "TIMESTAMP_NTZ returned under the type mapping, or the time taken in another zone"
+reading = "the page: the current time as TIMESTAMP_LTZ in the session time zone, whatever TIMESTAMP_TYPE_MAPPING says; an optional precision of 0 to 9 digits; callable without parentheses"
+cases = ["cases/translation/functions/localtimestamp.localtimestamp.toml#t001_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.localtimestamp.localtimestamp.t002"
+form = "sf.functions.localtimestamp.localtimestamp"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "rounding_scale"
+note = "Precision 0 and 3, whose unused fractional digits the page makes zero."
+catches = "the precision ignored"
+reading = "the page: the current time as TIMESTAMP_LTZ in the session time zone, whatever TIMESTAMP_TYPE_MAPPING says; an optional precision of 0 to 9 digits; callable without parentheses"
+cases = ["cases/translation/functions/localtimestamp.localtimestamp.toml#t002_precision"]
+required = true
+
+[[obligation]]
+id = "sf.functions.localtimestamp.localtimestamp.t003"
+form = "sf.functions.localtimestamp.localtimestamp"
+kind = "null_argument"
+target = "none"
+note = "The function takes no argument; a NULL value compared with its result gives NULL."
+catches = "the comparison with NULL returning FALSE, or the NULL replaced by the current value"
+reading = "the page: the current time as TIMESTAMP_LTZ in the session time zone, whatever TIMESTAMP_TYPE_MAPPING says; an optional precision of 0 to 9 digits; callable without parentheses"
+cases = ["cases/translation/functions/localtimestamp.localtimestamp.toml#t003_null_none"]
+required = true
+
+[[obligation]]
+id = "sf.functions.localtimestamp.localtimestamp.syntax.t001"
+form = "sf.functions.localtimestamp.localtimestamp.syntax"
+kind = "type_combination"
+target = "none"
+note = "The type, which the page says is TIMESTAMP_LTZ whatever TIMESTAMP_TYPE_MAPPING says (NTZ here), and agreement with SYSDATE in the UTC session to within a minute."
+catches = "TIMESTAMP_NTZ returned under the type mapping, or the time taken in another zone"
+reading = "the page: the current time as TIMESTAMP_LTZ in the session time zone, whatever TIMESTAMP_TYPE_MAPPING says; an optional precision of 0 to 9 digits; callable without parentheses"
+cases = ["cases/translation/functions/localtimestamp.localtimestamp.syntax.toml#t001_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.localtimestamp.localtimestamp.syntax.t002"
+form = "sf.functions.localtimestamp.localtimestamp.syntax"
+kind = "null_argument"
+target = "none"
+note = "The function takes no argument; a NULL value compared with its result gives NULL."
+catches = "the comparison with NULL returning FALSE, or the NULL replaced by the current value"
+reading = "the page: the current time as TIMESTAMP_LTZ in the session time zone, whatever TIMESTAMP_TYPE_MAPPING says; an optional precision of 0 to 9 digits; callable without parentheses"
+cases = ["cases/translation/functions/localtimestamp.localtimestamp.syntax.toml#t002_null_none"]
 required = true
 
 [[obligation]]
@@ -22835,6 +23388,72 @@ cases = ["cases/translation/functions/sum.sum-over.toml#t009_distinct_order"]
 required = true
 
 [[obligation]]
+id = "sf.functions.sysdate.t001"
+form = "sf.functions.sysdate"
+kind = "type_combination"
+target = "none"
+note = "The type, which the page says is TIMESTAMP_NTZ despite the name, and agreement with CURRENT_TIMESTAMP in the UTC session."
+catches = "a DATE returned, or TIMESTAMP_LTZ"
+reading = "the page: the current timestamp in UTC as TIMESTAMP_NTZ, not a DATE; requires parentheses; no precision argument"
+cases = ["cases/translation/functions/sysdate.toml#t001_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sysdate.t002"
+form = "sf.functions.sysdate"
+kind = "error_parity"
+target = "error"
+note = "A precision argument, which the page says SYSDATE does not support."
+catches = "the argument accepted"
+reading = "the page: the current timestamp in UTC as TIMESTAMP_NTZ, not a DATE; requires parentheses; no precision argument"
+cases = ["cases/translation/functions/sysdate.toml#t002_precision_arg"]
+required = true
+
+[[obligation]]
+id = "sf.functions.sysdate.t003"
+form = "sf.functions.sysdate"
+kind = "null_argument"
+target = "none"
+note = "The function takes no argument; a NULL value compared with its result gives NULL."
+catches = "the comparison with NULL returning FALSE, or the NULL replaced by the current value"
+reading = "the page: the current timestamp in UTC as TIMESTAMP_NTZ, not a DATE; requires parentheses; no precision argument"
+cases = ["cases/translation/functions/sysdate.toml#t003_null_none"]
+required = true
+
+[[obligation]]
+id = "sf.functions.systimestamp.t001"
+form = "sf.functions.systimestamp"
+kind = "type_combination"
+target = "none"
+note = "The type, which the page says is TIMESTAMP_LTZ whatever TIMESTAMP_TYPE_MAPPING says (NTZ here), and agreement with SYSDATE in the UTC session to within a minute."
+catches = "TIMESTAMP_NTZ returned under the type mapping, or the time taken in another zone"
+reading = "the page: the current time as TIMESTAMP_LTZ in the session time zone, whatever TIMESTAMP_TYPE_MAPPING says; requires parentheses and takes no precision"
+cases = ["cases/translation/functions/systimestamp.toml#t001_type"]
+required = true
+
+[[obligation]]
+id = "sf.functions.systimestamp.t002"
+form = "sf.functions.systimestamp"
+kind = "error_parity"
+target = "error"
+note = "A precision argument, which the page says this alias does not support."
+catches = "the argument accepted as for CURRENT_TIMESTAMP"
+reading = "the page: the current time as TIMESTAMP_LTZ in the session time zone, whatever TIMESTAMP_TYPE_MAPPING says; requires parentheses and takes no precision"
+cases = ["cases/translation/functions/systimestamp.toml#t002_precision_arg"]
+required = true
+
+[[obligation]]
+id = "sf.functions.systimestamp.t003"
+form = "sf.functions.systimestamp"
+kind = "null_argument"
+target = "none"
+note = "The function takes no argument; a NULL value compared with its result gives NULL."
+catches = "the comparison with NULL returning FALSE, or the NULL replaced by the current value"
+reading = "the page: the current time as TIMESTAMP_LTZ in the session time zone, whatever TIMESTAMP_TYPE_MAPPING says; requires parentheses and takes no precision"
+cases = ["cases/translation/functions/systimestamp.toml#t003_null_none"]
+required = true
+
+[[obligation]]
 id = "sf.functions.tan.t001"
 form = "sf.functions.tan"
 kind = "type_combination"
@@ -25876,6 +26495,72 @@ cases = ["cases/translation/functions/try-cast.toml#t005_null_source_string_expr
 required = true
 
 [[obligation]]
+id = "sf.functions.try-decrypt.t001"
+form = "sf.functions.try-decrypt"
+kind = "type_combination"
+target = "BINARY, VARCHAR"
+note = "Text encrypted and decrypted, converted back from BINARY with utf-8."
+catches = "the bytes returned as hex text"
+reading = "the page: the value decrypted with the passphrase as BINARY; the passphrase and any AAD must match those used to encrypt; NULL where DECRYPT would fail"
+cases = ["cases/translation/functions/try-decrypt.toml#t001_round_trip"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-decrypt.t002"
+form = "sf.functions.try-decrypt"
+kind = "type_combination"
+target = "BINARY, VARCHAR"
+note = "A wrong passphrase and a wrong AAD, which give NULL."
+catches = "an error raised, or garbage bytes"
+reading = "the page: the value decrypted with the passphrase as BINARY; the passphrase and any AAD must match those used to encrypt; NULL where DECRYPT would fail"
+cases = ["cases/translation/functions/try-decrypt.toml#t002_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-decrypt.t003"
+form = "sf.functions.try-decrypt"
+kind = "null_argument"
+target = "value-to-decrypt"
+note = "A NULL value; the page does not say; the recording decides."
+catches = "an error where Snowflake returns NULL, or the reverse"
+reading = "the page: the value decrypted with the passphrase as BINARY; the passphrase and any AAD must match those used to encrypt; NULL where DECRYPT would fail"
+cases = ["cases/translation/functions/try-decrypt.toml#t003_null_value_to_decrypt"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-decrypt-raw.t001"
+form = "sf.functions.try-decrypt-raw"
+kind = "type_combination"
+target = "BINARY ciphertext, key, IV, AAD, tag"
+note = "ENCRYPT_RAW output decrypted with its own fields."
+catches = "the ciphertext returned unchanged"
+reading = "the page: the ciphertext decrypted with the BINARY key, IV, AAD and tag used to encrypt it, as BINARY; NULL where DECRYPT_RAW would fail"
+cases = ["cases/translation/functions/try-decrypt-raw.toml#t001_round_trip"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-decrypt-raw.t002"
+form = "sf.functions.try-decrypt-raw"
+kind = "type_combination"
+target = "BINARY"
+note = "A different AAD, which gives NULL."
+catches = "an error raised, or the bytes returned anyway"
+reading = "the page: the ciphertext decrypted with the BINARY key, IV, AAD and tag used to encrypt it, as BINARY; NULL where DECRYPT_RAW would fail"
+cases = ["cases/translation/functions/try-decrypt-raw.toml#t002_wrong_aad"]
+required = true
+
+[[obligation]]
+id = "sf.functions.try-decrypt-raw.t003"
+form = "sf.functions.try-decrypt-raw"
+kind = "null_argument"
+target = "value-to-decrypt"
+note = "A NULL ciphertext; the page does not say; the recording decides."
+catches = "an error where Snowflake returns NULL, or the reverse"
+reading = "the page: the ciphertext decrypted with the BINARY key, IV, AAD and tag used to encrypt it, as BINARY; NULL where DECRYPT_RAW would fail"
+cases = ["cases/translation/functions/try-decrypt-raw.toml#t003_null_value_to_decrypt"]
+required = true
+
+[[obligation]]
 id = "sf.functions.try-hex-decode-binary.t001"
 form = "sf.functions.try-hex-decode-binary"
 kind = "type_combination"
@@ -27371,6 +28056,182 @@ cases = ["cases/translation/functions/vector-avg.toml#t004_empty_input"]
 required = true
 
 [[obligation]]
+id = "sf.functions.vector-cosine-similarity.t001"
+form = "sf.functions.vector-cosine-similarity"
+kind = "type_combination"
+target = "VECTOR(FLOAT, 3)"
+note = "Vectors with a negative element, and parallel vectors; rounded to 3 places for the margin."
+catches = "the inner product returned unnormalised, or the distance"
+reading = "the page: the cosine of the angle, in [-1, 1] of two vectors, as a floating-point value with an error margin of up to 1e-4"
+cases = ["cases/translation/functions/vector-cosine-similarity.toml#t001_float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.vector-cosine-similarity.t002"
+form = "sf.functions.vector-cosine-similarity"
+kind = "type_combination"
+target = "VECTOR(INT, 3)"
+note = "INT vectors."
+catches = "an integer result, or INT vectors rejected"
+reading = "the page: the cosine of the angle, in [-1, 1] of two vectors, as a floating-point value with an error margin of up to 1e-4"
+cases = ["cases/translation/functions/vector-cosine-similarity.toml#t002_int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.vector-cosine-similarity.t003"
+form = "sf.functions.vector-cosine-similarity"
+kind = "error_parity"
+target = "error"
+note = "Vectors of different dimensions."
+catches = "the shorter vector padded"
+reading = "the page: the cosine of the angle, in [-1, 1] of two vectors, as a floating-point value with an error margin of up to 1e-4"
+cases = ["cases/translation/functions/vector-cosine-similarity.toml#t003_dimension_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.vector-cosine-similarity.t004"
+form = "sf.functions.vector-cosine-similarity"
+kind = "null_argument"
+target = "vector"
+note = "A NULL vector; the page does not say; the recording decides."
+catches = "an error, or 0 returned"
+reading = "the page: the cosine of the angle, in [-1, 1] of two vectors, as a floating-point value with an error margin of up to 1e-4"
+cases = ["cases/translation/functions/vector-cosine-similarity.toml#t004_null_vector"]
+required = true
+
+[[obligation]]
+id = "sf.functions.vector-inner-product.t001"
+form = "sf.functions.vector-inner-product"
+kind = "type_combination"
+target = "VECTOR(FLOAT, 3)"
+note = "Vectors with a negative element, and parallel vectors; rounded to 3 places for the margin."
+catches = "the element-wise product summed without signs, or the cosine returned"
+reading = "the page: the inner product of two vectors, as a floating-point value with an error margin of up to 1e-4"
+cases = ["cases/translation/functions/vector-inner-product.toml#t001_float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.vector-inner-product.t002"
+form = "sf.functions.vector-inner-product"
+kind = "type_combination"
+target = "VECTOR(INT, 3)"
+note = "INT vectors."
+catches = "an integer result, or INT vectors rejected"
+reading = "the page: the inner product of two vectors, as a floating-point value with an error margin of up to 1e-4"
+cases = ["cases/translation/functions/vector-inner-product.toml#t002_int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.vector-inner-product.t003"
+form = "sf.functions.vector-inner-product"
+kind = "error_parity"
+target = "error"
+note = "Vectors of different dimensions."
+catches = "the shorter vector padded"
+reading = "the page: the inner product of two vectors, as a floating-point value with an error margin of up to 1e-4"
+cases = ["cases/translation/functions/vector-inner-product.toml#t003_dimension_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.vector-inner-product.t004"
+form = "sf.functions.vector-inner-product"
+kind = "null_argument"
+target = "vector"
+note = "A NULL vector; the page does not say; the recording decides."
+catches = "an error, or 0 returned"
+reading = "the page: the inner product of two vectors, as a floating-point value with an error margin of up to 1e-4"
+cases = ["cases/translation/functions/vector-inner-product.toml#t004_null_vector"]
+required = true
+
+[[obligation]]
+id = "sf.functions.vector-l1-distance.t001"
+form = "sf.functions.vector-l1-distance"
+kind = "type_combination"
+target = "VECTOR(FLOAT, 3)"
+note = "Vectors with a negative element, and parallel vectors; rounded to 3 places for the margin."
+catches = "the L2 distance, or differences without absolute values"
+reading = "the page: the sum of absolute differences of two vectors, as a floating-point value with an error margin of up to 1e-4"
+cases = ["cases/translation/functions/vector-l1-distance.toml#t001_float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.vector-l1-distance.t002"
+form = "sf.functions.vector-l1-distance"
+kind = "type_combination"
+target = "VECTOR(INT, 3)"
+note = "INT vectors."
+catches = "an integer result, or INT vectors rejected"
+reading = "the page: the sum of absolute differences of two vectors, as a floating-point value with an error margin of up to 1e-4"
+cases = ["cases/translation/functions/vector-l1-distance.toml#t002_int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.vector-l1-distance.t003"
+form = "sf.functions.vector-l1-distance"
+kind = "error_parity"
+target = "error"
+note = "Vectors of different dimensions."
+catches = "the shorter vector padded"
+reading = "the page: the sum of absolute differences of two vectors, as a floating-point value with an error margin of up to 1e-4"
+cases = ["cases/translation/functions/vector-l1-distance.toml#t003_dimension_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.vector-l1-distance.t004"
+form = "sf.functions.vector-l1-distance"
+kind = "null_argument"
+target = "vector"
+note = "A NULL vector; the page does not say; the recording decides."
+catches = "an error, or 0 returned"
+reading = "the page: the sum of absolute differences of two vectors, as a floating-point value with an error margin of up to 1e-4"
+cases = ["cases/translation/functions/vector-l1-distance.toml#t004_null_vector"]
+required = true
+
+[[obligation]]
+id = "sf.functions.vector-l2-distance.t001"
+form = "sf.functions.vector-l2-distance"
+kind = "type_combination"
+target = "VECTOR(FLOAT, 3)"
+note = "Vectors with a negative element, and parallel vectors; rounded to 3 places for the margin."
+catches = "the squared distance, or the L1 distance"
+reading = "the page: the Euclidean distance of two vectors, as a floating-point value with an error margin of up to 1e-4"
+cases = ["cases/translation/functions/vector-l2-distance.toml#t001_float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.vector-l2-distance.t002"
+form = "sf.functions.vector-l2-distance"
+kind = "type_combination"
+target = "VECTOR(INT, 3)"
+note = "INT vectors."
+catches = "an integer result, or INT vectors rejected"
+reading = "the page: the Euclidean distance of two vectors, as a floating-point value with an error margin of up to 1e-4"
+cases = ["cases/translation/functions/vector-l2-distance.toml#t002_int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.vector-l2-distance.t003"
+form = "sf.functions.vector-l2-distance"
+kind = "error_parity"
+target = "error"
+note = "Vectors of different dimensions."
+catches = "the shorter vector padded"
+reading = "the page: the Euclidean distance of two vectors, as a floating-point value with an error margin of up to 1e-4"
+cases = ["cases/translation/functions/vector-l2-distance.toml#t003_dimension_mismatch"]
+required = true
+
+[[obligation]]
+id = "sf.functions.vector-l2-distance.t004"
+form = "sf.functions.vector-l2-distance"
+kind = "null_argument"
+target = "vector"
+note = "A NULL vector; the page does not say; the recording decides."
+catches = "an error, or 0 returned"
+reading = "the page: the Euclidean distance of two vectors, as a floating-point value with an error margin of up to 1e-4"
+cases = ["cases/translation/functions/vector-l2-distance.toml#t004_null_vector"]
+required = true
+
+[[obligation]]
 id = "sf.functions.vector-max.t001"
 form = "sf.functions.vector-max"
 kind = "type_combination"
@@ -27459,6 +28320,39 @@ cases = ["cases/translation/functions/vector-min.toml#t004_empty_input"]
 required = true
 
 [[obligation]]
+id = "sf.functions.vector-normalize.t001"
+form = "sf.functions.vector-normalize"
+kind = "type_combination"
+target = "VECTOR(FLOAT, 3)"
+note = "A vector with a negative element; elements rounded to 3 places."
+catches = "L1 normalisation, or the vector returned unchanged"
+reading = "the page: the vector scaled to unit L2 length, as FLOAT elements; NULL gives NULL"
+cases = ["cases/translation/functions/vector-normalize.toml#t001_float"]
+required = true
+
+[[obligation]]
+id = "sf.functions.vector-normalize.t002"
+form = "sf.functions.vector-normalize"
+kind = "type_combination"
+target = "VECTOR(INT, 3)"
+note = "An INT vector, which the page says gives FLOAT elements."
+catches = "INT elements (0 and 1) returned"
+reading = "the page: the vector scaled to unit L2 length, as FLOAT elements; NULL gives NULL"
+cases = ["cases/translation/functions/vector-normalize.toml#t002_int"]
+required = true
+
+[[obligation]]
+id = "sf.functions.vector-normalize.t003"
+form = "sf.functions.vector-normalize"
+kind = "null_argument"
+target = "vector"
+note = "A NULL vector, which the page says gives NULL."
+catches = "an error"
+reading = "the page: the vector scaled to unit L2 length, as FLOAT elements; NULL gives NULL"
+cases = ["cases/translation/functions/vector-normalize.toml#t003_null_vector"]
+required = true
+
+[[obligation]]
 id = "sf.functions.vector-sum.t001"
 form = "sf.functions.vector-sum"
 kind = "type_combination"
@@ -27500,6 +28394,39 @@ note = "No rows."
 catches = "a zero vector instead of NULL"
 reading = "the page: element-wise sums, of the input element type; all vectors share element type and dimension; NULL values are ignored and an all-NULL group gives NULL; results may differ by up to 1e-4 (the cases use exact binary values)"
 cases = ["cases/translation/functions/vector-sum.toml#t004_empty_input"]
+required = true
+
+[[obligation]]
+id = "sf.functions.vector-truncate.t001"
+form = "sf.functions.vector-truncate"
+kind = "type_combination"
+target = "VECTOR(FLOAT, 3), dimension"
+note = "Truncation to 2 elements, which the page says are not normalised."
+catches = "the result normalised, or the last elements kept"
+reading = "the page: the first dimension elements, with the same values and types, not normalised; a dimension larger than the vector is an error; NULL gives NULL"
+cases = ["cases/translation/functions/vector-truncate.toml#t001_truncate"]
+required = true
+
+[[obligation]]
+id = "sf.functions.vector-truncate.t002"
+form = "sf.functions.vector-truncate"
+kind = "error_parity"
+target = "error"
+note = "A dimension larger than the vector, which the page says is an error."
+catches = "the vector returned unchanged, or padded"
+reading = "the page: the first dimension elements, with the same values and types, not normalised; a dimension larger than the vector is an error; NULL gives NULL"
+cases = ["cases/translation/functions/vector-truncate.toml#t002_too_long"]
+required = true
+
+[[obligation]]
+id = "sf.functions.vector-truncate.t003"
+form = "sf.functions.vector-truncate"
+kind = "null_argument"
+target = "vector"
+note = "A NULL vector and a NULL dimension, which the page says give NULL."
+catches = "an error, or the vector returned unchanged"
+reading = "the page: the first dimension elements, with the same values and types, not normalised; a dimension larger than the vector is an error; NULL gives NULL"
+cases = ["cases/translation/functions/vector-truncate.toml#t003_null_vector"]
 required = true
 
 [[obligation]]
