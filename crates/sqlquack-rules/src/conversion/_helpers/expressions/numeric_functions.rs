@@ -21,7 +21,8 @@ use crate::conversion::_helpers::support::site::Site;
 
 use crate::conversion::constants::{
     BITWISE, HALF_AWAY_FROM_ZERO, HALF_TO_EVEN, LN_NAME, LOGARITHM, NUMERIC_FUNCTION, POWER_BASE,
-    POWER_RULE, ROUND_FUNCTION, ROUND_WITH_MODE_ARGUMENTS, ROUNDING, SIGN_RULE, SQRT_NAME,
+    POWER_BASE_TWO, POWER_RULE, ROUND_FUNCTION, ROUND_WITH_MODE_ARGUMENTS, ROUNDING, SIGN_RULE,
+    SQRT_NAME,
 };
 use sqlquack_policy::policy::constants::NUMERIC_RANGE;
 
@@ -86,7 +87,7 @@ pub(crate) fn logarithm(
     Ok(Emitted::new(sql, SnowflakeType::Float))
 }
 
-/// POWER(10, n) of a whole NUMBER exponent, as the FLOAT nearest the power; other bases refuse.
+/// POWER(10, n) or POWER(2, n) of a whole NUMBER exponent, as a FLOAT; other bases refuse.
 pub(crate) fn power(
     arguments: &[Value],
     construct: &Construct,
@@ -98,19 +99,27 @@ pub(crate) fn power(
         return Err(refuse("POWER with these arguments".to_owned()));
     };
     let base = convert_expression(base, site)?;
-    if base.literal != Some(Literal::Number(POWER_BASE.to_owned())) {
+    let two = base.literal == Some(Literal::Number(POWER_BASE_TWO.to_owned()));
+    if base.literal != Some(Literal::Number(POWER_BASE.to_owned())) && !two {
         return Err(refuse(
-            "POWER of a base other than the constant 10, whose rounding no recording shows"
+            "POWER of a base other than the constant 10 or 2, whose rounding no recording shows"
                 .to_owned(),
         ));
     }
     let exponent = convert_expression(exponent, site)?;
-    match exponent.data_type {
-        SnowflakeType::Number { scale: 0, .. } | SnowflakeType::Null => Ok(Emitted::new(
+    match (exponent.data_type, two) {
+        (SnowflakeType::Number { scale: 0, .. } | SnowflakeType::Null, true) => Ok(Emitted::new(
+            format!("pow(CAST(2 AS DOUBLE), CAST({} AS DOUBLE))", exponent.sql),
+            SnowflakeType::Float,
+        )),
+        (SnowflakeType::Number { scale: 0, .. } | SnowflakeType::Null, false) => Ok(Emitted::new(
             power_of_ten(&exponent.sql, site.context.log),
             SnowflakeType::Float,
         )),
-        other => Err(refuse(format!("POWER(10, n) of a {other} exponent"))),
+        (other, _) => Err(refuse(format!(
+            "POWER({}, n) of a {other} exponent",
+            if two { POWER_BASE_TWO } else { POWER_BASE }
+        ))),
     }
 }
 
