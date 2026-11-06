@@ -13,6 +13,7 @@ rows = [
 ]
 query = "SELECT HASH(a) AS r FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "hash"
 tags = ["type-combination"]
 
 [[case]]
@@ -26,6 +27,7 @@ rows = [
 ]
 query = "SELECT HASH(a) AS r FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "hash"
 tags = ["type-combination"]
 
 [[case]]
@@ -37,6 +39,7 @@ rows = [
 ]
 query = "SELECT HASH(a) = HASH(b) AS r1, HASH(a) = HASH(c) AS r2, HASH(a) AS h FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "hash"
 tags = ["type-combination"]
 
 [[case]]
@@ -48,6 +51,7 @@ rows = [
 ]
 query = "SELECT HASH(a, b) AS r1, HASH(b, a) AS r2 FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "hash"
 tags = ["type-combination"]
 
 [[case]]
@@ -60,4 +64,5 @@ rows = [
 ]
 query = "SELECT HASH(a) AS r FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "hash"
 tags = ["null"]
