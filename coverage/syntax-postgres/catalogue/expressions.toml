@@ -2562,6 +2562,19 @@ uses = []
 status = "catalogued"
 
 [[form]]
+id = "pg.expressions.matching.ilike"
+family = "expressions"
+source = "doc.functions-matching"
+anchor = "LIKE"
+kind = "special"
+grammar = [
+  "<string> ILIKE <pattern> [ ESCAPE <escape-character> ]",
+]
+grammar_sha256 = "80176d84cf8518a334e04287c8f5d80801927e14cd73c25db260061dd63093a6"
+uses = []
+status = "catalogued"
+
+[[form]]
 id = "pg.expressions.matching.like"
 family = "expressions"
 source = "doc.functions-matching"
@@ -2571,6 +2584,19 @@ grammar = [
   "<string> LIKE <pattern> [ ESCAPE <escape-character> ]",
 ]
 grammar_sha256 = "66c76c1c2c0650a4239176ac985249553f4bcda2a81b2f12d4ac6a8da1eed7d0"
+uses = []
+status = "catalogued"
+
+[[form]]
+id = "pg.expressions.matching.not-ilike"
+family = "expressions"
+source = "doc.functions-matching"
+anchor = "LIKE"
+kind = "special"
+grammar = [
+  "<string> NOT ILIKE <pattern> [ ESCAPE <escape-character> ]",
+]
+grammar_sha256 = "30a50bfeab1432a9bb70276112a3da46f2837e47f7c79b78db6a6a050b9ca071"
 uses = []
 status = "catalogued"
 

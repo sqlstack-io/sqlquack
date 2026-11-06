@@ -338,6 +338,32 @@ uses = []
 status = "catalogued"
 
 [[form]]
+id = "pg.transaction_session.set.names"
+family = "transaction_session"
+source = "doc.sql-set"
+anchor = "Parameters"
+kind = "statement"
+grammar = [
+  "SET [ SESSION | LOCAL ] NAMES [ '<value>' | DEFAULT ]",
+]
+grammar_sha256 = "e7dc254279a9d0b20835c919abac59a2b87efa606fa588ad1da3c0b81a3f70b7"
+uses = []
+status = "catalogued"
+
+[[form]]
+id = "pg.transaction_session.set.schema"
+family = "transaction_session"
+source = "doc.sql-set"
+anchor = "Parameters"
+kind = "statement"
+grammar = [
+  "SET [ SESSION | LOCAL ] SCHEMA '<value>'",
+]
+grammar_sha256 = "841b19ac914a80f30f539843abf41a9749cfd037db26b081fa0f63e07b3561ae"
+uses = []
+status = "catalogued"
+
+[[form]]
 id = "pg.transaction_session.set.time-zone"
 family = "transaction_session"
 source = "doc.sql-set"

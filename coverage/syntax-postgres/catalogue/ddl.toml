@@ -3798,6 +3798,32 @@ uses = []
 status = "catalogued"
 
 [[form]]
+id = "pg.ddl.create-function.sql-body-atomic"
+family = "ddl"
+source = "doc.sql-createfunction"
+anchor = "Parameters"
+kind = "statement"
+grammar = [
+  "CREATE [ OR REPLACE ] FUNCTION <name> ( [ [ <argmode> ] [ <argname> ] <argtype> [ { DEFAULT | = } <default_expr> ] [, ...] ] ) [ RETURNS <rettype> | RETURNS TABLE ( <column_name> <column_type> [, ...] ) ] [ LANGUAGE SQL ] BEGIN ATOMIC <statement> ; [ ... ] END",
+]
+grammar_sha256 = "23386f8452cf44a76eaca13e978f02f8123327f27edcb83a7fa203c253ceb094"
+uses = []
+status = "catalogued"
+
+[[form]]
+id = "pg.ddl.create-function.sql-body-return"
+family = "ddl"
+source = "doc.sql-createfunction"
+anchor = "Parameters"
+kind = "statement"
+grammar = [
+  "CREATE [ OR REPLACE ] FUNCTION <name> ( [ [ <argmode> ] [ <argname> ] <argtype> [ { DEFAULT | = } <default_expr> ] [, ...] ] ) [ RETURNS <rettype> | RETURNS TABLE ( <column_name> <column_type> [, ...] ) ] [ LANGUAGE SQL ] RETURN <expression>",
+]
+grammar_sha256 = "3eedee127a9f2ba1698b5e49b560f0ee1db987e1d4a122c848b1a077a264292d"
+uses = []
+status = "catalogued"
+
+[[form]]
 id = "pg.ddl.create-index"
 family = "ddl"
 source = "doc.sql-createindex"
@@ -3902,6 +3928,19 @@ grammar = [
   "CREATE [ OR REPLACE ] PROCEDURE <name> ( [ [ <argmode> ] [ <argname> ] <argtype> [ { DEFAULT | = } <default_expr> ] [, ...] ] ) { LANGUAGE <lang_name> | TRANSFORM { FOR TYPE <type_name> } [, ... ] | [ EXTERNAL ] SECURITY INVOKER | [ EXTERNAL ] SECURITY DEFINER | SET <configuration_parameter> { TO <value> | = <value> | FROM CURRENT } | AS '<definition>' | AS '<obj_file>', '<link_symbol>' | <sql_body> } ...",
 ]
 grammar_sha256 = "7b4fac3741a1d6e6555be4f14bf346f0a64f3e1cb5c5ea223d5e5f256c690c72"
+uses = []
+status = "catalogued"
+
+[[form]]
+id = "pg.ddl.create-procedure.sql-body-atomic"
+family = "ddl"
+source = "doc.sql-createprocedure"
+anchor = "Parameters"
+kind = "statement"
+grammar = [
+  "CREATE [ OR REPLACE ] PROCEDURE <name> ( [ [ <argmode> ] [ <argname> ] <argtype> [ { DEFAULT | = } <default_expr> ] [, ...] ] ) [ LANGUAGE SQL ] BEGIN ATOMIC <statement> ; [ ... ] END",
+]
+grammar_sha256 = "99bc7628f17b88a4ff10ad7c7f03010eca913fdd3c01c241a2570914962ae15b"
 uses = []
 status = "catalogued"
 

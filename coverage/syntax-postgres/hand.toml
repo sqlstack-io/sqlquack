@@ -1867,3 +1867,68 @@ label = "multirange-constructor"
 grammar = ["<multirange_type>( [ <range> [, ...] ] )"]
 basis = "prose"
 page_sha256 = "014a2b51d8af730ddf431d5e9e131f306073227b0038ebd9f67bf1381a2770dc"
+
+[[form]]
+source = "doc.functions-matching"
+anchor = "LIKE"
+kind = "special"
+label = "ilike"
+family = "expressions"
+grammar = ["<string> ILIKE <pattern> [ ESCAPE <escape-character> ]"]
+basis = "prose"
+page_sha256 = "99009063125eb80b83c010c67e4d857676fe6621ae24c708dd5ea93fe472cfd8"
+
+[[form]]
+source = "doc.functions-matching"
+anchor = "LIKE"
+kind = "special"
+label = "not-ilike"
+family = "expressions"
+grammar = ["<string> NOT ILIKE <pattern> [ ESCAPE <escape-character> ]"]
+basis = "prose"
+page_sha256 = "99009063125eb80b83c010c67e4d857676fe6621ae24c708dd5ea93fe472cfd8"
+
+[[form]]
+source = "doc.sql-set"
+anchor = "Parameters"
+kind = "statement"
+label = "schema"
+grammar = ["SET [ SESSION | LOCAL ] SCHEMA '<value>'"]
+basis = "prose"
+page_sha256 = "d63b590640a2270e11b4f10e096b1f980bb05d104a512bd987d8994bba1517be"
+
+[[form]]
+source = "doc.sql-set"
+anchor = "Parameters"
+kind = "statement"
+label = "names"
+grammar = ["SET [ SESSION | LOCAL ] NAMES [ '<value>' | DEFAULT ]"]
+basis = "prose"
+page_sha256 = "d63b590640a2270e11b4f10e096b1f980bb05d104a512bd987d8994bba1517be"
+
+[[form]]
+source = "doc.sql-createfunction"
+anchor = "Parameters"
+kind = "statement"
+label = "sql-body-return"
+grammar = ["CREATE [ OR REPLACE ] FUNCTION <name> ( [ [ <argmode> ] [ <argname> ] <argtype> [ { DEFAULT | = } <default_expr> ] [, ...] ] ) [ RETURNS <rettype> | RETURNS TABLE ( <column_name> <column_type> [, ...] ) ] [ LANGUAGE SQL ] RETURN <expression>"]
+basis = "prose"
+page_sha256 = "7d6900e975a4fc3dd92251ba8dca80d2d778397048b16d29ec05da513f392530"
+
+[[form]]
+source = "doc.sql-createfunction"
+anchor = "Parameters"
+kind = "statement"
+label = "sql-body-atomic"
+grammar = ["CREATE [ OR REPLACE ] FUNCTION <name> ( [ [ <argmode> ] [ <argname> ] <argtype> [ { DEFAULT | = } <default_expr> ] [, ...] ] ) [ RETURNS <rettype> | RETURNS TABLE ( <column_name> <column_type> [, ...] ) ] [ LANGUAGE SQL ] BEGIN ATOMIC <statement> ; [ ... ] END"]
+basis = "prose"
+page_sha256 = "7d6900e975a4fc3dd92251ba8dca80d2d778397048b16d29ec05da513f392530"
+
+[[form]]
+source = "doc.sql-createprocedure"
+anchor = "Parameters"
+kind = "statement"
+label = "sql-body-atomic"
+grammar = ["CREATE [ OR REPLACE ] PROCEDURE <name> ( [ [ <argmode> ] [ <argname> ] <argtype> [ { DEFAULT | = } <default_expr> ] [, ...] ] ) [ LANGUAGE SQL ] BEGIN ATOMIC <statement> ; [ ... ] END"]
+basis = "prose"
+page_sha256 = "8f9071a156f46324c39813358e22884c765dbf868a25f9eeb4d093cff50d4fc3"

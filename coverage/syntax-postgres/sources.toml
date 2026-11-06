@@ -906,7 +906,9 @@ page_sha256 = "7d6900e975a4fc3dd92251ba8dca80d2d778397048b16d29ec05da513f392530"
 syntax_sha256 = "a5debce5ce5798a423ff6fe5b2ac572798bafaadbeb8c160b3b71b68eb8cd333"
 syntax_blocks = 1
 status = "forms"
-decisions = []
+decisions = [
+  "catalogued by hand from prose",
+]
 
 [[source]]
 id = "doc.sql-creategroup"
@@ -1018,7 +1020,9 @@ page_sha256 = "8f9071a156f46324c39813358e22884c765dbf868a25f9eeb4d093cff50d4fc3"
 syntax_sha256 = "3e71420a29ff6a6e124054a476f1cb6fe4d943201a1a13f9d44438c16121ae5e"
 syntax_blocks = 1
 status = "forms"
-decisions = []
+decisions = [
+  "catalogued by hand from prose",
+]
 
 [[source]]
 id = "doc.sql-createpublication"
@@ -2260,6 +2264,7 @@ syntax_sha256 = "b82facccf0f5de3e91aa2350057fc8920c2210d271ce94e7c842314682e43fd
 syntax_blocks = 1
 status = "forms"
 decisions = [
+  "catalogued by hand from prose",
   "synopsis split into one form per statement at unindented lines",
 ]
 
@@ -3261,6 +3266,7 @@ syntax_sha256 = "164b84fd8629603a94ddfc8c272748042ced45a0c0d3c406721bcc14d00abb2
 syntax_blocks = 9
 status = "forms"
 decisions = [
+  "catalogued by hand from prose",
   "every synopsis block restates syntax catalogued on another page; listed in also_sources",
   "operator signatures grouped by operator and section",
   "synopsis blocks dispositioned in hand.toml",

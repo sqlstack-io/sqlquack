@@ -99,3 +99,42 @@ class Definition:
     name: str
     alternatives: tuple[str, ...]
     listed: bool
+
+
+@dataclass(frozen=True)
+class Keyword:
+    """One kwlist.h keyword: its SQL text, grammar token and category."""
+
+    text: str
+    token: str
+    category: str
+
+
+@dataclass(frozen=True)
+class Rule:
+    """One gram.y rule and its alternatives as token sequences."""
+
+    name: str
+    alternatives: tuple[tuple[str, ...], ...]
+
+
+@dataclass(frozen=True)
+class AuditGap:
+    """A gram.y alternative whose keyword sequence no catalogued form spells."""
+
+    rule: str
+    alternative: int
+    keywords: str
+    production: str
+
+
+@dataclass(frozen=True)
+class AuditResult:
+    """What the omission audit found and how much it checked."""
+
+    gaps: list[AuditGap]
+    unused: list[Keyword]
+    missing: list[Keyword]
+    alternatives_checked: int
+    rules_checked: int
+    keywords_checked: int

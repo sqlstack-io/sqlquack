@@ -36,6 +36,31 @@ disposition naming no block, a restatement of an uncatalogued form, or a hand fo
 changed. PostgreSQL 19 is an in-place rebuild against its tarball; ids follow the same keeping
 rules as the Snowflake catalogue (`scripts/syntax_catalogue/_helpers/forms.py`, reused by import).
 
+## Omission audit (`audit.toml`)
+
+```sh
+python -m scripts.audit_syntax_catalogue_pg --cache CACHE
+```
+
+An independent check against the server's own grammar, `gram.y` and `kwlist.h` of the pinned
+release. It reads every rule of gram.y and spells each alternative of the statement rules, the
+expression rules and the rules up to two levels below a statement as keyword sequences,
+expanding nonterminals that are keyword sets (`DROP object_type_any_name` checks DROP TABLE,
+DROP SEQUENCE and so on). A sequence is covered when some catalogued form, with its page's
+definitions inlined, contains its keywords in order; for a statement the form's leading required
+keywords must also appear in the sequence, so DROP FOREIGN TABLE does not cover DROP TABLE.
+Every kwlist.h keyword that a production uses must appear in some grammar.
+
+`audit.toml` binds the sha256 of gram.y and kwlist.h and gives a reviewed reason for every
+production that no form covers (`[[production]]`, keyed by rule and production text) and every
+keyword that no grammar names (`[[keyword]]`). The audit fails on an unreviewed gap, a review
+naming no current gap, or a changed grammar file. The reasons are of three kinds: syntax gram.y
+accepts that the 18.6 documentation does not document (the spelling ANALYSE, GLOBAL and LOCAL
+before TEMPORARY outside CREATE TABLE, `BETWEEN ASYMMETRIC`, `TREAT`, `NCHAR`); productions that
+only raise an error (CREATE ASSERTION, `ALTER TYPE ... DROP VALUE`, UNENCRYPTED PASSWORD); and
+documented values of a placeholder (`NFC`, `OUT`, `SETOF`). Single-keyword alternatives below a
+statement are checked by the keyword rule only.
+
 ## Form rules
 
 1. **Command pages.** The `<refsynopsisdiv>` synopsis is split into statements at each unindented
@@ -63,8 +88,10 @@ rules as the Snowflake catalogue (`scripts/syntax_catalogue/_helpers/forms.py`, 
    and Pseudo-Types tables is a form in `expressions`; aliases are alternatives.
 6. **Hand forms** (`hand.toml` `[[form]]`): lexical syntax and expressions written in prose or
    examples (identifiers, string and bit-string constants, comments, constructors, named
-   notation, array types, interval fields, range constructors), the comparison operators whose
-   table uses the generic `datatype`, and the deprecated CREATE ROLE clauses.
+   notation, array types, interval fields, range constructors, ILIKE), the comparison operators
+   whose table uses the generic `datatype`, SET SCHEMA and SET NAMES, the SQL function bodies
+   (`RETURN`, `BEGIN ATOMIC`) of CREATE FUNCTION and CREATE PROCEDURE, and the deprecated CREATE
+   ROLE clauses.
 
 Families: `query`, `dml`, `ddl`, `transaction_session`, `security_admin`, `utility`, `functions`,
 `expressions`. There is no `classes` or `scripting` family: PL/pgSQL bodies are string constants
