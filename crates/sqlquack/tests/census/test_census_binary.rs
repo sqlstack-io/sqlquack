@@ -1,11 +1,13 @@
 use crate::helpers::{
-    census_warnings, converted_files, cursor_model_convertible, run_on_declared_orders,
-    run_on_events, run_on_placed_orders, run_on_refused_upstream, run_on_shop,
+    census_warnings, compiled_dbt_counts, converted_files, cursor_model_convertible,
+    run_on_declared_orders, run_on_events, run_on_placed_orders, run_on_refused_upstream,
+    run_on_shop,
 };
 use crate::test_types::{
-    BinaryOutcome, BinaryTestCase, ConvertedDirTestCase, ConvertedFile, CursorTestCase,
-    DeclaredOutcome, DeclaredTestCase, SessionTimeZoneTestCase, SourceVariantOutcome,
-    SourceVariantTestCase, UpstreamOutcome, UpstreamTestCase, WarningsTestCase,
+    BinaryOutcome, BinaryTestCase, CompiledDbtTestCase, ConvertedDirTestCase, ConvertedFile,
+    CursorTestCase, DeclaredOutcome, DeclaredTestCase, SessionTimeZoneTestCase,
+    SourceVariantOutcome, SourceVariantTestCase, UpstreamOutcome, UpstreamTestCase,
+    WarningsTestCase,
 };
 
 #[test]
@@ -431,6 +433,31 @@ fn given_converted_dir_set_when_running_census_then_each_converted_model_sql_is_
         assert_eq!(
             converted_files(test_case.set_variable),
             test_case.expected_files,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_compiled_dbt_models_with_qualified_names_when_running_census_then_they_convert() {
+    let test_cases = [
+        CompiledDbtTestCase {
+            description: "the staging model reads its declared source by database.schema.table; \
+                          the mart's model relation is unknown without chaining",
+            flags: &[],
+            expected_counts: (Some(1), Some(1)),
+        },
+        CompiledDbtTestCase {
+            description: "chained, the mart reads the staging model by its qualified name",
+            flags: &["--chain-models"],
+            expected_counts: (Some(2), Some(2)),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            compiled_dbt_counts(test_case.flags),
+            test_case.expected_counts,
             "{}",
             test_case.description
         );

@@ -91,3 +91,9 @@ pub(crate) struct ConvertedFile {
     pub(crate) model: String,
     pub(crate) holds_select: bool,
 }
+
+pub(crate) struct CompiledDbtTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) flags: &'static [&'static str],
+    pub(crate) expected_counts: (Option<u64>, Option<u64>),
+}

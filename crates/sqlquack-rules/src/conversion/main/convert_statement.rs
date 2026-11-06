@@ -20,7 +20,7 @@ use crate::conversion::_helpers::support::depth::positioned;
 use crate::conversion::_helpers::support::locations::Locator;
 use crate::conversion::_helpers::support::scope::{Context, StatementTracks};
 use crate::conversion::_helpers::support::tree::{node_construct, session_tree};
-use crate::conversion::constants::OUTPUT_ALIAS;
+use crate::conversion::constants::{NULL_BRANCHES, OUTPUT_ALIAS};
 use crate::conversion::models::{ConversionOptions, Converted};
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_semantics::types::models::TypedLeaves;
@@ -47,12 +47,18 @@ pub fn convert_statement(
         typed: &typed,
         order: &tracks.order,
         subqueries: &tracks.subqueries,
+        qualifiers: &tracks.qualifiers,
         free_projections: false,
         fixture_body: false,
     };
-    let (sql, columns) = checked(&typed, convert_query(&tree, None, &context, true))
+    let (sql, mut columns) = checked(&typed, convert_query(&tree, None, &context, true))
         .map_err(|refusal| locator.placed(refusal, &tree))?;
     let (sql, raises) = locator.finished(&output_variants(sql, &columns, &log), &tree);
+    for column in &mut columns {
+        if column.data_type == SnowflakeType::Null {
+            column.data_type = SnowflakeType::Varchar;
+        }
+    }
     let relation = |name: &str| -> Option<Vec<(String, SnowflakeType)>> {
         let columns = schema.relations.get(name)?;
         Some(column_types(columns))
@@ -74,20 +80,25 @@ pub fn convert_statement(
     })
 }
 
-/// The query with each VARIANT result column written as Snowflake returns it.
+/// The query with VARIANT result columns written as Snowflake returns them, NULL-only ones VARCHAR.
 fn output_variants(sql: String, columns: &[ColumnSpec], log: &ProvenanceLog) -> String {
     let replaced: Vec<String> = columns
         .iter()
-        .filter(|column| column.data_type == SnowflakeType::SemiStructured)
-        .map(|column| {
+        .filter_map(|column| {
             let name = quoted_identifier(&column.name, log);
-            match column.holding {
-                Holding::Variant => {
-                    format!("CAST({} AS JSON) AS {name}", variant_written(&name, log))
+            match (column.data_type, column.holding) {
+                (SnowflakeType::SemiStructured, Holding::Variant) => Some(format!(
+                    "CAST({} AS JSON) AS {name}",
+                    variant_written(&name, log)
+                )),
+                (SnowflakeType::SemiStructured, Holding::Json | Holding::Chained) => {
+                    Some(format!("{} AS {name}", json_output(&name, log)))
                 }
-                Holding::Json | Holding::Chained => {
-                    format!("{} AS {name}", json_output(&name, log))
+                (SnowflakeType::Null, _) => {
+                    let _rule = log.rule(NULL_BRANCHES);
+                    Some(format!("CAST({name} AS VARCHAR) AS {name}"))
                 }
+                _ => None,
             }
         })
         .collect();

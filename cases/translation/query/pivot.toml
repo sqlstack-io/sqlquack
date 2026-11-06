@@ -1,0 +1,48 @@
+category = "translation"
+construct = "sf.query.pivot"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_sum"
+description = "Sums of x by month for jan and feb, per group; mar is not listed and drops out. Catches: unlisted values kept, or the aggregate ignored"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "m", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "'jan'", "1"],
+  ["'a'", "'feb'", "2"],
+  ["'a'", "'feb'", "3"],
+  ["'b'", "'jan'", "NULL"],
+  ["'b'", "'mar'", "5"],
+]
+query = "SELECT * FROM (SELECT g, m, x FROM input) PIVOT (SUM(x) FOR m IN ('jan', 'feb')) ORDER BY g"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_aliases"
+description = "The listed values given aliases with AS. Catches: the aliases ignored"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "m", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "'jan'", "1"],
+  ["'a'", "'feb'", "2"],
+  ["'a'", "'feb'", "3"],
+  ["'b'", "'jan'", "NULL"],
+  ["'b'", "'mar'", "5"],
+]
+query = "SELECT * FROM (SELECT g, m, x FROM input) PIVOT (MAX(x) FOR m IN ('jan' AS january, 'mar' AS march)) ORDER BY g"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_values"
+description = "Group b's jan holds only NULL, so its sum is NULL; a missing month is NULL too. Catches: NULL read as 0"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "m", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "'jan'", "1"],
+  ["'a'", "'feb'", "2"],
+  ["'a'", "'feb'", "3"],
+  ["'b'", "'jan'", "NULL"],
+  ["'b'", "'mar'", "5"],
+]
+query = "SELECT * FROM (SELECT g, m, x FROM input) PIVOT (SUM(x) FOR m IN ('jan', 'mar')) ORDER BY g"
+order = "ordered"
+tags = ["null"]

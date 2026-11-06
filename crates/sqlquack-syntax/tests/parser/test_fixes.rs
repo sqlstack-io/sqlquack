@@ -1643,6 +1643,18 @@ fn given_a_documented_snowflake_element_when_parsing_then_the_tree_keeps_it() {
             expected_value: json!(true),
         },
         ProjectionTestCase {
+            description: "a star keeps its ILIKE pattern before REPLACE and RENAME",
+            sql: "SELECT * ILIKE '%v' REPLACE (1 AS v1) RENAME (v1 AS v2) FROM t1",
+            pointer: "/0/select/expressions/0/star/ilike",
+            expected_value: json!("%v"),
+        },
+        ProjectionTestCase {
+            description: "RENAME after a star's ILIKE keeps its new name",
+            sql: "SELECT * ILIKE '%v' REPLACE (1 AS v1) RENAME (v1 AS v2) FROM t1",
+            pointer: "/0/select/expressions/0/star/rename/0/1/name",
+            expected_value: json!("v2"),
+        },
+        ProjectionTestCase {
             description: "a quoted PIVOT aggregate alias stays quoted",
             sql: "SELECT * FROM t1 PIVOT ( SUM ( v1 ) \"v1 Q\" FOR v2 IN ( 1 , 2 ) )",
             pointer: "/0/select/from/expressions/0/pivot/expressions/0/alias/alias/quoted",

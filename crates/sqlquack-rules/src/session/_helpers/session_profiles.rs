@@ -2,7 +2,9 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use sqlquack_policy::policy::constants::RESULT_NEUTRAL_SESSION_PARAMETERS;
+use sqlquack_policy::policy::constants::{
+    DATABASE_PARAMETER, RESULT_NEUTRAL_SESSION_PARAMETERS, SCHEMA_PARAMETER,
+};
 use sqlquack_policy::policy::models::{Policy, SessionValue};
 
 /// The first profile matching `given`, unset ones as `default` pins, `ignored` never compared.
@@ -20,6 +22,7 @@ pub(crate) fn matching_profile(
         .map(|(name, _)| *name)
         .collect();
     let mut known: BTreeSet<&str> = neutral.clone();
+    known.extend([DATABASE_PARAMETER, SCHEMA_PARAMETER]);
     for profile in policy.session_profiles.values() {
         known.extend(
             profile
