@@ -417,7 +417,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CAST_TO_TEXT,
         constructs: &["node:cast"],
-        conditions: "From NUMBER, BOOLEAN, DATE or VARCHAR; from FLOAT as recorded: max(10, min(15, whole digits + 9)) significant digits as %.{n}g writes them, so ten below 10, one more per whole digit, fifteen from 1e5, plain from 1e-4 to below 1e15 and an exponent outside, NaN, inf, -inf, 0 and -0; from TIMESTAMP_NTZ(9) in the output format YYYY-MM-DD HH24:MI:SS.FF3 where the dropped digits are below half a millisecond, so truncating and rounding agree, raising timestamp_text_rounding otherwise; a length is enforced by raising an error; not TRY_CAST unless from VARCHAR.",
+        conditions: "From NUMBER, BOOLEAN, DATE or VARCHAR; from FLOAT as recorded: max(10, min(15, whole digits + 9)) significant digits as %.{n}g writes them, so ten below 10, one more per whole digit, fifteen from 1e5, plain from 1e-4 to below 1e15 and an exponent outside, NaN, inf, -inf, 0 and -0; from TIMESTAMP_NTZ(9) in the output format YYYY-MM-DD HH24:MI:SS.FF3, the digits past the millisecond truncated, never rounded or carried, as recorded; a length is enforced by raising an error; not TRY_CAST unless from VARCHAR.",
         failures: &[FailureMode {
             kind: ErrorKind::StringTooLong,
             snowflake: &[STRING_TOO_LONG],

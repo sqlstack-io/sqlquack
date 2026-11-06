@@ -59,8 +59,6 @@ pub const PERCENTILE_INTERPOLATION: &str = "percentile_interpolation";
 pub const DATE_TEXT_SPELLING: &str = "date_text_spelling";
 /// The divergence of the current date and time, which differ between engines and runs.
 pub const CURRENT_TIME: &str = "current_time";
-/// The divergence of a timestamp's text where truncating and rounding to milliseconds differ.
-pub const TIMESTAMP_TEXT_ROUNDING: &str = "timestamp_text_rounding";
 /// The divergence of ANY_VALUE, whose choice among a group's values differs between engines.
 pub const ANY_VALUE_CHOICE: &str = "any_value_choice";
 /// The divergence of MODE, whose choice among values tied for most frequent differs between engines.

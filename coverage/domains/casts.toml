@@ -127,7 +127,8 @@ arguments = [
 facets = { target = ["text"] }
 template = "CAST({0} AS VARCHAR)"
 category = "conversion"
-divergences = { "timestamp_ntz.half_millisecond" = "timestamp_text_rounding" }
+# Half-millisecond fractions keep their own case, recorded while the dropped digits were unknown.
+alone = ["0.timestamp_ntz.half_millisecond"]
 
 [[rule.form]]
 construct = "fn:TO_VARCHAR"
@@ -138,9 +139,8 @@ arguments = [
 template = "TO_VARCHAR({0})"
 category = "conversion"
 variants = ["TO_CHAR({0})"]
-divergences = { "timestamp_ntz.half_millisecond" = "timestamp_text_rounding" }
 # Subnormal FLOATs are written with ten significant digits, and negative zero as -0, as recorded.
-alone = ["0.float.subnormal", "0.float.negative_zero"]
+alone = ["0.float.subnormal", "0.float.negative_zero", "0.timestamp_ntz.half_millisecond"]
 
 [[rule]]
 id = "rule.cast_boolean"

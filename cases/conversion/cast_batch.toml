@@ -449,4 +449,3 @@ rows = [
 ]
 expression = "n::VARCHAR"
 tags = ["null", "boundary", "invalid"]
-expected_divergence = "timestamp_text_rounding"

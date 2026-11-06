@@ -18,7 +18,6 @@ use sqlquack_duckdb::blocks::main::varchar_length_try::varchar_length_try;
 use sqlquack_duckdb::floats::constants::FLOAT_DECIMAL_DIGITS;
 use sqlquack_duckdb::floats::main::float_to_decimal::float_to_decimal;
 use sqlquack_duckdb::floats::main::float_to_text::float_to_text;
-use sqlquack_duckdb::raises::main::raised::raised;
 use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::semi_structured::main::json_text::json_text;
 use sqlquack_duckdb::temporal::main::text_to_timestamp::text_to_timestamp;
@@ -68,8 +67,7 @@ use crate::conversion::constants::{
     VARIANT_NAME, VARIANT_TEXT_FUNCTION, VARIANT_TO_VARCHAR,
 };
 use sqlquack_policy::policy::constants::{
-    DATE_TEXT_SPELLING, SESSION_TIMEZONE_UTC, TIMESTAMP_RANGE, TIMESTAMP_TEXT_ROUNDING,
-    TIMESTAMP_TZ_OFFSET,
+    DATE_TEXT_SPELLING, SESSION_TIMEZONE_UTC, TIMESTAMP_RANGE, TIMESTAMP_TZ_OFFSET,
 };
 
 /// Serialised kinds of Snowflake's structured types.
@@ -364,17 +362,9 @@ fn cast_sql(
         }
         (SnowflakeType::TimestampNtz { precision: 9 }, SnowflakeType::Varchar, _) => {
             let _rule = cast_rule(CAST_TO_TEXT, log);
-            diverge(context, TIMESTAMP_TEXT_ROUNDING, construct)
-                .map_err(|refusal| refusal.reason)?;
-            let unproven = raised(&format!(
-                "{TIMESTAMP_TEXT_ROUNDING}: a timestamp whose dropped digits past the millisecond \
-                 decide between truncating and rounding, which no recording shows"
-            ));
             Ok(bounded(
                 format!(
-                    "list_transform([{}], lambda ntz_text: CASE WHEN ((epoch_ns(ntz_text) % 1000000) \
-                     + 1000000) % 1000000 >= 500000 THEN CAST({unproven} AS VARCHAR) \
-                     ELSE strftime(ntz_text, {}) END)[1]",
+                    "strftime({}, {})",
                     operand.sql,
                     string_literal(NTZ_OUTPUT_PATTERN, log)
                 ),

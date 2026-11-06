@@ -562,10 +562,3 @@ default = "warn"
 strict = "refuse"
 failure = "loud"
 reason = "Recordings show a FLOAT rounded to NUMBER scales 2, 6 and 8 with up to ten digits once scaled, scale padding included, where Snowflake rounds the double's exact value half away from zero, also where the shortest decimal reading rounds the other way. Other scales refuse; a value with more significant digits, where Snowflake may round a shorter decimal reading instead, raises. The failure is loud, never a wrong value."
-
-[divergences.timestamp_text_rounding]
-constructs = ["node:cast", "fn:TO_VARCHAR", "fn:TO_CHAR"]
-default = "warn"
-strict = "refuse"
-failure = "loud"
-reason = "A TIMESTAMP_NTZ(9) is written with three fractional digits, and recordings do not yet show whether Snowflake truncates or rounds the digits it drops. Where the two agree, a dropped part below half a millisecond, the converted SQL writes the text; otherwise it raises. The failure is loud, never a wrong value."

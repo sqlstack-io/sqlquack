@@ -309,7 +309,6 @@ rows = [
 expression = "CAST(x0 AS VARCHAR)"
 tags = ["null", "invalid", "boundary"]
 origin = "generated: hazards@1"
-expected_divergence = "timestamp_text_rounding"
 
 [[case]]
 id = "node_cast_5_0_timestamp_ntz_extreme_years"
@@ -676,7 +675,6 @@ rows = [
 expression = "TO_VARCHAR(x0)"
 tags = ["null", "invalid", "boundary"]
 origin = "generated: hazards@1"
-expected_divergence = "timestamp_text_rounding"
 
 [[case]]
 id = "fn_to_varchar_6_0_timestamp_ntz_extreme_years"
