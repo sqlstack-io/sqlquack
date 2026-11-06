@@ -17,7 +17,7 @@ use sqlquack_snowflake::typing::constants::VARIANT_COMMON_TYPE;
 pub const NOT_EXPRESSIBLE: &[NotExpressibleDeclaration] = &[];
 
 use crate::conversion::constants::{
-    ALIAS, ARRAY_AGG_RULE, ARRAY_APPEND_RULE, ARRAY_CAT_RULE, ARRAY_COMPACT_RULE,
+    ADD_MONTHS_RULE, ALIAS, ARRAY_AGG_RULE, ARRAY_APPEND_RULE, ARRAY_CAT_RULE, ARRAY_COMPACT_RULE,
     ARRAY_CONSTRUCT_COMPACT_RULE, ARRAY_CONSTRUCT_RULE, ARRAY_CONTAINS_RULE, ARRAY_EXCEPT_RULE,
     ARRAY_EXTREME_RULE, ARRAY_FLATTEN_RULE, ARRAY_POSITION_RULE, ARRAY_RANGE_RULE,
     ARRAY_REVERSE_RULE, ARRAY_SET_RULE, ARRAY_SIZE_RULE, ARRAY_SLICE_RULE, ARRAY_SORT_RULE,
@@ -33,9 +33,9 @@ use crate::conversion::constants::{
     HASH_RULE, HAVING, HIERARCHY_RULE, IFF, ILIKE_FOLDING, IN_LIST, IN_SUBQUERY,
     INTERVAL_ARITHMETIC, IS_NULL, JARO_WINKLER, JOIN_CROSS, JOIN_ON, JOIN_USING, LAMBDA_RULE,
     LAST_DAY_RULE, LATERAL_SUBQUERY, LEAST_GREATEST, LIKE, LIMIT, LISTAGG_RULE, LOGARITHM, LOGIC,
-    MEDIAN_RULE, MIN_MAX, MIN_MAX_FLOAT, MODE_RULE, NAMED_AGGREGATES, NEGATE, NOT_IN_SUBQUERY,
-    NULL_ARITHMETIC, NULL_BRANCHES, NULL_IF_ZERO_RULE, NULL_SAFE_COMPARISON, NULLIF,
-    NUMBER_LITERAL, NUMBER_TEXT_FORMAT, NUMERIC_FUNCTION, NVL2_RULE, OBJECT_CONSTRUCT_RULE,
+    MEDIAN_RULE, MIN_MAX, MIN_MAX_FLOAT, MODE_RULE, MONTHS_BETWEEN_RULE, NAMED_AGGREGATES, NEGATE,
+    NOT_IN_SUBQUERY, NULL_ARITHMETIC, NULL_BRANCHES, NULL_IF_ZERO_RULE, NULL_SAFE_COMPARISON,
+    NULLIF, NUMBER_LITERAL, NUMBER_TEXT_FORMAT, NUMERIC_FUNCTION, NVL2_RULE, OBJECT_CONSTRUCT_RULE,
     OBJECT_DELETE_RULE, OBJECT_INSERT_RULE, OBJECT_KEYS_RULE, OBJECT_PICK_RULE, ORDER_BY,
     PARENTHESES, PARSE_JSON_RULE, PARSE_JSON_VARIANT, PARSE_URL_RULE, PERCENTILE_RULE, PIVOT_RULE,
     POSITIONAL_COLUMN, POWER_RULE, PROJECT_FUNCTION_CALL, PROJECT_TABLE_FUNCTION, QUALIFY,
@@ -398,6 +398,18 @@ pub const RULES: &[RuleSpec] = &[
         id: IFF,
         constructs: &["fn:IFF"],
         conditions: "A BOOLEAN condition; branches unify.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: ADD_MONTHS_RULE,
+        constructs: &["fn:ADD_MONTHS"],
+        conditions: "ADD_MONTHS of a DATE, a TIMESTAMP_NTZ, or a TIMESTAMP_TZ with its UTC offset known, and a NUMBER of months rounded half away from zero, as DATEADD by month: the day clamped to the month's end, and a month's last day moved on to the last day of the month it lands in, the time of day kept, as recorded; a TIMESTAMP_TZ moves on its wall clock. NULL where either argument is NULL.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: MONTHS_BETWEEN_RULE,
+        constructs: &["fn:MONTHS_BETWEEN"],
+        conditions: "MONTHS_BETWEEN of DATEs and TIMESTAMP_NTZs, as NUMBER(27,6): the whole months between their calendar months where their days of month match or both are a month's last day, the clock ignored; otherwise those months plus the difference of their days and clocks over 31 days, rounded half away from zero at six decimals, as recorded. DATE inputs never tie; a timestamp tie at the sixth decimal no recording shows. NULL where either is NULL.",
         failures: &[],
     },
     RuleSpec {

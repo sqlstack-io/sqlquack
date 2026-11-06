@@ -13,10 +13,28 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 use crate::conversion::_helpers::expressions::casts::cast_to;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Emitted};
-use crate::conversion::constants::{
-    COVARIANCE_AGGREGATES, COVARIANCE_RULE, FLOAT_TYPE_NAME, NO_DISTINCT_VARIANCE,
-    SQUARED_PARAMETER, VARIANCE_AGGREGATES, VARIANCE_FLOAT_RULE, VARIANCE_RULE, VARIANCE_SCALES,
-};
+use crate::conversion::constants::{COVARIANCE_RULE, VARIANCE_FLOAT_RULE, VARIANCE_RULE};
+
+/// Variances and standard deviations: the name, whether over the population, and whether a root.
+const VARIANCE_AGGREGATES: &[(&str, bool, bool)] = &[
+    ("VARIANCE", false, false),
+    ("VAR_SAMP", false, false),
+    ("VAR_POP", true, false),
+    ("VARIANCE_POP", true, false),
+    ("STDDEV", false, true),
+    ("STDDEV_SAMP", false, true),
+    ("STDDEV_POP", true, true),
+];
+/// Covariances, and whether over the population.
+const COVARIANCE_AGGREGATES: &[(&str, bool)] = &[("COVAR_SAMP", false), ("COVAR_POP", true)];
+/// The variance Snowflake rejects with DISTINCT, though its other spellings accept it.
+const NO_DISTINCT_VARIANCE: &str = "VARIANCE";
+/// An exact variance's result scale: this base plus twice the input's scale, at most the widest.
+const VARIANCE_SCALES: (u8, u8) = (6, 12);
+/// The lambda parameter squaring each distinct value of an exact variance.
+const SQUARED_PARAMETER: &str = "__sqlquack_squared";
+/// The type name statistics cast NUMBER and text arguments to.
+const FLOAT_TYPE_NAME: &str = "FLOAT";
 
 /// Whether `name` is a variance, standard deviation or covariance aggregate converted here.
 pub(crate) fn is_statistic(name: &str) -> bool {

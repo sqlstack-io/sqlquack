@@ -23,27 +23,6 @@ pub const NAMED_AGGREGATE_NAMES: &[&str] = &[
     "MEDIAN",
     MULTI_COUNT,
 ];
-/// Variances and standard deviations: the name, whether over the population, and whether a root.
-pub(crate) const VARIANCE_AGGREGATES: &[(&str, bool, bool)] = &[
-    ("VARIANCE", false, false),
-    ("VAR_SAMP", false, false),
-    ("VAR_POP", true, false),
-    ("VARIANCE_POP", true, false),
-    ("STDDEV", false, true),
-    ("STDDEV_SAMP", false, true),
-    ("STDDEV_POP", true, true),
-];
-/// Covariances, and whether over the population.
-pub(crate) const COVARIANCE_AGGREGATES: &[(&str, bool)] =
-    &[("COVAR_SAMP", false), ("COVAR_POP", true)];
-/// The variance Snowflake rejects with DISTINCT, though its other spellings accept it.
-pub(crate) const NO_DISTINCT_VARIANCE: &str = "VARIANCE";
-/// An exact variance's result scale: this base plus twice the input's scale, at most the widest.
-pub(crate) const VARIANCE_SCALES: (u8, u8) = (6, 12);
-/// The lambda parameter squaring each distinct value of an exact variance.
-pub(crate) const SQUARED_PARAMETER: &str = "__sqlquack_squared";
-/// The type name statistics cast NUMBER and text arguments to.
-pub(crate) const FLOAT_TYPE_NAME: &str = "FLOAT";
 /// COUNT of several values, which the parser keeps as a named call.
 pub const MULTI_COUNT: &str = "COUNT";
 /// The recorded type of ARRAY_POSITION.
@@ -632,6 +611,19 @@ pub const VARIANCE_RULE: &str = "rule.variance";
 pub const VARIANCE_FLOAT_RULE: &str = "rule.variance_float";
 /// COVAR_SAMP and COVAR_POP of NUMBER or FLOAT pairs, with exact sums.
 pub const COVARIANCE_RULE: &str = "rule.covariance";
+/// ADD_MONTHS of a DATE or timestamp: DATEADD of the rounded months, a month's last day kept.
+pub const ADD_MONTHS_RULE: &str = "rule.add_months";
+/// MONTHS_BETWEEN of DATEs and naive timestamps.
+pub const MONTHS_BETWEEN_RULE: &str = "rule.months_between";
+/// MONTHS_BETWEEN's recorded type.
+pub const MONTHS_BETWEEN_TYPE: SnowflakeType = SnowflakeType::Number {
+    precision: 27,
+    scale: 6,
+};
+/// The month MONTHS_BETWEEN divides a partial month by: 31 days, in nanoseconds.
+pub(crate) const MONTHS_BETWEEN_MONTH_NANOSECONDS: i128 = 31 * 86_400 * 1_000_000_000;
+/// The DATEADD unit ADD_MONTHS moves by.
+pub(crate) const MONTH_UNIT: &str = "MONTH";
 /// NVL2 of a non-semi-structured value and two branches that unify without reading text.
 pub const NVL2_RULE: &str = "rule.nvl2";
 /// NULLIF.

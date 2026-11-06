@@ -7,6 +7,7 @@ use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::constants::NANOSECOND_DIGITS;
 use sqlquack_duckdb::blocks::main::cast::cast;
+use sqlquack_duckdb::blocks::main::exact_decimal_divide::exact_decimal_divide;
 use sqlquack_duckdb::blocks::main::string_literal::string_literal;
 use sqlquack_duckdb::blocks::models::TextFailure;
 use sqlquack_duckdb::temporal::constants::DATE_FORMATS;
@@ -58,13 +59,15 @@ use crate::conversion::_helpers::support::tree::{
     field, node_construct, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    CURRENT_TIME_RULE, DATE_ARITHMETIC, DATE_FORMAT_RULE, DATE_NAME, DATE_PART_RULE, DATE_PARTS,
-    DAY_NAME_RULE, DECIMAL_EPOCH_RULE, FRACTIONAL_DATE_AMOUNT, FROM_PARTS, LAST_DAY_RULE,
-    MAX_FRACTION_DIGITS_U8, MICROSECOND_DIGITS, NULL_BRANCHES, NUMBER_TEXT_FORMAT,
-    OFFSET_FREE_UNITS, RECORDED_TIME_ZONES, SCALE_DIGITS, TEMPORAL_TEXT_FORMAT, TEXT_TO_TIME_RULE,
-    TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE,
-    TIMESTAMP_NTZ_NAME, TIMESTAMP_TIME_RULE, TO_DATE_TEMPORAL, TO_TIMESTAMP_TEMPORAL,
-    UTC_OFFSET_ARITHMETIC, UTC_ZONE, ZONE_COLUMNS, ZONED_PARTS,
+    ADD_MONTHS_RULE, CURRENT_TIME_RULE, DATE_ARITHMETIC, DATE_FORMAT_RULE, DATE_NAME,
+    DATE_PART_RULE, DATE_PARTS, DAY_NAME_RULE, DAY_UNIT, DECIMAL_EPOCH_RULE,
+    FRACTIONAL_DATE_AMOUNT, FROM_PARTS, LAST_DAY_RULE, MAX_FRACTION_DIGITS_U8, MICROSECOND_DIGITS,
+    MONTH_UNIT, MONTHS_BETWEEN_MONTH_NANOSECONDS, MONTHS_BETWEEN_RULE, MONTHS_BETWEEN_TYPE,
+    NULL_BRANCHES, NUMBER_TEXT_FORMAT, OFFSET_FREE_UNITS, RECORDED_TIME_ZONES, SCALE_DIGITS,
+    TEMPORAL_TEXT_FORMAT, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC,
+    TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TIMESTAMP_NTZ_NAME, TIMESTAMP_TIME_RULE,
+    TO_DATE_TEMPORAL, TO_TIMESTAMP_TEMPORAL, UTC_OFFSET_ARITHMETIC, UTC_ZONE, ZONE_COLUMNS,
+    ZONED_PARTS,
 };
 use crate::text_formats::main::clock_format::clock_format;
 use crate::text_formats::main::strftime_pattern::strftime_pattern;
@@ -358,7 +361,102 @@ pub(crate) fn date_add(
     let _rule = site.context.log.rule(DATE_ARITHMETIC);
     let refuse = |reason: String| outside_conditions(construct.clone(), reason);
     let unit = unit_name(unit).ok_or_else(|| refuse("an unreadable unit".to_owned()))?;
-    let mut amount = convert_expression(amount, site)?;
+    let amount = convert_expression(amount, site)?;
+    let operand = convert_expression(value, site)?;
+    shift((&unit, amount), operand, false, (construct, site))
+}
+
+/// ADD_MONTHS(value, months): DATEADD of the rounded months, a month's last day kept the last day.
+pub(crate) fn add_months(
+    parts: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(ADD_MONTHS_RULE);
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let [value, amount] = parts else {
+        return Err(refuse(format!("ADD_MONTHS of {} arguments", parts.len())));
+    };
+    let operand = convert_expression(value, site)?;
+    let amount = convert_expression(amount, site)?;
+    match (operand.data_type, amount.data_type) {
+        (
+            SnowflakeType::Date
+            | SnowflakeType::TimestampNtz { .. }
+            | SnowflakeType::TimestampTz { .. },
+            SnowflakeType::Number { .. } | SnowflakeType::Null,
+        ) => shift((MONTH_UNIT, amount), operand, true, (construct, site)),
+        (operand, amount) => Err(refuse(format!(
+            "ADD_MONTHS of {operand} and {amount}, which no recording shows"
+        ))),
+    }
+}
+
+/// MONTHS_BETWEEN(a, b) of DATEs and naive timestamps, whole or over a 31-day month, as recorded.
+pub(crate) fn months_between(
+    parts: &[Value],
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let log = site.context.log;
+    let _rule = log.rule(MONTHS_BETWEEN_RULE);
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    let [later, earlier] = parts else {
+        return Err(refuse(format!(
+            "MONTHS_BETWEEN of {} arguments",
+            parts.len()
+        )));
+    };
+    let (later, earlier) = (
+        convert_expression(later, site)?,
+        convert_expression(earlier, site)?,
+    );
+    let read = |value: &Emitted| match value.data_type {
+        SnowflakeType::Date => Ok((value.sql.clone(), "0".to_owned())),
+        SnowflakeType::TimestampNtz { precision } => {
+            let day = truncate_timestamp_to_date(&value.sql, precision, log);
+            let clock = format!(
+                "(epoch_ns({}) - epoch_ns(CAST({day} AS TIMESTAMP)))",
+                value.sql
+            );
+            Ok((day, clock))
+        }
+        other => Err(refuse(format!(
+            "MONTHS_BETWEEN of a {other}, which no recording shows"
+        ))),
+    };
+    let ((a, a_clock), (b, b_clock)) = (read(&later)?, read(&earlier)?);
+    let whole = format!("((year({a}) - year({b})) * 12 + month({a}) - month({b}))");
+    let whole_only =
+        format!("(day({a}) = day({b}) OR (last_day({a}) = {a} AND last_day({b}) = {b}))");
+    let month = MONTHS_BETWEEN_MONTH_NANOSECONDS;
+    let numerator = format!(
+        "(CAST({whole} AS HUGEINT) * {month} + CAST(day({a}) - day({b}) AS HUGEINT) * {} \
+         + CAST({a_clock} AS HUGEINT) - CAST({b_clock} AS HUGEINT))",
+        month / 31
+    );
+    let (divided, _) = exact_decimal_divide(
+        (&numerator, MAX_PRECISION, 0),
+        (&month.to_string(), MAX_PRECISION, 0),
+        (MONTHS_BETWEEN_TYPE, false),
+        log,
+    )
+    .map_err(refuse)?;
+    let whole = cast(whole.as_str(), MONTHS_BETWEEN_TYPE, log).map_err(refuse)?;
+    Ok(Emitted::new(
+        format!("(CASE WHEN {whole_only} THEN {whole} ELSE {divided} END)"),
+        MONTHS_BETWEEN_TYPE,
+    ))
+}
+
+/// `operand` moved by `amount` of `unit`; with `month_end`, a month's last day stays a last day.
+fn shift(
+    (unit, mut amount): (&str, Emitted),
+    operand: Emitted,
+    month_end: bool,
+    (construct, site): (&Construct, Site<'_>),
+) -> Result<Emitted, Refusal> {
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
     match amount.data_type {
         SnowflakeType::Number { scale: 0, .. } => {}
         SnowflakeType::Number { .. } | SnowflakeType::Float => {
@@ -371,9 +469,9 @@ pub(crate) fn date_add(
                 },
             );
         }
+        SnowflakeType::Null if month_end => {}
         other => return Err(refuse(format!("a {other} amount"))),
     }
-    let operand = convert_expression(value, site)?;
     let operand = match operand.data_type {
         SnowflakeType::Varchar => {
             let ntz = SnowflakeType::TimestampNtz { precision: 9 };
@@ -394,7 +492,7 @@ pub(crate) fn date_add(
     if let SnowflakeType::Time { .. } = operand.data_type {
         let _time = site.context.log.rule(TIME_ARITHMETIC);
         let sql =
-            time_add_value(&operand.sql, (&unit, &amount.sql), site.context.log).map_err(refuse)?;
+            time_add_value(&operand.sql, (unit, &amount.sql), site.context.log).map_err(refuse)?;
         return Ok(Emitted::new(sql, operand.data_type));
     }
     if let SnowflakeType::TimestampNtz { precision } = operand.data_type
@@ -404,11 +502,16 @@ pub(crate) fn date_add(
     }
     let sql = date_add_value(
         &operand.sql,
-        (&unit, &format!("CAST({} AS BIGINT)", amount.sql)),
+        (unit, &format!("CAST({} AS BIGINT)", amount.sql)),
         operand.data_type,
         site.context.log,
     )
     .map_err(refuse)?;
+    let sql = match month_end {
+        true => kept_month_end((&operand.sql, sql), operand.data_type, site.context.log)
+            .map_err(refuse)?,
+        false => sql,
+    };
     let (sql, data_type) = match operand.data_type {
         SnowflakeType::TimestampNtz { precision } if precision < MAX_FRACTION_DIGITS_U8 => {
             let nanoseconds = SnowflakeType::TimestampNtz {
@@ -432,6 +535,26 @@ pub(crate) fn date_add(
         zoned,
         site.context.log,
     ))
+}
+
+/// `shifted` moved on to its month's last day where `original`, of `data_type`, is a month's last day.
+fn kept_month_end(
+    (original, shifted): (&str, String),
+    data_type: SnowflakeType,
+    log: &ProvenanceLog,
+) -> Result<String, String> {
+    let day = |sql: &str| match data_type {
+        SnowflakeType::TimestampNtz { precision } => {
+            truncate_timestamp_to_date(sql, precision, log)
+        }
+        _ => sql.to_owned(),
+    };
+    let (before, after) = (day(original), day(&shifted));
+    let days = format!(
+        "CASE WHEN last_day({before}) = {before} \
+         THEN datediff('day', {after}, last_day({after})) ELSE 0 END"
+    );
+    date_add_value(&shifted, (DAY_UNIT, &days), data_type, log)
 }
 
 /// DATEDIFF(unit, start, end) with a keyword unit.
