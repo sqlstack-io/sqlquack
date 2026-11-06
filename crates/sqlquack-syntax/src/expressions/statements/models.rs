@@ -610,6 +610,19 @@ pub struct Pragma {
     pub use_assignment_syntax: bool,
 }
 
+/// A PostgreSQL utility or session statement with no statement of its own, e.g. `VACUUM (FULL) t` or `LISTEN c`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct UtilityStatement {
+    /// The statement's keywords, e.g. "VACUUM", "LISTEN", "DECLARE CURSOR", "SET CONSTRAINTS"
+    pub kind: String,
+    /// The statement's options in order, e.g. `(FULL, true)` or `(SCROLL)`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub options: Vec<Expression>,
+    /// The statement's operands in order: names, values, settings or a statement
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub operands: Vec<Expression>,
+}
+
 /// COMMENT ON statement
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Comment {

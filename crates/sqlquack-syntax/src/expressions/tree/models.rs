@@ -441,6 +441,7 @@ use crate::expressions::statements::models::UnsetStatement;
 use crate::expressions::statements::models::Update;
 use crate::expressions::statements::models::Use;
 use crate::expressions::statements::models::UserDefinedFunction;
+use crate::expressions::statements::models::UtilityStatement;
 use crate::expressions::statements::models::Var;
 use crate::expressions::statements::models::Variadic;
 use crate::expressions::statements::models::Version;
@@ -1196,6 +1197,7 @@ pub enum Expression {
     Grant(Box<Grant>),
     Revoke(Box<Revoke>),
     AlterDefaultPrivileges(Box<AlterDefaultPrivileges>),
+    UtilityStatement(Box<UtilityStatement>),
     Comment(Box<Comment>),
     SetStatement(Box<SetStatement>),
     UnsetStatement(Box<UnsetStatement>),

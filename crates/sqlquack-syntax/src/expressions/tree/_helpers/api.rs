@@ -419,6 +419,7 @@ impl Expression {
             Expression::Grant(_) => "grant",
             Expression::Revoke(_) => "revoke",
             Expression::AlterDefaultPrivileges(_) => "alter_default_privileges",
+            Expression::UtilityStatement(_) => "utility_statement",
             Expression::Comment(_) => "comment",
             Expression::SetStatement(_) => "set_statement",
             Expression::UnsetStatement(_) => "unset_statement",

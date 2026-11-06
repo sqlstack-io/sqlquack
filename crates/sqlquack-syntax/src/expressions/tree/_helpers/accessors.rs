@@ -125,6 +125,7 @@ impl Expression {
             | Expression::Grant(_)
             | Expression::Revoke(_)
             | Expression::AlterDefaultPrivileges(_)
+            | Expression::UtilityStatement(_)
             | Expression::Cache(_)
             | Expression::Uncache(_)
             | Expression::LoadData(_)
