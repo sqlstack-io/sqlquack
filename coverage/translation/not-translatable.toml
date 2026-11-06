@@ -859,7 +859,7 @@ forms = [
 
 [[group]]
 id = "warehouses-sessions-and-query-history"
-reason = "Virtual warehouses, roles in use, locks, transactions in the account, account parameters, query results by query id and query plans. These describe Snowflake's compute and account state, which DuckDB does not have, so a matching result is not meaningful."
+reason = "Virtual warehouses, roles in use, locks, transactions in the account, account parameters, query results by query id and query plans. These describe Snowflake's compute and account state, which DuckDB does not have, so a matching result is not meaningful. SELECT ... FOR UPDATE is listed with them: it works on hybrid tables only, never under AUTOCOMMIT, and its only effect is to lock the selected rows until the transaction ends."
 forms = [
   "sf.ddl.alter-warehouse.abort-all-queries",
   "sf.ddl.alter-warehouse.add-tables",
@@ -876,6 +876,7 @@ forms = [
   "sf.ddl.create-warehouse.create-warehouse",
   "sf.ddl.create-warehouse.define-warehouse",
   "sf.ddl.drop-warehouse",
+  "sf.query.for-update",
   "sf.transaction_session.desc-result",
   "sf.transaction_session.show-locks",
   "sf.transaction_session.show-parameters",
