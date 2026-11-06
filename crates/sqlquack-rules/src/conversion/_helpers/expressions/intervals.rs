@@ -54,8 +54,12 @@ pub(crate) fn interval_arithmetic(
             value.data_type
         )));
     }
+    let unit_outside_quotes = node_kind(interval)
+        .and_then(|(_, payload)| payload.get("unit"))
+        .is_some_and(|unit| !is_inert(unit));
     let result_type = match value.data_type {
-        SnowflakeType::TimestampNtz { .. } => {
+        SnowflakeType::Date if !unit_outside_quotes => SnowflakeType::Date,
+        SnowflakeType::Date | SnowflakeType::TimestampNtz { .. } => {
             diverge(site.context, TIMESTAMP_RANGE, &construct)?;
             SnowflakeType::TimestampNtz {
                 precision: INTERVAL_TIMESTAMP_PRECISION,
