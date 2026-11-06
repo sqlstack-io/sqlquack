@@ -285,7 +285,7 @@ fn convert_kind(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
         "annotated" => commented(payload, site),
         "neg" => negate(payload, site),
         "subquery" => scalar_subquery(payload, site),
-        "add" | "sub" if adds_interval(payload) => interval_arithmetic(kind, payload, site),
+        "add" | "sub" if adds_interval(payload) => interval_arithmetic((kind, node), payload, site),
         "add" | "sub" | "mul" | "div" => arithmetic(kind, payload, site),
         "mod" => modulo(payload, site),
         "eq" | "neq" | "lt" | "lte" | "gt" | "gte" => comparison_predicate(kind, payload, site),

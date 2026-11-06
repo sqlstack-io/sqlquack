@@ -38,7 +38,7 @@ pub(crate) fn census_command(
         }
     };
     let conversion = match chosen_policy(
-        &arguments.conversion.policy,
+        arguments.conversion.policy.as_deref(),
         arguments.conversion.builtin_policy,
     ) {
         Ok(policy) => divergence_options(policy.as_ref(), &arguments.conversion),

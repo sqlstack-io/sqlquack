@@ -1,0 +1,27 @@
+category = "translation"
+construct = "sf.expressions.data-types-semistructured.array"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_from_variant"
+description = "A JSON array cast to ARRAY keeps its elements, nested and mixed-type ones included. Catches: the array flattened, or its elements turned to text"
+columns = [{ name = "j", type = "VARCHAR" }]
+rows = [
+  ["'[1, \"a\", [2, 3], null]'"],
+  ["'[]'"],
+]
+query = "SELECT ordinal, CAST(PARSE_JSON(j) AS ARRAY) AS r, ARRAY_SIZE(CAST(PARSE_JSON(j) AS ARRAY)) AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null"
+description = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies. Catches: NULL replaced by a value, or the cast raising for NULL"
+columns = [{ name = "j", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'[1]'"],
+]
+query = "SELECT ordinal, CAST(PARSE_JSON(j) AS ARRAY) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

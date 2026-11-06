@@ -15,8 +15,8 @@ sqlquack census [OPTIONS] <PATHS>...
 ```
 
 ```bash
-sqlquack census target/compiled/my_project/models --schema schema.json
-sqlquack census target/compiled --schema schema.json --chain-models --json
+sqlquack census target/compiled/my_project/models --schema schema.json --builtin-policy
+sqlquack census target/compiled --schema schema.json --chain-models --json --builtin-policy
 ```
 
 Each `.sql` file is one query, or one model compiled by
@@ -26,16 +26,16 @@ recognised. A directory is searched for `.sql` files. Compiled models name relat
 they resolve.
 
 ```console
-$ sqlquack census target/compiled/my_project/models --schema schema.json
-Census of 3 snowflake SQL files
-  parsed 3 (3 statements), unparsed 0, empty 0
-  distinct constructs 15 (2 clause, 4 fn, 9 node)
-  files refused: missing rule 0, outside type conditions 0, unresolved name 0, not expressible 0, parse fidelity 0, conversion budget 0, divergence refused 1
-  convertible: strict 2 (every model upstream converts too), unit-testable 2 (the file's own SQL converts; 0 with an upstream model refused or not scanned)
-  with no named assumption: strict 2, unit-testable 2 (relying on one: none)
+$ sqlquack census target/compiled/my_project/models --schema schema.json --builtin-policy
+Census of 25 snowflake SQL files
+  parsed 25 (25 statements), unparsed 0, empty 0
+  distinct constructs 21 (4 clause, 4 fn, 1 join, 12 node)
+  files refused: missing rule 0, outside type conditions 0, unresolved name 0, not expressible 0, parse fidelity 0, conversion budget 0, divergence refused 2
+  convertible: strict 23 (every model upstream converts too), unit-testable 23 (the file's own SQL converts; 0 with an upstream model refused or not scanned)
+  with no named assumption: strict 23, unit-testable 23 (relying on one: none)
 
 Refusals by category and construct (top 50)
-       1  a known divergence the policy refuses: fn:HASH
+       2  a known divergence the policy refuses: fn:SUM
 ```
 
 The report holds counts and construct names only, never SQL text or file names. `--names` adds

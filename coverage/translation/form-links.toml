@@ -480,6 +480,22 @@ constructs = ["cast:INT"]
 forms = ["sf.expressions.data-types-numeric.int"]
 
 [[link]]
+constructs = ["cast:BIGINT"]
+forms = ["sf.expressions.data-types-numeric.int"]
+
+[[link]]
+constructs = ["cast:SMALLINT"]
+forms = ["sf.expressions.data-types-numeric.int"]
+
+[[link]]
+constructs = ["cast:TINYINT"]
+forms = ["sf.expressions.data-types-numeric.int"]
+
+[[link]]
+constructs = ["cast:BYTEINT"]
+forms = ["sf.expressions.data-types-numeric.int"]
+
+[[link]]
 constructs = ["cast:FLOAT"]
 forms = ["sf.expressions.data-types-numeric.float"]
 
@@ -587,6 +603,10 @@ forms = ["sf.expressions.data-types-semistructured.subscript-dot"]
 
 [[link]]
 constructs = ["node:map_func"]
+forms = ["sf.expressions.data-types-semistructured.colon-subscript-dot"]
+
+[[link]]
+constructs = ["node:braced_wildcard"]
 forms = ["sf.expressions.data-types-semistructured.colon-subscript-dot"]
 
 [[link]]

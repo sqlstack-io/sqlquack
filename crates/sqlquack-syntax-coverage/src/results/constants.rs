@@ -42,3 +42,23 @@ pub const CALL_BARE: &str = "call_bare:";
 pub const CALL_PREFIXES: [&str; 4] = [CALL, CALL_OVER, CALL_NAMED, CALL_BARE];
 /// The refused construct of a refusal that names no construct: the whole statement.
 pub const STATEMENT_REFUSAL: &str = "statement";
+/// The directory of per-family obligation files, in the translation directory.
+pub const OBLIGATIONS_DIR: &str = "obligations";
+/// The prefix of every case an obligation cites, before the statement's reference.
+pub const OBLIGATION_CASES_PREFIX: &str = "cases/";
+/// The directory under the evidence cases holding translation cases.
+pub const TRANSLATION_CASES: &str = "translation/";
+/// The boundary kinds a boundary obligation may name.
+pub const BOUNDARY_SUBKINDS: [&str; 7] = [
+    "overflow",
+    "magnitude",
+    "rounding_scale",
+    "empty_string",
+    "negative",
+    "timezone_dst",
+    "leap_day",
+];
+/// Withdrawn obligation ids, in the translation directory.
+pub const RETIRED_OBLIGATIONS_FILE: &str = "retired-obligations.toml";
+/// The extension of each `<family>` obligation file.
+pub const OBLIGATION_FILE_EXTENSION: &str = "toml";

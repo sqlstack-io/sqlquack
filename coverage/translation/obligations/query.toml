@@ -124,6 +124,42 @@ cases = ["cases/translation/query/group-by-cube.toml#t003_null_key"]
 required = true
 
 [[obligation]]
+id = "sf.query.group-by-grouping-sets.t001"
+form = "sf.query.group-by-grouping-sets"
+kind = "type_combination"
+target = "GROUPING SETS ((g), (x), ())"
+note = "Three sets: by g, by x and the grand total."
+catches = "the sets combined as a cross product"
+reading = "group-by-grouping-sets: the union of the groupings named, with NULL in the columns a set leaves out"
+cases = []
+required = true
+held = "waits on a construct key for GROUPING SETS without a space, which form-links can name (B's post-launch classifier item)"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.t002"
+form = "sf.query.group-by-grouping-sets"
+kind = "type_combination"
+target = "a repeated set"
+note = "GROUPING SETS ((g), (g)); the page does not say; the recording decides whether the repeated set returns its rows twice."
+catches = "duplicates removed where Snowflake keeps them (or the reverse)"
+reading = "group-by-grouping-sets: the union of the groupings named, with NULL in the columns a set leaves out"
+cases = []
+required = true
+held = "waits on a construct key for GROUPING SETS without a space, which form-links can name (B's post-launch classifier item)"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.t003"
+form = "sf.query.group-by-grouping-sets"
+kind = "null_argument"
+target = "NULL key"
+note = "The NULL group of g against the row of the () set, where g is NULL because the set leaves it out."
+catches = "the two merged"
+reading = "group-by-grouping-sets: the union of the groupings named, with NULL in the columns a set leaves out"
+cases = []
+required = true
+held = "waits on a construct key for GROUPING SETS without a space, which form-links can name (B's post-launch classifier item)"
+
+[[obligation]]
 id = "sf.query.group-by-rollup.t001"
 form = "sf.query.group-by-rollup"
 kind = "type_combination"

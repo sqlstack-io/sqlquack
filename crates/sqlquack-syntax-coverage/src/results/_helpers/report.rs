@@ -6,10 +6,12 @@ use crate::formats::models::SyntaxCoverage;
 use crate::results::_helpers::files::{group_sha256, signed, subjects};
 use crate::results::_helpers::forms::{family_tallies, form_result, statement_tally};
 use crate::results::_helpers::links::{FunctionIndex, link_statement};
+use crate::results::_helpers::obligations::uncited_cases;
 use crate::results::_helpers::worklist::worklist;
 use crate::results::constants::{NOT_TRANSLATABLE_SUBJECT, QUERY_FAMILIES};
 use crate::results::models::{
-    FormResult, RecordedStatement, ResultState, ResultsFiles, ResultsReport, StatementOutcome,
+    FormResult, ObligationState, ObligationTally, RecordedStatement, ResultState, ResultsFiles,
+    ResultsReport, StatementOutcome, TranslationObligation,
 };
 use crate::translation::main::catalogued_forms::catalogued_forms;
 
@@ -80,7 +82,23 @@ pub(crate) fn form_results(
     coverage: &SyntaxCoverage,
     files: &ResultsFiles,
     (statements, links): (&[RecordedStatement], &Links),
+    states: &BTreeMap<String, ObligationState>,
 ) -> Result<Vec<FormResult>, Vec<String>> {
+    let mut unmet: BTreeMap<&str, Vec<String>> = BTreeMap::new();
+    let mut declared: BTreeSet<&str> = BTreeSet::new();
+    for obligation in files
+        .obligations
+        .iter()
+        .filter(|obligation| obligation.required)
+    {
+        declared.insert(obligation.form.as_str());
+        if states.get(&obligation.id) != Some(&ObligationState::Met) {
+            unmet
+                .entry(obligation.form.as_str())
+                .or_default()
+                .push(obligation.id.clone());
+        }
+    }
     let mut linked: BTreeMap<&str, Vec<&RecordedStatement>> = BTreeMap::new();
     for statement in statements {
         let forms = links.get(statement.reference.as_str());
@@ -103,7 +121,13 @@ pub(crate) fn form_results(
                 matching.reference
             ));
         }
-        results.push(form_result((id, family), is_listed, statements));
+        let unmet_here = unmet.get(id).cloned().unwrap_or_default();
+        results.push(form_result(
+            (id, family),
+            is_listed,
+            statements,
+            (unmet_here, declared.contains(id)),
+        ));
     }
     match problems.is_empty() {
         true => Ok(results),
@@ -148,8 +172,18 @@ pub(crate) fn assemble(
     files: &ResultsFiles,
     functions: FunctionIndex,
     (statements, links): (&[RecordedStatement], &Links),
-    form_results: Vec<FormResult>,
+    (form_results, obligation_states): (Vec<FormResult>, BTreeMap<String, ObligationState>),
 ) -> ResultsReport {
+    let mut obligations = ObligationTally::default();
+    for state in obligation_states.values() {
+        obligations.declared += 1;
+        *match state {
+            ObligationState::Met => &mut obligations.met,
+            ObligationState::Unmet => &mut obligations.unmet,
+            ObligationState::Held => &mut obligations.held,
+            ObligationState::Unmeasured => &mut obligations.unmeasured,
+        } += 1;
+    }
     let with_forms: BTreeSet<&str> = links
         .iter()
         .filter(|(_, forms)| !forms.is_empty())
@@ -187,5 +221,32 @@ pub(crate) fn assemble(
             .map(|statement| (statement.reference.clone(), statement.outcome))
             .collect(),
         form_results,
+        obligations,
+        held: reasons(&files.obligations, |obligation| obligation.held.as_ref()),
+        unmeasured: reasons(&files.obligations, |obligation| {
+            obligation.reason.as_ref().filter(|_| !obligation.required)
+        }),
+        uncited_cases: uncited_cases(&files.obligations, statements),
+        retired_obligations: files.retired.clone(),
+        obligation_states,
     }
+}
+
+/// Each obligation `pick` gives a reason for, by id.
+fn reasons(
+    obligations: &[TranslationObligation],
+    pick: fn(&TranslationObligation) -> Option<&String>,
+) -> BTreeMap<String, String> {
+    obligations
+        .iter()
+        .filter_map(|obligation| reason(obligation, pick))
+        .collect()
+}
+
+/// The obligation's id and the reason `pick` gives, if any.
+fn reason(
+    obligation: &TranslationObligation,
+    pick: fn(&TranslationObligation) -> Option<&String>,
+) -> Option<(String, String)> {
+    pick(obligation).map(|why| (obligation.id.clone(), why.clone()))
 }
