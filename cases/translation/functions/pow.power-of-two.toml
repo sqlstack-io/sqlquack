@@ -1,0 +1,57 @@
+category = "translation"
+construct = "sf.functions.pow.power"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_whole_exponents"
+description = "POWER(2, n) for whole exponents from -52 to 64, as dbt_utils.date_spine writes it for each bit. Catches: an inexact power of two, an integer result, or a lost low bit past 2^53"
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [
+  ["0"], ["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"], ["8"], ["9"], ["10"], ["11"],
+  ["31"], ["32"], ["52"], ["53"], ["62"], ["63"], ["64"],
+  ["-1"], ["-2"], ["-52"],
+]
+query = "SELECT POWER(2, n) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_literal_exponents_in_a_sum"
+description = "The dbt_utils.date_spine shape: a NUMBER times POWER(2, k) for literal k, summed, plus 1. Catches: the result typed NUMBER instead of FLOAT, or a power other than 2^k"
+columns = [{ name = "a", type = "NUMBER(38,0)" }, { name = "b", type = "NUMBER(38,0)" }]
+rows = [
+  ["0", "0"],
+  ["1", "0"],
+  ["1", "1"],
+  ["NULL", "1"],
+]
+query = "SELECT a * POWER(2, 0) + b * POWER(2, 1) + 1 AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_range_edges"
+description = "The largest and smallest finite powers of two in a double, 2^1023 and 2^-1074, and 2^-1075 below the smallest. Catches: 2^1023 overflowing, or the subnormal 2^-1074 flushed to 0"
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [["1023"], ["-1074"], ["-1075"]]
+query = "SELECT POWER(2, n) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_overflow"
+description = "2^1024, past the largest double. Catches: a finite value or an error where Snowflake gives its overflow result"
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [["1024"]]
+query = "SELECT POWER(2, n) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_null_exponent"
+description = "POWER(2, NULL). Catches: 1 or 2 returned instead of NULL"
+columns = [{ name = "n", type = "NUMBER(38,0)" }]
+rows = [["NULL"], ["3"]]
+query = "SELECT POWER(2, n) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

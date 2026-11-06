@@ -30,7 +30,7 @@ pub(crate) fn adds_interval(payload: &Value) -> bool {
 
 /// `value + INTERVAL 'n unit'` or `value - INTERVAL 'n unit'`, as DATEADD of n or -n units.
 pub(crate) fn interval_arithmetic(
-    kind: &str,
+    (kind, node): (&str, &Value),
     payload: &Value,
     site: Site<'_>,
 ) -> Result<Emitted, Refusal> {
@@ -41,6 +41,23 @@ pub(crate) fn interval_arithmetic(
     let payload = payload_object(payload, &construct)?;
     let value = convert_expression(field(payload, "left", &construct)?, site)?;
     let interval = field(payload, "right", &construct)?;
+    let quoted_value = site
+        .context
+        .locator
+        .source_text(node)
+        .is_some_and(|written| {
+            let lower = written.to_ascii_lowercase();
+            lower.rfind(INTERVAL_KIND).is_some_and(|start| {
+                lower[start + INTERVAL_KIND.len()..]
+                    .trim_start()
+                    .starts_with('\'')
+            })
+        });
+    if !quoted_value {
+        return Err(refuse(
+            "an INTERVAL whose value is not a quoted string, which no recording shows".to_owned(),
+        ));
+    }
     let (amount, unit) =
         interval_literal(interval, site)?.ok_or_else(|| refuse(INTERVAL_REFUSAL.to_owned()))?;
     let accepted = match value.data_type {
@@ -54,8 +71,12 @@ pub(crate) fn interval_arithmetic(
             value.data_type
         )));
     }
+    let unit_outside_quotes = node_kind(interval)
+        .and_then(|(_, payload)| payload.get("unit"))
+        .is_some_and(|unit| !is_inert(unit));
     let result_type = match value.data_type {
-        SnowflakeType::TimestampNtz { .. } => {
+        SnowflakeType::Date if !unit_outside_quotes => SnowflakeType::Date,
+        SnowflakeType::Date | SnowflakeType::TimestampNtz { .. } => {
             diverge(site.context, TIMESTAMP_RANGE, &construct)?;
             SnowflakeType::TimestampNtz {
                 precision: INTERVAL_TIMESTAMP_PRECISION,
