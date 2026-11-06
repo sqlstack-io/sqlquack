@@ -16,7 +16,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t002_first_type"
-description = "A string first, so the numbers compare as strings. Catches: numeric comparison ('10' vs 9 gives 10 instead of '9' for GREATEST)"
+description = "A string first beside a number. The page says the rest convert to the first type, but Snowflake recorded a NUMBER(38,5) result: the string converts to a number and the comparison is numeric. Catches: string comparison ('9' for GREATEST('10', 9), '10' for LEAST('10', 9)) or a VARCHAR result"
 columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "NUMBER(38,0)" }]
 rows = [
   ["'10'", "9"],
