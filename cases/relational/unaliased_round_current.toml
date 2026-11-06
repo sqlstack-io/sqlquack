@@ -1,0 +1,92 @@
+# The names Snowflake gives unaliased ROUND and current-time items, as a playground query writes them.
+# The recorded column names are the receipts for naming them.
+category = "relational"
+construct = "node:alias"
+session_profile = "utc-v1"
+
+[[case]]
+id = "unaliased_round"
+description = "Unaliased ROUND with one and two arguments, in upper and lower case and with inner spaces, over a NULL, a half and a negative."
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.25"],
+  ["1.25"],
+  ["-2.55"],
+  ["NULL"],
+]
+query = "SELECT ROUND(n, 1), ROUND(n), round( n, 0 ) FROM input"
+order = "ordered"
+tags = ["null", "boundary", "duplicates"]
+
+[[case]]
+id = "unaliased_round_no_rows"
+description = "Unaliased ROUND over no rows still names its columns."
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.00"],
+]
+query = "SELECT ROUND(n, 1), ROUND(n) FROM input WHERE n > 5"
+order = "ordered"
+tags = ["empty-input"]
+
+[[case]]
+id = "unaliased_current_time"
+description = "Unaliased CURRENT_DATE(), CURRENT_DATE and CURRENT_TIMESTAMP(): only the column names and types are the receipt; the values read the clock, so it is typing evidence."
+evidence = "typing"
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.00"],
+]
+query = "SELECT CURRENT_DATE(), CURRENT_DATE, CURRENT_TIMESTAMP() FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "unaliased_distinct_aggregates"
+description = "Unaliased SUM, MAX and AVG over DISTINCT, over a duplicate and a NULL. The aggregates are one query and the row expressions another, since one select list cannot hold both without GROUP BY; each item is written as given."
+columns = [{ name = "n", type = "NUMBER(10,2)" }, { name = "g", type = "VARCHAR" }]
+rows = [
+  ["1.50", "'12'"],
+  ["1.50", "'12'"],
+  ["NULL", "NULL"],
+  ["-2.25", "'-3'"],
+]
+query = "SELECT SUM(DISTINCT n), MAX(DISTINCT n), AVG(DISTINCT n) FROM input"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "unaliased_distinct_aggregates_no_rows"
+description = "The unaliased DISTINCT aggregates over no rows still name their columns."
+columns = [{ name = "n", type = "NUMBER(10,2)" }, { name = "g", type = "VARCHAR" }]
+rows = [
+  ["1.00", "'1'"],
+]
+query = "SELECT SUM(DISTINCT n), MAX(DISTINCT n), AVG(DISTINCT n) FROM input WHERE n > 5"
+order = "ordered"
+tags = ["empty-input"]
+
+[[case]]
+id = "unaliased_row_expressions"
+description = "Unaliased COALESCE with a column and with literals only, CAST of numeric text to INTEGER, and lower with a space before its closing parenthesis, over a duplicate and a NULL."
+columns = [{ name = "n", type = "NUMBER(10,2)" }, { name = "g", type = "VARCHAR" }]
+rows = [
+  ["1.50", "'12'"],
+  ["1.50", "'12'"],
+  ["NULL", "NULL"],
+  ["-2.25", "'-3'"],
+]
+query = "SELECT COALESCE(n, 0, 1), COALESCE(1, 2), CAST(g AS INTEGER), lower(g ) FROM input"
+order = "bag"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "unaliased_row_expressions_no_rows"
+description = "The unaliased row expressions over no rows still name their columns."
+columns = [{ name = "n", type = "NUMBER(10,2)" }, { name = "g", type = "VARCHAR" }]
+rows = [
+  ["1.00", "'1'"],
+]
+query = "SELECT COALESCE(n, 0, 1), COALESCE(1, 2), CAST(g AS INTEGER), lower(g ) FROM input WHERE n > 5"
+order = "bag"
+tags = ["empty-input"]

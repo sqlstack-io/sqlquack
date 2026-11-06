@@ -2,6 +2,7 @@ pub(crate) mod claims;
 pub(crate) mod compile_errors;
 pub(crate) mod error_check;
 pub(crate) mod judge;
+pub(crate) mod layout_check;
 pub(crate) mod messages;
 pub(crate) mod microsecond_evidence;
 pub(crate) mod row_checks;
