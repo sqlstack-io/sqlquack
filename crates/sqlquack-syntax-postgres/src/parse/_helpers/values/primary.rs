@@ -8,14 +8,14 @@ use sqlquack_syntax::expressions::operators::models::{
 };
 use sqlquack_syntax::expressions::typed_functions::models::ArrayConstructor;
 
-use crate::parse::_helpers::cursor::{
+use crate::parse::_helpers::tree::cursor::{
     Parser, Parsing, identifier, is_col_id, is_col_label, is_type_function_name,
 };
-use crate::parse::_helpers::expressions::Flavor;
-use crate::parse::_helpers::nodes::{
+use crate::parse::_helpers::tree::nodes::{
     boolean, case, cast, column, exists, function, literal, null, parameter, paren, star, subquery,
     tuple,
 };
+use crate::parse::_helpers::values::expressions::Flavor;
 use crate::parse::constants::{GAP_CALL_XMLSERIALIZE, GAP_CALLS, VALUE_FUNCTIONS};
 use crate::parse::constants::{MIN_IMPLICIT_ROW_ITEMS, TYPE_KEYWORDS};
 use crate::scan::models::{Token, TokenKind};

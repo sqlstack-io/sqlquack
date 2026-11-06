@@ -5,11 +5,11 @@ use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
 use sqlquack_syntax::expressions::operators::models::Alias;
 use sqlquack_syntax::expressions::queries::models::{Join, JoinKind};
 
-use crate::parse::_helpers::cursor::{Parser, Parsing, identifier, is_col_id, is_col_label};
-use crate::parse::_helpers::expressions::Flavor;
-use crate::parse::_helpers::nodes::{
+use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_col_id, is_col_label};
+use crate::parse::_helpers::tree::nodes::{
     JoinConstraint, TableAlias, join, joined_table, lateral, subquery, table,
 };
+use crate::parse::_helpers::values::expressions::Flavor;
 use crate::parse::constants::VALUE_FUNCTIONS;
 
 impl Parser<'_> {

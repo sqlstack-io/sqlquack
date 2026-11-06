@@ -2,8 +2,8 @@
 
 use sqlquack_syntax::Expression;
 
-use crate::parse::_helpers::cursor::Parser;
-use crate::parse::_helpers::nodes::command;
+use crate::parse::_helpers::tree::cursor::Parser;
+use crate::parse::_helpers::tree::nodes::command;
 use crate::parse::errors::ParseError;
 use crate::parse::models::Parsed;
 use crate::scan::main::scan::scan;

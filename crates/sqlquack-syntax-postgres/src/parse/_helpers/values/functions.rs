@@ -9,8 +9,8 @@ use sqlquack_syntax::expressions::queries::models::{
 };
 use sqlquack_syntax::expressions::statements::models::Variadic;
 
-use crate::parse::_helpers::cursor::{Parser, Parsing, is_col_id, is_type_function_name};
-use crate::parse::_helpers::nodes::{
+use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_col_id, is_type_function_name};
+use crate::parse::_helpers::tree::nodes::{
     aggregate, function, literal, ordered, over, star, window_function,
 };
 use crate::scan::models::{Token, TokenKind};
@@ -283,8 +283,9 @@ impl Parser<'_> {
                     self.operator_name()?
                 }
                 false => {
-                    let token: Token =
-                        self.expect_token(crate::parse::_helpers::expressions::is_operator_token)?;
+                    let token: Token = self.expect_token(
+                        crate::parse::_helpers::values::expressions::is_operator_token,
+                    )?;
                     token.value
                 }
             };

@@ -1,12 +1,5 @@
-//! The grammar's parts: cursor, node builders, types, expressions, queries, FROM, DML and statements.
+//! The grammar's parts: the cursor and node builders, value expressions, and statements.
 
-pub(crate) mod cursor;
-pub(crate) mod dml;
-pub(crate) mod expressions;
-pub(crate) mod from;
-pub(crate) mod functions;
-pub(crate) mod nodes;
-pub(crate) mod primary;
-pub(crate) mod queries;
-pub(crate) mod statements;
-pub(crate) mod typenames;
+pub(crate) mod commands;
+pub(crate) mod tree;
+pub(crate) mod values;

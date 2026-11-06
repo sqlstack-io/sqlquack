@@ -11,8 +11,8 @@ use sqlquack_syntax::expressions::statements::models::Var;
 use sqlquack_syntax::expressions::typed_functions::models::AtTimeZone;
 use sqlquack_syntax::tokens::models::SourceSpan;
 
-use crate::parse::_helpers::cursor::{Parser, Parsing, is_col_id};
-use crate::parse::_helpers::nodes::{
+use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_col_id};
+use crate::parse::_helpers::tree::nodes::{
     between, binary, cast, function, in_list, null_test, subquery,
 };
 use crate::parse::constants::{

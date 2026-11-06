@@ -6,11 +6,11 @@ use sqlquack_syntax::expressions::operators::models::{OnConflict, Returning};
 use sqlquack_syntax::expressions::queries::models::{From, Join, Where, With};
 use sqlquack_syntax::expressions::statements::models::{Merge, Var, When, Whens};
 
-use crate::parse::_helpers::cursor::{Parser, Parsing, is_col_id};
-use crate::parse::_helpers::expressions::binary_node;
-use crate::parse::_helpers::nodes::{
+use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_col_id};
+use crate::parse::_helpers::tree::nodes::{
     boolean, delete, insert, joined_table, ordered, tuple, update,
 };
+use crate::parse::_helpers::values::expressions::binary_node;
 use crate::scan::models::TokenKind;
 
 impl Parser<'_> {
@@ -141,7 +141,7 @@ impl Parser<'_> {
         self.expect_kw("insert")?;
         self.expect_kw("into")?;
         let name: Vec<Identifier> = self.table_name()?;
-        let mut target = insert(crate::parse::_helpers::nodes::table(name), Vec::new());
+        let mut target = insert(crate::parse::_helpers::tree::nodes::table(name), Vec::new());
         if self.eat_kw("as") {
             target.alias = Some(self.name(is_col_id)?);
             target.alias_explicit_as = true;
@@ -242,7 +242,7 @@ impl Parser<'_> {
                 self.expect_char(')')?;
                 inner
             }
-            false => self.c_expr(crate::parse::_helpers::expressions::Flavor::B)?,
+            false => self.c_expr(crate::parse::_helpers::values::expressions::Flavor::B)?,
         };
         if self.eat_kw("collate") {
             self.qualified_name()?;
