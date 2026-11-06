@@ -10,7 +10,8 @@ with a precise reason: the construct, where it is, and why.
 
 **Status: early.** A first set of rules converts the relational core, exact NUMBER arithmetic,
 comparisons, conditionals, casts, basic string functions, aggregates and window functions;
-everything else is refused. What works today:
+everything else is refused, or stopped by a declared guard where DuckDB's result would differ.
+What works today:
 
 - parsing Snowflake SQL with SQLQuack's own parser, derived from
   [polyglot](https://github.com/sqlstack-io/polyglot), which keeps every call as written, and
