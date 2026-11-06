@@ -8,6 +8,8 @@ mod test_analyze_function;
 mod test_bound_arguments;
 #[path = "tests/test_case_provenance.rs"]
 mod test_case_provenance;
+#[path = "tests/test_case_setup.rs"]
+mod test_case_setup;
 #[path = "tests/test_collect_refusals.rs"]
 mod test_collect_refusals;
 #[path = "tests/test_composition.rs"]

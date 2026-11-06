@@ -694,3 +694,62 @@ pub(crate) fn relying_on_utc_session(constructs: &[&str]) -> DivergenceModeOutco
         categories: vec![],
     }
 }
+
+/// The first value a translation case with `setup` and `query` returns, converted then replayed on
+/// DuckDB, or the fragment of a reason containing `expected`'s error, else every reason.
+pub(crate) fn setup_case_outcome(
+    (setup, query): (&[&str], &str),
+    expected: Result<&str, &str>,
+) -> Result<String, String> {
+    let quoted = |text: &str| format!("\"{}\"", text.replace('\\', "\\\\").replace('"', "\\\""));
+    let statements: Vec<String> = setup.iter().map(|statement| quoted(statement)).collect();
+    let directory = tempfile::tempdir().expect("a temporary directory");
+    let file = directory
+        .path()
+        .join("translation/expressions/name-resolution.toml");
+    std::fs::create_dir_all(file.parent().expect("a parent")).expect("the case directory");
+    std::fs::write(
+        &file,
+        format!(
+            "category = \"translation\"\nconstruct = \"sf.expressions.name-resolution\"\n\
+             session_profile = \"utc-v1\"\n\n[[case]]\nid = \"t001_setup\"\nsetup = [{}]\n\
+             description = \"A setup case\"\ncolumns = [{{ name = \"a\", type = \"NUMBER(38,0)\" }}]\n\
+             rows = [[\"1\"]]\nquery = {}\norder = \"ordered\"\ntags = [\"type-combination\"]\n",
+            statements.join(", "),
+            quoted(query)
+        ),
+    )
+    .expect("the case file is written");
+    let root = repository_root();
+    let policy = load_policy(&root.join(POLICY_FILE_NAME)).expect("the repository policy loads");
+    let cases = load_cases(directory.path(), &policy).expect("the setup case loads");
+    let converter = PipelineConverter {
+        options: conversion_options(&policy, false),
+        python: None,
+    };
+    let fragment = expected.err();
+    let failed = |reasons: Vec<String>| {
+        reasons
+            .iter()
+            .find(|reason| fragment.is_some_and(|fragment| reason.contains(fragment)))
+            .and(fragment)
+            .map_or_else(|| reasons.join("; "), str::to_owned)
+    };
+    let (sql, statements) = match converter.convert(&cases[0]) {
+        Conversion::Converted { sql, setup, .. } => (sql, setup),
+        Conversion::Refused { reasons, .. } => return Err(failed(reasons)),
+    };
+    let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    for statement in &statements {
+        connection
+            .execute_batch(statement)
+            .map_err(|error| failed(vec![error.to_string()]))?;
+    }
+    connection
+        .query_row(
+            &format!("SELECT CAST(COLUMNS(*) AS VARCHAR) FROM ({sql}) AS t"),
+            [],
+            |row| row.get::<_, String>(0),
+        )
+        .map_err(|error| failed(vec![error.to_string()]))
+}

@@ -206,3 +206,11 @@ pub(crate) struct OverrideCallsTestCase {
     pub(crate) emitted: &'static str,
     pub(crate) expected_refused: bool,
 }
+
+pub(crate) struct SetupCaseTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) setup: &'static [&'static str],
+    pub(crate) query: &'static str,
+    /// The first value as text, or a fragment of the refusal reason or DuckDB error.
+    pub(crate) expected_outcome: Result<&'static str, &'static str>,
+}

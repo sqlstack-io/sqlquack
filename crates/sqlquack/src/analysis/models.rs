@@ -18,14 +18,13 @@ use sqlquack_evidence::verify::types::CaseConverter;
 use sqlquack_policy::policy::constants::QUOTED_IDENTIFIERS_IGNORE_CASE;
 use sqlquack_policy::policy::models::SessionValue;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
+use sqlquack_rules::conversion::main::convert_setup::convert_setup;
 use sqlquack_rules::conversion::models::{ConversionOptions, Converted, Fixture};
 use sqlquack_semantics::types::models::Schema;
 
 use crate::analysis::_helpers::case_functions::case_functions;
 use crate::analysis::_helpers::override_definition::load_override;
-use crate::analysis::constants::{
-    CASE_SETUP_UNREPLAYED, PYTHON_RUNTIME_MISSING, STATEMENT_REFUSAL,
-};
+use crate::analysis::constants::{PYTHON_RUNTIME_MISSING, SETUP_REPLAY_NAMES, STATEMENT_REFUSAL};
 use crate::analysis::main::analyze::analyze;
 use crate::analysis::main::override_macros::override_macros;
 use crate::analysis::main::refused_construct::refused_construct;
@@ -69,12 +68,15 @@ pub struct CaseFunctions {
 
 impl CaseConverter for PipelineConverter {
     fn convert(&self, case: &LoadedCase) -> Conversion {
-        if !case.setup.is_empty() {
-            return Conversion::Refused {
-                reasons: vec![CASE_SETUP_UNREPLAYED.to_owned()],
-                constructs: vec![STATEMENT_REFUSAL.to_owned()],
-            };
-        }
+        let setup = match convert_setup(&case.setup) {
+            Ok(setup) => setup,
+            Err(reason) => {
+                return Conversion::Refused {
+                    reasons: vec![reason],
+                    constructs: vec![STATEMENT_REFUSAL.to_owned()],
+                };
+            }
+        };
         let mut options = ConversionOptions {
             fixture: Some(Fixture {
                 relation: INPUT_RELATION.to_owned(),
@@ -99,7 +101,7 @@ impl CaseConverter for PipelineConverter {
                 }
             }
         }
-        let functions = match case_functions(&case.functions, &options) {
+        let mut functions = match case_functions(&case.functions, &options) {
             Ok(functions) => functions,
             Err(reasons) => {
                 return Conversion::Refused {
@@ -121,8 +123,14 @@ impl CaseConverter for PipelineConverter {
                 };
             }
         };
+        functions.schema.relations.extend(setup.relations);
+        let source_sql = SETUP_REPLAY_NAMES
+            .iter()
+            .fold(case.source_sql.clone(), |sql, (placeholder, name)| {
+                sql.replace(placeholder, name)
+            });
         let analysis = analyze(
-            &case.source_sql,
+            &source_sql,
             SourceDialect::Snowflake,
             &builtin_catalogue(),
             (&functions.schema, &options),
@@ -144,9 +152,10 @@ impl CaseConverter for PipelineConverter {
             (true, [converted]) => Conversion::Converted {
                 sql: converted.sql.clone(),
                 raises: converted.raises.clone(),
-                setup: functions
-                    .setup
+                setup: setup
+                    .statements
                     .into_iter()
+                    .chain(functions.setup)
                     .chain(override_macros(&converted.provenance.divergences, &options))
                     .collect(),
                 python,

@@ -210,3 +210,12 @@ pub struct CollectedRefusals {
     /// The statement's result columns where conversion reached them; refused values are NULL-typed.
     pub columns: Option<Vec<ColumnSpec>>,
 }
+
+/// A case's setup as DuckDB replays it: its statements in order and the relations they create.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct ConvertedSetup {
+    /// Each created relation, by its resolved name, with its typed columns.
+    pub relations: BTreeMap<String, Vec<ColumnSpec>>,
+    /// The DuckDB statements, in setup order.
+    pub statements: Vec<String>,
+}

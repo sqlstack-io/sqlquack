@@ -1990,3 +1990,6 @@ pub(crate) const OUTPUT_NAMED_FUNCTIONS: &[&str] = &["LOWER", "UPPER", "COALESCE
 pub(crate) const OUTPUT_NAMED_ARITHMETIC: &[&str] = &["add", "sub", "mul", "div"];
 /// The cast target spellings whose unaliased column names receipts record.
 pub(crate) const OUTPUT_NAMED_CAST_ENDINGS: &[&str] = &[" AS INTEGER)", "::INTEGER"];
+/// The setup statements a case's DuckDB replay runs.
+pub(crate) const SETUP_REPLAYED: &str =
+    "CREATE TABLE of NUMBER and VARCHAR columns and INSERT INTO it VALUES of literals";
