@@ -5,6 +5,6 @@ pub(crate) mod evidence;
 pub(crate) mod function_command;
 pub(crate) mod index_command;
 pub(crate) mod pending_command;
+pub(crate) mod project;
 pub(crate) mod review_command;
-pub(crate) mod schema;
 pub(crate) mod verify_command;

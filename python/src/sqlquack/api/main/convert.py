@@ -17,6 +17,7 @@ def convert(
     """Convert `sql` or refuse it as `sqlquack convert` does; exit-2 failures raise."""
     chosen: ConvertOptions = options or ConvertOptions()
     request: dict[str, Any] = {
+        "project": path_argument(chosen.project),
         "schema": path_argument(chosen.schema),
         "policy": path_argument(chosen.policy),
         "builtin_policy": chosen.builtin_policy,

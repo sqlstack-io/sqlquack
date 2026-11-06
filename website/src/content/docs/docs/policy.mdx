@@ -66,6 +66,9 @@ sqlquack convert: done, converted under utc-v1
 | `--utc-session` | Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`. |
 | `--confirm-declared-offsets` | Confirm the `TIMESTAMP_TZ` offsets the schema declares. |
 | `--python-runtime` | Confirm a Python runtime registers the project's Python functions. |
+
+A project confirms the same three for every run under `[project.confirm]` in the policy file; see
+[Projects](/docs/project/#settings).
 | `--loud-divergences-only` | Rely only on divergences whose converted SQL raises rather than returns another value. |
 
 ## Sessions
@@ -74,7 +77,8 @@ Converted SQL is proven only where both sessions run in UTC: Snowflake's `TIMEZO
 `TimeZone` must be `'UTC'`. Statements whose result depends on the session time zone carry the
 `session_timezone_utc` assumption, and strict mode refuses them unless you pass `--utc-session`.
 
-`--session NAME=VALUE` passes your Snowflake session parameters, one flag each:
+`--session NAME=VALUE` passes your Snowflake session parameters, one flag each, or
+`[project.session]` in the policy file for every run (see [Projects](/docs/project/#settings)):
 
 - Conversion runs under the recorded session profile they match: `utc-v1`, or `utc-qiic-v1` for
   `QUOTED_IDENTIFIERS_IGNORE_CASE = true`. A parameter left unset takes Snowflake's documented

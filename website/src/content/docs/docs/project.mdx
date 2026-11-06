@@ -1,0 +1,146 @@
+---
+title: "Projects"
+description: "Keep tables, functions, overrides and session settings in a project folder, laid out as SQLBuild lays them out."
+---
+
+A project folder holds `sqlquack.toml` and the folders `convert` and `census` read without flags.
+A SQLBuild project's `sources/` and `functions/` folders work unchanged.
+
+```text
+sqlquack.toml
+sources/raw.yml
+functions/sql/is_shipped.sql
+functions/python/label.py
+overrides/
+```
+
+```console
+$ sqlquack convert shipped.sql
+sqlquack convert: converting…
+SELECT "ORDERS"."ORDER_ID" AS "ORDER_ID", CAST("IS_SHIPPED"("ORDERS"."STATUS") AS BOOLEAN) AS "SHIPPED" FROM "ORDERS" AS "ORDERS"
+sqlquack convert: done, converted under utc-v1
+```
+
+The project is the folder holding the policy file: `sqlquack.toml` in the current directory, or
+the file `--policy` names. A folder that does not exist is skipped.
+
+## Declaring tables
+
+Each `.yml` or `.yaml` file under `sources/` lists tables in SQLBuild's source format. SQLQuack
+reads each source's `name` and its columns' `name` and `type`, and ignores other keys such as
+`description`, `nullable`, `contract` and `audits`.
+
+```yaml
+sources:
+  - name: orders
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: status
+        type: VARCHAR
+```
+
+Names are unquoted, so `orders` declares the table `ORDERS`, as Snowflake folds it. A source with
+an `expression` is an inline query, not a table, and is not declared. A source with a column
+without a type is left out, as a [schema file](/docs/schema/) leaves out an unknown type.
+
+## Declaring functions
+
+A function is named after its file, upper-cased: `functions/sql/is_shipped.sql` declares
+`IS_SHIPPED`.
+
+A SQL function file starts with SQLBuild's `FUNCTION ( ... );` header, then the body:
+
+```sql
+FUNCTION (
+  description "Whether an order has shipped",
+  arguments (order_status VARCHAR),
+  returns BOOLEAN,
+);
+
+order_status = 'shipped'
+```
+
+`returns table (name TYPE, ...)` declares a table function. `description`, `tags`, `database` and
+`schema` are accepted and ignored.
+
+A Python function file is marked with SQLBuild's `@udf(...)` decorator, imported from
+`sqlbuild.functions` or `sqlquack`:
+
+```python
+from sqlbuild.functions import udf
+
+
+@udf(arguments={"status": "VARCHAR"}, returns="VARCHAR", runtime_version="3.11")
+def main(status: str | None) -> str | None:
+    return None if status is None else status.title()
+```
+
+SQLQuack reads the decorator's `arguments` and `returns` from the file without running it. Calls
+convert only once the project confirms a Python runtime, as [`--python-runtime`](/docs/policy/#flags)
+does:
+
+```console
+$ sqlquack convert labels.sql
+error[SQ0008]: the conversion needs a known divergence the policy refuses: `fn:LABEL`
+ --> labels.sql:1:18
+  |
+1 | SELECT order_id, label(status) AS label FROM orders
+  |                  ^^^^^^^^^^^^^ the Python function LABEL, which runs only where a Python runtime registers it, needs known divergence `project_udf`, an assumption the caller has not confirmed
+  |
+  = help: to rely on `project_udf`: confirm its assumption: add `python_runtime = true` under [project.confirm] in sqlquack.toml, or pass --python-runtime for one run
+```
+
+## Overriding built-in functions
+
+Each file under `overrides/` replaces a Snowflake built-in with DuckDB SQL. Its header names what
+it replaces with `replaces <FUNCTION>` and `dialect duckdb`; see
+[`convert`](/docs/cli/convert/).
+
+## Settings
+
+`sqlquack.toml` holds the project's settings beside its policy:
+
+```toml
+[project]
+sources = "tables"
+
+[project.session]
+TIMEZONE = "UTC"
+
+[project.confirm]
+python_runtime = true
+```
+
+| Key | Default | Meaning |
+|-----|---------|---------|
+| `[project] sources` | `sources` | The folder of source files. |
+| `[project] functions` | `functions` | The folder holding `sql/` and `python/` function files. |
+| `[project] overrides` | `overrides` | The folder of override files. |
+| `[project.session]` | none | Snowflake session parameters, as [`--session`](/docs/policy/#sessions) gives them. |
+| `[project.confirm] python_runtime` | `false` | As `--python-runtime`. |
+| `[project.confirm] utc_session` | `false` | As `--utc-session`. |
+| `[project.confirm] declared_offsets` | `false` | As `--confirm-declared-offsets`. |
+
+A folder named in `[project]` must exist. Write a folder key only when it differs from the default.
+
+## Flags and the project
+
+Flags apply on top of the project for one run:
+
+| Flag | With a project |
+|------|----------------|
+| `--session NAME=VALUE` | Replaces the project's value of `NAME`; other project parameters still apply. |
+| `--overrides <path>` | Replaces the project's overrides folder. |
+| `--schema <file>` | Adds the file's relations and functions to the project's. |
+| `--utc-session`, `--confirm-declared-offsets`, `--python-runtime` | Confirm on top of `[project.confirm]`. |
+| `--builtin-policy` | Reads no policy file, so no project. |
+
+A table or function declared twice, in two project files or in a project file and `--schema`, is
+an error naming both, and `convert` exits 2:
+
+```console
+$ sqlquack convert shipped.sql --schema schema.json
+sqlquack convert: converting…
+sqlquack convert: failed: the table ORDERS is declared twice, in ./sources/raw.yml and in schema.json; keep one
+```

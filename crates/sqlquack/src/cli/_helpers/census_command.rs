@@ -13,7 +13,7 @@ use crate::census::main::census_with_progress::census_with_progress;
 use crate::census::main::render_census_text::render_census_text;
 use crate::census::models::CensusOptions;
 use crate::cli::_helpers::evidence::{chosen_policy, divergence_options};
-use crate::cli::_helpers::schema::load_schema;
+use crate::cli::_helpers::project::project_choices;
 use crate::cli::models::CensusArguments;
 use sqlquack_rules::catalogue::constants::RULES;
 
@@ -30,29 +30,35 @@ pub(crate) fn census_command(
         );
         return ExitCode::from(2);
     };
-    let schema = match arguments.schema.as_deref().map(load_schema).transpose() {
-        Ok(schema) => schema.unwrap_or_default(),
-        Err(error) => {
-            let _ = writeln!(stderr, "sqlquack census: failed: {error}");
-            return ExitCode::from(2);
-        }
-    };
-    let conversion = match chosen_policy(
+    let policy = match chosen_policy(
         arguments.conversion.policy.as_deref(),
         arguments.conversion.builtin_policy,
     ) {
-        Ok(policy) => divergence_options(policy.as_ref(), &arguments.conversion),
+        Ok(policy) => policy,
         Err(error) => {
             let _ = writeln!(stderr, "sqlquack census: failed: {error}");
             return ExitCode::from(2);
         }
     };
-    let conversion = match with_overrides(
-        conversion,
+    let project = match project_choices(
+        policy.as_ref(),
+        &arguments.conversion,
         (
+            arguments.schema.as_deref(),
+            &[],
             arguments.overrides.as_deref(),
-            &arguments.verified_overrides,
         ),
+    ) {
+        Ok(project) => project,
+        Err(error) => {
+            let _ = writeln!(stderr, "sqlquack census: failed: {error}");
+            return ExitCode::from(2);
+        }
+    };
+    let schema = project.schema;
+    let conversion = match with_overrides(
+        divergence_options(policy.as_ref(), &project.conversion),
+        (project.overrides.as_deref(), &arguments.verified_overrides),
     ) {
         Ok(conversion) => conversion,
         Err(error) => {

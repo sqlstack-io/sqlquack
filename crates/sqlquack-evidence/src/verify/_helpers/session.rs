@@ -33,7 +33,7 @@ pub(crate) fn session_check(
                 return SessionCheck::Mismatch(format!(
                     "session parameter {key} was recorded as {}, but the profile sets {}",
                     actual.as_deref().unwrap_or("nothing"),
-                    parameter_text(value)
+                    value.text()
                 ));
             }
         }
@@ -51,25 +51,14 @@ pub(crate) fn session_check(
             return SessionCheck::Mismatch(format!(
                 "recorded before {key} was pinned, and the account default is {}, not {}",
                 default.map_or("unrecorded", String::as_str),
-                parameter_text(value)
+                value.text()
             ));
         }
     }
     SessionCheck::Matches
 }
 
-/// A parameter value as `SHOW PARAMETERS` writes it.
-pub(crate) fn parameter_text(value: &SessionValue) -> String {
-    match value {
-        SessionValue::Boolean(flag) => flag.to_string(),
-        SessionValue::Integer(number) => number.to_string(),
-        SessionValue::Text(text) => text.clone(),
-    }
-}
-
 /// Whether a reported value is the profile's, ignoring case and surrounding space.
 fn same(actual: &str, value: &SessionValue) -> bool {
-    actual
-        .trim()
-        .eq_ignore_ascii_case(parameter_text(value).trim())
+    actual.trim().eq_ignore_ascii_case(value.text().trim())
 }

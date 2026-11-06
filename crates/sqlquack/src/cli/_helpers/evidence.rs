@@ -188,20 +188,28 @@ fn divergence_help(
     }
     let mut fixes: Vec<String> = Vec::new();
     let confirmation = match id {
-        SESSION_TIMEZONE_UTC => Some(("--utc-session", arguments.utc_session)),
+        SESSION_TIMEZONE_UTC => Some(("utc_session", "--utc-session", arguments.utc_session)),
         DECLARED_OFFSET => Some((
+            "declared_offsets",
             "--confirm-declared-offsets",
             arguments.confirm_declared_offsets,
         )),
-        PROJECT_UDF => Some(("--python-runtime", arguments.python_runtime)),
+        PROJECT_UDF => Some((
+            "python_runtime",
+            "--python-runtime",
+            arguments.python_runtime,
+        )),
         _ => None,
     };
     let confirmable = match confirmation {
-        Some((flag, false)) => {
-            fixes.push(format!("confirm its assumption with {flag}"));
+        Some((key, flag, false)) => {
+            fixes.push(format!(
+                "confirm its assumption: add `{key} = true` under [project.confirm] in {file}, or \
+                 pass {flag} for one run"
+            ));
             true
         }
-        Some((_, true)) => true,
+        Some((_, _, true)) => true,
         None => false,
     };
     let mode = match arguments.strict {

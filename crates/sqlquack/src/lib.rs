@@ -7,6 +7,7 @@ pub mod census;
 pub mod cli;
 pub mod index;
 pub(crate) mod planning;
+pub mod project;
 pub mod review;
 pub mod statements;
 pub mod terminal;

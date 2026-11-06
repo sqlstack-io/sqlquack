@@ -25,6 +25,7 @@ anstream.workspace = true
 clap.workspace = true
 rayon.workspace = true
 serde.workspace = true
+saphyr-parser.workspace = true
 serde_json.workspace = true
 sha2.workspace = true
 sqlquack-compare.workspace = true

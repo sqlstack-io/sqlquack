@@ -57,3 +57,11 @@ class DeepChainTestCase:
     sql: str
     expected_converted: bool
     expected_codes: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class ProjectTestCase:
+    description: str
+    session: dict[str, str]
+    arguments: tuple[str, ...]
+    expected_notes: int

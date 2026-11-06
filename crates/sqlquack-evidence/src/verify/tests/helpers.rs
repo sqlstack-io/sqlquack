@@ -22,7 +22,6 @@ use crate::results::models::{
 };
 use crate::verify::_helpers::compile_errors::rejected_at_compile_time;
 use crate::verify::_helpers::compile_errors::undeclared_compile_error;
-use crate::verify::_helpers::session::parameter_text;
 use crate::verify::main::verify_cases::verify_cases;
 use crate::verify::models::VerifyInputs;
 use crate::verify::tests::test_types::{RoundTrip, Tampering, UnchangedSqlForTests};
@@ -331,7 +330,7 @@ fn record_stand_in(pending: &PendingCase, results: &Path) {
                 .session_parameters
                 .iter()
                 .chain(&pending.pinned_parameters)
-                .map(|(key, value)| (key.clone(), Some(parameter_text(value))))
+                .map(|(key, value)| (key.clone(), Some(value.text())))
                 .collect(),
         ),
         parameters_sha256: Some(STAND_IN_PARAMETERS_SHA256.to_owned()),

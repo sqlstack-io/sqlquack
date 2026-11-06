@@ -5,7 +5,7 @@ use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 
 use crate::cli::_helpers::convert_command::{analysis_report, chosen_options, refused_session};
 use crate::cli::_helpers::evidence::chosen_policy;
-use crate::cli::_helpers::schema::load_schema;
+use crate::cli::_helpers::project::project_choices;
 use crate::cli::models::{ConvertArguments, ConvertReport};
 use sqlquack_convert::analysis::main::analyze::analyze;
 use sqlquack_rules::session::main::parse_session::parse_session;
@@ -13,16 +13,26 @@ use sqlquack_rules::session::main::session_conversion_options::session_conversio
 
 /// The report `convert` prints for `sql` under `arguments`, or why it cannot be made (exit 2).
 pub fn convert_report(arguments: &ConvertArguments, sql: &str) -> Result<ConvertReport, String> {
-    let schema = arguments
-        .schema
-        .as_deref()
-        .map(load_schema)
-        .transpose()?
-        .unwrap_or_default();
     let policy = chosen_policy(
         arguments.conversion.policy.as_deref(),
         arguments.conversion.builtin_policy,
     )?;
+    let project = project_choices(
+        policy.as_ref(),
+        &arguments.conversion,
+        (
+            arguments.schema.as_deref(),
+            &arguments.session,
+            arguments.overrides.as_deref(),
+        ),
+    )?;
+    let schema = project.schema;
+    let arguments = &ConvertArguments {
+        session: project.session,
+        overrides: project.overrides,
+        conversion: project.conversion,
+        ..arguments.clone()
+    };
     let parameters = parse_session(&arguments.session)?;
     let session = (
         arguments.conversion.strict,
