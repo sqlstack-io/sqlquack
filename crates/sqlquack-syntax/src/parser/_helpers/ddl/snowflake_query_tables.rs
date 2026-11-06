@@ -93,7 +93,7 @@ impl Parser {
     }
 
     /// Checks an object name: a quoted identifier, or a word Snowflake does not reserve, optionally qualified.
-    fn check_iceberg_object_name(&mut self) -> Result<()> {
+    pub(super) fn check_iceberg_object_name(&mut self) -> Result<()> {
         if !self.check(TokenType::QuotedIdentifier) {
             let saved = self.current;
             self.expect_external_name()?;
@@ -145,7 +145,7 @@ impl Parser {
     }
 
     /// Checks `( <name> [ , ... ] )`, which may be empty only when `empty` is set.
-    fn check_iceberg_name_list(&mut self, empty: bool) -> Result<()> {
+    pub(super) fn check_iceberg_name_list(&mut self, empty: bool) -> Result<()> {
         self.expect_token(TokenType::LParen)?;
         if empty && self.match_token(TokenType::RParen) {
             return Ok(());
@@ -161,7 +161,7 @@ impl Parser {
     }
 
     /// Checks `( <tag> = <value> [ , ... ] )`.
-    fn check_iceberg_tags(&mut self) -> Result<()> {
+    pub(super) fn check_iceberg_tags(&mut self) -> Result<()> {
         self.expect_token(TokenType::LParen)?;
         loop {
             self.check_iceberg_object_name()?;
@@ -276,7 +276,7 @@ impl Parser {
     }
 
     /// Checks a value: a literal, a quoted identifier, or a word that is not the key of the next property.
-    fn check_iceberg_value(&mut self) -> Result<()> {
+    pub(super) fn check_iceberg_value(&mut self) -> Result<()> {
         let literal = matches!(
             self.peek().token_type,
             TokenType::String

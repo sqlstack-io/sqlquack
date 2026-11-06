@@ -363,7 +363,16 @@ impl Parser {
                 } else {
                     table_modifier.as_deref()
                 };
-                self.parse_create_table(or_replace, temporary, leading_comments, modifier)
+                let table_start = self.current;
+                let parsed =
+                    self.parse_create_table(or_replace, temporary, leading_comments, modifier);
+                let checkable = !define && !secure && matches!(modifier, None | Some("TRANSIENT"));
+                self.keep_snowflake_create_table(
+                    parsed,
+                    (create_pos, table_start),
+                    or_replace,
+                    checkable,
+                )
             }
             TokenType::Dictionary => {
                 self.parse_create_table(or_replace, temporary, leading_comments, Some("DICTIONARY"))

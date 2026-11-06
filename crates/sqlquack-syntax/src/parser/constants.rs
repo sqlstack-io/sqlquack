@@ -270,6 +270,19 @@ pub(crate) const SNOWFLAKE_EXTERNAL_TABLE_REQUIRED: &[&str] = &["LOCATION", "FIL
 /// The properties every dynamic table needs.
 pub(crate) const SNOWFLAKE_DYNAMIC_TABLE_REQUIRED: &[&str] = &["TARGET_LAG", "WAREHOUSE"];
 
+/// The `<key> = <value>` properties a Snowflake CREATE TABLE takes.
+pub(crate) const SNOWFLAKE_TABLE_PROPERTY_KEYS: &[&str] = &[
+    "CHANGE_TRACKING",
+    "COMMENT",
+    "DATA_RETENTION_TIME_IN_DAYS",
+    "DEFAULT_DDL_COLLATION",
+    "ENABLE_SCHEMA_EVOLUTION",
+    "ERROR_LOGGING",
+    "ICEBERG_DEFAULT_DDL_COLLATION",
+    "MAX_DATA_EXTENSION_TIME_IN_DAYS",
+    "ROW_TIMESTAMP",
+];
+
 /// The fields every semantic view verified query needs.
 pub(crate) const SNOWFLAKE_VERIFIED_QUERY_FIELDS: &[&str] = &["QUESTION", "SQL"];
 
