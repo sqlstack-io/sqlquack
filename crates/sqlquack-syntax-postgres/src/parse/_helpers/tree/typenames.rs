@@ -15,6 +15,12 @@ use crate::scan::constants::DECIMAL_RADIX;
 use crate::scan::main::digits::digits_value;
 use crate::scan::models::TokenKind;
 
+/// The suffix `format_type` gives every array type, whatever its bounds.
+const ARRAY_SUFFIX: &str = "[]";
+
+/// The array dimensions `format_type`'s text spells in full: one, unbounded.
+const FORMATTED_DIMENSIONS: usize = 1;
+
 /// Catalogue type names with a shared type, by modifiers; bare `bpchar` has no length, so stays generic.
 fn builtin(name: &str, modifiers: &[u32]) -> Option<DataType> {
     let allowed: usize = if name == NUMERIC_TYPE { 2 } else { 1 };
@@ -77,11 +83,38 @@ fn builtin(name: &str, modifiers: &[u32]) -> Option<DataType> {
     })
 }
 
-/// `SETOF type`: a name the shared tree keeps apart from the type, as `format_type` reads it.
+/// `SETOF type`: a name the shared tree keeps apart from the type, as `format_type` reads it, with any array bounds.
 pub(crate) fn setof(data_type: DataType) -> DataType {
     let text: String = format_type(&data_type).unwrap_or_else(|| format!("{data_type:?}"));
+    let bounds: Vec<Option<u32>> = array_bounds(&data_type);
+    let plain: bool = bounds.len() <= FORMATTED_DIMENSIONS && bounds.iter().all(Option::is_none);
+    let name: String = match text.strip_suffix(ARRAY_SUFFIX) {
+        Some(element) if !plain => {
+            let written: String = bounds
+                .iter()
+                .map(|bound| bound.map_or_else(|| ARRAY_SUFFIX.to_owned(), |n| format!("[{n}]")))
+                .collect();
+            format!("{element}{written}")
+        }
+        _ => text,
+    };
     DataType::Custom {
-        name: format!("{SETOF_PREFIX}{text}"),
+        name: format!("{SETOF_PREFIX}{name}"),
+    }
+}
+
+/// The array bounds of `data_type` in written order, innermost first; empty for a type that is no array.
+fn array_bounds(data_type: &DataType) -> Vec<Option<u32>> {
+    match data_type {
+        DataType::Array {
+            element_type,
+            dimension,
+        } => {
+            let mut bounds: Vec<Option<u32>> = array_bounds(element_type);
+            bounds.push(*dimension);
+            bounds
+        }
+        _ => Vec::new(),
     }
 }
 
