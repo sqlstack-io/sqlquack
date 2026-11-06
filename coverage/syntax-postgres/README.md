@@ -149,16 +149,17 @@ container of the pinned image, removed afterwards, with its start and end state 
 run that matched. The case build reads them as the shared builder does: an accepted case takes its
 receipt's later stage, and an observed case its receipt's outcome.
 
-`baseline.json` is the first claims snapshot (`syntax-coverage snapshot --root
-coverage/syntax-postgres`), bound to catalogue commit 19aa1f28 and to the Postgres parser's tree
-on `wip/pg-integration` e48be3a8 (tree 17b35dd8), where `local_parser = "postgres"` runs that
-parser's strict entry point in the checker's isolated worker: any parser error rejects the case. It claims 8,119 of 22,217 obligations and the 963 forms the auditors' first three review
-batches approved; a statement the parser keeps as an opaque command is never verified.
-
-`reviews/auditor-<family>.toml` holds the independent auditor's approvals (D235). Each `[[review]]`
-is copied verbatim from the auditor's record on `wip/syntax-omission-audit`
-(`coverage/syntax/audits/pg-review-*.toml`) and holds while each form's fingerprint and definition
-hash are unchanged. It holds
-the 5,372 cases Postgres rejects that the parser accepts as opaque, so `syntax-coverage diff
+`baseline.json` is the claims snapshot (`syntax-coverage snapshot --root
+coverage/syntax-postgres`), bound to catalogue commit b71461e6 and to the Postgres parser's tree
+on `wip/pg-integration` 1cbe9f0b (tree 37050ece), where `local_parser = "postgres"` runs that
+parser's strict entry point in the checker's isolated worker: any parser error rejects the case.
+It claims 8,154 of 22,228 obligations and the 963 forms the reviewers' first three batches
+approved; a statement the parser keeps as an opaque command is never verified. It holds the 5,372
+cases Postgres rejects that the parser accepts as opaque, so `syntax-coverage diff
 coverage/syntax-postgres/baseline.json --root coverage/syntax-postgres` fails on any regression
 from here.
+
+`reviews/auditor-<family>.toml` holds the independent reviewers' approvals (D235, D238). Each
+`[[review]]` is copied verbatim from the reviewer's record on `wip/syntax-omission-audit`
+(`coverage/syntax/audits/pg-review-*.toml`) and holds while each form's fingerprint and definition
+hash are unchanged.
