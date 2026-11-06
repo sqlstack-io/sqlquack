@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_relations"
-description = "Overlapping, meeting, contained, disjoint and equal periods, and periods meeting the other way. Catches: equal begins alone taken as equal"
+description = "The six period pairs, plus a pair with equal begins and different ends and a pair with different begins and equal ends. Catches: only the begins compared, or only the ends"
 columns = [{ name = "b1", type = "DATE" }, { name = "e1", type = "DATE" }, { name = "b2", type = "DATE" }, { name = "e2", type = "DATE" }]
 rows = [
   ["'2024-01-01'", "'2024-03-01'", "'2024-02-01'", "'2024-04-01'"],
@@ -13,6 +13,8 @@ rows = [
   ["'2024-01-01'", "'2024-02-01'", "'2024-06-01'", "'2024-07-01'"],
   ["'2024-01-01'", "'2024-02-01'", "'2024-01-01'", "'2024-02-01'"],
   ["'2024-02-01'", "'2024-03-01'", "'2024-01-01'", "'2024-02-01'"],
+  ["'2024-01-01'", "'2024-02-01'", "'2024-01-01'", "'2024-03-01'"],
+  ["'2024-01-01'", "'2024-03-01'", "'2024-02-01'", "'2024-03-01'"],
 ]
 query = "SELECT ordinal, PERIOD_EQUALS(PERIOD_CONSTRUCT(b1, e1), PERIOD_CONSTRUCT(b2, e2)) AS r FROM input ORDER BY ordinal"
 order = "ordered"

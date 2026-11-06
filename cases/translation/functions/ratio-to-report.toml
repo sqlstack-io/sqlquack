@@ -38,7 +38,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_zero_sum"
-description = "A partition whose values sum to zero; the page does not say; the recording decides. Catches: an error where Snowflake returns NULL, or the reverse"
+description = "A partition whose values sum to zero, for which the page gives NULL. Catches: a division-by-zero error, or 0 or infinity returned"
 columns = [{ name = "p", type = "VARCHAR" }, { name = "x", type = "NUMBER(10,2)" }]
 rows = [
   ["'a'", "1.5"],
