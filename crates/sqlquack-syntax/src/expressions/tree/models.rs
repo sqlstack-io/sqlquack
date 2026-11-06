@@ -335,6 +335,7 @@ use crate::expressions::queries::models::Where;
 use crate::expressions::queries::models::WindowSpec;
 use crate::expressions::queries::models::With;
 use crate::expressions::queries::models::XmlNamespace;
+use crate::expressions::schema_objects::models::AlterDefaultPrivileges;
 use crate::expressions::schema_objects::models::AlterIndex;
 use crate::expressions::schema_objects::models::AlterObject;
 use crate::expressions::schema_objects::models::AlterSequence;
@@ -359,6 +360,9 @@ use crate::expressions::schema_objects::models::DropTrigger;
 use crate::expressions::schema_objects::models::DropType;
 use crate::expressions::schema_objects::models::DropView;
 use crate::expressions::schema_objects::models::ExecuteObject;
+use crate::expressions::schema_objects::models::Grant;
+use crate::expressions::schema_objects::models::GrantPrincipal;
+use crate::expressions::schema_objects::models::Revoke;
 use crate::expressions::statements::models::AddPartition;
 use crate::expressions::statements::models::AlterSession;
 use crate::expressions::statements::models::Analyze;
@@ -390,8 +394,6 @@ use crate::expressions::statements::models::DropPartition;
 use crate::expressions::statements::models::ExecuteStatement;
 use crate::expressions::statements::models::ExecuteUsingPolicyContext;
 use crate::expressions::statements::models::Get;
-use crate::expressions::statements::models::Grant;
-use crate::expressions::statements::models::GrantPrincipal;
 use crate::expressions::statements::models::Heredoc;
 use crate::expressions::statements::models::HistoricalData;
 use crate::expressions::statements::models::Insert;
@@ -414,7 +416,6 @@ use crate::expressions::statements::models::Raw;
 use crate::expressions::statements::models::RecursiveWithSearch;
 use crate::expressions::statements::models::Refresh;
 use crate::expressions::statements::models::ReplacePartition;
-use crate::expressions::statements::models::Revoke;
 use crate::expressions::statements::models::Rollback;
 use crate::expressions::statements::models::Schema;
 use crate::expressions::statements::models::ScriptingBlock;
@@ -1194,6 +1195,7 @@ pub enum Expression {
     Pragma(Box<Pragma>),
     Grant(Box<Grant>),
     Revoke(Box<Revoke>),
+    AlterDefaultPrivileges(Box<AlterDefaultPrivileges>),
     Comment(Box<Comment>),
     SetStatement(Box<SetStatement>),
     UnsetStatement(Box<UnsetStatement>),

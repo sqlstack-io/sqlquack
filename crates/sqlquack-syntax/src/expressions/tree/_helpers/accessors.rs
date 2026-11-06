@@ -124,6 +124,7 @@ impl Expression {
             | Expression::Rollback(_)
             | Expression::Grant(_)
             | Expression::Revoke(_)
+            | Expression::AlterDefaultPrivileges(_)
             | Expression::Cache(_)
             | Expression::Uncache(_)
             | Expression::LoadData(_)
