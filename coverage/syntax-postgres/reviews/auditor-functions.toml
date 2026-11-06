@@ -2086,3 +2086,66 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.functions.xml.xmltext" = "46324ba379805919347f08925bd21709ade526312712d1f45fc9d7c70939b694"
 "pg.functions.xml.xpath" = "8b2020ddfae7da0f7d2a7f1946afcfa4bab9f48d77dcb4f981377abae3076867"
 "pg.functions.xml.xpath-exists" = "9de1238073480f6ff096acfa25eab1e76835dfe616743b00519e64e67d6563be"
+
+[[review]]
+id = "pg-auditor-functions-002"
+reviewer_lane = "auditor"
+family = "functions"
+parser_tree = "37050ece2046c9560a4ea42f87abfa43e1432125"
+reviewed_utc = "2026-11-06T08:56:35Z"
+verdict = "approved"
+forms = [
+  "pg.functions.info.has-any-column-privilege",
+  "pg.functions.info.has-column-privilege",
+  "pg.functions.info.has-database-privilege",
+  "pg.functions.info.has-foreign-data-wrapper-privilege",
+  "pg.functions.info.has-function-privilege",
+  "pg.functions.info.has-language-privilege",
+  "pg.functions.info.has-largeobject-privilege",
+  "pg.functions.info.has-parameter-privilege",
+  "pg.functions.info.has-schema-privilege",
+  "pg.functions.info.has-sequence-privilege",
+  "pg.functions.info.has-server-privilege",
+  "pg.functions.info.has-table-privilege",
+  "pg.functions.info.has-tablespace-privilege",
+  "pg.functions.info.has-type-privilege",
+  "pg.functions.info.pg-has-role",
+  "pg.functions.info.row-security-active",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 37050ece; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.functions.info.has-any-column-privilege" = "bd8ea4f4f7a1494f87fe8c27fc3f800a3522e4f10b77f1ec9cb20474547a2f22"
+"pg.functions.info.has-column-privilege" = "acabd8071dda26e2ff104cc18642277109447b97279896611d51a70f16f8810d"
+"pg.functions.info.has-database-privilege" = "da42fb021d0178e846be8f4f744407b48ae727e39629c508df42373886e38611"
+"pg.functions.info.has-foreign-data-wrapper-privilege" = "ec95e1c8bc588d0852d775180fd03fbf95b7937890027c4ede92b1a6c0f06b08"
+"pg.functions.info.has-function-privilege" = "92958b992bf928be90459705ca7cfe44a2dc30c9d1966d75cbb42623f00d1a6f"
+"pg.functions.info.has-language-privilege" = "e4670f1ae8094419b1aef62bb5ba2ba0102d9d3e64526568d0af64275d69f296"
+"pg.functions.info.has-largeobject-privilege" = "4b0c4e8ee61d9618b10d7e5e0b9bae932c593b7ccfbcdc94e8dcdeb0775e0fc4"
+"pg.functions.info.has-parameter-privilege" = "1040905a262aa7dcfa4c3499cca32a44ddd027b2d7cb56aeee0ae853715f3225"
+"pg.functions.info.has-schema-privilege" = "599844b2ed6731114776d16a1931f09394d39574a9aad021a884da3e916b5ee3"
+"pg.functions.info.has-sequence-privilege" = "30919cab7bd255b82f15f010cc15e88c9bf89b50a2a6641983b2118292e4de66"
+"pg.functions.info.has-server-privilege" = "a8bbeed4f9075ad532766b3c54c7f12e6912aa84e954b5a9e8b406ab5b6b2e20"
+"pg.functions.info.has-table-privilege" = "a284c2e5cb593c3d2e40bb73b83b9edccb1039592d708eeadd0bebe1ad109ee3"
+"pg.functions.info.has-tablespace-privilege" = "d0e622278efb4bcf81fcb5f3e477611eb39a705e93598607f074bd2d32d5c2c4"
+"pg.functions.info.has-type-privilege" = "53ee003d4b7ef8c824c6f8036499518882726ef895b21428ea7c222fb9c368ba"
+"pg.functions.info.pg-has-role" = "633abd1fe7f80e2225b93de11fcf15f7039cc997fe1ebe70085f1652fb14f59d"
+"pg.functions.info.row-security-active" = "35b4153f43b2fc21cbf19823ef88b9061a8e85d10e38a659e9679b97a5c88f82"
+
+[review.definitions]
+"pg.functions.info.has-any-column-privilege" = "2cbced122ffa8c5ca20f277269c6a6b20d6ea64a0d0ceb758f167df017a846ab"
+"pg.functions.info.has-column-privilege" = "276128b412d43abbb6b8c941c24d492016a717354891df42ba085e5d05e24dc5"
+"pg.functions.info.has-database-privilege" = "5b6d4faee2d7d6d5528340ac4bb1f748d29e37febea203aa6558171b933bb85e"
+"pg.functions.info.has-foreign-data-wrapper-privilege" = "3492e08c5b28b14b69483f8e779358ff777e2fbe4e5fabcc41181f994be79f2f"
+"pg.functions.info.has-function-privilege" = "36a34941d0acf2e745df7b9a5efe529fcb4b2077f3a7168bebf44f7ae42354ae"
+"pg.functions.info.has-language-privilege" = "7f2c7aa7fe212a64d8112172fc40b41f431b8b8754a12ed630a146aa3f1e15bf"
+"pg.functions.info.has-largeobject-privilege" = "940a2299fb49776bf3f110e9366a1ef7b80cc42aea4965bce8e1de3ce8c9fdca"
+"pg.functions.info.has-parameter-privilege" = "340b96d025e93cf230c5dcb454bf95ddd75c056cd1d7169abafee863a5d34d31"
+"pg.functions.info.has-schema-privilege" = "81ffff0a00e0a2b8c04de57b919e48631e2e37ed1d517af2ebbd2285bdb9faf0"
+"pg.functions.info.has-sequence-privilege" = "9b1b515fc5eebe727ffba7eaf94d3d23d0915cf63ce147ee104fce22e6639e62"
+"pg.functions.info.has-server-privilege" = "59ed37847706b188910db9fd9b552f94d7f6a925f19e1045e69b138c51b8e5da"
+"pg.functions.info.has-table-privilege" = "b6b137c8ff9911c34783511e14143caabca0fab115d7cac4e1204755a42a3302"
+"pg.functions.info.has-tablespace-privilege" = "f5f9a4028bf4685ab151693c8e00f05e161f7b9c94080d7b1260e6574fb86420"
+"pg.functions.info.has-type-privilege" = "d2e3389df9f5fe2b52e15b208da605f77f5aec70971369f2c37dd94d5fbc3309"
+"pg.functions.info.pg-has-role" = "b3de933aeefd2e351164e81e596dc022bf09609037f54839a0e65fee88d614da"
+"pg.functions.info.row-security-active" = "0019e6441c3638840067a9b634dac371b2ae29a9826e4293deec3e7827521c87"
