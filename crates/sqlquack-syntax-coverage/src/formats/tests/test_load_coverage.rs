@@ -1119,6 +1119,17 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
             expected_problem: "receipt query.select-17: holds an account, host, URL or address",
         },
         FormatFaultTestCase {
+            description: "a /1 receipt holding a bare @, as an operator would",
+            mutate: |root| {
+                write(
+                    root,
+                    "receipts/first.jsonl",
+                    &receipt_line().replace("run-1", "run-1 @> b"),
+                )
+            },
+            expected_problem: "receipt query.select-17: holds an account, host, URL or address",
+        },
+        FormatFaultTestCase {
             description: "a receipt of another format",
             mutate: |root| {
                 write(

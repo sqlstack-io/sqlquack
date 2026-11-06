@@ -24,12 +24,23 @@ fn blank(text: &str) -> bool {
     text.trim().is_empty()
 }
 
-/// Whether `text` holds an account, host, URL or address.
-fn identifying(text: &str) -> bool {
+/// Whether `text` holds an account, host, URL or address; `/2` lets operator `@`s such as `@>` pass.
+fn identifying(text: &str, engine: bool) -> bool {
     let lower: String = text.to_ascii_lowercase();
     RECEIPT_FORBIDDEN_TEXT
         .iter()
-        .any(|forbidden| lower.contains(forbidden))
+        .any(|forbidden| match (engine, *forbidden) {
+            (true, "@") => address_at(&lower),
+            _ => lower.contains(forbidden),
+        })
+}
+
+/// Whether an `@` in `text` has a word character on both sides.
+fn address_at(text: &str) -> bool {
+    let word = |byte: &u8| byte.is_ascii_alphanumeric() || *byte == b'_';
+    text.as_bytes()
+        .windows(3)
+        .any(|three| three[1] == b'@' && word(&three[0]) && word(&three[2]))
 }
 
 /// The version fields a receipt of its format must carry, and those it must not.
@@ -435,7 +446,7 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
         .flatten()
         .copied()
         .chain(account_text)
-        .any(|field| identifying(field))
+        .any(|field| identifying(field, receipt.format == RECEIPT_FORMAT_ENGINE))
     {
         problems.push(format!(
             "receipt {id}: holds an account, host, URL or address"

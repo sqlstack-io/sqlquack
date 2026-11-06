@@ -45,6 +45,22 @@ fn given_a_dialect_file_when_loading_then_the_root_loads_as_that_dialect() {
             expected_engine_versions: &[Some("18.6"), Some("18.6")],
         },
         DialectLoadTestCase {
+            description: "a Postgres receipt whose message names @ operators",
+            tree: |root| {
+                postgres_tree(root);
+                replace(
+                    root,
+                    "receipts/first.jsonl",
+                    "\"run-1\"",
+                    "\"operator does not exist: @-@ box; a @> b; a <@ b; @@ q\"",
+                );
+            },
+            expected_dialect: "postgres",
+            expected_families: &POSTGRES_FAMILIES,
+            expected_first_query_form: "pg.query.select",
+            expected_engine_versions: &[Some("18.6")],
+        },
+        DialectLoadTestCase {
             description: "a Postgres receipt whose parse-only pass was a SQL function body",
             tree: |root| {
                 postgres_tree(root);
@@ -155,6 +171,30 @@ fn given_a_dialect_fault_when_loading_then_the_problem_is_named() {
                 write(root, "receipts/first.jsonl", &format!("{line}\n"));
             },
             expected_problem: "/2 carries engine",
+        },
+        FormatFaultTestCase {
+            description: "a /2 receipt holding an email address",
+            mutate: |root| {
+                replace(
+                    root,
+                    "receipts/first.jsonl",
+                    "\"run-1\"",
+                    "\"user@example.com\"",
+                )
+            },
+            expected_problem: "receipt query.select-17: holds an account, host, URL or address",
+        },
+        FormatFaultTestCase {
+            description: "a /2 receipt holding a user at a host",
+            mutate: |root| {
+                replace(
+                    root,
+                    "receipts/first.jsonl",
+                    "\"run-1\"",
+                    "\"kevin@host.local\"",
+                )
+            },
+            expected_problem: "receipt query.select-17: holds an account, host, URL or address",
         },
         FormatFaultTestCase {
             description: "a /2 receipt from the retired live-only parser check",
