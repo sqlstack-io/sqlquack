@@ -131,6 +131,9 @@ function showCaption(example) {
 }
 
 let latest = null;
+let latestRaises = {};
+// The editor's current text and underlines, so a run's error can add its own.
+let shown = { chars: [], spans: [] };
 let current = 0;
 
 async function run() {
@@ -204,10 +207,12 @@ async function run() {
 		setStage('translate', 'refused', body, policy, 'not translated');
 	} else setStage('translate', translate.status, body, policy);
 	underline(chars, spans);
+	shown = { chars, spans };
 
 	const statements = translate.statements ?? [];
 	if (translate.status === 'pass' && statements.length === 1) {
 		latest = statements[0].sql;
+		latestRaises = statements[0].raises ?? {};
 		if (duckdb) execute();
 		else showDuckDBLoading();
 	} else if (translate.status === 'pass') {
@@ -378,8 +383,30 @@ async function execute() {
 			await conn.close();
 		}
 	} catch (error) {
+		const message = String(error.message ?? error);
+		// An error a building block raised as Snowflake would: shown as Snowflake's, where it comes from.
+		const failure = JSON.parse((await engine('failure', { message })).result);
 		if (ticket !== running) return;
-		setStage('run', 'fail', terminal(`<span class="bad">DuckDB:</span> ${escape(String(error.message ?? error))}`), duckdb ? `DuckDB ${duckdb.version}` : '');
+		const version = duckdb ? `DuckDB ${duckdb.version}` : '';
+		if (!failure.errno) {
+			setStage('run', 'fail', terminal(`<span class="bad">DuckDB:</span> ${escape(message)}`), version);
+			return;
+		}
+		const { chars, spans } = shown;
+		const raised = (latestRaises[failure.raise_id] ?? []).map((location) => {
+			const diagnostic = { code: String(failure.errno), message: failure.message, span: { start: location.start, end: location.end }, label: 'raised here' };
+			return { kind: 'error', span: diagnostic.span, text: rendered(diagnostic, chars) };
+		});
+		if (raised.length) underline(chars, [...spans, ...raised]);
+		const head = `<span class="bad">error ${escape(String(failure.errno))} (${escape(failure.sqlstate)})</span>: ${escape(failure.message)}`;
+		setStage(
+			'run',
+			'fail',
+			terminal(raised[0]?.text ?? head) +
+				'<p class="pg-conversion-note">Snowflake raises this error for these rows, and so does the translated SQL in DuckDB.</p>',
+			version,
+			'error',
+		);
 	}
 }
 

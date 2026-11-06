@@ -12,6 +12,9 @@ use sqlquack_core::classification::main::classify::classify;
 use sqlquack_core::diagnostics::constants::SESSION_PARAMETERS;
 use sqlquack_core::diagnostics::main::diagnose::diagnose;
 use sqlquack_core::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
+use sqlquack_core::failures::constants::{ERROR_TAG_PREFIX, TAG_END};
+use sqlquack_core::failures::main::duckdb_failure::duckdb_failure;
+use sqlquack_core::failures::main::raise_id::raise_id;
 use sqlquack_core::parsing::main::node_location::node_location;
 use sqlquack_core::parsing::main::parse_source::parse_source;
 use sqlquack_core::parsing::models::{SourceDialect, SourceLines};
@@ -48,6 +51,30 @@ use wasm_bindgen::prelude::wasm_bindgen;
 #[wasm_bindgen]
 pub fn analyze(sql: &str, schema: &str, settings: Option<String>) -> String {
     report(sql, schema, settings.as_deref().unwrap_or_default()).to_string()
+}
+
+/// A DuckDB error from running converted SQL, read back as the Snowflake error a building block
+/// raised, as JSON: `{"errno", "sqlstate", "raise_id", "message"}`, or `{}` when it is DuckDB's own.
+#[wasm_bindgen]
+pub fn run_failure(message: &str) -> String {
+    let Some(code) = duckdb_failure(message).and_then(|failure| failure.snowflake) else {
+        return json!({}).to_string();
+    };
+    // The tagged text, `sqlquack:<errno>#<id>: <message>`, ends at the quote DuckDB wraps it in.
+    let tagged = message
+        .split_once(ERROR_TAG_PREFIX)
+        .map_or("", |(before, after)| match before.ends_with('\'') {
+            true => after.split('\'').next().unwrap_or(after),
+            false => after.lines().next().unwrap_or(after),
+        });
+    let text = tagged.split_once(TAG_END).map_or(tagged, |(_, text)| text);
+    json!({
+        "errno": code.errno,
+        "sqlstate": code.sqlstate,
+        "raise_id": raise_id(message),
+        "message": text,
+    })
+    .to_string()
 }
 
 /// `CREATE TABLE` for each relation in `schema`, in the DuckDB types converted SQL reads them as,
@@ -329,6 +356,8 @@ fn report(sql: &str, schema: &str, settings: &str) -> Value {
                     "constructs": constructs,
                     "reason": options.divergences.get(id).map(|allowed| allowed.reason.as_str()),
                 })).collect::<Vec<_>>(),
+                // Where each raise ID in the SQL comes from, so a run's error points at the source.
+                "raises": done.raises,
             })),
             Err(refusal) => refusals.push(placed(refusal, statement, &lines)),
         }

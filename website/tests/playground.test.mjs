@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
-import { initSync, analyze } from '../wasm/pkg/sqlquack_wasm.js';
+import { initSync, analyze, run_failure } from '../wasm/pkg/sqlquack_wasm.js';
 import { rendered, underlined } from '../public/playground/spans.js';
 
 initSync({ module: readFileSync(new URL('../wasm/pkg/sqlquack_wasm_bg.wasm', import.meta.url)) });
@@ -149,4 +149,18 @@ test('each known divergence a translation relies on is reported with its constru
 	assert.match(statement.divergences[0].reason, /never Snowflake's value/);
 	// Without a divergence, none is reported.
 	assert.deepEqual(JSON.parse(analyze('SELECT order_id FROM orders', SCHEMA)).translate.statements[0].divergences, []);
+});
+
+test('a run error a building block raised reads back as the Snowflake error, at the expression that raised it', () => {
+	const sql = 'SELECT CAST(note AS NUMBER(10,2)) AS v FROM orders';
+	const [statement] = JSON.parse(analyze(sql, SCHEMA)).translate.statements;
+	const tag = /sqlquack:100038#[0-9a-f]{12}: [^']*/.exec(statement.sql)[0];
+	// As DuckDB reports a failed cast of the raised text.
+	const failure = JSON.parse(run_failure(`Conversion Error: Could not convert string '${tag}' to INT32\n\nLINE 1: ...`));
+	assert.equal(failure.errno, 100038);
+	assert.equal(failure.message, 'Numeric value is not recognized');
+	const [location] = statement.raises[failure.raise_id];
+	assert.equal(Array.from(sql).slice(location.start, location.end).join(''), 'CAST(note AS NUMBER(10,2))');
+	// DuckDB's own errors are not read as Snowflake's.
+	assert.deepEqual(JSON.parse(run_failure('Binder Error: Referenced column "x" not found')), {});
 });
