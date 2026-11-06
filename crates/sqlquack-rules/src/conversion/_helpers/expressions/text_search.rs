@@ -92,12 +92,12 @@ fn position_from(
     let needle = text_operand(needle, construct, site)?;
     let haystack = text_operand(haystack, construct, site)?;
     let start = integer_operand(start, construct, site)?;
-    let from = format!("greatest({start}, 1)");
-    let found = format!("strpos(substr({haystack}, {from}), {needle})");
     Ok(Emitted::new(
         format!(
-            "CAST(CASE WHEN {start} IS NULL THEN NULL WHEN {found} = 0 THEN 0 \
-             ELSE {found} + {from} - 1 END AS DECIMAL(9,0))"
+            "CAST(list_transform([struct_pack(n := {needle}, h := {haystack}, p := {start})], \
+             lambda s: CASE WHEN s['p'] IS NOT NULL THEN list_transform([greatest(s['p'], 1)], \
+             lambda f: list_transform([strpos(substr(s['h'], f), s['n'])], \
+             lambda i: CASE WHEN i = 0 THEN 0 ELSE i + f - 1 END)[1])[1] END)[1] AS DECIMAL(9,0))"
         ),
         TEXT_SEARCH_POSITION_TYPE,
     ))
