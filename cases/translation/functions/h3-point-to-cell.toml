@@ -1,0 +1,36 @@
+category = "translation"
+construct = "sf.functions.h3-point-to-cell"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_point"
+description = "A point in San Francisco, written longitude first, at resolutions 0 and 9. Catches: longitude and latitude swapped"
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["'POINT(-122.4194 37.7749)'"],
+]
+query = "SELECT H3_POINT_TO_CELL(TO_GEOGRAPHY(g), 0) AS r0, H3_POINT_TO_CELL(TO_GEOGRAPHY(g), 9) AS r9 FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_resolution_range"
+description = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. Catches: the resolution clamped to 15, or NULL returned"
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["'POINT(-122.4194 37.7749)'"],
+]
+query = "SELECT H3_POINT_TO_CELL(TO_GEOGRAPHY(g), 16) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t003_null_geography_point"
+description = "A NULL point; the page does not say; the recording decides. Catches: an error"
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT H3_POINT_TO_CELL(TO_GEOGRAPHY(g), 9) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

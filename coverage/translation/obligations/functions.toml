@@ -10450,6 +10450,1238 @@ cases = ["cases/translation/functions/grouping-id.toml#t004_null_expr1"]
 required = true
 
 [[obligation]]
+id = "sf.functions.h3-cell-to-boundary.t001"
+form = "sf.functions.h3-cell-to-boundary"
+kind = "type_combination"
+target = "INTEGER"
+note = "A hexagon and a pentagon, measured by their point counts and by containing their own centre."
+catches = "the centroid returned instead of the boundary, or every cell drawn as a hexagon"
+reading = "the page: a GEOGRAPHY polygon for the boundary of the cell, from an INTEGER or hexadecimal VARCHAR ID"
+cases = ["cases/translation/functions/h3-cell-to-boundary.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-boundary.t002"
+form = "sf.functions.h3-cell-to-boundary"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The hexadecimal ID of the same hexagon, equal to the INTEGER result."
+catches = "the text read as a decimal number"
+reading = "the page: a GEOGRAPHY polygon for the boundary of the cell, from an INTEGER or hexadecimal VARCHAR ID"
+cases = ["cases/translation/functions/h3-cell-to-boundary.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-boundary.t003"
+form = "sf.functions.h3-cell-to-boundary"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID; the page does not say; the recording decides."
+catches = "an error, or an empty shape returned"
+reading = "the page: a GEOGRAPHY polygon for the boundary of the cell, from an INTEGER or hexadecimal VARCHAR ID"
+cases = ["cases/translation/functions/h3-cell-to-boundary.toml#t003_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-children.t001"
+form = "sf.functions.h3-cell-to-children"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "Children at resolutions 9, 10 and 11 of a resolution-9 cell: the cell itself, 7 and 49."
+catches = "the resolution read as a number of levels below the cell, or the cell left out at its own resolution"
+reading = "the page: an array of the INTEGER IDs of the children of the cell at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-cell-to-children.toml#t001_resolutions"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-children.t002"
+form = "sf.functions.h3-cell-to-children"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of the INTEGER IDs of the children of the cell at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-cell-to-children.toml#t002_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-children.t003"
+form = "sf.functions.h3-cell-to-children"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the INTEGER IDs of the children of the cell at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-cell-to-children.toml#t003_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-children-string.t001"
+form = "sf.functions.h3-cell-to-children-string"
+kind = "type_combination"
+target = "VARCHAR, INTEGER"
+note = "Children at resolutions 9, 10 and 11 of a resolution-9 cell: the cell itself, 7 and 49."
+catches = "the resolution read as a number of levels below the cell, or the cell left out at its own resolution"
+reading = "the page: an array of the VARCHAR IDs of the children of the cell at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-cell-to-children-string.toml#t001_resolutions"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-children-string.t002"
+form = "sf.functions.h3-cell-to-children-string"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of the VARCHAR IDs of the children of the cell at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-cell-to-children-string.toml#t002_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-children-string.t003"
+form = "sf.functions.h3-cell-to-children-string"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the VARCHAR IDs of the children of the cell at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-cell-to-children-string.toml#t003_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-parent.t001"
+form = "sf.functions.h3-cell-to-parent"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "The parent of a resolution-9 cell at resolutions 7 and 9."
+catches = "the resolution read as a number of levels up, or the hexadecimal form returned"
+reading = "the page: the parent cell at the target resolution (0 to 15; any other value is an error), INTEGER for an INTEGER ID and hexadecimal VARCHAR for a VARCHAR ID"
+cases = ["cases/translation/functions/h3-cell-to-parent.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-parent.t002"
+form = "sf.functions.h3-cell-to-parent"
+kind = "type_combination"
+target = "VARCHAR, INTEGER"
+note = "The parent of the hexadecimal ID at resolution 7."
+catches = "the INTEGER form returned for a VARCHAR ID"
+reading = "the page: the parent cell at the target resolution (0 to 15; any other value is an error), INTEGER for an INTEGER ID and hexadecimal VARCHAR for a VARCHAR ID"
+cases = ["cases/translation/functions/h3-cell-to-parent.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-parent.t003"
+form = "sf.functions.h3-cell-to-parent"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: the parent cell at the target resolution (0 to 15; any other value is an error), INTEGER for an INTEGER ID and hexadecimal VARCHAR for a VARCHAR ID"
+cases = ["cases/translation/functions/h3-cell-to-parent.toml#t003_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-parent.t004"
+form = "sf.functions.h3-cell-to-parent"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: the parent cell at the target resolution (0 to 15; any other value is an error), INTEGER for an INTEGER ID and hexadecimal VARCHAR for a VARCHAR ID"
+cases = ["cases/translation/functions/h3-cell-to-parent.toml#t004_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-point.t001"
+form = "sf.functions.h3-cell-to-point"
+kind = "type_combination"
+target = "INTEGER"
+note = "The centroid of C, rounded to 6 places."
+catches = "a boundary vertex returned instead of the centroid, or longitude and latitude swapped"
+reading = "the page: a GEOGRAPHY point at the centroid of the cell, from an INTEGER or hexadecimal VARCHAR ID"
+cases = ["cases/translation/functions/h3-cell-to-point.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-point.t002"
+form = "sf.functions.h3-cell-to-point"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The hexadecimal ID of the same cell, equal to the INTEGER result."
+catches = "the text read as a decimal number"
+reading = "the page: a GEOGRAPHY point at the centroid of the cell, from an INTEGER or hexadecimal VARCHAR ID"
+cases = ["cases/translation/functions/h3-cell-to-point.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-cell-to-point.t003"
+form = "sf.functions.h3-cell-to-point"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: a GEOGRAPHY point at the centroid of the cell, from an INTEGER or hexadecimal VARCHAR ID"
+cases = ["cases/translation/functions/h3-cell-to-point.toml#t003_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-compact-cells.t001"
+form = "sf.functions.h3-compact-cells"
+kind = "type_combination"
+target = "ARRAY of INTEGER"
+note = "The 7 children of a cell and one child of a neighbouring cell, which compact to the parent and that child."
+catches = "the array returned unchanged, or the lone child merged into its parent"
+reading = "the page: an array of INTEGER IDs compacted to the fewest cells covering the same area; the input cells must be valid, of one resolution and not repeated; NULL gives NULL"
+cases = ["cases/translation/functions/h3-compact-cells.toml#t001_compact"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-compact-cells.t002"
+form = "sf.functions.h3-compact-cells"
+kind = "error_parity"
+target = "error"
+note = "Cells of two resolutions, which the page says the input must not contain."
+catches = "the cells compacted anyway"
+reading = "the page: an array of INTEGER IDs compacted to the fewest cells covering the same area; the input cells must be valid, of one resolution and not repeated; NULL gives NULL"
+cases = ["cases/translation/functions/h3-compact-cells.toml#t002_mixed_resolution"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-compact-cells.t003"
+form = "sf.functions.h3-compact-cells"
+kind = "error_parity"
+target = "error"
+note = "A repeated cell, which the page says is not allowed."
+catches = "the duplicate removed silently"
+reading = "the page: an array of INTEGER IDs compacted to the fewest cells covering the same area; the input cells must be valid, of one resolution and not repeated; NULL gives NULL"
+cases = ["cases/translation/functions/h3-compact-cells.toml#t003_duplicate"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-compact-cells.t004"
+form = "sf.functions.h3-compact-cells"
+kind = "null_argument"
+target = "array-of-cell-ids"
+note = "A NULL array, which the page says gives NULL without an error."
+catches = "an empty array returned"
+reading = "the page: an array of INTEGER IDs compacted to the fewest cells covering the same area; the input cells must be valid, of one resolution and not repeated; NULL gives NULL"
+cases = ["cases/translation/functions/h3-compact-cells.toml#t004_null_array_of_cell_ids"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-compact-cells-strings.t001"
+form = "sf.functions.h3-compact-cells-strings"
+kind = "type_combination"
+target = "ARRAY of VARCHAR"
+note = "The 7 children of a cell and one child of a neighbouring cell, which compact to the parent and that child."
+catches = "the array returned unchanged, or the lone child merged into its parent"
+reading = "the page: an array of VARCHAR IDs compacted to the fewest cells covering the same area; the input cells must be valid, of one resolution and not repeated; NULL gives NULL"
+cases = ["cases/translation/functions/h3-compact-cells-strings.toml#t001_compact"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-compact-cells-strings.t002"
+form = "sf.functions.h3-compact-cells-strings"
+kind = "error_parity"
+target = "error"
+note = "Cells of two resolutions, which the page says the input must not contain."
+catches = "the cells compacted anyway"
+reading = "the page: an array of VARCHAR IDs compacted to the fewest cells covering the same area; the input cells must be valid, of one resolution and not repeated; NULL gives NULL"
+cases = ["cases/translation/functions/h3-compact-cells-strings.toml#t002_mixed_resolution"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-compact-cells-strings.t003"
+form = "sf.functions.h3-compact-cells-strings"
+kind = "error_parity"
+target = "error"
+note = "A repeated cell, which the page says is not allowed."
+catches = "the duplicate removed silently"
+reading = "the page: an array of VARCHAR IDs compacted to the fewest cells covering the same area; the input cells must be valid, of one resolution and not repeated; NULL gives NULL"
+cases = ["cases/translation/functions/h3-compact-cells-strings.toml#t003_duplicate"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-compact-cells-strings.t004"
+form = "sf.functions.h3-compact-cells-strings"
+kind = "null_argument"
+target = "array-of-cell-ids"
+note = "A NULL array, which the page says gives NULL without an error."
+catches = "an empty array returned"
+reading = "the page: an array of VARCHAR IDs compacted to the fewest cells covering the same area; the input cells must be valid, of one resolution and not repeated; NULL gives NULL"
+cases = ["cases/translation/functions/h3-compact-cells-strings.toml#t004_null_array_of_cell_ids"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-coverage.t001"
+form = "sf.functions.h3-coverage"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A triangle inside one cell but away from its centroid, and a small square around the centroid: each is covered by that cell alone."
+catches = "only cells whose centroid is inside counted, which leaves the triangle uncovered"
+reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; an error when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-coverage.toml#t001_cover"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-coverage.t002"
+form = "sf.functions.h3-coverage"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A self-intersecting polygon kept with allow_invalid, for which the page says the coverage is NULL."
+catches = "an error raised, or the shape repaired first"
+reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; an error when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-coverage.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-coverage.t003"
+form = "sf.functions.h3-coverage"
+kind = "error_parity"
+target = "error"
+note = "A 20-degree square at resolution 15, more cells than the limit, which the page says is an error."
+catches = "NULL returned"
+reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; an error when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-coverage.toml#t003_limit"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-coverage.t004"
+form = "sf.functions.h3-coverage"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; an error when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-coverage.toml#t004_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-coverage.t005"
+form = "sf.functions.h3-coverage"
+kind = "null_argument"
+target = "geography-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; an error when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-coverage.toml#t005_null_geography_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-coverage-strings.t001"
+form = "sf.functions.h3-coverage-strings"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A triangle inside one cell but away from its centroid, and a small square around the centroid: each is covered by that cell alone."
+catches = "only cells whose centroid is inside counted, which leaves the triangle uncovered"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; an error when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-coverage-strings.toml#t001_cover"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-coverage-strings.t002"
+form = "sf.functions.h3-coverage-strings"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A self-intersecting polygon kept with allow_invalid, for which the page says the coverage is NULL."
+catches = "an error raised, or the shape repaired first"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; an error when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-coverage-strings.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-coverage-strings.t003"
+form = "sf.functions.h3-coverage-strings"
+kind = "error_parity"
+target = "error"
+note = "A 20-degree square at resolution 15, more cells than the limit, which the page says is an error."
+catches = "NULL returned"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; an error when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-coverage-strings.toml#t003_limit"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-coverage-strings.t004"
+form = "sf.functions.h3-coverage-strings"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; an error when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-coverage-strings.toml#t004_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-coverage-strings.t005"
+form = "sf.functions.h3-coverage-strings"
+kind = "null_argument"
+target = "geography-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; an error when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-coverage-strings.toml#t005_null_geography_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-get-resolution.t001"
+form = "sf.functions.h3-get-resolution"
+kind = "type_combination"
+target = "INTEGER"
+note = "Cells at resolutions 9, 10 and 0."
+catches = "a fixed resolution returned"
+reading = "the page: the resolution of the cell, an INTEGER from 0 to 15"
+cases = ["cases/translation/functions/h3-get-resolution.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-get-resolution.t002"
+form = "sf.functions.h3-get-resolution"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The hexadecimal IDs of cells at resolutions 9 and 0."
+catches = "the text read as a decimal number"
+reading = "the page: the resolution of the cell, an INTEGER from 0 to 15"
+cases = ["cases/translation/functions/h3-get-resolution.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-get-resolution.t003"
+form = "sf.functions.h3-get-resolution"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID; the page does not say; the recording decides."
+catches = "an error, or 0 returned"
+reading = "the page: the resolution of the cell, an INTEGER from 0 to 15"
+cases = ["cases/translation/functions/h3-get-resolution.toml#t003_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-disk.t001"
+form = "sf.functions.h3-grid-disk"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "k of 0, 1 and 2 around a hexagon: 1, 7 and 19 cells, including the cell itself."
+catches = "only the ring at distance k returned, or the cell left out"
+reading = "the page: an array of the cells within grid distance k (non-negative) of the cell, INTEGER for an INTEGER ID and hexadecimal VARCHAR for a VARCHAR ID"
+cases = ["cases/translation/functions/h3-grid-disk.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-disk.t002"
+form = "sf.functions.h3-grid-disk"
+kind = "type_combination"
+target = "VARCHAR, INTEGER"
+note = "A hexadecimal ID, whose disk holds hexadecimal IDs including a cell two steps away."
+catches = "INTEGER IDs returned for a VARCHAR ID"
+reading = "the page: an array of the cells within grid distance k (non-negative) of the cell, INTEGER for an INTEGER ID and hexadecimal VARCHAR for a VARCHAR ID"
+cases = ["cases/translation/functions/h3-grid-disk.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-disk.t003"
+form = "sf.functions.h3-grid-disk"
+kind = "error_parity"
+target = "error"
+note = "k = -1, which the page says must be non-negative."
+catches = "an empty array returned, or the sign ignored"
+reading = "the page: an array of the cells within grid distance k (non-negative) of the cell, INTEGER for an INTEGER ID and hexadecimal VARCHAR for a VARCHAR ID"
+cases = ["cases/translation/functions/h3-grid-disk.toml#t003_negative_k"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-disk.t004"
+form = "sf.functions.h3-grid-disk"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the cells within grid distance k (non-negative) of the cell, INTEGER for an INTEGER ID and hexadecimal VARCHAR for a VARCHAR ID"
+cases = ["cases/translation/functions/h3-grid-disk.toml#t004_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-distance.t001"
+form = "sf.functions.h3-grid-distance"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "A cell and a cell two steps away, both ways, and a cell with itself."
+catches = "a count of cells on the path (3) returned instead of steps, or direction-dependent results"
+reading = "the page: the grid distance in steps between two cells of the same resolution, from INTEGER or hexadecimal VARCHAR IDs"
+cases = ["cases/translation/functions/h3-grid-distance.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-distance.t002"
+form = "sf.functions.h3-grid-distance"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR"
+note = "The same pair as hexadecimal IDs."
+catches = "the text read as decimal numbers"
+reading = "the page: the grid distance in steps between two cells of the same resolution, from INTEGER or hexadecimal VARCHAR IDs"
+cases = ["cases/translation/functions/h3-grid-distance.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-distance.t003"
+form = "sf.functions.h3-grid-distance"
+kind = "error_parity"
+target = "error"
+note = "Cells of resolutions 9 and 10, which the page says must use the same resolution."
+catches = "a distance computed after converting one cell"
+reading = "the page: the grid distance in steps between two cells of the same resolution, from INTEGER or hexadecimal VARCHAR IDs"
+cases = ["cases/translation/functions/h3-grid-distance.toml#t003_mixed_resolution"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-distance.t004"
+form = "sf.functions.h3-grid-distance"
+kind = "null_argument"
+target = "cell-id-1"
+note = "A NULL first ID; the page does not say; the recording decides."
+catches = "an error, or 0 returned"
+reading = "the page: the grid distance in steps between two cells of the same resolution, from INTEGER or hexadecimal VARCHAR IDs"
+cases = ["cases/translation/functions/h3-grid-distance.toml#t004_null_cell_id_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-path.t001"
+form = "sf.functions.h3-grid-path"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "The path from a cell to a cell two steps away, as JSON text: 3 cells from the first to the second."
+catches = "the end cells left out, or the path reversed"
+reading = "the page: an array of the cells on the line between two cells of the same resolution, INTEGER for INTEGER IDs and hexadecimal VARCHAR for VARCHAR IDs"
+cases = ["cases/translation/functions/h3-grid-path.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-path.t002"
+form = "sf.functions.h3-grid-path"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR"
+note = "The same pair as hexadecimal IDs, which the page says give hexadecimal IDs."
+catches = "INTEGER IDs returned for VARCHAR IDs"
+reading = "the page: an array of the cells on the line between two cells of the same resolution, INTEGER for INTEGER IDs and hexadecimal VARCHAR for VARCHAR IDs"
+cases = ["cases/translation/functions/h3-grid-path.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-grid-path.t003"
+form = "sf.functions.h3-grid-path"
+kind = "null_argument"
+target = "cell-id-1"
+note = "A NULL first ID; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the cells on the line between two cells of the same resolution, INTEGER for INTEGER IDs and hexadecimal VARCHAR for VARCHAR IDs"
+cases = ["cases/translation/functions/h3-grid-path.toml#t003_null_cell_id_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-int-to-string.t001"
+form = "sf.functions.h3-int-to-string"
+kind = "type_combination"
+target = "INTEGER"
+note = "Cells at resolutions 9 and 0."
+catches = "the decimal digits returned, or leading digits dropped"
+reading = "the page: the hexadecimal form of an INTEGER cell ID"
+cases = ["cases/translation/functions/h3-int-to-string.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-int-to-string.t002"
+form = "sf.functions.h3-int-to-string"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID; the page does not say; the recording decides."
+catches = "an error, or an empty string returned"
+reading = "the page: the hexadecimal form of an INTEGER cell ID"
+cases = ["cases/translation/functions/h3-int-to-string.toml#t002_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-is-pentagon.t001"
+form = "sf.functions.h3-is-pentagon"
+kind = "type_combination"
+target = "INTEGER"
+note = "A resolution-0 pentagon and a hexagon."
+catches = "every cell reported as a hexagon"
+reading = "the page: TRUE if the cell is a pentagon, otherwise FALSE; NULL gives NULL"
+cases = ["cases/translation/functions/h3-is-pentagon.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-is-pentagon.t002"
+form = "sf.functions.h3-is-pentagon"
+kind = "type_combination"
+target = "VARCHAR"
+note = "The same cells as hexadecimal IDs."
+catches = "the text read as a decimal number"
+reading = "the page: TRUE if the cell is a pentagon, otherwise FALSE; NULL gives NULL"
+cases = ["cases/translation/functions/h3-is-pentagon.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-is-pentagon.t003"
+form = "sf.functions.h3-is-pentagon"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID, which the page says gives NULL without an error."
+catches = "FALSE returned"
+reading = "the page: TRUE if the cell is a pentagon, otherwise FALSE; NULL gives NULL"
+cases = ["cases/translation/functions/h3-is-pentagon.toml#t003_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-is-valid-cell.t001"
+form = "sf.functions.h3-is-valid-cell"
+kind = "type_combination"
+target = "INTEGER"
+note = "A valid cell, 0 and 123."
+catches = "any non-zero integer accepted, or an error for an invalid ID"
+reading = "the page: TRUE if the input is a valid H3 cell, otherwise FALSE; NULL gives NULL"
+cases = ["cases/translation/functions/h3-is-valid-cell.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-is-valid-cell.t002"
+form = "sf.functions.h3-is-valid-cell"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A valid hexadecimal ID, a non-hexadecimal string and the empty string."
+catches = "an error for text that is not hexadecimal"
+reading = "the page: TRUE if the input is a valid H3 cell, otherwise FALSE; NULL gives NULL"
+cases = ["cases/translation/functions/h3-is-valid-cell.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-is-valid-cell.t003"
+form = "sf.functions.h3-is-valid-cell"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID, which the page says gives NULL without an error."
+catches = "FALSE returned"
+reading = "the page: TRUE if the input is a valid H3 cell, otherwise FALSE; NULL gives NULL"
+cases = ["cases/translation/functions/h3-is-valid-cell.toml#t003_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-latlng-to-cell.t001"
+form = "sf.functions.h3-latlng-to-cell"
+kind = "type_combination"
+target = "FLOAT, FLOAT, INTEGER"
+note = "A point in San Francisco at resolutions 0, 9 and 15, the ends of the range and between."
+catches = "latitude and longitude swapped, or the resolution range cut short"
+reading = "the page: the INTEGER ID of the cell holding the latitude and longitude at the target resolution (0 to 15; any other value is an error); latitude and longitude outside their ranges are wrapped; NaN or Inf is an error"
+cases = ["cases/translation/functions/h3-latlng-to-cell.toml#t001_resolutions"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-latlng-to-cell.t002"
+form = "sf.functions.h3-latlng-to-cell"
+kind = "type_combination"
+target = "FLOAT, FLOAT, INTEGER"
+note = "The same point with 360 added to the longitude, which the page says is wrapped into range."
+catches = "an error for a longitude out of range, or another cell"
+reading = "the page: the INTEGER ID of the cell holding the latitude and longitude at the target resolution (0 to 15; any other value is an error); latitude and longitude outside their ranges are wrapped; NaN or Inf is an error"
+cases = ["cases/translation/functions/h3-latlng-to-cell.toml#t002_wrap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-latlng-to-cell.t003"
+form = "sf.functions.h3-latlng-to-cell"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: the INTEGER ID of the cell holding the latitude and longitude at the target resolution (0 to 15; any other value is an error); latitude and longitude outside their ranges are wrapped; NaN or Inf is an error"
+cases = ["cases/translation/functions/h3-latlng-to-cell.toml#t003_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-latlng-to-cell.t004"
+form = "sf.functions.h3-latlng-to-cell"
+kind = "error_parity"
+target = "error"
+note = "A NaN latitude, which the page says is an error."
+catches = "NULL or a cell returned"
+reading = "the page: the INTEGER ID of the cell holding the latitude and longitude at the target resolution (0 to 15; any other value is an error); latitude and longitude outside their ranges are wrapped; NaN or Inf is an error"
+cases = ["cases/translation/functions/h3-latlng-to-cell.toml#t004_nan"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-latlng-to-cell.t005"
+form = "sf.functions.h3-latlng-to-cell"
+kind = "null_argument"
+target = "latitude"
+note = "A NULL latitude; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: the INTEGER ID of the cell holding the latitude and longitude at the target resolution (0 to 15; any other value is an error); latitude and longitude outside their ranges are wrapped; NaN or Inf is an error"
+cases = ["cases/translation/functions/h3-latlng-to-cell.toml#t005_null_latitude"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-latlng-to-cell-string.t001"
+form = "sf.functions.h3-latlng-to-cell-string"
+kind = "type_combination"
+target = "FLOAT, FLOAT, INTEGER"
+note = "A point in San Francisco at resolutions 0, 9 and 15, the ends of the range and between."
+catches = "latitude and longitude swapped, or the resolution range cut short"
+reading = "the page: the hexadecimal VARCHAR ID of the cell holding the latitude and longitude at the target resolution (0 to 15; any other value is an error); latitude and longitude outside their ranges are wrapped; NaN or Inf is an error"
+cases = ["cases/translation/functions/h3-latlng-to-cell-string.toml#t001_resolutions"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-latlng-to-cell-string.t002"
+form = "sf.functions.h3-latlng-to-cell-string"
+kind = "type_combination"
+target = "FLOAT, FLOAT, INTEGER"
+note = "The same point with 360 added to the longitude, which the page says is wrapped into range."
+catches = "an error for a longitude out of range, or another cell"
+reading = "the page: the hexadecimal VARCHAR ID of the cell holding the latitude and longitude at the target resolution (0 to 15; any other value is an error); latitude and longitude outside their ranges are wrapped; NaN or Inf is an error"
+cases = ["cases/translation/functions/h3-latlng-to-cell-string.toml#t002_wrap"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-latlng-to-cell-string.t003"
+form = "sf.functions.h3-latlng-to-cell-string"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: the hexadecimal VARCHAR ID of the cell holding the latitude and longitude at the target resolution (0 to 15; any other value is an error); latitude and longitude outside their ranges are wrapped; NaN or Inf is an error"
+cases = ["cases/translation/functions/h3-latlng-to-cell-string.toml#t003_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-latlng-to-cell-string.t004"
+form = "sf.functions.h3-latlng-to-cell-string"
+kind = "error_parity"
+target = "error"
+note = "A NaN latitude, which the page says is an error."
+catches = "NULL or a cell returned"
+reading = "the page: the hexadecimal VARCHAR ID of the cell holding the latitude and longitude at the target resolution (0 to 15; any other value is an error); latitude and longitude outside their ranges are wrapped; NaN or Inf is an error"
+cases = ["cases/translation/functions/h3-latlng-to-cell-string.toml#t004_nan"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-latlng-to-cell-string.t005"
+form = "sf.functions.h3-latlng-to-cell-string"
+kind = "null_argument"
+target = "latitude"
+note = "A NULL latitude; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: the hexadecimal VARCHAR ID of the cell holding the latitude and longitude at the target resolution (0 to 15; any other value is an error); latitude and longitude outside their ranges are wrapped; NaN or Inf is an error"
+cases = ["cases/translation/functions/h3-latlng-to-cell-string.toml#t005_null_latitude"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-point-to-cell.t001"
+form = "sf.functions.h3-point-to-cell"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A point in San Francisco, written longitude first, at resolutions 0 and 9."
+catches = "longitude and latitude swapped"
+reading = "the page: the INTEGER ID of the cell holding a GEOGRAPHY point at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-point-to-cell.toml#t001_point"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-point-to-cell.t002"
+form = "sf.functions.h3-point-to-cell"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: the INTEGER ID of the cell holding a GEOGRAPHY point at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-point-to-cell.toml#t002_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-point-to-cell.t003"
+form = "sf.functions.h3-point-to-cell"
+kind = "null_argument"
+target = "geography-point"
+note = "A NULL point; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: the INTEGER ID of the cell holding a GEOGRAPHY point at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-point-to-cell.toml#t003_null_geography_point"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-point-to-cell-string.t001"
+form = "sf.functions.h3-point-to-cell-string"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A point in San Francisco, written longitude first, at resolutions 0 and 9."
+catches = "longitude and latitude swapped"
+reading = "the page: the hexadecimal VARCHAR ID of the cell holding a GEOGRAPHY point at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-point-to-cell-string.toml#t001_point"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-point-to-cell-string.t002"
+form = "sf.functions.h3-point-to-cell-string"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: the hexadecimal VARCHAR ID of the cell holding a GEOGRAPHY point at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-point-to-cell-string.toml#t002_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-point-to-cell-string.t003"
+form = "sf.functions.h3-point-to-cell-string"
+kind = "null_argument"
+target = "geography-point"
+note = "A NULL point; the page does not say; the recording decides."
+catches = "an error"
+reading = "the page: the hexadecimal VARCHAR ID of the cell holding a GEOGRAPHY point at the target resolution (0 to 15; any other value is an error)"
+cases = ["cases/translation/functions/h3-point-to-cell-string.toml#t003_null_geography_point"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-polygon-to-cells.t001"
+form = "sf.functions.h3-polygon-to-cells"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A triangle inside one cell but away from its centroid, which holds no centroid, and a small square around the centroid, which holds one."
+catches = "cells counted when their boundary intersects the polygon, which puts the cell in the triangle's result"
+reading = "the page: an array of the INTEGER IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-polygon-to-cells.toml#t001_centroids"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-polygon-to-cells.t002"
+form = "sf.functions.h3-polygon-to-cells"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of the INTEGER IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-polygon-to-cells.toml#t002_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-polygon-to-cells.t003"
+form = "sf.functions.h3-polygon-to-cells"
+kind = "null_argument"
+target = "geography-polygon"
+note = "A NULL polygon; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the INTEGER IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-polygon-to-cells.toml#t003_null_geography_polygon"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-polygon-to-cells-strings.t001"
+form = "sf.functions.h3-polygon-to-cells-strings"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A triangle inside one cell but away from its centroid, which holds no centroid, and a small square around the centroid, which holds one."
+catches = "cells counted when their boundary intersects the polygon, which puts the cell in the triangle's result"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-polygon-to-cells-strings.toml#t001_centroids"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-polygon-to-cells-strings.t002"
+form = "sf.functions.h3-polygon-to-cells-strings"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-polygon-to-cells-strings.toml#t002_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-polygon-to-cells-strings.t003"
+form = "sf.functions.h3-polygon-to-cells-strings"
+kind = "null_argument"
+target = "geography-polygon"
+note = "A NULL polygon; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-polygon-to-cells-strings.toml#t003_null_geography_polygon"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-string-to-int.t001"
+form = "sf.functions.h3-string-to-int"
+kind = "type_combination"
+target = "VARCHAR"
+note = "Hexadecimal IDs at resolutions 9 and 0."
+catches = "the text read as a decimal number, or a value beyond 63 bits truncated"
+reading = "the page: the INTEGER form of a hexadecimal cell ID"
+cases = ["cases/translation/functions/h3-string-to-int.toml#t001_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-string-to-int.t002"
+form = "sf.functions.h3-string-to-int"
+kind = "null_argument"
+target = "cell-id"
+note = "A NULL ID; the page does not say; the recording decides."
+catches = "an error, or 0 returned"
+reading = "the page: the INTEGER form of a hexadecimal cell ID"
+cases = ["cases/translation/functions/h3-string-to-int.toml#t002_null_cell_id"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-coverage.t001"
+form = "sf.functions.h3-try-coverage"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A triangle inside one cell but away from its centroid, and a small square around the centroid: each is covered by that cell alone."
+catches = "only cells whose centroid is inside counted, which leaves the triangle uncovered"
+reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-try-coverage.toml#t001_cover"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-coverage.t002"
+form = "sf.functions.h3-try-coverage"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A self-intersecting polygon kept with allow_invalid, for which the page says the coverage is NULL."
+catches = "an error raised, or the shape repaired first"
+reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-try-coverage.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-coverage.t003"
+form = "sf.functions.h3-try-coverage"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A 20-degree square at resolution 15, more cells than the limit, which the page says gives NULL."
+catches = "an error raised"
+reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-try-coverage.toml#t003_limit"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-coverage.t004"
+form = "sf.functions.h3-try-coverage"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. The page says this holds for the TRY form too."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-try-coverage.toml#t004_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-coverage.t005"
+form = "sf.functions.h3-try-coverage"
+kind = "null_argument"
+target = "geography-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the INTEGER IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-try-coverage.toml#t005_null_geography_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-coverage-strings.t001"
+form = "sf.functions.h3-try-coverage-strings"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A triangle inside one cell but away from its centroid, and a small square around the centroid: each is covered by that cell alone."
+catches = "only cells whose centroid is inside counted, which leaves the triangle uncovered"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-try-coverage-strings.toml#t001_cover"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-coverage-strings.t002"
+form = "sf.functions.h3-try-coverage-strings"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A self-intersecting polygon kept with allow_invalid, for which the page says the coverage is NULL."
+catches = "an error raised, or the shape repaired first"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-try-coverage-strings.toml#t002_invalid"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-coverage-strings.t003"
+form = "sf.functions.h3-try-coverage-strings"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A 20-degree square at resolution 15, more cells than the limit, which the page says gives NULL."
+catches = "an error raised"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-try-coverage-strings.toml#t003_limit"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-coverage-strings.t004"
+form = "sf.functions.h3-try-coverage-strings"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. The page says this holds for the TRY form too."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-try-coverage-strings.toml#t004_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-coverage-strings.t005"
+form = "sf.functions.h3-try-coverage-strings"
+kind = "null_argument"
+target = "geography-expression"
+note = "A NULL shape; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the fewest cells covering the shape, a cell counting if its boundary intersects it; NULL for an invalid shape; NULL when the cells exceed the limit; target resolution 0 to 15, any other value an error"
+cases = ["cases/translation/functions/h3-try-coverage-strings.toml#t005_null_geography_expression"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-grid-distance.t001"
+form = "sf.functions.h3-try-grid-distance"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "A cell and a cell two steps away, both ways, and a cell with itself."
+catches = "a count of cells on the path (3) returned instead of steps, or direction-dependent results"
+reading = "the page: the grid distance in steps between two cells of the same resolution, from INTEGER or hexadecimal VARCHAR IDs; NULL where it cannot be computed, for example for non-neighbouring base cells"
+cases = ["cases/translation/functions/h3-try-grid-distance.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-grid-distance.t002"
+form = "sf.functions.h3-try-grid-distance"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR"
+note = "The same pair as hexadecimal IDs."
+catches = "the text read as decimal numbers"
+reading = "the page: the grid distance in steps between two cells of the same resolution, from INTEGER or hexadecimal VARCHAR IDs; NULL where it cannot be computed, for example for non-neighbouring base cells"
+cases = ["cases/translation/functions/h3-try-grid-distance.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-grid-distance.t003"
+form = "sf.functions.h3-try-grid-distance"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "Resolution-5 cells in San Francisco and Sydney, on non-neighbouring base cells, which the page says give NULL."
+catches = "an error raised, or a great-circle estimate returned"
+reading = "the page: the grid distance in steps between two cells of the same resolution, from INTEGER or hexadecimal VARCHAR IDs; NULL where it cannot be computed, for example for non-neighbouring base cells"
+cases = ["cases/translation/functions/h3-try-grid-distance.toml#t003_far"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-grid-distance.t004"
+form = "sf.functions.h3-try-grid-distance"
+kind = "null_argument"
+target = "cell-id-1"
+note = "A NULL first ID; the page does not say; the recording decides."
+catches = "an error, or 0 returned"
+reading = "the page: the grid distance in steps between two cells of the same resolution, from INTEGER or hexadecimal VARCHAR IDs; NULL where it cannot be computed, for example for non-neighbouring base cells"
+cases = ["cases/translation/functions/h3-try-grid-distance.toml#t004_null_cell_id_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-grid-path.t001"
+form = "sf.functions.h3-try-grid-path"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "The path from a cell to a cell two steps away, as JSON text: 3 cells from the first to the second."
+catches = "the end cells left out, or the path reversed"
+reading = "the page: an array of the cells on the line between two cells of the same resolution, INTEGER for INTEGER IDs and hexadecimal VARCHAR for VARCHAR IDs; NULL where it cannot be computed, for example for non-neighbouring base cells"
+cases = ["cases/translation/functions/h3-try-grid-path.toml#t001_integer"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-grid-path.t002"
+form = "sf.functions.h3-try-grid-path"
+kind = "type_combination"
+target = "VARCHAR, VARCHAR"
+note = "The same pair as hexadecimal IDs, which the page says give hexadecimal IDs."
+catches = "INTEGER IDs returned for VARCHAR IDs"
+reading = "the page: an array of the cells on the line between two cells of the same resolution, INTEGER for INTEGER IDs and hexadecimal VARCHAR for VARCHAR IDs; NULL where it cannot be computed, for example for non-neighbouring base cells"
+cases = ["cases/translation/functions/h3-try-grid-path.toml#t002_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-grid-path.t003"
+form = "sf.functions.h3-try-grid-path"
+kind = "type_combination"
+target = "INTEGER, INTEGER"
+note = "Resolution-5 cells in San Francisco and Sydney, on non-neighbouring base cells, which the page says give NULL."
+catches = "an error raised, or a partial path returned"
+reading = "the page: an array of the cells on the line between two cells of the same resolution, INTEGER for INTEGER IDs and hexadecimal VARCHAR for VARCHAR IDs; NULL where it cannot be computed, for example for non-neighbouring base cells"
+cases = ["cases/translation/functions/h3-try-grid-path.toml#t003_far"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-grid-path.t004"
+form = "sf.functions.h3-try-grid-path"
+kind = "null_argument"
+target = "cell-id-1"
+note = "A NULL first ID; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the cells on the line between two cells of the same resolution, INTEGER for INTEGER IDs and hexadecimal VARCHAR for VARCHAR IDs; NULL where it cannot be computed, for example for non-neighbouring base cells"
+cases = ["cases/translation/functions/h3-try-grid-path.toml#t004_null_cell_id_1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-polygon-to-cells.t001"
+form = "sf.functions.h3-try-polygon-to-cells"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A triangle inside one cell but away from its centroid, which holds no centroid, and a small square around the centroid, which holds one."
+catches = "cells counted when their boundary intersects the polygon, which puts the cell in the triangle's result"
+reading = "the page: an array of the INTEGER IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error; NULL where it cannot be computed"
+cases = ["cases/translation/functions/h3-try-polygon-to-cells.toml#t001_centroids"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-polygon-to-cells.t002"
+form = "sf.functions.h3-try-polygon-to-cells"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. The page says this holds for the TRY form too."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of the INTEGER IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error; NULL where it cannot be computed"
+cases = ["cases/translation/functions/h3-try-polygon-to-cells.toml#t002_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-polygon-to-cells.t003"
+form = "sf.functions.h3-try-polygon-to-cells"
+kind = "null_argument"
+target = "geography-polygon"
+note = "A NULL polygon; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the INTEGER IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error; NULL where it cannot be computed"
+cases = ["cases/translation/functions/h3-try-polygon-to-cells.toml#t003_null_geography_polygon"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-polygon-to-cells-strings.t001"
+form = "sf.functions.h3-try-polygon-to-cells-strings"
+kind = "type_combination"
+target = "GEOGRAPHY, INTEGER"
+note = "A triangle inside one cell but away from its centroid, which holds no centroid, and a small square around the centroid, which holds one."
+catches = "cells counted when their boundary intersects the polygon, which puts the cell in the triangle's result"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error; NULL where it cannot be computed"
+cases = ["cases/translation/functions/h3-try-polygon-to-cells-strings.toml#t001_centroids"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-polygon-to-cells-strings.t002"
+form = "sf.functions.h3-try-polygon-to-cells-strings"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error. The page says this holds for the TRY form too."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error; NULL where it cannot be computed"
+cases = ["cases/translation/functions/h3-try-polygon-to-cells-strings.toml#t002_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-try-polygon-to-cells-strings.t003"
+form = "sf.functions.h3-try-polygon-to-cells-strings"
+kind = "null_argument"
+target = "geography-polygon"
+note = "A NULL polygon; the page does not say; the recording decides."
+catches = "an error, or an empty array returned"
+reading = "the page: an array of the hexadecimal VARCHAR IDs of the cells whose centroids lie inside the polygon; target resolution 0 to 15, any other value an error; NULL where it cannot be computed"
+cases = ["cases/translation/functions/h3-try-polygon-to-cells-strings.toml#t003_null_geography_polygon"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-uncompact-cells.t001"
+form = "sf.functions.h3-uncompact-cells"
+kind = "type_combination"
+target = "ARRAY of INTEGER, INTEGER"
+note = "A resolution-9 cell and a resolution-10 cell expanded to resolution 10: 7 cells and the one already there."
+catches = "the finer cell expanded again, or dropped"
+reading = "the page: an array of INTEGER IDs expanded to the target resolution (0 to 15; any other value is an error); the input cells cannot have a higher resolution than the target; NULL gives NULL"
+cases = ["cases/translation/functions/h3-uncompact-cells.toml#t001_uncompact"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-uncompact-cells.t002"
+form = "sf.functions.h3-uncompact-cells"
+kind = "error_parity"
+target = "error"
+note = "A target resolution 8, coarser than the resolution-9 input, which the page says is not allowed."
+catches = "the parent returned"
+reading = "the page: an array of INTEGER IDs expanded to the target resolution (0 to 15; any other value is an error); the input cells cannot have a higher resolution than the target; NULL gives NULL"
+cases = ["cases/translation/functions/h3-uncompact-cells.toml#t002_coarser_target"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-uncompact-cells.t003"
+form = "sf.functions.h3-uncompact-cells"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of INTEGER IDs expanded to the target resolution (0 to 15; any other value is an error); the input cells cannot have a higher resolution than the target; NULL gives NULL"
+cases = ["cases/translation/functions/h3-uncompact-cells.toml#t003_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-uncompact-cells.t004"
+form = "sf.functions.h3-uncompact-cells"
+kind = "null_argument"
+target = "array-of-cell-ids"
+note = "A NULL array, which the page says gives NULL without an error."
+catches = "an empty array returned"
+reading = "the page: an array of INTEGER IDs expanded to the target resolution (0 to 15; any other value is an error); the input cells cannot have a higher resolution than the target; NULL gives NULL"
+cases = ["cases/translation/functions/h3-uncompact-cells.toml#t004_null_array_of_cell_ids"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-uncompact-cells-strings.t001"
+form = "sf.functions.h3-uncompact-cells-strings"
+kind = "type_combination"
+target = "ARRAY of VARCHAR, INTEGER"
+note = "A resolution-9 cell and a resolution-10 cell expanded to resolution 10: 7 cells and the one already there."
+catches = "the finer cell expanded again, or dropped"
+reading = "the page: an array of VARCHAR IDs expanded to the target resolution (0 to 15; any other value is an error); the input cells cannot have a higher resolution than the target; NULL gives NULL"
+cases = ["cases/translation/functions/h3-uncompact-cells-strings.toml#t001_uncompact"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-uncompact-cells-strings.t002"
+form = "sf.functions.h3-uncompact-cells-strings"
+kind = "error_parity"
+target = "error"
+note = "A target resolution 8, coarser than the resolution-9 input, which the page says is not allowed."
+catches = "the parent returned"
+reading = "the page: an array of VARCHAR IDs expanded to the target resolution (0 to 15; any other value is an error); the input cells cannot have a higher resolution than the target; NULL gives NULL"
+cases = ["cases/translation/functions/h3-uncompact-cells-strings.toml#t002_coarser_target"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-uncompact-cells-strings.t003"
+form = "sf.functions.h3-uncompact-cells-strings"
+kind = "error_parity"
+target = "error"
+note = "Resolution 16, outside the 0 to 15 that the page allows; it says any other value is an error."
+catches = "the resolution clamped to 15, or NULL returned"
+reading = "the page: an array of VARCHAR IDs expanded to the target resolution (0 to 15; any other value is an error); the input cells cannot have a higher resolution than the target; NULL gives NULL"
+cases = ["cases/translation/functions/h3-uncompact-cells-strings.toml#t003_resolution_range"]
+required = true
+
+[[obligation]]
+id = "sf.functions.h3-uncompact-cells-strings.t004"
+form = "sf.functions.h3-uncompact-cells-strings"
+kind = "null_argument"
+target = "array-of-cell-ids"
+note = "A NULL array, which the page says gives NULL without an error."
+catches = "an empty array returned"
+reading = "the page: an array of VARCHAR IDs expanded to the target resolution (0 to 15; any other value is an error); the input cells cannot have a higher resolution than the target; NULL gives NULL"
+cases = ["cases/translation/functions/h3-uncompact-cells-strings.toml#t004_null_array_of_cell_ids"]
+required = true
+
+[[obligation]]
 id = "sf.functions.hash.t001"
 form = "sf.functions.hash"
 kind = "type_combination"
