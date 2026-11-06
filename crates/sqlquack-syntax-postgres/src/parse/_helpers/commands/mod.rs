@@ -15,5 +15,7 @@ pub(crate) mod role_alters;
 pub(crate) mod role_creates;
 pub(crate) mod routine_alters;
 pub(crate) mod routines;
+pub(crate) mod sessions;
 pub(crate) mod statements;
 pub(crate) mod tables;
+pub(crate) mod utility;

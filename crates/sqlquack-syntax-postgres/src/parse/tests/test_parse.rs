@@ -215,6 +215,21 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
+            description: "a cursor is declared for a query, not for DML",
+            sql: "DECLARE c CURSOR FOR INSERT INTO t VALUES (1)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "EXPLAIN does not take CREATE VIEW",
+            sql: "EXPLAIN CREATE VIEW v AS SELECT 1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a direction keyword alone is the cursor's name",
+            sql: "FETCH next",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
             description: "a policy is PERMISSIVE or RESTRICTIVE, compared after folding (42601)",
             sql: "CREATE POLICY p ON t AS \"RESTRICTIVE\"",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
@@ -1154,6 +1169,30 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() 
             sql: "COMMENT ON FUNCTION f(SETOF int[3]) IS 'x'",
             pointer: "/0/comment/this/function/args/0/data_type/name",
             expected_json: "\"SETOF integer[3]\"",
+        },
+        ValueTestCase {
+            description: "ABORT is the ROLLBACK gram.y makes of it",
+            sql: "ABORT",
+            pointer: "/0/utility_statement/kind",
+            expected_json: "\"ROLLBACK\"",
+        },
+        ValueTestCase {
+            description: "a VACUUM keyword is the option gram.y lists for it",
+            sql: "VACUUM FULL t",
+            pointer: "/0/utility_statement/options/0/tuple/expressions/0/identifier/name",
+            expected_json: "\"full\"",
+        },
+        ValueTestCase {
+            description: "CLUSTER index ON table names the table first",
+            sql: "CLUSTER i ON t",
+            pointer: "/0/utility_statement/operands/0/table/name/name",
+            expected_json: "\"t\"",
+        },
+        ValueTestCase {
+            description: "FETCH LAST is ABSOLUTE -1",
+            sql: "FETCH LAST c",
+            pointer: "/0/utility_statement/operands/1/literal/value",
+            expected_json: "\"-1\"",
         },
         ValueTestCase {
             description: "a policy without TO is for PUBLIC",

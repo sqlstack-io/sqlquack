@@ -21,7 +21,7 @@ next top-level `;` is not checked further. The SQL/JSON and SQL/XML calls, `TREA
 
 | Gap | Construct |
 | --- | --- |
-| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, `CREATE [OR REPLACE] [MATERIALIZED] VIEW`, `CREATE INDEX`, `SEQUENCE`, `TRIGGER`, `TYPE` and `FOREIGN TABLE`, the catalog `CREATE` statements listed under their own heading, every `ALTER`, `GRANT` and `REVOKE` |
+| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, `CREATE [OR REPLACE] [MATERIALIZED] VIEW`, `CREATE INDEX`, `SEQUENCE`, `TRIGGER`, `TYPE` and `FOREIGN TABLE`, the catalog `CREATE` statements listed under their own heading, every `ALTER`, `GRANT` and `REVOKE`, and the utility and session statements listed under their own heading |
 | `copy_where` | `COPY … FROM … WHERE condition` |
 | `json`, `json_array`, `json_arrayagg`, `json_exists`, `json_object`, `json_objectagg`, `json_query`, `json_scalar`, `json_serialize`, `json_value`, `json_table` | the SQL/JSON call syntax |
 | `xmlconcat`, `xmlelement`, `xmlexists`, `xmlforest`, `xmlparse`, `xmlpi`, `xmlroot`, `xmlserialize`, `xmltable` | the SQL/XML call syntax |
@@ -181,3 +181,19 @@ OPTION` and `GRANT OPTION FOR` set `grant_option`, and `RESTRICT` changes nothin
 PRIVILEGES` becomes `AlterDefaultPrivileges`: its `FOR ROLE` (or `FOR USER`) and `IN SCHEMA` options in
 order, then the `Grant` or `Revoke`, whose kind is the plural object kind; `ROUTINES` is `FUNCTIONS`.
 A `GRANT` inside `CREATE SCHEMA` grants on objects only.
+
+## Utility and session statements
+
+Transactions, `SET`, `RESET`, `SHOW`, `SET CONSTRAINTS`, `LOCK`, `DISCARD`, `CHECKPOINT`, `CLUSTER`,
+`VACUUM`, `ANALYZE`, `REINDEX`, `LISTEN`, `NOTIFY`, `UNLISTEN`, `LOAD`, `CLOSE`, `DECLARE`, `FETCH`,
+`MOVE`, `DEALLOCATE`, `DO`, `EXPLAIN`, `CALL`, `REFRESH MATERIALIZED VIEW`, `IMPORT FOREIGN SCHEMA` and
+`REASSIGN OWNED` become `UtilityStatement`: the statement's keywords in `kind`, its options and its
+operands in order. Each takes gram.y's raw tree: `ABORT` is `ROLLBACK` and `END` is `COMMIT`; `WORK`,
+`TRANSACTION`, `AND NO CHAIN`, `SET SESSION` and `WITHOUT HOLD` change nothing; `SET` and `RESET` are
+both `SET`, with the setting tuple of `ALTER DATABASE`; `SHOW TIME ZONE` is `SHOW timezone`. Keyword
+options are the `DefElem`s gram.y lists for them, so `VACUUM FULL t` equals `VACUUM (FULL) t`, and
+`CONCURRENTLY` is `REINDEX`'s last option. `CLUSTER index ON table` is `CLUSTER table USING index`. A
+lock mode is always written out, `ACCESS EXCLUSIVE` by default. `DECLARE`'s cursor options are a set.
+`FETCH` and `MOVE` write out the direction and count: `NEXT` and a bare cursor are `FORWARD 1`, `FIRST`
+and `LAST` are `ABSOLUTE 1` and `-1`. `CALL` keeps the call whole. `PREPARE` and `EXECUTE` become
+`PrepareStatement` and `ExecuteStatement`.
