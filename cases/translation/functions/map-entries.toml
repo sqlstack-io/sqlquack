@@ -1,0 +1,36 @@
+category = "translation"
+construct = "sf.functions.map-entries"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_entry"
+description = "A one-entry map, and the entry count of a two-entry map. Catches: fields named other than key and value, or entries missing"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["7"],
+]
+query = "SELECT MAP_ENTRIES(MAP_CONSTRUCT('a', x)) AS one, ARRAY_SIZE(MAP_ENTRIES(MAP_CONSTRUCT('a', 1, 'b', 2))) AS n FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_empty_map"
+description = "An empty map, made by deleting its only key; the page returns an empty ARRAY. Catches: NULL instead of []"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT MAP_ENTRIES(MAP_DELETE(MAP_CONSTRUCT('a', x), 'a')) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["empty-input"]
+
+[[case]]
+id = "t003_null_map"
+description = "A NULL map, which the page says gives NULL. Catches: an empty array"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT MAP_ENTRIES(IFF(x IS NULL, NULL, MAP_CONSTRUCT('a', 1, 'b', 2))) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

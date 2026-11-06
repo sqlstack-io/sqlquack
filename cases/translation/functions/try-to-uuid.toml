@@ -1,0 +1,37 @@
+category = "translation"
+construct = "sf.functions.try-to-uuid"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_valid"
+description = "A UUID in lower case, compared as text. Catches: NULL for a valid UUID"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'6ba7b810-9dad-11d1-80b4-00c04fd430c8'"],
+]
+query = "SELECT TRY_TO_UUID(v)::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_invalid"
+description = "A string one digit short and a string with a non-hex digit. Catches: an error raised"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'6BA7B810-9DAD-11D1-80B4-00C04FD430C'"],
+  ["'GBA7B810-9DAD-11D1-80B4-00C04FD430C8'"],
+]
+query = "SELECT TRY_TO_UUID(v) IS NULL AS n FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_string_expr"
+description = "A NULL string. Catches: a nil UUID returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TRY_TO_UUID(v)::VARCHAR AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

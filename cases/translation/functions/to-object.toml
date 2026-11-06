@@ -38,11 +38,11 @@ tags = ["null"]
 
 [[case]]
 id = "t004_string"
-description = "A string holding object text, for which the page says any input other than an OBJECT reports an error. Catches: the string parsed, instead of the error"
+description = "A VARIANT holding the text {}. The page says any input other than an OBJECT reports an error, but the recording shows Snowflake parsing the string into the empty object. Catches: the error the page describes raised, or the string returned unchanged"
 columns = [{ name = "a", type = "VARCHAR" }]
 rows = [
   ["'\"{}\"'"],
 ]
 query = "SELECT TO_OBJECT(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
 order = "ordered"
-tags = ["error"]
+tags = ["type-combination"]
