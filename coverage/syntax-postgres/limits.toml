@@ -1,0 +1,503 @@
+# Hand-written readings, suppressions and limits of the PostgreSQL catalogue's obligations; read
+# by scripts/build_syntax_obligations_pg.py through the shared obligation builder.
+#
+# [[reading]] replaces a form's grammar for derivation only, bound to the catalogue grammar's
+# sha256; an empty grammar means the form's obligations are all hand-written [[limit]] rows.
+# [[suppress]] withdraws one derived obligation (form, kind, target) with the reason it is not
+# the negative or positive it looks like. [[limit]] is a hand-written obligation with its SQL.
+
+# Lexical forms: the renderer joins tokens with blanks, so their obligations are hand-written.
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.identifier"
+grammar_sha256 = "d8b37eb88517838eee942590009aa8de168fc73af2fde0aaefce933782a8adca"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.quoted-identifier"
+grammar_sha256 = "77b3f8fccbea9ae6f3d55cac4b62e0ab012429624ed86cf313fddddb58bde328"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.integer"
+grammar_sha256 = "784f1846da0a5f234e5b933f629ac9765c2cc22ca8071f81f0cac63d106c1078"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.decimal"
+grammar_sha256 = "1a23e0e1ec848947a8f7edb791420f2e0dd21d619515126178b1a592b27769b9"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.string"
+grammar_sha256 = "be2d0f951c51970d077f00d886852bdfb4fe045f122f0d93eedb84dc233e9818"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.dollar-quoted-string"
+grammar_sha256 = "2adeca9fcf22b75ea2294c9593dfc56876b5ba72de833790670e4eaf3cd60772"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.block-comment"
+grammar_sha256 = "ea88611f3bcabceb913fcdbeeb609fd496c0d364d2f4b23d920bdd397a165113"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+[[reading]]
+form = "pg.expressions.sql-syntax-lexical.escape-string"
+grammar_sha256 = "c447fa34de95fba9138ff5669f534318971aa89462ff2dacd07b098561fb5d50"
+grammar = []
+reason = "a lexical form: the renderer joins tokens with blanks, so its obligations are hand-written [[limit]] rows"
+
+# Statements whose lists the renderer cannot copy as written.
+
+[[reading]]
+form = "pg.query.select.select"
+grammar_sha256 = "65fd72b7bb10ec989ba814d760a72c6e7c53195bd799770479d848a11a7e9a7d"
+grammar = ["[ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ] SELECT { [ ALL ] [ { * | <expression> [ [ AS ] <output_name> ] } [, ...] ] | DISTINCT [ ON ( <expression> [, ...] ) ] { * | <expression> [ [ AS ] <output_name> ] } [ , <expression> ] } [ FROM <from_item> [, ...] ] [ WHERE <condition> ] [ GROUP BY [ ALL | DISTINCT ] <grouping_element> [, ...] ] [ HAVING <condition> ] [ WINDOW <window_name> AS ( [ <window_definition> ] ) [ , <window_name> AS ( [ <window_definition> ] ) ] ] [ { UNION | INTERSECT | EXCEPT } [ ALL | DISTINCT ] <select> ] [ ORDER BY <expression> [ ASC | DESC | USING <operator> ] [ NULLS { FIRST | LAST } ] [ , <expression> ] ] [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ] [ OFFSET <start> [ ROW | ROWS ] ] [ FOR { UPDATE | NO KEY UPDATE | SHARE | KEY SHARE } [ OF <from_reference> [, ...] ] [ NOWAIT | SKIP LOCKED ] [...] ]"]
+reason = "with_query spelled as its definition's name AS ( query ), so nesting goes inside the parentheses; DISTINCT [ ON ( ... ) ] with a required select list (gram.y simple_select: distinct_clause target_list; ALL and no keyword take an optional list); every part of a window definition optional, as its definition on the page makes it; the WITH, DISTINCT select, WINDOW and ORDER BY lists' second items written out, which the renderer otherwise copies wrongly; LIMIT and FETCH as the two spellings of one clause (gram.y limit_clause: a query has at most one, the synopsis lists both as optional); FETCH ... WITH TIES, which needs ORDER BY, moved to hand-written limits"
+
+[[reading]]
+form = "pg.dml.update"
+grammar_sha256 = "c6d9af0264d04a611781bdccc6cdb1112e682c5c28d83003d8908ea0c410643c"
+grammar = ["[ WITH [ RECURSIVE ] <with_query_name> AS ( <with_subquery> ) [ , <with_query_name> AS ( <with_subquery> ) ] ] UPDATE { ONLY <table_name> | <table_name> [ * ] } [ [ AS ] <alias> ] SET { <column_name> = { <expression> | DEFAULT } | ( <column_name> [, ...] ) = [ ROW ] ( { <expression> | DEFAULT } [, ...] ) | ( <column_name> [, ...] ) = ( <sub-SELECT> ) } [ , <column_name> = <expression> ] [ FROM <from_item> [, ...] ] [ WHERE <condition> | WHERE CURRENT OF <cursor_name> ] [ RETURNING [ WITH ( { OLD | NEW } AS <output_alias> [ , NEW AS <output_alias> ] ) ] { * | <output_expression> [ [ AS ] <output_name> ] } [ , <output_expression> ] ]"]
+reason = "with_query spelled as its definition's name AS ( query ), so nesting goes inside the parentheses; ONLY and * as alternatives (gram.y relation_expr takes one or the other, the synopsis shows both as optional); the SET, WITH ( ... ) and RETURNING lists' second items written out, which the renderer otherwise copies wrongly"
+
+# Derived negatives that are valid PostgreSQL.
+
+[[suppress]]
+form = "pg.query.select.select"
+kind = "identifier_class"
+target = "<output_name>"
+reason = "a reserved keyword after an output expression is a bare column label (gram.y bare_label_keyword covers SELECT and most reserved words), so it is no negative; [[limit]] rows test a keyword that is not a bare label"
+
+[[suppress]]
+form = "pg.dml.update"
+kind = "identifier_class"
+target = "<output_name>"
+reason = "a reserved keyword after a RETURNING expression is a bare column label (gram.y bare_label_keyword), so it is no negative"
+
+[[suppress]]
+form = "pg.query.select.select"
+kind = "negative_neighbour"
+target = "<count> in [ <count> ]"
+reason = "FETCH's count is any c_expr (gram.y select_fetch_first_value), and a string literal is one; a non-integer count fails at run time, not in the parser"
+
+[[suppress]]
+form = "pg.query.select.select"
+kind = "negative_neighbour"
+target = "<count> in [ { LIMIT { <count> | ALL } | FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY } ]"
+reason = "LIMIT takes any a_expr (gram.y select_limit_value), and a string literal is one; a non-integer count fails at run time, not in the parser"
+
+[[suppress]]
+form = "pg.query.select.select"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SELECT"
+reason = "without SELECT the minimal form is the empty string, which PostgreSQL accepts as an empty query"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.aggregate"
+kind = "required_operand_missing"
+target = "<aggregate_name>"
+reason = "without the name the call is a parenthesised expression, ( expression ), which is valid"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.aggregate"
+kind = "identifier_class"
+target = "<aggregate_name>"
+reason = "with SELECT as the name, SELECT ( 1 ) inside parentheses is a scalar subquery, which is valid"
+
+[[suppress]]
+form = "pg.expressions.datatype.character-varying"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VARYING"
+reason = "CHARACTER without VARYING is the documented fixed-length type character, which is valid"
+
+[[suppress]]
+form = "pg.expressions.datatype.character-varying"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required CHARACTER after "
+reason = "VARYING is an unreserved keyword, so on its own it parses as a type name; an unknown type fails after parsing"
+
+[[suppress]]
+form = "pg.expressions.datatype-datetime.typed-datetime-literal"
+kind = "required_operand_missing"
+target = "<type>"
+reason = "without the type the constant is a plain string literal, which is valid"
+
+[[suppress]]
+form = "pg.expressions.datatype-datetime.typed-datetime-literal"
+kind = "required_operand_missing"
+target = "'<value>'"
+reason = "without the string the type name (TIMESTAMP, a column-name keyword) parses as a column reference, which is valid"
+
+[[suppress]]
+form = "pg.expressions.sql-syntax-lexical.type-string"
+kind = "required_operand_missing"
+target = "<type>"
+reason = "without the type the constant is a plain string literal, which is valid"
+
+[[suppress]]
+form = "pg.expressions.sql-expressions.column-reference"
+kind = "identifier_class"
+target = "<columnname>"
+reason = "after a dot any keyword is a column label (gram.y attr_name: ColLabel), so a reserved word there is valid"
+
+# Hand-written obligations of the lexical forms and of syntax a reading could not express.
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.identifier"
+kind = "positive"
+note = "an unquoted identifier: a letter, then letters, digits and underscores"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT abc_1"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.identifier"
+kind = "alternative"
+target = "<identifier>"
+note = "an identifier that starts with an underscore"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT _abc"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.identifier"
+kind = "alternative"
+target = "<identifier>"
+note = "a dollar sign after the first character"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT a$1"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.identifier"
+kind = "alternative"
+target = "<identifier>"
+note = "a non-Latin letter"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT é1"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.identifier"
+kind = "negative_neighbour"
+note = "an identifier that starts with a digit (trailing junk after a numeric literal)"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT 1abc"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.identifier"
+kind = "negative_neighbour"
+note = "a reserved key word used as an unquoted table name"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT 1 FROM select"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.quoted-identifier"
+kind = "positive"
+note = "a double-quoted identifier with a blank"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT \"a b\""
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.quoted-identifier"
+kind = "alternative"
+target = "\"<identifier>\""
+note = "a quoted reserved key word"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT 1 FROM \"select\""
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.quoted-identifier"
+kind = "alternative"
+target = "\"<identifier>\""
+note = "a doubled double quote stands for one"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT \"a\"\"b\""
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.quoted-identifier"
+kind = "negative_neighbour"
+note = "a zero-length quoted identifier"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT \"\""
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.quoted-identifier"
+kind = "negative_neighbour"
+note = "an unterminated quoted identifier"
+anchor = "doc.sql-syntax-lexical / Identifiers and Key Words"
+sql = "SELECT \"ab"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.integer"
+kind = "positive"
+note = "a decimal integer constant"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 42"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.integer"
+kind = "extreme"
+note = "an integer constant beyond bigint, which becomes numeric; no documented bound"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 123456789012345678901234567890"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.integer"
+kind = "negative_neighbour"
+note = "letters straight after the digits (trailing junk after a numeric literal)"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 42abc"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.decimal"
+kind = "positive"
+note = "digits, a point and digits"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 3.5"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.decimal"
+kind = "alternative"
+target = "[ <digits> ]"
+note = "no digits after the point"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 4."
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.decimal"
+kind = "alternative"
+target = "e[ +- ]<digits>"
+note = "an exponent with a sign"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 1.925e-3"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.decimal"
+kind = "alternative"
+target = "e[ +- ]<digits>"
+note = "an upper-case exponent without a sign, after a bare point"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 5.E3"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.decimal"
+kind = "negative_neighbour"
+note = "an exponent marker without digits"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 1.5e"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.decimal"
+kind = "negative_neighbour"
+note = "an exponent sign without digits"
+anchor = "doc.sql-syntax-lexical / Constants / Numeric Constants"
+sql = "SELECT 1.5e+"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.string"
+kind = "positive"
+note = "a string constant"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants"
+sql = "SELECT 'abc'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.string"
+kind = "alternative"
+target = "'<characters>'"
+note = "a doubled single quote stands for one"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants"
+sql = "SELECT 'it''s'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.string"
+kind = "alternative"
+target = "'<characters>'"
+note = "an empty string"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants"
+sql = "SELECT ''"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.string"
+kind = "negative_neighbour"
+note = "an unterminated string"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants"
+sql = "SELECT 'abc"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.dollar-quoted-string"
+kind = "positive"
+note = "a dollar-quoted string with a single quote taken literally"
+anchor = "doc.sql-syntax-lexical / Constants / Dollar-Quoted String Constants"
+sql = "SELECT $$it's$$"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.dollar-quoted-string"
+kind = "alternative"
+target = "<tag>"
+note = "a tagged dollar quote containing $$"
+anchor = "doc.sql-syntax-lexical / Constants / Dollar-Quoted String Constants"
+sql = "SELECT $tag$a $$ b$tag$"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.dollar-quoted-string"
+kind = "alternative"
+target = "<characters>"
+note = "an empty dollar-quoted string"
+anchor = "doc.sql-syntax-lexical / Constants / Dollar-Quoted String Constants"
+sql = "SELECT $$$$"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.dollar-quoted-string"
+kind = "negative_neighbour"
+note = "an unterminated dollar-quoted string"
+anchor = "doc.sql-syntax-lexical / Constants / Dollar-Quoted String Constants"
+sql = "SELECT $$abc"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.dollar-quoted-string"
+kind = "negative_neighbour"
+note = "a closing tag that differs from the opening tag"
+anchor = "doc.sql-syntax-lexical / Constants / Dollar-Quoted String Constants"
+sql = "SELECT $a$x$b$"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.block-comment"
+kind = "positive"
+note = "a block comment"
+anchor = "doc.sql-syntax-lexical / Comments"
+sql = "SELECT /* note */ 1"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.block-comment"
+kind = "option_present"
+target = "[ /* <comment_text> */ ]"
+note = "a nested block comment"
+anchor = "doc.sql-syntax-lexical / Comments"
+sql = "SELECT /* a /* b */ c */ 1"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.block-comment"
+kind = "negative_neighbour"
+note = "an unterminated block comment"
+anchor = "doc.sql-syntax-lexical / Comments"
+sql = "SELECT 1 /* note"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.block-comment"
+kind = "negative_neighbour"
+note = "a nested comment left open: the outer comment does not end at the first */"
+anchor = "doc.sql-syntax-lexical / Comments"
+sql = "SELECT /* a /* b */ 1"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.escape-string"
+kind = "positive"
+note = "an escape string constant with a backslash escape"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants with C-Style Escapes"
+sql = "SELECT E'a\\nb'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.escape-string"
+kind = "alternative"
+target = "E'<characters>'"
+note = "a lower-case e and a hexadecimal escape"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants with C-Style Escapes"
+sql = "SELECT e'\\x41'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.escape-string"
+kind = "alternative"
+target = "E'<characters>'"
+note = "an escaped single quote"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants with C-Style Escapes"
+sql = "SELECT E'it\\'s'"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-syntax-lexical.escape-string"
+kind = "negative_neighbour"
+note = "an escape string whose last quote is escaped, so it never ends"
+anchor = "doc.sql-syntax-lexical / Constants / String Constants with C-Style Escapes"
+sql = "SELECT E'abc\\'"
+context = "raw"
+
+[[limit]]
+form = "pg.query.select.select"
+kind = "alternative"
+target = "{ ONLY | WITH TIES }"
+note = "FETCH ... WITH TIES after an ORDER BY"
+anchor = "doc.sql-select / Synopsis"
+sql = "SELECT 1 ORDER BY 1 FETCH FIRST 1 ROW WITH TIES"
+context = "raw"
+
+[[limit]]
+form = "pg.query.select.select"
+kind = "negative_neighbour"
+target = "{ ONLY | WITH TIES }"
+note = "FETCH ... WITH TIES without ORDER BY; the page: WITH TIES requires an ORDER BY clause (gram.y raises 42601)"
+anchor = "doc.sql-select / LIMIT Clause"
+sql = "SELECT 1 FETCH FIRST 1 ROW WITH TIES"
+context = "raw"
+
+[[limit]]
+form = "pg.query.select.select"
+kind = "negative_neighbour"
+target = "DISTINCT [ ON ( <expression> [, ...] ) ]"
+note = "DISTINCT without a select list; the synopsis shows the list as optional, gram.y requires it after DISTINCT"
+anchor = "doc.sql-select / Synopsis"
+sql = "SELECT DISTINCT"
+context = "raw"
+
+[[limit]]
+form = "pg.query.select.select"
+kind = "negative_neighbour"
+target = "<output_name>"
+note = "a reserved key word that is not a bare label (gram.y bare_label_keyword omits it) as an output name without AS"
+anchor = "doc.sql-select / Synopsis"
+sql = "SELECT 1 ON"
+context = "raw"

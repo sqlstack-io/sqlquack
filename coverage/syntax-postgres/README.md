@@ -102,3 +102,27 @@ check, such as identifiers, punctuation and adjacency of keywords.
 Families: `query`, `dml`, `ddl`, `transaction_session`, `security_admin`, `utility`, `functions`,
 `expressions`. There is no `classes` or `scripting` family: PL/pgSQL bodies are string constants
 to the server grammar, and DO and CREATE FUNCTION are catalogued as statements.
+
+## Obligations and cases
+
+```sh
+python -m scripts.build_syntax_obligations_pg [--root ROOT] [--focus focus/postgres.toml]
+```
+
+Obligations are derived for every catalogued form by the shared builder
+(`scripts/syntax_obligations`, reused by import). `scripts/syntax_obligations_pg` adds what is
+Postgres's own: the submission context of each family (statements as written, expressions inside
+`SELECT ( … )` so a trailing keyword is never read as a bare column label, data types inside
+`CAST ( NULL AS … )`), placeholder fills by synopsis name, class rules for operator and function
+placeholders that name a value of a type, and a grammar read that writes a form's bare words in
+upper case (Postgres synopses spell keywords and type names in lower case; every placeholder is
+in angle brackets). `limits.toml` holds the readings, suppressions and hand-written limits, each
+with its reason, in the format of `coverage/syntax/limits.toml`.
+
+Cases are written for the forms in `focus/postgres.toml` only; the other families' case files are
+empty until their forms are taken up. Each case has the referee's shape: the session
+`{"TimeZone": "UTC", "statement_timeout": "30s"}`, capture `execute_in_rolled_back_transaction`,
+or `execute_autocommit_in_throwaway_database` for statements Postgres refuses inside a
+transaction block (the referee's `engine.toml` `autocommit` list), no setup, and one statement
+without a terminating semicolon. `elisions/` is not written: the Snowflake elision rules do not
+apply, and the few Postgres `...` fills are style entries.
