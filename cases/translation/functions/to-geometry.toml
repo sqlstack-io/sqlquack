@@ -28,7 +28,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_ewkt"
-description = "EWKT and EWKB with SRID 3857; the page does not say; the recording decides on the SRID of the result. Catches: the SRID prefix rejected"
+description = "EWKT with SRID 3857, which the page says specifies the SRID to use, and EWKB with SRID 3857 (the page does not say; the recording decides on its SRID). Catches: the EWKT SRID dropped to 0, or the prefix rejected"
 columns = [{ name = "v", type = "VARCHAR" }]
 rows = [
   ["'SRID=3857;POINT(10 20)'"],
@@ -40,7 +40,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t004_geography"
-description = "A GEOGRAPHY, which the page accepts; the page does not say; the recording decides on the SRID of the result. Catches: the GEOGRAPHY rejected, or its coordinates swapped"
+description = "A GEOGRAPHY, which the page accepts; its example converts a GEOGRAPHY to a GEOMETRY with SRID 4326. Catches: the GEOGRAPHY rejected, SRID 0 returned, or its coordinates swapped"
 columns = [{ name = "v", type = "VARCHAR" }]
 rows = [
   ["'POINT(10 20)'"],

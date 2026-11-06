@@ -27,7 +27,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_ewkt"
-description = "EWKT with SRID 3857, which a GEOMETRY may carry; the page does not say; the recording decides on the SRID of the result. Catches: the SRID prefix rejected, or kept in the shape text"
+description = "EWKT with SRID 3857, whose SRID the result keeps: the page example ST_GEOMETRYFROMEWKT('SRID=32633;...') returns SRID 32633. Catches: the SRID dropped to 0, the prefix rejected, or kept in the shape text"
 columns = [{ name = "v", type = "VARCHAR" }]
 rows = [
   ["'SRID=3857;POINT(10 20)'"],

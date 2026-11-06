@@ -33,7 +33,7 @@ rows = [
 ]
 query = "SELECT ST_EQUALS(ST_GEOGFROMGEOHASH(g, 1), ST_GEOGFROMGEOHASH('e')) AS one FROM input"
 order = "ordered"
-tags = ["boundary"]
+tags = ["type-combination"]
 
 [[case]]
 id = "t004_precision_zero"
