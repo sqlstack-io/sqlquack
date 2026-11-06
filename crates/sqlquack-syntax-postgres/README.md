@@ -21,7 +21,7 @@ next top-level `;` is not checked further. The SQL/JSON and SQL/XML calls, `TREA
 
 | Gap | Construct |
 | --- | --- |
-| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, and `ALTER` of a table, foreign table, index, sequence, view, materialized view, function, procedure, routine or aggregate |
+| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, and every `ALTER` other than `ALTER SYSTEM`, `ROLE`, `USER`, `GROUP`, `POLICY`, `USER MAPPING` and `DEFAULT PRIVILEGES` |
 | `copy_where` | `COPY … FROM … WHERE condition` |
 | `json`, `json_array`, `json_arrayagg`, `json_exists`, `json_object`, `json_objectagg`, `json_query`, `json_scalar`, `json_serialize`, `json_value`, `json_table` | the SQL/JSON call syntax |
 | `xmlconcat`, `xmlelement`, `xmlexists`, `xmlforest`, `xmlparse`, `xmlpi`, `xmlroot`, `xmlserialize`, `xmltable` | the SQL/XML call syntax |
@@ -100,6 +100,14 @@ PostgreSQL's raw tree makes of them: `SET TIME ZONE 'x'` is `SET timezone = 'x'`
 `DEFAULT` set the default, and `SCHEMA`, `NAMES`, `ROLE`, `SESSION AUTHORIZATION` and `XML OPTION`
 set `search_path`, `client_encoding`, `role`, `session_authorization` and `xmloption`.
 `SET CATALOG` is refused (0A000), as is a time zone interval with fields beyond `HOUR` and `MINUTE`
-(42601). `ALTER` followed by a word no statement kind allows is refused (42601); other `ALTER` statements
+(42601). The other object kinds also become `AlterObject`, named as their grammar names them: one name, an
+`any_name`, `name ON table` (`TRIGGER`, `RULE`), or an operator signature or large object number in
+`operands` with an empty `name`. `OPERATOR CLASS` and `FAMILY` keep `(USING, method)`. Each kind's
+own action names itself in `action`: enum values, attribute commands, domain constraints, mappings,
+publication objects, subscription publications, foreign-data options, operator family members,
+`SET STATISTICS`, `REFRESH VERSION` and settings. Publication objects take the kind before them, as
+`preprocess_pubobj_list` gives it, so `TABLE a, b` equals `TABLE a, TABLE b`, and its errors are kept
+(42601). In `operator_def_list`, `NONE` and a bare name both have no argument. `DROP VALUE` (0A000)
+and missing kind words, such as `ALTER TEXT SEARCH t`, are refused. `ALTER` followed by a word no statement kind allows is refused (42601); other `ALTER` statements
 stay opaque gaps. The grammar's own errors are kept, including `NOT VALID` on `ALTER CONSTRAINT`
 (0A000), a column number out of range, and identity options `SET` cannot take.

@@ -98,6 +98,13 @@ impl Parser<'_> {
         let mut node: CreateDatabase = CreateDatabase::new(String::new());
         node.name = name;
         self.eat_kw("with");
+        node.properties = self.database_options()?;
+        Ok(Expression::CreateDatabase(Box::new(node)))
+    }
+
+    /// `createdb_opt_list`: options, possibly none, each a `(name, value)` tuple.
+    pub(crate) fn database_options(&mut self) -> Parsing<Vec<Expression>> {
+        let mut options: Vec<Expression> = Vec::new();
         while let Some(option) = self.database_option_name()? {
             self.eat_char('=');
             let value: Expression = match self.peek().map(|token| token.kind) {
@@ -107,10 +114,9 @@ impl Parser<'_> {
                 _ if self.eat_kw("default") => var("DEFAULT"),
                 _ => self.boolean_or_string()?,
             };
-            node.properties
-                .push(tuple(vec![Expression::Identifier(option), value]));
+            options.push(tuple(vec![Expression::Identifier(option), value]));
         }
-        Ok(Expression::CreateDatabase(Box::new(node)))
+        Ok(options)
     }
 
     /// `createdb_opt_name`, or `None` when none comes next.
