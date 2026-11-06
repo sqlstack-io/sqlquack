@@ -6,3 +6,4 @@ pub(crate) mod objects;
 pub(crate) mod queries;
 pub(crate) mod routines;
 pub(crate) mod statements;
+pub(crate) mod tables;

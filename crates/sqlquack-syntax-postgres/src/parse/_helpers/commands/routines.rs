@@ -71,7 +71,7 @@ fn option(keyword: &str, values: Vec<Expression>) -> RoutineOption {
     }
 }
 
-fn var(text: &str) -> Expression {
+pub(crate) fn var(text: &str) -> Expression {
     Expression::Var(Box::new(Var {
         this: text.to_owned(),
     }))
