@@ -529,7 +529,20 @@ schema; any other `{{...}}`, or a placeholder in a case without setup, is reject
   every named object inside the run database), and runs setup and query in a fresh session and
   case schema, dropping the run database afterwards. A failing setup statement is a case-file
   error, not an outcome.
-- Replay: verify does not replay setup on DuckDB yet, so every setup case refuses.
+- Replay: verify replays setup on DuckDB statement by statement, in order, and refuses the whole
+  case at the first statement it cannot replay:
+  - `CREATE TABLE` of an unqualified, unquoted name with typed `NUMBER` and `VARCHAR` columns and
+    no other clause, created once. `INSERT INTO` it `VALUES` of literals or NULL, one per column,
+    that the column holds without rounding.
+  - `SET` of session variables to a literal, NULL or a deterministic scalar subquery, and `UNSET`
+    of a variable setup set. `$name` then reads the value; a variable setup did not set refuses.
+  - `CREATE TYPE name AS data_type`. A type spelled as that plain name, in either case, resolves
+    to its base type in casts, typing and later setup columns, as Snowflake reports it. A quoted
+    name, a redefinition, `OR REPLACE`, `IF NOT EXISTS`, a qualified name, a built-in type's name
+    and any other kind of type definition refuse. A cast to a structured type stays refused.
+  - `CREATE VIEW`, `CREATE SEMANTIC VIEW` and `ALTER SESSION` are not replayed. The parser keeps
+    `CREATE SEMANTIC VIEW` only as raw text, and `SEMANTIC_VIEW(…)` drops the clause order that
+    decides its column order.
 
 ### Hashes
 
