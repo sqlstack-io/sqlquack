@@ -67936,13 +67936,6 @@ target = "<like_type> in [ , LIKE = <like_type> ]"
 note = "a valid data_type"
 
 [[obligation]]
-id = "pg.ddl.create-type.input-output.o052"
-kind = "negative_neighbour"
-required = true
-target = "<like_type> in [ , LIKE = <like_type> ]"
-note = "a string literal in place of <like_type>"
-
-[[obligation]]
 id = "pg.ddl.create-type.input-output.o053"
 kind = "option_present"
 required = true
@@ -68097,13 +68090,6 @@ kind = "operand_type_class"
 required = true
 target = "<collatable> in [ , COLLATABLE = <collatable> ]"
 note = "a valid identifier"
-
-[[obligation]]
-id = "pg.ddl.create-type.input-output.o077"
-kind = "negative_neighbour"
-required = true
-target = "<collatable> in [ , COLLATABLE = <collatable> ]"
-note = "a string literal in place of <collatable>"
 
 [[obligation]]
 id = "pg.ddl.create-type.input-output.o078"
@@ -68362,6 +68348,22 @@ required = true
 target = "<delimiter> in [ , DELIMITER = <delimiter> ]"
 anchor = "doc.sql-createtype / Synopsis"
 note = "a one-character string constant (gram.y def_arg: Sconst)"
+
+[[obligation]]
+id = "pg.ddl.create-type.input-output.o119"
+kind = "operand_type_class"
+required = true
+target = "<like_type> in [ , LIKE = <like_type> ]"
+anchor = "doc.sql-createtype / Synopsis"
+note = "a string constant (gram.y def_arg: Sconst)"
+
+[[obligation]]
+id = "pg.ddl.create-type.input-output.o120"
+kind = "operand_type_class"
+required = true
+target = "<collatable> in [ , COLLATABLE = <collatable> ]"
+anchor = "doc.sql-createtype / Synopsis"
+note = "a string constant (gram.y def_arg: Sconst)"
 
 [[obligation]]
 id = "pg.ddl.create-type.name.o001"

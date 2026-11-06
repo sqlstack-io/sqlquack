@@ -5252,6 +5252,18 @@ target = "[ NOT DEFERRABLE | [ DEFERRABLE ] [ INITIALLY IMMEDIATE |… → [ DEF
 reason = "the derived spelling of this alternative leaves both optional attributes out, which is the same raw node as no clause (gram.y ConstraintAttributeSpec's empty production); the alternative is written out with DEFERRABLE and INITIALLY DEFERRED below"
 
 [[suppress]]
+form = "pg.ddl.create-type.input-output"
+kind = "negative_neighbour"
+target = "<like_type> in [ , LIKE = <like_type> ]"
+reason = "the definition value is a gram.y def_arg, which takes a string constant (Sconst), so a string literal is valid syntax; written as an operand class below"
+
+[[suppress]]
+form = "pg.ddl.create-type.input-output"
+kind = "negative_neighbour"
+target = "<collatable> in [ , COLLATABLE = <collatable> ]"
+reason = "the definition value is a gram.y def_arg, which takes a string constant (Sconst), so a string literal is valid syntax; written as an operand class below"
+
+[[suppress]]
 form = "pg.ddl.create-operator"
 kind = "negative_neighbour"
 target = "<function_name>"
@@ -5286,6 +5298,24 @@ form = "pg.ddl.create-collation.name"
 kind = "negative_neighbour"
 target = "<lc_collate> in [ , LC_COLLATE = <lc_collate> ]"
 reason = "the definition value is a gram.y def_arg, which takes a string constant (Sconst), so a string literal is valid syntax"
+
+[[limit]]
+form = "pg.ddl.create-type.input-output"
+kind = "operand_type_class"
+target = "<like_type> in [ , LIKE = <like_type> ]"
+note = "a string constant (gram.y def_arg: Sconst)"
+anchor = "doc.sql-createtype / Synopsis"
+sql = "CREATE TYPE t1 ( INPUT = v1 , OUTPUT = v1 , LIKE = 'INT' )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-type.input-output"
+kind = "operand_type_class"
+target = "<collatable> in [ , COLLATABLE = <collatable> ]"
+note = "a string constant (gram.y def_arg: Sconst)"
+anchor = "doc.sql-createtype / Synopsis"
+sql = "CREATE TYPE t1 ( INPUT = v1 , OUTPUT = v1 , COLLATABLE = 'true' )"
+context = "raw"
 
 # DDL: derived negatives that are valid PostgreSQL, and obligations that do not apply.
 
