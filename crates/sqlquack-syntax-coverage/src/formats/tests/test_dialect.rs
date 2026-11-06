@@ -207,7 +207,7 @@ fn given_a_dialect_fault_when_loading_then_the_problem_is_named() {
                     root,
                     "receipts/first.jsonl",
                     "\"run-1\"",
-                    "\"kevin@host.local\"",
+                    "\"alice@host.local\"",
                 )
             },
             expected_problem: "receipt query.select-17: holds an account, host, URL or address",

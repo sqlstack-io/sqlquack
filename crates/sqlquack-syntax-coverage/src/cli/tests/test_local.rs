@@ -28,8 +28,8 @@ fn given_sql_when_the_postgres_parser_judges_it_then_gaps_are_never_parsed() {
             expected_tree: false,
         },
         PostgresVerdictTestCase {
-            description: "a statement the parser keeps as an opaque gap",
-            sql: "CREATE TABLE t (a int)",
+            description: "a statement holding a construct the parser keeps as an opaque gap",
+            sql: "SELECT * FROM t TABLESAMPLE SYSTEM (1)",
             expected_verdict: "accepted",
             expected_opaque: Some(true),
             expected_tree: true,
