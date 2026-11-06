@@ -7,9 +7,10 @@ use crate::parse::main::parse::parse;
 use crate::parse::main::parse_strict::parse_strict;
 use crate::parse::main::parse_type::parse_type;
 use crate::parse::tests::test_types::{
-    ExpectedVerdict, ShapeTestCase, SpanTestCase, StrictTestCase, TypeTextTestCase, ValueTestCase,
-    VerdictTestCase,
+    ExpectedVerdict, GapTestCase, ShapeTestCase, SpanTestCase, StrictTestCase, TypeTextTestCase,
+    ValueTestCase, VerdictTestCase,
 };
+use crate::scan::_helpers::scanner::first_gap;
 
 #[test]
 fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
@@ -1095,6 +1096,48 @@ fn given_sql_when_parsing_strictly_then_any_parser_error_refuses_it() {
             .map_err(|failure| failure.parse_error().map(|error| error.syntax));
         assert_eq!(
             outcome, test_case.expected_outcome,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_tokens_that_skip_a_byte_when_checking_coverage_then_strict_parsing_finds_it() {
+    let test_cases = [
+        GapTestCase {
+            description: "every byte is in a token, a space or a comment",
+            sql: "SELECT 1, /* c */ 2",
+            ranges: &[(0, 6), (7, 8), (8, 9), (18, 19)],
+            faulted: false,
+            expected_gap: None,
+        },
+        GapTestCase {
+            description: "a byte between tokens is in none",
+            sql: "SELECT 1, /* c */ 2",
+            ranges: &[(0, 6), (7, 8), (18, 19)],
+            faulted: false,
+            expected_gap: Some(8),
+        },
+        GapTestCase {
+            description: "bytes after the last token are in none",
+            sql: "SELECT 1, /* c */ 2",
+            ranges: &[(0, 6), (7, 8), (8, 9)],
+            faulted: false,
+            expected_gap: Some(9),
+        },
+        GapTestCase {
+            description: "bytes past a fault are the parser's to refuse",
+            sql: "SELECT 1, /* c */ 2",
+            ranges: &[(0, 6), (7, 8), (8, 9)],
+            faulted: true,
+            expected_gap: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            first_gap(test_case.sql, test_case.ranges, test_case.faulted),
+            test_case.expected_gap,
             "{}",
             test_case.description
         );
