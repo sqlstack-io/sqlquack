@@ -1,0 +1,32 @@
+# Approvals by the independent syntax auditor (D235). Each listed form was read in full against its
+# PostgreSQL 18.6 documentation, its obligations, its cases with their PostgreSQL 18.6 receipts, and the
+# local parse trees. An approval holds while the form's definition hash and fingerprint are unchanged;
+# any change makes it stale until re-read. Entries are copied verbatim from the auditor's records on
+# wip/syntax-omission-audit (coverage/syntax/audits/pg-review-*.toml).
+
+[[review]]
+id = "pg-auditor-query-001"
+reviewer_lane = "auditor"
+family = "query"
+parser_tree = "6ba0c304312d074bf7620a74cc760722b322888d"
+reviewed_utc = "2026-11-06T07:48:06Z"
+verdict = "approved"
+forms = [
+  "pg.query.queries-table-expressions.join-on",
+  "pg.query.queries-table-expressions.join-using",
+  "pg.query.queries-table-expressions.natural-join",
+  "pg.query.select.table",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 6ba0c304; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.query.queries-table-expressions.join-on" = "334f6b5bb4134e17ea811a925b44ad884a0a576a3686921364a6388d52df0079"
+"pg.query.queries-table-expressions.join-using" = "b94baf99e1904bd0e01b07512ed3e239d8a5ae94443a4f444da0100faf040788"
+"pg.query.queries-table-expressions.natural-join" = "5a09cb1e0ed8f1a578a6ed8213ac3803e0d329809a445ba3ec2726bd37993dbf"
+"pg.query.select.table" = "ea40067833317ef18a74a3a435f60ff156f30a25d6ecb90c906117fed503bef7"
+
+[review.definitions]
+"pg.query.queries-table-expressions.join-on" = "f5aba286bdfc75ebc9fb8d5ad1bee558adb3acd27f35819546864afc72d14fdb"
+"pg.query.queries-table-expressions.join-using" = "9cfbaa6c8c2da89d9605797b060ea13ee7369426d57e6cbcb57aa1c64ee4043f"
+"pg.query.queries-table-expressions.natural-join" = "01b4cef40f7344adce54f644e8524bb791830e1b6a74797edb776bbf598b08c9"
+"pg.query.select.table" = "4df360aaab0ae703b1a84af140f41c9660401458c1f3bcde4ba6e13598771a2e"
