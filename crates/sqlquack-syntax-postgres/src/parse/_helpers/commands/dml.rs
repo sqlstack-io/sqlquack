@@ -11,7 +11,19 @@ use crate::parse::_helpers::tree::nodes::{
     boolean, delete, insert, joined_table, ordered, tuple, update,
 };
 use crate::parse::_helpers::values::expressions::binary_node;
+use crate::parse::constants::ROW_CONSTRUCTOR;
 use crate::scan::models::TokenKind;
+
+/// The `count` items of a row `(a, b)` or `ROW(a, b)`, which `SET (x, y) = …` splits.
+fn row_items(value: &Expression, count: usize) -> Option<Vec<Expression>> {
+    match value {
+        Expression::Tuple(row) if row.expressions.len() == count => Some(row.expressions.clone()),
+        Expression::Function(call) if call.args.len() == count && call.name == ROW_CONSTRUCTOR => {
+            Some(call.args.clone())
+        }
+        _ => None,
+    }
+}
 
 impl Parser<'_> {
     /// `[WITH ...] SELECT | INSERT | UPDATE | DELETE | MERGE`.
@@ -93,9 +105,12 @@ impl Parser<'_> {
                 let targets: Vec<Identifier> = self.parenthesized(|parser| parser.set_target())?;
                 self.expect_char('=')?;
                 let value: Expression = self.a_expr()?;
-                self.gap("multiple_column_set", start);
-                if let Some(first) = targets.into_iter().next() {
-                    clauses.push((first, value));
+                match row_items(&value, targets.len()) {
+                    Some(items) => clauses.extend(targets.into_iter().zip(items)),
+                    None => {
+                        self.gap("multiple_column_set", start);
+                        clauses.extend(targets.into_iter().next().map(|first| (first, value)));
+                    }
                 }
             } else {
                 let target: Identifier = self.set_target()?;

@@ -169,16 +169,14 @@ impl Parser<'_> {
             });
         }
         if self.kw("group") && self.kw_at(1, "by") {
-            let start: usize = self.offset();
             self.at += 2;
-            if self.eat_kw("distinct") {
-                self.gap("group_by_distinct", start);
-            } else {
+            let distinct: bool = self.eat_kw("distinct");
+            if !distinct {
                 self.eat_kw("all");
             }
             select.group_by = Some(GroupBy {
                 expressions: self.comma_list(|parser| parser.group_item())?,
-                all: None,
+                all: distinct.then_some(false),
                 totals: false,
                 comments: Vec::new(),
             });

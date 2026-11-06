@@ -195,6 +195,9 @@ pub(crate) const MAX_QUALIFIED_NAME_PARTS: usize = 3;
 /// `implicit_row`: a parenthesized list is a row only with at least this many items.
 pub(crate) const MIN_IMPLICIT_ROW_ITEMS: usize = 2;
 
+/// The function name the tree gives a `ROW (...)` constructor.
+pub(crate) const ROW_CONSTRUCTOR: &str = "ROW";
+
 /// The encodings `FORMAT JSON ENCODING` accepts, compared without case.
 pub(crate) const JSON_ENCODINGS: [&str; 3] = ["utf8", "utf16", "utf32"];
 

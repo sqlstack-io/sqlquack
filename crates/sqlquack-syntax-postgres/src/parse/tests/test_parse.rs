@@ -288,6 +288,21 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             sql: "SELECT * FROM LATERAL xmltable('/r' PASSING x COLUMNS a int) t",
             expected_verdict: ExpectedVerdict::Accepted { opaque: true },
         },
+        VerdictTestCase {
+            description: "GROUP BY DISTINCT, held as the group's quantifier",
+            sql: "SELECT a FROM t GROUP BY DISTINCT ROLLUP (a, b)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a row assigned across several UPDATE targets, split as PostgreSQL does",
+            sql: "UPDATE t SET (a, b) = ROW(1, DEFAULT), c = 3",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a sub-SELECT assigned across several UPDATE targets, kept opaque",
+            sql: "UPDATE t SET (a, b) = (SELECT 1, 2)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
     ];
     for test_case in test_cases {
         let verdict: ExpectedVerdict = parse(test_case.sql)

@@ -16,7 +16,9 @@ use crate::parse::_helpers::tree::nodes::{
     tuple,
 };
 use crate::parse::_helpers::values::expressions::Flavor;
-use crate::parse::constants::{JSON_AGGREGATES, JSON_CALLS, VALUE_FUNCTIONS, XML_CALLS};
+use crate::parse::constants::{
+    JSON_AGGREGATES, JSON_CALLS, ROW_CONSTRUCTOR, VALUE_FUNCTIONS, XML_CALLS,
+};
 use crate::parse::constants::{MIN_IMPLICIT_ROW_ITEMS, TYPE_KEYWORDS};
 use crate::scan::models::{Token, TokenKind};
 
@@ -393,7 +395,10 @@ impl Parser<'_> {
             })));
         }
         Ok(match explicit {
-            true => Expression::Function(Box::new(function(vec![Identifier::new("ROW")], items))),
+            true => Expression::Function(Box::new(function(
+                vec![Identifier::new(ROW_CONSTRUCTOR)],
+                items,
+            ))),
             false => tuple(items),
         })
     }

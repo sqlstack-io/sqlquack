@@ -32,7 +32,6 @@ next top-level `;` is not checked further. The SQL/JSON and SQL/XML calls, `TREA
 | `quantified_operator` | `op ANY/ALL (…)` with an operator other than `=`, `<>`, `<`, `<=`, `>`, `>=` |
 | `order_by_using_operator` | `ORDER BY … USING op` with an operator other than `<` and `>` |
 | `setof` | `SETOF` in a type name |
-| `group_by_distinct` | `GROUP BY DISTINCT` |
 | `cte_search`, `cte_cycle` | `SEARCH` and `CYCLE` after a common table expression |
 | `set_operation_with_ties`, `set_operation_locking` | `FETCH … WITH TIES` and `FOR UPDATE`-style locking on a set operation |
 | `rows_from`, `ordinality`, `column_definition_list` | `ROWS FROM (…)`, `WITH ORDINALITY` on a special call, `AS (col type, …)` after a function |
@@ -40,7 +39,7 @@ next top-level `;` is not checked further. The SQL/JSON and SQL/XML calls, `TREA
 | `join_using_alias`, `joined_table_column_aliases` | `USING (…) AS alias`, column aliases on a parenthesized join |
 | `returning_with` | `RETURNING WITH (OLD AS …, NEW AS …)` |
 | `overriding` | `OVERRIDING {USER \| SYSTEM} VALUE` in `INSERT` or a `MERGE` insert |
-| `set_target_indirection`, `multiple_column_set` | `SET a.b = …` or `SET a[1] = …`, and `SET (a, b) = …` |
+| `set_target_indirection`, `multiple_column_set` | `SET a.b = …` or `SET a[1] = …`, and `SET (a, b) = …` from anything but a row of as many items, which is split into one assignment each |
 | `where_current_of` | `WHERE CURRENT OF cursor` |
 | `index_element_collate`, `index_element_opclass` | `COLLATE` and operator classes in an `ON CONFLICT` target |
 | `delete_using_non_table` | `DELETE … USING` with a join, subquery or function |
