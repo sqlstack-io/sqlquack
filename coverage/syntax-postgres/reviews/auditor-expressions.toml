@@ -970,3 +970,24 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.expressions.subquery.some" = "3f0862545fbae7700dd9cdef085f1bc1a61cfb072fd91e8f1c982546379d639d"
 "pg.expressions.subquery.some-row" = "2b5d967f68728a257ce43f9eab62b1491b7198fb21bdfa88e30ef8e1c78d1a28"
 "pg.expressions.textsearch.op-bang-bang" = "35568f94170bd099a3bccfbed5d8742af614a0c8e7434d7022d4569f72c8b383"
+
+[[review]]
+id = "pg-auditor-expressions-003"
+reviewer_lane = "auditor"
+family = "expressions"
+parser_tree = "7627aaefa0e240e17fa4a4c04868e764a6d3c67f"
+reviewed_utc = "2026-11-06T09:05:04Z"
+verdict = "approved"
+forms = [
+  "pg.expressions.datatype.bit",
+  "pg.expressions.datatype.character",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 7627aaef; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.expressions.datatype.bit" = "c0a23cc73ff4b84faae9317d64a7cb14edcb26d86da30be32f726260ff4c68e6"
+"pg.expressions.datatype.character" = "b03d57636bffd84f74bb3d3f5de5cd166df926399fa588e39b82914e88d1e248"
+
+[review.definitions]
+"pg.expressions.datatype.bit" = "38b1bcabe3f64ce05b07812c572e1f071d159fbb1e4f32804e70dc2b4224cc47"
+"pg.expressions.datatype.character" = "d31e78b7daa79913c34c10210309fa24ceefabdecb26417d8ff3a654476659ca"
