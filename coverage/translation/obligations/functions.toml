@@ -4099,12 +4099,23 @@ required = true
 [[obligation]]
 id = "sf.functions.bitand.t005"
 form = "sf.functions.bitand"
-kind = "null_argument"
-target = "expr1"
-note = "A NULL on either side, and a string that cannot be cast, which the page says is treated as NULL."
-catches = "the NULL read as 0, or an error for the string"
+kind = "error_parity"
+target = "error"
+note = "A NULL on either side next to a string that cannot be cast; Snowflake raised 100038 for the string, so it is not treated as NULL."
+catches = "the string read as NULL or 0"
 reading = "the page: the bitwise AND of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
 cases = ["cases/translation/functions/bitand.toml#t005_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitand.t006"
+form = "sf.functions.bitand"
+kind = "null_argument"
+target = "expr1"
+note = "A NULL on either side alone; the page does not say; the recording decides."
+catches = "the NULL read as 0"
+reading = "the page: the bitwise AND of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitand.toml#t006_null_expr1"]
 required = true
 
 [[obligation]]
@@ -4638,12 +4649,23 @@ required = true
 [[obligation]]
 id = "sf.functions.bitor.t005"
 form = "sf.functions.bitor"
-kind = "null_argument"
-target = "expr1"
-note = "A NULL on either side, and a string that cannot be cast, which the page says is treated as NULL."
-catches = "the NULL read as 0, or an error for the string"
+kind = "error_parity"
+target = "error"
+note = "A NULL on either side next to a string that cannot be cast; Snowflake raised 100038 for the string, so it is not treated as NULL."
+catches = "the string read as NULL or 0"
 reading = "the page: the bitwise OR of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
 cases = ["cases/translation/functions/bitor.toml#t005_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitor.t006"
+form = "sf.functions.bitor"
+kind = "null_argument"
+target = "expr1"
+note = "A NULL on either side alone; the page does not say; the recording decides."
+catches = "the NULL read as 0"
+reading = "the page: the bitwise OR of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitor.toml#t006_null_expr1"]
 required = true
 
 [[obligation]]
@@ -4880,12 +4902,23 @@ required = true
 [[obligation]]
 id = "sf.functions.bitxor.t005"
 form = "sf.functions.bitxor"
-kind = "null_argument"
-target = "expr1"
-note = "A NULL on either side, and a string that cannot be cast, which the page says is treated as NULL."
-catches = "the NULL read as 0, or an error for the string"
+kind = "error_parity"
+target = "error"
+note = "A NULL on either side next to a string that cannot be cast; Snowflake raised 100038 for the string, so it is not treated as NULL."
+catches = "the string read as NULL or 0"
 reading = "the page: the bitwise XOR of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
 cases = ["cases/translation/functions/bitxor.toml#t005_null_expr1"]
+required = true
+
+[[obligation]]
+id = "sf.functions.bitxor.t006"
+form = "sf.functions.bitxor"
+kind = "null_argument"
+target = "expr1"
+note = "A NULL on either side alone; the page does not say; the recording decides."
+catches = "the NULL read as 0"
+reading = "the page: the bitwise XOR of two INTEGER or two BINARY values; other numbers are cast to INTEGER; a string is cast to INTEGER if possible (12.3 to 12) and otherwise treated as NULL; BINARY values of different lengths need padside LEFT or RIGHT; NULL gives NULL"
+cases = ["cases/translation/functions/bitxor.toml#t006_null_expr1"]
 required = true
 
 [[obligation]]
@@ -15868,10 +15901,10 @@ required = true
 [[obligation]]
 id = "sf.functions.map-insert.t003"
 form = "sf.functions.map-insert"
-kind = "null_argument"
-target = "key"
-note = "A NULL key, whose pair the page omits, and a SQL NULL value, which it inserts as a JSON null."
-catches = "the NULL-keyed pair inserted, or the NULL-valued pair omitted"
+kind = "error_parity"
+target = "error"
+note = "A NULL key and a SQL NULL value in one statement; Snowflake raised 220002 because a structured map with a non-nullable value type cannot take a NULL value."
+catches = "the NULL value inserted into the structured map, or silently dropped"
 reading = "the page: the map with a new key-value pair; an existing key is an error unless updateFlag is TRUE, which updates it; a NULL key is omitted; a SQL NULL value becomes a JSON null and is inserted"
 cases = ["cases/translation/functions/map-insert.toml#t003_null_key"]
 required = true
@@ -15885,6 +15918,17 @@ note = "An existing key without updateFlag, which the page says is an error."
 catches = "the value silently updated or kept"
 reading = "the page: the map with a new key-value pair; an existing key is an error unless updateFlag is TRUE, which updates it; a NULL key is omitted; a SQL NULL value becomes a JSON null and is inserted"
 cases = ["cases/translation/functions/map-insert.toml#t004_existing_key"]
+required = true
+
+[[obligation]]
+id = "sf.functions.map-insert.t005"
+form = "sf.functions.map-insert"
+kind = "null_argument"
+target = "key"
+note = "A NULL key alone, whose pair the page omits."
+catches = "the NULL-keyed pair inserted, or an error raised"
+reading = "the page: the map with a new key-value pair; an existing key is an error unless updateFlag is TRUE, which updates it; a NULL key is omitted; a SQL NULL value becomes a JSON null and is inserted"
+cases = ["cases/translation/functions/map-insert.toml#t005_null_key"]
 required = true
 
 [[obligation]]
@@ -17880,10 +17924,10 @@ required = true
 [[obligation]]
 id = "sf.functions.object-keys.t002"
 form = "sf.functions.object-keys"
-kind = "type_combination"
-target = "VARIANT holding an array"
-note = "A VARIANT holding an array; the page does not say; the recording decides."
-catches = "the indexes returned as keys"
+kind = "error_parity"
+target = "error"
+note = "A VARIANT holding an array; Snowflake raised 100071, failing to cast the array to OBJECT."
+catches = "the indexes returned as keys, or an empty array"
 reading = "the page: an ARRAY of the top-level keys of an OBJECT or a VARIANT holding one"
 cases = ["cases/translation/functions/object-keys.toml#t002_not_object"]
 required = true
@@ -28610,10 +28654,10 @@ required = true
 [[obligation]]
 id = "sf.functions.to-uuid.t002"
 form = "sf.functions.to-uuid"
-kind = "error_parity"
-target = "error"
-note = "A string one digit short of a UUID."
-catches = "NULL returned, or the string padded"
+kind = "type_combination"
+target = "VARCHAR"
+note = "A string one digit short of a UUID, which Snowflake accepted and returned as text."
+catches = "an error raised, NULL returned, or the string padded"
 reading = "the page: a UUID from a string in UUID format; NULL gives NULL"
 cases = ["cases/translation/functions/to-uuid.toml#t002_invalid"]
 required = true
