@@ -32,6 +32,9 @@ pub struct PendingCase {
     /// `Some(true)` when Snowflake is expected to refuse to compile the SQL.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub compile_error: Option<bool>,
+    /// `Some(true)` when the case expects Snowflake to raise an error (it is tagged `error`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub expected_error: Option<bool>,
     /// Statements creating the case's project functions, run first in a scratch schema.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub setup_sql: Vec<String>,
