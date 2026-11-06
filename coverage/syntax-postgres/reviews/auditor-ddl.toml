@@ -48,3 +48,24 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.ddl.create-table.of" = "5f307c609df2d16b71ecfcccaedcba0145bf89d6bd9380b9c8cdc0547839c9dd"
 "pg.ddl.create-table.partition-of" = "8a86debb8bb2f0e4bfc6cce5b93c9c96ea17107719424f680e994c24de7ad609"
 "pg.ddl.create-table.table-name" = "bd9001ff5cbf2e3a6eb346124b1345b792bedd34088f1b39eabe2f514a50b742"
+
+[[review]]
+id = "pg-auditor-ddl-003"
+reviewer_lane = "auditor"
+family = "ddl"
+parser_tree = "4825006a53c549f52e884ec1eb8cb506b330b9bc"
+reviewed_utc = "2026-11-06T11:01:15Z"
+verdict = "approved"
+forms = [
+  "pg.ddl.create-aggregate.sfunc-stype",
+  "pg.ddl.create-database",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 4825006a; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.ddl.create-aggregate.sfunc-stype" = "9702fab3d00ed65b6f60d0eacacb3debd41eebc55f3d7c6b3f77efcc2df38233"
+"pg.ddl.create-database" = "06fdc5593968b1eec959330f30cf47eaa85d731b636ca0732a037e541ed3b799"
+
+[review.definitions]
+"pg.ddl.create-aggregate.sfunc-stype" = "da56f0f3505b5ed0af3541223c8d8cb51b0338dc81df3a70642c6ce2e465cfdc"
+"pg.ddl.create-database" = "a1f699c51156642bb04b5fcd5dee5dd11e5944aa255cdc160e6d318fe337fe7d"
