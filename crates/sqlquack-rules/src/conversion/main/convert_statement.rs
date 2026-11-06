@@ -79,8 +79,7 @@ pub fn convert_statement(
     })
 }
 
-/// The query with each VARIANT result column written as Snowflake returns it, and each column
-/// of only NULL typed VARCHAR, as Snowflake types it.
+/// The query with VARIANT result columns written as Snowflake returns them, NULL-only ones VARCHAR.
 fn output_variants(sql: String, columns: &[ColumnSpec], log: &ProvenanceLog) -> String {
     let replaced: Vec<String> = columns
         .iter()

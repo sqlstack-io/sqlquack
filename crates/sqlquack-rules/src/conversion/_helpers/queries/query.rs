@@ -651,9 +651,7 @@ fn convert_projection(
     }
 }
 
-/// The name Snowflake gives an unaliased select item written as `text`: the text upper-cased as
-/// written, spacing and line breaks kept, as recorded. Text outside ASCII, or holding a comment,
-/// has no recorded name.
+/// Snowflake's name for an unaliased item written as ASCII `text` without comments: it upper-cased.
 fn output_name(text: String) -> Option<String> {
     let recorded = !text.is_empty()
         && text.is_ascii()
@@ -663,9 +661,7 @@ fn output_name(text: String) -> Option<String> {
     recorded.then(|| text.to_ascii_uppercase())
 }
 
-/// The text a literal, which the parse gives no position, was written as: a number as parsed, a
-/// string between quotes, NULL, TRUE or FALSE. A string holding a quote or a backslash could have
-/// been written in more than one way, so it has none.
+/// A literal's written text: a number as parsed, a plain string quoted, NULL, TRUE or FALSE.
 fn literal_text(item: &Value) -> Option<String> {
     match node_kind(item)? {
         ("literal", payload) => {
