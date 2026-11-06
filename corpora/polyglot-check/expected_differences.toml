@@ -1427,6 +1427,18 @@ marker = "CLONE"
 field = "clone_at_clause"
 note = "a table clone's AT | BEFORE ( TIMESTAMP | OFFSET | STATEMENT => <expr> ) parses into its keyword, kind and expression; polyglot keeps the clause as raw text; crates/sqlquack-syntax/tests/parser/test_snowflake_create_clone.rs pins the tree"
 
+# Clauses whose ALL SQLQuack keeps apart from its keys, where polyglot reads ALL as a bare-word key.
+# The check counts an entry only when the statement, without whitespace and ignoring case, contains
+# `marker`, the trees differ, and both are equal once each `<clause>` in SQLQuack's tree that has no
+# keys and an `all` is rewritten as polyglot's one key `{ "var": { "this": "ALL" } }` with the same
+# DESC and NULLS options. The run counts them with the kept fields.
+
+[[kept_all]]
+id = "snowflake_order_by_all"
+marker = "ORDERBYALL"
+clause = "order_by"
+note = "ORDER BY ALL sorts by every SELECT-list column in order, so SQLQuack records it as an ALL of the clause with its DESC and NULLS options; polyglot reads ALL as a key named ALL, which a column called ALL would also give; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
+
 # Statements polyglot keeps as one opaque command where SQLQuack parses them into structured nodes.
 # The check counts an entry only when polyglot's tree is a single command, SQLQuack's tree starts
 # with `sqlquack_node`, and the statement, without whitespace and ignoring case, contains `marker`.

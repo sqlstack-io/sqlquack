@@ -36,6 +36,13 @@ pub(crate) struct KeptNodeTestCase {
     pub(crate) expected_differences: usize,
 }
 
+pub(crate) struct KeptAllTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_kept_fields: usize,
+    pub(crate) expected_differences: usize,
+}
+
 pub(crate) struct KeptQuotingTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,

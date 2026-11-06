@@ -3,6 +3,7 @@
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
+use crate::cli::_helpers::commands::snowflake_only;
 use crate::cli::_helpers::output::{print, say};
 use crate::cli::models::Common;
 use crate::formats::main::load_coverage::load_coverage;
@@ -200,6 +201,7 @@ pub(crate) fn results(
         statements.display()
     ));
     let coverage = load_coverage(&common.root).map_err(|problems| fail(&problems))?;
+    snowflake_only("results")?;
     let coverage_root: &Path = common.root.parent().unwrap_or(Path::new("."));
     let directory: PathBuf = coverage_root.join(TRANSLATION_DIR);
     let repository: &Path = coverage_root.parent().unwrap_or(Path::new("."));
