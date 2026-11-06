@@ -1106,6 +1106,38 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-database.name.o013"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-alterdatabase / Synopsis"
+note = "ALLOW_CONNECTIONS <allowconn>"
+
+[[obligation]]
+id = "pg.ddl.alter-database.name.o014"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-alterdatabase / Synopsis"
+note = "IS_TEMPLATE <istemplate>, with WITH"
+
+[[obligation]]
+id = "pg.ddl.alter-database.name.o015"
+kind = "alternative"
+required = true
+target = "<option>"
+anchor = "doc.sql-alterdatabase / Synopsis"
+note = "CONNECTION LIMIT with = (gram.y createdb_opt_item: opt_equal)"
+
+[[obligation]]
+id = "pg.ddl.alter-database.name.o016"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.sql-alterdatabase / Synopsis"
+note = "several options in one statement"
+
+[[obligation]]
 id = "pg.ddl.alter-database.owner-to.o001"
 kind = "positive"
 required = true
@@ -1826,6 +1858,46 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-domain.add.o014"
+kind = "alternative"
+required = true
+target = "<domain_constraint>"
+anchor = "doc.sql-alterdomain / Synopsis"
+note = "NOT NULL: the other DomainConstraintElem (gram.y), besides CHECK"
+
+[[obligation]]
+id = "pg.ddl.alter-domain.add.o015"
+kind = "option_present"
+required = true
+target = "<domain_constraint>"
+anchor = "doc.sql-alterdomain / Synopsis"
+note = "a named constraint: CONSTRAINT <constraint_name> CHECK ( <expression> )"
+
+[[obligation]]
+id = "pg.ddl.alter-domain.add.o019"
+kind = "option_present"
+required = true
+target = "<domain_constraint>"
+anchor = "doc.sql-alterdomain / Synopsis"
+note = "a named NOT NULL constraint"
+
+[[obligation]]
+id = "pg.ddl.alter-domain.add.o017"
+kind = "required_operand_missing"
+required = true
+target = "<domain_constraint>"
+anchor = "doc.sql-alterdomain / Synopsis"
+note = "CONSTRAINT with its name but no constraint body"
+
+[[obligation]]
+id = "pg.ddl.alter-domain.add.o018"
+kind = "negative_neighbour"
+required = true
+target = "<domain_constraint>"
+anchor = "doc.sql-alterdomain / Synopsis"
+note = "NULL alone is a CREATE DOMAIN constraint, not one ALTER DOMAIN ADD takes (gram.y DomainConstraintElem)"
 
 [[obligation]]
 id = "pg.ddl.alter-domain.drop-constraint.o001"
@@ -3084,6 +3156,198 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-extension.add.o011"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "ACCESS METHOD member (gram.y AlterExtensionContentsStmt: object_type_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o012"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "AGGREGATE member (gram.y AlterExtensionContentsStmt: AGGREGATE aggregate_with_argtypes)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o013"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "CAST member (gram.y AlterExtensionContentsStmt: CAST)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o014"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "COLLATION member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o015"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "CONVERSION member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o016"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "DOMAIN member (gram.y AlterExtensionContentsStmt: DOMAIN Typename)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o017"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "EVENT TRIGGER member (gram.y AlterExtensionContentsStmt: object_type_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o018"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "FOREIGN DATA WRAPPER member (gram.y AlterExtensionContentsStmt: object_type_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o019"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "FOREIGN TABLE member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o020"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "FUNCTION member (gram.y AlterExtensionContentsStmt: FUNCTION function_with_argtypes)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o021"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "MATERIALIZED VIEW member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o022"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "OPERATOR member (gram.y AlterExtensionContentsStmt: OPERATOR operator_with_argtypes)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o023"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "OPERATOR CLASS member (gram.y AlterExtensionContentsStmt: OPERATOR CLASS any_name USING name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o024"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "OPERATOR FAMILY member (gram.y AlterExtensionContentsStmt: OPERATOR FAMILY any_name USING name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o025"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "PROCEDURE member (gram.y AlterExtensionContentsStmt: PROCEDURE function_with_argtypes)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o026"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "ROUTINE member (gram.y AlterExtensionContentsStmt: ROUTINE function_with_argtypes)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o027"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "SCHEMA member (gram.y AlterExtensionContentsStmt: object_type_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o028"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "SEQUENCE member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o029"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "SERVER member (gram.y AlterExtensionContentsStmt: object_type_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o030"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "TEXT SEARCH CONFIGURATION member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o031"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "TRANSFORM member (gram.y AlterExtensionContentsStmt: TRANSFORM FOR Typename LANGUAGE name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o032"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "TYPE member (gram.y AlterExtensionContentsStmt: TYPE Typename)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o033"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "VIEW member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.add.o034"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "LANGUAGE member (gram.y AlterExtensionContentsStmt: object_type_name)"
+
+[[obligation]]
 id = "pg.ddl.alter-extension.drop.o001"
 kind = "positive"
 required = true
@@ -3144,6 +3408,198 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o011"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "ACCESS METHOD member (gram.y AlterExtensionContentsStmt: object_type_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o012"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "AGGREGATE member (gram.y AlterExtensionContentsStmt: AGGREGATE aggregate_with_argtypes)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o013"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "CAST member (gram.y AlterExtensionContentsStmt: CAST)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o014"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "COLLATION member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o015"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "CONVERSION member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o016"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "DOMAIN member (gram.y AlterExtensionContentsStmt: DOMAIN Typename)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o017"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "EVENT TRIGGER member (gram.y AlterExtensionContentsStmt: object_type_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o018"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "FOREIGN DATA WRAPPER member (gram.y AlterExtensionContentsStmt: object_type_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o019"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "FOREIGN TABLE member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o020"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "FUNCTION member (gram.y AlterExtensionContentsStmt: FUNCTION function_with_argtypes)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o021"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "MATERIALIZED VIEW member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o022"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "OPERATOR member (gram.y AlterExtensionContentsStmt: OPERATOR operator_with_argtypes)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o023"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "OPERATOR CLASS member (gram.y AlterExtensionContentsStmt: OPERATOR CLASS any_name USING name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o024"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "OPERATOR FAMILY member (gram.y AlterExtensionContentsStmt: OPERATOR FAMILY any_name USING name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o025"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "PROCEDURE member (gram.y AlterExtensionContentsStmt: PROCEDURE function_with_argtypes)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o026"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "ROUTINE member (gram.y AlterExtensionContentsStmt: ROUTINE function_with_argtypes)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o027"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "SCHEMA member (gram.y AlterExtensionContentsStmt: object_type_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o028"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "SEQUENCE member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o029"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "SERVER member (gram.y AlterExtensionContentsStmt: object_type_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o030"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "TEXT SEARCH CONFIGURATION member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o031"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "TRANSFORM member (gram.y AlterExtensionContentsStmt: TRANSFORM FOR Typename LANGUAGE name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o032"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "TYPE member (gram.y AlterExtensionContentsStmt: TYPE Typename)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o033"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "VIEW member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+
+[[obligation]]
+id = "pg.ddl.alter-extension.drop.o034"
+kind = "alternative"
+required = true
+target = "<member_object>"
+anchor = "doc.sql-alterextension / Synopsis"
+note = "LANGUAGE member (gram.y AlterExtensionContentsStmt: object_type_name)"
 
 [[obligation]]
 id = "pg.ddl.alter-extension.set-schema.o001"
@@ -18095,6 +18551,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-operator-family.add.o076"
+kind = "option_present"
+required = true
+target = "[ ( <argument_type> [ , ... ] ) ]"
+anchor = "doc.sql-alteropfamily / Synopsis"
+note = "an empty argument list ( ): the valid spelling the suppressed omit-<argument_type> obligation stands for (gram.y func_args)"
+
+[[obligation]]
 id = "pg.ddl.alter-operator-family.drop.o001"
 kind = "positive"
 required = true
@@ -21343,6 +21807,110 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-publication.add.o013"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "ONLY"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.add.o014"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a trailing *"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.add.o015"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a column list"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.add.o016"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a row filter"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.add.o017"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a column list and a row filter"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.add.o018"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a schema-qualified table"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.add.o019"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "TABLES IN SCHEMA"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.add.o020"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "CURRENT_SCHEMA"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.add.o021"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a continuation: a bare name after a comma takes the previous object kind (gram.y pubobj_expr, PUBLICATIONOBJ_CONTINUATION)"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.add.o022"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a schema continuation"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.add.o023"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a table and a schema in one list"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.add.o024"
+kind = "negative_neighbour"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a column list on a schema (gram.y preprocess_pubobj_list raises a syntax error)"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.add.o025"
+kind = "negative_neighbour"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a bare name with no object kind before it (gram.y preprocess_pubobj_list)"
+
+[[obligation]]
 id = "pg.ddl.alter-publication.drop.o001"
 kind = "positive"
 required = true
@@ -21416,6 +21984,70 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.drop.o013"
+kind = "alternative"
+required = true
+target = "<publication_drop_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "ONLY"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.drop.o014"
+kind = "alternative"
+required = true
+target = "<publication_drop_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a trailing *"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.drop.o015"
+kind = "alternative"
+required = true
+target = "<publication_drop_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a schema-qualified table"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.drop.o016"
+kind = "alternative"
+required = true
+target = "<publication_drop_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "TABLES IN SCHEMA"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.drop.o017"
+kind = "alternative"
+required = true
+target = "<publication_drop_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "CURRENT_SCHEMA"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.drop.o018"
+kind = "alternative"
+required = true
+target = "<publication_drop_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a continuation: a bare name after a comma takes the previous object kind (gram.y pubobj_expr, PUBLICATIONOBJ_CONTINUATION)"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.drop.o019"
+kind = "alternative"
+required = true
+target = "<publication_drop_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a schema continuation"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.drop.o020"
+kind = "alternative"
+required = true
+target = "<publication_drop_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a table and a schema in one list"
 
 [[obligation]]
 id = "pg.ddl.alter-publication.owner-to.o001"
@@ -21687,6 +22319,94 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.set-name-publication-object.o013"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "ONLY"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.set-name-publication-object.o014"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a trailing *"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.set-name-publication-object.o015"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a column list"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.set-name-publication-object.o016"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a row filter"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.set-name-publication-object.o017"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a column list and a row filter"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.set-name-publication-object.o018"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a schema-qualified table"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.set-name-publication-object.o019"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "TABLES IN SCHEMA"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.set-name-publication-object.o020"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "CURRENT_SCHEMA"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.set-name-publication-object.o021"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a continuation: a bare name after a comma takes the previous object kind (gram.y pubobj_expr, PUBLICATIONOBJ_CONTINUATION)"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.set-name-publication-object.o022"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a schema continuation"
+
+[[obligation]]
+id = "pg.ddl.alter-publication.set-name-publication-object.o023"
+kind = "alternative"
+required = true
+target = "<publication_object>"
+anchor = "doc.sql-alterpublication / Synopsis"
+note = "a table and a schema in one list"
 
 [[obligation]]
 id = "pg.ddl.alter-publication.set-name-publication-parameter.o001"
@@ -40317,11 +41037,11 @@ target = "<token_type>"
 note = "omit <token_type>"
 
 [[obligation]]
-id = "pg.ddl.alter-text-search-configuration.add-mapping-for-with.o006"
+id = "pg.ddl.alter-text-search-configuration.add-mapping-for-with.o027"
 kind = "operand_type_class"
 required = true
 target = "<token_type>"
-note = "a valid data_type"
+note = "a valid identifier"
 
 [[obligation]]
 id = "pg.ddl.alter-text-search-configuration.add-mapping-for-with.o007"
@@ -40442,6 +41162,22 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-text-search-configuration.add-mapping-for-with.o028"
+kind = "identifier_class"
+required = true
+target = "<token_type>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "pg.ddl.alter-text-search-configuration.add-mapping-for-with.o029"
+kind = "identifier_class"
+required = true
+target = "<token_type>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
 id = "pg.ddl.alter-text-search-configuration.add-mapping-for-with.o025"
 kind = "identifier_class"
 required = true
@@ -40492,11 +41228,11 @@ target = "<token_type>"
 note = "omit <token_type>"
 
 [[obligation]]
-id = "pg.ddl.alter-text-search-configuration.alter-mapping-for-replace.o006"
+id = "pg.ddl.alter-text-search-configuration.alter-mapping-for-replace.o024"
 kind = "operand_type_class"
 required = true
 target = "<token_type>"
-note = "a valid data_type"
+note = "a valid identifier"
 
 [[obligation]]
 id = "pg.ddl.alter-text-search-configuration.alter-mapping-for-replace.o007"
@@ -40611,6 +41347,22 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-text-search-configuration.alter-mapping-for-replace.o025"
+kind = "identifier_class"
+required = true
+target = "<token_type>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "pg.ddl.alter-text-search-configuration.alter-mapping-for-replace.o026"
+kind = "identifier_class"
+required = true
+target = "<token_type>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
 id = "pg.ddl.alter-text-search-configuration.alter-mapping-for-with.o001"
 kind = "positive"
 required = true
@@ -40645,11 +41397,11 @@ target = "<token_type>"
 note = "omit <token_type>"
 
 [[obligation]]
-id = "pg.ddl.alter-text-search-configuration.alter-mapping-for-with.o006"
+id = "pg.ddl.alter-text-search-configuration.alter-mapping-for-with.o027"
 kind = "operand_type_class"
 required = true
 target = "<token_type>"
-note = "a valid data_type"
+note = "a valid identifier"
 
 [[obligation]]
 id = "pg.ddl.alter-text-search-configuration.alter-mapping-for-with.o007"
@@ -40766,6 +41518,22 @@ id = "pg.ddl.alter-text-search-configuration.alter-mapping-for-with.o024"
 kind = "identifier_class"
 required = true
 target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-text-search-configuration.alter-mapping-for-with.o028"
+kind = "identifier_class"
+required = true
+target = "<token_type>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "pg.ddl.alter-text-search-configuration.alter-mapping-for-with.o029"
+kind = "identifier_class"
+required = true
+target = "<token_type>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
@@ -40945,11 +41713,11 @@ target = "<token_type>"
 note = "omit <token_type>"
 
 [[obligation]]
-id = "pg.ddl.alter-text-search-configuration.drop-mapping-for.o008"
+id = "pg.ddl.alter-text-search-configuration.drop-mapping-for.o022"
 kind = "operand_type_class"
 required = true
 target = "<token_type>"
-note = "a valid data_type"
+note = "a valid identifier"
 
 [[obligation]]
 id = "pg.ddl.alter-text-search-configuration.drop-mapping-for.o009"
@@ -41032,6 +41800,22 @@ id = "pg.ddl.alter-text-search-configuration.drop-mapping-for.o021"
 kind = "identifier_class"
 required = true
 target = "<name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-text-search-configuration.drop-mapping-for.o023"
+kind = "identifier_class"
+required = true
+target = "<token_type>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "pg.ddl.alter-text-search-configuration.drop-mapping-for.o024"
+kind = "identifier_class"
+required = true
+target = "<token_type>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
@@ -41473,6 +42257,38 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-text-search-dictionary.name-option.o021"
+kind = "operand_type_class"
+required = true
+target = "<value>"
+anchor = "doc.sql-altertsdictionary / Synopsis"
+note = "a string constant (gram.y def_arg: Sconst)"
+
+[[obligation]]
+id = "pg.ddl.alter-text-search-dictionary.name-option.o022"
+kind = "operand_type_class"
+required = true
+target = "<value>"
+anchor = "doc.sql-altertsdictionary / Synopsis"
+note = "an unquoted word (gram.y def_arg: func_type)"
+
+[[obligation]]
+id = "pg.ddl.alter-text-search-dictionary.name-option.o023"
+kind = "operand_type_class"
+required = true
+target = "<value>"
+anchor = "doc.sql-altertsdictionary / Synopsis"
+note = "a reserved keyword (gram.y def_arg: reserved_keyword)"
+
+[[obligation]]
+id = "pg.ddl.alter-text-search-dictionary.name-option.o024"
+kind = "operand_type_class"
+required = true
+target = "<value>"
+anchor = "doc.sql-altertsdictionary / Synopsis"
+note = "a negative number (gram.y def_arg: NumericOnly)"
 
 [[obligation]]
 id = "pg.ddl.alter-text-search-dictionary.owner-to.o001"
@@ -43861,6 +44677,30 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-type.set.o017"
+kind = "operand_type_class"
+required = true
+target = "<value>"
+anchor = "doc.sql-altertype / Synopsis"
+note = "a string constant (gram.y operator_def_arg: Sconst)"
+
+[[obligation]]
+id = "pg.ddl.alter-type.set.o018"
+kind = "operand_type_class"
+required = true
+target = "<value>"
+anchor = "doc.sql-altertype / Synopsis"
+note = "a function name (gram.y operator_def_arg: func_type), qualified"
+
+[[obligation]]
+id = "pg.ddl.alter-type.set.o019"
+kind = "operand_type_class"
+required = true
+target = "<value>"
+anchor = "doc.sql-altertype / Synopsis"
+note = "NONE (gram.y operator_def_arg: NONE)"
 
 [[obligation]]
 id = "pg.ddl.alter-type.set-schema.o001"

@@ -3048,6 +3048,885 @@ anchor = "doc.sql-alterroutine / Synopsis"
 sql = "ALTER ROUTINE t1 ( INT ) SET work_mem FROM CURRENT SECURITY DEFINER"
 context = "raw"
 
+# DDL: batch-16 coverage notes: more spellings of the operands the ALTER slice-3 forms test thinly.
+
+[[limit]]
+form = "pg.ddl.alter-domain.add"
+kind = "alternative"
+target = "<domain_constraint>"
+note = "NOT NULL: the other DomainConstraintElem (gram.y), besides CHECK"
+anchor = "doc.sql-alterdomain / Synopsis"
+sql = "ALTER DOMAIN t1 ADD NOT NULL"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-domain.add"
+kind = "option_present"
+target = "<domain_constraint>"
+note = "a named constraint: CONSTRAINT <constraint_name> CHECK ( <expression> )"
+anchor = "doc.sql-alterdomain / Synopsis"
+sql = "ALTER DOMAIN t1 ADD CONSTRAINT c1 CHECK ( VALUE > 0 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-domain.add"
+kind = "option_present"
+target = "<domain_constraint>"
+note = "a named NOT NULL constraint"
+anchor = "doc.sql-alterdomain / Synopsis"
+sql = "ALTER DOMAIN t1 ADD CONSTRAINT c1 NOT NULL"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-domain.add"
+kind = "required_operand_missing"
+target = "<domain_constraint>"
+note = "CONSTRAINT with its name but no constraint body"
+anchor = "doc.sql-alterdomain / Synopsis"
+sql = "ALTER DOMAIN t1 ADD CONSTRAINT c1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.alter-domain.add"
+kind = "negative_neighbour"
+target = "<domain_constraint>"
+note = "NULL alone is a CREATE DOMAIN constraint, not one ALTER DOMAIN ADD takes (gram.y DomainConstraintElem)"
+anchor = "doc.sql-alterdomain / Synopsis"
+sql = "ALTER DOMAIN t1 ADD NULL"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.alter-type.set"
+kind = "operand_type_class"
+target = "<value>"
+note = "a string constant (gram.y operator_def_arg: Sconst)"
+anchor = "doc.sql-altertype / Synopsis"
+sql = "ALTER TYPE t1 SET ( v1 = 'x' )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-type.set"
+kind = "operand_type_class"
+target = "<value>"
+note = "a function name (gram.y operator_def_arg: func_type), qualified"
+anchor = "doc.sql-altertype / Synopsis"
+sql = "ALTER TYPE t1 SET ( v1 = s1.f1 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-type.set"
+kind = "operand_type_class"
+target = "<value>"
+note = "NONE (gram.y operator_def_arg: NONE)"
+anchor = "doc.sql-altertype / Synopsis"
+sql = "ALTER TYPE t1 SET ( v1 = NONE )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-text-search-dictionary.name-option"
+kind = "operand_type_class"
+target = "<value>"
+note = "a string constant (gram.y def_arg: Sconst)"
+anchor = "doc.sql-altertsdictionary / Synopsis"
+sql = "ALTER TEXT SEARCH DICTIONARY t1 ( v1 = 'english' )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-text-search-dictionary.name-option"
+kind = "operand_type_class"
+target = "<value>"
+note = "an unquoted word (gram.y def_arg: func_type)"
+anchor = "doc.sql-altertsdictionary / Synopsis"
+sql = "ALTER TEXT SEARCH DICTIONARY t1 ( v1 = english )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-text-search-dictionary.name-option"
+kind = "operand_type_class"
+target = "<value>"
+note = "a reserved keyword (gram.y def_arg: reserved_keyword)"
+anchor = "doc.sql-altertsdictionary / Synopsis"
+sql = "ALTER TEXT SEARCH DICTIONARY t1 ( v1 = TRUE )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-text-search-dictionary.name-option"
+kind = "operand_type_class"
+target = "<value>"
+note = "a negative number (gram.y def_arg: NumericOnly)"
+anchor = "doc.sql-altertsdictionary / Synopsis"
+sql = "ALTER TEXT SEARCH DICTIONARY t1 ( v1 = -1.5 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-database.name"
+kind = "alternative"
+target = "<option>"
+note = "ALLOW_CONNECTIONS <allowconn>"
+anchor = "doc.sql-alterdatabase / Synopsis"
+sql = "ALTER DATABASE t1 ALLOW_CONNECTIONS false"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-database.name"
+kind = "alternative"
+target = "<option>"
+note = "IS_TEMPLATE <istemplate>, with WITH"
+anchor = "doc.sql-alterdatabase / Synopsis"
+sql = "ALTER DATABASE t1 WITH IS_TEMPLATE true"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-database.name"
+kind = "alternative"
+target = "<option>"
+note = "CONNECTION LIMIT with = (gram.y createdb_opt_item: opt_equal)"
+anchor = "doc.sql-alterdatabase / Synopsis"
+sql = "ALTER DATABASE t1 CONNECTION LIMIT = -1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-database.name"
+kind = "option_present"
+target = "[ ... ]"
+note = "several options in one statement"
+anchor = "doc.sql-alterdatabase / Synopsis"
+sql = "ALTER DATABASE t1 ALLOW_CONNECTIONS true CONNECTION LIMIT 5 IS_TEMPLATE false"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "ACCESS METHOD member (gram.y AlterExtensionContentsStmt: object_type_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD ACCESS METHOD m1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "AGGREGATE member (gram.y AlterExtensionContentsStmt: AGGREGATE aggregate_with_argtypes)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD AGGREGATE a1 ( * )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "CAST member (gram.y AlterExtensionContentsStmt: CAST)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD CAST ( INT AS TEXT )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "COLLATION member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD COLLATION c1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "CONVERSION member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD CONVERSION c1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "DOMAIN member (gram.y AlterExtensionContentsStmt: DOMAIN Typename)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD DOMAIN d1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "EVENT TRIGGER member (gram.y AlterExtensionContentsStmt: object_type_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD EVENT TRIGGER e1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "FOREIGN DATA WRAPPER member (gram.y AlterExtensionContentsStmt: object_type_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD FOREIGN DATA WRAPPER w1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "FOREIGN TABLE member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD FOREIGN TABLE t2"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "FUNCTION member (gram.y AlterExtensionContentsStmt: FUNCTION function_with_argtypes)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD FUNCTION f1 ( INT )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "MATERIALIZED VIEW member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD MATERIALIZED VIEW v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "OPERATOR member (gram.y AlterExtensionContentsStmt: OPERATOR operator_with_argtypes)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD OPERATOR + ( INT , INT )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "OPERATOR CLASS member (gram.y AlterExtensionContentsStmt: OPERATOR CLASS any_name USING name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD OPERATOR CLASS c1 USING btree"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "OPERATOR FAMILY member (gram.y AlterExtensionContentsStmt: OPERATOR FAMILY any_name USING name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD OPERATOR FAMILY f1 USING btree"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "PROCEDURE member (gram.y AlterExtensionContentsStmt: PROCEDURE function_with_argtypes)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD PROCEDURE p1 ( )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "ROUTINE member (gram.y AlterExtensionContentsStmt: ROUTINE function_with_argtypes)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD ROUTINE r1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "SCHEMA member (gram.y AlterExtensionContentsStmt: object_type_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD SCHEMA s1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "SEQUENCE member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD SEQUENCE q1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "SERVER member (gram.y AlterExtensionContentsStmt: object_type_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD SERVER s1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "TEXT SEARCH CONFIGURATION member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD TEXT SEARCH CONFIGURATION c1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "TRANSFORM member (gram.y AlterExtensionContentsStmt: TRANSFORM FOR Typename LANGUAGE name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD TRANSFORM FOR INT LANGUAGE l1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "TYPE member (gram.y AlterExtensionContentsStmt: TYPE Typename)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD TYPE t2"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "VIEW member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD VIEW v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.add"
+kind = "alternative"
+target = "<member_object>"
+note = "LANGUAGE member (gram.y AlterExtensionContentsStmt: object_type_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 ADD LANGUAGE l1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "ACCESS METHOD member (gram.y AlterExtensionContentsStmt: object_type_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP ACCESS METHOD m1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "AGGREGATE member (gram.y AlterExtensionContentsStmt: AGGREGATE aggregate_with_argtypes)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP AGGREGATE a1 ( * )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "CAST member (gram.y AlterExtensionContentsStmt: CAST)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP CAST ( INT AS TEXT )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "COLLATION member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP COLLATION c1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "CONVERSION member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP CONVERSION c1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "DOMAIN member (gram.y AlterExtensionContentsStmt: DOMAIN Typename)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP DOMAIN d1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "EVENT TRIGGER member (gram.y AlterExtensionContentsStmt: object_type_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP EVENT TRIGGER e1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "FOREIGN DATA WRAPPER member (gram.y AlterExtensionContentsStmt: object_type_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP FOREIGN DATA WRAPPER w1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "FOREIGN TABLE member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP FOREIGN TABLE t2"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "FUNCTION member (gram.y AlterExtensionContentsStmt: FUNCTION function_with_argtypes)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP FUNCTION f1 ( INT )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "MATERIALIZED VIEW member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP MATERIALIZED VIEW v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "OPERATOR member (gram.y AlterExtensionContentsStmt: OPERATOR operator_with_argtypes)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP OPERATOR + ( INT , INT )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "OPERATOR CLASS member (gram.y AlterExtensionContentsStmt: OPERATOR CLASS any_name USING name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP OPERATOR CLASS c1 USING btree"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "OPERATOR FAMILY member (gram.y AlterExtensionContentsStmt: OPERATOR FAMILY any_name USING name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP OPERATOR FAMILY f1 USING btree"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "PROCEDURE member (gram.y AlterExtensionContentsStmt: PROCEDURE function_with_argtypes)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP PROCEDURE p1 ( )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "ROUTINE member (gram.y AlterExtensionContentsStmt: ROUTINE function_with_argtypes)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP ROUTINE r1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "SCHEMA member (gram.y AlterExtensionContentsStmt: object_type_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP SCHEMA s1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "SEQUENCE member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP SEQUENCE q1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "SERVER member (gram.y AlterExtensionContentsStmt: object_type_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP SERVER s1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "TEXT SEARCH CONFIGURATION member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP TEXT SEARCH CONFIGURATION c1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "TRANSFORM member (gram.y AlterExtensionContentsStmt: TRANSFORM FOR Typename LANGUAGE name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP TRANSFORM FOR INT LANGUAGE l1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "TYPE member (gram.y AlterExtensionContentsStmt: TYPE Typename)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP TYPE t2"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "VIEW member (gram.y AlterExtensionContentsStmt: object_type_any_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP VIEW v1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-extension.drop"
+kind = "alternative"
+target = "<member_object>"
+note = "LANGUAGE member (gram.y AlterExtensionContentsStmt: object_type_name)"
+anchor = "doc.sql-alterextension / Synopsis"
+sql = "ALTER EXTENSION t1 DROP LANGUAGE l1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.add"
+kind = "alternative"
+target = "<publication_object>"
+note = "ONLY"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 ADD TABLE ONLY t1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.add"
+kind = "alternative"
+target = "<publication_object>"
+note = "a trailing *"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 ADD TABLE t1 *"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.add"
+kind = "alternative"
+target = "<publication_object>"
+note = "a column list"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 ADD TABLE t1 ( c1 , c2 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.add"
+kind = "alternative"
+target = "<publication_object>"
+note = "a row filter"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 ADD TABLE t1 WHERE ( c1 > 0 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.add"
+kind = "alternative"
+target = "<publication_object>"
+note = "a column list and a row filter"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 ADD TABLE t1 ( c1 ) WHERE ( c1 > 0 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.add"
+kind = "alternative"
+target = "<publication_object>"
+note = "a schema-qualified table"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 ADD TABLE s1.t1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.add"
+kind = "alternative"
+target = "<publication_object>"
+note = "TABLES IN SCHEMA"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 ADD TABLES IN SCHEMA s1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.add"
+kind = "alternative"
+target = "<publication_object>"
+note = "CURRENT_SCHEMA"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 ADD TABLES IN SCHEMA CURRENT_SCHEMA"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.add"
+kind = "alternative"
+target = "<publication_object>"
+note = "a continuation: a bare name after a comma takes the previous object kind (gram.y pubobj_expr, PUBLICATIONOBJ_CONTINUATION)"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 ADD TABLE t1 , t2"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.add"
+kind = "alternative"
+target = "<publication_object>"
+note = "a schema continuation"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 ADD TABLES IN SCHEMA s1 , s2"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.add"
+kind = "alternative"
+target = "<publication_object>"
+note = "a table and a schema in one list"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 ADD TABLE t1 , TABLES IN SCHEMA s1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.set-name-publication-object"
+kind = "alternative"
+target = "<publication_object>"
+note = "ONLY"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 SET TABLE ONLY t1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.set-name-publication-object"
+kind = "alternative"
+target = "<publication_object>"
+note = "a trailing *"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 SET TABLE t1 *"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.set-name-publication-object"
+kind = "alternative"
+target = "<publication_object>"
+note = "a column list"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 SET TABLE t1 ( c1 , c2 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.set-name-publication-object"
+kind = "alternative"
+target = "<publication_object>"
+note = "a row filter"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 SET TABLE t1 WHERE ( c1 > 0 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.set-name-publication-object"
+kind = "alternative"
+target = "<publication_object>"
+note = "a column list and a row filter"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 SET TABLE t1 ( c1 ) WHERE ( c1 > 0 )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.set-name-publication-object"
+kind = "alternative"
+target = "<publication_object>"
+note = "a schema-qualified table"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 SET TABLE s1.t1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.set-name-publication-object"
+kind = "alternative"
+target = "<publication_object>"
+note = "TABLES IN SCHEMA"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 SET TABLES IN SCHEMA s1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.set-name-publication-object"
+kind = "alternative"
+target = "<publication_object>"
+note = "CURRENT_SCHEMA"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 SET TABLES IN SCHEMA CURRENT_SCHEMA"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.set-name-publication-object"
+kind = "alternative"
+target = "<publication_object>"
+note = "a continuation: a bare name after a comma takes the previous object kind (gram.y pubobj_expr, PUBLICATIONOBJ_CONTINUATION)"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 SET TABLE t1 , t2"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.set-name-publication-object"
+kind = "alternative"
+target = "<publication_object>"
+note = "a schema continuation"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 SET TABLES IN SCHEMA s1 , s2"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.set-name-publication-object"
+kind = "alternative"
+target = "<publication_object>"
+note = "a table and a schema in one list"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 SET TABLE t1 , TABLES IN SCHEMA s1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.drop"
+kind = "alternative"
+target = "<publication_drop_object>"
+note = "ONLY"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 DROP TABLE ONLY t1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.drop"
+kind = "alternative"
+target = "<publication_drop_object>"
+note = "a trailing *"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 DROP TABLE t1 *"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.drop"
+kind = "alternative"
+target = "<publication_drop_object>"
+note = "a schema-qualified table"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 DROP TABLE s1.t1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.drop"
+kind = "alternative"
+target = "<publication_drop_object>"
+note = "TABLES IN SCHEMA"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 DROP TABLES IN SCHEMA s1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.drop"
+kind = "alternative"
+target = "<publication_drop_object>"
+note = "CURRENT_SCHEMA"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 DROP TABLES IN SCHEMA CURRENT_SCHEMA"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.drop"
+kind = "alternative"
+target = "<publication_drop_object>"
+note = "a continuation: a bare name after a comma takes the previous object kind (gram.y pubobj_expr, PUBLICATIONOBJ_CONTINUATION)"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 DROP TABLE t1 , t2"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.drop"
+kind = "alternative"
+target = "<publication_drop_object>"
+note = "a schema continuation"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 DROP TABLES IN SCHEMA s1 , s2"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.drop"
+kind = "alternative"
+target = "<publication_drop_object>"
+note = "a table and a schema in one list"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 DROP TABLE t1 , TABLES IN SCHEMA s1"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-publication.add"
+kind = "negative_neighbour"
+target = "<publication_object>"
+note = "a column list on a schema (gram.y preprocess_pubobj_list raises a syntax error)"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 ADD TABLES IN SCHEMA s1 ( c1 )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.alter-publication.add"
+kind = "negative_neighbour"
+target = "<publication_object>"
+note = "a bare name with no object kind before it (gram.y preprocess_pubobj_list)"
+anchor = "doc.sql-alterpublication / Synopsis"
+sql = "ALTER PUBLICATION t1 ADD t1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.alter-operator-family.add"
+kind = "option_present"
+target = "[ ( <argument_type> [ , ... ] ) ]"
+note = "an empty argument list ( ): the valid spelling the suppressed omit-<argument_type> obligation stands for (gram.y func_args)"
+anchor = "doc.sql-alteropfamily / Synopsis"
+sql = "ALTER OPERATOR FAMILY t1 USING v1 ADD FUNCTION 1 f1 ( )"
+context = "raw"
+
 # DDL: derived negatives that are valid PostgreSQL, and obligations that do not apply.
 
 [[suppress]]
