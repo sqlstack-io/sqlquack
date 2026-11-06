@@ -31,6 +31,16 @@ impl Parser {
         }
     }
 
+    /// Refuses PRECISION or VARYING alone as a type, which Snowflake reads only after DOUBLE or CHARACTER.
+    pub(crate) fn reject_snowflake_lone_type_word(&self, name: &str) -> Result<()> {
+        match self.applies_snowflake_context_rules() && matches!(name, "PRECISION" | "VARYING") {
+            true => Err(self.parse_error(format!(
+                "{name} is not a Snowflake type on its own; it only follows DOUBLE or CHARACTER"
+            ))),
+            false => Ok(()),
+        }
+    }
+
     /// Refuses TABLE( ) or IDENTIFIER( ) around nothing or a bare name, except a named argument's TABLE(name).
     pub(crate) fn reject_snowflake_name_wrappers(&self, statements: &[Expression]) -> Result<()> {
         use crate::traversal::types::ExpressionWalk;

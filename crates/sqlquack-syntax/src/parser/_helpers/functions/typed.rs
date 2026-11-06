@@ -69,7 +69,12 @@ impl Parser {
 
         match behavior {
             crate::functions::dispatch::models::ParserDispatchBehavior::ExprListFunction => {
-                let args = self.parse_expression_list()?;
+                let args = if self.applies_snowflake_context_rules() && self.check(TokenType::RParen)
+                {
+                    Vec::new()
+                } else {
+                    self.parse_expression_list()?
+                };
                 self.expect_token(TokenType::RParen)?;
                 Ok(Some(make_unquoted_function(name, args)))
             }

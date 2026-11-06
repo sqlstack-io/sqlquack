@@ -208,6 +208,7 @@ impl Parser {
             });
         }
         let name = raw_name.to_ascii_uppercase();
+        self.reject_snowflake_lone_type_word(&name)?;
 
         let base_type = match name.as_str() {
             name if DataType::from_unsigned_name(name).is_some() => {

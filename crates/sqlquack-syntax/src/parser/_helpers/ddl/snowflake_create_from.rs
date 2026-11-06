@@ -113,6 +113,13 @@ impl Parser {
         let name = self.parse_object_name()?;
         let mut operands: Vec<Expression> = Vec::new();
         let mut properties: Vec<ObjectProperty> = Vec::new();
+        if matches!(kind, "EXPERIMENT")
+            && (self.check(TokenType::Type) || self.check_identifier("TYPE"))
+        {
+            self.skip();
+            self.expect_token(TokenType::Eq)?;
+            properties.push(property("TYPE", None, Some(self.parse_object_value()?)));
+        }
         let source = match kind {
             "MODEL" => {
                 if self.match_token(TokenType::With) {

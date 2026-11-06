@@ -776,7 +776,32 @@ fn given_a_snowflake_create_model_gateway_or_experiment_when_parsing_then_its_so
         SnowflakeVerdictTestCase {
             description: "keeps CREATE EXPERIMENT v1 TYPE = 'AI_FUNCTION_EVALUATION' FROM SPECIFICATIO",
             sql: "CREATE EXPERIMENT v1 TYPE = 'AI_FUNCTION_EVALUATION' FROM SPECIFICATION $$v1 $$ ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps an experiment TYPE without a specification (recorded as parsed)",
+            sql: "CREATE EXPERIMENT v1 TYPE = m1 ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an experiment specification without FROM (recorded errno 1003)",
+            sql: "CREATE EXPERIMENT v1 TYPE = 'AI_FUNCTION_EVALUATION' SPECIFICATION $$v1 $$ ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an experiment FROM without SPECIFICATION (recorded errno 1003)",
+            sql: "CREATE EXPERIMENT v1 TYPE = 'AI_FUNCTION_OPTIMIZATION' FROM $$v1 $$ ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an experiment TYPE with no value (recorded errno 1003)",
+            sql: "CREATE EXPERIMENT v1 TYPE = ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a name and TYPE with no object kind (recorded errno 1003)",
+            sql: "CREATE v1 TYPE = 'AI_FUNCTION_EVALUATION' FROM SPECIFICATION $$v1 $$ ;",
+            expected_kind: None,
         },
         SnowflakeVerdictTestCase {
             description: "keeps ALTER TABLE v1 MODIFY DATA METRIC FUNCTION v1 ON ( v1 ) SUSPEND ;",
@@ -1242,6 +1267,63 @@ fn given_snowflake_secret_resource_monitor_and_integration_alters_when_parsing_t
         SnowflakeVerdictTestCase { description: "an integration refreshes one secret (recorded parse)", sql: "ALTER INTEGRATION v1 REFRESH OAUTH_CLIENT_SECRET_2 ;", expected_kind: Some("alter_object") },
         SnowflakeVerdictTestCase { description: "REFRESH names what it refreshes (recorded errno 1003)", sql: "ALTER INTEGRATION \"v1 Q\" REFRESH ;", expected_kind: None },
         SnowflakeVerdictTestCase { description: "REFRESH names one key (recorded errno 1003)", sql: "ALTER SECURITY INTEGRATION v1 REFRESH SAML2_SNOWFLAKE_PRIVATE_KEY METADATA_URL ;", expected_kind: None },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_cast_or_conversion_call_when_parsing_then_the_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "PRECISION alone as a type (recorded errno 1003)",
+            sql: "SELECT CAST ( NULL AS PRECISION ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "VARYING alone as a type (recorded errno 1003)",
+            sql: "SELECT CAST ( NULL AS VARYING ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps DOUBLE PRECISION",
+            sql: "SELECT CAST ( NULL AS DOUBLE PRECISION ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps CHARACTER VARYING",
+            sql: "SELECT CAST ( NULL AS CHARACTER VARYING ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps an unknown type name, a compile error (recorded errno 2040)",
+            sql: "SELECT CAST ( NULL AS FOOBAR ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description:
+                "keeps TO_TIMESTAMP with no arguments, a compile error (recorded as parsed)",
+            sql: "SELECT TO_TIMESTAMP ( ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description:
+                "keeps TRY_TO_TIMESTAMP with no arguments, a compile error (recorded as parsed)",
+            sql: "SELECT TRY_TO_TIMESTAMP ( ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "IDENTIFIER with no arguments (recorded errno 1003)",
+            sql: "SELECT * FROM IDENTIFIER ( ) ;",
+            expected_kind: None,
+        },
     ];
 
     for test_case in test_cases {

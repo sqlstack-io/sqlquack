@@ -382,6 +382,7 @@ impl Parser {
             let (subtype, srid) = self.parse_spatial_type_args()?;
             return Ok(DataType::Geometry { subtype, srid });
         }
+        let is_quoted = self.check(TokenType::QuotedIdentifier);
         let mut raw_name = self.expect_identifier_or_keyword()?;
         while self.match_token(TokenType::Dot) {
             let part = self.expect_identifier_or_keyword()?;
@@ -389,6 +390,9 @@ impl Parser {
             raw_name.push_str(&part);
         }
         let mut name = raw_name.to_ascii_uppercase();
+        if !is_quoted {
+            self.reject_snowflake_lone_type_word(&name)?;
+        }
 
         if name == NATIONAL {
             let next_upper = if !self.is_at_end() {
