@@ -1,0 +1,93 @@
+category = "translation"
+construct = "sf.functions.regexp-substr"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_position_zero"
+description = "REGEXP_SUBSTR with position 0 and occurrence 1 taken from columns, outside the recorded range. One row per case, since it may raise."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }, { name = "o", type = "NUMBER(38,0)" }]
+rows = [["'a1b2c3d4'", "0", "1"]]
+query = "SELECT REGEXP_SUBSTR(a, '[0-9]', n, o) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination", "boundary"]
+
+[[case]]
+id = "t002_position_negative"
+description = "REGEXP_SUBSTR with position -1 and occurrence 1 taken from columns, outside the recorded range. One row per case, since it may raise."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }, { name = "o", type = "NUMBER(38,0)" }]
+rows = [["'a1b2c3d4'", "-1", "1"]]
+query = "SELECT REGEXP_SUBSTR(a, '[0-9]', n, o) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination", "boundary"]
+
+[[case]]
+id = "t003_position_past_end"
+description = "REGEXP_SUBSTR with position 9 and occurrence 1 taken from columns, outside the recorded range. One row per case, since it may raise."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }, { name = "o", type = "NUMBER(38,0)" }]
+rows = [["'a1b2c3d4'", "9", "1"]]
+query = "SELECT REGEXP_SUBSTR(a, '[0-9]', n, o) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination", "boundary"]
+
+[[case]]
+id = "t004_position_far_past_end"
+description = "REGEXP_SUBSTR with position 20 and occurrence 1 taken from columns, outside the recorded range. One row per case, since it may raise."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }, { name = "o", type = "NUMBER(38,0)" }]
+rows = [["'a1b2c3d4'", "20", "1"]]
+query = "SELECT REGEXP_SUBSTR(a, '[0-9]', n, o) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination", "boundary"]
+
+[[case]]
+id = "t005_occurrence_zero"
+description = "REGEXP_SUBSTR with position 1 and occurrence 0 taken from columns, outside the recorded range. One row per case, since it may raise."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }, { name = "o", type = "NUMBER(38,0)" }]
+rows = [["'a1b2c3d4'", "1", "0"]]
+query = "SELECT REGEXP_SUBSTR(a, '[0-9]', n, o) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination", "boundary"]
+
+[[case]]
+id = "t006_occurrence_negative"
+description = "REGEXP_SUBSTR with position 1 and occurrence -1 taken from columns, outside the recorded range. One row per case, since it may raise."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }, { name = "o", type = "NUMBER(38,0)" }]
+rows = [["'a1b2c3d4'", "1", "-1"]]
+query = "SELECT REGEXP_SUBSTR(a, '[0-9]', n, o) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination", "boundary"]
+
+[[case]]
+id = "t007_group_zero"
+description = "REGEXP_SUBSTR with the 'e' parameter and group 0 taken from a column, outside the pattern's two groups. One row per case, since it may raise."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "g", type = "NUMBER(38,0)" }]
+rows = [["'k1=v22 k2=v3'", "0"]]
+query = "SELECT REGEXP_SUBSTR(a, 'k([0-9])=v([0-9]+)', 1, 1, 'e', g) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination", "boundary"]
+
+[[case]]
+id = "t008_group_past_last"
+description = "REGEXP_SUBSTR with the 'e' parameter and group 3 taken from a column, outside the pattern's two groups. One row per case, since it may raise."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "g", type = "NUMBER(38,0)" }]
+rows = [["'k1=v22 k2=v3'", "3"]]
+query = "SELECT REGEXP_SUBSTR(a, 'k([0-9])=v([0-9]+)', 1, 1, 'e', g) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination", "boundary"]
+
+[[case]]
+id = "t009_group_negative"
+description = "REGEXP_SUBSTR with the 'e' parameter and group -1 taken from a column, outside the pattern's two groups. One row per case, since it may raise."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "g", type = "NUMBER(38,0)" }]
+rows = [["'k1=v22 k2=v3'", "-1"]]
+query = "SELECT REGEXP_SUBSTR(a, 'k([0-9])=v([0-9]+)', 1, 1, 'e', g) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination", "boundary"]
+
+[[case]]
+id = "t010_anchor_after_start_position"
+description = "A ^ anchor with a start position of 2: shows whether ^ anchors at the start position or at the start of the text."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "n", type = "NUMBER(38,0)" }]
+rows = [["'a1b2'", "2"]]
+query = "SELECT REGEXP_SUBSTR(a, '^[0-9]', n) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination", "boundary"]
