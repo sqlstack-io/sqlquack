@@ -31,6 +31,7 @@ impl Parser<'_> {
             Some("security") => self.security_label_statement(),
             Some("create") if self.creates_routine() => self.create_routine(),
             Some("create") if self.creates_table() => self.create_table(),
+            Some("create") if self.creates_aggregate() => self.create_aggregate(),
             Some("create") if self.keyword_at(1).is_none() => {
                 self.at += 1;
                 Err(self.error())

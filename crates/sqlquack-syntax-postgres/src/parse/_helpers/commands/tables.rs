@@ -47,6 +47,9 @@ const CAS_CHECKS: [(u8, &str, u8); 6] = [
     (ENFORCED, "ENFORCED", ENFORCED),
 ];
 
+/// Words that begin an `OptTemp`; a second one after the first is a syntax error.
+const TEMP_WORDS: [&str; 5] = ["temporary", "temp", "unlogged", "local", "global"];
+
 /// `PARTITION BY` strategies `parsePartitionStrategy` knows.
 const PARTITION_STRATEGIES: [&str; 3] = ["list", "range", "hash"];
 
@@ -118,7 +121,11 @@ impl Parser<'_> {
             Some("local" | "global") => 2,
             _ => 1,
         };
-        self.kw("create") && self.kw_at(skip, "table")
+        let repeated: bool = skip > 1
+            && self
+                .keyword_at(skip)
+                .is_some_and(|word| TEMP_WORDS.contains(&word));
+        self.kw("create") && (self.kw_at(skip, "table") || repeated)
     }
 
     /// `CREATE OptTemp TABLE [IF NOT EXISTS] name ...`, as `CreateStmt` or `CreateAsStmt`.
@@ -910,7 +917,7 @@ impl Parser<'_> {
     }
 
     /// `reloptions` (`dotted`) or `definition`: `( name [= def_arg], ... )`.
-    fn options(&mut self, dotted: bool) -> Parsing<Vec<Expression>> {
+    pub(crate) fn options(&mut self, dotted: bool) -> Parsing<Vec<Expression>> {
         self.parenthesized(|parser| {
             let mut name: Vec<Identifier> = vec![parser.name(is_col_label)?];
             if dotted && parser.eat_char('.') {
@@ -925,7 +932,7 @@ impl Parser<'_> {
     }
 
     /// `def_arg`: a type, a reserved word or `NONE`, an operator, a number or a string.
-    fn definition_value(&mut self) -> Parsing<Expression> {
+    pub(crate) fn definition_value(&mut self) -> Parsing<Expression> {
         if self.sconst_at(0) {
             return self.sconst();
         }
