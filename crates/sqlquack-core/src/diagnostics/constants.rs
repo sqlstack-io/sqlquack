@@ -148,9 +148,9 @@ pub const CODES: &[CodeEntry] = &[
         alias: None,
         title: "the conversion needs a known divergence the policy refuses",
         help: Some(
-            "allow the divergence under [divergences.<id>] in the policy file (--policy), drop \
-             --strict or --loud-divergences-only, or confirm its assumption (--utc-session, \
-             --confirm-declared-offsets, --python-runtime); --builtin-policy refuses every one",
+            "the help names the divergence and the fixes that work in the current mode: allow \
+             it in the policy file, drop --strict or --loud-divergences-only, or confirm its \
+             assumption; --builtin-policy refuses every one",
         ),
         explanation: "The construct at the span converts only by relying on the known \
             divergence the label names, where DuckDB may raise or differ from Snowflake as the \

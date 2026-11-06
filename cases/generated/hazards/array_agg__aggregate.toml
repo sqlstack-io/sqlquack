@@ -10,13 +10,16 @@ id = "node_within_group_combination_0_integer_integer"
 description = "node:within_group over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
+  ["'a'", "1", "2"],
+  ["'a'", "2", "12"],
+  ["'a'", "12", "1"],
   ["'a'", "1", "1"],
-  ["'a'", "2", "2"],
 ]
 query = "SELECT g, ARRAY_AGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
 tags = ["null", "empty-input", "duplicates"]
 origin = "generated: hazards@1"
+expected_divergence = "array_agg_order"
 
 [[case]]
 id = "node_within_group_combination_0_integer_text"
@@ -50,7 +53,7 @@ description = "node:within_group over benign values of each declared argument ki
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "1", "'2024-01-15'"],
-  ["'a'", "2", "'2024-01-16'"],
+  ["'a'", "2", "'2024-05-17'"],
 ]
 query = "SELECT g, ARRAY_AGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -63,7 +66,7 @@ description = "node:within_group over benign values of each declared argument ki
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "1", "'2024-01-15 10:00:00'"],
-  ["'a'", "2", "'2024-01-16 11:30:00'"],
+  ["'a'", "2", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, ARRAY_AGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -88,13 +91,16 @@ id = "node_within_group_combination_0_text_text"
 description = "node:within_group over benign values of each declared argument kind."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "VARCHAR" }]
 rows = [
+  ["'a'", "'a'", "'b'"],
+  ["'a'", "'b'", "'ab'"],
+  ["'a'", "'ab'", "'a'"],
   ["'a'", "'a'", "'a'"],
-  ["'a'", "'b'", "'b'"],
 ]
 query = "SELECT g, ARRAY_AGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
 tags = ["null", "empty-input", "duplicates"]
 origin = "generated: hazards@1"
+expected_divergence = "array_agg_order"
 
 [[case]]
 id = "node_within_group_combination_0_text_decimal"
@@ -115,7 +121,7 @@ description = "node:within_group over benign values of each declared argument ki
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "'a'", "'2024-01-15'"],
-  ["'a'", "'b'", "'2024-01-16'"],
+  ["'a'", "'b'", "'2024-05-17'"],
 ]
 query = "SELECT g, ARRAY_AGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -128,7 +134,7 @@ description = "node:within_group over benign values of each declared argument ki
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARCHAR" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "'a'", "'2024-01-15 10:00:00'"],
-  ["'a'", "'b'", "'2024-01-16 11:30:00'"],
+  ["'a'", "'b'", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, ARRAY_AGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -180,7 +186,7 @@ description = "node:within_group over benign values of each declared argument ki
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARIANT" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "PARSE_JSON('{\"a\":1}')", "'2024-01-15'"],
-  ["'a'", "PARSE_JSON('{\"a\":2}')", "'2024-01-16'"],
+  ["'a'", "PARSE_JSON('{\"a\":2}')", "'2024-05-17'"],
 ]
 query = "SELECT g, ARRAY_AGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -193,7 +199,7 @@ description = "node:within_group over benign values of each declared argument ki
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "VARIANT" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "PARSE_JSON('{\"a\":1}')", "'2024-01-15 10:00:00'"],
-  ["'a'", "PARSE_JSON('{\"a\":2}')", "'2024-01-16 11:30:00'"],
+  ["'a'", "PARSE_JSON('{\"a\":2}')", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, ARRAY_AGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -245,7 +251,7 @@ description = "node:within_group over benign values of each declared argument ki
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'a'", "TRUE", "'2024-01-15'"],
-  ["'a'", "FALSE", "'2024-01-16'"],
+  ["'a'", "FALSE", "'2024-05-17'"],
 ]
 query = "SELECT g, ARRAY_AGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -258,7 +264,7 @@ description = "node:within_group over benign values of each declared argument ki
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "BOOLEAN" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'a'", "TRUE", "'2024-01-15 10:00:00'"],
-  ["'a'", "FALSE", "'2024-01-16 11:30:00'"],
+  ["'a'", "FALSE", "'2024-05-17 11:30:00'"],
 ]
 query = "SELECT g, ARRAY_AGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -423,7 +429,7 @@ id = "node_within_group_group_empty_input"
 description = "node:within_group over an aggregate over no rows."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "1", "1"],
+  ["'a'", "1", "10"],
 ]
 query = "SELECT ARRAY_AGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input WHERE FALSE"
 order = "ordered"
@@ -435,9 +441,22 @@ id = "node_within_group_group_all_null"
 description = "node:within_group over a group whose values are all null."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "NULL", "1"],
-  ["'a'", "NULL", "2"],
-  ["'b'", "1", "3"],
+  ["'a'", "NULL", "30"],
+  ["'a'", "NULL", "20"],
+  ["'b'", "1", "10"],
+]
+query = "SELECT g, ARRAY_AGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "empty-input", "duplicates"]
+origin = "generated: hazards@1"
+
+[[case]]
+id = "node_within_group_group_mixed"
+description = "node:within_group over a group holding different values (any_value)."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1", "20"],
+  ["'a'", "2", "10"],
 ]
 query = "SELECT g, ARRAY_AGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -449,8 +468,8 @@ id = "node_within_group_group_null_beside_value"
 description = "node:within_group over a group holding null beside a value (any_value)."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "NULL", "1"],
-  ["'a'", "1", "2"],
+  ["'a'", "NULL", "20"],
+  ["'a'", "1", "10"],
 ]
 query = "SELECT g, ARRAY_AGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -462,9 +481,9 @@ id = "node_within_group_group_duplicates"
 description = "node:within_group over a group holding one value several times beside another, ties for ordering."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "1", "1"],
-  ["'a'", "1", "2"],
-  ["'a'", "2", "3"],
+  ["'a'", "1", "30"],
+  ["'a'", "1", "20"],
+  ["'a'", "2", "10"],
 ]
 query = "SELECT g, ARRAY_AGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"
@@ -476,7 +495,7 @@ id = "node_within_group_group_single_row"
 description = "node:within_group over a group of one row."
 columns = [{ name = "g", type = "VARCHAR" }, { name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "NUMBER(38,0)" }]
 rows = [
-  ["'a'", "1", "1"],
+  ["'a'", "1", "10"],
 ]
 query = "SELECT g, ARRAY_AGG(x0) WITHIN GROUP (ORDER BY x1) AS r FROM input GROUP BY g ORDER BY g"
 order = "ordered"

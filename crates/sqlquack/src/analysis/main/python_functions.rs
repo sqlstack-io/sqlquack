@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use sqlquack_rules::conversion::constants::PROJECT_UDF;
+use sqlquack_policy::policy::constants::PROJECT_UDF;
 use sqlquack_semantics::types::models::Schema;
 
 use crate::analysis::_helpers::python_signature::python_signature;

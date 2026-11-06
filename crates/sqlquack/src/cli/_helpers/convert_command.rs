@@ -28,9 +28,10 @@ use crate::analysis::models::Analysis;
 use crate::cli::_helpers::evidence::caller_choices;
 use crate::cli::models::{
     CheckArguments, CheckReport, ConvertArguments, ConvertRefusal, ConvertReport, ExplainArguments,
-    OverrideListing,
+    OverrideListing, PolicyArguments,
 };
 
+use crate::cli::_helpers::evidence::with_divergence_help;
 use crate::cli::main::convert_report::convert_report;
 
 /// The path naming standard input.
@@ -257,7 +258,7 @@ pub(crate) fn analysis_report(
     analysis: &Analysis,
     sql: &str,
     (schema, options, policy): (&Schema, &ConversionOptions, Option<&Policy>),
-    (parameters, profile): (&BTreeMap<String, String>, String),
+    (arguments, parameters, profile): (&PolicyArguments, &BTreeMap<String, String>, String),
 ) -> Result<ConvertReport, String> {
     let converted = analysis.parsed && analysis.refusals.is_empty();
     let provenance = merge_provenance(analysis.conversions.iter().map(|done| &done.provenance));
@@ -299,7 +300,11 @@ pub(crate) fn analysis_report(
         refusals: analysis
             .refusals
             .iter()
-            .zip(diagnose(&analysis.refusals, sql))
+            .zip(with_divergence_help(
+                &analysis.refusals,
+                diagnose(&analysis.refusals, sql),
+                (policy, arguments, parameters),
+            ))
             .map(convert_refusal)
             .collect(),
         python_functions: python_functions(&provenance.divergences, schema)?,

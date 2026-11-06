@@ -10,8 +10,10 @@ id = "node_if_func_combination_0_boolean_integer_integer"
 description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
+  ["TRUE", "1", "2"],
+  ["FALSE", "2", "12"],
+  ["TRUE", "12", "1"],
   ["TRUE", "1", "1"],
-  ["FALSE", "2", "2"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -70,8 +72,10 @@ id = "node_if_func_combination_0_boolean_decimal_decimal"
 description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "NUMBER(38,10)" }, { name = "x2", type = "NUMBER(38,10)" }]
 rows = [
+  ["TRUE", "1.5", "2.25"],
+  ["FALSE", "2.25", "3.125"],
+  ["TRUE", "3.125", "1.5"],
   ["TRUE", "1.5", "1.5"],
-  ["FALSE", "2.25", "2.25"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -130,8 +134,10 @@ id = "node_if_func_combination_0_boolean_float_float"
 description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "FLOAT" }, { name = "x2", type = "FLOAT" }]
 rows = [
+  ["TRUE", "1.5", "2.25"],
+  ["FALSE", "2.25", "3.125"],
+  ["TRUE", "3.125", "1.5"],
   ["TRUE", "1.5", "1.5"],
-  ["FALSE", "2.25", "2.25"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -202,7 +208,7 @@ id = "node_if_func_0_boolean_hazards"
 description = "node:if_func with SQL NULL in argument 0, boolean."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "NUMBER(38,0)" }, { name = "x2", type = "NUMBER(38,0)" }]
 rows = [
-  ["NULL", "1", "1"],
+  ["NULL", "1", "2"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -453,8 +459,10 @@ id = "node_if_func_1_combination_0_boolean_text_text"
 description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "VARCHAR" }]
 rows = [
+  ["TRUE", "'a'", "'b'"],
+  ["FALSE", "'b'", "'ab'"],
+  ["TRUE", "'ab'", "'a'"],
   ["TRUE", "'a'", "'a'"],
-  ["FALSE", "'b'", "'b'"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -489,7 +497,7 @@ id = "node_if_func_1_0_boolean_hazards"
 description = "node:if_func with SQL NULL in argument 0, boolean."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "VARCHAR" }, { name = "x2", type = "VARCHAR" }]
 rows = [
-  ["NULL", "'a'", "'a'"],
+  ["NULL", "'a'", "'b'"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -590,8 +598,10 @@ id = "node_if_func_2_combination_0_boolean_boolean_boolean"
 description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }, { name = "x2", type = "BOOLEAN" }]
 rows = [
+  ["FALSE", "TRUE", "TRUE"],
+  ["TRUE", "FALSE", "TRUE"],
+  ["TRUE", "TRUE", "FALSE"],
   ["TRUE", "TRUE", "TRUE"],
-  ["FALSE", "FALSE", "FALSE"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -602,8 +612,9 @@ id = "node_if_func_2_combination_0_boolean_boolean_null_literal"
 description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }]
 rows = [
+  ["TRUE", "FALSE"],
+  ["FALSE", "TRUE"],
   ["TRUE", "TRUE"],
-  ["FALSE", "FALSE"],
 ]
 expression = "IFF(x0, x1, NULL)"
 tags = ["null", "all-null", "mixed-types"]
@@ -614,8 +625,9 @@ id = "node_if_func_2_combination_0_boolean_null_literal_boolean"
 description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x2", type = "BOOLEAN" }]
 rows = [
+  ["TRUE", "FALSE"],
+  ["FALSE", "TRUE"],
   ["TRUE", "TRUE"],
-  ["FALSE", "FALSE"],
 ]
 expression = "IFF(x0, NULL, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -626,7 +638,7 @@ id = "node_if_func_2_0_boolean_hazards"
 description = "node:if_func with SQL NULL in argument 0, boolean."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }, { name = "x2", type = "BOOLEAN" }]
 rows = [
-  ["NULL", "TRUE", "TRUE"],
+  ["NULL", "TRUE", "FALSE"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -637,7 +649,7 @@ id = "node_if_func_2_1_boolean_hazards"
 description = "node:if_func with SQL NULL in argument 1, boolean."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }, { name = "x2", type = "BOOLEAN" }]
 rows = [
-  ["TRUE", "NULL", "TRUE"],
+  ["TRUE", "NULL", "FALSE"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -648,7 +660,7 @@ id = "node_if_func_2_2_boolean_hazards"
 description = "node:if_func with SQL NULL in argument 2, boolean."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "BOOLEAN" }, { name = "x2", type = "BOOLEAN" }]
 rows = [
-  ["TRUE", "TRUE", "NULL"],
+  ["TRUE", "FALSE", "NULL"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -659,8 +671,10 @@ id = "node_if_func_3_combination_0_boolean_date_date"
 description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "DATE" }, { name = "x2", type = "DATE" }]
 rows = [
+  ["TRUE", "'2024-01-15'", "'2024-05-17'"],
+  ["FALSE", "'2024-05-17'", "'2023-11-30'"],
+  ["TRUE", "'2023-11-30'", "'2024-01-15'"],
   ["TRUE", "'2024-01-15'", "'2024-01-15'"],
-  ["FALSE", "'2024-01-16'", "'2024-01-16'"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -672,7 +686,7 @@ description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "DATE" }, { name = "x2", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["TRUE", "'2024-01-15'", "'2024-01-15 10:00:00'"],
-  ["FALSE", "'2024-01-16'", "'2024-01-16 11:30:00'"],
+  ["FALSE", "'2024-05-17'", "'2024-05-17 11:30:00'"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -684,7 +698,7 @@ description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "DATE" }]
 rows = [
   ["TRUE", "'2024-01-15'"],
-  ["FALSE", "'2024-01-16'"],
+  ["FALSE", "'2024-05-17'"],
 ]
 expression = "IFF(x0, x1, NULL)"
 tags = ["null", "all-null", "mixed-types"]
@@ -696,7 +710,7 @@ description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }, { name = "x2", type = "DATE" }]
 rows = [
   ["TRUE", "'2024-01-15 10:00:00'", "'2024-01-15'"],
-  ["FALSE", "'2024-01-16 11:30:00'", "'2024-01-16'"],
+  ["FALSE", "'2024-05-17 11:30:00'", "'2024-05-17'"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -707,8 +721,10 @@ id = "node_if_func_3_combination_0_boolean_timestamp_ntz_timestamp_ntz"
 description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }, { name = "x2", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
+  ["TRUE", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["FALSE", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["TRUE", "'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
   ["TRUE", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["FALSE", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -720,7 +736,7 @@ description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["TRUE", "'2024-01-15 10:00:00'"],
-  ["FALSE", "'2024-01-16 11:30:00'"],
+  ["FALSE", "'2024-05-17 11:30:00'"],
 ]
 expression = "IFF(x0, x1, NULL)"
 tags = ["null", "all-null", "mixed-types"]
@@ -732,7 +748,7 @@ description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x2", type = "DATE" }]
 rows = [
   ["TRUE", "'2024-01-15'"],
-  ["FALSE", "'2024-01-16'"],
+  ["FALSE", "'2024-05-17'"],
 ]
 expression = "IFF(x0, NULL, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -744,7 +760,7 @@ description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x2", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["TRUE", "'2024-01-15 10:00:00'"],
-  ["FALSE", "'2024-01-16 11:30:00'"],
+  ["FALSE", "'2024-05-17 11:30:00'"],
 ]
 expression = "IFF(x0, NULL, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -755,7 +771,7 @@ id = "node_if_func_3_0_boolean_hazards"
 description = "node:if_func with SQL NULL in argument 0, boolean."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "DATE" }, { name = "x2", type = "DATE" }]
 rows = [
-  ["NULL", "'2024-01-15'", "'2024-01-15'"],
+  ["NULL", "'2024-01-15'", "'2024-05-17'"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -889,7 +905,7 @@ description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }, { name = "x2", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["TRUE", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["FALSE", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["FALSE", "'2024-05-17 11:30:00'", "'2024-05-17 11:30:00'"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -901,7 +917,7 @@ description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }, { name = "x2", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["TRUE", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["FALSE", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
+  ["FALSE", "'2024-05-17 11:30:00'", "'2024-05-17 11:30:00'"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -912,8 +928,10 @@ id = "node_if_func_4_combination_0_boolean_timestamp_ltz_timestamp_ltz"
 description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }, { name = "x2", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
+  ["TRUE", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["FALSE", "'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["TRUE", "'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
   ["TRUE", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["FALSE", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -925,7 +943,7 @@ description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["TRUE", "'2024-01-15 10:00:00'"],
-  ["FALSE", "'2024-01-16 11:30:00'"],
+  ["FALSE", "'2024-05-17 11:30:00'"],
 ]
 expression = "IFF(x0, x1, NULL)"
 tags = ["null", "all-null", "mixed-types"]
@@ -937,7 +955,7 @@ description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x2", type = "TIMESTAMP_LTZ(9)" }]
 rows = [
   ["TRUE", "'2024-01-15 10:00:00'"],
-  ["FALSE", "'2024-01-16 11:30:00'"],
+  ["FALSE", "'2024-05-17 11:30:00'"],
 ]
 expression = "IFF(x0, NULL, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -948,7 +966,7 @@ id = "node_if_func_4_0_boolean_hazards"
 description = "node:if_func with SQL NULL in argument 0, boolean."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }, { name = "x2", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
-  ["NULL", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
+  ["NULL", "'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -1110,7 +1128,7 @@ description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["TRUE", "'2024-01-15 10:00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["FALSE", "'2024-01-16 11:30:00'", "'2024-01-16 11:30:00 +00:00'"],
+  ["FALSE", "'2024-05-17 11:30:00'", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -1122,7 +1140,7 @@ description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["TRUE", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00'"],
-  ["FALSE", "'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00'"],
+  ["FALSE", "'2024-05-17 11:30:00 +00:00'", "'2024-05-17 11:30:00'"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -1133,8 +1151,10 @@ id = "node_if_func_5_combination_0_boolean_timestamp_tz_timestamp_tz"
 description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
+  ["TRUE", "'2024-01-15 10:00:00 +00:00'", "'2024-05-17 11:30:00 +00:00'"],
+  ["FALSE", "'2024-05-17 11:30:00 +00:00'", "'2023-11-30 23:15:45.5 +00:00'"],
+  ["TRUE", "'2023-11-30 23:15:45.5 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
   ["TRUE", "'2024-01-15 10:00:00 +00:00'", "'2024-01-15 10:00:00 +00:00'"],
-  ["FALSE", "'2024-01-16 11:30:00 +00:00'", "'2024-01-16 11:30:00 +00:00'"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -1146,7 +1166,7 @@ description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["TRUE", "'2024-01-15 10:00:00 +00:00'"],
-  ["FALSE", "'2024-01-16 11:30:00 +00:00'"],
+  ["FALSE", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "IFF(x0, x1, NULL)"
 tags = ["null", "all-null", "mixed-types"]
@@ -1158,7 +1178,7 @@ description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x2", type = "TIMESTAMP_TZ(9)" }]
 rows = [
   ["TRUE", "'2024-01-15 10:00:00 +00:00'"],
-  ["FALSE", "'2024-01-16 11:30:00 +00:00'"],
+  ["FALSE", "'2024-05-17 11:30:00 +00:00'"],
 ]
 expression = "IFF(x0, NULL, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -1249,8 +1269,10 @@ id = "node_if_func_6_combination_0_boolean_variant_variant"
 description = "node:if_func over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "VARIANT" }, { name = "x2", type = "VARIANT" }]
 rows = [
+  ["TRUE", "PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
+  ["FALSE", "PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":3}')"],
+  ["TRUE", "PARSE_JSON('{\"a\":3}')", "PARSE_JSON('{\"a\":1}')"],
   ["TRUE", "PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
-  ["FALSE", "PARSE_JSON('{\"a\":2}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]
@@ -1285,7 +1307,7 @@ id = "node_if_func_6_0_boolean_hazards"
 description = "node:if_func with SQL NULL in argument 0, boolean."
 columns = [{ name = "x0", type = "BOOLEAN" }, { name = "x1", type = "VARIANT" }, { name = "x2", type = "VARIANT" }]
 rows = [
-  ["NULL", "PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":1}')"],
+  ["NULL", "PARSE_JSON('{\"a\":1}')", "PARSE_JSON('{\"a\":2}')"],
 ]
 expression = "IFF(x0, x1, x2)"
 tags = ["null", "all-null", "mixed-types"]

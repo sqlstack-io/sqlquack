@@ -1,4 +1,4 @@
-use crate::helpers::{pending_compile_errors, run_on_repository_cases, translation_statements};
+use crate::helpers::{pending_flags, run_on_repository_cases, translation_statements};
 use crate::test_types::{
     CommandOutcome, CommandTestCase, PendingFlagsTestCase, TranslationStatementTestCase,
 };
@@ -48,20 +48,27 @@ fn given_repository_policy_and_cases_when_running_evidence_commands_then_they_lo
 }
 
 #[test]
-fn given_a_case_declaring_compile_error_when_writing_pending_then_only_its_file_carries_it() {
+fn given_cases_declaring_errors_when_writing_pending_then_only_their_files_carry_the_flag() {
     let test_cases = [PendingFlagsTestCase {
-        description: "the declaring case's pending file carries compile_error, the other none",
+        description: "compile_error marks only the declaring case, expected_error only the case \
+                      tagged error, and a plain case carries neither",
         expected_flags: vec![
-            ("relational/aliases.toml#plain_alias".to_owned(), None),
+            ("relational/aliases.toml#plain_alias".to_owned(), None, None),
             (
                 "relational/aliases.toml#reserved_alias".to_owned(),
+                Some(true),
+                None,
+            ),
+            (
+                "relational/aliases.toml#zero_divisor".to_owned(),
+                None,
                 Some(true),
             ),
         ],
     }];
     for test_case in test_cases {
         assert_eq!(
-            pending_compile_errors(),
+            pending_flags(),
             test_case.expected_flags,
             "{}",
             test_case.description

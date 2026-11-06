@@ -17,6 +17,22 @@ fn given_policy_text_when_parsing_then_schema_and_rules_are_enforced() {
             expected_error: Some("unknown field `overrides`"),
         },
         PolicyTestCase {
+            description: "a misspelt divergence id names the one it is near",
+            replace: "failure = \"value\"\n",
+            with: "failure = \"value\"\n\n[divergences.hsah]\ndefault = \"warn\"\n",
+            expected_error: Some(
+                "unknown divergence `hsah` in [divergences.hsah]; did you mean `hash`?",
+            ),
+        },
+        PolicyTestCase {
+            description: "a partial divergence entry names the fields it lacks",
+            replace: "failure = \"value\"\n",
+            with: "failure = \"value\"\n\n[divergences.json_fidelity]\ndefault = \"warn\"\n",
+            expected_error: Some(
+                "[divergences.json_fidelity] is missing fields `constructs`, `strict`, `reason`, `failure`",
+            ),
+        },
+        PolicyTestCase {
             description: "an unknown comparator key is rejected",
             replace: "timestamp_tz = \"instant\"",
             with: "timestamp_tz = \"instant\"\nfloat_tolerance = 0.5",

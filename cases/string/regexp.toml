@@ -143,3 +143,11 @@ rows = [
 ]
 expression = "REGEXP_LIKE(s, 'abc')"
 tags = ["null", "empty"]
+
+[[case]]
+id = "regexp_operator_whole_string"
+description = "The REGEXP operator matches the whole string; 'ba' and 'xa1' contain a match only as a substring, which catches an unanchored search."
+columns = [{ name = "s", type = "VARCHAR" }]
+rows = [["'a'"], ["'abc'"], ["'ba'"], ["'xa1'"], ["''"], ["' a'"], ["'aé'"], ["NULL"]]
+expression = "s REGEXP 'a.*'"
+tags = ["null", "empty", "whitespace", "unicode"]

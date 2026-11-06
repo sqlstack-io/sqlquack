@@ -5,7 +5,7 @@ use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 
 use crate::conversion::_helpers::support::scope::{Context, Emitted};
-use crate::conversion::constants::DECLARED_OFFSET;
+use sqlquack_policy::policy::constants::DECLARED_OFFSET;
 
 /// The declared columns any of `values` relies on, sorted and without repeats.
 pub(crate) fn declared_of<'a>(values: impl Iterator<Item = &'a Emitted>) -> Vec<String> {

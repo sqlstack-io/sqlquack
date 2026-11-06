@@ -10,9 +10,9 @@
 /playground/duckdb/*
   Cache-Control: public, max-age=31536000, immutable
 
-# The playground engine and pages keep their names across builds, so they revalidate.
+# The playground engine, in a directory named for its content hash: a new build gets a new path.
 /playground/engine/*
-  Cache-Control: public, max-age=300, must-revalidate
+  Cache-Control: public, max-age=31536000, immutable
 
 /fonts/*
   Cache-Control: public, max-age=2592000

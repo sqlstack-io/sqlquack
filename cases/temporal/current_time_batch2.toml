@@ -92,3 +92,25 @@ rows = [
 ]
 expression = "CURRENT_DATE() - 1 < CURRENT_DATE()"
 tags = ["null", "boundary"]
+
+[[case]]
+id = "current_date_shapes"
+description = "Bare CURRENT_DATE and CURRENT_DATE() are today's UTC date and print as a date alone; catches a timestamp or the previous or next day in their place."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT CURRENT_DATE = CAST(CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP()) AS DATE) AS bare, CURRENT_DATE() = CAST(CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP()) AS DATE) AS called, TO_VARCHAR(CURRENT_DATE) RLIKE '[0-9]{4}-[0-9]{2}-[0-9]{2}' AS bare_shape, TO_VARCHAR(CURRENT_DATE()) RLIKE '[0-9]{4}-[0-9]{2}-[0-9]{2}' AS called_shape FROM input"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "current_timestamp_shape"
+description = "CURRENT_TIMESTAMP() is a timestamp within seconds of CURRENT_TIMESTAMP and prints with a time of day; catches CURRENT_DATE or a truncated value in its place."
+columns = [{ name = "k", type = "NUMBER(2,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT DATEDIFF(second, CURRENT_TIMESTAMP(), CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ) BETWEEN -5 AND 5 AS near, TO_VARCHAR(CURRENT_TIMESTAMP()::TIMESTAMP_NTZ) RLIKE '[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}.*' AS shape FROM input"
+order = "ordered"
+tags = ["null", "boundary"]

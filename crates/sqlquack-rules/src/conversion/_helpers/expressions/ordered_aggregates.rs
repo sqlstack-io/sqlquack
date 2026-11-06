@@ -23,9 +23,11 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::_helpers::support::typed_leaves::compared_value;
 use crate::conversion::constants::DUPLICATE_VARIANTS;
 use crate::conversion::constants::{
-    ARRAY_AGG_ORDER, ARRAY_AGG_RULE, LISTAGG_RULE, PERCENTILE_DECIMALS, PERCENTILE_EXTRA_DIGITS,
-    PERCENTILE_FRACTION_DIGITS, PERCENTILE_INTERPOLATION, PERCENTILE_MAX_PRECISION,
-    PERCENTILE_RULE,
+    ARRAY_AGG_RULE, LISTAGG_RULE, PERCENTILE_DECIMALS, PERCENTILE_EXTRA_DIGITS,
+    PERCENTILE_FRACTION_DIGITS, PERCENTILE_MAX_PRECISION, PERCENTILE_RULE,
+};
+use sqlquack_policy::policy::constants::{
+    ARRAY_AGG_ORDER, LISTAGG_ORDER, PERCENTILE_INTERPOLATION,
 };
 
 /// An aggregate WITHIN GROUP (ORDER BY ...), alone or under `over`.
@@ -139,17 +141,27 @@ impl Ordered<'_> {
             keys.push(order_item(item, self.site)?);
         }
         let distinct = flag(self.call, "distinct");
-        if distinct && !self.order_is_value(&value)? {
+        let by_value = self.order_is_value(&value)?;
+        if distinct && !by_value {
             return Err(refuse("LISTAGG DISTINCT ordered by anything but its value"));
         }
-        let distinct = if distinct { "DISTINCT " } else { "" };
+        let listed = format!(
+            "coalesce(string_agg({}{value}, {} ORDER BY {}){}, '')",
+            if distinct { "DISTINCT " } else { "" },
+            string_literal(&delimiter, log),
+            keys.join(", "),
+            self.over
+        );
+        if by_value {
+            return Ok(Emitted::new(listed, SnowflakeType::Varchar));
+        }
+        diverge(self.site.context, LISTAGG_ORDER, &construct)?;
+        let mut tie_keys: Vec<String> = Vec::new();
+        for (position, item) in self.order.iter().enumerate() {
+            tie_keys.push(format!("k{position} := {}", order_key(item, self.site)?));
+        }
         Ok(Emitted::new(
-            format!(
-                "coalesce(string_agg({distinct}{value}, {} ORDER BY {}){}, '')",
-                string_literal(&delimiter, log),
-                keys.join(", "),
-                self.over
-            ),
+            tied_listagg(&listed, &value, (&tie_keys, &self.over)),
             SnowflakeType::Varchar,
         ))
     }
@@ -381,6 +393,24 @@ fn tied_array(element: &str, present: &str, (tie_keys, order): (&[String], &str)
          CAST(to_json(list_transform(array_agg_rows, lambda array_agg_row: array_agg_row['v'])) AS JSON) \
          ELSE CAST({tied} AS JSON) END)[1]",
         tie_keys.join(", ")
+    )
+}
+
+/// `listed`, raising where rows tied on `tie_keys` hold different non-NULL values of `value`.
+fn tied_listagg(listed: &str, value: &str, (tie_keys, over): (&[String], &str)) -> String {
+    let tied = raised(&format!(
+        "{LISTAGG_ORDER}: LISTAGG of different values tied on its order"
+    ));
+    let keys = format!("struct_pack({})", tie_keys.join(", "));
+    let count = |element: &str| {
+        format!(
+            "coalesce(len(list_distinct(list({element}) FILTER (WHERE {value} IS NOT NULL){over})), 0)"
+        )
+    };
+    format!(
+        "CASE WHEN {} = {} THEN {listed} ELSE CAST({tied} AS VARCHAR) END",
+        count(&keys),
+        count(&format!("struct_pack(k := {keys}, v := {value})"))
     )
 }
 

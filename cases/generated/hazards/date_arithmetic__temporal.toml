@@ -11,7 +11,7 @@ description = "fn:DATE_TRUNC over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }]
 rows = [
   ["'2024-01-15'"],
-  ["'2024-01-16'"],
+  ["'2024-05-17'"],
 ]
 expression = "DATE_TRUNC('month', x0)"
 tags = ["null", "boundary"]
@@ -23,7 +23,7 @@ description = "fn:DATE_TRUNC over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "DATE_TRUNC('month', x0)"
 tags = ["null", "boundary"]
@@ -96,7 +96,7 @@ description = "fn:DATEADD over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "DATE" }]
 rows = [
   ["1", "'2024-01-15'"],
-  ["2", "'2024-01-16'"],
+  ["2", "'2024-05-17'"],
 ]
 expression = "DATEADD(month, x0, x1)"
 tags = ["null", "boundary"]
@@ -108,7 +108,7 @@ description = "fn:DATEADD over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["1", "'2024-01-15 10:00:00'"],
-  ["2", "'2024-01-16 11:30:00'"],
+  ["2", "'2024-05-17 11:30:00'"],
 ]
 expression = "DATEADD(month, x0, x1)"
 tags = ["null", "boundary"]
@@ -120,7 +120,7 @@ description = "fn:DATEADD over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "DATE" }]
 rows = [
   ["1", "'2024-01-15'"],
-  ["2", "'2024-01-16'"],
+  ["2", "'2024-05-17'"],
 ]
 expression = "TIMESTAMPADD(month, x0, x1)"
 tags = ["null", "boundary"]
@@ -132,7 +132,7 @@ description = "fn:DATEADD over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "NUMBER(38,0)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["1", "'2024-01-15 10:00:00'"],
-  ["2", "'2024-01-16 11:30:00'"],
+  ["2", "'2024-05-17 11:30:00'"],
 ]
 expression = "TIMESTAMPADD(month, x0, x1)"
 tags = ["null", "boundary"]
@@ -243,8 +243,10 @@ id = "fn_datediff_2_combination_0_date_date"
 description = "fn:DATEDIFF over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
+  ["'2024-01-15'", "'2024-05-17'"],
+  ["'2024-05-17'", "'2023-11-30'"],
+  ["'2023-11-30'", "'2024-01-15'"],
   ["'2024-01-15'", "'2024-01-15'"],
-  ["'2024-01-16'", "'2024-01-16'"],
 ]
 expression = "DATEDIFF(day, x0, x1)"
 tags = ["null", "boundary"]
@@ -255,8 +257,10 @@ id = "fn_datediff_2_combination_1_date_date"
 description = "fn:DATEDIFF over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
+  ["'2024-01-15'", "'2024-05-17'"],
+  ["'2024-05-17'", "'2023-11-30'"],
+  ["'2023-11-30'", "'2024-01-15'"],
   ["'2024-01-15'", "'2024-01-15'"],
-  ["'2024-01-16'", "'2024-01-16'"],
 ]
 expression = "TIMEDIFF(day, x0, x1)"
 tags = ["null", "boundary"]
@@ -267,8 +271,10 @@ id = "fn_datediff_2_combination_2_date_date"
 description = "fn:DATEDIFF over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "DATE" }]
 rows = [
+  ["'2024-01-15'", "'2024-05-17'"],
+  ["'2024-05-17'", "'2023-11-30'"],
+  ["'2023-11-30'", "'2024-01-15'"],
   ["'2024-01-15'", "'2024-01-15'"],
-  ["'2024-01-16'", "'2024-01-16'"],
 ]
 expression = "TIMESTAMPDIFF(day, x0, x1)"
 tags = ["null", "boundary"]
@@ -331,8 +337,10 @@ id = "fn_datediff_3_combination_0_timestamp_ntz_timestamp_ntz"
 description = "fn:DATEDIFF over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
 ]
 expression = "DATEDIFF(second, x0, x1)"
 tags = ["null", "boundary"]
@@ -343,8 +351,10 @@ id = "fn_datediff_3_combination_1_timestamp_ntz_timestamp_ntz"
 description = "fn:DATEDIFF over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
 ]
 expression = "TIMEDIFF(second, x0, x1)"
 tags = ["null", "boundary"]
@@ -355,8 +365,10 @@ id = "fn_datediff_3_combination_2_timestamp_ntz_timestamp_ntz"
 description = "fn:DATEDIFF over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
+  ["'2024-01-15 10:00:00'", "'2024-05-17 11:30:00'"],
+  ["'2024-05-17 11:30:00'", "'2023-11-30 23:15:45.5'"],
+  ["'2023-11-30 23:15:45.5'", "'2024-01-15 10:00:00'"],
   ["'2024-01-15 10:00:00'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16 11:30:00'"],
 ]
 expression = "TIMESTAMPDIFF(second, x0, x1)"
 tags = ["null", "boundary"]
@@ -438,7 +450,7 @@ description = "fn:DATEDIFF over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }, { name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15'", "'2024-01-15 10:00:00'"],
-  ["'2024-01-16'", "'2024-01-16 11:30:00'"],
+  ["'2024-05-17'", "'2024-05-17 11:30:00'"],
 ]
 expression = "DATEDIFF(day, x0, x1)"
 tags = ["null", "boundary"]
@@ -523,7 +535,7 @@ description = "fn:DATEDIFF over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }, { name = "x1", type = "DATE" }]
 rows = [
   ["'2024-01-15 10:00:00'", "'2024-01-15'"],
-  ["'2024-01-16 11:30:00'", "'2024-01-16'"],
+  ["'2024-05-17 11:30:00'", "'2024-05-17'"],
 ]
 expression = "DATEDIFF(day, x0, x1)"
 tags = ["null", "boundary"]
@@ -596,7 +608,7 @@ description = "fn:DATEDIFF over benign values of each declared argument kind."
 columns = [{ name = "x1", type = "DATE" }]
 rows = [
   ["'2024-01-15'"],
-  ["'2024-01-16'"],
+  ["'2024-05-17'"],
 ]
 expression = "DATEDIFF(day, '2020-01-01', x1)"
 tags = ["null", "boundary"]
@@ -608,7 +620,7 @@ description = "fn:DATEDIFF over benign values of each declared argument kind."
 columns = [{ name = "x1", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "DATEDIFF(day, '2020-01-01', x1)"
 tags = ["null", "boundary"]

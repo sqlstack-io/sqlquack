@@ -127,7 +127,7 @@ description = "node:cast over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }]
 rows = [
   ["'2024-01-15'"],
-  ["'2024-01-16'"],
+  ["'2024-05-17'"],
 ]
 expression = "CAST(x0 AS VARCHAR)"
 tags = ["null", "invalid", "boundary"]
@@ -272,7 +272,7 @@ description = "node:cast over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "CAST(x0 AS VARCHAR)"
 tags = ["null", "invalid", "boundary"]
@@ -366,7 +366,7 @@ description = "fn:TO_VARCHAR over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }]
 rows = [
   ["'2024-01-15'"],
-  ["'2024-01-16'"],
+  ["'2024-05-17'"],
 ]
 expression = "TO_VARCHAR(x0)"
 tags = ["null", "invalid", "boundary"]
@@ -390,7 +390,7 @@ description = "fn:TO_VARCHAR over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "TO_VARCHAR(x0)"
 tags = ["null", "invalid", "boundary"]
@@ -438,7 +438,7 @@ description = "fn:TO_VARCHAR over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "DATE" }]
 rows = [
   ["'2024-01-15'"],
-  ["'2024-01-16'"],
+  ["'2024-05-17'"],
 ]
 expression = "TO_CHAR(x0)"
 tags = ["null", "invalid", "boundary"]
@@ -462,7 +462,7 @@ description = "fn:TO_VARCHAR over benign values of each declared argument kind."
 columns = [{ name = "x0", type = "TIMESTAMP_NTZ(9)" }]
 rows = [
   ["'2024-01-15 10:00:00'"],
-  ["'2024-01-16 11:30:00'"],
+  ["'2024-05-17 11:30:00'"],
 ]
 expression = "TO_CHAR(x0)"
 tags = ["null", "invalid", "boundary"]
