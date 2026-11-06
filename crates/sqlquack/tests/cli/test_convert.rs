@@ -520,6 +520,31 @@ fn given_a_bracket_expression_with_a_lazy_spelling_when_converting_then_the_clas
 }
 
 #[test]
+fn given_aggregates_and_nullif_with_recorded_types_when_running_then_values_follow_the_types() {
+    let test_cases = [
+        ValueTestCase {
+            description: "NULLIF(NULL, x) is text, so COALESCE with text keeps the text",
+            sql: "SELECT COALESCE(NULLIF(NULL, 1), 'none') AS r",
+            expected_value: "none",
+        },
+        ValueTestCase {
+            description: "AVG(DISTINCT) of NUMBER(38,0) keeps three decimals",
+            sql: "SELECT AVG(DISTINCT x)::VARCHAR AS r FROM (SELECT * FROM (VALUES \
+                  (1::NUMBER(38,0)), (2), (2)) AS v(x)) AS t",
+            expected_value: "1.500",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            converted_first_value(test_case.sql),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_count_of_a_qualified_or_filtered_star_when_running_then_rows_with_a_null_are_skipped() {
     let test_cases = [
         ValueTestCase {

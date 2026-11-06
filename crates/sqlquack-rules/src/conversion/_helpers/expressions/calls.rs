@@ -371,6 +371,12 @@ fn nullif(left: &Value, right: &Value, site: Site<'_>) -> Result<Emitted, Refusa
     let _rule = site.context.log.rule(NULLIF);
     let left = convert_expression(left, site)?;
     let right = convert_expression(right, site)?;
+    if left.data_type == SnowflakeType::Null {
+        return Ok(Emitted::new(
+            "CAST(NULL AS VARCHAR)".to_owned(),
+            SnowflakeType::Varchar,
+        ));
+    }
     comparable(left.clone(), right.clone(), &construct, site.context)?;
     let (branches, target) = unified(&[left, right], &construct, site.context)?;
     Ok(Emitted::new(
@@ -535,6 +541,24 @@ impl AggregateCall<'_> {
             )));
         };
         let distinct = self.distinct();
+        let data_type = match (distinct.is_empty(), argument.data_type) {
+            (true, _) => data_type,
+            (
+                false,
+                SnowflakeType::Number {
+                    precision: 38,
+                    scale: 0,
+                },
+            ) => SnowflakeType::Number {
+                precision: 38,
+                scale: 3,
+            },
+            (false, other) => {
+                return Err(refuse(format!(
+                    "AVG(DISTINCT) of {other}; its result type is recorded only for NUMBER(38,0)"
+                )));
+            }
+        };
         let counted = cast(
             &format!("count({distinct}{}){}", argument.sql, self.over),
             count(log),

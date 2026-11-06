@@ -402,7 +402,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: NULLIF,
         constructs: &["fn:NULLIF"],
-        conditions: "Arguments unify to a comparable type.",
+        conditions: "Arguments unify to a comparable type, the result typed as they unify. NULLIF(NULL, x) is NULL typed VARCHAR, as recorded.",
         failures: &[],
     },
     RuleSpec {
