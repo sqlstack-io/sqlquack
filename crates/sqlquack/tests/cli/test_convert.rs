@@ -14,6 +14,7 @@ use crate::test_types::{
 use sha2::{Digest, Sha256};
 
 const OTHER_BODY_SHA256: &str = "0000000000000000000000000000000000000000000000000000000000000000";
+const COUNT_STAR_REFUSAL: &str = "COUNT over a qualified star or a star with";
 const COUNTING_HANDLER: &str = "import itertools\nTICKETS = itertools.count(1)\ndef handle(*arguments):\n    return next(TICKETS)\n";
 const QUOTED_ALIAS: &str =
     "WITH totals AS (SELECT 1 AS \"orderTotal\") SELECT ordertotal FROM totals";
@@ -426,25 +427,28 @@ fn given_quoted_names_when_converted_and_run_on_duckdb_then_output_names_follow_
 }
 
 #[test]
-fn given_no_policy_file_when_converting_or_counting_then_the_command_exits_2() {
+fn given_no_policy_file_when_converting_or_counting_then_the_built_in_policy_applies() {
     let test_cases = [
         PolicyFreeTestCase {
-            description: "convert",
+            description: "convert runs under the built-in policy",
             arguments: &["convert", "query.sql"],
-            expected_exit_code: Some(2),
+            policy_file: None,
+            expected_exit_code: Some(0),
         },
         PolicyFreeTestCase {
-            description: "census",
+            description: "census runs under the built-in policy",
             arguments: &["census", "query.sql"],
-            expected_exit_code: Some(2),
+            policy_file: None,
+            expected_exit_code: Some(0),
         },
         PolicyFreeTestCase {
-            description: "index",
+            description: "index runs under the built-in policy",
             arguments: &["index", "query.sql"],
-            expected_exit_code: Some(2),
+            policy_file: None,
+            expected_exit_code: Some(0),
         },
         PolicyFreeTestCase {
-            description: "function",
+            description: "function runs under the built-in policy",
             arguments: &[
                 "function",
                 "query.sql",
@@ -453,17 +457,43 @@ fn given_no_policy_file_when_converting_or_counting_then_the_command_exits_2() {
                 "--schema",
                 "schema.json",
             ],
+            policy_file: None,
+            expected_exit_code: Some(0),
+        },
+        PolicyFreeTestCase {
+            description: "the built-in policy refuses a divergence the repository policy allows",
+            arguments: &["convert", "now.sql"],
+            policy_file: None,
+            expected_exit_code: Some(1),
+        },
+        PolicyFreeTestCase {
+            description: "a sqlquack.toml in the directory is still read",
+            arguments: &["convert", "now.sql"],
+            policy_file: Some("sqlquack.toml"),
+            expected_exit_code: Some(0),
+        },
+        PolicyFreeTestCase {
+            description: "--builtin-policy still refuses where a sqlquack.toml allows it",
+            arguments: &["convert", "--builtin-policy", "now.sql"],
+            policy_file: Some("sqlquack.toml"),
+            expected_exit_code: Some(1),
+        },
+        PolicyFreeTestCase {
+            description: "a --policy file that does not exist is a usage error",
+            arguments: &["convert", "--policy", "missing.toml", "query.sql"],
+            policy_file: None,
             expected_exit_code: Some(2),
         },
         PolicyFreeTestCase {
-            description: "census with --builtin-policy runs",
-            arguments: &["census", "--builtin-policy", "query.sql"],
-            expected_exit_code: Some(0),
+            description: "an invalid sqlquack.toml is a usage error",
+            arguments: &["convert", "query.sql"],
+            policy_file: Some("crates/sqlquack/tests/cli/fixtures/invalid_policy.toml"),
+            expected_exit_code: Some(2),
         },
     ];
     for test_case in test_cases {
         assert_eq!(
-            policy_free_exit_code(test_case.arguments),
+            policy_free_exit_code(test_case.arguments, test_case.policy_file),
             test_case.expected_exit_code,
             "{}",
             test_case.description
@@ -1152,6 +1182,55 @@ fn given_recorded_shapes_when_converting_then_they_convert_or_refuse_as_recorded
 }
 
 #[test]
+fn given_count_over_a_qualified_or_modified_star_when_converting_then_it_refuses() {
+    let test_cases = [
+        PythonRefusalTestCase {
+            description: "a qualified star counts rows where some column is not NULL, not every row",
+            sql: "SELECT COUNT(t.*) AS n FROM (SELECT 1 AS a, 'x' AS b UNION ALL SELECT NULL, NULL) AS t",
+            expected_mention: COUNT_STAR_REFUSAL,
+        },
+        PythonRefusalTestCase {
+            description: "EXCLUDE narrows the columns a star counts over",
+            sql: "SELECT COUNT(* EXCLUDE b) AS n FROM (SELECT 1 AS a, 'x' AS b UNION ALL SELECT NULL, NULL) AS t",
+            expected_mention: COUNT_STAR_REFUSAL,
+        },
+        PythonRefusalTestCase {
+            description: "ILIKE narrows the columns a star counts over",
+            sql: "SELECT COUNT(* ILIKE 'a%') AS n FROM (SELECT 1 AS a, 'x' AS b UNION ALL SELECT NULL, NULL) AS t",
+            expected_mention: COUNT_STAR_REFUSAL,
+        },
+        PythonRefusalTestCase {
+            description: "RENAME on a counted star",
+            sql: "SELECT COUNT(* RENAME a AS z) AS n FROM (SELECT 1 AS a, 'x' AS b UNION ALL SELECT NULL, NULL) AS t",
+            expected_mention: COUNT_STAR_REFUSAL,
+        },
+        PythonRefusalTestCase {
+            description: "a qualified star with EXCLUDE",
+            sql: "SELECT COUNT(t.* EXCLUDE b) AS n FROM (SELECT 1 AS a, 'x' AS b UNION ALL SELECT NULL, NULL) AS t",
+            expected_mention: COUNT_STAR_REFUSAL,
+        },
+        PythonRefusalTestCase {
+            description: "DISTINCT over a qualified star",
+            sql: "SELECT COUNT(DISTINCT t.*) AS n FROM (SELECT 1 AS a, 'x' AS b UNION ALL SELECT NULL, NULL) AS t",
+            expected_mention: COUNT_STAR_REFUSAL,
+        },
+        PythonRefusalTestCase {
+            description: "a qualified star over a window",
+            sql: "SELECT COUNT(t.*) OVER () AS n FROM (SELECT 1 AS a, 'x' AS b UNION ALL SELECT NULL, NULL) AS t",
+            expected_mention: COUNT_STAR_REFUSAL,
+        },
+    ];
+    for test_case in test_cases {
+        let refusals = python_report(test_case.sql, &[])["refusals"].to_string();
+        assert!(
+            refusals.contains(test_case.expected_mention),
+            "{}: {refusals}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_a_subquery_operand_when_converting_and_running_then_it_is_bound_outside_lambdas() {
     let test_cases = [
         ValueTestCase {
@@ -1513,7 +1592,7 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
             expected_text: "error[SQ0008]: the conversion needs a known divergence the policy refuses: \
                 `fn:HASH`\n --> <stdin>:1:8\n  |\n1 | SELECT HASH(1) AS h\n  |        ^^^^^^^ fn:HASH \
                 needs known divergence `hash`, which the policy refuses in this mode\n  |\n  = help: \
-                --builtin-policy refuses every known divergence; pass --policy with a policy \
+                the built-in policy refuses every known divergence; pass --policy with a policy \
                 file that allows `hash`, such as the repository's sqlquack.toml\nsqlquack convert: refused, 1 refusal under the built-in default\n",
             expected_json: ("SQ0008", "divergence_refused", 1, 8),
         },

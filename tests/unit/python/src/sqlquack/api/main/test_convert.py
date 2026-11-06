@@ -32,6 +32,13 @@ DATED: str = "SELECT CURRENT_DATE() AS d"
             expected_converted=True,
         ),
         CommandLineTestCase(
+            description="no policy flag and no sqlquack.toml: the built-in policy",
+            sql="SELECT order_id, price * 2 AS doubled FROM orders",
+            arguments=("--schema", "schema.json"),
+            options=ConvertOptions(schema="schema.json"),
+            expected_converted=True,
+        ),
+        CommandLineTestCase(
             description="a query refused for an undeclared relation",
             sql="SELECT a FROM customers",
             arguments=("--builtin-policy", "--schema", "schema.json"),
@@ -113,10 +120,10 @@ def test_given_a_refusal_when_converting_then_the_diagnostic_is_typed(
     "test_case",
     (
         FailureTestCase(
-            description="no policy file and no built-in policy, as on the command line",
-            sql="SELECT 1",
-            options=None,
-            expected_message="no policy file at sqlquack.toml",
+            description="a policy file that does not exist, as on the command line",
+            sql="SELECT 1 AS one",
+            options=ConvertOptions(policy="missing.toml"),
+            expected_message="no policy file at missing.toml",
         ),
         FailureTestCase(
             description="input holding no statement",
