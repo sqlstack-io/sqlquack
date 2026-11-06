@@ -1826,3 +1826,62 @@ fn given_a_snowflake_dynamic_iceberg_or_interactive_table_when_parsing_then_reco
         );
     }
 }
+
+#[test]
+fn given_snowflake_function_properties_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a nullable return type (recorded OK)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT NULL AS 'm' ;",
+            expected_kind: Some("create_function"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty COPY list (recorded OK)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE JAVA COPY = ( ) HANDLER = 'm' AS 'm' ;",
+            expected_kind: Some("create_function"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a bare-word handler (recorded OK)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE SCALA HANDLER = m1 AS 'm' ;",
+            expected_kind: Some("create_function"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a bare-word secret key and a string secret (recorded OK)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' HANDLER = 'm' SECRETS = ( m1 = 'd1.s1.v1' ) AS 'm' ;",
+            expected_kind: Some("create_function"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an untyped RETURNS TABLE column (recorded OK)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS TABLE ( INT ) LANGUAGE JAVA IMPORTS = ( 'm' ) HANDLER = 'm' ;",
+            expected_kind: Some("create_function"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a runtime version with no value before the next property (recorded errno 1003)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = HANDLER = 'm' AS 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a handler with no value before AS (recorded errno 1003)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE JAVA HANDLER = AS 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unclosed COPY list (recorded errno 1003)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT COPY = ( GRANTS AS 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "NULL ON NULL INPUT after the return type (recorded errno 1003)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT NULL ON NULL INPUT SERVICE = v1 ENDPOINT = e1 AS 'm' ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

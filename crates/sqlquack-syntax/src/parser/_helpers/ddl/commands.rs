@@ -1463,6 +1463,7 @@ impl Parser {
         let mut returns_table_body: Option<String> = None;
         (return_type, returns_table_body) =
             self.parse_create_function_returns(return_type, returns_table_body)?;
+        let return_nullability = self.match_snowflake_return_nullability();
 
         let mut function = CreateFunction {
             name,
@@ -1493,7 +1494,7 @@ impl Parser {
             runtime_version: None,
             packages: None,
             parameter_style: None,
-            snowflake_properties: Vec::new(),
+            snowflake_properties: return_nullability.into_iter().collect(),
         };
         function = self.parse_create_function_properties(function)?;
 
@@ -1518,6 +1519,9 @@ impl Parser {
                 function = self.parse_create_function_returns_null_on_null(function)?;
             } else if self.match_token(TokenType::Returns) {
                 function.return_type = Some(self.parse_data_type()?);
+                if let Some(nullability) = self.match_snowflake_return_nullability() {
+                    function.snowflake_properties.push(nullability);
+                }
             } else if self.match_token(TokenType::Language) {
                 function.language = Some(self.expect_identifier_or_keyword()?);
                 function = record_function_property(function, FunctionPropertyKind::Language);
@@ -1578,7 +1582,8 @@ impl Parser {
                 let parsed_env = self.parse_environment_list()?;
                 function.environment.extend(parsed_env);
                 function = record_function_property(function, FunctionPropertyKind::Environment);
-            } else if self.match_identifier("HANDLER") {
+            } else if self.check_identifier("HANDLER") && !self.names_snowflake_word_value() {
+                self.skip();
                 function = self.parse_create_function_handler(function)?;
             } else if self.match_identifier("RUNTIME_VERSION") {
                 function = self.parse_create_function_runtime_version(function)?;
@@ -1925,6 +1930,17 @@ impl Parser {
                     self.skip();
                     let mut cols: Vec<String> = Vec::new();
                     loop {
+                        let untyped = self.is_snowflake()
+                            && (self.check_next(TokenType::Comma)
+                                || self.check_next(TokenType::RParen));
+                        if untyped {
+                            self.check_snowflake_object_name()?;
+                            cols.push(self.advance_text()?);
+                            if !self.match_token(TokenType::Comma) {
+                                break;
+                            }
+                            continue;
+                        }
                         let col_name = self.expect_identifier()?;
                         let col_type = self.parse_data_type()?;
                         cols.push(format!(
