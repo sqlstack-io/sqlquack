@@ -1,5 +1,6 @@
 //! `convert_setup`: a case's setup statements as DuckDB statements and the relations they create.
 
+use serde_json::Value;
 use sqlquack_core::parsing::main::parse_source::parse_source;
 use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_core::provenance::models::ProvenanceLog;
@@ -11,15 +12,26 @@ use sqlquack_snowflake::typing::main::cast_target::cast_target;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 use sqlquack_syntax::expressions::columns::models::ColumnDef;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal, TableRef};
-use sqlquack_syntax::expressions::statements::models::Insert;
+use sqlquack_syntax::expressions::statements::models::{Insert, SetStatement, UnsetStatement};
 use sqlquack_syntax::expressions::tables::models::CreateTable;
 use sqlquack_syntax::expressions::tree::models::Expression;
 
 use crate::conversion::_helpers::expressions::casts::data_type_name;
-use crate::conversion::constants::SETUP_REPLAYED;
+use crate::conversion::_helpers::support::tree::strip_positions;
+use crate::conversion::constants::{NONDETERMINISTIC_FUNCTIONS, SETUP_REPLAYED};
 use crate::conversion::models::ConvertedSetup;
 
-/// Each statement in order: CREATE TABLE of named, typed columns, or INSERT INTO it of literal rows.
+/// Name prefixes of functions whose result depends on when they run, so a SET differs from its reads.
+const TIME_DEPENDENT_PREFIXES: &[&str] = &[
+    "CURRENT_",
+    "LOCALTIME",
+    "SYSDATE",
+    "GETDATE",
+    "SYSTIMESTAMP",
+];
+
+/// Each statement in order: CREATE TABLE of named, typed columns, INSERT INTO it of literal rows,
+/// SET of session variables, or UNSET of them.
 pub fn convert_setup(statements: &[String]) -> Result<ConvertedSetup, String> {
     let log = ProvenanceLog::default();
     let mut converted = ConvertedSetup::default();
@@ -33,6 +45,14 @@ pub fn convert_setup(statements: &[String]) -> Result<ConvertedSetup, String> {
             }
             [Expression::Insert(insert)] => {
                 inserted(insert, &converted, &log).map_err(|reason| refused(&reason))?
+            }
+            [Expression::SetStatement(set)] => {
+                assigned(set, &mut converted).map_err(|reason| refused(&reason))?;
+                continue;
+            }
+            [Expression::UnsetStatement(unset)] => {
+                unassigned(unset, &mut converted).map_err(|reason| refused(&reason))?;
+                continue;
             }
             _ => {
                 return Err(refused(&format!(
@@ -230,6 +250,102 @@ fn fits(text: &str, precision: u8, scale: u8) -> bool {
             .all(|character| character.is_ascii_digit() || character == '.')
         && fraction.len() <= usize::from(scale)
         && whole.len() <= usize::from(precision.saturating_sub(scale))
+}
+
+/// `SET name = value` or `SET (name, …) = (value, …)`: each variable recorded for `$name` to read.
+fn assigned(set: &SetStatement, converted: &mut ConvertedSetup) -> Result<(), String> {
+    for item in &set.items {
+        if item.kind.is_some() || item.no_equals {
+            return Err("sets other than a session variable with =".to_owned());
+        }
+        let pairs: Vec<(&Expression, &Expression)> = match (&item.name, &item.value) {
+            (Expression::Tuple(names), Expression::Tuple(values))
+                if names.expressions.len() == values.expressions.len() =>
+            {
+                names.expressions.iter().zip(&values.expressions).collect()
+            }
+            (Expression::Tuple(_), _) => {
+                return Err("sets a list of variables to other than as many values".to_owned());
+            }
+            (name, value) => vec![(name, value)],
+        };
+        for (name, value) in pairs {
+            let name = match name {
+                Expression::Identifier(identifier) => resolved(identifier)?,
+                Expression::Column(column) if column.table.is_none() => resolved(&column.name)?,
+                _ => return Err("sets a variable whose name is not a plain name".to_owned()),
+            };
+            let value = variable_value(value)?;
+            converted.variables.insert(name, value);
+        }
+    }
+    Ok(())
+}
+
+/// `UNSET name` or `UNSET (name, …)` of variables setup SET earlier.
+fn unassigned(unset: &UnsetStatement, converted: &mut ConvertedSetup) -> Result<(), String> {
+    for identifier in &unset.names {
+        let name = resolved(identifier)?;
+        if converted.variables.remove(&name).is_none() {
+            return Err(format!("unsets {name}, which setup did not set"));
+        }
+    }
+    Ok(())
+}
+
+/// A literal, NULL or a scalar subquery whose value cannot change between the SET and its reads.
+fn variable_value(value: &Expression) -> Result<Value, String> {
+    let fixed = match value {
+        Expression::Null(_) => true,
+        Expression::Literal(literal) => {
+            matches!(literal.as_ref(), Literal::Number(_) | Literal::String(_))
+        }
+        Expression::Subquery(_) => true,
+        _ => false,
+    };
+    if !fixed {
+        return Err(
+            "sets a variable to other than a literal, NULL or a scalar subquery".to_owned(),
+        );
+    }
+    let tree = serde_json::to_value(value)
+        .map(|value| strip_positions(&value))
+        .map_err(|error| format!("sets a value that does not serialise: {error}"))?;
+    match unrepeatable(&tree) {
+        Some(reason) => Err(format!("sets a variable to a subquery {reason}")),
+        None => Ok(tree),
+    }
+}
+
+/// Why a value read at each `$name` could differ from the value SET computed once, if it could.
+fn unrepeatable(tree: &Value) -> Option<String> {
+    match tree {
+        Value::Object(fields) => {
+            if fields.contains_key("parameter") {
+                return Some("reading another variable or parameter".to_owned());
+            }
+            if let Some(Value::String(name)) = fields.get("name") {
+                let name = name.to_ascii_uppercase();
+                if NONDETERMINISTIC_FUNCTIONS.contains(&name.as_str())
+                    || TIME_DEPENDENT_PREFIXES
+                        .iter()
+                        .any(|prefix| name.starts_with(prefix))
+                {
+                    return Some(format!("calling {name}, whose result can change"));
+                }
+            }
+            if let Some(kind) = fields.keys().find(|kind| {
+                TIME_DEPENDENT_PREFIXES
+                    .iter()
+                    .any(|prefix| kind.to_ascii_uppercase().starts_with(prefix))
+            }) {
+                return Some(format!("reading {kind}, whose result can change"));
+            }
+            fields.values().find_map(unrepeatable)
+        }
+        Value::Array(items) => items.iter().find_map(unrepeatable),
+        _ => None,
+    }
 }
 
 /// An unquoted name as Snowflake resolves it, in upper case; a quoted one refuses.

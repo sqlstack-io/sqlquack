@@ -28,7 +28,7 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::constants::{
     COLUMN, COMMENT, CONSTANT_LITERAL, DOLLAR_PARAMETER, DOLLAR_STRING_KIND, NEGATE,
     NUMBER_LITERAL, PARENTHESES, POSITIONAL_COLUMN, SCALAR_SUBQUERY, SEQUENCE_COLUMN,
-    SEQUENCE_PEERS, TYPED_LITERAL_KINDS, TYPED_LITERAL_PAIR,
+    SEQUENCE_PEERS, SESSION_VARIABLE, TYPED_LITERAL_KINDS, TYPED_LITERAL_PAIR,
 };
 use sqlquack_semantics::scopes::models::ScopeRelation;
 use sqlquack_semantics::types::models::Holding;
@@ -97,6 +97,31 @@ fn sequence_column(scope: &Scope<'_>, qualifier: Option<&str>, name: &str) -> bo
         level = current.outer;
     }
     false
+}
+
+/// `$name`, a session variable the case's setup SET, or `$n`, a column position.
+pub(crate) fn parameter(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let Some(name) = payload.get("name").and_then(Value::as_str) else {
+        return positional_column(payload, site);
+    };
+    let construct = node_construct("parameter");
+    let refuse = |reason: String| outside_conditions(construct.clone(), reason);
+    if payload.get("style").and_then(Value::as_str) != Some(DOLLAR_PARAMETER) {
+        return Err(refuse(format!(
+            "the parameter {name}, which is not a $name variable"
+        )));
+    }
+    if payload.get("quoted").and_then(Value::as_bool) == Some(true) {
+        return Err(refuse(format!("the quoted variable name {name}")));
+    }
+    let resolved = name.to_ascii_uppercase();
+    let Some(value) = site.context.options.session_variables.get(&resolved) else {
+        return Err(refuse(format!(
+            "the variable ${name}, which the case's setup does not SET"
+        )));
+    };
+    let _rule = site.context.log.rule(SESSION_VARIABLE);
+    convert_expression(value, site)
 }
 
 /// `$n`: the n-th column of the query level's only FROM source, read as that column.

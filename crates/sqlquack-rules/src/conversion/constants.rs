@@ -1398,5 +1398,7 @@ pub(crate) const OUTPUT_NAMED_ARITHMETIC: &[&str] = &["add", "sub", "mul", "div"
 /// The cast target spellings whose unaliased column names receipts record.
 pub(crate) const OUTPUT_NAMED_CAST_ENDINGS: &[&str] = &[" AS INTEGER)", "::INTEGER"];
 /// The setup statements a case's DuckDB replay runs.
-pub(crate) const SETUP_REPLAYED: &str =
-    "CREATE TABLE of NUMBER and VARCHAR columns and INSERT INTO it VALUES of literals";
+pub(crate) const SETUP_REPLAYED: &str = "CREATE TABLE of NUMBER and VARCHAR columns, INSERT INTO it \
+     VALUES of literals, and SET of variables to literals or a deterministic scalar subquery";
+/// `$name` read as the expression the case's setup SET the variable to.
+pub const SESSION_VARIABLE: &str = "rule.session_variable";

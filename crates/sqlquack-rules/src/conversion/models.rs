@@ -46,6 +46,8 @@ pub struct ConversionOptions {
     pub overrides: BTreeMap<String, UserOverride>,
     /// Override names to the SHA-256 of the body recorded cases verified, which strict mode allows.
     pub verified_overrides: BTreeMap<String, String>,
+    /// Session variables a case's setup SET, by upper-case name, with the expression each was set to.
+    pub session_variables: BTreeMap<String, serde_json::Value>,
 }
 
 /// A user's DuckDB SQL standing in for a Snowflake function, written in SQLBuild's FUNCTION() format.
@@ -218,4 +220,6 @@ pub struct ConvertedSetup {
     pub relations: BTreeMap<String, Vec<ColumnSpec>>,
     /// The DuckDB statements, in setup order.
     pub statements: Vec<String>,
+    /// Each session variable SET, by its resolved name, with the expression it was set to.
+    pub variables: BTreeMap<String, serde_json::Value>,
 }
