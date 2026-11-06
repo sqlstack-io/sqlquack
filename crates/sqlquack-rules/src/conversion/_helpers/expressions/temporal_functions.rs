@@ -62,12 +62,13 @@ use crate::conversion::constants::{
     DATE_FORMAT_RULE, DATE_NAME, DATE_PART_RULE, DATE_PARTS, DAY_NAME_RULE, DECIMAL_EPOCH_RULE,
     FRACTIONAL_DATE_AMOUNT, FROM_PARTS, LAST_DAY_RULE, MAX_FRACTION_DIGITS_U8, MICROSECOND_DIGITS,
     MONTH_NAME_FIELDS, MONTH_NAME_FOLLOWERS, NULL_BRANCHES, NUMBER_TEXT_FORMAT, OFFSET_FREE_UNITS,
-    RECORDED_TIME_ZONES, SCALE_DIGITS, TEMPORAL_TEXT_FIELDS, TEMPORAL_TEXT_FORMAT,
-    TEMPORAL_TEXT_SEPARATORS, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC,
-    TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TIMESTAMP_NTZ_NAME, TIMESTAMP_TIME_RULE,
-    TO_DATE_TEMPORAL, TO_TIMESTAMP_TEMPORAL, UTC_OFFSET_ARITHMETIC, UTC_ZONE, ZONE_COLUMNS,
-    ZONED_PARTS,
+    SCALE_DIGITS, TEMPORAL_TEXT_FIELDS, TEMPORAL_TEXT_FORMAT, TEMPORAL_TEXT_SEPARATORS,
+    TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC, TIME_ZONE_CONVERSION,
+    TIMESTAMP_FORMAT_RULE, TIMESTAMP_NTZ_NAME, TIMESTAMP_TIME_RULE, TO_DATE_TEMPORAL,
+    TO_TIMESTAMP_TEMPORAL, UTC_OFFSET_ARITHMETIC, UTC_ZONE, ZONE_COLUMNS, ZONED_PARTS,
 };
+use crate::time_zones::constants::RECORDED_TIME_ZONES;
+use crate::time_zones::main::recorded_zone::recorded_zone;
 use sqlquack_duckdb::raises::main::raised::raised;
 use sqlquack_duckdb::temporal::constants::{DUCKDB_CURRENT_DATE, DUCKDB_CURRENT_TIMESTAMP};
 use sqlquack_policy::policy::constants::{
@@ -1110,7 +1111,7 @@ struct Zone {
 /// A literal zone name, or a VARCHAR expression naming one per row.
 fn zone_operand(node: &Value, construct: &Construct, site: Site<'_>) -> Result<Zone, Refusal> {
     if let Some(zone) = zone_literal(node, site) {
-        if !RECORDED_TIME_ZONES.contains(&zone.as_str()) {
+        if !recorded_zone(&zone) {
             return Err(outside_conditions(
                 construct.clone(),
                 format!(
