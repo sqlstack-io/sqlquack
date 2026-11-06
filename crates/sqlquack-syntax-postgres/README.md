@@ -116,6 +116,15 @@ a query, `INSERT`, `UPDATE`, `DELETE` or `(NOTIFY, channel [, payload])`. A sche
 grants parse. `CREATE EXTENSION ... FROM` and schema elements after `IF NOT EXISTS` are refused
 (0A000), as are `OR REPLACE` and a persistence where gram.y has none (42601).
 
+## CREATE ROLE, USER, GROUP, POLICY and USER MAPPING
+
+`CREATE ROLE`, `USER` and `GROUP` become `CreateObject` of their own kind, each option a
+`(name, value)` tuple in `operands`, in order, named as gram.y's `DefElem` names it: `NOLOGIN` is
+`(canlogin, false)`, `ENCRYPTED PASSWORD` is `password`, `IN GROUP` is `addroleto`, `USER` and `ROLE`
+are `rolemembers`. An unknown option (42601), `UNENCRYPTED PASSWORD` (0A000) and a reserved role name
+(42939) are refused. `CREATE POLICY` writes gram.y's defaults out: `(AS, PERMISSIVE)`, `(FOR, ALL)`
+and `(TO, (PUBLIC))`. `CREATE USER MAPPING FOR USER` is `FOR CURRENT_USER`.
+
 ## ALTER
 
 `ALTER TABLE`, `FOREIGN TABLE`, `INDEX`, `SEQUENCE`, `VIEW` and `MATERIALIZED VIEW` become

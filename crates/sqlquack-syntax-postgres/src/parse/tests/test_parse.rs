@@ -165,6 +165,26 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
+            description: "a role option gram.y does not know is refused (42601)",
+            sql: "CREATE ROLE r foo",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "UNENCRYPTED PASSWORD is refused in gram.y (0A000)",
+            sql: "CREATE ROLE r UNENCRYPTED PASSWORD 'x'",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: false },
+        },
+        VerdictTestCase {
+            description: "CURRENT_USER cannot name a new role (42939)",
+            sql: "CREATE ROLE current_user",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: false },
+        },
+        VerdictTestCase {
+            description: "a policy is PERMISSIVE or RESTRICTIVE, compared after folding (42601)",
+            sql: "CREATE POLICY p ON t AS \"RESTRICTIVE\"",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
             description: "CREATE EXTENSION ... FROM is refused in gram.y (0A000)",
             sql: "CREATE EXTENSION e FROM x",
             expected_verdict: ExpectedVerdict::Rejected { syntax: false },
@@ -1034,6 +1054,18 @@ fn given_sql_when_parsing_strictly_then_any_parser_error_refuses_it() {
 #[test]
 fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() {
     let test_cases = [
+        ValueTestCase {
+            description: "a role option is the DefElem gram.y names it",
+            sql: "CREATE ROLE r NOLOGIN",
+            pointer: "/0/create_object/operands/0/tuple/expressions/0/identifier/name",
+            expected_json: "\"canlogin\"",
+        },
+        ValueTestCase {
+            description: "a policy without TO is for PUBLIC",
+            sql: "CREATE POLICY p ON t",
+            pointer: "/0/create_object/operands/3/tuple/expressions/1/tuple/expressions/0/var/this",
+            expected_json: "\"PUBLIC\"",
+        },
         ValueTestCase {
             description: "CREATE LANGUAGE without HANDLER is the CREATE EXTENSION gram.y makes of it",
             sql: "CREATE OR REPLACE LANGUAGE l",
