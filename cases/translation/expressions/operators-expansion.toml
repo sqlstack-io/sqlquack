@@ -60,7 +60,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t005_dates"
-description = "The page lists date and time values as supported in the array; date text in the array compared with a DATE column. How the VARIANT elements convert is the page does not say; the recording decides. Catches: the elements compared as text against the date, so nothing matches"
+description = "The page lists date and time values as supported in the array; date text in the array compared with a DATE column. The page does not say how the VARIANT elements convert; the recording decides. Catches: the elements compared as text against the date, so nothing matches"
 columns = [{ name = "d", type = "DATE" }]
 rows = [
   ["'2024-01-01'"],
@@ -88,8 +88,7 @@ tags = ["null"]
 
 [[case]]
 id = "t007_non_constant"
-compile_error = true
-description = "The page: the input must be an array of constant values; an array built from a column is not one. Catches: the column array expanded per row instead of raising"
+description = "The page: the input must be an array of constant values; an array built from a column is not one. It compiles, so the error, if any, is raised at run time; the recording decides. Catches: the column array expanded per row instead of raising"
 columns = [{ name = "a", type = "NUMBER(38,0)" }]
 rows = [
   ["1"],

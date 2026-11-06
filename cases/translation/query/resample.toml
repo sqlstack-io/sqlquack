@@ -45,7 +45,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t004_aligned_buckets"
-description = "The page: slices align to zero, as TIME_SLICE does, so 7 and 18 fall in the buckets starting 5 and 15 and the bucket starting 10 is missing; the value of k in the generated row is the page does not say; the recording decides. Catches: slices aligned to the smallest value (7, 12, 17) instead of to zero"
+description = "The page: slices align to 1970-01-01 00:00:00, as TIME_SLICE does; for a numeric column that is read as zero, an inference, so 7 and 18 fall in the buckets starting 5 and 15 and the bucket starting 10 is missing. The page does not say what k holds in the generated row; the recording decides. Catches: slices aligned to the smallest value (7, 12, 17) instead of to zero"
 columns = [{ name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "NUMBER(38,0)" }]
 rows = [
   ["7", "1"],
@@ -83,7 +83,7 @@ tags = ["error"]
 
 [[case]]
 id = "t007_null"
-description = "A NULL in a value column is kept as input; how a NULL in the USING column is treated is the page does not say; the recording decides. Catches: the NULL value replaced, or a NULL time placed in a bucket"
+description = "A NULL in a value column is kept as input; the page does not say how a NULL in the USING column is treated; the recording decides. Catches: the NULL value replaced, or a NULL time placed in a bucket"
 columns = [{ name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "NUMBER(38,0)" }]
 rows = [
   ["1", "NULL"],

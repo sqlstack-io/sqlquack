@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_from_literal"
-description = "The input relation named by TABLE() over a string literal; whether a CTE name resolves is the page does not say; the recording decides. Catches: TABLE() read as a table function call, or the relation not found"
+description = "The input relation named by TABLE() over a string literal; the page does not say whether a CTE name resolves; Snowflake compiles it. Catches: TABLE() read as a table function call, or the relation not found"
 columns = [{ name = "a", type = "NUMBER(38,0)" }]
 rows = [
   ["1"],

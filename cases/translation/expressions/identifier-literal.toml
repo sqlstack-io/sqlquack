@@ -4,7 +4,7 @@ session_profile = "utc-v1"
 
 [[case]]
 id = "t001_from_literal"
-description = "The input relation named by a string literal; whether IDENTIFIER() resolves a CTE name is the page does not say; the recording decides. Catches: the string read as a value, or the relation not found"
+description = "The input relation named by a string literal; the page does not say whether IDENTIFIER() resolves a CTE name; Snowflake compiles it. Catches: the string read as a value, or the relation not found"
 columns = [{ name = "a", type = "NUMBER(38,0)" }]
 rows = [
   ["1"],
@@ -16,7 +16,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t002_column"
-description = "A column named by a string literal in an expression; the page names objects in general, so whether a column resolves is the page does not say; the recording decides. Catches: the literal returned as the text 'a' instead of the column's value"
+description = "A column named by a string literal in an expression; the page names objects in general and does not say whether a column resolves; the recording decides. Catches: the literal returned as the text 'a' instead of the column's value"
 columns = [{ name = "a", type = "NUMBER(38,0)" }]
 rows = [
   ["1"],
