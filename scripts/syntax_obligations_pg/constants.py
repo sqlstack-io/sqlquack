@@ -367,6 +367,7 @@ PG_CLASS_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
         ),
         "subgrammar",
     ),
+    (re.compile(r"^token_type$"), "identifier"),
     (re.compile("^(?:" + "|".join(map(re.escape, VALUE_FILLS)) + ")$"), "expression"),
     (
         re.compile(r"^\w+ (?:" + "|".join(map(re.escape, ARGUMENT_TYPES)) + r")(?:\[\])?$"),
