@@ -194,7 +194,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: ALIAS,
         constructs: &["node:alias"],
-        conditions: "A single name.",
+        conditions: "A single name. An unaliased select item that is not a column takes Snowflake's name for it: its text upper-cased as written, spacing, line breaks and quotes kept, as recorded; text outside ASCII or holding a comment is refused with SQ0009.",
         failures: &[],
     },
     RuleSpec {

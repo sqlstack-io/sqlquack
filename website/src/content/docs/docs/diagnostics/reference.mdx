@@ -140,14 +140,14 @@ echo "SELECT HASH(1) AS h" | sqlquack convert --builtin-policy
 
 **this column has no alias, and SQLQuack has not verified the name Snowflake gives it** (`unaliased_output_name`)
 
-Snowflake names an unaliased select item after the expression's text, and a converted query must return the same column names. SQLQuack emits Snowflake's name only for the expression shapes whose names are verified against recorded results; the expression at the span is not one of them, so the statement is refused rather than converted with a different column name. An alias fixes the name in both engines.
+Snowflake names an unaliased select item after the expression's text, and a converted query must return the same column names. SQLQuack emits Snowflake's name when recorded results verify it: for ASCII text without comments, the name is the text upper-cased as written. The expression at the span holds other characters or a comment, so the statement is refused rather than converted with a different column name. An alias fixes the name in both engines.
 
 **Help:** add an alias, e.g. `AS one`
 
 **Example:**
 
 ```sh
-echo "SELECT 'a' || 'b'" | sqlquack convert --builtin-policy
+echo "SELECT 'café' || 'b'" | sqlquack convert --builtin-policy
 ```
 
 ## Input limits

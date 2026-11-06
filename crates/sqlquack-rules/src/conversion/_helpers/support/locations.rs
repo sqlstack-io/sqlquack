@@ -100,6 +100,11 @@ impl<'a> Locator<'a> {
         Some(self.lines.location(*start, *end))
     }
 
+    /// The source text of `node`, a node of the converted tree; `None` for a node built during conversion.
+    pub(crate) fn source_text(&self, node: &Value) -> Option<String> {
+        self.locate(node).map(|location| self.lines.text(&location))
+    }
+
     /// `refusal`, placed at `node` unless a node inside it placed it already.
     pub(crate) fn placed(&self, mut refusal: Refusal, node: &Value) -> Refusal {
         if refusal.location.is_none() {

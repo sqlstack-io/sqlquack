@@ -392,6 +392,44 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
 }
 
 #[test]
+fn given_unaliased_items_when_converted_and_run_on_duckdb_then_they_take_snowflakes_names() {
+    let test_cases = [
+        ColumnNameTestCase {
+            description: "an aggregate, a literal and an expression across lines, named as recorded",
+            sql: "SELECT COUNT(*), 'MiXeD text', max(n)\n  + 1, Count( DISTINCT n ) \
+                  FROM (SELECT 1 AS n) AS input",
+            flags: &[],
+            expected_names: vec![
+                "COUNT(*)".to_owned(),
+                "'MIXED TEXT'".to_owned(),
+                "MAX(N)\n  + 1".to_owned(),
+                "COUNT( DISTINCT N )".to_owned(),
+            ],
+        },
+        ColumnNameTestCase {
+            description: "numbers keep their written form, upper-cased",
+            sql: "SELECT 1.50, 1e3, -2, NULL, false",
+            flags: &[],
+            expected_names: vec![
+                "1.50".to_owned(),
+                "1E3".to_owned(),
+                "-2".to_owned(),
+                "NULL".to_owned(),
+                "FALSE".to_owned(),
+            ],
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            converted_column_names(test_case.sql, test_case.flags),
+            test_case.expected_names,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_quoted_names_when_converted_and_run_on_duckdb_then_output_names_follow_the_session() {
     let test_cases = [
         ColumnNameTestCase {
@@ -1372,11 +1410,11 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
         },
         ConvertDiagnosticTestCase {
             description: "an unaliased item has its own code, its own span and an alias as help",
-            sql: "SELECT 'a' AS a, UPPER('b')",
+            sql: "SELECT 'a' AS a, UPPER('é')",
             flags: &[],
             expected_text: concat!(
                 "error[SQ0009]: this column has no alias, and SQLQuack has not verified the name ",
-                "Snowflake gives it\n --> <stdin>:1:18\n  |\n1 | SELECT 'a' AS a, UPPER('b')\n",
+                "Snowflake gives it\n --> <stdin>:1:18\n  |\n1 | SELECT 'a' AS a, UPPER('é')\n",
                 "  |                  ^^^^^^^^^^ Snowflake names this `function` column after its text\n",
                 "  |\n  = help: add an alias, e.g. `AS one`\n",
                 "sqlquack convert: refused, 1 refusal under the built-in default\n",

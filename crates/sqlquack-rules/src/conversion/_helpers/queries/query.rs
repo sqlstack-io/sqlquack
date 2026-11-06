@@ -26,8 +26,8 @@ use crate::conversion::_helpers::support::scope::read_column;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Scope};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
-    Payload, field, flag, function_construct, identifier_name, list, node_construct, node_kind,
-    payload_object, require_understood,
+    LITERAL_NUMBER, LITERAL_STRING, Payload, field, flag, function_construct, identifier_name,
+    list, node_construct, node_kind, payload_object, require_understood,
 };
 use crate::conversion::constants::WINDOW_MARKER;
 use crate::conversion::constants::{
@@ -622,19 +622,69 @@ fn convert_projection(
         }
         Some((kind, _)) => {
             let emitted = convert_held(item, site)?;
-            if named {
-                let refusal = missing(
-                    Construct::new(ConstructFamily::Syntax, UNALIASED_OUTPUT_NAME_CONSTRUCT),
-                    format!("Snowflake names this `{kind}` column after its text"),
-                );
-                return Err(site.context.locator.placed(refusal, item));
+            if !named {
+                return Ok(vec![(None, emitted)]);
             }
-            Ok(vec![(None, emitted)])
+            let written = site
+                .context
+                .locator
+                .source_text(item)
+                .or_else(|| literal_text(item));
+            match written.and_then(output_name) {
+                Some(name) => {
+                    let _rule = site.context.log.rule(ALIAS);
+                    Ok(vec![(Some(name), emitted)])
+                }
+                None => {
+                    let refusal = missing(
+                        Construct::new(ConstructFamily::Syntax, UNALIASED_OUTPUT_NAME_CONSTRUCT),
+                        format!("Snowflake names this `{kind}` column after its text"),
+                    );
+                    Err(site.context.locator.placed(refusal, item))
+                }
+            }
         }
         None => Err(missing(
             node_construct("unknown"),
             "a select item has an unexpected shape".to_owned(),
         )),
+    }
+}
+
+/// The name Snowflake gives an unaliased select item written as `text`: the text upper-cased as
+/// written, spacing and line breaks kept, as recorded. Text outside ASCII, or holding a comment,
+/// has no recorded name.
+fn output_name(text: String) -> Option<String> {
+    let recorded = !text.is_empty()
+        && text.is_ascii()
+        && text.trim() == text
+        && !text.contains("--")
+        && !text.contains("/*");
+    recorded.then(|| text.to_ascii_uppercase())
+}
+
+/// The text a literal, which the parse gives no position, was written as: a number as parsed, a
+/// string between quotes, NULL, TRUE or FALSE. A string holding a quote or a backslash could have
+/// been written in more than one way, so it has none.
+fn literal_text(item: &Value) -> Option<String> {
+    match node_kind(item)? {
+        ("literal", payload) => {
+            let value = payload.get("value")?.as_str()?;
+            match payload.get("literal_type")?.as_str()? {
+                LITERAL_NUMBER => Some(value.to_owned()),
+                LITERAL_STRING if !value.contains(['\'', '\\']) => Some(format!("'{value}'")),
+                _ => None,
+            }
+        }
+        ("boolean", payload) => Some(
+            match payload.get("value")?.as_bool()? {
+                true => "TRUE",
+                false => "FALSE",
+            }
+            .to_owned(),
+        ),
+        ("null", _) => Some("NULL".to_owned()),
+        _ => None,
     }
 }
 

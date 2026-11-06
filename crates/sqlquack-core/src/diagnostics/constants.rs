@@ -168,11 +168,11 @@ pub const CODES: &[CodeEntry] = &[
         help: Some("add an alias, e.g. `AS one`"),
         explanation: "Snowflake names an unaliased select item after the expression's text, and \
             a converted query must return the same column names. SQLQuack emits Snowflake's name \
-            only for the expression shapes whose names are verified against recorded results; \
-            the expression at the span is not one of them, so the statement is refused rather \
-            than converted with a different column name. An alias fixes the name in both \
-            engines.",
-        example: r#"echo "SELECT 'a' || 'b'" | sqlquack convert --builtin-policy"#,
+            when recorded results verify it: for ASCII text without comments, the name is the \
+            text upper-cased as written. The expression at the span holds other characters or a \
+            comment, so the statement is refused rather than converted with a different column \
+            name. An alias fixes the name in both engines.",
+        example: r#"echo "SELECT 'café' || 'b'" | sqlquack convert --builtin-policy"#,
     },
     CodeEntry {
         code: "SQ0101",
