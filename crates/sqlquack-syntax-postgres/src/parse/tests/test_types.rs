@@ -31,3 +31,11 @@ pub(crate) struct SpanTestCase {
     pub(crate) pointer: &'static str,
     pub(crate) expected_span: [usize; 4],
 }
+
+/// A type string and PostgreSQL 18.6's `format_type` name for it, or whether it refuses the
+/// text with 42601 (`Err(true)`) or another SQLSTATE (`Err(false)`).
+pub(crate) struct TypeTextTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) text: &'static str,
+    pub(crate) expected_name: Result<&'static str, bool>,
+}

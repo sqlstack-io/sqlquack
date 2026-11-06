@@ -4,43 +4,67 @@ use sqlquack_syntax::DataType;
 use sqlquack_syntax::expressions::names::models::Identifier;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_col_label, is_type_function_name};
-use crate::parse::constants::{FLOAT4_MAX_PRECISION, INTERVAL_FIELDS, SECOND_FIELD};
+use crate::parse::constants::{
+    CATALOGUE_SCHEMA, FLOAT4_MAX_PRECISION, FLOAT8_MAX_PRECISION, INTERVAL_FIELDS, NUMERIC_TYPE,
+    SECOND_FIELD,
+};
+use crate::parse::errors::ParseError;
 use crate::scan::constants::DECIMAL_RADIX;
 use crate::scan::main::digits::digits_value;
 use crate::scan::models::TokenKind;
 
-/// Generic type names the shared tree has a type for, unquoted and unqualified.
-fn generic(name: &str) -> Option<DataType> {
-    Some(match name {
-        "int4" => DataType::Int {
+/// Catalogue type names the shared tree has a type for, with their integer modifiers, if any.
+///
+/// `bpchar`, `bit` and `char` stay generic without modifiers: PostgreSQL gives them no length
+/// then, unlike the keyword spellings `CHAR` and `BIT`, which mean a length of one.
+fn builtin(name: &str, modifiers: &[u32]) -> Option<DataType> {
+    let allowed: usize = if name == NUMERIC_TYPE { 2 } else { 1 };
+    if modifiers.len() > allowed {
+        return None;
+    }
+    let one: Option<u32> = modifiers.first().copied();
+    Some(match (name, one) {
+        ("int4", None) => DataType::Int {
             length: None,
             integer_spelling: false,
         },
-        "int2" => DataType::SmallInt { length: None },
-        "int8" => DataType::BigInt { length: None },
-        "float4" => DataType::Float {
+        ("int2", None) => DataType::SmallInt { length: None },
+        ("int8", None) => DataType::BigInt { length: None },
+        ("float4", None) => DataType::Float {
             precision: None,
             scale: None,
             real_spelling: true,
         },
-        "float8" => DataType::Double {
+        ("float8", None) => DataType::Double {
             precision: None,
             scale: None,
         },
-        "bool" => DataType::Boolean,
-        "text" => DataType::Text,
-        "date" => DataType::Date,
-        "timestamptz" => DataType::Timestamp {
-            precision: None,
-            timezone: true,
+        ("bool", None) => DataType::Boolean,
+        ("text", None) => DataType::Text,
+        ("date", None) => DataType::Date,
+        ("json", None) => DataType::Json,
+        ("jsonb", None) => DataType::JsonB,
+        ("uuid", None) => DataType::Uuid,
+        (NUMERIC_TYPE, _) => DataType::Decimal {
+            precision: one,
+            scale: modifiers.get(1).copied(),
         },
-        "timetz" => DataType::Time {
-            precision: None,
-            timezone: true,
+        ("varchar", length) => DataType::VarChar {
+            length,
+            parenthesized_length: false,
         },
-        "jsonb" => DataType::JsonB,
-        "uuid" => DataType::Uuid,
-        "varbit" => DataType::VarBit { length: None },
+        ("bpchar", Some(length)) => DataType::Char {
+            length: Some(length),
+        },
+        ("varbit", length) => DataType::VarBit { length },
+        ("timestamp" | "timestamptz", precision) => DataType::Timestamp {
+            precision,
+            timezone: name == "timestamptz",
+        },
+        ("time" | "timetz", precision) => DataType::Time {
+            precision,
+            timezone: name == "timetz",
+        },
         _ => return None,
     })
 }
@@ -162,7 +186,22 @@ impl Parser<'_> {
             }
             Some("float") => {
                 self.at += 1;
+                let start: usize = self.offset();
                 let precision: Option<u32> = self.precision()?;
+                let refusal: Option<&str> = match precision {
+                    Some(0) => Some("precision for type float must be at least 1 bit"),
+                    Some(bits) if bits > FLOAT8_MAX_PRECISION => {
+                        Some("precision for type float must be less than 54 bits")
+                    }
+                    _ => None,
+                };
+                if let Some(message) = refusal {
+                    return Err(ParseError {
+                        message: message.to_owned(),
+                        position: start,
+                        syntax: false,
+                    });
+                }
                 Ok(match precision {
                     Some(bits) if bits <= FLOAT4_MAX_PRECISION => DataType::Float {
                         precision: None,
@@ -327,8 +366,21 @@ impl Parser<'_> {
             .checked_sub(1)
             .and_then(|last| self.tokens.get(last))
             .map_or(start, |token| token.end);
-        let plain: bool = parts.len() == 1 && !parts[0].quoted && modifiers.is_none();
-        if let Some(known) = plain.then(|| generic(&parts[0].name)).flatten() {
+        let name: Option<&str> = match parts.as_slice() {
+            [name] => Some(&name.name),
+            [schema, name] if schema.name == CATALOGUE_SCHEMA => Some(&name.name),
+            _ => None,
+        };
+        let integers: Option<Vec<u32>> = modifiers
+            .as_deref()
+            .unwrap_or_default()
+            .iter()
+            .copied()
+            .collect();
+        if let Some(known) = name
+            .zip(integers)
+            .and_then(|(name, integers)| builtin(name, &integers))
+        {
             return Ok(known);
         }
         let name: String = parts
