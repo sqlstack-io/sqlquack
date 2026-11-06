@@ -95,7 +95,8 @@ fn position_from(
     Ok(Emitted::new(
         format!(
             "CAST(list_transform([struct_pack(n := {needle}, h := {haystack}, p := {start})], \
-             lambda s: CASE WHEN s['p'] IS NOT NULL THEN list_transform([greatest(s['p'], 1)], \
+             lambda s: CASE WHEN s['p'] IS NOT NULL AND s['h'] IS NOT NULL AND s['n'] IS NOT NULL \
+             THEN list_transform([greatest(s['p'], 1)], \
              lambda f: list_transform([strpos(substr(s['h'], f), s['n'])], \
              lambda i: CASE WHEN i = 0 OR f > greatest(length(s['h']), 1) THEN 0 ELSE i + f - 1 END)[1])[1] \
              END)[1] AS DECIMAL(9,0))"

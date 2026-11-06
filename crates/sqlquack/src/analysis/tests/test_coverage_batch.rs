@@ -40,6 +40,16 @@ fn given_text_searches_when_converting_then_positions_count_characters_from_one(
             expected_outcome: Ok("5"),
         },
         FirstValueTestCase {
+            description: "NULL text with a start past 1 is NULL, not 0",
+            sql: "SELECT COALESCE(TO_VARCHAR(CHARINDEX('a', NULL, 3)), 'null') AS v",
+            expected_outcome: Ok("null"),
+        },
+        FirstValueTestCase {
+            description: "an empty needle in NULL text with a start past 1 is NULL",
+            sql: "SELECT COALESCE(TO_VARCHAR(POSITION('', NULL, 3)), 'null') AS v",
+            expected_outcome: Ok("null"),
+        },
+        FirstValueTestCase {
             description: "a number operand is refused",
             sql: "SELECT CHARINDEX('1', 12) AS v",
             expected_outcome: Err("implicit conversion to text"),
