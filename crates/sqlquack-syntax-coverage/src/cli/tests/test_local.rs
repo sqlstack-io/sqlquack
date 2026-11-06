@@ -35,10 +35,10 @@ fn given_sql_when_the_postgres_parser_judges_it_then_gaps_are_never_parsed() {
             expected_tree: true,
         },
         PostgresVerdictTestCase {
-            description: "a parser error PostgreSQL does not report as 42601",
+            description: "a parser error PostgreSQL does not report as 42601 is still refused",
             sql: "SELECT E'\\u12'",
-            expected_verdict: "accepted",
-            expected_opaque: Some(true),
+            expected_verdict: "rejected",
+            expected_opaque: None,
             expected_tree: false,
         },
     ];
