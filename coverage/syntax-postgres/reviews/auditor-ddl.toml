@@ -668,3 +668,108 @@ note = "Read against the PostgreSQL 18.6 documentation (release SGML), every obl
 "pg.ddl.alter-routine.set" = "efba5b104b898e32db24e5a9ae0233562eca3f28dadfc4a23b948168d11edbfd"
 "pg.ddl.alter-routine.set-from-current" = "953a6f69a17714b0123ff8b361806cb27832b3f46afed85492a5a6e54dffc849"
 "pg.ddl.alter-routine.set-schema" = "e37b3babbfc8812c9098a4020fe82ea972991d983f604309037a8dd0fe49dc8e"
+
+[[review]]
+id = "pg-auditor-ddl-008"
+reviewer_lane = "auditor"
+family = "ddl"
+parser_tree = "bb29fc0ea41d9c91470367eedd5e6bac935190d4"
+reviewed_utc = "2026-11-06T11:51:10Z"
+verdict = "approved"
+forms = [
+  "pg.ddl.alter-aggregate.owner-to",
+  "pg.ddl.alter-aggregate.rename-to",
+  "pg.ddl.alter-aggregate.set-schema",
+  "pg.ddl.alter-function.called-on-null-input",
+  "pg.ddl.alter-function.cost",
+  "pg.ddl.alter-function.immutable-stable-volatile",
+  "pg.ddl.alter-function.leakproof",
+  "pg.ddl.alter-function.parallel",
+  "pg.ddl.alter-function.reset",
+  "pg.ddl.alter-function.reset-all",
+  "pg.ddl.alter-function.rows",
+  "pg.ddl.alter-function.security-invoker-security-definer",
+  "pg.ddl.alter-function.set",
+  "pg.ddl.alter-function.set-from-current",
+  "pg.ddl.alter-function.support",
+  "pg.ddl.alter-procedure.reset",
+  "pg.ddl.alter-procedure.reset-all",
+  "pg.ddl.alter-procedure.security-invoker-security-definer",
+  "pg.ddl.alter-procedure.set",
+  "pg.ddl.alter-procedure.set-from-current",
+  "pg.ddl.alter-routine.cost",
+  "pg.ddl.alter-routine.immutable-stable-volatile",
+  "pg.ddl.alter-routine.leakproof",
+  "pg.ddl.alter-routine.parallel",
+  "pg.ddl.alter-routine.reset",
+  "pg.ddl.alter-routine.reset-all",
+  "pg.ddl.alter-routine.rows",
+  "pg.ddl.alter-routine.security-invoker-security-definer",
+  "pg.ddl.alter-routine.set",
+  "pg.ddl.alter-routine.set-from-current",
+]
+note = "Re-read after the batch-13 obligation-notes delta against the PostgreSQL 18.6 documentation (release SGML), the new obligations, their cases with PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree bb29fc0e; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.ddl.alter-aggregate.owner-to" = "e3c25f9a9ebe2089c9cccc7eb4ba90917661df0ce4e7ea0d3d0cc216276f41ac"
+"pg.ddl.alter-aggregate.rename-to" = "e9be9a48b3ce6880bac5a48804c3ce8c83194fcba4d7f52d3621a74843ca1512"
+"pg.ddl.alter-aggregate.set-schema" = "19848ea8177d2a7b0b44e7afb699c035456f7a4bee40cbe1b6660ea5f5f1b17b"
+"pg.ddl.alter-function.called-on-null-input" = "ec169c243c6e58d963d8fff1b3b37c31ab2f43d3294761dcb47df1433d96213a"
+"pg.ddl.alter-function.cost" = "5ef49856ea1f2523c7aa45c73795ffb001e08343c2457ac5597279bb9f9733aa"
+"pg.ddl.alter-function.immutable-stable-volatile" = "a0e047a55b0dfec0cbc47b84e9a97ac6f015808cd3d26f6c0a36f426974d7067"
+"pg.ddl.alter-function.leakproof" = "19470c69c8e6b797d1467408ed5a873d7744e6b5e3d1c870e14734aa3b5f26bb"
+"pg.ddl.alter-function.parallel" = "c261b64129042b4e635e8dbeafa1042f5c2e51bec068916749812d95e2b109bf"
+"pg.ddl.alter-function.reset" = "6e3d35f2ba1a56f1ef22a6b002ad3e8f06d77feb0ce84acd191826522a93c1e3"
+"pg.ddl.alter-function.reset-all" = "db6e79bacaeacb7b44a9f23dc92fa7e8c891abade40543b2a4c3f32ed642a468"
+"pg.ddl.alter-function.rows" = "338773202f90031cff4564d5bcbbe738c3481410fd5d29c685f9a82da673aef1"
+"pg.ddl.alter-function.security-invoker-security-definer" = "5594986de2620aaaa3c8894c585912a984ed08aca788d06da5946dec038bdefd"
+"pg.ddl.alter-function.set" = "8bc24599d3508228251f0ffbaf9f608e1b760a310bbc1bcdaac109bd272e06b4"
+"pg.ddl.alter-function.set-from-current" = "83a0c9b5963a000b8eaf4f05e96de8d9291786ce56dc7cd939884211ffb22528"
+"pg.ddl.alter-function.support" = "18c17eef352217b636a6bcfb1675ff2dba1f4ff5d9e2a46682b1bf99ea81dfb0"
+"pg.ddl.alter-procedure.reset" = "3be186cf107a4e574c605c892798770d2f013def5b445647b86fc502c12c9a71"
+"pg.ddl.alter-procedure.reset-all" = "59b4d7c188dcc11fa2428017b1db3939a4f3fdacf79f1d0e7192751f0c2f5169"
+"pg.ddl.alter-procedure.security-invoker-security-definer" = "8177e682e04312170c91bf4151b647e79363ccf162a7a8e8394cc63666160c19"
+"pg.ddl.alter-procedure.set" = "36df1a1922586b3555e43cb53903752fc321dae38c0348727d0b7ee5320c7f7d"
+"pg.ddl.alter-procedure.set-from-current" = "8f6e9f867e3e9ab8d3479ebe537018ee1e7c19ceee2fa12ba6b53aab5246cad7"
+"pg.ddl.alter-routine.cost" = "9911d61df031049d6ee6ce0a6fb6946bb1c720eb7407f2d496fadad957b720ae"
+"pg.ddl.alter-routine.immutable-stable-volatile" = "947d10e53dea8e52dc5b1f13dd271fcc1950ba32c42f2d77696ea9c507c0b315"
+"pg.ddl.alter-routine.leakproof" = "1f09d68794fc3f9a9872aab60babe06b07cea78182b0bbf1a1f441986fdbe2e0"
+"pg.ddl.alter-routine.parallel" = "7c53392f244aa39be64a5ddcf705d0f83cb3a9b44e760c46d89513cee3a120a2"
+"pg.ddl.alter-routine.reset" = "51e06255740535b5ce46350c62fd9f6d2ef2fc4ac1f51bb5412f3f01a23cfb73"
+"pg.ddl.alter-routine.reset-all" = "0d7743b1d4c6a61d0beb3eed7b2c25eb858def7ad0539df4889389da3593fcd2"
+"pg.ddl.alter-routine.rows" = "0f53a198373727a1b03a1f6232d055b142cd5dd724d1af07e815311d1011f25b"
+"pg.ddl.alter-routine.security-invoker-security-definer" = "85e6fab72d0312ee08eeb800d4d599c04f60883472ad4bfd4c0fb14d8f21ac82"
+"pg.ddl.alter-routine.set" = "4a43574fa2e14b97f4f05a6bd80d4350a6477eec1e1cf0c2499d9201cbbc64cc"
+"pg.ddl.alter-routine.set-from-current" = "159747de27fb0c6451015ea3dcdabe2cc082108118e5b5e7d8f49673a7fd4989"
+
+[review.definitions]
+"pg.ddl.alter-aggregate.owner-to" = "b201d6d5a96cf31dd4bb9ddcfaeb4488ebd2de6bf25663959a637b1e4cf19f5f"
+"pg.ddl.alter-aggregate.rename-to" = "9fde8f7598ca457950c05edd4f011d29c17af31cc2540b907d3ba109d2aa1177"
+"pg.ddl.alter-aggregate.set-schema" = "ebaa8ccedac18ac2a162fddd5a4dbd296fa109bb0abb971ec524ebbf04b94686"
+"pg.ddl.alter-function.called-on-null-input" = "365c3897e89f3e04c7d6f45ff2ff88ee8d2103632ab99f0ee5462806ad43a71f"
+"pg.ddl.alter-function.cost" = "50faa3e54724dff93672d435055f86595528752283957030f948ad5522d93fb3"
+"pg.ddl.alter-function.immutable-stable-volatile" = "415dc45a1499a256a787a09743244e8c66c1d6b4e2e4bca8272e1e756601aa39"
+"pg.ddl.alter-function.leakproof" = "94b3dcedbf4b8f1ad8a6edffb60534e6251812875860db2e30b18f212cfb2a91"
+"pg.ddl.alter-function.parallel" = "bf8072eb304465435958dd4d3fef95b89a8a36bbdaf9a80037de7259097c44f7"
+"pg.ddl.alter-function.reset" = "9133f5d6abeec26b69e8b3f7a8007532c2ce47dc7a7d8b5f366ff37279bfda92"
+"pg.ddl.alter-function.reset-all" = "70788839b10b8ec474ac7eefd344d1a85a0e1dcc046bc03d8862e933d4be1570"
+"pg.ddl.alter-function.rows" = "376c661ea6346e7494661b029f467f33deea235a8b26e5f1456d2bc22990cece"
+"pg.ddl.alter-function.security-invoker-security-definer" = "3a8d5d7465620c3962f9670db51cc3f6edfa22536e0422c7d6735db4af872261"
+"pg.ddl.alter-function.set" = "a1c836aaeab4629291f748a7e6014a95e23e498d915b39bdcfdc45284fc997ba"
+"pg.ddl.alter-function.set-from-current" = "0159ac6e5e7c7cdee117565caf4684115143e6cbe8148e6b69cd5091fe190369"
+"pg.ddl.alter-function.support" = "30f8c121082c6a43618cf20d711726c8b1a028945e72584c3c11ceb4fc0382e1"
+"pg.ddl.alter-procedure.reset" = "c11eaa7a471cfe4321847e4ad5c793ec2ed4fd6566a78b61b7ce83943b5c7612"
+"pg.ddl.alter-procedure.reset-all" = "14aa97807c5aa053c81f4a8c840a3519b5b3744ece70c609f222ee6504501768"
+"pg.ddl.alter-procedure.security-invoker-security-definer" = "51753efca40393d42bfc38931b8ae77816b2608a188418346b487ae5b1b1872f"
+"pg.ddl.alter-procedure.set" = "a39ac304b8aca30f83b73c7142e0eab56cc0074ec94ed8d816ddbf4be462a83a"
+"pg.ddl.alter-procedure.set-from-current" = "d9c1092c3b66acab018a3e6ce86849de779800afb0f28d59af1b620feb235288"
+"pg.ddl.alter-routine.cost" = "94b52d4f43f006aad746e6cb16c99ba5e2cc59b01720ad80a8c2bf4b7bfacdbb"
+"pg.ddl.alter-routine.immutable-stable-volatile" = "7b7658253da578cd6d2713fd82a8c6fe94025a52ab5ea3b0b79c7e2489d4058d"
+"pg.ddl.alter-routine.leakproof" = "40552fcc6fdd8baedcaac28d9cc15958026d0917c7c64e5f121c7d9a9bb913c4"
+"pg.ddl.alter-routine.parallel" = "09c37ca328443eb2ef4cd0628835162c4ac765391487266b9bf02db713d600af"
+"pg.ddl.alter-routine.reset" = "d0a0820db7cdd69e7eb94b00facc30e86a2b76db9dcb856ac4c28e6bb3bccef6"
+"pg.ddl.alter-routine.reset-all" = "7cb7c6fda6e7599318c5979db5d3d2569e164ff5537ffcd4a5f6347706a2276e"
+"pg.ddl.alter-routine.rows" = "e2d1dd6d261be3f70304b9e1a97b46f86828ecc45417a6f73ff076805e773753"
+"pg.ddl.alter-routine.security-invoker-security-definer" = "0070a67a5162673dd1c556a1ee9676e4f7e7322ad4611927029914ecf55b824d"
+"pg.ddl.alter-routine.set" = "836358bf59e25449fe3466527da409f993bdae439df230601935f414322b247c"
+"pg.ddl.alter-routine.set-from-current" = "b7a6ddcdb739adeadb0974ca0e3420febe0b91f6c26860616d8009bd0a198ec8"
