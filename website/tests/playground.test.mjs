@@ -117,3 +117,36 @@ test('translated SQL is laid out one clause per line unless the compact setting 
 	assert.equal(compact, laidOut.replace(/\n */g, ' '));
 	assert.ok(!compact.includes('\n'));
 });
+
+test('an undeclared relation is refused by name, and the stub the page adds stays refused until filled in', async () => {
+	const { SCHEMA: PAGE_SCHEMA } = await import('../public/playground/examples.js');
+	// The page reads the relation's name from this label to offer "Add T to schema".
+	const unknown = JSON.parse(analyze('SELECT * FROM t', PAGE_SCHEMA)).translate;
+	assert.equal(unknown.status, 'fail');
+	assert.deepEqual(
+		unknown.diagnostics.map((d) => [d.code, d.label]),
+		[['SQ0004', 'relation `T` has no known columns']],
+	);
+	// The stub's placeholder type is not a Snowflake type: no column is assumed, so it still refuses.
+	const stub = JSON.stringify({ ...JSON.parse(PAGE_SCHEMA), T: [['COLUMN_NAME', 'SNOWFLAKE_TYPE']] });
+	assert.deepEqual(JSON.parse(analyze('SELECT * FROM t', stub)).translate.diagnostics.map((d) => d.code), ['SQ0004']);
+	// Every relation of the sample schema without semi-structured columns translates as declared.
+	for (const relation of ['ORDERS', 'CUSTOMERS', 'PRODUCTS', 'ORDER_ITEMS']) {
+		assert.equal(JSON.parse(analyze(`SELECT * FROM ${relation.toLowerCase()}`, PAGE_SCHEMA)).translate.status, 'pass', relation);
+	}
+});
+
+test('each known divergence a translation relies on is reported with its constructs and the policy reason', () => {
+	const repository = readFileSync(new URL('../../sqlquack.toml', import.meta.url), 'utf8');
+	const policy = repository.replace('constructs = ["fn:HASH"]\ndefault = "refuse"', 'constructs = ["fn:HASH"]\ndefault = "warn"');
+	assert.notEqual(policy, repository);
+	const translate = (settings) => JSON.parse(analyze('SELECT HASH(order_id) AS h FROM orders', SCHEMA, JSON.stringify(settings))).translate;
+	const [statement] = translate({ policy }).statements;
+	assert.deepEqual(
+		statement.divergences.map((d) => [d.id, d.constructs]),
+		[['hash', ['fn:HASH']]],
+	);
+	assert.match(statement.divergences[0].reason, /never Snowflake's value/);
+	// Without a divergence, none is reported.
+	assert.deepEqual(JSON.parse(analyze('SELECT order_id FROM orders', SCHEMA)).translate.statements[0].divergences, []);
+});

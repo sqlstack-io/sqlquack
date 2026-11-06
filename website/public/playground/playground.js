@@ -193,6 +193,7 @@ async function run() {
 	if (translate.status !== 'skipped') {
 		// Translated SQL keeps its line layout and scrolls sideways; diagnostics still wrap.
 		body = (translate.statements ?? []).map((s) => `<pre class="terminal sql">${escape(s.sql)}</pre>`).join('');
+		body = unknownRelationHints(translate.diagnostics) + body + conversionNotes(translate);
 		body += (translate.diagnostics ?? []).map((d) => terminal(tone(rendered(d, chars)))).join('');
 	}
 	const policy = translate.profile ? `policy: ${translate.profile}` : '';
@@ -212,6 +213,67 @@ async function run() {
 	} else if (translate.status === 'pass') {
 		setStage('run', 'skipped', terminal('<span class="dim">Runs one statement at a time.</span>'));
 	} else setStage('run', 'skipped', '', refused ? 'nothing was translated' : '');
+}
+
+// What the translation relies on that a reader should know: each known divergence the policy
+// allows (as `sqlquack convert` prints "relies on known divergence …"), and any other notes.
+function conversionNotes(translate) {
+	const notes = [...(translate.notes ?? [])].map((note) => escape(note));
+	for (const statement of translate.statements ?? [])
+		for (const d of statement.divergences ?? []) {
+			const at = d.constructs.map((construct) => `<code>${escape(construct)}</code>`).join(', ');
+			notes.push(`Relies on known divergence <code>${escape(d.id)}</code> at ${at}${d.reason ? `: ${escape(d.reason)}` : ''}`);
+		}
+	return [...new Set(notes)].map((note) => `<p class="pg-conversion-note"><strong>Note.</strong> ${note}</p>`).join('');
+}
+
+// A relation the schema does not declare: SQLQuack needs its columns and Snowflake types, and
+// does not guess them. Each one gets a line saying so, with a button that adds a stub to fill in.
+const UNKNOWN_RELATION = /^relation `(.+)` has no known columns$/;
+const STUB_COLUMN = ['COLUMN_NAME', 'SNOWFLAKE_TYPE'];
+
+function declaredRelations() {
+	try {
+		return Object.keys(JSON.parse(schemaBox.value));
+	} catch {
+		return [];
+	}
+}
+
+function unknownRelationHints(diagnostics) {
+	const relations = new Set();
+	for (const d of diagnostics ?? []) {
+		const match = d.code === 'SQ0004' && UNKNOWN_RELATION.exec(d.label ?? '');
+		if (match) relations.add(match[1]);
+	}
+	const declared = declaredRelations();
+	return [...relations]
+		.map((name) => {
+			const code = `<code>${escape(name)}</code>`;
+			return declared.includes(name)
+				? `<p class="pg-hint"><span>SQLQuack needs each table's columns and Snowflake types. Fill in ${code}'s in the Schema box.</span></p>`
+				: `<p class="pg-hint"><span>SQLQuack needs each table's columns and Snowflake types. Add ${code} to the Schema box.</span>` +
+						`<button class="button" type="button" data-add-relation="${escape(name)}">Add ${escape(name)} to schema</button></p>`;
+		})
+		.join('');
+}
+
+// Adds `name` with one placeholder column to the end of the schema's JSON, keeping the rest of the
+// text as typed, and selects the placeholder so typing replaces it.
+function addRelation(name) {
+	const text = schemaBox.value;
+	const close = text.lastIndexOf('}');
+	if (close < 0 || declaredRelations().includes(name)) return;
+	const before = text.slice(0, close).trimEnd();
+	const column = `[${STUB_COLUMN.map((part) => JSON.stringify(part)).join(', ')}]`;
+	const entry = `  ${JSON.stringify(name)}: [\n    ${column}\n  ]`;
+	const separator = before.endsWith('{') ? '\n' : ',\n';
+	schemaBox.value = `${before}${separator}${entry}\n${text.slice(close)}`;
+	schemaBox.closest('details').open = true;
+	const placeholder = `${before}${separator}  ${JSON.stringify(name)}: [\n    ["`.length;
+	schemaBox.focus();
+	schemaBox.setSelectionRange(placeholder, placeholder + STUB_COLUMN[0].length);
+	schedule();
 }
 
 // DuckDB-WASM, downloaded in the background once the page is idle (or on the first run).
@@ -329,6 +391,7 @@ const schedule = () => {
 
 document.addEventListener('click', (event) => {
 	if (event.target.id === 'pg-run') execute();
+	if (event.target.dataset.addRelation) addRelation(event.target.dataset.addRelation);
 });
 sqlBox.addEventListener('input', () => {
 	showCaption(null);

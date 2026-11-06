@@ -322,6 +322,13 @@ fn report(sql: &str, schema: &str, settings: &str) -> Value {
                     "name": column.name,
                     "type": column.data_type.to_string(),
                 })).collect::<Vec<_>>(),
+                // Each known divergence the policy allows and the conversion relies on, as
+                // `sqlquack convert` names it on standard error, with the policy's reason.
+                "divergences": done.provenance.divergences.iter().map(|(id, constructs)| json!({
+                    "id": id,
+                    "constructs": constructs,
+                    "reason": options.divergences.get(id).map(|allowed| allowed.reason.as_str()),
+                })).collect::<Vec<_>>(),
             })),
             Err(refusal) => refusals.push(placed(refusal, statement, &lines)),
         }
