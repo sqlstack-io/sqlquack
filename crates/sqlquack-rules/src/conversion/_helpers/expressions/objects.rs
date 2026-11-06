@@ -27,9 +27,9 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::constants::{
     KEEP_NULL_CONSTRUCTOR, MICROSECOND_DIGITS, OBJECT_CONSTANT_KIND, OBJECT_CONSTRUCT_RULE,
-    OBJECT_CONSTRUCTOR, OBJECT_DELETE_RULE, OBJECT_INSERT_RULE, SESSION_TIMEZONE_UTC,
-    TYPE_SUFFIX_UNREMOVED,
+    OBJECT_CONSTRUCTOR, OBJECT_DELETE_RULE, OBJECT_INSERT_RULE, TYPE_SUFFIX_UNREMOVED,
 };
+use sqlquack_policy::policy::constants::SESSION_TIMEZONE_UTC;
 
 /// OBJECT_DELETE of a VARIANT and literal text keys.
 pub(crate) fn object_delete(

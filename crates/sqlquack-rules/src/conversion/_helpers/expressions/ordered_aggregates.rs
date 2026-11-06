@@ -23,9 +23,11 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::_helpers::support::typed_leaves::compared_value;
 use crate::conversion::constants::DUPLICATE_VARIANTS;
 use crate::conversion::constants::{
-    ARRAY_AGG_ORDER, ARRAY_AGG_RULE, LISTAGG_ORDER, LISTAGG_RULE, PERCENTILE_DECIMALS,
-    PERCENTILE_EXTRA_DIGITS, PERCENTILE_FRACTION_DIGITS, PERCENTILE_INTERPOLATION,
-    PERCENTILE_MAX_PRECISION, PERCENTILE_RULE,
+    ARRAY_AGG_RULE, LISTAGG_RULE, PERCENTILE_DECIMALS, PERCENTILE_EXTRA_DIGITS,
+    PERCENTILE_FRACTION_DIGITS, PERCENTILE_MAX_PRECISION, PERCENTILE_RULE,
+};
+use sqlquack_policy::policy::constants::{
+    ARRAY_AGG_ORDER, LISTAGG_ORDER, PERCENTILE_INTERPOLATION,
 };
 
 /// An aggregate WITHIN GROUP (ORDER BY ...), alone or under `over`.

@@ -4,26 +4,10 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::models::{CallShape, SpellingPair, SpellingRule};
 
-/// HASH values differ from Snowflake's; equal inputs hash equally within one run.
-pub const HASH_DIVERGENCE: &str = "hash";
 /// HASH.
 pub const HASH_RULE: &str = "rule.hash";
 /// The digits of HASH's result, NUMBER(19,0), a signed 64-bit integer.
 pub const HASH_RESULT_PRECISION: u8 = 19;
-/// The divergence where DuckDB raises for a nanosecond timestamp outside its range.
-pub const TIMESTAMP_RANGE: &str = "timestamp_range";
-/// PERCENTILE_CONT raises where it would interpolate between two different values.
-pub const PERCENTILE_INTERPOLATION: &str = "percentile_interpolation";
-/// TRY_ conversions of text to DATE raise for spellings no recording shows.
-pub const DATE_TEXT_SPELLING: &str = "date_text_spelling";
-/// The divergence of the current date and time, which differ between engines and runs.
-pub const CURRENT_TIME: &str = "current_time";
-/// The divergence of a timestamp's text where truncating and rounding to milliseconds differ.
-pub const TIMESTAMP_TEXT_ROUNDING: &str = "timestamp_text_rounding";
-/// The divergence of ANY_VALUE, whose choice among a group's values differs between engines.
-pub const ANY_VALUE_CHOICE: &str = "any_value_choice";
-/// The divergence of MODE, whose choice among values tied for most frequent differs between engines.
-pub const MODE_TIES: &str = "mode_ties";
 /// MODE, the most frequent value.
 pub const MODE_RULE: &str = "rule.mode";
 /// The aggregates the parser keeps as named calls that convert.
@@ -66,8 +50,6 @@ pub const DISTINCT_WINDOW_AGGREGATE: &str = "count";
 pub const WINDOWED_NAMED_AGGREGATES: &[&str] = &["COUNT_IF", "BOOLOR_AGG", "BOOLAND_AGG"];
 /// Window aggregates Snowflake accepts only over an unordered window.
 pub const UNORDERED_WINDOW_AGGREGATES: &[&str] = &["BOOLOR_AGG", "BOOLAND_AGG"];
-/// The divergence where DuckDB raises for a zoned timestamp with a sub-microsecond part.
-pub const TIMESTAMP_TZ_SUBMICRO: &str = "timestamp_tz_submicro";
 /// Fractional digits DuckDB's TIMESTAMP and TIMESTAMPTZ hold.
 pub const MICROSECOND_DIGITS: u8 = 6;
 /// The first date every DuckDB nanosecond timestamp on it can hold (DuckDB's range starts 1677-09-21).
@@ -238,8 +220,6 @@ pub const INTERVAL_SIMPLE_UNIT: &str = "simple";
 pub const INTERVAL_MAX_DIGITS: usize = 9;
 /// The precision of a naive timestamp plus or minus an interval, whatever the timestamp's own.
 pub const INTERVAL_TIMESTAMP_PRECISION: u8 = 9;
-/// MODE over no rows without GROUP BY, which Snowflake answers by plan: raised.
-pub const MODE_OF_NO_ROWS: &str = "mode_of_no_rows";
 /// The node kind of an interval.
 pub const INTERVAL_KIND: &str = "interval";
 /// Interval units as written, singular and plural in upper case, and the DATEADD unit each is.
@@ -468,10 +448,6 @@ pub const OBJECT_DELETE_RULE: &str = "rule.object_delete";
 pub const OBJECT_INSERT_RULE: &str = "rule.object_insert";
 /// OBJECT_CONSTRUCT and OBJECT_CONSTRUCT_KEEP_NULL.
 pub const OBJECT_CONSTRUCT_RULE: &str = "rule.object_construct";
-/// The assumption that a TIMESTAMP_TZ source column holds the offset its schema declares.
-pub const DECLARED_OFFSET: &str = "declared_offset";
-/// The assumption that the session time zone is UTC, in Snowflake and DuckDB alike.
-pub const SESSION_TIMEZONE_UTC: &str = "session_timezone_utc";
 /// The zone from which CONVERT_TIMEZONE's three-argument form is covered.
 pub const UTC_ZONE: &str = "UTC";
 /// Fractional-second digits a Snowflake timestamp holds at most, as a scale.
@@ -522,12 +498,6 @@ pub const CAST_TEXT_TIMESTAMP: &str = "rule.cast_text_timestamp";
 /// Casts of TIMESTAMP_TZ values known to be at +00:00 to TIMESTAMP_NTZ or DATE.
 pub const CAST_UTC_ZONED: &str = "rule.cast_utc_zoned";
 
-/// The divergence where DuckDB raises an error for a value beyond its numeric range.
-pub const NUMERIC_RANGE: &str = "numeric_range";
-/// The divergence for ARRAY_AGG without WITHIN GROUP of several distinct values.
-pub const ARRAY_AGG_ORDER: &str = "array_agg_order";
-/// The divergence for LISTAGG of different values tied on every WITHIN GROUP key.
-pub const LISTAGG_ORDER: &str = "listagg_order";
 /// SUM of FLOAT.
 pub const SUM_FLOAT: &str = "rule.sum_float";
 
@@ -1365,12 +1335,6 @@ pub const IFF_NAME: &str = "IFF";
 pub const WINDOW_MARKER: &str = " OVER (";
 /// FLATTEN columns that depend on the input array's order: its positions and the array itself.
 pub const FLATTEN_ORDERED_COLUMNS: &[&str] = &["PATH", "INDEX", "THIS"];
-/// The assumption a Python project function call relies on: its handler runs locally as in Snowflake.
-pub const PROJECT_UDF: &str = "project_udf";
-/// The divergence of a Python value whose crossing no recording shows, which SQLQuack's runtime raises.
-pub const PYTHON_VALUE_CROSSING: &str = "python_value_crossing";
-/// The assumption a user override relies on: its DuckDB SQL gives what the function it replaces gives.
-pub const USER_OVERRIDE: &str = "user_override";
 /// Calls to a function a user override replaces.
 pub const USER_OVERRIDE_RULE: &str = "rule.user_override";
 /// The prefix of the macro converted SQL calls a user override by.
@@ -1976,8 +1940,6 @@ pub(crate) const RECORDED_TIME_ZONES: &[&str] = &[
     "WET",
     "Zulu",
 ];
-/// A zone name per row whose spelling no recording shows Snowflake accepting, raised.
-pub const TIME_ZONE_SPELLING: &str = "time_zone_spelling";
 /// The keyword of an inner join, whose USING keys all take the earlier side's type, as recorded.
 pub(crate) const INNER_JOIN_KEYWORD: &str = "JOIN";
 /// The sequence-number column of FLATTEN and SPLIT_TO_TABLE, which no rule converts.
@@ -1986,8 +1948,6 @@ pub(crate) const SEQUENCE_COLUMN: &str = "SEQ";
 pub(crate) const SEQUENCE_PEERS: [&str; 2] = ["INDEX", "VALUE"];
 /// Offsets that leave a zoned value's wall time at UTC's.
 pub(crate) const ZERO_OFFSETS: &[&str] = &["+00:00", "-00:00"];
-/// The divergence of zoned text whose offset is not +00:00, raised where its wall time matters.
-pub const TIMESTAMP_TZ_OFFSET: &str = "timestamp_tz_offset";
 /// The suffix of the TIMESTAMP_LTZ conversion functions' names.
 pub(crate) const LOCAL_ZONE_SUFFIX: &str = "_LTZ";
 /// The prefix of the conversion functions that give NULL where their strict forms raise.
