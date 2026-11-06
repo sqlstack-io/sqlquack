@@ -30544,10 +30544,10 @@ required = true
 [[obligation]]
 id = "sf.functions.to-query.t003"
 form = "sf.functions.to-query"
-kind = "null_argument"
-target = "arg"
-note = "A NULL bind argument, typed as VARCHAR because a bare NULL is refused as not a string; the page says \"If any argument is NULL, the function returns NULL without reporting any error\"; the page does not say; the recording decides on how a NULL result set reads."
-catches = "an error raised"
+kind = "error_parity"
+target = "error"
+note = "A NULL bind argument typed as VARCHAR. The page says \"If any argument is NULL, the function returns NULL without reporting any error\", but Snowflake refuses the NULL bind when compiling (1015, the argument needs to be constant), as it refused a bare NULL (1045)."
+catches = "the NULL bind accepted, or an empty result set returned"
 reading = "the page: the result set of the SQL text, valid only in a FROM clause; bind variables are passed as named string arguments; NULL if any argument is NULL"
 cases = ["cases/translation/functions/to-query.toml#t003_null_arg"]
 required = true
