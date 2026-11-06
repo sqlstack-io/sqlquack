@@ -460,7 +460,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CAST_HEX_BINARY,
         constructs: &["node:cast", "node:try_cast"],
-        conditions: "VARCHAR to BINARY or BINARY(n) under the session profile's pinned BINARY_INPUT_FORMAT HEX: whole pairs of hexadecimal digits of either case, as recorded; empty text gives empty bytes and NULL gives NULL. An odd count of digits or any other character fails with error 100115, or is NULL under TRY_CAST. More bytes than BINARY(n) holds fail the query with error 100145 rather than being truncated, as recorded; TRY_CAST to BINARY(n) is refused, since no recording shows it.",
+        conditions: "VARCHAR to BINARY or BINARY(n) under the session profile's pinned BINARY_INPUT_FORMAT HEX: whole pairs of hexadecimal digits of either case, as recorded; empty text gives empty bytes and NULL gives NULL. An odd count of digits or any other character fails with error 100115, or is NULL under TRY_CAST. More bytes than BINARY(n) holds fail the query with error 100145 rather than being truncated, as recorded for text; a value already BINARY cast to BINARY(n) is checked the same way. TRY_CAST to BINARY(n) is refused, since no recording shows it.",
         failures: &[
             FailureMode {
                 kind: ErrorKind::InvalidArgument,
@@ -1212,10 +1212,10 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CAST_SAME_TYPE,
         constructs: &["node:cast", "node:try_cast"],
-        conditions: "The operand already has the target type, or is NULL. TRY_CAST of a NUMBER to its own NUMBER type is the value, as recorded; to another NUMBER type Snowflake rejects it (error 1065), which refuses.",
+        conditions: "The operand already has the target type, or is NULL. TRY_CAST of a NUMBER to its own NUMBER type is the value, as recorded; to another NUMBER type Snowflake rejects it (error 1065), which refuses. A BINARY value cast to a shorter BINARY(n) fails with error 100145, as text does with 100078.",
         failures: &[FailureMode {
             kind: ErrorKind::StringTooLong,
-            snowflake: &[STRING_TOO_LONG],
+            snowflake: &[STRING_TOO_LONG, BINARY_TOO_LONG],
         }],
     },
     RuleSpec {

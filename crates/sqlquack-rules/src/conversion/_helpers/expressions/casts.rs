@@ -471,12 +471,11 @@ fn nanosecond_range(
     }
 }
 
-/// Text cut to a VARCHAR(n) target's length raises an error, as in Snowflake.
+/// Text or bytes longer than a VARCHAR(n) or BINARY(n) target raise an error, as in Snowflake.
 fn bounded(sql: String, target: CastTarget, log: &ProvenanceLog) -> String {
-    match target.max_length {
-        Some(max_length) if target.data_type == SnowflakeType::Varchar => {
-            varchar_length_check(&sql, max_length, log)
-        }
+    match (target.max_length, target.data_type) {
+        (Some(max_length), SnowflakeType::Varchar) => varchar_length_check(&sql, max_length, log),
+        (Some(max_length), SnowflakeType::Binary) => binary_length_check(&sql, max_length, log),
         _ => sql,
     }
 }
@@ -496,12 +495,9 @@ fn strict_cast(
             let _rule = cast_rule(CAST_TO_TEXT, log);
             Ok(bounded(cast(&operand.sql, to, log)?, target, log))
         }
-        (SnowflakeType::Binary, SnowflakeType::Binary) if target.max_length.is_some() => {
-            Err("BINARY to BINARY(n), whose length check no recording shows".to_owned())
-        }
         _ if from == to => {
             let _rule = cast_rule(CAST_SAME_TYPE, log);
-            cast(&operand.sql, to, log)
+            Ok(bounded(cast(&operand.sql, to, log)?, target, log))
         }
         (SnowflakeType::Number { .. }, SnowflakeType::Number { .. } | SnowflakeType::Float)
         | (SnowflakeType::Float, SnowflakeType::Number { scale: 0, .. }) => {

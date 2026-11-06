@@ -42,11 +42,6 @@ fn given_sql_and_a_schema_when_analyzing_then_it_converts_or_refuses_with_a_cate
             expected_summary: converted(),
         },
         AnalyzeTestCase {
-            description: "BINARY cast to BINARY(n) is refused, since no recording shows its length check",
-            sql: "SELECT CAST(CAST('AABBCC' AS BINARY) AS BINARY(2)) AS b",
-            expected_summary: refused(RefusalCategory::TypeCondition),
-        },
-        AnalyzeTestCase {
             description: "BINARY(0) is refused as a length Snowflake does not declare",
             sql: "SELECT CAST('' AS BINARY(0)) AS b",
             expected_summary: refused(RefusalCategory::TypeCondition),

@@ -78,6 +78,26 @@ fn given_computed_subscripts_when_converting_then_they_read_as_get() {
             expected_outcome: Ok("x"),
         },
         FirstValueTestCase {
+            description: "BINARY cast to a BINARY(n) it fits keeps its bytes",
+            sql: "SELECT OCTET_LENGTH(CAST(CAST('AABB' AS BINARY) AS BINARY(2))) AS v",
+            expected_outcome: Ok("2"),
+        },
+        FirstValueTestCase {
+            description: "BINARY cast to a shorter BINARY(n) raises 100145 rather than truncating",
+            sql: "SELECT OCTET_LENGTH(CAST(CAST('AABBCC' AS BINARY) AS BINARY(2))) AS v",
+            expected_outcome: Err("too long and would be truncated"),
+        },
+        FirstValueTestCase {
+            description: "BINARY with :: to a shorter BINARY(n) raises too",
+            sql: "SELECT OCTET_LENGTH(CAST('AABBCC' AS BINARY)::BINARY(1)) AS v",
+            expected_outcome: Err("too long and would be truncated"),
+        },
+        FirstValueTestCase {
+            description: "TRY_CAST of BINARY to BINARY(n) stays refused without a recording",
+            sql: "SELECT OCTET_LENGTH(TRY_CAST(CAST('AABBCC' AS BINARY) AS BINARY(2))) AS v",
+            expected_outcome: Err("has no proven conversion"),
+        },
+        FirstValueTestCase {
             description: "a negative constant index stays refused",
             sql: "SELECT PARSE_JSON('[1]')[-1] AS v",
             expected_outcome: Err("other than a literal"),
