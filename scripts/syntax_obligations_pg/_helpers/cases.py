@@ -6,10 +6,11 @@ import re
 import tomllib
 from pathlib import Path
 
-from scripts.syntax_obligations._helpers.cases import canonical, digest
+from scripts.syntax_obligations._helpers.cases import canonical, digest, observed_stage
 from scripts.syntax_obligations._helpers.render import style_of, submissions
+from scripts.syntax_obligations.constants import KIND_EXTREME
 from scripts.syntax_obligations.exceptions import ObligationError
-from scripts.syntax_obligations.models import Draft, Node, Rendered
+from scripts.syntax_obligations.models import Draft, Node, ReceiptView, Rendered
 from scripts.syntax_obligations.types import Row
 from scripts.syntax_obligations_pg.constants import (
     AUTOCOMMIT_LEADS,
@@ -41,9 +42,13 @@ def family_cases(
     numbered: list[tuple[str, Draft]],
     trees: dict[str, list[tuple[Node, ...]]],
     forms: set[str],
+    receipts: ReceiptView,
 ) -> list[Row]:
-    """The cases of one family's forms in `forms`, each citing every obligation it serves."""
+    """The cases of one family's forms in `forms`, each citing every obligation it serves; an
+    accepted case takes its receipt's later stage and an observed one its receipt's outcome,
+    as the shared builder settles them (decisions D92, D133)."""
     by_sql: dict[str, tuple[str, Rendered, list[str]]] = {}
+    extremes: set[str] = set()
     conflicts: list[str] = []
     for identifier, draft in numbered:
         if draft.form not in forms or draft.spec is None:
@@ -64,6 +69,8 @@ def family_cases(
                     f"{cited[0]} expects {earlier.expect} {earlier.stage}: {rendered.sql}"
                 )
             cited.append(identifier)
+            if draft.kind == KIND_EXTREME:
+                extremes.add(rendered.sql)
     if conflicts:
         raise ObligationError("one SQL text with two expectations:\n" + "\n".join(conflicts))
     session_sha: str = digest(canonical(SESSION))
@@ -85,5 +92,14 @@ def family_cases(
         }
         if rendered.stage:
             case[STAGE_KEY] = rendered.stage
-        cases.append(case)
+        key: tuple[str, str] = (str(case["case_id"]), sha)
+        cases.append(
+            observed_stage(
+                case=case,
+                phase=receipts.phases.get(key),
+                extreme=sql in extremes,
+                documented=rendered.documented,
+                settlement=receipts.settlements.get((*key, str(case["setup_sha256"]), session_sha)),
+            )
+        )
     return sorted(cases, key=lambda case: str(case["case_id"]))

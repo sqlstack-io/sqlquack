@@ -126,3 +126,8 @@ or `execute_autocommit_in_throwaway_database` for statements Postgres refuses in
 transaction block (the referee's `engine.toml` `autocommit` list), no setup, and one statement
 without a terminating semicolon. `elisions/` is not written: the Snowflake elision rules do not
 apply, and the few Postgres `...` fills are style entries.
+
+Receipts (`receipts/*.jsonl`, format `sqlquack-syntax-receipt/2`) are recorded by the Postgres
+referee (`engines/postgres`) against the pinned 18.6 image; the raw records and run audits stay
+private. The case build reads them as the shared builder does: an accepted case takes its
+receipt's later stage, and an observed case its receipt's outcome.

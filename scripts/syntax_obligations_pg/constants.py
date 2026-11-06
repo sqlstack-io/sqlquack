@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 
 DEFAULT_ROOT: Path = Path("coverage/syntax-postgres")
+RECEIPTS_DIR: str = "receipts"
 DEFAULT_FOCUS: Path = Path("focus/postgres.toml")
 FORM_PREFIX: str = "pg"
 FAMILIES: tuple[str, ...] = (
