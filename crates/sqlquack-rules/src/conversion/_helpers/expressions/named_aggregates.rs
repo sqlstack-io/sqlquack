@@ -22,6 +22,7 @@ use sqlquack_snowflake::typing::main::count::count;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::expressions::statistics::{is_statistic, statistic};
 use crate::conversion::_helpers::expressions::variants::to_variant;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::Emitted;
@@ -41,7 +42,7 @@ use sqlquack_policy::policy::constants::{
 
 /// Whether `name` is an aggregate converted here.
 pub(crate) fn is_named_aggregate(name: &str) -> bool {
-    NAMED_AGGREGATE_NAMES.contains(&name)
+    NAMED_AGGREGATE_NAMES.contains(&name) || is_statistic(name)
 }
 
 /// One named aggregate; `window` is the OVER clause when used as a window function.
@@ -57,13 +58,13 @@ pub(crate) fn named_aggregate(
     let payload = payload_object(payload, &construct)?;
     require_understood(payload, &["name", "args", "distinct"], &construct)?;
     let distinct = flag(payload, "distinct");
-    if distinct != (name == MULTI_COUNT) {
+    if distinct != (name == MULTI_COUNT) && !is_statistic(name) {
         return Err(refuse(format!(
             "{name} with or without DISTINCT as written"
         )));
     }
     let over = window.map_or_else(String::new, |window| format!(" OVER ({window})"));
-    if window.is_some() && !WINDOWED_NAMED_AGGREGATES.contains(&name) {
+    if window.is_some() && !WINDOWED_NAMED_AGGREGATES.contains(&name) && !is_statistic(name) {
         return Err(refuse(format!("{name} over a window")));
     }
     let site = site.placed(Placement::ROW);
@@ -73,6 +74,12 @@ pub(crate) fn named_aggregate(
         .collect::<Result<_, _>>()?;
     let log = site.context.log;
     match (name, arguments.as_slice()) {
+        (name, arguments) if is_statistic(name) => statistic(
+            name,
+            arguments,
+            (distinct, &over),
+            (&construct, site.context),
+        ),
         ("ANY_VALUE", [value]) if value.data_type != SnowflakeType::Null => {
             diverge(site.context, ANY_VALUE_CHOICE, &construct)?;
             compared_value(value, &construct, site.context)?;

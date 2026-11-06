@@ -296,4 +296,5 @@ rows = [
 ]
 query = "SELECT VARIANCE(x) AS v, VAR_POP(x) AS p, STDDEV(x) AS s, VARIANCE(-x) AS n FROM input"
 order = "ordered"
+expected_divergence = "float_sum_order"
 tags = ["type-combination"]

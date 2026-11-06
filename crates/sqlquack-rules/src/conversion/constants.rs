@@ -23,6 +23,27 @@ pub const NAMED_AGGREGATE_NAMES: &[&str] = &[
     "MEDIAN",
     MULTI_COUNT,
 ];
+/// Variances and standard deviations: the name, whether over the population, and whether a root.
+pub(crate) const VARIANCE_AGGREGATES: &[(&str, bool, bool)] = &[
+    ("VARIANCE", false, false),
+    ("VAR_SAMP", false, false),
+    ("VAR_POP", true, false),
+    ("VARIANCE_POP", true, false),
+    ("STDDEV", false, true),
+    ("STDDEV_SAMP", false, true),
+    ("STDDEV_POP", true, true),
+];
+/// Covariances, and whether over the population.
+pub(crate) const COVARIANCE_AGGREGATES: &[(&str, bool)] =
+    &[("COVAR_SAMP", false), ("COVAR_POP", true)];
+/// The variance Snowflake rejects with DISTINCT, though its other spellings accept it.
+pub(crate) const NO_DISTINCT_VARIANCE: &str = "VARIANCE";
+/// An exact variance's result scale: this base plus twice the input's scale, at most the widest.
+pub(crate) const VARIANCE_SCALES: (u8, u8) = (6, 12);
+/// The lambda parameter squaring each distinct value of an exact variance.
+pub(crate) const SQUARED_PARAMETER: &str = "__sqlquack_squared";
+/// The type name statistics cast NUMBER and text arguments to.
+pub(crate) const FLOAT_TYPE_NAME: &str = "FLOAT";
 /// COUNT of several values, which the parser keeps as a named call.
 pub const MULTI_COUNT: &str = "COUNT";
 /// The recorded type of ARRAY_POSITION.
@@ -605,6 +626,12 @@ pub const CASE: &str = "rule.case";
 pub const COALESCE: &str = "rule.coalesce";
 /// IFF.
 pub const IFF: &str = "rule.iff";
+/// VARIANCE, VAR_POP and STDDEV of a NUMBER, exact and rounded half up to the recorded scale.
+pub const VARIANCE_RULE: &str = "rule.variance";
+/// VARIANCE, VAR_POP and STDDEV of a FLOAT or text, with exact sums.
+pub const VARIANCE_FLOAT_RULE: &str = "rule.variance_float";
+/// COVAR_SAMP and COVAR_POP of NUMBER or FLOAT pairs, with exact sums.
+pub const COVARIANCE_RULE: &str = "rule.covariance";
 /// NVL2 of a non-semi-structured value and two branches that unify without reading text.
 pub const NVL2_RULE: &str = "rule.nvl2";
 /// NULLIF.

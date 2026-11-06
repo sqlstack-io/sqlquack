@@ -33,6 +33,7 @@ use crate::conversion::_helpers::expressions::predicates::{
 use crate::conversion::_helpers::expressions::result_types::result_type;
 use crate::conversion::_helpers::expressions::semi_structured::{variant_path, variant_subscript};
 use crate::conversion::_helpers::expressions::spellings::{as_typed, as_written, rlike_as_call};
+use crate::conversion::_helpers::expressions::statistics::is_statistic;
 use crate::conversion::_helpers::expressions::strings::{
     case_mapping, concat_operator, text_affix, trim,
 };
@@ -348,7 +349,9 @@ fn convert_kind(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
                     .adopt(&typed, arguments.map_or(&[], Vec::as_slice));
                 convert_expression(&typed, site).map_err(|refusal| as_written(refusal, spelling))
             }
-            None if kind == CALL_KIND => convert_function(payload, site),
+            None if kind == CALL_KIND && !is_statistic(&call_name(payload)) => {
+                convert_function(payload, site)
+            }
             None if is_named_aggregate(&call_name(payload)) => {
                 if !site.placement.aggregates {
                     return Err(outside_conditions(

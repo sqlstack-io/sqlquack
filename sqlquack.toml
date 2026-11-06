@@ -302,7 +302,7 @@ minimum_bytes = 4194304
 # can return another value.
 
 [divergences.numeric_range]
-constructs = ["fn:SUM", "fn:AVG", "node:add", "node:sub", "node:mul", "node:div", "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:null_safe_eq", "node:null_safe_neq", "node:in", "fn:EQUAL_NULL", "fn:NULLIF", "node:union", "node:except", "node:intersect", "node:case", "fn:COALESCE", "node:coalesce", "fn:DECODE", "fn:GREATEST", "fn:LEAST", "node:nvl", "fn:NVL2", "fn:IFF", "fn:IFNULL", "fn:ZEROIFNULL", "fn:EXP"]
+constructs = ["fn:SUM", "fn:AVG", "node:add", "node:sub", "node:mul", "node:div", "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:null_safe_eq", "node:null_safe_neq", "node:in", "fn:EQUAL_NULL", "fn:NULLIF", "node:union", "node:except", "node:intersect", "node:case", "fn:COALESCE", "node:coalesce", "fn:DECODE", "fn:GREATEST", "fn:LEAST", "node:nvl", "fn:NVL2", "fn:IFF", "fn:IFNULL", "fn:ZEROIFNULL", "fn:EXP", "fn:VARIANCE", "fn:VAR_SAMP", "fn:VAR_POP", "fn:VARIANCE_POP", "fn:STDDEV", "fn:STDDEV_SAMP", "fn:STDDEV_POP"]
 default = "warn"
 strict = "refuse"
 failure = "loud"
@@ -463,7 +463,7 @@ failure = "loud"
 reason = "A REGEXP_LIKE pattern from a column cannot be checked before it runs. Snowflake and RE2 were recorded reading literal characters, '.', groups, alternation, plain bracket expressions, single '*', '+' and '?' and anchors at the ends alike; the converted SQL raises for a pattern with any other syntax, such as escapes, counted repetition, POSIX classes or lazy quantifiers. REGEXP_COUNT and REGEXP_INSTR, and REGEXP_REPLACE and REGEXP_SUBSTR of a column pattern, raise for a pattern that matches empty text, whose empty matches no recording shows; column patterns for REGEXP_REPLACE and REGEXP_SUBSTR are checked as REGEXP_LIKE's are. The failure is loud, never a wrong value."
 
 [divergences.float_sum_order]
-constructs = ["fn:SUM"]
+constructs = ["fn:SUM", "fn:VARIANCE", "fn:VAR_SAMP", "fn:VAR_POP", "fn:VARIANCE_POP", "fn:STDDEV", "fn:STDDEV_SAMP", "fn:STDDEV_POP", "fn:COVAR_SAMP", "fn:COVAR_POP"]
 default = "warn"
 strict = "refuse"
 failure = "loud"

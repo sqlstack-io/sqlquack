@@ -23,6 +23,7 @@ use crate::conversion::_helpers::expressions::named_aggregates::named_aggregate;
 use crate::conversion::_helpers::expressions::ordered_aggregates::within_group;
 use crate::conversion::_helpers::expressions::scalar::{call_name, convert_expression};
 use crate::conversion::_helpers::expressions::spellings::{as_typed, as_written};
+use crate::conversion::_helpers::expressions::statistics::is_statistic;
 use crate::conversion::_helpers::support::declared::merged;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Emitted};
@@ -124,7 +125,8 @@ pub(crate) fn convert_window(payload: &Value, site: Site<'_>) -> Result<Emitted,
         "first_value" | "last_value" => WINDOW_FIRST_LAST,
         "count" | "sum" | "avg" | "min" | "max" | "within_group" => WINDOW_AGGREGATE,
         "function" | "aggregate_function"
-            if WINDOWED_NAMED_AGGREGATES.contains(&call_name(function_payload).as_str()) =>
+            if WINDOWED_NAMED_AGGREGATES.contains(&call_name(function_payload).as_str())
+                || is_statistic(&call_name(function_payload)) =>
         {
             WINDOW_AGGREGATE
         }
@@ -182,12 +184,22 @@ pub(crate) fn convert_window(payload: &Value, site: Site<'_>) -> Result<Emitted,
         "within_group" => ordered_window(function_payload, &over, site),
         "function" | "aggregate_function" => {
             let name = call_name(function_payload);
+            let statistic = is_statistic(&name);
             if over.frame.is_some_and(|frame| {
-                name != COUNT_IF_NAME || !is_running(frame) || over.order.is_empty()
+                let running_count = name == COUNT_IF_NAME && is_running(frame);
+                let rows = frame.get("kind").and_then(Value::as_str) == Some(ROWS);
+                !(statistic && rows) && (!running_count || over.order.is_empty())
             }) {
                 return Err(outside_conditions(
                     function_construct(&name),
                     format!("{name} over an explicit frame, which no recording shows"),
+                ));
+            }
+            let distinct = function_payload.get("distinct").and_then(Value::as_bool) == Some(true);
+            if statistic && distinct && !over.order.is_empty() {
+                return Err(outside_conditions(
+                    function_construct(&name),
+                    format!("{name}(DISTINCT) over an ordered window, which Snowflake rejects"),
                 ));
             }
             if UNORDERED_WINDOW_AGGREGATES.contains(&name.as_str()) && !over.order.is_empty() {
