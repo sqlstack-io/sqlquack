@@ -45,3 +45,11 @@ pub(crate) struct StrictTestCase {
     pub(crate) sql: &'static str,
     pub(crate) expected_outcome: Result<usize, Option<bool>>,
 }
+
+/// An input whose node at `pointer` (a JSON pointer) must serialise to `expected_json`.
+pub(crate) struct ValueTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) pointer: &'static str,
+    pub(crate) expected_json: &'static str,
+}

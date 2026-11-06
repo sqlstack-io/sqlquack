@@ -10,7 +10,7 @@ use crate::parse::_helpers::tree::cursor::{
     Parser, Parsing, is_col_id, is_col_label, is_non_reserved_word,
 };
 use crate::parse::_helpers::tree::nodes::{
-    boolean, column, command, literal, star, subquery, table,
+    boolean, column, command, function, literal, star, subquery, table,
 };
 use crate::parse::constants::{STATEMENT_STARTS, STATEMENT_STARTS_MORE};
 use crate::scan::models::TokenKind;
@@ -43,6 +43,9 @@ impl Parser<'_> {
     }
 }
 
+/// The call a `PROGRAM 'command'` target becomes, so it differs from a file.
+const PROGRAM_TARGET: &str = "program";
+
 /// `opt_program copy_file_name`: the file, and whether `PROGRAM` names a command.
 struct CopyFile {
     file: Expression,
@@ -69,9 +72,7 @@ impl Parser<'_> {
         self.eat_kw("table");
         let mut entries: Vec<TruncateTableEntry> = self.comma_list(|parser| {
             let table = parser.relation()?;
-            let star: bool =
-                !table.only && parser.tokens[parser.at - 1].kind == TokenKind::Char('*');
-            Ok(TruncateTableEntry { table, star })
+            Ok(TruncateTableEntry { table, star: false })
         })?;
         let identity: Option<TruncateIdentity> = match self.keyword_at(0) {
             Some("continue") => Some(TruncateIdentity::Continue),
@@ -85,9 +86,6 @@ impl Parser<'_> {
         let cascade: bool = self.eat_kw("cascade");
         let restrict: bool = !cascade && self.eat_kw("restrict");
         let first: TruncateTableEntry = entries.remove(0);
-        if first.star {
-            entries.insert(0, first.clone());
-        }
         Ok(Expression::Truncate(Box::new(Truncate {
             target: TruncateTarget::Table,
             if_exists: false,
@@ -316,14 +314,18 @@ fn copy(
     file: CopyFile,
     options: (Vec<CopyParameter>, bool),
 ) -> Expression {
-    let (mut params, with_wrapped) = options;
-    if file.program {
-        params.insert(0, parameter("program", None, Vec::new()));
-    }
+    let (params, with_wrapped) = options;
+    let target: Expression = match file.program {
+        true => Expression::Function(Box::new(function(
+            vec![Identifier::new(PROGRAM_TARGET)],
+            vec![file.file],
+        ))),
+        false => file.file,
+    };
     Expression::Copy(Box::new(CopyStmt {
         this,
         kind: from,
-        files: vec![file.file],
+        files: vec![target],
         params,
         credentials: None,
         is_into: false,
