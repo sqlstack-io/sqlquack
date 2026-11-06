@@ -181,6 +181,8 @@ impl Parser {
             function_target,
             partition_by: partition_by_expr,
             settings: insert_settings,
+            overriding: None,
+            returning_aliases: Vec::new(),
         })))
     }
 
@@ -368,6 +370,8 @@ impl Parser {
             function_target: None,
             partition_by: None,
             settings: Vec::new(),
+            overriding: None,
+            returning_aliases: Vec::new(),
         })))
     }
 

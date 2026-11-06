@@ -108,6 +108,12 @@ pub struct Insert {
     /// ClickHouse: SETTINGS key = val, ...
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub settings: Vec<Expression>,
+    /// PostgreSQL `OVERRIDING USER VALUE` or `OVERRIDING SYSTEM VALUE`: "USER" or "SYSTEM"
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub overriding: Option<String>,
+    /// PostgreSQL `RETURNING WITH (OLD AS o, NEW AS n)`: each `(OLD|NEW, alias)` in order
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub returning_aliases: Vec<Expression>,
 }
 
 /// OUTPUT clause (TSQL) - used in INSERT, UPDATE, DELETE
@@ -159,6 +165,16 @@ pub struct Update {
     /// Whether FROM clause appears before SET (Snowflake syntax)
     #[serde(default)]
     pub from_before_set: bool,
+    /// PostgreSQL: the whole SET list in order, each `(targets, source)`, when it holds
+    /// `(a, b) = source` from anything but a row of as many items; `set` is then empty
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub assignments: Vec<Expression>,
+    /// PostgreSQL `WHERE CURRENT OF cursor`, which stands in place of a WHERE condition
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub current_of: Option<Identifier>,
+    /// PostgreSQL `RETURNING WITH (OLD AS o, NEW AS n)`: each `(OLD|NEW, alias)` in order
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub returning_aliases: Vec<Expression>,
 }
 
 /// DELETE statement
@@ -211,6 +227,12 @@ pub struct Delete {
     /// BigQuery-style DELETE without FROM keyword: DELETE table WHERE ...
     #[serde(default)]
     pub no_from: bool,
+    /// PostgreSQL `WHERE CURRENT OF cursor`, which stands in place of a WHERE condition
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub current_of: Option<Identifier>,
+    /// PostgreSQL `RETURNING WITH (OLD AS o, NEW AS n)`: each `(OLD|NEW, alias)` in order
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub returning_aliases: Vec<Expression>,
 }
 
 /// COPY statement (Snowflake, PostgreSQL, DuckDB, TSQL)
@@ -234,6 +256,9 @@ pub struct CopyStmt {
     /// Whether parameters are wrapped in WITH (...) syntax
     #[serde(default)]
     pub with_wrapped: bool,
+    /// PostgreSQL `COPY ... FROM ... WHERE condition`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub where_clause: Option<Box<Expression>>,
 }
 
 /// COPY parameter (e.g., FILE_FORMAT = CSV or FORMAT PARQUET)
@@ -610,79 +635,17 @@ pub struct Pragma {
     pub use_assignment_syntax: bool,
 }
 
-/// A GRANT/REVOKE privilege with optional columns, such as `UPDATE(c1, c2)`.
+/// A PostgreSQL utility or session statement with no statement of its own, e.g. `VACUUM (FULL) t` or `LISTEN c`.
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Privilege {
-    /// The privilege name (e.g., SELECT, INSERT, UPDATE, ALL)
-    pub name: String,
-    /// Optional column list for column-level privileges (e.g., UPDATE(col1, col2))
+pub struct UtilityStatement {
+    /// The statement's keywords, e.g. "VACUUM", "LISTEN", "DECLARE CURSOR", "SET CONSTRAINTS"
+    pub kind: String,
+    /// The statement's options in order, e.g. `(FULL, true)` or `(SCROLL)`
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub columns: Vec<String>,
-}
-
-/// Principal in GRANT/REVOKE (user, role, etc.)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct GrantPrincipal {
-    /// The name of the principal
-    pub name: Identifier,
-    /// Whether prefixed with ROLE keyword
-    pub is_role: bool,
-    /// Whether prefixed with GROUP keyword (Redshift)
-    #[serde(default)]
-    pub is_group: bool,
-    /// Whether prefixed with SHARE keyword (Snowflake)
-    #[serde(default)]
-    pub is_share: bool,
-    /// Snowflake: the grantee kind, such as ROLE, DATABASE ROLE, APPLICATION or USER
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub kind: Option<String>,
-}
-
-/// GRANT statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Grant {
-    /// Privileges to grant (e.g., SELECT, INSERT, UPDATE(col1, col2))
-    pub privileges: Vec<Privilege>,
-    /// Object kind (TABLE, SCHEMA, FUNCTION, etc.)
-    pub kind: Option<String>,
-    /// The object to grant on
-    pub securable: Identifier,
-    /// Function parameter types (for FUNCTION kind)
+    pub options: Vec<Expression>,
+    /// The statement's operands in order: names, values, settings or a statement
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub function_params: Vec<String>,
-    /// The grantees
-    pub principals: Vec<GrantPrincipal>,
-    /// WITH GRANT OPTION
-    pub grant_option: bool,
-    /// TSQL: AS principal (the grantor role)
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub as_principal: Option<Identifier>,
-    /// Snowflake GRANT OWNERSHIP: COPY or REVOKE CURRENT GRANTS
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub current_grants: Option<String>,
-}
-
-/// REVOKE statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Revoke {
-    /// Privileges to revoke (e.g., SELECT, INSERT, UPDATE(col1, col2))
-    pub privileges: Vec<Privilege>,
-    /// Object kind (TABLE, SCHEMA, FUNCTION, etc.)
-    pub kind: Option<String>,
-    /// The object to revoke from
-    pub securable: Identifier,
-    /// Function parameter types (for FUNCTION kind)
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub function_params: Vec<String>,
-    /// The grantees
-    pub principals: Vec<GrantPrincipal>,
-    /// GRANT OPTION FOR
-    pub grant_option: bool,
-    /// CASCADE
-    pub cascade: bool,
-    /// RESTRICT
-    #[serde(default)]
-    pub restrict: bool,
+    pub operands: Vec<Expression>,
 }
 
 /// COMMENT ON statement
@@ -1348,6 +1311,9 @@ pub struct Merge {
     pub with_: Option<Box<Expression>>,
     #[serde(default)]
     pub returning: Option<Box<Expression>>,
+    /// PostgreSQL `RETURNING WITH (OLD AS o, NEW AS n)`: each `(OLD|NEW, alias)` in order
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub returning_aliases: Vec<Expression>,
 }
 
 /// When

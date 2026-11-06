@@ -26,6 +26,16 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
+            description: "OVERRIDING comes only before a query, never before DEFAULT VALUES",
+            sql: "INSERT INTO t OVERRIDING USER VALUE DEFAULT VALUES",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "FORMAT JSON after a JSON_ARRAY query is no column label",
+            sql: "SELECT JSON_ARRAY(SELECT 1 FORMAT JSON)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
             description: "ALTER TEXT SEARCH needs its object kind",
             sql: "ALTER TEXT SEARCH t1 RENAME TO v1",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
@@ -214,6 +224,36 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             description: "ALTER POLICY IF EXISTS only renames",
             sql: "ALTER POLICY IF EXISTS p ON t TO a",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a role option needs OPTION, TRUE or FALSE",
+            sql: "GRANT r TO u WITH ADMIN",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a GRANT inside CREATE SCHEMA grants on objects only",
+            sql: "CREATE SCHEMA s GRANT r TO u",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "ALTER DEFAULT PRIVILEGES takes no GRANTED BY",
+            sql: "ALTER DEFAULT PRIVILEGES GRANT SELECT ON TABLES TO r GRANTED BY s",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a cursor is declared for a query, not for DML",
+            sql: "DECLARE c CURSOR FOR INSERT INTO t VALUES (1)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "EXPLAIN does not take CREATE VIEW",
+            sql: "EXPLAIN CREATE VIEW v AS SELECT 1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a direction keyword alone is the cursor's name",
+            sql: "FETCH next",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a policy is PERMISSIVE or RESTRICTIVE, compared after folding (42601)",
@@ -491,9 +531,9 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "MERGE_ACTION(), which the parser keeps opaque",
+            description: "MERGE_ACTION(), as a keyword call",
             sql: "MERGE INTO t USING s ON true WHEN MATCHED THEN DELETE RETURNING merge_action()",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a comparison chained",
@@ -641,9 +681,9 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "SQL/JSON query options, which the parser checks and keeps opaque",
+            description: "SQL/JSON query options, each a clause of the keyword call",
             sql: "SELECT json_query(js, '$' RETURNING text WITH CONDITIONAL ARRAY WRAPPER KEEP QUOTES DEFAULT 1 ON EMPTY ERROR ON ERROR)",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "ON ERROR before ON EMPTY in a SQL/JSON query",
@@ -673,7 +713,7 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
         VerdictTestCase {
             description: "XMLTABLE after LATERAL",
             sql: "SELECT * FROM LATERAL xmltable('/r' PASSING x COLUMNS a int) t",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "GROUP BY DISTINCT, held as the group's quantifier",
@@ -686,9 +726,9 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "a sub-SELECT assigned across several UPDATE targets, kept opaque",
+            description: "a sub-SELECT assigned across several UPDATE targets, as one assignment",
             sql: "UPDATE t SET (a, b) = (SELECT 1, 2)",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
     ];
     for test_case in test_cases {
@@ -1175,10 +1215,112 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() 
             expected_json: "\"CURRENT_USER\"",
         },
         ValueTestCase {
+            description: "a GRANT without a kind word grants on tables",
+            sql: "GRANT SELECT ON t, u TO r",
+            pointer: "/0/grant/kind",
+            expected_json: "\"TABLE\"",
+        },
+        ValueTestCase {
+            description: "ALL PRIVILEGES is no privileges, as gram.y keeps it",
+            sql: "GRANT ALL PRIVILEGES ON SCHEMA s TO r",
+            pointer: "/0/grant/privileges",
+            expected_json: "[]",
+        },
+        ValueTestCase {
+            description: "a role option is kept by name, not folded into grant_option",
+            sql: "GRANT r TO u WITH ADMIN OPTION GRANTED BY v",
+            pointer: "/0/grant/options/0/tuple/expressions/0/identifier/name",
+            expected_json: "\"admin\"",
+        },
+        ValueTestCase {
+            description: "REVOKE ADMIN OPTION FOR revokes the option, as a false DefElem",
+            sql: "REVOKE ADMIN OPTION FOR r FROM u",
+            pointer: "/0/revoke/options/0/tuple/expressions/1/boolean/value",
+            expected_json: "false",
+        },
+        ValueTestCase {
+            description: "default privileges on ROUTINES are on functions",
+            sql: "ALTER DEFAULT PRIVILEGES GRANT EXECUTE ON ROUTINES TO r",
+            pointer: "/0/alter_default_privileges/action/grant/kind",
+            expected_json: "\"FUNCTIONS\"",
+        },
+        ValueTestCase {
             description: "SETOF keeps an array type's bounds",
             sql: "COMMENT ON FUNCTION f(SETOF int[3]) IS 'x'",
             pointer: "/0/comment/this/function/args/0/data_type/name",
             expected_json: "\"SETOF integer[3]\"",
+        },
+        ValueTestCase {
+            description: "ABORT is the ROLLBACK gram.y makes of it",
+            sql: "ABORT",
+            pointer: "/0/utility_statement/kind",
+            expected_json: "\"ROLLBACK\"",
+        },
+        ValueTestCase {
+            description: "JSON_ARRAY of values without a null clause absents nulls, as gram.y defaults",
+            sql: "SELECT JSON_ARRAY(1, 2)",
+            pointer: "/0/select/expressions/0/keyword_call/options/0/var/this",
+            expected_json: "\"ABSENT ON NULL\"",
+        },
+        ValueTestCase {
+            description: "IS NOT DOCUMENT is the NOT of IS DOCUMENT, as makeNotExpr makes it",
+            sql: "SELECT x IS NOT DOCUMENT",
+            pointer: "/0/select/expressions/0/not/this/keyword_call/kind",
+            expected_json: "\"IS DOCUMENT\"",
+        },
+        ValueTestCase {
+            description: "RETURNING WITH keeps each alias with OLD or NEW",
+            sql: "DELETE FROM t RETURNING WITH (OLD AS o) o.a",
+            pointer: "/0/delete/returning_aliases/0/tuple/expressions/1/identifier/name",
+            expected_json: "\"o\"",
+        },
+        ValueTestCase {
+            description: "SET (a, b) from a subquery keeps the whole SET list as assignments",
+            sql: "UPDATE t SET (a, b) = (SELECT 1, 2), c = 3",
+            pointer: "/0/update/assignments/1/tuple/expressions/0/tuple/expressions/0/identifier/name",
+            expected_json: "\"c\"",
+        },
+        ValueTestCase {
+            description: "SAVEPOINT as the last word is the savepoint's name",
+            sql: "ROLLBACK TRANSACTION TO SAVEPOINT",
+            pointer: "/0/utility_statement/operands/0/identifier/name",
+            expected_json: "\"savepoint\"",
+        },
+        ValueTestCase {
+            description: "PREPARE as the last word is the prepared statement's name",
+            sql: "DEALLOCATE PREPARE",
+            pointer: "/0/utility_statement/operands/0/identifier/name",
+            expected_json: "\"prepare\"",
+        },
+        ValueTestCase {
+            description: "a GRANT's objects are all in objects, with securable left empty",
+            sql: "GRANT SELECT ON t TO r",
+            pointer: "/0/grant/securable/name",
+            expected_json: "\"\"",
+        },
+        ValueTestCase {
+            description: "a GRANT's one object is the first of objects",
+            sql: "GRANT SELECT ON t TO r",
+            pointer: "/0/grant/objects/0/table/name/name",
+            expected_json: "\"t\"",
+        },
+        ValueTestCase {
+            description: "a VACUUM keyword is the option gram.y lists for it",
+            sql: "VACUUM FULL t",
+            pointer: "/0/utility_statement/options/0/tuple/expressions/0/identifier/name",
+            expected_json: "\"full\"",
+        },
+        ValueTestCase {
+            description: "CLUSTER index ON table names the table first",
+            sql: "CLUSTER i ON t",
+            pointer: "/0/utility_statement/operands/0/table/name/name",
+            expected_json: "\"t\"",
+        },
+        ValueTestCase {
+            description: "FETCH LAST is ABSOLUTE -1",
+            sql: "FETCH LAST c",
+            pointer: "/0/utility_statement/operands/1/literal/value",
+            expected_json: "\"-1\"",
         },
         ValueTestCase {
             description: "a policy without TO is for PUBLIC",
