@@ -134,7 +134,9 @@ FILLS: dict[str, str] = {
     "window_name": "w1",
     "window_definition": "ORDER BY c1",
     "select": "SELECT 1",
-    "sub-SELECT": "SELECT 1",
+    "sub-select": "SELECT 1",
+    "query_expression": "SELECT 1",
+    "namespace_uri": "'x'",
     "operator": "<",
     "count": "1",
     "start": "1",
@@ -379,6 +381,7 @@ PG_CLASS_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
     ),
     (re.compile(r"^token_type$"), "identifier"),
     (re.compile(r"^send_function$"), "operand"),
+    (re.compile(r"^namespace_uri$"), "expression"),
     (re.compile("^(?:" + "|".join(map(re.escape, VALUE_FILLS)) + ")$"), "expression"),
     (
         re.compile(r"^\w+ (?:" + "|".join(map(re.escape, ARGUMENT_TYPES)) + r")(?:\[\])?$"),
