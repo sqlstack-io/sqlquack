@@ -134,7 +134,7 @@ tags = ["boundary"]
 
 [[case]]
 id = "t012_binary_to_shorter_binary"
-description = "A three-byte BINARY value cast to BINARY(2); the cast of hex text raises 100145 here, and this records whether a BINARY value does too. Catches: the excess byte silently truncated"
+description = "A three-byte BINARY value cast to BINARY(2); a BINARY value raises 100145 here, exactly as the cast of hex text does (t010). Catches: the excess byte silently truncated"
 columns = [{ name = "b", type = "BINARY" }]
 rows = [
   ["'AABBCC'"],
