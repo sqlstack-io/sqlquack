@@ -5518,13 +5518,6 @@ target = "<value>"
 note = "omit <value>"
 
 [[obligation]]
-id = "pg.ddl.alter-foreign-table.alter-set.o019"
-kind = "operand_type_class"
-required = true
-target = "<value>"
-note = "a valid expression"
-
-[[obligation]]
 id = "pg.ddl.alter-foreign-table.alter-set.o020"
 kind = "option_present"
 required = true
@@ -5646,6 +5639,14 @@ required = true
 target = "<column_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.alter-set.o046"
+kind = "operand_type_class"
+required = true
+target = "<value>"
+anchor = "doc.sql-alterforeigntable / Synopsis"
+note = "a valid option value: a word, number or string (gram.y def_arg), not an expression"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.alter-set-default.o001"
@@ -9190,6 +9191,14 @@ required = true
 target = "<new_column_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-foreign-table.rename-to-only-column.o036"
+kind = "required_operand_missing"
+required = true
+target = "<column_name>"
+anchor = "doc.sql-alterforeigntable / Synopsis"
+note = "omit <column_name> with COLUMN written (without COLUMN the text is the valid RENAME TO)"
 
 [[obligation]]
 id = "pg.ddl.alter-foreign-table.set-schema.o001"
@@ -16263,6 +16272,14 @@ required = true
 target = "<new_column_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-materialized-view.rename-to-column.o025"
+kind = "required_operand_missing"
+required = true
+target = "<column_name>"
+anchor = "doc.sql-altermaterializedview / Synopsis"
+note = "omit <column_name> with COLUMN written (without COLUMN the text is the valid RENAME TO)"
 
 [[obligation]]
 id = "pg.ddl.alter-materialized-view.reset.o001"
@@ -25298,6 +25315,22 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-sequence.name.o084"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.sql-altersequence / Synopsis"
+note = "quoted: a double-quoted column name with blanks and mixed case after OWNED BY"
+
+[[obligation]]
+id = "pg.ddl.alter-sequence.name.o085"
+kind = "identifier_class"
+required = true
+target = "<column_name>"
+anchor = "doc.sql-altersequence / Synopsis"
+note = "reserved: a reserved keyword as the column after the dot, which gram.y takes as an attr_name ColLabel"
+
+[[obligation]]
 id = "pg.ddl.alter-sequence.owner-to.o001"
 kind = "positive"
 required = true
@@ -25699,6 +25732,22 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-sequence.set-schema.o015"
+kind = "identifier_class"
+required = true
+target = "<new_schema>"
+anchor = "doc.sql-altersequence / Synopsis"
+note = "quoted: a double-quoted schema name with blanks and mixed case"
+
+[[obligation]]
+id = "pg.ddl.alter-sequence.set-schema.o016"
+kind = "identifier_class"
+required = true
+target = "<new_schema>"
+anchor = "doc.sql-altersequence / Synopsis"
+note = "reserved: a reserved keyword, unquoted, as the schema name"
 
 [[obligation]]
 id = "pg.ddl.alter-server.name.o001"
@@ -28317,6 +28366,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-table.add-column-not-collate.o057"
+kind = "option_present"
+required = true
+target = "[ <column_constraint> [ ... ] ]"
+anchor = "doc.sql-altertable / Synopsis"
+note = "several column constraints on one column"
+
+[[obligation]]
 id = "pg.ddl.alter-table.add-not-valid.o001"
 kind = "positive"
 required = true
@@ -29004,6 +29061,14 @@ required = true
 target = "<column_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.alter-table.alter.o057"
+kind = "option_present"
+required = true
+target = "[...]"
+anchor = "doc.sql-altertable / Synopsis"
+note = "several identity options in one ALTER COLUMN"
 
 [[obligation]]
 id = "pg.ddl.alter-table.alter-add-generated-as.o001"
@@ -37612,6 +37677,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-table.rename-to-only-column.o036"
+kind = "required_operand_missing"
+required = true
+target = "<column_name>"
+anchor = "doc.sql-altertable / Synopsis"
+note = "omit <column_name> with COLUMN written (without COLUMN the text is the valid RENAME TO)"
+
+[[obligation]]
 id = "pg.ddl.alter-table.replica-identity.o001"
 kind = "positive"
 required = true
@@ -44219,6 +44292,14 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "pg.ddl.alter-view.rename-to-column.o025"
+kind = "required_operand_missing"
+required = true
+target = "<column_name>"
+anchor = "doc.sql-alterview / Synopsis"
+note = "omit <column_name> with COLUMN written (without COLUMN the text is the valid RENAME TO)"
+
+[[obligation]]
 id = "pg.ddl.alter-view.reset.o001"
 kind = "positive"
 required = true
@@ -50689,13 +50770,6 @@ kind = "operand_type_class"
 required = true
 target = "<collation_version> in [ COLLATION_VERSION = <collation_version> ]"
 note = "a valid identifier"
-
-[[obligation]]
-id = "pg.ddl.create-database.o079"
-kind = "negative_neighbour"
-required = true
-target = "<collation_version> in [ COLLATION_VERSION = <collation_version> ]"
-note = "a string literal in place of <collation_version>"
 
 [[obligation]]
 id = "pg.ddl.create-database.o080"
@@ -62650,6 +62724,14 @@ required = true
 target = "<tablespace_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "pg.ddl.create-table.table-name.o142"
+kind = "negative_neighbour"
+required = true
+target = "<column_constraint>"
+anchor = "doc.sql-createtable / Synopsis"
+note = "INCLUDE in a column-level UNIQUE constraint: the page lists index_parameters there, but gram.y ColConstraintElem takes only opt_definition and OptConsTableSpace"
 
 [[obligation]]
 id = "pg.ddl.create-tablespace.o001"

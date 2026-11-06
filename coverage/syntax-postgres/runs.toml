@@ -145,3 +145,14 @@ start_state = { roles = 0, databases = 3, tablespaces = 2 }
 end_state = { roles = 0, databases = 4, tablespaces = 2 }
 auto_conf_settings = []
 repeat_run = "pg-18.6-20261106T105756952901Z"
+
+[[run]]
+run_id = "pg-18.6-20261106T113743285526Z"
+referee = "8d4f7f9b"
+isolation = "fresh_container"
+container = "sqlquack-pg-notes1a"
+container_id = "8d2856149b0b"
+start_state = { roles = 0, databases = 3, tablespaces = 2 }
+end_state = { roles = 0, databases = 4, tablespaces = 2 }
+auto_conf_settings = []
+repeat_run = "pg-18.6-20261106T113750016242Z"

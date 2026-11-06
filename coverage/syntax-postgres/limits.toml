@@ -2527,7 +2527,163 @@ anchor = "doc.sql-createprocedure / Parameters"
 sql = "CREATE PROCEDURE t1 ( ) BEGIN ATOMIC SELECT 1 ; SELECT 2 ; END"
 context = "raw"
 
+[[limit]]
+form = "pg.ddl.alter-table.rename-to-only-column"
+kind = "required_operand_missing"
+target = "<column_name>"
+note = "omit <column_name> with COLUMN written (without COLUMN the text is the valid RENAME TO)"
+anchor = "doc.sql-altertable / Synopsis"
+sql = "ALTER TABLE t1 RENAME COLUMN TO c2"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.alter-foreign-table.rename-to-only-column"
+kind = "required_operand_missing"
+target = "<column_name>"
+note = "omit <column_name> with COLUMN written (without COLUMN the text is the valid RENAME TO)"
+anchor = "doc.sql-alterforeigntable / Synopsis"
+sql = "ALTER FOREIGN TABLE t1 RENAME COLUMN TO c2"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.alter-view.rename-to-column"
+kind = "required_operand_missing"
+target = "<column_name>"
+note = "omit <column_name> with COLUMN written (without COLUMN the text is the valid RENAME TO)"
+anchor = "doc.sql-alterview / Synopsis"
+sql = "ALTER VIEW t1 RENAME COLUMN TO c2"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.alter-materialized-view.rename-to-column"
+kind = "required_operand_missing"
+target = "<column_name>"
+note = "omit <column_name> with COLUMN written (without COLUMN the text is the valid RENAME TO)"
+anchor = "doc.sql-altermaterializedview / Synopsis"
+sql = "ALTER MATERIALIZED VIEW t1 RENAME COLUMN TO c2"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.alter-sequence.name"
+kind = "identifier_class"
+target = "<column_name>"
+note = "quoted: a double-quoted column name with blanks and mixed case after OWNED BY"
+anchor = "doc.sql-altersequence / Synopsis"
+sql = "ALTER SEQUENCE t1 OWNED BY t1.\"My Col\""
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-sequence.name"
+kind = "identifier_class"
+target = "<column_name>"
+note = "reserved: a reserved keyword as the column after the dot, which gram.y takes as an attr_name ColLabel"
+anchor = "doc.sql-altersequence / Synopsis"
+sql = "ALTER SEQUENCE t1 OWNED BY t1.select"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "pg.ddl.alter-sequence.set-schema"
+kind = "identifier_class"
+target = "<new_schema>"
+note = "quoted: a double-quoted schema name with blanks and mixed case"
+anchor = "doc.sql-altersequence / Synopsis"
+sql = "ALTER SEQUENCE t1 SET SCHEMA \"My Schema\""
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-sequence.set-schema"
+kind = "identifier_class"
+target = "<new_schema>"
+note = "reserved: a reserved keyword, unquoted, as the schema name"
+anchor = "doc.sql-altersequence / Synopsis"
+sql = "ALTER SEQUENCE t1 SET SCHEMA select"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.ddl.alter-table.alter"
+kind = "option_present"
+target = "[...]"
+note = "several identity options in one ALTER COLUMN"
+anchor = "doc.sql-altertable / Synopsis"
+sql = "ALTER TABLE t1 ALTER COLUMN c1 SET GENERATED ALWAYS SET INCREMENT BY 2 RESTART WITH 5"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-table.add-column-not-collate"
+kind = "option_present"
+target = "[ <column_constraint> [ ... ] ]"
+note = "several column constraints on one column"
+anchor = "doc.sql-altertable / Synopsis"
+sql = "ALTER TABLE t1 ADD COLUMN c1 INT NOT NULL DEFAULT 1 CHECK ( c1 > 0 ) UNIQUE"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.alter-foreign-table.alter-set"
+kind = "operand_type_class"
+target = "<value>"
+note = "a valid option value: a word, number or string (gram.y def_arg), not an expression"
+anchor = "doc.sql-alterforeigntable / Synopsis"
+sql = "ALTER FOREIGN TABLE t1 ALTER COLUMN c1 SET ( n_distinct = -1 , n_distinct_inherited = 'v' )"
+context = "raw"
+
+[[limit]]
+form = "pg.ddl.create-table.table-name"
+kind = "negative_neighbour"
+target = "<column_constraint>"
+note = "INCLUDE in a column-level UNIQUE constraint: the page lists index_parameters there, but gram.y ColConstraintElem takes only opt_definition and OptConsTableSpace"
+anchor = "doc.sql-createtable / Synopsis"
+sql = "CREATE TABLE t1 ( c1 INT UNIQUE INCLUDE ( c1 ) )"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-expressions.array-constructor"
+kind = "option_present"
+target = "[ [ <expression> [, ...] ] ]"
+note = "an empty inner array, ARRAY[[]] (gram.y array_expr takes '[' ']' as an element)"
+anchor = "doc.sql-expressions / Array Constructors"
+sql = "SELECT ARRAY[[]]::INT[]"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.sql-expressions.array-constructor"
+kind = "option_present"
+target = "ARRAY[ ARRAY[ [ <expression> [, ...] ] ] [, ...] ]"
+note = "nested ARRAY[ARRAY[]] with empty inner arrays"
+anchor = "doc.sql-expressions / Array Constructors"
+sql = "SELECT ARRAY[ARRAY[]::INT[], ARRAY[]::INT[]]"
+context = "raw"
+
+[[limit]]
+form = "pg.expressions.bitstring.op-bar"
+kind = "alternative"
+target = "prefix |"
+note = "| as a prefix operator: gram.y qual_Op a_expr parses it, and operator lookup refuses it (42883), the case behind the left-operand suppressions"
+anchor = "doc.functions-bitstring / Bit String Operators"
+sql = "SELECT | B'101'"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
 # DDL: derived negatives that are valid PostgreSQL, and obligations that do not apply.
+
+[[suppress]]
+form = "pg.ddl.create-database"
+kind = "negative_neighbour"
+target = "<collation_version> in [ COLLATION_VERSION = <collation_version> ]"
+reason = "a collation version is written as a string (gram.y createdb_opt_item takes opt_boolean_or_string, and the page's value is a version string), so a string literal is the valid spelling, not a negative"
+
+[[suppress]]
+form = "pg.ddl.alter-foreign-table.alter-set"
+kind = "operand_type_class"
+target = "<value>"
+reason = "an attribute option value is a gram.y def_arg (a word, number or string), not an expression; the hand-written limit tests it as one"
+
 
 [[suppress]]
 form = "pg.ddl.alter-database.owner-to"

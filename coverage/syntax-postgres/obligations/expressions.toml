@@ -379,6 +379,14 @@ target = "<bit> #2"
 note = "a valid expression"
 
 [[obligation]]
+id = "pg.expressions.bitstring.op-bar.o010"
+kind = "alternative"
+required = true
+target = "prefix |"
+anchor = "doc.functions-bitstring / Bit String Operators"
+note = "| as a prefix operator: gram.y qual_Op a_expr parses it, and operator lookup refuses it (42883), the case behind the left-operand suppressions"
+
+[[obligation]]
 id = "pg.expressions.bitstring.op-bar-bar.o001"
 kind = "positive"
 required = true
@@ -10511,6 +10519,22 @@ id = "pg.expressions.sql-expressions.array-constructor.o018"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "pg.expressions.sql-expressions.array-constructor.o052"
+kind = "option_present"
+required = true
+target = "[ [ <expression> [, ...] ] ]"
+anchor = "doc.sql-expressions / Array Constructors"
+note = "an empty inner array, ARRAY[[]] (gram.y array_expr takes '[' ']' as an element)"
+
+[[obligation]]
+id = "pg.expressions.sql-expressions.array-constructor.o053"
+kind = "option_present"
+required = true
+target = "ARRAY[ ARRAY[ [ <expression> [, ...] ] ] [, ...] ]"
+anchor = "doc.sql-expressions / Array Constructors"
+note = "nested ARRAY[ARRAY[]] with empty inner arrays"
 
 [[obligation]]
 id = "pg.expressions.sql-expressions.array-subquery.o001"
