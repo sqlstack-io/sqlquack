@@ -64,14 +64,7 @@ impl Parser<'_> {
             }
             false => {
                 let arguments: Expression = self.aggregate_arguments(name.clone())?;
-                let properties: Vec<ObjectProperty> = self.parenthesized(|parser| {
-                    let name: Identifier = parser.name(is_col_label)?;
-                    let value: Option<Expression> = match parser.eat_char('=') {
-                        true => Some(parser.definition_value()?),
-                        false => None,
-                    };
-                    Ok(definition(name, value))
-                })?;
+                let properties: Vec<ObjectProperty> = self.definition_list()?;
                 ("", vec![arguments], properties)
             }
         };
@@ -90,6 +83,18 @@ impl Parser<'_> {
 }
 
 impl Parser<'_> {
+    /// `definition`: `( name [= def_arg], ... )`, each a property whose value is absent when bare.
+    pub(crate) fn definition_list(&mut self) -> Parsing<Vec<ObjectProperty>> {
+        self.parenthesized(|parser| {
+            let name: Identifier = parser.name(is_col_label)?;
+            let value: Option<Expression> = match parser.eat_char('=') {
+                true => Some(parser.definition_value()?),
+                false => None,
+            };
+            Ok(definition(name, value))
+        })
+    }
+
     /// `CREATE DATABASE name [WITH] createdb_opt_item...`, each option a `(name, value)` tuple.
     pub(crate) fn create_database(&mut self) -> Parsing<Expression> {
         self.expect_kw("create")?;

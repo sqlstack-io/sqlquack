@@ -160,9 +160,34 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "a TEMP sequence stays a statement gap",
+            description: "a TEMP sequence is parsed",
             sql: "CREATE TEMP SEQUENCE s",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a recursive view refuses WITH CHECK OPTION in gram.y (0A000)",
+            sql: "CREATE RECURSIVE VIEW v (a) AS SELECT 1 WITH CHECK OPTION",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: false },
+        },
+        VerdictTestCase {
+            description: "CREATE ASSERTION parses, then is refused (0A000)",
+            sql: "CREATE ASSERTION a CHECK (true)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: false },
+        },
+        VerdictTestCase {
+            description: "a CREATE that stops after a word no statement allows is refused",
+            sql: "CREATE UNIQUE",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a trigger function argument cannot be an expression",
+            sql: "CREATE TRIGGER g AFTER INSERT ON t EXECUTE FUNCTION f(1 + 1)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a foreign table needs a SERVER",
+            sql: "CREATE FOREIGN TABLE f (a int)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
             description: "COLLATE twice on one column is refused (42601)",
@@ -969,6 +994,30 @@ fn given_sql_when_parsing_strictly_then_any_parser_error_refuses_it() {
 #[test]
 fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() {
     let test_cases = [
+        ValueTestCase {
+            description: "an index without USING records btree, as gram.y's DEFAULT_INDEX_TYPE does",
+            sql: "CREATE INDEX i ON t (a)",
+            pointer: "/0/create_object/operands/1/tuple/expressions/1/identifier/name",
+            expected_json: "\"btree\"",
+        },
+        ValueTestCase {
+            description: "trigger events are kept in TRIGGER_TYPE bit order, not as written",
+            sql: "CREATE TRIGGER g AFTER DELETE OR INSERT ON t EXECUTE FUNCTION f()",
+            pointer: "/0/create_object/operands/1/tuple/expressions/1/var/this",
+            expected_json: "\"INSERT\"",
+        },
+        ValueTestCase {
+            description: "a numeric trigger argument becomes the string gram.y makes of it",
+            sql: "CREATE TRIGGER g AFTER INSERT ON t EXECUTE FUNCTION f(1)",
+            pointer: "/0/create_object/operands/3/tuple/expressions/1/function/args/0/literal/literal_type",
+            expected_json: "\"string\"",
+        },
+        ValueTestCase {
+            description: "a foreign table keeps its server",
+            sql: "CREATE FOREIGN TABLE f (a int) SERVER s",
+            pointer: "/0/create_table/properties/0/tuple/expressions/1/identifier/name",
+            expected_json: "\"s\"",
+        },
         ValueTestCase {
             description: "a bare name after TABLE continues the TABLE list, as preprocess_pubobj_list reads it",
             sql: "ALTER PUBLICATION p ADD TABLE a, b",
