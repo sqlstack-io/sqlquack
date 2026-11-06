@@ -44,7 +44,8 @@ tags = ["error"]
 
 [[case]]
 id = "t004_nan"
-description = "A FLOAT NaN, which the page says is an error. Catches: TRUE returned, as for any non-zero number"
+compile_error = true
+description = "A FLOAT NaN, which the page says is an error; Snowflake refuses the FLOAT argument when compiling. Catches: the FLOAT accepted and NaN read as TRUE, as for any non-zero number"
 columns = [{ name = "f", type = "DOUBLE" }]
 rows = [
   ["'NaN'"],
