@@ -605,6 +605,27 @@ pub const CASE: &str = "rule.case";
 pub const COALESCE: &str = "rule.coalesce";
 /// IFF.
 pub const IFF: &str = "rule.iff";
+/// VARIANCE, VAR_POP and STDDEV of a NUMBER, exact and rounded half up to the recorded scale.
+pub const VARIANCE_RULE: &str = "rule.variance";
+/// VARIANCE, VAR_POP and STDDEV of a FLOAT or text, with exact sums.
+pub const VARIANCE_FLOAT_RULE: &str = "rule.variance_float";
+/// COVAR_SAMP and COVAR_POP of NUMBER or FLOAT pairs, with exact sums.
+pub const COVARIANCE_RULE: &str = "rule.covariance";
+/// ADD_MONTHS of a DATE or timestamp: DATEADD of the rounded months, a month's last day kept.
+pub const ADD_MONTHS_RULE: &str = "rule.add_months";
+/// MONTHS_BETWEEN of DATEs and naive timestamps.
+pub const MONTHS_BETWEEN_RULE: &str = "rule.months_between";
+/// MONTHS_BETWEEN's recorded type.
+pub const MONTHS_BETWEEN_TYPE: SnowflakeType = SnowflakeType::Number {
+    precision: 27,
+    scale: 6,
+};
+/// The month MONTHS_BETWEEN divides a partial month by: 31 days, in nanoseconds.
+pub(crate) const MONTHS_BETWEEN_MONTH_NANOSECONDS: i128 = 31 * 86_400 * 1_000_000_000;
+/// The DATEADD unit ADD_MONTHS moves by.
+pub(crate) const MONTH_UNIT: &str = "MONTH";
+/// NVL2 of a non-semi-structured value and two branches that unify without reading text.
+pub const NVL2_RULE: &str = "rule.nvl2";
 /// NULLIF.
 pub const NULLIF: &str = "rule.nullif";
 /// Casts between NUMBER and FLOAT.
@@ -879,27 +900,6 @@ pub const TO_NUMBER_PAIR: &str = "to_number_to_cast";
 pub const TO_VARCHAR_PAIR: &str = "to_varchar_to_cast";
 /// TO_VARCHAR and TO_CHAR of a date or timestamp with a literal format.
 pub const TEMPORAL_TEXT_FORMAT: &str = "rule.temporal_text_format";
-/// Format fields: the Snowflake token, its strftime spelling, and whether it is a time field.
-pub const TEMPORAL_TEXT_FIELDS: &[(&str, &str, bool)] = &[
-    ("YYYY", "%Y", false),
-    ("MM", "%m", false),
-    ("DD", "%d", false),
-    ("HH24", "%H", true),
-    ("MI", "%M", true),
-    ("SS", "%S", true),
-    ("FF9", "%n", true),
-    ("FF6", "%f", true),
-    ("FF3", "%g", true),
-];
-/// The format element writing as many fraction digits as the timestamp's precision.
-pub(crate) const BARE_FRACTION: &str = "FF";
-/// What FF writes for each precision recorded: none for 0, then milli-, micro- and nanoseconds.
-pub(crate) const BARE_FRACTION_PATTERNS: &[(u8, &str)] =
-    &[(0, ""), (3, "%g"), (6, "%f"), (9, "%n")];
-/// Snowflake's TIMESTAMP_NTZ output format, YYYY-MM-DD HH24:MI:SS.FF3, as a strftime pattern.
-pub const NTZ_OUTPUT_PATTERN: &str = "%Y-%m-%d %H:%M:%S.%g";
-/// Characters a format may hold between fields, written as they are.
-pub const TEMPORAL_TEXT_SEPARATORS: &str = "-_/:. ";
 /// The pair behind converting `TO_DOUBLE` and `TRY_TO_DOUBLE` as a cast to FLOAT.
 pub const TO_DOUBLE_PAIR: &str = "to_double_to_cast";
 /// The pair behind converting `MOD(a, b)` as `a % b`.
@@ -1272,8 +1272,10 @@ pub const NULL_IF_ZERO_RULE: &str = "rule.null_if_zero";
 pub const LOGARITHM: &str = "rule.logarithm";
 /// POWER(10, n) of a whole exponent.
 pub const POWER_RULE: &str = "rule.power";
-/// The one base POWER converts, as its literal is written.
+/// The base POWER converts as the FLOAT nearest the power, as its literal is written.
 pub(crate) const POWER_BASE: &str = "10";
+/// The other POWER base converted: 2, whose whole powers a double holds exactly.
+pub(crate) const POWER_BASE_TWO: &str = "2";
 /// The natural logarithm's name, beside EXP.
 pub(crate) const LN_NAME: &str = "LN";
 /// ARRAY_SORT of one array.
@@ -1347,10 +1349,6 @@ pub const DOLLAR_STRING_KIND: &str = "dollar_string";
 pub const NULL_ARITHMETIC: &str = "rule.null_arithmetic";
 /// The precision an untyped NULL widens a sum to, as recorded.
 pub const NULL_SUM_PRECISION: u8 = 18;
-/// The pieces of a TIME format recorded through TO_VARCHAR: clock fields and separators.
-pub const CLOCK_FORMAT_FIELDS: &[&str] = &[
-    "HH24", "MI", "SS", "FF1", "FF2", "FF3", "FF4", "FF5", "FF6", ":", ".",
-];
 /// IFF, which passes either branch up as it is.
 pub const IFF_NAME: &str = "IFF";
 /// Text every converted window function holds, which a window cannot hold inside its partition.
@@ -1981,3 +1979,12 @@ pub(crate) const CORRELATED_DERIVED: &str =
 pub(crate) const AMBIGUOUS_SUFFIX: &str = "is ambiguous";
 /// A JSON-held VARIANT as a sort key, in ARRAY_SORT's recorded order of kinds.
 pub const VARIANT_ORDER_KEY: &str = "rule.variant_order_key";
+
+/// Aggregates whose unaliased column names Snowflake receipts record.
+pub(crate) const OUTPUT_NAMED_AGGREGATES: &[&str] = &["COUNT", "SUM", "MAX", "AVG"];
+/// Scalar functions whose unaliased column names Snowflake receipts record.
+pub(crate) const OUTPUT_NAMED_FUNCTIONS: &[&str] = &["LOWER", "UPPER", "COALESCE"];
+/// Arithmetic whose unaliased column names, a column then a number, receipts record.
+pub(crate) const OUTPUT_NAMED_ARITHMETIC: &[&str] = &["add", "sub", "mul", "div"];
+/// The cast target spellings whose unaliased column names receipts record.
+pub(crate) const OUTPUT_NAMED_CAST_ENDINGS: &[&str] = &[" AS INTEGER)", "::INTEGER"];

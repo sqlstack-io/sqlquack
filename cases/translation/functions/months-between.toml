@@ -1,0 +1,112 @@
+category = "translation"
+construct = "sf.functions.months-between"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_date"
+description = "The page's pairs: equal days, two month ends, and a fraction. Catches: a DATEDIFF-style integer, a fraction from real month lengths, or the month-end rule missed (1.097 for 31 Mar / 28 Feb)"
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2019-03-15'", "'2019-02-15'"],
+  ["'2019-03-31'", "'2019-02-28'"],
+  ["'2019-03-01'", "'2019-02-15'"],
+]
+query = "SELECT MONTHS_BETWEEN(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_timestamp"
+description = "Timestamps whose time of day changes the fraction, and equal days that ignore it. Catches: the time of day ignored, or applied even on equal days"
+columns = [{ name = "a", type = "TIMESTAMP_NTZ" }, { name = "b", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2019-03-01 02:00:00'", "'2019-02-15 01:00:00'"],
+  ["'2019-02-15 02:00:00'", "'2019-01-15 01:00:00'"],
+]
+query = "SELECT MONTHS_BETWEEN(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_mixed"
+description = "A DATE against a TIMESTAMP, which the page allows. Catches: an error for mixed types"
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2024-03-20'", "'2024-01-05 12:00:00'"],
+]
+query = "SELECT MONTHS_BETWEEN(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_date_expr1"
+description = "NULL first date. Catches: NULL read as a default date"
+columns = [{ name = "a", type = "DATE" }]
+rows = [
+  ["NULL"],
+  ["'2024-02-01'"],
+]
+query = "SELECT MONTHS_BETWEEN(a, '2024-01-01'::DATE) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_null_date_expr2"
+description = "NULL second date. Catches: NULL read as a default date"
+columns = [{ name = "b", type = "DATE" }]
+rows = [
+  ["NULL"],
+  ["'2024-02-01'"],
+]
+query = "SELECT MONTHS_BETWEEN('2024-01-01'::DATE, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_reversed"
+description = "An earlier first date. Catches: an absolute value"
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2019-02-15'", "'2019-03-01'"],
+]
+query = "SELECT MONTHS_BETWEEN(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t007_leap"
+description = "29 February against month ends. Catches: the leap day not treated as a month end"
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2024-03-31'", "'2024-02-29'"],
+  ["'2024-02-29'", "'2023-02-28'"],
+]
+query = "SELECT MONTHS_BETWEEN(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t008_month_ends_with_time"
+description = "Timestamps on month ends and on equal days, with times of day. Catches: the time counted when both are month ends or share a day, or the fraction taken over the month length instead of 31 days"
+columns = [{ name = "a", type = "TIMESTAMP_NTZ" }, { name = "b", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2019-03-31 23:00:00'", "'2019-02-28 01:00:00'"],
+  ["'2024-04-30 00:00:00'", "'2024-03-30 12:00:00'"],
+  ["'2024-01-31 06:00:00'", "'2024-02-29 18:00:00'"],
+  ["'2024-01-10 06:00:00'", "'2024-02-20 18:00:00'"],
+]
+query = "SELECT MONTHS_BETWEEN(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t009_long_negative"
+description = "A span of years, negative. Catches: the whole months or the fraction miscounted far apart"
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "DATE" }]
+rows = [
+  ["'2000-01-15'", "'2024-07-20'"],
+  ["'2024-07-20'", "'1999-12-31'"],
+]
+query = "SELECT MONTHS_BETWEEN(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]

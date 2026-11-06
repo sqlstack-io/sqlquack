@@ -1,0 +1,63 @@
+category = "translation"
+construct = "sf.functions.iff"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_boolean"
+description = "TRUE and FALSE conditions. Catches: the branches swapped"
+columns = [{ name = "c", type = "BOOLEAN" }]
+rows = [
+  ["TRUE"],
+  ["FALSE"],
+]
+query = "SELECT IFF(c, 'yes', 'no') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_result_type"
+description = "Branches of different scales. Catches: the type of one branch only (2 instead of 2.50)"
+columns = [{ name = "c", type = "BOOLEAN" }]
+rows = [
+  ["FALSE"],
+  ["TRUE"],
+]
+query = "SELECT IFF(c, 1, CAST(2.5 AS NUMBER(10,2))) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_condition"
+description = "A NULL condition, which the page says gives expr2. Catches: NULL returned, or expr1"
+columns = [{ name = "c", type = "BOOLEAN" }]
+rows = [
+  ["NULL"],
+  ["TRUE"],
+]
+query = "SELECT IFF(c, 'yes', 'no') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_null_expr1"
+description = "A NULL first branch selected. Catches: expr2 returned instead"
+columns = [{ name = "c", type = "BOOLEAN" }]
+rows = [
+  ["TRUE"],
+  ["FALSE"],
+]
+query = "SELECT IFF(c, NULL, 'no') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_null_expr2"
+description = "A NULL second branch selected. Catches: expr1 returned instead"
+columns = [{ name = "c", type = "BOOLEAN" }]
+rows = [
+  ["FALSE"],
+  ["TRUE"],
+]
+query = "SELECT IFF(c, 'yes', NULL) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

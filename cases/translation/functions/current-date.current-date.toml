@@ -1,0 +1,26 @@
+category = "translation"
+construct = "sf.functions.current-date.current-date"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_type"
+description = "The type, agreement with the date of CURRENT_TIMESTAMP in the UTC session, and a lower bound. Catches: a timestamp returned, or the date taken in another zone"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT TYPEOF(CURRENT_DATE()::VARIANT) AS t, CURRENT_DATE() = CURRENT_TIMESTAMP()::DATE AS same_day, CURRENT_DATE() >= '2026-01-01'::DATE AS recent FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_none"
+description = "The function takes no argument; a NULL value compared with its result gives NULL. Catches: the comparison with NULL returning FALSE, or the NULL replaced by the current value"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["NULL"],
+  ["'2026-01-01'"],
+]
+query = "SELECT ordinal, d < CURRENT_DATE() AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

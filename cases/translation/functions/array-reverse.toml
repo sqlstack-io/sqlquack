@@ -1,0 +1,26 @@
+category = "translation"
+construct = "sf.functions.array-reverse"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_mixed"
+description = "Elements of different types, including a nested array. Catches: the nested array reversed too"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[1,\"x\",null,[2,3]]'"],
+  ["'[]'"],
+]
+query = "SELECT ARRAY_REVERSE(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_array"
+description = "A NULL argument. Catches: an empty array returned"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ARRAY_REVERSE(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

@@ -78,12 +78,25 @@ constructs = ["clause:with"]
 forms = ["sf.query.with.select"]
 
 [[link]]
+constructs = ["clause:with_recursive"]
+forms = ["sf.query.with.select.syntax"]
+
+# The converter refuses WITH RECURSIVE at its WITH node, so a refusal there names that form too.
+[[link]]
+constructs = ["node:with", "clause:with_recursive"]
+forms = ["sf.query.with.select.syntax"]
+
+[[link]]
 constructs = ["clause:where"]
 forms = ["sf.query.where"]
 
 [[link]]
 constructs = ["clause:group_by"]
 forms = ["sf.query.group-by.groupitem"]
+
+[[link]]
+constructs = ["clause:group_by_all"]
+forms = ["sf.query.group-by.all"]
 
 [[link]]
 constructs = ["clause:having"]
@@ -94,12 +107,51 @@ constructs = ["clause:order_by"]
 forms = ["sf.query.order-by.orderitem"]
 
 [[link]]
+constructs = ["clause:order_by_all"]
+forms = ["sf.query.order-by.all"]
+
+# The converter refuses ORDER BY ALL at its ORDER BY node, so a refusal there names that form too.
+[[link]]
+constructs = ["node:order_by", "clause:order_by_all"]
+forms = ["sf.query.order-by.all"]
+
+[[link]]
 constructs = ["clause:qualify"]
 forms = ["sf.query.qualify.qualify", "sf.query.qualify.select-from-qualify"]
 
 [[link]]
+constructs = ["clause:sample"]
+forms = ["sf.query.sample"]
+
+# The converter refuses a sampled table at its table node, so a refusal there names SAMPLE too.
+[[link]]
+constructs = ["node:table", "clause:sample"]
+forms = ["sf.query.sample"]
+
+[[link]]
 constructs = ["clause:limit"]
 forms = ["sf.query.limit.limit"]
+
+[[link]]
+constructs = ["clause:fetch"]
+forms = ["sf.query.limit.fetch"]
+
+[[link]]
+constructs = ["clause:offset"]
+forms = ["sf.query.limit.fetch"]
+
+[[link]]
+constructs = ["clause:top"]
+forms = ["sf.query.top-n"]
+
+# The converter refuses TOP at its SELECT node, so a refusal there names TOP's form too.
+[[link]]
+constructs = ["node:select", "clause:top"]
+forms = ["sf.query.top-n"]
+
+[[link]]
+constructs = ["clause:union_distinct"]
+forms = ["sf.query.operators-query.union", "sf.query.operators-query.intersect-minus-except-union"]
 
 [[link]]
 constructs = ["node:union"]
@@ -163,7 +215,20 @@ forms = ["sf.query.join.join"]
 
 [[link]]
 constructs = ["clause:join_using"]
-forms = ["sf.query.join.join"]
+forms = ["sf.query.join.join.syntax"]
+
+# The converter refuses the merged columns of SELECT * over a USING join at the star, so a refusal there names that form too.
+[[link]]
+constructs = ["node:star", "clause:join_using"]
+forms = ["sf.query.join.join.syntax"]
+
+[[link]]
+constructs = ["join:natural"]
+forms = ["sf.query.join.join-2"]
+
+[[link]]
+constructs = ["join:natural_left"]
+forms = ["sf.query.join.join-2"]
 
 [[link]]
 constructs = ["join:as_of", "clause:match_condition"]
@@ -176,6 +241,69 @@ forms = ["sf.query.join-lateral"]
 [[link]]
 constructs = ["node:pivot"]
 forms = ["sf.query.pivot"]
+
+[[link]]
+constructs = ["node:pivot_alias"]
+forms = ["sf.query.pivot"]
+
+[[link]]
+constructs = ["node:unpivot"]
+forms = ["sf.query.unpivot"]
+
+[[link]]
+constructs = ["node:match_recognize"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+# MATCH_RECOGNIZE's own functions, which exist only inside its MEASURES and DEFINE.
+[[link]]
+constructs = ["node:match_recognize", "fn:CLASSIFIER"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
+constructs = ["node:match_recognize", "fn:MATCH_NUMBER"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
+constructs = ["node:match_recognize", "fn:MATCH_SEQUENCE_NUMBER"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
+constructs = ["node:match_recognize", "fn:FIRST"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
+constructs = ["node:match_recognize", "fn:PREV"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
+constructs = ["node:match_recognize", "fn:NEXT"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
+constructs = ["node:match_recognize", "fn:LAST"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
+constructs = ["node:resample"]
+forms = ["sf.query.resample"]
+
+# RESAMPLE's metadata functions, which exist only over a RESAMPLE clause.
+[[link]]
+constructs = ["node:resample", "fn:BUCKET_START"]
+forms = ["sf.query.resample"]
+
+[[link]]
+constructs = ["node:resample", "fn:IS_GENERATED"]
+forms = ["sf.query.resample"]
+
+[[link]]
+constructs = ["fn:IDENTIFIER"]
+forms = ["sf.expressions.identifier-literal"]
+
+# The ** spread of an array into a list of arguments.
+[[link]]
+constructs = ["node:variadic"]
+forms = ["sf.expressions.operators-expansion"]
 
 [[link]]
 constructs = ["node:values"]
@@ -249,6 +377,14 @@ forms = ["sf.expressions.operators-logical.not"]
 [[link]]
 constructs = ["node:exists"]
 forms = ["sf.expressions.operators-subquery.exists"]
+
+[[link]]
+constructs = ["node:all"]
+forms = ["sf.expressions.operators-subquery.comparisonoperator-all-any"]
+
+[[link]]
+constructs = ["node:any"]
+forms = ["sf.expressions.operators-subquery.comparisonoperator-all-any"]
 
 [[link]]
 constructs = ["node:in"]
@@ -352,6 +488,22 @@ constructs = ["cast:INT"]
 forms = ["sf.expressions.data-types-numeric.int"]
 
 [[link]]
+constructs = ["cast:BIGINT"]
+forms = ["sf.expressions.data-types-numeric.int"]
+
+[[link]]
+constructs = ["cast:SMALLINT"]
+forms = ["sf.expressions.data-types-numeric.int"]
+
+[[link]]
+constructs = ["cast:TINYINT"]
+forms = ["sf.expressions.data-types-numeric.int"]
+
+[[link]]
+constructs = ["cast:BYTEINT"]
+forms = ["sf.expressions.data-types-numeric.int"]
+
+[[link]]
 constructs = ["cast:FLOAT"]
 forms = ["sf.expressions.data-types-numeric.float"]
 
@@ -370,6 +522,35 @@ forms = ["sf.expressions.data-types-text.string"]
 [[link]]
 constructs = ["cast:BINARY"]
 forms = ["sf.expressions.data-types-text.binary"]
+
+[[link]]
+constructs = ["cast:VARBINARY"]
+forms = ["sf.expressions.data-types-text.varbinary"]
+
+[[link]]
+constructs = ["cast:CHAR"]
+forms = ["sf.expressions.data-types-text.char"]
+
+# NCHAR is a synonym the CHAR page documents.
+[[link]]
+constructs = ["cast:NCHAR"]
+forms = ["sf.expressions.data-types-text.char"]
+
+[[link]]
+constructs = ["cast:DATETIME"]
+forms = ["sf.expressions.data-types-datetime.datetime"]
+
+[[link]]
+constructs = ["cast:INTERVAL"]
+forms = ["sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"]
+
+[[link]]
+constructs = ["cast:MAP"]
+forms = ["sf.expressions.data-types-structured.map"]
+
+[[link]]
+constructs = ["cast:UUID"]
+forms = ["sf.expressions.data-types-uuid"]
 
 [[link]]
 constructs = ["cast:BOOLEAN"]
@@ -433,6 +614,10 @@ constructs = ["node:map_func"]
 forms = ["sf.expressions.data-types-semistructured.colon-subscript-dot"]
 
 [[link]]
+constructs = ["node:braced_wildcard"]
+forms = ["sf.expressions.data-types-semistructured.colon-subscript-dot"]
+
+[[link]]
 constructs = ["node:interval"]
 forms = ["sf.expressions.data-types-datetime.interval.interval-constants"]
 
@@ -469,6 +654,44 @@ forms = ["sf.expressions.bind-variables"]
 [[link]]
 constructs = ["node:parameter", "spelling:positional_column"]
 forms = ["sf.query.select.select.selecting-specific-columns"]
+
+# Casts to DECFLOAT, IPADDRESS, PERIOD and VECTOR, ROLLUP and CUBE in GROUP BY, the COLLATE operator,
+# NTH_VALUE with its FROM and NULLS clauses, and unary plus.
+[[link]]
+constructs = ["cast:DECFLOAT"]
+forms = ["sf.expressions.data-types-numeric.decfloat"]
+
+[[link]]
+constructs = ["cast:IPADDRESS"]
+forms = ["sf.expressions.data-types-ipaddress"]
+
+[[link]]
+constructs = ["cast:PERIOD"]
+forms = ["sf.expressions.data-types-period"]
+
+[[link]]
+constructs = ["cast:VECTOR"]
+forms = ["sf.expressions.data-types-vector"]
+
+[[link]]
+constructs = ["fn:ROLLUP"]
+forms = ["sf.query.group-by-rollup"]
+
+[[link]]
+constructs = ["fn:CUBE"]
+forms = ["sf.query.group-by-cube"]
+
+[[link]]
+constructs = ["node:collation"]
+forms = ["sf.functions.collate.collate.syntax"]
+
+[[link]]
+constructs = ["node:nth_value"]
+forms = ["sf.functions.nth-value"]
+
+[[link]]
+constructs = ["node:pos"]
+forms = ["sf.expressions.operators-arithmetic.unary-plus"]
 
 [[no_form]]
 constructs = ["node:column", "node:alias", "node:null", "node:boolean", "node:paren", "node:annotated"]

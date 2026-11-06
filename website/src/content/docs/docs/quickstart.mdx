@@ -1,12 +1,22 @@
 ---
 title: "Quickstart"
-description: "Build SQLQuack, check a file and convert it to DuckDB SQL."
+description: "Install SQLQuack, check a file and convert it to DuckDB SQL."
 ---
 
 ## Install
 
-SQLQuack builds from source with Rust. The repository pins its toolchain in `rust-toolchain.toml`,
-which `rustup` installs on first use.
+SQLQuack installs from PyPI with Python 3.12 or newer. The package ships the `sqlquack` command and
+the [Python](/docs/python/) library, with DuckDB's library beside them.
+
+```bash
+pip install sqlquack
+sqlquack --version
+```
+
+### Build from source
+
+To build the command line from the repository instead, use Rust. The repository pins its toolchain
+in `rust-toolchain.toml`, which `rustup` installs on first use.
 
 ```bash
 git clone https://github.com/sqlstack-io/sqlquack
@@ -28,8 +38,7 @@ To run `target/release/sqlquack` directly, point the library path at that direct
 LD_LIBRARY_PATH=target/duckdb-download/x86_64-unknown-linux-gnu/v2.0.0 target/release/sqlquack check query.sql
 ```
 
-Use `DYLD_LIBRARY_PATH` on macOS and `PATH` on Windows. For the Python package, see
-[Python](/docs/python/).
+Use `DYLD_LIBRARY_PATH` on macOS and `PATH` on Windows.
 
 ## Check a file
 
@@ -77,15 +86,21 @@ statement reads. Declare them in a [schema file](/docs/schema/):
 
 ```console
 $ sqlquack convert revenue.sql --schema schema.json --builtin-policy
-SELECT "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID", CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE" FROM "ORDERS" AS "ORDERS" WHERE ("ORDERS"."STATUS" = 'shipped') GROUP BY "ORDERS"."CUSTOMER_ID"
+SELECT
+    "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID",
+    CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE"
+FROM "ORDERS" AS "ORDERS"
+WHERE ("ORDERS"."STATUS" = 'shipped')
+GROUP BY "ORDERS"."CUSTOMER_ID"
 sqlquack convert: done, converted under the built-in default
 ```
 
 The DuckDB SQL goes to standard output and the progress lines to standard error, so
 `sqlquack convert revenue.sql … > revenue.duckdb.sql` keeps only the SQL.
 
-`--builtin-policy` refuses every known divergence. Without it, `convert` reads `sqlquack.toml`
-from the current directory, or the file `--policy` names. See [Policy and sessions](/docs/policy/).
+`convert` reads `sqlquack.toml` from the current directory, or the file `--policy` names. Without
+one, or with `--builtin-policy`, it uses the built-in policy, which refuses every known divergence.
+See [Policy and sessions](/docs/policy/).
 
 ## Next steps
 

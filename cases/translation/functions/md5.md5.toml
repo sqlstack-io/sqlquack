@@ -1,0 +1,39 @@
+category = "translation"
+construct = "sf.functions.md5.md5"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "MD5 of ASCII and multi-byte text. Catches: another digest, upper-case hex, or Latin-1 bytes for \u00e9"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'Snowflake'"],
+  ["'\u00e9'"],
+  ["'AbCd0'"],
+]
+query = "SELECT MD5(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_msg"
+description = "NULL message next to a set one. Catches: NULL hashed as an empty string"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'a'"],
+]
+query = "SELECT MD5(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t003_empty"
+description = "The empty string, which has a defined digest. Catches: NULL for the empty string"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["''"],
+]
+query = "SELECT MD5(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

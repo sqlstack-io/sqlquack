@@ -1,0 +1,53 @@
+category = "translation"
+construct = "sf.functions.startswith"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "STARTSWITH with the arguments in both orders and in another case. Catches: arguments swapped or a case-insensitive match"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'banana'", "'ban'"],
+  ["'ban'", "'banana'"],
+  ["'banana'", "'BAN'"],
+  ["'\u00e9a'", "'\u00e9'"],
+]
+query = "SELECT STARTSWITH(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_expr1"
+description = "NULL first argument. Catches: NULL read as an empty string (FALSE instead of NULL)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'a'"],
+  ["'a'", "'a'"],
+]
+query = "SELECT STARTSWITH(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t003_null_expr2"
+description = "NULL second argument. Catches: NULL read as an empty string (TRUE instead of NULL)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'abc'", "NULL"],
+  ["'abc'", "'c'"],
+]
+query = "SELECT STARTSWITH(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_empty"
+description = "An empty search string, and an empty subject. Catches: FALSE for the empty search string"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'abc'", "''"],
+  ["''", "'a'"],
+]
+query = "SELECT STARTSWITH(a, b) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

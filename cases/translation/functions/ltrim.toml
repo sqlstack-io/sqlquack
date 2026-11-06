@@ -1,0 +1,64 @@
+category = "translation"
+construct = "sf.functions.ltrim"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_characters"
+description = "LTRIM with a character set given out of order. Catches: the set read as a substring, or characters removed from the right as well"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "c", type = "VARCHAR" }]
+rows = [
+  ["'xyyxabcxy'", "'yx'"],
+  ["'$.$a.b$.'", "'.$'"],
+  ["'\u00e9a\u00e9'", "'\u00e9'"],
+]
+query = "SELECT LTRIM(a, c) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_default"
+description = "LTRIM with the default blank, beside tabs and newlines. Catches: all whitespace removed (the tab and newline kept by Snowflake)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'  ab  '"],
+  ["CHR(9) || ' ab ' || CHR(10)"],
+]
+query = "SELECT LTRIM(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_expr"
+description = "NULL string. Catches: NULL read as empty"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["' a '"],
+]
+query = "SELECT LTRIM(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_null_characters"
+description = "NULL character set. Catches: NULL read as the default blank"
+columns = [{ name = "c", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'x'"],
+]
+query = "SELECT LTRIM(' xax ', c) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_empty"
+description = "An empty character set, and a string made only of trimmed characters. Catches: an empty set read as the default blank, or NULL for a fully trimmed string"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "c", type = "VARCHAR" }]
+rows = [
+  ["' a '", "''"],
+  ["'xxx'", "'x'"],
+]
+query = "SELECT LTRIM(a, c) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

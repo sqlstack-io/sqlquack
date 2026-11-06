@@ -1,0 +1,44 @@
+category = "translation"
+construct = "sf.functions.is-char-varchar.is-varchar"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_json"
+description = "IS_VARCHAR over JSON arrays, objects, strings (one holding a date), integers, decimals, exponent numbers, booleans and a JSON null. Catches: FALSE for the date-like string, or TRUE for a number"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[1]'"],
+  ["'{\"a\":1}'"],
+  ["'\"x\"'"],
+  ["'\"2024-02-29\"'"],
+  ["'5'"],
+  ["'1.50'"],
+  ["'1.5e0'"],
+  ["'true'"],
+  ["'null'"],
+]
+query = "SELECT IS_VARCHAR(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_typed"
+description = "IS_VARCHAR over a DATE, TIME, three timestamps, BINARY, DOUBLE and NUMBER(10,2), each cast to VARIANT. Catches: TRUE for the DATE, TIME or timestamps, whose VARIANT form prints as text"
+columns = [{ name = "d", type = "DATE" }, { name = "t", type = "TIME" }, { name = "n", type = "TIMESTAMP_NTZ" }, { name = "z", type = "TIMESTAMP_TZ" }, { name = "l", type = "TIMESTAMP_LTZ" }, { name = "b", type = "BINARY" }, { name = "f", type = "DOUBLE" }, { name = "k", type = "NUMBER(10,2)" }]
+rows = [
+  ["'2024-02-29'", "'13:14:15.123'", "'2024-02-29 13:14:15.123'", "'2024-02-29 13:14:15.123 -08:00'", "'2024-02-29 13:14:15.123'", "'ABCD'", "1.5", "2.50"],
+]
+query = "SELECT IS_VARCHAR(d::VARIANT) AS d, IS_VARCHAR(t::VARIANT) AS t, IS_VARCHAR(n::VARIANT) AS n, IS_VARCHAR(z::VARIANT) AS z, IS_VARCHAR(l::VARIANT) AS l, IS_VARCHAR(b::VARIANT) AS b, IS_VARCHAR(f::VARIANT) AS f, IS_VARCHAR(k::VARIANT) AS k FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_variant_expr"
+description = "A SQL NULL, which the page says returns NULL without an error. Catches: FALSE returned"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT IS_VARCHAR(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

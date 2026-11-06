@@ -1,13 +1,13 @@
 // The playground engine and its span handling, under Node's test runner: `npm run test:engine`.
-// Needs the engine built into public/playground/engine (scripts/build_engine.sh).
+// Needs the engine built into wasm/pkg (scripts/build_engine.sh).
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
-import { initSync, analyze } from '../public/playground/engine/sqlquack_wasm.js';
+import { initSync, analyze } from '../wasm/pkg/sqlquack_wasm.js';
 import { rendered, underlined } from '../public/playground/spans.js';
 
-initSync({ module: readFileSync(new URL('../public/playground/engine/sqlquack_wasm_bg.wasm', import.meta.url)) });
+initSync({ module: readFileSync(new URL('../wasm/pkg/sqlquack_wasm_bg.wasm', import.meta.url)) });
 
 const SCHEMA = JSON.stringify({ ORDERS: [['ORDER_ID', 'NUMBER(38,0)'], ['NOTE', 'VARCHAR']] });
 
@@ -102,4 +102,18 @@ test('every example stops at the stage it is meant to, and the default translate
 	const refused = JSON.parse(analyze(EXAMPLES.refused, PAGE_SCHEMA)).translate;
 	assert.deepEqual(refused.diagnostics.map((d) => d.code), ['SQ0008']);
 	assert.ok(CAPTIONS.refused);
+});
+
+test('translated SQL is laid out one clause per line unless the compact setting asks for one line', () => {
+	const sql = "SELECT order_id, note, 'a longer literal' AS label FROM orders WHERE order_id > 1";
+	const translated = (settings) => JSON.parse(analyze(sql, SCHEMA, JSON.stringify(settings))).translate.statements[0].sql;
+	const laidOut = translated({});
+	assert.equal(
+		laidOut,
+		'SELECT\n    "ORDERS"."ORDER_ID" AS "ORDER_ID",\n    "ORDERS"."NOTE" AS "NOTE",\n    ' +
+			'\'a longer literal\' AS "LABEL"\nFROM "ORDERS" AS "ORDERS"\nWHERE ("ORDERS"."ORDER_ID" > CAST(1 AS DECIMAL(1,0)))',
+	);
+	const compact = translated({ compact: true });
+	assert.equal(compact, laidOut.replace(/\n */g, ' '));
+	assert.ok(!compact.includes('\n'));
 });

@@ -302,3 +302,36 @@ pub(crate) fn converted_files(set_variable: bool) -> Vec<ConvertedFile> {
     files.sort_by(|left, right| left.model.cmp(&right.model));
     files
 }
+
+const COMPILED_STAGING_SQL: &str = "with source as (\n\n    select * from analytics.raw.orders\n\n),\n\n\
+                                    renamed as (\n\n    select id as order_id, status from source\n\n)\n\n\
+                                    select * from renamed\n";
+const COMPILED_MART_SQL: &str = "select status, count(order_id) as orders\n\
+                                 from \"ANALYTICS\".\"DBT_PROD\".\"STG_ORDERS\"\ngroup by status\n";
+const RAW_ORDERS_SCHEMA: &str = "{\"relations\": {\"ANALYTICS.RAW.ORDERS\": [[\"ID\", \"NUMBER(38,0)\"], [\"STATUS\", \"VARCHAR\"]]}}";
+
+/// The unit-testable and strict counts of a census of dbt-compiled models, with `flags`.
+pub(crate) fn compiled_dbt_counts(flags: &[&str]) -> (Option<u64>, Option<u64>) {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let models = directory.path().join("target/compiled/shop/models");
+    std::fs::create_dir_all(models.join("staging")).expect("staging directory created");
+    std::fs::create_dir_all(models.join("marts")).expect("marts directory created");
+    std::fs::write(models.join("staging/stg_orders.sql"), COMPILED_STAGING_SQL)
+        .expect("fixture written");
+    std::fs::write(models.join("marts/order_counts.sql"), COMPILED_MART_SQL)
+        .expect("fixture written");
+    let schema = directory.path().join("schema.json");
+    std::fs::write(&schema, RAW_ORDERS_SCHEMA).expect("schema written");
+    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(["census", "--builtin-policy", "--json", "--schema"])
+        .arg(&schema)
+        .args(flags)
+        .arg(directory.path().join("target/compiled"))
+        .output()
+        .expect("sqlquack runs");
+    let report: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap_or_default();
+    (
+        report["refusals"]["convertible"].as_u64(),
+        report["refusals"]["convertible_strict"].as_u64(),
+    )
+}

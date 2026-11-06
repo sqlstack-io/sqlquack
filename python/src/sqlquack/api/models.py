@@ -76,3 +76,4 @@ class ConvertOptions:
     loud_divergences_only: bool = False
     overrides: str | os.PathLike[str] | None = None
     verified_overrides: Mapping[str, str] = field(default_factory=dict)
+    compact: bool = False

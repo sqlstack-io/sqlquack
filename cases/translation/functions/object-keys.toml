@@ -1,0 +1,37 @@
+category = "translation"
+construct = "sf.functions.object-keys"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_keys"
+description = "An object with a nested object, keys sorted for comparison. Catches: nested keys included"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'{\"b\":{\"x\":1},\"a\":2}'"],
+  ["'{}'"],
+]
+query = "SELECT ARRAY_SORT(OBJECT_KEYS(PARSE_JSON(a))) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_not_object"
+description = "A VARIANT holding an array; Snowflake raised 100071, failing to cast the array to OBJECT. Catches: the indexes returned as keys, or an empty array"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[1,2]'"],
+]
+query = "SELECT OBJECT_KEYS(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t003_null_object"
+description = "A NULL object; the page does not say; the recording decides. Catches: an empty array"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT OBJECT_KEYS(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

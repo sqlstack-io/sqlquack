@@ -1,0 +1,95 @@
+category = "translation"
+construct = "sf.query.resample"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_numeric"
+description = "The page's UNIX-time example: the missing values between 2 and 5 are generated with NULL in the other columns. Catches: no rows generated, or the generated rows given a copied value instead of NULL"
+columns = [{ name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "NUMBER(38,0)" }]
+rows = [
+  ["2", "10"],
+  ["3", "11"],
+  ["5", "13"],
+  ["7", "15"],
+]
+query = "SELECT k, v FROM input RESAMPLE(USING k INCREMENT BY 1) ORDER BY k"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_date_interval"
+description = "A DATE column resampled by one day: 2024-01-03 is generated between 2024-01-02 and 2024-01-04. Catches: the interval read in another unit, or the DATE column turned into a timestamp"
+columns = [{ name = "d", type = "DATE" }, { name = "v", type = "NUMBER(38,0)" }]
+rows = [
+  ["'2024-01-01'", "1"],
+  ["'2024-01-02'", "2"],
+  ["'2024-01-04'", "4"],
+]
+query = "SELECT d, v FROM input RESAMPLE(USING d INCREMENT BY INTERVAL '1 day') ORDER BY d"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_partition_metadata"
+description = "Gaps are filled within each partition, the partition column is kept in generated rows, IS_GENERATED() marks them and BUCKET_START() gives each row's interval start. Catches: gaps filled across partitions, the partition column NULL in generated rows, or the metadata columns missing"
+columns = [{ name = "p", type = "VARCHAR" }, { name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "NUMBER(38,0)" }]
+rows = [
+  ["'a'", "1", "10"],
+  ["'a'", "3", "30"],
+  ["'b'", "1", "100"],
+  ["'b'", "2", "200"],
+]
+query = "SELECT p, k, v, g, bucket_start FROM input RESAMPLE(USING k INCREMENT BY 1 PARTITION BY p METADATA_COLUMNS IS_GENERATED() AS g, BUCKET_START()) ORDER BY p, k"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_aligned_buckets"
+description = "The page: slices align to 1970-01-01 00:00:00, as TIME_SLICE does; for a numeric column that is read as zero, an inference, so 7 and 18 fall in the buckets starting 5 and 15 and the bucket starting 10 is missing. The page does not say what k holds in the generated row; the recording decides. Catches: slices aligned to the smallest value (7, 12, 17) instead of to zero"
+columns = [{ name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "NUMBER(38,0)" }]
+rows = [
+  ["7", "1"],
+  ["18", "2"],
+]
+query = "SELECT k, v, bucket_start FROM input RESAMPLE(USING k INCREMENT BY 5 METADATA_COLUMNS BUCKET_START()) ORDER BY bucket_start, k"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t005_interval_on_numeric"
+compile_error = true
+description = "The page's example: 009954, RESAMPLE INCREMENT BY has to be numeric type when USING parameter is numeric. Catches: the interval accepted as a number of seconds"
+columns = [{ name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "NUMBER(38,0)" }]
+rows = [
+  ["2", "10"],
+  ["4", "12"],
+]
+query = "SELECT k, v FROM input RESAMPLE(USING k INCREMENT BY INTERVAL '1 second') ORDER BY k"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t006_zero_increment"
+compile_error = true
+description = "The page: a numeric INCREMENT BY constant must be positive (greater than 0). Catches: a zero step accepted, looping or returning the input unchanged"
+columns = [{ name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "NUMBER(38,0)" }]
+rows = [
+  ["2", "10"],
+  ["4", "12"],
+]
+query = "SELECT k, v FROM input RESAMPLE(USING k INCREMENT BY 0) ORDER BY k"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t007_null"
+description = "A NULL in a value column is kept as input; the page does not say how a NULL in the USING column is treated; the recording decides. Catches: the NULL value replaced, or a NULL time placed in a bucket"
+columns = [{ name = "k", type = "NUMBER(38,0)" }, { name = "v", type = "NUMBER(38,0)" }]
+rows = [
+  ["1", "NULL"],
+  ["3", "30"],
+  ["NULL", "40"],
+]
+query = "SELECT k, v FROM input RESAMPLE(USING k INCREMENT BY 1) ORDER BY k NULLS LAST, v"
+order = "ordered"
+tags = ["null"]

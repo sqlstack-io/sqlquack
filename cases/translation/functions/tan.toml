@@ -1,0 +1,51 @@
+category = "translation"
+construct = "sf.functions.tan"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_float"
+description = "TAN of FLOAT values. Catches: SIN or COT computed, or degrees"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["0.5"],
+  ["-1"],
+  ["1.5"],
+]
+query = "SELECT TAN(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_fixed"
+description = "TAN of NUMBER(12,4), converted to FLOAT. Catches: SIN or COT computed, or degrees; or the result left fixed-point"
+columns = [{ name = "x", type = "NUMBER(12,4)" }]
+rows = [
+  ["0.7854"],
+  ["-0.2500"],
+]
+query = "SELECT TAN(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null"
+description = "TAN of NULL. Catches: NULL turned into 0 or NaN"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TAN(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_near_pole"
+description = "Near pi/2. Catches: pole handling"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1.5707963267948966"],
+  ["-1.5707"],
+]
+query = "SELECT TAN(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]

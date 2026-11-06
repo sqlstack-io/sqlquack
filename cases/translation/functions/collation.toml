@@ -1,0 +1,26 @@
+category = "translation"
+construct = "sf.functions.collation"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_collated"
+description = "COLLATION of the same string under two explicit collations. Catches: a fixed or empty answer, or the collation specification dropped or normalised (de-ci read as de)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'x'"],
+]
+query = "SELECT COLLATION(COLLATE(a, 'de-ci')) AS r, COLLATION(COLLATE(a, 'en')) AS e FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_expression"
+description = "NULL collated value. Catches: records whatever Snowflake returns for a NULL collated value ('de' or NULL)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'y'"],
+]
+query = "SELECT COLLATION(COLLATE(a, 'de')) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

@@ -1,0 +1,75 @@
+category = "translation"
+construct = "sf.functions.base64-decode-string"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "BASE64_DECODE_STRING of standard Base64 with zero, one and two padding characters. Catches: a byte-order or sign error in the decoded bytes, a dropped final group, or UTF-8 text read as Latin-1"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'SMOpbGxvIHfDtnJsZA=='"],
+  ["'fn5+Pw=='"],
+  ["'YQ=='"],
+  ["'YWI='"],
+  ["'YWJj'"],
+]
+query = "SELECT BASE64_DECODE_STRING(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_alphabet"
+description = "A custom alphabet for indexes 62 and 63 and the padding character. The constant argument is a literal per call, as Snowflake requires. Catches: the alphabet argument ignored (an error or other bytes for -_ and ~ padding)"
+columns = [{ name = "a1", type = "VARCHAR" }, { name = "a2", type = "VARCHAR" }]
+rows = [
+  ["'fn5-Pw~~'", "'fn5+Pw=='"],
+]
+query = "SELECT BASE64_DECODE_STRING(a1, '-_~') AS r1, BASE64_DECODE_STRING(a2, '+$') AS r2 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_input"
+description = "NULL input next to a set one. Catches: NULL decoded as empty instead of NULL"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'YQ=='"],
+]
+query = "SELECT BASE64_DECODE_STRING(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_null_alphabet"
+description = "NULL alphabet next to a set one. The constant argument is a literal per call, as Snowflake requires. Catches: a NULL alphabet treated as the default (a value instead of NULL)"
+columns = [{ name = "a1", type = "VARCHAR" }, { name = "a2", type = "VARCHAR" }]
+rows = [
+  ["'YQ=='", "'YQ=='"],
+]
+query = "SELECT BASE64_DECODE_STRING(a1, NULL) AS r1, BASE64_DECODE_STRING(a2, '+/=') AS r2 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_empty"
+description = "The empty string decodes to an empty value. Catches: NULL or an error for empty input"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["''"],
+  ["'YWI='"],
+]
+query = "SELECT BASE64_DECODE_STRING(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]
+
+[[case]]
+id = "t006_invalid"
+description = "Text that is not Base64. Catches: NULL (the TRY_ behaviour) where Snowflake raises an error"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'ab$c'"],
+]
+query = "SELECT BASE64_DECODE_STRING(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]

@@ -1,0 +1,50 @@
+category = "translation"
+construct = "sf.functions.concat.concat-subscript-dot"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "Three strings in order. Catches: arguments reordered or a separator inserted"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }, { name = "c", type = "VARCHAR" }]
+rows = [
+  ["'\u00e9'", "'b'", "'cd'"],
+  ["'x '", "' y'", "'z'"],
+]
+query = "SELECT a || b || c AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_binary"
+description = "Three binary values. Catches: the hex texts concatenated as a VARCHAR (the length column tells 3 bytes from 6 hex characters even when both render as hex)"
+columns = [{ name = "a", type = "BINARY" }, { name = "b", type = "BINARY" }, { name = "c", type = "BINARY" }]
+rows = [
+  ["'00'", "'FF'", "'10'"],
+]
+query = "SELECT a || b || c AS r, OCTET_LENGTH(a || b || c) AS l FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_expr"
+description = "NULL in the middle argument. Catches: NULL skipped or read as '' (Postgres CONCAT gives 'ac')"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }, { name = "c", type = "VARCHAR" }]
+rows = [
+  ["'a'", "NULL", "'c'"],
+  ["'a'", "'b'", "'c'"],
+]
+query = "SELECT a || b || c AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_empty"
+description = "Empty strings between set ones. Catches: an empty string treated as NULL (NULL instead of 'ac')"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }, { name = "c", type = "VARCHAR" }]
+rows = [
+  ["'a'", "''", "'c'"],
+  ["''", "''", "''"],
+]
+query = "SELECT a || b || c AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

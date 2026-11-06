@@ -74,6 +74,9 @@ pub struct CaseDefinition {
     /// SQL project functions the query calls, created before it; their definitions are hashed.
     #[serde(default, rename = "function")]
     pub functions: Vec<CaseFunction>,
+    /// Snowflake statements run before the SQL, in a fresh session and case schema; hashed.
+    #[serde(default)]
+    pub setup: Vec<String>,
     /// User overrides conversion uses, proven by the case's recorded result; never hashed.
     #[serde(default, rename = "override")]
     pub overrides: Vec<CaseOverride>,
@@ -198,6 +201,8 @@ pub struct LoadedCase {
     pub overrides: Vec<CaseOverride>,
     /// The Snowflake statements creating them, run before `source_sql` in a scratch schema.
     pub setup_sql: Vec<String>,
+    /// The case's setup statements, placeholders unsubstituted, run before `source_sql`.
+    pub setup: Vec<String>,
     /// Its input columns, each with its cells in row order; read by the coverage check.
     pub inputs: Vec<CaseInput>,
     /// The source SQL of each input row alone, where result rows follow input rows one for one.
@@ -257,7 +262,7 @@ pub struct HashedContent<'a> {
     /// `Some(false)` when the recording keeps no values; absent otherwise, so older hashes hold.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub values: Option<bool>,
-    /// The statements creating the case's functions; absent when there are none.
+    /// The statements creating the case's functions, then its setup; absent when there are none.
     #[serde(skip_serializing_if = "<[String]>::is_empty")]
     pub setup_sql: &'a [String],
 }

@@ -1,0 +1,87 @@
+category = "translation"
+construct = "sf.functions.previous-day"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_date"
+description = "PREVIOUS_DAY from a Friday to Friday, Monday and Sunday. Catches: the same day returned when it already is that weekday, or a weekday index off by one"
+columns = [{ name = "d", type = "DATE" }, { name = "w", type = "VARCHAR" }]
+rows = [
+  ["'2024-03-01'", "'Friday'"],
+  ["'2024-03-01'", "'mo'"],
+  ["'2024-03-01'", "'SU'"],
+]
+query = "SELECT PREVIOUS_DAY(d, w) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_day_name_forms"
+description = "Names with leading spaces, trailing text and mixed case. Catches: the full name required, or leading spaces rejected"
+columns = [{ name = "w", type = "VARCHAR" }]
+rows = [
+  ["'  tUESDAYxyz'"],
+  ["'we'"],
+  ["'Th '"],
+]
+query = "SELECT PREVIOUS_DAY('2024-02-28'::DATE, w) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_timestamp"
+description = "A timestamp input, which returns a DATE. Catches: a TIMESTAMP result keeping the time"
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2024-02-29 23:59:00'"],
+]
+query = "SELECT PREVIOUS_DAY(t, 'th') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_date_or_timestamp_expr"
+description = "NULL date. Catches: NULL read as a default date"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["NULL"],
+  ["'2024-01-01'"],
+]
+query = "SELECT PREVIOUS_DAY(d, 'mo') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_null_dow_string"
+description = "NULL day name. Catches: NULL read as a default weekday"
+columns = [{ name = "w", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'fr'"],
+]
+query = "SELECT PREVIOUS_DAY('2024-01-01'::DATE, w) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_leap"
+description = "Steps across 29 February. Catches: a skipped or doubled leap day"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-02-27'"],
+  ["'2024-03-02'"],
+]
+query = "SELECT PREVIOUS_DAY(d, 'th') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t007_bad_name"
+description = "A string that names no weekday. Catches: NULL or a default weekday instead of an error"
+columns = [{ name = "w", type = "VARCHAR" }]
+rows = [
+  ["'xx'"],
+]
+query = "SELECT PREVIOUS_DAY('2024-01-01'::DATE, w) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]

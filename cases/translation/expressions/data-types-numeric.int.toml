@@ -1,0 +1,50 @@
+category = "translation"
+construct = "sf.expressions.data-types-numeric.int"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_synonyms_wide"
+description = "A 21-digit integer cast to each spelling keeps every digit, since all are NUMBER(38, 0). Catches: BIGINT read as 64-bit, or SMALLINT, TINYINT or BYTEINT as 16 or 8 bits (overflow or wrap-around)"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'123456789012345678901'"],
+  ["'-300'"],
+]
+query = "SELECT ordinal, CAST(a AS INT) AS i, CAST(a AS INTEGER) AS ig, CAST(a AS BIGINT) AS bi, CAST(a AS SMALLINT) AS si, CAST(a AS TINYINT) AS ti, CAST(a AS BYTEINT) AS byi FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_thirty_eight_digits"
+description = "The page: the range of every integer type is -(10^38 - 1) to 10^38 - 1, so both ends cast unchanged. Catches: the value rejected or rounded through a float"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'99999999999999999999999999999999999999'"],
+  ["'-99999999999999999999999999999999999999'"],
+]
+query = "SELECT ordinal, CAST(a AS INT) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t003_past_38_digits"
+description = "The page: the integer types hold at most 38 digits, so 10^38 is out of range and the cast raises. Catches: the value kept or rounded"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'100000000000000000000000000000000000000'"],
+]
+query = "SELECT ordinal, CAST(a AS INT) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t004_null"
+description = "NULL beside a set row, cast to the type; the page gives no special rule, so standard NULL handling applies. Catches: NULL replaced by a value, or the cast raising for NULL"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'7'"],
+]
+query = "SELECT ordinal, CAST(a AS SMALLINT) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

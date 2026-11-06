@@ -23,7 +23,7 @@ use crate::conversion::_helpers::support::tree::{
 };
 use crate::conversion::constants::{
     CASE, CASE_SUBJECT, COALESCE, DECODE_RULE, DIV0_RULE, IFF, NULL_BRANCHES, NULL_IF_ZERO_RULE,
-    SEMI_STRUCTURED_HOLDING, TEXT_BRANCHES, ZERO_IF_NULL_RULE,
+    NVL2_RULE, SEMI_STRUCTURED_HOLDING, TEXT_BRANCHES, ZERO_IF_NULL_RULE,
 };
 
 /// The branches cast to their unified type, and that type; text beside other types refuses.
@@ -236,6 +236,34 @@ pub(crate) fn iff(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
             target,
         )
     })
+}
+
+/// NVL2: the second argument where the first is not NULL, else the third; text beside other types refuses.
+pub(crate) fn nvl2(
+    (tested, when_set, otherwise): (&Value, &Value, &Value),
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let _rule = site.context.log.rule(NVL2_RULE);
+    let tested = convert_expression(tested, site)?;
+    if tested.data_type == SnowflakeType::SemiStructured {
+        return Err(outside_conditions(
+            construct.clone(),
+            "NVL2 of a semi-structured value, whose JSON null no recording shows".to_owned(),
+        ));
+    }
+    let branches = [
+        convert_expression(when_set, site)?,
+        convert_expression(otherwise, site)?,
+    ];
+    let (cast_branches, target) = unified(&branches, construct, site.context)?;
+    Ok(Emitted::new(
+        format!(
+            "(CASE WHEN ({}) IS NOT NULL THEN {} ELSE {} END)",
+            tested.sql, cast_branches[0], cast_branches[1]
+        ),
+        target,
+    ))
 }
 
 /// Searched and simple CASE.

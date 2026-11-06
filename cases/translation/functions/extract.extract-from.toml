@@ -1,0 +1,89 @@
+category = "translation"
+construct = "sf.functions.extract.extract-from"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_date_parts"
+description = "Calendar and week parts of dates at year and ISO-week boundaries. Catches: dayofweek on another numbering, week by calendar year, or dayofyear 0-based, or ISO numbering for dayofweek (7 instead of 0 on the Sunday row)"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-12-30'"],
+  ["'2021-01-01'"],
+  ["'2024-02-29'"],
+  ["'2023-01-01'"],
+]
+query = "SELECT EXTRACT(year FROM d) AS year, EXTRACT(quarter FROM d) AS quarter, EXTRACT(month FROM d) AS month, EXTRACT(day FROM d) AS day, EXTRACT(dayofweek FROM d) AS dayofweek, EXTRACT(dayofweekiso FROM d) AS dayofweekiso, EXTRACT(dayofyear FROM d) AS dayofyear, EXTRACT(week FROM d) AS week, EXTRACT(weekiso FROM d) AS weekiso, EXTRACT(yearofweekiso FROM d) AS yearofweekiso FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_time_parts"
+description = "Time parts with fractional seconds. Catches: seconds rounded, or nanosecond scaled to milliseconds"
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'2024-02-29 13:07:59.123456789'"],
+  ["'1969-12-31 23:59:59.5'"],
+]
+query = "SELECT EXTRACT(hour FROM t) AS hour, EXTRACT(minute FROM t) AS minute, EXTRACT(second FROM t) AS second, EXTRACT(nanosecond FROM t) AS nanosecond, EXTRACT(epoch_second FROM t) AS epoch_second, EXTRACT(epoch_millisecond FROM t) AS epoch_millisecond FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_timestamp_tz"
+description = "Parts of a TIMESTAMP_TZ, including its offset and epoch. Catches: parts from the UTC instant instead of the wall clock, timezone_hour sign flipped, or epoch from the wall clock"
+columns = [{ name = "t", type = "TIMESTAMP_TZ" }]
+rows = [
+  ["'2024-12-31 23:30:00.250 -0800'"],
+  ["'2024-07-01 00:15:00 +0530'"],
+]
+query = "SELECT EXTRACT(year FROM t) AS year, EXTRACT(day FROM t) AS day, EXTRACT(hour FROM t) AS hour, EXTRACT(minute FROM t) AS minute, EXTRACT(timezone_hour FROM t) AS timezone_hour, EXTRACT(timezone_minute FROM t) AS timezone_minute, EXTRACT(epoch_second FROM t) AS epoch_second FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_time"
+description = "Parts of a TIME. Catches: an error for a TIME, or seconds rounded (46)"
+columns = [{ name = "t", type = "TIME" }]
+rows = [
+  ["'18:30:45.75'"],
+]
+query = "SELECT EXTRACT(hour FROM t) AS hour, EXTRACT(minute FROM t) AS minute, EXTRACT(second FROM t) AS second FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t006_null_date_interval_time_or_timestamp_expr"
+description = "NULL next to a set date. Catches: NULL read as a default date"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["NULL"],
+  ["'2024-01-02'"],
+]
+query = "SELECT EXTRACT(year FROM d) AS year FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t007_leap"
+description = "Day of year around 29 February. Catches: a 365-day year in 2024"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'2024-12-31'"],
+  ["'2023-12-31'"],
+]
+query = "SELECT EXTRACT(dayofyear FROM d) AS dayofyear, EXTRACT(day FROM d) AS day FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t008_pre_epoch"
+description = "Epoch parts before 1970. Catches: a truncation toward zero instead of floor for negative epochs"
+columns = [{ name = "t", type = "TIMESTAMP_NTZ" }]
+rows = [
+  ["'1969-12-31 23:59:59.900'"],
+  ["'1900-01-01 00:00:00'"],
+]
+query = "SELECT EXTRACT(epoch_second FROM t) AS epoch_second, EXTRACT(epoch_millisecond FROM t) AS epoch_millisecond FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]

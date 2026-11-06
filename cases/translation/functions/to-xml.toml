@@ -1,0 +1,37 @@
+category = "translation"
+construct = "sf.functions.to-xml"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_round_trip"
+description = "An XML document parsed and written back. Catches: attributes or empty elements lost"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'<r><a id=\"1\">1.50</a><a>x</a><b/></r>'"],
+]
+query = "SELECT TO_XML(PARSE_XML(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_generated"
+description = "A single-key object and a number, which get generated tags. Catches: the JSON text returned unchanged"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'{\"k\":[1,\"x\"]}'"],
+  ["'5'"],
+]
+query = "SELECT TO_XML(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_expression"
+description = "A SQL NULL, which the page says gives NULL. Catches: an empty element returned"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT TO_XML(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

@@ -7,7 +7,7 @@ use sqlquack_core::diagnostics::models::Diagnostic;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_evidence::cases::main::load_cases::load_cases;
 use sqlquack_evidence::cases::models::LoadedCase;
-use sqlquack_policy::policy::constants::{SESSION_TIME_ZONE, TIMEZONE_PARAMETER};
+use sqlquack_policy::policy::constants::{POLICY_FILE_NAME, SESSION_TIME_ZONE, TIMEZONE_PARAMETER};
 use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_policy::policy::models::{DivergenceFailure, DivergenceMode, Policy};
 
@@ -32,15 +32,19 @@ pub(crate) fn load_evidence(paths: &EvidencePaths) -> Result<Evidence, String> {
     Ok(Evidence { policy, cases })
 }
 
-/// The policy at `path`, or none when `builtin` asks for the default; a missing file is an error.
-pub(crate) fn chosen_policy(path: &Path, builtin: bool) -> Result<Option<Policy>, String> {
-    if builtin {
-        return Ok(None);
-    }
+/// The `--policy` file, else an existing `sqlquack.toml`, else none (the built-in policy).
+pub(crate) fn chosen_policy(path: Option<&Path>, builtin: bool) -> Result<Option<Policy>, String> {
+    let default = Path::new(POLICY_FILE_NAME);
+    let path = match (builtin, path) {
+        (true, _) => return Ok(None),
+        (false, Some(path)) => path,
+        (false, None) if default.is_file() => default,
+        (false, None) => return Ok(None),
+    };
     if !path.is_file() {
         return Err(format!(
-            "no policy file at {}; pass --policy <file>, or --builtin-policy to refuse every known \
-             divergence",
+            "no policy file at {}; pass --policy with an existing file, or leave --policy out to \
+             use the built-in policy, which refuses every known divergence",
             path.display()
         ));
     }
@@ -123,11 +127,15 @@ fn divergence_help(
 ) -> String {
     let Some(policy) = policy else {
         return format!(
-            "--builtin-policy refuses every known divergence; pass --policy with a policy file \
+            "the built-in policy refuses every known divergence; pass --policy with a policy file \
              that allows `{id}`, such as the repository's sqlquack.toml"
         );
     };
-    let file = arguments.policy.display();
+    let file = arguments
+        .policy
+        .as_deref()
+        .unwrap_or(Path::new(POLICY_FILE_NAME))
+        .display();
     let Some(divergence) = policy.divergences.get(id) else {
         return format!(
             "{file} has no [divergences.{id}]; copy it from the repository's sqlquack.toml"

@@ -1,0 +1,64 @@
+category = "translation"
+construct = "sf.functions.any-value.any-value"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_varchar"
+description = "Groups whose rows hold one value each (repeated), so any choice gives it. Catches: a value from another group, or the grouping column returned"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "VARCHAR" }]
+rows = [
+  ["'p'", "'x'"],
+  ["'q'", "'y'"],
+  ["'p'", "'x'"],
+]
+query = "SELECT g, ANY_VALUE(x) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_date"
+description = "A DATE value. Catches: a different type returned"
+columns = [{ name = "x", type = "DATE" }]
+rows = [
+  ["'2024-02-29'"],
+  ["'2024-02-29'"],
+]
+query = "SELECT ANY_VALUE(x) AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_distinct"
+description = "DISTINCT, which has no effect. Catches: DISTINCT rejected"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["4"],
+  ["4"],
+]
+query = "SELECT ANY_VALUE(DISTINCT x) AS r FROM input"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "t004_null_expr1"
+description = "A group of only NULL, beside a group with a value. Catches: an error or a value from another group"
+columns = [{ name = "g", type = "VARCHAR" }, { name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["'p'", "NULL"],
+  ["'q'", "3"],
+  ["'p'", "NULL"],
+]
+query = "SELECT g, ANY_VALUE(x) AS r FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_empty_input"
+description = "No rows. Catches: an error instead of NULL"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT ANY_VALUE(x) AS r FROM input WHERE ordinal < 0"
+order = "ordered"
+tags = ["empty-input"]

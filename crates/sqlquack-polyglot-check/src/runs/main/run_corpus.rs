@@ -60,7 +60,14 @@ pub fn run_corpus(entries: &[CorpusEntry], expected: &ExpectedDifferences) -> Ru
                 let rejection = expected.rejection_for(&entry.sql, &dialect, &sqlquack);
                 let kept_quoting = expected.kept_quoting_for(&entry.sql, &polyglot, &sqlquack);
                 let kept_node = expected.kept_node_for(&entry.sql, &polyglot, &sqlquack);
-                let kept_field = expected.kept_field_for(&entry.sql, &polyglot, &sqlquack);
+                let kept_field = expected
+                    .kept_field_for(&entry.sql, &polyglot, &sqlquack)
+                    .map(|entry| entry.id.clone())
+                    .or_else(|| {
+                        expected
+                            .kept_all_for(&entry.sql, &polyglot, &sqlquack)
+                            .map(|entry| entry.id.clone())
+                    });
                 let structured = expected.structured_for(&entry.sql, &polyglot, &sqlquack);
                 match (
                     fix,
@@ -84,10 +91,7 @@ pub fn run_corpus(entries: &[CorpusEntry], expected: &ExpectedDifferences) -> Ru
                         *summary.kept_nodes.entry(kept_node.id.clone()).or_default() += 1;
                     }
                     (None, None, None, None, Some(kept_field), _) => {
-                        *summary
-                            .kept_fields
-                            .entry(kept_field.id.clone())
-                            .or_default() += 1;
+                        *summary.kept_fields.entry(kept_field).or_default() += 1;
                     }
                     (None, None, None, None, None, Some(structured)) => {
                         *summary.structured.entry(structured.id.clone()).or_default() += 1;

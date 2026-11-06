@@ -1,0 +1,66 @@
+# The names Snowflake gives select items without an alias: the first thing a reader types, as in
+# SELECT COUNT(*) FROM orders. The recorded column names are the receipts for naming them.
+category = "relational"
+construct = "node:alias"
+session_profile = "utc-v1"
+
+[[case]]
+id = "unaliased_aggregates"
+description = "Unaliased aggregates, written in upper, lower and mixed case and with inner spaces, over rows with NULLs and duplicates."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["'a'", "1.50"],
+  ["'a'", "1.50"],
+  ["'b'", "NULL"],
+  ["NULL", "-2.25"],
+]
+query = "SELECT COUNT(*), count(n), Count( DISTINCT g ), SUM(n), max(g), avg( n ) FROM input"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "unaliased_group_count"
+description = "A grouped column beside an unaliased COUNT(*), as an exploratory query writes it."
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["'a'"],
+  ["'a'"],
+  ["NULL"],
+]
+query = "SELECT g, COUNT(*) FROM input GROUP BY g ORDER BY g"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "unaliased_over_no_rows"
+description = "Unaliased aggregates over no rows still name their columns."
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.00"],
+]
+query = "SELECT COUNT(*), SUM(n) FROM input WHERE n > 5"
+order = "ordered"
+tags = ["empty-input"]
+
+[[case]]
+id = "unaliased_literals"
+description = "Unaliased literals: integers, a negative, a decimal, an exponent, text in mixed case, NULL and booleans."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [
+  ["1"],
+]
+query = "SELECT 1, -2, 1.50, 1e3, 'MiXeD text', NULL, TRUE, false FROM input"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "unaliased_expressions"
+description = "Unaliased arithmetic with and without spaces, function calls, casts, a qualified and a quoted column, and an expression across two lines."
+columns = [{ name = "g", type = "VARCHAR" }, { name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["'Ab'", "2.00"],
+  ["NULL", "NULL"],
+]
+query = "SELECT n + 1, n*2, lower(g), UPPER( g ), g || 'x', CAST(n AS INTEGER), n::INTEGER, COALESCE(n, 0), input.n - 1, \"N\" / 2, n\n  + 3 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

@@ -44,13 +44,16 @@ fn percent(part: usize, whole: usize) -> String {
 
 fn tally_line(name: &str, tally: &FormTally) -> String {
     format!(
-        "{name}: {} of {} translatable forms match ({}); {} syntax only, {} refused, {} differ, \
-         {} unmeasured; {} of {} catalogued forms not translatable",
+        "{name}: {} of {} translatable forms match ({}); {} syntax only, {} refused, {} with unmet \
+         obligations, {} with none declared, {} differ, {} unmeasured; {} of {} catalogued forms \
+         not translatable",
         tally.matching,
         tally.translatable,
         percent(tally.matching, tally.translatable),
         tally.syntax_only,
         tally.refused,
+        tally.unmet_obligations,
+        tally.no_obligations,
         tally.differs,
         tally.unmeasured,
         tally.not_translatable,
@@ -91,6 +94,16 @@ fn report_lines(report: &ResultsReport) -> Vec<String> {
                 .map(|(outcome, count)| format!("{outcome:?} {count}"))
                 .collect::<Vec<_>>()
                 .join(", ")
+        ),
+        format!(
+            "obligations: {} declared, {} met, {} unmet, {} held, {} unmeasured; a form matches only \
+             when every required obligation is met; {} recorded translation cases cite none",
+            report.obligations.declared,
+            report.obligations.met,
+            report.obligations.unmet,
+            report.obligations.held,
+            report.obligations.unmeasured,
+            report.uncited_cases.len(),
         ),
         tally_line("total", &report.forms),
     ];
@@ -187,12 +200,11 @@ pub(crate) fn results(
         statements.display()
     ));
     let coverage = load_coverage(&common.root).map_err(|problems| fail(&problems))?;
-    let directory: PathBuf = common
-        .root
-        .parent()
-        .unwrap_or(Path::new("."))
-        .join(TRANSLATION_DIR);
-    let files = load_results_files(&directory, &coverage).map_err(|problems| fail(&problems))?;
+    let coverage_root: &Path = common.root.parent().unwrap_or(Path::new("."));
+    let directory: PathBuf = coverage_root.join(TRANSLATION_DIR);
+    let repository: &Path = coverage_root.parent().unwrap_or(Path::new("."));
+    let files = load_results_files((&directory, repository), &coverage)
+        .map_err(|problems| fail(&problems))?;
     let recorded: StatementsFile = read_json(statements).map_err(|problem| fail(&[problem]))?;
     let report =
         measure_results(&coverage, &files, &recorded).map_err(|problems| fail(&problems))?;

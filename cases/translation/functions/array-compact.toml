@@ -1,0 +1,40 @@
+category = "translation"
+construct = "sf.functions.array-compact"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_json_null"
+description = "JSON null beside an empty array, an empty object, 0, false and an empty string. Catches: the empty containers, 0, false or the empty string removed as well, or the JSON null kept"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[1,null,[],{},0,false,\"\"]'"],
+  ["'[null,null]'"],
+]
+query = "SELECT ARRAY_COMPACT(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_sql_null"
+description = "An undefined element (a SQL NULL passed to ARRAY_CONSTRUCT) between values. Catches: the undefined element kept"
+columns = [{ name = "x", type = "NUMBER(38,0)" }]
+rows = [
+  ["NULL"],
+  ["2"],
+]
+query = "SELECT ARRAY_COMPACT(ARRAY_CONSTRUCT(1, x, 3)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+expected_divergence = "json_fidelity"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null_array1"
+description = "A NULL argument. Catches: an empty array returned"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'[1]'"],
+]
+query = "SELECT ARRAY_COMPACT(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

@@ -1,0 +1,51 @@
+category = "translation"
+construct = "sf.functions.asinh"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_float"
+description = "ASINH of FLOAT values. Catches: ACOSH computed"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1"],
+  ["-2.5"],
+  ["0"],
+]
+query = "SELECT ASINH(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_fixed"
+description = "ASINH of NUMBER(12,4), converted to FLOAT. Catches: ACOSH computed; or the result left fixed-point"
+columns = [{ name = "x", type = "NUMBER(12,4)" }]
+rows = [
+  ["0.5000"],
+  ["-3.0000"],
+]
+query = "SELECT ASINH(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_null"
+description = "ASINH of NULL. Catches: NULL turned into 0 or NaN"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ASINH(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t004_large"
+description = "Large arguments. Catches: precision loss in the log formula"
+columns = [{ name = "x", type = "FLOAT" }]
+rows = [
+  ["1e300"],
+  ["-1e300"],
+]
+query = "SELECT ASINH(x) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]

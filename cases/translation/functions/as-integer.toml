@@ -1,0 +1,52 @@
+category = "translation"
+construct = "sf.functions.as-integer"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_match"
+description = "Integers, negative and beyond 32 bits. Catches: values wrapped to 32 bits, or the sign lost"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'42'"],
+  ["'-7'"],
+  ["'9007199254740993'"],
+]
+query = "SELECT AS_INTEGER(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_mismatch"
+description = "A string holding digits and a boolean. Catches: text parsed as an integer, or true read as 1"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'\"42\"'"],
+  ["'true'"],
+]
+query = "SELECT AS_INTEGER(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_fraction"
+description = "Decimals with and without a fractional part; the page does not say whether they count as INTEGER; the recording decides. Catches: a fraction truncated or rounded where Snowflake returns NULL, or the reverse"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'1.5'"],
+  ["'2.0'"],
+]
+query = "SELECT AS_INTEGER(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_variant_expr"
+description = "A SQL NULL and a JSON null; the page returns NULL for a NULL argument and for a type that does not match. Catches: the JSON null passed through as a value, or an error"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+  ["'null'"],
+]
+query = "SELECT AS_INTEGER(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]

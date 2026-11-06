@@ -1,0 +1,79 @@
+category = "translation"
+construct = "sf.functions.ilike-any"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_patterns"
+description = "ILIKE ANY where one, both or neither pattern matches. Catches: ANY and ALL confused (one-of-two matching gives TRUE for ANY, FALSE for ALL) or an unanchored match"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }, { name = "r", type = "VARCHAR" }]
+rows = [
+  ["'abc'", "'a%'", "'%z'"],
+  ["'abz'", "'a%'", "'%z'"],
+  ["'xbc'", "'a%'", "'%z'"],
+  ["'b'", "'a%'", "'%b%'"],
+  ["'xab'", "'a%'", "'%z'"],
+]
+query = "SELECT a ILIKE ANY (p, r) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_case"
+description = "Patterns in another case. Catches: case sensitivity reversed (FALSE for ABC)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }, { name = "r", type = "VARCHAR" }]
+rows = [
+  ["'ABC'", "'a%'", "'%c'"],
+  ["'\u00c9a'", "'\u00e9%'", "'%A'"],
+]
+query = "SELECT a ILIKE ANY (p, r) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_escape"
+description = "An escape character before %. Catches: the escape ignored (50 matches 5!%)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }, { name = "r", type = "VARCHAR" }]
+rows = [
+  ["'5%'", "'5!%'", "'x'"],
+  ["'50'", "'5!%'", "'x'"],
+]
+query = "SELECT a ILIKE ANY (p, r) ESCAPE '!' AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null_subject"
+description = "NULL subject. Catches: NULL read as an empty string (TRUE against %)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }, { name = "r", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'%'", "'x'"],
+  ["''", "'%'", "'x'"],
+]
+query = "SELECT a ILIKE ANY (p, r) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_null_pattern"
+description = "One NULL pattern beside a matching and a non-matching one. Catches: a NULL pattern making the result NULL even when the other pattern matches, or NULL matching NULL"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }, { name = "r", type = "VARCHAR" }]
+rows = [
+  ["'abc'", "'a%'", "NULL"],
+  ["'xyz'", "'a%'", "NULL"],
+  ["NULL", "NULL", "'a'"],
+]
+query = "SELECT a ILIKE ANY (p, r) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t006_empty"
+description = "An empty subject against an empty and a % pattern. Catches: the empty pattern matching a non-empty subject"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "p", type = "VARCHAR" }, { name = "r", type = "VARCHAR" }]
+rows = [
+  ["''", "''", "'%'"],
+  ["'a'", "''", "''"],
+]
+query = "SELECT a ILIKE ANY (p, r) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary", "empty"]

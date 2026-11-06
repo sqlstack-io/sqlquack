@@ -1,0 +1,62 @@
+category = "translation"
+construct = "sf.functions.array-cat"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_order_duplicates"
+description = "Arrays with a value in both, in an order that shows which comes first. Catches: array2 placed first, or the shared value de-duplicated"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'[1,2]'", "'[3,1]'"],
+  ["'[\"b\"]'", "'[\"a\",\"b\"]'"],
+]
+query = "SELECT ARRAY_CAT(PARSE_JSON(a), PARSE_JSON(b)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_nested"
+description = "Arrays whose elements are arrays. Catches: one level of nesting flattened"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'[[1]]'", "'[[2],3]'"],
+]
+query = "SELECT ARRAY_CAT(PARSE_JSON(a), PARSE_JSON(b)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_empty_array"
+description = "An empty array on either side. Catches: NULL returned for an empty array"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'[]'", "'[1]'"],
+  ["'[1]'", "'[]'"],
+  ["'[]'", "'[]'"],
+]
+query = "SELECT ARRAY_CAT(PARSE_JSON(a), PARSE_JSON(b)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["empty-input"]
+
+[[case]]
+id = "t004_null_array1"
+description = "A NULL array on either side. Catches: NULL read as an empty array (the other array returned)"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["NULL", "'[1]'"],
+  ["'[1]'", "NULL"],
+]
+query = "SELECT ARRAY_CAT(PARSE_JSON(a), PARSE_JSON(b)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t005_object"
+description = "An OBJECT where an array is needed. Catches: the object treated as a one-element array"
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }]
+rows = [
+  ["'{\"k\":1}'", "'[1]'"],
+]
+query = "SELECT ARRAY_CAT(PARSE_JSON(a), PARSE_JSON(b)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]

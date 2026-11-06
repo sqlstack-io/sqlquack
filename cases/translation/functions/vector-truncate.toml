@@ -1,0 +1,37 @@
+category = "translation"
+construct = "sf.functions.vector-truncate"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_truncate"
+description = "Truncation to 2 elements, which the page says are not normalised. Catches: the result normalised, or the last elements kept"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[3,4,12]'"],
+]
+query = "SELECT VECTOR_TRUNCATE(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(FLOAT, 3)), 2)::ARRAY AS r FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_too_long"
+compile_error = true
+description = "A dimension larger than the vector, which the page says is an error; Snowflake refuses it when compiling. Catches: the vector returned unchanged, or padded"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'[3,4,12]'"],
+]
+query = "SELECT VECTOR_TRUNCATE(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(FLOAT, 3)), 4)::ARRAY AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t003_null_vector"
+description = "A NULL vector with a constant dimension, which Snowflake requires; the page says NULL gives NULL. Catches: an error, or an empty vector returned"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT VECTOR_TRUNCATE(CAST(PARSE_JSON(a)::ARRAY AS VECTOR(FLOAT, 3)), 2) IS NULL AS r FROM input"
+order = "ordered"
+tags = ["null"]

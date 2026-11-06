@@ -1,0 +1,27 @@
+category = "translation"
+construct = "sf.functions.st-dimension"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_types"
+description = "A point, a line string and a polygon, as GEOGRAPHY and GEOMETRY. Catches: the number of coordinates, or a fixed value"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["'POINT(10 20)'"],
+  ["'LINESTRING(0 0,1 2,3 4)'"],
+  ["'POLYGON((0 0,10 0,10 10,0 10,0 0))'"],
+]
+query = "SELECT ordinal, ST_DIMENSION(TO_GEOGRAPHY(v)) AS g, ST_DIMENSION(TO_GEOMETRY(v)) AS m FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_null_geography_or_geometry_expression"
+description = "A NULL shape, which the page says gives NULL. Catches: 0 returned"
+columns = [{ name = "v", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ST_DIMENSION(TO_GEOGRAPHY(v)) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

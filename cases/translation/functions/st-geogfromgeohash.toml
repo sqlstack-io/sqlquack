@@ -1,0 +1,58 @@
+category = "translation"
+construct = "sf.functions.st-geogfromgeohash"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_cell"
+description = "The cell of ezs42 contains a point inside it and not points just east of it or at the swapped coordinates. Catches: longitude and latitude swapped, or a point returned instead of the cell"
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["'ezs42'"],
+]
+query = "SELECT ST_CONTAINS(ST_GEOGFROMGEOHASH(g), ST_MAKEPOINT(-5.6, 42.6)) AS inside, ST_CONTAINS(ST_GEOGFROMGEOHASH(g), ST_MAKEPOINT(-5.55, 42.6)) AS east, ST_CONTAINS(ST_GEOGFROMGEOHASH(g), ST_MAKEPOINT(42.6, -5.6)) AS swapped FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_precision"
+description = "A longer geohash cut to 5 characters gives the WKT of the 5-character cell, and uncut gives other WKT. Catches: the precision ignored, or counted from the end"
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["'ezs42e44'"],
+]
+query = "SELECT (ST_ASWKT(ST_GEOGFROMGEOHASH(g, 5)) = ST_ASWKT(ST_GEOGFROMGEOHASH('ezs42'))) AS cut, (ST_ASWKT(ST_GEOGFROMGEOHASH(g)) = ST_ASWKT(ST_GEOGFROMGEOHASH('ezs42'))) AS uncut FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_precision_min"
+description = "Precision 1, the smallest the page allows, gives the WKT of the one-character cell. Catches: precision 1 rejected, or read as the whole hash"
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["'ezs42'"],
+]
+query = "SELECT (ST_ASWKT(ST_GEOGFROMGEOHASH(g, 1)) = ST_ASWKT(ST_GEOGFROMGEOHASH('e'))) AS one FROM input"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_precision_zero"
+description = "Precision 0, below the range of 1 to 20 that the page allows. Catches: an empty or whole-world shape returned"
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["'ezs42'"],
+]
+query = "SELECT ST_ASWKT(ST_GEOGFROMGEOHASH(g, 0)) AS r FROM input"
+order = "ordered"
+tags = ["error"]
+
+[[case]]
+id = "t005_null_geohash"
+description = "A NULL geohash; the page does not say; the recording decides. Catches: an error, or an empty shape returned"
+columns = [{ name = "g", type = "VARCHAR" }]
+rows = [
+  ["NULL"],
+]
+query = "SELECT ST_GEOGFROMGEOHASH(g) IS NULL AS n FROM input"
+order = "ordered"
+tags = ["null"]

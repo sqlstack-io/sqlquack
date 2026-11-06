@@ -10,7 +10,8 @@ with a precise reason: the construct, where it is, and why.
 
 **Status: early.** A first set of rules converts the relational core, exact NUMBER arithmetic,
 comparisons, conditionals, casts, basic string functions, aggregates and window functions;
-everything else is refused. What works today:
+everything else is refused, or stopped by a declared guard where DuckDB's result would differ.
+What works today:
 
 - parsing Snowflake SQL with SQLQuack's own parser, derived from
   [polyglot](https://github.com/sqlstack-io/polyglot), which keeps every call as written, and
@@ -106,7 +107,7 @@ A `VALUES` list of more than 1,000 rows is refused for now.
 session parameters yet and convert under `utc-v1`.
 
 `convert`, `function`, `census` and `index` read `sqlquack.toml` (or `--policy`); without one they
-exit 2 unless `--builtin-policy` asks for the built-in default, which refuses every known divergence.
+use the built-in policy, which refuses every known divergence, as `--builtin-policy` asks for.
 They share the policy flags (`--policy`, `--builtin-policy`, `--strict`, `--utc-session`,
 `--confirm-declared-offsets`, `--python-runtime` and `--loud-divergences-only`, which relies only
 on divergences whose converted SQL raises rather than returns another value). Every command with a report takes
@@ -114,15 +115,32 @@ on divergences whose converted SQL raises rather than returns another value). Ev
 
 HASH is refused by default: the converted SQL computes DuckDB's hash, which is consistent within one
 run but never Snowflake's value. A project that relies on HASH only for joins, grouping,
-deduplication or change detection can opt in by setting `default = "warn"` under
-`[divergences.hash]` in its `sqlquack.toml`.
+deduplication or change detection can opt in. A policy file is complete on its own, so start from
+this repository's [sqlquack.toml](sqlquack.toml): a file holding only `[divergences.hash]` is
+rejected, because the comparator, session profiles and edge-case tables are required. Copy it into
+the directory you run `sqlquack` from, and change `default` in its existing `[divergences.hash]`
+table from `"refuse"` to `"warn"`:
+
+```console
+$ cp path/to/sqlquack/sqlquack.toml .
+$ sed -i.bak '/^\[divergences.hash\]/,/^$/ s/^default = "refuse"/default = "warn"/' sqlquack.toml
+$ grep -A3 '^\[divergences.hash\]' sqlquack.toml
+[divergences.hash]
+constructs = ["fn:HASH"]
+default = "warn"
+strict = "refuse"
+```
+
+A divergence the file leaves out is refused.
 
 `function` converts a SQL project function's body, read from a file or from standard input with
 `-`, and prints the macro as JSON. A refused body prints `{"converted": false, "name": …,
 "refusals": [diagnostics]}` instead, with the same diagnostics on standard error.
 
-`convert`, `function`, `census` and `index` exit 0 when they succeed, 1 when something is refused,
-and 2 when they cannot run: bad arguments, an unreadable file, or input without SQL.
+`convert` and `function` exit 0 when they succeed, 1 when something is refused, and 2 when they
+cannot run: bad arguments, an unreadable file, or input without SQL. `census` and `index` report
+refused files rather than failing on them: they exit 0 once the report is printed, and 2 when they
+cannot run.
 
 ## Census
 
@@ -182,10 +200,11 @@ result = sqlquack.convert(
 )
 ```
 
-The `sqlquack` package (in `python/`, built with `make python-wheel`) runs the same code as the
-command line. `check` and `convert` return frozen results with typed `Diagnostic`s, the text the
-command line renders, and, for `convert`, its exact `--json` report. `ConvertOptions` has one field
-per `convert` flag. Where the command line exits 2, they raise `SqlQuackError`.
+The `sqlquack` package (in `python/`, built with `make python-wheel`) needs Python 3.12 or newer and
+runs the same code as the command line. `check` and `convert` return frozen results with typed
+`Diagnostic`s, the text the command line renders, and, for `convert`, its exact `--json` report.
+`ConvertOptions` has one field per `convert` flag. Where the command line exits 2, they raise
+`SqlQuackError`.
 
 ## Evidence
 
@@ -217,33 +236,23 @@ See [docs/architecture.md](docs/architecture.md).
 
 ## Development
 
-`make check-ci` runs every static gate (rustfmt, clippy, fensu, ruff, ty and the append-only
-evidence guard) and `make test` runs the tests. CI runs both with `RECORDER=0`, which leaves the
-recorder out.
-
-`make check-merge RECORDER=0` is what a merge to main must pass on its exact head: the static gate
-and the Rust tests.
-
-`make gate` runs everything CI runs: the static gate, the tests, the replay of every recorded case,
-the exact parser check and timed conversion over DuckShop and DuckShop 10K, and a fuzz smoke run.
-It needs a nightly toolchain with `cargo-fuzz` for the fuzz step, and fetches and compiles the
-pinned DuckShop projects itself on first use (`make duckshop-compiled`, pinned by `SQLBUILD_REF`
-and `SQLBUILD_VERSION`). Run it with `RECORDER=0 UV_NO_SYNC=1` in a clean checkout of the commit:
+Set up the Python tooling once, without the Snowflake recorder:
 
 ```console
 $ uv sync --locked --no-group recorder
-$ RECORDER=0 UV_NO_SYNC=1 make gate VERIFY_FLAGS="--require-verified --strict-errors"
 ```
 
-`make duckshop-measure DUCKSHOP_RESULTS=<dir>` measures DuckShop with the checkout's own binary
-and `sqlquack.toml`. It runs the compiled unit tests on DuckDB, then converts each model and runs
-it over Snowflake's recorded inputs, comparing the result with Snowflake's recorded rows.
-`DUCKSHOP_RESULTS` is a directory of DuckShop results recorded on Snowflake, with its
-`index-<target>.json` files beside it. The reports are written to `DUCKSHOP_MEASURE_DIR`, which
-defaults to `target/duckshop-measure`.
+`make check-ci RECORDER=0` runs the static checks (rustfmt, clippy, fensu, ruff, ty and the
+append-only evidence guard), and `make test RECORDER=0` runs the Rust and Python tests.
+`RECORDER=0` leaves the recorder out; only maintainers with a Snowflake account need it.
 
-A change lands on `main` as one squashed commit whose tree is exactly a tree that passed
-`make gate`.
+A change reaches `main` only after `make check-merge RECORDER=0` passes on its exact head commit:
+the static checks and the Rust tests. That commit is then fast-forwarded onto `main`, so `main`
+only ever holds a tree that passed.
+
+`RECORDER=0 UV_NO_SYNC=1 make gate` runs more: it adds the replay of every recorded case, timed
+conversion over pinned benchmark projects, which it downloads on first use, and a fuzz smoke run,
+which needs a nightly toolchain with `cargo-fuzz`.
 
 ## License
 
