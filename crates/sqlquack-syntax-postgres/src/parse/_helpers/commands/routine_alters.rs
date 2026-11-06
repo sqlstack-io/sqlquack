@@ -52,11 +52,23 @@ impl Parser<'_> {
     pub(crate) fn alter_routine(&mut self, kind: &'static str) -> Parsing<Expression> {
         self.at += 2;
         let aggregate: bool = kind == AGGREGATE_KIND;
-        let signature: Expression = match aggregate {
-            true => self.aggregate_with_argtypes()?,
-            false => self.function_with_argtypes()?,
+        let (signature, parts): (Expression, Vec<Identifier>) = match aggregate {
+            true => {
+                let name: Vec<Identifier> = self.func_name()?;
+                let signature: Expression = self.aggregate_arguments(name.clone())?;
+                let parts: Vec<Identifier> = match signature_parts(&signature) {
+                    parts if parts.is_empty() => name,
+                    parts => parts,
+                };
+                (signature, parts)
+            }
+            false => {
+                let signature: Expression = self.function_with_argtypes()?;
+                let parts: Vec<Identifier> = signature_parts(&signature);
+                (signature, parts)
+            }
         };
-        let target = (kind, table(signature_parts(&signature)), false);
+        let target = (kind, table(parts), false);
         let moved: bool =
             self.kw("set") && self.kw_at(1, "schema") && self.peek_at(2).is_some_and(is_col_id);
         let depends: bool =

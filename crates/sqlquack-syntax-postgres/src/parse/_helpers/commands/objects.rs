@@ -217,7 +217,7 @@ impl Parser<'_> {
     }
 
     /// Whether the keywords `words` come next.
-    fn words_at(&self, words: &[&str]) -> bool {
+    pub(crate) fn words_at(&self, words: &[&str]) -> bool {
         words
             .iter()
             .enumerate()
@@ -232,7 +232,7 @@ impl Parser<'_> {
     }
 
     /// The object of `COMMENT ON` and its kind.
-    fn commented_object(&mut self) -> Parsing<(String, Expression)> {
+    pub(crate) fn commented_object(&mut self) -> Parsing<(String, Expression)> {
         if let Some(kind) = self.eat_kind(&ANY_NAME_KINDS) {
             return Ok((kind, dotted(self.qualified_name()?)));
         }
@@ -487,7 +487,7 @@ impl Parser<'_> {
     }
 
     /// `operator_with_argtypes`: `any_operator oper_argtypes`, a dotted schema quoted as for calls.
-    fn operator_with_argtypes(&mut self) -> Parsing<Expression> {
+    pub(crate) fn operator_with_argtypes(&mut self) -> Parsing<Expression> {
         let mut parts: Vec<Identifier> = Vec::new();
         while self.is(is_col_id) && self.char_at(1, '.') {
             parts.push(self.name(is_col_id)?);

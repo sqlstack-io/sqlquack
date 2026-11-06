@@ -15,6 +15,41 @@ use crate::parse::tests::test_types::{
 fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
     let test_cases = [
         VerdictTestCase {
+            description: "ALTER TEXT SEARCH needs its object kind",
+            sql: "ALTER TEXT SEARCH t1 RENAME TO v1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "ALTER TYPE DROP VALUE is refused, as gram.y refuses it",
+            sql: "ALTER TYPE t DROP VALUE 'a'",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: false },
+        },
+        VerdictTestCase {
+            description: "ALTER DOMAIN ADD NOT NULL takes no NOT VALID",
+            sql: "ALTER DOMAIN d ADD NOT NULL NOT VALID",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: false },
+        },
+        VerdictTestCase {
+            description: "a publication list cannot start with a bare name",
+            sql: "ALTER PUBLICATION p ADD a",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a schema in a publication list takes no row filter",
+            sql: "ALTER PUBLICATION p ADD TABLES IN SCHEMA s, t WHERE (x)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "ALTER FOREIGN DATA WRAPPER needs an option",
+            sql: "ALTER FOREIGN DATA WRAPPER w",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "ALTER OPERATOR FAMILY ADD is structured, not opaque",
+            sql: "ALTER OPERATOR FAMILY f USING btree ADD OPERATOR 1 < (int, int), FUNCTION 1 f(int, int)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
             description: "ALTER FUNCTION takes common_func_opt_item, not LANGUAGE",
             sql: "ALTER FUNCTION f LANGUAGE sql",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
@@ -924,6 +959,36 @@ fn given_sql_when_parsing_strictly_then_any_parser_error_refuses_it() {
 #[test]
 fn given_sql_when_parsing_then_the_tree_keeps_what_postgresqls_raw_tree_keeps() {
     let test_cases = [
+        ValueTestCase {
+            description: "a bare name after TABLE continues the TABLE list, as preprocess_pubobj_list reads it",
+            sql: "ALTER PUBLICATION p ADD TABLE a, b",
+            pointer: "/0/alter_object/operands/1/tuple/expressions/0/var/this",
+            expected_json: "\"TABLE\"",
+        },
+        ValueTestCase {
+            description: "operator_def_list's NONE has no argument, as a bare name has none",
+            sql: "ALTER TYPE t SET (a = none)",
+            pointer: "/0/alter_object/operands/0/tuple/expressions",
+            expected_json: "[{\"identifier\":{\"name\":\"a\",\"quoted\":false,\"trailing_comments\":[]}}]",
+        },
+        ValueTestCase {
+            description: "SET TRANSACTION in ALTER DATABASE names transaction_read_only",
+            sql: "ALTER DATABASE d SET TRANSACTION READ ONLY",
+            pointer: "/0/alter_object/operands/0/tuple/expressions/1/tuple/expressions/0/identifier/name",
+            expected_json: "\"transaction_read_only\"",
+        },
+        ValueTestCase {
+            description: "an ordered-set aggregate's ALTER keeps its name parts",
+            sql: "ALTER AGGREGATE s.a(int ORDER BY int) RENAME TO b",
+            pointer: "/0/alter_object/name/schema/name",
+            expected_json: "\"s\"",
+        },
+        ValueTestCase {
+            description: "ALTER OPERATOR CLASS keeps its access method",
+            sql: "ALTER OPERATOR CLASS c USING btree RENAME TO d",
+            pointer: "/0/alter_object/operands/0/tuple/expressions/1/identifier/name",
+            expected_json: "\"btree\"",
+        },
         ValueTestCase {
             description: "a four-part ALTER FUNCTION name keeps its first part",
             sql: "ALTER FUNCTION a.b.c.d (int) IMMUTABLE",
