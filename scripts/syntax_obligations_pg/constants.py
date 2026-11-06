@@ -270,6 +270,9 @@ FORM_FILLS: dict[str, dict[str, str]] = {
     "pg.ddl.create-rule": {"event": "INSERT", "command": "DELETE FROM t1"},
     "pg.ddl.create-trigger": {"event": "INSERT"},
     "pg.ddl.create-procedure": {"sql_body": "BEGIN ATOMIC SELECT 1 ; END"},
+    "pg.ddl.create-aggregate.sfunc-stype": {"sort_operator": ">"},
+    "pg.ddl.create-aggregate.basetype-sfunc-stype": {"sort_operator": ">"},
+    "pg.ddl.create-database": {"connlimit": "5", "oid": "16384"},
     "pg.ddl.create-event-trigger": {"event": "ddl_command_start", "filter_value": "'CREATE TABLE'"},
     "pg.functions.json.json-table-columns": {
         "json_table_column": "c1 INT",
