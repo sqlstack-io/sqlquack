@@ -1326,6 +1326,22 @@ footer a {
 	color: var(--warning);
 }
 
+.pg-progress {
+	height: 6px;
+	margin: 4px 16px 14px;
+	border-radius: 3px;
+	background: var(--inner-line);
+	overflow: hidden;
+}
+
+.pg-progress span {
+	display: block;
+	width: 0;
+	height: 100%;
+	background: var(--primary);
+	transition: width 0.2s ease-out;
+}
+
 .pg-verdict {
 	margin: 0;
 	padding: 10px 14px;

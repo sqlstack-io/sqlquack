@@ -1,13 +1,13 @@
 // The playground engine and its span handling, under Node's test runner: `npm run test:engine`.
-// Needs the engine built into public/playground/engine (scripts/build_engine.sh).
+// Needs the engine built into wasm/pkg (scripts/build_engine.sh).
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
-import { initSync, analyze } from '../public/playground/engine/sqlquack_wasm.js';
+import { initSync, analyze } from '../wasm/pkg/sqlquack_wasm.js';
 import { rendered, underlined } from '../public/playground/spans.js';
 
-initSync({ module: readFileSync(new URL('../public/playground/engine/sqlquack_wasm_bg.wasm', import.meta.url)) });
+initSync({ module: readFileSync(new URL('../wasm/pkg/sqlquack_wasm_bg.wasm', import.meta.url)) });
 
 const SCHEMA = JSON.stringify({ ORDERS: [['ORDER_ID', 'NUMBER(38,0)'], ['NOTE', 'VARCHAR']] });
 
