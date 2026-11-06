@@ -2,7 +2,7 @@
 # scripts/audit_syntax_catalogue_pg.py, which fails on any unreviewed gap or stale row.
 #
 # The audit spells every alternative of every statement rule, the expression rules and the
-# rules up to two levels below a statement as keyword sequences (nonterminals that are
+# rules reachable from them as keyword sequences (nonterminals that are
 # keyword sets expanded), and requires a catalogued form whose words, with its page's
 # definitions inlined, contain each sequence in order (a statement's first keyword first).
 # It also requires every kwlist.h keyword that a production uses to appear in some grammar.
@@ -11,6 +11,15 @@
 
 gram_y_sha256 = "7e548b673a1e03eb3a56c5eb9ad92d8e11095fac76e14cb258ca851f58274724"
 kwlist_h_sha256 = "fdcdf3694513cba63b4016f63032472b686e381bb35f17c5d645bc2f6f1dac16"
+
+# Stated limits of the method; the audit claims no more than these allow.
+limits = [
+    "Walk: every rule reachable from toplevel_stmt, stmt and the expression rules is walked (no depth bound); every other gram.y rule is listed under [[unwalked]] with a reason, and the audit fails on an unwalked rule that is not listed.",
+    "Spelling: a production is checked as its keywords in order. Identifiers, literals, punctuation and operator symbols are not compared, and a nonterminal that is not a set of at most 60 alternatives of up to 4 keywords (nested two levels) contributes no words.",
+    "Containment: a sequence is covered when one catalogued form, with its page's definitions inlined to depth 3, contains its keywords in order, not necessarily adjacent. For a statement rule the form must also start with the sequence's first keyword and its leading keywords must appear in the sequence.",
+    "Below a statement, alternatives that spell fewer than 2 keywords are not checked as sequences; their keywords are covered only by the [[keyword]] check.",
+    "Expansion: an alternative spelling more than 64 keyword sequences stops the audit with an error instead of being truncated; none does at the pinned grammar.",
+]
 
 [[production]]
 rule = "AlterEnumStmt"
@@ -216,6 +225,128 @@ reason = "documented as a value of a placeholder, not as grammar: SETOF and %TYP
 rule = "for_locking_clause"
 production = "FOR READ ONLY"
 reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: FOR READ ONLY, which gram.y accepts in place of a locking clause and ignores"
+
+[[production]]
+rule = "CharacterWithLength"
+production = "character '(' Iconst ')'"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the spellings CHAR VARYING, NCHAR [ VARYING ] and NATIONAL CHAR[ACTER] [ VARYING ] with a length; datatype.sgml documents character varying(n), varchar(n), character(n) and char(n), which are catalogued"
+
+[[production]]
+rule = "CharacterWithoutLength"
+production = "character"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the same spellings as CharacterWithLength, without a length"
+
+[[production]]
+rule = "character"
+production = "CHAR_P opt_varying"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the spelling CHAR VARYING (character varying and varchar are documented)"
+
+[[production]]
+rule = "character"
+production = "NATIONAL CHARACTER opt_varying"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the type spelling NATIONAL CHARACTER [ VARYING ]"
+
+[[production]]
+rule = "character"
+production = "NATIONAL CHAR_P opt_varying"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the type spelling NATIONAL CHAR [ VARYING ]"
+
+[[production]]
+rule = "character"
+production = "NCHAR opt_varying"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the type spelling NCHAR [ VARYING ]"
+
+[[production]]
+rule = "ExclusionConstraintElem"
+production = "index_elem WITH OPERATOR '(' any_operator ')'"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: EXCLUDE ... WITH OPERATOR(schema.op); the gram.y comment says it exists for ruleutils.c output; CREATE TABLE documents EXCLUDE ... WITH <operator>, which is catalogued"
+
+[[production]]
+rule = "TriggerTransition"
+production = "TransitionOldOrNew TransitionRowOrTable opt_as TransitionRelName"
+reason = "the ROW alternative: REFERENCING { OLD | NEW } ROW [ AS ] name parses, then CREATE TRIGGER rejects it (trigger.c: ROW variable naming in the REFERENCING clause is not supported, 0A000); CREATE TRIGGER documents REFERENCING { OLD | NEW } TABLE, which is catalogued"
+
+[[production]]
+rule = "arg_class"
+production = "IN_P OUT_P"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the argument mode spelling IN OUT; CREATE FUNCTION and CREATE PROCEDURE document <argmode> as IN, OUT, INOUT or VARIADIC"
+
+[[production]]
+rule = "func_arg"
+production = "arg_class func_type"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: only through arg_class IN OUT; the other modes are catalogued"
+
+[[production]]
+rule = "func_arg"
+production = "arg_class param_name func_type"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: only through arg_class IN OUT; the other modes are catalogued"
+
+[[production]]
+rule = "func_arg"
+production = "param_name arg_class func_type"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: only through arg_class IN OUT, and the mode after the name is itself an undocumented order; the documented order is [ argmode ] [ argname ] argtype"
+
+[[production]]
+rule = "xml_whitespace_option"
+production = "PRESERVE WHITESPACE_P"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: XMLPARSE ( ... PRESERVE WHITESPACE ); func.sgml documents XMLPARSE ( { DOCUMENT | CONTENT } value ) only"
+
+[[production]]
+rule = "xml_whitespace_option"
+production = "STRIP_P WHITESPACE_P"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: XMLPARSE ( ... STRIP WHITESPACE ); func.sgml documents XMLPARSE ( { DOCUMENT | CONTENT } value ) only"
+
+[[unwalked]]
+rule = "PLAssignStmt"
+reason = "PL/pgSQL parse mode: reachable only from parse_toplevel's MODE_PLPGSQL_* tokens, which the PL/pgSQL compiler injects for expressions and assignments inside function bodies; no SQL command reaches it"
+
+[[unwalked]]
+rule = "PLpgSQL_Expr"
+reason = "PL/pgSQL parse mode: reachable only from parse_toplevel's MODE_PLPGSQL_* tokens, which the PL/pgSQL compiler injects for expressions and assignments inside function bodies; no SQL command reaches it"
+
+[[unwalked]]
+rule = "bare_label_keyword"
+reason = "keyword category list: one keyword per alternative; the [[keyword]] check covers every keyword in it"
+
+[[unwalked]]
+rule = "col_name_keyword"
+reason = "keyword category list: one keyword per alternative; the [[keyword]] check covers every keyword in it"
+
+[[unwalked]]
+rule = "opt_distinct_clause"
+reason = "PL/pgSQL parse mode: reachable only from parse_toplevel's MODE_PLPGSQL_* tokens, which the PL/pgSQL compiler injects for expressions and assignments inside function bodies; no SQL command reaches it (only PLpgSQL_Expr uses it; SELECT uses distinct_clause and opt_all_clause directly, which are walked)"
+
+[[unwalked]]
+rule = "parse_toplevel"
+reason = "start symbol: dispatches to stmtmulti or to the PL/pgSQL and type-name parse modes"
+
+[[unwalked]]
+rule = "plassign_equals"
+reason = "PL/pgSQL parse mode: reachable only from parse_toplevel's MODE_PLPGSQL_* tokens, which the PL/pgSQL compiler injects for expressions and assignments inside function bodies; no SQL command reaches it"
+
+[[unwalked]]
+rule = "plassign_target"
+reason = "PL/pgSQL parse mode: reachable only from parse_toplevel's MODE_PLPGSQL_* tokens, which the PL/pgSQL compiler injects for expressions and assignments inside function bodies; no SQL command reaches it"
+
+[[unwalked]]
+rule = "reserved_keyword"
+reason = "keyword category list: one keyword per alternative; the [[keyword]] check covers every keyword in it"
+
+[[unwalked]]
+rule = "stmtmulti"
+reason = "top-level wrapper: its alternatives are statement rules, each of which the audit walks (a semicolon-separated list of toplevel_stmt)"
+
+[[unwalked]]
+rule = "toplevel_stmt"
+reason = "top-level wrapper: its alternatives are statement rules, each of which the audit walks (stmt plus TransactionStmtLegacy, both walked)"
+
+[[unwalked]]
+rule = "type_func_name_keyword"
+reason = "keyword category list: one keyword per alternative; the [[keyword]] check covers every keyword in it"
+
+[[unwalked]]
+rule = "unreserved_keyword"
+reason = "keyword category list: one keyword per alternative; the [[keyword]] check covers every keyword in it"
 
 [[keyword]]
 keyword = "ANALYSE"

@@ -138,3 +138,4 @@ class AuditResult:
     alternatives_checked: int
     rules_checked: int
     keywords_checked: int
+    unwalked: list[str]

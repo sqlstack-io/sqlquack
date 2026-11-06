@@ -43,8 +43,9 @@ python -m scripts.audit_syntax_catalogue_pg --cache CACHE
 ```
 
 An independent check against the server's own grammar, `gram.y` and `kwlist.h` of the pinned
-release. It reads every rule of gram.y and spells each alternative of the statement rules, the
-expression rules and the rules up to two levels below a statement as keyword sequences,
+release. It reads every rule of gram.y and spells each alternative of every rule reachable from
+`toplevel_stmt`, `stmt` and the expression rules (720 of 733 rules, with no depth bound) as keyword
+sequences,
 expanding nonterminals that are keyword sets (`DROP object_type_any_name` checks DROP TABLE,
 DROP SEQUENCE and so on). A sequence is covered when some catalogued form, with its page's
 definitions inlined, contains its keywords in order; for a statement the form's leading required
@@ -60,6 +61,11 @@ before TEMPORARY outside CREATE TABLE, `BETWEEN ASYMMETRIC`, `TREAT`, `NCHAR`); 
 only raise an error (CREATE ASSERTION, `ALTER TYPE ... DROP VALUE`, UNENCRYPTED PASSWORD); and
 documented values of a placeholder (`NFC`, `OUT`, `SETOF`). Single-keyword alternatives below a
 statement are checked by the keyword rule only.
+
+`[[unwalked]]` lists each of the 13 rules the walk does not reach with its reason: the start
+symbol and top-level wrappers, the PL/pgSQL-only parse modes and the five keyword category lists.
+The audit fails on an unwalked rule that is not listed. `limits` states what the method does not
+check, such as identifiers, punctuation and adjacency of keywords.
 
 ## Form rules
 

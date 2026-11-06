@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import itertools
+import math
 import re
 import tomllib
 from pathlib import Path
@@ -14,6 +15,7 @@ from scripts.syntax_catalogue_pg.constants import GRAM_Y, KWLIST_H
 from scripts.syntax_catalogue_pg.models import AuditGap, AuditResult, Keyword, Rule
 
 STATEMENT_RULE: str = "stmt"
+TOPLEVEL_RULE: str = "toplevel_stmt"
 EXPRESSION_RULES: tuple[str, ...] = (
     "a_expr",
     "b_expr",
@@ -37,7 +39,6 @@ EXPRESSION_RULES: tuple[str, ...] = (
     "simple_select",
 )
 MAX_SET: int = 60
-CLAUSE_DEPTH: int = 2
 LEAD_TOKEN: re.Pattern[str] = re.compile(r"<[^<>]*>|\{|[A-Za-z_][A-Za-z0-9_]*")
 leads: dict[str, tuple[str, ...]] = {}
 MIN_CLAUSE_KEYWORDS: int = 2
@@ -161,9 +162,13 @@ def expansions(
         )
         if options and any(options):
             parts.append(options)
-    out: list[tuple[str, ...]] = []
-    for combination in itertools.islice(itertools.product(*parts), MAX_EXPANSION):
-        out.append(tuple(word for piece in combination for word in piece))
+    if math.prod(len(part) for part in parts) > MAX_EXPANSION:
+        message: str = f"{' '.join(alternative)} spells more than {MAX_EXPANSION} sequences"
+        raise ValueError(message)
+    out: list[tuple[str, ...]] = [
+        tuple(word for piece in combination for word in piece)
+        for combination in itertools.product(*parts)
+    ]
     return list(dict.fromkeys(out))
 
 
@@ -174,27 +179,40 @@ def is_subsequence(needle: tuple[str, ...], haystack: list[str]) -> bool:
 
 
 def statement_rules(grammar: dict[str, Rule]) -> list[str]:
-    """The statement rules `stmt` lists."""
-    return [alternative[0] for alternative in grammar[STATEMENT_RULE].alternatives if alternative]
+    """The statement rules `toplevel_stmt` and `stmt` list."""
+    names: list[str] = [
+        alternative[0]
+        for rule in (TOPLEVEL_RULE, STATEMENT_RULE)
+        for alternative in grammar[rule].alternatives
+        if alternative and alternative[0] != STATEMENT_RULE
+    ]
+    return list(dict.fromkeys(names))
 
 
 def clause_rules(grammar: dict[str, Rule], statements: list[str]) -> list[str]:
-    """Rules up to CLAUSE_DEPTH below a statement rule, other than keyword lists, expression
-    rules and rules every alternative of which is a keyword set."""
-    found: list[str] = []
-    frontier: list[str] = statements
+    """Every rule reachable from a statement or expression rule, other than those and the
+    keyword category lists."""
     seen: set[str] = set(statements) | set(EXPRESSION_RULES) | KEYWORD_LISTS
-    for _ in range(CLAUSE_DEPTH):
-        following: list[str] = []
-        for name in frontier:
-            for alternative in grammar[name].alternatives:
-                for token in alternative:
-                    if token in grammar and token not in seen:
-                        seen.add(token)
-                        following.append(token)
-        found += following
-        frontier = following
+    frontier: list[str] = [*statements, *EXPRESSION_RULES]
+    found: list[str] = []
+    while frontier:
+        name: str = frontier.pop(0)
+        for alternative in grammar[name].alternatives:
+            for token in alternative:
+                if token in grammar and token not in seen:
+                    seen.add(token)
+                    found.append(token)
+                    frontier.append(token)
     return found
+
+
+def unaudited_rules(grammar: dict[str, Rule]) -> list[str]:
+    """Rules the audit does not walk: those no statement or expression rule reaches."""
+    statements: list[str] = statement_rules(grammar)
+    walked: set[str] = (
+        set(statements) | set(EXPRESSION_RULES) | set(clause_rules(grammar, statements))
+    )
+    return sorted(set(grammar) - walked)
 
 
 def keyword_uses(grammar: dict[str, Rule]) -> set[str]:
@@ -255,5 +273,6 @@ def audit(*, tree: Path, root: Path) -> AuditResult:
         missing=[k for k in missing if k.token in used],
         alternatives_checked=checked,
         rules_checked=len(statements) + len(EXPRESSION_RULES) + len(clauses),
+        unwalked=unaudited_rules(grammar),
         keywords_checked=len(words),
     )

@@ -44,6 +44,12 @@ def problems_of(
     problems += [
         f"keyword review names a catalogued keyword: {k}" for k in sorted(keywords - missing)
     ]
+    unwalked_rows: object = review.get("unwalked", [])
+    listed: set[str] = (
+        {str(r["rule"]) for r in unwalked_rows} if isinstance(unwalked_rows, list) else set()
+    )
+    problems += [f"unlisted unwalked rule: {r}" for r in sorted(set(result.unwalked) - listed)]
+    problems += [f"listed rule is walked: {r}" for r in sorted(listed - set(result.unwalked))]
     return problems
 
 
@@ -65,6 +71,7 @@ def run_audit(argv: list[str] | None = None) -> int:
         json.dumps(
             {
                 "rules": result.rules_checked,
+                "rules_unwalked": len(result.unwalked),
                 "keyword_sequences": result.alternatives_checked,
                 "gap_productions": len({(g.rule, g.production) for g in result.gaps}),
                 "keywords": result.keywords_checked,
