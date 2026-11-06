@@ -29,6 +29,15 @@ impl Parser<'_> {
             Some("copy") => self.copy_statement(),
             Some("comment") => self.comment_statement(),
             Some("security") => self.security_label_statement(),
+            Some("create") if self.creates_routine() => self.create_routine(),
+            Some("create") if self.keyword_at(1).is_none() => {
+                self.at += 1;
+                Err(self.error())
+            }
+            Some("create") if self.kw_at(1, "or") && !self.kw_at(2, "replace") => {
+                self.at += 2;
+                Err(self.error())
+            }
             Some(word)
                 if STATEMENT_STARTS.contains(&word) || STATEMENT_STARTS_MORE.contains(&word) =>
             {
@@ -262,7 +271,7 @@ impl Parser<'_> {
     }
 
     /// `opt_boolean_or_string`: `TRUE`, `FALSE`, `ON`, a non-reserved word or a string.
-    fn boolean_or_string(&mut self) -> Parsing<Expression> {
+    pub(crate) fn boolean_or_string(&mut self) -> Parsing<Expression> {
         match self.keyword_at(0) {
             Some("true") => {
                 self.at += 1;
