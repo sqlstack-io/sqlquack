@@ -119,3 +119,26 @@ rows = [
 query = "SELECT CAST(v AS BINARY(2)) AS r, LENGTH(CAST(v AS BINARY(2))) AS l FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["error"]
+
+[[case]]
+id = "t011_binary_to_binary_fits"
+description = "A BINARY value cast to a BINARY(n) it fits, with its length. Catches: the bytes changed or re-read as hex text"
+columns = [{ name = "b", type = "BINARY" }]
+rows = [
+  ["'AABB'"],
+  ["NULL"],
+]
+query = "SELECT CAST(b AS BINARY(2)) AS r, LENGTH(CAST(b AS BINARY(2))) AS l FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "t012_binary_to_shorter_binary"
+description = "A three-byte BINARY value cast to BINARY(2); the cast of hex text raises 100145 here, and this records whether a BINARY value does too. Catches: the excess byte silently truncated"
+columns = [{ name = "b", type = "BINARY" }]
+rows = [
+  ["'AABBCC'"],
+]
+query = "SELECT CAST(b AS BINARY(2)) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["error"]
