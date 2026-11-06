@@ -40,7 +40,7 @@ tags = ["type-combination"]
 
 [[case]]
 id = "t003_null_value"
-description = "The matched quote for B at 8 is not reachable from 7 with >=, so B at 7 takes the quote at 7; a NULL price passes through when matched. Catches: NULL rows skipped when matching"
+description = "Quotes shifted back by 2: B's sit at 5 (price 200) and 6 (NULL price), so B at 7 matches the NULL-price quote at 6 and returns its NULL. Catches: NULL-price rows skipped when matching (B at 7 returning 200)"
 columns = [{ name = "kind", type = "VARCHAR" }, { name = "sym", type = "VARCHAR" }, { name = "ts", type = "NUMBER(38,0)" }, { name = "px", type = "NUMBER(38,0)" }]
 rows = [
   ["'t'", "'A'", "5", "NULL"],
@@ -52,6 +52,6 @@ rows = [
   ["'q'", "'B'", "7", "200"],
   ["'q'", "'B'", "8", "NULL"],
 ]
-query = "SELECT t.sym, t.ts, q.px FROM (SELECT sym, ts FROM input WHERE kind = 't') t ASOF JOIN (SELECT sym, ts + 1 AS ts, px FROM input WHERE kind = 'q') q MATCH_CONDITION (t.ts >= q.ts) ON t.sym = q.sym ORDER BY t.sym, t.ts"
+query = "SELECT t.sym, t.ts, q.px FROM (SELECT sym, ts FROM input WHERE kind = 't') t ASOF JOIN (SELECT sym, ts - 2 AS ts, px FROM input WHERE kind = 'q') q MATCH_CONDITION (t.ts >= q.ts) ON t.sym = q.sym ORDER BY t.sym, t.ts"
 order = "ordered"
 tags = ["null"]
