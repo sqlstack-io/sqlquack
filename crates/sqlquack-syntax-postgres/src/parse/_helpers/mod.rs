@@ -1,4 +1,4 @@
-//! The grammar's parts: cursor, node builders, types, expressions, queries, FROM and DML.
+//! The grammar's parts: cursor, node builders, types, expressions, queries, FROM, DML and statements.
 
 pub(crate) mod cursor;
 pub(crate) mod dml;

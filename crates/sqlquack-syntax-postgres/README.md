@@ -18,7 +18,8 @@ parsed.
 
 | Gap | Construct |
 | --- | --- |
-| a statement's first keyword, such as `copy` or `truncate` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE` and `DELETE` |
+| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `TRUNCATE` and `COPY` |
+| `copy_where` | `COPY … FROM … WHERE condition` |
 | `merge` | `MERGE` |
 | `json`, `json_array`, `json_arrayagg`, `json_exists`, `json_object`, `json_objectagg`, `json_query`, `json_scalar`, `json_serialize`, `json_value`, `json_table` | the SQL/JSON call syntax |
 | `xmlconcat`, `xmlelement`, `xmlexists`, `xmlforest`, `xmlparse`, `xmlpi`, `xmlroot`, `xmlserialize`, `xmltable` | the SQL/XML call syntax |

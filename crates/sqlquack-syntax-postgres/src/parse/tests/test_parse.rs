@@ -99,8 +99,8 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "COPY, which the parser keeps opaque",
-            sql: "COPY t FROM STDIN",
+            description: "CREATE TABLE, which the parser keeps opaque",
+            sql: "CREATE TABLE t (a int)",
             expected_verdict: ExpectedVerdict::Accepted { opaque: true },
         },
         VerdictTestCase {
@@ -193,6 +193,51 @@ fn given_sql_when_parsing_then_the_verdict_is_postgresqls() {
             sql: "SELECT E'\\u12'",
             expected_verdict: ExpectedVerdict::Rejected { syntax: false },
         },
+        VerdictTestCase {
+            description: "COPY options in parentheses with a star argument",
+            sql: "COPY t TO STDOUT WITH (FORMAT csv, FORCE_QUOTE *)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "old-style COPY options with a bare column list",
+            sql: "COPY t (a, b) FROM STDIN WITH CSV HEADER FORCE NOT NULL a, b",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "COPY FROM PROGRAM with STDIN",
+            sql: "COPY t FROM PROGRAM STDIN",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a number inside a COPY option's list",
+            sql: "COPY t FROM 'f' (a (1))",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "COPY of a query FROM a file",
+            sql: "COPY (SELECT 1) FROM STDIN",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "COPY TO with a WHERE clause",
+            sql: "COPY t TO 'f' WHERE a > 1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "USING without DELIMITERS in COPY",
+            sql: "COPY t FROM 'f' USING ','",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "TRUNCATE of several relations with identity and drop behaviour",
+            sql: "TRUNCATE TABLE ONLY a.b, c * RESTART IDENTITY CASCADE",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "CONTINUE without IDENTITY in TRUNCATE",
+            sql: "TRUNCATE t CONTINUE",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
     ];
     for test_case in test_cases {
         let verdict: ExpectedVerdict = parse(test_case.sql)
@@ -272,6 +317,18 @@ fn given_sql_when_parsing_then_the_tree_follows_postgresqls_grammar() {
             sql: "INSERT INTO t VALUES (1) ON CONFLICT DO NOTHING",
             pointer: "/0/insert/on_conflict",
             expected_node: "on_conflict",
+        },
+        ShapeTestCase {
+            description: "COPY with a column list names the table and its columns",
+            sql: "COPY t (a, b) FROM STDIN",
+            pointer: "/0/copy/this",
+            expected_node: "schema",
+        },
+        ShapeTestCase {
+            description: "TRUNCATE keeps every relation after the first",
+            sql: "TRUNCATE a, b",
+            pointer: "/0/truncate/extra_tables/0",
+            expected_node: "table",
         },
     ];
     for test_case in test_cases {

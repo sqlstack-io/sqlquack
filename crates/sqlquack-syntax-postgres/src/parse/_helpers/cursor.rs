@@ -58,6 +58,19 @@ pub(crate) fn is_col_label(token: &Token) -> bool {
     plain(token) || category(token).is_some()
 }
 
+/// `NonReservedWord`: an identifier or any keyword that is not reserved.
+pub(crate) fn is_non_reserved_word(token: &Token) -> bool {
+    plain(token)
+        || matches!(
+            category(token),
+            Some(
+                KeywordCategory::Unreserved
+                    | KeywordCategory::ColName
+                    | KeywordCategory::TypeFuncName
+            )
+        )
+}
+
 /// `BareColLabel`: an identifier or a keyword marked `BARE_LABEL`.
 pub(crate) fn is_bare_label(token: &Token) -> bool {
     plain(token) || matches!(token.kind, TokenKind::Keyword(keyword) if keyword.bare_label)
