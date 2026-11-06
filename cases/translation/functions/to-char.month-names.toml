@@ -1,0 +1,56 @@
+category = "translation"
+construct = "sf.functions.to-char.to-char"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_mon_every_month"
+description = "TO_CHAR(date, 'MON') for a date in every month, as dbt_date.get_date_dimension writes month_name_short. Catches: the month number written, the wrong letter case, or a locale's abbreviation"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-01-15'"], ["'2024-02-29'"], ["'2024-03-15'"], ["'2024-04-15'"], ["'2024-05-15'"], ["'2024-06-15'"],
+  ["'2024-07-15'"], ["'2024-08-15'"], ["'2024-09-15'"], ["'2024-10-15'"], ["'2024-11-15'"], ["'2024-12-31'"],
+]
+query = "SELECT TO_CHAR(d, 'MON') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_mmmm_every_month"
+description = "TO_CHAR(date, 'MMMM') for a date in every month, as dbt_date.get_date_dimension writes month_name. Catches: MMMM read as MM twice ('0101'), the wrong letter case, or an abbreviation"
+columns = [{ name = "d", type = "DATE" }]
+rows = [
+  ["'2024-01-15'"], ["'2024-02-29'"], ["'2024-03-15'"], ["'2024-04-15'"], ["'2024-05-15'"], ["'2024-06-15'"],
+  ["'2024-07-15'"], ["'2024-08-15'"], ["'2024-09-15'"], ["'2024-10-15'"], ["'2024-11-15'"], ["'2024-12-31'"],
+]
+query = "SELECT TO_CHAR(d, 'MMMM') AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_month_names_in_a_format"
+description = "MON and MMMM beside other fields and on a timestamp. Catches: a field next to the name misread, or the timestamp's time leaking into the name"
+columns = [{ name = "d", type = "DATE" }, { name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-09-05'", "'2024-05-01 23:59:59'"],
+]
+query = "SELECT TO_CHAR(d, 'DD MON YYYY') AS a, TO_CHAR(d, 'MMMM DD, YYYY') AS b, TO_CHAR(t, 'MON') AS c, TO_CHAR(t, 'MMMM') AS e FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t004_null"
+description = "A NULL date. Catches: a month name for NULL"
+columns = [{ name = "d", type = "DATE" }]
+rows = [["NULL"], ["'2024-03-01'"]]
+query = "SELECT TO_CHAR(d, 'MON') AS a, TO_CHAR(d, 'MMMM') AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "t007_names_beside_month_and_day"
+description = "MONMM and MMMMDD, a name directly before another field. Catches: the name's letters read as part of the next field"
+columns = [{ name = "d", type = "DATE" }]
+rows = [["'2024-09-05'"]]
+query = "SELECT TO_CHAR(d, 'MONMM') AS a, TO_CHAR(d, 'MMMMDD') AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]

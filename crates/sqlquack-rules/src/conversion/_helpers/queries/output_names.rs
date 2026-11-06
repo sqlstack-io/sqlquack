@@ -36,6 +36,19 @@ pub(crate) fn recorded_name_shape(item: &Value, text: &str) -> bool {
                         || (named(&["COUNT"]) && matches!(node_kind(argument), Some(("star", _))))
                 })
         }
+        "function" if arguments.is_empty() => {
+            only(&["name", "args", "no_parens"])
+                && matches!(
+                    text.to_ascii_uppercase().as_str(),
+                    "CURRENT_DATE()" | "CURRENT_DATE" | "CURRENT_TIMESTAMP()"
+                )
+        }
+        "function" if named(&["ROUND"]) => {
+            only(&["name", "args"])
+                && arguments.get(2).is_none()
+                && arguments.first().is_some_and(plain_column)
+                && arguments.iter().skip(1).all(integer_literal)
+        }
         "function" => {
             only(&["name", "args"])
                 && named(OUTPUT_NAMED_FUNCTIONS)

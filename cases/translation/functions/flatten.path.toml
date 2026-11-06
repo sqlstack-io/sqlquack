@@ -1,0 +1,39 @@
+category = "translation"
+construct = "sf.functions.flatten"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_object_under_path"
+description = "PATH reaching an object: one row per key, with KEY, VALUE and a PATH prefixed with the given path, for a plain key and one with a space. Catches: the prefix joined without a dot, or a quoted key written as a plain one"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'{\"x\":{\"y\":{\"b\":1,\"a c\":2}}}'"],
+]
+query = "SELECT i.ordinal, f.key, f.index, f.value, f.path FROM input i, LATERAL FLATTEN(INPUT => PARSE_JSON(i.a), PATH => 'x.y') f ORDER BY i.ordinal, f.key"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t002_path_key_case"
+description = "PATH keys match case-sensitively: 'Items' finds nothing where the key is items, and one-step 'items' reaches the array. Catches: keys matched ignoring case"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'{\"items\":[10,20]}'"],
+]
+query = "SELECT 'lower' AS k, f.index, f.value, f.path FROM input i, LATERAL FLATTEN(INPUT => PARSE_JSON(i.a), PATH => 'items') f UNION ALL SELECT 'upper', f.index, f.value, f.path FROM input i, LATERAL FLATTEN(INPUT => PARSE_JSON(i.a), PATH => 'Items') f ORDER BY 1, 2"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t003_scalar_and_null_at_path"
+description = "PATH reaching a scalar, a JSON null and an empty array gives no rows. Catches: a scalar flattened into one row, or a JSON null giving a row"
+columns = [{ name = "a", type = "VARCHAR" }]
+rows = [
+  ["'{\"x\":5}'"],
+  ["'{\"x\":null}'"],
+  ["'{\"x\":[]}'"],
+  ["'{\"x\":[7]}'"],
+]
+query = "SELECT i.ordinal, f.index, f.value, f.path FROM input i, LATERAL FLATTEN(INPUT => PARSE_JSON(i.a), PATH => 'x') f ORDER BY i.ordinal, f.index"
+order = "ordered"
+tags = ["type-combination"]

@@ -11,6 +11,11 @@ use crate::verify::models::Conversion;
 pub trait CaseConverter: std::fmt::Debug {
     /// The conversion of `case`.
     fn convert(&self, case: &LoadedCase) -> Conversion;
+
+    /// The converted `sql` as users see it, or why laying it out changed more than whitespace.
+    fn laid_out(&self, sql: &str) -> Result<String, String> {
+        Ok(sql.to_owned())
+    }
 }
 
 /// For each rule id, the failure modes it declares.

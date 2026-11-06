@@ -18,6 +18,7 @@ use crate::results::main::load_result::load_result;
 use crate::results::models::{RecordedOutcome, SessionDefaults, StoredResult};
 use crate::verify::_helpers::compile_errors::undeclared_compile_error;
 use crate::verify::_helpers::error_check::error_check;
+use crate::verify::_helpers::layout_check::{layout_failure, reads_clock};
 use crate::verify::_helpers::microsecond_evidence::differs_below_microseconds;
 use crate::verify::_helpers::row_checks::{RowCheck, row_check};
 use crate::verify::_helpers::session::{SessionCheck, session_check};
@@ -124,6 +125,12 @@ fn judge_stored(
         null_order: policy.comparator.null_order.duckdb_setting().to_owned(),
     };
     let replayed = replay_on_duckdb((&setup, &duckdb_sql), python.as_deref(), &settings);
+    let layout = layout_failure(
+        &converter.laid_out(&duckdb_sql),
+        (&setup, &duckdb_sql),
+        (&replayed, reads_clock(provenance.divergences.keys())),
+        (python.as_deref(), &settings),
+    );
     let duckdb_error = replayed.as_ref().err().cloned();
     let verdict = match &case.expected_divergence {
         Some(divergence) => divergence_verdict(
@@ -156,6 +163,10 @@ fn judge_stored(
             },
         },
         (verdict, _) => verdict,
+    };
+    let verdict = match layout {
+        Some(reason) => Verdict::Failed { reason },
+        None => verdict,
     };
     let error_check = match (&verdict, &stored.metadata.error, duckdb_error) {
         (Verdict::Passed, Some(recorded), Some(error)) => Some(error_check(
