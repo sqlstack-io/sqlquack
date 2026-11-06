@@ -13,10 +13,7 @@ use crate::scan::constants::DECIMAL_RADIX;
 use crate::scan::main::digits::digits_value;
 use crate::scan::models::TokenKind;
 
-/// Catalogue type names the shared tree has a type for, with their integer modifiers, if any.
-///
-/// `bpchar`, `bit` and `char` stay generic without modifiers: PostgreSQL gives them no length
-/// then, unlike the keyword spellings `CHAR` and `BIT`, which mean a length of one.
+/// Catalogue type names with a shared type, by modifiers; bare `bpchar` has no length, so stays generic.
 fn builtin(name: &str, modifiers: &[u32]) -> Option<DataType> {
     let allowed: usize = if name == NUMERIC_TYPE { 2 } else { 1 };
     if modifiers.len() > allowed {
@@ -57,13 +54,21 @@ fn builtin(name: &str, modifiers: &[u32]) -> Option<DataType> {
             length: Some(length),
         },
         ("varbit", length) => DataType::VarBit { length },
-        ("timestamp" | "timestamptz", precision) => DataType::Timestamp {
+        ("timestamp", precision) => DataType::Timestamp {
             precision,
-            timezone: name == "timestamptz",
+            timezone: false,
         },
-        ("time" | "timetz", precision) => DataType::Time {
+        ("timestamptz", precision) => DataType::Timestamp {
             precision,
-            timezone: name == "timetz",
+            timezone: true,
+        },
+        ("time", precision) => DataType::Time {
+            precision,
+            timezone: false,
+        },
+        ("timetz", precision) => DataType::Time {
+            precision,
+            timezone: true,
         },
         _ => return None,
     })

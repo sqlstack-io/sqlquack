@@ -32,18 +32,16 @@ pub(crate) struct SpanTestCase {
     pub(crate) expected_span: [usize; 4],
 }
 
-/// A type string and PostgreSQL 18.6's `format_type` name for it, or whether it refuses the
-/// text with 42601 (`Err(true)`) or another SQLSTATE (`Err(false)`).
+/// A type string and 18.6's `format_type` name, or `Err(syntax)` when it refuses it (42601 or not).
 pub(crate) struct TypeTextTestCase {
     pub(crate) description: &'static str,
     pub(crate) text: &'static str,
     pub(crate) expected_name: Result<&'static str, bool>,
 }
 
-/// An input and how strict parsing ends on PostgreSQL 18.6's verdict: its statement count, or
-/// `Err(Some(syntax))` for a parse error (42601 or not), `Err(None)` for an uncovered byte.
+/// An input's strict statement count, or `Err(Some(syntax))` for a parse error, `Err(None)` uncovered.
 pub(crate) struct StrictTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,
-    pub(crate) expected: Result<usize, Option<bool>>,
+    pub(crate) expected_outcome: Result<usize, Option<bool>>,
 }
