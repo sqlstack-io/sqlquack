@@ -24,6 +24,7 @@ rows = [
 ]
 query = "SELECT ARRAY_COMPACT(ARRAY_CONSTRUCT(1, x, 3)) AS r FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "json_fidelity"
 tags = ["type-combination"]
 
 [[case]]

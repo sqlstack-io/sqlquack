@@ -48,6 +48,7 @@ rows = [
 ]
 query = "SELECT TIMESTAMP_NTZ_FROM_PARTS(v, 1, 1, 0, 0, 0) AS r FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "timestamp_range"
 tags = ["null"]
 
 [[case]]

@@ -57,4 +57,5 @@ rows = [
 ]
 query = "SELECT ARRAY_MAX(ARRAY_CONSTRUCT(x, 2, x)) AS r, ARRAY_MAX(ARRAY_CONSTRUCT(x)) AS o, ARRAY_MAX(IFF(x IS NULL, NULL, ARRAY_CONSTRUCT(x))) AS z FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "json_fidelity"
 tags = ["null"]

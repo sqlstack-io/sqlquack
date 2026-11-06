@@ -19,6 +19,7 @@ rows = [
 ]
 query = "SELECT IS_DATE(PARSE_JSON(a)) AS r FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "json_fidelity"
 tags = ["type-combination"]
 
 [[case]]

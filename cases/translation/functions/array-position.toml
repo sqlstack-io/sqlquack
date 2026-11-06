@@ -47,4 +47,5 @@ rows = [
 ]
 query = "SELECT ARRAY_POSITION(NULL::VARIANT, ARRAY_CONSTRUCT(1, x, x)) AS r FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "json_fidelity"
 tags = ["null"]

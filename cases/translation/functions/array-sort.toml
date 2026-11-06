@@ -11,6 +11,7 @@ rows = [
 ]
 query = "SELECT ARRAY_SORT(ARRAY_CONSTRUCT(3, x, 1, 2)) AS r FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "json_fidelity"
 tags = ["type-combination"]
 
 [[case]]

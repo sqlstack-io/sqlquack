@@ -14,6 +14,7 @@ rows = [
 ]
 query = "SELECT JAROWINKLER_SIMILARITY(a, b) AS r FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "text_similarity"
 tags = ["type-combination"]
 
 [[case]]

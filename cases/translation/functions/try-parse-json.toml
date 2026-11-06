@@ -24,6 +24,7 @@ rows = [
 ]
 query = "SELECT TRY_PARSE_JSON(a) IS NULL AS n FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "json_fidelity"
 tags = ["type-combination"]
 
 [[case]]

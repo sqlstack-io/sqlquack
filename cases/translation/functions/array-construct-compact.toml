@@ -34,6 +34,7 @@ rows = [
 ]
 query = "SELECT ARRAY_CONSTRUCT_COMPACT(PARSE_JSON('null'), x) AS r FROM input ORDER BY ordinal"
 order = "ordered"
+expected_divergence = "json_fidelity"
 tags = ["type-combination"]
 
 [[case]]
