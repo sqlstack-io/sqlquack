@@ -1161,7 +1161,7 @@
     "sf.dml.copy-into-table.select-from-internalstage-externalstage": "unverified",
     "sf.dml.delete": "unverified",
     "sf.dml.get": "unverified",
-    "sf.dml.insert": "unverified",
+    "sf.dml.insert": "verified",
     "sf.dml.insert-multi-table": "absent",
     "sf.dml.insert-multi-table.all-intoclause": "unverified",
     "sf.dml.insert-multi-table.first-all-when-then": "unverified",
