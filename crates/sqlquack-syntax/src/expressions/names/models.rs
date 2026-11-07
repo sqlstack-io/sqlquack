@@ -301,8 +301,7 @@ pub struct TableRef {
     /// Time travel version clause: FOR VERSION AS OF / FOR TIMESTAMP AS OF (Presto/Trino, BigQuery, Databricks)
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub version: Option<Box<Version>>,
-    /// BigQuery: a part of the name was one backquoted dotted name (`` `proj.ds.t` ``), split
-    /// into its parts; GoogleSQL reads such a name as a table, never as a field path.
+    /// BigQuery: one backquoted dotted name (`` `proj.ds.t` ``), split into parts, read as a table
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub whole_quoted: bool,
     /// Source position span
