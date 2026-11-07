@@ -1,7 +1,10 @@
 use crate::guard::tests::helpers::constructor_levels;
+use crate::guard::tests::helpers::debug_length;
+use crate::guard::tests::helpers::deep_trees;
 use crate::guard::tests::helpers::guarded_parse;
 use crate::guard::tests::helpers::guarded_parse_in;
 use crate::guard::tests::test_types::AstDepthTestCase;
+use crate::guard::tests::test_types::TreeOperationTestCase;
 use crate::guard::tests::test_types::TypeDepthTestCase;
 use crate::guard::tests::test_types::TYPE_DEPTHS;
 
@@ -70,6 +73,16 @@ fn given_a_long_term_chain_when_parsing_on_a_2_mb_thread_then_it_parses_or_is_re
             description: "a 50,000-term + chain in ARRAY_CONSTRUCT parses and serializes",
             sql: || format!("SELECT ARRAY_CONSTRUCT(1{}) FROM a", " + 1".repeat(50_000)),
             expected_error: None,
+        },
+        AstDepthTestCase {
+            description: "a 70,000-cast :: chain inside a call is refused",
+            sql: || format!("SELECT f(1{}) FROM a", "::INT".repeat(70_000)),
+            expected_error: Some("E_GUARD_AST_DEPTH_EXCEEDED"),
+        },
+        AstDepthTestCase {
+            description: "a 70,000-subscript chain inside a call is refused",
+            sql: || format!("SELECT f(v{}) FROM a", "[1]".repeat(70_000)),
+            expected_error: Some("E_GUARD_AST_DEPTH_EXCEEDED"),
         },
         AstDepthTestCase {
             description: "a 100,000-term + chain is flat, parses and serializes",
@@ -255,5 +268,57 @@ fn given_a_deeply_nested_type_when_parsing_on_a_2_mb_thread_then_512_levels_pars
                 test_case.description
             );
         }
+    }
+}
+
+#[test]
+fn given_long_chains_and_guard_deep_nesting_on_a_2_mb_thread_when_cloning_comparing_formatting_serializing_or_dropping_then_none_overflows(
+) {
+    let test_cases = [
+        TreeOperationTestCase {
+            description: "clone",
+            operation: |tree| tree.clone().len() == tree.len(),
+            expected_completed: true,
+        },
+        TreeOperationTestCase {
+            description: "equality with a clone, and inequality between different statements",
+            operation: |tree| {
+                let clone = tree.clone();
+                clone == tree && clone[1..] != tree[..tree.len() - 1]
+            },
+            expected_completed: true,
+        },
+        TreeOperationTestCase {
+            description: "Debug formatting",
+            operation: |tree| debug_length(&tree) > 0,
+            expected_completed: true,
+        },
+        TreeOperationTestCase {
+            description: "serialization",
+            operation: |tree| serde_json::to_writer(std::io::sink(), &tree).is_ok(),
+            expected_completed: true,
+        },
+        TreeOperationTestCase {
+            description: "drop",
+            operation: |tree| {
+                drop(tree);
+                true
+            },
+            expected_completed: true,
+        },
+    ];
+    for test_case in test_cases {
+        let operation = test_case.operation;
+        let completed = std::thread::Builder::new()
+            .stack_size(2 << 20)
+            .spawn(move || operation(deep_trees()))
+            .expect("the thread starts")
+            .join()
+            .expect("the thread finishes");
+        assert_eq!(
+            completed, test_case.expected_completed,
+            "{}",
+            test_case.description
+        );
     }
 }

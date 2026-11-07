@@ -50,3 +50,10 @@ pub(crate) struct TypeDepthTestCase {
 
 /// The nesting depths each [`TypeDepthTestCase`] is parsed at.
 pub(crate) const TYPE_DEPTHS: [usize; 4] = [512, 513, 20_000, 100_000];
+
+pub(crate) struct TreeOperationTestCase {
+    pub(crate) description: &'static str,
+    /// The operation on the parsed tree; true when it ran to the end.
+    pub(crate) operation: fn(Vec<crate::expressions::tree::models::Expression>) -> bool,
+    pub(crate) expected_completed: bool,
+}

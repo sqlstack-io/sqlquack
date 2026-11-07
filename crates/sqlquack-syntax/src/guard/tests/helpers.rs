@@ -91,3 +91,50 @@ pub(crate) fn constructor_levels(n: usize, open: &str) -> String {
         "[]".repeat(n - 61 * levels)
     )
 }
+
+/// Default-guarded Snowflake trees with 100,000-term chains and nesting just inside each depth guard.
+pub(crate) fn deep_trees() -> Vec<crate::expressions::tree::models::Expression> {
+    let statements = [
+        format!(
+            "SELECT f(1{}) FROM a WHERE a = 1{}",
+            " + 1".repeat(100_000),
+            " AND a = 1".repeat(50_000)
+        ),
+        format!(
+            "SELECT {}1{}",
+            "CASE WHEN TRUE THEN ".repeat(500),
+            " END".repeat(500)
+        ),
+        format!("SELECT 1{}", " UNION ALL SELECT 1".repeat(500)),
+        format!("SELECT {}1{}", "(".repeat(500), ")".repeat(500)),
+        format!("SELECT {}1{}", "(SELECT ".repeat(250), ")".repeat(250)),
+        format!("SELECT {}TRUE", "NOT ".repeat(500)),
+        format!("SELECT CAST(NULL AS INT{})", "[]".repeat(512)),
+    ];
+    let mut trees = Vec::new();
+    for sql in statements {
+        trees.extend(
+            crate::parse_statements(
+                &sql,
+                crate::Dialect::Snowflake,
+                &crate::ParseOptions::default(),
+            )
+            .expect("the statement is inside every guard"),
+        );
+    }
+    trees
+}
+
+/// The number of bytes `value`'s `Debug` output takes, without keeping it.
+pub(crate) fn debug_length(value: &impl std::fmt::Debug) -> usize {
+    struct Counter(usize);
+    impl std::fmt::Write for Counter {
+        fn write_str(&mut self, text: &str) -> std::fmt::Result {
+            self.0 += text.len();
+            Ok(())
+        }
+    }
+    let mut counter = Counter(0);
+    std::fmt::write(&mut counter, format_args!("{value:?}")).expect("formatting succeeds");
+    counter.0
+}

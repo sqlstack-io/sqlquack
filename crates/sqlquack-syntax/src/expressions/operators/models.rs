@@ -7,7 +7,6 @@ use serde::Serialize;
 use crate::expressions::names::models::Identifier;
 use crate::expressions::names::models::TableRef;
 use crate::expressions::queries::models::Ordered;
-use crate::expressions::tree::main::_on_grown_stack::on_grown_stack;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
 
@@ -139,7 +138,7 @@ pub struct Case {
 }
 
 /// The payload of every binary operator variant: arithmetic, comparison, logical, bitwise.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct BinaryOp {
     #[serde(
         serialize_with = "crate::expressions::tree::main::_serialize_on_grown_stack::serialize_on_grown_stack"
@@ -166,30 +165,6 @@ pub struct BinaryOp {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
-}
-
-/// Clones each operand on a grown stack when needed, so cloning a long chain cannot overflow.
-impl Clone for BinaryOp {
-    fn clone(&self) -> Self {
-        let Self {
-            left,
-            right,
-            left_comments,
-            operator_comments,
-            trailing_comments,
-            inferred_type,
-            span,
-        } = self;
-        on_grown_stack(|| Self {
-            left: left.clone(),
-            right: right.clone(),
-            left_comments: left_comments.clone(),
-            operator_comments: operator_comments.clone(),
-            trailing_comments: trailing_comments.clone(),
-            inferred_type: inferred_type.clone(),
-            span: *span,
-        })
-    }
 }
 
 impl BinaryOp {
