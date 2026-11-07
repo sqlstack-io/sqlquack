@@ -150,7 +150,7 @@ sql = '''select
     _loaded_at
 from raw_orders
 where _loaded_at >= dateadd(day, -3, current_timestamp())'''
-expect = "refused SQ0008 fn:DATEADD at 152..189"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1064,7 +1064,7 @@ aggregated as (
 )
 select * from aggregated
 '''
-expect = "refused SQ0008 fn:SUM at 136..149"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1106,7 +1106,7 @@ aggregated as (
 )
 select * from aggregated
 '''
-expect = "refused SQ0008 fn:SUM at 143..155"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1262,7 +1262,7 @@ category_revenue as (
     group by 1, 2
 )
 select * from category_revenue'''
-expect = "refused SQ0008 node:mul at 220..253"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1508,7 +1508,7 @@ sql = '''select
 from stg_orders
 where updated_at > (select dateadd(hour, -3, max(updated_at)) from fct_orders)
 '''
-expect = "refused SQ0008 fn:DATEADD at 136..170"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1523,7 +1523,7 @@ sql = '''select
 from stg_orders
 where updated_at >= (select dateadd(day, -1, max(updated_at)) from fct_orders)
 '''
-expect = "refused SQ0008 fn:DATEADD at 137..170"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1538,7 +1538,7 @@ sql = '''select
 from stg_orders
 where updated_at > (select max(updated_at) - interval '3 hours' from fct_orders)
 '''
-expect = "refused SQ0008 node:sub at 136..172"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2732,7 +2732,7 @@ category = "dbt_date_spine"
 sql = '''select
     dateadd(minute, 15 * seq4(), '2024-01-01'::timestamp_ntz) as slot_start
 from table(generator(rowcount => 96))'''
-expect = "refused SQ0008 fn:DATEADD at 11..68"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2740,7 +2740,7 @@ category = "dbt_date_spine"
 sql = '''select
     dateadd(day, seq4(), '2024-01-01') as date_day
 from table(generator(rowcount => 10))'''
-expect = "refused SQ0008 fn:DATEADD at 11..45"
+expect = "translated"
 expect_repository = "translated"
 snowflake = "compiles"
 
@@ -3486,7 +3486,7 @@ from order_items i
 join orders o on o.order_id = i.order_id
 join products p on p.product_id = i.product_id
 group by 1, 2'''
-expect = "refused SQ0008 fn:SUM at 75..90"
+expect = "refused SQ0008 node:div at 152..205"
 expect_repository = "translated"
 
 [[query]]
@@ -3498,7 +3498,7 @@ sql = '''select
 from order_items i
 join products p on p.product_id = i.product_id
 group by 1'''
-expect = "refused SQ0008 node:mul at 31..56"
+expect = "refused SQ0008 node:div at 74..161"
 expect_repository = "translated"
 
 [[query]]
@@ -3601,7 +3601,7 @@ sql = '''select
     avg(s.page_views) as avg_page_views
 from web_sessions s
 group by 1'''
-expect = "refused SQ0008 fn:SUM at 51..68"
+expect = "refused SQ0008 fn:AVG at 88..105"
 expect_repository = "translated"
 
 [[query]]
@@ -3628,7 +3628,7 @@ sql = '''select
 from inventory_snapshots i
 join products p on p.product_id = i.product_id
 group by 1, 2'''
-expect = "refused SQ0008 fn:SUM at 49..63"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -3639,7 +3639,7 @@ sql = '''select
     on_hand,
     on_hand - lag(on_hand) over (partition by product_id, warehouse order by snapshot_date) as change
 from inventory_snapshots'''
-expect = "refused SQ0008 node:sub at 59..146"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -4066,7 +4066,7 @@ category = "dbt_tests"
 sql = '''select max(updated_at) as max_updated_at
 from stg_orders
 having max(updated_at) < dateadd(hour, -24, current_timestamp())'''
-expect = "refused SQ0008 fn:DATEADD at 82..121"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -4104,7 +4104,7 @@ sql = '''select *
 from stg_orders
 where updated_at >= (select dateadd(hour, -6, max(updated_at)) from fct_orders)
 '''
-expect = "refused SQ0008 fn:DATEADD at 53..87"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -4140,7 +4140,7 @@ sql = '''select *
 from stg_orders
 where updated_at > (select max(updated_at) from fct_orders) - interval '1 day'
 '''
-expect = "refused SQ0008 node:sub at 44..103"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -4643,7 +4643,7 @@ category = "dbt_window_frames"
 sql = '''select snapshot_date, product_id, on_hand,
     on_hand - lag(on_hand, 1, on_hand) over (partition by product_id order by snapshot_date) as delta
 from inventory_snapshots'''
-expect = "refused SQ0008 node:sub at 47..135"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -4704,7 +4704,7 @@ sql = '''select *
 from stg_orders
 where updated_at > (select max(updated_at) from fct_orders)
   and updated_at <= current_timestamp()'''
-expect = "refused SQ0008 node:lte at 91..124"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -5337,7 +5337,7 @@ sql = '''with
         as date) as date) as year_end_date
     from dates_with_prior_year_dates d
     order by 1'''
-expect = "refused SQ0008 fn:DATEADD at 1507..1624"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -6106,7 +6106,7 @@ expect_repository = "translated"
 category = "dbt_incremental"
 sql = '''select * from analytics.dbt_dev.fct_orders
 where updated_at >= (select dateadd(day, -3, max(updated_at)) from analytics.dbt_dev.inc_lookback)'''
-expect = "refused SQ0008 fn:DATEADD at 71..104"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]

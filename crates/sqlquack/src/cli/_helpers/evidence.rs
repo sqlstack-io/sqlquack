@@ -18,7 +18,8 @@ use crate::analysis::main::confirm_assumption::confirm_assumption;
 use crate::analysis::main::refuse_value_divergences::refuse_value_divergences;
 use crate::cli::models::{EvidencePaths, PolicyArguments};
 use sqlquack_policy::policy::constants::{
-    CURRENT_TIME, DECLARED_OFFSET, PROJECT_UDF, SESSION_TIMEZONE_UTC,
+    CURRENT_TIME, DECLARED_OFFSET, NUMERIC_RANGE, PROJECT_UDF, SESSION_TIMEZONE_UTC,
+    TIMESTAMP_RANGE,
 };
 use sqlquack_rules::session::main::builtin_conversion_options::builtin_conversion_options;
 use sqlquack_rules::session::main::confirm_utc_session::confirm_utc_session;
@@ -47,7 +48,8 @@ pub(crate) fn chosen_policy(path: Option<&Path>, builtin: bool) -> Result<Option
     if !path.is_file() {
         return Err(format!(
             "no policy file at {}; pass --policy with an existing file, or leave --policy out to \
-             use the built-in policy, which refuses every known divergence but the clock",
+             use the built-in policy, which refuses every known divergence but the clock and \
+             arithmetic's range errors",
             path.display()
         ));
     }
@@ -62,7 +64,7 @@ pub(crate) fn divergence_options(
     arguments: &PolicyArguments,
 ) -> ConversionOptions {
     let Some(policy) = policy else {
-        return builtin_conversion_options(arguments.strict || arguments.loud_divergences_only);
+        return builtin_conversion_options(arguments.strict, arguments.loud_divergences_only);
     };
     let options = conversion_options(policy, arguments.strict);
     let options = match arguments.utc_session {
@@ -132,13 +134,27 @@ fn divergence_help(
         return match [CURRENT_TIME, SESSION_TIMEZONE_UTC].contains(&id) {
             true => format!(
                 "the built-in policy allows `{id}` only for CURRENT_DATE() and \
-                 CURRENT_TIMESTAMP() in a UTC session, without --strict or \
+                 CURRENT_TIMESTAMP(), and DATEADD, DATEDIFF and comparisons of a TIMESTAMP_LTZ \
+                 or of a TIMESTAMP_TZ with text that has no offset, in a UTC session, without \
+                 --strict or \
                  --loud-divergences-only; drop those flags, or pass --policy with a policy file \
                  that allows `{id}` here, such as the repository's sqlquack.toml"
             ),
+            false if [NUMERIC_RANGE, TIMESTAMP_RANGE].contains(&id) => format!(
+                "the built-in policy allows `{id}` only for {}, where DuckDB raises an error \
+                 rather than return a different value, and not under --strict; drop --strict, or \
+                 pass --policy with a policy file that allows `{id}` here, such as the \
+                 repository's sqlquack.toml",
+                builtin_conversion_options(false, false)
+                    .divergences
+                    .get(id)
+                    .map(|allowed| allowed.constructs.join(", "))
+                    .unwrap_or_default()
+            ),
             false => format!(
-                "the built-in policy refuses every known divergence but the clock; pass --policy \
-                 with a policy file that allows `{id}`, such as the repository's sqlquack.toml"
+                "the built-in policy refuses every known divergence but the clock and \
+                 arithmetic's 38-digit and timestamp range errors; pass --policy with a policy \
+                 file that allows `{id}`, such as the repository's sqlquack.toml"
             ),
         };
     };

@@ -5,10 +5,11 @@ use crate::diagnostics::_helpers::code_entry::code_entry;
 use crate::diagnostics::_helpers::coded::coded;
 use crate::diagnostics::_helpers::line_index::LineIndex;
 use crate::diagnostics::constants::{
-    CASE_ONLY_MATCH, CASE_ONLY_MATCH_HELP, CONVERSION_BUDGET, DIVERGENCE_REFUSED, GUARD_PREFIX,
-    MISSING_RULE, NOT_EXPRESSIBLE, PARSE_FIDELITY, REPEATED_RESULT_NAME, REPEATED_RESULT_NAME_HELP,
-    SUGGESTED_NAME_MAX_CHARS, TYPE_CONDITION, UNALIASED_OUTPUT_NAME, UNPARSED_PREFIX,
-    UNRESOLVED_NAME, ZONED_LOCAL_TIME, ZONED_LOCAL_TIME_HELP, ZONED_LOCAL_TIME_NOTE,
+    CASE_ONLY_MATCH, CASE_ONLY_MATCH_HELP, CONVERSION_BUDGET, DIVERGENCE_REFUSED,
+    FUNCTION_OPERAND_HELP, GUARD_PREFIX, MISSING_RULE, NOT_EXPRESSIBLE, PARSE_FIDELITY,
+    REPEATED_RESULT_NAME, REPEATED_RESULT_NAME_HELP, SUGGESTED_NAME_MAX_CHARS, TYPE_CONDITION,
+    UNALIASED_OUTPUT_NAME, UNPARSED_PREFIX, UNRESOLVED_NAME, ZONED_LOCAL_TIME,
+    ZONED_LOCAL_TIME_HELP, ZONED_LOCAL_TIME_NOTE,
 };
 use crate::diagnostics::models::Diagnostic;
 use crate::refusals::models::{Refusal, RefusalCategory};
@@ -36,6 +37,15 @@ pub fn diagnose(refusals: &[Refusal], source: &str) -> Vec<Diagnostic> {
         {
             diagnostic.notes.push(ZONED_LOCAL_TIME_NOTE.to_owned());
             diagnostic.help = Some(ZONED_LOCAL_TIME_HELP.to_owned());
+        }
+        if code == TYPE_CONDITION
+            && refusal
+                .construct
+                .as_ref()
+                .is_some_and(|construct| construct.family == ConstructFamily::Function)
+            && diagnostic.help.as_deref() != Some(ZONED_LOCAL_TIME_HELP)
+        {
+            diagnostic.help = Some(FUNCTION_OPERAND_HELP.to_owned());
         }
         if code == UNALIASED_OUTPUT_NAME
             && let Some(name) = diagnostic

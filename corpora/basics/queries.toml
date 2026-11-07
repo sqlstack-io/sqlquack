@@ -6275,139 +6275,158 @@ result_repository = "5 rows d2331e3f4e723abb"
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT order_id + 1 AS v FROM orders'''
-expect = "refused SQ0008 node:add at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 2f6b61b9af32201e"
 result_repository = "5 rows 2f6b61b9af32201e"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SElEcT OrDEr_iD + 1 aS v frOM OrDerS
 '''
-expect = "refused SQ0008 node:add at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 2f6b61b9af32201e"
 result_repository = "5 rows 2f6b61b9af32201e"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select /* c */ order_id + 1 as v	from orders'''
-expect = "refused SQ0008 node:add at 15..27"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 2f6b61b9af32201e"
 result_repository = "5 rows 2f6b61b9af32201e"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select order_id + 1 as v	from orders'''
-expect = "refused SQ0008 node:add at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 2f6b61b9af32201e"
 result_repository = "5 rows 2f6b61b9af32201e"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT /* c */ ORDER_ID + 1 AS V
   FROM "ORDERS"'''
-expect = "refused SQ0008 node:add at 15..27"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 2f6b61b9af32201e"
 result_repository = "5 rows 2f6b61b9af32201e"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT order_id + 1 FROM orders'''
-expect = "refused SQ0008 node:add at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 2f6b61b9af32201e"
 result_repository = "5 rows 2f6b61b9af32201e"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select order_id + 1	from orders'''
-expect = "refused SQ0008 node:add at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 2f6b61b9af32201e"
 result_repository = "5 rows 2f6b61b9af32201e"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT /* c */ ORDER_ID + 1	FROM "ORDERS"
 '''
-expect = "refused SQ0008 node:add at 15..27"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 2f6b61b9af32201e"
 result_repository = "5 rows 2f6b61b9af32201e"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT ORDER_ID + 1 FROM ORDERS -- trailing comment'''
-expect = "refused SQ0008 node:add at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 2f6b61b9af32201e"
 result_repository = "5 rows 2f6b61b9af32201e"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SeleCt oRdEr_id + 1   froM "ORDERS" -- trailing comment'''
-expect = "refused SQ0008 node:add at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 2f6b61b9af32201e"
 result_repository = "5 rows 2f6b61b9af32201e"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT order_id + 2 AS v FROM orders'''
-expect = "refused SQ0008 node:add at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 8b11ec853ce09850"
 result_repository = "5 rows 8b11ec853ce09850"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select order_id + 2 as v from orders ;'''
-expect = "refused SQ0008 node:add at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 8b11ec853ce09850"
 result_repository = "5 rows 8b11ec853ce09850"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select order_id + 2 as v
   from orders'''
-expect = "refused SQ0008 node:add at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 8b11ec853ce09850"
 result_repository = "5 rows 8b11ec853ce09850"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select order_id + 2 as v   from orders
 '''
-expect = "refused SQ0008 node:add at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 8b11ec853ce09850"
 result_repository = "5 rows 8b11ec853ce09850"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT ORDER_ID + 2 AS V FROM ORDERS -- trailing comment'''
-expect = "refused SQ0008 node:add at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 8b11ec853ce09850"
 result_repository = "5 rows 8b11ec853ce09850"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT order_id + 2 FROM orders'''
-expect = "refused SQ0008 node:add at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 8b11ec853ce09850"
 result_repository = "5 rows 8b11ec853ce09850"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SeleCt OrDER_ID + 2 FRoM ORdERs'''
-expect = "refused SQ0008 node:add at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 8b11ec853ce09850"
 result_repository = "5 rows 8b11ec853ce09850"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SeLECT /* c */ OrdEr_iD + 2   froM ordErS ;'''
-expect = "refused SQ0008 node:add at 15..27"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 8b11ec853ce09850"
 result_repository = "5 rows 8b11ec853ce09850"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select order_id + 2	from orders'''
-expect = "refused SQ0008 node:add at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 8b11ec853ce09850"
 result_repository = "5 rows 8b11ec853ce09850"
 
 [[query]]
@@ -6415,23 +6434,26 @@ category = "select_arithmetic"
 sql = '''-- a comment
 SEleCT ORDeR_ID + 2
   FROm OrderS;'''
-expect = "refused SQ0008 node:add at 20..32"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 8b11ec853ce09850"
 result_repository = "5 rows 8b11ec853ce09850"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT order_id + total AS v FROM orders'''
-expect = "refused SQ0008 node:add at 7..23"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 25716c19bdc4bca5"
 result_repository = "5 rows 25716c19bdc4bca5"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''-- a comment
 SELeCT oRdeR_ID + ToTAl As v   FRoM orDerS'''
-expect = "refused SQ0008 node:add at 20..36"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 25716c19bdc4bca5"
 result_repository = "5 rows 25716c19bdc4bca5"
 
 [[query]]
@@ -6439,8 +6461,9 @@ category = "select_arithmetic"
 sql = '''-- a comment
 SELECT ORDER_ID + TOTAL AS V
   FROM "ORDERS" ;'''
-expect = "refused SQ0008 node:add at 20..36"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 25716c19bdc4bca5"
 result_repository = "5 rows 25716c19bdc4bca5"
 
 [[query]]
@@ -6448,22 +6471,25 @@ category = "select_arithmetic"
 sql = '''-- a comment
 SELECT ORDER_ID + TOTAL AS V
   FROM ORDERS;'''
-expect = "refused SQ0008 node:add at 20..36"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 25716c19bdc4bca5"
 result_repository = "5 rows 25716c19bdc4bca5"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT /* c */ ORDER_ID + TOTAL AS V	FROM ORDERS'''
-expect = "refused SQ0008 node:add at 15..31"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 25716c19bdc4bca5"
 result_repository = "5 rows 25716c19bdc4bca5"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT order_id + total FROM orders'''
-expect = "refused SQ0008 node:add at 7..23"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 25716c19bdc4bca5"
 result_repository = "5 rows 25716c19bdc4bca5"
 
 [[query]]
@@ -6471,52 +6497,59 @@ category = "select_arithmetic"
 sql = '''-- a comment
 select order_id + total
   from orders;'''
-expect = "refused SQ0008 node:add at 20..36"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 25716c19bdc4bca5"
 result_repository = "5 rows 25716c19bdc4bca5"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''sElECT orDer_iD + TOtaL
   from "ORDERS"'''
-expect = "refused SQ0008 node:add at 7..23"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 25716c19bdc4bca5"
 result_repository = "5 rows 25716c19bdc4bca5"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''sELEct ORDeR_ID + totaL   FrOm orDers'''
-expect = "refused SQ0008 node:add at 7..23"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 25716c19bdc4bca5"
 result_repository = "5 rows 25716c19bdc4bca5"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select order_id + total	from orders'''
-expect = "refused SQ0008 node:add at 7..23"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 25716c19bdc4bca5"
 result_repository = "5 rows 25716c19bdc4bca5"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT order_id - 1 AS v FROM orders'''
-expect = "refused SQ0008 node:sub at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 2965d24b80b4f692"
 result_repository = "5 rows 2965d24b80b4f692"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select order_id - 1 as v	from orders;'''
-expect = "refused SQ0008 node:sub at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 2965d24b80b4f692"
 result_repository = "5 rows 2965d24b80b4f692"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select /* c */ order_id - 1 as v
   from orders ;'''
-expect = "refused SQ0008 node:sub at 15..27"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 2965d24b80b4f692"
 result_repository = "5 rows 2965d24b80b4f692"
 
 [[query]]
@@ -6524,162 +6557,184 @@ category = "select_arithmetic"
 sql = '''-- a comment
 select order_id - 1 as v   from orders
 '''
-expect = "refused SQ0008 node:sub at 20..32"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 2965d24b80b4f692"
 result_repository = "5 rows 2965d24b80b4f692"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT ORDER_ID - 1 AS V
   FROM "ORDERS"'''
-expect = "refused SQ0008 node:sub at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 2965d24b80b4f692"
 result_repository = "5 rows 2965d24b80b4f692"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT order_id - 1 FROM orders'''
-expect = "refused SQ0008 node:sub at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 2965d24b80b4f692"
 result_repository = "5 rows 2965d24b80b4f692"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SeLECT oRdeR_ID - 1	FroM oRderS;'''
-expect = "refused SQ0008 node:sub at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 2965d24b80b4f692"
 result_repository = "5 rows 2965d24b80b4f692"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''sElEct OrdEr_Id - 1 fROm ORDERs'''
-expect = "refused SQ0008 node:sub at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 2965d24b80b4f692"
 result_repository = "5 rows 2965d24b80b4f692"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT ORDER_ID - 1 FROM ORDERS -- trailing comment'''
-expect = "refused SQ0008 node:sub at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 2965d24b80b4f692"
 result_repository = "5 rows 2965d24b80b4f692"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''-- a comment
 select order_id - 1	from orders'''
-expect = "refused SQ0008 node:sub at 20..32"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 2965d24b80b4f692"
 result_repository = "5 rows 2965d24b80b4f692"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT order_id - 2 AS v FROM orders'''
-expect = "refused SQ0008 node:sub at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 9212211346d1bb49"
 result_repository = "5 rows 9212211346d1bb49"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SeLeCt OrDer_Id - 2 As v fROM OrDers'''
-expect = "refused SQ0008 node:sub at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 9212211346d1bb49"
 result_repository = "5 rows 9212211346d1bb49"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select /* c */ order_id - 2 as v   from orders
 '''
-expect = "refused SQ0008 node:sub at 15..27"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 9212211346d1bb49"
 result_repository = "5 rows 9212211346d1bb49"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select order_id - 2 as v
   from "ORDERS"'''
-expect = "refused SQ0008 node:sub at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 9212211346d1bb49"
 result_repository = "5 rows 9212211346d1bb49"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select /* c */ order_id - 2 as v   from orders'''
-expect = "refused SQ0008 node:sub at 15..27"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 9212211346d1bb49"
 result_repository = "5 rows 9212211346d1bb49"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT order_id - 2 FROM orders'''
-expect = "refused SQ0008 node:sub at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 9212211346d1bb49"
 result_repository = "5 rows 9212211346d1bb49"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select order_id - 2 from orders'''
-expect = "refused SQ0008 node:sub at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 9212211346d1bb49"
 result_repository = "5 rows 9212211346d1bb49"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT ORDER_ID - 2
   FROM "ORDERS"'''
-expect = "refused SQ0008 node:sub at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 9212211346d1bb49"
 result_repository = "5 rows 9212211346d1bb49"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select order_id - 2	from orders'''
-expect = "refused SQ0008 node:sub at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 9212211346d1bb49"
 result_repository = "5 rows 9212211346d1bb49"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT ORDER_ID - 2
   FROM ORDERS'''
-expect = "refused SQ0008 node:sub at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 9212211346d1bb49"
 result_repository = "5 rows 9212211346d1bb49"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT order_id - total AS v FROM orders'''
-expect = "refused SQ0008 node:sub at 7..23"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 0fb62110676a7303"
 result_repository = "5 rows 0fb62110676a7303"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select order_id - total as v   from orders'''
-expect = "refused SQ0008 node:sub at 7..23"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 0fb62110676a7303"
 result_repository = "5 rows 0fb62110676a7303"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select /* c */ order_id - total as v   from orders'''
-expect = "refused SQ0008 node:sub at 15..31"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 0fb62110676a7303"
 result_repository = "5 rows 0fb62110676a7303"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''-- a comment
 select order_id - total as v from orders'''
-expect = "refused SQ0008 node:sub at 20..36"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 0fb62110676a7303"
 result_repository = "5 rows 0fb62110676a7303"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT order_id - total FROM orders'''
-expect = "refused SQ0008 node:sub at 7..23"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 0fb62110676a7303"
 result_repository = "5 rows 0fb62110676a7303"
 
 [[query]]
@@ -6687,8 +6742,9 @@ category = "select_arithmetic"
 sql = '''-- a comment
 select order_id - total
   from "ORDERS";'''
-expect = "refused SQ0008 node:sub at 20..36"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 0fb62110676a7303"
 result_repository = "5 rows 0fb62110676a7303"
 
 [[query]]
@@ -6696,29 +6752,33 @@ category = "select_arithmetic"
 sql = '''-- a comment
 select order_id - total
   from orders ;'''
-expect = "refused SQ0008 node:sub at 20..36"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 0fb62110676a7303"
 result_repository = "5 rows 0fb62110676a7303"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELect ordEr_ID - TotaL   frOm ordErs ;'''
-expect = "refused SQ0008 node:sub at 7..23"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 0fb62110676a7303"
 result_repository = "5 rows 0fb62110676a7303"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select /* c */ order_id - total from orders;'''
-expect = "refused SQ0008 node:sub at 15..31"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 0fb62110676a7303"
 result_repository = "5 rows 0fb62110676a7303"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT order_id * 1 AS v FROM orders'''
-expect = "refused SQ0008 node:mul at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows b5584a1464119498"
 result_repository = "5 rows b5584a1464119498"
 
 [[query]]
@@ -6726,89 +6786,101 @@ category = "select_arithmetic"
 sql = '''-- a comment
 SElECt oRDER_Id * 1 As V	fRom OrdErs;
 '''
-expect = "refused SQ0008 node:mul at 20..32"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows b5584a1464119498"
 result_repository = "5 rows b5584a1464119498"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select order_id * 1 as v	from orders'''
-expect = "refused SQ0008 node:mul at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows b5584a1464119498"
 result_repository = "5 rows b5584a1464119498"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT ORDER_ID * 1 AS V	FROM ORDERS;'''
-expect = "refused SQ0008 node:mul at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows b5584a1464119498"
 result_repository = "5 rows b5584a1464119498"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select /* c */ order_id * 1 as v
   from orders'''
-expect = "refused SQ0008 node:mul at 15..27"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows b5584a1464119498"
 result_repository = "5 rows b5584a1464119498"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT order_id * 1 FROM orders'''
-expect = "refused SQ0008 node:mul at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows b5584a1464119498"
 result_repository = "5 rows b5584a1464119498"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''sEleCt order_id * 1
   fROM orDers -- trailing comment'''
-expect = "refused SQ0008 node:mul at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows b5584a1464119498"
 result_repository = "5 rows b5584a1464119498"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''sELECt ORder_id * 1 fROm OrDers'''
-expect = "refused SQ0008 node:mul at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows b5584a1464119498"
 result_repository = "5 rows b5584a1464119498"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select order_id * 1
   from orders'''
-expect = "refused SQ0008 node:mul at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows b5584a1464119498"
 result_repository = "5 rows b5584a1464119498"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''sELEcT /* c */ orDer_Id * 1	fRom OrdERs;'''
-expect = "refused SQ0008 node:mul at 15..27"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows b5584a1464119498"
 result_repository = "5 rows b5584a1464119498"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT order_id * 2 AS v FROM orders'''
-expect = "refused SQ0008 node:mul at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 445eaa937a5a28cb"
 result_repository = "5 rows 445eaa937a5a28cb"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select order_id * 2 as v   from orders -- trailing comment'''
-expect = "refused SQ0008 node:mul at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 445eaa937a5a28cb"
 result_repository = "5 rows 445eaa937a5a28cb"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''-- a comment
 select order_id * 2 as v	from "ORDERS"'''
-expect = "refused SQ0008 node:mul at 20..32"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 445eaa937a5a28cb"
 result_repository = "5 rows 445eaa937a5a28cb"
 
 [[query]]
@@ -6816,116 +6888,132 @@ category = "select_arithmetic"
 sql = '''select /* c */ order_id * 2 as v
   from orders
 '''
-expect = "refused SQ0008 node:mul at 15..27"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 445eaa937a5a28cb"
 result_repository = "5 rows 445eaa937a5a28cb"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SelEcT ORDEr_iD * 2 aS v	FROm OrdERS -- trailing comment'''
-expect = "refused SQ0008 node:mul at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 445eaa937a5a28cb"
 result_repository = "5 rows 445eaa937a5a28cb"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT order_id * 2 FROM orders'''
-expect = "refused SQ0008 node:mul at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 445eaa937a5a28cb"
 result_repository = "5 rows 445eaa937a5a28cb"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT ORDER_ID * 2   FROM ORDERS'''
-expect = "refused SQ0008 node:mul at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 445eaa937a5a28cb"
 result_repository = "5 rows 445eaa937a5a28cb"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT ORDER_ID * 2 FROM ORDERS'''
-expect = "refused SQ0008 node:mul at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 445eaa937a5a28cb"
 result_repository = "5 rows 445eaa937a5a28cb"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select order_id * 2	from "ORDERS"'''
-expect = "refused SQ0008 node:mul at 7..19"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 445eaa937a5a28cb"
 result_repository = "5 rows 445eaa937a5a28cb"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT order_id * total AS v FROM orders'''
-expect = "refused SQ0008 node:mul at 7..23"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows e6e1ebe7a4100497"
 result_repository = "5 rows e6e1ebe7a4100497"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''-- a comment
 sELeCT ordEr_Id * Total AS v	frOm "ORDERS"'''
-expect = "refused SQ0008 node:mul at 20..36"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows e6e1ebe7a4100497"
 result_repository = "5 rows e6e1ebe7a4100497"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''seleCt OrDER_Id * TOTaL as V   FROM oRdeRs'''
-expect = "refused SQ0008 node:mul at 7..23"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows e6e1ebe7a4100497"
 result_repository = "5 rows e6e1ebe7a4100497"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select order_id * total as v   from orders -- trailing comment'''
-expect = "refused SQ0008 node:mul at 7..23"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows e6e1ebe7a4100497"
 result_repository = "5 rows e6e1ebe7a4100497"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select /* c */ order_id * total as v
   from orders'''
-expect = "refused SQ0008 node:mul at 15..31"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows e6e1ebe7a4100497"
 result_repository = "5 rows e6e1ebe7a4100497"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT order_id * total FROM orders'''
-expect = "refused SQ0008 node:mul at 7..23"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows e6e1ebe7a4100497"
 result_repository = "5 rows e6e1ebe7a4100497"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''Select OrdER_Id * TOtaL	frOm oRdErS
 '''
-expect = "refused SQ0008 node:mul at 7..23"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows e6e1ebe7a4100497"
 result_repository = "5 rows e6e1ebe7a4100497"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''select order_id * total from orders -- trailing comment'''
-expect = "refused SQ0008 node:mul at 7..23"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows e6e1ebe7a4100497"
 result_repository = "5 rows e6e1ebe7a4100497"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELeCt ordEr_iD * TOTaL   fRom ORDErS -- trailing comment'''
-expect = "refused SQ0008 node:mul at 7..23"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows e6e1ebe7a4100497"
 result_repository = "5 rows e6e1ebe7a4100497"
 
 [[query]]
 category = "select_arithmetic"
 sql = '''SELECT /* c */ ORDER_ID * TOTAL   FROM ORDERS'''
-expect = "refused SQ0008 node:mul at 15..31"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows e6e1ebe7a4100497"
 result_repository = "5 rows e6e1ebe7a4100497"
 
 [[query]]
@@ -10490,75 +10578,85 @@ result_repository = "5 rows 410c240ac76a593c"
 [[query]]
 category = "select_function"
 sql = '''SELECT DATEADD(day, 1, ordered_at) AS v FROM orders'''
-expect = "refused SQ0008 fn:DATEADD at 7..34"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 4e1743a56a33e771"
 result_repository = "5 rows 4e1743a56a33e771"
 
 [[query]]
 category = "select_function"
 sql = '''select DATEADD(day, 1, ordered_at) as v	from orders -- trailing comment'''
-expect = "refused SQ0008 fn:DATEADD at 7..34"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 4e1743a56a33e771"
 result_repository = "5 rows 4e1743a56a33e771"
 
 [[query]]
 category = "select_function"
 sql = '''select dateadd(day, 1, ordered_at) as v	from orders'''
-expect = "refused SQ0008 fn:DATEADD at 7..34"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 4e1743a56a33e771"
 result_repository = "5 rows 4e1743a56a33e771"
 
 [[query]]
 category = "select_function"
 sql = '''-- a comment
 SELECT DATEADD(DAY, 1, ORDERED_AT) AS V FROM "ORDERS";'''
-expect = "refused SQ0008 fn:DATEADD at 20..47"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 4e1743a56a33e771"
 result_repository = "5 rows 4e1743a56a33e771"
 
 [[query]]
 category = "select_function"
 sql = '''SELECT DATEADD(DAY, 1, ORDERED_AT) AS V
   FROM "ORDERS" -- trailing comment'''
-expect = "refused SQ0008 fn:DATEADD at 7..34"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 4e1743a56a33e771"
 result_repository = "5 rows 4e1743a56a33e771"
 
 [[query]]
 category = "select_function"
 sql = '''SELECT DATEADD(day, 1, ordered_at) FROM orders'''
-expect = "refused SQ0008 fn:DATEADD at 7..34"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 4e1743a56a33e771"
 result_repository = "5 rows 4e1743a56a33e771"
 
 [[query]]
 category = "select_function"
 sql = '''select dateadd(day, 1, ordered_at) from orders
 '''
-expect = "refused SQ0008 fn:DATEADD at 7..34"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 4e1743a56a33e771"
 result_repository = "5 rows 4e1743a56a33e771"
 
 [[query]]
 category = "select_function"
 sql = '''selecT dATeAdD(dAy, 1, ORDERed_At) fRom orDErS'''
-expect = "refused SQ0008 fn:DATEADD at 7..34"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 4e1743a56a33e771"
 result_repository = "5 rows 4e1743a56a33e771"
 
 [[query]]
 category = "select_function"
 sql = '''-- a comment
 SELECT DATEADD(DAY, 1, ORDERED_AT)	FROM ORDERS;'''
-expect = "refused SQ0008 fn:DATEADD at 20..47"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 4e1743a56a33e771"
 result_repository = "5 rows 4e1743a56a33e771"
 
 [[query]]
 category = "select_function"
 sql = '''SELECT /* c */ DATEADD(DAY, 1, ORDERED_AT)	FROM ORDERS'''
-expect = "refused SQ0008 fn:DATEADD at 15..42"
+expect = "translated"
 expect_repository = "translated"
+result = "5 rows 4e1743a56a33e771"
 result_repository = "5 rows 4e1743a56a33e771"
 
 [[query]]
@@ -15361,34 +15459,39 @@ result_repository = "0 rows e3b0c44298fc1c14"
 [[query]]
 category = "last_days"
 sql = '''SELECT order_id FROM orders WHERE ordered_at >= DATEADD(day, -30, CURRENT_TIMESTAMP())'''
-expect = "refused SQ0008 fn:DATEADD at 48..86"
+expect = "translated"
 expect_repository = "translated"
+result = "0 rows e3b0c44298fc1c14"
 result_repository = "0 rows e3b0c44298fc1c14"
 
 [[query]]
 category = "last_days"
 sql = '''select /* c */ order_id	from "ORDERS"	where ordered_at >= dateadd(day, -30, current_timestamp())'''
-expect = "refused SQ0008 fn:DATEADD at 58..96"
+expect = "translated"
 expect_repository = "translated"
+result = "0 rows e3b0c44298fc1c14"
 result_repository = "0 rows e3b0c44298fc1c14"
 
 [[query]]
 category = "last_days"
 sql = '''SELECT /* c */ ORDER_ID   FROM ORDERS   WHERE ORDERED_AT >= DATEADD(DAY, -30, CURRENT_TIMESTAMP())'''
-expect = "refused SQ0008 fn:DATEADD at 60..98"
+expect = "translated"
 expect_repository = "translated"
+result = "0 rows e3b0c44298fc1c14"
 result_repository = "0 rows e3b0c44298fc1c14"
 
 [[query]]
 category = "last_days"
 sql = '''select order_id	from orders	where ordered_at >= DATEADD(day, -30, CURRENT_TIMESTAMP())'''
-expect = "refused SQ0008 fn:DATEADD at 48..86"
+expect = "translated"
 expect_repository = "translated"
+result = "0 rows e3b0c44298fc1c14"
 result_repository = "0 rows e3b0c44298fc1c14"
 
 [[query]]
 category = "last_days"
 sql = '''SeLect ordEr_Id   FrOM "ORDERS"   wHERe oRDeRed_at >= DAteAdD(DAY, -30, cURrENt_tImEsTamP())'''
-expect = "refused SQ0008 fn:DATEADD at 54..92"
+expect = "translated"
 expect_repository = "translated"
+result = "0 rows e3b0c44298fc1c14"
 result_repository = "0 rows e3b0c44298fc1c14"

@@ -15,6 +15,10 @@ pub const REPEATED_RESULT_NAME: &str = "repeats an earlier result column's name"
 /// The help for such a name, replacing SQ0004's own.
 pub const REPEATED_RESULT_NAME_HELP: &str =
     "give each result column its own alias, such as `SELECT 1 AS first, 1 AS second`";
+/// SQ0003's help where a function's operand has a type its rule does not cover.
+pub const FUNCTION_OPERAND_HELP: &str = "the label names the operand types this function covers; \
+    cast the operand to one of them where that keeps the statement's meaning, such as \
+    `CAST(x AS TIMESTAMP_NTZ)` for a TIMESTAMP_LTZ in a UTC session";
 /// The words of a refusal reading a TIMESTAMP_TZ's local time, which needs the offset DuckDB drops.
 pub const ZONED_LOCAL_TIME: &str =
     "which reads the local time of an offset DuckDB's TIMESTAMPTZ drops";
@@ -91,7 +95,8 @@ pub const CODES: &[CodeEntry] = &[
         alias: None,
         title: "the operand types fall outside every rule's proven conditions",
         help: Some(
-            "declare the operands' Snowflake types in the schema, or cast them to a type the rule covers",
+            "declare the operands' Snowflake types in the schema, or cast them to a type the rule \
+             covers; for a function's operand, cast it to a type the label names",
         ),
         explanation: "A rule covers the construct, but only for operand types its recorded \
             cases prove. The operands at the span have other types, or types SQLQuack could not \
@@ -157,7 +162,8 @@ pub const CODES: &[CodeEntry] = &[
         help: Some(
             "the help names the divergence and the fixes that work in the current mode: allow \
              it in the policy file, drop --strict or --loud-divergences-only, or confirm its \
-             assumption; the built-in policy refuses every one but the clock outside strict mode",
+             assumption; outside strict mode the built-in policy allows only the clock and \
+             arithmetic that raises past 38 digits or the timestamp range",
         ),
         explanation: "The construct at the span converts only by relying on the known \
             divergence the label names, where DuckDB may raise or differ from Snowflake as the \

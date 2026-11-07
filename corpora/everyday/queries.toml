@@ -722,13 +722,13 @@ expect_repository = "translated"
 [[query]]
 category = "aggregates"
 sql = '''SELECT SUM(quantity * unit_price) AS revenue FROM order_items'''
-expect = "refused SQ0008 node:mul at 11..32"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "aggregates"
 sql = '''SELECT order_id, SUM(quantity) AS units FROM order_items GROUP BY order_id'''
-expect = "refused SQ0008 fn:SUM at 17..30"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -999,7 +999,7 @@ expect_repository = "translated"
 [[query]]
 category = "joins"
 sql = '''SELECT p.category, SUM(i.quantity * i.unit_price) AS revenue FROM order_items i JOIN products p ON p.product_id = i.product_id GROUP BY p.category ORDER BY revenue DESC'''
-expect = "refused SQ0008 node:mul at 23..48"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1102,7 +1102,7 @@ expect_repository = "translated"
 [[query]]
 category = "ctes"
 sql = '''WITH totals AS (SELECT order_id, SUM(quantity * unit_price) AS items_total FROM order_items GROUP BY order_id) SELECT o.order_id, o.total, t.items_total, o.total - t.items_total AS diff FROM orders o JOIN totals t ON t.order_id = o.order_id'''
-expect = "refused SQ0008 node:mul at 37..58"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1355,13 +1355,13 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT DATEADD(day, 7, ordered_at) AS due_at FROM orders'''
-expect = "refused SQ0008 fn:DATEADD at 7..34"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "dates"
 sql = '''SELECT DATEADD('day', 7, ordered_at) AS due_at FROM orders'''
-expect = "refused SQ0008 fn:DATEADD at 7..36"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1373,7 +1373,7 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT ordered_at + INTERVAL '1 day' AS tomorrow FROM orders'''
-expect = "refused SQ0008 node:add at 7..36"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1506,7 +1506,7 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT order_id FROM orders WHERE ordered_at >= DATEADD(day, -30, CURRENT_TIMESTAMP())'''
-expect = "refused SQ0008 fn:DATEADD at 48..86"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2096,13 +2096,13 @@ expect_repository = "translated"
 [[query]]
 category = "numeric"
 sql = '''SELECT quantity * unit_price AS line_total FROM order_items'''
-expect = "refused SQ0008 node:mul at 7..28"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "numeric"
 sql = '''SELECT SUM(quantity) * 1.0 / COUNT(DISTINCT order_id) AS units_per_order FROM order_items'''
-expect = "refused SQ0008 fn:SUM at 7..20"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2478,7 +2478,7 @@ sql = '''select
 from products p
 left join order_items i on i.product_id = p.product_id
 group by 1, 2, 3'''
-expect = "refused SQ0008 fn:SUM at 57..72"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]

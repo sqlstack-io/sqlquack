@@ -30,7 +30,7 @@ pub fn session_conversion_options(
             .collect();
         return match unknown.is_empty() {
             true => {
-                let mut options = builtin_conversion_options(strict);
+                let mut options = builtin_conversion_options(strict, false);
                 if parameters
                     .get(TIMEZONE_PARAMETER)
                     .is_some_and(|zone| zone != SESSION_TIME_ZONE)
