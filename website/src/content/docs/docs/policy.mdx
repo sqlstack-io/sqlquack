@@ -24,7 +24,9 @@ error[SQ0008]: the conversion needs a known divergence the policy refuses: `fn:H
 file `--policy` names. Without one they use the built-in policy, which refuses every known
 divergence but the clock: `CURRENT_DATE()` and `CURRENT_TIMESTAMP()` convert with a warning, because
 both engines take the value when the query runs, in the session's time zone, which must be UTC in
-both for the values to agree. `--strict` and `--loud-divergences-only` refuse them too.
+both for the values to agree. `DATEDIFF` of a `TIMESTAMP_LTZ`, such as
+`DATEDIFF('day', ordered_at, CURRENT_TIMESTAMP())`, relies on the same UTC session.
+`--strict` and `--loud-divergences-only` refuse them too.
 `--builtin-policy` chooses the built-in policy even where a `sqlquack.toml` exists. A `--policy` file
 that does not exist, or a policy file that is not valid, is an error.
 

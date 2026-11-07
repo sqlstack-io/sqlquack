@@ -2,6 +2,7 @@ use crate::helpers::{convert_outcome, policy_free_exit_code, run_convert};
 use crate::test_types::{ConvertTestCase, PolicyFreeTestCase};
 
 const TICKETS_SCHEMA: &str = "tests/cli/fixtures/semi_structured_tickets.json";
+const EVENTS_SCHEMA: &str = "tests/cli/fixtures/volatile_lookback.json";
 
 #[test]
 fn given_no_policy_file_when_converting_or_counting_then_the_built_in_policy_applies() {
@@ -162,6 +163,27 @@ fn given_a_table_with_semi_structured_columns_when_converting_then_only_reading_
             flags: &["--builtin-policy"],
             mention: "take their value when the query runs",
             expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "DATEDIFF to the clock reads it in the UTC session under the built-in policy",
+            sql: "SELECT DATEDIFF('day', occurred_at, CURRENT_TIMESTAMP()) AS age FROM events",
+            flags: &["--builtin-policy", "--schema", EVENTS_SCHEMA],
+            mention: "relies on assumption session_timezone_utc at fn:CURRENT_TIMESTAMP, fn:DATEDIFF",
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "DATEDIFF with a keyword unit reads the clock the same way",
+            sql: "SELECT DATEDIFF(month, occurred_at, CURRENT_TIMESTAMP()) AS age FROM events",
+            flags: &["--builtin-policy", "--schema", EVENTS_SCHEMA],
+            mention: "converted under the built-in default",
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "strict mode refuses DATEDIFF to the clock",
+            sql: "SELECT DATEDIFF('day', occurred_at, CURRENT_TIMESTAMP()) AS age FROM events",
+            flags: &["--builtin-policy", "--strict", "--schema", EVENTS_SCHEMA],
+            mention: "needs known divergence",
+            expected_outcome: convert_outcome(1, false),
         },
     ];
     for test_case in test_cases {

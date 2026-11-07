@@ -1,8 +1,8 @@
-//! `builtin_conversion_options`: the built-in default's options, which allow only the clock.
+//! `builtin_conversion_options`: the built-in default's options: the clock and reads of it.
 
 use crate::conversion::models::{AllowedDivergence, ConversionOptions};
 use crate::session::constants::{
-    BUILTIN_CLOCK_CONSTRUCTS, BUILTIN_CLOCK_REASON, BUILTIN_CLOCK_ZONE,
+    BUILTIN_CLOCK_CONSTRUCTS, BUILTIN_CLOCK_REASON, BUILTIN_CLOCK_ZONE, BUILTIN_ZONE_CONSTRUCTS,
 };
 use sqlquack_policy::policy::constants::{CURRENT_TIME, SESSION_TIMEZONE_UTC};
 
@@ -12,18 +12,27 @@ pub fn builtin_conversion_options(refuse_clock: bool) -> ConversionOptions {
     if refuse_clock {
         return options;
     }
-    let constructs: Vec<String> = BUILTIN_CLOCK_CONSTRUCTS
-        .iter()
-        .map(|construct| (*construct).to_owned())
-        .collect();
-    for (divergence, reason, assumption) in [
-        (CURRENT_TIME, BUILTIN_CLOCK_REASON, false),
-        (SESSION_TIMEZONE_UTC, BUILTIN_CLOCK_ZONE, true),
+    for (divergence, constructs, reason, assumption) in [
+        (
+            CURRENT_TIME,
+            BUILTIN_CLOCK_CONSTRUCTS.as_slice(),
+            BUILTIN_CLOCK_REASON,
+            false,
+        ),
+        (
+            SESSION_TIMEZONE_UTC,
+            BUILTIN_ZONE_CONSTRUCTS.as_slice(),
+            BUILTIN_CLOCK_ZONE,
+            true,
+        ),
     ] {
         options.divergences.insert(
             divergence.to_owned(),
             AllowedDivergence {
-                constructs: constructs.clone(),
+                constructs: constructs
+                    .iter()
+                    .map(|construct| (*construct).to_owned())
+                    .collect(),
                 reason: reason.to_owned(),
                 assumption,
             },
