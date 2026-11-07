@@ -41,8 +41,8 @@ expect_repository = "translated"
 [[query]]
 category = "literals"
 sql = '''SELECT 1 + 1'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 7..12"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..12"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "literals"
@@ -3316,8 +3316,8 @@ expect_repository = "translated"
 [[query]]
 category = "literals"
 sql = '''SELECT total::VARCHAR FROM orders'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 7..21"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..21"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "literals"
@@ -3334,26 +3334,26 @@ expect_repository = "translated"
 [[query]]
 category = "literals"
 sql = '''SELECT IFF(total > 100, 'big', 'small') FROM orders'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 7..39"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..39"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "literals"
 sql = '''SELECT DATE_TRUNC('month', ordered_at) FROM orders'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 7..38"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..38"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "literals"
 sql = '''SELECT 1 + 1'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 7..12"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..12"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "literals"
 sql = '''SELECT 'a' || 'b''''
-expect = "refused SQ0009 syntax:unaliased_output_name at 7..17"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..17"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "literals"
@@ -3376,8 +3376,8 @@ expect_repository = "translated"
 [[query]]
 category = "literals"
 sql = '''SELECT order_id, total - discount FROM orders'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 17..33"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 17..33"
+expect = "translated"
+expect_repository = "translated"
 
 # Round 4: analyst aggregates and statistics, numeric and string helpers, month arithmetic, array
 # and object functions, NVL2/DECODE, NATURAL and FULL joins, and window idioms.

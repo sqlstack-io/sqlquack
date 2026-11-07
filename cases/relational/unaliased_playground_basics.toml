@@ -1,0 +1,99 @@
+category = "relational"
+construct = "node:select"
+session_profile = "utc-v1"
+
+[[case]]
+id = "playground_min"
+description = "An unaliased MIN beside the recorded MAX and SUM, over an orders-shaped input with duplicates and a NULL."
+columns = [{ name = "order_id", type = "NUMBER(38,0)" }, { name = "total", type = "NUMBER(12,2)" }, { name = "status", type = "VARCHAR" }, { name = "ordered_at", type = "TIMESTAMP_NTZ(9)" }, { name = "customer_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["1", "150.00", "'open'", "'2024-03-15 10:30:00'", "7"],
+  ["2", "40.50", "'open'", "'2024-03-16 09:00:00'", "7"],
+  ["3", "40.50", "NULL", "'2024-03-17 08:15:00'", "8"],
+  ["4", "NULL", "'done'", "NULL", "NULL"],
+]
+query = "SELECT MIN(total) FROM input"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "playground_text_casts"
+description = "The unaliased spellings of a cast to text: CAST, ::, TO_VARCHAR and TRY_CAST."
+columns = [{ name = "order_id", type = "NUMBER(38,0)" }, { name = "total", type = "NUMBER(12,2)" }, { name = "status", type = "VARCHAR" }, { name = "ordered_at", type = "TIMESTAMP_NTZ(9)" }, { name = "customer_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["1", "150.00", "'open'", "'2024-03-15 10:30:00'", "7"],
+  ["2", "NULL", "NULL", "NULL", "NULL"],
+]
+query = "SELECT CAST(total AS VARCHAR), total::VARCHAR, TO_VARCHAR(total), TRY_CAST(status AS VARCHAR) FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "playground_case_expression"
+description = "An unaliased searched CASE."
+columns = [{ name = "order_id", type = "NUMBER(38,0)" }, { name = "total", type = "NUMBER(12,2)" }, { name = "status", type = "VARCHAR" }, { name = "ordered_at", type = "TIMESTAMP_NTZ(9)" }, { name = "customer_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["1", "150.00", "'open'", "'2024-03-15 10:30:00'", "7"],
+  ["2", "100.00", "'open'", "'2024-03-16 09:00:00'", "7"],
+  ["3", "NULL", "NULL", "NULL", "NULL"],
+]
+query = "SELECT CASE WHEN total > 100 THEN 'big' ELSE 'small' END FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "playground_literal_basics"
+description = "Unaliased literal expressions a first query writes: integer division, text concatenation, signed decimals, exponents in both cases, a trailing dot and a leading dot."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT 1 / 2, 'a' || 'b', -0.25, +1, 1E3, 1e3, 1., .5 FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "playground_lower_case_select"
+description = "A lower-case select of a lower-case exponent, named as Snowflake names it."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "select 1e3 from input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "playground_duplicate_output_names"
+description = "The same column selected twice: whether it compiles, and the two output names."
+columns = [{ name = "order_id", type = "NUMBER(38,0)" }, { name = "total", type = "NUMBER(12,2)" }, { name = "status", type = "VARCHAR" }, { name = "ordered_at", type = "TIMESTAMP_NTZ(9)" }, { name = "customer_id", type = "NUMBER(38,0)" }]
+rows = [
+  ["1", "150.00", "'open'", "'2024-03-15 10:30:00'", "7"],
+  ["1", "40.50", "'open'", "'2024-03-16 09:00:00'", "7"],
+]
+query = "SELECT order_id, order_id FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "playground_block_comment"
+description = "A block comment before an aliased literal compiles."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT /* c */ 1 AS v FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "playground_line_comment"
+description = "A line comment before an aliased literal on the next line compiles."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT -- c\n 1 AS v FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "playground_min_over_no_rows"
+description = "An unaliased MIN over no rows still names its column."
+columns = [{ name = "order_id", type = "NUMBER(38,0)" }, { name = "total", type = "NUMBER(12,2)" }, { name = "status", type = "VARCHAR" }, { name = "ordered_at", type = "TIMESTAMP_NTZ(9)" }, { name = "customer_id", type = "NUMBER(38,0)" }]
+rows = [["1", "150.00", "'open'", "'2024-03-15 10:30:00'", "7"]]
+query = "SELECT MIN(total) FROM input WHERE total > 1000"
+order = "ordered"
+tags = ["empty-input"]

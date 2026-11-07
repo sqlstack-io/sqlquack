@@ -1111,3 +1111,8 @@ pub(crate) fn schema_failure(text: &str) -> (Option<i32>, String) {
         String::from_utf8_lossy(&output.stderr).into_owned(),
     )
 }
+
+/// `names` as owned strings, for comparing with converted column names.
+pub(crate) fn names(names: &[&str]) -> Vec<String> {
+    names.iter().map(|name| (*name).to_owned()).collect()
+}
