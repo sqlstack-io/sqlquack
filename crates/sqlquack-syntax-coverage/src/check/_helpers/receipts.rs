@@ -3,20 +3,22 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use crate::check::models::{CaseResult, LocalVerdict, Reason, SnowflakeSyntax};
-use crate::formats::constants::{SYNTAX_ERRNO, SYNTAX_ERRNO_42601};
+use crate::formats::constants::{RECEIPT_FORMAT_ENGINE, SYNTAX_ERRNO, SYNTAX_ERRNO_42601};
+use crate::formats::main::current_dialect::current_dialect;
 use crate::formats::models::{AccountSetting, Case, Expect, Phase, Receipt};
 
-/// A syntax receipt bound to exactly this case's SQL, setup, session and capture, with a query id.
+/// A syntax receipt bound to this case's SQL, setup, session and capture; `/1` needs a query id.
 fn admissible(case: &Case, receipt: &Receipt) -> bool {
     receipt.measure.is_none()
         && receipt.capture_method == case.capture
         && receipt.sql_sha256 == case.sql_sha256
         && receipt.setup_sha256 == case.setup_sha256
         && receipt.session_sha256 == case.session_sha256
-        && (receipt
-            .query_id
-            .as_deref()
-            .is_some_and(|query| !query.trim().is_empty())
+        && (receipt.format == RECEIPT_FORMAT_ENGINE
+            || receipt
+                .query_id
+                .as_deref()
+                .is_some_and(|query| !query.trim().is_empty())
             || receipt.query_id_sha256.is_some())
 }
 
@@ -68,6 +70,7 @@ pub(crate) fn snowflake_syntax(statement_receipts: &[&Receipt]) -> Option<Snowfl
         .iter()
         .filter(|receipt| receipt.measure.is_none())
         .map(|receipt| match (receipt.phase, receipt.errno) {
+            _ if receipt.format == RECEIPT_FORMAT_ENGINE => engine_syntax(receipt),
             (Phase::SyntaxError, Some(errno))
                 if errno == SYNTAX_ERRNO || errno == SYNTAX_ERRNO_42601 =>
             {
@@ -81,6 +84,19 @@ pub(crate) fn snowflake_syntax(statement_receipts: &[&Receipt]) -> Option<Snowfl
     match verdicts.len() {
         1 => verdicts.into_iter().next().flatten(),
         _ => None,
+    }
+}
+
+/// What the engine's parser did by a `/2` receipt: refused when a syntax code decided the phase.
+fn engine_syntax(receipt: &Receipt) -> Option<SnowflakeSyntax> {
+    let syntax_code: bool = receipt
+        .engine_code
+        .as_ref()
+        .is_some_and(|code| current_dialect().syntax_codes.contains(code));
+    match (receipt.phase, syntax_code) {
+        (Phase::SyntaxError, true) => Some(SnowflakeSyntax::Refused),
+        (Phase::SyntaxError, false) => None,
+        _ => Some(SnowflakeSyntax::Parsed),
     }
 }
 

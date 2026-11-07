@@ -13,6 +13,7 @@ members = [
     "crates/sqlquack",
     "crates/sqlquack-polyglot-check",
     "crates/sqlquack-syntax-coverage",
+    "crates/sqlquack-syntax-postgres",
     "crates/sqlquack-python",
 ]
 exclude = ["fuzz"]
@@ -62,6 +63,7 @@ sqlquack-semantics = { path = "crates/sqlquack-semantics" }
 sqlquack-snowflake = { path = "crates/sqlquack-snowflake" }
 sqlquack-syntax = { path = "crates/sqlquack-syntax" }
 sqlquack-syntax-derive = { path = "crates/sqlquack-syntax-derive" }
+sqlquack-syntax-postgres = { path = "crates/sqlquack-syntax-postgres" }
 stacker = "0.1"
 syn = { version = "2", features = ["full"] }
 tempfile = "3"
