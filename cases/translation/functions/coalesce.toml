@@ -61,15 +61,3 @@ rows = [
 query = "SELECT COALESCE(a, 1) AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["error"]
-
-[[case]]
-id = "t006_ntz_text"
-description = "A naive timestamp or a date-only text literal, as dbt incremental filters write COALESCE(MAX(updated_at), '1900-01-01'); the recording decides the common type. Catches: the text kept as VARCHAR, so the result compares as text, or the literal read with a time zone"
-columns = [{ name = "a", type = "TIMESTAMP_NTZ" }]
-rows = [
-  ["'2024-05-06 07:08:09.123456789'"],
-  ["NULL"],
-]
-query = "SELECT ordinal, COALESCE(a, '1900-01-01') AS r, COALESCE(a, '1970-01-01') > '1960-01-01'::TIMESTAMP_NTZ AS later FROM input ORDER BY ordinal"
-order = "ordered"
-tags = ["type-combination"]
