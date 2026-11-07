@@ -132,6 +132,9 @@ impl Parser {
         let Some(end) = self.named_type_literal_end() else {
             return Ok(None);
         };
+        if let Some(error) = self.untyped_literal_error(end) {
+            return Err(error);
+        }
         let parts: Vec<String> = self.tokens[self.current..end]
             .iter()
             .map(|token| match token.token_type {
@@ -159,6 +162,18 @@ impl Parser {
                 span: SourceSpan::default(),
             },
         ))))
+    }
+
+    /// Snowflake's refusal of a timestamp type name before the string at `end`, placed at the string.
+    pub(crate) fn untyped_literal_error(&mut self, end: usize) -> Option<Error> {
+        let name = self.peek_text().to_ascii_uppercase();
+        let (_, function) = crate::parser::constants::SNOWFLAKE_UNTYPED_LITERAL_TYPES
+            .iter()
+            .find(|(listed, _)| *listed == name)?;
+        self.current = end;
+        Some(self.parse_error(format!(
+            "Snowflake has no {name} literal; cast the string instead, as '...'::{name} or {function}('...')"
+        )))
     }
 
     /// The position of the string after a type name and its non-empty balanced parameters, or none.

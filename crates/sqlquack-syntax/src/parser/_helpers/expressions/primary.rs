@@ -949,6 +949,12 @@ impl Parser {
     }
 
     fn parse_primary_datetime_literal(&mut self) -> Result<Expression> {
+        if self.is_snowflake() && self.check_next(TokenType::String) {
+            let string = self.current + 1;
+            if let Some(error) = self.untyped_literal_error(string) {
+                return Err(error);
+            }
+        }
         let token = self.advance()?;
         let original_text = token.text.to_string();
         if self.check(TokenType::String) {

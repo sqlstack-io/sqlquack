@@ -82865,3 +82865,89 @@ sql = "DESC TRANSACTION SELECT ;"
 expect = "observe"
 context = "raw"
 
+# Date and time constants: only DATE, TIME and TIMESTAMP take a string. The other timestamp names and
+# DATETIME are recorded refused before one (errno 1003), and with a precision as unsupported literals
+# (errno 2121), so those are observed.
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.date-time-constant"
+kind = "negative_neighbour"
+target = "{ DATE | TIME | TIMESTAMP }"
+note = "TIMESTAMP_NTZ in place of DATE, TIME or TIMESTAMP"
+anchor = "doc.data-types-datetime / Date and time constants"
+sql = "SELECT TIMESTAMP_NTZ '2026-01-02 03:04:05' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.date-time-constant"
+kind = "negative_neighbour"
+target = "{ DATE | TIME | TIMESTAMP }"
+note = "TIMESTAMP_LTZ in place of DATE, TIME or TIMESTAMP"
+anchor = "doc.data-types-datetime / Date and time constants"
+sql = "SELECT TIMESTAMP_LTZ '2026-01-02 03:04:05' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.date-time-constant"
+kind = "negative_neighbour"
+target = "{ DATE | TIME | TIMESTAMP }"
+note = "TIMESTAMP_TZ in place of DATE, TIME or TIMESTAMP"
+anchor = "doc.data-types-datetime / Date and time constants"
+sql = "SELECT TIMESTAMP_TZ '2026-01-02 03:04:05' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.date-time-constant"
+kind = "negative_neighbour"
+target = "{ DATE | TIME | TIMESTAMP }"
+note = "TIMESTAMPNTZ in place of DATE, TIME or TIMESTAMP"
+anchor = "doc.data-types-datetime / Date and time constants"
+sql = "SELECT TIMESTAMPNTZ '2026-01-02 03:04:05' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.date-time-constant"
+kind = "negative_neighbour"
+target = "{ DATE | TIME | TIMESTAMP }"
+note = "TIMESTAMPLTZ in place of DATE, TIME or TIMESTAMP"
+anchor = "doc.data-types-datetime / Date and time constants"
+sql = "SELECT TIMESTAMPLTZ '2026-01-02 03:04:05' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.date-time-constant"
+kind = "negative_neighbour"
+target = "{ DATE | TIME | TIMESTAMP }"
+note = "TIMESTAMPTZ in place of DATE, TIME or TIMESTAMP"
+anchor = "doc.data-types-datetime / Date and time constants"
+sql = "SELECT TIMESTAMPTZ '2026-01-02 03:04:05' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.date-time-constant"
+kind = "negative_neighbour"
+target = "{ DATE | TIME | TIMESTAMP }"
+note = "DATETIME in place of DATE, TIME or TIMESTAMP"
+anchor = "doc.data-types-datetime / Date and time constants"
+sql = "SELECT DATETIME '2026-01-02 03:04:05' ;"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.date-time-constant"
+kind = "negative_neighbour"
+target = "{ DATE | TIME | TIMESTAMP }"
+note = "TIMESTAMP_NTZ(3) in place of DATE, TIME or TIMESTAMP, observed"
+anchor = "doc.data-types-datetime / Date and time constants"
+sql = "SELECT TIMESTAMP_NTZ(3) '2026-01-02 03:04:05' ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.expressions.data-types-datetime.date-time-constant"
+kind = "negative_neighbour"
+target = "{ DATE | TIME | TIMESTAMP }"
+note = "TIMESTAMP_TZ(3) in place of DATE, TIME or TIMESTAMP, observed"
+anchor = "doc.data-types-datetime / Date and time constants"
+sql = "SELECT TIMESTAMP_TZ(3) '2026-01-02 03:04:05' ;"
+expect = "observe"
+context = "raw"
