@@ -20,6 +20,7 @@ const ICEBERG_ACTIONS: &[&[&str]] = &[
     &["REPLACE", "PARTITION", "BY"],
     &["UPGRADE", "TO", "ICEBERG", "VERSION"],
     &["OPTIMIZE"],
+    &["CONVERT", "TO", "MANAGED"],
 ];
 
 /// The storage lifecycle policy actions of an ALTER TABLE.
@@ -142,6 +143,16 @@ impl Parser {
                     vec![],
                     vec![property("REMOVE_POSITION_DELETES", None, None)],
                 )
+            }
+            "CONVERT TO MANAGED" => {
+                let mut properties: Vec<ObjectProperty> = Vec::new();
+                while !self.is_at_end() && !self.check(TokenType::Semicolon) {
+                    let key = self.peek().text.to_ascii_uppercase();
+                    self.expect_external_name()?;
+                    self.expect_token(TokenType::Eq)?;
+                    properties.push(property(&key, None, Some(self.parse_primary()?)));
+                }
+                (vec![], properties)
             }
             "ADD STORAGE LIFECYCLE POLICY" => {
                 let policy = self.parse_tag_operand()?;

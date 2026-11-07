@@ -785,6 +785,60 @@ fn given_snowflake_create_and_begin_name_when_parsing_then_the_tree_keeps_the_el
             pointer: "/0/use/parts",
             expected_value: json!(null),
         },
+        ProjectionTestCase {
+            description: "DEFAULT in INSERT VALUES is the keyword, not a variable",
+            sql: "INSERT INTO v1 VALUES ( DEFAULT , \"DEFAULT\" ) ;",
+            pointer: "/0/insert/values/0/0",
+            expected_value: json!({"default_keyword": null}),
+        },
+        ProjectionTestCase {
+            description: "a quoted \"DEFAULT\" in INSERT VALUES stays a column",
+            sql: "INSERT INTO v1 VALUES ( DEFAULT , \"DEFAULT\" ) ;",
+            pointer: "/0/insert/values/0/1/column/name/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "DEFAULT in a multi-table intoClause is the keyword, not a column",
+            sql: "INSERT ALL INTO v1 VALUES ( DEFAULT , v1 ) SELECT 1 ;",
+            pointer: "/0/multitable_inserts/expressions/0/conditional_insert/this/insert/values/0/0",
+            expected_value: json!({"default_keyword": null}),
+        },
+        ProjectionTestCase {
+            description: "a source column in a multi-table intoClause stays a column",
+            sql: "INSERT ALL INTO v1 VALUES ( DEFAULT , v1 ) SELECT 1 ;",
+            pointer: "/0/multitable_inserts/expressions/0/conditional_insert/this/insert/values/0/1/column/name/name",
+            expected_value: json!("v1"),
+        },
+        ProjectionTestCase {
+            description: "DEFAULT in a conditional multi-table intoClause is the keyword",
+            sql: "INSERT FIRST WHEN TRUE THEN INTO v1 VALUES ( DEFAULT ) SELECT 1 ;",
+            pointer: "/0/multitable_inserts/expressions/0/conditional_insert/this/insert/values/0/0",
+            expected_value: json!({"default_keyword": null}),
+        },
+        ProjectionTestCase {
+            description: "ALTER DYNAMIC TABLE MODIFY <col> COMMENT keeps the comment as the column's comment",
+            sql: "ALTER DYNAMIC TABLE v1 MODIFY ( COLUMN v1 UNSET COMMENT , v2 COMMENT 'x' ) ;",
+            pointer: "/0/alter_object/operands/1/alter_column/comment/literal/value",
+            expected_value: json!("x"),
+        },
+        ProjectionTestCase {
+            description: "ALTER DYNAMIC TABLE MODIFY <col> UNSET COMMENT drops the column's comment",
+            sql: "ALTER DYNAMIC TABLE v1 MODIFY ( COLUMN v1 UNSET COMMENT , v2 COMMENT 'x' ) ;",
+            pointer: "/0/alter_object/operands/0/alter_column/drop",
+            expected_value: json!({"var": {"this": "COMMENT"}}),
+        },
+        ProjectionTestCase {
+            description: "a named column FOREIGN KEY keeps its constraint name",
+            sql: "ALTER TABLE v1 ADD COLUMN v1 INT CONSTRAINT c9 FOREIGN KEY REFERENCES v2 ( v1 ) RELY ;",
+            pointer: "/0/alter_table/actions/0/AddColumn/column/constraints/0/References/constraint_name",
+            expected_value: json!("c9"),
+        },
+        ProjectionTestCase {
+            description: "RELY stays with the column constraint it follows",
+            sql: "ALTER TABLE v1 ADD COLUMN v1 INT NOT NULL CONSTRAINT c9 UNIQUE NORELY ;",
+            pointer: "/0/alter_table/actions/0/AddColumn/column/constraint_properties",
+            expected_value: json!([[1, "NORELY"]]),
+        },
     ];
 
     for test_case in test_cases {

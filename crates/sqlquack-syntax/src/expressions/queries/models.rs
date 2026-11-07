@@ -1084,6 +1084,8 @@ pub enum MatchRecognizeAfter {
     ToNextRow,
     ToFirst(Identifier),
     ToLast(Identifier),
+    /// `TO <symbol>`, with neither FIRST nor LAST written.
+    To(Identifier),
 }
 
 /// Represent a LIMIT clause that restricts the number of returned rows.

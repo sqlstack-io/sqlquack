@@ -824,7 +824,14 @@ impl Parser {
     /// Parses COPY INTO a table or a location (Snowflake, PostgreSQL).
     pub(crate) fn parse_copy(&mut self) -> Result<Expression> {
         self.expect_token(TokenType::Copy)?;
+        if self.is_snowflake() {
+            return self.parse_snowflake_copy();
+        }
+        self.parse_copy_typed()
+    }
 
+    /// Reads COPY's typed tree; the position is after COPY.
+    pub(crate) fn parse_copy_typed(&mut self) -> Result<Expression> {
         let is_into = self.match_token(TokenType::Into);
 
         let this = self.parse_copy_target()?;
@@ -1765,6 +1772,10 @@ impl Parser {
             while self.check(TokenType::Dot) {
                 self.skip();
                 stage_path.push('.');
+                if self.check(TokenType::Percent) || self.check(TokenType::Mod) {
+                    stage_path.push('%');
+                    self.skip();
+                }
                 if self.check(TokenType::QuotedIdentifier) {
                     let text = &self.peek_text();
                     stage_path.push('"');
@@ -1801,6 +1812,7 @@ impl Parser {
     /// Parses Snowflake PUT file://path @stage [options].
     pub(crate) fn parse_put(&mut self) -> Result<Expression> {
         self.expect_token(TokenType::Put)?;
+        self.check_snowflake_put()?;
 
         let (source, source_quoted) = if self.check(TokenType::String) {
             (self.advance_text()?, true)

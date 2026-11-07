@@ -666,6 +666,9 @@ impl Parser {
                     if self.check(TokenType::RParen) {
                         break;
                     }
+                    if self.is_snowflake_reserved_keyword() {
+                        return Err(self.parse_error("Expected a column alias"));
+                    }
                     aliases.push(self.expect_identifier_or_keyword_with_quoted()?);
                     if !self.match_token(TokenType::Comma) {
                         break;
@@ -829,6 +832,9 @@ impl Parser {
         let column_aliases = if self.match_token(TokenType::LParen) {
             let mut aliases: Vec<Identifier> = Vec::new();
             loop {
+                if self.is_snowflake_reserved_keyword() {
+                    return Err(self.parse_error("Expected a column alias"));
+                }
                 aliases.push(self.expect_identifier_or_keyword_with_quoted()?);
                 if !self.match_token(TokenType::Comma) {
                     break;

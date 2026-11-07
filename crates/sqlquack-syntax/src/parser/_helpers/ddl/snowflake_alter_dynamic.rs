@@ -1,7 +1,9 @@
 //! Snowflake ALTER DYNAMIC TABLE.
 
+use crate::expressions::columns::models::AlterColumn;
 use crate::expressions::names::models::Identifier;
 use crate::expressions::schema_objects::models::ObjectProperty;
+use crate::expressions::statements::models::Var;
 use crate::expressions::tree::models::Expression;
 use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
@@ -10,6 +12,7 @@ use crate::parser::constants::DROP_ROW_ACCESS_POLICY;
 use crate::parser::constants::SET;
 use crate::parser::constants::SET_MASKING_POLICY;
 use crate::parser::constants::SET_TAG;
+use crate::parser::constants::UNSET_COMMENT;
 use crate::parser::models::Parser;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
@@ -309,8 +312,33 @@ impl Parser {
             ])?;
             let mut properties: Vec<ObjectProperty> = Vec::new();
             match action.as_str() {
-                "COMMENT" => {
-                    properties.push(property("COMMENT", None, Some(self.parse_string_value()?)));
+                "COMMENT" | "UNSET COMMENT" => {
+                    let set = action != UNSET_COMMENT;
+                    let comment = if set {
+                        Some(Box::new(self.parse_string_value()?))
+                    } else {
+                        None
+                    };
+                    columns.push(Expression::AlterColumn(Box::new(AlterColumn {
+                        this: Box::new(column),
+                        dtype: None,
+                        collate: None,
+                        using: None,
+                        default: None,
+                        drop: (!set).then(|| {
+                            Box::new(Expression::Var(Box::new(Var {
+                                this: "COMMENT".to_owned(),
+                            })))
+                        }),
+                        comment,
+                        allow_null: None,
+                        visible: None,
+                        rename_to: None,
+                    })));
+                    if !self.match_token(TokenType::Comma) {
+                        break;
+                    }
+                    continue;
                 }
                 "SET MASKING POLICY" | "SET PROJECTION POLICY" => {
                     properties.push(property(&action, None, Some(self.policy_operand()?)));

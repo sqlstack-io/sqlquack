@@ -194,6 +194,9 @@ pub(crate) const SET_MASKING_POLICY: &str = "SET MASKING POLICY";
 /// The text "SET TAG", as comparisons test it.
 pub(crate) const SET_TAG: &str = "SET TAG";
 
+/// The text "UNSET COMMENT", as comparisons test it.
+pub(crate) const UNSET_COMMENT: &str = "UNSET COMMENT";
+
 /// The argument count of a two-argument call.
 pub(crate) const BINARY_ARITY: usize = 2;
 
@@ -250,6 +253,68 @@ pub(crate) const SQLITE_RANGE_FOLLOWERS: [crate::tokens::models::TokenType; 9] =
 
 /// Snowflake types written before a string as a typed literal, beyond the shared ones.
 pub(crate) const SNOWFLAKE_LITERAL_TYPES: &[&str] = &["IPADDRESS"];
+
+/// The names Snowflake calls in FROM without TABLE( ); any other `name ( ... )` there is refused (errno 1003).
+pub(crate) const SNOWFLAKE_FROM_CALLS: &[&str] = &[
+    "DIRECTORY",
+    "DYNAMIC_TABLE_REFRESH_BOUNDARY",
+    "ERROR_TABLE",
+    "IDENTIFIER",
+    "SEMANTIC_VIEW",
+    "TABLE",
+];
+
+/// The properties a column-form Snowflake external table needs; the first is its stage location.
+pub(crate) const SNOWFLAKE_EXTERNAL_TABLE_REQUIRED: &[&str] = &["LOCATION", "FILE_FORMAT"];
+
+/// The properties every dynamic table needs.
+pub(crate) const SNOWFLAKE_DYNAMIC_TABLE_REQUIRED: &[&str] = &["TARGET_LAG", "WAREHOUSE"];
+
+/// The `<key> = <value>` properties a Snowflake CREATE TABLE takes.
+pub(crate) const SNOWFLAKE_TABLE_PROPERTY_KEYS: &[&str] = &[
+    "CHANGE_TRACKING",
+    "COMMENT",
+    "DATA_RETENTION_TIME_IN_DAYS",
+    "DEFAULT_DDL_COLLATION",
+    "ENABLE_SCHEMA_EVOLUTION",
+    "ERROR_LOGGING",
+    "ICEBERG_DEFAULT_DDL_COLLATION",
+    "MAX_DATA_EXTENSION_TIME_IN_DAYS",
+    "ROW_TIMESTAMP",
+    "TARGET_LAG",
+    "WAREHOUSE",
+];
+
+/// The fields every semantic view verified query needs.
+pub(crate) const SNOWFLAKE_VERIFIED_QUERY_FIELDS: &[&str] = &["QUESTION", "SQL"];
+
+/// The clause words of a SEMANTIC_VIEW call, which cannot be an alias there.
+pub(crate) const SNOWFLAKE_SEMANTIC_VIEW_CLAUSES: &[&str] =
+    &["DIMENSIONS", "FACTS", "METRICS", "WHERE"];
+
+/// Words that end a MEASURES item in Snowflake, so they cannot be its alias.
+pub(crate) const SNOWFLAKE_MEASURES_ENDS: &[&str] = &["AFTER", "ALL", "DEFINE", "ONE", "PATTERN"];
+
+/// FROM calls whose one argument is an object name: none, or a string, is refused (errno 1003).
+pub(crate) const SNOWFLAKE_FROM_CALLS_OF_A_NAME: &[&str] =
+    &["DYNAMIC_TABLE_REFRESH_BOUNDARY", "ERROR_TABLE"];
+
+/// Tokens after which a Snowflake PRIOR has no operand, so the word is a name.
+pub(crate) const SNOWFLAKE_PRIOR_ENDS: &[crate::tokens::models::TokenType] = &[
+    crate::tokens::models::TokenType::Eq,
+    crate::tokens::models::TokenType::Neq,
+    crate::tokens::models::TokenType::Lt,
+    crate::tokens::models::TokenType::Lte,
+    crate::tokens::models::TokenType::Gt,
+    crate::tokens::models::TokenType::Gte,
+    crate::tokens::models::TokenType::And,
+    crate::tokens::models::TokenType::Or,
+    crate::tokens::models::TokenType::RParen,
+    crate::tokens::models::TokenType::Comma,
+    crate::tokens::models::TokenType::Semicolon,
+    crate::tokens::models::TokenType::Start,
+    crate::tokens::models::TokenType::Order,
+];
 
 /// Reserved words Snowflake is recorded refusing as an unquoted later part of a dotted name.
 pub(crate) const SNOWFLAKE_REFUSED_NAME_PARTS: &[&str] = &["SELECT"];
@@ -969,7 +1034,19 @@ pub(crate) const SNOWFLAKE_ROUTINE_TEXT_LIST_PROPERTIES: &[&str] =
 
 /// Snowflake function and procedure properties whose value is a parenthesized name list.
 pub(crate) const SNOWFLAKE_ROUTINE_NAME_LIST_PROPERTIES: &[&str] =
-    &["CONTEXT_HEADERS", "EXTERNAL_ACCESS_INTEGRATIONS"];
+    &["CONTEXT_HEADERS", "COPY", "EXTERNAL_ACCESS_INTEGRATIONS"];
+
+/// Snowflake function and procedure properties whose names, in a single value, a list or a map, may also be strings.
+pub(crate) const SNOWFLAKE_ROUTINE_TEXT_NAME_PROPERTIES: &[&str] = &[
+    "API_INTEGRATION",
+    "EXTERNAL_ACCESS_INTEGRATIONS",
+    "SECRETS",
+    "SERVICE",
+];
+
+/// Snowflake function and procedure string properties, and string list properties, whose values may also be bare words.
+pub(crate) const SNOWFLAKE_ROUTINE_WORD_PROPERTIES: &[&str] =
+    &["COMMENT", "HANDLER", "IMPORTS", "TARGET_PATH"];
 
 /// Snowflake function and procedure properties whose value is a `( '<key>' = <name> , ... )` map.
 pub(crate) const SNOWFLAKE_ROUTINE_NAME_MAP_PROPERTIES: &[&str] = &["SECRETS"];
