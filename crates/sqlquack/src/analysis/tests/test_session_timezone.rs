@@ -80,11 +80,22 @@ fn given_session_dependent_statements_when_converting_then_they_rely_on_a_utc_se
             expected_outcome: relying_on_utc_session(&["fn:CONVERT_TIMEZONE"]),
         },
         SessionTimeZoneTestCase {
-            description: "a naive timestamp compared with a local one relies on it",
+            description: "a naive timestamp compared with a nanosecond local one relies on it, \
+                          and on the nanosecond range",
             sql: NAIVE_BESIDE_LOCAL,
             strict: false,
             utc_session: false,
-            expected_outcome: relying_on_utc_session(&["node:lt"]),
+            expected_outcome: DivergenceModeOutcome {
+                converted: true,
+                divergences: vec![
+                    (
+                        "session_timezone_utc".to_owned(),
+                        vec!["node:lt".to_owned()],
+                    ),
+                    ("timestamp_range".to_owned(), vec!["node:lt".to_owned()]),
+                ],
+                categories: vec![],
+            },
         },
         SessionTimeZoneTestCase {
             description: "strict mode refuses that comparison without a confirmed UTC session",
