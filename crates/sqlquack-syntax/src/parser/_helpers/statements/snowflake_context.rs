@@ -12,6 +12,32 @@ impl Parser {
             && !self.config.record_call_spans
     }
 
+    /// Refuses a COPY INTO <location> order Snowflake rejects as a syntax error, in its faithful modes.
+    pub(crate) fn reject_snowflake_copy_order(
+        &mut self,
+        missing_from: bool,
+        after_location_parameter: bool,
+    ) -> Result<()> {
+        use crate::tokens::models::TokenType;
+        if !self.applies_snowflake_context_rules() {
+            return Ok(());
+        }
+        if missing_from {
+            return Err(self
+                .parse_error("Snowflake takes FROM right after the location COPY INTO writes to"));
+        }
+        if after_location_parameter
+            && self.check(TokenType::Partition)
+            && self.check_next(TokenType::By)
+        {
+            self.skip();
+            return Err(self.parse_error(
+                "Snowflake takes PARTITION BY before a location's STORAGE_INTEGRATION, CREDENTIALS or ENCRYPTION",
+            ));
+        }
+        Ok(())
+    }
+
     /// Refuses a backtick-quoted identifier, which Snowflake does not tokenize, in its faithful modes.
     pub(crate) fn reject_snowflake_backticks(&mut self) -> Result<()> {
         if !self.applies_snowflake_context_rules() {

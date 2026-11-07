@@ -829,7 +829,9 @@ impl Parser {
 
         let this = self.parse_copy_target()?;
 
+        let into_location = !matches!(this, Expression::Table(_) | Expression::Schema(_));
         let kind = self.match_token(TokenType::From);
+        self.reject_snowflake_copy_order(is_into && into_location && !kind, false)?;
         let has_to = if !kind {
             self.match_token(TokenType::To)
         } else {
@@ -844,6 +846,7 @@ impl Parser {
         let mut params: Vec<CopyParameter> = Vec::new();
         let mut credentials = None;
         let mut with_wrapped = false;
+        let mut after_location_parameter = false;
 
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
             let had_with = self.match_token(TokenType::With);
@@ -862,7 +865,12 @@ impl Parser {
             }
 
             if self.check(TokenType::Var) || self.check_keyword() {
+                self.reject_snowflake_copy_order(false, after_location_parameter)?;
                 let param = self.parse_copy_parameter()?;
+                after_location_parameter |= into_location
+                    && ["STORAGE_INTEGRATION", "CREDENTIALS", "ENCRYPTION"]
+                        .iter()
+                        .any(|name| param.name.eq_ignore_ascii_case(name));
 
                 if param.name.eq_ignore_ascii_case("CREDENTIALS") {
                     if let Some(Expression::Literal(lit)) = &param.value {
@@ -1109,6 +1117,8 @@ impl Parser {
             } else {
                 value = Some(self.parse_copy_param_value()?);
             }
+        } else if name.eq_ignore_ascii_case("PARTITION") && self.match_token(TokenType::By) {
+            value = Some(self.parse_expression()?);
         } else {
             if self.check(TokenType::LParen) {
                 let is_varlen_option = matches!(
@@ -1589,12 +1599,17 @@ impl Parser {
                 self.skip();
             }
 
-            if self.check(TokenType::Var) || self.check_keyword() || self.is_identifier_token() {
+            if (self.check(TokenType::Var) || self.check_keyword() || self.is_identifier_token())
+                && !self.check(TokenType::From)
+            {
                 stage_path.push_str(&self.advance_text()?);
             }
             while self.check(TokenType::Dot) {
                 self.skip();
                 stage_path.push('.');
+                if self.match_token(TokenType::Percent) || self.match_token(TokenType::Mod) {
+                    stage_path.push('%');
+                }
                 if self.check(TokenType::Var) || self.check_keyword() || self.is_identifier_token()
                 {
                     stage_path.push_str(&self.advance_text()?);
@@ -1629,6 +1644,9 @@ impl Parser {
             while self.check(TokenType::Dot) {
                 self.skip();
                 stage_path.push('.');
+                if self.match_token(TokenType::Percent) || self.match_token(TokenType::Mod) {
+                    stage_path.push('%');
+                }
                 if self.check(TokenType::Var) || self.check_keyword() || self.is_identifier_token()
                 {
                     stage_path.push_str(&self.advance_text()?);
