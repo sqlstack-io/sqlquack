@@ -1546,7 +1546,7 @@ fn given_each_documented_format_element_when_writing_text_then_it_converts_as_re
         FirstValueTestCase {
             description: "DY",
             sql: "SELECT TO_CHAR(DATE '2024-09-05', 'DY') AS v",
-            expected_outcome: Err("which no recording shows"),
+            expected_outcome: Ok("Thu"),
         },
         FirstValueTestCase {
             description: "UUUU",
