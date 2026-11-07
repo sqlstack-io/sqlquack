@@ -217,10 +217,11 @@ impl Parser {
                     .map(|t| t.text.eq_ignore_ascii_case("MATCH_CONDITION"))
                     == Some(true)
             {
+                let alias_span = self.peek().span;
                 let alias_name = self.advance_text()?;
                 Expression::Alias(Box::new(Alias {
                     this: table,
-                    alias: Identifier::new(alias_name),
+                    alias: Identifier::new(alias_name).with_span(alias_span),
                     column_aliases: Vec::new(),
                     alias_explicit_as: false,
                     alias_keyword: None,

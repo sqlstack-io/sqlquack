@@ -66,6 +66,12 @@ fn given_a_located_parse_when_reading_a_node_then_its_span_covers_its_source() {
             pointer: "/0/select/from/expressions/0",
             expected_text: Ok("(SELECT id FROM recent) AS r"),
         },
+        LocatedTestCase {
+            description: "a keyword alias of an ASOF JOIN table covers its name",
+            sql: "SELECT * FROM x ASOF JOIN y OFFSET MATCH_CONDITION (x.t >= OFFSET.t)",
+            pointer: "/0/select/joins/0/this/alias/alias",
+            expected_text: Ok("OFFSET"),
+        },
     ];
 
     for test_case in test_cases {
