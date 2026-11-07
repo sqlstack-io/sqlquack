@@ -24,6 +24,7 @@ pub fn parse(sql: &str) -> Result<Parsed, ParseError> {
         parser.opaque = false;
         let statement: Parsing<Expression> = parser.statement();
         let statement: Expression = parser.unless_too_deep(statement)?;
+        parser.within_tree_depth(&statement)?;
         if !(parser.peek().is_none() || parser.is_char(';')) {
             return Err(parser.error());
         }

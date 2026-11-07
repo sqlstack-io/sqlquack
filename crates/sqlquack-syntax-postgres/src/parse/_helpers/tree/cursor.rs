@@ -2,8 +2,8 @@
 
 use std::collections::HashMap;
 
-use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Identifier;
+use sqlquack_syntax::{Expression, ExpressionWalk};
 
 use crate::keywords::models::KeywordCategory;
 use crate::parse::constants::{EXPRESSION_KEYWORDS, QUERY_STARTS};
@@ -18,6 +18,9 @@ const MAX_DEPTH: usize = 300;
 
 /// The longest flat chain of operators other than AND and OR, or of indirections.
 const MAX_CHAIN: usize = 1000;
+
+/// The deepest statement tree; a release build serialises one this deep on a 2 MiB thread.
+const MAX_TREE_DEPTH: usize = 8000;
 
 /// PostgreSQL's message for 54001, which recursion and chains past their limits both raise.
 const STACK_DEPTH_EXCEEDED: &str = "stack depth limit exceeded";
@@ -377,6 +380,14 @@ impl<'sql> Parser<'sql> {
     /// Refuses the statement when `levels` more levels here, such as array bounds, pass the limit.
     pub(crate) fn within_depth_by(&mut self, levels: usize) -> Parsing<()> {
         match self.depth + levels > MAX_DEPTH {
+            true => Err(self.refuse_depth()),
+            false => Ok(()),
+        }
+    }
+
+    /// Refuses `statement` when its tree nests deeper than `MAX_TREE_DEPTH`, as 54001.
+    pub(crate) fn within_tree_depth(&mut self, statement: &Expression) -> Parsing<()> {
+        match statement.tree_depth() > MAX_TREE_DEPTH {
             true => Err(self.refuse_depth()),
             false => Ok(()),
         }
