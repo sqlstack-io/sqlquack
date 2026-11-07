@@ -295,7 +295,7 @@ fn convert_select(
             placement: Placement::ROW,
         },
     )?;
-    let group_positions = group_positions(select);
+    let group_positions = group_positions(select, &scope);
     let mut names: Vec<Option<String>> = Vec::new();
     let mut outputs: Vec<(String, Emitted)> = Vec::new();
     let mut suffixed_item: Option<&Value> = None;

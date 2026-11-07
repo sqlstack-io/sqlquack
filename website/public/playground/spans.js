@@ -69,3 +69,10 @@ export function resultTable(names, columns) {
 	const head = names.map((name) => `<th>${escape(name)}</th>`).join('');
 	return { html: `<div class="pg-rows"><table><thead><tr>${head}</tr></thead><tbody>${body.join('')}</tbody></table></div>`, rows };
 }
+
+// Whether a DuckDB-WASM error on a translated statement comes from the in-browser engine rather
+// than from the rows: a statement it could not bind or plan, or a crash of the WebAssembly engine.
+// The playground runs a preview build of DuckDB-WASM; errors about values (conversion, out of
+// range) would be raised by native DuckDB too, so they are not counted.
+const PREVIEW_LIMITS = /^(Binder|Catalog|Parser|Not implemented|INTERNAL) Error|memory access out of bounds|unreachable|RuntimeError/;
+export const previewLimit = (message) => PREVIEW_LIMITS.test(message);

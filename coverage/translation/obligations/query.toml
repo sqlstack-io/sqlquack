@@ -248,6 +248,28 @@ cases = ["cases/translation/query/group-by.groupitem.toml#t003_null_key"]
 required = true
 
 [[obligation]]
+id = "sf.query.group-by.groupitem.t004"
+form = "sf.query.group-by.groupitem"
+kind = "type_combination"
+target = "GROUP BY a select alias"
+note = "GROUP BY naming a select item's alias, as GROUP BY month over DATE_TRUNC('month', ts) with COUNT(DISTINCT); the page lists column names, so the recording decides."
+catches = "the alias rejected, or the rows grouped by the raw timestamp instead of the month"
+reading = "group-by: groups rows by column names, positions or expressions; GROUP BY ALL groups by every non-aggregate select item; NULL keys form one group"
+cases = ["cases/translation/query/group-by.groupitem.toml#t004_select_alias"]
+required = true
+
+[[obligation]]
+id = "sf.query.group-by.groupitem.t005"
+form = "sf.query.group-by.groupitem"
+kind = "type_combination"
+target = "GROUP BY an alias that is also an input column"
+note = "A select alias spelled like an input column: the recording decides whether GROUP BY reads the column or the alias."
+catches = "the alias preferred where Snowflake reads the column, or the reverse"
+reading = "group-by: groups rows by column names, positions or expressions; GROUP BY ALL groups by every non-aggregate select item; NULL keys form one group"
+cases = ["cases/translation/query/group-by.groupitem.toml#t005_alias_shadows_column"]
+required = true
+
+[[obligation]]
 id = "sf.query.having.t001"
 form = "sf.query.having"
 kind = "type_combination"

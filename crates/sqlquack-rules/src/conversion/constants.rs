@@ -213,6 +213,8 @@ pub const TIME_CAST: &str = "rule.time_cast";
 pub const TIME_ARITHMETIC: &str = "rule.time_arithmetic";
 /// GROUP BY ALL.
 pub const GROUP_BY_ALL_RULE: &str = "rule.group_by_all";
+/// GROUP BY a select alias that names no FROM column.
+pub const GROUP_BY_ALIAS_RULE: &str = "rule.group_by_alias";
 /// A DATE or naive timestamp plus or minus an interval literal.
 pub const INTERVAL_ARITHMETIC: &str = "rule.interval_arithmetic";
 /// Why GROUP BY ALL with every SELECT item an aggregate is refused: no recording shows its rows.
@@ -583,6 +585,8 @@ pub const PARENTHESES: &str = "rule.parentheses";
 pub const COMMENT: &str = "rule.comment";
 /// Unary minus.
 pub const NEGATE: &str = "rule.negate";
+/// Unary plus.
+pub const UNARY_PLUS: &str = "rule.unary_plus";
 /// `+ - *` on NUMBER.
 pub const DECIMAL_ARITHMETIC: &str = "rule.decimal_arithmetic";
 /// `/` on NUMBER.
@@ -593,6 +597,8 @@ pub const FLOAT_ARITHMETIC: &str = "rule.float_arithmetic";
 pub const COMPARISON: &str = "rule.comparison";
 /// A DATE compared with an ISO date string literal.
 pub const DATE_LITERAL_COMPARISON: &str = "rule.date_literal_comparison";
+/// A DATE compared with a TIMESTAMP_NTZ(9), the DATE read as its midnight.
+pub const DATE_TIMESTAMP_COMPARISON: &str = "rule.date_timestamp_comparison";
 /// AND, OR and NOT.
 pub const LOGIC: &str = "rule.logic";
 /// IS [NOT] NULL.

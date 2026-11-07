@@ -16,3 +16,11 @@ pub const BUILTIN_CLOCK_REASON: &str = "CURRENT_DATE() and CURRENT_TIMESTAMP() t
 pub const BUILTIN_CLOCK_ZONE: &str = "CURRENT_DATE() and CURRENT_TIMESTAMP() give the date and \
     time in the session's time zone, so they agree only where Snowflake's TIMEZONE and DuckDB's \
     TimeZone are both UTC";
+
+/// Where the built-in default reads a TIMESTAMP_LTZ, such as the clock, in the UTC session.
+pub const BUILTIN_ZONE_CONSTRUCTS: [&str; 4] = [
+    "fn:CURRENT_DATE",
+    "fn:CURRENT_TIMESTAMP",
+    "fn:DATEDIFF",
+    "node:date_diff",
+];

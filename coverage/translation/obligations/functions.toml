@@ -8588,6 +8588,17 @@ cases = ["cases/translation/functions/dateadd.toml#t011_time_day"]
 required = true
 
 [[obligation]]
+id = "sf.functions.dateadd.t012"
+form = "sf.functions.dateadd"
+kind = "type_combination"
+target = "DATEADD of TIMESTAMP_LTZ"
+note = "Days, hours and months added to a local timestamp in the UTC session, as incremental models filter on CURRENT_TIMESTAMP(); the result keeps TIMESTAMP_LTZ."
+catches = "the result turned naive, the offset applied twice, or a month end not clamped"
+reading = "the page: DATEADD(part, value, expr) with TIMEADD and TIMESTAMPADD as aliases; a DATE with an hour-or-smaller part becomes a TIMESTAMP at midnight; a TIME takes only hour or smaller parts; a month end clamps to the last day of the result month"
+cases = ["cases/translation/functions/dateadd.toml#t012_ltz"]
+required = true
+
+[[obligation]]
 id = "sf.functions.datediff.datediff.t001"
 form = "sf.functions.datediff.datediff"
 kind = "type_combination"
@@ -8687,6 +8698,72 @@ note = "A later first argument."
 catches = "an absolute value"
 reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
 cases = ["cases/translation/functions/datediff.datediff.toml#t009_negative"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.t010"
+form = "sf.functions.datediff.datediff"
+kind = "type_combination"
+target = "DATEDIFF of TIMESTAMP_NTZ and TIMESTAMP_LTZ"
+note = "Months and days from a naive timestamp to a local one in the UTC session, as tenure models count up to COALESCE(cancelled_at, CURRENT_TIMESTAMP())."
+catches = "the naive side read in another zone, or whole months counted instead of crossed boundaries"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t010_ntz_ltz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.t011"
+form = "sf.functions.datediff.datediff"
+kind = "type_combination"
+target = "DATEDIFF of TIMESTAMP_NTZ and TIMESTAMP_LTZ in sub-day units"
+note = "Week, hour, minute, second and millisecond boundaries from a naive timestamp to a local one in the UTC session, at a half-hour offset and nanoseconds below a second."
+catches = "the local side read at its own offset, its nanoseconds rounded up into the next second, or elapsed units counted instead of crossed boundaries"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t011_ntz_ltz_subday"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.t012"
+form = "sf.functions.datediff.datediff"
+kind = "type_combination"
+target = "DATEDIFF of DATE and TIMESTAMP_LTZ"
+note = "Days and hours from a DATE to a local timestamp in the UTC session, the DATE read as its midnight."
+catches = "the local side's own calendar day used instead of its UTC one, or the DATE read at another hour"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t012_date_ltz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.t013"
+form = "sf.functions.datediff.datediff"
+kind = "type_combination"
+target = "DATEDIFF of two TIMESTAMP_LTZ values"
+note = "Years, months, days and hours between two local timestamps entered at different offsets, in the UTC session."
+catches = "each side counted in its own offset instead of the session's"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t013_ltz_ltz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.t014"
+form = "sf.functions.datediff.datediff"
+kind = "type_combination"
+target = "DATEDIFF of TIMESTAMP_NTZ and COALESCE of TIMESTAMP_NTZ and TIMESTAMP_LTZ"
+note = "Days from a naive timestamp to COALESCE of a naive end and a local one, as DATEDIFF('day', ordered_at, COALESCE(shipped_at, CURRENT_TIMESTAMP())) takes it."
+catches = "the COALESCE typed as the naive side, or its naive branch read in another zone"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t014_coalesce_local"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.t015"
+form = "sf.functions.datediff.datediff"
+kind = "type_combination"
+target = "DATEDIFF of TIMESTAMP_NTZ and TIMESTAMP_LTZ in sub-day units at microseconds"
+note = "The sub-day boundaries of t011 without its nanosecond row, which the converted SQL refuses to load."
+catches = "the local side read at its own offset, or elapsed units counted instead of crossed boundaries"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t015_ntz_ltz_subday_micro"]
 required = true
 
 [[obligation]]
@@ -29923,6 +30000,17 @@ cases = ["cases/translation/functions/to-char.month-names.toml#t007_names_beside
 required = true
 
 [[obligation]]
+id = "sf.functions.to-char.to-char.t011"
+form = "sf.functions.to-char.to-char"
+kind = "type_combination"
+target = "TO_CHAR(DATE, 'DY') and 'YYYY-MM'"
+note = "A week of dates, Monday to Sunday, written with 'DY', as date spines do, and with 'YYYY-MM'."
+catches = "a different day-name spelling or case, or the week starting on another day"
+reading = "the page: the value as VARCHAR, using the given format for numbers, dates and times and binary values, or the session output format; a string in a VARIANT is kept as is; a JSON null becomes the text null"
+cases = ["cases/translation/functions/to-char.to-char.toml#t006_day_abbrev"]
+required = true
+
+[[obligation]]
 id = "sf.functions.to-char.to-varchar.t001"
 form = "sf.functions.to-char.to-varchar"
 kind = "type_combination"
@@ -30994,6 +31082,17 @@ note = "Strings with fractional seconds, an explicit format and an integer strin
 catches = "the fraction dropped, the format ignored, or an integer string read as a date"
 reading = "the page: a number of seconds (scale 0 or absent) or fractions of a second (scale 3 milliseconds ... 9 nanoseconds) since 1970-01-01 00:00:00 UTC; a non-integer decimal keeps its scale; the result type follows TIMESTAMP_TYPE_MAPPING (NTZ here); NULL gives NULL"
 cases = ["cases/translation/functions/to-timestamp.toml#t009_varchar"]
+required = true
+
+[[obligation]]
+id = "sf.functions.to-timestamp.t010"
+form = "sf.functions.to-timestamp"
+kind = "type_combination"
+target = "TO_TIMESTAMP_NTZ of TIMESTAMP_TZ"
+note = "A zoned timestamp made naive, as dbt snapshots write TO_TIMESTAMP_NTZ(CONVERT_TIMEZONE(...)); the recording decides whether the wall clock or the UTC instant is kept."
+catches = "the offset applied where Snowflake keeps the wall clock, or the reverse"
+reading = "the page: a number of seconds (scale 0 or absent) or fractions of a second (scale 3 milliseconds ... 9 nanoseconds) since 1970-01-01 00:00:00 UTC; a non-integer decimal keeps its scale; the result type follows TIMESTAMP_TYPE_MAPPING (NTZ here); NULL gives NULL"
+cases = ["cases/translation/functions/to-timestamp.toml#t010_ntz_of_tz"]
 required = true
 
 [[obligation]]

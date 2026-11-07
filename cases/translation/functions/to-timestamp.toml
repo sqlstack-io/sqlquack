@@ -107,3 +107,16 @@ rows = [
 query = "SELECT TO_TIMESTAMP(a) AS r, TO_TIMESTAMP('29/02/2024 13:05', 'DD/MM/YYYY HH24:MI') AS f, TO_TIMESTAMP('1700000000') AS i FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
+
+[[case]]
+id = "t010_ntz_of_tz"
+description = "A zoned timestamp made naive, as dbt snapshots write TO_TIMESTAMP_NTZ(CONVERT_TIMEZONE(...)); the recording decides whether the wall clock or the UTC instant is kept. Catches: the offset applied where Snowflake keeps the wall clock, or the reverse"
+columns = [{ name = "a", type = "TIMESTAMP_TZ" }]
+rows = [
+  ["'2024-12-31 23:30:00.250 -0800'"],
+  ["'2024-01-01 23:45:10 +0530'"],
+  ["NULL"],
+]
+query = "SELECT ordinal, TO_TIMESTAMP_NTZ(a) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]

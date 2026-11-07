@@ -4,11 +4,16 @@ use crate::cases::models::{CaseDefinition, Spelling};
 use crate::constants::{INPUT_RELATION, ORDINAL_COLUMN, ROW_COUPLING_WORDS, VALUE_COLUMN};
 
 pub(crate) fn source_sql(case: &CaseDefinition, spelling: Spelling) -> String {
+    numbered_source_sql(case, spelling, 1)
+}
+
+/// The source SQL with the input rows numbered from `first`, so a row alone keeps its ordinal.
+fn numbered_source_sql(case: &CaseDefinition, spelling: Spelling, first: usize) -> String {
     let rows: Vec<String> = case
         .rows
         .iter()
         .enumerate()
-        .map(|(index, row)| input_row(case, index + 1, row))
+        .map(|(index, row)| input_row(case, index + first, row))
         .collect();
     let input = format!(
         "WITH {INPUT_RELATION} AS (\n  {}\n)\n",
@@ -41,13 +46,15 @@ pub(crate) fn row_sources(case: &CaseDefinition, spelling: Spelling) -> Vec<Stri
         true => case
             .rows
             .iter()
-            .map(|row| {
-                source_sql(
+            .enumerate()
+            .map(|(index, row)| {
+                numbered_source_sql(
                     &CaseDefinition {
                         rows: vec![row.clone()],
                         ..case.clone()
                     },
                     spelling,
+                    index + 1,
                 )
             })
             .collect(),
