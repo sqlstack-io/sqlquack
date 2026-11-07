@@ -634,8 +634,8 @@ pub struct Dialect {
     pub syntax_codes: Vec<String>,
 }
 
-/// The parser the checker compares receipts with.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
+/// The parser the checker compares receipts with; `local_verdict` maps each to its verdict.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize, clap::ValueEnum)]
 #[serde(rename_all = "snake_case")]
 pub enum LocalParser {
     /// `sqlquack_syntax` in the Snowflake dialect, through the isolated worker.
