@@ -8723,6 +8723,50 @@ cases = ["cases/translation/functions/datediff.datediff.toml#t010_ntz_ltz"]
 required = true
 
 [[obligation]]
+id = "sf.functions.datediff.datediff.t011"
+form = "sf.functions.datediff.datediff"
+kind = "type_combination"
+target = "DATEDIFF of TIMESTAMP_NTZ and TIMESTAMP_LTZ in sub-day units"
+note = "Week, hour, minute, second and millisecond boundaries from a naive timestamp to a local one in the UTC session, at a half-hour offset and nanoseconds below a second."
+catches = "the local side read at its own offset, its nanoseconds rounded up into the next second, or elapsed units counted instead of crossed boundaries"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t011_ntz_ltz_subday"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.t012"
+form = "sf.functions.datediff.datediff"
+kind = "type_combination"
+target = "DATEDIFF of DATE and TIMESTAMP_LTZ"
+note = "Days and hours from a DATE to a local timestamp in the UTC session, the DATE read as its midnight."
+catches = "the local side's own calendar day used instead of its UTC one, or the DATE read at another hour"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t012_date_ltz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.t013"
+form = "sf.functions.datediff.datediff"
+kind = "type_combination"
+target = "DATEDIFF of two TIMESTAMP_LTZ values"
+note = "Years, months, days and hours between two local timestamps entered at different offsets, in the UTC session."
+catches = "each side counted in its own offset instead of the session's"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t013_ltz_ltz"]
+required = true
+
+[[obligation]]
+id = "sf.functions.datediff.datediff.t014"
+form = "sf.functions.datediff.datediff"
+kind = "type_combination"
+target = "DATEDIFF of TIMESTAMP_NTZ and COALESCE of TIMESTAMP_NTZ and TIMESTAMP_LTZ"
+note = "Days from a naive timestamp to COALESCE of a naive end and a local one, as DATEDIFF('day', ordered_at, COALESCE(shipped_at, CURRENT_TIMESTAMP())) takes it."
+catches = "the COALESCE typed as the naive side, or its naive branch read in another zone"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t014_coalesce_local"]
+required = true
+
+[[obligation]]
 id = "sf.functions.datediff.syntax.t001"
 form = "sf.functions.datediff.syntax"
 kind = "type_combination"
