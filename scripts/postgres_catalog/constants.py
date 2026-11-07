@@ -40,6 +40,20 @@ QUERIES: dict[str, str] = {
 TYPES_FIXTURE: Path = Path(
     "crates/sqlquack-semantics/src/lineage/tests/fixtures/postgres_engine_types.json"
 )
+SYNTAX_TYPES_FIXTURE: Path = Path(
+    "crates/sqlquack-semantics/src/lineage/tests/fixtures/postgres_syntax_types.json"
+)
+SYNTAX_CASES: Path = Path("coverage/syntax-postgres/cases")
+QUERY_HEADS: tuple[str, ...] = ("SELECT", "WITH", "VALUES", "TABLE")
+MATRIX_METHOD: str = (
+    "format_type of a temporary view's first column over the empty table t, "
+    "recorded by scripts/record_postgres_types.py"
+)
+SYNTAX_METHOD: str = (
+    "format_type of a temporary view's first column for each accepted query-shaped case of "
+    "coverage/syntax-postgres/cases, over the empty table t, recorded by "
+    "scripts/record_postgres_types.py --syntax-cases"
+)
 TABLE_COLUMNS: tuple[tuple[str, str], ...] = (
     ("c_smallint", "smallint"),
     ("c_integer", "integer"),

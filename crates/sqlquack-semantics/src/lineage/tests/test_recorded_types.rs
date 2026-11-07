@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use sqlquack_syntax::{Dialect, ParseOptions};
 
 use crate::dialects::constants::{DUCKDB, POSTGRES, SNOWFLAKE};
@@ -5,12 +7,17 @@ use crate::lineage::main::query_lineage::query_lineage;
 use crate::lineage::models::LineageContext;
 use crate::lineage::models::Nullability::{NonNull, Nullable, Unknown};
 use crate::lineage::tests::helpers::{
-    replayed_postgres_engine_types, typed_postgres_shop_schema, typed_shop_schema,
+    canonical_postgres, native_postgres_output_type, replayed_native_postgres_engine_types,
+    replayed_postgres_engine_types, typed_column, typed_postgres_shop_schema, typed_shop_schema,
 };
-use crate::lineage::tests::test_types::{DialectTypeTestCase, EngineTypeReplayTestCase};
+use crate::lineage::tests::test_types::{
+    DialectTypeTestCase, EngineTypeReplayTestCase, PostgresTypeTestCase, TypedShopSchema,
+};
 
 /// Result types the PostgreSQL 18.6 server bound for synthetic expressions, recorded through views.
 const POSTGRES_ENGINE_TYPES: &str = include_str!("fixtures/postgres_engine_types.json");
+/// Result types the PostgreSQL 18.6 server bound for the accepted query-shaped syntax cases.
+const POSTGRES_SYNTAX_TYPES: &str = include_str!("fixtures/postgres_syntax_types.json");
 
 #[test]
 fn given_a_query_when_typing_outputs_then_nulls_and_numbers_follow_the_recorded_engines() {
@@ -288,22 +295,161 @@ fn given_a_postgres_query_when_typing_outputs_then_types_follow_postgresql_18_6(
 }
 
 #[test]
+fn given_a_native_postgres_tree_when_typing_outputs_then_types_follow_postgresql_18_6() {
+    let test_cases = [
+        PostgresTypeTestCase {
+            description: "an array joined to an array keeps the array type",
+            sql: "SELECT c_int_array || c_int_array AS v FROM t",
+            expected_type: Some("integer[]"),
+        },
+        PostgresTypeTestCase {
+            description: "an array joined to its element keeps the array type",
+            sql: "SELECT c_int_array || c_integer AS v FROM t",
+            expected_type: Some("integer[]"),
+        },
+        PostgresTypeTestCase {
+            description: "jsonb joined to jsonb is jsonb",
+            sql: "SELECT c_jsonb || c_jsonb AS v FROM t",
+            expected_type: Some("jsonb"),
+        },
+        PostgresTypeTestCase {
+            description: "bytea joined to bytea is bytea",
+            sql: "SELECT c_bytea || c_bytea AS v FROM t",
+            expected_type: Some("bytea"),
+        },
+        PostgresTypeTestCase {
+            description: "lag drops its argument's length",
+            sql: "SELECT lag(c_varchar) OVER () AS v FROM t",
+            expected_type: Some("character varying"),
+        },
+        PostgresTypeTestCase {
+            description: "lead drops its argument's precision and scale",
+            sql: "SELECT lead(c_num10_2, 1, c_num10_2) OVER () AS v FROM t",
+            expected_type: Some("numeric"),
+        },
+        PostgresTypeTestCase {
+            description: "lower of a range is its element type",
+            sql: "SELECT lower(int4range(1, 5)) AS v",
+            expected_type: Some("integer"),
+        },
+        PostgresTypeTestCase {
+            description: "upper of a multirange is its element type",
+            sql: "SELECT upper(int8multirange(int8range(1, 5))) AS v",
+            expected_type: Some("bigint"),
+        },
+        PostgresTypeTestCase {
+            description: "a hexadecimal literal that fits four bytes is integer",
+            sql: "SELECT 0x1F AS v",
+            expected_type: Some("integer"),
+        },
+        PostgresTypeTestCase {
+            description: "a separated hexadecimal literal past four bytes is bigint",
+            sql: "SELECT 0x_FFFF_FFFF AS v",
+            expected_type: Some("bigint"),
+        },
+        PostgresTypeTestCase {
+            description: "a binary literal is integer",
+            sql: "SELECT 0b101 AS v",
+            expected_type: Some("integer"),
+        },
+        PostgresTypeTestCase {
+            description: "current_timestamp keeps the precision it is given",
+            sql: "SELECT current_timestamp(3) AS v",
+            expected_type: Some("timestamp(3) with time zone"),
+        },
+        PostgresTypeTestCase {
+            description: "localtime keeps the precision it is given",
+            sql: "SELECT localtime(2) AS v",
+            expected_type: Some("time(2) without time zone"),
+        },
+        PostgresTypeTestCase {
+            description: "a cast to a two-dimensional array is the one array type",
+            sql: "SELECT CAST(c_int_array AS integer[][]) AS v FROM t",
+            expected_type: Some("integer[]"),
+        },
+        PostgresTypeTestCase {
+            description: "a cast to unknown abstains: a view column of it is text",
+            sql: "SELECT CAST(NULL AS unknown) AS v",
+            expected_type: None,
+        },
+    ];
+    let schema: TypedShopSchema = TypedShopSchema {
+        closed: HashMap::from([(
+            "t".to_owned(),
+            vec![
+                typed_column("c_integer", "integer"),
+                typed_column("c_varchar", "varchar(20)"),
+                typed_column("c_num10_2", "numeric(10,2)"),
+                typed_column("c_jsonb", "jsonb"),
+                typed_column("c_bytea", "bytea"),
+                typed_column("c_int_array", "integer[]"),
+            ],
+        )]),
+        ..TypedShopSchema::default()
+    };
+    let expected: Vec<(&str, Option<String>)> = test_cases
+        .iter()
+        .map(|test_case| {
+            (
+                test_case.description,
+                test_case.expected_type.map(canonical_postgres),
+            )
+        })
+        .collect();
+    let reported: Vec<(&str, Option<String>)> = test_cases
+        .iter()
+        .map(|test_case| {
+            (
+                test_case.description,
+                native_postgres_output_type(&schema, test_case.sql)
+                    .as_deref()
+                    .map(canonical_postgres),
+            )
+        })
+        .collect();
+    assert_eq!(reported, expected);
+}
+
+#[test]
 fn given_engine_recorded_postgres_types_when_typing_outputs_then_none_is_wrong() {
-    let test_cases = [EngineTypeReplayTestCase {
-        description: "every recorded PostgreSQL 18.6 result type, replayed",
-        fixture: POSTGRES_ENGINE_TYPES,
-        expected_wrong: &[],
-        expected_minimum_typed: 1315,
-    }];
+    let test_cases = [
+        EngineTypeReplayTestCase {
+            description: "every recorded PostgreSQL 18.6 result type, replayed",
+            fixture: POSTGRES_ENGINE_TYPES,
+            replayed: replayed_postgres_engine_types,
+            expected_wrong: &[],
+            expected_minimum_typed: 1322,
+            expected_maximum_untyped: 45,
+        },
+        EngineTypeReplayTestCase {
+            description: "every recorded PostgreSQL 18.6 result type, replayed through the native parser",
+            fixture: POSTGRES_ENGINE_TYPES,
+            replayed: replayed_native_postgres_engine_types,
+            expected_wrong: &[],
+            expected_minimum_typed: 1345,
+            expected_maximum_untyped: 22,
+        },
+        EngineTypeReplayTestCase {
+            description: "every typed query of the PostgreSQL syntax cases, replayed through the native parser \
+              (a query the parser cannot read whole counts as untyped)",
+            fixture: POSTGRES_SYNTAX_TYPES,
+            replayed: replayed_native_postgres_engine_types,
+            expected_wrong: &[],
+            expected_minimum_typed: 683,
+            expected_maximum_untyped: 276,
+        },
+    ];
     for test_case in test_cases {
-        let replay = replayed_postgres_engine_types(test_case.fixture);
+        let replay = (test_case.replayed)(test_case.fixture);
+        let untyped: usize = replay.tally.values().map(|tally| tally.untyped).sum();
         assert_eq!(
             (
                 replay.wrong.as_slice(),
-                replay.typed >= test_case.expected_minimum_typed
+                replay.typed >= test_case.expected_minimum_typed,
+                untyped <= test_case.expected_maximum_untyped
             ),
-            (test_case.expected_wrong, true),
-            "{}: typed {} {:?}",
+            (test_case.expected_wrong, true, true),
+            "{}: typed {}, untyped {untyped} {:?}",
             test_case.description,
             replay.typed,
             replay.tally

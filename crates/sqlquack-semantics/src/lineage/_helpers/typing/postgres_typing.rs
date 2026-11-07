@@ -75,6 +75,36 @@ const PROCEDURE_KIND: &str = "p";
 const FLOAT4_BITS: u32 = 24;
 /// The pseudo-types an array argument matches.
 const ANY_ARRAY_TYPES: [&str; 2] = ["anyarray", "anycompatiblearray"];
+/// The concatenation operator, which joins strings, arrays and other values of one type.
+const CONCATENATION: &str = "||";
+/// Polymorphic results that take the type of the arguments in their parameter group, unmodified.
+const ELEMENT_GROUPS: [&[&str]; 2] = [
+    &["anyelement", "anynonarray"],
+    &["anycompatible", "anycompatiblenonarray"],
+];
+/// The categories of pseudo-types and `unknown`, whose casts a view column does not keep.
+const UNRESOLVED_CATEGORIES: [char; 2] = [PSEUDO_CATEGORY, 'X'];
+/// The category of range and multirange types.
+const RANGE_CATEGORY: char = 'R';
+/// The functions that read one bound of a range or multirange as its element type.
+const RANGE_BOUND_FUNCTIONS: [&str; 2] = ["lower", "upper"];
+/// Each built-in range and multirange type with its element type.
+const RANGE_ELEMENTS: [(&str, &str); 12] = [
+    ("int4range", "integer"),
+    ("int8range", "bigint"),
+    ("numrange", "numeric"),
+    ("tsrange", "timestamp without time zone"),
+    ("tstzrange", "timestamp with time zone"),
+    ("daterange", "date"),
+    ("int4multirange", "integer"),
+    ("int8multirange", "bigint"),
+    ("nummultirange", "numeric"),
+    ("tsmultirange", "timestamp without time zone"),
+    ("tstzmultirange", "timestamp with time zone"),
+    ("datemultirange", "date"),
+];
+/// The radix prefixes of PostgreSQL's non-decimal integer literals.
+const RADIX_PREFIXES: [(&str, u32); 3] = [("0x", 16), ("0o", 8), ("0b", 2)];
 
 /// One overload: its kind (`f`, `a`, `w` or `p`), result, parameters, variadic element and defaults.
 struct Overload {
@@ -241,6 +271,9 @@ fn viable(overload: &Overload, arguments: &[Option<Family>]) -> bool {
 
 /// SQLQuack's spelling of a `format_type` name.
 fn spelling(formatted: &str) -> String {
+    if let Some(element) = formatted.strip_suffix("[]") {
+        return format!("{}[]", spelling(element));
+    }
     let spelled: &str = match formatted {
         "character varying" => "VARCHAR",
         "character" => "CHAR",
@@ -638,8 +671,15 @@ pub(crate) fn postgres_cast_spelling(data_type: &DataType) -> Option<String> {
         DataType::Json => "JSON".to_owned(),
         DataType::JsonB => "JSONB".to_owned(),
         DataType::Uuid => "UUID".to_owned(),
-        DataType::Array { element_type, .. } => {
-            format!("{}[]", postgres_cast_spelling(element_type)?)
+        DataType::Array { element_type, .. } => match element_type.as_ref() {
+            DataType::Array { .. } => postgres_cast_spelling(element_type)?,
+            element => format!("{}[]", postgres_cast_spelling(element)?),
+        },
+        DataType::Custom { name }
+            if category(&catalogue_name(name))
+                .is_some_and(|category| UNRESOLVED_CATEGORIES.contains(&category)) =>
+        {
+            return None;
         }
         other => crate::lineage::_helpers::typing::rules::rendered_type(other)?,
     })
@@ -672,13 +712,26 @@ fn arithmetic(expression: &Expression) -> Option<(&'static str, &BinaryOp)> {
 pub(crate) fn postgres_literal_type(literal: &Literal) -> Option<&'static str> {
     match literal {
         Literal::String(_) | Literal::EscapeString(_) | Literal::DollarString(_) => Some(TEXT),
-        Literal::Number(digits) => Some(digits.parse::<i128>().map_or(NUMERIC, |value| {
+        Literal::Number(digits) => Some(integer_value(digits).map_or(NUMERIC, |value| {
             INTEGER_LITERAL_TYPES
                 .iter()
                 .find(|(bound, _)| value <= *bound)
                 .map_or(NUMERIC, |(_, name)| name)
         })),
         _ => None,
+    }
+}
+
+/// An integer literal's value: decimal or `0x`/`0o`/`0b`, with `_` separators; none otherwise.
+fn integer_value(digits: &str) -> Option<i128> {
+    let digits: String = digits.replace('_', "");
+    let lower: String = digits.to_ascii_lowercase();
+    match RADIX_PREFIXES
+        .iter()
+        .find(|(prefix, _)| lower.starts_with(prefix))
+    {
+        Some((prefix, radix)) => i128::from_str_radix(&lower[prefix.len()..], *radix).ok(),
+        None => digits.parse::<i128>().ok(),
     }
 }
 
@@ -695,7 +748,10 @@ pub(crate) fn postgres_type(
         let textual: bool = sides.contains(&Some(Family::String))
             || string_literal(&concat.left)
             || string_literal(&concat.right);
-        return (textual && !sides.contains(&Some(Family::Array))).then(|| Some(Rc::from(TEXT)));
+        if textual && !sides.contains(&Some(Family::Array)) {
+            return Some(Some(Rc::from(TEXT)));
+        }
+        return Some(concatenation_type(&concat.left, &concat.right, parts));
     }
     if let Expression::Case(case) = expression {
         let mut values: Vec<&Expression> = case.else_.iter().collect();
@@ -722,7 +778,19 @@ pub(crate) fn postgres_type(
     }
     let (name, arguments) = called(expression)?;
     if let Some((_, result)) = VALUE_FUNCTIONS.iter().find(|(value, _)| *value == name) {
-        return Some(Some(Rc::from(*result)));
+        return Some(value_function_type(result, &arguments));
+    }
+    if RANGE_BOUND_FUNCTIONS.contains(&name.as_str())
+        && let [argument] = arguments.as_slice()
+        && let Some(range) = argument_type(argument, parts).map(catalogue_name)
+        && category(&range) == Some(RANGE_CATEGORY)
+    {
+        return Some(
+            RANGE_ELEMENTS
+                .iter()
+                .find(|(known, _)| *known == range)
+                .map(|(_, element)| Rc::from(spelling(element))),
+        );
     }
     match name.as_str() {
         "coalesce" | "greatest" | "least" => return common_type(&arguments, parts),
@@ -764,6 +832,86 @@ pub(crate) fn postgres_type(
         [result] if category(result) != Some(PSEUDO_CATEGORY) => {
             Some(Some(Rc::from(spelling(result))))
         }
+        [result] => {
+            let group: &[&str] = ELEMENT_GROUPS.iter().find(|group| group.contains(result))?;
+            let chosen: Vec<&&Overload> = candidates
+                .iter()
+                .filter(|overload| fit(overload, &types) == best)
+                .collect();
+            Some(polymorphic_type(group, &chosen, &types))
+        }
         _ => None,
+    }
+}
+
+/// The type a polymorphic result takes: the one type every argument in its group has, without
+/// modifiers, as PostgreSQL gives function results; none unless every chosen overload agrees.
+fn polymorphic_type(
+    group: &[&str],
+    overloads: &[&&Overload],
+    types: &[Option<String>],
+) -> Option<Rc<str>> {
+    let mut found: Option<&String> = None;
+    for overload in overloads {
+        for (index, argument) in types.iter().enumerate() {
+            let parameter: Option<&String> = match &overload.variadic {
+                Some(element) if index + 1 >= overload.parameters.len() => Some(element),
+                _ => overload.parameters.get(index),
+            };
+            if !parameter.is_some_and(|parameter| group.contains(&parameter.as_str())) {
+                continue;
+            }
+            let argument: &String = argument.as_ref()?;
+            if category(argument).is_none_or(|category| category == PSEUDO_CATEGORY) {
+                return None;
+            }
+            match found {
+                Some(first) if first != argument => return None,
+                _ => found = Some(argument),
+            }
+        }
+    }
+    found.map(|found| Rc::from(spelling(found)))
+}
+
+/// A SQL value function's type, with the precision a literal argument gives it; none when the
+/// precision is not a literal.
+fn value_function_type(result: &str, arguments: &[&Expression]) -> Option<Rc<str>> {
+    match arguments {
+        [] => Some(Rc::from(result)),
+        [Expression::Literal(literal)] => match literal.as_ref() {
+            Literal::Number(digits) if digits.parse::<u8>().is_ok() => {
+                Some(Rc::from(format!("{result}({digits})")))
+            }
+            _ => None,
+        },
+        _ => None,
+    }
+}
+
+/// The type of `left || right` when neither side is a string: an array joined to an array or an
+/// element of its own type keeps that array type, and any other pair resolves through
+/// `pg_operator`; none when a side's type is unknown or the operator's result is polymorphic.
+fn concatenation_type(
+    left: &Expression,
+    right: &Expression,
+    parts: &[(&Expression, Lineage)],
+) -> Option<Rc<str>> {
+    let operands: Vec<Operand> = vec![operand(left, parts)?, operand(right, parts)?];
+    let names: Vec<&String> = operands.iter().flatten().map(|(name, _)| name).collect();
+    let [left_name, right_name] = names.as_slice() else {
+        return None;
+    };
+    let element = |name: &str| name.strip_suffix("[]").map(str::to_owned);
+    let array: Option<String> = match (element(left_name), element(right_name)) {
+        (Some(left), Some(right)) if left == right => Some(left),
+        (Some(left), None) if left == **right_name => Some(left),
+        (None, Some(right)) if right == **left_name => Some(right),
+        (Some(_), _) | (_, Some(_)) => return None,
+        (None, None) => None,
+    };
+    match array {
+        Some(element) => Some(Rc::from(spelling(&format!("{element}[]")))),
+        None => operator_type(CONCATENATION, BINARY_KIND, &operands),
     }
 }

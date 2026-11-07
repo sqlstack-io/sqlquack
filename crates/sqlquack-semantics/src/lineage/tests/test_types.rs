@@ -80,6 +80,12 @@ pub(crate) struct DuckdbTypeTestCase {
     pub(crate) expected_type: Option<&'static str>,
 }
 
+pub(crate) struct PostgresTypeTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_type: Option<&'static str>,
+}
+
 /// Engine-recorded result types: the schema the cases read and each case's bound type.
 #[derive(serde::Deserialize)]
 pub(crate) struct EngineTypeFixture {
@@ -124,8 +130,10 @@ pub(crate) struct EngineTypeTally {
 pub(crate) struct EngineTypeReplayTestCase {
     pub(crate) description: &'static str,
     pub(crate) fixture: &'static str,
+    pub(crate) replayed: fn(&str) -> EngineTypeReplay,
     pub(crate) expected_wrong: &'static [String],
     pub(crate) expected_minimum_typed: usize,
+    pub(crate) expected_maximum_untyped: usize,
 }
 
 /// A replay's wrong types, its exact count and the per-category tally.
