@@ -1663,7 +1663,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:TIMEDIFF",
             "fn:TIMESTAMPDIFF",
         ],
-        conditions: "DATE_TRUNC and DATEADD of a TIMESTAMP_TZ known to hold the UTC offset, +00:00 (from CONVERT_TIMEZONE('UTC', x), a cast of a DATE or naive timestamp in the UTC session, or values chosen from such), computed on its UTC wall time and read back at +00:00, keeping its type; DATEADD of a TIMESTAMP_LTZ the same way, which relies on session_timezone_utc; DATEDIFF of two such values from their UTC wall times. A UTC-offset value against a naive one, and zoned values of unknown offset, refuse.",
+        conditions: "DATE_TRUNC and DATEADD of a TIMESTAMP_TZ known to hold the UTC offset, +00:00 (from CONVERT_TIMEZONE('UTC', x), a cast of a DATE or naive timestamp in the UTC session, or values chosen from such), computed on its UTC wall time and read back at +00:00, keeping its type; DATEADD of a TIMESTAMP_LTZ the same way, which relies on session_timezone_utc; DATEDIFF of two such values from their UTC wall times, and of a TIMESTAMP_LTZ beside a DATE, naive timestamp or another TIMESTAMP_LTZ from its UTC wall time, which relies on session_timezone_utc, as recorded. A UTC-offset value against a naive one, and zoned values of unknown offset, refuse.",
         failures: &[],
     },
     RuleSpec {
