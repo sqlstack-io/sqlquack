@@ -8,6 +8,7 @@ use crate::cli::_helpers::commands::{
     boundaries, diff, family, missing, pages, parse_worker, snapshot_command, stale, summary,
     translation, validate,
 };
+use crate::cli::_helpers::depth_command::depth_probe;
 use crate::cli::_helpers::results_command::results;
 use crate::cli::models::{Arguments, Command};
 
@@ -41,7 +42,16 @@ pub fn run_cli() -> ExitCode {
             &common,
         ),
         Command::Diff { base, head, common } => diff(&base, head.as_deref(), &common),
-        Command::ParseWorker { parser } => parse_worker(parser),
+        Command::ParseWorker {
+            parser,
+            thread_stack,
+        } => parse_worker(parser, thread_stack),
+        Command::DepthProbe {
+            profile,
+            allowlist,
+            jobs,
+            json,
+        } => depth_probe(&profile, &allowlist, jobs, json),
     };
     result.unwrap_or_else(|code| code)
 }

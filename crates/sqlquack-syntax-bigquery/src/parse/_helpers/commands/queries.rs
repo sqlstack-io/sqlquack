@@ -2,6 +2,7 @@
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Identifier;
+use sqlquack_syntax::expressions::names::models::Null;
 use sqlquack_syntax::expressions::operators::models::Alias;
 use sqlquack_syntax::expressions::queries::models::{
     ClusterBy, Cte, DistributeBy, From, GroupBy, Having, Limit, NamedWindow, OrderBy, Ordered,
@@ -237,7 +238,12 @@ fn reorganized(body: Expression, organization: Organization) -> Expression {
 /// `body` with `with` as its common table expressions, wrapped when it has its own already.
 pub(crate) fn with_ctes(body: Expression, with: With) -> Expression {
     if let Expression::PipeOperator(mut node) = body {
-        node.this = with_ctes(node.this, with);
+        let mut input = &mut node.this;
+        while let Expression::PipeOperator(inner) = input {
+            input = &mut inner.this;
+        }
+        let first = std::mem::replace(input, Expression::Null(Null));
+        *input = with_ctes(first, with);
         return Expression::PipeOperator(node);
     }
     let has_with: bool = match &body {
