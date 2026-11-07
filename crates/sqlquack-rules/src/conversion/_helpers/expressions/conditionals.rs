@@ -14,6 +14,7 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 use crate::conversion::_helpers::expressions::casts::cast_to;
 use crate::conversion::_helpers::expressions::operators::{boolean_operand, comparable};
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::conversion::_helpers::expressions::temporal::unified_cast;
 use crate::conversion::_helpers::support::declared::declared_of;
 use crate::conversion::_helpers::support::divergence::require_widening_range;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal};
@@ -113,7 +114,12 @@ fn unified_branches(
             (SnowflakeType::SemiStructured, _) => {
                 format!("CAST(NULL AS {SEMI_STRUCTURED_HOLDING})")
             }
-            _ => cast(&branch.sql, target, context.log).map_err(refuse)?,
+            _ => unified_cast(
+                &branch.sql,
+                (branch.data_type, target),
+                (context, construct),
+            )
+            .map_err(refuse)?,
         });
     }
     match reads_text {

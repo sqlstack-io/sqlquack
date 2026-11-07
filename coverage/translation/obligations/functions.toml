@@ -8767,6 +8767,18 @@ cases = ["cases/translation/functions/datediff.datediff.toml#t015_ntz_ltz_subday
 required = true
 
 [[obligation]]
+id = "sf.functions.datediff.datediff.t016"
+form = "sf.functions.datediff.datediff"
+kind = "boundary"
+subkind = "rounding_scale"
+target = "DATEDIFF of TIMESTAMP_NTZ and COALESCE of TIMESTAMP_NTZ and TIMESTAMP_LTZ just before midnight"
+note = "t014's shape with naive ends a tenth of a microsecond and a microsecond before midnight."
+catches = "the naive branch rounded to microseconds, which moves 23:59:59.9999999 to the next day"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t016_coalesce_local_submicro"]
+required = true
+
+[[obligation]]
 id = "sf.functions.datediff.syntax.t001"
 form = "sf.functions.datediff.syntax"
 kind = "type_combination"
