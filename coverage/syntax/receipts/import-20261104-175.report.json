@@ -1,0 +1,63 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIMESTAMP(3) '2026-01-02 03:04:05' ;",
+   "sql_sha256": "095e3f2b2d220d6d1dd1e0e32625294e35cccbc171d17c7ad3f614f54f7e7902"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIMESTAMPNTZ(3) '2026-01-02 03:04:05' ;",
+   "sql_sha256": "2d3f47a99bc7db51844aad7bbf2fce718d3c0171eb67b0d1264e89d68477b8cc"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIMESTAMPLTZ(3) '2026-01-02 03:04:05' ;",
+   "sql_sha256": "2ddf8fac861b18d7331f21ac025d3d277a388ab27df0a8c4bb66da4fbd5b148b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIMESTAMP_LTZ(3) '2026-01-02 03:04:05' ;",
+   "sql_sha256": "539a5e78467be2e8677ffb7409d8bbe070edbe2e2d5df1450283fb1b2cb1ec6c"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT DATETIME(3) '2026-01-02 03:04:05' ;",
+   "sql_sha256": "865d3e5d570e594061ba80d683f82ed16e7ee5d1123823cb046644f94d5b4638"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIME(3) '03:04:05' ;",
+   "sql_sha256": "ad963014791bbd74d4611696fea101421a113083c5ca458825d54c61de0faef1"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIMESTAMPTZ(3) '2026-01-02 03:04:05' ;",
+   "sql_sha256": "f4f95dbf8b911627b2490f983d656fcee2dbaf33cbc56c687fba6e5593e884b3"
+  }
+ ],
+ "receipts": 7,
+ "receipts_file_sha256": "aecc53f282b1e74f4ec8fc5bd489ea0fc54ebd9e717e28e356f35616730d83e4",
+ "reconciled_receipts": 0,
+ "refusals": [],
+ "refused": 0,
+ "runs": [
+  {
+   "audit_sha256": "173ae78c50c611e9d0537cb9d254442525642c048638fc065910b3a70476ceaa",
+   "receipts": 7,
+   "refused_rows": 0,
+   "run_id": "tlnb-ex-00",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": []
+}
