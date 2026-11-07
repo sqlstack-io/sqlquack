@@ -1,0 +1,605 @@
+# Unary signs before a literal or a column: which doubled forms Snowflake rejects, how it types a
+# unary plus over a literal, and binary operators before a unary sign. Main converts all of them today.
+category = "relational"
+construct = "node:alias"
+session_profile = "utc-v1"
+
+[[case]]
+id = "unaliased_plus_minus"
+description = "A unary plus before a unary minus. Unaliased, with FROM on its own line."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +-1\nFROM input"
+order = "ordered"
+compile_error = true
+tags = ["boundary"]
+
+[[case]]
+id = "unaliased_minus_plus"
+description = "A unary minus before a unary plus. Unaliased, with FROM on its own line."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT -+1\nFROM input"
+order = "ordered"
+compile_error = true
+tags = ["boundary"]
+
+[[case]]
+id = "unaliased_spaced_double_minus"
+description = "Two unary minus signs separated by a space. Unaliased, with FROM on its own line."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT - -1\nFROM input"
+order = "ordered"
+compile_error = true
+tags = ["boundary"]
+
+[[case]]
+id = "unaliased_plus_parenthesised_plus"
+description = "A unary plus before a parenthesised unary plus. Unaliased, with FROM on its own line."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +(+1)\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "unaliased_spaced_double_plus"
+description = "Two unary plus signs separated by a space. Unaliased, with FROM on its own line."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT + +1\nFROM input"
+order = "ordered"
+compile_error = true
+tags = ["boundary"]
+
+[[case]]
+id = "unaliased_minus_parenthesised_minus"
+description = "A unary minus before a parenthesised unary minus. Unaliased, with FROM on its own line."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT -(-1)\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "unaliased_plus_parenthesised_minus"
+description = "A unary plus before a parenthesised unary minus. Unaliased, with FROM on its own line."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +(-1)\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "unaliased_double_plus_column"
+description = "Two unary plus signs before a column. Unaliased, with FROM on its own line."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT ++x\nFROM input"
+order = "ordered"
+compile_error = true
+tags = ["boundary"]
+
+[[case]]
+id = "unaliased_spaced_double_minus_column"
+description = "Two unary minus signs, spaced, before a column. Unaliased, with FROM on its own line."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT - -x\nFROM input"
+order = "ordered"
+compile_error = true
+tags = ["boundary"]
+
+[[case]]
+id = "unaliased_add_unary_plus"
+description = "Control: an addition whose right operand is a unary plus. Unaliased, with FROM on its own line."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT 1 + +1\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "unaliased_subtract_unary_minus"
+description = "Control: a subtraction whose right operand is a unary minus. Unaliased, with FROM on its own line."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT 1 - -1\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_double_unary_plus"
+description = "The same as its unaliased case, aliased: ++1 AS a."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT ++1 AS a\nFROM input"
+order = "ordered"
+compile_error = true
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_plus_minus"
+description = "The same as its unaliased case, aliased: +-1 AS a."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +-1 AS a\nFROM input"
+order = "ordered"
+compile_error = true
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_minus_plus"
+description = "The same as its unaliased case, aliased: -+1 AS a."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT -+1 AS a\nFROM input"
+order = "ordered"
+compile_error = true
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_spaced_double_minus"
+description = "The same as its unaliased case, aliased: - -1 AS a."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT - -1 AS a\nFROM input"
+order = "ordered"
+compile_error = true
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_spaced_double_plus"
+description = "The same as its unaliased case, aliased: + +1 AS a."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT + +1 AS a\nFROM input"
+order = "ordered"
+compile_error = true
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_plus_parenthesised_plus"
+description = "The same as its unaliased case, aliased: +(+1) AS a."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +(+1) AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_minus_parenthesised_minus"
+description = "The same as its unaliased case, aliased: -(-1) AS a."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT -(-1) AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_plus_parenthesised_minus"
+description = "The same as its unaliased case, aliased: +(-1) AS a."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +(-1) AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_double_plus_column"
+description = "The same as its unaliased case, aliased: ++x AS a."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT ++x AS a\nFROM input"
+order = "ordered"
+compile_error = true
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_spaced_double_minus_column"
+description = "The same as its unaliased case, aliased: - -x AS a."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT - -x AS a\nFROM input"
+order = "ordered"
+compile_error = true
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_add_unary_plus"
+description = "The same as its unaliased case, aliased: 1 + +1 AS a."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT 1 + +1 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_subtract_unary_minus"
+description = "The same as its unaliased case, aliased: 1 - -1 AS a."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT 1 - -1 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_unary_plus_decimal"
+description = "A unary plus over a decimal literal. Aliased, so the type is the point."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +1.5 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_unary_plus_three_digits"
+description = "A unary plus over a three-digit integer literal. Aliased, so the type is the point."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +123 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_unary_plus_fraction"
+description = "A unary plus over a fraction with a leading zero. Aliased, so the type is the point."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +0.25 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_unary_plus_parenthesised_decimal"
+description = "A unary plus over a parenthesised decimal. Aliased, so the type is the point."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +(1.5) AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_single_unary_signs"
+description = "Control: single unary plus and minus over a column, aliased, over rows with a duplicate and a NULL."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+  ["2"],
+  ["NULL"],
+]
+query = "SELECT +x AS a, -x AS b\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "aliased_single_unary_signs_over_no_rows"
+description = "Control: the same aliased items over no rows."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +x AS a, -x AS b\nFROM input WHERE x > 5"
+order = "ordered"
+tags = ["empty-input"]
+
+[[case]]
+id = "aliased_unary_plus_two_digits"
+description = "A unary plus over a two-digit integer literal. Aliased, so the type is the point."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +12 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_unary_plus_ninety_nine"
+description = "A unary plus over the largest two-digit integer literal. Aliased, so the type is the point."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +99 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_unary_plus_two_integer_digit_decimal"
+description = "A unary plus over a decimal with two integer digits. Aliased, so the type is the point."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +12.5 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_unary_plus_half"
+description = "A unary plus over a one-digit fraction with a leading zero. Aliased, so the type is the point."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +0.5 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_unary_plus_bare_fraction"
+description = "A unary plus over a fraction without a leading zero. Aliased, so the type is the point."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +.25 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_unary_plus_exponent"
+description = "A unary plus over an exponent literal. Aliased, so the type is the point."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +1e3 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_unary_plus_38_digit_integer"
+description = "A unary plus over a 38-digit integer literal. Aliased, so the type is the point."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +12345678901234567890123456789012345678 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_unary_plus_37_digit_fraction"
+description = "A unary plus over a fraction with 37 decimal digits. Aliased, so the type is the point."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +0.1234567890123456789012345678901234567 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_unary_plus_number_1_0"
+description = "A unary plus over a NUMBER(1,0) column, aliased, over a value and a NULL."
+columns = [{ name = "x", type = "NUMBER(1,0)" }]
+rows = [
+  ["7"],
+  ["NULL"],
+]
+query = "SELECT +x AS a\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "aliased_unary_plus_number_3_2"
+description = "A unary plus over a NUMBER(3,2) column, aliased, over a value and a NULL."
+columns = [{ name = "x", type = "NUMBER(3,2)" }]
+rows = [
+  ["1.25"],
+  ["NULL"],
+]
+query = "SELECT +x AS a\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "aliased_unary_plus_number_2_2"
+description = "A unary plus over a NUMBER(2,2) column, aliased, over a value and a NULL."
+columns = [{ name = "x", type = "NUMBER(2,2)" }]
+rows = [
+  ["0.25"],
+  ["NULL"],
+]
+query = "SELECT +x AS a\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "aliased_unary_plus_number_38_37"
+description = "A unary plus over a NUMBER(38,37) column, aliased, over a value and a NULL."
+columns = [{ name = "x", type = "NUMBER(38,37)" }]
+rows = [
+  ["1.5"],
+  ["NULL"],
+]
+query = "SELECT +x AS a\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "aliased_unary_plus_parenthesised_plus_column"
+description = "A unary plus over a parenthesised unary plus of a NUMBER(1,0) column, aliased, over a value and a NULL."
+columns = [{ name = "x", type = "NUMBER(1,0)" }]
+rows = [
+  ["7"],
+  ["NULL"],
+]
+query = "SELECT +(+x) AS a\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "aliased_multiply_unary_minus"
+description = "A multiplication whose right operand is a unary minus."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT 1 * -1 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_subtract_unary_plus"
+description = "A subtraction whose right operand is a unary plus."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT 1 - +1 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_subtract_unary_minus_column_10_0"
+description = "Over a NUMBER(10,0) column, a subtraction whose right operand is a unary minus of the column, aliased, over a value and a NULL."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["3"],
+  ["NULL"],
+]
+query = "SELECT x - -x AS a\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "aliased_add_unary_plus_column_10_0"
+description = "Over a NUMBER(10,0) column, an addition whose right operand is a unary plus of the column, aliased, over a value and a NULL."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["3"],
+  ["NULL"],
+]
+query = "SELECT x + +x AS a\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "aliased_multiply_unary_minus_column_10_0"
+description = "Over a NUMBER(10,0) column, a multiplication whose right operand is a unary minus of the column, aliased, over a value and a NULL."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["3"],
+  ["NULL"],
+]
+query = "SELECT x * -x AS a\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "aliased_subtract_unary_plus_column_10_0"
+description = "Over a NUMBER(10,0) column, a subtraction whose right operand is a unary plus of the column, aliased, over a value and a NULL."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["3"],
+  ["NULL"],
+]
+query = "SELECT x - +x AS a\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "aliased_subtract_unary_minus_column_10_2"
+description = "Over a NUMBER(10,2) column, a subtraction whose right operand is a unary minus of the column, aliased, over a value and a NULL."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["3.25"],
+  ["NULL"],
+]
+query = "SELECT x - -x AS a\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "aliased_add_unary_plus_column_10_2"
+description = "Over a NUMBER(10,2) column, an addition whose right operand is a unary plus of the column, aliased, over a value and a NULL."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["3.25"],
+  ["NULL"],
+]
+query = "SELECT x + +x AS a\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "aliased_multiply_unary_minus_column_10_2"
+description = "Over a NUMBER(10,2) column, a multiplication whose right operand is a unary minus of the column, aliased, over a value and a NULL."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["3.25"],
+  ["NULL"],
+]
+query = "SELECT x * -x AS a\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "aliased_subtract_unary_plus_column_10_2"
+description = "Over a NUMBER(10,2) column, a subtraction whose right operand is a unary plus of the column, aliased, over a value and a NULL."
+columns = [{ name = "x", type = "NUMBER(10,2)" }]
+rows = [
+  ["3.25"],
+  ["NULL"],
+]
+query = "SELECT x - +x AS a\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
