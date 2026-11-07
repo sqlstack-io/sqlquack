@@ -87,7 +87,12 @@ pub(crate) fn column_finding(
                 ),
             ));
         }
-        if matches >= 1 || current.sources.iter().any(unjudged) {
+        if matches >= 1
+            || current
+                .sources
+                .iter()
+                .any(|source| unjudged(source) || source.query.faulted)
+        {
             return None;
         }
         scope = current.outer;
@@ -120,7 +125,10 @@ fn qualified_finding(
     let mut scope: Option<&LineageScope<'_>> = Some(level.scope);
     while let Some(current) = scope {
         if let Some(source) = source_named(current, &alias, context) {
-            return (!unjudged(source) && !offers(source, wanted, context)).then(|| {
+            return (!unjudged(source)
+                && !source.query.faulted
+                && !offers(source, wanted, context))
+            .then(|| {
                 (
                     UNKNOWN_COLUMN_CODE,
                     format!(

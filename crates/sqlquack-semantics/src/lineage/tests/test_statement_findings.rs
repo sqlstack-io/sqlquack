@@ -1,6 +1,6 @@
 use sqlquack_syntax::{CallMode, Dialect, ParseOptions, parse_statements_with};
 
-use crate::dialects::constants::{DUCKDB, SNOWFLAKE};
+use crate::dialects::constants::{DUCKDB, POSTGRES, SNOWFLAKE};
 use crate::lineage::_helpers::findings::statement::statement_findings;
 use crate::lineage::models::LineageContext;
 use crate::lineage::tests::helpers::{
@@ -273,6 +273,49 @@ fn given_a_duckdb_name_not_definitely_unresolved_when_resolving_names_then_nothi
     for test_case in test_cases {
         assert_eq!(
             found_findings(test_case.sql, (Dialect::DuckDB, &DUCKDB, &schema)),
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_postgres_cte_with_a_finding_when_resolving_names_then_only_its_follow_ons_are_dropped() {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "a name read through a star of a faulted CTE is a follow-on of the root finding",
+            sql: "WITH kept AS (SELECT customer_id_missing FROM orders), again AS (SELECT * FROM kept) \
+                  SELECT customer_id FROM again",
+            expected_findings: &[(
+                "E201",
+                "Unknown column 'customer_id_missing' in table 'orders'",
+                21,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "the root finding and a finding independent of the faulted CTE both appear",
+            sql: "WITH kept AS (SELECT customer_id_missing FROM orders), again AS (SELECT * FROM kept) \
+                  SELECT a.customer_id, c.nam FROM again a, customers c",
+            expected_findings: &[
+                ("E201", "Unknown column 'nam' in table 'customers'", 109),
+                (
+                    "E201",
+                    "Unknown column 'customer_id_missing' in table 'orders'",
+                    21,
+                ),
+            ],
+        },
+        QueryFindingsTestCase {
+            description: "a CTE without a finding still has its unknown columns found",
+            sql: "WITH kept AS (SELECT customer_id FROM orders) SELECT k.nope FROM kept k",
+            expected_findings: &[("E201", "Unknown column 'nope' in table 'kept'", 55)],
+        },
+    ];
+    let schema = duckdb_shop_schema();
+    for test_case in test_cases {
+        assert_eq!(
+            found_findings(test_case.sql, (Dialect::PostgreSQL, &POSTGRES, &schema)),
             owned_findings(test_case.expected_findings),
             "{}",
             test_case.description

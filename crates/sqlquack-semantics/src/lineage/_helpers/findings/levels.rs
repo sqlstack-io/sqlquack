@@ -61,17 +61,36 @@ pub(crate) fn query_findings(
     }
 }
 
-/// The CTEs `with` adds to `ctes`, and each body's findings made with the CTEs before it.
+/// The CTEs `with` adds to `ctes`, and each body's findings made with the CTEs before it. Under
+/// PostgreSQL a CTE whose body has a finding, or reads a CTE that does, is faulted.
 fn visited_ctes<'a>(
     with: Option<&With>,
     (ctes, outer, aliases): (&'a [NamedQuery], Option<&LineageScope<'_>>, &[String]),
     context: LineageContext<'_>,
 ) -> (Cow<'a, [NamedQuery]>, Vec<NameFinding>) {
     let mut found: Vec<NameFinding> = Vec::new();
+    let postgres: bool = Engine::of(context) == Engine::Postgres;
     let reach = with_ctes_visiting(with, (ctes, outer), context, &mut |cte, reach| {
-        found.extend(query_findings(&cte.this, (reach, outer, aliases), context));
+        let body: Vec<NameFinding> = query_findings(&cte.this, (reach, outer, aliases), context);
+        let faulted: bool =
+            postgres && (!body.is_empty() || reads_faulted(&cte.this, reach, context));
+        found.extend(body);
+        faulted
     });
     (reach, found)
+}
+
+/// Whether `query` names a faulted CTE among `reach`.
+fn reads_faulted(query: &Expression, reach: &[NamedQuery], context: LineageContext<'_>) -> bool {
+    query.dfs().any(|node| match node {
+        Expression::Table(table) if table.schema.is_none() && table.catalog.is_none() => {
+            let name: String = key(&table.name, context);
+            reach.iter().any(|named| {
+                named.query.faulted && context.profile.same_identifier(&named.key, &name)
+            })
+        }
+        _ => false,
+    })
 }
 
 fn select_findings(
