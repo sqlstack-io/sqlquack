@@ -2,9 +2,11 @@
 // Needs the engine built into wasm/pkg (scripts/build_engine.sh).
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 
-import { initSync, analyze, run_failure } from '../wasm/pkg/sqlquack_wasm.js';
+import { initSync, analyze, fixture_tables, run_failure } from '../wasm/pkg/sqlquack_wasm.js';
 import { rendered, resultTable, underlined } from '../public/playground/spans.js';
 
 initSync({ module: readFileSync(new URL('../wasm/pkg/sqlquack_wasm_bg.wasm', import.meta.url)) });
@@ -83,21 +85,34 @@ test('the conversion budget is timed in the browser and refuses with SQ0006 when
 	assert.match(report.translate.diagnostics[0].label, /beyond the budget of 0 ms/);
 });
 
-test('every example stops at the stage it is meant to, and the default translates cleanly', async () => {
-	const { EXAMPLES, CAPTIONS, SCHEMA: PAGE_SCHEMA } = await import('../public/playground/examples.js');
-	const expected = {
-		valid: ['pass', 'pass', 'pass'],
-		decimal: ['pass', 'pass', 'pass'],
-		syntax: ['fail', 'skipped', 'skipped'],
-		rejected: ['pass', 'fail', 'skipped'],
-		unknown: ['pass', 'fail', 'fail'],
-		refused: ['pass', 'pass', 'fail'],
-	};
-	assert.deepEqual(Object.keys(EXAMPLES).sort(), Object.keys(expected).sort());
-	for (const [name, sql] of Object.entries(EXAMPLES)) {
+test('every example chip stops at the stage its label names, the Run stage included', async () => {
+	const { EXAMPLE_GROUPS, EXAMPLES, CAPTIONS, ROWS, SCHEMA: PAGE_SCHEMA } = await import('../public/playground/examples.js');
+	const chips = EXAMPLE_GROUPS.flatMap((group) => group.examples);
+	assert.deepEqual(chips.map((chip) => chip.key).sort(), Object.keys(EXAMPLES).sort());
+	assert.equal(new Set(chips.map((chip) => chip.slug)).size, chips.length);
+	// Translated examples run as the page runs them: the page's fixture tables and rows, in the
+	// DuckDB-WASM build the page serves, with every value read as text.
+	const require = createRequire(import.meta.url);
+	const duckdb = require('@duckdb/duckdb-wasm/dist/duckdb-node-blocking.cjs');
+	const dist = dirname(require.resolve('@duckdb/duckdb-wasm/dist/duckdb-node-blocking.cjs'));
+	const bundles = { base: { mainModule: join(dist, 'duckdb-base.wasm'), mainWorker: join(dist, 'duckdb-node-base.worker.cjs') } };
+	const db = await duckdb.createDuckDB(bundles, new duckdb.VoidLogger(), duckdb.NODE_RUNTIME);
+	await db.instantiate();
+	const conn = db.connect();
+	for (const table of JSON.parse(fixture_tables(PAGE_SCHEMA)).tables) conn.query(table);
+	conn.query(ROWS);
+	const stops = (sql) => {
 		const report = JSON.parse(analyze(sql, PAGE_SCHEMA));
-		assert.deepEqual(['parse', 'checks', 'translate'].map((stage) => report[stage].status), expected[name], name);
-	}
+		const failed = ['parse', 'checks', 'translate'].find((stage) => report[stage].status !== 'pass');
+		if (failed) return failed;
+		try {
+			conn.query(`SELECT COLUMNS(*)::VARCHAR FROM (${report.translate.statements[0].sql}) AS result`);
+			return null;
+		} catch {
+			return 'run';
+		}
+	};
+	for (const chip of chips) assert.equal(stops(EXAMPLES[chip.key]), chip.stops, chip.name);
 	// The one deliberate refusal is a known divergence, explained by its caption.
 	const refused = JSON.parse(analyze(EXAMPLES.refused, PAGE_SCHEMA)).translate;
 	assert.deepEqual(refused.diagnostics.map((d) => d.code), ['SQ0008']);

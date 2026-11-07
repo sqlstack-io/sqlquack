@@ -4,7 +4,7 @@
 
 import { DUCKDB_DIR, DUCKDB_WASM_BYTES } from './duckdb-version.js';
 import { ENGINE_DIR, ENGINE_WASM_BYTES } from './engine-version.js';
-import { CAPTIONS, EXAMPLES, ROWS, SCHEMA } from './examples.js';
+import { CAPTIONS, EXAMPLE_GROUPS, EXAMPLES, ROWS, SCHEMA, stopLabel } from './examples.js';
 import { escape, rendered, resultTable, underlined } from './spans.js';
 
 const here = (path) => new URL(path, import.meta.url).href;
@@ -426,6 +426,13 @@ document.addEventListener('click', (event) => {
 });
 sqlBox.addEventListener('input', () => {
 	showCaption(null);
+	// Edited SQL is no longer the example, so neither the chip nor the link names it any more.
+	if (activeExample) {
+		setActiveExample(null);
+		const url = new URL(location.href);
+		url.searchParams.delete('example');
+		history.replaceState(null, '', url);
+	}
 	schedule();
 });
 schemaBox.addEventListener('input', schedule);
@@ -436,11 +443,45 @@ $('#pg-load-policy').addEventListener('click', async () => {
 });
 rowsBox.addEventListener('input', () => latest && duckdb && schedule());
 sqlBox.addEventListener('scroll', () => (marks.scrollTop = sqlBox.scrollTop));
-$('#pg-example').addEventListener('change', (event) => {
-	if (!EXAMPLES[event.target.value]) return;
-	sqlBox.value = EXAMPLES[event.target.value];
-	showCaption(event.target.value);
-	event.target.value = '';
+
+// The example chips: one click loads an example and runs it, and the link names it
+// (`?example=<slug>`) so it can be shared.
+const examples = EXAMPLE_GROUPS.flatMap((group) => group.examples);
+const examplesBox = $('#pg-examples');
+examplesBox.innerHTML = EXAMPLE_GROUPS.map(
+	(group) =>
+		`<div class="pg-group"><p class="pg-group-head"><strong>${escape(group.title)}</strong> <span>${escape(group.tagline)}</span></p>` +
+		'<div class="pg-chips">' +
+		group.examples
+			.map(
+				(example) =>
+					`<button class="pg-chip" type="button" aria-pressed="false" data-example="${example.key}" data-stops="${example.stops ?? 'none'}">` +
+					`<span class="pg-chip-name">${escape(example.name)}</span><span class="pg-chip-stop">${escape(stopLabel(example.stops))}</span></button>`,
+			)
+			.join('') +
+		'</div></div>',
+).join('');
+
+let activeExample = null;
+function setActiveExample(key) {
+	activeExample = key;
+	for (const chip of examplesBox.querySelectorAll('.pg-chip')) chip.setAttribute('aria-pressed', String(chip.dataset.example === key));
+}
+
+function loadExample(key) {
+	sqlBox.value = EXAMPLES[key];
+	showCaption(key);
+	setActiveExample(key);
+}
+
+examplesBox.addEventListener('click', (event) => {
+	const key = event.target.closest('.pg-chip')?.dataset.example;
+	if (!key) return;
+	loadExample(key);
+	const url = new URL(location.href);
+	url.searchParams.delete('sql');
+	url.searchParams.set('example', examples.find((example) => example.key === key).slug);
+	history.replaceState(null, '', url);
 	run();
 });
 
@@ -462,8 +503,13 @@ sqlBox.addEventListener('mousemove', (event) => {
 sqlBox.addEventListener('mouseleave', () => (tip.hidden = true));
 
 const params = new URLSearchParams(location.search);
-sqlBox.value = params.get('sql') ?? EXAMPLES[params.get('example')] ?? EXAMPLES.valid;
-if (!params.get('sql')) showCaption(params.get('example'));
+if (params.get('sql') !== null) sqlBox.value = params.get('sql');
+else {
+	// A slug, or an example's key as earlier links used; anything else opens the default quietly.
+	const requested = params.get('example');
+	const key = examples.find((example) => example.slug === requested)?.key ?? (Object.hasOwn(EXAMPLES, requested ?? '') ? requested : 'valid');
+	loadExample(key);
+}
 schemaBox.value = SCHEMA;
 rowsBox.value = ROWS;
 setStage('parse', 'loading', '', 'loading the engine…', 'loading');

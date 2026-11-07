@@ -66,20 +66,10 @@
 					your browser. Each stage passes or fails on its own, so you can see which step stopped and where.
 				</p>
 			</div>
+			<div class="wrap pg-examples" id="pg-examples" role="group" aria-label="Examples"></div>
 			<div class="wrap playground">
 				<div class="pg-inputs">
-					<label class="pg-label" for="pg-sql"
-						><span>Snowflake SQL</span>
-						<select id="pg-example" aria-label="Examples">
-							<option value="">Examples…</option>
-							<option value="valid">Converts and runs</option>
-							<option value="decimal">Decimal division</option>
-							<option value="syntax">Syntax error</option>
-							<option value="rejected">Snowflake rejects it</option>
-							<option value="unknown">Unknown column</option>
-							<option value="refused">Translation refused</option>
-						</select></label
-					>
+					<label class="pg-label" for="pg-sql"><span>Snowflake SQL</span></label>
 					<div class="pg-editor">
 						<div class="pg-marks" id="pg-marks" aria-hidden="true"></div>
 						<textarea id="pg-sql" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
