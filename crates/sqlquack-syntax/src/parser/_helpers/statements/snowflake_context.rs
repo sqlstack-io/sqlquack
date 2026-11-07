@@ -17,6 +17,7 @@ impl Parser {
         &mut self,
         missing_from: bool,
         after_location_parameter: bool,
+        into_location: bool,
     ) -> Result<()> {
         use crate::tokens::models::TokenType;
         if !self.applies_snowflake_context_rules() {
@@ -25,6 +26,11 @@ impl Parser {
         if missing_from {
             return Err(self
                 .parse_error("Snowflake takes FROM right after the location COPY INTO writes to"));
+        }
+        if !into_location && self.check(TokenType::Partition) && self.check_next(TokenType::By) {
+            return Err(self.parse_error(
+                "COPY INTO a table has no PARTITION BY; only COPY INTO a location partitions its files",
+            ));
         }
         if after_location_parameter
             && self.check(TokenType::Partition)

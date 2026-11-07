@@ -831,7 +831,7 @@ impl Parser {
 
         let into_location = !matches!(this, Expression::Table(_) | Expression::Schema(_));
         let kind = self.match_token(TokenType::From);
-        self.reject_snowflake_copy_order(is_into && into_location && !kind, false)?;
+        self.reject_snowflake_copy_order(is_into && into_location && !kind, false, true)?;
         let has_to = if !kind {
             self.match_token(TokenType::To)
         } else {
@@ -865,7 +865,7 @@ impl Parser {
             }
 
             if self.check(TokenType::Var) || self.check_keyword() {
-                self.reject_snowflake_copy_order(false, after_location_parameter)?;
+                self.reject_snowflake_copy_order(false, after_location_parameter, into_location)?;
                 let param = self.parse_copy_parameter()?;
                 after_location_parameter |= into_location
                     && ["STORAGE_INTEGRATION", "CREDENTIALS", "ENCRYPTION"]
@@ -1601,6 +1601,7 @@ impl Parser {
 
             if (self.check(TokenType::Var) || self.check_keyword() || self.is_identifier_token())
                 && !self.check(TokenType::From)
+                && !self.check_next(TokenType::Eq)
             {
                 stage_path.push_str(&self.advance_text()?);
             }

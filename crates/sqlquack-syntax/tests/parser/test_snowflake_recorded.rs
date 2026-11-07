@@ -63,6 +63,18 @@ fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake
             expected_accepted: true,
         },
         AcceptanceTestCase {
+            description: "COPY INTO a table has no PARTITION BY",
+            sql: "COPY INTO t1 FROM @s1 PARTITION BY 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a user stage source takes options after it",
+            sql: "COPY INTO t1 FROM @~ FILES = ( 'a' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
             description: "COPY INTO a location needs an expression after PARTITION BY",
             sql: "COPY INTO @s1 FROM v1 PARTITION BY ;",
             dialect: Dialect::Snowflake,
