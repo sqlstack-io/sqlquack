@@ -166,7 +166,7 @@ fn clause_predicates(
 fn predicate_code(engine: Engine) -> &'static str {
     match engine {
         Engine::DuckDB => "W215",
-        Engine::Snowflake => "E211",
+        Engine::Snowflake | Engine::Postgres => "E211",
     }
 }
 
@@ -230,11 +230,14 @@ fn expression_checks(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<NameFin
                 && let Literal::String(value) = literal.as_ref()
                 && !value.chars().any(|character| character.is_ascii_digit())
             {
-                let code: &'static str = match engine {
-                    Engine::Snowflake => "E218",
-                    Engine::DuckDB => "W213",
+                let code: Option<&'static str> = match engine {
+                    Engine::Snowflake => Some("E218"),
+                    Engine::DuckDB => Some("W213"),
+                    Engine::Postgres => None,
                 };
-                findings.push(finding(code, "Invalid interval literal".to_owned(), node));
+                findings.extend(
+                    code.map(|code| finding(code, "Invalid interval literal".to_owned(), node)),
+                );
             }
         }
         Expression::DateTrunc(function) | Expression::TimestampTrunc(function) => {
@@ -470,7 +473,7 @@ fn impossible_cast(
     impossible.then(|| {
         finding(
             match engine {
-                Engine::Snowflake => "E218",
+                Engine::Snowflake | Engine::Postgres => "E218",
                 Engine::DuckDB => "W213",
             },
             format!("Cannot cast {} to {}", source.name(), target.name()),
