@@ -2149,3 +2149,99 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 "pg.functions.info.has-type-privilege" = "d2e3389df9f5fe2b52e15b208da605f77f5aec70971369f2c37dd94d5fbc3309"
 "pg.functions.info.pg-has-role" = "b3de933aeefd2e351164e81e596dc022bf09609037f54839a0e65fee88d614da"
 "pg.functions.info.row-security-active" = "0019e6441c3638840067a9b634dac371b2ae29a9826e4293deec3e7827521c87"
+
+[[review]]
+id = "pg-auditor-functions-003"
+reviewer_lane = "auditor"
+family = "functions"
+parser_tree = "f2372a18396b91d6573c5252d00bcec9315e56e5"
+reviewed_utc = "2026-11-06T21:57:37Z"
+verdict = "approved"
+forms = [
+  "pg.functions.merge-support.merge-action",
+  "pg.functions.aggregate.json-arrayagg",
+  "pg.functions.aggregate.json-objectagg",
+  "pg.functions.json.json",
+  "pg.functions.json.json-object",
+  "pg.functions.json.json-object-value-format-json-encoding",
+  "pg.functions.json.json-scalar",
+  "pg.functions.json.json-serialize",
+  "pg.functions.json.json-exists",
+  "pg.functions.json.json-query",
+  "pg.functions.json.json-value",
+  "pg.functions.json.json-table-columns",
+  "pg.functions.datatype-xml.xmlparse",
+  "pg.functions.datatype-xml.xmlserialize-as",
+  "pg.functions.xml.xmlconcat",
+  "pg.functions.xml.xmlelement-name",
+  "pg.functions.xml.xmlexists-passing",
+  "pg.functions.xml.xmlforest",
+  "pg.functions.xml.xmlpi-name",
+  "pg.functions.xml.xmlroot-version",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree f2372a18; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.functions.merge-support.merge-action" = "cfadf9491a0469bb5c87d59dc319580a4dd99d8cda62f312ed966ff27d3c00fe"
+"pg.functions.aggregate.json-arrayagg" = "0b7322e42853ab869eda259886ef989ebc2c6038b0a71aca8b940246fd2ab7c2"
+"pg.functions.aggregate.json-objectagg" = "c5ff8e4b5582914933fcec1c185cd50b4bc748dca6abc16b7e022c3932a1a5a5"
+"pg.functions.json.json" = "b0a65c3c028db6aff4d4ca7a3f699c6821ea9853d604cc780edc5ac2a367fd8b"
+"pg.functions.json.json-object" = "ee64b818edff4f5f5cfaa36b2d0ded9002fa71c1b66cdfb8505c921abc7ae34e"
+"pg.functions.json.json-object-value-format-json-encoding" = "bf82d81ab7833a6dcd3b608a7b43d413d9c2d8fafcdcd28e66da831b2a020c20"
+"pg.functions.json.json-scalar" = "eb1f9abedae448c78b2a23c8f949cbcbd9be1195cdef86a5f09aae1db9c7dff0"
+"pg.functions.json.json-serialize" = "b14b21d692e92944327891e8f251cd1d189f29656eaaefd282cbc865fdd9c141"
+"pg.functions.json.json-exists" = "dbc7b343f84962e20e01349361927b2a27f716fd7f0ae6f6f10163e3dfb05361"
+"pg.functions.json.json-query" = "a29e7b51bf0ea39cc265fadc03c72df0ed02ede5abe1e1df3f38a68d75d8b9d8"
+"pg.functions.json.json-value" = "c68498371c932f6fb2684a84f4e87dfb2f0d1bc8f282279b3ef4d0207ff6c8f3"
+"pg.functions.json.json-table-columns" = "5191d5c48de52dd7ebcb28b6ad813c3eba6a9d46b9c5346e984a4dd811dea86a"
+"pg.functions.datatype-xml.xmlparse" = "29937d13d809bd5139d6327b1045b8263a7c8c75ca32bc57d1f32704342f493b"
+"pg.functions.datatype-xml.xmlserialize-as" = "b2d20f4512e99843e02ad13b6f233eaae1126eedf11c4104b61f6179a0f612aa"
+"pg.functions.xml.xmlconcat" = "acd345fc1a1acc0ab8ac08654ecb80a06b971a0447e1e342148fdf8485bb0857"
+"pg.functions.xml.xmlelement-name" = "320210b28eac512fb2fa8e7938cbeee8d27a28a702b7ef322293c0ac12c50429"
+"pg.functions.xml.xmlexists-passing" = "345f97aaabe0c58befafde3ba3260d2cb92f0e41e4efc2f93a9e750652516b9c"
+"pg.functions.xml.xmlforest" = "aba0d82337fcfd643d1d381632eb10e3b967483ea3c3b4279913d4d4f60b5ae4"
+"pg.functions.xml.xmlpi-name" = "cead84205b736c5d0df53141029c44575d2da46e5c6097f0b7d5963aa3d24bde"
+"pg.functions.xml.xmlroot-version" = "763a41ddc7cddbb73c8d99844679728f12b99c0d00f4177a9333b444ce4c912e"
+
+[review.definitions]
+"pg.functions.merge-support.merge-action" = "38b531a58ac030f7e56c06dd3b87dcc2b2bc92407869d2702fb2bd3021f0b038"
+"pg.functions.aggregate.json-arrayagg" = "3037a1db0ab1a5580bc7b6e67793b6d4c896059ac3ad6a5a0d0f7995fb80702c"
+"pg.functions.aggregate.json-objectagg" = "c83d415f6af6344dff8476b56cd20d2a97f522cb7b16c032009d9a2c4dfc8363"
+"pg.functions.json.json" = "4b8e0b546f598b387d4412a984a4d006954f7c3d58ffd61246388fb65094ad97"
+"pg.functions.json.json-object" = "093a7022a3638bcf472fc6ceabe7d55772ebdadee35d483f92963ebbaca40f26"
+"pg.functions.json.json-object-value-format-json-encoding" = "98972c74f64ef7a156e519304f6ccbf2dd7fb4bd91e9973f4e89750a2e18f4ef"
+"pg.functions.json.json-scalar" = "637ec514aadc006676172671f16a6e7b552ba23fc9c7cde31bc9bafd95784fc5"
+"pg.functions.json.json-serialize" = "2a4037340fdc75e3c960683fb48e6c6e27051411602d47eb885d6e344defcbe4"
+"pg.functions.json.json-exists" = "35ccda9b7b750c9c1fdc5ddc92d60f0a0a4f20bfb21124837a335c0e5663f9f1"
+"pg.functions.json.json-query" = "c374230aa837544c46fef2cefc17041b16c550fbcb015134cc2daf5ad10002ef"
+"pg.functions.json.json-value" = "d69b9fc4326ac709f65b2395922fd800e130789ca55d72a3be5c8b19461bec84"
+"pg.functions.json.json-table-columns" = "827819a4bfa607f717898a9037c750c9589ae2db1397fcf04b5ca72ff2c83f3a"
+"pg.functions.datatype-xml.xmlparse" = "8900d1e850141b5acdd6a98a369736dac721e8bceaacd2779b80e3884d13925b"
+"pg.functions.datatype-xml.xmlserialize-as" = "bda58c1a89accdafef5d441d073ab845969268d6ddc9ab376345d0e579f2dfec"
+"pg.functions.xml.xmlconcat" = "74ca64fdb272daa8c83e54028f7387709acc92921f86e034252f1b2824556ca1"
+"pg.functions.xml.xmlelement-name" = "1771d54653561310d68d801f449cd5e43ac7810e1554300003384f1ac6662d2c"
+"pg.functions.xml.xmlexists-passing" = "278cca48d85f830e663bbd5a7872cc2c3a7fc26bf868b80843f9410a3627609c"
+"pg.functions.xml.xmlforest" = "4de141ef3ebc9e56666123900ddca53f870fde2befb0e1307f234a9122dbf5ee"
+"pg.functions.xml.xmlpi-name" = "f507fb65a3d36c449dfb878f89f8a54dad5a1e2623d80a24c0a156e39b10565d"
+"pg.functions.xml.xmlroot-version" = "92faf14efbe4d360ec1381df0e66d64d13c04be1ba3ec40a5e28e2c06edd854b"
+
+[[review]]
+id = "pg-auditor-functions-004"
+reviewer_lane = "auditor"
+family = "functions"
+parser_tree = "f2372a18396b91d6573c5252d00bcec9315e56e5"
+reviewed_utc = "2026-11-06T22:14:31Z"
+verdict = "approved"
+forms = [
+  "pg.functions.json.json-array",
+  "pg.functions.xml.xmltable-passing-columns",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree f2372a18; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.functions.json.json-array" = "33339fc99d0305e1fdb35524e44a79575784e92b04c5cd9d5010de9eadb154f3"
+"pg.functions.xml.xmltable-passing-columns" = "fcf25a8fba9231a4d49bef42d6814048972098db321ebb96367dbfa41ca9aebb"
+
+[review.definitions]
+"pg.functions.json.json-array" = "71b8534cc22fc4fbf00c034ce3d9e17cb3cf3f72025d5b3c869f999b4cca807e"
+"pg.functions.xml.xmltable-passing-columns" = "83f41a893d3c868dc27c6fa77f879058dc71418dc9bc64c48e5c11abac2d53cb"

@@ -165,3 +165,147 @@ note = "Re-read after the notes-6 obligation delta against the PostgreSQL 18.6 d
 "pg.security_admin.create-group" = "a063bec6afc088beab58ef4df6ed5a4839c0cb870085f48d51fa9a0edab3feed"
 "pg.security_admin.create-role" = "76e685f6b98bd402195555e42fa602251b55126807c35faef53168cb0ac4b233"
 "pg.security_admin.create-user" = "58661d3ec5c25a79d314221fb57012662a387238d640c0f50894e45503e93e5c"
+
+[[review]]
+id = "pg-auditor-security_admin-004"
+reviewer_lane = "auditor"
+family = "security_admin"
+parser_tree = "3c24ccecc4954f5416274b31e405eda128b876ba"
+reviewed_utc = "2026-11-06T15:13:47Z"
+verdict = "approved"
+forms = [
+  "pg.security_admin.drop-group",
+  "pg.security_admin.drop-owned",
+  "pg.security_admin.drop-policy",
+  "pg.security_admin.drop-role",
+  "pg.security_admin.drop-user",
+  "pg.security_admin.drop-user-mapping",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 3c24ccec; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.security_admin.drop-group" = "ab087a920656fdcefaa106041656f1f66c9ecc90c1d3946c5e647e04b85c4b0a"
+"pg.security_admin.drop-owned" = "8c83772a4383c8a0eb0ce1e4a4da56894085a2209fbe0e4800b80f5b7dd7f9fc"
+"pg.security_admin.drop-policy" = "66f2ba7815b5457e33ff78fafb3786a2db798de45763f97d3a1bf0368dce3ab7"
+"pg.security_admin.drop-role" = "b8573ed27cbd4f463c538059711824d2b5fd8203823dabf64948c870b70aa260"
+"pg.security_admin.drop-user" = "92c57c33407fc6710a819b56efdf007310f9e95a39e169e8f262b96164fe84ea"
+"pg.security_admin.drop-user-mapping" = "26f369f1d0c4a18346c43686a8e0846f5af8ca918137980c83e3de392359a78f"
+
+[review.definitions]
+"pg.security_admin.drop-group" = "d0c71fd3762daf2f20f8e7de8ad1bb6bc4995a5882a57df808da8d0f2ddcba5c"
+"pg.security_admin.drop-owned" = "b857c631bffe1ac7b335799e7b702bff411620d8600ea2b763835152eba59595"
+"pg.security_admin.drop-policy" = "5872a9a4563080712f610f0b4c8b9aaea28dd05675916de416fb49848d70baa2"
+"pg.security_admin.drop-role" = "1636b745c23e5fb3d6fea39e4db1c1a9fcaf365e686956a76365cb0044fbda39"
+"pg.security_admin.drop-user" = "2ff2beb30cd636bf48c27ab4bd91be8f7073c6bf01ef3d5afc62eb1ff2e807e2"
+"pg.security_admin.drop-user-mapping" = "7856cfb29eeb5f7d06e42d4403bde65892778e3dfb10141c404d405637afa4ef"
+
+[[review]]
+id = "pg-auditor-security_admin-007"
+reviewer_lane = "auditor"
+family = "security_admin"
+parser_tree = "06bb147f9101958773446552ee7dc06decf018d2"
+reviewed_utc = "2026-11-06T17:14:36Z"
+verdict = "approved"
+forms = [
+  "pg.security_admin.alter-default-privileges",
+  "pg.security_admin.grant.on-database-to",
+  "pg.security_admin.grant.on-domain-to",
+  "pg.security_admin.grant.on-foreign-data-wrapper",
+  "pg.security_admin.grant.on-foreign-server-to",
+  "pg.security_admin.grant.on-language-to",
+  "pg.security_admin.grant.on-large-object-to",
+  "pg.security_admin.grant.on-parameter-to",
+  "pg.security_admin.grant.on-schema-to",
+  "pg.security_admin.grant.on-tablespace-to",
+  "pg.security_admin.grant.on-to-execute-function-procedure-routine-functions-procedures-routines-in-schema",
+  "pg.security_admin.grant.on-to-select-insert-update-delete-truncate-references-trigger-maintain-table-tables-in-schema",
+  "pg.security_admin.grant.on-to-select-insert-update-references-table",
+  "pg.security_admin.grant.on-to-usage-select-update-sequence-sequences-in-schema",
+  "pg.security_admin.grant.on-type-to",
+  "pg.security_admin.grant.to",
+  "pg.security_admin.reassign-owned",
+  "pg.security_admin.revoke.from",
+  "pg.security_admin.revoke.on-database-from",
+  "pg.security_admin.revoke.on-domain-from",
+  "pg.security_admin.revoke.on-foreign-data-wrapper",
+  "pg.security_admin.revoke.on-foreign-server-from",
+  "pg.security_admin.revoke.on-from-execute-function-procedure-routine-functions-procedures-routines-in-schema",
+  "pg.security_admin.revoke.on-from-select-insert-update-delete-truncate-references-trigger-maintain-table-tables-in-schema",
+  "pg.security_admin.revoke.on-from-select-insert-update-references-table",
+  "pg.security_admin.revoke.on-from-usage-select-update-sequence-sequences-in-schema",
+  "pg.security_admin.revoke.on-language-from",
+  "pg.security_admin.revoke.on-large-object-from",
+  "pg.security_admin.revoke.on-parameter-from",
+  "pg.security_admin.revoke.on-schema-from",
+  "pg.security_admin.revoke.on-tablespace-from",
+  "pg.security_admin.revoke.on-type-from",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 06bb147f; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.security_admin.alter-default-privileges" = "b7e95fb2993454ceb5fde07dc5af4de3d74c0cb69f1c9be70e055222a8422e65"
+"pg.security_admin.grant.on-database-to" = "ee33e8af5d64c589f20fa74d99e0bbe8adb58105d2a679cbcc1bd644a9d9c94d"
+"pg.security_admin.grant.on-domain-to" = "dbbb99b50d3255360567aa1bcf262073507aff32d7d1af8890bcbbcc2c67661f"
+"pg.security_admin.grant.on-foreign-data-wrapper" = "c4174c19b64973c80b529593019c78f9e81a2a4349805f63ffd7db498b0226ee"
+"pg.security_admin.grant.on-foreign-server-to" = "f33d681fe58154c419611554fb4f7c02c7006949e3d702dc1ca72b1632599457"
+"pg.security_admin.grant.on-language-to" = "bf4b8b332cc32d75bdf476aa6d99e0a7564f50a616852d7df1db4b44146f682e"
+"pg.security_admin.grant.on-large-object-to" = "ecc8e0897539ccd91ed6ca130bdd843cccd03ca4224bcc6ff1acb07dc6587e64"
+"pg.security_admin.grant.on-parameter-to" = "b3f53ca3634c2140fdfbe3661579a663f87144a848448f5cbc56982452c2c2b5"
+"pg.security_admin.grant.on-schema-to" = "a093c0a894c4fb92f66a09c4309832686159d90a6980b80a54d699bf1c4da49a"
+"pg.security_admin.grant.on-tablespace-to" = "fccc72bc343365353ab2feb6a2c2a3ae4c1e06fdfb614cc5c349173a6b84f34e"
+"pg.security_admin.grant.on-to-execute-function-procedure-routine-functions-procedures-routines-in-schema" = "c30ae9b1f5b2795117358c343b0c471a407861abdd823885041de58615cbb0cb"
+"pg.security_admin.grant.on-to-select-insert-update-delete-truncate-references-trigger-maintain-table-tables-in-schema" = "c01e36d723984d1f7519b999eded1822084c5d64baaf238bf37d603c2795ee75"
+"pg.security_admin.grant.on-to-select-insert-update-references-table" = "4779edd9afabc8122473962d366079ad686c56e60870cce38da4b75063999a2f"
+"pg.security_admin.grant.on-to-usage-select-update-sequence-sequences-in-schema" = "b8f9fea40ee9b04c33003e2f6409fde653b70f3275ae68a279893a602e1cf031"
+"pg.security_admin.grant.on-type-to" = "0066a56509983a8c9962e9daf5370654238e45f4a5d842b506af9d4f72692f5f"
+"pg.security_admin.grant.to" = "8d05583532798c421ea726a3026ca0fb8652d0d5a17c1c90b6bf78b7940058b8"
+"pg.security_admin.reassign-owned" = "95bef4d91acb695d9b8d7bacd77268abdcbf8ee6ee3f1c45e4ef6ca1b934af85"
+"pg.security_admin.revoke.from" = "12189bfcb8f89999d40f04e62e3c66ccf06e0be16bbb036c590e9e201ddb7454"
+"pg.security_admin.revoke.on-database-from" = "d7c8fad7f20ad0cb2d06d37786b746a815c0bee48e3421ffeab8dfb58e6f2594"
+"pg.security_admin.revoke.on-domain-from" = "f57a2a731fd8e0a897132d7ac40250b1b5d73e5cca230b49255a480da6b199a2"
+"pg.security_admin.revoke.on-foreign-data-wrapper" = "ca0a226a41a929ead3aeb24b53e54c4c121c52f14dad6ee657c763b2548344b8"
+"pg.security_admin.revoke.on-foreign-server-from" = "fbaec048d3940b3df41b63fc25cecf0d3f0543e7e1b6d25b920ca974744d5c26"
+"pg.security_admin.revoke.on-from-execute-function-procedure-routine-functions-procedures-routines-in-schema" = "9e60299e05c950a2a8e8a84f8446c817e331e9b3d1a0f9b321a229b2b50bf3e6"
+"pg.security_admin.revoke.on-from-select-insert-update-delete-truncate-references-trigger-maintain-table-tables-in-schema" = "a20aa4624408cbaf6401c5e8998f867899dee1475114a6f6fe9825354a1237d5"
+"pg.security_admin.revoke.on-from-select-insert-update-references-table" = "ce0e59b17e252c1ab56e25eee964a22dce9bdc423765c9897fc8f0352b250f43"
+"pg.security_admin.revoke.on-from-usage-select-update-sequence-sequences-in-schema" = "65dd15645133595cdb0f1d75047491ec91124cb32151087eca3eb48eb825a96f"
+"pg.security_admin.revoke.on-language-from" = "02a21b6072c126b80f964d3d03b8e36f908410ac4c9de989a3805903d4d666bd"
+"pg.security_admin.revoke.on-large-object-from" = "a85228a9f0ff01147ba94c0eaeef68e0d2854f4bc5f97c51afeb9e7d4baa9111"
+"pg.security_admin.revoke.on-parameter-from" = "a0398bee10aca1953d692785802347655b02b30041543bed9871dc5ab9ae6132"
+"pg.security_admin.revoke.on-schema-from" = "34700d09abfcd35cdc25d034dc059b02f78e27414cc9ae28f4943e4f67f50449"
+"pg.security_admin.revoke.on-tablespace-from" = "8d60719153e930c28927ee17bf72a6e6c00e32f86d3bdf72a085ef217ec90ed8"
+"pg.security_admin.revoke.on-type-from" = "d854a90ce15b30fdba02f5f0b3cc79f95946d13669cca1085c22468141d835e4"
+
+[review.definitions]
+"pg.security_admin.alter-default-privileges" = "490d8510243ffc0a78a978ca7c1689c6b9f92f0b7b90ec88c8932a895b1eb3e5"
+"pg.security_admin.grant.on-database-to" = "469962063076ad8da6b566b4b6dcb3cb73c2f96be01207bb40975ea990893215"
+"pg.security_admin.grant.on-domain-to" = "850596257aa10cf0efb88d30cdb1d98972e7665e3900c8473351464888a0b140"
+"pg.security_admin.grant.on-foreign-data-wrapper" = "22c0d660f2f5dfaca25b8527a1640d79adb866d13732fb3f30fdd7edc7b9bde0"
+"pg.security_admin.grant.on-foreign-server-to" = "0ffc3b965c323b280435ab739fc41bf5c40b2c84b41bbb526bae2c34a6ed068a"
+"pg.security_admin.grant.on-language-to" = "581fdc8580788631e7b00c51cfa7ba42d5caaa8378733afcc862991c4750b082"
+"pg.security_admin.grant.on-large-object-to" = "f0b66a3574a2d4c60c8bc933e39dc65a41c166ae9929937d3f6bd5742957c355"
+"pg.security_admin.grant.on-parameter-to" = "4b338717f504d8e41596b4600820e8da025b3215f7ff35266429e3d4f5574b0c"
+"pg.security_admin.grant.on-schema-to" = "e1e7af4747d46dd8dcb61b5eaf57e170b37f325264510e309388ed19670f57d7"
+"pg.security_admin.grant.on-tablespace-to" = "41377b06fe0337a276a55f0e12900c37ff8a34e91693665735cca24584f27383"
+"pg.security_admin.grant.on-to-execute-function-procedure-routine-functions-procedures-routines-in-schema" = "7e9c0e2ec41332ffb7dbc0ace5491aaccaf0f452cad681d22d73792c0807749d"
+"pg.security_admin.grant.on-to-select-insert-update-delete-truncate-references-trigger-maintain-table-tables-in-schema" = "729392a826a662b9c61439198edfc29e0656950b47c22df8b502807e772e2d28"
+"pg.security_admin.grant.on-to-select-insert-update-references-table" = "8648ad1f40f54026590793783d6ac518aa945a9c5fdebb8f67148be77a7daba6"
+"pg.security_admin.grant.on-to-usage-select-update-sequence-sequences-in-schema" = "ecfdbd60ac8639814f90cd8d708f3772b908e54df305d4211a9811efd0a49f6a"
+"pg.security_admin.grant.on-type-to" = "e941fae51b99cd997f296a1bfe4bf44b2f7d31636fa451b3cf72c41092d4dd9e"
+"pg.security_admin.grant.to" = "afa71d7cf26f9b3e4cd6927063b8090f99f0843b7a59c17ac22e748b47185967"
+"pg.security_admin.reassign-owned" = "0688792c4c7f31b6162316e2bb4b3b740e7e56ff243e0ae45fb87e3fb7d8aa3f"
+"pg.security_admin.revoke.from" = "1310d660fcfcbaae5b49eb9c8ccdb6c3957c9438db42e5f7cad043d199a6e620"
+"pg.security_admin.revoke.on-database-from" = "e759714da61c6ec868edb8ac416b29d1c8974ba49bc835baa4a3692f666a238b"
+"pg.security_admin.revoke.on-domain-from" = "5e6cf4550d33b94fe6c3e4c31257563d7246ab6419dcc270e6e5a9e5daf98e62"
+"pg.security_admin.revoke.on-foreign-data-wrapper" = "eaae150dd1bea33f9614711c32d7d6716935b05307cfbed71c580e61b1b80219"
+"pg.security_admin.revoke.on-foreign-server-from" = "abaecb435735999cdd8c7662115034314f39101a1e7340946756ffda07b6bfa0"
+"pg.security_admin.revoke.on-from-execute-function-procedure-routine-functions-procedures-routines-in-schema" = "6afcb7583a90938cf68f8f5b14fc17c2b23bb9d910c5bd0081f8f82f11f2ab18"
+"pg.security_admin.revoke.on-from-select-insert-update-delete-truncate-references-trigger-maintain-table-tables-in-schema" = "150cab696fac939d8e56ef4510f1d992d430b4c6745ee4b0bfba804afb6b15cf"
+"pg.security_admin.revoke.on-from-select-insert-update-references-table" = "fb3a3a801e3d19cd9c080de27d1b2e56d9719b9bd1ef8fe10bdad947aa44ecb6"
+"pg.security_admin.revoke.on-from-usage-select-update-sequence-sequences-in-schema" = "b3d88a6276fb6ddf9e3e389f6a76e1afc5895f83505e67529b7154413a61b405"
+"pg.security_admin.revoke.on-language-from" = "f74ef068390d354716d3216eddda76e41814ea45a8c8c904f29ab716eadc6fdc"
+"pg.security_admin.revoke.on-large-object-from" = "9d2350389666fbbdbc32294ebaef54f28db711dd4804b385558c9b84ceda0964"
+"pg.security_admin.revoke.on-parameter-from" = "19e54f340a4548a91ac9e1e3e6be4b10dcc6191a35118167b417a75d36587413"
+"pg.security_admin.revoke.on-schema-from" = "c01c116921e15050f54a9e7259a9aa673ede742dd23d50316aa3f58ab3d1a497"
+"pg.security_admin.revoke.on-tablespace-from" = "84eec0bbb04cec2c0f7186fb7e39ab4c43034890fc8c3e65b8b1d212984d668a"
+"pg.security_admin.revoke.on-type-from" = "bf0a6c1fe1727bfb89d8e13df32cb5f4c186be6c49d9cc649884304769412a96"

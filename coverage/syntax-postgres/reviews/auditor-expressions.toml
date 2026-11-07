@@ -1027,3 +1027,30 @@ note = "Re-read after the obligation-notes delta against the PostgreSQL 18.6 doc
 [review.definitions]
 "pg.expressions.bitstring.op-bar" = "24ab756dba47b7871cfd13c7589b3601feff76e261c8e3ccd80de9f0a31db75a"
 "pg.expressions.sql-expressions.array-constructor" = "522ceb74156d2b81b2f5dd674dcdd5ef43b4dea88274b2f3a140d065a82e18c8"
+
+[[review]]
+id = "pg-auditor-expressions-006"
+reviewer_lane = "auditor"
+family = "expressions"
+parser_tree = "f2372a18396b91d6573c5252d00bcec9315e56e5"
+reviewed_utc = "2026-11-06T21:57:37Z"
+verdict = "approved"
+forms = [
+  "pg.expressions.json.is-not-json-value-scalar-array",
+  "pg.expressions.string.is-not-normalized",
+  "pg.expressions.xml.is-document",
+  "pg.expressions.xml.is-not-document",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree f2372a18; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.expressions.json.is-not-json-value-scalar-array" = "bcb6f1d43c19384b559b2d7245c62e6f76ba2d3a7a1b9ed8e49bb73989abb763"
+"pg.expressions.string.is-not-normalized" = "30e6f684ea5b4b3c3c894300a6a8e65120dcbfa8be4f7419b79c6a1d2fe1eda1"
+"pg.expressions.xml.is-document" = "58badf9f5d07c8d9e2a18807b78009ed0e885b8148eab6b4c24511763a462732"
+"pg.expressions.xml.is-not-document" = "cabb61fcac356ac230ce86ff0c3f7291dc3c21974201aff929f9879cd2aa4ce3"
+
+[review.definitions]
+"pg.expressions.json.is-not-json-value-scalar-array" = "6e6ca60f55c0d8f46679aedba8d87925ae7b864c2ee7e6897b391e352b624fa6"
+"pg.expressions.string.is-not-normalized" = "1c04a47f3bec11ebbc714cbfc5de7802b347c05df827f7f14eb523d680f91188"
+"pg.expressions.xml.is-document" = "07420da980672123dbad85a68cd4e6ea6033949f4dedb2505e6d85c6cca88818"
+"pg.expressions.xml.is-not-document" = "f826cf921bda0200b1587c3b999886b29bf90120cd79364dfc53b845d3390286"
