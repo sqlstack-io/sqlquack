@@ -13,6 +13,9 @@ const NAIVE_TO_ZONED: &str =
 const NAIVE_BESIDE_LOCAL: &str = "SELECT '2024-06-01 10:00:00'::TIMESTAMP_NTZ < \
                                   '2024-06-01 12:00:00 +02:00'::TIMESTAMP_LTZ AS v";
 
+const NAIVE_BESIDE_MICROSECOND_LOCAL: &str = "SELECT '2024-06-01 10:00:00'::TIMESTAMP_NTZ < \
+                                              '2024-06-01 12:00:00 +02:00'::TIMESTAMP_LTZ(6) AS v";
+
 #[test]
 fn given_session_dependent_statements_when_converting_then_they_rely_on_a_utc_session() {
     let test_cases = [
@@ -95,6 +98,24 @@ fn given_session_dependent_statements_when_converting_then_they_rely_on_a_utc_se
                     ("timestamp_range".to_owned(), vec!["node:lt".to_owned()]),
                 ],
                 categories: vec![],
+            },
+        },
+        SessionTimeZoneTestCase {
+            description: "a naive timestamp compared with a microsecond local one relies only on it",
+            sql: NAIVE_BESIDE_MICROSECOND_LOCAL,
+            strict: false,
+            utc_session: false,
+            expected_outcome: relying_on_utc_session(&["node:lt"]),
+        },
+        SessionTimeZoneTestCase {
+            description: "strict mode with a confirmed UTC session still refuses the nanosecond range",
+            sql: NAIVE_BESIDE_LOCAL,
+            strict: true,
+            utc_session: true,
+            expected_outcome: DivergenceModeOutcome {
+                converted: false,
+                divergences: vec![],
+                categories: vec![RefusalCategory::DivergenceRefused],
             },
         },
         SessionTimeZoneTestCase {
