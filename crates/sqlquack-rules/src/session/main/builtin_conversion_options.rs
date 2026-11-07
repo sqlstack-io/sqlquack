@@ -1,11 +1,13 @@
-//! `builtin_conversion_options`: the built-in default's options: the clock and loud range checks.
+//! `builtin_conversion_options`: the built-in default's options: the clock and loud checks.
 
 use crate::conversion::models::{AllowedDivergence, ConversionOptions};
 use crate::session::constants::{
-    BUILTIN_CLOCK_CONSTRUCTS, BUILTIN_CLOCK_REASON, BUILTIN_CLOCK_ZONE, BUILTIN_NUMERIC_CONSTRUCTS,
-    BUILTIN_NUMERIC_REASON, BUILTIN_SUBMICRO_CONSTRUCTS, BUILTIN_SUBMICRO_REASON,
-    BUILTIN_TIMESTAMP_CONSTRUCTS, BUILTIN_TIMESTAMP_REASON, BUILTIN_ZONE_CONSTRUCTS,
+    BUILTIN_CLOCK_CONSTRUCTS, BUILTIN_CLOCK_REASON, BUILTIN_CLOCK_ZONE, BUILTIN_JSON_CONSTRUCTS,
+    BUILTIN_JSON_REASON, BUILTIN_NUMERIC_CONSTRUCTS, BUILTIN_NUMERIC_REASON,
+    BUILTIN_SUBMICRO_CONSTRUCTS, BUILTIN_SUBMICRO_REASON, BUILTIN_TIMESTAMP_CONSTRUCTS,
+    BUILTIN_TIMESTAMP_REASON, BUILTIN_ZONE_CONSTRUCTS,
 };
+use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_policy::policy::constants::{
     CURRENT_TIME, NUMERIC_RANGE, SESSION_TIMEZONE_UTC, TIMESTAMP_RANGE, TIMESTAMP_TZ_SUBMICRO,
 };
@@ -17,6 +19,10 @@ pub fn builtin_conversion_options(strict: bool, loud_only: bool) -> ConversionOp
         return options;
     }
     let loud = [
+        (
+            JSON_FIDELITY,
+            allowed(&BUILTIN_JSON_CONSTRUCTS, BUILTIN_JSON_REASON, false),
+        ),
         (
             NUMERIC_RANGE,
             allowed(&BUILTIN_NUMERIC_CONSTRUCTS, BUILTIN_NUMERIC_REASON, false),

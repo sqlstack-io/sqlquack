@@ -288,7 +288,7 @@ sql = '''select
     raw:occurred_at::timestamp_ntz as occurred_at,
     _loaded_at
 from raw_events'''
-expect = "refused SQ0008 node:column at 192..202"
+expect = "refused SQ0008 node:cast at 125..155"
 expect_repository = "translated"
 
 [[query]]
@@ -298,7 +298,7 @@ sql = '''select
     raw:properties:page::string as page,
     raw:properties:referrer::string as referrer
 from raw_events'''
-expect = "refused SQ0008 node:column at 133..143"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -307,7 +307,7 @@ sql = '''select
     raw['id']::varchar as event_id,
     raw['properties']['page']::varchar as page
 from raw_events'''
-expect = "refused SQ0008 node:column at 95..105"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -316,7 +316,7 @@ sql = '''select
     get_path(raw, 'properties.page')::varchar as page,
     raw:id::varchar as event_id
 from raw_events'''
-expect = "refused SQ0008 node:column at 99..109"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -325,7 +325,7 @@ sql = '''select
     raw:id::varchar as event_id,
     try_to_timestamp(raw:occurred_at::varchar) as occurred_at
 from raw_events'''
-expect = "refused SQ0008 node:column at 107..117"
+expect = "refused SQ0008 fn:TRY_TO_TIMESTAMP at 44..86"
 expect_repository = "translated"
 
 [[query]]
@@ -334,7 +334,7 @@ sql = '''select
     raw:id::varchar as event_id,
     coalesce(raw:revenue::number(12,2), 0) as revenue
 from raw_events'''
-expect = "refused SQ0008 node:column at 99..109"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -366,7 +366,7 @@ sql = '''select
     attributes:utm_source::varchar as utm_source,
     attributes:utm_campaign::varchar as utm_campaign
 from web_sessions'''
-expect = "refused SQ0008 node:column at 164..176"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1148,7 +1148,7 @@ aggregated as (
 )
 select * from aggregated
 '''
-expect = "refused SQ0008 node:column at 35..47"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1172,7 +1172,7 @@ aggregated as (
 select * from aggregated
 order by row_count desc
 '''
-expect = "refused SQ0008 node:column at 35..47"
+expect = "refused SQ0008 fn:AVG at 208..223"
 expect_repository = "translated"
 
 [[query]]
@@ -1198,7 +1198,7 @@ final as (
 )
 select * from final
 '''
-expect = "refused SQ0008 node:column at 35..47"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1230,7 +1230,7 @@ final as (
 )
 select * from final
 '''
-expect = "refused SQ0008 node:column at 33..45"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1388,7 +1388,7 @@ select
     median(hours_to_close) as median_hours_to_close
 from resolution
 group by priority'''
-expect = "refused SQ0008 node:column at 36..43"
+expect = "refused SQ0008 fn:MEDIAN at 299..321"
 expect_repository = "translated"
 
 [[query]]
@@ -1404,7 +1404,7 @@ first_touch as (
     group by customer_id
 )
 select * from first_touch'''
-expect = "refused SQ0008 node:column at 37..49"
+expect = "refused SQ0008 fn:MIN_BY at 110..160"
 expect_repository = "translated"
 
 [[query]]
@@ -1687,7 +1687,7 @@ category = "dbt_incremental"
 sql = '''select *
 from events
 where occurred_at > (select max(occurred_at) from events)'''
-expect = "refused SQ0008 node:column at 14..20"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1695,7 +1695,7 @@ category = "dbt_incremental"
 sql = '''select *
 from events
 where occurred_at >= dateadd(day, -3, current_date())'''
-expect = "refused SQ0008 node:column at 14..20"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1703,7 +1703,7 @@ category = "dbt_incremental"
 sql = '''select *
 from events
 where occurred_at::date >= current_date() - 3'''
-expect = "refused SQ0008 node:column at 14..20"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1711,7 +1711,7 @@ category = "dbt_incremental"
 sql = '''select *
 from events
 where occurred_at >= dateadd(day, -3, (select max(occurred_at) from events))'''
-expect = "refused SQ0008 node:column at 14..20"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1855,7 +1855,7 @@ sql = '''select *
 from events
 qualify row_number() over (partition by event_id order by occurred_at desc) = 1
 '''
-expect = "refused SQ0008 node:column at 14..20"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1864,7 +1864,7 @@ sql = '''select *
 from web_sessions
 qualify row_number() over (partition by session_id order by started_at desc) = 1
 '''
-expect = "refused SQ0008 node:column at 14..26"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2063,7 +2063,7 @@ sql = '''select
     item.value:quantity::number as quantity
 from events,
     lateral flatten(input => events.payload:items) as item'''
-expect = "refused SQ0008 node:column at 113..119"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2074,7 +2074,7 @@ sql = '''select
     f.value:price::number(10,2) as price
 from events e,
     lateral flatten(input => e.payload:items) f'''
-expect = "refused SQ0008 node:column at 101..109"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2085,7 +2085,7 @@ sql = '''select
     f.value::varchar as tag
 from events e,
     lateral flatten(input => e.payload:tags) f'''
-expect = "refused SQ0008 node:column at 81..89"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2095,7 +2095,7 @@ sql = '''select
     f.value::varchar as tag
 from events e,
     lateral flatten(input => e.payload:tags, outer => true) f'''
-expect = "refused SQ0008 node:column at 56..64"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2105,7 +2105,7 @@ sql = '''select
     tag.value::varchar as tag
 from tickets t,
     lateral flatten(input => t.tags) tag'''
-expect = "refused SQ0008 node:column at 59..68"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2115,7 +2115,7 @@ sql = '''select
     tag.value::varchar as tag
 from tickets t,
     table(flatten(input => t.tags)) tag'''
-expect = "refused SQ0008 node:column at 59..68"
+expect = "refused SQ0002 fn:FLATTEN at 74..109"
 expect_repository = "refused SQ0002 fn:FLATTEN at 74..109"
 
 [[query]]
@@ -2127,7 +2127,7 @@ from tickets t,
     lateral flatten(input => t.tags) tag
 group by 1
 order by 2 desc'''
-expect = "refused SQ0008 node:column at 67..76"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2138,7 +2138,7 @@ sql = '''select
     attr.value::varchar as value
 from events e,
     lateral flatten(input => e.payload:attributes) attr'''
-expect = "refused SQ0008 node:column at 88..96"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2149,7 +2149,7 @@ sql = '''select
     a.value::varchar as value
 from web_sessions s,
     lateral flatten(input => s.attributes) a'''
-expect = "refused SQ0008 node:column at 84..98"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2161,7 +2161,7 @@ sql = '''select
 from events e,
     lateral flatten(input => e.payload:items) item,
     lateral flatten(input => item.value:options) option'''
-expect = "refused SQ0008 node:column at 100..108"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2171,7 +2171,7 @@ sql = '''select
     f.value:name::varchar as product_name
 from raw_events r,
     lateral flatten(input => r.raw:products) f'''
-expect = "refused SQ0008 node:column at 89..101"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2182,7 +2182,7 @@ sql = '''select
     f.value
 from raw_events r,
     lateral flatten(input => r.raw, recursive => true) f'''
-expect = "refused SQ0008 node:column at 71..83"
+expect = "translated"
 expect_repository = "translated"
 snowflake = "compiles"
 
@@ -2195,7 +2195,7 @@ from events e,
     lateral flatten(input => e.payload:items) f
 where e.event_type = 'purchase'
 group by 1'''
-expect = "refused SQ0008 node:column at 88..96"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2204,7 +2204,7 @@ sql = '''select
     e.event_id,
     array_size(e.payload:items) as item_count
 from events e'''
-expect = "refused SQ0008 node:column at 74..82"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2213,7 +2213,7 @@ sql = '''select
     e.event_id,
     e.payload:items[0]:sku::varchar as first_sku
 from events e'''
-expect = "refused SQ0008 node:column at 77..85"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2224,7 +2224,7 @@ sql = '''select
 from events e,
     lateral flatten(input => e.payload:items) f
 group by e.event_id'''
-expect = "refused SQ0008 node:column at 104..112"
+expect = "refused SQ0008 fn:ARRAY_AGG at 37..89"
 expect_repository = "translated"
 
 [[query]]
@@ -2234,7 +2234,7 @@ sql = '''select
     object_agg(e.event_type, e.payload) as last_payload_by_type
 from events e
 group by e.customer_id'''
-expect = "refused SQ0008 node:column at 95..103"
+expect = "refused SQ0008 fn:OBJECT_AGG at 30..65"
 expect_repository = "translated"
 snowflake = "compiles"
 
@@ -2245,7 +2245,7 @@ sql = '''select
     f.value:sku::varchar as sku
 from events e
 join lateral flatten(input => e.payload:items) f'''
-expect = "refused SQ0008 node:column at 60..68"
+expect = "refused SQ0002 node:lateral at 74..117"
 expect_repository = "refused SQ0002 node:lateral at 74..117"
 snowflake = "compiles"
 
@@ -2256,7 +2256,7 @@ sql = '''select
     f.value:sku::varchar as sku
 from events e
 inner join lateral flatten(input => e.payload:items) f on true'''
-expect = "refused SQ0008 node:column at 60..68"
+expect = "refused SQ0002 node:lateral at 80..123"
 expect_repository = "refused SQ0002 node:lateral at 80..123"
 snowflake = "rejects 2"
 
@@ -2285,7 +2285,7 @@ sql = '''select
 from events e,
     lateral flatten(input => e.payload:items) f
 where f.value:quantity::number > 0'''
-expect = "refused SQ0008 node:column at 134..142"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2295,7 +2295,7 @@ sql = '''select
     f.this
 from events e,
     lateral flatten(input => e.payload:items) f'''
-expect = "refused SQ0008 node:column at 39..47"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2308,7 +2308,7 @@ sql = '''select
     f.value
 from events e,
     lateral flatten(input => e.payload) f'''
-expect = "refused SQ0008 node:column at 75..83"
+expect = "refused SQ0003 node:column at 27..32"
 expect_repository = "refused SQ0003 node:column at 27..32"
 
 [[query]]
@@ -2327,7 +2327,7 @@ sql = '''select
     t.ticket_id,
     array_to_string(t.tags, ', ') as tag_list
 from tickets t'''
-expect = "refused SQ0008 node:column at 75..84"
+expect = "refused SQ0008 fn:ARRAY_TO_STRING at 28..57"
 expect_repository = "translated"
 
 [[query]]
@@ -3203,7 +3203,7 @@ select
     started_at,
     sum(is_new_session) over (partition by customer_id order by started_at rows between unbounded preceding and current row) as session_index
 from sessions'''
-expect = "refused SQ0008 node:column at 366..378"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -3615,7 +3615,7 @@ left join orders o
     on o.customer_id = s.customer_id
     and o.ordered_at between s.started_at and dateadd(day, 7, s.started_at)
 group by 1'''
-expect = "refused SQ0008 node:column at 151..165"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -4466,35 +4466,35 @@ expect_repository = "translated"
 category = "dbt_flatten"
 sql = '''select event_id, payload['items'][0]['sku']::varchar as first_sku
 from events'''
-expect = "refused SQ0008 node:column at 71..77"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select event_id, payload:customer.address.city::varchar as city
 from events'''
-expect = "refused SQ0008 node:column at 69..75"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select event_id, payload:"Order-Id"::number as order_id
 from events'''
-expect = "refused SQ0008 node:column at 61..67"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select event_id, get_path(payload, 'customer.email')::varchar as email
 from events'''
-expect = "refused SQ0008 node:column at 76..82"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select event_id, get(payload, 'event_type')::varchar as kind
 from events'''
-expect = "refused SQ0008 node:column at 66..72"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -4502,21 +4502,21 @@ category = "dbt_flatten"
 sql = '''select event_id
 from events
 where payload:type::varchar = 'checkout''''
-expect = "refused SQ0008 node:column at 21..27"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select event_id, typeof(payload:amount) as amount_type
 from events'''
-expect = "refused SQ0008 node:column at 60..66"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select event_id, array_contains('vip'::variant, payload:tags) as is_vip
 from events'''
-expect = "refused SQ0008 node:column at 77..83"
+expect = "refused SQ0008 fn:ARRAY_CONTAINS at 17..61"
 expect_repository = "translated"
 uncertain = true
 
@@ -4524,7 +4524,7 @@ uncertain = true
 category = "dbt_flatten"
 sql = '''select event_id, object_keys(payload) as keys
 from events'''
-expect = "refused SQ0008 node:column at 51..57"
+expect = "translated"
 expect_repository = "translated"
 uncertain = true
 
@@ -4532,14 +4532,14 @@ uncertain = true
 category = "dbt_flatten"
 sql = '''select r.raw:id::varchar as event_id, try_parse_json(r.raw:body::varchar) as body
 from raw_events r'''
-expect = "refused SQ0008 node:column at 87..99"
+expect = "refused SQ0008 fn:TRY_PARSE_JSON at 38..73"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select session_id, attributes:utm_source::varchar as utm_source, attributes:utm_campaign::varchar as utm_campaign
 from web_sessions'''
-expect = "refused SQ0008 node:column at 119..131"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -4547,7 +4547,7 @@ category = "dbt_flatten"
 sql = '''select event_id, payload:amount::number(12,2) as amount, payload:currency::varchar as currency
 from events
 where payload:amount is not null'''
-expect = "refused SQ0008 node:column at 100..106"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -4562,7 +4562,7 @@ expect_repository = "translated"
 category = "dbt_flatten"
 sql = '''select event_id, payload:items[array_size(payload:items) - 1]:sku::varchar as last_sku
 from events'''
-expect = "refused SQ0008 node:column at 92..98"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -4713,7 +4713,7 @@ sql = '''select *
 from events
 where occurred_at > (select coalesce(max(occurred_at), '1900-01-01'::timestamp_ntz) from events)
   and event_type in ('page_view', 'checkout')'''
-expect = "refused SQ0008 node:column at 14..20"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -5983,14 +5983,14 @@ expect_repository = "refused SQ0002 node:merge at 11..785"
 category = "dbt_flatten"
 sql = '''select e.event_id, f.value:sku::varchar as sku
 from events e, lateral flatten(input => e.payload, path => 'items') f'''
-expect = "refused SQ0008 node:column at 52..60"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select e.event_id, f.value:sku::varchar as sku
 from events e, lateral flatten(e.payload:items) f'''
-expect = "refused SQ0008 node:column at 52..60"
+expect = "translated"
 expect_repository = "translated"
 uncertain = true
 
@@ -5998,14 +5998,14 @@ uncertain = true
 category = "dbt_flatten"
 sql = '''select e.event_id, f.key as attribute
 from events e, lateral flatten(input => e.payload, mode => 'object') f'''
-expect = "refused SQ0008 node:column at 43..51"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select e.event_id, f.value['sku']::varchar as sku
 from events e, lateral flatten(input => e.payload['items']) f'''
-expect = "refused SQ0008 node:column at 55..63"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -6013,7 +6013,7 @@ category = "dbt_flatten"
 sql = '''select e.event_id, f.value:sku::varchar as first_sku
 from events e, lateral flatten(input => e.payload:items) f
 where f.index = 0'''
-expect = "refused SQ0008 node:column at 58..66"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -6021,14 +6021,14 @@ category = "dbt_flatten"
 sql = '''select e.customer_id, count(f.value) as items
 from events e, lateral flatten(input => e.payload:items, outer => true) f
 group by e.customer_id'''
-expect = "refused SQ0008 node:column at 51..59"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"
 sql = '''select r.raw:id::varchar as event_id, f.value:name::varchar as name
 from raw_events r, lateral flatten(input => parse_json(r.raw:body::varchar):products) f'''
-expect = "refused SQ0008 node:column at 73..85"
+expect = "refused SQ0008 fn:PARSE_JSON at 112..143"
 expect_repository = "translated"
 
 [[query]]
@@ -6036,7 +6036,7 @@ category = "dbt_flatten"
 sql = '''select t.ticket_id, f.value::varchar as tag
 from tickets t, lateral flatten(input => t.tags) f
 qualify row_number() over (partition by t.ticket_id order by f.index) = 1'''
-expect = "refused SQ0008 node:column at 49..58"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -6044,7 +6044,7 @@ category = "dbt_flatten"
 sql = '''select e.event_id, f.value:sku::varchar as sku
 from events e
 cross join lateral flatten(input => e.payload:items) f'''
-expect = "refused SQ0008 node:column at 52..60"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -6054,7 +6054,7 @@ from events e, lateral flatten(input => e.payload:items) f
 where e.event_type = 'checkout'
 group by 1
 order by buyers desc'''
-expect = "refused SQ0008 node:column at 81..89"
+expect = "translated"
 expect_repository = "translated"
 
 # Round 5: dbt incremental models compiled by dbt-snowflake 1.12 as an incremental run ({{ this }}
@@ -6557,7 +6557,7 @@ expect_repository = "translated"
 category = "dbt_dedup"
 sql = '''select * from raw_events
 qualify row_number() over (partition by raw:id::varchar order by _loaded_at desc) = 1'''
-expect = "refused SQ0008 node:column at 14..24"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
