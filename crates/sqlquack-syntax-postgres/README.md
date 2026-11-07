@@ -28,10 +28,13 @@ Nesting is bounded so that no input exhausts the caller's stack or takes exponen
 - Local parser limit, tree depth: PostgreSQL 18.6 accepts nested casts to about 13,200 levels
   (132 levels of 99 casts each) before its own 54001, so a statement 8,000 to 13,200 levels deep is
   refused here and accepted by the engine.
-- A parenthesized query, and `JSON_OBJECT`'s arguments, are parsed once from each token and the
-  outcome replayed, so alternatives that each read the same nested text stay linear. A replayed
-  tree is cloned recursively, so it is cloned on a stack grown to its depth, and a tree past the
-  8,000-level limit below is refused before it is kept.
+- A parenthesized query, and `JSON_OBJECT`'s arguments, that fail to parse from a token have the
+  failure replayed there. `JSON_OBJECT`'s arguments also keep their tree, because its readings each
+  read the nested arguments; keeping an outer one drops those kept inside it, so the kept trees
+  never overlap. A parenthesized query's tree is not kept, since keeping a copy at every level grows
+  with depth times size. Kept trees are cloned on a stack grown to their depth, and together may
+  hold at most 65,536 nodes plus 32 per input token; an input past that is refused with the same
+  error. This is a local parser limit: PostgreSQL accepts such inputs.
 
 ## Gaps
 

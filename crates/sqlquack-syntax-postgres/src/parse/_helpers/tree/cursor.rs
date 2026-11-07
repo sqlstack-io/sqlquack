@@ -1,6 +1,6 @@
 //! The parser's state: the tokens, where it is, and how tokens read as names.
 
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::{Expression, ExpressionWalk};
@@ -34,6 +34,12 @@ const CLONE_LEVEL_BYTES_DEBUG: usize = 8 * 1024;
 #[cfg(feature = "stacker")]
 const CLONE_STACK_MARGIN: usize = 1024 * 1024;
 
+/// Remembered nodes allowed per input token, beyond `MEMO_BASE_NODES`, before the input is refused.
+const MEMO_NODES_PER_TOKEN: usize = 32;
+
+/// Remembered nodes allowed whatever the input's length.
+const MEMO_BASE_NODES: usize = 64 * 1024;
+
 /// PostgreSQL's message for 54001, which recursion and chains past their limits both raise.
 const STACK_DEPTH_EXCEEDED: &str = "stack depth limit exceeded";
 
@@ -45,6 +51,7 @@ pub(crate) enum Remembered {
 }
 
 /// How a remembered construct's parse ended: its result, where it stopped, and the gaps it found.
+/// Only failures and `JSON_OBJECT` arguments are kept, so the copies stay bounded.
 struct Outcome {
     result: Parsing<Expression>,
     reached: usize,
@@ -60,6 +67,10 @@ pub(crate) struct Parser<'sql> {
     too_deep: Option<ParseError>,
     /// Constructs already parsed from a token, replayed when another alternative reaches them.
     remembered: HashMap<(Remembered, usize), Outcome>,
+    /// The nodes of every tree kept in `remembered`, bounded by the memo budget.
+    remembered_nodes: usize,
+    /// The start token and node count of every `JSON_OBJECT` argument tree kept in `remembered`.
+    kept_trees: BTreeMap<usize, usize>,
     pub(crate) gaps: Vec<Gap>,
     /// Whether the statement being parsed holds a gap, so it becomes a `Command`.
     pub(crate) opaque: bool,
@@ -141,6 +152,8 @@ impl<'sql> Parser<'sql> {
             depth: 0,
             too_deep: None,
             remembered: HashMap::new(),
+            remembered_nodes: 0,
+            kept_trees: BTreeMap::new(),
             gaps: Vec::new(),
             opaque: false,
         }
@@ -441,13 +454,43 @@ impl<'sql> Parser<'sql> {
             Ok(tree) if tree.tree_depth() > MAX_TREE_DEPTH => Err(self.refuse_depth()),
             result => result,
         };
+        let kept: Parsing<Expression> = match (&result, construct) {
+            (Err(error), _) => Err(error.clone()),
+            (Ok(_), Remembered::ParenthesizedQuery) => return result,
+            (Ok(tree), Remembered::JsonObjectArguments) => {
+                self.forget_trees_within(key.1, self.at);
+                let nodes: usize = tree.dfs().count();
+                self.kept_trees.insert(key.1, nodes);
+                self.remembered_nodes += nodes;
+                let budget: usize = MEMO_BASE_NODES + MEMO_NODES_PER_TOKEN * self.tokens.len();
+                if self.remembered_nodes > budget {
+                    return Err(self.refuse_depth());
+                }
+                copied(&result)
+            }
+        };
         let outcome: Outcome = Outcome {
-            result: copied(&result),
+            result: kept,
             reached: self.at,
             gaps: self.gaps[gaps.min(self.gaps.len())..].to_vec(),
         };
         self.remembered.insert(key, outcome);
         result
+    }
+
+    /// Drops kept argument trees strictly inside `start..end`; only that span's replay reached them.
+    fn forget_trees_within(&mut self, start: usize, end: usize) {
+        let inner: Vec<(usize, usize)> = self
+            .kept_trees
+            .range(start + 1..end)
+            .map(|(&at, &nodes)| (at, nodes))
+            .collect();
+        for (at, nodes) in inner {
+            self.kept_trees.remove(&at);
+            self.remembered
+                .remove(&(Remembered::JsonObjectArguments, at));
+            self.remembered_nodes -= nodes;
+        }
     }
 
     /// `result`, or the depth limit's error if any path went past it.
