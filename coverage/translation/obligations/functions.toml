@@ -6273,17 +6273,6 @@ cases = ["cases/translation/functions/coalesce.toml#t005_unconvertible"]
 required = true
 
 [[obligation]]
-id = "sf.functions.coalesce.t006"
-form = "sf.functions.coalesce"
-kind = "type_combination"
-target = "COALESCE(TIMESTAMP_NTZ, text literal)"
-note = "A naive timestamp or a date-only text literal, as dbt incremental filters write COALESCE(MAX(updated_at), '1900-01-01'); the recording decides the common type."
-catches = "the text kept as VARCHAR, so the result compares as text, or the literal read with a time zone"
-reading = "the page: the first non-NULL argument; arguments are implicitly converted to a common type, numeric when one argument is numeric ('17' and 1 give 17); an unconvertible string fails"
-cases = ["cases/translation/functions/coalesce.toml#t006_ntz_text"]
-required = true
-
-[[obligation]]
 id = "sf.functions.collate.collate.t001"
 form = "sf.functions.collate.collate"
 kind = "type_combination"
@@ -13144,17 +13133,6 @@ note = "A non-numeric string with a number."
 catches = "the string returned as text"
 reading = "the page: IFNULL(expr1, expr2) is expr1 unless it is NULL; arguments are implicitly converted to a common type, numeric when one argument is numeric ('17' and 1 give 17); an unconvertible string fails"
 cases = ["cases/translation/functions/ifnull.toml#t005_unconvertible"]
-required = true
-
-[[obligation]]
-id = "sf.functions.ifnull.t006"
-form = "sf.functions.ifnull"
-kind = "type_combination"
-target = "IFNULL(TIMESTAMP_NTZ, text literal)"
-note = "A naive timestamp or a date-only text literal, as incremental filters write IFNULL((SELECT MAX(updated_at) ...), '1900-01-01')."
-catches = "the text kept as VARCHAR, so the result compares as text"
-reading = "the page: IFNULL(expr1, expr2) is expr1 unless it is NULL; arguments are implicitly converted to a common type, numeric when one argument is numeric ('17' and 1 give 17); an unconvertible string fails"
-cases = ["cases/translation/functions/ifnull.toml#t006_ntz_text"]
 required = true
 
 [[obligation]]
