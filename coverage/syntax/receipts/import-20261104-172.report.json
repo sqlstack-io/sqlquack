@@ -1,0 +1,69 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO 's3://b1/p1/' FROM t1 STORAGE_INTEGRATION = i1 ;",
+   "sql_sha256": "381ab40d5aaaddc2bb245f696ecc32dac2cfabe2d32a2c8e2ebe4337da65f430"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO @s1 FROM t1 PARTITION BY ( 'date=' || v1 ) ;",
+   "sql_sha256": "3de8e456f6debdceb251fc215761e20f54dddca4465f2dd6e835b71994cf453c"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO 's3://b1/p1/' FROM t1 PARTITION BY 1 STORAGE_INTEGRATION = i1 ;",
+   "sql_sha256": "3ef7ea4589e3d8f86de3ebebb7346d4fb4a026de642b36da2c37ae65171ac5c1"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO @s1 FROM t1 PARTITION BY 1 HEADER = TRUE ;",
+   "sql_sha256": "43197da5fb38f516e31ab7ebcc2f6d1c2a84da5813cfda963f76db794745cefa"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO 's3://b1/p1/' FROM t1 STORAGE_INTEGRATION = i1 PARTITION BY 1 ;",
+   "sql_sha256": "77023081eb315b5a21d9cf3e28b1934eb5fdaee77f1c49dde0b395c4f454f686"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO 's3://b1/p1/' FROM t1 STORAGE_INTEGRATION = i1 ENCRYPTION = ( TYPE = 'AWS_SSE_S3' ) ;",
+   "sql_sha256": "7c3395d2fab1e433f0bcbbfc9d4cf951be59dcff65cd5acdd81d126e1f424ee3"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO @s1 FROM t1 PARTITION BY ( 'x' ) ;",
+   "sql_sha256": "a669f8e68a1f67a6b1cd5f2d0572e655d66c0fe5e8755a22bc8f66699fdc06be"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO 's3://b1/p1/' STORAGE_INTEGRATION = i1 FROM t1 PARTITION BY 1 ;",
+   "sql_sha256": "d5993e66f15f57b9f4cd8dbcabd97e282d7df6d9a6a25b5445d158f3ab2fca1c"
+  }
+ ],
+ "receipts": 8,
+ "receipts_file_sha256": "b4cd42aa8bf913dbab85a6f0ac82ff124fb32b0b53d2cb9591ba1f7f1d843496",
+ "reconciled_receipts": 0,
+ "refusals": [],
+ "refused": 0,
+ "runs": [
+  {
+   "audit_sha256": "5de35ab550f71a9eb2bc06a32f2bd00a2d94e0982908dce0a8ecb1873e00242e",
+   "receipts": 8,
+   "refused_rows": 0,
+   "run_id": "cpby-ex-00",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": []
+}
