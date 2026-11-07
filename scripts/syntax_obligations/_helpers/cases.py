@@ -152,14 +152,13 @@ def _binding(
 
 def run_database_setups(directory: Path) -> tuple[dict[tuple[str, str], list[str]], list[str]]:
     """Each ddl case's setup from its latest counted receipt (D110a), and cases for review."""
-    # Keyed by the setup's own hash: any report's input row gives its text.
-    texts: dict[str, list[str]] = {}
+    texts_by_setup_sha: dict[str, list[str]] = {}
     counted_runs: set[str] = set()
     for path in directory.glob("*.report.json"):
         report: Row = json.loads(path.read_text())
         for row in report.get("inputs", []):
             setup: list[str] = list(row["setup"])
-            texts[digest(canonical(setup))] = setup
+            texts_by_setup_sha[digest(canonical(setup))] = setup
         counted_runs |= {
             str(run["run_id"])
             for run in report.get("runs", [])
@@ -171,7 +170,7 @@ def run_database_setups(directory: Path) -> tuple[dict[tuple[str, str], list[str
         for line in path.read_text().splitlines():
             receipt: Row = json.loads(line)
             key: tuple[str, str] = (str(receipt["case_id"]), str(receipt["sql_sha256"]))
-            setup = texts.get(str(receipt.get("setup_sha256", "")), [])
+            setup = texts_by_setup_sha.get(str(receipt.get("setup_sha256", "")), [])
             if (
                 receipt.get("capture_method") != CASE_CAPTURE_RUN_DATABASE
                 or MEASURE_KEY in receipt
@@ -518,7 +517,7 @@ def family_outputs(
     return cases, arity, outputs
 
 
-def sync_outputs(outputs: list[tuple[Path, str | None]], *, check: bool) -> list[Path]:
+def sync_outputs(*, outputs: list[tuple[Path, str | None]], check: bool) -> list[Path]:
     """The files whose text differs; each is rewritten or removed unless check."""
     differing: list[Path] = []
     for path, text in outputs:

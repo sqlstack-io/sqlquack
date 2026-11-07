@@ -37,7 +37,7 @@ def run_cases(argv: list[str] | None = None) -> int:
         cases, arity, outputs = family_outputs(
             root=arguments.root, family=family, receipts=receipts, setups=setups, held=held
         )
-        differing += sync_outputs(outputs, check=arguments.check)
+        differing += sync_outputs(outputs=outputs, check=arguments.check)
         to_capture += [c for c in cases + arity if (c["case_id"], c["sql_sha256"]) not in recorded]
         print(
             json.dumps(
