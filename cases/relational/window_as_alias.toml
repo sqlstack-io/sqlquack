@@ -1,0 +1,64 @@
+# WINDOW as a column alias and as a table alias, bare and after AS. The Snowflake docs list WINDOW
+# as reserved; these receipts record what Snowflake's parser does with it.
+category = "relational"
+construct = "node:alias"
+session_profile = "utc-v1"
+
+[[case]]
+id = "window_bare_column_alias"
+description = "WINDOW as a column alias without AS."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+  ["2"],
+  ["NULL"],
+]
+query = "SELECT x window\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "window_column_alias_after_as"
+description = "Control: WINDOW as a column alias after AS."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+  ["2"],
+  ["NULL"],
+]
+query = "SELECT x AS window\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "window_bare_table_alias"
+description = "WINDOW as a table alias without AS, qualifying the column."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT window.x\nFROM input window"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "window_table_alias_after_as"
+description = "Control: WINDOW as a table alias after AS, qualifying the column."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT window.x\nFROM input AS window"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "window_column_alias_after_as_over_no_rows"
+description = "Control: WINDOW as a column alias after AS, over no rows."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT x AS window\nFROM input WHERE x > 5"
+order = "ordered"
+tags = ["empty-input"]
