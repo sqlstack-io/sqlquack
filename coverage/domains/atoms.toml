@@ -51,6 +51,17 @@ template = "-{0}"
 category = "numeric"
 
 [[rule]]
+id = "rule.unary_plus"
+
+[[rule.form]]
+construct = "node:pos"
+arguments = [
+  { families = ["integer", "decimal", "float", "text"] },
+]
+template = "+{0}"
+category = "numeric"
+
+[[rule]]
 id = "rule.scalar_subquery"
 
 [[rule.form]]

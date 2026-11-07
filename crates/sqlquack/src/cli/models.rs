@@ -317,7 +317,7 @@ pub struct PolicyArguments {
     /// The policy file; by default `sqlquack.toml` here, or the built-in policy without one.
     #[arg(long)]
     pub policy: Option<PathBuf>,
-    /// Use the built-in policy even where a policy file exists: it refuses all but the clock.
+    /// Use the built-in policy even where a policy file exists: it warns on the clock and range errors.
     #[arg(long, conflicts_with = "policy")]
     pub builtin_policy: bool,
     /// Refuse every known divergence the policy refuses in strict mode.

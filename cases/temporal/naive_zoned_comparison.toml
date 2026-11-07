@@ -1,0 +1,71 @@
+category = "temporal"
+construct = "node:lte"
+session_profile = "utc-v1"
+
+[[case]]
+id = "ntz_beside_utc_tz"
+description = "Every comparison of a naive timestamp with CONVERT_TIMEZONE('UTC', tz), equal, a microsecond apart and across source offsets."
+columns = [{ name = "n", type = "TIMESTAMP_NTZ(9)" }, { name = "tz", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-06-01 10:00:00'", "'2024-06-01 10:00:00 +00:00'"],
+  ["'2024-06-01 10:00:00'", "'2024-06-01 12:00:00 +02:00'"],
+  ["'2024-06-01 10:00:00.000001'", "'2024-06-01 10:00:00 +00:00'"],
+  ["'2024-06-01 09:59:59.999999'", "'2024-06-01 10:00:00 +00:00'"],
+  ["'2024-06-01 10:00:00'", "'2024-06-01 05:00:00 -05:00'"],
+  ["'1969-12-31 23:59:59.5'", "'1970-01-01 00:00:00 +00:00'"],
+  ["NULL", "'2024-06-01 10:00:00 +00:00'"],
+]
+expression = "ARRAY_CONSTRUCT(n = CONVERT_TIMEZONE('UTC', tz), n <> CONVERT_TIMEZONE('UTC', tz), n < CONVERT_TIMEZONE('UTC', tz), n <= CONVERT_TIMEZONE('UTC', tz), n > CONVERT_TIMEZONE('UTC', tz), n >= CONVERT_TIMEZONE('UTC', tz), CONVERT_TIMEZONE('UTC', tz) < n)"
+expected_divergence = "json_fidelity"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "ntz_beside_offset_tz_column"
+description = "A naive timestamp compared with a TIMESTAMP_TZ column at a non-UTC offset, without CONVERT_TIMEZONE: whether Snowflake compares instants or wall times."
+columns = [{ name = "n", type = "TIMESTAMP_NTZ(9)" }, { name = "tz", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-06-01 10:00:00'", "'2024-06-01 12:00:00 +02:00'"],
+  ["'2024-06-01 12:00:00'", "'2024-06-01 12:00:00 +02:00'"],
+  ["'2024-06-01 10:00:00'", "'2024-06-01 05:00:00 -05:00'"],
+]
+expression = "ARRAY_CONSTRUCT(n = tz, n < tz, n > tz)"
+tags = ["boundary"]
+
+[[case]]
+id = "ntz_at_most_utc_current_timestamp"
+description = "dbt's incremental upper bound: a past naive timestamp is at most CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP()); a far-future one is not."
+columns = [{ name = "updated_at", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2020-01-01 00:00:00'"],
+  ["'2199-12-31 23:59:59'"],
+  ["NULL"],
+]
+expression = "updated_at <= CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())"
+tags = ["null"]
+
+[[case]]
+id = "ntz_beside_zoned_past_nanosecond_range"
+description = "A naive TIMESTAMP_NTZ(9) compared with TIMESTAMP_TZ and TIMESTAMP_LTZ sentinels past 2262, which DuckDB cannot widen to nanoseconds."
+columns = [{ name = "n", type = "TIMESTAMP_NTZ(9)" }, { name = "tz", type = "TIMESTAMP_TZ(9)" }, { name = "l", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2024-06-01 10:00:00'", "'9999-12-31 00:00:00 +00:00'", "'9999-12-31 00:00:00 +00:00'"],
+  ["'2024-06-01 10:00:00'", "'2300-01-01 12:00:00 +02:00'", "'2300-01-01 12:00:00 +00:00'"],
+  ["'2024-06-01 10:00:00'", "'2024-06-01 12:00:00 +02:00'", "'2024-06-01 10:00:00 +00:00'"],
+]
+expression = "ARRAY_CONSTRUCT(n < tz, n = tz, n < l, n >= l)"
+expected_divergence = "timestamp_range"
+tags = ["boundary"]
+
+[[case]]
+id = "ntz_between_zoned_bounds"
+description = "A naive timestamp BETWEEN a TIMESTAMP_TZ and a TIMESTAMP_LTZ bound, and a zoned value BETWEEN naive bounds."
+columns = [{ name = "n", type = "TIMESTAMP_NTZ(9)" }, { name = "tz", type = "TIMESTAMP_TZ(9)" }, { name = "l", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2024-06-01 10:00:00'", "'2024-06-01 11:00:00 +02:00'", "'2024-06-01 11:00:00 +00:00'"],
+  ["'2024-06-01 10:00:00'", "'2024-06-01 12:00:00 +02:00'", "'2024-06-01 10:00:00 +00:00'"],
+  ["'2024-06-01 10:00:00'", "'2024-06-01 13:00:00 +02:00'", "'2024-06-01 09:00:00 +00:00'"],
+  ["NULL", "'2024-06-01 10:00:00 +00:00'", "'2024-06-01 10:00:00 +00:00'"],
+]
+query = "SELECT n BETWEEN tz AND l AS a, tz BETWEEN n AND '2024-06-01 10:30:00'::TIMESTAMP_NTZ AS b FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]

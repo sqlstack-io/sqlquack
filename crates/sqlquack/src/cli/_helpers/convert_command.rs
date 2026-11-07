@@ -13,7 +13,9 @@ use sqlquack_core::diagnostics::models::Diagnostic;
 use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::layout::main::layout_sql::layout_sql;
-use sqlquack_policy::policy::constants::{SESSION_TIME_ZONE, TIMEZONE_PARAMETER};
+use sqlquack_policy::policy::constants::{
+    CURRENT_TIME, SESSION_TIME_ZONE, SESSION_TIMEZONE_UTC, TIMEZONE_PARAMETER,
+};
 use sqlquack_policy::policy::models::{DivergenceFailure, Policy};
 use sqlquack_rules::conversion::models::ConversionOptions;
 use sqlquack_semantics::types::models::Schema;
@@ -243,10 +245,13 @@ pub(crate) fn chosen_options(
 ) -> Result<ConversionOptions, String> {
     let options = match policy {
         Some(policy) => caller_choices(options, policy, &arguments.conversion),
-        None if arguments.conversion.loud_divergences_only => ConversionOptions {
-            divergences: Default::default(),
-            ..options
-        },
+        None if arguments.conversion.loud_divergences_only => {
+            let mut options = options;
+            options
+                .divergences
+                .retain(|id, _| ![CURRENT_TIME, SESSION_TIMEZONE_UTC].contains(&id.as_str()));
+            options
+        }
         None => options,
     };
     with_overrides(
@@ -299,7 +304,6 @@ pub(crate) fn analysis_report(
                 .keys()
                 .filter(|_| policy.is_none())
                 .filter_map(|id| options.divergences.get(id.as_str()))
-                .filter(|divergence| !divergence.assumption)
                 .map(|divergence| divergence.reason.clone()),
         )
         .collect();

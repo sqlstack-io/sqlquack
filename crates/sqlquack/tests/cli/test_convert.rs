@@ -21,6 +21,9 @@ const QUOTED_ALIAS: &str =
 const PLACED_DATE: &str = "SELECT TO_DATE(placed_at) AS placed_on FROM orders";
 const DECLARED_SCHEMA: &str = "tests/cli/fixtures/declared_offsets.json";
 const QUALIFIED_SCHEMA: &str = "tests/cli/fixtures/qualified_relations.json";
+const NAIVE_LOCAL_SCHEMA: &str = "tests/cli/fixtures/naive_local_branches.json";
+const NAIVE_JOINS_LOCAL: &str = "relies on known divergence timestamp_tz_submicro at";
+const NAIVE_LOCAL_UTC: [&str; 3] = ["--utc-session", "--schema", NAIVE_LOCAL_SCHEMA];
 const NAIVE_TO_ZONED: &str =
     "SELECT '2024-03-10 22:30:00'::TIMESTAMP_NTZ(6)::TIMESTAMP_TZ AS placed_at";
 
@@ -28,8 +31,8 @@ const NAIVE_TO_ZONED: &str =
 fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_printed() {
     let test_cases = [
         ConvertTestCase {
-            description: "a repeated result name refuses with help to alias each column",
-            sql: "SELECT 1, 1",
+            description: "a result name repeated inside a subquery refuses with help to alias each column",
+            sql: "SELECT 1 AS one FROM (SELECT 1, 1) AS t",
             flags: &[],
             mention: "give each result column its own alias",
             expected_outcome: convert_outcome(1, false),
@@ -1301,8 +1304,8 @@ fn given_a_name_the_conversion_does_not_scope_when_converting_then_the_refusal_s
             expected_mention: "SEQ of FLATTEN or SPLIT_TO_TABLE",
         },
         PythonRefusalTestCase {
-            description: "a GROUP BY key naming only a select alias",
-            sql: "SELECT UPPER(sku) AS family, COUNT(*) AS n FROM orders GROUP BY family",
+            description: "a GROUP BY key naming only a select alias that follows a star",
+            sql: "SELECT *, UPPER(sku) AS family FROM orders GROUP BY family",
             expected_mention: "names only a select alias",
         },
         PythonRefusalTestCase {
@@ -1505,7 +1508,7 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
                 "error[SQ0009]: this column has no alias, and SQLQuack has not verified the name ",
                 "Snowflake gives it\n --> <stdin>:1:18\n  |\n1 | SELECT 'a' AS a, UPPER('é')\n",
                 "  |                  ^^^^^^^^^^ Snowflake names this `function` column after its text\n",
-                "  |\n  = help: add an alias, e.g. `AS one`\n",
+                "  |\n  = help: add an alias, such as `AS total`, which names the column in both engines\n",
                 "sqlquack convert: refused, 1 refusal under the built-in default\n",
             ),
             expected_json: ("SQ0009", "unaliased_output_name", 1, 18),
@@ -1517,8 +1520,8 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
             expected_text: "error[SQ0008]: the conversion needs a known divergence the policy refuses: \
                 `fn:HASH`\n --> <stdin>:1:8\n  |\n1 | SELECT HASH(1) AS h\n  |        ^^^^^^^ fn:HASH \
                 needs known divergence `hash`, which the policy refuses in this mode\n  |\n  = help: \
-                the built-in policy refuses every known divergence but the clock; pass --policy \
-                with a policy file that allows `hash`, such as the repository's sqlquack.toml\nsqlquack convert: refused, 1 refusal under the built-in default\n",
+                the built-in policy refuses every known divergence but the clock and \
+                arithmetic's 38-digit and timestamp range errors; pass --policy with a policy file that allows `hash`, such as the repository's sqlquack.toml\nsqlquack convert: refused, 1 refusal under the built-in default\n",
             expected_json: ("SQ0008", "divergence_refused", 1, 8),
         },
         ConvertDiagnosticTestCase {
@@ -1915,6 +1918,62 @@ fn given_a_malformed_schema_when_converting_then_the_error_names_what_is_wrong_i
         assert!(
             stderr.contains(test_case.expected_error) && !stderr.contains("untagged"),
             "{}: {stderr}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_naive_timestamp_joined_with_a_local_one_when_converting_then_its_nanoseconds_raise() {
+    let test_cases = [
+        ConvertTestCase {
+            description: "COALESCE of a naive and a local timestamp keeps the naive nanoseconds or raises",
+            sql: "SELECT COALESCE(n, l) AS r FROM t",
+            flags: &NAIVE_LOCAL_UTC,
+            mention: NAIVE_JOINS_LOCAL,
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "a CASE branch is joined the same way",
+            sql: "SELECT CASE WHEN n IS NULL THEN l ELSE n END AS r FROM t",
+            flags: &NAIVE_LOCAL_UTC,
+            mention: NAIVE_JOINS_LOCAL,
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "IFF's branches are joined the same way",
+            sql: "SELECT IFF(n IS NULL, l, n) AS r FROM t",
+            flags: &NAIVE_LOCAL_UTC,
+            mention: NAIVE_JOINS_LOCAL,
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "a UNION ALL column is joined the same way",
+            sql: "SELECT r FROM (SELECT n AS r FROM t UNION ALL SELECT l FROM t)",
+            flags: &NAIVE_LOCAL_UTC,
+            mention: NAIVE_JOINS_LOCAL,
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "LAG's default is joined to its value the same way",
+            sql: "SELECT LAG(l, 1, n) OVER (ORDER BY n) AS r FROM t",
+            flags: &NAIVE_LOCAL_UTC,
+            mention: NAIVE_JOINS_LOCAL,
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "strict mode refuses the join, which reads the naive value in the session's zone",
+            sql: "SELECT COALESCE(n, l) AS r FROM t",
+            flags: &["--strict", "--schema", NAIVE_LOCAL_SCHEMA],
+            mention: "needs known divergence",
+            expected_outcome: convert_outcome(1, false),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            run_convert(test_case.sql, test_case.flags, test_case.mention),
+            test_case.expected_outcome,
+            "{}",
             test_case.description
         );
     }

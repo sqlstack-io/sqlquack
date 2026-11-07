@@ -3,19 +3,20 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>SQLQuack · Run Snowflake SQL locally. Verified results, or a clear no</title>
+		<title>SQLQuack · Run warehouse SQL locally. Verified results, or a clear no</title>
 		<meta
 			name="description"
-			content="SQLQuack is a Snowflake SQL compiler written in Rust. It parses Snowflake SQL, reports what Snowflake would reject with rustc-style diagnostics, and translates the rest into DuckDB SQL, or refuses it with a code, a span and a reason."
+			content="A warehouse SQL compiler in Rust: parse, check and translate to DuckDB, or refuse with a precise reason."
 		/>
-		<meta property="og:title" content="SQLQuack · Run Snowflake SQL locally. Verified results, or a clear no" />
+		<meta property="og:title" content="SQLQuack · Run warehouse SQL locally. Verified results, or a clear no" />
 		<meta property="og:description" content="A SQLGlot alternative in Rust that would rather reject your SQL than return the wrong answer." />
 		<meta property="og:type" content="website" />
-		<meta property="og:image" content="/assets/og-sqlquack.png" />
+		<meta property="og:image" content="https://sqlquack.io/assets/og-sqlquack-v2.png" />
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
-		<meta property="og:image:alt" content="SQLQuack: a Snowflake SQL compiler that translates to DuckDB, or refuses to guess." />
+		<meta property="og:image:alt" content="SQLQuack: a warehouse SQL compiler that translates to DuckDB, or refuses to guess." />
 		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:image" content="https://sqlquack.io/assets/og-sqlquack-v2.png" />
 		<link rel="icon" type="image/png" sizes="128x128" href="/favicon.png" />
 		<link rel="preload" href="/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
 		<link rel="stylesheet" href="/styles.css" />
@@ -56,8 +57,9 @@
 			<div class="hero wrap">
 				<div class="hero-text">
 					<p class="eyebrow">Rust-powered · Free and open source · Apache-2.0</p>
-					<h1>Run Snowflake SQL locally.</h1>
+					<h1>Run warehouse SQL locally.</h1>
 					<p class="tagline">Verified results, or a clear no.</p>
+					<p class="dialects"><span class="dialects-label">Dialects today</span> <span class="dialect">Snowflake</span> parse · check · translate to DuckDB</p>
 					<p class="lede">
 						SQLQuack converts only where rules checked against recorded Snowflake results cover the types
 						involved. Everything else is refused, with the exact span and the reason.

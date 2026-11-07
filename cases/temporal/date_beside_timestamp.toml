@@ -1,0 +1,57 @@
+category = "temporal"
+construct = "node:gte"
+session_profile = "utc-v1"
+
+[[case]]
+id = "date_beside_ntz"
+description = "Every comparison of a DATE with a TIMESTAMP_NTZ: midnight equality, a time of day after midnight, the day before, sub-second parts and NULL."
+columns = [{ name = "d", type = "DATE" }, { name = "n", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2026-10-03'", "'2026-10-03 00:00:00'"],
+  ["'2026-10-03'", "'2026-10-03 00:00:00.000000001'"],
+  ["'2026-10-03'", "'2026-10-02 23:59:59.999999999'"],
+  ["'2026-10-03'", "'2026-10-03 12:30:00'"],
+  ["NULL", "'2026-10-03 00:00:00'"],
+]
+expression = "ARRAY_CONSTRUCT(n = d, n <> d, n < d, n <= d, n > d, n >= d, d < n)"
+tags = ["null", "boundary"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "ntz_column_beside_date_literal"
+description = "A TIMESTAMP_NTZ(3) column filtered against a DATE literal and a DATE column in BETWEEN, as a first query writes it."
+columns = [{ name = "ordered_at", type = "TIMESTAMP_NTZ(3)" }, { name = "d", type = "DATE" }]
+rows = [
+  ["'2026-10-02 23:59:59.999'", "'2026-10-03'"],
+  ["'2026-10-03 00:00:00'", "'2026-10-03'"],
+  ["'2026-10-04 08:00:00'", "'2026-10-03'"],
+  ["NULL", "NULL"],
+]
+query = "SELECT ordered_at >= DATE '2026-10-03' AS a, ordered_at BETWEEN d AND DATE '2026-10-04' AS b, d = ordered_at AS c FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "date_beside_zoned"
+description = "A DATE compared with TIMESTAMP_LTZ and TIMESTAMP_TZ values at UTC and another offset: whether the date is read as midnight in the session time zone."
+columns = [{ name = "d", type = "DATE" }, { name = "l", type = "TIMESTAMP_LTZ(9)" }, { name = "tz", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2026-10-03'", "'2026-10-03 00:00:00'", "'2026-10-03 00:00:00 +00:00'"],
+  ["'2026-10-03'", "'2026-10-02 23:00:00'", "'2026-10-03 01:00:00 +02:00'"],
+  ["NULL", "NULL", "NULL"],
+]
+expression = "ARRAY_CONSTRUCT(l = d, l < d, tz = d, tz < d, tz > d)"
+tags = ["null", "boundary"]
+expected_divergence = "json_fidelity"
+
+[[case]]
+id = "date_beside_ntz_extreme_years"
+description = "A DATE beside a TIMESTAMP_NTZ(9) at years 1 and 9999, outside DuckDB's nanosecond range."
+columns = [{ name = "d", type = "DATE" }, { name = "n", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'0001-01-01'", "'0001-01-01 00:00:00'"],
+  ["'9999-12-31'", "'9999-12-31 23:59:59'"],
+]
+expression = "ARRAY_CONSTRUCT(n = d, n > d)"
+tags = ["boundary"]
+expected_divergence = "timestamp_range"
