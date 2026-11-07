@@ -25,7 +25,9 @@ file `--policy` names. Without one they use the built-in policy, which refuses e
 divergence but the clock: `CURRENT_DATE()` and `CURRENT_TIMESTAMP()` convert with a warning, because
 both engines take the value when the query runs, in the session's time zone, which must be UTC in
 both for the values to agree. `DATEDIFF` of a `TIMESTAMP_LTZ`, such as
-`DATEDIFF('day', ordered_at, CURRENT_TIMESTAMP())`, relies on the same UTC session.
+`DATEDIFF('day', ordered_at, CURRENT_TIMESTAMP())`, relies on the same UTC session, and so does
+`COALESCE` of a `TIMESTAMP_NTZ` with one, such as `COALESCE(shipped_at, CURRENT_TIMESTAMP())`,
+which raises an error for a naive value with digits below the microsecond rather than round it.
 `--strict` and `--loud-divergences-only` refuse them too.
 `--builtin-policy` chooses the built-in policy even where a `sqlquack.toml` exists. A `--policy` file
 that does not exist, or a policy file that is not valid, is an error.

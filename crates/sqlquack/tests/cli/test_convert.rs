@@ -21,6 +21,9 @@ const QUOTED_ALIAS: &str =
 const PLACED_DATE: &str = "SELECT TO_DATE(placed_at) AS placed_on FROM orders";
 const DECLARED_SCHEMA: &str = "tests/cli/fixtures/declared_offsets.json";
 const QUALIFIED_SCHEMA: &str = "tests/cli/fixtures/qualified_relations.json";
+const NAIVE_LOCAL_SCHEMA: &str = "tests/cli/fixtures/naive_local_branches.json";
+const NAIVE_JOINS_LOCAL: &str = "relies on known divergence timestamp_tz_submicro at";
+const NAIVE_LOCAL_UTC: [&str; 3] = ["--utc-session", "--schema", NAIVE_LOCAL_SCHEMA];
 const NAIVE_TO_ZONED: &str =
     "SELECT '2024-03-10 22:30:00'::TIMESTAMP_NTZ(6)::TIMESTAMP_TZ AS placed_at";
 
@@ -1915,6 +1918,62 @@ fn given_a_malformed_schema_when_converting_then_the_error_names_what_is_wrong_i
         assert!(
             stderr.contains(test_case.expected_error) && !stderr.contains("untagged"),
             "{}: {stderr}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_naive_timestamp_joined_with_a_local_one_when_converting_then_its_nanoseconds_raise() {
+    let test_cases = [
+        ConvertTestCase {
+            description: "COALESCE of a naive and a local timestamp keeps the naive nanoseconds or raises",
+            sql: "SELECT COALESCE(n, l) AS r FROM t",
+            flags: &NAIVE_LOCAL_UTC,
+            mention: NAIVE_JOINS_LOCAL,
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "a CASE branch is joined the same way",
+            sql: "SELECT CASE WHEN n IS NULL THEN l ELSE n END AS r FROM t",
+            flags: &NAIVE_LOCAL_UTC,
+            mention: NAIVE_JOINS_LOCAL,
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "IFF's branches are joined the same way",
+            sql: "SELECT IFF(n IS NULL, l, n) AS r FROM t",
+            flags: &NAIVE_LOCAL_UTC,
+            mention: NAIVE_JOINS_LOCAL,
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "a UNION ALL column is joined the same way",
+            sql: "SELECT r FROM (SELECT n AS r FROM t UNION ALL SELECT l FROM t)",
+            flags: &NAIVE_LOCAL_UTC,
+            mention: NAIVE_JOINS_LOCAL,
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "LAG's default is joined to its value the same way",
+            sql: "SELECT LAG(l, 1, n) OVER (ORDER BY n) AS r FROM t",
+            flags: &NAIVE_LOCAL_UTC,
+            mention: NAIVE_JOINS_LOCAL,
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "strict mode refuses the join, which reads the naive value in the session's zone",
+            sql: "SELECT COALESCE(n, l) AS r FROM t",
+            flags: &["--strict", "--schema", NAIVE_LOCAL_SCHEMA],
+            mention: "needs known divergence",
+            expected_outcome: convert_outcome(1, false),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            run_convert(test_case.sql, test_case.flags, test_case.mention),
+            test_case.expected_outcome,
+            "{}",
             test_case.description
         );
     }

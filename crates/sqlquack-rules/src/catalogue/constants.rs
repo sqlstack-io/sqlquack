@@ -210,7 +210,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: SET_OPERATION,
         constructs: &["node:union", "node:except", "node:intersect"],
-        conditions: "Branches with the same column count whose types unify; differing branches are cast to the unified type; a VARIANT built from a FLOAT beside a JSON-held one holds both as a DuckDB VARIANT, raising for a JSON number it would retype; a set operation removing duplicates has no VARIANT column.",
+        conditions: "Branches with the same column count whose types unify; differing branches are cast to the unified type; a VARIANT built from a FLOAT beside a JSON-held one holds both as a DuckDB VARIANT, raising for a JSON number it would retype; a set operation removing duplicates has no VARIANT column. A TIMESTAMP_NTZ(9) joined with a TIMESTAMP_LTZ(9) or TIMESTAMP_TZ(9) is read in the UTC session, relying on session_timezone_utc, and raises timestamp_tz_submicro for digits below the microsecond, which DuckDB's TIMESTAMPTZ cannot hold, rather than rounding them.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -383,13 +383,13 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CASE,
         constructs: &["node:case"],
-        conditions: "BOOLEAN conditions, or a simple CASE whose values compare with the operand; results unify.",
+        conditions: "BOOLEAN conditions, or a simple CASE whose values compare with the operand; results unify. A TIMESTAMP_NTZ(9) joined with a TIMESTAMP_LTZ(9) or TIMESTAMP_TZ(9) is read in the UTC session, relying on session_timezone_utc, and raises timestamp_tz_submicro for digits below the microsecond, which DuckDB's TIMESTAMPTZ cannot hold, rather than rounding them.",
         failures: &[],
     },
     RuleSpec {
         id: COALESCE,
         constructs: &["fn:COALESCE", "fn:IFNULL", "fn:NVL"],
-        conditions: "Arguments unify.",
+        conditions: "Arguments unify. A TIMESTAMP_NTZ(9) joined with a TIMESTAMP_LTZ(9) or TIMESTAMP_TZ(9) is read in the UTC session, relying on session_timezone_utc, and raises timestamp_tz_submicro for digits below the microsecond, which DuckDB's TIMESTAMPTZ cannot hold, rather than rounding them.",
         failures: &[],
     },
     RuleSpec {
@@ -434,7 +434,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: IFF,
         constructs: &["fn:IFF"],
-        conditions: "A BOOLEAN condition; branches unify.",
+        conditions: "A BOOLEAN condition; branches unify. A TIMESTAMP_NTZ(9) joined with a TIMESTAMP_LTZ(9) or TIMESTAMP_TZ(9) is read in the UTC session, relying on session_timezone_utc, and raises timestamp_tz_submicro for digits below the microsecond, which DuckDB's TIMESTAMPTZ cannot hold, rather than rounding them.",
         failures: &[],
     },
     RuleSpec {

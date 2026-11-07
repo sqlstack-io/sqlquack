@@ -15,6 +15,7 @@ use sqlquack_snowflake::typing::models::{CastTarget, SnowflakeType};
 
 use crate::conversion::_helpers::expressions::conditionals::read_text;
 use crate::conversion::_helpers::expressions::semi_structured::{held_cast, variant_cast};
+use crate::conversion::_helpers::expressions::temporal::unified_cast;
 use crate::conversion::_helpers::expressions::windows::canonical_variant;
 use crate::conversion::_helpers::queries::clauses::order_and_limit;
 use crate::conversion::_helpers::queries::query::{
@@ -270,8 +271,12 @@ fn conform(
                 cast(&quoted_identifier(name, log), SnowflakeType::Varchar, log)
                     .map_err(|reason| outside_conditions(construct.clone(), reason))?
             }
-            (data_type, _) => cast(&quoted_identifier(name, log), data_type, log)
-                .map_err(|reason| outside_conditions(construct.clone(), reason))?,
+            (data_type, own_type) => unified_cast(
+                &quoted_identifier(name, log),
+                (own_type, data_type),
+                (context, construct),
+            )
+            .map_err(|reason| outside_conditions(construct.clone(), reason))?,
         };
         items.push(format!(
             "{value} AS {}",
@@ -434,8 +439,12 @@ fn conform_by_name(
                 cast(&value, SnowflakeType::Varchar, log)
                     .map_err(|reason| outside_conditions(construct.clone(), reason))?
             }
-            (data_type, _, _) => cast(&value, data_type, log)
-                .map_err(|reason| outside_conditions(construct.clone(), reason))?,
+            (data_type, _, own_type) => unified_cast(
+                &value,
+                (own_type.unwrap_or(SnowflakeType::Null), data_type),
+                (context, construct),
+            )
+            .map_err(|reason| outside_conditions(construct.clone(), reason))?,
         };
         items.push(format!(
             "{value} AS {}",

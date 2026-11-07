@@ -112,6 +112,21 @@ pub(crate) fn zoned_local(operation: &str, zoned: SnowflakeType) -> String {
     format!("{operation} of {zoned}, {ZONED_LOCAL_TIME}")
 }
 
+/// A value of `from` cast to the type a branch or column unifies to: naive to zoned as temporal_cast proves.
+pub(crate) fn unified_cast(
+    sql: &str,
+    (from, to): (SnowflakeType, SnowflakeType),
+    (context, construct): (&Context<'_>, &Construct),
+) -> Result<String, String> {
+    match (from, to) {
+        (
+            SnowflakeType::TimestampNtz { .. } | SnowflakeType::Date,
+            SnowflakeType::TimestampLtz { .. } | SnowflakeType::TimestampTz { .. },
+        ) => temporal_cast(sql, (from, to), (context, construct)),
+        _ => cast(sql, to, context.log),
+    }
+}
+
 /// The DuckDB SQL of a cast between DATE and timestamp types, or why it is unproven.
 pub(crate) fn temporal_cast(
     sql: &str,

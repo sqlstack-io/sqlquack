@@ -179,6 +179,21 @@ fn given_a_table_with_semi_structured_columns_when_converting_then_only_reading_
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
+            description: "TIMESTAMPDIFF with a quoted unit reads the clock the same way",
+            sql: "SELECT TIMESTAMPDIFF('day', occurred_at, CURRENT_TIMESTAMP()) AS age FROM events",
+            flags: &["--builtin-policy", "--schema", EVENTS_SCHEMA],
+            mention: "converted under the built-in default",
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "a naive end falling back to the clock raises on nanoseconds under the built-in policy",
+            sql: "SELECT DATEDIFF('day', occurred_at, COALESCE(occurred_at, CURRENT_TIMESTAMP())) AS age \
+                FROM events",
+            flags: &["--builtin-policy", "--schema", EVENTS_SCHEMA],
+            mention: "relies on known divergence timestamp_tz_submicro at node:coalesce",
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
             description: "strict mode refuses DATEDIFF to the clock",
             sql: "SELECT DATEDIFF('day', occurred_at, CURRENT_TIMESTAMP()) AS age FROM events",
             flags: &["--builtin-policy", "--strict", "--schema", EVENTS_SCHEMA],

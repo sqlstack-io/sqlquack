@@ -2,9 +2,12 @@
 
 use crate::conversion::models::{AllowedDivergence, ConversionOptions};
 use crate::session::constants::{
-    BUILTIN_CLOCK_CONSTRUCTS, BUILTIN_CLOCK_REASON, BUILTIN_CLOCK_ZONE, BUILTIN_ZONE_CONSTRUCTS,
+    BUILTIN_CLOCK_CONSTRUCTS, BUILTIN_CLOCK_REASON, BUILTIN_CLOCK_ZONE,
+    BUILTIN_SUBMICRO_CONSTRUCTS, BUILTIN_SUBMICRO_REASON, BUILTIN_ZONE_CONSTRUCTS,
 };
-use sqlquack_policy::policy::constants::{CURRENT_TIME, SESSION_TIMEZONE_UTC};
+use sqlquack_policy::policy::constants::{
+    CURRENT_TIME, SESSION_TIMEZONE_UTC, TIMESTAMP_TZ_SUBMICRO,
+};
 
 /// The built-in default's options: the clock converts with a warning unless `refuse_clock`.
 pub fn builtin_conversion_options(refuse_clock: bool) -> ConversionOptions {
@@ -24,6 +27,12 @@ pub fn builtin_conversion_options(refuse_clock: bool) -> ConversionOptions {
             BUILTIN_ZONE_CONSTRUCTS.as_slice(),
             BUILTIN_CLOCK_ZONE,
             true,
+        ),
+        (
+            TIMESTAMP_TZ_SUBMICRO,
+            BUILTIN_SUBMICRO_CONSTRUCTS.as_slice(),
+            BUILTIN_SUBMICRO_REASON,
+            false,
         ),
     ] {
         options.divergences.insert(
