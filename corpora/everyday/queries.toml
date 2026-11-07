@@ -113,25 +113,25 @@ expect_repository = "translated"
 [[query]]
 category = "literals"
 sql = '''SELECT CURRENT_DATE'''
-expect = "refused SQ0008 fn:CURRENT_DATE at 7..19"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "literals"
 sql = '''SELECT CURRENT_DATE AS today'''
-expect = "refused SQ0008 fn:CURRENT_DATE at 7..19"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "literals"
 sql = '''SELECT CURRENT_TIMESTAMP AS now'''
-expect = "refused SQ0008 fn:CURRENT_TIMESTAMP at 7..24"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "literals"
 sql = '''SELECT CURRENT_DATE()'''
-expect = "refused SQ0008 fn:CURRENT_DATE at 7..21"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1035,7 +1035,7 @@ expect_repository = "translated"
 [[query]]
 category = "joins"
 sql = '''SELECT t.ticket_id, c.email FROM tickets t JOIN customers c ON c.customer_id = t.customer_id WHERE t.closed_at IS NULL'''
-expect = "refused SQ0008 node:column at 33..42"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1500,13 +1500,13 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT order_id FROM orders WHERE ordered_at >= DATEADD(day, -30, CURRENT_DATE)'''
-expect = "refused SQ0008 fn:CURRENT_DATE at 66..78"
+expect = "refused SQ0003 node:gte at 34..79"
 expect_repository = "refused SQ0003 node:gte at 34..79"
 
 [[query]]
 category = "dates"
 sql = '''SELECT order_id FROM orders WHERE ordered_at >= DATEADD(day, -30, CURRENT_TIMESTAMP())'''
-expect = "refused SQ0008 fn:CURRENT_TIMESTAMP at 66..85"
+expect = "refused SQ0003 fn:DATEADD at 48..86"
 expect_repository = "refused SQ0003 fn:DATEADD at 48..86"
 
 [[query]]
@@ -1518,13 +1518,13 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT order_id FROM orders WHERE ordered_at::DATE = CURRENT_DATE - 1'''
-expect = "refused SQ0008 fn:CURRENT_DATE at 53..65"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "dates"
 sql = '''SELECT order_id FROM orders WHERE DATE_TRUNC('month', ordered_at) = DATE_TRUNC('month', CURRENT_DATE)'''
-expect = "refused SQ0008 fn:CURRENT_DATE at 88..100"
+expect = "refused SQ0003 node:eq at 34..101"
 expect_repository = "refused SQ0003 node:eq at 34..101"
 
 [[query]]
@@ -1536,7 +1536,7 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT DATEDIFF(year, signup_date, CURRENT_DATE) AS tenure_years FROM customers'''
-expect = "refused SQ0008 fn:CURRENT_DATE at 35..47"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1578,13 +1578,13 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT MONTHS_BETWEEN(CURRENT_DATE, signup_date) AS months FROM customers'''
-expect = "refused SQ0008 fn:CURRENT_DATE at 22..34"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "dates"
 sql = '''SELECT order_id, opened_at FROM tickets t JOIN orders o ON DATE_TRUNC('day', t.opened_at) = DATE_TRUNC('day', o.ordered_at)'''
-expect = "refused SQ0008 node:column at 32..41"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2337,7 +2337,7 @@ expect_repository = "translated"
 [[query]]
 category = "semi_structured"
 sql = '''SELECT customer_id, ARRAY_AGG(DISTINCT event_type) AS types FROM events GROUP BY customer_id'''
-expect = "refused SQ0008 node:column at 65..71"
+expect = "refused SQ0008 fn:ARRAY_AGG at 20..50"
 expect_repository = "translated"
 
 [[query]]
@@ -2448,7 +2448,7 @@ sql = '''select
     end as fulfillment_state,
     datediff('day', ordered_at, coalesce(shipped_at, current_timestamp())) as age_days
 from orders'''
-expect = "refused SQ0008 fn:CURRENT_TIMESTAMP at 267..286"
+expect = "refused SQ0003 fn:DATEDIFF at 218..288"
 expect_repository = "refused SQ0003 fn:DATEDIFF at 218..288"
 
 [[query]]
@@ -2506,7 +2506,7 @@ sql = '''select
     count_if(event_type = 'purchase') as purchases
 from events
 group by customer_id'''
-expect = "refused SQ0008 node:column at 192..198"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2590,7 +2590,7 @@ expect_repository = "translated"
 [[query]]
 category = "set_operations"
 sql = '''SELECT customer_id FROM orders UNION ALL SELECT customer_id FROM tickets'''
-expect = "refused SQ0008 node:column at 65..72"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -3310,7 +3310,7 @@ expect_repository = "translated"
 [[query]]
 category = "literals"
 sql = '''SELECT CURRENT_DATE()'''
-expect = "refused SQ0008 fn:CURRENT_DATE at 7..21"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -3685,13 +3685,13 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT order_id FROM orders WHERE ordered_at >= DATEADD(month, -3, DATE_TRUNC('month', CURRENT_DATE()))'''
-expect = "refused SQ0008 fn:CURRENT_DATE at 87..101"
+expect = "refused SQ0003 node:gte at 34..103"
 expect_repository = "refused SQ0003 node:gte at 34..103"
 
 [[query]]
 category = "dates"
 sql = '''SELECT customer_id, DATEDIFF('day', signup_date, CURRENT_DATE()) AS tenure_days FROM customers'''
-expect = "refused SQ0008 fn:CURRENT_DATE at 49..63"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -3775,7 +3775,7 @@ expect_repository = "translated"
 [[query]]
 category = "semi_structured"
 sql = '''SELECT customer_id, ARRAY_AGG(DISTINCT event_type) WITHIN GROUP (ORDER BY event_type) AS types FROM events GROUP BY customer_id'''
-expect = "refused SQ0008 node:column at 100..106"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]

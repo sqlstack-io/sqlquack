@@ -147,6 +147,14 @@ FIXED: tuple[tuple[str, str], ...] = (
         "SELECT order_id, status FROM orders "
         "QUALIFY ROW_NUMBER() OVER (PARTITION BY status ORDER BY total DESC) = 1",
     ),
+    (
+        "last_days",
+        "SELECT order_id FROM orders WHERE ordered_at >= DATEADD(day, -30, CURRENT_DATE)",
+    ),
+    (
+        "last_days",
+        "SELECT order_id FROM orders WHERE ordered_at >= DATEADD(day, -30, CURRENT_TIMESTAMP())",
+    ),
 )
 
 KEYWORDS: tuple[str, ...] = (
