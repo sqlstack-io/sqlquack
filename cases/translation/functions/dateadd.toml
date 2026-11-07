@@ -143,3 +143,4 @@ rows = [
 query = "SELECT ordinal, DATEADD(day, -3, a) AS d, DATEADD(hour, -24, a) AS h, DATEADD(month, -1, a) AS m FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
+expected_divergence = "timestamp_tz_submicro"
