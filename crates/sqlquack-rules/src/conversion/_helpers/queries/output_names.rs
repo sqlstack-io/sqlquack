@@ -52,6 +52,7 @@ const NAMED_KINDS: &[&str] = &[
     "or",
     "paren",
     "neg",
+    "pos",
     "not",
     "is_null",
     "cast",
