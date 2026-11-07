@@ -1,0 +1,21 @@
+[package]
+name = "sqlquack-format-check"
+version.workspace = true
+description = "Development check that formatting leaves DuckDB's output columns unchanged; never a runtime dependency."
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+publish = false
+rust-version.workspace = true
+
+[dependencies]
+duckdb.workspace = true
+sqlquack-format.workspace = true
+sqlquack-syntax.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true
+
+[lints]
+workspace = true

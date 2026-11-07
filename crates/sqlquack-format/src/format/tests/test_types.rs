@@ -17,7 +17,7 @@ pub(super) struct Departure {
     pub(super) formatted: Option<&'static str>,
     pub(super) reason: &'static str,
     /// The recorded Snowflake evidence for SQLQuack's outcome: a `coverage/syntax` receipt or a `cases` case.
-    pub(super) receipt: &'static str,
+    pub(super) receipt: Option<&'static str>,
 }
 
 /// The formatted, refused and departing counts of one corpus dialect, and every check that failed.
@@ -36,10 +36,12 @@ pub(super) struct EntryOutcome {
     pub(super) failures: Vec<String>,
 }
 
-/// A generated, deeply nested Snowflake query, and the refusal it gets, if any.
+/// A generated, deeply nested query, and the refusal it gets in each gated dialect, if any.
 pub(super) struct DeepSqlTestCase {
     pub(super) description: &'static str,
     pub(super) sql: fn() -> String,
+    /// The dialects it is formatted in.
+    pub(super) dialects: &'static [sqlquack_syntax::Dialect],
     /// The start of the refusal reason; `None` when the query is laid out.
     pub(super) expected_refusal: Option<&'static str>,
 }

@@ -1,5 +1,7 @@
 //! The spacing guard: whitespace changes between tokens are checked on the bytes, not the tokenizer.
 
+use sqlquack_syntax::Dialect;
+
 use crate::format::_helpers::lexemes::{Lexeme, is_keyword};
 use crate::format::_helpers::token_layout::AuthoredSql;
 use crate::format::constants::{
@@ -12,6 +14,7 @@ pub(crate) fn verify_touching_tokens(
     before: &AuthoredSql<'_>,
     after: &AuthoredSql<'_>,
     binary_operators: &[bool],
+    dialect: Dialect,
 ) -> Result<(), String> {
     let pairs = before.lexemes.windows(2).zip(after.lexemes.windows(2));
     for (index, (source, printed)) in pairs.enumerate() {
@@ -25,7 +28,7 @@ pub(crate) fn verify_touching_tokens(
         {
             return Err(SEPARATION_FAILURE.to_string());
         }
-        if !touched && touches && could_fuse(&source[0].raw, &source[1].raw) {
+        if !touched && touches && could_fuse(&source[0].raw, &source[1].raw, dialect) {
             return Err(JOIN_FAILURE.to_string());
         }
     }
@@ -89,14 +92,18 @@ fn operator_pieces(run: &str, offset: usize) -> Vec<(usize, usize)> {
     pieces
 }
 
-/// Whether printing `previous` and `next` with no space between them could read as different tokens.
-fn could_fuse(previous: &str, next: &str) -> bool {
+/// Whether printing `previous` and `next` with no space between them could read as different tokens; DuckDB lexes `@` as an operator character, Snowflake as part of a stage name.
+fn could_fuse(previous: &str, next: &str, dialect: Dialect) -> bool {
     let (Some(left), Some(right)) = (previous.chars().last(), next.chars().next()) else {
         return false;
     };
+    let at_operator = dialect == Dialect::DuckDB;
     let word = |character: char| {
-        character.is_alphanumeric() || matches!(character, '_' | '$' | '\'' | '"' | '`' | '@')
+        character.is_alphanumeric()
+            || matches!(character, '_' | '$' | '\'' | '"' | '`')
+            || (character == '@' && !at_operator)
     };
-    let operator = |character: char| OPERATOR_BYTES.contains(character);
+    let operator =
+        |character: char| OPERATOR_BYTES.contains(character) || (character == '@' && at_operator);
     (word(left) && word(right)) || (operator(left) && operator(right))
 }

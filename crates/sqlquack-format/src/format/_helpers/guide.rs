@@ -10,11 +10,12 @@ use crate::format::_helpers::lexemes::{
     Lexeme, bracket_partners, ends_operand, is_keyword, is_unquoted_word,
 };
 use crate::format::constants::{
-    ALIAS_FOLLOWERS, CASE_BRANCHES, CLAUSE_KEYWORDS, DUCKDB_INLINE_CALLS, GROUPING_CALLS,
-    GUIDE_INDENT, GUIDE_WIDTH, JOIN_PREFIXES, PLACEHOLDER_WIDTH, POSTFIX_CAST_WIDTH,
-    POSTGRES_INLINE_CALLS, SAMPLE_ROW_KEYWORD, SEMANTIC_VIEW_CALL, SEMANTIC_VIEW_CLAUSES,
-    SET_OPERATOR_MODIFIERS, SET_OPERATORS, SNOWFLAKE_INLINE_CALLS, SPACED_BEFORE_PARENTHESIS,
-    STRUCT_TYPE_WORDS, TYPE_CONTINUATIONS, TYPED_LITERALS,
+    ALIAS_FOLLOWERS, CASE_BRANCHES, CLAUSE_KEYWORDS, COLUMNS_CALL, DUCKDB_INLINE_CALLS,
+    EXPRESSION_LEADERS, GROUPING_CALLS, GUIDE_INDENT, GUIDE_WIDTH, JOIN_PREFIXES, LAMBDA_KEYWORD,
+    PLACEHOLDER_WIDTH, POSTFIX_CAST_WIDTH, POSTGRES_INLINE_CALLS, SAMPLE_KEYWORDS,
+    SAMPLE_ROW_KEYWORD, SEMANTIC_VIEW_CALL, SEMANTIC_VIEW_CLAUSES, SET_OPERATOR_MODIFIERS,
+    SET_OPERATORS, SNOWFLAKE_INLINE_CALLS, SPACED_BEFORE_PARENTHESIS, STRUCT_TYPE_WORDS,
+    TYPE_CONTINUATIONS, TYPED_LITERALS,
 };
 
 /// The guide's text and its tokens, with byte ranges in that text.
@@ -222,7 +223,15 @@ impl<'a> Guide<'a> {
             return "";
         }
         if previous.kind == TokenType::Colon {
-            return if self.path_colon(index - 1) { "" } else { " " };
+            return if self.tight_colon(index - 1) { "" } else { " " };
+        }
+        if (previous.kind == TokenType::DAt && !self.in_stage[index - 1])
+            || (previous.kind == TokenType::Star && self.is(index, COLUMNS_CALL))
+        {
+            return "";
+        }
+        if next.kind == TokenType::Percent && self.postfix_percent(index) {
+            return "";
         }
         if matches!(previous.kind, TokenType::Dash | TokenType::Plus)
             && index
@@ -268,6 +277,56 @@ impl<'a> Guide<'a> {
         SPACED_BEFORE_PARENTHESIS.contains(&upper.as_str())
             || (matches!(upper.as_str(), "EXCLUDE" | "REPLACE" | "RENAME" | "ILIKE") && after_star)
             || (upper == SAMPLE_ROW_KEYWORD && after_sample)
+    }
+
+    /// Whether a `:` at `index` binds tightly: a Snowflake path, a slice, or a DuckDB prefix alias.
+    fn tight_colon(&self, index: usize) -> bool {
+        let enclosing = self.enclosing[index].map(|opener| self.lexemes[opener].kind);
+        self.path_colon(index)
+            || self.in_subscript(index)
+            || (self.dialect == Dialect::DuckDB
+                && enclosing != Some(TokenType::LBrace)
+                && !self.lambda_colon(index))
+    }
+
+    /// Whether token `index` is inside a subscript such as `x[1:2]`.
+    fn in_subscript(&self, index: usize) -> bool {
+        self.enclosing[index].is_some_and(|opener| {
+            self.lexemes[opener].kind == TokenType::LBracket
+                && opener > 0
+                && self.lexemes[opener - 1].end == self.lexemes[opener].start
+                && self.operand_ends(opener - 1)
+        })
+    }
+
+    /// Whether the `:` at `index` ends the parameters of a DuckDB `LAMBDA x, y :`.
+    fn lambda_colon(&self, index: usize) -> bool {
+        let parameters = (0..index).rev().find(|&at| {
+            !matches!(
+                self.lexemes[at].kind,
+                TokenType::Var | TokenType::Identifier | TokenType::Comma
+            ) || self.is(at, LAMBDA_KEYWORD)
+        });
+        parameters.is_some_and(|at| self.is(at, LAMBDA_KEYWORD))
+    }
+
+    /// Whether the `%` at `index` is DuckDB's percentage suffix, as in `LIMIT 10%`, not modulo.
+    fn postfix_percent(&self, index: usize) -> bool {
+        let after_number = self.kind(index - 1) == Some(TokenType::Number);
+        let sampled = index > 1 && self.is_any(index - 2, &SAMPLE_KEYWORDS);
+        let operand_follows = match self.kind(index + 1) {
+            Some(TokenType::LParen) => !sampled,
+            Some(kind) => matches!(
+                kind,
+                TokenType::Number
+                    | TokenType::Var
+                    | TokenType::Identifier
+                    | TokenType::QuotedIdentifier
+                    | TokenType::Dash
+            ),
+            None => false,
+        };
+        self.dialect == Dialect::DuckDB && after_number && !operand_follows
     }
 
     /// Whether the `:` at `index` is a Snowflake path accessor such as `v:field`.
@@ -415,7 +474,12 @@ impl<'a> Guide<'a> {
     }
 
     fn starts_query(&self, index: usize) -> bool {
-        self.is(index, "SELECT") || self.is(index, "WITH")
+        self.is(index, "SELECT") || self.is(index, "WITH") || self.starts_from_first(index)
+    }
+
+    /// Whether a DuckDB FROM-first query, such as `FROM t WHERE x`, starts at `index`.
+    fn starts_from_first(&self, index: usize) -> bool {
+        self.dialect == Dialect::DuckDB && self.is(index, "FROM")
     }
 
     fn statements(&mut self) {
@@ -491,6 +555,8 @@ impl<'a> Guide<'a> {
         }
         if self.is(first, "SELECT") {
             self.select(first, last, indent);
+        } else if self.starts_from_first(first) {
+            self.lay_out_from_first(first, last, indent);
         } else if self.is(first, "WITH") {
             self.query(first, last, indent);
         } else {
@@ -516,7 +582,12 @@ impl<'a> Guide<'a> {
             let mut index = item + 1;
             if self.kind(index) == Some(TokenType::LParen)
                 && let Some(closer) = self.partners[index]
-                && self.is(closer + 1, "AS")
+            {
+                index = closer + 1;
+            }
+            if self.is(index, "USING")
+                && self.is(index + 1, "KEY")
+                && let Some(closer) = self.partners.get(index + 2).copied().flatten()
             {
                 index = closer + 1;
             }
@@ -559,6 +630,7 @@ impl<'a> Guide<'a> {
             Some(TokenType::Comma | TokenType::RParen)
         ) || self.is_any(index + 1, &ALIAS_FOLLOWERS);
         (!aliased && self.is_any(index, &CLAUSE_KEYWORDS))
+            || (self.is(index, "USING") && self.is(index + 1, "SAMPLE"))
             || ((self.is(index, "GROUP") || self.is(index, "ORDER")) && self.is(index + 1, "BY"))
     }
 
@@ -597,7 +669,10 @@ impl<'a> Guide<'a> {
         self.selects += 1;
         for (first, end) in self.split_commas(item, projection_end) {
             self.gaps[first] = newline(indent + 1);
-            if !self.aliases[end] && !self.plain_column(first, end) {
+            if self.dialect == Dialect::Snowflake
+                && !self.aliases[end]
+                && !self.plain_column(first, end)
+            {
                 self.verbatim.push((first, end));
             }
             self.expr(first, end, indent + 1);
@@ -614,6 +689,27 @@ impl<'a> Guide<'a> {
             self.identifiers[index]
                 || matches!(self.lexemes[index].kind, TokenType::Dot | TokenType::Star)
         })
+    }
+
+    /// Lay out a FROM-first query: its clauses, then any SELECT with the clauses after it.
+    fn lay_out_from_first(&mut self, from: usize, last: usize, indent: usize) {
+        let tops = self.tops(from + 1, last);
+        let select = tops.iter().copied().find(|&index| self.is(index, "SELECT"));
+        let end = select.map_or(last, |select| select - 1);
+        let clauses: Vec<usize> = std::iter::once(from)
+            .chain(
+                tops.into_iter()
+                    .filter(|&index| index <= end && self.starts_clause(index)),
+            )
+            .collect();
+        for (position, &clause) in clauses.iter().enumerate() {
+            let clause_end = clauses.get(position + 1).map_or(end, |&next| next - 1);
+            self.clause(clause, clause_end, indent);
+        }
+        if let Some(select) = select {
+            self.gaps[select] = newline(indent);
+            self.select(select, last, indent);
+        }
     }
 
     fn clause(&mut self, clause: usize, end: usize, indent: usize) {
@@ -634,6 +730,12 @@ impl<'a> Guide<'a> {
                 self.items(body, end, indent);
             }
             "WINDOW" => self.items(clause + 1, end, indent),
+            "USING" => {
+                for index in clause + 2..=end {
+                    self.protected[index] = true;
+                }
+                self.expr(clause + 2, end, indent);
+            }
             _ => self.expr(clause + 1, end, indent),
         }
     }
@@ -807,6 +909,10 @@ impl<'a> Guide<'a> {
             }
             return;
         }
+        if self.is(opener + 1, "VALUES") {
+            self.expr(opener + 1, closer - 1, indent);
+            return;
+        }
         let Some(previous) = previous else {
             self.tuple(opener, closer, indent);
             return;
@@ -822,16 +928,23 @@ impl<'a> Guide<'a> {
             || (self.base[opener].is_empty() && self.calls(previous) && !self.in_stage[previous])
         {
             self.call(previous, opener, closer, indent);
-        } else if self.is_word(previous) || self.in_stage[previous] {
+        } else if (self.is_word(previous) && !self.is_any(previous, &EXPRESSION_LEADERS))
+            || self.in_stage[previous]
+        {
             self.expr(opener + 1, closer - 1, indent);
         } else {
             self.tuple(opener, closer, indent);
         }
     }
 
+    /// Lay out a tuple, split past the guide width, or a parenthesised expression, always split.
     fn tuple(&mut self, opener: usize, closer: usize, indent: usize) {
         let items = self.split_commas(opener + 1, closer - 1);
-        let split = items.len() > 1 && self.items_width(&items) > GUIDE_WIDTH;
+        let split = match items.len() {
+            0 => false,
+            1 => true,
+            _ => self.items_width(&items) > GUIDE_WIDTH,
+        };
         self.list(closer, &items, split, indent);
     }
 

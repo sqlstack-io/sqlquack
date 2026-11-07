@@ -21,7 +21,12 @@ pub(crate) const JOIN_FAILURE: &str =
 pub(crate) const SELECT_LIST_FAILURE: &str =
     "formatter could not find every select list, whose items without an alias it keeps as written";
 pub(crate) const UNSUPPORTED_DIALECT_FAILURE: &str =
-    "formatter does not support this dialect yet; only Snowflake has a format gate";
+    "formatter does not support this dialect yet; only Snowflake and DuckDB have a format gate";
+/// The dialects whose format corpus subset gates the formatter.
+pub(crate) const FORMAT_GATED_DIALECTS: [sqlquack_syntax::Dialect; 2] = [
+    sqlquack_syntax::Dialect::Snowflake,
+    sqlquack_syntax::Dialect::DuckDB,
+];
 pub(crate) const DEPTH_FAILURE: &str =
     "formatter does not lay out SQL whose parse tree is more than 512 levels deep";
 /// The deepest parse tree the formatter walks; a deeper one, such as a chain of thousands of `+`, is refused before it can exhaust the stack.
@@ -178,7 +183,7 @@ pub(crate) const PLACEHOLDER_WIDTH: usize = 20;
 /// The added width of a `::` cast, which the guide measures as `CAST(value AS type)`.
 pub(crate) const POSTFIX_CAST_WIDTH: usize = 10;
 /// Keywords the guide always separates from a following `(`.
-pub(crate) const SPACED_BEFORE_PARENTHESIS: [&str; 42] = [
+pub(crate) const SPACED_BEFORE_PARENTHESIS: [&str; 44] = [
     "ALL",
     "AND",
     "ANY",
@@ -193,13 +198,12 @@ pub(crate) const SPACED_BEFORE_PARENTHESIS: [&str; 42] = [
     "DISTINCT",
     "ELSE",
     "END",
-    "EXISTS",
-    "FILTER",
     "FROM",
     "GROUP",
     "HAVING",
     "IN",
     "JOIN",
+    "KEY",
     "LATERAL",
     "MATCH_CONDITION",
     "NOT",
@@ -207,12 +211,15 @@ pub(crate) const SPACED_BEFORE_PARENTHESIS: [&str; 42] = [
     "ON",
     "OR",
     "OVER",
+    "PERCENT",
     "QUALIFY",
     "REPEATABLE",
+    "RESERVOIR",
     "ROLLUP",
     "SAMPLE",
     "SEED",
     "SELECT",
+    "SETS",
     "SOME",
     "SYSTEM",
     "TABLESAMPLE",
@@ -251,7 +258,7 @@ pub(crate) const TYPED_LITERALS: [&str; 7] = [
 pub(crate) const TYPE_CONTINUATIONS: [&str; 6] =
     ["PRECISION", "VARYING", "WITH", "WITHOUT", "TIME", "ZONE"];
 /// Calls that always put each argument on its own line.
-pub(crate) const GROUPING_CALLS: [&str; 2] = ["ROLLUP", "CUBE"];
+pub(crate) const GROUPING_CALLS: [&str; 3] = ["ROLLUP", "CUBE", "SETS"];
 /// Clause words of a Snowflake SEMANTIC_VIEW call, each starting its own line.
 pub(crate) const SEMANTIC_VIEW_CLAUSES: [&str; 4] = ["METRICS", "DIMENSIONS", "FACTS", "WHERE"];
 /// Clause keywords that start a line of a SELECT.
@@ -318,3 +325,13 @@ pub(crate) const SEMANTIC_VIEW_CALL: &str = "SEMANTIC_VIEW";
 pub(crate) const OPEN_PARENTHESIS: &str = "(";
 /// A closing parenthesis.
 pub(crate) const CLOSE_PARENTHESIS: &str = ")";
+/// DuckDB's call that expands to columns, which a `*` before it unpacks.
+pub(crate) const COLUMNS_CALL: &str = "COLUMNS";
+/// DuckDB's lambda keyword, whose parameters end at a `:`.
+pub(crate) const LAMBDA_KEYWORD: &str = "LAMBDA";
+/// Keywords whose count a DuckDB `%` may follow as a percentage.
+pub(crate) const SAMPLE_KEYWORDS: [&str; 3] = ["SAMPLE", "TABLESAMPLE", "LIMIT"];
+/// Keywords after which a `(` opens a parenthesised expression, not an argument list.
+pub(crate) const EXPRESSION_LEADERS: [&str; 11] = [
+    "AND", "OR", "NOT", "WHERE", "ON", "HAVING", "QUALIFY", "WHEN", "THEN", "ELSE", "SELECT",
+];

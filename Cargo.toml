@@ -15,6 +15,7 @@ members = [
     "crates/sqlquack-syntax-coverage",
     "crates/sqlquack-syntax-postgres",
     "crates/sqlquack-format",
+    "crates/sqlquack-format-check",
     "crates/sqlquack-syntax-bigquery",
     "crates/sqlquack-python",
 ]
