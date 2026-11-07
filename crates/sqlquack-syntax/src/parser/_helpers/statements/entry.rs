@@ -10,7 +10,6 @@ use crate::expressions::names::models::Identifier;
 use crate::expressions::names::models::Null;
 use crate::expressions::operators::models::Alias;
 use crate::expressions::operators::models::MethodCall;
-use crate::expressions::queries::models::Cte;
 use crate::expressions::queries::models::From;
 use crate::expressions::queries::models::GroupBy;
 use crate::expressions::queries::models::Having;
@@ -25,7 +24,6 @@ use crate::expressions::queries::models::SelectInto;
 use crate::expressions::queries::models::Subquery;
 use crate::expressions::queries::models::Top;
 use crate::expressions::queries::models::Where;
-use crate::expressions::queries::models::With;
 use crate::expressions::statements::models::Annotated;
 use crate::expressions::statements::models::Command;
 use crate::expressions::statements::models::VerticaSelectExtensions;
@@ -1869,134 +1867,5 @@ impl Parser {
         &mut self,
     ) -> Result<(Option<Vec<Expression>>, Option<Expression>)> {
         Ok((None, None))
-    }
-
-    /// Parse a WITH clause (CTEs)
-    pub(crate) fn parse_with(&mut self) -> Result<Expression> {
-        let with_token = self.expect_token(TokenType::With)?;
-        let leading_comments = with_token.comments;
-
-        let recursive = self.match_token(TokenType::Recursive);
-        let mut ctes: Vec<Cte> = Vec::new();
-        let mut has_procedure = false;
-
-        loop {
-            let cte_start = self.current;
-            let name = self.expect_identifier_or_alias_keyword_with_quoted()?;
-
-            let columns = if self.check(TokenType::LParen) && !self.check_next(TokenType::Select) {
-                self.skip();
-                let cols = self.parse_identifier_list()?;
-                self.expect_token(TokenType::RParen)?;
-                cols
-            } else {
-                Vec::new()
-            };
-
-            let key_expressions = if self.match_keywords(&[TokenType::Using, TokenType::Key]) {
-                self.expect_token(TokenType::LParen)?;
-                let keys = self.parse_identifier_list()?;
-                self.expect_token(TokenType::RParen)?;
-                keys
-            } else {
-                Vec::new()
-            };
-
-            let has_as = self.match_token(TokenType::As);
-            let cte_comments = if has_as {
-                self.previous_trailing_comments().to_vec()
-            } else {
-                Vec::new()
-            };
-            if matches!(
-                self.config.dialect,
-                Some(crate::tokens::models::DialectType::Snowflake)
-            ) {
-                self.reject_reserved_name_part(&name)?;
-                if !has_as {
-                    return Err(self.parse_error("Expected AS before the CTE body"));
-                }
-            }
-            if has_as && columns.is_empty() && self.at_anonymous_procedure() {
-                let procedure = self.parse_anonymous_procedure(&name)?;
-                has_procedure = true;
-                ctes.push(Cte {
-                    search_cycle: Vec::new(),
-                    alias: name,
-                    this: procedure,
-                    columns,
-                    materialized: None,
-                    key_expressions,
-                    alias_first: true,
-                    comments: cte_comments,
-                    span: self.source_range(cte_start),
-                });
-                if self.match_token(TokenType::Comma) {
-                    continue;
-                }
-                break;
-            }
-
-            let materialized = if self.match_token(TokenType::Materialized) {
-                Some(true)
-            } else if self.match_token(TokenType::Not) {
-                self.expect_token(TokenType::Materialized)?;
-                Some(false)
-            } else {
-                None
-            };
-
-            self.expect_token(TokenType::LParen)?;
-            if matches!(
-                self.config.dialect,
-                Some(crate::tokens::models::DialectType::Snowflake)
-            ) && self.check(TokenType::Values)
-            {
-                return Err(self.parse_error(format!(
-                    "Snowflake does not accept a bare VALUES list as the body of CTE '{}'; \
-                     select from it instead, as SELECT * FROM (VALUES ...) AS t(column, ...)",
-                    name.name
-                )));
-            }
-            let query_start = self.current;
-            let query = self.parse_cte_body(has_procedure)?;
-            let query = self.spanned(query_start, query);
-            self.expect_token(TokenType::RParen)?;
-
-            ctes.push(Cte {
-                search_cycle: Vec::new(),
-                alias: name,
-                this: query,
-                columns,
-                materialized,
-                key_expressions,
-                alias_first: true,
-                comments: cte_comments,
-                span: self.source_range(cte_start),
-            });
-
-            if !self.match_token(TokenType::Comma) {
-                if self.check(TokenType::With) {
-                    self.skip();
-                    self.match_token(TokenType::Recursive);
-                    continue;
-                }
-                break;
-            }
-
-            self.match_token(TokenType::With);
-        }
-
-        let search = self.parse_recursive_with_search()?;
-
-        self.parse_with_statement(
-            With {
-                ctes,
-                recursive,
-                leading_comments,
-                search,
-            },
-            has_procedure,
-        )
     }
 }
