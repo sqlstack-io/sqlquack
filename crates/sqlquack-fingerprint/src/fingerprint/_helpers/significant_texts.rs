@@ -33,9 +33,9 @@ fn postgres_texts(sql: &str) -> Result<Vec<&str>, FingerprintError> {
         .into_iter()
         .map(|token| match token.kind {
             PostgresTokenKind::Fault(_) => Err(FingerprintError::Tokenize(token.value)),
-            _ => sql.get(token.start..token.end).ok_or_else(|| {
-                FingerprintError::Tokenize(format!("invalid token range at byte {}", token.start))
-            }),
+            _ => sql
+                .get(token.start..token.end)
+                .ok_or(FingerprintError::TokenRange(token.start)),
         })
         .collect()
 }
