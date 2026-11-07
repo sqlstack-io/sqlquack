@@ -1,0 +1,3403 @@
+name,kind,returns_set,return_type,argument_types,variadic,defaults,strict,oid
+RI_FKey_cascade_del,f,f,trigger,,,0,t,1646
+RI_FKey_cascade_upd,f,f,trigger,,,0,t,1647
+RI_FKey_check_ins,f,f,trigger,,,0,t,1644
+RI_FKey_check_upd,f,f,trigger,,,0,t,1645
+RI_FKey_noaction_del,f,f,trigger,,,0,t,1654
+RI_FKey_noaction_upd,f,f,trigger,,,0,t,1655
+RI_FKey_restrict_del,f,f,trigger,,,0,t,1648
+RI_FKey_restrict_upd,f,f,trigger,,,0,t,1649
+RI_FKey_setdefault_del,f,f,trigger,,,0,t,1652
+RI_FKey_setdefault_upd,f,f,trigger,,,0,t,1653
+RI_FKey_setnull_del,f,f,trigger,,,0,t,1650
+RI_FKey_setnull_upd,f,f,trigger,,,0,t,1651
+abbrev,f,f,text,inet,,0,t,598
+abbrev,f,f,text,cidr,,0,t,599
+abs,f,f,real,real,,0,t,1394
+abs,f,f,double precision,double precision,,0,t,1395
+abs,f,f,bigint,bigint,,0,t,1396
+abs,f,f,integer,integer,,0,t,1397
+abs,f,f,smallint,smallint,,0,t,1398
+abs,f,f,numeric,numeric,,0,t,1705
+aclcontains,f,f,boolean,"aclitem[],aclitem",,0,t,1037
+acldefault,f,f,aclitem[],"""char"",oid",,0,t,3943
+aclexplode,f,t,record,aclitem[],,0,t,1689
+aclinsert,f,f,aclitem[],"aclitem[],aclitem",,0,t,1035
+aclitemeq,f,f,boolean,"aclitem,aclitem",,0,t,1062
+aclitemin,f,f,aclitem,cstring,,0,t,1031
+aclitemout,f,f,cstring,aclitem,,0,t,1032
+aclremove,f,f,aclitem[],"aclitem[],aclitem",,0,t,1036
+acos,f,f,double precision,double precision,,0,t,1601
+acosd,f,f,double precision,double precision,,0,t,2732
+acosh,f,f,double precision,double precision,,0,t,2466
+age,f,f,integer,xid,,0,t,1181
+age,f,f,interval,"timestamp with time zone,timestamp with time zone",,0,t,1199
+age,f,f,interval,timestamp with time zone,,0,t,1386
+age,f,f,interval,"timestamp without time zone,timestamp without time zone",,0,t,2058
+age,f,f,interval,timestamp without time zone,,0,t,2059
+amvalidate,f,f,boolean,oid,,0,t,338
+any_in,f,f,"""any""",cstring,,0,t,2294
+any_out,f,f,cstring,"""any""",,0,t,2295
+any_value,a,f,anyelement,anyelement,,0,f,6291
+any_value_transfn,f,f,anyelement,"anyelement,anyelement",,0,t,6292
+anyarray_in,f,f,anyarray,cstring,,0,t,2296
+anyarray_out,f,f,cstring,anyarray,,0,t,2297
+anyarray_recv,f,f,anyarray,internal,,0,t,2502
+anyarray_send,f,f,bytea,anyarray,,0,t,2503
+anycompatible_in,f,f,anycompatible,cstring,,0,t,5086
+anycompatible_out,f,f,cstring,anycompatible,,0,t,5087
+anycompatiblearray_in,f,f,anycompatiblearray,cstring,,0,t,5088
+anycompatiblearray_out,f,f,cstring,anycompatiblearray,,0,t,5089
+anycompatiblearray_recv,f,f,anycompatiblearray,internal,,0,t,5090
+anycompatiblearray_send,f,f,bytea,anycompatiblearray,,0,t,5091
+anycompatiblemultirange_in,f,f,anycompatiblemultirange,"cstring,oid,integer",,0,t,4226
+anycompatiblemultirange_out,f,f,cstring,anycompatiblemultirange,,0,t,4227
+anycompatiblenonarray_in,f,f,anycompatiblenonarray,cstring,,0,t,5092
+anycompatiblenonarray_out,f,f,cstring,anycompatiblenonarray,,0,t,5093
+anycompatiblerange_in,f,f,anycompatiblerange,"cstring,oid,integer",,0,t,5094
+anycompatiblerange_out,f,f,cstring,anycompatiblerange,,0,t,5095
+anyelement_in,f,f,anyelement,cstring,,0,t,2312
+anyelement_out,f,f,cstring,anyelement,,0,t,2313
+anyenum_in,f,f,anyenum,cstring,,0,t,3504
+anyenum_out,f,f,cstring,anyenum,,0,t,3505
+anymultirange_in,f,f,anymultirange,"cstring,oid,integer",,0,t,4229
+anymultirange_out,f,f,cstring,anymultirange,,0,t,4230
+anynonarray_in,f,f,anynonarray,cstring,,0,t,2777
+anynonarray_out,f,f,cstring,anynonarray,,0,t,2778
+anyrange_in,f,f,anyrange,"cstring,oid,integer",,0,t,3832
+anyrange_out,f,f,cstring,anyrange,,0,t,3833
+anytextcat,f,f,text,"anynonarray,text",,0,t,2004
+area,f,f,double precision,box,,0,t,975
+area,f,f,double precision,path,,0,t,979
+area,f,f,double precision,circle,,0,t,1468
+areajoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,140
+areasel,f,f,double precision,"internal,oid,internal,integer",,0,t,139
+array_agg,a,f,anyarray,anynonarray,,0,f,2335
+array_agg,a,f,anyarray,anyarray,,0,f,4053
+array_agg_array_combine,f,f,internal,"internal,internal",,0,f,6296
+array_agg_array_deserialize,f,f,internal,"bytea,internal",,0,t,6298
+array_agg_array_finalfn,f,f,anyarray,"internal,anyarray",,0,f,4052
+array_agg_array_serialize,f,f,bytea,internal,,0,t,6297
+array_agg_array_transfn,f,f,internal,"internal,anyarray",,0,f,4051
+array_agg_combine,f,f,internal,"internal,internal",,0,f,6293
+array_agg_deserialize,f,f,internal,"bytea,internal",,0,t,6295
+array_agg_finalfn,f,f,anyarray,"internal,anynonarray",,0,f,2334
+array_agg_serialize,f,f,bytea,internal,,0,t,6294
+array_agg_transfn,f,f,internal,"internal,anynonarray",,0,f,2333
+array_append,f,f,anycompatiblearray,"anycompatiblearray,anycompatible",,0,f,378
+array_append_support,f,f,internal,internal,,0,t,6378
+array_cat,f,f,anycompatiblearray,"anycompatiblearray,anycompatiblearray",,0,f,383
+array_dims,f,f,text,anyarray,,0,t,747
+array_eq,f,f,boolean,"anyarray,anyarray",,0,t,744
+array_fill,f,f,anyarray,"anyelement,integer[]",,0,f,1193
+array_fill,f,f,anyarray,"anyelement,integer[],integer[]",,0,f,1286
+array_ge,f,f,boolean,"anyarray,anyarray",,0,t,396
+array_gt,f,f,boolean,"anyarray,anyarray",,0,t,392
+array_in,f,f,anyarray,"cstring,oid,integer",,0,t,750
+array_larger,f,f,anyarray,"anyarray,anyarray",,0,t,515
+array_le,f,f,boolean,"anyarray,anyarray",,0,t,393
+array_length,f,f,integer,"anyarray,integer",,0,t,2176
+array_lower,f,f,integer,"anyarray,integer",,0,t,2091
+array_lt,f,f,boolean,"anyarray,anyarray",,0,t,391
+array_ndims,f,f,integer,anyarray,,0,t,748
+array_ne,f,f,boolean,"anyarray,anyarray",,0,t,390
+array_out,f,f,cstring,anyarray,,0,t,751
+array_position,f,f,integer,"anycompatiblearray,anycompatible",,0,f,3277
+array_position,f,f,integer,"anycompatiblearray,anycompatible,integer",,0,f,3278
+array_positions,f,f,integer[],"anycompatiblearray,anycompatible",,0,f,3279
+array_prepend,f,f,anycompatiblearray,"anycompatible,anycompatiblearray",,0,f,379
+array_prepend_support,f,f,internal,internal,,0,t,6379
+array_recv,f,f,anyarray,"internal,oid,integer",,0,t,2400
+array_remove,f,f,anycompatiblearray,"anycompatiblearray,anycompatible",,0,f,3167
+array_replace,f,f,anycompatiblearray,"anycompatiblearray,anycompatible,anycompatible",,0,f,3168
+array_reverse,f,f,anyarray,anyarray,,0,t,6381
+array_sample,f,f,anyarray,"anyarray,integer",,0,t,6216
+array_send,f,f,bytea,anyarray,,0,t,2401
+array_shuffle,f,f,anyarray,anyarray,,0,t,6215
+array_smaller,f,f,anyarray,"anyarray,anyarray",,0,t,516
+array_sort,f,f,anyarray,anyarray,,0,t,6388
+array_sort,f,f,anyarray,"anyarray,boolean",,0,t,6389
+array_sort,f,f,anyarray,"anyarray,boolean,boolean",,0,t,6390
+array_subscript_handler,f,f,internal,internal,,0,t,6179
+array_subscript_handler_support,f,f,internal,internal,,0,t,6380
+array_to_json,f,f,json,anyarray,,0,t,3153
+array_to_json,f,f,json,"anyarray,boolean",,0,t,3154
+array_to_string,f,f,text,"anyarray,text,text",,0,f,384
+array_to_string,f,f,text,"anyarray,text",,0,t,395
+array_to_tsvector,f,f,tsvector,text[],,0,t,3327
+array_typanalyze,f,f,boolean,internal,,0,t,3816
+array_unnest_support,f,f,internal,internal,,0,t,3996
+array_upper,f,f,integer,"anyarray,integer",,0,t,2092
+arraycontained,f,f,boolean,"anyarray,anyarray",,0,t,2749
+arraycontains,f,f,boolean,"anyarray,anyarray",,0,t,2748
+arraycontjoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,3818
+arraycontsel,f,f,double precision,"internal,oid,internal,integer",,0,t,3817
+arrayoverlap,f,f,boolean,"anyarray,anyarray",,0,t,2747
+ascii,f,f,integer,text,,0,t,1620
+asin,f,f,double precision,double precision,,0,t,1600
+asind,f,f,double precision,double precision,,0,t,2731
+asinh,f,f,double precision,double precision,,0,t,2465
+atan,f,f,double precision,double precision,,0,t,1602
+atan2,f,f,double precision,"double precision,double precision",,0,t,1603
+atan2d,f,f,double precision,"double precision,double precision",,0,t,2734
+atand,f,f,double precision,double precision,,0,t,2733
+atanh,f,f,double precision,double precision,,0,t,2467
+avg,a,f,numeric,bigint,,0,f,2100
+avg,a,f,numeric,integer,,0,f,2101
+avg,a,f,numeric,smallint,,0,f,2102
+avg,a,f,numeric,numeric,,0,f,2103
+avg,a,f,double precision,real,,0,f,2104
+avg,a,f,double precision,double precision,,0,f,2105
+avg,a,f,interval,interval,,0,f,2106
+bernoulli,f,f,tsm_handler,internal,,0,t,3313
+big5_to_euc_tw,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4333
+big5_to_mic,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4335
+big5_to_utf8,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4352
+binary_upgrade_add_sub_rel_state,f,f,void,"text,oid,""char"",pg_lsn",,0,f,6319
+binary_upgrade_create_empty_extension,f,f,void,"text,text,boolean,text,oid[],text[],text[]",,0,f,3591
+binary_upgrade_logical_slot_has_caught_up,f,f,boolean,name,,0,t,6312
+binary_upgrade_replorigin_advance,f,f,void,"text,pg_lsn",,0,f,6320
+binary_upgrade_set_missing_value,f,f,void,"oid,text,text",,0,t,4101
+binary_upgrade_set_next_array_pg_type_oid,f,f,void,oid,,0,t,3584
+binary_upgrade_set_next_heap_pg_class_oid,f,f,void,oid,,0,t,3586
+binary_upgrade_set_next_heap_relfilenode,f,f,void,oid,,0,t,4545
+binary_upgrade_set_next_index_pg_class_oid,f,f,void,oid,,0,t,3587
+binary_upgrade_set_next_index_relfilenode,f,f,void,oid,,0,t,4546
+binary_upgrade_set_next_multirange_array_pg_type_oid,f,f,void,oid,,0,t,4391
+binary_upgrade_set_next_multirange_pg_type_oid,f,f,void,oid,,0,t,4390
+binary_upgrade_set_next_pg_authid_oid,f,f,void,oid,,0,t,3590
+binary_upgrade_set_next_pg_enum_oid,f,f,void,oid,,0,t,3589
+binary_upgrade_set_next_pg_tablespace_oid,f,f,void,oid,,0,t,4548
+binary_upgrade_set_next_pg_type_oid,f,f,void,oid,,0,t,3582
+binary_upgrade_set_next_toast_pg_class_oid,f,f,void,oid,,0,t,3588
+binary_upgrade_set_next_toast_relfilenode,f,f,void,oid,,0,t,4547
+binary_upgrade_set_record_init_privs,f,f,void,boolean,,0,t,4083
+bit,f,f,bit,"integer,integer",,0,t,1683
+bit,f,f,bit,"bit,integer,boolean",,0,t,1685
+bit,f,f,bit,"bigint,integer",,0,t,2075
+bit_and,a,f,smallint,smallint,,0,f,2236
+bit_and,a,f,integer,integer,,0,f,2238
+bit_and,a,f,bigint,bigint,,0,f,2240
+bit_and,a,f,bit,bit,,0,f,2242
+bit_count,f,f,bigint,bit,,0,t,6162
+bit_count,f,f,bigint,bytea,,0,t,6163
+bit_in,f,f,bit,"cstring,oid,integer",,0,t,1564
+bit_length,f,f,integer,bytea,,0,t,1810
+bit_length,f,f,integer,text,,0,t,1811
+bit_length,f,f,integer,bit,,0,t,1812
+bit_or,a,f,smallint,smallint,,0,f,2237
+bit_or,a,f,integer,integer,,0,f,2239
+bit_or,a,f,bigint,bigint,,0,f,2241
+bit_or,a,f,bit,bit,,0,f,2243
+bit_out,f,f,cstring,bit,,0,t,1565
+bit_recv,f,f,bit,"internal,oid,integer",,0,t,2456
+bit_send,f,f,bytea,bit,,0,t,2457
+bit_xor,a,f,smallint,smallint,,0,f,6164
+bit_xor,a,f,integer,integer,,0,f,6165
+bit_xor,a,f,bigint,bigint,,0,f,6166
+bit_xor,a,f,bit,bit,,0,f,6167
+bitand,f,f,bit,"bit,bit",,0,t,1673
+bitcat,f,f,bit varying,"bit varying,bit varying",,0,t,1679
+bitcmp,f,f,integer,"bit,bit",,0,t,1596
+biteq,f,f,boolean,"bit,bit",,0,t,1581
+bitge,f,f,boolean,"bit,bit",,0,t,1592
+bitgt,f,f,boolean,"bit,bit",,0,t,1593
+bitle,f,f,boolean,"bit,bit",,0,t,1594
+bitlt,f,f,boolean,"bit,bit",,0,t,1595
+bitne,f,f,boolean,"bit,bit",,0,t,1582
+bitnot,f,f,bit,bit,,0,t,1676
+bitor,f,f,bit,"bit,bit",,0,t,1674
+bitshiftleft,f,f,bit,"bit,integer",,0,t,1677
+bitshiftright,f,f,bit,"bit,integer",,0,t,1678
+bittypmodin,f,f,integer,cstring[],,0,t,2919
+bittypmodout,f,f,cstring,integer,,0,t,2920
+bitxor,f,f,bit,"bit,bit",,0,t,1675
+bool,f,f,boolean,integer,,0,t,2557
+bool,f,f,boolean,jsonb,,0,t,3556
+bool_accum,f,f,internal,"internal,boolean",,0,f,3496
+bool_accum_inv,f,f,internal,"internal,boolean",,0,f,3497
+bool_alltrue,f,f,boolean,internal,,0,t,3498
+bool_and,a,f,boolean,boolean,,0,f,2517
+bool_anytrue,f,f,boolean,internal,,0,t,3499
+bool_or,a,f,boolean,boolean,,0,f,2518
+booland_statefunc,f,f,boolean,"boolean,boolean",,0,t,2515
+booleq,f,f,boolean,"boolean,boolean",,0,t,60
+boolge,f,f,boolean,"boolean,boolean",,0,t,1692
+boolgt,f,f,boolean,"boolean,boolean",,0,t,57
+boolin,f,f,boolean,cstring,,0,t,1242
+boolle,f,f,boolean,"boolean,boolean",,0,t,1691
+boollt,f,f,boolean,"boolean,boolean",,0,t,56
+boolne,f,f,boolean,"boolean,boolean",,0,t,84
+boolor_statefunc,f,f,boolean,"boolean,boolean",,0,t,2516
+boolout,f,f,cstring,boolean,,0,t,1243
+boolrecv,f,f,boolean,internal,,0,t,2436
+boolsend,f,f,bytea,boolean,,0,t,2437
+bound_box,f,f,box,"box,box",,0,t,4067
+box,f,f,box,"point,point",,0,t,1421
+box,f,f,box,polygon,,0,t,1446
+box,f,f,box,circle,,0,t,1480
+box,f,f,box,point,,0,t,4091
+box_above,f,f,boolean,"box,box",,0,t,2565
+box_above_eq,f,f,boolean,"box,box",,0,t,115
+box_add,f,f,box,"box,point",,0,t,1422
+box_below,f,f,boolean,"box,box",,0,t,2562
+box_below_eq,f,f,boolean,"box,box",,0,t,116
+box_center,f,f,point,box,,0,t,138
+box_contain,f,f,boolean,"box,box",,0,t,187
+box_contain_pt,f,f,boolean,"box,point",,0,t,193
+box_contained,f,f,boolean,"box,box",,0,t,192
+box_distance,f,f,double precision,"box,box",,0,t,978
+box_div,f,f,box,"box,point",,0,t,1425
+box_eq,f,f,boolean,"box,box",,0,t,128
+box_ge,f,f,boolean,"box,box",,0,t,126
+box_gt,f,f,boolean,"box,box",,0,t,127
+box_in,f,f,box,cstring,,0,t,123
+box_intersect,f,f,box,"box,box",,0,t,980
+box_le,f,f,boolean,"box,box",,0,t,130
+box_left,f,f,boolean,"box,box",,0,t,188
+box_lt,f,f,boolean,"box,box",,0,t,129
+box_mul,f,f,box,"box,point",,0,t,1424
+box_out,f,f,cstring,box,,0,t,124
+box_overabove,f,f,boolean,"box,box",,0,t,2564
+box_overbelow,f,f,boolean,"box,box",,0,t,2563
+box_overlap,f,f,boolean,"box,box",,0,t,125
+box_overleft,f,f,boolean,"box,box",,0,t,189
+box_overright,f,f,boolean,"box,box",,0,t,190
+box_recv,f,f,box,internal,,0,t,2484
+box_right,f,f,boolean,"box,box",,0,t,191
+box_same,f,f,boolean,"box,box",,0,t,186
+box_send,f,f,bytea,box,,0,t,2485
+box_sub,f,f,box,"box,point",,0,t,1423
+bpchar,f,f,character,name,,0,t,408
+bpchar,f,f,character,"character,integer,boolean",,0,t,668
+bpchar,f,f,character,"""char""",,0,t,860
+bpchar_larger,f,f,character,"character,character",,0,t,1063
+bpchar_pattern_ge,f,f,boolean,"character,character",,0,t,2177
+bpchar_pattern_gt,f,f,boolean,"character,character",,0,t,2178
+bpchar_pattern_le,f,f,boolean,"character,character",,0,t,2175
+bpchar_pattern_lt,f,f,boolean,"character,character",,0,t,2174
+bpchar_smaller,f,f,character,"character,character",,0,t,1064
+bpchar_sortsupport,f,f,void,internal,,0,t,3328
+bpcharcmp,f,f,integer,"character,character",,0,t,1078
+bpchareq,f,f,boolean,"character,character",,0,t,1048
+bpcharge,f,f,boolean,"character,character",,0,t,1052
+bpchargt,f,f,boolean,"character,character",,0,t,1051
+bpchariclike,f,f,boolean,"character,text",,0,t,1660
+bpcharicnlike,f,f,boolean,"character,text",,0,t,1661
+bpcharicregexeq,f,f,boolean,"character,text",,0,t,1656
+bpcharicregexne,f,f,boolean,"character,text",,0,t,1657
+bpcharin,f,f,character,"cstring,oid,integer",,0,t,1044
+bpcharle,f,f,boolean,"character,character",,0,t,1050
+bpcharlike,f,f,boolean,"character,text",,0,t,1631
+bpcharlt,f,f,boolean,"character,character",,0,t,1049
+bpcharne,f,f,boolean,"character,character",,0,t,1053
+bpcharnlike,f,f,boolean,"character,text",,0,t,1632
+bpcharout,f,f,cstring,character,,0,t,1045
+bpcharrecv,f,f,character,"internal,oid,integer",,0,t,2430
+bpcharregexeq,f,f,boolean,"character,text",,0,t,1658
+bpcharregexne,f,f,boolean,"character,text",,0,t,1659
+bpcharsend,f,f,bytea,character,,0,t,2431
+bpchartypmodin,f,f,integer,cstring[],,0,t,2913
+bpchartypmodout,f,f,cstring,integer,,0,t,2914
+brin_bloom_add_value,f,f,boolean,"internal,internal,internal,internal",,0,t,4592
+brin_bloom_consistent,f,f,boolean,"internal,internal,internal,integer",,0,t,4593
+brin_bloom_opcinfo,f,f,internal,internal,,0,t,4591
+brin_bloom_options,f,f,void,internal,,0,f,4595
+brin_bloom_summary_in,f,f,pg_brin_bloom_summary,cstring,,0,t,4596
+brin_bloom_summary_out,f,f,cstring,pg_brin_bloom_summary,,0,t,4597
+brin_bloom_summary_recv,f,f,pg_brin_bloom_summary,internal,,0,t,4598
+brin_bloom_summary_send,f,f,bytea,pg_brin_bloom_summary,,0,t,4599
+brin_bloom_union,f,f,boolean,"internal,internal,internal",,0,t,4594
+brin_desummarize_range,f,f,void,"regclass,bigint",,0,t,4014
+brin_inclusion_add_value,f,f,boolean,"internal,internal,internal,internal",,0,t,4106
+brin_inclusion_consistent,f,f,boolean,"internal,internal,internal",,0,t,4107
+brin_inclusion_opcinfo,f,f,internal,internal,,0,t,4105
+brin_inclusion_union,f,f,boolean,"internal,internal,internal",,0,t,4108
+brin_minmax_add_value,f,f,boolean,"internal,internal,internal,internal",,0,t,3384
+brin_minmax_consistent,f,f,boolean,"internal,internal,internal",,0,t,3385
+brin_minmax_multi_add_value,f,f,boolean,"internal,internal,internal,internal",,0,t,4617
+brin_minmax_multi_consistent,f,f,boolean,"internal,internal,internal,integer",,0,t,4618
+brin_minmax_multi_distance_date,f,f,double precision,"internal,internal",,0,t,4629
+brin_minmax_multi_distance_float4,f,f,double precision,"internal,internal",,0,t,4624
+brin_minmax_multi_distance_float8,f,f,double precision,"internal,internal",,0,t,4625
+brin_minmax_multi_distance_inet,f,f,double precision,"internal,internal",,0,t,4636
+brin_minmax_multi_distance_int2,f,f,double precision,"internal,internal",,0,t,4621
+brin_minmax_multi_distance_int4,f,f,double precision,"internal,internal",,0,t,4622
+brin_minmax_multi_distance_int8,f,f,double precision,"internal,internal",,0,t,4623
+brin_minmax_multi_distance_interval,f,f,double precision,"internal,internal",,0,t,4631
+brin_minmax_multi_distance_macaddr,f,f,double precision,"internal,internal",,0,t,4634
+brin_minmax_multi_distance_macaddr8,f,f,double precision,"internal,internal",,0,t,4635
+brin_minmax_multi_distance_numeric,f,f,double precision,"internal,internal",,0,t,4626
+brin_minmax_multi_distance_pg_lsn,f,f,double precision,"internal,internal",,0,t,4633
+brin_minmax_multi_distance_tid,f,f,double precision,"internal,internal",,0,t,4627
+brin_minmax_multi_distance_time,f,f,double precision,"internal,internal",,0,t,4630
+brin_minmax_multi_distance_timestamp,f,f,double precision,"internal,internal",,0,t,4637
+brin_minmax_multi_distance_timetz,f,f,double precision,"internal,internal",,0,t,4632
+brin_minmax_multi_distance_uuid,f,f,double precision,"internal,internal",,0,t,4628
+brin_minmax_multi_opcinfo,f,f,internal,internal,,0,t,4616
+brin_minmax_multi_options,f,f,void,internal,,0,f,4620
+brin_minmax_multi_summary_in,f,f,pg_brin_minmax_multi_summary,cstring,,0,t,4638
+brin_minmax_multi_summary_out,f,f,cstring,pg_brin_minmax_multi_summary,,0,t,4639
+brin_minmax_multi_summary_recv,f,f,pg_brin_minmax_multi_summary,internal,,0,t,4640
+brin_minmax_multi_summary_send,f,f,bytea,pg_brin_minmax_multi_summary,,0,t,4641
+brin_minmax_multi_union,f,f,boolean,"internal,internal,internal",,0,t,4619
+brin_minmax_opcinfo,f,f,internal,internal,,0,t,3383
+brin_minmax_union,f,f,boolean,"internal,internal,internal",,0,t,3386
+brin_summarize_new_values,f,f,integer,regclass,,0,t,3952
+brin_summarize_range,f,f,integer,"regclass,bigint",,0,t,3999
+brinhandler,f,f,index_am_handler,internal,,0,t,335
+broadcast,f,f,inet,inet,,0,t,698
+btarraycmp,f,f,integer,"anyarray,anyarray",,0,t,382
+btboolcmp,f,f,integer,"boolean,boolean",,0,t,1693
+btboolskipsupport,f,f,void,internal,,0,t,6408
+btbpchar_pattern_cmp,f,f,integer,"character,character",,0,t,2180
+btbpchar_pattern_sortsupport,f,f,void,internal,,0,t,3333
+btcharcmp,f,f,integer,"""char"",""char""",,0,t,358
+btcharskipsupport,f,f,void,internal,,0,t,6406
+btequalimage,f,f,boolean,oid,,0,t,5051
+btfloat48cmp,f,f,integer,"real,double precision",,0,t,2194
+btfloat4cmp,f,f,integer,"real,real",,0,t,354
+btfloat4sortsupport,f,f,void,internal,,0,t,3132
+btfloat84cmp,f,f,integer,"double precision,real",,0,t,2195
+btfloat8cmp,f,f,integer,"double precision,double precision",,0,t,355
+btfloat8sortsupport,f,f,void,internal,,0,t,3133
+bthandler,f,f,index_am_handler,internal,,0,t,330
+btint24cmp,f,f,integer,"smallint,integer",,0,t,2190
+btint28cmp,f,f,integer,"smallint,bigint",,0,t,2192
+btint2cmp,f,f,integer,"smallint,smallint",,0,t,350
+btint2skipsupport,f,f,void,internal,,0,t,6402
+btint2sortsupport,f,f,void,internal,,0,t,3129
+btint42cmp,f,f,integer,"integer,smallint",,0,t,2191
+btint48cmp,f,f,integer,"integer,bigint",,0,t,2188
+btint4cmp,f,f,integer,"integer,integer",,0,t,351
+btint4skipsupport,f,f,void,internal,,0,t,6403
+btint4sortsupport,f,f,void,internal,,0,t,3130
+btint82cmp,f,f,integer,"bigint,smallint",,0,t,2193
+btint84cmp,f,f,integer,"bigint,integer",,0,t,2189
+btint8cmp,f,f,integer,"bigint,bigint",,0,t,842
+btint8skipsupport,f,f,void,internal,,0,t,6404
+btint8sortsupport,f,f,void,internal,,0,t,3131
+btnamecmp,f,f,integer,"name,name",,0,t,359
+btnamesortsupport,f,f,void,internal,,0,t,3135
+btnametextcmp,f,f,integer,"name,text",,0,t,246
+btoidcmp,f,f,integer,"oid,oid",,0,t,356
+btoidskipsupport,f,f,void,internal,,0,t,6405
+btoidsortsupport,f,f,void,internal,,0,t,3134
+btoidvectorcmp,f,f,integer,"oidvector,oidvector",,0,t,404
+btrecordcmp,f,f,integer,"record,record",,0,t,2987
+btrecordimagecmp,f,f,integer,"record,record",,0,t,3187
+btrim,f,f,text,"text,text",,0,t,884
+btrim,f,f,text,text,,0,t,885
+btrim,f,f,bytea,"bytea,bytea",,0,t,2015
+bttext_pattern_cmp,f,f,integer,"text,text",,0,t,2166
+bttext_pattern_sortsupport,f,f,void,internal,,0,t,3332
+bttextcmp,f,f,integer,"text,text",,0,t,360
+bttextnamecmp,f,f,integer,"text,name",,0,t,253
+bttextsortsupport,f,f,void,internal,,0,t,3255
+bttidcmp,f,f,integer,"tid,tid",,0,t,2794
+btvarstrequalimage,f,f,boolean,oid,,0,t,5050
+bytea,f,f,bytea,smallint,,0,t,6367
+bytea,f,f,bytea,integer,,0,t,6368
+bytea,f,f,bytea,bigint,,0,t,6369
+bytea_larger,f,f,bytea,"bytea,bytea",,0,t,6393
+bytea_smaller,f,f,bytea,"bytea,bytea",,0,t,6394
+bytea_sortsupport,f,f,void,internal,,0,t,3331
+bytea_string_agg_finalfn,f,f,bytea,internal,,0,f,3544
+bytea_string_agg_transfn,f,f,internal,"internal,bytea,bytea",,0,f,3543
+byteacat,f,f,bytea,"bytea,bytea",,0,t,2011
+byteacmp,f,f,integer,"bytea,bytea",,0,t,1954
+byteaeq,f,f,boolean,"bytea,bytea",,0,t,1948
+byteage,f,f,boolean,"bytea,bytea",,0,t,1952
+byteagt,f,f,boolean,"bytea,bytea",,0,t,1951
+byteain,f,f,bytea,cstring,,0,t,1244
+byteale,f,f,boolean,"bytea,bytea",,0,t,1950
+bytealike,f,f,boolean,"bytea,bytea",,0,t,2005
+bytealt,f,f,boolean,"bytea,bytea",,0,t,1949
+byteane,f,f,boolean,"bytea,bytea",,0,t,1953
+byteanlike,f,f,boolean,"bytea,bytea",,0,t,2006
+byteaout,f,f,cstring,bytea,,0,t,31
+bytearecv,f,f,bytea,internal,,0,t,2412
+byteasend,f,f,bytea,bytea,,0,t,2413
+cardinality,f,f,integer,anyarray,,0,t,3179
+casefold,f,f,text,text,,0,t,6412
+cash_cmp,f,f,integer,"money,money",,0,t,377
+cash_div_cash,f,f,double precision,"money,money",,0,t,3822
+cash_div_flt4,f,f,money,"money,real",,0,t,847
+cash_div_flt8,f,f,money,"money,double precision",,0,t,897
+cash_div_int2,f,f,money,"money,smallint",,0,t,867
+cash_div_int4,f,f,money,"money,integer",,0,t,865
+cash_div_int8,f,f,money,"money,bigint",,0,t,3345
+cash_eq,f,f,boolean,"money,money",,0,t,888
+cash_ge,f,f,boolean,"money,money",,0,t,893
+cash_gt,f,f,boolean,"money,money",,0,t,892
+cash_in,f,f,money,cstring,,0,t,886
+cash_le,f,f,boolean,"money,money",,0,t,891
+cash_lt,f,f,boolean,"money,money",,0,t,890
+cash_mi,f,f,money,"money,money",,0,t,895
+cash_mul_flt4,f,f,money,"money,real",,0,t,846
+cash_mul_flt8,f,f,money,"money,double precision",,0,t,896
+cash_mul_int2,f,f,money,"money,smallint",,0,t,866
+cash_mul_int4,f,f,money,"money,integer",,0,t,864
+cash_mul_int8,f,f,money,"money,bigint",,0,t,3344
+cash_ne,f,f,boolean,"money,money",,0,t,889
+cash_out,f,f,cstring,money,,0,t,887
+cash_pl,f,f,money,"money,money",,0,t,894
+cash_recv,f,f,money,internal,,0,t,2492
+cash_send,f,f,bytea,money,,0,t,2493
+cash_words,f,f,text,money,,0,t,935
+cashlarger,f,f,money,"money,money",,0,t,898
+cashsmaller,f,f,money,"money,money",,0,t,899
+cbrt,f,f,double precision,double precision,,0,t,1345
+ceil,f,f,numeric,numeric,,0,t,1711
+ceil,f,f,double precision,double precision,,0,t,2308
+ceiling,f,f,numeric,numeric,,0,t,2167
+ceiling,f,f,double precision,double precision,,0,t,2320
+center,f,f,point,box,,0,t,1542
+center,f,f,point,circle,,0,t,1543
+char,f,f,"""char""",integer,,0,t,78
+char,f,f,"""char""",text,,0,t,944
+char_length,f,f,integer,character,,0,t,1372
+char_length,f,f,integer,text,,0,t,1381
+character_length,f,f,integer,character,,0,t,1367
+character_length,f,f,integer,text,,0,t,1369
+chareq,f,f,boolean,"""char"",""char""",,0,t,61
+charge,f,f,boolean,"""char"",""char""",,0,t,74
+chargt,f,f,boolean,"""char"",""char""",,0,t,73
+charin,f,f,"""char""",cstring,,0,t,1245
+charle,f,f,boolean,"""char"",""char""",,0,t,72
+charlt,f,f,boolean,"""char"",""char""",,0,t,1246
+charne,f,f,boolean,"""char"",""char""",,0,t,70
+charout,f,f,cstring,"""char""",,0,t,33
+charrecv,f,f,"""char""",internal,,0,t,2434
+charsend,f,f,bytea,"""char""",,0,t,2435
+chr,f,f,text,integer,,0,t,1621
+cideq,f,f,boolean,"cid,cid",,0,t,69
+cidin,f,f,cid,cstring,,0,t,52
+cidout,f,f,cstring,cid,,0,t,53
+cidr,f,f,cidr,inet,,0,t,1715
+cidr_in,f,f,cidr,cstring,,0,t,1267
+cidr_out,f,f,cstring,cidr,,0,t,1427
+cidr_recv,f,f,cidr,internal,,0,t,2498
+cidr_send,f,f,bytea,cidr,,0,t,2499
+cidrecv,f,f,cid,internal,,0,t,2442
+cidsend,f,f,bytea,cid,,0,t,2443
+circle,f,f,circle,"point,double precision",,0,t,1473
+circle,f,f,circle,polygon,,0,t,1474
+circle,f,f,circle,box,,0,t,1479
+circle_above,f,f,boolean,"circle,circle",,0,t,1461
+circle_add_pt,f,f,circle,"circle,point",,0,t,1146
+circle_below,f,f,boolean,"circle,circle",,0,t,1460
+circle_center,f,f,point,circle,,0,t,1472
+circle_contain,f,f,boolean,"circle,circle",,0,t,1453
+circle_contain_pt,f,f,boolean,"circle,point",,0,t,1477
+circle_contained,f,f,boolean,"circle,circle",,0,t,1458
+circle_distance,f,f,double precision,"circle,circle",,0,t,1471
+circle_div_pt,f,f,circle,"circle,point",,0,t,1149
+circle_eq,f,f,boolean,"circle,circle",,0,t,1462
+circle_ge,f,f,boolean,"circle,circle",,0,t,1467
+circle_gt,f,f,boolean,"circle,circle",,0,t,1465
+circle_in,f,f,circle,cstring,,0,t,1450
+circle_le,f,f,boolean,"circle,circle",,0,t,1466
+circle_left,f,f,boolean,"circle,circle",,0,t,1454
+circle_lt,f,f,boolean,"circle,circle",,0,t,1464
+circle_mul_pt,f,f,circle,"circle,point",,0,t,1148
+circle_ne,f,f,boolean,"circle,circle",,0,t,1463
+circle_out,f,f,cstring,circle,,0,t,1451
+circle_overabove,f,f,boolean,"circle,circle",,0,t,2588
+circle_overbelow,f,f,boolean,"circle,circle",,0,t,2587
+circle_overlap,f,f,boolean,"circle,circle",,0,t,1459
+circle_overleft,f,f,boolean,"circle,circle",,0,t,1455
+circle_overright,f,f,boolean,"circle,circle",,0,t,1456
+circle_recv,f,f,circle,internal,,0,t,2490
+circle_right,f,f,boolean,"circle,circle",,0,t,1457
+circle_same,f,f,boolean,"circle,circle",,0,t,1452
+circle_send,f,f,bytea,circle,,0,t,2491
+circle_sub_pt,f,f,circle,"circle,point",,0,t,1147
+clock_timestamp,f,f,timestamp with time zone,,,0,t,2649
+close_ls,f,f,point,"line,lseg",,0,t,1488
+close_lseg,f,f,point,"lseg,lseg",,0,t,1489
+close_pb,f,f,point,"point,box",,0,t,367
+close_pl,f,f,point,"point,line",,0,t,961
+close_ps,f,f,point,"point,lseg",,0,t,366
+close_sb,f,f,point,"lseg,box",,0,t,368
+col_description,f,f,text,"oid,integer",,0,t,1216
+concat,f,f,text,"""any""","""any""",0,f,3058
+concat_ws,f,f,text,"text,""any""","""any""",0,f,3059
+contjoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,1303
+contsel,f,f,double precision,"internal,oid,internal,integer",,0,t,1302
+convert,f,f,bytea,"bytea,name,name",,0,t,1813
+convert_from,f,f,text,"bytea,name",,0,t,1714
+convert_to,f,f,bytea,"text,name",,0,t,1717
+corr,a,f,double precision,"double precision,double precision",,0,f,2829
+cos,f,f,double precision,double precision,,0,t,1605
+cosd,f,f,double precision,double precision,,0,t,2736
+cosh,f,f,double precision,double precision,,0,t,2463
+cot,f,f,double precision,double precision,,0,t,1607
+cotd,f,f,double precision,double precision,,0,t,2738
+count,a,f,bigint,"""any""",,0,f,2147
+count,a,f,bigint,,,0,f,2803
+covar_pop,a,f,double precision,"double precision,double precision",,0,f,2827
+covar_samp,a,f,double precision,"double precision,double precision",,0,f,2828
+crc32,f,f,bigint,bytea,,0,t,6364
+crc32c,f,f,bigint,bytea,,0,t,6365
+cstring_in,f,f,cstring,cstring,,0,t,2292
+cstring_out,f,f,cstring,cstring,,0,t,2293
+cstring_recv,f,f,cstring,internal,,0,t,2500
+cstring_send,f,f,bytea,cstring,,0,t,2501
+cume_dist,w,f,double precision,,,0,f,3104
+cume_dist,a,f,double precision,"""any""","""any""",0,f,3990
+cume_dist_final,f,f,double precision,"internal,""any""","""any""",0,f,3991
+current_database,f,f,name,,,0,t,861
+current_query,f,f,text,,,0,f,817
+current_schema,f,f,name,,,0,t,1402
+current_schemas,f,f,name[],boolean,,0,t,1403
+current_setting,f,f,text,text,,0,t,2077
+current_setting,f,f,text,"text,boolean",,0,t,3294
+current_user,f,f,name,,,0,t,745
+currtid2,f,f,tid,"text,tid",,0,t,1294
+currval,f,f,bigint,regclass,,0,t,1575
+cursor_to_xml,f,f,xml,"refcursor,integer,boolean,boolean,text",,0,t,2925
+cursor_to_xmlschema,f,f,xml,"refcursor,boolean,boolean,text",,0,t,2928
+database_to_xml,f,f,xml,"boolean,boolean,text",,0,t,2936
+database_to_xml_and_xmlschema,f,f,xml,"boolean,boolean,text",,0,t,2938
+database_to_xmlschema,f,f,xml,"boolean,boolean,text",,0,t,2937
+date,f,f,date,timestamp with time zone,,0,t,1178
+date,f,f,date,timestamp without time zone,,0,t,2029
+date_add,f,f,timestamp with time zone,"timestamp with time zone,interval",,0,t,6221
+date_add,f,f,timestamp with time zone,"timestamp with time zone,interval,text",,0,t,6222
+date_bin,f,f,timestamp without time zone,"interval,timestamp without time zone,timestamp without time zone",,0,t,6177
+date_bin,f,f,timestamp with time zone,"interval,timestamp with time zone,timestamp with time zone",,0,t,6178
+date_cmp,f,f,integer,"date,date",,0,t,1092
+date_cmp_timestamp,f,f,integer,"date,timestamp without time zone",,0,t,2344
+date_cmp_timestamptz,f,f,integer,"date,timestamp with time zone",,0,t,2357
+date_eq,f,f,boolean,"date,date",,0,t,1086
+date_eq_timestamp,f,f,boolean,"date,timestamp without time zone",,0,t,2340
+date_eq_timestamptz,f,f,boolean,"date,timestamp with time zone",,0,t,2353
+date_ge,f,f,boolean,"date,date",,0,t,1090
+date_ge_timestamp,f,f,boolean,"date,timestamp without time zone",,0,t,2342
+date_ge_timestamptz,f,f,boolean,"date,timestamp with time zone",,0,t,2355
+date_gt,f,f,boolean,"date,date",,0,t,1089
+date_gt_timestamp,f,f,boolean,"date,timestamp without time zone",,0,t,2341
+date_gt_timestamptz,f,f,boolean,"date,timestamp with time zone",,0,t,2354
+date_in,f,f,date,cstring,,0,t,1084
+date_larger,f,f,date,"date,date",,0,t,1138
+date_le,f,f,boolean,"date,date",,0,t,1088
+date_le_timestamp,f,f,boolean,"date,timestamp without time zone",,0,t,2339
+date_le_timestamptz,f,f,boolean,"date,timestamp with time zone",,0,t,2352
+date_lt,f,f,boolean,"date,date",,0,t,1087
+date_lt_timestamp,f,f,boolean,"date,timestamp without time zone",,0,t,2338
+date_lt_timestamptz,f,f,boolean,"date,timestamp with time zone",,0,t,2351
+date_mi,f,f,integer,"date,date",,0,t,1140
+date_mi_interval,f,f,timestamp without time zone,"date,interval",,0,t,2072
+date_mii,f,f,date,"date,integer",,0,t,1142
+date_ne,f,f,boolean,"date,date",,0,t,1091
+date_ne_timestamp,f,f,boolean,"date,timestamp without time zone",,0,t,2343
+date_ne_timestamptz,f,f,boolean,"date,timestamp with time zone",,0,t,2356
+date_out,f,f,cstring,date,,0,t,1085
+date_part,f,f,double precision,"text,timestamp with time zone",,0,t,1171
+date_part,f,f,double precision,"text,interval",,0,t,1172
+date_part,f,f,double precision,"text,time with time zone",,0,t,1273
+date_part,f,f,double precision,"text,date",,0,t,1384
+date_part,f,f,double precision,"text,time without time zone",,0,t,1385
+date_part,f,f,double precision,"text,timestamp without time zone",,0,t,2021
+date_pl_interval,f,f,timestamp without time zone,"date,interval",,0,t,2071
+date_pli,f,f,date,"date,integer",,0,t,1141
+date_recv,f,f,date,internal,,0,t,2468
+date_send,f,f,bytea,date,,0,t,2469
+date_skipsupport,f,f,void,internal,,0,t,6407
+date_smaller,f,f,date,"date,date",,0,t,1139
+date_sortsupport,f,f,void,internal,,0,t,3136
+date_subtract,f,f,timestamp with time zone,"timestamp with time zone,interval",,0,t,6223
+date_subtract,f,f,timestamp with time zone,"timestamp with time zone,interval,text",,0,t,6273
+date_trunc,f,f,timestamp with time zone,"text,timestamp with time zone",,0,t,1217
+date_trunc,f,f,interval,"text,interval",,0,t,1218
+date_trunc,f,f,timestamp with time zone,"text,timestamp with time zone,text",,0,t,1284
+date_trunc,f,f,timestamp without time zone,"text,timestamp without time zone",,0,t,2020
+datemultirange,f,f,datemultirange,,,0,t,4292
+datemultirange,f,f,datemultirange,daterange,,0,t,4293
+datemultirange,f,f,datemultirange,daterange[],daterange,0,t,4294
+daterange,f,f,daterange,"date,date",,0,f,3941
+daterange,f,f,daterange,"date,date,text",,0,f,3942
+daterange_canonical,f,f,daterange,daterange,,0,t,3915
+daterange_subdiff,f,f,double precision,"date,date",,0,t,3925
+datetime_pl,f,f,timestamp without time zone,"date,time without time zone",,0,t,1272
+datetimetz_pl,f,f,timestamp with time zone,"date,time with time zone",,0,t,1297
+dcbrt,f,f,double precision,double precision,,0,t,231
+decode,f,f,bytea,"text,text",,0,t,1947
+degrees,f,f,double precision,double precision,,0,t,1608
+dense_rank,w,f,bigint,,,0,f,3102
+dense_rank,a,f,bigint,"""any""","""any""",0,f,3992
+dense_rank_final,f,f,bigint,"internal,""any""","""any""",0,f,3993
+dexp,f,f,double precision,double precision,,0,t,233
+diagonal,f,f,lseg,box,,0,t,981
+diameter,f,f,double precision,circle,,0,t,1469
+dispell_init,f,f,internal,internal,,0,t,3731
+dispell_lexize,f,f,internal,"internal,internal,internal,internal",,0,t,3732
+dist_bp,f,f,double precision,"box,point",,0,t,357
+dist_bs,f,f,double precision,"box,lseg",,0,t,381
+dist_cpoint,f,f,double precision,"circle,point",,0,t,3290
+dist_cpoly,f,f,double precision,"circle,polygon",,0,t,728
+dist_lp,f,f,double precision,"line,point",,0,t,702
+dist_ls,f,f,double precision,"line,lseg",,0,t,704
+dist_pathp,f,f,double precision,"path,point",,0,t,421
+dist_pb,f,f,double precision,"point,box",,0,t,364
+dist_pc,f,f,double precision,"point,circle",,0,t,1476
+dist_pl,f,f,double precision,"point,line",,0,t,725
+dist_polyc,f,f,double precision,"polygon,circle",,0,t,785
+dist_polyp,f,f,double precision,"polygon,point",,0,t,3292
+dist_ppath,f,f,double precision,"point,path",,0,t,371
+dist_ppoly,f,f,double precision,"point,polygon",,0,t,3275
+dist_ps,f,f,double precision,"point,lseg",,0,t,363
+dist_sb,f,f,double precision,"lseg,box",,0,t,365
+dist_sl,f,f,double precision,"lseg,line",,0,t,727
+dist_sp,f,f,double precision,"lseg,point",,0,t,380
+div,f,f,numeric,"numeric,numeric",,0,t,1973
+dlog1,f,f,double precision,double precision,,0,t,234
+dlog10,f,f,double precision,double precision,,0,t,1339
+domain_in,f,f,"""any""","cstring,oid,integer",,0,f,2597
+domain_recv,f,f,"""any""","internal,oid,integer",,0,f,2598
+dpow,f,f,double precision,"double precision,double precision",,0,t,232
+dround,f,f,double precision,double precision,,0,t,228
+dsimple_init,f,f,internal,internal,,0,t,3725
+dsimple_lexize,f,f,internal,"internal,internal,internal,internal",,0,t,3726
+dsnowball_init,f,f,internal,internal,,0,t,13232
+dsnowball_lexize,f,f,internal,"internal,internal,internal,internal",,0,t,13233
+dsqrt,f,f,double precision,double precision,,0,t,230
+dsynonym_init,f,f,internal,internal,,0,t,3728
+dsynonym_lexize,f,f,internal,"internal,internal,internal,internal",,0,t,3729
+dtrunc,f,f,double precision,double precision,,0,t,229
+elem_contained_by_multirange,f,f,boolean,"anyelement,anymultirange",,0,t,4252
+elem_contained_by_range,f,f,boolean,"anyelement,anyrange",,0,t,3860
+elem_contained_by_range_support,f,f,internal,internal,,0,t,6346
+encode,f,f,text,"bytea,text",,0,t,1946
+enum_cmp,f,f,integer,"anyenum,anyenum",,0,t,3514
+enum_eq,f,f,boolean,"anyenum,anyenum",,0,t,3508
+enum_first,f,f,anyenum,anyenum,,0,f,3528
+enum_ge,f,f,boolean,"anyenum,anyenum",,0,t,3513
+enum_gt,f,f,boolean,"anyenum,anyenum",,0,t,3511
+enum_in,f,f,anyenum,"cstring,oid",,0,t,3506
+enum_larger,f,f,anyenum,"anyenum,anyenum",,0,t,3525
+enum_last,f,f,anyenum,anyenum,,0,f,3529
+enum_le,f,f,boolean,"anyenum,anyenum",,0,t,3512
+enum_lt,f,f,boolean,"anyenum,anyenum",,0,t,3510
+enum_ne,f,f,boolean,"anyenum,anyenum",,0,t,3509
+enum_out,f,f,cstring,anyenum,,0,t,3507
+enum_range,f,f,anyarray,"anyenum,anyenum",,0,f,3530
+enum_range,f,f,anyarray,anyenum,,0,f,3531
+enum_recv,f,f,anyenum,"internal,oid",,0,t,3532
+enum_send,f,f,bytea,anyenum,,0,t,3533
+enum_smaller,f,f,anyenum,"anyenum,anyenum",,0,t,3524
+eqjoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,105
+eqsel,f,f,double precision,"internal,oid,internal,integer",,0,t,101
+erf,f,f,double precision,double precision,,0,t,6219
+erfc,f,f,double precision,double precision,,0,t,6220
+euc_cn_to_mic,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4322
+euc_cn_to_utf8,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4360
+euc_jis_2004_to_shift_jis_2004,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4386
+euc_jis_2004_to_utf8,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4382
+euc_jp_to_mic,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4326
+euc_jp_to_sjis,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4324
+euc_jp_to_utf8,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4362
+euc_kr_to_mic,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4330
+euc_kr_to_utf8,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4364
+euc_tw_to_big5,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4332
+euc_tw_to_mic,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4334
+euc_tw_to_utf8,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4366
+event_trigger_in,f,f,event_trigger,cstring,,0,f,3594
+event_trigger_out,f,f,cstring,event_trigger,,0,t,3595
+every,a,f,boolean,boolean,,0,f,2519
+exp,f,f,double precision,double precision,,0,t,1347
+exp,f,f,numeric,numeric,,0,t,1732
+extract,f,f,numeric,"text,date",,0,t,6199
+extract,f,f,numeric,"text,time without time zone",,0,t,6200
+extract,f,f,numeric,"text,time with time zone",,0,t,6201
+extract,f,f,numeric,"text,timestamp without time zone",,0,t,6202
+extract,f,f,numeric,"text,timestamp with time zone",,0,t,6203
+extract,f,f,numeric,"text,interval",,0,t,6204
+factorial,f,f,numeric,bigint,,0,t,1376
+family,f,f,integer,inet,,0,t,711
+fdw_handler_in,f,f,fdw_handler,cstring,,0,f,3116
+fdw_handler_out,f,f,cstring,fdw_handler,,0,t,3117
+first_value,w,f,anyelement,anyelement,,0,t,3112
+float4,f,f,real,smallint,,0,t,236
+float4,f,f,real,double precision,,0,t,312
+float4,f,f,real,integer,,0,t,318
+float4,f,f,real,bigint,,0,t,652
+float4,f,f,real,numeric,,0,t,1745
+float4,f,f,real,jsonb,,0,t,3453
+float48div,f,f,double precision,"real,double precision",,0,t,280
+float48eq,f,f,boolean,"real,double precision",,0,t,299
+float48ge,f,f,boolean,"real,double precision",,0,t,304
+float48gt,f,f,boolean,"real,double precision",,0,t,303
+float48le,f,f,boolean,"real,double precision",,0,t,302
+float48lt,f,f,boolean,"real,double precision",,0,t,301
+float48mi,f,f,double precision,"real,double precision",,0,t,282
+float48mul,f,f,double precision,"real,double precision",,0,t,279
+float48ne,f,f,boolean,"real,double precision",,0,t,300
+float48pl,f,f,double precision,"real,double precision",,0,t,281
+float4_accum,f,f,double precision[],"double precision[],real",,0,t,208
+float4abs,f,f,real,real,,0,t,207
+float4div,f,f,real,"real,real",,0,t,203
+float4eq,f,f,boolean,"real,real",,0,t,287
+float4ge,f,f,boolean,"real,real",,0,t,292
+float4gt,f,f,boolean,"real,real",,0,t,291
+float4in,f,f,real,cstring,,0,t,200
+float4larger,f,f,real,"real,real",,0,t,209
+float4le,f,f,boolean,"real,real",,0,t,290
+float4lt,f,f,boolean,"real,real",,0,t,289
+float4mi,f,f,real,"real,real",,0,t,205
+float4mul,f,f,real,"real,real",,0,t,202
+float4ne,f,f,boolean,"real,real",,0,t,288
+float4out,f,f,cstring,real,,0,t,201
+float4pl,f,f,real,"real,real",,0,t,204
+float4recv,f,f,real,internal,,0,t,2424
+float4send,f,f,bytea,real,,0,t,2425
+float4smaller,f,f,real,"real,real",,0,t,211
+float4um,f,f,real,real,,0,t,206
+float4up,f,f,real,real,,0,t,1913
+float8,f,f,double precision,smallint,,0,t,235
+float8,f,f,double precision,real,,0,t,311
+float8,f,f,double precision,integer,,0,t,316
+float8,f,f,double precision,bigint,,0,t,482
+float8,f,f,double precision,numeric,,0,t,1746
+float8,f,f,double precision,jsonb,,0,t,2580
+float84div,f,f,double precision,"double precision,real",,0,t,284
+float84eq,f,f,boolean,"double precision,real",,0,t,305
+float84ge,f,f,boolean,"double precision,real",,0,t,310
+float84gt,f,f,boolean,"double precision,real",,0,t,309
+float84le,f,f,boolean,"double precision,real",,0,t,308
+float84lt,f,f,boolean,"double precision,real",,0,t,307
+float84mi,f,f,double precision,"double precision,real",,0,t,286
+float84mul,f,f,double precision,"double precision,real",,0,t,283
+float84ne,f,f,boolean,"double precision,real",,0,t,306
+float84pl,f,f,double precision,"double precision,real",,0,t,285
+float8_accum,f,f,double precision[],"double precision[],double precision",,0,t,222
+float8_avg,f,f,double precision,double precision[],,0,t,1830
+float8_combine,f,f,double precision[],"double precision[],double precision[]",,0,t,276
+float8_corr,f,f,double precision,double precision[],,0,t,2817
+float8_covar_pop,f,f,double precision,double precision[],,0,t,2815
+float8_covar_samp,f,f,double precision,double precision[],,0,t,2816
+float8_regr_accum,f,f,double precision[],"double precision[],double precision,double precision",,0,t,2806
+float8_regr_avgx,f,f,double precision,double precision[],,0,t,2810
+float8_regr_avgy,f,f,double precision,double precision[],,0,t,2811
+float8_regr_combine,f,f,double precision[],"double precision[],double precision[]",,0,t,3342
+float8_regr_intercept,f,f,double precision,double precision[],,0,t,2814
+float8_regr_r2,f,f,double precision,double precision[],,0,t,2812
+float8_regr_slope,f,f,double precision,double precision[],,0,t,2813
+float8_regr_sxx,f,f,double precision,double precision[],,0,t,2807
+float8_regr_sxy,f,f,double precision,double precision[],,0,t,2809
+float8_regr_syy,f,f,double precision,double precision[],,0,t,2808
+float8_stddev_pop,f,f,double precision,double precision[],,0,t,2513
+float8_stddev_samp,f,f,double precision,double precision[],,0,t,1832
+float8_var_pop,f,f,double precision,double precision[],,0,t,2512
+float8_var_samp,f,f,double precision,double precision[],,0,t,1831
+float8abs,f,f,double precision,double precision,,0,t,221
+float8div,f,f,double precision,"double precision,double precision",,0,t,217
+float8eq,f,f,boolean,"double precision,double precision",,0,t,293
+float8ge,f,f,boolean,"double precision,double precision",,0,t,298
+float8gt,f,f,boolean,"double precision,double precision",,0,t,297
+float8in,f,f,double precision,cstring,,0,t,214
+float8larger,f,f,double precision,"double precision,double precision",,0,t,223
+float8le,f,f,boolean,"double precision,double precision",,0,t,296
+float8lt,f,f,boolean,"double precision,double precision",,0,t,295
+float8mi,f,f,double precision,"double precision,double precision",,0,t,219
+float8mul,f,f,double precision,"double precision,double precision",,0,t,216
+float8ne,f,f,boolean,"double precision,double precision",,0,t,294
+float8out,f,f,cstring,double precision,,0,t,215
+float8pl,f,f,double precision,"double precision,double precision",,0,t,218
+float8recv,f,f,double precision,internal,,0,t,2426
+float8send,f,f,bytea,double precision,,0,t,2427
+float8smaller,f,f,double precision,"double precision,double precision",,0,t,224
+float8um,f,f,double precision,double precision,,0,t,220
+float8up,f,f,double precision,double precision,,0,t,1914
+floor,f,f,numeric,numeric,,0,t,1712
+floor,f,f,double precision,double precision,,0,t,2309
+flt4_mul_cash,f,f,money,"real,money",,0,t,848
+flt8_mul_cash,f,f,money,"double precision,money",,0,t,919
+fmgr_c_validator,f,f,void,oid,,0,t,2247
+fmgr_internal_validator,f,f,void,oid,,0,t,2246
+fmgr_sql_validator,f,f,void,oid,,0,t,2248
+format,f,f,text,"text,""any""","""any""",0,f,3539
+format,f,f,text,text,,0,f,3540
+format_type,f,f,text,"oid,integer",,0,f,1081
+gamma,f,f,double precision,double precision,,0,t,6383
+gb18030_to_utf8,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4368
+gbk_to_utf8,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4370
+gcd,f,f,integer,"integer,integer",,0,t,5044
+gcd,f,f,bigint,"bigint,bigint",,0,t,5045
+gcd,f,f,numeric,"numeric,numeric",,0,t,5048
+gen_random_uuid,f,f,uuid,,,0,t,3432
+generate_series,f,t,timestamp without time zone,"timestamp without time zone,timestamp without time zone,interval",,0,t,938
+generate_series,f,t,timestamp with time zone,"timestamp with time zone,timestamp with time zone,interval",,0,t,939
+generate_series,f,t,integer,"integer,integer,integer",,0,t,1066
+generate_series,f,t,integer,"integer,integer",,0,t,1067
+generate_series,f,t,bigint,"bigint,bigint,bigint",,0,t,1068
+generate_series,f,t,bigint,"bigint,bigint",,0,t,1069
+generate_series,f,t,numeric,"numeric,numeric,numeric",,0,t,3259
+generate_series,f,t,numeric,"numeric,numeric",,0,t,3260
+generate_series,f,t,timestamp with time zone,"timestamp with time zone,timestamp with time zone,interval,text",,0,t,6274
+generate_series_int4_support,f,f,internal,internal,,0,t,3994
+generate_series_int8_support,f,f,internal,internal,,0,t,3995
+generate_series_numeric_support,f,f,internal,internal,,0,t,6357
+generate_series_timestamp_support,f,f,internal,internal,,0,t,6354
+generate_subscripts,f,t,integer,"anyarray,integer,boolean",,0,t,1191
+generate_subscripts,f,t,integer,"anyarray,integer",,0,t,1192
+get_bit,f,f,integer,"bytea,bigint",,0,t,723
+get_bit,f,f,integer,"bit,integer",,0,t,3032
+get_byte,f,f,integer,"bytea,integer",,0,t,721
+get_current_ts_config,f,f,regconfig,,,0,t,3759
+getdatabaseencoding,f,f,name,,,0,t,1039
+getpgusername,f,f,name,,,0,t,710
+gin_clean_pending_list,f,f,bigint,regclass,,0,t,3789
+gin_cmp_prefix,f,f,integer,"text,text,smallint,internal",,0,t,2700
+gin_cmp_tslexeme,f,f,integer,"text,text",,0,t,3724
+gin_compare_jsonb,f,f,integer,"text,text",,0,t,3480
+gin_consistent_jsonb,f,f,boolean,"internal,smallint,jsonb,integer,internal,internal,internal,internal",,0,t,3484
+gin_consistent_jsonb_path,f,f,boolean,"internal,smallint,jsonb,integer,internal,internal,internal,internal",,0,t,3487
+gin_extract_jsonb,f,f,internal,"jsonb,internal,internal",,0,t,3482
+gin_extract_jsonb_path,f,f,internal,"jsonb,internal,internal",,0,t,3485
+gin_extract_jsonb_query,f,f,internal,"jsonb,internal,smallint,internal,internal,internal,internal",,0,t,3483
+gin_extract_jsonb_query_path,f,f,internal,"jsonb,internal,smallint,internal,internal,internal,internal",,0,t,3486
+gin_extract_tsquery,f,f,internal,"tsquery,internal,smallint,internal,internal",,0,t,3087
+gin_extract_tsquery,f,f,internal,"tsvector,internal,smallint,internal,internal,internal,internal",,0,t,3657
+gin_extract_tsquery,f,f,internal,"tsquery,internal,smallint,internal,internal,internal,internal",,0,t,3791
+gin_extract_tsvector,f,f,internal,"tsvector,internal",,0,t,3077
+gin_extract_tsvector,f,f,internal,"tsvector,internal,internal",,0,t,3656
+gin_triconsistent_jsonb,f,f,"""char""","internal,smallint,jsonb,integer,internal,internal,internal",,0,t,3488
+gin_triconsistent_jsonb_path,f,f,"""char""","internal,smallint,jsonb,integer,internal,internal,internal",,0,t,3489
+gin_tsquery_consistent,f,f,boolean,"internal,smallint,tsquery,integer,internal,internal",,0,t,3088
+gin_tsquery_consistent,f,f,boolean,"internal,smallint,tsvector,integer,internal,internal,internal,internal",,0,t,3658
+gin_tsquery_consistent,f,f,boolean,"internal,smallint,tsquery,integer,internal,internal,internal,internal",,0,t,3792
+gin_tsquery_triconsistent,f,f,"""char""","internal,smallint,tsvector,integer,internal,internal,internal",,0,t,3921
+ginarrayconsistent,f,f,boolean,"internal,smallint,anyarray,integer,internal,internal,internal,internal",,0,t,2744
+ginarrayextract,f,f,internal,"anyarray,internal,internal",,0,t,2743
+ginarrayextract,f,f,internal,"anyarray,internal",,0,t,3076
+ginarraytriconsistent,f,f,"""char""","internal,smallint,anyarray,integer,internal,internal,internal",,0,t,3920
+ginhandler,f,f,index_am_handler,internal,,0,t,333
+ginqueryarrayextract,f,f,internal,"anyarray,internal,smallint,internal,internal,internal,internal",,0,t,2774
+gist_box_consistent,f,f,boolean,"internal,box,smallint,oid,internal",,0,t,2578
+gist_box_distance,f,f,double precision,"internal,box,smallint,oid,internal",,0,t,3998
+gist_box_penalty,f,f,internal,"internal,internal,internal",,0,t,2581
+gist_box_picksplit,f,f,internal,"internal,internal",,0,t,2582
+gist_box_same,f,f,internal,"box,box,internal",,0,t,2584
+gist_box_union,f,f,box,"internal,internal",,0,t,2583
+gist_circle_compress,f,f,internal,internal,,0,t,2592
+gist_circle_consistent,f,f,boolean,"internal,circle,smallint,oid,internal",,0,t,2591
+gist_circle_distance,f,f,double precision,"internal,circle,smallint,oid,internal",,0,t,3280
+gist_point_compress,f,f,internal,internal,,0,t,1030
+gist_point_consistent,f,f,boolean,"internal,point,smallint,oid,internal",,0,t,2179
+gist_point_distance,f,f,double precision,"internal,point,smallint,oid,internal",,0,t,3064
+gist_point_fetch,f,f,internal,internal,,0,t,3282
+gist_point_sortsupport,f,f,void,internal,,0,t,3435
+gist_poly_compress,f,f,internal,internal,,0,t,2586
+gist_poly_consistent,f,f,boolean,"internal,polygon,smallint,oid,internal",,0,t,2585
+gist_poly_distance,f,f,double precision,"internal,polygon,smallint,oid,internal",,0,t,3288
+gist_translate_cmptype_common,f,f,smallint,integer,,0,t,6347
+gisthandler,f,f,index_am_handler,internal,,0,t,332
+gtsquery_compress,f,f,internal,internal,,0,t,3695
+gtsquery_consistent,f,f,boolean,"internal,tsquery,smallint,oid,internal",,0,t,3701
+gtsquery_consistent,f,f,boolean,"internal,internal,integer,oid,internal",,0,t,3793
+gtsquery_penalty,f,f,internal,"internal,internal,internal",,0,t,3700
+gtsquery_picksplit,f,f,internal,"internal,internal",,0,t,3697
+gtsquery_same,f,f,internal,"bigint,bigint,internal",,0,t,3699
+gtsquery_union,f,f,bigint,"internal,internal",,0,t,3698
+gtsvector_compress,f,f,internal,internal,,0,t,3648
+gtsvector_consistent,f,f,boolean,"internal,tsvector,smallint,oid,internal",,0,t,3654
+gtsvector_consistent,f,f,boolean,"internal,gtsvector,integer,oid,internal",,0,t,3790
+gtsvector_decompress,f,f,internal,internal,,0,t,3649
+gtsvector_options,f,f,void,internal,,0,f,3434
+gtsvector_penalty,f,f,internal,"internal,internal,internal",,0,t,3653
+gtsvector_picksplit,f,f,internal,"internal,internal",,0,t,3650
+gtsvector_same,f,f,internal,"gtsvector,gtsvector,internal",,0,t,3652
+gtsvector_union,f,f,gtsvector,"internal,internal",,0,t,3651
+gtsvectorin,f,f,gtsvector,cstring,,0,t,3646
+gtsvectorout,f,f,cstring,gtsvector,,0,t,3647
+has_any_column_privilege,f,f,boolean,"name,text,text",,0,t,3024
+has_any_column_privilege,f,f,boolean,"name,oid,text",,0,t,3025
+has_any_column_privilege,f,f,boolean,"oid,text,text",,0,t,3026
+has_any_column_privilege,f,f,boolean,"oid,oid,text",,0,t,3027
+has_any_column_privilege,f,f,boolean,"text,text",,0,t,3028
+has_any_column_privilege,f,f,boolean,"oid,text",,0,t,3029
+has_column_privilege,f,f,boolean,"name,text,text,text",,0,t,3012
+has_column_privilege,f,f,boolean,"name,text,smallint,text",,0,t,3013
+has_column_privilege,f,f,boolean,"name,oid,text,text",,0,t,3014
+has_column_privilege,f,f,boolean,"name,oid,smallint,text",,0,t,3015
+has_column_privilege,f,f,boolean,"oid,text,text,text",,0,t,3016
+has_column_privilege,f,f,boolean,"oid,text,smallint,text",,0,t,3017
+has_column_privilege,f,f,boolean,"oid,oid,text,text",,0,t,3018
+has_column_privilege,f,f,boolean,"oid,oid,smallint,text",,0,t,3019
+has_column_privilege,f,f,boolean,"text,text,text",,0,t,3020
+has_column_privilege,f,f,boolean,"text,smallint,text",,0,t,3021
+has_column_privilege,f,f,boolean,"oid,text,text",,0,t,3022
+has_column_privilege,f,f,boolean,"oid,smallint,text",,0,t,3023
+has_database_privilege,f,f,boolean,"name,text,text",,0,t,2250
+has_database_privilege,f,f,boolean,"name,oid,text",,0,t,2251
+has_database_privilege,f,f,boolean,"oid,text,text",,0,t,2252
+has_database_privilege,f,f,boolean,"oid,oid,text",,0,t,2253
+has_database_privilege,f,f,boolean,"text,text",,0,t,2254
+has_database_privilege,f,f,boolean,"oid,text",,0,t,2255
+has_foreign_data_wrapper_privilege,f,f,boolean,"name,text,text",,0,t,3000
+has_foreign_data_wrapper_privilege,f,f,boolean,"name,oid,text",,0,t,3001
+has_foreign_data_wrapper_privilege,f,f,boolean,"oid,text,text",,0,t,3002
+has_foreign_data_wrapper_privilege,f,f,boolean,"oid,oid,text",,0,t,3003
+has_foreign_data_wrapper_privilege,f,f,boolean,"text,text",,0,t,3004
+has_foreign_data_wrapper_privilege,f,f,boolean,"oid,text",,0,t,3005
+has_function_privilege,f,f,boolean,"name,text,text",,0,t,2256
+has_function_privilege,f,f,boolean,"name,oid,text",,0,t,2257
+has_function_privilege,f,f,boolean,"oid,text,text",,0,t,2258
+has_function_privilege,f,f,boolean,"oid,oid,text",,0,t,2259
+has_function_privilege,f,f,boolean,"text,text",,0,t,2260
+has_function_privilege,f,f,boolean,"oid,text",,0,t,2261
+has_language_privilege,f,f,boolean,"name,text,text",,0,t,2262
+has_language_privilege,f,f,boolean,"name,oid,text",,0,t,2263
+has_language_privilege,f,f,boolean,"oid,text,text",,0,t,2264
+has_language_privilege,f,f,boolean,"oid,oid,text",,0,t,2265
+has_language_privilege,f,f,boolean,"text,text",,0,t,2266
+has_language_privilege,f,f,boolean,"oid,text",,0,t,2267
+has_largeobject_privilege,f,f,boolean,"name,oid,text",,0,t,6348
+has_largeobject_privilege,f,f,boolean,"oid,text",,0,t,6349
+has_largeobject_privilege,f,f,boolean,"oid,oid,text",,0,t,6350
+has_parameter_privilege,f,f,boolean,"name,text,text",,0,t,6205
+has_parameter_privilege,f,f,boolean,"oid,text,text",,0,t,6206
+has_parameter_privilege,f,f,boolean,"text,text",,0,t,6207
+has_schema_privilege,f,f,boolean,"name,text,text",,0,t,2268
+has_schema_privilege,f,f,boolean,"name,oid,text",,0,t,2269
+has_schema_privilege,f,f,boolean,"oid,text,text",,0,t,2270
+has_schema_privilege,f,f,boolean,"oid,oid,text",,0,t,2271
+has_schema_privilege,f,f,boolean,"text,text",,0,t,2272
+has_schema_privilege,f,f,boolean,"oid,text",,0,t,2273
+has_sequence_privilege,f,f,boolean,"name,text,text",,0,t,2181
+has_sequence_privilege,f,f,boolean,"name,oid,text",,0,t,2182
+has_sequence_privilege,f,f,boolean,"oid,text,text",,0,t,2183
+has_sequence_privilege,f,f,boolean,"oid,oid,text",,0,t,2184
+has_sequence_privilege,f,f,boolean,"text,text",,0,t,2185
+has_sequence_privilege,f,f,boolean,"oid,text",,0,t,2186
+has_server_privilege,f,f,boolean,"name,text,text",,0,t,3006
+has_server_privilege,f,f,boolean,"name,oid,text",,0,t,3007
+has_server_privilege,f,f,boolean,"oid,text,text",,0,t,3008
+has_server_privilege,f,f,boolean,"oid,oid,text",,0,t,3009
+has_server_privilege,f,f,boolean,"text,text",,0,t,3010
+has_server_privilege,f,f,boolean,"oid,text",,0,t,3011
+has_table_privilege,f,f,boolean,"name,text,text",,0,t,1922
+has_table_privilege,f,f,boolean,"name,oid,text",,0,t,1923
+has_table_privilege,f,f,boolean,"oid,text,text",,0,t,1924
+has_table_privilege,f,f,boolean,"oid,oid,text",,0,t,1925
+has_table_privilege,f,f,boolean,"text,text",,0,t,1926
+has_table_privilege,f,f,boolean,"oid,text",,0,t,1927
+has_tablespace_privilege,f,f,boolean,"name,text,text",,0,t,2390
+has_tablespace_privilege,f,f,boolean,"name,oid,text",,0,t,2391
+has_tablespace_privilege,f,f,boolean,"oid,text,text",,0,t,2392
+has_tablespace_privilege,f,f,boolean,"oid,oid,text",,0,t,2393
+has_tablespace_privilege,f,f,boolean,"text,text",,0,t,2394
+has_tablespace_privilege,f,f,boolean,"oid,text",,0,t,2395
+has_type_privilege,f,f,boolean,"name,text,text",,0,t,3138
+has_type_privilege,f,f,boolean,"name,oid,text",,0,t,3139
+has_type_privilege,f,f,boolean,"oid,text,text",,0,t,3140
+has_type_privilege,f,f,boolean,"oid,oid,text",,0,t,3141
+has_type_privilege,f,f,boolean,"text,text",,0,t,3142
+has_type_privilege,f,f,boolean,"oid,text",,0,t,3143
+hash_aclitem,f,f,integer,aclitem,,0,t,329
+hash_aclitem_extended,f,f,bigint,"aclitem,bigint",,0,t,777
+hash_array,f,f,integer,anyarray,,0,t,626
+hash_array_extended,f,f,bigint,"anyarray,bigint",,0,t,782
+hash_multirange,f,f,integer,anymultirange,,0,t,4278
+hash_multirange_extended,f,f,bigint,"anymultirange,bigint",,0,t,4279
+hash_numeric,f,f,integer,numeric,,0,t,432
+hash_numeric_extended,f,f,bigint,"numeric,bigint",,0,t,780
+hash_range,f,f,integer,anyrange,,0,t,3902
+hash_range_extended,f,f,bigint,"anyrange,bigint",,0,t,3417
+hash_record,f,f,integer,record,,0,t,6192
+hash_record_extended,f,f,bigint,"record,bigint",,0,t,6193
+hashbool,f,f,integer,boolean,,0,t,6417
+hashboolextended,f,f,bigint,"boolean,bigint",,0,t,6418
+hashbpchar,f,f,integer,character,,0,t,1080
+hashbpcharextended,f,f,bigint,"character,bigint",,0,t,972
+hashbytea,f,f,integer,bytea,,0,t,6413
+hashbyteaextended,f,f,bigint,"bytea,bigint",,0,t,6414
+hashchar,f,f,integer,"""char""",,0,t,454
+hashcharextended,f,f,bigint,"""char"",bigint",,0,t,446
+hashcid,f,f,integer,cid,,0,t,6423
+hashcidextended,f,f,bigint,"cid,bigint",,0,t,6424
+hashdate,f,f,integer,date,,0,t,6415
+hashdateextended,f,f,bigint,"date,bigint",,0,t,6416
+hashenum,f,f,integer,anyenum,,0,t,3515
+hashenumextended,f,f,bigint,"anyenum,bigint",,0,t,3414
+hashfloat4,f,f,integer,real,,0,t,451
+hashfloat4extended,f,f,bigint,"real,bigint",,0,t,443
+hashfloat8,f,f,integer,double precision,,0,t,452
+hashfloat8extended,f,f,bigint,"double precision,bigint",,0,t,444
+hashhandler,f,f,index_am_handler,internal,,0,t,331
+hashinet,f,f,integer,inet,,0,t,422
+hashinetextended,f,f,bigint,"inet,bigint",,0,t,779
+hashint2,f,f,integer,smallint,,0,t,449
+hashint2extended,f,f,bigint,"smallint,bigint",,0,t,441
+hashint4,f,f,integer,integer,,0,t,450
+hashint4extended,f,f,bigint,"integer,bigint",,0,t,425
+hashint8,f,f,integer,bigint,,0,t,949
+hashint8extended,f,f,bigint,"bigint,bigint",,0,t,442
+hashmacaddr,f,f,integer,macaddr,,0,t,399
+hashmacaddr8,f,f,integer,macaddr8,,0,t,328
+hashmacaddr8extended,f,f,bigint,"macaddr8,bigint",,0,t,781
+hashmacaddrextended,f,f,bigint,"macaddr,bigint",,0,t,778
+hashname,f,f,integer,name,,0,t,455
+hashnameextended,f,f,bigint,"name,bigint",,0,t,447
+hashoid,f,f,integer,oid,,0,t,453
+hashoidextended,f,f,bigint,"oid,bigint",,0,t,445
+hashoidvector,f,f,integer,oidvector,,0,t,457
+hashoidvectorextended,f,f,bigint,"oidvector,bigint",,0,t,776
+hashtext,f,f,integer,text,,0,t,400
+hashtextextended,f,f,bigint,"text,bigint",,0,t,448
+hashtid,f,f,integer,tid,,0,t,2233
+hashtidextended,f,f,bigint,"tid,bigint",,0,t,2234
+hashvarlena,f,f,integer,internal,,0,t,456
+hashvarlenaextended,f,f,bigint,"internal,bigint",,0,t,772
+hashxid,f,f,integer,xid,,0,t,6419
+hashxid8,f,f,integer,xid8,,0,t,6421
+hashxid8extended,f,f,bigint,"xid8,bigint",,0,t,6422
+hashxidextended,f,f,bigint,"xid,bigint",,0,t,6420
+heap_tableam_handler,f,f,table_am_handler,internal,,0,t,3
+height,f,f,double precision,box,,0,t,977
+host,f,f,text,inet,,0,t,699
+hostmask,f,f,inet,inet,,0,t,1362
+iclikejoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,1816
+iclikesel,f,f,double precision,"internal,oid,internal,integer",,0,t,1814
+icnlikejoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,1817
+icnlikesel,f,f,double precision,"internal,oid,internal,integer",,0,t,1815
+icregexeqjoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,1826
+icregexeqsel,f,f,double precision,"internal,oid,internal,integer",,0,t,1820
+icregexnejoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,1829
+icregexnesel,f,f,double precision,"internal,oid,internal,integer",,0,t,1823
+icu_unicode_version,f,f,text,,,0,t,6099
+in_range,f,f,boolean,"bigint,bigint,bigint,boolean,boolean",,0,t,4126
+in_range,f,f,boolean,"integer,integer,bigint,boolean,boolean",,0,t,4127
+in_range,f,f,boolean,"integer,integer,integer,boolean,boolean",,0,t,4128
+in_range,f,f,boolean,"integer,integer,smallint,boolean,boolean",,0,t,4129
+in_range,f,f,boolean,"smallint,smallint,bigint,boolean,boolean",,0,t,4130
+in_range,f,f,boolean,"smallint,smallint,integer,boolean,boolean",,0,t,4131
+in_range,f,f,boolean,"smallint,smallint,smallint,boolean,boolean",,0,t,4132
+in_range,f,f,boolean,"date,date,interval,boolean,boolean",,0,t,4133
+in_range,f,f,boolean,"timestamp without time zone,timestamp without time zone,interval,boolean,boolean",,0,t,4134
+in_range,f,f,boolean,"timestamp with time zone,timestamp with time zone,interval,boolean,boolean",,0,t,4135
+in_range,f,f,boolean,"interval,interval,interval,boolean,boolean",,0,t,4136
+in_range,f,f,boolean,"time without time zone,time without time zone,interval,boolean,boolean",,0,t,4137
+in_range,f,f,boolean,"time with time zone,time with time zone,interval,boolean,boolean",,0,t,4138
+in_range,f,f,boolean,"double precision,double precision,double precision,boolean,boolean",,0,t,4139
+in_range,f,f,boolean,"real,real,double precision,boolean,boolean",,0,t,4140
+in_range,f,f,boolean,"numeric,numeric,numeric,boolean,boolean",,0,t,4141
+index_am_handler_in,f,f,index_am_handler,cstring,,0,f,326
+index_am_handler_out,f,f,cstring,index_am_handler,,0,t,327
+inet_client_addr,f,f,inet,,,0,f,2196
+inet_client_port,f,f,integer,,,0,f,2197
+inet_gist_compress,f,f,internal,internal,,0,t,3555
+inet_gist_consistent,f,f,boolean,"internal,inet,smallint,oid,internal",,0,t,3553
+inet_gist_fetch,f,f,internal,internal,,0,t,3573
+inet_gist_penalty,f,f,internal,"internal,internal,internal",,0,t,3557
+inet_gist_picksplit,f,f,internal,"internal,internal",,0,t,3558
+inet_gist_same,f,f,internal,"inet,inet,internal",,0,t,3559
+inet_gist_union,f,f,inet,"internal,internal",,0,t,3554
+inet_in,f,f,inet,cstring,,0,t,910
+inet_merge,f,f,cidr,"inet,inet",,0,t,4063
+inet_out,f,f,cstring,inet,,0,t,911
+inet_recv,f,f,inet,internal,,0,t,2496
+inet_same_family,f,f,boolean,"inet,inet",,0,t,4071
+inet_send,f,f,bytea,inet,,0,t,2497
+inet_server_addr,f,f,inet,,,0,f,2198
+inet_server_port,f,f,integer,,,0,f,2199
+inet_spg_choose,f,f,void,"internal,internal",,0,t,3796
+inet_spg_config,f,f,void,"internal,internal",,0,t,3795
+inet_spg_inner_consistent,f,f,void,"internal,internal",,0,t,3798
+inet_spg_leaf_consistent,f,f,boolean,"internal,internal",,0,t,3799
+inet_spg_picksplit,f,f,void,"internal,internal",,0,t,3797
+inetand,f,f,inet,"inet,inet",,0,t,2628
+inetmi,f,f,bigint,"inet,inet",,0,t,2633
+inetmi_int8,f,f,inet,"inet,bigint",,0,t,2632
+inetnot,f,f,inet,inet,,0,t,2627
+inetor,f,f,inet,"inet,inet",,0,t,2629
+inetpl,f,f,inet,"inet,bigint",,0,t,2630
+initcap,f,f,text,text,,0,t,872
+int2,f,f,smallint,double precision,,0,t,237
+int2,f,f,smallint,real,,0,t,238
+int2,f,f,smallint,integer,,0,t,314
+int2,f,f,smallint,bigint,,0,t,714
+int2,f,f,smallint,numeric,,0,t,1783
+int2,f,f,smallint,jsonb,,0,t,3450
+int2,f,f,smallint,bytea,,0,t,6370
+int24div,f,f,integer,"smallint,integer",,0,t,172
+int24eq,f,f,boolean,"smallint,integer",,0,t,158
+int24ge,f,f,boolean,"smallint,integer",,0,t,168
+int24gt,f,f,boolean,"smallint,integer",,0,t,162
+int24le,f,f,boolean,"smallint,integer",,0,t,166
+int24lt,f,f,boolean,"smallint,integer",,0,t,160
+int24mi,f,f,integer,"smallint,integer",,0,t,182
+int24mul,f,f,integer,"smallint,integer",,0,t,170
+int24ne,f,f,boolean,"smallint,integer",,0,t,164
+int24pl,f,f,integer,"smallint,integer",,0,t,178
+int28div,f,f,bigint,"smallint,bigint",,0,t,948
+int28eq,f,f,boolean,"smallint,bigint",,0,t,1850
+int28ge,f,f,boolean,"smallint,bigint",,0,t,1855
+int28gt,f,f,boolean,"smallint,bigint",,0,t,1853
+int28le,f,f,boolean,"smallint,bigint",,0,t,1854
+int28lt,f,f,boolean,"smallint,bigint",,0,t,1852
+int28mi,f,f,bigint,"smallint,bigint",,0,t,942
+int28mul,f,f,bigint,"smallint,bigint",,0,t,943
+int28ne,f,f,boolean,"smallint,bigint",,0,t,1851
+int28pl,f,f,bigint,"smallint,bigint",,0,t,841
+int2_accum,f,f,internal,"internal,smallint",,0,f,1834
+int2_accum_inv,f,f,internal,"internal,smallint",,0,f,3567
+int2_avg_accum,f,f,bigint[],"bigint[],smallint",,0,t,1962
+int2_avg_accum_inv,f,f,bigint[],"bigint[],smallint",,0,t,3570
+int2_mul_cash,f,f,money,"smallint,money",,0,t,863
+int2_sum,f,f,bigint,"bigint,smallint",,0,f,1840
+int2abs,f,f,smallint,smallint,,0,t,1253
+int2and,f,f,smallint,"smallint,smallint",,0,t,1892
+int2div,f,f,smallint,"smallint,smallint",,0,t,153
+int2eq,f,f,boolean,"smallint,smallint",,0,t,63
+int2ge,f,f,boolean,"smallint,smallint",,0,t,151
+int2gt,f,f,boolean,"smallint,smallint",,0,t,146
+int2in,f,f,smallint,cstring,,0,t,38
+int2int4_sum,f,f,bigint,bigint[],,0,t,3572
+int2larger,f,f,smallint,"smallint,smallint",,0,t,770
+int2le,f,f,boolean,"smallint,smallint",,0,t,148
+int2lt,f,f,boolean,"smallint,smallint",,0,t,64
+int2mi,f,f,smallint,"smallint,smallint",,0,t,180
+int2mod,f,f,smallint,"smallint,smallint",,0,t,155
+int2mul,f,f,smallint,"smallint,smallint",,0,t,152
+int2ne,f,f,boolean,"smallint,smallint",,0,t,145
+int2not,f,f,smallint,smallint,,0,t,1895
+int2or,f,f,smallint,"smallint,smallint",,0,t,1893
+int2out,f,f,cstring,smallint,,0,t,39
+int2pl,f,f,smallint,"smallint,smallint",,0,t,176
+int2recv,f,f,smallint,internal,,0,t,2404
+int2send,f,f,bytea,smallint,,0,t,2405
+int2shl,f,f,smallint,"smallint,integer",,0,t,1896
+int2shr,f,f,smallint,"smallint,integer",,0,t,1897
+int2smaller,f,f,smallint,"smallint,smallint",,0,t,771
+int2um,f,f,smallint,smallint,,0,t,213
+int2up,f,f,smallint,smallint,,0,t,1911
+int2vectorin,f,f,int2vector,cstring,,0,t,40
+int2vectorout,f,f,cstring,int2vector,,0,t,41
+int2vectorrecv,f,f,int2vector,internal,,0,t,2410
+int2vectorsend,f,f,bytea,int2vector,,0,t,2411
+int2xor,f,f,smallint,"smallint,smallint",,0,t,1894
+int4,f,f,integer,"""char""",,0,t,77
+int4,f,f,integer,smallint,,0,t,313
+int4,f,f,integer,double precision,,0,t,317
+int4,f,f,integer,real,,0,t,319
+int4,f,f,integer,bigint,,0,t,480
+int4,f,f,integer,bit,,0,t,1684
+int4,f,f,integer,numeric,,0,t,1744
+int4,f,f,integer,boolean,,0,t,2558
+int4,f,f,integer,jsonb,,0,t,3451
+int4,f,f,integer,bytea,,0,t,6371
+int42div,f,f,integer,"integer,smallint",,0,t,173
+int42eq,f,f,boolean,"integer,smallint",,0,t,159
+int42ge,f,f,boolean,"integer,smallint",,0,t,169
+int42gt,f,f,boolean,"integer,smallint",,0,t,163
+int42le,f,f,boolean,"integer,smallint",,0,t,167
+int42lt,f,f,boolean,"integer,smallint",,0,t,161
+int42mi,f,f,integer,"integer,smallint",,0,t,183
+int42mul,f,f,integer,"integer,smallint",,0,t,171
+int42ne,f,f,boolean,"integer,smallint",,0,t,165
+int42pl,f,f,integer,"integer,smallint",,0,t,179
+int48div,f,f,bigint,"integer,bigint",,0,t,1281
+int48eq,f,f,boolean,"integer,bigint",,0,t,852
+int48ge,f,f,boolean,"integer,bigint",,0,t,857
+int48gt,f,f,boolean,"integer,bigint",,0,t,855
+int48le,f,f,boolean,"integer,bigint",,0,t,856
+int48lt,f,f,boolean,"integer,bigint",,0,t,854
+int48mi,f,f,bigint,"integer,bigint",,0,t,1279
+int48mul,f,f,bigint,"integer,bigint",,0,t,1280
+int48ne,f,f,boolean,"integer,bigint",,0,t,853
+int48pl,f,f,bigint,"integer,bigint",,0,t,1278
+int4_accum,f,f,internal,"internal,integer",,0,f,1835
+int4_accum_inv,f,f,internal,"internal,integer",,0,f,3568
+int4_avg_accum,f,f,bigint[],"bigint[],integer",,0,t,1963
+int4_avg_accum_inv,f,f,bigint[],"bigint[],integer",,0,t,3571
+int4_avg_combine,f,f,bigint[],"bigint[],bigint[]",,0,t,3324
+int4_mul_cash,f,f,money,"integer,money",,0,t,862
+int4_sum,f,f,bigint,"bigint,integer",,0,f,1841
+int4abs,f,f,integer,integer,,0,t,1251
+int4and,f,f,integer,"integer,integer",,0,t,1898
+int4div,f,f,integer,"integer,integer",,0,t,154
+int4eq,f,f,boolean,"integer,integer",,0,t,65
+int4ge,f,f,boolean,"integer,integer",,0,t,150
+int4gt,f,f,boolean,"integer,integer",,0,t,147
+int4in,f,f,integer,cstring,,0,t,42
+int4inc,f,f,integer,integer,,0,t,766
+int4larger,f,f,integer,"integer,integer",,0,t,768
+int4le,f,f,boolean,"integer,integer",,0,t,149
+int4lt,f,f,boolean,"integer,integer",,0,t,66
+int4mi,f,f,integer,"integer,integer",,0,t,181
+int4mod,f,f,integer,"integer,integer",,0,t,156
+int4mul,f,f,integer,"integer,integer",,0,t,141
+int4multirange,f,f,int4multirange,,,0,t,4280
+int4multirange,f,f,int4multirange,int4range,,0,t,4281
+int4multirange,f,f,int4multirange,int4range[],int4range,0,t,4282
+int4ne,f,f,boolean,"integer,integer",,0,t,144
+int4not,f,f,integer,integer,,0,t,1901
+int4or,f,f,integer,"integer,integer",,0,t,1899
+int4out,f,f,cstring,integer,,0,t,43
+int4pl,f,f,integer,"integer,integer",,0,t,177
+int4range,f,f,int4range,"integer,integer",,0,f,3840
+int4range,f,f,int4range,"integer,integer,text",,0,f,3841
+int4range_canonical,f,f,int4range,int4range,,0,t,3914
+int4range_subdiff,f,f,double precision,"integer,integer",,0,t,3922
+int4recv,f,f,integer,internal,,0,t,2406
+int4send,f,f,bytea,integer,,0,t,2407
+int4shl,f,f,integer,"integer,integer",,0,t,1902
+int4shr,f,f,integer,"integer,integer",,0,t,1903
+int4smaller,f,f,integer,"integer,integer",,0,t,769
+int4um,f,f,integer,integer,,0,t,212
+int4up,f,f,integer,integer,,0,t,1912
+int4xor,f,f,integer,"integer,integer",,0,t,1900
+int8,f,f,bigint,integer,,0,t,481
+int8,f,f,bigint,double precision,,0,t,483
+int8,f,f,bigint,real,,0,t,653
+int8,f,f,bigint,smallint,,0,t,754
+int8,f,f,bigint,oid,,0,t,1288
+int8,f,f,bigint,numeric,,0,t,1779
+int8,f,f,bigint,bit,,0,t,2076
+int8,f,f,bigint,jsonb,,0,t,3452
+int8,f,f,bigint,bytea,,0,t,6372
+int82div,f,f,bigint,"bigint,smallint",,0,t,840
+int82eq,f,f,boolean,"bigint,smallint",,0,t,1856
+int82ge,f,f,boolean,"bigint,smallint",,0,t,1861
+int82gt,f,f,boolean,"bigint,smallint",,0,t,1859
+int82le,f,f,boolean,"bigint,smallint",,0,t,1860
+int82lt,f,f,boolean,"bigint,smallint",,0,t,1858
+int82mi,f,f,bigint,"bigint,smallint",,0,t,838
+int82mul,f,f,bigint,"bigint,smallint",,0,t,839
+int82ne,f,f,boolean,"bigint,smallint",,0,t,1857
+int82pl,f,f,bigint,"bigint,smallint",,0,t,837
+int84div,f,f,bigint,"bigint,integer",,0,t,1277
+int84eq,f,f,boolean,"bigint,integer",,0,t,474
+int84ge,f,f,boolean,"bigint,integer",,0,t,479
+int84gt,f,f,boolean,"bigint,integer",,0,t,477
+int84le,f,f,boolean,"bigint,integer",,0,t,478
+int84lt,f,f,boolean,"bigint,integer",,0,t,476
+int84mi,f,f,bigint,"bigint,integer",,0,t,1275
+int84mul,f,f,bigint,"bigint,integer",,0,t,1276
+int84ne,f,f,boolean,"bigint,integer",,0,t,475
+int84pl,f,f,bigint,"bigint,integer",,0,t,1274
+int8_accum,f,f,internal,"internal,bigint",,0,f,1836
+int8_accum_inv,f,f,internal,"internal,bigint",,0,f,3569
+int8_avg,f,f,numeric,bigint[],,0,t,1964
+int8_avg_accum,f,f,internal,"internal,bigint",,0,f,2746
+int8_avg_accum_inv,f,f,internal,"internal,bigint",,0,f,3387
+int8_avg_combine,f,f,internal,"internal,internal",,0,f,2785
+int8_avg_deserialize,f,f,internal,"bytea,internal",,0,t,2787
+int8_avg_serialize,f,f,bytea,internal,,0,t,2786
+int8_mul_cash,f,f,money,"bigint,money",,0,t,3399
+int8_sum,f,f,numeric,"numeric,bigint",,0,f,1842
+int8abs,f,f,bigint,bigint,,0,t,1230
+int8and,f,f,bigint,"bigint,bigint",,0,t,1904
+int8dec,f,f,bigint,bigint,,0,t,3546
+int8dec_any,f,f,bigint,"bigint,""any""",,0,t,3547
+int8div,f,f,bigint,"bigint,bigint",,0,t,466
+int8eq,f,f,boolean,"bigint,bigint",,0,t,467
+int8ge,f,f,boolean,"bigint,bigint",,0,t,472
+int8gt,f,f,boolean,"bigint,bigint",,0,t,470
+int8in,f,f,bigint,cstring,,0,t,460
+int8inc,f,f,bigint,bigint,,0,t,1219
+int8inc_any,f,f,bigint,"bigint,""any""",,0,t,2804
+int8inc_float8_float8,f,f,bigint,"bigint,double precision,double precision",,0,t,2805
+int8inc_support,f,f,internal,internal,,0,t,6236
+int8larger,f,f,bigint,"bigint,bigint",,0,t,1236
+int8le,f,f,boolean,"bigint,bigint",,0,t,471
+int8lt,f,f,boolean,"bigint,bigint",,0,t,469
+int8mi,f,f,bigint,"bigint,bigint",,0,t,464
+int8mod,f,f,bigint,"bigint,bigint",,0,t,945
+int8mul,f,f,bigint,"bigint,bigint",,0,t,465
+int8multirange,f,f,int8multirange,,,0,t,4295
+int8multirange,f,f,int8multirange,int8range,,0,t,4296
+int8multirange,f,f,int8multirange,int8range[],int8range,0,t,4297
+int8ne,f,f,boolean,"bigint,bigint",,0,t,468
+int8not,f,f,bigint,bigint,,0,t,1907
+int8or,f,f,bigint,"bigint,bigint",,0,t,1905
+int8out,f,f,cstring,bigint,,0,t,461
+int8pl,f,f,bigint,"bigint,bigint",,0,t,463
+int8pl_inet,f,f,inet,"bigint,inet",,0,t,2631
+int8range,f,f,int8range,"bigint,bigint",,0,f,3945
+int8range,f,f,int8range,"bigint,bigint,text",,0,f,3946
+int8range_canonical,f,f,int8range,int8range,,0,t,3928
+int8range_subdiff,f,f,double precision,"bigint,bigint",,0,t,3923
+int8recv,f,f,bigint,internal,,0,t,2408
+int8send,f,f,bytea,bigint,,0,t,2409
+int8shl,f,f,bigint,"bigint,integer",,0,t,1908
+int8shr,f,f,bigint,"bigint,integer",,0,t,1909
+int8smaller,f,f,bigint,"bigint,bigint",,0,t,1237
+int8um,f,f,bigint,bigint,,0,t,462
+int8up,f,f,bigint,bigint,,0,t,1910
+int8xor,f,f,bigint,"bigint,bigint",,0,t,1906
+integer_pl_date,f,f,date,"integer,date",,0,t,2550
+inter_lb,f,f,boolean,"line,box",,0,t,278
+inter_sb,f,f,boolean,"lseg,box",,0,t,373
+inter_sl,f,f,boolean,"lseg,line",,0,t,277
+internal_in,f,f,internal,cstring,,0,f,2304
+internal_out,f,f,cstring,internal,,0,t,2305
+interval,f,f,interval,"interval,integer",,0,t,1200
+interval,f,f,interval,time without time zone,,0,t,1370
+interval_avg,f,f,interval,internal,,0,f,1844
+interval_avg_accum,f,f,internal,"internal,interval",,0,f,1843
+interval_avg_accum_inv,f,f,internal,"internal,interval",,0,f,3549
+interval_avg_combine,f,f,internal,"internal,internal",,0,f,3325
+interval_avg_deserialize,f,f,internal,"bytea,internal",,0,t,6325
+interval_avg_serialize,f,f,bytea,internal,,0,t,6324
+interval_cmp,f,f,integer,"interval,interval",,0,t,1315
+interval_div,f,f,interval,"interval,double precision",,0,t,1326
+interval_eq,f,f,boolean,"interval,interval",,0,t,1162
+interval_ge,f,f,boolean,"interval,interval",,0,t,1166
+interval_gt,f,f,boolean,"interval,interval",,0,t,1167
+interval_hash,f,f,integer,interval,,0,t,1697
+interval_hash_extended,f,f,bigint,"interval,bigint",,0,t,3418
+interval_in,f,f,interval,"cstring,oid,integer",,0,t,1160
+interval_larger,f,f,interval,"interval,interval",,0,t,1198
+interval_le,f,f,boolean,"interval,interval",,0,t,1165
+interval_lt,f,f,boolean,"interval,interval",,0,t,1164
+interval_mi,f,f,interval,"interval,interval",,0,t,1170
+interval_mul,f,f,interval,"interval,double precision",,0,t,1618
+interval_ne,f,f,boolean,"interval,interval",,0,t,1163
+interval_out,f,f,cstring,interval,,0,t,1161
+interval_pl,f,f,interval,"interval,interval",,0,t,1169
+interval_pl_date,f,f,timestamp without time zone,"interval,date",,0,t,2546
+interval_pl_time,f,f,time without time zone,"interval,time without time zone",,0,t,1848
+interval_pl_timestamp,f,f,timestamp without time zone,"interval,timestamp without time zone",,0,t,2548
+interval_pl_timestamptz,f,f,timestamp with time zone,"interval,timestamp with time zone",,0,t,2549
+interval_pl_timetz,f,f,time with time zone,"interval,time with time zone",,0,t,2547
+interval_recv,f,f,interval,"internal,oid,integer",,0,t,2478
+interval_send,f,f,bytea,interval,,0,t,2479
+interval_smaller,f,f,interval,"interval,interval",,0,t,1197
+interval_sum,f,f,interval,internal,,0,f,6326
+interval_support,f,f,internal,internal,,0,t,3918
+interval_um,f,f,interval,interval,,0,t,1168
+intervaltypmodin,f,f,integer,cstring[],,0,t,2903
+intervaltypmodout,f,f,cstring,integer,,0,t,2904
+is_normalized,f,f,boolean,"text,text",,1,t,4351
+isclosed,f,f,boolean,path,,0,t,1430
+isempty,f,f,boolean,anyrange,,0,t,3850
+isempty,f,f,boolean,anymultirange,,0,t,4237
+isfinite,f,f,boolean,date,,0,t,1373
+isfinite,f,f,boolean,timestamp with time zone,,0,t,1389
+isfinite,f,f,boolean,interval,,0,t,1390
+isfinite,f,f,boolean,timestamp without time zone,,0,t,2048
+ishorizontal,f,f,boolean,"point,point",,0,t,1407
+ishorizontal,f,f,boolean,lseg,,0,t,1411
+ishorizontal,f,f,boolean,line,,0,t,1415
+iso8859_1_to_utf8,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4374
+iso8859_to_utf8,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4373
+iso_to_koi8r,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4316
+iso_to_mic,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4304
+iso_to_win1251,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4318
+iso_to_win866,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4320
+isopen,f,f,boolean,path,,0,t,1431
+isparallel,f,f,boolean,"lseg,lseg",,0,t,1408
+isparallel,f,f,boolean,"line,line",,0,t,1412
+isperp,f,f,boolean,"lseg,lseg",,0,t,1409
+isperp,f,f,boolean,"line,line",,0,t,1413
+isvertical,f,f,boolean,"point,point",,0,t,1406
+isvertical,f,f,boolean,lseg,,0,t,1410
+isvertical,f,f,boolean,line,,0,t,1414
+johab_to_utf8,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4376
+json_agg,a,f,json,anyelement,,0,f,3175
+json_agg_finalfn,f,f,json,internal,,0,f,3174
+json_agg_strict,a,f,json,anyelement,,0,f,6276
+json_agg_strict_transfn,f,f,internal,"internal,anyelement",,0,f,6275
+json_agg_transfn,f,f,internal,"internal,anyelement",,0,f,3173
+json_array_element,f,f,json,"json,integer",,0,t,3949
+json_array_element_text,f,f,text,"json,integer",,0,t,3950
+json_array_elements,f,t,json,json,,0,t,3955
+json_array_elements_text,f,t,text,json,,0,t,3969
+json_array_length,f,f,integer,json,,0,t,3956
+json_build_array,f,f,json,"""any""","""any""",0,f,3198
+json_build_array,f,f,json,,,0,f,3199
+json_build_object,f,f,json,"""any""","""any""",0,f,3200
+json_build_object,f,f,json,,,0,f,3201
+json_each,f,t,record,json,,0,t,3958
+json_each_text,f,t,record,json,,0,t,3959
+json_extract_path,f,f,json,"json,text[]",text,0,t,3951
+json_extract_path_text,f,f,text,"json,text[]",text,0,t,3953
+json_in,f,f,json,cstring,,0,t,321
+json_object,f,f,json,text[],,0,t,3202
+json_object,f,f,json,"text[],text[]",,0,t,3203
+json_object_agg,a,f,json,"""any"",""any""",,0,f,3197
+json_object_agg_finalfn,f,f,json,internal,,0,f,3196
+json_object_agg_strict,a,f,json,"""any"",""any""",,0,f,6280
+json_object_agg_strict_transfn,f,f,internal,"internal,""any"",""any""",,0,f,6277
+json_object_agg_transfn,f,f,internal,"internal,""any"",""any""",,0,f,3180
+json_object_agg_unique,a,f,json,"""any"",""any""",,0,f,6281
+json_object_agg_unique_strict,a,f,json,"""any"",""any""",,0,f,6282
+json_object_agg_unique_strict_transfn,f,f,internal,"internal,""any"",""any""",,0,f,6279
+json_object_agg_unique_transfn,f,f,internal,"internal,""any"",""any""",,0,f,6278
+json_object_field,f,f,json,"json,text",,0,t,3947
+json_object_field_text,f,f,text,"json,text",,0,t,3948
+json_object_keys,f,t,text,json,,0,t,3957
+json_out,f,f,cstring,json,,0,t,322
+json_populate_record,f,f,anyelement,"anyelement,json,boolean",,1,f,3960
+json_populate_recordset,f,t,anyelement,"anyelement,json,boolean",,1,f,3961
+json_recv,f,f,json,internal,,0,t,323
+json_send,f,f,bytea,json,,0,t,324
+json_strip_nulls,f,f,json,"json,boolean",,1,t,3261
+json_to_record,f,f,record,json,,0,t,3204
+json_to_recordset,f,t,record,json,,0,f,3205
+json_to_tsvector,f,f,tsvector,"json,jsonb",,0,t,4215
+json_to_tsvector,f,f,tsvector,"regconfig,json,jsonb",,0,t,4216
+json_typeof,f,f,text,json,,0,t,3968
+jsonb_agg,a,f,jsonb,anyelement,,0,f,3267
+jsonb_agg_finalfn,f,f,jsonb,internal,,0,f,3266
+jsonb_agg_strict,a,f,jsonb,anyelement,,0,f,6284
+jsonb_agg_strict_transfn,f,f,internal,"internal,anyelement",,0,f,6283
+jsonb_agg_transfn,f,f,internal,"internal,anyelement",,0,f,3265
+jsonb_array_element,f,f,jsonb,"jsonb,integer",,0,t,3215
+jsonb_array_element_text,f,f,text,"jsonb,integer",,0,t,3216
+jsonb_array_elements,f,t,jsonb,jsonb,,0,t,3219
+jsonb_array_elements_text,f,t,text,jsonb,,0,t,3465
+jsonb_array_length,f,f,integer,jsonb,,0,t,3207
+jsonb_build_array,f,f,jsonb,"""any""","""any""",0,f,3271
+jsonb_build_array,f,f,jsonb,,,0,f,3272
+jsonb_build_object,f,f,jsonb,"""any""","""any""",0,f,3273
+jsonb_build_object,f,f,jsonb,,,0,f,3274
+jsonb_cmp,f,f,integer,"jsonb,jsonb",,0,t,4044
+jsonb_concat,f,f,jsonb,"jsonb,jsonb",,0,t,3301
+jsonb_contained,f,f,boolean,"jsonb,jsonb",,0,t,4050
+jsonb_contains,f,f,boolean,"jsonb,jsonb",,0,t,4046
+jsonb_delete,f,f,jsonb,"jsonb,text",,0,t,3302
+jsonb_delete,f,f,jsonb,"jsonb,integer",,0,t,3303
+jsonb_delete,f,f,jsonb,"jsonb,text[]",text,0,t,3343
+jsonb_delete_path,f,f,jsonb,"jsonb,text[]",,0,t,3304
+jsonb_each,f,t,record,jsonb,,0,t,3208
+jsonb_each_text,f,t,record,jsonb,,0,t,3932
+jsonb_eq,f,f,boolean,"jsonb,jsonb",,0,t,4043
+jsonb_exists,f,f,boolean,"jsonb,text",,0,t,4047
+jsonb_exists_all,f,f,boolean,"jsonb,text[]",,0,t,4049
+jsonb_exists_any,f,f,boolean,"jsonb,text[]",,0,t,4048
+jsonb_extract_path,f,f,jsonb,"jsonb,text[]",text,0,t,3217
+jsonb_extract_path_text,f,f,text,"jsonb,text[]",text,0,t,3940
+jsonb_ge,f,f,boolean,"jsonb,jsonb",,0,t,4042
+jsonb_gt,f,f,boolean,"jsonb,jsonb",,0,t,4040
+jsonb_hash,f,f,integer,jsonb,,0,t,4045
+jsonb_hash_extended,f,f,bigint,"jsonb,bigint",,0,t,3416
+jsonb_in,f,f,jsonb,cstring,,0,t,3806
+jsonb_insert,f,f,jsonb,"jsonb,text[],jsonb,boolean",,1,t,3579
+jsonb_le,f,f,boolean,"jsonb,jsonb",,0,t,4041
+jsonb_lt,f,f,boolean,"jsonb,jsonb",,0,t,4039
+jsonb_ne,f,f,boolean,"jsonb,jsonb",,0,t,4038
+jsonb_object,f,f,jsonb,text[],,0,t,3263
+jsonb_object,f,f,jsonb,"text[],text[]",,0,t,3264
+jsonb_object_agg,a,f,jsonb,"""any"",""any""",,0,f,3270
+jsonb_object_agg_finalfn,f,f,jsonb,internal,,0,f,3269
+jsonb_object_agg_strict,a,f,jsonb,"""any"",""any""",,0,f,6288
+jsonb_object_agg_strict_transfn,f,f,internal,"internal,""any"",""any""",,0,f,6285
+jsonb_object_agg_transfn,f,f,internal,"internal,""any"",""any""",,0,f,3268
+jsonb_object_agg_unique,a,f,jsonb,"""any"",""any""",,0,f,6289
+jsonb_object_agg_unique_strict,a,f,jsonb,"""any"",""any""",,0,f,6290
+jsonb_object_agg_unique_strict_transfn,f,f,internal,"internal,""any"",""any""",,0,f,6287
+jsonb_object_agg_unique_transfn,f,f,internal,"internal,""any"",""any""",,0,f,6286
+jsonb_object_field,f,f,jsonb,"jsonb,text",,0,t,3478
+jsonb_object_field_text,f,f,text,"jsonb,text",,0,t,3214
+jsonb_object_keys,f,t,text,jsonb,,0,t,3931
+jsonb_out,f,f,cstring,jsonb,,0,t,3804
+jsonb_path_exists,f,f,boolean,"jsonb,jsonpath,jsonb,boolean",,2,t,4005
+jsonb_path_exists_opr,f,f,boolean,"jsonb,jsonpath",,0,t,4010
+jsonb_path_exists_tz,f,f,boolean,"jsonb,jsonpath,jsonb,boolean",,2,t,1177
+jsonb_path_match,f,f,boolean,"jsonb,jsonpath,jsonb,boolean",,2,t,4009
+jsonb_path_match_opr,f,f,boolean,"jsonb,jsonpath",,0,t,4011
+jsonb_path_match_tz,f,f,boolean,"jsonb,jsonpath,jsonb,boolean",,2,t,2030
+jsonb_path_query,f,t,jsonb,"jsonb,jsonpath,jsonb,boolean",,2,t,4006
+jsonb_path_query_array,f,f,jsonb,"jsonb,jsonpath,jsonb,boolean",,2,t,4007
+jsonb_path_query_array_tz,f,f,jsonb,"jsonb,jsonpath,jsonb,boolean",,2,t,1180
+jsonb_path_query_first,f,f,jsonb,"jsonb,jsonpath,jsonb,boolean",,2,t,4008
+jsonb_path_query_first_tz,f,f,jsonb,"jsonb,jsonpath,jsonb,boolean",,2,t,2023
+jsonb_path_query_tz,f,t,jsonb,"jsonb,jsonpath,jsonb,boolean",,2,t,1179
+jsonb_populate_record,f,f,anyelement,"anyelement,jsonb",,0,f,3209
+jsonb_populate_record_valid,f,f,boolean,"anyelement,jsonb",,0,f,6338
+jsonb_populate_recordset,f,t,anyelement,"anyelement,jsonb",,0,f,3475
+jsonb_pretty,f,f,text,jsonb,,0,t,3306
+jsonb_recv,f,f,jsonb,internal,,0,t,3805
+jsonb_send,f,f,bytea,jsonb,,0,t,3803
+jsonb_set,f,f,jsonb,"jsonb,text[],jsonb,boolean",,1,t,3305
+jsonb_set_lax,f,f,jsonb,"jsonb,text[],jsonb,boolean,text",,2,f,5054
+jsonb_strip_nulls,f,f,jsonb,"jsonb,boolean",,1,t,3262
+jsonb_subscript_handler,f,f,internal,internal,,0,t,6098
+jsonb_to_record,f,f,record,jsonb,,0,t,3490
+jsonb_to_recordset,f,t,record,jsonb,,0,f,3491
+jsonb_to_tsvector,f,f,tsvector,"jsonb,jsonb",,0,t,4213
+jsonb_to_tsvector,f,f,tsvector,"regconfig,jsonb,jsonb",,0,t,4214
+jsonb_typeof,f,f,text,jsonb,,0,t,3210
+jsonpath_in,f,f,jsonpath,cstring,,0,t,4001
+jsonpath_out,f,f,cstring,jsonpath,,0,t,4003
+jsonpath_recv,f,f,jsonpath,internal,,0,t,4002
+jsonpath_send,f,f,bytea,jsonpath,,0,t,4004
+justify_days,f,f,interval,interval,,0,t,1295
+justify_hours,f,f,interval,interval,,0,t,1175
+justify_interval,f,f,interval,interval,,0,t,2711
+koi8r_to_iso,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4317
+koi8r_to_mic,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4302
+koi8r_to_utf8,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4355
+koi8r_to_win1251,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4310
+koi8r_to_win866,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4312
+koi8u_to_utf8,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4357
+lag,w,f,anyelement,anyelement,,0,t,3106
+lag,w,f,anyelement,"anyelement,integer",,0,t,3107
+lag,w,f,anycompatible,"anycompatible,integer,anycompatible",,0,t,3108
+language_handler_in,f,f,language_handler,cstring,,0,f,2302
+language_handler_out,f,f,cstring,language_handler,,0,t,2303
+last_value,w,f,anyelement,anyelement,,0,t,3113
+lastval,f,f,bigint,,,0,t,2559
+latin1_to_mic,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4344
+latin2_to_mic,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4338
+latin2_to_win1250,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4342
+latin3_to_mic,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4346
+latin4_to_mic,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4348
+lcm,f,f,integer,"integer,integer",,0,t,5046
+lcm,f,f,bigint,"bigint,bigint",,0,t,5047
+lcm,f,f,numeric,"numeric,numeric",,0,t,5049
+lead,w,f,anyelement,anyelement,,0,t,3109
+lead,w,f,anyelement,"anyelement,integer",,0,t,3110
+lead,w,f,anycompatible,"anycompatible,integer,anycompatible",,0,t,3111
+left,f,f,text,"text,integer",,0,t,3060
+length,f,f,integer,text,,0,t,1317
+length,f,f,integer,character,,0,t,1318
+length,f,f,double precision,lseg,,0,t,1530
+length,f,f,double precision,path,,0,t,1531
+length,f,f,integer,bit,,0,t,1681
+length,f,f,integer,"bytea,name",,0,t,1713
+length,f,f,integer,bytea,,0,t,2010
+length,f,f,integer,tsvector,,0,t,3711
+lgamma,f,f,double precision,double precision,,0,t,6384
+like,f,f,boolean,"text,text",,0,t,1569
+like,f,f,boolean,"name,text",,0,t,1571
+like,f,f,boolean,"bytea,bytea",,0,t,2007
+like_escape,f,f,text,"text,text",,0,t,1637
+like_escape,f,f,bytea,"bytea,bytea",,0,t,2009
+likejoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,1825
+likesel,f,f,double precision,"internal,oid,internal,integer",,0,t,1819
+line,f,f,line,"point,point",,0,t,1493
+line_distance,f,f,double precision,"line,line",,0,t,239
+line_eq,f,f,boolean,"line,line",,0,t,1492
+line_horizontal,f,f,boolean,line,,0,t,1499
+line_in,f,f,line,cstring,,0,t,1490
+line_interpt,f,f,point,"line,line",,0,t,1494
+line_intersect,f,f,boolean,"line,line",,0,t,1495
+line_out,f,f,cstring,line,,0,t,1491
+line_parallel,f,f,boolean,"line,line",,0,t,1496
+line_perp,f,f,boolean,"line,line",,0,t,1497
+line_recv,f,f,line,internal,,0,t,2488
+line_send,f,f,bytea,line,,0,t,2489
+line_vertical,f,f,boolean,line,,0,t,1498
+ln,f,f,double precision,double precision,,0,t,1341
+ln,f,f,numeric,numeric,,0,t,1734
+lo_close,f,f,integer,integer,,0,t,953
+lo_creat,f,f,oid,integer,,0,t,957
+lo_create,f,f,oid,oid,,0,t,715
+lo_export,f,f,integer,"oid,text",,0,t,765
+lo_from_bytea,f,f,oid,"oid,bytea",,0,t,3457
+lo_get,f,f,bytea,oid,,0,t,3458
+lo_get,f,f,bytea,"oid,bigint,integer",,0,t,3459
+lo_import,f,f,oid,text,,0,t,764
+lo_import,f,f,oid,"text,oid",,0,t,767
+lo_lseek,f,f,integer,"integer,integer,integer",,0,t,956
+lo_lseek64,f,f,bigint,"integer,bigint,integer",,0,t,3170
+lo_open,f,f,integer,"oid,integer",,0,t,952
+lo_put,f,f,void,"oid,bigint,bytea",,0,t,3460
+lo_tell,f,f,integer,integer,,0,t,958
+lo_tell64,f,f,bigint,integer,,0,t,3171
+lo_truncate,f,f,integer,"integer,integer",,0,t,1004
+lo_truncate64,f,f,integer,"integer,bigint",,0,t,3172
+lo_unlink,f,f,integer,oid,,0,t,964
+log,f,f,double precision,double precision,,0,t,1340
+log,f,f,numeric,"numeric,numeric",,0,t,1736
+log,f,f,numeric,numeric,,0,t,1741
+log10,f,f,double precision,double precision,,0,t,1194
+log10,f,f,numeric,numeric,,0,t,1481
+loread,f,f,bytea,"integer,integer",,0,t,954
+lower,f,f,text,text,,0,t,870
+lower,f,f,anyelement,anyrange,,0,t,3848
+lower,f,f,anyelement,anymultirange,,0,t,4235
+lower_inc,f,f,boolean,anyrange,,0,t,3851
+lower_inc,f,f,boolean,anymultirange,,0,t,4238
+lower_inf,f,f,boolean,anyrange,,0,t,3853
+lower_inf,f,f,boolean,anymultirange,,0,t,4240
+lowrite,f,f,integer,"integer,bytea",,0,t,955
+lpad,f,f,text,"text,integer,text",,0,t,873
+lpad,f,f,text,"text,integer",,0,t,879
+lseg,f,f,lseg,"point,point",,0,t,993
+lseg,f,f,lseg,box,,0,t,1541
+lseg_center,f,f,point,lseg,,0,t,225
+lseg_distance,f,f,double precision,"lseg,lseg",,0,t,361
+lseg_eq,f,f,boolean,"lseg,lseg",,0,t,999
+lseg_ge,f,f,boolean,"lseg,lseg",,0,t,1486
+lseg_gt,f,f,boolean,"lseg,lseg",,0,t,1485
+lseg_horizontal,f,f,boolean,lseg,,0,t,998
+lseg_in,f,f,lseg,cstring,,0,t,119
+lseg_interpt,f,f,point,"lseg,lseg",,0,t,362
+lseg_intersect,f,f,boolean,"lseg,lseg",,0,t,994
+lseg_le,f,f,boolean,"lseg,lseg",,0,t,1484
+lseg_length,f,f,double precision,lseg,,0,t,1487
+lseg_lt,f,f,boolean,"lseg,lseg",,0,t,1483
+lseg_ne,f,f,boolean,"lseg,lseg",,0,t,1482
+lseg_out,f,f,cstring,lseg,,0,t,120
+lseg_parallel,f,f,boolean,"lseg,lseg",,0,t,995
+lseg_perp,f,f,boolean,"lseg,lseg",,0,t,996
+lseg_recv,f,f,lseg,internal,,0,t,2480
+lseg_send,f,f,bytea,lseg,,0,t,2481
+lseg_vertical,f,f,boolean,lseg,,0,t,997
+ltrim,f,f,text,"text,text",,0,t,875
+ltrim,f,f,text,text,,0,t,881
+ltrim,f,f,bytea,"bytea,bytea",,0,t,6195
+macaddr,f,f,macaddr,macaddr8,,0,t,4124
+macaddr8,f,f,macaddr8,macaddr,,0,t,4123
+macaddr8_and,f,f,macaddr8,"macaddr8,macaddr8",,0,t,4121
+macaddr8_cmp,f,f,integer,"macaddr8,macaddr8",,0,t,4119
+macaddr8_eq,f,f,boolean,"macaddr8,macaddr8",,0,t,4113
+macaddr8_ge,f,f,boolean,"macaddr8,macaddr8",,0,t,4117
+macaddr8_gt,f,f,boolean,"macaddr8,macaddr8",,0,t,4116
+macaddr8_in,f,f,macaddr8,cstring,,0,t,4110
+macaddr8_le,f,f,boolean,"macaddr8,macaddr8",,0,t,4115
+macaddr8_lt,f,f,boolean,"macaddr8,macaddr8",,0,t,4114
+macaddr8_ne,f,f,boolean,"macaddr8,macaddr8",,0,t,4118
+macaddr8_not,f,f,macaddr8,macaddr8,,0,t,4120
+macaddr8_or,f,f,macaddr8,"macaddr8,macaddr8",,0,t,4122
+macaddr8_out,f,f,cstring,macaddr8,,0,t,4111
+macaddr8_recv,f,f,macaddr8,internal,,0,t,3446
+macaddr8_send,f,f,bytea,macaddr8,,0,t,3447
+macaddr8_set7bit,f,f,macaddr8,macaddr8,,0,t,4125
+macaddr_and,f,f,macaddr,"macaddr,macaddr",,0,t,3145
+macaddr_cmp,f,f,integer,"macaddr,macaddr",,0,t,836
+macaddr_eq,f,f,boolean,"macaddr,macaddr",,0,t,830
+macaddr_ge,f,f,boolean,"macaddr,macaddr",,0,t,834
+macaddr_gt,f,f,boolean,"macaddr,macaddr",,0,t,833
+macaddr_in,f,f,macaddr,cstring,,0,t,436
+macaddr_le,f,f,boolean,"macaddr,macaddr",,0,t,832
+macaddr_lt,f,f,boolean,"macaddr,macaddr",,0,t,831
+macaddr_ne,f,f,boolean,"macaddr,macaddr",,0,t,835
+macaddr_not,f,f,macaddr,macaddr,,0,t,3144
+macaddr_or,f,f,macaddr,"macaddr,macaddr",,0,t,3146
+macaddr_out,f,f,cstring,macaddr,,0,t,437
+macaddr_recv,f,f,macaddr,internal,,0,t,2494
+macaddr_send,f,f,bytea,macaddr,,0,t,2495
+macaddr_sortsupport,f,f,void,internal,,0,t,3359
+make_date,f,f,date,"integer,integer,integer",,0,t,3846
+make_interval,f,f,interval,"integer,integer,integer,integer,integer,integer,double precision",,7,t,3464
+make_time,f,f,time without time zone,"integer,integer,double precision",,0,t,3847
+make_timestamp,f,f,timestamp without time zone,"integer,integer,integer,integer,integer,double precision",,0,t,3461
+make_timestamptz,f,f,timestamp with time zone,"integer,integer,integer,integer,integer,double precision",,0,t,3462
+make_timestamptz,f,f,timestamp with time zone,"integer,integer,integer,integer,integer,double precision,text",,0,t,3463
+makeaclitem,f,f,aclitem,"oid,oid,text,boolean",,0,t,1365
+masklen,f,f,integer,inet,,0,t,697
+matchingjoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,5041
+matchingsel,f,f,double precision,"internal,oid,internal,integer",,0,t,5040
+max,a,f,anyarray,anyarray,,0,f,2050
+max,a,f,bigint,bigint,,0,f,2115
+max,a,f,integer,integer,,0,f,2116
+max,a,f,smallint,smallint,,0,f,2117
+max,a,f,oid,oid,,0,f,2118
+max,a,f,real,real,,0,f,2119
+max,a,f,double precision,double precision,,0,f,2120
+max,a,f,date,date,,0,f,2122
+max,a,f,time without time zone,time without time zone,,0,f,2123
+max,a,f,time with time zone,time with time zone,,0,f,2124
+max,a,f,money,money,,0,f,2125
+max,a,f,timestamp without time zone,timestamp without time zone,,0,f,2126
+max,a,f,timestamp with time zone,timestamp with time zone,,0,f,2127
+max,a,f,interval,interval,,0,f,2128
+max,a,f,text,text,,0,f,2129
+max,a,f,numeric,numeric,,0,f,2130
+max,a,f,character,character,,0,f,2244
+max,a,f,tid,tid,,0,f,2797
+max,a,f,anyenum,anyenum,,0,f,3526
+max,a,f,inet,inet,,0,f,3564
+max,a,f,pg_lsn,pg_lsn,,0,f,4189
+max,a,f,xid8,xid8,,0,f,5099
+max,a,f,record,record,,0,f,6373
+max,a,f,bytea,bytea,,0,f,6395
+md5,f,f,text,text,,0,t,2311
+md5,f,f,text,bytea,,0,t,2321
+mic_to_big5,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4337
+mic_to_euc_cn,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4323
+mic_to_euc_jp,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4328
+mic_to_euc_kr,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4331
+mic_to_euc_tw,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4336
+mic_to_iso,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4305
+mic_to_koi8r,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4303
+mic_to_latin1,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4345
+mic_to_latin2,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4339
+mic_to_latin3,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4347
+mic_to_latin4,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4349
+mic_to_sjis,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4329
+mic_to_win1250,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4341
+mic_to_win1251,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4307
+mic_to_win866,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4309
+min,a,f,anyarray,anyarray,,0,f,2051
+min,a,f,bigint,bigint,,0,f,2131
+min,a,f,integer,integer,,0,f,2132
+min,a,f,smallint,smallint,,0,f,2133
+min,a,f,oid,oid,,0,f,2134
+min,a,f,real,real,,0,f,2135
+min,a,f,double precision,double precision,,0,f,2136
+min,a,f,date,date,,0,f,2138
+min,a,f,time without time zone,time without time zone,,0,f,2139
+min,a,f,time with time zone,time with time zone,,0,f,2140
+min,a,f,money,money,,0,f,2141
+min,a,f,timestamp without time zone,timestamp without time zone,,0,f,2142
+min,a,f,timestamp with time zone,timestamp with time zone,,0,f,2143
+min,a,f,interval,interval,,0,f,2144
+min,a,f,text,text,,0,f,2145
+min,a,f,numeric,numeric,,0,f,2146
+min,a,f,character,character,,0,f,2245
+min,a,f,tid,tid,,0,f,2798
+min,a,f,anyenum,anyenum,,0,f,3527
+min,a,f,inet,inet,,0,f,3565
+min,a,f,pg_lsn,pg_lsn,,0,f,4190
+min,a,f,xid8,xid8,,0,f,5100
+min,a,f,record,record,,0,f,6374
+min,a,f,bytea,bytea,,0,f,6396
+min_scale,f,f,integer,numeric,,0,t,5042
+mod,f,f,smallint,"smallint,smallint",,0,t,940
+mod,f,f,integer,"integer,integer",,0,t,941
+mod,f,f,bigint,"bigint,bigint",,0,t,947
+mod,f,f,numeric,"numeric,numeric",,0,t,1728
+mode,a,f,anyelement,anyelement,,0,f,3984
+mode_final,f,f,anyelement,"internal,anyelement",,0,f,3985
+money,f,f,money,integer,,0,t,3811
+money,f,f,money,bigint,,0,t,3812
+money,f,f,money,numeric,,0,t,3824
+mul_d_interval,f,f,interval,"double precision,interval",,0,t,1624
+multirange,f,f,anymultirange,anyrange,,0,t,4298
+multirange_adjacent_multirange,f,f,boolean,"anymultirange,anymultirange",,0,t,4256
+multirange_adjacent_range,f,f,boolean,"anymultirange,anyrange",,0,t,4257
+multirange_after_multirange,f,f,boolean,"anymultirange,anymultirange",,0,t,4263
+multirange_after_range,f,f,boolean,"anymultirange,anyrange",,0,t,4262
+multirange_agg_finalfn,f,f,anymultirange,"internal,anymultirange",,0,f,6226
+multirange_agg_transfn,f,f,internal,"internal,anymultirange",,0,f,6225
+multirange_before_multirange,f,f,boolean,"anymultirange,anymultirange",,0,t,4260
+multirange_before_range,f,f,boolean,"anymultirange,anyrange",,0,t,4259
+multirange_cmp,f,f,integer,"anymultirange,anymultirange",,0,t,4273
+multirange_contained_by_multirange,f,f,boolean,"anymultirange,anymultirange",,0,t,4254
+multirange_contained_by_range,f,f,boolean,"anymultirange,anyrange",,0,t,4542
+multirange_contains_elem,f,f,boolean,"anymultirange,anyelement",,0,t,4249
+multirange_contains_multirange,f,f,boolean,"anymultirange,anymultirange",,0,t,4251
+multirange_contains_range,f,f,boolean,"anymultirange,anyrange",,0,t,4250
+multirange_eq,f,f,boolean,"anymultirange,anymultirange",,0,t,4244
+multirange_ge,f,f,boolean,"anymultirange,anymultirange",,0,t,4276
+multirange_gist_compress,f,f,internal,internal,,0,t,6156
+multirange_gist_consistent,f,f,boolean,"internal,anymultirange,smallint,oid,internal",,0,t,6154
+multirange_gt,f,f,boolean,"anymultirange,anymultirange",,0,t,4277
+multirange_in,f,f,anymultirange,"cstring,oid,integer",,0,t,4231
+multirange_intersect,f,f,anymultirange,"anymultirange,anymultirange",,0,t,4272
+multirange_intersect_agg_transfn,f,f,anymultirange,"anymultirange,anymultirange",,0,t,4388
+multirange_le,f,f,boolean,"anymultirange,anymultirange",,0,t,4275
+multirange_lt,f,f,boolean,"anymultirange,anymultirange",,0,t,4274
+multirange_minus,f,f,anymultirange,"anymultirange,anymultirange",,0,t,4271
+multirange_ne,f,f,boolean,"anymultirange,anymultirange",,0,t,4245
+multirange_out,f,f,cstring,anymultirange,,0,t,4232
+multirange_overlaps_multirange,f,f,boolean,"anymultirange,anymultirange",,0,t,4248
+multirange_overlaps_range,f,f,boolean,"anymultirange,anyrange",,0,t,4247
+multirange_overleft_multirange,f,f,boolean,"anymultirange,anymultirange",,0,t,4266
+multirange_overleft_range,f,f,boolean,"anymultirange,anyrange",,0,t,4265
+multirange_overright_multirange,f,f,boolean,"anymultirange,anymultirange",,0,t,4269
+multirange_overright_range,f,f,boolean,"anymultirange,anyrange",,0,t,4268
+multirange_recv,f,f,anymultirange,"internal,oid,integer",,0,t,4233
+multirange_send,f,f,bytea,anymultirange,,0,t,4234
+multirange_typanalyze,f,f,boolean,internal,,0,t,4242
+multirange_union,f,f,anymultirange,"anymultirange,anymultirange",,0,t,4270
+multirangesel,f,f,double precision,"internal,oid,internal,integer",,0,t,4243
+mxid_age,f,f,integer,xid,,0,t,3939
+name,f,f,name,text,,0,t,407
+name,f,f,name,character,,0,t,409
+name,f,f,name,character varying,,0,t,1400
+nameconcatoid,f,f,name,"name,oid",,0,t,266
+nameeq,f,f,boolean,"name,name",,0,t,62
+nameeqtext,f,f,boolean,"name,text",,0,t,240
+namege,f,f,boolean,"name,name",,0,t,658
+namegetext,f,f,boolean,"name,text",,0,t,243
+namegt,f,f,boolean,"name,name",,0,t,657
+namegttext,f,f,boolean,"name,text",,0,t,244
+nameiclike,f,f,boolean,"name,text",,0,t,1635
+nameicnlike,f,f,boolean,"name,text",,0,t,1636
+nameicregexeq,f,f,boolean,"name,text",,0,t,1240
+nameicregexne,f,f,boolean,"name,text",,0,t,1241
+namein,f,f,name,cstring,,0,t,34
+namele,f,f,boolean,"name,name",,0,t,656
+nameletext,f,f,boolean,"name,text",,0,t,242
+namelike,f,f,boolean,"name,text",,0,t,858
+namelt,f,f,boolean,"name,name",,0,t,655
+namelttext,f,f,boolean,"name,text",,0,t,241
+namene,f,f,boolean,"name,name",,0,t,659
+namenetext,f,f,boolean,"name,text",,0,t,245
+namenlike,f,f,boolean,"name,text",,0,t,859
+nameout,f,f,cstring,name,,0,t,35
+namerecv,f,f,name,internal,,0,t,2422
+nameregexeq,f,f,boolean,"name,text",,0,t,79
+nameregexne,f,f,boolean,"name,text",,0,t,1252
+namesend,f,f,bytea,name,,0,t,2423
+neqjoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,106
+neqsel,f,f,double precision,"internal,oid,internal,integer",,0,t,102
+netmask,f,f,inet,inet,,0,t,696
+network,f,f,cidr,inet,,0,t,683
+network_cmp,f,f,integer,"inet,inet",,0,t,926
+network_eq,f,f,boolean,"inet,inet",,0,t,920
+network_ge,f,f,boolean,"inet,inet",,0,t,924
+network_gt,f,f,boolean,"inet,inet",,0,t,923
+network_larger,f,f,inet,"inet,inet",,0,t,3562
+network_le,f,f,boolean,"inet,inet",,0,t,922
+network_lt,f,f,boolean,"inet,inet",,0,t,921
+network_ne,f,f,boolean,"inet,inet",,0,t,925
+network_overlap,f,f,boolean,"inet,inet",,0,t,3551
+network_smaller,f,f,inet,"inet,inet",,0,t,3563
+network_sortsupport,f,f,void,internal,,0,t,5033
+network_sub,f,f,boolean,"inet,inet",,0,t,927
+network_subeq,f,f,boolean,"inet,inet",,0,t,928
+network_subset_support,f,f,internal,internal,,0,t,1173
+network_sup,f,f,boolean,"inet,inet",,0,t,929
+network_supeq,f,f,boolean,"inet,inet",,0,t,930
+networkjoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,3561
+networksel,f,f,double precision,"internal,oid,internal,integer",,0,t,3560
+nextval,f,f,bigint,regclass,,0,t,1574
+nlikejoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,1828
+nlikesel,f,f,double precision,"internal,oid,internal,integer",,0,t,1822
+normalize,f,f,text,"text,text",,1,t,4350
+notlike,f,f,boolean,"text,text",,0,t,1570
+notlike,f,f,boolean,"name,text",,0,t,1572
+notlike,f,f,boolean,"bytea,bytea",,0,t,2008
+now,f,f,timestamp with time zone,,,0,t,1299
+npoints,f,f,integer,path,,0,t,1545
+npoints,f,f,integer,polygon,,0,t,1556
+nth_value,w,f,anyelement,"anyelement,integer",,0,t,3114
+ntile,w,f,integer,integer,,0,t,3105
+num_nonnulls,f,f,integer,"""any""","""any""",0,f,440
+num_nulls,f,f,integer,"""any""","""any""",0,f,438
+numeric,f,f,numeric,"numeric,integer",,0,t,1703
+numeric,f,f,numeric,integer,,0,t,1740
+numeric,f,f,numeric,real,,0,t,1742
+numeric,f,f,numeric,double precision,,0,t,1743
+numeric,f,f,numeric,bigint,,0,t,1781
+numeric,f,f,numeric,smallint,,0,t,1782
+numeric,f,f,numeric,jsonb,,0,t,3449
+numeric,f,f,numeric,money,,0,t,3823
+numeric_abs,f,f,numeric,numeric,,0,t,1704
+numeric_accum,f,f,internal,"internal,numeric",,0,f,1833
+numeric_accum_inv,f,f,internal,"internal,numeric",,0,f,3548
+numeric_add,f,f,numeric,"numeric,numeric",,0,t,1724
+numeric_avg,f,f,numeric,internal,,0,f,1837
+numeric_avg_accum,f,f,internal,"internal,numeric",,0,f,2858
+numeric_avg_combine,f,f,internal,"internal,internal",,0,f,3337
+numeric_avg_deserialize,f,f,internal,"bytea,internal",,0,t,2741
+numeric_avg_serialize,f,f,bytea,internal,,0,t,2740
+numeric_cmp,f,f,integer,"numeric,numeric",,0,t,1769
+numeric_combine,f,f,internal,"internal,internal",,0,f,3341
+numeric_deserialize,f,f,internal,"bytea,internal",,0,t,3336
+numeric_div,f,f,numeric,"numeric,numeric",,0,t,1727
+numeric_div_trunc,f,f,numeric,"numeric,numeric",,0,t,1980
+numeric_eq,f,f,boolean,"numeric,numeric",,0,t,1718
+numeric_exp,f,f,numeric,numeric,,0,t,1733
+numeric_ge,f,f,boolean,"numeric,numeric",,0,t,1721
+numeric_gt,f,f,boolean,"numeric,numeric",,0,t,1720
+numeric_in,f,f,numeric,"cstring,oid,integer",,0,t,1701
+numeric_inc,f,f,numeric,numeric,,0,t,1764
+numeric_larger,f,f,numeric,"numeric,numeric",,0,t,1767
+numeric_le,f,f,boolean,"numeric,numeric",,0,t,1723
+numeric_ln,f,f,numeric,numeric,,0,t,1735
+numeric_log,f,f,numeric,"numeric,numeric",,0,t,1737
+numeric_lt,f,f,boolean,"numeric,numeric",,0,t,1722
+numeric_mod,f,f,numeric,"numeric,numeric",,0,t,1729
+numeric_mul,f,f,numeric,"numeric,numeric",,0,t,1726
+numeric_ne,f,f,boolean,"numeric,numeric",,0,t,1719
+numeric_out,f,f,cstring,numeric,,0,t,1702
+numeric_pl_pg_lsn,f,f,pg_lsn,"numeric,pg_lsn",,0,t,5023
+numeric_poly_avg,f,f,numeric,internal,,0,f,3389
+numeric_poly_combine,f,f,internal,"internal,internal",,0,f,3338
+numeric_poly_deserialize,f,f,internal,"bytea,internal",,0,t,3340
+numeric_poly_serialize,f,f,bytea,internal,,0,t,3339
+numeric_poly_stddev_pop,f,f,numeric,internal,,0,f,3392
+numeric_poly_stddev_samp,f,f,numeric,internal,,0,f,3393
+numeric_poly_sum,f,f,numeric,internal,,0,f,3388
+numeric_poly_var_pop,f,f,numeric,internal,,0,f,3390
+numeric_poly_var_samp,f,f,numeric,internal,,0,f,3391
+numeric_power,f,f,numeric,"numeric,numeric",,0,t,1739
+numeric_recv,f,f,numeric,"internal,oid,integer",,0,t,2460
+numeric_send,f,f,bytea,numeric,,0,t,2461
+numeric_serialize,f,f,bytea,internal,,0,t,3335
+numeric_smaller,f,f,numeric,"numeric,numeric",,0,t,1766
+numeric_sortsupport,f,f,void,internal,,0,t,3283
+numeric_sqrt,f,f,numeric,numeric,,0,t,1731
+numeric_stddev_pop,f,f,numeric,internal,,0,f,2596
+numeric_stddev_samp,f,f,numeric,internal,,0,f,1839
+numeric_sub,f,f,numeric,"numeric,numeric",,0,t,1725
+numeric_sum,f,f,numeric,internal,,0,f,3178
+numeric_support,f,f,internal,internal,,0,t,3157
+numeric_uminus,f,f,numeric,numeric,,0,t,1771
+numeric_uplus,f,f,numeric,numeric,,0,t,1915
+numeric_var_pop,f,f,numeric,internal,,0,f,2514
+numeric_var_samp,f,f,numeric,internal,,0,f,1838
+numerictypmodin,f,f,integer,cstring[],,0,t,2917
+numerictypmodout,f,f,cstring,integer,,0,t,2918
+nummultirange,f,f,nummultirange,,,0,t,4283
+nummultirange,f,f,nummultirange,numrange,,0,t,4284
+nummultirange,f,f,nummultirange,numrange[],numrange,0,t,4285
+numnode,f,f,integer,tsquery,,0,t,3672
+numrange,f,f,numrange,"numeric,numeric",,0,f,3844
+numrange,f,f,numrange,"numeric,numeric,text",,0,f,3845
+numrange_subdiff,f,f,double precision,"numeric,numeric",,0,t,3924
+obj_description,f,f,text,"oid,name",,0,t,1215
+obj_description,f,f,text,oid,,0,t,1348
+octet_length,f,f,integer,bytea,,0,t,720
+octet_length,f,f,integer,text,,0,t,1374
+octet_length,f,f,integer,character,,0,t,1375
+octet_length,f,f,integer,bit,,0,t,1682
+oid,f,f,oid,bigint,,0,t,1287
+oideq,f,f,boolean,"oid,oid",,0,t,184
+oidge,f,f,boolean,"oid,oid",,0,t,1639
+oidgt,f,f,boolean,"oid,oid",,0,t,1638
+oidin,f,f,oid,cstring,,0,t,1798
+oidlarger,f,f,oid,"oid,oid",,0,t,1965
+oidle,f,f,boolean,"oid,oid",,0,t,717
+oidlt,f,f,boolean,"oid,oid",,0,t,716
+oidne,f,f,boolean,"oid,oid",,0,t,185
+oidout,f,f,cstring,oid,,0,t,1799
+oidrecv,f,f,oid,internal,,0,t,2418
+oidsend,f,f,bytea,oid,,0,t,2419
+oidsmaller,f,f,oid,"oid,oid",,0,t,1966
+oidvectoreq,f,f,boolean,"oidvector,oidvector",,0,t,679
+oidvectorge,f,f,boolean,"oidvector,oidvector",,0,t,680
+oidvectorgt,f,f,boolean,"oidvector,oidvector",,0,t,681
+oidvectorin,f,f,oidvector,cstring,,0,t,54
+oidvectorle,f,f,boolean,"oidvector,oidvector",,0,t,678
+oidvectorlt,f,f,boolean,"oidvector,oidvector",,0,t,677
+oidvectorne,f,f,boolean,"oidvector,oidvector",,0,t,619
+oidvectorout,f,f,cstring,oidvector,,0,t,55
+oidvectorrecv,f,f,oidvector,internal,,0,t,2420
+oidvectorsend,f,f,bytea,oidvector,,0,t,2421
+oidvectortypes,f,f,text,oidvector,,0,t,1349
+on_pb,f,f,boolean,"point,box",,0,t,136
+on_pl,f,f,boolean,"point,line",,0,t,959
+on_ppath,f,f,boolean,"point,path",,0,t,137
+on_ps,f,f,boolean,"point,lseg",,0,t,369
+on_sb,f,f,boolean,"lseg,box",,0,t,372
+on_sl,f,f,boolean,"lseg,line",,0,t,960
+ordered_set_transition,f,f,internal,"internal,""any""",,0,f,3970
+ordered_set_transition_multi,f,f,internal,"internal,""any""","""any""",0,f,3971
+overlaps,f,f,boolean,"time with time zone,time with time zone,time with time zone,time with time zone",,0,f,1271
+overlaps,f,f,boolean,"timestamp with time zone,timestamp with time zone,timestamp with time zone,timestamp with time zone",,0,f,1304
+overlaps,f,f,boolean,"timestamp with time zone,interval,timestamp with time zone,interval",,0,f,1305
+overlaps,f,f,boolean,"timestamp with time zone,timestamp with time zone,timestamp with time zone,interval",,0,f,1306
+overlaps,f,f,boolean,"timestamp with time zone,interval,timestamp with time zone,timestamp with time zone",,0,f,1307
+overlaps,f,f,boolean,"time without time zone,time without time zone,time without time zone,time without time zone",,0,f,1308
+overlaps,f,f,boolean,"time without time zone,interval,time without time zone,interval",,0,f,1309
+overlaps,f,f,boolean,"time without time zone,time without time zone,time without time zone,interval",,0,f,1310
+overlaps,f,f,boolean,"time without time zone,interval,time without time zone,time without time zone",,0,f,1311
+overlaps,f,f,boolean,"timestamp without time zone,timestamp without time zone,timestamp without time zone,timestamp without time zone",,0,f,2041
+overlaps,f,f,boolean,"timestamp without time zone,interval,timestamp without time zone,interval",,0,f,2042
+overlaps,f,f,boolean,"timestamp without time zone,timestamp without time zone,timestamp without time zone,interval",,0,f,2043
+overlaps,f,f,boolean,"timestamp without time zone,interval,timestamp without time zone,timestamp without time zone",,0,f,2044
+overlay,f,f,bytea,"bytea,bytea,integer,integer",,0,t,749
+overlay,f,f,bytea,"bytea,bytea,integer",,0,t,752
+overlay,f,f,text,"text,text,integer,integer",,0,t,1404
+overlay,f,f,text,"text,text,integer",,0,t,1405
+overlay,f,f,bit,"bit,bit,integer,integer",,0,t,3030
+overlay,f,f,bit,"bit,bit,integer",,0,t,3031
+parse_ident,f,f,text[],"text,boolean",,1,t,1268
+path,f,f,path,polygon,,0,t,1447
+path_add,f,f,path,"path,path",,0,t,1435
+path_add_pt,f,f,path,"path,point",,0,t,1436
+path_contain_pt,f,f,boolean,"path,point",,0,t,1426
+path_distance,f,f,double precision,"path,path",,0,t,370
+path_div_pt,f,f,path,"path,point",,0,t,1439
+path_in,f,f,path,cstring,,0,t,121
+path_inter,f,f,boolean,"path,path",,0,t,973
+path_length,f,f,double precision,path,,0,t,987
+path_mul_pt,f,f,path,"path,point",,0,t,1438
+path_n_eq,f,f,boolean,"path,path",,0,t,984
+path_n_ge,f,f,boolean,"path,path",,0,t,986
+path_n_gt,f,f,boolean,"path,path",,0,t,983
+path_n_le,f,f,boolean,"path,path",,0,t,985
+path_n_lt,f,f,boolean,"path,path",,0,t,982
+path_npoints,f,f,integer,path,,0,t,1432
+path_out,f,f,cstring,path,,0,t,122
+path_recv,f,f,path,internal,,0,t,2482
+path_send,f,f,bytea,path,,0,t,2483
+path_sub_pt,f,f,path,"path,point",,0,t,1437
+pclose,f,f,path,path,,0,t,1433
+percent_rank,w,f,double precision,,,0,f,3103
+percent_rank,a,f,double precision,"""any""","""any""",0,f,3988
+percent_rank_final,f,f,double precision,"internal,""any""","""any""",0,f,3989
+percentile_cont,a,f,double precision,"double precision,double precision",,0,f,3974
+percentile_cont,a,f,interval,"double precision,interval",,0,f,3976
+percentile_cont,a,f,double precision[],"double precision[],double precision",,0,f,3980
+percentile_cont,a,f,interval[],"double precision[],interval",,0,f,3982
+percentile_cont_float8_final,f,f,double precision,"internal,double precision",,0,f,3975
+percentile_cont_float8_multi_final,f,f,double precision[],"internal,double precision[]",,0,f,3981
+percentile_cont_interval_final,f,f,interval,"internal,double precision",,0,f,3977
+percentile_cont_interval_multi_final,f,f,interval[],"internal,double precision[]",,0,f,3983
+percentile_disc,a,f,anyelement,"double precision,anyelement",,0,f,3972
+percentile_disc,a,f,anyarray,"double precision[],anyelement",,0,f,3978
+percentile_disc_final,f,f,anyelement,"internal,double precision,anyelement",,0,f,3973
+percentile_disc_multi_final,f,f,anyarray,"internal,double precision[],anyelement",,0,f,3979
+pg_advisory_lock,f,f,void,bigint,,0,t,2880
+pg_advisory_lock,f,f,void,"integer,integer",,0,t,2886
+pg_advisory_lock_shared,f,f,void,bigint,,0,t,2881
+pg_advisory_lock_shared,f,f,void,"integer,integer",,0,t,2887
+pg_advisory_unlock,f,f,boolean,bigint,,0,t,2884
+pg_advisory_unlock,f,f,boolean,"integer,integer",,0,t,2890
+pg_advisory_unlock_all,f,f,void,,,0,t,2892
+pg_advisory_unlock_shared,f,f,boolean,bigint,,0,t,2885
+pg_advisory_unlock_shared,f,f,boolean,"integer,integer",,0,t,2891
+pg_advisory_xact_lock,f,f,void,bigint,,0,t,3089
+pg_advisory_xact_lock,f,f,void,"integer,integer",,0,t,3093
+pg_advisory_xact_lock_shared,f,f,void,bigint,,0,t,3090
+pg_advisory_xact_lock_shared,f,f,void,"integer,integer",,0,t,3094
+pg_available_extension_versions,f,t,record,,,0,t,3083
+pg_available_extensions,f,t,record,,,0,t,3082
+pg_available_wal_summaries,f,t,record,,,0,t,6321
+pg_backend_pid,f,f,integer,,,0,t,2026
+pg_backup_start,f,f,pg_lsn,"text,boolean",,1,t,2172
+pg_backup_stop,f,f,record,boolean,,1,t,2739
+pg_basetype,f,f,regtype,regtype,,0,t,6315
+pg_blocking_pids,f,f,integer[],integer,,0,t,2561
+pg_cancel_backend,f,f,boolean,integer,,0,t,2171
+pg_char_to_encoding,f,f,integer,name,,0,t,1264
+pg_clear_attribute_stats,f,f,void,"text,text,text,boolean",,0,f,6398
+pg_clear_relation_stats,f,f,void,"text,text",,0,f,6397
+pg_client_encoding,f,f,name,,,0,t,810
+pg_collation_actual_version,f,f,text,oid,,0,t,3448
+pg_collation_for,f,f,text,"""any""",,0,f,3162
+pg_collation_is_visible,f,f,boolean,oid,,0,t,3815
+pg_column_compression,f,f,text,"""any""",,0,t,2121
+pg_column_is_updatable,f,f,boolean,"regclass,smallint,boolean",,0,t,3843
+pg_column_size,f,f,integer,"""any""",,0,t,1269
+pg_column_toast_chunk_id,f,f,oid,"""any""",,0,t,6316
+pg_conf_load_time,f,f,timestamp with time zone,,,0,t,2034
+pg_config,f,t,record,,,0,t,3400
+pg_control_checkpoint,f,f,record,,,0,t,3442
+pg_control_init,f,f,record,,,0,t,3444
+pg_control_recovery,f,f,record,,,0,t,3443
+pg_control_system,f,f,record,,,0,t,3441
+pg_conversion_is_visible,f,f,boolean,oid,,0,t,2093
+pg_copy_logical_replication_slot,f,f,record,"name,name,boolean,name",,0,t,4222
+pg_copy_logical_replication_slot,f,f,record,"name,name,boolean",,0,t,4223
+pg_copy_logical_replication_slot,f,f,record,"name,name",,0,t,4224
+pg_copy_physical_replication_slot,f,f,record,"name,name,boolean",,0,t,4220
+pg_copy_physical_replication_slot,f,f,record,"name,name",,0,t,4221
+pg_create_logical_replication_slot,f,f,record,"name,name,boolean,boolean,boolean",,3,t,3786
+pg_create_physical_replication_slot,f,f,record,"name,boolean,boolean",,2,t,3779
+pg_create_restore_point,f,f,pg_lsn,text,,0,t,3098
+pg_current_logfile,f,f,text,,,0,f,3800
+pg_current_logfile,f,f,text,text,,0,f,3801
+pg_current_snapshot,f,f,pg_snapshot,,,0,t,5061
+pg_current_wal_flush_lsn,f,f,pg_lsn,,,0,t,3330
+pg_current_wal_insert_lsn,f,f,pg_lsn,,,0,t,2852
+pg_current_wal_lsn,f,f,pg_lsn,,,0,t,2849
+pg_current_xact_id,f,f,xid8,,,0,t,5059
+pg_current_xact_id_if_assigned,f,f,xid8,,,0,t,5060
+pg_cursor,f,t,record,,,0,t,2511
+pg_database_collation_actual_version,f,f,text,oid,,0,t,6249
+pg_database_size,f,f,bigint,name,,0,t,2168
+pg_database_size,f,f,bigint,oid,,0,t,2324
+pg_ddl_command_in,f,f,pg_ddl_command,cstring,,0,t,86
+pg_ddl_command_out,f,f,cstring,pg_ddl_command,,0,t,87
+pg_ddl_command_recv,f,f,pg_ddl_command,internal,,0,t,88
+pg_ddl_command_send,f,f,bytea,pg_ddl_command,,0,t,90
+pg_dependencies_in,f,f,pg_dependencies,cstring,,0,t,3404
+pg_dependencies_out,f,f,cstring,pg_dependencies,,0,t,3405
+pg_dependencies_recv,f,f,pg_dependencies,internal,,0,t,3406
+pg_dependencies_send,f,f,bytea,pg_dependencies,,0,t,3407
+pg_describe_object,f,f,text,"oid,oid,integer",,0,t,3537
+pg_drop_replication_slot,f,f,void,name,,0,t,3780
+pg_encoding_max_length,f,f,integer,integer,,0,t,2319
+pg_encoding_to_char,f,f,name,integer,,0,t,1597
+pg_event_trigger_ddl_commands,f,t,record,,,0,t,4568
+pg_event_trigger_dropped_objects,f,t,record,,,0,t,3566
+pg_event_trigger_table_rewrite_oid,f,f,oid,,,0,t,4566
+pg_event_trigger_table_rewrite_reason,f,f,integer,,,0,t,4567
+pg_export_snapshot,f,f,text,,,0,t,3809
+pg_extension_config_dump,f,f,void,"regclass,text",,0,t,3086
+pg_extension_update_paths,f,t,record,name,,0,t,3084
+pg_filenode_relation,f,f,regclass,"oid,oid",,0,t,3454
+pg_function_is_visible,f,f,boolean,oid,,0,t,2081
+pg_get_acl,f,f,aclitem[],"oid,oid,integer",,0,t,6385
+pg_get_aios,f,t,record,,,0,t,6399
+pg_get_backend_memory_contexts,f,t,record,,,0,t,2282
+pg_get_catalog_foreign_keys,f,t,record,,,0,t,6159
+pg_get_constraintdef,f,f,text,oid,,0,t,1387
+pg_get_constraintdef,f,f,text,"oid,boolean",,0,t,2508
+pg_get_expr,f,f,text,"pg_node_tree,oid",,0,t,1716
+pg_get_expr,f,f,text,"pg_node_tree,oid,boolean",,0,t,2509
+pg_get_function_arg_default,f,f,text,"oid,integer",,0,t,3808
+pg_get_function_arguments,f,f,text,oid,,0,t,2162
+pg_get_function_identity_arguments,f,f,text,oid,,0,t,2232
+pg_get_function_result,f,f,text,oid,,0,t,2165
+pg_get_function_sqlbody,f,f,text,oid,,0,t,6197
+pg_get_functiondef,f,f,text,oid,,0,t,2098
+pg_get_indexdef,f,f,text,oid,,0,t,1643
+pg_get_indexdef,f,f,text,"oid,integer,boolean",,0,t,2507
+pg_get_keywords,f,t,record,,,0,t,1686
+pg_get_loaded_modules,f,t,record,,,0,t,6353
+pg_get_multixact_members,f,t,record,xid,,0,t,3819
+pg_get_object_address,f,f,record,"text,text[],text[]",,0,t,3954
+pg_get_partition_constraintdef,f,f,text,oid,,0,t,3408
+pg_get_partkeydef,f,f,text,oid,,0,t,3352
+pg_get_publication_tables,f,t,record,text[],text,0,t,6119
+pg_get_replica_identity_index,f,f,regclass,regclass,,0,t,6120
+pg_get_replication_slots,f,t,record,,,0,f,3781
+pg_get_ruledef,f,f,text,oid,,0,t,1573
+pg_get_ruledef,f,f,text,"oid,boolean",,0,t,2504
+pg_get_sequence_data,f,f,record,regclass,,0,t,6427
+pg_get_serial_sequence,f,f,text,"text,text",,0,t,1665
+pg_get_shmem_allocations,f,t,record,,,0,t,5052
+pg_get_shmem_allocations_numa,f,t,record,,,0,t,4100
+pg_get_statisticsobjdef,f,f,text,oid,,0,t,3415
+pg_get_statisticsobjdef_columns,f,f,text,oid,,0,t,6174
+pg_get_statisticsobjdef_expressions,f,f,text[],oid,,0,t,6173
+pg_get_triggerdef,f,f,text,oid,,0,t,1662
+pg_get_triggerdef,f,f,text,"oid,boolean",,0,t,2730
+pg_get_userbyid,f,f,name,oid,,0,t,1642
+pg_get_viewdef,f,f,text,text,,0,t,1640
+pg_get_viewdef,f,f,text,oid,,0,t,1641
+pg_get_viewdef,f,f,text,"text,boolean",,0,t,2505
+pg_get_viewdef,f,f,text,"oid,boolean",,0,t,2506
+pg_get_viewdef,f,f,text,"oid,integer",,0,t,3159
+pg_get_wait_events,f,t,record,,,0,t,6318
+pg_get_wal_replay_pause_state,f,f,text,,,0,t,1137
+pg_get_wal_resource_managers,f,t,record,,,0,t,6224
+pg_get_wal_summarizer_state,f,f,record,,,0,t,6323
+pg_has_role,f,f,boolean,"name,name,text",,0,t,2705
+pg_has_role,f,f,boolean,"name,oid,text",,0,t,2706
+pg_has_role,f,f,boolean,"oid,name,text",,0,t,2707
+pg_has_role,f,f,boolean,"oid,oid,text",,0,t,2708
+pg_has_role,f,f,boolean,"name,text",,0,t,2709
+pg_has_role,f,f,boolean,"oid,text",,0,t,2710
+pg_hba_file_rules,f,t,record,,,0,t,3401
+pg_ident_file_mappings,f,t,record,,,0,t,6250
+pg_identify_object,f,f,record,"oid,oid,integer",,0,t,3839
+pg_identify_object_as_address,f,f,record,"oid,oid,integer",,0,t,3382
+pg_import_system_collations,f,f,integer,regnamespace,,0,t,3445
+pg_index_column_has_property,f,f,boolean,"regclass,integer,text",,0,t,638
+pg_index_has_property,f,f,boolean,"regclass,text",,0,t,637
+pg_indexam_has_property,f,f,boolean,"oid,text",,0,t,636
+pg_indexam_progress_phasename,f,f,text,"oid,bigint",,0,t,676
+pg_indexes_size,f,f,bigint,regclass,,0,t,2998
+pg_input_error_info,f,f,record,"text,text",,0,t,6211
+pg_input_is_valid,f,f,boolean,"text,text",,0,t,6210
+pg_is_in_recovery,f,f,boolean,,,0,t,3810
+pg_is_other_temp_schema,f,f,boolean,oid,,0,t,2855
+pg_is_wal_replay_paused,f,f,boolean,,,0,t,3073
+pg_isolation_test_session_is_blocked,f,f,boolean,"integer,integer[]",,0,t,3378
+pg_jit_available,f,f,boolean,,,0,t,315
+pg_last_committed_xact,f,f,record,,,0,t,3583
+pg_last_wal_receive_lsn,f,f,pg_lsn,,,0,t,3820
+pg_last_wal_replay_lsn,f,f,pg_lsn,,,0,t,3821
+pg_last_xact_replay_timestamp,f,f,timestamp with time zone,,,0,t,3830
+pg_listening_channels,f,t,text,,,0,t,3035
+pg_lock_status,f,t,record,,,0,t,1371
+pg_log_backend_memory_contexts,f,f,boolean,integer,,0,t,4543
+pg_log_standby_snapshot,f,f,pg_lsn,,,0,t,6305
+pg_logical_emit_message,f,f,pg_lsn,"boolean,text,text,boolean",,1,t,3577
+pg_logical_emit_message,f,f,pg_lsn,"boolean,text,bytea,boolean",,1,t,3578
+pg_logical_slot_get_binary_changes,f,t,record,"name,pg_lsn,integer,text[]",text,1,f,3783
+pg_logical_slot_get_changes,f,t,record,"name,pg_lsn,integer,text[]",text,1,f,3782
+pg_logical_slot_peek_binary_changes,f,t,record,"name,pg_lsn,integer,text[]",text,1,f,3785
+pg_logical_slot_peek_changes,f,t,record,"name,pg_lsn,integer,text[]",text,1,f,3784
+pg_ls_archive_statusdir,f,t,record,,,0,t,5031
+pg_ls_dir,f,t,text,text,,0,t,2625
+pg_ls_dir,f,t,text,"text,boolean,boolean",,0,t,3297
+pg_ls_logdir,f,t,record,,,0,t,3353
+pg_ls_logicalmapdir,f,t,record,,,0,t,6271
+pg_ls_logicalsnapdir,f,t,record,,,0,t,6270
+pg_ls_replslotdir,f,t,record,text,,0,t,6272
+pg_ls_summariesdir,f,t,record,,,0,t,6400
+pg_ls_tmpdir,f,t,record,,,0,t,5029
+pg_ls_tmpdir,f,t,record,oid,,0,t,5030
+pg_ls_waldir,f,t,record,,,0,t,3354
+pg_lsn,f,f,pg_lsn,numeric,,0,t,6103
+pg_lsn_cmp,f,f,integer,"pg_lsn,pg_lsn",,0,t,3251
+pg_lsn_eq,f,f,boolean,"pg_lsn,pg_lsn",,0,t,3233
+pg_lsn_ge,f,f,boolean,"pg_lsn,pg_lsn",,0,t,3234
+pg_lsn_gt,f,f,boolean,"pg_lsn,pg_lsn",,0,t,3235
+pg_lsn_hash,f,f,integer,pg_lsn,,0,t,3252
+pg_lsn_hash_extended,f,f,bigint,"pg_lsn,bigint",,0,t,3413
+pg_lsn_in,f,f,pg_lsn,cstring,,0,t,3229
+pg_lsn_larger,f,f,pg_lsn,"pg_lsn,pg_lsn",,0,t,4187
+pg_lsn_le,f,f,boolean,"pg_lsn,pg_lsn",,0,t,3232
+pg_lsn_lt,f,f,boolean,"pg_lsn,pg_lsn",,0,t,3231
+pg_lsn_mi,f,f,numeric,"pg_lsn,pg_lsn",,0,t,3237
+pg_lsn_mii,f,f,pg_lsn,"pg_lsn,numeric",,0,t,5024
+pg_lsn_ne,f,f,boolean,"pg_lsn,pg_lsn",,0,t,3236
+pg_lsn_out,f,f,cstring,pg_lsn,,0,t,3230
+pg_lsn_pli,f,f,pg_lsn,"pg_lsn,numeric",,0,t,5022
+pg_lsn_recv,f,f,pg_lsn,internal,,0,t,3238
+pg_lsn_send,f,f,bytea,pg_lsn,,0,t,3239
+pg_lsn_smaller,f,f,pg_lsn,"pg_lsn,pg_lsn",,0,t,4188
+pg_mcv_list_in,f,f,pg_mcv_list,cstring,,0,t,5018
+pg_mcv_list_items,f,t,record,pg_mcv_list,,0,t,3427
+pg_mcv_list_out,f,f,cstring,pg_mcv_list,,0,t,5019
+pg_mcv_list_recv,f,f,pg_mcv_list,internal,,0,t,5020
+pg_mcv_list_send,f,f,bytea,pg_mcv_list,,0,t,5021
+pg_my_temp_schema,f,f,oid,,,0,t,2854
+pg_ndistinct_in,f,f,pg_ndistinct,cstring,,0,t,3355
+pg_ndistinct_out,f,f,cstring,pg_ndistinct,,0,t,3356
+pg_ndistinct_recv,f,f,pg_ndistinct,internal,,0,t,3357
+pg_ndistinct_send,f,f,bytea,pg_ndistinct,,0,t,3358
+pg_nextoid,f,f,oid,"regclass,name,regclass",,0,t,275
+pg_node_tree_in,f,f,pg_node_tree,cstring,,0,t,195
+pg_node_tree_out,f,f,cstring,pg_node_tree,,0,t,196
+pg_node_tree_recv,f,f,pg_node_tree,internal,,0,t,197
+pg_node_tree_send,f,f,bytea,pg_node_tree,,0,t,198
+pg_notification_queue_usage,f,f,double precision,,,0,t,3296
+pg_notify,f,f,void,"text,text",,0,f,3036
+pg_numa_available,f,f,boolean,,,0,t,4099
+pg_opclass_is_visible,f,f,boolean,oid,,0,t,2083
+pg_operator_is_visible,f,f,boolean,oid,,0,t,2082
+pg_opfamily_is_visible,f,f,boolean,oid,,0,t,3829
+pg_options_to_table,f,t,record,text[],,0,t,2289
+pg_partition_ancestors,f,t,regclass,regclass,,0,t,3425
+pg_partition_root,f,f,regclass,regclass,,0,t,3424
+pg_partition_tree,f,t,record,regclass,,0,t,3423
+pg_postmaster_start_time,f,f,timestamp with time zone,,,0,t,2560
+pg_prepared_statement,f,t,record,,,0,t,2510
+pg_prepared_xact,f,t,record,,,0,t,1065
+pg_promote,f,f,boolean,"boolean,integer",,2,t,3436
+pg_read_binary_file,f,f,bytea,"text,bigint,bigint,boolean",,0,t,3295
+pg_read_binary_file,f,f,bytea,"text,bigint,bigint",,0,t,3827
+pg_read_binary_file,f,f,bytea,text,,0,t,3828
+pg_read_binary_file,f,f,bytea,"text,boolean",,0,t,6209
+pg_read_file,f,f,text,"text,bigint,bigint",,0,t,2624
+pg_read_file,f,f,text,"text,bigint,bigint,boolean",,0,t,3293
+pg_read_file,f,f,text,text,,0,t,3826
+pg_read_file,f,f,text,"text,boolean",,0,t,6208
+pg_relation_filenode,f,f,oid,regclass,,0,t,2999
+pg_relation_filepath,f,f,text,regclass,,0,t,3034
+pg_relation_is_publishable,f,f,boolean,regclass,,0,t,6121
+pg_relation_is_updatable,f,f,integer,"regclass,boolean",,0,t,3842
+pg_relation_size,f,f,bigint,regclass,,0,t,2325
+pg_relation_size,f,f,bigint,"regclass,text",,0,t,2332
+pg_reload_conf,f,f,boolean,,,0,t,2621
+pg_replication_origin_advance,f,f,void,"text,pg_lsn",,0,t,6012
+pg_replication_origin_create,f,f,oid,text,,0,t,6003
+pg_replication_origin_drop,f,f,void,text,,0,t,6004
+pg_replication_origin_oid,f,f,oid,text,,0,t,6005
+pg_replication_origin_progress,f,f,pg_lsn,"text,boolean",,0,t,6013
+pg_replication_origin_session_is_setup,f,f,boolean,,,0,t,6008
+pg_replication_origin_session_progress,f,f,pg_lsn,boolean,,0,t,6009
+pg_replication_origin_session_reset,f,f,void,,,0,t,6007
+pg_replication_origin_session_setup,f,f,void,text,,0,t,6006
+pg_replication_origin_xact_reset,f,f,void,,,0,t,6011
+pg_replication_origin_xact_setup,f,f,void,"pg_lsn,timestamp with time zone",,0,t,6010
+pg_replication_slot_advance,f,f,record,"name,pg_lsn",,0,t,3878
+pg_restore_attribute_stats,f,f,boolean,"""any""","""any""",0,f,6363
+pg_restore_relation_stats,f,f,boolean,"""any""","""any""",0,f,6362
+pg_rotate_logfile,f,f,boolean,,,0,t,2622
+pg_safe_snapshot_blocking_pids,f,f,integer[],integer,,0,t,3376
+pg_sequence_last_value,f,f,bigint,regclass,,0,t,4032
+pg_sequence_parameters,f,f,record,oid,,0,t,3078
+pg_settings_get_flags,f,f,text[],text,,0,t,6240
+pg_show_all_file_settings,f,t,record,,,0,t,3329
+pg_show_all_settings,f,t,record,,,0,t,2084
+pg_show_replication_origin_status,f,t,record,,,0,f,6014
+pg_size_bytes,f,f,bigint,text,,0,t,3334
+pg_size_pretty,f,f,text,bigint,,0,t,2288
+pg_size_pretty,f,f,text,numeric,,0,t,3166
+pg_sleep,f,f,void,double precision,,0,t,2626
+pg_sleep_for,f,f,void,interval,,0,t,3935
+pg_sleep_until,f,f,void,timestamp with time zone,,0,t,3936
+pg_snapshot_in,f,f,pg_snapshot,cstring,,0,t,5055
+pg_snapshot_out,f,f,cstring,pg_snapshot,,0,t,5056
+pg_snapshot_recv,f,f,pg_snapshot,internal,,0,t,5057
+pg_snapshot_send,f,f,bytea,pg_snapshot,,0,t,5058
+pg_snapshot_xip,f,t,xid8,pg_snapshot,,0,t,5064
+pg_snapshot_xmax,f,f,xid8,pg_snapshot,,0,t,5063
+pg_snapshot_xmin,f,f,xid8,pg_snapshot,,0,t,5062
+pg_split_walfile_name,f,f,record,text,,0,t,6213
+pg_stat_clear_snapshot,f,f,void,,,0,f,2230
+pg_stat_file,f,f,record,text,,0,t,2623
+pg_stat_file,f,f,record,"text,boolean",,0,t,3307
+pg_stat_force_next_flush,f,f,void,,,0,f,2137
+pg_stat_get_activity,f,t,record,integer,,0,f,2022
+pg_stat_get_analyze_count,f,f,bigint,oid,,0,t,3056
+pg_stat_get_archiver,f,f,record,,,0,f,3195
+pg_stat_get_autoanalyze_count,f,f,bigint,oid,,0,t,3057
+pg_stat_get_autovacuum_count,f,f,bigint,oid,,0,t,3055
+pg_stat_get_backend_activity,f,f,text,integer,,0,t,1940
+pg_stat_get_backend_activity_start,f,f,timestamp with time zone,integer,,0,t,2094
+pg_stat_get_backend_client_addr,f,f,inet,integer,,0,t,1392
+pg_stat_get_backend_client_port,f,f,integer,integer,,0,t,1393
+pg_stat_get_backend_dbid,f,f,oid,integer,,0,t,1938
+pg_stat_get_backend_idset,f,t,integer,,,0,t,1936
+pg_stat_get_backend_io,f,t,record,integer,,0,t,6386
+pg_stat_get_backend_pid,f,f,integer,integer,,0,t,1937
+pg_stat_get_backend_start,f,f,timestamp with time zone,integer,,0,t,1391
+pg_stat_get_backend_subxact,f,f,record,integer,,0,t,6107
+pg_stat_get_backend_userid,f,f,oid,integer,,0,t,1939
+pg_stat_get_backend_wait_event,f,f,text,integer,,0,t,2853
+pg_stat_get_backend_wait_event_type,f,f,text,integer,,0,t,2788
+pg_stat_get_backend_wal,f,f,record,integer,,0,t,6313
+pg_stat_get_backend_xact_start,f,f,timestamp with time zone,integer,,0,t,2857
+pg_stat_get_bgwriter_buf_written_clean,f,f,bigint,,,0,t,2772
+pg_stat_get_bgwriter_maxwritten_clean,f,f,bigint,,,0,t,2773
+pg_stat_get_bgwriter_stat_reset_time,f,f,timestamp with time zone,,,0,t,3075
+pg_stat_get_blocks_fetched,f,f,bigint,oid,,0,t,1934
+pg_stat_get_blocks_hit,f,f,bigint,oid,,0,t,1935
+pg_stat_get_buf_alloc,f,f,bigint,,,0,t,2859
+pg_stat_get_checkpointer_buffers_written,f,f,bigint,,,0,t,2771
+pg_stat_get_checkpointer_num_performed,f,f,bigint,,,0,t,6377
+pg_stat_get_checkpointer_num_requested,f,f,bigint,,,0,t,2770
+pg_stat_get_checkpointer_num_timed,f,f,bigint,,,0,t,2769
+pg_stat_get_checkpointer_restartpoints_performed,f,f,bigint,,,0,t,6329
+pg_stat_get_checkpointer_restartpoints_requested,f,f,bigint,,,0,t,6328
+pg_stat_get_checkpointer_restartpoints_timed,f,f,bigint,,,0,t,6327
+pg_stat_get_checkpointer_slru_written,f,f,bigint,,,0,t,6366
+pg_stat_get_checkpointer_stat_reset_time,f,f,timestamp with time zone,,,0,t,6314
+pg_stat_get_checkpointer_sync_time,f,f,double precision,,,0,t,3161
+pg_stat_get_checkpointer_write_time,f,f,double precision,,,0,t,3160
+pg_stat_get_db_active_time,f,f,double precision,oid,,0,t,6186
+pg_stat_get_db_blk_read_time,f,f,double precision,oid,,0,t,2844
+pg_stat_get_db_blk_write_time,f,f,double precision,oid,,0,t,2845
+pg_stat_get_db_blocks_fetched,f,f,bigint,oid,,0,t,1944
+pg_stat_get_db_blocks_hit,f,f,bigint,oid,,0,t,1945
+pg_stat_get_db_checksum_failures,f,f,bigint,oid,,0,t,3426
+pg_stat_get_db_checksum_last_failure,f,f,timestamp with time zone,oid,,0,t,3428
+pg_stat_get_db_conflict_all,f,f,bigint,oid,,0,t,3070
+pg_stat_get_db_conflict_bufferpin,f,f,bigint,oid,,0,t,3068
+pg_stat_get_db_conflict_lock,f,f,bigint,oid,,0,t,3066
+pg_stat_get_db_conflict_logicalslot,f,f,bigint,oid,,0,t,6309
+pg_stat_get_db_conflict_snapshot,f,f,bigint,oid,,0,t,3067
+pg_stat_get_db_conflict_startup_deadlock,f,f,bigint,oid,,0,t,3069
+pg_stat_get_db_conflict_tablespace,f,f,bigint,oid,,0,t,3065
+pg_stat_get_db_deadlocks,f,f,bigint,oid,,0,t,3152
+pg_stat_get_db_idle_in_transaction_time,f,f,double precision,oid,,0,t,6187
+pg_stat_get_db_numbackends,f,f,integer,oid,,0,t,1941
+pg_stat_get_db_parallel_workers_launched,f,f,bigint,oid,,0,t,6356
+pg_stat_get_db_parallel_workers_to_launch,f,f,bigint,oid,,0,t,6355
+pg_stat_get_db_session_time,f,f,double precision,oid,,0,t,6185
+pg_stat_get_db_sessions,f,f,bigint,oid,,0,t,6188
+pg_stat_get_db_sessions_abandoned,f,f,bigint,oid,,0,t,6189
+pg_stat_get_db_sessions_fatal,f,f,bigint,oid,,0,t,6190
+pg_stat_get_db_sessions_killed,f,f,bigint,oid,,0,t,6191
+pg_stat_get_db_stat_reset_time,f,f,timestamp with time zone,oid,,0,t,3074
+pg_stat_get_db_temp_bytes,f,f,bigint,oid,,0,t,3151
+pg_stat_get_db_temp_files,f,f,bigint,oid,,0,t,3150
+pg_stat_get_db_tuples_deleted,f,f,bigint,oid,,0,t,2762
+pg_stat_get_db_tuples_fetched,f,f,bigint,oid,,0,t,2759
+pg_stat_get_db_tuples_inserted,f,f,bigint,oid,,0,t,2760
+pg_stat_get_db_tuples_returned,f,f,bigint,oid,,0,t,2758
+pg_stat_get_db_tuples_updated,f,f,bigint,oid,,0,t,2761
+pg_stat_get_db_xact_commit,f,f,bigint,oid,,0,t,1942
+pg_stat_get_db_xact_rollback,f,f,bigint,oid,,0,t,1943
+pg_stat_get_dead_tuples,f,f,bigint,oid,,0,t,2879
+pg_stat_get_function_calls,f,f,bigint,oid,,0,t,2978
+pg_stat_get_function_self_time,f,f,double precision,oid,,0,t,2980
+pg_stat_get_function_total_time,f,f,double precision,oid,,0,t,2979
+pg_stat_get_ins_since_vacuum,f,f,bigint,oid,,0,t,5053
+pg_stat_get_io,f,t,record,,,0,t,6214
+pg_stat_get_last_analyze_time,f,f,timestamp with time zone,oid,,0,t,2783
+pg_stat_get_last_autoanalyze_time,f,f,timestamp with time zone,oid,,0,t,2784
+pg_stat_get_last_autovacuum_time,f,f,timestamp with time zone,oid,,0,t,2782
+pg_stat_get_last_vacuum_time,f,f,timestamp with time zone,oid,,0,t,2781
+pg_stat_get_lastscan,f,f,timestamp with time zone,oid,,0,t,6310
+pg_stat_get_live_tuples,f,f,bigint,oid,,0,t,2878
+pg_stat_get_mod_since_analyze,f,f,bigint,oid,,0,t,3177
+pg_stat_get_numscans,f,f,bigint,oid,,0,t,1928
+pg_stat_get_progress_info,f,t,record,text,,0,t,3318
+pg_stat_get_recovery_prefetch,f,t,record,,,0,t,6248
+pg_stat_get_replication_slot,f,f,record,text,,0,t,6169
+pg_stat_get_slru,f,t,record,,,0,f,2306
+pg_stat_get_snapshot_timestamp,f,f,timestamp with time zone,,,0,t,3788
+pg_stat_get_subscription,f,t,record,oid,,0,f,6118
+pg_stat_get_subscription_stats,f,f,record,oid,,0,t,6231
+pg_stat_get_total_analyze_time,f,f,double precision,oid,,0,t,6360
+pg_stat_get_total_autoanalyze_time,f,f,double precision,oid,,0,t,6361
+pg_stat_get_total_autovacuum_time,f,f,double precision,oid,,0,t,6359
+pg_stat_get_total_vacuum_time,f,f,double precision,oid,,0,t,6358
+pg_stat_get_tuples_deleted,f,f,bigint,oid,,0,t,1933
+pg_stat_get_tuples_fetched,f,f,bigint,oid,,0,t,1930
+pg_stat_get_tuples_hot_updated,f,f,bigint,oid,,0,t,1972
+pg_stat_get_tuples_inserted,f,f,bigint,oid,,0,t,1931
+pg_stat_get_tuples_newpage_updated,f,f,bigint,oid,,0,t,6217
+pg_stat_get_tuples_returned,f,f,bigint,oid,,0,t,1929
+pg_stat_get_tuples_updated,f,f,bigint,oid,,0,t,1932
+pg_stat_get_vacuum_count,f,f,bigint,oid,,0,t,3054
+pg_stat_get_wal,f,f,record,,,0,f,1136
+pg_stat_get_wal_receiver,f,f,record,,,0,f,3317
+pg_stat_get_wal_senders,f,t,record,,,0,f,3099
+pg_stat_get_xact_blocks_fetched,f,f,bigint,oid,,0,t,3044
+pg_stat_get_xact_blocks_hit,f,f,bigint,oid,,0,t,3045
+pg_stat_get_xact_function_calls,f,f,bigint,oid,,0,t,3046
+pg_stat_get_xact_function_self_time,f,f,double precision,oid,,0,t,3048
+pg_stat_get_xact_function_total_time,f,f,double precision,oid,,0,t,3047
+pg_stat_get_xact_numscans,f,f,bigint,oid,,0,t,3037
+pg_stat_get_xact_tuples_deleted,f,f,bigint,oid,,0,t,3042
+pg_stat_get_xact_tuples_fetched,f,f,bigint,oid,,0,t,3039
+pg_stat_get_xact_tuples_hot_updated,f,f,bigint,oid,,0,t,3043
+pg_stat_get_xact_tuples_inserted,f,f,bigint,oid,,0,t,3040
+pg_stat_get_xact_tuples_newpage_updated,f,f,bigint,oid,,0,t,6218
+pg_stat_get_xact_tuples_returned,f,f,bigint,oid,,0,t,3038
+pg_stat_get_xact_tuples_updated,f,f,bigint,oid,,0,t,3041
+pg_stat_have_stats,f,f,boolean,"text,oid,bigint",,0,t,6230
+pg_stat_reset,f,f,void,,,0,f,2274
+pg_stat_reset_backend_stats,f,f,void,integer,,0,t,6387
+pg_stat_reset_replication_slot,f,f,void,text,,0,f,6170
+pg_stat_reset_shared,f,f,void,text,,1,f,3775
+pg_stat_reset_single_function_counters,f,f,void,oid,,0,t,3777
+pg_stat_reset_single_table_counters,f,f,void,oid,,0,t,3776
+pg_stat_reset_slru,f,f,void,text,,1,f,2307
+pg_stat_reset_subscription_stats,f,f,void,oid,,0,f,6232
+pg_statistics_obj_is_visible,f,f,boolean,oid,,0,t,3403
+pg_stop_making_pinned_objects,f,f,void,,,0,t,6241
+pg_switch_wal,f,f,pg_lsn,,,0,t,2848
+pg_sync_replication_slots,f,f,void,,,0,t,6344
+pg_table_is_visible,f,f,boolean,oid,,0,t,2079
+pg_table_size,f,f,bigint,regclass,,0,t,2997
+pg_tablespace_databases,f,t,oid,oid,,0,t,2556
+pg_tablespace_location,f,f,text,oid,,0,t,3778
+pg_tablespace_size,f,f,bigint,oid,,0,t,2322
+pg_tablespace_size,f,f,bigint,name,,0,t,2323
+pg_terminate_backend,f,f,boolean,"integer,bigint",,1,t,2096
+pg_timezone_abbrevs_abbrevs,f,t,record,,,0,t,2599
+pg_timezone_abbrevs_zone,f,t,record,,,0,t,6401
+pg_timezone_names,f,t,record,,,0,t,2856
+pg_total_relation_size,f,f,bigint,regclass,,0,t,2286
+pg_trigger_depth,f,f,integer,,,0,t,3163
+pg_try_advisory_lock,f,f,boolean,bigint,,0,t,2882
+pg_try_advisory_lock,f,f,boolean,"integer,integer",,0,t,2888
+pg_try_advisory_lock_shared,f,f,boolean,bigint,,0,t,2883
+pg_try_advisory_lock_shared,f,f,boolean,"integer,integer",,0,t,2889
+pg_try_advisory_xact_lock,f,f,boolean,bigint,,0,t,3091
+pg_try_advisory_xact_lock,f,f,boolean,"integer,integer",,0,t,3095
+pg_try_advisory_xact_lock_shared,f,f,boolean,bigint,,0,t,3092
+pg_try_advisory_xact_lock_shared,f,f,boolean,"integer,integer",,0,t,3096
+pg_ts_config_is_visible,f,f,boolean,oid,,0,t,3758
+pg_ts_dict_is_visible,f,f,boolean,oid,,0,t,3757
+pg_ts_parser_is_visible,f,f,boolean,oid,,0,t,3756
+pg_ts_template_is_visible,f,f,boolean,oid,,0,t,3768
+pg_type_is_visible,f,f,boolean,oid,,0,t,2080
+pg_typeof,f,f,regtype,"""any""",,0,f,1619
+pg_visible_in_snapshot,f,f,boolean,"xid8,pg_snapshot",,0,t,5065
+pg_wal_lsn_diff,f,f,numeric,"pg_lsn,pg_lsn",,0,t,3165
+pg_wal_replay_pause,f,f,void,,,0,t,3071
+pg_wal_replay_resume,f,f,void,,,0,t,3072
+pg_wal_summary_contents,f,t,record,"bigint,pg_lsn,pg_lsn",,0,t,6322
+pg_walfile_name,f,f,text,pg_lsn,,0,t,2851
+pg_walfile_name_offset,f,f,record,pg_lsn,,0,t,2850
+pg_xact_commit_timestamp,f,f,timestamp with time zone,xid,,0,t,3581
+pg_xact_commit_timestamp_origin,f,f,record,xid,,0,t,6168
+pg_xact_status,f,f,text,xid8,,0,t,5066
+phraseto_tsquery,f,f,tsquery,text,,0,t,5001
+phraseto_tsquery,f,f,tsquery,"regconfig,text",,0,t,5006
+pi,f,f,double precision,,,0,t,1610
+plainto_tsquery,f,f,tsquery,"regconfig,text",,0,t,3747
+plainto_tsquery,f,f,tsquery,text,,0,t,3751
+plpgsql_call_handler,f,f,language_handler,,,0,f,13644
+plpgsql_inline_handler,f,f,void,internal,,0,t,13645
+plpgsql_validator,f,f,void,oid,,0,t,13646
+point,f,f,point,circle,,0,t,1416
+point,f,f,point,"double precision,double precision",,0,t,1440
+point,f,f,point,lseg,,0,t,1532
+point,f,f,point,box,,0,t,1534
+point,f,f,point,polygon,,0,t,1540
+point_above,f,f,boolean,"point,point",,0,t,131
+point_add,f,f,point,"point,point",,0,t,1441
+point_below,f,f,boolean,"point,point",,0,t,134
+point_distance,f,f,double precision,"point,point",,0,t,991
+point_div,f,f,point,"point,point",,0,t,1444
+point_eq,f,f,boolean,"point,point",,0,t,135
+point_horiz,f,f,boolean,"point,point",,0,t,990
+point_in,f,f,point,cstring,,0,t,117
+point_left,f,f,boolean,"point,point",,0,t,132
+point_mul,f,f,point,"point,point",,0,t,1443
+point_ne,f,f,boolean,"point,point",,0,t,988
+point_out,f,f,cstring,point,,0,t,118
+point_recv,f,f,point,internal,,0,t,2428
+point_right,f,f,boolean,"point,point",,0,t,133
+point_send,f,f,bytea,point,,0,t,2429
+point_sub,f,f,point,"point,point",,0,t,1442
+point_vert,f,f,boolean,"point,point",,0,t,989
+poly_above,f,f,boolean,"polygon,polygon",,0,t,2569
+poly_below,f,f,boolean,"polygon,polygon",,0,t,2566
+poly_center,f,f,point,polygon,,0,t,227
+poly_contain,f,f,boolean,"polygon,polygon",,0,t,340
+poly_contain_pt,f,f,boolean,"polygon,point",,0,t,1428
+poly_contained,f,f,boolean,"polygon,polygon",,0,t,345
+poly_distance,f,f,double precision,"polygon,polygon",,0,t,729
+poly_in,f,f,polygon,cstring,,0,t,347
+poly_left,f,f,boolean,"polygon,polygon",,0,t,341
+poly_npoints,f,f,integer,polygon,,0,t,1445
+poly_out,f,f,cstring,polygon,,0,t,348
+poly_overabove,f,f,boolean,"polygon,polygon",,0,t,2568
+poly_overbelow,f,f,boolean,"polygon,polygon",,0,t,2567
+poly_overlap,f,f,boolean,"polygon,polygon",,0,t,346
+poly_overleft,f,f,boolean,"polygon,polygon",,0,t,342
+poly_overright,f,f,boolean,"polygon,polygon",,0,t,343
+poly_recv,f,f,polygon,internal,,0,t,2486
+poly_right,f,f,boolean,"polygon,polygon",,0,t,344
+poly_same,f,f,boolean,"polygon,polygon",,0,t,339
+poly_send,f,f,bytea,polygon,,0,t,2487
+polygon,f,f,polygon,box,,0,t,1448
+polygon,f,f,polygon,path,,0,t,1449
+polygon,f,f,polygon,"integer,circle",,0,t,1475
+polygon,f,f,polygon,circle,,0,t,1544
+popen,f,f,path,path,,0,t,1434
+position,f,f,integer,"text,text",,0,t,849
+position,f,f,integer,"bit,bit",,0,t,1698
+position,f,f,integer,"bytea,bytea",,0,t,2014
+positionjoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,1301
+positionsel,f,f,double precision,"internal,oid,internal,integer",,0,t,1300
+postgresql_fdw_validator,f,f,boolean,"text[],oid",,0,t,2316
+pow,f,f,double precision,"double precision,double precision",,0,t,1346
+pow,f,f,numeric,"numeric,numeric",,0,t,1738
+power,f,f,double precision,"double precision,double precision",,0,t,1368
+power,f,f,numeric,"numeric,numeric",,0,t,2169
+prefixjoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,3438
+prefixsel,f,f,double precision,"internal,oid,internal,integer",,0,t,3437
+prsd_end,f,f,void,internal,,0,t,3719
+prsd_headline,f,f,internal,"internal,internal,tsquery",,0,t,3720
+prsd_lextype,f,f,internal,internal,,0,t,3721
+prsd_nexttoken,f,f,internal,"internal,internal,internal",,0,t,3718
+prsd_start,f,f,internal,"internal,integer",,0,t,3717
+pt_contained_circle,f,f,boolean,"point,circle",,0,t,1478
+pt_contained_poly,f,f,boolean,"point,polygon",,0,t,1429
+query_to_xml,f,f,xml,"text,boolean,boolean,text",,0,t,2924
+query_to_xml_and_xmlschema,f,f,xml,"text,boolean,boolean,text",,0,t,2930
+query_to_xmlschema,f,f,xml,"text,boolean,boolean,text",,0,t,2927
+querytree,f,f,text,tsquery,,0,t,3673
+quote_ident,f,f,text,text,,0,t,1282
+quote_literal,f,f,text,text,,0,t,1283
+quote_literal,f,f,text,anyelement,,0,t,1285
+quote_nullable,f,f,text,text,,0,f,1289
+quote_nullable,f,f,text,anyelement,,0,f,1290
+radians,f,f,double precision,double precision,,0,t,1609
+radius,f,f,double precision,circle,,0,t,1470
+random,f,f,double precision,,,0,t,1598
+random,f,f,integer,"integer,integer",,0,t,6339
+random,f,f,bigint,"bigint,bigint",,0,t,6340
+random,f,f,numeric,"numeric,numeric",,0,t,6341
+random_normal,f,f,double precision,"double precision,double precision",,2,t,6212
+range_adjacent,f,f,boolean,"anyrange,anyrange",,0,t,3862
+range_adjacent_multirange,f,f,boolean,"anyrange,anymultirange",,0,t,4255
+range_after,f,f,boolean,"anyrange,anyrange",,0,t,3864
+range_after_multirange,f,f,boolean,"anyrange,anymultirange",,0,t,4261
+range_agg,a,f,anymultirange,anyrange,,0,f,4301
+range_agg,a,f,anymultirange,anymultirange,,0,f,6227
+range_agg_finalfn,f,f,anymultirange,"internal,anyrange",,0,f,4300
+range_agg_transfn,f,f,internal,"internal,anyrange",,0,f,4299
+range_before,f,f,boolean,"anyrange,anyrange",,0,t,3863
+range_before_multirange,f,f,boolean,"anyrange,anymultirange",,0,t,4258
+range_cmp,f,f,integer,"anyrange,anyrange",,0,t,3870
+range_contained_by,f,f,boolean,"anyrange,anyrange",,0,t,3861
+range_contained_by_multirange,f,f,boolean,"anyrange,anymultirange",,0,t,4253
+range_contains,f,f,boolean,"anyrange,anyrange",,0,t,3859
+range_contains_elem,f,f,boolean,"anyrange,anyelement",,0,t,3858
+range_contains_elem_support,f,f,internal,internal,,0,t,6345
+range_contains_multirange,f,f,boolean,"anyrange,anymultirange",,0,t,4541
+range_eq,f,f,boolean,"anyrange,anyrange",,0,t,3855
+range_ge,f,f,boolean,"anyrange,anyrange",,0,t,3873
+range_gist_consistent,f,f,boolean,"internal,anyrange,smallint,oid,internal",,0,t,3875
+range_gist_penalty,f,f,internal,"internal,internal,internal",,0,t,3879
+range_gist_picksplit,f,f,internal,"internal,internal",,0,t,3880
+range_gist_same,f,f,internal,"anyrange,anyrange,internal",,0,t,3881
+range_gist_union,f,f,anyrange,"internal,internal",,0,t,3876
+range_gt,f,f,boolean,"anyrange,anyrange",,0,t,3874
+range_in,f,f,anyrange,"cstring,oid,integer",,0,t,3834
+range_intersect,f,f,anyrange,"anyrange,anyrange",,0,t,3868
+range_intersect_agg,a,f,anymultirange,anymultirange,,0,f,4389
+range_intersect_agg,a,f,anyrange,anyrange,,0,f,4450
+range_intersect_agg_transfn,f,f,anyrange,"anyrange,anyrange",,0,t,4401
+range_le,f,f,boolean,"anyrange,anyrange",,0,t,3872
+range_lt,f,f,boolean,"anyrange,anyrange",,0,t,3871
+range_merge,f,f,anyrange,"anyrange,anyrange",,0,t,4057
+range_merge,f,f,anyrange,anymultirange,,0,t,4228
+range_minus,f,f,anyrange,"anyrange,anyrange",,0,t,3869
+range_ne,f,f,boolean,"anyrange,anyrange",,0,t,3856
+range_out,f,f,cstring,anyrange,,0,t,3835
+range_overlaps,f,f,boolean,"anyrange,anyrange",,0,t,3857
+range_overlaps_multirange,f,f,boolean,"anyrange,anymultirange",,0,t,4246
+range_overleft,f,f,boolean,"anyrange,anyrange",,0,t,3865
+range_overleft_multirange,f,f,boolean,"anyrange,anymultirange",,0,t,4264
+range_overright,f,f,boolean,"anyrange,anyrange",,0,t,3866
+range_overright_multirange,f,f,boolean,"anyrange,anymultirange",,0,t,4267
+range_recv,f,f,anyrange,"internal,oid,integer",,0,t,3836
+range_send,f,f,bytea,anyrange,,0,t,3837
+range_sortsupport,f,f,void,internal,,0,t,6391
+range_typanalyze,f,f,boolean,internal,,0,t,3916
+range_union,f,f,anyrange,"anyrange,anyrange",,0,t,3867
+rangesel,f,f,double precision,"internal,oid,internal,integer",,0,t,3169
+rank,w,f,bigint,,,0,f,3101
+rank,a,f,bigint,"""any""","""any""",0,f,3986
+rank_final,f,f,bigint,"internal,""any""","""any""",0,f,3987
+raw_array_subscript_handler,f,f,internal,internal,,0,t,6180
+record_eq,f,f,boolean,"record,record",,0,t,2981
+record_ge,f,f,boolean,"record,record",,0,t,2986
+record_gt,f,f,boolean,"record,record",,0,t,2984
+record_image_eq,f,f,boolean,"record,record",,0,t,3181
+record_image_ge,f,f,boolean,"record,record",,0,t,3186
+record_image_gt,f,f,boolean,"record,record",,0,t,3184
+record_image_le,f,f,boolean,"record,record",,0,t,3185
+record_image_lt,f,f,boolean,"record,record",,0,t,3183
+record_image_ne,f,f,boolean,"record,record",,0,t,3182
+record_in,f,f,record,"cstring,oid,integer",,0,t,2290
+record_larger,f,f,record,"record,record",,0,t,6375
+record_le,f,f,boolean,"record,record",,0,t,2985
+record_lt,f,f,boolean,"record,record",,0,t,2983
+record_ne,f,f,boolean,"record,record",,0,t,2982
+record_out,f,f,cstring,record,,0,t,2291
+record_recv,f,f,record,"internal,oid,integer",,0,t,2402
+record_send,f,f,bytea,record,,0,t,2403
+record_smaller,f,f,record,"record,record",,0,t,6376
+regclass,f,f,regclass,text,,0,t,1079
+regclassin,f,f,regclass,cstring,,0,t,2218
+regclassout,f,f,cstring,regclass,,0,t,2219
+regclassrecv,f,f,regclass,internal,,0,t,2452
+regclasssend,f,f,bytea,regclass,,0,t,2453
+regcollationin,f,f,regcollation,cstring,,0,t,4193
+regcollationout,f,f,cstring,regcollation,,0,t,4194
+regcollationrecv,f,f,regcollation,internal,,0,t,4196
+regcollationsend,f,f,bytea,regcollation,,0,t,4197
+regconfigin,f,f,regconfig,cstring,,0,t,3736
+regconfigout,f,f,cstring,regconfig,,0,t,3737
+regconfigrecv,f,f,regconfig,internal,,0,t,3738
+regconfigsend,f,f,bytea,regconfig,,0,t,3739
+regdictionaryin,f,f,regdictionary,cstring,,0,t,3771
+regdictionaryout,f,f,cstring,regdictionary,,0,t,3772
+regdictionaryrecv,f,f,regdictionary,internal,,0,t,3773
+regdictionarysend,f,f,bytea,regdictionary,,0,t,3774
+regexeqjoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,1824
+regexeqsel,f,f,double precision,"internal,oid,internal,integer",,0,t,1818
+regexnejoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,1827
+regexnesel,f,f,double precision,"internal,oid,internal,integer",,0,t,1821
+regexp_count,f,f,integer,"text,text",,0,t,6254
+regexp_count,f,f,integer,"text,text,integer",,0,t,6255
+regexp_count,f,f,integer,"text,text,integer,text",,0,t,6256
+regexp_instr,f,f,integer,"text,text",,0,t,6257
+regexp_instr,f,f,integer,"text,text,integer",,0,t,6258
+regexp_instr,f,f,integer,"text,text,integer,integer",,0,t,6259
+regexp_instr,f,f,integer,"text,text,integer,integer,integer",,0,t,6260
+regexp_instr,f,f,integer,"text,text,integer,integer,integer,text",,0,t,6261
+regexp_instr,f,f,integer,"text,text,integer,integer,integer,text,integer",,0,t,6262
+regexp_like,f,f,boolean,"text,text",,0,t,6263
+regexp_like,f,f,boolean,"text,text,text",,0,t,6264
+regexp_match,f,f,text[],"text,text",,0,t,3396
+regexp_match,f,f,text[],"text,text,text",,0,t,3397
+regexp_matches,f,t,text[],"text,text",,0,t,2763
+regexp_matches,f,t,text[],"text,text,text",,0,t,2764
+regexp_replace,f,f,text,"text,text,text",,0,t,2284
+regexp_replace,f,f,text,"text,text,text,text",,0,t,2285
+regexp_replace,f,f,text,"text,text,text,integer,integer,text",,0,t,6251
+regexp_replace,f,f,text,"text,text,text,integer,integer",,0,t,6252
+regexp_replace,f,f,text,"text,text,text,integer",,0,t,6253
+regexp_split_to_array,f,f,text[],"text,text",,0,t,2767
+regexp_split_to_array,f,f,text[],"text,text,text",,0,t,2768
+regexp_split_to_table,f,t,text,"text,text",,0,t,2765
+regexp_split_to_table,f,t,text,"text,text,text",,0,t,2766
+regexp_substr,f,f,text,"text,text",,0,t,6265
+regexp_substr,f,f,text,"text,text,integer",,0,t,6266
+regexp_substr,f,f,text,"text,text,integer,integer",,0,t,6267
+regexp_substr,f,f,text,"text,text,integer,integer,text",,0,t,6268
+regexp_substr,f,f,text,"text,text,integer,integer,text,integer",,0,t,6269
+regnamespacein,f,f,regnamespace,cstring,,0,t,4084
+regnamespaceout,f,f,cstring,regnamespace,,0,t,4085
+regnamespacerecv,f,f,regnamespace,internal,,0,t,4087
+regnamespacesend,f,f,bytea,regnamespace,,0,t,4088
+regoperatorin,f,f,regoperator,cstring,,0,t,2216
+regoperatorout,f,f,cstring,regoperator,,0,t,2217
+regoperatorrecv,f,f,regoperator,internal,,0,t,2450
+regoperatorsend,f,f,bytea,regoperator,,0,t,2451
+regoperin,f,f,regoper,cstring,,0,t,2214
+regoperout,f,f,cstring,regoper,,0,t,2215
+regoperrecv,f,f,regoper,internal,,0,t,2448
+regopersend,f,f,bytea,regoper,,0,t,2449
+regprocedurein,f,f,regprocedure,cstring,,0,t,2212
+regprocedureout,f,f,cstring,regprocedure,,0,t,2213
+regprocedurerecv,f,f,regprocedure,internal,,0,t,2446
+regproceduresend,f,f,bytea,regprocedure,,0,t,2447
+regprocin,f,f,regproc,cstring,,0,t,44
+regprocout,f,f,cstring,regproc,,0,t,45
+regprocrecv,f,f,regproc,internal,,0,t,2444
+regprocsend,f,f,bytea,regproc,,0,t,2445
+regr_avgx,a,f,double precision,"double precision,double precision",,0,f,2822
+regr_avgy,a,f,double precision,"double precision,double precision",,0,f,2823
+regr_count,a,f,bigint,"double precision,double precision",,0,f,2818
+regr_intercept,a,f,double precision,"double precision,double precision",,0,f,2826
+regr_r2,a,f,double precision,"double precision,double precision",,0,f,2824
+regr_slope,a,f,double precision,"double precision,double precision",,0,f,2825
+regr_sxx,a,f,double precision,"double precision,double precision",,0,f,2819
+regr_sxy,a,f,double precision,"double precision,double precision",,0,f,2821
+regr_syy,a,f,double precision,"double precision,double precision",,0,f,2820
+regrolein,f,f,regrole,cstring,,0,t,4098
+regroleout,f,f,cstring,regrole,,0,t,4092
+regrolerecv,f,f,regrole,internal,,0,t,4094
+regrolesend,f,f,bytea,regrole,,0,t,4095
+regtypein,f,f,regtype,cstring,,0,t,2220
+regtypeout,f,f,cstring,regtype,,0,t,2221
+regtyperecv,f,f,regtype,internal,,0,t,2454
+regtypesend,f,f,bytea,regtype,,0,t,2455
+repeat,f,f,text,"text,integer",,0,t,1622
+replace,f,f,text,"text,text,text",,0,t,2087
+reverse,f,f,text,text,,0,t,3062
+reverse,f,f,bytea,bytea,,0,t,6382
+right,f,f,text,"text,integer",,0,t,3061
+round,f,f,double precision,double precision,,0,t,1342
+round,f,f,numeric,"numeric,integer",,0,t,1707
+round,f,f,numeric,numeric,,0,t,1708
+row_number,w,f,bigint,,,0,f,3100
+row_security_active,f,f,boolean,oid,,0,t,3298
+row_security_active,f,f,boolean,text,,0,t,3299
+row_to_json,f,f,json,record,,0,t,3155
+row_to_json,f,f,json,"record,boolean",,0,t,3156
+rpad,f,f,text,"text,integer,text",,0,t,874
+rpad,f,f,text,"text,integer",,0,t,880
+rtrim,f,f,text,"text,text",,0,t,876
+rtrim,f,f,text,text,,0,t,882
+rtrim,f,f,bytea,"bytea,bytea",,0,t,6196
+satisfies_hash_partition,f,f,boolean,"oid,integer,integer,""any""","""any""",0,f,5028
+scalargejoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,398
+scalargesel,f,f,double precision,"internal,oid,internal,integer",,0,t,337
+scalargtjoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,108
+scalargtsel,f,f,double precision,"internal,oid,internal,integer",,0,t,104
+scalarlejoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,386
+scalarlesel,f,f,double precision,"internal,oid,internal,integer",,0,t,336
+scalarltjoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,107
+scalarltsel,f,f,double precision,"internal,oid,internal,integer",,0,t,103
+scale,f,f,integer,numeric,,0,t,3281
+schema_to_xml,f,f,xml,"name,boolean,boolean,text",,0,t,2933
+schema_to_xml_and_xmlschema,f,f,xml,"name,boolean,boolean,text",,0,t,2935
+schema_to_xmlschema,f,f,xml,"name,boolean,boolean,text",,0,t,2934
+session_user,f,f,name,,,0,t,746
+set_bit,f,f,bytea,"bytea,bigint,integer",,0,t,724
+set_bit,f,f,bit,"bit,integer,integer",,0,t,3033
+set_byte,f,f,bytea,"bytea,integer,integer",,0,t,722
+set_config,f,f,text,"text,text,boolean",,0,f,2078
+set_masklen,f,f,inet,"inet,integer",,0,t,605
+set_masklen,f,f,cidr,"cidr,integer",,0,t,635
+setseed,f,f,void,double precision,,0,t,1599
+setval,f,f,bigint,"regclass,bigint",,0,t,1576
+setval,f,f,bigint,"regclass,bigint,boolean",,0,t,1765
+setweight,f,f,tsvector,"tsvector,""char"",text[]",,0,t,3320
+setweight,f,f,tsvector,"tsvector,""char""",,0,t,3624
+sha224,f,f,bytea,bytea,,0,t,3419
+sha256,f,f,bytea,bytea,,0,t,3420
+sha384,f,f,bytea,bytea,,0,t,3421
+sha512,f,f,bytea,bytea,,0,t,3422
+shell_in,f,f,void,cstring,,0,f,2398
+shell_out,f,f,cstring,void,,0,t,2399
+shift_jis_2004_to_euc_jis_2004,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4387
+shift_jis_2004_to_utf8,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4384
+shobj_description,f,f,text,"oid,name",,0,t,1993
+sign,f,f,numeric,numeric,,0,t,1706
+sign,f,f,double precision,double precision,,0,t,2310
+similar_escape,f,f,text,"text,text",,0,f,1623
+similar_to_escape,f,f,text,"text,text",,0,t,1986
+similar_to_escape,f,f,text,text,,0,t,1987
+sin,f,f,double precision,double precision,,0,t,1604
+sind,f,f,double precision,double precision,,0,t,2735
+sinh,f,f,double precision,double precision,,0,t,2462
+sjis_to_euc_jp,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4325
+sjis_to_mic,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4327
+sjis_to_utf8,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4378
+slope,f,f,double precision,"point,point",,0,t,992
+spg_bbox_quad_config,f,f,void,"internal,internal",,0,t,5010
+spg_box_quad_choose,f,f,void,"internal,internal",,0,t,5013
+spg_box_quad_config,f,f,void,"internal,internal",,0,t,5012
+spg_box_quad_inner_consistent,f,f,void,"internal,internal",,0,t,5015
+spg_box_quad_leaf_consistent,f,f,boolean,"internal,internal",,0,t,5016
+spg_box_quad_picksplit,f,f,void,"internal,internal",,0,t,5014
+spg_kd_choose,f,f,void,"internal,internal",,0,t,4024
+spg_kd_config,f,f,void,"internal,internal",,0,t,4023
+spg_kd_inner_consistent,f,f,void,"internal,internal",,0,t,4026
+spg_kd_picksplit,f,f,void,"internal,internal",,0,t,4025
+spg_poly_quad_compress,f,f,box,polygon,,0,t,5011
+spg_quad_choose,f,f,void,"internal,internal",,0,t,4019
+spg_quad_config,f,f,void,"internal,internal",,0,t,4018
+spg_quad_inner_consistent,f,f,void,"internal,internal",,0,t,4021
+spg_quad_leaf_consistent,f,f,boolean,"internal,internal",,0,t,4022
+spg_quad_picksplit,f,f,void,"internal,internal",,0,t,4020
+spg_range_quad_choose,f,f,void,"internal,internal",,0,t,3470
+spg_range_quad_config,f,f,void,"internal,internal",,0,t,3469
+spg_range_quad_inner_consistent,f,f,void,"internal,internal",,0,t,3472
+spg_range_quad_leaf_consistent,f,f,boolean,"internal,internal",,0,t,3473
+spg_range_quad_picksplit,f,f,void,"internal,internal",,0,t,3471
+spg_text_choose,f,f,void,"internal,internal",,0,t,4028
+spg_text_config,f,f,void,"internal,internal",,0,t,4027
+spg_text_inner_consistent,f,f,void,"internal,internal",,0,t,4030
+spg_text_leaf_consistent,f,f,boolean,"internal,internal",,0,t,4031
+spg_text_picksplit,f,f,void,"internal,internal",,0,t,4029
+spghandler,f,f,index_am_handler,internal,,0,t,334
+split_part,f,f,text,"text,text,integer",,0,t,2088
+sqrt,f,f,double precision,double precision,,0,t,1344
+sqrt,f,f,numeric,numeric,,0,t,1730
+starts_with,f,f,boolean,"text,text",,0,t,3696
+statement_timestamp,f,f,timestamp with time zone,,,0,t,2648
+stddev,a,f,numeric,bigint,,0,f,2154
+stddev,a,f,numeric,integer,,0,f,2155
+stddev,a,f,numeric,smallint,,0,f,2156
+stddev,a,f,double precision,real,,0,f,2157
+stddev,a,f,double precision,double precision,,0,f,2158
+stddev,a,f,numeric,numeric,,0,f,2159
+stddev_pop,a,f,numeric,bigint,,0,f,2724
+stddev_pop,a,f,numeric,integer,,0,f,2725
+stddev_pop,a,f,numeric,smallint,,0,f,2726
+stddev_pop,a,f,double precision,real,,0,f,2727
+stddev_pop,a,f,double precision,double precision,,0,f,2728
+stddev_pop,a,f,numeric,numeric,,0,f,2729
+stddev_samp,a,f,numeric,bigint,,0,f,2712
+stddev_samp,a,f,numeric,integer,,0,f,2713
+stddev_samp,a,f,numeric,smallint,,0,f,2714
+stddev_samp,a,f,double precision,real,,0,f,2715
+stddev_samp,a,f,double precision,double precision,,0,f,2716
+stddev_samp,a,f,numeric,numeric,,0,f,2717
+string_agg,a,f,text,"text,text",,0,f,3538
+string_agg,a,f,bytea,"bytea,bytea",,0,f,3545
+string_agg_combine,f,f,internal,"internal,internal",,0,f,6299
+string_agg_deserialize,f,f,internal,"bytea,internal",,0,t,6301
+string_agg_finalfn,f,f,text,internal,,0,f,3536
+string_agg_serialize,f,f,bytea,internal,,0,t,6300
+string_agg_transfn,f,f,internal,"internal,text,text",,0,f,3535
+string_to_array,f,f,text[],"text,text,text",,0,f,376
+string_to_array,f,f,text[],"text,text",,0,f,394
+string_to_table,f,t,text,"text,text",,0,f,6160
+string_to_table,f,t,text,"text,text,text",,0,f,6161
+strip,f,f,tsvector,tsvector,,0,t,3623
+strpos,f,f,integer,"text,text",,0,t,868
+substr,f,f,text,"text,integer,integer",,0,t,877
+substr,f,f,text,"text,integer",,0,t,883
+substr,f,f,bytea,"bytea,integer,integer",,0,t,2085
+substr,f,f,bytea,"bytea,integer",,0,t,2086
+substring,f,f,text,"text,integer,integer",,0,t,936
+substring,f,f,text,"text,integer",,0,t,937
+substring,f,f,bit,"bit,integer,integer",,0,t,1680
+substring,f,f,bit,"bit,integer",,0,t,1699
+substring,f,f,bytea,"bytea,integer,integer",,0,t,2012
+substring,f,f,bytea,"bytea,integer",,0,t,2013
+substring,f,f,text,"text,text",,0,t,2073
+substring,f,f,text,"text,text,text",,0,t,2074
+sum,a,f,numeric,bigint,,0,f,2107
+sum,a,f,bigint,integer,,0,f,2108
+sum,a,f,bigint,smallint,,0,f,2109
+sum,a,f,real,real,,0,f,2110
+sum,a,f,double precision,double precision,,0,f,2111
+sum,a,f,money,money,,0,f,2112
+sum,a,f,interval,interval,,0,f,2113
+sum,a,f,numeric,numeric,,0,f,2114
+suppress_redundant_updates_trigger,f,f,trigger,,,0,t,1291
+system,f,f,tsm_handler,internal,,0,t,3314
+system_user,f,f,text,,,0,t,6311
+table_am_handler_in,f,f,table_am_handler,cstring,,0,f,267
+table_am_handler_out,f,f,cstring,table_am_handler,,0,t,268
+table_to_xml,f,f,xml,"regclass,boolean,boolean,text",,0,t,2923
+table_to_xml_and_xmlschema,f,f,xml,"regclass,boolean,boolean,text",,0,t,2929
+table_to_xmlschema,f,f,xml,"regclass,boolean,boolean,text",,0,t,2926
+tan,f,f,double precision,double precision,,0,t,1606
+tand,f,f,double precision,double precision,,0,t,2737
+tanh,f,f,double precision,double precision,,0,t,2464
+text,f,f,text,character,,0,t,401
+text,f,f,text,name,,0,t,406
+text,f,f,text,inet,,0,t,730
+text,f,f,text,"""char""",,0,t,946
+text,f,f,text,xml,,0,t,2922
+text,f,f,text,boolean,,0,t,2971
+text_ge,f,f,boolean,"text,text",,0,t,743
+text_gt,f,f,boolean,"text,text",,0,t,742
+text_larger,f,f,text,"text,text",,0,t,458
+text_le,f,f,boolean,"text,text",,0,t,741
+text_lt,f,f,boolean,"text,text",,0,t,740
+text_pattern_ge,f,f,boolean,"text,text",,0,t,2163
+text_pattern_gt,f,f,boolean,"text,text",,0,t,2164
+text_pattern_le,f,f,boolean,"text,text",,0,t,2161
+text_pattern_lt,f,f,boolean,"text,text",,0,t,2160
+text_smaller,f,f,text,"text,text",,0,t,459
+text_starts_with_support,f,f,internal,internal,,0,t,6242
+textanycat,f,f,text,"text,anynonarray",,0,t,2003
+textcat,f,f,text,"text,text",,0,t,1258
+texteq,f,f,boolean,"text,text",,0,t,67
+texteqname,f,f,boolean,"text,name",,0,t,247
+textgename,f,f,boolean,"text,name",,0,t,250
+textgtname,f,f,boolean,"text,name",,0,t,251
+texticlike,f,f,boolean,"text,text",,0,t,1633
+texticlike_support,f,f,internal,internal,,0,t,1025
+texticnlike,f,f,boolean,"text,text",,0,t,1634
+texticregexeq,f,f,boolean,"text,text",,0,t,1238
+texticregexeq_support,f,f,internal,internal,,0,t,1024
+texticregexne,f,f,boolean,"text,text",,0,t,1239
+textin,f,f,text,cstring,,0,t,46
+textlen,f,f,integer,text,,0,t,1257
+textlename,f,f,boolean,"text,name",,0,t,249
+textlike,f,f,boolean,"text,text",,0,t,850
+textlike_support,f,f,internal,internal,,0,t,1023
+textltname,f,f,boolean,"text,name",,0,t,248
+textne,f,f,boolean,"text,text",,0,t,157
+textnename,f,f,boolean,"text,name",,0,t,252
+textnlike,f,f,boolean,"text,text",,0,t,851
+textout,f,f,cstring,text,,0,t,47
+textrecv,f,f,text,internal,,0,t,2414
+textregexeq,f,f,boolean,"text,text",,0,t,1254
+textregexeq_support,f,f,internal,internal,,0,t,1364
+textregexne,f,f,boolean,"text,text",,0,t,1256
+textsend,f,f,bytea,text,,0,t,2415
+thesaurus_init,f,f,internal,internal,,0,t,3740
+thesaurus_lexize,f,f,internal,"internal,internal,internal,internal",,0,t,3741
+tideq,f,f,boolean,"tid,tid",,0,t,1292
+tidge,f,f,boolean,"tid,tid",,0,t,2792
+tidgt,f,f,boolean,"tid,tid",,0,t,2790
+tidin,f,f,tid,cstring,,0,t,48
+tidlarger,f,f,tid,"tid,tid",,0,t,2795
+tidle,f,f,boolean,"tid,tid",,0,t,2793
+tidlt,f,f,boolean,"tid,tid",,0,t,2791
+tidne,f,f,boolean,"tid,tid",,0,t,1265
+tidout,f,f,cstring,tid,,0,t,49
+tidrecv,f,f,tid,internal,,0,t,2438
+tidsend,f,f,bytea,tid,,0,t,2439
+tidsmaller,f,f,tid,"tid,tid",,0,t,2796
+time,f,f,time without time zone,timestamp without time zone,,0,t,1316
+time,f,f,time without time zone,interval,,0,t,1419
+time,f,f,time without time zone,"time without time zone,integer",,0,t,1968
+time,f,f,time without time zone,timestamp with time zone,,0,t,2019
+time,f,f,time without time zone,time with time zone,,0,t,2046
+time_cmp,f,f,integer,"time without time zone,time without time zone",,0,t,1107
+time_eq,f,f,boolean,"time without time zone,time without time zone",,0,t,1145
+time_ge,f,f,boolean,"time without time zone,time without time zone",,0,t,1105
+time_gt,f,f,boolean,"time without time zone,time without time zone",,0,t,1104
+time_hash,f,f,integer,time without time zone,,0,t,1688
+time_hash_extended,f,f,bigint,"time without time zone,bigint",,0,t,3409
+time_in,f,f,time without time zone,"cstring,oid,integer",,0,t,1143
+time_larger,f,f,time without time zone,"time without time zone,time without time zone",,0,t,1377
+time_le,f,f,boolean,"time without time zone,time without time zone",,0,t,1103
+time_lt,f,f,boolean,"time without time zone,time without time zone",,0,t,1102
+time_mi_interval,f,f,time without time zone,"time without time zone,interval",,0,t,1748
+time_mi_time,f,f,interval,"time without time zone,time without time zone",,0,t,1690
+time_ne,f,f,boolean,"time without time zone,time without time zone",,0,t,1106
+time_out,f,f,cstring,time without time zone,,0,t,1144
+time_pl_interval,f,f,time without time zone,"time without time zone,interval",,0,t,1747
+time_recv,f,f,time without time zone,"internal,oid,integer",,0,t,2470
+time_send,f,f,bytea,time without time zone,,0,t,2471
+time_smaller,f,f,time without time zone,"time without time zone,time without time zone",,0,t,1378
+time_support,f,f,internal,internal,,0,t,3944
+timedate_pl,f,f,timestamp without time zone,"time without time zone,date",,0,t,1296
+timeofday,f,f,text,,,0,t,274
+timestamp,f,f,timestamp without time zone,"timestamp without time zone,integer",,0,t,1961
+timestamp,f,f,timestamp without time zone,date,,0,t,2024
+timestamp,f,f,timestamp without time zone,"date,time without time zone",,0,t,2025
+timestamp,f,f,timestamp without time zone,timestamp with time zone,,0,t,2027
+timestamp_cmp,f,f,integer,"timestamp without time zone,timestamp without time zone",,0,t,2045
+timestamp_cmp_date,f,f,integer,"timestamp without time zone,date",,0,t,2370
+timestamp_cmp_timestamptz,f,f,integer,"timestamp without time zone,timestamp with time zone",,0,t,2526
+timestamp_eq,f,f,boolean,"timestamp without time zone,timestamp without time zone",,0,t,2052
+timestamp_eq_date,f,f,boolean,"timestamp without time zone,date",,0,t,2366
+timestamp_eq_timestamptz,f,f,boolean,"timestamp without time zone,timestamp with time zone",,0,t,2522
+timestamp_ge,f,f,boolean,"timestamp without time zone,timestamp without time zone",,0,t,2056
+timestamp_ge_date,f,f,boolean,"timestamp without time zone,date",,0,t,2368
+timestamp_ge_timestamptz,f,f,boolean,"timestamp without time zone,timestamp with time zone",,0,t,2524
+timestamp_gt,f,f,boolean,"timestamp without time zone,timestamp without time zone",,0,t,2057
+timestamp_gt_date,f,f,boolean,"timestamp without time zone,date",,0,t,2367
+timestamp_gt_timestamptz,f,f,boolean,"timestamp without time zone,timestamp with time zone",,0,t,2523
+timestamp_hash,f,f,integer,timestamp without time zone,,0,t,2039
+timestamp_hash_extended,f,f,bigint,"timestamp without time zone,bigint",,0,t,3411
+timestamp_in,f,f,timestamp without time zone,"cstring,oid,integer",,0,t,1312
+timestamp_larger,f,f,timestamp without time zone,"timestamp without time zone,timestamp without time zone",,0,t,2036
+timestamp_le,f,f,boolean,"timestamp without time zone,timestamp without time zone",,0,t,2055
+timestamp_le_date,f,f,boolean,"timestamp without time zone,date",,0,t,2365
+timestamp_le_timestamptz,f,f,boolean,"timestamp without time zone,timestamp with time zone",,0,t,2521
+timestamp_lt,f,f,boolean,"timestamp without time zone,timestamp without time zone",,0,t,2054
+timestamp_lt_date,f,f,boolean,"timestamp without time zone,date",,0,t,2364
+timestamp_lt_timestamptz,f,f,boolean,"timestamp without time zone,timestamp with time zone",,0,t,2520
+timestamp_mi,f,f,interval,"timestamp without time zone,timestamp without time zone",,0,t,2031
+timestamp_mi_interval,f,f,timestamp without time zone,"timestamp without time zone,interval",,0,t,2033
+timestamp_ne,f,f,boolean,"timestamp without time zone,timestamp without time zone",,0,t,2053
+timestamp_ne_date,f,f,boolean,"timestamp without time zone,date",,0,t,2369
+timestamp_ne_timestamptz,f,f,boolean,"timestamp without time zone,timestamp with time zone",,0,t,2525
+timestamp_out,f,f,cstring,timestamp without time zone,,0,t,1313
+timestamp_pl_interval,f,f,timestamp without time zone,"timestamp without time zone,interval",,0,t,2032
+timestamp_recv,f,f,timestamp without time zone,"internal,oid,integer",,0,t,2474
+timestamp_send,f,f,bytea,timestamp without time zone,,0,t,2475
+timestamp_skipsupport,f,f,void,internal,,0,t,6409
+timestamp_smaller,f,f,timestamp without time zone,"timestamp without time zone,timestamp without time zone",,0,t,2035
+timestamp_sortsupport,f,f,void,internal,,0,t,3137
+timestamp_support,f,f,internal,internal,,0,t,3917
+timestamptypmodin,f,f,integer,cstring[],,0,t,2905
+timestamptypmodout,f,f,cstring,integer,,0,t,2906
+timestamptz,f,f,timestamp with time zone,date,,0,t,1174
+timestamptz,f,f,timestamp with time zone,"date,time without time zone",,0,t,1176
+timestamptz,f,f,timestamp with time zone,"date,time with time zone",,0,t,1359
+timestamptz,f,f,timestamp with time zone,"timestamp with time zone,integer",,0,t,1967
+timestamptz,f,f,timestamp with time zone,timestamp without time zone,,0,t,2028
+timestamptz_cmp,f,f,integer,"timestamp with time zone,timestamp with time zone",,0,t,1314
+timestamptz_cmp_date,f,f,integer,"timestamp with time zone,date",,0,t,2383
+timestamptz_cmp_timestamp,f,f,integer,"timestamp with time zone,timestamp without time zone",,0,t,2533
+timestamptz_eq,f,f,boolean,"timestamp with time zone,timestamp with time zone",,0,t,1152
+timestamptz_eq_date,f,f,boolean,"timestamp with time zone,date",,0,t,2379
+timestamptz_eq_timestamp,f,f,boolean,"timestamp with time zone,timestamp without time zone",,0,t,2529
+timestamptz_ge,f,f,boolean,"timestamp with time zone,timestamp with time zone",,0,t,1156
+timestamptz_ge_date,f,f,boolean,"timestamp with time zone,date",,0,t,2381
+timestamptz_ge_timestamp,f,f,boolean,"timestamp with time zone,timestamp without time zone",,0,t,2531
+timestamptz_gt,f,f,boolean,"timestamp with time zone,timestamp with time zone",,0,t,1157
+timestamptz_gt_date,f,f,boolean,"timestamp with time zone,date",,0,t,2380
+timestamptz_gt_timestamp,f,f,boolean,"timestamp with time zone,timestamp without time zone",,0,t,2530
+timestamptz_hash,f,f,integer,timestamp with time zone,,0,t,6425
+timestamptz_hash_extended,f,f,bigint,"timestamp with time zone,bigint",,0,t,6426
+timestamptz_in,f,f,timestamp with time zone,"cstring,oid,integer",,0,t,1150
+timestamptz_larger,f,f,timestamp with time zone,"timestamp with time zone,timestamp with time zone",,0,t,1196
+timestamptz_le,f,f,boolean,"timestamp with time zone,timestamp with time zone",,0,t,1155
+timestamptz_le_date,f,f,boolean,"timestamp with time zone,date",,0,t,2378
+timestamptz_le_timestamp,f,f,boolean,"timestamp with time zone,timestamp without time zone",,0,t,2528
+timestamptz_lt,f,f,boolean,"timestamp with time zone,timestamp with time zone",,0,t,1154
+timestamptz_lt_date,f,f,boolean,"timestamp with time zone,date",,0,t,2377
+timestamptz_lt_timestamp,f,f,boolean,"timestamp with time zone,timestamp without time zone",,0,t,2527
+timestamptz_mi,f,f,interval,"timestamp with time zone,timestamp with time zone",,0,t,1188
+timestamptz_mi_interval,f,f,timestamp with time zone,"timestamp with time zone,interval",,0,t,1190
+timestamptz_ne,f,f,boolean,"timestamp with time zone,timestamp with time zone",,0,t,1153
+timestamptz_ne_date,f,f,boolean,"timestamp with time zone,date",,0,t,2382
+timestamptz_ne_timestamp,f,f,boolean,"timestamp with time zone,timestamp without time zone",,0,t,2532
+timestamptz_out,f,f,cstring,timestamp with time zone,,0,t,1151
+timestamptz_pl_interval,f,f,timestamp with time zone,"timestamp with time zone,interval",,0,t,1189
+timestamptz_recv,f,f,timestamp with time zone,"internal,oid,integer",,0,t,2476
+timestamptz_send,f,f,bytea,timestamp with time zone,,0,t,2477
+timestamptz_smaller,f,f,timestamp with time zone,"timestamp with time zone,timestamp with time zone",,0,t,1195
+timestamptztypmodin,f,f,integer,cstring[],,0,t,2907
+timestamptztypmodout,f,f,cstring,integer,,0,t,2908
+timetypmodin,f,f,integer,cstring[],,0,t,2909
+timetypmodout,f,f,cstring,integer,,0,t,2910
+timetz,f,f,time with time zone,timestamp with time zone,,0,t,1388
+timetz,f,f,time with time zone,"time with time zone,integer",,0,t,1969
+timetz,f,f,time with time zone,time without time zone,,0,t,2047
+timetz_cmp,f,f,integer,"time with time zone,time with time zone",,0,t,1358
+timetz_eq,f,f,boolean,"time with time zone,time with time zone",,0,t,1352
+timetz_ge,f,f,boolean,"time with time zone,time with time zone",,0,t,1356
+timetz_gt,f,f,boolean,"time with time zone,time with time zone",,0,t,1357
+timetz_hash,f,f,integer,time with time zone,,0,t,1696
+timetz_hash_extended,f,f,bigint,"time with time zone,bigint",,0,t,3410
+timetz_in,f,f,time with time zone,"cstring,oid,integer",,0,t,1350
+timetz_larger,f,f,time with time zone,"time with time zone,time with time zone",,0,t,1379
+timetz_le,f,f,boolean,"time with time zone,time with time zone",,0,t,1355
+timetz_lt,f,f,boolean,"time with time zone,time with time zone",,0,t,1354
+timetz_mi_interval,f,f,time with time zone,"time with time zone,interval",,0,t,1750
+timetz_ne,f,f,boolean,"time with time zone,time with time zone",,0,t,1353
+timetz_out,f,f,cstring,time with time zone,,0,t,1351
+timetz_pl_interval,f,f,time with time zone,"time with time zone,interval",,0,t,1749
+timetz_recv,f,f,time with time zone,"internal,oid,integer",,0,t,2472
+timetz_send,f,f,bytea,time with time zone,,0,t,2473
+timetz_smaller,f,f,time with time zone,"time with time zone,time with time zone",,0,t,1380
+timetzdate_pl,f,f,timestamp with time zone,"time with time zone,date",,0,t,1298
+timetztypmodin,f,f,integer,cstring[],,0,t,2911
+timetztypmodout,f,f,cstring,integer,,0,t,2912
+timezone,f,f,timestamp without time zone,"interval,timestamp with time zone",,0,t,1026
+timezone,f,f,timestamp without time zone,"text,timestamp with time zone",,0,t,1159
+timezone,f,f,time with time zone,"text,time with time zone",,0,t,2037
+timezone,f,f,time with time zone,"interval,time with time zone",,0,t,2038
+timezone,f,f,timestamp with time zone,"text,timestamp without time zone",,0,t,2069
+timezone,f,f,timestamp with time zone,"interval,timestamp without time zone",,0,t,2070
+timezone,f,f,timestamp without time zone,timestamp with time zone,,0,t,6334
+timezone,f,f,timestamp with time zone,timestamp without time zone,,0,t,6335
+timezone,f,f,time with time zone,time with time zone,,0,t,6336
+to_ascii,f,f,text,text,,0,t,1845
+to_ascii,f,f,text,"text,integer",,0,t,1846
+to_ascii,f,f,text,"text,name",,0,t,1847
+to_bin,f,f,text,integer,,0,t,6330
+to_bin,f,f,text,bigint,,0,t,6331
+to_char,f,f,text,"interval,text",,0,t,1768
+to_char,f,f,text,"timestamp with time zone,text",,0,t,1770
+to_char,f,f,text,"numeric,text",,0,t,1772
+to_char,f,f,text,"integer,text",,0,t,1773
+to_char,f,f,text,"bigint,text",,0,t,1774
+to_char,f,f,text,"real,text",,0,t,1775
+to_char,f,f,text,"double precision,text",,0,t,1776
+to_char,f,f,text,"timestamp without time zone,text",,0,t,2049
+to_date,f,f,date,"text,text",,0,t,1780
+to_hex,f,f,text,integer,,0,t,2089
+to_hex,f,f,text,bigint,,0,t,2090
+to_json,f,f,json,anyelement,,0,t,3176
+to_jsonb,f,f,jsonb,anyelement,,0,t,3787
+to_number,f,f,numeric,"text,text",,0,t,1777
+to_oct,f,f,text,integer,,0,t,6332
+to_oct,f,f,text,bigint,,0,t,6333
+to_regclass,f,f,regclass,text,,0,t,3495
+to_regcollation,f,f,regcollation,text,,0,t,4195
+to_regnamespace,f,f,regnamespace,text,,0,t,4086
+to_regoper,f,f,regoper,text,,0,t,3492
+to_regoperator,f,f,regoperator,text,,0,t,3476
+to_regproc,f,f,regproc,text,,0,t,3494
+to_regprocedure,f,f,regprocedure,text,,0,t,3479
+to_regrole,f,f,regrole,text,,0,t,4093
+to_regtype,f,f,regtype,text,,0,t,3493
+to_regtypemod,f,f,integer,text,,0,t,6317
+to_timestamp,f,f,timestamp with time zone,double precision,,0,t,1158
+to_timestamp,f,f,timestamp with time zone,"text,text",,0,t,1778
+to_tsquery,f,f,tsquery,"regconfig,text",,0,t,3746
+to_tsquery,f,f,tsquery,text,,0,t,3750
+to_tsvector,f,f,tsvector,"regconfig,text",,0,t,3745
+to_tsvector,f,f,tsvector,text,,0,t,3749
+to_tsvector,f,f,tsvector,jsonb,,0,t,4209
+to_tsvector,f,f,tsvector,json,,0,t,4210
+to_tsvector,f,f,tsvector,"regconfig,jsonb",,0,t,4211
+to_tsvector,f,f,tsvector,"regconfig,json",,0,t,4212
+transaction_timestamp,f,f,timestamp with time zone,,,0,t,2647
+translate,f,f,text,"text,text,text",,0,t,878
+trigger_in,f,f,trigger,cstring,,0,f,2300
+trigger_out,f,f,cstring,trigger,,0,t,2301
+trim_array,f,f,anyarray,"anyarray,integer",,0,t,6172
+trim_scale,f,f,numeric,numeric,,0,t,5043
+trunc,f,f,macaddr,macaddr,,0,t,753
+trunc,f,f,double precision,double precision,,0,t,1343
+trunc,f,f,numeric,"numeric,integer",,0,t,1709
+trunc,f,f,numeric,numeric,,0,t,1710
+trunc,f,f,macaddr8,macaddr8,,0,t,4112
+ts_debug,f,t,record,"regconfig,text",,0,t,6183
+ts_debug,f,t,record,text,,0,t,6184
+ts_delete,f,f,tsvector,"tsvector,text",,0,t,3321
+ts_delete,f,f,tsvector,"tsvector,text[]",,0,t,3323
+ts_filter,f,f,tsvector,"tsvector,""char""[]",,0,t,3319
+ts_headline,f,f,text,"regconfig,text,tsquery,text",,0,t,3743
+ts_headline,f,f,text,"regconfig,text,tsquery",,0,t,3744
+ts_headline,f,f,text,"text,tsquery,text",,0,t,3754
+ts_headline,f,f,text,"text,tsquery",,0,t,3755
+ts_headline,f,f,jsonb,"regconfig,jsonb,tsquery,text",,0,t,4201
+ts_headline,f,f,jsonb,"regconfig,jsonb,tsquery",,0,t,4202
+ts_headline,f,f,jsonb,"jsonb,tsquery,text",,0,t,4203
+ts_headline,f,f,jsonb,"jsonb,tsquery",,0,t,4204
+ts_headline,f,f,json,"regconfig,json,tsquery,text",,0,t,4205
+ts_headline,f,f,json,"regconfig,json,tsquery",,0,t,4206
+ts_headline,f,f,json,"json,tsquery,text",,0,t,4207
+ts_headline,f,f,json,"json,tsquery",,0,t,4208
+ts_lexize,f,f,text[],"regdictionary,text",,0,t,3723
+ts_match_qv,f,f,boolean,"tsquery,tsvector",,0,t,3635
+ts_match_tq,f,f,boolean,"text,tsquery",,0,t,3761
+ts_match_tt,f,f,boolean,"text,text",,0,t,3760
+ts_match_vq,f,f,boolean,"tsvector,tsquery",,0,t,3634
+ts_parse,f,t,record,"oid,text",,0,t,3715
+ts_parse,f,t,record,"text,text",,0,t,3716
+ts_rank,f,f,real,"real[],tsvector,tsquery,integer",,0,t,3703
+ts_rank,f,f,real,"real[],tsvector,tsquery",,0,t,3704
+ts_rank,f,f,real,"tsvector,tsquery,integer",,0,t,3705
+ts_rank,f,f,real,"tsvector,tsquery",,0,t,3706
+ts_rank_cd,f,f,real,"real[],tsvector,tsquery,integer",,0,t,3707
+ts_rank_cd,f,f,real,"real[],tsvector,tsquery",,0,t,3708
+ts_rank_cd,f,f,real,"tsvector,tsquery,integer",,0,t,3709
+ts_rank_cd,f,f,real,"tsvector,tsquery",,0,t,3710
+ts_rewrite,f,f,tsquery,"tsquery,tsquery,tsquery",,0,t,3684
+ts_rewrite,f,f,tsquery,"tsquery,text",,0,t,3685
+ts_stat,f,t,record,text,,0,t,3689
+ts_stat,f,t,record,"text,text",,0,t,3690
+ts_token_type,f,t,record,oid,,0,t,3713
+ts_token_type,f,t,record,text,,0,t,3714
+ts_typanalyze,f,f,boolean,internal,,0,t,3688
+tsm_handler_in,f,f,tsm_handler,cstring,,0,f,3311
+tsm_handler_out,f,f,cstring,tsm_handler,,0,t,3312
+tsmatchjoinsel,f,f,double precision,"internal,oid,internal,smallint,internal",,0,t,3687
+tsmatchsel,f,f,double precision,"internal,oid,internal,integer",,0,t,3686
+tsmultirange,f,f,tsmultirange,,,0,t,4286
+tsmultirange,f,f,tsmultirange,tsrange,,0,t,4287
+tsmultirange,f,f,tsmultirange,tsrange[],tsrange,0,t,4288
+tsq_mcontained,f,f,boolean,"tsquery,tsquery",,0,t,3692
+tsq_mcontains,f,f,boolean,"tsquery,tsquery",,0,t,3691
+tsquery_and,f,f,tsquery,"tsquery,tsquery",,0,t,3669
+tsquery_cmp,f,f,integer,"tsquery,tsquery",,0,t,3668
+tsquery_eq,f,f,boolean,"tsquery,tsquery",,0,t,3664
+tsquery_ge,f,f,boolean,"tsquery,tsquery",,0,t,3666
+tsquery_gt,f,f,boolean,"tsquery,tsquery",,0,t,3667
+tsquery_le,f,f,boolean,"tsquery,tsquery",,0,t,3663
+tsquery_lt,f,f,boolean,"tsquery,tsquery",,0,t,3662
+tsquery_ne,f,f,boolean,"tsquery,tsquery",,0,t,3665
+tsquery_not,f,f,tsquery,tsquery,,0,t,3671
+tsquery_or,f,f,tsquery,"tsquery,tsquery",,0,t,3670
+tsquery_phrase,f,f,tsquery,"tsquery,tsquery",,0,t,5003
+tsquery_phrase,f,f,tsquery,"tsquery,tsquery,integer",,0,t,5004
+tsqueryin,f,f,tsquery,cstring,,0,t,3612
+tsqueryout,f,f,cstring,tsquery,,0,t,3613
+tsqueryrecv,f,f,tsquery,internal,,0,t,3641
+tsquerysend,f,f,bytea,tsquery,,0,t,3640
+tsrange,f,f,tsrange,"timestamp without time zone,timestamp without time zone",,0,f,3933
+tsrange,f,f,tsrange,"timestamp without time zone,timestamp without time zone,text",,0,f,3934
+tsrange_subdiff,f,f,double precision,"timestamp without time zone,timestamp without time zone",,0,t,3929
+tstzmultirange,f,f,tstzmultirange,,,0,t,4289
+tstzmultirange,f,f,tstzmultirange,tstzrange,,0,t,4290
+tstzmultirange,f,f,tstzmultirange,tstzrange[],tstzrange,0,t,4291
+tstzrange,f,f,tstzrange,"timestamp with time zone,timestamp with time zone",,0,f,3937
+tstzrange,f,f,tstzrange,"timestamp with time zone,timestamp with time zone,text",,0,f,3938
+tstzrange_subdiff,f,f,double precision,"timestamp with time zone,timestamp with time zone",,0,t,3930
+tsvector_cmp,f,f,integer,"tsvector,tsvector",,0,t,3622
+tsvector_concat,f,f,tsvector,"tsvector,tsvector",,0,t,3625
+tsvector_eq,f,f,boolean,"tsvector,tsvector",,0,t,3618
+tsvector_ge,f,f,boolean,"tsvector,tsvector",,0,t,3620
+tsvector_gt,f,f,boolean,"tsvector,tsvector",,0,t,3621
+tsvector_le,f,f,boolean,"tsvector,tsvector",,0,t,3617
+tsvector_lt,f,f,boolean,"tsvector,tsvector",,0,t,3616
+tsvector_ne,f,f,boolean,"tsvector,tsvector",,0,t,3619
+tsvector_to_array,f,f,text[],tsvector,,0,t,3326
+tsvector_update_trigger,f,f,trigger,,,0,f,3752
+tsvector_update_trigger_column,f,f,trigger,,,0,f,3753
+tsvectorin,f,f,tsvector,cstring,,0,t,3610
+tsvectorout,f,f,cstring,tsvector,,0,t,3611
+tsvectorrecv,f,f,tsvector,internal,,0,t,3639
+tsvectorsend,f,f,bytea,tsvector,,0,t,3638
+txid_current,f,f,bigint,,,0,t,2943
+txid_current_if_assigned,f,f,bigint,,,0,t,3348
+txid_current_snapshot,f,f,txid_snapshot,,,0,t,2944
+txid_snapshot_in,f,f,txid_snapshot,cstring,,0,t,2939
+txid_snapshot_out,f,f,cstring,txid_snapshot,,0,t,2940
+txid_snapshot_recv,f,f,txid_snapshot,internal,,0,t,2941
+txid_snapshot_send,f,f,bytea,txid_snapshot,,0,t,2942
+txid_snapshot_xip,f,t,bigint,txid_snapshot,,0,t,2947
+txid_snapshot_xmax,f,f,bigint,txid_snapshot,,0,t,2946
+txid_snapshot_xmin,f,f,bigint,txid_snapshot,,0,t,2945
+txid_status,f,f,text,bigint,,0,t,3360
+txid_visible_in_snapshot,f,f,boolean,"bigint,txid_snapshot",,0,t,2948
+uhc_to_utf8,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4380
+unicode_assigned,f,f,boolean,text,,0,t,6105
+unicode_version,f,f,text,,,0,t,4549
+unique_key_recheck,f,f,trigger,,,0,t,1250
+unistr,f,f,text,text,,0,t,6198
+unknownin,f,f,unknown,cstring,,0,t,109
+unknownout,f,f,cstring,unknown,,0,t,110
+unknownrecv,f,f,unknown,internal,,0,t,2416
+unknownsend,f,f,bytea,unknown,,0,t,2417
+unnest,f,t,anyrange,anymultirange,,0,t,1293
+unnest,f,t,anyelement,anyarray,,0,t,2331
+unnest,f,t,record,tsvector,,0,t,3322
+upper,f,f,text,text,,0,t,871
+upper,f,f,anyelement,anyrange,,0,t,3849
+upper,f,f,anyelement,anymultirange,,0,t,4236
+upper_inc,f,f,boolean,anyrange,,0,t,3852
+upper_inc,f,f,boolean,anymultirange,,0,t,4239
+upper_inf,f,f,boolean,anyrange,,0,t,3854
+upper_inf,f,f,boolean,anymultirange,,0,t,4241
+utf8_to_big5,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4353
+utf8_to_euc_cn,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4361
+utf8_to_euc_jis_2004,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4383
+utf8_to_euc_jp,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4363
+utf8_to_euc_kr,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4365
+utf8_to_euc_tw,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4367
+utf8_to_gb18030,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4369
+utf8_to_gbk,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4371
+utf8_to_iso8859,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4372
+utf8_to_iso8859_1,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4375
+utf8_to_johab,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4377
+utf8_to_koi8r,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4354
+utf8_to_koi8u,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4356
+utf8_to_shift_jis_2004,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4385
+utf8_to_sjis,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4379
+utf8_to_uhc,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4381
+utf8_to_win,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4358
+uuid_cmp,f,f,integer,"uuid,uuid",,0,t,2960
+uuid_eq,f,f,boolean,"uuid,uuid",,0,t,2956
+uuid_extract_timestamp,f,f,timestamp with time zone,uuid,,0,t,6342
+uuid_extract_version,f,f,smallint,uuid,,0,t,6343
+uuid_ge,f,f,boolean,"uuid,uuid",,0,t,2957
+uuid_gt,f,f,boolean,"uuid,uuid",,0,t,2958
+uuid_hash,f,f,integer,uuid,,0,t,2963
+uuid_hash_extended,f,f,bigint,"uuid,bigint",,0,t,3412
+uuid_in,f,f,uuid,cstring,,0,t,2952
+uuid_le,f,f,boolean,"uuid,uuid",,0,t,2955
+uuid_lt,f,f,boolean,"uuid,uuid",,0,t,2954
+uuid_ne,f,f,boolean,"uuid,uuid",,0,t,2959
+uuid_out,f,f,cstring,uuid,,0,t,2953
+uuid_recv,f,f,uuid,internal,,0,t,2961
+uuid_send,f,f,bytea,uuid,,0,t,2962
+uuid_skipsupport,f,f,void,internal,,0,t,6410
+uuid_sortsupport,f,f,void,internal,,0,t,3300
+uuidv4,f,f,uuid,,,0,t,6428
+uuidv7,f,f,uuid,,,0,t,6429
+uuidv7,f,f,uuid,interval,,0,t,6430
+var_pop,a,f,numeric,bigint,,0,f,2718
+var_pop,a,f,numeric,integer,,0,f,2719
+var_pop,a,f,numeric,smallint,,0,f,2720
+var_pop,a,f,double precision,real,,0,f,2721
+var_pop,a,f,double precision,double precision,,0,f,2722
+var_pop,a,f,numeric,numeric,,0,f,2723
+var_samp,a,f,numeric,bigint,,0,f,2641
+var_samp,a,f,numeric,integer,,0,f,2642
+var_samp,a,f,numeric,smallint,,0,f,2643
+var_samp,a,f,double precision,real,,0,f,2644
+var_samp,a,f,double precision,double precision,,0,f,2645
+var_samp,a,f,numeric,numeric,,0,f,2646
+varbit,f,f,bit varying,"bit varying,integer,boolean",,0,t,1687
+varbit_in,f,f,bit varying,"cstring,oid,integer",,0,t,1579
+varbit_out,f,f,cstring,bit varying,,0,t,1580
+varbit_recv,f,f,bit varying,"internal,oid,integer",,0,t,2458
+varbit_send,f,f,bytea,bit varying,,0,t,2459
+varbit_support,f,f,internal,internal,,0,t,3158
+varbitcmp,f,f,integer,"bit varying,bit varying",,0,t,1672
+varbiteq,f,f,boolean,"bit varying,bit varying",,0,t,1666
+varbitge,f,f,boolean,"bit varying,bit varying",,0,t,1668
+varbitgt,f,f,boolean,"bit varying,bit varying",,0,t,1669
+varbitle,f,f,boolean,"bit varying,bit varying",,0,t,1670
+varbitlt,f,f,boolean,"bit varying,bit varying",,0,t,1671
+varbitne,f,f,boolean,"bit varying,bit varying",,0,t,1667
+varbittypmodin,f,f,integer,cstring[],,0,t,2902
+varbittypmodout,f,f,cstring,integer,,0,t,2921
+varchar,f,f,character varying,"character varying,integer,boolean",,0,t,669
+varchar,f,f,character varying,name,,0,t,1401
+varchar_support,f,f,internal,internal,,0,t,3097
+varcharin,f,f,character varying,"cstring,oid,integer",,0,t,1046
+varcharout,f,f,cstring,character varying,,0,t,1047
+varcharrecv,f,f,character varying,"internal,oid,integer",,0,t,2432
+varcharsend,f,f,bytea,character varying,,0,t,2433
+varchartypmodin,f,f,integer,cstring[],,0,t,2915
+varchartypmodout,f,f,cstring,integer,,0,t,2916
+variance,a,f,numeric,bigint,,0,f,2148
+variance,a,f,numeric,integer,,0,f,2149
+variance,a,f,numeric,smallint,,0,f,2150
+variance,a,f,double precision,real,,0,f,2151
+variance,a,f,double precision,double precision,,0,f,2152
+variance,a,f,numeric,numeric,,0,f,2153
+version,f,f,text,,,0,t,89
+void_in,f,f,void,cstring,,0,t,2298
+void_out,f,f,cstring,void,,0,t,2299
+void_recv,f,f,void,internal,,0,t,3120
+void_send,f,f,bytea,void,,0,t,3121
+websearch_to_tsquery,f,f,tsquery,"regconfig,text",,0,t,5007
+websearch_to_tsquery,f,f,tsquery,text,,0,t,5009
+width,f,f,double precision,box,,0,t,976
+width_bucket,f,f,integer,"double precision,double precision,double precision,integer",,0,t,320
+width_bucket,f,f,integer,"numeric,numeric,numeric,integer",,0,t,2170
+width_bucket,f,f,integer,"anycompatible,anycompatiblearray",,0,t,3218
+win1250_to_latin2,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4343
+win1250_to_mic,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4340
+win1251_to_iso,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4319
+win1251_to_koi8r,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4311
+win1251_to_mic,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4306
+win1251_to_win866,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4315
+win866_to_iso,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4321
+win866_to_koi8r,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4313
+win866_to_mic,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4308
+win866_to_win1251,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4314
+win_to_utf8,f,f,integer,"integer,integer,cstring,internal,integer,boolean",,0,t,4359
+window_cume_dist_support,f,f,internal,internal,,0,t,6307
+window_dense_rank_support,f,f,internal,internal,,0,t,6235
+window_ntile_support,f,f,internal,internal,,0,t,6308
+window_percent_rank_support,f,f,internal,internal,,0,t,6306
+window_rank_support,f,f,internal,internal,,0,t,6234
+window_row_number_support,f,f,internal,internal,,0,t,6233
+xid,f,f,xid,xid8,,0,t,5071
+xid8_larger,f,f,xid8,"xid8,xid8",,0,t,5097
+xid8_smaller,f,f,xid8,"xid8,xid8",,0,t,5098
+xid8cmp,f,f,integer,"xid8,xid8",,0,t,5096
+xid8eq,f,f,boolean,"xid8,xid8",,0,t,5084
+xid8ge,f,f,boolean,"xid8,xid8",,0,t,5037
+xid8gt,f,f,boolean,"xid8,xid8",,0,t,5035
+xid8in,f,f,xid8,cstring,,0,t,5070
+xid8le,f,f,boolean,"xid8,xid8",,0,t,5036
+xid8lt,f,f,boolean,"xid8,xid8",,0,t,5034
+xid8ne,f,f,boolean,"xid8,xid8",,0,t,5085
+xid8out,f,f,cstring,xid8,,0,t,5081
+xid8recv,f,f,xid8,internal,,0,t,5082
+xid8send,f,f,bytea,xid8,,0,t,5083
+xideq,f,f,boolean,"xid,xid",,0,t,68
+xideqint4,f,f,boolean,"xid,integer",,0,t,1319
+xidin,f,f,xid,cstring,,0,t,50
+xidneq,f,f,boolean,"xid,xid",,0,t,3308
+xidneqint4,f,f,boolean,"xid,integer",,0,t,3309
+xidout,f,f,cstring,xid,,0,t,51
+xidrecv,f,f,xid,internal,,0,t,2440
+xidsend,f,f,bytea,xid,,0,t,2441
+xml,f,f,xml,text,,0,t,2896
+xml_in,f,f,xml,cstring,,0,t,2893
+xml_is_well_formed,f,f,boolean,text,,0,t,3051
+xml_is_well_formed_content,f,f,boolean,text,,0,t,3053
+xml_is_well_formed_document,f,f,boolean,text,,0,t,3052
+xml_out,f,f,cstring,xml,,0,t,2894
+xml_recv,f,f,xml,internal,,0,t,2898
+xml_send,f,f,bytea,xml,,0,t,2899
+xmlagg,a,f,xml,xml,,0,f,2901
+xmlcomment,f,f,xml,text,,0,t,2895
+xmlconcat2,f,f,xml,"xml,xml",,0,f,2900
+xmlexists,f,f,boolean,"text,xml",,0,t,2614
+xmltext,f,f,xml,text,,0,t,3813
+xmlvalidate,f,f,boolean,"xml,text",,0,t,2897
+xpath,f,f,xml[],"text,xml,text[]",,0,t,2931
+xpath,f,f,xml[],"text,xml",,0,t,2932
+xpath_exists,f,f,boolean,"text,xml,text[]",,0,t,3049
+xpath_exists,f,f,boolean,"text,xml",,0,t,3050

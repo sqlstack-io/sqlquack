@@ -1,0 +1,409 @@
+# Reviewed omission audit of the catalogue against the pinned grammar; checked by
+# scripts/audit_syntax_catalogue_pg.py, which fails on any unreviewed gap or stale row.
+#
+# The audit spells every alternative of every statement rule, the expression rules and the
+# rules reachable from them as keyword sequences (nonterminals that are
+# keyword sets expanded), and requires a catalogued form whose words, with its page's
+# definitions inlined, contain each sequence in order (a statement's first keyword first).
+# It also requires every kwlist.h keyword that a production uses to appear in some grammar.
+# [[production]] gives the reason a gram.y production has no form; [[keyword]] the reason a
+# keyword appears in no grammar. Keywords no production uses are reported, not reviewed.
+
+gram_y_sha256 = "7e548b673a1e03eb3a56c5eb9ad92d8e11095fac76e14cb258ca851f58274724"
+kwlist_h_sha256 = "fdcdf3694513cba63b4016f63032472b686e381bb35f17c5d645bc2f6f1dac16"
+
+# Stated limits of the method; the audit claims no more than these allow.
+limits = [
+    "Walk: every rule reachable from toplevel_stmt, stmt and the expression rules is walked (no depth bound); every other gram.y rule is listed under [[unwalked]] with a reason, and the audit fails on an unwalked rule that is not listed.",
+    "Spelling: a production is checked as its keywords in order. Identifiers, literals, punctuation and operator symbols are not compared, and a nonterminal that is not a set of at most 60 alternatives of up to 4 keywords (nested two levels) contributes no words.",
+    "Containment: a sequence is covered when one catalogued form, with its page's definitions inlined to depth 3, contains its keywords in order, not necessarily adjacent. For a statement rule the form must also start with the sequence's first keyword and its leading keywords must appear in the sequence.",
+    "Below a statement, alternatives that spell fewer than 2 keywords are not checked as sequences; their keywords are covered only by the [[keyword]] check.",
+    "Expansion: an alternative spelling more than 64 keyword sequences stops the audit with an error instead of being truncated; none does at the pinned grammar.",
+]
+
+[[production]]
+rule = "AlterEnumStmt"
+production = "ALTER TYPE_P any_name DROP VALUE_P Sconst"
+reason = "rejected after parsing: the production only raises an error (dropping an enum value is not implemented, 0A000)"
+
+[[production]]
+rule = "AlterExtensionContentsStmt"
+production = "ALTER EXTENSION name add_drop object_type_any_name any_name"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: INDEX and STATISTICS are object types the shared object_type_any_name rule allows; ALTER EXTENSION's member_object list documents the others, which are catalogued"
+
+[[production]]
+rule = "AlterStatsStmt"
+production = "ALTER STATISTICS IF_P EXISTS any_name SET STATISTICS set_statistics_value"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: IF EXISTS on ALTER STATISTICS ... SET STATISTICS"
+
+[[production]]
+rule = "AnalyzeStmt"
+production = "analyze_keyword opt_verbose opt_vacuum_relation_list"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the spelling ANALYSE; ANALYZE is catalogued"
+
+[[production]]
+rule = "AnalyzeStmt"
+production = "analyze_keyword '(' utility_option_list ')' opt_vacuum_relation_list"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the spelling ANALYSE; ANALYZE is catalogued"
+
+[[production]]
+rule = "ClusterStmt"
+production = "CLUSTER opt_verbose name ON qualified_name"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: VERBOSE in the pre-8.3 CLUSTER index ON table syntax, catalogued without it"
+
+[[production]]
+rule = "CopyStmt"
+production = "COPY opt_binary qualified_name opt_column_list copy_from opt_program copy_file_name copy_delimiter opt_with copy_options where_clause"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: BINARY before the table name together with PROGRAM; the documented forms take one or the other"
+
+[[production]]
+rule = "CreateAmStmt"
+production = "CREATE ACCESS METHOD name TYPE_P am_type HANDLER handler_name"
+reason = "documented as a value of a placeholder, not as grammar: INDEX and TABLE are the documented values of <access_method_type>"
+
+[[production]]
+rule = "CreateAssertionStmt"
+production = "CREATE ASSERTION any_name CHECK '(' a_expr ')' ConstraintAttributeSpec"
+reason = "rejected after parsing: the production only raises an error (CREATE ASSERTION is not yet implemented, 0A000)"
+
+[[production]]
+rule = "CreateMatViewStmt"
+production = "CREATE OptNoLog MATERIALIZED VIEW create_mv_target AS SelectStmt opt_with_data"
+reason = "UNLOGGED: undocumented for materialized views, which parse analysis refuses (materialized views cannot be unlogged); the form without UNLOGGED is catalogued"
+
+[[production]]
+rule = "CreateMatViewStmt"
+production = "CREATE OptNoLog MATERIALIZED VIEW IF_P NOT EXISTS create_mv_target AS SelectStmt opt_with_data"
+reason = "UNLOGGED: undocumented for materialized views, which parse analysis refuses (materialized views cannot be unlogged); the form without UNLOGGED is catalogued"
+
+[[production]]
+rule = "CreateSeqStmt"
+production = "CREATE OptTemp SEQUENCE qualified_name OptSeqOptList"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: GLOBAL and LOCAL before TEMPORARY, which OptTemp accepts for every relation and CREATE TABLE alone documents (deprecated, no effect)"
+
+[[production]]
+rule = "CreateSeqStmt"
+production = "CREATE OptTemp SEQUENCE IF_P NOT EXISTS qualified_name OptSeqOptList"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: GLOBAL and LOCAL before TEMPORARY, which OptTemp accepts for every relation and CREATE TABLE alone documents (deprecated, no effect)"
+
+[[production]]
+rule = "ExecuteStmt"
+production = "CREATE OptTemp TABLE create_as_target AS EXECUTE name execute_param_clause opt_with_data"
+reason = "documented as a value of a placeholder, not as grammar: CREATE TABLE AS documents <query> as a SELECT, TABLE, VALUES or EXECUTE command; pg.ddl.create-table-as carries it"
+
+[[production]]
+rule = "ExecuteStmt"
+production = "CREATE OptTemp TABLE IF_P NOT EXISTS create_as_target AS EXECUTE name execute_param_clause opt_with_data"
+reason = "documented as a value of a placeholder, not as grammar: CREATE TABLE AS documents <query> as a SELECT, TABLE, VALUES or EXECUTE command; pg.ddl.create-table-as carries it"
+
+[[production]]
+rule = "ExplainStmt"
+production = "EXPLAIN analyze_keyword opt_verbose ExplainableStmt"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the spelling ANALYSE in the pre-9.0 EXPLAIN syntax"
+
+[[production]]
+rule = "VacuumStmt"
+production = "VACUUM opt_full opt_freeze opt_verbose opt_analyze opt_vacuum_relation_list"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the spelling ANALYSE in the pre-9.0 VACUUM syntax"
+
+[[production]]
+rule = "RenameStmt"
+production = "ALTER POLICY IF_P EXISTS name ON qualified_name RENAME TO name"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: IF EXISTS on ALTER POLICY ... RENAME"
+
+[[production]]
+rule = "SecLabelStmt"
+production = "SECURITY LABEL opt_provider ON object_type_any_name any_name IS security_label"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: INDEX, COLLATION, CONVERSION, STATISTICS and the TEXT SEARCH objects, which the shared object_type_any_name rule allows beyond SECURITY LABEL's documented list"
+
+[[production]]
+rule = "VariableShowStmt"
+production = "SHOW TIME ZONE"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the SQL-standard spelling of SHOW TimeZone, which pg.transaction_session.show carries"
+
+[[production]]
+rule = "VariableShowStmt"
+production = "SHOW TRANSACTION ISOLATION LEVEL"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the SQL-standard spelling of SHOW transaction_isolation"
+
+[[production]]
+rule = "VariableShowStmt"
+production = "SHOW SESSION AUTHORIZATION"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the SQL-standard spelling of SHOW session_authorization"
+
+[[production]]
+rule = "ViewStmt"
+production = "CREATE OptTemp VIEW qualified_name opt_column_list opt_reloptions AS SelectStmt opt_check_option"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: GLOBAL and LOCAL before TEMPORARY (OptTemp); CREATE VIEW documents TEMP and TEMPORARY"
+
+[[production]]
+rule = "ViewStmt"
+production = "CREATE OR REPLACE OptTemp VIEW qualified_name opt_column_list opt_reloptions AS SelectStmt opt_check_option"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: GLOBAL and LOCAL before TEMPORARY (OptTemp); CREATE VIEW documents TEMP and TEMPORARY"
+
+[[production]]
+rule = "ViewStmt"
+production = "CREATE OptTemp RECURSIVE VIEW qualified_name '(' columnList ')' opt_reloptions AS SelectStmt opt_check_option"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: GLOBAL and LOCAL before TEMPORARY (OptTemp); WITH CHECK OPTION here is refused by the production itself (not supported on recursive views, 0A000)"
+
+[[production]]
+rule = "ViewStmt"
+production = "CREATE OR REPLACE OptTemp RECURSIVE VIEW qualified_name '(' columnList ')' opt_reloptions AS SelectStmt opt_check_option"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: GLOBAL and LOCAL before TEMPORARY (OptTemp); WITH CHECK OPTION here is refused by the production itself (not supported on recursive views, 0A000)"
+
+[[production]]
+rule = "a_expr"
+production = "a_expr BETWEEN opt_asymmetric b_expr AND a_expr"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the SQL-standard noise word ASYMMETRIC; BETWEEN is catalogued"
+
+[[production]]
+rule = "a_expr"
+production = "a_expr NOT_LA BETWEEN opt_asymmetric b_expr AND a_expr"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the SQL-standard noise word ASYMMETRIC; NOT BETWEEN is catalogued"
+
+[[production]]
+rule = "a_expr"
+production = "a_expr IS unicode_normal_form NORMALIZED"
+reason = "documented as a value of a placeholder, not as grammar: NFC, NFD, NFKC and NFKD are the documented values of <form> in pg.expressions.string.is-not-normalized"
+
+[[production]]
+rule = "a_expr"
+production = "a_expr IS NOT unicode_normal_form NORMALIZED"
+reason = "documented as a value of a placeholder, not as grammar: NFC, NFD, NFKC and NFKD are the documented values of <form> in pg.expressions.string.is-not-normalized"
+
+[[production]]
+rule = "func_expr_common_subexpr"
+production = "NORMALIZE '(' a_expr ',' unicode_normal_form ')'"
+reason = "documented as a value of a placeholder, not as grammar: NFC, NFD, NFKC and NFKD are the documented values of the form argument of pg.functions.string.normalize"
+
+[[production]]
+rule = "func_expr_common_subexpr"
+production = "TREAT '(' a_expr AS Typename ')'"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the SQL99 TREAT expression"
+
+[[production]]
+rule = "func_expr_common_subexpr"
+production = "XMLPARSE '(' document_or_content a_expr xml_whitespace_option ')'"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: PRESERVE WHITESPACE and STRIP WHITESPACE in XMLPARSE"
+
+[[production]]
+rule = "Typename"
+production = "SETOF SimpleTypename ARRAY '[' Iconst ']'"
+reason = "documented as a value of a placeholder, not as grammar: the SETOF modifier of <rettype>, documented in CREATE FUNCTION's prose, with the SQL-standard ARRAY spelling"
+
+[[production]]
+rule = "Typename"
+production = "SETOF SimpleTypename ARRAY"
+reason = "documented as a value of a placeholder, not as grammar: the SETOF modifier of <rettype>, documented in CREATE FUNCTION's prose, with the SQL-standard ARRAY spelling"
+
+[[production]]
+rule = "foreign_server_version"
+production = "VERSION_P NULL_P"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: VERSION NULL in CREATE and ALTER SERVER"
+
+[[production]]
+rule = "transform_element_list"
+production = "TO SQL_P WITH FUNCTION function_with_argtypes ',' FROM SQL_P WITH FUNCTION function_with_argtypes"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the TO SQL and FROM SQL clauses of CREATE TRANSFORM in the reverse of the documented order"
+
+[[production]]
+rule = "SeqOptElem"
+production = "SEQUENCE NAME_P any_name"
+reason = "documented as a value of a placeholder, not as grammar: SEQUENCE NAME is documented in CREATE TABLE's prose as one of the <sequence_options> of an identity column"
+
+[[production]]
+rule = "AlterOptRoleElem"
+production = "UNENCRYPTED PASSWORD Sconst"
+reason = "rejected after parsing: the production only raises an error (UNENCRYPTED PASSWORD is no longer supported, 0A000)"
+
+[[production]]
+rule = "func_type"
+production = "SETOF type_function_name attrs '%' TYPE_P"
+reason = "documented as a value of a placeholder, not as grammar: SETOF and %TYPE are documented in CREATE FUNCTION's prose for <argtype> and <rettype>"
+
+[[production]]
+rule = "for_locking_clause"
+production = "FOR READ ONLY"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: FOR READ ONLY, which gram.y accepts in place of a locking clause and ignores"
+
+[[production]]
+rule = "CharacterWithLength"
+production = "character '(' Iconst ')'"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the spellings CHAR VARYING, NCHAR [ VARYING ] and NATIONAL CHAR[ACTER] [ VARYING ] with a length; datatype.sgml documents character varying(n), varchar(n), character(n) and char(n), which are catalogued"
+
+[[production]]
+rule = "CharacterWithoutLength"
+production = "character"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the same spellings as CharacterWithLength, without a length"
+
+[[production]]
+rule = "character"
+production = "CHAR_P opt_varying"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the spelling CHAR VARYING (character varying and varchar are documented)"
+
+[[production]]
+rule = "character"
+production = "NATIONAL CHARACTER opt_varying"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the type spelling NATIONAL CHARACTER [ VARYING ]"
+
+[[production]]
+rule = "character"
+production = "NATIONAL CHAR_P opt_varying"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the type spelling NATIONAL CHAR [ VARYING ]"
+
+[[production]]
+rule = "character"
+production = "NCHAR opt_varying"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the type spelling NCHAR [ VARYING ]"
+
+[[production]]
+rule = "ExclusionConstraintElem"
+production = "index_elem WITH OPERATOR '(' any_operator ')'"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: EXCLUDE ... WITH OPERATOR(schema.op); the gram.y comment says it exists for ruleutils.c output; CREATE TABLE documents EXCLUDE ... WITH <operator>, which is catalogued"
+
+[[production]]
+rule = "TriggerTransition"
+production = "TransitionOldOrNew TransitionRowOrTable opt_as TransitionRelName"
+reason = "the ROW alternative: REFERENCING { OLD | NEW } ROW [ AS ] name parses, then CREATE TRIGGER rejects it (trigger.c: ROW variable naming in the REFERENCING clause is not supported, 0A000); CREATE TRIGGER documents REFERENCING { OLD | NEW } TABLE, which is catalogued"
+
+[[production]]
+rule = "arg_class"
+production = "IN_P OUT_P"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: the argument mode spelling IN OUT; CREATE FUNCTION and CREATE PROCEDURE document <argmode> as IN, OUT, INOUT or VARIADIC"
+
+[[production]]
+rule = "func_arg"
+production = "arg_class func_type"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: only through arg_class IN OUT; the other modes are catalogued"
+
+[[production]]
+rule = "func_arg"
+production = "arg_class param_name func_type"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: only through arg_class IN OUT; the other modes are catalogued"
+
+[[production]]
+rule = "func_arg"
+production = "param_name arg_class func_type"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: only through arg_class IN OUT, and the mode after the name is itself an undocumented order; the documented order is [ argmode ] [ argname ] argtype"
+
+[[production]]
+rule = "xml_whitespace_option"
+production = "PRESERVE WHITESPACE_P"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: XMLPARSE ( ... PRESERVE WHITESPACE ); func.sgml documents XMLPARSE ( { DOCUMENT | CONTENT } value ) only"
+
+[[production]]
+rule = "xml_whitespace_option"
+production = "STRIP_P WHITESPACE_P"
+reason = "undocumented: gram.y accepts it, the 18.6 documentation does not document it: XMLPARSE ( ... STRIP WHITESPACE ); func.sgml documents XMLPARSE ( { DOCUMENT | CONTENT } value ) only"
+
+[[unwalked]]
+rule = "PLAssignStmt"
+reason = "PL/pgSQL parse mode: reachable only from parse_toplevel's MODE_PLPGSQL_* tokens, which the PL/pgSQL compiler injects for expressions and assignments inside function bodies; no SQL command reaches it"
+
+[[unwalked]]
+rule = "PLpgSQL_Expr"
+reason = "PL/pgSQL parse mode: reachable only from parse_toplevel's MODE_PLPGSQL_* tokens, which the PL/pgSQL compiler injects for expressions and assignments inside function bodies; no SQL command reaches it"
+
+[[unwalked]]
+rule = "bare_label_keyword"
+reason = "keyword category list: one keyword per alternative; the [[keyword]] check covers every keyword in it"
+
+[[unwalked]]
+rule = "col_name_keyword"
+reason = "keyword category list: one keyword per alternative; the [[keyword]] check covers every keyword in it"
+
+[[unwalked]]
+rule = "opt_distinct_clause"
+reason = "PL/pgSQL parse mode: reachable only from parse_toplevel's MODE_PLPGSQL_* tokens, which the PL/pgSQL compiler injects for expressions and assignments inside function bodies; no SQL command reaches it (only PLpgSQL_Expr uses it; SELECT uses distinct_clause and opt_all_clause directly, which are walked)"
+
+[[unwalked]]
+rule = "parse_toplevel"
+reason = "start symbol: dispatches to stmtmulti or to the PL/pgSQL and type-name parse modes"
+
+[[unwalked]]
+rule = "plassign_equals"
+reason = "PL/pgSQL parse mode: reachable only from parse_toplevel's MODE_PLPGSQL_* tokens, which the PL/pgSQL compiler injects for expressions and assignments inside function bodies; no SQL command reaches it"
+
+[[unwalked]]
+rule = "plassign_target"
+reason = "PL/pgSQL parse mode: reachable only from parse_toplevel's MODE_PLPGSQL_* tokens, which the PL/pgSQL compiler injects for expressions and assignments inside function bodies; no SQL command reaches it"
+
+[[unwalked]]
+rule = "reserved_keyword"
+reason = "keyword category list: one keyword per alternative; the [[keyword]] check covers every keyword in it"
+
+[[unwalked]]
+rule = "stmtmulti"
+reason = "top-level wrapper: its alternatives are statement rules, each of which the audit walks (a semicolon-separated list of toplevel_stmt)"
+
+[[unwalked]]
+rule = "toplevel_stmt"
+reason = "top-level wrapper: its alternatives are statement rules, each of which the audit walks (stmt plus TransactionStmtLegacy, both walked)"
+
+[[unwalked]]
+rule = "type_func_name_keyword"
+reason = "keyword category list: one keyword per alternative; the [[keyword]] check covers every keyword in it"
+
+[[unwalked]]
+rule = "unreserved_keyword"
+reason = "keyword category list: one keyword per alternative; the [[keyword]] check covers every keyword in it"
+
+[[keyword]]
+keyword = "ANALYSE"
+reason = "undocumented spelling of ANALYZE; see AnalyzeStmt, ExplainStmt and VacuumStmt"
+
+[[keyword]]
+keyword = "ASSERTION"
+reason = "CREATE ASSERTION, rejected after parsing: the production only raises an error"
+
+[[keyword]]
+keyword = "ASYMMETRIC"
+reason = "undocumented noise word of BETWEEN; see a_expr"
+
+[[keyword]]
+keyword = "DEC"
+reason = "undocumented alias of DECIMAL and NUMERIC in gram.y's Numeric rule"
+
+[[keyword]]
+keyword = "NATIONAL"
+reason = "undocumented NATIONAL CHARACTER [ VARYING ] type spelling"
+
+[[keyword]]
+keyword = "NCHAR"
+reason = "undocumented NCHAR [ VARYING ] type spelling"
+
+[[keyword]]
+keyword = "NFC"
+reason = "documented as a value of a placeholder, not as grammar (<form> of IS NORMALIZED and normalize)"
+
+[[keyword]]
+keyword = "NFD"
+reason = "documented as a value of a placeholder, not as grammar (<form> of IS NORMALIZED and normalize)"
+
+[[keyword]]
+keyword = "NFKC"
+reason = "documented as a value of a placeholder, not as grammar (<form> of IS NORMALIZED and normalize)"
+
+[[keyword]]
+keyword = "NFKD"
+reason = "documented as a value of a placeholder, not as grammar (<form> of IS NORMALIZED and normalize)"
+
+[[keyword]]
+keyword = "OUT"
+reason = "documented as a value of a placeholder, not as grammar (<argmode>: IN, OUT, INOUT or VARIADIC)"
+
+[[keyword]]
+keyword = "SETOF"
+reason = "documented as a value of a placeholder, not as grammar (the SETOF modifier of <rettype> in CREATE FUNCTION)"
+
+[[keyword]]
+keyword = "TREAT"
+reason = "undocumented SQL99 TREAT expression; see func_expr_common_subexpr"
+
+[[keyword]]
+keyword = "UNENCRYPTED"
+reason = "UNENCRYPTED PASSWORD, rejected after parsing: the production only raises an error"
+
+[[keyword]]
+keyword = "WHITESPACE"
+reason = "undocumented XMLPARSE whitespace option; see func_expr_common_subexpr"

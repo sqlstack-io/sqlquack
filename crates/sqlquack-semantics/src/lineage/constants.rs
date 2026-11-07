@@ -256,6 +256,9 @@ pub(crate) const FIRST_ARGUMENT_NULLABILITY: [&str; 2] = ["UPPER", "LOWER"];
 pub(crate) const SNOWFLAKE_PROFILE: &str = "Snowflake";
 /// The PostgreSQL profile's name.
 pub(crate) const POSTGRES_PROFILE: &str = "PostgreSQL";
+/// PostgreSQL's system columns, which every stored table has and no star expands.
+pub(crate) const POSTGRES_SYSTEM_COLUMNS: [&str; 6] =
+    ["tableoid", "xmin", "cmin", "xmax", "cmax", "ctid"];
 /// Snowflake's semi-structured ARRAY type.
 pub(crate) const SNOWFLAKE_ARRAY_TYPE: &str = "ARRAY";
 /// The widest Snowflake NUMBER.

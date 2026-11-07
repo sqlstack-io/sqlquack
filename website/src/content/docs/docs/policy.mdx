@@ -22,7 +22,10 @@ error[SQ0008]: the conversion needs a known divergence the policy refuses: `fn:H
 
 `convert`, `function`, `census` and `index` read `sqlquack.toml` from the current directory, or the
 file `--policy` names. Without one they use the built-in policy, which refuses every known
-divergence; `--builtin-policy` chooses it even where a `sqlquack.toml` exists. A `--policy` file
+divergence but the clock: `CURRENT_DATE()` and `CURRENT_TIMESTAMP()` convert with a warning, because
+both engines take the value when the query runs, in the session's time zone, which must be UTC in
+both for the values to agree. `--strict` and `--loud-divergences-only` refuse them too.
+`--builtin-policy` chooses the built-in policy even where a `sqlquack.toml` exists. A `--policy` file
 that does not exist, or a policy file that is not valid, is an error.
 
 A policy file is complete on its own: the comparator, session profiles and edge-case tables are
@@ -51,7 +54,7 @@ sqlquack convert: done, converted under utc-v1
 | Flag | Effect |
 |------|--------|
 | `--policy <file>` | The policy file. Default `sqlquack.toml` in the current directory, or the built-in policy without one. |
-| `--builtin-policy` | Use the built-in policy even where a `sqlquack.toml` exists: every known divergence is refused. |
+| `--builtin-policy` | Use the built-in policy even where a `sqlquack.toml` exists: every known divergence but the clock is refused. |
 | `--strict` | Refuse every divergence the policy refuses in strict mode. |
 | `--utc-session` | Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`. |
 | `--confirm-declared-offsets` | Confirm the `TIMESTAMP_TZ` offsets the schema declares. |
