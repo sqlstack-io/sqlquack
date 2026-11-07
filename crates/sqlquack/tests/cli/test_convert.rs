@@ -28,8 +28,8 @@ const NAIVE_TO_ZONED: &str =
 fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_printed() {
     let test_cases = [
         ConvertTestCase {
-            description: "a repeated result name refuses with help to alias each column",
-            sql: "SELECT 1, 1",
+            description: "a result name repeated inside a subquery refuses with help to alias each column",
+            sql: "SELECT 1 AS one FROM (SELECT 1, 1) AS t",
             flags: &[],
             mention: "give each result column its own alias",
             expected_outcome: convert_outcome(1, false),
