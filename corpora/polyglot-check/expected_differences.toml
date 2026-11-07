@@ -878,6 +878,41 @@ sqlquack_error = "Expected AS before the CTE body"
 note = "prose read as a CTE without AS; polyglot fails here too, with another error"
 
 [[rejection]]
+id = "snowflake_copy_prose_into_with"
+sql = "COPY INTO with ? source failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a table name"
+note = "an assertion message read as a COPY; the COPY grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_copy_prose_on_error"
+sql = "COPY ON_ERROR=? failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected INTO after COPY"
+note = "an assertion message read as a COPY; the COPY grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_copy_prose_reversed"
+sql = "COPY reversed param order failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected INTO after COPY"
+note = "an assertion message read as a COPY; the COPY grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_copy_prose_minimal"
+sql = "COPY minimal with ? source failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected INTO after COPY"
+note = "an assertion message read as a COPY; the COPY grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_copy_prose_roundtrip"
+sql = "COPY roundtrip failed to re-parse: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected INTO after COPY"
+note = "an assertion message read as a COPY; the COPY grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
 id = "snowflake_reserved_cte_name"
 sql = "WITH all AS (SELECT 1 AS count) SELECT all.count FROM all"
 dialects = ["Snowflake"]
@@ -892,6 +927,34 @@ sqlquack_error = "Reserved word TABLE cannot be an unquoted object name"
 note = "TABLE is a Snowflake reserved word, so it cannot name a table unquoted"
 
 [[rejection]]
+id = "snowflake_copy_unload_reserved_table_credentials"
+sql = "COPY INTO 's3://example/data.csv'\n    FROM EXTRA.EXAMPLE.TABLE\n    CREDENTIALS = ()\n    FILE_FORMAT = (TYPE = CSV COMPRESSION = NONE NULL_IF = ('') FIELD_OPTIONALLY_ENCLOSED_BY = '\"')\n    HEADER = TRUE\n    OVERWRITE = TRUE\n    SINGLE = TRUE\n            "
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a table name"
+note = "TABLE is a Snowflake reserved word, so it cannot be the unquoted last part of the unloaded table's name either; Snowflake refuses d1.s1.SELECT as an object name with syntax error 1003 (DEFINE STREAM d1.s1.v1 ON TABLE d1.s1.SELECT and DEFINE SEQUENCE d1.s1.SELECT)"
+
+[[rejection]]
+id = "snowflake_copy_unload_reserved_table_credentials_flat"
+sql = "COPY INTO 's3://example/data.csv'\nFROM EXTRA.EXAMPLE.TABLE\nCREDENTIALS = ()\nFILE_FORMAT = (TYPE=CSV COMPRESSION=NONE NULL_IF=(\n  ''\n) FIELD_OPTIONALLY_ENCLOSED_BY='\"')\nHEADER = TRUE\nOVERWRITE = TRUE\nSINGLE = TRUE"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a table name"
+note = "TABLE is a Snowflake reserved word, so it cannot be the unquoted last part of the unloaded table's name either; Snowflake refuses d1.s1.SELECT as an object name with syntax error 1003 (DEFINE STREAM d1.s1.v1 ON TABLE d1.s1.SELECT and DEFINE SEQUENCE d1.s1.SELECT)"
+
+[[rejection]]
+id = "snowflake_copy_unload_reserved_table_integration"
+sql = "COPY INTO 's3://example/data.csv'\n    FROM EXTRA.EXAMPLE.TABLE\n    STORAGE_INTEGRATION = S3_INTEGRATION\n    FILE_FORMAT = (TYPE=CSV COMPRESSION=NONE NULL_IF=('') FIELD_OPTIONALLY_ENCLOSED_BY='\"')\n    HEADER = TRUE\n    OVERWRITE = TRUE\n    SINGLE = TRUE\n            "
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a table name"
+note = "TABLE is a Snowflake reserved word, so it cannot be the unquoted last part of the unloaded table's name either; Snowflake refuses d1.s1.SELECT as an object name with syntax error 1003 (DEFINE STREAM d1.s1.v1 ON TABLE d1.s1.SELECT and DEFINE SEQUENCE d1.s1.SELECT)"
+
+[[rejection]]
+id = "snowflake_copy_unload_reserved_table_integration_flat"
+sql = "COPY INTO 's3://example/data.csv' FROM EXTRA.EXAMPLE.TABLE STORAGE_INTEGRATION = S3_INTEGRATION FILE_FORMAT = (TYPE=CSV COMPRESSION=NONE NULL_IF=('') FIELD_OPTIONALLY_ENCLOSED_BY='\"') HEADER = TRUE OVERWRITE = TRUE SINGLE = TRUE"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a table name"
+note = "TABLE is a Snowflake reserved word, so it cannot be the unquoted last part of the unloaded table's name either; Snowflake refuses d1.s1.SELECT as an object name with syntax error 1003 (DEFINE STREAM d1.s1.v1 ON TABLE d1.s1.SELECT and DEFINE SEQUENCE d1.s1.SELECT)"
+
+[[rejection]]
 id = "snowflake_empty_call_argument"
 sql = "SELECT ROUND(SCALE => 1, EXPR => 2.25, , ROUNDING_MODE => 'HALF_TO_EVEN') AS value"
 dialects = ["Snowflake"]
@@ -904,6 +967,90 @@ sql = "WITH RECURSIVE T(n) AS (VALUES (1) UNION ALL SELECT n + 1 FROM t WHERE n 
 dialects = ["Snowflake"]
 sqlquack_error = "Snowflake does not accept a bare VALUES list as the body of CTE 'T'"
 note = "Snowflake takes VALUES only in FROM; polyglot added this rule after SQLQuack's fork (rev 8767d68), with the same message"
+
+[[rejection]]
+id = "snowflake_table_unset_projection_policy"
+sql = "ALTER TABLE t UNSET PROJECTION POLICY"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected the end of the statement"
+note = "Snowflake refuses UNSET PROJECTION POLICY on a table, which takes it only on a column (recorded errno 1003)"
+
+[[rejection]]
+id = "snowflake_put_prose_with_quoted_file_uri"
+sql = "PUT with quoted file URI failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a file:// source and then the stage"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_put_prose_with_placeholder"
+sql = "PUT with ? placeholder failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an option after the location"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_put_prose_with_quoted_stage"
+sql = "PUT with quoted stage failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a file:// source and then the stage"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_put_prose_minimal_with"
+sql = "PUT minimal with ? failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a file:// source and then the stage"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_put_prose_roundtrip"
+sql = "PUT roundtrip failed to re-parse: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a file:// source and then the stage"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_put_prose_with_dollar_quoted_stage_target"
+sql = "PUT with dollar-quoted stage target failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a file:// source and then the stage"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_put_prose_with_uuid_name_path"
+sql = "PUT with @~/UUID/name path failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an option after the location"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_put_prose_with_uuid_compressupload_path"
+sql = "PUT with @~/UUID/compressUpload path failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an option after the location"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_put_prose_with_stage_uuid_auto_compress_false"
+sql = "PUT with @stage/UUID AUTO_COMPRESS=FALSE failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an option after the location"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_put_prose_with_stage_uuid_auto_compress_true"
+sql = "PUT with @stage/UUID AUTO_COMPRESS=TRUE failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected an option after the location"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
+
+[[rejection]]
+id = "snowflake_put_prose_with_long_path_stage_uuid"
+sql = "PUT with long path + @stage/UUID failed: {:?}"
+dialects = ["Snowflake"]
+sqlquack_error = "Expected a file:// source and then the stage"
+note = "an assertion message read as a PUT; the PUT grammar check refuses it before polyglot's parser fails on it with another error"
 
 [[rejection]]
 id = "snowflake_empty_select_list"

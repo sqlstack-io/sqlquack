@@ -130,6 +130,8 @@ impl Parser {
                     &["INCLUDE", "INTERNAL", "STAGES"],
                 ])?;
                 properties.push(property(&words, None, None));
+            } else if options == CloneOptions::Container {
+                break;
             } else {
                 return Err(self.parse_error("Unexpected token after the CLONE source"));
             }

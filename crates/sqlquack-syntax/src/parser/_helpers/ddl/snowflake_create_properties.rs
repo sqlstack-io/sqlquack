@@ -19,6 +19,15 @@ impl Parser {
         or_alter: bool,
     ) -> Result<Option<Expression>> {
         let start = self.current;
+        if let Some(table) = self.parse_snowflake_create_external_table(or_replace, or_alter)? {
+            return Ok(Some(table));
+        }
+        if let Some(table) = self.parse_snowflake_create_query_table(or_replace, or_alter)? {
+            return Ok(Some(table));
+        }
+        if self.check_text_seq(&["SEMANTIC", "VIEW"]) {
+            self.check_snowflake_semantic_view()?;
+        }
         if self.check(TokenType::Alter) || self.check(TokenType::String) {
             return Err(self.parse_error("Expected an object kind after CREATE"));
         }

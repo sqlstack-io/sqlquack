@@ -539,6 +539,13 @@ impl Parser {
 
     /// Parses CHANGES(INFORMATION => var) AT|BEFORE(...) END(...).
     pub(crate) fn parse_changes(&mut self) -> Result<Option<Expression>> {
+        if self.is_snowflake() && self.match_text_seq(&["CHANGES", "(", ")"]) {
+            return Ok(Some(Expression::Changes(Box::new(Changes {
+                information: None,
+                at_before: None,
+                end: None,
+            }))));
+        }
         if !self.match_text_seq(&["CHANGES", "(", "INFORMATION", "=>"]) {
             return Ok(None);
         }
@@ -1814,6 +1821,9 @@ impl Parser {
 
     /// Parses Snowflake SEMANTIC_VIEW(name METRICS ... DIMENSIONS ... WHERE ...).
     pub(crate) fn parse_semantic_view(&mut self) -> Result<Expression> {
+        if self.is_snowflake() && self.check(TokenType::String) {
+            return Err(self.parse_error("Expected a semantic view name"));
+        }
         let this = self.parse_primary()?;
 
         let mut metrics = None;
@@ -1845,6 +1855,9 @@ impl Parser {
             }
         }
 
+        if self.is_snowflake() && metrics.is_none() && dimensions.is_none() && facts.is_none() {
+            return Err(self.parse_error("SEMANTIC_VIEW needs METRICS, DIMENSIONS or FACTS"));
+        }
         Ok(Expression::SemanticView(Box::new(SemanticView {
             this: Box::new(this),
             metrics,
@@ -1877,7 +1890,16 @@ impl Parser {
         let expr = self
             .parse_disjunction()?
             .ok_or_else(|| self.parse_error("Expected expression in SEMANTIC_VIEW clause"))?;
-        if self.match_token(TokenType::As) {
+        let bare_alias = self.is_snowflake()
+            && (self.check(TokenType::Identifier)
+                || self.check(TokenType::QuotedIdentifier)
+                || self.check(TokenType::Var))
+            && !self.is_snowflake_reserved_keyword()
+            && (self.check(TokenType::QuotedIdentifier)
+                || !crate::parser::constants::SNOWFLAKE_SEMANTIC_VIEW_CLAUSES
+                    .iter()
+                    .any(|word| self.peek_text().eq_ignore_ascii_case(word)));
+        if bare_alias || self.match_token(TokenType::As) {
             let alias = self.expect_identifier_or_keyword_with_quoted()?;
             Ok(Expression::Alias(Box::new(
                 crate::expressions::operators::models::Alias {
