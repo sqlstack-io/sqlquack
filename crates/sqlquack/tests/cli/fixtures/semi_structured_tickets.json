@@ -1,0 +1,10 @@
+{
+  "relations": {
+    "TICKETS": [
+      ["TICKET_ID", "NUMBER(38,0)"],
+      ["SUBJECT", "VARCHAR"],
+      ["TAGS", "ARRAY"],
+      ["DETAILS", "VARIANT"]
+    ]
+  }
+}

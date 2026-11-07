@@ -9,7 +9,7 @@ use crate::formats::constants::COVERAGE_ROOT;
 #[derive(Debug, Parser)]
 #[command(
     name = "syntax-coverage",
-    about = "Checks documented Snowflake syntax coverage."
+    about = "Checks documented syntax coverage, Snowflake's unless the root's dialect.toml says otherwise."
 )]
 pub struct Arguments {
     #[command(subcommand)]
@@ -52,6 +52,9 @@ pub enum Command {
     },
     /// Counts for the whole catalogue and per family; fails on any unresolved reference.
     Summary {
+        /// A focus file (`focus/<dialect>.toml`): also report its forms; fails on any unknown id.
+        #[arg(long)]
+        focus: Option<PathBuf>,
         #[command(flatten)]
         common: Common,
     },
@@ -99,7 +102,11 @@ pub enum Command {
     },
     /// Internal: one verdict line per SQL line on stdin, for the isolated local parse.
     #[command(hide = true)]
-    ParseWorker,
+    ParseWorker {
+        /// Parse with the PostgreSQL parser instead of the Snowflake one.
+        #[arg(long)]
+        postgres: bool,
+    },
     /// What conversion makes of every case Snowflake parsed, by form and family (decision D107).
     Translation {
         #[command(flatten)]

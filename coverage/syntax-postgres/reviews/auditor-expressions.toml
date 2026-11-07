@@ -1,0 +1,1029 @@
+# Approvals by the independent syntax auditor (D235). Each listed form was read in full against its
+# PostgreSQL 18.6 documentation, its obligations, its cases with their PostgreSQL 18.6 receipts, and the
+# local parse trees. An approval holds while the form's definition hash and fingerprint are unchanged;
+# any change makes it stale until re-read. Entries are copied verbatim from the auditor's records on
+# wip/syntax-omission-audit (coverage/syntax/audits/pg-review-*.toml).
+
+
+[[review]]
+id = "pg-auditor-expressions-001"
+reviewer_lane = "auditor"
+family = "expressions"
+parser_tree = "17b35dd8e162cf4f53a47da96498f6a4669a9164"
+reviewed_utc = "2026-11-06T08:23:55Z"
+verdict = "approved"
+forms = [
+  "pg.expressions.array.op-amp-amp",
+  "pg.expressions.array.op-at-gt",
+  "pg.expressions.array.op-bar-bar",
+  "pg.expressions.array.op-lt-at",
+  "pg.expressions.binarystring.op-bar-bar",
+  "pg.expressions.bitstring.op-amp",
+  "pg.expressions.bitstring.op-bar-bar",
+  "pg.expressions.bitstring.op-gt-gt",
+  "pg.expressions.bitstring.op-hash",
+  "pg.expressions.bitstring.op-lt-lt",
+  "pg.expressions.bitstring.op-tilde",
+  "pg.expressions.comparison.between-and",
+  "pg.expressions.comparison.between-symmetric-and",
+  "pg.expressions.comparison.is-distinct-from",
+  "pg.expressions.comparison.is-false",
+  "pg.expressions.comparison.is-not-distinct-from",
+  "pg.expressions.comparison.is-not-false",
+  "pg.expressions.comparison.is-not-null",
+  "pg.expressions.comparison.is-not-true",
+  "pg.expressions.comparison.is-null",
+  "pg.expressions.comparison.is-true",
+  "pg.expressions.comparison.isnull",
+  "pg.expressions.comparison.not-between-and",
+  "pg.expressions.comparison.not-between-symmetric-and",
+  "pg.expressions.comparison.notnull",
+  "pg.expressions.comparison.op-bang-eq",
+  "pg.expressions.comparison.op-eq",
+  "pg.expressions.comparison.op-gt",
+  "pg.expressions.comparison.op-gt-eq",
+  "pg.expressions.comparison.op-lt",
+  "pg.expressions.comparison.op-lt-eq",
+  "pg.expressions.comparison.op-lt-gt",
+  "pg.expressions.comparisons.in-list",
+  "pg.expressions.comparisons.not-in-list",
+  "pg.expressions.comparisons.record-comparison",
+  "pg.expressions.conditional.case-searched",
+  "pg.expressions.conditional.case-simple",
+  "pg.expressions.datatype-boolean.boolean-literal",
+  "pg.expressions.datatype-character.char",
+  "pg.expressions.datatype-character.name",
+  "pg.expressions.datatype-datetime.typed-datetime-literal",
+  "pg.expressions.datatype-json.jsonpath-type",
+  "pg.expressions.datatype-numeric.float-precision",
+  "pg.expressions.datatype-oid.oid",
+  "pg.expressions.datatype-oid.regclass",
+  "pg.expressions.datatype-oid.regcollation",
+  "pg.expressions.datatype-oid.regconfig",
+  "pg.expressions.datatype-oid.regdictionary",
+  "pg.expressions.datatype-oid.regnamespace",
+  "pg.expressions.datatype-oid.regoper",
+  "pg.expressions.datatype-oid.regoperator",
+  "pg.expressions.datatype-oid.regproc",
+  "pg.expressions.datatype-oid.regprocedure",
+  "pg.expressions.datatype-oid.regrole",
+  "pg.expressions.datatype-oid.regtype",
+  "pg.expressions.datatype-pseudo.any",
+  "pg.expressions.datatype-pseudo.anyarray",
+  "pg.expressions.datatype-pseudo.anycompatible",
+  "pg.expressions.datatype-pseudo.anycompatiblearray",
+  "pg.expressions.datatype-pseudo.anycompatiblemultirange",
+  "pg.expressions.datatype-pseudo.anycompatiblenonarray",
+  "pg.expressions.datatype-pseudo.anycompatiblerange",
+  "pg.expressions.datatype-pseudo.anyelement",
+  "pg.expressions.datatype-pseudo.anyenum",
+  "pg.expressions.datatype-pseudo.anymultirange",
+  "pg.expressions.datatype-pseudo.anynonarray",
+  "pg.expressions.datatype-pseudo.anyrange",
+  "pg.expressions.datatype-pseudo.cstring",
+  "pg.expressions.datatype-pseudo.event-trigger",
+  "pg.expressions.datatype-pseudo.fdw-handler",
+  "pg.expressions.datatype-pseudo.index-am-handler",
+  "pg.expressions.datatype-pseudo.internal",
+  "pg.expressions.datatype-pseudo.language-handler",
+  "pg.expressions.datatype-pseudo.pg-ddl-command",
+  "pg.expressions.datatype-pseudo.record",
+  "pg.expressions.datatype-pseudo.table-am-handler",
+  "pg.expressions.datatype-pseudo.trigger",
+  "pg.expressions.datatype-pseudo.tsm-handler",
+  "pg.expressions.datatype-pseudo.unknown",
+  "pg.expressions.datatype-pseudo.void",
+  "pg.expressions.datatype.bigint",
+  "pg.expressions.datatype.bigserial",
+  "pg.expressions.datatype.boolean",
+  "pg.expressions.datatype.box",
+  "pg.expressions.datatype.bytea",
+  "pg.expressions.datatype.character-varying",
+  "pg.expressions.datatype.cidr",
+  "pg.expressions.datatype.circle",
+  "pg.expressions.datatype.date",
+  "pg.expressions.datatype.double-precision",
+  "pg.expressions.datatype.inet",
+  "pg.expressions.datatype.integer",
+  "pg.expressions.datatype.json",
+  "pg.expressions.datatype.jsonb",
+  "pg.expressions.datatype.line",
+  "pg.expressions.datatype.lseg",
+  "pg.expressions.datatype.macaddr",
+  "pg.expressions.datatype.macaddr8",
+  "pg.expressions.datatype.money",
+  "pg.expressions.datatype.path",
+  "pg.expressions.datatype.pg-lsn",
+  "pg.expressions.datatype.pg-snapshot",
+  "pg.expressions.datatype.point",
+  "pg.expressions.datatype.polygon",
+  "pg.expressions.datatype.real",
+  "pg.expressions.datatype.serial",
+  "pg.expressions.datatype.smallint",
+  "pg.expressions.datatype.smallserial",
+  "pg.expressions.datatype.text",
+  "pg.expressions.datatype.time",
+  "pg.expressions.datatype.time-with-time-zone",
+  "pg.expressions.datatype.timestamp",
+  "pg.expressions.datatype.timestamp-with-time-zone",
+  "pg.expressions.datatype.tsquery",
+  "pg.expressions.datatype.tsvector",
+  "pg.expressions.datatype.txid-snapshot",
+  "pg.expressions.datatype.uuid",
+  "pg.expressions.datatype.xml",
+  "pg.expressions.datetime.op-minus",
+  "pg.expressions.datetime.op-plus",
+  "pg.expressions.datetime.op-slash",
+  "pg.expressions.datetime.op-star",
+  "pg.expressions.datetime.overlaps",
+  "pg.expressions.datetime.overlaps-length",
+  "pg.expressions.ddl-schemas.database-qualified-name",
+  "pg.expressions.ddl-schemas.schema-qualified-name",
+  "pg.expressions.geometry.op-amp-amp",
+  "pg.expressions.geometry.op-amp-gt",
+  "pg.expressions.geometry.op-amp-lt",
+  "pg.expressions.geometry.op-amp-lt-bar",
+  "pg.expressions.geometry.op-at-gt",
+  "pg.expressions.geometry.op-bar-amp-gt",
+  "pg.expressions.geometry.op-bar-gt-gt",
+  "pg.expressions.geometry.op-gt-caret",
+  "pg.expressions.geometry.op-gt-gt",
+  "pg.expressions.geometry.op-hash-hash",
+  "pg.expressions.geometry.op-lt-at",
+  "pg.expressions.geometry.op-lt-caret",
+  "pg.expressions.geometry.op-lt-lt",
+  "pg.expressions.geometry.op-lt-lt-bar",
+  "pg.expressions.geometry.op-lt-minus-gt",
+  "pg.expressions.geometry.op-minus",
+  "pg.expressions.geometry.op-plus",
+  "pg.expressions.geometry.op-qmark-bar-bar",
+  "pg.expressions.geometry.op-qmark-hash",
+  "pg.expressions.geometry.op-qmark-minus-bar",
+  "pg.expressions.geometry.op-slash",
+  "pg.expressions.geometry.op-star",
+  "pg.expressions.geometry.op-tilde-eq",
+  "pg.expressions.info.op-at-gt",
+  "pg.expressions.info.op-eq",
+  "pg.expressions.json.op-at-at",
+  "pg.expressions.json.op-at-gt",
+  "pg.expressions.json.op-at-qmark",
+  "pg.expressions.json.op-bar-bar",
+  "pg.expressions.json.op-hash-gt",
+  "pg.expressions.json.op-hash-gt-gt",
+  "pg.expressions.json.op-hash-minus",
+  "pg.expressions.json.op-lt-at",
+  "pg.expressions.json.op-minus",
+  "pg.expressions.json.op-minus-gt",
+  "pg.expressions.json.op-minus-gt-gt",
+  "pg.expressions.json.op-qmark",
+  "pg.expressions.json.op-qmark-amp",
+  "pg.expressions.json.op-qmark-bar",
+  "pg.expressions.logical.and",
+  "pg.expressions.logical.not",
+  "pg.expressions.logical.or",
+  "pg.expressions.matching.ilike",
+  "pg.expressions.matching.like",
+  "pg.expressions.matching.not-ilike",
+  "pg.expressions.matching.not-like",
+  "pg.expressions.matching.not-similar-to",
+  "pg.expressions.matching.op-bang-tilde",
+  "pg.expressions.matching.op-bang-tilde-star",
+  "pg.expressions.matching.op-tilde",
+  "pg.expressions.matching.op-tilde-star",
+  "pg.expressions.matching.similar-to",
+  "pg.expressions.math.op-amp",
+  "pg.expressions.math.op-caret",
+  "pg.expressions.math.op-gt-gt",
+  "pg.expressions.math.op-hash",
+  "pg.expressions.math.op-lt-lt",
+  "pg.expressions.math.op-minus",
+  "pg.expressions.math.op-percent",
+  "pg.expressions.math.op-plus",
+  "pg.expressions.math.op-slash",
+  "pg.expressions.math.op-star",
+  "pg.expressions.math.op-tilde",
+  "pg.expressions.net.op-amp",
+  "pg.expressions.net.op-amp-amp",
+  "pg.expressions.net.op-gt-gt",
+  "pg.expressions.net.op-gt-gt-eq",
+  "pg.expressions.net.op-lt-lt",
+  "pg.expressions.net.op-lt-lt-eq",
+  "pg.expressions.net.op-minus",
+  "pg.expressions.net.op-plus",
+  "pg.expressions.net.op-tilde",
+  "pg.expressions.range.op-amp-amp",
+  "pg.expressions.range.op-amp-gt",
+  "pg.expressions.range.op-amp-lt",
+  "pg.expressions.range.op-at-gt",
+  "pg.expressions.range.op-gt-gt",
+  "pg.expressions.range.op-lt-at",
+  "pg.expressions.range.op-lt-lt",
+  "pg.expressions.range.op-minus",
+  "pg.expressions.range.op-minus-bar-minus",
+  "pg.expressions.range.op-plus",
+  "pg.expressions.range.op-star",
+  "pg.expressions.rangetypes.builtin-multirange-types",
+  "pg.expressions.rangetypes.builtin-range-types",
+  "pg.expressions.rangetypes.multirange-constructor",
+  "pg.expressions.rangetypes.range-constructor",
+  "pg.expressions.sql-expressions.array-subquery",
+  "pg.expressions.sql-expressions.column-reference",
+  "pg.expressions.sql-expressions.field-selection",
+  "pg.expressions.sql-expressions.function-call",
+  "pg.expressions.sql-expressions.function-style-cast",
+  "pg.expressions.sql-expressions.positional-parameter",
+  "pg.expressions.sql-expressions.row-constructor",
+  "pg.expressions.sql-expressions.scalar-subquery",
+  "pg.expressions.sql-expressions.slice",
+  "pg.expressions.sql-expressions.subscript",
+  "pg.expressions.sql-syntax-calling-funcs.mixed-notation",
+  "pg.expressions.sql-syntax-calling-funcs.named-notation",
+  "pg.expressions.sql-syntax-calling-funcs.named-notation-colon-equals",
+  "pg.expressions.sql-syntax-lexical.binary-integer",
+  "pg.expressions.sql-syntax-lexical.bit-string",
+  "pg.expressions.sql-syntax-lexical.block-comment",
+  "pg.expressions.sql-syntax-lexical.decimal",
+  "pg.expressions.sql-syntax-lexical.decimal-leading-point",
+  "pg.expressions.sql-syntax-lexical.digit-separators",
+  "pg.expressions.sql-syntax-lexical.dollar-quoted-string",
+  "pg.expressions.sql-syntax-lexical.escape-string",
+  "pg.expressions.sql-syntax-lexical.exponent",
+  "pg.expressions.sql-syntax-lexical.function-style-string",
+  "pg.expressions.sql-syntax-lexical.hex-bit-string",
+  "pg.expressions.sql-syntax-lexical.hex-integer",
+  "pg.expressions.sql-syntax-lexical.identifier",
+  "pg.expressions.sql-syntax-lexical.integer",
+  "pg.expressions.sql-syntax-lexical.line-comment",
+  "pg.expressions.sql-syntax-lexical.octal-integer",
+  "pg.expressions.sql-syntax-lexical.quoted-identifier",
+  "pg.expressions.sql-syntax-lexical.string",
+  "pg.expressions.sql-syntax-lexical.string-continuation",
+  "pg.expressions.sql-syntax-lexical.unicode-identifier",
+  "pg.expressions.sql-syntax-lexical.unicode-string",
+  "pg.expressions.string.op-bar-bar",
+  "pg.expressions.string.op-caret-at",
+  "pg.expressions.subquery.exists",
+  "pg.expressions.subquery.in",
+  "pg.expressions.subquery.not-in",
+  "pg.expressions.textsearch.op-amp-amp",
+  "pg.expressions.textsearch.op-at-at",
+  "pg.expressions.textsearch.op-at-gt",
+  "pg.expressions.textsearch.op-bar-bar",
+  "pg.expressions.textsearch.op-lt-at",
+  "pg.expressions.textsearch.op-lt-minus-gt",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 17b35dd8; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.expressions.array.op-amp-amp" = "b08c7151b86bea0165c2dc47b90ea2ceb6ad58c224955050add086a78bb80933"
+"pg.expressions.array.op-at-gt" = "9ec661963d3a3cf65e901a65dc693afa4de4b11522697bd1791c7ef729891472"
+"pg.expressions.array.op-bar-bar" = "0c859c24f03c61f8e797dd10f91b7bab519b175d7a820e5794dc8498827e7fb4"
+"pg.expressions.array.op-lt-at" = "0d72ec3f1b7019ba398f7c16c5c42277d8c6a44e9e15bd08e4ecd1a3c517858d"
+"pg.expressions.binarystring.op-bar-bar" = "4cf14b077862df94ebab1530beadeb835c18ac7785aa9e00cce860cdf758f3fa"
+"pg.expressions.bitstring.op-amp" = "083bee5d19323dfc1dbaa986b8b87adf2d5d1ad86d4d15b2e15c23e15e1c9896"
+"pg.expressions.bitstring.op-bar-bar" = "0f4dc26ec3a0a16952f3d402b125a8517be7de6e32981655d8412ce34980b04e"
+"pg.expressions.bitstring.op-gt-gt" = "d9c018c5b1b16e56f6f5a3c1bad01bb286f3048ea6d0b1a492d7877241b760de"
+"pg.expressions.bitstring.op-hash" = "704951b0f30c1a1b59784e781c3f0b240567627f519e98409a41a2fcb36be4bc"
+"pg.expressions.bitstring.op-lt-lt" = "2727114e7c2c4a2421197ed3227d98e1257ef3d0a40d42a4cb725d8a85f7eb92"
+"pg.expressions.bitstring.op-tilde" = "444e4aa1de35312542ef3b1985ad59e88d57b39a643fc3b40b3f9ef90d6360c8"
+"pg.expressions.comparison.between-and" = "38539f327bea3eb7234d83c8c78f0ff76f84c1cca2c06861e76c2b67a29ed9b8"
+"pg.expressions.comparison.between-symmetric-and" = "6478c1160497e57c883a92db42667b47c3a6bcba252979466f19570e77b0e391"
+"pg.expressions.comparison.is-distinct-from" = "c2b2e7a9464366f77160e57c8b323bcc29bf67ed5d64f98142f8e2f1c6bfa65e"
+"pg.expressions.comparison.is-false" = "9f59b7a4aa84db76b9ba3abbd2cbd2663187dfcb3687ccf6b9f9eb52f8cbc22f"
+"pg.expressions.comparison.is-not-distinct-from" = "a1eff7dd41c9f152d844fb9be5c35fa8688f66d6f3b6581cf23c1b6dc8976f2b"
+"pg.expressions.comparison.is-not-false" = "f2bb1cc9cb2e27316474001f6d8ed6f3967f9a7d5fce4e426aa7ab311fa0c1ed"
+"pg.expressions.comparison.is-not-null" = "964946c4f9aecbfae474e012163d2e14ef573fd751d62f24b300f5319a592a28"
+"pg.expressions.comparison.is-not-true" = "ad6e79462c40e8cbbdd02f26e9f9588f11a298939018e4fc26762ed19af96374"
+"pg.expressions.comparison.is-null" = "0565b1c0f621f24ae3223f6d96b9d4c184739695d8af45cf242899c82c1aa2f1"
+"pg.expressions.comparison.is-true" = "04d4069d7af5dc1855e2048e8bf6b21654379af44108487aafe016b4789ca5f5"
+"pg.expressions.comparison.isnull" = "4639a2cbdb2eb9fd57f327e6f255b2246d6c55b149a9c9c57c1ce7db02494cc8"
+"pg.expressions.comparison.not-between-and" = "e3b478c1d679ec853be9f7381fa74e7908ff6ac5f1c1aa7ab6f07abd301e5969"
+"pg.expressions.comparison.not-between-symmetric-and" = "61d6956d09d5a88f55d9533bfc96c30fdcccfe62d03267f04136d53d94e92947"
+"pg.expressions.comparison.notnull" = "bedb65c9c9b3ff1f9fde1b51f7cd464d91c1adabede8a487957c40d0c313a39c"
+"pg.expressions.comparison.op-bang-eq" = "9143849a8142a85e5e02aa631f9d584e671894fc1d2604649b5311101c30bbf9"
+"pg.expressions.comparison.op-eq" = "029015e836d2ce0ca42c6d0f6a916017a67d4d57e134a5cfb7d068f5536f81e6"
+"pg.expressions.comparison.op-gt" = "fa1a38e35552f5c9a62a888c40547625e19bf7e3fc2baaa9d441464d4ca25d0e"
+"pg.expressions.comparison.op-gt-eq" = "591b1d10527573be61c02d05662fdca70e223d454d3e761bb58fc6b7ea6392f3"
+"pg.expressions.comparison.op-lt" = "2248ef93004e61b1fd357d1c5c0c6bb718e15313d976d84bb335bddddb32bcda"
+"pg.expressions.comparison.op-lt-eq" = "e0dd2ffefd5a950c4a49b09fd7a2d0efe8d96ad7dd7253ac0e7ccc908a71a54d"
+"pg.expressions.comparison.op-lt-gt" = "9ebd36d4a597f310b97f2c6e40f7aaf4099419f625c03f71cf6a884afae738dc"
+"pg.expressions.comparisons.in-list" = "327f762bbe772af8ce45804d58d84fa9b7425f5a31981e9c1eca41ea7160b58a"
+"pg.expressions.comparisons.not-in-list" = "ac423b88447d468323263ea7b0d6b54336e69239c9943b3adba7d7b3b4d57066"
+"pg.expressions.comparisons.record-comparison" = "d39cd0fb8e9b1d1cee5505882c5bf823b54ea847cbc5563bcd5a96ab1b2e516a"
+"pg.expressions.conditional.case-searched" = "986dca2680acbe119f29fad595d27c3cc4a74d61cb2fe6d4c02aaacb4baefb62"
+"pg.expressions.conditional.case-simple" = "5b0999e1423d118e0b52fee1363266f524eed942e98650ae5fe6405f4b388df2"
+"pg.expressions.datatype-boolean.boolean-literal" = "93fb2bdb45563440a08c6d706794d3bc52d365e4bc2243a52dd93a8b8d133686"
+"pg.expressions.datatype-character.char" = "ef2d8ba101db83be8abc64d8e3eff9803f81e68a0812214c28c48375d2a56e86"
+"pg.expressions.datatype-character.name" = "64604b0caf320231a7150efdeffca76df621cf1d7cd6ef1835a17df1bd56d541"
+"pg.expressions.datatype-datetime.typed-datetime-literal" = "bbd2d750ca51fb2795b16e7d3b79d13485290f67d103adb1adba2dfa73b6f56e"
+"pg.expressions.datatype-json.jsonpath-type" = "86f74fb4ed460e9ead56c322f73d9b1914cb4fd389ff9c3e4892b67b50dc374f"
+"pg.expressions.datatype-numeric.float-precision" = "e4cc3ded5e0a4c704873f8c148c1c561626ff24edb251b693ac2ff4ea5fd07cb"
+"pg.expressions.datatype-oid.oid" = "e8a9744d4d4dfa8dbfb21feb4bfb88e65bad7b9d36927c50d0322e59ba66cab1"
+"pg.expressions.datatype-oid.regclass" = "345c159b33d217a5c6fc163e680414d1928cf07039903231d2ade0b0b1f5a5e6"
+"pg.expressions.datatype-oid.regcollation" = "6efb41112e09ed9d9046863201469f73c303522ee53f4b1ffd24c261ceb91f7e"
+"pg.expressions.datatype-oid.regconfig" = "9b18308810051bf859ec3cfeda45dac6bcdb5562aa12cc8d6059ef58482472ec"
+"pg.expressions.datatype-oid.regdictionary" = "a6e423aaacd943580fb7615ab230f1a6ae78d7f616c25cc14d1ed6ad202ac501"
+"pg.expressions.datatype-oid.regnamespace" = "d41ec9a36013cbe4448ecf0cada57aa5827fbb44f97c6b1f18740b87b5313f9b"
+"pg.expressions.datatype-oid.regoper" = "29d829d5bc01fffb5209096dd05b71597635a5c788611c2704fbdd231f911992"
+"pg.expressions.datatype-oid.regoperator" = "2ea3ee6c2e35f614fc8576f37d37373794b0d411f0c653636e9f843b0cd09bec"
+"pg.expressions.datatype-oid.regproc" = "44e51e6e7dbb8784f2ce64c600f335ae53f898f284d0f7563b0311b78f7c2196"
+"pg.expressions.datatype-oid.regprocedure" = "2fe117698e95f8e149b335ae25c24dac8bf6d55d7a72e0c304151fd0d04a45ac"
+"pg.expressions.datatype-oid.regrole" = "823477a58b6fd3feef75a495f711bed7510332c19e14ff1ce9ad8fba9c47df2b"
+"pg.expressions.datatype-oid.regtype" = "5857ddd616cbf5681f9515d619975e1b83e8970e97198067eff6759bd08b0130"
+"pg.expressions.datatype-pseudo.any" = "7bde50fe8ec5da3d2f0b61351aaa9fc62c42ba6de201ee10502abbf4642be374"
+"pg.expressions.datatype-pseudo.anyarray" = "e68ed0e9e0406e24877c6034f07682f666de6e13438df1ff155bc95534fd20bc"
+"pg.expressions.datatype-pseudo.anycompatible" = "530793d0a22ef8f07524ab4302a58e0315598df559541aa50f46eede91210cc4"
+"pg.expressions.datatype-pseudo.anycompatiblearray" = "964675e6a1dff0e0b4ce886c681084cf7f992d285c8a67771f2bda4d1a85b61a"
+"pg.expressions.datatype-pseudo.anycompatiblemultirange" = "6e858b2d05fd90db105e7bf57b0f7aaa7d0f6cb645ec99b3582d781b6278f2d5"
+"pg.expressions.datatype-pseudo.anycompatiblenonarray" = "5ed1671254e8475fc8472d4ed9ae0916a4d2992fa539bc084b496107b99bfdac"
+"pg.expressions.datatype-pseudo.anycompatiblerange" = "697ad3646d07e7c7b02a9b99a489edd7260bdc8705ecb506e5ab3998352e96e2"
+"pg.expressions.datatype-pseudo.anyelement" = "48f4976844f43e25bca0f4c7ef52ce5b80821d7cdc72a9d3ceedb3eb51429b39"
+"pg.expressions.datatype-pseudo.anyenum" = "5080c09076b73f6ab4305c6bab3955153b4af45ef228598d9df29478a39ae47f"
+"pg.expressions.datatype-pseudo.anymultirange" = "3fdf0c085d43c0da078e82e4e3e7ef75355cf40dd8ee096de845d6dd491b6df5"
+"pg.expressions.datatype-pseudo.anynonarray" = "bdd8e7dfde773cb71b75a76f262fc2117794f29ca7aa3f94fa8ba402c21d8c09"
+"pg.expressions.datatype-pseudo.anyrange" = "64b23e3d7fe29619fc205b3675561a2dd4f71b5d2fd3954dbbd2483f0f86e0db"
+"pg.expressions.datatype-pseudo.cstring" = "f87616434e8a594ab5567e8fc0f8144a3005c1d972720dc50d011bbbce8921e0"
+"pg.expressions.datatype-pseudo.event-trigger" = "c90b825d1059e41faf08c46717f237adbf18c29b2f372821e5ec54c1397948e7"
+"pg.expressions.datatype-pseudo.fdw-handler" = "ca804b74ca2e07aa654623d5b0013b7f6d29d9830ae99da7ec411aa6d9557ec4"
+"pg.expressions.datatype-pseudo.index-am-handler" = "b7f7f6dfb41c8e52692ccd50c95b0cb247e97c2c67c152f9dc5dc98ffefca8fb"
+"pg.expressions.datatype-pseudo.internal" = "9a407a33e677bb229f6ed04ef55b447fed2554a50f52fb9788045ca02348072c"
+"pg.expressions.datatype-pseudo.language-handler" = "de647d03d6308b3dc8c9cbe6155d90387e61831262cbb39acc1fa03ac07a41aa"
+"pg.expressions.datatype-pseudo.pg-ddl-command" = "bf8f205a2ff9488d952e94748186ac7094c7b4041647ec0b8c6c060a394969e4"
+"pg.expressions.datatype-pseudo.record" = "6dafd80c409437c9b81575bfa8624231603086c8a0be9501eb332373e62194dd"
+"pg.expressions.datatype-pseudo.table-am-handler" = "30bc02da73c39ecaef2f4f3362e3979e5422519ac2b10a08ff2d7d549f3274a4"
+"pg.expressions.datatype-pseudo.trigger" = "ad40cc21ed7bbbc7890cbe14fa58aaca002cb5373e823de4b55ed10c069ac59e"
+"pg.expressions.datatype-pseudo.tsm-handler" = "b60ea7488b9a2eb47fe492dfa485a318cc64081df91ff05e4d095099557c45eb"
+"pg.expressions.datatype-pseudo.unknown" = "9fd45afd0f7cfa30f18856747551b8875be874f28294d8c476ee2abc42abbdd0"
+"pg.expressions.datatype-pseudo.void" = "e0c20441f8aa2b579b9b8410abc76cb09748a5815843aab4784108d0c6732577"
+"pg.expressions.datatype.bigint" = "bc0eb7e3aa7a3d314edd97487ab501ed4949efd6d21b84bac83e192949f1d9cd"
+"pg.expressions.datatype.bigserial" = "1c95598790b9ccc1613a926c4d6b2be3cbad38ac3f027ad192a1a5e9ef0c4144"
+"pg.expressions.datatype.boolean" = "a00263d4e12809f5fefee3ecd10838fe132f7b6be6c640b0583d228e3684ba20"
+"pg.expressions.datatype.box" = "be4804335aa74e7c297e1e8787e6e1437c865bd1be367f9801909e46b7dd7589"
+"pg.expressions.datatype.bytea" = "82d249baccc2a74a2fcb0937837a9e9b65cf16be0dc70f8d648b8d84f7097dc1"
+"pg.expressions.datatype.character-varying" = "0183a01067f127a91e6d499518156b830f0fc7cc1c4b8c617159f321ec5b1195"
+"pg.expressions.datatype.cidr" = "3fb3a53d394032ffa57fbe00b2748a4947a94e71646bb1132b27574020cbbed3"
+"pg.expressions.datatype.circle" = "5d56f7a1c722640a17fed7d92355afd1f262294ee883626de04a7023305bb6c1"
+"pg.expressions.datatype.date" = "d20d8f576296a418303d9d1e899e34e9ef20e36a02b58c6f07352b2e48d010ef"
+"pg.expressions.datatype.double-precision" = "28b1e74a9f6cf298c3ad78868a1fea600af0bb6014b3fc3b63630ef395029ada"
+"pg.expressions.datatype.inet" = "54537f5ec2c83dc4fd0e79a3652830ffe9f803947ea8453f0fa49e513621550e"
+"pg.expressions.datatype.integer" = "592e39fcf33a4d2eafa539324e4b53198b40b86c2c7357ff521bea1d28a5be87"
+"pg.expressions.datatype.json" = "324fcccff4de09e022968b6eaf4f303aa079e9de166bb2c8b79ad5d47885f0a8"
+"pg.expressions.datatype.jsonb" = "4445979f3710a2cdb92d23b14ad67661f8e180f0f6b18246eec1ac7a65c7b106"
+"pg.expressions.datatype.line" = "ffd638e487cf7b60fbae83273468beb59250e32abbc182c196dd637e4600f4b5"
+"pg.expressions.datatype.lseg" = "a913f20f1662ee2a34751d8c48b7ae1a21940e7348ce267a0a03480e7db94a9c"
+"pg.expressions.datatype.macaddr" = "aed45f90b3fcc370c5542d90b5cc2769f9eb8439a77d9190f44c30bfac280e31"
+"pg.expressions.datatype.macaddr8" = "4e0a460cf6b3eba2afbbafc1144f458f0384dae34fcbe423e46926e0b77bd150"
+"pg.expressions.datatype.money" = "86fe3098873643ead7d1eeead9cef7ddddb42d30a5e123f85391bea8a01f10df"
+"pg.expressions.datatype.path" = "b5b7ea2049c39ddd327fc64d0f2d2adbadbbaa2e72b29c26755ccc98ce91e0ff"
+"pg.expressions.datatype.pg-lsn" = "fc0f79e9b1ecd644e21840c0e17781186033c43a62a1bf49ce5bf30da98ddade"
+"pg.expressions.datatype.pg-snapshot" = "d24d27f8e7c51e1246aa16ce54b059898427f149e3d53cdbbf4fc271242fa157"
+"pg.expressions.datatype.point" = "4545c9e45a5b4150e689cd036c2c1391d2dff35c279f174fb8fbaf94da292f88"
+"pg.expressions.datatype.polygon" = "e5d9fe936faa9cc440126bbefc3edd555d98e763ab1c5c0c06475ded6fe7c0d7"
+"pg.expressions.datatype.real" = "4949aa6c523869e03fe9541498086e81ca03207cb90cb94392b8514e408e371f"
+"pg.expressions.datatype.serial" = "3bbc83b9d7ff258d9e38a86e329c5ffa97cd04c37dcd9044136b03772251794b"
+"pg.expressions.datatype.smallint" = "9335c954bdba76c32cecd06056c9b95b626a09ffeb5fd3060de789bffae8b1bc"
+"pg.expressions.datatype.smallserial" = "39e4711f51d730e6723d7715b65f6f9555e9ad0613539a38e7129f4dd6619fb4"
+"pg.expressions.datatype.text" = "009db6f84d4312f9b172cb9ff22e2d2625a2893def40af369aede21de788e42f"
+"pg.expressions.datatype.time" = "7a18d6ad340fa703984bc86c255e44337b86b83c05285b253f953eb1b3bc87f0"
+"pg.expressions.datatype.time-with-time-zone" = "4ecf4341a13e0bb67e9c5dac52843331f9b1f5b6f79ea31d7eb09cfe05f13e0c"
+"pg.expressions.datatype.timestamp" = "d1966a92a8714e16ca23575d34b8de6eb14ff917d19ec25f9a024780ce3cf2a6"
+"pg.expressions.datatype.timestamp-with-time-zone" = "6569689816ac11adc4fb62edbf9381c7e5f793af30ed988ca87d98bb134cc8f5"
+"pg.expressions.datatype.tsquery" = "aecf752cda1bbbf7eeb6bb62f19c552193da13828a828d669113544f4e98ae43"
+"pg.expressions.datatype.tsvector" = "fc26b1d91a82f11d4f136588e02a5e116bf2d08b4659c520225de8f004d2fb38"
+"pg.expressions.datatype.txid-snapshot" = "59db9b6b2ce4ceeff9d9f60dbaf3f1300f53682d94b40b3648d2cabf21e01673"
+"pg.expressions.datatype.uuid" = "803ae82846d81f1a9276608994a190fa79cd8cd20819a78a498cb60ab9a470b2"
+"pg.expressions.datatype.xml" = "960d1d588a3b75da478b333810926a77cba267903344902bb4d44668229d488e"
+"pg.expressions.datetime.op-minus" = "b9989042fa930184d993c70fd5c1941dc3a2e847bb2bbbf84c694ca6467de696"
+"pg.expressions.datetime.op-plus" = "46ff1262882764b9b2667cd8412805b306210f1d34c6dd86d8ce66ec2e713d1a"
+"pg.expressions.datetime.op-slash" = "73b9d5583e07f71dcfec83764e8f321db8e82891965c7b923d9eb7987e276a62"
+"pg.expressions.datetime.op-star" = "5397c6987e838b35af07219884f747f1f6e38d6bc525f134a0894dfbfeebecd7"
+"pg.expressions.datetime.overlaps" = "32aa0bd17a25698988e4917747b1969c2e933905de06eb74069ea8f68a4f21fc"
+"pg.expressions.datetime.overlaps-length" = "f8761b5a91d4891ba4ba9c543e46defcb46e4a737afc938bd70af7890ab9399b"
+"pg.expressions.ddl-schemas.database-qualified-name" = "24b48182809477e08951b1535cf70f4781c615ce580aa0a2927c5f94fa4a3956"
+"pg.expressions.ddl-schemas.schema-qualified-name" = "0ba9ce2398a2cc93c2d99fb9d15bacc10605ad3c556eaea0535b24c4f1eefa8d"
+"pg.expressions.geometry.op-amp-amp" = "d70bcda7df8aa80355226015a110a5cc2eefcd063dfccc5be2add8c9fa91a295"
+"pg.expressions.geometry.op-amp-gt" = "93fc9b8f3b4d02cc3983561b5a8406a2eb906180ccfb1057aad5025b47d7e093"
+"pg.expressions.geometry.op-amp-lt" = "29574895736e0a6c641b18967f6b78114dccff94bda2ec6bf0544a4ba39a7f50"
+"pg.expressions.geometry.op-amp-lt-bar" = "2fb2848d2fa4a81974cd8c9a138695049d47c4ede41527026ed1c8e4e45ec526"
+"pg.expressions.geometry.op-at-gt" = "4e14afa55631dbe25e8062e46786329c7a4f95e32046265481e160944d04db5f"
+"pg.expressions.geometry.op-bar-amp-gt" = "cedf4a56884f657392995d0df56e39b2f4743962635b9f3c7f3bb714ca7bad4c"
+"pg.expressions.geometry.op-bar-gt-gt" = "9ba2fd7dc6e69f26802d1ae07f9009e967b2e9347391951fd208fa9fbc9a384c"
+"pg.expressions.geometry.op-gt-caret" = "633e4f4188da8bc84c31f275ccf146b97aa16eb1760a4b3c23b6ca72fe42acf1"
+"pg.expressions.geometry.op-gt-gt" = "187da3f276776f5aed8a66d10b2dfa6fc35c3eb789d169fda1cda6ff2d6ec8aa"
+"pg.expressions.geometry.op-hash-hash" = "6f5be032a4b74c9cfa1138fbfbce63b16afaedd37aed576571d5b1c144929520"
+"pg.expressions.geometry.op-lt-at" = "aa002171f93a027c3a37dbb662a35a32d7752a2b1913b8a3cc22976b71712860"
+"pg.expressions.geometry.op-lt-caret" = "a82cf4940ba5d35d4c51bee667cc7399856d669bd57a87a8cf4b94713c46c07f"
+"pg.expressions.geometry.op-lt-lt" = "731ded75f1156b8de76abd11bf9671e666995790a910c947c32a2743347358e3"
+"pg.expressions.geometry.op-lt-lt-bar" = "58f70c807eb32216b06ba4fd84d364185c8c4b7552bc8a08158ca5180a61ea38"
+"pg.expressions.geometry.op-lt-minus-gt" = "8d87574ed40af81c8eb0344f201de3bb4fed5ee7df9d4ee32c23e4ef9f137805"
+"pg.expressions.geometry.op-minus" = "571479b278636fcbb97db3c3f136a1d6ea97bdaef179c4393ca8fad08e12af2c"
+"pg.expressions.geometry.op-plus" = "f013d85c2147fa25869c6f3e3d295dbe202af8ea371402c8736b89c1a27c2224"
+"pg.expressions.geometry.op-qmark-bar-bar" = "677a812f1868eeb6212f0a3d0c9b751c78921b5788ce183de52a0d1e27a5fda4"
+"pg.expressions.geometry.op-qmark-hash" = "38e4b117261b0c7840a38c27ef79b57747361408b52594913dba4082eb9e0558"
+"pg.expressions.geometry.op-qmark-minus-bar" = "9f2fd76c1ffd79725d3fe9e0b90e718f5ef5a30100ea09688924b11d4b8fe4ca"
+"pg.expressions.geometry.op-slash" = "2f78e2c6a5e1972a445dcd2b99deba0bacc1c63856e59e23467108b1e9846882"
+"pg.expressions.geometry.op-star" = "dc34da3502e6350ff217e3e0f9b3ab5e888a784b5cab049a49ff9fa4560072ee"
+"pg.expressions.geometry.op-tilde-eq" = "f2a23930af998674f96f2544d2eb85ae3918eda2187cfaa59f384a51f2d29d0b"
+"pg.expressions.info.op-at-gt" = "5c4d2740216a399c0cdf747bd89a963a8dd15d806d131e83f9411b47df7e7939"
+"pg.expressions.info.op-eq" = "fac3b6df2595867b22d9aaa876caa78ae21f9a4cbc65bc414bfca66c2a25221b"
+"pg.expressions.json.op-at-at" = "67f649b3616f7b6209238233f7ac4dd7650412fd19a885754c69c4d7100a855c"
+"pg.expressions.json.op-at-gt" = "498d87798b8e6e8310233a16fe00d9d1dab70ddfd61b42198d9bece206bd4952"
+"pg.expressions.json.op-at-qmark" = "57968eca7333b27a197015bfefd164697e117f9a6c62598638f56493d20259a2"
+"pg.expressions.json.op-bar-bar" = "dc4cc76396419b861d06dda13e91c8f12a5358c0d8d9ea55a08d45ea738ff289"
+"pg.expressions.json.op-hash-gt" = "2d1e3bf7576efb9fa2d972265472b693c96d09e98527dbfd602eb9d4d4ae0660"
+"pg.expressions.json.op-hash-gt-gt" = "9d96c67a4099f01a7e24078be8cac6a16a2e633d272b4e1eb37a1893670878ba"
+"pg.expressions.json.op-hash-minus" = "990b0d71a5c5b28fdca1e98d2d86e45a834b9b9f82ec828bc3ecba17ff251b5c"
+"pg.expressions.json.op-lt-at" = "5aa3863d41b6d8d8236ea64b3a7444a3c294dacd8414d8882ad055aed9aedffd"
+"pg.expressions.json.op-minus" = "2e72c92dbc3158b0b9c412c7d21cd9213fa3e46f75a564b3f43b2f1cf0ede207"
+"pg.expressions.json.op-minus-gt" = "72937d0dabc2e1cd13c1d8354a08452b118b47b4e2e6340c0ee08ee0aa7b7412"
+"pg.expressions.json.op-minus-gt-gt" = "798699c52ea112b9bb0f3cb9b571ad84b9b93562a2cdad69182f76db5c3dde0d"
+"pg.expressions.json.op-qmark" = "07a9ad5f567ce0b46971dbca3bd386e8b6e7436a68b0ce3a5c24938a9bd580f5"
+"pg.expressions.json.op-qmark-amp" = "2ba4439cb578b1b9096dedd1931c584fa60ac22f61c92b970cd8d5063855bc6b"
+"pg.expressions.json.op-qmark-bar" = "a2405f3e968456e3196f98c4eb540538279b19907726395f1fb8846e873bc494"
+"pg.expressions.logical.and" = "df753e9afb6e0a0f0214b124566e0f7496b2222b4679819ef29a8d413290b460"
+"pg.expressions.logical.not" = "3df35f6863b7d8a6732cebe3201d6d404d57746f96aff99bac90629ddc06fafa"
+"pg.expressions.logical.or" = "34cb0b273a3656f3ce8e9dc7018c8cdb970cddb9f3d18e195645e1a38bff7a27"
+"pg.expressions.matching.ilike" = "e98a70188eb462af3ad8bca0744e537bafbd878f6a515f383ea208d2c3fda842"
+"pg.expressions.matching.like" = "8566d8c14c2f9c7456ab1881818d6dd6e9ef85f865b32e30ee1e02f4055e056f"
+"pg.expressions.matching.not-ilike" = "887bac5b47c8040544c57b0bb18df3bf3c3f45a615e8e5bb8005db3347be6a6a"
+"pg.expressions.matching.not-like" = "32ab7b8354d2a891bac5de6ad7afa7a13ab047376a2cc90d49b378555109c500"
+"pg.expressions.matching.not-similar-to" = "5c08df555865abd6c1428de4d6b4d3ff8b7185426db6aa000204261f7ef2f68b"
+"pg.expressions.matching.op-bang-tilde" = "15d6b31455453ac0c3aad394a83edc51bf6101032a8908c227479cf804d28721"
+"pg.expressions.matching.op-bang-tilde-star" = "2e552d680f97c06477838a87bc5c2b01758972a2dbd2538e862b4de7a0c8a7c2"
+"pg.expressions.matching.op-tilde" = "b3dc8a425d38e1c672541b04f41c08727110d05c1d74dd29389b30f398b4c00e"
+"pg.expressions.matching.op-tilde-star" = "f012d709066f72959737358149b101dae4ed2adfda55290dcd2f5b4f75ed9e5f"
+"pg.expressions.matching.similar-to" = "834e9dc043fa5d4f06ad05526390659838af7d1a3d11fe5af49855ec295551b2"
+"pg.expressions.math.op-amp" = "70bf22fc614b4d9b07dd8026ca43910221b5d19eb81b89d34f348f09acd0ef98"
+"pg.expressions.math.op-caret" = "c07f482a2b418e51fda662b9d6d935ac618c5f5bbd71a86ace0f9abbb92805d1"
+"pg.expressions.math.op-gt-gt" = "fa5a76e07b71eb1be3f1a71e72d09dc95644f77296a974dbff32f4ff584c7c98"
+"pg.expressions.math.op-hash" = "56561b444e4bfac9a5d0b5f4e5bfea2f91d15bba56f699a0949ba26611c660e8"
+"pg.expressions.math.op-lt-lt" = "dfce27ac30c8e89c541ef2051f81e7a78629ca7c7fc9c84e8684f66aa4845a36"
+"pg.expressions.math.op-minus" = "fb358cab471178f2222beb903723f742e7875ace36d43035b66ad24f186af558"
+"pg.expressions.math.op-percent" = "9257999d7a0803a387f0dba50a2484b3076c2bb5a19827ee30c8c6527d2226bf"
+"pg.expressions.math.op-plus" = "2374e201120181e76f343aafb2610369f0514237c8f8603c98f920b43b2e81ef"
+"pg.expressions.math.op-slash" = "639ebd70918ecb487610c9a49923d54ebae83a97bcad3a0b1f17639c5e6c3490"
+"pg.expressions.math.op-star" = "c77b186100166eaa13f589ed757faa8329ebb41b8439c5dc20dcc136323da15c"
+"pg.expressions.math.op-tilde" = "447c826caa423af6d4363a3e07b5dde9d3b2ea38160deba0afae1962d6737bd1"
+"pg.expressions.net.op-amp" = "5c943e8f4a3216ca0eaa045f83dd217d258f2cdaceb84c4f70d9de78982e1264"
+"pg.expressions.net.op-amp-amp" = "533c9ece91b6a875ad0ef7a40716131e74c602c85f176305eb112aedff761907"
+"pg.expressions.net.op-gt-gt" = "9dfce64283c35e81bff0a66ab47ea55759403cbc3af877fe818ff3b5ee2e4d75"
+"pg.expressions.net.op-gt-gt-eq" = "364e4a0c6d7ef9f5f0d5a3d2683532140f22b99ab447b30bd1222efd3e9719c5"
+"pg.expressions.net.op-lt-lt" = "d355b0d2c071ae72207c1e26473eb6048b7d4bbb8d7f432b7fa6d2ebb304e7b2"
+"pg.expressions.net.op-lt-lt-eq" = "8c9b568f809f6ea615e0fd7fbb7a014957f7bb358369ee973e3d8bcdec58a72a"
+"pg.expressions.net.op-minus" = "5bacf02645be84b3441676e8302a3841854566a52b13173e9a1ea1c1aa63ef38"
+"pg.expressions.net.op-plus" = "5b81b8eab214bb2697a2f12d756728edf9d1b648f43b0349b60b89985edc82ac"
+"pg.expressions.net.op-tilde" = "d82d5a531113177274f311b99b584b4b4696c15932e765b92e71ab9418b961e0"
+"pg.expressions.range.op-amp-amp" = "c4181210e8c62761f00a6d722203a9c1d5cf7687a2bb47ee1e4fe575af5ccb6f"
+"pg.expressions.range.op-amp-gt" = "95cf42ac89511371ee23ec9740163732145745c9e0981f82ea5a0d81c1e72fd9"
+"pg.expressions.range.op-amp-lt" = "6389fb99686f96977cc2d1a186cf45e1a5b407095d883f12b1d3eb3b47078120"
+"pg.expressions.range.op-at-gt" = "90d5814b6533063e28e02a56798ee959a912f810b46e4b4e0ba31b0f20688888"
+"pg.expressions.range.op-gt-gt" = "8a49c47436a8aedbd0b03c32010182fd0487c0aec46e45f22a94d0b1ba7ca16c"
+"pg.expressions.range.op-lt-at" = "3e0db7f385549580e994c56a2024ef1c1b8bcee1515ffbe082a08ccdb6bd4ee2"
+"pg.expressions.range.op-lt-lt" = "0c207b93009096c9b3df491ceb322d656087acb415056e0c03d326e4aaaea27f"
+"pg.expressions.range.op-minus" = "ce424f5d879c5a7701142c3df1c1f437e1e256b60906f55e3a4af98852646469"
+"pg.expressions.range.op-minus-bar-minus" = "eef312c0ecd41de66b9b464525bcf3940ca8a499169a123b81aea2ebaa831776"
+"pg.expressions.range.op-plus" = "20616d6361dd345193a1497664c325e0328cc2b6f21e568a8a33e4691979b824"
+"pg.expressions.range.op-star" = "0eb156414ad532eb0bb6049399b87870272ac464d561c2004f3a9db1e0c2dace"
+"pg.expressions.rangetypes.builtin-multirange-types" = "f1487ef492a6accd1131784a359ea940471dbb8bf90d028eaf5491efbc4e18e6"
+"pg.expressions.rangetypes.builtin-range-types" = "9684a46da449c96f85f1b411184b9ee6a70c633b5018cd06605cb2331d5164a9"
+"pg.expressions.rangetypes.multirange-constructor" = "b4fd5c042da695cbdeafc9363b4d35a0ad910d865394cfa6868fc2685e66658e"
+"pg.expressions.rangetypes.range-constructor" = "1dbdcc8224a3ce3ebce71f364ee068222c2d28150fde0dad9e2490e6e247397b"
+"pg.expressions.sql-expressions.array-subquery" = "92fd7aff84f0ccec7fc30c193118a9cdfd5543839d2993cdee06a44a050c8c35"
+"pg.expressions.sql-expressions.column-reference" = "35f279a425f412e8e4e76cdf30a07cbf53b3b5f138f44d99f40be8dddb9e56d2"
+"pg.expressions.sql-expressions.field-selection" = "50f365ba816906886442d23aa7c892b2898c316d2210caf12f33e07a5284cd73"
+"pg.expressions.sql-expressions.function-call" = "431659bad07c6b30c5058a87df76c6e2d3e13c7f592723ac8c3902234609b23d"
+"pg.expressions.sql-expressions.function-style-cast" = "5d2f715c63bf31f117307e6cf9de2410d5524fc1151e16c8a27017382d7de54b"
+"pg.expressions.sql-expressions.positional-parameter" = "e6829016d3b4459cf0f64730a328256a2483e19884266810524412a600fc8c82"
+"pg.expressions.sql-expressions.row-constructor" = "ecee36a8c94ee0b096d6c9896372fc2f6b848f42688401f9362566d55f53da8a"
+"pg.expressions.sql-expressions.scalar-subquery" = "3ef47eb4e6fa741bc2667056431f4a5fd01e1c7b7b68f0cb5bda218f19bee73c"
+"pg.expressions.sql-expressions.slice" = "1a0f6a44e232aa4632ab0c3d4c0d7edac1388f1a3f4d1dfdc6539b9f749f3d84"
+"pg.expressions.sql-expressions.subscript" = "ffa470172b83a4faf6eec9d7a52e16f7f3470124fd846dc98ac7e8d2cfce6482"
+"pg.expressions.sql-syntax-calling-funcs.mixed-notation" = "68dc178adb355f69cb3f3c8ed858be0ad9a8ed05a9175403d00b623d2bbbe46e"
+"pg.expressions.sql-syntax-calling-funcs.named-notation" = "80241ab8d20b0cea31f7795398881e0cacf6f961a1e074ae1bce035729925ef3"
+"pg.expressions.sql-syntax-calling-funcs.named-notation-colon-equals" = "cace4d2de130a71942b93cb19cab97e8e6cae188aae22d8aabc70b80298440cc"
+"pg.expressions.sql-syntax-lexical.binary-integer" = "5af4fe26e4807ae4d5ce96c4d45d804c86462a71ba29d5a4d88d7bcf1ee6890e"
+"pg.expressions.sql-syntax-lexical.bit-string" = "25b9dd95992b2016353d29d319445b92e3641d20f4a760f911a36417cd39cfbe"
+"pg.expressions.sql-syntax-lexical.block-comment" = "415a0871bea972a3542ec5e1bff14c7610a8de34757db99c56be0175d47ad88a"
+"pg.expressions.sql-syntax-lexical.decimal" = "a7f5e95bf24cc0d8517a859862f2685deb167fe6d28ac14145ee39b7b8fe4de4"
+"pg.expressions.sql-syntax-lexical.decimal-leading-point" = "81df5b0ed5bfc72c9203292363ae5ee94140ec5d1f7d5f5a30999b70b2385346"
+"pg.expressions.sql-syntax-lexical.digit-separators" = "4eecf0d2ff07be7b6130d7ce4ed91e87f5706964c111dfc08b58c4a8c8801dd3"
+"pg.expressions.sql-syntax-lexical.dollar-quoted-string" = "f3ca1ec62f6d390b2393377c9dacfdc764da3c017c75114acb81f33d7db66e05"
+"pg.expressions.sql-syntax-lexical.escape-string" = "50fa968b53d3394dcf80e69e6764ec44a674bba2acb0471a7c763b41570f567d"
+"pg.expressions.sql-syntax-lexical.exponent" = "474af3877a9e094dd89085b10dcb02785b60aa8b5f0d95014c337a98859bed69"
+"pg.expressions.sql-syntax-lexical.function-style-string" = "b4673b58099ce222b2b2e2b420bb84edbe249df9373f43be396f85963d9e0d26"
+"pg.expressions.sql-syntax-lexical.hex-bit-string" = "93e0000e8f0830f26ee6395bf0931ef685aeb86546212cbad858e2eb1bd8e031"
+"pg.expressions.sql-syntax-lexical.hex-integer" = "a69463b127b170bc1b2eb52c91626b7d43e2c872c9be85cff57d4d6713afecd4"
+"pg.expressions.sql-syntax-lexical.identifier" = "ebbe128b93ec1e658d5328da2533166251c358bc57d2cdcc6a523b48b9c73597"
+"pg.expressions.sql-syntax-lexical.integer" = "391a18384f1290ee275def1c4a960821534f1e9f412eae92c1b90c8f1198728d"
+"pg.expressions.sql-syntax-lexical.line-comment" = "62ebc2ed91a522931a3201babb42de3ad75cec818b87aab0d581e466020a8656"
+"pg.expressions.sql-syntax-lexical.octal-integer" = "f88551741cba8124df09ed7a8727b26503b58943f5c0a38a1a7795b56e5d0d57"
+"pg.expressions.sql-syntax-lexical.quoted-identifier" = "7531bb3c2435bf5d81d6dd0b727eb92d181dc9d5c784e231746a41d7f306684f"
+"pg.expressions.sql-syntax-lexical.string" = "6ea241b2373cbe38be21bb0511d319e25f1280204ac2a495e22b71355ebadb3d"
+"pg.expressions.sql-syntax-lexical.string-continuation" = "ad4006fab4a783db67c3f2b8c02a34ccef84e4838861acf14782889f85a2fa19"
+"pg.expressions.sql-syntax-lexical.unicode-identifier" = "d42487429f92eecb8d9b9cd18f503a3bda9cf675fc91f07f39a125ecea70eead"
+"pg.expressions.sql-syntax-lexical.unicode-string" = "818f08b79245e886afc67a50bdc5a490a66d5b44ac2cbc6ebb1a6fb79fd300b1"
+"pg.expressions.string.op-bar-bar" = "2b8afce5726673ccbc315170377cd854e328922034e09924b5e6ad8811d65cc6"
+"pg.expressions.string.op-caret-at" = "1b0f09013fa10f1a812f5fcba0e8c21bacb88d409f4ba6a547fa771d203c97de"
+"pg.expressions.subquery.exists" = "15815984a9cc103bfa891c188067aa94a141f888273a5735b1454c0f085182da"
+"pg.expressions.subquery.in" = "5c8f1fb5eeeb183060d62b8a6f0c0644cbbbacba65897fee2e3ed60b8d0cf177"
+"pg.expressions.subquery.not-in" = "8727c7497195ec88a6290f9173896d8ef1eaccbeca5d4337d897308b9d770431"
+"pg.expressions.textsearch.op-amp-amp" = "fde92cd4112614557afb3689f192b178c89356b22bbeaa70c51bb09aafb9a5f3"
+"pg.expressions.textsearch.op-at-at" = "c4711dd69cf83a825ed518bf82ac8bcef2a226c34219ad1ed1b65426bc395bc4"
+"pg.expressions.textsearch.op-at-gt" = "63bf64a757b26df65fc978b103bcecab815850d2ca010c9aed82c0f7647f52d8"
+"pg.expressions.textsearch.op-bar-bar" = "7006601ac6b3e82d827518c7fd24c99e00a6c89ecd725a7a256cc7b3595b7f1e"
+"pg.expressions.textsearch.op-lt-at" = "ac5cdf75004b95237ed581afe4c7ae6b2cab9447e25407ad5fbbb254559fc9ba"
+"pg.expressions.textsearch.op-lt-minus-gt" = "a4434803f2688dc4f4d6eef51813e6edd8512cbdabaacfb6d84a657b2f4aa4e0"
+
+[review.definitions]
+"pg.expressions.array.op-amp-amp" = "9172c8648c07be8b02e043896f42db6aba7e956967de48a60a7f1e9a76e71460"
+"pg.expressions.array.op-at-gt" = "23896ca49fd34f9dcfdaed596fa4acaf3271705f7ca42545c72d119d20299a1e"
+"pg.expressions.array.op-bar-bar" = "0df641c18a4f6f6c8c7e5e7b407fd6aab7447cde90a4eedf3c6a632f44216014"
+"pg.expressions.array.op-lt-at" = "10a10195cc55d2e9eaadf948e77cc1af9d8137716bd7f6509902983daa6a97d2"
+"pg.expressions.binarystring.op-bar-bar" = "5cb36032e90676042db33bd854481d58cbf98d0cb054293be96e323d2a5cefce"
+"pg.expressions.bitstring.op-amp" = "9187cf3acee80d4a749f0ffeef1297b49c0eb376970dc81e87ff2c38acf847a8"
+"pg.expressions.bitstring.op-bar-bar" = "77b6a293c2acd14aec41dcd628e573f749a08ca7b0e2d7ee7ffff1620a3fa9a4"
+"pg.expressions.bitstring.op-gt-gt" = "e3dd9d5d1fa51ee02304b0456f8f8f80601711bfb1d0a2156a343191c80dcc22"
+"pg.expressions.bitstring.op-hash" = "0aca11fab87500162454c51b68bb0701a5f3f82e1e2e9a572792eaf2b74c8701"
+"pg.expressions.bitstring.op-lt-lt" = "d495acc7f3688ece8e967862a9fe28c76e350e953d108c268ef6b4d01a5b40ed"
+"pg.expressions.bitstring.op-tilde" = "847dc1ec2e744a50f465bdff4cb579d319baf28c8331a53426974a452a51c07c"
+"pg.expressions.comparison.between-and" = "b7933a0344892b38c265887714972a57927cfb1fb6e428303ebe3895d3212617"
+"pg.expressions.comparison.between-symmetric-and" = "617214923a421ff502f59a1075cb97ad125d9293851ffe25de95d349441dcb08"
+"pg.expressions.comparison.is-distinct-from" = "7e7db04cc13ce1d062eb07c414e1f7a3ab33c2706b199fc7ed561e67254df9e4"
+"pg.expressions.comparison.is-false" = "c8d8417dcd7c584a1c6432299235e4f4be3395dd99324282f2f2fcb16826dcf8"
+"pg.expressions.comparison.is-not-distinct-from" = "010a682b7daf3d721e936518cf160cbc2c1598086e264049053f066601d1cb31"
+"pg.expressions.comparison.is-not-false" = "b098d899c6cd772bfe68a0befd1eeec6a1d2680c384754afef6980caf3d4182c"
+"pg.expressions.comparison.is-not-null" = "f9ecc47959753570457b4bdece1442170aafa6bcbd02cbb2f090888f26bdda9e"
+"pg.expressions.comparison.is-not-true" = "8a2467c6ae37ba1ece8115aa8684dfc6cd925e5bf02115dabdd4f049e0f8faa7"
+"pg.expressions.comparison.is-null" = "b49c72d5660a492d397fc9c51bcbad3099f48fc3ba6039423c0003904c164822"
+"pg.expressions.comparison.is-true" = "dafc992d1cf4016032493297291ec496d063146b5c9db65a5e107a032a91f57c"
+"pg.expressions.comparison.isnull" = "be7e0f52f1e92e56e2d443a5fc9b6242f51db0da558f47d8fc7a4dc566e622db"
+"pg.expressions.comparison.not-between-and" = "be3bca999bcd72e256f8f9a4c38fa809c57ff899f23eaa504f4a101267a9dfa7"
+"pg.expressions.comparison.not-between-symmetric-and" = "395da1ccb3f178f8d0256c4ef6d4ca676d6bafaf2fde08c305a63b872a411b1d"
+"pg.expressions.comparison.notnull" = "6df06471153f3a6cd2adb302273450b914dd34e75af37bb00f6db422c100cac2"
+"pg.expressions.comparison.op-bang-eq" = "a34e2e70087350afcd731c8e785827a639f5db19dd04d6ff879ecf314c6c5b95"
+"pg.expressions.comparison.op-eq" = "140c559b78b8962433d13732b9ac7de5b7568d9a984a1b6ef69633155fc739ed"
+"pg.expressions.comparison.op-gt" = "fe8fb92df553f7bedb0988f5646eb7d86ec39e5e72f23b8923a8acf3a90ecbb2"
+"pg.expressions.comparison.op-gt-eq" = "b278d0f6daa6a03c17fe2d1d4c06038fd3a62a1a749a2f4b21de325c054ce636"
+"pg.expressions.comparison.op-lt" = "e322048463566fd4d377e0f0b94ec96b8b99bafbac3b3535615d5f1687792cee"
+"pg.expressions.comparison.op-lt-eq" = "abf49287976614bfaf084c684a3692702e5fa2060c2b91cb5643b72842fa454d"
+"pg.expressions.comparison.op-lt-gt" = "ac3aabea7d236ebc4eb44c8c81b65d16573c787e3e6c9d30cf9ba7c393b44cb8"
+"pg.expressions.comparisons.in-list" = "f03ac0fda74cd373efa77dbce7101713b28823c27ade188b0262d83a19c728f1"
+"pg.expressions.comparisons.not-in-list" = "4d9ddaa040c5c325e83792ac21309402c33e81fcc9208a229de54b741979a45c"
+"pg.expressions.comparisons.record-comparison" = "2e409612ae09db72d43139e5e1c2150a4dc5ea66509d6f0128517880cd536e69"
+"pg.expressions.conditional.case-searched" = "db6ae0d88354c361c25c0c86b1862b29bce23715b66369d5fdb120e554e7ec74"
+"pg.expressions.conditional.case-simple" = "6d5173ffe0e818a56abbfdac5428c86cfd387cfe259db6cd296118042304fb46"
+"pg.expressions.datatype-boolean.boolean-literal" = "f642517e4b86b61d0e08afd69ca11e26206bc3f010628971834ed3d93e1e2869"
+"pg.expressions.datatype-character.char" = "f37c34bd6e5e49200d0c8f99b498d33b6dea719b51678d5f06ac5e1710d27d27"
+"pg.expressions.datatype-character.name" = "969f7325a45c01710fc9bd7c13f9c16effff8c1ab29eb986a2014685078e0a37"
+"pg.expressions.datatype-datetime.typed-datetime-literal" = "5b6c57c1a70b68fdf031445003822c716417f03144a87175b374daecf7e026b6"
+"pg.expressions.datatype-json.jsonpath-type" = "f6197c558bd852cc86f99ed9989c35adf335fbd82c08f790fbeae681fe781a67"
+"pg.expressions.datatype-numeric.float-precision" = "3aeb81053722edd6519000417b71854edaea65bb9101fdda155b73ffb2237949"
+"pg.expressions.datatype-oid.oid" = "6fdec88c2414d55283c67d592232fd61cb877e0037d805f1b6bbeaadb82d5445"
+"pg.expressions.datatype-oid.regclass" = "1639333f0e61bd630d08ad8c5b30ab6e1f916d0ca9db6e883b12b39d9043f5d8"
+"pg.expressions.datatype-oid.regcollation" = "52eefb2aaf3208690d1fdd8fe47d36d75b6c886f1b363cb15641ed75e998761d"
+"pg.expressions.datatype-oid.regconfig" = "6a2cc3e87162bec33b913c462df5caca94c11b67953a1e7ee19bf300860b1698"
+"pg.expressions.datatype-oid.regdictionary" = "1e735e965157b4e1ab5bf402dc970abe27cf82d0d036ef68a75c16cd5cfb782c"
+"pg.expressions.datatype-oid.regnamespace" = "128ab7af2a054f3eb5b4452010f6320a14b18d744f5376a156284727e6363479"
+"pg.expressions.datatype-oid.regoper" = "2f24df655e1b0c1a76b0cd6f135f0e5c1ecf15d4ea19e1a521b128ea82241c1d"
+"pg.expressions.datatype-oid.regoperator" = "636fa266cebe184d55cabedc3f2b05d619845ccca0e6c6b623c94b32bb4ad515"
+"pg.expressions.datatype-oid.regproc" = "721c10ce78417455b3b8bd3fe044f7f265d06a65119a48b75dea8f5c633896a3"
+"pg.expressions.datatype-oid.regprocedure" = "bc5394abac6aba23256de821f2a5c8ec077dabe9a938f36a3f8a78bc49d42375"
+"pg.expressions.datatype-oid.regrole" = "e1f8d118ee24628b58c35bfa06174430a7fc0e1a8b1a722f7e2e50bf0eb4ce64"
+"pg.expressions.datatype-oid.regtype" = "714541c3e8837f802a7d8ba29c02ee6be27c88c2ad39da8a9f3e731f039bd6cc"
+"pg.expressions.datatype-pseudo.any" = "ba8541f04fe653cc197d3cadd57fbeda18696129dd5be2610cb9769beb446fed"
+"pg.expressions.datatype-pseudo.anyarray" = "ac665d2205c4c3c5d86c01d334d7d41b12154460375b8c1aba442f046b294b5c"
+"pg.expressions.datatype-pseudo.anycompatible" = "1b322f63696fe72da966e5c0214902a02e9263db922768efa04d75a8072af8d5"
+"pg.expressions.datatype-pseudo.anycompatiblearray" = "9dc3aabdee10d30d4995d3a45a54b66e4a9096313b6cead7b8d86db51690dbca"
+"pg.expressions.datatype-pseudo.anycompatiblemultirange" = "bddca9e63bf598a7c3eb1db51191b9aeaca2aa017348b18a379c98f85f7d6f6a"
+"pg.expressions.datatype-pseudo.anycompatiblenonarray" = "bebe1beb4b6d7051a69b87973d4eb5724b8f2609cfcb45038f8e812ae90900d8"
+"pg.expressions.datatype-pseudo.anycompatiblerange" = "cba0695202d78bee74ff922f02a56a697dc0ee6d2e7fa464180b4a5d897bc605"
+"pg.expressions.datatype-pseudo.anyelement" = "dfa7f872c111c8e7e1b9a9fac44174b3a148b83395c29cf12266b56c07f0eaba"
+"pg.expressions.datatype-pseudo.anyenum" = "5657fd17240b6de5cd53552f33f3559c7d3e40ef76153336075fb43a8aa7a6f5"
+"pg.expressions.datatype-pseudo.anymultirange" = "430f2de39ff103a6a5a4c467f2dd02eb8f28470824cfd361e0f373439ef6ecb9"
+"pg.expressions.datatype-pseudo.anynonarray" = "414506176db396b897ccec8afd948b1bfd76ad3dcf576083eef1f9c010f4eaca"
+"pg.expressions.datatype-pseudo.anyrange" = "879bba2f5228051f98f94dd576107be93dc1fea6cdf8387544ae1ca060f6d25a"
+"pg.expressions.datatype-pseudo.cstring" = "ed2cbbd2cdaf8f98879a06128f03686759e8b245a610a2413828790b532850d7"
+"pg.expressions.datatype-pseudo.event-trigger" = "3208fa4f1a2cfd121671fefe52a4a7bbc21a65e67c51bfe43b2acc93162b88bd"
+"pg.expressions.datatype-pseudo.fdw-handler" = "a259e853ce0f400c30ec005987979d283a8424151b6fe3c75dfaede22ba29a77"
+"pg.expressions.datatype-pseudo.index-am-handler" = "9d57fb315822b7380e47ddcecb7552d99e7fa1f63aef83e5d7c039142999a600"
+"pg.expressions.datatype-pseudo.internal" = "5a5591607571ebf3ee8f76ae5e54dc35cdce0c334902253d0daa7264da8dbefa"
+"pg.expressions.datatype-pseudo.language-handler" = "ea72ca278711d8d68a271663c9298649e96113c3188174a803341a4a7157afb4"
+"pg.expressions.datatype-pseudo.pg-ddl-command" = "6c3e737613c9e71f34cc165356e2e95f88b3bbac8d68ea2d96db3bc3ff902d7f"
+"pg.expressions.datatype-pseudo.record" = "612bab8570ce6f6ff8bb7cb53230e476ddf0c4d692a7c407ac07db701a84a761"
+"pg.expressions.datatype-pseudo.table-am-handler" = "6a2caadcd70e35ff44d0614cdcf2738030183c28679b7a2c837ff7c6bec89b75"
+"pg.expressions.datatype-pseudo.trigger" = "f591652b1095d6c0fc90fa4dcb3e9c6d35b702c9bbd277b43e152ddc01819810"
+"pg.expressions.datatype-pseudo.tsm-handler" = "c5f20395a0b069f656a4e7081dc6c36abe9c1979d6ed6c3595fcd782d5825a1b"
+"pg.expressions.datatype-pseudo.unknown" = "8885f400ce04cb964c232aeb2cdfe4c3ddb4d8a2e5ced1a23796207ed253c17d"
+"pg.expressions.datatype-pseudo.void" = "25f170fb910b6c488733b0f6cc33a247df773d8acb5852ebef73b607991a4fa7"
+"pg.expressions.datatype.bigint" = "413a3105f0d78fb57d9631979b58c9ad5a9ec1c73d4f4d120db7314b77b7653d"
+"pg.expressions.datatype.bigserial" = "2620e57018d949f9cc1770d811730e5d3e3b6cb578f3d72fcd3a2ad71eee03eb"
+"pg.expressions.datatype.boolean" = "183a307243ee23153d9f44cf2621cfac8279ec457ab158ce61c9184730e6aadf"
+"pg.expressions.datatype.box" = "4a5599fecff583553d66f04a3a8e7671a63ef66d411b744441ef47d94dddd91a"
+"pg.expressions.datatype.bytea" = "9f51e635f8f17a3e90c34c0cea94b8c5a3c0e062a315c1c9fbf6adcbf2401216"
+"pg.expressions.datatype.character-varying" = "0356e7d1d85c272f4b61e6793eb06f5b273548d0f05513c044f0dfb5cb98c8ad"
+"pg.expressions.datatype.cidr" = "6572570a7fa63ef6fd54141951ecc76a159e1151c12a0fed38b8a7090f88554f"
+"pg.expressions.datatype.circle" = "a9dea5a6ac2310191288e73d4e45ae0c48095909b14959d73cf738238fba7f30"
+"pg.expressions.datatype.date" = "8f5c5644395a7ca1c9c816037eb059c9507fddcf82db0999061c234517ca01d3"
+"pg.expressions.datatype.double-precision" = "d9f218c097b245b5a4c6262b52fbeef2d403f22101d38925901dbb5f5d113a2a"
+"pg.expressions.datatype.inet" = "e036fc5ace3e0f667ad757773d3bd3d35d30153d517383016056b437c802201d"
+"pg.expressions.datatype.integer" = "7eab99fe08cd4841c9446405747782cead4ca41bd2931ff1702997d212fe3997"
+"pg.expressions.datatype.json" = "d0f39cb6f5aa6978a369f9fd3ae6427bb1e98ae6d6e08e2a725167765f214e01"
+"pg.expressions.datatype.jsonb" = "540d062215bbf0fae64b8b297d3848cff6bae42a0277f8f9df3778823870bc58"
+"pg.expressions.datatype.line" = "be30cb9971c31a9b4f68c5ea524823aa1ebb334ecf1160a642483f2e0fe25ec5"
+"pg.expressions.datatype.lseg" = "897d3d1d4a79063b83cf6001f7a4f3caf0b038ed69b718cbe495a801992c5e81"
+"pg.expressions.datatype.macaddr" = "33487820788b4e7a2d86f0c84cd9655e2cbc490b7d8042e1230dc6d10656202b"
+"pg.expressions.datatype.macaddr8" = "e7841834bbd63887b9e4a98fb91a2c46710e29fbbb0a4c74bf7557ff8ddbd6a6"
+"pg.expressions.datatype.money" = "1444330cd6e4fc3bcc6dbd34fb0aa6786b22b449327768d33c9353cadad83896"
+"pg.expressions.datatype.path" = "bbdcf81639b10e13b16849dd831a7d93abee3c446a46700b34672affd065822c"
+"pg.expressions.datatype.pg-lsn" = "cd33807d079fe6df299ae63a10c1300f83bb687e74d405a7e78367fa845983ca"
+"pg.expressions.datatype.pg-snapshot" = "0cc1136fdb17b25e02999fff733f512ac6b92d5ad765698e673e22c039b82d15"
+"pg.expressions.datatype.point" = "7d255edb8dcff617b93d2983ec858fad6a21e30304ae959ee64e62877f7eb391"
+"pg.expressions.datatype.polygon" = "8d00a84cc3b8ca9611745cacfd4b0434a4439913b1c591aaaa2874b5853fe53b"
+"pg.expressions.datatype.real" = "424a7d95bbf37a5a9d2f9c1cbcab45db34213a2036fc52d4e777720791a49e81"
+"pg.expressions.datatype.serial" = "c6e93c1d0034bd7d57497114692148eb677aec86ed707809be6783622b7e939f"
+"pg.expressions.datatype.smallint" = "17947585bb77c7d36b423ab20f079e89fb716303e8fa247d8c67ffff83e5c5fc"
+"pg.expressions.datatype.smallserial" = "fbdea384aa9d2a4c578baae5303b93bcf785dca429e4087d158af1a65274dcda"
+"pg.expressions.datatype.text" = "8ee249ced5392185b460d1b9ee10253ee949ea6d4587c6941863486968fea53e"
+"pg.expressions.datatype.time" = "43ae574210b2490518c1a5944a7f61d70736558626ad1273e15402293d9ad2dd"
+"pg.expressions.datatype.time-with-time-zone" = "88ec687b8db4acb84e2138c8e2fa6fa20479a505ddcbce5f31c5eb784860400d"
+"pg.expressions.datatype.timestamp" = "d83d9ffba8126318d7207c3a3bc2e0db26145db3966d35a81885f131aafefcf1"
+"pg.expressions.datatype.timestamp-with-time-zone" = "277bd3744e16863a6162fbe0764c0c0beca6b63477aab17cb0fb17d31018d8cc"
+"pg.expressions.datatype.tsquery" = "33f591a8357fd7dca3e66a2cad63c85e143c5df9394c43be6924403b230ef0fe"
+"pg.expressions.datatype.tsvector" = "bb724b4b36107b411dc496754383b0dc769912045ceff4dee3851ff18f5032bc"
+"pg.expressions.datatype.txid-snapshot" = "c19990989406e8674de1492ae90232513d00aece9dbaac032280ba148a02ce8a"
+"pg.expressions.datatype.uuid" = "2fb338df5f149797bb0dfa6041679bd125232cdeec282620b7a84abf0b60e736"
+"pg.expressions.datatype.xml" = "12b7afa802343b678cbaab66600ba42b98be049a3ce37a6f297dd405b7a65e04"
+"pg.expressions.datetime.op-minus" = "8994d8c8c18bc792dbdf5717ce933acaed512186a8a150876c1d73b9edecbadd"
+"pg.expressions.datetime.op-plus" = "0084792347c1e4979408993198d41b437aef9676293a86707bfd1d13ac285492"
+"pg.expressions.datetime.op-slash" = "69bb7376fd64c1882468a5612a55d745cc8e8b16344eb4841a68b0b804e84478"
+"pg.expressions.datetime.op-star" = "239c55ffbd40b6a1afcd456e0d50af550596790f0d472dd19c1afb01955b29dd"
+"pg.expressions.datetime.overlaps" = "9b4efa07bd09b3c9196421dd5a6dbab337f56cf6222bb458899d4dc448725fab"
+"pg.expressions.datetime.overlaps-length" = "f6430a54864beb654eb64da491831d075d475af0747c1ecb14d35f226b456300"
+"pg.expressions.ddl-schemas.database-qualified-name" = "20b3c05378bb325d6fb70d68766feaf7bdc12660833749d97f67881ed1d5c44a"
+"pg.expressions.ddl-schemas.schema-qualified-name" = "faea23c2824a26f64507c89d3c763f5a94fb6ec61522461d0c80811e4e002d31"
+"pg.expressions.geometry.op-amp-amp" = "90877d4b1d36b3cb11ae64b3dfb15d37f09c5e724305fd6c57d4489ca7c35886"
+"pg.expressions.geometry.op-amp-gt" = "201543ab94139661da2f4c454121ea3185cb8099de09e19e7399f484f10c05fa"
+"pg.expressions.geometry.op-amp-lt" = "d41fcc28cb6fd4ec4fa4849eb3707f48d26638f4534833e25744eb02a0a260a2"
+"pg.expressions.geometry.op-amp-lt-bar" = "cee04013d8a7982374ea5fd7d4b1513a84da19785a33f0779ff080e15e8832bd"
+"pg.expressions.geometry.op-at-gt" = "3d2f003e9f1ddf87384ec74cfd2a8db62953be6539978ef35f3c4537289f4d13"
+"pg.expressions.geometry.op-bar-amp-gt" = "10c4137ce8a64db289a0909dc95ebaeda7bf4130103fd48d231a27f2eafb1b9b"
+"pg.expressions.geometry.op-bar-gt-gt" = "a8c92cf79262d05faa92c4f1474af5d1b756c9083fafdfc71f17457d784d0670"
+"pg.expressions.geometry.op-gt-caret" = "db0d8f2c1b451735f53985d64d94d1f57e3831ff4da1c6c24ec81124ef2d871d"
+"pg.expressions.geometry.op-gt-gt" = "d34eb29ab9ad6730bc1d1669ce80a86872fd8df104d5ce3d6edff9bd63c61722"
+"pg.expressions.geometry.op-hash-hash" = "77eb2280754a28510a4d2dc62c5cec07df65bb4099326037f9158daa1ff2fc12"
+"pg.expressions.geometry.op-lt-at" = "9ad4fcf913c85c73478d8ee7d1708dd46c1e9f3a2d5ec92560b950ccb3f610e0"
+"pg.expressions.geometry.op-lt-caret" = "3b6882a7c268702b310b704387c4d779a4c263bd4a67c10809d50b1e1cac08ee"
+"pg.expressions.geometry.op-lt-lt" = "e60772ef25c3710f8ac66d07f7c6b3501958d543c0d523f39e2621671f91fd87"
+"pg.expressions.geometry.op-lt-lt-bar" = "f88c7e711aca86d9b97fc940d7c755b40de6e8d48dee8406e548a3b6329d9bb6"
+"pg.expressions.geometry.op-lt-minus-gt" = "b545bc703241a289919aeb9278e28a60c447883dead253ee064866960c7446b2"
+"pg.expressions.geometry.op-minus" = "9fe027b3b7ccc6071e96ca1b0809b1c4cde58ff064b1a38cd1a1a573dfebd839"
+"pg.expressions.geometry.op-plus" = "5478088557a622848eab1dd8d1f350e8206aabfb3c122bfb93d2ec135bbe04ca"
+"pg.expressions.geometry.op-qmark-bar-bar" = "f147f1bee80ff00aac9d76a6d60ad54bb0107776be06cd749ff2ea8fe6609b58"
+"pg.expressions.geometry.op-qmark-hash" = "e2d6fe88696b7c9e6e75eec1350dbc22b28dda3336e44477fa913c6e37f07d85"
+"pg.expressions.geometry.op-qmark-minus-bar" = "940e3bd97c4f27023bc7a1b511d526bcc5cf9dd008d0eeba804ac29e39c75f28"
+"pg.expressions.geometry.op-slash" = "8eb2bda9b3c02c181ec83e414375ef29f7466de32a412bd06647f3a09f39abd0"
+"pg.expressions.geometry.op-star" = "3f5938485aeecba0febb81013bd0d47cb0850feda05db8b9a827b45535e8e885"
+"pg.expressions.geometry.op-tilde-eq" = "5d03bc2616f8429199c1a7bd57f3e3ee4b0974e1e9e356f70d1aaef06b7a9746"
+"pg.expressions.info.op-at-gt" = "c886ab6da93591d5acc5a51c5abf960c6113da5432c977f48a464b43d43eea26"
+"pg.expressions.info.op-eq" = "57de21f51bf9d2b1266296da32b5e6543218c1012ec98fadb0b2b7fb98b4f1a0"
+"pg.expressions.json.op-at-at" = "5e2408b2cce2b18a5af7e311ae791bf4ddbc652283429f7d8d15d51d6f1bb635"
+"pg.expressions.json.op-at-gt" = "55a5b37c99273be821a95a1fb5fb8a7f63e353e17d85f56eb19123b70b1db8ca"
+"pg.expressions.json.op-at-qmark" = "96abe5b71baee429e7b3f33e9d6730125d4a34fe42e8684cfa11f3053178862b"
+"pg.expressions.json.op-bar-bar" = "f1340992e5c1414e543e286246c5c637adab50382bfc7260ca9cfe7c7566fee2"
+"pg.expressions.json.op-hash-gt" = "080581b56a9f84e746122bf9dca42e77c30ecdbcc46247f972780c5286b7f425"
+"pg.expressions.json.op-hash-gt-gt" = "dd12154b52e3767038f069e8c45166e77bf9f96d9af4e8d5b47ac8ae08361be3"
+"pg.expressions.json.op-hash-minus" = "eacbdf4877f1726b1e12a0e8d544dba6e338f005e93ed7c912b41ba94a7cdaaf"
+"pg.expressions.json.op-lt-at" = "0ae8b58b8543ed52c8eec247d0d48b256cc8877ae4fb4bc5fdd7749f41b22f85"
+"pg.expressions.json.op-minus" = "06f4d9b63302163cfd2c6adc62c8000156e18ba85451a34deb7ea32203df4205"
+"pg.expressions.json.op-minus-gt" = "1887f1f75bdf79c47629f8dcc3f0ebf45920a9354536f302630eae85ae9e171f"
+"pg.expressions.json.op-minus-gt-gt" = "5d2cdfbabb5cf8f1b3a46a2a3a7eda76eab68383f70844a2c099866148a6a32a"
+"pg.expressions.json.op-qmark" = "a9eeb4d9515e5b462c7512070914e0a83b90a387418465d47a22beb1df8bd1b2"
+"pg.expressions.json.op-qmark-amp" = "fbcde2bb501f272b37172539ee168514982adb8b81aea1273f8c2c59c1606735"
+"pg.expressions.json.op-qmark-bar" = "2b9782d055e9c195f5ddbe39cea60596fa9f90eb9cb0aae229b7f2c5ffe0a37f"
+"pg.expressions.logical.and" = "443cd93d4c7aa7556fdadc8f744ead2a09b460a05b1cc3423e54cc0874aa612b"
+"pg.expressions.logical.not" = "e024e100dbf35f9270ef8781bc4a86806b51e3e33a398bd0c3dfa418da89b277"
+"pg.expressions.logical.or" = "7be1b821e5e9b55f7325be1bbfa9a988679629b6db6ef998a38aac02005e0d91"
+"pg.expressions.matching.ilike" = "d6f13c4911f2e99f2f11c46cc245f19f862926cbbbd4288f5e978754c923f188"
+"pg.expressions.matching.like" = "4e07576a39126c02cd8212cdeea552eaab1c3a935cb25d7f041d6538b6b460b2"
+"pg.expressions.matching.not-ilike" = "7968ac3bba09ee65e512bcc98783d492141070d8652390ab48d1d2c5f1c3588a"
+"pg.expressions.matching.not-like" = "1d6089807d86e9ea7e571dd03658b0c909904d90e31485f5fee15da316ba658c"
+"pg.expressions.matching.not-similar-to" = "c5f064fa24f8dfeef21cee8ffd98906a2d77794cf3ce41b634323f113a8324d4"
+"pg.expressions.matching.op-bang-tilde" = "817538d1977b3d2be178dadae878501d53315690362fdb72d17d881cc2384a6a"
+"pg.expressions.matching.op-bang-tilde-star" = "c45b24c66803afe851fd8b786e70911357048ff648e63caa66f9f5be1aa0ce0a"
+"pg.expressions.matching.op-tilde" = "b91395d25d94a4a1d8248a733fbd9f3417bd7e502ab51cdf298c358e6147779b"
+"pg.expressions.matching.op-tilde-star" = "4314e16ff2155b0ea71abd34e92fb4ce8b42869eee83268e38ba42b29a463fc3"
+"pg.expressions.matching.similar-to" = "b27a097f76a8033423cf9d93164b610f68b56ca7a5c1839c49389cb3708d952b"
+"pg.expressions.math.op-amp" = "7c70dee77ffd5b31fc2279dbde5e257e80777b010d28cf61dd905bb2309650ef"
+"pg.expressions.math.op-caret" = "1f14d1c0354046d5b728c7df24fe3fbeca9fe76ba4fccd9a53f9fd29e21dee6e"
+"pg.expressions.math.op-gt-gt" = "c396d9fe898878173170fcf9295608504e4f9b4ac73fc622b7f862a894f0ec2b"
+"pg.expressions.math.op-hash" = "6957f88988ac19c25b4499e6fc1ac5be7b64c87d0a3c3bc5909bd81b4d4e258e"
+"pg.expressions.math.op-lt-lt" = "dfb4a175b07d894206f2221af94bca517d3c34c3c0542154e8dad79dba6e622e"
+"pg.expressions.math.op-minus" = "8de2e95d6e632dea1c949770ab6f1dc6e49c2813347d1a0a564daccc9b78c396"
+"pg.expressions.math.op-percent" = "12c78318060d3443e271917f2008b58eff3e35cbdb1dc4dcf6c4f305ba290ebb"
+"pg.expressions.math.op-plus" = "06bda5175f8dee4138b5991dd84fd38fbb204d5803d1b2655eb6d6700f101812"
+"pg.expressions.math.op-slash" = "e4432d0bc369b8c14d6e7f49ee602190e5d62087398fe8ec274548bdb842f622"
+"pg.expressions.math.op-star" = "faa9165e3bcf93cfa3a6e245d8a6ee5942ca8c52e9d828425f585e442b3ff04d"
+"pg.expressions.math.op-tilde" = "e4e379862f92a71c8283d1f5a0e258af32ba6a671d4546fe0259aaf90cc41c98"
+"pg.expressions.net.op-amp" = "268489d51e25e2ad3adbe23f484231a22c3650592dd0e0293ddd9428780a3e5c"
+"pg.expressions.net.op-amp-amp" = "c15e1dcc689e7ffbd7a90ba9ea2cc608adf57d00dd2b94f37e489164afb3906a"
+"pg.expressions.net.op-gt-gt" = "84bb7c7412cbd841eb857060a8ac7fcb6b7c84cc55565174b5a53bee8ce08e54"
+"pg.expressions.net.op-gt-gt-eq" = "484aaf06a79037495bc40dfeb7f57de1eb69bcddde2398a9ef67d0c343c4b5bd"
+"pg.expressions.net.op-lt-lt" = "0480fe096430c31e89dc46363def1eaab723c06f02467edac3e771a3b624771c"
+"pg.expressions.net.op-lt-lt-eq" = "561b05d43df7e2fe5575195b093a07613e97e2cea98acf92487db650ef8df3f0"
+"pg.expressions.net.op-minus" = "eae624b0a145dbcf5115a036fb33c8a1f99b01523cc1a2f691ed5d18f794b65a"
+"pg.expressions.net.op-plus" = "52fce925086e5034bd4b49159c14b26a4fcb3c7ef8393046f3ea335ef049b630"
+"pg.expressions.net.op-tilde" = "3bdb75eec07e9a19bf3f0b98883dd0a0ca4394fc93738006630e2ca2a263a1de"
+"pg.expressions.range.op-amp-amp" = "8b2c73b839b156d8869aa5be73a30c57e4f18c82b3b6734025dcb25ba6456513"
+"pg.expressions.range.op-amp-gt" = "6f7177958e48501e5edf159f02f5b2d469c4d46cba3a97611bbc3f47f00c13ef"
+"pg.expressions.range.op-amp-lt" = "dee57cbb5a8ba93b638a1737bd8ab3e478e328356c3789da937a58b02973f730"
+"pg.expressions.range.op-at-gt" = "7b79227e8031c04d0d03b203ad4442040d520a6c0b4fb723d2bb7537b4c11972"
+"pg.expressions.range.op-gt-gt" = "6406eb94a5dc2302147d602bd7d4b8d97541ab673a5cd5906ba346fe8cd27034"
+"pg.expressions.range.op-lt-at" = "4a9f7e8a5c60789f2ed922df9b088c0ddd93e6799654eb62dc4f80c647cbc9ec"
+"pg.expressions.range.op-lt-lt" = "d849dccf956a1d13d65bc5927c48c2e39936a3098e38ce214910ea4cda2ae82d"
+"pg.expressions.range.op-minus" = "31f4a339f47449fbab728e9149c90cb042cd4810330a5306f5cc518a58b30bac"
+"pg.expressions.range.op-minus-bar-minus" = "62a061db5b3b2b81c5c906365508cb1ed4d7851e96ea9a417859c69a7b377284"
+"pg.expressions.range.op-plus" = "5df8a2e33e39a7c098151a27d87b2427d109535e7982ef480573b6b2f8b3ff83"
+"pg.expressions.range.op-star" = "59301f1e0e4b5985e23fd0db2395830693cd67eccddec54948ed02b07bdb62be"
+"pg.expressions.rangetypes.builtin-multirange-types" = "45ee5ace45e178f21da2f8eb5487fd57965f28b070d0dd88bcc4c9c2448fea38"
+"pg.expressions.rangetypes.builtin-range-types" = "29e9e3b8884a42f4b94aa479fa7f3354db6d96f190df1196b1261f792abb12c2"
+"pg.expressions.rangetypes.multirange-constructor" = "c18502a02e5c94edd0c2216d7dd8d07e991c8e8de4fb738dbb474344f5c6dfb2"
+"pg.expressions.rangetypes.range-constructor" = "5951373c42aeeff65290ef97b9c3334a193be39ec959849abca0b7ecb5b2a5fb"
+"pg.expressions.sql-expressions.array-subquery" = "757f7dba79124129e5431585f3ad4ae3e5960d1495137bb3cc317b68f8ef064c"
+"pg.expressions.sql-expressions.column-reference" = "032fe8d4abb96e26258214760df099699e8c5d5b539a8cb0bf9c7f1ec0fec03d"
+"pg.expressions.sql-expressions.field-selection" = "6f7632e1d5e97684d37c1ce6453a924e1b949c8b4fc18a5ca2eb47b0bb6721d2"
+"pg.expressions.sql-expressions.function-call" = "557ad7ad4ba1f2018d35fbbb39bc97b2484adbdbb47ff16d67e1378da30b6080"
+"pg.expressions.sql-expressions.function-style-cast" = "4674f67e6164b8b34b7e2555ced367bb4155a1440570e4fbecf93311c0494fca"
+"pg.expressions.sql-expressions.positional-parameter" = "31169bb60466c56303dc245ed2a7ae62fc0f36627d5c6286ab06cbf7e62666f1"
+"pg.expressions.sql-expressions.row-constructor" = "38da5acbeb7c00fefc3dc00560d75d7ce22570a70bca23db86f028c64203a2c6"
+"pg.expressions.sql-expressions.scalar-subquery" = "529e2f7861dc7789e42057281557b00c7662ffbfb591060ada5723b83e6047b3"
+"pg.expressions.sql-expressions.slice" = "2c71e468057065af8eb4fe6ff01755fa181f98d1a178a40b987ea09d8c623b03"
+"pg.expressions.sql-expressions.subscript" = "3ad4280dcb4f2e6b50bab4f3cebb5aef312d7b6d7a81ec8b5b0f7f5956d80053"
+"pg.expressions.sql-syntax-calling-funcs.mixed-notation" = "972fc6c6673c08095b568ff1cfa9e65866068037f3af0d1dd988d3f92b4b3a4e"
+"pg.expressions.sql-syntax-calling-funcs.named-notation" = "d7e90654fca9cb5caebb19b478d8c34cef63ff9d0c445a8f5210003f964d946c"
+"pg.expressions.sql-syntax-calling-funcs.named-notation-colon-equals" = "d099c7108210a9288bb41384692864966ef512d65d3aed104a652e5839342f8e"
+"pg.expressions.sql-syntax-lexical.binary-integer" = "29779c36fae4262d5dd4fc75e161a8e3ca58295c34b997041f9326c043083963"
+"pg.expressions.sql-syntax-lexical.bit-string" = "a859bca2f62d03db7367e814741f324f00ee085330e1a85ef02897c9dff881a2"
+"pg.expressions.sql-syntax-lexical.block-comment" = "bde72058004d9d3c65a016ae4e985da7c5f2ebd9ebf7dc7e66a2eaf1d16e64b9"
+"pg.expressions.sql-syntax-lexical.decimal" = "419f2fa5799ac6f4fab95ed7f254ae104db5f71cc0bc7fcd7bd513c5a71dc296"
+"pg.expressions.sql-syntax-lexical.decimal-leading-point" = "688088221c4caade04aef5dcf988b2a7e552cbb1c9662490f774e0abbe637176"
+"pg.expressions.sql-syntax-lexical.digit-separators" = "021bbcf0af1da693d2ef3ffeefdc98c19aa282d2efb323c57c3b15e74356118f"
+"pg.expressions.sql-syntax-lexical.dollar-quoted-string" = "4147d6b197bd7a2916018cb6bfde327ab404cacc7425a7e3d00f8f57eb5bea71"
+"pg.expressions.sql-syntax-lexical.escape-string" = "41de475f8190db8f2f67c71095ed3d770fdfeaa5dc8465d9561364e921f10f93"
+"pg.expressions.sql-syntax-lexical.exponent" = "c046c2a6ec0f073b7a03b90e99c9da7e7fb9923c835cb2cd18a1ff445d04c5fb"
+"pg.expressions.sql-syntax-lexical.function-style-string" = "b167498a6dc5ad926c36790e28e86bd9e172dbc62e19a2c91c7ad41b0ecbccd2"
+"pg.expressions.sql-syntax-lexical.hex-bit-string" = "13fda9e71b75454968ab4ea2fa051d59ddcdf47c8949e57e95861bb4ef921eee"
+"pg.expressions.sql-syntax-lexical.hex-integer" = "30da25a175b8f82dfd3033af293dfbd42e4b16f82b0cc4d1402acf30c21f7d2a"
+"pg.expressions.sql-syntax-lexical.identifier" = "552559aa31b9cb220b6b2b064b70b0291c8dcdb36e9b7475d03f03450c00f4f1"
+"pg.expressions.sql-syntax-lexical.integer" = "e9410bbe2f1775e4028e142f4f7fa0f4386bcfda0dee92e53d7ed8a37807a2c7"
+"pg.expressions.sql-syntax-lexical.line-comment" = "bf44933febf8cd9b7c92c08cd6480d4351a3a750f77375d824af62a98dd6e8f3"
+"pg.expressions.sql-syntax-lexical.octal-integer" = "0e59b56da639117d230200988d41baeb692bda307d5380a9be3f9963b3b3edd2"
+"pg.expressions.sql-syntax-lexical.quoted-identifier" = "82be54a44573a9c681645a68bea89360f0a409328ee4564dcaccbfe5e50693d7"
+"pg.expressions.sql-syntax-lexical.string" = "b5033289f95a287f7c354be9f8272bc342ea4d6e30f33a5c9159d104dd7913a1"
+"pg.expressions.sql-syntax-lexical.string-continuation" = "7e0467eec0a49cbc02b2313d6c9d99b95a43d03d53b7b7d326fde458162f2c6d"
+"pg.expressions.sql-syntax-lexical.unicode-identifier" = "a29c42af24d5aad48e1d111ee7f44352f83bc884c84df8d3d1a725a12ee01836"
+"pg.expressions.sql-syntax-lexical.unicode-string" = "8b6b860f223595c40f6cc7f95407f0229fb59a2d4bb069b59294d674fef450ad"
+"pg.expressions.string.op-bar-bar" = "f1b643fc900c985977590d0d740d85e829931fa8eb804331ce72c1145627fcde"
+"pg.expressions.string.op-caret-at" = "2dc5c3b9f30377fdf0b831552d6e949f6fde76d8cb432fa07cbc29f7cc566396"
+"pg.expressions.subquery.exists" = "659faa2a07a78009092640122e1a9a2d105c52ad7320018e009bca45e615c3f6"
+"pg.expressions.subquery.in" = "d91f59e8ad066e5d23df970e8a7042b8593572bd66fcfa052129d073bf42b23c"
+"pg.expressions.subquery.not-in" = "12295562c41fa3bf2ad82a2c40eff430c63ec44e43078bfa20029cc961e8e3b2"
+"pg.expressions.textsearch.op-amp-amp" = "3ff9c1225775b09646a47cf0c4cccff69cc8f194234c44793dd00c6982482d01"
+"pg.expressions.textsearch.op-at-at" = "f1f68681d36318a74d2aaa366d85cc8327f0b78a79f4f58de0feb6e42d0e8c73"
+"pg.expressions.textsearch.op-at-gt" = "62008a93614b3d44b01c414346382c685934f9d6f75caf0c77b5bdb9b2a28bdb"
+"pg.expressions.textsearch.op-bar-bar" = "a617a788b2004b6afc85f2229af082497b8c77fc09cb56c214142ceee767b4a0"
+"pg.expressions.textsearch.op-lt-at" = "732c94612ed22e07b9229dacb48e2bfa43e3fd9d4a3418666480ea88565c8be2"
+"pg.expressions.textsearch.op-lt-minus-gt" = "ee5b9438c0724109f4f0ff941a68193b554ba666996c07ecf91270824a719e31"
+
+[[review]]
+id = "pg-auditor-expressions-002"
+reviewer_lane = "auditor"
+family = "expressions"
+parser_tree = "37050ece2046c9560a4ea42f87abfa43e1432125"
+reviewed_utc = "2026-11-06T08:56:35Z"
+verdict = "approved"
+forms = [
+  "pg.expressions.bitstring.op-bar",
+  "pg.expressions.comparison.is-not-unknown",
+  "pg.expressions.comparison.is-unknown",
+  "pg.expressions.comparisons.all-array",
+  "pg.expressions.comparisons.any-array",
+  "pg.expressions.comparisons.row-comparison",
+  "pg.expressions.comparisons.row-is-distinct-from",
+  "pg.expressions.comparisons.row-is-not-distinct-from",
+  "pg.expressions.comparisons.some-array",
+  "pg.expressions.datatype-datetime.interval-fields",
+  "pg.expressions.datatype-datetime.interval-literal-fields",
+  "pg.expressions.datatype.bit-varying",
+  "pg.expressions.datatype.interval",
+  "pg.expressions.datatype.numeric",
+  "pg.expressions.datetime.at-local",
+  "pg.expressions.datetime.at-time-zone",
+  "pg.expressions.geometry.op-at-at",
+  "pg.expressions.geometry.op-at-minus-at",
+  "pg.expressions.geometry.op-hash",
+  "pg.expressions.geometry.op-qmark-bar",
+  "pg.expressions.geometry.op-qmark-minus",
+  "pg.expressions.math.op-at",
+  "pg.expressions.math.op-bar",
+  "pg.expressions.math.op-bar-bar-slash",
+  "pg.expressions.math.op-bar-slash",
+  "pg.expressions.net.op-bar",
+  "pg.expressions.sql-expressions.aggregate",
+  "pg.expressions.sql-expressions.aggregate-all",
+  "pg.expressions.sql-expressions.aggregate-distinct",
+  "pg.expressions.sql-expressions.aggregate-star",
+  "pg.expressions.sql-expressions.aggregate-within-group",
+  "pg.expressions.sql-expressions.array-constructor",
+  "pg.expressions.sql-expressions.collate",
+  "pg.expressions.sql-expressions.operator-call",
+  "pg.expressions.sql-expressions.window-call-definition",
+  "pg.expressions.sql-expressions.window-call-name",
+  "pg.expressions.sql-expressions.window-star-definition",
+  "pg.expressions.sql-expressions.window-star-name",
+  "pg.expressions.subquery.all",
+  "pg.expressions.subquery.all-row",
+  "pg.expressions.subquery.any",
+  "pg.expressions.subquery.any-row",
+  "pg.expressions.subquery.in-row",
+  "pg.expressions.subquery.not-in-row",
+  "pg.expressions.subquery.row-comparison",
+  "pg.expressions.subquery.some",
+  "pg.expressions.subquery.some-row",
+  "pg.expressions.textsearch.op-bang-bang",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 37050ece; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.expressions.bitstring.op-bar" = "855c90308093084cfb070959bff277780f463c44fcd64bb9f9c2c2539a8b1ac6"
+"pg.expressions.comparison.is-not-unknown" = "e1be007bb11cd2186d7f5c638a8ce5e1ee63d87754b990c13c42c3dddcf25901"
+"pg.expressions.comparison.is-unknown" = "eba1dcf2a00a556481b6a11cae4634712afc9e32e47305d8036b0f34c2c71864"
+"pg.expressions.comparisons.all-array" = "835a3a3fd0488fae9620b8b587cd5135573893dfc08bd08a0c15ddf927b5473f"
+"pg.expressions.comparisons.any-array" = "14cf6c05d55f55d9f38dd85ca560a623564a5f7be6c287226b4412faf81330ce"
+"pg.expressions.comparisons.row-comparison" = "d39cd0fb8e9b1d1cee5505882c5bf823b54ea847cbc5563bcd5a96ab1b2e516a"
+"pg.expressions.comparisons.row-is-distinct-from" = "e7725f2f5a6bb425d5ca4f07c3d00b51720a98c060be74888878df41e92b044c"
+"pg.expressions.comparisons.row-is-not-distinct-from" = "9700ff31b3c93e9fc17849b4708b13e3e5b7bc1e57914a726d5a519aee73143f"
+"pg.expressions.comparisons.some-array" = "0e2f7c95757eb90b3d801e39868e008b02381190e534b9ecd9de8ccb72ba8eae"
+"pg.expressions.datatype-datetime.interval-fields" = "a01cbb4be5b670f2da7e20d1e67f56056326ecb37aabb53f00d9993501caf505"
+"pg.expressions.datatype-datetime.interval-literal-fields" = "a1bf0470a5d1fb0f34b2e259f10bc99b850c497c34e4a960aecadec7156dc645"
+"pg.expressions.datatype.bit-varying" = "f84b2e633ff8394a9ea4c8399f9c722738221943f5f7904cd67abab0443f259b"
+"pg.expressions.datatype.interval" = "c8f8b3cea4a210aaa032f93ad5ceeb54044655337539251213e9870f05b112ef"
+"pg.expressions.datatype.numeric" = "b98b49206a124723ca4c0b9d02e1573d73f128281a4b4ea50c9402991a935e41"
+"pg.expressions.datetime.at-local" = "5923b2b33d24b699c19f653ce2381a57369d0fb58a25658665e674c329b9a719"
+"pg.expressions.datetime.at-time-zone" = "e50ad9bcc0910d7633349e9265b9d4fef64dcabcff0f91089f9cbabb789cd527"
+"pg.expressions.geometry.op-at-at" = "d9d93f1f5a3bf48b0dfa322b9d2bbeb9657d8cafdf856d6c83e7d20dcf151bac"
+"pg.expressions.geometry.op-at-minus-at" = "bba66d02cdf81bca8e4c1be06b0c92e32550012d8a27a0129636c35c3d9488a5"
+"pg.expressions.geometry.op-hash" = "ef2a35e004e4a6515a6c1cfd725fd427e80a94d1f711134183eee244fb38d601"
+"pg.expressions.geometry.op-qmark-bar" = "bc587594fe419ed4dd09f7155b3a7ac628241b152fd13832c2b903ebc435f52d"
+"pg.expressions.geometry.op-qmark-minus" = "cbcfe852fd9b610af46590bec48487049b933d6970f82416c6fc9d72f78556a8"
+"pg.expressions.math.op-at" = "8c5f44dc79bf3dceff9435b86a3f55d18150db86b5f50e7b1dffd37e5f1c64a1"
+"pg.expressions.math.op-bar" = "e45c59a89fce2d1f5da1c278c376b4b979921133b4383f0e390f5e3979021137"
+"pg.expressions.math.op-bar-bar-slash" = "5d852e65e5ec9886d41e0c7ff35e68233a81380a6888c9fe97a2503407a3ec22"
+"pg.expressions.math.op-bar-slash" = "c67b8c9ee3387069174026aecc1a2bb8a54310abf033e3f74a46c09fd9c39cbc"
+"pg.expressions.net.op-bar" = "6f466468d7969d76c4a03189ddc6abbf92cdeea4a1af0a83cc7436202b78173d"
+"pg.expressions.sql-expressions.aggregate" = "c0212f1eb40de79a139cc109ceb11a297aaebd9e824a9d945d4722170acf6d2a"
+"pg.expressions.sql-expressions.aggregate-all" = "f510442d7662d8651520cc42db9386a5a8aae4018dd85c5f7ed06fed6ea30c24"
+"pg.expressions.sql-expressions.aggregate-distinct" = "4f83e1096e5e880153135fd480806bb1fb7ff68a9bfaa0d2b2f591b1b77f64f6"
+"pg.expressions.sql-expressions.aggregate-star" = "b7ef67b74c3efd61a3f7e7f7d48832a68fd336ef7a88c0a1a9781d15fce7c2dd"
+"pg.expressions.sql-expressions.aggregate-within-group" = "f8bcecc8a33c36145a3b5529f19300457fcbb1f98a72ffd17beb5ea4c00ec89a"
+"pg.expressions.sql-expressions.array-constructor" = "119f4b5e3fb8d4909df8a9e138c9e96131f04a9f3cdd9f5cb372ef7f874904eb"
+"pg.expressions.sql-expressions.collate" = "54355c2a2194125f5d6998ed322030774b0f29f81f86ccd4ebe957c427c9e346"
+"pg.expressions.sql-expressions.operator-call" = "7e278623aedf5396c3e251741a2b89ea0e5562dd2f2c7d3158718a22999ccfb2"
+"pg.expressions.sql-expressions.window-call-definition" = "dbb3564fb520bc36f496261a6ab6e3d468e297aebbc685d153f4b1fa66375209"
+"pg.expressions.sql-expressions.window-call-name" = "f06d90b48acb483983a3d0ce2d2eb03bfd5b3c0d95d1efd573e466ad964b80af"
+"pg.expressions.sql-expressions.window-star-definition" = "097572736c725b89e014370fedeef7fdac9f7ff99ac7761647edfdc0ca369c30"
+"pg.expressions.sql-expressions.window-star-name" = "8320a1fdc92dfa3152924f9e89d1602f61d70a3366b76629d2dcefa036a37e5a"
+"pg.expressions.subquery.all" = "1c7a08a0f3d154ebc88cee1cb301031668f0bd9497cc426ef72c4124e28998b0"
+"pg.expressions.subquery.all-row" = "fd236c00f812f8801b069c4959dbedc415f5b66eca710ff2f3dc3b96794f45f7"
+"pg.expressions.subquery.any" = "1fdff3f49d8c7bfb00a83d02b0487b73f13b504fdd26d6c078cb493c8f42fcf0"
+"pg.expressions.subquery.any-row" = "858413da6506b150df25f3ffcf6cb7918e69c0542d99da022e15323e6aeb2b82"
+"pg.expressions.subquery.in-row" = "cae7a0e907be456ac3b41849bd09ad76da5e2ffd8fe9b1fadf1aee8bafa841d1"
+"pg.expressions.subquery.not-in-row" = "58a77b5424ae307a839e40fdbbff3a3cf0605787e5ee45d0db65b02946510872"
+"pg.expressions.subquery.row-comparison" = "9dd2d4e3195f60bf91d963d605f782073f9ccb3642ee71cf6a47af4b25749a47"
+"pg.expressions.subquery.some" = "5713db22a384324fd666e158c50cf44c06c4f5246804d07fdb09fcf79811494b"
+"pg.expressions.subquery.some-row" = "11428f01c71f17311ce8d7398e6ba887766532b5950e54e85e1e01a8f7a50b58"
+"pg.expressions.textsearch.op-bang-bang" = "7ab8b43b80ea771c51bd7800012ec2f90817516fb522bc92479158ee151275c2"
+
+[review.definitions]
+"pg.expressions.bitstring.op-bar" = "b82dc63a63ad666cefe021842a9c8481f81328121c789d5f298971d74b02d911"
+"pg.expressions.comparison.is-not-unknown" = "6df2fa4a1f66a52301ce3d483e025c4abb1d5c8f9dd9cb06c651b8f3c01188e6"
+"pg.expressions.comparison.is-unknown" = "0da888471de90b40e88969e57d9b264e7aef68e30436c2e8508514ddde6bc874"
+"pg.expressions.comparisons.all-array" = "ab8a8db4cd4f64fbcbcaccaac76f568be35cade6b16e3a30d4482b5ed7094d4e"
+"pg.expressions.comparisons.any-array" = "87dc4ed5748f26a69881a1db4df363ac13069331d6d59fe8448437bd8bba60cd"
+"pg.expressions.comparisons.row-comparison" = "efc59af1cf68920bcaadffc3c18dd1f9fe4af56388a3adba39e641eb9bc16a72"
+"pg.expressions.comparisons.row-is-distinct-from" = "96527b1d1a561d3ea07bf6d828fe31cd85fda8b2e66e338397abb24855d92c91"
+"pg.expressions.comparisons.row-is-not-distinct-from" = "248d2a41cc79fad88e51209f85a13a62c5a17cf215a6b486de6b75ed30b74f0b"
+"pg.expressions.comparisons.some-array" = "23df261f3685438db62a8315169405aeec37a8cd389c538b68be1015b08ac52b"
+"pg.expressions.datatype-datetime.interval-fields" = "d27bd15dba10c1457efa9b7eda45afca766c64d56e6995a8dd7e264e2e11907f"
+"pg.expressions.datatype-datetime.interval-literal-fields" = "c3f760c113b3a324169224903ff2170f90235e7f21402e74e93d99e8b0e0956c"
+"pg.expressions.datatype.bit-varying" = "6fcecbc6168fedb0ca1ebcefefbe1041686e15acdf5193fd3159523f2d6811ca"
+"pg.expressions.datatype.interval" = "d2b0ca25015b11f0ede649af21c86017aca03aad1d73d07ca32dacd7aa4d22e1"
+"pg.expressions.datatype.numeric" = "792ba21f0342f821ee2eddb6b0f137267148f262cbc3718eaf0b285ea19c5d16"
+"pg.expressions.datetime.at-local" = "1b99efcea55539dad52136d2300c79f01b1ec3063d7f11d2220b699f550346bf"
+"pg.expressions.datetime.at-time-zone" = "9ad1bdfc75b26d7cd2659ef65a23f89b025e4992d8473f75612e3b85120b572c"
+"pg.expressions.geometry.op-at-at" = "62863887e54ee5c54ff172ece698255f60b72d30283d65c458e792e6cbe008c4"
+"pg.expressions.geometry.op-at-minus-at" = "9c6817832a7efe231c8be6bb58e7abe0f38e33ad82fc4a1535022edf5b8acb7d"
+"pg.expressions.geometry.op-hash" = "f7961d1993b037238c91a19441e395327ffac1b143c7ef5b9a5d685561b9fb38"
+"pg.expressions.geometry.op-qmark-bar" = "f267a4ea27ceb40bdeae46f661858a94d9fe3a5d39eaf71e584538ed0c7e0a12"
+"pg.expressions.geometry.op-qmark-minus" = "632073ef35649764275b03ee0d7ad7ef1ba3f29d0612f803ebdf0fb113149c96"
+"pg.expressions.math.op-at" = "33b307a526b2052ea8f69bb6f9e83570ec5dcf5add680845d3b2fd6ecdcd6d37"
+"pg.expressions.math.op-bar" = "c960aec62f8f576c78900faadcea5b397acf9a89eb7bc6b9589dcd4916e89771"
+"pg.expressions.math.op-bar-bar-slash" = "fe7f8556e86384574c2cef87b2b0d7a99855783125fefa3fc7f6d320f5ae1537"
+"pg.expressions.math.op-bar-slash" = "188d373e0fa093a2b479eebb1000755e545066f3b4f6703444d4a6efc4ef23c9"
+"pg.expressions.net.op-bar" = "6ed9ab3684b3a3c8b730e8a4700b080d2431061e86be66771f8faa74569cb5cd"
+"pg.expressions.sql-expressions.aggregate" = "be025658a836a093fb85b8d266b05fbfd1b999b6bef49d3a10df716872a546ca"
+"pg.expressions.sql-expressions.aggregate-all" = "923109143d533fbb68c111691693aad16ebd1f27ceb7e2d6eb3acc0e09ad7b81"
+"pg.expressions.sql-expressions.aggregate-distinct" = "4e4784bcf9488a026ae356c2ec7b244df3d85bc2cd93488d094be681bf96d26a"
+"pg.expressions.sql-expressions.aggregate-star" = "436aa6d5d63cfdad1ebc8c52e8f69f141fe779c2458d86d1cd8f0fb93889ccc5"
+"pg.expressions.sql-expressions.aggregate-within-group" = "4702b7a0ebb9f374f3d3e268e5012dcb251e70a02da2161c624d1ae23c7b0491"
+"pg.expressions.sql-expressions.array-constructor" = "4d99912136498b108106af0619698b360fe5443f8deccf77f6eb9e3c2a991f16"
+"pg.expressions.sql-expressions.collate" = "958302abaea7340fad096886a3ddaf4a360fc0debdc56ddf16add756d2306408"
+"pg.expressions.sql-expressions.operator-call" = "39c26be2c6369ed9c1cbf43afc4c7cc75caa4c3b90080eda0d01aa8b4610379e"
+"pg.expressions.sql-expressions.window-call-definition" = "661215883cb6d404b020518985e3e232ade4a53a2464d8ffa07b92e6773398a0"
+"pg.expressions.sql-expressions.window-call-name" = "0970360856cd0c9c0f31122db264c7329e75387b204954fb5a89c86d8762b3c3"
+"pg.expressions.sql-expressions.window-star-definition" = "a35c33de043ae7003fb6854429d78d13865eee2e00574135b1ea1ed5d07ea25a"
+"pg.expressions.sql-expressions.window-star-name" = "013b2938b6ce8fffb334961bb04f102d4718f7cf36d79466739518c9121c0912"
+"pg.expressions.subquery.all" = "9785be0cb5ebf780a77a7cb73eb443828b60bf0cc4f04ca15f5d21909ba08ffc"
+"pg.expressions.subquery.all-row" = "ee670bb1b7d0b435d0f62626791fc89d4bfa388ca2850165c4277d3fab1c3a66"
+"pg.expressions.subquery.any" = "06d87adee5cddc08ac95ea9b90f6d28d9bab22a97f10e006042d2e6d4dd2c906"
+"pg.expressions.subquery.any-row" = "f6fe953bb6ef44b24472b2ad7bd9e713bb94946d9c8802800ed3621de4227dc4"
+"pg.expressions.subquery.in-row" = "31db5285f63e296c486441c21ce401240fb149c34f2a88041fabd55b37b7e2a6"
+"pg.expressions.subquery.not-in-row" = "e86dd17670634805982847f517d6c606425bb20052fbb06c8bca01d2293a34c3"
+"pg.expressions.subquery.row-comparison" = "f5e0088811bc09d6b6cacec891e0d8bf3de12faa0b541a2986ad2d734ca4a11a"
+"pg.expressions.subquery.some" = "3f0862545fbae7700dd9cdef085f1bc1a61cfb072fd91e8f1c982546379d639d"
+"pg.expressions.subquery.some-row" = "2b5d967f68728a257ce43f9eab62b1491b7198fb21bdfa88e30ef8e1c78d1a28"
+"pg.expressions.textsearch.op-bang-bang" = "35568f94170bd099a3bccfbed5d8742af614a0c8e7434d7022d4569f72c8b383"
+
+[[review]]
+id = "pg-auditor-expressions-003"
+reviewer_lane = "auditor"
+family = "expressions"
+parser_tree = "7627aaefa0e240e17fa4a4c04868e764a6d3c67f"
+reviewed_utc = "2026-11-06T09:05:04Z"
+verdict = "approved"
+forms = [
+  "pg.expressions.datatype.bit",
+  "pg.expressions.datatype.character",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 7627aaef; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.expressions.datatype.bit" = "c0a23cc73ff4b84faae9317d64a7cb14edcb26d86da30be32f726260ff4c68e6"
+"pg.expressions.datatype.character" = "b03d57636bffd84f74bb3d3f5de5cd166df926399fa588e39b82914e88d1e248"
+
+[review.definitions]
+"pg.expressions.datatype.bit" = "38b1bcabe3f64ce05b07812c572e1f071d159fbb1e4f32804e70dc2b4224cc47"
+"pg.expressions.datatype.character" = "d31e78b7daa79913c34c10210309fa24ceefabdecb26417d8ff3a654476659ca"
+
+[[review]]
+id = "pg-auditor-expressions-004"
+reviewer_lane = "auditor"
+family = "expressions"
+parser_tree = "a510c28db022a42c0036736f66c210cd018c1085"
+reviewed_utc = "2026-11-06T09:39:32Z"
+verdict = "approved"
+forms = [
+  "pg.expressions.arrays.array-type",
+  "pg.expressions.sql-expressions.cast",
+  "pg.expressions.sql-expressions.cast-double-colon",
+  "pg.expressions.sql-syntax-lexical.cast-string",
+  "pg.expressions.sql-syntax-lexical.string-cast",
+  "pg.expressions.sql-syntax-lexical.type-string",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree a510c28d; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.expressions.arrays.array-type" = "2bc06625ba2b32d6ed688d17b29f792a5c6c6360a862de612a7ba01226be53c2"
+"pg.expressions.sql-expressions.cast" = "67ff44066712ef5a2125213338bcad2045fb3419e807f1101aa3c68f270c092c"
+"pg.expressions.sql-expressions.cast-double-colon" = "4f5361591792658a0e997232543feaa50744ba3d7eed4e046ab53e36bebbea00"
+"pg.expressions.sql-syntax-lexical.cast-string" = "66e1135f6d0b8d622477ed15fca96cf9daee55e55e822157f0a31dfce114dd75"
+"pg.expressions.sql-syntax-lexical.string-cast" = "a55efcc8c75475de5068f7a3b586bc93621ad2a661aa7df309c4984ad3f4f31a"
+"pg.expressions.sql-syntax-lexical.type-string" = "9787e00582c8247ef608988ebe37cc231a8914092b0d5db6b383243307c2433f"
+
+[review.definitions]
+"pg.expressions.arrays.array-type" = "3858f710f8a3c365382ba9a590cc22130523014d75d4756edb27420f023db806"
+"pg.expressions.sql-expressions.cast" = "d31b8492914a911885bd0216a3ed9c52b67a8d0863e005ed71be34aa0234338d"
+"pg.expressions.sql-expressions.cast-double-colon" = "50fa6ae1daed6b44cda69b22a1b28e26f693cec13d6538f6c98edd02b54b4ee7"
+"pg.expressions.sql-syntax-lexical.cast-string" = "a082b862baed93e5559fc95c560cfdce70287bd703aae0b674a901a33ca217e4"
+"pg.expressions.sql-syntax-lexical.string-cast" = "89cfeeaf429b9f0f4d56eeb62806f113b38b860f4d4b58e74ea9893979835a91"
+"pg.expressions.sql-syntax-lexical.type-string" = "5dfa22b5cd8870a98b4477ae59f4227911f526510fe906c3bc146e7669daab57"
+
+[[review]]
+id = "pg-auditor-expressions-005"
+reviewer_lane = "auditor"
+family = "expressions"
+parser_tree = "bb29fc0ea41d9c91470367eedd5e6bac935190d4"
+reviewed_utc = "2026-11-06T11:41:21Z"
+verdict = "approved"
+forms = [
+  "pg.expressions.bitstring.op-bar",
+  "pg.expressions.sql-expressions.array-constructor",
+]
+note = "Re-read after the obligation-notes delta against the PostgreSQL 18.6 documentation (release SGML), the new obligations, their cases with PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree bb29fc0e; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.expressions.bitstring.op-bar" = "3611afe9d6fb2e296f3c6164d192b96ed81571db155ea1ea0afd414bb5755e77"
+"pg.expressions.sql-expressions.array-constructor" = "767dc341288f9ab4155455ad2a68a30b03870ded52480b7c23af59b93b5da40b"
+
+[review.definitions]
+"pg.expressions.bitstring.op-bar" = "24ab756dba47b7871cfd13c7589b3601feff76e261c8e3ccd80de9f0a31db75a"
+"pg.expressions.sql-expressions.array-constructor" = "522ceb74156d2b81b2f5dd674dcdd5ef43b4dea88274b2f3a140d065a82e18c8"

@@ -38,6 +38,8 @@ pub enum LocalFailure {
     Timeout,
     /// A complexity guard refused the input; never a syntax verdict.
     Guard,
+    /// The root's dialect has no local parser yet.
+    NoParser,
 }
 
 /// Why an obligation or a form is not satisfied; every failure names one.
