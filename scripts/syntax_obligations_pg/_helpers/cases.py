@@ -77,7 +77,7 @@ def family_cases(
     forms: set[str],
     receipts: ReceiptView,
 ) -> list[Row]:
-    """The cases of the family's focus forms, settled by their receipts (D92, D133)."""
+    """The cases of the family's focus forms, settled by their receipts."""
     by_sql: dict[str, tuple[str, Rendered, list[str]]] = {}
     extremes: set[str] = set()
     conflicts: list[str] = []

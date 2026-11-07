@@ -1,5 +1,5 @@
 # Documented obligations whose construct Snowflake answers only with an internal error (603), so no
-# capture can establish a phase (decision D87). Each obligation stays in the denominator, never
+# capture can establish a phase. Each obligation stays in the denominator, never
 # counts as verified, and is reported as "unverifiable: Snowflake internal error". Its case stays in
 # cases/<family>.jsonl. Fields: obligation, form, construct, reason, the cases that were captured
 # (case_id, sql_sha256), the runs (the original capture, the exact re-run and the diagnostic probes,
@@ -171,7 +171,7 @@ probes = [
 [[diagnostic]]
 obligation = "sf.scripting.if.o043"
 form = "sf.scripting.if"
-construct = "5,000 ELSEIF branches in one IF (145 KB), an extreme-value probe (decision D90)"
+construct = "5,000 ELSEIF branches in one IF (145 KB), an extreme-value probe"
 reason = "internal error 603 (300010:2141090603) after about 3 to 4 seconds; a probe size, not documented syntax, so the obligation is withdrawn and the 1,000-branch extreme stays scored"
 captured = [
   { case_id = "sf.scripting.if.k685d9d2a067e", sql_sha256 = "685d9d2a067ee23f80925091867c597eae975e4c8d4d6436b906b9bd14248576" },
@@ -182,7 +182,7 @@ probes = []
 [[diagnostic]]
 obligation = "sf.scripting.case.end.syntax.o030"
 form = "sf.scripting.case.end.syntax"
-construct = "5,000 WHEN branches in one searched CASE (115 KB), an extreme-value probe (decision D90)"
+construct = "5,000 WHEN branches in one searched CASE (115 KB), an extreme-value probe"
 reason = "internal error 603 (300010:2141090603) after about 3 to 4 seconds; a probe size, not documented syntax, so the obligation is withdrawn and the 1,000-branch extreme stays scored"
 captured = [
   { case_id = "sf.scripting.case.end.syntax.k93f2857ca62c", sql_sha256 = "93f2857ca62cd9f2093aaac340647dc07ae0c281d08ceb1e1237f47c990983d5" },
