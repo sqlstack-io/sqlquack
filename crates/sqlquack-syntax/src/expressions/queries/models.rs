@@ -1044,6 +1044,9 @@ pub struct MatchRecognize {
     /// Whether AS keyword was explicitly present before alias
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub alias_explicit_as: bool,
+    /// `OPTIONS ( name = value, ... )` (BigQuery), as `name = value` pairs; empty when absent
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub options: Vec<Expression>,
 }
 
 /// MEASURES expression with optional RUNNING/FINAL semantics
