@@ -22,6 +22,18 @@ const MAX_CHAIN: usize = 1000;
 /// The deepest statement tree; a release build serialises one this deep on a 2 MiB thread.
 const MAX_TREE_DEPTH: usize = 8000;
 
+/// Stack a release build's recursive clone of a remembered tree may use per level of its depth.
+#[cfg(feature = "stacker")]
+const CLONE_LEVEL_BYTES: usize = 2 * 1024;
+
+/// Stack a debug build's recursive clone of a remembered tree may use per level of its depth.
+#[cfg(feature = "stacker")]
+const CLONE_LEVEL_BYTES_DEBUG: usize = 8 * 1024;
+
+/// Stack kept free beyond the clone's own estimate when the stack is grown for it.
+#[cfg(feature = "stacker")]
+const CLONE_STACK_MARGIN: usize = 1024 * 1024;
+
 /// PostgreSQL's message for 54001, which recursion and chains past their limits both raise.
 const STACK_DEPTH_EXCEEDED: &str = "stack depth limit exceeded";
 
@@ -422,12 +434,15 @@ impl<'sql> Parser<'sql> {
             self.at = outcome.reached;
             self.opaque |= !outcome.gaps.is_empty();
             self.gaps.extend(outcome.gaps.iter().cloned());
-            return outcome.result.clone();
+            return copied(&outcome.result);
         }
         let gaps: usize = self.gaps.len();
-        let result: Parsing<Expression> = parse(self);
+        let result: Parsing<Expression> = match parse(self) {
+            Ok(tree) if tree.tree_depth() > MAX_TREE_DEPTH => Err(self.refuse_depth()),
+            result => result,
+        };
         let outcome: Outcome = Outcome {
-            result: result.clone(),
+            result: copied(&result),
             reached: self.at,
             gaps: self.gaps[gaps.min(self.gaps.len())..].to_vec(),
         };
@@ -518,4 +533,18 @@ impl<'sql> Parser<'sql> {
         }
         Ok(parts)
     }
+}
+
+/// A copy of a remembered parse; its tree is cloned recursively, so on a stack grown to its depth.
+fn copied(result: &Parsing<Expression>) -> Parsing<Expression> {
+    #[cfg(feature = "stacker")]
+    if let Ok(tree) = result {
+        let per_level: usize = match cfg!(debug_assertions) {
+            true => CLONE_LEVEL_BYTES_DEBUG,
+            false => CLONE_LEVEL_BYTES,
+        };
+        let needed: usize = (tree.tree_depth() + 1) * per_level;
+        return stacker::maybe_grow(needed, needed + CLONE_STACK_MARGIN, || Ok(tree.clone()));
+    }
+    result.clone()
 }
