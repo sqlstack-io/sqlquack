@@ -7,13 +7,14 @@ import json
 from pathlib import Path
 
 from scripts.syntax_obligations._helpers.cases import (
+    family_outputs,
     held_cases,
     packet_text,
     receipt_phases,
     receipt_settlements,
     recorded_receipts,
     run_database_setups,
-    write_family,
+    sync_outputs,
 )
 from scripts.syntax_obligations.models import ReceiptView
 from scripts.syntax_obligations.types import Row
@@ -31,10 +32,12 @@ def run_cases(argv: list[str] | None = None) -> int:
     print(json.dumps({"setup_review": flagged}))
     held: frozenset[str] = held_cases(arguments.held)
     to_capture: list[Row] = []
+    differing: list[Path] = []
     for family in arguments.families:
-        cases, arity = write_family(
+        cases, arity, outputs = family_outputs(
             root=arguments.root, family=family, receipts=receipts, setups=setups, held=held
         )
+        differing += sync_outputs(outputs, check=arguments.check)
         to_capture += [c for c in cases + arity if (c["case_id"], c["sql_sha256"]) not in recorded]
         print(
             json.dumps(
@@ -46,6 +49,11 @@ def run_cases(argv: list[str] | None = None) -> int:
                 }
             )
         )
+    if arguments.check:
+        for path in differing:
+            print(f"syntax cases: {path} differs from what the receipts regenerate")
+        print(f"syntax cases: {'FAILED' if differing else 'passed'}, {len(differing)} files differ")
+        return 1 if differing else 0
     if arguments.packet:
         arguments.packet.write_text(packet_text(to_capture))
     return 0
@@ -74,5 +82,10 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         help="held-case list (JSON lines with case_id) whose cases run in a d103 run database",
     )
     parser.add_argument("--packet", type=Path, help="write the cases still to capture here")
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="write nothing; fail when a family's files differ from what the receipts regenerate",
+    )
     parser.add_argument("families", nargs="+")
     return parser.parse_args(argv)

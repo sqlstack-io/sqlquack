@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: format rust-lint python-check fensu syntax-coverage gate-build evidence-guard polyglot-guard generate-cases generated-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-results check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
+.PHONY: format rust-lint python-check fensu syntax-coverage gate-build evidence-guard polyglot-guard generate-cases generated-cases generate-syntax-cases syntax-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-results check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -83,6 +83,18 @@ corpus-rerecord:
 generated-cases:
 	uv run python -m scripts.generate_cases --check
 
+# The syntax-coverage families whose cases and marks scripts/build_syntax_cases.py writes.
+SYNTAX_CASE_ARGS := --receipts coverage/syntax/receipts --held coverage/syntax/held.jsonl \
+  classes ddl dml expressions functions query scripting security_admin transaction_session utility
+
+# Rewrites coverage/syntax/cases, marks and arity from the obligations and the committed receipts.
+generate-syntax-cases:
+	uv run python -m scripts.build_syntax_cases $(SYNTAX_CASE_ARGS)
+
+# Fails when a syntax case, mark or arity file differs from what the committed receipts regenerate.
+syntax-cases:
+	uv run python -m scripts.build_syntax_cases --check $(SYNTAX_CASE_ARGS)
+
 # Rewrites referee/generated/ and referee/environments/ from scripts/referee_cases/.
 generate-referee-cases:
 	uv run python -m scripts.generate_referee_cases
@@ -97,7 +109,7 @@ referee-pending:
 	uv run python -m scripts.write_referee_pending $(REFEREE_ARGS)
 
 # The static gate, the first step of `gate`, and the Python API's tests.
-check-ci: rust-lint python-check fensu syntax-coverage evidence-guard polyglot-guard generated-cases referee-cases python-api
+check-ci: rust-lint python-check fensu syntax-coverage evidence-guard polyglot-guard generated-cases syntax-cases referee-cases python-api
 
 # The gate builds everything it runs once, in `gate-build`: one profile, GATE_PROFILE (Cargo.toml's
 # `gate`), and one feature set, GATE_FEATURES. Cargo unifies features per invocation, so a build of a
