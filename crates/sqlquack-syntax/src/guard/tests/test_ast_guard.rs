@@ -52,6 +52,26 @@ fn given_a_long_term_chain_when_parsing_on_a_2_mb_thread_then_it_parses_or_is_re
             expected_error: None,
         },
         AstDepthTestCase {
+            description: "a 50,000-term + chain as a call argument parses and serializes",
+            sql: || format!("SELECT f(1{}) FROM a", " + 1".repeat(50_000)),
+            expected_error: None,
+        },
+        AstDepthTestCase {
+            description: "a 50,000-term + chain as a SUM argument parses and serializes",
+            sql: || format!("SELECT SUM(1{}) FROM a", " + 1".repeat(50_000)),
+            expected_error: None,
+        },
+        AstDepthTestCase {
+            description: "a 50,000-term + chain as a COALESCE argument parses and serializes",
+            sql: || format!("SELECT COALESCE(1{}) FROM a", " + 1".repeat(50_000)),
+            expected_error: None,
+        },
+        AstDepthTestCase {
+            description: "a 50,000-term + chain in ARRAY_CONSTRUCT parses and serializes",
+            sql: || format!("SELECT ARRAY_CONSTRUCT(1{}) FROM a", " + 1".repeat(50_000)),
+            expected_error: None,
+        },
+        AstDepthTestCase {
             description: "a 100,000-term + chain is flat, parses and serializes",
             sql: || format!("SELECT 1{}", "+1".repeat(100_000)),
             expected_error: None,

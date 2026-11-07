@@ -3,6 +3,8 @@
 use serde::Serialize;
 use serde::Serializer;
 
+use crate::expressions::tree::main::_on_grown_stack::on_grown_stack;
+
 /// Serializes `value`, moving to a fresh stack segment first when the current stack is nearly used.
 pub(in crate::expressions) fn serialize_on_grown_stack<T, S>(
     value: &T,
@@ -12,13 +14,5 @@ where
     T: Serialize + ?Sized,
     S: Serializer,
 {
-    #[cfg(feature = "stacker")]
-    {
-        stacker::maybe_grow(256 * 1024, 4 * 1024 * 1024, || value.serialize(serializer))
-    }
-
-    #[cfg(not(feature = "stacker"))]
-    {
-        value.serialize(serializer)
-    }
+    on_grown_stack(|| value.serialize(serializer))
 }
