@@ -1,0 +1,563 @@
+{
+  "schema": "the 19 relations the models read, typed as in corpora/everyday-models/schema.json, as empty CTEs (CAST(NULL AS type) ... WHERE FALSE) ahead of each query; for queries with their own WITH, the schema CTEs go first in the same WITH and skip names the query defines",
+  "method": "EXPLAIN of each query (compile only); queries that compiled were then executed once on the empty inputs and their result columns taken from the connector metadata",
+  "session": "TIMEZONE UTC, TIMESTAMP_TYPE_MAPPING TIMESTAMP_NTZ, QUOTED_IDENTIFIERS_IGNORE_CASE false, USE_CACHED_RESULT false",
+  "results": {
+    "U1": {
+      "sql": "select * exclude (_loaded_at) rename (id as customer_id)\nfrom raw_customers",
+      "compiles": null,
+      "captured": false,
+      "note": "not submitted: the capture guard's offline read-only screen holds any statement containing the word RENAME"
+    },
+    "U2": {
+      "sql": "with customers as (\n    select * from stg_customers\n),\norders as (\n    select * from stg_orders\n),\npayments as (\n    select * from stg_payments\n),\ncustomer_orders as (\n    select\n        customer_id,\n        min(order_date) as first_order,\n        max(order_date) as most_recent_order,\n        count(order_id) as number_of_orders\n    from orders\n    group by customer_id\n),\ncustomer_payments as (\n    select\n        orders.customer_id,\n        sum(amount) as total_amount\n    from payments\n    left join orders on payments.order_id = orders.order_id\n    group by orders.customer_id\n),\nfinal as (\n    select\n        customers.customer_id,\n        customers.first_name,\n        customers.last_name,\n        customer_orders.first_order,\n        customer_orders.most_recent_order,\n        customer_orders.number_of_orders,\n        customer_payments.total_amount as customer_lifetime_value\n    from customers\n    left join customer_orders on customers.customer_id = customer_orders.customer_id\n    left join customer_payments on customers.customer_id = customer_payments.customer_id\n)\nselect * from final",
+      "compiles": false,
+      "errno": 2028,
+      "sqlstate": "42601",
+      "message": "SQL compilation error: ambiguous column name 'AMOUNT'"
+    },
+    "U3": {
+      "sql": "select\n    r.raw:id::varchar as event_id,\n    f.path,\n    f.value\nfrom raw_events r,\n    lateral flatten(input => r.raw, recursive => true) f",
+      "compiles": true,
+      "outcome": "rows",
+      "error": null,
+      "columns": [
+        {
+          "name": "EVENT_ID",
+          "type_name": "TEXT",
+          "precision": null,
+          "scale": null,
+          "nullable": true
+        },
+        {
+          "name": "PATH",
+          "type_name": "TEXT",
+          "precision": null,
+          "scale": null,
+          "nullable": true
+        },
+        {
+          "name": "VALUE",
+          "type_name": "VARIANT",
+          "precision": null,
+          "scale": null,
+          "nullable": true
+        }
+      ]
+    },
+    "U4": {
+      "sql": "select\n    e.customer_id,\n    object_agg(e.event_type, e.payload) as last_payload_by_type\nfrom events e\ngroup by e.customer_id",
+      "compiles": true,
+      "outcome": "rows",
+      "error": null,
+      "columns": [
+        {
+          "name": "CUSTOMER_ID",
+          "type_name": "FIXED",
+          "precision": 38,
+          "scale": 0,
+          "nullable": true
+        },
+        {
+          "name": "LAST_PAYLOAD_BY_TYPE",
+          "type_name": "OBJECT",
+          "precision": null,
+          "scale": null,
+          "nullable": false
+        }
+      ]
+    },
+    "U5": {
+      "sql": "select\n    e.event_id,\n    f.value:sku::varchar as sku\nfrom events e\njoin lateral flatten(input => e.payload:items) f",
+      "compiles": true,
+      "outcome": "rows",
+      "error": null,
+      "columns": [
+        {
+          "name": "EVENT_ID",
+          "type_name": "TEXT",
+          "precision": null,
+          "scale": null,
+          "nullable": true
+        },
+        {
+          "name": "SKU",
+          "type_name": "TEXT",
+          "precision": null,
+          "scale": null,
+          "nullable": true
+        }
+      ]
+    },
+    "U6": {
+      "sql": "select\n    e.event_id,\n    f.value:sku::varchar as sku\nfrom events e\ninner join lateral flatten(input => e.payload:items) f on true",
+      "compiles": false,
+      "errno": 2,
+      "sqlstate": "0A000",
+      "message": "Unsupported feature 'lateral table function called with OUTER JOIN syntax or a join predicate (ON clause)'."
+    },
+    "U7": {
+      "sql": "with spine as (\n    select dateadd(day, seq4(), '2024-01-01'::date) as date_day\n    from table(generator(rowcount => 366))\n)\nselect\n    spine.date_day,\n    last_value(f.rate_to_usd ignore nulls) over (order by spine.date_day rows between unbounded preceding and current row) as rate_to_usd\nfrom spine\nleft join fx_rates f on f.rate_date = spine.date_day and f.currency = 'EUR'",
+      "compiles": true,
+      "outcome": "rows",
+      "error": null,
+      "columns": [
+        {
+          "name": "DATE_DAY",
+          "type_name": "DATE",
+          "precision": null,
+          "scale": null,
+          "nullable": false
+        },
+        {
+          "name": "RATE_TO_USD",
+          "type_name": "FIXED",
+          "precision": 18,
+          "scale": 6,
+          "nullable": true
+        }
+      ]
+    },
+    "U8": {
+      "sql": "select\n    dateadd(day, value::int, '2024-01-01'::date) as date_day\nfrom table(flatten(input => array_generate_range(0, 366)))",
+      "compiles": true,
+      "outcome": "rows",
+      "error": null,
+      "columns": [
+        {
+          "name": "DATE_DAY",
+          "type_name": "DATE",
+          "precision": null,
+          "scale": null,
+          "nullable": true
+        }
+      ]
+    },
+    "U9": {
+      "sql": "select\n    dateadd(day, seq4(), '2024-01-01') as date_day\nfrom table(generator(rowcount => 10))",
+      "compiles": true,
+      "outcome": "rows",
+      "error": null,
+      "columns": [
+        {
+          "name": "DATE_DAY",
+          "type_name": "TIMESTAMP_NTZ",
+          "precision": 0,
+          "scale": 9,
+          "nullable": false
+        }
+      ]
+    },
+    "U10": {
+      "sql": "select\n    dateadd(day, seq4(), '2024-01-01'::date) as date_day\nfrom table(generator(timelimit => 1))",
+      "compiles": true,
+      "outcome": "rows",
+      "error": null,
+      "columns": [
+        {
+          "name": "DATE_DAY",
+          "type_name": "DATE",
+          "precision": null,
+          "scale": null,
+          "nullable": false
+        }
+      ]
+    },
+    "U11": {
+      "sql": "select\n    order_id,\n    customer_id,\n    ordered_at,\n    total,\n    count(distinct status) over (partition by customer_id) as distinct_statuses\nfrom orders\n",
+      "compiles": true,
+      "outcome": "rows",
+      "error": null,
+      "columns": [
+        {
+          "name": "ORDER_ID",
+          "type_name": "FIXED",
+          "precision": 38,
+          "scale": 0,
+          "nullable": true
+        },
+        {
+          "name": "CUSTOMER_ID",
+          "type_name": "FIXED",
+          "precision": 38,
+          "scale": 0,
+          "nullable": true
+        },
+        {
+          "name": "ORDERED_AT",
+          "type_name": "TIMESTAMP_NTZ",
+          "precision": 0,
+          "scale": 9,
+          "nullable": true
+        },
+        {
+          "name": "TOTAL",
+          "type_name": "FIXED",
+          "precision": 12,
+          "scale": 2,
+          "nullable": true
+        },
+        {
+          "name": "DISTINCT_STATUSES",
+          "type_name": "FIXED",
+          "precision": 18,
+          "scale": 0,
+          "nullable": false
+        }
+      ]
+    },
+    "U12": {
+      "sql": "select\n    order_id,\n    customer_id,\n    ordered_at,\n    total,\n    conditional_true_event(datediff('minute', lag(ordered_at) over (partition by customer_id order by ordered_at), ordered_at) > 30) over (partition by customer_id order by ordered_at) as session_number\nfrom orders\n",
+      "compiles": true,
+      "outcome": "rows",
+      "error": null,
+      "columns": [
+        {
+          "name": "ORDER_ID",
+          "type_name": "FIXED",
+          "precision": 38,
+          "scale": 0,
+          "nullable": true
+        },
+        {
+          "name": "CUSTOMER_ID",
+          "type_name": "FIXED",
+          "precision": 38,
+          "scale": 0,
+          "nullable": true
+        },
+        {
+          "name": "ORDERED_AT",
+          "type_name": "TIMESTAMP_NTZ",
+          "precision": 0,
+          "scale": 9,
+          "nullable": true
+        },
+        {
+          "name": "TOTAL",
+          "type_name": "FIXED",
+          "precision": 12,
+          "scale": 2,
+          "nullable": true
+        },
+        {
+          "name": "SESSION_NUMBER",
+          "type_name": "FIXED",
+          "precision": 18,
+          "scale": 0,
+          "nullable": true
+        }
+      ]
+    },
+    "U13": {
+      "sql": "select\n    order_id,\n    customer_id,\n    ordered_at,\n    total,\n    avg(total) over (partition by customer_id order by ordered_at range between interval '7 days' preceding and current row) as avg_7_days\nfrom orders\n",
+      "compiles": true,
+      "outcome": "rows",
+      "error": null,
+      "columns": [
+        {
+          "name": "ORDER_ID",
+          "type_name": "FIXED",
+          "precision": 38,
+          "scale": 0,
+          "nullable": true
+        },
+        {
+          "name": "CUSTOMER_ID",
+          "type_name": "FIXED",
+          "precision": 38,
+          "scale": 0,
+          "nullable": true
+        },
+        {
+          "name": "ORDERED_AT",
+          "type_name": "TIMESTAMP_NTZ",
+          "precision": 0,
+          "scale": 9,
+          "nullable": true
+        },
+        {
+          "name": "TOTAL",
+          "type_name": "FIXED",
+          "precision": 12,
+          "scale": 2,
+          "nullable": true
+        },
+        {
+          "name": "AVG_7_DAYS",
+          "type_name": "FIXED",
+          "precision": 27,
+          "scale": 5,
+          "nullable": true
+        }
+      ]
+    },
+    "U14": {
+      "sql": "select\n    order_id,\n    customer_id,\n    ordered_at,\n    total,\n    lag(total) ignore nulls over (partition by customer_id order by ordered_at) as previous_non_null\nfrom orders\n",
+      "compiles": true,
+      "outcome": "rows",
+      "error": null,
+      "columns": [
+        {
+          "name": "ORDER_ID",
+          "type_name": "FIXED",
+          "precision": 38,
+          "scale": 0,
+          "nullable": true
+        },
+        {
+          "name": "CUSTOMER_ID",
+          "type_name": "FIXED",
+          "precision": 38,
+          "scale": 0,
+          "nullable": true
+        },
+        {
+          "name": "ORDERED_AT",
+          "type_name": "TIMESTAMP_NTZ",
+          "precision": 0,
+          "scale": 9,
+          "nullable": true
+        },
+        {
+          "name": "TOTAL",
+          "type_name": "FIXED",
+          "precision": 12,
+          "scale": 2,
+          "nullable": true
+        },
+        {
+          "name": "PREVIOUS_NON_NULL",
+          "type_name": "FIXED",
+          "precision": 12,
+          "scale": 2,
+          "nullable": true
+        }
+      ]
+    },
+    "U15": {
+      "sql": "select\n    order_id,\n    sum(total) over w as running_total,\n    avg(total) over w as running_avg\nfrom orders\nwindow w as (partition by customer_id order by ordered_at)",
+      "compiles": false,
+      "errno": 1003,
+      "sqlstate": "42000",
+      "message": "SQL compilation error: syntax error line 3 at position 20 unexpected 'w'. syntax error line 3 at position 22 unexpected 'as'."
+    },
+    "U16": {
+      "sql": "select *\nfrom (select customer_id, channel, total from orders)\npivot (sum(total) for channel in (any order by channel))",
+      "compiles": true,
+      "outcome": "rows",
+      "error": null,
+      "columns": [
+        {
+          "name": "CUSTOMER_ID",
+          "type_name": "FIXED",
+          "precision": 38,
+          "scale": 0,
+          "nullable": true
+        }
+      ]
+    },
+    "U17": {
+      "sql": "select *\nfrom (select customer_id, channel, total from orders)\npivot (sum(total) for channel in (select distinct channel from orders))",
+      "compiles": true,
+      "outcome": "rows",
+      "error": null,
+      "columns": [
+        {
+          "name": "CUSTOMER_ID",
+          "type_name": "FIXED",
+          "precision": 38,
+          "scale": 0,
+          "nullable": true
+        }
+      ]
+    },
+    "U18": {
+      "sql": "select *\nfrom (select customer_id, channel, total from orders)\npivot (sum(total) for channel in ('web', 'store') default on null (0))",
+      "compiles": true,
+      "outcome": "rows",
+      "error": null,
+      "columns": [
+        {
+          "name": "CUSTOMER_ID",
+          "type_name": "FIXED",
+          "precision": 38,
+          "scale": 0,
+          "nullable": true
+        },
+        {
+          "name": "'web'",
+          "type_name": "FIXED",
+          "precision": 24,
+          "scale": 2,
+          "nullable": false
+        },
+        {
+          "name": "'store'",
+          "type_name": "FIXED",
+          "precision": 24,
+          "scale": 2,
+          "nullable": false
+        }
+      ]
+    },
+    "U19": {
+      "sql": "select order_id, metric, value\nfrom (select order_id, total, discount from orders)\nunpivot include nulls (value for metric in (total, discount))",
+      "compiles": true,
+      "outcome": "rows",
+      "error": null,
+      "columns": [
+        {
+          "name": "ORDER_ID",
+          "type_name": "FIXED",
+          "precision": 38,
+          "scale": 0,
+          "nullable": true
+        },
+        {
+          "name": "METRIC",
+          "type_name": "TEXT",
+          "precision": null,
+          "scale": null,
+          "nullable": true
+        },
+        {
+          "name": "VALUE",
+          "type_name": "FIXED",
+          "precision": 12,
+          "scale": 2,
+          "nullable": true
+        }
+      ]
+    },
+    "U20": {
+      "sql": "select o.order_id, m.metric, m.value\nfrom orders o,\n    lateral (\n        select 'total' as metric, o.total as value\n        union all\n        select 'discount', o.discount\n    ) m",
+      "compiles": true,
+      "outcome": "rows",
+      "error": null,
+      "columns": [
+        {
+          "name": "ORDER_ID",
+          "type_name": "FIXED",
+          "precision": 38,
+          "scale": 0,
+          "nullable": true
+        },
+        {
+          "name": "METRIC",
+          "type_name": "TEXT",
+          "precision": null,
+          "scale": null,
+          "nullable": false
+        },
+        {
+          "name": "VALUE",
+          "type_name": "FIXED",
+          "precision": 12,
+          "scale": 2,
+          "nullable": true
+        }
+      ]
+    },
+    "U21": {
+      "sql": "select customer_id, channel, total_web, total_store\nfrom (select customer_id, channel, total from orders)\npivot (sum(total) for channel in ('web' as total_web, 'store' as total_store))",
+      "compiles": false,
+      "errno": 904,
+      "sqlstate": "42000",
+      "message": "SQL compilation error: error line 1 at position 4,966 invalid identifier 'CHANNEL'"
+    },
+    "U22": {
+      "sql": "select\n    o.order_id,\n    o.total,\n    coalesce(sum(p.amount), 0) as paid,\n    o.total - coalesce(sum(p.amount), 0) as outstanding\nfrom orders o\nleft join payments p on p.order_id = o.order_id\ngroup by o.order_id, o.total\nhaving outstanding <> 0",
+      "compiles": true,
+      "outcome": "rows",
+      "error": null,
+      "columns": [
+        {
+          "name": "ORDER_ID",
+          "type_name": "FIXED",
+          "precision": 38,
+          "scale": 0,
+          "nullable": true
+        },
+        {
+          "name": "TOTAL",
+          "type_name": "FIXED",
+          "precision": 12,
+          "scale": 2,
+          "nullable": true
+        },
+        {
+          "name": "PAID",
+          "type_name": "FIXED",
+          "precision": 24,
+          "scale": 2,
+          "nullable": false
+        },
+        {
+          "name": "OUTSTANDING",
+          "type_name": "FIXED",
+          "precision": 25,
+          "scale": 2,
+          "nullable": true
+        }
+      ]
+    },
+    "U23": {
+      "sql": "select *\nfrom stg_customers\nat (timestamp => '2024-06-30 00:00:00'::timestamp_ltz)",
+      "compiles": true,
+      "outcome": "rows",
+      "error": null,
+      "columns": [
+        {
+          "name": "CUSTOMER_ID",
+          "type_name": "FIXED",
+          "precision": 38,
+          "scale": 0,
+          "nullable": true
+        },
+        {
+          "name": "FIRST_NAME",
+          "type_name": "TEXT",
+          "precision": null,
+          "scale": null,
+          "nullable": true
+        },
+        {
+          "name": "LAST_NAME",
+          "type_name": "TEXT",
+          "precision": null,
+          "scale": null,
+          "nullable": true
+        },
+        {
+          "name": "EMAIL",
+          "type_name": "TEXT",
+          "precision": null,
+          "scale": null,
+          "nullable": true
+        },
+        {
+          "name": "COUNTRY",
+          "type_name": "TEXT",
+          "precision": null,
+          "scale": null,
+          "nullable": true
+        },
+        {
+          "name": "UPDATED_AT",
+          "type_name": "TIMESTAMP_NTZ",
+          "precision": 0,
+          "scale": 9,
+          "nullable": true
+        }
+      ]
+    },
+    "U24": {
+      "sql": "select *\nfrom stg_customers\nchanges (information => default)\nat (offset => -3600)",
+      "compiles": false,
+      "errno": 91930,
+      "sqlstate": "2F003",
+      "message": "SQL compilation error: Change tracking is not enabled or has been missing for the time range requested on table 'SYS$_VIEW_914'."
+    }
+  }
+}
