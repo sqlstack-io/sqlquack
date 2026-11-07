@@ -182,8 +182,7 @@ impl Parser {
         ))))
     }
 
-    /// Snowflake's syntax refusal of `TIMESTAMP [ ( n ) ] { WITH [ LOCAL ] | WITHOUT } TIME ZONE '...'`
-    /// in its faithful modes, at WITH, or at TIME after WITHOUT, where Snowflake stops.
+    /// Snowflake's syntax refusal of a time zone clause on a TIMESTAMP literal, where Snowflake stops.
     pub(crate) fn zoned_timestamp_literal_error(&mut self) -> Option<Error> {
         if !self.applies_snowflake_context_rules() {
             return None;
