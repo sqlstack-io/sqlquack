@@ -162,8 +162,9 @@ pub const CODES: &[CodeEntry] = &[
         help: Some(
             "the help names the divergence and the fixes that work in the current mode: allow \
              it in the policy file, drop --strict or --loud-divergences-only, or confirm its \
-             assumption; outside strict mode the built-in policy allows only the clock and \
-             arithmetic that raises past 38 digits or the timestamp range",
+             assumption; outside strict mode the built-in policy allows only the clock, \
+             arithmetic that raises past 38 digits or the timestamp range, and VARIANT reads \
+             whose JSON guards raise",
         ),
         explanation: "The construct at the span converts only by relying on the known \
             divergence the label names, where DuckDB may raise or differ from Snowflake as the \

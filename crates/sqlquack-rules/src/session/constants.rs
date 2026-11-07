@@ -69,6 +69,15 @@ pub const BUILTIN_ZONE_CONSTRUCTS: [&str; 18] = [
     "node:nvl",
 ];
 
+/// Where the built-in default lets reading a VARIANT rely on the converted SQL's JSON guards.
+pub const BUILTIN_JSON_CONSTRUCTS: [&str; 4] = ["node:column", "node:cast", "fn:GET", "fn:FLATTEN"];
+
+/// The edge case of json_fidelity under the built-in default, printed with the warning.
+pub const BUILTIN_JSON_REASON: &str = "if a VARIANT holds JSON DuckDB might read differently \
+    from Snowflake, such as an exponent, -0.0, a decimal longer than a double keeps, a repeated \
+    key or text that is not strict JSON, or a value a cast cannot match, the converted SQL raises \
+    an error for the whole query; it never returns a different value. --strict refuses this";
+
 /// Where the built-in default lets a naive timestamp joined with a local one raise on nanoseconds.
 pub const BUILTIN_SUBMICRO_CONSTRUCTS: [&str; 5] = [
     "fn:COALESCE",

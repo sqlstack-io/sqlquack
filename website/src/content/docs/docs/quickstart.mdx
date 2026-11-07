@@ -100,7 +100,8 @@ The DuckDB SQL goes to standard output and the progress lines to standard error,
 
 `convert` reads `sqlquack.toml` from the current directory, or the file `--policy` names. Without
 one, or with `--builtin-policy`, it uses the built-in policy. It refuses every known divergence
-except the clock and arithmetic that raises an error at its range limit, which convert with a warning.
+except the clock and checks that only ever raise an error, such as arithmetic past its range or
+JSON DuckDB might read differently, which convert with a warning.
 See [Policy and sessions](/docs/policy/).
 
 ## Next steps

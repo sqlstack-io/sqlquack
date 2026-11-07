@@ -2138,85 +2138,85 @@ expect_repository = "refused SQ0002 fn:WIDTH_BUCKET at 7..39"
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:page FROM events'''
-expect = "refused SQ0008 node:column at 25..31"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..14"
 expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..14"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:page AS page FROM events'''
-expect = "refused SQ0008 node:column at 33..39"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:page::STRING AS page FROM events'''
-expect = "refused SQ0008 node:column at 41..47"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:page::VARCHAR AS page FROM events'''
-expect = "refused SQ0008 node:column at 42..48"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:device.os::STRING AS os FROM events'''
-expect = "refused SQ0008 node:column at 44..50"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:items[0].sku::STRING AS first_sku FROM events'''
-expect = "refused SQ0008 node:column at 54..60"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload['page']::STRING AS page FROM events'''
-expect = "refused SQ0008 node:column at 44..50"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:"page"::STRING AS page FROM events'''
-expect = "refused SQ0008 node:column at 43..49"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:amount::NUMBER(10,2) AS amount FROM events'''
-expect = "refused SQ0008 node:column at 51..57"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:amount::FLOAT AS amount FROM events'''
-expect = "refused SQ0008 node:column at 44..50"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT event_id FROM events WHERE payload:page::STRING = '/checkout''''
-expect = "refused SQ0008 node:column at 21..27"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:page::STRING AS page, COUNT(*) AS views FROM events WHERE event_type = 'page_view' GROUP BY 1 ORDER BY 2 DESC'''
-expect = "refused SQ0008 node:column at 60..66"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT GET(payload, 'page') AS page FROM events'''
-expect = "refused SQ0008 node:column at 41..47"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT GET_PATH(payload, 'device.os') AS os FROM events'''
-expect = "refused SQ0008 node:column at 49..55"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2246,92 +2246,92 @@ expect_repository = "translated"
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ARRAY_SIZE(tags) AS n FROM tickets'''
-expect = "refused SQ0008 node:column at 34..41"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ARRAY_CONTAINS('urgent'::VARIANT, tags) AS urgent FROM tickets'''
-expect = "refused SQ0008 node:column at 62..69"
+expect = "refused SQ0008 fn:ARRAY_CONTAINS at 7..46"
 expect_repository = "translated"
 snowflake = "compiles"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT tags[0]::STRING AS first_tag FROM tickets'''
-expect = "refused SQ0008 node:column at 41..48"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ticket_id, f.value::STRING AS tag FROM tickets, LATERAL FLATTEN(input => tags) f'''
-expect = "refused SQ0008 node:column at 46..53"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ticket_id, f.value::STRING AS tag FROM tickets t, TABLE(FLATTEN(t.tags)) f'''
-expect = "refused SQ0008 node:column at 46..55"
+expect = "refused SQ0002 fn:FLATTEN at 57..81"
 expect_repository = "refused SQ0002 fn:FLATTEN at 57..81"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT e.event_id, i.value:sku::STRING AS sku, i.value:qty::INT AS qty FROM events e, LATERAL FLATTEN(input => e.payload:items) i'''
-expect = "refused SQ0008 node:column at 76..84"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT e.event_id, i.index, i.value FROM events e, LATERAL FLATTEN(input => e.payload:items) i'''
-expect = "refused SQ0008 node:column at 41..49"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT event_id, OBJECT_KEYS(payload) AS keys FROM events'''
-expect = "refused SQ0008 node:column at 51..57"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT TYPEOF(payload) AS t FROM events'''
-expect = "refused SQ0008 node:column at 33..39"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT IS_NULL_VALUE(payload:page) AS null_page FROM events'''
-expect = "refused SQ0008 node:column at 53..59"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:page IS NULL AS missing FROM events'''
-expect = "refused SQ0008 node:column at 44..50"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT event_id FROM events WHERE payload:amount::NUMBER > 100'''
-expect = "refused SQ0008 node:column at 21..27"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT TO_JSON(payload) AS txt FROM events'''
-expect = "refused SQ0008 node:column at 36..42"
+expect = "refused SQ0008 fn:TO_JSON at 7..23"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload FROM events LIMIT 10'''
-expect = "refused SQ0008 node:column at 20..26"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ARRAY_TO_STRING(tags, ',') AS tag_list FROM tickets'''
-expect = "refused SQ0008 node:column at 51..58"
+expect = "refused SQ0008 fn:ARRAY_TO_STRING at 7..33"
 expect_repository = "translated"
 
 [[query]]
@@ -2343,7 +2343,7 @@ expect_repository = "translated"
 [[query]]
 category = "semi_structured"
 sql = '''SELECT customer_id, OBJECT_AGG(event_type, payload) AS by_type FROM events GROUP BY customer_id'''
-expect = "refused SQ0008 node:column at 68..74"
+expect = "refused SQ0008 fn:OBJECT_AGG at 20..51"
 expect_repository = "translated"
 
 [[query]]
@@ -2433,7 +2433,7 @@ sql = '''with events_ranked as (
     from events
 )
 select * exclude (rn) from events_ranked where rn = 1'''
-expect = "refused SQ0008 node:column at 137..143"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2494,7 +2494,7 @@ sql = '''with ticket_durations as (
 select priority, avg(minutes_open) as avg_minutes, max(minutes_open) as max_minutes
 from ticket_durations
 group by priority'''
-expect = "refused SQ0008 node:column at 149..156"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -3571,7 +3571,7 @@ expect_repository = "translated"
 [[query]]
 category = "strings"
 sql = '''SELECT customer_id, SPLIT(email, '@')[1]::VARCHAR AS domain FROM customers'''
-expect = "refused SQ0008 node:cast at 20..49"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -3709,67 +3709,67 @@ expect_repository = "refused SQ0003 fn:LAST_DAY at 17..51"
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ticket_id, ARRAY_SLICE(tags, 0, 2) AS first_tags FROM tickets'''
-expect = "refused SQ0008 node:column at 61..68"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ticket_id, ARRAY_DISTINCT(tags) AS tags FROM tickets'''
-expect = "refused SQ0008 node:column at 52..59"
+expect = "refused SQ0008 fn:ARRAY_DISTINCT at 18..38"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ticket_id, ARRAY_APPEND(tags, 'triaged') AS tags FROM tickets'''
-expect = "refused SQ0008 node:column at 61..68"
+expect = "refused SQ0008 fn:ARRAY_APPEND at 18..47"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ticket_id, ARRAY_CAT(tags, ARRAY_CONSTRUCT('x')) AS tags FROM tickets'''
-expect = "refused SQ0008 node:column at 69..76"
+expect = "refused SQ0008 fn:ARRAY_CONSTRUCT at 34..54"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ticket_id FROM tickets WHERE ARRAYS_OVERLAP(tags, ARRAY_CONSTRUCT('urgent', 'vip'))'''
-expect = "refused SQ0008 node:column at 22..29"
+expect = "refused SQ0008 fn:ARRAYS_OVERLAP at 36..90"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT event_id, OBJECT_INSERT(payload, 'seen', TRUE) AS payload FROM events'''
-expect = "refused SQ0008 node:column at 70..76"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT event_id, OBJECT_DELETE(payload, 'debug') AS payload FROM events'''
-expect = "refused SQ0008 node:column at 65..71"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT event_id, STRIP_NULL_VALUE(payload:coupon) AS coupon FROM events'''
-expect = "refused SQ0008 node:column at 65..71"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT event_id, IS_NULL_VALUE(payload:coupon) AS coupon_is_json_null FROM events'''
-expect = "refused SQ0008 node:column at 75..81"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT event_id, payload:amount::FLOAT AS amount FROM events WHERE IS_DECIMAL(payload:amount) OR IS_INTEGER(payload:amount)'''
-expect = "refused SQ0008 node:column at 54..60"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT event_id, TO_JSON(payload) AS payload_text FROM events'''
-expect = "refused SQ0008 node:column at 55..61"
+expect = "refused SQ0008 fn:TO_JSON at 17..33"
 expect_repository = "translated"
 
 [[query]]
