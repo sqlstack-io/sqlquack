@@ -17,6 +17,7 @@ members = [
     "crates/sqlquack-format",
     "crates/sqlquack-format-check",
     "crates/sqlquack-syntax-bigquery",
+    "crates/sqlquack-fingerprint",
     "crates/sqlquack-python",
 ]
 exclude = ["fuzz"]
@@ -61,6 +62,7 @@ sqlquack-core = { path = "crates/sqlquack-core" }
 sqlquack-duckdb = { path = "crates/sqlquack-duckdb", default-features = false }
 sqlquack-evidence = { path = "crates/sqlquack-evidence" }
 sqlquack-format = { path = "crates/sqlquack-format" }
+sqlquack-fingerprint = { path = "crates/sqlquack-fingerprint" }
 sqlquack-policy = { path = "crates/sqlquack-policy" }
 sqlquack-rules = { path = "crates/sqlquack-rules" }
 sqlquack-semantics = { path = "crates/sqlquack-semantics" }

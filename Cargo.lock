@@ -1409,6 +1409,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "sqlquack-fingerprint"
+version = "0.2.0"
+dependencies = [
+ "sha2",
+ "sqlquack-syntax",
+ "sqlquack-syntax-postgres",
+]
+
+[[package]]
 name = "sqlquack-format"
 version = "0.2.0"
 dependencies = [
