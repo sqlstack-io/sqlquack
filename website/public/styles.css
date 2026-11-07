@@ -1135,13 +1135,92 @@ footer a {
 	font-weight: 500;
 }
 
-.pg-label select {
-	padding: 4px 8px;
+/* Example chips above the editor, in groups by what SQLQuack does with them. */
+.pg-examples {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px 32px;
+	padding-top: 28px;
+}
+
+.pg-group-head {
+	margin: 0 0 8px;
+	color: var(--muted-foreground);
+	font-size: 13px;
+}
+
+.pg-group-head strong {
+	color: var(--foreground);
+	font-weight: 600;
+}
+
+.pg-group-head span::before {
+	content: '· ';
+}
+
+.pg-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.pg-chip {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2px;
+	padding: 7px 12px;
 	border: 1px solid var(--inner-line);
 	border-radius: var(--radius);
 	background: var(--panel);
 	color: var(--foreground);
 	font: inherit;
+	text-align: left;
+	cursor: pointer;
+}
+
+.pg-chip:hover {
+	border-color: var(--faint);
+}
+
+.pg-chip:focus-visible {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
+}
+
+.pg-chip[aria-pressed='true'] {
+	border-color: var(--primary);
+	background: var(--accent-soft);
+	box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.pg-chip-name {
+	font-size: 14px;
+	font-weight: 550;
+}
+
+.pg-chip-stop {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	color: var(--muted-foreground);
+	font-size: 12px;
+}
+
+.pg-chip-stop::before {
+	content: '';
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--error);
+}
+
+.pg-chip[data-stops='none'] .pg-chip-stop::before {
+	background: var(--success);
+}
+
+.pg-chip[data-stops='translate'] .pg-chip-stop::before {
+	background: var(--warning);
 }
 
 .pg-editor {
@@ -1475,5 +1554,11 @@ footer a {
 @media (max-width: 900px) {
 	.playground {
 		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+@media (max-width: 620px) {
+	.pg-examples {
+		flex-direction: column;
 	}
 }

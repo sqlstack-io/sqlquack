@@ -86,6 +86,42 @@ FROM orders`,
 FROM orders`,
 };
 
+// The example chips above the editor, grouped by what SQLQuack does with them. `slug` is the
+// example's `?example=` link and `stops` the stage where its run stops (null when all four pass);
+// tests/playground.test.mjs checks each `stops` against the engine and DuckDB-WASM.
+export const EXAMPLE_GROUPS = [
+	{
+		title: 'Runs it',
+		tagline: 'verified results',
+		examples: [
+			{ key: 'valid', slug: 'converts-and-runs', name: 'Converts and runs', stops: null },
+			{ key: 'decimal', slug: 'decimal-division', name: 'Decimal division', stops: null },
+		],
+	},
+	{
+		title: 'Catches the mistake',
+		tagline: 'a clear no',
+		examples: [
+			{ key: 'syntax', slug: 'syntax-error', name: 'Syntax error', stops: 'parse' },
+			{ key: 'rejected', slug: 'snowflake-rejects-it', name: 'Snowflake rejects it', stops: 'checks' },
+			{ key: 'unknown', slug: 'unknown-column', name: 'Unknown column', stops: 'checks' },
+		],
+	},
+	{
+		title: 'Says no, clearly',
+		tagline: 'a clear no',
+		examples: [{ key: 'refused', slug: 'translation-refused', name: 'Translation refused', stops: 'translate' }],
+	},
+];
+
+export const STOP_LABELS = {
+	parse: 'stops at Parse',
+	checks: 'stops at Check',
+	translate: 'stops at Translate',
+	run: 'stops at Run',
+};
+export const stopLabel = (stops) => (stops ? STOP_LABELS[stops] : 'all four pass');
+
 // Shown under the editor while an example is loaded and unedited.
 export const CAPTIONS = {
 	refused:
