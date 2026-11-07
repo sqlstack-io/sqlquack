@@ -1,0 +1,33 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO t1 FROM @ FILES = ( 'a' ) ;",
+   "sql_sha256": "345b26da879437dd5952fa1fb8b8aa7be40596915fb9ca56b9395af1c2aba979"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO t1 FROM @% FILES = ( 'a' ) ;",
+   "sql_sha256": "f6730f7a8cfc9bb1f142552664aebc2a4fb84c9b1cedd29c1c32e934f7387ad5"
+  }
+ ],
+ "receipts": 2,
+ "receipts_file_sha256": "5b73a5b84063dfcfdf1deb7d05740b6c285c6d92d3c0f3da52cb5a93bc18482c",
+ "reconciled_receipts": 0,
+ "refusals": [],
+ "refused": 0,
+ "runs": [
+  {
+   "audit_sha256": "70836042648492cce26d119d6fb49f02a03da2fd181d2a556c7830e5ef2c987d",
+   "receipts": 2,
+   "refused_rows": 0,
+   "run_id": "cp145b-ex-00",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": []
+}
