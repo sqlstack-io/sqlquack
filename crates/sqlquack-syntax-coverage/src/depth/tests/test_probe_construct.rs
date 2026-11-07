@@ -85,6 +85,18 @@ fn given_a_parser_without_a_syntax_when_listing_constructs_then_only_its_own_are
             expected_probed: false,
         },
         ConstructsTestCase {
+            description: "BigQuery chains pipe operators",
+            parser: LocalParser::BigQuery,
+            construct: "nested_pipe_chain",
+            expected_probed: true,
+        },
+        ConstructsTestCase {
+            description: "Postgres has no pipe operator",
+            parser: LocalParser::Postgres,
+            construct: "nested_pipe_chain",
+            expected_probed: false,
+        },
+        ConstructsTestCase {
             description: "every parser nests FROM parentheses",
             parser: LocalParser::Postgres,
             construct: "from_parentheses",

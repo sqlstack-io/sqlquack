@@ -1,6 +1,6 @@
-//! Every construct the probe nests: recursive paths through queries, expressions and types, and flat chains.
+//! Every construct the probe nests: recursive paths, flat chains, and chains nested in a chain's first operand.
 
-use crate::depth::constants::MIXED_SUFFIX_RUN;
+use crate::depth::constants::{MIXED_SUFFIX_RUN, NESTED_CHAIN_LINKS};
 use crate::depth::models::Construct;
 use crate::formats::models::LocalParser;
 
@@ -14,11 +14,19 @@ fn chain(term: &str, separator: &str, depth: usize) -> String {
     vec![term; depth].join(separator)
 }
 
+/// A parenthesised chain of `link` after `inner`, nested in the first operand of the next, `depth` links in all.
+fn nested_chain(inner: &str, link: &str, depth: usize) -> String {
+    let levels: usize = (depth / NESTED_CHAIN_LINKS).max(1);
+    let close: String = format!("{})", link.repeat(NESTED_CHAIN_LINKS));
+    nest("(", inner, &close, levels)
+}
+
 /// A type built by the parser's own nested type constructor, where it has one.
 fn constructed_type(parser: LocalParser, depth: usize) -> Option<String> {
     match parser {
         LocalParser::Snowflake => Some(nest("ARRAY(", "INT", ")", depth)),
-        LocalParser::Postgres | LocalParser::BigQuery | LocalParser::None => None,
+        LocalParser::BigQuery => Some(nest("STRUCT<x ", "INT64", ">", depth)),
+        LocalParser::Postgres | LocalParser::None => None,
     }
 }
 
@@ -210,6 +218,46 @@ pub(crate) fn constructs() -> Vec<Construct> {
         Construct {
             name: "flat_union_all",
             text: |_, depth| Some(chain("SELECT 1", " UNION ALL ", depth)),
+        },
+        Construct {
+            name: "subquery_flat_union_all",
+            text: |_, depth| {
+                Some(format!(
+                    "SELECT * FROM ({}) s",
+                    chain("SELECT 1", " UNION ALL ", depth)
+                ))
+            },
+        },
+        Construct {
+            name: "nested_cast_chain",
+            text: |parser, depth| match parser {
+                LocalParser::BigQuery => None,
+                _ => Some(format!("SELECT {}", nested_chain("1", "::INT", depth))),
+            },
+        },
+        Construct {
+            name: "nested_plus_chain",
+            text: |_, depth| Some(format!("SELECT {}", nested_chain("1", " + 1", depth))),
+        },
+        Construct {
+            name: "nested_or_chain",
+            text: |_, depth| {
+                Some(format!(
+                    "SELECT {}",
+                    nested_chain("FALSE", " OR FALSE", depth)
+                ))
+            },
+        },
+        Construct {
+            name: "nested_union_all",
+            text: |_, depth| Some(nested_chain("SELECT 1", " UNION ALL SELECT 1", depth)),
+        },
+        Construct {
+            name: "nested_pipe_chain",
+            text: |parser, depth| match parser {
+                LocalParser::BigQuery => Some(nested_chain("FROM t", " |> WHERE TRUE", depth)),
+                _ => None,
+            },
         },
         Construct {
             name: "flat_join",

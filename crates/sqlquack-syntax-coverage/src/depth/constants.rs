@@ -14,5 +14,11 @@ pub const PROBE_BOUND: Duration = Duration::from_secs(15);
 pub const PROBE_STACK_BYTES: usize = 2 * 1024 * 1024;
 /// How many runs of `[]` a mixed type nests between its constructor levels.
 pub const MIXED_SUFFIX_RUN: usize = 60;
+/// How many links each parenthesised level of a nested chain holds.
+pub const NESTED_CHAIN_LINKS: usize = 60;
 /// Every native parser this checker links, each probed in turn.
-pub const PROBED_PARSERS: [LocalParser; 2] = [LocalParser::Snowflake, LocalParser::Postgres];
+pub const PROBED_PARSERS: [LocalParser; 3] = [
+    LocalParser::Snowflake,
+    LocalParser::Postgres,
+    LocalParser::BigQuery,
+];

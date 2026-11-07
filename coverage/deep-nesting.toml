@@ -10,38 +10,6 @@
 # in check-ci, `dev` in `make depth-probe-debug`.
 
 [[known_failures]]
-parser = "snowflake"
-construct = "type_suffix"
-profile = "gate"
-depth = 100000
-failure = "crash"
-owner = "sqlquack-syntax: Snowflake parser"
-
-[[known_failures]]
-parser = "snowflake"
-construct = "type_suffix_sized"
-profile = "gate"
-depth = 100000
-failure = "crash"
-owner = "sqlquack-syntax: Snowflake parser"
-
-[[known_failures]]
-parser = "snowflake"
-construct = "column_type_suffix"
-profile = "gate"
-depth = 100000
-failure = "crash"
-owner = "sqlquack-syntax: Snowflake parser"
-
-[[known_failures]]
-parser = "snowflake"
-construct = "flat_plus"
-profile = "gate"
-depth = 100000
-failure = "crash"
-owner = "sqlquack-syntax: shared tree serialisation and drop"
-
-[[known_failures]]
 parser = "postgres"
 construct = "from_parentheses"
 profile = "gate"
@@ -187,30 +155,6 @@ owner = "sqlquack-syntax-postgres"
 
 [[known_failures]]
 parser = "postgres"
-construct = "flat_plus"
-profile = "gate"
-depth = 100000
-failure = "crash"
-owner = "sqlquack-syntax-postgres"
-
-[[known_failures]]
-parser = "postgres"
-construct = "flat_or"
-profile = "gate"
-depth = 100000
-failure = "crash"
-owner = "sqlquack-syntax: shared tree serialisation and drop"
-
-[[known_failures]]
-parser = "postgres"
-construct = "flat_union_all"
-profile = "gate"
-depth = 100000
-failure = "crash"
-owner = "sqlquack-syntax: shared tree serialisation and drop"
-
-[[known_failures]]
-parser = "postgres"
 construct = "cast_and_type_suffix"
 profile = "gate"
 depth = 100000
@@ -218,44 +162,180 @@ failure = "crash"
 owner = "sqlquack-syntax-postgres"
 
 [[known_failures]]
-parser = "snowflake"
-construct = "type_suffix"
-profile = "dev"
-depth = 1000
+parser = "postgres"
+construct = "nested_cast_chain"
+profile = "gate"
+depth = 100000
 failure = "crash"
-owner = "sqlquack-syntax: Snowflake parser"
+owner = "sqlquack-syntax-postgres"
 
 [[known_failures]]
-parser = "snowflake"
-construct = "type_suffix_sized"
-profile = "dev"
-depth = 1000
+parser = "postgres"
+construct = "nested_plus_chain"
+profile = "gate"
+depth = 100000
 failure = "crash"
-owner = "sqlquack-syntax: Snowflake parser"
+owner = "sqlquack-syntax-postgres"
 
 [[known_failures]]
-parser = "snowflake"
-construct = "column_type_suffix"
-profile = "dev"
-depth = 1000
+parser = "postgres"
+construct = "nested_or_chain"
+profile = "gate"
+depth = 100000
 failure = "crash"
-owner = "sqlquack-syntax: Snowflake parser"
+owner = "sqlquack-syntax-postgres"
 
 [[known_failures]]
-parser = "snowflake"
-construct = "type_constructor_and_suffix"
-profile = "dev"
-depth = 1000
-failure = "crash"
-owner = "sqlquack-syntax: Snowflake parser"
-
-[[known_failures]]
-parser = "snowflake"
-construct = "flat_plus"
-profile = "dev"
+parser = "postgres"
+construct = "nested_union_all"
+profile = "gate"
 depth = 10000
 failure = "crash"
-owner = "sqlquack-syntax: shared tree serialisation and drop"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "from_parentheses"
+profile = "gate"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "from_parenthesised_join"
+profile = "gate"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "from_subquery"
+profile = "gate"
+depth = 50
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "scalar_subquery"
+profile = "gate"
+depth = 50
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "exists_subquery"
+profile = "gate"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "in_subquery"
+profile = "gate"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "parenthesised_query"
+profile = "gate"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "parenthesised_set_operation"
+profile = "gate"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "parenthesised_expression"
+profile = "gate"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "case"
+profile = "gate"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "function_arguments"
+profile = "gate"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "cast"
+profile = "gate"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "subscript"
+profile = "gate"
+depth = 1000
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "cast_and_type_suffix"
+profile = "gate"
+depth = 10000
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "nested_plus_chain"
+profile = "gate"
+depth = 10000
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "nested_or_chain"
+profile = "gate"
+depth = 10000
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "nested_union_all"
+profile = "gate"
+depth = 10000
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "nested_pipe_chain"
+profile = "gate"
+depth = 10000
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
 
 [[known_failures]]
 parser = "postgres"
@@ -389,7 +469,7 @@ owner = "sqlquack-syntax-postgres"
 parser = "postgres"
 construct = "type_suffix"
 profile = "dev"
-depth = 1000
+depth = 10000
 failure = "crash"
 owner = "sqlquack-syntax-postgres"
 
@@ -397,7 +477,7 @@ owner = "sqlquack-syntax-postgres"
 parser = "postgres"
 construct = "type_suffix_sized"
 profile = "dev"
-depth = 1000
+depth = 10000
 failure = "crash"
 owner = "sqlquack-syntax-postgres"
 
@@ -405,7 +485,7 @@ owner = "sqlquack-syntax-postgres"
 parser = "postgres"
 construct = "double_colon_type_suffix"
 profile = "dev"
-depth = 1000
+depth = 10000
 failure = "crash"
 owner = "sqlquack-syntax-postgres"
 
@@ -413,33 +493,9 @@ owner = "sqlquack-syntax-postgres"
 parser = "postgres"
 construct = "column_type_suffix"
 profile = "dev"
-depth = 1000
-failure = "crash"
-owner = "sqlquack-syntax-postgres"
-
-[[known_failures]]
-parser = "postgres"
-construct = "flat_plus"
-profile = "dev"
 depth = 10000
 failure = "crash"
 owner = "sqlquack-syntax-postgres"
-
-[[known_failures]]
-parser = "postgres"
-construct = "flat_or"
-profile = "dev"
-depth = 10000
-failure = "crash"
-owner = "sqlquack-syntax: shared tree serialisation and drop"
-
-[[known_failures]]
-parser = "postgres"
-construct = "flat_union_all"
-profile = "dev"
-depth = 3000
-failure = "crash"
-owner = "sqlquack-syntax: shared tree serialisation and drop"
 
 [[known_failures]]
 parser = "postgres"
@@ -448,3 +504,187 @@ profile = "dev"
 depth = 10000
 failure = "crash"
 owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "nested_cast_chain"
+profile = "dev"
+depth = 10000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "nested_plus_chain"
+profile = "dev"
+depth = 10000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "nested_or_chain"
+profile = "dev"
+depth = 10000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "nested_union_all"
+profile = "dev"
+depth = 10000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "from_parentheses"
+profile = "dev"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "from_parenthesised_join"
+profile = "dev"
+depth = 50
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "from_subquery"
+profile = "dev"
+depth = 50
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "scalar_subquery"
+profile = "dev"
+depth = 50
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "exists_subquery"
+profile = "dev"
+depth = 50
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "in_subquery"
+profile = "dev"
+depth = 50
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "parenthesised_query"
+profile = "dev"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "parenthesised_set_operation"
+profile = "dev"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "nested_with"
+profile = "dev"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "parenthesised_expression"
+profile = "dev"
+depth = 50
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "case"
+profile = "dev"
+depth = 50
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "function_arguments"
+profile = "dev"
+depth = 50
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "cast"
+profile = "dev"
+depth = 50
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "subscript"
+profile = "dev"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "cast_and_type_suffix"
+profile = "dev"
+depth = 3000
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "nested_plus_chain"
+profile = "dev"
+depth = 3000
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "nested_or_chain"
+profile = "dev"
+depth = 3000
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "nested_union_all"
+profile = "dev"
+depth = 10000
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
+
+[[known_failures]]
+parser = "bigquery"
+construct = "nested_pipe_chain"
+profile = "dev"
+depth = 10000
+failure = "crash"
+owner = "sqlquack-syntax-bigquery"
