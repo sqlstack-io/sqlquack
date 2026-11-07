@@ -140,6 +140,6 @@ VARIANT_AGGREGATED_DIVERGENCES: dict[str, str] = {
     "date": "variant_typed_values",
     "ntz": "variant_typed_values",
 }
-ZONED_TEXT_COMPARISONS: frozenset[str] = frozenset(
-    {"gte_naive_text", "lt_date_text", "eq_offset_text", "between_texts"}
+ZONED_SUBMICRO_COMPARISONS: frozenset[str] = frozenset(
+    {"gte_naive_text", "lt_date_text", "eq_offset_text", "between_texts", "eq_ntz"}
 )

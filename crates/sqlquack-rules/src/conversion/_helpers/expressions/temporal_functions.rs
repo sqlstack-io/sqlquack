@@ -484,6 +484,15 @@ fn shift(
     };
     let (operand, zoned) = match operand.data_type {
         SnowflakeType::Time { .. } => (operand, None),
+        local @ SnowflakeType::TimestampLtz { precision } => {
+            let _zoned = site.context.log.rule(UTC_OFFSET_ARITHMETIC);
+            diverge(site.context, SESSION_TIMEZONE_UTC, construct)?;
+            let wall = SnowflakeType::TimestampNtz {
+                precision: precision.min(MICROSECOND_DIGITS),
+            };
+            let sql = utc_wall_time(&operand.sql, site.context.log);
+            (Emitted::new(sql, wall), Some(local))
+        }
         _ => temporal_or_refused(operand, construct, site.context)?,
     };
     let amount = Emitted::new(

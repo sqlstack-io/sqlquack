@@ -16,6 +16,7 @@ use sqlquack_duckdb::semi_structured::main::json_output::json_output;
 use sqlquack_duckdb::semi_structured::main::json_text::json_text;
 use sqlquack_duckdb::temporal::main::date_add_amount::date_add_amount;
 use sqlquack_duckdb::temporal::main::date_add_value::date_add_value;
+use sqlquack_duckdb::temporal::main::utc_wall_time::utc_wall_time;
 use sqlquack_duckdb::text::constants::TEXT_NUMBER_SCALE;
 use sqlquack_duckdb::text::main::compared_number_range::compared_number_range;
 use sqlquack_duckdb::text::main::compared_number_text::compared_number_text;
@@ -41,13 +42,14 @@ use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
 use crate::conversion::constants::DATE_NAME;
 use sqlquack_duckdb::blocks::constants::NANOSECOND_DIGITS;
 
+use crate::catalogue::constants::NAIVE_LOCAL_COMPARISON;
 use crate::conversion::constants::{
     COMPARISON, DATE_DAY_ARITHMETIC, DATE_LITERAL_COMPARISON, DATE_TIMESTAMP_COMPARISON, DAY_UNIT,
     DECIMAL_ARITHMETIC, DECIMAL_DIVISION, DECIMAL_MODULO, FLOAT_ARITHMETIC, FLOAT_MODULO, LOGIC,
-    MOD_PAIR, NULL_ARITHMETIC, NULL_SAFE_COMPARISON, NULL_SUM_PRECISION, TEXT_NUMBER_COMPARISON,
-    VARIANT_EQUALITY,
+    MICROSECOND_DIGITS, MOD_PAIR, NULL_ARITHMETIC, NULL_SAFE_COMPARISON, NULL_SUM_PRECISION,
+    TEXT_NUMBER_COMPARISON, VARIANT_EQUALITY,
 };
-use sqlquack_policy::policy::constants::{NUMERIC_RANGE, SESSION_TIMEZONE_UTC};
+use sqlquack_policy::policy::constants::{NUMERIC_RANGE, SESSION_TIMEZONE_UTC, TIMESTAMP_RANGE};
 
 /// Characters in a `YYYY-MM-DD` date.
 const ISO_DATE_LENGTH: usize = 10;
@@ -620,6 +622,20 @@ pub(crate) fn comparable(
             let (right, left) = date_timestamp(right, left, construct, context)?;
             return Ok((left, right));
         }
+        (
+            SnowflakeType::TimestampNtz { .. },
+            SnowflakeType::TimestampLtz { precision } | SnowflakeType::TimestampTz { precision },
+        ) => {
+            let right = local_as_naive(right, precision, construct, context)?;
+            return comparable(left, right, construct, context);
+        }
+        (
+            SnowflakeType::TimestampLtz { precision } | SnowflakeType::TimestampTz { precision },
+            SnowflakeType::TimestampNtz { .. },
+        ) => {
+            let left = local_as_naive(left, precision, construct, context)?;
+            return comparable(left, right, construct, context);
+        }
         (SnowflakeType::Varchar, number @ SnowflakeType::Number { .. }) => {
             let text = number_text(left, (number, &right.sql), construct, context)?;
             return Ok((text, number_range(right, context)));
@@ -677,6 +693,25 @@ fn date_timestamp(
         )
     };
     Ok((key(&date, None), key(&timestamp, Some(precision))))
+}
+
+/// A TIMESTAMP_LTZ or TIMESTAMP_TZ beside a TIMESTAMP_NTZ, as its instant's UTC wall time.
+fn local_as_naive(
+    emitted: Emitted,
+    precision: u8,
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<Emitted, Refusal> {
+    let log = context.log;
+    let _rule = log.rule(NAIVE_LOCAL_COMPARISON);
+    diverge(context, SESSION_TIMEZONE_UTC, construct)?;
+    if precision > MICROSECOND_DIGITS {
+        diverge(context, TIMESTAMP_RANGE, construct)?;
+    }
+    let naive = SnowflakeType::TimestampNtz { precision };
+    let sql = cast(&utc_wall_time(&emitted.sql, log), naive, log)
+        .map_err(|reason| outside_conditions(construct.clone(), reason))?;
+    Ok(Emitted::new(sql, naive))
 }
 
 /// A NUMBER compared with text, raising where Snowflake's comparison overflows.
