@@ -837,7 +837,7 @@ impl Parser {
         };
 
         let files = self.parse_copy_files(has_to, kind)?;
-        if (kind || has_to) && files.is_empty() {
+        if (kind || has_to) && files.is_empty() && self.applies_snowflake_context_rules() {
             return Err(self.parse_error("Expected a table, query or location after FROM or TO"));
         }
 
