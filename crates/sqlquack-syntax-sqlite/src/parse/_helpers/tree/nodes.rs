@@ -312,6 +312,7 @@ pub(crate) fn join(
         directed: false,
         first_last: None,
         first_last_alias: None,
+        using_alias: None,
         span: SourceSpan(None),
     }
 }
@@ -357,6 +358,8 @@ pub(crate) fn set_operation(
                 corresponding: false,
                 strict: false,
                 on_columns: Vec::new(),
+                locks: Vec::new(),
+                with_ties: false,
                 span: SourceSpan(None),
             }))
         };
@@ -391,6 +394,7 @@ pub(crate) fn cte(alias: Identifier, columns: Vec<Identifier>, this: Expression)
         materialized: None,
         key_expressions: Vec::new(),
         alias_first: true,
+        search_cycle: Vec::new(),
         comments: Vec::new(),
         span: SourceSpan(None),
     }
