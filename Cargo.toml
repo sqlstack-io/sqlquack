@@ -14,6 +14,7 @@ members = [
     "crates/sqlquack-polyglot-check",
     "crates/sqlquack-syntax-coverage",
     "crates/sqlquack-syntax-postgres",
+    "crates/sqlquack-format",
     "crates/sqlquack-syntax-bigquery",
     "crates/sqlquack-python",
 ]
@@ -58,6 +59,7 @@ sqlquack-compare = { path = "crates/sqlquack-compare" }
 sqlquack-core = { path = "crates/sqlquack-core" }
 sqlquack-duckdb = { path = "crates/sqlquack-duckdb", default-features = false }
 sqlquack-evidence = { path = "crates/sqlquack-evidence" }
+sqlquack-format = { path = "crates/sqlquack-format" }
 sqlquack-policy = { path = "crates/sqlquack-policy" }
 sqlquack-rules = { path = "crates/sqlquack-rules" }
 sqlquack-semantics = { path = "crates/sqlquack-semantics" }

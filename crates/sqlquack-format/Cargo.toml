@@ -1,0 +1,17 @@
+[package]
+name = "sqlquack-format"
+version.workspace = true
+description = "SQL layout that changes only the whitespace between tokens and the case of keywords."
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+publish.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+serde_json.workspace = true
+sqlquack-syntax.workspace = true
+
+[lints]
+workspace = true
