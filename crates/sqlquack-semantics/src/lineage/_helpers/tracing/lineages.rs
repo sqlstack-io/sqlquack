@@ -5,8 +5,9 @@ use std::rc::Rc;
 
 use crate::dialects::types::DialectProfile;
 use crate::lineage::_helpers::typing::duckdb_types::{DuckType, common_type, parsed_type};
+use crate::lineage::_helpers::typing::postgres_typing::postgres_set_type;
 use crate::lineage::_helpers::typing::snowflake_sets::snowflake_set_type;
-use crate::lineage::constants::{DUCKDB_PROFILE, SNOWFLAKE_PROFILE};
+use crate::lineage::constants::{DUCKDB_PROFILE, POSTGRES_PROFILE, SNOWFLAKE_PROFILE};
 use crate::lineage::models::{Lineage, Nullability, RowReads, SourceColumn, TransformKind};
 use crate::lineage::types::SharedColumns;
 
@@ -124,10 +125,14 @@ pub(crate) fn set_merged(parts: Vec<Lineage>, profile: &dyn DialectProfile) -> L
         .filter(|part| !untyped_null(part))
         .cloned()
         .collect();
+    let parts_typed: Vec<Lineage> = parts.clone();
     let mut lineage: Lineage = merged(parts, profile);
     if lineage.data_type.is_none() && profile.name() == SNOWFLAKE_PROFILE {
         let typed: Vec<&Lineage> = branches.iter().collect();
         lineage.data_type = snowflake_set_type(&typed);
+    }
+    if profile.name() == POSTGRES_PROFILE {
+        lineage.data_type = postgres_set_type(&parts_typed).unwrap_or(lineage.data_type);
     }
     lineage
 }
