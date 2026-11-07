@@ -1,4 +1,4 @@
-//! Trees that differ only by a wrapper node or a field SQLQuack keeps and polyglot drops or infers.
+//! Trees that differ only by a wrapper node, a field or a call's node SQLQuack keeps and polyglot drops or infers.
 
 use serde_json::Value;
 
@@ -165,4 +165,73 @@ fn all_as_key(mut fields: serde_json::Map<String, Value>) -> Value {
         None => {}
     }
     Value::Object(fields)
+}
+
+/// Whether both rendered parses are trees that are equal once SQLQuack's `(node, call)` nodes are polyglot's calls.
+pub(crate) fn differ_only_by_structured_calls(
+    polyglot: &str,
+    sqlquack: &str,
+    calls: &[(&str, &str)],
+) -> bool {
+    let (Some(theirs), Some(ours)) = (
+        polyglot.strip_prefix(OK_PREFIX),
+        sqlquack.strip_prefix(OK_PREFIX),
+    ) else {
+        return false;
+    };
+    match (
+        serde_json::from_str::<Value>(theirs),
+        serde_json::from_str::<Value>(ours),
+    ) {
+        (Ok(theirs), Ok(ours)) => theirs != ours && as_calls(ours, calls) == theirs,
+        (Err(_), _) | (_, Err(_)) => false,
+    }
+}
+
+/// `value` with every `{ node: { "expressions": arguments } }` replaced by polyglot's call of them.
+fn as_calls(value: Value, calls: &[(&str, &str)]) -> Value {
+    match value {
+        Value::Object(object) => match called(&object, calls) {
+            Some((call, arguments)) => polyglot_call(call, as_calls(arguments, calls)),
+            None => Value::Object(
+                object
+                    .into_iter()
+                    .map(|(key, value)| (key, as_calls(value, calls)))
+                    .collect(),
+            ),
+        },
+        Value::Array(items) => Value::Array(
+            items
+                .into_iter()
+                .map(|value| as_calls(value, calls))
+                .collect(),
+        ),
+        other => other,
+    }
+}
+
+/// The call name and arguments of `object` if it is one listed node holding only `expressions`.
+fn called<'c>(
+    object: &serde_json::Map<String, Value>,
+    calls: &[(&str, &'c str)],
+) -> Option<(&'c str, Value)> {
+    let (node, inner) = object.iter().next().filter(|_| object.len() == 1)?;
+    let (_, call) = calls.iter().find(|(listed, _)| listed == node)?;
+    let inner = inner.as_object().filter(|inner| inner.len() == 1)?;
+    Some((call, inner.get(EXPRESSIONS_KEY)?.clone()))
+}
+
+/// polyglot's tree of a plain call of `name` with `arguments`.
+fn polyglot_call(name: &str, arguments: Value) -> Value {
+    serde_json::json!({
+        "function": {
+            "name": name,
+            "args": arguments,
+            "distinct": false,
+            "trailing_comments": [],
+            "use_bracket_syntax": false,
+            "no_parens": false,
+            "quoted": false,
+        }
+    })
 }

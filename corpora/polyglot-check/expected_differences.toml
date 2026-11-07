@@ -1320,6 +1320,31 @@ marker = "FILEFORMAT"
 sqlquack_node = "create_object"
 note = "a Snowflake CREATE FILE FORMAT parses into a FILE FORMAT object with its modifier and options; polyglot keeps it as raw text; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
 
+# Calls polyglot keeps as functions where SQLQuack parses them into their own nodes. The check counts
+# an entry only when the statement contains `marker` and the trees are equal once each listed node,
+# holding only `expressions`, is written back as polyglot's call of `call` with those arguments.
+
+[[structured_call]]
+id = "group_by_rollup_node"
+marker = "ROLLUP("
+sqlquack_node = "rollup"
+call = "ROLLUP"
+note = "GROUP BY ROLLUP (...) is a grouping construct, not a function, so SQLQuack parses it into a rollup node that rules can match (D322); crates/sqlquack-syntax/src/parser/tests/test_parser.rs pins the tree"
+
+[[structured_call]]
+id = "group_by_cube_node"
+marker = "CUBE("
+sqlquack_node = "cube"
+call = "CUBE"
+note = "GROUP BY CUBE (...) is a grouping construct, not a function, so SQLQuack parses it into a cube node that rules can match (D322); crates/sqlquack-syntax/src/parser/tests/test_parser.rs pins the tree"
+
+[[structured_call]]
+id = "group_by_grouping_sets_node"
+marker = "GROUPINGSETS("
+sqlquack_node = "grouping_sets"
+call = "GROUPING SETS"
+note = "GROUP BY GROUPING SETS (...) is a grouping construct, not a function, so SQLQuack parses it into a grouping_sets node that rules can match (D322); crates/sqlquack-syntax/src/parser/tests/test_parser.rs pins the tree"
+
 [[rejection]]
 id = "snowflake_stage_reserved_name"
 sql = "SELECT @select"

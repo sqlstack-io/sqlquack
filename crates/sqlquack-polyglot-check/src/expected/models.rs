@@ -1,7 +1,8 @@
 //! Expected differences.
 
 use crate::expected::_helpers::nodes::{
-    differ_only_by_kept_all, differ_only_by_kept_field, differ_only_by_kept_node, is_opaque,
+    differ_only_by_kept_all, differ_only_by_kept_field, differ_only_by_kept_node,
+    differ_only_by_structured_calls, is_opaque,
 };
 use crate::expected::_helpers::quoting::{compact, differ_only_by_kept_quoting};
 use crate::expected::constants::{ERROR_PREFIX, OK_PREFIX};
@@ -37,6 +38,25 @@ pub struct ExpectedFile {
     /// One entry per reviewed statement polyglot keeps as a command and SQLQuack structures.
     #[serde(default, rename = "structured")]
     pub structured: Vec<StructuredStatement>,
+    /// One entry per reviewed call polyglot keeps as a function and SQLQuack parses into a node.
+    #[serde(default, rename = "structured_call")]
+    pub structured_calls: Vec<StructuredCall>,
+}
+
+/// A call polyglot keeps as a function, such as `ROLLUP(...)`, that SQLQuack parses into its own node.
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct StructuredCall {
+    /// A lower-case identifier.
+    pub id: String,
+    /// Text the statement contains, with whitespace removed and ignoring case, such as `ROLLUP(`.
+    pub marker: String,
+    /// SQLQuack's node, such as `rollup`; its only field is `expressions`, polyglot's arguments.
+    pub sqlquack_node: String,
+    /// The function name polyglot gives the call, such as `ROLLUP`.
+    pub call: String,
+    /// Why SQLQuack's node is right; a test in sqlquack-syntax pins its tree.
+    pub note: String,
 }
 
 /// A statement polyglot keeps as an opaque command or raw SQL and SQLQuack parses into a structured node.
@@ -168,6 +188,8 @@ pub struct ExpectedDifferences {
     pub kept_alls: Vec<KeptAll>,
     /// The reviewed statements polyglot keeps as a command and SQLQuack structures.
     pub structured: Vec<StructuredStatement>,
+    /// The reviewed calls polyglot keeps as functions and SQLQuack parses into nodes.
+    pub structured_calls: Vec<StructuredCall>,
 }
 
 impl ParserFix {
@@ -259,6 +281,29 @@ impl ExpectedDifferences {
                 && sqlquack.starts_with(&format!("{OK_PREFIX}[{{\"{}\":", entry.sqlquack_node))
                 && compact.contains(&entry.marker.to_ascii_uppercase())
         })
+    }
+
+    /// The first entry explaining a tree that differs only by calls SQLQuack parses into nodes.
+    pub fn structured_call_for(
+        &self,
+        sql: &str,
+        polyglot: &str,
+        sqlquack: &str,
+    ) -> Option<&StructuredCall> {
+        let compact = compact(sql);
+        let present: Vec<&StructuredCall> = self
+            .structured_calls
+            .iter()
+            .filter(|entry| compact.contains(&entry.marker.to_ascii_uppercase()))
+            .collect();
+        let calls: Vec<(&str, &str)> = present
+            .iter()
+            .map(|entry| (entry.sqlquack_node.as_str(), entry.call.as_str()))
+            .collect();
+        present
+            .first()
+            .copied()
+            .filter(|_| differ_only_by_structured_calls(polyglot, sqlquack, &calls))
     }
 
     /// Whether keeping `name` where polyglot makes `polyglot` of it is listed.

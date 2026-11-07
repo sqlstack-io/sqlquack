@@ -18,6 +18,7 @@ pub fn load_expected(path: &Path) -> Result<ExpectedDifferences, String> {
         kept_fields: file.kept_fields,
         kept_alls: file.kept_alls,
         structured: file.structured,
+        structured_calls: file.structured_calls,
         ..ExpectedDifferences::default()
     };
     for spelling in file.spellings {
