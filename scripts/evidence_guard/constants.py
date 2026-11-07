@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-RESULTS_DIRS: tuple[str, ...] = (
+RESULTS_PATHSPECS: tuple[str, ...] = (
     "evidence/results",
     "evidence/audit/results",
     "evidence/referee",
