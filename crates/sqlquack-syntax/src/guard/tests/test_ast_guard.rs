@@ -1,5 +1,9 @@
+use crate::guard::tests::helpers::constructor_levels;
 use crate::guard::tests::helpers::guarded_parse;
+use crate::guard::tests::helpers::guarded_parse_in;
 use crate::guard::tests::test_types::AstDepthTestCase;
+use crate::guard::tests::test_types::TypeDepthTestCase;
+use crate::guard::tests::test_types::TYPE_DEPTHS;
 
 #[test]
 fn given_a_long_flat_operator_chain_when_parsing_then_only_real_nesting_counts_as_depth() {
@@ -39,12 +43,17 @@ fn given_a_long_flat_operator_chain_when_parsing_then_only_real_nesting_counts_a
 }
 
 #[test]
-fn given_a_70k_term_chain_when_parsing_on_a_2_mb_thread_then_it_parses_or_is_refused_without_overflow(
+fn given_a_long_term_chain_when_parsing_on_a_2_mb_thread_then_it_parses_or_is_refused_without_overflow(
 ) {
     let test_cases = [
         AstDepthTestCase {
             description: "a + chain is flat and parses",
             sql: || format!("SELECT 1{}", "+1".repeat(70_000)),
+            expected_error: None,
+        },
+        AstDepthTestCase {
+            description: "a 100,000-term + chain is flat, parses and serializes",
+            sql: || format!("SELECT 1{}", "+1".repeat(100_000)),
             expected_error: None,
         },
         AstDepthTestCase {
@@ -120,5 +129,111 @@ fn given_a_70k_term_chain_when_parsing_on_a_2_mb_thread_then_it_parses_or_is_ref
             "{}: {outcome:?}",
             test_case.description
         );
+    }
+}
+
+#[test]
+fn given_a_deeply_nested_type_when_parsing_on_a_2_mb_thread_then_512_levels_parse_and_more_are_refused(
+) {
+    const NESTING: Option<&str> = Some("E_GUARD_NESTING_DEPTH_EXCEEDED");
+    const PARSER_DEPTH: Option<&str> = Some("E_GUARD_PARSER_DEPTH_EXCEEDED");
+    const FUNCTION_NESTING: Option<&str> = Some("E_GUARD_FUNCTION_NESTING_DEPTH_EXCEEDED");
+    let test_cases = [
+        TypeDepthTestCase {
+            description: "[] suffixes in a Snowflake CAST",
+            dialect: crate::Dialect::Snowflake,
+            sql: |n| format!("SELECT CAST(NULL AS INT{})", "[]".repeat(n)),
+            expected_errors: [None, NESTING, NESTING, NESTING],
+        },
+        TypeDepthTestCase {
+            description: "[3] suffixes in a DuckDB CAST",
+            dialect: crate::Dialect::DuckDB,
+            sql: |n| format!("SELECT CAST(NULL AS INT{})", "[3]".repeat(n)),
+            expected_errors: [None, NESTING, NESTING, NESTING],
+        },
+        TypeDepthTestCase {
+            description: "[] suffixes in a DuckDB :: cast",
+            dialect: crate::Dialect::DuckDB,
+            sql: |n| format!("SELECT x::INT{} FROM t", "[]".repeat(n)),
+            expected_errors: [None, NESTING, NESTING, NESTING],
+        },
+        TypeDepthTestCase {
+            description: "[] suffixes on a Snowflake column type",
+            dialect: crate::Dialect::Snowflake,
+            sql: |n| format!("CREATE TABLE t (c INT{})", "[]".repeat(n)),
+            expected_errors: [None, NESTING, NESTING, NESTING],
+        },
+        TypeDepthTestCase {
+            description: "nested ARRAY<> in a Snowflake CAST",
+            dialect: crate::Dialect::Snowflake,
+            sql: |n| {
+                format!(
+                    "SELECT CAST(NULL AS {}INT{})",
+                    "ARRAY<".repeat(n),
+                    ">".repeat(n)
+                )
+            },
+            expected_errors: [None, NESTING, PARSER_DEPTH, PARSER_DEPTH],
+        },
+        TypeDepthTestCase {
+            description: "ARRAY<> levels alternating with short [] runs",
+            dialect: crate::Dialect::Snowflake,
+            sql: |n| {
+                let levels = n / 4;
+                let inner = "[][][]>".repeat(levels);
+                let outer = "[]".repeat(n - 4 * levels);
+                format!(
+                    "SELECT CAST(NULL AS {}INT{inner}{outer})",
+                    "ARRAY<".repeat(levels)
+                )
+            },
+            expected_errors: [None, NESTING, PARSER_DEPTH, PARSER_DEPTH],
+        },
+        TypeDepthTestCase {
+            description: "ARRAY( levels each wrapping 60 [] suffixes",
+            dialect: crate::Dialect::Snowflake,
+            sql: |n| constructor_levels(n, "ARRAY("),
+            expected_errors: [None, NESTING, FUNCTION_NESTING, FUNCTION_NESTING],
+        },
+        TypeDepthTestCase {
+            description: "OBJECT( levels each wrapping 60 [] suffixes",
+            dialect: crate::Dialect::Snowflake,
+            sql: |n| constructor_levels(n, "OBJECT(a "),
+            expected_errors: [None, NESTING, FUNCTION_NESTING, FUNCTION_NESTING],
+        },
+        TypeDepthTestCase {
+            description: "MAP( values each wrapping 60 [] suffixes",
+            dialect: crate::Dialect::Snowflake,
+            sql: |n| constructor_levels(n, "MAP(VARCHAR, "),
+            expected_errors: [None, NESTING, FUNCTION_NESTING, FUNCTION_NESTING],
+        },
+        TypeDepthTestCase {
+            description: "STRUCT( levels each wrapping 60 [] suffixes",
+            dialect: crate::Dialect::DuckDB,
+            sql: |n| constructor_levels(n, "STRUCT(a "),
+            expected_errors: [None, NESTING, FUNCTION_NESTING, FUNCTION_NESTING],
+        },
+    ];
+    for test_case in test_cases {
+        for (index, levels) in TYPE_DEPTHS.into_iter().enumerate() {
+            let sql = (test_case.sql)(levels);
+            let dialect = test_case.dialect;
+            let outcome = std::thread::Builder::new()
+                .stack_size(2 << 20)
+                .spawn(move || guarded_parse_in(&sql, dialect))
+                .expect("the parse thread starts")
+                .join()
+                .expect("the parse thread finishes");
+            let code = outcome.as_ref().err().and_then(|error| {
+                error
+                    .split(|c: char| !(c.is_ascii_uppercase() || c == '_'))
+                    .find(|word| word.starts_with("E_"))
+            });
+            assert_eq!(
+                code, test_case.expected_errors[index],
+                "{} at {levels} levels: {outcome:?}",
+                test_case.description
+            );
+        }
     }
 }

@@ -38,3 +38,15 @@ pub(crate) struct AstDepthTestCase {
     /// None when the default guard accepts the query; otherwise a fragment of the error.
     pub(crate) expected_error: Option<&'static str>,
 }
+
+pub(crate) struct TypeDepthTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) dialect: crate::Dialect,
+    /// The query with its type nested `n` levels deep.
+    pub(crate) sql: fn(n: usize) -> String,
+    /// The guard code at each of [`TYPE_DEPTHS`] levels, or None where the parse succeeds.
+    pub(crate) expected_errors: [Option<&'static str>; 4],
+}
+
+/// The nesting depths each [`TypeDepthTestCase`] is parsed at.
+pub(crate) const TYPE_DEPTHS: [usize; 4] = [512, 513, 20_000, 100_000];

@@ -62,14 +62,32 @@ pub(crate) fn guard_json_accepted(json: &str) -> bool {
     serde_json::from_str::<ComplexityGuardOptions>(json).is_ok()
 }
 
-/// The default-guarded Snowflake parse of `sql`, or its error message.
+/// The default-guarded Snowflake parse of `sql`, serialized as JSON, or its error message.
 pub(crate) fn guarded_parse(sql: &str) -> Result<(), String> {
-    crate::parse_statements_with(
+    guarded_parse_in(sql, crate::Dialect::Snowflake)
+}
+
+/// The default-guarded parse of `sql` in `dialect`, serialized as JSON, or its error message.
+pub(crate) fn guarded_parse_in(sql: &str, dialect: crate::Dialect) -> Result<(), String> {
+    let statements = crate::parse_statements_with(
         sql,
-        crate::Dialect::Snowflake,
+        dialect,
         &crate::ParseOptions::default(),
         crate::CallMode::Faithful,
     )
-    .map(|_| ())
-    .map_err(|error| error.to_string())
+    .map_err(|error| error.to_string())?;
+    serde_json::to_string(&statements)
+        .map(|_| ())
+        .map_err(|error| error.to_string())
+}
+
+/// `n` type levels: constructor levels that each wrap 60 `[]` suffixes, then the remaining suffixes.
+pub(crate) fn constructor_levels(n: usize, open: &str) -> String {
+    let levels = n / 61;
+    format!(
+        "SELECT CAST(NULL AS {}INT{}{})",
+        open.repeat(levels),
+        format!("{})", "[]".repeat(60)).repeat(levels),
+        "[]".repeat(n - 61 * levels)
+    )
 }
