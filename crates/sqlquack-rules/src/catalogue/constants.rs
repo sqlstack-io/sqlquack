@@ -57,6 +57,8 @@ use crate::conversion::constants::{
 };
 use crate::conversion::models::RuleSpec;
 
+/// A TIMESTAMP_NTZ compared with a TIMESTAMP_LTZ or TIMESTAMP_TZ in the UTC session.
+pub const NAIVE_LOCAL_COMPARISON: &str = "rule.naive_local_comparison";
 /// Every rule.
 pub const RULES: &[RuleSpec] = &[
     RuleSpec {
@@ -318,6 +320,20 @@ pub const RULES: &[RuleSpec] = &[
         }],
     },
     RuleSpec {
+        id: NAIVE_LOCAL_COMPARISON,
+        constructs: &[
+            "node:eq",
+            "node:neq",
+            "node:lt",
+            "node:lte",
+            "node:gt",
+            "node:gte",
+            "node:between",
+        ],
+        conditions: "A TIMESTAMP_NTZ beside a TIMESTAMP_LTZ, such as CURRENT_TIMESTAMP() or DATEADD of it, or beside a TIMESTAMP_TZ at any offset, such as CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP()): Snowflake reads the naive value in the session time zone and compares instants, as recorded, so the zoned value is read as its wall time in UTC, which relies on session_timezone_utc, and on timestamp_range at precisions above microseconds.",
+        failures: &[],
+    },
+    RuleSpec {
         id: DATE_LITERAL_COMPARISON,
         constructs: &[
             "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:in",
@@ -547,7 +563,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:TIMEDIFF",
             "fn:TIMESTAMPDIFF",
         ],
-        conditions: "DATE or TIMESTAMP_NTZ values. DATE_TRUNC to YEAR, QUARTER, MONTH, WEEK (Monday) or DAY, and for timestamps HOUR, MINUTE or SECOND, keeping the type. DATEADD of a NUMBER(p,0) amount (to text read as TIMESTAMP_NTZ(9) as CAST reads it, as recorded), which fails beyond 2^53 as Snowflake's error 100046, of YEAR, QUARTER, MONTH (clamped to the month's end), WEEK or DAY, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND, keeping the type and its nanoseconds; a result beyond DuckDB's range (for precision 7-9 its nanosecond range) raises timestamp_range. DATEDIFF between two DATEs or two timestamps counts YEAR, QUARTER, MONTH and DAY boundaries of the dates, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND boundaries toward the past. Between two TIMESTAMP_TZ values at any offsets, MINUTE and SECOND boundaries are counted between their UTC instants, which every whole-minute offset shares, as recorded; other units of such values refuse, as Snowflake counts DAY boundaries in each value's own offset.",
+        conditions: "DATE or TIMESTAMP_NTZ values. DATE_TRUNC to YEAR, QUARTER, MONTH, WEEK (Monday) or DAY, and for timestamps HOUR, MINUTE or SECOND, keeping the type. DATEADD of a NUMBER(p,0) amount (to text read as TIMESTAMP_NTZ(9) as CAST reads it, as recorded), which fails beyond 2^53 as Snowflake's error 100046, of YEAR, QUARTER, MONTH (clamped to the month's end), WEEK or DAY, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND, keeping the type and its nanoseconds; a result beyond DuckDB's range (for precision 7-9 its nanosecond range) raises timestamp_range. DATEDIFF between two DATEs or two timestamps counts YEAR, QUARTER, MONTH and DAY boundaries of the dates, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND boundaries toward the past, a DATE beside a timestamp or another DATE read as its midnight for those units. Between two TIMESTAMP_TZ values at any offsets, MINUTE and SECOND boundaries are counted between their UTC instants, which every whole-minute offset shares, as recorded; other units of such values refuse, as Snowflake counts DAY boundaries in each value's own offset.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -1620,7 +1636,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:TIMEDIFF",
             "fn:TIMESTAMPDIFF",
         ],
-        conditions: "DATE_TRUNC and DATEADD of a TIMESTAMP_TZ known to hold the UTC offset, +00:00 (from CONVERT_TIMEZONE('UTC', x), a cast of a DATE or naive timestamp in the UTC session, or values chosen from such), computed on its UTC wall time and read back at +00:00, keeping its type; DATEDIFF of two such values from their UTC wall times. A UTC-offset value against a naive one, and zoned values of unknown offset, refuse.",
+        conditions: "DATE_TRUNC and DATEADD of a TIMESTAMP_TZ known to hold the UTC offset, +00:00 (from CONVERT_TIMEZONE('UTC', x), a cast of a DATE or naive timestamp in the UTC session, or values chosen from such), computed on its UTC wall time and read back at +00:00, keeping its type; DATEADD of a TIMESTAMP_LTZ the same way, which relies on session_timezone_utc; DATEDIFF of two such values from their UTC wall times. A UTC-offset value against a naive one, and zoned values of unknown offset, refuse.",
         failures: &[],
     },
     RuleSpec {

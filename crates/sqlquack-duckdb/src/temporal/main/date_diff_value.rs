@@ -5,6 +5,7 @@ use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::blocks::constants::DATE_DIFF;
 use crate::temporal::_helpers::timestamps::{epoch_units, floor_divide, stored_digits};
+use crate::temporal::constants::MIDNIGHT_PRECISION;
 use crate::temporal::main::truncate_timestamp_to_date::truncate_timestamp_to_date;
 
 /// Boundaries of the unit named by its canonical Snowflake name crossed from `start` to `end`.
@@ -41,6 +42,16 @@ pub fn date_diff_value(
         _ => 0,
     };
     let units = |sql: &str, source: SnowflakeType| -> Result<String, String> {
+        let (sql, source) = match source {
+            SnowflakeType::Date => (
+                format!("CAST({sql} AS TIMESTAMP)"),
+                SnowflakeType::TimestampNtz {
+                    precision: MIDNIGHT_PRECISION,
+                },
+            ),
+            other => (sql.to_owned(), other),
+        };
+        let sql = sql.as_str();
         let SnowflakeType::TimestampNtz { precision } = source else {
             return Err(format!(
                 "DATEDIFF in {unit} of {source} has no proven conversion"

@@ -1,4 +1,4 @@
-// Diagnostic spans in the playground. The engine counts Unicode characters (code points), and
+// Diagnostic spans and result tables in the playground. The engine counts Unicode characters (code points), and
 // JavaScript strings count UTF-16 units, so every span is applied to `Array.from(sql)`.
 
 export const escape = (text) => text.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -60,3 +60,12 @@ export function underlined(chars, items) {
 	return { html, items: sorted };
 }
 
+// The Run stage's table: `names` as the header and `columns` (one array of text or null per name)
+// read by position, so two columns of the same name keep their own values.
+export function resultTable(names, columns) {
+	const rows = columns[0]?.length ?? 0;
+	const cell = (value) => (value === null ? '<span class="dim">NULL</span>' : escape(String(value)));
+	const body = Array.from({ length: rows }, (_, row) => `<tr>${columns.map((column) => `<td>${cell(column[row])}</td>`).join('')}</tr>`);
+	const head = names.map((name) => `<th>${escape(name)}</th>`).join('');
+	return { html: `<div class="pg-rows"><table><thead><tr>${head}</tr></thead><tbody>${body.join('')}</tbody></table></div>`, rows };
+}
