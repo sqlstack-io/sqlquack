@@ -10,12 +10,13 @@ use crate::format::_helpers::lexemes::{
     Lexeme, bracket_partners, ends_operand, is_keyword, is_unquoted_word,
 };
 use crate::format::constants::{
-    ALIAS_FOLLOWERS, CASE_BRANCHES, CLAUSE_KEYWORDS, COLUMNS_CALL, DUCKDB_INLINE_CALLS,
-    EXPRESSION_LEADERS, GROUPING_CALLS, GUIDE_INDENT, GUIDE_WIDTH, JOIN_PREFIXES, LAMBDA_KEYWORD,
-    PLACEHOLDER_WIDTH, POSTFIX_CAST_WIDTH, POSTGRES_INLINE_CALLS, SAMPLE_KEYWORDS,
-    SAMPLE_ROW_KEYWORD, SEMANTIC_VIEW_CALL, SEMANTIC_VIEW_CLAUSES, SET_OPERATOR_MODIFIERS,
-    SET_OPERATORS, SNOWFLAKE_INLINE_CALLS, SPACED_BEFORE_PARENTHESIS, STRUCT_TYPE_WORDS,
-    TYPE_CONTINUATIONS, TYPED_LITERALS,
+    ALIAS_FOLLOWERS, CALL_TARGET_KEYWORDS, CASE_BRANCHES, CLAUSE_KEYWORDS, COLUMNS_CALL,
+    CTE_BODY_PREFIXES, DUCKDB_INLINE_CALLS, EXPRESSION_LEADERS, GROUPING_CALLS, GUIDE_INDENT,
+    GUIDE_WIDTH, INSERT_BODIES, INSERT_KEYWORD, JOIN_PREFIXES, LAMBDA_KEYWORD, PARAMETERISED_TYPES,
+    PLACEHOLDER_NAME_PREFIX, PLACEHOLDER_WIDTH, POSTFIX_CAST_WIDTH, POSTGRES_INLINE_CALLS,
+    SAMPLE_KEYWORDS, SAMPLE_ROW_KEYWORD, SEMANTIC_VIEW_CALL, SEMANTIC_VIEW_CLAUSES,
+    SET_OPERATOR_MODIFIERS, SET_OPERATORS, SNOWFLAKE_INLINE_CALLS, SPACED_BEFORE_PARENTHESIS,
+    STRUCT_TYPE_WORDS, TYPE_CONTINUATIONS, TYPED_LITERALS, VALUES_KEYWORD,
 };
 
 /// The guide's text and its tokens, with byte ranges in that text.
@@ -54,6 +55,12 @@ struct Guide<'a> {
     enclosing: Vec<Option<usize>>,
     /// Tokens of a Snowflake stage reference such as `@stage/path/file.csv`.
     in_stage: Vec<bool>,
+    /// Operators the parse tree reads as binary, such as a comparison's `<`.
+    binary_operators: &'a [bool],
+    /// The `<` and `>` around the parameters of a type such as `ARRAY<INT>`.
+    angles: Vec<bool>,
+    /// Tokens directly inside a struct type's field list, where a name keeps its case.
+    field_lists: Vec<bool>,
     /// The one-line spacing before each token.
     base: Vec<&'static str>,
     /// The laid-out whitespace before each token.
@@ -104,6 +111,9 @@ impl<'a> Guide<'a> {
             partners: bracket_partners(lexemes),
             enclosing,
             in_stage: vec![false; count],
+            binary_operators: &names.binary_operators,
+            angles: vec![false; count],
+            field_lists: vec![false; count],
             base: vec![""; count],
             gaps: vec![String::new(); count],
             dropped: vec![false; count],
@@ -112,6 +122,8 @@ impl<'a> Guide<'a> {
             protected: vec![false; count],
         };
         guide.mark_stages();
+        guide.mark_angles();
+        guide.mark_field_lists();
         for index in 1..count {
             guide.base[index] = guide.space(index);
             guide.gaps[index] = guide.base[index].to_string();
@@ -187,10 +199,31 @@ impl<'a> Guide<'a> {
         }
     }
 
+    /// Mark the `<` after a parameterised type name such as `ARRAY`, and the `>` that closes it.
+    fn mark_angles(&mut self) {
+        let mut open: usize = 0;
+        for index in 1..self.len() {
+            let kind = self.lexemes[index].kind;
+            if kind == TokenType::Lt
+                && !self.binary_operators[index]
+                && self.is_any(index - 1, &PARAMETERISED_TYPES)
+            {
+                self.angles[index] = true;
+                open += 1;
+            } else if kind == TokenType::Gt && open > 0 && !self.binary_operators[index] {
+                self.angles[index] = true;
+                open -= 1;
+            }
+        }
+    }
+
     /// The spacing a one-line rendering puts before token `index`.
     fn space(&self, index: usize) -> &'static str {
         let (previous, next) = (&self.lexemes[index - 1], &self.lexemes[index]);
-        if self.in_stage[index] && self.in_stage[index - 1] {
+        if (self.in_stage[index] && self.in_stage[index - 1])
+            || (self.angles[index - 1] && self.lexemes[index - 1].kind == TokenType::Lt)
+            || self.angles[index]
+        {
             return "";
         }
         if self.in_stage[index - 1] && next.kind == TokenType::LParen {
@@ -247,7 +280,9 @@ impl<'a> Guide<'a> {
                 ""
             };
         }
-        if next.kind == TokenType::LBracket && self.operand_ends(index - 1) {
+        if next.kind == TokenType::LBracket
+            && (self.operand_ends(index - 1) || self.angles[index - 1])
+        {
             return "";
         }
         " "
@@ -559,8 +594,29 @@ impl<'a> Guide<'a> {
             self.lay_out_from_first(first, last, indent);
         } else if self.is(first, "WITH") {
             self.query(first, last, indent);
+        } else if self.is(first, INSERT_KEYWORD) {
+            self.insert(first, last, indent);
         } else {
             self.expr(first, last, indent);
+        }
+    }
+
+    /// Lay out an INSERT: its target on the first line, then its VALUES or query from a new line.
+    fn insert(&mut self, insert: usize, last: usize, indent: usize) {
+        let body = self
+            .tops(insert + 1, last)
+            .into_iter()
+            .find(|&index| self.is_any(index, &INSERT_BODIES));
+        let Some(body) = body else {
+            self.expr(insert, last, indent);
+            return;
+        };
+        self.expr(insert, body - 1, indent);
+        self.gaps[body] = newline(indent);
+        if self.is(body, VALUES_KEYWORD) {
+            self.expr(body, last, indent);
+        } else {
+            self.query(body, last, indent);
         }
     }
 
@@ -1064,7 +1120,7 @@ impl<'a> Guide<'a> {
         }
     }
 
-    /// The guide's spelling of token `index`: keywords in upper case, names as written.
+    /// The guide's spelling of token `index`: keywords and called names in upper case, other names as written.
     fn text(&self, index: usize) -> String {
         let lexeme = &self.lexemes[index];
         if self.protected[index]
@@ -1072,12 +1128,27 @@ impl<'a> Guide<'a> {
             || self.identifiers[index]
             || self.name_position(index)
             || self.field_name(index)
-            || !is_keyword(lexeme)
+            || !(is_keyword(lexeme) || self.called_name(index))
         {
             lexeme.raw.clone()
         } else {
             lexeme.raw.to_ascii_uppercase()
         }
+    }
+
+    /// Whether token `index` is an unquoted name called with `(`, which folds to upper case as SQLBuild's query fingerprint folds it: not a placeholder, an INSERT or CREATE TABLE target, or a CTE name with a column list.
+    fn called_name(&self, index: usize) -> bool {
+        let raw = &self.lexemes[index].raw;
+        let Some(closer) = self.partners.get(index + 1).copied().flatten() else {
+            return false;
+        };
+        self.kind(index + 1) == Some(TokenType::LParen)
+            && is_unquoted_word(raw)
+            && !raw.starts_with(PLACEHOLDER_NAME_PREFIX)
+            && !(index > 0 && self.is_any(index - 1, &CALL_TARGET_KEYWORDS))
+            && !(self.is(closer + 1, "AS")
+                && (self.kind(closer + 2) == Some(TokenType::LParen)
+                    || self.is_any(closer + 2, &CTE_BODY_PREFIXES)))
     }
 
     /// Whether token `index` names a field of a struct type such as `STRUCT(type VARCHAR)` or `STRUCT<type: STRING>`; the tree keeps these names without spans, and a schema keeps their case.
@@ -1094,31 +1165,46 @@ impl<'a> Guide<'a> {
         if !starts_field || !typed {
             return false;
         }
-        let mut angles: usize = 0;
-        let mut at = index;
-        while at > 0 {
-            at -= 1;
-            match self.lexemes[at].kind {
-                TokenType::Gt => angles += 1,
-                TokenType::GtGt => angles += 2,
-                TokenType::RParen | TokenType::RBracket => {
-                    if let Some(opener) = self.partners[at].filter(|&opener| opener < at) {
-                        at = opener;
-                    }
+        self.field_lists[index]
+    }
+
+    /// Mark every token whose innermost open bracket is a struct type's field list, such as the `(` of `STRUCT(a INT)` or the `<` of `STRUCT<a INT>`, in one pass.
+    fn mark_field_lists(&mut self) {
+        let mut open: Vec<(TokenType, bool)> = Vec::new();
+        for index in 0..self.len() {
+            self.field_lists[index] = open.last().is_some_and(|&(_, fields)| fields);
+            let kind = self.lexemes[index].kind;
+            let after_struct = index > 0
+                && STRUCT_TYPE_WORDS
+                    .iter()
+                    .any(|word| self.lexemes[index - 1].raw.eq_ignore_ascii_case(word));
+            match kind {
+                TokenType::LParen | TokenType::LBracket | TokenType::LBrace => {
+                    open.push((kind, after_struct && kind == TokenType::LParen));
                 }
-                TokenType::Lt if angles > 0 => angles -= 1,
-                TokenType::Lt | TokenType::LParen | TokenType::LBracket => {
-                    return angles == 0
-                        && self.lexemes[at].kind != TokenType::LBracket
-                        && at > 0
-                        && STRUCT_TYPE_WORDS
-                            .iter()
-                            .any(|word| self.lexemes[at - 1].raw.eq_ignore_ascii_case(word));
+                TokenType::Lt if after_struct || self.angles[index] => {
+                    open.push((kind, after_struct));
+                }
+                TokenType::RParen | TokenType::RBracket | TokenType::RBrace => {
+                    while open
+                        .pop()
+                        .is_some_and(|(opener, _)| opener == TokenType::Lt)
+                    {}
+                }
+                TokenType::Gt | TokenType::GtGt => {
+                    let closes = if kind == TokenType::GtGt { 2 } else { 1 };
+                    for _ in 0..closes {
+                        if open
+                            .last()
+                            .is_some_and(|&(opener, _)| opener == TokenType::Lt)
+                        {
+                            open.pop();
+                        }
+                    }
                 }
                 _ => {}
             }
         }
-        false
     }
 
     fn render(&self) -> GuideLayout {

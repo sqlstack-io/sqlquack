@@ -35,6 +35,8 @@ pub(crate) const TYPE_DEPTH_FAILURE: &str =
     "formatter does not lay out data types nested more than 64 levels deep";
 /// The deepest data type the formatter lets the parser build: a run of bracket suffixes such as `INT[][]`, nested type constructors, or both alternating.
 pub(crate) const MAX_TYPE_NESTING: usize = 64;
+/// The types whose parameters are written in angle brackets, such as `ARRAY<INT>`.
+pub(crate) const PARAMETERISED_TYPES: [&str; 5] = ["ARRAY", "STRUCT", "MAP", "OBJECT", "RANGE"];
 /// The type names whose parameters are named fields, such as `STRUCT(a INT)`.
 pub(crate) const STRUCT_TYPE_WORDS: [&str; 5] = ["STRUCT", "ROW", "OBJECT", "UNION", "RECORD"];
 /// The type names whose parameters are data types in angle brackets or parentheses, such as `ARRAY<INT>` or `STRUCT(a INT)`.
@@ -261,6 +263,18 @@ pub(crate) const TYPE_CONTINUATIONS: [&str; 6] =
 pub(crate) const GROUPING_CALLS: [&str; 3] = ["ROLLUP", "CUBE", "SETS"];
 /// Clause words of a Snowflake SEMANTIC_VIEW call, each starting its own line.
 pub(crate) const SEMANTIC_VIEW_CLAUSES: [&str; 4] = ["METRICS", "DIMENSIONS", "FACTS", "WHERE"];
+/// The start of a placeholder name, such as SQLBuild's `__ref(...)`, which keeps its case when called.
+pub(crate) const PLACEHOLDER_NAME_PREFIX: &str = "__";
+/// Words after which a name with `(` is defined, not called: a table's column list or a macro's parameters.
+pub(crate) const CALL_TARGET_KEYWORDS: [&str; 3] = ["INTO", "TABLE", "MACRO"];
+/// Words after a CTE's `AS` that start its body.
+pub(crate) const CTE_BODY_PREFIXES: [&str; 2] = ["MATERIALIZED", "NOT"];
+/// The keyword that starts an INSERT statement.
+pub(crate) const INSERT_KEYWORD: &str = "INSERT";
+/// The keyword of a VALUES list.
+pub(crate) const VALUES_KEYWORD: &str = "VALUES";
+/// Words that start the rows an INSERT adds, each from a new line.
+pub(crate) const INSERT_BODIES: [&str; 3] = ["VALUES", "SELECT", "WITH"];
 /// Clause keywords that start a line of a SELECT.
 pub(crate) const CLAUSE_KEYWORDS: [&str; 8] = [
     "FROM", "WHERE", "HAVING", "QUALIFY", "WINDOW", "LIMIT", "OFFSET", "FETCH",

@@ -86,7 +86,12 @@ impl Oracle {
         let generated: Vec<Keyed> = guide
             .tokens
             .iter()
-            .map(|token| Keyed::new(token, false))
+            .enumerate()
+            .map(|(index, token)| {
+                let mut keyed = Keyed::new(token, false);
+                keyed.keyword |= is_called(&guide.tokens, index);
+                keyed
+            })
             .collect();
         Self {
             generated,
@@ -236,7 +241,7 @@ pub(crate) fn verify_printed_tokens(
         }
         let allowed = recases.get(&index).is_some_and(|recase| {
             *recase == printed.raw
-                && is_keyword(printed)
+                && (is_keyword(printed) || is_called(after.lexemes, index))
                 && printed.raw == printed.raw.to_ascii_uppercase()
                 && authored.raw.eq_ignore_ascii_case(&printed.raw)
         });
@@ -560,6 +565,14 @@ fn would_fuse(previous: &Keyed, next: &Keyed) -> bool {
     };
     let operator = |character: char| "+-*/<>=!|&^%~:#?".contains(character);
     (word(left) && word(right)) || (operator(left) && operator(right))
+}
+
+/// Whether token `index` is an unquoted word followed by `(`, as a called name is.
+fn is_called(lexemes: &[Lexeme], index: usize) -> bool {
+    is_unquoted_word(&lexemes[index].raw)
+        && lexemes
+            .get(index + 1)
+            .is_some_and(|next| next.kind == TokenType::LParen)
 }
 
 /// Whether the guide prints the aligned authored word as an upper-case keyword.

@@ -17,7 +17,7 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             sql: "create table t (x object(type varchar, first int, key int))",
             line_width: None,
             dialect: Dialect::Snowflake,
-            expected_outcome: Ok("CREATE TABLE t(x object(type varchar, first int, key int))"),
+            expected_outcome: Ok("CREATE TABLE t(x OBJECT(type varchar, first int, key int))"),
         },
         test_types::FormatSqlTestCase {
             description: "DuckDB struct field names spelled like keywords keep their case in a column type",
@@ -25,7 +25,30 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             line_width: None,
             dialect: Dialect::DuckDB,
             expected_outcome: Ok(
-                "CREATE TABLE t(x struct(type varchar, first int, key int, date DATE))",
+                "CREATE TABLE t(x STRUCT(type varchar, first int, key int, date DATE))",
+            ),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a DuckDB macro name keeps its case, since DuckDB stores it as written",
+            sql: "create macro add_one(x) as x + 1",
+            line_width: None,
+            dialect: Dialect::DuckDB,
+            expected_outcome: Ok("CREATE macro add_one(x) AS x + 1"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a temporary replacing DuckDB macro name keeps its case",
+            sql: "create or replace temp macro add_one(x) as x + 1",
+            line_width: None,
+            dialect: Dialect::DuckDB,
+            expected_outcome: Ok("CREATE OR REPLACE TEMP macro add_one(x) AS x + 1"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a DuckDB table macro name keeps its case",
+            sql: "create macro first_rows(n) as table select * from t limit n",
+            line_width: None,
+            dialect: Dialect::DuckDB,
+            expected_outcome: Ok(
+                "CREATE macro first_rows(n) AS table SELECT\n  *\nFROM t\nLIMIT n",
             ),
         },
         test_types::FormatSqlTestCase {
@@ -100,7 +123,7 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             sql: "select t.*, count(*) c from t where x=1",
             line_width: None,
             dialect: Dialect::Snowflake,
-            expected_outcome: Ok("SELECT\n  t.*,\n  count(*) c\nFROM t\nWHERE x = 1"),
+            expected_outcome: Ok("SELECT\n  t.*,\n  COUNT(*) c\nFROM t\nWHERE x = 1"),
         },
         test_types::FormatSqlTestCase {
             description: "path and cast accessors stay touching",
