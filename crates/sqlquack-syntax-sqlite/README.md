@@ -38,13 +38,43 @@ follows `sqlquack-syntax-duckdb`.
 
   As in SQLite, these checks report their error only once the parser takes the next token. So a
   later syntax error wins over them when it falls on that token.
-- Nesting deeper than 1,000 levels fails with "the statement nests too deeply" (`syntax: false`),
-  never a stack overflow. SQLite's own limit is the same expression depth.
-- A statement whose tree is deeper than the shared AST depth guard (512 levels, as in the shared
-  parser) fails with the same error. This keeps trees within what recursive walkers such as
-  serde_json can handle on a 2 MiB stack. Some deep inputs that SQLite accepts are therefore
-  refused as a limit: about 255 nested derived tables or subqueries, or a flat chain of 512
-  operands.
+
+## Local parser limits
+
+Past these limits, parsing fails with "the statement nests too deeply" (`syntax: false`) instead of
+overflowing the stack. Some inputs that SQLite 3.53.4 accepts fall past them.
+
+| Shape, nested or chained | Parser accepts up to | sqlite3 3.53.4 accepts up to |
+|---|---|---|
+| Derived tables, `(SELECT * FROM (...))` | 255 | 415 |
+| Scalar subqueries, `(SELECT (SELECT ...))` | 255 | 498 |
+| `EXISTS` subqueries | 255 | 415 |
+| `IN` subqueries | 255 | 355 |
+| Subqueries holding a `UNION` | 170 | 355 |
+| `IN` lists, `1 IN (1 IN (...))` | 511 | 499 |
+| `CASE WHEN 1 THEN (CASE ...) END` | 511 | 498 |
+| Nested `WITH`, `WITH a AS (WITH a AS (...) ...)` | 511 | 498 |
+| `FILTER (WHERE count(*) FILTER (...))` | 511 | 356 |
+| Window `ORDER BY`, `count(*) OVER (ORDER BY count(*) OVER (...))` | 510 | 311 |
+| Flat chains of `AND`, `+` and similar | 511 operators | 999 operators |
+| Parentheses around one value | 511 | 2,493 |
+| Terms of a compound `SELECT` | 499 (SQLite's own check) | 499 |
+
+The parser's figures come from two limits: 1,000 levels of recursion and chained operators, and the
+shared AST depth guard of 512 tree levels. Each subquery level adds two or three tree levels.
+sqlite3's figures come from its 1,000-level expression depth (`SQLITE_MAX_EXPR_DEPTH`) and its
+parser's recursion limit ("Recursion limit", the depth of its LALR stack).
+
+Where the parser accepts more than sqlite3, it accepts statements that sqlite3 refuses with a limit
+error: nested `IN` lists, `CASE`, `WITH`, `FILTER` and window `ORDER BY` past sqlite3's figures above.
+These are known false accepts at depth. Everywhere else the parser refuses earlier than sqlite3.
+
+The tree-depth guard keeps trees within what recursive walkers, such as serde_json, can handle on a
+2 MiB stack. Without it, about 600 nested derived tables overflow such a stack.
+
+A depth probe checks the limits: 31 shapes at depths from 50 to 100,000, on 8 MiB and 2 MiB stacks,
+in debug and release builds. Each case is parsed and serialized in its own process. It found no
+crashes and no case slower than 1.2 s.
 
 ## Gaps
 
