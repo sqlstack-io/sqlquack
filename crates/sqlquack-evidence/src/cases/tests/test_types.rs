@@ -18,6 +18,12 @@ pub(crate) struct SourceSqlTestCase {
     pub(crate) expected_sql: &'static str,
 }
 
+pub(crate) struct RowOrdinalTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) row: usize,
+    pub(crate) expected_ordinal: Option<usize>,
+}
+
 pub(crate) struct RowSourceTestCase {
     pub(crate) description: &'static str,
     pub(crate) reference: &'static str,

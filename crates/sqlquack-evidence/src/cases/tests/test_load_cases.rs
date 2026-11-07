@@ -1,5 +1,9 @@
-use crate::cases::tests::helpers::{observed_problem, row_source_count, source_sql_of};
-use crate::cases::tests::test_types::{LoadTestCase, RowSourceTestCase, SourceSqlTestCase};
+use crate::cases::tests::helpers::{
+    observed_problem, row_source_count, row_source_ordinal, source_sql_of,
+};
+use crate::cases::tests::test_types::{
+    LoadTestCase, RowOrdinalTestCase, RowSourceTestCase, SourceSqlTestCase,
+};
 
 #[test]
 fn given_case_file_when_loading_then_format_and_policy_rules_are_enforced() {
@@ -264,6 +268,37 @@ fn given_multi_row_cases_when_loading_then_only_row_by_row_results_get_single_ro
         assert_eq!(
             row_source_count(test_case.reference, (test_case.replace, test_case.with)),
             test_case.expected_rows,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_query_selecting_the_ordinal_when_splitting_rows_then_each_row_keeps_its_ordinal() {
+    let test_cases = [
+        RowOrdinalTestCase {
+            description: "the first row alone is numbered 1",
+            row: 0,
+            expected_ordinal: Some(1),
+        },
+        RowOrdinalTestCase {
+            description: "the second row alone is numbered 2, as in the whole case",
+            row: 1,
+            expected_ordinal: Some(2),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            row_source_ordinal(
+                "string/concat.toml#sorted",
+                (
+                    "SELECT a FROM input ORDER BY a",
+                    "SELECT ordinal, a FROM input ORDER BY ordinal",
+                ),
+                test_case.row,
+            ),
+            test_case.expected_ordinal,
             "{}",
             test_case.description
         );
