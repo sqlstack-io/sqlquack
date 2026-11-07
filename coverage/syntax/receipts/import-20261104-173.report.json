@@ -1,0 +1,39 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO t1 FROM @s1 PARTITION BY 1 ;",
+   "sql_sha256": "51508c05655c1f9bf481dd78e14692dbc6b6dd09fc27c7dd085558965695751a"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO 'azure://a1.blob.core.windows.net/c1/p1/' FROM t1 CREDENTIALS = ( AZURE_SAS_TOKEN = 'm' ) PARTITION BY 1 ;",
+   "sql_sha256": "c6caf6ef219f5170cc13151c0dae037f6a96888901793ea50c35187879fc94e1"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "COPY INTO 's3://b1/p1/' FROM t1 ENCRYPTION = ( TYPE = 'AWS_SSE_S3' ) PARTITION BY 1 ;",
+   "sql_sha256": "cedab5995d6b2e5252a4523ad9fd6b1094d2b39a5a21a82dab337d726b6a19fd"
+  }
+ ],
+ "receipts": 3,
+ "receipts_file_sha256": "6ed7abd1412f9b4794804ade012c691ed7623fa8b12ebf92a729f4b4e36b3e12",
+ "reconciled_receipts": 0,
+ "refusals": [],
+ "refused": 0,
+ "runs": [
+  {
+   "audit_sha256": "dfa6acf5c621bf303d4627e30be014522e1b21c54d8feb644c2a3265b3d3b445",
+   "receipts": 3,
+   "refused_rows": 0,
+   "run_id": "cp145-ex-00",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": []
+}
