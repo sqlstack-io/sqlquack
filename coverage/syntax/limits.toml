@@ -5465,6 +5465,24 @@ expect = "observe"
 context = "raw"
 
 [[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "positive"
+note = "the nameless stage @ as the source, followed by FILES (observed)"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO t1 FROM @ FILES = ( 'a' ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "positive"
+note = "the table stage @% without a table name as the source, followed by FILES (observed)"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO t1 FROM @% FILES = ( 'a' ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
 form = "sf.transaction_session.alter-session.set-sessionparams"
 kind = "positive"
 note = "several parameters separated by commas (observed: the grammar separates them by blanks)"

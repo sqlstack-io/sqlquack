@@ -7586,6 +7586,20 @@ anchor = "doc.sql.copy-into-table / Syntax"
 note = "the user stage as the source, followed by FILES (observed)"
 
 [[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o728"
+kind = "positive"
+required = true
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "the nameless stage @ as the source, followed by FILES (observed)"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o729"
+kind = "positive"
+required = true
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "the table stage @% without a table name as the source, followed by FILES (observed)"
+
+[[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o700"
 kind = "required_operand_missing"
 required = true
