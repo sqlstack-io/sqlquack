@@ -18,6 +18,7 @@ const COSMETIC_FIELDS: &[&str] = &[
     "comments",
     "leading_comments",
     "pre_alias_comments",
+    "post_select_comments",
     "left_comments",
     "operator_comments",
     "right_comments",
@@ -194,11 +195,63 @@ pub(crate) fn integer_literal(node: &Value) -> Option<u64> {
 
 /// The tree conversion reads, positions stripped and quoted identifiers folded if case is ignored.
 pub(crate) fn session_tree(positioned: &Value, ignore_quoted_case: bool) -> Result<Value, String> {
-    let mut tree = strip_positions(positioned);
+    let mut tree = without_comment_wrappers(&strip_positions(positioned));
     if ignore_quoted_case {
         fold_quoted(&mut tree)?;
     }
     Ok(tree)
+}
+
+/// `value` with each node that only wrapped a comment replaced by the node it wrapped.
+fn without_comment_wrappers(value: &Value) -> Value {
+    unwrap_comments(value, false)
+}
+
+/// `value` with its comment wrappers unwrapped, its own kept if `keep_wrapper`.
+fn unwrap_comments(value: &Value, keep_wrapper: bool) -> Value {
+    match value {
+        Value::Object(fields) => match fields.get("annotated").and_then(Value::as_object) {
+            Some(annotated) if !keep_wrapper && fields.len() == 1 && annotated.len() == 1 => {
+                annotated
+                    .get("this")
+                    .map_or_else(|| value.clone(), without_comment_wrappers)
+            }
+            _ => Value::Object(
+                fields
+                    .iter()
+                    .map(|(key, field)| (key.clone(), unwrap_field(key, field)))
+                    .collect(),
+            ),
+        },
+        Value::Array(items) => Value::Array(items.iter().map(without_comment_wrappers).collect()),
+        other => other.clone(),
+    }
+}
+
+/// A node's field unwrapped; a SELECT keeps its select items' wrappers, which name their columns.
+fn unwrap_field(key: &str, field: &Value) -> Value {
+    match (key, field) {
+        ("select", Value::Object(clauses)) => Value::Object(
+            clauses
+                .iter()
+                .map(|(name, clause)| (name.clone(), unwrap_clause(name, clause)))
+                .collect(),
+        ),
+        _ => without_comment_wrappers(field),
+    }
+}
+
+/// A SELECT clause with comment wrappers unwrapped, except around the select items themselves.
+fn unwrap_clause(name: &str, clause: &Value) -> Value {
+    match (name, clause) {
+        ("expressions", Value::Array(items)) => Value::Array(
+            items
+                .iter()
+                .map(|item| unwrap_comments(item, true))
+                .collect(),
+        ),
+        _ => without_comment_wrappers(clause),
+    }
 }
 
 /// Upper-cases the name of each quoted identifier under `value`.

@@ -110,3 +110,41 @@ pub struct SnapshotDiff {
     /// Receipts the head cannot judge because no case or run report gives their SQL.
     pub unjudged_receipts: Vec<String>,
 }
+
+/// One focus form: its uses and how far it is.
+#[derive(Clone, Debug, PartialEq, Serialize)]
+pub struct FocusLine {
+    pub form: String,
+    pub uses: Vec<String>,
+    pub state: FormState,
+    pub required_obligations: usize,
+    pub satisfied_obligations: usize,
+    pub reasons: Vec<Reason>,
+}
+
+/// Focus forms counted together.
+#[derive(Clone, Debug, Default, PartialEq, Serialize)]
+pub struct FocusTally {
+    pub forms: usize,
+    pub verified: usize,
+    pub required_obligations: usize,
+    pub satisfied_obligations: usize,
+}
+
+/// `summary --focus`: the focus file's forms in work order, in total and by SQLBuild use.
+#[derive(Clone, Debug, PartialEq, Serialize)]
+pub struct FocusReport {
+    pub dialect: String,
+    pub sqlbuild_commit: String,
+    pub total: FocusTally,
+    pub by_use: BTreeMap<String, FocusTally>,
+    pub forms: Vec<FocusLine>,
+}
+
+/// The summary with its focus report, as `summary --focus --json` prints it.
+#[derive(Clone, Debug, PartialEq, Serialize)]
+pub struct FocusedSummary {
+    #[serde(flatten)]
+    pub summary: Summary,
+    pub focus: FocusReport,
+}

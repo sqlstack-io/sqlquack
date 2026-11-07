@@ -4,8 +4,8 @@ use std::path::{Path, PathBuf};
 
 use serde::de::DeserializeOwned;
 
+use crate::formats::_helpers::dialect::current_dialect;
 use crate::formats::_helpers::hashes::sha256_hex;
-use crate::formats::constants::FAMILIES;
 
 /// A file's text and the SHA-256 of its bytes.
 pub(crate) fn read_text(path: &Path) -> Result<(String, String), String> {
@@ -84,6 +84,7 @@ pub(crate) fn family_files(
     directory: &str,
     extension: &str,
 ) -> (Vec<(String, PathBuf)>, Vec<String>) {
+    let families: Vec<String> = current_dialect().families.clone();
     let (paths, others) = listed(&root.join(directory), extension);
     let mut problems: Vec<String> = others.iter().map(|path| stray(path, extension)).collect();
     let mut found: Vec<(String, PathBuf)> = Vec::new();
@@ -93,13 +94,13 @@ pub(crate) fn family_files(
             .and_then(|stem| stem.to_str())
             .unwrap_or_default()
             .to_owned();
-        if FAMILIES.contains(&stem.as_str()) {
+        if families.contains(&stem) {
             found.push((stem, path));
         } else {
             problems.push(format!("{directory}/{stem}.{extension}: names no family"));
         }
     }
-    for family in FAMILIES {
+    for family in families.iter() {
         if !found.iter().any(|(stem, _)| stem == family) {
             problems.push(format!("{directory}/{family}.{extension}: missing"));
         }

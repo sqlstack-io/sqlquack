@@ -3,12 +3,14 @@
 use std::collections::BTreeMap;
 use std::path::Path;
 
+use crate::formats::_helpers::dialect::{load_dialect, set_dialect};
 use crate::formats::_helpers::sections::{Sections, load_sections};
 use crate::formats::constants::MARK_DOCUMENTED;
 use crate::formats::models::{Case, Definition, Form, SyntaxCoverage};
 
-/// Every file under `root`, or every format problem found; nothing is skipped or defaulted.
+/// Every file under `root`, or every format problem; the root's dialect becomes this thread's.
 pub fn load_coverage(root: &Path) -> Result<SyntaxCoverage, Vec<String>> {
+    set_dialect(load_dialect(root)?);
     let sections: Sections = load_sections(root);
     let mut problems: Vec<String> = sections.problems();
     problems.extend(unmatched_marks(&sections));

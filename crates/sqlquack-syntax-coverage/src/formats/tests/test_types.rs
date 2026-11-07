@@ -45,3 +45,29 @@ pub(crate) struct RetireTestCase {
     pub(crate) expected_kept: usize,
     pub(crate) expected_problem: Option<&'static str>,
 }
+
+/// A tree with a dialect file, which must load as that dialect.
+pub(crate) struct DialectLoadTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) tree: fn(&Path),
+    pub(crate) expected_dialect: &'static str,
+    pub(crate) expected_families: &'static [&'static str],
+    pub(crate) expected_first_query_form: &'static str,
+    pub(crate) expected_engine_versions: &'static [Option<&'static str>],
+}
+
+/// A focus file loaded against a tree, and how many entries it must keep.
+pub(crate) struct FocusTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) tree: fn(&Path),
+    pub(crate) focus: &'static str,
+    pub(crate) expected_entries: usize,
+}
+
+/// A focus file loaded against a tree, and a fragment of the problem it must cause.
+pub(crate) struct FocusFaultTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) tree: fn(&Path),
+    pub(crate) focus: &'static str,
+    pub(crate) expected_problem: &'static str,
+}

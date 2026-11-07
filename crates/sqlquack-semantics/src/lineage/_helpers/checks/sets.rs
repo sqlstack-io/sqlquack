@@ -166,7 +166,9 @@ pub(crate) fn set_findings(
     };
     let findings: Vec<NameFinding> = match Engine::of(context) {
         Engine::Snowflake => snowflake_findings(query, branches, context),
-        Engine::DuckDB => duckdb_findings((query, operator), (left, right), branches, context),
+        engine @ (Engine::DuckDB | Engine::Postgres) => {
+            binder_findings((engine, query, operator), (left, right), branches, context)
+        }
     };
     let span = type_location(query);
     findings
@@ -175,8 +177,9 @@ pub(crate) fn set_findings(
         .collect()
 }
 
-fn duckdb_findings(
-    (query, operator): (&Expression, &str),
+/// DuckDB's and PostgreSQL's findings: column counts, then each column's families.
+fn binder_findings(
+    (engine, query, operator): (Engine, &Expression, &str),
     (left, right): (&Expression, &Expression),
     branches: Branches<'_, '_>,
     context: LineageContext<'_>,
@@ -207,13 +210,19 @@ fn duckdb_findings(
         .zip(right_families)
         .enumerate()
         .filter(|(index, (left_family, right_family))| {
-            !setop(Engine::DuckDB, *left_family, *right_family)
+            !setop(engine, *left_family, *right_family)
                 && !literal(left, *index, *right_family)
                 && !literal(right, *index, *left_family)
         })
         .map(|(index, (left_family, right_family))| {
             issue(
-                ("W214", TYPE_PHASE),
+                (
+                    match engine {
+                        Engine::DuckDB => "W214",
+                        _ => "E215",
+                    },
+                    TYPE_PHASE,
+                ),
                 format!(
                     "{operator} column {} has incompatible types: {} vs {}",
                     index + 1,
