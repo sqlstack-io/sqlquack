@@ -11,7 +11,7 @@ pub const CASE_ONLY_MATCH_HELP: &str = "Snowflake folds unquoted names to upper 
     the relation or column in the schema as the SQL resolves it (`ORDERS` for `FROM orders`), or \
     quote the name in the SQL to keep its case";
 /// The words of an unresolved name's reason when two result columns share a name.
-pub const REPEATED_RESULT_NAME: &str = "repeats, possibly differing only in case";
+pub const REPEATED_RESULT_NAME: &str = "repeats an earlier result column's name";
 /// The help for such a name, replacing SQ0004's own.
 pub const REPEATED_RESULT_NAME_HELP: &str =
     "give each result column its own alias, such as `SELECT 1 AS first, 1 AS second`";
@@ -178,8 +178,8 @@ pub const CODES: &[CodeEntry] = &[
             characters, and a converted query must return the same column names. SQLQuack emits \
             that name as an alias for the shapes recorded results verify: literals in any \
             spelling, columns, arithmetic, ||, comparisons, AND, OR, NOT, IS NULL, parentheses, \
-            casts, IFF, the clock functions and a recorded list of functions and aggregates, \
-            nested freely. Other items, such as CASE, paths, window functions, non-ASCII text, \
+            casts, CASE, IFF, the clock functions and a recorded list of functions and \
+            aggregates, nested freely. Other items, such as paths, window functions, non-ASCII text, \
             line comments or unlisted functions, are refused rather than converted under a name \
             that might differ. The help suggests the exact alias; an alias fixes the name in \
             both engines.",

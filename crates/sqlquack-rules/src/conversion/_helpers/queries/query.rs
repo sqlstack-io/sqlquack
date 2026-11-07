@@ -47,6 +47,15 @@ use sqlquack_semantics::types::models::ColumnSpec;
 
 /// The most characters Snowflake keeps of an unaliased item's text as its name, as recorded.
 const OUTPUT_NAME_MAX_CHARS: usize = 255;
+/// Why a repeated name is refused inside a subquery or CTE.
+pub(crate) const NESTED_REPEAT: &str =
+    "inside a subquery or CTE, where DuckDB renames the second column";
+/// Why a repeated name is refused where a clause could read it.
+const CLAUSE_REPEAT: &str = "where ORDER BY, GROUP BY, HAVING or QUALIFY could read either column, which no recording shows";
+/// Why a repeated name is refused where the converted SQL wraps the result.
+const WRAPPED_REPEAT: &str = "where the converted SQL wraps the result to write VARIANT or NULL columns, and DuckDB renames the second column";
+/// The SELECT clauses that could read a repeated result name.
+const NAME_READING_CLAUSES: [&str; 4] = ["order_by", "group_by", "having", "qualify"];
 /// The SELECT clauses this rule converts; anything else set on the node is refused.
 const SELECT_FIELDS: &[&str] = &[
     "expressions",
@@ -346,8 +355,26 @@ fn convert_select(
         })
         .collect();
     if named {
-        let outermost = !context.free_projections && outer.is_none();
-        require_distinct_names(&columns, outermost)?;
+        let refused_because = match !context.free_projections && outer.is_none() {
+            false => Some(NESTED_REPEAT),
+            true if NAME_READING_CLAUSES
+                .iter()
+                .any(|clause| select.get(*clause).is_some_and(|value| !value.is_null())) =>
+            {
+                Some(CLAUSE_REPEAT)
+            }
+            true if columns.iter().any(|column| {
+                matches!(
+                    column.data_type,
+                    SnowflakeType::SemiStructured | SnowflakeType::Null
+                )
+            }) =>
+            {
+                Some(WRAPPED_REPEAT)
+            }
+            true => None,
+        };
+        require_distinct_names(&columns, refused_because)?;
     }
     let grouped_all = match select.get("group_by").and_then(Value::as_object) {
         Some(group) if flag(group, "all") => group_all_positions(select).unwrap_or_default(),
@@ -572,7 +599,7 @@ pub(crate) fn convert_with<'a>(
                 })?;
                 quoted.push(quoted_identifier(&column.name, context.log));
             }
-            require_distinct_names(&columns, false)?;
+            require_distinct_names(&columns, Some(NESTED_REPEAT))?;
             column_list = format!("({})", quoted.join(", "));
         }
         parts.push(format!(
@@ -846,27 +873,30 @@ fn hidden_column(column: &ColumnSpec) -> bool {
     column.name == GENERATOR_SEQUENCE_COLUMN || column.name.starts_with(HIERARCHY_COLUMN_PREFIX)
 }
 
-/// Refuses result columns whose names repeat, which DuckDB would rename.
+/// Refuses repeated result names, exact repeats only for `refused_because`, which says why.
 pub(crate) fn require_distinct_names(
     columns: &[ColumnSpec],
-    outermost: bool,
+    refused_because: Option<&str>,
 ) -> Result<(), Refusal> {
     for (index, column) in columns.iter().enumerate() {
         let earlier = columns[..index]
             .iter()
             .find(|earlier| earlier.name.eq_ignore_ascii_case(&column.name));
         match earlier {
-            Some(earlier) if outermost && earlier.name == column.name => {}
-            Some(earlier) if earlier.name == column.name => {
-                return Err(unresolved(format!(
-                    "the result column name `{}` {REPEATED_RESULT_NAME} inside a subquery or CTE, \
-                     where DuckDB renames the second column `{}_1` and Snowflake keeps the name",
-                    column.name, column.name
-                )));
-            }
+            Some(earlier) if earlier.name == column.name => match refused_because {
+                None => {}
+                Some(reason) => {
+                    return Err(unresolved(format!(
+                        "the result column name `{}` {REPEATED_RESULT_NAME} {reason}; \
+                         Snowflake keeps both names, so alias one of them",
+                        column.name
+                    )));
+                }
+            },
             Some(_) => {
                 return Err(unresolved(format!(
-                    "the result column name `{}` {REPEATED_RESULT_NAME}",
+                    "the result column name `{}` {REPEATED_RESULT_NAME} in another case, which \
+                     DuckDB treats as the same name",
                     column.name
                 )));
             }
