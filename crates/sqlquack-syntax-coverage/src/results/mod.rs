@@ -1,4 +1,4 @@
-//! The result-matching translation measure (decision D139): recorded statements linked to forms.
+//! The result-matching translation measure: recorded statements linked to forms.
 
 pub(crate) mod _helpers;
 pub mod constants;

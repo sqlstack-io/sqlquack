@@ -154,15 +154,16 @@ DANGLING_CALL: re.Pattern[str] = re.compile(
 )
 ARITY_CLASS: str = "arity"
 ARITY_REASON: str = (
-    "D97 extension (auditor 11406dcd, coordinator): an omission that leaves a well-formed "
+    "Settle-rule extension (auditor 11406dcd): an omission that leaves a well-formed "
     "ordinary call, such as VAR_POP ( ) or BITXOR ( 1 ), is an arity error found when the "
     "function name is resolved, not a syntax error; withdrawn from the syntax score and kept "
     "as unscored observe cases in arity/<family>.jsonl"
 )
 ARGUMENT_CLASS_REASON: str = (
-    "D97: a whole argument of an ordinary function call is an <expr> to the parser, so a wrong "
+    "a whole argument of an ordinary function call is an <expr> to the parser, so a wrong "
     "class there (an identifier, literal or query where the page names another) is a type or "
-    "semantic question, not syntax, and is not lexically distinct under D82; class negatives "
+    "semantic question, not syntax, and is not lexically distinct under the "
+    "lexical-distinctness rule; class negatives "
     "stay where the slot is not an expression (keywords, types, @stage names, ON column lists, "
     "qualified-name parts, statement identifiers)"
 )
@@ -1621,7 +1622,7 @@ DEFINE_REFERENCE_ITEM: str = (
     r"(?:'[^']*'|(?:[A-Za-z_][A-Za-z0-9_$]*\.)*(?:\"[^\"]*\"|[A-Za-z_][A-Za-z0-9_$]*))"
 )
 OBSERVED_NEIGHBOUR_REASON: str = (
-    "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+    "the rejection renders SQL a hand row observes because Snowflake parses it"
 )
 EQUALS_TOKEN: str = "="
 DOT_TOKEN: str = "."

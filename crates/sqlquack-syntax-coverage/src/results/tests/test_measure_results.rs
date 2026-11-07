@@ -23,7 +23,7 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             expected_translatable: 12,
         },
         FormStateTestCase {
-            description: "refused for one recorded type: not matching (D139a)",
+            description: "refused for one recorded type: not matching",
             outcomes: &[
                 StatementOutcome::Matching,
                 StatementOutcome::Matching,

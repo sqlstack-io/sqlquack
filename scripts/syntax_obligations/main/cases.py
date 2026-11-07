@@ -79,7 +79,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         type=Path,
         action="append",
         default=[],
-        help="held-case list (JSON lines with case_id) whose cases run in a d103 run database",
+        help="held-case list (JSON lines with case_id) whose cases run in a run database",
     )
     parser.add_argument("--packet", type=Path, help="write the cases still to capture here")
     parser.add_argument(

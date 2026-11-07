@@ -1,5 +1,5 @@
 # How a recorded statement's constructs link to catalogue forms, for the result-matching measure
-# (decision D139). Function calls link by name to the function forms whose grammar calls that name
+#. Function calls link by name to the function forms whose grammar calls that name
 # in the same shape: a plain call, a call over a window, a call with named arguments, or a bare name
 # without parentheses. Each call's own shape decides, not the statement's. Some forms share a name and
 # a shape, so one call credits each of them: TRUNC's numeric and date forms, both GENERATOR forms

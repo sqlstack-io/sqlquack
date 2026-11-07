@@ -1,4 +1,4 @@
-//! What verify shows about each recorded statement, for the result-matching measure (D139).
+//! What verify shows about each recorded statement, for the result-matching measure.
 
 pub(crate) mod _helpers;
 pub mod constants;

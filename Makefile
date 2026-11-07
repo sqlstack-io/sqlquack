@@ -168,7 +168,7 @@ VERIFY_PYTHON ?= $(CURDIR)/.venv/bin/python
 COVERAGE_FLAGS := --coverage-json $(COVERAGE_REPORT) $(if $(filter 1,$(REQUIRE_COVERAGE)),--require-coverage,)
 
 # Verify also writes each recorded statement's translation outcome to TRANSLATION_STATEMENTS, which
-# `syntax-coverage results` links to catalogue forms (decision D139). It fails unless
+# `syntax-coverage results` links to catalogue forms. It fails unless
 # coverage/translation/results-baseline.json holds the measure exactly, and on any regression
 # against the baseline at RESULTS_BASE, the target branch.
 TRANSLATION_STATEMENTS ?= target/translation-statements.json

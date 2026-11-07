@@ -20,9 +20,9 @@ pub const RECEIPTS_DIR: &str = "receipts";
 pub const REVIEWS_DIR: &str = "reviews";
 /// Obligations Snowflake answers only with an internal error, one optional TOML file per family.
 pub const UNOBSERVABLE_DIR: &str = "unobservable";
-/// The catalogue's case marks, one optional JSON Lines file per family (decision D135).
+/// The catalogue's case marks, one optional JSON Lines file per family.
 pub const MARKS_DIR: &str = "marks";
-/// A case that follows its documentation against Snowflake's syntax error (D113).
+/// A case that follows its documentation against Snowflake's syntax error.
 pub const MARK_DOCUMENTED: &str = "documented (D113)";
 /// Every mark a case can carry.
 pub const MARKS: [&str; 3] = [

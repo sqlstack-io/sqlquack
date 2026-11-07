@@ -1,4 +1,4 @@
-//! Recorded statements, their links to catalogue forms, and the result-matching measure (D139).
+//! Recorded statements, their links to catalogue forms, and the result-matching measure.
 
 use std::collections::{BTreeMap, BTreeSet};
 

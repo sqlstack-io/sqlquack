@@ -380,7 +380,7 @@ whose value Snowflake would not need: a loud failure, never a different value.
 ### Comparing converted models with recorded results
 
 `sqlquack compare --manifest <file>` replays converted SQL on DuckDB and judges each result against a
-recording with the strict comparator (decision D101). The manifest is a JSON list of entries
+recording with the strict comparator. The manifest is a JSON list of entries
 `{id, recorded, database, sql, ordered}`: a recording's sidecar, beside its `.arrow` file; a DuckDB
 database attached read-only as `inputs`, holding the recorded inputs the SQL reads; the converted
 SQL file; and whether rows compare in order or as a bag. The sidecar must record `rows`, and the
