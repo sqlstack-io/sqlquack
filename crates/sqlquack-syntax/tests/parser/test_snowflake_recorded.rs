@@ -663,6 +663,42 @@ fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake
             expected_accepted: true,
         },
         AcceptanceTestCase {
+            description: "TIMESTAMP WITH TIME ZONE before a string is no literal (recorded errno 1003)",
+            sql: "SELECT TIMESTAMP WITH TIME ZONE '2026-01-02 03:04:05' AS v FROM input",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "TIMESTAMP(3) WITH TIME ZONE before a string is no literal (recorded errno 1003)",
+            sql: "SELECT TIMESTAMP(3) WITH TIME ZONE '2026-01-02 03:04:05' AS v FROM input",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "TIMESTAMP WITH LOCAL TIME ZONE before a string is no literal (recorded errno 1003)",
+            sql: "SELECT TIMESTAMP WITH LOCAL TIME ZONE '2026-01-02 03:04:05' AS v FROM input",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "TIMESTAMP(3) WITH LOCAL TIME ZONE before a string is no literal (recorded errno 1003)",
+            sql: "SELECT TIMESTAMP(3) WITH LOCAL TIME ZONE '2026-01-02 03:04:05' AS v FROM input",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "TIMESTAMP WITHOUT TIME ZONE before a string is no literal (recorded errno 1003)",
+            sql: "SELECT TIMESTAMP WITHOUT TIME ZONE '2026-01-02 03:04:05' AS v FROM input",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "TIMESTAMP(3) WITHOUT TIME ZONE before a string is no literal (recorded errno 1003)",
+            sql: "SELECT TIMESTAMP(3) WITHOUT TIME ZONE '2026-01-02 03:04:05' AS v FROM input",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
             description: "TIMESTAMP before a string is a literal (recorded)",
             sql: "SELECT TIMESTAMP '2026-01-02 03:04:05' AS v FROM input",
             dialect: Dialect::Snowflake,

@@ -800,6 +800,9 @@ impl Parser {
     }
 
     fn parse_primary_timestamp_literal(&mut self) -> Result<Expression> {
+        if let Some(error) = self.zoned_timestamp_literal_error() {
+            return Err(error);
+        }
         if let Some(literal) = self.try_parse_snowflake_parameterized_literal()? {
             return Ok(literal);
         }

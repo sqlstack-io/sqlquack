@@ -182,6 +182,48 @@ impl Parser {
         ))))
     }
 
+    /// Snowflake's syntax refusal of `TIMESTAMP [ ( n ) ] { WITH [ LOCAL ] | WITHOUT } TIME ZONE '...'`
+    /// in its faithful modes, at WITH, or at TIME after WITHOUT, where Snowflake stops.
+    pub(crate) fn zoned_timestamp_literal_error(&mut self) -> Option<Error> {
+        if !self.applies_snowflake_context_rules() {
+            return None;
+        }
+        let kind = |at: usize| self.tokens.get(at).map(|token| token.token_type);
+        let text_is = |at: usize, word: &str| {
+            self.tokens
+                .get(at)
+                .is_some_and(|token| token.text.eq_ignore_ascii_case(word))
+        };
+        let mut at = self.current + 1;
+        if kind(at) == Some(TokenType::LParen) {
+            if kind(at + 1) != Some(TokenType::Number) || kind(at + 2) != Some(TokenType::RParen) {
+                return None;
+            }
+            at += 3;
+        }
+        let (stop, zone, target) = if kind(at) == Some(TokenType::With) {
+            match kind(at + 1) == Some(TokenType::Local) {
+                true => (at, at + 2, "TIMESTAMP_LTZ"),
+                false => (at, at + 1, "TIMESTAMP_TZ"),
+            }
+        } else if text_is(at, "WITHOUT") {
+            (at + 1, at + 1, "TIMESTAMP_NTZ")
+        } else {
+            return None;
+        };
+        if !text_is(zone, "TIME") || !text_is(zone + 1, "ZONE") {
+            return None;
+        }
+        if kind(zone + 2) != Some(TokenType::String) {
+            return None;
+        }
+        self.current = stop;
+        Some(self.parse_error(format!(
+            "Snowflake has no TIMESTAMP literal with a time zone clause; cast the string instead, \
+             as '...'::{target} or TO_{target}('...')"
+        )))
+    }
+
     /// Snowflake's syntax refusal of a timestamp type name right before the string at `end`, at it.
     pub(crate) fn untyped_literal_error(&mut self, end: usize) -> Option<Error> {
         let name = self.peek_text().to_ascii_uppercase();
