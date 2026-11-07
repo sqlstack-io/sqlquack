@@ -19,18 +19,18 @@ use crate::expressions::schema_objects::models::FunctionSecurity;
 use crate::expressions::schema_objects::models::FunctionSetOption;
 use crate::expressions::schema_objects::models::FunctionSetValue;
 use crate::expressions::schema_objects::models::FunctionUsingResource;
+use crate::expressions::schema_objects::models::Grant;
+use crate::expressions::schema_objects::models::GrantPrincipal;
+use crate::expressions::schema_objects::models::Privilege;
+use crate::expressions::schema_objects::models::Revoke;
 use crate::expressions::schema_objects::models::SqlDataAccess;
 use crate::expressions::statements::models::Command;
 use crate::expressions::statements::models::Comment;
 use crate::expressions::statements::models::ExecuteParameter;
 use crate::expressions::statements::models::ExecuteStatement;
-use crate::expressions::statements::models::Grant;
-use crate::expressions::statements::models::GrantPrincipal;
 use crate::expressions::statements::models::Kill;
 use crate::expressions::statements::models::PrepareStatement;
-use crate::expressions::statements::models::Privilege;
 use crate::expressions::statements::models::Raw;
-use crate::expressions::statements::models::Revoke;
 use crate::expressions::statements::models::SetItem;
 use crate::expressions::statements::models::SetStatement;
 use crate::expressions::statements::models::UnsetStatement;
@@ -369,6 +369,9 @@ impl Parser {
             grant_option,
             as_principal,
             current_grants: None,
+            objects: Vec::new(),
+            granted_by: None,
+            options: Vec::new(),
         })))
     }
 
@@ -458,6 +461,9 @@ impl Parser {
             grant_option,
             cascade,
             restrict,
+            objects: Vec::new(),
+            granted_by: None,
+            options: Vec::new(),
         })))
     }
 

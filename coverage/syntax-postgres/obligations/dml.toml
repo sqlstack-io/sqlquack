@@ -2650,6 +2650,14 @@ depths = [
 note = "query operands nested; no documented bound"
 
 [[obligation]]
+id = "pg.dml.delete.o138"
+kind = "operand_type_class"
+required = true
+target = "{ OLD | NEW }"
+anchor = "doc.sql-delete / Synopsis"
+note = "NEW first in a two-item WITH list (gram.y returning_with_clause: WITH ( returning_options ), a list of returning_option_kind AS ColId in any order)"
+
+[[obligation]]
 id = "pg.dml.insert.o001"
 kind = "positive"
 required = true
@@ -5291,3 +5299,19 @@ depths = [
   8,
 ]
 note = "query operands nested; no documented bound"
+
+[[obligation]]
+id = "pg.dml.update.o182"
+kind = "operand_type_class"
+required = true
+target = "<sub-SELECT>"
+anchor = "doc.sql-update / Synopsis"
+note = "a sub-SELECT giving one value per listed column (gram.y set_clause: '(' set_target_list ')' '=' a_expr, with a sub-SELECT as the row source)"
+
+[[obligation]]
+id = "pg.dml.update.o183"
+kind = "operand_type_class"
+required = true
+target = "<sub-SELECT>"
+anchor = "doc.sql-update / Synopsis"
+note = "a sub-SELECT reading the updated row, with FROM and WHERE"

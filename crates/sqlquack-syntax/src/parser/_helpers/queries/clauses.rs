@@ -1418,6 +1418,7 @@ impl Parser {
             define,
             alias: None,
             alias_explicit_as: false,
+            options: Vec::new(),
         })))
     }
 

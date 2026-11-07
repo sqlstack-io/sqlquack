@@ -265,6 +265,7 @@ use crate::expressions::operators::models::IsJson;
 use crate::expressions::operators::models::IsNull;
 use crate::expressions::operators::models::IsTrueFalse;
 use crate::expressions::operators::models::JoinHint;
+use crate::expressions::operators::models::KeywordCall;
 use crate::expressions::operators::models::LambdaExpr;
 use crate::expressions::operators::models::Lateral;
 use crate::expressions::operators::models::LikeOp;
@@ -336,6 +337,7 @@ use crate::expressions::queries::models::Where;
 use crate::expressions::queries::models::WindowSpec;
 use crate::expressions::queries::models::With;
 use crate::expressions::queries::models::XmlNamespace;
+use crate::expressions::schema_objects::models::AlterDefaultPrivileges;
 use crate::expressions::schema_objects::models::AlterIndex;
 use crate::expressions::schema_objects::models::AlterObject;
 use crate::expressions::schema_objects::models::AlterSequence;
@@ -360,6 +362,9 @@ use crate::expressions::schema_objects::models::DropTrigger;
 use crate::expressions::schema_objects::models::DropType;
 use crate::expressions::schema_objects::models::DropView;
 use crate::expressions::schema_objects::models::ExecuteObject;
+use crate::expressions::schema_objects::models::Grant;
+use crate::expressions::schema_objects::models::GrantPrincipal;
+use crate::expressions::schema_objects::models::Revoke;
 use crate::expressions::statements::models::AddPartition;
 use crate::expressions::statements::models::AlterSession;
 use crate::expressions::statements::models::Analyze;
@@ -391,8 +396,6 @@ use crate::expressions::statements::models::DropPartition;
 use crate::expressions::statements::models::ExecuteStatement;
 use crate::expressions::statements::models::ExecuteUsingPolicyContext;
 use crate::expressions::statements::models::Get;
-use crate::expressions::statements::models::Grant;
-use crate::expressions::statements::models::GrantPrincipal;
 use crate::expressions::statements::models::Heredoc;
 use crate::expressions::statements::models::HistoricalData;
 use crate::expressions::statements::models::Insert;
@@ -415,7 +418,6 @@ use crate::expressions::statements::models::Raw;
 use crate::expressions::statements::models::RecursiveWithSearch;
 use crate::expressions::statements::models::Refresh;
 use crate::expressions::statements::models::ReplacePartition;
-use crate::expressions::statements::models::Revoke;
 use crate::expressions::statements::models::Rollback;
 use crate::expressions::statements::models::Schema;
 use crate::expressions::statements::models::ScriptingBlock;
@@ -441,6 +443,7 @@ use crate::expressions::statements::models::UnsetStatement;
 use crate::expressions::statements::models::Update;
 use crate::expressions::statements::models::Use;
 use crate::expressions::statements::models::UserDefinedFunction;
+use crate::expressions::statements::models::UtilityStatement;
 use crate::expressions::statements::models::Var;
 use crate::expressions::statements::models::Variadic;
 use crate::expressions::statements::models::Version;
@@ -826,6 +829,7 @@ pub enum Expression {
     IsTrue(Box<IsTrueFalse>),
     IsFalse(Box<IsTrueFalse>),
     IsJson(Box<IsJson>),
+    KeywordCall(Box<KeywordCall>),
     Is(Box<BinaryOp>),
     Exists(Box<Exists>),
     /// MySQL MEMBER OF operator: expr MEMBER OF(json_array)
@@ -1196,6 +1200,8 @@ pub enum Expression {
     Pragma(Box<Pragma>),
     Grant(Box<Grant>),
     Revoke(Box<Revoke>),
+    AlterDefaultPrivileges(Box<AlterDefaultPrivileges>),
+    UtilityStatement(Box<UtilityStatement>),
     Comment(Box<Comment>),
     SetStatement(Box<SetStatement>),
     UnsetStatement(Box<UnsetStatement>),

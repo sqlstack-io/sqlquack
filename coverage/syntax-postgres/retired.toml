@@ -3574,3 +3574,21 @@ ids = [
   "pg.ddl.create-publication.o046",
   "pg.ddl.create-publication.o047",
 ]
+
+[[retired]]
+retired_in = "0261a05d23c9a00ead1f4df22425fd741c0b8b26"
+reason = "the json_array reading now makes the query signature's query_expression required (gram.y json_array: JSON_ARRAY '(' select_no_parens ...; batch-29 review), so its option_present, option_absent and operand obligations of [ <query_expression> ] are gone; the query line's obligations are issued under new ids"
+ids = [
+  "pg.functions.json.json-array.o027",
+  "pg.functions.json.json-array.o028",
+  "pg.functions.json.json-array.o029",
+]
+
+[[retired]]
+retired_in = "0261a05d23c9a00ead1f4df22425fd741c0b8b26"
+reason = "XMLNAMESPACES' namespace_uri is a text expression, not an identifier (gram.y xml_namespace_el: b_expr AS ColLabel; batch-29 review), so its identifier-class obligations are gone; the placeholder is now filled with a string and checked as an expression under new ids"
+ids = [
+  "pg.functions.xml.xmltable-passing-columns.o005",
+  "pg.functions.xml.xmltable-passing-columns.o058",
+  "pg.functions.xml.xmltable-passing-columns.o059",
+]

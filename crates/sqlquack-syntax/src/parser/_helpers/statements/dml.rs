@@ -146,6 +146,8 @@ impl Parser {
         };
 
         Ok(Expression::Delete(Box::new(Delete {
+            using_items: Vec::new(),
+            using_joins: Vec::new(),
             table,
             hint,
             on_cluster,
@@ -164,6 +166,8 @@ impl Parser {
             joins,
             force_index,
             no_from: !_has_from,
+            current_of: None,
+            returning_aliases: Vec::new(),
         })))
     }
 
@@ -671,6 +675,7 @@ impl Parser {
             };
 
             let insert_expr = Expression::Insert(Box::new(Insert {
+                column_targets: Vec::new(),
                 table: table_ref,
                 columns,
                 values,
@@ -698,6 +703,8 @@ impl Parser {
                 function_target: None,
                 partition_by: None,
                 settings: Vec::new(),
+                overriding: None,
+                returning_aliases: Vec::new(),
             }));
 
             let conditional_insert = Expression::ConditionalInsert(Box::new(ConditionalInsert {

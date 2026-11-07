@@ -130,6 +130,7 @@ impl Parser {
                 let (first_last, first_last_alias) = self.parse_snowflake_join_first_last()?;
 
                 joins.push(Join {
+                    using_alias: None,
                     this: table,
                     on,
                     using,

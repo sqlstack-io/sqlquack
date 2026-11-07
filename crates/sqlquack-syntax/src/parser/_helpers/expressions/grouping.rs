@@ -762,6 +762,7 @@ impl Parser {
             whens: whens.map(Box::new),
             with_: None,
             returning: returning.map(Box::new),
+            returning_aliases: Vec::new(),
         }))))
     }
 

@@ -1491,6 +1491,7 @@ impl Parser {
                     inferred_type: None,
                 }));
             return Ok(TableRef {
+                sample_call: None,
                 catalog: None,
                 schema: None,
                 name: Identifier::empty(),
@@ -1510,6 +1511,7 @@ impl Parser {
                 changes: None,
                 version: None,
                 span: None,
+                whole_quoted: false,
             });
         }
 
@@ -1521,6 +1523,7 @@ impl Parser {
                 let table = self.parse_bigquery_table_part()?;
                 let trailing_comments = self.previous_trailing_comments().to_vec();
                 Ok(TableRef {
+                    sample_call: None,
                     catalog: Some(first),
                     schema: Some(Identifier::new("")),
                     name: table,
@@ -1540,6 +1543,7 @@ impl Parser {
                     changes: None,
                     version: None,
                     span: None,
+                    whole_quoted: false,
                 })
             } else {
                 let table = self.parse_bigquery_table_part()?;
@@ -1547,6 +1551,7 @@ impl Parser {
                     let actual_table = self.parse_bigquery_table_part()?;
                     let trailing_comments = self.previous_trailing_comments().to_vec();
                     Ok(TableRef {
+                        sample_call: None,
                         catalog: Some(first),
                         schema: Some(table),
                         name: actual_table,
@@ -1566,10 +1571,12 @@ impl Parser {
                         changes: None,
                         version: None,
                         span: None,
+                        whole_quoted: false,
                     })
                 } else {
                     let trailing_comments = self.previous_trailing_comments().to_vec();
                     Ok(TableRef {
+                        sample_call: None,
                         catalog: None,
                         schema: Some(first),
                         name: table,
@@ -1589,12 +1596,14 @@ impl Parser {
                         changes: None,
                         version: None,
                         span: None,
+                        whole_quoted: false,
                     })
                 }
             }
         } else {
             let trailing_comments = self.previous_trailing_comments().to_vec();
             Ok(TableRef {
+                sample_call: None,
                 catalog: None,
                 schema: None,
                 name: first,
@@ -1614,6 +1623,7 @@ impl Parser {
                 changes: None,
                 version: None,
                 span: None,
+                whole_quoted: false,
             })
         }
     }

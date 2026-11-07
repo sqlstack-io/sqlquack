@@ -1498,6 +1498,8 @@ impl Parser {
             cascade,
             restrict,
             force,
+            objects: Vec::new(),
+            concurrently: false,
         })))
     }
 

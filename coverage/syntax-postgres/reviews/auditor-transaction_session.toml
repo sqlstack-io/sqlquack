@@ -1,0 +1,140 @@
+# Approvals by the independent syntax auditor. Each listed form was read in full against its
+# PostgreSQL 18.6 documentation, its obligations, its cases with their PostgreSQL 18.6 receipts, and the
+# local parse trees. An approval holds while the form's definition hash and fingerprint are unchanged;
+# any change makes it stale until re-read. Entries are copied verbatim from the auditor's records on
+# wip/syntax-omission-audit (coverage/syntax/audits/pg-review-*.toml).
+
+[[review]]
+id = "pg-auditor-transaction_session-001"
+reviewer_lane = "auditor"
+family = "transaction_session"
+parser_tree = "06bb147f9101958773446552ee7dc06decf018d2"
+reviewed_utc = "2026-11-06T17:14:36Z"
+verdict = "approved"
+forms = [
+  "pg.transaction_session.abort",
+  "pg.transaction_session.begin",
+  "pg.transaction_session.commit",
+  "pg.transaction_session.commit-prepared",
+  "pg.transaction_session.datatype-xml.set-xml-option",
+  "pg.transaction_session.discard",
+  "pg.transaction_session.end",
+  "pg.transaction_session.lock",
+  "pg.transaction_session.prepare-transaction",
+  "pg.transaction_session.release-savepoint",
+  "pg.transaction_session.reset.all",
+  "pg.transaction_session.reset.configuration-parameter",
+  "pg.transaction_session.rollback",
+  "pg.transaction_session.rollback-prepared",
+  "pg.transaction_session.rollback-to-savepoint",
+  "pg.transaction_session.savepoint",
+  "pg.transaction_session.set-constraints",
+  "pg.transaction_session.set-role.reset-role",
+  "pg.transaction_session.set-role.role-name",
+  "pg.transaction_session.set-role.set-role-none",
+  "pg.transaction_session.set-session-authorization.reset-session-authorization",
+  "pg.transaction_session.set-session-authorization.set-session-authorization-default",
+  "pg.transaction_session.set-session-authorization.user-name",
+  "pg.transaction_session.set-transaction.session-characteristics-as-transaction",
+  "pg.transaction_session.set-transaction.transaction",
+  "pg.transaction_session.set-transaction.transaction-snapshot",
+  "pg.transaction_session.set.configuration-parameter",
+  "pg.transaction_session.set.names",
+  "pg.transaction_session.set.schema",
+  "pg.transaction_session.set.time-zone",
+  "pg.transaction_session.show.all",
+  "pg.transaction_session.show.name",
+  "pg.transaction_session.start-transaction",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 06bb147f; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.transaction_session.abort" = "2a139cdf9a49985205d727f098917c2a4b9bc42b43a0c4021b98f96b89f26dec"
+"pg.transaction_session.begin" = "4868f6f127b714d49e5982da278bc8caf57d6eb4feb9b1744ae8a8e27f3260e3"
+"pg.transaction_session.commit" = "0459ff444a68c62234aab67ae6d986d16d60c15aba293b0b3d1307621b7a79fe"
+"pg.transaction_session.commit-prepared" = "408fc76a1ea30084ddfa883e16e9812a2a0e93810258baae091373ea7d264e56"
+"pg.transaction_session.datatype-xml.set-xml-option" = "312da8aad387497baef52847de0598c1029dabade524e51c0e869547026b95eb"
+"pg.transaction_session.discard" = "d3513259dfa017bc06ac98e4f250d20f608283e87e790630c43f67bc1af4fa96"
+"pg.transaction_session.end" = "43253e4555cb13def4b07e6ae82d67ba577a458667f70bf395c43bc946ef2535"
+"pg.transaction_session.lock" = "93ae2db9e98a8712da7cda182891efdd2fab21f4705687acdd15ae6bf66fe2e1"
+"pg.transaction_session.prepare-transaction" = "2e67c4002b2be5b964c5a097321cfaf4f7a84ad2706fb01c7f00f2208ca09cc9"
+"pg.transaction_session.release-savepoint" = "a695f7695d023abd858f3592ce75f46647f9cf9d666e7f7057296ccf616bf843"
+"pg.transaction_session.reset.all" = "6f4e04e26cdb3fc39f21250abd08b91052c38d15739527c7da76d13c7072116b"
+"pg.transaction_session.reset.configuration-parameter" = "338d06033bd54e1088dd7a8f44f3b28dde6d7a91d3b3d3ec4f3ae3c629e24c04"
+"pg.transaction_session.rollback" = "ab926040acfa1000723e329be1fcacbe5cd93753284e7ae5633f5201a9c9036c"
+"pg.transaction_session.rollback-prepared" = "31c353d7f00f23b81030df23b9a243378f3b6c362c5a5cf6e8f4c24faf4862dd"
+"pg.transaction_session.rollback-to-savepoint" = "85e676cdaf98379d2441b28b697e227dd67d51cebf8e0a819d81013a441d11fa"
+"pg.transaction_session.savepoint" = "e3724b3cff1e1e21d9923c60f1c239200827b03f07c619e9dad2ded9629c1d7f"
+"pg.transaction_session.set-constraints" = "cd4e816f45246cf19e515035481802ddebfd9601f9f38848fc3fd2518de541f7"
+"pg.transaction_session.set-role.reset-role" = "6d54a32dc1e6e1efe83b265f3b0c9c063acaadfca8a79eec6090da82333ca690"
+"pg.transaction_session.set-role.role-name" = "4f8953fbf5b6964c58fc9d2627dbfb3ea3113843038de0e53ba4c6ead60f6536"
+"pg.transaction_session.set-role.set-role-none" = "593607e1135f7cafcea0b9b9c83cf0fac5607bd6870b74acdfc32eb65dfbf3fd"
+"pg.transaction_session.set-session-authorization.reset-session-authorization" = "02e0f9bc6637e6968a10c5b349c9932dbd0d18b0252f85430a8768f23650bf9a"
+"pg.transaction_session.set-session-authorization.set-session-authorization-default" = "d8a95b0f15f5ef58104ba2d3010c80e59ce800daed190927f40426e8b156a250"
+"pg.transaction_session.set-session-authorization.user-name" = "b4e6eb36cbf41f9b8b273b4a4871cede8ba02020c86e1f5b4c023a7db12db7a2"
+"pg.transaction_session.set-transaction.session-characteristics-as-transaction" = "0e47b7f6bdfcb172429dafed6a2fb8db0c52ab14c6e32077117e7defdf5bb1a9"
+"pg.transaction_session.set-transaction.transaction" = "c4abd9d592aac2b1b00875910a4b7ecbbcd2322054fa81f0bfbdddb5cb06d53f"
+"pg.transaction_session.set-transaction.transaction-snapshot" = "c507adde61bd16834f793d2b2e549f9108627054a31235f74e487337381e48a6"
+"pg.transaction_session.set.configuration-parameter" = "4ffc70b0e240868e5056ca25dc314347032de152e04cb26bb20754f2aa397e65"
+"pg.transaction_session.set.names" = "8cff73a97a7f5ba38ff9fcd4d04916c4c8fd3bf5c829152c5b0b08445c1798ee"
+"pg.transaction_session.set.schema" = "7660b09fb226bf2de9c35e5c67b9c0be8410b71664602dd14761eedf5e3a2b71"
+"pg.transaction_session.set.time-zone" = "c7818ae9f80ab6c979159d6bd40135a21fb80ab061e85fe065a3e60fdebff967"
+"pg.transaction_session.show.all" = "f53c552fa3f015e1f5c7f98bee1c15269c2b33bd48654c3315fd51313350e118"
+"pg.transaction_session.show.name" = "cb44038c8eb365819f9dcc34e37025c434dfbd0dd8d60e7637790f24364504f8"
+"pg.transaction_session.start-transaction" = "4d2d7251c753ce9bdd74bae07b72dc798b2e46ec08f28bc8496ad346f555168d"
+
+[review.definitions]
+"pg.transaction_session.abort" = "d60d1dbaa287b29dbf97ee1a4b4594ed26753b6de98e0879ee0f9ca266905273"
+"pg.transaction_session.begin" = "bb1943866bca3a532b6007b2d3498c2c7a921eed3f6c1a5e9fcd8eda216021c0"
+"pg.transaction_session.commit" = "263f45674278e8e0c5045b4461924dded04bc64871215f6c9a4f60ed817e6a2b"
+"pg.transaction_session.commit-prepared" = "98711f82b99d6e78e92591a5df1b5d046427cd4608e2a7e57d56b6d22e3f40dc"
+"pg.transaction_session.datatype-xml.set-xml-option" = "6dacb5507df91aa74c2d4e3ad65793f2384031c190c4998e94fccaaf31a6fbfe"
+"pg.transaction_session.discard" = "9f6f372f47b5d5edeeee05c04760d44edaa9e33447caf341c8cc54c0eb309ced"
+"pg.transaction_session.end" = "614f0b317929a609f29a2ebf11679c05307a4156717c32fcddbf8888cb6f03aa"
+"pg.transaction_session.lock" = "5e3650598daea9b6a9854a268458676df9c362103cb76337eabdcce1064920bf"
+"pg.transaction_session.prepare-transaction" = "b1e61a190ba9dc20cd1e3f5a160008aaa9786c8cd29e2452d112e43b68392e80"
+"pg.transaction_session.release-savepoint" = "b6e97880540bb41f2b147e2be949b4695b02759bdfc0451efaa01da32054f634"
+"pg.transaction_session.reset.all" = "db79a2b461db9587b71805ed9f6459b912c0c77b2f217c868f7ff73b629650f4"
+"pg.transaction_session.reset.configuration-parameter" = "72ba60869aaa1ae205182a6dd429f4e90fb1e022e5201d56f10868b412fe159f"
+"pg.transaction_session.rollback" = "91a647794f0afad3292de1ba797eb37a847f5e12d842011bb3b8b682b48c079d"
+"pg.transaction_session.rollback-prepared" = "81209d831d129522603282cf52a419eb04b6ea847df679bbb5e93f0fed684ef4"
+"pg.transaction_session.rollback-to-savepoint" = "b6e3fe465541a249bcd9a2d8c4fc881065034725ae708b0e0a4e8a8fa2173351"
+"pg.transaction_session.savepoint" = "d07bf920eda250c34619a3b8905b9fd9c7fd96678d218cbe6c8826a0de124d2d"
+"pg.transaction_session.set-constraints" = "f2ec711dfd655eb3eeb9b41a251d2637d49a8baa84f15189bb492d3c889480c8"
+"pg.transaction_session.set-role.reset-role" = "6aca28febd1b997a2d846e0a3c8b7cdc8046fc86b312663e8994a2821797787f"
+"pg.transaction_session.set-role.role-name" = "455e2d691a0b73d34dd8eb3f9826d6255713fddc2a6a823264be20e602001cd0"
+"pg.transaction_session.set-role.set-role-none" = "191c6e1b2521f50f66eeae521944470a2b9ac1aaf3d5ed86e64439f637cde058"
+"pg.transaction_session.set-session-authorization.reset-session-authorization" = "11c4ebf59926070e2546093d84aa7caca01b5cc41fc387ecbcf02072bc84ac3f"
+"pg.transaction_session.set-session-authorization.set-session-authorization-default" = "4aad10e5bf161bdc596dbb90bb452bbef1df623bb6629762061be8290ce31760"
+"pg.transaction_session.set-session-authorization.user-name" = "bd44c8d19a38645ce88e1737037ae4eac06a7a4da79db32c0ac3111e001575b7"
+"pg.transaction_session.set-transaction.session-characteristics-as-transaction" = "037041901f96e2a961265bdbc39be12e6294366a0161af63621c86f9df8855f1"
+"pg.transaction_session.set-transaction.transaction" = "7fea461a9c3bda453100e748cb58d87cc9e0763a583d32306fc8b82f5215bf40"
+"pg.transaction_session.set-transaction.transaction-snapshot" = "d552c920ccf22564984f6fca9cac46e6d38dc6dc7c21f2e511b3a90b3061e817"
+"pg.transaction_session.set.configuration-parameter" = "f47228511606724cb5937d5bbcddc4e473e73243a7bc85cb7c2b78f3f74b7915"
+"pg.transaction_session.set.names" = "9926f91ef170adb2d3825ec56d9d416fa7ec0300524862a9a8f1c11aacca311a"
+"pg.transaction_session.set.schema" = "52bdff57e9811baeae45a37eb9a09964c8b1020c390f9595d331ae3a76698d1e"
+"pg.transaction_session.set.time-zone" = "e42bc1c4c56b0c1b779decd1d769a205597841c3af7c4dd42ee69459f3545d2b"
+"pg.transaction_session.show.all" = "19ae38233a93adac1c756965b6e9e89044b43293db14eea0e68ea1134b10c124"
+"pg.transaction_session.show.name" = "3b461f0c7da279ce45d5e342709f679943dc290d65a1921a1ab0fc4b11fb4299"
+"pg.transaction_session.start-transaction" = "627460bbde90f08d64fe4a75c1142409076c75266e9a22b9ec2af7d039379110"
+
+[[review]]
+id = "pg-auditor-transaction_session-002"
+reviewer_lane = "auditor"
+family = "transaction_session"
+parser_tree = "f2372a18396b91d6573c5252d00bcec9315e56e5"
+reviewed_utc = "2026-11-06T21:57:37Z"
+verdict = "approved"
+forms = [
+  "pg.transaction_session.release-savepoint",
+  "pg.transaction_session.rollback-to-savepoint",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree f2372a18; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.transaction_session.release-savepoint" = "5315aa4b96d777e00130b6649e7c87ea53d94b78a9f5fa8194fffc0607ec0bd3"
+"pg.transaction_session.rollback-to-savepoint" = "a6d9b95efb15f9c40b5fb534eed0d29667d602ec7e70a2783d1c8e6c11e4acd5"
+
+[review.definitions]
+"pg.transaction_session.release-savepoint" = "b04a5ea647a6d26916026421fcced45fffa9cb7fe878fff711f8365cd1588913"
+"pg.transaction_session.rollback-to-savepoint" = "d5efd23a63200d5a93639f6b31cb6e0498a3e56c223312c8edde2f9fa26805b2"
