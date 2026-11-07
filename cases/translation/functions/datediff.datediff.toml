@@ -191,3 +191,17 @@ rows = [
 query = "SELECT ordinal, DATEDIFF(week, a, b) AS w, DATEDIFF(hour, a, b) AS h, DATEDIFF(minute, a, b) AS mi, DATEDIFF(second, a, b) AS s, DATEDIFF(millisecond, a, b) AS ms FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination", "boundary"]
+
+[[case]]
+id = "t016_coalesce_local_submicro"
+description = "t014's shape with naive ends a tenth of a microsecond and a microsecond before midnight: the naive branch joins the local one as a TIMESTAMP_LTZ(9) keeping its nanoseconds. Catches: the naive branch rounded to microseconds, which moves 23:59:59.9999999 to the next day"
+columns = [{ name = "a", type = "TIMESTAMP_NTZ" }, { name = "c", type = "TIMESTAMP_NTZ" }, { name = "b", type = "TIMESTAMP_LTZ" }]
+rows = [
+  ["'2024-05-01 08:00:00'", "'2024-05-03 23:59:59.9999999'", "'2024-05-10 00:00:00 +00:00'"],
+  ["'2024-05-01 08:00:00'", "'2024-05-03 23:59:59.999999'", "'2024-05-10 00:00:00 +00:00'"],
+  ["'2024-05-01 08:00:00'", "NULL", "'2024-05-10 00:00:00 +00:00'"],
+]
+query = "SELECT ordinal, DATEDIFF('day', a, COALESCE(c, b)) AS d, DATEDIFF('hour', a, COALESCE(c, b)) AS h FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination", "boundary"]
+expected_divergence = "timestamp_tz_submicro"
