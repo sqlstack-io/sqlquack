@@ -215,6 +215,12 @@ fn given_a_snowflake_query_when_checking_built_in_calls_and_types_then_definite_
             expected_findings: &[],
         },
         QueryFindingsTestCase {
+            description: "a timestamp against a date string with a comment after it converts",
+            sql: "SELECT cutoff FROM shipments WHERE shipped_at >= '2026-10-03' /* c */ \
+                  AND shipped_at < '2026-10-04' -- c\n",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
             description: "a number plus text, which Snowflake converts",
             sql: "SELECT id + status AS d FROM orders",
             expected_findings: &[],
