@@ -291,6 +291,33 @@ pre {
 	letter-spacing: -0.015em;
 }
 
+.dialects {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 10px;
+	margin: 16px 0 0;
+	color: var(--muted-foreground);
+	font-size: 15px;
+}
+
+.dialects-label {
+	color: var(--faint);
+	font-size: 13px;
+	font-weight: 550;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.dialect {
+	padding: 2px 10px;
+	border: 1px solid var(--inner-line);
+	border-radius: 999px;
+	background: var(--accent-soft);
+	color: var(--foreground);
+	font-weight: 550;
+}
+
 .lede {
 	max-width: 62ch;
 	margin: 20px 0 0;
