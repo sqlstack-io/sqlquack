@@ -173,6 +173,12 @@ fn given_unaliased_expressions_from_the_receipts_when_run_on_duckdb_then_they_ta
             expected_names: vec![LONG_NAME.to_owned()],
         },
         ColumnNameTestCase {
+            description: "a comment after an unaliased item is dropped from its name, as recorded",
+            sql: "SELECT 1 -- trailing comment\n, 1.5 /* c */, TRUE -- c\n, x -- c\nFROM (SELECT 1 AS x) AS input",
+            flags: &[],
+            expected_names: names(&["1", "1.5", "TRUE", "X"]),
+        },
+        ColumnNameTestCase {
             description: "a name repeated in the outermost query is kept twice, as Snowflake keeps it",
             sql: "SELECT x, x FROM (SELECT 1 AS x) AS input UNION ALL SELECT 2, 3",
             flags: &[],

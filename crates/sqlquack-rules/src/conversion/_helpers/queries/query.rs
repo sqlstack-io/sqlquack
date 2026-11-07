@@ -47,6 +47,8 @@ use sqlquack_semantics::types::models::ColumnSpec;
 
 /// The most characters Snowflake keeps of an unaliased item's text as its name, as recorded.
 const OUTPUT_NAME_MAX_CHARS: usize = 255;
+/// Why a name written straight after a number, which Snowflake rejects, is refused.
+const GLUED_ALIAS: &str = "a name written straight after a number, such as 0x1F, which Snowflake rejects as a syntax error";
 /// Why a repeated name is refused inside a subquery or CTE.
 pub(crate) const NESTED_REPEAT: &str =
     "inside a subquery or CTE, where DuckDB renames the second column";
@@ -638,19 +640,8 @@ fn convert_projection(
             let _rule = site.context.log.rule(COMMENT);
             let annotated = payload_object(payload, &construct)?;
             require_understood(annotated, &["this", "trailing_comments"], &construct)?;
-            let this = field(annotated, "this", &construct)?;
-            match node_kind(this) {
-                Some((kind, _)) if named && !matches!(kind, "star" | "alias" | "column") => {
-                    let refusal = missing(
-                        Construct::new(ConstructFamily::Syntax, UNALIASED_OUTPUT_NAME_CONSTRUCT),
-                        format!(
-                            "Snowflake names this `{kind}` column after its text, comment included"
-                        ),
-                    );
-                    Err(site.context.locator.placed(refusal, this))
-                }
-                _ => convert_projection(this, site, named),
-            }
+            convert_projection(field(annotated, "this", &construct)?, site, named)
+                .map_err(|refusal| site.context.locator.placed(refusal, item))
         }
         Some(("alias", payload)) => {
             let _rule = site.context.log.rule(ALIAS);
@@ -659,7 +650,14 @@ fn convert_projection(
             require_understood(alias, &["this", "alias"], &construct)?;
             let name = identifier_name(field(alias, "alias", &construct)?)
                 .ok_or_else(|| missing(construct.clone(), "an alias has no name".to_owned()))?;
-            let emitted = convert_held(field(alias, "this", &construct)?, site)?;
+            let this = field(alias, "this", &construct)?;
+            if glued_to_number(site.context.locator.source_text(item).as_deref(), this) {
+                return Err(site
+                    .context
+                    .locator
+                    .placed(outside_conditions(construct, GLUED_ALIAS.to_owned()), item));
+            }
+            let emitted = convert_held(this, site)?;
             Ok(vec![(Some(name), emitted)])
         }
         Some(("column", payload)) => {
@@ -699,6 +697,23 @@ fn convert_projection(
             "a select item has an unexpected shape".to_owned(),
         )),
     }
+}
+
+/// Whether the alias item written as `written` follows its number `this` with no space, as `0x1F`.
+fn glued_to_number(written: Option<&str>, this: &Value) -> bool {
+    let Some(("literal", payload)) = node_kind(this) else {
+        return false;
+    };
+    let value = payload
+        .get("value")
+        .and_then(Value::as_str)
+        .unwrap_or_default();
+    payload.get("literal_type").and_then(Value::as_str) == Some(LITERAL_NUMBER)
+        && !value.is_empty()
+        && written
+            .and_then(|written| written.strip_prefix(value))
+            .and_then(|rest| rest.chars().next())
+            .is_some_and(|next| next.is_ascii_alphabetic() || next == '_')
 }
 
 /// Snowflake's name for an unaliased item written as `text`: it upper-cased, cut at 255 characters.
