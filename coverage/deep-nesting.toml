@@ -1,0 +1,434 @@
+# Deep-nesting failures the depth probe tolerates until their owners fix them.
+#
+# `syntax-coverage depth-probe` parses every construct at each ladder depth on a 2 MiB thread, in
+# every native parser, and fails on a crash, panic or 15 s timeout no entry here names, and on an
+# entry whose construct no longer fails. A parser is fit for in-process use (native routes, lint,
+# the formatter) only once it has no entry. Each fix removes its own entries in the same change;
+# each new parser adds its entries, or its depth fix, in the change that links it.
+#
+# `depth` is the shallowest ladder depth that fails; `profile` is the Cargo profile probed: `gate`
+# in check-ci, `dev` in `make depth-probe-debug`.
+
+[[known_failures]]
+parser = "snowflake"
+construct = "type_suffix"
+profile = "gate"
+depth = 100000
+failure = "crash"
+owner = "sqlquack-syntax: Snowflake parser"
+
+[[known_failures]]
+parser = "snowflake"
+construct = "type_suffix_sized"
+profile = "gate"
+depth = 100000
+failure = "crash"
+owner = "sqlquack-syntax: Snowflake parser"
+
+[[known_failures]]
+parser = "snowflake"
+construct = "column_type_suffix"
+profile = "gate"
+depth = 100000
+failure = "crash"
+owner = "sqlquack-syntax: Snowflake parser"
+
+[[known_failures]]
+parser = "snowflake"
+construct = "flat_plus"
+profile = "gate"
+depth = 100000
+failure = "crash"
+owner = "sqlquack-syntax: shared tree serialisation and drop"
+
+[[known_failures]]
+parser = "postgres"
+construct = "from_parentheses"
+profile = "gate"
+depth = 1000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "from_parenthesised_join"
+profile = "gate"
+depth = 1000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "from_subquery"
+profile = "gate"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "scalar_subquery"
+profile = "gate"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "exists_subquery"
+profile = "gate"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "in_subquery"
+profile = "gate"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "parenthesised_query"
+profile = "gate"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "parenthesised_set_operation"
+profile = "gate"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "nested_with"
+profile = "gate"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "parenthesised_expression"
+profile = "gate"
+depth = 1000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "case"
+profile = "gate"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "function_arguments"
+profile = "gate"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "cast"
+profile = "gate"
+depth = 1000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "subscript"
+profile = "gate"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "type_suffix"
+profile = "gate"
+depth = 100000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "type_suffix_sized"
+profile = "gate"
+depth = 100000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "double_colon_type_suffix"
+profile = "gate"
+depth = 100000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "column_type_suffix"
+profile = "gate"
+depth = 100000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "flat_plus"
+profile = "gate"
+depth = 100000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "flat_or"
+profile = "gate"
+depth = 100000
+failure = "crash"
+owner = "sqlquack-syntax: shared tree serialisation and drop"
+
+[[known_failures]]
+parser = "postgres"
+construct = "flat_union_all"
+profile = "gate"
+depth = 100000
+failure = "crash"
+owner = "sqlquack-syntax: shared tree serialisation and drop"
+
+[[known_failures]]
+parser = "snowflake"
+construct = "type_suffix"
+profile = "dev"
+depth = 1000
+failure = "crash"
+owner = "sqlquack-syntax: Snowflake parser"
+
+[[known_failures]]
+parser = "snowflake"
+construct = "type_suffix_sized"
+profile = "dev"
+depth = 1000
+failure = "crash"
+owner = "sqlquack-syntax: Snowflake parser"
+
+[[known_failures]]
+parser = "snowflake"
+construct = "column_type_suffix"
+profile = "dev"
+depth = 1000
+failure = "crash"
+owner = "sqlquack-syntax: Snowflake parser"
+
+[[known_failures]]
+parser = "snowflake"
+construct = "type_constructor_and_suffix"
+profile = "dev"
+depth = 1000
+failure = "crash"
+owner = "sqlquack-syntax: Snowflake parser"
+
+[[known_failures]]
+parser = "snowflake"
+construct = "flat_plus"
+profile = "dev"
+depth = 10000
+failure = "crash"
+owner = "sqlquack-syntax: shared tree serialisation and drop"
+
+[[known_failures]]
+parser = "postgres"
+construct = "from_parentheses"
+profile = "dev"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "from_parenthesised_join"
+profile = "dev"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "from_subquery"
+profile = "dev"
+depth = 50
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "scalar_subquery"
+profile = "dev"
+depth = 50
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "exists_subquery"
+profile = "dev"
+depth = 50
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "in_subquery"
+profile = "dev"
+depth = 50
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "parenthesised_query"
+profile = "dev"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "parenthesised_set_operation"
+profile = "dev"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "nested_with"
+profile = "dev"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "parenthesised_expression"
+profile = "dev"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "unary_minus"
+profile = "dev"
+depth = 1000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "not"
+profile = "dev"
+depth = 1000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "case"
+profile = "dev"
+depth = 50
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "function_arguments"
+profile = "dev"
+depth = 50
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "cast"
+profile = "dev"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "subscript"
+profile = "dev"
+depth = 200
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "type_suffix"
+profile = "dev"
+depth = 1000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "type_suffix_sized"
+profile = "dev"
+depth = 1000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "double_colon_type_suffix"
+profile = "dev"
+depth = 1000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "column_type_suffix"
+profile = "dev"
+depth = 1000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "flat_plus"
+profile = "dev"
+depth = 10000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
+parser = "postgres"
+construct = "flat_or"
+profile = "dev"
+depth = 10000
+failure = "crash"
+owner = "sqlquack-syntax: shared tree serialisation and drop"
+
+[[known_failures]]
+parser = "postgres"
+construct = "flat_union_all"
+profile = "dev"
+depth = 3000
+failure = "crash"
+owner = "sqlquack-syntax: shared tree serialisation and drop"

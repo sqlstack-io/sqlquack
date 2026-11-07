@@ -1,0 +1,18 @@
+//! The deep-nesting probe's ladder, bounds and allowlist path.
+
+use std::time::Duration;
+
+use crate::formats::models::LocalParser;
+
+/// The known failures of today's parsers, relative to the repository.
+pub const ALLOWLIST_FILE: &str = "coverage/deep-nesting.toml";
+/// The nesting depths each construct is parsed at, shallowest first; a construct stops at its first failure.
+pub const DEPTH_LADDER: [usize; 6] = [50, 200, 1_000, 3_000, 10_000, 100_000];
+/// The time one probe parse may take before it fails as a timeout.
+pub const PROBE_BOUND: Duration = Duration::from_secs(15);
+/// The stack of the thread each probe parse runs on, the smallest an in-process caller is assumed to give.
+pub const PROBE_STACK_BYTES: usize = 2 * 1024 * 1024;
+/// How many runs of `[]` a mixed type nests between its constructor levels.
+pub const MIXED_SUFFIX_RUN: usize = 60;
+/// Every native parser this checker links, each probed in turn.
+pub const PROBED_PARSERS: [LocalParser; 2] = [LocalParser::Snowflake, LocalParser::Postgres];
