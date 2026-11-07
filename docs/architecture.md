@@ -36,6 +36,8 @@ a parameter of every entry point; Snowflake is the only one implemented.
 | `sqlquack-rules` | The conversion rules, their type conditions, and declared refusals. |
 | `sqlquack-duckdb` | DuckDB building blocks shared by rules, and DuckDB's own parse-and-bind check of every converted statement. |
 | `sqlquack-policy` | The policy file `sqlquack.toml`: schema, validation and type-pattern matching. |
+| `sqlquack-format` | The SQL formatter: lays SQL out over lines, changing only the whitespace between tokens and keyword case. A layout guide prints the authored tokens as a parse-tree pretty printer would; the output is refused unless it keeps every token, keeps comments attached and is idempotent. It builds on `sqlquack-syntax` alone. |
+| `sqlquack-format-check` | Development only: proves that formatting DuckDB SQL leaves the output columns DuckDB binds it to unchanged, on the format corpus. |
 | `sqlquack-compare` | The strict comparator between a recorded result and a DuckDB replay or a fresh recording. |
 | `sqlquack-evidence` | Cases, case hashes, pending files, stored results, DuckDB replay, verification and audits. |
 | `sqlquack` | The `sqlquack` command line and the library entry points: the pipeline, the census, the index and the evidence commands. |
