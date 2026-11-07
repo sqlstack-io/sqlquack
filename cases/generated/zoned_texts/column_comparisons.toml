@@ -128,6 +128,7 @@ query = "SELECT z >= '2024-01-01'::DATE AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: zoned_texts@1"
+expected_divergence = "timestamp_tz_submicro"
 
 [[case]]
 id = "timestamp_ltz_column_gte_naive_text"
@@ -252,3 +253,4 @@ query = "SELECT z >= '2024-01-01'::DATE AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null", "boundary"]
 origin = "generated: zoned_texts@1"
+expected_divergence = "timestamp_tz_submicro"

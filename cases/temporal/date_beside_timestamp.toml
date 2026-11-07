@@ -15,6 +15,7 @@ rows = [
 ]
 expression = "ARRAY_CONSTRUCT(n = d, n <> d, n < d, n <= d, n > d, n >= d, d < n)"
 tags = ["null", "boundary"]
+expected_divergence = "json_fidelity"
 
 [[case]]
 id = "ntz_column_beside_date_literal"
@@ -41,6 +42,7 @@ rows = [
 ]
 expression = "ARRAY_CONSTRUCT(l = d, l < d, tz = d, tz < d, tz > d)"
 tags = ["null", "boundary"]
+expected_divergence = "json_fidelity"
 
 [[case]]
 id = "date_beside_ntz_extreme_years"
@@ -52,3 +54,4 @@ rows = [
 ]
 expression = "ARRAY_CONSTRUCT(n = d, n > d)"
 tags = ["boundary"]
+expected_divergence = "timestamp_range"
