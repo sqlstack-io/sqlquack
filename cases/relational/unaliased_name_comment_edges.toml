@@ -92,3 +92,21 @@ rows = [["2"]]
 query = "SELECT i.x, I.X + 1 FROM input i"
 order = "ordered"
 tags = ["boundary"]
+
+[[case]]
+id = "comment_after_exponent_literal"
+description = "A lower-case exponent literal followed by a line comment."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["2"]]
+query = "SELECT 1e3 -- c\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "comment_after_negative_literal"
+description = "A negative integer literal followed by a line comment."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["2"]]
+query = "SELECT -1 -- c\nFROM input"
+order = "ordered"
+tags = ["boundary"]
