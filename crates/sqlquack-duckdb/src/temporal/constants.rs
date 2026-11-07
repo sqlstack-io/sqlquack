@@ -170,3 +170,5 @@ pub const NANOSECOND_DATE_RANGE: (&str, &str) = ("1677-09-22", "2262-04-10");
 pub const DUCKDB_CURRENT_DATE: &str = "current_date()";
 /// DuckDB's current timestamp as a call, which an alias `CURRENT_TIMESTAMP` cannot capture.
 pub const DUCKDB_CURRENT_TIMESTAMP: &str = "get_current_timestamp()";
+/// The precision a DATE is read at, as its midnight, when DATEDIFF counts units shorter than a day.
+pub const MIDNIGHT_PRECISION: u8 = 0;

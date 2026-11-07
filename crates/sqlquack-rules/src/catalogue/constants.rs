@@ -26,16 +26,17 @@ use crate::conversion::constants::{
     CAST_TEXT_TIME, CAST_TEXT_TIMESTAMP, CAST_TO_TEXT, CAST_UTC_ZONED, COALESCE, COLUMN, COMMENT,
     COMMON_TABLE, COMPARISON, COMPUTED_SUBSTR_LENGTH, CONCAT, CONCAT_WS, CONSTANT_LITERAL, COUNT,
     COVARIANCE_RULE, CURRENT_TIME_RULE, DATE_ARITHMETIC, DATE_DAY_ARITHMETIC, DATE_FORMAT_RULE,
-    DATE_LITERAL_COMPARISON, DATE_PART_RULE, DAY_NAME_RULE, DECIMAL_ARITHMETIC, DECIMAL_DIVISION,
-    DECIMAL_EPOCH_RULE, DECIMAL_MODULO, DECODE_RULE, DISTINCT, DIV0_RULE, EDIT_DISTANCE, EXISTS,
-    FLATTEN_RULE, FLOAT_ARITHMETIC, FLOAT_MODULO, FLOAT_TO_DOUBLE, FRACTIONAL_DATE_AMOUNT,
-    FROM_PARTS, FROM_RELATION, FROM_SUBQUERY, GENERATOR_RULE, GROUP_BY, GROUP_BY_ALL_RULE,
-    HASH_RULE, HAVING, HIERARCHY_RULE, IFF, ILIKE_FOLDING, IN_LIST, IN_SUBQUERY,
-    INTERVAL_ARITHMETIC, IS_NULL, JARO_WINKLER, JOIN_CROSS, JOIN_ON, JOIN_USING, LAMBDA_RULE,
-    LAST_DAY_RULE, LATERAL_SUBQUERY, LEAST_GREATEST, LIKE, LIMIT, LISTAGG_RULE, LOGARITHM, LOGIC,
-    MEDIAN_RULE, MIN_MAX, MIN_MAX_FLOAT, MODE_RULE, MONTHS_BETWEEN_RULE, NAMED_AGGREGATES, NEGATE,
-    NOT_IN_SUBQUERY, NULL_ARITHMETIC, NULL_BRANCHES, NULL_IF_ZERO_RULE, NULL_SAFE_COMPARISON,
-    NULLIF, NUMBER_LITERAL, NUMBER_TEXT_FORMAT, NUMERIC_FUNCTION, NVL2_RULE, OBJECT_CONSTRUCT_RULE,
+    DATE_LITERAL_COMPARISON, DATE_PART_RULE, DATE_TIMESTAMP_COMPARISON, DAY_NAME_RULE,
+    DECIMAL_ARITHMETIC, DECIMAL_DIVISION, DECIMAL_EPOCH_RULE, DECIMAL_MODULO, DECODE_RULE,
+    DISTINCT, DIV0_RULE, EDIT_DISTANCE, EXISTS, FLATTEN_RULE, FLOAT_ARITHMETIC, FLOAT_MODULO,
+    FLOAT_TO_DOUBLE, FRACTIONAL_DATE_AMOUNT, FROM_PARTS, FROM_RELATION, FROM_SUBQUERY,
+    GENERATOR_RULE, GROUP_BY, GROUP_BY_ALIAS_RULE, GROUP_BY_ALL_RULE, HASH_RULE, HAVING,
+    HIERARCHY_RULE, IFF, ILIKE_FOLDING, IN_LIST, IN_SUBQUERY, INTERVAL_ARITHMETIC, IS_NULL,
+    JARO_WINKLER, JOIN_CROSS, JOIN_ON, JOIN_USING, LAMBDA_RULE, LAST_DAY_RULE, LATERAL_SUBQUERY,
+    LEAST_GREATEST, LIKE, LIMIT, LISTAGG_RULE, LOGARITHM, LOGIC, MEDIAN_RULE, MIN_MAX,
+    MIN_MAX_FLOAT, MODE_RULE, MONTHS_BETWEEN_RULE, NAMED_AGGREGATES, NEGATE, NOT_IN_SUBQUERY,
+    NULL_ARITHMETIC, NULL_BRANCHES, NULL_IF_ZERO_RULE, NULL_SAFE_COMPARISON, NULLIF,
+    NUMBER_LITERAL, NUMBER_TEXT_FORMAT, NUMERIC_FUNCTION, NVL2_RULE, OBJECT_CONSTRUCT_RULE,
     OBJECT_DELETE_RULE, OBJECT_INSERT_RULE, OBJECT_KEYS_RULE, OBJECT_PICK_RULE, ORDER_BY,
     PARENTHESES, PARSE_JSON_RULE, PARSE_JSON_VARIANT, PARSE_URL_RULE, PERCENTILE_RULE, PIVOT_RULE,
     POSITIONAL_COLUMN, POWER_RULE, PROJECT_FUNCTION_CALL, PROJECT_TABLE_FUNCTION, QUALIFY,
@@ -47,16 +48,18 @@ use crate::conversion::constants::{
     TEXT_SEARCH_POSITION, TEXT_SHA2, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TEXT_TRANSLATE,
     TIME_ARITHMETIC, TIME_CAST, TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TIMESTAMP_TIME_RULE,
     TO_ARRAY_RULE, TO_BOOLEAN_RULE, TO_DATE_TEMPORAL, TO_TIMESTAMP_TEMPORAL, TO_VARIANT_RULE, TRIM,
-    UNION_BY_NAME, USER_OVERRIDE_RULE, UTC_OFFSET_ARITHMETIC, VALUE_AT_EXTREME_KEY, VALUES_ROWS,
-    VARIANCE_FLOAT_RULE, VARIANCE_RULE, VARIANT_CAST, VARIANT_COMPUTED_GET, VARIANT_EQUALITY,
-    VARIANT_EQUALITY_BY_TEXT, VARIANT_INSPECT, VARIANT_KIND_CAST, VARIANT_KIND_RULE, VARIANT_MAX,
-    VARIANT_ORDER_KEY, VARIANT_PARTITION, VARIANT_PATH, VARIANT_TEXT_BRANCHES, VARIANT_TO_VARCHAR,
-    VARIANT_TYPE_NAME, VARIANT_TYPED_CHECK, WHERE, WINDOW_AGGREGATE, WINDOW_FIRST_LAST,
-    WINDOW_OFFSET, WINDOW_RANKING, WINDOW_VALUE_FRAME, ZERO_IF_NULL_RULE, ZONE_COLUMNS,
-    ZONED_PARTS,
+    UNARY_PLUS, UNION_BY_NAME, USER_OVERRIDE_RULE, UTC_OFFSET_ARITHMETIC, VALUE_AT_EXTREME_KEY,
+    VALUES_ROWS, VARIANCE_FLOAT_RULE, VARIANCE_RULE, VARIANT_CAST, VARIANT_COMPUTED_GET,
+    VARIANT_EQUALITY, VARIANT_EQUALITY_BY_TEXT, VARIANT_INSPECT, VARIANT_KIND_CAST,
+    VARIANT_KIND_RULE, VARIANT_MAX, VARIANT_ORDER_KEY, VARIANT_PARTITION, VARIANT_PATH,
+    VARIANT_TEXT_BRANCHES, VARIANT_TO_VARCHAR, VARIANT_TYPE_NAME, VARIANT_TYPED_CHECK, WHERE,
+    WINDOW_AGGREGATE, WINDOW_FIRST_LAST, WINDOW_OFFSET, WINDOW_RANKING, WINDOW_VALUE_FRAME,
+    ZERO_IF_NULL_RULE, ZONE_COLUMNS, ZONED_PARTS,
 };
 use crate::conversion::models::RuleSpec;
 
+/// A TIMESTAMP_NTZ compared with a TIMESTAMP_LTZ or TIMESTAMP_TZ in the UTC session.
+pub const NAIVE_LOCAL_COMPARISON: &str = "rule.naive_local_comparison";
 /// Every rule.
 pub const RULES: &[RuleSpec] = &[
     RuleSpec {
@@ -86,7 +89,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: FROM_RELATION,
         constructs: &["node:table"],
-        conditions: "The relation is a CTE or has typed columns in the schema. A schema relation may be declared as TABLE, SCHEMA.TABLE or DATABASE.SCHEMA.TABLE, and a name reads the declared relation whose parts agree with the parts it writes, the longest agreement winning; it is written as the declared name. A name matching several declared relations equally, a qualified name a CTE of its declared name would capture, and two differently written names reading one declared relation are refused.",
+        conditions: "The relation is a CTE or has typed columns in the schema. A schema relation may be declared as TABLE, SCHEMA.TABLE or DATABASE.SCHEMA.TABLE, and a name reads the declared relation whose parts agree with the parts it writes, the longest agreement winning; it is written as the declared name. A name matching several declared relations equally, a qualified name a CTE of its declared name would capture, and two differently written names reading one declared relation are refused. A base table's VARIANT, OBJECT or ARRAY column the statement may read, by name, through a star other than COUNT(*)'s, a positional column, PIVOT, UNPIVOT or a NATURAL join, is guarded as PARSE_JSON's result is and relies on json_fidelity; a column it never reads is neither guarded nor relied on.",
         failures: &[],
     },
     RuleSpec {
@@ -207,7 +210,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: SET_OPERATION,
         constructs: &["node:union", "node:except", "node:intersect"],
-        conditions: "Branches with the same column count whose types unify; differing branches are cast to the unified type; a VARIANT built from a FLOAT beside a JSON-held one holds both as a DuckDB VARIANT, raising for a JSON number it would retype; a set operation removing duplicates has no VARIANT column.",
+        conditions: "Branches with the same column count whose types unify; differing branches are cast to the unified type; a VARIANT built from a FLOAT beside a JSON-held one holds both as a DuckDB VARIANT, raising for a JSON number it would retype; a set operation removing duplicates has no VARIANT column. A TIMESTAMP_NTZ(9) joined with a TIMESTAMP_LTZ(9) or TIMESTAMP_TZ(9) is read in the UTC session, relying on session_timezone_utc, and raises timestamp_tz_submicro for digits below the microsecond, which DuckDB's TIMESTAMPTZ cannot hold, rather than rounding them.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -274,6 +277,12 @@ pub const RULES: &[RuleSpec] = &[
         failures: &[],
     },
     RuleSpec {
+        id: UNARY_PLUS,
+        constructs: &["node:pos"],
+        conditions: "A NUMBER or FLOAT operand is returned unchanged, with its type. A VARCHAR operand is read as FLOAT, as CAST reads it, raising for text that is not a number (100038), as recorded.",
+        failures: &[],
+    },
+    RuleSpec {
         id: DECIMAL_ARITHMETIC,
         constructs: &["node:add", "node:sub", "node:mul"],
         conditions: "NUMBER operands; `+`, `-` and `*` whose exact result type needs more than 38 digits rely on `numeric_range`. A `*` whose exact product needs more than 38 digits before Snowflake cuts its scale is computed exactly at the summed scale and rounded half away from zero to Snowflake's scale, as recorded; DuckDB raises where the product's whole digits exceed what the summed scale leaves, which also relies on `numeric_range`. A `*` whose scales sum to more than 38 refuses.",
@@ -318,11 +327,39 @@ pub const RULES: &[RuleSpec] = &[
         }],
     },
     RuleSpec {
+        id: NAIVE_LOCAL_COMPARISON,
+        constructs: &[
+            "node:eq",
+            "node:neq",
+            "node:lt",
+            "node:lte",
+            "node:gt",
+            "node:gte",
+            "node:between",
+        ],
+        conditions: "A TIMESTAMP_NTZ beside a TIMESTAMP_LTZ, such as CURRENT_TIMESTAMP() or DATEADD of it, or beside a TIMESTAMP_TZ at any offset, such as CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP()): Snowflake reads the naive value in the session time zone and compares instants, as recorded, so the zoned value is read as its wall time in UTC, which relies on session_timezone_utc, and on timestamp_range at precisions above microseconds.",
+        failures: &[],
+    },
+    RuleSpec {
         id: DATE_LITERAL_COMPARISON,
         constructs: &[
             "node:eq", "node:neq", "node:lt", "node:lte", "node:gt", "node:gte", "node:in",
         ],
         conditions: "A DATE beside text, or a TIMESTAMP_NTZ beside text, in a comparison or IN list: the text is read as that type, a timestamp literal beside a DATE read as its date with the clock dropped, and text from a column cast as CAST reads it, as recorded. A TIME and a string literal in HH:MI:SS form (hours 00-23) read as that TIME.",
+        failures: &[],
+    },
+    RuleSpec {
+        id: DATE_TIMESTAMP_COMPARISON,
+        constructs: &[
+            "node:eq",
+            "node:neq",
+            "node:lt",
+            "node:lte",
+            "node:gt",
+            "node:gte",
+            "node:between",
+        ],
+        conditions: "A DATE beside a TIMESTAMP_NTZ, TIMESTAMP_LTZ or TIMESTAMP_TZ in a comparison or BETWEEN reads the DATE as its midnight, as recorded. Against a naive timestamp, wall times compare: both sides become day-and-clock order keys (twice the days since 1970, the timestamp's date truncated toward the past, plus one past midnight), which no date or timestamp range overflows. Against a zoned timestamp, instants compare, the DATE taken at midnight in the session time zone, relying on session_timezone_utc. Refused in IN, CASE, DECODE, NULLIF, LEAST and GREATEST, where no recording shows the comparison",
         failures: &[],
     },
     RuleSpec {
@@ -346,13 +383,13 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: CASE,
         constructs: &["node:case"],
-        conditions: "BOOLEAN conditions, or a simple CASE whose values compare with the operand; results unify.",
+        conditions: "BOOLEAN conditions, or a simple CASE whose values compare with the operand; results unify. A TIMESTAMP_NTZ(9) joined with a TIMESTAMP_LTZ(9) or TIMESTAMP_TZ(9) is read in the UTC session, relying on session_timezone_utc, and raises timestamp_tz_submicro for digits below the microsecond, which DuckDB's TIMESTAMPTZ cannot hold, rather than rounding them.",
         failures: &[],
     },
     RuleSpec {
         id: COALESCE,
         constructs: &["fn:COALESCE", "fn:IFNULL", "fn:NVL"],
-        conditions: "Arguments unify.",
+        conditions: "Arguments unify. A TIMESTAMP_NTZ(9) joined with a TIMESTAMP_LTZ(9) or TIMESTAMP_TZ(9) is read in the UTC session, relying on session_timezone_utc, and raises timestamp_tz_submicro for digits below the microsecond, which DuckDB's TIMESTAMPTZ cannot hold, rather than rounding them.",
         failures: &[],
     },
     RuleSpec {
@@ -397,7 +434,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: IFF,
         constructs: &["fn:IFF"],
-        conditions: "A BOOLEAN condition; branches unify.",
+        conditions: "A BOOLEAN condition; branches unify. A TIMESTAMP_NTZ(9) joined with a TIMESTAMP_LTZ(9) or TIMESTAMP_TZ(9) is read in the UTC session, relying on session_timezone_utc, and raises timestamp_tz_submicro for digits below the microsecond, which DuckDB's TIMESTAMPTZ cannot hold, rather than rounding them.",
         failures: &[],
     },
     RuleSpec {
@@ -547,7 +584,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:TIMEDIFF",
             "fn:TIMESTAMPDIFF",
         ],
-        conditions: "DATE or TIMESTAMP_NTZ values. DATE_TRUNC to YEAR, QUARTER, MONTH, WEEK (Monday) or DAY, and for timestamps HOUR, MINUTE or SECOND, keeping the type. DATEADD of a NUMBER(p,0) amount (to text read as TIMESTAMP_NTZ(9) as CAST reads it, as recorded), which fails beyond 2^53 as Snowflake's error 100046, of YEAR, QUARTER, MONTH (clamped to the month's end), WEEK or DAY, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND, keeping the type and its nanoseconds; a result beyond DuckDB's range (for precision 7-9 its nanosecond range) raises timestamp_range. DATEDIFF between two DATEs or two timestamps counts YEAR, QUARTER, MONTH and DAY boundaries of the dates, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND boundaries toward the past. Between two TIMESTAMP_TZ values at any offsets, MINUTE and SECOND boundaries are counted between their UTC instants, which every whole-minute offset shares, as recorded; other units of such values refuse, as Snowflake counts DAY boundaries in each value's own offset.",
+        conditions: "DATE or TIMESTAMP_NTZ values. DATE_TRUNC to YEAR, QUARTER, MONTH, WEEK (Monday) or DAY, and for timestamps HOUR, MINUTE or SECOND, keeping the type. DATEADD of a NUMBER(p,0) amount (to text read as TIMESTAMP_NTZ(9) as CAST reads it, as recorded), which fails beyond 2^53 as Snowflake's error 100046, of YEAR, QUARTER, MONTH (clamped to the month's end), WEEK or DAY, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND, keeping the type and its nanoseconds; a result beyond DuckDB's range (for precision 7-9 its nanosecond range) raises timestamp_range. DATEDIFF between two DATEs or two timestamps counts YEAR, QUARTER, MONTH and DAY boundaries of the dates, and for timestamps HOUR, MINUTE, SECOND, MILLISECOND or MICROSECOND boundaries toward the past, a DATE beside a timestamp or another DATE read as its midnight for those units. Between two TIMESTAMP_TZ values at any offsets, MINUTE and SECOND boundaries are counted between their UTC instants, which every whole-minute offset shares, as recorded; other units of such values refuse, as Snowflake counts DAY boundaries in each value's own offset.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -1225,7 +1262,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: TEMPORAL_TEXT_FORMAT,
         constructs: &["fn:TO_VARCHAR", "fn:TO_CHAR"],
-        conditions: "A TIME and a format of only HH24, MI, SS and FF1 to FF6 fields, truncating, as recorded; a DATE or TIMESTAMP_NTZ and a literal format of YYYY, MM and DD and, for timestamps, HH24, MI, SS and FF, FF3, FF6 and FF9 fields (each truncating, as recorded; FF writes as many digits as the TIMESTAMP_NTZ precision, recorded for 0, 3, 6 and 9), in any case, between the separators - _ / : . and space: each field zero-padded, as strftime writes it. MON and MMMM, written in upper case, write the English month's abbreviation (Jan) and full name (January) in title case, as recorded for every month. MMMM directly before DD writes the name then the day (MMMMDD is September05), as recorded. A format where two adjacent fields would spell a longer run of one letter (MMMMMM, DDDD, SSSS), where a field follows MON directly (MONMM writes the full name, as recorded), where a field other than DD follows MMMM directly, or where a month name directly follows another field, is not converted, nor any element other than these.",
+        conditions: "A TIME and a format of only HH24, MI, SS and FF1 to FF6 fields, truncating, as recorded; a DATE or TIMESTAMP_NTZ and a literal format of YYYY, MM and DD and, for timestamps, HH24, MI, SS and FF, FF3, FF6 and FF9 fields (each truncating, as recorded; FF writes as many digits as the TIMESTAMP_NTZ precision, recorded for 0, 3, 6 and 9), in any case, between the separators - _ / : . and space: each field zero-padded, as strftime writes it. MON and MMMM, written in upper case, write the English month's abbreviation (Jan) and full name (January) in title case, as recorded for every month; DY, written in upper case with no field directly after it, writes the English day's abbreviation (Mon) in title case, as recorded for every weekday. MMMM directly before DD writes the name then the day (MMMMDD is September05), as recorded. A format where two adjacent fields would spell a longer run of one letter (MMMMMM, DDDD, SSSS), where a field follows MON directly (MONMM writes the full name, as recorded), where a field other than DD follows MMMM directly, or where a month name directly follows another field, is not converted, nor any element other than these.",
         failures: &[],
     },
     RuleSpec {
@@ -1489,6 +1526,12 @@ pub const RULES: &[RuleSpec] = &[
         }],
     },
     RuleSpec {
+        id: GROUP_BY_ALIAS_RULE,
+        constructs: &["clause:group_by", "node:group_by"],
+        conditions: "A bare GROUP BY name that is the alias of exactly one SELECT item and resolves to no FROM column groups by that item's output position, as recorded. A name that is also a FROM column is that column, as Snowflake reads it. Refused where a star precedes the item, whose positions no recording shows.",
+        failures: &[],
+    },
+    RuleSpec {
         id: GROUP_BY_ALL_RULE,
         constructs: &["clause:group_by", "node:group_by"],
         conditions: "GROUP BY ALL groups by the SELECT items that hold no aggregate (COUNT, SUM, AVG, MIN, MAX, an aggregate call or WITHIN GROUP, or a named aggregate such as COUNT_IF), by output position. Refused where an item holds a window function or subquery, where the SELECT list has a star, and where every item is an aggregate.",
@@ -1620,7 +1663,7 @@ pub const RULES: &[RuleSpec] = &[
             "fn:TIMEDIFF",
             "fn:TIMESTAMPDIFF",
         ],
-        conditions: "DATE_TRUNC and DATEADD of a TIMESTAMP_TZ known to hold the UTC offset, +00:00 (from CONVERT_TIMEZONE('UTC', x), a cast of a DATE or naive timestamp in the UTC session, or values chosen from such), computed on its UTC wall time and read back at +00:00, keeping its type; DATEDIFF of two such values from their UTC wall times. A UTC-offset value against a naive one, and zoned values of unknown offset, refuse.",
+        conditions: "DATE_TRUNC and DATEADD of a TIMESTAMP_TZ known to hold the UTC offset, +00:00 (from CONVERT_TIMEZONE('UTC', x), a cast of a DATE or naive timestamp in the UTC session, or values chosen from such), computed on its UTC wall time and read back at +00:00, keeping its type; DATEADD of a TIMESTAMP_LTZ the same way, which relies on session_timezone_utc; DATEDIFF of two such values from their UTC wall times, and of a TIMESTAMP_LTZ beside a DATE, naive timestamp or another TIMESTAMP_LTZ from its UTC wall time, which relies on session_timezone_utc, as recorded. A UTC-offset value against a naive one, and zoned values of unknown offset, refuse.",
         failures: &[],
     },
     RuleSpec {

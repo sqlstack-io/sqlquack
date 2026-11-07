@@ -162,7 +162,7 @@ impl Parser<'_> {
     }
 
     /// `SignedIconst`: an integer with an optional sign, as its value.
-    fn signed_iconst(&mut self) -> Parsing<Expression> {
+    pub(crate) fn signed_iconst(&mut self) -> Parsing<Expression> {
         let negative: bool = self.is_char('-');
         if negative || self.is_char('+') {
             self.at += 1;

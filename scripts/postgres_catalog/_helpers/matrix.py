@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import json
 from itertools import product
+from pathlib import Path
 
 from scripts.postgres_catalog.constants import (
+    ACCEPTED,
     AGGREGATE_INPUTS,
     AGGREGATES,
     ARITHMETIC,
@@ -14,6 +17,7 @@ from scripts.postgres_catalog.constants import (
     LITERALS,
     NILADIC,
     NUMERIC_COLUMNS,
+    QUERY_HEADS,
     SCALARS,
     SHAPES,
     TABLE_COLUMNS,
@@ -91,4 +95,18 @@ def expression_cases() -> list[tuple[str, str, str]]:
         cases.append(_expression_case(category="niladic", expression=name))
     for name, sql in SHAPES:
         cases.append((f"shape: {name}", "shape", sql))
+    return cases
+
+
+def syntax_cases(directory: Path) -> list[tuple[str, str, str]]:
+    """Each accepted case of the syntax corpus that reads like a query, as (id, category, sql)."""
+    cases: list[tuple[str, str, str]] = []
+    for path in sorted(directory.glob("*.jsonl")):
+        for line in path.read_text().splitlines():
+            case: dict[str, object] = json.loads(line)
+            sql: str = str(case["sql"])
+            words: list[str] = sql.lstrip().lstrip("(").split(None, 1)
+            if case["expect"] == ACCEPTED and words and words[0].upper() in QUERY_HEADS:
+                category: str = f"{path.stem}:{case.get('stage') or 'executed'}"
+                cases.append((str(case["case_id"]), category, sql))
     return cases

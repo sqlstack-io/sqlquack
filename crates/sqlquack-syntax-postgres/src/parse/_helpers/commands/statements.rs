@@ -30,6 +30,40 @@ impl Parser<'_> {
             Some("copy") => self.copy_statement(),
             Some("comment") => self.comment_statement(),
             Some("security") => self.security_label_statement(),
+            Some("grant") => self.grant_statement(false),
+            Some(
+                "begin" | "start" | "commit" | "rollback" | "abort" | "end" | "savepoint"
+                | "release",
+            ) => self.transaction_statement(),
+            Some("prepare") if self.kw_at(1, "transaction") => self.transaction_statement(),
+            Some("prepare") => self.prepare_statement(),
+            Some("set") if self.kw_at(1, "constraints") => self.set_constraints(),
+            Some("set" | "reset") => self.set_statement(),
+            Some("show") => self.show_statement(),
+            Some("lock") => self.lock_statement(),
+            Some("discard") => self.discard_statement(),
+            Some("checkpoint") => self.checkpoint_statement(),
+            Some("cluster") => self.cluster_statement(),
+            Some("vacuum") => self.vacuum_statement(false),
+            Some("analyze" | "analyse") => self.vacuum_statement(true),
+            Some("reindex") => self.reindex_statement(),
+            Some("listen" | "notify" | "unlisten") => self.channel_statement(),
+            Some("load") => self.load_statement(),
+            Some("close") => self.close_statement(),
+            Some("declare") => self.declare_statement(),
+            Some("fetch" | "move") => self.fetch_statement(),
+            Some("deallocate") => self.deallocate_statement(),
+            Some("do") => self.do_statement(),
+            Some("explain") => self.explain_statement(),
+            Some("call") => self.call_statement(),
+            Some("execute") => self.execute_statement(),
+            Some("refresh") => self.refresh_statement(),
+            Some("import") => self.import_statement(),
+            Some("reassign") => self.reassign_statement(),
+            Some("revoke") => self.revoke_statement(),
+            Some("alter") if self.kw_at(1, "default") && self.kw_at(2, "privileges") => {
+                self.alter_default_privileges()
+            }
             Some("alter") if self.unknown_alter_kind().is_some() => {
                 self.at += self.unknown_alter_kind().unwrap_or_default();
                 Err(self.error())
@@ -64,6 +98,7 @@ impl Parser<'_> {
                 self.create_kind(kind)
             }
             Some("create") if self.created_catalog().is_some() => self.create_catalog(),
+            Some("drop") => self.drop_statement(),
             Some("create") if self.keyword_at(1).is_none() => {
                 self.at += 1;
                 Err(self.error())
@@ -193,14 +228,18 @@ impl Parser<'_> {
         let (options, with_wrapped) = self.copy_options()?;
         params.extend(options);
         let where_start: usize = self.offset();
+        let mut condition: Option<Box<Expression>> = None;
         if self.eat_kw("where") {
-            self.a_expr()?;
+            condition = Some(Box::new(self.a_expr()?));
             if !from {
                 return Err(self.error_with("WHERE clause not allowed with COPY TO", where_start));
             }
-            self.gap("copy_where", where_start);
         }
-        Ok(copy(target, from, file, (params, with_wrapped)))
+        let mut node: Expression = copy(target, from, file, (params, with_wrapped));
+        if let Expression::Copy(statement) = &mut node {
+            statement.where_clause = condition;
+        }
+        Ok(node)
     }
 
     /// `opt_program copy_file_name`; `PROGRAM` takes a string only.
@@ -375,5 +414,6 @@ fn copy(
         credentials: None,
         is_into: false,
         with_wrapped,
+        where_clause: None,
     }))
 }

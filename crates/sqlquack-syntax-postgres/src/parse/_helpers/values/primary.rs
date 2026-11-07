@@ -9,12 +9,13 @@ use sqlquack_syntax::expressions::operators::models::{
 use sqlquack_syntax::expressions::typed_functions::models::ArrayConstructor;
 use sqlquack_syntax::tokens::models::Span;
 
+use crate::parse::_helpers::commands::routines::var;
 use crate::parse::_helpers::tree::cursor::{
     Parser, Parsing, identifier, is_col_id, is_col_label, is_type_function_name,
 };
 use crate::parse::_helpers::tree::nodes::{
     boolean, case, cast, column, exists, function, literal, null, parameter, paren, star, subquery,
-    tuple,
+    tuple, window_function,
 };
 use crate::parse::_helpers::values::expressions::Flavor;
 use crate::parse::constants::{
@@ -187,18 +188,28 @@ impl Parser<'_> {
             }
             _ if call && JSON_CALLS.contains(&name) => {
                 self.at += 1;
-                self.json_call(name)?;
+                let mut node: Expression = self.json_call(name)?;
                 if JSON_AGGREGATES.contains(&name) {
-                    self.filter_and_window()?;
+                    let (filter, window) = self.filter_and_window()?;
+                    if let (Some(filter), Expression::KeywordCall(aggregate)) = (filter, &mut node)
+                    {
+                        aggregate.options.push(tuple(vec![var("FILTER"), filter]));
+                    }
+                    if let Some(window) = window {
+                        node = window_function(node, window);
+                    }
                 }
-                self.gap(name, start);
-                Ok(null())
+                Ok(node)
             }
             _ if call && XML_CALLS.contains(&name) => {
                 self.at += 1;
-                self.xml_call(name)?;
-                self.gap(name, start);
-                Ok(null())
+                match self.xml_call(name)? {
+                    Some(node) => Ok(node),
+                    None => {
+                        self.gap(name, start);
+                        Ok(null())
+                    }
+                }
             }
             _ if call && self.is_special_call(name) => self.special_call(name),
             _ => {

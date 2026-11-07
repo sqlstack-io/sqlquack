@@ -12,6 +12,7 @@ use sqlquack_policy::policy::models::{Policy, SessionValue};
 
 use crate::session::_helpers::session_profiles::{matching_profile, value_text};
 use crate::session::constants::BUILTIN_PROFILE;
+use crate::session::main::builtin_conversion_options::builtin_conversion_options;
 use crate::session::main::confirm_utc_session::confirm_utc_session;
 use crate::session::main::conversion_options::conversion_options;
 
@@ -28,10 +29,19 @@ pub fn session_conversion_options(
             .filter(|name| !builtin_accepts(name))
             .collect();
         return match unknown.is_empty() {
-            true => Ok((
-                with_namespace(ConversionOptions::default(), parameters),
-                BUILTIN_PROFILE.to_owned(),
-            )),
+            true => {
+                let mut options = builtin_conversion_options(strict, false);
+                if parameters
+                    .get(TIMEZONE_PARAMETER)
+                    .is_some_and(|zone| zone != SESSION_TIME_ZONE)
+                {
+                    options.divergences.remove(SESSION_TIMEZONE_UTC);
+                }
+                Ok((
+                    with_namespace(options, parameters),
+                    BUILTIN_PROFILE.to_owned(),
+                ))
+            }
             false => Err(format!(
                 "the built-in default records no session profiles, so it takes only TIMEZONE, \
                  DATABASE, SCHEMA and the result-neutral parameters, not {}; pass --policy with a policy file whose \

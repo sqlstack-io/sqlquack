@@ -52,6 +52,16 @@ impl<'a> Locator<'a> {
         }
     }
 
+    /// The whole source text the statement came from.
+    pub(crate) fn source(&self) -> String {
+        self.lines.text(&self.lines.whole())
+    }
+
+    /// The statement tree being converted, positions stripped.
+    pub(crate) fn tree(&self) -> &'a Value {
+        self.tree
+    }
+
     /// `sql`, converted from `node`, with its unidentified raises identified and located at `node`.
     pub(crate) fn identified(&self, sql: &str, node: &Value) -> String {
         let (sql, ids) = identify_raises(sql);

@@ -8,7 +8,7 @@ target = ""
 note = "the form without its required PRIOR after BY"
 sql = "SELECT v1 FROM t1 START WITH 1 CONNECT BY v1 = v1 ;"
 valid_as = "sf.query.connect-by negative_neighbour the form without its required PRIOR, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.query.constructs"
@@ -71,7 +71,7 @@ target = ""
 note = "the form without its required SEMANTIC_VIEW after FROM"
 sql = "SELECT 1 FROM ( t1 ) ;"
 valid_as = "sf.query.from negative_neighbour the form without its required VALUES, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.query.from"
@@ -80,7 +80,7 @@ target = ""
 note = "the form without its required ERROR_TABLE after FROM"
 sql = "SELECT 1 FROM ( t1 ) ;"
 valid_as = "sf.query.from negative_neighbour the form without its required VALUES, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.query.join.join-2"

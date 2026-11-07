@@ -15,10 +15,11 @@ use sqlquack_snowflake::typing::models::{CastTarget, SnowflakeType};
 
 use crate::conversion::_helpers::expressions::conditionals::read_text;
 use crate::conversion::_helpers::expressions::semi_structured::{held_cast, variant_cast};
+use crate::conversion::_helpers::expressions::temporal::unified_cast;
 use crate::conversion::_helpers::expressions::windows::canonical_variant;
 use crate::conversion::_helpers::queries::clauses::order_and_limit;
 use crate::conversion::_helpers::queries::query::{
-    ConvertedQuery, QueryRequest, convert_query, convert_with,
+    ConvertedQuery, QueryRequest, convert_query, convert_with, require_distinct_names,
 };
 use crate::conversion::_helpers::support::declared::merged;
 use crate::conversion::_helpers::support::divergence::{diverge, require_widening_range};
@@ -37,6 +38,9 @@ use sqlquack_semantics::types::models::{ColumnSpec, Holding};
 
 /// The relation name for the result of a set operation that is then ordered or limited.
 const SET_RESULT: &str = "_SET";
+/// Why a repeated name in a set operation's result is refused.
+const SET_REPEAT: &str =
+    "in a set operation the converted SQL wraps, where DuckDB renames the second column";
 /// The relation name for a branch cast to the unified column types.
 const BRANCH: &str = "_BRANCH";
 
@@ -148,6 +152,16 @@ pub(crate) fn convert_set_operation(
     let ordered = ["order_by", "limit", "offset"]
         .iter()
         .any(|clause| operation.get(*clause).is_some_and(|value| !value.is_null()));
+    let wrapped = ordered
+        || columns.iter().any(|column| {
+            matches!(
+                column.data_type,
+                SnowflakeType::SemiStructured | SnowflakeType::Null
+            )
+        });
+    if wrapped {
+        require_distinct_names(&columns, Some(SET_REPEAT))?;
+    }
     if !ordered {
         return Ok((sql, columns));
     }
@@ -270,8 +284,12 @@ fn conform(
                 cast(&quoted_identifier(name, log), SnowflakeType::Varchar, log)
                     .map_err(|reason| outside_conditions(construct.clone(), reason))?
             }
-            (data_type, _) => cast(&quoted_identifier(name, log), data_type, log)
-                .map_err(|reason| outside_conditions(construct.clone(), reason))?,
+            (data_type, own_type) => unified_cast(
+                &quoted_identifier(name, log),
+                (own_type, data_type),
+                (context, construct),
+            )
+            .map_err(|reason| outside_conditions(construct.clone(), reason))?,
         };
         items.push(format!(
             "{value} AS {}",
@@ -434,8 +452,12 @@ fn conform_by_name(
                 cast(&value, SnowflakeType::Varchar, log)
                     .map_err(|reason| outside_conditions(construct.clone(), reason))?
             }
-            (data_type, _, _) => cast(&value, data_type, log)
-                .map_err(|reason| outside_conditions(construct.clone(), reason))?,
+            (data_type, _, own_type) => unified_cast(
+                &value,
+                (own_type.unwrap_or(SnowflakeType::Null), data_type),
+                (context, construct),
+            )
+            .map_err(|reason| outside_conditions(construct.clone(), reason))?,
         };
         items.push(format!(
             "{value} AS {}",

@@ -139,3 +139,9 @@ id = "rule.group_by_all"
 
 [[rule.form]]
 construct = "query"
+
+[[rule]]
+id = "rule.group_by_alias"
+
+[[rule.form]]
+construct = "query"

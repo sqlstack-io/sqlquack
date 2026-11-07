@@ -1360,6 +1360,7 @@ dependencies = [
  "sqlquack-snowflake",
  "sqlquack-syntax",
  "tempfile",
+ "toml",
  "walkdir",
 ]
 
@@ -1468,6 +1469,7 @@ dependencies = [
  "sqlquack-core",
  "sqlquack-snowflake",
  "sqlquack-syntax",
+ "sqlquack-syntax-postgres",
 ]
 
 [[package]]

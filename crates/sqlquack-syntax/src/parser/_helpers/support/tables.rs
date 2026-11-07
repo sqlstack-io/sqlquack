@@ -90,6 +90,7 @@ impl Parser {
         });
 
         Ok(Some(Expression::boxed_table(TableRef {
+            sample_call: None,
             name: name_ident,
             schema: schema_ident,
             catalog: catalog_ident,
@@ -109,6 +110,7 @@ impl Parser {
             changes: None,
             version: None,
             span: None,
+            whole_quoted: false,
         })))
     }
 

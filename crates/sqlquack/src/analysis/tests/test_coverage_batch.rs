@@ -1546,7 +1546,7 @@ fn given_each_documented_format_element_when_writing_text_then_it_converts_as_re
         FirstValueTestCase {
             description: "DY",
             sql: "SELECT TO_CHAR(DATE '2024-09-05', 'DY') AS v",
-            expected_outcome: Err("which no recording shows"),
+            expected_outcome: Ok("Thu"),
         },
         FirstValueTestCase {
             description: "UUUU",
@@ -1707,6 +1707,81 @@ fn given_each_documented_format_element_when_writing_text_then_it_converts_as_re
     for test_case in test_cases {
         assert_eq!(
             shop_first_outcome(test_case.sql, test_case.expected_outcome),
+            test_case
+                .expected_outcome
+                .map(str::to_owned)
+                .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_unary_signs_when_converting_then_they_type_and_refuse_as_snowflake_does() {
+    let typed = |operand: &str| {
+        format!("SELECT REGEXP_REPLACE(SYSTEM$TYPEOF({operand}), '\\\\[.*\\\\]$', '') AS v")
+    };
+    let test_cases = [
+        BuiltFirstValueTestCase {
+            description: "a plus gives a one-digit literal a second integer digit",
+            sql: typed("+1"),
+            expected_outcome: Ok("NUMBER(2,0)"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a spaced plus over parentheses types the same",
+            sql: typed("+ (1)"),
+            expected_outcome: Ok("NUMBER(2,0)"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a plus leaves a literal with two or more integer digits alone",
+            sql: typed("+123"),
+            expected_outcome: Ok("NUMBER(3,0)"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a plus keeps the scale of a decimal it widens",
+            sql: typed("+0.25"),
+            expected_outcome: Ok("NUMBER(4,2)"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a plus over a parenthesised minus widens the minus",
+            sql: typed("+(-1)"),
+            expected_outcome: Ok("NUMBER(2,0)"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a minus over a parenthesised minus keeps its type",
+            sql: typed("-(-1)"),
+            expected_outcome: Ok("NUMBER(1,0)"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a plus keeps a NUMBER(38,37) within 38 digits",
+            sql: typed("+0.1234567890123456789012345678901234567"),
+            expected_outcome: Ok("NUMBER(38,37)"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a widened plus keeps its value",
+            sql: "SELECT +(1.5) * 2 AS v".to_owned(),
+            expected_outcome: Ok("3.0"),
+        },
+        BuiltFirstValueTestCase {
+            description: "two plus signs, which Snowflake rejects (1005)",
+            sql: "SELECT ++1 AS v".to_owned(),
+            expected_outcome: Err("two adjacent signs"),
+        },
+        BuiltFirstValueTestCase {
+            description: "a spaced minus over a plus",
+            sql: "SELECT - +1 AS v".to_owned(),
+            expected_outcome: Err("two adjacent signs"),
+        },
+        BuiltFirstValueTestCase {
+            description: "two spaced minus signs",
+            sql: "SELECT - -1 AS v".to_owned(),
+            expected_outcome: Err("two adjacent signs"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            shop_first_outcome(&test_case.sql, test_case.expected_outcome),
             test_case
                 .expected_outcome
                 .map(str::to_owned)

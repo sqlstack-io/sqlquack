@@ -8,7 +8,7 @@ target = ""
 note = "the form without its required YEAR after '<string>'"
 sql = "SELECT INTERVAL '1' ;"
 valid_as = "sf.expressions.data-types-datetime.interval negative_neighbour the form without its required { YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precision> ) ] | DAY [ ( <precision> ) ] [ TO { HOUR | MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | HOUR [ ( <precision> ) ] [ TO { MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | MINUTE [ ( <precision> ) ] [ TO SECOND [ ( <fractional_seconds_precision> ) ] ] | SECOND [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ] }, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.expressions.data-types-datetime.interval"
@@ -17,7 +17,7 @@ target = ""
 note = "the form without its required MONTH after '<string>'"
 sql = "SELECT INTERVAL '1' ;"
 valid_as = "sf.expressions.data-types-datetime.interval negative_neighbour the form without its required { YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precision> ) ] | DAY [ ( <precision> ) ] [ TO { HOUR | MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | HOUR [ ( <precision> ) ] [ TO { MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | MINUTE [ ( <precision> ) ] [ TO SECOND [ ( <fractional_seconds_precision> ) ] ] | SECOND [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ] }, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.expressions.data-types-datetime.interval"
@@ -26,7 +26,7 @@ target = ""
 note = "the form without its required DAY after '<string>'"
 sql = "SELECT INTERVAL '1' ;"
 valid_as = "sf.expressions.data-types-datetime.interval negative_neighbour the form without its required { YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precision> ) ] | DAY [ ( <precision> ) ] [ TO { HOUR | MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | HOUR [ ( <precision> ) ] [ TO { MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | MINUTE [ ( <precision> ) ] [ TO SECOND [ ( <fractional_seconds_precision> ) ] ] | SECOND [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ] }, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.expressions.data-types-datetime.interval"
@@ -35,7 +35,7 @@ target = ""
 note = "the form without its required HOUR after '<string>'"
 sql = "SELECT INTERVAL '1' ;"
 valid_as = "sf.expressions.data-types-datetime.interval negative_neighbour the form without its required { YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precision> ) ] | DAY [ ( <precision> ) ] [ TO { HOUR | MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | HOUR [ ( <precision> ) ] [ TO { MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | MINUTE [ ( <precision> ) ] [ TO SECOND [ ( <fractional_seconds_precision> ) ] ] | SECOND [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ] }, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.expressions.data-types-datetime.interval"
@@ -44,7 +44,7 @@ target = ""
 note = "the form without its required MINUTE after '<string>'"
 sql = "SELECT INTERVAL '1' ;"
 valid_as = "sf.expressions.data-types-datetime.interval negative_neighbour the form without its required { YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precision> ) ] | DAY [ ( <precision> ) ] [ TO { HOUR | MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | HOUR [ ( <precision> ) ] [ TO { MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | MINUTE [ ( <precision> ) ] [ TO SECOND [ ( <fractional_seconds_precision> ) ] ] | SECOND [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ] }, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.expressions.data-types-datetime.interval"
@@ -53,7 +53,7 @@ target = ""
 note = "the form without its required SECOND after '<string>'"
 sql = "SELECT INTERVAL '1' ;"
 valid_as = "sf.expressions.data-types-datetime.interval negative_neighbour the form without its required { YEAR [ ( <precision> ) ] [ TO MONTH ] | MONTH [ ( <precision> ) ] | DAY [ ( <precision> ) ] [ TO { HOUR | MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | HOUR [ ( <precision> ) ] [ TO { MINUTE | SECOND [ ( <fractional_seconds_precision> ) ] } ] | MINUTE [ ( <precision> ) ] [ TO SECOND [ ( <fractional_seconds_precision> ) ] ] | SECOND [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ] }, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.expressions.data-types-datetime.timestamp-variations"

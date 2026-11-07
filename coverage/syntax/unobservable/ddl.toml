@@ -1,5 +1,5 @@
 # Documented obligations whose construct Snowflake answers only with an internal error (603), so no
-# capture can establish a phase (decision D87). Fields as in unobservable/scripting.toml. Each
+# capture can establish a phase. Fields as in unobservable/scripting.toml. Each
 # obligation stays in the denominator, never counts as verified, and is reported as "unverifiable:
 # Snowflake internal error". Its case stays in cases/ddl.jsonl.
 

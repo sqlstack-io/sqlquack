@@ -2377,6 +2377,17 @@ cases = ["cases/translation/expressions/operators-comparison.less-or-equal.toml#
 required = true
 
 [[obligation]]
+id = "sf.expressions.operators-comparison.less-or-equal.t006"
+form = "sf.expressions.operators-comparison.less-or-equal"
+kind = "type_combination"
+target = "TIMESTAMP_NTZ <= TIMESTAMP_LTZ"
+note = "A naive timestamp against a local one in the UTC session: the same instant, a nanosecond either side, a day apart, and NULL; the page does not say how the two compare, so the recording decides."
+catches = "the naive side read in another zone, the comparison strict, or the nanosecond dropped"
+reading = "operators-comparison: a = b, a != b, a <> b, a > b, a >= b, a < b and a <= b compare two expressions; the page does not say how NULL compares, so the recording decides"
+cases = ["cases/translation/expressions/operators-comparison.less-or-equal.toml#t006_ntz_ltz"]
+required = true
+
+[[obligation]]
 id = "sf.expressions.operators-comparison.not-equal-angle.t001"
 form = "sf.expressions.operators-comparison.not-equal-angle"
 kind = "type_combination"

@@ -274,7 +274,7 @@ pub(crate) fn with_ctes<'a>(
     outer: Option<&LineageScope<'_>>,
     context: LineageContext<'_>,
 ) -> Cow<'a, [NamedQuery]> {
-    with_ctes_visiting(with, (ctes, outer), context, &mut |_, _| {})
+    with_ctes_visiting(with, (ctes, outer), context, &mut |_, _| false)
 }
 
 /// `with_ctes`, showing `visit` each CTE with the CTEs its body can read.
@@ -282,16 +282,16 @@ pub(crate) fn with_ctes_visiting<'a>(
     with: Option<&With>,
     (ctes, outer): (&'a [NamedQuery], Option<&LineageScope<'_>>),
     context: LineageContext<'_>,
-    visit: &mut dyn FnMut(&Cte, &[NamedQuery]),
+    visit: &mut dyn FnMut(&Cte, &[NamedQuery]) -> bool,
 ) -> Cow<'a, [NamedQuery]> {
     let Some(with) = with else {
         return Cow::Borrowed(ctes);
     };
     let mut reach: Vec<NamedQuery> = ctes.to_vec();
     for cte in &with.ctes {
-        visit(cte, &reach);
+        let faulted: bool = visit(cte, &reach);
         let name = key(&cte.alias, context);
-        let query: ResolvedQuery = match with.recursive || reads_itself(cte, &name, context) {
+        let mut query: ResolvedQuery = match with.recursive || reads_itself(cte, &name, context) {
             true => recursive_query(cte, (&name, &reach), outer, context),
             false => renamed(
                 resolved_query(&cte.this, &reach, outer, context),
@@ -299,6 +299,7 @@ pub(crate) fn with_ctes_visiting<'a>(
                 context,
             ),
         };
+        query.faulted = faulted;
         reach.retain(|named| named.key != name);
         reach.push(NamedQuery { key: name, query });
     }
@@ -709,6 +710,7 @@ pub(crate) fn expanded_star(
         rows: RowReads::default(),
         outer_nullable: only.is_some_and(|only| only.query.outer_nullable),
         derived: false,
+        faulted: false,
     }
 }
 

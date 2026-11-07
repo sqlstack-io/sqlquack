@@ -8,6 +8,7 @@ use crate::dialects::constants::{DUCKDB, POSTGRES};
 use crate::dialects::types::DialectProfile;
 use crate::lineage::_helpers::findings::statement::statement_findings;
 use crate::lineage::main::query_lineage::query_lineage;
+use crate::lineage::main::statement_lineage::statement_lineage;
 use crate::lineage::models::{LineageContext, TransformKind};
 use crate::lineage::tests::test_types::{
     EngineTypeFixture, EngineTypeReplay, EngineTypeTally, ShopSchema, TypedShopSchema,
@@ -314,6 +315,11 @@ pub(crate) fn replayed_postgres_engine_types(fixture: &str) -> EngineTypeReplay 
     replayed_types(fixture, canonical_postgres, postgres_output_type)
 }
 
+/// Each recorded PostgreSQL result type against the type of the native PostgreSQL parser's tree.
+pub(crate) fn replayed_native_postgres_engine_types(fixture: &str) -> EngineTypeReplay {
+    replayed_types(fixture, canonical_postgres, native_postgres_output_type)
+}
+
 /// Each recorded engine type, in canonical form, against the type the lineage reports.
 fn replayed_types(
     fixture: &str,
@@ -357,8 +363,28 @@ fn postgres_output_type(schema: &TypedShopSchema, sql: &str) -> Option<String> {
     lineage.outputs.first()?.data_type.clone()
 }
 
+/// The first output's type under Engine::Postgres, when the native parser reads one statement whole.
+pub(crate) fn native_postgres_output_type(schema: &TypedShopSchema, sql: &str) -> Option<String> {
+    let parsed = sqlquack_syntax_postgres::parse_strict(sql)
+        .ok()
+        .filter(|parsed| parsed.gaps.is_empty())?;
+    let [statement] = parsed.statements.as_slice() else {
+        return None;
+    };
+    let context = LineageContext {
+        profile: &POSTGRES,
+        schema,
+        sql: Some(sql),
+    };
+    statement_lineage(statement, context)
+        .outputs
+        .first()?
+        .data_type
+        .clone()
+}
+
 /// A PostgreSQL type spelling in one canonical form, keeping its modifiers as `format_type` does.
-fn canonical_postgres(raw: &str) -> String {
+pub(crate) fn canonical_postgres(raw: &str) -> String {
     let upper: String = raw.trim().to_ascii_uppercase().replace(", ", ",");
     upper.strip_suffix("[]").map_or_else(
         || {

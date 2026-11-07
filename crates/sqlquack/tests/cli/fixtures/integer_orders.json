@@ -1,0 +1,9 @@
+{
+  "relations": {
+    "ORDERS": [
+      ["ORDER_ID", "NUMBER(38,0)"],
+      ["QUANTITY", "NUMBER(38,0)"],
+      ["ORDERED_AT", "TIMESTAMP_NTZ(9)"]
+    ]
+  }
+}

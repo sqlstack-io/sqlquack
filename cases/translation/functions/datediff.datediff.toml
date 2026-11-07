@@ -106,3 +106,102 @@ rows = [
 query = "SELECT DATEDIFF(month, a, b) AS m, DATEDIFF(day, a, b) AS d FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
+
+[[case]]
+id = "t010_ntz_ltz"
+description = "Months and days from a naive timestamp to a local one in the UTC session, as tenure models count up to COALESCE(cancelled_at, CURRENT_TIMESTAMP()). Catches: the naive side read in another zone, or whole months counted instead of crossed boundaries"
+columns = [{ name = "a", type = "TIMESTAMP_NTZ" }, { name = "b", type = "TIMESTAMP_LTZ" }]
+rows = [
+  ["'2024-01-31 23:00:00'", "'2024-02-01 01:00:00 +00:00'"],
+  ["'2023-03-15 00:00:00'", "'2024-03-14 23:59:59 +00:00'"],
+  ["'2024-01-01 00:00:00'", "'2024-01-01 02:00:00 +03:00'"],
+  ["'2024-01-01 00:00:00'", "NULL"],
+]
+query = "SELECT ordinal, DATEDIFF('month', a, b) AS m, DATEDIFF('day', a, b) AS d FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t011_ntz_ltz_subday"
+description = "Week, hour, minute, second and millisecond boundaries from a naive timestamp to a local one in the UTC session, at a half-hour offset and nanoseconds below a second. Catches: the local side read at its own offset, its nanoseconds rounded up into the next second, or elapsed units counted instead of crossed boundaries"
+columns = [{ name = "a", type = "TIMESTAMP_NTZ" }, { name = "b", type = "TIMESTAMP_LTZ" }]
+rows = [
+  ["'2024-01-01 00:00:00'", "'2024-01-01 05:29:59 +05:30'"],
+  ["'2024-01-01 10:59:59.999'", "'2024-01-01 11:00:00.001 +00:00'"],
+  ["'2024-01-01 00:00:00'", "'2024-01-01 00:00:00.999999999 +00:00'"],
+  ["'2024-01-07 23:00:00'", "'2024-01-08 01:00:00 +02:00'"],
+  ["'2024-01-01 00:00:00'", "NULL"],
+]
+query = "SELECT ordinal, DATEDIFF(week, a, b) AS w, DATEDIFF(hour, a, b) AS h, DATEDIFF(minute, a, b) AS mi, DATEDIFF(second, a, b) AS s, DATEDIFF(millisecond, a, b) AS ms FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination", "boundary"]
+expected_divergence = "timestamp_tz_submicro"
+
+[[case]]
+id = "t012_date_ltz"
+description = "Days and hours from a DATE to a local timestamp in the UTC session, the DATE read as its midnight. Catches: the local side's own calendar day used instead of its UTC one, or the DATE read at another hour"
+columns = [{ name = "a", type = "DATE" }, { name = "b", type = "TIMESTAMP_LTZ" }]
+rows = [
+  ["'2024-03-01'", "'2024-03-01 23:30:00 -02:00'"],
+  ["'2024-03-01'", "'2024-03-01 01:00:00 +03:00'"],
+  ["'2024-02-28'", "'2024-03-01 00:00:00 +00:00'"],
+  ["NULL", "'2024-03-01 00:00:00 +00:00'"],
+]
+query = "SELECT ordinal, DATEDIFF(day, a, b) AS d, DATEDIFF(hour, a, b) AS h, DATEDIFF(day, b, a) AS back FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t013_ltz_ltz"
+description = "Years, months, days and hours between two local timestamps entered at different offsets, in the UTC session. Catches: each side counted in its own offset instead of the session's"
+columns = [{ name = "a", type = "TIMESTAMP_LTZ" }, { name = "b", type = "TIMESTAMP_LTZ" }]
+rows = [
+  ["'2023-12-31 23:30:00 -01:00'", "'2024-01-01 00:30:00 +01:00'"],
+  ["'2024-01-31 20:00:00 -05:00'", "'2024-02-01 03:00:00 +05:00'"],
+  ["'2024-06-15 12:00:00 +00:00'", "'2024-06-15 12:00:00 +00:00'"],
+]
+query = "SELECT ordinal, DATEDIFF(year, a, b) AS y, DATEDIFF(month, a, b) AS m, DATEDIFF(day, a, b) AS d, DATEDIFF(hour, a, b) AS h FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t014_coalesce_local"
+description = "Days from a naive timestamp to COALESCE of a naive end and a local one, the shape `DATEDIFF('day', ordered_at, COALESCE(shipped_at, CURRENT_TIMESTAMP()))` takes with a fixed local value. Catches: the COALESCE typed as the naive side, or its naive branch read in another zone"
+columns = [{ name = "a", type = "TIMESTAMP_NTZ" }, { name = "c", type = "TIMESTAMP_NTZ" }, { name = "b", type = "TIMESTAMP_LTZ" }]
+rows = [
+  ["'2024-05-01 08:00:00'", "'2024-05-03 23:00:00'", "'2024-05-10 00:00:00 +00:00'"],
+  ["'2024-05-01 08:00:00'", "NULL", "'2024-05-10 01:00:00 +03:00'"],
+  ["'2024-05-01 08:00:00'", "NULL", "NULL"],
+]
+query = "SELECT ordinal, DATEDIFF('day', a, COALESCE(c, b)) AS d, DATEDIFF('hour', a, COALESCE(c, b)) AS h FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
+
+[[case]]
+id = "t015_ntz_ltz_subday_micro"
+description = "The sub-day boundaries of t011 without its nanosecond row, which the converted SQL refuses to load: week, hour, minute, second and millisecond from a naive timestamp to a local one at a half-hour offset, at milliseconds and across a week start. Catches: the local side read at its own offset, or elapsed units counted instead of crossed boundaries"
+columns = [{ name = "a", type = "TIMESTAMP_NTZ" }, { name = "b", type = "TIMESTAMP_LTZ" }]
+rows = [
+  ["'2024-01-01 00:00:00'", "'2024-01-01 05:29:59 +05:30'"],
+  ["'2024-01-01 10:59:59.999'", "'2024-01-01 11:00:00.001 +00:00'"],
+  ["'2024-01-01 00:00:00'", "'2024-01-01 00:00:00.999999 +00:00'"],
+  ["'2024-01-07 23:00:00'", "'2024-01-08 01:00:00 +02:00'"],
+  ["'2024-01-01 00:00:00'", "NULL"],
+]
+query = "SELECT ordinal, DATEDIFF(week, a, b) AS w, DATEDIFF(hour, a, b) AS h, DATEDIFF(minute, a, b) AS mi, DATEDIFF(second, a, b) AS s, DATEDIFF(millisecond, a, b) AS ms FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination", "boundary"]
+
+[[case]]
+id = "t016_coalesce_local_submicro"
+description = "t014's shape with naive ends a tenth of a microsecond and a microsecond before midnight: the naive branch joins the local one as a TIMESTAMP_LTZ(9) keeping its nanoseconds. Catches: the naive branch rounded to microseconds, which moves 23:59:59.9999999 to the next day"
+columns = [{ name = "a", type = "TIMESTAMP_NTZ" }, { name = "c", type = "TIMESTAMP_NTZ" }, { name = "b", type = "TIMESTAMP_LTZ" }]
+rows = [
+  ["'2024-05-01 08:00:00'", "'2024-05-03 23:59:59.9999999'", "'2024-05-10 00:00:00 +00:00'"],
+  ["'2024-05-01 08:00:00'", "'2024-05-03 23:59:59.999999'", "'2024-05-10 00:00:00 +00:00'"],
+  ["'2024-05-01 08:00:00'", "NULL", "'2024-05-10 00:00:00 +00:00'"],
+]
+query = "SELECT ordinal, DATEDIFF('day', a, COALESCE(c, b)) AS d, DATEDIFF('hour', a, COALESCE(c, b)) AS h FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination", "boundary"]
+expected_divergence = "timestamp_tz_submicro"

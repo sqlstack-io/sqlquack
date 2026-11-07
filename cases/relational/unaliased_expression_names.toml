@@ -1,0 +1,86 @@
+category = "relational"
+construct = "node:select"
+session_profile = "utc-v1"
+
+[[case]]
+id = "unaliased_launch_basics"
+description = "The basic unaliased shapes a first query writes: literal arithmetic, CURRENT_DATE(), a :: cast, IFF, DATE_TRUNC, || of columns and column arithmetic. Typing evidence: CURRENT_DATE() reads the clock."
+evidence = "typing"
+columns = [{ name = "x", type = "NUMBER(10,0)" }, { name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }, { name = "total", type = "NUMBER(12,2)" }, { name = "discount", type = "NUMBER(12,2)" }, { name = "d", type = "DATE" }, { name = "ts", type = "TIMESTAMP_NTZ(9)" }]
+rows = [["2", "'p'", "'q'", "10.50", "1.25", "'2024-03-15'", "'2024-03-15 10:30:00'"]]
+query = "SELECT 1 + 1, CURRENT_DATE(), x::VARCHAR, IFF(x > 1, 'big', 'small'), DATE_TRUNC('month', ts), a || b, total - discount FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "unaliased_nested_expressions"
+description = "Nested unaliased expressions: parentheses, functions inside arithmetic, comparisons inside IFF, casts of expressions, lower-case function names and keywords, double spaces and a tab."
+columns = [{ name = "x", type = "NUMBER(10,0)" }, { name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }, { name = "total", type = "NUMBER(12,2)" }, { name = "discount", type = "NUMBER(12,2)" }, { name = "d", type = "DATE" }, { name = "ts", type = "TIMESTAMP_NTZ(9)" }]
+rows = [["2", "'p'", "'q'", "10.50", "1.25", "'2024-03-15'", "'2024-03-15 10:30:00'"], ["NULL", "NULL", "'q'", "NULL", "0", "NULL", "NULL"]]
+query = "SELECT (total - discount) * 2, iff(x is null, 0, x), IFF(a = 'p' AND x >= 1, 'yes', 'no'), CAST(total - discount AS VARCHAR), date_trunc('MONTH', d), DATEADD(day, 1, d), DATEDIFF('day', d, ts), round(total / 3, 2), coalesce(a, b, 'none'), a  ||  b, x\t+ 1, NOT x > 1, x > 1, x IS NULL, ABS(-x), CONCAT(a, b), TO_VARCHAR(d, 'YYYY-MM'), YEAR(d), LENGTH(a), TRIM(a), NVL(a, 'z'), x % 2, -x, 1 + 1 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "unaliased_name_edges"
+description = "Where the written-text rule may break: a lower-case quoted column, an escaped quote, non-ASCII text, a comment inside the item, a 300-character expression, and an unaliased aggregate of an expression."
+columns = [{ name = "x", type = "NUMBER(10,0)" }, { name = "lc", type = "VARCHAR" }, { name = "total", type = "NUMBER(12,2)" }, { name = "discount", type = "NUMBER(12,2)" }]
+rows = [["2", "'p'", "10.50", "1.25"], ["3", "'r'", "4.00", "0.50"]]
+query = "SELECT \"X\" + 1, 'it''s', 'café', x /* note */ + 1, x + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11 + 12 + 13 + 14 + 15 + 16 + 17 + 18 + 19 + 20 + 21 + 22 + 23 + 24 + 25 + 26 + 27 + 28 + 29 + 30 + 31 + 32 + 33 + 34 + 35 + 36 + 37 + 38 + 39 + 40 + 41 + 42 + 43 + 44 + 45 + 46 + 47 + 48 + 49 + 50 + 51 + 52 + 53 + 54 + 55 + 56 + 57 + 58 + 59 + 60 + 61 + 62 + 63 + 64 + 65 + 66 + 67 + 68 + 69 + 70 + 71 + 72 + 73 + 74 + 75 + 76 + 77 + 78 + 79 + 80 FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "unaliased_aggregate_expressions"
+description = "Unaliased aggregates of expressions and grouped expressions, as an exploratory query writes them."
+columns = [{ name = "x", type = "NUMBER(10,0)" }, { name = "total", type = "NUMBER(12,2)" }, { name = "discount", type = "NUMBER(12,2)" }, { name = "d", type = "DATE" }]
+rows = [["2", "10.50", "1.25", "'2024-03-15'"], ["3", "4.00", "0.50", "'2024-03-20'"], ["3", "1.00", "0", "'2024-04-01'"]]
+query = "SELECT DATE_TRUNC('month', d), SUM(total - discount), count(DISTINCT x), MIN(d), max(total) - min(total) FROM input GROUP BY DATE_TRUNC('month', d) ORDER BY 1"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "unaliased_expression_aggregates_with_duplicates"
+description = "Unaliased aggregates of expressions over rows holding the same values more than once."
+columns = [{ name = "x", type = "NUMBER(10,0)" }, { name = "total", type = "NUMBER(12,2)" }, { name = "discount", type = "NUMBER(12,2)" }]
+rows = [["3", "4.00", "0.50"], ["3", "4.00", "0.50"], ["2", "10.50", "1.25"]]
+query = "SELECT SUM(total - discount), count(DISTINCT x), max(total) - min(total) FROM input"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "unaliased_expressions_over_no_rows"
+description = "Unaliased aggregates of expressions over no rows still name their columns."
+columns = [{ name = "total", type = "NUMBER(12,2)" }, { name = "discount", type = "NUMBER(12,2)" }]
+rows = [["4.00", "0.50"]]
+query = "SELECT SUM(total - discount), max(total) - min(total) FROM input WHERE total > 100"
+order = "ordered"
+tags = ["empty-input"]
+
+[[case]]
+id = "unaliased_hex_literal"
+compile_error = true
+description = "Whether Snowflake accepts 0x1F as an unaliased numeric literal, and what it names the column."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT 0x1F FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "unaliased_literal_spellings_distinct"
+description = "The literal spellings of unaliased_literal_spellings without the two that repeat a name (null beside NULL, date '…' beside DATE '…'), so every result name is distinct."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT 1., .5, 1.50, 1e3, 1E-2, 1.0E+3, 001, -1, - 1, +1, -1.5, true, NULL, 'text', DATE '2024-01-01', TIMESTAMP '2024-01-01 10:00:00' FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "unaliased_literal_repeated_names"
+description = "Only the literal spellings whose names repeat: NULL beside null, and DATE '2024-01-01' beside date '2024-01-01'."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT NULL, null, DATE '2024-01-01', date '2024-01-01' FROM input"
+order = "ordered"
+tags = ["boundary"]

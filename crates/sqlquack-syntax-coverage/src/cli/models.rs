@@ -108,14 +108,14 @@ pub enum Command {
         #[arg(long, value_enum)]
         parser: LocalParser,
     },
-    /// What conversion makes of every case Snowflake parsed, by form and family (decision D107).
+    /// What conversion makes of every case Snowflake parsed, by form and family.
     Translation {
         #[command(flatten)]
         arguments: TranslationArguments,
         #[command(flatten)]
         common: Common,
     },
-    /// Recorded statements linked to forms, the result-matching measure; fails on any change (D139).
+    /// Recorded statements linked to forms, the result-matching measure; fails on any change.
     Results {
         /// The file `sqlquack verify --translation-statements` writes.
         statements: PathBuf,

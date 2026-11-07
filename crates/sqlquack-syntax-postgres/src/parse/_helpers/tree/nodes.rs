@@ -9,7 +9,8 @@ use sqlquack_syntax::expressions::names::models::{
     BooleanLiteral, Column, Identifier, Literal, Null, Star, TableRef,
 };
 use sqlquack_syntax::expressions::operators::models::{
-    Between, BinaryOp, Case, Cast, Exists, In, IsNull, Lateral, Parameter, ParameterStyle,
+    Between, BinaryOp, Case, Cast, Exists, In, IsNull, KeywordCall, Lateral, Parameter,
+    ParameterStyle,
 };
 use sqlquack_syntax::expressions::queries::models::{
     Cte, Except, Intersect, Join, JoinKind, JoinedTable, Ordered, Over, Subquery, Union, Values,
@@ -164,6 +165,19 @@ pub(crate) fn paren(this: Expression) -> Expression {
 
 pub(crate) fn tuple(expressions: Vec<Expression>) -> Expression {
     Expression::Tuple(Box::new(Tuple { expressions }))
+}
+
+/// A call written with keywords, such as `JSON_VALUE (...)` or `x IS DOCUMENT`.
+pub(crate) fn keyword_call(
+    kind: &str,
+    operands: Vec<Expression>,
+    options: Vec<Expression>,
+) -> Expression {
+    Expression::KeywordCall(Box::new(KeywordCall {
+        kind: kind.to_owned(),
+        operands,
+        options,
+    }))
 }
 
 /// A name's parts joined by `.`, quoting a part that holds `.` or `"`, so one text names one list.
@@ -376,6 +390,7 @@ pub(crate) fn join(
         JoinConstraint::Using(columns) => (None, columns),
     };
     Join {
+        using_alias: None,
         this,
         on,
         using,
@@ -419,6 +434,7 @@ pub(crate) fn set_operation(
     macro_rules! node {
         ($variant:ident, $node:ident) => {
             Expression::$variant(Box::new($node {
+                with_ties: false,
                 left,
                 right,
                 all,
@@ -436,6 +452,7 @@ pub(crate) fn set_operation(
                 corresponding: false,
                 strict: false,
                 on_columns: Vec::new(),
+                locks: Vec::new(),
                 span: SourceSpan(None),
             }))
         };
@@ -465,6 +482,7 @@ pub(crate) fn cte(
     materialized: Option<bool>,
 ) -> Cte {
     Cte {
+        search_cycle: Vec::new(),
         alias,
         this,
         columns,
@@ -484,6 +502,7 @@ pub(crate) fn command(text: &str) -> Expression {
 
 pub(crate) fn insert(table: TableRef, columns: Vec<Identifier>) -> Insert {
     Insert {
+        column_targets: Vec::new(),
         table,
         columns,
         values: Vec::new(),
@@ -511,6 +530,8 @@ pub(crate) fn insert(table: TableRef, columns: Vec<Identifier>) -> Insert {
         function_target: None,
         partition_by: None,
         settings: Vec::new(),
+        overriding: None,
+        returning_aliases: Vec::new(),
     }
 }
 
@@ -531,11 +552,16 @@ pub(crate) fn update(table: TableRef) -> Update {
         limit: None,
         order_by: None,
         from_before_set: false,
+        assignments: Vec::new(),
+        current_of: None,
+        returning_aliases: Vec::new(),
     }
 }
 
 pub(crate) fn delete(table: TableRef) -> Delete {
     Delete {
+        using_items: Vec::new(),
+        using_joins: Vec::new(),
         table,
         hint: None,
         on_cluster: None,
@@ -554,5 +580,7 @@ pub(crate) fn delete(table: TableRef) -> Delete {
         joins: Vec::new(),
         force_index: None,
         no_from: false,
+        current_of: None,
+        returning_aliases: Vec::new(),
     }
 }

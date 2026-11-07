@@ -26,7 +26,7 @@ pub enum LocalVerdict {
     },
 }
 
-/// How a local parse failed to end cleanly (decision D90).
+/// How a local parse failed to end cleanly.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum LocalFailure {
@@ -50,7 +50,7 @@ pub enum Reason {
     NoObligations,
     /// No case cites the obligation.
     MissingCase,
-    /// Unverifiable: Snowflake answers the construct only with an internal error (decision D87).
+    /// Unverifiable: Snowflake answers the construct only with an internal error.
     UnverifiableInternalError,
     /// Unverifiable: the cases are never submitted, such as side-effecting calls a guard holds.
     UnverifiableNotSubmitted,
@@ -103,7 +103,7 @@ pub struct CaseResult {
     pub semantic_only: bool,
     /// What Snowflake's parser did, whatever the case expects; none on disagreeing or no receipts.
     pub snowflake: Option<SnowflakeSyntax>,
-    /// The account parameters its admissible receipts ran under (decision D120).
+    /// The account parameters its admissible receipts ran under.
     #[serde(skip_serializing_if = "BTreeMap::is_empty")]
     pub account_state: BTreeMap<String, AccountSetting>,
 }
@@ -164,7 +164,7 @@ pub struct CheckResult {
     pub unexcluded_pages: Vec<String>,
     /// References between files that do not resolve; any one fails the check.
     pub problems: Vec<String>,
-    /// Receipt case ids whose statement the parser contradicts, cited by a form or not (D141).
+    /// Receipt case ids whose statement the parser contradicts, cited by a form or not.
     pub receipt_contradictions: BTreeSet<String>,
     /// Receipt case ids whose SQL no case or run report gives, so no verdict can be compared.
     pub unjudged_receipts: BTreeSet<String>,

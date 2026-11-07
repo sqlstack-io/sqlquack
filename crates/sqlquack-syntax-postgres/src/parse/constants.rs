@@ -216,6 +216,12 @@ pub(crate) const INTERVAL_FIELDS: [&str; 6] = ["year", "month", "day", "hour", "
 /// The function `expr AT LOCAL` calls, as PostgreSQL's raw tree names it with one argument.
 pub(crate) const TIMEZONE_FUNCTION: &str = "timezone";
 
+/// The SQL/JSON query function that also takes a wrapper and a quotes clause.
+pub(crate) const JSON_QUERY_FUNCTION: &str = "json_query";
+
+/// The `XMLPARSE` whitespace option that keeps whitespace.
+pub(crate) const PRESERVE_WHITESPACE: &str = "preserve";
+
 /// The right side of `IS UNKNOWN`, which PostgreSQL keeps apart from `IS NULL`.
 pub(crate) const UNKNOWN_TEST: &str = "UNKNOWN";
 

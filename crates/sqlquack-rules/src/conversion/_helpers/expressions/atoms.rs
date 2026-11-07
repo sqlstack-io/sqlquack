@@ -13,6 +13,7 @@ use sqlquack_snowflake::typing::main::literal_digits::literal_digits;
 use sqlquack_snowflake::typing::main::number_literal::number_literal;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
+use crate::conversion::_helpers::expressions::casts::cast_to;
 use crate::conversion::_helpers::expressions::scalar::{convert_expression, convert_held};
 use crate::conversion::_helpers::queries::query::convert_query;
 use crate::conversion::_helpers::support::collecting::{
@@ -22,16 +23,20 @@ use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Emitted, Literal, Scope, resolve};
 use crate::conversion::_helpers::support::site::Site;
 use crate::conversion::_helpers::support::tree::{
-    LITERAL_NUMBER, LITERAL_STRING, field, identifier_name, node_construct, payload_object,
-    require_understood,
+    LITERAL_NUMBER, LITERAL_STRING, Payload, field, identifier_name, node_construct, node_kind,
+    payload_object, require_understood,
 };
 use crate::conversion::constants::{
     COLUMN, COMMENT, CONSTANT_LITERAL, DOLLAR_PARAMETER, DOLLAR_STRING_KIND, NEGATE,
     NUMBER_LITERAL, PARENTHESES, POSITIONAL_COLUMN, SCALAR_SUBQUERY, SEQUENCE_COLUMN,
-    SEQUENCE_PEERS, TYPED_LITERAL_KINDS, TYPED_LITERAL_PAIR,
+    SEQUENCE_PEERS, TYPED_LITERAL_KINDS, TYPED_LITERAL_PAIR, UNARY_PLUS,
 };
 use sqlquack_semantics::scopes::models::ScopeRelation;
 use sqlquack_semantics::types::models::Holding;
+use sqlquack_snowflake::typing::constants::MAX_PRECISION;
+
+/// The integer digits a unary plus gives a NUMBER at least, within 38: + 1 is NUMBER(2,0).
+const PLUS_INTEGER_DIGITS: u8 = 2;
 
 /// A column reference.
 pub(crate) fn column(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
@@ -228,12 +233,61 @@ pub(crate) fn negate(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal
     let _rule = site.context.log.rule(NEGATE);
     let payload = payload_object(payload, &construct)?;
     require_understood(payload, &["this"], &construct)?;
-    let inner = convert_expression(field(payload, "this", &construct)?, site)?;
+    let inner = convert_expression(unsigned_operand(payload, &construct)?, site)?;
     match inner.data_type {
         SnowflakeType::Number { .. } | SnowflakeType::Float => {
             Ok(Emitted::new(format!("(-{})", inner.sql), inner.data_type))
         }
         other => Err(outside_conditions(construct, format!("negating {other}"))),
+    }
+}
+
+/// Unary plus: a NUMBER given two integer digits at least, a FLOAT unchanged, text read as FLOAT.
+pub(crate) fn unary_plus(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let construct = node_construct("pos");
+    let _rule = site.context.log.rule(UNARY_PLUS);
+    let payload = payload_object(payload, &construct)?;
+    require_understood(payload, &["this"], &construct)?;
+    let inner = convert_expression(unsigned_operand(payload, &construct)?, site)?;
+    match inner.data_type {
+        SnowflakeType::Number { precision, scale } => {
+            let widened = (scale + precision.saturating_sub(scale).max(PLUS_INTEGER_DIGITS))
+                .min(MAX_PRECISION);
+            let data_type = SnowflakeType::Number {
+                precision: widened,
+                scale,
+            };
+            match widened == precision {
+                true => Ok(Emitted::new(inner.sql, data_type)),
+                false => Ok(Emitted::new(
+                    cast(&inner.sql, data_type, site.context.log)
+                        .map_err(|reason| outside_conditions(construct.clone(), reason))?,
+                    data_type,
+                )),
+            }
+        }
+        SnowflakeType::Float => Ok(Emitted::new(inner.sql, inner.data_type)),
+        SnowflakeType::Varchar => Ok(Emitted::new(
+            cast_to(&inner, "FLOAT", false, (site.context, &construct))
+                .map_err(|reason| outside_conditions(construct.clone(), reason))?,
+            SnowflakeType::Float,
+        )),
+        other => Err(outside_conditions(
+            construct,
+            format!("unary plus of {other}"),
+        )),
+    }
+}
+
+/// A sign's operand, refused when it is itself a sign, as Snowflake rejects `++1` and `- -x` (1005).
+fn unsigned_operand<'a>(payload: &'a Payload, construct: &Construct) -> Result<&'a Value, Refusal> {
+    let operand = field(payload, "this", construct)?;
+    match node_kind(operand) {
+        Some(("pos" | "neg", _)) => Err(outside_conditions(
+            construct.clone(),
+            "two adjacent signs, which Snowflake rejects as an invalid function (1005)".to_owned(),
+        )),
+        _ => Ok(operand),
     }
 }
 

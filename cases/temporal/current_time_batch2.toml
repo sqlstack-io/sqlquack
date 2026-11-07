@@ -111,6 +111,6 @@ columns = [{ name = "k", type = "NUMBER(2,0)" }]
 rows = [
   ["1"],
 ]
-query = "SELECT DATEDIFF(second, CURRENT_TIMESTAMP(), CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ) BETWEEN -5 AND 5 AS near, TO_VARCHAR(CURRENT_TIMESTAMP()::TIMESTAMP_NTZ) RLIKE '[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}.*' AS shape FROM input"
+query = "SELECT DATEDIFF(second, CURRENT_TIMESTAMP(), CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ) BETWEEN -5 AND 5 AS near, TO_VARCHAR(CURRENT_TIMESTAMP()::TIMESTAMP_NTZ, 'YYYY-MM-DD HH24:MI:SS') RLIKE '[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}' AS shape FROM input"
 order = "ordered"
 tags = ["null", "boundary"]

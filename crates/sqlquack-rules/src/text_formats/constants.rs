@@ -7,6 +7,7 @@ pub(crate) const TEMPORAL_TEXT_FIELDS: &[(&str, &str, bool)] = &[
     ("MON", "%b", false),
     ("MM", "%m", false),
     ("DD", "%d", false),
+    ("DY", "%a", false),
     ("HH24", "%H", true),
     ("MI", "%M", true),
     ("SS", "%S", true),
@@ -14,10 +15,11 @@ pub(crate) const TEMPORAL_TEXT_FIELDS: &[(&str, &str, bool)] = &[
     ("FF6", "%f", true),
     ("FF3", "%g", true),
 ];
-/// Fields writing an English month name, recorded only as written in upper case.
-pub(crate) const MONTH_NAME_FIELDS: &[&str] = &["MMMM", "MON"];
-/// The fields recorded directly after each month name: none after MON, whose MONMM writes the full name.
-pub(crate) const MONTH_NAME_FOLLOWERS: &[(&str, &[&str])] = &[("MON", &[]), ("MMMM", &["DD"])];
+/// Fields writing an English month or day name, recorded only as written in upper case.
+pub(crate) const MONTH_NAME_FIELDS: &[&str] = &["MMMM", "MON", "DY"];
+/// The fields recorded directly after each name: none after MON, whose MONMM writes the full name, or DY.
+pub(crate) const MONTH_NAME_FOLLOWERS: &[(&str, &[&str])] =
+    &[("MON", &[]), ("MMMM", &["DD"]), ("DY", &[])];
 /// The format element writing as many fraction digits as the timestamp's precision.
 pub(crate) const BARE_FRACTION: &str = "FF";
 /// What FF writes for each precision recorded: none for 0, then milli-, micro- and nanoseconds.

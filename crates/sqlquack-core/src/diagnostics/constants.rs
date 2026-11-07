@@ -11,10 +11,14 @@ pub const CASE_ONLY_MATCH_HELP: &str = "Snowflake folds unquoted names to upper 
     the relation or column in the schema as the SQL resolves it (`ORDERS` for `FROM orders`), or \
     quote the name in the SQL to keep its case";
 /// The words of an unresolved name's reason when two result columns share a name.
-pub const REPEATED_RESULT_NAME: &str = "repeats, possibly differing only in case";
+pub const REPEATED_RESULT_NAME: &str = "repeats an earlier result column's name";
 /// The help for such a name, replacing SQ0004's own.
 pub const REPEATED_RESULT_NAME_HELP: &str =
     "give each result column its own alias, such as `SELECT 1 AS first, 1 AS second`";
+/// SQ0003's help where a function's operand has a type its rule does not cover.
+pub const FUNCTION_OPERAND_HELP: &str = "the label names the operand types this function covers; \
+    cast the operand to one of them where that keeps the statement's meaning, such as \
+    `CAST(x AS TIMESTAMP_NTZ)` for a TIMESTAMP_LTZ in a UTC session";
 /// The words of a refusal reading a TIMESTAMP_TZ's local time, which needs the offset DuckDB drops.
 pub const ZONED_LOCAL_TIME: &str =
     "which reads the local time of an offset DuckDB's TIMESTAMPTZ drops";
@@ -54,6 +58,8 @@ pub const DIVERGENCE_REFUSED: &str = "SQ0008";
 pub const UNALIASED_OUTPUT_NAME: &str = "SQ0009";
 /// The construct name of that refusal, which its code is registered under.
 pub const UNALIASED_OUTPUT_NAME_CONSTRUCT: &str = "unaliased_output_name";
+/// The longest unaliased item text whose upper-cased name SQ0009's help suggests as the alias.
+pub const SUGGESTED_NAME_MAX_CHARS: usize = 80;
 
 /// Every diagnostic code, in the order issued.
 pub const CODES: &[CodeEntry] = &[
@@ -89,7 +95,8 @@ pub const CODES: &[CodeEntry] = &[
         alias: None,
         title: "the operand types fall outside every rule's proven conditions",
         help: Some(
-            "declare the operands' Snowflake types in the schema, or cast them to a type the rule covers",
+            "declare the operands' Snowflake types in the schema, or cast them to a type the rule \
+             covers; for a function's operand, cast it to a type the label names",
         ),
         explanation: "A rule covers the construct, but only for operand types its recorded \
             cases prove. The operands at the span have other types, or types SQLQuack could not \
@@ -155,7 +162,9 @@ pub const CODES: &[CodeEntry] = &[
         help: Some(
             "the help names the divergence and the fixes that work in the current mode: allow \
              it in the policy file, drop --strict or --loud-divergences-only, or confirm its \
-             assumption; the built-in policy refuses every one",
+             assumption; outside strict mode the built-in policy allows only the clock, \
+             arithmetic that raises past 38 digits or the timestamp range, and VARIANT reads \
+             whose JSON guards raise",
         ),
         explanation: "The construct at the span converts only by relying on the known \
             divergence the label names, where DuckDB may raise or differ from Snowflake as the \
@@ -170,17 +179,17 @@ pub const CODES: &[CodeEntry] = &[
         name: UNALIASED_OUTPUT_NAME_CONSTRUCT,
         alias: None,
         title: "this column has no alias, and SQLQuack has not verified the name Snowflake gives it",
-        help: Some("add an alias, e.g. `AS one`"),
-        explanation: "Snowflake names an unaliased select item after the expression's text, and \
-            a converted query must return the same column names. SQLQuack emits Snowflake's name \
-            only for the shapes recorded results verify, named by their text upper-cased as \
-            written: literals, columns and COUNT, SUM, MAX, AVG, LOWER, UPPER and COALESCE of \
-            columns, ROUND of a column, a column plus, minus, times, divided by or concatenated \
-            with a literal, a column cast to INTEGER, and CURRENT_DATE, CURRENT_DATE() or \
-            CURRENT_TIMESTAMP(), written with single spaces and at most one line break. \
-            Other items, such as paths, CASE, nested calls or other functions, are refused \
-            rather than converted with a different column name. An alias fixes the name in both \
-            engines.",
+        help: Some("add an alias, such as `AS total`, which names the column in both engines"),
+        explanation: "Snowflake names an unaliased select item after its written text, \
+            upper-cased in full with spacing, comments and quotes kept and cut at 255 \
+            characters, and a converted query must return the same column names. SQLQuack emits \
+            that name as an alias for the shapes recorded results verify: literals in any \
+            spelling, columns, arithmetic, ||, comparisons, AND, OR, NOT, IS NULL, parentheses, \
+            casts, CASE, IFF, the clock functions and a recorded list of functions and \
+            aggregates, nested freely. Other items, such as paths, window functions, non-ASCII text, \
+            line comments or unlisted functions, are refused rather than converted under a name \
+            that might differ. The help suggests the exact alias; an alias fixes the name in \
+            both engines.",
         example: r#"echo "SELECT 'café' || 'b'" | sqlquack convert --builtin-policy"#,
     },
     CodeEntry {

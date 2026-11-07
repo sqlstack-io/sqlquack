@@ -40,7 +40,7 @@ There is one `[[source]]` per documentation page:
 - `page_sha256` and `syntax_sha256`: the hashes of the fetched page and of its syntax blocks.
 - `syntax_blocks`.
 - `status`: one of `forms`, `restated`, `no_syntax_block` or `out_of_scope`. A `restated` page
-  repeats grammar that a form on another page already covers in full (decision D80). It has no
+  repeats grammar that a form on another page already covers in full. It has no
   form of its own and adds nothing to the denominator. At least one form must list it in
   `also_sources`.
 - `decisions`: the extraction rules that changed the page's form count.
@@ -50,7 +50,7 @@ The pages and their prose stay private and untracked.
 
 ## Catalogue (`catalogue/<family>.toml`)
 
-A `[[form]]` is one documented syntax block or variant (decision D62). Options and alternatives
+A `[[form]]` is one documented syntax block or variant. Options and alternatives
 inside it are obligations, not forms.
 
 - `id`: `sf.<family>.<page-slug>[.<variant>…]`. No segment may read as an obligation number such
@@ -90,11 +90,10 @@ An `[[obligation]]` has these fields:
   - `interaction`: two options or alternatives whose combination a page's usage notes constrain.
     It must carry the `anchor` of that note.
   - `interaction_all_options`: one per form with two or more independent options. A case that
-    uses every option together satisfies it. It takes no `target`, `pair` or `depths`
-    (decision D82).
+    uses every option together satisfies it. It takes no `target`, `pair` or `depths`.
   - `extreme`: a size or nesting value with no documented bound, such as 100 nested blocks or
-    5,000 list items (decision D90). It takes no `target`, `pair` or `depths`, is required, and has
-    a `note`. Its case takes its expectation from Snowflake's receipt (decision D92).
+    5,000 list items. It takes no `target`, `pair` or `depths`, is required, and has
+    a `note`. Its case takes its expectation from Snowflake's receipt.
 - `required`.
 - `target`: the alternative or option id. It is required for the alternative, option, operand
   and boundary kinds.
@@ -134,16 +133,16 @@ Each line is one JSON object. Blank lines are refused.
   the run owns and discloses. A receipt counts for a case only when its `capture_method` is the
   case's `capture`, so a standalone execute receipt never satisfies a DCM case.
 
-- `expect`: optional, `accept` or `reject` (decision D84). `reject` means a syntax error. `accept`
+- `expect`: optional, `accept` or `reject`. `reject` means a syntax error. `accept`
   means no syntax error: the statement was accepted, or refused only after parsing. A receipt whose
   phase contradicts it makes the case `unexpected_outcome`, so it is no evidence.
 - `expect` is `observe` on an extreme case Snowflake has not answered yet; the case fails as
   `awaiting_observation` whatever its receipts. It is `terminates` on an extreme case Snowflake
   refused with a syntax error: any clean local verdict, an acceptance or a rejection, agrees, and
-  only a local parse failure fails it. No receipt phase contradicts `terminates` (decision D92).
+  only a local parse failure fails it. No receipt phase contradicts `terminates`.
 - `stage`: optional, only with `accept`. One of `semantic`, `runtime` or `error`: where the
   accepted statement is expected to fail later. It is informational, and the syntax score never
-  compares it (decision D85).
+  compares it.
 
 `setup_sha256` is the SHA-256 of the compact JSON array, which Python writes with
 `json.dumps(setup, separators=(",", ":"), ensure_ascii=False)`. `session_sha256` is the same over
@@ -177,7 +176,7 @@ committed one.
   stopped. It is provenance only and does not change the phase.
 - Optional `account_state`: the account parameters the capture ran under, by name, each as
   `{ "value": …, "basis": … }` with both non-empty, such as
-  `{ "CORTEX_MODELS_ALLOWLIST": { "value": "NONE", "basis": "D120: …" } }` (decision D120). It
+  `{ "CORTEX_MODELS_ALLOWLIST": { "value": "NONE", "basis": "…" } }`. It
   is provenance only and does not change the phase; when present it names at least one parameter.
 - Optional `reason_category` and `reason_category_basis`, always together, and only on a phase
   after parsing (`semantic_error`, `runtime_error` or `unsupported_feature`). The category is one
@@ -207,7 +206,7 @@ committed one.
 
 The importer reads a run only when its audit has one `complete` event whose `raw_sha256` is the
 hash of `capture/raw.jsonl`. A DDL run that stopped before writing that event can instead carry a
-`reconciliation.json` in the format `sqlquack-run-reconciliation/1` (decision D108). The importer
+`reconciliation.json` in the format `sqlquack-run-reconciliation/1`. The importer
 then reports the run as `reconciled` instead of `imported`, with the file's hash as
 `reconciliation_sha256`, and its report counts `reconciled_receipts`. It refuses the whole run
 when:
@@ -255,7 +254,7 @@ says nothing about runtime.
 ## Unobservable obligations (`unobservable/<family>.toml`)
 
 An `[[unobservable]]` entry names an obligation whose construct Snowflake answers only with an
-internal error (603), so no capture can establish a phase (decision D87). It has `obligation`,
+internal error (603), so no capture can establish a phase. It has `obligation`,
 `form`, `construct`, `reason`, `cases` (each `{ case_id, sql_sha256 }`), `runs` and `probes` (each
 `{ probe, sql_sha256, result }`). The obligation must be declared and belong to `form` in that
 family; each listed case must exist with that `sql_sha256` and cite the obligation; an obligation is
@@ -298,20 +297,18 @@ A `[[review]]` has these fields:
   review with `forms` marks only the listed forms as reviewed, still bound to the catalogue and
   obligation hashes and the parser tree; forms it does not list stay `unreviewed`. A review without
   `forms` covers the whole family. An empty list, a form of another family or an uncatalogued form
-  is an error. Two current reviews may list the same form; a review id declared twice is an error
-  (decision D88).
+  is an error. Two current reviews may list the same form; a review id declared twice is an error.
 - `fingerprints` (optional, with `forms` only): each listed form's fingerprint when it was reviewed,
   as `{ "<form id>" = "<sha256>" }`, one for every listed form. While a form's recorded fingerprint
   equals its current one, the review stays current for that form whatever the parser tree; when it
   differs, the review is stale for that form only. A review without `fingerprints` stays bound to
-  `parser_tree` (decision D100).
+  `parser_tree`.
 - `definitions` (optional, with `forms` and `fingerprints` only): each listed form's definition
   hash when it was reviewed, as `{ "<form id>" = "<sha256>" }`, one for every listed form. A
   review with `definitions` binds each form by its definition and fingerprint alone and has no
   `catalogue_sha256`, `obligations_sha256` or exclusions. An edit to another form in the same
   catalogue or obligations file, or to another form's reading, leaves it current; any change to
-  the form's own catalogue entry, obligations, reading or fingerprint makes it stale for that form
-  (decision D118).
+  the form's own catalogue entry, obligations, reading or fingerprint makes it stale for that form.
 - `[[review.exclusion]]`: exactly one of `form` (a form id of the review's family) or `source` (a
   page id, used for out-of-scope and syntax-less pages), plus a `reason`. A page review excludes
   pages only, and a family review excludes forms only.
@@ -335,7 +332,7 @@ A `semantic_error`, `runtime_error` or `unsupported_feature` receipt with a stru
 acceptance satisfies the obligation for syntax and is counted as `semantic_only`.
 
 Every local parse runs in a worker child process of the checker, bounded to 10 seconds and 4 GiB of
-virtual memory, and restarted after any failure (decisions D90 and D92). A panic, a crash such as a
+virtual memory, and restarted after any failure. A panic, a crash such as a
 stack overflow or the memory bound, a timeout, or a complexity-guard error (`E_GUARD_*`) is a local
 parse failure, never a syntax rejection, and fails that case as `local_parse_failure`; the run goes
 on.
@@ -360,7 +357,7 @@ entry and its own obligations in file order, as loaded, followed by its `[[readi
 `limits.toml` when it has one; `family --json` prints it as
 `definition_sha256`. A form is excluded only by an approved review that is current in the
 same way. Absent forms keep their ids and are never counted. The headline denominator is the
-catalogued forms: 3,348 on the frozen catalogue `e863d7de` (decision D81).
+catalogued forms: 3,348 on the frozen catalogue `e863d7de`.
 
 Anything missing, ambiguous, stale, mismatched or opaque fails closed with a named reason:
 `no_obligations`, `missing_case`, `unverifiable_internal_error`, `missing_receipt`,
@@ -407,7 +404,7 @@ errno other than 1003, and refused it when every receipt is a syntax error with 
 a positionless 1003 or receipts that disagree count as neither. The first line catches a case that
 moves from an opaque acceptance, which satisfies no obligation, to a rejection; a pull request that
 has one explains each case. A case marked `documented (D113)` that the current parser now accepts
-is listed on its own line for the auditor and does not fail the diff (decision D135). A
+is listed on its own line for the auditor and does not fail the diff. A
 snapshot taken before these case lists existed has none, so it reports no such case. The second is a catalogue change: a changed sources, aliases or
 catalogue file, or a form added or removed. Catalogue changes are reported separately from
 coverage changes. Gains pass. After a reviewed gain or catalogue change, re-record the baseline
@@ -416,7 +413,7 @@ tree, so any parser commit makes its verified forms stale until it is renewed; a
 fingerprints goes stale only for the forms whose cases now parse differently. Either shows up as a
 regression.
 
-## Receipt contradictions (decision D141)
+## Receipt contradictions
 
 The case lists above only reach receipts through the catalogue: a receipt whose case id no form
 cites, such as a retired or hand-written case, never counts. A snapshot therefore also records
@@ -426,7 +423,7 @@ rejects a statement Snowflake parsed, or accepts one Snowflake refused as syntax
 the case that names the hash or from the `inputs` of the run reports beside the receipts, each
 checked against its hash. A receipt neither gives is listed in `unjudged_receipts` and judged by
 nothing. `diff` fails on a receipt the head contradicts and the base did not. A receipt of a case
-marked `documented (D113)` is listed on its own line instead (decision D135). Receipts both sides
+marked `documented (D113)` is listed on its own line instead. Receipts both sides
 contradict, and every head contradiction when the base snapshot predates these fields, are listed in
 the JSON without failing.
 

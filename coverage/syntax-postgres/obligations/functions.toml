@@ -18243,22 +18243,10 @@ required = true
 target = "[ ENCODING UTF8 ]"
 
 [[obligation]]
-id = "pg.functions.json.json-array.o027"
-kind = "option_present"
-required = true
-target = "[ <query_expression> ]"
-
-[[obligation]]
-id = "pg.functions.json.json-array.o028"
-kind = "option_absent"
-required = true
-target = "[ <query_expression> ]"
-
-[[obligation]]
-id = "pg.functions.json.json-array.o029"
+id = "pg.functions.json.json-array.o052"
 kind = "operand_type_class"
 required = true
-target = "<query_expression> in [ <query_expression> ]"
+target = "<query_expression>"
 note = "a valid expression"
 
 [[obligation]]
@@ -18377,6 +18365,37 @@ id = "pg.functions.json.json-array.o048"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "pg.functions.json.json-array.o053"
+kind = "operand_type_class"
+required = true
+target = "<query_expression>"
+anchor = "doc.functions-json / Processing and Creating JSON Data"
+note = "a VALUES query as the query signature's query (gram.y json_array: select_no_parens takes values_clause)"
+
+[[obligation]]
+id = "pg.functions.json.json-array.o054"
+kind = "operand_type_class"
+required = true
+target = "<query_expression>"
+anchor = "doc.functions-json / Processing and Creating JSON Data"
+note = "a query with a WITH clause as the query signature's query (gram.y select_no_parens: with_clause select_clause)"
+
+[[obligation]]
+id = "pg.functions.json.json-array.o055"
+kind = "operand_type_class"
+required = true
+target = "<query_expression>"
+anchor = "doc.functions-json / Processing and Creating JSON Data"
+note = "a string query with RETURNING bytea FORMAT JSON ENCODING UTF8, the output type ENCODING applies to"
+
+[[obligation]]
+id = "pg.functions.json.json-array.o056"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions-json / Processing and Creating JSON Data"
+note = "a parenthesised query is one value of the value-list signature, not the query signature: ON NULL is allowed after it (gram.y json_value_expr_list), while the query signature takes no ON NULL"
 
 [[obligation]]
 id = "pg.functions.json.json-array-elements.o001"
@@ -33195,11 +33214,11 @@ target = "<namespace_uri> in [ XMLNAMESPACES ( <namespace_uri> AS <namespace_nam
 note = "omit <namespace_uri>"
 
 [[obligation]]
-id = "pg.functions.xml.xmltable-passing-columns.o005"
+id = "pg.functions.xml.xmltable-passing-columns.o070"
 kind = "operand_type_class"
 required = true
 target = "<namespace_uri> in [ XMLNAMESPACES ( <namespace_uri> AS <namespace_name> [ , ... ] ) , ]"
-note = "a valid identifier"
+note = "a valid expression"
 
 [[obligation]]
 id = "pg.functions.xml.xmltable-passing-columns.o006"
@@ -33551,22 +33570,6 @@ id = "pg.functions.xml.xmltable-passing-columns.o057"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
-
-[[obligation]]
-id = "pg.functions.xml.xmltable-passing-columns.o058"
-kind = "identifier_class"
-required = true
-target = "<namespace_uri>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "pg.functions.xml.xmltable-passing-columns.o059"
-kind = "identifier_class"
-required = true
-target = "<namespace_uri>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "pg.functions.xml.xmltable-passing-columns.o062"

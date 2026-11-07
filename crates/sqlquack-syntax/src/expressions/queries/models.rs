@@ -279,6 +279,12 @@ pub struct Union {
     /// BigQuery: BY (columns) after CORRESPONDING
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub on_columns: Vec<Expression>,
+    /// PostgreSQL: FOR UPDATE/SHARE locking clauses on the whole set operation
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub locks: Vec<Lock>,
+    /// PostgreSQL `FETCH … WITH TIES`: the limit keeps rows that tie with the last one
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub with_ties: bool,
     /// SQLQuack: the node's source range, recorded by a located parse.
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -343,6 +349,12 @@ pub struct Intersect {
     /// BigQuery: BY (columns) after CORRESPONDING
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub on_columns: Vec<Expression>,
+    /// PostgreSQL: FOR UPDATE/SHARE locking clauses on the whole set operation
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub locks: Vec<Lock>,
+    /// PostgreSQL `FETCH … WITH TIES`: the limit keeps rows that tie with the last one
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub with_ties: bool,
     /// SQLQuack: the node's source range, recorded by a located parse.
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -406,6 +418,12 @@ pub struct Except {
     /// BigQuery: BY (columns) after CORRESPONDING
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub on_columns: Vec<Expression>,
+    /// PostgreSQL: FOR UPDATE/SHARE locking clauses on the whole set operation
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub locks: Vec<Lock>,
+    /// PostgreSQL `FETCH … WITH TIES`: the limit keeps rows that tie with the last one
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub with_ties: bool,
     /// SQLQuack: the node's source range, recorded by a located parse.
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -668,6 +686,9 @@ pub struct Join {
     /// Snowflake: the alias in `FIRST ( alias )` or `LAST ( alias )`; absent when none
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub first_last_alias: Option<Identifier>,
+    /// PostgreSQL `USING (…) AS alias`: the alias of the join's USING columns
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub using_alias: Option<Identifier>,
     /// SQLQuack: the node's source range, recorded by a located parse.
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1023,6 +1044,9 @@ pub struct MatchRecognize {
     /// Whether AS keyword was explicitly present before alias
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub alias_explicit_as: bool,
+    /// `OPTIONS ( name = value, ... )` (BigQuery), as `name = value` pairs; empty when absent
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub options: Vec<Expression>,
 }
 
 /// MEASURES expression with optional RUNNING/FINAL semantics
@@ -1227,6 +1251,9 @@ pub struct Cte {
     /// Comments associated with this CTE (placed after alias name, before AS)
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub comments: Vec<String>,
+    /// PostgreSQL `SEARCH … SET col` then `CYCLE … USING col`, each a `KeywordCall`, when written
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub search_cycle: Vec<Expression>,
     /// SQLQuack: the node's source range, recorded by a located parse.
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]

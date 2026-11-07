@@ -18,15 +18,17 @@ use crate::conversion::_helpers::expressions::semi_structured::guarded_column;
 use crate::conversion::_helpers::queries::clauses::condition_sql;
 use crate::conversion::_helpers::queries::flatten::lateral_flatten;
 use crate::conversion::_helpers::queries::pivot::pivot_subquery;
-use crate::conversion::_helpers::queries::query::{convert_query, require_distinct_names};
+use crate::conversion::_helpers::queries::query::{
+    NESTED_REPEAT, convert_query, require_distinct_names,
+};
 use crate::conversion::_helpers::support::collecting::{
     collecting, events, opaque, record, recorded, replace_since, suspended, unresolved_since,
 };
 use crate::conversion::_helpers::support::scope::{Context, Scope};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
-    Payload, field, function_construct, identifier_name, integer_literal, list, node_construct,
-    node_kind, payload_object, require_understood,
+    Payload, field, function_construct, identifier_name, integer_literal, is_inert, list,
+    node_construct, node_kind, payload_object, require_understood,
 };
 use crate::conversion::constants::{
     ASOF_JOIN, ASOF_KIND, CORRELATED_DERIVED, FROM_RELATION, FROM_SUBQUERY, GENERATOR_MAX_ROWS,
@@ -35,6 +37,9 @@ use crate::conversion::constants::{
     TABLE_WRAPPER, UNALIASED_SUBQUERY_PREFIX, USING_ALIAS_PREFIX,
 };
 use crate::conversion::constants::{FULL_JOIN_KEYWORD, INNER_JOIN_KEYWORD};
+
+/// How the parsed tree spells a NATURAL join's kind, lower-cased.
+const NATURAL_JOIN_PREFIX: &str = "natural";
 use sqlquack_semantics::lineage::main::stored_columns::stored_columns;
 use sqlquack_semantics::names::constants::RELATION_KEY_SEPARATOR;
 use sqlquack_semantics::names::main::relation_key::relation_key;
@@ -598,6 +603,7 @@ fn table_source(
     for column in columns
         .iter()
         .filter(|column| !is_cte && column.data_type == SnowflakeType::SemiStructured)
+        .filter(|column| may_read(context.locator.tree(), &column.name))
     {
         let quoted = quoted_identifier(&column.name, log);
         guarded.push(format!("{} AS {quoted}", guarded_column(&quoted, context)?));
@@ -847,7 +853,7 @@ fn subquery_source(
                 missing(construct.clone(), "a column alias has no name".to_owned())
             })?;
         }
-        require_distinct_names(&columns)?;
+        require_distinct_names(&columns, Some(NESTED_REPEAT))?;
     }
     let alias = subquery
         .get("alias")
@@ -885,4 +891,58 @@ fn reads_enclosing(query: &Value, outer: &Scope<'_>, context: &Context<'_>) -> b
         Ok(_) => true,
         Err(refusal) => refusal.reason == CORRELATED_DERIVED,
     }
+}
+
+/// Whether `tree` names column `name`, or reads columns unnamed: `*`, `$n`, PIVOT or NATURAL.
+fn may_read(tree: &Value, name: &str) -> bool {
+    let plain = !name.is_empty()
+        && name
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || byte == b'_' || byte == b'$');
+    !plain || reads_unnamed_or(tree, name)
+}
+
+/// The walk behind `may_read`.
+fn reads_unnamed_or(tree: &Value, name: &str) -> bool {
+    match tree {
+        Value::String(text) => {
+            text.eq_ignore_ascii_case(name)
+                || text.to_ascii_lowercase().starts_with(NATURAL_JOIN_PREFIX)
+        }
+        Value::Array(items) => items.iter().any(|item| reads_unnamed_or(item, name)),
+        Value::Object(fields) => fields.iter().any(|(key, value)| match key.as_str() {
+            "star" | "parameter" | "pivot" | "unpivot" | "columns" => true,
+            "count" | "aggregate_function" if counts_rows(value) => false,
+            _ => reads_unnamed_or(value, name),
+        }),
+        _ => false,
+    }
+}
+
+/// Whether a COUNT payload is COUNT(*) alone, which reads no column.
+fn counts_rows(payload: &Value) -> bool {
+    let Some(fields) = payload.as_object() else {
+        return false;
+    };
+    let star =
+        |value: &Value| matches!(node_kind(value), Some(("star", star)) if is_inert_star(star));
+    let named_count = fields
+        .get("name")
+        .and_then(Value::as_str)
+        .is_none_or(|called| called.eq_ignore_ascii_case("COUNT"));
+    named_count
+        && fields.iter().all(|(key, value)| match key.as_str() {
+            "this" => star(value),
+            "args" => value
+                .as_array()
+                .is_some_and(|items| items.len() == 1 && star(&items[0])),
+            "name" => true,
+            _ => is_inert(value),
+        })
+}
+
+/// A bare `*`, without a qualifier, ILIKE, EXCLUDE, REPLACE or RENAME.
+fn is_inert_star(star: &Value) -> bool {
+    star.as_object()
+        .is_none_or(|fields| fields.values().all(is_inert))
 }

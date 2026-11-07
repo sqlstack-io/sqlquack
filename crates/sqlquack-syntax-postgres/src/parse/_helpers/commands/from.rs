@@ -5,12 +5,46 @@ use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
 use sqlquack_syntax::expressions::operators::models::Alias;
 use sqlquack_syntax::expressions::queries::models::{Join, JoinKind};
 
+use crate::parse::_helpers::commands::routines::var;
+use crate::parse::_helpers::commands::tables::{clause, name_value};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_col_id, is_col_label};
 use crate::parse::_helpers::tree::nodes::{
-    JoinConstraint, TableAlias, join, joined_table, lateral, subquery, table,
+    JoinConstraint, TableAlias, join, joined_table, keyword_call, lateral, subquery, table, tuple,
 };
 use crate::parse::_helpers::values::expressions::Flavor;
 use crate::parse::constants::VALUE_FUNCTIONS;
+
+/// `call` under its alias, when it has one.
+fn aliased(call: Expression, alias: Option<TableAlias>) -> Expression {
+    match alias {
+        None => call,
+        Some(alias) => {
+            let mut node: Alias = Alias::new(call, alias.name);
+            node.column_aliases = alias.columns;
+            node.alias_explicit_as = alias.explicit;
+            node.alias_keyword = alias.explicit.then(|| "AS".to_owned());
+            Expression::Alias(Box::new(node))
+        }
+    }
+}
+
+/// A parenthesized join and its alias: a name alone stays on the join, column aliases wrap it.
+fn joined_alias(left: Expression, joins: Vec<Join>, alias: Option<TableAlias>) -> Expression {
+    let named: bool = alias.as_ref().is_some_and(|alias| alias.columns.is_empty());
+    let table: Expression = match (joins.is_empty(), left) {
+        (true, Expression::JoinedTable(mut inner)) if named && inner.alias.is_none() => {
+            inner.alias = alias.map(|alias| alias.name);
+            return Expression::JoinedTable(inner);
+        }
+        (true, left) => left,
+        (false, left) if named => return joined_table(left, joins, alias.map(|alias| alias.name)),
+        (false, left) => joined_table(left, joins, None),
+    };
+    match named {
+        true => table,
+        false => aliased(table, alias),
+    }
+}
 
 impl Parser<'_> {
     /// `from_list`: the comma-separated items, and every join, in order.
@@ -92,7 +126,6 @@ impl Parser<'_> {
             let nested: Vec<Join> = self.joins()?;
             right = joined_table(right, nested, None);
         }
-        let start: usize = self.offset();
         if self.eat_kw("on") {
             let on: Expression = self.a_expr()?;
             return Ok(join(
@@ -104,40 +137,53 @@ impl Parser<'_> {
         }
         self.expect_kw("using")?;
         let using: Vec<Identifier> = self.name_list()?;
+        let mut node: Join = join(right, kind, JoinConstraint::Using(using), (inner, outer));
         if self.eat_kw("as") {
-            self.name(is_col_id)?;
-            self.gap("join_using_alias", start);
+            node.using_alias = Some(self.name(is_col_id)?);
         }
-        Ok(join(
-            right,
-            kind,
-            JoinConstraint::Using(using),
-            (inner, outer),
-        ))
+        Ok(node)
     }
 
-    /// `ROWS FROM (...)`, `XMLTABLE (...)` or `JSON_TABLE (...)` with its alias, as a gap.
-    fn gap_table(&mut self, start: usize) -> Parsing<Option<Expression>> {
+    /// `ROWS FROM (...)`, `XMLTABLE (...)` or `JSON_TABLE (...)`, with its alias.
+    fn keyword_table(&mut self, is_lateral: bool) -> Parsing<Option<Expression>> {
         match self.keyword_at(0) {
             Some("rows") if self.kw_at(1, "from") && self.char_at(2, '(') => {
                 self.at += 2;
-                self.skip_parenthesized()?;
-                self.ordinality();
-                self.function_alias()?;
-                self.gap("rows_from", start);
-                Ok(Some(Expression::Table(Box::new(TableRef::new(
-                    "rows_from",
-                )))))
+                let calls: Vec<Expression> = self.parenthesized(|parser| {
+                    let call: Expression = parser.windowless_call()?;
+                    match parser.kw("as") && parser.char_at(1, '(') {
+                        true => {
+                            parser.at += 1;
+                            let columns: Vec<Expression> = parser.column_definitions()?;
+                            Ok(keyword_call("COLUMN DEFINITIONS", vec![call], columns))
+                        }
+                        false => Ok(call),
+                    }
+                })?;
+                let options: Vec<Expression> = match self.ordinality() {
+                    true => vec![var("WITH ORDINALITY")],
+                    false => Vec::new(),
+                };
+                let call: Expression = keyword_call("ROWS FROM", calls, options);
+                Ok(Some(self.function_with_alias(call, is_lateral)?))
             }
             Some(word @ ("xmltable" | "json_table")) if self.char_at(1, '(') => {
                 self.at += 1;
-                match word {
+                let call: Expression = match word {
                     "xmltable" => self.xml_table()?,
                     _ => self.json_table()?,
-                }
-                self.alias_clause(true)?;
-                self.gap(word, start);
-                Ok(Some(Expression::Table(Box::new(TableRef::new(word)))))
+                };
+                let alias: Option<TableAlias> = self.alias_clause(true)?;
+                Ok(Some(match is_lateral {
+                    true => {
+                        let (name, columns) = match alias {
+                            Some(alias) => (Some(alias.name), alias.columns),
+                            None => (None, Vec::new()),
+                        };
+                        lateral(call, name, columns)
+                    }
+                    false => aliased(call, alias),
+                }))
             }
             _ => Ok(None),
         }
@@ -152,26 +198,25 @@ impl Parser<'_> {
 
     /// `table_ref` without its joins.
     fn table_item(&mut self) -> Parsing<Expression> {
-        let start: usize = self.offset();
         if self.eat_kw("lateral") {
             if self.is_char('(') {
                 let query: Expression = self.select_with_parens()?;
                 let alias: Option<TableAlias> = self.alias_clause(true)?;
                 return Ok(self.subquery_ref(query, alias, true));
             }
-            if let Some(gap) = self.gap_table(start)? {
-                return Ok(gap);
+            if let Some(call) = self.keyword_table(true)? {
+                return Ok(call);
             }
-            return self.function_table(true, start);
+            return self.function_table(true);
         }
         if self.is_char('(') {
             return self.parenthesized_ref();
         }
-        if let Some(gap) = self.gap_table(start)? {
-            return Ok(gap);
+        if let Some(call) = self.keyword_table(false)? {
+            return Ok(call);
         }
         if self.function_ahead() {
-            return self.function_table(false, start);
+            return self.function_table(false);
         }
         let mut relation: TableRef = self.relation()?;
         if let Some(alias) = self.alias_clause(true)? {
@@ -179,22 +224,21 @@ impl Parser<'_> {
             relation.alias_explicit_as = alias.explicit;
             relation.column_aliases = alias.columns;
         }
-        if self.kw("tablesample") {
-            let start: usize = self.offset();
-            self.at += 1;
-            self.name_expression_free()?;
-            self.skip_parenthesized()?;
+        if self.eat_kw("tablesample") {
+            let method: Vec<Identifier> = self.qualified_name()?;
+            let mut operands: Vec<Expression> = vec![name_value(&method)];
+            self.expect_char('(')?;
+            operands.extend(self.expr_list()?);
+            self.expect_char(')')?;
+            let mut options: Vec<Expression> = Vec::new();
             if self.eat_kw("repeatable") {
-                self.skip_parenthesized()?;
+                self.expect_char('(')?;
+                options.push(clause("REPEATABLE", vec![self.a_expr()?]));
+                self.expect_char(')')?;
             }
-            self.gap("tablesample", start);
+            relation.sample_call = Some(Box::new(keyword_call("TABLESAMPLE", operands, options)));
         }
         Ok(Expression::Table(Box::new(relation)))
-    }
-
-    /// The function name of `TABLESAMPLE`, which may be qualified.
-    fn name_expression_free(&mut self) -> Parsing<()> {
-        self.qualified_name().map(|_| ())
     }
 
     /// Whether a function table starts here: a name and then `(`, or a value function.
@@ -237,7 +281,7 @@ impl Parser<'_> {
     }
 
     /// `func_table func_alias_clause`, after any `LATERAL`.
-    fn function_table(&mut self, is_lateral: bool, start: usize) -> Parsing<Expression> {
+    fn function_table(&mut self, is_lateral: bool) -> Parsing<Expression> {
         let call: Expression = match self.keyword_at(0) {
             Some(word)
                 if self.is_special_call(word)
@@ -259,14 +303,29 @@ impl Parser<'_> {
                     function.name = format!("{} WITH ORDINALITY", function.name);
                     Expression::Function(function)
                 }
-                other => {
-                    self.gap("ordinality", start);
-                    other
-                }
+                other => keyword_call("WITH ORDINALITY", vec![other], Vec::new()),
             },
             false => call,
         };
-        let alias: Option<TableAlias> = self.function_alias()?;
+        self.function_with_alias(call, is_lateral)
+    }
+
+    /// A function table under its `func_alias_clause`; a column definition list wraps the call.
+    fn function_with_alias(&mut self, call: Expression, is_lateral: bool) -> Parsing<Expression> {
+        let (alias, columns) = self.function_alias()?;
+        let (call, alias) = match columns.is_empty() {
+            true => (call, alias),
+            false => {
+                let mut operands: Vec<Expression> = vec![call];
+                if let Some(alias) = alias {
+                    if alias.explicit {
+                        operands.push(var("AS"));
+                    }
+                    operands.push(Expression::Identifier(alias.name));
+                }
+                (keyword_call("COLUMN DEFINITIONS", operands, columns), None)
+            }
+        };
         if is_lateral {
             let (name, columns) = match alias {
                 Some(alias) => (Some(alias.name), alias.columns),
@@ -274,16 +333,7 @@ impl Parser<'_> {
             };
             return Ok(lateral(call, name, columns));
         }
-        Ok(match alias {
-            None => call,
-            Some(alias) => {
-                let mut node: Alias = Alias::new(call, alias.name);
-                node.column_aliases = alias.columns;
-                node.alias_explicit_as = alias.explicit;
-                node.alias_keyword = alias.explicit.then(|| "AS".to_owned());
-                Expression::Alias(Box::new(node))
-            }
-        })
+        Ok(aliased(call, alias))
     }
 
     /// `WITH ORDINALITY`, when present.
@@ -293,49 +343,47 @@ impl Parser<'_> {
         found
     }
 
-    /// `func_alias_clause`: an alias whose list may define columns with types, which is a gap.
-    fn function_alias(&mut self) -> Parsing<Option<TableAlias>> {
-        let start: usize = self.offset();
+    /// `func_alias_clause`: an alias, and the columns it defines with their types, if any.
+    fn function_alias(&mut self) -> Parsing<(Option<TableAlias>, Vec<Expression>)> {
         if self.kw("as") && self.char_at(1, '(') {
             self.at += 1;
-            self.column_definitions()?;
-            self.gap("column_definition_list", start);
-            return Ok(None);
+            return Ok((None, self.column_definitions()?));
         }
         let explicit: bool = self.eat_kw("as");
         let name: Identifier = match self.is(is_col_id) {
             true => self.name(is_col_id)?,
             false if explicit => return Err(self.error()),
-            false => return Ok(None),
+            false => return Ok((None, Vec::new())),
         };
         let mut columns: Vec<Identifier> = Vec::new();
+        let mut definitions: Vec<Expression> = Vec::new();
         if self.is_char('(') {
             match self.attempt(|parser| parser.name_list()) {
                 Ok(names) => columns = names,
-                Err(_) => {
-                    self.column_definitions()?;
-                    self.gap("column_definition_list", start);
-                }
+                Err(_) => definitions = self.column_definitions()?,
             }
         }
-        Ok(Some(TableAlias {
+        let alias: TableAlias = TableAlias {
             name,
             columns,
             explicit,
-        }))
+        };
+        Ok((Some(alias), definitions))
     }
 
-    /// `( ColId Typename [COLLATE any_name], ... )`.
-    fn column_definitions(&mut self) -> Parsing<()> {
+    /// `( ColId Typename [COLLATE any_name], ... )`, each as `(name, type [, (COLLATE, name)])`.
+    fn column_definitions(&mut self) -> Parsing<Vec<Expression>> {
         self.parenthesized(|parser| {
-            parser.name(is_col_id)?;
-            parser.typename()?;
+            let mut parts: Vec<Expression> = vec![
+                Expression::Identifier(parser.name(is_col_id)?),
+                Expression::DataType(parser.typename()?),
+            ];
             if parser.eat_kw("collate") {
-                parser.qualified_name()?;
+                let name: Vec<Identifier> = parser.qualified_name()?;
+                parts.push(clause("COLLATE", vec![name_value(&name)]));
             }
-            Ok(())
+            Ok(tuple(parts))
         })
-        .map(|_| ())
     }
 
     /// `alias_clause`: `[AS] ColId [( name_list )]`, when present and `allowed`.
@@ -390,18 +438,8 @@ impl Parser<'_> {
                 return Err(parser.error());
             }
             parser.expect_char(')')?;
-            let start: usize = parser.offset();
             let alias: Option<TableAlias> = parser.alias_clause(true)?;
-            if alias
-                .as_ref()
-                .is_some_and(|alias| !alias.columns.is_empty())
-            {
-                parser.gap("joined_table_column_aliases", start);
-            }
-            Ok(match joins.is_empty() {
-                true => left,
-                false => joined_table(left, joins, alias.map(|alias| alias.name)),
-            })
+            Ok(joined_alias(left, joins, alias))
         });
         match (joined, reached) {
             (Ok(node), _) => Ok(node),
