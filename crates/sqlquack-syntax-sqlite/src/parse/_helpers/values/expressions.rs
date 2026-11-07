@@ -270,7 +270,7 @@ impl Parser<'_> {
                 let high: Expression = self.deeper(|parser| parser.climb(right_level))?;
                 between(left, low, high, not)
             }
-            _ => self.in_tail(left, not)?,
+            _ => self.deeper(|parser| parser.in_tail(left, not))?,
         }))
     }
 

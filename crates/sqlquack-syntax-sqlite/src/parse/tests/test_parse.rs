@@ -2,7 +2,9 @@
 
 use crate::parse::constants::{INCOMPLETE_INPUT, TOO_DEEP, UNSUPPORTED_FRAME};
 use crate::parse::main::parse::parse;
-use crate::parse::tests::test_types::{NestingTestCase, VerdictTestCase};
+use crate::parse::tests::test_types::{
+    NestingTestCase, SerializedNestingTestCase, VerdictTestCase,
+};
 
 /// The stack of the thread the nesting cases run on: Rust's default for a spawned thread.
 const TEST_STACK: usize = 2 * 1024 * 1024;
@@ -48,6 +50,13 @@ fn given_deep_nesting_when_parsing_then_it_fails_cleanly_without_overflowing_the
         NestingTestCase {
             description: "scalar subqueries",
             prefix: "(SELECT ",
+            core: "1",
+            suffix: ")",
+            expected_message: TOO_DEEP,
+        },
+        NestingTestCase {
+            description: "IN lists",
+            prefix: "1 IN (",
             core: "1",
             suffix: ")",
             expected_message: TOO_DEEP,
@@ -176,6 +185,104 @@ fn given_queries_when_parsing_then_the_verdicts_match_sqlite() {
                 .expected_verdict
                 .map(<[&str]>::to_vec)
                 .map_err(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_nesting_near_the_ast_depth_guard_when_parsing_then_trees_serialize_on_a_small_stack() {
+    let test_cases = [
+        SerializedNestingTestCase {
+            description: "derived tables at 999 levels",
+            head: "SELECT * FROM ",
+            prefix: "(SELECT * FROM ",
+            core: "t",
+            suffix: ")",
+            depth: 999,
+            expected_outcome: Err(TOO_DEEP),
+        },
+        SerializedNestingTestCase {
+            description: "derived tables just within the shared AST depth guard",
+            head: "SELECT * FROM ",
+            prefix: "(SELECT * FROM ",
+            core: "t",
+            suffix: ")",
+            depth: 255,
+            expected_outcome: Ok(()),
+        },
+        SerializedNestingTestCase {
+            description: "derived tables just past the shared AST depth guard",
+            head: "SELECT * FROM ",
+            prefix: "(SELECT * FROM ",
+            core: "t",
+            suffix: ")",
+            depth: 256,
+            expected_outcome: Err(TOO_DEEP),
+        },
+        SerializedNestingTestCase {
+            description: "a chain of ANDs just within the shared AST depth guard",
+            head: "SELECT 1",
+            prefix: " AND 1",
+            core: "",
+            suffix: "",
+            depth: 511,
+            expected_outcome: Ok(()),
+        },
+        SerializedNestingTestCase {
+            description: "a chain of ANDs at 999 terms",
+            head: "SELECT 1",
+            prefix: " AND 1",
+            core: "",
+            suffix: "",
+            depth: 999,
+            expected_outcome: Err(TOO_DEEP),
+        },
+        SerializedNestingTestCase {
+            description: "IN subqueries at 999 levels",
+            head: "SELECT ",
+            prefix: "1 IN (SELECT ",
+            core: "1",
+            suffix: ")",
+            depth: 999,
+            expected_outcome: Err(TOO_DEEP),
+        },
+        SerializedNestingTestCase {
+            description: "FROM parentheses at 999 levels, one table",
+            head: "SELECT 1 FROM ",
+            prefix: "(",
+            core: "t",
+            suffix: ")",
+            depth: 999,
+            expected_outcome: Ok(()),
+        },
+    ];
+    for test_case in test_cases {
+        let sql: String = format!(
+            "{}{}{}{}",
+            test_case.head,
+            test_case.prefix.repeat(test_case.depth),
+            test_case.core,
+            test_case.suffix.repeat(test_case.depth)
+        );
+        let outcome: Result<(), String> = std::thread::Builder::new()
+            .stack_size(TEST_STACK)
+            .spawn(move || {
+                parse(&sql)
+                    .map_err(|error| error.message)
+                    .and_then(|parsed| {
+                        serde_json::to_string(&parsed.statements)
+                            .map(|_| ())
+                            .map_err(|error| error.to_string())
+                    })
+            })
+            .expect("a thread")
+            .join()
+            .expect("no stack overflow");
+        assert_eq!(
+            outcome,
+            test_case.expected_outcome.map_err(str::to_owned),
             "{}",
             test_case.description
         );

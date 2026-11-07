@@ -40,6 +40,11 @@ follows `sqlquack-syntax-duckdb`.
   later syntax error wins over them when it falls on that token.
 - Nesting deeper than 1,000 levels fails with "the statement nests too deeply" (`syntax: false`),
   never a stack overflow. SQLite's own limit is the same expression depth.
+- A statement whose tree is deeper than the shared AST depth guard (512 levels, as in the shared
+  parser) fails with the same error. This keeps trees within what recursive walkers such as
+  serde_json can handle on a 2 MiB stack. Some deep inputs that SQLite accepts are therefore
+  refused as a limit: about 255 nested derived tables or subqueries, or a flat chain of 512
+  operands.
 
 ## Gaps
 

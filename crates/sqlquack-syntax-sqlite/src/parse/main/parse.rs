@@ -1,15 +1,17 @@
 //! `parse`: every statement of an SQLite input, or the error SQLite's parser reports.
 
-use sqlquack_syntax::{Expression, Parsed};
+use sqlquack_syntax::{ComplexityGuardOptions, Expression, ExpressionWalk, Parsed};
 
 use crate::parse::_helpers::tree::cursor::Parser;
 use crate::parse::_helpers::tree::nodes::command;
+use crate::parse::constants::TOO_DEEP;
 use crate::parse::errors::ParseError;
 use crate::scan::main::scan::scan;
 
-/// Every statement of `sql`; a statement the tree cannot hold is a `Command` and a named gap.
+/// Every statement of `sql`, each no deeper than the shared AST depth guard; a gap becomes a `Command`.
 pub fn parse(sql: &str) -> Result<Parsed, ParseError> {
     let mut parser: Parser<'_> = Parser::new(sql, scan(sql));
+    let max_tree_depth: Option<usize> = ComplexityGuardOptions::default().max_ast_depth;
     let mut statements: Vec<Expression> = Vec::new();
     loop {
         while parser.eat_op("SEMI") {}
@@ -20,6 +22,7 @@ pub fn parse(sql: &str) -> Result<Parsed, ParseError> {
             });
         }
         let first: usize = parser.at;
+        let start: usize = parser.offset();
         parser.opaque = false;
         let statement: Result<Expression, ParseError> =
             parser
@@ -37,6 +40,11 @@ pub fn parse(sql: &str) -> Result<Parsed, ParseError> {
                 });
             }
             (Err(error), None) => return Err(error),
+            (Ok(statement), None)
+                if max_tree_depth.is_some_and(|max| statement.tree_depth() > max) =>
+            {
+                return Err(parser.error_with(TOO_DEEP, start, false));
+            }
             (Ok(statement), None) => statements.push(match parser.opaque {
                 true => command(parser.text_from(first)),
                 false => statement,

@@ -15,3 +15,14 @@ pub(crate) struct VerdictTestCase {
     pub(crate) sql: &'static str,
     pub(crate) expected_verdict: Result<&'static [&'static str], &'static str>,
 }
+
+/// An input nested `depth` times, parsed and serialized on a small stack.
+pub(crate) struct SerializedNestingTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) head: &'static str,
+    pub(crate) prefix: &'static str,
+    pub(crate) core: &'static str,
+    pub(crate) suffix: &'static str,
+    pub(crate) depth: usize,
+    pub(crate) expected_outcome: Result<(), &'static str>,
+}
