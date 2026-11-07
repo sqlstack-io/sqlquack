@@ -151,7 +151,7 @@ def _binding(
 
 
 def run_database_setups(directory: Path) -> tuple[dict[tuple[str, str], list[str]], list[str]]:
-    """Each ddl case's setup from its latest counted receipt (D110a), and cases for review."""
+    """Each ddl case's setup from its latest counted receipt, and cases for review."""
     inputs: dict[tuple[str, str], list[str]] = {}
     counted_runs: set[str] = set()
     for path in directory.glob("*.report.json"):
@@ -316,7 +316,7 @@ def receipt_phases(directory: Path) -> dict[tuple[str, str], str]:
 
 
 def receipt_settlements(directory: Path) -> dict[tuple[str, str, str, str], tuple[str, str]]:
-    """D133: the expect and stage each (case, sql, setup, session) settles to, where it settles."""
+    """The expect and stage each (case, sql, setup, session) settles to, where it settles."""
     gone: set[str] = set()
     for path in directory.glob("*.report.json"):
         gone |= {
@@ -391,7 +391,7 @@ def observed_stage(
 
 
 def _settled(*, case: Row, settlement: tuple[str, str] | None) -> Row:
-    """D133: an observed case takes the expect its agreeing receipts settle, or stays observed."""
+    """An observed case takes the expect its agreeing receipts settle, or stays observed."""
     if settlement is not None:
         case["expect"], stage = settlement
         if stage:
@@ -402,7 +402,7 @@ def _settled(*, case: Row, settlement: tuple[str, str] | None) -> Row:
 def _observed_outcome(
     *, case: Row, phase: str | None, stage: str | None, extreme: bool, documented: bool
 ) -> Row:
-    """An extreme's outcome (D92); an observed negative settles only on a syntax error (D97)."""
+    """An extreme's outcome; an observed negative settles only on a syntax error."""
     if not extreme:
         return case
     if phase == SYNTAX_ERROR_PHASE:
@@ -423,7 +423,7 @@ def settled_cases(
     setups: dict[tuple[str, str], list[str]],
     held: frozenset[str],
 ) -> tuple[list[Row], list[Row], list[Row]]:
-    """The merged cases with their receipts' stages, unscored arity cases, D113/D133 marks."""
+    """The merged cases with their receipts' stages, unscored arity cases, case marks."""
     generated, expected, arity, extremes, documented, disputed = family_cases(
         root=root, family=family, setups=setups, held=held
     )
@@ -474,7 +474,7 @@ def settled_cases(
 
 
 def _cites_disputed_form(*, obligations: list[str], disputed: set[str]) -> bool:
-    """Whether a case cites a form all of whose documented positives Snowflake refuses (D113)."""
+    """Whether a case cites a form all of whose documented positives Snowflake refuses."""
     forms: set[str] = {obligation.rsplit(".o", 1)[0] for obligation in obligations}
     return bool(forms & disputed)
 

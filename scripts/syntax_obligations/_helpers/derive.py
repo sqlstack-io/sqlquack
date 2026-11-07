@@ -225,13 +225,13 @@ class _Walk:
         )
 
     def _unsure(self, *, spec: Spec, after: frozenset[str]) -> Spec:
-        """A statement-level rejection observed instead of scored when it follows `after` (D97)."""
+        """A statement-level rejection observed instead of scored when it follows `after`."""
         if self.statements and self.previous in after:
             return replace(spec, expect=EXPECT_OBSERVE)
         return spec
 
     def _call_argument(self) -> bool:
-        """Whether the next node is a whole argument of an ordinary call (D97 arity)."""
+        """Whether the next node is a whole argument of an ordinary call (arity)."""
         return (
             self.expression_arguments
             and bool(self.callees)
@@ -382,7 +382,7 @@ def derive(*, form: str, grammar: list[str]) -> list[Draft]:
 def derive_trees(
     *, form: str, grammar: list[str]
 ) -> tuple[list[Draft], list[tuple[Node, ...]], Counter[str]]:
-    """The drafts, parsed productions and the classes of skipped argument negatives (D97)."""
+    """The drafts, parsed productions and the classes of skipped argument negatives."""
     if not grammar:
         return [], [], Counter()
     walk: _Walk = _Walk(form)

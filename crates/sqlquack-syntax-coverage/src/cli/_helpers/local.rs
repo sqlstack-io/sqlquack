@@ -2,12 +2,13 @@
 
 use std::process::Command;
 
-use sqlquack_syntax::{CallMode, Dialect, Expression, ExpressionWalk, ParseOptions};
+use sqlquack_syntax::{CallMode, Dialect, Expression, ExpressionWalk, ParseOptions, Parsed};
 
 use crate::check::models::{LocalFailure, LocalVerdict};
 use crate::formats::constants::SNOWFLAKE_DIALECT;
 use crate::formats::main::content_sha256::content_sha256;
 use crate::formats::main::current_dialect::current_dialect;
+use crate::formats::models::LocalParser;
 
 /// The code prefix of every complexity-guard error, which is never a syntax verdict.
 const GUARD_PREFIX: &str = "E_GUARD_";
@@ -28,7 +29,7 @@ fn accepted(statements: &[Expression], gapped: bool) -> LocalVerdict {
 }
 
 /// SQLQuack's Snowflake verdict; a Command or Raw node anywhere makes the parse opaque.
-pub(crate) fn snowflake_verdict(sql: &str) -> LocalVerdict {
+fn snowflake_verdict(sql: &str) -> LocalVerdict {
     match sqlquack_syntax::parse_statements_with(
         sql,
         Dialect::Snowflake,
@@ -45,11 +46,31 @@ pub(crate) fn snowflake_verdict(sql: &str) -> LocalVerdict {
     }
 }
 
-/// SQLQuack's strict PostgreSQL verdict: a gap makes it opaque, and any refusal rejects it.
-pub(crate) fn postgres_verdict(sql: &str) -> LocalVerdict {
-    match sqlquack_syntax_postgres::parse_strict(sql) {
+/// A native dialect parser's strict verdict: a gap makes it opaque, and any refusal rejects it.
+fn native_verdict<E>(parsed: Result<Parsed, E>) -> LocalVerdict {
+    match parsed {
         Ok(parsed) => accepted(&parsed.statements, !parsed.gaps.is_empty()),
         Err(_) => LocalVerdict::Rejected,
+    }
+}
+
+/// SQLQuack's strict PostgreSQL verdict.
+pub(crate) fn postgres_verdict(sql: &str) -> LocalVerdict {
+    native_verdict(sqlquack_syntax_postgres::parse_strict(sql))
+}
+
+/// SQLQuack's strict BigQuery GoogleSQL verdict.
+fn bigquery_verdict(sql: &str) -> LocalVerdict {
+    native_verdict(sqlquack_syntax_bigquery::parse_strict(sql))
+}
+
+/// The verdict of each dialect's local parser, or none when the dialect has no parser yet.
+pub(crate) fn local_verdict(parser: LocalParser) -> Option<fn(&str) -> LocalVerdict> {
+    match parser {
+        LocalParser::Snowflake => Some(snowflake_verdict),
+        LocalParser::Postgres => Some(postgres_verdict),
+        LocalParser::BigQuery => Some(bigquery_verdict),
+        LocalParser::None => None,
     }
 }
 

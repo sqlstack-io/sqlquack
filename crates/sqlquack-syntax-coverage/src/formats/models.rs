@@ -189,7 +189,7 @@ pub enum ObligationKind {
     Interaction,
     /// One case using every independent option of the form together.
     InteractionAllOptions,
-    /// A size or nesting value with no documented bound (decision D90).
+    /// A size or nesting value with no documented bound.
     Extreme,
 }
 
@@ -234,9 +234,9 @@ pub enum Expect {
     Accept,
     /// A syntax error.
     Reject,
-    /// An extreme case Snowflake has not answered yet; never satisfied (decision D90).
+    /// An extreme case Snowflake has not answered yet; never satisfied.
     Observe,
-    /// An extreme case Snowflake refused: any clean local verdict passes (decision D92).
+    /// An extreme case Snowflake refused: any clean local verdict passes.
     Terminates,
 }
 
@@ -387,7 +387,7 @@ pub struct Receipt {
     /// The position the inner error points at, when its text gives one.
     #[serde(default)]
     pub definition_position: Option<u32>,
-    /// Account parameters the capture ran under, by name (decision D120); provenance, never phase.
+    /// Account parameters the capture ran under, by name; provenance, never phase.
     #[serde(default)]
     pub account_state: Option<BTreeMap<String, AccountSetting>>,
 }
@@ -450,7 +450,7 @@ pub struct Review {
     /// Each listed form's fingerprint when reviewed; while it matches, the parser tree may change.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub fingerprints: BTreeMap<String, String>,
-    /// Each listed form's definition hash when reviewed; binds the form, not the files (D118).
+    /// Each listed form's definition hash when reviewed; binds the form, not the files.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub definitions: BTreeMap<String, String>,
     #[serde(default)]
@@ -475,7 +475,7 @@ pub enum Lane {
     B,
     C,
     Backend,
-    /// The omission auditor (decision D88).
+    /// The omission auditor.
     Auditor,
 }
 
@@ -517,7 +517,7 @@ pub struct LimitsFile {
     pub readings: Vec<Reading>,
 }
 
-/// How a form's page grammar is read where it is ambiguous; part of the form's definition (D118).
+/// How a form's page grammar is read where it is ambiguous; part of the form's definition.
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Reading {
@@ -527,7 +527,7 @@ pub struct Reading {
     pub reason: String,
 }
 
-/// An obligation no capture can establish a phase for; never verified (decision D87).
+/// An obligation no capture can establish a phase for; never verified.
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Unobservable {
@@ -634,14 +634,18 @@ pub struct Dialect {
     pub syntax_codes: Vec<String>,
 }
 
-/// The parser the checker compares receipts with.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
+/// The parser the checker compares receipts with; `local_verdict` maps each to its verdict.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize, clap::ValueEnum)]
 #[serde(rename_all = "snake_case")]
 pub enum LocalParser {
     /// `sqlquack_syntax` in the Snowflake dialect, through the isolated worker.
     Snowflake,
     /// `sqlquack_syntax_postgres`, through the isolated worker.
     Postgres,
+    /// `sqlquack_syntax_bigquery`, through the isolated worker.
+    #[serde(rename = "bigquery")]
+    #[value(name = "bigquery")]
+    BigQuery,
     /// No parser yet: every case fails locally as `no_parser`.
     None,
 }

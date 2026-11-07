@@ -7,15 +7,14 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode};
 use std::time::Duration;
 
+use clap::ValueEnum;
 use serde_json::{Value, json};
 
 use crate::check::main::check_coverage::check_coverage;
 use crate::check::models::{
     CheckResult, FormResult, LocalFailure, LocalVerdict, ObligationResult, Reason,
 };
-use crate::cli::_helpers::local::{
-    frozen_catalogue, parser_tree, postgres_verdict, snowflake_verdict,
-};
+use crate::cli::_helpers::local::{frozen_catalogue, local_verdict, parser_tree};
 use crate::cli::_helpers::output::{print, say};
 use crate::cli::_helpers::worker::Worker;
 use crate::cli::models::{Common, TranslationArguments};
@@ -46,17 +45,19 @@ const BOUNDARY_KINDS: [ObligationKind; 4] = [
     ObligationKind::NestingDepth,
 ];
 
-/// The time one local parse may take before it fails as a timeout (decision D92).
+/// The time one local parse may take before it fails as a timeout.
 const PARSE_BOUND: Duration = Duration::from_secs(10);
 /// The worker's virtual memory bound in KiB, 4 GiB; exceeding it fails the case as a crash.
 const PARSE_MEMORY_KIB: u64 = 4 * 1024 * 1024;
 
 /// The worker command: this binary, its memory bounded by the shell before it starts.
 fn worker_command(binary: PathBuf, local_parser: LocalParser) -> Box<dyn Fn() -> Command> {
-    let worker: &str = match local_parser {
-        LocalParser::Postgres => "parse-worker --postgres",
-        LocalParser::Snowflake | LocalParser::None => "parse-worker",
-    };
+    let worker: String = format!(
+        "parse-worker --parser {}",
+        local_parser
+            .to_possible_value()
+            .map_or_else(String::new, |value| value.get_name().to_owned())
+    );
     Box::new(move || {
         let mut command = Command::new("sh");
         command
@@ -101,9 +102,10 @@ fn checked(coverage: &SyntaxCoverage) -> Result<CheckResult, ExitCode> {
         worker_command(binary, local_parser),
         PARSE_BOUND,
     ));
-    let check: CheckResult = check_coverage(coverage, tree.as_deref(), &|sql| match local_parser {
-        LocalParser::Snowflake | LocalParser::Postgres => worker.borrow_mut().verdict(sql),
-        LocalParser::None => LocalVerdict::Failed {
+    let parses: bool = local_verdict(local_parser).is_some();
+    let check: CheckResult = check_coverage(coverage, tree.as_deref(), &|sql| match parses {
+        true => worker.borrow_mut().verdict(sql),
+        false => LocalVerdict::Failed {
             failure: LocalFailure::NoParser,
         },
     });
@@ -425,11 +427,11 @@ fn diff_lines(diff: &SnapshotDiff) -> Vec<String> {
     let lists: [(&str, &Vec<String>); 12] = [
         ("REGRESSION forms lost", &diff.forms_lost),
         (
-            "REGRESSION receipts the parser now contradicts, cited by a form or not (D141)",
+            "REGRESSION receipts the parser now contradicts, cited by a form or not",
             &diff.receipts_contradicted,
         ),
         (
-            "DOCUMENTED (D113) receipts the parser now contradicts, for the auditor",
+            "DOCUMENTED receipts the parser now contradicts, for the auditor",
             &diff.documented_receipts_contradicted,
         ),
         ("REGRESSION obligations lost", &diff.obligations_lost),
@@ -442,7 +444,7 @@ fn diff_lines(diff: &SnapshotDiff) -> Vec<String> {
             &diff.syntax_error_cases_accepted,
         ),
         (
-            "DOCUMENTED (D113) Snowflake syntax errors the parser now accepts, for the auditor",
+            "DOCUMENTED Snowflake syntax errors the parser now accepts, for the auditor",
             &diff.documented_cases_accepted,
         ),
         ("CATALOGUE files changed", &diff.catalogue_files_changed),
@@ -521,11 +523,8 @@ pub(crate) fn diff(
 }
 
 /// Reads one JSON string of SQL per line and prints the local verdict on each, flushed.
-pub(crate) fn parse_worker(postgres: bool) -> Result<ExitCode, ExitCode> {
-    let verdict_of: fn(&str) -> LocalVerdict = match postgres {
-        true => postgres_verdict,
-        false => snowflake_verdict,
-    };
+pub(crate) fn parse_worker(parser: LocalParser) -> Result<ExitCode, ExitCode> {
+    let verdict_of: fn(&str) -> LocalVerdict = local_verdict(parser).ok_or(ExitCode::FAILURE)?;
     let stdout = std::io::stdout();
     for line in std::io::stdin().lock().lines() {
         let line: String = line.map_err(|_| ExitCode::FAILURE)?;

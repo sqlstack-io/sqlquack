@@ -467,7 +467,7 @@ target = ""
 note = "the form without its required FROM after <name>"
 sql = "ALTER SERVICE v1 SPECIFICATION_FILE = 'm' ;"
 valid_as = "sf.ddl.alter-service.fromspecification-fromspecificationtemplate negative_neighbour the specification without its required FROM, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.ddl.alter-snapshot-set.set-comment"
@@ -503,7 +503,7 @@ target = ""
 note = "the form without its required SET after <col1_name>"
 sql = "ALTER TABLE v1 ALTER v1 DROP DEFAULT , v1 DEFAULT v1 . NEXTVAL , v1 NOT NULL , v1 INT , v1 COMMENT 'm' , v1 UNSET COMMENT ;"
 valid_as = "sf.ddl.alter-table-column.drop-default-set-default negative_neighbour the form without its required SET, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.ddl.alter-table-column.drop-default-set-default"
@@ -2969,7 +2969,7 @@ target = ""
 note = "the form without its required TABLE after IN in [ IN { ACCOUNT | DATABASE [ <database_name> ] | SCHEMA [ <schema_name> ] | TABLE | TABLE <table_name> } ]"
 sql = "SHOW INDEXES IN v1 ;"
 valid_as = "sf.ddl.show-indexes-standard-tables negative_neighbour the form without its required TABLE, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.ddl.show-indexes-standard-tables"

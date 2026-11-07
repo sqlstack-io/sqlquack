@@ -241,7 +241,8 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
                 write(
                     root,
                     "receipts/first.jsonl",
-                    &receipt_line().replace(ACCOUNT_STATE_AT, &account_state("D120")),
+                    &receipt_line()
+                        .replace(ACCOUNT_STATE_AT, &account_state("set by the capture run")),
                 );
             },
             expected_counts: counts(1),
@@ -1101,7 +1102,7 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                     root,
                     "receipts/first.jsonl",
                     &receipt_line()
-                        .replace(ACCOUNT_STATE_AT, &account_state("D120"))
+                        .replace(ACCOUNT_STATE_AT, &account_state("set by the capture run"))
                         .replace("\"value\":\"NONE\"", "\"value\":\"NONE\",\"scope\":\"x\""),
                 )
             },

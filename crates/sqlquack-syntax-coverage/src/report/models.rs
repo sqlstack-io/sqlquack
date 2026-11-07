@@ -47,7 +47,7 @@ pub struct FamilySummary {
 pub struct Snapshot {
     /// Always `SNAPSHOT_FORMAT`.
     pub format: String,
-    /// The commit whose catalogue the snapshot was taken on (decision D81).
+    /// The commit whose catalogue the snapshot was taken on.
     pub catalogue_commit: String,
     /// SHA-256 of `sources.toml`, `aliases.toml` and each catalogue file, by path.
     pub catalogue_files: BTreeMap<String, String>,
@@ -73,10 +73,10 @@ pub struct Snapshot {
     /// Cases the catalogue marks documented (D113): their acceptance against a syntax error is intended.
     #[serde(default)]
     pub documented_cases: BTreeSet<String>,
-    /// Every receipt case id whose statement the parser contradicts, cited or not; none before D141.
+    /// Every receipt case id whose statement the parser contradicts, cited or not; none before receipt contradictions were tracked.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub receipt_contradictions: Option<BTreeSet<String>>,
-    /// Receipt case ids whose SQL no case or run report gives; none before D141.
+    /// Receipt case ids whose SQL no case or run report gives; none before receipt contradictions were tracked.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub unjudged_receipts: Option<BTreeSet<String>>,
 }
@@ -99,11 +99,11 @@ pub struct SnapshotDiff {
     pub parsed_cases_refused: Vec<String>,
     /// Cases Snowflake refused as syntax that the base parser rejected and the head accepts, less documented ones.
     pub syntax_error_cases_accepted: Vec<String>,
-    /// The same flips on cases marked documented (D113): listed for the auditor, not failing (D135).
+    /// The same flips on cases marked documented (D113): listed for the auditor, not failing.
     pub documented_cases_accepted: Vec<String>,
-    /// Receipts the head contradicts and the base did not, less documented ones: regressions (D141).
+    /// Receipts the head contradicts and the base did not, less documented ones: regressions.
     pub receipts_contradicted: Vec<String>,
-    /// The same on receipts of cases marked documented (D113): listed, not failing (D135).
+    /// The same on receipts of cases marked documented (D113): listed, not failing.
     pub documented_receipts_contradicted: Vec<String>,
     /// Receipts both contradict, or every head contradiction when the base has no receipt verdicts.
     pub receipts_still_contradicted: Vec<String>,

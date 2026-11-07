@@ -119,7 +119,7 @@ fn given_a_later_snapshot_when_diffing_then_regressions_and_catalogue_changes_ar
             },
         },
         DiffTestCase {
-            description: "a documented case's receipt newly contradicted is listed apart (D135)",
+            description: "a documented case's receipt newly contradicted is listed apart",
             head: |mut head| {
                 head.documented_cases
                     .insert("sf.query.select.k3".to_owned());
@@ -166,7 +166,7 @@ fn given_a_later_snapshot_when_diffing_then_regressions_and_catalogue_changes_ar
 fn given_a_base_without_receipt_verdicts_when_diffing_then_no_contradiction_is_new() {
     let test_cases = [
         BaseDiffTestCase {
-            description: "every head contradiction is existing against a base from before D141",
+            description: "every head contradiction is existing against a base from before receipt contradictions were tracked",
             base: |base| Snapshot {
                 receipt_contradictions: None,
                 ..base
@@ -181,7 +181,7 @@ fn given_a_base_without_receipt_verdicts_when_diffing_then_no_contradiction_is_n
             },
         },
         BaseDiffTestCase {
-            description: "a head from before D141 lists no receipts at all",
+            description: "a head from before receipt contradictions were tracked lists no receipts at all",
             base: |base| base,
             head: |head| Snapshot {
                 receipt_contradictions: None,
