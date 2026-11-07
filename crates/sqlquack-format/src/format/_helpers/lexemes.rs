@@ -4,6 +4,7 @@ use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::{TokenKind, tokenize};
 
 use crate::format::_helpers::bigquery::lex_bigquery;
+use crate::format::_helpers::native::{native_keywords, native_kind};
 use crate::format::_helpers::sqlserver::lex_sqlserver;
 use crate::format::constants::{TOKENIZE_FAILURE, UNSUPPORTED_DIALECT_FAILURE};
 use crate::format::models::FormatDialect;
@@ -60,6 +61,12 @@ pub(crate) fn lex(
                 token.kind == TokenKind::LineComment,
             )),
             TokenKind::Whitespace => {}
+        }
+    }
+    if dialect == FormatDialect::PostgreSQL {
+        let keywords = native_keywords(sql, &lexemes)?;
+        for (lexeme, keyword) in lexemes.iter_mut().zip(keywords) {
+            lexeme.kind = native_kind(lexeme, keyword);
         }
     }
     Ok((lexemes, comments))

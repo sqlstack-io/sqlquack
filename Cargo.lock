@@ -1446,6 +1446,7 @@ dependencies = [
  "serde_json",
  "sqlquack-syntax",
  "sqlquack-syntax-bigquery",
+ "sqlquack-syntax-postgres",
  "sqlquack-syntax-sqlserver",
 ]
 

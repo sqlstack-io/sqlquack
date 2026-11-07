@@ -15,9 +15,11 @@ use crate::format::constants::{
     ALIAS_FOLLOWERS, BIGQUERY_INDEX_KEYWORD, BIGQUERY_INLINE_CALLS, BIGQUERY_REFERENCES_KEYWORD,
     BIGQUERY_SET_OPERATOR_PREFIXES, BIGQUERY_VALUE_TABLE_KINDS, CALL_TARGET_KEYWORDS,
     CASE_BRANCHES, CLAUSE_KEYWORDS, COLUMNS_CALL, CTE_BODY_PREFIXES, DUCKDB_INLINE_CALLS,
-    EXPRESSION_LEADERS, GROUPING_CALLS, GUIDE_INDENT, GUIDE_WIDTH, INSERT_BODIES, INSERT_KEYWORD,
-    JOIN_PREFIXES, LAMBDA_KEYWORD, PARAMETERISED_TYPES, PLACEHOLDER_NAME_PREFIX, PLACEHOLDER_WIDTH,
-    POSTFIX_CAST_WIDTH, POSTGRES_INLINE_CALLS, SAMPLE_KEYWORDS, SAMPLE_ROW_KEYWORD,
+    EXPRESSION_LEADERS, FROM_CONTINUED, GROUPING_CALLS, GUIDE_INDENT, GUIDE_WIDTH, INSERT_BODIES,
+    INSERT_KEYWORD, JOIN_PREFIXES, LAMBDA_KEYWORD, PARAMETERISED_TYPES, PLACEHOLDER_NAME_PREFIX,
+    PLACEHOLDER_WIDTH, POSTFIX_CAST_WIDTH, POSTGRES_CTE_CLAUSES, POSTGRES_INLINE_CALLS,
+    POSTGRES_INLINE_SOURCES, POSTGRES_INTO_CLAUSE, POSTGRES_PATTERN_OPERATORS,
+    POSTGRES_QUANTIFIERS, POSTGRES_SPACED_QUANTIFIER, SAMPLE_KEYWORDS, SAMPLE_ROW_KEYWORD,
     SEMANTIC_VIEW_CALL, SEMANTIC_VIEW_CLAUSES, SET_OPERATOR_MODIFIERS, SET_OPERATORS,
     SNOWFLAKE_INLINE_CALLS, SPACED_BEFORE_PARENTHESIS, SQLSERVER_APPLY_KEYWORD,
     SQLSERVER_APPLY_PREFIXES, SQLSERVER_INLINE_CALLS, SQLSERVER_LIST_CLAUSES,
@@ -51,6 +53,8 @@ struct Guide<'a> {
     identifiers: &'a [bool],
     /// Tokens the parse tree names as an alias.
     aliases: &'a [bool],
+    /// Words matching a name the parse tree records without a span.
+    unspanned: &'a [bool],
     /// Token ranges whose authored text is kept byte for byte.
     verbatim: Vec<(usize, usize)>,
     /// The number of select lists laid out.
@@ -83,6 +87,8 @@ struct Guide<'a> {
     covered: Vec<bool>,
     /// Tokens a placeholder stands in for, which keep their authored case.
     protected: Vec<bool>,
+    /// Openers of calls the guide keeps on one line wherever they stand, such as UNNEST in FROM.
+    inline_openers: Vec<bool>,
 }
 
 fn newline(indent: usize) -> String {
@@ -115,6 +121,7 @@ impl<'a> Guide<'a> {
             lexemes,
             identifiers: &names.identifiers,
             aliases: &names.aliases,
+            unspanned: &names.unspanned,
             verbatim: Vec::new(),
             selects: 0,
             dialect,
@@ -132,6 +139,7 @@ impl<'a> Guide<'a> {
             widths: vec![0; count],
             covered: vec![false; count],
             protected: vec![false; count],
+            inline_openers: vec![false; count],
         };
         guide.mark_runs();
         guide.mark_angles();
@@ -370,6 +378,11 @@ impl<'a> Guide<'a> {
             return false;
         }
         let upper = self.upper(index);
+        if self.dialect == FormatDialect::PostgreSQL
+            && POSTGRES_QUANTIFIERS.contains(&upper.as_str())
+        {
+            return upper == POSTGRES_SPACED_QUANTIFIER && self.after_pattern_operator(index);
+        }
         let after_star = index > 0
             && matches!(
                 self.lexemes[index - 1].kind,
@@ -502,6 +515,19 @@ impl<'a> Guide<'a> {
             None => false,
         };
         self.dialect == FormatDialect::DuckDB && after_number && !operand_follows
+    }
+
+    /// Whether token `index` follows LIKE or ILIKE, as the quantifier of `x LIKE ANY (...)` does.
+    fn after_pattern_operator(&self, index: usize) -> bool {
+        index > 0 && self.is_any(index - 1, &POSTGRES_PATTERN_OPERATORS)
+    }
+
+    /// Whether the PostgreSQL `(` at `opener` holds the operand of a quantified pattern match.
+    fn quantified_pattern(&self, opener: usize) -> bool {
+        self.dialect == FormatDialect::PostgreSQL
+            && opener > 0
+            && self.is_any(opener - 1, &POSTGRES_QUANTIFIERS)
+            && self.after_pattern_operator(opener - 1)
     }
 
     /// Whether the `:` at `index` is a Snowflake path accessor such as `v:field`.
@@ -819,12 +845,32 @@ impl<'a> Guide<'a> {
             let closer = self.partners[index].filter(|&closer| closer <= last)?;
             self.gaps[index] = " ".to_string();
             self.subquery(index, closer, indent);
-            if closer < last && self.kind(closer + 1) == Some(TokenType::Comma) {
-                item = closer + 2;
+            let end = self.postgres_cte_clauses_end(closer, last, indent);
+            if end < last && self.kind(end + 1) == Some(TokenType::Comma) {
+                item = end + 2;
                 continue;
             }
-            return Some(closer + 1);
+            return Some(end + 1);
         }
+    }
+
+    /// The last token of the PostgreSQL SEARCH and CYCLE clauses after the CTE body ending at `closer`, each on its own line; `closer` when there are none.
+    fn postgres_cte_clauses_end(&mut self, closer: usize, last: usize, indent: usize) -> usize {
+        let mut end = closer;
+        while self.dialect == FormatDialect::PostgreSQL {
+            let Some(&(_, last_word)) = POSTGRES_CTE_CLAUSES
+                .iter()
+                .find(|(clause, _)| self.is(end + 1, clause))
+            else {
+                break;
+            };
+            let Some(word) = (end + 2..=last).find(|&index| self.is(index, last_word)) else {
+                break;
+            };
+            self.gaps[end + 1] = newline(indent);
+            end = word + 1;
+        }
+        end
     }
 
     fn subquery(&mut self, opener: usize, closer: usize, indent: usize) {
@@ -843,11 +889,12 @@ impl<'a> Guide<'a> {
             Some(TokenType::Comma | TokenType::RParen)
         ) || self.is_any(index + 1, &ALIAS_FOLLOWERS);
         let continues = index > 0
-            && ((self.is(index, "FROM") && self.is(index - 1, "DISTINCT"))
+            && ((self.is(index, "FROM") && self.is_any(index - 1, &FROM_CONTINUED))
                 || (self.is(index, "OFFSET") && self.is(index - 1, "WITH")));
         (!aliased && !continues && self.is_any(index, &CLAUSE_KEYWORDS))
             || (self.is(index, "USING") && self.is(index + 1, "SAMPLE"))
             || ((self.is(index, "GROUP") || self.is(index, "ORDER")) && self.is(index + 1, "BY"))
+            || (self.dialect == FormatDialect::PostgreSQL && self.is(index, POSTGRES_INTO_CLAUSE))
     }
 
     fn select(&mut self, select: usize, last: usize, indent: usize) {
@@ -1053,6 +1100,12 @@ impl<'a> Guide<'a> {
             self.expr(closer + 1, last, indent);
             return;
         }
+        if self.dialect == FormatDialect::PostgreSQL
+            && self.is_any(opener, &POSTGRES_INLINE_SOURCES)
+            && self.kind(opener + 1) == Some(TokenType::LParen)
+        {
+            self.inline_openers[opener + 1] = true;
+        }
         self.expr(first, last, indent);
     }
 
@@ -1147,6 +1200,8 @@ impl<'a> Guide<'a> {
         if (self.is(previous, "PATTERN") || pivot_values) && opener + 1 < closer {
             self.verbatim.push((opener + 1, closer - 1));
             self.expr(opener + 1, closer - 1, indent);
+        } else if self.quantified_pattern(opener) {
+            self.list(closer, &[(opener + 1, closer - 1)], true, indent);
         } else if self.is(previous, "PIVOT")
             || self.is(previous, "UNPIVOT")
             || self.enclosing[opener]
@@ -1194,7 +1249,9 @@ impl<'a> Guide<'a> {
         }
         let items = self.split_commas(first, closer - 1);
         let grouping = GROUPING_CALLS.contains(&upper.as_str());
-        let inline = self.protected[opener] || self.inline_calls().contains(&upper.as_str());
+        let inline = self.protected[opener]
+            || self.inline_openers[opener]
+            || self.inline_calls().contains(&upper.as_str());
         let split =
             !items.is_empty() && (grouping || (!inline && self.items_width(&items) > GUIDE_WIDTH));
         self.list(closer, &items, split, indent);
@@ -1302,6 +1359,7 @@ impl<'a> Guide<'a> {
         if self.protected[index]
             || self.in_run[index]
             || self.identifiers[index]
+            || self.unspanned[index]
             || self.name_position(index)
             || self.field_name(index)
             || self.sqlserver_object_name(index)

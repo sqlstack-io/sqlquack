@@ -33,13 +33,18 @@ pub(crate) const HASH_COMMENT_START: char = '#';
 pub(crate) const BLOCK_COMMENT_START: &str = "/*";
 /// The end of a `/* ... */` comment.
 pub(crate) const BLOCK_COMMENT_END: &str = "*/";
+pub(crate) const POSTGRES_OPAQUE_STATEMENT_FAILURE: &str =
+    "formatter does not lay out a statement the PostgreSQL parser keeps as opaque text";
+pub(crate) const SCANNER_MISMATCH_FAILURE: &str =
+    "formatter tokens differ from the PostgreSQL scanner's, so the layout cannot be checked";
 pub(crate) const SELECT_LIST_FAILURE: &str =
     "formatter could not find every select list, whose items without an alias it keeps as written";
-pub(crate) const UNSUPPORTED_DIALECT_FAILURE: &str = "formatter does not support this dialect yet; only Snowflake, DuckDB, BigQuery and SQL Server have a format gate";
+pub(crate) const UNSUPPORTED_DIALECT_FAILURE: &str = "formatter does not support this dialect yet; only Snowflake, DuckDB, PostgreSQL, BigQuery and SQL Server have a format gate";
 /// The dialects whose format corpus subset gates the formatter.
-pub(crate) const FORMAT_GATED_DIALECTS: [crate::format::models::FormatDialect; 4] = [
+pub(crate) const FORMAT_GATED_DIALECTS: [crate::format::models::FormatDialect; 5] = [
     crate::format::models::FormatDialect::Snowflake,
     crate::format::models::FormatDialect::DuckDB,
+    crate::format::models::FormatDialect::PostgreSQL,
     crate::format::models::FormatDialect::BigQuery,
     crate::format::models::FormatDialect::SqlServer,
 ];
@@ -177,7 +182,7 @@ pub(crate) const DUCKDB_INLINE_CALLS: [&str; 25] = [
 /// BigQuery calls the guide keeps on one line however wide.
 pub(crate) const BIGQUERY_INLINE_CALLS: [&str; 1] = ["JSON_OBJECT"];
 /// PostgreSQL calls the guide keeps on one line however wide.
-pub(crate) const POSTGRES_INLINE_CALLS: [&str; 14] = [
+pub(crate) const POSTGRES_INLINE_CALLS: [&str; 15] = [
     "ARRAY_LENGTH",
     "CAST",
     "COUNT",
@@ -188,11 +193,22 @@ pub(crate) const POSTGRES_INLINE_CALLS: [&str; 14] = [
     "LOGICAL_OR",
     "MODE",
     "PERCENTILE_CONT",
+    "SUBSTRING",
     "SUM",
     "TRIM",
     "TRY_CAST",
     "XMLELEMENT",
 ];
+/// PostgreSQL table functions the guide keeps on one line in a FROM clause, however wide.
+pub(crate) const POSTGRES_INLINE_SOURCES: [&str; 1] = ["UNNEST"];
+/// PostgreSQL quantifiers of an array or subquery comparison, such as `= ANY(...)`.
+pub(crate) const POSTGRES_QUANTIFIERS: [&str; 3] = ["ANY", "SOME", "ALL"];
+/// PostgreSQL pattern operators whose quantified operand the guide puts on its own lines.
+pub(crate) const POSTGRES_PATTERN_OPERATORS: [&str; 2] = ["LIKE", "ILIKE"];
+/// The PostgreSQL quantifier the guide keeps spaced from `(` after a pattern operator.
+pub(crate) const POSTGRES_SPACED_QUANTIFIER: &str = "ALL";
+/// The PostgreSQL clause of SELECT ... INTO, which starts its own line.
+pub(crate) const POSTGRES_INTO_CLAUSE: &str = "INTO";
 
 /// The BigQuery keyword of a foreign key, after which a name names the referenced table.
 pub(crate) const BIGQUERY_REFERENCES_KEYWORD: &str = "REFERENCES";
@@ -327,6 +343,10 @@ pub(crate) const SEMANTIC_VIEW_CLAUSES: [&str; 4] = ["METRICS", "DIMENSIONS", "F
 pub(crate) const PLACEHOLDER_NAME_PREFIX: &str = "__";
 /// Words after which a name with `(` is defined, not called: a table's column list or a macro's parameters.
 pub(crate) const CALL_TARGET_KEYWORDS: [&str; 3] = ["INTO", "TABLE", "MACRO"];
+/// Words a FROM continues rather than starting a clause after: `IS DISTINCT FROM` and PostgreSQL's `ROWS FROM (...)`.
+pub(crate) const FROM_CONTINUED: [&str; 2] = ["DISTINCT", "ROWS"];
+/// The PostgreSQL clauses that may follow a recursive CTE's body, each with the word before its last token: `SEARCH ... SET column` and `CYCLE ... USING column`.
+pub(crate) const POSTGRES_CTE_CLAUSES: [(&str, &str); 2] = [("SEARCH", "SET"), ("CYCLE", "USING")];
 /// Words after a CTE's `AS` that start its body.
 pub(crate) const CTE_BODY_PREFIXES: [&str; 2] = ["MATERIALIZED", "NOT"];
 /// The keyword that starts an INSERT statement.

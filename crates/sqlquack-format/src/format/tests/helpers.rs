@@ -17,13 +17,18 @@ const BIGQUERY_RECEIPTS: &str = include_str!("fixtures/bigquery_receipts.jsonl")
 const INVALID_QUERY: &str = "invalidQuery";
 /// SQL Server's recorded verdicts on the corpus statements SQLQuack refuses.
 const SQLSERVER_RECEIPTS: &str = include_str!("fixtures/sqlserver_receipts.jsonl");
+/// PostgreSQL 18.6's recorded verdicts, two runs of each statement.
+const POSTGRES_RECEIPTS: &str = include_str!("fixtures/pg18.6_receipts.jsonl");
+/// The SQLSTATE PostgreSQL reports for a syntax error.
+const SYNTAX_ERROR: &str = "42601";
 
 /// The line width the corpus is also wrapped at, as SQLClean's corpus test does.
 const CORPUS_LINE_WIDTH: usize = 40;
 /// The corpus dialect names SQLQuack tokenizes, with their dialects.
-const DIALECTS: [(&str, FormatDialect); 4] = [
+const DIALECTS: [(&str, FormatDialect); 5] = [
     ("snowflake", FormatDialect::Snowflake),
     ("duckdb", FormatDialect::DuckDB),
+    ("postgres", FormatDialect::PostgreSQL),
     ("bigquery", FormatDialect::BigQuery),
     ("tsql", FormatDialect::SqlServer),
 ];
@@ -245,4 +250,35 @@ pub(super) fn format_time(sql: &str, dialect: FormatDialect) -> std::time::Durat
     let start = std::time::Instant::now();
     let _ = format_sql(sql, &FormatOptions::new(dialect));
     start.elapsed()
+}
+
+/// The syntax error a PostgreSQL receipt records, as its message and one-based position; `None` when it parsed.
+fn recorded_postgres_rejection(receipt: &Value) -> Option<(String, usize)> {
+    (receipt["engine_code"] == SYNTAX_ERROR).then(|| {
+        (
+            receipt["message"].as_str().unwrap_or_default().to_string(),
+            receipt["position"]
+                .as_str()
+                .and_then(|position| position.parse::<usize>().ok())
+                .unwrap_or_default(),
+        )
+    })
+}
+
+/// What every recorded PostgreSQL 18.6 run of `statement` reported: its syntax error, or `None`.
+pub(super) fn recorded_postgres_rejections(statement: &str) -> Vec<Option<(String, usize)>> {
+    POSTGRES_RECEIPTS
+        .lines()
+        .filter_map(|line| serde_json::from_str::<Value>(line).ok())
+        .filter(|receipt| receipt["statement"] == statement)
+        .map(|receipt| recorded_postgres_rejection(&receipt))
+        .collect()
+}
+
+/// The syntax error SQLQuack's PostgreSQL parser reports for `statement`, with a one-based position.
+pub(super) fn native_postgres_rejection(statement: &str) -> Option<(String, usize)> {
+    sqlquack_syntax_postgres::parse_strict(statement)
+        .err()
+        .and_then(|failure| failure.parse_error().cloned())
+        .map(|error| (error.message, error.position + 1))
 }

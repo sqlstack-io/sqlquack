@@ -92,3 +92,11 @@ pub(super) struct BigQueryReceiptTestCase {
     /// The recorded message and `line:column` of BigQuery's syntax error.
     pub(super) expected_rejection: (&'static str, &'static str),
 }
+
+/// A statement PostgreSQL 18.6 was recorded on, with the syntax error it reported, if any.
+pub(super) struct PostgresReceiptTestCase {
+    /// The statement, as recorded.
+    pub(super) description: &'static str,
+    /// The recorded message and one-based character position of PostgreSQL's syntax error.
+    pub(super) expected_rejection: Option<(&'static str, usize)>,
+}
