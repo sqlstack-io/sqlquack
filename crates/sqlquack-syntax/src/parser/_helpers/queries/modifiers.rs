@@ -1022,6 +1022,7 @@ impl Parser {
                 changes: None,
                 version: None,
                 span: None,
+                whole_quoted: false,
             }
         } else {
             TableRef::new(table_name.name)
@@ -1241,6 +1242,7 @@ impl Parser {
                     changes: None,
                     version: None,
                     span: None,
+                    whole_quoted: false,
                 }
             } else {
                 TableRef {
@@ -1264,6 +1266,7 @@ impl Parser {
                     changes: None,
                     version: None,
                     span: None,
+                    whole_quoted: false,
                 }
             }
         } else {
@@ -1300,6 +1303,7 @@ impl Parser {
                         changes: None,
                         version: None,
                         span: None,
+                        whole_quoted: false,
                     }
                 } else {
                     TableRef {
@@ -1323,6 +1327,7 @@ impl Parser {
                         changes: None,
                         version: None,
                         span: None,
+                        whole_quoted: false,
                     }
                 }
             } else {

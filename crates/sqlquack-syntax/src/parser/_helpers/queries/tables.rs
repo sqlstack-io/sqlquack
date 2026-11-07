@@ -1505,6 +1505,7 @@ impl Parser {
                 changes: None,
                 version: None,
                 span: None,
+                whole_quoted: false,
             });
         }
 
@@ -1536,6 +1537,7 @@ impl Parser {
                     changes: None,
                     version: None,
                     span: None,
+                    whole_quoted: false,
                 })
             } else {
                 let table = self.parse_bigquery_table_part()?;
@@ -1563,6 +1565,7 @@ impl Parser {
                         changes: None,
                         version: None,
                         span: None,
+                        whole_quoted: false,
                     })
                 } else {
                     let trailing_comments = self.previous_trailing_comments().to_vec();
@@ -1587,6 +1590,7 @@ impl Parser {
                         changes: None,
                         version: None,
                         span: None,
+                        whole_quoted: false,
                     })
                 }
             }
@@ -1613,6 +1617,7 @@ impl Parser {
                 changes: None,
                 version: None,
                 span: None,
+                whole_quoted: false,
             })
         }
     }

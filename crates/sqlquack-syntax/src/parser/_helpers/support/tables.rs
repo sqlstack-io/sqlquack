@@ -110,6 +110,7 @@ impl Parser {
             changes: None,
             version: None,
             span: None,
+            whole_quoted: false,
         })))
     }
 

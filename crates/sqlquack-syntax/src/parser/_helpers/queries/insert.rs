@@ -441,6 +441,7 @@ impl Parser {
                 changes: None,
                 version: None,
                 span: None,
+                whole_quoted: false,
             }
         } else {
             let trailing_comments = self.previous_trailing_comments().to_vec();
@@ -465,6 +466,7 @@ impl Parser {
                 changes: None,
                 version: None,
                 span: None,
+                whole_quoted: false,
             }
         })
     }
@@ -588,6 +590,7 @@ impl Parser {
                     changes: None,
                     version: None,
                     span: None,
+                    whole_quoted: false,
                 }
             } else {
                 let trailing_comments = self.previous_trailing_comments().to_vec();
@@ -612,6 +615,7 @@ impl Parser {
                     changes: None,
                     version: None,
                     span: None,
+                    whole_quoted: false,
                 }
             };
             Some(Expression::Table(Box::new(source_table)))
