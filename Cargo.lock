@@ -1493,6 +1493,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "sqlquack-syntax-bigquery"
+version = "0.2.0"
+dependencies = [
+ "serde_json",
+ "sqlquack-syntax",
+]
+
+[[package]]
 name = "sqlquack-syntax-coverage"
 version = "0.2.0"
 dependencies = [
@@ -1501,6 +1509,7 @@ dependencies = [
  "serde_json",
  "sha2",
  "sqlquack-syntax",
+ "sqlquack-syntax-bigquery",
  "sqlquack-syntax-postgres",
  "tempfile",
  "toml",

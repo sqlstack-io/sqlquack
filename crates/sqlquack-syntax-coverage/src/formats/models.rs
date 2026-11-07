@@ -642,6 +642,10 @@ pub enum LocalParser {
     Snowflake,
     /// `sqlquack_syntax_postgres`, through the isolated worker.
     Postgres,
+    /// `sqlquack_syntax_bigquery`, through the isolated worker.
+    #[serde(rename = "bigquery")]
+    #[value(name = "bigquery")]
+    BigQuery,
     /// No parser yet: every case fails locally as `no_parser`.
     None,
 }
