@@ -10,3 +10,11 @@ class ShortenedTargetTestCase:
     description: str
     grammar: str
     expected_last_tokens: frozenset[str]
+
+
+@dataclass(frozen=True)
+class SetupBindingTestCase:
+    description: str
+    receipt_sql_sha256: str
+    report_input_sql_sha256: str
+    expected_setup: tuple[str, ...]

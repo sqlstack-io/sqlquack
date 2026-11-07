@@ -152,13 +152,13 @@ def _binding(
 
 def run_database_setups(directory: Path) -> tuple[dict[tuple[str, str], list[str]], list[str]]:
     """Each ddl case's setup from its latest counted receipt, and cases for review."""
-    inputs: dict[tuple[str, str], list[str]] = {}
+    texts_by_setup_sha: dict[str, list[str]] = {}
     counted_runs: set[str] = set()
     for path in directory.glob("*.report.json"):
         report: Row = json.loads(path.read_text())
         for row in report.get("inputs", []):
             setup: list[str] = list(row["setup"])
-            inputs[(str(row["sql_sha256"]), digest(canonical(setup)))] = setup
+            texts_by_setup_sha[digest(canonical(setup))] = setup
         counted_runs |= {
             str(run["run_id"])
             for run in report.get("runs", [])
@@ -170,7 +170,7 @@ def run_database_setups(directory: Path) -> tuple[dict[tuple[str, str], list[str
         for line in path.read_text().splitlines():
             receipt: Row = json.loads(line)
             key: tuple[str, str] = (str(receipt["case_id"]), str(receipt["sql_sha256"]))
-            setup = inputs.get((key[1], str(receipt.get("setup_sha256", ""))), [])
+            setup = texts_by_setup_sha.get(str(receipt.get("setup_sha256", "")), [])
             if (
                 receipt.get("capture_method") != CASE_CAPTURE_RUN_DATABASE
                 or MEASURE_KEY in receipt
@@ -493,15 +493,15 @@ def packet_text(cases: list[Row]) -> str:
     return jsonl_text([_packet_row(case) for case in cases])
 
 
-def write_family(
+def family_outputs(
     *,
     root: Path,
     family: str,
     receipts: ReceiptView,
     setups: dict[tuple[str, str], list[str]],
     held: frozenset[str],
-) -> tuple[list[Row], list[Row]]:
-    """Write one family's cases, arity cases and settled marks; return the cases and arity cases."""
+) -> tuple[list[Row], list[Row], list[tuple[Path, str | None]]]:
+    """One family's cases and arity cases, and each of its files' text (None: no file)."""
     cases, arity, marked = settled_cases(
         root=root,
         family=family,
@@ -509,16 +509,26 @@ def write_family(
         setups=setups,
         held=held,
     )
-    _write_rows(path=root / MARKS_DIR / f"{family}.jsonl", rows=marked, keep_empty=False)
-    _write_rows(path=root / "cases" / f"{family}.jsonl", rows=cases, keep_empty=True)
-    _write_rows(path=root / "arity" / f"{family}.jsonl", rows=arity, keep_empty=False)
-    return cases, arity
+    outputs: list[tuple[Path, str | None]] = [
+        (root / MARKS_DIR / f"{family}.jsonl", jsonl_text(marked) if marked else None),
+        (root / "cases" / f"{family}.jsonl", jsonl_text(cases)),
+        (root / "arity" / f"{family}.jsonl", jsonl_text(arity) if arity else None),
+    ]
+    return cases, arity, outputs
 
 
-def _write_rows(*, path: Path, rows: list[Row], keep_empty: bool) -> None:
-    """Write rows as JSON lines; an empty list removes the file unless it is kept empty."""
-    if rows or keep_empty:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(jsonl_text(rows))
-    elif path.exists():
-        path.unlink()
+def sync_outputs(*, outputs: list[tuple[Path, str | None]], check: bool) -> list[Path]:
+    """The files whose text differs; each is rewritten or removed unless check."""
+    differing: list[Path] = []
+    for path, text in outputs:
+        if text == (path.read_text() if path.exists() else None):
+            continue
+        differing.append(path)
+        if check:
+            continue
+        if text is None:
+            path.unlink()
+        else:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(text)
+    return differing
