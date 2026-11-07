@@ -2,7 +2,7 @@
 // worker) and shows its stages; translated SQL runs in DuckDB-WASM, which downloads in the
 // background once the page is idle.
 
-import { DUCKDB_DIR, DUCKDB_WASM_BYTES } from './duckdb-version.js';
+import { DUCKDB_DIR, DUCKDB_EXTENSIONS, DUCKDB_WASM_BYTES } from './duckdb-version.js';
 import { ENGINE_DIR, ENGINE_WASM_BYTES } from './engine-version.js';
 import { CAPTIONS, EXAMPLE_GROUPS, EXAMPLES, ROWS, SCHEMA, stopLabel } from './examples.js';
 import { escape, previewLimit, rendered, resultTable, underlined } from './spans.js';
@@ -328,7 +328,17 @@ async function loadDuckDB() {
 	const module = await import(moduleUrl);
 	const db = new module.AsyncDuckDB(new module.VoidLogger(), new Worker(workerUrl));
 	await db.instantiate(wasmUrl);
-	const version = await (await db.connect()).query('SELECT version() AS v');
+	const conn = await db.connect();
+	// The extensions this build lacks, from the site, before any SQL: DuckDB autoloads ICU while
+	// binding the first statement that needs it, which corrupts that statement's function lookups.
+	await conn.query(`SET custom_extension_repository = '${here(`${DUCKDB_DIR}extensions`)}'`);
+	for (const extension of DUCKDB_EXTENSIONS) {
+		await conn.query(`LOAD ${extension}`).catch((error) => {
+			throw new Error(`the ${extension} extension did not load: ${error.message ?? error}`);
+		});
+	}
+	const version = await conn.query('SELECT version() AS v');
+	await conn.close();
 	return { db, version: String(version.toArray()[0].v) };
 }
 

@@ -1,9 +1,10 @@
 // The playground engine and its span handling, under Node's test runner: `npm run test:engine`.
-// Needs the engine built into wasm/pkg (scripts/build_engine.sh).
+// Needs the engine built into wasm/pkg (scripts/build_engine.sh); the script prepares the playground first.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 
 import { initSync, analyze, fixture_tables, run_failure } from '../wasm/pkg/sqlquack_wasm.js';
@@ -12,6 +13,27 @@ import { previewLimit, rendered, resultTable, underlined } from '../public/playg
 initSync({ module: readFileSync(new URL('../wasm/pkg/sqlquack_wasm_bg.wasm', import.meta.url)) });
 
 const SCHEMA = JSON.stringify({ ORDERS: [['ORDER_ID', 'NUMBER(38,0)'], ['NOTE', 'VARCHAR']] });
+
+// A DuckDB as the page starts one: the DuckDB-WASM build it serves, the extensions it loads from the
+// site, then the sample schema's tables and rows. A fresh one per case, so no earlier case has
+// already loaded an extension a later case needs.
+async function pageDuckDB() {
+	const { SCHEMA: PAGE_SCHEMA, ROWS } = await import('../public/playground/examples.js');
+	const { DUCKDB_DIR, DUCKDB_EXTENSIONS } = await import('../public/playground/duckdb-version.js');
+	const require = createRequire(import.meta.url);
+	const duckdb = require('@duckdb/duckdb-wasm/dist/duckdb-node-blocking.cjs');
+	const dist = dirname(require.resolve('@duckdb/duckdb-wasm/dist/duckdb-node-blocking.cjs'));
+	const bundles = { base: { mainModule: join(dist, 'duckdb-base.wasm'), mainWorker: join(dist, 'duckdb-node-base.worker.cjs') } };
+	const db = await duckdb.createDuckDB(bundles, new duckdb.VoidLogger(), duckdb.NODE_RUNTIME);
+	await db.instantiate();
+	const conn = db.connect();
+	conn.query(`SET custom_extension_repository = '${fileURLToPath(new URL(`../public/playground/${DUCKDB_DIR}extensions`, import.meta.url))}'`);
+	for (const extension of DUCKDB_EXTENSIONS) conn.query(`LOAD ${extension}`);
+	for (const table of JSON.parse(fixture_tables(PAGE_SCHEMA)).tables) conn.query(table);
+	conn.query(ROWS);
+	// Every value as text, as the page reads them.
+	return (sql) => conn.query(`SELECT COLUMNS(*)::VARCHAR FROM (${sql}) AS result`).toArray().map((row) => Object.values(row.toJSON()));
+}
 
 const marked = (html) => [...html.matchAll(/<mark[^>]*>(.*?)<\/mark>/g)].map((match) => match[1]);
 
@@ -86,37 +108,50 @@ test('the conversion budget is timed in the browser and refuses with SQ0006 when
 });
 
 test('every example chip stops at the stage its label names, the Run stage included', async () => {
-	const { EXAMPLE_GROUPS, EXAMPLES, CAPTIONS, ROWS, SCHEMA: PAGE_SCHEMA } = await import('../public/playground/examples.js');
+	const { EXAMPLE_GROUPS, EXAMPLES, CAPTIONS, SCHEMA: PAGE_SCHEMA } = await import('../public/playground/examples.js');
 	const chips = EXAMPLE_GROUPS.flatMap((group) => group.examples);
 	assert.deepEqual(chips.map((chip) => chip.key).sort(), Object.keys(EXAMPLES).sort());
 	assert.equal(new Set(chips.map((chip) => chip.slug)).size, chips.length);
-	// Translated examples run as the page runs them: the page's fixture tables and rows, in the
-	// DuckDB-WASM build the page serves, with every value read as text.
-	const require = createRequire(import.meta.url);
-	const duckdb = require('@duckdb/duckdb-wasm/dist/duckdb-node-blocking.cjs');
-	const dist = dirname(require.resolve('@duckdb/duckdb-wasm/dist/duckdb-node-blocking.cjs'));
-	const bundles = { base: { mainModule: join(dist, 'duckdb-base.wasm'), mainWorker: join(dist, 'duckdb-node-base.worker.cjs') } };
-	const db = await duckdb.createDuckDB(bundles, new duckdb.VoidLogger(), duckdb.NODE_RUNTIME);
-	await db.instantiate();
-	const conn = db.connect();
-	for (const table of JSON.parse(fixture_tables(PAGE_SCHEMA)).tables) conn.query(table);
-	conn.query(ROWS);
-	const stops = (sql) => {
+	// Translated examples run as the page runs them, each in a fresh DuckDB.
+	const stops = async (sql) => {
 		const report = JSON.parse(analyze(sql, PAGE_SCHEMA));
 		const failed = ['parse', 'checks', 'translate'].find((stage) => report[stage].status !== 'pass');
 		if (failed) return failed;
+		const run = await pageDuckDB();
 		try {
-			conn.query(`SELECT COLUMNS(*)::VARCHAR FROM (${report.translate.statements[0].sql}) AS result`);
+			run(report.translate.statements[0].sql);
 			return null;
 		} catch {
 			return 'run';
 		}
 	};
-	for (const chip of chips) assert.equal(stops(EXAMPLES[chip.key]), chip.stops, chip.name);
+	for (const chip of chips) assert.equal(await stops(EXAMPLES[chip.key]), chip.stops, chip.name);
 	// The one deliberate refusal is a known divergence, explained by its caption.
 	const refused = JSON.parse(analyze(EXAMPLES.refused, PAGE_SCHEMA)).translate;
 	assert.deepEqual(refused.diagnostics.map((d) => d.code), ['SQ0008']);
 	assert.ok(CAPTIONS.refused);
+});
+
+test('date arithmetic against CURRENT_DATE runs in the in-browser DuckDB, on its first statement', async () => {
+	const { SCHEMA: PAGE_SCHEMA } = await import('../public/playground/examples.js');
+	const cases = [
+		// Last 30 days: the fixture's orders are older, and stay so.
+		['SELECT order_id FROM orders WHERE ordered_at >= DATEADD(day, -30, CURRENT_DATE)', []],
+		// Every sample customer signed up more than 30 days ago.
+		['SELECT customer_id FROM customers WHERE DATEDIFF(day, signup_date, CURRENT_DATE) > 30 ORDER BY customer_id', [['10'], ['11'], ['12']]],
+		// A month later than a month's last day is the next month's last day when it is shorter.
+		[
+			"SELECT DATEADD(month, 1, DATE '2024-01-31') AS leap, DATEADD(month, -1, DATE '2026-03-31') AS feb FROM orders " +
+				'WHERE ordered_at < DATEADD(year, 1, CURRENT_DATE) AND order_id = 1',
+			[['2024-02-29', '2026-02-28']],
+		],
+	];
+	for (const [sql, rows] of cases) {
+		const report = JSON.parse(analyze(sql, PAGE_SCHEMA));
+		assert.equal(report.translate.status, 'pass', sql);
+		const run = await pageDuckDB();
+		assert.deepEqual(run(report.translate.statements[0].sql), rows, sql);
+	}
 });
 
 test('a run error from the in-browser DuckDB is told apart from an error about the rows', () => {
