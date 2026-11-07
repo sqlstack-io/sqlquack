@@ -135,6 +135,7 @@ rows = [
 query = "SELECT ordinal, DATEDIFF(week, a, b) AS w, DATEDIFF(hour, a, b) AS h, DATEDIFF(minute, a, b) AS mi, DATEDIFF(second, a, b) AS s, DATEDIFF(millisecond, a, b) AS ms FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination", "boundary"]
+expected_divergence = "timestamp_tz_submicro"
 
 [[case]]
 id = "t012_date_ltz"
@@ -175,3 +176,18 @@ rows = [
 query = "SELECT ordinal, DATEDIFF('day', a, COALESCE(c, b)) AS d, DATEDIFF('hour', a, COALESCE(c, b)) AS h FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["type-combination"]
+
+[[case]]
+id = "t015_ntz_ltz_subday_micro"
+description = "The sub-day boundaries of t011 without its nanosecond row, which the converted SQL refuses to load: week, hour, minute, second and millisecond from a naive timestamp to a local one at a half-hour offset, at milliseconds and across a week start. Catches: the local side read at its own offset, or elapsed units counted instead of crossed boundaries"
+columns = [{ name = "a", type = "TIMESTAMP_NTZ" }, { name = "b", type = "TIMESTAMP_LTZ" }]
+rows = [
+  ["'2024-01-01 00:00:00'", "'2024-01-01 05:29:59 +05:30'"],
+  ["'2024-01-01 10:59:59.999'", "'2024-01-01 11:00:00.001 +00:00'"],
+  ["'2024-01-01 00:00:00'", "'2024-01-01 00:00:00.999999 +00:00'"],
+  ["'2024-01-07 23:00:00'", "'2024-01-08 01:00:00 +02:00'"],
+  ["'2024-01-01 00:00:00'", "NULL"],
+]
+query = "SELECT ordinal, DATEDIFF(week, a, b) AS w, DATEDIFF(hour, a, b) AS h, DATEDIFF(minute, a, b) AS mi, DATEDIFF(second, a, b) AS s, DATEDIFF(millisecond, a, b) AS ms FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination", "boundary"]

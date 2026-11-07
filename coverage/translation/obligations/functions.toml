@@ -8767,6 +8767,17 @@ cases = ["cases/translation/functions/datediff.datediff.toml#t014_coalesce_local
 required = true
 
 [[obligation]]
+id = "sf.functions.datediff.datediff.t015"
+form = "sf.functions.datediff.datediff"
+kind = "type_combination"
+target = "DATEDIFF of TIMESTAMP_NTZ and TIMESTAMP_LTZ in sub-day units at microseconds"
+note = "The sub-day boundaries of t011 without its nanosecond row, which the converted SQL refuses to load."
+catches = "the local side read at its own offset, or elapsed units counted instead of crossed boundaries"
+reading = "the page: DATEDIFF(part, expr1, expr2) subtracts expr1 from expr2 and counts crossed unit boundaries; TIMEDIFF and TIMESTAMPDIFF are aliases; NULL if any argument is NULL"
+cases = ["cases/translation/functions/datediff.datediff.toml#t015_ntz_ltz_subday_micro"]
+required = true
+
+[[obligation]]
 id = "sf.functions.datediff.syntax.t001"
 form = "sf.functions.datediff.syntax"
 kind = "type_combination"
