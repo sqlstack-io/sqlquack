@@ -24,6 +24,7 @@ export default defineConfig({
 				{ tag: 'meta', attrs: { property: 'og:image', content: 'https://sqlquack.io/assets/og-sqlquack.png' } },
 				{ tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
 				{ tag: 'meta', attrs: { property: 'og:image:height', content: '630' } },
+				{ tag: 'meta', attrs: { property: 'og:image:alt', content: 'SQLQuack: a Snowflake SQL compiler that translates to DuckDB, or refuses to guess.' } },
 				{ tag: 'meta', attrs: { name: 'twitter:image', content: 'https://sqlquack.io/assets/og-sqlquack.png' } },
 			],
 			social: [
