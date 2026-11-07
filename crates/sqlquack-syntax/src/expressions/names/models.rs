@@ -123,6 +123,10 @@ pub struct BooleanLiteral {
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Null;
 
+/// The DEFAULT keyword where a value is expected, such as a VALUES item: the column's default.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct DefaultKeyword;
+
 /// An identifier (table, column, alias, ...); `quoted` records whether it was delimited.
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, Serialize, Deserialize)]
 pub struct Identifier {

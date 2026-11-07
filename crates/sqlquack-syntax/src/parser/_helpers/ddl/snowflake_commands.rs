@@ -228,6 +228,90 @@ impl Parser {
         if needs_target && !target {
             return Err(self.parse_error("Expected a file:// target after the stage"));
         }
+        self.check_snowflake_stage_words(tokens, if needs_target { 2 } else { 1 })
+    }
+
+    /// Refuses a quoted name with a space in an unquoted location, and a word after the locations that is no option.
+    pub(crate) fn check_snowflake_stage_words(
+        &self,
+        tokens: &[crate::tokens::models::ParserToken],
+        locations: usize,
+    ) -> Result<()> {
+        let quoted_space = tokens.iter().any(|token| {
+            token.token_type == TokenType::QuotedIdentifier
+                && token.text.chars().any(char::is_whitespace)
+        });
+        if quoted_space {
+            return Err(
+                self.parse_error("A quoted name with a space needs the whole location quoted")
+            );
+        }
+        let mut words: Vec<&[crate::tokens::models::ParserToken]> = Vec::new();
+        let mut start = 0;
+        for index in 1..=tokens.len() {
+            if index == tokens.len() || tokens[index - 1].span.end != tokens[index].span.start {
+                words.push(&tokens[start..index]);
+                start = index;
+            }
+        }
+        let mut after_eq = words.len() < locations;
+        for word in words.iter().skip(locations) {
+            let first = word[0].token_type;
+            let option_name = matches!(
+                first,
+                TokenType::Var | TokenType::Identifier | TokenType::Eq
+            ) || first.is_keyword();
+            if !after_eq && !option_name {
+                return Err(self.parse_error("Expected an option after the location"));
+            }
+            after_eq = word[word.len() - 1].token_type == TokenType::Eq;
+        }
+        Ok(())
+    }
+
+    /// Refuses a Snowflake PUT whose file:// source is missing, split by a space, or not followed by the stage.
+    pub(crate) fn check_snowflake_put(&self) -> Result<()> {
+        if !self.is_snowflake() {
+            return Ok(());
+        }
+        let rest = &self.tokens[self.current.min(self.tokens.len())..];
+        let end: usize = rest
+            .iter()
+            .position(|token| token.token_type == TokenType::Semicolon)
+            .unwrap_or(rest.len());
+        let stage_first = rest
+            .first()
+            .is_none_or(|token| token.token_type == TokenType::DAt || token.text.starts_with('@'));
+        let source_end = rest[..end]
+            .windows(2)
+            .position(|pair| pair[0].span.end != pair[1].span.start)
+            .map_or(end, |index| index + 1);
+        let stage_second = rest.get(source_end).is_some_and(|token| {
+            matches!(
+                token.token_type,
+                TokenType::DAt | TokenType::String | TokenType::Parameter
+            ) || token.text.starts_with('@')
+        });
+        if stage_first || !stage_second {
+            return Err(self.parse_error("Expected a file:// source and then the stage"));
+        }
+        self.check_snowflake_stage_words(&rest[..end], 2)
+    }
+
+    /// Refuses a Snowflake DELETE without FROM, or whose table is a reserved word.
+    pub(crate) fn check_snowflake_delete_head(&self) -> Result<()> {
+        if !self.is_snowflake() {
+            return Ok(());
+        }
+        let reserved = self.tokens.get(self.current + 1).is_some_and(|token| {
+            token.token_type != TokenType::QuotedIdentifier
+                && crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS
+                    .iter()
+                    .any(|keyword| token.text.eq_ignore_ascii_case(keyword))
+        });
+        if !self.check(TokenType::From) || reserved {
+            return Err(self.parse_error("Expected FROM and a table name after DELETE"));
+        }
         Ok(())
     }
 
