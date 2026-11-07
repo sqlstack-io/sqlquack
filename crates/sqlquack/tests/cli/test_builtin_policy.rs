@@ -105,7 +105,7 @@ fn given_no_policy_file_when_converting_or_counting_then_the_built_in_policy_app
 }
 
 #[test]
-fn given_a_table_with_semi_structured_columns_when_converting_then_only_reading_them_needs_json_fidelity()
+fn given_a_table_with_semi_structured_columns_when_converting_then_only_reading_them_relies_on_json_fidelity()
  {
     let test_cases = [
         ConvertTestCase {
@@ -123,32 +123,53 @@ fn given_a_table_with_semi_structured_columns_when_converting_then_only_reading_
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
-            description: "a star reads the ARRAY column, so it still needs json_fidelity",
+            description: "a star reads the ARRAY column, so it relies on json_fidelity, with its warning",
             sql: "SELECT * FROM tickets",
             flags: &["--builtin-policy", "--schema", TICKETS_SCHEMA],
-            mention: "needs known divergence `json_fidelity`",
-            expected_outcome: convert_outcome(1, false),
+            mention: "relies on known divergence json_fidelity",
+            expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
-            description: "a qualified read of the ARRAY in WHERE still needs json_fidelity",
+            description: "a qualified read of the ARRAY in WHERE relies on json_fidelity, with its warning",
             sql: "SELECT t.ticket_id FROM tickets t WHERE ARRAY_SIZE(t.Tags) > 0",
             flags: &["--builtin-policy", "--schema", TICKETS_SCHEMA],
-            mention: "needs known divergence `json_fidelity`",
-            expected_outcome: convert_outcome(1, false),
+            mention: "relies on known divergence json_fidelity",
+            expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
-            description: "a positional column may be the VARIANT, so it still needs json_fidelity",
+            description: "a positional column may be the VARIANT, so it relies on json_fidelity, with its warning",
             sql: "SELECT $4 AS d FROM tickets",
             flags: &["--builtin-policy", "--schema", TICKETS_SCHEMA],
-            mention: "needs known divergence `json_fidelity`",
-            expected_outcome: convert_outcome(1, false),
+            mention: "relies on known divergence json_fidelity",
+            expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
-            description: "a subquery reading the VARIANT still needs json_fidelity",
+            description: "a subquery reading the VARIANT relies on json_fidelity, with its warning",
             sql: "SELECT ticket_id FROM tickets WHERE ticket_id IN (SELECT ticket_id FROM tickets \
                 WHERE details IS NOT NULL)",
             flags: &["--builtin-policy", "--schema", TICKETS_SCHEMA],
+            mention: "relies on known divergence json_fidelity",
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "a cast path read of the VARIANT converts, warning that odd JSON raises",
+            sql: "SELECT details:kind::VARCHAR AS kind FROM tickets",
+            flags: &["--builtin-policy", "--schema", TICKETS_SCHEMA],
+            mention: "the converted SQL raises an error for the whole query; it never returns a different value",
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "comparing an uncast VARIANT rests on an assumption, so it still refuses",
+            sql: "SELECT ticket_id FROM tickets WHERE details:kind = 'bug'",
+            flags: &["--builtin-policy", "--schema", TICKETS_SCHEMA],
             mention: "needs known divergence `json_fidelity`",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "--strict refuses reading the VARIANT",
+            sql: "SELECT details:kind::VARCHAR AS kind FROM tickets",
+            flags: &["--builtin-policy", "--strict", "--schema", TICKETS_SCHEMA],
+            mention: "allows `json_fidelity` only for node:column, node:cast, fn:GET, fn:FLATTEN",
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
