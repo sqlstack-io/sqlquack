@@ -5,7 +5,7 @@
 import { DUCKDB_DIR, DUCKDB_WASM_BYTES } from './duckdb-version.js';
 import { ENGINE_DIR, ENGINE_WASM_BYTES } from './engine-version.js';
 import { CAPTIONS, EXAMPLES, ROWS, SCHEMA } from './examples.js';
-import { escape, rendered, underlined } from './spans.js';
+import { escape, rendered, resultTable, underlined } from './spans.js';
 
 const here = (path) => new URL(path, import.meta.url).href;
 const ENGINE_WASM = here(`${ENGINE_DIR}sqlquack_wasm_bg.wasm`);
@@ -131,6 +131,9 @@ function showCaption(example) {
 }
 
 let latest = null;
+let latestRaises = {};
+// The editor's current text and underlines, so a run's error can add its own.
+let shown = { chars: [], spans: [] };
 let current = 0;
 
 async function run() {
@@ -193,6 +196,7 @@ async function run() {
 	if (translate.status !== 'skipped') {
 		// Translated SQL keeps its line layout and scrolls sideways; diagnostics still wrap.
 		body = (translate.statements ?? []).map((s) => `<pre class="terminal sql">${escape(s.sql)}</pre>`).join('');
+		body = unknownRelationHints(translate.diagnostics) + body + conversionNotes(translate);
 		body += (translate.diagnostics ?? []).map((d) => terminal(tone(rendered(d, chars)))).join('');
 	}
 	const policy = translate.profile ? `policy: ${translate.profile}` : '';
@@ -203,15 +207,80 @@ async function run() {
 		setStage('translate', 'refused', body, policy, 'not translated');
 	} else setStage('translate', translate.status, body, policy);
 	underline(chars, spans);
+	shown = { chars, spans };
 
 	const statements = translate.statements ?? [];
 	if (translate.status === 'pass' && statements.length === 1) {
 		latest = statements[0].sql;
+		latestRaises = statements[0].raises ?? {};
 		if (duckdb) execute();
 		else showDuckDBLoading();
 	} else if (translate.status === 'pass') {
 		setStage('run', 'skipped', terminal('<span class="dim">Runs one statement at a time.</span>'));
 	} else setStage('run', 'skipped', '', refused ? 'nothing was translated' : '');
+}
+
+// What the translation relies on that a reader should know, as `sqlquack convert` prints it:
+// each known divergence the policy allows, and each assumption, which gives a wrong value
+// silently where it does not hold.
+function conversionNotes(translate) {
+	const notes = [];
+	for (const statement of translate.statements ?? [])
+		for (const d of statement.divergences ?? []) {
+			const at = d.constructs.map((construct) => `<code>${escape(construct)}</code>`).join(', ');
+			const kind = d.assumption ? 'assumption' : 'known divergence';
+			notes.push(`Relies on ${kind} <code>${escape(d.id)}</code> at ${at}${d.reason ? `: ${escape(d.reason)}` : ''}`);
+		}
+	return [...new Set(notes)].map((note) => `<p class="pg-conversion-note"><strong>Note.</strong> ${note}</p>`).join('');
+}
+
+// A relation the schema does not declare: SQLQuack needs its columns and Snowflake types, and
+// does not guess them. Each one gets a line saying so, with a button that adds a stub to fill in.
+const UNKNOWN_RELATION = /^relation `(.+)` has no known columns$/;
+const STUB_COLUMN = ['COLUMN_NAME', 'SNOWFLAKE_TYPE'];
+
+function declaredRelations() {
+	try {
+		return Object.keys(JSON.parse(schemaBox.value));
+	} catch {
+		return [];
+	}
+}
+
+function unknownRelationHints(diagnostics) {
+	const relations = new Set();
+	for (const d of diagnostics ?? []) {
+		const match = d.code === 'SQ0004' && UNKNOWN_RELATION.exec(d.label ?? '');
+		if (match) relations.add(match[1]);
+	}
+	const declared = declaredRelations();
+	return [...relations]
+		.map((name) => {
+			const code = `<code>${escape(name)}</code>`;
+			return declared.includes(name)
+				? `<p class="pg-hint"><span>SQLQuack needs each table's columns and Snowflake types. Fill in ${code}'s in the Schema box.</span></p>`
+				: `<p class="pg-hint"><span>SQLQuack needs each table's columns and Snowflake types. Add ${code} to the Schema box.</span>` +
+						`<button class="button" type="button" data-add-relation="${escape(name)}">Add ${escape(name)} to schema</button></p>`;
+		})
+		.join('');
+}
+
+// Adds `name` with one placeholder column to the end of the schema's JSON, keeping the rest of the
+// text as typed, and selects the placeholder so typing replaces it.
+function addRelation(name) {
+	const text = schemaBox.value;
+	const close = text.lastIndexOf('}');
+	if (close < 0 || declaredRelations().includes(name)) return;
+	const before = text.slice(0, close).trimEnd();
+	const column = `[${STUB_COLUMN.map((part) => JSON.stringify(part)).join(', ')}]`;
+	const entry = `  ${JSON.stringify(name)}: [\n    ${column}\n  ]`;
+	const separator = before.endsWith('{') ? '\n' : ',\n';
+	schemaBox.value = `${before}${separator}${entry}\n${text.slice(close)}`;
+	schemaBox.closest('details').open = true;
+	const placeholder = `${before}${separator}  ${JSON.stringify(name)}: [\n    ["`.length;
+	schemaBox.focus();
+	schemaBox.setSelectionRange(placeholder, placeholder + STUB_COLUMN[0].length);
+	schedule();
 }
 
 // DuckDB-WASM, downloaded in the background once the page is idle (or on the first run).
@@ -305,19 +374,43 @@ async function execute() {
 			// Every value as DuckDB's own text, so decimals and timestamps show exactly.
 			const result = await conn.query(`SELECT COLUMNS(*)::VARCHAR FROM (${sql}) AS result`);
 			const elapsed = performance.now() - started;
+			// The wrapper renames a repeated output name (ORDER_ID_1); the statement's own names come
+			// from DESCRIBE, which keeps them as DuckDB and Snowflake return them.
+			const fields = result.schema.fields.map((field) => field.name);
+			const described = await conn.query(`DESCRIBE ${sql}`).catch(() => null);
+			const own = described ? Array.from(described.getChild('column_name').toArray(), String) : [];
 			if (ticket !== running) return;
-			const names = result.schema.fields.map((field) => field.name);
-			const rows = result.toArray().map((row) => row.toJSON());
-			const table = `<div class="pg-rows"><table><thead><tr>${names.map((n) => `<th>${escape(n)}</th>`).join('')}</tr></thead><tbody>${rows
-				.map((row) => `<tr>${names.map((n) => `<td>${row[n] === null ? '<span class="dim">NULL</span>' : escape(String(row[n]))}</td>`).join('')}</tr>`)
-				.join('')}</tbody></table></div>`;
-			setStage('run', 'pass', table, `${rows.length} row${rows.length === 1 ? '' : 's'} · ${elapsed.toFixed(0)} ms · DuckDB ${duckdb.version}`);
+			const columns = fields.map((_, index) => Array.from(result.getChildAt(index).toArray()));
+			const { html: table, rows } = resultTable(own.length === fields.length ? own : fields, columns);
+			setStage('run', 'pass', table, `${rows} row${rows === 1 ? '' : 's'} · ${elapsed.toFixed(0)} ms · DuckDB ${duckdb.version}`);
 		} finally {
 			await conn.close();
 		}
 	} catch (error) {
+		const message = String(error.message ?? error);
+		// An error a building block raised as Snowflake would: shown as Snowflake's, where it comes from.
+		const failure = JSON.parse((await engine('failure', { message })).result);
 		if (ticket !== running) return;
-		setStage('run', 'fail', terminal(`<span class="bad">DuckDB:</span> ${escape(String(error.message ?? error))}`), duckdb ? `DuckDB ${duckdb.version}` : '');
+		const version = duckdb ? `DuckDB ${duckdb.version}` : '';
+		if (!failure.errno) {
+			setStage('run', 'fail', terminal(`<span class="bad">DuckDB:</span> ${escape(message)}`), version);
+			return;
+		}
+		const { chars, spans } = shown;
+		const raised = (latestRaises[failure.raise_id] ?? []).map((location) => {
+			const diagnostic = { code: String(failure.errno), message: failure.message, span: { start: location.start, end: location.end }, label: 'raised here' };
+			return { kind: 'error', span: diagnostic.span, text: rendered(diagnostic, chars) };
+		});
+		if (raised.length) underline(chars, [...spans, ...raised]);
+		const head = `<span class="bad">error ${escape(String(failure.errno))} (${escape(failure.sqlstate)})</span>: ${escape(failure.message)}`;
+		setStage(
+			'run',
+			'fail',
+			terminal(raised[0]?.text ?? head) +
+				'<p class="pg-conversion-note">Snowflake raises this error for these rows, and so does the translated SQL in DuckDB.</p>',
+			version,
+			'error',
+		);
 	}
 }
 
@@ -329,6 +422,7 @@ const schedule = () => {
 
 document.addEventListener('click', (event) => {
 	if (event.target.id === 'pg-run') execute();
+	if (event.target.dataset.addRelation) addRelation(event.target.dataset.addRelation);
 });
 sqlBox.addEventListener('input', () => {
 	showCaption(null);

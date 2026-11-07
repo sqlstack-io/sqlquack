@@ -240,3 +240,68 @@ pub(crate) fn superseding_receipt(supersedes: Option<&str>) -> Receipt {
     receipt.supersedes_receipt_sha256 = supersedes.map(str::to_owned);
     receipt
 }
+
+/// `receipt_line()` in format `/2`, as the Postgres referee writes it.
+pub(crate) fn engine_receipt_line() -> String {
+    receipt_line()
+        .replace("sqlquack-syntax-receipt/1", "sqlquack-syntax-receipt/2")
+        .replace(
+            "\"query_id\":\"01b2-0000\",\"warehouse_version\":\"10.40.100\"",
+            &format!(
+                "\"engine\":\"postgres\",\"engine_version\":\"18.6\",\
+                 \"engine_image_sha256\":\"{SHA_B}\",\"engine_code\":null,\
+                 \"parser_check\":\"do_block\",\"parse_only_sqlstate\":null"
+            ),
+        )
+        .replace(
+            "\"capture_method\":\"execute\"",
+            "\"capture_method\":\"execute_in_rolled_back_transaction\"",
+        )
+}
+
+/// `valid_tree` as a Postgres root: its dialect file, eight families, `pg` ids, a `/2` receipt.
+pub(crate) fn postgres_tree(root: &Path) {
+    valid_tree(root);
+    write(
+        root,
+        "dialect.toml",
+        "format = \"sqlquack-syntax-dialect/1\"\nname = \"postgres\"\nform_prefix = \"pg\"\n\
+         families = [\"query\", \"dml\", \"ddl\", \"transaction_session\", \"security_admin\", \
+         \"utility\", \"functions\", \"expressions\"]\n\
+         receipt_format = \"sqlquack-syntax-receipt/2\"\n\
+         parser_path = \"crates/sqlquack-syntax-postgres\"\nlocal_parser = \"none\"\n\
+         syntax_codes = [\"42601\"]\n",
+    );
+    for family in ["scripting", "classes"] {
+        for (directory, extension) in [
+            ("catalogue", "toml"),
+            ("obligations", "toml"),
+            ("cases", "jsonl"),
+        ] {
+            std::fs::remove_file(root.join(format!("{directory}/{family}.{extension}")))
+                .expect("remove");
+        }
+    }
+    for path in [
+        "aliases.toml",
+        "catalogue/query.toml",
+        "obligations/query.toml",
+        "cases/query.jsonl",
+        "limits.toml",
+        "reviews/query.toml",
+    ] {
+        let text = std::fs::read_to_string(root.join(path)).expect("read");
+        write(root, path, &text.replace("\"sf.", "\"pg."));
+    }
+    replace(
+        root,
+        "cases/query.jsonl",
+        "\"capture\":\"execute\"",
+        "\"capture\":\"execute_in_rolled_back_transaction\"",
+    );
+    write(
+        root,
+        "receipts/first.jsonl",
+        &format!("{}\n", engine_receipt_line()),
+    );
+}

@@ -1,0 +1,31 @@
+# The pinned PostgreSQL source release (https://ftp.postgresql.org/pub/source/v18.6/postgresql-18.6.tar.bz2)
+# and the files in it that list the pages and the grammar: the SQL command reference, the
+# documentation file lists, gram.y and kwlist.h.
+
+[[index]]
+name = "postgresql-18.6.tar.bz2"
+sha256 = "555610c24d53e4316da5b7d3fc25c279d96856d5e0e23ee308c328c5fa881d9f"
+
+[[index]]
+name = "doc/src/sgml/reference.sgml"
+sha256 = "afc4bde5aa5ae963bbb16117bb461ba72432c1ed83551a4e026f8be81bc05ea9"
+
+[[index]]
+name = "doc/src/sgml/ref/allfiles.sgml"
+sha256 = "4240987b5fddaa5ab5ffa2562551cb1325f2e5527b552c3bbe5be7ca6fd42fc7"
+
+[[index]]
+name = "doc/src/sgml/filelist.sgml"
+sha256 = "c34c3cebd10a22795d2be9c959101194437a1ae830bc9767f3ed675fc4842242"
+
+[[index]]
+name = "doc/src/sgml/postgres.sgml"
+sha256 = "f12b5f9af8cb74221d18c9ec2ff57f9499ffc280ebdc16e58a4dd2c60b44c7fa"
+
+[[index]]
+name = "src/backend/parser/gram.y"
+sha256 = "7e548b673a1e03eb3a56c5eb9ad92d8e11095fac76e14cb258ca851f58274724"
+
+[[index]]
+name = "src/include/parser/kwlist.h"
+sha256 = "fdcdf3694513cba63b4016f63032472b686e381bb35f17c5d645bc2f6f1dac16"

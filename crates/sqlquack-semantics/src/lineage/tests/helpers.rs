@@ -4,11 +4,11 @@ use crate::lineage::models::NullabilityRule;
 use crate::lineage::models::{Nullability, SchemaColumn, SourceColumn};
 use sqlquack_syntax::{CallMode, Dialect, ParseOptions, parse_statements_with};
 
-use crate::dialects::constants::DUCKDB;
+use crate::dialects::constants::{DUCKDB, POSTGRES};
 use crate::dialects::types::DialectProfile;
 use crate::lineage::_helpers::findings::statement::statement_findings;
 use crate::lineage::main::query_lineage::query_lineage;
-use crate::lineage::models::LineageContext;
+use crate::lineage::models::{LineageContext, TransformKind};
 use crate::lineage::tests::test_types::{
     EngineTypeFixture, EngineTypeReplay, EngineTypeTally, ShopSchema, TypedShopSchema,
 };
@@ -31,6 +31,32 @@ pub(crate) fn shop_schema() -> ShopSchema {
         ("SHOP.PRODUCTS", &["SKU", "PRICE"]),
         ("EXPORTS", &["\"listingId\"", "LISTING_STATUS"]),
     ])
+}
+
+/// Each output of `sql`'s lineage: its name, transform and sources as `relation.column`.
+pub(crate) fn lineage_outputs(
+    sql: &str,
+    (dialect, profile): (Dialect, &'static dyn DialectProfile),
+    schema: &dyn LineageSchema,
+) -> Vec<(String, TransformKind, Vec<String>)> {
+    let context = LineageContext {
+        profile,
+        schema,
+        sql: None,
+    };
+    query_lineage(sql, dialect, &ParseOptions::default(), context)
+        .unwrap_or_else(|error| panic!("{sql}: {error}"))
+        .outputs
+        .iter()
+        .map(|output| {
+            let sources: Vec<String> = output
+                .sources
+                .iter()
+                .map(|source| format!("{}.{}", source.relation, source.column))
+                .collect();
+            (output.name.clone(), output.kind, sources)
+        })
+        .collect()
 }
 
 /// The same shop as DuckDB spells unquoted names, in lower case.
@@ -228,6 +254,22 @@ pub(crate) fn typed_duckdb_shop_schema() -> TypedShopSchema {
     }
 }
 
+/// A PostgreSQL shop: the DuckDB shop's orders and customers, and shipments of temporal values.
+pub(crate) fn typed_postgres_shop_schema() -> TypedShopSchema {
+    let mut schema: TypedShopSchema = typed_duckdb_shop_schema();
+    schema.closed.insert(
+        "shipments".to_owned(),
+        vec![
+            typed_column("shipped_on", "DATE"),
+            typed_column("shipped_at", "TIMESTAMP"),
+            typed_column("cutoff", "TIME"),
+            typed_column("took", "INTERVAL"),
+            typed_column("rush", "BOOLEAN"),
+        ],
+    );
+    schema
+}
+
 pub(crate) fn typed_column(name: &str, data_type: &str) -> SchemaColumn {
     SchemaColumn {
         name: name.to_owned(),
@@ -264,14 +306,28 @@ fn engine_schema(fixture: &EngineTypeFixture) -> TypedShopSchema {
 
 /// Replays engine-recorded DuckDB result types: wrong types, exact count and per-category tally.
 pub(crate) fn replayed_engine_types(fixture: &str) -> EngineTypeReplay {
+    replayed_types(fixture, canonical_duckdb, duckdb_output_type)
+}
+
+/// Each recorded PostgreSQL result type against the type SQLQuack reports with Engine::Postgres.
+pub(crate) fn replayed_postgres_engine_types(fixture: &str) -> EngineTypeReplay {
+    replayed_types(fixture, canonical_postgres, postgres_output_type)
+}
+
+/// Each recorded engine type, in canonical form, against the type the lineage reports.
+fn replayed_types(
+    fixture: &str,
+    canonical: fn(&str) -> String,
+    output_type: fn(&TypedShopSchema, &str) -> Option<String>,
+) -> EngineTypeReplay {
     let fixture: EngineTypeFixture =
         serde_json::from_str(fixture).unwrap_or_else(|error| panic!("fixture: {error}"));
     let schema: TypedShopSchema = engine_schema(&fixture);
     let mut replay = EngineTypeReplay::default();
     let recorded = fixture.cases.iter().filter_map(|case| {
-        let engine_type: String = canonical_duckdb(case.engine_type.as_deref()?);
+        let engine_type: String = canonical(case.engine_type.as_deref()?);
         let reported: Option<String> =
-            duckdb_output_type(&schema, &case.sql).map(|reported| canonical_duckdb(&reported));
+            output_type(&schema, &case.sql).map(|reported| canonical(&reported));
         Some((case, engine_type, reported))
     });
     for (case, engine_type, reported) in recorded {
@@ -288,6 +344,65 @@ pub(crate) fn replayed_engine_types(fixture: &str) -> EngineTypeReplay {
     }
     replay
 }
+
+/// The first output's type under Engine::Postgres, when the query reads.
+fn postgres_output_type(schema: &TypedShopSchema, sql: &str) -> Option<String> {
+    let context = LineageContext {
+        profile: &POSTGRES,
+        schema,
+        sql: Some(sql),
+    };
+    let lineage =
+        query_lineage(sql, Dialect::PostgreSQL, &ParseOptions::default(), context).ok()?;
+    lineage.outputs.first()?.data_type.clone()
+}
+
+/// A PostgreSQL type spelling in one canonical form, keeping its modifiers as `format_type` does.
+fn canonical_postgres(raw: &str) -> String {
+    let upper: String = raw.trim().to_ascii_uppercase().replace(", ", ",");
+    upper.strip_suffix("[]").map_or_else(
+        || {
+            let (head, rest) = upper.split_once('(').unwrap_or((upper.as_str(), ""));
+            let (modifiers, suffix) = rest.split_once(')').unwrap_or_default();
+            let base: String = format!("{} {}", head.trim(), suffix.trim())
+                .trim()
+                .to_owned();
+            let name: String = CANONICAL_POSTGRES_NAMES
+                .iter()
+                .find(|(spellings, _)| spellings.contains(&base.as_str()))
+                .map_or(base.clone(), |(_, name)| (*name).to_owned());
+            let scale_omitted: bool =
+                name == "NUMERIC" && !modifiers.is_empty() && !modifiers.contains(',');
+            let modifiers: String = [modifiers.to_owned(), format!("{modifiers},0")]
+                [usize::from(scale_omitted)]
+            .clone();
+            [name.clone(), format!("{name}({modifiers})")][usize::from(!modifiers.is_empty())]
+                .clone()
+        },
+        |element| format!("{}[]", canonical_postgres(element)),
+    )
+}
+
+/// The spellings of each PostgreSQL type and the one the comparison uses.
+const CANONICAL_POSTGRES_NAMES: [(&[&str], &str); 14] = [
+    (&["SMALLINT", "INT2"], "SMALLINT"),
+    (&["INTEGER", "INT", "INT4"], "INTEGER"),
+    (&["BIGINT", "INT8"], "BIGINT"),
+    (&["NUMERIC", "DECIMAL"], "NUMERIC"),
+    (&["REAL", "FLOAT4"], "REAL"),
+    (
+        &["DOUBLE PRECISION", "DOUBLE", "FLOAT8", "FLOAT"],
+        "DOUBLE PRECISION",
+    ),
+    (&["VARCHAR", "CHARACTER VARYING"], "VARCHAR"),
+    (&["CHAR", "CHARACTER", "BPCHAR"], "CHAR"),
+    (&["BOOLEAN", "BOOL"], "BOOLEAN"),
+    (&["TIMESTAMP", "TIMESTAMP WITHOUT TIME ZONE"], "TIMESTAMP"),
+    (&["TIMESTAMPTZ", "TIMESTAMP WITH TIME ZONE"], "TIMESTAMPTZ"),
+    (&["TIME", "TIME WITHOUT TIME ZONE"], "TIME"),
+    (&["TIMETZ", "TIME WITH TIME ZONE"], "TIMETZ"),
+    (&["TEXT"], "TEXT"),
+];
 
 /// The first output's type, when the query reads.
 pub(crate) fn duckdb_output_type(schema: &TypedShopSchema, sql: &str) -> Option<String> {

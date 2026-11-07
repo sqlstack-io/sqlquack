@@ -243,6 +243,10 @@ pub(crate) fn chosen_options(
 ) -> Result<ConversionOptions, String> {
     let options = match policy {
         Some(policy) => caller_choices(options, policy, &arguments.conversion),
+        None if arguments.conversion.loud_divergences_only => ConversionOptions {
+            divergences: Default::default(),
+            ..options
+        },
         None => options,
     };
     with_overrides(
@@ -266,10 +270,15 @@ pub(crate) fn analysis_report(
     let assumptions: Vec<String> = provenance
         .divergences
         .keys()
-        .filter(|id| {
-            policy
-                .and_then(|policy| policy.divergences.get(assumption_id(id)))
-                .is_some_and(|divergence| divergence.assumption)
+        .filter(|id| match policy {
+            Some(policy) => policy
+                .divergences
+                .get(assumption_id(id))
+                .is_some_and(|divergence| divergence.assumption),
+            None => options
+                .divergences
+                .get(id.as_str())
+                .is_some_and(|divergence| divergence.assumption),
         })
         .cloned()
         .collect();
@@ -284,6 +293,15 @@ pub(crate) fn analysis_report(
             )
         })
         .into_iter()
+        .chain(
+            provenance
+                .divergences
+                .keys()
+                .filter(|_| policy.is_none())
+                .filter_map(|id| options.divergences.get(id.as_str()))
+                .filter(|divergence| !divergence.assumption)
+                .map(|divergence| divergence.reason.clone()),
+        )
         .collect();
     Ok(ConvertReport {
         converted,
