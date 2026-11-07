@@ -29,7 +29,7 @@ fn given_sql_when_the_postgres_parser_judges_it_then_gaps_are_never_parsed() {
         },
         PostgresVerdictTestCase {
             description: "a statement holding a construct the parser keeps as an opaque gap",
-            sql: "SELECT * FROM (a JOIN b ON true) AS j (x, y)",
+            sql: "SELECT TREAT(1 AS int)",
             expected_verdict: "accepted",
             expected_opaque: Some(true),
             expected_tree: true,
