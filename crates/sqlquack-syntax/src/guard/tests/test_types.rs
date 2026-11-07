@@ -1,5 +1,6 @@
 use serde_json::error::Category;
 
+use crate::expressions::tree::models::Expression;
 use crate::guard::models::ComplexityGuardOptions;
 
 pub(crate) struct GuardJsonTestCase {
@@ -37,4 +38,31 @@ pub(crate) struct AstDepthTestCase {
     pub(crate) sql: fn() -> String,
     /// None when the default guard accepts the query; otherwise a fragment of the error.
     pub(crate) expected_error: Option<&'static str>,
+}
+
+pub(crate) struct TypeDepthTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) dialect: crate::Dialect,
+    /// The query with its type nested `n` levels deep.
+    pub(crate) sql: fn(n: usize) -> String,
+    /// The guard code at each of [`TYPE_DEPTHS`] levels, or None where the parse succeeds.
+    pub(crate) expected_errors: [Option<&'static str>; 4],
+}
+
+/// The nesting depths each [`TypeDepthTestCase`] is parsed at.
+pub(crate) const TYPE_DEPTHS: [usize; 4] = [512, 513, 20_000, 100_000];
+
+pub(crate) struct TreeOperationTestCase {
+    pub(crate) description: &'static str,
+    /// The operation on the parsed tree; true when it ran to the end.
+    pub(crate) operation: fn(Vec<crate::expressions::tree::models::Expression>) -> bool,
+    pub(crate) expected_completed: bool,
+}
+
+pub(crate) struct ChainStepTestCase {
+    pub(crate) description: &'static str,
+    /// Wraps the chain so far in one more node of the kind under test.
+    pub(crate) step: fn(Expression) -> Expression,
+    /// The chain's depth after 100,000 steps, which the drop must survive.
+    pub(crate) expected_depth: usize,
 }

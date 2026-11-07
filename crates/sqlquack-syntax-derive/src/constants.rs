@@ -8,3 +8,6 @@ pub(crate) const SKIP_MARKER: &str = "skip";
 
 /// The field a node keeps its recorded source range in.
 pub(crate) const SPAN_FIELD: &str = "span";
+
+/// The only `rename_all` value `StackSafe` serializes variant names with.
+pub(crate) const SNAKE_CASE: &str = "snake_case";
