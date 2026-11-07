@@ -1114,7 +1114,7 @@ fn given_a_receipt_with_account_state_when_checking_then_only_its_case_carries_i
         AccountStateTestCase {
             description: "a parameter with its value",
             account_state: ",\"account_state\":{\"CORTEX_MODELS_ALLOWLIST\":\
-                            {\"value\":\"NONE\",\"basis\":\"D120: set by sa-01\"}}",
+                            {\"value\":\"NONE\",\"basis\":\"set by sa-01\"}}",
             expected_cases: vec![
                 ("select-17", vec![("CORTEX_MODELS_ALLOWLIST", Some("NONE"))]),
                 ("select-from", vec![]),
@@ -1124,7 +1124,7 @@ fn given_a_receipt_with_account_state_when_checking_then_only_its_case_carries_i
         AccountStateTestCase {
             description: "a parameter whose value is null for want of a usable recorded_at",
             account_state: ",\"account_state\":{\"CORTEX_MODELS_ALLOWLIST\":\
-                            {\"value\":null,\"basis\":\"D120: no usable recorded_at\"}}",
+                            {\"value\":null,\"basis\":\"no usable recorded_at\"}}",
             expected_cases: vec![
                 ("select-17", vec![("CORTEX_MODELS_ALLOWLIST", None)]),
                 ("select-from", vec![]),

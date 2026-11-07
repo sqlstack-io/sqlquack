@@ -45,7 +45,7 @@ const BOUNDARY_KINDS: [ObligationKind; 4] = [
     ObligationKind::NestingDepth,
 ];
 
-/// The time one local parse may take before it fails as a timeout (decision D92).
+/// The time one local parse may take before it fails as a timeout.
 const PARSE_BOUND: Duration = Duration::from_secs(10);
 /// The worker's virtual memory bound in KiB, 4 GiB; exceeding it fails the case as a crash.
 const PARSE_MEMORY_KIB: u64 = 4 * 1024 * 1024;
@@ -427,11 +427,11 @@ fn diff_lines(diff: &SnapshotDiff) -> Vec<String> {
     let lists: [(&str, &Vec<String>); 12] = [
         ("REGRESSION forms lost", &diff.forms_lost),
         (
-            "REGRESSION receipts the parser now contradicts, cited by a form or not (D141)",
+            "REGRESSION receipts the parser now contradicts, cited by a form or not",
             &diff.receipts_contradicted,
         ),
         (
-            "DOCUMENTED (D113) receipts the parser now contradicts, for the auditor",
+            "DOCUMENTED receipts the parser now contradicts, for the auditor",
             &diff.documented_receipts_contradicted,
         ),
         ("REGRESSION obligations lost", &diff.obligations_lost),
@@ -444,7 +444,7 @@ fn diff_lines(diff: &SnapshotDiff) -> Vec<String> {
             &diff.syntax_error_cases_accepted,
         ),
         (
-            "DOCUMENTED (D113) Snowflake syntax errors the parser now accepts, for the auditor",
+            "DOCUMENTED Snowflake syntax errors the parser now accepts, for the auditor",
             &diff.documented_cases_accepted,
         ),
         ("CATALOGUE files changed", &diff.catalogue_files_changed),

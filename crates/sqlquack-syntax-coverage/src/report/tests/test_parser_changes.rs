@@ -61,7 +61,7 @@ fn given_receipted_cases_of_any_expectation_when_the_parser_changes_then_the_dif
             expected_documented_cases_accepted: Vec::new(),
         },
         ParserChangeTestCase {
-            description: "a case marked documented (D113), refused with 1003 and now accepted, is listed apart (D135)",
+            description: "a case marked documented (D113), refused with 1003 and now accepted, is listed apart",
             mutate: |root| {
                 observed_select_from(root, 1003);
                 mark_select_from(root, MARK_DOCUMENTED);

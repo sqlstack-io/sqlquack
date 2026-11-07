@@ -77,7 +77,7 @@ class Rendered:
 
 @dataclass(frozen=True)
 class ReceiptView:
-    """Receipt phases by (case_id, sql_sha256) and D133 settlements by case, sql, setup, session."""
+    """Receipt phases by (case_id, sql_sha256) and settlements by case, sql, setup, session."""
 
     phases: dict[tuple[str, str], str]
     settlements: dict[tuple[str, str, str, str], tuple[str, str]]

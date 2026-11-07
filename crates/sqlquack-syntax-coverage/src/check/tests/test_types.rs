@@ -30,7 +30,7 @@ pub(crate) struct AccountStateTestCase {
     pub(crate) expected_cases: Vec<(&'static str, Parameters<'static>)>,
 }
 
-/// Receipts on a case id no form cites, and the receipt verdicts the checker must then give (D141).
+/// Receipts on a case id no form cites, and the receipt verdicts the checker must then give.
 pub(crate) struct ReceiptCheckTestCase {
     pub(crate) description: &'static str,
     pub(crate) mutate: fn(&Path),

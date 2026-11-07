@@ -1,6 +1,6 @@
-# D133 disagreement worklist: owner A
+# Settled-accept disagreement worklist: owner A
 
-Settled-accept (D133) cases on catalogue e85aeb3e (evidence 83452441) that the parser at main c793813c
+Settled-accept cases on catalogue e85aeb3e (evidence 83452441) that the parser at main c793813c
 rejects or leaves opaque. Snowflake parsed every one of them. Construct: the most common failure,
 with the token the parser stopped at, or the head of the opaque statement. A case is listed under
 every form whose obligations cite it, so family totals can count a case more than once.

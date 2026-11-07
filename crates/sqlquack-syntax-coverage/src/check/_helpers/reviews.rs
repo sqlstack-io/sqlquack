@@ -6,7 +6,7 @@ use crate::check::models::{FamilyContext, Reason};
 use crate::formats::constants::{CATALOGUE_DIR, OBLIGATIONS_DIR, SOURCES_FILE};
 use crate::formats::models::{Review, ReviewVerdict, Source, SourceStatus};
 
-/// Whether `review` is approved and current: by the form's definition (D118), else its files.
+/// Whether `review` is approved and current: by the form's definition, else its files.
 fn current(
     review: &Review,
     hashes: &BTreeMap<String, String>,

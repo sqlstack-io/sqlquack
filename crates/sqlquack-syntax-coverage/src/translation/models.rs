@@ -31,7 +31,7 @@ pub enum CaseOutcome {
     Translated { binds: Option<bool> },
     /// Refused only for constructs the signed-off by-design list names.
     ByDesign { constructs: Vec<String> },
-    /// Refused only because a known divergence can return another value (decision D105).
+    /// Refused only because a known divergence can return another value.
     DeclaredValueDivergence { constructs: Vec<String> },
     /// Refused for anything else, each refusal as `category: construct`.
     NotYetTranslated { refusals: Vec<String> },
@@ -57,7 +57,7 @@ pub struct CaseTranslation {
     pub forms: Vec<String>,
     /// Whether conversion read a census schema for it.
     pub census_schema: bool,
-    /// Whether its setup is empty, so binding is measured (decision D107b).
+    /// Whether its setup is empty, so binding is measured.
     pub empty_setup: bool,
     #[serde(flatten)]
     pub outcome: CaseOutcome,
@@ -167,7 +167,7 @@ pub struct ByDesignSignoff {
     pub reviewed_utc: String,
 }
 
-/// One census sidecar line: the relations a case reads, with typed columns (decision D107c).
+/// One census sidecar line: the relations a case reads, with typed columns.
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct CensusEntry {
