@@ -86,8 +86,7 @@ pub struct Cast {
     /// Whether PostgreSQL `::` syntax was used (true) vs CAST() function (false)
     #[serde(default)]
     pub double_colon_syntax: bool,
-    /// SQLQuack: written as a typed literal, `TYPE '...'`, rather than as `CAST` or `::`; read by
-    /// the Snowflake refusals only, so left out of the serialized tree.
+    /// SQLQuack: written as a typed literal, `TYPE '...'`; read by the Snowflake refusals only.
     #[serde(skip)]
     #[ast(skip)]
     pub typed_literal: bool,
