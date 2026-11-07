@@ -53,7 +53,7 @@ pub(crate) struct Parser<'sql> {
     pub(crate) gaps: Vec<Gap>,
     /// Whether the statement being parsed holds a gap, so it becomes a `Command`.
     pub(crate) opaque: bool,
-    /// A separator error SQLite raises once the token after the number, at this index, is taken.
+    /// An action's error SQLite raises once the token at this index, which triggered the action, is taken.
     pub(crate) pending: Option<(ParseError, usize)>,
 }
 
@@ -176,6 +176,13 @@ impl<'sql> Parser<'sql> {
                 token.start,
                 true,
             ),
+        }
+    }
+
+    /// Holds an action's error until the token at the cursor is taken, as SQLite reduces then shifts.
+    pub(crate) fn defer(&mut self, error: ParseError) {
+        if self.pending.is_none() {
+            self.pending = Some((error, self.at));
         }
     }
 

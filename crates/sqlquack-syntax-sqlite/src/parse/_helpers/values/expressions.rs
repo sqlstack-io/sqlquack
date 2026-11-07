@@ -215,7 +215,10 @@ impl Parser<'_> {
                 Some(TokenKind::Keyword("NULL" | "LIKE_KW" | "MATCH" | "BETWEEN" | "IN")) => {
                     (NOT_LEVEL, true)
                 }
-                _ => return Ok(Step::Done(left)),
+                _ => {
+                    self.at += 1;
+                    return Err(self.error());
+                }
             },
             TokenKind::Keyword(
                 "IS" | "ISNULL" | "NOTNULL" | "LIKE_KW" | "MATCH" | "BETWEEN" | "IN",

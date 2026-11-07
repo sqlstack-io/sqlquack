@@ -40,7 +40,7 @@ impl Parser<'_> {
         let mut args: Vec<Expression> = Vec::new();
         let mut distinct: bool = false;
         let mut order_by: Vec<Ordered> = Vec::new();
-        if self.op("STAR") && self.op_at(1, "RP") {
+        if self.op("STAR") {
             self.at += 1;
             args.push(Expression::Star(star(None, None)));
         } else {
@@ -48,17 +48,13 @@ impl Parser<'_> {
             if !distinct {
                 self.eat_kw("ALL");
             }
-            if !self.op("RP") && !(self.kw("ORDER") && self.kw_at(1, "BY")) {
+            if !self.op("RP") && !self.kw("ORDER") {
                 args = self.comma_list(|parser| parser.expression())?;
             }
             if self.kw("ORDER") {
                 self.at += 1;
                 self.expect_kw("BY")?;
                 order_by = self.sort_list()?;
-            }
-            if args.len() > MAX_FUNCTION_ARG {
-                let message: String = format!("too many arguments on function {written}");
-                return Err(self.error_with(&message, start, false));
             }
         }
         self.expect_op("RP")?;
@@ -77,18 +73,24 @@ impl Parser<'_> {
             true => Some(self.over_clause()?),
             false => None,
         };
+        let mut check: Option<String> = None;
+        if args.len() > MAX_FUNCTION_ARG {
+            check = Some(format!("too many arguments on function {written}"));
+        }
         if window.is_some() && distinct {
-            return Err(self.error_with(DISTINCT_WINDOW, start, false));
+            check = Some(DISTINCT_WINDOW.to_owned());
         }
         if !order_by.is_empty() && !args.is_empty() {
             if window.is_some() {
-                let message: String =
-                    format!("ORDER BY may not be used with non-aggregate {written}()");
-                return Err(self.error_with(&message, start, false));
+                check = Some(format!(
+                    "ORDER BY may not be used with non-aggregate {written}()"
+                ));
+            } else if order_by.len() > MAX_COLUMN {
+                check = Some(ORDER_BY_TERMS.to_owned());
             }
-            if order_by.len() > MAX_COLUMN {
-                return Err(self.error_with(ORDER_BY_TERMS, start, false));
-            }
+        }
+        if let Some(message) = check {
+            self.defer(self.error_with(&message, start, false));
         }
         if args.is_empty() {
             order_by.clear();
@@ -179,9 +181,6 @@ impl Parser<'_> {
             Side::Following => end_side != Side::Following,
             Side::Preceding => false,
         };
-        if unsupported {
-            return Err(self.error_with(UNSUPPORTED_FRAME, frame_start, false));
-        }
         let exclude: Option<WindowFrameExclude> = match self.eat_kw("EXCLUDE") {
             true => Some(match self.kind_at(0) {
                 Some(TokenKind::Keyword("NO")) => {
@@ -206,6 +205,9 @@ impl Parser<'_> {
             }),
             false => None,
         };
+        if unsupported {
+            self.defer(self.error_with(UNSUPPORTED_FRAME, frame_start, false));
+        }
         Ok(Some(WindowFrame {
             kind,
             start,

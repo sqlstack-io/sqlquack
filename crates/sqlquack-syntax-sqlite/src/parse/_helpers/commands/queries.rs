@@ -111,17 +111,17 @@ impl Parser<'_> {
         let mut terms: usize = 1;
         let mut body: Expression = term.body;
         let mut last_values: bool = term.values;
+        let mut misplaced: Option<String> = None;
         while let Some((operator, all)) = self.compound_operator() {
             if term.order_by.is_some() || term.limit.is_some() {
                 let clause: &str = match term.order_by.is_some() {
                     true => "ORDER BY",
                     false => "LIMIT",
                 };
-                let message: String = format!(
+                misplaced = Some(format!(
                     "{clause} clause should come after {} not before",
                     operator_name(operator, all)
-                );
-                return Err(self.error_with(&message, start, true));
+                ));
             }
             term = self.one_select()?;
             terms += 1;
@@ -129,7 +129,9 @@ impl Parser<'_> {
             body = set_operation(operator, body, term.body, (all, false));
         }
         if terms > MAX_COMPOUND_SELECT && !last_values {
-            return Err(self.error_with(COMPOUND_TERMS, start, false));
+            self.defer(self.error_with(COMPOUND_TERMS, start, false));
+        } else if let Some(message) = misplaced {
+            self.defer(self.error_with(&message, start, true));
         }
         let body: Expression = finished(body, term.order_by, term.limit);
         Ok(self.respanned(first, with_ctes(body, with)))
@@ -311,7 +313,23 @@ impl Parser<'_> {
     pub(crate) fn with_clause(&mut self) -> Parsing<With> {
         self.expect_kw("WITH")?;
         let recursive: bool = self.eat_kw("RECURSIVE");
-        let ctes: Vec<Cte> = self.comma_list(|parser| parser.common_table_expression())?;
+        let mut ctes: Vec<Cte> = Vec::new();
+        loop {
+            let start: usize = self.offset();
+            let node: Cte = self.common_table_expression()?;
+            let name: &str = &node.alias.name;
+            if ctes
+                .iter()
+                .any(|earlier| earlier.alias.name.eq_ignore_ascii_case(name))
+            {
+                let message: String = format!("duplicate WITH table name: {name}");
+                self.defer(self.error_with(&message, start, true));
+            }
+            ctes.push(node);
+            if !self.eat_op("COMMA") {
+                break;
+            }
+        }
         Ok(With {
             ctes,
             recursive,

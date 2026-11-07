@@ -122,7 +122,7 @@ impl Parser<'_> {
         };
         if let Some(clause) = clause {
             let message: String = format!("a JOIN clause is required before {clause}");
-            return Err(self.error_with(&message, self.offset(), false));
+            self.defer(self.error_with(&message, self.offset(), false));
         }
         let mut items: Vec<Item> = Vec::new();
         while let Some(joiner) = self.join_operator()? {
@@ -179,7 +179,7 @@ impl Parser<'_> {
             || bits & (JT_OUTER | JT_LEFT | JT_RIGHT) == JT_OUTER;
         if invalid {
             let message: String = format!("unknown join type: {}", written.join(" "));
-            return Err(self.error_with(&message, words[0].start, true));
+            self.defer(self.error_with(&message, words[0].start, true));
         }
         let spelled = |name: &str| written.iter().any(|word| word.eq_ignore_ascii_case(name));
         Ok(Some(Joiner::Join {
@@ -228,8 +228,8 @@ impl Parser<'_> {
                         self.expect_kw("BY")?;
                         self.expect_token(is_nm)?;
                         self.gap("indexed_by", start);
-                    } else if self.kw("NOT") && self.kw_at(1, "INDEXED") {
-                        self.at += 2;
+                    } else if self.eat_kw("NOT") {
+                        self.expect_kw("INDEXED")?;
                         self.gap("indexed_by", start);
                     }
                     item

@@ -1,7 +1,7 @@
 //! `term` and the operands of `expr` (parse.y).
 
 use sqlquack_syntax::Expression;
-use sqlquack_syntax::expressions::names::models::{Identifier, Literal};
+use sqlquack_syntax::expressions::names::models::{BooleanLiteral, Identifier, Literal};
 use sqlquack_syntax::expressions::operators::models::{Parameter, ParameterStyle, Placeholder};
 use sqlquack_syntax::expressions::types::models::DataType;
 
@@ -86,10 +86,9 @@ impl Parser<'_> {
             }
             TokenKind::Number(kind) => {
                 self.at += 1;
-                if kind == NumberKind::Misseparated && self.pending.is_none() {
+                if kind == NumberKind::Misseparated {
                     let message: String = format!("{UNRECOGNIZED_TOKEN} \"{}\"", token.value);
-                    let error = self.error_with(&message, token.start, true);
-                    self.pending = Some((error, self.at));
+                    self.defer(self.error_with(&message, token.start, true));
                 }
                 let hex: Option<&str> = token
                     .value
@@ -148,6 +147,16 @@ impl Parser<'_> {
         if !self.op("DOT") {
             if first.kind == TokenKind::String || !is_idj(&first) {
                 return Err(self.error_at(&first));
+            }
+            if first.kind == TokenKind::Ident {
+                let truth: Option<bool> = match first.value.to_ascii_lowercase().as_str() {
+                    "true" => Some(true),
+                    "false" => Some(false),
+                    _ => None,
+                };
+                if let Some(value) = truth {
+                    return Ok(Expression::Boolean(BooleanLiteral { value }));
+                }
             }
             return Ok(column_from(vec![identifier(&first)]));
         }
