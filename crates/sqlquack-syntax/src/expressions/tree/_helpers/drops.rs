@@ -17,7 +17,9 @@ use crate::expressions::operators::models::LikeOp;
 use crate::expressions::operators::models::MethodCall;
 use crate::expressions::operators::models::Subscript;
 use crate::expressions::operators::models::UnaryOp;
+use crate::expressions::queries::models::MatchRecognize;
 use crate::expressions::queries::models::PipeOperator;
+use crate::expressions::statements::models::TableSample;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::typed_functions::models::AtTimeZone;
 use crate::expressions::typed_functions::models::BinaryFunc;
@@ -62,11 +64,13 @@ drop_iteratively!(
     JSONCast,
     JsonExtractFunc,
     LikeOp,
+    MatchRecognize,
     MethodCall,
     ModelAttribute,
     Operator,
     PipeOperator,
     Subscript,
+    TableSample,
     UnaryOp,
     Xor,
 );
