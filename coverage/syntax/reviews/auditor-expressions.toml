@@ -472,3 +472,21 @@ note = "Re-read after o018-o024 were added: the seven precision spellings before
 
 [review.definitions]
 "sf.expressions.data-types-datetime.date-time-constant" = "16b01a2321c5b096282ec8d6cb1d60770b7930a2addc61e580d549d1b6e713af"
+
+[[review]]
+id = "auditor-expressions-018"
+reviewer_lane = "auditor"
+family = "expressions"
+parser_tree = "d8d59bf920d53af8cfe584ab74fca3430d48bb5c"
+reviewed_utc = "2026-11-07T14:30:07Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-datetime.date-time-constant",
+]
+note = "Re-read after o025-o031 were added: the seven time zone spellings of a typed literal (TIMESTAMP and TIMESTAMP(3) with WITH TIME ZONE, WITH LOCAL TIME ZONE or WITHOUT TIME ZONE, and TIME WITH TIME ZONE), their cases and their import-177 receipts (all 1003/42000; each case's SQL hash matches its receipt), against the parse trees and refusals of the parser at 89fcbea97. Every scored case agrees with its Snowflake receipt, and each refusal stops where Snowflake does: WITH for the WITH forms, TIME after WITHOUT, and WITH after TIME."
+
+[review.fingerprints]
+"sf.expressions.data-types-datetime.date-time-constant" = "6231a89a54081856e4008964b88ca8060b84dc94adc1daa683192e9ad9df947d"
+
+[review.definitions]
+"sf.expressions.data-types-datetime.date-time-constant" = "fbe8e08957ddc0bbb254581eaf8c532e8548f136ac6a9cb543093e1edb71810e"
