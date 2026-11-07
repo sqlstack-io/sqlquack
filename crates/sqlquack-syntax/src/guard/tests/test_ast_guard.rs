@@ -1,12 +1,26 @@
+use crate::expressions::functions::models::JSONCast;
+use crate::expressions::functions::models::Operator;
+use crate::expressions::functions::models::Xor;
+use crate::expressions::names::models::Identifier;
+use crate::expressions::operators::models::ArraySlice;
+use crate::expressions::operators::models::MethodCall;
+use crate::expressions::queries::models::PipeOperator;
+use crate::expressions::tree::models::Expression;
+use crate::expressions::typed_functions::models::AtTimeZone;
+use crate::expressions::typed_functions::models::BinaryFunc;
+use crate::expressions::typed_functions::models::ModelAttribute;
+use crate::expressions::types::models::DataType;
 use crate::guard::tests::helpers::constructor_levels;
 use crate::guard::tests::helpers::debug_length;
 use crate::guard::tests::helpers::deep_trees;
 use crate::guard::tests::helpers::guarded_parse;
 use crate::guard::tests::helpers::guarded_parse_in;
 use crate::guard::tests::test_types::AstDepthTestCase;
+use crate::guard::tests::test_types::ChainStepTestCase;
 use crate::guard::tests::test_types::TreeOperationTestCase;
 use crate::guard::tests::test_types::TypeDepthTestCase;
 use crate::guard::tests::test_types::TYPE_DEPTHS;
+use crate::traversal::types::ExpressionWalk;
 
 #[test]
 fn given_a_long_flat_operator_chain_when_parsing_then_only_real_nesting_counts_as_depth() {
@@ -326,5 +340,127 @@ fn given_long_chains_and_deep_nesting_on_a_2_mb_thread_when_cloning_comparing_fo
             "{}",
             test_case.description
         );
+    }
+}
+
+#[test]
+fn given_a_100_000_step_chain_of_a_node_parsers_build_in_a_loop_when_dropping_on_a_2_mb_thread_then_it_does_not_overflow(
+) {
+    let test_cases = [
+        ChainStepTestCase {
+            description: "BigQuery pipe operators",
+            step: |input| {
+                Expression::PipeOperator(Box::new(PipeOperator {
+                    this: input,
+                    expression: Expression::number(1),
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: "AT TIME ZONE",
+            step: |input| {
+                Expression::AtTimeZone(Box::new(AtTimeZone {
+                    this: input,
+                    zone: Expression::number(1),
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: "** powers",
+            step: |input| {
+                Expression::Power(Box::new(BinaryFunc {
+                    this: input,
+                    expression: Expression::number(1),
+                    original_name: None,
+                    inferred_type: None,
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: "XOR",
+            step: |input| {
+                Expression::Xor(Box::new(Xor {
+                    this: Some(Box::new(input)),
+                    expression: Some(Box::new(Expression::number(1))),
+                    expressions: Vec::new(),
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: "Snowflake ->> flow operators",
+            step: |input| {
+                Expression::Operator(Box::new(Operator {
+                    this: Box::new(input),
+                    operator: None,
+                    expression: Box::new(Expression::number(1)),
+                    comments: Vec::new(),
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: "model attributes",
+            step: |input| {
+                Expression::ModelAttribute(Box::new(ModelAttribute {
+                    this: Box::new(input),
+                    expression: Box::new(Expression::number(1)),
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: ".: casts",
+            step: |input| {
+                Expression::JSONCast(Box::new(JSONCast {
+                    this: Box::new(input),
+                    to: DataType::Json,
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: "array slices",
+            step: |input| {
+                Expression::ArraySlice(Box::new(ArraySlice {
+                    this: input,
+                    start: Some(Expression::number(1)),
+                    end: None,
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: "method calls",
+            step: |input| {
+                Expression::MethodCall(Box::new(MethodCall {
+                    this: input,
+                    method: Identifier::new("f"),
+                    args: vec![Expression::number(1)],
+                }))
+            },
+            expected_depth: 100_000,
+        },
+    ];
+    for test_case in test_cases {
+        let step = test_case.step;
+        let depth = std::thread::Builder::new()
+            .stack_size(2 << 20)
+            .spawn(move || {
+                let mut chain = Expression::number(1);
+                for _ in 0..100_000 {
+                    chain = step(chain);
+                }
+                let depth = chain.tree_depth();
+                drop(chain);
+                depth
+            })
+            .expect("the thread starts")
+            .join()
+            .expect("the chain drops");
+        assert_eq!(depth, test_case.expected_depth, "{}", test_case.description);
     }
 }
