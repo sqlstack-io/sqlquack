@@ -454,3 +454,21 @@ note = "Re-read after o009-o017 were added: the nine negative neighbours, their 
 
 [review.definitions]
 "sf.expressions.data-types-datetime.date-time-constant" = "31d338a953d80790742befe3292530218a691cf8a112a56d8fd37ed9c7650f64"
+
+[[review]]
+id = "auditor-expressions-017"
+reviewer_lane = "auditor"
+family = "expressions"
+parser_tree = "0d2197f74b5cdf9671cce329570657f8a5ddf2af"
+reviewed_utc = "2026-11-07T13:47:55Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-datetime.date-time-constant",
+]
+note = "Re-read after o018-o024 were added: the seven precision spellings before a string (TIMESTAMP_LTZ(3), TIMESTAMPNTZ(3), TIMESTAMPLTZ(3), TIMESTAMPTZ(3), DATETIME(3), TIMESTAMP(3), TIME(3)), their cases and their import-175 receipts (all 2121), against the parse trees and refusals of the parser at c12707138; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-datetime.date-time-constant" = "d0ed46f05949d0fb3b504b2897e5fcde790bac56a8702d75f84b5495f3184e04"
+
+[review.definitions]
+"sf.expressions.data-types-datetime.date-time-constant" = "16b01a2321c5b096282ec8d6cb1d60770b7930a2addc61e580d549d1b6e713af"
