@@ -735,6 +735,7 @@ impl Parser {
                         to: data_type,
                         trailing_comments: Vec::new(),
                         double_colon_syntax: false,
+                        typed_literal: false,
                         format: None,
                         default: None,
                         inferred_type: None,
@@ -936,53 +937,17 @@ impl Parser {
                     self.skip();
 
                     let data_type = self.parse_data_type_for_cast()?;
-                    expr = Expression::Cast(Box::new(Cast {
-                        this: expr,
-                        to: data_type,
-                        trailing_comments: Vec::new(),
-                        double_colon_syntax: true,
-                        format: None,
-                        default: None,
-                        inferred_type: None,
-                        span: SourceSpan::default(),
-                    }));
+                    expr = Expression::Cast(Box::new(Cast::new(expr, data_type, true)));
                 }
             } else if self.match_token(TokenType::ColonGt) {
                 let data_type = self.parse_data_type_for_cast()?;
-                expr = Expression::Cast(Box::new(Cast {
-                    this: expr,
-                    to: data_type,
-                    trailing_comments: Vec::new(),
-                    double_colon_syntax: false,
-                    format: None,
-                    default: None,
-                    inferred_type: None,
-                    span: SourceSpan::default(),
-                }));
+                expr = Expression::Cast(Box::new(Cast::new(expr, data_type, false)));
             } else if self.match_token(TokenType::NColonGt) {
                 let data_type = self.parse_data_type_for_cast()?;
-                expr = Expression::TryCast(Box::new(Cast {
-                    this: expr,
-                    to: data_type,
-                    trailing_comments: Vec::new(),
-                    double_colon_syntax: false,
-                    format: None,
-                    default: None,
-                    inferred_type: None,
-                    span: SourceSpan::default(),
-                }));
+                expr = Expression::TryCast(Box::new(Cast::new(expr, data_type, false)));
             } else if self.match_token(TokenType::QDColon) {
                 let data_type = self.parse_data_type_for_cast()?;
-                expr = Expression::TryCast(Box::new(Cast {
-                    this: expr,
-                    to: data_type,
-                    trailing_comments: Vec::new(),
-                    double_colon_syntax: true,
-                    format: None,
-                    default: None,
-                    inferred_type: None,
-                    span: SourceSpan::default(),
-                }));
+                expr = Expression::TryCast(Box::new(Cast::new(expr, data_type, true)));
             } else if self.check(TokenType::Arrow)
                 && !matches!(
                     self.config.dialect,

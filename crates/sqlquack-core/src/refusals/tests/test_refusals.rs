@@ -127,6 +127,10 @@ fn given_sql_snowflake_parses_then_rejects_when_refusing_then_each_rejection_is_
                   SELECT timestamp_tz(3) '2026-01-02 03:04:05' AS v; \
                   SELECT '2026-01-02 03:04:05'::TIMESTAMP_NTZ(3) AS v; \
                   SELECT CAST('2026-01-02' AS TIMESTAMP_TZ(3)) AS v; \
+                  SELECT CAST('2026-01-02' AS DATETIME(3)) AS v; \
+                  SELECT CAST('2026-01-02' AS TIMESTAMPNTZ(3)) AS v; \
+                  SELECT CAST('2026-01-02' AS TIMESTAMP_LTZ(3)) AS v; \
+                  SELECT TRY_CAST('2026-01-02' AS TIMESTAMPLTZ(3)) AS v; \
                   SELECT TIMESTAMP '2026-01-02 03:04:05' AS v; SELECT v1 'm' AS v",
             expected_rejections: vec!["unsupported_type_literal", "unsupported_type_literal"],
             expected_codes: vec!["SQ0211", "SQ0211"],

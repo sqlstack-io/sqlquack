@@ -1076,6 +1076,7 @@ impl Parser {
                 },
                 trailing_comments: Vec::new(),
                 double_colon_syntax: false,
+                typed_literal: false,
                 format: None,
                 default: None,
                 inferred_type: None,

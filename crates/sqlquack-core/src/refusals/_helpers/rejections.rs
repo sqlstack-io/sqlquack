@@ -54,7 +54,7 @@ fn untyped_literal(cast: &Cast) -> Option<(&'static str, String)> {
     let (_, function) = SNOWFLAKE_UNTYPED_LITERAL_TYPES
         .iter()
         .find(|(listed, _)| listed.eq_ignore_ascii_case(base))?;
-    (!cast.double_colon_syntax && matches!(literal.as_ref(), Literal::String(_))).then(|| {
+    (cast.typed_literal && matches!(literal.as_ref(), Literal::String(_))).then(|| {
         (
             "unsupported_type_literal",
             format!(
