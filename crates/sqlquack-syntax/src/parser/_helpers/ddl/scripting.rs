@@ -837,6 +837,9 @@ impl Parser {
         };
 
         let files = self.parse_copy_files(has_to, kind)?;
+        if (kind || has_to) && files.is_empty() {
+            return Err(self.parse_error("Expected a table, query or location after FROM or TO"));
+        }
 
         let mut params: Vec<CopyParameter> = Vec::new();
         let mut credentials = None;

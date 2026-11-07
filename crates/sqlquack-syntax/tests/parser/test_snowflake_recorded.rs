@@ -9,6 +9,18 @@ use crate::test_types::{AcceptanceTestCase, ProjectionTestCase};
 fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake() {
     let test_cases = [
         AcceptanceTestCase {
+            description: "COPY INTO a location needs a source after FROM (recorded errno 1003)",
+            sql: "COPY INTO 'azure://a1.blob.core.windows.net/c1/p1/' FROM v1 = ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "COPY INTO a location from a table takes CREDENTIALS (recorded errno 1008, after parsing)",
+            sql: "COPY INTO 'azure://a1.blob.core.windows.net/c1/p1/' FROM v1 CREDENTIALS = ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
             description: "UNDROP takes a stage (recorded success)",
             sql: "UNDROP STAGE \"v1 Q\" ;",
             dialect: Dialect::Snowflake,
