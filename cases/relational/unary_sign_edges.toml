@@ -349,3 +349,151 @@ rows = [
 query = "SELECT +x AS a, -x AS b\nFROM input WHERE x > 5"
 order = "ordered"
 tags = ["empty-input"]
+
+[[case]]
+id = "aliased_unary_plus_two_digits"
+description = "A unary plus over a two-digit integer literal. Aliased, so the type is the point."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +12 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_unary_plus_ninety_nine"
+description = "A unary plus over the largest two-digit integer literal. Aliased, so the type is the point."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +99 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_unary_plus_two_integer_digit_decimal"
+description = "A unary plus over a decimal with two integer digits. Aliased, so the type is the point."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +12.5 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_unary_plus_half"
+description = "A unary plus over a one-digit fraction with a leading zero. Aliased, so the type is the point."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +0.5 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_unary_plus_bare_fraction"
+description = "A unary plus over a fraction without a leading zero. Aliased, so the type is the point."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +.25 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_unary_plus_exponent"
+description = "A unary plus over an exponent literal. Aliased, so the type is the point."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +1e3 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_unary_plus_38_digit_integer"
+description = "A unary plus over a 38-digit integer literal. Aliased, so the type is the point."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +12345678901234567890123456789012345678 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_unary_plus_37_digit_fraction"
+description = "A unary plus over a fraction with 37 decimal digits. Aliased, so the type is the point."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +0.1234567890123456789012345678901234567 AS a\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "aliased_unary_plus_number_1_0"
+description = "A unary plus over a NUMBER(1,0) column, aliased, over a value and a NULL."
+columns = [{ name = "x", type = "NUMBER(1,0)" }]
+rows = [
+  ["7"],
+  ["NULL"],
+]
+query = "SELECT +x AS a\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "aliased_unary_plus_number_3_2"
+description = "A unary plus over a NUMBER(3,2) column, aliased, over a value and a NULL."
+columns = [{ name = "x", type = "NUMBER(3,2)" }]
+rows = [
+  ["1.25"],
+  ["NULL"],
+]
+query = "SELECT +x AS a\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "aliased_unary_plus_number_2_2"
+description = "A unary plus over a NUMBER(2,2) column, aliased, over a value and a NULL."
+columns = [{ name = "x", type = "NUMBER(2,2)" }]
+rows = [
+  ["0.25"],
+  ["NULL"],
+]
+query = "SELECT +x AS a\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "aliased_unary_plus_number_38_37"
+description = "A unary plus over a NUMBER(38,37) column, aliased, over a value and a NULL."
+columns = [{ name = "x", type = "NUMBER(38,37)" }]
+rows = [
+  ["1.5"],
+  ["NULL"],
+]
+query = "SELECT +x AS a\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
+
+[[case]]
+id = "aliased_unary_plus_parenthesised_plus_column"
+description = "A unary plus over a parenthesised unary plus of a NUMBER(1,0) column, aliased, over a value and a NULL."
+columns = [{ name = "x", type = "NUMBER(1,0)" }]
+rows = [
+  ["7"],
+  ["NULL"],
+]
+query = "SELECT +(+x) AS a\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null"]
