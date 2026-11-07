@@ -442,7 +442,7 @@ id = "auditor-expressions-016"
 reviewer_lane = "auditor"
 family = "expressions"
 parser_tree = "90d1828438bc1814b7b71e8aeda823626d48b9f0"
-reviewed_utc = "2026-11-07T05:05:00Z"
+reviewed_utc = "2026-11-07T04:58:00Z"
 verdict = "approved"
 forms = [
   "sf.expressions.data-types-datetime.date-time-constant",
