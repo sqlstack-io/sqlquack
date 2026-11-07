@@ -1,7 +1,7 @@
 # Translation results measure
 
 How much documented Snowflake syntax SQLQuack translates to DuckDB with results matching
-Snowflake, measured over the syntax catalogue in `coverage/syntax` (decision D139). It is reported
+Snowflake, measured over the syntax catalogue in `coverage/syntax`. It is reported
 separately from syntax coverage, and every figure comes from the checker.
 
 ## Inputs
@@ -15,7 +15,7 @@ separately from syntax coverage, and every figure comes from the checker.
 - `not-translatable.toml`: forms with no meaningful DuckDB translation, in groups, each with its
   reason. A group leaves the denominator only once the auditor signs it off in
   `reviews/auditor-results.toml`, which binds its reason and forms by SHA-256.
-- `obligations/<family>.toml`: what each form must be shown to do (decision D272). Each
+- `obligations/<family>.toml`: what each form must be shown to do. Each
   `[[obligation]]` has `id` (`<form>.t<NNN>`), `form`, `kind` (`type_combination`,
   `null_argument`, `boundary` with a `subkind`, `error_parity`), `target`, `note`, `catches`,
   `reading`, `cases` (references `cases/translation/<family>/<file>.toml#<case>`) and `required`.

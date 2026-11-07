@@ -314,7 +314,7 @@ target = "<rule_name> in [ <rule_name> [ , <rule_name> , ... ] ]"
 note = "a string literal in place of <rule_name>"
 sql = "CREATE DATA MOVEMENT POLICY v1 ENFORCE_RULES = ( 'v1' ) ;"
 valid_as = "sf.security_admin.create-data-movement-policy negative_neighbour <rule_name> in [ ENFORCE_RULES = ( <rule_name> [ , <rule_name> , ... ] ) ]"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.security_admin.create-data-movement-policy"
@@ -332,7 +332,7 @@ target = "<rule_name> in [ <rule_name> [ , <rule_name> , ... ] ] #2"
 note = "a string literal in place of <rule_name>"
 sql = "CREATE DATA MOVEMENT POLICY v1 ALERT_RULES = ( 'v1' ) ;"
 valid_as = "sf.security_admin.create-data-movement-policy negative_neighbour <rule_name> in [ ALERT_RULES = ( <rule_name> [ , <rule_name> , ... ] ) ]"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.security_admin.create-database-role.create-database-role"
@@ -386,7 +386,7 @@ target = ""
 note = "the form without its required { METADATA_URL = '<string_literal>' | { SAML2_ISSUER = '<string_literal>' SAML2_SSO_URL = '<string_literal>' SAML2_PROVIDER = '<string_literal>' SAML2_X509_CERT = '<string_literal>' } }"
 sql = "CREATE SECURITY INTEGRATION v1 TYPE = SAML2 ENABLED = TRUE ;"
 valid_as = "sf.security_admin.create-security-integration-saml2 negative_neighbour the form without its required { METADATA_URL = '<string_literal>' | <idp_parameters> }, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.security_admin.create-session-policy"
@@ -836,7 +836,7 @@ target = ""
 note = "the form without its required TABLE after CREATE"
 sql = "GRANT CREATE ON SCHEMA v1 TO DATABASE ROLE v1 ;"
 valid_as = "sf.security_admin.grant-privilege.create-schema-modify-monitor negative_neighbour the form without its required VIEW, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.security_admin.grant-privilege.create-schema-modify-monitor"
@@ -908,7 +908,7 @@ target = ""
 note = "the form without its required POLICY after ATTACH"
 sql = "GRANT ATTACH ON ACCOUNT TO v1 ;"
 valid_as = "sf.security_admin.grant-privilege-user negative_neighbour the form without its required POLICY, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
@@ -953,7 +953,7 @@ target = ""
 note = "the form without its required LISTING after EXCHANGE"
 sql = "GRANT PURCHASE DATA EXCHANGE ON ACCOUNT TO v1 ;"
 valid_as = "sf.security_admin.grant-privilege-user negative_neighbour the form without its required LISTING, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
@@ -1016,7 +1016,7 @@ target = ""
 note = "the form without its required TABLE after CREATE"
 sql = "GRANT CREATE ON SCHEMA v1 TO v1 ;"
 valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account negative_neighbour the form without its required VIEW, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
@@ -1061,7 +1061,7 @@ target = ""
 note = "the form without its required ERROR after SELECT"
 sql = "GRANT SELECT TABLE ON TABLE v1 TO v1 ;"
 valid_as = "sf.security_admin.grant-privilege-user negative_neighbour the form without its required ERROR, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.security_admin.grant-service-role"
@@ -1502,7 +1502,7 @@ target = ""
 note = "the form without its required TABLE after CREATE"
 sql = "REVOKE CREATE ON SCHEMA v1 FROM DATABASE ROLE v1 ;"
 valid_as = "sf.security_admin.revoke-privilege.create-schema-modify-monitor negative_neighbour the form without its required VIEW, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
@@ -1574,7 +1574,7 @@ target = ""
 note = "the form without its required POLICY after ATTACH"
 sql = "REVOKE ATTACH ON ACCOUNT FROM v1 ;"
 valid_as = "sf.security_admin.revoke-privilege-user negative_neighbour the form without its required POLICY, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
@@ -1619,7 +1619,7 @@ target = ""
 note = "the form without its required LISTING after EXCHANGE"
 sql = "REVOKE PURCHASE DATA EXCHANGE ON ACCOUNT FROM v1 ;"
 valid_as = "sf.security_admin.revoke-privilege-user negative_neighbour the form without its required LISTING, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
@@ -1673,7 +1673,7 @@ target = ""
 note = "the form without its required TABLE after CREATE"
 sql = "REVOKE CREATE ON SCHEMA v1 FROM v1 ;"
 valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account negative_neighbour the form without its required VIEW, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
@@ -1718,7 +1718,7 @@ target = ""
 note = "the form without its required ERROR after SELECT"
 sql = "REVOKE SELECT TABLE ON TABLE v1 FROM v1 ;"
 valid_as = "sf.security_admin.revoke-privilege-user negative_neighbour the form without its required ERROR, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.security_admin.revoke-service-role"
@@ -1916,7 +1916,7 @@ target = ""
 note = "the form without its required ROLE after OF"
 sql = "SHOW GRANTS OF v1 ;"
 valid_as = "sf.security_admin.show-grants.grants-of-share negative_neighbour the form without its required SHARE, observed"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.security_admin.show-grants.grants-to-application-application"
@@ -1943,7 +1943,7 @@ target = ""
 note = "the form without its required SERVICE after TO"
 sql = "SHOW GRANTS TO ROLE v1!v1 ;"
 valid_as = "sf.security_admin.show-grants.grants-to-application-application required_operand_missing <class_name>"
-reason = "the rejection renders SQL a hand row observes because Snowflake parses it (D97)"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
 form = "sf.security_admin.show-ingress-policies"

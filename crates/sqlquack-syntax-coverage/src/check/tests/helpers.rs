@@ -99,7 +99,7 @@ pub(crate) fn pin_fingerprints(root: &Path) {
     );
 }
 
-/// Rewrites the query review to bind each query form by fingerprint and definition (D118).
+/// Rewrites the query review to bind each query form by fingerprint and definition.
 pub(crate) fn pin_definitions(root: &Path) {
     let coverage = crate::formats::main::load_coverage::load_coverage(root).expect("load");
     let check =
