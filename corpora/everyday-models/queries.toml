@@ -3534,8 +3534,8 @@ sql = '''select
     s.mrr * 12 as arr,
     datediff('month', s.started_at, coalesce(s.cancelled_at, current_timestamp())) as tenure_months
 from subscriptions s'''
-expect = "refused SQ0003 fn:DATEDIFF at 76..154"
-expect_repository = "refused SQ0003 fn:DATEDIFF at 76..154"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "dbt_marts"

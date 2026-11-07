@@ -2448,8 +2448,8 @@ sql = '''select
     end as fulfillment_state,
     datediff('day', ordered_at, coalesce(shipped_at, current_timestamp())) as age_days
 from orders'''
-expect = "refused SQ0003 fn:DATEDIFF at 218..288"
-expect_repository = "refused SQ0003 fn:DATEDIFF at 218..288"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "dbt_models"
