@@ -4,7 +4,9 @@ use crate::expressions::functions::models::Xor;
 use crate::expressions::names::models::Identifier;
 use crate::expressions::operators::models::ArraySlice;
 use crate::expressions::operators::models::MethodCall;
+use crate::expressions::queries::models::MatchRecognize;
 use crate::expressions::queries::models::PipeOperator;
+use crate::expressions::statements::models::TableSample;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::typed_functions::models::AtTimeZone;
 use crate::expressions::typed_functions::models::BinaryFunc;
@@ -429,6 +431,44 @@ fn given_a_100_000_step_chain_of_a_node_parsers_build_in_a_loop_when_dropping_on
                     this: input,
                     start: Some(Expression::number(1)),
                     end: None,
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: "TABLESAMPLE after TABLESAMPLE",
+            step: |input| {
+                Expression::TableSample(Box::new(TableSample {
+                    this: Some(Box::new(input)),
+                    sample: None,
+                    expressions: Vec::new(),
+                    method: None,
+                    bucket_numerator: None,
+                    bucket_denominator: None,
+                    bucket_field: None,
+                    percent: Some(Box::new(Expression::number(1))),
+                    rows: None,
+                    size: None,
+                    seed: None,
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: "MATCH_RECOGNIZE after MATCH_RECOGNIZE",
+            step: |input| {
+                Expression::MatchRecognize(Box::new(MatchRecognize {
+                    this: Some(Box::new(input)),
+                    partition_by: None,
+                    order_by: None,
+                    measures: None,
+                    rows: None,
+                    after: None,
+                    pattern: None,
+                    define: None,
+                    alias: None,
+                    alias_explicit_as: false,
+                    options: vec![Expression::number(1)],
                 }))
             },
             expected_depth: 100_000,
