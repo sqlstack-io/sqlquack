@@ -16,8 +16,8 @@ use crate::lineage::_helpers::tracing::queries::{empty_scope, renamed, resolved_
 use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
 use crate::lineage::constants::{
     DUCKDB_PROFILE, DUCKDB_VALUES_COLUMN, IDENTIFIER_FUNCTION, ONE_AGGREGATE, OUTER_LEFT_JOINS,
-    OUTER_RIGHT_JOINS, SNOWFLAKE_PROFILE, SNOWFLAKE_VALUES_COLUMN, TABLE_FUNCTION_COLUMNS,
-    TABLE_WRAPPER,
+    OUTER_RIGHT_JOINS, SNOWFLAKE_PROFILE, SNOWFLAKE_VALUES_COLUMN, SQLITE_PROFILE,
+    SQLITE_VALUES_COLUMN, TABLE_FUNCTION_COLUMNS, TABLE_WRAPPER,
 };
 use crate::lineage::models::{
     FromItems, Lineage, LineageContext, LineageScope, NamedQuery, Nullability, ResolvedQuery,
@@ -514,6 +514,7 @@ pub(crate) fn values_query(
         .unwrap_or(0);
     let generated = |position: usize| match context.profile.name() {
         DUCKDB_PROFILE => format!("{DUCKDB_VALUES_COLUMN}{position}"),
+        SQLITE_PROFILE => format!("{SQLITE_VALUES_COLUMN}{}", position + 1),
         _ => format!("{SNOWFLAKE_VALUES_COLUMN}{}", position + 1),
     };
     let columns: Vec<ScopedColumn> = (0..width)

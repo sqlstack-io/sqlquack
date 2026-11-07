@@ -61,6 +61,16 @@ fn given_a_duckdb_select_when_checking_its_scope_rules_then_broken_rules_are_fou
             sql: "SELECT status, COUNT(*) AS n FROM orders GROUP BY 1 HAVING COUNT(*) > 1 ORDER BY n",
             expected_findings: &[],
         },
+        QueryFindingsTestCase {
+            description: "a quoted read of a grouped column in another case, which DuckDB matches",
+            sql: "SELECT \"STATUS\", COUNT(*) AS n FROM orders GROUP BY status",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a qualified grouped column read in another case",
+            sql: "SELECT O.Status, COUNT(*) AS n FROM orders AS o GROUP BY o.status",
+            expected_findings: &[],
+        },
     ];
     let schema = typed_duckdb_shop_schema();
     for test_case in test_cases {

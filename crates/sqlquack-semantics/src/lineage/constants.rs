@@ -256,6 +256,10 @@ pub(crate) const FIRST_ARGUMENT_NULLABILITY: [&str; 2] = ["UPPER", "LOWER"];
 pub(crate) const SNOWFLAKE_PROFILE: &str = "Snowflake";
 /// The PostgreSQL profile's name.
 pub(crate) const POSTGRES_PROFILE: &str = "PostgreSQL";
+/// The SQLite profile's name.
+pub(crate) const SQLITE_PROFILE: &str = "SQLite";
+/// SQLite's name for the n-th column of a VALUES list, numbered from 1.
+pub(crate) const SQLITE_VALUES_COLUMN: &str = "column";
 /// PostgreSQL's system columns, which every stored table has and no star expands.
 pub(crate) const POSTGRES_SYSTEM_COLUMNS: [&str; 6] =
     ["tableoid", "xmin", "cmin", "xmax", "cmax", "ctid"];

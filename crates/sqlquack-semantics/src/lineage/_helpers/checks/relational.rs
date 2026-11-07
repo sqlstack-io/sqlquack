@@ -185,6 +185,7 @@ pub(crate) fn recursive_findings(
             let literal: Option<&Expression> = projection_literal(&union.right, index);
             let invalid: bool = match engine {
                 Engine::Snowflake => !setop_compatible(target, source),
+                Engine::Sqlite => false,
                 Engine::DuckDB | Engine::Postgres => {
                     literal.is_some_and(|value| invalid_literal_for(value, target))
                         || (source == Family::String
@@ -197,7 +198,7 @@ pub(crate) fn recursive_findings(
                 findings.push(finding(
                     match engine {
                         Engine::Snowflake => "E215",
-                        Engine::DuckDB | Engine::Postgres => "W214",
+                        Engine::DuckDB | Engine::Postgres | Engine::Sqlite => "W214",
                     },
                     "Recursive branch cannot convert to the anchor column type".to_owned(),
                     node,

@@ -4,7 +4,7 @@ use crate::lineage::models::NullabilityRule;
 use crate::lineage::models::{Nullability, SchemaColumn, SourceColumn};
 use sqlquack_syntax::{CallMode, Dialect, ParseOptions, parse_statements_with};
 
-use crate::dialects::constants::{DUCKDB, POSTGRES};
+use crate::dialects::constants::{DUCKDB, POSTGRES, SQLITE};
 use crate::dialects::types::DialectProfile;
 use crate::lineage::_helpers::findings::statement::statement_findings;
 use crate::lineage::main::query_lineage::query_lineage;
@@ -472,3 +472,43 @@ const CANONICAL_DUCKDB_NAMES: [(&[&str], &str); 19] = [
     (&["TIMETZ", "TIME WITH TIME ZONE"], "TIMETZ"),
     (&["BLOB", "BYTEA", "VARBINARY"], "BLOB"),
 ];
+
+/// A SQLite shop, with the declared types its tables are created with.
+pub(crate) fn sqlite_shop_schema() -> TypedShopSchema {
+    TypedShopSchema {
+        closed: HashMap::from([
+            (
+                "orders".to_owned(),
+                vec![
+                    typed_column("id", "INTEGER"),
+                    typed_column("quantity", "INTEGER"),
+                    typed_column("price", "REAL"),
+                    typed_column("status", "TEXT"),
+                ],
+            ),
+            (
+                "customers".to_owned(),
+                vec![typed_column("id", "INTEGER"), typed_column("name", "TEXT")],
+            ),
+        ]),
+        ..TypedShopSchema::default()
+    }
+}
+
+/// Each SQLite output's name, type and nullability.
+pub(crate) fn sqlite_outputs(
+    schema: &TypedShopSchema,
+    sql: &str,
+) -> Vec<(String, Option<String>, Nullability)> {
+    let context = LineageContext {
+        profile: &SQLITE,
+        schema,
+        sql: Some(sql),
+    };
+    query_lineage(sql, Dialect::SQLite, &ParseOptions::default(), context)
+        .unwrap_or_else(|error| panic!("{sql}: {error}"))
+        .outputs
+        .into_iter()
+        .map(|output| (output.name, output.data_type, output.nullability))
+        .collect()
+}

@@ -12,7 +12,7 @@ use crate::lineage::_helpers::checks::issues::{in_scope, issue, rule_location};
 use crate::lineage::_helpers::tracing::expressions::is_aggregate;
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::typing::postgres_typing::postgres_window_only;
-use crate::lineage::constants::{POSTGRES_PROFILE, SCOPE_PHASE, SNOWFLAKE_PROFILE};
+use crate::lineage::constants::{POSTGRES_PROFILE, SCOPE_PHASE, SNOWFLAKE_PROFILE, SQLITE_PROFILE};
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding, ScopeSource};
 
 const COLUMNS_FUNCTION: &str = "columns";
@@ -253,7 +253,7 @@ fn structure_rules(
         for cte in &with.ctes {
             let profile: &str = level.context.profile.name();
             let mismatched = |width: usize| match profile {
-                SNOWFLAKE_PROFILE => width != cte.columns.len(),
+                SNOWFLAKE_PROFILE | SQLITE_PROFILE => width != cte.columns.len(),
                 POSTGRES_PROFILE => width < cte.columns.len(),
                 _ => false,
             };
@@ -266,7 +266,7 @@ fn structure_rules(
                 ));
             }
             if !names.insert(level.key(&cte.alias))
-                && matches!(engine, Engine::DuckDB | Engine::Postgres)
+                && matches!(engine, Engine::DuckDB | Engine::Postgres | Engine::Sqlite)
             {
                 findings.push(rule(
                     "E233",
@@ -278,7 +278,10 @@ fn structure_rules(
         }
     }
     let mut names: HashSet<String> = HashSet::new();
-    for item in from_items(select) {
+    for item in from_items(select)
+        .into_iter()
+        .filter(|_| engine != Engine::Sqlite)
+    {
         if let Some(name) = item_name(item)
             && !names.insert(level.key(name))
         {
@@ -312,7 +315,7 @@ fn structure_rules(
             }
         }
     }
-    if matches!(engine, Engine::Postgres) {
+    if matches!(engine, Engine::Postgres | Engine::Sqlite) {
         findings.extend(unwindowed_calls(node));
     }
     if select.qualify.is_some() && !has_window {
@@ -330,7 +333,11 @@ fn structure_rules(
         .map(|limit| &limit.this)
         .chain(select.offset.iter().map(|offset| &offset.this));
     for value in bounds {
-        if invalid_bound(value) {
+        let invalid: bool = match engine {
+            Engine::Sqlite => matches!(value, Expression::Column(_)),
+            _ => invalid_bound(value),
+        };
+        if invalid {
             findings.push(rule(
                 "E234",
                 "LIMIT/OFFSET must be a non-negative constant numeric expression".to_owned(),
@@ -739,12 +746,15 @@ fn offers(source: &ScopeSource, name: &str, level: RuleLevel<'_, '_>) -> bool {
         .any(|offered| level.context.profile.same_identifier(&offered.key, name))
 }
 
-/// Columns an aggregate query reads that are neither grouped nor aggregated.
+/// Ungrouped, unaggregated columns an aggregate query reads; none in SQLite, which reads any row.
 fn grouping(
     (node, select): (&Expression, &Select),
     aliases: &HashMap<String, &Expression>,
     level: RuleLevel<'_, '_>,
 ) -> Vec<NameFinding> {
+    if Engine::of(level.context) == Engine::Sqlite {
+        return Vec::new();
+    }
     let aggregate_query: bool = select.group_by.is_some()
         || select.expressions.iter().any(ordinary_aggregate)
         || select
@@ -765,13 +775,24 @@ fn grouping(
     }
     let groups: Vec<&Expression> = group_keys(select, aliases, level);
     let unmarked_groups: Vec<&Expression> = groups.iter().map(|group| unmarked(group)).collect();
-    let grouped_columns: HashSet<(Option<String>, String)> = groups
+    let grouped_columns: Vec<(Option<String>, String)> = groups
         .iter()
         .filter_map(|group| match group {
             Expression::Column(column) => Some(column_key(column, level)),
             _ => None,
         })
         .collect();
+    let same = |left: &str, right: &str| level.context.profile.same_identifier(left, right);
+    let grouped = |(table, name): &(Option<String>, String)| {
+        grouped_columns.iter().any(|(grouped_table, grouped_name)| {
+            same(grouped_name, name)
+                && match (grouped_table, table) {
+                    (Some(left), Some(right)) => same(left, right),
+                    (None, None) => true,
+                    _ => false,
+                }
+        })
+    };
     let aliases_outside_order: bool = Engine::of(level.context) != Engine::Postgres;
     let mut read: Vec<(&Expression, bool)> = select
         .expressions
@@ -817,7 +838,7 @@ fn grouping(
                 continue;
             }
             if let Expression::Column(column) = current {
-                if grouped_columns.contains(&column_key(column, level)) {
+                if grouped(&column_key(column, level)) {
                     continue;
                 }
                 if column.table.is_none() && named {

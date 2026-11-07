@@ -149,3 +149,10 @@ pub(crate) struct QueryFindingsTestCase {
     pub(crate) sql: &'static str,
     pub(crate) expected_findings: &'static [(&'static str, &'static str, usize)],
 }
+
+/// SQLite outputs: the query and each output's name, type and nullability.
+pub(crate) struct SqliteOutputsTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_outputs: &'static [(&'static str, Option<&'static str>, Nullability)],
+}

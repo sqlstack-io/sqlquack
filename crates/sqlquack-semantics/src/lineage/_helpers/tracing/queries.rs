@@ -1,6 +1,7 @@
 //! The outputs of a query, set operation or CTE, with their lineage.
 
 use std::borrow::Cow;
+use std::rc::Rc;
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
@@ -14,8 +15,8 @@ use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
 use crate::lineage::_helpers::tracing::sources::{from_sources, listed, values_query};
 use crate::lineage::_helpers::typing::rules::filtered_non_null;
 use crate::lineage::constants::{
-    DUCKDB_PROFILE, ORDINAL_BASE, POSTGRES_PROFILE, RECURSION_LIMIT, SQL_STAR, SUBTOTAL_GROUPINGS,
-    UNNAMED_CHARACTERS,
+    DUCKDB_PROFILE, ORDINAL_BASE, POSTGRES_PROFILE, RECURSION_LIMIT, SQL_STAR, SQLITE_PROFILE,
+    SUBTOTAL_GROUPINGS, UNNAMED_CHARACTERS,
 };
 use crate::lineage::models::{
     FromItems, Lineage, LineageContext, LineageScope, NamedQuery, Nullability, ResolvedQuery,
@@ -319,7 +320,7 @@ fn reads_itself(cte: &Cte, name: &str, context: LineageContext<'_>) -> bool {
     })
 }
 
-/// A recursive CTE: its anchor, then each iteration merged in until nothing changes.
+/// A recursive CTE: its anchor, then each iteration merged in; DuckDB keeps the anchor's types.
 fn recursive_query(
     cte: &Cte,
     (name, reach): (&str, &[NamedQuery]),
@@ -338,6 +339,11 @@ fn recursive_query(
         &cte.columns,
         context,
     );
+    let anchor_types: Vec<Option<Rc<str>>> = current
+        .columns
+        .iter()
+        .map(|column| column.lineage.data_type.clone())
+        .collect();
     for _ in 0..RECURSION_LIMIT {
         let mut iteration: Vec<NamedQuery> = reach.to_vec();
         iteration.push(NamedQuery {
@@ -349,7 +355,12 @@ fn recursive_query(
             &cte.columns,
             context,
         );
-        let joined: ResolvedQuery = positional(vec![current.clone(), next], context);
+        let mut joined: ResolvedQuery = positional(vec![current.clone(), next], context);
+        if context.profile.name() == DUCKDB_PROFILE {
+            for (column, data_type) in joined.columns.iter_mut().zip(&anchor_types) {
+                column.lineage.data_type.clone_from(data_type);
+            }
+        }
         if same_lineage(&joined, &current) {
             return joined;
         }
@@ -756,7 +767,7 @@ fn output_name(projection: &Expression, context: LineageContext<'_>) -> String {
                 _ => String::new(),
             }
         }
-        _ if context.profile.name() == DUCKDB_PROFILE => String::new(),
+        _ if matches!(context.profile.name(), DUCKDB_PROFILE | SQLITE_PROFILE) => String::new(),
         _ if context.profile.name() == POSTGRES_PROFILE => postgres_name(projection),
         _ => snowflake_name(projection, context).unwrap_or_default(),
     }
