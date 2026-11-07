@@ -328,6 +328,19 @@ pub struct IsJson {
     pub negated: bool,
 }
 
+/// PostgreSQL: a call written with keywords, e.g. `JSON_VALUE(j, '$' RETURNING int)` or `x IS DOCUMENT`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct KeywordCall {
+    /// The call's keywords, e.g. "JSON_VALUE", "XMLELEMENT", "IS DOCUMENT", "FORMAT JSON"
+    pub kind: String,
+    /// The call's operands in order, e.g. the context item and the path
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub operands: Vec<Expression>,
+    /// The call's clauses in order, e.g. `(RETURNING, int)` or `(ON ERROR, NULL)`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub options: Vec<Expression>,
+}
+
 /// JSON unique keys constraint variants
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum JsonUniqueKeys {

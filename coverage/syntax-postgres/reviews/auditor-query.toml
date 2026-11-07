@@ -48,3 +48,24 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 
 [review.definitions]
 "pg.query.values" = "5723e702074da772320e60753158f01c8280525e08436dbb89c9a7d367e96f87"
+
+[[review]]
+id = "pg-auditor-query-003"
+reviewer_lane = "auditor"
+family = "query"
+parser_tree = "456f03b38854dcee53403e8c19c657bde430a76e"
+reviewed_utc = "2026-11-07T04:24:14Z"
+verdict = "approved"
+forms = [
+  "pg.query.select-into",
+  "pg.query.select.select",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 456f03b3; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.query.select-into" = "8bb44243625051875e76dc880949f81ad59c2a73d2c07fa415f1e8e91d6f9f59"
+"pg.query.select.select" = "28b287b1fa26c3589879a9ab0992628a3f747bb85238e718af0fca590d9e9f1d"
+
+[review.definitions]
+"pg.query.select-into" = "36f6dc00c653c04497be846becc78d8519d3943b0d7ba7c07a205d2528458d07"
+"pg.query.select.select" = "8cbeccadef634b217f8d60d4e91890fa0e93497f48023fb0a1fe2f95a9e2111b"

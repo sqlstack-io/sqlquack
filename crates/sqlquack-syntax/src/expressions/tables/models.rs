@@ -333,7 +333,7 @@ impl DropTable {
     }
 }
 
-/// Snowflake DROP of an object kind with no statement of its own, e.g. `DROP AGENT IF EXISTS a1`.
+/// DROP of an object kind with no statement of its own, e.g. Snowflake `DROP AGENT IF EXISTS a1` or a PostgreSQL `DropStmt`.
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DropObject {
     /// The object kind, e.g. "AGENT", "COMPUTE POOL", "EXTERNAL TABLE"
@@ -352,6 +352,12 @@ pub struct DropObject {
     /// FORCE
     #[serde(default)]
     pub force: bool,
+    /// PostgreSQL DropStmt's objects in order, e.g. names, signatures, `name ON table`; empty when `name` is the one object
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub objects: Vec<Expression>,
+    /// PostgreSQL: DROP INDEX CONCURRENTLY
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub concurrently: bool,
 }
 
 /// UNDROP object statement (Snowflake, ClickHouse)

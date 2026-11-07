@@ -105,9 +105,6 @@ const RULE_EVENTS: [&str; 4] = ["select", "update", "delete", "insert"];
 /// The definition element `CREATE COLLATION ... FROM` makes.
 const COLLATION_FROM: &str = "from";
 
-/// The gap a `GRANT` inside `CREATE SCHEMA` leaves until grants parse.
-const GRANT_GAP: &str = "grant";
-
 /// gram.y's error for `CREATE EXTENSION ... FROM` (0A000).
 const EXTENSION_FROM: &str = "CREATE EXTENSION ... FROM is no longer supported";
 
@@ -591,13 +588,10 @@ impl Parser<'_> {
         Ok(object(node))
     }
 
-    /// `schema_stmt`: `CREATE TABLE`, `INDEX`, `SEQUENCE`, `TRIGGER` or `VIEW`, or a `GRANT`, a gap until grants parse.
+    /// `schema_stmt`: `CREATE TABLE`, `INDEX`, `SEQUENCE`, `TRIGGER` or `VIEW`, or a `GrantStmt`.
     fn schema_element(&mut self) -> Parsing<Expression> {
         if self.kw("grant") {
-            let start: usize = self.offset();
-            self.skip_statement_rest()?;
-            self.gap(GRANT_GAP, start);
-            return Ok(var("GRANT"));
+            return self.grant_statement(true);
         }
         if self.creates_table() {
             let created: Expression = self.create_table()?;

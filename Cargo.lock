@@ -1469,6 +1469,7 @@ dependencies = [
  "sqlquack-core",
  "sqlquack-snowflake",
  "sqlquack-syntax",
+ "sqlquack-syntax-postgres",
 ]
 
 [[package]]

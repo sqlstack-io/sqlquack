@@ -66,3 +66,48 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 
 [review.definitions]
 "pg.dml.copy.to" = "b9601c2e9dd27a881b675b9c5f9ed36d2ca07528e83f65beee2e849732418a13"
+
+[[review]]
+id = "pg-auditor-dml-004"
+reviewer_lane = "auditor"
+family = "dml"
+parser_tree = "f2372a18396b91d6573c5252d00bcec9315e56e5"
+reviewed_utc = "2026-11-06T21:57:37Z"
+verdict = "approved"
+forms = [
+  "pg.dml.copy.from",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree f2372a18; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.dml.copy.from" = "d166a99a10d057218e83789a0150750f1961cefbb6faa9b078e15002e8fa5470"
+
+[review.definitions]
+"pg.dml.copy.from" = "13e22ed25819be82574017fb4d04be879a208da1b3a00ace94a2289e2c789391"
+
+[[review]]
+id = "pg-auditor-dml-005"
+reviewer_lane = "auditor"
+family = "dml"
+parser_tree = "456f03b38854dcee53403e8c19c657bde430a76e"
+reviewed_utc = "2026-11-07T04:24:14Z"
+verdict = "approved"
+forms = [
+  "pg.dml.delete",
+  "pg.dml.insert",
+  "pg.dml.merge",
+  "pg.dml.update",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 456f03b3; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.dml.delete" = "49b76f08a5efdadd769b5799d24bf9fc7f9787c6efa4c927ffc6fb58bedb537c"
+"pg.dml.insert" = "93cbf75fb434dd45a84852854c6bda025016388a4b44c3ea651ea6c54c775cf7"
+"pg.dml.merge" = "1beca7bfb8f4da96fc1d4bcbd91ed707372e60937dc30f806bc9efc9383e277d"
+"pg.dml.update" = "d628f9c6268010d759206c8863f2f700c39b7a499d93208ea309378bbf6ca44e"
+
+[review.definitions]
+"pg.dml.delete" = "1b68aaa7cfc85b9db2637d6086927271a9a6209d352d0cb14d8d73054821640c"
+"pg.dml.insert" = "f785f04a6cbdc987c949abb4a4e54d3deed6e68d69719f068204c679844c3dc4"
+"pg.dml.merge" = "12a4a293663784f0f8f272f565dcc530585b44e4fd617b1d07df0bd281b997b4"
+"pg.dml.update" = "fd549baf499e8d806ebd9ec34146d801fa023f4b720813b17b4c161a179fddce"

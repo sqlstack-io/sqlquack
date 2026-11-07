@@ -434,7 +434,7 @@ impl Parser<'_> {
     }
 
     /// `var_name`: `ColId [. ColId]...`, as one name.
-    fn setting_name(&mut self) -> Parsing<Expression> {
+    pub(crate) fn setting_name(&mut self) -> Parsing<Expression> {
         let mut parts: Vec<Identifier> = vec![self.name(is_col_id)?];
         while self.eat_char('.') {
             parts.push(self.name(is_col_id)?);
@@ -632,6 +632,30 @@ impl Parser<'_> {
             Some(item) => Ok(option_tuple(&item)),
             None => Err(self.error()),
         }
+    }
+
+    /// `set_rest` after `SET [LOCAL | SESSION]`, as the option tuple `set_reset_clause` makes of it.
+    pub(crate) fn set_rest(&mut self) -> Parsing<Expression> {
+        let modes: bool = self.kw("transaction")
+            && TRANSACTION_MODE_WORDS
+                .iter()
+                .any(|word| self.kw_at(1, word));
+        if modes {
+            self.at += 1;
+            let values: Vec<Expression> = self.transaction_modes()?;
+            return Ok(option_tuple(&option(TRANSACTION_OPTION, values)));
+        }
+        if self.kw("session") && self.kw_at(1, "characteristics") {
+            self.at += 2;
+            self.expect_kw("as")?;
+            self.expect_kw("transaction")?;
+            let values: Vec<Expression> = self.transaction_modes()?;
+            return Ok(option_tuple(&option(
+                SESSION_CHARACTERISTICS_OPTION,
+                values,
+            )));
+        }
+        Ok(option_tuple(&self.setting()?))
     }
 
     /// `SET generic_set` or `RESET generic_reset` as one option tuple, shaped as `set_reset_clause` shapes them.

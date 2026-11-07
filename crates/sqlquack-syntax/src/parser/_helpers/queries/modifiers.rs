@@ -401,6 +401,7 @@ impl Parser {
                 let (order_by, limit, offset) =
                     self.detach_unparenthesized_set_operation_modifiers(&mut right);
                 result = Expression::Union(Box::new(Union {
+                    with_ties: false,
                     left: wrap_values_set_operand(left),
                     right: wrap_values_set_operand(right),
                     all,
@@ -419,6 +420,7 @@ impl Parser {
                     strict,
                     on_columns,
                     span: SourceSpan::default(),
+                    locks: Vec::new(),
                 }));
                 found_set_op = true;
             } else if self.check_set_operation_start(TokenType::Intersect) {
@@ -447,6 +449,7 @@ impl Parser {
                 let (order_by, limit, offset) =
                     self.detach_unparenthesized_set_operation_modifiers(&mut right);
                 result = Expression::Intersect(Box::new(Intersect {
+                    with_ties: false,
                     left: wrap_values_set_operand(left),
                     right: wrap_values_set_operand(right),
                     all,
@@ -465,6 +468,7 @@ impl Parser {
                     strict,
                     on_columns,
                     span: SourceSpan::default(),
+                    locks: Vec::new(),
                 }));
                 if self.config.dialect == Some(crate::tokens::models::DialectType::Snowflake) {
                     result = Self::snowflake_intersect_precedence(result);
@@ -496,6 +500,7 @@ impl Parser {
                 let (order_by, limit, offset) =
                     self.detach_unparenthesized_set_operation_modifiers(&mut right);
                 result = Expression::Except(Box::new(Except {
+                    with_ties: false,
                     left: wrap_values_set_operand(left),
                     right: wrap_values_set_operand(right),
                     all,
@@ -514,6 +519,7 @@ impl Parser {
                     strict,
                     on_columns,
                     span: SourceSpan::default(),
+                    locks: Vec::new(),
                 }));
                 found_set_op = true;
             } else if side.is_some() || kind.is_some() {
@@ -996,6 +1002,7 @@ impl Parser {
         let table = if self.match_token(TokenType::Dot) {
             let second_name = self.expect_identifier_or_safe_keyword_with_quoted()?;
             TableRef {
+                sample_call: None,
                 name: second_name,
                 schema: Some(table_name),
                 catalog: None,
@@ -1015,6 +1022,7 @@ impl Parser {
                 changes: None,
                 version: None,
                 span: None,
+                whole_quoted: false,
             }
         } else {
             TableRef::new(table_name.name)
@@ -1057,6 +1065,7 @@ impl Parser {
         };
 
         Ok(Expression::Insert(Box::new(Insert {
+            column_targets: Vec::new(),
             table,
             columns,
             values,
@@ -1084,6 +1093,8 @@ impl Parser {
             function_target: None,
             partition_by: None,
             settings: Vec::new(),
+            overriding: None,
+            returning_aliases: Vec::new(),
         })))
     }
 
@@ -1199,6 +1210,9 @@ impl Parser {
             limit,
             order_by,
             from_before_set,
+            assignments: Vec::new(),
+            current_of: None,
+            returning_aliases: Vec::new(),
         })))
     }
 
@@ -1208,6 +1222,7 @@ impl Parser {
             if self.match_token(TokenType::Dot) {
                 let table_name = self.expect_identifier_with_quoted()?;
                 TableRef {
+                    sample_call: None,
                     name: table_name,
                     schema: Some(second_name),
                     catalog: Some(first_name),
@@ -1227,9 +1242,11 @@ impl Parser {
                     changes: None,
                     version: None,
                     span: None,
+                    whole_quoted: false,
                 }
             } else {
                 TableRef {
+                    sample_call: None,
                     name: second_name,
                     schema: Some(first_name),
                     catalog: None,
@@ -1249,6 +1266,7 @@ impl Parser {
                     changes: None,
                     version: None,
                     span: None,
+                    whole_quoted: false,
                 }
             }
         } else {
@@ -1265,6 +1283,7 @@ impl Parser {
                 if self.match_token(TokenType::Dot) {
                     let table_name = self.expect_identifier_with_quoted()?;
                     TableRef {
+                        sample_call: None,
                         name: table_name,
                         schema: Some(second_name),
                         catalog: Some(first_name),
@@ -1284,9 +1303,11 @@ impl Parser {
                         changes: None,
                         version: None,
                         span: None,
+                        whole_quoted: false,
                     }
                 } else {
                     TableRef {
+                        sample_call: None,
                         name: second_name,
                         schema: Some(first_name),
                         catalog: None,
@@ -1306,6 +1327,7 @@ impl Parser {
                         changes: None,
                         version: None,
                         span: None,
+                        whole_quoted: false,
                     }
                 }
             } else {
@@ -1345,6 +1367,7 @@ impl Parser {
                 None
             };
             table_joins.push(Join {
+                using_alias: None,
                 this: join_expr,
                 on: on_condition,
                 using: Vec::new(),
