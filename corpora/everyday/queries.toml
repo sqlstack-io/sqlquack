@@ -1506,8 +1506,8 @@ expect_repository = "refused SQ0003 node:gte at 34..79"
 [[query]]
 category = "dates"
 sql = '''SELECT order_id FROM orders WHERE ordered_at >= DATEADD(day, -30, CURRENT_TIMESTAMP())'''
-expect = "refused SQ0003 fn:DATEADD at 48..86"
-expect_repository = "refused SQ0003 fn:DATEADD at 48..86"
+expect = "refused SQ0008 fn:DATEADD at 48..86"
+expect_repository = "translated"
 
 [[query]]
 category = "dates"

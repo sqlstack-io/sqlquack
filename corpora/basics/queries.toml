@@ -14565,29 +14565,34 @@ expect_repository = "refused SQ0003 node:gte at 42..87"
 [[query]]
 category = "last_days"
 sql = '''SELECT order_id FROM orders WHERE ordered_at >= DATEADD(day, -30, CURRENT_TIMESTAMP())'''
-expect = "refused SQ0003 fn:DATEADD at 48..86"
-expect_repository = "refused SQ0003 fn:DATEADD at 48..86"
+expect = "refused SQ0008 fn:DATEADD at 48..86"
+expect_repository = "translated"
+result_repository = "0 rows e3b0c44298fc1c14"
 
 [[query]]
 category = "last_days"
 sql = '''select /* c */ order_id	from "ORDERS"	where ordered_at >= dateadd(day, -30, current_timestamp())'''
-expect = "refused SQ0003 fn:DATEADD at 58..96"
-expect_repository = "refused SQ0003 fn:DATEADD at 58..96"
+expect = "refused SQ0008 fn:DATEADD at 58..96"
+expect_repository = "translated"
+result_repository = "0 rows e3b0c44298fc1c14"
 
 [[query]]
 category = "last_days"
 sql = '''SELECT /* c */ ORDER_ID   FROM ORDERS   WHERE ORDERED_AT >= DATEADD(DAY, -30, CURRENT_TIMESTAMP())'''
-expect = "refused SQ0003 fn:DATEADD at 60..98"
-expect_repository = "refused SQ0003 fn:DATEADD at 60..98"
+expect = "refused SQ0008 fn:DATEADD at 60..98"
+expect_repository = "translated"
+result_repository = "0 rows e3b0c44298fc1c14"
 
 [[query]]
 category = "last_days"
 sql = '''select order_id	from orders	where ordered_at >= DATEADD(day, -30, CURRENT_TIMESTAMP())'''
-expect = "refused SQ0003 fn:DATEADD at 48..86"
-expect_repository = "refused SQ0003 fn:DATEADD at 48..86"
+expect = "refused SQ0008 fn:DATEADD at 48..86"
+expect_repository = "translated"
+result_repository = "0 rows e3b0c44298fc1c14"
 
 [[query]]
 category = "last_days"
 sql = '''SeLect ordEr_Id   FrOM "ORDERS"   wHERe oRDeRed_at >= DAteAdD(DAY, -30, cURrENt_tImEsTamP())'''
-expect = "refused SQ0003 fn:DATEADD at 54..92"
-expect_repository = "refused SQ0003 fn:DATEADD at 54..92"
+expect = "refused SQ0008 fn:DATEADD at 54..92"
+expect_repository = "translated"
+result_repository = "0 rows e3b0c44298fc1c14"

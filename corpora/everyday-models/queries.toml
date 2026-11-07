@@ -150,8 +150,8 @@ sql = '''select
     _loaded_at
 from raw_orders
 where _loaded_at >= dateadd(day, -3, current_timestamp())'''
-expect = "refused SQ0003 fn:DATEADD at 152..189"
-expect_repository = "refused SQ0003 fn:DATEADD at 152..189"
+expect = "refused SQ0008 fn:DATEADD at 152..189"
+expect_repository = "translated"
 
 [[query]]
 category = "dbt_staging"
@@ -4066,8 +4066,8 @@ category = "dbt_tests"
 sql = '''select max(updated_at) as max_updated_at
 from stg_orders
 having max(updated_at) < dateadd(hour, -24, current_timestamp())'''
-expect = "refused SQ0003 fn:DATEADD at 82..121"
-expect_repository = "refused SQ0003 fn:DATEADD at 82..121"
+expect = "refused SQ0008 fn:DATEADD at 82..121"
+expect_repository = "translated"
 
 [[query]]
 category = "dbt_tests"
@@ -4704,8 +4704,8 @@ sql = '''select *
 from stg_orders
 where updated_at > (select max(updated_at) from fct_orders)
   and updated_at <= current_timestamp()'''
-expect = "refused SQ0003 node:lte at 91..124"
-expect_repository = "refused SQ0003 node:lte at 91..124"
+expect = "refused SQ0008 node:lte at 91..124"
+expect_repository = "translated"
 
 [[query]]
 category = "dbt_incremental"
@@ -4797,8 +4797,8 @@ expect_repository = "translated"
 category = "dates"
 sql = '''select order_id, timestampdiff(hour, order_date, updated_at) as hours_to_update
 from stg_orders'''
-expect = "refused SQ0003 fn:TIMESTAMPDIFF at 17..60"
-expect_repository = "refused SQ0003 fn:TIMESTAMPDIFF at 17..60"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "strings"
@@ -6091,7 +6091,7 @@ sql = '''select * from analytics.dbt_dev.fct_orders
 where updated_at > (select max(updated_at) from analytics.dbt_dev.inc_event_time)
   and updated_at <= convert_timezone('UTC', current_timestamp())'''
 expect = "refused SQ0008 fn:CONVERT_TIMEZONE at 145..189"
-expect_repository = "refused SQ0003 node:lte at 131..189"
+expect_repository = "translated"
 
 [[query]]
 category = "dbt_incremental"
