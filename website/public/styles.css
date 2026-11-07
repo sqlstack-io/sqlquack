@@ -1359,6 +1359,33 @@ footer a {
 	display: none;
 }
 
+.pg-hint code {
+	display: inline;
+}
+
+.pg-conversion-note {
+	margin: 10px 0 0;
+	padding: 8px 10px;
+	border-left: 2px solid var(--primary);
+	background: var(--accent-soft);
+	color: var(--muted-foreground);
+	font-size: 13px;
+}
+
+.pg-conversion-note code {
+	display: inline;
+}
+
+.pg-hint {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 12px;
+	margin: 0 0 10px;
+	color: var(--foreground);
+	font-size: 13px;
+}
+
 .terminal .warn {
 	color: var(--warning);
 }
