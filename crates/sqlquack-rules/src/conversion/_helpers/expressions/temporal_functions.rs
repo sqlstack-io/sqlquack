@@ -484,6 +484,15 @@ fn shift(
     };
     let (operand, zoned) = match operand.data_type {
         SnowflakeType::Time { .. } => (operand, None),
+        local @ SnowflakeType::TimestampLtz { precision } => {
+            let _zoned = site.context.log.rule(UTC_OFFSET_ARITHMETIC);
+            diverge(site.context, SESSION_TIMEZONE_UTC, construct)?;
+            let wall = SnowflakeType::TimestampNtz {
+                precision: precision.min(MICROSECOND_DIGITS),
+            };
+            let sql = utc_wall_time(&operand.sql, site.context.log);
+            (Emitted::new(sql, wall), Some(local))
+        }
         _ => temporal_or_refused(operand, construct, site.context)?,
     };
     let amount = Emitted::new(
@@ -669,7 +678,7 @@ fn date_diff_of(
     ))
 }
 
-/// A DATEDIFF operand: a DATE or naive timestamp, or an ISO date literal read as a DATE.
+/// A DATEDIFF operand: a DATE, naive timestamp or local one at its UTC wall time, or an ISO date.
 fn date_diff_operand(
     node: &Value,
     construct: &Construct,
@@ -682,6 +691,16 @@ fn date_diff_operand(
             _,
         ) => Ok(emitted),
         (SnowflakeType::TimestampTz { .. }, _) => Ok(emitted),
+        (SnowflakeType::TimestampLtz { precision }, _) => {
+            let _zoned = site.context.log.rule(UTC_OFFSET_ARITHMETIC);
+            diverge(site.context, SESSION_TIMEZONE_UTC, construct)?;
+            Ok(Emitted::new(
+                utc_wall_time(&emitted.sql, site.context.log),
+                SnowflakeType::TimestampNtz {
+                    precision: (*precision).min(MICROSECOND_DIGITS),
+                },
+            ))
+        }
         (SnowflakeType::Varchar, Some(Literal::Text(text))) if is_iso_date(text) => {
             Ok(Emitted::new(
                 cast(&emitted.sql, SnowflakeType::Date, site.context.log)
@@ -692,7 +711,7 @@ fn date_diff_operand(
         (other, _) => Err(outside_conditions(
             construct.clone(),
             format!(
-                "a {other} operand; only DATE, TIMESTAMP_NTZ and ISO date literals are covered"
+                "a {other} operand; only DATE, TIMESTAMP_NTZ, TIMESTAMP_LTZ and ISO date literals are covered"
             ),
         )),
     }

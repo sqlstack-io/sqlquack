@@ -1,0 +1,87 @@
+# A TIMESTAMP_NTZ compared with a TIMESTAMP_LTZ (a column, CURRENT_TIMESTAMP() or DATEADD of it) in
+# the UTC session, the incremental and freshness filters compiled models write.
+category = "temporal"
+construct = "node:lte"
+session_profile = "utc-v1"
+
+[[case]]
+id = "ntz_beside_ltz_columns"
+description = "Every comparison of a naive timestamp with a local-zone one, equal, a microsecond apart and across offsets."
+columns = [{ name = "n", type = "TIMESTAMP_NTZ(9)" }, { name = "l", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2024-06-01 10:00:00'", "'2024-06-01 10:00:00 +00:00'"],
+  ["'2024-06-01 10:00:00'", "'2024-06-01 12:00:00 +02:00'"],
+  ["'2024-06-01 10:00:00.000001'", "'2024-06-01 10:00:00 +00:00'"],
+  ["'2024-06-01 09:59:59.999999'", "'2024-06-01 10:00:00 +00:00'"],
+  ["'2024-06-01 10:00:00'", "'2024-06-01 05:00:00 -05:00'"],
+  ["'1969-12-31 23:59:59.5'", "'1970-01-01 00:00:00 +00:00'"],
+  ["NULL", "'2024-06-01 10:00:00 +00:00'"],
+]
+expression = "ARRAY_CONSTRUCT(n = l, n <> l, n < l, n <= l, n > l, n >= l, l < n)"
+expected_divergence = "json_fidelity"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "ntz_millisecond_beside_ltz"
+description = "A TIMESTAMP_NTZ(3) beside a TIMESTAMP_LTZ with microseconds compares at full precision."
+columns = [{ name = "n", type = "TIMESTAMP_NTZ(3)" }, { name = "l", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2024-06-01 10:00:00.123'", "'2024-06-01 10:00:00.123 +00:00'"],
+  ["'2024-06-01 10:00:00.123'", "'2024-06-01 10:00:00.123001 +00:00'"],
+  ["'2024-06-01 10:00:00.124'", "'2024-06-01 10:00:00.123999 +00:00'"],
+]
+expression = "ARRAY_CONSTRUCT(n = l, n < l, n > l)"
+tags = ["boundary"]
+
+[[case]]
+id = "ntz_at_most_current_timestamp"
+description = "A past naive timestamp is at most CURRENT_TIMESTAMP(); a far-future one is not."
+columns = [{ name = "updated_at", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2020-01-01 00:00:00'"],
+  ["'2199-12-31 23:59:59'"],
+  ["NULL"],
+]
+expression = "updated_at <= CURRENT_TIMESTAMP()"
+tags = ["null"]
+
+[[case]]
+id = "ntz_after_dateadd_of_current_timestamp"
+description = "The incremental filter updated_at >= DATEADD(day, -3, CURRENT_TIMESTAMP()) over past and future rows."
+columns = [{ name = "updated_at", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2020-01-01 00:00:00'"],
+  ["'2199-12-31 23:59:59'"],
+  ["NULL"],
+]
+expression = "updated_at >= DATEADD(day, -3, CURRENT_TIMESTAMP())"
+tags = ["null"]
+
+[[case]]
+id = "dateadd_of_ltz_column"
+description = "DATEADD of a local-zone column in DAY, HOUR, MONTH and MINUTE, compared with naive values."
+columns = [{ name = "l", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2024-01-31 23:30:00 +00:00'"],
+  ["'2024-02-29 01:00:00 +05:30'"],
+  ["'2024-03-31 00:00:00.000001 -08:00'"],
+  ["NULL"],
+]
+expression = "ARRAY_CONSTRUCT(DATEADD(day, -3, l) = '2024-01-28 23:30:00'::TIMESTAMP_NTZ, TO_VARCHAR(DATEADD(hour, 5, l)::TIMESTAMP_NTZ), TO_VARCHAR(DATEADD(month, 1, l)::TIMESTAMP_NTZ), TO_VARCHAR(DATEADD(minute, -90, l)::TIMESTAMP_NTZ))"
+expected_divergence = "json_fidelity"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "datediff_subday_of_dates"
+description = "DATEDIFF in HOUR, MINUTE and SECOND with a DATE operand, read as its midnight."
+columns = [{ name = "d", type = "DATE" }, { name = "t", type = "TIMESTAMP_NTZ(9)" }]
+rows = [
+  ["'2024-06-01'", "'2024-06-01 10:30:00'"],
+  ["'2024-06-01'", "'2024-05-31 23:59:59.999999999'"],
+  ["'2024-02-28'", "'2024-03-01 00:00:00'"],
+  ["'1969-12-31'", "'1970-01-01 00:00:01'"],
+  ["NULL", "'2024-06-01 10:30:00'"],
+]
+expression = "ARRAY_CONSTRUCT(DATEDIFF(hour, d, t), DATEDIFF(minute, t, d), DATEDIFF(second, d, t), DATEDIFF(hour, d, '2024-06-03'::DATE))"
+expected_divergence = "json_fidelity"
+tags = ["null", "boundary"]

@@ -351,6 +351,10 @@ fn cast_sql(
                 (context, construct),
             )
         }
+        (from @ SnowflakeType::Number { .. }, _, _) if trying => Err(format!(
+            "TRY_CAST of {from} to {to}, which Snowflake rejects (error 1065: TRY_CAST takes \
+             only text); use CAST or TO_VARCHAR"
+        )),
         (from, _, _) if trying => Err(format!(
             "TRY_CAST of {from} to {to} has no proven conversion"
         )),

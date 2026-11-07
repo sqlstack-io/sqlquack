@@ -16,8 +16,9 @@ self.onmessage = async ({ data }) => {
 		ready.then(() => self.postMessage({ ready: true }));
 		return;
 	}
-	const { analyze, fixture_tables } = await ready;
+	const { analyze, fixture_tables, run_failure } = await ready;
 	const started = performance.now();
-	const result = data.op === 'fixture' ? fixture_tables(data.schema) : analyze(data.sql, data.schema, data.settings);
+	const result =
+		data.op === 'fixture' ? fixture_tables(data.schema) : data.op === 'failure' ? run_failure(data.message) : analyze(data.sql, data.schema, data.settings);
 	self.postMessage({ id: data.id, result, elapsed: performance.now() - started });
 };

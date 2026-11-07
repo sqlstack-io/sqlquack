@@ -52,6 +52,11 @@ impl<'a> Locator<'a> {
         }
     }
 
+    /// The whole source text the statement came from.
+    pub(crate) fn source(&self) -> String {
+        self.lines.text(&self.lines.whole())
+    }
+
     /// The statement tree being converted, positions stripped.
     pub(crate) fn tree(&self) -> &'a Value {
         self.tree

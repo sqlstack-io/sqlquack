@@ -29,8 +29,9 @@ use crate::conversion::_helpers::support::scope::read_column;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Scope};
 use crate::conversion::_helpers::support::site::{Placement, Site};
 use crate::conversion::_helpers::support::tree::{
-    LITERAL_NUMBER, LITERAL_STRING, Payload, field, flag, function_construct, identifier_name,
-    list, node_construct, node_kind, payload_object, require_understood,
+    LITERAL_DATE, LITERAL_NUMBER, LITERAL_STRING, LITERAL_TIMESTAMP, Payload, field, flag,
+    function_construct, identifier_name, list, node_construct, node_kind, payload_object,
+    require_understood,
 };
 use crate::conversion::constants::WINDOW_MARKER;
 use crate::conversion::constants::{
@@ -44,6 +45,19 @@ use sqlquack_semantics::scopes::main::star_relations::star_relations;
 use sqlquack_semantics::scopes::models::ScopeRelation;
 use sqlquack_semantics::types::models::ColumnSpec;
 
+/// The most characters Snowflake keeps of an unaliased item's text as its name, as recorded.
+const OUTPUT_NAME_MAX_CHARS: usize = 255;
+/// Why a name written straight after a number, which Snowflake rejects, is refused.
+const GLUED_ALIAS: &str = "a name written straight after a number, such as 0x1F, which Snowflake rejects as a syntax error";
+/// Why a repeated name is refused inside a subquery or CTE.
+pub(crate) const NESTED_REPEAT: &str =
+    "inside a subquery or CTE, where DuckDB renames the second column";
+/// Why a repeated name is refused where a clause could read it.
+const CLAUSE_REPEAT: &str = "where ORDER BY, GROUP BY, HAVING or QUALIFY could read either column, which no recording shows";
+/// Why a repeated name is refused where the converted SQL wraps the result.
+const WRAPPED_REPEAT: &str = "where the converted SQL wraps the result to write VARIANT or NULL columns, and DuckDB renames the second column";
+/// The SELECT clauses that could read a repeated result name.
+const NAME_READING_CLAUSES: [&str; 4] = ["order_by", "group_by", "having", "qualify"];
 /// The SELECT clauses this rule converts; anything else set on the node is refused.
 const SELECT_FIELDS: &[&str] = &[
     "expressions",
@@ -281,7 +295,7 @@ fn convert_select(
             placement: Placement::ROW,
         },
     )?;
-    let group_positions = group_positions(select);
+    let group_positions = group_positions(select, &scope);
     let mut names: Vec<Option<String>> = Vec::new();
     let mut outputs: Vec<(String, Emitted)> = Vec::new();
     let mut suffixed_item: Option<&Value> = None;
@@ -343,7 +357,26 @@ fn convert_select(
         })
         .collect();
     if named {
-        require_distinct_names(&columns)?;
+        let refused_because = match !context.free_projections && outer.is_none() {
+            false => Some(NESTED_REPEAT),
+            true if NAME_READING_CLAUSES
+                .iter()
+                .any(|clause| select.get(*clause).is_some_and(|value| !value.is_null())) =>
+            {
+                Some(CLAUSE_REPEAT)
+            }
+            true if columns.iter().any(|column| {
+                matches!(
+                    column.data_type,
+                    SnowflakeType::SemiStructured | SnowflakeType::Null
+                )
+            }) =>
+            {
+                Some(WRAPPED_REPEAT)
+            }
+            true => None,
+        };
+        require_distinct_names(&columns, refused_because)?;
     }
     let grouped_all = match select.get("group_by").and_then(Value::as_object) {
         Some(group) if flag(group, "all") => group_all_positions(select).unwrap_or_default(),
@@ -568,7 +601,7 @@ pub(crate) fn convert_with<'a>(
                 })?;
                 quoted.push(quoted_identifier(&column.name, context.log));
             }
-            require_distinct_names(&columns)?;
+            require_distinct_names(&columns, Some(NESTED_REPEAT))?;
             column_list = format!("({})", quoted.join(", "));
         }
         parts.push(format!(
@@ -607,19 +640,8 @@ fn convert_projection(
             let _rule = site.context.log.rule(COMMENT);
             let annotated = payload_object(payload, &construct)?;
             require_understood(annotated, &["this", "trailing_comments"], &construct)?;
-            let this = field(annotated, "this", &construct)?;
-            match node_kind(this) {
-                Some((kind, _)) if named && !matches!(kind, "star" | "alias" | "column") => {
-                    let refusal = missing(
-                        Construct::new(ConstructFamily::Syntax, UNALIASED_OUTPUT_NAME_CONSTRUCT),
-                        format!(
-                            "Snowflake names this `{kind}` column after its text, comment included"
-                        ),
-                    );
-                    Err(site.context.locator.placed(refusal, this))
-                }
-                _ => convert_projection(this, site, named),
-            }
+            convert_projection(field(annotated, "this", &construct)?, site, named)
+                .map_err(|refusal| site.context.locator.placed(refusal, item))
         }
         Some(("alias", payload)) => {
             let _rule = site.context.log.rule(ALIAS);
@@ -628,7 +650,14 @@ fn convert_projection(
             require_understood(alias, &["this", "alias"], &construct)?;
             let name = identifier_name(field(alias, "alias", &construct)?)
                 .ok_or_else(|| missing(construct.clone(), "an alias has no name".to_owned()))?;
-            let emitted = convert_held(field(alias, "this", &construct)?, site)?;
+            let this = field(alias, "this", &construct)?;
+            if glued_to_number(site.context.locator.source_text(item).as_deref(), this) {
+                return Err(site
+                    .context
+                    .locator
+                    .placed(outside_conditions(construct, GLUED_ALIAS.to_owned()), item));
+            }
+            let emitted = convert_held(this, site)?;
             Ok(vec![(Some(name), emitted)])
         }
         Some(("column", payload)) => {
@@ -644,9 +673,10 @@ fn convert_projection(
                 .context
                 .locator
                 .source_text(item)
-                .or_else(|| literal_text(item));
+                .or_else(|| literal_text(item, &site.context.locator.source()));
+            let text_of = |node: &Value| site.context.locator.source_text(node);
             match written
-                .filter(|text| recorded_name_shape(item, text))
+                .filter(|_| recorded_name_shape(item, &text_of))
                 .and_then(output_name)
             {
                 Some(name) => {
@@ -669,32 +699,55 @@ fn convert_projection(
     }
 }
 
-/// Snowflake's name for an unaliased item written as `text` in recorded spacing: it upper-cased.
+/// Whether the alias item written as `written` follows its number `this` with no space, as `0x1F`.
+fn glued_to_number(written: Option<&str>, this: &Value) -> bool {
+    let Some(("literal", payload)) = node_kind(this) else {
+        return false;
+    };
+    let value = payload
+        .get("value")
+        .and_then(Value::as_str)
+        .unwrap_or_default();
+    payload.get("literal_type").and_then(Value::as_str) == Some(LITERAL_NUMBER)
+        && !value.is_empty()
+        && written
+            .and_then(|written| written.strip_prefix(value))
+            .and_then(|rest| rest.chars().next())
+            .is_some_and(|next| next.is_ascii_alphabetic() || next == '_')
+}
+
+/// Snowflake's name for an unaliased item written as `text`: it upper-cased, cut at 255 characters.
 fn output_name(text: String) -> Option<String> {
     let recorded = !text.is_empty()
         && text.is_ascii()
         && text.trim() == text
         && !text.contains("--")
-        && !text.contains("/*")
-        && !text.contains(['\t', '\r'])
+        && !text.contains('\r')
         && !text.contains(" (")
-        && text.matches('\n').count() <= 1
-        && text
-            .split('\n')
-            .all(|line| !line.trim_start_matches(' ').contains("  "));
-    recorded.then(|| text.to_ascii_uppercase())
+        && text.matches('\n').count() <= 1;
+    recorded.then(|| {
+        text.to_ascii_uppercase()
+            .chars()
+            .take(OUTPUT_NAME_MAX_CHARS)
+            .collect()
+    })
 }
 
 /// A literal's written text: a number as parsed, a plain string quoted, NULL, TRUE or FALSE.
-fn literal_text(item: &Value) -> Option<String> {
+fn literal_text(item: &Value, source: &str) -> Option<String> {
     match node_kind(item)? {
         ("literal", payload) => {
             let value = payload.get("value")?.as_str()?;
-            match payload.get("literal_type")?.as_str()? {
-                LITERAL_NUMBER => Some(value.to_owned()),
-                LITERAL_STRING if !value.contains(['\'', '\\']) => Some(format!("'{value}'")),
-                _ => None,
-            }
+            let keyword = match payload.get("literal_type")?.as_str()? {
+                LITERAL_NUMBER => return Some(value.to_owned()),
+                LITERAL_STRING if !value.contains(['\'', '\\']) => {
+                    return Some(format!("'{value}'"));
+                }
+                LITERAL_DATE => "DATE",
+                LITERAL_TIMESTAMP => "TIMESTAMP",
+                _ => return None,
+            };
+            spelled_once(source, keyword, value).then(|| format!("{keyword} '{value}'"))
         }
         ("boolean", payload) => Some(
             match payload.get("value")?.as_bool()? {
@@ -847,18 +900,49 @@ fn hidden_column(column: &ColumnSpec) -> bool {
     column.name == GENERATOR_SEQUENCE_COLUMN || column.name.starts_with(HIERARCHY_COLUMN_PREFIX)
 }
 
-/// Refuses result columns whose names repeat, which DuckDB would rename.
-pub(crate) fn require_distinct_names(columns: &[ColumnSpec]) -> Result<(), Refusal> {
+/// Refuses repeated result names, exact repeats only for `refused_because`, which says why.
+pub(crate) fn require_distinct_names(
+    columns: &[ColumnSpec],
+    refused_because: Option<&str>,
+) -> Result<(), Refusal> {
     for (index, column) in columns.iter().enumerate() {
-        if columns[..index]
+        let earlier = columns[..index]
             .iter()
-            .any(|earlier| earlier.name.eq_ignore_ascii_case(&column.name))
-        {
-            return Err(unresolved(format!(
-                "the result column name `{}` {REPEATED_RESULT_NAME}",
-                column.name
-            )));
+            .find(|earlier| earlier.name.eq_ignore_ascii_case(&column.name));
+        match earlier {
+            Some(earlier) if earlier.name == column.name => match refused_because {
+                None => {}
+                Some(reason) => {
+                    return Err(unresolved(format!(
+                        "the result column name `{}` {REPEATED_RESULT_NAME} {reason}; \
+                         Snowflake keeps both names, so alias one of them",
+                        column.name
+                    )));
+                }
+            },
+            Some(_) => {
+                return Err(unresolved(format!(
+                    "the result column name `{}` {REPEATED_RESULT_NAME} in another case, which \
+                     DuckDB treats as the same name",
+                    column.name
+                )));
+            }
+            None => {}
         }
     }
     Ok(())
+}
+
+/// Whether every `'value'` after `keyword` in `source` is spelled `keyword 'value'` with one space.
+fn spelled_once(source: &str, keyword: &str, value: &str) -> bool {
+    let quoted = format!("'{value}'");
+    !value.contains(['\'', '\\'])
+        && !source.contains("--")
+        && source.match_indices(&quoted).all(|(at, _)| {
+            let before = &source[..at];
+            let gap = before.len() - before.trim_end().len();
+            let typed = before.trim_end().to_ascii_uppercase().ends_with(keyword)
+                || before.trim_end().ends_with("*/");
+            !typed || (gap == 1 && before.ends_with(' ') && !before.trim_end().ends_with("*/"))
+        })
 }

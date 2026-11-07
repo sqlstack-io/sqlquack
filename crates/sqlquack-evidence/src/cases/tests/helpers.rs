@@ -115,6 +115,23 @@ pub(crate) fn source_sql_of(reference: &str) -> Option<String> {
         .map(|case| case.source_sql)
 }
 
+/// The ordinal the single-row source `row` of the case `reference` gives its row.
+pub(crate) fn row_source_ordinal(
+    reference: &str,
+    (replace, with): (&str, &str),
+    row: usize,
+) -> Option<usize> {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let case = load_variant(directory.path(), replace, with)
+        .expect("the variant loads")
+        .into_iter()
+        .find(|case| case.reference == reference)?;
+    let source = case.row_sources.get(row)?;
+    let (_, rest) = source.split_once("SELECT ")?;
+    let (ordinal, _) = rest.split_once(" AS ordinal")?;
+    ordinal.parse().ok()
+}
+
 /// How many single-row sources the case `reference` gets once `replace` becomes `with`.
 pub(crate) fn row_source_count(reference: &str, (replace, with): (&str, &str)) -> Option<usize> {
     let directory = tempfile::tempdir().expect("temporary directory");

@@ -3,19 +3,20 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>Playground · SQLQuack</title>
+		<title>Playground · SQLQuack · Run warehouse SQL locally</title>
 		<meta
 			name="description"
-			content="SQLQuack is a Snowflake SQL compiler written in Rust. It parses Snowflake SQL, reports what Snowflake would reject with rustc-style diagnostics, and translates the rest into DuckDB SQL, or refuses it with a code, a span and a reason."
+			content="A warehouse SQL compiler in Rust: parse, check and translate to DuckDB, or refuse with a precise reason."
 		/>
-		<meta property="og:title" content="SQLQuack · Snowflake SQL on DuckDB, or a clear no" />
+		<meta property="og:title" content="SQLQuack Playground · Run warehouse SQL locally. Verified results, or a clear no" />
 		<meta property="og:description" content="A SQLGlot alternative in Rust that would rather reject your SQL than return the wrong answer." />
 		<meta property="og:type" content="website" />
-		<meta property="og:image" content="/assets/og-sqlquack.png" />
+		<meta property="og:image" content="https://sqlquack.io/assets/og-sqlquack-v2.png" />
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
-		<meta property="og:image:alt" content="SQLQuack: a Snowflake SQL compiler that translates to DuckDB, or refuses to guess." />
+		<meta property="og:image:alt" content="SQLQuack: a warehouse SQL compiler that translates to DuckDB, or refuses to guess." />
 		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:image" content="https://sqlquack.io/assets/og-sqlquack-v2.png" />
 		<link rel="icon" type="image/png" sizes="128x128" href="/favicon.png" />
 		<link rel="preload" href="/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
 		<link rel="stylesheet" href="/styles.css" />
@@ -65,20 +66,10 @@
 					your browser. Each stage passes or fails on its own, so you can see which step stopped and where.
 				</p>
 			</div>
+			<div class="wrap pg-examples" id="pg-examples" role="group" aria-label="Examples"></div>
 			<div class="wrap playground">
 				<div class="pg-inputs">
-					<label class="pg-label" for="pg-sql"
-						><span>Snowflake SQL</span>
-						<select id="pg-example" aria-label="Examples">
-							<option value="">Examples…</option>
-							<option value="valid">Converts and runs</option>
-							<option value="decimal">Decimal division</option>
-							<option value="syntax">Syntax error</option>
-							<option value="rejected">Snowflake rejects it</option>
-							<option value="unknown">Unknown column</option>
-							<option value="refused">Translation refused</option>
-						</select></label
-					>
+					<label class="pg-label" for="pg-sql"><span>Snowflake SQL</span></label>
 					<div class="pg-editor">
 						<div class="pg-marks" id="pg-marks" aria-hidden="true"></div>
 						<textarea id="pg-sql" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
@@ -97,7 +88,7 @@
 					</details>
 					<details>
 						<summary>Policy and session</summary>
-						<textarea class="pg-small" id="pg-policy" spellcheck="false" aria-label="Policy file (TOML)" placeholder="Empty: the built-in default, which refuses every known divergence but the clock"></textarea>
+						<textarea class="pg-small" id="pg-policy" spellcheck="false" aria-label="Policy file (TOML)" placeholder="Empty: the built-in default, which refuses every known divergence but the clock and arithmetic range errors"></textarea>
 						<p class="pg-note">A policy file, as for <code>--policy</code>. <button class="pg-link" type="button" id="pg-load-policy">Load the repository's sqlquack.toml</button></p>
 						<textarea class="pg-small pg-short" id="pg-session" spellcheck="false" aria-label="Session parameters" placeholder="TIMEZONE=UTC"></textarea>
 						<p class="pg-note">Snowflake session parameters, one <code>NAME=VALUE</code> per line, as for <code>--session</code>.</p>

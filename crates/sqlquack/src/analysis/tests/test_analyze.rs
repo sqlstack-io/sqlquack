@@ -114,9 +114,9 @@ fn given_sql_and_a_schema_when_analyzing_then_it_converts_or_refuses_with_a_cate
             expected_summary: converted(),
         },
         AnalyzeTestCase {
-            description: "an unaliased literal carrying a comment has no recorded column name",
+            description: "a comment after an unaliased literal is not part of its name, as recorded",
             sql: "SELECT 'x' /* c */ FROM orders",
-            expected_summary: refused(RefusalCategory::MissingRule),
+            expected_summary: converted(),
         },
         AnalyzeTestCase {
             description: "comments after select items and inside expressions are dropped",

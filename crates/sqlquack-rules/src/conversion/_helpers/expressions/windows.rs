@@ -24,6 +24,7 @@ use crate::conversion::_helpers::expressions::ordered_aggregates::within_group;
 use crate::conversion::_helpers::expressions::scalar::{call_name, convert_expression};
 use crate::conversion::_helpers::expressions::spellings::{as_typed, as_written};
 use crate::conversion::_helpers::expressions::statistics::is_statistic;
+use crate::conversion::_helpers::expressions::temporal::unified_cast;
 use crate::conversion::_helpers::support::declared::merged;
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Emitted};
@@ -439,7 +440,14 @@ fn offset_window(
                 default.data_type, value.data_type
             )));
         }
-        arguments.push(cast(&default.sql, value.data_type, log).map_err(refuse)?);
+        arguments.push(
+            unified_cast(
+                &default.sql,
+                (default.data_type, value.data_type),
+                (site.context, &construct),
+            )
+            .map_err(refuse)?,
+        );
     }
     Ok(Emitted {
         utc_offset: utc_kept(&values, value.data_type),

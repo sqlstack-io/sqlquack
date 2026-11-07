@@ -25,7 +25,7 @@ use crate::conversion::_helpers::support::tree::{
     node_construct, node_kind, payload_object, require_understood,
 };
 use crate::conversion::constants::{
-    AMBIGUOUS_SUFFIX, GROUP_BY_ALL_RULE, LIMIT, ORDER_BY, SYSTEM_TYPEOF_NAME,
+    AMBIGUOUS_SUFFIX, GROUP_BY_ALIAS_RULE, GROUP_BY_ALL_RULE, LIMIT, ORDER_BY, SYSTEM_TYPEOF_NAME,
     TYPE_SUFFIX_UNREMOVED, VARIANT_HELD_UNREAD,
 };
 
@@ -116,7 +116,9 @@ pub(crate) fn group_by(select: &Payload, site: Site<'_>, held: &[bool]) -> Resul
     let site = site.scoped(&without_aliases).placed(Placement::ROW);
     let mut keys: Vec<String> = Vec::new();
     for key in list(group, "expressions") {
-        match integer_literal(key) {
+        let aliased = alias_position(key, select, site.scope);
+        let _rule = aliased.map(|_| site.context.log.rule(GROUP_BY_ALIAS_RULE));
+        match integer_literal(key).or(aliased) {
             Some(position) => keys.push(position_key(position, held, "GROUP BY")?),
             None => {
                 alias_only_key(key, &aliases, site)?;
@@ -155,7 +157,10 @@ pub(crate) fn variant_group_keys(
     let site = site.scoped(&without_aliases).placed(Placement::ROW);
     let mut keys: Vec<(String, String)> = Vec::new();
     for key in list(payload_object(group, &construct)?, "expressions") {
-        if integer_literal(key).is_some() {
+        if integer_literal(key)
+            .or_else(|| alias_position(key, select, site.scope))
+            .is_some()
+        {
             continue;
         }
         alias_only_key(key, &aliases, site)?;
@@ -171,15 +176,49 @@ pub(crate) fn variant_group_keys(
     Ok(keys)
 }
 
-/// The output positions GROUP BY names.
-pub(crate) fn group_positions(select: &Payload) -> Vec<u64> {
+/// The output positions GROUP BY names, by number or by a select alias no FROM column shadows.
+pub(crate) fn group_positions(select: &Payload, scope: &Scope) -> Vec<u64> {
     let group = select.get("group_by").and_then(Value::as_object);
     group
         .map(|group| list(group, "expressions"))
         .unwrap_or_default()
         .iter()
-        .filter_map(integer_literal)
+        .filter_map(|key| integer_literal(key).or_else(|| alias_position(key, select, scope)))
         .collect()
+}
+
+/// The position of the one SELECT item a bare key names by alias, unshadowed and after no star.
+fn alias_position(key: &Value, select: &Payload, scope: &Scope) -> Option<u64> {
+    let Some(("column", column)) = node_kind(key) else {
+        return None;
+    };
+    if !column.get("table").is_none_or(Value::is_null) {
+        return None;
+    }
+    let name = column.get("name").and_then(identifier_name)?;
+    let from_only = Scope::new(scope.relations.clone(), scope.outer);
+    resolve_name(&from_only, (None, &name), SNOWFLAKE_TO_DUCKDB)
+        .is_err()
+        .then_some(())?;
+    let items = list(select, "expressions");
+    let named: Vec<usize> = items
+        .iter()
+        .enumerate()
+        .filter(|(_, item)| match node_kind(item) {
+            Some(("alias", payload)) => {
+                payload.get("alias").and_then(identifier_name) == Some(name.clone())
+            }
+            _ => false,
+        })
+        .map(|(index, _)| index)
+        .collect();
+    let [index] = named.as_slice() else {
+        return None;
+    };
+    let starred = items[..*index]
+        .iter()
+        .any(|item| matches!(node_kind(item), Some(("star", _))));
+    (!starred).then(|| u64::try_from(index + 1).unwrap_or(u64::MAX))
 }
 
 /// A key by output position; an output held as a DuckDB VARIANT is refused, as its order is.
