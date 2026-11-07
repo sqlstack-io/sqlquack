@@ -2,7 +2,9 @@
 
 use sqlquack_syntax::expressions::names::models::{Literal, Star};
 use sqlquack_syntax::expressions::operators::models::Cast;
-use sqlquack_syntax::expressions::types::constants::SNOWFLAKE_UNTYPED_LITERAL_TYPES;
+use sqlquack_syntax::expressions::types::constants::{
+    SNOWFLAKE_UNPARAMETERIZED_LITERAL_TYPES, SNOWFLAKE_UNTYPED_LITERAL_TYPES,
+};
 use sqlquack_syntax::expressions::types::models::DataType;
 use sqlquack_syntax::{Expression, ExpressionWalk};
 
@@ -41,7 +43,7 @@ pub(crate) fn rejection(node: &Expression) -> Option<(&'static str, String)> {
     }
 }
 
-/// A string written after a timestamp type name with parameters, such as `TIMESTAMP_NTZ(3) '...'`.
+/// A string written after a date-time type name with parameters, such as `TIMESTAMP_NTZ(3) '...'`.
 fn untyped_literal(cast: &Cast) -> Option<(&'static str, String)> {
     let Expression::Literal(literal) = &cast.this else {
         return None;
@@ -53,6 +55,7 @@ fn untyped_literal(cast: &Cast) -> Option<(&'static str, String)> {
     let (base, _) = written.split_once('(')?;
     let (_, function) = SNOWFLAKE_UNTYPED_LITERAL_TYPES
         .iter()
+        .chain(SNOWFLAKE_UNPARAMETERIZED_LITERAL_TYPES)
         .find(|(listed, _)| listed.eq_ignore_ascii_case(base))?;
     (cast.typed_literal && matches!(literal.as_ref(), Literal::String(_))).then(|| {
         (

@@ -315,14 +315,15 @@ pub const CODES: &[CodeEntry] = &[
         code: "SQ0211",
         name: "unsupported_type_literal",
         alias: None,
-        title: "Snowflake has no literal of this timestamp type",
+        title: "Snowflake has no literal of this date-time type",
         help: Some("cast the string instead, e.g. `'2026-01-02'::TIMESTAMP_NTZ(3)`"),
         explanation: "Only DATE, TIME and TIMESTAMP take a string as a typed literal in \
-            Snowflake. A TIMESTAMP_NTZ, TIMESTAMP_LTZ or TIMESTAMP_TZ type with a precision \
-            before a string parses, but Snowflake rejects it as an unsupported data type \
-            literal (Snowflake error 2121). Without a precision, the same spelling is a syntax \
-            error. Cast the string with `::` or CAST, or call TO_TIMESTAMP_NTZ, \
-            TO_TIMESTAMP_LTZ or TO_TIMESTAMP_TZ.",
+            Snowflake, and only without a precision. A date-time type with a precision before \
+            a string, such as TIMESTAMP_NTZ(3), DATETIME(3), TIMESTAMP(3) or TIME(3), parses, \
+            but Snowflake rejects it as an unsupported data type literal (Snowflake error \
+            2121). Without a precision, TIMESTAMP_NTZ, TIMESTAMP_LTZ, TIMESTAMP_TZ or DATETIME \
+            before a string is a syntax error. Cast the string with `::` or CAST, or call \
+            TO_TIMESTAMP_NTZ, TO_TIMESTAMP_LTZ, TO_TIMESTAMP_TZ, TO_TIMESTAMP or TO_TIME.",
         example: r#"echo "SELECT TIMESTAMP_NTZ(3) '2026-01-02 03:04:05' AS v" | sqlquack check"#,
     },
 ];

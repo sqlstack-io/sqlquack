@@ -132,6 +132,9 @@ impl Parser {
         }
 
         if self.check(TokenType::Time) {
+            if let Some(literal) = self.try_parse_snowflake_parameterized_literal()? {
+                return Ok(literal);
+            }
             let token = self.advance()?;
             let original_text = token.text.to_string();
             if self.check(TokenType::String) {
@@ -797,6 +800,9 @@ impl Parser {
     }
 
     fn parse_primary_timestamp_literal(&mut self) -> Result<Expression> {
+        if let Some(literal) = self.try_parse_snowflake_parameterized_literal()? {
+            return Ok(literal);
+        }
         let token = self.advance()?;
         let original_text = token.text.to_string();
         if self.check(TokenType::String) {
@@ -960,6 +966,9 @@ impl Parser {
             if let Some(error) = self.untyped_literal_error(string) {
                 return Err(error);
             }
+        }
+        if let Some(literal) = self.try_parse_snowflake_parameterized_literal()? {
+            return Ok(literal);
         }
         let token = self.advance()?;
         let original_text = token.text.to_string();

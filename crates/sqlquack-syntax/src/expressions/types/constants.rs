@@ -10,3 +10,7 @@ pub const SNOWFLAKE_UNTYPED_LITERAL_TYPES: &[(&str, &str)] = &[
     ("TIMESTAMPTZ", "TO_TIMESTAMP_TZ"),
     ("DATETIME", "TO_TIMESTAMP_NTZ"),
 ];
+
+/// Type names Snowflake takes before a string only without parameters, each with its function.
+pub const SNOWFLAKE_UNPARAMETERIZED_LITERAL_TYPES: &[(&str, &str)] =
+    &[("TIMESTAMP", "TO_TIMESTAMP"), ("TIME", "TO_TIME")];

@@ -129,6 +129,21 @@ impl Parser {
         {
             return Ok(None);
         }
+        self.parse_snowflake_named_type_literal()
+    }
+
+    /// A date-time keyword with parameters before a string, as Snowflake parses `TIME(3) '...'`.
+    pub(crate) fn try_parse_snowflake_parameterized_literal(
+        &mut self,
+    ) -> Result<Option<Expression>> {
+        if !self.applies_snowflake_context_rules() || !self.check_next(TokenType::LParen) {
+            return Ok(None);
+        }
+        self.parse_snowflake_named_type_literal()
+    }
+
+    /// The current type name `[ ( ... ) ] '<string>'` as a typed-literal cast, or none.
+    pub(crate) fn parse_snowflake_named_type_literal(&mut self) -> Result<Option<Expression>> {
         let Some(end) = self.named_type_literal_end() else {
             return Ok(None);
         };
