@@ -20,7 +20,6 @@ next top-level `;` is not checked further. `TREAT` is checked against the full g
 | --- | --- |
 | a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, `CREATE [OR REPLACE] [MATERIALIZED] VIEW`, `CREATE INDEX`, `SEQUENCE`, `TRIGGER`, `TYPE` and `FOREIGN TABLE`, the catalog `CREATE` statements listed under their own heading, every `DROP`, every `ALTER`, `GRANT` and `REVOKE`, and the utility and session statements listed under their own heading |
 | `treat` | `TREAT (… AS type)` |
-| `joined_table_column_aliases` | column aliases on a parenthesized join |
 
 ## Lossy mappings
 

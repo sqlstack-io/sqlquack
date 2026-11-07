@@ -28,6 +28,24 @@ fn aliased(call: Expression, alias: Option<TableAlias>) -> Expression {
     }
 }
 
+/// A parenthesized join and its alias: a name alone stays on the join, column aliases wrap it.
+fn joined_alias(left: Expression, joins: Vec<Join>, alias: Option<TableAlias>) -> Expression {
+    let named: bool = alias.as_ref().is_some_and(|alias| alias.columns.is_empty());
+    let table: Expression = match (joins.is_empty(), left) {
+        (true, Expression::JoinedTable(mut inner)) if named && inner.alias.is_none() => {
+            inner.alias = alias.map(|alias| alias.name);
+            return Expression::JoinedTable(inner);
+        }
+        (true, left) => left,
+        (false, left) if named => return joined_table(left, joins, alias.map(|alias| alias.name)),
+        (false, left) => joined_table(left, joins, None),
+    };
+    match named {
+        true => table,
+        false => aliased(table, alias),
+    }
+}
+
 impl Parser<'_> {
     /// `from_list`: the comma-separated items, and every join, in order.
     pub(crate) fn parse_from_list(&mut self) -> Parsing<(Vec<Expression>, Vec<Join>)> {
@@ -420,18 +438,8 @@ impl Parser<'_> {
                 return Err(parser.error());
             }
             parser.expect_char(')')?;
-            let start: usize = parser.offset();
             let alias: Option<TableAlias> = parser.alias_clause(true)?;
-            if alias
-                .as_ref()
-                .is_some_and(|alias| !alias.columns.is_empty())
-            {
-                parser.gap("joined_table_column_aliases", start);
-            }
-            Ok(match joins.is_empty() {
-                true => left,
-                false => joined_table(left, joins, alias.map(|alias| alias.name)),
-            })
+            Ok(joined_alias(left, joins, alias))
         });
         match (joined, reached) {
             (Ok(node), _) => Ok(node),
