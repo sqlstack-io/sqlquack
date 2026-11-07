@@ -379,7 +379,7 @@ class _Renderer:
 
     @staticmethod
     def _set_anchor(*, rest: tuple[Node, ...], choices: _Choices) -> _Choices:
-        """Choices with one property of an all-optional SET list, if none would render (D118)."""
+        """Choices with one property of an all-optional SET list, if none would render."""
         options: list[Node] = _set_options(rest)
         if choices.full or not options or any(id(n) in choices.path for n in options):
             return choices

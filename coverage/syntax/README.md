@@ -24,7 +24,7 @@ translation-equivalence measure.
   removed as a fragment (not a form) has no alias.
 - `reviews/exclusions.toml`: the reviewed reason for every page that catalogues no form
   (`out_of_scope` and `no_syntax_block`), bound to the sha256 of `sources.toml`.
-- `census/<family>.jsonl` (D107c): for each counted case that `sqlquack convert` refuses only
+- `census/<family>.jsonl`: for each counted case that `sqlquack convert` refuses only
   with `unresolved name`, the smallest schema that resolves its names, one line per case sorted
   by case id: `{"case_id", "relations": [{"name", "columns": [{"name", "type"}]}]}`. Names are
   spelled as the case SQL spells them (unquoted, or with their double or single quotes); types
@@ -48,7 +48,7 @@ are still among its signatures. A form whose grammar no longer appears keeps its
 `status = "absent_from_source"`; ids are never reused, and splits and renames go through
 `aliases.toml`.
 
-## Form rules (decision D62)
+## Form rules
 
 A form is one documented syntax block or variant. Options and alternatives inside it are its
 obligations, not forms.
@@ -79,7 +79,7 @@ obligations, not forms.
    and `ALL` inside the parentheses are options of the plain call.
 8. A variant heading with no syntax block (the DCM `DEFINE <object>` variants, some CREATE OR
    ALTER variants) is a `prose` form with an empty grammar. Its grammar is a `[[reading]]` in
-   `limits.toml` derived from the page's substitution rule (decision D104): CREATE OR ALTER X takes
+   `limits.toml` derived from the page's substitution rule: CREATE OR ALTER X takes
    the CREATE X grammar with OR ALTER, DEFINE X takes the CREATE OR ALTER X grammar with DEFINE in
    its place, and each reading quotes the page. DEFINE cases are captured from a DCM project
    definition file (`capture = "dcm_definition_file"`), never by executing them. DCM refuses
@@ -89,19 +89,19 @@ obligations, not forms.
    after AFTER, FINALIZE, ROOTS, FINALIZER, CORTEX SEARCH SERVICE, REFRESH USING ( DELETE FROM and
    the secret objects in SECRETS = ( ... ) are qualified the same way. Other ddl, security_admin
    and classes cases are executed in a run database (`capture = "execute_ddl_in_run_database"`), and each carries the
-   exact setup its receipts were recorded under (D110), so the checker binds receipts strictly:
+   exact setup its receipts were recorded under, so the checker binds receipts strictly:
    the setup of the case's latest receipt from an imported or reconciled run, skipping
    measure-only receipts and shared-schema setups (whose outcome depends on run order). A case
    whose receipts disagree on syntax_error across setups is listed for review. A case without
    such a receipt carries its family's sweep setup with a per-case schema (the ddl sweep for
-   ddl, the d103 sweep for security_admin and classes), which future captures use. Cases of
+   ddl, the run-database sweep for security_admin and classes), which future captures use. Cases of
    other families on a held list (`--held`, the import's held-case file) run later under the
-   d103 runner and carry its setup too, unless they already have such a receipt, whose setup
+   run-database runner and carry its setup too, unless they already have such a receipt, whose setup
    they then carry like a ddl case.
 9. Pages whose syntax is written outside syntax blocks are catalogued from `hand.toml`; the
    page's `decisions` records the basis (HTML parsed-literal, table, heading, prose, inline code or
    examples, the last only for syntax shown by examples alone, such as `<expr>['<key>']`).
-10. Syntax restated on another page counts once (decision D80). Grammar repeated byte for byte on
+10. Syntax restated on another page counts once. Grammar repeated byte for byte on
    several pages is one form, on the page with the shortest id (the command's own page before its
    variant pages, `create-iceberg-table` before the per-catalog pages); grammars that differ at all
    are separate forms. General-reference pages that restate forms catalogued elsewhere
@@ -122,7 +122,7 @@ collision the heading is appended, then a number.
   obligation numbers above 999, which the checker accepts as `o1000` onwards, unpadded. The DCM
   `DEFINE` variants are valid only inside DCM project files, not as standalone SQL.
 - An unquoted identifier in place of a string literal is an observed neighbour, not a scored
-  rejection (D106): Snowflake parses an identifier there and fails it later (OAUTH_ALLOWED_SCOPES,
+  rejection: Snowflake parses an identifier there and fails it later (OAUTH_ALLOWED_SCOPES,
   IMPORTS, FROM LISTING), so a receipt decides it. An observed neighbour still settles as a
   rejection when its receipt is a syntax error, unless Snowflake refuses every documented positive
   of its form: then the form's receipts say nothing about its negatives, which all stay observed.

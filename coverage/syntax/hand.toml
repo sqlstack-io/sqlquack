@@ -855,7 +855,7 @@ grammar = [
 basis = "example"
 page_sha256 = "354fefb657b3ed083830ad6f74d14d30f3a13d6fdb303829e38f44904d49af99"
 
-# Folds (D80): a form that restates syntax catalogued under another page's form is counted once.
+# Folds: a form that restates syntax catalogued under another page's form is counted once.
 # The restating page becomes an also_sources entry of each canonical form in `into`; the folded id
 # stays absent_from_source with an alias. Byte-identical grammar across pages is folded by the
 # build without an entry here.
@@ -863,147 +863,147 @@ page_sha256 = "354fefb657b3ed083830ad6f74d14d30f3a13d6fdb303829e38f44904d49af99"
 [[fold]]
 form = "sf.expressions.data-types-geospatial.st-geogfromwkb"
 into = ["sf.functions.st-geographyfromwkb.st-geogfromwkb"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.expressions.data-types-geospatial.st-geogfromwkt"
 into = ["sf.functions.st-geographyfromwkt.st-geogfromwkt"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.expressions.data-types-geospatial.st-geomfromwkb"
 into = ["sf.functions.st-geometryfromwkb.st-geomfromwkb"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.expressions.data-types-geospatial.st-geomfromwkt"
 into = ["sf.functions.st-geometryfromwkt.st-geomfromwkt"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.expressions.data-types-geospatial.to-geography"
 into = ["sf.functions.to-geography"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.expressions.data-types-geospatial.to-geometry"
 into = ["sf.functions.to-geometry"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.expressions.date-time-input-output.to-timestamp"
 into = ["sf.functions.to-timestamp"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.expressions.date-time-input-output.to-timestamp-to-number"
 into = ["sf.functions.to-timestamp", "sf.functions.to-decimal.to-number"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.expressions.collation.collate"
 into = ["sf.functions.collate.collate"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.expressions.collation.collate.collate-function"
 into = ["sf.functions.collate.collate.syntax"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.expressions.collation.collation"
 into = ["sf.functions.collation"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.expressions.collation.create-table-collate"
 into = ["sf.ddl.create-table.create-table"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.ddl.constraints-create.alter-table-add"
 into = ["sf.ddl.alter-table.constraintaction"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.ddl.constraints-create.alter-table-add-column"
 into = ["sf.ddl.alter-table.tablecolumnaction"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.ddl.constraints-create.create-table"
 into = ["sf.ddl.create-table.create-table"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.ddl.constraints-create.create-table.creating-constraints-out-of-line"
 into = ["sf.ddl.create-table.create-table"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.ddl.constraints-alter.alter-modify-constraint-primary"
 into = ["sf.ddl.alter-table.constraintaction"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.ddl.constraints-alter.rename-constraint-to"
 into = ["sf.ddl.alter-table.constraintaction"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.ddl.constraints-drop.alter-table-drop-column"
 into = ["sf.ddl.alter-table.tablecolumnaction"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.ddl.constraints-drop.alter-table-drop-constraint"
 into = ["sf.ddl.alter-table.constraintaction"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.ddl.constraints-drop.drop-table-schema-database"
 into = ["sf.ddl.drop-database", "sf.ddl.drop-schema", "sf.ddl.drop-table"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.expressions.virtual-columns.alter-table-add-as"
 into = ["sf.ddl.alter-table.tablecolumnaction"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.expressions.virtual-columns.create-or-replace-table"
 into = ["sf.ddl.create-table.create-table"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.expressions.external-functions-translators.alter-function-set"
 into = ["sf.ddl.alter-function.set-request-translator-response-translator"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.expressions.external-functions-translators.alter-function-unset"
 into = ["sf.ddl.alter-function.unset-comment-headers-context-headers"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.expressions.external-functions-translators.create-external-function-f"
 into = ["sf.ddl.create-external-function.function-returns-api-integration-as"]
-reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f, D80)"
+reason = "general-reference page restating syntax catalogued on its own page (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.expressions.sql-format-models"
 into = ["sf.functions.to-char.to-char", "sf.functions.to-decimal.to-number"]
-reason = "format-string element inside conversion-function format arguments, not SQL syntax; an obligation of the forms that take a format (omission audit of 9160085f, D80)"
+reason = "format-string element inside conversion-function format arguments, not SQL syntax; an obligation of the forms that take a format (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.expressions.data-types-datetime.interval-formats"
 into = ["sf.expressions.data-types-datetime.interval"]
-reason = "string content of an INTERVAL literal; an obligation of the interval literal form (omission audit of 9160085f, D80)"
+reason = "string content of an INTERVAL literal; an obligation of the interval literal form (omission audit of 9160085f)"
 
 [[fold]]
 form = "sf.expressions.data-types-datetime.interval-formats.interval-formats"
 into = ["sf.expressions.data-types-datetime.interval"]
-reason = "string content of an INTERVAL literal; an obligation of the interval literal form (omission audit of 9160085f, D80)"
+reason = "string content of an INTERVAL literal; an obligation of the interval literal form (omission audit of 9160085f)"
 
 [[form]]
 source = "doc.sql.create-warehouse"

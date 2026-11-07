@@ -1,4 +1,4 @@
-//! Every current receipt against the parser, whether or not a catalogued case cites it (decision D141).
+//! Every current receipt against the parser, whether or not a catalogued case cites it.
 
 use std::collections::{BTreeMap, BTreeSet};
 

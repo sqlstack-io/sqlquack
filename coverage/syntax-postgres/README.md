@@ -166,7 +166,7 @@ rejects is accepted by the parser, so `syntax-coverage diff
 coverage/syntax-postgres/baseline.json --root coverage/syntax-postgres` fails on any regression
 from here.
 
-`reviews/auditor-<family>.toml` holds the independent reviewers' approvals (D235, D238). Each
+`reviews/auditor-<family>.toml` holds the independent reviewers' approvals. Each
 `[[review]]` is copied verbatim from the reviewer's record on `wip/syntax-omission-audit`
 (`coverage/syntax/audits/pg-review-*.toml`) and holds while each form's fingerprint and definition
 hash are unchanged.

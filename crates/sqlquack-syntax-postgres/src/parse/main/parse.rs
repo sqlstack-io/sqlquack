@@ -5,8 +5,8 @@ use sqlquack_syntax::Expression;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
 use crate::parse::_helpers::tree::nodes::command;
 use crate::parse::errors::ParseError;
-use crate::parse::models::Parsed;
 use crate::scan::main::scan::scan;
+use sqlquack_syntax::Parsed;
 
 /// Every statement of `sql`; a statement holding a construct the shared tree lacks is a `Command`.
 pub fn parse(sql: &str) -> Result<Parsed, ParseError> {

@@ -1,0 +1,41 @@
+# The names Snowflake gives unaliased unary plus and minus over a column and over a parenthesised
+# literal, beside the literal operands already recorded.
+category = "relational"
+construct = "node:alias"
+session_profile = "utc-v1"
+
+[[case]]
+id = "unaliased_unary_signs"
+description = "Unary plus and minus over a NUMBER column, a spaced plus and a plus before parentheses, unaliased, with FROM on its own line."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+  ["2"],
+  ["NULL"],
+]
+query = "SELECT +x, -x, + 1, +(1)\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "unaliased_unary_signs_over_no_rows"
+description = "The same unary items over no rows still name their columns."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT +x, -x, + 1, +(1)\nFROM input WHERE x > 5"
+order = "ordered"
+tags = ["empty-input"]
+
+[[case]]
+id = "unaliased_double_unary_plus"
+description = "Two unary plus signs before a literal, unaliased, with FROM on its own line. Snowflake rejects it as an invalid function."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT ++1\nFROM input"
+order = "ordered"
+compile_error = true
+tags = ["boundary"]

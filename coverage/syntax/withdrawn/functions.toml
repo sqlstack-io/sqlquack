@@ -6,43 +6,43 @@
 class = "data_type"
 derived_negative = "a string literal in place of an operand of class data_type"
 count = 4
-reason = "D97: a whole argument of an ordinary function call is an <expr> to the parser, so a wrong class there (an identifier, literal or query where the page names another) is a type or semantic question, not syntax, and is not lexically distinct under D82; class negatives stay where the slot is not an expression (keywords, types, @stage names, ON column lists, qualified-name parts, statement identifiers)"
+reason = "a whole argument of an ordinary function call is an <expr> to the parser, so a wrong class there (an identifier, literal or query where the page names another) is a type or semantic question, not syntax, and is not lexically distinct under the lexical-distinctness rule; class negatives stay where the slot is not an expression (keywords, types, @stage names, ON column lists, qualified-name parts, statement identifiers)"
 
 [[withdrawn_class]]
 class = "identifier"
 derived_negative = "a string literal in place of an operand of class identifier"
 count = 80
-reason = "D97: a whole argument of an ordinary function call is an <expr> to the parser, so a wrong class there (an identifier, literal or query where the page names another) is a type or semantic question, not syntax, and is not lexically distinct under D82; class negatives stay where the slot is not an expression (keywords, types, @stage names, ON column lists, qualified-name parts, statement identifiers)"
+reason = "a whole argument of an ordinary function call is an <expr> to the parser, so a wrong class there (an identifier, literal or query where the page names another) is a type or semantic question, not syntax, and is not lexically distinct under the lexical-distinctness rule; class negatives stay where the slot is not an expression (keywords, types, @stage names, ON column lists, qualified-name parts, statement identifiers)"
 
 [[withdrawn_class]]
 class = "integer_literal"
 derived_negative = "a string literal in place of an operand of class integer_literal"
 count = 43
-reason = "D97: a whole argument of an ordinary function call is an <expr> to the parser, so a wrong class there (an identifier, literal or query where the page names another) is a type or semantic question, not syntax, and is not lexically distinct under D82; class negatives stay where the slot is not an expression (keywords, types, @stage names, ON column lists, qualified-name parts, statement identifiers)"
+reason = "a whole argument of an ordinary function call is an <expr> to the parser, so a wrong class there (an identifier, literal or query where the page names another) is a type or semantic question, not syntax, and is not lexically distinct under the lexical-distinctness rule; class negatives stay where the slot is not an expression (keywords, types, @stage names, ON column lists, qualified-name parts, statement identifiers)"
 
 [[withdrawn_class]]
 class = "query"
 derived_negative = "a bare literal in place of an operand of class query"
 count = 182
-reason = "D97: a whole argument of an ordinary function call is an <expr> to the parser, so a wrong class there (an identifier, literal or query where the page names another) is a type or semantic question, not syntax, and is not lexically distinct under D82; class negatives stay where the slot is not an expression (keywords, types, @stage names, ON column lists, qualified-name parts, statement identifiers)"
+reason = "a whole argument of an ordinary function call is an <expr> to the parser, so a wrong class there (an identifier, literal or query where the page names another) is a type or semantic question, not syntax, and is not lexically distinct under the lexical-distinctness rule; class negatives stay where the slot is not an expression (keywords, types, @stage names, ON column lists, qualified-name parts, statement identifiers)"
 
 [[withdrawn_class]]
 class = "statement"
 derived_negative = "a bare literal in place of an operand of class statement"
 count = 1
-reason = "D97: a whole argument of an ordinary function call is an <expr> to the parser, so a wrong class there (an identifier, literal or query where the page names another) is a type or semantic question, not syntax, and is not lexically distinct under D82; class negatives stay where the slot is not an expression (keywords, types, @stage names, ON column lists, qualified-name parts, statement identifiers)"
+reason = "a whole argument of an ordinary function call is an <expr> to the parser, so a wrong class there (an identifier, literal or query where the page names another) is a type or semantic question, not syntax, and is not lexically distinct under the lexical-distinctness rule; class negatives stay where the slot is not an expression (keywords, types, @stage names, ON column lists, qualified-name parts, statement identifiers)"
 
 [[withdrawn_class]]
 class = "string_literal"
 derived_negative = "an unquoted identifier in place of an operand of class string_literal"
 count = 799
-reason = "D97: a whole argument of an ordinary function call is an <expr> to the parser, so a wrong class there (an identifier, literal or query where the page names another) is a type or semantic question, not syntax, and is not lexically distinct under D82; class negatives stay where the slot is not an expression (keywords, types, @stage names, ON column lists, qualified-name parts, statement identifiers)"
+reason = "a whole argument of an ordinary function call is an <expr> to the parser, so a wrong class there (an identifier, literal or query where the page names another) is a type or semantic question, not syntax, and is not lexically distinct under the lexical-distinctness rule; class negatives stay where the slot is not an expression (keywords, types, @stage names, ON column lists, qualified-name parts, statement identifiers)"
 
 [[withdrawn_class]]
 class = "arity"
 derived_negative = "an omitted argument that leaves a well-formed ordinary call"
 count = 931
-reason = "D97 extension (auditor 11406dcd, coordinator): an omission that leaves a well-formed ordinary call, such as VAR_POP ( ) or BITXOR ( 1 ), is an arity error found when the function name is resolved, not a syntax error; withdrawn from the syntax score and kept as unscored observe cases in arity/<family>.jsonl"
+reason = "Settle-rule extension (auditor 11406dcd): an omission that leaves a well-formed ordinary call, such as VAR_POP ( ) or BITXOR ( 1 ), is an arity error found when the function name is resolved, not a syntax error; withdrawn from the syntax score and kept as unscored observe cases in arity/<family>.jsonl"
 
 [[withdrawn]]
 form = "sf.functions.ai-classify"
