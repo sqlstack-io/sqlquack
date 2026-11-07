@@ -155,7 +155,7 @@ pub const CODES: &[CodeEntry] = &[
         help: Some(
             "the help names the divergence and the fixes that work in the current mode: allow \
              it in the policy file, drop --strict or --loud-divergences-only, or confirm its \
-             assumption; the built-in policy refuses every one",
+             assumption; the built-in policy refuses every one but the clock outside strict mode",
         ),
         explanation: "The construct at the span converts only by relying on the known \
             divergence the label names, where DuckDB may raise or differ from Snowflake as the \
