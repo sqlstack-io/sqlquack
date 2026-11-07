@@ -152,13 +152,13 @@ def _binding(
 
 def run_database_setups(directory: Path) -> tuple[dict[tuple[str, str], list[str]], list[str]]:
     """Each ddl case's setup from its latest counted receipt (D110a), and cases for review."""
-    inputs: dict[tuple[str, str], list[str]] = {}
+    inputs: dict[str, list[str]] = {}
     counted_runs: set[str] = set()
     for path in directory.glob("*.report.json"):
         report: Row = json.loads(path.read_text())
         for row in report.get("inputs", []):
             setup: list[str] = list(row["setup"])
-            inputs[(str(row["sql_sha256"]), digest(canonical(setup)))] = setup
+            inputs[digest(canonical(setup))] = setup
         counted_runs |= {
             str(run["run_id"])
             for run in report.get("runs", [])
@@ -170,7 +170,7 @@ def run_database_setups(directory: Path) -> tuple[dict[tuple[str, str], list[str
         for line in path.read_text().splitlines():
             receipt: Row = json.loads(line)
             key: tuple[str, str] = (str(receipt["case_id"]), str(receipt["sql_sha256"]))
-            setup = inputs.get((key[1], str(receipt.get("setup_sha256", ""))), [])
+            setup = inputs.get(str(receipt.get("setup_sha256", "")), [])
             if (
                 receipt.get("capture_method") != CASE_CAPTURE_RUN_DATABASE
                 or MEASURE_KEY in receipt

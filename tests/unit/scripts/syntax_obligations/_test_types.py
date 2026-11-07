@@ -10,3 +10,10 @@ class ShortenedTargetTestCase:
     description: str
     grammar: str
     expected_last_tokens: frozenset[str]
+
+
+@dataclass(frozen=True)
+class RecordedSetupTestCase:
+    description: str
+    input_sql_sha256: str
+    expected_setups: dict[tuple[str, str], list[str]]
