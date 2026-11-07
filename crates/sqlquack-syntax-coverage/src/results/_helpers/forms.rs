@@ -111,7 +111,10 @@ pub(crate) fn statement_tally(
         tally.recorded += 1;
         tally.matching += usize::from(outcome.matches());
         tally.matching_rows += usize::from(outcome == StatementOutcome::Matching);
-        tally.matching_errors += usize::from(outcome == StatementOutcome::MatchingError);
+        tally.matching_errors += usize::from(matches!(
+            outcome,
+            StatementOutcome::MatchingError | StatementOutcome::MatchingRejection
+        ));
         tally.unlinked += usize::from(!linked.contains(statement.reference.as_str()));
     }
     tally

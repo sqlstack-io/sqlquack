@@ -10,13 +10,27 @@ pub(crate) fn undeclared_compile_error(
     recorded: Option<&RecordedFailure>,
 ) -> Option<String> {
     let sqlstate = recorded?.sqlstate.as_deref()?;
-    let compile_class = COMPILE_ERROR_SQLSTATE_CLASSES
-        .iter()
-        .any(|class| sqlstate.starts_with(class));
-    (compile_class && !case.compile_error && case.setup_sql.is_empty() && case.setup.is_empty()).then(|| {
+    (compile_class(sqlstate) && !case.compile_error && case.setup_sql.is_empty() && case.setup.is_empty()).then(|| {
         format!(
             "the recording is a compile-class Snowflake error (SQLSTATE {sqlstate}), which the case \
              must declare with compile_error = true"
         )
     })
+}
+
+/// Whether `recorded` shows Snowflake refusing to compile `case`'s statement, as the case declares.
+pub(crate) fn rejected_at_compile_time(
+    case: &LoadedCase,
+    recorded: Option<&RecordedFailure>,
+) -> bool {
+    case.compile_error
+        && recorded
+            .and_then(|recorded| recorded.sqlstate.as_deref())
+            .is_some_and(compile_class)
+}
+
+fn compile_class(sqlstate: &str) -> bool {
+    COMPILE_ERROR_SQLSTATE_CLASSES
+        .iter()
+        .any(|class| sqlstate.starts_with(class))
 }

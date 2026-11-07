@@ -15,6 +15,8 @@ pub enum Outcome {
     /// Converted, and DuckDB raised a declared divergence's guard where Snowflake did not.
     DeclaredDivergence,
     Refused,
+    /// Refused, and Snowflake refused to compile it too, as recorded and as the case declares.
+    MatchingRejection,
     /// The recording cannot show whether the replay is right.
     Unproven,
     /// No recorded result; the statement converts.

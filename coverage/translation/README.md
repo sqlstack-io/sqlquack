@@ -40,6 +40,7 @@ A statement:
 | `shape_only` | Only types were recorded, or only two Snowflake spellings were compared. |
 | `declared_divergence` | Translated, and DuckDB raised a declared divergence's guard where Snowflake returned rows. |
 | `refused` | SQLQuack refused it, with its `SQ` code; an opt-in divergence counts as refused. |
+| `matching_rejection` | SQLQuack refused it, and its case declares `compile_error = true` and records Snowflake refusing to compile it (SQLSTATE class `42` or `0A`). It counts as `matching_error`; a recorded runtime error leaves the statement `refused`. |
 | `unrecorded_translates`, `unrecorded_refused` | No Snowflake result is recorded yet. |
 | `differs` | DuckDB's result differs from Snowflake's: a bug. |
 
@@ -55,11 +56,11 @@ forms when it names none. Any other statement counts for every form it links to.
 | `no_obligations` | Otherwise, a linked statement returns Snowflake's rows, but the form declares no required obligation, so nothing shows what it must do. |
 | `unmet_obligations` | Otherwise, a linked statement returns Snowflake's rows, but a required obligation is unmet or held. |
 | `matching` | Otherwise, at least one linked statement returns Snowflake's rows, and it declares required obligations, every one met. |
-| `syntax_only` | Otherwise, linked statements exist but none returns compared rows: only types or matching errors. |
+| `syntax_only` | Otherwise, linked statements exist but none returns compared rows: only types, matching errors or matching rejections. |
 | `unmeasured` | No recorded statement links to it. |
 
 An obligation is `met` when it cites at least one case and every cited case is `matching` or
-`matching_error`; otherwise it is `unmet`, or `held` or `unmeasured` by its shape. The report lists
+`matching_error` or `matching_rejection`; otherwise it is `unmet`, or `held` or `unmeasured` by its shape. The report lists
 each obligation's state, the `held` and `unmeasured` obligations with their reasons, and the
 `uncited_cases`: recorded translation cases no obligation cites, which meet no obligation.
 
@@ -67,7 +68,8 @@ each obligation's state, the `held` and `unmeasured` obligations with their reas
 
 - Forms: `matching` forms out of all catalogued forms less the signed-off not-translatable ones.
 - Statements, over the statements recorded as evidence (not a sample of real-world SQL): `matching`
-  statements out of all recorded ones, and, as a separate line, `matching_error` statements.
+  statements out of all recorded ones, and, as a separate line, `matching_error` and
+  `matching_rejection` statements together.
 - Syntax only: a separate count, never part of either figure.
 - Capture queue: translatable function, expression and query forms with no matching or refused
   statement. DDL, DML, session and utility forms without one are a separate gap: measuring them

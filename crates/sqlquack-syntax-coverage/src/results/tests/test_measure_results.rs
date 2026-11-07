@@ -62,6 +62,25 @@ fn given_linked_statements_when_measuring_then_the_form_takes_the_weakest_state(
             expected_translatable: 12,
         },
         FormStateTestCase {
+            description: "a refusal Snowflake also refused to compile counts as a matching error",
+            outcomes: &[StatementOutcome::MatchingRejection],
+            list: nothing,
+            review: nothing,
+            expected_state: ResultState::SyntaxOnly,
+            expected_translatable: 12,
+        },
+        FormStateTestCase {
+            description: "rows beside a refusal Snowflake also refused to compile: not refused",
+            outcomes: &[
+                StatementOutcome::Matching,
+                StatementOutcome::MatchingRejection,
+            ],
+            list: nothing,
+            review: nothing,
+            expected_state: ResultState::NoObligations,
+            expected_translatable: 12,
+        },
+        FormStateTestCase {
             description: "types only: syntax only, never matching",
             outcomes: &[StatementOutcome::ShapeOnly],
             list: nothing,
