@@ -1,6 +1,9 @@
 //! The constructs Snowflake parses but then rejects, recognised one node at a time.
 
-use sqlquack_syntax::expressions::names::models::Star;
+use sqlquack_syntax::expressions::names::models::{Literal, Star};
+use sqlquack_syntax::expressions::operators::models::Cast;
+use sqlquack_syntax::expressions::types::constants::SNOWFLAKE_UNTYPED_LITERAL_TYPES;
+use sqlquack_syntax::expressions::types::models::DataType;
 use sqlquack_syntax::{Expression, ExpressionWalk};
 
 /// The registry name of the rejection a node causes, with the reason, if it causes one.
@@ -33,8 +36,32 @@ pub(crate) fn rejection(node: &Expression) -> Option<(&'static str, String)> {
                 format!("{name} does not match the star's ILIKE pattern, so REPLACE or RENAME names a column the pattern removed"),
             )
         }),
+        Expression::Cast(cast) => untyped_literal(cast),
         _ => None,
     }
+}
+
+/// A string written after a timestamp type name with parameters, such as `TIMESTAMP_NTZ(3) '...'`.
+fn untyped_literal(cast: &Cast) -> Option<(&'static str, String)> {
+    let Expression::Literal(literal) = &cast.this else {
+        return None;
+    };
+    let DataType::Custom { name } = &cast.to else {
+        return None;
+    };
+    let written: String = name.split_whitespace().collect();
+    let (base, _) = written.split_once('(')?;
+    let (_, function) = SNOWFLAKE_UNTYPED_LITERAL_TYPES
+        .iter()
+        .find(|(listed, _)| listed.eq_ignore_ascii_case(base))?;
+    (!cast.double_colon_syntax && matches!(literal.as_ref(), Literal::String(_))).then(|| {
+        (
+            "unsupported_type_literal",
+            format!(
+                "Snowflake has no {written} literal; cast the string instead, as '...'::{written} or {function}('...')"
+            ),
+        )
+    })
 }
 
 /// A REPLACE or RENAME name the ILIKE pattern removes ignoring case; backslashes and non-ASCII skip.

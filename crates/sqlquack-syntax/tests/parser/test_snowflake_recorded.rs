@@ -633,16 +633,16 @@ fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake
             expected_accepted: false,
         },
         AcceptanceTestCase {
-            description: "TIMESTAMP_NTZ(3) before a string is no literal (recorded errno 2121)",
+            description: "TIMESTAMP_NTZ(3) before a string parses, as Snowflake rejects it later (recorded errno 2121)",
             sql: "SELECT TIMESTAMP_NTZ(3) '2026-01-02 03:04:05' AS v FROM input",
             dialect: Dialect::Snowflake,
-            expected_accepted: false,
+            expected_accepted: true,
         },
         AcceptanceTestCase {
-            description: "TIMESTAMP_TZ(3) before a string is no literal (recorded errno 2121)",
+            description: "TIMESTAMP_TZ(3) before a string parses, as Snowflake rejects it later (recorded errno 2121)",
             sql: "SELECT TIMESTAMP_TZ(3) '2026-01-02 03:04:05' AS v FROM input",
             dialect: Dialect::Snowflake,
-            expected_accepted: false,
+            expected_accepted: true,
         },
         AcceptanceTestCase {
             description: "TIMESTAMP before a string is a literal (recorded)",

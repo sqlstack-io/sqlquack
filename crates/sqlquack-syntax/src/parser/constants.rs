@@ -251,17 +251,6 @@ pub(crate) const SQLITE_RANGE_FOLLOWERS: [crate::tokens::models::TokenType; 9] =
 /// Snowflake types written before a string as a typed literal, beyond the shared ones.
 pub(crate) const SNOWFLAKE_LITERAL_TYPES: &[&str] = &["IPADDRESS"];
 
-/// Type names Snowflake refuses before a string, each with the conversion function to suggest.
-pub(crate) const SNOWFLAKE_UNTYPED_LITERAL_TYPES: &[(&str, &str)] = &[
-    ("TIMESTAMP_NTZ", "TO_TIMESTAMP_NTZ"),
-    ("TIMESTAMPNTZ", "TO_TIMESTAMP_NTZ"),
-    ("TIMESTAMP_LTZ", "TO_TIMESTAMP_LTZ"),
-    ("TIMESTAMPLTZ", "TO_TIMESTAMP_LTZ"),
-    ("TIMESTAMP_TZ", "TO_TIMESTAMP_TZ"),
-    ("TIMESTAMPTZ", "TO_TIMESTAMP_TZ"),
-    ("DATETIME", "TO_TIMESTAMP_NTZ"),
-];
-
 /// Reserved words Snowflake is recorded refusing as an unquoted later part of a dotted name.
 pub(crate) const SNOWFLAKE_REFUSED_NAME_PARTS: &[&str] = &["SELECT"];
 

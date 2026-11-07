@@ -132,8 +132,10 @@ impl Parser {
         let Some(end) = self.named_type_literal_end() else {
             return Ok(None);
         };
-        if let Some(error) = self.untyped_literal_error(end) {
-            return Err(error);
+        if end == self.current + 1 {
+            if let Some(error) = self.untyped_literal_error(end) {
+                return Err(error);
+            }
         }
         let parts: Vec<String> = self.tokens[self.current..end]
             .iter()
@@ -164,10 +166,10 @@ impl Parser {
         ))))
     }
 
-    /// Snowflake's refusal of a timestamp type name before the string at `end`, placed at the string.
+    /// Snowflake's syntax refusal of a timestamp type name right before the string at `end`, at it.
     pub(crate) fn untyped_literal_error(&mut self, end: usize) -> Option<Error> {
         let name = self.peek_text().to_ascii_uppercase();
-        let (_, function) = crate::parser::constants::SNOWFLAKE_UNTYPED_LITERAL_TYPES
+        let (_, function) = crate::expressions::types::constants::SNOWFLAKE_UNTYPED_LITERAL_TYPES
             .iter()
             .find(|(listed, _)| *listed == name)?;
         self.current = end;

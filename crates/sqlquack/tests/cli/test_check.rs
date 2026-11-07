@@ -61,6 +61,14 @@ fn given_snowflake_sql_when_checked_then_problems_are_coded_and_the_exit_status_
             expected_stderr_mention: "--> <stdin>:1:25\n",
         },
         CheckCommandTestCase {
+            description: "a timestamp type with a precision before a string is SQ0211 and exits 1",
+            arguments: &["check"],
+            sql: "SELECT TIMESTAMP_NTZ(3) '2026-01-02 03:04:05' AS v",
+            expected_exit_code: Some(1),
+            expected_stdout_prefix: "",
+            expected_stderr_mention: "error[SQ0211]",
+        },
+        CheckCommandTestCase {
             description: "SQL that does not parse is SQ0001 and exits 1",
             arguments: &["check"],
             sql: "SELECT a,\n  FROM orders WHERE (b = 1\n",
