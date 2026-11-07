@@ -1304,8 +1304,8 @@ fn given_a_name_the_conversion_does_not_scope_when_converting_then_the_refusal_s
             expected_mention: "SEQ of FLATTEN or SPLIT_TO_TABLE",
         },
         PythonRefusalTestCase {
-            description: "a GROUP BY key naming only a select alias",
-            sql: "SELECT UPPER(sku) AS family, COUNT(*) AS n FROM orders GROUP BY family",
+            description: "a GROUP BY key naming only a select alias that follows a star",
+            sql: "SELECT *, UPPER(sku) AS family FROM orders GROUP BY family",
             expected_mention: "names only a select alias",
         },
         PythonRefusalTestCase {

@@ -1,4 +1,4 @@
-// Diagnostic spans in the playground. The engine counts Unicode characters (code points), and
+// Diagnostic spans and result tables in the playground. The engine counts Unicode characters (code points), and
 // JavaScript strings count UTF-16 units, so every span is applied to `Array.from(sql)`.
 
 export const escape = (text) => text.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -60,3 +60,19 @@ export function underlined(chars, items) {
 	return { html, items: sorted };
 }
 
+// The Run stage's table: `names` as the header and `columns` (one array of text or null per name)
+// read by position, so two columns of the same name keep their own values.
+export function resultTable(names, columns) {
+	const rows = columns[0]?.length ?? 0;
+	const cell = (value) => (value === null ? '<span class="dim">NULL</span>' : escape(String(value)));
+	const body = Array.from({ length: rows }, (_, row) => `<tr>${columns.map((column) => `<td>${cell(column[row])}</td>`).join('')}</tr>`);
+	const head = names.map((name) => `<th>${escape(name)}</th>`).join('');
+	return { html: `<div class="pg-rows"><table><thead><tr>${head}</tr></thead><tbody>${body.join('')}</tbody></table></div>`, rows };
+}
+
+// Whether a DuckDB-WASM error on a translated statement comes from the in-browser engine rather
+// than from the rows: a statement it could not bind or plan, or a crash of the WebAssembly engine.
+// The playground runs a preview build of DuckDB-WASM; errors about values (conversion, out of
+// range) would be raised by native DuckDB too, so they are not counted.
+const PREVIEW_LIMITS = /^(Binder|Catalog|Parser|Not implemented|INTERNAL) Error|memory access out of bounds|unreachable|RuntimeError/;
+export const previewLimit = (message) => PREVIEW_LIMITS.test(message);
