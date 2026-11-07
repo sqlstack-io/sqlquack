@@ -272,7 +272,7 @@ fn given_a_deeply_nested_type_when_parsing_on_a_2_mb_thread_then_512_levels_pars
 }
 
 #[test]
-fn given_long_chains_and_guard_deep_nesting_on_a_2_mb_thread_when_cloning_comparing_formatting_serializing_or_dropping_then_none_overflows(
+fn given_long_chains_and_deep_nesting_on_a_2_mb_thread_when_cloning_comparing_formatting_serializing_or_dropping_then_none_overflows(
 ) {
     let test_cases = [
         TreeOperationTestCase {
@@ -309,9 +309,15 @@ fn given_long_chains_and_guard_deep_nesting_on_a_2_mb_thread_when_cloning_compar
     ];
     for test_case in test_cases {
         let operation = test_case.operation;
+        let trees = std::thread::Builder::new()
+            .stack_size(256 << 20)
+            .spawn(deep_trees)
+            .expect("the parsing thread starts")
+            .join()
+            .expect("the trees parse");
         let completed = std::thread::Builder::new()
             .stack_size(2 << 20)
-            .spawn(move || operation(deep_trees()))
+            .spawn(move || operation(trees))
             .expect("the thread starts")
             .join()
             .expect("the thread finishes");

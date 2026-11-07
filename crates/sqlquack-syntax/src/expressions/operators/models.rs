@@ -140,13 +140,7 @@ pub struct Case {
 /// The payload of every binary operator variant: arithmetic, comparison, logical, bitwise.
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct BinaryOp {
-    #[serde(
-        serialize_with = "crate::expressions::tree::main::_serialize_on_grown_stack::serialize_on_grown_stack"
-    )]
     pub left: Expression,
-    #[serde(
-        serialize_with = "crate::expressions::tree::main::_serialize_on_grown_stack::serialize_on_grown_stack"
-    )]
     pub right: Expression,
     /// Comments after the left operand (before the operator)
     #[serde(default)]

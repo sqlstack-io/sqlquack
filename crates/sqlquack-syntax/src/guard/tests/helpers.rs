@@ -92,9 +92,9 @@ pub(crate) fn constructor_levels(n: usize, open: &str) -> String {
     )
 }
 
-/// Default-guarded Snowflake trees with 100,000-term chains and nesting just inside each depth guard.
+/// Snowflake trees with 100,000-term chains, nesting inside each default guard, and 8,000 levels unguarded.
 pub(crate) fn deep_trees() -> Vec<crate::expressions::tree::models::Expression> {
-    let statements = [
+    let guarded = [
         format!(
             "SELECT f(1{}) FROM a WHERE a = 1{}",
             " + 1".repeat(100_000),
@@ -111,15 +111,34 @@ pub(crate) fn deep_trees() -> Vec<crate::expressions::tree::models::Expression> 
         format!("SELECT {}TRUE", "NOT ".repeat(500)),
         format!("SELECT CAST(NULL AS INT{})", "[]".repeat(512)),
     ];
+    let unguarded = [
+        format!("SELECT 1{}", "::INT".repeat(8_000)),
+        format!(
+            "SELECT {}1{}",
+            "CASE WHEN TRUE THEN ".repeat(8_000),
+            " END".repeat(8_000)
+        ),
+        format!("SELECT {}1{}", "(".repeat(8_000), ")".repeat(8_000)),
+    ];
+    let unlimited = Some(usize::MAX);
+    let raised = crate::ParseOptions {
+        complexity_guard: Some(ComplexityGuardOptions {
+            max_parser_depth: unlimited,
+            max_input_bytes: unlimited,
+            max_tokens: unlimited,
+            max_ast_nodes: unlimited,
+            max_ast_depth: unlimited,
+            max_parenthesis_depth: unlimited,
+            max_function_call_depth: unlimited,
+        }),
+    };
+    let options = std::iter::repeat_n(crate::ParseOptions::default(), guarded.len())
+        .chain(std::iter::repeat_n(raised, unguarded.len()));
     let mut trees = Vec::new();
-    for sql in statements {
+    for (sql, options) in guarded.into_iter().chain(unguarded).zip(options) {
         trees.extend(
-            crate::parse_statements(
-                &sql,
-                crate::Dialect::Snowflake,
-                &crate::ParseOptions::default(),
-            )
-            .expect("the statement is inside every guard"),
+            crate::parse_statements(&sql, crate::Dialect::Snowflake, &options)
+                .expect("the statement is inside its guards"),
         );
     }
     trees
