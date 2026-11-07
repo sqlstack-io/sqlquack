@@ -4,9 +4,10 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::columns::models::WithOperator;
 use sqlquack_syntax::expressions::functions::models::{Function, Operator};
 use sqlquack_syntax::expressions::names::models::Identifier;
+use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::operators::models::{
-    BinaryOp, CollationExpr, IsTrueFalse, LikeOp, QuantifiedExpr, QuantifiedOp, SimilarToExpr,
-    UnaryOp,
+    BinaryOp, CollationExpr, IsJson, IsTrueFalse, JsonUniqueKeys, LikeOp, QuantifiedExpr,
+    QuantifiedOp, SimilarToExpr, UnaryOp,
 };
 use sqlquack_syntax::expressions::statements::models::Var;
 use sqlquack_syntax::expressions::typed_functions::models::AtTimeZone;
@@ -14,7 +15,7 @@ use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_col_id};
 use crate::parse::_helpers::tree::nodes::{
-    between, binary, cast, function, in_list, name_text, null_test, subquery,
+    between, binary, cast, function, in_list, keyword_call, literal, name_text, null_test, subquery,
 };
 use crate::parse::constants::{
     ADD, AND, AT, BITWISE_NOT, CATALOGUE_SCHEMA, COLLATE, COMPARE, EXPONENT, ILIKE, IS, LIKE,
@@ -22,6 +23,24 @@ use crate::parse::constants::{
     UNKNOWN_TEST,
 };
 use crate::scan::models::{Token, TokenKind};
+
+/// `this`, or `NOT this` as gram.y's `makeNotExpr` makes it when `not` is set.
+fn negated(not: bool, this: Expression) -> Expression {
+    match not {
+        true => unary(Expression::Not, this),
+        false => this,
+    }
+}
+
+/// `x IS [form] NORMALIZED`: the `is_normalized` call gram.y makes, with the form as a string.
+fn normalized(this: Expression, form: Option<&str>) -> Expression {
+    let mut args: Vec<Expression> = vec![this];
+    args.extend(form.map(|form| literal(Literal::String(form.to_uppercase()))));
+    Expression::Function(Box::new(function(
+        vec![Identifier::new("is_normalized")],
+        args,
+    )))
+}
 
 /// Which of gram.y's two expression grammars: `a_expr`, or the restricted `b_expr`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -336,7 +355,7 @@ impl Parser<'_> {
                 binary(Expression::And, left, self.climb(AND + 1, flavor)?),
                 false,
             )),
-            "is" => self.after_is(left, flavor, start),
+            "is" => self.after_is(left, flavor),
             "isnull" => Ok((null_test(left, false, true), false)),
             "notnull" => Ok((null_test(left, true, true), false)),
             "not" => self.like_family(left, true, start),
@@ -550,13 +569,8 @@ impl Parser<'_> {
         Ok(None)
     }
 
-    /// The test after `IS`: `[NOT] NULL|TRUE|FALSE|UNKNOWN`, `[NOT] DISTINCT FROM`, or a gap.
-    fn after_is(
-        &mut self,
-        left: Expression,
-        flavor: Flavor,
-        start: usize,
-    ) -> Parsing<(Expression, bool)> {
+    /// The test after `IS`: `[NOT]` NULL, a truth value, DOCUMENT, JSON, NORMALIZED or DISTINCT FROM.
+    fn after_is(&mut self, left: Expression, flavor: Flavor) -> Parsing<(Expression, bool)> {
         let not: bool = self.eat_kw("not");
         let word: &str = self.keyword_at(0).unwrap_or_default();
         self.at += 1;
@@ -590,39 +604,44 @@ impl Parser<'_> {
                 };
                 Ok((binary(kind, left, right), true))
             }
-            "document" => {
-                self.gap("is_document", start);
-                Ok((left, false))
-            }
-            "normalized" => {
-                self.gap("is_normalized", start);
-                Ok((left, false))
-            }
-            "nfc" | "nfd" | "nfkc" | "nfkd" => {
+            "document" => Ok((
+                negated(not, keyword_call("IS DOCUMENT", vec![left], Vec::new())),
+                false,
+            )),
+            "normalized" => Ok((negated(not, normalized(left, None)), false)),
+            form @ ("nfc" | "nfd" | "nfkc" | "nfkd") => {
                 self.expect_kw("normalized")?;
-                self.gap("is_normalized", start);
-                Ok((left, false))
+                Ok((negated(not, normalized(left, Some(form))), false))
             }
             _ => {
-                self.json_predicate()?;
-                self.gap("is_json", start);
-                Ok((left, false))
+                self.at -= 1;
+                self.expect_kw("json")?;
+                let json_type: Option<String> = self.json_predicate_type();
+                let unique_keys: Option<JsonUniqueKeys> =
+                    self.json_key_uniqueness().then_some(JsonUniqueKeys::With);
+                let node: Expression = Expression::IsJson(Box::new(IsJson {
+                    this: left,
+                    json_type,
+                    unique_keys,
+                    negated: false,
+                }));
+                Ok((negated(not, node), false))
             }
         }
     }
 
-    /// The rest of `IS [NOT] JSON [VALUE|ARRAY|OBJECT|SCALAR] [WITH|WITHOUT UNIQUE [KEYS]]`.
-    fn json_predicate(&mut self) -> Parsing<()> {
-        for kind in ["value", "array", "object", "scalar"] {
-            if self.eat_kw(kind) {
-                break;
+    /// `json_predicate_type_constraint` after `JSON`: `VALUE` is `JSON` alone (`JS_TYPE_ANY`).
+    fn json_predicate_type(&mut self) -> Option<String> {
+        let kind: &str = match self.keyword_at(0) {
+            Some("value") => {
+                self.at += 1;
+                return None;
             }
-        }
-        if (self.kw("with") || self.kw("without")) && self.kw_at(1, "unique") {
-            self.at += 2;
-            self.eat_kw("keys");
-        }
-        Ok(())
+            Some(kind @ ("array" | "object" | "scalar")) => kind,
+            _ => return None,
+        };
+        self.at += 1;
+        Some(kind.to_uppercase())
     }
 
     /// A syntax error at a byte position some failed alternative reached.

@@ -1,0 +1,116 @@
+# Approvals by the independent syntax auditor. Each listed form was read in full against its
+# PostgreSQL 18.6 documentation, its obligations, its cases with their PostgreSQL 18.6 receipts, and the
+# local parse trees. An approval holds while the form's definition hash and fingerprint are unchanged;
+# any change makes it stale until re-read. Entries are copied verbatim from the auditor's records on
+# wip/syntax-omission-audit (coverage/syntax/audits/pg-review-*.toml).
+
+[[review]]
+id = "pg-auditor-utility-001"
+reviewer_lane = "auditor"
+family = "utility"
+parser_tree = "06bb147f9101958773446552ee7dc06decf018d2"
+reviewed_utc = "2026-11-06T17:14:36Z"
+verdict = "approved"
+forms = [
+  "pg.utility.analyze",
+  "pg.utility.analyze.pre-11",
+  "pg.utility.call",
+  "pg.utility.checkpoint",
+  "pg.utility.close",
+  "pg.utility.cluster",
+  "pg.utility.cluster.pre-17",
+  "pg.utility.cluster.pre-8-3",
+  "pg.utility.deallocate",
+  "pg.utility.declare",
+  "pg.utility.do",
+  "pg.utility.execute",
+  "pg.utility.explain",
+  "pg.utility.explain.pre-9-0",
+  "pg.utility.fetch",
+  "pg.utility.listen",
+  "pg.utility.load",
+  "pg.utility.move",
+  "pg.utility.notify",
+  "pg.utility.prepare",
+  "pg.utility.refresh-materialized-view",
+  "pg.utility.reindex.database-system",
+  "pg.utility.reindex.index-table-schema",
+  "pg.utility.unlisten",
+  "pg.utility.vacuum",
+  "pg.utility.vacuum.pre-9-0",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 06bb147f; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.utility.analyze" = "8fabbed96841bb1dcad491078955538eedb9b7674d0526d957afdc568ff8847a"
+"pg.utility.analyze.pre-11" = "6da8df9944fdea47f3d6a1a3b3285412d28ac0ee3f6a4d2795c0cfcf0007ccb1"
+"pg.utility.call" = "71ee5e2ef9fa5c9bc23e7588602a648f618f508230854595937993c2872b6b3d"
+"pg.utility.checkpoint" = "8a08dd725e386d99f43eca3620ef62801efea9a8a93507c77c7f6be212d03e23"
+"pg.utility.close" = "a592b57a0b5e95c2931b84576bca6dfccb9ff7b98ccafcb01b8b54377f981ff5"
+"pg.utility.cluster" = "22c15b7bd81e65914264636ce2310b5545928fe30d9bb90e64ab2c0cc8d98e00"
+"pg.utility.cluster.pre-17" = "5799a5fc5caa7e4bc6cb5433fa2b8bed6788b0ba69fc132f3c4f7c1b760c3ce3"
+"pg.utility.cluster.pre-8-3" = "5a2287e45b718301855bc00cfc4a5577df5ba73e40374dbc79f6e7934720e5db"
+"pg.utility.deallocate" = "2fdc73651f9b07af8910905f329a77b75f791aeb65d3ae5c4acf960c33fc7a67"
+"pg.utility.declare" = "16a3c53261b31827c19143791f65b1e13ce09de35368c68e19055145501fdb2e"
+"pg.utility.do" = "0b02cba467914042ee6fce6b7732e3af9ff6001dfc51a5f443ab591c357fdbfc"
+"pg.utility.execute" = "00ed436db2cb3a3a4a80bdf343fd213142078c02d6aaf8c5674e46bda2f26f7c"
+"pg.utility.explain" = "e74af4165a42b4e81ad59267ba50b54e2e74cf7d252a38c5581168dd9e854893"
+"pg.utility.explain.pre-9-0" = "5214ac04fbf58630fd94b42605b06b33c9545d3d5f8a0ca1e2b4729d8ca297e0"
+"pg.utility.fetch" = "99f80d5930c4947aa8eb3f82a8cbe702e6ded57d8a9418c8068e0096341ccb36"
+"pg.utility.listen" = "1519ca0f905195fcd2a43127cec799342f326a87926b65d67ac7719efc2d965c"
+"pg.utility.load" = "b9ca818445557a903cd900399b9f1a7221bd5ec657e327e89443fa2dcf59cdee"
+"pg.utility.move" = "e9fa8bf99912f31987a7171d38a6aca12c223422829b0cbe35df77580d77ae98"
+"pg.utility.notify" = "89059c451fff6e3fa90c09fb11e326269991215f8cef2269c5a12656fc5b1c6d"
+"pg.utility.prepare" = "8858322deddc2d6897e092bb1eebdbf732cc60dd505b0d4ba0687af8d2af80be"
+"pg.utility.refresh-materialized-view" = "f0757ae699741ae3a374d8a750f1e11a6dd18933be45255028d613a5da191e4f"
+"pg.utility.reindex.database-system" = "798c16f07e4c0f30e7e732d65f537ce3f1e3eb9d5fc52d3718e565c5428dff32"
+"pg.utility.reindex.index-table-schema" = "c98f9c2fe945f29d339d86d684caec8e5d728fad13b3ce142cb610d8a681019a"
+"pg.utility.unlisten" = "320fc5d6e17bce9c64a6b8e4d9cd7dd0a17cabd28cbed30e827c500e8496c8f9"
+"pg.utility.vacuum" = "b91aee8044c066d2b0229ec63c489b0489dea9520eda9eb37ce3cf1c2621cb27"
+"pg.utility.vacuum.pre-9-0" = "607fafbe9bfb2d9100ba977a2e7feed239b60dd8a1d4467acbaa31a0210dfc6e"
+
+[review.definitions]
+"pg.utility.analyze" = "b7b147885f1d2ea3174598b699cfa2b6faa1e1974d4a784a365458c5507dd576"
+"pg.utility.analyze.pre-11" = "95da73bb21f440eb3828591bd2adc9e1b0b8e80b84ef1104b9aa42803d38dc02"
+"pg.utility.call" = "5a58a8b7dbf93abe7372219c7318cae9c3812289fd7b2d82886556bf1ebb4af2"
+"pg.utility.checkpoint" = "9462719bb31932bbd18fc4aad5ce7cffe966229761715419fd8388bf9da54661"
+"pg.utility.close" = "33ed06a76c527d9a992dad2ea743a544188f696d315d9367a9b421d1a97b830b"
+"pg.utility.cluster" = "d2b81b837518bcd7ab15c94ce0973e1b5ae0c109d2aad19468bfff49c9701c07"
+"pg.utility.cluster.pre-17" = "02606a752dd16e4d5cab2e52baa8a0bff59975db2f4bfcf35de62e30c855b9ca"
+"pg.utility.cluster.pre-8-3" = "e4d8c6ff725cc29206578f65b984eb777857f4547dd3b1e04eda92886ebce8a4"
+"pg.utility.deallocate" = "5917d26fc60a3aa26fe03ab8bb61834470b371501a7dd35c12b40f4d4c10cf2a"
+"pg.utility.declare" = "cb4c39581a768f51c0c39192680a526d1cb332990f359030a319a01758293943"
+"pg.utility.do" = "e5885af4eac484c1592e90d6e1ad2a6805b07bcdedf1924e0e9ec9a9d97194f5"
+"pg.utility.execute" = "e4439ce009273041bf41210321a33e4a76deeb40e18aa348a9b133a4dc05dc8c"
+"pg.utility.explain" = "a7d07623e82f00ba461540795cea5d56ce2d355a169a8083390a0ec7f5416ec1"
+"pg.utility.explain.pre-9-0" = "20185caab57ee83d3f79c0626ac5869bc04f91e22fcd1bc6555832391f97136a"
+"pg.utility.fetch" = "04e30370ea0a30eabf23e496989b466f3c137968db3c8bd12b4de09496ed5d81"
+"pg.utility.listen" = "25025a471490ec515fa5173359210317ed12f64633ae7c531a3c52c03b992a2e"
+"pg.utility.load" = "d10eab61bc8b72cc21f437b77edd81024ff6fe9b9551e11b610c39024ad0bf2f"
+"pg.utility.move" = "c87cf729207c935aa878bd45488bd5b14fc5f648904f1b8131596e0b1f007e6a"
+"pg.utility.notify" = "bc05c49c363355976d8075a5c23d712cb6d9862857d7e7eae9bdfa2fc9813f4a"
+"pg.utility.prepare" = "c1f150bc3eb8dd3d098fe56fba46876fcc281f7092f9f48bd72eacf46af1a3d0"
+"pg.utility.refresh-materialized-view" = "723674b22378fd19d29361805a5fe2308e02c52600ff189e53ac524f42920d66"
+"pg.utility.reindex.database-system" = "708cee0951102c45aaa086a8252dfa3d1bd324d38f9d4757e2b807baf661384d"
+"pg.utility.reindex.index-table-schema" = "d9403ca66c31bd4e4e485ae2f763c43b856f1b87220c0ec49fc3058a73a9617f"
+"pg.utility.unlisten" = "6c41d20e855b7a241b5c5f37779557dbda0ed942c1687530c6a7a93ed1cfb2c1"
+"pg.utility.vacuum" = "633bca712f5581a3d212b11f7bc31dbd884347c1a4887f91c8489a1e7c686b6d"
+"pg.utility.vacuum.pre-9-0" = "a24b6e574b194a4a4abb6ba035bab6bb99d5689bd6fc2a1ef7542f8a7228531e"
+
+[[review]]
+id = "pg-auditor-utility-002"
+reviewer_lane = "auditor"
+family = "utility"
+parser_tree = "f2372a18396b91d6573c5252d00bcec9315e56e5"
+reviewed_utc = "2026-11-06T21:57:37Z"
+verdict = "approved"
+forms = [
+  "pg.utility.deallocate",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree f2372a18; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.utility.deallocate" = "5a88e2e54b98ca872297b91773d9b519afa0da09b201892cd41c9a347a2356b0"
+
+[review.definitions]
+"pg.utility.deallocate" = "36e46cc6dc73914c87d390301b7d2a019354d94436d9406bad0ed4d44b336a37"

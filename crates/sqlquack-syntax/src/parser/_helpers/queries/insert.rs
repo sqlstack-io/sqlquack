@@ -154,6 +154,7 @@ impl Parser {
         };
 
         Ok(Expression::Insert(Box::new(Insert {
+            column_targets: Vec::new(),
             table,
             columns,
             values,
@@ -181,6 +182,8 @@ impl Parser {
             function_target,
             partition_by: partition_by_expr,
             settings: insert_settings,
+            overriding: None,
+            returning_aliases: Vec::new(),
         })))
     }
 
@@ -336,6 +339,7 @@ impl Parser {
         let query = self.parse_statement()?;
 
         Ok(Expression::Insert(Box::new(Insert {
+            column_targets: Vec::new(),
             table: TableRef::new(""),
             columns: Vec::new(),
             values: Vec::new(),
@@ -368,6 +372,8 @@ impl Parser {
             function_target: None,
             partition_by: None,
             settings: Vec::new(),
+            overriding: None,
+            returning_aliases: Vec::new(),
         })))
     }
 
@@ -415,6 +421,7 @@ impl Parser {
             };
             let trailing_comments = self.previous_trailing_comments().to_vec();
             TableRef {
+                sample_call: None,
                 name,
                 schema: Some(schema),
                 catalog,
@@ -434,10 +441,12 @@ impl Parser {
                 changes: None,
                 version: None,
                 span: None,
+                whole_quoted: false,
             }
         } else {
             let trailing_comments = self.previous_trailing_comments().to_vec();
             TableRef {
+                sample_call: None,
                 name: table_name,
                 schema: None,
                 catalog: None,
@@ -457,6 +466,7 @@ impl Parser {
                 changes: None,
                 version: None,
                 span: None,
+                whole_quoted: false,
             }
         })
     }
@@ -560,6 +570,7 @@ impl Parser {
                 let name = self.expect_identifier_with_quoted()?;
                 let trailing_comments = self.previous_trailing_comments().to_vec();
                 TableRef {
+                    sample_call: None,
                     name,
                     schema: Some(schema),
                     catalog: None,
@@ -579,10 +590,12 @@ impl Parser {
                     changes: None,
                     version: None,
                     span: None,
+                    whole_quoted: false,
                 }
             } else {
                 let trailing_comments = self.previous_trailing_comments().to_vec();
                 TableRef {
+                    sample_call: None,
                     name: source_name,
                     schema: None,
                     catalog: None,
@@ -602,6 +615,7 @@ impl Parser {
                     changes: None,
                     version: None,
                     span: None,
+                    whole_quoted: false,
                 }
             };
             Some(Expression::Table(Box::new(source_table)))

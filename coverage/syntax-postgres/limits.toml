@@ -2203,8 +2203,8 @@ reason = "the value is required (gram.y json_aggregate_func: JSON_ARRAYAGG '(' j
 [[reading]]
 form = "pg.functions.json.json-array"
 grammar_sha256 = "28f285245bee6c800d4b3bede6711c278830981f8789d0f84ff857b5a6a1673f"
-grammar = ["JSON_ARRAY ( [ { <value_expression> [ FORMAT JSON ] } [ , ... ] [ { NULL | ABSENT } ON NULL ] ] [ RETURNING <data_type> [ FORMAT JSON [ ENCODING UTF8 ] ] ] )", "JSON_ARRAY ( [ <query_expression> ] [ RETURNING <data_type> [ FORMAT JSON [ ENCODING UTF8 ] ] ] )"]
-reason = "ON NULL follows a value list only (gram.y json_array: JSON_ARRAY '(' json_value_expr_list json_array_constructor_null_clause_opt ...; with no values only RETURNING may follow)"
+grammar = ["JSON_ARRAY ( [ { <value_expression> [ FORMAT JSON ] } [ , ... ] [ { NULL | ABSENT } ON NULL ] ] [ RETURNING <data_type> [ FORMAT JSON [ ENCODING UTF8 ] ] ] )", "JSON_ARRAY ( <query_expression> [ RETURNING <data_type> [ FORMAT JSON [ ENCODING UTF8 ] ] ] )"]
+reason = "ON NULL follows a value list only (gram.y json_array: JSON_ARRAY '(' json_value_expr_list json_array_constructor_null_clause_opt ...; with no values only RETURNING may follow); the query signature's query_expression is required, since its production is JSON_ARRAY '(' select_no_parens json_format_clause_opt json_returning_clause_opt ')' and an empty or RETURNING-only call is the value-list or returning-only production"
 
 [[reading]]
 form = "pg.functions.json.json-object-value-format-json-encoding"
@@ -7460,3 +7460,69 @@ form = "pg.security_admin.security-label"
 kind = "identifier_class"
 target = "<column_name>"
 reason = "a column after a dot is an attr_name, which is a ColLabel in gram.y and takes reserved keywords, so the reserved-word spelling is no negative"
+
+# batch-29 review: the query signature of json_array and the sub-SELECT form of UPDATE SET.
+
+[[limit]]
+form = "pg.functions.json.json-array"
+kind = "operand_type_class"
+target = "<query_expression>"
+note = "a VALUES query as the query signature's query (gram.y json_array: select_no_parens takes values_clause)"
+anchor = "doc.functions-json / Processing and Creating JSON Data"
+sql = "SELECT JSON_ARRAY ( VALUES ( 1 ) , ( 2 ) )"
+context = "raw"
+
+[[limit]]
+form = "pg.functions.json.json-array"
+kind = "operand_type_class"
+target = "<query_expression>"
+note = "a query with a WITH clause as the query signature's query (gram.y select_no_parens: with_clause select_clause)"
+anchor = "doc.functions-json / Processing and Creating JSON Data"
+sql = "SELECT JSON_ARRAY ( WITH w1 AS ( SELECT 1 AS c1 ) SELECT c1 FROM w1 )"
+context = "raw"
+
+[[limit]]
+form = "pg.functions.json.json-array"
+kind = "operand_type_class"
+target = "<query_expression>"
+note = "a string query with RETURNING bytea FORMAT JSON ENCODING UTF8, the output type ENCODING applies to"
+anchor = "doc.functions-json / Processing and Creating JSON Data"
+sql = "SELECT JSON_ARRAY ( SELECT 'a' RETURNING bytea FORMAT JSON ENCODING UTF8 )"
+context = "raw"
+
+[[limit]]
+form = "pg.functions.json.json-array"
+kind = "negative_neighbour"
+target = ""
+note = "a parenthesised query is one value of the value-list signature, not the query signature: ON NULL is allowed after it (gram.y json_value_expr_list), while the query signature takes no ON NULL"
+anchor = "doc.functions-json / Processing and Creating JSON Data"
+sql = "SELECT JSON_ARRAY ( SELECT 1 NULL ON NULL )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "pg.dml.update"
+kind = "operand_type_class"
+target = "<sub-SELECT>"
+note = "a sub-SELECT giving one value per listed column (gram.y set_clause: '(' set_target_list ')' '=' a_expr, with a sub-SELECT as the row source)"
+anchor = "doc.sql-update / Synopsis"
+sql = "UPDATE t1 SET ( c1 , c2 ) = ( SELECT 1 , 2 )"
+context = "raw"
+
+[[limit]]
+form = "pg.dml.update"
+kind = "operand_type_class"
+target = "<sub-SELECT>"
+note = "a sub-SELECT reading the updated row, with FROM and WHERE"
+anchor = "doc.sql-update / Synopsis"
+sql = "UPDATE t1 SET ( c1 , c2 ) = ( SELECT t2.c1 , t2.c2 FROM t2 WHERE t2.c1 = t1.c1 )"
+context = "raw"
+
+[[limit]]
+form = "pg.dml.delete"
+kind = "operand_type_class"
+target = "{ OLD | NEW }"
+note = "NEW first in a two-item WITH list (gram.y returning_with_clause: WITH ( returning_options ), a list of returning_option_kind AS ColId in any order)"
+anchor = "doc.sql-delete / Synopsis"
+sql = "DELETE FROM t1 RETURNING WITH ( NEW AS n1 , OLD AS o1 ) n1.c1 , o1.c1"
+context = "raw"

@@ -6,13 +6,31 @@ use sqlquack_syntax::expressions::operators::models::{OnConflict, Returning};
 use sqlquack_syntax::expressions::queries::models::{From, Join, Where, With};
 use sqlquack_syntax::expressions::statements::models::{Merge, Var, When, Whens};
 
+use crate::parse::_helpers::commands::routines::var;
+use crate::parse::_helpers::commands::tables::{clause, name_value};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_col_id};
 use crate::parse::_helpers::tree::nodes::{
-    boolean, delete, insert, joined_table, ordered, tuple, update,
+    boolean, delete, insert, joined_table, keyword_call, ordered, tuple, update,
 };
 use crate::parse::_helpers::values::expressions::binary_node;
 use crate::parse::constants::ROW_CONSTRUCTOR;
 use crate::scan::models::TokenKind;
+
+/// A `set_clause_list` as pairs, or as the whole list of `(targets, source)` assignments.
+type SetClauses = (Vec<(Identifier, Expression)>, Vec<Expression>);
+
+/// One assignment of `set_clause_list`, as `(targets, source)`.
+fn assignment(targets: Vec<Expression>, source: Expression) -> Expression {
+    tuple(vec![tuple(targets), source])
+}
+
+/// The column a target names, when it has no subfield or subscript.
+fn plain_column(target: &Expression) -> Option<Identifier> {
+    match target {
+        Expression::Identifier(name) => Some(name.clone()),
+        _ => None,
+    }
+}
 
 /// The `count` items of a row `(a, b)` or `ROW(a, b)`, which `SET (x, y) = …` splits.
 fn row_items(value: &Expression, count: usize) -> Option<Vec<Expression>> {
@@ -65,81 +83,106 @@ impl Parser<'_> {
         Ok(())
     }
 
-    /// `RETURNING [WITH (...)] target_list`, when present.
-    fn returning(&mut self) -> Parsing<Vec<Expression>> {
+    /// `RETURNING [WITH (...)] target_list`, when present, as its aliases and its targets.
+    fn returning(&mut self) -> Parsing<(Vec<Expression>, Vec<Expression>)> {
         if !self.eat_kw("returning") {
-            return Ok(Vec::new());
+            return Ok((Vec::new(), Vec::new()));
         }
-        let start: usize = self.offset();
+        let mut aliases: Vec<Expression> = Vec::new();
         if self.kw("with") && self.char_at(1, '(') {
             self.at += 1;
-            self.parenthesized(|parser| {
-                if !(parser.eat_kw("old") || parser.eat_kw("new")) {
-                    return Err(parser.error());
-                }
+            aliases = self.parenthesized(|parser| {
+                let which: &str = match parser.keyword_at(0) {
+                    Some("old") => "OLD",
+                    Some("new") => "NEW",
+                    _ => return Err(parser.error()),
+                };
+                parser.at += 1;
                 parser.expect_kw("as")?;
-                parser.name(is_col_id)
+                let name: Identifier = parser.name(is_col_id)?;
+                Ok(tuple(vec![var(which), Expression::Identifier(name)]))
             })?;
-            self.gap("returning_with", start);
         }
-        self.comma_list(|parser| parser.target())
+        Ok((aliases, self.comma_list(|parser| parser.target())?))
     }
 
-    /// `ColId opt_indirection` naming a column to set; indirection is a gap.
-    fn set_target(&mut self) -> Parsing<Identifier> {
-        let start: usize = self.offset();
+    /// `ColId opt_indirection` naming a column to set, with any subfields and subscripts.
+    fn set_target(&mut self) -> Parsing<Expression> {
         let name: Identifier = self.name(is_col_id)?;
-        if self.is_char('.') || self.is_char('[') {
-            self.indirection(Expression::Null(
-                sqlquack_syntax::expressions::names::models::Null,
-            ))?;
-            self.gap("set_target_indirection", start);
-        }
-        Ok(name)
+        self.indirection(Expression::Identifier(name))
     }
 
-    /// `set_clause_list`: `col = expr` and `(cols) = expr`, the latter a gap.
-    fn set_clauses(&mut self) -> Parsing<Vec<(Identifier, Expression)>> {
+    /// The `SET` of `ON CONFLICT` or `MERGE`: `col = expr` items, or else the `(targets, source)` list.
+    fn set_clauses(&mut self) -> Parsing<Vec<Expression>> {
+        let (clauses, assignments) = self.set_clause_list()?;
+        Ok(match assignments.is_empty() {
+            true => clauses
+                .into_iter()
+                .map(|(name, value)| binary_node("=", Expression::Identifier(name), value))
+                .collect(),
+            false => assignments,
+        })
+    }
+
+    /// `set_clause_list` as pairs, and as `(targets, source)` items when a `(cols) = source` is no row.
+    fn set_clause_list(&mut self) -> Parsing<SetClauses> {
         let mut clauses: Vec<(Identifier, Expression)> = Vec::new();
+        let mut assignments: Vec<Expression> = Vec::new();
+        let mut unsplit: bool = false;
         loop {
-            let start: usize = self.offset();
-            if self.is_char('(') {
-                let targets: Vec<Identifier> = self.parenthesized(|parser| parser.set_target())?;
-                self.expect_char('=')?;
-                let value: Expression = self.a_expr()?;
-                match row_items(&value, targets.len()) {
-                    Some(items) => clauses.extend(targets.into_iter().zip(items)),
+            let multiple: bool = self.is_char('(');
+            let targets: Vec<Expression> = match multiple {
+                true => self.parenthesized(|parser| parser.set_target())?,
+                false => vec![self.set_target()?],
+            };
+            self.expect_char('=')?;
+            let value: Expression = self.a_expr()?;
+            let pairs: Vec<(Expression, Expression)> = match multiple {
+                false => vec![(targets[0].clone(), value.clone())],
+                true => match row_items(&value, targets.len()) {
+                    Some(items) => targets.iter().cloned().zip(items).collect(),
                     None => {
-                        self.gap("multiple_column_set", start);
-                        clauses.extend(targets.into_iter().next().map(|first| (first, value)));
+                        unsplit = true;
+                        Vec::new()
+                    }
+                },
+            };
+            match pairs.is_empty() {
+                true => assignments.push(assignment(targets, value)),
+                false => {
+                    for (target, item) in pairs {
+                        assignments.push(assignment(vec![target.clone()], item.clone()));
+                        match plain_column(&target) {
+                            Some(column) => clauses.push((column, item)),
+                            None => unsplit = true,
+                        }
                     }
                 }
-            } else {
-                let target: Identifier = self.set_target()?;
-                self.expect_char('=')?;
-                clauses.push((target, self.a_expr()?));
             }
             if !self.eat_char(',') {
-                return Ok(clauses);
+                return Ok(match unsplit {
+                    true => (Vec::new(), assignments),
+                    false => (clauses, Vec::new()),
+                });
             }
         }
     }
 
-    /// `WHERE a_expr` or `WHERE CURRENT OF cursor` (a gap), when present.
-    fn where_or_current(&mut self) -> Parsing<Option<Where>> {
+    /// `WHERE a_expr` or `WHERE CURRENT OF cursor`, when present.
+    fn where_or_current(&mut self) -> Parsing<(Option<Where>, Option<Identifier>)> {
         if !self.eat_kw("where") {
-            return Ok(None);
+            return Ok((None, None));
         }
-        let start: usize = self.offset();
         if self.kw("current") && self.kw_at(1, "of") {
             self.at += 2;
-            self.name(is_col_id)?;
-            self.gap("where_current_of", start);
-            return Ok(None);
+            return Ok((None, Some(self.name(is_col_id)?)));
         }
-        Ok(Some(Where {
-            this: self.a_expr()?,
-        }))
+        Ok((
+            Some(Where {
+                this: self.a_expr()?,
+            }),
+            None,
+        ))
     }
 
     /// `relation_expr_opt_alias`; `SET` after an `UPDATE` target is never its alias.
@@ -164,17 +207,18 @@ impl Parser<'_> {
             target.alias_explicit_as = true;
         }
         if self.is_char('(') && !self.starts_query_at(1) {
-            target.columns = self.parenthesized(|parser| parser.set_target())?;
-        }
-        let start: usize = self.offset();
-        if self.eat_kw("overriding") {
-            if !(self.eat_kw("user") || self.eat_kw("system")) {
-                return Err(self.error());
+            let targets: Vec<Expression> = self.parenthesized(|parser| parser.set_target())?;
+            match targets
+                .iter()
+                .map(plain_column)
+                .collect::<Option<Vec<Identifier>>>()
+            {
+                Some(columns) => target.columns = columns,
+                None => target.column_targets = targets,
             }
-            self.expect_kw("value")?;
-            self.gap("overriding", start);
         }
-        if self.kw("default") && self.kw_at(1, "values") {
+        target.overriding = self.overriding()?;
+        if target.overriding.is_none() && self.kw("default") && self.kw_at(1, "values") {
             self.at += 2;
             target.default_values = true;
         } else {
@@ -194,7 +238,7 @@ impl Parser<'_> {
             self.at += 2;
             target.on_conflict = Some(Box::new(self.on_conflict()?));
         }
-        target.returning = self.returning()?;
+        (target.returning_aliases, target.returning) = self.returning()?;
         target.with = with;
         Ok(Expression::Insert(Box::new(target)))
     }
@@ -231,11 +275,7 @@ impl Parser<'_> {
         } else {
             self.expect_kw("update")?;
             self.expect_kw("set")?;
-            let assignments: Vec<Expression> = self
-                .set_clauses()?
-                .into_iter()
-                .map(|(name, value)| binary_node("=", Expression::Identifier(name), value))
-                .collect();
+            let assignments: Vec<Expression> = self.set_clauses()?;
             node.action = Some(Box::new(tuple(assignments)));
             if self.eat_kw("where") {
                 node.where_ = Some(Box::new(self.a_expr()?));
@@ -246,7 +286,6 @@ impl Parser<'_> {
 
     /// `index_elem`: a column, a call, or `( a_expr )`, with collation, operator class and order.
     fn index_element(&mut self) -> Parsing<Expression> {
-        let start: usize = self.offset();
         let this: Expression = match self.is_char('(') {
             true => {
                 self.at += 1;
@@ -256,14 +295,24 @@ impl Parser<'_> {
             }
             false => self.c_expr(crate::parse::_helpers::values::expressions::Flavor::B)?,
         };
+        let mut options: Vec<Expression> = Vec::new();
         if self.eat_kw("collate") {
-            self.qualified_name()?;
-            self.gap("index_element_collate", start);
+            let name: Vec<Identifier> = self.qualified_name()?;
+            options.push(clause("COLLATE", vec![name_value(&name)]));
         }
-        if self.is(is_col_id) && !self.kw("nulls") {
-            self.qualified_name()?;
-            self.gap("index_element_opclass", start);
+        let ordering: bool = self.kw("nulls") && (self.kw_at(1, "first") || self.kw_at(1, "last"));
+        if self.is(is_col_id) && !ordering && !self.kw("asc") && !self.kw("desc") {
+            let name: Vec<Identifier> = self.qualified_name()?;
+            let mut values: Vec<Expression> = vec![name_value(&name)];
+            if self.is_char('(') {
+                values.push(tuple(self.options(true)?));
+            }
+            options.push(clause("OPCLASS", values));
         }
+        let this: Expression = match options.is_empty() {
+            true => this,
+            false => keyword_call("INDEX ELEMENT", vec![this], options),
+        };
         let desc: bool = self.eat_kw("desc");
         let explicit_asc: bool = !desc && self.eat_kw("asc");
         let nulls_first: Option<bool> = self.nulls_order();
@@ -280,14 +329,14 @@ impl Parser<'_> {
         let (relation, _) = self.relation_with_alias(true)?;
         let mut node = update(relation);
         self.expect_kw("set")?;
-        node.set = self.set_clauses()?;
+        (node.set, node.assignments) = self.set_clause_list()?;
         if self.eat_kw("from") {
             let (items, joins) = self.parse_from_list()?;
             node.from_clause = Some(From { expressions: items });
             node.from_joins = joins;
         }
-        node.where_clause = self.where_or_current()?;
-        node.returning = self.returning()?;
+        (node.where_clause, node.current_of) = self.where_or_current()?;
+        (node.returning_aliases, node.returning) = self.returning()?;
         node.with = with;
         Ok(Expression::Update(Box::new(node)))
     }
@@ -301,22 +350,28 @@ impl Parser<'_> {
         let mut node = delete(relation);
         node.alias = alias;
         node.alias_explicit_as = explicit;
-        let start: usize = self.offset();
         if self.eat_kw("using") {
             let (items, joins) = self.parse_from_list()?;
-            let mut opaque: bool = !joins.is_empty();
-            for item in items {
-                match item {
-                    Expression::Table(relation) => node.using.push(*relation),
-                    _ => opaque = true,
+            let tables: Option<Vec<TableRef>> = match joins.is_empty() {
+                true => items
+                    .iter()
+                    .map(|item| match item {
+                        Expression::Table(relation) => Some((**relation).clone()),
+                        _ => None,
+                    })
+                    .collect(),
+                false => None,
+            };
+            match tables {
+                Some(tables) => node.using = tables,
+                None => {
+                    node.using_items = items;
+                    node.using_joins = joins;
                 }
             }
-            if opaque {
-                self.gap("delete_using_non_table", start);
-            }
         }
-        node.where_clause = self.where_or_current()?;
-        node.returning = self.returning()?;
+        (node.where_clause, node.current_of) = self.where_or_current()?;
+        (node.returning_aliases, node.returning) = self.returning()?;
         node.with = with;
         Ok(Expression::Delete(Box::new(node)))
     }
@@ -338,7 +393,7 @@ impl Parser<'_> {
         while self.kw("when") {
             whens.push(self.merge_when()?);
         }
-        let returning: Vec<Expression> = self.returning()?;
+        let (returning_aliases, returning) = self.returning()?;
         Ok(Expression::Merge(Box::new(Merge {
             this: Box::new(Expression::Table(Box::new(target))),
             using: Box::new(source),
@@ -355,6 +410,7 @@ impl Parser<'_> {
                     into: None,
                 })))),
             },
+            returning_aliases,
         })))
     }
 
@@ -402,11 +458,7 @@ impl Parser<'_> {
             (true, Some("update")) => {
                 self.at += 1;
                 self.expect_kw("set")?;
-                let assignments: Vec<Expression> = self
-                    .set_clauses()?
-                    .into_iter()
-                    .map(|(target, value)| binary_node("=", Expression::Identifier(target), value))
-                    .collect();
+                let assignments: Vec<Expression> = self.set_clauses()?;
                 Ok(tuple(vec![verb("UPDATE"), tuple(assignments)]))
             }
             (true, Some("delete")) => {
@@ -422,6 +474,21 @@ impl Parser<'_> {
         }
     }
 
+    /// `OVERRIDING USER VALUE` or `OVERRIDING SYSTEM VALUE`, when present, as "USER" or "SYSTEM".
+    fn overriding(&mut self) -> Parsing<Option<String>> {
+        if !self.eat_kw("overriding") {
+            return Ok(None);
+        }
+        let kind: &str = match self.keyword_at(0) {
+            Some("user") => "USER",
+            Some("system") => "SYSTEM",
+            _ => return Err(self.error()),
+        };
+        self.at += 1;
+        self.expect_kw("value")?;
+        Ok(Some(kind.to_owned()))
+    }
+
     /// `merge_insert` after `INSERT`, as its column and value tuples or `DEFAULT VALUES`.
     fn merge_insert(&mut self) -> Parsing<Vec<Expression>> {
         if self.kw("default") && self.kw_at(1, "values") {
@@ -432,18 +499,10 @@ impl Parser<'_> {
         }
         let mut parts: Vec<Expression> = Vec::new();
         if self.is_char('(') {
-            let columns: Vec<Identifier> = self.parenthesized(|parser| parser.set_target())?;
-            parts.push(tuple(
-                columns.into_iter().map(Expression::Identifier).collect(),
-            ));
+            parts.push(tuple(self.parenthesized(|parser| parser.set_target())?));
         }
-        let start: usize = self.offset();
-        if self.eat_kw("overriding") {
-            if !(self.eat_kw("user") || self.eat_kw("system")) {
-                return Err(self.error());
-            }
-            self.expect_kw("value")?;
-            self.gap("overriding", start);
+        if let Some(overriding) = self.overriding()? {
+            parts.push(tuple(vec![var("OVERRIDING"), var(&overriding)]));
         }
         self.expect_kw("values")?;
         self.expect_char('(')?;

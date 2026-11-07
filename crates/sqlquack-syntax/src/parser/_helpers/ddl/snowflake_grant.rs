@@ -1,7 +1,7 @@
 //! Snowflake GRANT and REVOKE of privileges, roles and service roles, as Snowflake parses them.
 
 use crate::expressions::names::models::Identifier;
-use crate::expressions::statements::models::{Grant, GrantPrincipal, Privilege, Revoke};
+use crate::expressions::schema_objects::models::{Grant, GrantPrincipal, Privilege, Revoke};
 use crate::expressions::tree::models::Expression;
 use crate::parser::constants::{SNOWFLAKE_GRANT_KINDS, SNOWFLAKE_GRANT_PRIVILEGES};
 use crate::parser::models::Parser;
@@ -109,6 +109,9 @@ impl Parser {
                 grant_option,
                 cascade,
                 restrict,
+                objects: Vec::new(),
+                granted_by: None,
+                options: Vec::new(),
             })));
         }
         let grant_option = self.check(TokenType::With);
@@ -133,6 +136,9 @@ impl Parser {
             grant_option,
             as_principal: None,
             current_grants,
+            objects: Vec::new(),
+            granted_by: None,
+            options: Vec::new(),
         })))
     }
 

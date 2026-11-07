@@ -1241,3 +1241,106 @@ pub struct ExecuteObject {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub properties: Vec<ObjectProperty>,
 }
+
+/// A GRANT/REVOKE privilege with optional columns, such as `UPDATE(c1, c2)`.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Privilege {
+    /// The privilege name (e.g., SELECT, INSERT, UPDATE, ALL)
+    pub name: String,
+    /// Optional column list for column-level privileges (e.g., UPDATE(col1, col2))
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub columns: Vec<String>,
+}
+
+/// Principal in GRANT/REVOKE (user, role, etc.)
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct GrantPrincipal {
+    /// The name of the principal
+    pub name: Identifier,
+    /// Whether prefixed with ROLE keyword
+    pub is_role: bool,
+    /// Whether prefixed with GROUP keyword (Redshift)
+    #[serde(default)]
+    pub is_group: bool,
+    /// Whether prefixed with SHARE keyword (Snowflake)
+    #[serde(default)]
+    pub is_share: bool,
+    /// Snowflake: the grantee kind, such as ROLE, DATABASE ROLE, APPLICATION or USER
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub kind: Option<String>,
+}
+
+/// GRANT statement
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Grant {
+    /// Privileges to grant (e.g., SELECT, INSERT, UPDATE(col1, col2))
+    pub privileges: Vec<Privilege>,
+    /// Object kind (TABLE, SCHEMA, FUNCTION, etc.)
+    pub kind: Option<String>,
+    /// The object to grant on
+    pub securable: Identifier,
+    /// Function parameter types (for FUNCTION kind)
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub function_params: Vec<String>,
+    /// The grantees
+    pub principals: Vec<GrantPrincipal>,
+    /// WITH GRANT OPTION
+    pub grant_option: bool,
+    /// TSQL: AS principal (the grantor role)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub as_principal: Option<Identifier>,
+    /// Snowflake GRANT OWNERSHIP: COPY or REVOKE CURRENT GRANTS
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub current_grants: Option<String>,
+    /// PostgreSQL: the objects in order, e.g. names, signatures or large object numbers; empty when `securable` is the one object
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub objects: Vec<Expression>,
+    /// PostgreSQL: GRANTED BY role
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub granted_by: Option<Expression>,
+    /// PostgreSQL role membership options in order, e.g. `(ADMIN, true)` or `(INHERIT, false)`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub options: Vec<Expression>,
+}
+
+/// REVOKE statement
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Revoke {
+    /// Privileges to revoke (e.g., SELECT, INSERT, UPDATE(col1, col2))
+    pub privileges: Vec<Privilege>,
+    /// Object kind (TABLE, SCHEMA, FUNCTION, etc.)
+    pub kind: Option<String>,
+    /// The object to revoke from
+    pub securable: Identifier,
+    /// Function parameter types (for FUNCTION kind)
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub function_params: Vec<String>,
+    /// The grantees
+    pub principals: Vec<GrantPrincipal>,
+    /// GRANT OPTION FOR
+    pub grant_option: bool,
+    /// CASCADE
+    pub cascade: bool,
+    /// RESTRICT
+    #[serde(default)]
+    pub restrict: bool,
+    /// PostgreSQL: the objects in order, e.g. names, signatures or large object numbers; empty when `securable` is the one object
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub objects: Vec<Expression>,
+    /// PostgreSQL: GRANTED BY role
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub granted_by: Option<Expression>,
+    /// PostgreSQL role membership options revoked, e.g. `ADMIN` in `REVOKE ADMIN OPTION FOR`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub options: Vec<Expression>,
+}
+
+/// PostgreSQL ALTER DEFAULT PRIVILEGES: a GRANT or REVOKE on objects created later.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct AlterDefaultPrivileges {
+    /// The FOR ROLE and IN SCHEMA options in order, e.g. `(FOR ROLE, (r1, r2))`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub options: Vec<Expression>,
+    /// The GRANT or REVOKE, whose kind names the objects, e.g. TABLES
+    pub action: Expression,
+}

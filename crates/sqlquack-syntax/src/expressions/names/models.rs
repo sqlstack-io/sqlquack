@@ -277,6 +277,9 @@ pub struct TableRef {
     /// ClickHouse FINAL modifier: forces final aggregation for MergeTree tables
     #[serde(default)]
     pub final_: bool,
+    /// PostgreSQL `TABLESAMPLE method (args) [REPEATABLE (seed)]`, as a `KeywordCall`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub sample_call: Option<Box<Expression>>,
     /// TABLESAMPLE clause attached to this table reference (DuckDB, BigQuery)
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub table_sample: Option<Box<Sample>>,
@@ -298,6 +301,9 @@ pub struct TableRef {
     /// Time travel version clause: FOR VERSION AS OF / FOR TIMESTAMP AS OF (Presto/Trino, BigQuery, Databricks)
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub version: Option<Box<Version>>,
+    /// BigQuery: one backquoted dotted name (`` `proj.ds.t` ``), split into parts, read as a table
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub whole_quoted: bool,
     /// Source position span
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub span: Option<Span>,
@@ -306,6 +312,7 @@ pub struct TableRef {
 impl TableRef {
     pub fn new(name: impl Into<String>) -> Self {
         Self {
+            sample_call: None,
             name: Identifier::new(name),
             schema: None,
             catalog: None,
@@ -325,6 +332,7 @@ impl TableRef {
             changes: None,
             version: None,
             span: None,
+            whole_quoted: false,
         }
     }
 
@@ -350,6 +358,7 @@ impl TableRef {
     /// Create from an Identifier, preserving the quoted flag
     pub fn from_identifier(name: Identifier) -> Self {
         Self {
+            sample_call: None,
             name,
             schema: None,
             catalog: None,
@@ -369,6 +378,7 @@ impl TableRef {
             changes: None,
             version: None,
             span: None,
+            whole_quoted: false,
         }
     }
 

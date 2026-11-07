@@ -1462,3 +1462,171 @@ note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), t
 
 [review.definitions]
 "pg.ddl.create-publication" = "38ee20b4e2c97a6909930a6845a6978e3b172558b41e4314361fce90249f693c"
+
+[[review]]
+id = "pg-auditor-ddl-015"
+reviewer_lane = "auditor"
+family = "ddl"
+parser_tree = "3c24ccecc4954f5416274b31e405eda128b876ba"
+reviewed_utc = "2026-11-06T15:13:47Z"
+verdict = "approved"
+forms = [
+  "pg.ddl.drop-access-method",
+  "pg.ddl.drop-aggregate",
+  "pg.ddl.drop-cast",
+  "pg.ddl.drop-collation",
+  "pg.ddl.drop-conversion",
+  "pg.ddl.drop-database",
+  "pg.ddl.drop-domain",
+  "pg.ddl.drop-event-trigger",
+  "pg.ddl.drop-extension",
+  "pg.ddl.drop-foreign-data-wrapper",
+  "pg.ddl.drop-foreign-table",
+  "pg.ddl.drop-function",
+  "pg.ddl.drop-index",
+  "pg.ddl.drop-language",
+  "pg.ddl.drop-materialized-view",
+  "pg.ddl.drop-operator",
+  "pg.ddl.drop-operator-class",
+  "pg.ddl.drop-operator-family",
+  "pg.ddl.drop-procedure",
+  "pg.ddl.drop-publication",
+  "pg.ddl.drop-routine",
+  "pg.ddl.drop-rule",
+  "pg.ddl.drop-schema",
+  "pg.ddl.drop-sequence",
+  "pg.ddl.drop-server",
+  "pg.ddl.drop-statistics",
+  "pg.ddl.drop-subscription",
+  "pg.ddl.drop-table",
+  "pg.ddl.drop-tablespace",
+  "pg.ddl.drop-text-search-configuration",
+  "pg.ddl.drop-text-search-dictionary",
+  "pg.ddl.drop-text-search-parser",
+  "pg.ddl.drop-text-search-template",
+  "pg.ddl.drop-transform",
+  "pg.ddl.drop-trigger",
+  "pg.ddl.drop-type",
+  "pg.ddl.drop-view",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 3c24ccec; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.ddl.drop-access-method" = "9708df5b799dffa1eabb45ed44cf54da4d3fe71634ca3107df87c501ce88eb43"
+"pg.ddl.drop-aggregate" = "2b0af0ab19198df82b80728dd910ad1a6094e76331c3bf79ad44b43baf219870"
+"pg.ddl.drop-cast" = "d31faa878b5235606783587637f146c2a9b4f7ffe8b0cac89a73da3b05fa24e2"
+"pg.ddl.drop-collation" = "3e070333ab69031deb710fd0c9c7c5021b56e491659ebaa80713a2142cfdad0e"
+"pg.ddl.drop-conversion" = "00ce6c63c7d7d51ab359232488149739a68dd11403d7c89b0b97d23172be4e84"
+"pg.ddl.drop-database" = "461f9e6735bfb7b3a375779713b09c002e821c4af625102645a3e6f5d0d5f767"
+"pg.ddl.drop-domain" = "14ecd8a869b60dfdf136b3ff8f323d61687562cc84fb53feacd4ce2cf12b603e"
+"pg.ddl.drop-event-trigger" = "6c2ffd689185942328972f010025a26bca0e1786130f626fec6e082d62d0e6dd"
+"pg.ddl.drop-extension" = "3d07d3557dbc244a086723543547c360965c30baa381c8d47982a4249d7c566a"
+"pg.ddl.drop-foreign-data-wrapper" = "dd04c829e8bac8190bb04136fa50b04ff5b14965f0c651e93a9a0686ef7e3063"
+"pg.ddl.drop-foreign-table" = "6610368e8c2f34b716c65e167f7637b1c34ce105be99a6e0e159dff84a9e7544"
+"pg.ddl.drop-function" = "21a6dd527dc9c91126e2b07014885be0892b383bb99fcd154c372515feaca26f"
+"pg.ddl.drop-index" = "d73bfde83aa7c2da51c9719d2dd666fe361e6ff2f6f5b4210b2514139b90c42b"
+"pg.ddl.drop-language" = "9c5bb6914affc367f057002797929e62784bedbc96e83792c1904e4250115eb2"
+"pg.ddl.drop-materialized-view" = "4e47dcb40d43712a0d9ef68b1b325d8f70f1ca3991887305faa3838dc346a926"
+"pg.ddl.drop-operator" = "bf232ceff72043c7f80876a03fef7139a3560dcd168777f3e8d2707bfb682e6a"
+"pg.ddl.drop-operator-class" = "b335efb45bbe241648c98aa228cebed43af13a5dabe2ba42cec87b715c9adcab"
+"pg.ddl.drop-operator-family" = "33a6420c802c07b10d2574a86995cdeadd02d2228d185038557fa07e2487452d"
+"pg.ddl.drop-procedure" = "5f317ed46e4f52e0fa355e5995f45c499400c199f92601f84e6250303e0480db"
+"pg.ddl.drop-publication" = "1c4a4916cc280e69d94e1f59332bf91a884cad7f25cf14ed7060891b1f86445b"
+"pg.ddl.drop-routine" = "f117ae237ec65f4047ed0598422d23a203f9c6336da1f4735aa94bf81e297755"
+"pg.ddl.drop-rule" = "5661b3f3dbbef44a1dae8473a9f022251b7e52942ea5355693b6179b58d4a6d7"
+"pg.ddl.drop-schema" = "5be96ae1cb016ac32c525b6bb83118e30f3e89f3b472d44207e6c0fc7e986898"
+"pg.ddl.drop-sequence" = "957d4919281723d1d65d997f5ee0cf06c61ee6922e049488c08276c200d8c5cb"
+"pg.ddl.drop-server" = "5d32d65586ff2716b7d1b166c670ff23a516546beea72993f907724a4d238caf"
+"pg.ddl.drop-statistics" = "42bca11a73769df963bc793a9021e515bb5feacdbb20b55807453c42a1ff73f2"
+"pg.ddl.drop-subscription" = "3ac302f4de6193f1e0d41bda1c1b41f0dfed93c097a3abe4e5907803169972a6"
+"pg.ddl.drop-table" = "f938d333b302ef72fa01d5e351649c5c796e17fa6d1d427daabce9c65050cb0f"
+"pg.ddl.drop-tablespace" = "9acecee6b292a28e15235458a3c8a913fd8d3eae0fdbf1801d322dfb0b3f9a1e"
+"pg.ddl.drop-text-search-configuration" = "ee0a52bcf5fa99535590267394603641db98a9849b6c4940ed1f672c12f53f45"
+"pg.ddl.drop-text-search-dictionary" = "e26d0193d9cb45caa612b9cb05630f46085b4c4feab35b25100506b27206c4da"
+"pg.ddl.drop-text-search-parser" = "ea60b44fa652937266d07b146afb95742725918d300ffe3a1d41b66fd7fb2696"
+"pg.ddl.drop-text-search-template" = "d201ad35c7b81b5fd39137f135d036745a1bb6c9106f5e73f5a7e739c868fb89"
+"pg.ddl.drop-transform" = "3c2bc041d472067590120a420c3e599f5a7a9d8829aaea8cdefb943f996d441b"
+"pg.ddl.drop-trigger" = "09112f91e218b0862e1fbf7d3d064b859f560f22260d558dc210aa0098de5847"
+"pg.ddl.drop-type" = "80a2d92a754d1c0d6baf3830a3993336535197eacb7cda4bd385157c30e844a3"
+"pg.ddl.drop-view" = "22b20fdacbfcc991e160e100f9084aae71d33853d48942f7290e8ab681cb7ab6"
+
+[review.definitions]
+"pg.ddl.drop-access-method" = "7e4b8ed7864864d15db7dc57fcffec5389a18d7b3491239d194aafef378accb2"
+"pg.ddl.drop-aggregate" = "0c02944dab87174b1b1514a63189c17bf0b1d0cbd984bfc0ff466b1f7e0583ef"
+"pg.ddl.drop-cast" = "ed0b0f8f68ad3a3f85040fdf85454f22486d470ecfbb3be18f34d7ac0d07f74a"
+"pg.ddl.drop-collation" = "1e4151a9d55f2cd54a807c95fb11d67baf9ded06e9df0d69b3bf18ccabe857b9"
+"pg.ddl.drop-conversion" = "abdff3c131f86232786e52094e13a1fdd7d7068f0b070cc795551b800b1a8d63"
+"pg.ddl.drop-database" = "a571459819c66fcc095b7b889b5cb4103b0c4a8a41839ceba00af6904c5b6a45"
+"pg.ddl.drop-domain" = "822b85dc49d46055f1be13f0fd5ac46ae982b57098369eeba17ec7e005ef9104"
+"pg.ddl.drop-event-trigger" = "e1b7514d7402af4635cf70a2621ab8db94f2822c677c9cfb11ccbbfd08b47e4e"
+"pg.ddl.drop-extension" = "fbd207d354c595fb9b86a9f3679cec9f86d885d9b2873d96c9eeed8b8d2f1061"
+"pg.ddl.drop-foreign-data-wrapper" = "4299a38ad7c540e8525fb8a4bc046a2c7ac28be9c1d912213f4b662a8dfc32ac"
+"pg.ddl.drop-foreign-table" = "1dcd5fe20253a76845f9ad875876c360672abb40ad35063e9883aa8137ca517c"
+"pg.ddl.drop-function" = "da782dbff0152459e1e0f4115b4dee777af495caf1f3a7ad917325bbaf7b8b74"
+"pg.ddl.drop-index" = "a3b99b2962ddc3381bd3af99df550d188b9532ce898742468af54ab48711acfd"
+"pg.ddl.drop-language" = "ead3aacf57c830c8e03b55768caff2121cb31f0cd5d551270e8a20259299d9cf"
+"pg.ddl.drop-materialized-view" = "f1417c0bf3772facec17556fa1afd8dc039501cc349cd6a4922654c033e121e7"
+"pg.ddl.drop-operator" = "0a2361f144fe084ff486b95cc372faf6ae2e60dc94839ac15e66a4ac73fcf22f"
+"pg.ddl.drop-operator-class" = "06601e8fa199d49251e2435700e4c38ba2184faa285d867548688f8ab6b7d357"
+"pg.ddl.drop-operator-family" = "0beee648297ab40b0435d86350ffb2eb0fd7a36120cc2ffc51418f880b8d2e76"
+"pg.ddl.drop-procedure" = "0b2d59b9761b47e600ae351c07c79d7abe8f13636da492f4f90b779f6a10729d"
+"pg.ddl.drop-publication" = "a39f709f88b688abd4ff2c531346abc376985742f5d0e15fb0321cc2c40bde9f"
+"pg.ddl.drop-routine" = "5f3ce6e3fa6aef56cc1782eb210323d190d46aa55a788fafd544a4d257755d88"
+"pg.ddl.drop-rule" = "16b5f618b559d5f0111e5c8633e5a7dce876bdf5936e7daa55f825d0297795d2"
+"pg.ddl.drop-schema" = "b283e300d3713c2bf7a9032e21bfd4023534a8b516a6ab26b7a05a20f06b9428"
+"pg.ddl.drop-sequence" = "0cebc43f63cc57574c3d77c90db8a8f05b09f643a28e3fc14730d910496d6913"
+"pg.ddl.drop-server" = "11a5b694d13da3ebc41139fc064d6dd4f47438ae678385842111f18a19fcaced"
+"pg.ddl.drop-statistics" = "62842fdb3b7830066d07546542538293015f02f22c93d6e0dda475381512810b"
+"pg.ddl.drop-subscription" = "05ee9581600a7ab7ea6b360fdb15093dce51c560e40c6f32311e7c4a88571abf"
+"pg.ddl.drop-table" = "447497593e2d910ad79b9b9510a9acea24510c593572e14fce74efb708563a51"
+"pg.ddl.drop-tablespace" = "dc302be058b4cb8a170cba26247c2318cdf77a5a6bf6be88ecddd3b139391102"
+"pg.ddl.drop-text-search-configuration" = "b482bf03d3dbd2de814ce0c6a6b99aa50f8d807d5ab49bbfa00cf79b459a1f3b"
+"pg.ddl.drop-text-search-dictionary" = "c7568e74ebf788f207b3f8273a83af4ae0ade83d63cc01312c65713d4bdd02be"
+"pg.ddl.drop-text-search-parser" = "dd0950a4340209ccf9aff30f3f7fa87a2a60e46b5aa51a01c989fabcaf6387ac"
+"pg.ddl.drop-text-search-template" = "537090b02c40ddd2d6f464b69a007a809a900eefc7fb246a962fc521211bed38"
+"pg.ddl.drop-transform" = "b5540b1283860bca919521221dc4e2422067e4b9b6302002d0f7467eb61654bc"
+"pg.ddl.drop-trigger" = "0de6854d98071c86b1fa8f15cf6195c4e28e01ff4a307b8917188736194b313b"
+"pg.ddl.drop-type" = "d7c8d897d994cc167369414bd9269244dbad08a9f798b733901983b140fa3d19"
+"pg.ddl.drop-view" = "f59530e5e15194d7588b51a33fff9ec02aaf6dab28061a49ee412330054e5bbe"
+
+[[review]]
+id = "pg-auditor-ddl-018"
+reviewer_lane = "auditor"
+family = "ddl"
+parser_tree = "06bb147f9101958773446552ee7dc06decf018d2"
+reviewed_utc = "2026-11-06T17:14:36Z"
+verdict = "approved"
+forms = [
+  "pg.ddl.create-schema.authorization",
+  "pg.ddl.create-schema.schema-name",
+  "pg.ddl.import-foreign-schema",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 06bb147f; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.ddl.create-schema.authorization" = "5a23c7d33d2491b9280dfc8c5aa31ae1f2551e116c410b43ff524bb93d3f6065"
+"pg.ddl.create-schema.schema-name" = "62e33f175bf1c712013db3e0d55616ad43d60692bb26e9318e1bf753cc6e319f"
+"pg.ddl.import-foreign-schema" = "8108511807fc8af15dc9d69033cb9b2afce16eb62861d4276759339726ec6975"
+
+[review.definitions]
+"pg.ddl.create-schema.authorization" = "549985064b3d0463cff8ba6ab6e1f211c41b6d9be222c0109443d10d004fc675"
+"pg.ddl.create-schema.schema-name" = "ae518edab3e57ff47a6ca24b5a46785ce67aa3e42806295546a5d54883d1227c"
+"pg.ddl.import-foreign-schema" = "035131f8e96d9d77de84af9bff9512ec92ae477dbc9c3866e3fc8863c3f3212c"
+
+[[review]]
+id = "pg-auditor-ddl-020"
+reviewer_lane = "auditor"
+family = "ddl"
+parser_tree = "456f03b38854dcee53403e8c19c657bde430a76e"
+reviewed_utc = "2026-11-07T04:24:14Z"
+verdict = "approved"
+forms = [
+  "pg.ddl.create-rule",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 456f03b3; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.ddl.create-rule" = "139f15deaa0612a366c2658bc98fbbd63cd07e9090396ca6a9955f7d38467ad3"
+
+[review.definitions]
+"pg.ddl.create-rule" = "ef00fc41f0e5090bfa27dbab84da6b88b65295a766d80bc9af05e19fdd5bbd85"
