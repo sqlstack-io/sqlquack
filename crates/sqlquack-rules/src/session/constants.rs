@@ -14,15 +14,52 @@ pub const BUILTIN_CLOCK_REASON: &str = "CURRENT_DATE() and CURRENT_TIMESTAMP() t
 
 /// The session time zone the clock functions rest on under the built-in default.
 pub const BUILTIN_CLOCK_ZONE: &str = "CURRENT_DATE() and CURRENT_TIMESTAMP() give the date and \
-    time in the session's time zone, so they agree only where Snowflake's TIMEZONE and DuckDB's \
-    TimeZone are both UTC";
+    time in the session's time zone, and DATEADD, DATEDIFF, TIMESTAMPDIFF, TIMEDIFF, COALESCE and \
+    comparisons read a TIMESTAMP_LTZ, or a TIMESTAMP_TZ compared with text that has no offset, in \
+    it too, so they agree only where Snowflake's TIMEZONE and DuckDB's TimeZone are both UTC";
+
+/// Where the built-in default lets 38-digit arithmetic rely on DuckDB raising at the limit.
+pub const BUILTIN_NUMERIC_CONSTRUCTS: [&str; 4] = ["node:add", "node:sub", "node:mul", "fn:SUM"];
+
+/// The edge case of numeric_range under the built-in default, printed with the warning.
+pub const BUILTIN_NUMERIC_REASON: &str = "if a sum, difference, product or SUM needs more than 38 \
+    digits, DuckDB raises an Overflow error where Snowflake can still return the number; it never \
+    returns a different number. --strict refuses this";
+
+/// Where the built-in default lets date arithmetic rely on the converted SQL raising out of range.
+pub const BUILTIN_TIMESTAMP_CONSTRUCTS: [&str; 11] = [
+    "fn:DATEADD",
+    "fn:TIMEADD",
+    "fn:TIMESTAMPADD",
+    "node:add",
+    "node:sub",
+    "node:eq",
+    "node:neq",
+    "node:lt",
+    "node:lte",
+    "node:gt",
+    "node:gte",
+];
+
+/// The edge case of timestamp_range under the built-in default, printed with the warning.
+pub const BUILTIN_TIMESTAMP_REASON: &str = "if date or time arithmetic, or a timestamp \
+    compared at nanosecond precision, lands outside 1677-09-21 00:12:43.145224192 to \
+    2262-04-11 23:47:16.854775807 UTC, the converted SQL raises an error where Snowflake returns \
+    or compares the timestamp; it never returns a different value. --strict refuses this";
 
 /// Where the built-in default reads a TIMESTAMP_LTZ, such as the clock, in the UTC session.
-pub const BUILTIN_ZONE_CONSTRUCTS: [&str; 11] = [
+pub const BUILTIN_ZONE_CONSTRUCTS: [&str; 18] = [
     "fn:CURRENT_DATE",
     "fn:CURRENT_TIMESTAMP",
+    "fn:DATEADD",
     "fn:DATEDIFF",
     "node:date_diff",
+    "node:eq",
+    "node:neq",
+    "node:lt",
+    "node:lte",
+    "node:gt",
+    "node:gte",
     "fn:TIMESTAMPDIFF",
     "fn:TIMEDIFF",
     "fn:COALESCE",

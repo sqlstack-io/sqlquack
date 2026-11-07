@@ -68,7 +68,7 @@ echo "SELECT WEEKISO(CURRENT_DATE()) AS w" | sqlquack convert --builtin-policy
 
 A rule covers the construct, but only for operand types its recorded cases prove. The operands at the span have other types, or types SQLQuack could not determine. Declaring the relation's columns and types in the schema often lets the types resolve; an explicit cast to a covered type also works when it keeps the statement's meaning.
 
-**Help:** declare the operands' Snowflake types in the schema, or cast them to a type the rule covers
+**Help:** declare the operands' Snowflake types in the schema, or cast them to a type the rule covers; for a function's operand, cast it to a type the label names
 
 **Example:**
 
@@ -128,7 +128,7 @@ echo "SELECT 1 AS one" | sqlquack convert --builtin-policy --session WEEK_START=
 
 The construct at the span converts only by relying on the known divergence the label names, where DuckDB may raise or differ from Snowflake as the policy file describes. The policy refuses that divergence in the current mode, so the statement is refused. Allow it in the policy file, use a mode that allows it, or confirm the assumption it rests on; otherwise rewrite the statement without the construct.
 
-**Help:** the help names the divergence and the fixes that work in the current mode: allow it in the policy file, drop --strict or --loud-divergences-only, or confirm its assumption; the built-in policy refuses every one but the clock outside strict mode
+**Help:** the help names the divergence and the fixes that work in the current mode: allow it in the policy file, drop --strict or --loud-divergences-only, or confirm its assumption; outside strict mode the built-in policy allows only the clock and arithmetic that raises past 38 digits or the timestamp range
 
 **Example:**
 

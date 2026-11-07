@@ -157,7 +157,8 @@ renumbered.
 ### Policy
 
 `convert`, `function`, `census` and `index` read `sqlquack.toml` (or `--policy`); without one they
-use the built-in policy, which refuses every known divergence, as `--builtin-policy` asks for.
+use the built-in policy, as `--builtin-policy` asks for: it refuses every known divergence except the
+clock and arithmetic that raises at its range limit, which convert with a warning.
 They share the policy flags: `--policy`, `--builtin-policy`, `--strict`, `--utc-session`,
 `--confirm-declared-offsets`, `--python-runtime` and `--loud-divergences-only`, which relies only
 on divergences whose converted SQL raises rather than returns another value. Every command with a

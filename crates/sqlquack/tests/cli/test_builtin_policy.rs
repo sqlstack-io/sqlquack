@@ -2,6 +2,7 @@ use crate::helpers::{convert_outcome, policy_free_exit_code, run_convert};
 use crate::test_types::{ConvertTestCase, PolicyFreeTestCase};
 
 const TICKETS_SCHEMA: &str = "tests/cli/fixtures/semi_structured_tickets.json";
+const ORDERS_SCHEMA: &str = "tests/cli/fixtures/integer_orders.json";
 const EVENTS_SCHEMA: &str = "tests/cli/fixtures/volatile_lookback.json";
 
 #[test]
@@ -165,6 +166,13 @@ fn given_a_table_with_semi_structured_columns_when_converting_then_only_reading_
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
+            description: "comparing a TIMESTAMP_LTZ notes that it reads the session's time zone",
+            sql: "SELECT CURRENT_TIMESTAMP() > '2020-01-01 00:00:00' AS late",
+            flags: &["--builtin-policy"],
+            mention: "compared with text that has no offset",
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
             description: "DATEDIFF to the clock reads it in the UTC session under the built-in policy",
             sql: "SELECT DATEDIFF('day', occurred_at, CURRENT_TIMESTAMP()) AS age FROM events",
             flags: &["--builtin-policy", "--schema", EVENTS_SCHEMA],
@@ -197,6 +205,130 @@ fn given_a_table_with_semi_structured_columns_when_converting_then_only_reading_
             description: "strict mode refuses DATEDIFF to the clock",
             sql: "SELECT DATEDIFF('day', occurred_at, CURRENT_TIMESTAMP()) AS age FROM events",
             flags: &["--builtin-policy", "--strict", "--schema", EVENTS_SCHEMA],
+            mention: "needs known divergence",
+            expected_outcome: convert_outcome(1, false),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            run_convert(test_case.sql, test_case.flags, test_case.mention),
+            test_case.expected_outcome,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_arithmetic_that_only_raises_at_its_range_when_converting_then_the_built_in_policy_warns() {
+    const BUILTIN: &[&str] = &["--builtin-policy", "--schema", ORDERS_SCHEMA];
+    const STRICT: &[&str] = &["--builtin-policy", "--strict", "--schema", ORDERS_SCHEMA];
+    const LOUD_ONLY: &[&str] = &[
+        "--builtin-policy",
+        "--loud-divergences-only",
+        "--schema",
+        ORDERS_SCHEMA,
+    ];
+    let overflow = "needs more than 38 digits, DuckDB raises an Overflow error";
+    let out_of_range = "lands outside 1677-09-21 00:12:43.145224192 to 2262-04-11 23:47:16.854775807 UTC, the converted SQL raises an error";
+    let test_cases = [
+        ConvertTestCase {
+            description: "adding to a NUMBER(38,0) converts, warning that DuckDB raises past 38 digits",
+            sql: "SELECT order_id + 1 AS next_id FROM orders",
+            flags: BUILTIN,
+            mention: overflow,
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "SUM of a NUMBER(38,0) converts with the same warning",
+            sql: "SELECT SUM(quantity) AS units FROM orders",
+            flags: BUILTIN,
+            mention: overflow,
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "DATEADD of a TIMESTAMP_NTZ(9) converts, warning that it raises out of range",
+            sql: "SELECT DATEADD(day, 1, ordered_at) AS due FROM orders",
+            flags: BUILTIN,
+            mention: out_of_range,
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "adding an interval to a TIMESTAMP_NTZ(9) converts with the same warning",
+            sql: "SELECT ordered_at + INTERVAL '1 day' AS due FROM orders",
+            flags: BUILTIN,
+            mention: out_of_range,
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "only-loud mode keeps the range warnings, which never return a different value",
+            sql: "SELECT order_id * 2 AS doubled FROM orders",
+            flags: LOUD_ONLY,
+            mention: overflow,
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "a value divergence, which can return a different value, still refuses",
+            sql: "SELECT HASH(order_id) AS h FROM orders",
+            flags: BUILTIN,
+            mention: "needs known divergence `hash`",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "--strict refuses the arithmetic too, naming the constructs the default allows",
+            sql: "SELECT order_id + 1 AS next_id FROM orders",
+            flags: STRICT,
+            mention: "allows `numeric_range` only for node:add, node:sub, node:mul, fn:SUM",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "--strict refuses the date arithmetic",
+            sql: "SELECT DATEADD(day, 1, ordered_at) AS due FROM orders",
+            flags: STRICT,
+            mention: "needs known divergence `timestamp_range`",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "--strict refuses the value divergence",
+            sql: "SELECT HASH(order_id) AS h FROM orders",
+            flags: STRICT,
+            mention: "needs known divergence `hash`",
+            expected_outcome: convert_outcome(1, false),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            run_convert(test_case.sql, test_case.flags, test_case.mention),
+            test_case.expected_outcome,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_last_30_days_filter_when_converting_then_the_built_in_policy_warns() {
+    const BUILTIN: &[&str] = &["--builtin-policy", "--schema", ORDERS_SCHEMA];
+    const STRICT: &[&str] = &["--builtin-policy", "--strict", "--schema", ORDERS_SCHEMA];
+    let test_cases = [
+        ConvertTestCase {
+            description: "a last-30-days filter on the clock's date converts with the clock's caveat",
+            sql: "SELECT order_id FROM orders WHERE ordered_at >= DATEADD(day, -30, CURRENT_DATE)",
+            flags: BUILTIN,
+            mention: "take their value when the query runs",
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "a last-30-days filter on CURRENT_TIMESTAMP() converts, warning that it raises out of range",
+            sql: "SELECT order_id FROM orders WHERE ordered_at >= DATEADD(day, -30, CURRENT_TIMESTAMP())",
+            flags: BUILTIN,
+            mention: "compared at nanosecond precision",
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "--strict refuses the last-30-days filter on CURRENT_TIMESTAMP()",
+            sql: "SELECT order_id FROM orders WHERE ordered_at >= DATEADD(day, -30, CURRENT_TIMESTAMP())",
+            flags: STRICT,
             mention: "needs known divergence",
             expected_outcome: convert_outcome(1, false),
         },

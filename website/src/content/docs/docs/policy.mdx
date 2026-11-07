@@ -22,13 +22,15 @@ error[SQ0008]: the conversion needs a known divergence the policy refuses: `fn:H
 
 `convert`, `function`, `census` and `index` read `sqlquack.toml` from the current directory, or the
 file `--policy` names. Without one they use the built-in policy, which refuses every known
-divergence but the clock: `CURRENT_DATE()` and `CURRENT_TIMESTAMP()` convert with a warning, because
-both engines take the value when the query runs, in the session's time zone, which must be UTC in
-both for the values to agree. `DATEDIFF` of a `TIMESTAMP_LTZ`, such as
-`DATEDIFF('day', ordered_at, CURRENT_TIMESTAMP())`, relies on the same UTC session, and so does
-`COALESCE` of a `TIMESTAMP_NTZ` with one, such as `COALESCE(shipped_at, CURRENT_TIMESTAMP())`,
-which raises an error for a naive value with digits below the microsecond rather than round it.
-`--strict` and `--loud-divergences-only` refuse them too.
+divergence except these, which convert with a warning:
+
+| Divergence | Where | Warning | Refused by |
+| --- | --- | --- | --- |
+| `current_time`, `session_timezone_utc` | `CURRENT_DATE()`, `CURRENT_TIMESTAMP()`, and `DATEADD`, `DATEDIFF`, `TIMESTAMPDIFF`, `TIMEDIFF`, `COALESCE` and comparisons of a `TIMESTAMP_LTZ`, or of a `TIMESTAMP_TZ` with text that has no offset, such as `DATEADD(day, -30, CURRENT_TIMESTAMP())` or `DATEDIFF('day', ordered_at, CURRENT_TIMESTAMP())` | Both engines take the value when the query runs, in the session's time zone, which must be UTC in both for the values to agree. | `--strict`, `--loud-divergences-only`, a `TIMEZONE` other than UTC |
+| `numeric_range` | `+`, `-`, `*`, `SUM` | If a result needs more than 38 digits, DuckDB raises an Overflow error; it never returns a different number. | `--strict` |
+| `timestamp_range` | `DATEADD`, `TIMEADD`, `TIMESTAMPADD`, adding or subtracting an interval, comparing timestamps at nanosecond precision | If a timestamp lands outside 1677-09-21 00:12:43.145224192 to 2262-04-11 23:47:16.854775807 UTC, the converted SQL raises an error; it never returns a different value. | `--strict` |
+| `timestamp_tz_submicro` | `COALESCE`, `IFNULL` or `NVL` of a `TIMESTAMP_NTZ` with a `TIMESTAMP_LTZ`, such as `COALESCE(shipped_at, CURRENT_TIMESTAMP())` | A naive value with digits below the microsecond raises an error rather than being rounded; it never returns a different value. | `--strict` |
+
 `--builtin-policy` chooses the built-in policy even where a `sqlquack.toml` exists. A `--policy` file
 that does not exist, or a policy file that is not valid, is an error.
 
@@ -58,7 +60,7 @@ sqlquack convert: done, converted under utc-v1
 | Flag | Effect |
 |------|--------|
 | `--policy <file>` | The policy file. Default `sqlquack.toml` in the current directory, or the built-in policy without one. |
-| `--builtin-policy` | Use the built-in policy even where a `sqlquack.toml` exists: every known divergence but the clock is refused. |
+| `--builtin-policy` | Use the built-in policy even where a `sqlquack.toml` exists: every known divergence is refused but the clock and arithmetic range errors. |
 | `--strict` | Refuse every divergence the policy refuses in strict mode. |
 | `--utc-session` | Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`. |
 | `--confirm-declared-offsets` | Confirm the `TIMESTAMP_TZ` offsets the schema declares. |
