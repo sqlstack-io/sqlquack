@@ -7,7 +7,7 @@ import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 
 import { initSync, analyze, fixture_tables, run_failure } from '../wasm/pkg/sqlquack_wasm.js';
-import { rendered, resultTable, underlined } from '../public/playground/spans.js';
+import { previewLimit, rendered, resultTable, underlined } from '../public/playground/spans.js';
 
 initSync({ module: readFileSync(new URL('../wasm/pkg/sqlquack_wasm_bg.wasm', import.meta.url)) });
 
@@ -117,6 +117,15 @@ test('every example chip stops at the stage its label names, the Run stage inclu
 	const refused = JSON.parse(analyze(EXAMPLES.refused, PAGE_SCHEMA)).translate;
 	assert.deepEqual(refused.diagnostics.map((d) => d.code), ['SQ0008']);
 	assert.ok(CAPTIONS.refused);
+});
+
+test('a run error from the in-browser DuckDB is told apart from an error about the rows', () => {
+	// What the preview build of DuckDB-WASM reported for a translated DATEADD that native DuckDB 2.0 runs.
+	assert.ok(previewLimit("Binder Error: No function matches the given name and argument types '+(DATE, INTERVAL)'."));
+	assert.ok(previewLimit('memory access out of bounds'));
+	// Errors about values would come from native DuckDB too.
+	assert.ok(!previewLimit("Conversion Error: Could not convert string 'x' to INT32"));
+	assert.ok(!previewLimit('Invalid Input Error: Attempting to fetch from an unsuccessful query result'));
 });
 
 test('translated SQL is laid out one clause per line unless the compact setting asks for one line', () => {

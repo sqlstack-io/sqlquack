@@ -5,7 +5,7 @@
 import { DUCKDB_DIR, DUCKDB_WASM_BYTES } from './duckdb-version.js';
 import { ENGINE_DIR, ENGINE_WASM_BYTES } from './engine-version.js';
 import { CAPTIONS, EXAMPLE_GROUPS, EXAMPLES, ROWS, SCHEMA, stopLabel } from './examples.js';
-import { escape, rendered, resultTable, underlined } from './spans.js';
+import { escape, previewLimit, rendered, resultTable, underlined } from './spans.js';
 
 const here = (path) => new URL(path, import.meta.url).href;
 const ENGINE_WASM = here(`${ENGINE_DIR}sqlquack_wasm_bg.wasm`);
@@ -362,6 +362,8 @@ async function execute() {
 	if (!sql) return;
 	const ticket = ++running;
 	setStage('run', 'running', '');
+	// Whether the error came from the translated statement itself, after the fixture loaded.
+	let ranStatement = false;
 	try {
 		if (!duckdb) await startDuckDB();
 		const conn = await duckdb.db.connect();
@@ -371,6 +373,7 @@ async function execute() {
 			for (const table of tables.tables) await conn.query(table.replace(/^CREATE TABLE/, 'CREATE OR REPLACE TABLE'));
 			if (rowsBox.value.trim()) await conn.query(rowsBox.value);
 			const started = performance.now();
+			ranStatement = true;
 			// Every value as DuckDB's own text, so decimals and timestamps show exactly.
 			const result = await conn.query(`SELECT COLUMNS(*)::VARCHAR FROM (${sql}) AS result`);
 			const elapsed = performance.now() - started;
@@ -392,6 +395,20 @@ async function execute() {
 		const failure = JSON.parse((await engine('failure', { message })).result);
 		if (ticket !== running) return;
 		const version = duckdb ? `DuckDB ${duckdb.version}` : '';
+		if (!failure.errno && ranStatement && previewLimit(message)) {
+			setStage(
+				'run',
+				'refused',
+				'<p class="pg-conversion-note"><strong>A limit of the in-browser DuckDB, not of the translation.</strong> ' +
+					'This page runs a preview build of DuckDB-WASM, which could not run this translated SQL. SQLQuack translates for ' +
+					'native DuckDB 2.0: <code>sqlquack convert</code> binds every translated statement in native DuckDB before ' +
+					'returning it, so run it there to see the result.</p>' +
+					terminal(`<span class="dim">DuckDB-WASM:</span> ${escape(message)}`),
+				version,
+				'not run here',
+			);
+			return;
+		}
 		if (!failure.errno) {
 			setStage('run', 'fail', terminal(`<span class="bad">DuckDB:</span> ${escape(message)}`), version);
 			return;
