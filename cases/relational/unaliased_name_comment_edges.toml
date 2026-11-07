@@ -49,6 +49,7 @@ tags = ["boundary"]
 
 [[case]]
 id = "typed_timestamp_literals"
+compile_error = true
 description = "Unaliased TIMESTAMP_NTZ, TIMESTAMP_LTZ and TIMESTAMP_TZ literals."
 columns = [{ name = "x", type = "NUMBER(10,0)" }]
 rows = [["2"]]
