@@ -849,14 +849,14 @@ expect_repository = "translated"
 [[query]]
 category = "aggregates"
 sql = '''SELECT DATE_TRUNC('month', ordered_at) AS month, COUNT(DISTINCT customer_id) AS active_customers FROM orders GROUP BY month'''
-expect = "refused SQ0003 node:group_by at 118..123"
-expect_repository = "refused SQ0003 node:group_by at 118..123"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "aggregates"
 sql = '''SELECT YEAR(ordered_at) AS yr, SUM(total) AS revenue FROM orders GROUP BY yr ORDER BY yr'''
-expect = "refused SQ0003 node:group_by at 74..76"
-expect_repository = "refused SQ0003 node:group_by at 74..76"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "aggregates"
@@ -1500,8 +1500,8 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT order_id FROM orders WHERE ordered_at >= DATEADD(day, -30, CURRENT_DATE)'''
-expect = "refused SQ0003 node:gte at 34..79"
-expect_repository = "refused SQ0003 node:gte at 34..79"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "dates"
@@ -1524,8 +1524,8 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT order_id FROM orders WHERE DATE_TRUNC('month', ordered_at) = DATE_TRUNC('month', CURRENT_DATE)'''
-expect = "refused SQ0003 node:eq at 34..101"
-expect_repository = "refused SQ0003 node:eq at 34..101"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "dates"
@@ -3685,8 +3685,8 @@ expect_repository = "translated"
 [[query]]
 category = "dates"
 sql = '''SELECT order_id FROM orders WHERE ordered_at >= DATEADD(month, -3, DATE_TRUNC('month', CURRENT_DATE()))'''
-expect = "refused SQ0003 node:gte at 34..103"
-expect_repository = "refused SQ0003 node:gte at 34..103"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "dates"

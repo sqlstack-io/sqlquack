@@ -10,7 +10,7 @@ use sqlquack_semantics::types::models::Volatility;
 
 use crate::conversion::_helpers::expressions::atoms::{
     boolean_literal, column, commented, literal, negate, null_literal, parentheses,
-    positional_column, scalar_subquery,
+    positional_column, scalar_subquery, unary_plus,
 };
 use crate::conversion::_helpers::expressions::calls::{convert_aggregate, convert_function};
 use crate::conversion::_helpers::expressions::casts::convert_cast;
@@ -285,6 +285,7 @@ fn convert_kind(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
         "paren" => parentheses(payload, site),
         "annotated" => commented(payload, site),
         "neg" => negate(payload, site),
+        "pos" => unary_plus(payload, site),
         "subquery" => scalar_subquery(payload, site),
         "add" | "sub" if adds_interval(payload) => interval_arithmetic((kind, node), payload, site),
         "add" | "sub" | "mul" | "div" => arithmetic(kind, payload, site),

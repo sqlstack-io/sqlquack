@@ -1696,7 +1696,7 @@ sql = '''select *
 from events
 where occurred_at >= dateadd(day, -3, current_date())'''
 expect = "refused SQ0008 node:column at 14..20"
-expect_repository = "refused SQ0003 node:gte at 27..74"
+expect_repository = "translated"
 
 [[query]]
 category = "dbt_incremental"
@@ -1719,8 +1719,8 @@ category = "dbt_incremental"
 sql = '''select *
 from payments
 where paid_at between dateadd(day, -7, current_date()) and current_date()'''
-expect = "refused SQ0003 node:between at 29..96"
-expect_repository = "refused SQ0003 node:between at 29..96"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "dbt_incremental"
@@ -2710,8 +2710,8 @@ left join orders o
     and o.ordered_at < dateadd(week, 1, spine.week_start)
 group by 1
 order by 1'''
-expect = "refused SQ0003 node:gte at 225..257"
-expect_repository = "refused SQ0003 node:gte at 225..257"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "dbt_date_spine"
@@ -2724,8 +2724,8 @@ select
     to_char(date_day, 'YYYY-MM') as year_month,
     to_char(date_day, 'DY') as day_short
 from spine'''
-expect = "refused SQ0003 fn:TO_CHAR at 198..221"
-expect_repository = "refused SQ0003 fn:TO_CHAR at 198..221"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "dbt_date_spine"
@@ -4973,7 +4973,7 @@ where most_recent < cast(
  as timestamp)
    or most_recent is null'''
 expect = "refused SQ0008 fn:CONVERT_TIMEZONE at 170..214"
-expect_repository = "refused SQ0003 node:lt at 272..407"
+expect_repository = "translated"
 
 [[query]]
 category = "dbt_tests"

@@ -13,6 +13,7 @@ use sqlquack_snowflake::typing::main::literal_digits::literal_digits;
 use sqlquack_snowflake::typing::main::number_literal::number_literal;
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
+use crate::conversion::_helpers::expressions::casts::cast_to;
 use crate::conversion::_helpers::expressions::scalar::{convert_expression, convert_held};
 use crate::conversion::_helpers::queries::query::convert_query;
 use crate::conversion::_helpers::support::collecting::{
@@ -28,7 +29,7 @@ use crate::conversion::_helpers::support::tree::{
 use crate::conversion::constants::{
     COLUMN, COMMENT, CONSTANT_LITERAL, DOLLAR_PARAMETER, DOLLAR_STRING_KIND, NEGATE,
     NUMBER_LITERAL, PARENTHESES, POSITIONAL_COLUMN, SCALAR_SUBQUERY, SEQUENCE_COLUMN,
-    SEQUENCE_PEERS, TYPED_LITERAL_KINDS, TYPED_LITERAL_PAIR,
+    SEQUENCE_PEERS, TYPED_LITERAL_KINDS, TYPED_LITERAL_PAIR, UNARY_PLUS,
 };
 use sqlquack_semantics::scopes::models::ScopeRelation;
 use sqlquack_semantics::types::models::Holding;
@@ -234,6 +235,29 @@ pub(crate) fn negate(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal
             Ok(Emitted::new(format!("(-{})", inner.sql), inner.data_type))
         }
         other => Err(outside_conditions(construct, format!("negating {other}"))),
+    }
+}
+
+/// Unary plus: a NUMBER or FLOAT unchanged, and text read as FLOAT, as recorded.
+pub(crate) fn unary_plus(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let construct = node_construct("pos");
+    let _rule = site.context.log.rule(UNARY_PLUS);
+    let payload = payload_object(payload, &construct)?;
+    require_understood(payload, &["this"], &construct)?;
+    let inner = convert_expression(field(payload, "this", &construct)?, site)?;
+    match inner.data_type {
+        SnowflakeType::Number { .. } | SnowflakeType::Float => {
+            Ok(Emitted::new(inner.sql, inner.data_type))
+        }
+        SnowflakeType::Varchar => Ok(Emitted::new(
+            cast_to(&inner, "FLOAT", false, (site.context, &construct))
+                .map_err(|reason| outside_conditions(construct.clone(), reason))?,
+            SnowflakeType::Float,
+        )),
+        other => Err(outside_conditions(
+            construct,
+            format!("unary plus of {other}"),
+        )),
     }
 }
 

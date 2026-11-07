@@ -20,6 +20,7 @@ use sqlquack_duckdb::temporal::main::utc_wall_time::utc_wall_time;
 use sqlquack_duckdb::text::constants::TEXT_NUMBER_SCALE;
 use sqlquack_duckdb::text::main::compared_number_range::compared_number_range;
 use sqlquack_duckdb::text::main::compared_number_text::compared_number_text;
+use sqlquack_duckdb::times::main::date_timestamp_key::date_timestamp_key;
 use sqlquack_snowflake::typing::constants::MAX_PRECISION;
 use sqlquack_snowflake::typing::main::comparison::comparison;
 use sqlquack_snowflake::typing::main::numeric_add_subtract::numeric_add_subtract;
@@ -43,15 +44,25 @@ use sqlquack_duckdb::blocks::constants::NANOSECOND_DIGITS;
 
 use crate::catalogue::constants::NAIVE_LOCAL_COMPARISON;
 use crate::conversion::constants::{
-    COMPARISON, DATE_DAY_ARITHMETIC, DATE_LITERAL_COMPARISON, DAY_UNIT, DECIMAL_ARITHMETIC,
-    DECIMAL_DIVISION, DECIMAL_MODULO, FLOAT_ARITHMETIC, FLOAT_MODULO, LOGIC, MICROSECOND_DIGITS,
-    MOD_PAIR, NULL_ARITHMETIC, NULL_SAFE_COMPARISON, NULL_SUM_PRECISION, TEXT_NUMBER_COMPARISON,
-    VARIANT_EQUALITY,
+    COMPARISON, DATE_DAY_ARITHMETIC, DATE_LITERAL_COMPARISON, DATE_TIMESTAMP_COMPARISON, DAY_UNIT,
+    DECIMAL_ARITHMETIC, DECIMAL_DIVISION, DECIMAL_MODULO, FLOAT_ARITHMETIC, FLOAT_MODULO, LOGIC,
+    MICROSECOND_DIGITS, MOD_PAIR, NULL_ARITHMETIC, NULL_SAFE_COMPARISON, NULL_SUM_PRECISION,
+    TEXT_NUMBER_COMPARISON, VARIANT_EQUALITY,
 };
 use sqlquack_policy::policy::constants::{NUMERIC_RANGE, SESSION_TIMEZONE_UTC, TIMESTAMP_RANGE};
 
 /// Characters in a `YYYY-MM-DD` date.
 const ISO_DATE_LENGTH: usize = 10;
+/// The constructs whose DATE beside TIMESTAMP_NTZ comparisons are recorded.
+const DATE_TIMESTAMP_SITES: &[&str] = &[
+    "node:eq",
+    "node:neq",
+    "node:lt",
+    "node:lte",
+    "node:gt",
+    "node:gte",
+    "node:between",
+];
 /// Characters in an `HH:MI:SS` time.
 const CLOCK_TIME_LENGTH: usize = 8;
 
@@ -595,6 +606,23 @@ pub(crate) fn comparable(
             return Ok((left, right));
         }
         (
+            SnowflakeType::Date,
+            SnowflakeType::TimestampNtz { .. }
+            | SnowflakeType::TimestampTz { .. }
+            | SnowflakeType::TimestampLtz { .. },
+        ) => {
+            return date_timestamp(left, right, construct, context);
+        }
+        (
+            SnowflakeType::TimestampNtz { .. }
+            | SnowflakeType::TimestampTz { .. }
+            | SnowflakeType::TimestampLtz { .. },
+            SnowflakeType::Date,
+        ) => {
+            let (right, left) = date_timestamp(right, left, construct, context)?;
+            return Ok((left, right));
+        }
+        (
             SnowflakeType::TimestampNtz { .. },
             SnowflakeType::TimestampLtz { precision } | SnowflakeType::TimestampTz { precision },
         ) => {
@@ -631,6 +659,40 @@ pub(crate) fn comparable(
         )),
         _ => Ok((left, right)),
     }
+}
+
+/// A DATE beside a timestamp, read as its midnight in the session time zone, as recorded.
+fn date_timestamp(
+    date: Emitted,
+    timestamp: Emitted,
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<(Emitted, Emitted), Refusal> {
+    let other = timestamp.data_type;
+    if !DATE_TIMESTAMP_SITES.contains(&construct.key().as_str()) {
+        return Err(outside_conditions(
+            construct.clone(),
+            format!("comparing DATE with {other} is recorded only in a comparison or BETWEEN"),
+        ));
+    }
+    let log = context.log;
+    let _rule = log.rule(DATE_TIMESTAMP_COMPARISON);
+    let SnowflakeType::TimestampNtz { precision } = other else {
+        diverge(context, SESSION_TIMEZONE_UTC, construct)?;
+        let midnight = cast(&date.sql, other, log)
+            .map_err(|reason| outside_conditions(construct.clone(), reason))?;
+        return Ok((Emitted::new(midnight, other), timestamp));
+    };
+    let key = |emitted: &Emitted, clock: Option<u8>| {
+        Emitted::new(
+            date_timestamp_key(&emitted.sql, clock, log),
+            SnowflakeType::Number {
+                precision: MAX_PRECISION,
+                scale: 0,
+            },
+        )
+    };
+    Ok((key(&date, None), key(&timestamp, Some(precision))))
 }
 
 /// A TIMESTAMP_LTZ or TIMESTAMP_TZ beside a TIMESTAMP_NTZ, as its instant's UTC wall time.

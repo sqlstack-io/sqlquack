@@ -362,12 +362,11 @@ fn given_a_model_putting_a_scaled_number_in_a_variant_when_a_reader_types_it_the
 #[test]
 fn given_known_names_a_rule_does_not_scope_when_tracing_then_each_root_names_the_rule_limit() {
     let test_cases = [RootsTestCase {
-        description: "SEQ of SPLIT_TO_TABLE, a GROUP BY select alias and a correlated FROM subquery",
+        description: "SEQ of SPLIT_TO_TABLE and a correlated FROM subquery; a GROUP BY select alias converts",
         fixtures: UNSCOPED_NAMES,
         expected_roots: vec![
             ("node:column".to_owned(), [1, 0, 1, 1]),
             ("node:subquery".to_owned(), [1, 0, 1, 1]),
-            ("node:group_by".to_owned(), [1, 0, 1, 0]),
         ],
     }];
     for test_case in test_cases {

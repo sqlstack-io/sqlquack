@@ -106,3 +106,17 @@ rows = [
 query = "SELECT DATEDIFF(month, a, b) AS m, DATEDIFF(day, a, b) AS d FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["boundary"]
+
+[[case]]
+id = "t010_ntz_ltz"
+description = "Months and days from a naive timestamp to a local one in the UTC session, as tenure models count up to COALESCE(cancelled_at, CURRENT_TIMESTAMP()). Catches: the naive side read in another zone, or whole months counted instead of crossed boundaries"
+columns = [{ name = "a", type = "TIMESTAMP_NTZ" }, { name = "b", type = "TIMESTAMP_LTZ" }]
+rows = [
+  ["'2024-01-31 23:00:00'", "'2024-02-01 01:00:00 +00:00'"],
+  ["'2023-03-15 00:00:00'", "'2024-03-14 23:59:59 +00:00'"],
+  ["'2024-01-01 00:00:00'", "'2024-01-01 02:00:00 +03:00'"],
+  ["'2024-01-01 00:00:00'", "NULL"],
+]
+query = "SELECT ordinal, DATEDIFF('month', a, b) AS m, DATEDIFF('day', a, b) AS d FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]

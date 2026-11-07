@@ -67,3 +67,18 @@ rows = [
 query = "SELECT ordinal, a <= b AS r FROM input ORDER BY ordinal"
 order = "ordered"
 tags = ["null"]
+
+[[case]]
+id = "t006_ntz_ltz"
+description = "A naive timestamp against a local one in the UTC session: the same instant, a nanosecond either side, a day apart, and NULL; the page does not say how the two compare, so the recording decides. Catches: the naive side read in another zone, the comparison strict, or the nanosecond dropped"
+columns = [{ name = "a", type = "TIMESTAMP_NTZ" }, { name = "b", type = "TIMESTAMP_LTZ" }]
+rows = [
+  ["'2024-03-10 12:00:00'", "'2024-03-10 12:00:00 +00:00'"],
+  ["'2024-03-10 12:00:00.000000001'", "'2024-03-10 12:00:00 +00:00'"],
+  ["'2024-03-10 11:59:59.999999999'", "'2024-03-10 12:00:00 +00:00'"],
+  ["'2024-03-11 00:00:00'", "'2024-03-10 23:00:00 -05:00'"],
+  ["NULL", "'2024-03-10 12:00:00 +00:00'"],
+]
+query = "SELECT ordinal, a <= b AS r, a > b AS g, a = b AS e FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination"]
