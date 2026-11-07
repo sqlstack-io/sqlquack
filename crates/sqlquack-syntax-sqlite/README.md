@@ -58,7 +58,7 @@ overflowing the stack. Some inputs that SQLite 3.53.4 accepts fall past them.
 | Window `ORDER BY`, `count(*) OVER (ORDER BY count(*) OVER (...))` | 510 | 311 |
 | Flat chains of `AND`, `+` and similar | 511 operators | 999 operators |
 | Parentheses around one value | 511 | 2,493 |
-| Terms of a compound `SELECT` | 499 (SQLite's own check) | 499 |
+| Terms of a compound `SELECT` | 500 (SQLite's own check) | 500 |
 
 The parser's figures come from two limits: 1,000 levels of recursion and chained operators, and the
 shared AST depth guard of 512 tree levels. Each subquery level adds two or three tree levels.
@@ -67,7 +67,7 @@ parser's recursion limit ("Recursion limit", the depth of its LALR stack).
 
 Where the parser accepts more than sqlite3, it accepts statements that sqlite3 refuses with a limit
 error: nested `IN` lists, `CASE`, `WITH`, `FILTER` and window `ORDER BY` past sqlite3's figures above.
-These are known false accepts at depth. Everywhere else the parser refuses earlier than sqlite3.
+These are known false accepts at depth. Everywhere else the parser refuses at or before sqlite3's figure.
 
 The tree-depth guard keeps trees within what recursive walkers, such as serde_json, can handle on a
 2 MiB stack. Without it, about 600 nested derived tables overflow such a stack.
