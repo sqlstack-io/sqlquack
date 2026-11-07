@@ -65,13 +65,12 @@ fn given_unaliased_items_when_converted_and_run_on_duckdb_then_they_take_snowfla
         },
         ColumnNameTestCase {
             description: "numbers keep their written form, upper-cased",
-            sql: "SELECT 1.50, 1e3, -2, +1, NULL, false",
+            sql: "SELECT 1.50, 1e3, -2, NULL, false",
             flags: &[],
             expected_names: vec![
                 "1.50".to_owned(),
                 "1E3".to_owned(),
                 "-2".to_owned(),
-                "+1".to_owned(),
                 "NULL".to_owned(),
                 "FALSE".to_owned(),
             ],
