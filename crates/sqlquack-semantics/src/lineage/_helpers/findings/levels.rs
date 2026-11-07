@@ -61,17 +61,52 @@ pub(crate) fn query_findings(
     }
 }
 
-/// The CTEs `with` adds to `ctes`, and each body's findings made with the CTEs before it.
+/// The CTEs `with` adds to `ctes`, each body's findings, and under PostgreSQL each one faulted.
 fn visited_ctes<'a>(
     with: Option<&With>,
     (ctes, outer, aliases): (&'a [NamedQuery], Option<&LineageScope<'_>>, &[String]),
     context: LineageContext<'_>,
 ) -> (Cow<'a, [NamedQuery]>, Vec<NameFinding>) {
     let mut found: Vec<NameFinding> = Vec::new();
+    let postgres: bool = Engine::of(context) == Engine::Postgres;
     let reach = with_ctes_visiting(with, (ctes, outer), context, &mut |cte, reach| {
-        found.extend(query_findings(&cte.this, (reach, outer, aliases), context));
+        let body: Vec<NameFinding> = query_findings(&cte.this, (reach, outer, aliases), context);
+        let faulted: bool =
+            postgres && (!body.is_empty() || reads_faulted(&cte.this, reach, context));
+        found.extend(body);
+        faulted
     });
     (reach, found)
+}
+
+/// The key of a derived table in FROM, by its alias; none when `item` is not a derived table.
+fn derived_key(item: &Expression, context: LineageContext<'_>) -> Option<Option<String>> {
+    match item {
+        Expression::Subquery(subquery) => {
+            Some(subquery.alias.as_ref().map(|alias| key(alias, context)))
+        }
+        Expression::Alias(alias) if matches!(alias.this, Expression::Subquery(_)) => {
+            Some(Some(key(&alias.alias, context)))
+        }
+        _ => None,
+    }
+}
+
+/// Whether `query` names a faulted CTE among `reach`.
+fn reads_faulted(query: &Expression, reach: &[NamedQuery], context: LineageContext<'_>) -> bool {
+    query.dfs().any(|node| match node {
+        Expression::Table(table) if table.schema.is_none() && table.catalog.is_none() => {
+            faulted_cte(&key(&table.name, context), reach, context)
+        }
+        _ => false,
+    })
+}
+
+/// Whether the CTE `name` resolves to among `reach` is faulted.
+fn faulted_cte(name: &str, reach: &[NamedQuery], context: LineageContext<'_>) -> bool {
+    reach
+        .iter()
+        .any(|named| named.query.faulted && context.profile.same_identifier(&named.key, name))
 }
 
 fn select_findings(
@@ -80,7 +115,7 @@ fn select_findings(
     context: LineageContext<'_>,
 ) -> Vec<NameFinding> {
     let (ctes, mut nested) = visited_ctes(select.with.as_ref(), (ctes, outer, aliases), context);
-    let scope: LineageScope<'_> = level_scope(select, &ctes, outer, context);
+    let mut scope: LineageScope<'_> = level_scope(select, &ctes, outer, context);
     let level = NodeLevel {
         scope: &scope,
         context,
@@ -97,13 +132,22 @@ fn select_findings(
     }
     let mut own: Vec<NameFinding> = alias_count_findings(select, &scope, context);
     own.extend(using_findings(select, &scope, context));
+    let postgres: bool = Engine::of(context) == Engine::Postgres;
     for item in from_items(select) {
         let reads: Option<&LineageScope<'_>> = lateral(item).then_some(&scope);
-        nested.extend(query_findings(
-            unannotated(item),
-            (&ctes, reads, aliases),
-            context,
-        ));
+        let body: Vec<NameFinding> =
+            query_findings(unannotated(item), (&ctes, reads, aliases), context);
+        if let Some(derived) = derived_key(unannotated(item), context)
+            && postgres
+            && (!body.is_empty() || reads_faulted(item, &ctes, context))
+        {
+            scope
+                .sources
+                .iter_mut()
+                .filter(|source| source.query.derived && source.key == derived)
+                .for_each(|source| source.query.faulted = true);
+        }
+        nested.extend(body);
         own.extend(unpivot_findings(item, &ctes, context));
     }
     let mut outputs: Vec<String> = aliases.to_vec();
@@ -124,7 +168,6 @@ fn select_findings(
             )
         }),
     };
-    let postgres: bool = Engine::of(context) == Engine::Postgres;
     let unnamed: [String; 0] = [];
     for projection in &select.expressions {
         let own_name: String = output_key(unannotated(projection), context);

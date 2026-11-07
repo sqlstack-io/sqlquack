@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 from scripts.postgres_catalog.constants import (
     TABLE_COLUMNS,
     TYPE_ERROR_MARKER,
     TYPE_FIELD,
     TYPE_MARKER,
-    TYPES_FIXTURE,
 )
 
 
@@ -52,14 +52,15 @@ def recorded_cases(*, cases: list[tuple[str, str, str]], output: str) -> list[di
     return records
 
 
-def write_fixture(*, records: list[dict[str, str]], version: str, image: str) -> None:
+def write_fixture(
+    *, records: list[dict[str, str]], version: str, image: str, path: Path, method: str
+) -> None:
     """Write the fixture: the engine, its image, the table t and one line per case."""
     header: dict[str, object] = {
         "engine": "postgres",
         "engine_version": version,
         "engine_image_sha256": image,
-        "method": "format_type of a temporary view's first column over the empty table t, "
-        "recorded by scripts/record_postgres_types.py",
+        "method": method,
         "schema": {
             "tables": [
                 {
@@ -70,6 +71,4 @@ def write_fixture(*, records: list[dict[str, str]], version: str, image: str) ->
         },
     }
     body: str = ",\n".join("  " + json.dumps(record) for record in records)
-    TYPES_FIXTURE.write_text(
-        json.dumps(header, indent=1)[:-2] + f',\n "cases": [\n{body}\n ]\n}}\n'
-    )
+    path.write_text(json.dumps(header, indent=1)[:-2] + f',\n "cases": [\n{body}\n ]\n}}\n')

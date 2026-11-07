@@ -13,19 +13,24 @@ fn given_engine_recorded_duckdb_types_when_typing_outputs_then_none_is_wrong() {
     let test_cases = [EngineTypeReplayTestCase {
         description: "every recorded DuckDB result type, replayed",
         fixture: ENGINE_TYPES,
+        replayed: replayed_engine_types,
         expected_wrong: &[],
         expected_minimum_typed: 2556,
+        expected_maximum_untyped: 2,
     }];
     for test_case in test_cases {
-        let replay = replayed_engine_types(test_case.fixture);
+        let replay = (test_case.replayed)(test_case.fixture);
+        let untyped: usize = replay.tally.values().map(|tally| tally.untyped).sum();
         assert_eq!(
             (
                 replay.wrong.as_slice(),
-                replay.typed >= test_case.expected_minimum_typed
+                replay.typed >= test_case.expected_minimum_typed,
+                untyped <= test_case.expected_maximum_untyped
             ),
-            (test_case.expected_wrong, true),
-            "{}: {:?}",
+            (test_case.expected_wrong, true, true),
+            "{}: typed {}, untyped {untyped} {:?}",
             test_case.description,
+            replay.typed,
             replay.tally
         );
     }
