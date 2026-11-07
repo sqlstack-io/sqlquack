@@ -766,7 +766,7 @@ impl Parser<'_> {
             }
             let statement: Expression = match self.eat_kw("return") {
                 true => Expression::ReturnStmt(Box::new(self.a_expr()?)),
-                false => self.statement()?,
+                false => self.deeper(|parser| parser.statement())?,
             };
             statements.push(statement);
             self.expect_char(';')?;

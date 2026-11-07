@@ -9,6 +9,22 @@ carries the message, the byte position and whether the SQLSTATE is 42601. Other 
 as an invalid Unicode escape (22025), the `UNIQUE` predicate (0A000) or the stack depth limit
 (54001), have `syntax = false`.
 
+## Nesting
+
+Nesting is bounded so that no input exhausts the caller's stack or takes exponential time:
+
+- Each nested level (parentheses, subqueries, FROM items, calls, CASE, prefixes such as `NOT`,
+  statements inside `BEGIN ATOMIC` and `EXPLAIN`, and type names) runs on a stack that grows on
+  demand (the default `stacker` feature), and a statement nesting past 300 levels is refused with
+  54001's "stack depth limit exceeded". A type's `[]` bounds count against the same limit. Once
+  one reading passes the limit, every other reading fails at once and the statement is refused.
+  PostgreSQL's own limit depends on its stack size, so it accepts some deeper texts.
+- A flat chain of operators (other than `AND` and `OR`), casts or indirections is refused with
+  the same error past 1,000 links. `AND`, `OR` and set operations are not counted; their trees are
+  as deep as the chain, so a consumer that walks them recursively must bound the depth itself.
+- A parenthesized query, and `JSON_OBJECT`'s arguments, are parsed once from each token and the
+  outcome replayed, so alternatives that each read the same nested text stay linear.
+
 ## Gaps
 
 A statement holding a construct the shared tree cannot hold becomes a `Command` with the

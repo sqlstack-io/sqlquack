@@ -1,5 +1,7 @@
 //! Test case types for the PostgreSQL parser.
 
+use crate::parse::errors::ParseError;
+
 /// What PostgreSQL 18.6's raw parser does with an input.
 #[derive(Debug, PartialEq, Eq)]
 pub(crate) enum ExpectedVerdict {
@@ -61,4 +63,16 @@ pub(crate) struct GapTestCase {
     pub(crate) ranges: &'static [(usize, usize)],
     pub(crate) faulted: bool,
     pub(crate) expected_gap: Option<usize>,
+}
+
+/// A nesting built from its parts, the entry point that reads it, and its `(message, syntax)`.
+pub(crate) struct NestingTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) prefix: &'static str,
+    pub(crate) open: &'static str,
+    pub(crate) innermost: &'static str,
+    pub(crate) close: &'static str,
+    pub(crate) read: fn(&str) -> Option<ParseError>,
+    pub(crate) levels: usize,
+    pub(crate) expected_error: Option<(&'static str, bool)>,
 }
