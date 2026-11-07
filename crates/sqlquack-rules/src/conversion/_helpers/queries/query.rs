@@ -638,7 +638,19 @@ fn convert_projection(
             let _rule = site.context.log.rule(COMMENT);
             let annotated = payload_object(payload, &construct)?;
             require_understood(annotated, &["this", "trailing_comments"], &construct)?;
-            convert_projection(field(annotated, "this", &construct)?, site, named)
+            let this = field(annotated, "this", &construct)?;
+            match node_kind(this) {
+                Some((kind, _)) if named && !matches!(kind, "star" | "alias" | "column") => {
+                    let refusal = missing(
+                        Construct::new(ConstructFamily::Syntax, UNALIASED_OUTPUT_NAME_CONSTRUCT),
+                        format!(
+                            "Snowflake names this `{kind}` column after its text, comment included"
+                        ),
+                    );
+                    Err(site.context.locator.placed(refusal, this))
+                }
+                _ => convert_projection(this, site, named),
+            }
         }
         Some(("alias", payload)) => {
             let _rule = site.context.log.rule(ALIAS);
