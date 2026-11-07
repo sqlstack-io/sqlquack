@@ -8770,6 +8770,7 @@ required = true
 id = "sf.functions.datediff.datediff.t016"
 form = "sf.functions.datediff.datediff"
 kind = "boundary"
+subkind = "rounding_scale"
 target = "DATEDIFF of TIMESTAMP_NTZ and COALESCE of TIMESTAMP_NTZ and TIMESTAMP_LTZ just before midnight"
 note = "t014's shape with naive ends a tenth of a microsecond and a microsecond before midnight."
 catches = "the naive branch rounded to microseconds, which moves 23:59:59.9999999 to the next day"
