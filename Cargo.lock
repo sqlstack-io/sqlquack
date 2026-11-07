@@ -1351,6 +1351,7 @@ dependencies = [
  "serde_json",
  "sha2",
  "sqlquack-compare",
+ "sqlquack-convert",
  "sqlquack-core",
  "sqlquack-duckdb",
  "sqlquack-evidence",
@@ -1370,6 +1371,21 @@ version = "0.2.0"
 dependencies = [
  "arrow",
  "sqlquack-policy",
+]
+
+[[package]]
+name = "sqlquack-convert"
+version = "0.2.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sqlquack-core",
+ "sqlquack-duckdb",
+ "sqlquack-policy",
+ "sqlquack-rules",
+ "sqlquack-semantics",
+ "sqlquack-snowflake",
+ "sqlquack-syntax",
 ]
 
 [[package]]

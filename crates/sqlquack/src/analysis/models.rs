@@ -4,6 +4,7 @@ use std::collections::BTreeSet;
 use std::path::PathBuf;
 
 use serde::Serialize;
+use sqlquack_convert::analysis::main::analyze::analyze;
 use sqlquack_core::classification::constants::PROJECT_FUNCTION_CONSTRUCT;
 use sqlquack_core::classification::models::Occurrence;
 use sqlquack_core::parsing::models::SourceDialect;
@@ -27,24 +28,8 @@ use crate::analysis::_helpers::override_definition::load_override;
 use crate::analysis::constants::{
     CASE_SETUP_UNREPLAYED, PYTHON_RUNTIME_MISSING, STATEMENT_REFUSAL,
 };
-use crate::analysis::main::analyze::analyze;
 use crate::analysis::main::override_macros::override_macros;
 use crate::analysis::main::refused_construct::refused_construct;
-
-/// What the pipeline found in one SQL input.
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub struct Analysis {
-    /// Whether the input parsed.
-    pub parsed: bool,
-    /// Statements parsed.
-    pub statements: usize,
-    /// Every construct used, in source order.
-    pub occurrences: Vec<Occurrence>,
-    /// Every refusal; the input converts only when this is empty.
-    pub refusals: Vec<Refusal>,
-    /// The conversion of each statement that converted.
-    pub conversions: Vec<Converted>,
-}
 
 /// The production converter: the SQLQuack pipeline with the built-in rule catalogue.
 #[derive(Clone, Debug, Default)]

@@ -37,8 +37,6 @@ pub const OVERRIDE_DUCKDB: &str = "duckdb";
 pub const VARIANT_HOLDING_TYPE: &str = "JSON";
 /// The extension of a user override's file.
 pub const OVERRIDE_EXTENSION: &str = "sql";
-/// The parsed tree's keys for a named call, scalar or aggregate.
-pub const CALL_NODE_KINDS: &[&str] = &["function", "aggregate_function"];
 /// Hex digits in a SHA-256.
 pub const SHA256_HEX_LENGTH: usize = 64;
 /// Snowflake aggregate and window functions, which a user override may not replace.

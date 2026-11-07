@@ -15,13 +15,13 @@ use sqlquack_semantics::types::models::{ColumnSpec, Schema};
 use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_core::provenance::models::Provenance;
 
-use crate::analysis::main::analyze::analyze;
 use crate::analysis::main::collect_all_refusals::collect_all_refusals;
 use crate::analysis::main::refused_construct::refused_construct;
 use crate::census::_helpers::placeholders::{original_location, rewrite_with_references};
 use crate::census::constants::{CONVERTED_DIR_VARIABLE, GUARDS_DIR_VARIABLE};
 use crate::census::errors::CensusError;
 use crate::census::models::PlacedRefusal;
+use sqlquack_convert::analysis::main::analyze::analyze;
 
 #[derive(Clone)]
 pub(crate) struct FileCensus {

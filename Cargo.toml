@@ -6,6 +6,7 @@ members = [
     "crates/sqlquack-snowflake",
     "crates/sqlquack-semantics",
     "crates/sqlquack-rules",
+    "crates/sqlquack-convert",
     "crates/sqlquack-duckdb",
     "crates/sqlquack-policy",
     "crates/sqlquack-compare",
@@ -55,11 +56,12 @@ pyo3 = { version = "0.30.1", features = ["abi3-py312"] }
 sha2 = "0.10"
 sqlquack = { path = "crates/sqlquack" }
 sqlquack-compare = { path = "crates/sqlquack-compare" }
+sqlquack-convert = { path = "crates/sqlquack-convert" }
 sqlquack-core = { path = "crates/sqlquack-core" }
 sqlquack-duckdb = { path = "crates/sqlquack-duckdb", default-features = false }
 sqlquack-evidence = { path = "crates/sqlquack-evidence" }
 sqlquack-policy = { path = "crates/sqlquack-policy" }
-sqlquack-rules = { path = "crates/sqlquack-rules" }
+sqlquack-rules = { path = "crates/sqlquack-rules", default-features = false }
 sqlquack-semantics = { path = "crates/sqlquack-semantics" }
 sqlquack-snowflake = { path = "crates/sqlquack-snowflake" }
 sqlquack-syntax = { path = "crates/sqlquack-syntax" }

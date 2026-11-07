@@ -13,12 +13,17 @@ tooling = ["crates/sqlquack-polyglot-check"]
 rule_packs = ["rust"]
 select = ["FPRS"]
 
-# Layer: only the command-line crates may depend on the conversion rules.
+# Layer: only the command-line crates and the pipeline crate may depend on the conversion rules.
 [targets.rust_rules_layer]
 analyzer = "rust"
 roots = ["crates"]
 tests = []
-tooling = ["crates/sqlquack", "crates/sqlquack-polyglot-check", "crates/sqlquack-python"]
+tooling = [
+  "crates/sqlquack",
+  "crates/sqlquack-convert",
+  "crates/sqlquack-polyglot-check",
+  "crates/sqlquack-python",
+]
 rule_packs = ["rust"]
 select = ["FPRSL301"]
 
@@ -32,6 +37,7 @@ roots = ["crates"]
 tests = []
 tooling = [
   "crates/sqlquack",
+  "crates/sqlquack-convert",
   "crates/sqlquack-polyglot-check",
   "crates/sqlquack-python",
   "crates/sqlquack-rules",
