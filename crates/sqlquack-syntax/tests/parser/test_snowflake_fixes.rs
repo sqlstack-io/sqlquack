@@ -1253,3 +1253,739 @@ fn given_snowflake_secret_resource_monitor_and_integration_alters_when_parsing_t
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_copy_when_parsing_then_it_follows_the_recorded_grammar() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "COPY without INTO (recorded errno 1003)",
+            sql: "COPY v1 FROM @s1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a load from a plain table name (recorded errno 1003)",
+            sql: "COPY INTO v1 FROM m1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string as a stage name (recorded errno 1003)",
+            sql: "COPY INTO @'v1' FROM v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unload from a string (recorded errno 1003)",
+            sql: "COPY INTO 's3://b1/p1/' FROM 'v1' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "PARTITION without BY (recorded errno 1003)",
+            sql: "COPY INTO @s1 FROM v1 PARTITION 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved word as an INCLUDE_METADATA key (recorded errno 1003)",
+            sql: "COPY INTO v1 FROM @s1 INCLUDE_METADATA = ( SELECT = METADATA$FILENAME ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty file format value (recorded errno 1003)",
+            sql: "COPY INTO v1 FROM @s1 FILE_FORMAT = ( TYPE = JSON DATE_FORMAT = ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a credential without a key (recorded errno 1003)",
+            sql: "COPY INTO v1 FROM 's3://b1/p1/' CREDENTIALS = ( = 'm' AWS_SECRET_KEY = 'm' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string key after the first INCLUDE_METADATA item (recorded errno 1003)",
+            sql: "COPY INTO v1 FROM @s1 INCLUDE_METADATA = ( v1 = METADATA$FILENAME , 'v1' = METADATA$FILENAME ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty select list in COPY FILES (recorded errno 1003)",
+            sql: "COPY FILES INTO @s1 FROM ( SELECT FROM v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty top-level option value (recorded errno 1003)",
+            sql: "COPY INTO v1 FROM 's3://b1/p1/' ENCRYPTION = ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a load from the table's own stage names no source",
+            sql: "COPY INTO v1 FILE_FORMAT = ( TYPE = CSV ) ;",
+            expected_kind: Some("copy"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a stage after the table still needs FROM",
+            sql: "COPY INTO v1 @s1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unload still needs FROM",
+            sql: "COPY INTO 's3://b1/p1/' v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "the connector's load from a bind placeholder",
+            sql: "COPY INTO \"T\" FROM ? ;",
+            expected_kind: Some("copy"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "the connector's IDENTIFIER(?) target with a column list",
+            sql: "COPY INTO identifier(?) ( \"A\" ) FROM ( SELECT $1:\"A\" FROM '@\"STG\"' ) ON_ERROR = ? PURGE = TRUE ;",
+            expected_kind: Some("copy"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a typed load stays a COPY tree",
+            sql: "COPY INTO v1 FROM @s1 FILE_FORMAT = ( TYPE = CSV ) ;",
+            expected_kind: Some("copy"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "COPY FILES from a query parses (recorded errno 90105)",
+            sql: "COPY FILES INTO @s1 FROM ( SELECT v1 , 'v1' FROM v1 ) ;",
+            expected_kind: Some("command"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "COPY FILES into the bare stage @ parses (recorded errno 1012)",
+            sql: "COPY FILES INTO @ FROM @s1 ;",
+            expected_kind: Some("command"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unload with PARTITION BY parses (recorded errno 90105)",
+            sql: "COPY INTO @s1 FROM v1 PARTITION BY 1 ;",
+            expected_kind: Some("command"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string key as the only INCLUDE_METADATA item parses (recorded errno 1757)",
+            sql: "COPY INTO v1 FROM @s1 INCLUDE_METADATA = ( 'v1' = METADATA$FILENAME ) ;",
+            expected_kind: Some("command"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a $ column named by a reserved word parses (recorded errno 2211)",
+            sql: "COPY INTO v1 FROM ( SELECT $SELECT FROM @s1 ) ;",
+            expected_kind: Some("command"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_after_match_skip_to_when_parsing_then_a_bare_symbol_is_accepted() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "NEXT without ROW is the symbol of TO <symbol> (recorded errno 2347)",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( AFTER MATCH SKIP TO NEXT PATTERN ( a ) DEFINE a AS 1 ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "TO NEXT ROW stays the next-row form",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( AFTER MATCH SKIP TO NEXT ROW PATTERN ( a ) DEFINE a AS 1 ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "TO needs a symbol",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( AFTER MATCH SKIP TO PATTERN ( a ) DEFINE a AS 1 ) ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_from_clause_when_parsing_then_recorded_query_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "an unknown call in FROM (recorded errno 1003)",
+            sql: "SELECT 1 FROM t1 ( 10 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "ERROR_TABLE of a string (recorded errno 1003)",
+            sql: "SELECT 1 FROM ERROR_TABLE ( 'v1' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty CHANGES is accepted (recorded OK)",
+            sql: "SELECT 1 FROM v1 CHANGES ( ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "JOIN without FROM (recorded errno 1003)",
+            sql: "SELECT 1 t1 JOIN t2 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "MATCH_CONDITION on an inner join (recorded errno 1003)",
+            sql: "SELECT * FROM t1 JOIN t2 MATCH_CONDITION ( t1.c1 >= t2.c1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "RESAMPLE's METADATA_COLUMNS needs a function, and the interval does not take it as its unit (recorded errno 1003)",
+            sql: "SELECT * FROM t1 RESAMPLE ( USING v1 INCREMENT BY INTERVAL '1 hour' METADATA_COLUMNS ( ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a sample size that is a string (recorded errno 1003)",
+            sql: "SELECT 1 FROM t1 SAMPLE ( 'x' ROWS ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a negative sample size (recorded errno 1003)",
+            sql: "SELECT * FROM t1 SAMPLE ( -1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a negative sample seed (recorded errno 1003)",
+            sql: "SELECT * FROM t1 SAMPLE SYSTEM ( 10 ) SEED ( -1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps an unsigned sample seed",
+            sql: "SELECT * FROM t1 SAMPLE SYSTEM ( 10 ) SEED ( 1 ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a trailing comma in a VALUES row (recorded errno 1003)",
+            sql: "SELECT 1 FROM ( VALUES ( 1 , ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved column alias (recorded errno 1003)",
+            sql: "SELECT 1 FROM ( VALUES ( 1 ) ) v1 ( SELECT ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps a quoted reserved column alias",
+            sql: "SELECT 1 FROM ( VALUES ( 1 ) ) v1 ( \"SELECT\" ) ;",
+            expected_kind: Some("select"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_snowflake_match_recognize_and_semantic_view_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "an empty PARTITION BY takes PATTERN as its item (recorded errno 1003)",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( PARTITION BY PATTERN ( a ) DEFINE a AS 1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty PATTERN (recorded errno 1003)",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( PATTERN ( ) DEFINE a AS 1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unclosed exclusion in PATTERN (recorded errno 1003)",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( {- a b ) DEFINE a AS TRUE , b AS TRUE ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a measure without an alias (recorded errno 1003)",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( MEASURES 1 PATTERN ( a ) DEFINE a AS 1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a measure alias without AS (recorded OK)",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( MEASURES 1 v1 PATTERN ( a ) DEFINE a AS 1 ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "SHOW EMPTY MATCHES (recorded OK)",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( ALL ROWS PER MATCH SHOW EMPTY MATCHES PATTERN ( a ) DEFINE a AS 1 ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "SEMANTIC_VIEW with no clause (recorded errno 1003)",
+            sql: "SELECT * FROM SEMANTIC_VIEW ( v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "SEMANTIC_VIEW of a string (recorded errno 1003)",
+            sql: "SELECT * FROM SEMANTIC_VIEW ( 'v1' METRICS 1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a SEMANTIC_VIEW alias without AS (recorded OK)",
+            sql: "SELECT * FROM SEMANTIC_VIEW ( v1 METRICS 1 DIMENSIONS 1 v1 ) ;",
+            expected_kind: Some("select"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_snowflake_dml_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "UPDATE ALL BY NAME (recorded OK)",
+            sql: "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1 WHEN MATCHED THEN UPDATE ALL BY NAME ;",
+            expected_kind: Some("merge"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "INSERT ALL BY NAME without VALUES (recorded OK)",
+            sql: "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1 WHEN NOT MATCHED THEN INSERT ALL BY NAME ;",
+            expected_kind: Some("merge"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "MERGE without INTO (recorded errno 1003)",
+            sql: "MERGE v1 USING t2 ON v1.c1 = t2.c1 WHEN MATCHED THEN UPDATE ALL BY NAME ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "WHEN without MATCHED (recorded errno 1003)",
+            sql: "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1 WHEN THEN UPDATE ALL BY NAME ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "DELETE without FROM (recorded errno 1003)",
+            sql: "DELETE v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "DELETE FROM a reserved word (recorded errno 1003)",
+            sql: "DELETE FROM SELECT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "DELETE USING of a parenthesized value (recorded errno 1003)",
+            sql: "DELETE FROM v1 USING ( 1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps DELETE USING of a subquery",
+            sql: "DELETE FROM v1 USING ( SELECT 1 ) ;",
+            expected_kind: Some("delete"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a trailing USING is the table's alias (recorded OK)",
+            sql: "DELETE FROM v1 USING ;",
+            expected_kind: Some("delete"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a quoted stage name with a space, unquoted (recorded errno 1003)",
+            sql: "LIST @\"s1 Q\" ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps a quoted stage name without a space",
+            sql: "LIST @\"SELECT\" ;",
+            expected_kind: Some("command"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a stage path with a space (recorded errno 1003)",
+            sql: "LIST @s1/p 1/ ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a GET target with a space (recorded errno 1003)",
+            sql: "GET @s1 file:///tmp/d 1/ ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "PUT without a source (recorded errno 1003)",
+            sql: "PUT @s1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a PUT source with a space (recorded errno 1003)",
+            sql: "PUT file:///tmp/d 1/f1.csv @s1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "PUT to a qualified table stage (recorded OK)",
+            sql: "PUT file:///tmp/d1/f1.csv @v1.%v1/p1 PARALLEL = 1 AUTO_COMPRESS = TRUE SOURCE_COMPRESSION = AUTO_DETECT OVERWRITE = TRUE ;",
+            expected_kind: Some("put"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_create_semantic_view_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "an empty TABLES list (recorded errno 1003)",
+            sql: "CREATE SEMANTIC VIEW v1 TABLES ( ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a table alias without AS (recorded errno 1003)",
+            sql: "CREATE SEMANTIC VIEW v1 TABLES ( v1 v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string view name (recorded errno 1003)",
+            sql: "CREATE SEMANTIC VIEW 'v1' TABLES ( v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a verified query field without a value (recorded errno 1003)",
+            sql: "CREATE SEMANTIC VIEW v1 TABLES ( v1 ) AI_VERIFIED_QUERIES ( v1 AS ( QUESTION 'm' ONBOARDING_QUESTION SQL 'm' ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a relationship range without EXCLUSIVE (recorded errno 1003)",
+            sql: "CREATE SEMANTIC VIEW v1 TABLES ( v1 ) RELATIONSHIPS ( v1 ( v1 ) REFERENCES v1 ( BETWEEN v1 AND v1 ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a metric window PARTITION BY EXCLUDING (recorded OK)",
+            sql: "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 ) METRICS ( v1 . v1 AS SUM ( v1 ) OVER ( PARTITION BY EXCLUDING v1 ) ) ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a dimension with a Cortex Search service (recorded OK)",
+            sql: "CREATE SEMANTIC VIEW v1 TABLES ( v1 ) DIMENSIONS ( v1 . v1 AS 1 WITH CORTEX SEARCH SERVICE v1 USING v1 ) ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "PARTITION BY EXCLUDING outside a semantic view stays refused",
+            sql: "SELECT SUM ( v1 ) OVER ( PARTITION BY EXCLUDING v1 ) ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_create_external_table_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a virtual column with a stage and a named file format (recorded OK)",
+            sql: "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a bare @ before PARTITION_TYPE (recorded OK)",
+            sql: "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @ PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a template variable (recorded OK)",
+            sql: "CREATE EXTERNAL TABLE v1 USING TEMPLATE $v1 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a quoted template variable (recorded errno 1003)",
+            sql: "CREATE EXTERNAL TABLE v1 USING TEMPLATE $\"v1 Q\" ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty column list (recorded errno 1003)",
+            sql: "CREATE EXTERNAL TABLE v1 ( ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a stage name part that is a string (recorded errno 1003)",
+            sql: "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @'v1'.s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a property with no value before the next (recorded errno 1003)",
+            sql: "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 AUTO_REFRESH = FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "NOT UNIQUE after a virtual column (recorded errno 1003)",
+            sql: "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 NOT UNIQUE ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a bare template query keeps the structured table (recorded OK)",
+            sql: "CREATE EXTERNAL TABLE v1 USING TEMPLATE ( SELECT 1 ) ;",
+            expected_kind: Some("create_table"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_alter_table_governance_action_when_parsing_then_only_a_faithful_tree_is_structured(
+) {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "an unquoted tag stays structured (recorded OK)",
+            sql: "ALTER TABLE v1 SET TAG v1 = 'm' ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a quoted tag, whose quoting the tree drops, stays raw (recorded OK)",
+            sql: "ALTER TABLE v1 SET TAG \"v1 Q\" = 'm' ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unquoted row access policy stays structured (recorded OK)",
+            sql: "ALTER TABLE v1 ADD ROW ACCESS POLICY v1 ON ( v1 ) ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a quoted row access policy stays raw (recorded OK)",
+            sql: "ALTER TABLE v1 ADD ROW ACCESS POLICY \"v1 Q\" ON ( v1 ) ;",
+            expected_kind: Some("raw"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_dynamic_iceberg_or_interactive_table_when_parsing_then_recorded_verdicts_hold()
+{
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "an untyped column, quoted warehouse and AS query (recorded OK)",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 ) TARGET_LAG = '1 minute' WAREHOUSE = \"SELECT\" AS SELECT 1 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "REFRESH USING an INSERT INTO SELF (recorded OK)",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = DOWNSTREAM WAREHOUSE = v1 REFRESH USING ( INSERT INTO SELF SELECT 1 ) ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a row access policy on no columns (recorded OK)",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 ROW ACCESS POLICY v1 ON ( ) AS SELECT 1 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "secondary roles ALL (recorded OK)",
+            sql: "CREATE OR ALTER DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL AS SELECT 1 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "no AS query (recorded errno 1003)",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a property with no value before the next (recorded errno 1003)",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = WAREHOUSE = v1 AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a storage lifecycle policy on no columns (recorded errno 1003)",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 STORAGE LIFECYCLE POLICY v1 ON ( ) AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "PARTITION BY (recorded errno 1003)",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 PARTITION BY ( DAY ( 'v1' ) ) AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string column type (recorded errno 1003)",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 'INT' ) TARGET_LAG = '1 minute' WAREHOUSE = v1 AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an interactive table with a lag but no warehouse (recorded OK)",
+            sql: "CREATE INTERACTIVE TABLE v1 ( v1 INT ) CLUSTER BY ( 1 ) TARGET_LAG = '1 minute' AS SELECT 1 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an interactive table with a storage lifecycle policy (recorded OK)",
+            sql: "CREATE INTERACTIVE TABLE v1 ( v1 INT ) CLUSTER BY ( 1 ) WITH STORAGE LIFECYCLE POLICY v1 ON ( v1 ) AS SELECT 1 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an interactive table without CLUSTER BY (recorded errno 1003)",
+            sql: "CREATE INTERACTIVE TABLE v1 ( v1 INT ) BY ( 1 ) AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an interactive table with a query but no AS (recorded errno 1003)",
+            sql: "CREATE INTERACTIVE TABLE v1 ( v1 INT ) CLUSTER BY ( 1 ) SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an interactive table with a row access policy on no columns (recorded errno 1003)",
+            sql: "CREATE INTERACTIVE TABLE v1 ( v1 INT ) CLUSTER BY ( 1 ) ROW ACCESS POLICY v1 ON ( ) AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "INTERACTIVE without TABLE (recorded errno 1003)",
+            sql: "CREATE INTERACTIVE v1 CLUSTER BY ( 1 ) AS SELECT 1 ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_snowflake_function_properties_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a nullable return type (recorded OK)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT NULL AS 'm' ;",
+            expected_kind: Some("create_function"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty COPY list (recorded OK)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE JAVA COPY = ( ) HANDLER = 'm' AS 'm' ;",
+            expected_kind: Some("create_function"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a bare-word handler (recorded OK)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE SCALA HANDLER = m1 AS 'm' ;",
+            expected_kind: Some("create_function"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a bare-word secret key and a string secret (recorded OK)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' HANDLER = 'm' SECRETS = ( m1 = 'd1.s1.v1' ) AS 'm' ;",
+            expected_kind: Some("create_function"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an untyped RETURNS TABLE column (recorded OK)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS TABLE ( INT ) LANGUAGE JAVA IMPORTS = ( 'm' ) HANDLER = 'm' ;",
+            expected_kind: Some("create_function"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a runtime version with no value before the next property (recorded errno 1003)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = HANDLER = 'm' AS 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a handler with no value before AS (recorded errno 1003)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE JAVA HANDLER = AS 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unclosed COPY list (recorded errno 1003)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT COPY = ( GRANTS AS 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "NULL ON NULL INPUT after the return type (recorded errno 1003)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT NULL ON NULL INPUT SERVICE = v1 ENDPOINT = e1 AS 'm' ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_snowflake_database_and_schema_properties_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a word comment on a schema (recorded OK)",
+            sql: "CREATE SCHEMA v1 COMMENT = m1 ;",
+            expected_kind: Some("create_schema"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a linked catalog with namespace lists (recorded OK)",
+            sql: "CREATE DATABASE v1 LINKED_CATALOG = ( CATALOG = 'm' ALLOWED_NAMESPACES = ( 'm' , m1 ) ) ;",
+            expected_kind: Some("create_database"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a contact with a quoted steward (recorded OK)",
+            sql: "CREATE DATABASE v1 WITH CONTACT ( STEWARD = \"v1 Q\" ) ;",
+            expected_kind: Some("create_database"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a database from a listing named by a string (recorded OK)",
+            sql: "CREATE DATABASE v1 FROM LISTING 'm' ;",
+            expected_kind: Some("create_database"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a property with no value (recorded errno 1003)",
+            sql: "CREATE SCHEMA v1 COMMENT = ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a contact whose steward is a string (recorded errno 1003)",
+            sql: "CREATE DATABASE v1 WITH CONTACT ( STEWARD = 'v1' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a parenthesized property list after WITH (recorded errno 1003)",
+            sql: "CREATE DATABASE v1 WITH ( STEWARD = v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "properties after TAG and CONTACT (recorded errno 1003)",
+            sql: "CREATE OR REPLACE TRANSIENT DATABASE IF NOT EXISTS v1 CLONE v1 AT ( TIMESTAMP => CURRENT_TIMESTAMP ( ) ) IGNORE TABLES WITH INSUFFICIENT DATA RETENTION IGNORE HYBRID TABLES DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 STAGE_UNDROP_RETENTION_TIME_IN_DAYS = 1 EXTERNAL_VOLUME = v1 CATALOG = v1 ICEBERG_DEFAULT_DDL_COLLATION = 'm' ICEBERG_VERSION_DEFAULT = 1 ICEBERG_MERGE_ON_READ_BEHAVIOR = 'AUTO' ENABLE_ICEBERG_MERGE_ON_READ = TRUE REPLACE_INVALID_CHARACTERS = TRUE DEFAULT_DDL_COLLATION = 'm' STORAGE_SERIALIZATION_POLICY = COMPATIBLE COMMENT = 'm' CATALOG_SYNC = 'm' CATALOG_SYNC_NAMESPACE_MODE = NEST CATALOG_SYNC_NAMESPACE_FLATTEN_DELIMITER = 'm' WITH TAG ( v1 = 'm' , v1 = 'm' ) WITH CONTACT ( STEWARD = v1 , STEWARD = v1 ) OBJECT_VISIBILITY = $$m: 1$$ ENABLE_DATA_COMPACTION = TRUE OAUTH_AUTHORIZATION_SERVER = i1 OAUTH_SCOPES_SUPPORTED = 'm' ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

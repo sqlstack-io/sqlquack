@@ -227,6 +227,7 @@ use crate::expressions::functions::models::JSON;
 use crate::expressions::names::models::BooleanLiteral;
 use crate::expressions::names::models::ByteString;
 use crate::expressions::names::models::Column;
+use crate::expressions::names::models::DefaultKeyword;
 use crate::expressions::names::models::HexStringExpr;
 use crate::expressions::names::models::Identifier;
 use crate::expressions::names::models::Literal;
@@ -745,6 +746,7 @@ pub enum Expression {
     Literal(Box<Literal>),
     Boolean(BooleanLiteral),
     Null(Null),
+    DefaultKeyword(DefaultKeyword),
 
     Identifier(Identifier),
     Column(Box<Column>),

@@ -58,3 +58,21 @@ note = "Read in full against the documentation page, the obligations, the cases 
 
 [review.definitions]
 "sf.dml.insert" = "bad9b5d87ae130a845de65c5f83951140610f12c8fc401de7ce02655598fe694"
+
+[[review]]
+id = "auditor-dml-004"
+reviewer_lane = "auditor"
+family = "dml"
+parser_tree = "752f45b805b271f57b4e21f2fdb50a26059fb991"
+reviewed_utc = "2026-11-07T01:28:00Z"
+verdict = "approved"
+forms = [
+  "sf.dml.insert",
+]
+note = "Re-read after the Snowflake parser batch at 552b9c1b6. The definition is unchanged. Only two of the 32 cases have new parse trees, INSERT INTO v1 VALUES ( DEFAULT ) and its two-row form, where DEFAULT is now a DefaultKeyword node instead of a generic Var. Every verdict is unchanged (16 parsed, 16 rejected), all 50 satisfied obligations stay satisfied, and no case contradicts its receipt."
+
+[review.fingerprints]
+"sf.dml.insert" = "cd9bb8864e68b288d7dcbef3012f13d970779fb739f18105ca0d0495b22e73b0"
+
+[review.definitions]
+"sf.dml.insert" = "bad9b5d87ae130a845de65c5f83951140610f12c8fc401de7ce02655598fe694"

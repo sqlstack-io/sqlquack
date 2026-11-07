@@ -58,10 +58,27 @@ impl Parser {
         }
     }
 
+    /// Refuses a Snowflake `name ( ... )` in FROM that Snowflake takes only inside TABLE( ).
+    pub(crate) fn refuse_snowflake_bare_table_call(&self, name: &str) -> Result<()> {
+        use crate::parser::constants::{SNOWFLAKE_FROM_CALLS, SNOWFLAKE_FROM_CALLS_OF_A_NAME};
+        if !self.applies_snowflake_context_rules() {
+            return Ok(());
+        }
+        let upper: String = name.to_ascii_uppercase();
+        if !SNOWFLAKE_FROM_CALLS.contains(&upper.as_str()) {
+            return Err(self.parse_error("Expected TABLE( ) around a table function"));
+        }
+        let no_name = self.check(TokenType::RParen) || self.check(TokenType::String);
+        match SNOWFLAKE_FROM_CALLS_OF_A_NAME.contains(&upper.as_str()) && no_name {
+            true => Err(self.parse_error(format!("Expected an object name in {upper}( )"))),
+            false => Ok(()),
+        }
+    }
+
     /// Refuses Snowflake's `FROM ( f ( ... ) )`: a table function needs TABLE( ), not parentheses.
     pub(crate) fn refuse_snowflake_parenthesized_call(&self, source: &Expression) -> Result<()> {
         let call = matches!(source, Expression::Paren(paren) if matches!(paren.this, Expression::Function(_)));
-        match self.is_snowflake() && call {
+        match self.applies_snowflake_context_rules() && call {
             true => Err(self.parse_error("Expected TABLE( ) around a table function")),
             false => Ok(()),
         }
