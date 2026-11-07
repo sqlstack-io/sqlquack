@@ -1,29 +1,92 @@
-# SQLQuack
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/sqlstack-io/sqlquack/main/.github/sqlquack-logo-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/sqlstack-io/sqlquack/main/.github/sqlquack-logo-light.png">
+    <img src="https://raw.githubusercontent.com/sqlstack-io/sqlquack/main/.github/sqlquack-logo-light.png" alt="SQLQuack" width="420">
+  </picture>
+  <br>
+  <sub>by <a href="https://sqlstack.io">SQLStack</a></sub>
+</p>
 
-SQLQuack converts Snowflake SQL into DuckDB SQL, and refuses to guess.
+<p align="center">
+  <strong>Run warehouse SQL locally. Verified results, or a clear no.</strong>
+</p>
 
-Most SQL transpilers print *something* for every input. Often that output parses and runs on DuckDB but
-means something different: `CONCAT` handles NULLs differently, regular expressions anchor
-differently, decimal division keeps a different scale. SQLQuack takes the opposite approach. Every
-conversion either comes from a rule verified against recorded Snowflake results, or it is refused
-with a precise reason: the construct, where it is, and why.
+<p align="center">
+  <a href="https://sqlquack.io">Website</a> ·
+  <a href="https://sqlquack.io/docs/">Docs</a> ·
+  <a href="https://sqlquack.io/playground/">Playground</a> ·
+  <a href="https://sqlquack.io/docs/quickstart/">Quickstart</a>
+</p>
 
-**Status: early.** A first set of rules converts the relational core, exact NUMBER arithmetic,
-comparisons, conditionals, casts, basic string functions, aggregates and window functions;
-everything else is refused, or stopped by a declared guard where DuckDB's result would differ.
-What works today:
+SQLQuack checks warehouse SQL and translates it into DuckDB SQL, so you can run it locally and in
+CI. Today it reads Snowflake SQL.
 
-- parsing Snowflake SQL with SQLQuack's own parser, derived from
-  [polyglot](https://github.com/sqlstack-io/polyglot), which keeps every call as written, and
-  classifying every function, operator, type, cast, join and clause in it;
-- a structured refusal for each construct: *missing rule*, *outside a rule's type conditions*,
-  *unresolved name*, *not expressible in DuckDB*, *parse fidelity*, or *conversion budget
-  exceeded*;
-- DuckDB's own parse-and-bind check of every converted statement;
-- `sqlquack census`, which reports which constructs a body of SQL uses and how much of it would
-  convert as rules are added;
-- `sqlquack index`, which maps every building block, typing function and rule to the cases and
-  SQL files whose conversions rely on it.
+Most SQL transpilers print *something* for every input. Often that output runs on DuckDB but means
+something different: `CONCAT` handles NULLs differently, regular expressions anchor differently,
+decimal division keeps a different scale. SQLQuack converts only where a rule verified against
+recorded Snowflake results covers the types involved. Everything else is refused with a code, the
+exact span and the reason.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/sqlstack-io/sqlquack/main/.github/demos/check-convert.gif" alt="sqlquack check reports a QUALIFY clause without a window function, with the span underlined and a fix; sqlquack convert turns a revenue query into DuckDB SQL, and refuses a query that needs HASH under the built-in policy" width="100%">
+</p>
+
+`sqlquack check` reports a `QUALIFY` that Snowflake would reject, with the span and a fix.
+`sqlquack convert` turns a revenue query into DuckDB SQL, and refuses a query that needs `HASH`,
+whose DuckDB value differs from Snowflake's.
+
+## Quick start
+
+> **Build from source for now.** SQLQuack has no published release yet: the `sqlquack` package on
+> PyPI is a name reservation that does not contain the compiler. Until the first release, build it
+> with a Rust toolchain:
+
+```bash
+git clone https://github.com/sqlstack-io/sqlquack
+cd sqlquack
+cargo build --release -p sqlquack
+cargo run --release -p sqlquack -- check query.sql
+cargo run --release -p sqlquack -- convert query.sql --schema schema.json
+```
+
+`check` needs no schema. `convert` needs the columns and Snowflake types of the relations a statement
+reads, in a [schema file](https://sqlquack.io/docs/schema/). Or try SQL in the
+[playground](https://sqlquack.io/playground/), which runs the same engine in your browser.
+
+The binary links DuckDB's prebuilt shared library (`libduckdb.so`, `libduckdb.dylib` on macOS,
+`duckdb.dll` on Windows), which the build downloads to
+`target/duckdb-download/<target triple>/<DuckDB version>` and `cargo run` puts on the library path.
+To run `target/release/sqlquack` directly, point the library path there:
+
+```console
+$ LD_LIBRARY_PATH=target/duckdb-download/x86_64-unknown-linux-gnu/v2.0.0 target/release/sqlquack convert query.sql
+```
+
+Use `DYLD_LIBRARY_PATH` on macOS and `PATH` on Windows.
+
+## What works today
+
+SQLQuack is early. The source dialect is Snowflake and the target is DuckDB. Parsing, checking and
+translation are separate steps, each with its own coverage.
+
+**Parse.** SQLQuack parses Snowflake SQL with its own parser, derived from
+[polyglot](https://github.com/sqlstack-io/polyglot), which keeps every call as written. It
+classifies every function, operator, type, cast, join and clause.
+
+**Check.** `sqlquack check` reports SQL that Snowflake parses but then rejects, such as
+`INTERSECT ALL`, `FOR UPDATE WAIT`, `QUALIFY` without a window function, or a `* ILIKE` `REPLACE`
+or `RENAME` of a column the pattern removes. Each has its own `SQ02xx` code.
+
+**Translate.** A first set of rules converts the relational core, exact NUMBER arithmetic,
+comparisons, conditionals, casts, basic string functions, aggregates and window functions. DuckDB
+parses and binds every converted statement before it is returned. Everything else is refused, or
+stopped by a declared guard where DuckDB's result would differ. Each refusal names its kind:
+*missing rule*, *outside a rule's type conditions*, *unresolved name*, *not expressible in DuckDB*,
+*parse fidelity* or *conversion budget exceeded*. A `VALUES` list of more than 1,000 rows is refused
+for now.
+
+[Coverage](https://sqlquack.io/docs/coverage/) says how each part is measured.
 
 Converted SQL is proven only where both sessions run in UTC: Snowflake's `TIMEZONE` and DuckDB's
 `TimeZone` must be `'UTC'`. Statements whose result depends on the session time zone carry the
@@ -52,22 +115,9 @@ $ cargo run --release -p sqlquack -- convert query.sql --schema schema.json
 $ echo "SELECT 1 AS total" | cargo run --release -p sqlquack -- convert --json
 ```
 
-The binary links DuckDB's prebuilt shared library (`libduckdb.so`, `libduckdb.dylib` on macOS,
-`duckdb.dll` on Windows), which `cargo run` puts on the library path. To run
-`target/release/sqlquack` directly, point the library path at the directory the build downloaded it
-to, `target/duckdb-download/<target triple>/<DuckDB version>`:
-
-```console
-$ LD_LIBRARY_PATH=target/duckdb-download/x86_64-unknown-linux-gnu/v2.0.0 target/release/sqlquack convert query.sql
-```
-
-Use `DYLD_LIBRARY_PATH` on macOS and `PATH` on Windows. The Python module ships the library beside
-itself and needs neither.
-
 `convert` prints the DuckDB SQL for Snowflake SQL from a file or standard input, and names the known
 divergences and assumptions it relies on on standard error. A refused statement prints its refusals
-instead and exits 1; input holding no statement exits 2. Each refusal is a coded diagnostic,
-underlined in the source as rustc does:
+instead. Each refusal is a coded diagnostic, underlined in the source as rustc does:
 
 ```console
 error[SQ0004]: a name does not resolve
@@ -79,17 +129,16 @@ error[SQ0004]: a name does not resolve
   = help: declare the relation and its columns in the schema (`--schema` on the command line)
 ```
 
-With `--json`, each refusal also carries the same diagnostic: `code`, `name`, `alias` (a parser
-guard's former `E_GUARD_*` name), `message`, `span` (character `start` and `end`, one-based `line`,
+With `--json`, each refusal carries the same diagnostic: `code`, `name`, `alias` (a parser guard's
+former `E_GUARD_*` name), `message`, `span` (character `start` and `end`, one-based `line`,
 `column`, `end_line` and `end_column`), `label`, `notes` and `help`. Codes are `SQ` and four digits,
-listed with an explanation each in `crates/sqlquack-core/src/diagnostics/constants.rs`, which
-`sqlquack explain <code>` prints; a code is never reused or renumbered. SQL that Snowflake parses
-but then rejects, such as `INTERSECT ALL`, `FOR UPDATE WAIT`, `QUALIFY` without a window function,
-or a `* ILIKE` `REPLACE` or `RENAME` of a column the pattern removes, is refused with its own
-`SQ02xx` code instead of being converted.
-A `VALUES` list of more than 1,000 rows is refused for now.
-`--session NAME=VALUE` passes the caller's Snowflake session parameters
-(`function` takes it too):
+listed with an explanation each in `crates/sqlquack-core/src/diagnostics/constants.rs` and in the
+[diagnostics reference](https://sqlquack.io/docs/diagnostics/reference/). A code is never reused or
+renumbered.
+
+### Sessions
+
+`--session NAME=VALUE` passes the caller's Snowflake session parameters (`function` takes it too):
 
 - Conversion runs under the recorded session profile they match (`utc-v1`, or `utc-qiic-v1` for
   `QUOTED_IDENTIFIERS_IGNORE_CASE = true`) and refuses, naming the parameters, when they match none.
@@ -103,23 +152,24 @@ A `VALUES` list of more than 1,000 rows is refused for now.
 - `TIMEZONE = UTC`, or no `TIMEZONE`, leaves time-zone-dependent statements to the
   `session_timezone_utc` assumption. Any other `TIMEZONE` refuses them, even with `--utc-session`.
 
-`--strict`, `--utc-session` and `--json` work as for the census. `census` and `index` take no
-session parameters yet and convert under `utc-v1`.
+`census` and `index` take no session parameters yet and convert under `utc-v1`.
+
+### Policy
 
 `convert`, `function`, `census` and `index` read `sqlquack.toml` (or `--policy`); without one they
 use the built-in policy, which refuses every known divergence, as `--builtin-policy` asks for.
-They share the policy flags (`--policy`, `--builtin-policy`, `--strict`, `--utc-session`,
+They share the policy flags: `--policy`, `--builtin-policy`, `--strict`, `--utc-session`,
 `--confirm-declared-offsets`, `--python-runtime` and `--loud-divergences-only`, which relies only
-on divergences whose converted SQL raises rather than returns another value). Every command with a report takes
-`--format text|json`; `--json` is short for `--format json`.
+on divergences whose converted SQL raises rather than returns another value. Every command with a
+report takes `--format text|json`; `--json` is short for `--format json`.
 
 HASH is refused by default: the converted SQL computes DuckDB's hash, which is consistent within one
 run but never Snowflake's value. A project that relies on HASH only for joins, grouping,
 deduplication or change detection can opt in. A policy file is complete on its own, so start from
 this repository's [sqlquack.toml](sqlquack.toml): a file holding only `[divergences.hash]` is
 rejected, because the comparator, session profiles and edge-case tables are required. Copy it into
-the directory you run `sqlquack` from, and change `default` in its existing `[divergences.hash]`
-table from `"refuse"` to `"warn"`:
+the directory you run `sqlquack` from, and change `default` in its `[divergences.hash]` table from
+`"refuse"` to `"warn"`:
 
 ```console
 $ cp path/to/sqlquack/sqlquack.toml .
@@ -131,7 +181,9 @@ default = "warn"
 strict = "refuse"
 ```
 
-A divergence the file leaves out is refused.
+A divergence the file leaves out is refused. See [Policy and sessions](https://sqlquack.io/docs/policy/).
+
+### Functions and exit status
 
 `function` converts a SQL project function's body, read from a file or from standard input with
 `-`, and prints the macro as JSON. A refused body prints `{"converted": false, "name": …,
@@ -149,29 +201,33 @@ $ cargo run --release -p sqlquack -- census path/to/sql
 $ cargo run --release -p sqlquack -- census path/to/sql --json
 ```
 
-Each `.sql` file is one query, or one model compiled by
-[SQLBuild](https://github.com/sqlstack-io/sqlbuild); SQLBuild's reference calls are recognised. The
-report contains counts and construct names only, never SQL text or file names; `--names` adds
-file, model and relation names to the slowest files and the blockers. Conversion needs the
-column types of the relations a file reads: `--schema` takes a JSON file mapping relation names to
-`[column, Snowflake type]` pairs, and `--chain-models` types each converted file as the relation
-its file name references, then converts again. Where the schema file types a model that is itself
-refused, files reading it still convert from those columns: the report counts them as
-unit-testable (`convertible`) but not strict (`convertible_strict`, every model upstream converts
-too), and lists each with an `upstream_refused:<model>` label for every refused model upstream,
-or `upstream_missing:<relation>` for a referenced model the scan holds no file for. Both counts are
-repeated without named assumptions (`convertible_no_assumptions`,
-`convertible_strict_no_assumptions`): a file relying on one, such as `session_timezone_utc` or
-`source_variant_json`, drops out, and a strict file also does when a model upstream relies on one.
-`--cursor-type timestamp|integer` replaces SQLBuild's cursor intrinsics with a bound as SQLBuild's
-Snowflake adapter renders it (timestamp bounds as text, integer bounds as integers); without it
-they stay unknown.
-`--assume-supported` (with `--chain-models`) takes construct keys or `rule.<id>`s and reports how
-many files would then be unit-testable and strict, what blocks the rest next, and a greedy plan of
-the few constructs each step should support together. Assumptions match at construct level: a
-`rule.<id>` expands to its construct keys, so it also clears other rules' refusals of the same
-construct, such as every refused `node:cast`. Plan steps support only missing rules and rules' type
-conditions. Every such figure is an upper bound: it counts only the refusals collected, matches
+`census` reports which constructs a body of SQL uses and how much of it would convert as rules are
+added. Each `.sql` file is one query, or one model compiled by
+[SQLBuild](https://github.com/sqlstack-io/sqlbuild), whose reference calls are recognised. The
+report holds counts and construct names only, never SQL text or file names; `--names` adds file,
+model and relation names to the slowest files and the blockers.
+
+- `--schema` takes a JSON file mapping relation names to `[column, Snowflake type]` pairs.
+  `--chain-models` types each converted file as the relation its file name references, then
+  converts again.
+- Where the schema types a model that is itself refused, files reading it still convert from those
+  columns. The report counts them as unit-testable (`convertible`) but not strict
+  (`convertible_strict`, every model upstream converts too), and labels each
+  `upstream_refused:<model>`, or `upstream_missing:<relation>` for a referenced model the scan holds
+  no file for.
+- Both counts are repeated without named assumptions (`convertible_no_assumptions`,
+  `convertible_strict_no_assumptions`): a file relying on one, such as `session_timezone_utc` or
+  `source_variant_json`, drops out, and a strict file also does when a model upstream relies on one.
+- `--cursor-type timestamp|integer` replaces SQLBuild's cursor intrinsics with a bound as SQLBuild's
+  Snowflake adapter renders it (timestamp bounds as text, integer bounds as integers); without it
+  they stay unknown.
+- `--assume-supported` (with `--chain-models`) takes construct keys or `rule.<id>`s and reports how
+  many files would then be unit-testable and strict, what blocks the rest next, and a greedy plan of
+  the few constructs each step should support together. Assumptions match at construct level: a
+  `rule.<id>` expands to its construct keys, so it also clears other rules' refusals of the same
+  construct. Plan steps support only missing rules and rules' type conditions.
+
+Every `--assume-supported` figure is an upper bound: it counts only the refusals collected, matches
 constructs rather than the exact condition refused, and supporting a construct may uncover others.
 Each figure says how many of its unit-testable files may hold refusals collecting did not reach, and
 a key matching no collected refusal is warned about.
@@ -200,11 +256,11 @@ result = sqlquack.convert(
 )
 ```
 
-The `sqlquack` package (in `python/`, built with `make python-wheel`) needs Python 3.12 or newer and
-runs the same code as the command line. `check` and `convert` return frozen results with typed
-`Diagnostic`s, the text the command line renders, and, for `convert`, its exact `--json` report.
-`ConvertOptions` has one field per `convert` flag. Where the command line exits 2, they raise
-`SqlQuackError`.
+The `sqlquack` Python package lives in `python/`. Build it from source with `make python-wheel`; it
+needs Python 3.12 or newer, runs the same code as the command line and ships the DuckDB library
+beside itself. `check` and `convert` return frozen results with typed `Diagnostic`s, the text the
+command line renders, and, for `convert`, its exact `--json` report. `ConvertOptions` has one field
+per `convert` flag. Where the command line exits 2, they raise `SqlQuackError`.
 
 ## Evidence
 
@@ -253,6 +309,9 @@ only ever holds a tree that passed.
 `RECORDER=0 UV_NO_SYNC=1 make gate` runs more: it adds the replay of every recorded case, timed
 conversion over pinned benchmark projects, which it downloads on first use, and a fuzz smoke run,
 which needs a nightly toolchain with `cargo-fuzz`.
+
+The README demo is recorded from a real run with the tapes in
+[website/recordings](website/recordings/README.md).
 
 ## License
 
