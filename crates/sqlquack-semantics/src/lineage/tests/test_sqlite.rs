@@ -3,9 +3,10 @@
 use sqlquack_syntax::Dialect;
 
 use crate::dialects::constants::SQLITE;
-use crate::lineage::models::Nullability;
+use crate::lineage::_helpers::findings::statement::statement_findings;
+use crate::lineage::models::{LineageContext, Nullability};
 use crate::lineage::tests::helpers::{
-    found_findings, owned_findings, sqlite_outputs, sqlite_shop_schema,
+    found_findings, generic_calls, owned_findings, sqlite_outputs, sqlite_shop_schema,
 };
 use crate::lineage::tests::test_types::{QueryFindingsTestCase, SqliteOutputsTestCase};
 
@@ -179,6 +180,94 @@ fn given_sqlite_outputs_when_typing_then_only_one_storage_class_values_are_typed
                     )
                 })
                 .collect::<Vec<(String, Option<String>, Nullability)>>(),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_sqlite_window_only_calls_by_name_when_checking_then_each_without_over_is_found() {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "row_number without OVER, as sqlite3 refuses it",
+            sql: "SELECT row_number() AS r FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "rank without OVER, as sqlite3 refuses it",
+            sql: "SELECT rank() AS r FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "dense_rank without OVER, as sqlite3 refuses it",
+            sql: "SELECT dense_rank() AS r FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "percent_rank without OVER, as sqlite3 refuses it",
+            sql: "SELECT percent_rank() AS r FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "cume_dist without OVER, as sqlite3 refuses it",
+            sql: "SELECT cume_dist() AS r FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "ntile without OVER, as sqlite3 refuses it",
+            sql: "SELECT ntile(2) AS r FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "lag without OVER, as sqlite3 refuses it",
+            sql: "SELECT lag(id) AS r FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "lead without OVER, as sqlite3 refuses it",
+            sql: "SELECT lead(id) AS r FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "first_value without OVER, as sqlite3 refuses it",
+            sql: "SELECT first_value(id) AS r FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "last_value without OVER, as sqlite3 refuses it",
+            sql: "SELECT last_value(id) AS r FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "nth_value without OVER, as sqlite3 refuses it",
+            sql: "SELECT nth_value(id, 1) AS r FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "an ordinary call by name",
+            sql: "SELECT upper(status) AS r FROM orders",
+            expected_findings: &[],
+        },
+    ];
+    let schema = sqlite_shop_schema();
+    for test_case in test_cases {
+        let context = LineageContext {
+            profile: &SQLITE,
+            schema: &schema,
+            sql: Some(test_case.sql),
+        };
+        let statement = generic_calls(test_case.sql);
+        assert_eq!(
+            statement_findings(&statement, context)
+                .into_iter()
+                .map(|finding| (
+                    finding.code,
+                    finding.message,
+                    finding.span.map_or(0, |span| span.start)
+                ))
+                .collect::<Vec<_>>(),
+            owned_findings(test_case.expected_findings),
             "{}",
             test_case.description
         );

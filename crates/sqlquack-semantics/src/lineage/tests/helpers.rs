@@ -538,3 +538,27 @@ pub(crate) fn sqlite_outputs(
         .map(|output| (output.name, output.data_type, output.nullability))
         .collect()
 }
+
+/// `sql`'s statement with its first output's call kept generic, as the native SQLite parser writes calls.
+pub(crate) fn generic_calls(sql: &str) -> sqlquack_syntax::Expression {
+    let written: String = sql.replacen("SELECT ", "SELECT zz_", 1);
+    let mut statements = parse_statements_with(
+        &written,
+        Dialect::SQLite,
+        &ParseOptions::default(),
+        CallMode::FaithfulLocated,
+    )
+    .unwrap_or_else(|error| panic!("{sql}: {error}"));
+    let mut statement = statements.remove(0);
+    let sqlquack_syntax::Expression::Select(select) = &mut statement else {
+        panic!("{sql}: not a SELECT");
+    };
+    let Some(sqlquack_syntax::Expression::Alias(alias)) = select.expressions.first_mut() else {
+        panic!("{sql}: no aliased first output");
+    };
+    let sqlquack_syntax::Expression::Function(function) = &mut alias.this else {
+        panic!("{sql}: the first output is not a call");
+    };
+    function.name = function.name.trim_start_matches("zz_").to_owned();
+    statement
+}
