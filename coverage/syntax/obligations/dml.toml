@@ -3234,6 +3234,62 @@ anchor = "doc.sql.copy-into-location / Syntax"
 note = "Microsoft Azure location parameters before FROM, in the position the page's grammar shows (observed: its examples place them after FROM)"
 
 [[obligation]]
+id = "sf.dml.copy-into-location.o540"
+kind = "positive"
+required = true
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "a parenthesized string as the partition expression (observed)"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o541"
+kind = "positive"
+required = true
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "a parenthesized concatenation as the partition expression, as the page's examples write it (observed)"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o542"
+kind = "positive"
+required = true
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "a partition expression followed by HEADER = TRUE, as the page's examples write it (observed)"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o543"
+kind = "positive"
+required = true
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "an Amazon S3 location's STORAGE_INTEGRATION after FROM, as the page's examples write it (observed)"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o544"
+kind = "positive"
+required = true
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "an Amazon S3 location's ENCRYPTION after FROM (observed)"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o545"
+kind = "positive"
+required = true
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "an Amazon S3 location's STORAGE_INTEGRATION after FROM, then PARTITION BY (observed)"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o546"
+kind = "positive"
+required = true
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "an Amazon S3 location's STORAGE_INTEGRATION before FROM, then PARTITION BY (observed)"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o547"
+kind = "positive"
+required = true
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "PARTITION BY before an Amazon S3 location's STORAGE_INTEGRATION (observed)"
+
+[[obligation]]
 id = "sf.dml.copy-into-location.o511"
 kind = "identifier_class"
 required = true

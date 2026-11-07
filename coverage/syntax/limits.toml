@@ -5357,6 +5357,78 @@ expect = "observe"
 context = "raw"
 
 [[limit]]
+form = "sf.dml.copy-into-location"
+kind = "positive"
+note = "a parenthesized string as the partition expression (observed)"
+anchor = "doc.sql.copy-into-location / Syntax"
+sql = "COPY INTO @s1 FROM t1 PARTITION BY ( 'x' ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "positive"
+note = "a parenthesized concatenation as the partition expression, as the page's examples write it (observed)"
+anchor = "doc.sql.copy-into-location / Syntax"
+sql = "COPY INTO @s1 FROM t1 PARTITION BY ( 'date=' || v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "positive"
+note = "a partition expression followed by HEADER = TRUE, as the page's examples write it (observed)"
+anchor = "doc.sql.copy-into-location / Syntax"
+sql = "COPY INTO @s1 FROM t1 PARTITION BY 1 HEADER = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "positive"
+note = "an Amazon S3 location's STORAGE_INTEGRATION after FROM, as the page's examples write it (observed)"
+anchor = "doc.sql.copy-into-location / Syntax"
+sql = "COPY INTO 's3://b1/p1/' FROM t1 STORAGE_INTEGRATION = i1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "positive"
+note = "an Amazon S3 location's ENCRYPTION after FROM (observed)"
+anchor = "doc.sql.copy-into-location / Syntax"
+sql = "COPY INTO 's3://b1/p1/' FROM t1 STORAGE_INTEGRATION = i1 ENCRYPTION = ( TYPE = 'AWS_SSE_S3' ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "positive"
+note = "an Amazon S3 location's STORAGE_INTEGRATION after FROM, then PARTITION BY (observed)"
+anchor = "doc.sql.copy-into-location / Syntax"
+sql = "COPY INTO 's3://b1/p1/' FROM t1 STORAGE_INTEGRATION = i1 PARTITION BY 1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "positive"
+note = "an Amazon S3 location's STORAGE_INTEGRATION before FROM, then PARTITION BY (observed)"
+anchor = "doc.sql.copy-into-location / Syntax"
+sql = "COPY INTO 's3://b1/p1/' STORAGE_INTEGRATION = i1 FROM t1 PARTITION BY 1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "positive"
+note = "PARTITION BY before an Amazon S3 location's STORAGE_INTEGRATION (observed)"
+anchor = "doc.sql.copy-into-location / Syntax"
+sql = "COPY INTO 's3://b1/p1/' FROM t1 PARTITION BY 1 STORAGE_INTEGRATION = i1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
 form = "sf.transaction_session.alter-session.set-sessionparams"
 kind = "positive"
 note = "several parameters separated by commas (observed: the grammar separates them by blanks)"
