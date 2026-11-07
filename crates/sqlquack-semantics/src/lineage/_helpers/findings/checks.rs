@@ -14,8 +14,8 @@ use crate::lineage::constants::{
     UNKNOWN_QUALIFIER_CODE,
 };
 use crate::lineage::constants::{
-    DUCKDB_PROFILE, DUCKDB_ROWID, METADATA_PREFIX, POSITIONAL_PREFIX, SEQUENCE_COLUMNS,
-    SNOWFLAKE_PROFILE, SQL_STAR,
+    DUCKDB_PROFILE, DUCKDB_ROWID, METADATA_PREFIX, POSITIONAL_PREFIX, POSTGRES_PROFILE,
+    POSTGRES_SYSTEM_COLUMNS, SEQUENCE_COLUMNS, SNOWFLAKE_PROFILE, SQL_STAR,
 };
 use crate::lineage::models::NameFinding;
 use crate::lineage::models::{LineageContext, LineageScope, NamedQuery, ScopeSource};
@@ -268,13 +268,16 @@ pub(crate) fn unpivot_findings(
     findings
 }
 
-/// Whether `source` offers a column named `wanted`.
+/// Whether `source` offers a column named `wanted`; a PostgreSQL stored table its system columns.
 fn offers(source: &ScopeSource, wanted: &str, context: LineageContext<'_>) -> bool {
     source
         .query
         .columns
         .iter()
         .any(|offered| context.profile.same_identifier(&offered.key, wanted))
+        || (context.profile.name() == POSTGRES_PROFILE
+            && source.query.stored_relation.is_some()
+            && POSTGRES_SYSTEM_COLUMNS.contains(&wanted))
 }
 
 /// How many FROM items offer `wanted`, two under one name counted once.

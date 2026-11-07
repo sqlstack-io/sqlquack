@@ -4,7 +4,7 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Literal;
 
 use crate::lineage::_helpers::checks::families::Family;
-use crate::lineage::constants::DUCKDB_PROFILE;
+use crate::lineage::constants::{DUCKDB_PROFILE, POSTGRES_PROFILE};
 use crate::lineage::models::LineageContext;
 
 /// The length of an ISO date, `YYYY-MM-DD`, and where its dashes and parts are.
@@ -28,12 +28,15 @@ const LAST_MINUTE: u32 = 59;
 pub(crate) enum Engine {
     DuckDB,
     Snowflake,
+    /// PostgreSQL: no implicit predicate, comparison or string set-operation coercions.
+    Postgres,
 }
 
 impl Engine {
     pub(crate) fn of(context: LineageContext<'_>) -> Self {
         match context.profile.name() {
             DUCKDB_PROFILE => Self::DuckDB,
+            POSTGRES_PROFILE => Self::Postgres,
             _ => Self::Snowflake,
         }
     }
@@ -43,6 +46,7 @@ impl Engine {
         match self {
             Self::DuckDB => &[Family::Integer, Family::Numeric],
             Self::Snowflake => &[Family::Integer, Family::Numeric, Family::String],
+            Self::Postgres => &[],
         }
     }
 
@@ -63,6 +67,7 @@ impl Engine {
                 (Family::Integer, Family::Boolean),
                 (Family::Numeric, Family::Boolean),
             ],
+            Self::Postgres => &[],
         }
     }
 }
@@ -161,7 +166,10 @@ pub(crate) fn setop(engine: Engine, left: Family, right: Family) -> bool {
     !left.fully_modelled()
         || !right.fully_modelled()
         || naturally_comparable(left, right)
-        || ((left == Family::String || right == Family::String) && !nested(left) && !nested(right))
+        || (engine != Engine::Postgres
+            && (left == Family::String || right == Family::String)
+            && !nested(left)
+            && !nested(right))
         || (engine == Engine::DuckDB
             && ((left == Family::Boolean && right.is_numeric())
                 || (right == Family::Boolean && left.is_numeric())))
@@ -195,7 +203,7 @@ pub(crate) fn arithmetic(
     }
     let add: bool = matches!(node, Expression::Add(_));
     let sub: bool = matches!(node, Expression::Sub(_));
-    if engine == Engine::DuckDB
+    if matches!(engine, Engine::DuckDB | Engine::Postgres)
         && ((matches!(node, Expression::Mul(_))
             && ((left == Interval && right.is_numeric())
                 || (right == Interval && left.is_numeric())))
@@ -226,9 +234,10 @@ pub(crate) fn arithmetic(
     if (add && ADD.contains(&(left, right))) || (sub && SUB.contains(&(left, right))) {
         return true;
     }
-    if engine == Engine::DuckDB
+    if matches!(engine, Engine::DuckDB | Engine::Postgres)
         && ((add && matches!((left, right), (Date, Time) | (Time, Date)))
-            || (sub && matches!((left, right), (Date, Timestamp) | (Timestamp, Date))))
+            || (sub && matches!((left, right), (Date, Timestamp) | (Timestamp, Date)))
+            || (sub && engine == Engine::Postgres && (left, right) == (Time, Time)))
     {
         return true;
     }

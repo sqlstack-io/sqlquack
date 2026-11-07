@@ -99,7 +99,8 @@ The DuckDB SQL goes to standard output and the progress lines to standard error,
 `sqlquack convert revenue.sql … > revenue.duckdb.sql` keeps only the SQL.
 
 `convert` reads `sqlquack.toml` from the current directory, or the file `--policy` names. Without
-one, or with `--builtin-policy`, it uses the built-in policy, which refuses every known divergence.
+one, or with `--builtin-policy`, it uses the built-in policy, which refuses every known divergence
+but the clock (`CURRENT_DATE()` and `CURRENT_TIMESTAMP()` convert with a warning).
 See [Policy and sessions](/docs/policy/).
 
 ## Next steps

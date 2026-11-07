@@ -1,0 +1,7 @@
+# Cases held out of the receipts because the referee cannot yet run them as written; each waits
+# on the named referee change and is recorded again then. Not read by the checker, and a pending
+# case does not count as verified. None are pending: every case once held here (TABLE, SELECT ...
+# INTO, the @-@ operator, BEGIN ATOMIC bodies, rule action lists, the ALTER DATABASE ... SET
+# TABLESPACE, DETACH PARTITION ... CONCURRENTLY and bare CLUSTER captures, and the three
+# negatives that split into two statements) was recorded once the referee and checker changes
+# it waited on landed.
