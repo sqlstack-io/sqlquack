@@ -363,16 +363,14 @@ fn postgres_output_type(schema: &TypedShopSchema, sql: &str) -> Option<String> {
     lineage.outputs.first()?.data_type.clone()
 }
 
-/// The first output's type under Engine::Postgres of the native parser's one statement, when the
-/// parser reads the whole query.
+/// The first output's type under Engine::Postgres, when the native parser reads one statement whole.
 pub(crate) fn native_postgres_output_type(schema: &TypedShopSchema, sql: &str) -> Option<String> {
-    let parsed = sqlquack_syntax_postgres::parse_strict(sql).ok()?;
+    let parsed = sqlquack_syntax_postgres::parse_strict(sql)
+        .ok()
+        .filter(|parsed| parsed.gaps.is_empty())?;
     let [statement] = parsed.statements.as_slice() else {
         return None;
     };
-    if !parsed.gaps.is_empty() {
-        return None;
-    }
     let context = LineageContext {
         profile: &POSTGRES,
         schema,

@@ -193,8 +193,7 @@ pub(crate) struct ResolvedQuery {
     pub(crate) outer_nullable: bool,
     /// Whether the FROM item is a derived table, which no qualifier names unless it is aliased.
     pub(crate) derived: bool,
-    /// Whether the CTE's definition, or a CTE it reads, has a finding, so names read from its
-    /// columns are follow-on findings and not reported.
+    /// Whether its definition or a CTE it reads has a finding, so names read from it are not.
     pub(crate) faulted: bool,
 }
 

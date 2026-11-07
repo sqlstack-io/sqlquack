@@ -387,27 +387,16 @@ fn given_a_native_postgres_tree_when_typing_outputs_then_types_follow_postgresql
         )]),
         ..TypedShopSchema::default()
     };
-    let expected: Vec<(&str, Option<String>)> = test_cases
-        .iter()
-        .map(|test_case| {
-            (
-                test_case.description,
-                test_case.expected_type.map(canonical_postgres),
-            )
-        })
-        .collect();
-    let reported: Vec<(&str, Option<String>)> = test_cases
-        .iter()
-        .map(|test_case| {
-            (
-                test_case.description,
-                native_postgres_output_type(&schema, test_case.sql)
-                    .as_deref()
-                    .map(canonical_postgres),
-            )
-        })
-        .collect();
-    assert_eq!(reported, expected);
+    for test_case in test_cases {
+        assert_eq!(
+            native_postgres_output_type(&schema, test_case.sql)
+                .as_deref()
+                .map(canonical_postgres),
+            test_case.expected_type.map(canonical_postgres),
+            "{}",
+            test_case.description
+        );
+    }
 }
 
 #[test]

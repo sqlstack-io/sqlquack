@@ -45,6 +45,7 @@ SYNTAX_TYPES_FIXTURE: Path = Path(
 )
 SYNTAX_CASES: Path = Path("coverage/syntax-postgres/cases")
 QUERY_HEADS: tuple[str, ...] = ("SELECT", "WITH", "VALUES", "TABLE")
+ACCEPTED: str = "accept"
 MATRIX_METHOD: str = (
     "format_type of a temporary view's first column over the empty table t, "
     "recorded by scripts/record_postgres_types.py"

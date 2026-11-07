@@ -61,8 +61,7 @@ pub(crate) fn query_findings(
     }
 }
 
-/// The CTEs `with` adds to `ctes`, and each body's findings made with the CTEs before it. Under
-/// PostgreSQL a CTE whose body has a finding, or reads a CTE that does, is faulted.
+/// The CTEs `with` adds to `ctes`, each body's findings, and under PostgreSQL each one faulted.
 fn visited_ctes<'a>(
     with: Option<&With>,
     (ctes, outer, aliases): (&'a [NamedQuery], Option<&LineageScope<'_>>, &[String]),
@@ -97,13 +96,17 @@ fn derived_key(item: &Expression, context: LineageContext<'_>) -> Option<Option<
 fn reads_faulted(query: &Expression, reach: &[NamedQuery], context: LineageContext<'_>) -> bool {
     query.dfs().any(|node| match node {
         Expression::Table(table) if table.schema.is_none() && table.catalog.is_none() => {
-            let name: String = key(&table.name, context);
-            reach.iter().any(|named| {
-                named.query.faulted && context.profile.same_identifier(&named.key, &name)
-            })
+            faulted_cte(&key(&table.name, context), reach, context)
         }
         _ => false,
     })
+}
+
+/// Whether the CTE `name` resolves to among `reach` is faulted.
+fn faulted_cte(name: &str, reach: &[NamedQuery], context: LineageContext<'_>) -> bool {
+    reach
+        .iter()
+        .any(|named| named.query.faulted && context.profile.same_identifier(&named.key, name))
 }
 
 fn select_findings(

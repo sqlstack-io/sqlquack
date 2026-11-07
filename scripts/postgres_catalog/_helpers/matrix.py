@@ -7,6 +7,7 @@ from itertools import product
 from pathlib import Path
 
 from scripts.postgres_catalog.constants import (
+    ACCEPTED,
     AGGREGATE_INPUTS,
     AGGREGATES,
     ARITHMETIC,
@@ -105,7 +106,7 @@ def syntax_cases(directory: Path) -> list[tuple[str, str, str]]:
             case: dict[str, object] = json.loads(line)
             sql: str = str(case["sql"])
             words: list[str] = sql.lstrip().lstrip("(").split(None, 1)
-            if case["expect"] == "accept" and words and words[0].upper() in QUERY_HEADS:
+            if case["expect"] == ACCEPTED and words and words[0].upper() in QUERY_HEADS:
                 category: str = f"{path.stem}:{case.get('stage') or 'executed'}"
                 cases.append((str(case["case_id"]), category, sql))
     return cases

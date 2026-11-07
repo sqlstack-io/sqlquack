@@ -1,6 +1,7 @@
 //! PostgreSQL's result types from its 18.6 catalogue: string literals, `||` and built-in calls.
 
 use std::collections::{HashMap, HashSet};
+use std::num::ParseIntError;
 use std::rc::Rc;
 use std::sync::OnceLock;
 
@@ -722,16 +723,15 @@ pub(crate) fn postgres_literal_type(literal: &Literal) -> Option<&'static str> {
     }
 }
 
-/// An integer literal's value: decimal or `0x`/`0o`/`0b`, with `_` separators; none otherwise.
-fn integer_value(digits: &str) -> Option<i128> {
-    let digits: String = digits.replace('_', "");
-    let lower: String = digits.to_ascii_lowercase();
-    match RADIX_PREFIXES
+/// An integer literal's value, decimal or `0x`/`0o`/`0b`, with `_` separators.
+fn integer_value(digits: &str) -> Result<i128, ParseIntError> {
+    let digits: String = digits.replace('_', "").to_ascii_lowercase();
+    let radix: Option<(&str, u32)> = RADIX_PREFIXES
         .iter()
-        .find(|(prefix, _)| lower.starts_with(prefix))
-    {
-        Some((prefix, radix)) => i128::from_str_radix(&lower[prefix.len()..], *radix).ok(),
-        None => digits.parse::<i128>().ok(),
+        .find_map(|(prefix, radix)| Some((digits.strip_prefix(prefix)?, *radix)));
+    match radix {
+        Some((rest, radix)) => i128::from_str_radix(rest, radix),
+        None => digits.parse::<i128>(),
     }
 }
 
@@ -844,8 +844,7 @@ pub(crate) fn postgres_type(
     }
 }
 
-/// The type a polymorphic result takes: the one type every argument in its group has, without
-/// modifiers, as PostgreSQL gives function results; none unless every chosen overload agrees.
+/// A polymorphic result's type: its group's one argument type, unmodified; none if they differ.
 fn polymorphic_type(
     group: &[&str],
     overloads: &[&&Overload],
@@ -874,24 +873,22 @@ fn polymorphic_type(
     found.map(|found| Rc::from(spelling(found)))
 }
 
-/// A SQL value function's type, with the precision a literal argument gives it; none when the
-/// precision is not a literal.
+/// A SQL value function's type, with a literal precision argument; none for any other argument.
 fn value_function_type(result: &str, arguments: &[&Expression]) -> Option<Rc<str>> {
     match arguments {
         [] => Some(Rc::from(result)),
         [Expression::Literal(literal)] => match literal.as_ref() {
-            Literal::Number(digits) if digits.parse::<u8>().is_ok() => {
-                Some(Rc::from(format!("{result}({digits})")))
-            }
+            Literal::Number(digits) => match digits.parse::<u8>() {
+                Ok(precision) => Some(Rc::from(format!("{result}({precision})"))),
+                Err(_) => None,
+            },
             _ => None,
         },
         _ => None,
     }
 }
 
-/// The type of `left || right` when neither side is a string: an array joined to an array or an
-/// element of its own type keeps that array type, and any other pair resolves through
-/// `pg_operator`; none when a side's type is unknown or the operator's result is polymorphic.
+/// The type of a non-string `left || right`: an array with its own type, else from `pg_operator`.
 fn concatenation_type(
     left: &Expression,
     right: &Expression,
