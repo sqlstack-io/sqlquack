@@ -36,6 +36,17 @@ fn mixed_type(parser: LocalParser, depth: usize) -> Option<String> {
     }
 }
 
+/// Casts nested about `depth / MIXED_SUFFIX_RUN` deep, each to a type with a run of `[]`.
+fn cast_with_suffix(depth: usize) -> String {
+    let levels: usize = (depth / MIXED_SUFFIX_RUN).max(1);
+    let cast: String = format!(" AS INT{})", "[]".repeat(MIXED_SUFFIX_RUN));
+    format!(
+        "SELECT {}NULL{}",
+        "CAST(".repeat(levels),
+        cast.repeat(levels)
+    )
+}
+
 /// The probed constructs, in report order.
 pub(crate) fn constructs() -> Vec<Construct> {
     vec![
@@ -178,6 +189,10 @@ pub(crate) fn constructs() -> Vec<Construct> {
             text: |parser, depth| {
                 mixed_type(parser, depth).map(|kind| format!("SELECT CAST(NULL AS {kind})"))
             },
+        },
+        Construct {
+            name: "cast_and_type_suffix",
+            text: |_, depth| Some(cast_with_suffix(depth)),
         },
         Construct {
             name: "flat_plus",

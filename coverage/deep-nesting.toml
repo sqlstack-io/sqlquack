@@ -210,6 +210,14 @@ failure = "crash"
 owner = "sqlquack-syntax: shared tree serialisation and drop"
 
 [[known_failures]]
+parser = "postgres"
+construct = "cast_and_type_suffix"
+profile = "gate"
+depth = 100000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"
+
+[[known_failures]]
 parser = "snowflake"
 construct = "type_suffix"
 profile = "dev"
@@ -432,3 +440,11 @@ profile = "dev"
 depth = 3000
 failure = "crash"
 owner = "sqlquack-syntax: shared tree serialisation and drop"
+
+[[known_failures]]
+parser = "postgres"
+construct = "cast_and_type_suffix"
+profile = "dev"
+depth = 10000
+failure = "crash"
+owner = "sqlquack-syntax-postgres"

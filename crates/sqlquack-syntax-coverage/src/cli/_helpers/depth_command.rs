@@ -96,7 +96,17 @@ pub(crate) fn depth_probe(
     })?;
     let started: Instant = Instant::now();
     let results: Vec<ConstructResult> = probe_all(&binary, jobs);
-    let report: DepthReport = compare_allowlist(&results, &known, profile);
+    let mut report: DepthReport = compare_allowlist(&results, &known, profile);
+    let expected: usize = PROBED_PARSERS
+        .iter()
+        .map(|&parser| probed_constructs(parser).len())
+        .sum();
+    if results.len() != expected {
+        report.problems.push(format!(
+            "{} of {expected} constructs gave no result; a probe thread failed",
+            expected - results.len().min(expected)
+        ));
+    }
     let failing: usize = results
         .iter()
         .filter(|result| result.failed_at.is_some())
