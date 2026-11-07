@@ -1520,8 +1520,10 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
             expected_text: "error[SQ0008]: the conversion needs a known divergence the policy refuses: \
                 `fn:HASH`\n --> <stdin>:1:8\n  |\n1 | SELECT HASH(1) AS h\n  |        ^^^^^^^ fn:HASH \
                 needs known divergence `hash`, which the policy refuses in this mode\n  |\n  = help: \
-                the built-in policy refuses every known divergence but the clock and \
-                arithmetic's 38-digit and timestamp range errors; pass --policy with a policy file that allows `hash`, such as the repository's sqlquack.toml\nsqlquack convert: refused, 1 refusal under the built-in default\n",
+                the built-in policy refuses every known divergence but the clock, \
+                arithmetic's 38-digit and timestamp range errors, VARIANT reads' JSON guards \
+                and the sub-microsecond error of a naive timestamp joined with a local one; \
+                pass --policy with a policy file that allows `hash`, such as the repository's sqlquack.toml\nsqlquack convert: refused, 1 refusal under the built-in default\n",
             expected_json: ("SQ0008", "divergence_refused", 1, 8),
         },
         ConvertDiagnosticTestCase {
