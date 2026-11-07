@@ -436,3 +436,21 @@ note = "Read in full against the documentation page, the obligations, the cases 
 [review.definitions]
 "sf.expressions.data-types-datetime.timestamp-variations" = "c5aee53a49abc97848292516688ff51bdbb71c9b3eab90e5e17be1a239ba2c52"
 "sf.expressions.identifier-literal" = "6a6e2aa9d390636159e63ade723676774c8aa4776bf415e1a16fdff49e946740"
+
+[[review]]
+id = "auditor-expressions-016"
+reviewer_lane = "auditor"
+family = "expressions"
+parser_tree = "90d1828438bc1814b7b71e8aeda823626d48b9f0"
+reviewed_utc = "2026-11-07T05:05:00Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-datetime.date-time-constant",
+]
+note = "Re-read after o009-o017 were added: the nine negative neighbours, their cases and their import-171 receipts (seven 1003, two 2121), against the parse trees and refusals of the parser at 32ba12e8c242; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-datetime.date-time-constant" = "c8570c5f675d9f63f8af68ba7b683a31451d1d5c88f0e7c7f2d02a81c2f6d7b5"
+
+[review.definitions]
+"sf.expressions.data-types-datetime.date-time-constant" = "31d338a953d80790742befe3292530218a691cf8a112a56d8fd37ed9c7650f64"
