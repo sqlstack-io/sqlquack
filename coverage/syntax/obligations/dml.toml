@@ -3290,6 +3290,20 @@ anchor = "doc.sql.copy-into-location / Syntax"
 note = "PARTITION BY before an Amazon S3 location's STORAGE_INTEGRATION (observed)"
 
 [[obligation]]
+id = "sf.dml.copy-into-location.o548"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "PARTITION BY after an Azure location's CREDENTIALS, as after STORAGE_INTEGRATION (observed)"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o549"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.copy-into-location / Syntax"
+note = "PARTITION BY after an Amazon S3 location's ENCRYPTION, as after STORAGE_INTEGRATION (observed)"
+
+[[obligation]]
 id = "sf.dml.copy-into-location.o511"
 kind = "identifier_class"
 required = true
@@ -7556,6 +7570,20 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.copy-into-table / Usage notes"
 note = "a SQL variable as the FROM location, which the page says must be a literal constant"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o726"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "PARTITION BY, which only COPY INTO a location takes (observed)"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o727"
+kind = "positive"
+required = true
+anchor = "doc.sql.copy-into-table / Syntax"
+note = "the user stage as the source, followed by FILES (observed)"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o700"

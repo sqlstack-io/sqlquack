@@ -5429,6 +5429,42 @@ expect = "observe"
 context = "raw"
 
 [[limit]]
+form = "sf.dml.copy-into-location"
+kind = "negative_neighbour"
+note = "PARTITION BY after an Azure location's CREDENTIALS, as after STORAGE_INTEGRATION (observed)"
+anchor = "doc.sql.copy-into-location / Syntax"
+sql = "COPY INTO 'azure://a1.blob.core.windows.net/c1/p1/' FROM t1 CREDENTIALS = ( AZURE_SAS_TOKEN = 'm' ) PARTITION BY 1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-location"
+kind = "negative_neighbour"
+note = "PARTITION BY after an Amazon S3 location's ENCRYPTION, as after STORAGE_INTEGRATION (observed)"
+anchor = "doc.sql.copy-into-location / Syntax"
+sql = "COPY INTO 's3://b1/p1/' FROM t1 STORAGE_INTEGRATION = i1 ENCRYPTION = ( TYPE = 'AWS_SSE_S3' ) PARTITION BY 1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "negative_neighbour"
+note = "PARTITION BY, which only COPY INTO a location takes (observed)"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO t1 FROM @s1 PARTITION BY 1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
+kind = "positive"
+note = "the user stage as the source, followed by FILES (observed)"
+anchor = "doc.sql.copy-into-table / Syntax"
+sql = "COPY INTO t1 FROM @~ FILES = ( 'a' ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
 form = "sf.transaction_session.alter-session.set-sessionparams"
 kind = "positive"
 note = "several parameters separated by commas (observed: the grammar separates them by blanks)"
