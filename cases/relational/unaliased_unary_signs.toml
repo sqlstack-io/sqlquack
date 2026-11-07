@@ -27,3 +27,15 @@ rows = [
 query = "SELECT +x, -x, + 1, +(1)\nFROM input WHERE x > 5"
 order = "ordered"
 tags = ["empty-input"]
+
+[[case]]
+id = "unaliased_double_unary_plus"
+description = "Two unary plus signs before a literal, unaliased, with FROM on its own line. Snowflake rejects it as an invalid function."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [
+  ["2"],
+]
+query = "SELECT ++1\nFROM input"
+order = "ordered"
+compile_error = true
+tags = ["boundary"]
