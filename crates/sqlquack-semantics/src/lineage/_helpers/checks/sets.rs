@@ -172,6 +172,7 @@ pub(crate) fn set_findings(
                 .into_iter()
                 .collect()
         }
+        Engine::Databricks => Vec::new(),
         engine @ (Engine::DuckDB | Engine::Postgres | Engine::BigQuery) => {
             binder_findings((engine, query, operator), (left, right), branches, context)
         }

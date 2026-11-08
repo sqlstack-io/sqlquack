@@ -1,5 +1,11 @@
 use crate::dialects::types::DialectProfile;
 
+pub(crate) struct TypeComparisonTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) compared: (&'static str, &'static str),
+    pub(crate) expected_same: bool,
+}
+
 pub(crate) struct IdentifierTestCase {
     pub(crate) description: &'static str,
     pub(crate) profile: &'static dyn DialectProfile,

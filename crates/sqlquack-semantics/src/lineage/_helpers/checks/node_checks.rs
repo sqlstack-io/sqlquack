@@ -54,8 +54,11 @@ fn finding(code: &'static str, message: String, node: &Expression) -> NameFindin
     issue((code, TYPE_PHASE), message, None, node)
 }
 
-/// The type findings of `node`, as polyglot's type checks report them, in its order.
+/// The type findings of `node`, as polyglot's type checks report them; none for Databricks.
 pub(crate) fn node_findings(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<NameFinding> {
+    if level.engine() == Engine::Databricks {
+        return Vec::new();
+    }
     let sqlite: bool = level.engine() == Engine::Sqlite;
     let mut findings: Vec<NameFinding> = match node {
         Expression::Select(select) if !sqlite => clause_predicates(select, node, level),
@@ -236,7 +239,11 @@ fn clause_predicates(
 fn predicate_code(engine: Engine) -> &'static str {
     match engine {
         Engine::DuckDB => "W215",
-        Engine::Snowflake | Engine::Postgres | Engine::Sqlite | Engine::BigQuery => "E211",
+        Engine::Snowflake
+        | Engine::Postgres
+        | Engine::Sqlite
+        | Engine::BigQuery
+        | Engine::Databricks => "E211",
     }
 }
 
@@ -315,7 +322,9 @@ fn expression_checks(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<NameFin
                 let code: Option<&'static str> = match engine {
                     Engine::Snowflake => Some("E218"),
                     Engine::DuckDB => Some("W213"),
-                    Engine::Postgres | Engine::Sqlite | Engine::BigQuery => None,
+                    Engine::Postgres | Engine::Sqlite | Engine::BigQuery | Engine::Databricks => {
+                        None
+                    }
                 };
                 findings.extend(
                     code.map(|code| finding(code, "Invalid interval literal".to_owned(), node)),
@@ -695,7 +704,11 @@ fn impossible_cast(
     impossible.then(|| {
         finding(
             match engine {
-                Engine::Snowflake | Engine::Postgres | Engine::Sqlite | Engine::BigQuery => "E218",
+                Engine::Snowflake
+                | Engine::Postgres
+                | Engine::Sqlite
+                | Engine::BigQuery
+                | Engine::Databricks => "E218",
                 Engine::DuckDB => "W213",
             },
             format!("Cannot cast {} to {}", source.name(), target.name()),

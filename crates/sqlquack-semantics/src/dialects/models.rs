@@ -1,5 +1,6 @@
 //! The dialect profiles.
 
+use crate::dialects::_helpers::databricks_types::same_databricks_type;
 use crate::dialects::_helpers::snowflake_types::same_snowflake_type;
 use crate::dialects::constants::{
     CLICKHOUSE_TIMESTAMP_TYPE, SNOWFLAKE_TIMESTAMP_TYPE, SQLSERVER_TIMESTAMP_TYPE,
@@ -185,6 +186,28 @@ impl DialectProfile for SqlServer {
 
     fn timestamp_type(&self) -> &'static str {
         SQLSERVER_TIMESTAMP_TYPE
+    }
+}
+
+/// Databricks SQL: names kept as written and compared without ASCII case; types by synonym.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct Databricks;
+
+impl DialectProfile for Databricks {
+    fn name(&self) -> &'static str {
+        "Databricks"
+    }
+
+    fn resolved_identifier(&self, name: &str, _quoted: bool) -> String {
+        name.to_owned()
+    }
+
+    fn same_identifier(&self, left: &str, right: &str) -> bool {
+        left.eq_ignore_ascii_case(right)
+    }
+
+    fn same_type(&self, left: &str, right: &str) -> bool {
+        same_databricks_type(left, right)
     }
 }
 

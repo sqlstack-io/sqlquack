@@ -286,7 +286,11 @@ fn structure_rules(
             if !names.insert(level.key(&cte.alias))
                 && matches!(
                     engine,
-                    Engine::DuckDB | Engine::Postgres | Engine::Sqlite | Engine::BigQuery
+                    Engine::DuckDB
+                        | Engine::Postgres
+                        | Engine::Sqlite
+                        | Engine::BigQuery
+                        | Engine::Databricks
                 )
             {
                 findings.push(rule(
@@ -301,7 +305,7 @@ fn structure_rules(
     let mut names: HashSet<String> = HashSet::new();
     for item in from_items(select)
         .into_iter()
-        .filter(|_| engine != Engine::Sqlite)
+        .filter(|_| !matches!(engine, Engine::Sqlite | Engine::Databricks))
     {
         if let Some(name) = item_name(item)
             && !names.insert(level.key(name))
@@ -341,6 +345,7 @@ fn structure_rules(
             findings.extend(unwindowed_calls(node, postgres_window_only));
         }
         Engine::BigQuery => findings.extend(unwindowed_calls(node, bigquery_window_only)),
+        Engine::Databricks => {}
     }
     if select.qualify.is_some() && !has_window {
         findings.push(rule(
@@ -1095,7 +1100,9 @@ pub(crate) fn set_order(query: &Expression, context: LineageContext<'_>) -> Vec<
         })
         .flat_map(|order| order.expressions.iter())
         .filter(|ordered| {
-            matches!(&ordered.this, Expression::Column(column) if !outputs.contains(&key(&column.name, context)))
+            matches!(&ordered.this, Expression::Column(column) if !outputs.iter().any(|output| {
+                context.profile.same_identifier(output, &key(&column.name, context))
+            }))
         })
         .map(|ordered| {
             issue(

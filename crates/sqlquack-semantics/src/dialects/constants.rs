@@ -1,8 +1,8 @@
 //! The implemented dialect profiles.
 
 use crate::dialects::models::{
-    BigQuery, ClickHouse, DuckDb, Postgres, Profiles, Snowflake, SnowflakeQuotedIgnoringCase,
-    SqlServer, Sqlite,
+    BigQuery, ClickHouse, Databricks, DuckDb, Postgres, Profiles, Snowflake,
+    SnowflakeQuotedIgnoringCase, SqlServer, Sqlite,
 };
 
 /// The Snowflake profile.
@@ -29,6 +29,9 @@ pub const SQLITE: Sqlite = Sqlite;
 /// The SQL Server profile, under the server's default case-insensitive collation.
 pub const SQL_SERVER: SqlServer = SqlServer;
 
+/// The Databricks SQL profile.
+pub const DATABRICKS: Databricks = Databricks;
+
 /// Snowflake SQL resolved so its names stay apart in DuckDB, as conversion needs.
 pub const SNOWFLAKE_TO_DUCKDB: Profiles = Profiles {
     source: &SNOWFLAKE,
@@ -40,6 +43,10 @@ pub(crate) const SNOWFLAKE_LONGEST_VARCHAR: u32 = 16_777_216;
 pub(crate) const CLICKHOUSE_TIMESTAMP_TYPE: &str = "DateTime";
 /// What Snowflake's TIMESTAMP is under the default TIMESTAMP_TYPE_MAPPING.
 pub(crate) const SNOWFLAKE_TIMESTAMP_TYPE: &str = "TIMESTAMP_NTZ";
+/// Databricks' fixed-point type, whose precision and scale default when omitted.
+pub(crate) const DATABRICKS_DECIMAL: &str = "DECIMAL";
+/// The precision and scale of a Databricks DECIMAL declared without them.
+pub(crate) const DATABRICKS_DEFAULT_DECIMAL: (u32, u32) = (10, 0);
 
 /// ClickHouse 26.1's type families matched with case, as `system.data_type_families` lists them.
 pub(crate) const CLICKHOUSE_EXACT_FAMILIES: [&str; 20] = [

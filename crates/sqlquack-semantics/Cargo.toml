@@ -24,6 +24,7 @@ sqlquack-syntax-postgres.workspace = true
 sqlquack-syntax-clickhouse.workspace = true
 sqlquack-syntax-sqlite.workspace = true
 sqlquack-syntax-sqlserver.workspace = true
+sqlquack-syntax-databricks.workspace = true
 
 [lints]
 workspace = true

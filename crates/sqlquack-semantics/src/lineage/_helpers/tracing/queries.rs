@@ -19,8 +19,8 @@ use crate::lineage::_helpers::tracing::sources::{
 };
 use crate::lineage::_helpers::typing::rules::filtered_non_null;
 use crate::lineage::constants::{
-    DUCKDB_PROFILE, ORDINAL_BASE, POSTGRES_PROFILE, RECURSION_LIMIT, SQL_STAR, SQLITE_PROFILE,
-    SUBTOTAL_GROUPINGS, UNNAMED_CHARACTERS,
+    DATABRICKS_PROFILE, DUCKDB_PROFILE, ORDINAL_BASE, POSTGRES_PROFILE, RECURSION_LIMIT, SQL_STAR,
+    SQLITE_PROFILE, SUBTOTAL_GROUPINGS, UNNAMED_CHARACTERS,
 };
 use crate::lineage::models::{
     FromItems, Lineage, LineageContext, LineageScope, NamedQuery, Nullability, ResolvedQuery,
@@ -818,7 +818,16 @@ fn output_name(projection: &Expression, context: LineageContext<'_>) -> String {
                 _ => String::new(),
             }
         }
-        _ if matches!(context.profile.name(), DUCKDB_PROFILE | SQLITE_PROFILE) => String::new(),
+        Expression::Dot(dot) if context.profile.name() == DATABRICKS_PROFILE => {
+            dot.field.name.clone()
+        }
+        _ if matches!(
+            context.profile.name(),
+            DUCKDB_PROFILE | SQLITE_PROFILE | DATABRICKS_PROFILE
+        ) =>
+        {
+            String::new()
+        }
         _ if context.profile.name() == POSTGRES_PROFILE => postgres_name(projection),
         _ => snowflake_name(projection, context).unwrap_or_default(),
     }

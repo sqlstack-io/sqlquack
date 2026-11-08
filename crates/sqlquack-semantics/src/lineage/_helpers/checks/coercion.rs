@@ -5,8 +5,8 @@ use sqlquack_syntax::expressions::names::models::Literal;
 
 use crate::lineage::_helpers::checks::families::Family;
 use crate::lineage::constants::{
-    BIGQUERY_PROFILE, DECIMAL_BASE, DUCKDB_PROFILE, LAST_HOUR, LAST_MINUTE_OR_SECOND,
-    POSTGRES_PROFILE, SQLITE_PROFILE,
+    BIGQUERY_PROFILE, DATABRICKS_PROFILE, DECIMAL_BASE, DUCKDB_PROFILE, LAST_HOUR,
+    LAST_MINUTE_OR_SECOND, POSTGRES_PROFILE, SQLITE_PROFILE,
 };
 use crate::lineage::models::LineageContext;
 
@@ -38,6 +38,8 @@ pub(crate) enum Engine {
     Sqlite,
     /// BigQuery (GoogleSQL): as PostgreSQL, and a string literal converts only to a date or time.
     BigQuery,
+    /// Databricks SQL, coercions not recorded: no type findings, only scope and name rules.
+    Databricks,
 }
 
 impl Engine {
@@ -47,6 +49,7 @@ impl Engine {
             POSTGRES_PROFILE => Self::Postgres,
             SQLITE_PROFILE => Self::Sqlite,
             BIGQUERY_PROFILE => Self::BigQuery,
+            DATABRICKS_PROFILE => Self::Databricks,
             _ => Self::Snowflake,
         }
     }
@@ -56,7 +59,7 @@ impl Engine {
         match self {
             Self::DuckDB => &[Family::Integer, Family::Numeric],
             Self::Snowflake => &[Family::Integer, Family::Numeric, Family::String],
-            Self::Postgres | Self::Sqlite | Self::BigQuery => &[],
+            Self::Postgres | Self::Sqlite | Self::BigQuery | Self::Databricks => &[],
         }
     }
 
@@ -77,7 +80,7 @@ impl Engine {
                 (Family::Integer, Family::Boolean),
                 (Family::Numeric, Family::Boolean),
             ],
-            Self::Postgres | Self::Sqlite | Self::BigQuery => &[],
+            Self::Postgres | Self::Sqlite | Self::BigQuery | Self::Databricks => &[],
         }
     }
 }

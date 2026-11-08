@@ -6,6 +6,8 @@ mod test_bigquery_types;
 mod test_checks;
 #[path = "tests/test_clickhouse.rs"]
 mod test_clickhouse;
+#[path = "tests/test_databricks.rs"]
+mod test_databricks;
 #[path = "tests/test_duckdb_types.rs"]
 mod test_duckdb_types;
 #[path = "tests/test_lineage_details.rs"]

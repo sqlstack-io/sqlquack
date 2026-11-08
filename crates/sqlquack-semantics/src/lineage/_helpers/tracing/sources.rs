@@ -8,7 +8,7 @@ use sqlquack_syntax::expressions::functions::models::Function;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal, TableRef};
 use sqlquack_syntax::expressions::operators::models::Lateral;
 use sqlquack_syntax::expressions::queries::models::{
-    Join, JoinKind, Pivot, Select, Unpivot, Values,
+    Join, JoinKind, LateralView, Pivot, Select, Unpivot, Values,
 };
 
 use crate::lineage::_helpers::tracing::expressions::expression_lineage;
@@ -17,9 +17,9 @@ use crate::lineage::_helpers::tracing::queries::{empty_scope, renamed, resolved_
 use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
 use crate::lineage::_helpers::typing::rules::mapped_timestamp;
 use crate::lineage::constants::{
-    ARRAY_FUNCTION, BIGQUERY_PROFILE, DUCKDB_PROFILE, DUCKDB_TABLE_FUNCTION_COLUMNS,
-    DUCKDB_UNNEST_COLUMN, DUCKDB_VALUES_COLUMN, IDENTIFIER_FUNCTION, ONE_AGGREGATE,
-    OUTER_LEFT_JOINS, OUTER_RIGHT_JOINS, SNOWFLAKE_PROFILE, SNOWFLAKE_VALUES_COLUMN,
+    ARRAY_FUNCTION, BIGQUERY_PROFILE, DATABRICKS_PROFILE, DATABRICKS_VALUES_COLUMN, DUCKDB_PROFILE,
+    DUCKDB_TABLE_FUNCTION_COLUMNS, DUCKDB_UNNEST_COLUMN, DUCKDB_VALUES_COLUMN, IDENTIFIER_FUNCTION,
+    ONE_AGGREGATE, OUTER_LEFT_JOINS, OUTER_RIGHT_JOINS, SNOWFLAKE_PROFILE, SNOWFLAKE_VALUES_COLUMN,
     SQLITE_PROFILE, SQLITE_VALUES_COLUMN, SQLSERVER_PROFILE, STRUCT_FUNCTION,
     TABLE_FUNCTION_COLUMNS, TABLE_WRAPPER, UNNEST_FUNCTION,
 };
@@ -77,7 +77,54 @@ pub(crate) fn from_sources(
         }
         from.sources.extend(added);
     }
+    if context.profile.name() == DATABRICKS_PROFILE {
+        for view in &select.lateral_views {
+            let scope = LineageScope {
+                sources: std::mem::take(&mut from.sources),
+                merged: std::mem::take(&mut from.merged),
+                ..empty_scope(ctes, outer)
+            };
+            let added: ScopeSource = lateral_view_source(view, &scope, context);
+            from.sources = scope.sources;
+            from.merged = scope.merged;
+            from.sources.push(added);
+        }
+    }
     from
+}
+
+/// A LATERAL VIEW's columns under its alias, untyped; open when it names no columns.
+fn lateral_view_source(
+    view: &LateralView,
+    scope: &LineageScope<'_>,
+    context: LineageContext<'_>,
+) -> ScopeSource {
+    let alias: Option<String> = view.table_alias.as_ref().map(|alias| key(alias, context));
+    let (Expression::Function(function), false) = (&view.this, view.column_aliases.is_empty())
+    else {
+        return ScopeSource {
+            key: alias,
+            ..opaque_source()
+        };
+    };
+    let names: Vec<&str> = view
+        .column_aliases
+        .iter()
+        .map(|column| column.name.as_str())
+        .collect();
+    let generated: ScopeSource =
+        table_function_source((&function.name, &names), &function.args, scope, context);
+    let source = ScopeSource {
+        query: ResolvedQuery {
+            function_name: generated.query.function_name.filter(|_| alias.is_none()),
+            ..generated.query
+        },
+        key: alias,
+    };
+    match view.outer {
+        true => outer_nullable(source),
+        false => source,
+    }
 }
 
 /// Snowflake's ASOF JOIN keeps unmatched left rows, NULL-filling the right; DuckDB's is inner.
@@ -625,6 +672,7 @@ pub(crate) fn values_query(
     let generated = |position: usize| match context.profile.name() {
         DUCKDB_PROFILE => format!("{DUCKDB_VALUES_COLUMN}{position}"),
         SQLITE_PROFILE => format!("{SQLITE_VALUES_COLUMN}{}", position + 1),
+        DATABRICKS_PROFILE => format!("{DATABRICKS_VALUES_COLUMN}{}", position + 1),
         _ => format!("{SNOWFLAKE_VALUES_COLUMN}{}", position + 1),
     };
     let columns: Vec<ScopedColumn> = (0..width)

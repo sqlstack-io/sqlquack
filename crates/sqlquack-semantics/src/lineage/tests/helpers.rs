@@ -4,7 +4,9 @@ use crate::lineage::models::NullabilityRule;
 use crate::lineage::models::{Nullability, SchemaColumn, SourceColumn};
 use sqlquack_syntax::{CallMode, Dialect, Expression, ParseOptions, parse_statements_with};
 
-use crate::dialects::constants::{BIGQUERY, CLICKHOUSE, DUCKDB, POSTGRES, SQL_SERVER, SQLITE};
+use crate::dialects::constants::{
+    BIGQUERY, CLICKHOUSE, DATABRICKS, DUCKDB, POSTGRES, SQL_SERVER, SQLITE,
+};
 use crate::dialects::types::DialectProfile;
 use crate::lineage::_helpers::findings::statement::statement_findings;
 use crate::lineage::main::query_lineage::query_lineage;
@@ -877,5 +879,68 @@ pub(crate) fn sqlserver_findings(
                 finding.span.map_or(0, |span| span.start),
             )
         })
+        .collect()
+}
+
+/// A Databricks shop, typed as `DESCRIBE TABLE` spells its columns.
+pub(crate) fn databricks_shop_schema() -> TypedShopSchema {
+    TypedShopSchema {
+        closed: HashMap::from([
+            (
+                "orders".to_owned(),
+                vec![
+                    typed_column("id", "INT"),
+                    typed_column("quantity", "INT"),
+                    typed_column("price", "DECIMAL(10,2)"),
+                    typed_column("status", "STRING"),
+                    typed_column("ordered_at", "TIMESTAMP"),
+                ],
+            ),
+            (
+                "customers".to_owned(),
+                vec![typed_column("id", "INT"), typed_column("name", "STRING")],
+            ),
+        ]),
+        ..TypedShopSchema::default()
+    }
+}
+
+/// `sql`'s one statement, read by the Databricks parser, refusing any gap.
+fn databricks_statement(sql: &str) -> sqlquack_syntax::Expression {
+    sqlquack_syntax_databricks::parse_strict(sql)
+        .unwrap_or_else(|error| panic!("{sql}: {error:?}"))
+        .statements
+        .remove(0)
+}
+
+/// The `(code, message, start)` findings of Databricks `sql` under the DATABRICKS profile.
+pub(crate) fn databricks_findings(sql: &str) -> Vec<(&'static str, String, usize)> {
+    let schema: TypedShopSchema = databricks_shop_schema();
+    let context = LineageContext {
+        profile: &DATABRICKS,
+        schema: &schema,
+        sql: Some(sql),
+    };
+    statement_findings(&databricks_statement(sql), context)
+        .into_iter()
+        .map(|finding| {
+            let start: usize = finding.span.map_or(0, |span| span.start);
+            (finding.code, finding.message, start)
+        })
+        .collect()
+}
+
+/// Each output of Databricks `sql` under the DATABRICKS profile: its name and type.
+pub(crate) fn databricks_outputs(sql: &str) -> Vec<(String, Option<String>)> {
+    let schema: TypedShopSchema = databricks_shop_schema();
+    let context = LineageContext {
+        profile: &DATABRICKS,
+        schema: &schema,
+        sql: Some(sql),
+    };
+    statement_lineage(&databricks_statement(sql), context)
+        .outputs
+        .into_iter()
+        .map(|output| (output.name, output.data_type))
         .collect()
 }

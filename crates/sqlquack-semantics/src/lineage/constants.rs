@@ -373,6 +373,10 @@ pub(crate) const SQLITE_PROFILE: &str = "SQLite";
 pub(crate) const SQLSERVER_PROFILE: &str = "SQL Server";
 /// SQLite's name for the n-th column of a VALUES list, numbered from 1.
 pub(crate) const SQLITE_VALUES_COLUMN: &str = "column";
+/// The Databricks SQL profile's name.
+pub(crate) const DATABRICKS_PROFILE: &str = "Databricks";
+/// Databricks' name for the n-th column of a VALUES list, numbered from 1.
+pub(crate) const DATABRICKS_VALUES_COLUMN: &str = "col";
 /// PostgreSQL's system columns, which every stored table has and no star expands.
 pub(crate) const POSTGRES_SYSTEM_COLUMNS: [&str; 6] =
     ["tableoid", "xmin", "cmin", "xmax", "cmax", "ctid"];
