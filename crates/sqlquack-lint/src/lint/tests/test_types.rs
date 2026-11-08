@@ -159,3 +159,9 @@ pub(crate) struct JoinPredicateTestCase {
     pub predicate: &'static str,
     pub expected_findings: usize,
 }
+
+pub(crate) struct UnusedCteTestCase {
+    pub description: &'static str,
+    pub sql: &'static str,
+    pub expected_unused: &'static [&'static str],
+}
