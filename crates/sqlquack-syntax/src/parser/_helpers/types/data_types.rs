@@ -130,9 +130,29 @@ impl Parser {
         {
             return Ok(None);
         }
+        self.parse_snowflake_named_type_literal()
+    }
+
+    /// A date-time keyword with parameters before a string, as Snowflake parses `TIME(3) '...'`.
+    pub(crate) fn try_parse_snowflake_parameterized_literal(
+        &mut self,
+    ) -> Result<Option<Expression>> {
+        if !self.applies_snowflake_context_rules() || !self.check_next(TokenType::LParen) {
+            return Ok(None);
+        }
+        self.parse_snowflake_named_type_literal()
+    }
+
+    /// The current type name `[ ( ... ) ] '<string>'` as a typed-literal cast, or none.
+    pub(crate) fn parse_snowflake_named_type_literal(&mut self) -> Result<Option<Expression>> {
         let Some(end) = self.named_type_literal_end() else {
             return Ok(None);
         };
+        if end == self.current + 1 {
+            if let Some(error) = self.untyped_literal_error(end) {
+                return Err(error);
+            }
+        }
         let parts: Vec<String> = self.tokens[self.current..end]
             .iter()
             .map(|token| match token.token_type {
@@ -140,6 +160,11 @@ impl Parser {
                 _ => token.text.to_string(),
             })
             .collect();
+        let to = self
+            .date_time_literal_type(end)
+            .unwrap_or_else(|| DataType::Custom {
+                name: parts.join(" "),
+            });
         self.current = end;
         let string_token = self.advance()?;
         Ok(Some(Expression::Cast(Box::new(
@@ -149,17 +174,85 @@ impl Parser {
                         string_token.text.to_string(),
                     ),
                 )),
-                to: DataType::Custom {
-                    name: parts.join(" "),
-                },
+                to,
                 trailing_comments: Vec::new(),
                 double_colon_syntax: false,
+                typed_literal: true,
                 format: None,
                 default: None,
                 inferred_type: None,
                 span: SourceSpan::default(),
             },
         ))))
+    }
+
+    /// The type a date-time name with parameters before the string at `end` casts to, as `::` reads it.
+    fn date_time_literal_type(&mut self, end: usize) -> Option<DataType> {
+        let name = self.peek_text().to_ascii_uppercase();
+        let date_time = crate::expressions::types::constants::SNOWFLAKE_UNTYPED_LITERAL_TYPES
+            .iter()
+            .chain(crate::expressions::types::constants::SNOWFLAKE_UNPARAMETERIZED_LITERAL_TYPES)
+            .any(|(listed, _)| *listed == name);
+        if !date_time || end == self.current + 1 {
+            return None;
+        }
+        let start = self.current;
+        let parsed = self.parse_data_type().ok().filter(|_| self.current == end);
+        self.current = start;
+        parsed
+    }
+
+    /// Snowflake's syntax refusal of a time zone clause on a TIMESTAMP literal, where Snowflake stops.
+    pub(crate) fn zoned_timestamp_literal_error(&mut self) -> Option<Error> {
+        if !self.applies_snowflake_context_rules() {
+            return None;
+        }
+        let kind = |at: usize| self.tokens.get(at).map(|token| token.token_type);
+        let text_is = |at: usize, word: &str| {
+            self.tokens
+                .get(at)
+                .is_some_and(|token| token.text.eq_ignore_ascii_case(word))
+        };
+        let mut at = self.current + 1;
+        if kind(at) == Some(TokenType::LParen) {
+            if kind(at + 1) != Some(TokenType::Number) || kind(at + 2) != Some(TokenType::RParen) {
+                return None;
+            }
+            at += 3;
+        }
+        let (stop, zone, target) = if kind(at) == Some(TokenType::With) {
+            match kind(at + 1) == Some(TokenType::Local) {
+                true => (at, at + 2, "TIMESTAMP_LTZ"),
+                false => (at, at + 1, "TIMESTAMP_TZ"),
+            }
+        } else if text_is(at, "WITHOUT") {
+            (at + 1, at + 1, "TIMESTAMP_NTZ")
+        } else {
+            return None;
+        };
+        if !text_is(zone, "TIME") || !text_is(zone + 1, "ZONE") {
+            return None;
+        }
+        if kind(zone + 2) != Some(TokenType::String) {
+            return None;
+        }
+        self.current = stop;
+        Some(self.parse_error(format!(
+            "Snowflake has no TIMESTAMP literal with a time zone clause; cast the string instead, \
+             as '...'::{target} or TO_{target}('...')"
+        )))
+    }
+
+    /// Snowflake's syntax refusal of a timestamp type name right before the string at `end`, at it.
+    pub(crate) fn untyped_literal_error(&mut self, end: usize) -> Option<Error> {
+        let name = self.peek_text().to_ascii_uppercase();
+        let (_, function) = crate::expressions::types::constants::SNOWFLAKE_UNTYPED_LITERAL_TYPES
+            .iter()
+            .find(|(listed, _)| *listed == name)?;
+        self.current = end;
+        Some(self.parse_error(format!(
+            "Snowflake has no {name} literal; cast the string instead, as '...'::{name} or {function}('...')"
+        )))
     }
 
     /// The position of the string after a type name and its non-empty balanced parameters, or none.

@@ -122,6 +122,25 @@ fn given_sql_snowflake_parses_then_rejects_when_refusing_then_each_rejection_is_
             expected_codes: vec![],
         },
         RejectionTestCase {
+            description: "a date-time type with a precision before a string is rejected; a cast or a plain TIME or TIMESTAMP literal is not",
+            sql: "SELECT TIMESTAMP_NTZ(3) '2026-01-02 03:04:05' AS v; \
+                  SELECT timestamp_tz(3) '2026-01-02 03:04:05' AS v; \
+                  SELECT '2026-01-02 03:04:05'::TIMESTAMP_NTZ(3) AS v; \
+                  SELECT CAST('2026-01-02' AS TIMESTAMP_TZ(3)) AS v; \
+                  SELECT CAST('2026-01-02' AS DATETIME(3)) AS v; \
+                  SELECT CAST('2026-01-02' AS TIMESTAMPNTZ(3)) AS v; \
+                  SELECT CAST('2026-01-02' AS TIMESTAMP_LTZ(3)) AS v; \
+                  SELECT TRY_CAST('2026-01-02' AS TIMESTAMPLTZ(3)) AS v; \
+                  SELECT DATETIME(3) '2026-01-02 03:04:05' AS v; \
+                  SELECT TIMESTAMP(3) '2026-01-02 03:04:05' AS v; \
+                  SELECT time (3) '03:04:05' AS v; \
+                  SELECT CAST('2026-01-02' AS TIMESTAMP(3)) AS v; \
+                  SELECT '03:04:05'::TIME(3) AS v; SELECT TIME '03:04:05' AS v; \
+                  SELECT TIMESTAMP '2026-01-02 03:04:05' AS v; SELECT v1 'm' AS v",
+            expected_rejections: vec!["unsupported_type_literal"; 5],
+            expected_codes: vec!["SQ0211"; 5],
+        },
+        RejectionTestCase {
             description: "a rejection nested in a CTE is found",
             sql: "WITH both_ids AS (SELECT 1 AS id EXCEPT ALL SELECT 2) SELECT id FROM both_ids",
             expected_rejections: vec!["set_operation_all"],

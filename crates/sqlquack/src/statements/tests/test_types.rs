@@ -16,3 +16,10 @@ pub(crate) struct RejectionTestCase {
     pub(crate) declared: &'static [&'static str],
     pub(crate) expected_outcome: Outcome,
 }
+
+pub(crate) struct ConstructsTestCase {
+    pub(crate) description: &'static str,
+    /// The `compile_error = …` line of the case.
+    pub(crate) compile_error_line: &'static str,
+    pub(crate) expected_ok: bool,
+}

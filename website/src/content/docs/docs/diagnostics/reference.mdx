@@ -33,6 +33,7 @@ renumbered. See [Reading diagnostics](/docs/diagnostics/overview/) for the outpu
 | [`SQ0202`](#sq0202) | `lock_wait` | Snowflake does not support WAIT in FOR UPDATE |
 | [`SQ0203`](#sq0203) | `qualify_without_window` | QUALIFY needs a window function |
 | [`SQ0204`](#sq0204) | `star_filter_drops_named_column` | REPLACE or RENAME names a column the star's ILIKE pattern removed |
+| [`SQ0211`](#sq0211) | `unsupported_type_literal` | Snowflake has no literal of this date-time type |
 
 ## Conversion
 
@@ -320,4 +321,18 @@ In `* ILIKE 'pattern' REPLACE (...)` or `RENAME (...)`, Snowflake applies the pa
 
 ```sh
 echo "SELECT * ILIKE '%_id' REPLACE (price * 2 AS price) FROM orders" | sqlquack check
+```
+
+### SQ0211
+
+**Snowflake has no literal of this date-time type** (`unsupported_type_literal`)
+
+Only DATE, TIME and TIMESTAMP take a string as a typed literal in Snowflake, and only without a precision. A date-time type with a precision before a string, such as TIMESTAMP_NTZ(3), DATETIME(3), TIMESTAMP(3) or TIME(3), parses, but Snowflake rejects it as an unsupported data type literal (Snowflake error 2121). Without a precision, TIMESTAMP_NTZ, TIMESTAMP_LTZ, TIMESTAMP_TZ or DATETIME before a string is a syntax error. Cast the string with `::` or CAST, or call TO_TIMESTAMP_NTZ, TO_TIMESTAMP_LTZ, TO_TIMESTAMP_TZ, TO_TIMESTAMP or TO_TIME.
+
+**Help:** cast the string instead, e.g. `'2026-01-02'::TIMESTAMP_NTZ(3)`
+
+**Example:**
+
+```sh
+echo "SELECT TIMESTAMP_NTZ(3) '2026-01-02 03:04:05' AS v" | sqlquack check
 ```

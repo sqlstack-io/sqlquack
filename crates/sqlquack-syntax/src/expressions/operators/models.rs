@@ -86,6 +86,10 @@ pub struct Cast {
     /// Whether PostgreSQL `::` syntax was used (true) vs CAST() function (false)
     #[serde(default)]
     pub double_colon_syntax: bool,
+    /// SQLQuack: written as a typed literal, `TYPE '...'`; read by the Snowflake refusals only.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub typed_literal: bool,
     /// FORMAT clause for BigQuery: CAST(x AS STRING FORMAT 'format_string')
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub format: Option<Box<Expression>>,
@@ -100,6 +104,23 @@ pub struct Cast {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+}
+
+impl Cast {
+    /// A cast of `this` to `to`, written with `::` when `double_colon_syntax`, else as CAST.
+    pub fn new(this: Expression, to: DataType, double_colon_syntax: bool) -> Self {
+        Self {
+            this,
+            to,
+            trailing_comments: Vec::new(),
+            double_colon_syntax,
+            typed_literal: false,
+            format: None,
+            default: None,
+            inferred_type: None,
+            span: SourceSpan::default(),
+        }
+    }
 }
 
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]

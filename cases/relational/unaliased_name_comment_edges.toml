@@ -1,0 +1,112 @@
+category = "relational"
+construct = "node:select"
+session_profile = "utc-v1"
+
+[[case]]
+id = "comment_after_string_literal"
+description = "An unaliased string literal followed by a block comment: whether the name is the upper-cased literal without the comment."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["2"]]
+query = "SELECT 'x' /* c */\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "comment_after_multi_token_item"
+description = "An unaliased multi-token expression followed by a block comment."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["2"], ["NULL"]]
+query = "SELECT x + 1 /* c */\nFROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "boundary"]
+
+[[case]]
+id = "comment_before_comma"
+description = "A block comment between an unaliased item and the comma before the next item."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["2"]]
+query = "SELECT 1 /* c */, 2\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "stacked_block_comments"
+description = "Two block comments after an unaliased item."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["2"]]
+query = "SELECT 1 /* a */ /* b */\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "block_then_line_comment"
+description = "A block comment and then a line comment after an unaliased item."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["2"]]
+query = "SELECT 1 /* a */ -- b\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "typed_timestamp_literals"
+compile_error = true
+description = "Unaliased TIMESTAMP_NTZ, TIMESTAMP_LTZ and TIMESTAMP_TZ literals."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["2"]]
+query = "SELECT TIMESTAMP_NTZ '2024-01-01 10:00:00', TIMESTAMP_LTZ '2024-01-01 10:00:00', TIMESTAMP_TZ '2024-01-01 10:00:00 +02:00' FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "simple_case_and_dateadd"
+description = "An unaliased simple CASE and DATEADD with a quoted part name, over rows with duplicates."
+columns = [{ name = "x", type = "NUMBER(10,0)" }, { name = "d", type = "DATE" }]
+rows = [["1", "'2024-03-15'"], ["1", "'2024-03-15'"], ["2", "'2024-03-16'"]]
+query = "SELECT CASE x WHEN 1 THEN 'a' ELSE 'b' END, DATEADD('day', 1, d) FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["duplicates"]
+
+[[case]]
+id = "backslash_escaped_quote_in_call"
+description = "An unaliased call whose string argument holds a backslash-escaped quote."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["2"]]
+query = "SELECT CONCAT('it\\'s', x) FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "qualified_columns"
+description = "Unaliased columns qualified by the relation name, over no rows."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["2"]]
+query = "SELECT input.x, input.x + 1 FROM input WHERE input.x > 5"
+order = "ordered"
+tags = ["empty-input"]
+
+[[case]]
+id = "alias_qualified_columns"
+description = "Unaliased columns qualified by a table alias, written in lower and upper case."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["2"]]
+query = "SELECT i.x, I.X + 1 FROM input i"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "comment_after_exponent_literal"
+description = "A lower-case exponent literal followed by a line comment."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["2"]]
+query = "SELECT 1e3 -- c\nFROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "comment_after_negative_literal"
+description = "A negative integer literal followed by a line comment."
+columns = [{ name = "x", type = "NUMBER(10,0)" }]
+rows = [["2"]]
+query = "SELECT -1 -- c\nFROM input"
+order = "ordered"
+tags = ["boundary"]
