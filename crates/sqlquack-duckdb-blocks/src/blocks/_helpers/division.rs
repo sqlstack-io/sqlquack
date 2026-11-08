@@ -161,9 +161,12 @@ fn column_quotient(n: &str, d: &str, (truncated, doubles): (bool, bool)) -> Stri
     }
 }
 
-/// The decimal `sql` of `scale` places as an unscaled HUGEINT, through its whole and fraction.
+/// The decimal `sql` of `scale` places as an unscaled HUGEINT, from its digits past 19 places.
 fn long_unscaled(sql: &str, scale: u8) -> String {
     let decimal = format!("CAST({sql} AS DECIMAL(38,{scale}))");
+    if 2 * usize::from(scale) > usize::from(MAX_DECIMAL_PRECISION) {
+        return format!("CAST(replace(CAST({decimal} AS VARCHAR), '.', '') AS HUGEINT)");
+    }
     let power = "0".repeat(usize::from(scale));
     format!(
         "(CAST(trunc({decimal}) AS HUGEINT) * CAST('1{power}' AS HUGEINT) + \

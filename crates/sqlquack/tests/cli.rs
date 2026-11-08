@@ -12,6 +12,8 @@ mod test_convert;
 mod test_coverage;
 #[path = "cli/test_divergence.rs"]
 mod test_divergence;
+#[path = "cli/test_division.rs"]
+mod test_division;
 #[path = "cli/test_error_check.rs"]
 mod test_error_check;
 #[path = "cli/test_evidence_commands.rs"]
