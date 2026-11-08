@@ -2,6 +2,7 @@
 
 use std::collections::{HashMap, HashSet};
 
+use serde_json::Value;
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::{Column, Identifier, Literal};
@@ -12,7 +13,10 @@ use crate::lineage::_helpers::checks::issues::{in_scope, issue, rule_location};
 use crate::lineage::_helpers::tracing::expressions::is_aggregate;
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::typing::postgres_typing::postgres_window_only;
-use crate::lineage::constants::{POSTGRES_PROFILE, SCOPE_PHASE, SNOWFLAKE_PROFILE, SQLITE_PROFILE};
+use crate::lineage::constants::{
+    POSTGRES_PROFILE, SCOPE_PHASE, SHAPE_COMMENT_SUFFIX, SHAPE_COSMETIC_FIELDS, SNOWFLAKE_PROFILE,
+    SQLITE_PROFILE,
+};
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding, ScopeSource};
 
 const COLUMNS_FUNCTION: &str = "columns";
@@ -315,7 +319,10 @@ fn structure_rules(
             }
         }
     }
-    if matches!(engine, Engine::Postgres | Engine::Sqlite) {
+    if matches!(
+        engine,
+        Engine::Postgres | Engine::Sqlite | Engine::Snowflake
+    ) {
         findings.extend(unwindowed_calls(node));
     }
     if select.qualify.is_some() && !has_window {
@@ -507,7 +514,11 @@ fn star_modifiers(
             .flatten()
             .chain(star.replace.iter().flatten().map(|alias| &alias.alias));
         for name in names {
-            if !inputs.contains(&level.key(name)) {
+            let wanted: String = level.key(name);
+            if !inputs
+                .iter()
+                .any(|input| level.context.profile.same_identifier(input, &wanted))
+            {
                 findings.push(rule(
                     "E201",
                     format!("Star modifier references unknown column '{}'", name.name),
@@ -695,6 +706,53 @@ fn group_keys<'s>(
     groups
 }
 
+/// A DuckDB group key as grouping compares it: each column as the source and name it resolves to.
+fn duckdb_shape(expression: &Expression, level: RuleLevel<'_, '_>) -> Option<Value> {
+    match serde_json::to_value(expression) {
+        Ok(mut shape) => {
+            resolved_columns(&mut shape, level);
+            Some(shape)
+        }
+        Err(_) => None,
+    }
+}
+
+/// `value` without spans, comments or `::` spelling, each column its lower-cased source and name.
+fn resolved_columns(value: &mut Value, level: RuleLevel<'_, '_>) {
+    match value {
+        Value::Object(fields) => {
+            fields.retain(|field, _| {
+                !SHAPE_COSMETIC_FIELDS.contains(&field.as_str())
+                    && !field.ends_with(SHAPE_COMMENT_SUFFIX)
+            });
+            let resolved: Option<Value> = match fields.get("column") {
+                Some(written) => match serde_json::from_value::<Column>(written.clone()) {
+                    Ok(column) => {
+                        let (table, name) = column_key(&column, level);
+                        Some(Value::from(vec![
+                            table.map(|table| table.to_ascii_lowercase()),
+                            Some(name.to_ascii_lowercase()),
+                        ]))
+                    }
+                    Err(_) => None,
+                },
+                None => None,
+            };
+            if let Some(resolved) = resolved {
+                fields.insert("column".to_owned(), resolved);
+            } else {
+                fields
+                    .values_mut()
+                    .for_each(|field| resolved_columns(field, level));
+            }
+        }
+        Value::Array(items) => items
+            .iter_mut()
+            .for_each(|item| resolved_columns(item, level)),
+        _ => {}
+    }
+}
+
 fn type_marker(node: &Expression) -> bool {
     matches!(node, Expression::Annotated(annotated)
         if annotated.type_assertion.is_some() || annotated.type_like.is_some())
@@ -775,6 +833,24 @@ fn grouping(
     }
     let groups: Vec<&Expression> = group_keys(select, aliases, level);
     let unmarked_groups: Vec<&Expression> = groups.iter().map(|group| unmarked(group)).collect();
+    let group_shapes: Vec<(&'static str, Value)> = match Engine::of(level.context) {
+        Engine::DuckDB => unmarked_groups
+            .iter()
+            .filter(|group| !matches!(group, Expression::Column(_)))
+            .filter_map(|group| Some((group.variant_name(), duckdb_shape(group, level)?)))
+            .collect(),
+        _ => Vec::new(),
+    };
+    let same_shape = |node: &Expression| {
+        group_shapes
+            .iter()
+            .any(|(variant, _)| *variant == node.variant_name())
+            && duckdb_shape(node, level).is_some_and(|shape| {
+                group_shapes
+                    .iter()
+                    .any(|(_, group_shape)| *group_shape == shape)
+            })
+    };
     let grouped_columns: Vec<(Option<String>, String)> = groups
         .iter()
         .filter_map(|group| match group {
@@ -834,6 +910,7 @@ fn grouping(
                 || unmarked_groups
                     .iter()
                     .any(|group| **group == *unmarked(current))
+                || same_shape(unmarked(current))
             {
                 continue;
             }

@@ -108,7 +108,7 @@ pub(crate) fn empty_scope<'a>(
     }
 }
 
-/// `query`'s outputs renamed by a column alias list, when it has one.
+/// `query`'s outputs renamed by a column alias list; a DuckDB VALUES list all renamed is judged.
 pub(crate) fn renamed(
     query: ResolvedQuery,
     aliases: &[Identifier],
@@ -130,9 +130,12 @@ pub(crate) fn renamed(
             None => column,
         })
         .collect();
+    let from_values: bool = query.from_values
+        && !(context.profile.name() == DUCKDB_PROFILE && aliases.len() >= columns.len());
     ResolvedQuery {
         columns,
         stored_relation: None,
+        from_values,
         ..query
     }
 }
@@ -289,7 +292,7 @@ pub(crate) fn with_ctes<'a>(
     with_ctes_visiting(with, (ctes, outer), context, &mut |_, _| false)
 }
 
-/// `with_ctes`, showing `visit` each CTE with the CTEs its body can read.
+/// `with_ctes`, showing `visit` each CTE with what its body reads, a DuckDB recursive one itself.
 pub(crate) fn with_ctes_visiting<'a>(
     with: Option<&With>,
     (ctes, outer): (&'a [NamedQuery], Option<&LineageScope<'_>>),
@@ -301,15 +304,27 @@ pub(crate) fn with_ctes_visiting<'a>(
     };
     let mut reach: Vec<NamedQuery> = ctes.to_vec();
     for cte in &with.ctes {
-        let faulted: bool = visit(cte, &reach);
         let name = key(&cte.alias, context);
-        let mut query: ResolvedQuery = match with.recursive || reads_itself(cte, &name, context) {
+        let reads_own: bool = reads_itself(cte, &name, context);
+        let mut query: ResolvedQuery = match with.recursive || reads_own {
             true => recursive_query(cte, (&name, &reach), outer, context),
             false => renamed(
                 resolved_query(&cte.this, &reach, outer, context),
                 &cte.columns,
                 context,
             ),
+        };
+        let faulted: bool = match reads_own && context.profile.name() == DUCKDB_PROFILE {
+            true => {
+                let mut own: Vec<NamedQuery> = reach.clone();
+                own.retain(|named| named.key != name);
+                own.push(NamedQuery {
+                    key: name.clone(),
+                    query: query.clone(),
+                });
+                visit(cte, &own)
+            }
+            false => visit(cte, &reach),
         };
         query.faulted = faulted;
         reach.retain(|named| named.key != name);
@@ -728,6 +743,7 @@ pub(crate) fn expanded_star(
         stored_relation: None,
         from_values: false,
         written_name: None,
+        function_name: None,
         open_reads: only.and_then(|only| only.query.open_reads.clone()),
         rows: RowReads::default(),
         outer_nullable: only.is_some_and(|only| only.query.outer_nullable),

@@ -67,8 +67,184 @@ fn given_a_duckdb_select_when_checking_its_scope_rules_then_broken_rules_are_fou
             expected_findings: &[],
         },
         QueryFindingsTestCase {
+            description: "a grouped CAST read with its column quoted in another case",
+            sql: "SELECT CAST(\"STATUS\" AS VARCHAR) AS s, COUNT(*) AS n FROM orders GROUP BY CAST(status AS VARCHAR)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a CAST grouped with its column quoted, read unquoted",
+            sql: "SELECT CAST(status AS VARCHAR) AS s, COUNT(*) AS n FROM orders GROUP BY CAST(\"STATUS\" AS VARCHAR)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a grouped expression read with its qualifier and column in other cases",
+            sql: "SELECT upper(O.\"Status\") || 'x' AS s, COUNT(*) AS n FROM orders AS o GROUP BY upper(o.status) || 'x'",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a grouped CAST read unqualified, its column offered by one source only",
+            sql: "SELECT CAST(ordered_at AS DATE) AS d, COUNT(*) AS n FROM orders AS o JOIN customers AS c ON o.id = c.id GROUP BY CAST(o.ordered_at AS DATE)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a grouped CAST read unqualified, its column offered by both sources",
+            sql: "SELECT CAST(id AS VARCHAR) AS d, COUNT(*) AS n FROM orders AS o JOIN customers AS c ON o.id = c.id GROUP BY CAST(o.id AS VARCHAR)",
+            expected_findings: &[
+                (
+                    "E230",
+                    "Column must be grouped or used in an aggregate function",
+                    12,
+                ),
+                (
+                    "E221",
+                    "Ambiguous unqualified column 'id' found in 2 referenced tables",
+                    12,
+                ),
+            ],
+        },
+        QueryFindingsTestCase {
+            description: "a grouped CAST read in the :: spelling with a comment",
+            sql: "SELECT status::VARCHAR /* shown */ AS s, COUNT(*) AS n FROM orders GROUP BY CAST(status AS VARCHAR)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a CAST of another column than the grouped one",
+            sql: "SELECT CAST(quantity AS VARCHAR) AS s, COUNT(*) AS n FROM orders GROUP BY CAST(status AS VARCHAR)",
+            expected_findings: &[(
+                "E230",
+                "Column must be grouped or used in an aggregate function",
+                12,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "EXCLUDE naming a column quoted in another case, which DuckDB matches",
+            sql: "WITH c AS (SELECT o.\"STATUS\", o.id FROM orders AS o) SELECT * EXCLUDE (status) FROM c",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "EXCLUDE naming a column the input lacks",
+            sql: "WITH c AS (SELECT o.\"STATUS\", o.id FROM orders AS o) SELECT * EXCLUDE (quantity) FROM c",
+            expected_findings: &[(
+                "E201",
+                "Star modifier references unknown column 'quantity'",
+                0,
+            )],
+        },
+        QueryFindingsTestCase {
             description: "a qualified grouped column read in another case",
             sql: "SELECT O.Status, COUNT(*) AS n FROM orders AS o GROUP BY o.status",
+            expected_findings: &[],
+        },
+    ];
+    let schema = typed_duckdb_shop_schema();
+    for test_case in test_cases {
+        assert_eq!(
+            found_findings(test_case.sql, (Dialect::DuckDB, &DUCKDB, &schema)),
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_duckdb_relations_whose_columns_are_known_when_checking_names_then_unknown_names_are_found()
+{
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "an unknown qualifier beside generate_series",
+            sql: "SELECT zq.n FROM generate_series(1, 3) AS g(n)",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'zq' referenced by column 'n'",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "an unknown column of a renamed generate_series",
+            sql: "SELECT g.generate_series FROM generate_series(1, 3) AS g(n)",
+            expected_findings: &[("E201", "Unknown column 'generate_series' in table 'g'", 9)],
+        },
+        QueryFindingsTestCase {
+            description: "an unknown qualifier beside a cross-joined unnest",
+            sql: "SELECT zq.id, t.flag FROM orders AS o CROSS JOIN unnest([false]) AS t(flag)",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'zq' referenced by column 'id'",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "the columns range, generate_series and unnest are named after",
+            sql: "SELECT r.range, s.generate_series, u.unnest FROM range(2) AS r, generate_series(1, 2) AS s, unnest([1]) AS u",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an unknown column of a VALUES list every column of which is renamed",
+            sql: "SELECT missing, status FROM (VALUES ('o1', 'placed')) AS t(order_id, status)",
+            expected_findings: &[("E201", "Unknown column 'missing' in table 't'", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "an unknown column of an aliased CTE, named by its alias",
+            sql: "WITH counted AS (SELECT id FROM orders) SELECT missing FROM counted AS c",
+            expected_findings: &[("E201", "Unknown column 'missing' in table 'c'", 47)],
+        },
+        QueryFindingsTestCase {
+            description: "an unknown column of an aliased stored table, named by the table",
+            sql: "SELECT missing FROM orders AS o",
+            expected_findings: &[("E201", "Unknown column 'missing' in table 'orders'", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "an unknown column in a CTE nothing reads, which DuckDB never binds",
+            sql: "WITH o AS (SELECT missing FROM orders) SELECT id FROM orders AS o",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an unknown column in a CTE read only by another unread CTE",
+            sql: "WITH a AS (SELECT missing FROM orders), b AS (SELECT * FROM a) SELECT id FROM orders",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an unknown column in a CTE read through another CTE",
+            sql: "WITH a AS (SELECT missing FROM orders), b AS (SELECT * FROM a) SELECT * FROM b",
+            expected_findings: &[("E201", "Unknown column 'missing' in table 'orders'", 18)],
+        },
+        QueryFindingsTestCase {
+            description: "an unknown column in a CTE read by a subquery",
+            sql: "WITH a AS (SELECT missing FROM orders) SELECT id FROM orders WHERE id IN (SELECT id FROM a)",
+            expected_findings: &[("E201", "Unknown column 'missing' in table 'orders'", 18)],
+        },
+        QueryFindingsTestCase {
+            description: "a VALUES list renamed in part keeps generated names, so nothing is judged",
+            sql: "SELECT col1 FROM (VALUES ('o1', 'placed')) AS t(order_id)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an unknown qualifier in a recursive term",
+            sql: "WITH RECURSIVE chain AS (SELECT id, 0 AS depth FROM orders UNION ALL SELECT zq.id, chain.depth + 1 FROM orders JOIN chain ON orders.id = chain.id) SELECT id FROM chain",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'zq' referenced by column 'id'",
+                76,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a column both the table and the recursive reference offer",
+            sql: "WITH RECURSIVE chain AS (SELECT id, 0 AS depth FROM orders UNION ALL SELECT id, chain.depth + 1 FROM orders JOIN chain ON orders.id = chain.id) SELECT id FROM chain",
+            expected_findings: &[(
+                "E221",
+                "Ambiguous unqualified column 'id' found in 2 referenced tables",
+                76,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a column the anchor does not output",
+            sql: "WITH RECURSIVE chain AS (SELECT id, 0 AS depth FROM orders UNION ALL SELECT orders.id, chain.missing FROM orders JOIN chain ON orders.id = chain.id) SELECT id FROM chain",
+            expected_findings: &[("E201", "Unknown column 'missing' in table 'chain'", 93)],
+        },
+        QueryFindingsTestCase {
+            description: "a recursive term reading only names the anchor outputs",
+            sql: "WITH RECURSIVE chain AS (SELECT id, 0 AS depth FROM orders UNION ALL SELECT orders.id, chain.depth + 1 FROM orders JOIN chain ON orders.id = chain.id WHERE chain.depth < 3) SELECT id, depth FROM chain",
             expected_findings: &[],
         },
     ];
@@ -263,9 +439,12 @@ fn given_a_snowflake_query_when_checking_built_in_calls_and_types_then_definite_
 fn given_a_call_or_type_the_checks_cannot_prove_when_checking_then_nothing_is_found() {
     let test_cases = [
         QueryFindingsTestCase {
-            description: "unknown and declared functions are never errors",
+            description: "unknown functions are only unknown names, declared ones are never errors",
             sql: "SELECT TO_DATE('2026-01-01') AS d, shop_score(status) AS s, mystery(1, 2) AS m FROM orders",
-            expected_findings: &[],
+            expected_findings: &[
+                ("E202", "Unknown function 'TO_DATE' for dialect DuckDB", 7),
+                ("E202", "Unknown function 'mystery' for dialect DuckDB", 60),
+            ],
         },
         QueryFindingsTestCase {
             description: "a declared function's arguments are not checked",
@@ -280,7 +459,7 @@ fn given_a_call_or_type_the_checks_cannot_prove_when_checking_then_nothing_is_fo
         QueryFindingsTestCase {
             description: "an unknown function's result has no type to check",
             sql: "SELECT mystery(quantity) + ordered_at AS u FROM orders",
-            expected_findings: &[],
+            expected_findings: &[("E202", "Unknown function 'mystery' for dialect DuckDB", 7)],
         },
     ];
     let schema = typed_duckdb_shop_schema();
@@ -351,7 +530,7 @@ fn given_a_duckdb_query_when_checking_subqueries_keys_frames_and_the_catalog_the
             expected_findings: &[
                 (
                     "E203",
-                    "Invalid arity for function 'SUBSTRING': got 1, expected 2..3",
+                    "Invalid arity for function 'SUBSTRING': got 1, expected 2, 3",
                     17,
                 ),
                 (
@@ -363,9 +542,13 @@ fn given_a_duckdb_query_when_checking_subqueries_keys_frames_and_the_catalog_the
             ],
         },
         QueryFindingsTestCase {
-            description: "a call the catalog does not know is not checked",
+            description: "a call the catalog does not know is an unknown name, not a count error",
             sql: "SELECT order_band(status, 1, 2, 3) AS b FROM orders",
-            expected_findings: &[],
+            expected_findings: &[(
+                "E202",
+                "Unknown function 'order_band' for dialect DuckDB",
+                7,
+            )],
         },
         QueryFindingsTestCase {
             description: "an alias names no unaliased derived table",
@@ -644,6 +827,175 @@ fn given_a_postgres_query_when_checking_types_and_names_then_findings_follow_pos
     for test_case in test_cases {
         assert_eq!(
             found_findings(test_case.sql, (Dialect::PostgreSQL, &POSTGRES, &schema)),
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_duckdb_calls_when_checking_them_against_the_engine_catalogue_then_unknown_names_and_counts_are_found()
+ {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "a name DuckDB has no function, macro or special form for",
+            sql: "SELECT not_a_function(id) AS v FROM orders",
+            expected_findings: &[(
+                "E202",
+                "Unknown function 'not_a_function' for dialect DuckDB",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "SUBSTRING with one argument, where DuckDB takes two or three",
+            sql: "SELECT SUBSTRING(status) AS v FROM orders",
+            expected_findings: &[(
+                "E203",
+                "Invalid arity for function 'SUBSTRING': got 1, expected 2, 3",
+                17,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "DATE_TRUNC with one argument",
+            sql: "SELECT DATE_TRUNC('day') AS v FROM orders",
+            expected_findings: &[(
+                "E203",
+                "Invalid arity for function 'DATE_TRUNC': got 1, expected 2",
+                0,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "SUM with two arguments",
+            sql: "SELECT SUM(quantity, id) AS v FROM orders",
+            expected_findings: &[(
+                "E203",
+                "Invalid arity for function 'SUM': got 2, expected 1",
+                11,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "variadic, extension and parser-transformed calls are known",
+            sql: "SELECT concat(status) AS a, ifnull(status, 'x') AS b, try(id) AS c, \
+                  json_extract(status, '$.a') AS d, st_astext(st_point(1, 2)) AS e FROM orders",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "GROUP BY ROLLUP and CUBE are grouping constructs, not calls",
+            sql: "SELECT status, COUNT(*) AS n FROM orders GROUP BY ROLLUP (status), CUBE (id)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a schema-qualified call is not judged",
+            sql: "SELECT main.not_a_function(id) AS v FROM orders",
+            expected_findings: &[],
+        },
+    ];
+    let schema = typed_duckdb_shop_schema();
+    for test_case in test_cases {
+        assert_eq!(
+            found_findings(test_case.sql, (Dialect::DuckDB, &DUCKDB, &schema)),
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_duckdb_qualified_column_its_relation_lacks_when_checking_then_the_relation_is_named() {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "an aliased stored table is named by its table",
+            sql: "SELECT s.missing FROM orders AS s",
+            expected_findings: &[("E201", "Unknown column 'missing' in table 'orders'", 9)],
+        },
+        QueryFindingsTestCase {
+            description: "an aliased CTE is named by the qualifier as written",
+            sql: "WITH weekly AS (SELECT id FROM orders) SELECT S.missing FROM weekly AS s",
+            expected_findings: &[("E201", "Unknown column 'missing' in table 'S'", 48)],
+        },
+    ];
+    let schema = typed_duckdb_shop_schema();
+    for test_case in test_cases {
+        assert_eq!(
+            found_findings(test_case.sql, (Dialect::DuckDB, &DUCKDB, &schema)),
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_duckdb_columns_pattern_when_checking_then_one_matching_no_listed_column_is_found() {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "a pattern no column of a listed relation matches",
+            sql: "SELECT COLUMNS('^nothing_') FROM orders",
+            expected_findings: &[("E201", "COLUMNS pattern matches no input columns", 0)],
+        },
+        QueryFindingsTestCase {
+            description: "a pattern matching part of a column name, as DuckDB searches",
+            sql: "SELECT COLUMNS('tatu') FROM orders",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a pattern over a relation whose columns are not all listed",
+            sql: "SELECT COLUMNS('^nothing_') FROM events",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a pattern that does not compile is left to the engine",
+            sql: "SELECT COLUMNS('(') FROM orders",
+            expected_findings: &[],
+        },
+    ];
+    let schema = typed_duckdb_shop_schema();
+    for test_case in test_cases {
+        assert_eq!(
+            found_findings(test_case.sql, (Dialect::DuckDB, &DUCKDB, &schema)),
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_text_key_joined_to_a_number_key_when_checking_then_only_using_is_unreported() {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "a USING key of text and a number, the text filtered to numbers",
+            sql: "WITH text_keys AS (SELECT status AS check_key FROM orders \
+                  WHERE TRY_TO_NUMBER(status) IS NOT NULL), \
+                  wide AS (SELECT id AS check_key FROM customers) \
+                  SELECT check_key FROM text_keys AS t INNER JOIN wide AS w USING (check_key)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "the same keys compared in ON",
+            sql: "SELECT o.id FROM orders AS o INNER JOIN customers AS c ON o.status = c.id",
+            expected_findings: &[(
+                "W210",
+                "Incompatible comparison between string and integer",
+                58,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "the same keys compared in WHERE",
+            sql: "SELECT o.id FROM orders AS o, customers AS c WHERE o.status = c.id",
+            expected_findings: &[(
+                "W210",
+                "Incompatible comparison between string and integer",
+                51,
+            )],
+        },
+    ];
+    let schema = typed_shop_schema();
+    for test_case in test_cases {
+        assert_eq!(
+            found_findings(test_case.sql, (Dialect::Snowflake, &SNOWFLAKE, &schema)),
             owned_findings(test_case.expected_findings),
             "{}",
             test_case.description

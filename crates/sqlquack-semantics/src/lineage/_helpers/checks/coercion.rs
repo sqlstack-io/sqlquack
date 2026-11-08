@@ -27,6 +27,7 @@ const LAST_MINUTE: u32 = 59;
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum Engine {
     DuckDB,
+    /// Snowflake; implicit conversion on USING keys isn't checked, as polyglot leaves it.
     Snowflake,
     /// PostgreSQL: no implicit predicate, comparison or string set-operation coercions.
     Postgres,

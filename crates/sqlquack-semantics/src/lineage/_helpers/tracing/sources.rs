@@ -15,9 +15,10 @@ use crate::lineage::_helpers::tracing::lineages::{combined, constant, direct, me
 use crate::lineage::_helpers::tracing::queries::{empty_scope, renamed, resolved_query};
 use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
 use crate::lineage::constants::{
-    DUCKDB_PROFILE, DUCKDB_VALUES_COLUMN, IDENTIFIER_FUNCTION, ONE_AGGREGATE, OUTER_LEFT_JOINS,
-    OUTER_RIGHT_JOINS, SNOWFLAKE_PROFILE, SNOWFLAKE_VALUES_COLUMN, SQLITE_PROFILE,
-    SQLITE_VALUES_COLUMN, TABLE_FUNCTION_COLUMNS, TABLE_WRAPPER,
+    DUCKDB_PROFILE, DUCKDB_TABLE_FUNCTION_COLUMNS, DUCKDB_UNNEST_COLUMN, DUCKDB_VALUES_COLUMN,
+    IDENTIFIER_FUNCTION, ONE_AGGREGATE, OUTER_LEFT_JOINS, OUTER_RIGHT_JOINS, SNOWFLAKE_PROFILE,
+    SNOWFLAKE_VALUES_COLUMN, SQLITE_PROFILE, SQLITE_VALUES_COLUMN, TABLE_FUNCTION_COLUMNS,
+    TABLE_WRAPPER,
 };
 use crate::lineage::models::{
     FromItems, Lineage, LineageContext, LineageScope, NamedQuery, Nullability, ResolvedQuery,
@@ -250,7 +251,10 @@ fn item_sources_level(
                 .into_iter()
                 .map(|source| ScopeSource {
                     key: Some(key(&alias.alias, context)),
-                    query: renamed(source.query, &alias.column_aliases, context),
+                    query: ResolvedQuery {
+                        function_name: None,
+                        ..renamed(source.query, &alias.column_aliases, context)
+                    },
                 })
                 .collect()
         }
@@ -258,16 +262,21 @@ fn item_sources_level(
             let alias: Option<String> = lateral_key(lateral, context);
             item_sources(&lateral.this, scope, context)
                 .into_iter()
-                .map(|source| ScopeSource {
-                    key: alias.clone().or(source.key),
-                    query: source.query,
+                .map(|mut source| {
+                    if alias.is_some() {
+                        source.query.function_name = None;
+                    }
+                    ScopeSource {
+                        key: alias.clone().or(source.key),
+                        query: source.query,
+                    }
                 })
                 .collect()
         }
-        Expression::Function(function) if built_in_columns(&function.name).is_some() => {
-            let columns = built_in_columns(&function.name).unwrap_or_default();
+        Expression::Function(function) if built_in_columns(&function.name, context).is_some() => {
+            let columns = built_in_columns(&function.name, context).unwrap_or_default();
             vec![table_function_source(
-                columns,
+                (&function.name, columns),
                 &function.args,
                 scope,
                 context,
@@ -298,11 +307,25 @@ fn item_sources_level(
                 query: ResolvedQuery {
                     open: true,
                     open_relation: Some(plain_key(&function.name, context)),
+                    function_name: Some(plain_key(&function.name, context)),
                     rows: input_rows(reads.as_ref()),
                     open_reads: reads,
                     ..ResolvedQuery::default()
                 },
             }]
+        }
+        Expression::Unnest(unnest)
+            if unnest.expressions.is_empty()
+                && !unnest.with_ordinality
+                && unnest.alias.is_none()
+                && context.profile.name() == DUCKDB_PROFILE =>
+        {
+            vec![table_function_source(
+                (DUCKDB_UNNEST_COLUMN, &[DUCKDB_UNNEST_COLUMN]),
+                std::slice::from_ref(&unnest.this),
+                scope,
+                context,
+            )]
         }
         Expression::Values(values) => vec![values_source(values, scope, context)],
         Expression::JoinedTable(joined) => {
@@ -362,10 +385,22 @@ fn table_source(
     };
     let mut query: ResolvedQuery = renamed(query, &table.column_aliases, context);
     query.written_name = Some(written_name(table));
+    if table.alias.is_none() && unqualified && cte.is_none() && query.open {
+        query.function_name = file_stem(&table.name, context);
+    }
     ScopeSource {
         key: source_key,
         query,
     }
+}
+
+/// The name DuckDB gives an unaliased file scan, such as `x` for `'sub/x.csv'`: the file's stem.
+fn file_stem(name: &Identifier, context: LineageContext<'_>) -> Option<String> {
+    let path: &str = name.name.as_str();
+    let file: bool = name.quoted && path.contains(['.', '/', '\\']);
+    let stem: &str = path.rsplit(['/', '\\']).next()?.split('.').next()?;
+    (context.profile.name() == DUCKDB_PROFILE && file && !stem.is_empty())
+        .then(|| context.profile.resolved_identifier(stem, false))
 }
 
 /// The relation's name as written, its parts joined by dots, in lower case.
@@ -440,16 +475,18 @@ fn stored_columns(
 }
 
 /// The columns of a built-in table function, when `name` is one.
-fn built_in_columns(name: &str) -> Option<&'static [&'static str]> {
+fn built_in_columns(name: &str, context: LineageContext<'_>) -> Option<&'static [&'static str]> {
+    let duckdb: bool = context.profile.name() == DUCKDB_PROFILE;
     TABLE_FUNCTION_COLUMNS
         .iter()
+        .chain(DUCKDB_TABLE_FUNCTION_COLUMNS.iter().filter(|_| duckdb))
         .find(|(function, _)| name.eq_ignore_ascii_case(function))
         .map(|(_, columns)| *columns)
 }
 
 /// A built-in table function: each of its columns derives from everything its arguments read.
 fn table_function_source(
-    columns: &[&str],
+    (name, columns): (&str, &[&str]),
     arguments: &[Expression],
     scope: &LineageScope<'_>,
     context: LineageContext<'_>,
@@ -473,6 +510,7 @@ fn table_function_source(
                 })
                 .collect(),
             rows: input_rows(Some(&input)),
+            function_name: Some(plain_key(name, context)),
             ..ResolvedQuery::default()
         },
     }

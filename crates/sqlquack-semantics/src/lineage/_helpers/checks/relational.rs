@@ -119,7 +119,7 @@ fn offered_family(
         .map_or(Family::Unknown, type_family)
 }
 
-/// USING keys whose two sides cannot compare; only a single two-item join is checked.
+/// USING keys of a single two-item join whose sides cannot compare; Snowflake skips conversions.
 pub(crate) fn using_findings(
     node: &Expression,
     select: &Select,
@@ -145,6 +145,9 @@ pub(crate) fn using_findings(
         let left: Family = offered_family(left_source, &name, context);
         let right: Family = offered_family(right_source, &name, context);
         let runtime: bool = runtime_comparison(left, right);
+        if runtime && engine == Engine::Snowflake {
+            continue;
+        }
         if !comparable(engine, (&join.this, &join.this), (left, right)) || runtime {
             findings.push(finding(
                 if runtime { "W210" } else { "E217" },

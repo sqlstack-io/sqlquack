@@ -1,6 +1,7 @@
 //! Walking a query level by level: each level's clauses read in its scope, inner queries after.
 
 use std::borrow::Cow;
+use std::collections::HashMap;
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
@@ -12,13 +13,15 @@ use crate::lineage::_helpers::checks::node_checks::{NodeLevel, node_findings};
 use crate::lineage::_helpers::checks::scope_rules::{RuleLevel, select_rules, set_order};
 use crate::lineage::_helpers::checks::sets::{Branches, set_findings};
 use crate::lineage::_helpers::findings::checks::{
-    Level, alias_count_findings, column_finding, unpivot_findings, using_findings,
+    Level, alias_count_findings, column_finding, columns_pattern_finding, unpivot_findings,
+    using_findings,
 };
 use crate::lineage::_helpers::tracing::expressions::date_part_argument;
 use crate::lineage::_helpers::tracing::queries::{
     level_scope, output_key, unannotated, with_ctes_visiting,
 };
 use crate::lineage::_helpers::tracing::resolution::key;
+use crate::lineage::constants::COLUMNS_FUNCTION;
 use crate::lineage::models::NameFinding;
 use crate::lineage::models::{LineageContext, LineageScope, NamedQuery};
 
@@ -39,7 +42,7 @@ fn query_findings_level(
     context: LineageContext<'_>,
 ) -> Vec<NameFinding> {
     let branches = |with: Option<&With>, left: &Expression, right: &Expression| {
-        let (ctes, mut found) = visited_ctes(with, (ctes, outer, aliases), context);
+        let (ctes, mut found) = visited_ctes((query, with), (ctes, outer, aliases), context);
         let mut branches: Vec<NameFinding> = query_findings(left, (&ctes, outer, aliases), context);
         branches.extend(query_findings(right, (&ctes, outer, aliases), context));
         branches.append(&mut found);
@@ -71,22 +74,80 @@ fn query_findings_level(
     }
 }
 
-/// The CTEs `with` adds to `ctes`, each body's findings, and under PostgreSQL each one faulted.
+/// The CTEs `with` adds to `ctes`, each read body's findings, and under PostgreSQL each one faulted.
 fn visited_ctes<'a>(
-    with: Option<&With>,
+    (owner, with): (&Expression, Option<&With>),
     (ctes, outer, aliases): (&'a [NamedQuery], Option<&LineageScope<'_>>, &[String]),
     context: LineageContext<'_>,
 ) -> (Cow<'a, [NamedQuery]>, Vec<NameFinding>) {
     let mut found: Vec<NameFinding> = Vec::new();
     let postgres: bool = Engine::of(context) == Engine::Postgres;
+    let unread: Vec<String> = match (Engine::of(context), with) {
+        (Engine::DuckDB, Some(with)) => unread_ctes(owner, with, context),
+        _ => Vec::new(),
+    };
     let reach = with_ctes_visiting(with, (ctes, outer), context, &mut |cte, reach| {
         let body: Vec<NameFinding> = query_findings(&cte.this, (reach, outer, aliases), context);
         let faulted: bool =
             postgres && (!body.is_empty() || reads_faulted(&cte.this, reach, context));
-        found.extend(body);
+        if !unread.contains(&key(&cte.alias, context)) {
+            found.extend(body);
+        }
         faulted
     });
     (reach, found)
+}
+
+/// The CTEs of `with` that `owner` never reads, nor any CTE it reads: DuckDB does not bind them.
+fn unread_ctes(owner: &Expression, with: &With, context: LineageContext<'_>) -> Vec<String> {
+    let names: Vec<String> = with
+        .ctes
+        .iter()
+        .map(|cte| key(&cte.alias, context))
+        .collect();
+    let mut indices: HashMap<String, Vec<usize>> = HashMap::new();
+    for (index, name) in names.iter().enumerate() {
+        indices
+            .entry(name.to_ascii_lowercase())
+            .or_default()
+            .push(index);
+    }
+    let reads = |query: &Expression| -> Vec<usize> {
+        query
+            .dfs()
+            .filter_map(|node| match node {
+                Expression::Table(table) if table.schema.is_none() && table.catalog.is_none() => {
+                    indices.get(&key(&table.name, context).to_ascii_lowercase())
+                }
+                _ => None,
+            })
+            .flatten()
+            .copied()
+            .collect()
+    };
+    let mut outside: Vec<isize> = vec![0; names.len()];
+    for index in reads(owner) {
+        outside[index] += 1;
+    }
+    let bodies: Vec<Vec<usize>> = with.ctes.iter().map(|cte| reads(&cte.this)).collect();
+    for index in bodies.iter().flatten() {
+        outside[*index] -= 1;
+    }
+    let mut read: Vec<bool> = outside.iter().map(|count| *count > 0).collect();
+    let mut pending: Vec<usize> = (0..names.len()).filter(|index| read[*index]).collect();
+    while let Some(index) = pending.pop() {
+        for &next in &bodies[index] {
+            if !read[next] {
+                read[next] = true;
+                pending.push(next);
+            }
+        }
+    }
+    names
+        .into_iter()
+        .zip(read)
+        .filter_map(|(name, read)| (!read).then_some(name))
+        .collect()
 }
 
 /// The key of a derived table in FROM, by its alias; none when `item` is not a derived table.
@@ -124,7 +185,11 @@ fn select_findings(
     (ctes, outer, aliases): (&[NamedQuery], Option<&LineageScope<'_>>, &[String]),
     context: LineageContext<'_>,
 ) -> Vec<NameFinding> {
-    let (ctes, mut nested) = visited_ctes(select.with.as_ref(), (ctes, outer, aliases), context);
+    let (ctes, mut nested) = visited_ctes(
+        (node, select.with.as_ref()),
+        (ctes, outer, aliases),
+        context,
+    );
     let mut scope: LineageScope<'_> = level_scope(select, &ctes, outer, context);
     let level = NodeLevel {
         scope: &scope,
@@ -332,6 +397,16 @@ fn clause_findings(
             }
             Expression::Column(column) => {
                 own.extend(column_finding(column, (level, &bound), context));
+            }
+            Expression::Columns(columns) => {
+                own.extend(columns_pattern_finding(&columns.this, level, context));
+                pending.extend(columns.unpack.as_deref());
+            }
+            Expression::Function(function)
+                if function.name.eq_ignore_ascii_case(COLUMNS_FUNCTION)
+                    && function.args.len() == 1 =>
+            {
+                own.extend(columns_pattern_finding(&function.args[0], level, context));
             }
             Expression::Lambda(lambda) => {
                 bound.extend(lambda.parameters.iter().map(|name| key(name, context)));

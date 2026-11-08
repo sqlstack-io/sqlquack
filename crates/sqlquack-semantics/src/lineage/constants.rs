@@ -8,6 +8,18 @@ pub(crate) const TABLE_FUNCTION_COLUMNS: [(&str, &[&str]); 3] = [
     ("SPLIT_TO_TABLE", &["SEQ", "INDEX", "VALUE"]),
     ("STRTOK_SPLIT_TO_TABLE", &["SEQ", "INDEX", "VALUE"]),
 ];
+/// DuckDB's built-in table functions of one column, named after the function.
+pub(crate) const DUCKDB_TABLE_FUNCTION_COLUMNS: [(&str, &[&str]); 3] = [
+    ("GENERATE_SERIES", &["generate_series"]),
+    ("RANGE", &["range"]),
+    ("UNNEST", &[DUCKDB_UNNEST_COLUMN]),
+];
+/// The one column DuckDB's UNNEST in FROM returns.
+pub(crate) const DUCKDB_UNNEST_COLUMN: &str = "unnest";
+/// Serialized expression fields that do not change what a group key means: spans and `::` spelling.
+pub(crate) const SHAPE_COSMETIC_FIELDS: [&str; 2] = ["span", "double_colon_syntax"];
+/// The suffix of serialized comment fields, which group-key shapes drop.
+pub(crate) const SHAPE_COMMENT_SUFFIX: &str = "comments";
 /// The wrapper Snowflake writes around a table function in FROM.
 pub(crate) const TABLE_WRAPPER: &str = "TABLE";
 /// Snowflake's name for the n-th column of a VALUES list, numbered from 1.
@@ -335,6 +347,10 @@ pub(crate) const CONNECT_BY_LEVEL: &str = "LEVEL";
 pub(crate) const METADATA_PREFIX: &str = "METADATA$";
 /// The prefix of a positional column reference, `$1`.
 pub(crate) const POSITIONAL_PREFIX: char = '$';
+/// DuckDB's COLUMNS star expression, written as a call.
+pub(crate) const COLUMNS_FUNCTION: &str = "columns";
+/// A DuckDB COLUMNS pattern that matches no column, worded as polyglot words it.
+pub(crate) const COLUMNS_NO_MATCH: &str = "COLUMNS pattern matches no input columns";
 /// DuckDB's row identifier pseudo-column.
 pub(crate) const DUCKDB_ROWID: &str = "rowid";
 /// Sequence pseudo-columns, read after the sequence's name.

@@ -10,6 +10,7 @@ use crate::lineage::_helpers::checks::coercion::{
     predicate, runtime_comparison, runtime_equality, string_literal, temporal_argument,
     temporal_function_argument,
 };
+use crate::lineage::_helpers::checks::duckdb_functions::{duckdb_arities, duckdb_function};
 use crate::lineage::_helpers::checks::families::{Family, data_type_family, expression_family};
 use crate::lineage::_helpers::checks::issues::{issue, type_location};
 use crate::lineage::_helpers::checks::relational::{
@@ -81,9 +82,36 @@ pub(crate) fn node_findings(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<
     }
     findings.extend(located(own, node));
     if let Expression::Function(function) = node {
-        findings.extend(keyword_only_call(function, level.engine(), node));
+        let keyword_only: Vec<NameFinding> = keyword_only_call(function, level.engine(), node);
+        if keyword_only.is_empty() {
+            findings.extend(unknown_duckdb_call(function, level.engine(), node));
+        }
+        findings.extend(keyword_only);
     }
     findings
+}
+
+/// An unqualified DuckDB call to a name that is neither built in nor declared by the project.
+fn unknown_duckdb_call(
+    function: &sqlquack_syntax::expressions::functions::models::Function,
+    engine: Engine,
+    node: &Expression,
+) -> Vec<NameFinding> {
+    match engine == Engine::DuckDB
+        && !function.quoted
+        && !function.no_parens
+        && !function.use_bracket_syntax
+        && !function.name.contains('.')
+        && !duckdb_function(&function.name)
+    {
+        true => vec![issue(
+            ("E202", NAME_PHASE),
+            format!("Unknown function '{}' for dialect DuckDB", function.name),
+            function.span.0,
+            node,
+        )],
+        false => Vec::new(),
+    }
 }
 
 /// A call whose argument count no signature in the catalog accepts.
@@ -93,7 +121,13 @@ fn catalog_arity(
     node: &Expression,
 ) -> Vec<NameFinding> {
     let canonical: String = dispatch_name(name);
-    let Some(arities) = level.context.schema.function_arities(name, &canonical) else {
+    let recorded: Option<Vec<(usize, Option<usize>)>> = match level.engine() {
+        Engine::DuckDB if !name.contains('.') => duckdb_arities(name),
+        _ => None,
+    };
+    let Some(arities) =
+        recorded.or_else(|| level.context.schema.function_arities(name, &canonical))
+    else {
         return Vec::new();
     };
     if arities

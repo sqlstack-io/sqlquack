@@ -185,6 +185,8 @@ pub(crate) struct ResolvedQuery {
     pub(crate) from_values: bool,
     /// The relation a FROM item names, as written in lower case, when it is a table reference.
     pub(crate) written_name: Option<String>,
+    /// The table function an unaliased FROM item calls: the one qualifier that may name it.
+    pub(crate) function_name: Option<String>,
     /// What every unknown column also reads, as a table function's arguments.
     pub(crate) open_reads: Option<Lineage>,
     /// Columns deciding which rows the query returns.
