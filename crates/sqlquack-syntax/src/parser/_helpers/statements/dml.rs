@@ -520,6 +520,9 @@ impl Parser {
             {
                 return Err(self.parse_error("Expected an object kind and a name"));
             }
+            if self.is_snowflake() {
+                self.check_snowflake_create_kind()?;
+            }
             let start = self.current;
             while !self.is_at_end() && !self.check(TokenType::Semicolon) {
                 self.skip();
@@ -539,6 +542,35 @@ impl Parser {
             prefix.push_str(&sql);
             Ok(Expression::Raw(Raw { sql: prefix }))
         }
+    }
+
+    /// Refuse a Snowflake CREATE with no kind before its name, a partial kind, or an APPLICATION with no source, as recorded syntax errors (errno 1003).
+    fn check_snowflake_create_kind(&self) -> Result<()> {
+        let token_type_at = |offset: usize| {
+            self.tokens
+                .get(self.current + offset)
+                .map(|token| token.token_type)
+        };
+        let ends_at = |offset: usize| {
+            token_type_at(offset).is_none_or(|token_type| token_type == TokenType::Semicolon)
+        };
+        if ends_at(1) || token_type_at(2) == Some(TokenType::Eq) {
+            return Err(self.parse_error("Expected an object kind and a name"));
+        }
+        let partial = self.check_identifier("PROFILE")
+            || self.check_identifier("POLICY")
+            || (self.check_identifier("PACKAGES") && !self.check_next_identifier("POLICY"));
+        if partial {
+            return Err(self.parse_error("Expected a complete object kind"));
+        }
+        if self.check_identifier("APPLICATION")
+            && !self.check_next_identifier("PACKAGE")
+            && !self.check_next_identifier("ROLE")
+            && ends_at(2)
+        {
+            return Err(self.parse_error("Expected FROM after the application name"));
+        }
+        Ok(())
     }
 
     fn parse_create_view_options(
