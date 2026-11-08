@@ -33,7 +33,9 @@ use crate::analysis::tests::test_types::{
     AnalysisSummary, CollectedSummary, DivergenceModeOutcome, EverydayCorpus, EverydayQuery,
 };
 use crate::cli::main::convert_report::convert_report;
-use crate::cli::models::{ConvertArguments, OutputArguments, OutputFormat, PolicyArguments};
+use crate::cli::models::{
+    ColorArguments, ConvertArguments, OutputArguments, OutputFormat, PolicyArguments,
+};
 use sqlquack_convert::analysis::main::analyze::analyze;
 use sqlquack_rules::session::main::confirm_utc_session::confirm_utc_session;
 use sqlquack_rules::session::main::conversion_options::conversion_options;
@@ -931,6 +933,9 @@ fn everyday_arguments(root: &std::path::Path, builtin_policy: bool) -> ConvertAr
         output: OutputArguments {
             format: OutputFormat::Json,
             json: false,
+        },
+        colors: ColorArguments {
+            color: clap::ColorChoice::Never,
         },
         conversion: PolicyArguments {
             policy: Some(repository_root().join(POLICY_FILE_NAME)),

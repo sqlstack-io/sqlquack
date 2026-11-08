@@ -915,10 +915,25 @@ pub(crate) fn run_with_input(
     arguments: &[&str],
     input: &str,
 ) -> (Option<i32>, String, String) {
+    run_with_environment(directory, arguments, input, &[])
+}
+
+/// Runs `sqlquack` like `run_with_input`, with the colour variables cleared and then `environment` set.
+pub(crate) fn run_with_environment(
+    directory: &std::path::Path,
+    arguments: &[&str],
+    input: &str,
+    environment: &[(&str, &str)],
+) -> (Option<i32>, String, String) {
     use std::io::Write;
     let mut child = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
         .args(arguments)
         .current_dir(directory)
+        .env_remove("NO_COLOR")
+        .env_remove("CLICOLOR")
+        .env_remove("CLICOLOR_FORCE")
+        .env_remove("FORCE_COLOR")
+        .envs(environment.iter().copied())
         .stdin(std::process::Stdio::piped())
         .stdout(std::process::Stdio::piped())
         .stderr(std::process::Stdio::piped())

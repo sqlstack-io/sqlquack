@@ -240,6 +240,16 @@ pub(crate) struct ExplainTestCase {
     pub(crate) expected_stderr_mention: &'static str,
 }
 
+pub(crate) struct ColorTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) arguments: &'static [&'static str],
+    pub(crate) sql: &'static str,
+    pub(crate) environment: &'static [(&'static str, &'static str)],
+    pub(crate) expected_exit_code: Option<i32>,
+    pub(crate) expected_stdout: &'static str,
+    pub(crate) expected_stderr: &'static str,
+}
+
 pub(crate) struct CheckCommandTestCase {
     pub(crate) description: &'static str,
     pub(crate) arguments: &'static [&'static str],

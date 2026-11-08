@@ -3,7 +3,8 @@
 use std::collections::BTreeMap;
 use std::path::PathBuf;
 
-use clap::{Args, Parser, Subcommand, ValueEnum};
+use clap::builder::styling::Styles;
+use clap::{Args, ColorChoice, Parser, Subcommand, ValueEnum};
 use serde::{Deserialize, Serialize};
 use sqlquack_core::diagnostics::models::Diagnostic;
 
@@ -21,7 +22,7 @@ use crate::cli::constants::EXIT_STATUS_HELP;
 
 /// Snowflake-to-DuckDB SQL conversion that refuses to guess.
 #[derive(Debug, Parser)]
-#[command(name = "sqlquack", version, after_help = EXIT_STATUS_HELP)]
+#[command(name = "sqlquack", version, after_help = EXIT_STATUS_HELP, styles = Styles::styled())]
 pub struct Cli {
     /// The command to run.
     #[command(subcommand)]
@@ -84,6 +85,9 @@ pub struct CheckArguments {
     /// How to print the report on standard output.
     #[command(flatten)]
     pub output: OutputArguments,
+    /// How standard output and standard error are coloured.
+    #[command(flatten)]
+    pub colors: ColorArguments,
 }
 
 /// Arguments of `sqlquack convert`.
@@ -109,6 +113,9 @@ pub struct ConvertArguments {
     /// How to print the report on standard output.
     #[command(flatten)]
     pub output: OutputArguments,
+    /// How standard output and standard error are coloured.
+    #[command(flatten)]
+    pub colors: ColorArguments,
     /// The policy and what the caller confirms about its sessions.
     #[command(flatten)]
     pub conversion: PolicyArguments,
@@ -359,6 +366,14 @@ pub struct OutputArguments {
     /// Print the report as JSON; the same as `--format json`.
     #[arg(long, conflicts_with = "format")]
     pub json: bool,
+}
+
+/// How standard output and standard error are coloured.
+#[derive(Debug, Default, Args)]
+pub struct ColorArguments {
+    /// When to colour output: `auto` colours a terminal, honouring NO_COLOR and CLICOLOR_FORCE.
+    #[arg(long, value_enum, value_name = "WHEN", default_value_t = ColorChoice::Auto)]
+    pub color: ColorChoice,
 }
 
 impl OutputArguments {

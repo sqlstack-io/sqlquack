@@ -1,6 +1,6 @@
 //! The diagnostic code registry, the one source of every `SQ` code; append only, see codes.lock.
 
-use crate::diagnostics::models::CodeEntry;
+use crate::diagnostics::models::{CodeEntry, Palette};
 
 /// The prefix of a parse refusal's reason, before the parser's own message.
 pub const UNPARSED_PREFIX: &str = "the SQL does not parse: ";
@@ -37,6 +37,36 @@ pub const GUARD_PREFIX: &str = "E_GUARD_";
 pub const MAX_SHOWN_LINE: usize = 120;
 /// How many columns a tab takes when a source line is shown.
 pub const TAB_WIDTH: usize = 4;
+/// No styling: rendered diagnostics are plain text.
+pub const PLAIN_PALETTE: Palette = Palette {
+    error: "",
+    message: "",
+    gutter: "",
+    note: "",
+    help: "",
+    success: "",
+    keyword: "",
+    string: "",
+    number: "",
+    comment: "",
+    identifier: "",
+    reset: "",
+};
+/// rustc's terminal colours for diagnostics, and SQL highlighting colours for converted output.
+pub const ANSI_PALETTE: Palette = Palette {
+    error: "\x1b[1;31m",
+    message: "\x1b[1m",
+    gutter: "\x1b[1;34m",
+    note: "\x1b[1m",
+    help: "\x1b[1;36m",
+    success: "\x1b[1;32m",
+    keyword: "\x1b[35m",
+    string: "\x1b[32m",
+    number: "\x1b[33m",
+    comment: "\x1b[2m",
+    identifier: "\x1b[36m",
+    reset: "\x1b[0m",
+};
 
 /// SQL that does not parse.
 pub const PARSE_FIDELITY: &str = "SQ0001";

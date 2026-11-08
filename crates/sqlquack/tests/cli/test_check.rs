@@ -1,5 +1,25 @@
-use crate::helpers::run_with_input;
-use crate::test_types::CheckCommandTestCase;
+use crate::helpers::{run_with_environment, run_with_input};
+use crate::test_types::{CheckCommandTestCase, ColorTestCase};
+
+const PLAIN_CHECK: &str = "sqlquack check: checking…\n\
+    error[SQ0203]: QUALIFY needs a window function\n \
+    --> <stdin>:1:10\n  |\n1 | SELECT 1 QUALIFY TRUE\n  |          ^^^^^^^ QUALIFY is used \
+    without a window function in the SELECT list or QUALIFY\n  |\n  = help: move the condition \
+    to WHERE or HAVING, or filter on a window function's result\nsqlquack check: found 1 problem\n";
+
+const STYLED_CHECK: &str = "sqlquack check: checking…\n\
+    \x1b[1;31merror[SQ0203]\x1b[0m\x1b[1m: QUALIFY needs a window function\x1b[0m\n \
+    \x1b[1;34m-->\x1b[0m <stdin>:1:10\n  \x1b[1;34m|\x1b[0m\n\x1b[1;34m1 |\x1b[0m SELECT 1 \
+    QUALIFY TRUE\n  \x1b[1;34m|\x1b[0m \x1b[1;31m         ^^^^^^^ QUALIFY is used without a window \
+    function in the SELECT list or QUALIFY\x1b[0m\n  \x1b[1;34m|\x1b[0m\n  \x1b[1;34m=\x1b[0m \
+    \x1b[1;36mhelp\x1b[0m: move the condition to WHERE or HAVING, or filter on a window \
+    function's result\nsqlquack check: \x1b[1;31mfound 1 problem\x1b[0m\n";
+
+const PLAIN_CONVERTED: &str = "sqlquack convert: converting…\n\
+    sqlquack convert: done, converted under the built-in default\n";
+
+const STYLED_CONVERTED: &str = "sqlquack convert: converting…\n\
+    sqlquack convert: \x1b[1;32mdone, converted\x1b[0m under the built-in default\n";
 
 #[test]
 fn given_snowflake_sql_when_checked_then_problems_are_coded_and_the_exit_status_says_so() {
@@ -105,6 +125,138 @@ fn given_snowflake_sql_when_checked_then_problems_are_coded_and_the_exit_status_
             ),
             (test_case.expected_exit_code, true, true),
             "{}: {stdout}{stderr}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_color_choice_when_checked_or_converted_then_only_a_colored_stream_is_styled() {
+    let test_cases = [
+        ColorTestCase {
+            description: "a pipe is not a terminal, so auto prints plain text",
+            arguments: &["check"],
+            sql: "SELECT 1 QUALIFY TRUE",
+            environment: &[],
+            expected_exit_code: Some(1),
+            expected_stdout: "",
+            expected_stderr: PLAIN_CHECK,
+        },
+        ColorTestCase {
+            description: "--color always styles a pipe",
+            arguments: &["check", "--color", "always"],
+            sql: "SELECT 1 QUALIFY TRUE",
+            environment: &[],
+            expected_exit_code: Some(1),
+            expected_stdout: "",
+            expected_stderr: STYLED_CHECK,
+        },
+        ColorTestCase {
+            description: "CLICOLOR_FORCE styles a pipe under auto",
+            arguments: &["check"],
+            sql: "SELECT 1 QUALIFY TRUE",
+            environment: &[("CLICOLOR_FORCE", "1")],
+            expected_exit_code: Some(1),
+            expected_stdout: "",
+            expected_stderr: STYLED_CHECK,
+        },
+        ColorTestCase {
+            description: "FORCE_COLOR styles a pipe under auto",
+            arguments: &["check"],
+            sql: "SELECT 1 QUALIFY TRUE",
+            environment: &[("FORCE_COLOR", "1")],
+            expected_exit_code: Some(1),
+            expected_stdout: "",
+            expected_stderr: STYLED_CHECK,
+        },
+        ColorTestCase {
+            description: "an empty FORCE_COLOR forces nothing",
+            arguments: &["check"],
+            sql: "SELECT 1 QUALIFY TRUE",
+            environment: &[("FORCE_COLOR", "")],
+            expected_exit_code: Some(1),
+            expected_stdout: "",
+            expected_stderr: PLAIN_CHECK,
+        },
+        ColorTestCase {
+            description: "NO_COLOR wins over FORCE_COLOR and CLICOLOR_FORCE",
+            arguments: &["check"],
+            sql: "SELECT 1 QUALIFY TRUE",
+            environment: &[
+                ("NO_COLOR", "1"),
+                ("FORCE_COLOR", "1"),
+                ("CLICOLOR_FORCE", "1"),
+            ],
+            expected_exit_code: Some(1),
+            expected_stdout: "",
+            expected_stderr: PLAIN_CHECK,
+        },
+        ColorTestCase {
+            description: "--color never wins over CLICOLOR_FORCE",
+            arguments: &["check", "--color", "never"],
+            sql: "SELECT 1 QUALIFY TRUE",
+            environment: &[("CLICOLOR_FORCE", "1")],
+            expected_exit_code: Some(1),
+            expected_stdout: "",
+            expected_stderr: PLAIN_CHECK,
+        },
+        ColorTestCase {
+            description: "converted SQL on a pipe is plain under auto",
+            arguments: &["convert"],
+            sql: "SELECT 'a' AS s",
+            environment: &[],
+            expected_exit_code: Some(0),
+            expected_stdout: "SELECT 'a' AS \"S\"\n",
+            expected_stderr: PLAIN_CONVERTED,
+        },
+        ColorTestCase {
+            description: "forced colour highlights keywords, strings and identifiers",
+            arguments: &["convert", "--color", "always"],
+            sql: "SELECT 'a' AS s",
+            environment: &[],
+            expected_exit_code: Some(0),
+            expected_stdout: "\x1b[35mSELECT\x1b[0m \x1b[32m'a'\x1b[0m \x1b[35mAS\x1b[0m \
+                \x1b[36m\"S\"\x1b[0m\n",
+            expected_stderr: STYLED_CONVERTED,
+        },
+        ColorTestCase {
+            description: "NO_COLOR keeps converted SQL plain despite CLICOLOR_FORCE",
+            arguments: &["convert"],
+            sql: "SELECT 'a' AS s",
+            environment: &[("NO_COLOR", "1"), ("CLICOLOR_FORCE", "1")],
+            expected_exit_code: Some(0),
+            expected_stdout: "SELECT 'a' AS \"S\"\n",
+            expected_stderr: PLAIN_CONVERTED,
+        },
+        ColorTestCase {
+            description: "the JSON report is never styled, even when forced",
+            arguments: &["convert", "--json", "--color", "always"],
+            sql: "SELECT 'a' AS s",
+            environment: &[],
+            expected_exit_code: Some(0),
+            expected_stdout: "{\n  \"converted\": true,\n  \"profile\": \"the built-in default\",\n  \
+                \"sql\": \"SELECT 'a' AS \\\"S\\\"\",\n  \"refusals\": [],\n  \"divergences\": {},\n  \
+                \"assumptions\": [],\n  \"divergence_failures\": {},\n  \"notes\": [],\n  \
+                \"python_functions\": [],\n  \"macros\": [],\n  \"overrides\": []\n}\n",
+            expected_stderr: STYLED_CONVERTED,
+        },
+    ];
+    let directory = tempfile::tempdir().expect("temporary directory");
+    for test_case in test_cases {
+        let (exit_code, stdout, stderr) = run_with_environment(
+            directory.path(),
+            test_case.arguments,
+            test_case.sql,
+            test_case.environment,
+        );
+        assert_eq!(
+            (exit_code, stdout.as_str(), stderr.as_str()),
+            (
+                test_case.expected_exit_code,
+                test_case.expected_stdout,
+                test_case.expected_stderr
+            ),
+            "{}",
             test_case.description
         );
     }
