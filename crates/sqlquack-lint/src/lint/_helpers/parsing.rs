@@ -33,6 +33,36 @@ static BIGQUERY_TOKENIZER: LazyLock<Tokenizer> = LazyLock::new(|| {
     Tokenizer::new(config)
 });
 
+/// Databricks' tokens as SQLClean read them: backtick names, `"` strings, `\` escapes, typed number suffixes.
+static DATABRICKS_TOKENIZER: LazyLock<Tokenizer> = LazyLock::new(|| {
+    let mut config: TokenizerConfig = TokenizerConfig::default();
+    config.identifiers.clear();
+    config.identifiers.insert('`', '`');
+    config.quotes.insert("\"".to_owned(), "\"".to_owned());
+    config.string_escapes.push('\\');
+    config.keywords.insert("DIV".to_owned(), TokenType::Div);
+    for command in ["REPAIR", "MSCK"] {
+        config
+            .keywords
+            .insert(command.to_owned(), TokenType::Command);
+    }
+    for (suffix, kind) in [
+        ("L", "BIGINT"),
+        ("S", "SMALLINT"),
+        ("Y", "TINYINT"),
+        ("D", "DOUBLE"),
+        ("F", "FLOAT"),
+        ("BD", "DECIMAL"),
+    ] {
+        config
+            .numeric_literals
+            .insert(suffix.to_owned(), kind.to_owned());
+    }
+    config.identifiers_can_start_with_digit = true;
+    config.string_escapes_allowed_in_raw_strings = false;
+    Tokenizer::new(config)
+});
+
 /// The SQLQuack dialect `name` names; `None` for a known dialect SQLQuack does not parse yet.
 pub(crate) fn dialect(name: &str) -> Result<Option<LintDialect>, String> {
     let lower = name.to_ascii_lowercase();
@@ -42,6 +72,7 @@ pub(crate) fn dialect(name: &str) -> Result<Option<LintDialect>, String> {
         "sqlite" => Ok(Some(LintDialect::SQLite)),
         "postgres" | "postgresql" | "generic" | "" => Ok(Some(LintDialect::PostgreSQL)),
         "bigquery" => Ok(Some(LintDialect::BigQuery)),
+        "databricks" => Ok(Some(LintDialect::Databricks)),
         _ if UNPARSED_DIALECTS.contains(&lower.as_str()) => Ok(None),
         _ => Err(format!("Unknown dialect: {name}")),
     }
@@ -54,7 +85,7 @@ fn syntax_dialect(dialect: LintDialect) -> Option<Dialect> {
         LintDialect::DuckDB => Some(Dialect::DuckDB),
         LintDialect::PostgreSQL => Some(Dialect::PostgreSQL),
         LintDialect::SQLite => Some(Dialect::SQLite),
-        LintDialect::BigQuery => None,
+        LintDialect::BigQuery | LintDialect::Databricks => None,
     }
 }
 
@@ -66,6 +97,7 @@ pub(crate) fn parse(
 ) -> Result<ParsedSql, String> {
     let tokens: Vec<Token> = match syntax_dialect(dialect) {
         Some(syntax) => dialect_tokens(sql, syntax),
+        None if dialect == LintDialect::Databricks => DATABRICKS_TOKENIZER.tokenize(sql),
         None => BIGQUERY_TOKENIZER.tokenize(sql),
     }
     .map_err(|error| error.to_string())?;
@@ -85,7 +117,7 @@ pub(crate) fn parse(
     };
     let statements: Vec<Expression> = match (dialect, syntax_dialect(dialect)) {
         (LintDialect::PostgreSQL, _) => postgres_statements(parse_text)?,
-        (LintDialect::BigQuery, _) | (_, None) => bigquery_statements(parse_text)?,
+        (_, None) => native_statements(parse_text, dialect)?,
         (_, Some(syntax)) => {
             parse_statements(parse_text, syntax, &options).map_err(|error| error.to_string())?
         }
@@ -116,17 +148,15 @@ pub(crate) fn predicate_expressions(
     }
     let mut text: &str = text.trim_end();
     loop {
-        let refused: usize =
-            match sqlquack_syntax_bigquery::parse_strict(&format!("{SELECT_PREFIX}{text}")) {
-                Ok(parsed) => {
-                    return match parsed.statements.as_slice() {
-                        [Expression::Select(select)] => Ok(select.expressions.clone()),
-                        _ => Err("the predicate is not one expression list".to_owned()),
-                    };
-                }
-                Err(sqlquack_syntax_bigquery::StrictFailure::Parse(error)) => error.position,
-                Err(sqlquack_syntax_bigquery::StrictFailure::Uncovered { position }) => position,
-            };
+        let refused: usize = match native_parse(&format!("{SELECT_PREFIX}{text}"), dialect) {
+            Ok(statements) => {
+                return match statements.as_slice() {
+                    [Expression::Select(select)] => Ok(select.expressions.clone()),
+                    _ => Err("the predicate is not one expression list".to_owned()),
+                };
+            }
+            Err((position, _)) => position,
+        };
         let kept: &str = refused
             .checked_sub(SELECT_PREFIX.len())
             .filter(|&at| at > 0 && at < text.len())
@@ -146,13 +176,36 @@ fn postgres_statements(sql: &str) -> Result<Vec<Expression>, String> {
     }
 }
 
-/// The statements of `sql` from SQLQuack's native BigQuery parser, refusing what BigQuery refuses.
-fn bigquery_statements(sql: &str) -> Result<Vec<Expression>, String> {
-    use sqlquack_syntax_bigquery::StrictFailure;
-    match sqlquack_syntax_bigquery::parse_strict(sql) {
-        Ok(parsed) => Ok(parsed.statements),
-        Err(StrictFailure::Parse(error)) => Err(parse_error(sql, error.position, &error.message)),
-        Err(StrictFailure::Uncovered { position }) => Err(uncovered(sql, position)),
+/// The statements of `sql` from the dialect's own native parser, refusing what that engine refuses.
+fn native_statements(sql: &str, dialect: LintDialect) -> Result<Vec<Expression>, String> {
+    native_parse(sql, dialect).map_err(|(position, message)| match message {
+        Some(message) => parse_error(sql, position, &message),
+        None => uncovered(sql, position),
+    })
+}
+
+/// The native BigQuery or Databricks parse of `sql`; on refusal, its byte position and parse message.
+fn native_parse(
+    sql: &str,
+    dialect: LintDialect,
+) -> Result<Vec<Expression>, (usize, Option<String>)> {
+    match dialect {
+        LintDialect::Databricks => {
+            use sqlquack_syntax_databricks::StrictFailure;
+            match sqlquack_syntax_databricks::parse_strict(sql) {
+                Ok(parsed) => Ok(parsed.statements),
+                Err(StrictFailure::Parse(error)) => Err((error.position, Some(error.message))),
+                Err(StrictFailure::Uncovered { position }) => Err((position, None)),
+            }
+        }
+        _ => {
+            use sqlquack_syntax_bigquery::StrictFailure;
+            match sqlquack_syntax_bigquery::parse_strict(sql) {
+                Ok(parsed) => Ok(parsed.statements),
+                Err(StrictFailure::Parse(error)) => Err((error.position, Some(error.message))),
+                Err(StrictFailure::Uncovered { position }) => Err((position, None)),
+            }
+        }
     }
 }
 

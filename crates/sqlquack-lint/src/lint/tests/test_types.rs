@@ -152,3 +152,10 @@ pub(crate) struct LongChainTestCase {
     pub terms: usize,
     pub expected_lints: bool,
 }
+
+pub(crate) struct JoinPredicateTestCase {
+    pub description: &'static str,
+    pub dialect: &'static str,
+    pub predicate: &'static str,
+    pub expected_findings: usize,
+}

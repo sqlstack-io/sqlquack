@@ -5,8 +5,10 @@ use sqlquack_syntax::Expression;
 
 use crate::tree::constants::{
     BIGQUERY_AGGREGATE_CALLS, BIGQUERY_FOREIGN_AGGREGATE_CALLS,
-    BIGQUERY_SINGLE_ARGUMENT_AGGREGATES, JSON_AGGREGATE_KINDS, POSTGRES_AGGREGATE_CALLS,
-    POSTGRES_FOREIGN_AGGREGATE_CALLS, POSTGRES_SINGLE_ARGUMENT_AGGREGATES, WINDOW_ONLY_CALLS,
+    BIGQUERY_SINGLE_ARGUMENT_AGGREGATES, DATABRICKS_AGGREGATE_CALLS,
+    DATABRICKS_FOREIGN_AGGREGATE_CALLS, DATABRICKS_SINGLE_ARGUMENT_AGGREGATES,
+    JSON_AGGREGATE_KINDS, POSTGRES_AGGREGATE_CALLS, POSTGRES_FOREIGN_AGGREGATE_CALLS,
+    POSTGRES_SINGLE_ARGUMENT_AGGREGATES, WINDOW_ONLY_CALLS,
 };
 use crate::tree::main::call_name::call_name;
 
@@ -14,7 +16,10 @@ use crate::tree::main::call_name::call_name;
 pub(crate) fn is_aggregate(expression: &Expression, dialect: LintDialect) -> bool {
     match expression {
         Expression::Function(_) | Expression::AggregateFunction(_)
-            if matches!(dialect, LintDialect::PostgreSQL | LintDialect::BigQuery) =>
+            if matches!(
+                dialect,
+                LintDialect::PostgreSQL | LintDialect::BigQuery | LintDialect::Databricks
+            ) =>
         {
             call_name(expression)
                 .is_some_and(|name| is_named_aggregate(name, call_arguments(expression), dialect))
@@ -114,6 +119,11 @@ fn is_named_aggregate(name: &str, arguments: usize, dialect: LintDialect) -> boo
             &BIGQUERY_AGGREGATE_CALLS,
             &BIGQUERY_FOREIGN_AGGREGATE_CALLS,
             &BIGQUERY_SINGLE_ARGUMENT_AGGREGATES,
+        ),
+        LintDialect::Databricks => (
+            &DATABRICKS_AGGREGATE_CALLS,
+            &DATABRICKS_FOREIGN_AGGREGATE_CALLS,
+            &DATABRICKS_SINGLE_ARGUMENT_AGGREGATES,
         ),
         _ => (
             &POSTGRES_AGGREGATE_CALLS,

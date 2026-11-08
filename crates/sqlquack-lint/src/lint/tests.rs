@@ -6,6 +6,8 @@ mod cross_joins;
 mod empty_fixture_lint;
 #[path = "tests/helpers.rs"]
 mod helpers;
+#[path = "tests/test_join_predicates.rs"]
+mod join_predicates;
 #[path = "tests/test_lint_exemptions.rs"]
 mod lint_exemptions;
 #[path = "tests/test_long_chains.rs"]

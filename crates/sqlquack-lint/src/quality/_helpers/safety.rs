@@ -228,7 +228,7 @@ fn with_clause(node: &Expression) -> Option<&With> {
 fn cte_key(identifier: &Identifier, dialect: LintDialect) -> String {
     let quoted_names_ignore_case = matches!(
         dialect,
-        LintDialect::DuckDB | LintDialect::SQLite | LintDialect::BigQuery
+        LintDialect::DuckDB | LintDialect::SQLite | LintDialect::BigQuery | LintDialect::Databricks
     );
     match dialect {
         _ if identifier.quoted && !quoted_names_ignore_case => identifier.name.clone(),

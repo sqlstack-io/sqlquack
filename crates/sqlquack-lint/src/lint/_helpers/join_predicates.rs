@@ -93,23 +93,48 @@ pub(super) fn join_expression_spans(
                         ))
             })
             .unwrap_or(tokens.len());
+        let native: bool = matches!(dialect, LintDialect::BigQuery | LintDialect::Databricks);
+        let end: usize = match native {
+            true => (index + 1..end)
+                .rev()
+                .find(|&last| !join_side(tokens[last].token_type))
+                .map_or(index + 1, |last| last + 1),
+            false => end,
+        };
         let parsed = predicate_expressions(
             sql_between(sql, tokens, index + 1, end),
             &tokens[index + 1..end],
             dialect,
         );
-        if dialect == LintDialect::BigQuery && parsed.is_err() {
+        if native && parsed.is_err() {
             continue;
         }
         let plain = |predicate: &Expression| {
-            plain_predicate(predicate)
-                || (dialect == LintDialect::BigQuery && is_distinct_from(predicate))
+            plain_predicate(predicate) || (native && is_distinct_from(predicate))
         };
         if !matches!(parsed.as_deref(), Ok([predicate]) if plain(predicate)) {
             spans.push(token.span);
         }
     }
     spans
+}
+
+/// A keyword that starts the next join (`LEFT`, `CROSS`, ...), which a native select list would read as an alias.
+fn join_side(token_type: TokenType) -> bool {
+    matches!(
+        token_type,
+        TokenType::Left
+            | TokenType::Right
+            | TokenType::Full
+            | TokenType::Inner
+            | TokenType::Outer
+            | TokenType::Cross
+            | TokenType::Natural
+            | TokenType::Semi
+            | TokenType::Anti
+            | TokenType::Lateral
+            | TokenType::Positional
+    )
 }
 
 fn plain_column(expression: &Expression) -> bool {
@@ -134,7 +159,7 @@ fn comparison(left: &Expression, right: &Expression) -> bool {
     operand(left) && operand(right)
 }
 
-/// `a IS DISTINCT FROM b`, which BigQuery's parser writes as NOT over `IS NOT DISTINCT FROM`.
+/// `a IS DISTINCT FROM b`, which the BigQuery and Databricks parsers write as NOT over `IS NOT DISTINCT FROM`.
 fn is_distinct_from(expression: &Expression) -> bool {
     matches!(expression, Expression::Not(value)
         if matches!(value.this, Expression::NullSafeEq(_)) && plain_predicate(&value.this))

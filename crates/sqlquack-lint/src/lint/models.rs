@@ -13,6 +13,7 @@ pub enum LintDialect {
     PostgreSQL,
     SQLite,
     BigQuery,
+    Databricks,
 }
 
 /// SQL text tokenized and parsed under one dialect.

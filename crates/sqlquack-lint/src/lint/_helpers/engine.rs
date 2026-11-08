@@ -1815,6 +1815,7 @@ fn explicit_union_fix(dialect: LintDialect, span: Span) -> Option<LintEdit> {
             | LintDialect::Snowflake
             | LintDialect::DuckDB
             | LintDialect::BigQuery
+            | LintDialect::Databricks
     )
     .then(|| LintEdit {
         start: span.start,
