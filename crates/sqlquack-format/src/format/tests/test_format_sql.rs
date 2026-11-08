@@ -1101,6 +1101,7 @@ fn given_wide_sql_when_formatting_as_sql_server_then_it_takes_about_as_long_as_s
 }
 
 #[test]
+#[ignore = "timing"]
 fn given_sql_growing_in_size_when_formatting_then_time_grows_linearly() {
     let test_cases = [test_types::ScalingSqlTestCase {
         description: "a BigQuery dashed name of many segments, whose touching run the guide marks once",

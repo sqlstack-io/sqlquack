@@ -81,6 +81,11 @@ cargo test --workspace --locked --profile "$profile" "${features[@]}" --doc || f
 # single-threaded, so no other test shares the machine with them.
 { grep -rh -A4 --include='*.rs' '#\[ignore = "timing"\]' crates || true; } \
   | sed -n 's/^fn \([a-z0-9_]*\)(.*/\1/p' | sort -u >"$work/timing"
+marks=$({ grep -rh --include='*.rs' '#\[ignore = "timing"\]' crates || true; } | wc -l)
+if [ "$marks" -ne "$(wc -l <"$work/timing")" ]; then
+  echo "run_rust_tests: FAILED: $marks timing marks name $(wc -l <"$work/timing") distinct test functions"
+  failed=1
+fi
 : >"$work/timing-found"
 while IFS="$(printf '\t')" read -r _ name executable directory; do
   (cd "$directory" && "$executable" --list --ignored) | sed -n 's/: test$//p' \
