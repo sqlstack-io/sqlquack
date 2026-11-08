@@ -944,3 +944,27 @@ pub(crate) fn databricks_outputs(sql: &str) -> Vec<(String, Option<String>)> {
         .map(|output| (output.name, output.data_type))
         .collect()
 }
+
+/// The findings of `sql` read by DuckDB's own parser, under the DUCKDB profile and its shop.
+pub(crate) fn duckdb_parser_findings(sql: &str) -> Vec<(&'static str, String, usize)> {
+    let statement = sqlquack_syntax_duckdb::parse_strict(sql)
+        .unwrap_or_else(|failure| panic!("{sql}: {failure:?}"))
+        .statements
+        .remove(0);
+    let schema = duckdb_shop_schema();
+    let context = LineageContext {
+        profile: &DUCKDB,
+        schema: &schema,
+        sql: Some(sql),
+    };
+    statement_findings(&statement, context)
+        .into_iter()
+        .map(|finding| {
+            (
+                finding.code,
+                finding.message,
+                finding.span.map_or(0, |span| span.start),
+            )
+        })
+        .collect()
+}

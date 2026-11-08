@@ -17,8 +17,8 @@ use crate::lineage::constants::{
 };
 use crate::lineage::constants::{
     CLICKHOUSE_PROFILE, CLICKHOUSE_SINGLE_JOIN_SOURCES, DUCKDB_PROFILE, DUCKDB_ROWID,
-    METADATA_PREFIX, POSITIONAL_PREFIX, POSTGRES_PROFILE, POSTGRES_SYSTEM_COLUMNS,
-    SEQUENCE_COLUMNS, SNOWFLAKE_PROFILE, SQL_STAR,
+    DUCKDB_VALUE_KEYWORDS, METADATA_PREFIX, POSITIONAL_PREFIX, POSTGRES_PROFILE,
+    POSTGRES_SYSTEM_COLUMNS, SEQUENCE_COLUMNS, SNOWFLAKE_PROFILE, SQL_STAR,
 };
 use crate::lineage::models::NameFinding;
 use crate::lineage::models::{LineageContext, LineageScope, NamedQuery, ScopeSource};
@@ -119,6 +119,7 @@ pub(crate) fn column_finding(
         .iter()
         .any(|output| context.profile.same_identifier(output, &wanted))
         || (level.scope.sources.is_empty() && level.scope.outer.is_none())
+        || keyword_function(column, level.scope, context)
     {
         return None;
     }
@@ -126,6 +127,38 @@ pub(crate) fn column_finding(
         UNKNOWN_COLUMN_CODE,
         unknown_message(&written, level.scope, context),
     ))
+}
+
+/// A bare DuckDB value keyword no FROM item in scope offers, which DuckDB reads as its function.
+pub(crate) fn keyword_function(
+    column: &Column,
+    scope: &LineageScope<'_>,
+    context: LineageContext<'_>,
+) -> bool {
+    let name: &Identifier = &column.name;
+    if context.profile.name() != DUCKDB_PROFILE
+        || column.table.is_some()
+        || name.quoted
+        || !DUCKDB_VALUE_KEYWORDS
+            .iter()
+            .any(|keyword| name.name.eq_ignore_ascii_case(keyword))
+    {
+        return false;
+    }
+    let wanted: String = key(name, context);
+    let mut current: Option<&LineageScope<'_>> = Some(scope);
+    while let Some(level) = current {
+        if offering_count(level, &wanted, context) > 0
+            || level
+                .merged
+                .iter()
+                .any(|merged| context.profile.same_identifier(&merged.key, &wanted))
+        {
+            return false;
+        }
+        current = level.outer;
+    }
+    true
 }
 
 /// Whether ClickHouse reads a name both sides of the one join offer from the left side.

@@ -10,6 +10,7 @@ use sqlquack_syntax::expressions::queries::models::{OrderBy, Select};
 
 use crate::lineage::_helpers::checks::coercion::Engine;
 use crate::lineage::_helpers::checks::issues::{in_scope, issue, rule_location};
+use crate::lineage::_helpers::findings::checks::keyword_function;
 use crate::lineage::_helpers::tracing::expressions::is_aggregate;
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::typing::postgres_typing::postgres_window_only;
@@ -1002,7 +1003,9 @@ fn grouping(
                 continue;
             }
             if let Expression::Column(column) = current {
-                if grouped(&column_key(column, level)) {
+                if grouped(&column_key(column, level))
+                    || keyword_function(column, level.scope, level.context)
+                {
                     continue;
                 }
                 if column.table.is_none() && named {

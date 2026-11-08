@@ -1552,6 +1552,7 @@ dependencies = [
  "sqlquack-syntax-bigquery",
  "sqlquack-syntax-clickhouse",
  "sqlquack-syntax-databricks",
+ "sqlquack-syntax-duckdb",
  "sqlquack-syntax-postgres",
  "sqlquack-syntax-sqlite",
  "sqlquack-syntax-sqlserver",
