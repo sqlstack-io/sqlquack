@@ -20,6 +20,7 @@ stacker.workspace = true
 
 [dev-dependencies]
 sqlquack-syntax-bigquery.workspace = true
+sqlquack-syntax-duckdb.workspace = true
 sqlquack-syntax-postgres.workspace = true
 sqlquack-syntax-clickhouse.workspace = true
 sqlquack-syntax-sqlite.workspace = true

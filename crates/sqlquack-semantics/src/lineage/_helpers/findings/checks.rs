@@ -17,8 +17,8 @@ use crate::lineage::constants::{
 };
 use crate::lineage::constants::{
     CLICKHOUSE_PROFILE, CLICKHOUSE_SINGLE_JOIN_SOURCES, DUCKDB_PROFILE, DUCKDB_ROWID,
-    METADATA_PREFIX, POSITIONAL_PREFIX, POSTGRES_PROFILE, POSTGRES_SYSTEM_COLUMNS,
-    SEQUENCE_COLUMNS, SNOWFLAKE_PROFILE, SQL_STAR,
+    DUCKDB_VALUE_KEYWORDS, METADATA_PREFIX, POSITIONAL_PREFIX, POSTGRES_PROFILE,
+    POSTGRES_SYSTEM_COLUMNS, SEQUENCE_COLUMNS, SNOWFLAKE_PROFILE, SQL_STAR,
 };
 use crate::lineage::models::NameFinding;
 use crate::lineage::models::{LineageContext, LineageScope, NamedQuery, ScopeSource};
@@ -252,7 +252,7 @@ fn clickhouse_source_names(source: &ScopeSource, alias: &str, context: LineageCo
         })
 }
 
-/// A pseudo-column no relation lists: `METADATA$…`, `$n`, DuckDB's `rowid`, NEXTVAL or CURRVAL.
+/// A pseudo-column no relation lists: `METADATA$…`, `$n`, DuckDB's own names, NEXTVAL, CURRVAL.
 fn pseudo_column(name: &Identifier, qualified: bool, context: LineageContext<'_>) -> bool {
     let upper: String = name.name.to_uppercase();
     !name.quoted
@@ -265,6 +265,11 @@ fn pseudo_column(name: &Identifier, qualified: bool, context: LineageContext<'_>
                 })
             || (context.profile.name() == DUCKDB_PROFILE
                 && name.name.eq_ignore_ascii_case(DUCKDB_ROWID))
+            || (context.profile.name() == DUCKDB_PROFILE
+                && !qualified
+                && DUCKDB_VALUE_KEYWORDS
+                    .iter()
+                    .any(|keyword| name.name.eq_ignore_ascii_case(keyword)))
             || (qualified && SEQUENCE_COLUMNS.contains(&upper.as_str())))
 }
 

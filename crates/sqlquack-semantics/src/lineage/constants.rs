@@ -458,6 +458,20 @@ pub(crate) const SCOPE_PHASE: u8 = 0;
 pub(crate) const NAME_PHASE: u8 = 1;
 /// The phase of type findings: comparisons, arithmetic, casts, arguments and set operations.
 pub(crate) const TYPE_PHASE: u8 = 2;
+/// DuckDB keywords a bare name reads as their function when no column in scope has that name.
+pub(crate) const DUCKDB_VALUE_KEYWORDS: [&str; 11] = [
+    "current_catalog",
+    "current_date",
+    "current_role",
+    "current_schema",
+    "current_time",
+    "current_timestamp",
+    "current_user",
+    "localtime",
+    "localtimestamp",
+    "session_user",
+    "user",
+];
 /// DuckDB keywords that are not callable functions: only the bracket-free form is valid.
 pub(crate) const DUCKDB_KEYWORD_ONLY_FUNCTIONS: [&str; 4] = [
     "current_time",

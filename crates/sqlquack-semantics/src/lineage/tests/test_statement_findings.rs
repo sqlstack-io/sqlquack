@@ -4,7 +4,7 @@ use crate::dialects::constants::{DUCKDB, POSTGRES, SNOWFLAKE};
 use crate::lineage::_helpers::findings::statement::statement_findings;
 use crate::lineage::models::LineageContext;
 use crate::lineage::tests::helpers::{
-    duckdb_shop_schema, found_findings, owned_findings, shop_schema,
+    duckdb_parser_findings, duckdb_shop_schema, found_findings, owned_findings, shop_schema,
 };
 use crate::lineage::tests::test_types::QueryFindingsTestCase;
 
@@ -561,6 +561,44 @@ fn given_a_snowflake_query_when_a_name_or_window_is_definitely_wrong_then_it_is_
     for test_case in test_cases {
         assert_eq!(
             found_findings(test_case.sql, (Dialect::Snowflake, &SNOWFLAKE, &schema)),
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_bare_duckdb_value_keyword_from_duckdbs_parser_when_resolving_names_then_only_columns_are_judged()
+ {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "a keyword no FROM item offers reads as its function",
+            sql: "WITH recent AS (SELECT CURRENT_TIMESTAMP AS created_at) \
+                  SELECT created_at FROM recent WHERE created_at > CURRENT_TIMESTAMP - INTERVAL 1 DAY",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "every value keyword DuckDB reads bare, beside a relation",
+            sql: "SELECT current_catalog, current_date, current_role, current_schema, \
+                  current_time, current_timestamp, current_user, localtime, localtimestamp, \
+                  session_user, user FROM orders",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a function name DuckDB does not read bare is still a column",
+            sql: "SELECT now FROM orders",
+            expected_findings: &[("E201", "Unknown column 'now' in table 'orders'", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "a qualified keyword is a column of its relation",
+            sql: "SELECT o.current_date FROM orders o",
+            expected_findings: &[("E201", "Unknown column 'current_date' in table 'orders'", 9)],
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            duckdb_parser_findings(test_case.sql),
             owned_findings(test_case.expected_findings),
             "{}",
             test_case.description
