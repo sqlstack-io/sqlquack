@@ -332,6 +332,22 @@ fn given_a_project_when_a_declaration_clashes_or_is_unconfirmed_then_the_error_s
             expected_output: "sqlquack convert: warning: ./sources/raw.yml: the source raw__customers is left out, because its column email has no type",
         },
         ProjectTestCase {
+            description: "a source with a column type SQLQuack cannot read is left out with a warning naming it",
+            files: &[
+                POLICY_FILE,
+                ProjectFile {
+                    path: "sources/raw.yml",
+                    repository: &[],
+                    text: "sources:\n  - name: raw__customers\n    columns:\n      - name: id\n        type: INTEGER\n      - name: place\n        type: GEOGRAPHY\n",
+                },
+            ],
+            folder: "",
+            flags: &[],
+            sql: "SELECT id AS n FROM raw__customers",
+            expected_exit: Some(1),
+            expected_output: "sqlquack convert: warning: ./sources/raw.yml: the source raw__customers is left out, because its column place has no type SQLQuack reads: unknown Snowflake type `GEOGRAPHY`",
+        },
+        ProjectTestCase {
             description: "a Python function file not marked as SQLBuild marks one is an error",
             files: &[
                 POLICY_FILE,
