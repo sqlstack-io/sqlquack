@@ -14,7 +14,7 @@ from scripts.syntax_obligations.constants import ACTION_HAND, HAND_CASE_KEYS, PA
 from scripts.syntax_obligations.exceptions import ObligationError
 from scripts.syntax_obligations.models import Draft, FormStyle, Spec
 from scripts.syntax_obligations.types import Key, Row
-from scripts.syntax_obligations_pg.constants import (
+from scripts.syntax_obligations_postgres.constants import (
     FAMILIES,
     FAMILY_CONTEXTS,
     FILLS,

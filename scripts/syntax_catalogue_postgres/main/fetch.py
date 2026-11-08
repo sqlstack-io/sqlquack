@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from scripts.syntax_catalogue_pg._helpers.fetch import fetch
+from scripts.syntax_catalogue_postgres._helpers.fetch import fetch
 
 
 def run_fetch(argv: list[str] | None = None) -> int:

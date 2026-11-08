@@ -11,8 +11,8 @@ from scripts.syntax_catalogue._helpers.grammar import (
     normalize,
     required_skeleton,
 )
-from scripts.syntax_catalogue_pg.constants import ALTERNATIVE_VERBS, PHRASE_LINE, WHERE_PHRASE
-from scripts.syntax_catalogue_pg.models import Definition, Segment
+from scripts.syntax_catalogue_postgres.constants import ALTERNATIVE_VERBS, PHRASE_LINE, WHERE_PHRASE
+from scripts.syntax_catalogue_postgres.models import Definition, Segment
 
 
 def indent(line: str) -> int:

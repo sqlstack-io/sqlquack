@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 from scripts.syntax_catalogue._helpers.grammar import sha256
-from scripts.syntax_catalogue_pg._helpers.sgml import (
+from scripts.syntax_catalogue_postgres._helpers.sgml import (
     literals,
     plain,
     section_at,
@@ -14,7 +14,7 @@ from scripts.syntax_catalogue_pg._helpers.sgml import (
     signature_text,
     synopsis_text,
 )
-from scripts.syntax_catalogue_pg.constants import (
+from scripts.syntax_catalogue_postgres.constants import (
     ADMIN_TITLES,
     CHAPTER_FAMILIES,
     CHAPTERS,
@@ -36,9 +36,9 @@ from scripts.syntax_catalogue_pg.constants import (
     SYNOPSIS_DIV,
     UTILITY_TITLES,
 )
-from scripts.syntax_catalogue_pg.exceptions import PgCatalogueError
-from scripts.syntax_catalogue_pg.models import PgPage, Section, Signature, SynopsisBlock
-from scripts.syntax_catalogue_pg.types import Spans
+from scripts.syntax_catalogue_postgres.exceptions import PgCatalogueError
+from scripts.syntax_catalogue_postgres.models import PgPage, Section, Signature, SynopsisBlock
+from scripts.syntax_catalogue_postgres.types import Spans
 
 
 def command_family(title: str) -> str:

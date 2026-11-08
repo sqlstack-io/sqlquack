@@ -6,7 +6,7 @@ import re
 
 from scripts.syntax_catalogue._helpers.grammar import bare_words, required_skeleton, slug
 from scripts.syntax_catalogue.models import FormGroup
-from scripts.syntax_catalogue_pg.constants import (
+from scripts.syntax_catalogue_postgres.constants import (
     ACTION_PLACEHOLDER,
     BAR,
     CALL_NAME,
@@ -32,7 +32,7 @@ from scripts.syntax_catalogue_pg.constants import (
     PLACEHOLDER,
     PLAIN_CALL_WORDS,
 )
-from scripts.syntax_catalogue_pg.models import Definition, Signature
+from scripts.syntax_catalogue_postgres.models import Definition, Signature
 
 
 def without_choices(text: str) -> str:

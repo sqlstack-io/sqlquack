@@ -27,8 +27,8 @@ signatures.
 ## Regenerating
 
 ```sh
-python -m scripts.fetch_syntax_docs_pg CACHE      # private cache, never committed
-python -m scripts.build_syntax_catalogue_pg --cache CACHE --out coverage/syntax-postgres
+python -m scripts.fetch_syntax_docs_postgres CACHE      # private cache, never committed
+python -m scripts.build_syntax_catalogue_postgres --cache CACHE --out coverage/syntax-postgres
 ```
 
 The build writes nothing while any input is unresolved: a synopsis block with no disposition, a
@@ -39,7 +39,7 @@ rules as the Snowflake catalogue (`scripts/syntax_catalogue/_helpers/forms.py`, 
 ## Omission audit (`audit.toml`)
 
 ```sh
-python -m scripts.audit_syntax_catalogue_pg --cache CACHE
+python -m scripts.audit_syntax_catalogue_postgres --cache CACHE
 ```
 
 An independent check against the server's own grammar, `gram.y` and `kwlist.h` of the pinned
@@ -106,11 +106,11 @@ to the server grammar, and DO and CREATE FUNCTION are catalogued as statements.
 ## Obligations and cases
 
 ```sh
-python -m scripts.build_syntax_obligations_pg [--root ROOT] [--focus focus/postgres.toml]
+python -m scripts.build_syntax_obligations_postgres [--root ROOT] [--focus focus/postgres.toml]
 ```
 
 Obligations are derived for every catalogued form by the shared builder
-(`scripts/syntax_obligations`, reused by import). `scripts/syntax_obligations_pg` adds what is
+(`scripts/syntax_obligations`, reused by import). `scripts/syntax_obligations_postgres` adds what is
 Postgres's own: the submission context of each family (statements as written, expressions inside
 `SELECT ( … )` so a trailing keyword is never read as a bare column label, data types inside
 `CAST ( NULL AS … )`), placeholder fills by synopsis name, class rules for operator and function

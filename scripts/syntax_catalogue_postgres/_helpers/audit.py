@@ -9,9 +9,9 @@ from collections.abc import Iterator
 from pathlib import Path
 
 from scripts.syntax_catalogue._helpers.grammar import bare_words
-from scripts.syntax_catalogue_pg._helpers.gram import keywords, rules, token_text
-from scripts.syntax_catalogue_pg._helpers.groups import required_without_options
-from scripts.syntax_catalogue_pg.constants import (
+from scripts.syntax_catalogue_postgres._helpers.gram import keywords, rules, token_text
+from scripts.syntax_catalogue_postgres._helpers.groups import required_without_options
+from scripts.syntax_catalogue_postgres.constants import (
     DEFINITION_HEAD,
     EXPRESSION_RULES,
     GRAM_Y,
@@ -27,8 +27,8 @@ from scripts.syntax_catalogue_pg.constants import (
     TOPLEVEL_RULE,
     WORD_JOINER,
 )
-from scripts.syntax_catalogue_pg.exceptions import PgCatalogueError
-from scripts.syntax_catalogue_pg.models import (
+from scripts.syntax_catalogue_postgres.exceptions import PgCatalogueError
+from scripts.syntax_catalogue_postgres.models import (
     AuditGap,
     AuditResult,
     CatalogueWords,

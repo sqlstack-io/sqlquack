@@ -20,7 +20,7 @@ from scripts.syntax_obligations.constants import KIND_EXTREME
 from scripts.syntax_obligations.exceptions import ObligationError
 from scripts.syntax_obligations.models import Draft, Node, ReceiptView, Rendered
 from scripts.syntax_obligations.types import Row
-from scripts.syntax_obligations_pg.constants import (
+from scripts.syntax_obligations_postgres.constants import (
     AUTOCOMMIT_PATTERNS,
     CAPTURE_AUTOCOMMIT,
     CAPTURE_ROLLED_BACK,

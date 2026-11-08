@@ -1,5 +1,5 @@
 # Hand-written readings, suppressions and limits of the PostgreSQL catalogue's obligations; read
-# by scripts/build_syntax_obligations_pg.py through the shared obligation builder.
+# by scripts/build_syntax_obligations_postgres.py through the shared obligation builder.
 #
 # [[reading]] replaces a form's grammar for derivation only, bound to the catalogue grammar's
 # sha256; an empty grammar means the form's obligations are all hand-written [[limit]] rows.

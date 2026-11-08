@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from scripts.syntax_catalogue_pg.main.audit import run_audit
+from scripts.syntax_catalogue_postgres.main.audit import run_audit
 
 
 def main(argv: list[str] | None = None) -> int:

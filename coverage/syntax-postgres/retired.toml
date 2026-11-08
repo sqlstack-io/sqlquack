@@ -1,5 +1,5 @@
 # Obligation ids this root has retired, grouped by the commit that retired them.
-# scripts/build_syntax_obligations_pg.py never issues them again: it reserves each number and
+# scripts/build_syntax_obligations_postgres.py never issues them again: it reserves each number and
 # fails if a retired id appears in obligations/.
 
 [[retired]]

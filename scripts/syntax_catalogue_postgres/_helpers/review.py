@@ -5,8 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from scripts.syntax_catalogue._helpers.grammar import sha256
-from scripts.syntax_catalogue_pg.constants import GRAM_Y, KWLIST_H
-from scripts.syntax_catalogue_pg.models import AuditResult
+from scripts.syntax_catalogue_postgres.constants import GRAM_Y, KWLIST_H
+from scripts.syntax_catalogue_postgres.models import AuditResult
 
 
 def grammar_hashes(tree: Path) -> dict[str, str]:

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from scripts.syntax_obligations_pg.main.build import run_build
+from scripts.syntax_obligations_postgres.main.build import run_build
 
 
 def main(argv: list[str] | None = None) -> int:

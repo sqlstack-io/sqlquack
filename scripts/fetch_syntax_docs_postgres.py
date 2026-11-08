@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from scripts.syntax_catalogue_pg.main.fetch import run_fetch
+from scripts.syntax_catalogue_postgres.main.fetch import run_fetch
 
 
 def main(argv: list[str] | None = None) -> int:

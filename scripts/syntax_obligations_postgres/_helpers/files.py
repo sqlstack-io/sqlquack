@@ -5,7 +5,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from scripts.syntax_obligations_pg.constants import CASES_DIR, OBLIGATIONS_DIR
+from scripts.syntax_obligations_postgres.constants import CASES_DIR, OBLIGATIONS_DIR
 
 
 def snapshot(root: Path) -> dict[Path, bytes]:

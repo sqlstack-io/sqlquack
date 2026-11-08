@@ -8,11 +8,15 @@ import sys
 import tomllib
 from pathlib import Path
 
-from scripts.syntax_catalogue_pg._helpers.audit import audit
-from scripts.syntax_catalogue_pg._helpers.fetch import pinned
-from scripts.syntax_catalogue_pg._helpers.review import audit_summary, grammar_hashes, problems_of
-from scripts.syntax_catalogue_pg.constants import AUDIT_FILE
-from scripts.syntax_catalogue_pg.models import AuditResult
+from scripts.syntax_catalogue_postgres._helpers.audit import audit
+from scripts.syntax_catalogue_postgres._helpers.fetch import pinned
+from scripts.syntax_catalogue_postgres._helpers.review import (
+    audit_summary,
+    grammar_hashes,
+    problems_of,
+)
+from scripts.syntax_catalogue_postgres.constants import AUDIT_FILE
+from scripts.syntax_catalogue_postgres.models import AuditResult
 
 
 def run_audit(argv: list[str] | None = None) -> int:

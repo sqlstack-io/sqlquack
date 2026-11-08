@@ -10,7 +10,7 @@ import urllib.request
 from pathlib import Path
 
 from scripts.syntax_catalogue.exceptions import CatalogueError
-from scripts.syntax_catalogue_pg.constants import (
+from scripts.syntax_catalogue_postgres.constants import (
     FETCH_RECORD,
     TARBALL_NAME,
     TARBALL_SHA256,

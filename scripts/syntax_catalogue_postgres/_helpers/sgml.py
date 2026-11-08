@@ -6,7 +6,7 @@ import bisect
 import re
 
 from scripts.syntax_catalogue._helpers.grammar import normalize
-from scripts.syntax_catalogue_pg.constants import (
+from scripts.syntax_catalogue_postgres.constants import (
     ANGLES,
     BAR,
     COMMENT,
@@ -29,8 +29,8 @@ from scripts.syntax_catalogue_pg.constants import (
     TITLE,
     TYPE_TAG,
 )
-from scripts.syntax_catalogue_pg.models import Section
-from scripts.syntax_catalogue_pg.types import Spans
+from scripts.syntax_catalogue_postgres.models import Section
+from scripts.syntax_catalogue_postgres.types import Spans
 
 
 def entities(text: str) -> str:

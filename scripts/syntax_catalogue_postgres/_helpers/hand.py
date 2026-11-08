@@ -6,7 +6,7 @@ import tomllib
 from pathlib import Path
 
 from scripts.syntax_catalogue.exceptions import CatalogueError
-from scripts.syntax_catalogue_pg.constants import (
+from scripts.syntax_catalogue_postgres.constants import (
     BLOCK_KEYS,
     BLOCK_KINDS,
     FOLD_KEYS,
@@ -16,7 +16,7 @@ from scripts.syntax_catalogue_pg.constants import (
     PAGE_KEYS,
     SECTION_KEYS,
 )
-from scripts.syntax_catalogue_pg.models import Disposition, HandForm, HandInputs
+from scripts.syntax_catalogue_postgres.models import Disposition, HandForm, HandInputs
 
 
 def check_keys(*, table: str, row: dict[str, object], allowed: frozenset[str]) -> None:

@@ -1,5 +1,5 @@
 # Reviewed omission audit of the catalogue against the pinned grammar; checked by
-# scripts/audit_syntax_catalogue_pg.py, which fails on any unreviewed gap or stale row.
+# scripts/audit_syntax_catalogue_postgres.py, which fails on any unreviewed gap or stale row.
 #
 # The audit spells every alternative of every statement rule, the expression rules and the
 # rules reachable from them as keyword sequences (nonterminals that are

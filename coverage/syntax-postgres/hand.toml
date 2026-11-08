@@ -1,4 +1,4 @@
-# Reviewed inputs to scripts/build_syntax_catalogue_pg.py; read by the build only.
+# Reviewed inputs to scripts/build_syntax_catalogue_postgres.py; read by the build only.
 #
 # [[form]]: a form read by hand where the syntax is not in a command synopsis or a signature
 #   table: prose, a table, examples, or a synopsis that needs reading. Bound to the sha256 of

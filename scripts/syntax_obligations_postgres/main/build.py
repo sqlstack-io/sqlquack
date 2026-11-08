@@ -9,10 +9,14 @@ from pathlib import Path
 
 from scripts.syntax_obligations.exceptions import ObligationError
 from scripts.syntax_obligations.models import ReceiptView
-from scripts.syntax_obligations_pg._helpers.adapt import install, retired_ids
-from scripts.syntax_obligations_pg._helpers.cases import focus_forms, receipt_view, write_family
-from scripts.syntax_obligations_pg._helpers.files import restore, snapshot
-from scripts.syntax_obligations_pg.constants import (
+from scripts.syntax_obligations_postgres._helpers.adapt import install, retired_ids
+from scripts.syntax_obligations_postgres._helpers.cases import (
+    focus_forms,
+    receipt_view,
+    write_family,
+)
+from scripts.syntax_obligations_postgres._helpers.files import restore, snapshot
+from scripts.syntax_obligations_postgres.constants import (
     DEFAULT_FOCUS,
     DEFAULT_ROOT,
     FAMILIES,

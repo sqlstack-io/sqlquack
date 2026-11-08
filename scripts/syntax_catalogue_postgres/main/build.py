@@ -9,16 +9,16 @@ from pathlib import Path
 
 from scripts.syntax_catalogue._helpers.grammar import sha256
 from scripts.syntax_catalogue._helpers.toml_out import write_tables
-from scripts.syntax_catalogue_pg._helpers.catalogue import build_catalogue
-from scripts.syntax_catalogue_pg._helpers.fetch import pinned
-from scripts.syntax_catalogue_pg.constants import (
+from scripts.syntax_catalogue_postgres._helpers.catalogue import build_catalogue
+from scripts.syntax_catalogue_postgres._helpers.fetch import pinned
+from scripts.syntax_catalogue_postgres.constants import (
     FAMILIES,
     INDEX_FILES,
     TARBALL_NAME,
     TARBALL_SHA256,
     TARBALL_URL,
 )
-from scripts.syntax_catalogue_pg.models import PgCatalogue
+from scripts.syntax_catalogue_postgres.models import PgCatalogue
 
 
 def run_build(argv: list[str] | None = None) -> int:

@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from scripts.syntax_catalogue_pg.constants import (
+from scripts.syntax_catalogue_postgres.constants import (
     BACKSLASH,
     CLOSE_BRACE,
     KEYWORD_LINE,
@@ -17,7 +17,7 @@ from scripts.syntax_catalogue_pg.constants import (
     SINGLE_QUOTE,
     TOKEN,
 )
-from scripts.syntax_catalogue_pg.models import Keyword, Rule
+from scripts.syntax_catalogue_postgres.models import Keyword, Rule
 
 
 def keywords(path: Path) -> list[Keyword]:

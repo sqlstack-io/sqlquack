@@ -10,22 +10,22 @@ from scripts.syntax_catalogue._helpers.forms import emit_forms
 from scripts.syntax_catalogue._helpers.grammar import normalize, sha256, slug
 from scripts.syntax_catalogue.exceptions import CatalogueError
 from scripts.syntax_catalogue.models import Catalogue, Existing, FormGroup, PageContext
-from scripts.syntax_catalogue_pg._helpers.groups import (
+from scripts.syntax_catalogue_postgres._helpers.groups import (
     call_groups,
     required_without_options,
     signature_groups,
     statement_groups,
     statement_labels,
 )
-from scripts.syntax_catalogue_pg._helpers.hand import load_hand
-from scripts.syntax_catalogue_pg._helpers.pages import load_pages
-from scripts.syntax_catalogue_pg._helpers.sgml import plain, synopsis_text
-from scripts.syntax_catalogue_pg._helpers.synopsis import (
+from scripts.syntax_catalogue_postgres._helpers.hand import load_hand
+from scripts.syntax_catalogue_postgres._helpers.pages import load_pages
+from scripts.syntax_catalogue_postgres._helpers.sgml import plain, synopsis_text
+from scripts.syntax_catalogue_postgres._helpers.synopsis import (
     definition_grammar,
     read_synopsis,
     split_at,
 )
-from scripts.syntax_catalogue_pg.constants import (
+from scripts.syntax_catalogue_postgres.constants import (
     ALIAS_SEPARATOR,
     ANCHOR_FIELD,
     CLASH_SIZE,
@@ -55,7 +55,7 @@ from scripts.syntax_catalogue_pg.constants import (
     TYPE_ROW,
     TYPE_TABLES,
 )
-from scripts.syntax_catalogue_pg.models import (
+from scripts.syntax_catalogue_postgres.models import (
     Definition,
     Disposition,
     HandForm,
@@ -66,7 +66,7 @@ from scripts.syntax_catalogue_pg.models import (
     Signature,
     SynopsisBlock,
 )
-from scripts.syntax_catalogue_pg.types import Row
+from scripts.syntax_catalogue_postgres.types import Row
 
 
 def add_groups(*, build: PageBuild, family: str, groups: list[FormGroup]) -> PageBuild:
