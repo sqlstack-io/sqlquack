@@ -15,18 +15,19 @@ sqlquack census [OPTIONS] <PATHS>...
 ```
 
 ```bash
-sqlquack census target/compiled/my_project/models --schema schema.json --builtin-policy
-sqlquack census target/compiled --schema schema.json --chain-models --json --builtin-policy
+sqlquack census target/compiled/my_project/models --builtin-policy
+sqlquack census target/compiled --chain-models --json --builtin-policy
 ```
 
 Each `.sql` file is one query, or one model compiled by
 [SQLBuild](https://github.com/sqlstack-io/sqlbuild) or dbt; SQLBuild's reference calls are
-recognised. A directory is searched for `.sql` files. Compiled models name relations as
-`database.schema.table`; see [Schema files](/docs/schema/#naming-relations-and-columns) for how
+recognised. A directory is searched for `.sql` files. The tables they read come from the
+[project](/docs/project/) you run it in. Compiled models name relations as
+`database.schema.table`; see [Projects](/docs/project/#naming-tables) for how
 they resolve.
 
 ```console
-$ sqlquack census target/compiled/my_project/models --schema schema.json --builtin-policy
+$ sqlquack census target/compiled/my_project/models --builtin-policy
 Census of 25 snowflake SQL files
   parsed 25 (25 statements), unparsed 0, empty 0
   distinct constructs 21 (4 clause, 4 fn, 1 join, 12 node)
@@ -65,7 +66,7 @@ collected, and supporting a construct may uncover others.
 
 | Option | Meaning |
 |--------|---------|
-| `--schema <file>` | The relations the files read. See [Schema files](/docs/schema/). |
+| `--project <folder>` | The [project](/docs/project/) declaring the tables the files read. Default the current folder. |
 | `--chain-models` | Type each converted file as the relation its name references, and convert again. |
 | `--assume-supported <keys>` | Construct keys or `rule.<id>`s to treat as supported, comma-separated. |
 | `--cursor-type timestamp\|integer` | Replace SQLBuild's cursor intrinsics with a bound as SQLBuild renders one. |

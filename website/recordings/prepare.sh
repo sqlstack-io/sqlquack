@@ -29,16 +29,20 @@ SELECT order_id,
        HASH(customer_id) AS bucket
 FROM orders
 SQL
-    cat > schema.json <<'JSON'
-{
-  "ORDERS": [
-    ["ORDER_ID", "NUMBER(38,0)"],
-    ["CUSTOMER_ID", "NUMBER(38,0)"],
-    ["STATUS", "VARCHAR"],
-    ["TOTAL", "NUMBER(12,2)"]
-  ]
-}
-JSON
+    mkdir -p sources
+    cat > sources/orders.yml <<'YAML'
+sources:
+  - name: orders
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: status
+        type: VARCHAR
+      - name: total
+        type: NUMBER(12,2)
+YAML
     ;;
   *)
     echo "unknown demo: $demo" >&2

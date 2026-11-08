@@ -43,11 +43,12 @@ def timed(*, workload: Workload, sqlquack: Path, policy: Path, rows: int) -> Tim
 def converted(*, sql: str, sqlquack: Path, policy: Path) -> dict[str, Any]:
     """`sqlquack convert --json`'s report for `sql`, which must convert."""
     with tempfile.TemporaryDirectory() as directory:
-        schema: Path = Path(directory) / "schema.json"
-        schema.write_text(json.dumps(SCHEMA))
+        sources: Path = Path(directory) / "sources"
+        sources.mkdir()
+        (sources / "tables.yml").write_text(json.dumps({"sources": source_entries()}))
         completed: subprocess.CompletedProcess[str] = subprocess.run(
             [str(sqlquack), "convert", "--json", "--compact", "--utc-session"]
-            + ["--schema", str(schema), "--policy", str(policy)],
+            + ["--project", directory, "--policy", str(policy)],
             input=sql,
             capture_output=True,
             text=True,
@@ -57,6 +58,15 @@ def converted(*, sql: str, sqlquack: Path, policy: Path) -> dict[str, Any]:
     if not report["converted"]:
         raise SystemExit(f"sql benchmark: SQLQuack refused {sql!r}: {completed.stderr}")
     return report
+
+
+def source_entries() -> list[dict[str, object]]:
+    """SCHEMA's relations as a project's sources, JSON being YAML too."""
+    entries: list[dict[str, object]] = []
+    for name, columns in SCHEMA.items():
+        typed: list[dict[str, str]] = [{"name": column, "type": kind} for column, kind in columns]
+        entries.append({"name": name, "columns": typed})
+    return entries
 
 
 def fastest(*, connection: duckdb.DuckDBPyConnection, sql: str) -> float:

@@ -8,4 +8,4 @@ pub const UNKNOWN_RELATION_SUFFIX: &str = "` has no known columns";
 pub const RELATION_KEY_SEPARATOR: &str = ".";
 /// How a refusal for a name matching several schema relations ends, after the relations.
 pub const AMBIGUOUS_RELATION_SUFFIX: &str =
-    " in the schema; qualify it, or set the session's DATABASE and SCHEMA, to pick one";
+    " in the project's sources; qualify it, or set the session's DATABASE and SCHEMA, to pick one";

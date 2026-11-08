@@ -1,41 +1,64 @@
-// The playground's starting schema, fixture rows and examples. Every example that is meant to
+// The playground's starting sources, fixture rows and examples. Every example that is meant to
 // translate does so cleanly (tests/playground.test.mjs checks each one's stages).
 
-export const SCHEMA = `{
-  "ORDERS": [
-    ["ORDER_ID", "NUMBER(38,0)"],
-    ["CUSTOMER_ID", "NUMBER(38,0)"],
-    ["STATUS", "VARCHAR"],
-    ["TOTAL", "NUMBER(12,2)"],
-    ["ORDERED_AT", "TIMESTAMP_NTZ"]
-  ],
-  "CUSTOMERS": [
-    ["CUSTOMER_ID", "NUMBER(38,0)"],
-    ["EMAIL", "VARCHAR"],
-    ["FIRST_NAME", "VARCHAR"],
-    ["COUNTRY", "VARCHAR"],
-    ["SIGNUP_DATE", "DATE"]
-  ],
-  "PRODUCTS": [
-    ["PRODUCT_ID", "NUMBER(38,0)"],
-    ["NAME", "VARCHAR"],
-    ["CATEGORY", "VARCHAR"],
-    ["PRICE", "NUMBER(10,2)"]
-  ],
-  "ORDER_ITEMS": [
-    ["ORDER_ID", "NUMBER(38,0)"],
-    ["PRODUCT_ID", "NUMBER(38,0)"],
-    ["QUANTITY", "NUMBER(38,0)"],
-    ["UNIT_PRICE", "NUMBER(10,2)"]
-  ],
-  "EVENTS": [
-    ["EVENT_ID", "NUMBER(38,0)"],
-    ["CUSTOMER_ID", "NUMBER(38,0)"],
-    ["EVENT_TYPE", "VARCHAR"],
-    ["OCCURRED_AT", "TIMESTAMP_NTZ"],
-    ["PAYLOAD", "VARIANT"]
-  ]
-}`;
+export const SOURCES = `sources:
+  - name: orders
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: status
+        type: VARCHAR
+      - name: total
+        type: NUMBER(12,2)
+      - name: ordered_at
+        type: TIMESTAMP_NTZ
+  - name: customers
+    columns:
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: email
+        type: VARCHAR
+      - name: first_name
+        type: VARCHAR
+      - name: country
+        type: VARCHAR
+      - name: signup_date
+        type: DATE
+  - name: products
+    columns:
+      - name: product_id
+        type: NUMBER(38,0)
+      - name: name
+        type: VARCHAR
+      - name: category
+        type: VARCHAR
+      - name: price
+        type: NUMBER(10,2)
+  - name: order_items
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: product_id
+        type: NUMBER(38,0)
+      - name: quantity
+        type: NUMBER(38,0)
+      - name: unit_price
+        type: NUMBER(10,2)
+  - name: events
+    columns:
+      - name: event_id
+        type: NUMBER(38,0)
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: event_type
+        type: VARCHAR
+      - name: occurred_at
+        type: TIMESTAMP_NTZ
+      - name: payload
+        type: VARIANT
+`;
 
 export const ROWS = `INSERT INTO "ORDERS" VALUES
   (1, 10, 'shipped', 120.50, TIMESTAMP '2026-10-01 09:30:00'),

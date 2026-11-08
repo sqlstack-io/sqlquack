@@ -30,7 +30,7 @@ fn given_refusals_when_rendered_then_the_source_line_is_underlined_at_the_span()
             expected_text: "error[SQ0004]: a name does not resolve: `fn:EDITDISTANCE`\n \
                 --> query.sql:1:8\n  |\n1 | SELECT    EDITDISTANCE(a) FROM orders\n  |           \
                 ^^^^^^^^^^^^^^^ no rule converts this call\n  |\n  = help: declare the relation and its \
-                columns in the schema (`--schema` on the command line)\n"
+                columns in a source file of the project (`sources/*.yml`)\n"
                 .to_owned(),
         },
         RenderTestCase {

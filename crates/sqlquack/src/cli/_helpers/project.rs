@@ -11,14 +11,13 @@ use sqlquack_semantics::types::models::Schema;
 use crate::cli::_helpers::evidence::policy_file;
 use crate::cli::models::{PolicyArguments, ProjectChoices};
 use crate::project::constants::OVERRIDES_FOLDER;
-use crate::project::main::load_schema::load_schema;
 use crate::project::main::project_folder::project_folder;
 use crate::project::main::project_schema::project_schema;
 
 /// The policy and the project choices of `conversion.project`, under the caller's flags.
 pub(crate) fn project_choices(
     conversion: &PolicyArguments,
-    (schema, session, overrides): (Option<&Path>, &[String], Option<&Path>),
+    (schema, session, overrides): (Option<&Schema>, &[String], Option<&Path>),
 ) -> Result<(Option<Policy>, ProjectChoices), String> {
     let root = conversion
         .project
@@ -36,7 +35,6 @@ pub(crate) fn project_choices(
         (false, Some(path)) => Some(policy_file(path)?),
         (false, None) => file_policy,
     };
-    let file = schema.map(schema_file).transpose()?;
     let mut conversion = conversion.clone();
     conversion.python_runtime |= project.confirm.python_runtime;
     conversion.utc_session |= project.confirm.utc_session;
@@ -57,7 +55,7 @@ pub(crate) fn project_choices(
         Some(path) => Some(path.to_path_buf()),
         None => project_folder(&root, project.overrides.as_deref(), OVERRIDES_FOLDER)?,
     };
-    let (schema, warnings) = project_schema(&root, &project, file)?;
+    let (schema, warnings) = project_schema(&root, &project, schema)?;
     Ok((
         policy,
         ProjectChoices {
@@ -76,9 +74,4 @@ fn project_file(path: &Path) -> Result<(Option<Policy>, ProjectPolicy), String> 
         true => load_project_file(path).map_err(|error| error.to_string()),
         false => Ok((None, ProjectPolicy::default())),
     }
-}
-
-/// The schema file at `path`, kept with its path to name it in a clash.
-fn schema_file(path: &Path) -> Result<(&Path, Schema), String> {
-    load_schema(path).map(|schema| (path, schema))
 }

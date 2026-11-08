@@ -74,11 +74,18 @@ SQL in rendered diagnostics. It returns a `CheckResult`:
 | `report` | `Mapping[str, Any]` | Exactly `sqlquack convert --json`'s report. |
 
 `ConvertOptions` has one field per [`convert`](/docs/cli/convert/) flag, with the same defaults:
-`project`, `schema`, `policy`, `builtin_policy`, `session`, `strict`, `utc_session`,
+`project`, `policy`, `builtin_policy`, `session`, `strict`, `utc_session`,
 `confirm_declared_offsets`, `python_runtime`, `loud_divergences_only`, `overrides`,
-`verified_overrides` and `compact`. `project`, `schema`, `policy` and `overrides` take a path (`str` or `os.PathLike`), not
-the parsed contents. `session` and `verified_overrides` take a mapping, such as
+`verified_overrides` and `compact`. `project`, `policy` and `overrides` take a path (`str` or
+`os.PathLike`), not the parsed contents. `session` and `verified_overrides` take a mapping, such as
 `session={"TIMEZONE": "UTC"}`, not a list of `NAME=VALUE` strings.
+
+`schema` declares tables in memory, beside the project's, as a mapping of table names to
+`[column, Snowflake type]` pairs:
+
+```python
+options = sqlquack.ConvertOptions(schema={"ORDERS": [["ORDER_ID", "NUMBER(38,0)"]]})
+```
 
 `project` takes a [project](/docs/project/) folder, as `--project` does: its sources, functions,
 overrides and settings apply, and its `sqlquack.toml` is the policy unless `policy` or
@@ -95,4 +102,4 @@ SQL.
 ## Errors
 
 Where the command line exits 2, the functions raise `SqlQuackError`, a `ValueError`: for example,
-for input that holds no SQL statement or a schema file that can't be read.
+for input that holds no SQL statement or a `schema` that is not a valid mapping.

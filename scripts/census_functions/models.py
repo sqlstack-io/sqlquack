@@ -1,4 +1,4 @@
-"""A project function's signature, as the schema file writes it."""
+"""A project function's signature, as a project folder's function file declares it."""
 
 from __future__ import annotations
 

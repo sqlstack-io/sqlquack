@@ -1,5 +1,5 @@
 -- The rows the basics corpus's translations run over, in the DuckDB types converted SQL reads
--- corpora/basics/schema.json as; the playground's sample rows.
+-- corpora/basics/sources/tables.yml as; the playground's sample rows.
 CREATE TABLE "CUSTOMERS" ("CUSTOMER_ID" DECIMAL(38,0), "EMAIL" VARCHAR, "FIRST_NAME" VARCHAR, "COUNTRY" VARCHAR, "SIGNUP_DATE" DATE);
 CREATE TABLE "EVENTS" ("EVENT_ID" DECIMAL(38,0), "CUSTOMER_ID" DECIMAL(38,0), "EVENT_TYPE" VARCHAR, "OCCURRED_AT" TIMESTAMP_NS, "PAYLOAD" JSON);
 CREATE TABLE "ORDERS" ("ORDER_ID" DECIMAL(38,0), "CUSTOMER_ID" DECIMAL(38,0), "STATUS" VARCHAR, "TOTAL" DECIMAL(12,2), "ORDERED_AT" TIMESTAMP_NS);

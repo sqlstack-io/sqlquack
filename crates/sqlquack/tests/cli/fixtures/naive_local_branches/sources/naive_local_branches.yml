@@ -1,0 +1,7 @@
+sources:
+  - name: t
+    columns:
+      - name: n
+        type: TIMESTAMP_NTZ(9)
+      - name: l
+        type: TIMESTAMP_LTZ(9)

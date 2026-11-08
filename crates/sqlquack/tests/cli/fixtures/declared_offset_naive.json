@@ -1,1 +1,0 @@
-{"relations": {"ORDERS": [{"name": "PLACED_ON", "type": "TIMESTAMP_NTZ(9)", "offset": "UTC"}]}}

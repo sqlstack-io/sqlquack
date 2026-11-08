@@ -1,3 +1,4 @@
+use std::path::Path;
 use std::process::Command;
 
 use crate::test_types::{
@@ -7,6 +8,12 @@ use crate::test_types::{
 const ORDERS_SQL: &str = "SELECT customer_id, COUNT(*) AS orders FROM __ref(\"orders\") \
                           GROUP BY customer_id";
 const PRODUCTS_SQL: &str = "SELECT sku, price::NUMBER(10, 2) AS price FROM products";
+
+/// Writes the source file `sources` into the project folder `project`.
+fn write_sources(project: &Path, sources: &str) {
+    std::fs::create_dir_all(project.join("sources")).expect("sources folder created");
+    std::fs::write(project.join("sources/tables.yml"), sources).expect("sources written");
+}
 
 pub(crate) fn run_on_shop(arguments: &[&str]) -> BinaryOutcome {
     let directory = tempfile::tempdir().expect("temporary directory");
@@ -37,24 +44,24 @@ pub(crate) fn run_on_shop(arguments: &[&str]) -> BinaryOutcome {
 const FUZZY_NAMES_SQL: &str = "SELECT customer_id, SOUNDEX(name) AS sound FROM customers";
 const NAME_REPORT_SQL: &str =
     "SELECT customer_id, UPPER(sound) AS sound FROM __ref(\"fuzzy_names\")";
-const CUSTOMERS_SCHEMA: &str =
-    "\"CUSTOMERS\": [[\"CUSTOMER_ID\", \"NUMBER(38,0)\"], [\"NAME\", \"VARCHAR\"]]";
-const FUZZY_NAMES_SCHEMA: &str = "\"__SQLQUACK_RELATION__FUZZY_NAMES\": \
-                                  [[\"CUSTOMER_ID\", \"NUMBER(38,0)\"], [\"SOUND\", \"VARCHAR\"]]";
+const CUSTOMERS_SOURCE: &str = "  - name: customers\n    columns:\n      - name: customer_id\n        \
+                                type: NUMBER(38,0)\n      - name: name\n        type: VARCHAR\n";
+const FUZZY_NAMES_SOURCE: &str = "  - name: __sqlquack_relation__fuzzy_names\n    columns:\n      \
+                                  - name: customer_id\n        type: NUMBER(38,0)\n      \
+                                  - name: sound\n        type: VARCHAR\n";
 
-/// The chained census of a refused model and its reader, the schema typing the model if `typed`.
+/// The chained census of a refused model and its reader, the project typing the model if `typed`.
 pub(crate) fn run_on_refused_upstream(typed: bool, flags: &[&str]) -> UpstreamOutcome {
     let directory = tempfile::tempdir().expect("temporary directory");
     let models = directory.path().join("models");
     std::fs::create_dir(&models).expect("models directory created");
     std::fs::write(models.join("fuzzy_names.sql"), FUZZY_NAMES_SQL).expect("fixture written");
     std::fs::write(models.join("name_report.sql"), NAME_REPORT_SQL).expect("fixture written");
-    let relations = [CUSTOMERS_SCHEMA, FUZZY_NAMES_SCHEMA][..1 + usize::from(typed)].join(", ");
-    let schema = directory.path().join("schema.json");
-    std::fs::write(&schema, format!("{{\"relations\": {{{relations}}}}}")).expect("schema written");
+    let sources = [CUSTOMERS_SOURCE, FUZZY_NAMES_SOURCE][..1 + usize::from(typed)].concat();
+    write_sources(directory.path(), &format!("sources:\n{sources}"));
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["census", "--builtin-policy", "--chain-models", "--schema"])
-        .arg(&schema)
+        .args(["census", "--builtin-policy", "--chain-models", "--project"])
+        .arg(directory.path())
         .args(flags)
         .arg(&models)
         .output()
@@ -85,23 +92,21 @@ pub(crate) fn run_on_refused_upstream(typed: bool, flags: &[&str]) -> UpstreamOu
 
 const EVENTS_SQL: &str = "SELECT payload:kind = PARSE_JSON('\"order\"') AS is_order FROM events";
 
-/// Runs the census, with `flags`, over a model comparing a source VARIANT whose column is `payload`.
+/// Runs the census, with `flags`, over a model comparing a source VARIANT, `payload` its column's YAML.
 pub(crate) fn run_on_events(payload: &str, flags: &[&str]) -> SourceVariantOutcome {
     let directory = tempfile::tempdir().expect("temporary directory");
     let models = directory.path().join("models");
     std::fs::create_dir(&models).expect("models directory created");
     std::fs::write(models.join("order_events.sql"), EVENTS_SQL).expect("fixture written");
-    let schema = directory.path().join("schema.json");
-    std::fs::write(
-        &schema,
-        format!("{{\"relations\": {{\"EVENTS\": [{payload}]}}}}"),
-    )
-    .expect("schema written");
+    write_sources(
+        directory.path(),
+        &format!("sources:\n  - name: events\n    columns:\n{payload}"),
+    );
     let policy = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../sqlquack.toml");
     let mut command = Command::new(env!("CARGO_BIN_EXE_sqlquack"));
     command
-        .args(["census", "--json", "--chain-models", "--schema"])
-        .arg(&schema)
+        .args(["census", "--json", "--chain-models", "--project"])
+        .arg(directory.path())
         .arg("--policy")
         .arg(&policy);
     let output = command
@@ -126,16 +131,14 @@ pub(crate) fn run_on_placed_orders(flags: &[&str]) -> SourceVariantOutcome {
     let models = directory.path().join("models");
     std::fs::create_dir(&models).expect("models directory created");
     std::fs::write(models.join("placed_orders.sql"), PLACED_SQL).expect("fixture written");
-    let schema = directory.path().join("schema.json");
-    std::fs::write(
-        &schema,
-        "{\"relations\": {\"ORDERS\": [[\"PLACED_ON\", \"DATE\"]]}}",
-    )
-    .expect("schema written");
+    write_sources(
+        directory.path(),
+        "sources:\n  - name: orders\n    columns:\n      - name: placed_on\n        type: DATE\n",
+    );
     let policy = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../sqlquack.toml");
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["census", "--json", "--schema"])
-        .arg(&schema)
+        .args(["census", "--json", "--project"])
+        .arg(directory.path())
         .arg("--policy")
         .arg(&policy)
         .args(flags)
@@ -158,21 +161,16 @@ pub(crate) fn census_warnings(flags: &[&str]) -> Vec<String> {
     std::fs::create_dir(&models).expect("models directory created");
     std::fs::write(models.join("fuzzy_names.sql"), FUZZY_NAMES_SQL).expect("fixture written");
     std::fs::write(models.join("name_report.sql"), NAME_REPORT_SQL).expect("fixture written");
-    let schema = directory.path().join("schema.json");
-    std::fs::write(
-        &schema,
-        format!("{{\"relations\": {{{CUSTOMERS_SCHEMA}}}}}"),
-    )
-    .expect("schema written");
+    write_sources(directory.path(), &format!("sources:\n{CUSTOMERS_SOURCE}"));
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
         .args([
             "census",
             "--builtin-policy",
             "--json",
             "--chain-models",
-            "--schema",
+            "--project",
         ])
-        .arg(&schema)
+        .arg(directory.path())
         .args(flags)
         .arg(&models)
         .output()
@@ -193,15 +191,13 @@ pub(crate) fn cursor_model_convertible(flags: &[&str]) -> Option<u64> {
     let models = directory.path().join("models");
     std::fs::create_dir(&models).expect("models directory created");
     std::fs::write(models.join("new_orders.sql"), CURSOR_SQL).expect("fixture written");
-    let schema = directory.path().join("schema.json");
-    std::fs::write(
-        &schema,
-        "{\"relations\": {\"ORDERS\": [[\"ORDER_ID\", \"NUMBER(38,0)\"]]}}",
-    )
-    .expect("schema written");
+    write_sources(
+        directory.path(),
+        "sources:\n  - name: orders\n    columns:\n      - name: order_id\n        type: NUMBER(38,0)\n",
+    );
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["census", "--builtin-policy", "--json", "--schema"])
-        .arg(&schema)
+        .args(["census", "--builtin-policy", "--json", "--project"])
+        .arg(directory.path())
         .args(flags)
         .arg(&models)
         .output()
@@ -211,8 +207,8 @@ pub(crate) fn cursor_model_convertible(flags: &[&str]) -> Option<u64> {
 }
 
 const PLACED_DATE_SQL: &str = "SELECT TO_DATE(placed_at) AS placed_on FROM orders";
-const DECLARED_ORDERS_SCHEMA: &str = "\"ORDERS\": [{\"name\": \"PLACED_AT\", \
-                                      \"type\": \"TIMESTAMP_TZ(9)\", \"offset\": \"+00:00\"}]";
+const DECLARED_ORDERS_SOURCE: &str = "  - name: orders\n    columns:\n      - name: placed_at\n        \
+                                      type: TIMESTAMP_TZ(9)\n        offset: \"+00:00\"\n";
 
 /// The census of a model reading a declared-UTC column, optionally also declaring its output.
 pub(crate) fn run_on_declared_orders(declare_model: bool, flags: &[&str]) -> DeclaredOutcome {
@@ -220,18 +216,19 @@ pub(crate) fn run_on_declared_orders(declare_model: bool, flags: &[&str]) -> Dec
     let models = directory.path().join("models");
     std::fs::create_dir(&models).expect("models directory created");
     std::fs::write(models.join("placed_dates.sql"), PLACED_DATE_SQL).expect("fixture written");
-    let model = ", \"__SQLQUACK_RELATION__PLACED_DATES\": [{\"name\": \"PLACED_ON\", \
-                 \"type\": \"TIMESTAMP_TZ(9)\", \"offset\": \"UTC\"}]";
-    let schema = directory.path().join("schema.json");
-    let relations = format!(
-        "{DECLARED_ORDERS_SCHEMA}{}",
-        ["", model][usize::from(declare_model)]
+    let model = "  - name: __sqlquack_relation__placed_dates\n    columns:\n      \
+                 - name: placed_on\n        type: TIMESTAMP_TZ(9)\n        offset: UTC\n";
+    write_sources(
+        directory.path(),
+        &format!(
+            "sources:\n{DECLARED_ORDERS_SOURCE}{}",
+            ["", model][usize::from(declare_model)]
+        ),
     );
-    std::fs::write(&schema, format!("{{\"relations\": {{{relations}}}}}")).expect("schema written");
     let policy = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../sqlquack.toml");
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["census", "--json", "--schema"])
-        .arg(&schema)
+        .args(["census", "--json", "--project"])
+        .arg(directory.path())
         .arg("--policy")
         .arg(&policy)
         .args(flags)
@@ -266,16 +263,11 @@ pub(crate) fn converted_files(set_variable: bool) -> Vec<ConvertedFile> {
     std::fs::create_dir(&converted).expect("converted directory created");
     std::fs::write(models.join("customer_ids.sql"), CUSTOMER_IDS_SQL).expect("fixture written");
     std::fs::write(models.join("fuzzy_names.sql"), FUZZY_NAMES_SQL).expect("fixture written");
-    let schema = directory.path().join("schema.json");
-    std::fs::write(
-        &schema,
-        format!("{{\"relations\": {{{CUSTOMERS_SCHEMA}}}}}"),
-    )
-    .expect("schema written");
+    write_sources(directory.path(), &format!("sources:\n{CUSTOMERS_SOURCE}"));
     let mut command = Command::new(env!("CARGO_BIN_EXE_sqlquack"));
     command
-        .args(["census", "--builtin-policy", "--json", "--schema"])
-        .arg(&schema)
+        .args(["census", "--builtin-policy", "--json", "--project"])
+        .arg(directory.path())
         .arg(&models)
         .env_remove("SQLQUACK_CONVERTED_DIR")
         .envs(set_variable.then_some(("SQLQUACK_CONVERTED_DIR", &converted)))
@@ -308,7 +300,9 @@ const COMPILED_STAGING_SQL: &str = "with source as (\n\n    select * from analyt
                                     select * from renamed\n";
 const COMPILED_MART_SQL: &str = "select status, count(order_id) as orders\n\
                                  from \"ANALYTICS\".\"DBT_PROD\".\"STG_ORDERS\"\ngroup by status\n";
-const RAW_ORDERS_SCHEMA: &str = "{\"relations\": {\"ANALYTICS.RAW.ORDERS\": [[\"ID\", \"NUMBER(38,0)\"], [\"STATUS\", \"VARCHAR\"]]}}";
+const RAW_ORDERS_SOURCES: &str = "sources:\n  - name: orders\n    database: analytics\n    schema: raw\n    \
+                                  columns:\n      - name: id\n        type: NUMBER(38,0)\n      \
+                                  - name: status\n        type: VARCHAR\n";
 
 /// The unit-testable and strict counts of a census of dbt-compiled models, with `flags`.
 pub(crate) fn compiled_dbt_counts(flags: &[&str]) -> (Option<u64>, Option<u64>) {
@@ -320,11 +314,10 @@ pub(crate) fn compiled_dbt_counts(flags: &[&str]) -> (Option<u64>, Option<u64>) 
         .expect("fixture written");
     std::fs::write(models.join("marts/order_counts.sql"), COMPILED_MART_SQL)
         .expect("fixture written");
-    let schema = directory.path().join("schema.json");
-    std::fs::write(&schema, RAW_ORDERS_SCHEMA).expect("schema written");
+    write_sources(directory.path(), RAW_ORDERS_SOURCES);
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["census", "--builtin-policy", "--json", "--schema"])
-        .arg(&schema)
+        .args(["census", "--builtin-policy", "--json", "--project"])
+        .arg(directory.path())
         .args(flags)
         .arg(directory.path().join("target/compiled"))
         .output()

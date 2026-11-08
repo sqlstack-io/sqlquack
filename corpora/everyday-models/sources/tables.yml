@@ -1,0 +1,425 @@
+sources:
+  - name: customers
+    columns:
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: first_name
+        type: VARCHAR
+      - name: last_name
+        type: VARCHAR
+      - name: email
+        type: VARCHAR
+      - name: country
+        type: VARCHAR
+      - name: signup_date
+        type: DATE
+      - name: is_active
+        type: BOOLEAN
+      - name: created_at
+        type: TIMESTAMP_NTZ
+  - name: orders
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: status
+        type: VARCHAR
+      - name: total
+        type: NUMBER(12,2)
+      - name: discount
+        type: NUMBER(12,2)
+      - name: ordered_at
+        type: TIMESTAMP_NTZ
+      - name: shipped_at
+        type: TIMESTAMP_NTZ
+      - name: channel
+        type: VARCHAR
+  - name: order_items
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: line_number
+        type: NUMBER(38,0)
+      - name: product_id
+        type: NUMBER(38,0)
+      - name: quantity
+        type: NUMBER(38,0)
+      - name: unit_price
+        type: NUMBER(10,2)
+  - name: products
+    columns:
+      - name: product_id
+        type: NUMBER(38,0)
+      - name: sku
+        type: VARCHAR
+      - name: name
+        type: VARCHAR
+      - name: category
+        type: VARCHAR
+      - name: price
+        type: NUMBER(10,2)
+      - name: weight_kg
+        type: FLOAT
+      - name: launched_on
+        type: DATE
+  - name: payments
+    columns:
+      - name: payment_id
+        type: NUMBER(38,0)
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: method
+        type: VARCHAR
+      - name: amount
+        type: NUMBER(12,2)
+      - name: paid_at
+        type: TIMESTAMP_NTZ
+  - name: events
+    columns:
+      - name: event_id
+        type: VARCHAR
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: event_type
+        type: VARCHAR
+      - name: payload
+        type: VARIANT
+      - name: occurred_at
+        type: TIMESTAMP_NTZ
+  - name: tickets
+    columns:
+      - name: ticket_id
+        type: NUMBER(38,0)
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: priority
+        type: VARCHAR
+      - name: subject
+        type: VARCHAR
+      - name: opened_at
+        type: TIMESTAMP_NTZ
+      - name: closed_at
+        type: TIMESTAMP_NTZ
+      - name: tags
+        type: ARRAY
+  - name: raw_orders
+    columns:
+      - name: id
+        type: NUMBER(38,0)
+      - name: user_id
+        type: NUMBER(38,0)
+      - name: order_date
+        type: DATE
+      - name: status
+        type: VARCHAR
+      - name: amount_cents
+        type: NUMBER(38,0)
+      - name: updated_at
+        type: TIMESTAMP_NTZ
+      - name: _loaded_at
+        type: TIMESTAMP_NTZ
+  - name: raw_customers
+    columns:
+      - name: id
+        type: NUMBER(38,0)
+      - name: first_name
+        type: VARCHAR
+      - name: last_name
+        type: VARCHAR
+      - name: email
+        type: VARCHAR
+      - name: updated_at
+        type: TIMESTAMP_NTZ
+      - name: _loaded_at
+        type: TIMESTAMP_NTZ
+  - name: raw_payments
+    columns:
+      - name: id
+        type: NUMBER(38,0)
+      - name: orderid
+        type: NUMBER(38,0)
+      - name: paymentmethod
+        type: VARCHAR
+      - name: status
+        type: VARCHAR
+      - name: amount
+        type: NUMBER(38,0)
+      - name: created
+        type: DATE
+      - name: _batched_at
+        type: TIMESTAMP_NTZ
+  - name: raw_events
+    columns:
+      - name: raw
+        type: VARIANT
+      - name: _loaded_at
+        type: TIMESTAMP_NTZ
+  - name: stg_orders
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: order_date
+        type: DATE
+      - name: status
+        type: VARCHAR
+      - name: amount
+        type: NUMBER(12,2)
+      - name: updated_at
+        type: TIMESTAMP_NTZ
+  - name: stg_customers
+    columns:
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: first_name
+        type: VARCHAR
+      - name: last_name
+        type: VARCHAR
+      - name: email
+        type: VARCHAR
+      - name: country
+        type: VARCHAR
+      - name: updated_at
+        type: TIMESTAMP_NTZ
+  - name: stg_payments
+    columns:
+      - name: payment_id
+        type: NUMBER(38,0)
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: payment_method
+        type: VARCHAR
+      - name: amount
+        type: NUMBER(12,2)
+      - name: paid_at
+        type: TIMESTAMP_NTZ
+  - name: fct_orders
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: order_date
+        type: DATE
+      - name: status
+        type: VARCHAR
+      - name: amount
+        type: NUMBER(12,2)
+      - name: updated_at
+        type: TIMESTAMP_NTZ
+  - name: subscriptions
+    columns:
+      - name: subscription_id
+        type: NUMBER(38,0)
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: plan
+        type: VARCHAR
+      - name: mrr
+        type: NUMBER(10,2)
+      - name: started_at
+        type: TIMESTAMP_NTZ
+      - name: cancelled_at
+        type: TIMESTAMP_NTZ
+      - name: updated_at
+        type: TIMESTAMP_NTZ
+  - name: inventory_snapshots
+    columns:
+      - name: snapshot_date
+        type: DATE
+      - name: product_id
+        type: NUMBER(38,0)
+      - name: warehouse
+        type: VARCHAR
+      - name: on_hand
+        type: NUMBER(38,0)
+  - name: web_sessions
+    columns:
+      - name: session_id
+        type: VARCHAR
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: started_at
+        type: TIMESTAMP_NTZ
+      - name: page_views
+        type: NUMBER(38,0)
+      - name: device
+        type: VARCHAR
+      - name: attributes
+        type: OBJECT
+  - name: fx_rates
+    columns:
+      - name: rate_date
+        type: DATE
+      - name: currency
+        type: VARCHAR
+      - name: rate_to_usd
+        type: NUMBER(18,6)
+  - name: orders_snapshot
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: order_date
+        type: DATE
+      - name: status
+        type: VARCHAR
+      - name: amount
+        type: NUMBER(12,2)
+      - name: updated_at
+        type: TIMESTAMP_NTZ
+      - name: dbt_scd_id
+        type: VARCHAR
+      - name: dbt_updated_at
+        type: TIMESTAMP_NTZ
+      - name: dbt_valid_from
+        type: TIMESTAMP_NTZ
+      - name: dbt_valid_to
+        type: TIMESTAMP_NTZ
+  - name: inc_merge
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: order_date
+        type: DATE
+      - name: status
+        type: VARCHAR
+      - name: amount
+        type: NUMBER(12,2)
+      - name: updated_at
+        type: TIMESTAMP_NTZ
+  - name: inc_lookback
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: order_date
+        type: DATE
+      - name: status
+        type: VARCHAR
+      - name: amount
+        type: NUMBER(12,2)
+      - name: updated_at
+        type: TIMESTAMP_NTZ
+  - name: inc_coalesce
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: order_date
+        type: DATE
+      - name: status
+        type: VARCHAR
+      - name: amount
+        type: NUMBER(12,2)
+      - name: updated_at
+        type: TIMESTAMP_NTZ
+  - name: inc_dedup
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: order_date
+        type: DATE
+      - name: status
+        type: VARCHAR
+      - name: amount
+        type: NUMBER(12,2)
+      - name: updated_at
+        type: TIMESTAMP_NTZ
+  - name: inc_var
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: order_date
+        type: DATE
+      - name: status
+        type: VARCHAR
+      - name: amount
+        type: NUMBER(12,2)
+      - name: updated_at
+        type: TIMESTAMP_NTZ
+  - name: inc_not_exists
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: order_date
+        type: DATE
+      - name: status
+        type: VARCHAR
+      - name: amount
+        type: NUMBER(12,2)
+      - name: updated_at
+        type: TIMESTAMP_NTZ
+  - name: inc_join_this
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: order_date
+        type: DATE
+      - name: status
+        type: VARCHAR
+      - name: amount
+        type: NUMBER(12,2)
+      - name: updated_at
+        type: TIMESTAMP_NTZ
+  - name: inc_event_time
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: order_date
+        type: DATE
+      - name: status
+        type: VARCHAR
+      - name: amount
+        type: NUMBER(12,2)
+      - name: updated_at
+        type: TIMESTAMP_NTZ
+  - name: inc_append
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: status
+        type: VARCHAR
+      - name: updated_at
+        type: TIMESTAMP_NTZ
+      - name: loaded_at
+        type: TIMESTAMP_TZ
+  - name: inc_partition_date
+    columns:
+      - name: order_date
+        type: DATE
+      - name: orders
+        type: NUMBER(18,0)
+      - name: revenue
+        type: NUMBER(38,2)
+  - name: fct_orders__dbt_tmp
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: order_date
+        type: DATE
+      - name: status
+        type: VARCHAR
+      - name: amount
+        type: NUMBER(12,2)
+      - name: updated_at
+        type: TIMESTAMP_NTZ

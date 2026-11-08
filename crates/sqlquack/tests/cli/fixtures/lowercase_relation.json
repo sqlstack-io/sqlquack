@@ -1,7 +1,0 @@
-{
-  "relations": {
-    "orders": [
-      ["ORDER_ID", "NUMBER(10,0)"]
-    ]
-  }
-}

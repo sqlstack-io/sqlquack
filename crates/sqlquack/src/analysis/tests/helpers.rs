@@ -925,7 +925,7 @@ fn rerecord(root: &std::path::Path, queries: &[EverydayQuery]) {
 fn everyday_arguments(root: &std::path::Path, builtin_policy: bool) -> ConvertArguments {
     ConvertArguments {
         path: None,
-        schema: Some(root.join("schema.json")),
+        schema: None,
         overrides: None,
         verified_overrides: Vec::new(),
         session: Vec::new(),
@@ -938,7 +938,7 @@ fn everyday_arguments(root: &std::path::Path, builtin_policy: bool) -> ConvertAr
             color: clap::ColorChoice::Never,
         },
         conversion: PolicyArguments {
-            project: None,
+            project: Some(root.to_path_buf()),
             policy: Some(repository_root().join(POLICY_FILE_NAME)),
             builtin_policy,
             strict: false,

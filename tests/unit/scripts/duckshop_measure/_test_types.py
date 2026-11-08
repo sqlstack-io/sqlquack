@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 class SchemaTestCase:
     description: str
     setup_sql: tuple[str, ...]
-    expected_schema: dict[str, list[list[str]]]
+    expected_relations: dict[str, list[list[str]]]
 
 
 @dataclass(frozen=True)
@@ -71,7 +71,7 @@ class SnowflakeTestCase:
 class FunctionSchemaTestCase:
     description: str
     header: str
-    expected_functions: dict[str, dict[str, object]]
+    expected_functions: dict[str, str]
 
 
 @dataclass(frozen=True)

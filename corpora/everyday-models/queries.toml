@@ -1,4 +1,4 @@
-# dbt-style Snowflake models, over schema.json: staging, CTE chains, incremental filters, QUALIFY
+# dbt-style Snowflake models, over sources/tables.yml: staging, CTE chains, incremental filters, QUALIFY
 # deduplication, FLATTEN, MERGE and other materialization DML, date spines, window frames,
 # PIVOT/UNPIVOT, marts, snapshots and the SQL generic tests compile to. The fields are those of
 # corpora/everyday/queries.toml: `expect` under the built-in default policy, `expect_repository`

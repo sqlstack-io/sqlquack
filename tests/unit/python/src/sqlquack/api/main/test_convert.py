@@ -15,7 +15,11 @@ from tests.unit.python.src.sqlquack.api.main._test_types import (
     ProjectTestCase,
     TypedDiagnosticTestCase,
 )
-from tests.unit.python.src.sqlquack.api.main.helpers import command_report, schema_file
+from tests.unit.python.src.sqlquack.api.main.helpers import (
+    SCHEMA,
+    command_report,
+    source_project,
+)
 
 POLICY: str = str(Path(__file__).resolve().parents[7] / "sqlquack.toml")
 HASHED: str = "SELECT HASH(order_id) AS h FROM orders"
@@ -28,59 +32,57 @@ DATED: str = "SELECT CURRENT_DATE() AS d"
         CommandLineTestCase(
             description="a converted query",
             sql="SELECT order_id, price * 2 AS doubled FROM orders",
-            arguments=("--builtin-policy", "--schema", "schema.json"),
-            options=ConvertOptions(builtin_policy=True, schema="schema.json"),
+            arguments=("--builtin-policy",),
+            options=ConvertOptions(builtin_policy=True, schema=SCHEMA),
             expected_converted=True,
         ),
         CommandLineTestCase(
             description="a converted query on one line",
             sql="SELECT order_id, price * 2 AS doubled FROM orders",
-            arguments=("--builtin-policy", "--schema", "schema.json", "--compact"),
-            options=ConvertOptions(builtin_policy=True, schema="schema.json", compact=True),
+            arguments=("--builtin-policy", "--compact"),
+            options=ConvertOptions(builtin_policy=True, schema=SCHEMA, compact=True),
             expected_converted=True,
         ),
         CommandLineTestCase(
             description="no policy flag and no sqlquack.toml: the built-in policy",
             sql="SELECT order_id, price * 2 AS doubled FROM orders",
-            arguments=("--schema", "schema.json"),
-            options=ConvertOptions(schema="schema.json"),
+            arguments=(),
+            options=ConvertOptions(schema=SCHEMA),
             expected_converted=True,
         ),
         CommandLineTestCase(
             description="a query refused for an undeclared relation",
             sql="SELECT a FROM customers",
-            arguments=("--builtin-policy", "--schema", "schema.json"),
-            options=ConvertOptions(builtin_policy=True, schema="schema.json"),
+            arguments=("--builtin-policy",),
+            options=ConvertOptions(builtin_policy=True, schema=SCHEMA),
             expected_converted=False,
         ),
         CommandLineTestCase(
             description="a query refused under a session no profile covers",
             sql="SELECT order_id FROM orders",
-            arguments=("--builtin-policy", "--schema", "schema.json", "--session", "WEEK_START=3"),
-            options=ConvertOptions(
-                builtin_policy=True, schema="schema.json", session={"WEEK_START": "3"}
-            ),
+            arguments=("--builtin-policy", "--session", "WEEK_START=3"),
+            options=ConvertOptions(builtin_policy=True, schema=SCHEMA, session={"WEEK_START": "3"}),
             expected_converted=False,
         ),
         CommandLineTestCase(
             description="HASH is refused by default, as its value is never Snowflake's",
             sql=HASHED,
-            arguments=("--policy", POLICY, "--schema", "schema.json"),
-            options=ConvertOptions(policy=POLICY, schema="schema.json"),
+            arguments=("--policy", POLICY),
+            options=ConvertOptions(policy=POLICY, schema=SCHEMA),
             expected_converted=False,
         ),
         CommandLineTestCase(
             description="CURRENT_DATE relies on value divergences the report names",
             sql=DATED,
-            arguments=("--policy", POLICY, "--schema", "schema.json"),
-            options=ConvertOptions(policy=POLICY, schema="schema.json"),
+            arguments=("--policy", POLICY),
+            options=ConvertOptions(policy=POLICY, schema=SCHEMA),
             expected_converted=True,
         ),
         CommandLineTestCase(
             description="CURRENT_DATE refused when relying only on loud divergences",
             sql=DATED,
-            arguments=("--policy", POLICY, "--schema", "schema.json", "--loud-divergences-only"),
-            options=ConvertOptions(policy=POLICY, schema="schema.json", loud_divergences_only=True),
+            arguments=("--policy", POLICY, "--loud-divergences-only"),
+            options=ConvertOptions(policy=POLICY, schema=SCHEMA, loud_divergences_only=True),
             expected_converted=False,
         ),
     ),
@@ -89,10 +91,12 @@ DATED: str = "SELECT CURRENT_DATE() AS d"
 def test_given_the_same_options_when_converting_then_the_report_is_the_command_lines(
     test_case: CommandLineTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    schema_file(tmp_path)
-    monkeypatch.chdir(tmp_path)
+    project: Path = source_project(tmp_path / "project")
+    elsewhere: Path = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+    monkeypatch.chdir(elsewhere)
     conversion: Conversion = sqlquack.convert(sql=test_case.sql, options=test_case.options)
-    assert conversion.report == command_report(test_case.sql, test_case.arguments, tmp_path)
+    assert conversion.report == command_report(test_case.sql, test_case.arguments, project)
     assert conversion.converted is test_case.expected_converted
     assert len(conversion.diagnostics) == len(conversion.report["refusals"])
     assert conversion.divergence_failures == conversion.report["divergence_failures"]
@@ -140,10 +144,10 @@ def test_given_a_refusal_when_converting_then_the_diagnostic_is_typed(
             expected_message="the input holds no SQL statement",
         ),
         FailureTestCase(
-            description="an unreadable schema",
+            description="a schema option that is not a schema",
             sql="SELECT 1",
-            options=ConvertOptions(builtin_policy=True, schema="missing.json"),
-            expected_message="missing.json",
+            options=ConvertOptions(builtin_policy=True, schema={"ORDERS": "order_id"}),
+            expected_message="the schema option is not a schema",
         ),
     ),
     ids=lambda case: case.description,

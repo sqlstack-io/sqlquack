@@ -3,8 +3,9 @@ use std::process::{Command, Output};
 
 use crate::test_types::{CaseIndexOutcome, IndexOutcome};
 
-const SCHEMA: &str = r#"{"CUSTOMERS": [["CUSTOMER_ID", "NUMBER(38,0)"], ["ACTIVE_FLAG", "VARCHAR"],
-    ["CREDIT", "VARCHAR"], ["NOTE", "VARCHAR"]]}"#;
+const SOURCES: &str = "sources:\n  - name: customers\n    columns:\n      - name: customer_id\n        \
+                       type: NUMBER(38,0)\n      - name: active_flag\n        type: VARCHAR\n      \
+                       - name: credit\n        type: VARCHAR\n      - name: note\n        type: VARCHAR\n";
 const CORPUS: &[(&str, &str)] = &[
     (
         "active.sql",
@@ -49,17 +50,12 @@ pub(crate) fn index_shop_corpus() -> IndexOutcome {
     for (name, sql) in CORPUS {
         std::fs::write(directory.path().join("corpus").join(name), sql).expect("fixture written");
     }
-    std::fs::write(directory.path().join("schema.json"), SCHEMA).expect("schema written");
+    std::fs::create_dir(directory.path().join("sources")).expect("sources directory");
+    std::fs::write(directory.path().join("sources/customers.yml"), SOURCES)
+        .expect("sources written");
     let output = sqlquack(
         directory.path(),
-        &[
-            "index",
-            "--builtin-policy",
-            "--json",
-            "--schema",
-            "schema.json",
-            "corpus",
-        ],
+        &["index", "--builtin-policy", "--json", "corpus"],
     );
     let index: serde_json::Value =
         serde_json::from_slice(&output.stdout).unwrap_or(serde_json::Value::Null);

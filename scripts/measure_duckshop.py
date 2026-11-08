@@ -1,4 +1,4 @@
-"""Direct wrapper: DuckShop's census schema, and its unit tests converted and run on DuckDB."""
+"""Direct wrapper: DuckShop's census project, and its unit tests converted and run on DuckDB."""
 
 from __future__ import annotations
 

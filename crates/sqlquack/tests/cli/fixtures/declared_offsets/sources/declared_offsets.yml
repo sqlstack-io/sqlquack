@@ -1,0 +1,15 @@
+sources:
+  - name: orders
+    columns:
+      - name: order_id
+        type: NUMBER(10,0)
+      - name: placed_at
+        type: TIMESTAMP_TZ(9)
+        offset: "+00:00"
+      - name: shipped_at
+        type: TIMESTAMP_TZ(9)
+      - name: paid_at
+        type: TIMESTAMP_TZ(9)
+        offset: UTC
+      - name: ship_zone
+        type: VARCHAR

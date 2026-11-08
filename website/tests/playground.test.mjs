@@ -12,13 +12,13 @@ import { previewLimit, rendered, resultTable, underlined } from '../public/playg
 
 initSync({ module: readFileSync(new URL('../wasm/pkg/sqlquack_wasm_bg.wasm', import.meta.url)) });
 
-const SCHEMA = JSON.stringify({ ORDERS: [['ORDER_ID', 'NUMBER(38,0)'], ['NOTE', 'VARCHAR']] });
+const SOURCES = 'sources:\n  - name: orders\n    columns:\n      - name: order_id\n        type: NUMBER(38,0)\n      - name: note\n        type: VARCHAR\n';
 
 // A DuckDB as the page starts one: the DuckDB-WASM build it serves, the extensions it loads from the
-// site, then the sample schema's tables and rows. A fresh one per case, so no earlier case has
+// site, then the sample sources' tables and rows. A fresh one per case, so no earlier case has
 // already loaded an extension a later case needs.
 async function pageDuckDB() {
-	const { SCHEMA: PAGE_SCHEMA, ROWS } = await import('../public/playground/examples.js');
+	const { SOURCES: PAGE_SOURCES, ROWS } = await import('../public/playground/examples.js');
 	const { DUCKDB_DIR, DUCKDB_EXTENSIONS } = await import('../public/playground/duckdb-version.js');
 	const require = createRequire(import.meta.url);
 	const duckdb = require('@duckdb/duckdb-wasm/dist/duckdb-node-blocking.cjs');
@@ -29,7 +29,7 @@ async function pageDuckDB() {
 	const conn = db.connect();
 	conn.query(`SET custom_extension_repository = '${fileURLToPath(new URL(`../public/playground/${DUCKDB_DIR}extensions`, import.meta.url))}'`);
 	for (const extension of DUCKDB_EXTENSIONS) conn.query(`LOAD ${extension}`);
-	for (const table of JSON.parse(fixture_tables(PAGE_SCHEMA)).tables) conn.query(table);
+	for (const table of JSON.parse(fixture_tables(PAGE_SOURCES)).tables) conn.query(table);
 	conn.query(ROWS);
 	// Every value as text, as the page reads them.
 	return (sql) => conn.query(`SELECT COLUMNS(*)::VARCHAR FROM (${sql}) AS result`).toArray().map((row) => Object.values(row.toJSON()));
@@ -40,7 +40,7 @@ const marked = (html) => [...html.matchAll(/<mark[^>]*>(.*?)<\/mark>/g)].map((ma
 test('spans after non-ASCII text underline the characters the diagnostic names', () => {
 	// 'é' is one UTF-16 unit, '😀' two and 'ß' one: three characters but four units before `nope`.
 	const sql = "SELECT 'é😀ß' AS note, nope FROM orders";
-	const report = JSON.parse(analyze(sql, SCHEMA));
+	const report = JSON.parse(analyze(sql, SOURCES));
 	const [refusal] = report.translate.diagnostics;
 	assert.equal(refusal.code, 'SQ0004');
 	const chars = Array.from(sql);
@@ -55,7 +55,7 @@ test('spans after non-ASCII text underline the characters the diagnostic names',
 
 test('a parse failure on a later line renders at its line and column', () => {
 	const sql = "SELECT '日本' AS note\nFROM orders\nWHERE";
-	const report = JSON.parse(analyze(sql, SCHEMA));
+	const report = JSON.parse(analyze(sql, SOURCES));
 	assert.equal(report.parse.status, 'fail');
 	const [failure] = report.parse.diagnostics;
 	assert.equal(failure.code, 'SQ0001');
@@ -66,7 +66,7 @@ test('a parse failure on a later line renders at its line and column', () => {
 
 test('each stage reports pass, fail or skipped', () => {
 	const stages = (sql) => {
-		const report = JSON.parse(analyze(sql, SCHEMA));
+		const report = JSON.parse(analyze(sql, SOURCES));
 		return ['parse', 'checks', 'translate'].map((stage) => report[stage].status);
 	};
 	assert.deepEqual(stages('SELECT order_id FROM orders'), ['pass', 'pass', 'pass']);
@@ -78,7 +78,7 @@ test('each stage reports pass, fail or skipped', () => {
 test('the policy and session parameters choose the profile, or refuse, as on the command line', () => {
 	const policy = readFileSync(new URL('../../sqlquack.toml', import.meta.url), 'utf8');
 	const translate = (settings) => {
-		const report = JSON.parse(analyze('SELECT order_id FROM orders', SCHEMA, JSON.stringify(settings)));
+		const report = JSON.parse(analyze('SELECT order_id FROM orders', SOURCES, JSON.stringify(settings)));
 		return report.settings_error ? { error: report.settings_error } : report.translate;
 	};
 	assert.equal(translate({}).profile, 'the built-in default');
@@ -101,20 +101,20 @@ test('the conversion budget is timed in the browser and refuses with SQ0006 when
 	const policy = readFileSync(new URL('../../sqlquack.toml', import.meta.url), 'utf8');
 	// A zero-millisecond budget: any measured conversion time exceeds it. `Instant` would panic here.
 	const tight = policy.replace(/\[conversion_budget\][^[]*/, '[conversion_budget]\nmilliseconds = 0\nsize_ratio = 2000\nminimum_bytes = 4194304\n\n');
-	const report = JSON.parse(analyze('SELECT order_id FROM orders', SCHEMA, JSON.stringify({ policy: tight })));
+	const report = JSON.parse(analyze('SELECT order_id FROM orders', SOURCES, JSON.stringify({ policy: tight })));
 	assert.equal(report.translate.status, 'fail');
 	assert.equal(report.translate.diagnostics[0].code, 'SQ0006');
 	assert.match(report.translate.diagnostics[0].label, /beyond the budget of 0 ms/);
 });
 
 test('every example chip stops at the stage its label names, the Run stage included', async () => {
-	const { EXAMPLE_GROUPS, EXAMPLES, CAPTIONS, SCHEMA: PAGE_SCHEMA } = await import('../public/playground/examples.js');
+	const { EXAMPLE_GROUPS, EXAMPLES, CAPTIONS, SOURCES: PAGE_SOURCES } = await import('../public/playground/examples.js');
 	const chips = EXAMPLE_GROUPS.flatMap((group) => group.examples);
 	assert.deepEqual(chips.map((chip) => chip.key).sort(), Object.keys(EXAMPLES).sort());
 	assert.equal(new Set(chips.map((chip) => chip.slug)).size, chips.length);
 	// Translated examples run as the page runs them, each in a fresh DuckDB.
 	const stops = async (sql) => {
-		const report = JSON.parse(analyze(sql, PAGE_SCHEMA));
+		const report = JSON.parse(analyze(sql, PAGE_SOURCES));
 		const failed = ['parse', 'checks', 'translate'].find((stage) => report[stage].status !== 'pass');
 		if (failed) return failed;
 		const run = await pageDuckDB();
@@ -127,13 +127,13 @@ test('every example chip stops at the stage its label names, the Run stage inclu
 	};
 	for (const chip of chips) assert.equal(await stops(EXAMPLES[chip.key]), chip.stops, chip.name);
 	// The one deliberate refusal is a known divergence, explained by its caption.
-	const refused = JSON.parse(analyze(EXAMPLES.refused, PAGE_SCHEMA)).translate;
+	const refused = JSON.parse(analyze(EXAMPLES.refused, PAGE_SOURCES)).translate;
 	assert.deepEqual(refused.diagnostics.map((d) => d.code), ['SQ0008']);
 	assert.ok(CAPTIONS.refused);
 });
 
 test('date arithmetic against CURRENT_DATE runs in the in-browser DuckDB, on its first statement', async () => {
-	const { SCHEMA: PAGE_SCHEMA } = await import('../public/playground/examples.js');
+	const { SOURCES: PAGE_SOURCES } = await import('../public/playground/examples.js');
 	const cases = [
 		// Last 30 days: the fixture's orders are older, and stay so.
 		['SELECT order_id FROM orders WHERE ordered_at >= DATEADD(day, -30, CURRENT_DATE)', []],
@@ -147,7 +147,7 @@ test('date arithmetic against CURRENT_DATE runs in the in-browser DuckDB, on its
 		],
 	];
 	for (const [sql, rows] of cases) {
-		const report = JSON.parse(analyze(sql, PAGE_SCHEMA));
+		const report = JSON.parse(analyze(sql, PAGE_SOURCES));
 		assert.equal(report.translate.status, 'pass', sql);
 		const run = await pageDuckDB();
 		assert.deepEqual(run(report.translate.statements[0].sql), rows, sql);
@@ -165,7 +165,7 @@ test('a run error from the in-browser DuckDB is told apart from an error about t
 
 test('translated SQL is laid out one clause per line unless the compact setting asks for one line', () => {
 	const sql = "SELECT order_id, note, 'a longer literal' AS label FROM orders WHERE order_id > 1";
-	const translated = (settings) => JSON.parse(analyze(sql, SCHEMA, JSON.stringify(settings))).translate.statements[0].sql;
+	const translated = (settings) => JSON.parse(analyze(sql, SOURCES, JSON.stringify(settings))).translate.statements[0].sql;
 	const laidOut = translated({});
 	assert.equal(
 		laidOut,
@@ -178,20 +178,20 @@ test('translated SQL is laid out one clause per line unless the compact setting 
 });
 
 test('an undeclared relation is refused by name, and the stub the page adds stays refused until filled in', async () => {
-	const { SCHEMA: PAGE_SCHEMA } = await import('../public/playground/examples.js');
-	// The page reads the relation's name from this label to offer "Add T to schema".
-	const unknown = JSON.parse(analyze('SELECT * FROM t', PAGE_SCHEMA)).translate;
+	const { SOURCES: PAGE_SOURCES } = await import('../public/playground/examples.js');
+	// The page reads the relation's name from this label to offer "Add T to sources".
+	const unknown = JSON.parse(analyze('SELECT * FROM t', PAGE_SOURCES)).translate;
 	assert.equal(unknown.status, 'fail');
 	assert.deepEqual(
 		unknown.diagnostics.map((d) => [d.code, d.label]),
 		[['SQ0004', 'relation `T` has no known columns']],
 	);
 	// The stub's placeholder type is not a Snowflake type: no column is assumed, so it still refuses.
-	const stub = JSON.stringify({ ...JSON.parse(PAGE_SCHEMA), T: [['COLUMN_NAME', 'SNOWFLAKE_TYPE']] });
+	const stub = `${PAGE_SOURCES}  - name: t\n    columns:\n      - name: column_name\n        type: SNOWFLAKE_TYPE\n`;
 	assert.deepEqual(JSON.parse(analyze('SELECT * FROM t', stub)).translate.diagnostics.map((d) => d.code), ['SQ0004']);
-	// Every relation of the sample schema without semi-structured columns translates as declared.
+	// Every table of the sample sources without semi-structured columns translates as declared.
 	for (const relation of ['ORDERS', 'CUSTOMERS', 'PRODUCTS', 'ORDER_ITEMS']) {
-		assert.equal(JSON.parse(analyze(`SELECT * FROM ${relation.toLowerCase()}`, PAGE_SCHEMA)).translate.status, 'pass', relation);
+		assert.equal(JSON.parse(analyze(`SELECT * FROM ${relation.toLowerCase()}`, PAGE_SOURCES)).translate.status, 'pass', relation);
 	}
 });
 
@@ -199,7 +199,7 @@ test('each known divergence a translation relies on is reported with its constru
 	const repository = readFileSync(new URL('../../sqlquack.toml', import.meta.url), 'utf8');
 	const policy = repository.replace('constructs = ["fn:HASH"]\ndefault = "refuse"', 'constructs = ["fn:HASH"]\ndefault = "warn"');
 	assert.notEqual(policy, repository);
-	const translate = (settings) => JSON.parse(analyze('SELECT HASH(order_id) AS h FROM orders', SCHEMA, JSON.stringify(settings))).translate;
+	const translate = (settings) => JSON.parse(analyze('SELECT HASH(order_id) AS h FROM orders', SOURCES, JSON.stringify(settings))).translate;
 	const [statement] = translate({ policy }).statements;
 	assert.deepEqual(
 		statement.divergences.map((d) => [d.id, d.constructs]),
@@ -208,17 +208,17 @@ test('each known divergence a translation relies on is reported with its constru
 	assert.match(statement.divergences[0].reason, /never Snowflake's value/);
 	assert.equal(statement.divergences[0].assumption, false);
 	// An assumption gives a wrong value silently where it does not hold, so it is reported as one.
-	const today = JSON.parse(analyze('SELECT CURRENT_DATE AS d', SCHEMA, JSON.stringify({ policy: repository, utc_session: true })));
+	const today = JSON.parse(analyze('SELECT CURRENT_DATE AS d', SOURCES, JSON.stringify({ policy: repository, utc_session: true })));
 	const assumed = today.translate.statements[0].divergences.find((d) => d.id === 'session_timezone_utc');
 	assert.equal(assumed?.assumption, true);
 	assert.ok(assumed.reason);
 	// Without a divergence, none is reported.
-	assert.deepEqual(JSON.parse(analyze('SELECT order_id FROM orders', SCHEMA)).translate.statements[0].divergences, []);
+	assert.deepEqual(JSON.parse(analyze('SELECT order_id FROM orders', SOURCES)).translate.statements[0].divergences, []);
 });
 
 test('a run error a building block raised reads back as the Snowflake error, at the expression that raised it', () => {
 	const sql = 'SELECT CAST(note AS NUMBER(10,2)) AS v FROM orders';
-	const [statement] = JSON.parse(analyze(sql, SCHEMA)).translate.statements;
+	const [statement] = JSON.parse(analyze(sql, SOURCES)).translate.statements;
 	const tag = /sqlquack:100038#[0-9a-f]{12}: [^']*/.exec(statement.sql)[0];
 	// As DuckDB reports a failed cast of the raised text.
 	const failure = JSON.parse(run_failure(`Conversion Error: Could not convert string '${tag}' to INT32\n\nLINE 1: ...`));
@@ -234,7 +234,7 @@ test('a raised message holding a quote reads back whole, as DuckDB quotes it une
 	const sql = "SELECT TO_DATE(note, 'YYYY-MM-DD') AS d FROM orders";
 	// The repository's policy allows the date-text divergence the built-in one refuses.
 	const policy = readFileSync(new URL('../../sqlquack.toml', import.meta.url), 'utf8');
-	const [statement] = JSON.parse(analyze(sql, SCHEMA, JSON.stringify({ policy }))).translate.statements;
+	const [statement] = JSON.parse(analyze(sql, SOURCES, JSON.stringify({ policy }))).translate.statements;
 	const [, id] = /sqlquack:100097#([0-9a-f]{12}): /.exec(statement.sql);
 	const text = "Can't parse the text as date with the format";
 	// As DuckDB 2.0.0 reports the failed cast of the raised text.

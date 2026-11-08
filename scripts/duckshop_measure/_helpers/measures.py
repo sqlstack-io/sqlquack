@@ -1,4 +1,4 @@
-"""The two measures: a census schema from an environment, and every compiled unit test run."""
+"""The measures: a census project from an environment, every unit test run, models compared."""
 
 from __future__ import annotations
 
@@ -7,12 +7,12 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from scripts.census_functions._helpers.schema_file import compiled_functions
-from scripts.census_functions.constants import FUNCTIONS_KEY, RELATIONS_KEY
+from scripts.census_functions._helpers.project_files import sources_text, write_functions
+from scripts.census_functions.constants import SOURCES_FOLDER
 from scripts.duckshop_measure._helpers.functions import create_macros, python_calls
 from scripts.duckshop_measure._helpers.outcomes import unit_test_outcome
+from scripts.duckshop_measure._helpers.relations import census_relations, recorded_relations
 from scripts.duckshop_measure._helpers.running import refusal_names
-from scripts.duckshop_measure._helpers.schema import census_schema, recorded_schema
 from scripts.duckshop_measure._helpers.snowflake import (
     compiled_file,
     converted_name,
@@ -23,6 +23,7 @@ from scripts.duckshop_measure._helpers.snowflake import (
     with_unloadable_input,
 )
 from scripts.duckshop_measure.constants import (
+    CENSUS_SOURCES,
     JSON_SUFFIX,
     MODEL_PREFIX,
     SQL_SUFFIX,
@@ -45,21 +46,21 @@ from scripts.duckshop_measure.types import (
 )
 
 
-def write_schema(
+def write_project(
     *, environment: Path, out: Path, recorded: Path | None = None, functions: Path | None = None
 ) -> None:
-    """Write the census schema of the environment's tables, with `functions`' compiled ones."""
+    """Write the census project: the environment's tables, with `functions`' compiled ones."""
     setup: list[str] = json.loads(environment.read_text())["setup_sql"]
-    schema: dict[str, list[list[str]]] = census_schema(setup)
+    relations: dict[str, list[list[str]]] = census_relations(setup)
     if recorded is not None:
-        schema.update(recorded_schema(recorded))
-    written: object = schema
+        relations.update(recorded_relations(recorded))
     if functions is not None:
-        found, unread = compiled_functions(functions)
-        written = {RELATIONS_KEY: schema, FUNCTIONS_KEY: found}
-        print(f"duckshop measure: {len(found)} functions written, {unread} unread", file=sys.stderr)
-    out.write_text(json.dumps(written, indent=1) + "\n")
-    print(f"duckshop measure: {len(schema)} relations written to {out}", file=sys.stderr)
+        written, unread = write_functions(compiled=functions, project=out)
+        print(f"duckshop measure: {written} functions written, {unread} unread", file=sys.stderr)
+    sources: Path = out / SOURCES_FOLDER / CENSUS_SOURCES
+    sources.parent.mkdir(parents=True, exist_ok=True)
+    sources.write_text(sources_text(relations))
+    print(f"duckshop measure: {len(relations)} relations written to {sources}", file=sys.stderr)
 
 
 def model_python_calls(

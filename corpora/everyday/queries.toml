@@ -1,4 +1,4 @@
-# Everyday Snowflake queries, as a demo visitor or a dbt project writes them, over schema.json.
+# Everyday Snowflake queries, as a demo visitor or a dbt project writes them, over sources/tables.yml.
 # `expect` is its outcome from SQLQuack under the built-in default policy, which the playground
 # offers as "strict": "translated", "parse <code>", "check <code>" or "refused <code> <construct>".
 # `expect_repository` is the outcome under the repository's sqlquack.toml with a UTC session, the

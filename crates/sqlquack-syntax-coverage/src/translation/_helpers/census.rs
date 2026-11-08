@@ -1,4 +1,4 @@
-//! The census sidecars: each case's relations, written as the schema file convert reads.
+//! The census sidecars: each case's relations, written as a source file of a project convert reads.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
@@ -70,21 +70,25 @@ fn resolved(name: &str) -> String {
     }
 }
 
-/// A column as convert's schema pair: its resolved name and its type.
-fn column_pair(column: &CensusColumn) -> Value {
-    json!([resolved(&column.name), column.column_type])
+/// `name` resolved and quoted, so a source file declares exactly the name Snowflake resolves.
+fn source_name(name: &str) -> String {
+    format!("\"{}\"", resolved(name).replace('"', "\"\""))
 }
 
-/// The entry as convert's `--schema` JSON: each resolved relation to its `[column, type]` pairs.
-pub(crate) fn schema_json(entry: &CensusEntry) -> Value {
-    Value::Object(
-        entry
-            .relations
-            .iter()
-            .map(|relation| {
-                let columns: Vec<Value> = relation.columns.iter().map(column_pair).collect();
-                (resolved(&relation.name), Value::Array(columns))
-            })
-            .collect(),
-    )
+/// The entry as a source file's text, in JSON's flow style: each relation with its typed columns.
+pub(crate) fn source_file(entry: &CensusEntry) -> String {
+    let sources: Vec<Value> = entry
+        .relations
+        .iter()
+        .map(|relation| {
+            let columns: Vec<Value> = relation.columns.iter().map(source_column).collect();
+            json!({ "name": source_name(&relation.name), "columns": columns })
+        })
+        .collect();
+    json!({ "sources": sources }).to_string()
+}
+
+/// A census column as a source file's column: its resolved, quoted name and its type.
+fn source_column(column: &CensusColumn) -> Value {
+    json!({ "name": source_name(&column.name), "type": column.column_type })
 }

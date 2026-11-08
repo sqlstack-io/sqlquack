@@ -4,7 +4,7 @@
 
 import { DUCKDB_DIR, DUCKDB_EXTENSIONS, DUCKDB_WASM_BYTES } from './duckdb-version.js';
 import { ENGINE_DIR, ENGINE_WASM_BYTES } from './engine-version.js';
-import { CAPTIONS, EXAMPLE_GROUPS, EXAMPLES, ROWS, SCHEMA, stopLabel } from './examples.js';
+import { CAPTIONS, EXAMPLE_GROUPS, EXAMPLES, ROWS, SOURCES, stopLabel } from './examples.js';
 import { escape, previewLimit, rendered, resultTable, underlined } from './spans.js';
 
 const here = (path) => new URL(path, import.meta.url).href;
@@ -92,7 +92,7 @@ function progress(id, text) {
 
 const $ = (selector) => document.querySelector(selector);
 const sqlBox = $('#pg-sql');
-const schemaBox = $('#pg-schema');
+const sourcesBox = $('#pg-sources');
 const rowsBox = $('#pg-rows');
 const policyBox = $('#pg-policy');
 const sessionBox = $('#pg-session');
@@ -139,17 +139,17 @@ let current = 0;
 async function run() {
 	const ticket = ++current;
 	const sql = sqlBox.value;
-	const reply = await engine('analyze', { sql, schema: schemaBox.value, settings: settings() });
+	const reply = await engine('analyze', { sql, sources: sourcesBox.value, settings: settings() });
 	// A newer edit has already been sent; its reply will render instead.
 	if (ticket !== current) return;
 	const chars = Array.from(sql);
 	const report = JSON.parse(reply.result);
 	latest = null;
 	verdict.hidden = true;
-	if (report.schema_error || report.settings_error) {
+	if (report.sources_error || report.settings_error) {
 		underline(chars, []);
-		const what = report.schema_error ? 'The schema is not valid' : 'The policy or session is not valid';
-		setStage('parse', 'skipped', terminal(`<span class="bad">${what}:</span> ${escape(report.schema_error ?? report.settings_error)}`));
+		const what = report.sources_error ? 'The sources are not valid' : 'The policy or session is not valid';
+		setStage('parse', 'skipped', terminal(`<span class="bad">${what}:</span> ${escape(report.sources_error ?? report.settings_error)}`));
 		for (const id of ['checks', 'translate', 'run']) setStage(id, 'skipped');
 		return;
 	}
@@ -234,17 +234,23 @@ function conversionNotes(translate) {
 	return [...new Set(notes)].map((note) => `<p class="pg-conversion-note"><strong>Note.</strong> ${note}</p>`).join('');
 }
 
-// A relation the schema does not declare: SQLQuack needs its columns and Snowflake types, and
+// A relation the sources do not declare: SQLQuack needs its columns and Snowflake types, and
 // does not guess them. Each one gets a line saying so, with a button that adds a stub to fill in.
 const UNKNOWN_RELATION = /^relation `(.+)` has no known columns$/;
-const STUB_COLUMN = ['COLUMN_NAME', 'SNOWFLAKE_TYPE'];
+const SOURCE_NAME = /^ {2}- name: *(.+?) *$/gm;
+const STUB_COLUMN = ['column_name', 'SNOWFLAKE_TYPE'];
 
+// A name as a source file writes it: unquoted when Snowflake folds it to itself, else quoted.
+function sourceName(name) {
+	return name === name.toUpperCase() ? name.toLowerCase() : `'"${name.replaceAll('"', '""')}"'`;
+}
+
+// Each source's name as Snowflake resolves it: quoted names keep their case, others upper case.
 function declaredRelations() {
-	try {
-		return Object.keys(JSON.parse(schemaBox.value));
-	} catch {
-		return [];
-	}
+	return [...sourcesBox.value.matchAll(SOURCE_NAME)].map(([, written]) => {
+		const unquoted = written.replace(/^'(.*)'$/, '$1');
+		return unquoted.startsWith('"') ? unquoted.slice(1, -1).replaceAll('""', '"') : unquoted.toUpperCase();
+	});
 }
 
 function unknownRelationHints(diagnostics) {
@@ -258,28 +264,23 @@ function unknownRelationHints(diagnostics) {
 		.map((name) => {
 			const code = `<code>${escape(name)}</code>`;
 			return declared.includes(name)
-				? `<p class="pg-hint"><span>SQLQuack needs each table's columns and Snowflake types. Fill in ${code}'s in the Schema box.</span></p>`
-				: `<p class="pg-hint"><span>SQLQuack needs each table's columns and Snowflake types. Add ${code} to the Schema box.</span>` +
-						`<button class="button" type="button" data-add-relation="${escape(name)}">Add ${escape(name)} to schema</button></p>`;
+				? `<p class="pg-hint"><span>SQLQuack needs each table's columns and Snowflake types. Fill in ${code}'s in the Sources box.</span></p>`
+				: `<p class="pg-hint"><span>SQLQuack needs each table's columns and Snowflake types. Add ${code} to the Sources box.</span>` +
+						`<button class="button" type="button" data-add-relation="${escape(name)}">Add ${escape(name)} to sources</button></p>`;
 		})
 		.join('');
 }
 
-// Adds `name` with one placeholder column to the end of the schema's JSON, keeping the rest of the
-// text as typed, and selects the placeholder so typing replaces it.
+// Adds `name` with one placeholder column to the end of the sources, keeping the rest of the text
+// as typed, and selects the placeholder so typing replaces it.
 function addRelation(name) {
-	const text = schemaBox.value;
-	const close = text.lastIndexOf('}');
-	if (close < 0 || declaredRelations().includes(name)) return;
-	const before = text.slice(0, close).trimEnd();
-	const column = `[${STUB_COLUMN.map((part) => JSON.stringify(part)).join(', ')}]`;
-	const entry = `  ${JSON.stringify(name)}: [\n    ${column}\n  ]`;
-	const separator = before.endsWith('{') ? '\n' : ',\n';
-	schemaBox.value = `${before}${separator}${entry}\n${text.slice(close)}`;
-	schemaBox.closest('details').open = true;
-	const placeholder = `${before}${separator}  ${JSON.stringify(name)}: [\n    ["`.length;
-	schemaBox.focus();
-	schemaBox.setSelectionRange(placeholder, placeholder + STUB_COLUMN[0].length);
+	if (declaredRelations().includes(name)) return;
+	const before = sourcesBox.value.trimEnd();
+	const head = `${before ? `${before}\n` : 'sources:\n'}  - name: ${sourceName(name)}\n    columns:\n      - name: `;
+	sourcesBox.value = `${head}${STUB_COLUMN[0]}\n        type: ${STUB_COLUMN[1]}\n`;
+	sourcesBox.closest('details').open = true;
+	sourcesBox.focus();
+	sourcesBox.setSelectionRange(head.length, head.length + STUB_COLUMN[0].length);
 	schedule();
 }
 
@@ -378,8 +379,8 @@ async function execute() {
 		if (!duckdb) await startDuckDB();
 		const conn = await duckdb.db.connect();
 		try {
-			const tables = JSON.parse((await engine('fixture', { schema: schemaBox.value })).result);
-			if (tables.error) throw new Error(`schema: ${tables.error}`);
+			const tables = JSON.parse((await engine('fixture', { sources: sourcesBox.value })).result);
+			if (tables.error) throw new Error(`sources: ${tables.error}`);
 			for (const table of tables.tables) await conn.query(table.replace(/^CREATE TABLE/, 'CREATE OR REPLACE TABLE'));
 			if (rowsBox.value.trim()) await conn.query(rowsBox.value);
 			const started = performance.now();
@@ -462,7 +463,7 @@ sqlBox.addEventListener('input', () => {
 	}
 	schedule();
 });
-schemaBox.addEventListener('input', schedule);
+sourcesBox.addEventListener('input', schedule);
 for (const box of [policyBox, sessionBox, strictBox, utcBox]) box.addEventListener('input', schedule);
 $('#pg-load-policy').addEventListener('click', async () => {
 	policyBox.value = await (await fetch(new URL('./sqlquack.toml', import.meta.url))).text();
@@ -537,7 +538,7 @@ else {
 	const key = examples.find((example) => example.slug === requested)?.key ?? (Object.hasOwn(EXAMPLES, requested ?? '') ? requested : 'valid');
 	loadExample(key);
 }
-schemaBox.value = SCHEMA;
+sourcesBox.value = SOURCES;
 rowsBox.value = ROWS;
 setStage('parse', 'loading', '', 'loading the engine…', 'loading');
 await engineReady;

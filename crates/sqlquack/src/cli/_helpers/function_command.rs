@@ -98,10 +98,8 @@ pub(crate) fn function_command(
 
 /// The policy, session parameters, schema and choices of the project and flags; an error is a usage error.
 fn function_inputs(arguments: &FunctionArguments) -> Result<FunctionInputs, String> {
-    let (policy, project) = project_choices(
-        &arguments.conversion,
-        (arguments.schema.as_deref(), &arguments.session, None),
-    )?;
+    let (policy, project) =
+        project_choices(&arguments.conversion, (None, &arguments.session, None))?;
     Ok(FunctionInputs {
         policy,
         parameters: parse_session(&project.session)?,

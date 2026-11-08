@@ -1,0 +1,9 @@
+sources:
+  - name: orders
+    columns:
+      - name: order_id
+        type: NUMBER(10,0)
+      - name: sku
+        type: VARCHAR
+      - name: next_ticket_source
+        type: VARCHAR

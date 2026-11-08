@@ -8,7 +8,7 @@ pub const UNPARSED_PREFIX: &str = "the SQL does not parse: ";
 pub const CASE_ONLY_MATCH: &str = "only without regard to case";
 /// The help for such a name, replacing SQ0004's own.
 pub const CASE_ONLY_MATCH_HELP: &str = "Snowflake folds unquoted names to upper case, so declare \
-    the relation or column in the schema as the SQL resolves it (`ORDERS` for `FROM orders`), or \
+    the relation or column in a source file as the SQL resolves it (`ORDERS` for `FROM orders`), or \
     quote the name in the SQL to keep its case";
 /// The words of an unresolved name's reason when two result columns share a name.
 pub const REPEATED_RESULT_NAME: &str = "repeats an earlier result column's name";
@@ -125,13 +125,13 @@ pub const CODES: &[CodeEntry] = &[
         alias: None,
         title: "the operand types fall outside every rule's proven conditions",
         help: Some(
-            "declare the operands' Snowflake types in the schema, or cast them to a type the rule \
+            "declare the operands' Snowflake types in the project's sources, or cast them to a type the rule \
              covers; for a function's operand, cast it to a type the label names",
         ),
         explanation: "A rule covers the construct, but only for operand types its recorded \
             cases prove. The operands at the span have other types, or types SQLQuack could not \
-            determine. Declaring the relation's columns and types in the schema often lets the \
-            types resolve; an explicit cast to a covered type also works when it keeps the \
+            determine. Declaring the relation's columns and types in the project's sources often \
+            lets the types resolve; an explicit cast to a covered type also works when it keeps the \
             statement's meaning.",
         example: r#"echo "SELECT FLOOR('abc') AS f" | sqlquack convert --builtin-policy"#,
     },
@@ -141,12 +141,12 @@ pub const CODES: &[CodeEntry] = &[
         alias: None,
         title: "a name does not resolve",
         help: Some(
-            "declare the relation and its columns in the schema (`--schema` on the command line)",
+            "declare the relation and its columns in a source file of the project (`sources/*.yml`)",
         ),
         explanation: "Converting a statement needs to know what each relation and column \
             name refers to and what type it has. The name at the span is unknown, or resolves to \
-            more than one column. Add the relation and its columns to the schema file, or \
-            qualify an ambiguous column with its relation.",
+            more than one column. Add the relation and its columns to a source file in the \
+            project's `sources/` folder, or qualify an ambiguous column with its relation.",
         example: r#"echo "SELECT a FROM orders" | sqlquack convert --builtin-policy"#,
     },
     CodeEntry {

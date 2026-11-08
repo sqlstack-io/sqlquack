@@ -70,22 +70,28 @@ Move the condition to `HAVING SUM(total) > 100` and `check` reports no problems.
 ## Convert a file
 
 Conversion types every expression, so it needs the columns and Snowflake types of the relations a
-statement reads. Declare them in a [schema file](/docs/schema/):
+statement reads. Declare them in a source file under `sources/` in the folder you run `sqlquack`
+from (see [Projects](/docs/project/)):
 
-```json
-{
-  "ORDERS": [
-    ["ORDER_ID", "NUMBER(38,0)"],
-    ["CUSTOMER_ID", "NUMBER(38,0)"],
-    ["STATUS", "VARCHAR"],
-    ["TOTAL", "NUMBER(12,2)"],
-    ["ORDERED_AT", "TIMESTAMP_NTZ"]
-  ]
-}
+```yaml
+# sources/orders.yml
+sources:
+  - name: orders
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: status
+        type: VARCHAR
+      - name: total
+        type: NUMBER(12,2)
+      - name: ordered_at
+        type: TIMESTAMP_NTZ
 ```
 
 ```console
-$ sqlquack convert revenue.sql --schema schema.json --builtin-policy
+$ sqlquack convert revenue.sql --builtin-policy
 SELECT
     "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID",
     CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE"

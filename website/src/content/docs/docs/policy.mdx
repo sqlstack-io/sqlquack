@@ -10,7 +10,7 @@ it. Anything relying on a refused divergence is refused with
 [`SQ0008`](/docs/diagnostics/reference/#sq0008).
 
 ```console
-$ sqlquack convert due.sql --schema schema.json
+$ sqlquack convert due.sql
 error[SQ0008]: the conversion needs a known divergence the policy refuses: `fn:HASH`
  --> due.sql:2:8
   |
@@ -91,6 +91,6 @@ Converted SQL is proven only where both sessions run in UTC: Snowflake's `TIMEZO
   `USE_CACHED_RESULT`, `STATEMENT_TIMEOUT_IN_SECONDS`, `STATEMENT_QUEUED_TIMEOUT_IN_SECONDS`,
   `ABORT_DETACHED_QUERY` and `CLIENT_SESSION_KEEP_ALIVE`.
 - `DATABASE` and `SCHEMA` set the current database and schema, which complete relation names
-  written without them. See [Schema files](/docs/schema/#naming-relations-and-columns).
+  written without them. See [Projects](/docs/project/#naming-tables).
 - `TIMEZONE = UTC`, or no `TIMEZONE`, leaves time-zone-dependent statements to the
   `session_timezone_utc` assumption. Any other `TIMEZONE` refuses them, even with `--utc-session`.

@@ -19,13 +19,13 @@ error[SQ0004]: a name does not resolve
 2 | FROM orders
   |      ^^^^^^ relation `ORDERS` has no known columns
   |
-  = help: declare the relation and its columns in the schema (`--schema` on the command line)
+  = help: declare the relation and its columns in a source file of the project (`sources/*.yml`)
 ```
 
-Once the schema declares `ORDERS`, the same file converts:
+Once `sources/orders.yml` declares `ORDERS`, the same file converts:
 
 ```console
-$ sqlquack convert revenue.sql --builtin-policy --schema schema.json
+$ sqlquack convert revenue.sql --builtin-policy
 SELECT
     "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID",
     CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE"

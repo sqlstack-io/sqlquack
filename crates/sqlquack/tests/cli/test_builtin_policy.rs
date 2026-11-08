@@ -1,9 +1,9 @@
 use crate::helpers::{convert_outcome, policy_free_exit_code, run_convert};
 use crate::test_types::{ConvertTestCase, PolicyFreeTestCase};
 
-const TICKETS_SCHEMA: &str = "tests/cli/fixtures/semi_structured_tickets.json";
-const ORDERS_SCHEMA: &str = "tests/cli/fixtures/integer_orders.json";
-const EVENTS_SCHEMA: &str = "tests/cli/fixtures/volatile_lookback.json";
+const TICKETS_PROJECT: &str = "tests/cli/fixtures/semi_structured_tickets";
+const ORDERS_PROJECT: &str = "tests/cli/fixtures/integer_orders";
+const EVENTS_PROJECT: &str = "tests/cli/fixtures/volatile_lookback";
 
 #[test]
 fn given_no_policy_file_when_converting_or_counting_then_the_built_in_policy_applies() {
@@ -28,14 +28,7 @@ fn given_no_policy_file_when_converting_or_counting_then_the_built_in_policy_app
         },
         PolicyFreeTestCase {
             description: "function runs under the built-in policy",
-            arguments: &[
-                "function",
-                "query.sql",
-                "--name",
-                "TOTAL",
-                "--schema",
-                "schema.json",
-            ],
+            arguments: &["function", "query.sql", "--name", "TOTAL"],
             policy_file: None,
             expected_exit_code: Some(0),
         },
@@ -111,35 +104,35 @@ fn given_a_table_with_semi_structured_columns_when_converting_then_only_reading_
         ConvertTestCase {
             description: "a column beside unread ARRAY and VARIANT columns converts under the built-in policy",
             sql: "SELECT ticket_id, subject FROM tickets WHERE ticket_id > 1",
-            flags: &["--builtin-policy", "--schema", TICKETS_SCHEMA],
+            flags: &["--builtin-policy", "--project", TICKETS_PROJECT],
             mention: "converted under the built-in default",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "COUNT(*) reads no column, so it converts too",
             sql: "SELECT COUNT(*) AS n FROM tickets t",
-            flags: &["--builtin-policy", "--schema", TICKETS_SCHEMA],
+            flags: &["--builtin-policy", "--project", TICKETS_PROJECT],
             mention: "converted under the built-in default",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "a star reads the ARRAY column, so it relies on json_fidelity, with its warning",
             sql: "SELECT * FROM tickets",
-            flags: &["--builtin-policy", "--schema", TICKETS_SCHEMA],
+            flags: &["--builtin-policy", "--project", TICKETS_PROJECT],
             mention: "relies on known divergence json_fidelity",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "a qualified read of the ARRAY in WHERE relies on json_fidelity, with its warning",
             sql: "SELECT t.ticket_id FROM tickets t WHERE ARRAY_SIZE(t.Tags) > 0",
-            flags: &["--builtin-policy", "--schema", TICKETS_SCHEMA],
+            flags: &["--builtin-policy", "--project", TICKETS_PROJECT],
             mention: "relies on known divergence json_fidelity",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "a positional column may be the VARIANT, so it relies on json_fidelity, with its warning",
             sql: "SELECT $4 AS d FROM tickets",
-            flags: &["--builtin-policy", "--schema", TICKETS_SCHEMA],
+            flags: &["--builtin-policy", "--project", TICKETS_PROJECT],
             mention: "relies on known divergence json_fidelity",
             expected_outcome: convert_outcome(0, true),
         },
@@ -147,35 +140,35 @@ fn given_a_table_with_semi_structured_columns_when_converting_then_only_reading_
             description: "a subquery reading the VARIANT relies on json_fidelity, with its warning",
             sql: "SELECT ticket_id FROM tickets WHERE ticket_id IN (SELECT ticket_id FROM tickets \
                 WHERE details IS NOT NULL)",
-            flags: &["--builtin-policy", "--schema", TICKETS_SCHEMA],
+            flags: &["--builtin-policy", "--project", TICKETS_PROJECT],
             mention: "relies on known divergence json_fidelity",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "a cast path read of the VARIANT converts, warning that odd JSON raises",
             sql: "SELECT details:kind::VARCHAR AS kind FROM tickets",
-            flags: &["--builtin-policy", "--schema", TICKETS_SCHEMA],
+            flags: &["--builtin-policy", "--project", TICKETS_PROJECT],
             mention: "the converted SQL raises an error for the whole query; it never returns a different value",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "comparing an uncast VARIANT rests on an assumption, so it still refuses",
             sql: "SELECT ticket_id FROM tickets WHERE details:kind = 'bug'",
-            flags: &["--builtin-policy", "--schema", TICKETS_SCHEMA],
+            flags: &["--builtin-policy", "--project", TICKETS_PROJECT],
             mention: "needs known divergence `json_fidelity`",
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
             description: "--strict refuses reading the VARIANT",
             sql: "SELECT details:kind::VARCHAR AS kind FROM tickets",
-            flags: &["--builtin-policy", "--strict", "--schema", TICKETS_SCHEMA],
+            flags: &["--builtin-policy", "--strict", "--project", TICKETS_PROJECT],
             mention: "allows `json_fidelity` only for node:column, node:cast, fn:GET, fn:FLATTEN",
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
             description: "the repository policy still guards the VARIANT it reads",
             sql: "SELECT details:kind::VARCHAR AS kind FROM tickets",
-            flags: &["--schema", TICKETS_SCHEMA],
+            flags: &["--project", TICKETS_PROJECT],
             mention: "relies on known divergence json_fidelity at node:cast, node:column",
             expected_outcome: convert_outcome(0, true),
         },
@@ -196,21 +189,21 @@ fn given_a_table_with_semi_structured_columns_when_converting_then_only_reading_
         ConvertTestCase {
             description: "DATEDIFF to the clock reads it in the UTC session under the built-in policy",
             sql: "SELECT DATEDIFF('day', occurred_at, CURRENT_TIMESTAMP()) AS age FROM events",
-            flags: &["--builtin-policy", "--schema", EVENTS_SCHEMA],
+            flags: &["--builtin-policy", "--project", EVENTS_PROJECT],
             mention: "relies on assumption session_timezone_utc at fn:CURRENT_TIMESTAMP, fn:DATEDIFF",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "DATEDIFF with a keyword unit reads the clock the same way",
             sql: "SELECT DATEDIFF(month, occurred_at, CURRENT_TIMESTAMP()) AS age FROM events",
-            flags: &["--builtin-policy", "--schema", EVENTS_SCHEMA],
+            flags: &["--builtin-policy", "--project", EVENTS_PROJECT],
             mention: "converted under the built-in default",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "TIMESTAMPDIFF with a quoted unit reads the clock the same way",
             sql: "SELECT TIMESTAMPDIFF('day', occurred_at, CURRENT_TIMESTAMP()) AS age FROM events",
-            flags: &["--builtin-policy", "--schema", EVENTS_SCHEMA],
+            flags: &["--builtin-policy", "--project", EVENTS_PROJECT],
             mention: "converted under the built-in default",
             expected_outcome: convert_outcome(0, true),
         },
@@ -218,14 +211,14 @@ fn given_a_table_with_semi_structured_columns_when_converting_then_only_reading_
             description: "a naive end falling back to the clock raises on nanoseconds under the built-in policy",
             sql: "SELECT DATEDIFF('day', occurred_at, COALESCE(occurred_at, CURRENT_TIMESTAMP())) AS age \
                 FROM events",
-            flags: &["--builtin-policy", "--schema", EVENTS_SCHEMA],
+            flags: &["--builtin-policy", "--project", EVENTS_PROJECT],
             mention: "relies on known divergence timestamp_tz_submicro at node:coalesce",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "strict mode refuses DATEDIFF to the clock",
             sql: "SELECT DATEDIFF('day', occurred_at, CURRENT_TIMESTAMP()) AS age FROM events",
-            flags: &["--builtin-policy", "--strict", "--schema", EVENTS_SCHEMA],
+            flags: &["--builtin-policy", "--strict", "--project", EVENTS_PROJECT],
             mention: "needs known divergence",
             expected_outcome: convert_outcome(1, false),
         },
@@ -242,13 +235,13 @@ fn given_a_table_with_semi_structured_columns_when_converting_then_only_reading_
 
 #[test]
 fn given_arithmetic_that_only_raises_at_its_range_when_converting_then_the_built_in_policy_warns() {
-    const BUILTIN: &[&str] = &["--builtin-policy", "--schema", ORDERS_SCHEMA];
-    const STRICT: &[&str] = &["--builtin-policy", "--strict", "--schema", ORDERS_SCHEMA];
+    const BUILTIN: &[&str] = &["--builtin-policy", "--project", ORDERS_PROJECT];
+    const STRICT: &[&str] = &["--builtin-policy", "--strict", "--project", ORDERS_PROJECT];
     const LOUD_ONLY: &[&str] = &[
         "--builtin-policy",
         "--loud-divergences-only",
-        "--schema",
-        ORDERS_SCHEMA,
+        "--project",
+        ORDERS_PROJECT,
     ];
     let overflow = "needs more than 38 digits, DuckDB raises an Overflow error";
     let out_of_range = "lands outside 1677-09-21 00:12:43.145224192 to 2262-04-11 23:47:16.854775807 UTC, the converted SQL raises an error";
@@ -329,8 +322,8 @@ fn given_arithmetic_that_only_raises_at_its_range_when_converting_then_the_built
 
 #[test]
 fn given_a_last_30_days_filter_when_converting_then_the_built_in_policy_warns() {
-    const BUILTIN: &[&str] = &["--builtin-policy", "--schema", ORDERS_SCHEMA];
-    const STRICT: &[&str] = &["--builtin-policy", "--strict", "--schema", ORDERS_SCHEMA];
+    const BUILTIN: &[&str] = &["--builtin-policy", "--project", ORDERS_PROJECT];
+    const STRICT: &[&str] = &["--builtin-policy", "--strict", "--project", ORDERS_PROJECT];
     let test_cases = [
         ConvertTestCase {
             description: "a last-30-days filter on the clock's date converts with the clock's caveat",

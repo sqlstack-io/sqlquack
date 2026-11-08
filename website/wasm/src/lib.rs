@@ -39,18 +39,20 @@ use sqlquack_semantics::dialects::constants::SNOWFLAKE;
 use sqlquack_semantics::lineage::main::query_name_findings::query_name_findings;
 use sqlquack_semantics::lineage::models::{LineageContext, Nullability, SchemaColumn};
 use sqlquack_semantics::lineage::types::LineageSchema;
+use sqlquack_semantics::types::errors::SchemaError;
 use sqlquack_semantics::types::main::parse_schema::parse_schema;
+use sqlquack_semantics::types::main::source_tables::source_tables;
 use sqlquack_semantics::types::models::Schema;
 use sqlquack_syntax::{Dialect, Expression, ParseOptions};
 use wasm_bindgen::prelude::wasm_bindgen;
 
-/// Every stage's result for `sql` over the relations `schema` declares, as JSON. `settings` is
+/// Every stage's result for `sql` over the tables `sources` declares, as JSON. `settings` is
 /// JSON `{"policy": TOML, "session": "NAME=VALUE" lines, "strict": bool, "utc_session": bool,
 /// "compact": bool}`, `compact` printing each statement on one line as `convert --compact` does;
 /// an empty policy is the built-in default, as `sqlquack convert --builtin-policy`.
 #[wasm_bindgen]
-pub fn analyze(sql: &str, schema: &str, settings: Option<String>) -> String {
-    report(sql, schema, settings.as_deref().unwrap_or_default()).to_string()
+pub fn analyze(sql: &str, sources: &str, settings: Option<String>) -> String {
+    report(sql, sources, settings.as_deref().unwrap_or_default()).to_string()
 }
 
 /// A DuckDB error from running converted SQL, read back as the Snowflake error a building block
@@ -82,11 +84,11 @@ pub fn run_failure(message: &str) -> String {
     .to_string()
 }
 
-/// `CREATE TABLE` for each relation in `schema`, in the DuckDB types converted SQL reads them as,
+/// `CREATE TABLE` for each table `sources` declares, in the DuckDB types converted SQL reads them as,
 /// as JSON: `{"tables": [...]}`, or `{"error": ...}`.
 #[wasm_bindgen]
-pub fn fixture_tables(schema: &str) -> String {
-    let catalog = match catalog(schema) {
+pub fn fixture_tables(sources: &str) -> String {
+    let catalog = match catalog(sources) {
         Ok(catalog) => catalog,
         Err(error) => return json!({ "error": error }).to_string(),
     };
@@ -128,12 +130,23 @@ impl LineageSchema for Catalog {
     }
 }
 
-/// The schema file `text`, read by the same parser as `sqlquack convert --schema`.
+/// The source file `text`, read as `sqlquack convert` reads a project's `sources/*.yml`; a source
+/// left out for an untyped column is an error, so the playground says why.
 fn catalog(text: &str) -> Result<Catalog, String> {
     if text.trim().is_empty() {
         return Ok(Catalog::default());
     }
-    let schema = parse_schema(text).map_err(|error| error.to_string())?;
+    let found = source_tables(text)?;
+    if !found.warnings.is_empty() {
+        return Err(found.warnings.join("; "));
+    }
+    let relations: serde_json::Map<String, Value> = found.tables.into_iter().collect();
+    let schema =
+        parse_schema(&json!({ "relations": relations }).to_string()).map_err(
+            |error| match error {
+                SchemaError::Shape(reason) | SchemaError::Declaration(reason) => reason,
+            },
+        )?;
     let columns = schema
         .relations
         .iter()
@@ -236,10 +249,10 @@ fn placed(mut refusal: Refusal, statement: &Expression, lines: &SourceLines) -> 
     refusal
 }
 
-fn report(sql: &str, schema: &str, settings: &str) -> Value {
-    let catalog = match catalog(schema) {
+fn report(sql: &str, sources: &str, settings: &str) -> Value {
+    let catalog = match catalog(sources) {
         Ok(catalog) => catalog,
-        Err(error) => return json!({ "schema_error": error }),
+        Err(error) => return json!({ "sources_error": error }),
     };
     let settings: Settings = match settings.trim() {
         "" => Settings::default(),

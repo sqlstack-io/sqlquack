@@ -96,9 +96,9 @@ pub struct CheckArguments {
 pub struct ConvertArguments {
     /// The SQL file; standard input when absent or `-`.
     pub path: Option<PathBuf>,
-    /// A JSON file mapping relation names to `[column, Snowflake type]` pairs or column objects.
-    #[arg(long)]
-    pub schema: Option<PathBuf>,
+    /// Declarations a caller passes in memory, as the Python API does, beside the project's.
+    #[arg(skip)]
+    pub schema: Option<Schema>,
     /// User overrides: a FUNCTION() file, or a directory of them, each with `replaces` and `dialect duckdb`.
     #[arg(long)]
     pub overrides: Option<PathBuf>,
@@ -127,12 +127,9 @@ pub struct ConvertArguments {
 pub struct FunctionArguments {
     /// The file holding the function's body (a scalar's expression or a table function's query), or `-` for standard input.
     pub body: PathBuf,
-    /// The function's name, as the schema declares it.
+    /// The function's name, as the project's functions folder declares it.
     #[arg(long)]
     pub name: String,
-    /// A schema file declaring the function and the relations its body reads, with the project's.
-    #[arg(long)]
-    pub schema: Option<PathBuf>,
     /// A Snowflake session parameter of the caller's session, `NAME=VALUE`; repeatable.
     #[arg(long = "session", value_name = "NAME=VALUE")]
     pub session: Vec<String>,
@@ -270,9 +267,6 @@ pub struct IndexArguments {
     /// How to print the report on standard output.
     #[command(flatten)]
     pub output: OutputArguments,
-    /// A JSON file mapping relation names to `[column, type]` pairs or column objects, for SQL files.
-    #[arg(long)]
-    pub schema: Option<PathBuf>,
     /// Treat each converted SQL file as the relation its file name references, and convert again.
     #[arg(long)]
     pub chain_models: bool,
@@ -296,9 +290,6 @@ pub struct CensusArguments {
     /// Constructs listed in the text report.
     #[arg(long, default_value_t = DEFAULT_TEXT_LIMIT)]
     pub limit: usize,
-    /// A JSON file mapping relation names to `[column, Snowflake type]` pairs or column objects.
-    #[arg(long)]
-    pub schema: Option<PathBuf>,
     /// Treat each converted file as the relation its file name references, and convert again.
     #[arg(long)]
     pub chain_models: bool,
@@ -473,7 +464,7 @@ pub(crate) struct Comparison {
 /// What a command reads from the project once the caller's flags are applied.
 #[derive(Debug)]
 pub struct ProjectChoices {
-    /// The schema of `--schema` merged with the project's sources and functions.
+    /// The project's sources and functions, with any schema the caller passes in memory.
     pub schema: Schema,
     /// `[project.session]`, each parameter a `--session` flag gives replaced by the flag's value.
     pub session: Vec<String>,

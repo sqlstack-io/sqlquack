@@ -32,11 +32,7 @@ pub(crate) fn census_command(
     };
     let (policy, project) = match project_choices(
         &arguments.conversion,
-        (
-            arguments.schema.as_deref(),
-            &[],
-            arguments.overrides.as_deref(),
-        ),
+        (None, &[], arguments.overrides.as_deref()),
     ) {
         Ok(project) => project,
         Err(error) => {

@@ -77,14 +77,14 @@
 					<p class="pg-note">Hover an underline for its diagnostic.</p>
 					<p class="pg-note pg-caption" id="pg-caption" hidden></p>
 					<details open>
-						<summary>Schema: the relations your SQL reads</summary>
-						<textarea class="pg-small" id="pg-schema" spellcheck="false" aria-label="Schema JSON"></textarea>
-						<p class="pg-note">Relation names to <code>[column, Snowflake type]</code> pairs, as for <code>--schema</code>. Unquoted names are upper case.</p>
+						<summary>Sources: the tables your SQL reads</summary>
+						<textarea class="pg-small" id="pg-sources" spellcheck="false" aria-label="Source file (YAML)"></textarea>
+						<p class="pg-note">Each table's columns and Snowflake types, as a <a href="/docs/project/">project</a>'s <code>sources/*.yml</code> file declares them. Unquoted names are upper case.</p>
 					</details>
 					<details>
 						<summary>Fixture rows for DuckDB</summary>
 						<textarea class="pg-small" id="pg-rows" spellcheck="false" aria-label="Fixture rows as DuckDB SQL"></textarea>
-						<p class="pg-note">DuckDB SQL run after the schema's tables are created, before the translated query.</p>
+						<p class="pg-note">DuckDB SQL run after the sources' tables are created, before the translated query.</p>
 					</details>
 					<details>
 						<summary>Policy and session</summary>

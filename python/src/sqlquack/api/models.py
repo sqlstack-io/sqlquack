@@ -63,10 +63,10 @@ class Conversion:
 
 @dataclass(frozen=True)
 class ConvertOptions:
-    """The `sqlquack convert` flags, one field each; the defaults are the flags' own."""
+    """The `sqlquack convert` flags, one field each, and `schema`, declarations held in memory."""
 
     project: str | os.PathLike[str] | None = None
-    schema: str | os.PathLike[str] | None = None
+    schema: Mapping[str, Any] | None = None
     policy: str | os.PathLike[str] | None = None
     builtin_policy: bool = False
     session: Mapping[str, str] = field(default_factory=dict)

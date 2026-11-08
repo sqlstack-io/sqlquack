@@ -5,7 +5,7 @@ use serde_json::{Map, Value, json};
 use crate::analysis::constants::{OVERRIDE_ARGUMENTS, OVERRIDE_RETURNS};
 use crate::project::_helpers::python_literal::python_keywords;
 use crate::project::constants::{
-    SQL_FUNCTION_KEYS, TABLE_RETURNS, UDF_DECORATOR, UDF_IMPORTS, UDF_KEYS,
+    FUNCTION_TRAIT_KEYS, SQL_FUNCTION_KEYS, TABLE_RETURNS, UDF_DECORATOR, UDF_IMPORTS, UDF_KEYS,
 };
 use crate::project::main::function_header::function_header;
 use crate::project::main::named_types::named_types;
@@ -31,6 +31,12 @@ pub(crate) fn sql_function(text: &str) -> Result<Value, String> {
                 function.insert(key, returns);
             }
             known if SQL_FUNCTION_KEYS.contains(&known) => {}
+            "vectorized" => {
+                return Err("`vectorized` applies only to Python functions".to_owned());
+            }
+            trait_key if FUNCTION_TRAIT_KEYS.contains(&trait_key) => {
+                function.insert(key, json!(value.trim()));
+            }
             other => return Err(format!("the property `{other}` is not understood")),
         }
     }
@@ -90,7 +96,7 @@ pub(crate) fn python_function(text: &str) -> Result<Value, String> {
                         _ => return Err(format!("line {line}: arguments is not a dict")),
                     }
                 }
-                function.insert(key, pairs(named));
+                function.insert(key, pairs(folded(named)));
             }
             (OVERRIDE_RETURNS, Value::String(type_name)) => {
                 function.insert(key, json!(type_name));
@@ -102,6 +108,9 @@ pub(crate) fn python_function(text: &str) -> Result<Value, String> {
                 ));
             }
             (known, _) if UDF_KEYS.contains(&known) => {}
+            (trait_key, value) if FUNCTION_TRAIT_KEYS.contains(&trait_key) => {
+                function.insert(key, value);
+            }
             (other, _) => {
                 return Err(format!(
                     "line {line}: the keyword `{other}` is not understood"

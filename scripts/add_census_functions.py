@@ -6,7 +6,7 @@ from scripts.census_functions.main.add_functions import run_add_functions
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Add a functions section to a census schema file."""
+    """Write a census project folder's function files."""
     return run_add_functions(argv)
 
 

@@ -19,12 +19,12 @@ Type "clear"
 Enter
 Sleep 300ms
 Show
-Type "sqlquack convert revenue.sql --schema schema.json"
+Type "sqlquack convert revenue.sql"
 Sleep 300ms
 Enter
 Wait@60s /\$\s*$/
 Sleep 4s
-Type "sqlquack convert bucket.sql --schema schema.json"
+Type "sqlquack convert bucket.sql"
 Sleep 300ms
 Enter
 Wait@60s /\$\s*$/

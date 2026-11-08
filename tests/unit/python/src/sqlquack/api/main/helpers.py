@@ -14,17 +14,24 @@ from sqlquack import CheckResult
 #: The release command line `make python-api` builds next to the module.
 COMMAND_ENV: str = "SQLQUACK_BIN"
 
-#: A schema of one relation, as `--schema` reads it.
+#: A schema of one relation, as the `schema` option holds it in memory.
 SCHEMA: dict[str, list[list[str]]] = {
     "ORDERS": [["ORDER_ID", "NUMBER(38,0)"], ["PRICE", "NUMBER(10,2)"]]
 }
 
+#: The same relation as a project's source file declares it.
+SOURCES: str = (
+    "sources:\n  - name: orders\n    columns:\n"
+    "      - name: order_id\n        type: NUMBER(38,0)\n"
+    "      - name: price\n        type: NUMBER(10,2)\n"
+)
 
-def schema_file(directory: Path) -> Path:
-    """The test schema written into `directory`."""
-    path: Path = directory / "schema.json"
-    path.write_text(json.dumps(SCHEMA))
-    return path
+
+def source_project(directory: Path) -> Path:
+    """`directory` made a project declaring the test relation in `sources/`."""
+    (directory / "sources").mkdir(parents=True)
+    (directory / "sources" / "orders.yml").write_text(SOURCES)
+    return directory
 
 
 def command_report(sql: str, arguments: tuple[str, ...], directory: Path) -> dict[str, Any]:

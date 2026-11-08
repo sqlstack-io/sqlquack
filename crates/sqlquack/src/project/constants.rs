@@ -16,6 +16,8 @@ pub const SOURCE_EXTENSIONS: &[&str] = &["yml", "yaml"];
 pub const PYTHON_EXTENSION: &str = "py";
 /// SQL function header properties SQLBuild reads that a signature does not need.
 pub const SQL_FUNCTION_KEYS: &[&str] = &["description", "tags", "database", "schema"];
+/// Keys SQLQuack reads beyond SQLBuild's, in a SQL function header or `@udf(...)`: how calls behave.
+pub const FUNCTION_TRAIT_KEYS: &[&str] = &["volatility", "null_input", "vectorized"];
 /// The word that starts a table function's `returns table (...)`.
 pub const TABLE_RETURNS: &str = "table";
 /// How a Python function file's decorator starts.
@@ -40,6 +42,5 @@ pub const SQL_EXTENSION: &str = "sql";
 pub const TABLE_KIND: &str = "table";
 /// How a clash names a declared function.
 pub const FUNCTION_KIND: &str = "function";
-
-/// The YAML key that merges another mapping's keys into the one holding it.
-pub const MERGE_KEY: &str = "<<";
+/// How a clash names the schema a caller passes in memory, as the Python API's `schema` option.
+pub const GIVEN_SCHEMA: &str = "the schema option";

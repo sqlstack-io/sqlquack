@@ -11,3 +11,6 @@ pub const COLUMN_KEYS: [&str; 4] = ["name", "type", "typed_leaves", "offset"];
 
 /// The keys a column written as an object must give, as strings.
 pub const REQUIRED_COLUMN_KEYS: [&str; 2] = ["name", "type"];
+
+/// The YAML key that merges another mapping's keys into the one holding it.
+pub const MERGE_KEY: &str = "<<";

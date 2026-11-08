@@ -1,0 +1,5 @@
+sources:
+  - name: '"orders"'
+    columns:
+      - name: order_id
+        type: NUMBER(10,0)

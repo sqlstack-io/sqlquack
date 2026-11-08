@@ -1,4 +1,4 @@
-"""DuckShop's census schema, and unit-test outcomes from real DuckDB runs of converted SQL."""
+"""DuckShop's census relations, and unit-test outcomes from real DuckDB runs of converted SQL."""
 
 from __future__ import annotations
 
@@ -13,9 +13,9 @@ import pytest
 
 from scripts.duckshop_measure._helpers.measures import unit_test_outcomes
 from scripts.duckshop_measure._helpers.outcomes import unit_test_outcome
+from scripts.duckshop_measure._helpers.relations import census_relations
 from scripts.duckshop_measure._helpers.report import unit_tests_report
 from scripts.duckshop_measure._helpers.running import duckdb_rows
-from scripts.duckshop_measure._helpers.schema import census_schema
 from scripts.duckshop_measure._helpers.snowflake import (
     load_inputs,
     model_result,
@@ -56,7 +56,7 @@ _ROWS: dict[str, object] = {"model": "m", "target": "core", "outcome": "rows"}
                 "CREATE TEMPORARY TABLE rel__shop__orders (order_id VARCHAR NOT NULL, "
                 '"Total" NUMBER(38,2), placed_at TIMESTAMP_TZ)',
             ),
-            expected_schema={
+            expected_relations={
                 "__SQLQUACK_RELATION__SHOP__ORDERS": [
                     ["ORDER_ID", "VARCHAR"],
                     ["TOTAL", "NUMBER(38,2)"],
@@ -67,11 +67,11 @@ _ROWS: dict[str, object] = {"model": "m", "target": "core", "outcome": "rows"}
     ),
     ids=lambda case: case.description,
 )
-def test_given_an_environment_when_deriving_the_census_schema_then_each_table_is_a_relation(
+def test_given_an_environment_when_deriving_the_census_relations_then_each_table_is_one(
     test_case: SchemaTestCase,
 ) -> None:
-    schema: dict[str, list[list[str]]] = census_schema(list(test_case.setup_sql))
-    assert schema == test_case.expected_schema
+    relations: dict[str, list[list[str]]] = census_relations(list(test_case.setup_sql))
+    assert relations == test_case.expected_relations
 
 
 @pytest.mark.parametrize(
@@ -533,29 +533,27 @@ def test_given_recorded_models_when_measuring_snowflake_then_the_policy_decides_
             header="CREATE OR REPLACE FUNCTION SHOP.PUBLIC.SKU_FAMILY(sku STRING)\nRETURNS STRING\n"
             "AS $$ split_part(sku, '-', 1) $$",
             expected_functions={
-                "__SQLQUACK_UDF__SKU_FAMILY": {
-                    "language": "sql",
-                    "arguments": [["SKU", "STRING"]],
-                    "returns": "STRING",
-                }
+                "functions/sql/__SQLQUACK_UDF__SKU_FAMILY.sql": (
+                    "FUNCTION (\n  arguments (SKU STRING),\n  returns STRING,\n);\nNULL\n"
+                )
             },
         ),
         FunctionSchemaTestCase(
-            description="a Python function is declared with its language",
+            description="a Python function is declared with @udf",
             header="CREATE FUNCTION S.P.SKU_FAMILY(x NUMBER) RETURNS NUMBER LANGUAGE PYTHON "
             "HANDLER = 'f' AS $$\ndef f(x):\n    return x\n$$",
             expected_functions={
-                "__SQLQUACK_UDF__SKU_FAMILY": {
-                    "language": "python",
-                    "arguments": [["X", "NUMBER"]],
-                    "returns": "NUMBER",
-                }
+                "functions/python/__SQLQUACK_UDF__SKU_FAMILY.py": (
+                    "from sqlquack import udf\n\n\n"
+                    '@udf(arguments={"X": "NUMBER"}, returns="NUMBER")\n'
+                    "def main(*arguments):\n    return None\n"
+                )
             },
         ),
     ),
     ids=lambda case: case.description,
 )
-def test_given_compiled_functions_when_deriving_the_schema_then_they_sit_beside_the_relations(
+def test_given_compiled_functions_when_writing_the_project_then_they_sit_beside_the_sources(
     test_case: FunctionSchemaTestCase, tmp_path: Path
 ) -> None:
     environment: Path = tmp_path / "environment.json"
@@ -565,10 +563,10 @@ def test_given_compiled_functions_when_deriving_the_schema_then_they_sit_beside_
     functions: Path = tmp_path / "functions"
     functions.mkdir()
     (functions / "sku_family.sql").write_text(test_case.header)
-    out: Path = tmp_path / "schema.json"
+    out: Path = tmp_path / "project"
     status: int = run_measure(
         argv=[
-            "schema",
+            "project",
             "--environment",
             str(environment),
             "--functions",
@@ -577,11 +575,26 @@ def test_given_compiled_functions_when_deriving_the_schema_then_they_sit_beside_
             str(out),
         ]
     )
-    assert (status, json.loads(out.read_text())) == (
+    written: dict[str, str] = {
+        str(path.relative_to(out)): path.read_text()
+        for path in filter(Path.is_file, out.rglob("*"))
+    }
+    assert (status, written) == (
         0,
         {
-            "relations": {"__SQLQUACK_RELATION__SHOP__SKUS": [["SKU", "VARCHAR"]]},
-            "functions": test_case.expected_functions,
+            "sources/census.yml": json.dumps(
+                {
+                    "sources": [
+                        {
+                            "name": '"__SQLQUACK_RELATION__SHOP__SKUS"',
+                            "columns": [{"name": '"SKU"', "type": "VARCHAR"}],
+                        }
+                    ]
+                },
+                indent=1,
+            )
+            + "\n",
+            **test_case.expected_functions,
         },
     )
 
@@ -691,7 +704,7 @@ def test_given_project_functions_when_measuring_snowflake_then_sql_ones_run_and_
             str(converted),
             "--functions",
             str(compiled / "functions"),
-            "--schema",
+            "--project",
             "unused",
             "--sqlquack",
             "unused",
