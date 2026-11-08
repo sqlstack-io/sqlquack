@@ -90,6 +90,7 @@ pub(crate) fn cast(this: Expression, to: DataType, double_colon_syntax: bool) ->
         to,
         trailing_comments: Vec::new(),
         double_colon_syntax,
+        typed_literal: false,
         format: None,
         default: None,
         inferred_type: None,
