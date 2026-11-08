@@ -611,5 +611,6 @@ pub(crate) fn delete(table: TableRef) -> Delete {
         joins: Vec::new(),
         force_index: None,
         no_from: false,
+        settings: Vec::new(),
     }
 }

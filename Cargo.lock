@@ -1532,6 +1532,7 @@ dependencies = [
  "sqlquack-core",
  "sqlquack-snowflake",
  "sqlquack-syntax",
+ "sqlquack-syntax-clickhouse",
  "sqlquack-syntax-postgres",
  "sqlquack-syntax-sqlite",
  "stacker",
@@ -1563,6 +1564,15 @@ version = "0.2.0"
 dependencies = [
  "serde_json",
  "sqlquack-syntax",
+]
+
+[[package]]
+name = "sqlquack-syntax-clickhouse"
+version = "0.2.0"
+dependencies = [
+ "serde_json",
+ "sqlquack-syntax",
+ "stacker",
 ]
 
 [[package]]

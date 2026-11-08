@@ -20,6 +20,7 @@ stacker.workspace = true
 
 [dev-dependencies]
 sqlquack-syntax-postgres.workspace = true
+sqlquack-syntax-clickhouse.workspace = true
 sqlquack-syntax-sqlite.workspace = true
 
 [lints]

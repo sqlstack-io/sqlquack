@@ -270,6 +270,61 @@ pub(crate) const DUCKDB_JSON_TYPES: [&str; 2] = ["JSON", "JSONB"];
 pub(crate) const FIRST_ARGUMENT_NULLABILITY: [&str; 2] = ["UPPER", "LOWER"];
 /// The Snowflake profile's name.
 pub(crate) const SNOWFLAKE_PROFILE: &str = "Snowflake";
+/// The ClickHouse profile's name.
+pub(crate) const CLICKHOUSE_PROFILE: &str = "ClickHouse";
+/// The FROM items of a query with one join, whose shared names ClickHouse reads from the left.
+pub(crate) const CLICKHOUSE_SINGLE_JOIN_SOURCES: usize = 2;
+/// What ClickHouse's comparisons, logical operators and predicates return.
+pub(crate) const CLICKHOUSE_BOOLEAN_RESULT: &str = "UInt8";
+/// What ClickHouse's counts and ranking functions return.
+pub(crate) const CLICKHOUSE_COUNT_TYPE: &str = "UInt64";
+/// ClickHouse's text type.
+pub(crate) const CLICKHOUSE_STRING_TYPE: &str = "String";
+/// What ClickHouse's `now()` and one-argument `toDateTime` return.
+pub(crate) const CLICKHOUSE_DATETIME_TYPE: &str = "DateTime";
+/// How ClickHouse spells every Decimal type's name.
+pub(crate) const CLICKHOUSE_DECIMAL_PREFIX: &str = "Decimal(";
+/// How ClickHouse spells every FixedString type's name.
+pub(crate) const CLICKHOUSE_FIXED_STRING_PREFIX: &str = "FixedString(";
+/// The prefix of a hexadecimal number literal.
+pub(crate) const CLICKHOUSE_HEX_PREFIX: &str = "0x";
+/// The wrappers that do not change a value's type for arithmetic and functions.
+pub(crate) const CLICKHOUSE_NULLABLE_WRAPPERS: [&str; 2] = ["Nullable", "LowCardinality"];
+/// Built-ins whose ClickHouse 26.1 result type does not depend on their arguments' types.
+pub(crate) const CLICKHOUSE_FIXED_RESULTS: [(&str, &str); 32] = [
+    ("toDate", "Date"),
+    ("today", "Date"),
+    ("toString", "String"),
+    ("toInt8", "Int8"),
+    ("toInt16", "Int16"),
+    ("toInt32", "Int32"),
+    ("toInt64", "Int64"),
+    ("toUInt8", "UInt8"),
+    ("toUInt16", "UInt16"),
+    ("toUInt32", "UInt32"),
+    ("toUInt64", "UInt64"),
+    ("toFloat32", "Float32"),
+    ("toFloat64", "Float64"),
+    ("toYYYYMM", "UInt32"),
+    ("toYYYYMMDD", "UInt32"),
+    ("toYear", "UInt16"),
+    ("toMonth", "UInt8"),
+    ("toDayOfMonth", "UInt8"),
+    ("toHour", "UInt8"),
+    ("length", "UInt64"),
+    ("lengthUTF8", "UInt64"),
+    ("concat", "String"),
+    ("substring", "String"),
+    ("trim", "String"),
+    ("replaceAll", "String"),
+    ("formatDateTime", "String"),
+    ("toStartOfMonth", "Date"),
+    ("toStartOfQuarter", "Date"),
+    ("toStartOfYear", "Date"),
+    ("toStartOfWeek", "Date"),
+    ("toMonday", "Date"),
+    ("dateDiff", "Int64"),
+];
 /// The PostgreSQL profile's name.
 pub(crate) const POSTGRES_PROFILE: &str = "PostgreSQL";
 /// The SQLite profile's name.

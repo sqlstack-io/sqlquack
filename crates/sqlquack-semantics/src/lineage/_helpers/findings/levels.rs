@@ -21,6 +21,7 @@ use crate::lineage::_helpers::tracing::queries::{
     level_scope, output_key, unannotated, with_ctes_visiting,
 };
 use crate::lineage::_helpers::tracing::resolution::key;
+use crate::lineage::constants::CLICKHOUSE_PROFILE;
 use crate::lineage::constants::COLUMNS_FUNCTION;
 use crate::lineage::models::NameFinding;
 use crate::lineage::models::{LineageContext, LineageScope, NamedQuery};
@@ -46,12 +47,14 @@ fn query_findings_level(
         let mut branches: Vec<NameFinding> = query_findings(left, (&ctes, outer, aliases), context);
         branches.extend(query_findings(right, (&ctes, outer, aliases), context));
         branches.append(&mut found);
-        branches.extend(set_order(query, context));
-        branches.extend(set_findings(
-            query,
-            Branches { ctes: &ctes, outer },
-            context,
-        ));
+        if typed_rules(context) {
+            branches.extend(set_order(query, context));
+            branches.extend(set_findings(
+                query,
+                Branches { ctes: &ctes, outer },
+                context,
+            ));
+        }
         branches
     };
     match query {
@@ -72,6 +75,11 @@ fn query_findings_level(
         }
         _ => Vec::new(),
     }
+}
+
+/// Whether the profile takes the scope, type and set-operation rules; ClickHouse keeps names only.
+fn typed_rules(context: LineageContext<'_>) -> bool {
+    context.profile.name() != CLICKHOUSE_PROFILE
 }
 
 /// The CTEs `with` adds to `ctes`, each read body's findings, and under PostgreSQL each one faulted.
@@ -195,15 +203,17 @@ fn select_findings(
         scope: &scope,
         context,
     };
-    nested.extend(select_rules(
-        (node, select),
-        RuleLevel {
-            scope: &scope,
-            context,
-        },
-    ));
-    for checked in in_scope(node) {
-        nested.extend(node_findings(checked, level));
+    if typed_rules(context) {
+        nested.extend(select_rules(
+            (node, select),
+            RuleLevel {
+                scope: &scope,
+                context,
+            },
+        ));
+        for checked in in_scope(node) {
+            nested.extend(node_findings(checked, level));
+        }
     }
     let mut own: Vec<NameFinding> = alias_count_findings(select, &scope, context);
     own.extend(using_findings(select, &scope, context));

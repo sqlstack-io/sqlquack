@@ -1,7 +1,8 @@
 //! The dialect profiles.
 
 use crate::dialects::_helpers::snowflake_types::same_snowflake_type;
-use crate::dialects::constants::SNOWFLAKE_TIMESTAMP_TYPE;
+use crate::dialects::constants::{CLICKHOUSE_TIMESTAMP_TYPE, SNOWFLAKE_TIMESTAMP_TYPE};
+use crate::dialects::main::clickhouse_type::clickhouse_type;
 use crate::dialects::types::DialectProfile;
 
 /// Snowflake: unquoted identifiers resolve to upper case, and resolved names compare exactly.
@@ -113,6 +114,35 @@ impl DialectProfile for Sqlite {
 
     fn same_identifier(&self, left: &str, right: &str) -> bool {
         left.eq_ignore_ascii_case(right)
+    }
+}
+
+/// ClickHouse: names keep their case and compare exactly; types compare as ClickHouse names them.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct ClickHouse;
+
+impl DialectProfile for ClickHouse {
+    fn name(&self) -> &'static str {
+        "ClickHouse"
+    }
+
+    fn resolved_identifier(&self, name: &str, _quoted: bool) -> String {
+        name.to_owned()
+    }
+
+    fn same_identifier(&self, left: &str, right: &str) -> bool {
+        left == right
+    }
+
+    fn timestamp_type(&self) -> &'static str {
+        CLICKHOUSE_TIMESTAMP_TYPE
+    }
+
+    fn same_type(&self, left: &str, right: &str) -> bool {
+        match (clickhouse_type(left), clickhouse_type(right)) {
+            (Some(left), Some(right)) => left == right,
+            _ => left == right,
+        }
     }
 }
 

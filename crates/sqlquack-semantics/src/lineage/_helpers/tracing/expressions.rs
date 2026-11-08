@@ -8,6 +8,7 @@ use sqlquack_syntax::expressions::names::models::{Identifier, Star};
 use sqlquack_syntax::expressions::operators::models::Parameter;
 
 use crate::dialects::main::canonical_type::canonical_type;
+use crate::dialects::main::clickhouse_type::clickhouse_type;
 use crate::lineage::_helpers::tracing::lineages::{combined, constant, traced_if, unresolved};
 use crate::lineage::_helpers::tracing::queries::{expanded_star, resolved_query};
 use crate::lineage::_helpers::tracing::resolution::{column_lineage, key, positional_column};
@@ -18,9 +19,9 @@ use crate::lineage::_helpers::typing::rules::{
 };
 use crate::lineage::_helpers::typing::sqlite_typing::sqlite_cast_spelling;
 use crate::lineage::constants::{
-    AGGREGATE_FUNCTIONS, BOOLEAN_TYPE, DATE_PART_FUNCTIONS, DUCKDB_PROFILE, POSITIONAL_COLUMN_BASE,
-    POSTGRES_PROFILE, SNOWFLAKE_JSON_HOLDERS, SNOWFLAKE_PROFILE, SNOWFLAKE_VARIANT_TYPE,
-    SQLITE_PROFILE,
+    AGGREGATE_FUNCTIONS, BOOLEAN_TYPE, CLICKHOUSE_PROFILE, DATE_PART_FUNCTIONS, DUCKDB_PROFILE,
+    POSITIONAL_COLUMN_BASE, POSTGRES_PROFILE, SNOWFLAKE_JSON_HOLDERS, SNOWFLAKE_PROFILE,
+    SNOWFLAKE_VARIANT_TYPE, SQLITE_PROFILE,
 };
 use crate::lineage::models::{
     Lineage, LineageContext, LineageScope, Nullability, ResolvedQuery, RowReads, TransformKind,
@@ -91,6 +92,9 @@ fn expression_lineage_level(
         Expression::Cast(cast) | Expression::TryCast(cast) | Expression::SafeCast(cast) => {
             let inner: Lineage = expression_lineage(&cast.this, scope, context);
             let target: Option<String> = match context.profile.name() {
+                CLICKHOUSE_PROFILE => {
+                    rendered_type(&cast.to).and_then(|written| clickhouse_type(&written))
+                }
                 DUCKDB_PROFILE => cast_spelling(&cast.to),
                 POSTGRES_PROFILE => postgres_cast_spelling(&cast.to),
                 SQLITE_PROFILE => sqlite_cast_spelling(&cast.to),

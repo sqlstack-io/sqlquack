@@ -74,6 +74,19 @@ pub(crate) struct ResolvedReadTestCase {
     pub(crate) expected_resolved: bool,
 }
 
+pub(crate) struct ClickhouseJoinTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_output: (Option<&'static str>, Nullability),
+    pub(crate) expected_codes: &'static [&'static str],
+}
+
+pub(crate) struct ClickhouseTypeTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_output: ExpectedTypedOutput,
+}
+
 pub(crate) struct DuckdbTypeTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,

@@ -502,5 +502,6 @@ pub(crate) fn delete(table: TableRef) -> Delete {
         returning_aliases: Vec::new(),
         using_items: Vec::new(),
         using_joins: Vec::new(),
+        settings: Vec::new(),
     }
 }

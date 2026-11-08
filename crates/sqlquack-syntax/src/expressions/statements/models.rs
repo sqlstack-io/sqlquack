@@ -241,6 +241,9 @@ pub struct Delete {
     /// PostgreSQL: the joins of the USING list, with `using_items`
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub using_joins: Vec<Join>,
+    /// ClickHouse: SETTINGS key = val, ...
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub settings: Vec<Expression>,
 }
 
 /// COPY statement (Snowflake, PostgreSQL, DuckDB, TSQL)
