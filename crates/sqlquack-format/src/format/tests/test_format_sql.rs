@@ -330,6 +330,13 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             expected_outcome: Ok("SELECT a\nINTO TEMP b\nFROM c"),
         },
         test_types::FormatSqlTestCase {
+            description: "an UPDATE's SET assignments written touching are spaced, and a comparison in SET stays one",
+            sql: "update t set a=1, b=c=d where b=2",
+            line_width: None,
+            dialect: FormatDialect::Snowflake,
+            expected_outcome: Ok("UPDATE t SET a = 1, b = c = d WHERE b = 2"),
+        },
+        test_types::FormatSqlTestCase {
             description: "SQL Server bracketed names stay as written, a keyword inside brackets included",
             sql: "select [Order Id], [select] from [dbo].[Orders] o",
             line_width: None,
