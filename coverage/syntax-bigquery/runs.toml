@@ -14,7 +14,7 @@
 # receipts: the file in receipts/ the checker reads as the current receipts.
 # reversed_run: a run of the same cases in reverse order (run --reverse), kept in repeats/ where
 #   the checker does not read it. Compare it with the receipts:
-#   python -m scripts.run_bigquery_referee compare <receipts file> <repeats file>
+#   python -m scripts.run_bigquery_receipts compare <receipts file> <repeats file>
 # reversed_compared: what that comparison printed.
 # bytes_billed: dry-run and executed bytes billed, summed from the run report.
 

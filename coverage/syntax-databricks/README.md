@@ -30,7 +30,7 @@ python -m scripts.fetch_syntax_docs_databricks /tmp/dbx-pin
 python -m scripts.build_syntax_catalogue_databricks --cache /tmp/dbx-pin
 python -m scripts.audit_syntax_catalogue_databricks --cache /tmp/dbx-pin
 python -m scripts.build_syntax_obligations_databricks
-python -m scripts.run_databricks_referee run --cases coverage/syntax-databricks/cases/query.jsonl \
+python -m scripts.run_databricks_receipts run --cases coverage/syntax-databricks/cases/query.jsonl \
     --out /tmp/run --private /tmp/private
 ```
 
@@ -268,7 +268,7 @@ form's reading and is kept as observed `[[limit]]` rows that quote the banner.
 `sqlquack-syntax-receipt/2`); `runs.toml` records each run, the cases it covered and its repeat
 run, a second run of the same cases in a shuffled order kept in `repeats/`, which the checker
 does not read, so that each case has one current receipt. Compare a run with its repeat with
-`python -m scripts.run_databricks_referee compare receipts/<run>.jsonl repeats/<run>.jsonl`.
+`python -m scripts.run_databricks_receipts compare receipts/<run>.jsonl repeats/<run>.jsonl`.
 
 Every family is recorded, in the runs `runs.toml` lists. Each run is repeated in a shuffled
 order; every repeat compares with 0 differences except the sequential phase's, which `runs.toml`
@@ -287,7 +287,7 @@ A case whose text changes an account- or catalog-level object (a catalog, a sche
 a governed tag, a group, a policy, or a grant on one of them) is held: a run stops before any
 statement runs. Held cases are recorded by `run --sequential`, one case at a time. Before the
 first case and after each one, the referee reads the account state over REST (`SNAPSHOT_KINDS`
-in `scripts/databricks_referee/constants.py`): catalogs, the schemas of `workspace`, connections,
+in `scripts/databricks_receipts/constants.py`): catalogs, the schemas of `workspace`, connections,
 shares, recipients, providers, external locations, storage and service credentials, tag
 policies, groups and their members, the metastore's and `workspace`'s grants, and the tables,
 functions and volumes of `workspace.default`. Each object is recorded by the fields a change
@@ -310,7 +310,7 @@ full, with its subclass, from the start of the message (`[CLASS.SUBCLASS]`, or
 `[RequestId=… ErrorClass=CLASS]` for a Unity Catalog service error, whose request id receipts
 mask), and only a reviewed class is counted: `PARSER_CLASSES` lists the classes the parser
 raises and `LATER_PHASES` gives the phase of each class raised after parsing, in
-`scripts/databricks_referee/constants.py`. A message with no error class is read only by an
+`scripts/databricks_receipts/constants.py`. A message with no error class is read only by an
 anchored pattern, in `UNCLASSED_PARSER` when it carries the excerpt and in `UNCLASSED_LATER`
 with its phase when it does not. Any other failure, including a parser class or a later class
 that is not reviewed, stops the run before a receipt is written and lists every such case in a
@@ -324,11 +324,11 @@ and 23505 (builder refusals of unsupported combinations and repeated keys), 2202
 referee's code for a reviewed parser message that carries no SQLSTATE (an `Operation not
 allowed` message, for example); such a receipt's `sqlstate` and `parse_only_sqlstate` stay
 empty, as the engine sent them.
-`tests/unit/scripts/databricks_referee/test_phases.py` checks these rules.
+`tests/unit/scripts/databricks_receipts/test_phases.py` checks these rules.
 
 ### The referee's tables
 
-`scripts/databricks_referee/constants.py` holds the referee's reviewed tables. The reasons for
+`scripts/databricks_receipts/constants.py` holds the referee's reviewed tables. The reasons for
 their entries follow.
 
 Connection and timing:

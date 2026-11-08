@@ -342,18 +342,18 @@ Project numbers in engine messages (`<number>:dataset`) are masked to `SQLQUACK_
 project id, and the referee counts any it finds as a leak. The sandbox project id comes from the
 `GCP_BQ_SANDBOX_PROJECT` environment variable.
 
-The referee is `scripts/run_bigquery_referee.py` (package
-`scripts/bigquery_referee`), modelled on the SQL Server referee. It writes receipt format
+The referee is `scripts/run_bigquery_receipts.py` (package
+`scripts/bigquery_receipts`), modelled on the SQL Server referee. It writes receipt format
 `sqlquack-syntax-receipt/2` with the capture `execute_autocommit_in_throwaway_database`.
 
 ```sh
-uv run -q --no-project --with google-auth --with requests python -m scripts.run_bigquery_referee \
+uv run -q --no-project --with google-auth --with requests python -m scripts.run_bigquery_receipts \
   run --cases coverage/syntax-bigquery/cases/*.jsonl \
   --out coverage/syntax-bigquery/receipts/<run>.jsonl --private <private dir> [--reverse] [--workers 8]
-python -m scripts.run_bigquery_referee compare receipts/<run>.jsonl repeats/<run>.jsonl
-uv run -q --no-project --with google-auth --with requests python -m scripts.run_bigquery_referee \
+python -m scripts.run_bigquery_receipts compare receipts/<run>.jsonl repeats/<run>.jsonl
+uv run -q --no-project --with google-auth --with requests python -m scripts.run_bigquery_receipts \
   probe "SELECT 1 FROM SQLQUACK_DATASET.t1" [--family query]
-python -m scripts.run_bigquery_referee refusals <cache>/googlesql/googlesql/parser/googlesql.tm
+python -m scripts.run_bigquery_receipts refusals <cache>/googlesql/googlesql/parser/googlesql.tm
 ```
 
 `GCP_BQ_SANDBOX_SA_KEY` holds the service-account key JSON, or the path of its file, and
@@ -405,7 +405,7 @@ start and end state of both run datasets: their options, tables (schema and row 
 routines and models.
 
 **Error classes.** Each error is matched on its `reason` and on a pattern over the normalised
-message, against a fixed table (`scripts/bigquery_referee/constants.py` and
+message, against a fixed table (`scripts/bigquery_receipts/constants.py` and
 `parser_refusals.json`). The table gives `engine_code`, which is kept beside the verbatim
 message:
 - **Parser refusals:** `PR001`–`PR151` are `syntax_error`. Each is one distinct message of a

@@ -11,7 +11,7 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
-from scripts.sqlite_referee.classes.library import Library
+from scripts.sqlite_receipts.classes.library import Library
 from scripts.syntax_catalogue_sqlite.constants import (
     AMALGAMATION,
     AMALGAMATION_FILES,

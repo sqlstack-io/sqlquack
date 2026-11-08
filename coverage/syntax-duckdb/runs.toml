@@ -8,7 +8,7 @@
 # receipts: the file in receipts/ the checker reads as the current receipts.
 # repeat_run: a second run of the same cases, kept in repeats/ where the checker does not read
 #   it (two current receipts per case would make a later disagreement ambiguous). Compare the
-#   two with: python -m scripts.run_duckdb_referee compare <receipts file> <repeats file>
+#   two with: python -m scripts.run_duckdb_receipts compare <receipts file> <repeats file>
 # compared: what that comparison printed.
 
 [[run]]

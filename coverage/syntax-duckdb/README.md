@@ -103,7 +103,7 @@ python -m scripts.fetch_syntax_docs_duckdb /tmp/dd-cache
 python -m scripts.build_syntax_catalogue_duckdb --cache /tmp/dd-cache
 python -m scripts.audit_syntax_catalogue_duckdb --cache /tmp/dd-cache
 python -m scripts.build_syntax_obligations_duckdb --root coverage/syntax-duckdb
-python -m scripts.run_duckdb_referee run --cases coverage/syntax-duckdb/cases/*.jsonl \
+python -m scripts.run_duckdb_receipts run --cases coverage/syntax-duckdb/cases/*.jsonl \
     --out /tmp/run.jsonl --private /tmp/private
 ```
 
@@ -163,7 +163,7 @@ transaction_session 56/41, security_admin 61/36, utility 382/280, functions 4,25
 `sqlquack-syntax-receipt/2`), the run the checker reads. `runs.toml` records it and its repeat
 run, a second run of the same cases kept in `repeats/`, which the checker does not read, so
 that each case has one current receipt. Compare the two with
-`python -m scripts.run_duckdb_referee compare receipts/<run>.jsonl repeats/<run>.jsonl`; at the
+`python -m scripts.run_duckdb_receipts compare receipts/<run>.jsonl repeats/<run>.jsonl`; at the
 pin they do not differ.
 
 The referee judges cases in a child process. Each case runs in a fresh in-memory database:

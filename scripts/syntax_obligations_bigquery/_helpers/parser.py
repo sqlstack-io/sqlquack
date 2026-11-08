@@ -11,8 +11,8 @@ import tempfile
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from scripts.bigquery_referee._helpers.refusals import syntax_classes
-from scripts.bigquery_referee.models import ErrorClass
+from scripts.bigquery_receipts._helpers.refusals import syntax_classes
+from scripts.bigquery_receipts.models import ErrorClass
 from scripts.syntax_obligations.exceptions import ObligationError
 from scripts.syntax_obligations.types import Row
 from scripts.syntax_obligations_bigquery.constants import (

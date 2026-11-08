@@ -96,7 +96,7 @@ python -m scripts.fetch_syntax_docs_sqlite <cache>
 python -m scripts.build_syntax_catalogue_sqlite --cache <cache>
 python -m scripts.audit_syntax_catalogue_sqlite --cache <cache>
 python -m scripts.build_syntax_obligations_sqlite --root coverage/syntax-sqlite
-python -m scripts.run_sqlite_referee run --cache <cache> \
+python -m scripts.run_sqlite_receipts run --cache <cache> \
   --cases coverage/syntax-sqlite/cases/*.jsonl --out <run>.jsonl --private <dir>
 ```
 
@@ -238,11 +238,11 @@ Beyond the derived obligations, `limits.toml` adds by hand:
 `receipts/` holds one run of the local referee against the pinned engine (receipt format
 `sqlquack-syntax-receipt/2`), the run the checker reads. `runs.toml` records it and its repeat
 run, kept in `repeats/`, which the checker does not read, so that each case has one current
-receipt. `python -m scripts.run_sqlite_referee compare <receipts> <repeat>` compares the two,
+receipt. `python -m scripts.run_sqlite_receipts compare <receipts> <repeat>` compares the two,
 and `check --cases ... --receipts <receipts>` checks one run against the cases; at the pin the
 runs do not differ and the check finds nothing missing or stale.
 
-The referee (`scripts/sqlite_referee`) loads the pinned `libsqlite3.so` through ctypes and
+The referee (`scripts/sqlite_receipts`) loads the pinned `libsqlite3.so` through ctypes and
 judges each case in its own child process, in a fresh in-memory database with the case's setup
 applied in autocommit. A parse-only pass prepares each statement of the text in turn, unrun
 (`parser_check = "whole_text"`); then every statement is prepared and stepped in turn, in the
@@ -271,7 +271,7 @@ parser itself raised it (the tokenizer, a parse.y syntax error, or a parse.y act
 | any other message | none | the run stops |
 
 An error from `sqlite3_step` is a runtime error, `E` with the extended code. The classes are in
-`scripts/sqlite_referee/constants.py`, and `tests/unit/scripts/sqlite_referee` checks the
+`scripts/sqlite_receipts/constants.py`, and `tests/unit/scripts/sqlite_receipts` checks the
 mapping, including that an unreviewed message stops the run. The receipt keeps the result
 code's name, the extended code and `sqlite3_errmsg()` verbatim, so the mapping can be checked.
 

@@ -11,7 +11,7 @@
 # receipts: the file in receipts/ the checker reads as the current receipts.
 # repeat_run: a second run of the same cases in an order shuffled with shuffle_seed, kept in
 #   repeats/ where the checker does not read it. Compare the two with:
-#   python -m scripts.run_databricks_referee compare <receipts file> <repeats file>
+#   python -m scripts.run_databricks_receipts compare <receipts file> <repeats file>
 # compared: what that comparison printed.
 
 [[run]]
