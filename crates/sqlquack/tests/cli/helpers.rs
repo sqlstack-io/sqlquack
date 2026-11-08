@@ -1144,18 +1144,21 @@ pub(crate) fn names(names: &[&str]) -> Vec<String> {
 /// `sqlquack convert --json` run inside a project folder built from `test_case`.
 pub(crate) fn project_convert(test_case: &ProjectTestCase) -> ProjectOutcome {
     let directory = tempfile::tempdir().expect("temporary directory");
-    let policy =
-        std::fs::read_to_string(repository_root().join("sqlquack.toml")).expect("policy read");
-    std::fs::write(
-        directory.path().join("sqlquack.toml"),
-        format!("{policy}\n{}", test_case.project),
-    )
-    .expect("policy written");
+    let project = directory.path().join(test_case.folder);
+    std::fs::create_dir_all(&project).expect("project folder created");
     for file in test_case.files {
-        let path = directory.path().join(file.path);
+        let path = project.join(file.path);
         std::fs::create_dir_all(path.parent().expect("a parent directory"))
             .expect("directory created");
-        std::fs::write(path, file.text).expect("file written");
+        let text: String = file
+            .repository
+            .iter()
+            .map(|copied| {
+                std::fs::read_to_string(repository_root().join(copied)).expect("file read") + "\n"
+            })
+            .chain(std::iter::once(file.text.to_owned()))
+            .collect();
+        std::fs::write(path, text).expect("file written");
     }
     std::fs::write(directory.path().join("query.sql"), test_case.sql).expect("query written");
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))

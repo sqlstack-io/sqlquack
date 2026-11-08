@@ -20,8 +20,9 @@ error[SQ0008]: the conversion needs a known divergence the policy refuses: `fn:H
 
 ## Choosing a policy
 
-`convert`, `function`, `census` and `index` read `sqlquack.toml` from the current directory, or the
-file `--policy` names. Without one they use the built-in policy, which refuses every known
+`convert`, `function`, `census` and `index` read the policy from the [project](/docs/project/)'s
+`sqlquack.toml`, or from the file `--policy` names. Without one, or when `sqlquack.toml` holds only
+`[project]`, they use the built-in policy, which refuses every known
 divergence except these, which convert with a warning:
 
 | Divergence | Where | Warning | Refused by |
@@ -60,16 +61,16 @@ sqlquack convert: done, converted under utc-v1
 
 | Flag | Effect |
 |------|--------|
-| `--policy <file>` | The policy file. Default `sqlquack.toml` in the current directory, or the built-in policy without one. |
+| `--policy <file>` | The policy file. Default the project's `sqlquack.toml`, or the built-in policy without one. |
 | `--builtin-policy` | Use the built-in policy even where a `sqlquack.toml` exists: every known divergence is refused but the clock and the checks that only raise, listed above. |
 | `--strict` | Refuse every divergence the policy refuses in strict mode. |
 | `--utc-session` | Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`. |
 | `--confirm-declared-offsets` | Confirm the `TIMESTAMP_TZ` offsets the schema declares. |
 | `--python-runtime` | Confirm a Python runtime registers the project's Python functions. |
-
-A project confirms the same three for every run under `[project.confirm]` in the policy file; see
-[Projects](/docs/project/#settings).
 | `--loud-divergences-only` | Rely only on divergences whose converted SQL raises rather than returns another value. |
+
+A project can confirm the same three for every run under `[project.confirm]` in its
+`sqlquack.toml`; see [Projects](/docs/project/#session-settings).
 
 ## Sessions
 
@@ -78,7 +79,8 @@ Converted SQL is proven only where both sessions run in UTC: Snowflake's `TIMEZO
 `session_timezone_utc` assumption, and strict mode refuses them unless you pass `--utc-session`.
 
 `--session NAME=VALUE` passes your Snowflake session parameters, one flag each, or
-`[project.session]` in the policy file for every run (see [Projects](/docs/project/#settings)):
+`[project.session]` in the project's `sqlquack.toml` for every run (see
+[Projects](/docs/project/#session-settings)):
 
 - Conversion runs under the recorded session profile they match: `utc-v1`, or `utc-qiic-v1` for
   `QUOTED_IDENTIFIERS_IGNORE_CASE = true`. A parameter left unset takes Snowflake's documented

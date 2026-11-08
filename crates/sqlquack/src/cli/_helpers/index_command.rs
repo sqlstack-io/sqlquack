@@ -12,14 +12,14 @@ use walkdir::WalkDir;
 use crate::analysis::models::PipelineConverter;
 use crate::census::main::inspect_corpus::inspect_corpus;
 use crate::census::models::CensusOptions;
-use crate::cli::_helpers::evidence::{chosen_policy, divergence_options};
-use crate::cli::models::IndexArguments;
+use crate::cli::_helpers::evidence::divergence_options;
+use crate::cli::_helpers::project::project_choices;
+use crate::cli::models::{IndexArguments, ProjectChoices};
 use crate::index::main::build_index::build_index;
 use crate::index::main::case_records::case_records;
 use crate::index::main::corpus_records::corpus_records;
 use crate::index::main::render_index_text::render_index_text;
 use crate::index::models::{ConversionRecord, ProvenanceIndex};
-use crate::project::main::load_schema::load_schema;
 
 /// The case directory indexed when no path is given.
 const DEFAULT_CASES: &str = "cases";
@@ -30,17 +30,17 @@ pub(crate) fn index_command(
     stderr: &mut dyn Write,
 ) -> ExitCode {
     let _ = writeln!(stderr, "sqlquack index: converting cases and SQL files…");
-    let policy = match chosen_policy(
-        arguments.conversion.policy.as_deref(),
-        arguments.conversion.builtin_policy,
+    let (policy, project) = match project_choices(
+        &arguments.conversion,
+        (arguments.schema.as_deref(), &[], None),
     ) {
-        Ok(policy) => policy,
+        Ok(chosen) => chosen,
         Err(error) => {
             let _ = writeln!(stderr, "sqlquack index: failed: {error}");
             return ExitCode::from(2);
         }
     };
-    let index = match index(arguments, policy.as_ref()) {
+    let index = match index(arguments, policy.as_ref(), project) {
         Ok(index) => index,
         Err(error) => {
             let _ = writeln!(stderr, "sqlquack index: failed: {error}");
@@ -60,14 +60,18 @@ pub(crate) fn index_command(
     ExitCode::SUCCESS
 }
 
-fn index(arguments: &IndexArguments, policy: Option<&Policy>) -> Result<ProvenanceIndex, String> {
+fn index(
+    arguments: &IndexArguments,
+    policy: Option<&Policy>,
+    project: ProjectChoices,
+) -> Result<ProvenanceIndex, String> {
     let paths: Vec<PathBuf> = match arguments.paths.is_empty() {
         true => vec![PathBuf::from(DEFAULT_CASES)],
         false => arguments.paths.clone(),
     };
     let mut records: Vec<ConversionRecord> = Vec::new();
     let mut corpus: Vec<PathBuf> = Vec::new();
-    let conversion = divergence_options(policy, &arguments.conversion);
+    let conversion = divergence_options(policy, &project.conversion);
     let converter = PipelineConverter {
         options: conversion.clone(),
         python: None,
@@ -86,14 +90,10 @@ fn index(arguments: &IndexArguments, policy: Option<&Policy>) -> Result<Provenan
         }
     }
     if !corpus.is_empty() {
-        let schema = match &arguments.schema {
-            Some(path) => load_schema(path)?,
-            None => Default::default(),
-        };
         let options = CensusOptions {
             dialect: SourceDialect::Snowflake,
             coverage_points: Vec::new(),
-            schema,
+            schema: project.schema,
             chain_models: arguments.chain_models,
             conversion,
             names: false,

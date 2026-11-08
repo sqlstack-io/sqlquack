@@ -29,11 +29,8 @@ pub(crate) fn convert_json(sql: &str, request: &str, path: &str) -> PyResult<Str
         },
         colors: ColorArguments::default(),
         conversion: PolicyArguments {
-            policy: request.policy.or_else(|| {
-                request
-                    .project
-                    .map(|project| project.join(POLICY_FILE_NAME))
-            }),
+            project: request.project,
+            policy: request.policy,
             builtin_policy: request.builtin_policy,
             strict: request.strict,
             utc_session: request.utc_session,

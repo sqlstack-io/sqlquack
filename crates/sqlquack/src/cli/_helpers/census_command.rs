@@ -12,7 +12,7 @@ use crate::census::errors::CensusError;
 use crate::census::main::census_with_progress::census_with_progress;
 use crate::census::main::render_census_text::render_census_text;
 use crate::census::models::CensusOptions;
-use crate::cli::_helpers::evidence::{chosen_policy, divergence_options};
+use crate::cli::_helpers::evidence::divergence_options;
 use crate::cli::_helpers::project::project_choices;
 use crate::cli::models::CensusArguments;
 use sqlquack_rules::catalogue::constants::RULES;
@@ -30,18 +30,7 @@ pub(crate) fn census_command(
         );
         return ExitCode::from(2);
     };
-    let policy = match chosen_policy(
-        arguments.conversion.policy.as_deref(),
-        arguments.conversion.builtin_policy,
-    ) {
-        Ok(policy) => policy,
-        Err(error) => {
-            let _ = writeln!(stderr, "sqlquack census: failed: {error}");
-            return ExitCode::from(2);
-        }
-    };
-    let project = match project_choices(
-        policy.as_ref(),
+    let (policy, project) = match project_choices(
         &arguments.conversion,
         (
             arguments.schema.as_deref(),

@@ -18,7 +18,7 @@ pub struct Rendered<T: Serialize> {
 #[derive(Debug, Default, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct ConvertRequest {
-    /// The project folder, whose policy file is the default `--policy`.
+    /// `--project`.
     pub project: Option<PathBuf>,
     /// `--schema`.
     pub schema: Option<PathBuf>,

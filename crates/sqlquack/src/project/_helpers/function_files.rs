@@ -18,13 +18,13 @@ pub(crate) fn sql_function(text: &str) -> Result<Value, String> {
     for (key, value) in properties {
         match key.as_str() {
             OVERRIDE_ARGUMENTS => {
-                function.insert(key, pairs(named_types(&value)?));
+                function.insert(key, pairs(folded(named_types(&value)?)));
             }
             OVERRIDE_RETURNS => {
                 let returns = match value.get(..TABLE_RETURNS.len()) {
                     Some(head) if head.eq_ignore_ascii_case(TABLE_RETURNS) => {
                         let columns = value[TABLE_RETURNS.len()..].trim();
-                        json!({ "table": pairs(named_types(columns)?) })
+                        json!({ "table": pairs(folded(named_types(columns)?)) })
                     }
                     _ => json!(value),
                 };
@@ -108,6 +108,14 @@ pub(crate) fn python_function(text: &str) -> Result<Value, String> {
         return Err(format!("line {line}: needs returns=\"<TYPE>\""));
     }
     Ok(Value::Object(function))
+}
+
+/// Unquoted names upper-cased, as Snowflake folds them where the body refers to them.
+fn folded(named: Vec<(String, String)>) -> Vec<(String, String)> {
+    named
+        .into_iter()
+        .map(|(name, type_name)| (name.to_ascii_uppercase(), type_name))
+        .collect()
 }
 
 /// Name and type pairs as the schema file writes columns.

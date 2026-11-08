@@ -1,6 +1,5 @@
 //! `sqlquack function`: a SQL project function's body as a DuckDB macro, or why it is refused.
 
-use std::collections::BTreeMap;
 use std::io::{Read, Write};
 use std::path::Path;
 use std::process::ExitCode;
@@ -12,16 +11,14 @@ use sqlquack_core::diagnostics::main::render_diagnostics::render_diagnostics;
 use sqlquack_core::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
 use sqlquack_core::diagnostics::models::Diagnostic;
 use sqlquack_core::parsing::models::SourceDialect;
-use sqlquack_policy::policy::models::Policy;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::conversion::models::ConvertedFunction;
 
 use crate::census::main::resolve_references::resolve_references;
 use crate::cli::_helpers::evidence::caller_choices;
-use crate::cli::_helpers::evidence::chosen_policy;
 use crate::cli::_helpers::evidence::with_divergence_help;
-use crate::cli::models::FunctionArguments;
-use crate::project::main::load_schema::load_schema;
+use crate::cli::_helpers::project::project_choices;
+use crate::cli::models::{FunctionArguments, FunctionInputs};
 use sqlquack_convert::analysis::main::analyze_function::analyze_function;
 use sqlquack_rules::session::main::parse_session::parse_session;
 use sqlquack_rules::session::main::session_conversion_options::session_conversion_options;
@@ -99,15 +96,18 @@ pub(crate) fn function_command(
     }
 }
 
-/// The policy and the caller's session parameters; an error is a usage error.
-fn function_inputs(
-    arguments: &FunctionArguments,
-) -> Result<(Option<Policy>, BTreeMap<String, String>), String> {
-    let policy = chosen_policy(
-        arguments.conversion.policy.as_deref(),
-        arguments.conversion.builtin_policy,
+/// The policy, session parameters, schema and choices of the project and flags; an error is a usage error.
+fn function_inputs(arguments: &FunctionArguments) -> Result<FunctionInputs, String> {
+    let (policy, project) = project_choices(
+        &arguments.conversion,
+        (arguments.schema.as_deref(), &arguments.session, None),
     )?;
-    Ok((policy, parse_session(&arguments.session)?))
+    Ok(FunctionInputs {
+        policy,
+        parameters: parse_session(&project.session)?,
+        schema: project.schema,
+        conversion: project.conversion,
+    })
 }
 
 /// How diagnostics name the body's file.
@@ -135,22 +135,23 @@ fn read_body(path: &Path) -> Result<String, String> {
 
 fn convert(
     arguments: &FunctionArguments,
-    (policy, parameters): &(Option<Policy>, BTreeMap<String, String>),
+    FunctionInputs {
+        policy,
+        parameters,
+        schema,
+        conversion,
+    }: &FunctionInputs,
 ) -> Result<ConvertedFunction, Failure> {
-    let schema = load_schema(&arguments.schema).map_err(Failure::Usage)?;
     let spec = schema.functions.get(&arguments.name).ok_or_else(|| {
         Failure::Usage(format!(
-            "the schema declares no function {}",
+            "no function {} is declared; declare it in the project's functions folder",
             arguments.name
         ))
     })?;
     let body = resolve_references(&read_body(&arguments.body).map_err(Failure::Usage)?);
     let options = match session_conversion_options(
         policy.as_ref(),
-        (
-            arguments.conversion.strict,
-            arguments.conversion.utc_session,
-        ),
+        (conversion.strict, conversion.utc_session),
         parameters,
     ) {
         Ok((options, _)) => options,
@@ -164,20 +165,20 @@ fn convert(
         }
     };
     let options = match policy {
-        Some(policy) => caller_choices(options, policy, &arguments.conversion),
+        Some(policy) => caller_choices(options, policy, conversion),
         None => options,
     };
     analyze_function(
         (&body, spec),
         SourceDialect::Snowflake,
         &builtin_catalogue(),
-        (&schema, &options),
+        (schema, &options),
     )
     .map_err(|refusals| Failure::Refused {
         diagnostics: with_divergence_help(
             &refusals,
             diagnose(&refusals, &body),
-            (policy.as_ref(), &arguments.conversion, parameters),
+            (policy.as_ref(), conversion, parameters),
         ),
         body,
     })

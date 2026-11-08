@@ -63,7 +63,7 @@ class Conversion:
 
 @dataclass(frozen=True)
 class ConvertOptions:
-    """A project folder and one field per `sqlquack convert` flag, with the flags' defaults."""
+    """The `sqlquack convert` flags, one field each; the defaults are the flags' own."""
 
     project: str | os.PathLike[str] | None = None
     schema: str | os.PathLike[str] | None = None

@@ -4,7 +4,6 @@ use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 
 use crate::cli::_helpers::convert_command::{analysis_report, chosen_options, refused_session};
-use crate::cli::_helpers::evidence::chosen_policy;
 use crate::cli::_helpers::project::project_choices;
 use crate::cli::models::{ConvertArguments, ConvertReport};
 use sqlquack_convert::analysis::main::analyze::analyze;
@@ -13,12 +12,7 @@ use sqlquack_rules::session::main::session_conversion_options::session_conversio
 
 /// The report `convert` prints for `sql` under `arguments`, or why it cannot be made (exit 2).
 pub fn convert_report(arguments: &ConvertArguments, sql: &str) -> Result<ConvertReport, String> {
-    let policy = chosen_policy(
-        arguments.conversion.policy.as_deref(),
-        arguments.conversion.builtin_policy,
-    )?;
-    let project = project_choices(
-        policy.as_ref(),
+    let (policy, project) = project_choices(
         &arguments.conversion,
         (
             arguments.schema.as_deref(),

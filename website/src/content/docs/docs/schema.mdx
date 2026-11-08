@@ -5,9 +5,9 @@ description: "Declare the relations and functions your SQL reads, so conversion 
 
 Conversion needs to know what each relation and column name refers to and what Snowflake type it
 has. A [project](/docs/project/) declares them in `sources/` and `functions/` files; a schema file
-declares them as JSON, the format programs such as SQLBuild write. Pass it with `--schema` to
-`convert`, `function`, `census` and `index`. With a project, the schema file adds to the project's
-declarations, and a name declared in both is an error.
+declares them as JSON. Pass it with `--schema` to `convert`, `function`, `census` and `index`. With
+a project, the schema file adds to the project's declarations, and a name declared in both is an
+error.
 
 ```json
 {

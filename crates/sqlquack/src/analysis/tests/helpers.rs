@@ -938,6 +938,7 @@ fn everyday_arguments(root: &std::path::Path, builtin_policy: bool) -> ConvertAr
             color: clap::ColorChoice::Never,
         },
         conversion: PolicyArguments {
+            project: None,
             policy: Some(repository_root().join(POLICY_FILE_NAME)),
             builtin_policy,
             strict: false,
