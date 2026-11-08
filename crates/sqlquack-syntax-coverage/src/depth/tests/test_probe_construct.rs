@@ -115,6 +115,42 @@ fn given_a_parser_without_a_syntax_when_listing_constructs_then_only_its_own_are
             expected_probed: false,
         },
         ConstructsTestCase {
+            description: "SQLite has no type constructor",
+            parser: LocalParser::Sqlite,
+            construct: "type_constructor_and_suffix",
+            expected_probed: false,
+        },
+        ConstructsTestCase {
+            description: "SQLite has no :: cast to chain",
+            parser: LocalParser::Sqlite,
+            construct: "nested_cast_chain",
+            expected_probed: false,
+        },
+        ConstructsTestCase {
+            description: "SQLite gaps CREATE TABLE, so a column type nests nothing",
+            parser: LocalParser::Sqlite,
+            construct: "column_type_suffix",
+            expected_probed: false,
+        },
+        ConstructsTestCase {
+            description: "SQLite reads [] as a quoted name, so a type suffix nests nothing",
+            parser: LocalParser::Sqlite,
+            construct: "type_suffix",
+            expected_probed: false,
+        },
+        ConstructsTestCase {
+            description: "SQLite reads [3] as a quoted name, so a sized type suffix nests nothing",
+            parser: LocalParser::Sqlite,
+            construct: "type_suffix_sized",
+            expected_probed: false,
+        },
+        ConstructsTestCase {
+            description: "SQLite nests CAST( itself",
+            parser: LocalParser::Sqlite,
+            construct: "cast",
+            expected_probed: true,
+        },
+        ConstructsTestCase {
             description: "every parser nests FROM parentheses",
             parser: LocalParser::Postgres,
             construct: "from_parentheses",

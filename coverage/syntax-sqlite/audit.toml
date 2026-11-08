@@ -1,0 +1,213 @@
+# Reviewed omission audit of the SQLite catalogue against the pinned parse.y, the keyword table of
+# mkkeywordhash.c and the pinned engine; checked by scripts/audit_syntax_catalogue_sqlite.py, which
+# fails on any unreviewed or stale row.
+#
+# [[gap]]: a parse.y rule's keyword sequences no catalogued form spells, with the reason.
+# [[keyword]]: a keyword of the table that no catalogued grammar names, that no walked production
+#   uses, or that the pinned engine does not report.
+# [[function]], [[pragma]], [[type]]: an engine function, PRAGMA, STRICT type or collation that no
+#   catalogued grammar names. [[unwalked]]: a rule the walk does not reach.
+# [[unseen]]: syntax of a walked rule that no gap row can report, because it spells no keyword the
+#   walk compares or because a longer documented form contains its keywords; kept uncatalogued with
+#   its reason. The audit fails when a rule of UNSEEN_RULES (constants.py) has no row, when a row
+#   names a rule not in that list, or when a listed rule is no longer walked.
+
+parse_y_sha256 = "ba52f3a1a8c7500d35fe71b46730ae13f3e5dc3701ae23d854ffbfefae7a449a"
+mkkeywordhash_sha256 = "099f834d82274c1c4dd1a31fb7f2ad59cf1e71db30f5fd87772d2dfc70c35cae"
+engine_extract_sha256 = "efcd8a6b2ccd3529a031e7ee6d042ffa233d712470c3c7360906f7a4322b85a1"
+
+limits = [
+    "Grammar: parse.y is read as the amalgamation's parser was generated: comments and C code removed, every %ifdef, %ifndef and %if evaluated with no macro defined (SQLITE_ENABLE_UPDATE_DELETE_LIMIT, SQLITE_UDL_CAPABLE_PARSER and SQLITE_ENABLE_ORDERED_SET_AGGREGATES off, no SQLITE_OMIT_* on). The audit fails unless the productions it reads number YYNRULE of the amalgamation's generated parser (412).",
+    "Walk: every rule reachable from `input` is walked and every production of it checked; a rule not reached is an [[unwalked]] row.",
+    "Spelling: a production is checked as its keyword terminals in order, each terminal standing for the keywords mkkeywordhash.c scans as that token (LIKE_KW for GLOB, LIKE and REGEXP; JOIN_KW for the join words; CTIME_KW for the CURRENT_ words; COLUMNKW for COLUMN; TEMP for TEMP and TEMPORARY). The punctuation terminals LP, RP, COMMA, DOT, EQ, PLUS and MINUS spell ( ) , . = + -; other terminals and the token classes id, ids, idj and number stand for identifiers and literals and spell nothing. A referenced rule contributes its words when every production of it spells only keywords, in at most 60 ways; a recursive or larger rule (expr, select, the lists) contributes `…`, any run, to its parent and is checked as its own productions.",
+    "Containment: a sequence is covered only when one catalogued grammar line reads it as a contiguous run: each line is an automaton over its keywords and the punctuation above, with the syntax diagrams it names inlined as optional parts (all but expr, the select diagrams and sql-stmt), placeholders, identifiers, literals and quoted text spelling nothing, and `…` reading any run of the line. A sequence of `cmd` must be read from the line's start. A longer documented form whose keywords are not adjacent no longer covers a sequence.",
+    "Every production that spells at least one keyword is checked, below `cmd` as well; the [[keyword]] check also covers single words.",
+    "Derived gaps: a gap that contains, as a contiguous run, a gap of a rule it reaches is counted (gaps_derived) but not reviewed; its reviewed root gives the reason.",
+    "Keywords: the 148 rows of mkkeywordhash.c's aKeywordTable, compared with the 147 words sqlite3_keyword_name() reports in the pinned engine; a word counts as catalogued when some grammar spells it outside placeholders and quotes.",
+    "Engine names: functions, PRAGMAs and collations are those pragma_function_list, pragma_pragma_list and pragma_collation_list report in a fresh in-memory database of the pinned engine (built with SQLITE_ENABLE_MATH_FUNCTIONS and SQLITE_ENABLE_PERCENTILE), and the STRICT types those of the amalgamation's sqlite3StdType[]; a name counts as catalogued when some grammar spells it as a word or operator.",
+    "Expansion: a production spelling more than 4096 keyword sequences stops the audit with an error instead of being truncated; none does at the pinned grammar.",
+]
+
+[[gap]]
+rule = "cmd"
+sequences = [
+    "PRAGMA ( DEFAULT )",
+    "PRAGMA ( DELETE )",
+    "PRAGMA ( ON )",
+    "PRAGMA . ( DEFAULT )",
+    "PRAGMA . ( DELETE )",
+    "PRAGMA . ( ON )",
+    "PRAGMA . = DEFAULT",
+    "PRAGMA . = ON",
+    "PRAGMA = ON",
+]
+reason = "pragma.html writes boolean pragma values as the placeholder <boolean> and its prose lists 1, yes, true and on (0, no, false, off); parse.y's nmnum takes ON, DELETE and DEFAULT as keywords so that PRAGMA x = ON, journal_mode = DELETE and temp_store = DEFAULT parse. The values are documented, as words of the placeholder, not as grammar; the schema-qualified and parenthesised spellings are the pragma-stmt diagram's [ schema-name . ] and ( pragma-value ) with the same values (PRAGMA main.foreign_keys = ON, PRAGMA temp_store(DEFAULT) and PRAGMA main.journal_mode(DELETE) run on the pinned engine)"
+
+[[gap]]
+rule = "expr"
+sequences = [
+    "… GLOB … ESCAPE …",
+    "… MATCH … ESCAPE …",
+    "… NOT GLOB … ESCAPE …",
+    "… NOT MATCH … ESCAPE …",
+    "… NOT REGEXP … ESCAPE …",
+    "… REGEXP … ESCAPE …",
+]
+reason = "undocumented: lang_expr.html's expr diagram allows ESCAPE only after LIKE, and its operator table says the ESCAPE clause 'can only bind to a preceding [expr] LIKE [expr] expression'; parse.y's likeop production takes ESCAPE after any LIKE_KW or MATCH and passes it as a third argument, which the pinned engine refuses when preparing (wrong number of arguments to function GLOB(); MATCH likewise; REGEXP has no built-in function)"
+
+[[gap]]
+rule = "refarg"
+sequences = [
+    "ON INSERT CASCADE",
+    "ON INSERT NO ACTION",
+    "ON INSERT RESTRICT",
+    "ON INSERT SET DEFAULT",
+    "ON INSERT SET NULL",
+]
+reason = "undocumented: the foreign-key-clause diagram offers ON DELETE and ON UPDATE only; parse.y keeps `refarg ::= ON INSERT refact` and ignores it (its action sets no flag), so REFERENCES ... ON INSERT SET NULL is accepted and does nothing."
+
+[[gap]]
+rule = "ccons"
+sequences = [
+    "DEFAULT + CURRENT_DATE",
+    "DEFAULT + CURRENT_TIME",
+    "DEFAULT + CURRENT_TIMESTAMP",
+    "DEFAULT + NULL",
+    "DEFAULT - CURRENT_DATE",
+    "DEFAULT - CURRENT_TIME",
+    "DEFAULT - CURRENT_TIMESTAMP",
+    "DEFAULT - NULL",
+]
+reason = "undocumented: the column-constraint diagram signs only a signed-number (DEFAULT { ( expr ) | literal-value | signed-number }); parse.y's ccons takes DEFAULT PLUS or MINUS before any term, so a sign before NULL or a CURRENT_ word parses and the pinned engine creates the table (CREATE TABLE x(a DEFAULT -NULL) and CREATE TABLE x(a DEFAULT +CURRENT_DATE) run)"
+
+[[gap]]
+rule = "expr"
+sequences = [
+    "( ALL … )",
+    "( ALL … ) …",
+    "( ALL … ORDER BY … )",
+    "( ALL … ORDER BY … ) …",
+]
+reason = "undocumented: lang_aggfunc.html's aggregate-function-invocation diagram allows DISTINCT before the arguments but not ALL; parse.y's function call takes `distinct`, which is DISTINCT, ALL or nothing, so count(ALL a) and group_concat(ALL a ORDER BY a) parse and run on the pinned engine, ALL meaning the default"
+
+[[gap]]
+rule = "trigger_decl"
+sequences = [
+    "TEMP TRIGGER . AFTER … ON . FOR EACH ROW …",
+    "TEMP TRIGGER . AFTER … ON . …",
+    "TEMP TRIGGER . BEFORE … ON . FOR EACH ROW …",
+    "TEMP TRIGGER . BEFORE … ON . …",
+    "TEMP TRIGGER . INSTEAD OF … ON . FOR EACH ROW …",
+    "TEMP TRIGGER . INSTEAD OF … ON . …",
+    "TEMP TRIGGER . … ON . FOR EACH ROW …",
+    "TEMP TRIGGER . … ON . …",
+    "TEMP TRIGGER IF NOT EXISTS . AFTER … ON . FOR EACH ROW …",
+    "TEMP TRIGGER IF NOT EXISTS . AFTER … ON . …",
+    "TEMP TRIGGER IF NOT EXISTS . BEFORE … ON . FOR EACH ROW …",
+    "TEMP TRIGGER IF NOT EXISTS . BEFORE … ON . …",
+    "TEMP TRIGGER IF NOT EXISTS . INSTEAD OF … ON . FOR EACH ROW …",
+    "TEMP TRIGGER IF NOT EXISTS . INSTEAD OF … ON . …",
+    "TEMP TRIGGER IF NOT EXISTS . … ON . FOR EACH ROW …",
+    "TEMP TRIGGER IF NOT EXISTS . … ON . …",
+    "TEMPORARY TRIGGER . AFTER … ON . FOR EACH ROW …",
+    "TEMPORARY TRIGGER . AFTER … ON . …",
+    "TEMPORARY TRIGGER . BEFORE … ON . FOR EACH ROW …",
+    "TEMPORARY TRIGGER . BEFORE … ON . …",
+    "TEMPORARY TRIGGER . INSTEAD OF … ON . FOR EACH ROW …",
+    "TEMPORARY TRIGGER . INSTEAD OF … ON . …",
+    "TEMPORARY TRIGGER . … ON . FOR EACH ROW …",
+    "TEMPORARY TRIGGER . … ON . …",
+    "TEMPORARY TRIGGER IF NOT EXISTS . AFTER … ON . FOR EACH ROW …",
+    "TEMPORARY TRIGGER IF NOT EXISTS . AFTER … ON . …",
+    "TEMPORARY TRIGGER IF NOT EXISTS . BEFORE … ON . FOR EACH ROW …",
+    "TEMPORARY TRIGGER IF NOT EXISTS . BEFORE … ON . …",
+    "TEMPORARY TRIGGER IF NOT EXISTS . INSTEAD OF … ON . FOR EACH ROW …",
+    "TEMPORARY TRIGGER IF NOT EXISTS . INSTEAD OF … ON . …",
+    "TEMPORARY TRIGGER IF NOT EXISTS . … ON . FOR EACH ROW …",
+    "TEMPORARY TRIGGER IF NOT EXISTS . … ON . …",
+]
+reason = "refused: the create-trigger diagram qualifies the trigger name but not the table after ON, and the TEMP-trigger section qualifies the table of a TEMP trigger whose name is unqualified (catalogued as its own hand form); a TEMP trigger with a schema-qualified name parses in parse.y's trigger_decl but the pinned engine refuses it while preparing (temporary trigger may not have qualified name)"
+
+[[gap]]
+rule = "trigger_decl"
+sequences = [
+    "TRIGGER . AFTER … ON . FOR EACH ROW …",
+    "TRIGGER . AFTER … ON . …",
+    "TRIGGER . BEFORE … ON . FOR EACH ROW …",
+    "TRIGGER . BEFORE … ON . …",
+    "TRIGGER . INSTEAD OF … ON . FOR EACH ROW …",
+    "TRIGGER . INSTEAD OF … ON . …",
+    "TRIGGER . … ON . FOR EACH ROW …",
+    "TRIGGER . … ON . …",
+    "TRIGGER IF NOT EXISTS . AFTER … ON . FOR EACH ROW …",
+    "TRIGGER IF NOT EXISTS . AFTER … ON . …",
+    "TRIGGER IF NOT EXISTS . BEFORE … ON . FOR EACH ROW …",
+    "TRIGGER IF NOT EXISTS . BEFORE … ON . …",
+    "TRIGGER IF NOT EXISTS . INSTEAD OF … ON . FOR EACH ROW …",
+    "TRIGGER IF NOT EXISTS . INSTEAD OF … ON . …",
+    "TRIGGER IF NOT EXISTS . … ON . FOR EACH ROW …",
+    "TRIGGER IF NOT EXISTS . … ON . …",
+]
+reason = "undocumented: the create-trigger diagram names the table after ON unqualified, and lang_createtrigger.html documents a qualified table only for a TEMP trigger with an unqualified name ('TEMP Triggers on Non-TEMP Tables'); parse.y's trigger_decl takes a fullname after ON for every trigger, and the pinned engine accepts a qualified non-TEMP trigger on a table of the same schema (CREATE TRIGGER main.tr AFTER INSERT ON main.t ... runs) and refuses one on another schema while preparing (trigger tr cannot reference objects in database temp)"
+
+[[keyword]]
+keyword = "WITHIN"
+reason = "the table's WITHIN row has mask ORDERSET, compiled only with SQLITE_ENABLE_ORDERED_SET_AGGREGATES: the pinned engine does not report it, no production of the pinned grammar uses it (WITHIN GROUP is inside %ifdef SQLITE_ENABLE_ORDERED_SET_AGGREGATES), and percentile.html writes `percentile_cont(P) WITHIN GROUP (ORDER BY Y)` only for builds with that option, which changes parse.y and so cannot be enabled in the release amalgamation: out of scope, as the README states"
+
+[[function]]
+name = "sqlite_log"
+reason = "undocumented in the page set: the SQL wrapper of the sqlite3_log() C interface (c3ref/log.html, excluded with the C interface reference); lang_corefunc.html does not list it"
+
+[[function]]
+name = "subtype"
+reason = "undocumented in the page set: a built-in that reports a value's subtype, used to test the sqlite3_value_subtype() C interface (c3ref/value_subtype.html, excluded with the C interface reference); lang_corefunc.html does not list it"
+
+[[unseen]]
+rule = "ccons"
+syntax = "NULL [ <conflict-clause> ] as a column constraint; DEFAULT <identifier>"
+reason = "undocumented: the column-constraint diagram has NOT NULL but no bare NULL, and DEFAULT takes a parenthesised expression, a literal or a signed number; parse.y's ccons accepts NULL onconf (CREATE TABLE t(x NULL) parses and the constraint does nothing) and DEFAULT followed by an identifier (an id, kept as the text of a string default). The walk cannot report them: NULL ON CONFLICT is contained in the documented NOT NULL ON CONFLICT, and DEFAULT <identifier> spells only DEFAULT"
+
+[[unseen]]
+rule = "key_opt"
+syntax = "ATTACH [ DATABASE ] <expr> AS <schema-name> KEY <expr>"
+reason = "undocumented: the attach-stmt diagram ends at the schema name; parse.y's key_opt takes KEY <expr>, the encryption key of builds that support one, which the pinned build accepts and ignores. KEY is a catalogued word (PRIMARY KEY, FOREIGN KEY) and key_opt spells one keyword, so the walk cannot report it"
+
+[[unseen]]
+rule = "trans_opt"
+syntax = "{ BEGIN | COMMIT | END | ROLLBACK } [ <kind> ] TRANSACTION <name>"
+reason = "undocumented: the begin-stmt, commit-stmt and rollback-stmt diagrams end at TRANSACTION; parse.y's trans_opt also takes a name after it, which the pinned engine accepts and ignores (BEGIN TRANSACTION foo parses). The name is an identifier, which the walk does not compare"
+
+[[unseen]]
+rule = "cmd"
+syntax = "ATTACH [ DATABASE ] <expr> AS <expr>; DETACH [ DATABASE ] <expr>"
+reason = "undocumented: the attach-stmt and detach-stmt diagrams name the schema with <schema-name>; parse.y's cmd ::= ATTACH database_kw_opt expr AS expr key_opt and cmd ::= DETACH database_kw_opt expr (parse.y:1861, :1864) take any expression, which the pinned engine evaluates for the name (ATTACH ':memory:' AS 'a' || 'b' runs; DETACH 'a' || 'b' parses and fails at step with 'no such database: ab'). A name is an expression, which the walk does not compare"
+
+[[unseen]]
+rule = "exprlist"
+syntax = "<table-function-name> ( ) in a FROM clause"
+reason = "undocumented: the table-or-subquery diagram writes a table-valued function with at least one <expr>; parse.y's seltablist ::= stl_prefix nm dbnm LP exprlist RP as on_using takes exprlist ::= . (parse.y:769), so SELECT * FROM json_each() parses and runs. The empty list adds no keyword, so the walk cannot report it"
+
+[[unseen]]
+rule = "nm"
+syntax = "an unquoted fallback keyword as a name"
+reason = "undocumented as accepted: lang_keywords.html:136 says a keyword used as a name must be quoted, but parse.y's %fallback ID makes the non-reserved keywords fall back to ID, so CREATE TABLE abort ( c1 ) and SELECT 1 AS offset parse. The walk compares keyword sequences, not which words a name may be"
+
+[[unseen]]
+rule = "seltablist"
+syntax = "( <table-or-subquery> ) AS <table-alias>"
+reason = "undocumented: the table-or-subquery diagram gives a parenthesised join-clause or table-or-subquery list no alias; parse.y's seltablist ::= stl_prefix LP seltablist RP as on_using (parse.y:777) takes one, so SELECT * FROM ( t1 ) AS x parses and runs. AS is a catalogued word next to a parenthesis, so the walk cannot report it"
+
+[[unseen]]
+rule = "tcons"
+syntax = "CHECK ( <expr> ) <conflict-clause> as a table constraint"
+reason = "undocumented as accepted: the table-constraint diagram has no conflict clause after CHECK and lang_conflict.html:210 says ON CONFLICT is not allowed on CHECK, but parse.y's tcons ::= CHECK LP expr RP onconf (parse.y:472) parses one and ignores it, so CREATE TABLE t3 ( c1 , CHECK ( c1 < 9 ) ON CONFLICT FAIL ) runs. ON CONFLICT follows other table constraints, so the walk cannot report it"
+
+[[unseen]]
+rule = "tconscomma"
+syntax = "<table-constraint> <table-constraint> with no comma between them"
+reason = "undocumented: the create-table diagram separates table constraints with commas; parse.y's tconscomma ::= . (parse.y:465) lets the comma be left out, so CREATE TABLE t3 ( c1 , c2 , PRIMARY KEY ( c1 ) UNIQUE ( c2 ) ) parses and runs. Leaving a token out adds no keyword, so the walk cannot report it"
+
+[[unseen]]
+rule = "typetoken"
+syntax = "CAST ( <expr> AS )"
+reason = "undocumented: the expr diagram writes CAST ( <expr> AS <type-name> ); parse.y's expr ::= CAST LP expr AS typetoken RP with typetoken ::= . (parse.y:1234) takes an empty type, so SELECT CAST ( 1 AS ) parses and runs. Leaving a name out adds no keyword, so the walk cannot report it"

@@ -1,0 +1,99 @@
+# Obligation ids this root has retired, grouped by the commit that retired them.
+# scripts/build_syntax_obligations_sqlite.py never issues them again: it reserves each number and
+# fails if a retired id appears in obligations/, and it fails when an id it issued before leaves
+# obligations/ without a row here.
+#
+# [[retired]]
+# retired_in = "<commit>"
+# reason = "<why the obligation no longer holds>"
+# ids = ["sl.<family>.<form>.oNNN"]
+
+[[retired]]
+retired_in = "e1e176c34c98aaa316ee5509b75ae8479b330d13"
+reason = "the DELETE and UPDATE forms with ORDER BY and LIMIT are out of scope: lang_delete.html and lang_update.html document them only for builds with SQLITE_ENABLE_UPDATE_DELETE_LIMIT, and the pinned engine refuses LIMIT there while parsing, so their diagram pages are out_of_scope in hand.toml and the forms are absent_from_source"
+ids = [
+  "sl.dml.delete-stmt-limited.o001",
+  "sl.dml.delete-stmt-limited.o002",
+  "sl.dml.update-stmt-limited.o001",
+  "sl.dml.update-stmt-limited.o002",
+]
+
+[[retired]]
+retired_in = "62890a8dafffbfb20e06785d41e01d32d04ea18b"
+reason = "the debug-only and other-build PRAGMA forms are out of scope: pragma.html documents parser_trace, stats and the four vdbe_ pragmas only for SQLITE_DEBUG builds, data_store_directory only for Windows builds, and legacy_file_format as a no-op the source no longer defines; the pinned engine lists none of them in pragma_pragma_list, so PRAGMA_OUT_OF_SCOPE leaves them out and the forms are absent_from_source"
+ids = [
+  "sl.utility.pragma.data-store-directory.o001",
+  "sl.utility.pragma.data-store-directory.o002",
+  "sl.utility.pragma.data-store-directory.o003",
+  "sl.utility.pragma.data-store-directory.o004",
+  "sl.utility.pragma.data-store-directory.o005",
+  "sl.utility.pragma.data-store-directory.o006",
+  "sl.utility.pragma.legacy-file-format.o001",
+  "sl.utility.pragma.legacy-file-format.o002",
+  "sl.utility.pragma.parser-trace.o001",
+  "sl.utility.pragma.parser-trace.o002",
+  "sl.utility.pragma.parser-trace.o003",
+  "sl.utility.pragma.parser-trace.o004",
+  "sl.utility.pragma.stats.o001",
+  "sl.utility.pragma.stats.o002",
+  "sl.utility.pragma.vdbe-addoptrace.o001",
+  "sl.utility.pragma.vdbe-addoptrace.o002",
+  "sl.utility.pragma.vdbe-addoptrace.o003",
+  "sl.utility.pragma.vdbe-addoptrace.o004",
+  "sl.utility.pragma.vdbe-debug.o001",
+  "sl.utility.pragma.vdbe-debug.o002",
+  "sl.utility.pragma.vdbe-debug.o003",
+  "sl.utility.pragma.vdbe-debug.o004",
+  "sl.utility.pragma.vdbe-listing.o001",
+  "sl.utility.pragma.vdbe-listing.o002",
+  "sl.utility.pragma.vdbe-listing.o003",
+  "sl.utility.pragma.vdbe-listing.o004",
+  "sl.utility.pragma.vdbe-trace.o001",
+  "sl.utility.pragma.vdbe-trace.o002",
+  "sl.utility.pragma.vdbe-trace.o003",
+  "sl.utility.pragma.vdbe-trace.o004",
+]
+
+[[retired]]
+retired_in = "c39642b4d3912931dc0d162702b9bc793aab26b6"
+reason = "four parser refusals are syntax errors (GRAMR), not limits checked after parsing: the variable-number and compound-term limits are enforced in parse.y actions (sqlite3ExprAssignVarNumber, parserDoubleLinkSelect), so the boundary obligations whose notes said the text parses are reissued with notes that say where the refusal happens and that the limit is the pinned build's default; and the frame-spec operand case wrote an ending boundary higher in the list than the starting one, which windowfunctions.html forbids and sqlite3WindowAlloc refuses, so it is suppressed and replaced by hand-written rows"
+ids = [
+  "sl.expressions.expr.parameters.o008",
+  "sl.expressions.expr.parameters.o009",
+  "sl.expressions.expr.parameters.o010",
+  "sl.expressions.frame-spec.o016",
+  "sl.query.compound-select-stmt.o042",
+  "sl.query.compound-select-stmt.o043",
+]
+
+[[retired]]
+retired_in = "7ab1832f5776c48a72942ab7b885d6761bf1677d"
+reason = "refusals SQLite raises while parsing, from the statement text alone, are syntax errors (GRAMR) even when a build.c helper that a parse.y action calls raises them: 2,001 table columns (sqlite3AddColumn), STRICT without a type (sqlite3EndTable) and AUTOINCREMENT outside an INTEGER PRIMARY KEY (sqlite3AddPrimaryKey); the column boundaries and the two AUTOINCREMENT negatives said the text parses, so they are reissued with notes that say where the refusal happens and, for the columns, that the limit is the pinned build's default"
+ids = [
+  "sl.ddl.column-constraint.primary-key.o019",
+  "sl.ddl.create-table-stmt.columns.o033",
+  "sl.ddl.create-table-stmt.columns.o034",
+  "sl.ddl.table-constraint.primary-key-autoincrement.o015",
+]
+
+[[retired]]
+retired_in = "47984925ad057fb13874297cd8311febca7c21b9"
+reason = "two forms are read as the pinned engine parses them: a TEMP trigger takes no qualified name (sqlite3BeginTrigger refuses one from the statement text alone, temp . <name> included, though the diagram allows it), so CREATE TRIGGER is read as two branches, the optional qualified name without TEMP and TEMP or TEMPORARY with a plain name, and TEMP is no longer an optional word; and the foreign-key clause, derived in a column constraint, references one column (sqlite3CreateForeignKey refuses more there), with the continued list written by hand in a table constraint. The obligations the diagram's reading derived for the optional TEMP and for the referenced list vanish"
+ids = [
+  "sl.ddl.create-trigger-stmt.o002",
+  "sl.ddl.create-trigger-stmt.o003",
+  "sl.ddl.foreign-key-clause.o004",
+  "sl.ddl.foreign-key-clause.o005",
+  "sl.ddl.foreign-key-clause.o006",
+  "sl.ddl.foreign-key-clause.o007",
+  "sl.ddl.foreign-key-clause.o009",
+  "sl.ddl.foreign-key-clause.o010",
+  "sl.ddl.foreign-key-clause.o021",
+]
+
+[[retired]]
+retired_in = "e5335d918d76408fa25cc8a3fd668da9605f4cdb"
+reason = "the hand negative for TEMP with a qualified trigger name named build.c as the home of sqlite3BeginTrigger, which is in trigger.c; it is reissued with the corrected note"
+ids = [
+  "sl.ddl.create-trigger-stmt.o087",
+]

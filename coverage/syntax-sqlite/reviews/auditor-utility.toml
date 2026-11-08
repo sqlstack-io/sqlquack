@@ -1,0 +1,23 @@
+# Approvals by the independent syntax auditor. Each listed form was read in full against its
+# SQLite 3.54.1 documentation, its obligations, its cases with their SQLite 3.54.1 receipts, and the
+# local parse trees. An approval holds while the form's definition hash and fingerprint are unchanged;
+# any change makes it stale until re-read. Entries are copied verbatim from the auditor's record on
+# wip/syntax-omission-audit (coverage/syntax/audits/sl-family-batch-b24e4b34.toml).
+
+[[review]]
+id = "sl-auditor-utility-001"
+reviewer_lane = "auditor"
+family = "utility"
+parser_tree = "1cc1e8670f6a0f2987045786698eb71c2ba3e5ba"
+reviewed_utc = "2026-11-08T08:10:17Z"
+verdict = "approved"
+forms = [
+  "sl.utility.sql-stmt-list",
+]
+note = "Read against the pinned SQLite 3.54.1 documentation and parse.y, the obligations, the cases with their receipts and repeat, and the parse trees of the strict parser; every case was re-run by the auditor on the pinned engine and every scored case agrees with its receipt."
+
+[review.fingerprints]
+"sl.utility.sql-stmt-list" = "c1234817fb7b88128ab3995eca55e6766411129d0b30fe3ffecb65d443eae5df"
+
+[review.definitions]
+"sl.utility.sql-stmt-list" = "1c971a756624b1e9bfd6bbe207021f4b46c9ab601fa8c6c5004acbf28f4b9254"
