@@ -18,6 +18,8 @@ pub(crate) const SEPARATION_FAILURE: &str =
     "formatter would separate tokens written touching where the space could change their meaning";
 pub(crate) const JOIN_FAILURE: &str =
     "formatter would join tokens written apart where they could read as one";
+pub(crate) const BIGQUERY_OPAQUE_STATEMENT_FAILURE: &str =
+    "formatter does not lay out a statement the BigQuery parser keeps as opaque text";
 pub(crate) const SQLSERVER_OPAQUE_STATEMENT_FAILURE: &str =
     "formatter does not lay out a statement the SQL Server parser keeps as opaque text";
 pub(crate) const BATCH_SEPARATOR_FAILURE: &str = "formatter does not lay out a GO batch separator, which a client reads and SQL Server never sees";
@@ -33,11 +35,12 @@ pub(crate) const BLOCK_COMMENT_START: &str = "/*";
 pub(crate) const BLOCK_COMMENT_END: &str = "*/";
 pub(crate) const SELECT_LIST_FAILURE: &str =
     "formatter could not find every select list, whose items without an alias it keeps as written";
-pub(crate) const UNSUPPORTED_DIALECT_FAILURE: &str = "formatter does not support this dialect yet; only Snowflake, DuckDB and SQL Server have a format gate";
+pub(crate) const UNSUPPORTED_DIALECT_FAILURE: &str = "formatter does not support this dialect yet; only Snowflake, DuckDB, BigQuery and SQL Server have a format gate";
 /// The dialects whose format corpus subset gates the formatter.
-pub(crate) const FORMAT_GATED_DIALECTS: [crate::format::models::FormatDialect; 3] = [
+pub(crate) const FORMAT_GATED_DIALECTS: [crate::format::models::FormatDialect; 4] = [
     crate::format::models::FormatDialect::Snowflake,
     crate::format::models::FormatDialect::DuckDB,
+    crate::format::models::FormatDialect::BigQuery,
     crate::format::models::FormatDialect::SqlServer,
 ];
 pub(crate) const DEPTH_FAILURE: &str =
@@ -171,6 +174,8 @@ pub(crate) const DUCKDB_INLINE_CALLS: [&str; 25] = [
     "TRIM",
     "TRY_CAST",
 ];
+/// BigQuery calls the guide keeps on one line however wide.
+pub(crate) const BIGQUERY_INLINE_CALLS: [&str; 1] = ["JSON_OBJECT"];
 /// PostgreSQL calls the guide keeps on one line however wide.
 pub(crate) const POSTGRES_INLINE_CALLS: [&str; 14] = [
     "ARRAY_LENGTH",
@@ -189,6 +194,10 @@ pub(crate) const POSTGRES_INLINE_CALLS: [&str; 14] = [
     "XMLELEMENT",
 ];
 
+/// The BigQuery keyword of a foreign key, after which a name names the referenced table.
+pub(crate) const BIGQUERY_REFERENCES_KEYWORD: &str = "REFERENCES";
+/// The BigQuery keyword whose ON names the indexed table, as in `CREATE SEARCH INDEX ix ON t(c)`.
+pub(crate) const BIGQUERY_INDEX_KEYWORD: &str = "INDEX";
 /// SQL Server calls the guide keeps on one line however wide.
 pub(crate) const SQLSERVER_INLINE_CALLS: [&str; 2] = ["CAST", "SUBSTRING"];
 /// The SQL Server keyword that, after CROSS or OUTER, applies a table-valued expression like a join.
@@ -381,9 +390,20 @@ pub(crate) const UNSEPARABLE_NEIGHBOURS: [&str; 3] = [".", ":", "::"];
 pub(crate) const ALIAS_FOLLOWERS: [&str; 3] = ["MATCH_CONDITION", "ON", "USING"];
 /// Set operators, each starting its own line between its operands.
 pub(crate) const SET_OPERATORS: [&str; 4] = ["UNION", "EXCEPT", "INTERSECT", "MINUS"];
-/// Words that continue a set operator, such as `UNION ALL BY NAME`.
-pub(crate) const SET_OPERATOR_MODIFIERS: [&str; 5] =
-    ["ALL", "DISTINCT", "BY", "NAME", "CORRESPONDING"];
+/// Words that continue a set operator, such as `UNION ALL BY NAME` or `UNION ALL STRICT CORRESPONDING BY (a)`.
+pub(crate) const SET_OPERATOR_MODIFIERS: [&str; 7] = [
+    "ALL",
+    "DISTINCT",
+    "BY",
+    "NAME",
+    "CORRESPONDING",
+    "STRICT",
+    "ON",
+];
+/// Words before a BigQuery set operator that start its line, such as `LEFT UNION ALL`.
+pub(crate) const BIGQUERY_SET_OPERATOR_PREFIXES: [&str; 4] = ["INNER", "LEFT", "FULL", "OUTER"];
+/// The kinds of a BigQuery value-table SELECT, such as `SELECT AS STRUCT`.
+pub(crate) const BIGQUERY_VALUE_TABLE_KINDS: [&str; 2] = ["STRUCT", "VALUE"];
 /// The branch keywords of a CASE expression.
 pub(crate) const CASE_BRANCHES: [&str; 3] = ["WHEN", "THEN", "ELSE"];
 /// The sampling unit spaced before `(` after SAMPLE or TABLESAMPLE.

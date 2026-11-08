@@ -3,6 +3,7 @@
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::{TokenKind, tokenize};
 
+use crate::format::_helpers::bigquery::lex_bigquery;
 use crate::format::_helpers::sqlserver::lex_sqlserver;
 use crate::format::constants::{TOKENIZE_FAILURE, UNSUPPORTED_DIALECT_FAILURE};
 use crate::format::models::FormatDialect;
@@ -35,6 +36,7 @@ pub(crate) fn lex(
 ) -> Result<(Vec<Lexeme>, Vec<Comment>), String> {
     let Some(shared) = dialect.shared() else {
         return match dialect {
+            FormatDialect::BigQuery => lex_bigquery(sql),
             FormatDialect::SqlServer => lex_sqlserver(sql),
             _ => Err(UNSUPPORTED_DIALECT_FAILURE.to_string()),
         };

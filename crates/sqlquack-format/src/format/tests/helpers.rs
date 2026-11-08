@@ -2,24 +2,29 @@
 
 use serde_json::Value;
 use sqlquack_syntax::{TokenKind, tokenize};
-use sqlquack_syntax_sqlserver::scan;
 
 use crate::format::models::FormatDialect;
 
+use crate::format::_helpers::lexemes::lex;
 use crate::format::constants::{DEPTH_FAILURE, PARSE_FAILURE, TYPE_DEPTH_FAILURE};
 use crate::format::main::format_sql::format_sql;
 use crate::format::models::FormatOptions;
 use crate::format::tests::test_types::{CorpusOutcome, EntryOutcome, FormatCorpusTestCase};
 
+/// BigQuery's recorded dry-run verdicts, two runs of each statement.
+const BIGQUERY_RECEIPTS: &str = include_str!("fixtures/bigquery_receipts.jsonl");
+/// The reason BigQuery gives an invalid query.
+const INVALID_QUERY: &str = "invalidQuery";
 /// SQL Server's recorded verdicts on the corpus statements SQLQuack refuses.
 const SQLSERVER_RECEIPTS: &str = include_str!("fixtures/sqlserver_receipts.jsonl");
 
 /// The line width the corpus is also wrapped at, as SQLClean's corpus test does.
 const CORPUS_LINE_WIDTH: usize = 40;
 /// The corpus dialect names SQLQuack tokenizes, with their dialects.
-const DIALECTS: [(&str, FormatDialect); 3] = [
+const DIALECTS: [(&str, FormatDialect); 4] = [
     ("snowflake", FormatDialect::Snowflake),
     ("duckdb", FormatDialect::DuckDB),
+    ("bigquery", FormatDialect::BigQuery),
     ("tsql", FormatDialect::SqlServer),
 ];
 
@@ -44,10 +49,9 @@ fn format_once(sql: &str, dialect: FormatDialect, line_width: Option<usize>) -> 
 /// The significant token texts of `sql`.
 fn token_texts(sql: &str, dialect: FormatDialect) -> Vec<String> {
     let Some(shared) = dialect.shared() else {
-        return scan(sql)
-            .iter()
-            .map(|token| sql[token.start..token.end].to_string())
-            .collect();
+        return lex(sql, dialect)
+            .map(|(lexemes, _)| lexemes.into_iter().map(|lexeme| lexeme.raw).collect())
+            .unwrap_or_default();
     };
     tokenize(sql, shared)
         .unwrap_or_default()
@@ -174,6 +178,34 @@ pub(super) fn check_dialect_corpus(
             .flat_map(|outcome| outcome.failures)
             .collect(),
     }
+}
+
+/// The syntax error a BigQuery receipt records, as its message and `line:column`; `None` when it was accepted.
+fn recorded_bigquery_rejection(receipt: &Value) -> Option<(String, String)> {
+    (receipt["engine_code"] == INVALID_QUERY).then(|| {
+        (
+            receipt["message"].as_str().unwrap_or_default().to_string(),
+            receipt["position"].as_str().unwrap_or_default().to_string(),
+        )
+    })
+}
+
+/// What every recorded BigQuery run of `statement` reported: its syntax error, or `None`.
+pub(super) fn recorded_bigquery_rejections(statement: &str) -> Vec<Option<(String, String)>> {
+    BIGQUERY_RECEIPTS
+        .lines()
+        .filter_map(|line| serde_json::from_str::<Value>(line).ok())
+        .filter(|receipt| receipt["statement"] == statement)
+        .map(|receipt| recorded_bigquery_rejection(&receipt))
+        .collect()
+}
+
+/// Whether SQLQuack's BigQuery parser refuses `statement` with a syntax error.
+pub(super) fn native_bigquery_refusal(statement: &str) -> bool {
+    sqlquack_syntax_bigquery::parse_strict(statement)
+        .err()
+        .and_then(|failure| failure.parse_error().cloned())
+        .is_some_and(|error| error.syntax)
 }
 
 /// The failure constant `reason` starts with, or all of `reason` when it starts with none of them.

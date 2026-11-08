@@ -3,6 +3,7 @@
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::{CallMode, ExpressionWalk, parse_statements_with};
 
+use crate::format::_helpers::bigquery::parse_bigquery;
 use crate::format::_helpers::guide::layout_guide;
 use crate::format::_helpers::identifiers::parsed_names;
 use crate::format::_helpers::lexemes::{Lexeme, ends_operand, is_unquoted_word, lex};
@@ -39,6 +40,7 @@ pub(crate) fn format_checked(sql: &str, options: &FormatOptions) -> Result<Forma
         return Err(TYPE_DEPTH_FAILURE.to_string());
     }
     let statements = match dialect {
+        FormatDialect::BigQuery => parse_bigquery(sql)?,
         FormatDialect::SqlServer => parse_sqlserver(sql)?,
         _ => {
             let shared = dialect.shared().ok_or(UNSUPPORTED_DIALECT_FAILURE)?;

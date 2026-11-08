@@ -72,3 +72,11 @@ pub(super) struct TimedSqlTestCase {
     /// How many times Snowflake's time SQL Server may take.
     pub(super) expected_max_ratio: u32,
 }
+
+/// A statement BigQuery was recorded rejecting, with the syntax error it reported.
+pub(super) struct BigQueryReceiptTestCase {
+    /// The statement, as recorded.
+    pub(super) description: &'static str,
+    /// The recorded message and `line:column` of BigQuery's syntax error.
+    pub(super) expected_rejection: (&'static str, &'static str),
+}

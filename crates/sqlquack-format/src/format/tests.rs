@@ -1,5 +1,7 @@
 #[path = "tests/helpers.rs"]
 mod helpers;
+#[path = "tests/test_bigquery_receipts.rs"]
+mod test_bigquery_receipts;
 #[path = "tests/test_format_corpus.rs"]
 mod test_format_corpus;
 #[path = "tests/test_format_sql.rs"]

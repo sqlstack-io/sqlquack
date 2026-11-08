@@ -4,6 +4,7 @@ use std::collections::HashMap;
 
 use crate::format::models::FormatDialect;
 use sqlquack_syntax::tokens::models::TokenType;
+use sqlquack_syntax_bigquery::keywords::main::is_reserved::is_reserved as is_bigquery_reserved;
 use sqlquack_syntax_sqlserver::is_reserved;
 
 use crate::format::_helpers::identifiers::ParsedNames;
@@ -11,15 +12,17 @@ use crate::format::_helpers::lexemes::{
     Lexeme, bracket_partners, ends_operand, is_keyword, is_unquoted_word,
 };
 use crate::format::constants::{
-    ALIAS_FOLLOWERS, CALL_TARGET_KEYWORDS, CASE_BRANCHES, CLAUSE_KEYWORDS, COLUMNS_CALL,
-    CTE_BODY_PREFIXES, DUCKDB_INLINE_CALLS, EXPRESSION_LEADERS, GROUPING_CALLS, GUIDE_INDENT,
-    GUIDE_WIDTH, INSERT_BODIES, INSERT_KEYWORD, JOIN_PREFIXES, LAMBDA_KEYWORD, PARAMETERISED_TYPES,
-    PLACEHOLDER_NAME_PREFIX, PLACEHOLDER_WIDTH, POSTFIX_CAST_WIDTH, POSTGRES_INLINE_CALLS,
-    SAMPLE_KEYWORDS, SAMPLE_ROW_KEYWORD, SEMANTIC_VIEW_CALL, SEMANTIC_VIEW_CLAUSES,
-    SET_OPERATOR_MODIFIERS, SET_OPERATORS, SNOWFLAKE_INLINE_CALLS, SPACED_BEFORE_PARENTHESIS,
-    SQLSERVER_APPLY_KEYWORD, SQLSERVER_APPLY_PREFIXES, SQLSERVER_INLINE_CALLS,
-    SQLSERVER_LIST_CLAUSES, SQLSERVER_OBJECT_PRECEDERS, SQLSERVER_SPACED_BEFORE_PARENTHESIS,
-    STRUCT_TYPE_WORDS, TYPE_CONTINUATIONS, TYPED_LITERALS, VALUES_KEYWORD,
+    ALIAS_FOLLOWERS, BIGQUERY_INDEX_KEYWORD, BIGQUERY_INLINE_CALLS, BIGQUERY_REFERENCES_KEYWORD,
+    BIGQUERY_SET_OPERATOR_PREFIXES, BIGQUERY_VALUE_TABLE_KINDS, CALL_TARGET_KEYWORDS,
+    CASE_BRANCHES, CLAUSE_KEYWORDS, COLUMNS_CALL, CTE_BODY_PREFIXES, DUCKDB_INLINE_CALLS,
+    EXPRESSION_LEADERS, GROUPING_CALLS, GUIDE_INDENT, GUIDE_WIDTH, INSERT_BODIES, INSERT_KEYWORD,
+    JOIN_PREFIXES, LAMBDA_KEYWORD, PARAMETERISED_TYPES, PLACEHOLDER_NAME_PREFIX, PLACEHOLDER_WIDTH,
+    POSTFIX_CAST_WIDTH, POSTGRES_INLINE_CALLS, SAMPLE_KEYWORDS, SAMPLE_ROW_KEYWORD,
+    SEMANTIC_VIEW_CALL, SEMANTIC_VIEW_CLAUSES, SET_OPERATOR_MODIFIERS, SET_OPERATORS,
+    SNOWFLAKE_INLINE_CALLS, SPACED_BEFORE_PARENTHESIS, SQLSERVER_APPLY_KEYWORD,
+    SQLSERVER_APPLY_PREFIXES, SQLSERVER_INLINE_CALLS, SQLSERVER_LIST_CLAUSES,
+    SQLSERVER_OBJECT_PRECEDERS, SQLSERVER_SPACED_BEFORE_PARENTHESIS, STRUCT_TYPE_WORDS,
+    TYPE_CONTINUATIONS, TYPED_LITERALS, VALUES_KEYWORD,
 };
 
 /// The guide's text and its tokens, with byte ranges in that text.
@@ -56,12 +59,14 @@ struct Guide<'a> {
     partners: Vec<Option<usize>>,
     /// The innermost bracket each token is inside.
     enclosing: Vec<Option<usize>>,
-    /// Tokens of a Snowflake stage reference such as `@stage/path/file.csv`.
-    in_stage: Vec<bool>,
+    /// Tokens printed touching as written: a Snowflake stage reference such as `@stage/path/file.csv`, or a BigQuery dashed name such as `my-project.ds.t`.
+    in_run: Vec<bool>,
     /// Operators the parse tree reads as binary, such as a comparison's `<`.
     binary_operators: &'a [bool],
     /// The `<` and `>` around the parameters of a type such as `ARRAY<INT>`.
     angles: Vec<bool>,
+    /// Tokens inside a type's angle brackets, such as the comma of `STRUCT<a INT64, b STRING>`, which are not at the top of their list.
+    in_angles: Vec<bool>,
     /// Tokens directly inside a struct type's field list, where a name keeps its case.
     field_lists: Vec<bool>,
     /// SQL Server commas that separate the items of a FROM list.
@@ -115,9 +120,10 @@ impl<'a> Guide<'a> {
             dialect,
             partners: bracket_partners(lexemes),
             enclosing,
-            in_stage: vec![false; count],
+            in_run: vec![false; count],
             binary_operators: &names.binary_operators,
             angles: vec![false; count],
+            in_angles: vec![false; count],
             field_lists: vec![false; count],
             from_list_commas: vec![false; count],
             base: vec![""; count],
@@ -127,7 +133,7 @@ impl<'a> Guide<'a> {
             covered: vec![false; count],
             protected: vec![false; count],
         };
-        guide.mark_stages();
+        guide.mark_runs();
         guide.mark_angles();
         guide.mark_field_lists();
         guide.mark_from_list_commas();
@@ -166,6 +172,11 @@ impl<'a> Guide<'a> {
         index > 0 && matches!(self.lexemes[index - 1].raw.as_str(), "." | ":" | "@" | "$")
     }
 
+    /// Whether token `index` directly follows a `*`, as BigQuery's `* EXCEPT (...)` does.
+    fn after_star(&self, index: usize) -> bool {
+        index > 0 && self.lexemes[index - 1].kind == TokenType::Star
+    }
+
     fn upper(&self, index: usize) -> String {
         self.lexemes[index].raw.to_ascii_uppercase()
     }
@@ -178,7 +189,10 @@ impl<'a> Guide<'a> {
         self.identifiers[index] || ends_operand(&self.lexemes[index])
     }
 
-    fn mark_stages(&mut self) {
+    fn mark_runs(&mut self) {
+        if self.dialect == FormatDialect::BigQuery {
+            self.mark_dashed_names();
+        }
         if self.dialect != FormatDialect::Snowflake {
             return;
         }
@@ -191,7 +205,7 @@ impl<'a> Guide<'a> {
                 index += 1;
                 continue;
             }
-            self.in_stage[index] = true;
+            self.in_run[index] = true;
             while index + 1 < self.len()
                 && self.lexemes[index].end == self.lexemes[index + 1].start
                 && !matches!(
@@ -200,9 +214,51 @@ impl<'a> Guide<'a> {
                 )
             {
                 index += 1;
-                self.in_stage[index] = true;
+                self.in_run[index] = true;
             }
             index += 1;
+        }
+    }
+
+    /// Mark each run of touching tokens around a `-` the parse tree does not read as subtraction, such as `my-project.ds.t`.
+    fn mark_dashed_names(&mut self) {
+        let touching = |left: &Lexeme, right: &Lexeme| left.end == right.start;
+        let piece = |lexeme: &Lexeme| {
+            is_unquoted_word(&lexeme.raw)
+                || matches!(
+                    lexeme.kind,
+                    TokenType::Number
+                        | TokenType::QuotedIdentifier
+                        | TokenType::Dot
+                        | TokenType::Dash
+                )
+        };
+        for index in 1..self.len().saturating_sub(1) {
+            let lexemes = self.lexemes;
+            let dash = lexemes[index].kind == TokenType::Dash
+                && !self.binary_operators[index]
+                && touching(&lexemes[index - 1], &lexemes[index])
+                && touching(&lexemes[index], &lexemes[index + 1]);
+            if !dash {
+                continue;
+            }
+            let mut first = index;
+            while first > 0
+                && touching(&lexemes[first - 1], &lexemes[first])
+                && piece(&lexemes[first - 1])
+            {
+                first -= 1;
+            }
+            let mut last = index;
+            while last + 1 < self.len()
+                && touching(&lexemes[last], &lexemes[last + 1])
+                && piece(&lexemes[last + 1])
+            {
+                last += 1;
+            }
+            for at in first..=last {
+                self.in_run[at] = true;
+            }
         }
     }
 
@@ -221,19 +277,20 @@ impl<'a> Guide<'a> {
                 self.angles[index] = true;
                 open -= 1;
             }
+            self.in_angles[index] = open > 0 && !self.angles[index];
         }
     }
 
     /// The spacing a one-line rendering puts before token `index`.
     fn space(&self, index: usize) -> &'static str {
         let (previous, next) = (&self.lexemes[index - 1], &self.lexemes[index]);
-        if (self.in_stage[index] && self.in_stage[index - 1])
+        if (self.in_run[index] && self.in_run[index - 1])
             || (self.angles[index - 1] && self.lexemes[index - 1].kind == TokenType::Lt)
             || self.angles[index]
         {
             return "";
         }
-        if self.in_stage[index - 1] && next.kind == TokenType::LParen {
+        if self.in_run[index - 1] && next.kind == TokenType::LParen {
             return " ";
         }
         if matches!(
@@ -265,7 +322,7 @@ impl<'a> Guide<'a> {
         if previous.kind == TokenType::Colon {
             return if self.tight_colon(index - 1) { "" } else { " " };
         }
-        if (previous.kind == TokenType::DAt && !self.in_stage[index - 1])
+        if (previous.kind == TokenType::DAt && !self.in_run[index - 1])
             || (previous.kind == TokenType::Star && self.is(index, COLUMNS_CALL))
         {
             return "";
@@ -320,7 +377,10 @@ impl<'a> Guide<'a> {
         let after_sample =
             index > 0 && (self.is(index - 1, "SAMPLE") || self.is(index - 1, "TABLESAMPLE"));
         SPACED_BEFORE_PARENTHESIS.contains(&upper.as_str())
-            || (matches!(upper.as_str(), "EXCLUDE" | "REPLACE" | "RENAME" | "ILIKE") && after_star)
+            || (matches!(
+                upper.as_str(),
+                "EXCLUDE" | "EXCEPT" | "REPLACE" | "RENAME" | "ILIKE"
+            ) && after_star)
             || (upper == SAMPLE_ROW_KEYWORD && after_sample)
     }
 
@@ -339,6 +399,20 @@ impl<'a> Guide<'a> {
             && !is_reserved(&self.lexemes[index].raw)
             && (self.is_any(index - 1, &SQLSERVER_OBJECT_PRECEDERS)
                 || self.from_list_commas[index - 1])
+    }
+
+    /// Whether the word at `index` names a BigQuery table before `(`, whose name is case-sensitive and which the tree keeps without a span: the table of a REFERENCES or of an index's ON. Unqualified table functions are built-ins, which resolve in any case.
+    fn bigquery_table_name(&self, index: usize) -> bool {
+        let after_references = index
+            .checked_sub(1)
+            .is_some_and(|before| self.is(before, BIGQUERY_REFERENCES_KEYWORD));
+        let after_index_on = index.checked_sub(3).is_some_and(|keyword| {
+            self.is(keyword, BIGQUERY_INDEX_KEYWORD) && self.is(keyword + 2, "ON")
+        });
+        self.dialect == FormatDialect::BigQuery
+            && self.kind(index + 1) == Some(TokenType::LParen)
+            && !is_bigquery_reserved(&self.lexemes[index].raw)
+            && (after_references || after_index_on)
     }
 
     /// Mark the SQL Server commas whose nearest list clause at their depth is FROM, in one pass that keeps each depth's last list clause.
@@ -540,6 +614,10 @@ impl<'a> Guide<'a> {
         let mut tops: Vec<usize> = Vec::new();
         let mut index = first;
         while index <= last && index < self.len() {
+            if self.in_angles[index] {
+                index += 1;
+                continue;
+            }
             tops.push(index);
             match self.partners[index] {
                 Some(partner) if partner > index && partner <= last => {
@@ -629,17 +707,30 @@ impl<'a> Guide<'a> {
         let operators: Vec<usize> = self
             .tops(start, last)
             .into_iter()
-            .filter(|&index| self.is_any(index, &SET_OPERATORS))
+            .filter(|&index| self.is_any(index, &SET_OPERATORS) && !self.after_star(index))
             .collect();
         let mut operand = start;
         for operator in operators {
-            if operator > operand {
-                self.operand(operand, operator - 1, indent);
+            let mut line = operator;
+            while self.dialect == FormatDialect::BigQuery
+                && line > operand
+                && self.is_any(line - 1, &BIGQUERY_SET_OPERATOR_PREFIXES)
+            {
+                line -= 1;
             }
-            self.gaps[operator] = newline(indent);
+            if line > operand {
+                self.operand(operand, line - 1, indent);
+            }
+            self.gaps[line] = newline(indent);
             let mut next = operator + 1;
             while next <= last && self.is_any(next, &SET_OPERATOR_MODIFIERS) {
                 next += 1;
+                if (self.is(next - 1, "BY") || self.is(next - 1, "ON"))
+                    && let Some(closer) = self.partners.get(next).copied().flatten()
+                    && self.kind(next) == Some(TokenType::LParen)
+                {
+                    next = closer + 1;
+                }
             }
             if next <= last {
                 self.gaps[next] = newline(indent);
@@ -750,7 +841,10 @@ impl<'a> Guide<'a> {
             self.kind(index + 1),
             Some(TokenType::Comma | TokenType::RParen)
         ) || self.is_any(index + 1, &ALIAS_FOLLOWERS);
-        (!aliased && self.is_any(index, &CLAUSE_KEYWORDS))
+        let continues = index > 0
+            && ((self.is(index, "FROM") && self.is(index - 1, "DISTINCT"))
+                || (self.is(index, "OFFSET") && self.is(index - 1, "WITH")));
+        (!aliased && !continues && self.is_any(index, &CLAUSE_KEYWORDS))
             || (self.is(index, "USING") && self.is(index + 1, "SAMPLE"))
             || ((self.is(index, "GROUP") || self.is(index, "ORDER")) && self.is(index + 1, "BY"))
     }
@@ -775,6 +869,10 @@ impl<'a> Guide<'a> {
                 {
                     item = closer + 1;
                 }
+                continue;
+            }
+            if self.is(item, "AS") && self.is_any(item + 1, &BIGQUERY_VALUE_TABLE_KINDS) {
+                item += 2;
                 continue;
             }
             if self.is(item, "TOP") {
@@ -1048,14 +1146,19 @@ impl<'a> Guide<'a> {
         if (self.is(previous, "PATTERN") || pivot_values) && opener + 1 < closer {
             self.verbatim.push((opener + 1, closer - 1));
             self.expr(opener + 1, closer - 1, indent);
-        } else if self.is(previous, "PIVOT") || self.is(previous, "UNPIVOT") {
+        } else if self.is(previous, "PIVOT")
+            || self.is(previous, "UNPIVOT")
+            || self.enclosing[opener]
+                .is_some_and(|at| at > 0 && self.is(at - 1, "UNPIVOT") && at + 1 == opener)
+        {
             self.expr(opener + 1, closer - 1, indent);
         } else if self.is_any(previous, &GROUPING_CALLS)
-            || (self.base[opener].is_empty() && self.calls(previous) && !self.in_stage[previous])
+            || self.angles[previous]
+            || (self.base[opener].is_empty() && self.calls(previous) && !self.in_run[previous])
         {
             self.call(previous, opener, closer, indent);
         } else if (self.is_word(previous) && !self.is_any(previous, &EXPRESSION_LEADERS))
-            || self.in_stage[previous]
+            || self.in_run[previous]
         {
             self.expr(opener + 1, closer - 1, indent);
         } else {
@@ -1100,9 +1203,8 @@ impl<'a> Guide<'a> {
         match self.dialect {
             FormatDialect::Snowflake => &SNOWFLAKE_INLINE_CALLS,
             FormatDialect::DuckDB => &DUCKDB_INLINE_CALLS,
-            FormatDialect::PostgreSQL | FormatDialect::BigQuery | FormatDialect::Databricks => {
-                &POSTGRES_INLINE_CALLS
-            }
+            FormatDialect::PostgreSQL | FormatDialect::Databricks => &POSTGRES_INLINE_CALLS,
+            FormatDialect::BigQuery => &BIGQUERY_INLINE_CALLS,
             FormatDialect::SqlServer => &SQLSERVER_INLINE_CALLS,
         }
     }
@@ -1197,11 +1299,12 @@ impl<'a> Guide<'a> {
     fn text(&self, index: usize) -> String {
         let lexeme = &self.lexemes[index];
         if self.protected[index]
-            || self.in_stage[index]
+            || self.in_run[index]
             || self.identifiers[index]
             || self.name_position(index)
             || self.field_name(index)
             || self.sqlserver_object_name(index)
+            || self.bigquery_table_name(index)
             || !(is_keyword(lexeme) || self.called_name(index))
         {
             lexeme.raw.clone()
