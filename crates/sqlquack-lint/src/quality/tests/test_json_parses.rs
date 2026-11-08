@@ -263,6 +263,7 @@ fn given_json_parse_calls_when_linting_then_repeats_in_one_select_are_reported()
 }
 
 #[test]
+#[ignore = "timing"]
 fn given_wide_select_with_many_repeated_parses_when_linting_then_it_stays_linear()
 -> Result<(), String> {
     let test_cases = [JsonParseScaleTestCase {

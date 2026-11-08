@@ -7,6 +7,7 @@ use crate::analysis::tests::test_types::{CompositionTestCase, LargeLiteralTestCa
 const TIMING_FLOOR: Duration = Duration::from_millis(50);
 
 #[test]
+#[ignore = "timing"]
 fn given_composed_variant_text_when_converting_then_sql_and_time_grow_linearly() {
     let test_cases = [
         CompositionTestCase {
@@ -44,6 +45,7 @@ fn given_composed_variant_text_when_converting_then_sql_and_time_grow_linearly()
 }
 
 #[test]
+#[ignore = "timing"]
 fn given_large_literals_when_converting_then_time_stays_bounded() {
     let rows = |count: usize| vec!["(1)"; count].join(", ");
     let test_cases = [

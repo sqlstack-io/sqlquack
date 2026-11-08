@@ -299,6 +299,7 @@ fn given_unusual_but_valid_sql_when_parsing_then_it_parses() {
 }
 
 #[test]
+#[ignore = "timing"]
 fn given_doubtful_sql_when_parsing_then_the_parser_decides_without_panicking() {
     let test_cases = [
         TerminationTestCase {

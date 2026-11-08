@@ -45,7 +45,8 @@ fn given_recorded_cases_when_exporting_for_review_then_each_case_shows_sql_and_e
             ],
         },
     ];
-    let review = review_repository();
+    let files: Vec<&str> = test_cases.iter().map(|test_case| test_case.file).collect();
+    let review = review_repository(&files);
     for test_case in test_cases {
         assert_eq!(
             review_export(&review, test_case.file, test_case.expected_lines),

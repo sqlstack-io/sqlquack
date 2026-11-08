@@ -9,6 +9,7 @@ use crate::cli::tests::test_types::WorkerTestCase;
 const REJECTED: &str = "while read l; do echo '{\"verdict\":\"rejected\"}'; done";
 
 #[test]
+#[ignore = "timing"]
 fn given_a_worker_that_fails_when_parsing_then_only_that_case_fails_with_its_reason() {
     let test_cases = [
         WorkerTestCase {

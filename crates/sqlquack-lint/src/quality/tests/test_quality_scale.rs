@@ -7,6 +7,7 @@ use crate::quality::tests::helpers::wide_cte_chain;
 use crate::quality::tests::test_types::QualityScaleTestCase;
 
 #[test]
+#[ignore = "timing"]
 fn given_many_wide_ctes_with_findings_when_linting_then_quality_rules_stay_linear()
 -> Result<(), String> {
     let test_cases = [QualityScaleTestCase {

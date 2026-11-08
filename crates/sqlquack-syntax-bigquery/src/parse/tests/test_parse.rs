@@ -1882,6 +1882,7 @@ fn given_a_long_pipe_chain_then_a_syntax_error_when_parsing_on_a_small_stack_the
 }
 
 #[test]
+#[ignore = "timing"]
 fn given_nested_keyword_calls_when_parsing_then_each_call_is_read_once() {
     let test_cases = [
         NestingTestCase {

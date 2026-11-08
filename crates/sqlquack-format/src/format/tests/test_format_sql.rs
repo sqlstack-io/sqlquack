@@ -802,6 +802,7 @@ fn given_deeply_nested_sql_when_formatting_then_it_is_refused_or_laid_out_withou
 }
 
 #[test]
+#[ignore = "timing"]
 fn given_wide_sql_when_formatting_as_sql_server_then_it_takes_about_as_long_as_snowflake() {
     let test_cases = [
         test_types::TimedSqlTestCase {

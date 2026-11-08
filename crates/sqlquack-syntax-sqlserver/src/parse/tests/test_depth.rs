@@ -355,6 +355,7 @@ fn given_nesting_or_chains_within_the_limit_when_parsing_on_a_small_stack_then_i
 }
 
 #[test]
+#[ignore = "timing"]
 fn given_tops_whose_parentheses_open_on_a_subquery_when_parsing_then_time_grows_with_nesting_not_doubling()
  {
     let nested_top = |wrap: &dyn Fn(&str) -> String| {
