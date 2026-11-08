@@ -1,0 +1,1835 @@
+# Reviewed inputs to scripts/build_syntax_catalogue_duckdb.py; read by the build only.
+#
+# [[form]]: a form read by hand where the syntax is not in a railroad diagram or a signature
+#   heading: prose, a table, examples, or a synopsis code block. Bound to the sha256 of the
+#   page's Markdown; the build refuses a form whose page changed. Fields: source, anchor,
+#   kind, label, family, grammar, basis, page_sha256.
+# [[page]]: the reviewed status of a page with no diagram, signature or hand form:
+#   no_syntax_block or out_of_scope, with the reason.
+# [[signature]]: a signature heading that catalogues no form, with the reason.
+
+[[form]]
+source = "doc.configuration.pragmas"
+anchor = "Metadata"
+kind = "statement"
+label = "pragma"
+family = "utility"
+grammar = ["PRAGMA <pragma-name>"]
+basis = "example"
+page_sha256 = "2beca88974b8ba009c872d9d5b141641ed66370e0c0ad8213029d7815de460b3"
+
+[[form]]
+source = "doc.configuration.pragmas"
+anchor = "Table Information"
+kind = "statement"
+label = "pragma-call"
+family = "utility"
+grammar = ["PRAGMA <pragma-name> ( <argument> [ , <argument> ... ] )"]
+basis = "example"
+page_sha256 = "2beca88974b8ba009c872d9d5b141641ed66370e0c0ad8213029d7815de460b3"
+
+[[form]]
+source = "doc.sql.data-types.array"
+anchor = "Defining an Array Field"
+kind = "special"
+label = "array-type"
+family = "expressions"
+grammar = ["<type-name>[<length>]"]
+basis = "example"
+page_sha256 = "8ef3ea63a97287b7750afb885fe40b3ddadbc32f9e8531d3993a412d7067d3b0"
+
+[[form]]
+source = "doc.sql.data-types.boolean"
+anchor = "Boolean Type"
+kind = "special"
+label = "boolean-literal"
+family = "expressions"
+grammar = ["{ TRUE | FALSE }"]
+basis = "example"
+page_sha256 = "ccad9183ef5f619403e1709550a27ca660c035b97f548962366d31abf2917ce4"
+
+[[form]]
+source = "doc.sql.data-types.date"
+anchor = "Date Types"
+kind = "special"
+label = "date-literal"
+family = "expressions"
+grammar = ["DATE '<date>'"]
+basis = "example"
+page_sha256 = "bf2b1d6b203ffd3f5159f2508d43814cb22af0df18a0f0e2414dce48ffa6f0ac"
+
+[[form]]
+source = "doc.sql.data-types.enum"
+anchor = "Creating Enums"
+kind = "special"
+label = "enum-type"
+family = "expressions"
+grammar = ["ENUM ( '<value>' [ , '<value>' ... ] )"]
+basis = "example"
+page_sha256 = "cb7c8220c488a472dd3674c7fe4ad6112b1ea59947e63c2375a47b726b57dcdc"
+
+[[form]]
+source = "doc.sql.data-types.geometry"
+anchor = "Handling Unknown Coordinate Reference Systems"
+kind = "special"
+label = "geometry-crs-type"
+family = "expressions"
+grammar = ["GEOMETRY ( '<crs>' )"]
+basis = "example"
+page_sha256 = "d317e14580d74cb6ae42d8ba8a3bdf232c88d332acb2353dbbcaf86dad705572"
+
+[[form]]
+source = "doc.sql.data-types.interval"
+anchor = "Interval Type"
+kind = "special"
+label = "interval-unit"
+family = "expressions"
+grammar = ["INTERVAL { <integer-literal> | '<amount>' | ( <expr> ) } <unit>"]
+basis = "example"
+page_sha256 = "9a4d413aba99986de50a327b6b27a3fde3ae67aad809e8edbe5679e55e87c879"
+
+[[form]]
+source = "doc.sql.data-types.interval"
+anchor = "Interval Type"
+kind = "special"
+label = "interval-string"
+family = "expressions"
+grammar = ["INTERVAL '<interval-string>'"]
+basis = "example"
+page_sha256 = "9a4d413aba99986de50a327b6b27a3fde3ae67aad809e8edbe5679e55e87c879"
+
+[[form]]
+source = "doc.sql.data-types.list"
+anchor = "Creating Lists"
+kind = "special"
+label = "list-literal"
+family = "expressions"
+grammar = ["[ [ <expr> [ , <expr> ... ] ] ]"]
+basis = "example"
+page_sha256 = "14de36998ed001337439503c96157d162a3cf45afe7248b275db88e7d1108dcd"
+
+[[form]]
+source = "doc.sql.data-types.list"
+anchor = "Creating Lists"
+kind = "special"
+label = "list-type"
+family = "expressions"
+grammar = ["<type-name>[]"]
+basis = "example"
+page_sha256 = "14de36998ed001337439503c96157d162a3cf45afe7248b275db88e7d1108dcd"
+
+[[form]]
+source = "doc.sql.data-types.literal-types"
+anchor = "Null Literals"
+kind = "special"
+label = "null-literal"
+family = "expressions"
+grammar = ["NULL"]
+basis = "prose"
+page_sha256 = "31760c9892cc02c873219328926dc8618883f7b4597ddb449bf89436a67a7b30"
+
+[[form]]
+source = "doc.sql.data-types.literal-types"
+anchor = "Integer Literals"
+kind = "special"
+label = "integer-literal"
+family = "expressions"
+grammar = ["<digits>"]
+basis = "prose"
+page_sha256 = "31760c9892cc02c873219328926dc8618883f7b4597ddb449bf89436a67a7b30"
+
+[[form]]
+source = "doc.sql.data-types.literal-types"
+anchor = "Other Numeric Literals"
+kind = "special"
+label = "decimal-literal"
+family = "expressions"
+grammar = ["{ <digits>.[<digits>] | .<digits> }"]
+basis = "prose"
+page_sha256 = "31760c9892cc02c873219328926dc8618883f7b4597ddb449bf89436a67a7b30"
+
+[[form]]
+source = "doc.sql.data-types.literal-types"
+anchor = "Other Numeric Literals"
+kind = "special"
+label = "e-notation"
+family = "expressions"
+grammar = ["{ <digits> | <decimal> } { e | E } [ { + | - } ] <digits>"]
+basis = "prose"
+page_sha256 = "31760c9892cc02c873219328926dc8618883f7b4597ddb449bf89436a67a7b30"
+
+[[form]]
+source = "doc.sql.data-types.literal-types"
+anchor = "Underscores in Numeric Literals"
+kind = "special"
+label = "digit-separators"
+family = "expressions"
+grammar = ["<digits>_<digits>"]
+basis = "prose"
+page_sha256 = "31760c9892cc02c873219328926dc8618883f7b4597ddb449bf89436a67a7b30"
+
+[[form]]
+source = "doc.sql.data-types.literal-types"
+anchor = "String Literals"
+kind = "special"
+label = "string"
+family = "expressions"
+grammar = ["'<characters>'"]
+basis = "prose"
+page_sha256 = "31760c9892cc02c873219328926dc8618883f7b4597ddb449bf89436a67a7b30"
+
+[[form]]
+source = "doc.sql.data-types.literal-types"
+anchor = "Implicit String Literal Concatenation"
+kind = "special"
+label = "string-continuation"
+family = "expressions"
+grammar = ["'<characters>' <newline> '<characters>'"]
+basis = "prose"
+page_sha256 = "31760c9892cc02c873219328926dc8618883f7b4597ddb449bf89436a67a7b30"
+
+[[form]]
+source = "doc.sql.data-types.literal-types"
+anchor = "Escape String Literals"
+kind = "special"
+label = "escape-string"
+family = "expressions"
+grammar = ["{ e | E }'<characters>'"]
+basis = "prose"
+page_sha256 = "31760c9892cc02c873219328926dc8618883f7b4597ddb449bf89436a67a7b30"
+
+[[form]]
+source = "doc.sql.data-types.literal-types"
+anchor = "Dollar-Quoted String Literals"
+kind = "special"
+label = "dollar-quoted-string"
+family = "expressions"
+grammar = ["$[ <tag> ]$<characters>$[ <tag> ]$"]
+basis = "prose"
+page_sha256 = "31760c9892cc02c873219328926dc8618883f7b4597ddb449bf89436a67a7b30"
+
+[[form]]
+source = "doc.sql.data-types.literal-types"
+anchor = "Bit String and Hex String Literals"
+kind = "special"
+label = "bit-string"
+family = "expressions"
+grammar = ["B'<binary-digits>'"]
+basis = "example"
+page_sha256 = "31760c9892cc02c873219328926dc8618883f7b4597ddb449bf89436a67a7b30"
+
+[[form]]
+source = "doc.sql.data-types.literal-types"
+anchor = "Bit String and Hex String Literals"
+kind = "special"
+label = "hex-string"
+family = "expressions"
+grammar = ["X'<hex-digits>'"]
+basis = "example"
+page_sha256 = "31760c9892cc02c873219328926dc8618883f7b4597ddb449bf89436a67a7b30"
+
+[[form]]
+source = "doc.sql.data-types.map"
+anchor = "Creating Maps"
+kind = "special"
+label = "map-literal"
+family = "expressions"
+grammar = ["MAP { [ <key> : <value> [ , <key> : <value> ... ] ] }"]
+basis = "example"
+page_sha256 = "496edae2bea7533985fc81efab54f40c899b17cb72d0fbaafa6acdff6898b5b5"
+
+[[form]]
+source = "doc.sql.data-types.map"
+anchor = "Creating Maps"
+kind = "special"
+label = "map-type"
+family = "expressions"
+grammar = ["MAP ( <key-type> , <value-type> )"]
+basis = "example"
+page_sha256 = "496edae2bea7533985fc81efab54f40c899b17cb72d0fbaafa6acdff6898b5b5"
+
+[[form]]
+source = "doc.sql.data-types.numeric"
+anchor = "Specifying the `WIDTH` and the `SCALE`"
+kind = "special"
+label = "decimal-type"
+family = "expressions"
+grammar = ["{ DECIMAL | NUMERIC } [ ( [ <width> [ , <scale> ] ] ) ]"]
+basis = "prose"
+page_sha256 = "c91139c29736dc94e50495cd99f68f356a102d1bde762f62597e9e8b98a8136c"
+
+[[form]]
+source = "doc.sql.data-types.struct"
+anchor = "Creating Structs"
+kind = "special"
+label = "struct-literal"
+family = "expressions"
+grammar = ["{ [ '<key>' : <expr> [ , '<key>' : <expr> ... ] ] }"]
+basis = "example"
+page_sha256 = "0f6940f71e0cdffb9c7a2261ce497795fd648fece3543a0c3d898edb8466c654"
+
+[[form]]
+source = "doc.sql.data-types.struct"
+anchor = "Tuples"
+kind = "special"
+label = "row"
+family = "expressions"
+grammar = ["ROW ( [ <expr> [ , <expr> ... ] ] )"]
+basis = "example"
+page_sha256 = "0f6940f71e0cdffb9c7a2261ce497795fd648fece3543a0c3d898edb8466c654"
+
+[[form]]
+source = "doc.sql.data-types.struct"
+anchor = "Tuples"
+kind = "special"
+label = "tuple-literal"
+family = "expressions"
+grammar = ["( <expr> , <expr> [ , <expr> ... ] )"]
+basis = "example"
+page_sha256 = "0f6940f71e0cdffb9c7a2261ce497795fd648fece3543a0c3d898edb8466c654"
+
+[[form]]
+source = "doc.sql.data-types.struct"
+anchor = "Casting between Tuples and Structs"
+kind = "special"
+label = "struct-type"
+family = "expressions"
+grammar = ["STRUCT ( <field-name> <type-name> [ , <field-name> <type-name> ... ] )"]
+basis = "example"
+page_sha256 = "0f6940f71e0cdffb9c7a2261ce497795fd648fece3543a0c3d898edb8466c654"
+
+[[form]]
+source = "doc.sql.data-types.struct"
+anchor = "Casting between Tuples and Structs"
+kind = "special"
+label = "tuple-type"
+family = "expressions"
+grammar = ["TUPLE ( <type-name> [ , <type-name> ... ] )"]
+basis = "example"
+page_sha256 = "0f6940f71e0cdffb9c7a2261ce497795fd648fece3543a0c3d898edb8466c654"
+
+[[form]]
+source = "doc.sql.data-types.text"
+anchor = "Specifying a Compression Type"
+kind = "special"
+label = "column-compression"
+family = "ddl"
+grammar = ["<column-name> <type-name> USING COMPRESSION <compression-method>"]
+basis = "example"
+page_sha256 = "19e8ec3b5936e090abea192bebb5a6e9cacf9320e231c22b8be32ce34208e338"
+
+[[form]]
+source = "doc.sql.data-types.time"
+anchor = "Time Types"
+kind = "special"
+label = "time-literal"
+family = "expressions"
+grammar = ["{ TIME | TIMETZ } '<time>'"]
+basis = "example"
+page_sha256 = "f61841cafd069b3b8eb7307a34644f60313355f9758ee324938edf41e470b652"
+
+[[form]]
+source = "doc.sql.data-types.timestamp"
+anchor = "Timestamp Types"
+kind = "special"
+label = "timestamp-literal"
+family = "expressions"
+grammar = ["{ TIMESTAMP | TIMESTAMP_NS | TIMESTAMP_MS | TIMESTAMP_S | TIMESTAMPTZ | TIMESTAMPTZ_NS } '<timestamp>'"]
+basis = "example"
+page_sha256 = "6950a899e9047d2aef4667990e10562e0a39a259ae81ce9484affa4e1abdb5cb"
+
+[[form]]
+source = "doc.sql.data-types.union"
+anchor = "Example"
+kind = "special"
+label = "union-type"
+family = "expressions"
+grammar = ["UNION ( <member-name> <type-name> [ , <member-name> <type-name> ... ] )"]
+basis = "example"
+page_sha256 = "b079393f2179d07a35393d6b798cd6b66f00b2eb045a31fc2a414beed3ec5352"
+
+[[form]]
+source = "doc.sql.dialect.friendly-sql"
+anchor = "Trailing Commas"
+kind = "special"
+label = "trailing-comma"
+family = "expressions"
+grammar = ["<item> [ , <item> ... ] ,"]
+basis = "example"
+page_sha256 = "8e5030137640607484948f353447d16e228023b5c1ab5ad0349b2114ca41b211"
+
+[[form]]
+source = "doc.sql.dialect.keywords-and-identifiers"
+anchor = "Identifiers"
+kind = "special"
+label = "identifier"
+family = "expressions"
+grammar = ["<identifier>"]
+basis = "prose"
+page_sha256 = "788c6312e677fe32130df6d602ed1238c428c8941806bfff9b40a15eeab84836"
+
+[[form]]
+source = "doc.sql.dialect.keywords-and-identifiers"
+anchor = "Identifiers"
+kind = "special"
+label = "quoted-identifier"
+family = "expressions"
+grammar = ["\"<characters>\""]
+basis = "prose"
+page_sha256 = "788c6312e677fe32130df6d602ed1238c428c8941806bfff9b40a15eeab84836"
+
+[[form]]
+source = "doc.sql.dialect.keywords-and-identifiers"
+anchor = "Identifiers"
+kind = "special"
+label = "backtick-identifier"
+family = "expressions"
+grammar = ["`<characters>`"]
+basis = "prose"
+page_sha256 = "788c6312e677fe32130df6d602ed1238c428c8941806bfff9b40a15eeab84836"
+
+[[form]]
+source = "doc.sql.dialect.keywords-and-identifiers"
+anchor = "Identifier Resolution"
+kind = "special"
+label = "qualified-name"
+family = "expressions"
+grammar = ["[ [ [ <database> . ] <schema> . ] <table> . ] <column>"]
+basis = "prose"
+page_sha256 = "788c6312e677fe32130df6d602ed1238c428c8941806bfff9b40a15eeab84836"
+
+[[form]]
+source = "doc.sql.expressions.try"
+anchor = "TRY Expression"
+kind = "special"
+label = "try"
+family = "expressions"
+grammar = ["TRY ( <expr> )"]
+basis = "example"
+page_sha256 = "1388b1e46c0ef2eedf9f6f08c373ceb461eaad13ee72fcea7616c33d77915cd3"
+
+[[form]]
+source = "doc.sql.functions.geometry"
+anchor = "`ST_GeomFromWKB` Function"
+kind = "call"
+label = "st-geomfromwkb"
+family = "functions"
+grammar = ["ST_GeomFromWKB(<blob>)"]
+basis = "example"
+page_sha256 = "f93054c7f0742b200792cb60a130d66a13b4075d4760eeb904b73c5e0bf17ae8"
+
+[[form]]
+source = "doc.sql.functions.geometry"
+anchor = "`ST_AsWKB` Function"
+kind = "call"
+label = "st-aswkb"
+family = "functions"
+grammar = ["ST_AsWKB(<geometry>)", "ST_AsBinary(<geometry>)"]
+basis = "example"
+page_sha256 = "f93054c7f0742b200792cb60a130d66a13b4075d4760eeb904b73c5e0bf17ae8"
+
+[[form]]
+source = "doc.sql.functions.geometry"
+anchor = "`ST_AsWKT` Function"
+kind = "call"
+label = "st-aswkt"
+family = "functions"
+grammar = ["ST_AsWKT(<geometry>)", "ST_AsText(<geometry>)"]
+basis = "example"
+page_sha256 = "f93054c7f0742b200792cb60a130d66a13b4075d4760eeb904b73c5e0bf17ae8"
+
+[[form]]
+source = "doc.sql.functions.geometry"
+anchor = "`ST_Intersects_Extent` Function"
+kind = "call"
+label = "st-intersects-extent"
+family = "functions"
+grammar = ["ST_Intersects_Extent(<geometry>, <geometry>)"]
+basis = "heading"
+page_sha256 = "f93054c7f0742b200792cb60a130d66a13b4075d4760eeb904b73c5e0bf17ae8"
+
+[[form]]
+source = "doc.sql.functions.geometry"
+anchor = "`ST_CRS` Function"
+kind = "call"
+label = "st-crs"
+family = "functions"
+grammar = ["ST_CRS(<geometry>)"]
+basis = "example"
+page_sha256 = "f93054c7f0742b200792cb60a130d66a13b4075d4760eeb904b73c5e0bf17ae8"
+
+[[form]]
+source = "doc.sql.functions.geometry"
+anchor = "`ST_SetCRS` Function"
+kind = "call"
+label = "st-setcrs"
+family = "functions"
+grammar = ["ST_SetCRS(<geometry>, '<crs>')"]
+basis = "example"
+page_sha256 = "f93054c7f0742b200792cb60a130d66a13b4075d4760eeb904b73c5e0bf17ae8"
+
+[[form]]
+source = "doc.sql.query-syntax.prepared-statements"
+anchor = "Auto-Incremented Parameters: `?`"
+kind = "special"
+label = "auto-parameter"
+family = "expressions"
+grammar = ["?"]
+basis = "heading"
+page_sha256 = "26b1a2afbffacc87eefed38ac9fddfccca352058e224822a000ed674768dd203"
+
+[[form]]
+source = "doc.sql.query-syntax.prepared-statements"
+anchor = "Positional Parameters: `$1`"
+kind = "special"
+label = "positional-parameter"
+family = "expressions"
+grammar = ["$<n>"]
+basis = "heading"
+page_sha256 = "26b1a2afbffacc87eefed38ac9fddfccca352058e224822a000ed674768dd203"
+
+[[form]]
+source = "doc.sql.query-syntax.prepared-statements"
+anchor = "Named Parameters: `$parameter`"
+kind = "special"
+label = "named-parameter"
+family = "expressions"
+grammar = ["$<name>"]
+basis = "heading"
+page_sha256 = "26b1a2afbffacc87eefed38ac9fddfccca352058e224822a000ed674768dd203"
+
+[[form]]
+source = "doc.sql.query-syntax.unnest"
+anchor = "Recursive Unnesting"
+kind = "call"
+label = "unnest-options"
+family = "functions"
+grammar = ["unnest(<expr> [ , recursive := <boolean> ] [ , max_depth := <integer> ] [ , keep_parent_names := <boolean> ])"]
+basis = "example"
+page_sha256 = "ed7aedabe1a9d2ca4e3274399160994c21dbc0601054701053032e3b779806d1"
+
+[[form]]
+source = "doc.sql.statements.alter-view"
+anchor = "Examples"
+kind = "statement"
+label = ""
+family = "ddl"
+grammar = ["ALTER VIEW <view-name> RENAME TO <new-name>"]
+basis = "example"
+page_sha256 = "c83cff7686649840afc99bd99efa18cb197002c54ae734c2a6590a3d8978f73e"
+
+[[form]]
+source = "doc.sql.statements.analyze"
+anchor = "Usage"
+kind = "statement"
+label = ""
+family = "utility"
+grammar = ["ANALYZE"]
+basis = "example"
+page_sha256 = "68c91dc0b3d395d0c391be19ec9ee83a2da7a8535a272ddca0876a28e129a0d1"
+
+[[form]]
+source = "doc.sql.statements.connect"
+anchor = "Syntax"
+kind = "statement"
+label = "connect"
+family = "utility"
+grammar = ["CONNECT { <attached-database> | '<connection-string>' }"]
+basis = "synopsis"
+page_sha256 = "d72d155ba4f428561a39f96590a0bd609e49746fc24c0b4649eb1e34133a8aab"
+
+[[form]]
+source = "doc.sql.statements.connect"
+anchor = "Syntax"
+kind = "statement"
+label = "disconnect"
+family = "utility"
+grammar = ["DISCONNECT"]
+basis = "synopsis"
+page_sha256 = "d72d155ba4f428561a39f96590a0bd609e49746fc24c0b4649eb1e34133a8aab"
+
+[[form]]
+source = "doc.sql.statements.describe"
+anchor = "Usage"
+kind = "statement"
+label = ""
+family = "utility"
+grammar = ["DESCRIBE { <table-name> | <query> }"]
+basis = "example"
+page_sha256 = "c26e539b453533e398ac0c2d3819202487811f2bd05d3628c4f46d42f70d014e"
+
+[[form]]
+source = "doc.sql.statements.profiling"
+anchor = "`EXPLAIN`"
+kind = "statement"
+label = "explain"
+family = "utility"
+grammar = ["EXPLAIN <query>"]
+basis = "synopsis"
+page_sha256 = "b33c5c6966b27d0e1b7b5f19e95171415f1a1725163897ffc3ed7cd972a058b2"
+
+[[form]]
+source = "doc.sql.statements.profiling"
+anchor = "`EXPLAIN (SQL)`"
+kind = "statement"
+label = "explain-sql"
+family = "utility"
+grammar = ["EXPLAIN ( SQL ) { <query> | <insert-statement> | <update-statement> | <delete-statement> | <merge-statement> }"]
+basis = "example"
+page_sha256 = "b33c5c6966b27d0e1b7b5f19e95171415f1a1725163897ffc3ed7cd972a058b2"
+
+[[form]]
+source = "doc.sql.statements.profiling"
+anchor = "`EXPLAIN ANALYZE`"
+kind = "statement"
+label = "explain-analyze"
+family = "utility"
+grammar = ["EXPLAIN ANALYZE <query>"]
+basis = "synopsis"
+page_sha256 = "b33c5c6966b27d0e1b7b5f19e95171415f1a1725163897ffc3ed7cd972a058b2"
+
+[[form]]
+source = "doc.sql.statements.show"
+anchor = "`SHOW` Statement"
+kind = "statement"
+label = "show"
+family = "utility"
+grammar = ["SHOW { <name> | <query> }"]
+basis = "example"
+page_sha256 = "763832ee7c1f4123d98a56264fb9b611df4a205500d5a47a3bb850d2aedba1fa"
+
+[[form]]
+source = "doc.sql.statements.show"
+anchor = "`SHOW DATABASES` Statement"
+kind = "statement"
+label = "show-databases"
+family = "utility"
+grammar = ["SHOW DATABASES"]
+basis = "example"
+page_sha256 = "763832ee7c1f4123d98a56264fb9b611df4a205500d5a47a3bb850d2aedba1fa"
+
+[[form]]
+source = "doc.sql.statements.show"
+anchor = "`SHOW SCHEMAS` Statement"
+kind = "statement"
+label = "show-schemas"
+family = "utility"
+grammar = ["SHOW SCHEMAS"]
+basis = "example"
+page_sha256 = "763832ee7c1f4123d98a56264fb9b611df4a205500d5a47a3bb850d2aedba1fa"
+
+[[form]]
+source = "doc.sql.statements.summarize"
+anchor = "Usage"
+kind = "statement"
+label = ""
+family = "utility"
+grammar = ["SUMMARIZE { <table-name> | <query> }"]
+basis = "example"
+page_sha256 = "f14dac7a394d8eee2bfffd0d805998d0e24f29bc7284c005082318e7179ac26c"
+
+[[form]]
+source = "doc.sql.statements.transactions"
+anchor = "Starting a Transaction"
+kind = "statement"
+label = "begin"
+family = "transaction_session"
+grammar = ["BEGIN TRANSACTION"]
+basis = "example"
+page_sha256 = "493033227aefdc0e245037160f14a863d8483053fa9ffe06053ef9e76b36adc7"
+
+[[form]]
+source = "doc.sql.statements.transactions"
+anchor = "Committing a Transaction"
+kind = "statement"
+label = "commit"
+family = "transaction_session"
+grammar = ["COMMIT"]
+basis = "example"
+page_sha256 = "493033227aefdc0e245037160f14a863d8483053fa9ffe06053ef9e76b36adc7"
+
+[[form]]
+source = "doc.sql.statements.transactions"
+anchor = "Rolling Back a Transaction"
+kind = "statement"
+label = "rollback"
+family = "transaction_session"
+grammar = ["ROLLBACK"]
+basis = "example"
+page_sha256 = "493033227aefdc0e245037160f14a863d8483053fa9ffe06053ef9e76b36adc7"
+
+[[form]]
+source = "doc.sql.statements.transactions"
+anchor = "Rolling Back a Transaction"
+kind = "statement"
+label = "abort"
+family = "transaction_session"
+grammar = ["ABORT"]
+basis = "example"
+page_sha256 = "493033227aefdc0e245037160f14a863d8483053fa9ffe06053ef9e76b36adc7"
+
+[[form]]
+source = "doc.sql.statements.update-extensions"
+anchor = "Updating Selected Extensions"
+kind = "statement"
+label = ""
+family = "utility"
+grammar = ["UPDATE EXTENSIONS [ ( <extension-name> [ , <extension-name> ... ] ) ]"]
+basis = "example"
+page_sha256 = "c053f0e312d7e1a0e574bf403e01490617493deaf4f2dbd78cc6bbcbac09fc6e"
+
+[[form]]
+source = "doc.sql.query-syntax.limit"
+anchor = "Syntax"
+kind = "special"
+label = "fetch"
+family = "query"
+grammar = ["[ OFFSET <offset> [ ROW | ROWS ] ] FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY"]
+basis = "prose"
+page_sha256 = "8ee23196b486e4e13c9e18330e365b7a88d725ae541d1674e8f8e1fd22341300"
+
+[[form]]
+source = "doc.sql.functions.window-functions"
+anchor = "Nulls"
+kind = "special"
+label = "respect-nulls"
+family = "expressions"
+grammar = ["<function-name> ( [ <expr> [ , <expr> ... ] ] [ ORDER BY <ordering> ] { IGNORE NULLS | RESPECT NULLS } ) OVER <window>"]
+basis = "prose"
+page_sha256 = "b6221346fb179461ce650d54db680fc3e5a83ab784cc7f35e93c9874f52effaf"
+
+[[form]]
+source = "doc.sql.functions.timestamptz"
+anchor = "At Time Zone"
+kind = "special"
+label = "at-time-zone"
+family = "expressions"
+grammar = ["<expr> AT TIME ZONE <time-zone>"]
+basis = "example"
+page_sha256 = "76613df93f4088734b7a8539235ea1d7c2750bda8a4805d30b1e7d2472de0807"
+
+[[form]]
+source = "doc.sql.functions.aggregates"
+anchor = "Ordered Set Aggregate Functions"
+kind = "special"
+label = "within-group"
+family = "expressions"
+grammar = ["{ mode ( ) | percentile_cont ( <fraction> ) | percentile_disc ( <fraction> ) } WITHIN GROUP ( ORDER BY <expr> [ ASC | DESC ] )"]
+basis = "table"
+page_sha256 = "8091961271378034b9b8dc67481b0380e2adea42fc2e64c30750623742a78130"
+
+[[form]]
+source = "doc.sql.query-syntax.from"
+anchor = "Table Functions"
+kind = "special"
+label = "with-ordinality"
+family = "query"
+grammar = ["FROM <table-function> WITH ORDINALITY"]
+basis = "example"
+page_sha256 = "142f346c5a3eb5e600a0e22544eb9ab418a289eea1a997214018897799c928de"
+
+[[form]]
+source = "doc.sql.query-syntax.from"
+anchor = "Nearest Joins"
+kind = "special"
+label = "nearest-join"
+family = "query"
+grammar = ["[ <join-type> ] JOIN <table-reference> [ APPROX ] NEAREST <k> BY { SIMILARITY | DISTANCE } <expr>"]
+basis = "prose"
+page_sha256 = "142f346c5a3eb5e600a0e22544eb9ab418a289eea1a997214018897799c928de"
+
+[[form]]
+source = "doc.sql.statements.delete"
+anchor = "The `TRUNCATE` Statement"
+kind = "statement"
+label = "truncate"
+family = "dml"
+grammar = ["TRUNCATE <table-name>"]
+basis = "example"
+page_sha256 = "ecc9cc1e8d40437dd00d69fe15e88962092badfad857acc9ed9bc0e6f2f9e68b"
+
+[[form]]
+source = "doc.sql.statements.create-sequence"
+anchor = "Examples"
+kind = "statement"
+label = "if-not-exists"
+family = "ddl"
+grammar = ["CREATE SEQUENCE IF NOT EXISTS <sequence-name>"]
+basis = "example"
+page_sha256 = "455f97f1ddb260006459ddd67570f73007fa49c294267b54bfbc5f84b15f69f1"
+
+[[form]]
+source = "doc.sql.data-types.numeric"
+anchor = "Fixed-Width Integer Types"
+kind = "special"
+label = "integer-aliases"
+family = "expressions"
+grammar = ["{ INT16 | INT32 | INT64 | INT128 | UINT8 | UINT16 | UINT32 | UINT64 | UINT128 }"]
+basis = "table"
+page_sha256 = "c91139c29736dc94e50495cd99f68f356a102d1bde762f62597e9e8b98a8136c"
+
+[[form]]
+source = "doc.sql.data-types.time"
+anchor = "Time Types"
+kind = "special"
+label = "time-types"
+family = "expressions"
+grammar = ["{ TIME | TIMETZ | TIME_NS | TIME WITHOUT TIME ZONE | TIME WITH TIME ZONE }"]
+basis = "table"
+page_sha256 = "f61841cafd069b3b8eb7307a34644f60313355f9758ee324938edf41e470b652"
+
+[[form]]
+source = "doc.sql.data-types.timestamp"
+anchor = "Timestamp Types"
+kind = "special"
+label = "timestamp-types"
+family = "expressions"
+grammar = ["{ TIMESTAMP_NS | TIMESTAMP_MS | TIMESTAMP_S | TIMESTAMPTZ_NS | TIMESTAMP WITHOUT TIME ZONE }"]
+basis = "table"
+page_sha256 = "6950a899e9047d2aef4667990e10562e0a39a259ae81ce9484affa4e1abdb5cb"
+
+[[form]]
+source = "doc.sql.data-types.timestamp"
+anchor = "Calendar Support"
+kind = "call"
+label = "icu-calendar-names"
+family = "functions"
+grammar = ["icu_calendar_names()"]
+basis = "example"
+page_sha256 = "6950a899e9047d2aef4667990e10562e0a39a259ae81ce9484affa4e1abdb5cb"
+
+[[form]]
+source = "doc.sql.data-types.timezones"
+anchor = "Time Zone Reference List"
+kind = "call"
+label = "pg-timezone-names"
+family = "functions"
+grammar = ["pg_timezone_names()"]
+basis = "example"
+page_sha256 = "aa8e81dea18f15dd1cf16aae952ee298fbc2222288211b896d5bbf3abb8591a8"
+
+[[form]]
+source = "doc.guides.meta.list-tables"
+anchor = "List Tables"
+kind = "statement"
+label = "show-tables"
+family = "utility"
+grammar = ["SHOW TABLES"]
+basis = "example"
+page_sha256 = "5bde6a709969fb81317ae9798a3d72682a4f2d8917beca2653ff1a38fcd32d7f"
+
+[[form]]
+source = "doc.guides.meta.list-tables"
+anchor = "List Tables"
+kind = "statement"
+label = "show-all-tables"
+family = "utility"
+grammar = ["SHOW [ ALL TABLES ]"]
+basis = "prose"
+page_sha256 = "5bde6a709969fb81317ae9798a3d72682a4f2d8917beca2653ff1a38fcd32d7f"
+
+[[form]]
+source = "doc.guides.meta.list-tables"
+anchor = "List Tables"
+kind = "statement"
+label = "show-tables-from"
+family = "utility"
+grammar = ["SHOW TABLES FROM <qualified-name>"]
+basis = "example"
+page_sha256 = "5bde6a709969fb81317ae9798a3d72682a4f2d8917beca2653ff1a38fcd32d7f"
+
+[[form]]
+source = "doc.extensions.extension-repositories"
+anchor = "Creating a Repository"
+kind = "statement"
+label = "create"
+family = "utility"
+grammar = ["CREATE [ OR REPLACE ] EXTENSION REPOSITORY <repository-name> WITH PREFIX '<url>' [ USING { PUBLIC KEY '<key>' | PUBLIC KEYS '<key>' [ , '<key>' ... ] } ]", "CREATE EXTENSION REPOSITORY IF NOT EXISTS <repository-name> WITH PREFIX '<url>' [ USING { PUBLIC KEY '<key>' | PUBLIC KEYS '<key>' [ , '<key>' ... ] } ]"]
+basis = "example"
+page_sha256 = "7770f1838f31130fe25929a1b49770487238d7538e74bf662b08c9ee6a8abc87"
+
+[[form]]
+source = "doc.extensions.extension-repositories"
+anchor = "Using a Repository"
+kind = "statement"
+label = "install-from"
+family = "utility"
+grammar = ["{ INSTALL [ AND LOAD ] | LOAD } <extension-name> FROM <repository-name>"]
+basis = "example"
+page_sha256 = "7770f1838f31130fe25929a1b49770487238d7538e74bf662b08c9ee6a8abc87"
+
+[[form]]
+source = "doc.extensions.extension-repositories"
+anchor = "Using a Repository"
+kind = "statement"
+label = "install-path"
+family = "utility"
+grammar = ["INSTALL <'extension-path'>"]
+basis = "example"
+page_sha256 = "7770f1838f31130fe25929a1b49770487238d7538e74bf662b08c9ee6a8abc87"
+
+[[form]]
+source = "doc.extensions.extension-repositories"
+anchor = "Rotating Keys"
+kind = "statement"
+label = "drop"
+family = "utility"
+grammar = ["DROP EXTENSION REPOSITORY <repository-name>"]
+basis = "example"
+page_sha256 = "7770f1838f31130fe25929a1b49770487238d7538e74bf662b08c9ee6a8abc87"
+
+[[form]]
+source = "doc.data.csv.overview"
+anchor = "CSV Functions"
+kind = "call"
+label = "read-csv"
+family = "functions"
+grammar = ["read_csv(<path> [ , <parameter> = <value> ... ])", "read_csv_auto(<path> [ , <parameter> = <value> ... ])"]
+basis = "example"
+page_sha256 = "83aaa750eed4177109bafe081a1bee364b0925546137a3105442824a605ebc83"
+
+[[form]]
+source = "doc.data.csv.auto-detection"
+anchor = "`sniff_csv` Function"
+kind = "call"
+label = "sniff-csv"
+family = "functions"
+grammar = ["sniff_csv(<filename> [ , <parameter> = <value> ... ])"]
+basis = "example"
+page_sha256 = "54beaf68c60f888b044df6e92e93478ebd32a70bf57b1bed70603f20c9c22d2c"
+
+[[form]]
+source = "doc.data.parquet.metadata"
+anchor = "Parquet Metadata"
+kind = "call"
+label = "parquet-metadata"
+family = "functions"
+grammar = ["parquet_metadata(<path>)"]
+basis = "example"
+page_sha256 = "ffef8b26396d29426ef118dd202f11a81f3bb4e6d01d793fbb3785599e708236"
+
+[[form]]
+source = "doc.data.parquet.metadata"
+anchor = "Parquet Schema"
+kind = "call"
+label = "parquet-schema"
+family = "functions"
+grammar = ["parquet_schema(<path>)"]
+basis = "example"
+page_sha256 = "ffef8b26396d29426ef118dd202f11a81f3bb4e6d01d793fbb3785599e708236"
+
+[[form]]
+source = "doc.data.parquet.metadata"
+anchor = "Parquet File Metadata"
+kind = "call"
+label = "parquet-file-metadata"
+family = "functions"
+grammar = ["parquet_file_metadata(<path>)"]
+basis = "example"
+page_sha256 = "ffef8b26396d29426ef118dd202f11a81f3bb4e6d01d793fbb3785599e708236"
+
+[[form]]
+source = "doc.data.parquet.metadata"
+anchor = "Parquet Key-Value Metadata"
+kind = "call"
+label = "parquet-kv-metadata"
+family = "functions"
+grammar = ["parquet_kv_metadata(<path>)"]
+basis = "example"
+page_sha256 = "ffef8b26396d29426ef118dd202f11a81f3bb4e6d01d793fbb3785599e708236"
+
+[[form]]
+source = "doc.data.parquet.metadata"
+anchor = "Full Metadata"
+kind = "call"
+label = "parquet-full-metadata"
+family = "functions"
+grammar = ["parquet_full_metadata(<path>)"]
+basis = "example"
+page_sha256 = "ffef8b26396d29426ef118dd202f11a81f3bb4e6d01d793fbb3785599e708236"
+
+[[form]]
+source = "doc.data.parquet.metadata"
+anchor = "Bloom Filters"
+kind = "call"
+label = "parquet-bloom-probe"
+family = "functions"
+grammar = ["parquet_bloom_probe(<path>, <column-name>, <value>)"]
+basis = "example"
+page_sha256 = "ffef8b26396d29426ef118dd202f11a81f3bb4e6d01d793fbb3785599e708236"
+
+[[form]]
+source = "doc.sql.functions.text"
+anchor = "`overlay`"
+kind = "special"
+label = "overlay-placing"
+family = "expressions"
+grammar = ["overlay ( <string> PLACING <replacement> FROM <start> [ FOR <count> ] )"]
+basis = "prose"
+page_sha256 = "6c15d27f9bea4ad846a696e351ae5a460c1beaf5e6fc4a65fed8a637247ab3a0"
+
+[[form]]
+source = "doc.data.json.json-functions"
+anchor = "JSON Extraction Functions"
+kind = "special"
+label = "op-arrow"
+family = "expressions"
+grammar = ["<json> -> <path>"]
+basis = "table"
+page_sha256 = "eb23aec12b114e0ab07abe86912af1576ccde423d2d33ab9fa1e18ecc2715879"
+
+[[form]]
+source = "doc.data.json.json-functions"
+anchor = "JSON Extraction Functions"
+kind = "special"
+label = "op-arrow-text"
+family = "expressions"
+grammar = ["<json> ->> <path>"]
+basis = "table"
+page_sha256 = "eb23aec12b114e0ab07abe86912af1576ccde423d2d33ab9fa1e18ecc2715879"
+
+[[form]]
+source = "doc.data.json.json-functions"
+anchor = "JSON Extraction Functions"
+kind = "call"
+label = "json-extract-path"
+family = "functions"
+grammar = ["json_extract_path(<json>, <path>)", "json_extract_path_text(<json>, <path>)"]
+basis = "table"
+page_sha256 = "eb23aec12b114e0ab07abe86912af1576ccde423d2d33ab9fa1e18ecc2715879"
+
+[[form]]
+source = "doc.data.json.json-functions"
+anchor = "JSON Table Functions"
+kind = "call"
+label = "json-each"
+family = "functions"
+grammar = ["json_each(<json> [ , <path> ])", "json_tree(<json> [ , <path> ])"]
+basis = "table"
+page_sha256 = "eb23aec12b114e0ab07abe86912af1576ccde423d2d33ab9fa1e18ecc2715879"
+
+[[form]]
+source = "doc.sql.query-syntax.grouping-sets"
+anchor = "Identifying Grouping Sets with `GROUPING_ID()`"
+kind = "call"
+label = "grouping-id"
+family = "functions"
+grammar = ["GROUPING_ID(<expr> [ , <expr> ... ])"]
+basis = "example"
+page_sha256 = "959fd971e761a6eb15a6bde2678ff6e2fb13624948208aab1d3200ae259677f6"
+
+[[form]]
+source = "doc.sql.expressions.star"
+anchor = "Unpacking a `COLUMNS` Expression"
+kind = "special"
+label = "unpack"
+family = "expressions"
+grammar = ["UNPACK ( COLUMNS ( <selector> ) )"]
+basis = "example"
+page_sha256 = "08b344a4c7e689044fe24271de13fbb91b27e4d20da784f4b2e23bf782f8982e"
+
+[[form]]
+source = "doc.sql.statements.copy"
+anchor = "Syntax"
+kind = "statement"
+label = "legacy-options"
+family = "dml"
+grammar = ["COPY <table-name> FROM <file-name> WITH DELIMITER '<delimiter>' CSV HEADER"]
+basis = "example"
+page_sha256 = "3435e861c51e91a8c29a5283c0574b1f915b3199ab4cb0b088ec8233fd869c83"
+
+[[form]]
+source = "doc.data.partitioning.partitioned-writes"
+anchor = "Custom Partition Paths"
+kind = "call"
+label = "hive-partition-component"
+family = "functions"
+grammar = ["hive_partition_component(<name>, <value>)"]
+basis = "example"
+page_sha256 = "8b60dc70d9bf5ca59d031398d842885d3cfdb4ee3923be6cc30bc148d8bd2867"
+
+[[form]]
+source = "doc.data.partitioning.partitioned-writes"
+anchor = "Custom Partition Paths"
+kind = "call"
+label = "path-join"
+family = "functions"
+grammar = ["path_join(<path> [ , <path> ... ])"]
+basis = "prose"
+page_sha256 = "8b60dc70d9bf5ca59d031398d842885d3cfdb4ee3923be6cc30bc148d8bd2867"
+
+[[form]]
+source = "doc.operations-manual.logging.overview"
+anchor = "Basics"
+kind = "call"
+label = "enable-logging"
+family = "functions"
+grammar = ["enable_logging([ <parameter> = <value> [ , ... ] ])"]
+basis = "example"
+page_sha256 = "f1996ce956fb93164412171566517e2febaa8bb535f992f82f94d0259d8318da"
+
+[[form]]
+source = "doc.operations-manual.logging.overview"
+anchor = "Basics"
+kind = "call"
+label = "disable-logging"
+family = "functions"
+grammar = ["disable_logging()"]
+basis = "example"
+page_sha256 = "f1996ce956fb93164412171566517e2febaa8bb535f992f82f94d0259d8318da"
+
+[[form]]
+source = "doc.operations-manual.logging.overview"
+anchor = "Basics"
+kind = "call"
+label = "truncate-duckdb-logs"
+family = "functions"
+grammar = ["truncate_duckdb_logs()"]
+basis = "example"
+page_sha256 = "f1996ce956fb93164412171566517e2febaa8bb535f992f82f94d0259d8318da"
+
+[[form]]
+source = "doc.sql.functions.text"
+anchor = "Text Functions and Operators"
+kind = "special"
+label = "op-starts-with"
+family = "expressions"
+grammar = ["<string> ^@ <search-string>"]
+basis = "table"
+page_sha256 = "6c15d27f9bea4ad846a696e351ae5a460c1beaf5e6fc4a65fed8a637247ab3a0"
+
+[[form]]
+source = "doc.sql.statements.create-sequence"
+anchor = "Setting the Sequence Value"
+kind = "call"
+label = "setval"
+family = "functions"
+grammar = ["setval('<sequence-name>', <value> [ , <is-called> ])"]
+basis = "example"
+page_sha256 = "455f97f1ddb260006459ddd67570f73007fa49c294267b54bfbc5f84b15f69f1"
+
+[[form]]
+source = "doc.configuration.overview"
+anchor = "Examples"
+kind = "call"
+label = "write-log"
+family = "functions"
+grammar = ["write_log(<message> [ , level := <level> ] [ , scope := <scope> ] )"]
+basis = "example"
+page_sha256 = "ffd6d825c7388bea7ec2ae11b25cba3882ce4aa6e043e564851e8078dd09d359"
+
+[[form]]
+source = "doc.sql.expressions.cast"
+anchor = "`cast_to_type` Function"
+kind = "call"
+label = "cast-to-type"
+family = "functions"
+grammar = ["cast_to_type(<expr>, <typed-expr>)"]
+basis = "example"
+page_sha256 = "463203752d1d663764e31d6488536d4df31b5295c9bf975f580c243b4e032f53"
+
+[[form]]
+source = "doc.configuration.secrets-manager"
+anchor = "Creating Multiple Secrets for the Same Service Type"
+kind = "call"
+label = "which-secret"
+family = "functions"
+grammar = ["which_secret('<path>', '<secret-type>')"]
+basis = "example"
+page_sha256 = "09834a7e316d6b9f6ee162a6f456f20ac9e37905a0582f30692f52bb7517a866"
+
+[[form]]
+source = "doc.operations-manual.logging.overview"
+anchor = "Structured Logging"
+kind = "call"
+label = "duckdb-logs-parsed"
+family = "functions"
+grammar = ["duckdb_logs_parsed('<log-type>')"]
+basis = "example"
+page_sha256 = "f1996ce956fb93164412171566517e2febaa8bb535f992f82f94d0259d8318da"
+
+[[form]]
+source = "doc.guides.file-formats.read-duckdb"
+anchor = "Reading a Specific Table"
+kind = "call"
+label = "read-duckdb"
+family = "functions"
+grammar = ["read_duckdb('<path>' [ , <parameter> = <value> ... ])"]
+basis = "example"
+page_sha256 = "813db5089aea8162660aa44dae83b0edb4ecaa5cc3e287703971e2b22fa86563"
+
+[[form]]
+source = "doc.sql.statements.alter-table"
+anchor = "`ADD PRIMARY KEY` / `ADD UNIQUE`"
+kind = "statement"
+label = "add-constraint"
+family = "ddl"
+grammar = ["ALTER TABLE <table-name> ADD [ CONSTRAINT <constraint-name> ] { PRIMARY KEY | UNIQUE } ( <column-name> [ , <column-name> ... ] )"]
+basis = "prose"
+page_sha256 = "a3da6c3d6ecbaa131313c3b48e2cdb41d21efbff0bfa69fcdfe7f7e571058761"
+
+[[form]]
+source = "doc.sql.statements.alter-table"
+anchor = "`SET` / `RESET` (Table Options)"
+kind = "statement"
+label = "table-options"
+family = "ddl"
+grammar = ["ALTER TABLE <table-name> SET ( '<option>' = '<value>' [ , '<option>' = '<value>' ... ] )", "ALTER TABLE <table-name> RESET ( '<option>' [ , '<option>' ... ] )"]
+basis = "example"
+page_sha256 = "a3da6c3d6ecbaa131313c3b48e2cdb41d21efbff0bfa69fcdfe7f7e571058761"
+
+[[form]]
+source = "doc.sql.statements.create-table"
+anchor = "Check Constraints"
+kind = "statement"
+label = "named-check"
+family = "ddl"
+grammar = ["CREATE TABLE <table-name> ( <column-name> <type-name> [ , <column-name> <type-name> ... ] , CONSTRAINT <constraint-name> CHECK ( <expr> ) )"]
+basis = "example"
+page_sha256 = "164d8c98070b2ddbc6e8ee7c9df38e52b7a6e197f19f548c872b8c5779892a84"
+
+[[form]]
+source = "doc.sql.statements.create-view"
+anchor = "Examples"
+kind = "statement"
+label = "secure"
+family = "ddl"
+grammar = ["CREATE SECURE VIEW <view-name> AS <select-node>"]
+basis = "example"
+page_sha256 = "015581e636e20d63d89749c7e32f5769774b889e9c1b28dd1f016975f38dae02"
+
+[[form]]
+source = "doc.sql.expressions.comparison-operators"
+anchor = "`BETWEEN` and `IS [NOT] NULL`"
+kind = "special"
+label = "isnull-notnull"
+family = "expressions"
+grammar = ["<expr> ISNULL", "<expr> NOTNULL"]
+basis = "table"
+page_sha256 = "bc11824de50710e16b634bf0bf5557dae6ccb3d01a72a4a086eedeebb6e8ffd6"
+
+[[form]]
+source = "doc.sql.expressions.subqueries"
+anchor = "Subquery Comparisons: `ALL`, `ANY`, and `SOME`"
+kind = "special"
+label = "quantified-comparison"
+family = "expressions"
+grammar = ["<expr> <comparison-operator> { ALL | ANY | SOME } ( <select-node> )"]
+basis = "prose"
+page_sha256 = "fa2c05c31b5da8b139366bf73f91e157d29d4ad1a66514f3c7d51be64ace230a"
+
+[[form]]
+source = "doc.sql.functions.pattern-matching"
+anchor = "`LIKE`"
+kind = "special"
+label = "op-tilde-tilde"
+family = "expressions"
+grammar = ["<string> ~~ <pattern>"]
+basis = "table"
+page_sha256 = "e8c8afc53ed6e54ecfaecf66430a872bdf66ab1a0d1ae8f05806ec0470d3b70c"
+
+[[form]]
+source = "doc.sql.functions.pattern-matching"
+anchor = "`LIKE`"
+kind = "special"
+label = "op-bang-tilde-tilde"
+family = "expressions"
+grammar = ["<string> !~~ <pattern>"]
+basis = "table"
+page_sha256 = "e8c8afc53ed6e54ecfaecf66430a872bdf66ab1a0d1ae8f05806ec0470d3b70c"
+
+[[form]]
+source = "doc.sql.functions.pattern-matching"
+anchor = "`LIKE`"
+kind = "special"
+label = "op-tilde-tilde-star"
+family = "expressions"
+grammar = ["<string> ~~* <pattern>"]
+basis = "table"
+page_sha256 = "e8c8afc53ed6e54ecfaecf66430a872bdf66ab1a0d1ae8f05806ec0470d3b70c"
+
+[[form]]
+source = "doc.sql.functions.pattern-matching"
+anchor = "`LIKE`"
+kind = "special"
+label = "op-bang-tilde-tilde-star"
+family = "expressions"
+grammar = ["<string> !~~* <pattern>"]
+basis = "table"
+page_sha256 = "e8c8afc53ed6e54ecfaecf66430a872bdf66ab1a0d1ae8f05806ec0470d3b70c"
+
+[[form]]
+source = "doc.sql.functions.pattern-matching"
+anchor = "`GLOB`"
+kind = "special"
+label = "op-tilde-tilde-tilde"
+family = "expressions"
+grammar = ["<string> ~~~ <pattern>"]
+basis = "table"
+page_sha256 = "e8c8afc53ed6e54ecfaecf66430a872bdf66ab1a0d1ae8f05806ec0470d3b70c"
+
+[[form]]
+source = "doc.configuration.pragmas"
+anchor = "Table Information"
+kind = "call"
+label = "pragma-table-info"
+family = "functions"
+grammar = ["pragma_table_info('<table-name>')"]
+basis = "example"
+page_sha256 = "2beca88974b8ba009c872d9d5b141641ed66370e0c0ad8213029d7815de460b3"
+
+[[form]]
+source = "doc.configuration.pragmas"
+anchor = "Database Size"
+kind = "call"
+label = "pragma-database-size"
+family = "functions"
+grammar = ["pragma_database_size()"]
+basis = "example"
+page_sha256 = "2beca88974b8ba009c872d9d5b141641ed66370e0c0ad8213029d7815de460b3"
+
+[[form]]
+source = "doc.configuration.pragmas"
+anchor = "Storage Information"
+kind = "call"
+label = "pragma-storage-info"
+family = "functions"
+grammar = ["pragma_storage_info('<table-name>' [ , include_segment_info := <boolean> ])"]
+basis = "example"
+page_sha256 = "2beca88974b8ba009c872d9d5b141641ed66370e0c0ad8213029d7815de460b3"
+
+[[form]]
+source = "doc.configuration.pragmas"
+anchor = "Version"
+kind = "call"
+label = "pragma-version"
+family = "functions"
+grammar = ["pragma_version()"]
+basis = "example"
+page_sha256 = "2beca88974b8ba009c872d9d5b141641ed66370e0c0ad8213029d7815de460b3"
+
+[[form]]
+source = "doc.configuration.pragmas"
+anchor = "Platform"
+kind = "call"
+label = "pragma-platform"
+family = "functions"
+grammar = ["pragma_platform()"]
+basis = "example"
+page_sha256 = "2beca88974b8ba009c872d9d5b141641ed66370e0c0ad8213029d7815de460b3"
+
+[[form]]
+source = "doc.sql.expressions.collations"
+anchor = "ICU Collations"
+kind = "call"
+label = "pragma-collations"
+family = "functions"
+grammar = ["pragma_collations()"]
+basis = "example"
+page_sha256 = "7b513525f34af3f325fa963506ce1a296c820bebc71c433f181a836c8336ca4b"
+
+[[form]]
+source = "doc.data.json.loading-json"
+anchor = "GeoJSON"
+kind = "call"
+label = "st-geomfromgeojson"
+family = "functions"
+grammar = ["st_geomfromgeojson(<geojson>)"]
+basis = "prose"
+page_sha256 = "bb1232cfde308c20ed78da0ddcab26b0f8c82c9196fecb3a4989ae0afcc12c15"
+
+[[form]]
+source = "doc.data.json.loading-json"
+anchor = "GeoJSON"
+kind = "call"
+label = "st-asgeojson"
+family = "functions"
+grammar = ["st_asgeojson(<geometry>)"]
+basis = "prose"
+page_sha256 = "bb1232cfde308c20ed78da0ddcab26b0f8c82c9196fecb3a4989ae0afcc12c15"
+
+[[form]]
+source = "doc.guides.performance.how-to-tune-workloads"
+anchor = "Caching"
+kind = "call"
+label = "duckdb-external-file-cache"
+family = "functions"
+grammar = ["duckdb_external_file_cache()"]
+basis = "example"
+page_sha256 = "5d6aec8b82ff94459c81d62a976f008911b8a680f7d949db1954e4c53c899087"
+
+[[form]]
+source = "doc.sql.statements.merge-into"
+anchor = "Examples"
+kind = "statement"
+label = "using-columns"
+family = "dml"
+grammar = ["MERGE INTO <table-name> USING <source-table-or-subquery> [ AS <alias> ] USING ( <column-name> [ , <column-name> ... ] ) WHEN MATCHED THEN { UPDATE SET <column-name> = <value-expr> [ , <column-name> = <value-expr> ... ] | DELETE }"]
+basis = "example"
+page_sha256 = "36224fe3273c36eb93562e02ba4f29e614076ba56d7f70bff9f6594f5d23ca09"
+
+[[form]]
+source = "doc.sql.query-syntax.limit"
+anchor = "Examples"
+kind = "special"
+label = "percent"
+family = "query"
+grammar = ["LIMIT <expr> %"]
+basis = "example"
+page_sha256 = "8ee23196b486e4e13c9e18330e365b7a88d725ae541d1674e8f8e1fd22341300"
+
+[[form]]
+source = "doc.sql.query-syntax.with"
+anchor = "Aggregate Payloads in `USING KEY`"
+kind = "statement"
+label = "table-statement"
+family = "query"
+grammar = ["TABLE <table-name>"]
+basis = "example"
+page_sha256 = "a0128a10beed9e97ec42b2ed21cff01243fccdda0fd79d03b4db24d82d65b064"
+
+[[form]]
+source = "doc.sql.query-syntax.with"
+anchor = "Data-Modifying CTEs"
+kind = "statement"
+label = "data-modifying"
+family = "query"
+grammar = ["WITH <table-name> AS [ [ NOT ] MATERIALIZED ] ( { <insert-statement> | <update-statement> | <delete-statement> | <copy-to-statement> } ) { <select-node> | <main-insert> | <main-update> | <main-delete> }"]
+basis = "prose"
+page_sha256 = "a0128a10beed9e97ec42b2ed21cff01243fccdda0fd79d03b4db24d82d65b064"
+
+[[form]]
+source = "doc.sql.query-syntax.with"
+anchor = "Aggregate Payloads in `USING KEY`"
+kind = "statement"
+label = "using-key-aggregates"
+family = "query"
+grammar = ["WITH RECURSIVE <table-name> [ ( <column-name> [ , <column-name> ... ] ) ] USING KEY ( <column-name> [ , <column-name> ... ] , <aggregate-name> ( <column-name> ) [ , <aggregate-name> ( <column-name> ) ... ] ) AS ( <select-node> )"]
+basis = "example"
+page_sha256 = "a0128a10beed9e97ec42b2ed21cff01243fccdda0fd79d03b4db24d82d65b064"
+
+[[form]]
+source = "doc.sql.statements.create-schema"
+anchor = "Nested Schemas"
+kind = "statement"
+label = "nested"
+family = "ddl"
+grammar = ["CREATE SCHEMA <schema-name> . <schema-name> [ . <schema-name> ... ]"]
+basis = "example"
+page_sha256 = "d74908e5d6c0ac5bdd0aac4eaef631f50dd130546dc2d56dbe46e3cb41b18999"
+
+[[form]]
+source = "doc.sql.statements.create-type"
+anchor = "Examples"
+kind = "statement"
+label = "or-replace"
+family = "ddl"
+grammar = ["CREATE OR REPLACE TYPE <name> AS { <existing-type-name> | ENUM ( <'enum-value'> [ , <'enum-value'> ... ] ) }"]
+basis = "example"
+page_sha256 = "1fae7f88fc3fc5795de66ea4faaec165be52c890a1fc0e7e2a646f2ee3a376bf"
+
+[[form]]
+source = "doc.sql.data-types.enum"
+anchor = "Creating Enums"
+kind = "statement"
+label = "enum-from-select"
+family = "ddl"
+grammar = ["CREATE TYPE <name> AS ENUM ( <select-node> )"]
+basis = "example"
+page_sha256 = "cb7c8220c488a472dd3674c7fe4ad6112b1ea59947e63c2375a47b726b57dcdc"
+
+[[form]]
+source = "doc.sql.statements.update"
+anchor = "`RETURNING` Clause"
+kind = "statement"
+label = "returning"
+family = "dml"
+grammar = ["UPDATE <table-name> SET <column-name> = <expr> [ , <column-name> = <expr> ... ] [ WHERE <expr> ] RETURNING { * | <expr> [ [ AS ] <alias> ] [ , <expr> [ [ AS ] <alias> ] ... ] }"]
+basis = "prose"
+page_sha256 = "a05c0ca773ac989aab080f5b5f0fa76b15b2bc44dfe0ba55fd37c9e70c1116b5"
+
+[[form]]
+source = "doc.sql.statements.unpivot"
+anchor = "Simplified `UNPIVOT` Syntax"
+kind = "statement"
+label = "order-by-limit"
+family = "query"
+grammar = ["UNPIVOT <table-name> ON <unpivot-column> [ , <unpivot-column> ... ] [ INTO NAME <name-column-name> VALUE <value-column-name> [ , <value-column-name> ... ] ] [ ORDER BY <expr> [ ASC | DESC ] [ , <expr> [ ASC | DESC ] ... ] ] [ LIMIT <expr> ]"]
+basis = "synopsis"
+page_sha256 = "f4aaf070a13578db06c3a896d7366d5ea39e41c49d62c271cd50afcc6d3c9773"
+
+[[form]]
+source = "doc.sql.query-syntax.from"
+anchor = "`FROM`-First Syntax with a `SELECT` Clause"
+kind = "statement"
+label = "from-first-select"
+family = "query"
+grammar = ["FROM <table-reference> SELECT <expr> [ , <expr> ... ]"]
+basis = "example"
+page_sha256 = "142f346c5a3eb5e600a0e22544eb9ab418a289eea1a997214018897799c928de"
+
+[[form]]
+source = "doc.sql.query-syntax.from"
+anchor = "Specifying the Join Type Explicitly"
+kind = "special"
+label = "join-by"
+family = "query"
+grammar = ["JOIN BY ( TYPE { INNER | LEFT | RIGHT | FULL | SEMI | ANTI | RIGHT_SEMI | RIGHT_ANTI | MARK | SINGLE } ) <table-reference> ON <expr>", "JOIN BY ( TYPE { INNER_JOIN | LEFT_JOIN | RIGHT_JOIN | FULL_JOIN | SEMI_JOIN | ANTI_JOIN | RIGHT_SEMI_JOIN | RIGHT_ANTI_JOIN | MARK_JOIN | SINGLE_JOIN } ) <table-reference> ON <expr>"]
+basis = "synopsis"
+page_sha256 = "142f346c5a3eb5e600a0e22544eb9ab418a289eea1a997214018897799c928de"
+
+[[form]]
+source = "doc.sql.dialect.friendly-sql"
+anchor = "Data Import"
+kind = "statement"
+label = "replacement-scan"
+family = "query"
+grammar = ["FROM <file-name>"]
+basis = "prose"
+page_sha256 = "8e5030137640607484948f353447d16e228023b5c1ab5ad0349b2114ca41b211"
+
+[[form]]
+source = "doc.sql.statements.attach"
+anchor = "Name Qualification"
+kind = "statement"
+label = "qualified-table"
+family = "query"
+grammar = ["FROM <catalog-name> . <schema-name> . <table-name>"]
+basis = "example"
+page_sha256 = "b35dc450bee73972af7c21e5ff326e574da62392b3324c0ef652ccb9d3277d05"
+
+[[form]]
+source = "doc.sql.statements.attach"
+anchor = "Options"
+kind = "statement"
+label = "options"
+family = "utility"
+grammar = ["ATTACH <database-path> [ AS <database-alias> ] ( { { READ_ONLY | COMPRESS } [ <boolean> ] | READ_WRITE | TYPE { DUCKDB | SQLITE | POSTGRES | MYSQL } | DEFAULT_TABLE <table-name> | { BLOCK_SIZE | ROW_GROUP_SIZE } <integer> | STORAGE_VERSION '<version>' | ENCRYPTION_KEY '<key>' | ENCRYPTION_CIPHER { CBC | CTR | GCM } | RECOVERY_MODE <recovery-mode> } [ , { { READ_ONLY | COMPRESS } [ <boolean> ] | READ_WRITE | TYPE { DUCKDB | SQLITE | POSTGRES | MYSQL } | DEFAULT_TABLE <table-name> | { BLOCK_SIZE | ROW_GROUP_SIZE } <integer> | STORAGE_VERSION '<version>' | ENCRYPTION_KEY '<key>' | ENCRYPTION_CIPHER { CBC | CTR | GCM } | RECOVERY_MODE <recovery-mode> } ... ] )"]
+basis = "table"
+page_sha256 = "b35dc450bee73972af7c21e5ff326e574da62392b3324c0ef652ccb9d3277d05"
+
+[[form]]
+source = "doc.sql.indexes"
+anchor = "Constraint Checking in `UPDATE` Statements"
+kind = "statement"
+label = "begin"
+family = "transaction_session"
+grammar = ["BEGIN"]
+basis = "example"
+page_sha256 = "521ad556fba2538a6daa129be934ccadf2ca557c109cd04f9f7a9edc36a89ba1"
+
+[[form]]
+source = "doc.configuration.pragmas"
+anchor = "Pragmas"
+kind = "statement"
+label = "pragma-assign"
+family = "utility"
+grammar = ["PRAGMA <pragma-name> = <value>"]
+basis = "prose"
+page_sha256 = "2beca88974b8ba009c872d9d5b141641ed66370e0c0ad8213029d7815de460b3"
+
+[[form]]
+source = "doc.sql.functions.pattern-matching"
+anchor = "Regular Expressions"
+kind = "special"
+label = "op-tilde"
+family = "expressions"
+grammar = ["<string> ~ <regex>"]
+basis = "table"
+page_sha256 = "e8c8afc53ed6e54ecfaecf66430a872bdf66ab1a0d1ae8f05806ec0470d3b70c"
+
+[[form]]
+source = "doc.sql.functions.pattern-matching"
+anchor = "Regular Expressions"
+kind = "special"
+label = "op-bang-tilde"
+family = "expressions"
+grammar = ["<string> !~ <regex>"]
+basis = "table"
+page_sha256 = "e8c8afc53ed6e54ecfaecf66430a872bdf66ab1a0d1ae8f05806ec0470d3b70c"
+
+[[form]]
+source = "doc.sql.functions.pattern-matching"
+anchor = "Regular Expressions"
+kind = "special"
+label = "op-tilde-star"
+family = "expressions"
+grammar = ["<string> ~* <regex>"]
+basis = "table"
+page_sha256 = "e8c8afc53ed6e54ecfaecf66430a872bdf66ab1a0d1ae8f05806ec0470d3b70c"
+
+[[form]]
+source = "doc.sql.functions.pattern-matching"
+anchor = "Regular Expressions"
+kind = "special"
+label = "op-bang-tilde-star"
+family = "expressions"
+grammar = ["<string> !~* <regex>"]
+basis = "table"
+page_sha256 = "e8c8afc53ed6e54ecfaecf66430a872bdf66ab1a0d1ae8f05806ec0470d3b70c"
+
+[[form]]
+source = "doc.sql.functions.list"
+anchor = "List Comprehension"
+kind = "special"
+label = "list-comprehension"
+family = "expressions"
+grammar = ["[ <expr> FOR <x-name> [ , <i-name> ] IN <list> [ IF <condition> ] ]"]
+basis = "example"
+page_sha256 = "b4df7bd4510dab6910ed75c4336018b6d8565bf192bba0074805e92d302b70ba"
+
+[[form]]
+source = "doc.sql.functions.list"
+anchor = "Slicing"
+kind = "special"
+label = "open-slice"
+family = "expressions"
+grammar = ["<list> [ [ <begin> ] : { [ <end> ] [ : <step> ] | - : <step> } ]"]
+basis = "example"
+page_sha256 = "b4df7bd4510dab6910ed75c4336018b6d8565bf192bba0074805e92d302b70ba"
+
+[[form]]
+source = "doc.sql.functions.text"
+anchor = "`string[begin:end]`"
+kind = "special"
+label = "open-slice"
+family = "expressions"
+grammar = ["<string> [ [ <begin> ] : [ <end> ] ]"]
+basis = "table"
+page_sha256 = "6c15d27f9bea4ad846a696e351ae5a460c1beaf5e6fc4a65fed8a637247ab3a0"
+
+[[form]]
+source = "doc.sql.functions.overview"
+anchor = "Function Chaining via the Dot Operator"
+kind = "special"
+label = "dot-call"
+family = "expressions"
+grammar = ["<expr> . <function-name> ( [ <argument> [ , <argument> ... ] ] )"]
+basis = "example"
+page_sha256 = "f6cedaf8f48c664dc64c7e36a8b60310a39e4c1ae21feb3c794092948d70d374"
+
+[[form]]
+source = "doc.sql.functions.lambda"
+anchor = "Lambda Functions"
+kind = "special"
+label = "lambda-expression"
+family = "expressions"
+grammar = ["LAMBDA <param-name> [ , <param-name> ... ] : <expr>"]
+basis = "synopsis"
+page_sha256 = "6ea17ec4994ab9ceb7b4d4323dc6c336aa709506e959cfd28b1c8fa3f51e7c5e"
+
+[[form]]
+source = "doc.data.parquet.overview"
+anchor = "`read_parquet` Function / Parameters"
+kind = "call"
+label = "read-parquet-parameters"
+family = "functions"
+grammar = ["read_parquet(<path> [ , <parameter> = <value> ... ])", "parquet_scan(<path> [ , <parameter> = <value> ... ])"]
+basis = "table"
+page_sha256 = "77356ca39aa6fafc4b6bfe76fbe23a3623cc382bc956f5f6cf45c57ed6661b5b"
+
+[[form]]
+source = "doc.data.json.loading-json"
+anchor = "Functions for Reading JSON as a Table / Parameters"
+kind = "call"
+label = "read-json-parameters"
+family = "functions"
+grammar = ["read_json(<path> [ , <parameter> = <value> ... ])", "read_json_auto(<path> [ , <parameter> = <value> ... ])", "read_ndjson(<path> [ , <parameter> = <value> ... ])", "read_ndjson_auto(<path> [ , <parameter> = <value> ... ])"]
+basis = "table"
+page_sha256 = "bb1232cfde308c20ed78da0ddcab26b0f8c82c9196fecb3a4989ae0afcc12c15"
+
+[[form]]
+source = "doc.data.json.loading-json"
+anchor = "Functions for Reading JSON Objects / Parameters"
+kind = "call"
+label = "read-json-objects-parameters"
+family = "functions"
+grammar = ["read_json_objects(<path> [ , <parameter> = <value> ... ])", "read_ndjson_objects(<path> [ , <parameter> = <value> ... ])", "read_json_objects_auto(<path> [ , <parameter> = <value> ... ])"]
+basis = "table"
+page_sha256 = "bb1232cfde308c20ed78da0ddcab26b0f8c82c9196fecb3a4989ae0afcc12c15"
+
+[[form]]
+source = "doc.sql.peg-parser"
+anchor = "Checking a Query"
+kind = "call"
+label = "check-peg-parser"
+family = "functions"
+grammar = ["check_peg_parser('<query>')"]
+basis = "example"
+page_sha256 = "541fb419df9c8840109d8a5a1dd051f29139ba64b1daf145bae9ac2112728649"
+
+[[page]]
+source = "doc.sql.data-types.bitstring"
+status = "no_syntax_block"
+reason = "the B'...' literal is catalogued from literal_types.md; BITSTRING is a type-table row; bitstring() is on the bitstring functions page"
+page_sha256 = "d049b9d731181cb13ca5670eef1e83cae1697fd0037b6ec054277553916fa161"
+
+[[page]]
+source = "doc.sql.data-types.blob"
+status = "no_syntax_block"
+reason = "the X'...' literal is catalogued from literal_types.md and BLOB is a type-table row; the '\\xAA' escapes live inside a string literal"
+page_sha256 = "9baa763223b1fa21b747ddc0685e1fd78186ed69a30fea9140c0d2fe90cd137b"
+
+[[page]]
+source = "doc.sql.data-types.nulls"
+status = "no_syntax_block"
+reason = "semantics of NULL; NULL, IS NULL and IS NOT DISTINCT FROM are catalogued on literal_types.md and the comparison pages"
+page_sha256 = "b6f67cdda96ba8d405ecfb89e3c2cf1fdacef58794840201011bf11085588b23"
+
+[[page]]
+source = "doc.sql.data-types.typecasting"
+status = "no_syntax_block"
+reason = "casting rules; CAST and :: are catalogued from expressions/cast.md"
+page_sha256 = "dd91ceb875c3b876f16d590fc26c36c7ef9df5bab4cd08461d4e1fa4fece8ca0"
+
+[[page]]
+source = "doc.sql.data-types.variant"
+status = "no_syntax_block"
+reason = "VARIANT is a type-table row; casts, field access and COPY options use syntax catalogued elsewhere"
+page_sha256 = "bff85686317db3587bfeb5746fd8212ca5d08fb8547e7e448e641b2245c01707"
+
+[[page]]
+source = "doc.sql.dialect.indexing"
+status = "no_syntax_block"
+reason = "describes 1-based indexing; the subscript syntax is catalogued on the list and text function pages"
+page_sha256 = "453967b5486ce079b6484e5403432b398d9e414432f3527d4c75f3f5ee134180"
+
+[[page]]
+source = "doc.sql.dialect.order-preservation"
+status = "no_syntax_block"
+reason = "describes result ordering; no syntax of its own"
+page_sha256 = "8307c2822c516bbf062423cb0aae1b2aed2b32417451fac4f43f5eb1880575de"
+
+[[page]]
+source = "doc.sql.dialect.overview"
+status = "no_syntax_block"
+reason = "index page linking the dialect pages"
+page_sha256 = "c1f431e75621b3877998ac159181e004567a6c2470e9de5254b8b22b3a921eb1"
+
+[[page]]
+source = "doc.sql.dialect.postgresql-compatibility"
+status = "no_syntax_block"
+reason = "semantic differences from PostgreSQL; the operators it mentions (//, ==) are catalogued on the numeric and comparison pages"
+page_sha256 = "1b97693c3dc61e3974340dd9182875336e80960cef49f54ef62d6c8d717b9db0"
+
+[[page]]
+source = "doc.sql.dialect.sql-quirks"
+status = "no_syntax_block"
+reason = "semantic surprises; no syntax of its own"
+page_sha256 = "06c9ad6ef86d61a000fe9a5e701091041f1dfb5c9f72bf4fe691a2f1ba6817e1"
+
+[[page]]
+source = "doc.sql.expressions.overview"
+status = "no_syntax_block"
+reason = "index page linking the expression pages"
+page_sha256 = "38667c7ebbb11de5b32ea7d439c3c5eae60f98587eec43c05b55c79ace8ac59a"
+
+[[page]]
+source = "doc.sql.functions.dateformat"
+status = "out_of_scope"
+reason = "strftime and strptime format specifiers are written inside a string literal; the functions themselves are catalogued on the date and timestamp function pages"
+page_sha256 = "395ffed697fc60a92e60d35e50373ae056ff1cec80560c4b6e74f35700326823"
+
+[[page]]
+source = "doc.sql.functions.nested"
+status = "no_syntax_block"
+reason = "index table linking the nested type and function pages"
+page_sha256 = "165e3c3612259fd9e6d8e08b870b4a602029ea84a65d9e6656139030e66ea281"
+
+[[page]]
+source = "doc.sql.introduction"
+status = "no_syntax_block"
+reason = "tutorial whose examples use statements catalogued on their own pages"
+page_sha256 = "cc2cc311aca34d11755c948103578681f202b5e6bb448a0ea0b7cefa709b23fa"
+
+[[page]]
+source = "doc.sql.meta.information-schema"
+status = "no_syntax_block"
+reason = "lists the information_schema views, read with ordinary SELECT"
+page_sha256 = "83baae5ceec54e1c0adc8c1ca97dac3c1361d643c13463c7b9ab4bab341bae89"
+
+[[page]]
+source = "doc.sql.statements.overview"
+status = "no_syntax_block"
+reason = "index page linking the statement pages"
+page_sha256 = "84336916c3ce076ba6e1ae84dab013c882dbdfaf34440f24e33bebe8d4805c3f"
+
+[[form]]
+source = "doc.sql.statements.alter-table"
+anchor = "`ADD` / `DROP CONSTRAINT`"
+kind = "statement"
+label = "add-check"
+family = "ddl"
+grammar = ["ALTER TABLE <table-name> ADD [ CONSTRAINT <constraint-name> ] CHECK ( <expr> )"]
+basis = "prose"
+page_sha256 = "a3da6c3d6ecbaa131313c3b48e2cdb41d21efbff0bfa69fcdfe7f7e571058761"
+
+[[form]]
+source = "doc.sql.statements.alter-table"
+anchor = "`ADD` / `DROP CONSTRAINT`"
+kind = "statement"
+label = "add-foreign-key"
+family = "ddl"
+grammar = ["ALTER TABLE <table-name> ADD [ CONSTRAINT <constraint-name> ] FOREIGN KEY ( <column-name> [ , <column-name> ... ] ) REFERENCES <foreign-table> [ ( <column-name> [ , <column-name> ... ] ) ]"]
+basis = "prose"
+page_sha256 = "a3da6c3d6ecbaa131313c3b48e2cdb41d21efbff0bfa69fcdfe7f7e571058761"
+
+[[form]]
+source = "doc.sql.statements.alter-table"
+anchor = "`ADD` / `DROP CONSTRAINT`"
+kind = "statement"
+label = "drop-constraint"
+family = "ddl"
+grammar = ["ALTER TABLE <table-name> DROP CONSTRAINT <constraint-name>"]
+basis = "prose"
+page_sha256 = "a3da6c3d6ecbaa131313c3b48e2cdb41d21efbff0bfa69fcdfe7f7e571058761"
+
+[[form]]
+source = "doc.sql.statements.vacuum"
+anchor = "Examples"
+kind = "statement"
+label = "vacuum-full"
+family = "utility"
+grammar = ["VACUUM FULL"]
+basis = "example"
+page_sha256 = "b387bafe8e64450c4e20894c36004a4228e703f3fc5be2916144c643a68db5f6"
+
+[[form]]
+source = "doc.sql.statements.create-trigger"
+anchor = "Limitations"
+kind = "statement"
+label = "instead-of"
+family = "ddl"
+grammar = ["CREATE TRIGGER <name> INSTEAD OF { INSERT | UPDATE | DELETE } ON <table> FOR EACH ROW <triggered-statement>"]
+basis = "prose"
+page_sha256 = "7bc7287fccc5413cc5fed097888e7f57fe05345ddcd9d6645e5f1700a1b0be14"
+
+[[form]]
+source = "doc.sql.statements.create-trigger"
+anchor = "Limitations"
+kind = "statement"
+label = "temporary"
+family = "ddl"
+grammar = ["CREATE { TEMPORARY | TEMP } TRIGGER <name> { BEFORE | AFTER } { INSERT | UPDATE | DELETE } ON <table> FOR EACH { ROW | STATEMENT } <triggered-statement>"]
+basis = "prose"
+page_sha256 = "7bc7287fccc5413cc5fed097888e7f57fe05345ddcd9d6645e5f1700a1b0be14"
+
+[[form]]
+source = "doc.sql.statements.comment-on"
+anchor = "Limitations"
+kind = "statement"
+label = "schema-or-database"
+family = "ddl"
+grammar = ["COMMENT ON { SCHEMA | DATABASE } <entity-name> IS <string-literal>"]
+basis = "prose"
+page_sha256 = "11fc6ae605d9fa1603386e9a940f8390b8fe0f37dbeb286de0cfd53d8e5cbf37"
+
+[[form]]
+source = "doc.sql.statements.create-table"
+anchor = "Foreign Key Constraints / Limitations"
+kind = "special"
+label = "foreign-key-on-delete-cascade"
+family = "ddl"
+grammar = ["FOREIGN KEY ( <column-name> [ , <column-name> ... ] ) REFERENCES <foreign-table> [ ( <column-name> [ , <column-name> ... ] ) ] ON DELETE CASCADE"]
+basis = "prose"
+page_sha256 = "164d8c98070b2ddbc6e8ee7c9df38e52b7a6e197f19f548c872b8c5779892a84"

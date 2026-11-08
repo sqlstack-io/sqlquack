@@ -1,15 +1,19 @@
-"""A small root holding the committed transaction_session catalogue and its obligations."""
+"""A small root of the committed transaction_session family, and the build in its own process."""
 
 from __future__ import annotations
 
+import re
 import shutil
+import subprocess
+import sys
 from pathlib import Path
 
-from scripts.syntax_obligations.exceptions import ObligationError
 from scripts.syntax_obligations_sqlite.constants import FAMILIES
-from scripts.syntax_obligations_sqlite.main.build import run_build
 
-ROOT: Path = Path(__file__).parents[4] / "coverage" / "syntax-sqlite"
+REPOSITORY: Path = Path(__file__).parents[4]
+ROOT: Path = REPOSITORY / "coverage" / "syntax-sqlite"
+BUILD_MODULE: str = "scripts.build_syntax_obligations_sqlite"
+RAISED: re.Pattern[str] = re.compile(r"^[\w.]+(?:Error|Exception): (.*)$", re.MULTILINE)
 FAMILY: str = "transaction_session"
 POSITIVE_ID: str = "sl.transaction_session.begin-stmt.o001"
 SUPPRESS_POSITIVE: str = (
@@ -42,10 +46,17 @@ def obligations_text(root: Path) -> str:
     return (root / "obligations" / f"{FAMILY}.toml").read_text()
 
 
+def build_process(arguments: list[str]) -> subprocess.CompletedProcess[str]:
+    """The build with `arguments`, run from the repository root in a fresh interpreter."""
+    return subprocess.run(
+        [sys.executable, "-m", BUILD_MODULE, *arguments],
+        cwd=REPOSITORY,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+
 def build_error(root: Path) -> str:
-    """The build's refusal, or the empty string when it wrote the root."""
-    try:
-        run_build(["--root", str(root)])
-    except ObligationError as raised:
-        return str(raised)
-    return ""
+    """The message of the exception the build process raised, or the empty string if none."""
+    return "".join(RAISED.findall(build_process(["--root", str(root)]).stderr))

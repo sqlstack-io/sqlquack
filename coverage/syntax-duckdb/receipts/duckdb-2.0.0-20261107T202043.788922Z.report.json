@@ -1,0 +1,12 @@
+{
+  "phases": {
+    "accepted": 895,
+    "runtime_error": 131,
+    "semantic_error": 1323,
+    "syntax_error": 3330,
+    "unsupported_feature": 23
+  },
+  "problems": [],
+  "receipts": 5702,
+  "run_id": "duckdb-2.0.0-20261107T202043.788922Z"
+}

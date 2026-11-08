@@ -2,13 +2,18 @@
 
 from __future__ import annotations
 
+import subprocess
 from pathlib import Path
 
 import pytest
 
-from scripts.syntax_obligations_sqlite.main.build import run_build
 from tests.unit.scripts.syntax_obligations_sqlite._test_types import CheckTestCase, StrayTestCase
-from tests.unit.scripts.syntax_obligations_sqlite.helpers import FAMILY, build_error, small_root
+from tests.unit.scripts.syntax_obligations_sqlite.helpers import (
+    FAMILY,
+    build_error,
+    build_process,
+    small_root,
+)
 
 
 @pytest.mark.parametrize(
@@ -42,7 +47,7 @@ from tests.unit.scripts.syntax_obligations_sqlite.helpers import FAMILY, build_e
     ids=lambda case: case.description,
 )
 def test_given_committed_files_when_checking_then_only_an_edit_fails_and_nothing_is_written(
-    test_case: CheckTestCase, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    test_case: CheckTestCase, tmp_path: Path
 ) -> None:
     root: Path = small_root(directory=tmp_path, limits="", retired="")
     assert build_error(root) == ""
@@ -50,12 +55,11 @@ def test_given_committed_files_when_checking_then_only_an_edit_fails_and_nothing
     original: str = path.read_text()
     edited: str = original.replace(test_case.old, test_case.new, 1)
     path.write_text(edited)
-    capsys.readouterr()
 
-    code: int = run_build(["--root", str(root), "--check"])
+    checked: subprocess.CompletedProcess[str] = build_process(["--root", str(root), "--check"])
 
-    assert code == test_case.expected_code
-    assert capsys.readouterr().err.count("stale: ") == test_case.expected_stale
+    assert checked.returncode == test_case.expected_code
+    assert checked.stderr.count("stale: ") == test_case.expected_stale
     assert path.read_text() == edited
 
 
@@ -79,19 +83,18 @@ def test_given_committed_files_when_checking_then_only_an_edit_fails_and_nothing
     ids=lambda case: case.description,
 )
 def test_given_a_stray_committed_file_when_checking_then_the_check_names_it_and_fails(
-    test_case: StrayTestCase, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    test_case: StrayTestCase, tmp_path: Path
 ) -> None:
     root: Path = small_root(directory=tmp_path, limits="", retired="")
     assert build_error(root) == ""
     stray: Path = root / test_case.relative
     stray.parent.mkdir(parents=True, exist_ok=True)
     stray.write_text("")
-    capsys.readouterr()
 
-    code: int = run_build(["--root", str(root), "--check"])
+    checked: subprocess.CompletedProcess[str] = build_process(["--root", str(root), "--check"])
 
-    assert code == test_case.expected_code
-    assert capsys.readouterr().err.splitlines() == [
+    assert checked.returncode == test_case.expected_code
+    assert checked.stderr.splitlines() == [
         f"stale: {stray} is missing, differs, or is not written by the build"
     ]
     assert stray.read_text() == ""
