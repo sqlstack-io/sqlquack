@@ -1,0 +1,615 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 RLIKE ;",
+   "sql_sha256": "00a2b0b0ba1074e91ff582ca654da20b1e2e907717b48bb853280b06e7230496"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 AS ;",
+   "sql_sha256": "01a87f7c211314f45efaf212e82780c6e7cde496b05e623484e74c47ee6e2cb1"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 AS ;",
+   "sql_sha256": "07fb59aa975bde88d679be79871a13c1d01c785e975ab3138b9eb38f7c6983d0"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 HAVING ;",
+   "sql_sha256": "08e9e9e8530fc0a3897cb115902ac066d347146131d8c0f68feda960d7470c9f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 CHECK ;",
+   "sql_sha256": "0b045b417d9e0ddc49fff4886b3c83478f3ba64b380cbe1fa135784b7b6aacb2"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 GRANT ;",
+   "sql_sha256": "0c8db5eeae8db3269b18a7930c71550d1654d60d3b005ff997d318f75ca44f76"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 CHECK ;",
+   "sql_sha256": "0f00572375c53ae3e59bd9780cf99e8862b6fde9faf9f871d49d55bfe25c623b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 VALUES ;",
+   "sql_sha256": "0fbe67d57e33dc518651b3c8f37cd0faa9a3266dc4082b2b93aa0e276e9e00d2"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 ELSE ;",
+   "sql_sha256": "104185c8a1339a89a0b4b9c6e58144d767dec166cc242b936cd370da8896d2d2"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 OF ;",
+   "sql_sha256": "11f6768eec6292f68ea328b954682c8e29dc95fe73d07fd6a4202964bad2dfa5"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 INTO ;",
+   "sql_sha256": "15aa81df62f3cc85e66377e0f8e4c7ef27592587225925f661fd1c24e434b274"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 INCREMENT ;",
+   "sql_sha256": "1f1ecbfeae9d0f24bc77190efef299cdbc95a67cc77e6f8e75feef232b069487"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 NOT ;",
+   "sql_sha256": "21928b8f64cae94b204a20322ecdc486cdcaaf117802a5d617190ff4846c5274"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 WITH ;",
+   "sql_sha256": "242e4437b004ef783a32f9d859c331353508a3c71068b1c9bf6dcabe1f615265"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 AND ;",
+   "sql_sha256": "28687848e3e9d27afac87c72f1a1974c0588fe11ca290812f0a05b3c2ea594dd"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 ROWS ;",
+   "sql_sha256": "2a8388d70696e24f86831983f2df7ed19a12c26602a171e0ddfac0e4999a7c1b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 ANY ;",
+   "sql_sha256": "2b716497ecc9dc6033642c0d45747246204494dba9d90349e48795df90368950"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 THEN ;",
+   "sql_sha256": "2cba221198208815b6f4d62a00bec5869f96b49bf389979ee34f0874154a656f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 TABLESAMPLE ;",
+   "sql_sha256": "2d974572bfe706e3637c4f41e8eb1d043e42d5743447406e22a827bb24a60369"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 IN ;",
+   "sql_sha256": "307f53ee80a59fc6c952b26610e04c383cac27a1215e01a88b322dc05b820a84"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 DROP ;",
+   "sql_sha256": "30f9e44fb61cbc06d0b3ebfaa3022bc80c0102f6cf52c5826f4983f1beb9cc90"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 WHERE ;",
+   "sql_sha256": "323d83df8bdacf045f9625970543884d969a18973a470addc3ec3ca60858450b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GROUP ;",
+   "sql_sha256": "370a1917f9f2681ee7a3c5fda716ef8211658c37f53addf1c59d377e70106563"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 ALTER ;",
+   "sql_sha256": "374a2d7864af10deb817395c181a9b4266720fea95c80289461e075652cc23f7"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 OF ;",
+   "sql_sha256": "377a7c71c09cad0feb07586cb3427ff2ef4c759acef091df5d4c1fb8de7fee55"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 ALTER ;",
+   "sql_sha256": "3d87a729cbbeb5c13d1da33d9c68f4f6a7a6b5c0de15d69e818a97aaf14132c3"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 SELECT ;",
+   "sql_sha256": "3f2300cb369e4a5bfca630936e7556259c6a98bc9f9c6a3a3ed0182721b6cfd6"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 START ;",
+   "sql_sha256": "4dc944b5afb10ac4e332d67671d62179d3ce429b326275d767c9231827dd3683"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 WHENEVER ;",
+   "sql_sha256": "4e66e40763e859b9461f669aa42a09f0771f7b85d990f9f6983af8d5c23bdde6"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 ON ;",
+   "sql_sha256": "511a0ea880174fe0fef08a7d5d24ac7e30cf6ef8120f4e3c958064bdb35c8ecb"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 MINUS ;",
+   "sql_sha256": "518d804bb5e2e9932514cd7f25b90cf3b269b3ff2eeff7eb4735d06f74605258"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 TO ;",
+   "sql_sha256": "534741de33330e8a4b0c888210e5843066160a1abffec83565698e0ce8912fa4"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 SET ;",
+   "sql_sha256": "5383a8ad69635fcc5b9df750ee99045c297747b605b51084e8d19339ff17ec13"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 QUALIFY ;",
+   "sql_sha256": "57418aff3da94be1833bc54476491100e9f23fc1484500a63772b178cddcbab6"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 HAVING ;",
+   "sql_sha256": "57a356cffcabf594627485b3b74743cd933b0f3132e257cefb97bcc3541f8fa9"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FOLLOWING ;",
+   "sql_sha256": "5c09a41c0455b68d60a45a9b5d57ebd399520e01a5cbd6d2a0fee623cd42f10f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 ROW ;",
+   "sql_sha256": "60a1db82495adc3d9a23b796ee911616ccdf30d26f5f4dd315369134ef1fa45d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 NOT ;",
+   "sql_sha256": "6101a93d8d15907208e2a04f53e8ba81c78abc6be173adb065ca1852396be45f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 DISTINCT ;",
+   "sql_sha256": "6452ffa1b056500664d122fd84b793ea16c8218920bc683cc3df94c0f4172626"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 SOME ;",
+   "sql_sha256": "6710305e4142ed0f89d32f762fe6b9e95474cc17def618b0a9a0df934342307f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 CONNECT ;",
+   "sql_sha256": "67645a3856a025c783a28796f6f5c226cdbce46e9ba5cd265644ca708036e198"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 OR ;",
+   "sql_sha256": "727f138b940929299d1a3578f41c833bec65d6e216f5550523175968519123f3"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 LIKE ;",
+   "sql_sha256": "74001d0fedc0efb90544f08bd7c3b6f05367d8b0934e2fed26a4dca6c3611e2f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 NULL ;",
+   "sql_sha256": "75bdd820f0e84afe4bb084c0ad631653c7cee8a320b7499286828cbb8e470ea8"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 ON ;",
+   "sql_sha256": "793220a0f14378fdd15f8ed2f85aed868f459831f0c607585df9bb9d603ccce1"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 TABLESAMPLE ;",
+   "sql_sha256": "7bb06185825ead3168f4996388b25cfe029776e3489cbf30d437d468ed180840"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 INSERT ;",
+   "sql_sha256": "7bf86c7615b0c8548117d228f218b8a87f64b0dc01e7c48403c9fa662ec70db3"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 WITH ;",
+   "sql_sha256": "7ec935322e6f3d8d5c2d99627c37feb13a3bfaa9b5924472ae19c00c87511ff9"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 CURRENT ;",
+   "sql_sha256": "8290a0b28d0a5d5042d16053371e0d22900294d8977a7eab5ca7dec915f80d0d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 REGEXP ;",
+   "sql_sha256": "83891e3064e4f3159595840a1d61d6c569a2f5039555c09aa69e69d98c516cc2"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 SAMPLE ;",
+   "sql_sha256": "8439f929d1bae1643a89d890f1cfb4958f6686d52add1443820cddfce5f816cf"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 ALL ;",
+   "sql_sha256": "85d4a00f2d222cf1311bab2094ab8fcfe820122228e9c603b44e0764015850bb"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 TRIGGER ;",
+   "sql_sha256": "8eac7f3e5e9116e6b6bea357b65e208626631eca4a3a4fe2bfbe77e1896131b2"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 EXISTS ;",
+   "sql_sha256": "909d38a54f6021c2f7a2ac35de223e6f8def49509a341085e589e78a65fda39b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 DELETE ;",
+   "sql_sha256": "9238c9de0dadeb67defc8aa0d28b56ada13313240e2926f3f61142232f20b9d1"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 FROM ;",
+   "sql_sha256": "955b71257d747f5fab30095fd764dc29263ebc69a7ad87d189fb0ef155ed6baf"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 IN ;",
+   "sql_sha256": "95b926bc2a591c95cea65b73af013042f22ff5aa39365033b07e539e3fa39a0c"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 VALUES ;",
+   "sql_sha256": "96135be089dedd54ef6f60c9727382260a1ee53e46726cb19e7bb41aae6598a0"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 COLUMN ;",
+   "sql_sha256": "9abb70c65285e9939bd568a6cd4fc83e73268e53d0569ea442f9087a543b7696"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 UPDATE ;",
+   "sql_sha256": "9b6a00b5fe0ea6213490264c3af30a59ae9501e1a9c648e70c7f67a272752ef5"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 GRANT ;",
+   "sql_sha256": "a1120df642075a7d44c704eb05f07716b3eb8f38ad92a907aca6b262b8fa13b2"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 TABLE ;",
+   "sql_sha256": "a340462ba02ead1faec9691e51a73d9b7acd4545d1f62123a334e9db2c113edd"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 UNION ;",
+   "sql_sha256": "a54bf7f0df7d8678ad18b22ca4879d48123d2914711cb7d8495052e256c82a6c"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 ILIKE ;",
+   "sql_sha256": "a65440e4ab08d635c3da5a3068db3b0ff036065db58394db6899551be42ac8bd"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 EXISTS ;",
+   "sql_sha256": "a6e73bfa23a54b901c043a087b28d189338fe1b80186178c657771eb6465fa2d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 TRIGGER ;",
+   "sql_sha256": "add43a04ec9683fa8794d767adc48df43a925427345e3164a2fb298619d057e7"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 THEN ;",
+   "sql_sha256": "ade76ea18fdcf4332e1dbb807d71041d492b7dff81478545e65540fe69da72df"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 BY ;",
+   "sql_sha256": "b11e5e10bbbfae7123bc348d07b24940b43a82f4695c1a34848686ab895a400f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 CURRENT ;",
+   "sql_sha256": "b46f4e7d9d1b8c33ac7fedd5ab6db3b40652583aeab8bb89bd243d5b058642e9"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 BETWEEN ;",
+   "sql_sha256": "b59685f9ae5703234f5b69edfb217cde2d860cfd72630445fae27138ce00191d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 BETWEEN ;",
+   "sql_sha256": "b6c753d3d82151ef43a655c8f2abf0e64a19425c5c1c9fa47e46f335e5250014"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 ALL ;",
+   "sql_sha256": "b6e35ced818fad0f6babcc935f0650f30ca5fbc0689150cffee168fb2da43292"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 ROW ;",
+   "sql_sha256": "bd8ea802152541022f618ea8a1afafac996717f71c35f23afb85f44df6d60b85"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 REVOKE ;",
+   "sql_sha256": "bf4d42363a7443de71bca20e300c93f4c8cae8cff5301bf9b1eef5af03da8664"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 INCREMENT ;",
+   "sql_sha256": "c02589d34f3b50e9c05e40752236c47fd349f2102c71fd66faaea721555a91bd"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 UNIQUE ;",
+   "sql_sha256": "c577736068f8646c501fa9498f2998e626f10dd88c0a30a209d41cc31120e27e"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 IS ;",
+   "sql_sha256": "ca10e5554782c36535036916c9bf79784439c44c1e11962ecdb2d1395abbdce6"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 INTO ;",
+   "sql_sha256": "cba4835ee9abb9bb74c37adb71ebd4ce163ba2a4383ea449c1a5a97268ddc042"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 SOME ;",
+   "sql_sha256": "cd6495096f7f3b6881164642c4082812dda3e5c1f1893cf3de47f5fb8151801d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 REVOKE ;",
+   "sql_sha256": "ce7997c826117a19f595721fe1e79455f7999680e46d4893976821b2908235d0"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 DELETE ;",
+   "sql_sha256": "cf41c2c5b13267b448cb4cd12a28a3d074d2edc8ab0bbc71fc1d6b0a96cdbe54"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 BY ;",
+   "sql_sha256": "d262c933a92b46a6fc10596e99232c805d15a180bb4641aa053c6e42b82eeafb"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 START ;",
+   "sql_sha256": "d65f0d4412a0a04378285adb310cd8dc78b656282c207bde404a626b76363253"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 WHENEVER ;",
+   "sql_sha256": "db39cd086e81a85a4d0539fba762f200a129d00481644d40334ece7e515b795b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 COLUMN ;",
+   "sql_sha256": "db798f28ec3cbf93d27a431c282baec509ad1acaaf79324681def818de7ae6f4"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 DISTINCT ;",
+   "sql_sha256": "dd9ddb00c6e444cdfd3e4691a1153673def5dce8e68a88a930749f6274c2454d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 DROP ;",
+   "sql_sha256": "defb3da2bc206d62dbbfe3ef465306570e5a752717b8eabce182f59728d50f03"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 INTERSECT ;",
+   "sql_sha256": "e04ad736c5e846cda020ae5b730cd2423ed4e8058ff54257b64287231f566e7a"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 CREATE ;",
+   "sql_sha256": "e1e79426b83d29d7e9740e66cbac5fa547df27d9a27cea42a6b72e2d4d375b6a"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 FOLLOWING ;",
+   "sql_sha256": "e217de41db495fe07c6d190817f2d27f7fe47ed0b5f83aab94feff37fd91de16"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 TO ;",
+   "sql_sha256": "e5d8d1006ccbda9858fd87c765a2df19d455555bac80915bc973fc490f9065b4"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 INSERT ;",
+   "sql_sha256": "e7e4dcf00ef0fb1238d6b42219d6bb267c004d673c920fe89aa4ea9df2b11eed"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 ELSE ;",
+   "sql_sha256": "ece1c0b43389fd076c8b3157177f0d4e982ee9b960965eaa8788c2ad9b302a55"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 CREATE ;",
+   "sql_sha256": "ed0ad2a3941b5caea44b04fe1ee13186c38b1c4dd69a2378c2646a6f2a0e3e3f"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 UNIQUE ;",
+   "sql_sha256": "ee3d6a7880382ca26d5e0a1dff339af0e2d1dc45f572284c8029ef340fe24e5b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 FROM t1 SET ;",
+   "sql_sha256": "f2d6af2fef0215bf677423761f326d730f2725dfa8bc052b729878b855ad2c99"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 ROWS ;",
+   "sql_sha256": "f3e85dcbc209d7dc12e5f91643a36e31a2752e2918abcf0622b5ccf7d1b2c329"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 TABLE ;",
+   "sql_sha256": "f87b14b1ddbe5aa023e434d50a70e4c972907c81c35c74f911d9b3d04233b83c"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 ANY ;",
+   "sql_sha256": "fe334a22be5e4c2d2aaaa433e0dc4ce559f1398488f4c0c7e66d5ab561c989af"
+  }
+ ],
+ "receipts": 99,
+ "receipts_file_sha256": "b85a9e25ebf80ea0b011f504309df6b64fc089c9d686a7556391b3592ed3233c",
+ "reconciled_receipts": 0,
+ "refusals": [],
+ "refused": 0,
+ "runs": [
+  {
+   "audit_sha256": "afb014385c334c721afb40df42208d846018046d7f8e694ee2966aa7c08e2de8",
+   "receipts": 99,
+   "refused_rows": 0,
+   "run_id": "rwalias",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": []
+}

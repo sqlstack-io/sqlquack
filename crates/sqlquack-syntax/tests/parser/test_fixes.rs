@@ -372,6 +372,39 @@ fn given_a_reserved_keyword_after_a_select_item_when_parsing_snowflake_then_it_i
             dialect: Dialect::Snowflake,
             expected_accepted: true,
         },
+        AcceptanceTestCase {
+            description:
+                "Snowflake accepts the reserved WINDOW as an implicit select alias (recorded)",
+            sql: "SELECT x window FROM t ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake accepts WINDOW as an implicit table alias (recorded)",
+            sql: "SELECT window.x FROM t window ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description:
+                "Snowflake rejects WHENEVER as an implicit table alias (recorded errno 1003)",
+            sql: "SELECT 1 FROM t1 WHENEVER ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description:
+                "Snowflake rejects a NOT that starts no negated comparison (recorded errno 1003)",
+            sql: "SELECT 1 NOT ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "A NOT before IN still negates it",
+            sql: "SELECT 1 NOT IN (2) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
     ];
 
     for test_case in test_cases {
