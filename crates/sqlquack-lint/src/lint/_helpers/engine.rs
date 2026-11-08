@@ -2,7 +2,7 @@ use crate::lint::models::LintDialect;
 use std::borrow::Cow;
 use std::collections::{HashMap, HashSet, VecDeque};
 
-use sqlquack_syntax::expressions::queries::models::{Select, With};
+use sqlquack_syntax::expressions::queries::models::With;
 use sqlquack_syntax::tokens::models::{Span, Token, TokenType};
 use sqlquack_syntax::{Expression, ExpressionWalk};
 
@@ -347,7 +347,6 @@ struct FactBuildOptions<'a> {
     allows_ceremonial_select: bool,
     allows_dynamic_output_star: bool,
     fixture_harness: Option<&'a FixtureHarness>,
-    dialect: LintDialect,
 }
 
 pub(crate) fn lint_json_impl(request_json: &str) -> Result<String, String> {
@@ -414,7 +413,6 @@ pub(crate) fn lint(request: LintRequest) -> Result<LintResponse, String> {
         allows_ceremonial_select: request.fixture_harness.is_some(),
         allows_dynamic_output_star: request.allows_dynamic_output_star,
         fixture_harness: request.fixture_harness.as_ref(),
-        dialect: dialect_type,
     };
     let facts = build_facts(&statements, &tokens, &request.sql, &options);
     let context = DiagnosticContext {
@@ -1051,11 +1049,6 @@ fn collect_unused_ctes(expression: &Expression, options: &FactBuildOptions<'_>) 
     let mut unused: Vec<String> = Vec::new();
     for node in expression.dfs() {
         let with: Option<&With> = match node {
-            Expression::Select(select)
-                if options.dialect == LintDialect::PostgreSQL && selects_only_values(select) =>
-            {
-                None
-            }
             Expression::Select(select) => select.with.as_ref(),
             Expression::Union(operation) => operation.with.as_ref(),
             Expression::Intersect(operation) => operation.with.as_ref(),
@@ -1071,18 +1064,6 @@ fn collect_unused_ctes(expression: &Expression, options: &FactBuildOptions<'_>) 
         }
     }
     unused
-}
-
-/// Whether `select` is `SELECT * FROM (VALUES ...)`, as PostgreSQL also writes `WITH ... VALUES`.
-fn selects_only_values(select: &Select) -> bool {
-    matches!(select.expressions.as_slice(), [Expression::Star(_)])
-        && select.from.as_ref().is_some_and(|from| {
-            matches!(
-                from.expressions.as_slice(),
-                [Expression::Subquery(subquery)]
-                    if subquery.alias.is_none() && matches!(subquery.this, Expression::Values(_))
-            )
-        })
 }
 
 /// Table names `root` references outside its own `with`, counted so a name the WITH also uses still counts.
