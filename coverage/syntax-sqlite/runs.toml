@@ -1,0 +1,20 @@
+# The referee runs whose receipts this root holds; written by hand when a run's receipts are
+# committed, and read by no tool. Every run loaded the library built from the pinned
+# sqlite-amalgamation-3540100.zip (its sha256 is each receipt's engine_image_sha256), judged each
+# case in a fresh in-memory database in its own child process of the referee, and recorded with
+# the referee at `referee`, the repository commit the run was made against plus its uncommitted
+# referee changes, committed with the receipts.
+#
+# receipts: the file in receipts/ the checker reads as the current receipts.
+# repeat_run: a second run of the same cases, kept in repeats/ where the checker does not read
+#   it (two current receipts per case would make a later disagreement ambiguous). Compare the
+#   two with: python -m scripts.run_sqlite_referee compare <receipts file> <repeats file>
+# compared: what that comparison printed.
+
+[[run]]
+run_id = "sqlite-3.54.1-20261108T083232.828328Z"
+referee = "e4aaa077"
+receipts = "receipts/sqlite-3.54.1-20261108T083232.828328Z.jsonl"
+repeat_run = "sqlite-3.54.1-20261108T083540.591058Z"
+repeat_receipts = "repeats/sqlite-3.54.1-20261108T083540.591058Z.jsonl"
+compared = "2780 and 2780 receipts; 0 differ"

@@ -1,0 +1,83 @@
+# Approvals by the independent syntax auditor. Each listed form was read in full against its
+# SQLite 3.54.1 documentation, its obligations, its cases with their SQLite 3.54.1 receipts, and the
+# local parse trees. An approval holds while the form's definition hash and fingerprint are unchanged;
+# any change makes it stale until re-read. Entries are copied verbatim from the auditor's record on
+# wip/syntax-omission-audit (coverage/syntax/audits/sl-family-batch-b24e4b34.toml).
+
+[[review]]
+id = "sl-auditor-query-001"
+reviewer_lane = "auditor"
+family = "query"
+parser_tree = "1cc1e8670f6a0f2987045786698eb71c2ba3e5ba"
+reviewed_utc = "2026-11-08T08:10:17Z"
+verdict = "approved"
+forms = [
+  "sl.query.common-table-expression",
+  "sl.query.compound-operator",
+  "sl.query.cte-table-name",
+  "sl.query.factored-select-stmt",
+  "sl.query.join-clause",
+  "sl.query.join-constraint",
+  "sl.query.join-operator.comma",
+  "sl.query.join-operator.cross-join",
+  "sl.query.join-operator.join",
+  "sl.query.ordering-term",
+  "sl.query.recursive-cte",
+  "sl.query.result-column",
+  "sl.query.select-core.select",
+  "sl.query.select-core.values",
+  "sl.query.select-stmt",
+  "sl.query.select.join-keywords-any-order",
+  "sl.query.simple-select-stmt",
+  "sl.query.table-or-subquery.nested",
+  "sl.query.table-or-subquery.subquery",
+  "sl.query.table-or-subquery.table-function",
+  "sl.query.window-defn",
+]
+note = "Read against the pinned SQLite 3.54.1 documentation and parse.y, the obligations, the cases with their receipts and repeat, and the parse trees of the strict parser; every case was re-run by the auditor on the pinned engine and every scored case agrees with its receipt."
+
+[review.fingerprints]
+"sl.query.common-table-expression" = "58392856998bbd9894f5514e63be45b70d9b3b29249619662548233928bef586"
+"sl.query.compound-operator" = "2f695ead6bc4791ce025a795c3a0412ff40089f46736124c8bd2346c3546d95c"
+"sl.query.cte-table-name" = "870943e70ca7fa8a38882e6f9742f69d4ac2ab42d9b21cf7094c5be681d69a9f"
+"sl.query.factored-select-stmt" = "8692a0bbd4a9256eb1e566caf405f9666cdc519db0b34871868e9b8e84c62d20"
+"sl.query.join-clause" = "367929c50840749ae483e5b2d05c7660cbe04efd394e86435643ea1c1b1a81c0"
+"sl.query.join-constraint" = "cc02d24156999f5ee6c213611da4dea356c4e69ddac45a17dfb41d2814b3e216"
+"sl.query.join-operator.comma" = "62c5f4db14ab0aafda5c039d3d262224791932d7cee2b3c5c92cf5b4963dd327"
+"sl.query.join-operator.cross-join" = "03f7b6034e21dc87876a9fcfad190c71bf88b1a92ba064f3e16f161684c7b175"
+"sl.query.join-operator.join" = "e68eb01f2c2d36b633c59ee1c6302decff82880c121d60b4a3768919f20604ef"
+"sl.query.ordering-term" = "d181b46a94b73708eeed5c7623036d07bcaf9a1b2e2061ece341a0915790d38f"
+"sl.query.recursive-cte" = "f8c7903272a687a0a88f04eeeb247430b691d63b2af5934976bdd6a4a8c1b1dd"
+"sl.query.result-column" = "3f0e5e2771ec5ae7ed39635b040fe2f93f91fd4c0bde03d9ef827f5d5db7c74e"
+"sl.query.select-core.select" = "2c0271e4809ece3b1343129f6b4bb9997f4678ee88d409ec5417e0146b33e984"
+"sl.query.select-core.values" = "ed3605785d4e4bc4bf4e7577443ed6cc41465b15ab9a27e6ca94441f57a8d0fe"
+"sl.query.select-stmt" = "8692a0bbd4a9256eb1e566caf405f9666cdc519db0b34871868e9b8e84c62d20"
+"sl.query.select.join-keywords-any-order" = "8f1f719acfc01c8e81ce3189a4e34415e30cf643773cb56e030e44fbf7a797fc"
+"sl.query.simple-select-stmt" = "e7bd093fdfc3fcd76534dff39a92104d1f2f587c0f3d817ca45b50d405034326"
+"sl.query.table-or-subquery.nested" = "c44be96987f00fa07ce9f56bdd2a789a35f505c65dd8183cc2ada841f3cb6b9f"
+"sl.query.table-or-subquery.subquery" = "31d1636411c8a6a4694a05ceedb75ff30cac612da46864025ed6271a0bff9983"
+"sl.query.table-or-subquery.table-function" = "d29a78f1a204c08561213f407c0c2d5b060a300575b56323ad270ec216b7e6dd"
+"sl.query.window-defn" = "71573bf9b8cd253f32076aa54c311535eafdc9579fe0bae5ec033a318944780f"
+
+[review.definitions]
+"sl.query.common-table-expression" = "c6993479c9e45f54cef9223111826cf491718f32fa4ae6e464ec2d40266ef6b8"
+"sl.query.compound-operator" = "89951104ebd0de95c326191a40d5b6689c2bb607ad59b78e39ad8e1251c7ea15"
+"sl.query.cte-table-name" = "77f6106bb1b58daac03ee45f69ca571c28aa613be30e7a2f6a7dad38a4b0cf4d"
+"sl.query.factored-select-stmt" = "2bfeba56faf6364cdcb321990a314ad05990bf58b99e1705b68d0e0d5efa29d2"
+"sl.query.join-clause" = "b01e8b12aa72893e7f8ec7bdfc3ca54d44f429753be6d9f0f6d1705bc8f27286"
+"sl.query.join-constraint" = "de8cc8e3873f14139f7dd9a2bc9f1e32c96c441e448dd3929ba33d6337c0d895"
+"sl.query.join-operator.comma" = "dc6c952d73468734983663973609fce4c604a272a2b2b8834a6a1c8970e3560c"
+"sl.query.join-operator.cross-join" = "9f591cd1e5c6c037d6e3c7d07158e597dfd16a5655897c28d5d3366ad2e9211c"
+"sl.query.join-operator.join" = "35693ace26787de579300d860352d0e1d5537f3444718b38d23dc82eb9c74b01"
+"sl.query.ordering-term" = "a34c747f421d8f13ce0706ac6b3c8252ca3f5ac8dea6181bd2209b2c9c593aa2"
+"sl.query.recursive-cte" = "36ac7a447fdd125e19f60d33f2de102df09403b2b0e922030fc38868bef86027"
+"sl.query.result-column" = "015f6e98112a6c79d47ba73b94e6bff63b0c46b88e73211fbe554f93af376808"
+"sl.query.select-core.select" = "021ea87bcd70bbe492dde3dabd1513dbb52afd9ac33feaf20de204cd4d0d63fe"
+"sl.query.select-core.values" = "f1d3d6a529e0235a9b7359c2c56bde097a69d1edb885444f8fd471dc9036e340"
+"sl.query.select-stmt" = "c5ab2b0e3ae6ebdfe276cdd9e1ad766e5cebede72d530923977b3d97f531eb38"
+"sl.query.select.join-keywords-any-order" = "57cf7b4e2f788743d2bc54d1a6f48e9f05bd486c67ba2c0078f9f3b39c2addb2"
+"sl.query.simple-select-stmt" = "d5c0be4363d171d4500e24f4ccdbca52017ed5156fa58396d0b95a4acf39fbdc"
+"sl.query.table-or-subquery.nested" = "17889084118f84c845bcec575f57ee0ec000dc8f6c9e1fa13b994a6b9c4f27f2"
+"sl.query.table-or-subquery.subquery" = "3bc9811c67d96be503269ac24174c5d69a8626939b9660adbc582a603dd65c09"
+"sl.query.table-or-subquery.table-function" = "432e782c2956900b479f86a709bdf6b8f9150d9276a0332e3717074763e49e47"
+"sl.query.window-defn" = "58a995b62ccef8866b046bfb8be9acbab772d0dd507efed0502d3ce794962462"

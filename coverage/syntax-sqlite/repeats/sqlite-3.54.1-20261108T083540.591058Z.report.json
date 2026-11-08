@@ -1,0 +1,12 @@
+{
+  "phases": {
+    "accepted": 1018,
+    "runtime_error": 50,
+    "semantic_error": 293,
+    "syntax_error": 1416,
+    "unsupported_feature": 3
+  },
+  "problems": [],
+  "receipts": 2780,
+  "run_id": "sqlite-3.54.1-20261108T083540.591058Z"
+}

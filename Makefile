@@ -61,6 +61,7 @@ fensu:
 # current parser no longer supports, or a catalogue change the baseline was not re-recorded for.
 syntax-coverage: gate-build
 	$(GATE_DIR)/syntax-coverage diff coverage/syntax/baseline.json
+	$(GATE_DIR)/syntax-coverage diff --root coverage/syntax-sqlite coverage/syntax-sqlite/baseline.json
 
 # Fails when a native parser crashes, panics or hangs on deeply nested SQL on a 2 MiB thread and
 # coverage/deep-nesting.toml does not list it, or when a listed failure no longer happens.

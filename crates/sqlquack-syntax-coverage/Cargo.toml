@@ -21,6 +21,7 @@ sqlquack-syntax-duckdb.workspace = true
 sqlquack-syntax-databricks.workspace = true
 sqlquack-syntax-sqlserver.workspace = true
 sqlquack-syntax-postgres.workspace = true
+sqlquack-syntax-sqlite.workspace = true
 toml.workspace = true
 
 [dev-dependencies]

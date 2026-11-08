@@ -13,6 +13,7 @@ pub fn analysis_verdict(parser: LocalParser) -> Option<fn(&str) -> LocalVerdict>
         LocalParser::BigQuery
         | LocalParser::Databricks
         | LocalParser::SqlServer
+        | LocalParser::Sqlite
         | LocalParser::None => None,
     }
 }

@@ -1595,6 +1595,7 @@ dependencies = [
  "sqlquack-syntax-databricks",
  "sqlquack-syntax-duckdb",
  "sqlquack-syntax-postgres",
+ "sqlquack-syntax-sqlite",
  "sqlquack-syntax-sqlserver",
  "tempfile",
  "toml",

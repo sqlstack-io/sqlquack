@@ -82,6 +82,11 @@ fn sqlserver_verdict(sql: &str) -> LocalVerdict {
     }
 }
 
+/// SQLQuack's strict SQLite verdict.
+fn sqlite_verdict(sql: &str) -> LocalVerdict {
+    native_verdict(sqlquack_syntax_sqlite::parse_strict(sql))
+}
+
 /// The verdict of each dialect's local parser, or none when the dialect has no parser yet.
 pub(crate) fn local_verdict(parser: LocalParser) -> Option<fn(&str) -> LocalVerdict> {
     match parser {
@@ -91,6 +96,7 @@ pub(crate) fn local_verdict(parser: LocalParser) -> Option<fn(&str) -> LocalVerd
         LocalParser::DuckDb => Some(duckdb_verdict),
         LocalParser::Databricks => Some(databricks_verdict),
         LocalParser::SqlServer => Some(sqlserver_verdict),
+        LocalParser::Sqlite => Some(sqlite_verdict),
         LocalParser::None => None,
     }
 }

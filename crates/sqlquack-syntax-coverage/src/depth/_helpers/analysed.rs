@@ -58,6 +58,7 @@ fn orders(parser: LocalParser) -> Option<(Orders, &'static dyn DialectProfile)> 
             LocalParser::BigQuery
             | LocalParser::Databricks
             | LocalParser::SqlServer
+            | LocalParser::Sqlite
             | LocalParser::None => return None,
         };
     Some((Orders { relation, columns }, profile))
@@ -89,6 +90,7 @@ fn parsed(parser: LocalParser, sql: &str) -> Result<Vec<Expression>, LocalVerdic
         LocalParser::BigQuery
         | LocalParser::Databricks
         | LocalParser::SqlServer
+        | LocalParser::Sqlite
         | LocalParser::None => Err(LocalVerdict::Failed {
             failure: LocalFailure::NoParser,
         }),

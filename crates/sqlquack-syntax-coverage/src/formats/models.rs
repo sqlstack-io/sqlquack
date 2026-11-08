@@ -656,6 +656,8 @@ pub enum LocalParser {
     #[serde(rename = "sqlserver")]
     #[value(name = "sqlserver")]
     SqlServer,
+    /// `sqlquack_syntax_sqlite`, through the isolated worker.
+    Sqlite,
     /// No parser yet: every case fails locally as `no_parser`.
     None,
 }

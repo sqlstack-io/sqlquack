@@ -28,7 +28,10 @@ fn constructed_type(parser: LocalParser, depth: usize) -> Option<String> {
         LocalParser::BigQuery => Some(nest("STRUCT<x ", "INT64", ">", depth)),
         LocalParser::DuckDb => Some(nest("STRUCT(a ", "INT", ")", depth)),
         LocalParser::Databricks => Some(nest("ARRAY<", "INT", ">", depth)),
-        LocalParser::Postgres | LocalParser::SqlServer | LocalParser::None => None,
+        LocalParser::Postgres
+        | LocalParser::SqlServer
+        | LocalParser::Sqlite
+        | LocalParser::None => None,
     }
 }
 
@@ -43,6 +46,7 @@ fn mixed_type(parser: LocalParser, depth: usize) -> Option<String> {
         | LocalParser::BigQuery
         | LocalParser::Databricks
         | LocalParser::SqlServer
+        | LocalParser::Sqlite
         | LocalParser::None => return None,
     };
     Some(format!(
@@ -63,9 +67,9 @@ fn cast_with_suffix(depth: usize) -> String {
     )
 }
 
-/// Whether `parser` reads `[]` subscripts and array type suffixes; T-SQL has neither.
+/// Whether `parser` reads `[]` subscripts and type suffixes; T-SQL and SQLite (`[x]` is a name) don't.
 fn array_syntax(parser: LocalParser) -> bool {
-    parser != LocalParser::SqlServer
+    !matches!(parser, LocalParser::SqlServer | LocalParser::Sqlite)
 }
 
 /// The probed constructs, in report order.
@@ -122,16 +126,20 @@ pub(crate) fn constructs() -> Vec<Construct> {
         },
         Construct {
             name: "parenthesised_query",
-            text: |_, depth| Some(nest("(", "SELECT 1", ")", depth)),
+            text: |parser, depth| match parser {
+                LocalParser::Sqlite => None,
+                _ => Some(nest("(", "SELECT 1", ")", depth)),
+            },
         },
         Construct {
             name: "parenthesised_set_operation",
-            text: |_, depth| {
-                Some(format!(
+            text: |parser, depth| match parser {
+                LocalParser::Sqlite => None,
+                _ => Some(format!(
                     "{}SELECT 1{}",
                     "(".repeat(depth),
                     ") UNION ALL (SELECT 1)".repeat(depth)
-                ))
+                )),
             },
         },
         Construct {
@@ -280,7 +288,7 @@ pub(crate) fn constructs() -> Vec<Construct> {
         Construct {
             name: "nested_cast_chain",
             text: |parser, depth| match parser {
-                LocalParser::BigQuery => None,
+                LocalParser::BigQuery | LocalParser::Sqlite => None,
                 LocalParser::SqlServer => Some(format!(
                     "SELECT {}",
                     nested_chain("'a'", " COLLATE Latin1_General_CI_AS", depth)
@@ -307,7 +315,10 @@ pub(crate) fn constructs() -> Vec<Construct> {
         },
         Construct {
             name: "nested_union_all",
-            text: |_, depth| Some(nested_chain("SELECT 1", " UNION ALL SELECT 1", depth)),
+            text: |parser, depth| match parser {
+                LocalParser::Sqlite => None,
+                _ => Some(nested_chain("SELECT 1", " UNION ALL SELECT 1", depth)),
+            },
         },
         Construct {
             name: "nested_pipe_chain",
