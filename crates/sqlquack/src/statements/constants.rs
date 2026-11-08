@@ -4,6 +4,8 @@ use sqlquack_core::refusals::models::RefusalCategory;
 
 /// The file's format name, read back by `syntax-coverage results`.
 pub const STATEMENTS_FORMAT: &str = "sqlquack-translation-statements/1";
+/// The SQL sizes file's format name, read back by `scripts/check_sql_sizes.py`.
+pub const SQL_SIZES_FORMAT: &str = "sqlquack-sql-sizes/1";
 /// The code of a refusal no diagnostic code names, such as a missing Python runtime.
 pub const UNCODED: &str = "uncoded";
 /// The prefix of a project function's refusal reason, before its name.

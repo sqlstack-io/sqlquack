@@ -40,6 +40,7 @@ use crate::cli::_helpers::evidence::{Evidence, load_evidence};
 use crate::cli::models::{
     CompareArguments, Comparison, CoverageArguments, EvidencePaths, VerifyArguments,
 };
+use crate::statements::main::write_sql_sizes::write_sql_sizes;
 use crate::statements::main::write_translation_statements::write_translation_statements;
 use sqlquack_rules::session::main::conversion_options::conversion_options;
 
@@ -106,6 +107,27 @@ pub(crate) fn verify_command(
         }
         None => false,
     };
+    let unwritten = unwritten
+        || match &arguments.sql_sizes {
+            Some(path) => {
+                let converter = python_converter(&evidence.policy, arguments.python.as_deref());
+                match write_sql_sizes(path, &evidence.cases, &converter) {
+                    Ok(count) => {
+                        let _ = writeln!(
+                            stderr,
+                            "sqlquack verify: wrote the SQL sizes of {count} cases to {}",
+                            path.display()
+                        );
+                        false
+                    }
+                    Err(error) => {
+                        let _ = writeln!(stderr, "sqlquack verify: SQL sizes: {error}");
+                        true
+                    }
+                }
+            }
+            None => false,
+        };
     let blocked = unwritten
         || failed > 0
         || (arguments.require_verified && (unverified > 0 || report.unproven_sessions > 0))

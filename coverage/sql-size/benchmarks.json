@@ -1,0 +1,24 @@
+{
+  "format": "sqlquack-sql-benchmark/1",
+  "rows": 1000000,
+  "workloads": {
+    "variant_one_field": {
+      "sql_bytes": 5845,
+      "seconds": 3.94,
+      "reference_seconds": 0.039,
+      "ratio": 102.0
+    },
+    "variant_staging": {
+      "sql_bytes": 19330,
+      "seconds": 4.745,
+      "reference_seconds": 0.223,
+      "ratio": 21.3
+    },
+    "decimal_divide": {
+      "sql_bytes": 4239,
+      "seconds": 6.792,
+      "reference_seconds": 0.037,
+      "ratio": 181.6
+    }
+  }
+}

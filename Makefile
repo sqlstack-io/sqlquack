@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug gate-build evidence-guard polyglot-guard engine-free generate-cases generated-cases generate-syntax-cases syntax-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-results check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
+.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug gate-build evidence-guard polyglot-guard engine-free generate-cases generated-cases generate-syntax-cases syntax-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-results sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -202,11 +202,44 @@ TRANSLATION_REPORT ?= target/translation-results.json
 RESULTS_BASE ?= $(EVIDENCE_BASE)
 RESULTS_BASE_FILE := target/translation-results-base.json
 
+# Verify also writes the bytes of DuckDB SQL each converted case emits to SQL_SIZES, which must equal
+# coverage/sql-size/baseline.json and must not grow against the baseline at RESULTS_BASE beyond what
+# coverage/sql-size/allowances.toml rules.
+SQL_SIZES ?= target/sql-sizes.json
+SQL_SIZE_BASELINE := coverage/sql-size/baseline.json
+SQL_SIZE_BASE_FILE := target/sql-size-base.json
+SQL_SIZE_ALLOWANCES := coverage/sql-size/allowances.toml
+
 verify-recorded:
 	mkdir -p $(dir $(COVERAGE_REPORT))
 	cargo run --release --locked -p sqlquack -- verify $(VERIFY_FLAGS) $(COVERAGE_FLAGS) --python $(VERIFY_PYTHON) \
-	  --translation-statements $(TRANSLATION_STATEMENTS)
+	  --translation-statements $(TRANSLATION_STATEMENTS) --sql-sizes $(SQL_SIZES)
 	$(MAKE) translation-results
+	$(MAKE) sql-sizes
+
+# The generated-SQL size ratchet over the sizes verify wrote; see verify-recorded.
+sql-sizes:
+	@if git show $(RESULTS_BASE):$(SQL_SIZE_BASELINE) > $(SQL_SIZE_BASE_FILE) 2>/dev/null; \
+	  then against="--against $(SQL_SIZE_BASE_FILE)"; \
+	  else echo "sql-sizes: $(RESULTS_BASE) has no baseline; checking the committed one only"; against=; fi; \
+	  uv run python -m scripts.check_sql_sizes $(SQL_SIZES) --baseline $(SQL_SIZE_BASELINE) \
+	    --allowances $(SQL_SIZE_ALLOWANCES) $$against
+
+# Rewrites coverage/sql-size/baseline.json from the sizes the last verify-recorded wrote.
+sql-size-baseline:
+	uv run python -m scripts.check_sql_sizes $(SQL_SIZES) --baseline $(SQL_SIZE_BASELINE) --update
+
+# Times the converted VARIANT and decimal division examples over a million rows against hand-written
+# DuckDB SQL, and fails when one's time over its reference exceeds twice the ratio
+# coverage/sql-size/benchmarks.json records. SQL_BENCHMARK_ARGS=--update records the ratios.
+SQL_BENCHMARK_ARGS ?=
+sql-benchmark:
+	cargo build --locked --release -p sqlquack
+	target="$${CARGO_TARGET_DIR:-target}"; \
+	  library="$$(ls "$$target"/duckdb-download/*/*/libduckdb.so 2>/dev/null | head -1)"; \
+	  test -n "$$library" || { echo "sql-benchmark: no libduckdb.so under $$target/duckdb-download" >&2; exit 1; }; \
+	  LD_LIBRARY_PATH="$$(dirname "$$library")" uv run python -m scripts.benchmark_sql --sqlquack "$$target/release/sqlquack" \
+	  --budget coverage/sql-size/benchmarks.json $(SQL_BENCHMARK_ARGS)
 
 # The result-matching measure over the statements verify wrote; see verify-recorded.
 translation-results:
@@ -295,10 +328,11 @@ fuzz-smoke:
 # timed conversion on DuckShop, and the fuzz smoke. The pre-push verify hook runs this.
 # After the static gate, the independent targets run in parallel, each target's output kept
 # together; any failure fails the gate. The verify hook builds what they need beforehand. The fuzz
-# smoke runs alone afterwards, so its time-boxed run gets the machine to itself.
+# smoke and then the SQL timing benchmark run alone afterwards, so each gets the machine to itself.
 gate: check-ci $(if $(filter command line,$(origin DUCKSHOP_COMPILED)),,duckshop-compiled)
 	$(MAKE) -j --output-sync=target gate-parallel
 	$(MAKE) fuzz-smoke
+	$(MAKE) sql-benchmark
 
 gate-parallel: test-rust test-python verify-recorded polyglot-duckshop census-duckshop
 
