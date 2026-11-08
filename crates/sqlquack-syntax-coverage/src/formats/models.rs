@@ -650,6 +650,8 @@ pub enum LocalParser {
     #[serde(rename = "duckdb")]
     #[value(name = "duckdb")]
     DuckDb,
+    /// `sqlquack_syntax_databricks`, through the isolated worker.
+    Databricks,
     /// No parser yet: every case fails locally as `no_parser`.
     None,
 }

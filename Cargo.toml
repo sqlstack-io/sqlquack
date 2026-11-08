@@ -21,6 +21,7 @@ members = [
     "crates/sqlquack-format",
     "crates/sqlquack-format-check",
     "crates/sqlquack-syntax-duckdb",
+    "crates/sqlquack-syntax-databricks",
     "crates/sqlquack-python",
 ]
 exclude = ["fuzz"]
@@ -78,6 +79,7 @@ sqlquack-syntax-derive = { path = "crates/sqlquack-syntax-derive" }
 sqlquack-syntax-postgres = { path = "crates/sqlquack-syntax-postgres" }
 sqlquack-syntax-bigquery = { path = "crates/sqlquack-syntax-bigquery" }
 sqlquack-syntax-duckdb = { path = "crates/sqlquack-syntax-duckdb" }
+sqlquack-syntax-databricks = { path = "crates/sqlquack-syntax-databricks" }
 stacker = "0.1"
 syn = { version = "2", features = ["full"] }
 tempfile = "3"

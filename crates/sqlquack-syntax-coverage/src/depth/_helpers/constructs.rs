@@ -27,6 +27,7 @@ fn constructed_type(parser: LocalParser, depth: usize) -> Option<String> {
         LocalParser::Snowflake => Some(nest("ARRAY(", "INT", ")", depth)),
         LocalParser::BigQuery => Some(nest("STRUCT<x ", "INT64", ">", depth)),
         LocalParser::DuckDb => Some(nest("STRUCT(a ", "INT", ")", depth)),
+        LocalParser::Databricks => Some(nest("ARRAY<", "INT", ">", depth)),
         LocalParser::Postgres | LocalParser::None => None,
     }
 }
@@ -38,7 +39,10 @@ fn mixed_type(parser: LocalParser, depth: usize) -> Option<String> {
     let open: &str = match parser {
         LocalParser::Snowflake => "ARRAY(",
         LocalParser::DuckDb => "STRUCT(a ",
-        LocalParser::Postgres | LocalParser::BigQuery | LocalParser::None => return None,
+        LocalParser::Postgres
+        | LocalParser::BigQuery
+        | LocalParser::Databricks
+        | LocalParser::None => return None,
     };
     Some(format!(
         "{}INT{}{run}",
@@ -258,7 +262,9 @@ pub(crate) fn constructs() -> Vec<Construct> {
         Construct {
             name: "nested_pipe_chain",
             text: |parser, depth| match parser {
-                LocalParser::BigQuery => Some(nested_chain("FROM t", " |> WHERE TRUE", depth)),
+                LocalParser::BigQuery | LocalParser::Databricks => {
+                    Some(nested_chain("FROM t", " |> WHERE TRUE", depth))
+                }
                 _ => None,
             },
         },

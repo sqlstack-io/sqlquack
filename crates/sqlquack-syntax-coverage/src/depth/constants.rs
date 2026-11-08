@@ -17,9 +17,10 @@ pub const MIXED_SUFFIX_RUN: usize = 60;
 /// How many links each parenthesised level of a nested chain holds.
 pub const NESTED_CHAIN_LINKS: usize = 60;
 /// Every native parser this checker links, each probed in turn.
-pub const PROBED_PARSERS: [LocalParser; 4] = [
+pub const PROBED_PARSERS: [LocalParser; 5] = [
     LocalParser::Snowflake,
     LocalParser::Postgres,
     LocalParser::BigQuery,
     LocalParser::DuckDb,
+    LocalParser::Databricks,
 ];

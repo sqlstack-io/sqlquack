@@ -1571,10 +1571,20 @@ dependencies = [
  "sha2",
  "sqlquack-syntax",
  "sqlquack-syntax-bigquery",
+ "sqlquack-syntax-databricks",
  "sqlquack-syntax-duckdb",
  "sqlquack-syntax-postgres",
  "tempfile",
  "toml",
+]
+
+[[package]]
+name = "sqlquack-syntax-databricks"
+version = "0.2.0"
+dependencies = [
+ "serde_json",
+ "sqlquack-syntax",
+ "stacker",
 ]
 
 [[package]]
