@@ -903,6 +903,67 @@ fn given_a_review_with_fingerprints_when_the_parser_changes_then_only_changed_fo
             expected_reason: Some(Reason::StaleReview),
             expected_problem: None,
         },
+        CheckTestCase {
+            description: "a receipt reclassified from syntax to semantic after review, clearing a disagreement",
+            mutate: |root| {
+                let receipts: &str = "receipts/run-1.jsonl";
+                replace(
+                    root,
+                    receipts,
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"syntax_error\"",
+                );
+                pin_fingerprints(root);
+                replace(
+                    root,
+                    receipts,
+                    "\"phase\":\"syntax_error\"",
+                    "\"phase\":\"semantic_error\"",
+                );
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReview),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a case's expected verdict declared after review",
+            mutate: |root| {
+                pin_fingerprints(root);
+                rewrite_select_17(
+                    root,
+                    &with_fields(&select_17(), serde_json::json!({"expect": "accept"})),
+                );
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReview),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a case's expected stage moved after review",
+            mutate: |root| {
+                let semantic: String = with_fields(
+                    &select_17(),
+                    serde_json::json!({"expect": "accept", "stage": "semantic"}),
+                );
+                rewrite_select_17(root, &semantic);
+                pin_fingerprints(root);
+                let runtime: String =
+                    with_fields(&semantic, serde_json::json!({"stage": "runtime"}));
+                replace(root, "cases/query.jsonl", &semantic, &runtime);
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::StaleReview),
+            expected_problem: None,
+        },
     ];
 
     for test_case in test_cases {

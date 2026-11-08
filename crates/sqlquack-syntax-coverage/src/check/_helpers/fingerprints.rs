@@ -2,6 +2,8 @@
 
 use std::collections::BTreeMap;
 
+use serde::Serialize;
+
 use crate::check::models::{CaseResult, LocalVerdict, ObligationResult};
 use crate::formats::main::content_sha256::content_sha256;
 use crate::formats::models::{Form, Obligation, Reading};
@@ -17,7 +19,12 @@ fn verdict_text(local: &LocalVerdict) -> String {
     }
 }
 
-/// SHA-256 over one line per case citing the form, sorted by case id: its id, SQL hash and verdict.
+/// A classification field as its serde name, or `null`, so a renamed variant keeps its hash.
+fn serde_name<T: Serialize>(value: &T) -> String {
+    serde_json::to_string(value).unwrap_or_default()
+}
+
+/// SHA-256 over one line per citing case, by case id: id, SQL hash, verdict, expect, stage, phase.
 pub(crate) fn form_fingerprint(obligations: &[ObligationResult]) -> String {
     let cases: BTreeMap<&str, &CaseResult> = obligations
         .iter()
@@ -28,10 +35,13 @@ pub(crate) fn form_fingerprint(obligations: &[ObligationResult]) -> String {
         .values()
         .map(|case| {
             format!(
-                "{}\t{}\t{}\n",
+                "{}\t{}\t{}\t{}\t{}\t{}\n",
                 case.case_id,
                 case.sql_sha256,
-                verdict_text(&case.local)
+                verdict_text(&case.local),
+                serde_name(&case.expect),
+                serde_name(&case.stage),
+                serde_name(&case.phase)
             )
         })
         .collect();
