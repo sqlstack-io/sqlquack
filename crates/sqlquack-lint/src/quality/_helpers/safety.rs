@@ -569,6 +569,7 @@ fn aggregate_names(
             }
             Expression::AggregateFunction(function) => Some(normalized_name(&function.name)),
             Expression::Function(function) => Some(normalized_name(&function.name)),
+            Expression::KeywordCall(call) => Some(normalized_name(&call.kind)),
             other => Some(normalized_name(other.variant_name())),
         })
         .collect()

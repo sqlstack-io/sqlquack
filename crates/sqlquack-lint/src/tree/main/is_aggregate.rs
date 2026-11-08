@@ -4,7 +4,7 @@ use crate::lint::models::LintDialect;
 use sqlquack_syntax::Expression;
 
 use crate::tree::constants::{
-    POSTGRES_AGGREGATE_CALLS, POSTGRES_FOREIGN_AGGREGATE_CALLS,
+    JSON_AGGREGATE_KINDS, POSTGRES_AGGREGATE_CALLS, POSTGRES_FOREIGN_AGGREGATE_CALLS,
     POSTGRES_SINGLE_ARGUMENT_AGGREGATES, WINDOW_ONLY_CALLS,
 };
 use crate::tree::main::call_name::call_name;
@@ -18,6 +18,9 @@ pub(crate) fn is_aggregate(expression: &Expression, dialect: LintDialect) -> boo
             call_name(expression)
                 .is_some_and(|name| is_postgres_aggregate(name, call_arguments(expression)))
         }
+        Expression::KeywordCall(call) => JSON_AGGREGATE_KINDS
+            .iter()
+            .any(|kind| kind.eq_ignore_ascii_case(&call.kind)),
         Expression::AggregateFunction(function) => !WINDOW_ONLY_CALLS
             .iter()
             .any(|name| name.eq_ignore_ascii_case(&function.name)),
