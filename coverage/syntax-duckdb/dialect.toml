@@ -4,5 +4,5 @@ form_prefix = "dd"
 families = ["query", "dml", "ddl", "transaction_session", "security_admin", "utility", "functions", "expressions"]
 receipt_format = "sqlquack-syntax-receipt/2"
 parser_path = "crates/sqlquack-syntax-duckdb"
-local_parser = "none"
+local_parser = "duckdb"
 syntax_codes = ["PARSE"]

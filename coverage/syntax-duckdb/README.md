@@ -202,13 +202,13 @@ never guesses a code.
 | `Error` whose message starts "An error occurred while trying to automatically install the required extension" and says external access is "disabled by configuration" | `PERMS` | runtime_error |
 | Any other `Error` whose message starts "An error occurred while trying to automatically install the required extension" | `EXTLD` | unsupported_feature |
 
-`syntax_codes` in `dialect.toml` is `["PARSE"]`. `parser_path` names the reserved crate
-`crates/sqlquack-syntax-duckdb`; until it exists `local_parser = "none"` and no form verifies.
+`syntax_codes` in `dialect.toml` is `["PARSE"]`. `parser_path` names
+`crates/sqlquack-syntax-duckdb`, and `local_parser = "duckdb"` links the checker to it.
 
 ## Checking
 
-The root is checked with the coverage checker on `main` at
-`fc15d512c240487b318d3b00802097d70663f7e6`, which reads `dialect.toml`:
+The root is checked with the coverage checker, which reads `dialect.toml` and parses every case
+with `crates/sqlquack-syntax-duckdb`:
 
 ```sh
 cargo build -p sqlquack-syntax-coverage --bin syntax-coverage
@@ -217,7 +217,20 @@ target/debug/syntax-coverage summary --root coverage/syntax-duckdb
 ```
 
 `validate` prints `valid, 994 forms, 5702 receipts (0 superseded or withdrawn)` and `summary`
-prints `checked 994 forms, 0 problems` and `0 of 994 forms verified (0%)`: with
-`local_parser = "none"` every form is `LocalParseFailure` and no family review exists, so no
-form verifies until `crates/sqlquack-syntax-duckdb` exists. The engine side is complete: every
-case has one current receipt that agrees with its expectation.
+prints `checked 994 forms, 0 problems` and `0 of 994 forms verified (0%), 0 excluded;
+obligations 8555/8818`. The parser meets 8,555 of the 8,818 obligations. No form verifies yet,
+because no independent family review of the DuckDB catalogue exists (`Unreviewed: 994 forms`);
+13 forms are observed limits (`AwaitingObservation`) and 18 parse only through the parser's
+opaque fallback (`OpaqueFallback`). The engine side is complete: every case has one current
+receipt that agrees with its expectation.
+
+Five receipts record a refusal the parser does not make, all of them observed limits that
+DuckDB 2.0.0 refuses while parsing: `ALTER TABLE ... DROP CONSTRAINT`, `COMMENT ON SCHEMA`,
+`COMMENT ON DATABASE`, `RESET LOCAL` and `SET LOCAL`. They are listed as
+`receipts_still_contradicted` and do not fail the gate.
+
+`baseline.json` is the `snapshot` of these claims, bound to the commit that added the catalogue.
+`make syntax-coverage`, part of `check-ci`, runs `diff --root coverage/syntax-duckdb` against it,
+so a met obligation the parser stops supporting, or a catalogue change the baseline was not
+re-recorded for, fails the gate. Re-record it with
+`syntax-coverage snapshot --root coverage/syntax-duckdb --catalogue-commit <commit> --json`.

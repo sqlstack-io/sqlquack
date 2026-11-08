@@ -62,6 +62,7 @@ fensu:
 syntax-coverage: gate-build
 	$(GATE_DIR)/syntax-coverage diff coverage/syntax/baseline.json
 	$(GATE_DIR)/syntax-coverage diff --root coverage/syntax-sqlite coverage/syntax-sqlite/baseline.json
+	$(GATE_DIR)/syntax-coverage diff --root coverage/syntax-duckdb coverage/syntax-duckdb/baseline.json
 
 # Fails when a native parser crashes, panics or hangs on deeply nested SQL on a 2 MiB thread and
 # coverage/deep-nesting.toml does not list it, or when a listed failure no longer happens.
