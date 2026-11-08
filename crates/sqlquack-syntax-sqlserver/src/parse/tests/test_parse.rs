@@ -1,7 +1,12 @@
 //! Verdicts and trees of the SQL Server parser, each confirmed against SQL Server 2022 under PARSEONLY.
 
+use serde_json::Value;
+
+use crate::parse::main::parse_strict::parse_strict;
 use crate::parse::tests::helpers::{identifier_texts, verdict};
-use crate::parse::tests::test_types::{ExpectedVerdict, SpanTestCase, VerdictTestCase};
+use crate::parse::tests::test_types::{
+    ExpectedVerdict, SpanTestCase, ValueTestCase, VerdictTestCase,
+};
 
 #[test]
 fn given_sql_when_parsing_then_the_verdict_is_sql_servers() {
@@ -313,6 +318,68 @@ fn given_names_when_parsing_then_every_identifier_records_the_range_of_its_own_t
         assert_eq!(
             texts,
             names.into_iter().map(Some).collect::<Vec<Option<String>>>(),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+/// SQLBuild's analysis-only markers: SQL Server gives each 195; the parser lowers two shapes.
+#[test]
+fn given_sqlbuild_type_markers_when_parsing_then_well_formed_ones_are_annotations() {
+    let test_cases = [
+        ValueTestCase {
+            description: "a type marker asserts its type around its expression",
+            sql: "SELECT __polyglot_typed(t.x, 'varchar(5)') AS v FROM t",
+            pointer: "/0/select/expressions/0/alias/this/annotated/type_assertion/data_type",
+            expected_json: r#""var_char""#,
+        },
+        ValueTestCase {
+            description: "the marker name is compared without case",
+            sql: "SELECT __POLYGLOT_TYPED(x, 'BIGINT') FROM t",
+            pointer: "/0/select/expressions/0/annotated/type_assertion/data_type",
+            expected_json: r#""big_int""#,
+        },
+        ValueTestCase {
+            description: "a typed-like marker keeps the expression it is typed like",
+            sql: "SELECT __polyglot_typed_like(x, y + 1) FROM t",
+            pointer: "/0/select/expressions/0/annotated/type_like/add/right/literal/value",
+            expected_json: r#""1""#,
+        },
+    ];
+    for test_case in test_cases {
+        let parsed = parse_strict(test_case.sql).expect(test_case.description);
+        let tree: Value = serde_json::to_value(&parsed.statements).expect(test_case.description);
+        assert_eq!(
+            tree.pointer(test_case.pointer)
+                .map(Value::to_string)
+                .as_deref(),
+            Some(test_case.expected_json),
+            "{}",
+            test_case.description
+        );
+    }
+    let refused = [
+        VerdictTestCase {
+            description: "a type text T-SQL cannot read leaves a call to no built-in (195)",
+            sql: "SELECT __polyglot_typed(x, 'int garbage') FROM t",
+            expected_verdict: ExpectedVerdict::Refused { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a marker of one argument is no built-in (195)",
+            sql: "SELECT __polyglot_typed(x) FROM t",
+            expected_verdict: ExpectedVerdict::Refused { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a bracketed marker name is a call of no schema (102)",
+            sql: "SELECT [__polyglot_typed](x, 'INT') FROM t",
+            expected_verdict: ExpectedVerdict::Refused { syntax: true },
+        },
+    ];
+    for test_case in refused {
+        assert_eq!(
+            verdict(test_case.sql),
+            test_case.expected_verdict,
             "{}",
             test_case.description
         );

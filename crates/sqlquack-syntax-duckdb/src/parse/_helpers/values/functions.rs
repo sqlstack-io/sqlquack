@@ -12,6 +12,7 @@ use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier, is_ty
 use crate::parse::_helpers::tree::nodes::{
     aggregate, call, function, ordered, over, string, window_function,
 };
+use crate::parse::_helpers::values::typed_markers::typed_marker;
 use crate::parse::constants::{COALESCE, IFNULL_ARGUMENTS};
 use crate::scan::models::TokenKind;
 
@@ -186,6 +187,20 @@ impl Parser<'_> {
         if window.is_none() && ignore_nulls.is_some() && !Self::rewritten_call(&name) {
             self.refuse_later(NULLS_OUTSIDE_WINDOW, start);
         }
+        let plain: bool = !distinct
+            && !export_state
+            && filter.is_none()
+            && ignore_nulls.is_none()
+            && order_by.is_empty()
+            && within.is_none()
+            && window.is_none();
+        let args: Vec<Expression> = match plain {
+            true => match typed_marker(&name, args) {
+                Ok(marker) => return Ok(marker),
+                Err(args) => args,
+            },
+            false => args,
+        };
         let mut call = function(name, args);
         call.export_state = export_state;
         let aggregated: bool =
