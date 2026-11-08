@@ -77,15 +77,18 @@ pub(crate) fn parsed_names(
         converted.sort_unstable();
         converted
     };
-    let (identifiers, aliases) = (to_bytes(&ranges.identifiers), to_bytes(&ranges.aliases));
+    let (identifiers, aliases) = (
+        Covering::new(to_bytes(&ranges.identifiers)),
+        Covering::new(to_bytes(&ranges.aliases)),
+    );
     Ok(ParsedNames {
         identifiers: lexemes
             .iter()
-            .map(|lexeme| covered(&identifiers, lexeme))
+            .map(|lexeme| identifiers.covers(lexeme))
             .collect(),
         aliases: lexemes
             .iter()
-            .map(|lexeme| covered(&aliases, lexeme))
+            .map(|lexeme| aliases.covers(lexeme))
             .collect(),
         binary_operators: binary_operators(&ranges, lexemes, &byte),
         selects: ranges.selects,
@@ -108,9 +111,9 @@ fn binary_operators(
         let (start, end) = binary
             .span
             .map_or((0, usize::MAX), |(start, end)| (byte(start), byte(end)));
-        let inside: Vec<usize> = (0..lexemes.len())
-            .filter(|&index| lexemes[index].start >= start && lexemes[index].end <= end)
-            .collect();
+        let first = lexemes.partition_point(|lexeme| lexeme.start < start);
+        let last = lexemes.partition_point(|lexeme| lexeme.end <= end);
+        let inside: Vec<usize> = (first..last.max(first)).collect();
         let found = match (binary.left_end.map(byte), binary.right_start.map(byte)) {
             (Some(left_end), _) => inside
                 .iter()
@@ -145,10 +148,36 @@ fn binary_operators(
     operators
 }
 
-/// Whether one of the sorted byte `ranges` covers `lexeme`.
-fn covered(ranges: &[(usize, usize)], lexeme: &Lexeme) -> bool {
-    let before = ranges.partition_point(|&(start, _)| start <= lexeme.start);
-    ranges[..before].iter().any(|&(_, end)| end >= lexeme.end)
+/// Sorted byte ranges, with the furthest end among each range and those before it.
+struct Covering {
+    ranges: Vec<(usize, usize)>,
+    furthest_ends: Vec<usize>,
+}
+
+impl Covering {
+    fn new(ranges: Vec<(usize, usize)>) -> Self {
+        let furthest_ends: Vec<usize> = ranges
+            .iter()
+            .scan(0, |furthest, &(_, end)| {
+                *furthest = (*furthest).max(end);
+                Some(*furthest)
+            })
+            .collect();
+        Self {
+            ranges,
+            furthest_ends,
+        }
+    }
+
+    /// Whether one of the ranges covers `lexeme`.
+    fn covers(&self, lexeme: &Lexeme) -> bool {
+        let before = self
+            .ranges
+            .partition_point(|&(start, _)| start <= lexeme.start);
+        before
+            .checked_sub(1)
+            .is_some_and(|last| self.furthest_ends[last] >= lexeme.end)
+    }
 }
 
 /// The identifier and alias ranges and the select lists of `value` and every node under it, walked without recursion so a deep tree cannot exhaust the stack.
