@@ -466,8 +466,11 @@ pub(crate) fn unify(
     })
 }
 
-/// `findings` placed where polyglot places a node's type findings, when they have no place yet.
+/// `findings` placed where polyglot places a node's type findings; only unplaced ones read the subtree.
 pub(crate) fn located(mut findings: Vec<NameFinding>, node: &Expression) -> Vec<NameFinding> {
+    if findings.iter().all(|finding| finding.span.is_some()) {
+        return findings;
+    }
     let span = type_location(node);
     for finding in &mut findings {
         if finding.span.is_none() {
