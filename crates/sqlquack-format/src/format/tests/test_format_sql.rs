@@ -635,6 +635,13 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             expected_outcome: Err(SEPARATION_FAILURE),
         },
         test_types::FormatSqlTestCase {
+            description: "a BigQuery ARRAY, a reserved word the shared tokenizer reads as a name, stays touching its brackets",
+            sql: "select array[1, 2] as a, array[1][offset(0)] as b",
+            line_width: None,
+            dialect: FormatDialect::BigQuery,
+            expected_outcome: Ok("SELECT\n  ARRAY[1, 2] AS a,\n  ARRAY[1][OFFSET(0)] AS b"),
+        },
+        test_types::FormatSqlTestCase {
             description: "a BigQuery script statement is refused",
             sql: "declare x int64",
             line_width: None,

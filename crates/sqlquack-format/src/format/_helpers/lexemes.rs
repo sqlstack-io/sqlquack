@@ -113,6 +113,7 @@ pub(crate) fn ends_operand(lexeme: &Lexeme) -> bool {
             | TokenType::False
             | TokenType::End
     ) || is_string_literal(lexeme.kind)
+        || (lexeme.kind == TokenType::Unknown && is_unquoted_word(&lexeme.raw))
 }
 
 /// Whether the token type is a string literal of any quoting.
