@@ -783,8 +783,7 @@ pub(crate) fn expanded_star(
     }
 }
 
-/// DuckDB's and SQLite's star over USING and NATURAL keys: each key once, where the first source
-/// offers it and under that column's name. A key no selected source offers comes first.
+/// DuckDB's and SQLite's star: each join key once, where and as its first source offers it.
 fn keys_in_place(
     keys: &[&ScopedColumn],
     selected: &[&ScopeSource],
@@ -794,18 +793,16 @@ fn keys_in_place(
         .iter()
         .flat_map(|source| source.query.columns.iter())
         .collect();
-    let same = |left: &ScopedColumn, right: &ScopedColumn| {
-        context.profile.same_identifier(&left.key, &right.key)
-    };
-    let mut columns: Vec<ScopedColumn> = keys
-        .iter()
-        .filter(|merged| !offered.iter().any(|column| same(merged, column)))
-        .map(|merged| (*merged).clone())
-        .collect();
+    let mut columns: Vec<ScopedColumn> = Vec::new();
+    for merged in keys {
+        if same_key(&offered, merged, context).is_none() {
+            columns.push((*merged).clone());
+        }
+    }
     let mut placed: Vec<&ScopedColumn> = Vec::new();
     for column in offered {
-        match keys.iter().find(|merged| same(merged, column)) {
-            Some(merged) if placed.iter().any(|done| same(done, merged)) => {}
+        match same_key(keys, column, context) {
+            Some(merged) if same_key(&placed, merged, context).is_some() => {}
             Some(merged) => {
                 placed.push(merged);
                 columns.push(ScopedColumn {
@@ -818,6 +815,18 @@ fn keys_in_place(
         }
     }
     columns
+}
+
+/// The first of `columns` naming the same key as `column`.
+fn same_key<'a>(
+    columns: &[&'a ScopedColumn],
+    column: &ScopedColumn,
+    context: LineageContext<'_>,
+) -> Option<&'a ScopedColumn> {
+    columns
+        .iter()
+        .find(|candidate| context.profile.same_identifier(&candidate.key, &column.key))
+        .copied()
 }
 
 fn star_column(
