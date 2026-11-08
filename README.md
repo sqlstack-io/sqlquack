@@ -38,13 +38,13 @@ echo "SELECT 1 AS total" | sqlquack convert --builtin-policy
 # Check a SQL file
 sqlquack check query.sql
 
-# Convert a query using your table definitions
-sqlquack convert query.sql --schema schema.json
+# Convert a query using the tables in sources/*.yml
+sqlquack convert query.sql
 ```
 
 Or **[try the playground](https://sqlquack.io/playground/)** - no installation needed.
 
-See the [supported dialects and coverage](https://sqlquack.io/docs/coverage/), [schema guide](https://sqlquack.io/docs/schema/) and [conversion policy](https://sqlquack.io/docs/policy/) for the details.
+See the [supported dialects and coverage](https://sqlquack.io/docs/coverage/), [project guide](https://sqlquack.io/docs/project/) and [conversion policy](https://sqlquack.io/docs/policy/) for the details.
 
 ## Use it from Python
 
