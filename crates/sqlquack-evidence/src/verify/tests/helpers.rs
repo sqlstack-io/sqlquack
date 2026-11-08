@@ -20,6 +20,7 @@ use crate::results::_helpers::reading::sha256_hex;
 use crate::results::models::{
     RecordedFailure, RecordedOutcome, ResultMetadata, SessionDefaults, WarehouseColumn,
 };
+use crate::verify::_helpers::compile_errors::rejected_at_compile_time;
 use crate::verify::_helpers::compile_errors::undeclared_compile_error;
 use crate::verify::_helpers::session::parameter_text;
 use crate::verify::main::verify_cases::verify_cases;
@@ -455,12 +456,12 @@ pub(crate) fn floored_nanos(rows: &ResultSet) -> i64 {
         .value(0)
 }
 
-/// Whether a recorded `sqlstate` error fails a case declaring it or not, with setup or not.
-pub(crate) fn undeclared_compile_error_for(
+/// Whether a recorded `sqlstate` error fails the case, and whether it matches a refusal of it.
+pub(crate) fn compile_error_judgement_for(
     sqlstate: &str,
     declared: bool,
     with_setup: bool,
-) -> bool {
+) -> (bool, bool) {
     let case = LoadedCase {
         reference: "orders.toml#order_total".to_owned(),
         description: String::new(),
@@ -494,5 +495,8 @@ pub(crate) fn undeclared_compile_error_for(
         sqlstate: Some(sqlstate.to_owned()),
         message: None,
     };
-    undeclared_compile_error(&case, Some(&recorded)).is_some()
+    (
+        undeclared_compile_error(&case, Some(&recorded)).is_some(),
+        rejected_at_compile_time(&case, Some(&recorded)),
+    )
 }

@@ -16,6 +16,7 @@ use crate::replay::main::replay_on_duckdb::replay_on_duckdb;
 use crate::replay::models::ReplaySettings;
 use crate::results::main::load_result::load_result;
 use crate::results::models::{RecordedOutcome, SessionDefaults, StoredResult};
+use crate::verify::_helpers::compile_errors::rejected_at_compile_time;
 use crate::verify::_helpers::compile_errors::undeclared_compile_error;
 use crate::verify::_helpers::error_check::error_check;
 use crate::verify::_helpers::layout_check::{layout_failure, reads_clock};
@@ -111,6 +112,10 @@ fn judge_stored(
                 Verdict::Refused {
                     reasons,
                     constructs,
+                    snowflake_rejected: rejected_at_compile_time(
+                        case,
+                        stored.metadata.error.as_ref(),
+                    ),
                 },
                 None,
                 None,

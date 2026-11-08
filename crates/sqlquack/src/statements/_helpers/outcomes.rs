@@ -33,8 +33,12 @@ pub(crate) fn outcome(
         Verdict::Refused {
             reasons,
             constructs,
+            snowflake_rejected,
         } => (
-            Outcome::Refused,
+            match snowflake_rejected {
+                true => Outcome::MatchingRejection,
+                false => Outcome::Refused,
+            },
             (codes(reasons, constructs), constructs.clone()),
         ),
         Verdict::Pending => match converter.convert(case) {

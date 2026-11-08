@@ -78,8 +78,8 @@ fn report_lines(report: &ResultsReport) -> Vec<String> {
         ),
         format!(
             "statements (our recorded Snowflake statements, not a sample of real-world SQL): {} of \
-             {} return rows matching Snowflake ({}); {} more raise the same kind of error on both \
-             sides ({}); {} link to no form",
+             {} return rows matching Snowflake ({}); {} more raise the same kind of error, or are \
+             refused by both sides ({}); {} link to no form",
             statements.matching_rows,
             statements.recorded,
             percent(statements.matching_rows, statements.recorded),
