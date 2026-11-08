@@ -423,3 +423,6 @@ pub(crate) const TRY_CONVERT_FUNCTION: &str = "TRY_CONVERT";
 
 /// Nesting deeper than this, in parsing or in the finished tree, is the gap `nesting_depth`.
 pub(crate) const MAX_DEPTH: usize = 512;
+/// The engine's error 10704 for a THROW without arguments outside a CATCH block.
+pub(crate) const THROW_OUTSIDE_CATCH: &str =
+    "To rethrow an error, a THROW statement must be used inside a CATCH block.";

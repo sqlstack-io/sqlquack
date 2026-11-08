@@ -18,7 +18,7 @@ use sqlquack_syntax::expressions::tables::models::{
 
 use crate::parse::_helpers::statements::queries::set_with;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier};
-use crate::parse::_helpers::tree::nodes::{table, var};
+use crate::parse::_helpers::tree::nodes::{column_from, table, var};
 use crate::scan::models::{Token, TokenKind};
 
 impl<'sql> Parser<'sql> {
@@ -66,6 +66,8 @@ impl<'sql> Parser<'sql> {
             .is_some_and(|token| token.kind == TokenKind::Variable);
         if listed {
             node.parameters = self.comma_list(|parser| parser.procedure_parameter())?;
+        } else if node.has_parens {
+            return Err(self.error());
         }
         if node.has_parens {
             self.expect_char(')')?;
@@ -108,7 +110,7 @@ impl<'sql> Parser<'sql> {
             return Err(self.gap("procedure_parameter_option", self.offset()));
         }
         let default: Option<Expression> = match self.eat_char('=') {
-            true => Some(self.scalar()?),
+            true => Some(self.procedure_default()?),
             false => None,
         };
         let mode_text: Option<String> = match self.kw_in(0, &["OUT", "OUTPUT"]) {
@@ -126,6 +128,34 @@ impl<'sql> Parser<'sql> {
             default,
             mode_text,
         })
+    }
+
+    /// A parameter's default, which SQL Server takes only as a constant: a literal, `-` and a number, or a bare or bracketed word.
+    fn procedure_default(&mut self) -> Parsing<Expression> {
+        let start: usize = self.at;
+        let negative: bool = self.char_at(0, '-');
+        let width: usize = 1 + usize::from(negative);
+        let Some(value) = self.peek_at(width - 1).cloned() else {
+            return Err(self.error());
+        };
+        let word: bool = matches!(value.kind, TokenKind::Word | TokenKind::Quoted(_))
+            && !value.value.eq_ignore_ascii_case("NULL");
+        let default: Expression = match value.kind {
+            TokenKind::Number(_) => self.scalar()?,
+            TokenKind::String { .. } | TokenKind::Word if !negative && !word => self.scalar()?,
+            TokenKind::Word | TokenKind::Quoted(_) if !negative && !self.char_at(1, '(') => {
+                self.at += 1;
+                match value.kind {
+                    TokenKind::Word => var(&value.value),
+                    _ => column_from(vec![identifier(&value)]),
+                }
+            }
+            _ => return Err(self.error_at(start + width - 1 + usize::from(word))),
+        };
+        if self.at != start + width {
+            return Err(self.error_at(start + width));
+        }
+        Ok(default)
     }
 
     /// `CREATE TABLE name ( column_def | table_constraint, ... )`.

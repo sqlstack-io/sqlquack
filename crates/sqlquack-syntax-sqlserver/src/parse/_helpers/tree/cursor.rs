@@ -21,6 +21,10 @@ pub(crate) struct Parser<'sql> {
     pub(crate) ranges: Vec<StatementRange>,
     /// How many statements enclose the one being read.
     nesting: usize,
+    /// How many WHILE loops enclose the statement being read, where BREAK and CONTINUE may stand.
+    pub(crate) loops: usize,
+    /// How many CATCH blocks enclose the statement being read, where a THROW without arguments may stand.
+    pub(crate) catches: usize,
     /// Token positions of a `(` already refused as a subquery, so backtracking tries each reading once.
     pub(crate) not_subquery: std::collections::HashSet<usize>,
 }
@@ -63,6 +67,8 @@ impl<'sql> Parser<'sql> {
             gaps: Vec::new(),
             ranges: Vec::new(),
             nesting: 0,
+            loops: 0,
+            catches: 0,
             not_subquery: std::collections::HashSet::new(),
         }
     }

@@ -13,7 +13,9 @@ use sqlquack_syntax::{Expression, ExpressionWalk};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_any_name, is_name};
 use crate::parse::_helpers::tree::nodes::{binary, column_from, paren, var};
 use crate::parse::_helpers::values::primary::variable;
-use crate::parse::constants::{MAX_DEPTH, STATISTICS_SWITCH, UNREAD_STATEMENTS};
+use crate::parse::constants::{
+    MAX_DEPTH, STATISTICS_SWITCH, THROW_OUTSIDE_CATCH, UNREAD_STATEMENTS,
+};
 use crate::scan::models::{Token, TokenKind};
 
 /// Statements that must be the first of their batch and take the rest of it as their body.
@@ -219,6 +221,9 @@ impl<'sql> Parser<'sql> {
                 };
                 Ok(Expression::ReturnStmt(Box::new(value)))
             }
+            "BREAK" | "CONTINUE" if self.loops == 0 => Err(self.error_with(&format!(
+                "Cannot use a {word} statement outside the scope of a WHILE statement."
+            ))),
             "BREAK" | "CONTINUE" => {
                 self.at += 1;
                 let keyword: ScriptingJumpKeyword = match word.as_str() {
@@ -242,6 +247,9 @@ impl<'sql> Parser<'sql> {
                 self.at += 1;
                 if !self.statement_ends() {
                     return Err(self.gap("throw", start));
+                }
+                if self.catches == 0 {
+                    return Err(self.error_with(THROW_OUTSIDE_CATCH));
                 }
                 Ok(Expression::ScriptingBlock(Box::new(block(vec![
                     ScriptingStatement::Raise(ScriptingRaise {
@@ -314,7 +322,10 @@ impl<'sql> Parser<'sql> {
     fn while_statement(&mut self) -> Parsing<Expression> {
         self.expect_kw("WHILE")?;
         let condition: Expression = self.condition()?;
-        let body: Vec<ScriptingStatement> = self.branch()?;
+        self.loops += 1;
+        let body: Parsing<Vec<ScriptingStatement>> = self.branch();
+        self.loops -= 1;
+        let body: Vec<ScriptingStatement> = body?;
         Ok(Expression::ScriptingBlock(Box::new(block(vec![
             ScriptingStatement::While(ScriptingWhile {
                 span: SourceSpan(None),
@@ -389,6 +400,13 @@ impl<'sql> Parser<'sql> {
 
     /// A `CATCH` block may be empty, unlike every other block.
     fn catch_body(&mut self) -> Parsing<Vec<Expression>> {
+        self.catches += 1;
+        let statements: Parsing<Vec<Expression>> = self.catch_statements();
+        self.catches -= 1;
+        statements
+    }
+
+    fn catch_statements(&mut self) -> Parsing<Vec<Expression>> {
         let mut statements: Vec<Expression> = Vec::new();
         loop {
             while self.eat_char(';') {}

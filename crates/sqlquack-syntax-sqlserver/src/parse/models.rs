@@ -17,7 +17,7 @@ pub struct Gap {
 pub struct StatementRange {
     /// Byte offset of the statement's first token.
     pub start: usize,
-    /// Byte offset just past its last token, or past the `;` written right after it.
+    /// Byte offset just past its last token, or past the `;`s written right after it.
     pub end: usize,
     /// How many statements enclose it: 0 for a statement of the batch itself.
     pub depth: usize,

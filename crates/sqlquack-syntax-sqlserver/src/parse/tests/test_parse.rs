@@ -324,6 +324,66 @@ fn given_sql_when_parsing_then_the_verdict_is_sql_servers() {
             sql: "THROW 50000, 'x', 1",
             expected_verdict: ExpectedVerdict::Gap("throw"),
         },
+        VerdictTestCase {
+            description: "BREAK outside a WHILE is refused (135)",
+            sql: "BREAK",
+            expected_verdict: ExpectedVerdict::Refused { syntax: true },
+        },
+        VerdictTestCase {
+            description: "CONTINUE outside a WHILE is refused (136)",
+            sql: "CONTINUE",
+            expected_verdict: ExpectedVerdict::Refused { syntax: true },
+        },
+        VerdictTestCase {
+            description: "BREAK may be a WHILE's own statement",
+            sql: "WHILE 1 = 1 BREAK",
+            expected_verdict: ExpectedVerdict::Tree,
+        },
+        VerdictTestCase {
+            description: "a THROW without arguments outside CATCH is refused (10704)",
+            sql: "THROW",
+            expected_verdict: ExpectedVerdict::Refused { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a THROW without arguments may be nested in a CATCH block's IF",
+            sql: "BEGIN TRY SELECT 1 END TRY BEGIN CATCH IF 1 = 1 THROW END CATCH",
+            expected_verdict: ExpectedVerdict::Tree,
+        },
+        VerdictTestCase {
+            description: "a procedure's parentheses hold at least one parameter (102)",
+            sql: "CREATE PROCEDURE p () AS SELECT 1",
+            expected_verdict: ExpectedVerdict::Refused { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a parameter's default is a constant, not an expression (102)",
+            sql: "CREATE PROCEDURE p @a int = 1 + 1 AS SELECT @a",
+            expected_verdict: ExpectedVerdict::Refused { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a parameter's default may not be signed with + (102)",
+            sql: "CREATE PROCEDURE p @a int = +1 AS SELECT @a",
+            expected_verdict: ExpectedVerdict::Refused { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a parameter's default may not be parenthesised (102)",
+            sql: "CREATE PROCEDURE p @a int = (1) AS SELECT @a",
+            expected_verdict: ExpectedVerdict::Refused { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a parameter's default may not be a call (102)",
+            sql: "CREATE PROCEDURE p @a datetime = getdate() AS SELECT @a",
+            expected_verdict: ExpectedVerdict::Refused { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a parameter's default may not be a variable (137)",
+            sql: "CREATE PROCEDURE p @a int = @b AS SELECT @a",
+            expected_verdict: ExpectedVerdict::Refused { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a parameter's default may be a negative number, a binary or money literal, a national string, a bare or bracketed word, or DEFAULT",
+            sql: "CREATE PROCEDURE p @a int = - 1, @b varbinary(9) = 0x1F, @c money = $5, @d nvarchar(9) = N'x', @e varchar(9) = abc, @f varchar(9) = [abc], @g varchar(9) = default AS SELECT @a",
+            expected_verdict: ExpectedVerdict::Tree,
+        },
     ];
     for test_case in test_cases {
         assert_eq!(
@@ -340,15 +400,16 @@ fn given_sql_when_parsing_then_the_verdict_is_sql_servers() {
 fn given_statements_when_parsing_then_each_records_its_text_and_depth() {
     let test_cases = [
         RangeTestCase {
-            description: "statements without semicolons, a branch, a block and a rethrow",
-            sql: "select 1 select 2; if 1 = 1 begin select 3 end else throw;",
+            description: "statements without semicolons, a branch, a block and a loop",
+            sql: "select 1 select 2; if 1 = 1 begin select 3 end else while 1 = 0 break;",
             expected_statements: &[
                 ("select 1", 0),
                 ("select 2;", 0),
-                ("if 1 = 1 begin select 3 end else throw;", 0),
+                ("if 1 = 1 begin select 3 end else while 1 = 0 break;", 0),
                 ("begin select 3 end", 1),
                 ("select 3", 2),
-                ("throw;", 1),
+                ("while 1 = 0 break;", 1),
+                ("break;", 2),
             ],
         },
         RangeTestCase {
