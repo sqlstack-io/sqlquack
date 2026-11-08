@@ -17,6 +17,7 @@ members = [
     "crates/sqlquack-syntax-postgres",
     "crates/sqlquack-lint",
     "crates/sqlquack-syntax-bigquery",
+    "crates/sqlquack-syntax-sqlite",
     "crates/sqlquack-fingerprint",
     "crates/sqlquack-format",
     "crates/sqlquack-format-check",
@@ -78,6 +79,7 @@ sqlquack-syntax = { path = "crates/sqlquack-syntax" }
 sqlquack-syntax-derive = { path = "crates/sqlquack-syntax-derive" }
 sqlquack-syntax-postgres = { path = "crates/sqlquack-syntax-postgres" }
 sqlquack-syntax-bigquery = { path = "crates/sqlquack-syntax-bigquery" }
+sqlquack-syntax-sqlite = { path = "crates/sqlquack-syntax-sqlite" }
 sqlquack-syntax-duckdb = { path = "crates/sqlquack-syntax-duckdb" }
 sqlquack-syntax-databricks = { path = "crates/sqlquack-syntax-databricks" }
 stacker = "0.1"
