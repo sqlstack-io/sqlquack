@@ -1,0 +1,20 @@
+{
+  "current_versions": [
+    {
+      "dbr_version": null,
+      "dbsql_version": "2026.44",
+      "r_build_hash": "9137db2a382aeb72e78a171ff7d47f3c0b69e9f9",
+      "u_build_hash": "8d2146c1bc481b4e88bcebe4266f5cf8e6e9a0a2"
+    }
+  ],
+  "phases": {
+    "semantic_error": 4,
+    "syntax_error": 7
+  },
+  "problems": [],
+  "receipts": 11,
+  "run_id": "databricks-2026.44-20261108T082309.684933Z",
+  "shuffle_seed": null,
+  "undecided": [],
+  "undecided_reasons": {}
+}

@@ -1,0 +1,2711 @@
+# Hand-written readings, suppressions and limits of the Databricks catalogue's obligations; read
+# by scripts/build_syntax_obligations_databricks.py through the shared obligation builder.
+#
+# [[reading]] replaces a form's grammar for derivation only, bound to the catalogue grammar's
+# sha256; an empty grammar means the form's obligations are all hand-written [[limit]] rows.
+# [[suppress]] withdraws one derived obligation (form, kind, target) with the reason it is not
+# the negative or positive it looks like. [[limit]] is a hand-written obligation with its SQL.
+
+[[reading]]
+form = "db.query.select-values.values"
+grammar_sha256 = "d0877b87903bb87db82704a6ec8c7c10a33add0075f269faddc0cea6e6c0a13c"
+grammar = ["VALUES <expression> [ , <expression> ... ] [ <table_alias> ]", "VALUES ( <expression> [ , ... ] ) [ , ( <expression> [ , ... ] ) ... ] [ <table_alias> ]"]
+reason = "the [ , ... ] continues the row list with another row (the page's examples: VALUES (1, 2), (3, 4)); the renderer otherwise repeats VALUES with the row, which parses only as a call of a function named VALUES. Every row has as many columns as the first, which Spark's parse-tree builder checks (INVALID_INLINE_TABLE.NUM_COLUMNS_MISMATCH), so single-expression rows and parenthesised rows are read as one line each"
+
+[[reading]]
+form = "db.ddl.alter-table"
+grammar_sha256 = "4414db22b9351d905b67ff8cf769896251ef221b9e3657950c34237c7ad19300"
+grammar = ["ALTER TABLE <table_name> { RENAME TO <rename_to_clause> | ADD COLUMN <add_column_clause> | ALTER COLUMN <alter_column_clause> | DROP COLUMN <drop_column_clause> | RENAME COLUMN <rename_column_clause> | DEFAULT COLLATION <default_collation_clause> | ADD CONSTRAINT <add_constraint_clause> | DROP CONSTRAINT <drop_constraint_clause> | DROP FEATURE <drop_feature_clause> | ADD PARTITION <add_partition_clause> | DROP PARTITION <drop_partition_clause> | PARTITION <partition_clause> SET LOCATION <path> | <from_partition_clause> RENAME TO <to_partition_clause> | RECOVER PARTITIONS | SET { ROW FILTER <row_filter_clause> } | DROP ROW FILTER | SET TBLPROPERTIES <set_tblproperties_clause> | UNSET TBLPROPERTIES <unset_tblproperties_clause> | SET LOCATION <set_location_clause> | [ SET ] OWNER TO <principal> | SET TAGS <set_tags_clause> | UNSET TAGS <unset_tags_clause> | CLUSTER BY <cluster_by_clause> | REPLACE PARTITIONED BY WITH CLUSTER BY [ ( <clustering_columns> ) | AUTO ] | { ENABLE | DISABLE | INHERIT } PREDICTIVE OPTIMIZATION }"]
+reason = "the page's Syntax names each clause by the text of its link (PARTITION SET LOCATION clause, RENAME PARTITION clause, SET OWNER TO clause, REPLACE PARTITIONED BY WITH CLUSTER BY clause, PREDICTIVE OPTIMIZATION clause); the clause's own syntax, on the linked section or page, is PARTITION clause SET LOCATION path and PARTITION clause RENAME TO PARTITION clause (ALTER TABLE ... PARTITION page), and the Parameters headings [ SET ] OWNER TO principal, REPLACE PARTITIONED BY WITH CLUSTER BY [( clustering_columns ) | AUTO] (which 'can be omitted') and { ENABLE | DISABLE | INHERIT } PREDICTIVE OPTIMIZATION, so the alternative is read as that syntax (its obligations belong to the clause's own form). SET SERDE ('Applies to: Databricks Runtime'), SET EXTERNAL ('Applies to: Databricks Runtime 17.3 and above'), SET MANAGED and UNSET MANAGED ('Applies to: Databricks Runtime 17.3 LTS and above') carry Runtime-only banners on the page's Parameters, while the pinned engine is a Databricks SQL warehouse, so they leave this derivation; their own forms (db.ddl.alter-table.alter-table-set-serde, alter-table-set-external, alter-table-set-managed) derive every documented spelling, observed on the warehouse (RUNTIME_ONLY_CLAUSES in scripts/syntax_obligations_databricks/constants.py)"
+
+[[reading]]
+form = "db.ddl.alter-table-manage-partition.alter-table-add-partition"
+grammar_sha256 = "95278b22ad34c3b69af7bde2313ff652e29c6e431ab2675c8eeca20be2af9b25"
+grammar = ["ALTER TABLE <table_name> { ADD PARTITION <add_partition_clause> | DROP PARTITION <drop_partition_clause> | PARTITION <partition_clause> SET LOCATION <path> | <from_partition_clause> RENAME TO <to_partition_clause> | RECOVER PARTITIONS }"]
+reason = "the page's Syntax names each clause by the text of its link (PARTITION SET LOCATION clause, RENAME PARTITION clause); the clause's own syntax, on the linked section or page, is PARTITION clause SET LOCATION path and PARTITION clause RENAME TO PARTITION clause (the page's own PARTITION ... SET LOCATION and RENAME TO forms), so the alternative is read as that syntax (its obligations belong to the clause's own form)"
+
+[[reading]]
+form = "db.ddl.alter-table-manage-partition.drop-partition"
+grammar_sha256 = "ce77003dc4f1243e6e8c905fdc7b6adde281ca2f4b59df77b19238b938dc2b90"
+grammar = ["DROP [ IF EXISTS ] PARTITION <partition_clause> [ , PARTITION <partition_clause> ... ] [ PURGE ]"]
+reason = "PARTITION clause names the PARTITION clause page, whose syntax begins with PARTITION, so each further item of the list is a PARTITION clause too (SqlBaseParser dropTablePartitions: DROP (IF EXISTS)? partitionSpec (COMMA partitionSpec)*, and partitionSpec begins with PARTITION); the renderer otherwise repeats only the parenthesised keys"
+
+[[reading]]
+form = "db.query.select-hints"
+grammar_sha256 = "e5d1b448a96f3a9e0db60073416a4314a84a3cac10fdbb5d60b008db7cdb331d"
+grammar = ["/*+ { <partition_hint> | <join_hint> | <skew_hint> } [ , { <partition_hint> | <join_hint> | <skew_hint> } ... ] */"]
+reason = "the hint list continues inside one /*+ ... */ comment with any hint after the comma (the page's examples: /*+ REPARTITION(100), COALESCE(500) */ and /*+ BROADCAST(t1), MERGE(t1, t2) */); the renderer otherwise repeats the comment's opener with the hint"
+
+[[reading]]
+form = "db.dml.insert-overwrite-directory-hive"
+grammar_sha256 = "6ee2b01386d2a83c605a905e4627e7626e1fbd9a9d62f7598cb51c7d080ab78a"
+grammar = ["INSERT OVERWRITE [ LOCAL ] DIRECTORY <directory_path> [ ROW FORMAT <row_format> ] [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ] { VALUES ( { <value> | NULL } [ , ... ] ) [ , ( { <value> | NULL } [ , ... ] ) ... ] | <query> }"]
+reason = "the VALUES list's [ , ( ... ) ] continues the row list with another parenthesised row (the VALUES page: VALUES {expression | ( expression [, ...] ) } [, ...]); the renderer otherwise repeats VALUES with the row. file_format may also be 'your own input and output format using INPUTFORMAT and OUTPUTFORMAT' (the page's file_format parameter; SqlBaseParser fileFormat: INPUTFORMAT inFmt=stringLit OUTPUTFORMAT outFmt=stringLit), so STORED AS takes either"
+
+[[reading]]
+form = "db.ddl.create-table-constraint.foreign-key-references"
+grammar_sha256 = "ad49a163a9e69318fb9a93eedd343f8fc39031c4544c8c79b8c95c32447d745d"
+grammar = ["{ [ CONSTRAINT <name> ] { PRIMARY KEY ( <key_column> [ TIMESERIES ] [ , <key_column> ... ] ) [ <constraint_option> [ ... ] ] | UNIQUE ( <key_column> [ , ... ] ) [ <constraint_option> [ ... ] ] | { FOREIGN KEY ( <foreign_key_column> [ , ... ] ) REFERENCES <parent_table> [ ( <parent_column> [ , ... ] ) ] [ <foreign_key_option> | <constraint_option> ] [ ... ] } } }"]
+reason = "TIMESERIES 'optionally labels the primary key column component as representing a timeseries' (one component), and the warehouse refuses a second (UNSUPPORTED_TIMESERIES_WITH_MORE_THAN_ONE_COLUMN), so the key list continues with plain key columns; two TIMESERIES columns, as the page's line allows, are kept as an observed [[limit]] row"
+
+[[reading]]
+form = "db.query.select-lateral-view"
+grammar_sha256 = "85a52b98065767343bae5f479f46dab122418f4a27db2217130a23540c72bbee"
+grammar = ["LATERAL VIEW [ OUTER ] <generator_function> ( <expression> [ , ... ] ) [ <table_identifier> ] AS <column_identifier> [ , <column_identifier> ... ]"]
+reason = "the list after AS is a list of column identifiers (SqlBaseParser lateralView: ... AS? colName+=identifier (COMMA colName+=identifier)*); the renderer otherwise repeats the generator call with it"
+
+[[reading]]
+form = "db.query.select-table-reference"
+grammar_sha256 = "764c448d15529081bf12a34150e0c5d04c0c4b7a4f388836a6cb48aff6801fd6"
+grammar = ["{ <table_name> [ TABLESAMPLE <tablesample_clause> ] [ <table_alias> ] | { STREAM <table_name> [ <table_alias> ] | STREAM ( <table_name> ) [ <table_alias> ] } | <view_name> [ <table_alias> ] | <table_reference> JOIN <join_clause> | <table_reference> JOIN <nearest_by_join_clause> | <table_reference> PIVOT <pivot_clause> | <table_reference> UNPIVOT <unpivot_clause> | <table_reference> MATCH_RECOGNIZE <match_recognize_clause> | [ STREAM ] <table_valued_function> [ <table_alias> ] | [ LATERAL ] <table_valued_function> [ <table_alias> ] | VALUES <values_clause> | [ LATERAL ] ( <query> ) [ TABLESAMPLE <tablesample_clause> ] [ <table_alias> ] }"]
+reason = "the page's Syntax names each clause by the text of its link (NEAREST BY JOIN clause, linked to the NEAREST BY page); the clause's own syntax, on the linked section or page, is { INNER | LEFT [ OUTER ] } JOIN target_table_reference { APPROX | EXACT } NEAREST [ num_results ] BY { DISTANCE | SIMILARITY } ranking_expression, with no NEAREST BY before JOIN, so the alternative is read as that syntax (its obligations belong to the clause's own form)"
+
+[[reading]]
+form = "db.query.select-watermark"
+grammar_sha256 = "b05082faf3f7666880628693ea53020f29f07e1219f70c8067e599bab4114ecb"
+grammar = ["{ <table_name> [ TABLESAMPLE <tablesample_clause> ] [ <watermark_clause> ] [ <table_alias> ] | <table_reference> JOIN <join_clause> | [ LATERAL ] <table_valued_function> [ <table_alias> ] | VALUES <values_clause> | [ LATERAL ] ( <query> ) [ TABLESAMPLE <tablesample_clause> ] [ <watermark_clause> ] [ <table_alias> ] }"]
+reason = "the from_item list names the JOIN clause and the VALUE clause in prose; the table-reference page writes the same items as table_reference JOIN clause (linked to the JOIN page, whose syntax needs the left table reference) and VALUES clause (linked to the VALUES page, whose syntax begins with VALUES)"
+
+[[reading]]
+form = "db.dml.insert-overwrite-directory"
+grammar_sha256 = "967bcbcae5578a688c870d07d77c7a037f3e01c49645ff9d478f9607a2dc9372"
+grammar = ["INSERT OVERWRITE [ LOCAL ] DIRECTORY { <directory_path> USING <file_format> [ OPTIONS ( { <key> [ = ] <val> } [ , ... ] ) ] | USING <file_format> OPTIONS ( 'path' [ = ] <directory_path> [ , <key> [ = ] <val> ... ] ) } { VALUES ( { <value> | NULL } [ , ... ] ) [ , ( { <value> | NULL } [ , ... ] ) ... ] | <query> }"]
+reason = "directory_path 'can also be specified in OPTIONS using path' (the page's Parameters), so the statement names the directory once: either before USING or as the path option (the parser refuses neither and both: 'Directory path and 'path' in OPTIONS should be specified one, but not both'). The VALUES list's [ , ( ... ) ] continues the row list with another parenthesised row (the VALUES page: VALUES {expression | ( expression [, ...] ) } [, ...]); the renderer otherwise repeats VALUES with the row"
+
+[[reading]]
+form = "db.query.query"
+grammar_sha256 = "94d967cb37722eb5ba5cf2d2ed0324cb559289f8043689136a5aec333e4a857e"
+grammar = ["[ <common_table_expression> ] <subquery> [ <set_operator> ] [ { |> <piped_operation> } [ ... ] ] [ ORDER BY <order_by_clause> | { [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY <sort_by_clause> ] } | CLUSTER BY <cluster_by_clause> ] [ WINDOW <window_clause> ] [ LIMIT <limit_clause> ] [ OFFSET <offset_clause> ]"]
+reason = "a pipe operation applies to a query term, before the query's ORDER BY ... OFFSET clauses (SqlBaseParser query: ctes? queryTerm queryOrganization, and #operatorPipeStatement: queryTerm |> operatorPipeRightSide); the warehouse refuses |> after ORDER BY or LIMIT, so the page's order is kept as observed [[limit]] rows"
+
+[[reading]]
+form = "db.query.select-pipeop"
+grammar_sha256 = "d5ea96694d44b87418c3f7516a2fd19c20c20da4d6223b34fdd4c628a1effd84"
+grammar = ["{ SELECT <select_clause> [ GROUP BY <grouping_expr> [ , ... ] ] | EXTEND { <expression> [ [ AS ] <column_alias> ] } [ , ... ] | SET { <column_name> = <expression> } [ , ... ] | DROP <column_name> [ , ... ] | AS <table_alias> | WHERE <where_clause> | { LIMIT <limit_clause> | OFFSET <offset_clause> | LIMIT <limit_clause> OFFSET <offset_clause> } | <aggregation> | JOIN <join_clause> | ORDER BY <order_by_clause> | <set_operator> | TABLESAMPLE <tablesample_clause> | PIVOT <pivot_clause> | UNPIVOT <unpivot_clause> }"]
+reason = "the warehouse refuses AS column_alias after a SELECT pipe operation's grouping expression (PARSE_SYNTAX_ERROR at the alias; SqlBaseParser operatorPipeRightSide: selectClause aggregationClause?, whose groupByClause takes plain expressions), so the documented alias is kept as an observed [[limit]] row"
+
+[[reading]]
+form = "db.ddl.alter-table-manage-column.add"
+grammar_sha256 = "5ab628e9e01e2b09ffc6e064925bd9a85c621ab49614fb9e2510076b3e65c12a"
+grammar = ["{ ADD { COLUMN | COLUMNS } ( { { <column_identifier> | <field_name> } <data_type> [ COLLATE <collation_name> ] [ DEFAULT <default_clause> ] [ COMMENT <comment> ] [ FIRST | AFTER <identifier> ] [ MASK <mask_clause> ] } [ , ... ] ) }"]
+reason = "the warehouse refuses ADD without COLUMN or COLUMNS (SqlBaseParser #addTableColumns: ADD (COLUMN | COLUMNS)), so the documented ADD ( ... ) is kept as an observed [[limit]] row"
+
+[[reading]]
+form = "db.ddl.alter-table-manage-column.drop"
+grammar_sha256 = "b9fffd2a6cd4330802f38821d3ed46d6612e462ff6d532ce15bcb8854bffe807"
+grammar = ["DROP { COLUMN | COLUMNS } [ IF EXISTS ] ( { <column_identifier> | <field_name> } [ , ... ] )"]
+reason = "the warehouse refuses DROP without COLUMN or COLUMNS (SqlBaseParser #dropTableColumns: DROP (COLUMN | COLUMNS)), so the documented DROP ( ... ) is kept as an observed [[limit]] row"
+
+[[reading]]
+form = "db.ddl.alter-table-manage-column.alter-change-set-mask"
+grammar_sha256 = "02e014fa5b99e0ba0edda62bf5de1ff76fdf9cf965698269de7e9eff74b686bf"
+grammar = ["{ { ALTER | CHANGE } [ COLUMN ] { <column_identifier> | <field_name> } { SET { MASK <mask_clause> } | DROP MASK } | ALTER COLUMN { <column_identifier> | <field_name> } { SET TAGS <set_tags_clause> | UNSET TAGS <unset_tags_clause> } }"]
+reason = "the warehouse takes SET TAGS and UNSET TAGS on a column only after ALTER COLUMN (it refuses them after ALTER without COLUMN and after CHANGE), while MASK takes every spelling; the other documented spellings of the tag clauses are kept as observed [[limit]] rows"
+
+[[reading]]
+form = "db.ddl.create-table-using"
+grammar_sha256 = "b555b7b70d4132aa75c81052664d03c7f2a7987d9912e0396dbf7c90301e26db"
+grammar = ["{ [ CREATE OR ] REPLACE TABLE | CREATE [ EXTERNAL ] TABLE [ IF NOT EXISTS ] } <table_name> { [ <table_specification> ] [ USING <data_source> ] [ <table_clauses> ] | [ USING <data_source> ] [ <table_clauses> ] AS <query> }", "{ [ CREATE OR ] REPLACE { TEMP | TEMPORARY } TABLE | CREATE { TEMP | TEMPORARY } TABLE } <table_name> { [ <table_specification> ] [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION <default_collation_name> ] [ ... ] | [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION <default_collation_name> ] [ ... ] AS <query> }"]
+reason = "a temporary table is its own line: 'When creating or replacing a temporary table, don't specify a data source in the USING clause or a LOCATION clause. The following clauses are not supported: PARTITIONED BY, CLUSTER BY, and row-level filters', and the USING, CLUSTERED BY and LOCATION parameters each repeat that they are not supported for temporary tables, so the temporary line takes no USING and only the table clauses the page leaves it (OPTIONS sets data-source options, which a temporary table has no data source for); the permanent line keeps every clause. The page: 'If you do not define columns the table schema you must specify either AS query or LOCATION', and the parser refuses both ('Schema may not be specified in a Create Table As Select (CTAS) statement'), so table_specification and AS query are alternatives; the documented combination is kept as an observed [[limit]] row"
+
+[[reading]]
+form = "db.ddl.create-view.temporary-view-using"
+grammar_sha256 = "3f0891d2b8f44f8307c7918b5a8218970cf40540a077c618934ae8623101b578"
+grammar = ["CREATE [ OR REPLACE ] TEMPORARY VIEW <view_name> [ <column_list> ] USING <data_source> [ OPTIONS ( <option_key> [ = ] <option_value> [ , ... ] ) ]"]
+reason = "the warehouse refuses IF NOT EXISTS in a data-source temporary view (PARSE_SYNTAX_ERROR at USING; SqlBaseParser #createTempViewUsing has no IF NOT EXISTS), so the documented IF NOT EXISTS is kept as an observed [[limit]] row. GLOBAL TEMPORARY carries the banner 'Applies to: Databricks Runtime' (the page's GLOBAL TEMPORARY parameter), and the pinned engine is a Databricks SQL warehouse, so GLOBAL leaves the derivation and the documented global temporary views are observed [[limit]] rows"
+
+[[reading]]
+form = "db.ddl.create-table-hiveformat"
+grammar_sha256 = "d1379144d49ba5cb74288772d4b20346d3c1752da635bcb06e116dcc491b55dd"
+grammar = ["CREATE [ EXTERNAL ] TABLE [ IF NOT EXISTS ] <table_identifier> [ ( <col_name1> <col_type1> [ COMMENT <col_comment1> ] , ... ) ] [ COMMENT <table_comment> ] [ PARTITIONED BY { ( <col_name2> <col_type2> [ COMMENT <col_comment2> ] , ... ) | ( <col_name1> , <col_name2> , ... ) } ] [ ROW FORMAT <row_format> ] [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ] [ LOCATION <path> ] [ TBLPROPERTIES ( <key1> = <val1> , <key2> = <val2> , ... ) ]", "CREATE [ EXTERNAL ] TABLE [ IF NOT EXISTS ] <table_identifier> [ COMMENT <table_comment> ] [ PARTITIONED BY ( <col_name1> , <col_name2> , ... ) ] [ ROW FORMAT <row_format> ] [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ] [ LOCATION <path> ] [ TBLPROPERTIES ( <key1> = <val1> , <key2> = <val2> , ... ) ] AS <select_statement>"]
+reason = "PARTITIONED BY takes either new typed partition columns or a list of the table's own columns (the page's Parameters: 'Partitions are created on the table, based on the columns specified'; SqlBaseParser createTableClauses: PARTITIONED BY partitionFieldList, whose field is a column or a typed column); the page's line omits the braces that bind the alternative to PARTITIONED BY. The warehouse refuses the documented [ : ] between a column's name and type (PARSE_SYNTAX_ERROR at ':'), so the colon is kept as observed [[limit]] rows. The parser refuses a column list with AS select_statement ('Schema may not be specified in a Create Table As Select (CTAS) statement'), so a table with AS is its own line without the column list, and it refuses typed partition columns there ('Partition column types may not be specified in Create Table As Select (CTAS)'), so that line partitions by the query's columns; both combinations are kept as observed [[limit]] rows. STORED AS takes a file format or, as the page's STORED AS parameter says, 'your own input and output formats through INPUTFORMAT and OUTPUTFORMAT' (SqlBaseParser fileFormat: INPUTFORMAT inFmt=stringLit OUTPUTFORMAT outFmt=stringLit | simpleIdentifier). The page says 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; the line fixes the page's order, so each pair of those clauses in the other order is a hand-written interaction [[limit]] row"
+
+[[reading]]
+form = "db.ddl.create-view.view-as"
+grammar_sha256 = "6e43fcafa8bd10404651f97e473c41afa96f1d465f3ab6e5b1c0a190abe5273e"
+grammar = ["CREATE OR REPLACE VIEW <view_name> [ <column_list> ] [ <with_clause> | COMMENT <view_comment> | DEFAULT COLLATION <collation_name> | TBLPROPERTIES <tblproperties_clause> | { COPY | NOCOPY } * ] [ ... ] AS <query>", "CREATE VIEW [ IF NOT EXISTS ] <view_name> [ <column_list> ] [ <with_clause> | COMMENT <view_comment> | DEFAULT COLLATION <collation_name> | TBLPROPERTIES <tblproperties_clause> ] [ ... ] AS <query>", "CREATE [ OR REPLACE ] TEMPORARY VIEW <view_name> [ <column_list> ] [ COMMENT <view_comment> | DEFAULT COLLATION <collation_name> ] [ ... ] AS <query>", "CREATE { OR REPLACE [ TEMPORARY ] VIEW | [ TEMPORARY ] VIEW [ IF NOT EXISTS ] } <view_name> [ <column_list> ] WITH METRICS LANGUAGE YAML [ COMMENT <view_comment> | TBLPROPERTIES <tblproperties_clause> ] [ ... ] AS $ $ <yaml_string> $ $"]
+reason = "the page writes the query-backed and the metric view on one line; WITH METRICS 'identifies the view as a metric view. The view must be defined with LANGUAGE YAML and the body of the view must be a valid YAML specification', and 'a metric view does not support the DEFAULT COLLATION and SCHEMA_BINDING clauses', so LANGUAGE YAML and the $$ body go with WITH METRICS, and the query body with the other clauses (the parser refuses LANGUAGE YAML before a query, and a $$ body without them). The parser refuses OR REPLACE with IF NOT EXISTS (CREATE_VIEW_WITH_IF_NOT_EXISTS_AND_REPLACE), so the two are read as alternatives, and it refuses COPY and NOCOPY and GLOBAL TEMPORARY in a metric view, and TBLPROPERTIES in a temporary query view ('TBLPROPERTIES can't coexist with CREATE TEMPORARY VIEW'), so the temporary query view is its own line. The schema binding clause 'is not supported for temporary views, metric views, or materialized views', so the temporary query line takes no with_clause (a temporary metric view is the metric line's). 'For a Unity Catalog managed view, use the COPY * or NOCOPY * clause to control whether the replacement preserves the existing view's metadata' (OR REPLACE), Spark's parse-tree builder refuses IF NOT EXISTS in a temporary query view ('It is not allowed to define a TEMPORARY view with IF NOT EXISTS'), so the temporary query line takes none and the documented combination is an observed [[limit]] row. COPY and NOCOPY are read only after CREATE OR REPLACE of a permanent view, and CREATE VIEW without OR REPLACE is its own line; the refused combinations are kept as observed [[limit]] rows. GLOBAL TEMPORARY carries the banner 'Applies to: Databricks Runtime' (the page's GLOBAL TEMPORARY parameter), and the pinned engine is a Databricks SQL warehouse, so GLOBAL leaves the derivation and the documented global temporary views are observed [[limit]] rows"
+
+[[reading]]
+form = "db.query.select-nearest-by"
+grammar_sha256 = "89ba325df8863d205477f137b71035599fc3b5fddbd7fc904154574031aebabe"
+grammar = ["[ INNER | LEFT [ OUTER ] ] JOIN <target_table_reference> { APPROX | EXACT } NEAREST [ <num_results> ] BY { DISTANCE | SIMILARITY } <ranking_expression>"]
+reason = "the page's Parameters say of { INNER | LEFT [ OUTER ] }: 'Optional. The join type. The default is INNER.', while the Syntax line writes the join type as a required choice; so the join type is read as optional"
+
+[[reading]]
+form = "db.ddl.clone.clone-source-temporal"
+grammar_sha256 = "3c61815adf322d93115205650c91bacdfc29bda80e5c3865ef2bb2426f8b1811"
+grammar = ["{ CREATE TABLE [ IF NOT EXISTS ] | [ CREATE OR ] REPLACE TABLE } <table_name> [ SHALLOW | DEEP ] CLONE <source_table_name> { [ FOR ] TIMESTAMP AS OF <timestamp_expression> | [ FOR ] VERSION AS OF <version> } [ WITH ( { <option_key> [ = ] <option_val> } [ , ... ] ) ]", "{ CREATE TABLE [ IF NOT EXISTS ] | [ CREATE OR ] REPLACE TABLE } <table_name> [ SHALLOW | DEEP ] CLONE <source_table_name> WITH ( { <option_key> [ = ] <option_val> } [ , ... ] )"]
+reason = "the names page spells the temporal specification [ FOR ] { SYSTEM_TIMESTAMP | TIMESTAMP } AS OF and [ FOR ] { SYSTEM_VERSION | VERSION } AS OF, while SqlBaseParser temporalClause spells FOR? (SYSTEM_VERSION | VERSION) AS OF and FOR? (SYSTEM_TIME | TIMESTAMP) AS OF: the two sources agree on TIMESTAMP and VERSION only, so those are derived, and SYSTEM_TIMESTAMP, SYSTEM_VERSION and Spark's SYSTEM_TIME are observed [[limit]] rows that a receipt settles. A clone source with neither a temporal nor an options specification is the clone page's own lines (db.ddl.clone.create-table-clone and replace-table-clone), so each line here spells at least one of them"
+
+[[limit]]
+form = "db.query.select-hints"
+kind = "option_present"
+target = "a merge hint after a broadcast hint"
+note = "the page's example /*+ BROADCAST(t1), MERGE(t1, t2) */: a join hint list continued with a different hint"
+anchor = "doc.sql-ref-syntax-qry-select-hints / Examples"
+sql = "SELECT /*+ BROADCAST(t1), MERGE(t1, t2) */ * FROM t1 JOIN t2 ON t1.c1 = t2.c1"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "db.query.pipeline.table"
+kind = "required_operand_missing"
+target = "trailing |> with no operation"
+note = "a pipe with no operation after it; Spark 4.2.0's parser accepts the text, so the warehouse's answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-qry-pipeline / Syntax"
+sql = "FROM t1 |>"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.query"
+kind = "required_operand_missing"
+target = "trailing |> with no operation"
+note = "a query term followed by a pipe with no operation; Spark 4.2.0's parser accepts the text, so the warehouse's answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-qry-query / Syntax"
+sql = "SELECT c1 FROM t1 |>"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-table-constraint.foreign-key-references"
+kind = "option_present"
+target = "TIMESERIES on two key columns"
+note = "TIMESERIES on two primary key columns, as the page's line allows, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT NOT NULL , c2 INT NOT NULL , CONSTRAINT n1 PRIMARY KEY ( c1 TIMESERIES , c2 TIMESERIES ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.query"
+kind = "option_present"
+target = "|> after the query's clauses"
+note = "a pipe operation after LIMIT, in the page's order, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-qry-query / Syntax"
+sql = "SELECT c1 FROM t1 LIMIT 1 |> WHERE 1 = 1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.query"
+kind = "option_present"
+target = "|> after ORDER BY"
+note = "a pipe operation after ORDER BY, in the page's order, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-qry-query / Syntax"
+sql = "SELECT c1 FROM t1 ORDER BY c1 |> WHERE 1 = 1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.select-pipeop"
+kind = "option_present"
+target = "[ AS <column_alias> ]"
+note = "the documented alias of a SELECT pipe operation's grouping expression, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-qry-select-pipeop / Syntax"
+sql = "FROM t1 |> SELECT c1 GROUP BY c1 AS a1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table-manage-column.add"
+kind = "option_absent"
+target = "[ COLUMN | COLUMNS ]"
+note = "ADD without COLUMN or COLUMNS, as the page allows, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+sql = "ALTER TABLE t1 ADD ( c3 INT )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table-manage-column.drop"
+kind = "option_absent"
+target = "[ COLUMN | COLUMNS ]"
+note = "DROP without COLUMN or COLUMNS, as the page allows, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+sql = "ALTER TABLE t1 DROP ( c2 )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table-manage-column.alter-change-set-mask"
+kind = "alternative"
+target = "ALTER SET TAGS"
+note = "SET TAGS after ALTER without COLUMN, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+sql = "ALTER TABLE t1 ALTER c1 SET TAGS ( 'k' = 'v' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table-manage-column.alter-change-set-mask"
+kind = "alternative"
+target = "ALTER UNSET TAGS"
+note = "UNSET TAGS after ALTER without COLUMN, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+sql = "ALTER TABLE t1 ALTER c1 UNSET TAGS ( 'k' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table-manage-column.alter-change-set-mask"
+kind = "alternative"
+target = "CHANGE SET TAGS"
+note = "SET TAGS after CHANGE COLUMN, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+sql = "ALTER TABLE t1 CHANGE COLUMN c1 SET TAGS ( 'k' = 'v' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table-manage-column.alter-change-set-mask"
+kind = "alternative"
+target = "CHANGE UNSET TAGS"
+note = "UNSET TAGS after CHANGE COLUMN, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+sql = "ALTER TABLE t1 CHANGE COLUMN c1 UNSET TAGS ( 'k' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-table-using"
+kind = "option_present"
+target = "<table_specification> with AS <query>"
+note = "columns and AS query together, as the page's line allows, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-create-table-using / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT ) USING DELTA AS SELECT 1 AS c1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-table-hiveformat"
+kind = "option_present"
+target = "[ : ] in the columns"
+note = "the documented colon between a column's name and type, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
+sql = "CREATE TABLE t3 ( c1 : INT ) STORED AS PARQUET"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-table-hiveformat"
+kind = "option_present"
+target = "[ : ] in PARTITIONED BY"
+note = "the documented colon between a partition column's name and type, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT ) PARTITIONED BY ( c2 : INT ) STORED AS PARQUET"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-table-hiveformat"
+kind = "option_present"
+target = "columns with AS <select_statement>"
+note = "a column list and AS select_statement together, as the page's line allows, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT ) STORED AS TEXTFILE AS SELECT 1 AS c1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-table-hiveformat"
+kind = "option_present"
+target = "typed PARTITIONED BY with AS <select_statement>"
+note = "typed partition columns with AS select_statement, as the page's line allows, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
+sql = "CREATE TABLE t3 PARTITIONED BY ( c2 INT ) STORED AS TEXTFILE AS SELECT 1 AS c1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-view.view-as"
+kind = "option_present"
+target = "OR REPLACE with IF NOT EXISTS"
+note = "OR REPLACE and IF NOT EXISTS together, as the page's line allows, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-create-view / Syntax"
+sql = "CREATE OR REPLACE VIEW IF NOT EXISTS v3 AS SELECT 1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-view.view-as"
+kind = "option_present"
+target = "COPY * in a metric view"
+note = "COPY * in a metric view, as the page's line allows, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-create-view / Syntax"
+sql = "CREATE OR REPLACE VIEW v3 WITH METRICS LANGUAGE YAML COPY * AS $${\"version\": \"1.1\", \"source\": \"t1\", \"dimensions\": [{\"name\": \"d1\", \"expr\": \"c1\"}], \"measures\": [{\"name\": \"m1\", \"expr\": \"count(1)\"}]}$$"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-view.view-as"
+kind = "option_present"
+target = "NOCOPY * in a metric view"
+note = "NOCOPY * in a metric view, as the page's line allows, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-create-view / Syntax"
+sql = "CREATE OR REPLACE VIEW v3 WITH METRICS LANGUAGE YAML NOCOPY * AS $${\"version\": \"1.1\", \"source\": \"t1\", \"dimensions\": [{\"name\": \"d1\", \"expr\": \"c1\"}], \"measures\": [{\"name\": \"m1\", \"expr\": \"count(1)\"}]}$$"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-view.temporary-view-using"
+kind = "option_present"
+target = "[ IF NOT EXISTS ]"
+note = "the documented IF NOT EXISTS of a data-source temporary view, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-create-view / Syntax"
+sql = "CREATE TEMPORARY VIEW IF NOT EXISTS v3 USING DELTA"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-view.view-as"
+kind = "option_present"
+target = "GLOBAL TEMPORARY in a metric view"
+note = "a global temporary metric view, as the page's line allows, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-create-view / Syntax"
+sql = "CREATE GLOBAL TEMPORARY VIEW v3 WITH METRICS LANGUAGE YAML AS $${\"version\": \"1.1\", \"source\": \"t1\", \"dimensions\": [{\"name\": \"d1\", \"expr\": \"c1\"}], \"measures\": [{\"name\": \"m1\", \"expr\": \"count(1)\"}]}$$"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-view.view-as"
+kind = "option_present"
+target = "TEMPORARY with IF NOT EXISTS"
+note = "a temporary query view with IF NOT EXISTS, as the page's line allows, which Spark's parser refuses"
+anchor = "doc.sql-ref-syntax-ddl-create-view / Syntax"
+sql = "CREATE TEMPORARY VIEW IF NOT EXISTS v3 AS SELECT 1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-view.view-as"
+kind = "option_present"
+target = "TEMPORARY with TBLPROPERTIES"
+note = "a temporary query view with TBLPROPERTIES, as the page's line allows, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-create-view / Syntax"
+sql = "CREATE TEMPORARY VIEW v3 TBLPROPERTIES ( 'k' = 'v' ) AS SELECT 1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-table-hiveformat"
+kind = "interaction"
+pair = ["[ COMMENT <table_comment> ]", "[ PARTITIONED BY { ( <col_name2> <col_type2> [ COMMENT <col_comment2> ] , ... ) | ( <col_name1> , <col_name2> , ... ) }…"]
+note = "PARTITIONED BY before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
+anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) PARTITIONED BY ( c3 INT ) COMMENT 'x' STORED AS TEXTFILE"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-table-hiveformat"
+kind = "interaction"
+pair = ["[ COMMENT <table_comment> ]", "[ ROW FORMAT <row_format> ]"]
+note = "ROW FORMAT before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
+anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) ROW FORMAT DELIMITED COMMENT 'x' STORED AS TEXTFILE"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-table-hiveformat"
+kind = "interaction"
+pair = ["[ COMMENT <table_comment> ]", "[ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ]"]
+note = "STORED AS before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
+anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) STORED AS TEXTFILE COMMENT 'x'"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-table-hiveformat"
+kind = "interaction"
+pair = ["[ COMMENT <table_comment> ]", "[ LOCATION <path> ]"]
+note = "LOCATION before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
+anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) STORED AS TEXTFILE LOCATION '/tmp/x' COMMENT 'x'"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-table-hiveformat"
+kind = "interaction"
+pair = ["[ COMMENT <table_comment> ]", "[ TBLPROPERTIES ( <key1> = <val1> , <key2> = <val2> , ... ) ]"]
+note = "TBLPROPERTIES before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
+anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) STORED AS TEXTFILE TBLPROPERTIES ( 'k' = 'v' ) COMMENT 'x'"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-table-hiveformat"
+kind = "interaction"
+pair = ["[ PARTITIONED BY { ( <col_name2> <col_type2> [ COMMENT <col_comment2> ] , ... ) | ( <col_name1> , <col_name2> , ... ) }…", "[ ROW FORMAT <row_format> ]"]
+note = "ROW FORMAT before PARTITIONED BY, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
+anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) ROW FORMAT DELIMITED PARTITIONED BY ( c3 INT ) STORED AS TEXTFILE"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-table-hiveformat"
+kind = "interaction"
+pair = ["[ PARTITIONED BY { ( <col_name2> <col_type2> [ COMMENT <col_comment2> ] , ... ) | ( <col_name1> , <col_name2> , ... ) }…", "[ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ]"]
+note = "STORED AS before PARTITIONED BY, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
+anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) STORED AS TEXTFILE PARTITIONED BY ( c3 INT )"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-table-hiveformat"
+kind = "interaction"
+pair = ["[ PARTITIONED BY { ( <col_name2> <col_type2> [ COMMENT <col_comment2> ] , ... ) | ( <col_name1> , <col_name2> , ... ) }…", "[ LOCATION <path> ]"]
+note = "LOCATION before PARTITIONED BY, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
+anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) STORED AS TEXTFILE LOCATION '/tmp/x' PARTITIONED BY ( c3 INT )"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-table-hiveformat"
+kind = "interaction"
+pair = ["[ PARTITIONED BY { ( <col_name2> <col_type2> [ COMMENT <col_comment2> ] , ... ) | ( <col_name1> , <col_name2> , ... ) }…", "[ TBLPROPERTIES ( <key1> = <val1> , <key2> = <val2> , ... ) ]"]
+note = "TBLPROPERTIES before PARTITIONED BY, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
+anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) STORED AS TEXTFILE TBLPROPERTIES ( 'k' = 'v' ) PARTITIONED BY ( c3 INT )"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-table-hiveformat"
+kind = "interaction"
+pair = ["[ ROW FORMAT <row_format> ]", "[ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ]"]
+note = "STORED AS before ROW FORMAT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
+anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) STORED AS TEXTFILE ROW FORMAT DELIMITED"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-table-hiveformat"
+kind = "interaction"
+pair = ["[ ROW FORMAT <row_format> ]", "[ LOCATION <path> ]"]
+note = "LOCATION before ROW FORMAT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
+anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) STORED AS TEXTFILE LOCATION '/tmp/x' ROW FORMAT DELIMITED"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-table-hiveformat"
+kind = "interaction"
+pair = ["[ ROW FORMAT <row_format> ]", "[ TBLPROPERTIES ( <key1> = <val1> , <key2> = <val2> , ... ) ]"]
+note = "TBLPROPERTIES before ROW FORMAT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
+anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) STORED AS TEXTFILE TBLPROPERTIES ( 'k' = 'v' ) ROW FORMAT DELIMITED"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-table-hiveformat"
+kind = "interaction"
+pair = ["[ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ]", "[ LOCATION <path> ]"]
+note = "LOCATION before STORED AS, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
+anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) LOCATION '/tmp/x' STORED AS TEXTFILE"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-table-hiveformat"
+kind = "interaction"
+pair = ["[ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ]", "[ TBLPROPERTIES ( <key1> = <val1> , <key2> = <val2> , ... ) ]"]
+note = "TBLPROPERTIES before STORED AS, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
+anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) TBLPROPERTIES ( 'k' = 'v' ) STORED AS TEXTFILE"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-table-hiveformat"
+kind = "interaction"
+pair = ["[ LOCATION <path> ]", "[ TBLPROPERTIES ( <key1> = <val1> , <key2> = <val2> , ... ) ]"]
+note = "TBLPROPERTIES before LOCATION, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
+anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) STORED AS TEXTFILE TBLPROPERTIES ( 'k' = 'v' ) LOCATION '/tmp/x'"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-view.view-as"
+kind = "option_present"
+target = "GLOBAL TEMPORARY"
+note = "a global temporary query view; GLOBAL TEMPORARY carries 'Applies to: Databricks Runtime' (the page's GLOBAL TEMPORARY parameter), and the pinned engine is a Databricks SQL warehouse, so it is observed"
+anchor = "doc.sql-ref-syntax-ddl-create-view / Parameters"
+sql = "CREATE GLOBAL TEMPORARY VIEW v3 AS SELECT 1"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-view.view-as"
+kind = "option_present"
+target = "OR REPLACE GLOBAL TEMPORARY with COMMENT"
+note = "a global temporary query view; GLOBAL TEMPORARY carries 'Applies to: Databricks Runtime' (the page's GLOBAL TEMPORARY parameter), and the pinned engine is a Databricks SQL warehouse, so it is observed"
+anchor = "doc.sql-ref-syntax-ddl-create-view / Parameters"
+sql = "CREATE OR REPLACE GLOBAL TEMPORARY VIEW v3 ( c1 ) COMMENT 'x' AS SELECT 1"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-view.view-as"
+kind = "option_present"
+target = "OR REPLACE GLOBAL TEMPORARY with DEFAULT COLLATION"
+note = "a global temporary query view; GLOBAL TEMPORARY carries 'Applies to: Databricks Runtime' (the page's GLOBAL TEMPORARY parameter), and the pinned engine is a Databricks SQL warehouse, so it is observed"
+anchor = "doc.sql-ref-syntax-ddl-create-view / Parameters"
+sql = "CREATE OR REPLACE GLOBAL TEMPORARY VIEW v3 ( c1 ) DEFAULT COLLATION UTF8_BINARY AS SELECT 1"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-view.temporary-view-using"
+kind = "option_present"
+target = "GLOBAL TEMPORARY"
+note = "a global temporary data-source view; GLOBAL TEMPORARY carries 'Applies to: Databricks Runtime' (the page's GLOBAL TEMPORARY parameter), and the pinned engine is a Databricks SQL warehouse, so it is observed"
+anchor = "doc.sql-ref-syntax-ddl-create-view / Parameters"
+sql = "CREATE GLOBAL TEMPORARY VIEW v3 ( c1 INT ) USING DELTA"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-view.temporary-view-using"
+kind = "option_present"
+target = "OR REPLACE GLOBAL TEMPORARY with OPTIONS"
+note = "a global temporary data-source view; GLOBAL TEMPORARY carries 'Applies to: Databricks Runtime' (the page's GLOBAL TEMPORARY parameter), and the pinned engine is a Databricks SQL warehouse, so it is observed"
+anchor = "doc.sql-ref-syntax-ddl-create-view / Parameters"
+sql = "CREATE OR REPLACE GLOBAL TEMPORARY VIEW v3 ( c1 INT ) USING DELTA OPTIONS ( 'k' = 'v' , 'k2' = 'v' )"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-table-like"
+kind = "option_present"
+target = "ROW FORMAT DELIMITED"
+note = "ROW FORMAT DELIMITED in table_clauses; ROW FORMAT row_format carries 'Applies to: Databricks Runtime' (the page's ROW FORMAT parameter), and the pinned engine is a Databricks SQL warehouse, so it is observed"
+anchor = "doc.sql-ref-syntax-ddl-create-table-like / Parameters"
+sql = "CREATE TABLE t3 LIKE t1 ROW FORMAT DELIMITED STORED AS TEXTFILE"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-table-like"
+kind = "option_present"
+target = "ROW FORMAT SERDE"
+note = "ROW FORMAT SERDE with SERDEPROPERTIES in table_clauses; ROW FORMAT row_format carries 'Applies to: Databricks Runtime' (the page's ROW FORMAT parameter), and the pinned engine is a Databricks SQL warehouse, so it is observed"
+anchor = "doc.sql-ref-syntax-ddl-create-table-like / Parameters"
+sql = "CREATE TABLE t3 LIKE t1 ROW FORMAT SERDE 'org.example.Serde' WITH SERDEPROPERTIES ( 'k' = 'v' ) STORED AS TEXTFILE"
+context = "raw"
+expect = "observe"
+documented = true
+
+[[limit]]
+form = "db.ddl.create-table-like"
+kind = "option_present"
+target = "STORED AS INPUTFORMAT ... OUTPUTFORMAT ..."
+note = "STORED AS with an input and an output format: 'Alternatively, you can specify your own input and output formats through INPUTFORMAT and OUTPUTFORMAT' (the page's STORED AS parameter; SqlBaseParser fileFormat)"
+anchor = "doc.sql-ref-syntax-ddl-create-table-like / Parameters"
+sql = "CREATE TABLE t3 LIKE t1 STORED AS INPUTFORMAT 'org.example.In' OUTPUTFORMAT 'org.example.Out'"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "db.ddl.clone.clone-source-temporal"
+kind = "option_present"
+target = "SYSTEM_TIMESTAMP AS OF"
+note = "a clone source with SYSTEM_TIMESTAMP AS OF; the names page writes SYSTEM_TIMESTAMP and SYSTEM_VERSION, SqlBaseParser temporalClause SYSTEM_TIME and SYSTEM_VERSION; observed, so that a receipt settles which the warehouse takes"
+anchor = "doc.delta-clone / Parameters"
+sql = "CREATE TABLE t3 CLONE t1 SYSTEM_TIMESTAMP AS OF current_timestamp ( )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.clone.clone-source-temporal"
+kind = "option_present"
+target = "FOR SYSTEM_TIMESTAMP AS OF"
+note = "a clone source with FOR SYSTEM_TIMESTAMP AS OF; the names page writes SYSTEM_TIMESTAMP and SYSTEM_VERSION, SqlBaseParser temporalClause SYSTEM_TIME and SYSTEM_VERSION; observed, so that a receipt settles which the warehouse takes"
+anchor = "doc.delta-clone / Parameters"
+sql = "CREATE TABLE t3 CLONE t1 FOR SYSTEM_TIMESTAMP AS OF current_timestamp ( )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.clone.clone-source-temporal"
+kind = "option_present"
+target = "SYSTEM_TIME AS OF"
+note = "a clone source with SYSTEM_TIME AS OF; the names page writes SYSTEM_TIMESTAMP and SYSTEM_VERSION, SqlBaseParser temporalClause SYSTEM_TIME and SYSTEM_VERSION; observed, so that a receipt settles which the warehouse takes"
+anchor = "doc.delta-clone / Parameters"
+sql = "CREATE TABLE t3 CLONE t1 SYSTEM_TIME AS OF current_timestamp ( )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.clone.clone-source-temporal"
+kind = "option_present"
+target = "FOR SYSTEM_TIME AS OF"
+note = "a clone source with FOR SYSTEM_TIME AS OF; the names page writes SYSTEM_TIMESTAMP and SYSTEM_VERSION, SqlBaseParser temporalClause SYSTEM_TIME and SYSTEM_VERSION; observed, so that a receipt settles which the warehouse takes"
+anchor = "doc.delta-clone / Parameters"
+sql = "CREATE TABLE t3 CLONE t1 FOR SYSTEM_TIME AS OF current_timestamp ( )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.clone.clone-source-temporal"
+kind = "option_present"
+target = "SYSTEM_VERSION AS OF"
+note = "a clone source with SYSTEM_VERSION AS OF; the names page writes SYSTEM_TIMESTAMP and SYSTEM_VERSION, SqlBaseParser temporalClause SYSTEM_TIME and SYSTEM_VERSION; observed, so that a receipt settles which the warehouse takes"
+anchor = "doc.delta-clone / Parameters"
+sql = "CREATE TABLE t3 CLONE t1 SYSTEM_VERSION AS OF 1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.clone.clone-source-temporal"
+kind = "option_present"
+target = "FOR SYSTEM_VERSION AS OF"
+note = "a clone source with FOR SYSTEM_VERSION AS OF; the names page writes SYSTEM_TIMESTAMP and SYSTEM_VERSION, SqlBaseParser temporalClause SYSTEM_TIME and SYSTEM_VERSION; observed, so that a receipt settles which the warehouse takes"
+anchor = "doc.delta-clone / Parameters"
+sql = "CREATE TABLE t3 CLONE t1 FOR SYSTEM_VERSION AS OF 1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.select-table-reference"
+kind = "option_present"
+target = "VERSION AS OF"
+note = "a table name with a temporal specification ('table_name: Identifies a table that may contain a temporal specification'); the names page and SqlBaseParser temporalClause both spell VERSION AS OF"
+anchor = "doc.sql-ref-syntax-qry-select-table-reference / Parameters"
+sql = "SELECT * FROM t1 VERSION AS OF 1"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "db.query.select-table-reference"
+kind = "option_present"
+target = "TIMESTAMP AS OF"
+note = "a table name with a temporal specification ('table_name: Identifies a table that may contain a temporal specification'); the names page and SqlBaseParser temporalClause both spell TIMESTAMP AS OF"
+anchor = "doc.sql-ref-syntax-qry-select-table-reference / Parameters"
+sql = "SELECT * FROM t1 TIMESTAMP AS OF current_timestamp ( )"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "db.query.select-table-reference"
+kind = "option_present"
+target = "FOR SYSTEM_TIMESTAMP AS OF"
+note = "a table name with FOR SYSTEM_TIMESTAMP AS OF; the names page writes SYSTEM_TIMESTAMP and SYSTEM_VERSION, SqlBaseParser temporalClause SYSTEM_TIME and SYSTEM_VERSION; observed, so that a receipt settles which the warehouse takes"
+anchor = "doc.sql-ref-syntax-qry-select-table-reference / Parameters"
+sql = "SELECT * FROM t1 FOR SYSTEM_TIMESTAMP AS OF current_timestamp ( )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.select-table-reference"
+kind = "option_present"
+target = "FOR SYSTEM_TIME AS OF"
+note = "a table name with FOR SYSTEM_TIME AS OF; the names page writes SYSTEM_TIMESTAMP and SYSTEM_VERSION, SqlBaseParser temporalClause SYSTEM_TIME and SYSTEM_VERSION; observed, so that a receipt settles which the warehouse takes"
+anchor = "doc.sql-ref-syntax-qry-select-table-reference / Parameters"
+sql = "SELECT * FROM t1 FOR SYSTEM_TIME AS OF current_timestamp ( )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.select-table-reference"
+kind = "option_present"
+target = "FOR SYSTEM_VERSION AS OF"
+note = "a table name with FOR SYSTEM_VERSION AS OF; the names page writes SYSTEM_TIMESTAMP and SYSTEM_VERSION, SqlBaseParser temporalClause SYSTEM_TIME and SYSTEM_VERSION; observed, so that a receipt settles which the warehouse takes"
+anchor = "doc.sql-ref-syntax-qry-select-table-reference / Parameters"
+sql = "SELECT * FROM t1 FOR SYSTEM_VERSION AS OF 1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.select-sampling"
+kind = "boundary_below"
+target = "<percentage>"
+note = "TABLESAMPLE percentage -1, below the documented range: the page: 'An INTEGER or DECIMAL constant percentage between 0 and 100'"
+anchor = "doc.sql-ref-syntax-qry-select-sampling / Parameters"
+sql = "SELECT * FROM t1 TABLESAMPLE ( -1 PERCENT )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "db.query.select-sampling"
+kind = "boundary_at"
+target = "<percentage>"
+note = "TABLESAMPLE percentage 0, the documented lower bound: the page: 'An INTEGER or DECIMAL constant percentage between 0 and 100'"
+anchor = "doc.sql-ref-syntax-qry-select-sampling / Parameters"
+sql = "SELECT * FROM t1 TABLESAMPLE ( 0 PERCENT )"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "db.query.select-sampling"
+kind = "boundary_at"
+target = "<percentage>"
+note = "TABLESAMPLE percentage 100, the documented upper bound: the page: 'An INTEGER or DECIMAL constant percentage between 0 and 100'"
+anchor = "doc.sql-ref-syntax-qry-select-sampling / Parameters"
+sql = "SELECT * FROM t1 TABLESAMPLE ( 100 PERCENT )"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "db.query.select-sampling"
+kind = "boundary_above"
+target = "<percentage>"
+note = "TABLESAMPLE percentage 101, above the documented range: the page: 'An INTEGER or DECIMAL constant percentage between 0 and 100'"
+anchor = "doc.sql-ref-syntax-qry-select-sampling / Parameters"
+sql = "SELECT * FROM t1 TABLESAMPLE ( 101 PERCENT )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "db.query.select-sampling"
+kind = "boundary_below"
+target = "<num_rows>"
+note = "TABLESAMPLE num_rows -1, below the documented positive range: the page: 'A constant positive INTEGER expression num_rows'; Spark 4.2.0's parser accepts the text, so the bound is checked after parsing and the warehouse's answer is recorded, not expected"
+anchor = "doc.sql-ref-syntax-qry-select-sampling / Parameters"
+sql = "SELECT * FROM t1 TABLESAMPLE ( -1 ROWS )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.select-sampling"
+kind = "boundary_below"
+target = "<num_rows>"
+note = "TABLESAMPLE num_rows 0, just below the documented positive range: the page: 'A constant positive INTEGER expression num_rows'; Spark 4.2.0's parser accepts the text, so the bound is checked after parsing and the warehouse's answer is recorded, not expected"
+anchor = "doc.sql-ref-syntax-qry-select-sampling / Parameters"
+sql = "SELECT * FROM t1 TABLESAMPLE ( 0 ROWS )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.select-sampling"
+kind = "boundary_at"
+target = "<num_rows>"
+note = "TABLESAMPLE num_rows 1, the least positive integer: the page: 'A constant positive INTEGER expression num_rows'"
+anchor = "doc.sql-ref-syntax-qry-select-sampling / Parameters"
+sql = "SELECT * FROM t1 TABLESAMPLE ( 1 ROWS )"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "db.query.select-sampling"
+kind = "boundary_below"
+target = "<seed>"
+note = "REPEATABLE seed -1, below the documented positive range: the page: 'An optional positive INTEGER constant seed'"
+anchor = "doc.sql-ref-syntax-qry-select-sampling / Parameters"
+sql = "SELECT * FROM t1 TABLESAMPLE ( 50 PERCENT ) REPEATABLE ( -1 )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "db.query.select-sampling"
+kind = "boundary_below"
+target = "<seed>"
+note = "REPEATABLE seed 0, just below the documented positive range: the page: 'An optional positive INTEGER constant seed'; Spark 4.2.0's parser accepts the text, so the bound is checked after parsing and the warehouse's answer is recorded, not expected"
+anchor = "doc.sql-ref-syntax-qry-select-sampling / Parameters"
+sql = "SELECT * FROM t1 TABLESAMPLE ( 50 PERCENT ) REPEATABLE ( 0 )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.select-sampling"
+kind = "boundary_at"
+target = "<seed>"
+note = "REPEATABLE seed 1, the least positive integer: the page: 'An optional positive INTEGER constant seed'"
+anchor = "doc.sql-ref-syntax-qry-select-sampling / Parameters"
+sql = "SELECT * FROM t1 TABLESAMPLE ( 50 PERCENT ) REPEATABLE ( 1 )"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "db.ddl.create-table-using"
+kind = "boundary_at"
+target = "<table_name>"
+note = "a table name of 255 characters: the names page: 'The following limitations apply for all object names in Unity Catalog: Object names cannot exceed 255 characters.'"
+anchor = "doc.sql-ref-names / Names"
+sql = "CREATE TABLE ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt ( c1 INT )"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "db.ddl.create-table-using"
+kind = "boundary_above"
+target = "<table_name>"
+note = "a table name of 256 characters: the names page: 'The following limitations apply for all object names in Unity Catalog: Object names cannot exceed 255 characters.'; Spark 4.2.0's parser accepts the text, so the bound is checked after parsing and the warehouse's answer is recorded, not expected"
+anchor = "doc.sql-ref-names / Names"
+sql = "CREATE TABLE tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt ( c1 INT )"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.query.query"
+kind = "required_operand_missing"
+target = "<piped_operation> in [ { |> <piped_operation> } [ ... ] ]"
+note = "omit <piped_operation>"
+reason = "Spark 4.2.0's parser accepts a query term followed by a trailing |> with no operation, so the text is no certain syntax negative; it is kept as the observed [[limit]] 'SELECT c1 FROM t1 |>', whose receipt settles it"
+
+[[suppress]]
+form = "db.ddl.create-table-constraint.references"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required UNIQUE after "
+reason = "a column needs no constraint (the create-table-using page's column_properties are optional), so the column without its constraint is a valid column definition"
+
+[[suppress]]
+form = "db.ddl.create-table-constraint.references"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { PRIMARY KEY [ <constraint_option> ] [ ... ] | UNIQUE [ <constraint_option> ] [ ... ] | { [ FOREIGN KEY ] REFERENCES <parent_table> [ ( <parent_column> [ , ... ] ) ] [ <foreign_key_option> | <constraint_option> ] [ ... ] } }"
+reason = "a column needs no constraint (the create-table-using page's column_properties are optional), so the column without its constraint is a valid column definition"
+
+[[suppress]]
+form = "db.ddl.create-table-hiveformat"
+kind = "required_operand_missing"
+target = "<col_name2> in [ PARTITIONED BY { ( <col_name2> <col_type2> [ COMMENT <col_comment2> ] , ... ) | ( <col_name1> ,\u2026"
+note = "omit <col_name2>"
+reason = "without its name or type the typed partition column reads as the alternative list of the table's own columns, ( col_name1 , col_name2 , ... ), so the text parses"
+
+[[suppress]]
+form = "db.ddl.create-table-hiveformat"
+kind = "required_operand_missing"
+target = "<col_type2> in [ PARTITIONED BY { ( <col_name2> <col_type2> [ COMMENT <col_comment2> ] , ... ) | ( <col_name1> ,\u2026"
+note = "omit <col_type2>"
+reason = "without its name or type the typed partition column reads as the alternative list of the table's own columns, ( col_name1 , col_name2 , ... ), so the text parses"
+
+[[suppress]]
+form = "db.ddl.create-table-hiveformat"
+kind = "required_operand_missing"
+target = "<table_identifier> #2"
+note = "omit <table_identifier>"
+reason = "without the table name the word AS is read as the name (Databricks formally disallows no literal as an identifier) and the query follows without AS, which is optional (SqlBaseParser createTable: ... (AS? query)?), so the text parses"
+
+[[suppress]]
+form = "db.ddl.create-table-hiveformat"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } in [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ] #2"
+reason = "without its file format the word AS is read as the format name (SqlBaseParser createFileFormat: STORED AS fileFormat, an identifier) and the query follows without AS, which is optional, so the text parses; the format is checked afterwards"
+
+[[suppress]]
+form = "db.ddl.create-table-hiveformat"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required AS"
+reason = "AS is optional before the query (SqlBaseParser createTable: ... (AS? query)?), so the text without AS parses"
+
+[[suppress]]
+form = "db.ddl.create-table-using"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required REPLACE"
+reason = "TABLE relation alone is a documented query (the pipeline page's { FROM | TABLE } relation_name; SqlBaseParser queryPrimary #table), so the text is another valid form"
+
+[[suppress]]
+form = "db.ddl.create-table-using"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required CREATE after "
+reason = "TABLE relation alone is a documented query (the pipeline page's { FROM | TABLE } relation_name; SqlBaseParser queryPrimary #table), so the text is another valid form"
+
+[[suppress]]
+form = "db.ddl.create-table-using"
+kind = "required_operand_missing"
+target = "<data_source> in [ USING <data_source> ] #2"
+note = "omit <data_source>"
+reason = "without its data source the word AS is read as the provider name (SqlBaseParser tableProvider: USING multipartIdentifier) and the query follows without AS, which is optional, so the text parses; the provider is looked up in analysis"
+
+[[suppress]]
+form = "db.ddl.create-table-using"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required AS"
+reason = "AS is optional before the query (SqlBaseParser createTable and replaceTable: ... (AS? query)?), so the text without AS parses"
+
+[[suppress]]
+form = "db.ddl.repair-table"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required REPAIR"
+reason = "TABLE relation alone is a documented query (the pipeline page's { FROM | TABLE } relation_name; SqlBaseParser queryPrimary #table), so the text is another valid form"
+
+[[suppress]]
+form = "db.dml.delete-from"
+kind = "required_operand_missing"
+target = "<predicate> in [ WHERE <predicate> ]"
+note = "omit <predicate>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.dml.delete-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DELETE"
+reason = "FROM relation alone is a documented query (the pipeline page; SqlBaseParser fromStatement: fromClause fromStatementBody*), so the text without the rest of the form is another valid form"
+
+[[suppress]]
+form = "db.dml.insert-into.into-replace-on"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NAME in [ ( <column_name> [ , ... ] ) | BY NAME ]"
+reason = "without NAME the word BY is the target alias (SqlBaseParser #insertIntoReplaceBooleanCond: tableAlias before (BY NAME)?), so the text parses"
+
+[[suppress]]
+form = "db.dml.insert-overwrite-directory-hive"
+kind = "required_operand_missing"
+target = "<directory_path>"
+note = "omit <directory_path>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand is read as a table or column name and the text parses; it fails only when the name is resolved"
+
+[[suppress]]
+form = "db.dml.insert-overwrite-directory"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { <directory_path> USING <file_format> [ OPTIONS ( { <key> [ = ] <val> } [ , ... ] ) ] | USING <file_format> OPTIONS ( 'path' [ = ] <directory_path> [ , <key> [ = ] <val> ... ] ) }"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand is read as a table or column name and the text parses; it fails only when the name is resolved"
+
+[[suppress]]
+form = "db.query.pipeline.table"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { |> <piped_operation> }"
+reason = "FROM relation alone is a documented query (the pipeline page; SqlBaseParser fromStatement: fromClause fromStatementBody*), so the text without the rest of the form is another valid form"
+
+[[suppress]]
+form = "db.query.pipeline.table.syntax"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { | <piped_operation> }"
+reason = "FROM relation alone is a documented query (the pipeline page; SqlBaseParser fromStatement: fromClause fromStatementBody*), so the text without the rest of the form is another valid form"
+
+[[suppress]]
+form = "db.query.query"
+kind = "required_operand_missing"
+target = "<window_clause> in [ WINDOW <window_clause> ]"
+note = "omit <window_clause>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.query"
+kind = "required_operand_missing"
+target = "<limit_clause> in [ LIMIT <limit_clause> ]"
+note = "omit <limit_clause>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.query"
+kind = "required_operand_missing"
+target = "<offset_clause> in [ OFFSET <offset_clause> ]"
+note = "omit <offset_clause>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-column-list"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { <named_expression> | <star_clause> }"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-groupby.group-by-rollup-cube"
+kind = "required_operand_missing"
+target = "<grouping_set>"
+note = "omit <grouping_set>"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall); whether the routine exists and takes those arguments is checked in analysis"
+
+[[suppress]]
+form = "db.query.select-groupby.group-by-rollup-cube"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required GROUPING after BY"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall); whether the routine exists and takes those arguments is checked in analysis"
+
+[[suppress]]
+form = "db.query.select-groupby.group-by-rollup-cube"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SETS"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall); whether the routine exists and takes those arguments is checked in analysis"
+
+[[suppress]]
+form = "db.query.select-groupby.subscript-dot"
+kind = "required_operand_missing"
+target = "<aggregate_name>"
+note = "omit <aggregate_name>"
+reason = "without the aggregate name the text is a parenthesised expression, another valid select item"
+
+[[suppress]]
+form = "db.query.select-groupby.subscript-dot"
+kind = "required_operand_missing"
+target = "<expression>"
+note = "omit <expression>"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall); whether the routine exists and takes those arguments is checked in analysis"
+
+[[suppress]]
+form = "db.query.select-join"
+kind = "required_operand_missing"
+target = "<join_type>"
+note = "omit <join_type>"
+reason = "join_type may be empty (the JOIN page: join_type { [ INNER ] | ... }), so NATURAL JOIN without a join type is the documented natural inner join"
+
+[[suppress]]
+form = "db.query.select-join"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required JOIN"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-join"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required NATURAL after "
+reason = "without NATURAL the text is the form's first alternative, [ join_type ] JOIN right_table_reference [ join_criteria ]"
+
+[[suppress]]
+form = "db.query.select-lateral-view"
+kind = "required_operand_missing"
+target = "<expression>"
+note = "omit <expression>"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall); whether the routine exists and takes those arguments is checked in analysis"
+
+[[suppress]]
+form = "db.query.select-lateral-view"
+kind = "required_operand_missing"
+target = "<column_identifier>"
+note = "omit <column_identifier>"
+reason = "the column names after AS are optional (SqlBaseParser lateralView: (AS? colName ...)?), so AS alone is read as the table alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-lateral-view"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required AS"
+reason = "AS is optional before the column names (SqlBaseParser lateralView: ... tblName=identifier? (AS? colName+=identifier ...)?), so without AS the name is the column alias"
+
+[[suppress]]
+form = "db.query.select-limit"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { ALL | <integer_expression> }"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-named-window"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { <window_name> AS <window_spec> }"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-nearest-by"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required LEFT after "
+reason = "without LEFT the text is JOIN alone, which the JOIN page documents as the inner join (join_type [ INNER ]), so it parses; the ranking expression's type is checked in analysis"
+
+[[suppress]]
+form = "db.query.select-offset"
+kind = "required_operand_missing"
+target = "<integer_expression>"
+note = "omit <integer_expression>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-qualify"
+kind = "required_operand_missing"
+target = "<boolean_expression>"
+note = "omit <boolean_expression>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-sampling"
+kind = "negative_neighbour"
+target = "<num_rows>"
+note = "a string literal in place of <num_rows>"
+reason = "num_rows is an expression (SqlBaseParser sample: expression ROWS), and a string literal is an expression, so the text parses; its type is checked in analysis"
+
+[[suppress]]
+form = "db.query.select-setops"
+kind = "required_operand_missing"
+target = "<subquery2>"
+note = "omit <subquery2>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-sortby"
+kind = "required_operand_missing"
+target = "<sort_direction> in [ <sort_direction> <nulls_sort_order> ]"
+note = "omit <sort_direction>"
+reason = "the page defines sort_direction as [ ASC | DEC ] and nulls_sort_order as [ NULLS FIRST | NULLS LAST ], each optional on its own (SqlBaseParser sortItem), so either may be omitted"
+
+[[suppress]]
+form = "db.query.select-sortby"
+kind = "required_operand_missing"
+target = "<nulls_sort_order> in [ <sort_direction> <nulls_sort_order> ]"
+note = "omit <nulls_sort_order>"
+reason = "the page defines sort_direction as [ ASC | DEC ] and nulls_sort_order as [ NULLS FIRST | NULLS LAST ], each optional on its own (SqlBaseParser sortItem), so either may be omitted"
+
+[[suppress]]
+form = "db.query.select-table-reference"
+kind = "required_operand_missing"
+target = "<table_name>"
+note = "omit <table_name>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-table-reference"
+kind = "required_operand_missing"
+target = "<tablesample_clause> in [ TABLESAMPLE <tablesample_clause> ]"
+note = "omit <tablesample_clause>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-table-reference"
+kind = "required_operand_missing"
+target = "<table_name> #2"
+note = "omit <table_name>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand is read as a table or column name and the text parses; it fails only when the name is resolved"
+
+[[suppress]]
+form = "db.query.select-table-reference"
+kind = "required_operand_missing"
+target = "<table_name> #3"
+note = "omit <table_name>"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall); whether the routine exists and takes those arguments is checked in analysis"
+
+[[suppress]]
+form = "db.query.select-table-reference"
+kind = "negative_neighbour"
+target = "<table_name> #3"
+note = "a string literal in place of <table_name>"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall); whether the routine exists and takes those arguments is checked in analysis"
+
+[[suppress]]
+form = "db.query.select-table-reference"
+kind = "required_operand_missing"
+target = "<view_name>"
+note = "omit <view_name>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-table-reference"
+kind = "required_operand_missing"
+target = "<pivot_clause>"
+note = "omit <pivot_clause>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-table-reference"
+kind = "required_operand_missing"
+target = "<unpivot_clause>"
+note = "omit <unpivot_clause>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-table-reference"
+kind = "required_operand_missing"
+target = "<match_recognize_clause>"
+note = "omit <match_recognize_clause>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-table-reference"
+kind = "required_operand_missing"
+target = "<table_valued_function>"
+note = "omit <table_valued_function>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-table-reference"
+kind = "required_operand_missing"
+target = "<table_valued_function> #2"
+note = "omit <table_valued_function>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-table-reference"
+kind = "required_operand_missing"
+target = "<values_clause>"
+note = "omit <values_clause>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand is read as a table or column name and the text parses; it fails only when the name is resolved"
+
+[[suppress]]
+form = "db.query.select-table-reference"
+kind = "required_operand_missing"
+target = "<tablesample_clause> in [ TABLESAMPLE <tablesample_clause> ] #2"
+note = "omit <tablesample_clause>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-table-reference"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required STREAM after  #2"
+reason = "without STREAM the text is a parenthesised table reference (SqlBaseParser relationPrimary #aliasedRelation: ( relation ) tableAlias), another valid relation"
+
+[[suppress]]
+form = "db.query.select-unpivot"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { <single_value> | <multi_value> }"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-watermark"
+kind = "required_operand_missing"
+target = "<table_name>"
+note = "omit <table_name>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-watermark"
+kind = "required_operand_missing"
+target = "<tablesample_clause> in [ TABLESAMPLE <tablesample_clause> ]"
+note = "omit <tablesample_clause>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-watermark"
+kind = "required_operand_missing"
+target = "<table_valued_function>"
+note = "omit <table_valued_function>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-watermark"
+kind = "required_operand_missing"
+target = "<tablesample_clause> in [ TABLESAMPLE <tablesample_clause> ] #2"
+note = "omit <tablesample_clause>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select-watermark"
+kind = "required_operand_missing"
+target = "<values_clause>"
+note = "omit <values_clause>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand is read as a table or column name and the text parses; it fails only when the name is resolved"
+
+[[suppress]]
+form = "db.query.select-where"
+kind = "required_operand_missing"
+target = "<boolean_expression>"
+note = "omit <boolean_expression>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select"
+kind = "required_operand_missing"
+target = "<select_clause>"
+note = "omit <select_clause>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select"
+kind = "required_operand_missing"
+target = "<table_reference>"
+note = "omit <table_reference>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select"
+kind = "required_operand_missing"
+target = "<where_clause> in [ WHERE <where_clause> ]"
+note = "omit <where_clause>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select"
+kind = "required_operand_missing"
+target = "<having_clause> in [ HAVING <having_clause> ]"
+note = "omit <having_clause>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select"
+kind = "required_operand_missing"
+target = "<qualify_clause> in [ QUALIFY <qualify_clause> ]"
+note = "omit <qualify_clause>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.query.select"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required FROM"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), and an alias follows a select item or a table reference with AS optional (SqlBaseParser namedExpression and tableAlias take a non-reserved word), so the keyword left without its operand is read as an alias and the text parses"
+
+[[suppress]]
+form = "db.ddl.alter-database"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MANAGED"
+reason = "without MANAGED the text is ALTER SCHEMA ... SET LOCATION (SqlBaseParser #setNamespaceLocation: ALTER namespace identifierReference SET locationSpec), another valid statement"
+
+[[suppress]]
+form = "db.ddl.alter-schema-set-managed-location"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MANAGED"
+reason = "without MANAGED the text is ALTER SCHEMA ... SET LOCATION (SqlBaseParser #setNamespaceLocation), another valid statement"
+
+[[suppress]]
+form = "db.ddl.alter-schema"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MANAGED"
+reason = "without MANAGED the text is ALTER SCHEMA ... SET LOCATION (SqlBaseParser #setNamespaceLocation), another valid statement"
+
+[[suppress]]
+form = "db.ddl.create-database"
+kind = "negative_neighbour"
+target = "<property_name> in [ COMMENT <schema_comment> | DEFAULT COLLATION <default_collation_name> | { LOCATION\u2026"
+note = "a string literal in place of <property_name>"
+reason = "a property key is an identifier or a string literal (SqlBaseParser propertyKey: errorCapturingIdentifier (DOT ...)* | stringLit), so a string literal in its place is no negative"
+
+[[suppress]]
+form = "db.ddl.create-database"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MANAGED after <schema_name> in [ COMMENT <schema_comment> | DEFAULT COLLATION <default_collation_name> | { LOCATION <schema_directory> | MANAGED\u2026"
+reason = "without MANAGED the text is CREATE SCHEMA ... LOCATION (SqlBaseParser #createNamespace: (commentSpec | locationSpec | ...)*), another valid statement"
+
+[[suppress]]
+form = "db.ddl.create-function"
+kind = "negative_neighbour"
+target = "<class_name>"
+note = "a string literal in place of <class_name>"
+reason = "the class name is a string literal (SqlBaseParser #createFunction: AS className=stringLit; the page's examples quote it), so a string literal in its place is the documented operand, no negative"
+
+[[suppress]]
+form = "db.ddl.create-materialized-view-refresh-policy"
+kind = "required_operand_missing"
+target = "<refresh_policy>"
+note = "omit <refresh_policy>"
+reason = "REFRESH followed by any text parses as Spark's REFRESH resource or REFRESH TABLE (SqlBaseParser #refreshTable: REFRESH TABLE? identifierReference, #refreshResource: REFRESH .*?), so the text without the rest of the form parses; the resource is looked up when it runs"
+
+[[suppress]]
+form = "db.ddl.create-materialized-view-refresh-policy"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required POLICY"
+reason = "REFRESH followed by any text parses as Spark's REFRESH resource or REFRESH TABLE (SqlBaseParser #refreshTable: REFRESH TABLE? identifierReference, #refreshResource: REFRESH .*?), so the text without the rest of the form parses; the resource is looked up when it runs"
+
+[[suppress]]
+form = "db.ddl.create-materialized-view"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED"
+reason = "without MATERIALIZED the text is CREATE OR REPLACE VIEW, another documented statement"
+
+[[suppress]]
+form = "db.ddl.create-materialized-view"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MATERIALIZED after CREATE"
+reason = "without MATERIALIZED the text is CREATE VIEW, another documented statement"
+
+[[suppress]]
+form = "db.ddl.create-schema"
+kind = "negative_neighbour"
+target = "<property_name> in [ COMMENT <schema_comment> | DEFAULT COLLATION <default_collation_name> | { LOCATION\u2026"
+note = "a string literal in place of <property_name>"
+reason = "a property key is an identifier or a string literal (SqlBaseParser propertyKey: errorCapturingIdentifier (DOT ...)* | stringLit), so a string literal in its place is no negative"
+
+[[suppress]]
+form = "db.ddl.create-schema"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MANAGED after <schema_name> in [ COMMENT <schema_comment> | DEFAULT COLLATION <default_collation_name> | { LOCATION <schema_directory> | MANAGED\u2026"
+reason = "without MANAGED the text is CREATE SCHEMA ... LOCATION (SqlBaseParser #createNamespace: (commentSpec | locationSpec | ...)*), another valid statement"
+
+[[suppress]]
+form = "db.ddl.create-streaming-table"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required STREAMING after CREATE"
+reason = "without STREAMING the text is CREATE TABLE, another documented statement (a table with no columns parses; its schema is checked afterwards)"
+
+[[suppress]]
+form = "db.ddl.refresh-foreign"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { CATALOG <foreign_catalog_name> | SCHEMA <foreign_schema_name> [ RESOLVE DBFS LOCATION ] | TABLE <foreign_table_name> [ RESOLVE DBFS LOCATION ] }"
+reason = "REFRESH followed by any text parses as Spark's REFRESH resource or REFRESH TABLE (SqlBaseParser #refreshTable: REFRESH TABLE? identifierReference, #refreshResource: REFRESH .*?), so the text without the rest of the form parses; the resource is looked up when it runs"
+
+[[suppress]]
+form = "db.ddl.refresh-full"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TABLE"
+reason = "REFRESH followed by any text parses as Spark's REFRESH resource or REFRESH TABLE (SqlBaseParser #refreshTable: REFRESH TABLE? identifierReference, #refreshResource: REFRESH .*?), so the text without the rest of the form parses; the resource is looked up when it runs"
+
+[[suppress]]
+form = "db.ddl.refresh-full"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { MATERIALIZED VIEW | [ STREAMING ] TABLE }"
+reason = "REFRESH followed by any text parses as Spark's REFRESH resource or REFRESH TABLE (SqlBaseParser #refreshTable: REFRESH TABLE? identifierReference, #refreshResource: REFRESH .*?), so the text without the rest of the form parses; the resource is looked up when it runs"
+
+[[suppress]]
+form = "db.expressions.binary-type.x"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { 'num [ ... ] ' | \"num [ ... ] \" }"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.decfloat-type"
+kind = "required_operand_missing"
+target = "<p> in [ ( <p> ) ]"
+note = "omit <p>"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall), so the type name with empty parentheses parses in an expression; the routine is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.decimal-type.bd"
+kind = "required_operand_missing"
+target = "<digit>"
+note = "omit <digit>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.decimal-type"
+kind = "required_operand_missing"
+target = "<p> in [ ( <p> [ , <s> ] ) ]"
+note = "omit <p>"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall), so the type name with empty parentheses parses in an expression; the routine is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.double-type.d"
+kind = "required_operand_missing"
+target = "<decimal_digits>"
+note = "omit <decimal_digits>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.expression"
+kind = "negative_neighbour"
+target = "<named_parameter_marker>"
+note = "a string literal in place of <named_parameter_marker>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.expression"
+kind = "negative_neighbour"
+target = "<unnamed_parameter_marker>"
+note = "a string literal in place of <unnamed_parameter_marker>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.expression"
+kind = "negative_neighbour"
+target = "<column_reference>"
+note = "a string literal in place of <column_reference>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.expression"
+kind = "required_operand_missing"
+target = "<expression>"
+note = "omit <expression>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.expression"
+kind = "required_operand_missing"
+target = "<expression> #2"
+note = "omit <expression>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.expression"
+kind = "required_operand_missing"
+target = "<expression> #3"
+note = "omit <expression>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.file-type"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required FILE after "
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.file-type"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MANAGED"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.file-type"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required FILE after  #2"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.file-type"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required EXTERNAL"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.float-type.f.literals"
+kind = "required_operand_missing"
+target = "<digit>"
+note = "omit <digit>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.float-type.f"
+kind = "required_operand_missing"
+target = "<decimal_digits>"
+note = "omit <decimal_digits>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.geography-type"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { <srid> | ANY }"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall), so the type name with empty parentheses parses in an expression; the routine is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.geometry-type"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { <srid> | ANY }"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall), so the type name with empty parentheses parses in an expression; the routine is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.identifiers.subscript-dot.syntax"
+kind = "required_operand_missing"
+target = "<c>"
+note = "omit <c>"
+reason = "a backquoted blank is a valid quoted identifier (SqlBaseLexer BACKQUOTED_IDENTIFIER: '`' ( ~'`' | '``' )* '`'), so the text with a blank in place of the operand parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.interval-type"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { <year_month_interval_qualifier> | <day_time_interval_qualifier> }"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.json-path-expression"
+kind = "negative_neighbour"
+target = "<identifier>"
+note = "a string literal in place of <identifier>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier-2"
+kind = "negative_neighbour"
+target = "<schema_name> in [ <schema_name> . ]"
+note = "a string literal in place of <schema_name>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier-2"
+kind = "negative_neighbour"
+target = "<view_identifier>"
+note = "a string literal in place of <view_identifier>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier-2"
+kind = "required_operand_missing"
+target = "<identifier_clause>"
+note = "omit <identifier_clause>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier-3"
+kind = "negative_neighbour"
+target = "<relation_name> in [ <relation_name> . ]"
+note = "a string literal in place of <relation_name>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier-3"
+kind = "negative_neighbour"
+target = "<column_identifier>"
+note = "a string literal in place of <column_identifier>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier-3"
+kind = "required_operand_missing"
+target = "<identifier_clause>"
+note = "omit <identifier_clause>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier-4"
+kind = "required_operand_missing"
+target = "<identifier_clause>"
+note = "omit <identifier_clause>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier-5"
+kind = "negative_neighbour"
+target = "<schema_name> in [ <schema_name> . ]"
+note = "a string literal in place of <schema_name>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier-5"
+kind = "negative_neighbour"
+target = "<variable_identifier>"
+note = "a string literal in place of <variable_identifier>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier-5"
+kind = "required_operand_missing"
+target = "<identifier_clause>"
+note = "omit <identifier_clause>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier-6"
+kind = "negative_neighbour"
+target = "<schema_name> in [ <schema_name> . ]"
+note = "a string literal in place of <schema_name>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier-6"
+kind = "negative_neighbour"
+target = "<function_identifier>"
+note = "a string literal in place of <function_identifier>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier-6"
+kind = "required_operand_missing"
+target = "<identifier_clause>"
+note = "omit <identifier_clause>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier-7"
+kind = "negative_neighbour"
+target = "<schema_name> in [ <schema_name> . ]"
+note = "a string literal in place of <schema_name>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier-7"
+kind = "negative_neighbour"
+target = "<procedure_identifier>"
+note = "a string literal in place of <procedure_identifier>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier-7"
+kind = "required_operand_missing"
+target = "<identifier_clause>"
+note = "omit <identifier_clause>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier-8"
+kind = "negative_neighbour"
+target = "<label_identifier>"
+note = "a string literal in place of <label_identifier>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier-8"
+kind = "required_operand_missing"
+target = "<identifier_clause>"
+note = "omit <identifier_clause>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier"
+kind = "negative_neighbour"
+target = "<catalog_name> in [ <catalog_name> . ]"
+note = "a string literal in place of <catalog_name>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier"
+kind = "negative_neighbour"
+target = "<schema_identifier>"
+note = "a string literal in place of <schema_identifier>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier"
+kind = "required_operand_missing"
+target = "<identifier_clause>"
+note = "omit <identifier_clause>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier.syntax"
+kind = "negative_neighbour"
+target = "<schema_name> in [ <schema_name> . ]"
+note = "a string literal in place of <schema_name>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier.syntax"
+kind = "negative_neighbour"
+target = "<table_identifier>"
+note = "a string literal in place of <table_identifier>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier.syntax"
+kind = "required_operand_missing"
+target = "<identifier_clause>"
+note = "omit <identifier_clause>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier.syntax"
+kind = "required_operand_missing"
+target = "<file_format> #2"
+note = "omit <file_format>"
+reason = "a backquoted blank is a valid quoted identifier (SqlBaseLexer BACKQUOTED_IDENTIFIER: '`' ( ~'`' | '``' )* '`'), so the text with a blank in place of the operand parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.names.identifier.syntax"
+kind = "required_operand_missing"
+target = "<path_to_table>"
+note = "omit <path_to_table>"
+reason = "a backquoted blank is a valid quoted identifier (SqlBaseLexer BACKQUOTED_IDENTIFIER: '`' ( ~'`' | '``' )* '`'), so the text with a blank in place of the operand parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.names.subscript-dot-2"
+kind = "negative_neighbour"
+target = "<table_identifier>"
+note = "a string literal in place of <table_identifier>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.subscript-dot-2"
+kind = "required_operand_missing"
+target = "<column_identifier1> in [ ( <column_identifier1> [ , ... ] ) ]"
+note = "omit <column_identifier1>"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall), so the type name with empty parentheses parses in an expression; the routine is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.names.subscript-dot-2"
+kind = "negative_neighbour"
+target = "<column_identifier1> in [ ( <column_identifier1> [ , ... ] ) ]"
+note = "a string literal in place of <column_identifier1>"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall), so the type name with empty parentheses parses in an expression; the routine is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.names.subscript-dot-3"
+kind = "negative_neighbour"
+target = "<column_identifier>"
+note = "a string literal in place of <column_identifier>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.subscript-dot-4"
+kind = "negative_neighbour"
+target = "<schema_name> in [ <schema_name> . ]"
+note = "a string literal in place of <schema_name>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.subscript-dot-4"
+kind = "negative_neighbour"
+target = "<volume_identifier>"
+note = "a string literal in place of <volume_identifier>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.subscript-dot"
+kind = "negative_neighbour"
+target = "<routine_identifier> in [ <routine_identifier> . ]"
+note = "a string literal in place of <routine_identifier>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.subscript-dot"
+kind = "negative_neighbour"
+target = "<parameter_identifier>"
+note = "a string literal in place of <parameter_identifier>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.subscript-dot.syntax"
+kind = "negative_neighbour"
+target = "<cursor_identifier>"
+note = "a string literal in place of <cursor_identifier>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.subscript"
+kind = "negative_neighbour"
+target = "<column_identifier>"
+note = "a string literal in place of <column_identifier>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.syntax"
+kind = "negative_neighbour"
+target = "<table_name>"
+note = "a string literal in place of <table_name>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.names.syntax"
+kind = "negative_neighbour"
+target = "<view_name>"
+note = "a string literal in place of <view_name>"
+reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+
+[[suppress]]
+form = "db.expressions.smallint-type.s"
+kind = "required_operand_missing"
+target = "<digit>"
+note = "omit <digit>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.time-type.time.syntax"
+kind = "required_operand_missing"
+target = "<p>"
+note = "omit <p>"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall), so the type name with empty parentheses parses in an expression; the routine is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.timestamp-ntz-type.timestamp-ntz"
+kind = "required_operand_missing"
+target = "<p> in [ ( <p> ) ]"
+note = "omit <p>"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall), so the type name with empty parentheses parses in an expression; the routine is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.timestamp-type.timestamp-ltz"
+kind = "required_operand_missing"
+target = "<p> in [ ( <p> ) ]"
+note = "omit <p>"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall), so the type name with empty parentheses parses in an expression; the routine is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.timestamp-type.timestamp"
+kind = "required_operand_missing"
+target = "<p> in [ ( <p> ) ]"
+note = "omit <p>"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall), so the type name with empty parentheses parses in an expression; the routine is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.tinyint-type.y"
+kind = "required_operand_missing"
+target = "<digit>"
+note = "omit <digit>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.functions.ai-parse-document"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required MAP"
+reason = "without MAP the argument is a parenthesised list of two values, itself a valid expression (SqlBaseParser #rowConstructor: LEFT_PAREN namedExpression (COMMA namedExpression)+ RIGHT_PAREN), so the text parses; the argument's type is checked in analysis"
+
+[[suppress]]
+form = "db.functions.ai-predict-class"
+kind = "required_operand_missing"
+target = "<input>"
+note = "omit <input>"
+reason = "TABLE with empty parentheses reads as a call of a function named TABLE: Databricks formally disallows no word as an identifier (reserved-words page), and Spark's grammar admits TABLE as a function name (SqlBaseParser #functionCall), so the text parses; the routine is resolved in analysis"
+
+[[suppress]]
+form = "db.functions.ai-predict-class"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TABLE"
+reason = "without TABLE the argument is a parenthesised expression, itself a valid argument (SqlBaseParser functionArgument: expression | namedArgumentExpression), so the text parses; a table argument is required in analysis"
+
+[[suppress]]
+form = "db.functions.ai-predict-value"
+kind = "required_operand_missing"
+target = "<input>"
+note = "omit <input>"
+reason = "TABLE with empty parentheses reads as a call of a function named TABLE: Databricks formally disallows no word as an identifier (reserved-words page), and Spark's grammar admits TABLE as a function name (SqlBaseParser #functionCall), so the text parses; the routine is resolved in analysis"
+
+[[suppress]]
+form = "db.functions.ai-predict-value"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TABLE"
+reason = "without TABLE the argument is a parenthesised expression, itself a valid argument (SqlBaseParser functionArgument: expression | namedArgumentExpression), so the text parses; a table argument is required in analysis"
+
+[[suppress]]
+form = "db.functions.any"
+kind = "required_operand_missing"
+target = "<expr>"
+note = "omit <expr>"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser #functionCall: functionName LEFT_PAREN (functionArgument (COMMA functionArgument)*)? RIGHT_PAREN), so the text parses; the routine, its arity and its window are resolved in analysis"
+
+[[suppress]]
+form = "db.functions.cloud-files-state"
+kind = "required_operand_missing"
+target = "<table_name>"
+note = "omit <table_name>"
+reason = "TABLE with empty parentheses reads as a call of a function named TABLE: Databricks formally disallows no word as an identifier (reserved-words page), and Spark's grammar admits TABLE as a function name (SqlBaseParser #functionCall), so the text parses; the routine is resolved in analysis"
+
+[[suppress]]
+form = "db.functions.cloud-files-state"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TABLE after ("
+reason = "without TABLE the argument is a parenthesised expression, itself a valid argument (SqlBaseParser functionArgument: expression | namedArgumentExpression), so the text parses; a table argument is required in analysis"
+
+[[suppress]]
+form = "db.functions.colonsign"
+kind = "required_operand_missing"
+target = "<json_expr>"
+note = "omit <json_expr>"
+reason = "without the JSON expression the text is a named parameter marker (SqlBaseParser #namedParameterLiteral: namedParameterMarker, COLON identifier), another valid expression"
+
+[[suppress]]
+form = "db.functions.cume-dist"
+kind = "required_operand_missing"
+target = "<over_clause>"
+note = "omit <over_clause>"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser #functionCall: functionName LEFT_PAREN (functionArgument (COMMA functionArgument)*)? RIGHT_PAREN), so the text parses; the routine, its arity and its window are resolved in analysis"
+
+[[suppress]]
+form = "db.functions.data-skipping-summary"
+kind = "required_operand_missing"
+target = "<table_name>"
+note = "omit <table_name>"
+reason = "TABLE with empty parentheses reads as a call of a function named TABLE: Databricks formally disallows no word as an identifier (reserved-words page), and Spark's grammar admits TABLE as a function name (SqlBaseParser #functionCall), so the text parses; the routine is resolved in analysis"
+
+[[suppress]]
+form = "db.functions.data-skipping-summary"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TABLE"
+reason = "without TABLE the argument is a parenthesised expression, itself a valid argument (SqlBaseParser functionArgument: expression | namedArgumentExpression), so the text parses; a table argument is required in analysis"
+
+[[suppress]]
+form = "db.functions.event-log"
+kind = "required_operand_missing"
+target = "<table_name>"
+note = "omit <table_name>"
+reason = "TABLE with empty parentheses reads as a call of a function named TABLE: Databricks formally disallows no word as an identifier (reserved-words page), and Spark's grammar admits TABLE as a function name (SqlBaseParser #functionCall), so the text parses; the routine is resolved in analysis"
+
+[[suppress]]
+form = "db.functions.event-log"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TABLE after ("
+reason = "without TABLE the argument is a parenthesised expression, itself a valid argument (SqlBaseParser functionArgument: expression | namedArgumentExpression), so the text parses; a table argument is required in analysis"
+
+[[suppress]]
+form = "db.functions.gtgtgtsign"
+kind = "negative_neighbour"
+target = "<n>"
+note = "a string literal in place of <n>"
+reason = "a string literal is a valid operand expression (SqlBaseParser valueExpression), so the text parses; the operand's type is checked in analysis"
+
+[[suppress]]
+form = "db.functions.gtgtsign"
+kind = "negative_neighbour"
+target = "<n>"
+note = "a string literal in place of <n>"
+reason = "a string literal is a valid operand expression (SqlBaseParser valueExpression), so the text parses; the operand's type is checked in analysis"
+
+[[suppress]]
+form = "db.functions.ilike.ilike"
+kind = "required_operand_missing"
+target = "<str>"
+note = "omit <str>"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser #functionCall: functionName LEFT_PAREN (functionArgument (COMMA functionArgument)*)? RIGHT_PAREN), so the text parses; the routine, its arity and its window are resolved in analysis"
+
+[[suppress]]
+form = "db.functions.ilike.ilike"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ILIKE"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser #functionCall: functionName LEFT_PAREN (functionArgument (COMMA functionArgument)*)? RIGHT_PAREN), so the text parses; the routine, its arity and its window are resolved in analysis"
+
+[[suppress]]
+form = "db.functions.in.in"
+kind = "required_operand_missing"
+target = "<expr1>"
+note = "omit <expr1>"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser #functionCall: functionName LEFT_PAREN (functionArgument (COMMA functionArgument)*)? RIGHT_PAREN), so the text parses; the routine, its arity and its window are resolved in analysis"
+
+[[suppress]]
+form = "db.functions.in.in.syntax"
+kind = "required_operand_missing"
+target = "<elem>"
+note = "omit <elem>"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser #functionCall: functionName LEFT_PAREN (functionArgument (COMMA functionArgument)*)? RIGHT_PAREN), so the text parses; the routine, its arity and its window are resolved in analysis"
+
+[[suppress]]
+form = "db.functions.in.in.syntax"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required IN"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser #functionCall: functionName LEFT_PAREN (functionArgument (COMMA functionArgument)*)? RIGHT_PAREN), so the text parses; the routine, its arity and its window are resolved in analysis"
+
+[[suppress]]
+form = "db.functions.like.like"
+kind = "required_operand_missing"
+target = "<str>"
+note = "omit <str>"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser #functionCall: functionName LEFT_PAREN (functionArgument (COMMA functionArgument)*)? RIGHT_PAREN), so the text parses; the routine, its arity and its window are resolved in analysis"
+
+[[suppress]]
+form = "db.functions.like.like"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required LIKE"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser #functionCall: functionName LEFT_PAREN (functionArgument (COMMA functionArgument)*)? RIGHT_PAREN), so the text parses; the routine, its arity and its window are resolved in analysis"
+
+[[suppress]]
+form = "db.functions.ltltsign"
+kind = "negative_neighbour"
+target = "<n>"
+note = "a string literal in place of <n>"
+reason = "a string literal is a valid operand expression (SqlBaseParser valueExpression), so the text parses; the operand's type is checked in analysis"
+
+[[suppress]]
+form = "db.functions.not"
+kind = "required_operand_missing"
+target = "<expr>"
+note = "omit <expr>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.functions.questiondoublecolonsign"
+kind = "required_operand_missing"
+target = "<expr>"
+note = "omit <expr>"
+reason = "without the expression the text is a positional parameter marker followed by a :: cast (SqlBaseParser #posParameterLiteral: QUESTION, and DOUBLE_COLON dataType), another valid expression"
+
+[[suppress]]
+form = "db.functions.trim.trim-both-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required BOTH"
+reason = "without the trim option and string the text is TRIM ( FROM <str> ), which the grammar admits (SqlBaseParser #trim: TRIM LEFT_PAREN trimOption=(BOTH | LEADING | TRAILING)? (trimStr=valueExpression)? FROM srcStr=valueExpression RIGHT_PAREN), so the text parses"
+
+[[suppress]]
+form = "db.functions.trim.trim-from"
+kind = "required_operand_missing"
+target = "<trim_str>"
+note = "omit <trim_str>"
+reason = "without the trim option and string the text is TRIM ( FROM <str> ), which the grammar admits (SqlBaseParser #trim: TRIM LEFT_PAREN trimOption=(BOTH | LEADING | TRAILING)? (trimStr=valueExpression)? FROM srcStr=valueExpression RIGHT_PAREN), so the text parses"
+
+[[suppress]]
+form = "db.functions.trim.trim-leading-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required LEADING"
+reason = "without the trim option and string the text is TRIM ( FROM <str> ), which the grammar admits (SqlBaseParser #trim: TRIM LEFT_PAREN trimOption=(BOTH | LEADING | TRAILING)? (trimStr=valueExpression)? FROM srcStr=valueExpression RIGHT_PAREN), so the text parses"
+
+[[suppress]]
+form = "db.functions.trim.trim-trailing-from"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TRAILING"
+reason = "without the trim option and string the text is TRIM ( FROM <str> ), which the grammar admits (SqlBaseParser #trim: TRIM LEFT_PAREN trimOption=(BOTH | LEADING | TRAILING)? (trimStr=valueExpression)? FROM srcStr=valueExpression RIGHT_PAREN), so the text parses"
+
+[[suppress]]
+form = "db.transaction_session.ansi-mode"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { TRUE | FALSE }"
+reason = "Spark's generic configuration SET takes any text after SET (SqlBaseParser #setConfiguration: SET configKey (EQ .*?)?, and SET .*?), so the text without the operand parses as a configuration SET"
+
+[[suppress]]
+form = "db.transaction_session.collation"
+kind = "required_operand_missing"
+target = "<collation_name>"
+note = "omit <collation_name>"
+reason = "Spark's generic configuration SET takes any text after SET (SqlBaseParser #setConfiguration: SET configKey (EQ .*?)?, and SET .*?), so the text without the operand parses as a configuration SET"
+
+[[suppress]]
+form = "db.transaction_session.conf-mgmt-set-collation"
+kind = "required_operand_missing"
+target = "<collation_name>"
+note = "omit <collation_name>"
+reason = "Spark's generic configuration SET takes any text after SET (SqlBaseParser #setConfiguration: SET configKey (EQ .*?)?, and SET .*?), so the text without the operand parses as a configuration SET"
+
+[[suppress]]
+form = "db.transaction_session.conf-mgmt-set-collation"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required COLLATION"
+reason = "Spark's generic configuration SET takes any text after SET (SqlBaseParser #setConfiguration: SET configKey (EQ .*?)?, and SET .*?), so the text without the operand parses as a configuration SET"
+
+[[suppress]]
+form = "db.transaction_session.conf-mgmt-set-path"
+kind = "required_operand_missing"
+target = "<path_element>"
+note = "omit <path_element>"
+reason = "Spark's generic configuration SET takes any text after SET (SqlBaseParser #setConfiguration: SET configKey (EQ .*?)?, and SET .*?), so the text without the operand parses as a configuration SET"
+
+[[suppress]]
+form = "db.transaction_session.conf-mgmt-set-query-tags.query-tags"
+kind = "required_operand_missing"
+target = "<tag_value>"
+note = "omit <tag_value>"
+reason = "Spark's generic configuration SET takes any text after SET (SqlBaseParser #setConfiguration: SET configKey (EQ .*?)?, and SET .*?), so the text without the operand parses as a configuration SET"
+
+[[suppress]]
+form = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.syntax"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required QUERY_TAGS"
+reason = "Spark's generic configuration SET takes any text after SET (SqlBaseParser #setConfiguration: SET configKey (EQ .*?)?, and SET .*?), so the text without the operand parses as a configuration SET"
+
+[[suppress]]
+form = "db.transaction_session.conf-mgmt-set.set-2"
+kind = "required_operand_missing"
+target = "<parameter_value> in [ = <parameter_value> ]"
+note = "omit <parameter_value>"
+reason = "Spark's generic configuration SET takes any text after SET (SqlBaseParser #setConfiguration: SET configKey (EQ .*?)?, and SET .*?), so the text without the operand parses as a configuration SET"
+
+[[suppress]]
+form = "db.transaction_session.legacy-time-parser-policy"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { LEGACY | CORRECTED | EXCEPTION }"
+reason = "Spark's generic configuration SET takes any text after SET (SqlBaseParser #setConfiguration: SET configKey (EQ .*?)?, and SET .*?), so the text without the operand parses as a configuration SET"
+
+[[suppress]]
+form = "db.transaction_session.max-partition-bytes"
+kind = "required_operand_missing"
+target = "<bytes>"
+note = "omit <bytes>"
+reason = "Spark's generic configuration SET takes any text after SET (SqlBaseParser #setConfiguration: SET configKey (EQ .*?)?, and SET .*?), so the text without the operand parses as a configuration SET"
+
+[[suppress]]
+form = "db.transaction_session.set-recipient"
+kind = "required_operand_missing"
+target = "<recipient_name>"
+note = "omit <recipient_name>"
+reason = "Spark's generic configuration SET takes any text after SET (SqlBaseParser #setConfiguration: SET configKey (EQ .*?)?, and SET .*?), so the text without the operand parses as a configuration SET"
+
+[[suppress]]
+form = "db.transaction_session.set-variable.set-default"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { <expression> | DEFAULT }"
+reason = "Spark's generic configuration SET takes any text after SET (SqlBaseParser #setConfiguration: SET configKey (EQ .*?)?, and SET .*?), so the text without the operand parses as a configuration SET"
+
+[[suppress]]
+form = "db.transaction_session.statement-timeout"
+kind = "required_operand_missing"
+target = "<seconds>"
+note = "omit <seconds>"
+reason = "Spark's generic configuration SET takes any text after SET (SqlBaseParser #setConfiguration: SET configKey (EQ .*?)?, and SET .*?), so the text without the operand parses as a configuration SET"
+
+[[suppress]]
+form = "db.transaction_session.timezone"
+kind = "required_operand_missing"
+target = "<zone_id>"
+note = "omit <zone_id>"
+reason = "Spark's generic configuration SET takes any text after SET (SqlBaseParser #setConfiguration: SET configKey (EQ .*?)?, and SET .*?), so the text without the operand parses as a configuration SET"
+
+[[suppress]]
+form = "db.transaction_session.use-cached-result"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { TRUE | FALSE }"
+reason = "Spark's generic configuration SET takes any text after SET (SqlBaseParser #setConfiguration: SET configKey (EQ .*?)?, and SET .*?), so the text without the operand parses as a configuration SET"
+
+[[suppress]]
+form = "db.transaction_session.usedb"
+kind = "required_operand_missing"
+target = "<schema_name>"
+note = "omit <schema_name>"
+reason = "Databricks formally disallows no literal as an identifier (reserved-words page), so USE followed by DATABASE alone reads DATABASE as the schema name (SqlBaseParser #use: USE identifierReference) and the text parses"
+
+[[suppress]]
+form = "db.utility.cache-refresh-function"
+kind = "required_operand_missing"
+target = "<function_name>"
+note = "omit <function_name>"
+reason = "REFRESH followed by any text parses as Spark's REFRESH resource or REFRESH TABLE (SqlBaseParser #refreshTable, #refreshFunction, #refreshResource: REFRESH .*?), so the text without the rest of the form parses; the resource is looked up when it runs"
+
+[[suppress]]
+form = "db.utility.cache-refresh-function"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required FUNCTION"
+reason = "REFRESH followed by any text parses as Spark's REFRESH resource or REFRESH TABLE (SqlBaseParser #refreshTable, #refreshFunction, #refreshResource: REFRESH .*?), so the text without the rest of the form parses; the resource is looked up when it runs"
+
+[[suppress]]
+form = "db.utility.cache-refresh-table"
+kind = "negative_neighbour"
+target = "<table_name>"
+note = "a string literal in place of <table_name>"
+reason = "REFRESH followed by any text parses as Spark's REFRESH resource or REFRESH TABLE (SqlBaseParser #refreshTable, #refreshFunction, #refreshResource: REFRESH .*?), so the text without the rest of the form parses; the resource is looked up when it runs"
+
+[[suppress]]
+form = "db.utility.describe-catalog"
+kind = "required_operand_missing"
+target = "<catalog_name>"
+note = "omit <catalog_name>"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-catalog"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required CATALOG"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-connection"
+kind = "required_operand_missing"
+target = "<connection_name>"
+note = "omit <connection_name>"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-connection"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required CONNECTION"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-credential"
+kind = "required_operand_missing"
+target = "<credential_name>"
+note = "omit <credential_name>"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-credential"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required CREDENTIAL"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-database"
+kind = "required_operand_missing"
+target = "<schema_name>"
+note = "omit <schema_name>"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-database"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required DATABASE"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-function"
+kind = "required_operand_missing"
+target = "<function_name>"
+note = "omit <function_name>"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-function"
+kind = "negative_neighbour"
+target = "<function_name>"
+note = "a string literal in place of <function_name>"
+reason = "DESCRIBE FUNCTION takes a function name or a string literal (SqlBaseParser describeFuncName: identifierReference | stringLit | comparisonOperator | ...), so a string literal in its place parses"
+
+[[suppress]]
+form = "db.utility.describe-function"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required FUNCTION"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-governed-tag"
+kind = "required_operand_missing"
+target = "<tag_key>"
+note = "omit <tag_key>"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-governed-tag"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required GOVERNED"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-governed-tag"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TAG"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-history"
+kind = "required_operand_missing"
+target = "<table_name>"
+note = "omit <table_name>"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-location"
+kind = "required_operand_missing"
+target = "<location_name>"
+note = "omit <location_name>"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-location"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required EXTERNAL"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-location"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required LOCATION"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-procedure"
+kind = "required_operand_missing"
+target = "<procedure_name>"
+note = "omit <procedure_name>"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-procedure"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required PROCEDURE"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-schema"
+kind = "required_operand_missing"
+target = "<schema_name>"
+note = "omit <schema_name>"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-schema"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SCHEMA"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-table"
+kind = "required_operand_missing"
+target = "<partition_clause> in [ PARTITION <partition_clause> ]"
+note = "omit <partition_clause>"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-table"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required JSON in [ AS JSON ]"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-volume"
+kind = "required_operand_missing"
+target = "<volume_name>"
+note = "omit <volume_name>"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.describe-volume"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required VOLUME"
+reason = "DESC or DESCRIBE followed by a name parses as DESCRIBE TABLE with TABLE optional (SqlBaseParser #describeRelation: (DESC | DESCRIBE) TABLE? option=(EXTENDED | FORMATTED)? identifierReference partitionSpec? describeColName?), and Databricks formally disallows no literal as an identifier (reserved-words page), so the text without the rest of the form reads its last word as a table or column name and parses; the name is resolved afterwards"
+
+[[suppress]]
+form = "db.utility.show-functions"
+kind = "required_operand_missing"
+target = "<schema_name> in [ { FROM | IN } <schema_name> ]"
+note = "omit <schema_name>"
+reason = "SHOW FUNCTIONS takes an optional function name or a string pattern (SqlBaseParser #showFunctions: SHOW identifier? FUNCTIONS ((FROM | IN) ns)? (LIKE? (legacy=multipartIdentifier | pattern=stringLit))?), so a string literal is the documented pattern and a lone FROM reads as a function name; the text parses"
+
+[[suppress]]
+form = "db.utility.show-functions"
+kind = "negative_neighbour"
+target = "<function_name> in [ [ LIKE ] { <function_name> | <regex_pattern> } ]"
+note = "a string literal in place of <function_name>"
+reason = "SHOW FUNCTIONS takes an optional function name or a string pattern (SqlBaseParser #showFunctions: SHOW identifier? FUNCTIONS ((FROM | IN) ns)? (LIKE? (legacy=multipartIdentifier | pattern=stringLit))?), so a string literal is the documented pattern and a lone FROM reads as a function name; the text parses"
+
+[[suppress]]
+form = "db.query.select-groupby.nested-grouping-sets"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SETS"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall); whether the routine exists and takes those arguments is checked in analysis"
+
+[[suppress]]
+form = "db.query.select-groupby.nested-grouping-sets"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required GROUPING"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall); whether the routine exists and takes those arguments is checked in analysis"
+
+[[suppress]]
+form = "db.query.select-groupby.nested-grouping-sets"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required GROUPING after ("
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall); whether the routine exists and takes those arguments is checked in analysis"
+
+[[suppress]]
+form = "db.query.select-groupby.nested-grouping-sets"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SETS after GROUPING"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall); whether the routine exists and takes those arguments is checked in analysis"
+
+[[suppress]]
+form = "db.query.select-groupby.nested-grouping-sets"
+kind = "required_operand_missing"
+target = "<grouping_set> #2"
+note = "omit <grouping_set>"
+reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall); whether the routine exists and takes those arguments is checked in analysis"
+
+[[suppress]]
+form = "db.query.select-hints.join-hint-alias"
+kind = "negative_neighbour"
+target = "<table_name>"
+note = "a string literal in place of <table_name>"
+reason = "a hint's parameters are expressions (SqlBaseParser hintStatement: hintName=simpleIdentifier LEFT_PAREN parameters+=primaryExpression (COMMA parameters+=primaryExpression)* RIGHT_PAREN), so a string literal parses; which relation the hint names is resolved after parsing"
+
+[[suppress]]
+form = "db.ddl.alter-table-add-constraint.enable-novalidate"
+kind = "required_operand_missing"
+target = "<parent_table>"
+note = "omit <parent_table>"
+reason = "the derived negative 'ALTER TABLE t1 ADD FOREIGN KEY ( c1 ) REFERENCES ENABLE NOVALIDATE' parses: the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers semantic_error (TABLE_OR_VIEW_NOT_FOUND), not a syntax error; it is kept as an observed [[limit]] whose receipt settles it"
+
+[[limit]]
+form = "db.ddl.alter-table-add-constraint.enable-novalidate"
+kind = "required_operand_missing"
+target = "<parent_table>"
+note = "omit <parent_table>; the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers semantic_error (TABLE_OR_VIEW_NOT_FOUND), so the answer is recorded rather than expected"
+sql = "ALTER TABLE t1 ADD FOREIGN KEY ( c1 ) REFERENCES ENABLE NOVALIDATE"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.ddl.alter-table-add-constraint.enable-novalidate"
+kind = "negative_neighbour"
+note = "the form without its required NOVALIDATE"
+reason = "the derived negative 'ALTER TABLE t1 ADD PRIMARY KEY ( c1 ) ENABLE' parses: the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers semantic_error, not a syntax error; it is kept as an observed [[limit]] whose receipt settles it"
+
+[[limit]]
+form = "db.ddl.alter-table-add-constraint.enable-novalidate"
+kind = "negative_neighbour"
+note = "the form without its required NOVALIDATE; the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers semantic_error, so the answer is recorded rather than expected"
+sql = "ALTER TABLE t1 ADD PRIMARY KEY ( c1 ) ENABLE"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.ddl.alter-table-add-constraint.enable-novalidate"
+kind = "negative_neighbour"
+note = "the form without its required ENABLE"
+reason = "the derived negative 'ALTER TABLE t1 ADD PRIMARY KEY ( c1 ) NOVALIDATE' parses: the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers semantic_error, not a syntax error; it is kept as an observed [[limit]] whose receipt settles it"
+
+[[limit]]
+form = "db.ddl.alter-table-add-constraint.enable-novalidate"
+kind = "negative_neighbour"
+note = "the form without its required ENABLE; the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers semantic_error, so the answer is recorded rather than expected"
+sql = "ALTER TABLE t1 ADD PRIMARY KEY ( c1 ) NOVALIDATE"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.ddl.alter-table.alter-table-drop-feature"
+kind = "negative_neighbour"
+target = "<feature_name>"
+note = "a string literal in place of <feature_name>"
+reason = "the derived negative \"ALTER TABLE t1 DROP FEATURE 'v1'\" parses: the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers semantic_error (DELTA_FEATURE_DROP_UNSUPPORTED_CLIENT_FEATURE), not a syntax error; it is kept as an observed [[limit]] whose receipt settles it"
+
+[[limit]]
+form = "db.ddl.alter-table.alter-table-drop-feature"
+kind = "negative_neighbour"
+target = "<feature_name>"
+note = "a string literal in place of <feature_name>; the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers semantic_error (DELTA_FEATURE_DROP_UNSUPPORTED_CLIENT_FEATURE), so the answer is recorded rather than expected"
+sql = "ALTER TABLE t1 DROP FEATURE 'v1'"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.ddl.alter-table"
+kind = "negative_neighbour"
+target = "<clustering_columns> in [ ( <clustering_columns> ) | AUTO ]"
+note = "a string literal in place of <clustering_columns>"
+reason = "the derived negative \"ALTER TABLE t1 REPLACE PARTITIONED BY WITH CLUSTER BY ( 'v1' )\" parses: the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers unsupported_feature (DELTA_CLUSTER_BY_EXPRESSIONS_NOT_SUPPORTED), not a syntax error; it is kept as an observed [[limit]] whose receipt settles it"
+
+[[limit]]
+form = "db.ddl.alter-table"
+kind = "negative_neighbour"
+target = "<clustering_columns> in [ ( <clustering_columns> ) | AUTO ]"
+note = "a string literal in place of <clustering_columns>; the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers unsupported_feature (DELTA_CLUSTER_BY_EXPRESSIONS_NOT_SUPPORTED), so the answer is recorded rather than expected"
+sql = "ALTER TABLE t1 REPLACE PARTITIONED BY WITH CLUSTER BY ( 'v1' )"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.ddl.create-table-using"
+kind = "negative_neighbour"
+note = "the form without its required AS after <table_name>"
+reason = "the derived negative 'REPLACE TEMP TABLE t3 SELECT 1' parses: the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers semantic_error (TABLE_OR_VIEW_NOT_FOUND), not a syntax error; it is kept as an observed [[limit]] whose receipt settles it"
+
+[[limit]]
+form = "db.ddl.create-table-using"
+kind = "negative_neighbour"
+note = "the form without its required AS after <table_name>; the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers semantic_error (TABLE_OR_VIEW_NOT_FOUND), so the answer is recorded rather than expected"
+sql = "REPLACE TEMP TABLE t3 SELECT 1"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.ddl.create-table-using"
+kind = "required_operand_missing"
+target = "<default_collation_name> in [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION… #2"
+note = "omit <default_collation_name>"
+reason = "the derived negative 'REPLACE TEMP TABLE t3 DEFAULT COLLATION AS SELECT 1' parses: the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers semantic_error (TABLE_OR_VIEW_NOT_FOUND), not a syntax error; it is kept as an observed [[limit]] whose receipt settles it"
+
+[[limit]]
+form = "db.ddl.create-table-using"
+kind = "required_operand_missing"
+target = "<default_collation_name> in [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION… #2"
+note = "omit <default_collation_name>; the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers semantic_error (TABLE_OR_VIEW_NOT_FOUND), so the answer is recorded rather than expected"
+sql = "REPLACE TEMP TABLE t3 DEFAULT COLLATION AS SELECT 1"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.query.select-pipeop"
+kind = "identifier_class"
+target = "<table_alias>"
+note = "reserved: ANTI, which the reserved-words page reserves as a table alias, unquoted (expected rejection) and in backticks (expected acceptance)"
+reason = "the derived negative 'FROM t1 |> AS ANTI' parses: the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers accepted, not a syntax error; it is kept as an observed [[limit]] whose receipt settles it"
+
+[[limit]]
+form = "db.query.select-pipeop"
+kind = "identifier_class"
+target = "<table_alias>"
+note = "reserved: ANTI, which the reserved-words page reserves as a table alias, unquoted (expected rejection) and in backticks (expected acceptance); the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers accepted, so the answer is recorded rather than expected"
+anchor = "doc.identifiers-syntax"
+sql = "FROM t1 |> AS ANTI"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.select-pipeop"
+kind = "identifier_class"
+target = "<table_alias>"
+note = "reserved: ANTI, which the reserved-words page reserves as a table alias, unquoted (expected rejection) and in backticks (expected acceptance); the accepted half, kept when the unquoted half became observed"
+anchor = "doc.identifiers-syntax"
+sql = "FROM t1 |> AS `ANTI`"
+context = "raw"
+expect = "accept"
+
+[[suppress]]
+form = "db.query.select-unpivot"
+kind = "identifier_class"
+target = "<table_alias>"
+note = "reserved: ANTI, which the reserved-words page reserves as a table alias, unquoted (expected rejection) and in backticks (expected acceptance)"
+reason = "the derived negative 'SELECT * FROM t1 UNPIVOT ( v FOR k IN ( c1 , c2 ) ) ANTI' parses: the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers accepted, not a syntax error; it is kept as an observed [[limit]] whose receipt settles it"
+
+[[limit]]
+form = "db.query.select-unpivot"
+kind = "identifier_class"
+target = "<table_alias>"
+note = "reserved: ANTI, which the reserved-words page reserves as a table alias, unquoted (expected rejection) and in backticks (expected acceptance); the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers accepted, so the answer is recorded rather than expected"
+anchor = "doc.identifiers-syntax"
+sql = "SELECT * FROM t1 UNPIVOT ( v FOR k IN ( c1 , c2 ) ) ANTI"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.select-unpivot"
+kind = "identifier_class"
+target = "<table_alias>"
+note = "reserved: ANTI, which the reserved-words page reserves as a table alias, unquoted (expected rejection) and in backticks (expected acceptance); the accepted half, kept when the unquoted half became observed"
+anchor = "doc.identifiers-syntax"
+sql = "SELECT * FROM t1 UNPIVOT ( v FOR k IN ( c1 , c2 ) ) `ANTI`"
+context = "raw"
+expect = "accept"
+
+[[suppress]]
+form = "db.query.select-values.select"
+kind = "identifier_class"
+target = "<table_alias>"
+note = "reserved: ANTI, which the reserved-words page reserves as a table alias, unquoted (expected rejection) and in backticks (expected acceptance)"
+reason = "the derived negative 'SELECT 1 ANTI' parses: the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers accepted, not a syntax error; it is kept as an observed [[limit]] whose receipt settles it"
+
+[[limit]]
+form = "db.query.select-values.select"
+kind = "identifier_class"
+target = "<table_alias>"
+note = "reserved: ANTI, which the reserved-words page reserves as a table alias, unquoted (expected rejection) and in backticks (expected acceptance); the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers accepted, so the answer is recorded rather than expected"
+anchor = "doc.identifiers-syntax"
+sql = "SELECT 1 ANTI"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.select-values.select"
+kind = "identifier_class"
+target = "<table_alias>"
+note = "reserved: ANTI, which the reserved-words page reserves as a table alias, unquoted (expected rejection) and in backticks (expected acceptance); the accepted half, kept when the unquoted half became observed"
+anchor = "doc.identifiers-syntax"
+sql = "SELECT 1 `ANTI`"
+context = "raw"
+expect = "accept"
+

@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug gate-build evidence-guard polyglot-guard engine-free generate-cases generated-cases generate-syntax-cases syntax-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-results sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
+.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug gate-build evidence-guard polyglot-guard engine-free generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-results sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -114,6 +114,14 @@ generate-syntax-cases:
 syntax-cases:
 	uv run python -m scripts.build_syntax_cases --check $(SYNTAX_CASE_ARGS)
 
+# Dialect obligation builders whose --check rebuilds the committed obligations and cases into a
+# temporary directory and fails on a missing or differing file, or on any file under obligations/ or
+# cases/ that the build does not write. A dialect joins once its builder has --check.
+DIALECT_CASE_BUILDERS ?= scripts.build_syntax_obligations_databricks
+
+dialect-cases:
+	@set -e; for m in $(DIALECT_CASE_BUILDERS); do uv run python -m $$m --check; done
+
 # Rewrites referee/generated/ and referee/environments/ from scripts/referee_cases/.
 generate-referee-cases:
 	uv run python -m scripts.generate_referee_cases
@@ -128,7 +136,7 @@ referee-pending:
 	uv run python -m scripts.write_referee_pending $(REFEREE_ARGS)
 
 # The static gate, the first step of `gate`, and the Python API's tests.
-check-ci: rust-lint python-check fensu syntax-coverage depth-probe evidence-guard polyglot-guard engine-free generated-cases syntax-cases referee-cases python-api distribution-notices
+check-ci: rust-lint python-check fensu syntax-coverage depth-probe evidence-guard polyglot-guard engine-free generated-cases syntax-cases dialect-cases referee-cases python-api distribution-notices
 
 # Each distribution ships the licence and third-party notices; its copies must match the root files.
 distribution-notices:

@@ -1,0 +1,1431 @@
+# Reviewed inputs of the Databricks SQL catalogue; read by scripts/build_syntax_catalogue_databricks.py.
+#
+# [[form]] is a form catalogued by hand from a page whose syntax is in prose, bound to the SHA-256
+#   of the page's <article> element, since the rest of the page names per-deploy script bundles:
+#   an alias page (`An alias for CREATE SCHEMA`) or a configuration parameter's settings.
+# [[page]] is the reviewed status of a pinned page that catalogues no form, with its reason,
+#   bound to the same article hash.
+# [[reading]] reads one converted Syntax production as other lines, where the page's notation is
+#   wrong or ambiguous; `written` is the production as the build converts it.
+
+[[form]]
+page = "sql-ref-syntax-ddl-create-database"
+anchor = "CREATE DATABASE"
+kind = "statement"
+label = "create-database"
+grammar = [
+  "CREATE DATABASE [ IF NOT EXISTS ] <schema_name> [ COMMENT <schema_comment> | DEFAULT COLLATION <default_collation_name> | { LOCATION <schema_directory> | MANAGED LOCATION <location_path> } | RETAIN DROPPED FOR <number> { HOUR | HOURS | DAY | DAYS | WEEK | WEEKS } | WITH DBPROPERTIES ( { <property_name> = <property_value> } [ , ... ] ) ] [ ... ]",
+]
+basis = "prose"
+article_sha256 = "52a4b928ad3c40a86bfadb4dc3ed6b0289cd1656d35fadec8eb6b65c85256864"
+
+[[form]]
+page = "sql-ref-syntax-ddl-alter-database"
+anchor = "ALTER DATABASE"
+kind = "statement"
+label = "alter-database"
+grammar = [
+  "ALTER DATABASE <schema_name> { DEFAULT COLLATION <default_collation_name> | SET DBPROPERTIES ( { <key> = <val> } [ , ... ] ) | [ SET ] OWNER TO <principal> | SET TAGS ( { <tag_name> = <tag_value> } [ , ... ] ) | UNSET TAGS ( <tag_name> [ , ... ] ) | { ENABLE | DISABLE | INHERIT } PREDICTIVE OPTIMIZATION | SET MANAGED LOCATION <location> | [ SET ] RETAIN DROPPED TO <number> { HOUR | HOURS | DAY | DAYS | WEEK | WEEKS } }",
+]
+basis = "prose"
+article_sha256 = "1429aed4b54b50ea77423947da3ec56e4c570b599f9a0eacee4faa1ee280dc2f"
+
+[[form]]
+page = "sql-ref-syntax-ddl-drop-database"
+anchor = "DROP DATABASE"
+kind = "statement"
+label = "drop-database"
+grammar = [
+  "DROP DATABASE [ IF EXISTS ] <schema_name> [ RESTRICT | CASCADE ]",
+]
+basis = "prose"
+article_sha256 = "e37492e1eb34da8fbd87e523060f5a04a0c97d32d327744a001e8e76f9e0ea5a"
+
+[[form]]
+page = "sql-ref-syntax-aux-describe-database"
+anchor = "DESCRIBE DATABASE"
+kind = "statement"
+label = "describe-database"
+grammar = [
+  "{ DESC | DESCRIBE } DATABASE [ EXTENDED ] <schema_name>",
+]
+basis = "prose"
+article_sha256 = "2a234fcdfa153fc198617bcbbdaa0b4ac2a291af8eee7eaec06e9910b9f01741"
+
+[[form]]
+page = "sql-ref-syntax-aux-show-databases"
+anchor = "SHOW DATABASES"
+kind = "statement"
+label = "show-databases"
+grammar = [
+  "SHOW DATABASES [ { FROM | IN } <catalog_name> ] [ [ LIKE ] <regex_pattern> ]",
+]
+basis = "prose"
+article_sha256 = "ea8d25e881ac0cd6ebce1276fc37f93877047421bc6580441923b7f5ab6c9fae"
+
+[[form]]
+page = "sql-ref-syntax-ddl-usedb"
+anchor = "USE DATABASE"
+kind = "statement"
+label = "use-database"
+grammar = [
+  "USE DATABASE <schema_name>",
+]
+basis = "prose"
+article_sha256 = "5ee15a594febfd5546467a1af762fc169645abcc373f545b3328d383d803c390"
+
+[[form]]
+page = "sql-ref-syntax-ddl-create-server"
+anchor = "CREATE SERVER"
+kind = "statement"
+label = "create-server"
+grammar = [
+  "CREATE SERVER [ IF NOT EXISTS ] <connection_name> TYPE <connection_type> OPTIONS ( <option> <value> [ , ... ] ) [ COMMENT <comment> ]",
+]
+basis = "prose"
+article_sha256 = "5b08cb00fca62236fa07373e4b6a5ea8c69b19eebf8dab3748c1590243212e45"
+
+[[form]]
+page = "parameters/ansi_mode"
+anchor = "Settings"
+kind = "statement"
+label = "ansi-mode"
+grammar = [
+  "SET ANSI_MODE = { TRUE | FALSE }",
+]
+basis = "prose"
+article_sha256 = "6cc3cdf57232b5acfa5f672a1eb5883002de34cd3e2ebd91d56e1b0a3e57af37"
+
+[[form]]
+page = "parameters/collation"
+anchor = "Setting"
+kind = "statement"
+label = "collation"
+grammar = [
+  "SET COLLATION = <collation_name>",
+]
+basis = "prose"
+article_sha256 = "27c64af1e54826eec1fd2a7a45e4dd4cdbd4eb5e3094faed93e79f14bde6851b"
+
+[[form]]
+page = "parameters/legacy_time_parser_policy"
+anchor = "Settings"
+kind = "statement"
+label = "legacy-time-parser-policy"
+grammar = [
+  "SET LEGACY_TIME_PARSER_POLICY = { LEGACY | CORRECTED | EXCEPTION }",
+]
+basis = "prose"
+article_sha256 = "fe5469d1d5b3fa46f19cbcecbd2065c77b19a89321535812a565b03ef184513f"
+
+[[form]]
+page = "parameters/max_partition_bytes"
+anchor = "Settings"
+kind = "statement"
+label = "max-partition-bytes"
+grammar = [
+  "SET MAX_FILE_PARTITION_BYTES = <bytes>",
+]
+basis = "prose"
+article_sha256 = "946ca914bdb015f9d09ea3b7d6cfb6c605ddd7a09287614f8fc4b97185235ec6"
+
+[[form]]
+page = "parameters/statement_timeout"
+anchor = "Setting"
+kind = "statement"
+label = "statement-timeout"
+grammar = [
+  "SET STATEMENT_TIMEOUT = <seconds>",
+]
+basis = "prose"
+article_sha256 = "f0e3550a359e286b521ab3f5ce42d74df7c552a0fff5f2f2d1bebfab4010e0aa"
+
+[[form]]
+page = "parameters/timezone"
+anchor = "Setting"
+kind = "statement"
+label = "timezone"
+grammar = [
+  "SET TIMEZONE = <zone_id>",
+]
+basis = "prose"
+article_sha256 = "7e60156ae69e704c81c2f83614fc1d3667851faf113638edce33838380210e08"
+
+[[form]]
+page = "parameters/use_cached_result"
+anchor = "Examples"
+kind = "statement"
+label = "use-cached-result"
+grammar = [
+  "SET USE_CACHED_RESULT = { TRUE | FALSE }",
+]
+basis = "prose"
+article_sha256 = "5f9c3c7c3ca3d64dd672ad9e5d5aada861a0dc67c74de95060631017b6a8ff60"
+
+[[page]]
+page = "parameters/path"
+status = "no_syntax_block"
+reason = "the PATH parameter is set with SET PATH, catalogued from sql-ref-syntax-aux-conf-mgmt-set-path"
+article_sha256 = "80d2b2b08fe11b4b12aede6c4f3d2cfa013416af298e0d402465df70e7155329"
+
+[[page]]
+page = "parameters/read_only_external_metastore"
+status = "no_syntax_block"
+reason = "the page says the parameter can't be set at the session level; it is set in workspace configuration, not by a statement"
+article_sha256 = "94b207f5b10f32aa5ed39400359c610735fb548f1cd824154c94d2e539c6e9e1"
+
+[[page]]
+page = ""
+status = "no_syntax_block"
+reason = "an index or overview page that links to the reference pages, whose forms are catalogued there; its examples restate catalogued statements"
+article_sha256 = "4bf9f7e4894e314d1ddff8c12c5c070ed4ac7bcb1f48430fe7dbb7a13d583892"
+
+[[page]]
+page = "data-types/special-floating-point-values"
+status = "no_syntax_block"
+reason = "the special values are spellings inside string literals cast to FLOAT or DOUBLE ('NaN', 'Inf'), read at runtime: no SQL syntax beyond the catalogued cast and string literal"
+article_sha256 = "00deaac408d829bc35d6070ca9a41f6e4c1d5a66b410f51caa9cd377d35bb9a7"
+
+[[page]]
+page = "delta-create-bloomfilter-index"
+status = "no_syntax_block"
+reason = "the page marks CREATE BLOOMFILTER INDEX deprecated and documents no syntax for it"
+article_sha256 = "790f9656e78d33af08fa6d124c516046e8203604861e5d736f31b403b3eb6d94"
+
+[[page]]
+page = "how-to-use"
+status = "no_syntax_block"
+reason = "explains the reference's notation conventions; no syntax of its own"
+article_sha256 = "3662a2be7ca3bf4818970d6faf2f2b170ffa5ee7119a55e3ddab1de68db6ab4f"
+
+[[page]]
+page = "information-schema/abac_policy_definitions"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "0dccfa054e15f0f90634d0fe138808803c013e64a37d7c3284a2138a3a8bbcc3"
+
+[[page]]
+page = "information-schema/catalog_privileges"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "cca9a4ef10b74f77f5839359404bde40a460a641c8d73ac0f45dea00695cbc2e"
+
+[[page]]
+page = "information-schema/catalog_provider_share_usage"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "55f341225e50e086044e71eee511a311fcf04343c1b383e71493ff0472b38d99"
+
+[[page]]
+page = "information-schema/catalog_tags"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "7ea5b1d195b8a97d04a28f9dc44aa78d29e383c07d19a960e9b750c21ba7252b"
+
+[[page]]
+page = "information-schema/catalogs"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "329cc8c0e0f0b660cf0abeb1dd57691ece035f690e005ffe6e9c706dc6512172"
+
+[[page]]
+page = "information-schema/check_constraints"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "e8f8176b7ff477daff771490c144b6cc66ef3ccb6ce44e2978793d6c8f4f451f"
+
+[[page]]
+page = "information-schema/column_masks"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "596e92bca54c515f1727d7e82fdf283a20a964c459d50b8fd6059e89325b5def"
+
+[[page]]
+page = "information-schema/column_tags"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "d3f80756f5a999881917137f7a44c8449684522701b5625edf14872bc204f3ac"
+
+[[page]]
+page = "information-schema/columns"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "f302b53015b9743e575679d118b5af397bdaad3f82de1588bdf3048512c8ca60"
+
+[[page]]
+page = "information-schema/connection_privileges"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "8afc7059781405a80b8af79e301c9a3db06b6e7b0b6580439fe098f0730f31dd"
+
+[[page]]
+page = "information-schema/connections"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "83dd37e4079abd083096a1406f6f11f8c4e3d5d38069ab396fdc3ab54fe91eae"
+
+[[page]]
+page = "information-schema/constraint_column_usage"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "0fd1755fb8cdffd0ad86209ff224a210f1f57f4ec606661b06ac4adff84ef6e8"
+
+[[page]]
+page = "information-schema/constraint_table_usage"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "a2540e5aca080f2910ce3a9c2aad406495a793f04e708301615e6590a69f01e9"
+
+[[page]]
+page = "information-schema/credential_privileges"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "0fa01d3a2fd668a5837994c329d7a01b0395118772c01eae9c1c79b5f75455e0"
+
+[[page]]
+page = "information-schema/credentials"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "7c6709a3ca88d0c324efa4d0cc70dcbfcaf953f86c9fb75336660ceb76afcd6a"
+
+[[page]]
+page = "information-schema/external_location_privileges"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "0f52e3a9352f71aaf9fb69b6864b580d308cf2242360cd4618114e77c397726a"
+
+[[page]]
+page = "information-schema/external_locations"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "fe6d3df5fcf1dd65181b62f8107e9648ac3517b19af1ec61d23e0da960331aaa"
+
+[[page]]
+page = "information-schema/information_schema_catalog_name"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "4ad5be689cdc63fb1bb9d4744bd900afa29929ab1bc8e1c23ffc94a977970aea"
+
+[[page]]
+page = "information-schema/key_column_usage"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "05ec5f4e56b6616e1aef511a70c9fe48a51df94f87a3d11c9f83b638edd4d1f7"
+
+[[page]]
+page = "information-schema/metastore_privileges"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "1afa41e3ecec8ee0a9cca0f1d18b552a6d8acae1f00783110fe18ff9abc7e8b5"
+
+[[page]]
+page = "information-schema/metastores"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "724a5de1a3ef1a07655bf4658a5131c30082b837626bead7d061c6f2c4924bbc"
+
+[[page]]
+page = "information-schema/parameters"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "d69b0046b7cd3b90599a1984d83f404786ddd470ceb52e4db428c4e148882215"
+
+[[page]]
+page = "information-schema/providers"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "9aefe61e270956b42a8735627f09e9c96d5c31032efd674542e08206a584e564"
+
+[[page]]
+page = "information-schema/recipient_allowed_ip_ranges"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "416ba0b61375e127ff45f21caa8b6d4c900e22c9ec148de79c7a222c79a8b529"
+
+[[page]]
+page = "information-schema/recipient_tokens"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "d5e6b665e49ceeb3a5a3b129efa952b1d2056bc33f46cf0e9b7b9f5be09fb51f"
+
+[[page]]
+page = "information-schema/recipients"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "7986fd0902a793015228928df4f88a5344da5c1440177cc86edb7a5004e30422"
+
+[[page]]
+page = "information-schema/referential_constraints"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "dcace13fe01a9fb92164567cd5d73875d0a15936d990ec04060ef8a06ba99ef2"
+
+[[page]]
+page = "information-schema/routine_columns"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "a6d6463e6c6f74f4e40f91909d4f81a782169fe43c47db750f9acd2859ba45e7"
+
+[[page]]
+page = "information-schema/routine_privileges"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "b913c2daece2aa03a16e607ec14b29f593db6d9d3f116780e9587f0040f13e77"
+
+[[page]]
+page = "information-schema/routines"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "82fded8e9673cfd3b2341e45377040988c506a54dfa9f62e5627a66ad9337a52"
+
+[[page]]
+page = "information-schema/row_filters"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "8f17ce608deb64fce5d4836b884b2f59522d4099ae39a8652988afb338622f65"
+
+[[page]]
+page = "information-schema/schema_privileges"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "9fe7972f34eea861ca74b36d55b5fee57a3bae9bdcd331cfee17144161f2b1e5"
+
+[[page]]
+page = "information-schema/schema_share_usage"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "4cd85716612f6bc2bfc9da2d216d1fe594e7cb58ceed6cf1970336eafa7e9488"
+
+[[page]]
+page = "information-schema/schema_tags"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "0cea2f4040ec09f5dc1da5cde35c818f87d15204659d0fb0057f2bb95c508150"
+
+[[page]]
+page = "information-schema/schemata"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "f6815dd9d90ba81743730bdb257dd49f49569b13da39c195974f33af8d8319bd"
+
+[[page]]
+page = "information-schema/share_recipient_privileges"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "daa3b33a5239fcad0cb3c3e0bc6ad99561aa61365c9c08c18b33c6651b649fe6"
+
+[[page]]
+page = "information-schema/shares"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "69258e526977eb95401df10c0ceb4b46a61890a8e8e78880049a0838e35516de"
+
+[[page]]
+page = "information-schema/storage_credential_privileges"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "7113788db446faed4998d2e9d172237bfec7c36016a449e499988e846a0e5c78"
+
+[[page]]
+page = "information-schema/storage_credentials"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "f93ba101bab9a73c1f26a06f358146796a668a5144fb67c80e51d2bcddbc093a"
+
+[[page]]
+page = "information-schema/table_constraints"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "d566f54f3202b1b71f84b512e67cad38ac9e1be199bee2b2904fde46eecf50b9"
+
+[[page]]
+page = "information-schema/table_privileges"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "e4492080f0cb6ce9a66584744b7276dc9cee04cdae6639e5373dc607f2ffd729"
+
+[[page]]
+page = "information-schema/table_share_usage"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "b26c04f0647338c07fe568c8d4a9a85a8d256c03540b74aca81949b9f6311cb0"
+
+[[page]]
+page = "information-schema/table_tags"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "4c08775b0b0969a2bc58d145384ec56e35b46f54a4033c934498325490847b8d"
+
+[[page]]
+page = "information-schema/tables"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "488f4b0bc4274a03c1ae46e73602feadf23c170e1e225a270d26e44ce58e9b19"
+
+[[page]]
+page = "information-schema/views"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "7e4b4749366648b0aeba0e383af2f1e0594a2701af974af280a6e32fcb3093d6"
+
+[[page]]
+page = "information-schema/volume_privileges"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "97f1f0902b54350532a43639c205cf2790a1c226d5999d43142b1238aae4fa66"
+
+[[page]]
+page = "information-schema/volume_tags"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "55cea79a05f8bb0178952b50181aeaeebcb879aba1b9d4668ecb9b31c9189ed7"
+
+[[page]]
+page = "information-schema/volumes"
+status = "no_syntax_block"
+reason = "documents the columns of an INFORMATION_SCHEMA relation, read with the catalogued SELECT; no statement or clause syntax of its own"
+article_sha256 = "2119f847b5d06a60c3878dc47d3572e0ce6a47f938528124035da2a5226fcdbf"
+
+[[page]]
+page = "sql-ref-ansi-compliance"
+status = "no_syntax_block"
+reason = "describes ANSI-mode semantics of casts, arithmetic and functions catalogued elsewhere; its keyword table restates sql-ref-reserved-words"
+article_sha256 = "c1c48afe80768e8b2471158dee4a1bf41e105c8c3355585eb295bb027bf43387"
+
+[[page]]
+page = "sql-ref-authorized-user"
+status = "no_syntax_block"
+reason = "a concept page: prose and examples of statements catalogued from their own reference pages; no syntax block or syntax of its own"
+article_sha256 = "735c970298984bf71585302cdc8cca097de52fafe9812af3fca198e5cad87e4b"
+
+[[page]]
+page = "sql-ref-datatype-rules"
+status = "no_syntax_block"
+reason = "type promotion and coercion rules: semantics of the catalogued types, no syntax"
+article_sha256 = "0e7760e49b656057ec3089c532afbb565a8acc932b730782baed5fae96e5032b"
+
+[[page]]
+page = "sql-ref-datatypes"
+status = "no_syntax_block"
+reason = "lists the data types each catalogued from its own data-types/ page; the Scala and Python class listings are host-language API"
+article_sha256 = "70dc4ad40339a32cb3e0becf634f28eb82cf08cd969e5f1a3362dac6f4570b1e"
+
+[[page]]
+page = "sql-ref-datetime-pattern"
+status = "no_syntax_block"
+reason = "the pattern letters of format strings, read at runtime inside string literals; not SQL syntax"
+article_sha256 = "700d3334547905639111a7e4573d284a90462f1f3f5c1adb4a1d1544eb01a54e"
+
+[[page]]
+page = "sql-ref-external-locations"
+status = "no_syntax_block"
+reason = "a concept page: prose and examples of statements catalogued from their own reference pages; no syntax block or syntax of its own"
+article_sha256 = "e2e729dbefc6d153aed0494755f3be0f916b82763c672666e6b8e520240ce894"
+
+[[page]]
+page = "sql-ref-external-tables"
+status = "no_syntax_block"
+reason = "a concept page: prose and examples of statements catalogued from their own reference pages; no syntax block or syntax of its own"
+article_sha256 = "1049221fd0627209d172e75ce79564c50f22901625d3603600ec81a165a9bde7"
+
+[[page]]
+page = "sql-ref-federated-queries"
+status = "no_syntax_block"
+reason = "a concept page: prose and examples of statements catalogued from their own reference pages; no syntax block or syntax of its own"
+article_sha256 = "021b564ab97adf4954e5f3eb7bf8718eeec00ab8b441902bb0f413f79b6c9d78"
+
+[[page]]
+page = "sql-ref-file-functions-quickstart"
+status = "no_syntax_block"
+reason = "a concept page: prose and examples of statements catalogued from their own reference pages; no syntax block or syntax of its own"
+article_sha256 = "4910df22f1e804a56f9e2d79b3f6e905c5d269c0e3006810fb73cc831e945b9c"
+
+[[page]]
+page = "sql-ref-functions"
+status = "no_syntax_block"
+reason = "an index or overview page that links to the reference pages, whose forms are catalogued there; its examples restate catalogued statements"
+article_sha256 = "daa93bd5cb860acaabbf9b6794ef6e36acb341a3f6522ec09265946cc677abbb"
+
+[[page]]
+page = "sql-ref-functions-builtin"
+status = "no_syntax_block"
+reason = "an index or overview page that links to the reference pages, whose forms are catalogued there; its examples restate catalogued statements"
+article_sha256 = "5e54f64d471b2673fba6cc37429ffd9ccb533f711df419406a2b83c2ec9fef2f"
+
+[[page]]
+page = "sql-ref-functions-builtin-alpha"
+status = "no_syntax_block"
+reason = "an index or overview page that links to the reference pages, whose forms are catalogued there; its examples restate catalogued statements"
+article_sha256 = "872c5110ad67ec97e9c1c134aac3b8d1d113d5c3f21e0d4613c01244a32488d8"
+
+[[page]]
+page = "sql-ref-functions-udf-aggregate"
+status = "no_syntax_block"
+reason = "Scala and Python Aggregator classes registered from host code: host-language API, not SQL syntax"
+article_sha256 = "cf91f2cdde33f20340a2b1e6c37e328dd2c183f2031de4f07e75796313c2366d"
+
+[[page]]
+page = "sql-ref-functions-udf-hive"
+status = "no_syntax_block"
+reason = "registers Hive UDFs with the catalogued CREATE FUNCTION (External); its examples restate catalogued statements"
+article_sha256 = "2b855aef5fe6fc010e2c2cefc13818311bcfc9e4c35579e663096f9e8e0de87b"
+
+[[page]]
+page = "sql-ref-functions-udf-scalar"
+status = "no_syntax_block"
+reason = "Scala and Python UserDefinedFunction classes: host-language API, not SQL syntax"
+article_sha256 = "0224ce3d91833ff35984dff3a3e19c190cef1a53a1e2aa113f2ebc1e45a3b9b2"
+
+[[page]]
+page = "sql-ref-h3-geospatial-functions"
+status = "no_syntax_block"
+reason = "an index or overview page that links to the reference pages, whose forms are catalogued there; its examples restate catalogued statements"
+article_sha256 = "ddbd429e8af70ba91f7d2c44540e681b9594f744db2ecc3bd9dcb87d927a8eb5"
+
+[[page]]
+page = "sql-ref-h3-geospatial-functions-alpha"
+status = "no_syntax_block"
+reason = "an index or overview page that links to the reference pages, whose forms are catalogued there; its examples restate catalogued statements"
+article_sha256 = "ec7049a9ff9eee2e0e435bf7dab8bffccfed758f4cfc4cb232d4c81cfafbb9a2"
+
+[[page]]
+page = "sql-ref-h3-geospatial-functions-examples"
+status = "no_syntax_block"
+reason = "a concept page: prose and examples of statements catalogued from their own reference pages; no syntax block or syntax of its own"
+article_sha256 = "d8b1c534bd8c9db09a499f75f8cf353305ef1828b46f98bc3c430472520b2aad"
+
+[[page]]
+page = "sql-ref-h3-geospatial-functions-quickstart"
+status = "no_syntax_block"
+reason = "a concept page: prose and examples of statements catalogued from their own reference pages; no syntax block or syntax of its own"
+article_sha256 = "e780fb78fe3db61c6c93862da51f283970324c1f6d7612c313800d91e1f2814f"
+
+[[page]]
+page = "sql-ref-hive-compatibility"
+status = "no_syntax_block"
+reason = "lists supported and unsupported Hive features in prose; the supported statements are catalogued from their own pages"
+article_sha256 = "b65e245f5760d3063f3bd33efe5950da92d55f68f4fa4e9874c3e7ac92405d20"
+
+[[page]]
+page = "sql-ref-information-schema"
+status = "no_syntax_block"
+reason = "an index or overview page that links to the reference pages, whose forms are catalogued there; its examples restate catalogued statements"
+article_sha256 = "40a77d2b5d268b0c835b59d23c1f2848adf020a2c1ce3c521f174503a7d794b3"
+
+[[page]]
+page = "sql-ref-ip-functions"
+status = "no_syntax_block"
+reason = "an index or overview page that links to the reference pages, whose forms are catalogued there; its examples restate catalogued statements"
+article_sha256 = "c043d03421bfc81582707d6a0091060e936771b13faae6d9d00f36cf3ccd89c1"
+
+[[page]]
+page = "sql-ref-name-resolution"
+status = "no_syntax_block"
+reason = "name-resolution rules: semantics of names catalogued from sql-ref-names, no syntax of its own"
+article_sha256 = "0292f3129ab73de80f30d69257c9860e430aed5bc7493d72e413164764f7889f"
+
+[[page]]
+page = "sql-ref-null-semantics"
+status = "no_syntax_block"
+reason = "NULL handling of operators and functions catalogued elsewhere: semantics, no syntax"
+article_sha256 = "a82c71eae0ad317e91a1eebddd2ca9396c9b36610a52430340ee7cef0adec443"
+
+[[page]]
+page = "sql-ref-parameters"
+status = "no_syntax_block"
+reason = "an index or overview page that links to the reference pages, whose forms are catalogued there; its examples restate catalogued statements"
+article_sha256 = "ff8d1e09f0c60fad10a92099a6293fcdb6710b6c2732f7a5fa4a11bc01236951"
+
+[[page]]
+page = "sql-ref-regexp-pattern"
+status = "no_syntax_block"
+reason = "the Java regular-expression language read at runtime inside string literals; not SQL syntax"
+article_sha256 = "6819d81a194cc799352b26084aefe13b54a0753027bb92d2c2d0d9ca3dea1024"
+
+[[page]]
+page = "sql-ref-reserved-words"
+status = "no_syntax_block"
+reason = "lists reserved words and schema names; read by the omission audit's keyword check, not a syntax form"
+article_sha256 = "cd656b05810426046ee000d98d963b112f7d50dfcccafe06141fa5e29df10610"
+
+[[page]]
+page = "sql-ref-scripting"
+status = "no_syntax_block"
+reason = "overview of SQL scripting; each control-flow statement is catalogued from its control-flow/ page"
+article_sha256 = "b919e7717857164099e43db0fabda653056ced1344754a491ddb4d4e0b6918bc"
+
+[[page]]
+page = "sql-ref-sharing"
+status = "no_syntax_block"
+reason = "a concept page: prose and examples of statements catalogued from their own reference pages; no syntax block or syntax of its own"
+article_sha256 = "fd586415c0eab8a3c93296093778caff92501acb82b7d900f52d5d9d3f3165a9"
+
+[[page]]
+page = "sql-ref-st-geospatial-functions"
+status = "no_syntax_block"
+reason = "an index or overview page that links to the reference pages, whose forms are catalogued there; its examples restate catalogued statements"
+article_sha256 = "a1a14f9447af416ccd8c962cba427b546beb31216f821c1d39e5cf564294b6fd"
+
+[[page]]
+page = "sql-ref-st-geospatial-functions-alpha"
+status = "no_syntax_block"
+reason = "an index or overview page that links to the reference pages, whose forms are catalogued there; its examples restate catalogued statements"
+article_sha256 = "1b1d7a0e810c5347f738d34b7af96e3117150a189ff2d3c18bb07d58ee26aaf6"
+
+[[page]]
+page = "sql-ref-storage-credentials"
+status = "no_syntax_block"
+reason = "a concept page: prose and examples of statements catalogued from their own reference pages; no syntax block or syntax of its own"
+article_sha256 = "8f9c376ff107d6968bf35241b6bf4c0044625cbfa12d4b35eca7d280f0ae94b5"
+
+[[page]]
+page = "sql-ref-syntax-ddl-create-table"
+status = "no_syntax_block"
+reason = "a hub naming the CREATE TABLE variants, each catalogued from its own page (USING, Hive format, LIKE, CLONE)"
+article_sha256 = "4891701e21d752434d2daa523c95449824920bf8258c71cc54d6099c92ae1ed2"
+
+[[page]]
+page = "sql-ref-variables"
+status = "no_syntax_block"
+reason = "overview of session variables; DECLARE VARIABLE, SET VARIABLE and DROP VARIABLE are catalogued from their own pages"
+article_sha256 = "d44896ae01d00f594c81a8d81bbfe34211f8b24b84922b83c2deee7844d27f59"
+
+[[page]]
+page = "sql-ref-volumes"
+status = "no_syntax_block"
+reason = "overview of volumes; CREATE, ALTER, DROP, UNDROP, DESCRIBE and SHOW VOLUME(S) are catalogued from their own pages, volume paths are string literals"
+article_sha256 = "598189a00e5837e42589d77df30650fb1c8c364058f218ad21f446d659b0e2ab"
+
+# Readings of converted Syntax productions; see the header.
+[[reading]]
+page = "sql-ref-syntax-ddl-alter-connection"
+written = "ALTER CONNECTION <connection_name> { [ SET ] OWNER TO <principal> | RENAME TO <new_connection_name> | OPTIONS ( <option> <value> [ , ... ] )"
+read = [
+  "ALTER CONNECTION <connection_name> { [ SET ] OWNER TO <principal> | RENAME TO <new_connection_name> | OPTIONS ( <option> <value> [ , ... ] ) }",
+]
+reason = "unbalanced brackets in the page's notation: the choice is not closed; read with the closing brace"
+
+[[reading]]
+page = "sql-ref-syntax-ddl-alter-table-manage-column"
+written = "DROP [ COLUMN | COLUMNS ] [ IF EXISTS ] ( { { <column_identifier> | <field_name> } [ , ... ] )"
+read = [
+  "DROP [ COLUMN | COLUMNS ] [ IF EXISTS ] ( { <column_identifier> | <field_name> } [ , ... ] )",
+]
+reason = "unbalanced brackets in the page's notation: a stray opening brace before the column choice; read without it"
+
+[[reading]]
+page = "sql-ref-syntax-ddl-alter-share"
+written = "<alter_add_materialized_view> ::= { { ALTER | ADD } MATERIALIZED VIEW <mat_view_name> [ COMMENT <comment> ] [ AS <mat_view_share_name> ]"
+read = [
+  "<alter_add_materialized_view> ::= { { ALTER | ADD } MATERIALIZED VIEW <mat_view_name> [ COMMENT <comment> ] [ AS <mat_view_share_name> ] }",
+]
+reason = "unbalanced brackets in the page's notation: the definition's opening brace is not closed, unlike alter_add_table's; read with the closing brace"
+
+[[reading]]
+page = "sql-ref-syntax-ddl-alter-share"
+written = "<alter_add_model> ::= { { ALTER | ADD } MODEL <model_name> [ COMMENT <comment> ] [ AS <model_share_name> ]"
+read = [
+  "<alter_add_model> ::= { { ALTER | ADD } MODEL <model_name> [ COMMENT <comment> ] [ AS <model_share_name> ] }",
+]
+reason = "unbalanced brackets in the page's notation: the definition's opening brace is not closed, unlike alter_add_table's; read with the closing brace"
+
+[[reading]]
+page = "sql-ref-syntax-ddl-alter-share"
+written = "<alter_add_schema> ::= { { ALTER | ADD } SCHEMA <schema_name> [ COMMENT <comment> ]"
+read = [
+  "<alter_add_schema> ::= { { ALTER | ADD } SCHEMA <schema_name> [ COMMENT <comment> ] }",
+]
+reason = "unbalanced brackets in the page's notation: the definition's opening brace is not closed, unlike alter_add_table's; read with the closing brace"
+
+[[reading]]
+page = "sql-ref-syntax-ddl-alter-share"
+written = "<alter_add_view> ::= { { ALTER | ADD } VIEW <view_name> [ COMMENT <comment> ] [ AS <view_share_name> ]"
+read = [
+  "<alter_add_view> ::= { { ALTER | ADD } VIEW <view_name> [ COMMENT <comment> ] [ AS <view_share_name> ] }",
+]
+reason = "unbalanced brackets in the page's notation: the definition's opening brace is not closed, unlike alter_add_table's; read with the closing brace"
+
+[[reading]]
+page = "sql-ref-syntax-ddl-alter-table-add-constraint"
+written = "<key_constraint> ::= { [ CONSTRAINT <name> ] { PRIMARY KEY ( <key_column> [ TIMESERIES ] [ , ... ] ) [ <constraint_option> [ ... ] ] | UNIQUE ( <key_column> [ , ... ] ) [ <constraint_option> [ ... ] ] | { FOREIGN KEY ( <foreign_key_column> [ , ... ] ) REFERENCES <parent_relation> [ ( <parent_column> [ , ... ] ] ) [ <constraint_option> | <foreign_key_option> ] [ ... ] } }"
+read = [
+  "<key_constraint> ::= { [ CONSTRAINT <name> ] { PRIMARY KEY ( <key_column> [ TIMESERIES ] [ , ... ] ) [ <constraint_option> [ ... ] ] | UNIQUE ( <key_column> [ , ... ] ) [ <constraint_option> [ ... ] ] | { FOREIGN KEY ( <foreign_key_column> [ , ... ] ) REFERENCES <parent_relation> [ ( <parent_column> [ , ... ] ) ] [ <constraint_option> | <foreign_key_option> ] [ ... ] } } }",
+]
+reason = "unbalanced brackets in the page's notation: the parent column list closes its bracket before its parenthesis, and the definition's outer brace is not closed; read as the CONSTRAINT clause's table_constraint writes it"
+
+[[reading]]
+page = "sql-ref-syntax-ddl-create-sql-function"
+written = "<characteristic> ::= { LANGUAGE { SQL | PYTHON | SCALA | JAVA } | [ NOT ] DETERMINISTIC | COMMENT <function_comment> | [ CONTAINS SQL | READS SQL DATA ] | DEFAULT COLLATION <default_collation_name> | PARAMETER STYLE PANDAS | CREDENTIALS ( <service_credential> [ , ... ] ) | SECRETS ( <secret_name> [ , ... ] ) } | <environment> }"
+read = [
+  "<characteristic> ::= { LANGUAGE { SQL | PYTHON | SCALA | JAVA } | [ NOT ] DETERMINISTIC | COMMENT <function_comment> | [ CONTAINS SQL | READS SQL DATA ] | DEFAULT COLLATION <default_collation_name> | PARAMETER STYLE PANDAS | CREDENTIALS ( <service_credential> [ , ... ] ) | SECRETS ( <secret_name> [ , ... ] ) | <environment> }",
+]
+reason = "unbalanced brackets in the page's notation: a stray closing brace before the last alternative; read as one choice"
+
+[[reading]]
+page = "sql-ref-syntax-ddl-create-view"
+written = "<with_clause> ::= WITH { { <schema_binding> | METRICS } | ( { <schema_binding> | METRICS } [ , ... ] } )"
+read = [
+  "<with_clause> ::= { <schema_binding> | WITH METRICS | WITH ( { SCHEMA { BINDING | COMPENSATION | [ TYPE ] EVOLUTION } | METRICS } [ , ... ] ) }",
+]
+reason = "unbalanced brackets in the page's notation: the parenthesised list closes its brace inside the parenthesis; read with them nested. The page's <schema_binding> already begins WITH SCHEMA, so WITH is not repeated before it, as the page's examples write WITH SCHEMA BINDING and WITH METRICS"
+
+[[reading]]
+page = "delta-update"
+written = "[ <common_table_expression> ] UPDATE <table_name> [ <table_alias> ] SET { { <column_name> | <field_name> } = [ <expr> | DEFAULT } [ , ... ] [ WHERE <where_clause> ]"
+read = [
+  "[ <common_table_expression> ] UPDATE <table_name> [ <table_alias> ] SET { { <column_name> | <field_name> } = { <expr> | DEFAULT } } [ , ... ] [ WHERE <where_clause> ]",
+]
+reason = "unbalanced brackets in the page's notation: the value choice opens with [ and closes with }; read as a required choice, as MERGE's UPDATE SET writes it"
+
+[[reading]]
+page = "delta-merge-into"
+written = "<not_matched_action> ::= { INSERT * [ EXCEPT ( <column> [ , ... ] ) ] | INSERT ( <column1> [ , ... ] ) VALUES ( <expr> | DEFAULT ] [ , ... ] )"
+read = [
+  "<not_matched_action> ::= { INSERT * [ EXCEPT ( <column> [ , ... ] ) ] | INSERT ( <column1> [ , ... ] ) VALUES ( { <expr> | DEFAULT } [ , ... ] ) }",
+]
+reason = "unbalanced brackets in the page's notation: the value choice opens with ( and closes with ], and the definition's brace is not closed"
+
+[[reading]]
+page = "sql-ref-function-invocation"
+written = "<function_name> ( [ <arg_expr> | <table_argument> | <star_clause> ] [ , ... ] [ namedParameter => [ <arg_expr> | <table_argument> ] [ , ... ] )"
+read = [
+  "<function_name> ( [ <arg_expr> | <table_argument> | <star_clause> ] [ , ... ] [ <named_parameter> => { <arg_expr> | <table_argument> } [ , ... ] ] )",
+]
+reason = "unbalanced brackets in the page's notation: the named-parameter part is not closed; read as an optional part with a required argument choice; namedParameter is the placeholder <named_parameter>"
+
+[[reading]]
+page = "sql-ref-names"
+written = "{ [ <schema_name> . ] <table_identifier> | IDENTIFIER <identifier_clause> | { <file_format> | ` <file_format> ` } . ` <path_to_table> ` } [ <temporal_spec> ] [ <options_spec> ] }"
+read = [
+  "{ [ <schema_name> . ] <table_identifier> | IDENTIFIER <identifier_clause> | { <file_format> | ` <file_format> ` } . ` <path_to_table> ` } [ <temporal_spec> ] [ <options_spec> ]",
+]
+reason = "unbalanced brackets in the page's notation: a stray closing brace at the end; read without it"
+
+[[reading]]
+page = "sql-ref-syntax-window-functions-frame"
+written = "{ <frame_mode> <frame_start> | <frame_mode> BETWEEN <frame_start> AND <frame_end> } }"
+read = [
+  "{ <frame_mode> <frame_start> | <frame_mode> BETWEEN <frame_start> AND <frame_end> }",
+]
+reason = "unbalanced brackets in the page's notation: a stray closing brace at the end; read without it"
+
+[[reading]]
+page = "sql-ref-function-invocation"
+written = "<table_argument> ::= { TABLE ( { <table_name> | <query> } ) [ <table_partition> ] [ <table_order> ]"
+read = [
+  "<table_argument> ::= { TABLE ( { <table_name> | <query> } ) [ <table_partitioning> ] [ <table_ordering> ] }",
+]
+reason = "unbalanced brackets in the page's notation: the definition's opening brace is not closed; read with the closing brace. The page names the parts table_partition and table_order here but defines them as table_partitioning and table_ordering; read with the defined names"
+
+[[reading]]
+page = "sql-ref-function-invocation"
+written = "<table_ordering> ::= { { ORDER | SORT } BY { <order_by_expr> | ( <order_by_expr> [ , ... ] } }"
+read = [
+  "<table_ordering> ::= { { ORDER | SORT } BY { <order_by_expr> | ( <order_by_expr> [ , ... ] ) } }",
+]
+reason = "unbalanced brackets in the page's notation: the parenthesised list is not closed; read with its closing parenthesis"
+
+[[reading]]
+page = "functions/bit_get"
+written = "BIT_GET ( <expr> , <pos> ) )"
+read = [
+  "BIT_GET ( <expr> , <pos> )",
+]
+reason = "unbalanced brackets in the page's notation: a stray closing parenthesis; read without it"
+
+[[reading]]
+page = "functions/struct"
+written = "STRUCT ( <expr1> [ [ AS ] <alias1> ] ) [ , ... ] )"
+read = [
+  "STRUCT ( <expr1> [ [ AS ] <alias1> ] [ , ... ] )",
+]
+reason = "unbalanced brackets in the page's notation: the call closes before its repetition; read with the repetition inside the call"
+
+[[reading]]
+page = "functions/substring"
+written = "SUBSTRING ( <expr> FROM <pos> [ FOR <len> ] ] )"
+read = [
+  "SUBSTRING ( <expr> FROM <pos> [ FOR <len> ] )",
+]
+reason = "unbalanced brackets in the page's notation: a stray closing bracket; read without it"
+
+[[reading]]
+page = "sql-ref-syntax-qry-select-sampling"
+written = "TABLESAMPLE ( { <percentage> PERCENT ) | <num_rows> ROWS | BUCKET <fraction> OUT OF <total> } ) [ REPEATABLE ( <seed> ) ]"
+read = [
+  "TABLESAMPLE ( { <percentage> PERCENT | <num_rows> ROWS | BUCKET <fraction> OUT OF <total> } ) [ REPEATABLE ( <seed> ) ]",
+]
+reason = "unbalanced brackets in the page's notation: a stray closing parenthesis after PERCENT; read without it"
+
+[[reading]]
+page = "sql-ref-syntax-qry-select-setops"
+written = "{ UNION | INTERSECT | EXCEPT } [ ALL | DISTINCT ] <subquery2> } [ ... ]"
+read = [
+  "<subquery1> { { UNION | INTERSECT | EXCEPT | MINUS } [ ALL | DISTINCT ] <subquery2> } [ ... ]",
+]
+reason = "unbalanced brackets in the page's notation: the repeated group has no opening brace and drops subquery1, which the page's parameters name; read as subquery1 followed by one or more operations. The page's prose adds 'You can specify MINUS as a syntax alternative for EXCEPT', read into the choice"
+
+[[reading]]
+page = "sql-ref-syntax-qry-select-pivot"
+written = "<expression_list> ::= { <expression> [ AS ] [ <column_alias> ] | { ( <expression> [ , ... ] ) [ AS ] [ <column_alias> ] } [ , ... ] ) }"
+read = [
+  "<expression_list> ::= { <expression> [ AS ] [ <column_alias> ] | ( <expression> [ , ... ] ) [ AS ] [ <column_alias> ] } [ , ... ]",
+]
+reason = "unbalanced brackets in the page's notation: a stray closing parenthesis and brace; read as one repeated choice"
+
+[[reading]]
+page = "sql-ref-syntax-aux-set-variable"
+written = "SET [ VAR | VARIABLE ] ( <variable_name> [ , ... ] ) = ( <query> ) }"
+read = [
+  "SET [ VAR | VARIABLE ] ( <variable_name> [ , ... ] ) = ( <query> )",
+]
+reason = "unbalanced brackets in the page's notation: a stray closing brace at the end; read without it"
+
+[[reading]]
+page = "sql-ref-syntax-aux-show-volumes"
+written = "SHOW VOLUMES [ { FROM | IN } <schema_name> ] [ [ LIKE ] <regex_pattern> } ]"
+read = [
+  "SHOW VOLUMES [ { FROM | IN } <schema_name> ] [ [ LIKE ] <regex_pattern> ]",
+]
+reason = "unbalanced brackets in the page's notation: a stray closing brace; read as SHOW SCHEMAS writes its pattern"
+
+[[reading]]
+page = "sql-ref-syntax-ddl-alter-schema"
+written = "ALTER SCHEMA <schema_name> { DEFAULT COLLATION <default_collation_name> | SET DBPROPERTIES ( { <key> = <val> } [ , ... ] ) | [ SET ] OWNER TO <principal> SET TAGS ( { <tag_name> = <tag_value> } [ , ... ] ) | UNSET TAGS ( <tag_name> [ , ... ] ) | { ENABLE | DISABLE | INHERIT } PREDICTIVE OPTIMIZATION | SET MANAGED LOCATION <location> | [ SET ] RETAIN DROPPED TO <number> { HOUR | HOURS | DAY | DAYS | WEEK | WEEKS } }"
+read = [
+  "ALTER SCHEMA <schema_name> { DEFAULT COLLATION <default_collation_name> | SET DBPROPERTIES ( { <key> = <val> } [ , ... ] ) | [ SET ] OWNER TO <principal> | SET TAGS ( { <tag_name> = <tag_value> } [ , ... ] ) | UNSET TAGS ( <tag_name> [ , ... ] ) | { ENABLE | DISABLE | INHERIT } PREDICTIVE OPTIMIZATION | SET MANAGED LOCATION <location> | [ SET ] RETAIN DROPPED TO <number> { HOUR | HOURS | DAY | DAYS | WEEK | WEEKS } }",
+]
+reason = "a missing bar: OWNER TO and SET TAGS are alternatives of the choice, as every other ALTER statement writes them"
+
+[[reading]]
+page = "sql-ref-syntax-qry-select-pipeop"
+written = "{ SELECT <select_clause> [ GROUP BY <grouping_expr> [ AS <column_alias> ] [ , ... ] ] | EXTEND { <expression> [ [ AS ] <column_alias> ] } [ , ... ] | SET { <column_name> = <expression> } [ , ... ] | DROP <column_name> [ , ... ] | AS <table_alias> | WHERE <where_clause> | { LIMIT <limit_clause> | OFFSET <offset_clause> | LIMIT <limit_clause> OFFSET <offset_clause> } | <aggregation> | JOIN <join_clause> | ORDER BY <order_by_clause> | <set_operator> | TABLESAMPLE <tablesample_clause> PIVOT <pivot_clause> UNPIVOT <unpivot_clause> }"
+read = [
+  "{ SELECT <select_clause> [ GROUP BY <grouping_expr> [ AS <column_alias> ] [ , ... ] ] | EXTEND { <expression> [ [ AS ] <column_alias> ] } [ , ... ] | SET { <column_name> = <expression> } [ , ... ] | DROP <column_name> [ , ... ] | AS <table_alias> | WHERE <where_clause> | { LIMIT <limit_clause> | OFFSET <offset_clause> | LIMIT <limit_clause> OFFSET <offset_clause> } | <aggregation> | JOIN <join_clause> | ORDER BY <order_by_clause> | <set_operator> | TABLESAMPLE <tablesample_clause> | PIVOT <pivot_clause> | UNPIVOT <unpivot_clause> }",
+]
+reason = "missing bars: the page's parameters describe TABLESAMPLE, PIVOT and UNPIVOT as separate piped operations"
+
+[[reading]]
+page = "sql-ref-syntax-qry-pipeline"
+written = "{ FROM | TABLE } <relation_name> { | <piped_operation> } [ ... ]"
+read = [
+  "{ FROM | TABLE } <relation_name> { \\| <piped_operation> } [ ... ]",
+]
+reason = "the bar here is the pipe token the page's prose describes ('you can use | in place of |>'), not a choice; written \\| as a literal token"
+
+[[reading]]
+page = "sql-ref-syntax-qry-select-sortby"
+written = "<sort_direction> ::= [ ASC | DEC ]"
+read = [
+  "<sort_direction> ::= [ ASC | DESC ]",
+]
+reason = "DEC is a typo of DESC: the page's parameters and ORDER BY's sort_direction write ASC | DESC"
+
+[[reading]]
+page = "sql-ref-syntax-qry-select-match-recognize-pattern"
+written = "<pattern_operator> ::= { ( [ <row_pattern> ] ) | PERMUTE ( <row_pattern> [ , ... ] ) | <row_pattern> | <row_pattern> | <row_pattern> <row_pattern> }"
+read = [
+  "<pattern_operator> ::= { ( [ <row_pattern> ] ) | PERMUTE ( <row_pattern> [ , ... ] ) | <row_pattern> \\| <row_pattern> | <row_pattern> <row_pattern> }",
+]
+reason = "the bar between the two row_pattern operands is the pattern language's alternation operator, not a choice (the page lists alternation and concatenation); written \\| as a literal token, and the duplicated <row_pattern> alternative it leaves is dropped"
+
+[[reading]]
+page = "sql-ref-syntax-ddl-alter-table-add-constraint"
+written = "ADD [ <check_constraint> | <key_constraint> ]"
+read = [
+  "ADD { <check_constraint> | <key_constraint> }",
+]
+reason = "the brackets would make ADD alone a clause; the page's parameters require one of the two constraints, read as a required choice"
+
+[[reading]]
+page = "sql-ref-syntax-ddl-alter-catalog"
+written = "ALTER CATALOG [ <catalog_name> ] { DEFAULT COLLATION <default_collation_name> | [ SET ] OWNER TO <principal> SET TAGS ( { <tag_name> = <tag_value> } [ , ... ] ) | UNSET TAGS ( <tag_name> [ , ... ] ) | { ENABLE | DISABLE | INHERIT } PREDICTIVE OPTIMIZATION | OPTIONS ( <option> <value> [ , ... ] ) | SET MANAGED LOCATION <location> | [ SET ] RETAIN DROPPED TO <number> { HOUR | HOURS | DAY | DAYS | WEEK | WEEKS } }"
+read = [
+  "ALTER CATALOG [ <catalog_name> ] { DEFAULT COLLATION <default_collation_name> | [ SET ] OWNER TO <principal> | SET TAGS ( { <tag_name> = <tag_value> } [ , ... ] ) | UNSET TAGS ( <tag_name> [ , ... ] ) | { ENABLE | DISABLE | INHERIT } PREDICTIVE OPTIMIZATION | OPTIONS ( <option> <value> [ , ... ] ) | SET MANAGED LOCATION <location> | [ SET ] RETAIN DROPPED TO <number> { HOUR | HOURS | DAY | DAYS | WEEK | WEEKS } }",
+]
+reason = "a missing bar: OWNER TO and SET TAGS are alternatives of the choice, as ALTER SCHEMA's parameters describe them"
+
+[[reading]]
+page = "sql-ref-syntax-ddl-alter-streaming-table"
+written = "ALTER STREAMING TABLE <table_name> { { ADD | ALTER } <schedule> DROP SCHEDULE | ALTER COLUMN <column_clause> | SET ROW FILTER <set_row_filter_clause> | DROP ROW FILTER | SET TAGS <set_tags_clause> | UNSET TAGS <unset_tags_clause> | SET OWNER TO <principal> | }"
+read = [
+  "ALTER STREAMING TABLE <table_name> { { ADD | ALTER } <schedule> | DROP SCHEDULE | ALTER COLUMN <column_clause> | SET ROW FILTER <set_row_filter_clause> | DROP ROW FILTER | SET TAGS <set_tags_clause> | UNSET TAGS <unset_tags_clause> | SET OWNER TO <principal> | }",
+]
+reason = "a missing bar: ADD/ALTER SCHEDULE and DROP SCHEDULE are alternatives, as ALTER MATERIALIZED VIEW writes them"
+
+[[reading]]
+page = "sql-ref-syntax-ddl-create-table-hiveformat"
+written = "<row_format> ::= : SERDE <serde_class> [ WITH SERDEPROPERTIES ( <k1> = <v1> , <k2> = <v2> , ... ) ] | DELIMITED [ FIELDS TERMINATED BY <fields_terminated_char> [ ESCAPED BY <escaped_char> ] ] [ COLLECTION ITEMS TERMINATED BY <collection_items_terminated_char> ] [ MAP KEYS TERMINATED BY <map_key_terminated_char> ] [ LINES TERMINATED BY <row_terminated_char> ] [ NULL DEFINED AS <null_char> ]"
+read = [
+  "<row_format> ::= SERDE <serde_class> [ WITH SERDEPROPERTIES ( <k1> = <v1> , <k2> = <v2> , ... ) ] | DELIMITED [ FIELDS TERMINATED BY <fields_terminated_char> [ ESCAPED BY <escaped_char> ] ] [ COLLECTION ITEMS TERMINATED BY <collection_items_terminated_char> ] [ MAP KEYS TERMINATED BY <map_key_terminated_char> ] [ LINES TERMINATED BY <row_terminated_char> ] [ NULL DEFINED AS <null_char> ]",
+]
+reason = "a stray colon before SERDE, left from the page's 'row_format:' heading line; read as the choice SERDE ... | DELIMITED ..."
+
+[[reading]]
+page = "sql-ref-syntax-qry-select-unpivot"
+written = "UNPIVOT [ { INCLUDE NULLS | EXCLUDE NULLS } ] { <single_value> | <multi_value> } ( <value_column> FOR <unpivot_column> IN ( { <column_name> [ <column_alias> ] } [ , ... ] ) ) [ <table_alias> ]"
+read = [
+  "UNPIVOT [ { INCLUDE NULLS | EXCLUDE NULLS } ] { <single_value> | <multi_value> } [ <table_alias> ]",
+]
+reason = "the Syntax block writes the body of single_value again after { single_value | multi_value }; its single_value and multi_value definitions that follow show the repeated text is the single_value body, not a further part of the clause"
+
+[[reading]]
+page = "sql-ref-syntax-ddl-alter-table"
+written = "ALTER TABLE <table_name> { RENAME TO <rename_to_clause> | ADD COLUMN <add_column_clause> | ALTER COLUMN <alter_column_clause> | DROP COLUMN <drop_column_clause> | RENAME COLUMN <rename_column_clause> | DEFAULT COLLATION <default_collation_clause> | ADD CONSTRAINT <add_constraint_clause> | DROP CONSTRAINT <drop_constraint_clause> | DROP FEATURE <drop_feature_clause> | ADD PARTITION <add_partition_clause> | DROP PARTITION <drop_partition_clause> | PARTITION SET LOCATION <partition_set_location_clause> | RENAME PARTITION <rename_partition_clause> | RECOVER PARTITIONS <recover_partitions_clause> | SET { ROW FILTER <row_filter_clause> } | DROP ROW FILTER | SET TBLPROPERTIES <set_tblproperties_clause> | UNSET TBLPROPERTIES <unset_tblproperties_clause> | SET SERDE <set_serde_clause> | SET LOCATION <set_location_clause> | SET EXTERNAL <set_external_clause> | SET MANAGED <set_managed_clause> | UNSET MANAGED <unset_managed_clause> | SET OWNER TO <set_owner_to_clause> | SET TAGS <set_tags_clause> | UNSET TAGS <unset_tags_clause> | CLUSTER BY <cluster_by_clause> | REPLACE PARTITIONED BY WITH CLUSTER BY <with_cluster_by_clause> | PREDICTIVE OPTIMIZATION <predictive_optimization_clause> }"
+read = [
+  "ALTER TABLE <table_name> { RENAME TO <rename_to_clause> | ADD COLUMN <add_column_clause> | ALTER COLUMN <alter_column_clause> | DROP COLUMN <drop_column_clause> | RENAME COLUMN <rename_column_clause> | DEFAULT COLLATION <default_collation_clause> | ADD CONSTRAINT <add_constraint_clause> | DROP CONSTRAINT <drop_constraint_clause> | DROP FEATURE <drop_feature_clause> | ADD PARTITION <add_partition_clause> | DROP PARTITION <drop_partition_clause> | PARTITION SET LOCATION <partition_set_location_clause> | RENAME PARTITION <rename_partition_clause> | RECOVER PARTITIONS | SET { ROW FILTER <row_filter_clause> } | DROP ROW FILTER | SET TBLPROPERTIES <set_tblproperties_clause> | UNSET TBLPROPERTIES <unset_tblproperties_clause> | SET SERDE <set_serde_clause> | SET LOCATION <set_location_clause> | SET EXTERNAL | SET MANAGED | UNSET MANAGED | SET OWNER TO <set_owner_to_clause> | SET TAGS <set_tags_clause> | UNSET TAGS <unset_tags_clause> | CLUSTER BY <cluster_by_clause> | REPLACE PARTITIONED BY WITH CLUSTER BY <with_cluster_by_clause> | PREDICTIVE OPTIMIZATION <predictive_optimization_clause> }",
+]
+reason = "the page writes RECOVER PARTITIONS, SET EXTERNAL, SET MANAGED and UNSET MANAGED each with a clause placeholder after the keywords. The RECOVER PARTITIONS clause's own Syntax (ALTER TABLE … PARTITION page) is the keywords alone, with Parameters None. The other three are not keywords alone: this page's Parameters give SET EXTERNAL [ DRY RUN ], SET MANAGED [ TRUNCATE UNIFORM HISTORY ], SET MANAGED { MOVE | COPY } and UNSET MANAGED [ TRUNCATE UNIFORM HISTORY ], which are catalogued as the clauses' own forms (the [[form]] rows alter-table-set-external and alter-table-set-managed), so here the keywords stand without the placeholder"
+
+[[reading]]
+page = "sql-ref-syntax-ddl-alter-table-manage-partition"
+written = "ALTER TABLE <table_name> { ADD PARTITION <add_partition_clause> | DROP PARTITION <drop_partition_clause> | PARTITION SET LOCATION <partition_set_location_clause> | RENAME PARTITION <rename_partition_clause> | RECOVER PARTITIONS <recover_partitions_clause> }"
+read = [
+  "ALTER TABLE <table_name> { ADD PARTITION <add_partition_clause> | DROP PARTITION <drop_partition_clause> | PARTITION SET LOCATION <partition_set_location_clause> | RENAME PARTITION <rename_partition_clause> | RECOVER PARTITIONS }",
+]
+reason = "the page names the RECOVER PARTITIONS clause by its keywords and a placeholder; the clause's own Syntax on the same page is RECOVER PARTITIONS, with Parameters None, so the clause adds no operand after the keywords"
+
+[[reading]]
+page = "sql-ref-syntax-aux-cache-clear-cache"
+written = "> CLEAR CACHE"
+read = [
+  "CLEAR CACHE",
+]
+reason = "the syntax block carries the examples' > prompt; read without it"
+
+[[reading]]
+page = "sql-ref-syntax-ddl-create-table-using"
+written = "{ { [ CREATE OR ] REPLACE { TEMP | TEMPORARY } TABLE | CREATE [ EXTERNAL ] TABLE [ IF NOT EXISTS ] | CREATE { TEMP | TEMPORARY } TABLE } <table_name> [ <table_specification> ] [ USING <data_source> ] [ <table_clauses> ] [ AS <query> ] }"
+read = [
+  "{ { [ CREATE OR ] REPLACE [ TEMP | TEMPORARY ] TABLE | CREATE [ EXTERNAL ] TABLE [ IF NOT EXISTS ] | CREATE { TEMP | TEMPORARY } TABLE } <table_name> [ <table_specification> ] [ USING <data_source> ] [ <table_clauses> ] [ AS <query> ] }",
+]
+reason = "braces for brackets: the block makes TEMP or TEMPORARY required after REPLACE, while the page's parameters describe CREATE OR REPLACE TABLE for tables that are not temporary (IF NOT EXISTS cannot coexist with REPLACE); read with TEMP optional"
+
+[[reading]]
+page = "data-types/interval-type"
+written = "<year> - <month> <interval> INTERVAL [ + | - ] <year_month_interval_string> <year_month_interval_qualifier>"
+read = [
+  "INTERVAL [ + | - ] <year_month_interval_string> <year_month_interval_qualifier>",
+]
+reason = "the Literals block labels the line \"year-month interval\" inside the code; read without the label"
+
+[[reading]]
+page = "data-types/interval-type"
+written = "<day> - <time> <interval> INTERVAL [ + | - ] <day_time_interval_string> <day_time_interval_qualifier>"
+read = [
+  "INTERVAL [ + | - ] <day_time_interval_string> <day_time_interval_qualifier>",
+]
+reason = "the Literals block labels the line \"day-time interval\" inside the code; read without the label"
+
+[[reading]]
+page = "functions/getbit"
+written = "GETBIT ( <expr> , <pos> ) )"
+read = [
+  "GETBIT ( <expr> , <pos> )",
+]
+reason = "unbalanced brackets in the page's notation: a stray closing parenthesis; read without it"
+
+[[reading]]
+page = "functions/from_protobuf"
+written = "FROM_PROTOBUF ( <data> , <message_name> [ , <desc_file_path> [ , <options> ] ] ) <from_protobuf> ( <data> , <message_name> , <options> )"
+read = [
+  "FROM_PROTOBUF ( <data> , <message_name> [ , <desc_file_path> [ , <options> ] ] )",
+  "FROM_PROTOBUF ( <data> , <message_name> , <options> )",
+]
+reason = "two Syntax lines joined: the second line's lower-case from_protobuf was read as a placeholder continuing the first; read as the page's two calls"
+
+[[reading]]
+page = "functions/to_protobuf"
+written = "TO_PROTOBUF ( <data> , <message_name> [ , <desc_file_path> [ , <options> ] ] ) <to_protobuf> ( <data> , <message_name> , <options> )"
+read = [
+  "TO_PROTOBUF ( <data> , <message_name> [ , <desc_file_path> [ , <options> ] ] )",
+  "TO_PROTOBUF ( <data> , <message_name> , <options> )",
+]
+reason = "two Syntax lines joined: the second line's lower-case to_protobuf was read as a placeholder continuing the first; read as the page's two calls"
+
+[[reading]]
+page = "functions/trim"
+written = "TRIM ( <trim_str> FROM <str> ) <trim> ( BOTH <trim_str> FROM <str> )"
+read = [
+  "TRIM ( <trim_str> FROM <str> )",
+  "TRIM ( BOTH <trim_str> FROM <str> )",
+]
+reason = "two Syntax lines joined: the second line's lower-case trim was read as a placeholder continuing the first; read as the page's two calls"
+
+[[reading]]
+page = "functions/st_asewkt"
+written = "<st_asbinary> ( <geo_expr> )"
+read = [
+  "ST_ASEWKT ( <geo_expr> )",
+]
+reason = "the page's Syntax names st_asbinary, another function, and the build read it as a placeholder; the page is st_asewkt's and its examples call st_asewkt"
+
+[[reading]]
+page = "functions/vector_search"
+written = "SELECT * FROM <vector_search> ( <index> , { <query_text> | <query_vector> } , [ <num_results> ] )"
+read = [
+  "SELECT * FROM VECTOR_SEARCH ( <index> , { <query_text> | <query_vector> } , [ <num_results> ] )",
+]
+reason = "the lower-case function name vector_search was read as a placeholder; read as the function the page defines"
+
+[[reading]]
+page = "functions/vector_search"
+written = "SELECT * FROM <vector_search> ( <index> , <query> , <num_results> )"
+read = [
+  "SELECT * FROM VECTOR_SEARCH ( <index> , <query_str> , <num_results> )",
+]
+reason = "the lower-case function name vector_search was read as a placeholder; read as the function the page defines. The argument named query is a STRING expression (the page's Arguments), not a query, though the build classes a placeholder named query as one; read with a name it classes as an expression"
+
+[[reading]]
+page = "functions/ai_parse_document"
+written = "AI_PARSE_DOCUMENT ( <content> , <map> ( \"version\" -> \"2.0\" ) )"
+read = [
+  "AI_PARSE_DOCUMENT ( <content> , MAP ( 'version' , '2.0' ) )",
+]
+reason = "the Syntax line writes the map argument in non-SQL notation, Map(\"version\" -> \"2.0\"), and the build read map as a placeholder; read as the map function call the page's examples use, map('version', '2.0')"
+
+[[reading]]
+page = "functions/bracketsign"
+written = "<expr> [ <key_expr> ]"
+read = [
+  "<expr> \\[ <key_expr> \\]",
+]
+reason = "the brackets are the subscript operator, not an optional part: the page's examples write map('a', 1)['a'] and array(1, 2)[0]; read as literal brackets"
+
+[[reading]]
+page = "functions/questiondoublecolonsign"
+written = "<expr> ? :: <type>"
+read = [
+  "<expr> ?:: <type>",
+]
+reason = "the page writes the operator ?:: as one token; the build split it into ? and ::; read as one token"
+
+[[reading]]
+page = "functions/http_request"
+written = "HTTP_REQUEST ( { CONN => <connection_name> | METHOD => <http_method> | PATH => <path> | HEADERS => <header_map> | PARAMS => <param_map> | JSON => <json_str> } [ , . . ] )"
+read = [
+  "HTTP_REQUEST ( { CONN => <connection_name> | METHOD => <http_method> | PATH => <path> | HEADERS => <header_map> | PARAMS => <param_map> | JSON => <json_str> } [ , ... ] )",
+]
+reason = "the repetition is written with two dots, [, ..]; read as the usual [ , ... ]"
+
+[[reading]]
+page = "functions/read_files"
+written = "READ_FILES ( <path> [ , option_key => <option_value> ] [ ... ] )"
+read = [
+  "READ_FILES ( <path> [ , <option_key> => <option_value> ] [ ... ] )",
+]
+reason = "the option name is written in lower case as option_key, which the build kept as a literal word; the arguments explain it as any option the function documents, so read as a placeholder"
+
+[[reading]]
+page = "functions/read_kafka"
+written = "READ_KAFKA ( [ option_key => <option_value> ] [ , ... ] )"
+read = [
+  "READ_KAFKA ( [ <option_key> => <option_value> ] [ , ... ] )",
+]
+reason = "the option name is written in lower case as option_key, which the build kept as a literal word; the arguments explain it as any option the function documents, so read as a placeholder"
+
+[[reading]]
+page = "functions/read_pulsar"
+written = "READ_PULSAR ( { option_key => <option_value> } [ , ... ] )"
+read = [
+  "READ_PULSAR ( { <option_key> => <option_value> } [ , ... ] )",
+]
+reason = "the option name is written in lower case as option_key, which the build kept as a literal word; the arguments explain it as any option the function documents, so read as a placeholder"
+
+[[reading]]
+page = "functions/read_statestore"
+written = "READ_STATESTORE ( <path> [ , option_key => <option_value> ] [ ... ] )"
+read = [
+  "READ_STATESTORE ( <path> [ , <option_key> => <option_value> ] [ ... ] )",
+]
+reason = "the option name is written in lower case as option_key, which the build kept as a literal word; the arguments explain it as any option the function documents, so read as a placeholder"
+
+[[reading]]
+page = "functions/read_kinesis"
+written = "READ_KINESIS ( { parameter => <value> } [ , ... ] )"
+read = [
+  "READ_KINESIS ( { <parameter> => <value> } [ , ... ] )",
+]
+reason = "the option name is written in lower case as parameter, which the build kept as a literal word; the arguments explain it as any option the function documents, so read as a placeholder"
+
+[[reading]]
+page = "functions/read_pubsub"
+written = "READ_PUBSUB ( { parameter => <value> } [ , ... ] )"
+read = [
+  "READ_PUBSUB ( { <parameter> => <value> } [ , ... ] )",
+]
+reason = "the option name is written in lower case as parameter, which the build kept as a literal word; the arguments explain it as any option the function documents, so read as a placeholder"
+
+[[reading]]
+page = "functions/ai_search"
+written = "AI_SEARCH ( <query> , <knowledge_sources> [ , <instructions> ] [ , <options> ] )"
+read = [
+  "AI_SEARCH ( <query_str> , <knowledge_sources> [ , <instructions> ] [ , <options> ] )",
+]
+reason = "the argument named query is a STRING expression (the page's Arguments), not a query, though the build classes a placeholder named query as one; read with a name it classes as an expression"
+
+
+[[form]]
+page = "sql-ref-partition"
+anchor = "PARTITION"
+kind = "statement"
+label = "partition-spec"
+grammar = [
+  "PARTITION ( { <partition_column> [ = <partition_value> | LIKE <pattern> ] } [ , ... ] )",
+]
+basis = "section"
+article_sha256 = "4ac14324cf855be6ba5f6a06d739cbbabb9a8126de8ed297dc2bbef828ab3cff"
+
+[[form]]
+page = "sql-ref-syntax-aux-describe-table"
+anchor = "DESCRIBE DETAIL"
+kind = "statement"
+label = "describe-detail"
+grammar = [
+  "DESCRIBE DETAIL [ <schema_name> . ] <table_name>",
+]
+basis = "section"
+article_sha256 = "2f0d1ac5d94ad9f279a739f2ae8a67b6b6c0cb7d2f4e830435bdb4b87674bd13"
+
+[[form]]
+page = "sql-ref-syntax-ddl-alter-table"
+anchor = "Parameters"
+kind = "statement"
+label = "alter-table-set-managed"
+grammar = [
+  "SET MANAGED [ TRUNCATE UNIFORM HISTORY ]",
+  "SET MANAGED { MOVE | COPY }",
+  "UNSET MANAGED [ TRUNCATE UNIFORM HISTORY ]",
+]
+basis = "section"
+article_sha256 = "7f64ba5db7d0d877785694b551ef06568a8a52e265d1813ed5702b74fb8e847a"
+
+[[form]]
+page = "sql-ref-syntax-ddl-alter-table"
+anchor = "Parameters"
+kind = "statement"
+label = "alter-table-set-external"
+grammar = [
+  "SET EXTERNAL [ DRY RUN ]",
+]
+basis = "section"
+article_sha256 = "7f64ba5db7d0d877785694b551ef06568a8a52e265d1813ed5702b74fb8e847a"
+
+[[form]]
+page = "sql-ref-syntax-ddl-alter-table"
+anchor = "Parameters"
+kind = "statement"
+label = "alter-table-drop-feature"
+grammar = [
+  "DROP FEATURE <feature_name> [ TRUNCATE HISTORY ]",
+]
+basis = "section"
+article_sha256 = "7f64ba5db7d0d877785694b551ef06568a8a52e265d1813ed5702b74fb8e847a"
+
+[[form]]
+page = "sql-ref-syntax-ddl-alter-table"
+anchor = "Parameters"
+kind = "statement"
+label = "alter-table-set-serde"
+grammar = [
+  "SET SERDE <serde_class> [ WITH SERDEPROPERTIES ( { <property_key> = <property_value> } [ , ... ] ) ]",
+]
+basis = "prose"
+article_sha256 = "7f64ba5db7d0d877785694b551ef06568a8a52e265d1813ed5702b74fb8e847a"
+
+[[form]]
+page = "sql-ref-syntax-qry-select-hints"
+anchor = "Syntax"
+kind = "statement"
+label = "join-hint-alias"
+grammar = [
+  "/*+ { BROADCASTJOIN | MAPJOIN | SHUFFLE_MERGE | MERGEJOIN } ( <table_name> ) */",
+]
+basis = "prose"
+article_sha256 = "0569f16035fe7811c866a5d702f03e395d6f14afcea626e45b7e33c3ddbf633f"
+
+[[form]]
+page = "sql-ref-syntax-qry-select-groupby"
+anchor = "Parameters"
+kind = "statement"
+label = "hive-grouping-sets"
+grammar = [
+  "GROUP BY <group_expression> [ , ... ] GROUPING SETS ( <grouping_set> [ , ... ] )",
+]
+basis = "prose"
+article_sha256 = "732c8cb2c78638fb1f890a2725785a7ab4ac381bd07b1eb161d5aabc300a57d5"
+
+[[form]]
+page = "sql-ref-syntax-qry-select-groupby"
+anchor = "Mixed/Nested Grouping Analytics"
+kind = "statement"
+label = "nested-grouping-sets"
+grammar = [
+  "GROUP BY GROUPING SETS ( { <grouping_set> | { ROLLUP | CUBE | GROUPING SETS } ( <grouping_set> [ , ... ] ) } [ , ... ] )",
+]
+basis = "section"
+article_sha256 = "732c8cb2c78638fb1f890a2725785a7ab4ac381bd07b1eb161d5aabc300a57d5"
+
+[[form]]
+page = "sql-ref-syntax-ddl-create-table-constraint"
+anchor = "Syntax"
+kind = "statement"
+label = "enable-novalidate"
+grammar = [
+  "[ CONSTRAINT <name> ] { PRIMARY KEY ( <key_column> [ , ... ] ) | UNIQUE ( <key_column> [ , ... ] ) | FOREIGN KEY ( <foreign_key_column> [ , ... ] ) REFERENCES <parent_table> [ ( <parent_column> [ , ... ] ) ] } ENABLE NOVALIDATE",
+]
+basis = "prose"
+article_sha256 = "7e58f8b26b14a874d4502558a31a0d4a4d584b0df0444f8c1e2489b8076dfd1e"
+
+[[form]]
+page = "sql-ref-syntax-ddl-alter-table-add-constraint"
+anchor = "Syntax"
+kind = "statement"
+label = "enable-novalidate"
+grammar = [
+  "ADD [ CONSTRAINT <name> ] { PRIMARY KEY ( <key_column> [ , ... ] ) | FOREIGN KEY ( <foreign_key_column> [ , ... ] ) REFERENCES <parent_table> [ ( <parent_column> [ , ... ] ) ] } ENABLE NOVALIDATE",
+]
+basis = "prose"
+article_sha256 = "ac3f1972e912d627ff563b8a7fcec79c47062b81be981254913477ba2855bf02"
+
+[[form]]
+page = "sql-ref-syntax-dml-insert-into"
+anchor = "Parameters"
+kind = "statement"
+label = "values-default"
+grammar = [
+  "INSERT INTO <table_name> VALUES ( { <expression> | DEFAULT } , { <expression> | DEFAULT } ) [ , ( { <expression> | DEFAULT } , { <expression> | DEFAULT } ) ... ]",
+  "INSERT INTO <table_name> SELECT { <named_expression> | DEFAULT } , { <named_expression> | DEFAULT }",
+]
+basis = "prose"
+article_sha256 = "3375b74ec13d9a984efd9ca1084e27afb3bb85bd29d8ad5c258609cea798a999"
+
+[[form]]
+page = "delta-copy-into"
+anchor = "Parameters"
+kind = "statement"
+label = "target-credential"
+grammar = [
+  "COPY INTO <target_table> WITH ( CREDENTIAL <credential_name> ) FROM <source_clause> FILEFORMAT = <data_source>",
+]
+basis = "prose"
+article_sha256 = "e96c1a54732f1be2464f7c9f4b496e1bb70a770eaa23d6b99001ab3dc240f0da"
+
+[[form]]
+page = "delta-clone"
+anchor = "Parameters"
+kind = "statement"
+label = "clone-source-temporal"
+grammar = [
+  "{ CREATE TABLE [ IF NOT EXISTS ] | [ CREATE OR ] REPLACE TABLE } <table_name> [ SHALLOW | DEEP ] CLONE <source_table_name> [ [ FOR ] { SYSTEM_TIMESTAMP | TIMESTAMP } AS OF <timestamp_expression> | [ FOR ] { SYSTEM_VERSION | VERSION } AS OF <version> ] [ WITH ( { <option_key> [ = ] <option_val> } [ , ... ] ) ]",
+]
+basis = "prose"
+article_sha256 = "c239cc4568da2a09e863172a025c85551b12860c2b5d0648c7bf0007a5238588"
+
+[[form]]
+page = "sql-ref-syntax-ddl-create-streaming-table-auto-cdc"
+anchor = "AUTO CDC FROM SNAPSHOT"
+kind = "statement"
+label = "create-streaming-table-auto-cdc-from-snapshot"
+grammar = [
+  "FLOW AUTO CDC [ ONCE ] FROM SNAPSHOT ( <snapshot_query> ) [ WITH VERSION ( <version_query> ) ] KEYS ( <key> [ , ... ] ) [ STORED AS { SCD TYPE 1 | SCD TYPE 2 } ] [ TRACK HISTORY ON { <column_list> | * EXCEPT ( <except_column_list> ) } ]",
+]
+basis = "section"
+article_sha256 = "56336639a20c68194ed0771b5a5368ee5943814ce2999d94380805d230eedb20"
+
+[[reading]]
+page = "sql-ref-syntax-aux-describe-provider"
+written = "[ DESC | DESCRIBE ] PROVIDER <provider_name>"
+read = [
+  "{ DESC | DESCRIBE } PROVIDER <provider_name>",
+]
+reason = "the page brackets the verb as optional, but PROVIDER, RECIPIENT or SHARE and a name alone is no statement, and the page's examples all begin DESCRIBE; read the verb as a required choice"
+
+[[reading]]
+page = "sql-ref-syntax-aux-describe-recipient"
+written = "[ DESC | DESCRIBE ] RECIPIENT <recipient_name>"
+read = [
+  "{ DESC | DESCRIBE } RECIPIENT <recipient_name>",
+]
+reason = "the page brackets the verb as optional, but PROVIDER, RECIPIENT or SHARE and a name alone is no statement, and the page's examples all begin DESCRIBE; read the verb as a required choice"
+
+[[reading]]
+page = "sql-ref-syntax-aux-describe-share"
+written = "[ DESC | DESCRIBE ] SHARE <share_name>"
+read = [
+  "{ DESC | DESCRIBE } SHARE <share_name>",
+]
+reason = "the page brackets the verb as optional, but PROVIDER, RECIPIENT or SHARE and a name alone is no statement, and the page's examples all begin DESCRIBE; read the verb as a required choice"
+
+[[reading]]
+page = "sql-ref-syntax-aux-call"
+written = "CALL <procedure_name> ( [ <argument> [ , ... ] ] [ namedParameter => <argument> ] [ , ... ] )"
+read = [
+  "CALL <procedure_name> ( [ <argument> [ , ... ] ] )",
+  "CALL <procedure_name> ( [ <argument> [ , ... ] , ] <named_parameter> => <argument> [ , ... ] )",
+]
+reason = "the line leaves out the comma between the positional and the named arguments, and writes the named parameter as the literal word namedParameter; read as positional arguments, then named ones after a comma, with the name a placeholder"
+
+[[reading]]
+page = "sql-ref-syntax-qry-explain"
+written = "EXPLAIN [ EXTENDED | CODEGEN | COST | FORMATTED ] <statement>"
+read = [
+  "EXPLAIN [ EXTENDED | CODEGEN | COST | FORMATTED ] <query>",
+]
+reason = "the build classes a placeholder named statement as a scripting statement (filled NULL, nested in BEGIN ... END), which EXPLAIN does not take; the page's examples explain queries, so read as a query"
+
+[[reading]]
+page = "sql-ref-syntax-aux-describe-query"
+written = "{ DESC | DESCRIBE } [ QUERY ] <input_statement>"
+read = [
+  "{ DESC | DESCRIBE } [ QUERY ] <query>",
+]
+reason = "the page's Parameters name the operand query, the query to be described; read with that name, which the build classes as a query"
+
+[[reading]]
+page = "sql-ref-syntax-qry-explain-materialized-view"
+written = "EXPLAIN [ CREATE MATERIALIZED VIEW <query> ]"
+read = [
+  "EXPLAIN CREATE MATERIALIZED VIEW <view_name> AS <query>",
+]
+reason = "the page brackets the whole CREATE MATERIALIZED VIEW as optional and names its rest query, a SQL query that creates a materialized view; its examples write EXPLAIN CREATE MATERIALIZED VIEW name AS query, so read as that"
+
+[[reading]]
+page = "sql-ref-principal"
+written = "{ ` <user> @ < <domain> - <name> > ` | ` < <sp> - <application> - <id> > ` | <group_name> | <users> | ` <account> <users> ` }"
+read = [
+  "{ <user_principal> | <service_principal> | <group_name> | <users> | <account_users> }",
+]
+reason = "the page writes back-quoted patterns, `<user>@<domain-name>`, `<sp-application-id>` and `account users`, which the build split into words; read each as one operand, filled with a name of that shape"
+
+[[reading]]
+page = "sql-ref-syntax-ddl-alter-recipient"
+written = "ALTER RECIPIENT <recipient_name> { RENAME TO <to_recipient_name> | [ SET ] OWNER TO <principal> | SET PROPERTIES ( <property_key> [ = ] <property_value> [ , ... ] ) | UNSET PROPERTIES ( <property_key> [ , ... ] ) }"
+read = [
+  "ALTER RECIPIENT <recipient_name> { RENAME TO <to_recipient_name> | [ SET ] OWNER TO <principal> | SET PROPERTIES ( { <property_identifier> [ . ... ] | <property_string> } [ = ] <property_value> [ , ... ] ) | UNSET PROPERTIES ( { <property_identifier> [ . ... ] | <property_string> } [ , ... ] ) }",
+]
+reason = "the page's Parameters define property_key as { identifier [. ...] | string_literal }, and the build reads only the Syntax block; read with that definition in place of <property_key>, so both spellings of a key are derived"
+
+[[reading]]
+page = "sql-ref-syntax-ddl-create-recipient"
+written = "CREATE RECIPIENT [ IF NOT EXISTS ] <recipient_name> [ USING ID <sharing_identifier> ] [ COMMENT <comment> ] [ PROPERTIES ( <property_key> [ = ] <property_value> [ , ... ] ) ]"
+read = [
+  "CREATE RECIPIENT [ IF NOT EXISTS ] <recipient_name> [ USING ID <sharing_identifier> ] [ COMMENT <comment> ] [ PROPERTIES ( { <property_identifier> [ . ... ] | <property_string> } [ = ] <property_value> [ , ... ] ) ]",
+]
+reason = "the page's Parameters define property_key as { identifier [. ...] | string_literal }, and the build reads only the Syntax block; read with that definition in place of <property_key>, so both spellings of a key are derived"
+
+[[reading]]
+page = "functions/ilike"
+written = "<str> [ NOT ] ILIKE { ANY | SOME | ALL } ( [ <pattern> [ , ... ] ] )"
+read = [
+  "<str> [ NOT ] ILIKE { ANY | SOME | ALL } ( <pattern> [ , ... ] )",
+]
+reason = "the page's line wraps the pattern list in an optional bracket, so ( ) with no pattern would be a form, but the warehouse refuses it while parsing (EMPTY_QUANTIFIED_PATTERN, the == SQL == excerpt); read with the list required, so the empty list is a negative case"
+
+[[reading]]
+page = "functions/like"
+written = "<str> [ NOT ] LIKE { ANY | SOME | ALL } ( [ <pattern> [ , ... ] ] )"
+read = [
+  "<str> [ NOT ] LIKE { ANY | SOME | ALL } ( <pattern> [ , ... ] )",
+]
+reason = "the page's line wraps the pattern list in an optional bracket, so ( ) with no pattern would be a form, but the warehouse refuses it while parsing (EMPTY_QUANTIFIED_PATTERN, the == SQL == excerpt); read with the list required, so the empty list is a negative case"
