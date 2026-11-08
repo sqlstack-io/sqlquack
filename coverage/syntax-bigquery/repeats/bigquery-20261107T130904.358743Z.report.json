@@ -1,0 +1,129 @@
+{
+  "bytes": {
+    "dry_run_bytes_billed": 0,
+    "dry_run_bytes_processed": 0,
+    "executed_bytes_billed": 0,
+    "executed_bytes_processed": 0
+  },
+  "case_bytes_billed": {},
+  "end_state": {
+    "SQLQUACK_DATASET": {
+      "models": [],
+      "options": {
+        "defaultTableExpirationMs": "3600000",
+        "labels": [
+          "sqlquack_run"
+        ],
+        "maxTimeTravelHours": "168"
+      },
+      "routines": [],
+      "tables": {
+        "t1": {
+          "fields": [
+            [
+              "c1",
+              "INTEGER",
+              null
+            ],
+            [
+              "c2",
+              "INTEGER",
+              null
+            ],
+            [
+              "c3",
+              "INTEGER",
+              null
+            ],
+            [
+              "v1",
+              "INTEGER",
+              null
+            ]
+          ],
+          "rows": "0",
+          "type": "TABLE"
+        }
+      }
+    },
+    "SQLQUACK_DATASET2": {
+      "models": [],
+      "options": {
+        "defaultTableExpirationMs": "3600000",
+        "labels": [
+          "sqlquack_run"
+        ],
+        "maxTimeTravelHours": "168"
+      },
+      "routines": [],
+      "tables": {}
+    }
+  },
+  "engine": "bigquery v2 jobs.insert, location US, useLegacySql false",
+  "fixtures": [
+    "t1"
+  ],
+  "held": {},
+  "phases": {
+    "accepted": 4,
+    "semantic_error": 37,
+    "syntax_error": 46
+  },
+  "problems": [],
+  "receipts": 87,
+  "referee": "8e8a97447052ca1d2a83415417825157ea52e05a",
+  "run_id": "bigquery-20261107T130904.358743Z",
+  "start_state": {
+    "SQLQUACK_DATASET": {
+      "models": [],
+      "options": {
+        "defaultTableExpirationMs": "3600000",
+        "labels": [
+          "sqlquack_run"
+        ],
+        "maxTimeTravelHours": "168"
+      },
+      "routines": [],
+      "tables": {
+        "t1": {
+          "fields": [
+            [
+              "c1",
+              "INTEGER",
+              null
+            ],
+            [
+              "c2",
+              "INTEGER",
+              null
+            ],
+            [
+              "c3",
+              "INTEGER",
+              null
+            ],
+            [
+              "v1",
+              "INTEGER",
+              null
+            ]
+          ],
+          "rows": "0",
+          "type": "TABLE"
+        }
+      }
+    },
+    "SQLQUACK_DATASET2": {
+      "models": [],
+      "options": {
+        "defaultTableExpirationMs": "3600000",
+        "labels": [
+          "sqlquack_run"
+        ],
+        "maxTimeTravelHours": "168"
+      },
+      "routines": [],
+      "tables": {}
+    }
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "bytes": {
+    "dry_run_bytes_billed": 0,
+    "dry_run_bytes_processed": 0,
+    "executed_bytes_billed": 0,
+    "executed_bytes_processed": 0
+  },
+  "case_bytes_billed": {},
+  "end_state": {
+    "SQLQUACK_DATASET": {
+      "models": [],
+      "options": {
+        "defaultTableExpirationMs": "3600000",
+        "labels": [
+          "sqlquack_run"
+        ],
+        "maxTimeTravelHours": "168"
+      },
+      "routines": [],
+      "tables": {}
+    },
+    "SQLQUACK_DATASET2": {
+      "models": [],
+      "options": {
+        "defaultTableExpirationMs": "3600000",
+        "labels": [
+          "sqlquack_run"
+        ],
+        "maxTimeTravelHours": "168"
+      },
+      "routines": [],
+      "tables": {}
+    }
+  },
+  "engine": "bigquery v2 jobs.insert, location US, useLegacySql false",
+  "fixtures": [],
+  "held": {},
+  "phases": {
+    "accepted": 17,
+    "semantic_error": 7,
+    "syntax_error": 22
+  },
+  "problems": [],
+  "receipts": 46,
+  "referee": "c9cd68105854018599aae60c0e6ab927824949e1",
+  "run_id": "bigquery-20261107T203342.206143Z",
+  "start_state": {
+    "SQLQUACK_DATASET": {
+      "models": [],
+      "options": {
+        "defaultTableExpirationMs": "3600000",
+        "labels": [
+          "sqlquack_run"
+        ],
+        "maxTimeTravelHours": "168"
+      },
+      "routines": [],
+      "tables": {}
+    },
+    "SQLQUACK_DATASET2": {
+      "models": [],
+      "options": {
+        "defaultTableExpirationMs": "3600000",
+        "labels": [
+          "sqlquack_run"
+        ],
+        "maxTimeTravelHours": "168"
+      },
+      "routines": [],
+      "tables": {}
+    }
+  }
+}

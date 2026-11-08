@@ -1,0 +1,24 @@
+# The pinned GoogleSQL grammar files the omission audit reads: one [[index]] per file,
+# named by repository, tag, commit and path; written and verified by
+# scripts/fetch_syntax_docs_bigquery.py and rewritten by
+# scripts/build_syntax_catalogue_bigquery.py.
+
+[[index]]
+name = "https://github.com/google/googlesql.git@2026.11.1 (d48c569aebd63870ff6acecf08b6611015ef1d9d) googlesql/parser/googlesql.tm"
+sha256 = "38a88ee136bd770fca435b5ba4c60a45251a91daa51710fc5d783f957971737e"
+
+[[index]]
+name = "https://github.com/google/googlesql.git@2026.11.1 (d48c569aebd63870ff6acecf08b6611015ef1d9d) googlesql/parser/keywords.cc"
+sha256 = "65bcb223e4a78de52097426d06e18c45d2269a3e0096d0a925a01f139641f4f0"
+
+[[index]]
+name = "https://github.com/google/googlesql.git@2026.11.1 (d48c569aebd63870ff6acecf08b6611015ef1d9d) googlesql/parser/lookahead_transformer.cc"
+sha256 = "97b7bd22b9fba88bc7ac086e99f37d454881127a7601cf99cf7b311fcee93b6b"
+
+[[index]]
+name = "https://github.com/google/googlesql.git@2026.11.1 (d48c569aebd63870ff6acecf08b6611015ef1d9d) googlesql/public/options.proto"
+sha256 = "e30788baaad9466118b5035532161def82694407e0c1980a73c2b25db24b6a58"
+
+[[index]]
+name = "https://github.com/google/googlesql.git@2026.11.1 (d48c569aebd63870ff6acecf08b6611015ef1d9d) LICENSE"
+sha256 = "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"

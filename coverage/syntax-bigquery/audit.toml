@@ -1,0 +1,1594 @@
+# Reviewed omission audit of the BigQuery catalogue against the pinned GoogleSQL grammar
+# (googlesql.tm) and keyword table (keywords.cc); checked by
+# scripts/audit_syntax_catalogue_bigquery.py, which fails on any unreviewed or stale row.
+#
+# kind, on [[gap]] and [[keyword]] rows, is checked against the pinned reference pages:
+#   googlesql_only: GoogleSQL grammar no page of the reference spells; the reason starts
+#     "GoogleSQL grammar, not a BigQuery feature" and the audit fails if any code line or code
+#     span of the pinned pages spells a sequence of the row.
+#   undocumented: as googlesql_only, for a word the reference lists (reserved) but uses nowhere.
+#   spelled_otherwise: the reference spells the words, in another construct that is catalogued;
+#     the audit fails if no page spells them.
+# [[gap]]: a grammar rule's keyword sequences no catalogued grammar spells contiguously.
+# [[keyword]]: keywords.cc keywords no catalogued grammar spells as a keyword.
+# [[dispatched]]: words the grammar's actions compare identifiers with (CaseEqual).
+# [[feature]]: each FEATURE_ language option the grammar's actions test, reviewed as enabled
+#   in BigQuery (with catalogued forms as evidence) or not_enabled; a gap gated by a
+#   not_enabled feature must name it in its reason.
+# [[unseen]]: syntax of a walked rule the gap walk cannot see (punctuation, lexical forms);
+#   the audit fails when a rule of UNSEEN_RULES (constants.py) has no row, when a row names
+#   a rule not in that list, or when a listed rule is no longer walked.
+# [[unwalked]]: a rule the walk from the grammar's entry rules does not reach.
+
+grammar_sha256 = "38a88ee136bd770fca435b5ba4c60a45251a91daa51710fc5d783f957971737e"
+keywords_sha256 = "65bcb223e4a78de52097426d06e18c45d2269a3e0096d0a925a01f139641f4f0"
+
+limits = [
+  "Walk: every parser rule of googlesql.tm reachable from its %input entry rules (script, sql_statement, next_script_statement, next_statement, standalone_expression, standalone_type) is walked; the rest are listed under [[unwalked]].",
+  "Spelling: an alternative is spelled as its keyword literals and KW_ tokens in order; a referenced rule that spells only keywords (at most 60 ways) is inlined, any other nonterminal is a wildcard. Alternatives whose action only returns a syntax error are skipped (alternatives_rejected).",
+  "Containment: a sequence is covered only when one catalogued grammar line, with its page's definitions inlined, spells each keyword run contiguously, in order, with other keywords only where the grammar has a wildcard; a statement's sequence must start the line. A clause sequence may also be covered by a catalogued definition.",
+  "Below a statement, alternatives that spell fewer than 2 keywords are checked only by the [[keyword]] check, which counts words outside placeholders and quoted strings only.",
+  "Derived gaps: a gap containing a gap of a rule it reaches as a contiguous run, or containing in order a shorter gap of its own alternative, is counted (gaps_derived) and takes its root's reason.",
+  "Docs checks: a reviewed kind is checked against every code line and code span of the pinned pages, not against prose; reasons citing prose were read by hand.",
+  "Features: language features are those the parser actions test with LanguageFeatureEnabled, directly or through a helper of the parser template; enabled-or-not is read from the reference, not from an engine.",
+  "Names: OPTIONS option names (the 36 option tables of the DDL, load and export pages), the differential-privacy parameters (epsilon, delta, max_groups_contributed, privacy_unit_column; query-syntax.md:5527-5532) and the system variable names (system-variables.md:12-29) are identifiers to the grammar (an options_list entry is identifier = expression; a system variable is @@ and a path), so the walk cannot compare them and the catalogue writes them as the `name = value` and `@@name` forms; BigQuery checks the names after parsing. The BigQuery ML pages, which spell their option names in the syntax block, keep them as written.",
+]
+
+[[gap]]
+rule = "unterminated_sql_statement"
+kind = "googlesql_only"
+sequences = [
+  "DEFINE MACRO",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: DEFINE MACRO, the macro language of other GoogleSQL front ends. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "sql_statement_body_no_pipe_suffix"
+kind = "googlesql_only"
+sequences = [
+  "ABORT BATCH",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: the batch statements (START BATCH, RUN BATCH, ABORT BATCH) of Spanner. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_external_table_statement"
+kind = "googlesql_only"
+sequences = [
+  "CREATE TEMP EXTERNAL TABLE",
+  "CREATE TEMPORARY EXTERNAL TABLE",
+  "CREATE PUBLIC EXTERNAL TABLE",
+  "CREATE PRIVATE EXTERNAL TABLE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: the TEMP, TEMPORARY, PUBLIC and PRIVATE scope modifiers GoogleSQL accepts on every CREATE; the reference documents TEMP only for tables and functions. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_model_statement"
+kind = "googlesql_only"
+sequences = [
+  "CREATE TEMP MODEL",
+  "CREATE TEMPORARY MODEL",
+  "CREATE PUBLIC MODEL",
+  "CREATE PRIVATE MODEL",
+  "CREATE OR REPLACE MODEL IF NOT EXISTS",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: the TEMP, TEMPORARY, PUBLIC and PRIVATE scope modifiers GoogleSQL accepts on every CREATE; the reference documents TEMP only for tables and functions; OR REPLACE with IF NOT EXISTS, which the BigQuery ML pages write as three separate alternatives. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_table_function_statement"
+kind = "outside_pinned"
+sequences = [
+  "CREATE TEMP TABLE FUNCTION",
+  "CREATE TEMPORARY TABLE FUNCTION",
+]
+reason = "BigQuery syntax outside the pinned reference: CREATE TEMP TABLE FUNCTION (and the ANY TABLE parameter kind) is documented on the table-functions page that the DDL page links (data-definition-language.md:3626), which moved out of the reference and is not pinned; the reading of bq.ddl.create-table-function carries TEMP and ANY TABLE into its obligations. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_live_table_statement"
+kind = "googlesql_only"
+sequences = [
+  "CREATE LIVE TABLE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: CREATE LIVE TABLE, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_view_statement"
+kind = "googlesql_only"
+sequences = [
+  "CREATE RECURSIVE VIEW",
+  "CREATE TEMP VIEW",
+  "CREATE TEMPORARY VIEW",
+  "CREATE PUBLIC VIEW",
+  "CREATE PRIVATE VIEW",
+  "CREATE MATERIALIZED VIEW IF NOT EXISTS … AS REPLICA OF",
+  "CREATE MATERIALIZED RECURSIVE VIEW … AS",
+  "CREATE OR REPLACE MATERIALIZED VIEW … AS REPLICA OF",
+  "CREATE APPROX VIEW",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: the TEMP, TEMPORARY, PUBLIC and PRIVATE scope modifiers GoogleSQL accepts on every CREATE; the reference documents TEMP only for tables and functions; RECURSIVE and APPROX views; AS REPLICA OF with IF NOT EXISTS or OR REPLACE, which the reference writes only as CREATE MATERIALIZED VIEW <name> AS REPLICA OF; query-syntax.md:5152 names CREATE RECURSIVE VIEW only to say it isn't supported (use WITH RECURSIVE inside CREATE VIEW). No other code line or code span of the pinned reference spells these sequences."
+mentioned_on = ["doc.query-syntax"]
+
+[[gap]]
+rule = "explain_statement"
+kind = "googlesql_only"
+sequences = [
+  "EXPLAIN",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: EXPLAIN, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "alter_statement"
+kind = "googlesql_only"
+sequences = [
+  "ALTER TABLE FUNCTION",
+  "ALTER CONNECTION … ON",
+  "ALTER CONSTANT",
+  "ALTER DATABASE",
+  "ALTER EXTERNAL TABLE",
+  "ALTER EXTERNAL SCHEMA",
+  "ALTER FUNCTION",
+  "ALTER INDEX",
+  "ALTER MODEL … ON",
+  "ALTER PROCEDURE",
+  "ALTER SCHEMA … ON",
+  "ALTER SEQUENCE",
+  "ALTER VIEW … ON",
+  "ALTER PROPERTY GRAPH",
+  "ALTER PRIVILEGE RESTRICTION ON … ON",
+  "ALTER ROW ACCESS POLICY … ON",
+  "ALTER ALL ROW ACCESS POLICIES ON",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: ALTER for object kinds the reference gives no ALTER statement (TABLE FUNCTION, CONSTANT, DATABASE, EXTERNAL TABLE/SCHEMA, FUNCTION, INDEX, PROCEDURE, SEQUENCE, PROPERTY GRAPH, PRIVILEGE RESTRICTION, ROW ACCESS POLICY) and the ON <path> suffix. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "begin_statement"
+kind = "googlesql_only"
+sequences = [
+  "START TRANSACTION",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: START TRANSACTION; the reference documents BEGIN [TRANSACTION]. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "analyze_statement"
+kind = "googlesql_only"
+sequences = [
+  "ANALYZE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: ANALYZE, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "clone_data_statement"
+kind = "googlesql_only"
+sequences = [
+  "CLONE DATA INTO … FROM",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: CLONE DATA INTO, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "set_statement"
+kind = "googlesql_only"
+sequences = [
+  "SET TRANSACTION",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: SET TRANSACTION, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "start_batch_statement"
+kind = "googlesql_only"
+sequences = [
+  "START BATCH",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: START BATCH, a Spanner batch statement. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "run_batch_statement"
+kind = "googlesql_only"
+sequences = [
+  "RUN BATCH",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: RUN BATCH, a Spanner batch statement (RUN BATCH is dispatched by CaseEqual on BATCH). No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "abort_batch_statement"
+kind = "googlesql_only"
+sequences = [
+  "ABORT BATCH",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: ABORT BATCH, a Spanner batch statement. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_constant_statement"
+kind = "googlesql_only"
+sequences = [
+  "CREATE CONSTANT",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: CREATE CONSTANT, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_connection_statement"
+kind = "googlesql_only"
+sequences = [
+  "CREATE OR REPLACE CONNECTION",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: CREATE OR REPLACE CONNECTION; the reference documents CREATE CONNECTION [IF NOT EXISTS]. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_database_statement"
+kind = "googlesql_only"
+sequences = [
+  "CREATE DATABASE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: CREATE DATABASE; BigQuery datasets are SCHEMA. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_function_statement"
+kind = "googlesql_only"
+sequences = [
+  "CREATE FUNCTION … IMMUTABLE",
+  "CREATE FUNCTION … STABLE",
+  "CREATE FUNCTION … VOLATILE",
+  "CREATE AGGREGATE FUNCTION … DETERMINISTIC",
+  "CREATE PUBLIC FUNCTION",
+  "CREATE PRIVATE FUNCTION",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: IMMUTABLE, STABLE and VOLATILE volatility, DETERMINISTIC on aggregate functions, and the PUBLIC and PRIVATE modifiers. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_procedure_statement"
+kind = "googlesql_only"
+sequences = [
+  "CREATE PROCEDURE … EXTERNAL SECURITY INVOKER LANGUAGE",
+  "CREATE PROCEDURE … EXTERNAL SECURITY DEFINER",
+  "CREATE TEMP PROCEDURE",
+  "CREATE TEMPORARY PROCEDURE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: EXTERNAL SECURITY written before LANGUAGE, EXTERNAL SECURITY DEFINER, and TEMP or TEMPORARY procedures; the reference writes EXTERNAL SECURITY INVOKER after the argument list and before WITH CONNECTION, which is catalogued. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_index_statement"
+kind = "googlesql_only"
+sequences = [
+  "CREATE INDEX … ON",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: plain CREATE INDEX ... ON, Spanner legacy DDL (FEATURE_SPANNER_LEGACY_DDL); the reference documents CREATE SEARCH INDEX and CREATE VECTOR INDEX. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_privilege_restriction_statement"
+kind = "googlesql_only"
+sequences = [
+  "CREATE PRIVILEGE RESTRICTION ON … ON",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: privilege restrictions, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_row_access_policy_statement"
+kind = "googlesql_only"
+sequences = [
+  "CREATE ROW POLICY … ON",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: CREATE ROW POLICY without ACCESS; the reference writes CREATE ROW ACCESS POLICY. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_sequence_statement"
+kind = "googlesql_only"
+sequences = [
+  "CREATE SEQUENCE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: CREATE SEQUENCE, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_locality_group_statement"
+kind = "googlesql_only"
+sequences = [
+  "CREATE LOCALITY GROUP",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: CREATE LOCALITY GROUP, Spanner DDL behind FEATURE_CREATE_LOCALITY_GROUP. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_property_graph_statement"
+kind = "googlesql_only"
+sequences = [
+  "CREATE TEMP PROPERTY GRAPH",
+  "CREATE TEMPORARY PROPERTY GRAPH",
+  "CREATE PUBLIC PROPERTY GRAPH",
+  "CREATE PRIVATE PROPERTY GRAPH",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: the TEMP, TEMPORARY, PUBLIC and PRIVATE scope modifiers GoogleSQL accepts on every CREATE; the reference documents TEMP only for tables and functions. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_property_graph_type_statement"
+kind = "googlesql_only"
+sequences = [
+  "CREATE PROPERTY GRAPH TYPE … NODE TYPES",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: property graph types, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_schema_statement"
+kind = "googlesql_only"
+sequences = [
+  "CREATE OR REPLACE SCHEMA",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: CREATE OR REPLACE SCHEMA; the reference documents CREATE SCHEMA [IF NOT EXISTS]. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_external_schema_statement"
+kind = "googlesql_only"
+sequences = [
+  "CREATE TEMP EXTERNAL SCHEMA",
+  "CREATE TEMPORARY EXTERNAL SCHEMA",
+  "CREATE PUBLIC EXTERNAL SCHEMA",
+  "CREATE PRIVATE EXTERNAL SCHEMA",
+  "CREATE OR REPLACE EXTERNAL SCHEMA",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: the TEMP, TEMPORARY, PUBLIC and PRIVATE scope modifiers GoogleSQL accepts on every CREATE; the reference documents TEMP only for tables and functions; OR REPLACE on external schemas. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_snapshot_statement"
+kind = "googlesql_only"
+sequences = [
+  "CREATE OR REPLACE SNAPSHOT TABLE … CLONE",
+  "CREATE SNAPSHOT CONNECTION … CLONE",
+  "CREATE SNAPSHOT CONSTANT … CLONE",
+  "CREATE SNAPSHOT DATABASE … CLONE",
+  "CREATE SNAPSHOT EXTERNAL TABLE … CLONE",
+  "CREATE SNAPSHOT FUNCTION … CLONE",
+  "CREATE SNAPSHOT INDEX … CLONE",
+  "CREATE SNAPSHOT MODEL … CLONE",
+  "CREATE SNAPSHOT PROCEDURE … CLONE",
+  "CREATE SNAPSHOT SCHEMA … CLONE",
+  "CREATE SNAPSHOT SEQUENCE … CLONE",
+  "CREATE SNAPSHOT VIEW … CLONE",
+  "CREATE SNAPSHOT PROPERTY GRAPH … CLONE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: CREATE SNAPSHOT for object kinds other than TABLE, and OR REPLACE SNAPSHOT TABLE. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_entity_statement"
+kind = "googlesql_only"
+sequences = [
+  "CREATE PUBLIC",
+  "CREATE PRIVATE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: the PUBLIC and PRIVATE modifiers on generic entities. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "define_macro_statement"
+kind = "googlesql_only"
+sequences = [
+  "DEFINE MACRO",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: DEFINE MACRO, the macro language of other GoogleSQL front ends. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "define_table_statement"
+kind = "googlesql_only"
+sequences = [
+  "DEFINE TABLE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: DEFINE TABLE, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "export_metadata_statement"
+kind = "outside_pinned"
+sequences = [
+  "EXPORT TABLE METADATA FROM",
+]
+reason = "BigQuery syntax outside the pinned reference: EXPORT TABLE METADATA FROM <table> is documented in BigQuery's exporting-data and managed-tables guides (it exports Iceberg metadata), which are not reference pages and so are not in the pinned set; the pinned grammar parses it. Not catalogued; no code line or code span of the pinned reference spells it."
+
+[[gap]]
+rule = "rename_statement"
+kind = "spelled_otherwise"
+sequences = [
+  "RENAME … TO",
+]
+reason = "the reference spells RENAME ... TO only inside ALTER TABLE RENAME TO and RENAME COLUMN ... TO, which are catalogued; a standalone RENAME statement is GoogleSQL grammar, not in the reference"
+
+[[gap]]
+rule = "drop_all_row_access_policies_statement"
+kind = "googlesql_only"
+sequences = [
+  "DROP ALL ROW POLICIES ON",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: DROP ALL ROW POLICIES without ACCESS; the reference writes DROP ALL ROW ACCESS POLICIES. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "drop_statement"
+kind = "googlesql_only"
+sequences = [
+  "DROP PRIVILEGE RESTRICTION ON … ON",
+  "DROP AGGREGATE FUNCTION",
+  "DROP CONNECTION … RESTRICT",
+  "DROP CONNECTION … CASCADE",
+  "DROP CONNECTION … ON",
+  "DROP CONSTANT",
+  "DROP DATABASE",
+  "DROP EXTERNAL TABLE … RESTRICT",
+  "DROP EXTERNAL TABLE … CASCADE",
+  "DROP EXTERNAL TABLE … ON",
+  "DROP FUNCTION … RESTRICT",
+  "DROP FUNCTION … CASCADE",
+  "DROP FUNCTION … ON",
+  "DROP INDEX",
+  "DROP MODEL … RESTRICT",
+  "DROP MODEL … CASCADE",
+  "DROP MODEL … ON",
+  "DROP PROCEDURE … RESTRICT",
+  "DROP PROCEDURE … CASCADE",
+  "DROP PROCEDURE … ON",
+  "DROP SCHEMA … ON",
+  "DROP SEQUENCE",
+  "DROP VIEW … RESTRICT",
+  "DROP VIEW … CASCADE",
+  "DROP VIEW … ON",
+  "DROP PROPERTY GRAPH … RESTRICT",
+  "DROP PROPERTY GRAPH … CASCADE",
+  "DROP PROPERTY GRAPH … ON",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: DROP for object kinds the reference gives no DROP statement, RESTRICT and CASCADE on kinds other than SCHEMA, the ON <path> suffix and DROP AGGREGATE FUNCTION, which the grammar's action itself refuses. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "import_statement"
+kind = "googlesql_only"
+sequences = [
+  "IMPORT MODULE",
+  "IMPORT PROTO",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: IMPORT MODULE and IMPORT PROTO, which BigQuery does not run; the lexical page's case-sensitivity table (lexical.md:750) mentions `MODULE x.y.z;` and `IMPORT MODULE x.y.z;` as GoogleSQL text in passing, with no syntax, statement page or example. No other code line or code span of the pinned reference spells these sequences."
+mentioned_on = ["doc.lexical"]
+
+[[gap]]
+rule = "module_statement"
+kind = "googlesql_only"
+sequences = [
+  "MODULE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: MODULE, which BigQuery does not run; the lexical page's case-sensitivity table (lexical.md:750) mentions `MODULE x.y.z;` and `IMPORT MODULE x.y.z;` as GoogleSQL text in passing, with no syntax, statement page or example. No other code line or code span of the pinned reference spells these sequences."
+mentioned_on = ["doc.lexical"]
+
+[[gap]]
+rule = "undrop_statement"
+kind = "googlesql_only"
+sequences = [
+  "UNDROP CONNECTION",
+  "UNDROP CONSTANT",
+  "UNDROP DATABASE",
+  "UNDROP EXTERNAL TABLE",
+  "UNDROP EXTERNAL SCHEMA",
+  "UNDROP FUNCTION",
+  "UNDROP INDEX",
+  "UNDROP MODEL",
+  "UNDROP PROCEDURE",
+  "UNDROP SEQUENCE",
+  "UNDROP VIEW",
+  "UNDROP PROPERTY GRAPH",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: UNDROP for object kinds other than SCHEMA. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "describe_statement"
+kind = "googlesql_only"
+sequences = [
+  "DESCRIBE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: DESCRIBE, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "describe_statement"
+kind = "spelled_otherwise"
+sequences = [
+  "DESC",
+]
+reason = "DESC appears in the reference only as the ORDER BY direction; DESC as a DESCRIBE statement is GoogleSQL grammar, not in the reference"
+
+[[gap]]
+rule = "run_statement"
+kind = "googlesql_only"
+sequences = [
+  "RUN",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: RUN, behind FEATURE_RUN_STATEMENT. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "show_statement"
+kind = "googlesql_only"
+sequences = [
+  "SHOW",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: SHOW, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "sql_security"
+kind = "googlesql_only"
+sequences = [
+  "SQL SECURITY INVOKER",
+  "SQL SECURITY DEFINER",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: SQL SECURITY INVOKER/DEFINER; the reference writes SQL SECURITY nowhere and documents EXTERNAL SECURITY on procedures. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "create_table_statement_prefix"
+kind = "googlesql_only"
+sequences = [
+  "CREATE PUBLIC TABLE",
+  "CREATE PRIVATE TABLE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: the PUBLIC and PRIVATE modifiers on tables. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "schema_object_kind"
+kind = "googlesql_only"
+sequences = [
+  "APPROX VIEW",
+  "EXTERNAL TABLE FUNCTION",
+  "AI INDEX",
+  "LIVE TABLE",
+  "PROPERTY GRAPH TYPE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: object kinds the reference has no statements for (APPROX VIEW, EXTERNAL TABLE FUNCTION, AI INDEX, LIVE TABLE, PROPERTY GRAPH TYPE). No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "privilege_restriction_alter_action"
+kind = "googlesql_only"
+sequences = [
+  "ADD IF NOT EXISTS",
+  "REMOVE IF EXISTS",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: privilege restrictions, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "row_access_policy_alter_action"
+kind = "googlesql_only"
+sequences = [
+  "REVOKE FROM",
+  "REVOKE FROM ALL",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: ALTER ROW ACCESS POLICY actions, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "transaction_mode"
+kind = "googlesql_only"
+sequences = [
+  "READ ONLY",
+  "READ WRITE",
+  "ISOLATION LEVEL",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: transaction modes (READ ONLY, READ WRITE, ISOLATION LEVEL), not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "index_order_by_and_options"
+kind = "googlesql_only"
+sequences = [
+  "AUTO COLUMNS",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: AUTO COLUMNS on indexes, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "restrict_to_clause"
+kind = "googlesql_only"
+sequences = [
+  "RESTRICT TO",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: RESTRICT TO of privilege restrictions. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "with_condition_clause"
+kind = "googlesql_only"
+sequences = [
+  "WITH CONDITION",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: WITH CONDITION on data policies; the reference's CREATE DATA_POLICY takes OPTIONS only. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "edge_type_clause"
+kind = "googlesql_only"
+sequences = [
+  "EDGE TYPES",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: property graph types, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "privileges"
+kind = "googlesql_only"
+sequences = [
+  "ALL PRIVILEGES",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: ALL PRIVILEGES; the reference's GRANT takes role names. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "insert_statement"
+kind = "googlesql_only"
+sequences = [
+  "INSERT IGNORE",
+  "INSERT REPLACE",
+  "INSERT UPDATE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: INSERT IGNORE, INSERT REPLACE and INSERT UPDATE (and the OR forms), not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "tvf_argument"
+kind = "googlesql_only"
+sequences = [
+  "INPUT TABLE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: INPUT TABLE arguments, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "show_target"
+kind = "googlesql_only"
+sequences = [
+  "MATERIALIZED VIEWS",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: SHOW MATERIALIZED VIEWS, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "query_without_pipe_operators"
+kind = "googlesql_only"
+sequences = [
+  "FOR UPDATE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: FOR UPDATE, behind FEATURE_FOR_UPDATE. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "alter_action"
+kind = "googlesql_only"
+sequences = [
+  "SET AS",
+  "ALTER CONSTRAINT … ENFORCED",
+  "ALTER CONSTRAINT … SET OPTIONS",
+  "ADD COLUMN … FILL USING",
+  "ADD STORED COLUMN",
+  "DROP STORED COLUMN",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: ALTER TABLE actions the reference gives no statement for (SET AS, ALTER CONSTRAINT, ADD COLUMN ... FILL USING, ADD/DROP STORED COLUMN). No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "index_auto_columns"
+kind = "googlesql_only"
+sequences = [
+  "AUTO COLUMNS",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: AUTO COLUMNS on indexes, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "spanner_index_interleave_clause"
+kind = "googlesql_only"
+sequences = [
+  "INTERLEAVE IN",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: INTERLEAVE IN, Spanner legacy DDL behind FEATURE_SPANNER_LEGACY_DDL. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "function_parameter"
+kind = "googlesql_only"
+sequences = [
+  "AS … NOT AGGREGATE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: a parameter alias (AS <name>) before NOT AGGREGATE; the reference writes NOT AGGREGATE directly after the parameter type (data-definition-language.md:3211, :3311), which is catalogued. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "insert_mode"
+kind = "googlesql_only"
+sequences = [
+  "OR IGNORE",
+  "OR UPDATE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: INSERT OR IGNORE and INSERT OR UPDATE, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "returning_clause"
+kind = "googlesql_only"
+sequences = [
+  "THEN RETURN",
+  "THEN RETURN WITH ACTION",
+  "THEN RETURN WITH ACTION AS",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: THEN RETURN, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "named_argument"
+kind = "googlesql_only"
+sequences = [
+  "INPUT TABLE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: INPUT TABLE arguments, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "input_table_argument"
+kind = "googlesql_only"
+sequences = [
+  "INPUT TABLE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: INPUT TABLE arguments, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "unparenthesized_expression_higher_prec_than_and"
+kind = "googlesql_only"
+sequences = [
+  "BETWEEN … OR",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: BETWEEN ... OR, an error-recovery alternative of the expression grammar. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "pipe_join"
+kind = "googlesql_only"
+sequences = [
+  "NATURAL JOIN",
+  "HASH JOIN",
+  "LOOKUP JOIN",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: NATURAL, HASH and LOOKUP joins; HASH and LOOKUP are reserved but the reference's join syntax has none of the three. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "opt_lock_mode_clause"
+kind = "googlesql_only"
+sequences = [
+  "FOR UPDATE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: FOR UPDATE, behind FEATURE_FOR_UPDATE. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "recursion_depth_modifier"
+kind = "googlesql_only"
+sequences = [
+  "WITH DEPTH",
+  "WITH DEPTH BETWEEN … AND",
+  "WITH DEPTH … BETWEEN … AND",
+  "WITH DEPTH MAX",
+  "WITH DEPTH … MAX",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: WITH DEPTH on recursive CTEs, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "opt_spanner_interleave_in_parent_clause"
+kind = "googlesql_only"
+sequences = [
+  "INTERLEAVE IN PARENT",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: INTERLEAVE IN PARENT, Spanner legacy DDL behind FEATURE_SPANNER_LEGACY_DDL. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "ttl_clause"
+kind = "googlesql_only"
+sequences = [
+  "ROW DELETION POLICY",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: ROW DELETION POLICY, behind FEATURE_TTL. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "table_constraint_spec"
+kind = "googlesql_only"
+sequences = [
+  "CHECK … ENFORCED",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: CHECK constraints, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "spanner_set_on_delete_action"
+kind = "googlesql_only"
+sequences = [
+  "SET ON DELETE RESTRICT",
+  "SET ON DELETE CASCADE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: SET ON DELETE, Spanner legacy DDL behind FEATURE_SPANNER_LEGACY_DDL. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "data_policy_alter_action"
+kind = "googlesql_only"
+sequences = [
+  "SET CONDITION",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: SET CONDITION on data policies; the reference's ALTER DATA_POLICY takes SET OPTIONS only. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "with_timestamp_clause"
+kind = "googlesql_only"
+sequences = [
+  "WITH TIMESTAMP",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: WITH TIMESTAMP, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "on_conflict_clause"
+kind = "googlesql_only"
+sequences = [
+  "ON CONFLICT DO NOTHING",
+  "ON CONFLICT DO UPDATE SET",
+  "ON CONFLICT … DO NOTHING",
+  "ON CONFLICT … DO UPDATE SET",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: ON CONFLICT, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "from_clause_contents"
+kind = "googlesql_only"
+sequences = [
+  "NATURAL JOIN",
+  "HASH JOIN",
+  "LOOKUP JOIN",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: NATURAL, HASH and LOOKUP joins; HASH and LOOKUP are reserved but the reference's join syntax has none of the three. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "graph_expression"
+kind = "googlesql_only"
+sequences = [
+  "IS LABELED",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: IS LABELED, not in the reference's graph predicates. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "limit_offset_clause"
+kind = "googlesql_only"
+sequences = [
+  "LIMIT ALL",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: LIMIT ALL, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "table_primary"
+kind = "googlesql_only"
+sequences = [
+  "GROUP ROWS",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: GROUP ROWS, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "align_operator"
+kind = "googlesql_only"
+sequences = [
+  "ALIGN PERIOD",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: ALIGN PERIOD, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "lock_mode_clause"
+kind = "googlesql_only"
+sequences = [
+  "FOR UPDATE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: FOR UPDATE, behind FEATURE_FOR_UPDATE. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "opt_foreign_key_on_delete"
+kind = "googlesql_only"
+sequences = [
+  "ON DELETE RESTRICT",
+  "ON DELETE CASCADE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: referential actions; the reference's foreign keys are NOT ENFORCED and take none. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "identity_column_info"
+kind = "googlesql_only"
+sequences = [
+  "IDENTITY … CYCLE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: CYCLE on identity columns, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "foreign_key_action"
+kind = "googlesql_only"
+sequences = [
+  "NO ACTION",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: NO ACTION referential action; the reference's foreign keys take none. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "foreign_key_action"
+kind = "spelled_otherwise"
+sequences = [
+  "SET NULL",
+]
+reason = "the reference spells SET ... NULL only in SET statements assigning NULL; SET NULL as a referential action is GoogleSQL grammar, not in the reference"
+
+[[gap]]
+rule = "insert_column_using_clause"
+kind = "googlesql_only"
+sequences = [
+  "USING FUNCTION",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: USING FUNCTION in an INSERT column list, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "insert_column_using_clause"
+kind = "googlesql_only"
+sequences = [
+  "USING … DEFAULT",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: USING <lambda> DEFAULT in an INSERT column list; the reference spells USING and DEFAULT only in MERGE, DML and DDL text, never as an INSERT column clause. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "conflict_target"
+kind = "googlesql_only"
+sequences = [
+  "ON UNIQUE CONSTRAINT",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: ON CONFLICT ON UNIQUE CONSTRAINT, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "is_labeled_operator"
+kind = "googlesql_only"
+sequences = [
+  "IS LABELED",
+  "IS NOT LABELED",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: IS [NOT] LABELED, not in the reference's graph predicates. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "limit_all"
+kind = "googlesql_only"
+sequences = [
+  "LIMIT ALL",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: LIMIT ALL, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "set_operation_metadata"
+kind = "googlesql_only"
+sequences = [
+  "EXCEPT ALL",
+  "INTERSECT ALL",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: EXCEPT ALL and INTERSECT ALL; the reference documents EXCEPT DISTINCT and INTERSECT DISTINCT. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "join"
+kind = "googlesql_only"
+sequences = [
+  "NATURAL JOIN",
+  "HASH JOIN",
+  "LOOKUP JOIN",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: NATURAL, HASH and LOOKUP joins; HASH and LOOKUP are reserved but the reference's join syntax has none of the three. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "opt_sample_clause_suffix"
+kind = "googlesql_only"
+sequences = [
+  "WITH WEIGHT",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: WITH WEIGHT on TABLESAMPLE, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "insert_statement_in_pipe_prefix"
+kind = "googlesql_only"
+sequences = [
+  "INSERT IGNORE",
+  "INSERT REPLACE",
+  "INSERT UPDATE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: INSERT IGNORE, INSERT REPLACE and INSERT UPDATE, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "within_range_clause"
+kind = "googlesql_only"
+sequences = [
+  "RANGE FROM … TO",
+  "RANGE TO",
+  "PERIOD PRECEDING",
+  "PERIOD FOLLOWING",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: the RANGE and PERIOD bounds of WITHIN, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "foreign_key_on_delete"
+kind = "googlesql_only"
+sequences = [
+  "ON DELETE RESTRICT",
+  "ON DELETE CASCADE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: referential actions; the reference's foreign keys are NOT ENFORCED and take none. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "opt_foreign_key_match"
+kind = "googlesql_only"
+sequences = [
+  "MATCH SIMPLE",
+  "MATCH FULL",
+  "MATCH NOT DISTINCT",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: MATCH SIMPLE/FULL/NOT DISTINCT on foreign keys, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "opt_foreign_key_actions"
+kind = "googlesql_only"
+sequences = [
+  "ON UPDATE RESTRICT",
+  "ON UPDATE CASCADE",
+  "ON DELETE RESTRICT",
+  "ON DELETE CASCADE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: referential actions; the reference's foreign keys are NOT ENFORCED and take none. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "generated_column_info"
+kind = "googlesql_only"
+sequences = [
+  "GENERATED AS … STORED",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: stored generated columns (GENERATED AS expression STORED); the reference's generated columns are identity columns, GENERATED [ ALWAYS | BY DEFAULT ] AS IDENTITY, catalogued with the mode and without it (bq.ddl.alter-column-set-generated-default-mode: ALWAYS is the default, data-definition-language.md:6203). No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "opt_cycle"
+kind = "googlesql_only"
+sequences = [
+  "NO CYCLE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: NO CYCLE on identity columns, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "dynamic_label_or_properties"
+kind = "googlesql_only"
+sequences = [
+  "DYNAMIC LABEL",
+  "DYNAMIC PROPERTIES",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: DYNAMIC LABEL and DYNAMIC PROPERTIES in property graphs, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "inlined_edge_definition"
+kind = "googlesql_only"
+sequences = [
+  "EDGE … JOIN KEY … REFERENCES",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: inlined edge definitions with JOIN KEY, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "graph_composite_query_prefix"
+kind = "googlesql_only"
+sequences = [
+  "EXCEPT ALL",
+  "INTERSECT ALL",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: EXCEPT ALL and INTERSECT ALL in GQL; the reference documents the DISTINCT forms. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "function_call_expression_base"
+kind = "googlesql_only"
+sequences = [
+  "IF DISTINCT",
+  "GROUPING DISTINCT",
+  "LEFT DISTINCT",
+  "RIGHT DISTINCT",
+  "COLLATE DISTINCT",
+  "RANGE DISTINCT",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: DISTINCT inside calls of the keyword-named functions IF, GROUPING, LEFT, RIGHT, COLLATE and RANGE; the reference documents DISTINCT only for aggregate functions. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "with_report_modifier"
+kind = "googlesql_only"
+sequences = [
+  "WITH REPORT",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: WITH REPORT, a differential privacy modifier not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "clamped_between_modifier"
+kind = "googlesql_only"
+sequences = [
+  "CLAMPED BETWEEN … AND",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: CLAMPED BETWEEN, a differential privacy modifier the reference writes as contribution_bounds arguments instead. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "within_clause_bound_expression"
+kind = "googlesql_only"
+sequences = [
+  "PERIOD PRECEDING",
+  "PERIOD FOLLOWING",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: PERIOD PRECEDING and PERIOD FOLLOWING, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "foreign_key_on_update"
+kind = "googlesql_only"
+sequences = [
+  "ON UPDATE RESTRICT",
+  "ON UPDATE CASCADE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: referential actions; the reference's foreign keys are NOT ENFORCED and take none. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "opt_foreign_key_on_update"
+kind = "googlesql_only"
+sequences = [
+  "ON UPDATE RESTRICT",
+  "ON UPDATE CASCADE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: referential actions; the reference's foreign keys are NOT ENFORCED and take none. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "stored_mode"
+kind = "googlesql_only"
+sequences = [
+  "STORED VOLATILE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: STORED VOLATILE generated columns, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "graph_set_operation_metadata"
+kind = "googlesql_only"
+sequences = [
+  "EXCEPT ALL",
+  "INTERSECT ALL",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: EXCEPT ALL and INTERSECT ALL in GQL; the reference documents the DISTINCT forms. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "graph_delete_operator"
+kind = "googlesql_only"
+sequences = [
+  "NODETACH DELETE",
+  "DETACH DELETE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: GQL DETACH DELETE and NODETACH DELETE, graph mutation not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "graph_path_pattern"
+kind = "googlesql_only"
+sequences = [
+  "SIMPLE PATH",
+  "SIMPLE PATHS",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: SIMPLE PATH(S), not in the reference's path modes. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "opt_graph_sample_clause_suffix"
+kind = "googlesql_only"
+sequences = [
+  "WITH WEIGHT",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: WITH WEIGHT on graph sampling, not in the reference. No code line or code span of the pinned reference spells these sequences."
+
+[[gap]]
+rule = "graph_search_prefix"
+kind = "googlesql_only"
+sequences = [
+  "ALL SHORTEST",
+  "ALL CHEAPEST",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: ALL SHORTEST and ALL CHEAPEST, not in the reference's path search prefixes. No code line or code span of the pinned reference spells these sequences."
+
+[[keyword]]
+kind = "spelled_otherwise"
+keywords = [
+  "APPROX",
+  "AUTO",
+  "CONSTANT",
+  "SIMPLE",
+  "SQL",
+]
+reason = "the reference spells these words only as quoted option values of BigQuery ML pages ('APPROX', 'AUTO', 'CONSTANT', 'SIMPLE') or inside prose code spans (SQL); no documented statement uses them as keywords, and the grammar's uses of them are reviewed in the [[gap]] rows"
+
+[[keyword]]
+kind = "undocumented"
+keywords = [
+  "ASSERT_ROWS_MODIFIED",
+  "CONTAINS",
+  "ENUM",
+  "ESCAPE",
+  "FETCH",
+  "GROUPS",
+  "HASH",
+  "LATERAL",
+  "LOOKUP",
+  "NATURAL",
+  "NEW",
+  "PROTO",
+  "TREAT",
+  "WITHIN",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: reserved by the lexical page's keyword list, so they must be quoted as identifiers, but no documented syntax uses them; the legacy-SQL migration page, which is out of scope, lists them again in its reserved-word tables; the grammar uses them for protocol buffers, NATURAL/HASH/LOOKUP joins, LATERAL, FETCH, GROUPS frames, WITHIN, TREAT, ENUM and ASSERT_ROWS_MODIFIED"
+mentioned_on = ["doc.migrating-from-legacy-sql"]
+
+[[keyword]]
+kind = "googlesql_only"
+keywords = [
+  "ABORT",
+  "ACTION",
+  "ALIGN",
+  "ANALYZE",
+  "BACKWARDS",
+  "BATCH",
+  "CHECK",
+  "CLAMPED",
+  "CONDITION",
+  "CONFLICT",
+  "CYCLE",
+  "DATABASE",
+  "DEFINER",
+  "DELETION",
+  "DEPTH",
+  "DESCRIBE",
+  "DESCRIPTOR",
+  "DETACH",
+  "DYNAMIC",
+  "EPOCH",
+  "EXPLAIN",
+  "FILL",
+  "FINISH",
+  "FORK",
+  "FORWARDS",
+  "GROUP_ROWS",
+  "HIDDEN",
+  "IMMUTABLE",
+  "IMPORT",
+  "INTERLEAVE",
+  "ISOLATION",
+  "LABELED",
+  "LIVE",
+  "LOCALITY",
+  "MACRO",
+  "MAP",
+  "MAXVALUE",
+  "METADATA",
+  "MINVALUE",
+  "MODULE",
+  "NODETACH",
+  "NOTHING",
+  "NULL_FILTERED",
+  "ONLY",
+  "PARENT",
+  "PERIOD",
+  "PRIVATE",
+  "PRIVILEGE",
+  "PRIVILEGES",
+  "PUBLIC",
+  "READ",
+  "REMOVE",
+  "REPEATABLE",
+  "REPLACE_FIELDS",
+  "REPORT",
+  "RESTRICTION",
+  "RUN",
+  "SEQUENCE",
+  "SHOW",
+  "STABLE",
+  "STATIC_DESCRIBE",
+  "TEE",
+  "TYPES",
+  "UNIQUE",
+  "VARIANT",
+  "VIEWS",
+  "VOLATILE",
+  "WRITE",
+]
+reason = "GoogleSQL grammar, not a BigQuery feature: non-reserved keywords of statements and clauses the [[gap]] rows review (batch, macro, sequence, privilege restriction, locality group, Spanner DDL, graph mutation, referential actions and others); no page of the reference spells them; PUBLIC (the GoogleSQL CREATE PUBLIC scope modifier) is in no code line or code span of the pinned pages; IMPORT and MODULE appear only in the lexical page's case-sensitivity table (lexical.md:750), and VARIANT only as a TensorFlow Lite input type the tflite page marks Unsupported"
+mentioned_on = ["doc.bigqueryml-syntax-create-tflite", "doc.lexical"]
+
+[[dispatched]]
+word = "BATCH"
+reason = "GoogleSQL grammar, not a BigQuery feature: RUN BATCH is told from RUN <path> by comparing the path with BATCH (CaseEqual); batch statements are Spanner's and in no page of the reference"
+
+[[dispatched]]
+word = "EPOCH"
+reason = "GoogleSQL grammar, not a BigQuery feature: ALIGN ... EPOCH is told from a path expression by comparing it with EPOCH (CaseEqual); ALIGN is in no page of the reference"
+
+[[feature]]
+name = "FEATURE_ALLOW_CONSECUTIVE_ON"
+bigquery = "enabled"
+sites = [
+  "on_or_using_clause_lists#1",
+]
+evidence = [
+  "bq.query.query-syntax.consecutive-join-conditions",
+]
+reason = "the reference documents several ON or USING conditions after a run of JOINs"
+
+[[feature]]
+name = "FEATURE_ALLOW_DASHES_IN_TABLE_NAME"
+bigquery = "enabled"
+sites = [
+  "maybe_dashed_path_expression#2",
+  "maybe_dashed_generalized_path_expression#2",
+]
+evidence = [
+  "bq.expressions.lexical.dashed-table-name",
+]
+reason = "the lexical page allows single dashes in an unquoted project or table name in FROM"
+
+[[feature]]
+name = "FEATURE_ALLOW_SLASH_PATHS"
+bigquery = "enabled"
+sites = [
+  "maybe_slashed_or_dashed_path_expression#2",
+]
+evidence = [
+  "bq.expressions.lexical.path",
+]
+reason = "the lexical page's path expressions use / : and - separators"
+
+[[feature]]
+name = "FEATURE_CASE_STMT"
+bigquery = "enabled"
+sites = [
+  "case_statement#1",
+]
+evidence = [
+  "bq.utility.case",
+  "bq.utility.case-search-expression",
+]
+reason = "the procedural CASE statement is documented"
+
+[[feature]]
+name = "FEATURE_COLUMN_DEFAULT_VALUE"
+bigquery = "enabled"
+sites = [
+  "default_column_info#1",
+]
+evidence = [
+  "bq.ddl.alter-column-set-default",
+]
+reason = "column DEFAULT values are documented"
+
+[[feature]]
+name = "FEATURE_CREATE_FUNCTION_LANGUAGE_WITH_CONNECTION"
+bigquery = "enabled"
+sites = [
+  "remote_with_connection_clause#2",
+]
+evidence = [
+  "bq.ddl.create-function.returns-language-options-as",
+]
+reason = "LANGUAGE python WITH CONNECTION is documented for Python UDFs"
+
+[[feature]]
+name = "FEATURE_CREATE_LOCALITY_GROUP"
+bigquery = "not_enabled"
+sites = [
+  "create_locality_group_statement#1",
+]
+evidence = []
+reason = "GoogleSQL grammar, not a BigQuery feature: CREATE LOCALITY GROUP is Spanner DDL; the reference has no locality groups"
+
+[[feature]]
+name = "FEATURE_FOR_IN"
+bigquery = "enabled"
+sites = [
+  "for_in_statement#1",
+]
+evidence = [
+  "bq.utility.loops.for-in-do-end",
+]
+reason = "FOR ... IN ... DO is documented"
+
+[[feature]]
+name = "FEATURE_FOR_UPDATE"
+bigquery = "not_enabled"
+sites = [
+  "lock_mode_clause#1",
+]
+evidence = []
+reason = "GoogleSQL grammar, not a BigQuery feature: FOR UPDATE locking is in no query synopsis of the reference"
+
+[[feature]]
+name = "FEATURE_IS_DISTINCT"
+bigquery = "enabled"
+sites = [
+  "unparenthesized_expression_higher_prec_than_and#40",
+]
+evidence = [
+  "bq.expressions.operators.op-is-not-distinct-from",
+]
+reason = "IS [NOT] DISTINCT FROM is documented"
+
+[[feature]]
+name = "FEATURE_LOAD_DATA_PARTITIONS"
+bigquery = "enabled"
+sites = [
+  "load_data_partitions_clause#1",
+]
+evidence = [
+  "bq.dml.load-data",
+]
+reason = "LOAD DATA's [OVERWRITE] PARTITIONS clause is documented"
+
+[[feature]]
+name = "FEATURE_LOAD_DATA_TEMP_TABLE"
+bigquery = "enabled"
+sites = [
+  "aux_load_data_statement#1",
+]
+evidence = [
+  "bq.dml.load-data",
+]
+reason = "LOAD DATA INTO TEMP TABLE is documented"
+
+[[feature]]
+name = "FEATURE_OPTIONS_FROM_STRUCT"
+bigquery = "not_enabled"
+sites = [
+  "options_entry#2",
+]
+evidence = []
+reason = "GoogleSQL grammar, not a BigQuery feature: OPTIONS ( FROM <struct> ) is in no OPTIONS list of the reference; it spells one keyword after OPTIONS, so it yields no gap sequence"
+
+[[feature]]
+name = "FEATURE_ORDERED_PRIMARY_KEYS"
+bigquery = "not_enabled"
+sites = [
+  "primary_key_element#1",
+]
+evidence = []
+reason = "GoogleSQL grammar, not a BigQuery feature: the reference's PRIMARY KEY lists column names only, with no ASC or DESC"
+
+[[feature]]
+name = "FEATURE_PIPES"
+bigquery = "enabled"
+sites = [
+  "query_without_pipe_operators#3",
+  "query_without_pipe_operators#5",
+  "query_without_pipe_operators#6",
+  "query_without_pipe_operators#7",
+  "query_set_operation_prefix#3",
+  "query_set_operation_prefix#4",
+  "query_primary#3",
+  "group_by_preamble_in_pipe#1",
+]
+evidence = [
+  "bq.query.where-pipe",
+  "bq.query.select-pipe",
+]
+reason = "pipe syntax is documented"
+
+[[feature]]
+name = "FEATURE_QUALIFY"
+bigquery = "enabled"
+sites = [
+  "qualify_clause_reserved#1",
+  "qualify_clause_nonreserved#1",
+]
+evidence = [
+  "bq.query.qualify",
+]
+reason = "QUALIFY is documented"
+
+[[feature]]
+name = "FEATURE_REMOTE_FUNCTION"
+bigquery = "enabled"
+sites = [
+  "remote_with_connection_clause#1",
+  "remote_with_connection_clause#2",
+]
+evidence = [
+  "bq.ddl.create-function.returns-remote-with-connection",
+]
+reason = "REMOTE WITH CONNECTION functions are documented"
+
+[[feature]]
+name = "FEATURE_REPEAT"
+bigquery = "enabled"
+sites = [
+  "repeat_statement#1",
+]
+evidence = [
+  "bq.utility.loops.repeat-until-end-repeat",
+]
+reason = "REPEAT ... UNTIL is documented"
+
+[[feature]]
+name = "FEATURE_RUN_STATEMENT"
+bigquery = "not_enabled"
+sites = [
+  "run_statement#1",
+  "run_statement#2",
+]
+evidence = []
+reason = "GoogleSQL grammar, not a BigQuery feature: RUN is in no page of the reference"
+
+[[feature]]
+name = "FEATURE_SCRIPT_LABEL"
+bigquery = "enabled"
+sites = [
+  "unterminated_script_statement#9",
+  "break_statement#1",
+  "break_statement#2",
+  "continue_statement#1",
+  "continue_statement#2",
+]
+evidence = [
+  "bq.utility.labels.begin-end",
+]
+reason = "labelled blocks and loops are documented (the grammar tests it through ValidateLabelSupport)"
+
+[[feature]]
+name = "FEATURE_SPANNER_LEGACY_DDL"
+bigquery = "not_enabled"
+sites = [
+  "create_index_statement#1",
+  "table_element_list#2",
+  "spanner_primary_key#1",
+  "spanner_index_interleave_clause#1",
+  "opt_spanner_interleave_in_parent_clause#1",
+  "opt_spanner_table_options#1",
+  "spanner_alter_column_action#1",
+  "spanner_set_on_delete_action#1",
+]
+evidence = []
+reason = "GoogleSQL grammar, not a BigQuery feature: Spanner legacy DDL (INTERLEAVE, ON DELETE actions, Spanner PRIMARY KEY and table options) is in no page of the reference"
+
+[[feature]]
+name = "FEATURE_STATEMENT_WITH_PIPE_OPERATORS"
+bigquery = "not_enabled"
+sites = [
+  "sql_statement_body#2",
+]
+evidence = []
+reason = "GoogleSQL grammar, not a BigQuery feature: the reference documents pipe operators after queries only, not after CALL, DESCRIBE, EXECUTE IMMEDIATE, RUN or SHOW"
+
+[[feature]]
+name = "FEATURE_TAG_DATA_POLICY_DDL"
+bigquery = "not_enabled"
+sites = [
+  "create_data_policy_statement#1",
+  "alter_data_policy_statement#1",
+  "next_statement_kind_without_hint#56",
+  "next_statement_kind_without_hint#67",
+]
+evidence = []
+reason = "GoogleSQL grammar, not a BigQuery feature: the reference's CREATE and ALTER DATA_POLICY take OPTIONS only; WITH CONDITION and SET CONDITION, which the feature adds, are in no page, and without the feature the grammar still parses CREATE DATA_POLICY as a generic entity"
+
+[[feature]]
+name = "FEATURE_TTL"
+bigquery = "not_enabled"
+sites = [
+  "alter_action#24",
+  "alter_action#25",
+  "alter_action#26",
+  "ttl_clause#1",
+]
+evidence = []
+reason = "GoogleSQL grammar, not a BigQuery feature: ROW DELETION POLICY is in no page of the reference"
+
+[[unseen]]
+rule = "braced_constructor"
+reason = "GoogleSQL grammar, not a BigQuery feature: braced proto constructors ({ field: value } and NEW ... { }) are spelled by punctuation, which the gap walk does not compare; the reference has no protocol buffer syntax (PROTO and NEW are reserved only)"
+
+[[unseen]]
+rule = "cast_expression"
+reason = "the :: and ?:: cast operators are punctuation the gap walk does not compare; GoogleSQL grammar, not a BigQuery feature: the reference documents CAST and SAFE_CAST only, both catalogued"
+
+[[unseen]]
+rule = "generalized_extension_path"
+reason = "GoogleSQL grammar extension paths are punctuation the gap walk does not compare; the reference uses the `x.(path)` shape for chained function calls (functions-reference.md:102-200: `(x).UPPER()`, `(x).(SAFE.SQRT)()`), catalogued as bq.expressions.functions-reference.chained-function-calls; proto extension paths (x.(pkg.ext)) are GoogleSQL grammar, as the reference has no protocol buffer syntax"
+
+[[unseen]]
+rule = "hint"
+reason = "GoogleSQL grammar, not a BigQuery feature: @{ ... } hints are punctuation the gap walk does not compare; the reference documents no hints"
+
+[[unseen]]
+rule = "maybe_dashed_path_expression"
+reason = "dashed names are a lexical difference the gap walk does not see; catalogued from the lexical page's table names as bq.expressions.lexical.dashed-table-name"
+
+[[unseen]]
+rule = "on_or_using_clause_lists"
+reason = "consecutive ON / USING conditions repeat one keyword, which the gap walk does not compare; catalogued as bq.query.query-syntax.consecutive-join-conditions"
+
+[[unseen]]
+rule = "options_assignment_operator"
+reason = "the += and -= OPTIONS assignments are punctuation the gap walk does not compare; the reference documents += for ALTER COLUMN SET OPTIONS (data-definition-language.md:801, :5869: `data_policies += [...]`), catalogued as bq.ddl.data-definition-language.alter-column-set-options-append; -= is GoogleSQL grammar, not in the reference"
+
+[[unseen]]
+rule = "slashed_path_expression"
+reason = "/ separators are punctuation the gap walk does not compare; catalogued from the lexical page's path expressions as bq.expressions.lexical.path"
+
+[[unwalked]]
+rule = "next_statement_kind"
+reason = "a statement-kind classifier the front end runs for its next_statement_kind entry (to name a statement before parsing it); it mirrors the statement rules the walk reaches and is not a separate syntax"
+
+[[unwalked]]
+rule = "next_statement_kind_create_modifiers"
+reason = "a statement-kind classifier the front end runs for its next_statement_kind entry (to name a statement before parsing it); it mirrors the statement rules the walk reaches and is not a separate syntax"
+
+[[unwalked]]
+rule = "next_statement_kind_parenthesized_select"
+reason = "a statement-kind classifier the front end runs for its next_statement_kind entry (to name a statement before parsing it); it mirrors the statement rules the walk reaches and is not a separate syntax"
+
+[[unwalked]]
+rule = "next_statement_kind_table"
+reason = "a statement-kind classifier the front end runs for its next_statement_kind entry (to name a statement before parsing it); it mirrors the statement rules the walk reaches and is not a separate syntax"
+
+[[unwalked]]
+rule = "next_statement_kind_without_hint"
+reason = "a statement-kind classifier the front end runs for its next_statement_kind entry (to name a statement before parsing it); it mirrors the statement rules the walk reaches and is not a separate syntax"

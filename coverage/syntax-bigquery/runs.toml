@@ -1,0 +1,74 @@
+# The referee runs whose receipts this root holds; written by hand when a run's receipts are
+# committed, and read by no tool. Each run called the BigQuery API v2 in the referee's fixed
+# free-trial sandbox project (no receipt names it), with the referee at `referee`, the
+# repository commit the run's report names. Every case was a dry run; a dry run that the execution policy allows was
+# followed by one execution in the run datasets (see README.md, Receipts).
+#
+# isolation:
+#   run_datasets: two throwaway datasets per run, SQLQUACK_DATASET and SQLQUACK_DATASET2 in
+#     receipts, created with a one-hour table expiry and dropped when the run ended; the
+#     referee reads their state after every execution and stops if a case changed it.
+#   case_datasets: DDL, TRUNCATE, EXPORT DATA and row access policy drops run in two more
+#     throwaway datasets made for that one case, with only its fixtures, dropped after it.
+#
+# receipts: the file in receipts/ the checker reads as the current receipts.
+# reversed_run: a run of the same cases in reverse order (run --reverse), kept in repeats/ where
+#   the checker does not read it. Compare it with the receipts:
+#   python -m scripts.run_bigquery_referee compare <receipts file> <repeats file>
+# reversed_compared: what that comparison printed.
+# bytes_billed: dry-run and executed bytes billed, summed from the run report.
+
+[[run]]
+run_id = "bigquery-20261107T033339.716606Z"
+referee = "56a6944afbfd3b6c381b1643b64bec71dc22b3ae"
+isolation = "run_datasets, case_datasets"
+receipts = "receipts/bigquery-20261107T033339.716606Z.jsonl"
+held = 19
+bytes_billed = 0
+reversed_run = "bigquery-20261107T035019.032023Z"
+reversed_receipts = "repeats/bigquery-20261107T035019.032023Z.jsonl"
+reversed_compared = "8543 and 8543 receipts; 0 differ"
+
+[[run]]
+run_id = "bigquery-20261107T130850.890801Z"
+referee = "8e8a97447052ca1d2a83415417825157ea52e05a"
+isolation = "run_datasets, case_datasets"
+receipts = "receipts/bigquery-20261107T130850.890801Z.jsonl"
+held = 0
+bytes_billed = 0
+reversed_run = "bigquery-20261107T130904.358743Z"
+reversed_receipts = "repeats/bigquery-20261107T130904.358743Z.jsonl"
+reversed_compared = "87 and 87 receipts; 0 differ"
+
+[[run]]
+run_id = "bigquery-20261107T141326.119615Z"
+referee = "5100635a12ca0832979ac4367599f259dd4f3dfe"
+isolation = "run_datasets, case_datasets"
+receipts = "receipts/bigquery-20261107T141326.119615Z.jsonl"
+held = 0
+bytes_billed = 0
+reversed_run = "bigquery-20261107T141346.039246Z"
+reversed_receipts = "repeats/bigquery-20261107T141346.039246Z.jsonl"
+reversed_compared = "22 and 22 receipts; 0 differ"
+
+[[run]]
+run_id = "bigquery-20261107T203342.206143Z"
+referee = "c9cd68105854018599aae60c0e6ab927824949e1"
+isolation = "run_datasets, case_datasets"
+receipts = "receipts/bigquery-20261107T203342.206143Z.jsonl"
+held = 0
+bytes_billed = 0
+reversed_run = "bigquery-20261107T203349.467556Z"
+reversed_receipts = "repeats/bigquery-20261107T203349.467556Z.jsonl"
+reversed_compared = "46 and 46 receipts; 0 differ"
+
+[[run]]
+run_id = "bigquery-20261108T022009.099039Z"
+referee = "fb2dd877504530399d40e7da72b5c3c1484f4487"
+isolation = "run_datasets, case_datasets"
+receipts = "receipts/bigquery-20261108T022009.099039Z.jsonl"
+held = 0
+bytes_billed = 0
+reversed_run = "bigquery-20261108T022015.711491Z"
+reversed_receipts = "repeats/bigquery-20261108T022015.711491Z.jsonl"
+reversed_compared = "4 and 4 receipts; 0 differ"
