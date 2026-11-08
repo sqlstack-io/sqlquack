@@ -14,6 +14,8 @@ rust-version.workspace = true
 [features]
 default = ["engine"]
 engine = ["dep:duckdb"]
+# Compiles DuckDB into the binary, for distributions that must not need a system DuckDB.
+bundled = ["engine", "duckdb/bundled"]
 
 [dependencies]
 duckdb = { workspace = true, optional = true }

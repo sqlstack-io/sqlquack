@@ -18,6 +18,8 @@ doctest = false
 [features]
 # Set when building the module the interpreter loads, so it does not link libpython itself.
 extension-module = ["pyo3/extension-module"]
+# DuckDB compiled in, as the sqlquack wheel ships it.
+bundled = ["sqlquack/bundled"]
 
 [dependencies]
 pyo3.workspace = true

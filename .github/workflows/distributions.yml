@@ -1,0 +1,27 @@
+name: Distributions
+
+# Builds and smoke tests every wheel and sdist when a pull request changes what goes into them.
+on:
+  pull_request:
+    paths:
+      - "python/**"
+      - "crates/sqlquack/pyproject.toml"
+      - "crates/sqlquack-python/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "rust-toolchain.toml"
+      - ".github/workflows/build-distributions.yml"
+      - ".github/workflows/distributions.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: distributions-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  distributions:
+    name: Distributions
+    uses: ./.github/workflows/build-distributions.yml

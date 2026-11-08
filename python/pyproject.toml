@@ -6,11 +6,15 @@ build-backend = "maturin"
 name = "sqlquack"
 description = "Check Snowflake SQL and convert it into DuckDB SQL, or refuse it with coded diagnostics."
 requires-python = ">=3.12"
-license = "Apache-2.0"
+license = "Apache-2.0 AND MIT"
+# Copies of the repository root files; `make distribution-notices` checks they match.
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES"]
 dynamic = ["version"]
+# The `sqlquack` command, as a native executable built from the same sources.
+dependencies = ["sqlquack-cli==0.2.0"]  # x-release-please-version
 
 [tool.maturin]
 manifest-path = "../crates/sqlquack-python/Cargo.toml"
 python-source = "src"
 module-name = "sqlquack._native"
-features = ["extension-module"]
+features = ["extension-module", "bundled"]

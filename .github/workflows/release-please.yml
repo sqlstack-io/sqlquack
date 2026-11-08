@@ -1,0 +1,53 @@
+name: Release Please
+
+# Opens the release pull request from Conventional Commits on main and, once it merges, tags the
+# release and dispatches Publish. Nothing runs until the repository variable SQLQUACK_RELEASES is
+# set to "enabled", so no release pull request, tag or upload can happen before launch.
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: release-please
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    if: vars.SQLQUACK_RELEASES == 'enabled'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+      - name: Publish the created release
+        if: steps.release.outputs.release_created == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag_name }}
+        run: |
+          gh workflow run publish.yml --repo "${GITHUB_REPOSITORY}" --ref main \
+            -f "tag=${RELEASE_TAG}"
+
+      - name: Build the release pull request's distributions
+        if: steps.release.outputs.prs_created == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_PRS: ${{ steps.release.outputs.prs }}
+        run: |
+          release_branch="$(jq -r '.[0].headBranchName // empty' <<< "${RELEASE_PRS}")"
+          if [[ -z "${release_branch}" ]]; then
+            echo "Release Please reported a created pull request without a head branch" >&2
+            exit 1
+          fi
+          gh workflow run release-distributions.yml --repo "${GITHUB_REPOSITORY}" \
+            --ref "${release_branch}"

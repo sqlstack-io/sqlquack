@@ -13,6 +13,21 @@ tooling = ["crates/sqlquack-polyglot-check"]
 rule_packs = ["rust"]
 select = ["FPRS"]
 
+# A crate that is also a Python distribution keeps its pyproject.toml and shipped notices beside Cargo.toml.
+[targets.rust.rule_options.FPRSR311]
+allowed_entries = [
+    "Cargo.toml",
+    "build.rs",
+    "src/",
+    "tests/",
+    "benches/",
+    "examples/",
+    "README*",
+    "LICENSE*",
+    "THIRD_PARTY_NOTICES",
+    "pyproject.toml",
+]
+
 # Layer: only the command-line crates and the pipeline crate may depend on the conversion rules.
 [targets.rust_rules_layer]
 analyzer = "rust"
