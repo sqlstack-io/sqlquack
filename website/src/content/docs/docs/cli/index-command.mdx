@@ -16,7 +16,7 @@ sqlquack index [OPTIONS] [PATHS]...
 ```
 
 ```bash
-sqlquack index models --schema schema.json --json --builtin-policy
+sqlquack index models --json --builtin-policy
 ```
 
 Every list is sorted, so the output for two revisions can be diffed to see which files a change to
@@ -26,7 +26,7 @@ one rule affects.
 
 | Option | Meaning |
 |--------|---------|
-| `--schema <file>` | The relations the SQL files read. |
+| `--project <folder>` | The [project](/docs/project/) declaring the tables the SQL files read. Default the current folder. |
 | `--chain-models` | Type each converted file as the relation its name references, and convert again. |
 | `--format text\|json`, `--json` | Print the report as text or JSON. |
 

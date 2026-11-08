@@ -14,7 +14,7 @@ error[SQ0004]: a name does not resolve
 1 | SELECT a FROM orders
   |               ^^^^^^ relation `ORDERS` has no known columns
   |
-  = help: declare the relation and its columns in the schema (`--schema` on the command line)
+  = help: declare the relation and its columns in a source file of the project (`sources/*.yml`)
 ```
 
 The first line has the code and the message. The arrow gives the file, line and column. The caret

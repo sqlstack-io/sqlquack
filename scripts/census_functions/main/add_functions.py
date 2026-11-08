@@ -1,31 +1,26 @@
-"""Adds the functions section to a census schema file from compiled function files."""
+"""Writes a census project folder's function files from compiled function files."""
 
 from __future__ import annotations
 
 import argparse
-import json
 import sys
 from pathlib import Path
 
-from scripts.census_functions._helpers.schema_file import compiled_functions
-from scripts.census_functions.constants import FUNCTIONS_KEY, RELATIONS_KEY
+from scripts.census_functions._helpers.project_files import write_functions
 
 
 def run_add_functions(argv: list[str] | None = None) -> int:
-    """Rewrite --schema with a functions section read from --functions; relations are kept."""
+    """Replace --project's functions/sql and functions/python files with --functions' headers."""
     parser: argparse.ArgumentParser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--functions", type=Path, required=True)
-    parser.add_argument("--schema", type=Path, required=True)
+    parser.add_argument("--functions", type=Path, required=True, help="compiled project functions")
+    parser.add_argument(
+        "--project", type=Path, required=True, help="the project folder; its sources are kept"
+    )
     arguments: argparse.Namespace = parser.parse_args(argv)
     print("census functions: reading compiled function headers…", file=sys.stderr)
-    loaded: dict[str, object] = json.loads(arguments.schema.read_text(encoding="utf-8"))
-    relations: object = loaded.get(RELATIONS_KEY, loaded) if FUNCTIONS_KEY in loaded else loaded
-    functions, unread = compiled_functions(arguments.functions)
-    arguments.schema.write_text(
-        json.dumps({RELATIONS_KEY: relations, FUNCTIONS_KEY: functions}), encoding="utf-8"
-    )
+    written, unread = write_functions(compiled=arguments.functions, project=arguments.project)
     print(
-        f"census functions: done, {len(functions)} functions written, {unread} unread",
+        f"census functions: done, {written} functions written, {unread} unread",
         file=sys.stderr,
     )
     return 0

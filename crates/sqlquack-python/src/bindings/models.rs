@@ -20,8 +20,8 @@ pub struct Rendered<T: Serialize> {
 pub struct ConvertRequest {
     /// `--project`.
     pub project: Option<PathBuf>,
-    /// `--schema`.
-    pub schema: Option<PathBuf>,
+    /// Relations and functions declared in memory, in addition to the project's.
+    pub schema: Option<serde_json::Value>,
     /// `--policy`; the command line's default when absent.
     pub policy: Option<PathBuf>,
     /// `--builtin-policy`.

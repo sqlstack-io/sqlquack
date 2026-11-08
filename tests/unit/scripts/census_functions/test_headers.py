@@ -1,4 +1,4 @@
-"""Compiled CREATE FUNCTION headers read as schema signatures."""
+"""Compiled CREATE FUNCTION headers read as signatures and written as project function files."""
 
 from __future__ import annotations
 
@@ -9,7 +9,11 @@ import pytest
 from scripts.census_functions._helpers.headers import signature
 from scripts.census_functions.main.add_functions import run_add_functions
 from scripts.census_functions.models import Signature
-from tests.unit.scripts.census_functions._test_types import HeaderTestCase, SchemaFileTestCase
+from tests.unit.scripts.census_functions._test_types import HeaderTestCase, ProjectFilesTestCase
+
+_SOURCES: str = (
+    "sources:\n  - name: orders\n    columns:\n      - name: order_id\n        type: NUMBER\n"
+)
 
 
 @pytest.mark.parametrize(
@@ -55,29 +59,92 @@ def test_given_a_compiled_function_when_reading_its_header_then_the_signature_is
 @pytest.mark.parametrize(
     "test_case",
     (
-        SchemaFileTestCase(
-            description="a relations-only schema gains a functions section",
-            schema='{"ORDERS": [["ORDER_ID", "NUMBER(38,0)"]]}',
-            expected_schema=(
-                '{"relations": {"ORDERS": [["ORDER_ID", "NUMBER(38,0)"]]}, "functions": '
-                '{"__SQLQUACK_UDF__IS_GIFT": {"language": "sql", "arguments": [["NOTE", "STRING"]], '
-                '"returns": "BOOLEAN"}}}'
+        ProjectFilesTestCase(
+            description="a SQL scalar function is a SQL function file under its placeholder",
+            compiled=(
+                (
+                    "is_gift",
+                    "CREATE FUNCTION S.P.IS_GIFT(note STRING) RETURNS BOOLEAN AS $$ note = 'gift' $$",
+                ),
             ),
+            expected_files={
+                "functions/sql/__SQLQUACK_UDF__IS_GIFT.sql": (
+                    "FUNCTION (\n  arguments (NOTE STRING),\n  returns BOOLEAN,\n);\nNULL\n"
+                ),
+            },
+        ),
+        ProjectFilesTestCase(
+            description="a SQL table function returns its columns as a table",
+            compiled=(
+                (
+                    "open_orders",
+                    "CREATE FUNCTION S.P.OPEN_ORDERS() RETURNS TABLE (order_id NUMBER(38,0), "
+                    "placed TIMESTAMP_NTZ) AS $$ SELECT 1, NULL $$",
+                ),
+            ),
+            expected_files={
+                "functions/sql/__SQLQUACK_TABLE_FN__OPEN_ORDERS.sql": (
+                    "FUNCTION (\n  arguments (),\n"
+                    "  returns table (ORDER_ID NUMBER(38,0), PLACED TIMESTAMP_NTZ),\n);\nNULL\n"
+                ),
+            },
+        ),
+        ProjectFilesTestCase(
+            description="a Python scalar function is a Python function file with its decorator",
+            compiled=(
+                (
+                    "py_score",
+                    "CREATE FUNCTION S.P.PY_SCORE(x NUMBER, label STRING) RETURNS NUMBER "
+                    "LANGUAGE PYTHON HANDLER = 'f' AS $$\ndef f(x, label):\n    return x\n$$",
+                ),
+            ),
+            expected_files={
+                "functions/python/__SQLQUACK_UDF__PY_SCORE.py": (
+                    "from sqlquack import udf\n\n\n"
+                    '@udf(arguments={"X": "NUMBER", "LABEL": "STRING"}, returns="NUMBER")\n'
+                    "def main(*arguments):\n    return None\n"
+                ),
+            },
+        ),
+        ProjectFilesTestCase(
+            description="a Python table function or a name that is not plain is not declarable",
+            compiled=(
+                (
+                    "py_rows",
+                    "CREATE FUNCTION S.P.PY_ROWS(x NUMBER) RETURNS TABLE (a NUMBER) "
+                    "LANGUAGE PYTHON HANDLER = 'f' AS $$\nclass f: ...\n$$",
+                ),
+                (
+                    "hyphened",
+                    'CREATE FUNCTION S.P.HYPHENED("my-arg" NUMBER) RETURNS NUMBER AS $$ 1 $$',
+                ),
+            ),
+            expected_files={},
         ),
     ),
     ids=lambda case: case.description,
 )
-def test_given_compiled_functions_when_adding_them_then_the_schema_keeps_its_relations(
-    test_case: SchemaFileTestCase, tmp_path: Path
+def test_given_compiled_functions_when_adding_them_then_the_project_keeps_its_sources(
+    test_case: ProjectFilesTestCase, tmp_path: Path
 ) -> None:
     functions: Path = tmp_path / "functions"
     functions.mkdir()
-    (functions / "is_gift.sql").write_text(
-        "CREATE FUNCTION S.P.IS_GIFT(note STRING) RETURNS BOOLEAN AS $$ note = 'gift' $$",
-        encoding="utf-8",
+    for stem, text in test_case.compiled:
+        (functions / f"{stem}.sql").write_text(text, encoding="utf-8")
+    project: Path = tmp_path / "project"
+    (project / "sources").mkdir(parents=True)
+    (project / "sources" / "orders.yml").write_text(_SOURCES, encoding="utf-8")
+    (project / "functions" / "sql").mkdir(parents=True)
+    (project / "functions" / "sql" / "__SQLQUACK_UDF__STALE.sql").write_text(
+        "FUNCTION (arguments (), returns NUMBER);\nNULL\n", encoding="utf-8"
     )
-    schema: Path = tmp_path / "schema.json"
-    schema.write_text(test_case.schema, encoding="utf-8")
 
-    assert run_add_functions(["--functions", str(functions), "--schema", str(schema)]) == 0
-    assert schema.read_text(encoding="utf-8") == test_case.expected_schema
+    status: int = run_add_functions(["--functions", str(functions), "--project", str(project)])
+    written: dict[str, str] = {
+        str(path.relative_to(project)): path.read_text(encoding="utf-8")
+        for path in filter(Path.is_file, sorted(project.rglob("*")))
+    }
+    assert (status, written) == (
+        0,
+        {**test_case.expected_files, "sources/orders.yml": _SOURCES},
+    )

@@ -15,7 +15,7 @@ pub fn convert_report(arguments: &ConvertArguments, sql: &str) -> Result<Convert
     let (policy, project) = project_choices(
         &arguments.conversion,
         (
-            arguments.schema.as_deref(),
+            arguments.schema.as_ref(),
             &arguments.session,
             arguments.overrides.as_deref(),
         ),

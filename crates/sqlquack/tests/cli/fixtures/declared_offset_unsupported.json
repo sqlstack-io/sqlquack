@@ -1,1 +1,0 @@
-{"relations": {"ORDERS": [{"name": "PLACED_AT", "type": "TIMESTAMP_TZ(9)", "offset": "-05:00"}]}}

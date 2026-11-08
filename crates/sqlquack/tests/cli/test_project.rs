@@ -1,5 +1,5 @@
-use crate::helpers::project_convert;
-use crate::test_types::{ProjectFile, ProjectTestCase};
+use crate::helpers::{project_convert, source_failure};
+use crate::test_types::{ProjectFile, ProjectTestCase, SourceErrorTestCase};
 
 /// The repository's policy file, as a project's `sqlquack.toml`.
 const POLICY_FILE: ProjectFile = ProjectFile {
@@ -31,7 +31,7 @@ const PYTHON_FUNCTION: ProjectFile = ProjectFile {
 fn given_a_sqlbuild_project_when_converting_then_its_folders_declare_tables_and_functions() {
     let test_cases = [
         ProjectTestCase {
-            description: "a source table types the query without --schema",
+            description: "a source table types the query",
             files: &[POLICY_FILE, SOURCES],
             folder: "",
             flags: &[],
@@ -241,21 +241,21 @@ fn given_a_project_when_a_declaration_clashes_or_is_unconfirmed_then_the_error_s
 {
     let test_cases = [
         ProjectTestCase {
-            description: "a table in both a source file and --schema is an error naming both",
+            description: "a table in two source files is an error naming both",
             files: &[
                 POLICY_FILE,
                 SOURCES,
                 ProjectFile {
-                    path: "schema.json",
+                    path: "sources/staging/raw.yml",
                     repository: &[],
-                    text: "{\"RAW__ORDERS\": [[\"id\", \"INTEGER\"]]}",
+                    text: "sources:\n  - name: RAW__ORDERS\n    columns:\n      - name: id\n        type: INTEGER\n",
                 },
             ],
             folder: "",
-            flags: &["--schema", "schema.json"],
+            flags: &[],
             sql: "SELECT id AS n FROM raw__orders",
             expected_exit: Some(2),
-            expected_output: "the table RAW__ORDERS is declared twice, in ./sources/raw.yml and in schema.json",
+            expected_output: "the table RAW__ORDERS is declared twice, in ./sources/raw.yml and in ./sources/staging/raw.yml",
         },
         ProjectTestCase {
             description: "a SQL and a Python function of one name is an error",
@@ -465,6 +465,38 @@ fn given_a_project_folder_when_converting_then_it_needs_no_policy_and_may_live_e
             test_case.description,
             outcome.stdout,
             outcome.stderr
+        );
+    }
+}
+
+#[test]
+fn given_a_malformed_source_file_when_converting_then_the_error_names_what_is_wrong_in_source_terms()
+ {
+    let test_cases = [
+        SourceErrorTestCase {
+            description: "columns not listed",
+            sources: "sources:\n  - name: orders\n    columns:\n      a: NUMBER\n",
+            expected_error: "orders.yml: is not a source file: invalid type: map, expected a sequence",
+        },
+        SourceErrorTestCase {
+            description: "a source without a name",
+            sources: "sources:\n  - columns:\n      - name: a\n        type: NUMBER\n",
+            expected_error: "orders.yml: is not a source file: missing field `name`",
+        },
+        SourceErrorTestCase {
+            description: "text that is not YAML",
+            sources: "sources:\n  - name: [orders\n",
+            expected_error: "orders.yml: line 3 column 1: while parsing a flow sequence",
+        },
+    ];
+    for test_case in test_cases {
+        let (exit_code, stderr) = source_failure(test_case.sources);
+
+        assert_eq!(exit_code, Some(2), "{}: {stderr}", test_case.description);
+        assert!(
+            stderr.contains(test_case.expected_error) && !stderr.contains("untagged"),
+            "{}: {stderr}",
+            test_case.description
         );
     }
 }

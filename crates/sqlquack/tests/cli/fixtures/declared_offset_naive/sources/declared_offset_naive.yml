@@ -1,0 +1,6 @@
+sources:
+  - name: orders
+    columns:
+      - name: placed_on
+        type: TIMESTAMP_NTZ(9)
+        offset: UTC

@@ -15,17 +15,18 @@ sqlquack convert [OPTIONS] [PATH]
 ```
 
 ```bash
-sqlquack convert query.sql --schema schema.json --builtin-policy
+sqlquack convert query.sql --builtin-policy
 echo "SELECT 1 AS total" | sqlquack convert --builtin-policy --json
 ```
 
-`PATH` is a SQL file. Without one, or with `-`, `convert` reads standard input. The DuckDB SQL goes
+`PATH` is a SQL file. Without one, or with `-`, `convert` reads standard input. The tables the SQL
+reads come from the [project](/docs/project/) in the current folder. The DuckDB SQL goes
 to standard output, laid out with each clause on its own line, select items one per line, and
 nested queries and long `CASE` expressions indented; short statements stay on one line. Progress,
 the known divergences and assumptions it relies on, and refusals go to standard error.
 
 ```console
-$ sqlquack convert revenue.sql --schema schema.json --builtin-policy
+$ sqlquack convert revenue.sql --builtin-policy
 SELECT
     "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID",
     CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE"
@@ -44,7 +45,7 @@ Each refusal is one of these:
 |------|-----|
 | [`SQ0002`](/docs/diagnostics/reference/#sq0002) | No verified rule converts the construct yet. |
 | [`SQ0003`](/docs/diagnostics/reference/#sq0003) | A rule exists, but not for these operand types. |
-| [`SQ0004`](/docs/diagnostics/reference/#sq0004) | A relation or column name does not resolve in the schema. |
+| [`SQ0004`](/docs/diagnostics/reference/#sq0004) | A relation or column name is not declared in the project's sources. |
 | [`SQ0005`](/docs/diagnostics/reference/#sq0005) | DuckDB cannot express the construct's Snowflake meaning. |
 | [`SQ0006`](/docs/diagnostics/reference/#sq0006) | Conversion exceeded its time or size budget. |
 | [`SQ0007`](/docs/diagnostics/reference/#sq0007) | The session parameters match no recorded profile. |
@@ -58,7 +59,7 @@ SQL that does not parse, or that Snowflake rejects, is refused with the same cod
 
 | Option | Meaning |
 |--------|---------|
-| `--schema <file>` | The relations and functions the SQL reads, added to the [project](/docs/project/)'s. See [Schema files](/docs/schema/). |
+| `--project <folder>` | The [project](/docs/project/) declaring the tables and functions the SQL reads. Default the current folder. |
 | `--session NAME=VALUE` | A Snowflake session parameter of your session, replacing the project's. Repeatable. See [Sessions](/docs/policy/#sessions). |
 | `--overrides <path>` | User overrides: a `FUNCTION()` file, or a directory of them, each with `replaces` and `dialect duckdb`. Replaces the project's `overrides/` folder. |
 | `--verified-override NAME=SHA256` | An override verified for the body with that hash, as `convert --json` reports. |

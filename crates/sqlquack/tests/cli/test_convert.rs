@@ -2,14 +2,13 @@ use crate::helpers::{
     convert_outcome, convert_streams, converted_column_names, converted_first_value,
     converted_run_error, converted_value_over, first_refusal_help, override_failure,
     override_outcome, python_outcome, python_report, python_rows, run_convert, run_with_input,
-    schema_failure,
 };
 use crate::test_types::{
     ColumnNameTestCase, ConvertDiagnosticTestCase, ConvertOutcome, ConvertTestCase,
     ConvertedRunTestCase, CountedCallsTestCase, CrossingTestCase, DedicatedOverrideTestCase,
     DeepChainTestCase, DivergenceHelpTestCase, FailureKindTestCase, LayoutFlagsTestCase,
     OutputFormatTestCase, OverrideFailureTestCase, OverrideTestCase, PythonRefusalTestCase,
-    PythonRunTestCase, RunErrorTestCase, SchemaErrorTestCase, ValueTestCase,
+    PythonRunTestCase, RunErrorTestCase, ValueTestCase,
 };
 use sha2::{Digest, Sha256};
 
@@ -19,11 +18,11 @@ const COUNTING_HANDLER: &str = "import itertools\nTICKETS = itertools.count(1)\n
 const QUOTED_ALIAS: &str =
     "WITH totals AS (SELECT 1 AS \"orderTotal\") SELECT ordertotal FROM totals";
 const PLACED_DATE: &str = "SELECT TO_DATE(placed_at) AS placed_on FROM orders";
-const DECLARED_SCHEMA: &str = "tests/cli/fixtures/declared_offsets.json";
-const QUALIFIED_SCHEMA: &str = "tests/cli/fixtures/qualified_relations.json";
-const NAIVE_LOCAL_SCHEMA: &str = "tests/cli/fixtures/naive_local_branches.json";
+const DECLARED_PROJECT: &str = "tests/cli/fixtures/declared_offsets";
+const QUALIFIED_PROJECT: &str = "tests/cli/fixtures/qualified_relations";
+const NAIVE_LOCAL_PROJECT: &str = "tests/cli/fixtures/naive_local_branches";
 const NAIVE_JOINS_LOCAL: &str = "relies on known divergence timestamp_tz_submicro at";
-const NAIVE_LOCAL_UTC: [&str; 3] = ["--utc-session", "--schema", NAIVE_LOCAL_SCHEMA];
+const NAIVE_LOCAL_UTC: [&str; 3] = ["--utc-session", "--project", NAIVE_LOCAL_PROJECT];
 const NAIVE_TO_ZONED: &str =
     "SELECT '2024-03-10 22:30:00'::TIMESTAMP_NTZ(6)::TIMESTAMP_TZ AS placed_at";
 
@@ -194,35 +193,35 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
         ConvertTestCase {
             description: "a declared-UTC TIMESTAMP_TZ column's date converts naming its assumption",
             sql: PLACED_DATE,
-            flags: &["--schema", DECLARED_SCHEMA],
+            flags: &["--project", DECLARED_PROJECT],
             mention: "relies on assumption declared_offset:ORDERS.PLACED_AT at fn:TO_DATE",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "a TIMESTAMP_TZ column without a declared offset keeps refusing",
             sql: "SELECT TO_DATE(shipped_at) AS shipped_on FROM orders",
-            flags: &["--schema", DECLARED_SCHEMA],
+            flags: &["--project", DECLARED_PROJECT],
             mention: "casting to DATE of TIMESTAMP_TZ(9), which reads the local time of an offset",
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
             description: "the suggested rewrite through a zone column converts the local date",
             sql: "SELECT CONVERT_TIMEZONE(ship_zone, shipped_at)::TIMESTAMP_NTZ::DATE AS shipped_on FROM orders",
-            flags: &["--schema", DECLARED_SCHEMA],
+            flags: &["--project", DECLARED_PROJECT],
             mention: "relies on known divergence time_zone_spelling at fn:CONVERT_TIMEZONE",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "the declared offset carries through a CTE and COALESCE to DATE_TRUNC",
             sql: "WITH latest AS (SELECT COALESCE(placed_at, CONVERT_TIMEZONE('UTC', shipped_at)) AS at FROM orders) SELECT DATE_TRUNC('day', at) AS day FROM latest",
-            flags: &["--schema", DECLARED_SCHEMA],
+            flags: &["--project", DECLARED_PROJECT],
             mention: "relies on assumption declared_offset:ORDERS.PLACED_AT at fn:DATE_TRUNC",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "strict mode refuses relying on a declared offset",
             sql: PLACED_DATE,
-            flags: &["--schema", DECLARED_SCHEMA, "--strict"],
+            flags: &["--project", DECLARED_PROJECT, "--strict"],
             mention: "assumption `declared_offset`, which the policy does not allow in this mode",
             expected_outcome: convert_outcome(1, false),
         },
@@ -230,8 +229,8 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             description: "strict mode converts it once --confirm-declared-offsets confirms them",
             sql: PLACED_DATE,
             flags: &[
-                "--schema",
-                DECLARED_SCHEMA,
+                "--project",
+                DECLARED_PROJECT,
                 "--strict",
                 "--confirm-declared-offsets",
             ],
@@ -241,14 +240,14 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
         ConvertTestCase {
             description: "strict mode refuses a declared offset read through FIRST_VALUE",
             sql: "SELECT FIRST_VALUE(placed_at) OVER (ORDER BY order_id)::DATE AS first_on FROM orders",
-            flags: &["--schema", DECLARED_SCHEMA, "--strict"],
+            flags: &["--project", DECLARED_PROJECT, "--strict"],
             mention: "assumption `declared_offset`, which the policy does not allow in this mode",
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
             description: "LAST_VALUE keeps the origin of every declared column it reads",
             sql: "SELECT DATEDIFF('day', placed_at, LAST_VALUE(paid_at) OVER (ORDER BY order_id)) AS days FROM orders",
-            flags: &["--schema", DECLARED_SCHEMA],
+            flags: &["--project", DECLARED_PROJECT],
             mention: "relies on assumption declared_offset:ORDERS.PAID_AT",
             expected_outcome: convert_outcome(0, true),
         },
@@ -256,8 +255,8 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             description: "a declared offset other than UTC is a usage error",
             sql: PLACED_DATE,
             flags: &[
-                "--schema",
-                "tests/cli/fixtures/declared_offset_unsupported.json",
+                "--project",
+                "tests/cli/fixtures/declared_offset_unsupported",
             ],
             mention: "the declared offset `-05:00` is not supported; only +00:00 (UTC) is",
             expected_outcome: convert_outcome(2, false),
@@ -265,7 +264,7 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
         ConvertTestCase {
             description: "an offset declared for a column other than TIMESTAMP_TZ is a usage error",
             sql: "SELECT placed_on FROM orders",
-            flags: &["--schema", "tests/cli/fixtures/declared_offset_naive.json"],
+            flags: &["--project", "tests/cli/fixtures/declared_offset_naive"],
             mention: "an offset may be declared only for a TIMESTAMP_TZ column",
             expected_outcome: convert_outcome(2, false),
         },
@@ -362,7 +361,7 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             description: "a subquery calling a volatile function refuses where a lambda wraps it",
             sql: "SELECT DATEADD(day, -3, (SELECT MAX(occurred_at) FROM events \
                   WHERE event_id > LOOKBACK())) AS d",
-            flags: &["--schema", "tests/cli/fixtures/volatile_lookback.json"],
+            flags: &["--project", "tests/cli/fixtures/volatile_lookback"],
             mention: "a subquery calling a function whose result can change between calls",
             expected_outcome: convert_outcome(1, false),
         },
@@ -488,9 +487,10 @@ fn given_a_bracket_expression_with_a_lazy_spelling_when_converting_then_the_clas
 #[test]
 fn given_qualified_table_names_when_converting_then_they_read_the_declared_relation() {
     let staged = (
-        "{\"ANALYTICS.STAGING.STG_ORDERS\": [[\"STATUS\", \"VARCHAR\"]], \
-          \"ANALYTICS.MARTS.STG_ORDERS\": [[\"STATUS\", \"VARCHAR\"]], \
-          \"PAYMENTS\": [[\"STATUS\", \"VARCHAR\"]]}",
+        "sources:\n\
+         - {name: stg_orders, database: analytics, schema: staging, columns: [{name: status, type: VARCHAR}]}\n\
+         - {name: stg_orders, database: analytics, schema: marts, columns: [{name: status, type: VARCHAR}]}\n\
+         - {name: payments, columns: [{name: status, type: VARCHAR}]}\n",
         "ATTACH ':memory:' AS analytics; CREATE SCHEMA analytics.staging; \
          CREATE SCHEMA analytics.marts; \
          CREATE TABLE analytics.staging.stg_orders (status VARCHAR); \
@@ -535,36 +535,36 @@ fn given_qualified_table_names_when_converting_then_they_read_the_declared_relat
         ConvertTestCase {
             description: "a name matching tables in two schemas, with no session schema, names both",
             sql: "SELECT order_id FROM stg_orders",
-            flags: &["--schema", QUALIFIED_SCHEMA],
+            flags: &["--project", QUALIFIED_PROJECT],
             mention: "relation `STG_ORDERS` matches `ANALYTICS.MARTS.STG_ORDERS`, \
-                      `ANALYTICS.STAGING.STG_ORDERS` in the schema",
+                      `ANALYTICS.STAGING.STG_ORDERS` in the project's sources",
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
             description: "a quoted lower-case part is a different table from the declared one",
             sql: "SELECT order_id FROM analytics.\"staging\".stg_orders",
-            flags: &["--schema", QUALIFIED_SCHEMA],
+            flags: &["--project", QUALIFIED_PROJECT],
             mention: "relation `ANALYTICS.staging.STG_ORDERS` matches `ANALYTICS.STAGING.STG_ORDERS` only without regard to case",
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
             description: "a database the schema does not declare refuses as unknown",
             sql: "SELECT order_id FROM other.staging.stg_orders",
-            flags: &["--schema", QUALIFIED_SCHEMA],
+            flags: &["--project", QUALIFIED_PROJECT],
             mention: "relation `OTHER.STAGING.STG_ORDERS` has no known columns",
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
             description: "two qualifiers of one undeclared-qualifier relation refuse instead of reading it twice",
             sql: "SELECT a.order_id FROM sales.orders a JOIN archive.orders b USING (order_id)",
-            flags: &["--schema", DECLARED_SCHEMA],
+            flags: &["--project", DECLARED_PROJECT],
             mention: "`SALES.ORDERS` and `ARCHIVE.ORDERS` both read the schema relation `ORDERS`",
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
             description: "a qualified name a CTE of the same name would capture refuses",
             sql: "WITH orders AS (SELECT 1 AS order_id) SELECT order_id FROM sales.orders",
-            flags: &["--schema", DECLARED_SCHEMA],
+            flags: &["--project", DECLARED_PROJECT],
             mention: "which a CTE of the same name hides",
             expected_outcome: convert_outcome(1, false),
         },
@@ -588,7 +588,7 @@ fn given_qualified_table_names_when_converting_then_they_read_the_declared_relat
         ),
     ];
     for (parameters, expected_relation) in sessions {
-        let mut flags = vec!["--builtin-policy", "--schema", QUALIFIED_SCHEMA];
+        let mut flags = vec!["--builtin-policy", "--project", QUALIFIED_PROJECT];
         for parameter in parameters {
             flags.extend(["--session", parameter]);
         }
@@ -618,7 +618,7 @@ fn given_a_time_with_nanoseconds_when_formatting_then_digits_beyond_the_format_a
         let value = converted_value_over(
             test_case.sql,
             (
-                "{\"CLOCKS\": [[\"T\", \"TIME(9)\"]]}",
+                "sources: [{name: clocks, columns: [{name: t, type: TIME(9)}]}]",
                 "CREATE TABLE \"CLOCKS\" (\"T\" TIME_NS); \
                  INSERT INTO \"CLOCKS\" VALUES ('23:59:59.9999999')",
             ),
@@ -1030,7 +1030,14 @@ fn given_an_override_of_a_name_the_rules_type_when_converting_then_it_is_honoure
 
 #[test]
 fn given_flatten_outer_over_empty_and_missing_inputs_when_running_then_columns_are_as_recorded() {
-    let schema = r#"{"relations": {"DOCS": [["K", "NUMBER(4,0)"], ["J", "VARCHAR"]]}}"#;
+    let sources = r#"sources:
+  - name: docs
+    columns:
+      - name: k
+        type: NUMBER(4,0)
+      - name: j
+        type: VARCHAR
+"#;
     let setup = "SET TimeZone = 'UTC'; CREATE TABLE \"DOCS\" (\"K\" INTEGER, \"J\" VARCHAR); \
                  INSERT INTO \"DOCS\" VALUES (1, '{\"lines\": []}'), (2, '{\"lines\": {}}'), \
                  (3, '{\"lines\": null}'), (4, '{}'), (5, '{\"lines\": [7]}')";
@@ -1052,7 +1059,7 @@ fn given_flatten_outer_over_empty_and_missing_inputs_when_running_then_columns_a
     ];
     for test_case in test_cases {
         assert_eq!(
-            converted_value_over(test_case.sql, (schema, setup)),
+            converted_value_over(test_case.sql, (sources, setup)),
             test_case.expected_value,
             "{}",
             test_case.description
@@ -1211,7 +1218,18 @@ fn given_connect_by_root_of_a_qualified_column_when_running_then_it_reads_the_ro
 #[test]
 fn given_an_inner_join_using_keys_of_two_widths_when_running_then_a_wide_unmatched_key_does_not_fail()
  {
-    let schema = r#"{"relations": {"NARROW": [["K", "NUMBER(18,0)"]], "WIDE": [["K", "NUMBER(38,0)"], ["V", "VARCHAR"]]}}"#;
+    let sources = r#"sources:
+  - name: narrow
+    columns:
+      - name: k
+        type: NUMBER(18,0)
+  - name: wide
+    columns:
+      - name: k
+        type: NUMBER(38,0)
+      - name: v
+        type: VARCHAR
+"#;
     let setup = "SET TimeZone = 'UTC'; CREATE TABLE \"NARROW\" (\"K\" DECIMAL(18,0)); \
                  CREATE TABLE \"WIDE\" (\"K\" DECIMAL(38,0), \"V\" VARCHAR); \
                  INSERT INTO \"NARROW\" VALUES (7); \
@@ -1232,7 +1250,7 @@ fn given_an_inner_join_using_keys_of_two_widths_when_running_then_a_wide_unmatch
     ];
     for test_case in test_cases {
         assert_eq!(
-            converted_value_over(test_case.sql, (schema, setup)),
+            converted_value_over(test_case.sql, (sources, setup)),
             test_case.expected_value,
             "{}",
             test_case.description
@@ -1242,7 +1260,12 @@ fn given_an_inner_join_using_keys_of_two_widths_when_running_then_a_wide_unmatch
 
 #[test]
 fn given_zoned_text_when_converting_and_running_then_wall_time_parts_hold_its_utc_offset() {
-    let schema = r#"{"relations": {"EVENTS": [["AT_TEXT", "VARCHAR"]]}}"#;
+    let sources = r#"sources:
+  - name: events
+    columns:
+      - name: at_text
+        type: VARCHAR
+"#;
     let setup = "SET TimeZone = 'UTC'; CREATE TABLE \"EVENTS\" (\"AT_TEXT\" VARCHAR); \
                  INSERT INTO \"EVENTS\" VALUES ('2023-12-31 22:30:15 +00:00')";
     let test_cases = [
@@ -1265,7 +1288,7 @@ fn given_zoned_text_when_converting_and_running_then_wall_time_parts_hold_its_ut
     ];
     for test_case in test_cases {
         assert_eq!(
-            converted_value_over(test_case.sql, (schema, setup)),
+            converted_value_over(test_case.sql, (sources, setup)),
             test_case.expected_value,
             "{}",
             test_case.description
@@ -1338,7 +1361,14 @@ fn given_a_name_the_conversion_does_not_scope_when_converting_then_the_refusal_s
 
 #[test]
 fn given_variant_keys_when_converting_and_running_then_they_order_and_compare_as_recorded() {
-    let schema = r#"{"relations": {"DOCS": [["K", "NUMBER(4,0)"], ["J", "VARCHAR"]]}}"#;
+    let sources = r#"sources:
+  - name: docs
+    columns:
+      - name: k
+        type: NUMBER(4,0)
+      - name: j
+        type: VARCHAR
+"#;
     let setup = "SET TimeZone = 'UTC'; CREATE TABLE \"DOCS\" (\"K\" INTEGER, \"J\" VARCHAR); \
                  INSERT INTO \"DOCS\" VALUES (0, '\"b\"'), (1, '10'), (2, 'true'), (3, 'null'), \
                  (4, '2'), (5, NULL)";
@@ -1373,7 +1403,7 @@ fn given_variant_keys_when_converting_and_running_then_they_order_and_compare_as
     ];
     for test_case in test_cases {
         assert_eq!(
-            converted_value_over(test_case.sql, (schema, setup)),
+            converted_value_over(test_case.sql, (sources, setup)),
             test_case.expected_value,
             "{}",
             test_case.description
@@ -1383,7 +1413,12 @@ fn given_variant_keys_when_converting_and_running_then_they_order_and_compare_as
 
 #[test]
 fn given_a_zoned_column_and_text_or_a_by_name_union_when_running_then_values_are_as_recorded() {
-    let schema = r#"{"relations": {"EVENTS": [["AT", "TIMESTAMP_TZ(9)"]]}}"#;
+    let sources = r#"sources:
+  - name: events
+    columns:
+      - name: at
+        type: TIMESTAMP_TZ(9)
+"#;
     let setup = "SET TimeZone = 'UTC'; CREATE TABLE \"EVENTS\" (\"AT\" TIMESTAMPTZ); \
                  INSERT INTO \"EVENTS\" VALUES ('2023-12-31 22:30:15-05:30'), \
                  ('2024-01-01 08:59:59+09:00')";
@@ -1409,7 +1444,7 @@ fn given_a_zoned_column_and_text_or_a_by_name_union_when_running_then_values_are
     ];
     for test_case in test_cases {
         assert_eq!(
-            converted_value_over(test_case.sql, (schema, setup)),
+            converted_value_over(test_case.sql, (sources, setup)),
             test_case.expected_value,
             "{}",
             test_case.description
@@ -1419,8 +1454,16 @@ fn given_a_zoned_column_and_text_or_a_by_name_union_when_running_then_values_are
 
 #[test]
 fn given_a_union_of_a_float_variant_and_parsed_json_when_running_then_types_hold() {
-    let schema =
-        r#"{"relations": {"READINGS": [["K", "NUMBER(2,0)"], ["F", "FLOAT"], ["J", "VARCHAR"]]}}"#;
+    let sources = r#"sources:
+  - name: readings
+    columns:
+      - name: k
+        type: NUMBER(2,0)
+      - name: f
+        type: FLOAT
+      - name: j
+        type: VARCHAR
+"#;
     let setup = "CREATE TABLE \"READINGS\" (\"K\" INTEGER, \"F\" DOUBLE, \"J\" VARCHAR); \
                  INSERT INTO \"READINGS\" VALUES (1, 1.5, '7'), (2, -0.25, '{\"a\": \"x\"}')";
     let test_cases = [ValueTestCase {
@@ -1433,7 +1476,7 @@ fn given_a_union_of_a_float_variant_and_parsed_json_when_running_then_types_hold
     }];
     for test_case in test_cases {
         assert_eq!(
-            converted_value_over(test_case.sql, (schema, setup)),
+            converted_value_over(test_case.sql, (sources, setup)),
             test_case.expected_value,
             "{}",
             test_case.description
@@ -1485,8 +1528,8 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
             flags: &[],
             expected_text: "error[SQ0004]: a name does not resolve\n --> <stdin>:1:15\n  |\n1 | SELECT a \
                 FROM orders\n  |               ^^^^^^ relation `ORDERS` has no known columns\n  |\n  \
-                = help: declare the relation and its columns in the schema (`--schema` on the command \
-                line)\nsqlquack convert: refused, 1 refusal under the built-in default\n",
+                = help: declare the relation and its columns in a source file of the project \
+                (`sources/*.yml`)\nsqlquack convert: refused, 1 refusal under the built-in default\n",
             expected_json: ("SQ0004", "unresolved_name", 1, 15),
         },
         ConvertDiagnosticTestCase {
@@ -1529,7 +1572,7 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
         ConvertDiagnosticTestCase {
             description: "a TIMESTAMP_TZ local-time reading explains the dropped offset and suggests the rewrite",
             sql: "SELECT DATEDIFF('day', shipped_at, paid_at) AS days FROM orders",
-            flags: &["--schema", DECLARED_SCHEMA],
+            flags: &["--project", DECLARED_PROJECT],
             expected_text: "error[SQ0003]: the operand types fall outside every rule's proven \
                 conditions: `fn:DATEDIFF`\n --> <stdin>:1:8\n  |\n1 | SELECT DATEDIFF('day', shipped_at, \
                 paid_at) AS days FROM orders\n  |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ DATEDIFF in \
@@ -1546,11 +1589,11 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
         ConvertDiagnosticTestCase {
             description: "a schema key matching only ignoring case says unquoted names fold to upper case",
             sql: "SELECT order_id FROM orders",
-            flags: &["--schema", "tests/cli/fixtures/lowercase_relation.json"],
+            flags: &["--project", "tests/cli/fixtures/lowercase_relation"],
             expected_text: "error[SQ0004]: a name does not resolve\n --> <stdin>:1:22\n  |\n1 | SELECT \
                 order_id FROM orders\n  |                      ^^^^^^ relation `ORDERS` matches `orders` \
                 only without regard to case\n  |\n  = help: Snowflake folds unquoted names to upper \
-                case, so declare the relation or column in the schema as the SQL resolves it (`ORDERS` \
+                case, so declare the relation or column in a source file as the SQL resolves it (`ORDERS` \
                 for `FROM orders`), or quote the name in the SQL to keep its case\nsqlquack convert: \
                 refused, 1 refusal under the built-in default\n",
             expected_json: ("SQ0004", "unresolved_name", 1, 22),
@@ -1891,42 +1934,6 @@ fn given_a_refused_divergence_when_converting_then_its_help_names_it_and_only_fi
 }
 
 #[test]
-fn given_a_malformed_schema_when_converting_then_the_error_names_what_is_wrong_in_schema_terms() {
-    let test_cases = [
-        SchemaErrorTestCase {
-            description: "a column without a type",
-            schema: r#"{"ORDERS": [["A"]]}"#,
-            expected_error: "relation ORDERS, column 1 (A) has no type",
-        },
-        SchemaErrorTestCase {
-            description: "an unknown key beside the sections",
-            schema: r#"{"relations": {}, "tables": {}}"#,
-            expected_error: "unknown top-level key `tables`",
-        },
-        SchemaErrorTestCase {
-            description: "an unknown key in a column object",
-            schema: r#"{"ORDERS": [{"name": "A", "type": "NUMBER", "nullable": true}]}"#,
-            expected_error: "relation ORDERS, column 1 has unknown key `nullable`",
-        },
-        SchemaErrorTestCase {
-            description: "relations not listed as columns",
-            schema: r#"{"ORDERS": {"A": "NUMBER"}}"#,
-            expected_error: "relation ORDERS must list its columns",
-        },
-    ];
-    for test_case in test_cases {
-        let (exit_code, stderr) = schema_failure(test_case.schema);
-
-        assert_eq!(exit_code, Some(2), "{}: {stderr}", test_case.description);
-        assert!(
-            stderr.contains(test_case.expected_error) && !stderr.contains("untagged"),
-            "{}: {stderr}",
-            test_case.description
-        );
-    }
-}
-
-#[test]
 fn given_a_naive_timestamp_joined_with_a_local_one_when_converting_then_its_nanoseconds_raise() {
     let test_cases = [
         ConvertTestCase {
@@ -1967,7 +1974,7 @@ fn given_a_naive_timestamp_joined_with_a_local_one_when_converting_then_its_nano
         ConvertTestCase {
             description: "strict mode refuses the join, which reads the naive value in the session's zone",
             sql: "SELECT COALESCE(n, l) AS r FROM t",
-            flags: &["--strict", "--schema", NAIVE_LOCAL_SCHEMA],
+            flags: &["--strict", "--project", NAIVE_LOCAL_PROJECT],
             mention: "needs known divergence",
             expected_outcome: convert_outcome(1, false),
         },

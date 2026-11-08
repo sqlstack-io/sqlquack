@@ -28,6 +28,7 @@ serde_json.workspace = true
 sqlquack.workspace = true
 sqlquack-core.workspace = true
 sqlquack-policy.workspace = true
+sqlquack-semantics.workspace = true
 
 [lints]
 workspace = true

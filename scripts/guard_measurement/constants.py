@@ -6,6 +6,8 @@ import re
 
 PROBE_FUNCTION: str = "GUARD_PROBE"
 SAMPLE_RELATION: str = "GUARD_SAMPLE"
+SAMPLE_SOURCES: str = "sample.yml"
+PROBE_PROJECT: str = "project"
 UNUSED_ARGUMENT: tuple[str, str] = ("UNUSED", "NUMBER(1,0)")
 RESULT_COLUMN: str = "R"
 SEMI_STRUCTURED_BODY: str = "SELECT TO_JSON({expression}) IS NULL AS r FROM guard_sample"

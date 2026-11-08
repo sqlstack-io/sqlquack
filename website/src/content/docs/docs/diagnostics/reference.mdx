@@ -67,9 +67,9 @@ echo "SELECT WEEKISO(CURRENT_DATE()) AS w" | sqlquack convert --builtin-policy
 
 **the operand types fall outside every rule's proven conditions** (`type_condition`)
 
-A rule covers the construct, but only for operand types its recorded cases prove. The operands at the span have other types, or types SQLQuack could not determine. Declaring the relation's columns and types in the schema often lets the types resolve; an explicit cast to a covered type also works when it keeps the statement's meaning.
+A rule covers the construct, but only for operand types its recorded cases prove. The operands at the span have other types, or types SQLQuack could not determine. Declaring the relation's columns and types in the project's sources often lets the types resolve; an explicit cast to a covered type also works when it keeps the statement's meaning.
 
-**Help:** declare the operands' Snowflake types in the schema, or cast them to a type the rule covers; for a function's operand, cast it to a type the label names
+**Help:** declare the operands' Snowflake types in the project's sources, or cast them to a type the rule covers; for a function's operand, cast it to a type the label names
 
 **Example:**
 
@@ -81,9 +81,9 @@ echo "SELECT FLOOR('abc') AS f" | sqlquack convert --builtin-policy
 
 **a name does not resolve** (`unresolved_name`)
 
-Converting a statement needs to know what each relation and column name refers to and what type it has. The name at the span is unknown, or resolves to more than one column. Add the relation and its columns to the schema file, or qualify an ambiguous column with its relation.
+Converting a statement needs to know what each relation and column name refers to and what type it has. The name at the span is unknown, or resolves to more than one column. Add the relation and its columns to a source file in the project's `sources/` folder, or qualify an ambiguous column with its relation.
 
-**Help:** declare the relation and its columns in the schema (`--schema` on the command line)
+**Help:** declare the relation and its columns in a source file of the project (`sources/*.yml`)
 
 **Example:**
 

@@ -1,4 +1,4 @@
-"""Header patterns and the placeholder names the census gives project function references."""
+"""Header patterns, the census's placeholder names, and the project folder files they become."""
 
 from __future__ import annotations
 
@@ -19,5 +19,12 @@ SQL_LANGUAGE: str = "sql"
 SCALAR_PLACEHOLDER: str = "__SQLQUACK_UDF__"
 TABLE_PLACEHOLDER: str = "__SQLQUACK_TABLE_FN__"
 FUNCTION_SUFFIX: str = ".sql"
-RELATIONS_KEY: str = "relations"
-FUNCTIONS_KEY: str = "functions"
+PYTHON_LANGUAGE: str = "python"
+PYTHON_SUFFIX: str = ".py"
+FUNCTIONS_FOLDER: str = "functions"
+SOURCES_FOLDER: str = "sources"
+LANGUAGE_FOLDERS: dict[str, str] = {SQL_LANGUAGE: "sql", PYTHON_LANGUAGE: "python"}
+LANGUAGE_SUFFIXES: dict[str, str] = {SQL_LANGUAGE: FUNCTION_SUFFIX, PYTHON_LANGUAGE: PYTHON_SUFFIX}
+PLAIN_IDENTIFIER: re.Pattern[str] = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
+PLACEHOLDER_BODY: str = "NULL"
+IDENTIFIER_QUOTE: str = '"'

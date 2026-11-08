@@ -1383,7 +1383,6 @@ dependencies = [
  "clap",
  "duckdb",
  "rayon",
- "saphyr-parser",
  "serde",
  "serde_json",
  "sha2",
@@ -1541,6 +1540,7 @@ dependencies = [
  "sqlquack",
  "sqlquack-core",
  "sqlquack-policy",
+ "sqlquack-semantics",
 ]
 
 [[package]]
@@ -1562,6 +1562,7 @@ name = "sqlquack-semantics"
 version = "0.2.0"
 dependencies = [
  "regex",
+ "saphyr-parser",
  "serde",
  "serde_json",
  "sqlquack-core",

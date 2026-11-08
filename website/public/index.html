@@ -85,7 +85,7 @@
   |
   <span class="dim">= help:</span> move the condition to WHERE or HAVING
 
-<span class="cmd">sqlquack convert revenue.sql --schema schema.json</span>
+<span class="cmd">sqlquack convert revenue.sql</span>
 SELECT
     "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID",
     CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE"
@@ -150,13 +150,13 @@ GROUP BY "ORDERS"."CUSTOMER_ID"
 							<div class="step-text">
 								<span class="num">02 · Convert</span>
 								<h3>DuckDB SQL that keeps Snowflake's meaning</h3>
-								<p>Uses your schema's types and only verified rules. NUMBER(12,2) / 3 keeps Snowflake's 8 decimal places.</p>
+								<p>Uses your sources' types and only verified rules. NUMBER(12,2) / 3 keeps Snowflake's 8 decimal places.</p>
 								<p class="more"><a href="/docs/cli/convert/">How conversion works →</a></p>
 							</div>
-<pre class="terminal"><span class="cm">-- div.sql, with TOTAL as NUMBER(12,2) in schema.json</span>
+<pre class="terminal"><span class="cm">-- div.sql, with TOTAL as NUMBER(12,2) in sources/orders.yml</span>
 SELECT order_id, total / 3 AS third FROM orders
 
-<span class="cmd">sqlquack convert div.sql --schema schema.json --builtin-policy</span>
+<span class="cmd">sqlquack convert div.sql --builtin-policy</span>
 SELECT
     "ORDERS"."ORDER_ID" AS "ORDER_ID",
     (CASE
@@ -174,7 +174,7 @@ FROM "ORDERS" AS "ORDERS"
 								<p>No verified rule, no conversion. The refusal underlines the construct and says what to change.</p>
 								<p class="more"><a href="/docs/diagnostics/reference/">Every diagnostic code →</a></p>
 							</div>
-<pre class="terminal"><span class="cmd">sqlquack convert due.sql --schema schema.json --builtin-policy</span>
+<pre class="terminal"><span class="cmd">sqlquack convert due.sql --builtin-policy</span>
 <span class="bad">error[SQ0008]</span>: the conversion needs a known divergence the policy refuses: `fn:HASH`
  --&gt; due.sql:2:8
   |
@@ -198,7 +198,7 @@ sqlquack convert: refused, 1 refusal under the built-in default</pre>
 [divergences.hash]
 <span class="arg">default</span> = <span class="str">&quot;warn&quot;</span>
 
-<span class="cmd">sqlquack convert due.sql --schema schema.json</span>
+<span class="cmd">sqlquack convert due.sql</span>
 SELECT
     "ORDERS"."ORDER_ID" AS "ORDER_ID",
     <span class="dim">…</span> AS "BUCKET"
@@ -214,7 +214,7 @@ sqlquack convert: relies on known divergence hash at fn:HASH
 								<p>Point it at a folder of compiled SQL, such as dbt's target/compiled. It counts the constructs, how many convert, and which refusals block the rest.</p>
 								<p class="more"><a href="/docs/cli/census/">Run a census →</a></p>
 							</div>
-<pre class="terminal"><span class="cmd">sqlquack census target/compiled/my_project/models --schema schema.json --builtin-policy</span>
+<pre class="terminal"><span class="cmd">sqlquack census target/compiled/my_project/models --builtin-policy</span>
 Census of 25 snowflake SQL files
   parsed 25 (25 statements), unparsed 0, empty 0
   distinct constructs 21 (4 clause, 4 fn, 1 join, 12 node)
@@ -283,7 +283,7 @@ conversion.converted          <span class="cm"># True</span></pre>
 					<div>
 						<h2>Start in a minute</h2>
 						<p class="lede">
-							Install it with pip, then check a file or convert it with a schema of your relations.
+							Install it with pip, then check a file or convert it with your tables declared in sources/*.yml.
 						</p>
 						<ul>
 							<li>Snowflake to DuckDB, for running warehouse SQL against small fixtures locally or in CI.</li>

@@ -17,6 +17,14 @@ fn repository_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
 }
 
+/// Writes `text` to `path` under the project folder `project`, making its folders.
+fn write_project_file(project: &Path, path: &str, text: &str) {
+    let path = project.join(path);
+    std::fs::create_dir_all(path.parent().expect("a parent directory"))
+        .expect("project folder created");
+    std::fs::write(path, text).expect("project file written");
+}
+
 fn copy_files(from: &Path, to: &Path) {
     for entry in WalkDir::new(from)
         .into_iter()
@@ -120,17 +128,17 @@ pub(crate) fn converted_first_value(sql: &str) -> String {
         .expect("the converted statement returns a text value")
 }
 
-/// The first value the converted `sql` returns over `schema`, its tables made by `setup` on DuckDB.
-pub(crate) fn converted_value_over(sql: &str, (schema, setup): (&str, &str)) -> String {
+/// The first value the converted `sql` returns over the source file `sources`, its tables made by `setup` on DuckDB.
+pub(crate) fn converted_value_over(sql: &str, (sources, setup): (&str, &str)) -> String {
     let directory = tempfile::tempdir().expect("temporary directory");
     std::fs::write(directory.path().join("query.sql"), sql).expect("query written");
-    std::fs::write(directory.path().join("schema.json"), schema).expect("schema written");
+    write_project_file(directory.path(), "sources/tables.yml", sources);
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
         .arg("convert")
         .arg("--policy")
         .arg(repository_root().join("sqlquack.toml"))
-        .arg("--schema")
-        .arg(directory.path().join("schema.json"))
+        .arg("--project")
+        .arg(directory.path())
         .arg(directory.path().join("query.sql"))
         .output()
         .expect("sqlquack runs");
@@ -174,16 +182,16 @@ pub(crate) fn override_outcome(
     std::fs::create_dir(&overrides).expect("overrides directory");
     std::fs::write(overrides.join("reversed_text.sql"), definition).expect("override written");
     std::fs::write(directory.path().join("query.sql"), sql).expect("query written");
-    std::fs::write(
-        directory.path().join("schema.json"),
-        r#"{"relations": {"ORDERS": [["ORDER_ID", "NUMBER(10,0)"], ["SKU", "VARCHAR"]]}}"#,
-    )
-    .expect("schema written");
+    write_project_file(
+        directory.path(),
+        "sources/orders.yml",
+        "sources:\n  - name: orders\n    columns:\n      - name: order_id\n        type: NUMBER(10,0)\n      - name: sku\n        type: VARCHAR\n",
+    );
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
         .args(["convert", "--json", "--policy"])
         .arg(repository_root().join("sqlquack.toml"))
-        .arg("--schema")
-        .arg(directory.path().join("schema.json"))
+        .arg("--project")
+        .arg(directory.path())
         .arg("--overrides")
         .arg(&overrides)
         .args(flags)
@@ -238,11 +246,11 @@ pub(crate) fn policy_free_exit_code(arguments: &[&str], policy_file: Option<&str
         )
         .expect("policy copied");
     });
-    std::fs::write(
-        directory.path().join("schema.json"),
-        "{\"functions\": {\"TOTAL\": {\"language\": \"sql\", \"arguments\": [], \"returns\": \"NUMBER(1,0)\"}}}",
-    )
-    .expect("schema written");
+    write_project_file(
+        directory.path(),
+        "functions/sql/total.sql",
+        "FUNCTION (\n  arguments (),\n  returns NUMBER(1,0),\n);\n1\n",
+    );
     Command::new(env!("CARGO_BIN_EXE_sqlquack"))
         .args(arguments)
         .current_dir(directory.path())
@@ -252,7 +260,7 @@ pub(crate) fn policy_free_exit_code(arguments: &[&str], policy_file: Option<&str
         .code()
 }
 
-const PYTHON_SCHEMA: &str = "crates/sqlquack/tests/cli/fixtures/python_functions.json";
+const PYTHON_PROJECT: &str = "crates/sqlquack/tests/cli/fixtures/python_functions";
 const PYTHON_HANDLER: &str = "handle";
 
 const OVERFLOW_CASE: &str = r#"category = "aggregate"
@@ -520,29 +528,28 @@ fn run_review(directory: &Path) -> Option<i32> {
         .code()
 }
 
-/// Converts `DOUBLED(PRICE NUMBER(10,2))` with `sqlquack function`, then runs its macro.
+/// Converts `DOUBLED(PRICE NUMBER(10,2))`, its project file returning `returns`, with `sqlquack function`, then runs its macro.
 pub(crate) fn run_function_macro(
     (returns, body): (&str, &str),
     call: &str,
     flags: &[&str],
 ) -> FunctionMacroOutcome {
     let directory = tempfile::tempdir().expect("temporary directory");
-    let schema = format!(
-        "{{\"relations\": {{\"__SQLQUACK_RELATION__FEES\": [[\"AMOUNT\", \"NUMBER(10,2)\"]]}}, \
-         \"functions\": {{\"DOUBLED\": {{\"language\": \"sql\", \
-         \"arguments\": [[\"PRICE\", \"NUMBER(10,2)\"]], \"returns\": {returns}}}}}}}"
+    write_project_file(
+        directory.path(),
+        "sources/fees.yml",
+        "sources:\n  - name: __sqlquack_relation__fees\n    columns:\n      - name: amount\n        type: NUMBER(10,2)\n",
     );
-    std::fs::write(directory.path().join("schema.json"), schema).expect("schema written");
+    write_project_file(
+        directory.path(),
+        "functions/sql/doubled.sql",
+        &format!(
+            "FUNCTION (\n  arguments (price NUMBER(10,2)),\n  returns {returns},\n);\n{body}\n"
+        ),
+    );
     std::fs::write(directory.path().join("doubled.sql"), body).expect("body written");
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args([
-            "function",
-            "doubled.sql",
-            "--name",
-            "DOUBLED",
-            "--schema",
-            "schema.json",
-        ])
+        .args(["function", "doubled.sql", "--name", "DOUBLED"])
         .arg("--policy")
         .arg(repository_root().join("sqlquack.toml"))
         .args(flags)
@@ -801,8 +808,8 @@ pub(crate) fn python_report(sql: &str, flags: &[&str]) -> serde_json::Value {
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
         .args(["convert", "--json", "--policy"])
         .arg(repository_root().join("sqlquack.toml"))
-        .arg("--schema")
-        .arg(repository_root().join(PYTHON_SCHEMA))
+        .arg("--project")
+        .arg(repository_root().join(PYTHON_PROJECT))
         .args(flags)
         .arg(directory.path().join("query.sql"))
         .output()
@@ -953,26 +960,17 @@ pub(crate) fn run_with_environment(
     )
 }
 
-/// How `sqlquack function` ends on `body` from standard input, the schema declaring `DOUBLED`.
+/// How `sqlquack function` ends on `body` from standard input, the project declaring `DOUBLED`.
 pub(crate) fn function_from_stdin(name: &str, body: &str) -> FunctionStdinOutcome {
     let directory = tempfile::tempdir().expect("temporary directory");
-    std::fs::write(
-        directory.path().join("schema.json"),
-        "{\"functions\": {\"DOUBLED\": {\"language\": \"sql\", \
-         \"arguments\": [[\"PRICE\", \"NUMBER(10,2)\"]], \"returns\": \"BOOLEAN\"}}}",
-    )
-    .expect("schema written");
+    write_project_file(
+        directory.path(),
+        "functions/sql/doubled.sql",
+        "FUNCTION (\n  arguments (price NUMBER(10,2)),\n  returns BOOLEAN,\n);\nprice > 1\n",
+    );
     let (exit_code, stdout, stderr) = run_with_input(
         directory.path(),
-        &[
-            "function",
-            "-",
-            "--name",
-            name,
-            "--schema",
-            "schema.json",
-            "--builtin-policy",
-        ],
+        &["function", "-", "--name", name, "--builtin-policy"],
         body,
     );
     let report: serde_json::Value = serde_json::from_str(&stdout).unwrap_or_default();
@@ -1109,14 +1107,13 @@ pub(crate) fn first_refusal_help(sql: &str, flags: &[&str]) -> String {
         .replace(&policy.display().to_string(), "<policy>")
 }
 
-/// The exit code and standard error of converting a statement with the schema `text`.
-pub(crate) fn schema_failure(text: &str) -> (Option<i32>, String) {
+/// The exit code and standard error of converting a statement in a project with the source file `text`.
+pub(crate) fn source_failure(text: &str) -> (Option<i32>, String) {
     let directory = tempfile::tempdir().expect("temporary directory");
-    let schema = directory.path().join("schema.json");
-    std::fs::write(&schema, text).expect("schema written");
+    write_project_file(directory.path(), "sources/orders.yml", text);
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["convert", "--builtin-policy", "--schema"])
-        .arg(&schema)
+        .args(["convert", "--builtin-policy", "--project"])
+        .arg(directory.path())
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())

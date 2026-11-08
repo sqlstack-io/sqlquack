@@ -15,7 +15,7 @@ class HeaderTestCase:
 
 
 @dataclass(frozen=True)
-class SchemaFileTestCase:
+class ProjectFilesTestCase:
     description: str
-    schema: str
-    expected_schema: str
+    compiled: tuple[tuple[str, str], ...]
+    expected_files: dict[str, str]

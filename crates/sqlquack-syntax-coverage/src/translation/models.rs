@@ -17,7 +17,7 @@ pub struct TranslationInputs<'a> {
     pub by_design: &'a BTreeSet<String>,
     pub binary: &'a Path,
     pub policy: &'a Path,
-    /// A scratch directory for each case's schema file.
+    /// A scratch directory for each case's project of census relations.
     pub work: &'a Path,
     pub family: Option<&'a str>,
     pub jobs: usize,

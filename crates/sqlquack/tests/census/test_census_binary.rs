@@ -80,12 +80,12 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
             },
         },
         BinaryTestCase {
-            description: "an unreadable schema file is a usage error, as for convert",
+            description: "a missing project folder is a usage error, as for convert",
             arguments: &[
                 "census",
                 "--builtin-policy",
-                "--schema",
-                "/nonexistent/schema.json",
+                "--project",
+                "/nonexistent/project",
             ],
             expected_outcome: BinaryOutcome {
                 exit_code: Some(2),
@@ -138,7 +138,7 @@ fn given_a_model_comparing_a_source_variant_when_running_census_then_source_vari
     let test_cases = [
         SourceVariantTestCase {
             description: "a source VARIANT compared by text converts, relying on source_variant_json",
-            payload: "[\"PAYLOAD\", \"VARIANT\"]",
+            payload: "      - name: payload\n        type: VARIANT\n",
             flags: &[],
             expected_outcome: SourceVariantOutcome {
                 exit_code: Some(0),
@@ -148,7 +148,7 @@ fn given_a_model_comparing_a_source_variant_when_running_census_then_source_vari
         },
         SourceVariantTestCase {
             description: "strict mode refuses the comparison relying on source_variant_json",
-            payload: "[\"PAYLOAD\", \"VARIANT\"]",
+            payload: "      - name: payload\n        type: VARIANT\n",
             flags: &["--strict"],
             expected_outcome: SourceVariantOutcome {
                 exit_code: Some(0),
@@ -157,8 +157,8 @@ fn given_a_model_comparing_a_source_variant_when_running_census_then_source_vari
             },
         },
         SourceVariantTestCase {
-            description: "a schema column marked typed_leaves is unproven, so the comparison is refused",
-            payload: "{\"name\": \"PAYLOAD\", \"type\": \"VARIANT\", \"typed_leaves\": true}",
+            description: "a source column marked typed_leaves is unproven, so the comparison is refused",
+            payload: "      - name: payload\n        type: VARIANT\n        typed_leaves: true\n",
             flags: &[],
             expected_outcome: SourceVariantOutcome {
                 exit_code: Some(0),
@@ -182,7 +182,7 @@ fn given_a_refused_upstream_model_when_running_census_binary_then_strict_and_uni
 {
     let test_cases = [
         UpstreamTestCase {
-            description: "the schema file types the refused model: its reader is unit-testable, \
+            description: "a source file types the refused model: its reader is unit-testable, \
                           labelled, and not strict",
             typed: true,
             flags: &["--json", "--names"],

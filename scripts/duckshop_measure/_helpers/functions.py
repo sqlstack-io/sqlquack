@@ -44,16 +44,16 @@ def project_functions(directory: Path) -> list[ProjectFunction]:
 
 
 def binary_function_converter(
-    *, binary: Path, library: Path, policy: Path, schema: Path
+    *, binary: Path, library: Path, policy: Path, project: Path
 ) -> FunctionConverter:
-    """A converter running `<binary> function - --name … --schema <schema>` under `policy`."""
+    """A converter running `<binary> function - --name … --project <project>` under `policy`."""
     environment: dict[str, str] = {**os.environ, "LD_LIBRARY_PATH": str(library)}
 
     def convert(function: ProjectFunction) -> FunctionMacro | tuple[str, ...]:
         """The macro of `function`, or its refusals; a crash or unreadable output names it."""
         completed: subprocess.CompletedProcess[str] = subprocess.run(
             (str(binary), "function", "-", "--name", function.name)
-            + ("--schema", str(schema), "--policy", str(policy)),
+            + ("--project", str(project), "--policy", str(policy)),
             input=function.body,
             capture_output=True,
             text=True,
@@ -135,7 +135,7 @@ def project_macros(
         binary=arguments.sqlquack,
         library=arguments.library,
         policy=arguments.policy,
-        schema=arguments.schema,
+        project=arguments.project,
     )
     macros, refused = converted_macros(functions=functions, convert=convert)
     print(

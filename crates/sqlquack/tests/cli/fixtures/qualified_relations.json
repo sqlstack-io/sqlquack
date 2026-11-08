@@ -1,6 +1,0 @@
-{
-  "relations": {
-    "ANALYTICS.STAGING.STG_ORDERS": [["ORDER_ID", "NUMBER(38,0)"]],
-    "ANALYTICS.MARTS.STG_ORDERS": [["ORDER_ID", "NUMBER(38,0)"]]
-  }
-}

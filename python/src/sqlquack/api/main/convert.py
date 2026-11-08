@@ -18,7 +18,7 @@ def convert(
     chosen: ConvertOptions = options or ConvertOptions()
     request: dict[str, Any] = {
         "project": path_argument(chosen.project),
-        "schema": path_argument(chosen.schema),
+        "schema": None if chosen.schema is None else dict(chosen.schema),
         "policy": path_argument(chosen.policy),
         "builtin_policy": chosen.builtin_policy,
         "session": dict(chosen.session),

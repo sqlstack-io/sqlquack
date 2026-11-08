@@ -7,13 +7,23 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+from scripts.census_functions._helpers.project_files import sources_text, sql_function_text
+from scripts.census_functions.constants import (
+    FUNCTION_SUFFIX,
+    FUNCTIONS_FOLDER,
+    LANGUAGE_FOLDERS,
+    SOURCES_FOLDER,
+)
+from scripts.census_functions.models import Signature
 from scripts.guard_measurement.constants import (
     BOOLEAN_TYPE,
     PLAIN_BODY,
     PROBE_FUNCTION,
+    PROBE_PROJECT,
     REFUSED_FALLBACK,
     RESULT_COLUMN,
     SAMPLE_RELATION,
+    SAMPLE_SOURCES,
     SEMI_STRUCTURED_BODY,
     SQL_LANGUAGE,
     UNUSED_ARGUMENT,
@@ -30,15 +40,41 @@ def probe_bodies(*, expression: str, semi_structured: bool | None) -> list[str]:
     return choices[semi_structured]
 
 
+def write_probe_project(*, directory: Path, columns: tuple[tuple[str, str], ...]) -> None:
+    """A project folder in `directory`: the sample relation, and the probe as a table function."""
+    sources: Path = directory / SOURCES_FOLDER / SAMPLE_SOURCES
+    probe: Path = (
+        directory
+        / FUNCTIONS_FOLDER
+        / LANGUAGE_FOLDERS[SQL_LANGUAGE]
+        / f"{PROBE_FUNCTION}{FUNCTION_SUFFIX}"
+    )
+    sources.parent.mkdir(parents=True)
+    probe.parent.mkdir(parents=True)
+    sources.write_text(
+        sources_text({SAMPLE_RELATION: [list(column) for column in columns]}), encoding="utf-8"
+    )
+    probe.write_text(
+        sql_function_text(
+            Signature(
+                language=SQL_LANGUAGE,
+                arguments=(UNUSED_ARGUMENT,),
+                returns=((RESULT_COLUMN, BOOLEAN_TYPE),),
+            )
+        ),
+        encoding="utf-8",
+    )
+
+
 def binary_converter(*, binary: Path, policy: Path) -> Converter:
     """A converter running `<binary> function` with the policy's known divergences."""
 
     def convert(*, body: str, columns: tuple[tuple[str, str], ...]) -> ConvertedProbe | str:
         """The emitted macro, or the last line of the refusal."""
         with tempfile.TemporaryDirectory() as directory:
-            schema_path: Path = Path(directory) / "schema.json"
+            project: Path = Path(directory) / PROBE_PROJECT
             body_path: Path = Path(directory) / "body.sql"
-            schema_path.write_text(json.dumps(_schema(columns=columns)), encoding="utf-8")
+            write_probe_project(directory=project, columns=columns)
             body_path.write_text(body, encoding="utf-8")
             completed: subprocess.CompletedProcess[str] = subprocess.run(
                 [
@@ -46,8 +82,8 @@ def binary_converter(*, binary: Path, policy: Path) -> Converter:
                     "function",
                     "--name",
                     PROBE_FUNCTION,
-                    "--schema",
-                    str(schema_path),
+                    "--project",
+                    str(project),
                     "--policy",
                     str(policy),
                     str(body_path),
@@ -68,17 +104,3 @@ def binary_converter(*, binary: Path, policy: Path) -> Converter:
         )
 
     return convert
-
-
-def _schema(*, columns: tuple[tuple[str, str], ...]) -> dict[str, object]:
-    """A schema with the sample relation and the probe as a table function."""
-    return {
-        "relations": {SAMPLE_RELATION: [list(column) for column in columns]},
-        "functions": {
-            PROBE_FUNCTION: {
-                "language": SQL_LANGUAGE,
-                "arguments": [list(UNUSED_ARGUMENT)],
-                "returns": {"table": [[RESULT_COLUMN, BOOLEAN_TYPE]]},
-            }
-        },
-    }

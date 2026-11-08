@@ -30,10 +30,7 @@ pub(crate) fn index_command(
     stderr: &mut dyn Write,
 ) -> ExitCode {
     let _ = writeln!(stderr, "sqlquack index: converting cases and SQL files…");
-    let (policy, project) = match project_choices(
-        &arguments.conversion,
-        (arguments.schema.as_deref(), &[], None),
-    ) {
+    let (policy, project) = match project_choices(&arguments.conversion, (None, &[], None)) {
         Ok(chosen) => chosen,
         Err(error) => {
             let _ = writeln!(stderr, "sqlquack index: failed: {error}");

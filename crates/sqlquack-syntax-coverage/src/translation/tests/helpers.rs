@@ -17,7 +17,7 @@ pub(crate) fn fake_sqlquack(directory: &Path, convert: &str) -> std::path::PathB
     std::fs::write(
         &path,
         format!(
-            "#!/bin/sh\nsql=$(cat)\nschema=\nwhile [ $# -gt 0 ]; do [ \"$1\" = --schema ] && schema=$2; shift; done\n\
+            "#!/bin/sh\nsql=$(cat)\nschema=\nwhile [ $# -gt 0 ]; do [ \"$1\" = --project ] && schema=$2/sources/census.yml; shift; done\n\
              if [ \"$sql\" = 'SELECT 17' ]; then echo '{{\"converted\":true,\"refusals\":[]}}'; exit 0; fi\n{convert}\n"
         ),
     )

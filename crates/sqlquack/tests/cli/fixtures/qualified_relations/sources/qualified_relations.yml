@@ -1,0 +1,13 @@
+sources:
+  - name: stg_orders
+    database: analytics
+    schema: staging
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+  - name: stg_orders
+    database: analytics
+    schema: marts
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)

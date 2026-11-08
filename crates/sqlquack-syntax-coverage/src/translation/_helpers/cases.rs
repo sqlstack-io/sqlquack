@@ -7,10 +7,10 @@ use crate::check::main::check_coverage::check_coverage;
 use crate::check::models::{CheckResult, LocalVerdict};
 use crate::formats::main::obligation_form::obligation_form;
 use crate::formats::models::{Case, Expect, Phase, SyntaxCoverage};
-use crate::translation::_helpers::census::schema_json;
+use crate::translation::_helpers::census::source_file;
 use crate::translation::_helpers::classify::classify;
 use crate::translation::_helpers::convert::Converter;
-use crate::translation::constants::CONVERSION_BOUND;
+use crate::translation::constants::{CENSUS_SOURCE_FILE, CONVERSION_BOUND, SOURCES_FOLDER};
 use crate::translation::models::{CaseTranslation, CensusEntry, TranslationInputs};
 
 /// The ids of the cases whose current receipt says Snowflake parsed them.
@@ -65,24 +65,26 @@ pub(crate) fn queued_cases<'a>(
     queue
 }
 
-/// Converts one case, with its census schema written under `work` when it has one.
+/// Converts one case, with its census relations in a project under `work` when it has one.
 fn translate(
     (case, forms): &(&Case, Vec<String>),
     census: Option<&CensusEntry>,
     (inputs, converter): (&TranslationInputs, &Converter),
 ) -> CaseTranslation {
-    let schema = census.map(|entry| {
-        let path = inputs.work.join(format!("{}.json", case.sql_sha256));
-        let written = std::fs::write(&path, schema_json(entry).to_string());
-        (path, written)
+    let project = census.map(|entry| {
+        let project = inputs.work.join(&case.sql_sha256);
+        let sources = project.join(SOURCES_FOLDER);
+        let written = std::fs::create_dir_all(&sources)
+            .and_then(|()| std::fs::write(sources.join(CENSUS_SOURCE_FILE), source_file(entry)));
+        (project, written)
     });
-    let output = match &schema {
-        Some((_, Err(error))) => Err(format!("cannot write the census schema: {error}")),
+    let output = match &project {
+        Some((_, Err(error))) => Err(format!("cannot write the census project: {error}")),
         Some((path, Ok(()))) => converter.convert(&case.sql, Some(path)),
         None => converter.convert(&case.sql, None),
     };
-    if let Some((path, _)) = &schema {
-        let _ = std::fs::remove_file(path);
+    if let Some((path, _)) = &project {
+        let _ = std::fs::remove_dir_all(path);
     }
     CaseTranslation {
         case_id: case.case_id.clone(),

@@ -26,11 +26,11 @@ pub(crate) struct Converter<'a> {
 }
 
 impl Converter<'_> {
-    /// Conversion's report on `sql`, with `schema` when given, or why it gave none.
+    /// Conversion's report on `sql`, in the `project` folder when given, or why it gave none.
     pub(crate) fn convert(
         &self,
         sql: &str,
-        schema: Option<&Path>,
+        project: Option<&Path>,
     ) -> Result<ConvertOutput, String> {
         let mut command = Command::new("sh");
         command
@@ -41,8 +41,8 @@ impl Converter<'_> {
             .arg(self.binary)
             .args(["convert", "--loud-divergences-only", "--json", "--policy"])
             .arg(self.policy);
-        if let Some(schema) = schema {
-            command.arg("--schema").arg(schema);
+        if let Some(project) = project {
+            command.arg("--project").arg(project);
         }
         command
             .arg("-")

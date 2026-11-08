@@ -11,17 +11,17 @@ DuckDB macro, and prints it as JSON.
 ## Usage
 
 ```bash
-sqlquack function --name <NAME> --schema <SCHEMA> [OPTIONS] <BODY>
+sqlquack function --name <NAME> [OPTIONS] <BODY>
 ```
 
 ```bash
-sqlquack function --name NET_TOTAL --schema schema.json --builtin-policy net_total.sql
+sqlquack function --name NET_TOTAL --builtin-policy net_total.sql
 ```
 
 `BODY` is the file holding the function's body: a scalar function's expression, or a table
-function's query. Use `-` to read standard input. The schema declares the function under
-`functions`, with its arguments and return type, and the relations its body reads. See
-[Schema files](/docs/schema/#relations-and-functions).
+function's query. Use `-` to read standard input. The function, its arguments and return type, and
+the tables its body reads are declared in the [project](/docs/project/#functions) in the current
+folder.
 
 A converted body prints the macro's parameters and body. A refused body prints
 `{"converted": false, "name": …, "refusals": [diagnostics]}` instead, with the same diagnostics
@@ -31,8 +31,8 @@ on standard error.
 
 | Option | Meaning |
 |--------|---------|
-| `--name <name>` | The function's name, as the schema declares it. Required. |
-| `--schema <file>` | The schema declaring the function and the relations its body reads. Required. |
+| `--name <name>` | The function's name, as the project declares it. Required. |
+| `--project <folder>` | The [project](/docs/project/) declaring the function. Default the current folder. |
 | `--session NAME=VALUE` | A Snowflake session parameter of your session. Repeatable. |
 
 `function` also takes the [policy flags](/docs/policy/#flags).

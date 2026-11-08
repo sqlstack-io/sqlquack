@@ -43,8 +43,7 @@ Every `.yml` or `.yaml` file under `sources/` is read. Each source has a `name` 
 `columns`, each with a `name` and a `type`. Other keys, such as `description`, are ignored, so a
 SQLBuild project's source files work unchanged.
 
-Names are unquoted, so `orders` declares the table `ORDERS`, as Snowflake folds it. A source with
-an `expression` is a query rather than a table, and is skipped.
+A source with an `expression` is a query rather than a table, and is skipped.
 
 A source with a column that has no `type` is left out whole, so a `SELECT *` never misses a
 column. SQLQuack warns about it:
@@ -54,6 +53,66 @@ sqlquack convert: warning: ./sources/more.yml: the source customers is left out,
 ```
 
 A table declared in two files is an error naming both.
+
+## Naming tables
+
+Names resolve as Snowflake resolves them. An unquoted name is upper-cased, so `orders` declares
+`ORDERS` and `FROM orders` reads it. A name in double quotes keeps its case, so `'"orders"'` declares
+a different table from `ORDERS`. When a name in the SQL matches a declared one only ignoring case,
+the diagnostic says so and suggests the spelling to declare.
+
+`database` and `schema` qualify a table:
+
+```yaml
+sources:
+  - name: orders
+    database: analytics
+    schema: sales
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+```
+
+This declares `ANALYTICS.SALES.ORDERS`. A name in the SQL reads the declared table whose parts agree
+with it:
+
+| Declared | SQL | Reads |
+|----------|-----|-------|
+| `ORDERS` | `orders`, `sales.orders`, `analytics.sales.orders` | `ORDERS` |
+| `ANALYTICS.SALES.ORDERS` | `orders`, `sales.orders`, `Analytics.Sales.Orders` | `ANALYTICS.SALES.ORDERS` |
+| `ANALYTICS.SALES.ORDERS` and `ANALYTICS.ARCHIVE.ORDERS` | `sales.orders` | `ANALYTICS.SALES.ORDERS` |
+| `ANALYTICS.SALES.ORDERS` and `ANALYTICS.ARCHIVE.ORDERS` | `orders` | refused: it matches both |
+
+The session's `DATABASE` and `SCHEMA` complete a name written without them, as in Snowflake: with
+`--session SCHEMA=archive`, `orders` reads `ANALYTICS.ARCHIVE.ORDERS`. See
+[Sessions](/docs/policy/#sessions).
+
+These are refused with [`SQ0004`](/docs/diagnostics/reference/#sq0004), naming the tables involved:
+
+- A name matching several declared tables that no session default settles.
+- A qualified name whose declared table a CTE of the same name hides.
+- Two differently qualified names in one statement that read the same declared table. Declare
+  each under its qualified name.
+
+The converted SQL reads a qualified table from the database you attach to DuckDB under that name,
+such as `ATTACH 'analytics.duckdb' AS analytics`.
+
+## Column details
+
+Two more column keys tell SQLQuack what a column's values hold:
+
+```yaml
+      - name: placed_at
+        type: TIMESTAMP_TZ(9)
+        offset: "+00:00"
+      - name: payload
+        type: VARIANT
+        typed_leaves: true
+```
+
+`offset` says every value of a `TIMESTAMP_TZ` column has that offset, `+00:00` or `UTC`, so
+conversion can rely on it; strict mode needs `--confirm-declared-offsets` too. `typed_leaves` says
+a `VARIANT` column holds typed values, such as dates, beside JSON.
 
 ## Choosing the folders
 
@@ -86,7 +145,8 @@ order_status = 'shipped'
 ```
 
 Now a query can call `is_shipped(status)`. `returns table (name TYPE, ...)` declares a table
-function.
+function. `volatility` (`volatile` or `immutable`) and `null_input` (`called` or `returns_null`)
+describe how calls behave; both are optional.
 
 Python functions go in `functions/python/`, marked with `@udf`:
 
@@ -100,7 +160,8 @@ def main(status):
     return None if status is None else status.title()
 ```
 
-SQLQuack reads the decorator without running the file. A Python function only runs where a Python
+SQLQuack reads the decorator without running the file. Besides SQLBuild's keys, `@udf` takes
+`volatility`, `null_input` and `vectorized=True`. A Python function only runs where a Python
 runtime registers it, so the built-in policy refuses calls to it. With a policy that allows
 `project_udf`, such as the repository's `sqlquack.toml`, confirm the runtime once:
 

@@ -1,8 +1,6 @@
 //! A Python call's keyword arguments as JSON: the strings, numbers, booleans, None, lists and dicts a `@udf(...)` holds, each dict as its `[key, value]` pairs in written order.
 
-use serde_json::{Map, Value};
-
-use crate::project::_helpers::yaml_value::number;
+use serde_json::{Map, Number, Value};
 
 /// The call arguments `(keyword=literal, ...)` at the start of `text`, as an object.
 pub(crate) fn python_keywords(text: &str) -> Result<Map<String, Value>, String> {
@@ -160,5 +158,14 @@ impl Reader {
             Some(next @ ('\'' | '"')) => Ok(text + &self.string(next)?),
             _ => Ok(text),
         }
+    }
+}
+
+/// `text` as an integer or a finite float, or None when it is neither.
+fn number(text: &str) -> Option<Number> {
+    match (text.parse::<i64>(), text.parse::<f64>()) {
+        (Ok(integer), _) => Some(Number::from(integer)),
+        (Err(_not_integer), Ok(float)) => Number::from_f64(float),
+        (Err(_not_integer), Err(_not_float)) => None,
     }
 }

@@ -298,3 +298,12 @@ impl TypedLeaves {
             .collect()
     }
 }
+
+/// The tables one source file declares, and a warning for each source it leaves out.
+#[derive(Debug, Default)]
+pub struct SourceTables {
+    /// Table names, folded as Snowflake folds them, and their columns as a schema writes them.
+    pub tables: Vec<(String, serde_json::Value)>,
+    /// One message per source left out, naming the source and the column without a type.
+    pub warnings: Vec<String>,
+}

@@ -1,0 +1,6 @@
+sources:
+  - name: orders
+    columns:
+      - name: placed_at
+        type: TIMESTAMP_TZ(9)
+        offset: "-05:00"

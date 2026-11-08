@@ -45,7 +45,8 @@ fn given_a_conversion_report_when_measuring_then_the_form_takes_its_state() {
         TranslationTestCase {
             description: "the census schema reaches convert with names resolved as Snowflake resolves them",
             convert: format!(
-                "grep -q '\"T\":\\[\\[\"A\",\"NUMBER\"\\],\\[\"b \\\\\"q\",\"TEXT\"\\]\\]' \"$schema\" && {{ echo '{{\"converted\":true,\"refusals\":[]}}'; exit 0; }}\n{unresolved}"
+                r##"grep -qF '"name":"\"T\""' "$schema" && grep -qF '{{"name":"\"A\"","type":"NUMBER"}}' "$schema" && grep -qF '{{"name":"\"b \"\"q\"","type":"TEXT"}}' "$schema" && {{ echo '{{"converted":true,"refusals":[]}}'; exit 0; }}
+{unresolved}"##
             ),
             census: concat!(
                 r#"{"case_id":"select-top","relations":[{"name":"t","columns":[{"name":"a","type":"NUMBER"},{"name":"\"b \"\"q\"","type":"TEXT"}]}]}"#,

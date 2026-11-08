@@ -10,6 +10,10 @@ pub const BY_DESIGN_FILE: &str = "by-design.toml";
 pub const BY_DESIGN_REVIEW_FILE: &str = "reviews/auditor-by-design.toml";
 /// One census sidecar per family, under the coverage root.
 pub const CENSUS_DIR: &str = "census";
+/// The project folder of source files `sqlquack convert --project` reads.
+pub const SOURCES_FOLDER: &str = "sources";
+/// The source file holding one case's census relations.
+pub const CENSUS_SOURCE_FILE: &str = "census.yml";
 /// The time one conversion may take before the case counts as not finished.
 pub const CONVERSION_BOUND: Duration = Duration::from_secs(120);
 /// The conversion's virtual memory bound in KiB, 4 GiB.

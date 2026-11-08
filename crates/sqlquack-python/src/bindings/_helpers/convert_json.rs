@@ -8,6 +8,8 @@ use sqlquack::cli::models::{
 };
 use sqlquack_core::diagnostics::main::render_diagnostics::render_diagnostics;
 use sqlquack_core::diagnostics::models::Diagnostic;
+use sqlquack_semantics::types::errors::SchemaError;
+use sqlquack_semantics::types::main::parse_schema::parse_schema;
 
 use crate::bindings::models::{ConvertRequest, Rendered};
 
@@ -16,9 +18,21 @@ use crate::bindings::models::{ConvertRequest, Rendered};
 pub(crate) fn convert_json(sql: &str, request: &str, path: &str) -> PyResult<String> {
     let request: ConvertRequest =
         serde_json::from_str(request).map_err(|error| PyValueError::new_err(error.to_string()))?;
+    let schema = request
+        .schema
+        .map(|schema| {
+            parse_schema(&schema.to_string()).map_err(|error| match error {
+                SchemaError::Shape(reason) => {
+                    format!("the schema option is not a schema: {reason}")
+                }
+                SchemaError::Declaration(reason) => format!("the schema option: {reason}"),
+            })
+        })
+        .transpose()
+        .map_err(PyValueError::new_err)?;
     let arguments = ConvertArguments {
         path: None,
-        schema: request.schema,
+        schema,
         overrides: request.overrides,
         verified_overrides: pairs(request.verified_overrides),
         session: pairs(request.session),

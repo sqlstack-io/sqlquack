@@ -11,6 +11,7 @@ rust-version.workspace = true
 
 [dependencies]
 regex.workspace = true
+saphyr-parser.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 sqlquack-syntax.workspace = true

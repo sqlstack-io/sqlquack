@@ -1,4 +1,4 @@
-//! `project_schema`: the tables and functions a project's folders declare, with a schema file's.
+//! `project_schema`: the tables and functions a project's folders declare.
 
 use std::path::Path;
 
@@ -11,13 +11,13 @@ use sqlquack_semantics::types::models::Schema;
 use crate::project::_helpers::declarations::{
     declaration, no_clash, project_functions, source_tables,
 };
-use crate::project::constants::{FUNCTION_KIND, TABLE_KIND};
+use crate::project::constants::{FUNCTION_KIND, GIVEN_SCHEMA, TABLE_KIND};
 
-/// The project's schema merged with `file`'s, and warnings; a name declared twice is an error.
+/// The project's schema merged with `given`, a caller's in memory, and warnings; a name declared twice is an error.
 pub fn project_schema(
     root: &Path,
     project: &ProjectPolicy,
-    file: Option<(&Path, Schema)>,
+    given: Option<&Schema>,
 ) -> Result<(Schema, Vec<String>), String> {
     let ((tables, mut declarations), warnings) = source_tables(root, project)?;
     let (functions, function_declarations) = project_functions(root, project)?;
@@ -28,19 +28,22 @@ pub fn project_schema(
             format!("the project at {}: {reason}", root.display())
         }
     })?;
-    if let Some((path, file)) = file {
+    if let Some(given) = given {
+        let place = Path::new(GIVEN_SCHEMA);
         declarations.extend(
-            file.relations
+            given
+                .relations
                 .keys()
-                .map(|name| declaration(TABLE_KIND, name, path)),
+                .map(|name| declaration(TABLE_KIND, name, place)),
         );
         declarations.extend(
-            file.functions
+            given
+                .functions
                 .keys()
-                .map(|name| declaration(FUNCTION_KIND, name, path)),
+                .map(|name| declaration(FUNCTION_KIND, name, place)),
         );
-        schema.relations.extend(file.relations);
-        schema.functions.extend(file.functions);
+        schema.relations.extend(given.relations.clone());
+        schema.functions.extend(given.functions.clone());
     }
     no_clash(&declarations)?;
     Ok((schema, warnings))

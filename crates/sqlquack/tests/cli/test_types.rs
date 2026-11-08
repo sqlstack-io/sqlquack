@@ -305,10 +305,10 @@ pub(crate) struct DivergenceHelpTestCase {
     pub(crate) expected_help: &'static str,
 }
 
-/// A malformed schema file and the words its error must use.
-pub(crate) struct SchemaErrorTestCase {
+/// A malformed source file and the words its error must use.
+pub(crate) struct SourceErrorTestCase {
     pub(crate) description: &'static str,
-    pub(crate) schema: &'static str,
+    pub(crate) sources: &'static str,
     pub(crate) expected_error: &'static str,
 }
 

@@ -333,7 +333,7 @@ use it, plus how many files would convert as the top N constructs get rules, in 
 in greedy order (each next rule is the one that completes the most files). SQLBuild reference calls
 (`__ref`, `__source`, `__seed`, `__udf`, `__table_fn`, cursor bounds) are replaced with neutral
 placeholders before parsing; each model, source or seed reference becomes a relation named after its
-arguments, so a `--schema` file can type it. The report holds counts and construct keys only. With
+arguments, so a project's source file can type it. The report holds counts and construct keys only. With
 `SQLQUACK_GUARDS_DIR` set, census also writes each converted file's known divergences there, and
 with `SQLQUACK_CONVERTED_DIR` set, each converted file's DuckDB SQL, named after its path.
 Progress goes to stderr every few seconds, and the conversion times of the slowest files, over every

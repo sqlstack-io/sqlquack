@@ -5,7 +5,7 @@ use crate::translation::models::FormState;
 /// What the fake `sqlquack convert` reports on `SELECT TOP 1 17`, and the state its form must take.
 pub(crate) struct TranslationTestCase {
     pub(crate) description: &'static str,
-    /// The shell lines the fake runs for that SQL, with `$schema` the census schema file or empty.
+    /// The shell lines the fake runs for that SQL, with `$schema` the census source file or empty.
     pub(crate) convert: String,
     /// The query family's census sidecar, each line ending in a newline; empty for none.
     pub(crate) census: &'static str,

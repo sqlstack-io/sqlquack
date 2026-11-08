@@ -1,4 +1,4 @@
-"""DuckShop measures: the census schema from a referee environment, and unit tests on DuckDB."""
+"""DuckShop measures: the census project from a referee environment, and tests on DuckDB."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from scripts.duckshop_measure._helpers.functions import project_macros
 from scripts.duckshop_measure._helpers.measures import (
     snowflake_results,
     unit_test_outcomes,
-    write_schema,
+    write_project,
 )
 from scripts.duckshop_measure._helpers.report import (
     snowflake_report,
@@ -20,27 +20,29 @@ from scripts.duckshop_measure._helpers.report import (
 )
 from scripts.duckshop_measure._helpers.running import binary_converter, duckdb_rows
 from scripts.duckshop_measure._helpers.snowflake import policy_value_divergences, run_comparisons
-from scripts.duckshop_measure.constants import SCHEMA_COMMAND, SNOWFLAKE_COMMAND, TESTS_COMMAND
+from scripts.duckshop_measure.constants import PROJECT_COMMAND, SNOWFLAKE_COMMAND, TESTS_COMMAND
 from scripts.duckshop_measure.models import ModelResult, SnowflakeInputs, UnitTestOutcome
 from scripts.duckshop_measure.types import Comparer, Converter, FunctionConverter
 
 
 def _measure_parser() -> argparse.ArgumentParser:
-    """The `schema`, `tests` and `snowflake` subcommands and their arguments."""
+    """The `project`, `tests` and `snowflake` subcommands and their arguments."""
     parser: argparse.ArgumentParser = argparse.ArgumentParser(description=__doc__)
     commands: argparse._SubParsersAction[argparse.ArgumentParser] = parser.add_subparsers(
         dest="command", required=True
     )
-    schema: argparse.ArgumentParser = commands.add_parser(
-        SCHEMA_COMMAND, help="a census schema from a referee environment"
+    project: argparse.ArgumentParser = commands.add_parser(
+        PROJECT_COMMAND, help="a census project folder from a referee environment"
     )
-    schema.add_argument("--environment", type=Path, required=True)
-    schema.add_argument("--out", type=Path, required=True)
-    schema.add_argument(
-        "--recorded", type=Path, help="recorded results whose relations the schema types instead"
+    project.add_argument("--environment", type=Path, required=True)
+    project.add_argument(
+        "--out", type=Path, required=True, help="the project folder its sources go to"
     )
-    schema.add_argument(
-        "--functions", type=Path, help="compiled project functions the schema declares"
+    project.add_argument(
+        "--recorded", type=Path, help="recorded results whose relations the project types instead"
+    )
+    project.add_argument(
+        "--functions", type=Path, help="compiled project functions the project declares"
     )
     tests: argparse.ArgumentParser = commands.add_parser(
         TESTS_COMMAND, help="compiled unit tests converted and run on DuckDB"
@@ -73,7 +75,9 @@ def _measure_parser() -> argparse.ArgumentParser:
         "--functions", type=Path, help="compiled project functions, created in DuckDB before models"
     )
     snowflake.add_argument(
-        "--schema", type=Path, help="the census schema declaring the functions (with --functions)"
+        "--project",
+        type=Path,
+        help="the census project folder declaring the functions (with --functions)",
     )
     snowflake.add_argument("--sqlquack", type=Path, required=True)
     snowflake.add_argument("--library", type=Path, required=True, help="libduckdb.so's directory")
@@ -136,8 +140,8 @@ def run_measure(
 ) -> int:
     """Run one DuckShop measure subcommand; 0 once its report is written."""
     arguments: argparse.Namespace = _measure_parser().parse_args(argv)
-    if arguments.command == SCHEMA_COMMAND:
-        write_schema(
+    if arguments.command == PROJECT_COMMAND:
+        write_project(
             environment=arguments.environment,
             out=arguments.out,
             recorded=arguments.recorded,
