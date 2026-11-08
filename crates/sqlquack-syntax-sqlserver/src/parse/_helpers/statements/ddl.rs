@@ -16,6 +16,7 @@ use sqlquack_syntax::expressions::tables::models::{
     CreateIndex, CreateTable, DropTable, IndexColumn,
 };
 
+use crate::keywords::main::is_reserved::is_reserved;
 use crate::parse::_helpers::statements::queries::set_with;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier};
 use crate::parse::_helpers::tree::nodes::{column_from, table, var};
@@ -130,7 +131,7 @@ impl<'sql> Parser<'sql> {
         })
     }
 
-    /// A parameter's default, which SQL Server takes only as a constant: a literal, `-` and a number, or a bare or bracketed word.
+    /// A parameter's default, which SQL Server takes only as a constant: a literal, `-` and a number, DEFAULT, or a bare word that is not reserved or a bracketed one.
     fn procedure_default(&mut self) -> Parsing<Expression> {
         let start: usize = self.at;
         let negative: bool = self.char_at(0, '-');
@@ -140,17 +141,22 @@ impl<'sql> Parser<'sql> {
         };
         let word: bool = matches!(value.kind, TokenKind::Word | TokenKind::Quoted(_))
             && !value.value.eq_ignore_ascii_case("NULL");
+        let reserved: bool = value.kind == TokenKind::Word
+            && is_reserved(&value.value)
+            && !value.value.eq_ignore_ascii_case("DEFAULT");
         let default: Expression = match value.kind {
             TokenKind::Number(_) => self.scalar()?,
             TokenKind::String { .. } | TokenKind::Word if !negative && !word => self.scalar()?,
-            TokenKind::Word | TokenKind::Quoted(_) if !negative && !self.char_at(1, '(') => {
+            TokenKind::Word | TokenKind::Quoted(_)
+                if !negative && !reserved && !self.char_at(1, '(') =>
+            {
                 self.at += 1;
                 match value.kind {
                     TokenKind::Word => var(&value.value),
                     _ => column_from(vec![identifier(&value)]),
                 }
             }
-            _ => return Err(self.error_at(start + width - 1 + usize::from(word))),
+            _ => return Err(self.error_at(start + width - 1 + usize::from(word && !reserved))),
         };
         if self.at != start + width {
             return Err(self.error_at(start + width));

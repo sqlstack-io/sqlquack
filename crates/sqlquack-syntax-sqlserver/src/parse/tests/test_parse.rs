@@ -375,6 +375,16 @@ fn given_sql_when_parsing_then_the_verdict_is_sql_servers() {
             expected_verdict: ExpectedVerdict::Refused { syntax: true },
         },
         VerdictTestCase {
+            description: "a parameter's default may not be a reserved word (156)",
+            sql: "CREATE PROCEDURE p @a int = select AS SELECT 1",
+            expected_verdict: ExpectedVerdict::Refused { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a parameter's default may be a word that is not reserved, such as date",
+            sql: "CREATE PROCEDURE p @a varchar(9) = date AS SELECT 1",
+            expected_verdict: ExpectedVerdict::Tree,
+        },
+        VerdictTestCase {
             description: "a parameter's default may not be a variable (137)",
             sql: "CREATE PROCEDURE p @a int = @b AS SELECT @a",
             expected_verdict: ExpectedVerdict::Refused { syntax: true },
