@@ -1,7 +1,9 @@
 //! The dialect profiles.
 
 use crate::dialects::_helpers::snowflake_types::same_snowflake_type;
-use crate::dialects::constants::{CLICKHOUSE_TIMESTAMP_TYPE, SNOWFLAKE_TIMESTAMP_TYPE};
+use crate::dialects::constants::{
+    CLICKHOUSE_TIMESTAMP_TYPE, SNOWFLAKE_TIMESTAMP_TYPE, SQLSERVER_TIMESTAMP_TYPE,
+};
 use crate::dialects::main::clickhouse_type::clickhouse_type;
 use crate::dialects::types::DialectProfile;
 
@@ -161,6 +163,28 @@ impl DialectProfile for BigQuery {
 
     fn same_identifier(&self, left: &str, right: &str) -> bool {
         left.eq_ignore_ascii_case(right)
+    }
+}
+
+/// SQL Server under its default collation: names resolve and compare without regard to case.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct SqlServer;
+
+impl DialectProfile for SqlServer {
+    fn name(&self) -> &'static str {
+        "SQL Server"
+    }
+
+    fn resolved_identifier(&self, name: &str, _quoted: bool) -> String {
+        name.to_lowercase()
+    }
+
+    fn same_identifier(&self, left: &str, right: &str) -> bool {
+        left.to_lowercase() == right.to_lowercase()
+    }
+
+    fn timestamp_type(&self) -> &'static str {
+        SQLSERVER_TIMESTAMP_TYPE
     }
 }
 

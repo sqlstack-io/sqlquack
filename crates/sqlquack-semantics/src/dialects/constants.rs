@@ -2,7 +2,7 @@
 
 use crate::dialects::models::{
     BigQuery, ClickHouse, DuckDb, Postgres, Profiles, Snowflake, SnowflakeQuotedIgnoringCase,
-    Sqlite,
+    SqlServer, Sqlite,
 };
 
 /// The Snowflake profile.
@@ -25,6 +25,9 @@ pub const BIGQUERY: BigQuery = BigQuery;
 
 /// The SQLite profile.
 pub const SQLITE: Sqlite = Sqlite;
+
+/// The SQL Server profile, under the server's default case-insensitive collation.
+pub const SQL_SERVER: SqlServer = SqlServer;
 
 /// Snowflake SQL resolved so its names stay apart in DuckDB, as conversion needs.
 pub const SNOWFLAKE_TO_DUCKDB: Profiles = Profiles {
@@ -165,3 +168,6 @@ pub(crate) const CLICKHOUSE_DECIMAL_WIDTHS: [(&str, u32); 4] = [
     ("Decimal128", 38),
     ("Decimal256", 76),
 ];
+
+/// What SQL Server stores a timestamp written without its kind as; its TIMESTAMP is rowversion.
+pub(crate) const SQLSERVER_TIMESTAMP_TYPE: &str = "DATETIME2";
