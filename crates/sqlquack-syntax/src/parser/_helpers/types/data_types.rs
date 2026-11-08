@@ -197,7 +197,10 @@ impl Parser {
             return None;
         }
         let start = self.current;
-        let parsed = self.parse_data_type().ok().filter(|_| self.current == end);
+        let parsed = match self.parse_data_type() {
+            Ok(data_type) if self.current == end => Some(data_type),
+            Ok(_) | Err(_) => None,
+        };
         self.current = start;
         parsed
     }
