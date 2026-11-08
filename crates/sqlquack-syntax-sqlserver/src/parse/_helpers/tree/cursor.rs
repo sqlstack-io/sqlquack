@@ -1,11 +1,12 @@
 //! The parser's state: the tokens, where it is, and how tokens read as names.
 
+use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Identifier;
 
 use crate::keywords::main::is_reserved::is_reserved;
 use crate::parse::constants::MAX_DEPTH;
 use crate::parse::errors::ParseError;
-use crate::parse::models::Gap;
+use crate::parse::models::{Gap, StatementRange};
 use crate::scan::models::{Token, TokenKind};
 
 pub(crate) type Parsing<T> = Result<T, ParseError>;
@@ -16,6 +17,14 @@ pub(crate) struct Parser<'sql> {
     pub(crate) at: usize,
     depth: usize,
     pub(crate) gaps: Vec<Gap>,
+    /// Where each statement read so far was written, in source order.
+    pub(crate) ranges: Vec<StatementRange>,
+    /// How many statements enclose the one being read.
+    nesting: usize,
+    /// How many WHILE loops enclose the statement being read, where BREAK and CONTINUE may stand.
+    pub(crate) loops: usize,
+    /// How many CATCH blocks enclose the statement being read, where a THROW without arguments may stand.
+    pub(crate) catches: usize,
     /// Token positions of a `(` already refused as a subquery, so backtracking tries each reading once.
     pub(crate) not_subquery: std::collections::HashSet<usize>,
 }
@@ -56,6 +65,10 @@ impl<'sql> Parser<'sql> {
             at: 0,
             depth: 0,
             gaps: Vec::new(),
+            ranges: Vec::new(),
+            nesting: 0,
+            loops: 0,
+            catches: 0,
             not_subquery: std::collections::HashSet::new(),
         }
     }
@@ -281,12 +294,46 @@ impl<'sql> Parser<'sql> {
         parse: impl FnOnce(&mut Self) -> Parsing<T>,
     ) -> Result<T, ParseError> {
         let (at, gaps, depth) = (self.at, self.gaps.len(), self.depth);
+        let (ranges, nesting) = (self.ranges.len(), self.nesting);
         parse(self).inspect_err(|_| {
             if self.gaps.len() == gaps {
                 self.at = at;
                 self.depth = depth;
+                self.ranges.truncate(ranges);
+                self.nesting = nesting;
             }
         })
+    }
+
+    /// Runs `parse` for the statement at the next token, recording where it was written and reading the statements inside it one level deeper.
+    pub(crate) fn ranged(
+        &mut self,
+        parse: impl FnOnce(&mut Self) -> Parsing<Expression>,
+    ) -> Parsing<Expression> {
+        let slot: usize = self.ranges.len();
+        let start: usize = self.offset();
+        self.ranges.push(StatementRange {
+            start,
+            end: start,
+            depth: self.nesting,
+        });
+        self.nesting += 1;
+        let parsed: Parsing<Expression> = parse(self);
+        self.nesting -= 1;
+        let mut look: usize = 0;
+        while self.char_at(look, ';') {
+            look += 1;
+        }
+        let end: usize = match look {
+            0 => self.last_end(),
+            _ => self
+                .peek_at(look - 1)
+                .map_or(self.sql.len(), |token| token.end),
+        };
+        if let Some(range) = self.ranges.get_mut(slot) {
+            range.end = end;
+        }
+        parsed
     }
 
     /// Whether a gap has been recorded, so parsing has stopped.

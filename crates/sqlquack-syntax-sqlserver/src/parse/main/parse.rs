@@ -5,7 +5,7 @@ use sqlquack_syntax::expressions::statements::models::Command;
 
 use crate::parse::_helpers::tree::cursor::Parser;
 use crate::parse::errors::ParseError;
-use crate::parse::models::Parsed;
+use crate::parse::models::{Parsed, StatementRange};
 use crate::scan::main::scan::scan;
 use crate::scan::models::{Token, TokenKind};
 
@@ -27,6 +27,7 @@ pub fn parse(sql: &str) -> Result<Parsed, ParseError> {
         Ok(statements) => Ok(Parsed {
             statements,
             gaps: Vec::new(),
+            ranges: parser.ranges,
         }),
         Err(_) if parser.gapped() => {
             let start: usize = parser.gaps.first().map_or(0, |gap| gap.start);
@@ -35,6 +36,11 @@ pub fn parse(sql: &str) -> Result<Parsed, ParseError> {
                     this: sql[start..].to_owned(),
                 }))],
                 gaps: parser.gaps,
+                ranges: vec![StatementRange {
+                    start,
+                    end: sql.len(),
+                    depth: 0,
+                }],
             })
         }
         Err(error) => Err(error),

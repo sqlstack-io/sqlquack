@@ -11,7 +11,7 @@ pub use crate::keywords::main::keyword_status::keyword_status;
 pub use crate::parse::errors::{ParseError, StrictFailure};
 pub use crate::parse::main::parse::parse;
 pub use crate::parse::main::parse_strict::parse_strict;
-pub use crate::parse::models::{Gap, Parsed};
+pub use crate::parse::models::{Gap, Parsed, StatementRange};
 pub use crate::scan::errors::ScanError;
 pub use crate::scan::main::scan::scan;
 pub use crate::scan::main::tokenize::tokenize;

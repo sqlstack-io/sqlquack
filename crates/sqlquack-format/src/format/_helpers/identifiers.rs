@@ -17,6 +17,8 @@ const SPAN_FIELD: &str = "span";
 const LEFT_FIELD: &str = "left";
 const RIGHT_FIELD: &str = "right";
 const COLUMN_ALIASES_FIELD: &str = "column_aliases";
+/// The field of a serialised UPDATE that holds its `column = value` pairs.
+const SET_FIELD: &str = "set";
 
 /// Per-token facts from the parse tree, and how many select lists it has.
 pub(crate) struct ParsedNames {
@@ -220,7 +222,10 @@ fn own_ranges(value: &Value) -> Ranges {
             .and_then(|span| Some((span_offset(span, "start")?, span_offset(span, "end")?)))
             .into_iter()
             .collect(),
-        binaries: binary(value).into_iter().collect(),
+        binaries: binary(value)
+            .into_iter()
+            .chain(assignments(value))
+            .collect(),
         unspanned: unspanned_names(value),
         selects: usize::from(
             value
@@ -299,6 +304,22 @@ fn binary(value: &Value) -> Option<Binary> {
         left_end: operand_span(LEFT_FIELD).and_then(|span| span_offset(span, "end")),
         right_start: operand_span(RIGHT_FIELD).and_then(|span| span_offset(span, "start")),
     })
+}
+
+/// The `=` of each `column = value` pair of an UPDATE's SET, which the tree keeps as a pair, not a comparison.
+fn assignments(value: &Value) -> Vec<Binary> {
+    let pairs = value.get(SET_FIELD).and_then(Value::as_array);
+    pairs
+        .into_iter()
+        .flatten()
+        .filter_map(|pair| identifier_range(pair.as_array()?.first()?))
+        .map(|(_, end)| Binary {
+            spellings: &["="],
+            span: None,
+            left_end: Some(end),
+            right_start: None,
+        })
+        .collect()
 }
 
 /// The character range of `value` when it is an identifier node with a recorded span.

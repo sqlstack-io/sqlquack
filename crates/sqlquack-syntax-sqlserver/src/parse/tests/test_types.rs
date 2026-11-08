@@ -46,3 +46,10 @@ pub(crate) struct ValueTestCase {
     pub(crate) pointer: &'static str,
     pub(crate) expected_json: &'static str,
 }
+
+/// An input and each statement it holds, nested ones included, as its written text and depth.
+pub(crate) struct RangeTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_statements: &'static [(&'static str, usize)],
+}

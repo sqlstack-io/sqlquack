@@ -79,6 +79,8 @@ pub(crate) struct Oracle {
     text: String,
     /// Token ranges, in order and apart, whose authored text is printed byte for byte.
     pub(crate) verbatim: Vec<(usize, usize)>,
+    /// Authored tokens that start a statement, which take keyword case even after `AS`.
+    statement_starts: Vec<usize>,
 }
 
 impl Oracle {
@@ -97,6 +99,7 @@ impl Oracle {
             generated,
             text: guide.text,
             verbatim: guide.verbatim,
+            statement_starts: guide.statement_starts,
         }
     }
 }
@@ -123,14 +126,16 @@ pub(crate) struct AuthoredSql<'a> {
     pub(crate) comments: &'a [Comment],
 }
 
-fn keyed_authored(lexemes: &[Lexeme]) -> Vec<Keyed> {
+/// The authored tokens, each word recasable unless it follows an accessor, or an `AS` without starting a statement.
+fn keyed_authored(lexemes: &[Lexeme], statement_starts: &[usize]) -> Vec<Keyed> {
     lexemes
         .iter()
         .enumerate()
         .map(|(index, lexeme)| {
             let name = index > 0
                 && (matches!(lexemes[index - 1].raw.as_str(), "." | ":" | "@" | "$")
-                    || lexemes[index - 1].raw.eq_ignore_ascii_case("AS"));
+                    || (lexemes[index - 1].raw.eq_ignore_ascii_case("AS")
+                        && !statement_starts.contains(&index)));
             Keyed::new(lexeme, !name && is_unquoted_word(&lexeme.raw))
         })
         .collect()
@@ -146,7 +151,7 @@ pub(crate) fn print_authored_tokens(
         lexemes,
         comments,
     } = *source;
-    let authored = keyed_authored(lexemes);
+    let authored = keyed_authored(lexemes, &oracle.statement_starts);
     let generated = &oracle.generated;
     let alignment = align(&authored, generated)?;
     let separators = separators(&authored, generated, &alignment, &oracle.text)?;

@@ -3,8 +3,9 @@
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::statements::models::{
     Commit, Declare, DeclareItem, ExecuteParameter, ExecuteStatement, Rollback, ScriptingBlock,
-    ScriptingBranch, ScriptingElse, ScriptingIf, ScriptingLoopKeyword, ScriptingSql,
-    ScriptingStatement, ScriptingWhile, SetItem, SetStatement, Transaction, TryCatch, Use,
+    ScriptingBranch, ScriptingElse, ScriptingIf, ScriptingJump, ScriptingJumpKeyword,
+    ScriptingLoopKeyword, ScriptingRaise, ScriptingSql, ScriptingStatement, ScriptingWhile,
+    SetItem, SetStatement, Transaction, TryCatch, Use,
 };
 use sqlquack_syntax::tokens::models::SourceSpan;
 use sqlquack_syntax::{Expression, ExpressionWalk};
@@ -12,7 +13,9 @@ use sqlquack_syntax::{Expression, ExpressionWalk};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_any_name, is_name};
 use crate::parse::_helpers::tree::nodes::{binary, column_from, paren, var};
 use crate::parse::_helpers::values::primary::variable;
-use crate::parse::constants::{MAX_DEPTH, STATISTICS_SWITCH, UNREAD_STATEMENTS};
+use crate::parse::constants::{
+    MAX_DEPTH, STATISTICS_SWITCH, THROW_OUTSIDE_CATCH, UNREAD_STATEMENTS,
+};
 use crate::scan::models::{Token, TokenKind};
 
 /// Statements that must be the first of their batch and take the rest of it as their body.
@@ -100,10 +103,10 @@ impl<'sql> Parser<'sql> {
                     return Err(self.batch_first_error());
                 }
                 let start: usize = self.offset();
-                let statement: Expression = match self.kw("ALTER") {
-                    true => self.alter_statement()?,
-                    false => self.create_statement()?,
-                };
+                let statement: Expression = self.ranged(|parser| match parser.kw("ALTER") {
+                    true => parser.alter_statement(),
+                    false => parser.create_statement(),
+                })?;
                 statements.push(self.within_depth(statement, start)?);
                 while self.eat_char(';') {}
                 if !self.at_end() && !self.gapped() {
@@ -151,8 +154,7 @@ impl<'sql> Parser<'sql> {
 
     /// One statement, with a `;` after it if one is written.
     pub(crate) fn statement(&mut self) -> Parsing<Expression> {
-        let statement: Expression = self.deeper(|parser| parser.statement_body())?;
-        Ok(statement)
+        self.ranged(|parser| parser.deeper(|parser| parser.statement_body()))
     }
 
     fn statement_body(&mut self) -> Parsing<Expression> {
@@ -219,9 +221,43 @@ impl<'sql> Parser<'sql> {
                 };
                 Ok(Expression::ReturnStmt(Box::new(value)))
             }
-            "BREAK" | "CONTINUE" => Err(self.gap("loop_jump", start)),
+            "BREAK" | "CONTINUE" if self.loops == 0 => Err(self.error_with(&format!(
+                "Cannot use a {word} statement outside the scope of a WHILE statement."
+            ))),
+            "BREAK" | "CONTINUE" => {
+                self.at += 1;
+                let keyword: ScriptingJumpKeyword = match word.as_str() {
+                    "BREAK" => ScriptingJumpKeyword::Break,
+                    _ => ScriptingJumpKeyword::Continue,
+                };
+                let jump: ScriptingJump = ScriptingJump {
+                    span: SourceSpan(None),
+                    keyword,
+                    label: None,
+                };
+                Ok(Expression::ScriptingBlock(Box::new(block(vec![
+                    match keyword {
+                        ScriptingJumpKeyword::Break => ScriptingStatement::Break(jump),
+                        _ => ScriptingStatement::Continue(jump),
+                    },
+                ]))))
+            }
             "PRINT" => Err(self.gap("print", start)),
-            "THROW" => Err(self.gap("throw", start)),
+            "THROW" => {
+                self.at += 1;
+                if !self.statement_ends() {
+                    return Err(self.gap("throw", start));
+                }
+                if self.catches == 0 {
+                    return Err(self.error_with(THROW_OUTSIDE_CATCH));
+                }
+                Ok(Expression::ScriptingBlock(Box::new(block(vec![
+                    ScriptingStatement::Raise(ScriptingRaise {
+                        span: SourceSpan(None),
+                        exception: None,
+                    }),
+                ]))))
+            }
             "RAISERROR" => Err(self.gap("raiserror", start)),
             word if UNREAD_STATEMENTS.contains(&word) => Err(self.gap("statement", start)),
             "END" if self.kw_at(1, "CONVERSATION") => Err(self.gap("statement", start)),
@@ -286,7 +322,10 @@ impl<'sql> Parser<'sql> {
     fn while_statement(&mut self) -> Parsing<Expression> {
         self.expect_kw("WHILE")?;
         let condition: Expression = self.condition()?;
-        let body: Vec<ScriptingStatement> = self.branch()?;
+        self.loops += 1;
+        let body: Parsing<Vec<ScriptingStatement>> = self.branch();
+        self.loops -= 1;
+        let body: Vec<ScriptingStatement> = body?;
         Ok(Expression::ScriptingBlock(Box::new(block(vec![
             ScriptingStatement::While(ScriptingWhile {
                 span: SourceSpan(None),
@@ -361,6 +400,13 @@ impl<'sql> Parser<'sql> {
 
     /// A `CATCH` block may be empty, unlike every other block.
     fn catch_body(&mut self) -> Parsing<Vec<Expression>> {
+        self.catches += 1;
+        let statements: Parsing<Vec<Expression>> = self.catch_statements();
+        self.catches -= 1;
+        statements
+    }
+
+    fn catch_statements(&mut self) -> Parsing<Vec<Expression>> {
         let mut statements: Vec<Expression> = Vec::new();
         loop {
             while self.eat_char(';') {}
