@@ -324,7 +324,7 @@ fn given_names_when_parsing_then_every_identifier_records_the_range_of_its_own_t
     }
 }
 
-/// SQLBuild's analysis-only markers: SQL Server gives each 195; the parser lowers two shapes.
+/// SQLBuild's analysis-only markers: a deliberate departure, not parity, since SQL Server gives each 195.
 #[test]
 fn given_sqlbuild_type_markers_when_parsing_then_well_formed_ones_are_annotations() {
     let test_cases = [
