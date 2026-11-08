@@ -9,7 +9,7 @@ separate numbers. Hazards in `coverage/hazards.toml` stay the measure of transla
 Everything lives under `coverage/syntax/`. The catalogue owner's build
 (`scripts/syntax_catalogue/`, described in `coverage/syntax/README.md`) generates the sources and
 the catalogue. The evidence owner's importer generates the receipts. The loader in
-`crates/sqlquack-syntax-coverage` refuses all of the following, and names the file and record for
+`tools/sqlquack-coverage` refuses all of the following, and names the file and record for
 each:
 
 - an unknown field;
@@ -19,7 +19,7 @@ each:
 - a stray file;
 - an id declared twice.
 
-To validate a tree, run `cargo run -p sqlquack-syntax-coverage -- validate [--root coverage/syntax]`.
+To validate a tree, run `cargo run -p sqlquack-coverage -- validate [--root coverage/syntax]`.
 
 ## Families
 
@@ -369,7 +369,7 @@ and an exclusion naming an unknown form or page.
 
 ## Reports
 
-`cargo run -p sqlquack-syntax-coverage -- <command> [--root coverage/syntax] [--json]` prints
+`cargo run -p sqlquack-coverage -- <command> [--root coverage/syntax] [--json]` prints
 results on stdout and progress on stderr:
 
 - `summary`: the verified share of catalogued forms, obligation completion, forms per reason, and

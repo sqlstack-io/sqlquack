@@ -2,7 +2,7 @@
 
 use std::process::ExitCode;
 
-use sqlquack_syntax_coverage::cli::main::run_cli::run_cli;
+use sqlquack_coverage::cli::main::run_cli::run_cli;
 
 fn main() -> ExitCode {
     run_cli()

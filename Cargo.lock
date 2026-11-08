@@ -1434,6 +1434,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "sqlquack-coverage"
+version = "0.2.0"
+dependencies = [
+ "clap",
+ "serde",
+ "serde_json",
+ "sha2",
+ "sqlquack-semantics",
+ "sqlquack-syntax",
+ "sqlquack-syntax-bigquery",
+ "sqlquack-syntax-databricks",
+ "sqlquack-syntax-duckdb",
+ "sqlquack-syntax-postgres",
+ "sqlquack-syntax-sqlite",
+ "sqlquack-syntax-sqlserver",
+ "tempfile",
+ "toml",
+]
+
+[[package]]
 name = "sqlquack-duckdb-blocks"
 version = "0.2.0"
 dependencies = [
@@ -1614,26 +1634,6 @@ dependencies = [
  "serde_json",
  "sqlquack-syntax",
  "stacker",
-]
-
-[[package]]
-name = "sqlquack-syntax-coverage"
-version = "0.2.0"
-dependencies = [
- "clap",
- "serde",
- "serde_json",
- "sha2",
- "sqlquack-semantics",
- "sqlquack-syntax",
- "sqlquack-syntax-bigquery",
- "sqlquack-syntax-databricks",
- "sqlquack-syntax-duckdb",
- "sqlquack-syntax-postgres",
- "sqlquack-syntax-sqlite",
- "sqlquack-syntax-sqlserver",
- "tempfile",
- "toml",
 ]
 
 [[package]]

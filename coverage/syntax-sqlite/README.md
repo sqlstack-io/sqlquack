@@ -296,7 +296,7 @@ receipt carries a listed code. `parser_path` names `crates/sqlquack-syntax-sqlit
 The root is checked with the coverage checker, which reads `dialect.toml`:
 
 ```sh
-cargo build -p sqlquack-syntax-coverage --bin syntax-coverage
+cargo build -p sqlquack-coverage --bin syntax-coverage
 target/debug/syntax-coverage validate --root coverage/syntax-sqlite
 target/debug/syntax-coverage summary --root coverage/syntax-sqlite
 ```

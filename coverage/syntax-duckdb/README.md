@@ -211,7 +211,7 @@ The root is checked with the coverage checker, which reads `dialect.toml` and pa
 with `crates/sqlquack-syntax-duckdb`:
 
 ```sh
-cargo build -p sqlquack-syntax-coverage --bin syntax-coverage
+cargo build -p sqlquack-coverage --bin syntax-coverage
 target/debug/syntax-coverage validate --root coverage/syntax-duckdb
 target/debug/syntax-coverage summary --root coverage/syntax-duckdb
 ```

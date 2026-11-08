@@ -1,5 +1,5 @@
 [package]
-name = "sqlquack-syntax-coverage"
+name = "sqlquack-coverage"
 version.workspace = true
 description = "Development check of documented Snowflake syntax coverage; never a runtime dependency."
 edition.workspace = true
