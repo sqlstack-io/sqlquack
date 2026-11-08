@@ -25,6 +25,7 @@ use crate::conversion::_helpers::queries::hierarchy::hierarchy;
 use crate::conversion::_helpers::queries::output_names::recorded_name_shape;
 use crate::conversion::_helpers::queries::set_operations::convert_set_operation;
 use crate::conversion::_helpers::queries::sources::convert_from;
+use crate::conversion::_helpers::support::locations::Locator;
 use crate::conversion::_helpers::support::scope::read_column;
 use crate::conversion::_helpers::support::scope::{Context, Emitted, Scope};
 use crate::conversion::_helpers::support::site::{Placement, Site};
@@ -299,6 +300,7 @@ fn convert_select(
     let mut names: Vec<Option<String>> = Vec::new();
     let mut outputs: Vec<(String, Emitted)> = Vec::new();
     let mut suffixed_item: Option<&Value> = None;
+    let mut origins: Vec<&Value> = Vec::new();
     for item in list(select, "expressions") {
         let site = Site {
             scope: &scope,
@@ -315,6 +317,7 @@ fn convert_select(
             }
             outputs.push((name.clone().unwrap_or_default(), emitted));
             names.push(name);
+            origins.push(item);
         }
         scope.aliases = outputs.clone();
     }
@@ -376,7 +379,7 @@ fn convert_select(
             }
             true => None,
         };
-        require_distinct_names(&columns, refused_because)?;
+        require_distinct_items(&columns, &origins, refused_because, &context)?;
     }
     let grouped_all = match select.get("group_by").and_then(Value::as_object) {
         Some(group) if flag(group, "all") => group_all_positions(select).unwrap_or_default(),
@@ -601,7 +604,9 @@ pub(crate) fn convert_with<'a>(
                 })?;
                 quoted.push(quoted_identifier(&column.name, context.log));
             }
-            require_distinct_names(&columns, Some(NESTED_REPEAT))?;
+            if let Some((index, refusal)) = repeated_name(&columns, Some(NESTED_REPEAT)) {
+                return Err(context.locator.placed(refusal, &renamed[index]));
+            }
             column_list = format!("({})", quoted.join(", "));
         }
         parts.push(format!(
@@ -673,7 +678,7 @@ fn convert_projection(
                 .context
                 .locator
                 .source_text(item)
-                .or_else(|| literal_text(item, &site.context.locator.source()));
+                .or_else(|| literal_text(item, site.context.locator));
             let text_of = |node: &Value| site.context.locator.source_text(node);
             match written
                 .filter(|_| recorded_name_shape(item, &text_of))
@@ -683,13 +688,13 @@ fn convert_projection(
                     let _rule = site.context.log.rule(ALIAS);
                     Ok(vec![(Some(name), emitted)])
                 }
-                None => {
-                    let refusal = missing(
+                None => Err(Refusal {
+                    location: site.context.locator.locate_written(item),
+                    ..missing(
                         Construct::new(ConstructFamily::Syntax, UNALIASED_OUTPUT_NAME_CONSTRUCT),
                         format!("Snowflake names this `{kind}` column after its text"),
-                    );
-                    Err(site.context.locator.placed(refusal, item))
-                }
+                    )
+                }),
             }
         }
         None => Err(missing(
@@ -734,7 +739,7 @@ fn output_name(text: String) -> Option<String> {
 }
 
 /// A literal's written text: a number as parsed, a plain string quoted, NULL, TRUE or FALSE.
-fn literal_text(item: &Value, source: &str) -> Option<String> {
+fn literal_text(item: &Value, locator: &Locator<'_>) -> Option<String> {
     match node_kind(item)? {
         ("literal", payload) => {
             let value = payload.get("value")?.as_str()?;
@@ -747,7 +752,7 @@ fn literal_text(item: &Value, source: &str) -> Option<String> {
                 LITERAL_TIMESTAMP => "TIMESTAMP",
                 _ => return None,
             };
-            spelled_once(source, keyword, value).then(|| format!("{keyword} '{value}'"))
+            spelled_once(item, locator, value).then(|| format!("{keyword} '{value}'"))
         }
         ("boolean", payload) => Some(
             match payload.get("value")?.as_bool()? {
@@ -905,44 +910,58 @@ pub(crate) fn require_distinct_names(
     columns: &[ColumnSpec],
     refused_because: Option<&str>,
 ) -> Result<(), Refusal> {
-    for (index, column) in columns.iter().enumerate() {
-        let earlier = columns[..index]
-            .iter()
-            .find(|earlier| earlier.name.eq_ignore_ascii_case(&column.name));
-        match earlier {
-            Some(earlier) if earlier.name == column.name => match refused_because {
-                None => {}
-                Some(reason) => {
-                    return Err(unresolved(format!(
-                        "the result column name `{}` {REPEATED_RESULT_NAME} {reason}; \
-                         Snowflake keeps both names, so alias one of them",
-                        column.name
-                    )));
-                }
-            },
-            Some(_) => {
-                return Err(unresolved(format!(
-                    "the result column name `{}` {REPEATED_RESULT_NAME} in another case, which \
-                     DuckDB treats as the same name",
-                    column.name
-                )));
-            }
-            None => {}
-        }
-    }
-    Ok(())
+    repeated_name(columns, refused_because).map_or(Ok(()), |(_, refusal)| Err(refusal))
 }
 
-/// Whether every `'value'` after `keyword` in `source` is spelled `keyword 'value'` with one space.
-fn spelled_once(source: &str, keyword: &str, value: &str) -> bool {
-    let quoted = format!("'{value}'");
+/// Refuses repeated result names as `require_distinct_names` does, placed at the repeating item.
+fn require_distinct_items(
+    columns: &[ColumnSpec],
+    items: &[&Value],
+    refused_because: Option<&str>,
+    context: &Context<'_>,
+) -> Result<(), Refusal> {
+    match repeated_name(columns, refused_because) {
+        Some((index, refusal)) => Err(Refusal {
+            location: context.locator.locate_written(items[index]),
+            ..refusal
+        }),
+        None => Ok(()),
+    }
+}
+
+/// The first column whose name `require_distinct_names` refuses, by index, with the refusal.
+pub(crate) fn repeated_name(
+    columns: &[ColumnSpec],
+    refused_because: Option<&str>,
+) -> Option<(usize, Refusal)> {
+    for (index, column) in columns.iter().enumerate() {
+        let Some(earlier) = columns[..index]
+            .iter()
+            .find(|earlier| earlier.name.eq_ignore_ascii_case(&column.name))
+        else {
+            continue;
+        };
+        let reason = match (earlier.name == column.name, refused_because) {
+            (true, None) => continue,
+            (true, Some(reason)) => {
+                format!(
+                    "{REPEATED_RESULT_NAME} {reason}; Snowflake keeps both names, so alias one of them"
+                )
+            }
+            (false, _) => format!(
+                "{REPEATED_RESULT_NAME} in another case, which DuckDB treats as the same name"
+            ),
+        };
+        let refusal = unresolved(format!("the result column name `{}` {reason}", column.name));
+        return Some((index, refusal));
+    }
+    None
+}
+
+/// Whether the source writes the typed literal `item` as `keyword 'value'` with one space, everywhere.
+fn spelled_once(item: &Value, locator: &Locator<'_>, value: &str) -> bool {
     !value.contains(['\'', '\\'])
-        && !source.contains("--")
-        && source.match_indices(&quoted).all(|(at, _)| {
-            let before = &source[..at];
-            let gap = before.len() - before.trim_end().len();
-            let typed = before.trim_end().to_ascii_uppercase().ends_with(keyword)
-                || before.trim_end().ends_with("*/");
-            !typed || (gap == 1 && before.ends_with(' ') && !before.trim_end().ends_with("*/"))
-        })
+        && locator
+            .written_literal(item)
+            .is_some_and(|found| found.iter().all(|(_, gap)| *gap == Some(" ")))
 }

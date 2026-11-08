@@ -1,8 +1,11 @@
-use crate::helpers::{convert_outcome, converted_column_names, names, run_convert};
-use crate::test_types::{ColumnNameTestCase, ConvertTestCase};
+use crate::helpers::{
+    convert_outcome, convert_streams, converted_column_names, names, run_convert,
+};
+use crate::test_types::{ColumnNameTestCase, ConvertTestCase, PlacedNameTestCase};
 
 const UNALIASED_SCHEMA: &str = "tests/cli/fixtures/unaliased_items.json";
 const UNVERIFIED_NAME: &str = "has not verified the name Snowflake gives it";
+const INTEGER_ORDERS_SCHEMA: &str = "tests/cli/fixtures/integer_orders.json";
 /// The 392-character sum's name: its first 255 characters, ending in "52 + ", as recorded.
 const LONG_NAME: &str = "X + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11 + 12 + 13 + 14 + 15 + 16 + 17 + 18 + 19 + 20 + 21 + 22 + 23 + 24 + 25 + 26 + 27 + 28 + 29 + 30 + 31 + 32 + 33 + 34 + 35 + 36 + 37 + 38 + 39 + 40 + 41 + 42 + 43 + 44 + 45 + 46 + 47 + 48 + 49 + 50 + 51 + 52 + ";
 
@@ -178,6 +181,12 @@ fn given_unaliased_expressions_from_the_receipts_when_run_on_duckdb_then_they_ta
             sql: "SELECT 1 -- trailing comment\n, 1.5 /* c */, TRUE -- c\n, x -- c\nFROM (SELECT 1 AS x) AS input",
             flags: &[],
             expected_names: names(&["1", "1.5", "TRUE", "X"]),
+        },
+        ColumnNameTestCase {
+            description: "a line comment elsewhere in the statement leaves typed literals named as written",
+            sql: "-- daily figures\nSELECT DATE '2024-01-01', TIMESTAMP '2024-01-01 10:00:00' -- last\n",
+            flags: &[],
+            expected_names: names(&["DATE '2024-01-01'", "TIMESTAMP '2024-01-01 10:00:00'"]),
         },
         ColumnNameTestCase {
             description: "a name repeated in the outermost query is kept twice, as Snowflake keeps it",
@@ -394,6 +403,13 @@ fn given_unaliased_items_no_receipt_names_when_converting_then_each_refuses_with
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
+            description: "a line comment between DATE and its value refuses with SQ0009",
+            sql: "SELECT DATE -- c\n'2024-01-01' FROM input",
+            flags: &["--schema", UNALIASED_SCHEMA],
+            mention: UNVERIFIED_NAME,
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
             description: "a line comment inside the item refuses with SQ0009",
             sql: "SELECT n -- note\n+ 1 FROM input",
             flags: &["--schema", UNALIASED_SCHEMA],
@@ -447,6 +463,78 @@ fn given_unaliased_items_no_receipt_names_when_converting_then_each_refuses_with
         assert_eq!(
             run_convert(test_case.sql, test_case.flags, test_case.mention),
             test_case.expected_outcome,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_refused_result_name_when_converting_then_the_diagnostic_underlines_the_item() {
+    let test_cases = [
+        PlacedNameTestCase {
+            description: "an unaliased string the parser keeps no range for is placed at the string",
+            sql: "SELECT order_id, 'it''s' FROM orders",
+            expected_text: concat!(
+                "error[SQ0009]: this column has no alias, and SQLQuack has not verified the name ",
+                "Snowflake gives it\n --> <stdin>:1:18\n  |\n1 | SELECT order_id, 'it''s' FROM orders\n",
+                "  |                  ^^^^^^^ Snowflake names this `literal` column after its text\n",
+                "  |\n  = help: add an alias, such as `AS \"'IT''S'\"`, which names the column in both engines\n",
+                "sqlquack convert: refused, 1 refusal under the built-in default\n",
+            ),
+            expected_span: ("SQ0009", 17, 24),
+        },
+        PlacedNameTestCase {
+            description: "a result name repeated in another case is placed at the repeating item",
+            sql: "SELECT order_id, 1 AS \"order_id\" FROM orders",
+            expected_text: concat!(
+                "error[SQ0004]: a name does not resolve\n --> <stdin>:1:18\n  |\n",
+                "1 | SELECT order_id, 1 AS \"order_id\" FROM orders\n",
+                "  |                  ^^^^^^^^^^^^^^^ the result column name `order_id` repeats an ",
+                "earlier result column's name in another case, which DuckDB treats as the same name\n",
+                "  |\n  = help: give each result column its own alias, such as `SELECT 1 AS first, 1 AS second`\n",
+                "sqlquack convert: refused, 1 refusal under the built-in default\n",
+            ),
+            expected_span: ("SQ0004", 17, 32),
+        },
+        PlacedNameTestCase {
+            description: "a name a clause could read twice is placed at the second column",
+            sql: "SELECT order_id, order_id FROM orders ORDER BY 1",
+            expected_text: concat!(
+                "error[SQ0004]: a name does not resolve\n --> <stdin>:1:18\n  |\n",
+                "1 | SELECT order_id, order_id FROM orders ORDER BY 1\n",
+                "  |                  ^^^^^^^^ the result column name `ORDER_ID` repeats an earlier ",
+                "result column's name where ORDER BY, GROUP BY, HAVING or QUALIFY could read either ",
+                "column, which no recording shows; Snowflake keeps both names, so alias one of them\n",
+                "  |\n  = help: give each result column its own alias, such as `SELECT 1 AS first, 1 AS second`\n",
+                "sqlquack convert: refused, 1 refusal under the built-in default\n",
+            ),
+            expected_span: ("SQ0004", 17, 25),
+        },
+    ];
+    let flags = ["--builtin-policy", "--schema", INTEGER_ORDERS_SCHEMA];
+    for test_case in test_cases {
+        let (_, stderr) = convert_streams(test_case.sql, &flags);
+        assert_eq!(
+            stderr.trim_start_matches("sqlquack convert: converting…\n"),
+            test_case.expected_text,
+            "{}",
+            test_case.description
+        );
+        let (json, _) = convert_streams(test_case.sql, &[&flags[..], &["--json"]].concat());
+        let report: serde_json::Value = serde_json::from_str(&json).expect("a JSON report");
+        let refusal = &report["refusals"][0];
+        assert_eq!(
+            (
+                refusal["code"].as_str(),
+                refusal["span"]["start"].as_u64(),
+                refusal["span"]["end"].as_u64(),
+            ),
+            (
+                Some(test_case.expected_span.0),
+                Some(test_case.expected_span.1),
+                Some(test_case.expected_span.2),
+            ),
             "{}",
             test_case.description
         );
