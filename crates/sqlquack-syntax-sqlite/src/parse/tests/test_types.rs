@@ -26,3 +26,11 @@ pub(crate) struct SerializedNestingTestCase {
     pub(crate) depth: usize,
     pub(crate) expected_outcome: Result<(), &'static str>,
 }
+
+/// An input whose tree holds a node of a given kind at a JSON pointer.
+pub(crate) struct ShapeTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) pointer: &'static str,
+    pub(crate) expected_node: &'static str,
+}
