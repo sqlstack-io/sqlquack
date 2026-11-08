@@ -1,0 +1,60 @@
+# Approvals by the independent syntax auditor. Each listed form was read in full against its documentation
+# page, its obligations, its cases with their Databricks receipts, and the local parse trees. An approval holds
+# while the form's definition hash and fingerprint are unchanged; any change makes it stale until re-read.
+
+[[review]]
+id = "db-auditor-transaction_session-001"
+reviewer_lane = "auditor"
+family = "transaction_session"
+parser_tree = "90f341b5c9ff2c489c0ed994f07448481f70597f"
+reviewed_utc = "2026-11-08T09:04:25Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.ansi-mode",
+  "db.transaction_session.collation",
+  "db.transaction_session.conf-mgmt-reset",
+  "db.transaction_session.conf-mgmt-set-query-tags.query-tags.syntax",
+  "db.transaction_session.conf-mgmt-set.set",
+  "db.transaction_session.conf-mgmt-set.set-2",
+  "db.transaction_session.legacy-time-parser-policy",
+  "db.transaction_session.max-partition-bytes",
+  "db.transaction_session.set-variable.set-default",
+  "db.transaction_session.statement-timeout",
+  "db.transaction_session.timezone",
+  "db.transaction_session.use-cached-result",
+  "db.transaction_session.use-schema",
+  "db.transaction_session.usedb",
+]
+note = "Read against the pinned Databricks documentation pages and the Spark 4.2 SqlBaseParser grammar, the obligations, the cases with their Databricks receipts and repeats, and the parse trees of the strict parser; every case was parsed by the auditor's own build of the parser and every scored case agrees with its receipt."
+
+[review.fingerprints]
+"db.transaction_session.ansi-mode" = "e4fa75c48841ca306634b1f08d6e22c5bffbfb88bb8ce59109b04e111e31d0f3"
+"db.transaction_session.collation" = "0986d22b6206cd53dba613a86fbfa36238d218bd966e473f3322ef89a23c7958"
+"db.transaction_session.conf-mgmt-reset" = "9915d5907df048eccabbf996cb500235332f524931fd275e7e3d173b2d91372f"
+"db.transaction_session.conf-mgmt-set-query-tags.query-tags.syntax" = "128039928f6f60d9fce029df9df5412132c6205160f0a1bb2b983736ea2d4196"
+"db.transaction_session.conf-mgmt-set.set" = "68da5b3b3b42ba34e3f56aee2e64999e9bb163da2f10946b028bd2a6d8bb58c8"
+"db.transaction_session.conf-mgmt-set.set-2" = "6dda9216a27aca587037dc610b505cb14e8dbee9c5a094d0aca85e811e1719e0"
+"db.transaction_session.legacy-time-parser-policy" = "dcc57f6c336afd073d9a846784667052c0b1387ff1f372fcb337112953836151"
+"db.transaction_session.max-partition-bytes" = "b6703e0ab8e05d4295315ea5800e63edbd2bc3f37e1c03ce7983da77ad65f87f"
+"db.transaction_session.set-variable.set-default" = "6492c4ce0f209c4e2eb6ed8b61d4c265a37026913c4513ed97e34f3179f186a6"
+"db.transaction_session.statement-timeout" = "1db16ad0b89e8a94357948cbaac2312227bbabd7d31e2687355dba0676c66375"
+"db.transaction_session.timezone" = "94fdf40a8f3e252ec6978859753197954e59ed31af414f2cb6180913e17a3c21"
+"db.transaction_session.use-cached-result" = "4f98d5f2baa0c851bd6bc4227902c3a787dcbc8f9a6c029b77fcbd1980d9286f"
+"db.transaction_session.use-schema" = "c94c926526c4a05b727e2ddfbd5a277df3e3872bfae9e939d34c2e775a5494cd"
+"db.transaction_session.usedb" = "af853154c13ee4c8aeaf52d36b0b335a496862ea0e85267c9b39c432d43d85e9"
+
+[review.definitions]
+"db.transaction_session.ansi-mode" = "d2421ff73deae00091b5c805421e0e888b4b75edd028387b53826978da8f643d"
+"db.transaction_session.collation" = "4b50b508bac6625e9ffee174983c1a8f8fcf67b898cd0c2964af08fb40559041"
+"db.transaction_session.conf-mgmt-reset" = "a5e5632145a0eb6543944ede1c35339abd0468c2f4c39279cb87b57beb104eae"
+"db.transaction_session.conf-mgmt-set-query-tags.query-tags.syntax" = "c54b4349327942ef2c1dc4ff7c06fe2a3c14bf75351e8db1a412696181fad878"
+"db.transaction_session.conf-mgmt-set.set" = "ede080cc7559ca5799032c37e042bfb64ef37c85b720aee52b2ecd58b022c5fd"
+"db.transaction_session.conf-mgmt-set.set-2" = "283bccbe4bcc5f216c1cee23b20db4ea09b9fb12d829cc321e547eabd43ba287"
+"db.transaction_session.legacy-time-parser-policy" = "a6c9a16624f1ba6d89ddabc2a07e4c64515a10499f3775a30d3e3959baa739d0"
+"db.transaction_session.max-partition-bytes" = "731e9c4b55cc298dc7ac1135f8fc9a870a92146faca20a31bae9458362f56915"
+"db.transaction_session.set-variable.set-default" = "15969e8c230b484b1f6a258dc9a6e6b67df0bd1581c72da7e5a49c17f89a9c3f"
+"db.transaction_session.statement-timeout" = "46863e76053168f418af5a24dc86c13520eb537627143cd86599af16061679db"
+"db.transaction_session.timezone" = "d8b08eb678665ca8473def72ab1f8d5ebbd052b206cfb00352b376338740beb7"
+"db.transaction_session.use-cached-result" = "16e5654e3de577675d641b8f9736c4c9e0c046b74fcf36f9bf62f49ef24f1d16"
+"db.transaction_session.use-schema" = "9086fedaf7a4a5a1b1bc7d4e1451d249467bf85f86d0e0abaf5d67a27f066bf4"
+"db.transaction_session.usedb" = "0a00ed90a5bb723e022aaecd1129291dc97e89e2e23e623abd4bfe0c4d191cf0"

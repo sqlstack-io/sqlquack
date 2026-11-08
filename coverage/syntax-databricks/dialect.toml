@@ -1,0 +1,8 @@
+format = "sqlquack-syntax-dialect/1"
+name = "databricks"
+form_prefix = "db"
+families = ["query", "dml", "ddl", "transaction_session", "security_admin", "utility", "scripting", "functions", "expressions"]
+receipt_format = "sqlquack-syntax-receipt/2"
+parser_path = "crates/sqlquack-syntax-databricks"
+local_parser = "databricks"
+syntax_codes = ["42601", "42617", "0A000", "22023", "23505", "42000", "42604", "42KD2", "PARSE"]

@@ -1,0 +1,39 @@
+{
+  "current_versions": [
+    {
+      "dbr_version": null,
+      "dbsql_version": "2026.44",
+      "r_build_hash": "9137db2a382aeb72e78a171ff7d47f3c0b69e9f9",
+      "u_build_hash": "8d2146c1bc481b4e88bcebe4266f5cf8e6e9a0a2"
+    }
+  ],
+  "phases": {
+    "accepted": 64,
+    "runtime_error": 3,
+    "semantic_error": 464,
+    "syntax_error": 717,
+    "unsupported_feature": 20
+  },
+  "problems": [],
+  "receipts": 1268,
+  "run_id": "databricks-2026.44-20261108T000457.492696Z",
+  "shuffle_seed": 20261106,
+  "undecided": [
+    "db.ddl.create-location.k62f245a69cf5",
+    "db.ddl.create-recipient.k6af5ffd8d13d",
+    "db.ddl.create-recipient.k86915abb1b06",
+    "db.ddl.drop-share.k494101cf5eb6",
+    "db.ddl.set-tag.kc808693a6e2d",
+    "db.ddl.unset-tag.k848fbae92932",
+    "db.ddl.unset-tag.ke852c98d30b1"
+  ],
+  "undecided_reasons": {
+    "db.ddl.create-location.k62f245a69cf5": "setup failed: TABLE_OR_VIEW_ALREADY_EXISTS",
+    "db.ddl.create-recipient.k6af5ffd8d13d": "cancelled at the deadline",
+    "db.ddl.create-recipient.k86915abb1b06": "cancelled at the deadline",
+    "db.ddl.drop-share.k494101cf5eb6": "setup failed: TABLE_OR_VIEW_ALREADY_EXISTS",
+    "db.ddl.set-tag.kc808693a6e2d": "setup failed: TABLE_OR_VIEW_ALREADY_EXISTS",
+    "db.ddl.unset-tag.k848fbae92932": "setup failed: TABLE_OR_VIEW_ALREADY_EXISTS",
+    "db.ddl.unset-tag.ke852c98d30b1": "setup failed: TABLE_OR_VIEW_ALREADY_EXISTS"
+  }
+}
