@@ -2,7 +2,7 @@ use std::time::Instant;
 
 use serde_json::Value;
 
-use crate::quality::tests::helpers::{anchors, lint_dialect, lint_unavailable, wide_json_select};
+use crate::quality::tests::helpers::{anchors, lint_dialect, wide_json_select};
 use crate::quality::tests::test_types::{JsonParseScaleTestCase, JsonParseTestCase};
 
 const RULE: &str = "SQLCLEAN045";
@@ -179,8 +179,6 @@ fn given_json_parse_calls_when_linting_then_repeats_in_one_select_are_reported()
             expected_anchors: &[],
             expected_details: &[],
         },
-    ];
-    let unparsed_dialect_cases = [
         JsonParseTestCase {
             description: "bigquery quoted names keep backticks",
             dialect: "bigquery",
@@ -196,18 +194,18 @@ fn given_json_parse_calls_when_linting_then_repeats_in_one_select_are_reported()
             expected_details: &["PARSE_JSON(e.value) is parsed 2 times in one SELECT."],
         },
         JsonParseTestCase {
-            description: "databricks backticked names are case-insensitive",
-            dialect: "databricks",
-            sql: "SELECT try_parse_json(e.`v`) AS a, try_parse_json(e.V) AS b FROM events AS e",
-            expected_anchors: &["try_parse_json"],
-            expected_details: &["TRY_PARSE_JSON(e.V) is parsed 2 times in one SELECT."],
-        },
-        JsonParseTestCase {
             description: "bigquery safe parse is matched",
             dialect: "bigquery",
             sql: "SELECT JSON_VALUE(SAFE.PARSE_JSON(e.value), '$.a') AS a, JSON_VALUE(SAFE.PARSE_JSON(e.value), '$.b') AS b FROM events AS e",
             expected_anchors: &["PARSE_JSON"],
             expected_details: &["SAFE.PARSE_JSON(e.value) is parsed 2 times in one SELECT."],
+        },
+        JsonParseTestCase {
+            description: "databricks backticked names are case-insensitive",
+            dialect: "databricks",
+            sql: "SELECT try_parse_json(e.`v`) AS a, try_parse_json(e.V) AS b FROM events AS e",
+            expected_anchors: &["try_parse_json"],
+            expected_details: &["TRY_PARSE_JSON(e.V) is parsed 2 times in one SELECT."],
         },
         JsonParseTestCase {
             description: "databricks try parse is matched",
@@ -217,14 +215,6 @@ fn given_json_parse_calls_when_linting_then_repeats_in_one_select_are_reported()
             expected_details: &["TRY_PARSE_JSON(value) is parsed 2 times in one SELECT."],
         },
     ];
-    for test_case in &unparsed_dialect_cases {
-        assert!(
-            lint_unavailable(test_case.dialect)?,
-            "{}: lint is unavailable until SQLQuack parses {}",
-            test_case.description,
-            test_case.dialect
-        );
-    }
     for test_case in &test_cases {
         let diagnostics: Vec<Value> = lint_dialect(test_case.sql, test_case.dialect, RULE)?;
         assert_eq!(

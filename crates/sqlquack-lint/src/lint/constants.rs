@@ -1,15 +1,13 @@
 use sqlquack_syntax::tokens::models::TokenType;
 
 /// Dialect names SQLClean's engine accepted that SQLQuack does not parse yet; their lint is unavailable.
-pub(crate) const UNPARSED_DIALECTS: [&str; 40] = [
+pub(crate) const UNPARSED_DIALECTS: [&str; 38] = [
     "arrow-datafusion",
     "arrow_datafusion",
     "athena",
-    "bigquery",
     "clickhouse",
     "cockroach",
     "cockroachdb",
-    "databricks",
     "datafusion",
     "doris",
     "dremio",

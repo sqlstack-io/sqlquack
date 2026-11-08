@@ -16,6 +16,8 @@ serde.workspace = true
 serde_json.workspace = true
 sqlquack-syntax.workspace = true
 sqlquack-syntax-postgres.workspace = true
+sqlquack-syntax-bigquery.workspace = true
+sqlquack-syntax-databricks.workspace = true
 
 [lints]
 workspace = true

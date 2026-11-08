@@ -1469,6 +1469,8 @@ dependencies = [
  "serde",
  "serde_json",
  "sqlquack-syntax",
+ "sqlquack-syntax-bigquery",
+ "sqlquack-syntax-databricks",
  "sqlquack-syntax-postgres",
 ]
 

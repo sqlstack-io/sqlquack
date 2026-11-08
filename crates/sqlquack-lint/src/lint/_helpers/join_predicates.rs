@@ -1,11 +1,12 @@
 //! Join predicates, and whether an explicit cross join can multiply rows.
 
-use crate::lint::_helpers::parsing::syntax_dialect;
+use crate::lint::_helpers::parsing::predicate_expressions;
 use crate::lint::models::LintDialect;
 use std::borrow::Cow;
 use std::collections::{HashMap, HashSet};
 
 use sqlquack_syntax::Expression;
+use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::names::models::TableRef;
@@ -14,7 +15,6 @@ use sqlquack_syntax::expressions::queries::models::Select;
 use sqlquack_syntax::expressions::queries::models::Subquery;
 use sqlquack_syntax::expressions::queries::models::With;
 use sqlquack_syntax::tokens::models::{Span, Token, TokenType};
-use sqlquack_syntax::{ExpressionWalk, parse_expressions};
 
 use crate::constants::SETTING_SNIPPET_INDENT;
 use crate::lint::_helpers::engine::{is_comment, is_layout};
@@ -49,6 +49,7 @@ const ROW_GENERATOR_FUNCTIONS: [&str; 16] = [
 ];
 
 pub(super) fn join_expression_spans(
+    sql: &str,
     tokens: &[Token],
     depths: &[usize],
     dialect: LintDialect,
@@ -92,12 +93,48 @@ pub(super) fn join_expression_spans(
                         ))
             })
             .unwrap_or(tokens.len());
-        let parsed = parse_expressions(tokens[index + 1..end].to_vec(), syntax_dialect(dialect));
-        if !matches!(parsed.as_deref(), Ok([predicate]) if plain_predicate(predicate)) {
+        let native: bool = matches!(dialect, LintDialect::BigQuery | LintDialect::Databricks);
+        let end: usize = match native {
+            true => (index + 1..end)
+                .rev()
+                .find(|&last| !join_side(tokens[last].token_type))
+                .map_or(index + 1, |last| last + 1),
+            false => end,
+        };
+        let parsed = predicate_expressions(
+            sql_between(sql, tokens, index + 1, end),
+            &tokens[index + 1..end],
+            dialect,
+        );
+        if native && parsed.is_err() {
+            continue;
+        }
+        let plain = |predicate: &Expression| {
+            plain_predicate(predicate) || (native && is_distinct_from(predicate))
+        };
+        if !matches!(parsed.as_deref(), Ok([predicate]) if plain(predicate)) {
             spans.push(token.span);
         }
     }
     spans
+}
+
+/// A keyword that starts the next join (`LEFT`, `CROSS`, ...), which a native select list would read as an alias.
+fn join_side(token_type: TokenType) -> bool {
+    matches!(
+        token_type,
+        TokenType::Left
+            | TokenType::Right
+            | TokenType::Full
+            | TokenType::Inner
+            | TokenType::Outer
+            | TokenType::Cross
+            | TokenType::Natural
+            | TokenType::Semi
+            | TokenType::Anti
+            | TokenType::Lateral
+            | TokenType::Positional
+    )
 }
 
 fn plain_column(expression: &Expression) -> bool {
@@ -120,6 +157,12 @@ fn operand(expression: &Expression) -> bool {
 
 fn comparison(left: &Expression, right: &Expression) -> bool {
     operand(left) && operand(right)
+}
+
+/// `a IS DISTINCT FROM b`, which the BigQuery and Databricks parsers write as NOT over `IS NOT DISTINCT FROM`.
+fn is_distinct_from(expression: &Expression) -> bool {
+    matches!(expression, Expression::Not(value)
+        if matches!(value.this, Expression::NullSafeEq(_)) && plain_predicate(&value.this))
 }
 
 /// Whether every comparison joined by AND, OR and parentheses compares plain operands, read without recursion.
@@ -468,6 +511,7 @@ impl Analysis<'_> {
                     .iter()
                     .find(|token| token.span.start == span.start && token.span.end == span.end)
             })
+            .filter(|token| token.text.eq_ignore_ascii_case(&identifier.name))
             .map_or(identifier.name.as_str(), |token| token.text.as_str())
     }
 
@@ -801,4 +845,21 @@ pub(super) fn trivial_on_condition(tokens: &[Token], condition: &[usize]) -> boo
             )
             && significant[0].token_type == significant[2].token_type
             && significant[0].text == significant[2].text
+}
+
+/// The source text from the start of `tokens[first]` to the end of `tokens[end - 1]`.
+fn sql_between<'a>(sql: &'a str, tokens: &[Token], first: usize, end: usize) -> &'a str {
+    let (Some(start), Some(last)) = (
+        tokens.get(first),
+        end.checked_sub(1).and_then(|i| tokens.get(i)),
+    ) else {
+        return "";
+    };
+    let byte = |chars: usize| {
+        sql.char_indices()
+            .nth(chars)
+            .map_or(sql.len(), |(at, _)| at)
+    };
+    sql.get(byte(start.span.start)..byte(last.span.end))
+        .unwrap_or("")
 }
