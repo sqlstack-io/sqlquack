@@ -46,35 +46,37 @@ overflowing the stack. Some inputs that SQLite 3.53.4 accepts fall past them.
 
 | Shape, nested or chained | Parser accepts up to | sqlite3 3.53.4 accepts up to |
 |---|---|---|
-| Derived tables, `(SELECT * FROM (...))` | 255 | 415 |
-| Scalar subqueries, `(SELECT (SELECT ...))` | 255 | 498 |
-| `EXISTS` subqueries | 255 | 415 |
-| `IN` subqueries | 255 | 355 |
-| Subqueries holding a `UNION` | 170 | 355 |
-| `IN` lists, `1 IN (1 IN (...))` | 511 | 499 |
-| `CASE WHEN 1 THEN (CASE ...) END` | 511 | 498 |
-| Nested `WITH`, `WITH a AS (WITH a AS (...) ...)` | 511 | 498 |
-| `FILTER (WHERE count(*) FILTER (...))` | 511 | 356 |
-| Window `ORDER BY`, `count(*) OVER (ORDER BY count(*) OVER (...))` | 510 | 311 |
-| Flat chains of `AND`, `+` and similar | 511 operators | 999 operators |
-| Parentheses around one value | 511 | 2,493 |
+| Derived tables, `(SELECT * FROM (...))` | 999 | 415 |
+| Scalar subqueries, `(SELECT (SELECT ...))` | 499 | 498 |
+| `EXISTS` subqueries | 499 | 415 |
+| `IN` subqueries | 499 | 355 |
+| Subqueries holding a `UNION` | 499 | 355 |
+| `IN` lists, `1 IN (1 IN (...))` | 998 | 499 |
+| `CASE WHEN 1 THEN (CASE ...) END` | 998 | 498 |
+| Nested `WITH`, `WITH a AS (WITH a AS (...) ...)` | 999 | 498 |
+| `FILTER (WHERE count(*) FILTER (...))` | 998 | 356 |
+| Window `ORDER BY`, `count(*) OVER (ORDER BY count(*) OVER (...))` | 998 | 311 |
+| Flat chains of `AND`, `+` and similar | 998 operators | 999 operators |
+| Parentheses around one value | 998 | 2,493 |
+| Parentheses around one table in `FROM` | 999 | 1,245 |
 | Terms of a compound `SELECT` | 500 (SQLite's own check) | 500 |
 
-The parser's figures come from two limits: 1,000 levels of recursion and chained operators, and the
-shared AST depth guard of 512 tree levels. Each subquery level adds two or three tree levels.
-sqlite3's figures come from its 1,000-level expression depth (`SQLITE_MAX_EXPR_DEPTH`) and its
-parser's recursion limit ("Recursion limit", the depth of its LALR stack).
+The parser's figures come from two limits: 1,000 levels of recursion and chained operators, as
+sqlite3's 1,000-level expression depth (`SQLITE_MAX_EXPR_DEPTH`), and a tree depth of 8,000, the
+depth the shared tree's clone, comparison, serialization and drop are tested to on a 2 MiB stack.
+Within the recursion limit no shape builds a tree deeper than about 2,000 levels, so the tree-depth
+limit is a backstop.
 
-Where the parser accepts more than sqlite3, it accepts statements that sqlite3 refuses with a limit
-error: nested `IN` lists, `CASE`, `WITH`, `FILTER` and window `ORDER BY` past sqlite3's figures above.
-These are known false accepts at depth. Everywhere else the parser refuses at or before sqlite3's figure.
-
-The tree-depth guard keeps trees within what recursive walkers, such as serde_json, can handle on a
-2 MiB stack. Without it, about 600 nested derived tables overflow such a stack.
+sqlite3's lower figures for subqueries, `IN` lists, `CASE`, `WITH`, `FILTER` and window `ORDER BY`
+come from its resource limits: its parser's recursion limit ("Recursion limit", the depth of its
+LALR stack) and "Expression tree is too large". The parser does not model them, so it accepts these
+shapes past sqlite3's figures. These are known false accepts at depth. Its higher figures for
+parentheses come from the same LALR stack, which does not count a parenthesis as expression depth;
+there the parser refuses earlier. Flat chains stop one operator short of sqlite3.
 
 A depth probe checks the limits: 31 shapes at depths from 50 to 100,000, on 8 MiB and 2 MiB stacks,
 in debug and release builds. Each case is parsed and serialized in its own process. It found no
-crashes and no case slower than 1.2 s.
+crashes and no case slower than 1.6 s.
 
 ## Gaps
 

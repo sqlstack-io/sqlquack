@@ -192,52 +192,52 @@ fn given_queries_when_parsing_then_the_verdicts_match_sqlite() {
 }
 
 #[test]
-fn given_nesting_near_the_ast_depth_guard_when_parsing_then_trees_serialize_on_a_small_stack() {
+fn given_nesting_up_to_the_depth_limit_when_parsing_then_trees_serialize_on_a_small_stack() {
     let test_cases = [
         SerializedNestingTestCase {
-            description: "derived tables at 999 levels",
+            description: "derived tables at 999 levels, a tree about 2,000 deep",
             head: "SELECT * FROM ",
             prefix: "(SELECT * FROM ",
             core: "t",
             suffix: ")",
             depth: 999,
-            expected_outcome: Err(TOO_DEEP),
-        },
-        SerializedNestingTestCase {
-            description: "derived tables just within the shared AST depth guard",
-            head: "SELECT * FROM ",
-            prefix: "(SELECT * FROM ",
-            core: "t",
-            suffix: ")",
-            depth: 255,
             expected_outcome: Ok(()),
         },
         SerializedNestingTestCase {
-            description: "derived tables just past the shared AST depth guard",
+            description: "derived tables at 1,000 levels",
             head: "SELECT * FROM ",
             prefix: "(SELECT * FROM ",
             core: "t",
             suffix: ")",
-            depth: 256,
+            depth: 1000,
             expected_outcome: Err(TOO_DEEP),
         },
         SerializedNestingTestCase {
-            description: "a chain of ANDs just within the shared AST depth guard",
+            description: "a chain of 998 ANDs",
             head: "SELECT 1",
             prefix: " AND 1",
             core: "",
             suffix: "",
-            depth: 511,
+            depth: 998,
             expected_outcome: Ok(()),
         },
         SerializedNestingTestCase {
-            description: "a chain of ANDs at 999 terms",
+            description: "a chain of 999 ANDs",
             head: "SELECT 1",
             prefix: " AND 1",
             core: "",
             suffix: "",
             depth: 999,
             expected_outcome: Err(TOO_DEEP),
+        },
+        SerializedNestingTestCase {
+            description: "IN subqueries at 499 levels",
+            head: "SELECT ",
+            prefix: "1 IN (SELECT ",
+            core: "1",
+            suffix: ")",
+            depth: 499,
+            expected_outcome: Ok(()),
         },
         SerializedNestingTestCase {
             description: "IN subqueries at 999 levels",

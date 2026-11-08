@@ -3,6 +3,9 @@
 /// Recursion and chained operators past this fail as a limit, near `SQLITE_MAX_EXPR_DEPTH`.
 pub(crate) const MAX_DEPTH: usize = 1000;
 
+/// The deepest tree a statement may build, the cap the shared tree's stack-safe walks are tested to.
+pub(crate) const MAX_TREE_DEPTH: usize = 8000;
+
 /// Stack the recursion keeps free before it grows its stack, and how much it adds each time.
 pub(crate) const STACK_RED_ZONE: usize = 256 * 1024;
 pub(crate) const STACK_SEGMENT: usize = 4 * 1024 * 1024;
