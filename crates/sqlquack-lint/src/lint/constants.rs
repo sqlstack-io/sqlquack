@@ -1,8 +1,7 @@
 use sqlquack_syntax::tokens::models::TokenType;
 
 /// Dialect names SQLClean's engine accepted that SQLQuack does not parse yet; their lint is unavailable.
-pub(crate) const UNPARSED_DIALECTS: [&str; 45] = [
-    "",
+pub(crate) const UNPARSED_DIALECTS: [&str; 40] = [
     "arrow-datafusion",
     "arrow_datafusion",
     "athena",
@@ -19,7 +18,6 @@ pub(crate) const UNPARSED_DIALECTS: [&str; 45] = [
     "dune",
     "exasol",
     "fabric",
-    "generic",
     "hana",
     "hive",
     "materialize",
@@ -27,8 +25,6 @@ pub(crate) const UNPARSED_DIALECTS: [&str; 45] = [
     "mssql",
     "mysql",
     "oracle",
-    "postgres",
-    "postgresql",
     "presto",
     "redshift",
     "risingwave",
@@ -38,7 +34,6 @@ pub(crate) const UNPARSED_DIALECTS: [&str; 45] = [
     "solr",
     "spark",
     "spark2",
-    "sqlite",
     "sqlserver",
     "starrocks",
     "tableau",

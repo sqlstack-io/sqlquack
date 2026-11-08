@@ -265,8 +265,3 @@ pub(crate) const PROJECTION_ENDS: [TokenType; 13] = [
     TokenType::Except,
     TokenType::Intersect,
 ];
-
-/// Other dialects' aggregates that Snowflake lacks, so lint cannot tell what a Snowflake call by the name is.
-pub(crate) const NON_SNOWFLAKE_AGGREGATE_CALLS: [&str; 6] = [
-    "BIT_AND", "BIT_OR", "BIT_XOR", "BOOL_AND", "BOOL_OR", "EVERY",
-];

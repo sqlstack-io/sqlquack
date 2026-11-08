@@ -1,5 +1,6 @@
 //! SQLCLEAN042 allow-list: when removing an unused CTE output provably keeps every row.
 
+use crate::lint::models::LintDialect;
 use crate::tree::main::contains_aggregate::contains_aggregate;
 use sqlquack_syntax::expressions::queries::models::Select;
 use sqlquack_syntax::{Expression, ExpressionWalk};
@@ -21,7 +22,11 @@ const ONLY_OUTPUT_REFUSAL: &str = "Removing the only output column leaves an emp
 const EXPRESSION_REFUSAL: &str = "Only column references and deterministic scalar expressions are removed automatically; this expression may change the rows the CTE returns";
 
 /// Why removing any output of `select` could change its rows, if it could.
-pub(super) fn select_refusal(select: &Select, outputs: usize) -> Option<&'static str> {
+pub(super) fn select_refusal(
+    select: &Select,
+    outputs: usize,
+    dialect: LintDialect,
+) -> Option<&'static str> {
     if select.distinct {
         Some(DISTINCT_REFUSAL)
     } else if select.distinct_on.is_some() {
@@ -35,7 +40,11 @@ pub(super) fn select_refusal(select: &Select, outputs: usize) -> Option<&'static
     } else if orders_by_all(select) {
         Some(ORDER_BY_ALL_REFUSAL)
     } else if select.group_by.is_none()
-        && (select.having.is_some() || select.expressions.iter().any(contains_aggregate))
+        && (select.having.is_some()
+            || select
+                .expressions
+                .iter()
+                .any(|expression| contains_aggregate(expression, dialect)))
     {
         Some(UNGROUPED_AGGREGATE_REFUSAL)
     } else if positional_clauses(select) {

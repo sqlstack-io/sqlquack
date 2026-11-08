@@ -411,7 +411,8 @@ fn unused_outputs(
         .flat_map(columns)
         .map(|column| lower(&column.name.name))
         .collect();
-    let select_refused: Option<&'static str> = select_refusal(select, output.len());
+    let select_refused: Option<&'static str> =
+        select_refusal(select, output.len(), request.dialect);
     let mut found: Vec<LintDiagnostic> = Vec::new();
     for (index, item) in output.iter().enumerate() {
         let Projection::Named {

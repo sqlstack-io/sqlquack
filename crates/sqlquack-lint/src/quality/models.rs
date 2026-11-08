@@ -1,14 +1,17 @@
+use crate::lint::models::LintDialect;
 use std::collections::{HashMap, HashSet};
 
+use sqlquack_syntax::Expression;
 use sqlquack_syntax::tokens::models::Token;
-use sqlquack_syntax::{Dialect, Expression};
 
 /// Inputs for one body's quality Rules, borrowed from the native lint request.
 #[derive(Debug)]
 pub(crate) struct QualityRequest<'a> {
     pub(crate) statements: &'a [Expression],
     pub(crate) tokens: &'a [Token],
-    pub(crate) dialect: Dialect,
+    pub(crate) dialect: LintDialect,
+    /// Whether the SQL targets no particular engine, so other dialects' aggregate names still count.
+    pub(crate) generic: bool,
     pub(crate) enabled: &'a HashSet<String>,
     pub(crate) max_literal_length: usize,
     pub(crate) max_ranking_order_by: usize,

@@ -2,13 +2,22 @@ use std::borrow::Cow;
 use std::collections::{HashMap, HashSet};
 
 use serde::{Deserialize, Serialize};
+use sqlquack_syntax::Expression;
 use sqlquack_syntax::tokens::models::{Span, Token};
-use sqlquack_syntax::{Dialect, Expression};
+
+/// A dialect lint reads, named by the parser that reads it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum LintDialect {
+    Snowflake,
+    DuckDB,
+    PostgreSQL,
+    SQLite,
+}
 
 /// SQL text tokenized and parsed under one dialect.
 #[derive(Debug)]
 pub struct ParsedSql {
-    pub dialect: Dialect,
+    pub dialect: LintDialect,
     pub tokens: Vec<Token>,
     pub statements: Vec<Expression>,
 }
@@ -181,4 +190,5 @@ pub(crate) struct CrossJoinRequest<'a> {
     pub(crate) relation_keys: &'a HashMap<String, Vec<Vec<String>>>,
     /// The relation name each dependency sentinel stands for.
     pub(crate) relation_names: &'a HashMap<String, String>,
+    pub(crate) dialect: LintDialect,
 }

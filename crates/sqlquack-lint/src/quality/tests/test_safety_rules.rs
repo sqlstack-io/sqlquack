@@ -150,20 +150,11 @@ fn given_safety_rule_inputs_when_linting_then_exactly_the_mistakes_are_reported(
             rule: "SQLCLEAN053",
             expected_anchors: &["MIN(o.amount)"],
         },
-    ];
-    let unparsed_dialect_cases = [
         SafetyRuleTestCase {
             description: "quoted names that differ in case are distinct in PostgreSQL",
             dialect: "postgres",
             sql: r#"WITH "paid" AS (SELECT 1 AS x), "PAID" AS (SELECT 2 AS x) SELECT x FROM "paid""#,
             rule: "SQLCLEAN046",
-            expected_anchors: &[],
-        },
-        SafetyRuleTestCase {
-            description: "a joined DELETE and a LIMIT bound the rows in MySQL",
-            dialect: "mysql",
-            sql: "DELETE o FROM orders o JOIN customers c ON c.id = o.customer_id; DELETE FROM orders LIMIT 10",
-            rule: "SQLCLEAN049",
             expected_anchors: &[],
         },
         SafetyRuleTestCase {
@@ -188,6 +179,34 @@ fn given_safety_rule_inputs_when_linting_then_exactly_the_mistakes_are_reported(
             expected_anchors: &["BETWEEN ASYMMETRIC 10 AND 1"],
         },
         SafetyRuleTestCase {
+            description: "another dialect's aggregate name is unknown in PostgreSQL",
+            dialect: "postgres",
+            sql: "SELECT t.a FROM t WHERE MEDIAN(t.x) > 1",
+            rule: "SQLCLEAN053",
+            expected_anchors: &[],
+        },
+        SafetyRuleTestCase {
+            description: "another dialect's aggregate name still counts for no particular engine",
+            dialect: "generic",
+            sql: "SELECT t.a FROM t WHERE MEDIAN(t.x) > 1",
+            rule: "SQLCLEAN053",
+            expected_anchors: &["MEDIAN(t.x)"],
+        },
+        SafetyRuleTestCase {
+            description: "a PostgreSQL catalogue aggregate is reported for PostgreSQL and no particular engine",
+            dialect: "generic",
+            sql: "SELECT t.a FROM t WHERE BOOL_AND(t.x) OR EVERY(t.y)",
+            rule: "SQLCLEAN053",
+            expected_anchors: &["BOOL_AND(t.x)", "EVERY(t.y)"],
+        },
+        SafetyRuleTestCase {
+            description: "BOOL_AND and EVERY are PostgreSQL aggregates",
+            dialect: "postgres",
+            sql: "SELECT t.a FROM t WHERE BOOL_AND(t.x) OR EVERY(t.y)",
+            rule: "SQLCLEAN053",
+            expected_anchors: &["BOOL_AND(t.x)", "EVERY(t.y)"],
+        },
+        SafetyRuleTestCase {
             description: "multi-argument MAX is the scalar function in SQLite",
             dialect: "sqlite",
             sql: "SELECT order_id FROM orders WHERE max(amount, refunded) > 100",
@@ -195,6 +214,13 @@ fn given_safety_rule_inputs_when_linting_then_exactly_the_mistakes_are_reported(
             expected_anchors: &[],
         },
     ];
+    let unparsed_dialect_cases = [SafetyRuleTestCase {
+        description: "a joined DELETE and a LIMIT bound the rows in MySQL",
+        dialect: "mysql",
+        sql: "DELETE o FROM orders o JOIN customers c ON c.id = o.customer_id; DELETE FROM orders LIMIT 10",
+        rule: "SQLCLEAN049",
+        expected_anchors: &[],
+    }];
     for test_case in &unparsed_dialect_cases {
         assert!(
             lint_unavailable(test_case.dialect)?,

@@ -1,5 +1,6 @@
 //! SQLCLEAN045: the same JSON payload column parsed more than once in one SELECT scope.
 
+use crate::lint::models::LintDialect;
 use std::borrow::Cow;
 use std::collections::HashMap;
 
@@ -8,7 +9,7 @@ use crate::tree::main::walk_in_scope::walk_in_scope;
 use sqlquack_syntax::expressions::names::models::Column;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::tokens::models::Token;
-use sqlquack_syntax::{Dialect, Expression, ExpressionWalk};
+use sqlquack_syntax::{Expression, ExpressionWalk};
 
 use crate::lint::models::LintDiagnostic;
 use crate::quality::constants::REPEATED_JSON_PARSE;
@@ -52,11 +53,11 @@ pub(crate) fn diagnostics(request: &QualityRequest<'_>) -> Vec<LintDiagnostic> {
 }
 
 /// JSON parse functions that take one string argument, by dialect, in upper case.
-fn parse_functions(dialect: Dialect) -> &'static [&'static str] {
+fn parse_functions(dialect: LintDialect) -> &'static [&'static str] {
     match dialect {
-        Dialect::Snowflake => &["PARSE_JSON", "TRY_PARSE_JSON"],
-        Dialect::DuckDB => &["JSON"],
-        Dialect::PostgreSQL | Dialect::SQLite => &[],
+        LintDialect::Snowflake => &["PARSE_JSON", "TRY_PARSE_JSON"],
+        LintDialect::DuckDB => &["JSON"],
+        LintDialect::PostgreSQL | LintDialect::SQLite => &[],
     }
 }
 
@@ -64,7 +65,7 @@ fn scope_diagnostics(
     tokens: &[Token],
     select: &Expression,
     functions: &[&'static str],
-    dialect: Dialect,
+    dialect: LintDialect,
 ) -> Vec<LintDiagnostic> {
     let quote: char = identifier_quote(dialect);
     let mut calls: Vec<ParseCall<'_>> = walk_in_scope(select)
@@ -108,10 +109,10 @@ fn scope_diagnostics(
 }
 
 /// Normalises a name the way the dialect resolves it (Snowflake folds unquoted names upward).
-fn identifier_key(identifier: &Identifier, dialect: Dialect) -> IdentifierKey {
+fn identifier_key(identifier: &Identifier, dialect: LintDialect) -> IdentifierKey {
     match dialect {
-        Dialect::Snowflake if identifier.quoted => identifier.name.clone(),
-        Dialect::Snowflake => identifier.name.to_uppercase(),
+        LintDialect::Snowflake if identifier.quoted => identifier.name.clone(),
+        LintDialect::Snowflake => identifier.name.to_uppercase(),
         _ => lower(&identifier.name),
     }
 }
@@ -204,6 +205,6 @@ fn written(identifier: &Identifier, quote: char) -> String {
     }
 }
 
-fn identifier_quote(_dialect: Dialect) -> char {
+fn identifier_quote(_dialect: LintDialect) -> char {
     '"'
 }

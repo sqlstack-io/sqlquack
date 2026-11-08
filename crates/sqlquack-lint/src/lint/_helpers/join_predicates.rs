@@ -1,9 +1,12 @@
 //! Join predicates, and whether an explicit cross join can multiply rows.
 
+use crate::lint::_helpers::parsing::syntax_dialect;
+use crate::lint::models::LintDialect;
 use std::borrow::Cow;
 use std::collections::{HashMap, HashSet};
 
 use sqlquack_syntax::Expression;
+use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::queries::models::JoinKind;
@@ -11,7 +14,7 @@ use sqlquack_syntax::expressions::queries::models::Select;
 use sqlquack_syntax::expressions::queries::models::Subquery;
 use sqlquack_syntax::expressions::queries::models::With;
 use sqlquack_syntax::tokens::models::{Span, Token, TokenType};
-use sqlquack_syntax::{Dialect, ExpressionWalk, parse_expressions};
+use sqlquack_syntax::{ExpressionWalk, parse_expressions};
 
 use crate::constants::SETTING_SNIPPET_INDENT;
 use crate::lint::_helpers::engine::{is_comment, is_layout};
@@ -48,7 +51,7 @@ const ROW_GENERATOR_FUNCTIONS: [&str; 16] = [
 pub(super) fn join_expression_spans(
     tokens: &[Token],
     depths: &[usize],
-    dialect: Dialect,
+    dialect: LintDialect,
 ) -> Vec<Span> {
     let mut spans: Vec<Span> = Vec::new();
     for (index, token) in tokens.iter().enumerate() {
@@ -89,7 +92,7 @@ pub(super) fn join_expression_spans(
                         ))
             })
             .unwrap_or(tokens.len());
-        let parsed = parse_expressions(tokens[index + 1..end].to_vec(), dialect);
+        let parsed = parse_expressions(tokens[index + 1..end].to_vec(), syntax_dialect(dialect));
         if !matches!(parsed.as_deref(), Ok([predicate]) if plain_predicate(predicate)) {
             spans.push(token.span);
         }
@@ -194,6 +197,8 @@ pub(super) fn cross_join_diagnostics(
     let inputs = OneRowInputs {
         one_row_relations: &one_row_relations,
         relation_names: &relation_names,
+        tokens: request.tokens,
+        dialect: request.dialect,
     };
     multiplying_cross_joins(
         request.statements,
@@ -276,6 +281,9 @@ struct OneRowInputs<'a> {
     one_row_relations: &'a HashSet<String>,
     /// Lowercased dependency sentinels mapped to the relation names they stand for.
     relation_names: &'a HashMap<String, String>,
+    /// The tokens the names were parsed from, which spell each unquoted name as authored.
+    tokens: &'a [Token],
+    dialect: LintDialect,
 }
 
 /// One step of `Analysis::visit`: a node with its CTE label and top-level flag, or a select's joins.
@@ -428,7 +436,7 @@ impl Analysis<'_> {
             Expression::Subquery(subquery) => {
                 subquery.alias.as_ref().map(|alias| alias.name.clone())
             }
-            Expression::Alias(alias) => Some(alias.alias.name.clone()),
+            Expression::Alias(alias) => Some(self.authored(&alias.alias).to_owned()),
             _ => None,
         }
     }
@@ -443,10 +451,24 @@ impl Analysis<'_> {
         [&table.catalog, &table.schema]
             .into_iter()
             .flatten()
-            .map(|part| part.name.as_str())
-            .chain([table.name.name.as_str()])
+            .chain([&table.name])
+            .map(|part| self.authored(part))
             .collect::<Vec<&str>>()
             .join(".")
+    }
+
+    /// An unquoted name as authored, though PostgreSQL's parser folds it to lower case.
+    fn authored<'a>(&'a self, identifier: &'a Identifier) -> &'a str {
+        identifier
+            .span
+            .filter(|_| !identifier.quoted)
+            .and_then(|span| {
+                self.inputs
+                    .tokens
+                    .iter()
+                    .find(|token| token.span.start == span.start && token.span.end == span.end)
+            })
+            .map_or(identifier.name.as_str(), |token| token.text.as_str())
     }
 
     /// Whether a query expression returns at most one row.
@@ -480,7 +502,12 @@ impl Analysis<'_> {
         if select.expressions.iter().any(generates_rows) {
             return false;
         }
-        if select.group_by.is_none() && select.expressions.iter().any(aggregates) {
+        if select.group_by.is_none()
+            && select
+                .expressions
+                .iter()
+                .any(|expression| aggregates(expression, self.inputs.dialect))
+        {
             return true;
         }
         if select
@@ -598,10 +625,10 @@ fn anchored_at(target: &CrossJoinTarget, candidates: &[usize]) -> bool {
 }
 
 /// Whether an expression aggregates outside any window function or subquery.
-fn aggregates(expression: &Expression) -> bool {
+fn aggregates(expression: &Expression, dialect: LintDialect) -> bool {
     let mut pending: Vec<&Expression> = vec![expression];
     while let Some(node) = pending.pop() {
-        if crate::tree::main::is_aggregate::is_aggregate(node) {
+        if crate::tree::main::is_aggregate::is_aggregate(node, dialect) {
             return true;
         }
         if !matches!(

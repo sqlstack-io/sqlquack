@@ -65,6 +65,40 @@ fn given_deeply_nested_from_parentheses_when_linting_then_each_parser_refuses_cl
             depth: 1500,
             expected_code: "E_GUARD_NESTING_DEPTH_EXCEEDED",
         },
+        test_types::NestingRefusalTestCase {
+            description: "SQLite refuses past its nesting limit",
+            dialect: "sqlite",
+            depth: 1500,
+            expected_code: "E_GUARD_NESTING_DEPTH_EXCEEDED",
+        },
+    ];
+    for test_case in test_cases {
+        let sql = helpers::nested_from_sql(test_case.depth);
+        let error = helpers::diagnostics_for_dialect(&sql, test_case.dialect, &["SQLCLEAN001"])
+            .expect_err("deeply nested FROM parentheses should be refused");
+        assert!(
+            error.contains(test_case.expected_code),
+            "{}: {error}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_deeply_nested_from_parentheses_when_linting_postgres_then_the_parser_refuses_cleanly() {
+    let test_cases = [
+        test_types::NestingRefusalTestCase {
+            description: "PostgreSQL refuses deep nesting as a parse error",
+            dialect: "postgres",
+            depth: 1500,
+            expected_code: "Parse error",
+        },
+        test_types::NestingRefusalTestCase {
+            description: "Generic parses as PostgreSQL and refuses the same way",
+            dialect: "generic",
+            depth: 1500,
+            expected_code: "Parse error",
+        },
     ];
     for test_case in test_cases {
         let sql = helpers::nested_from_sql(test_case.depth);

@@ -172,6 +172,13 @@ fn given_json_parse_calls_when_linting_then_repeats_in_one_select_are_reported()
             expected_anchors: &["json"],
             expected_details: &["JSON(e.value) is parsed 2 times in one SELECT."],
         },
+        JsonParseTestCase {
+            description: "dialects without an equivalent are not checked",
+            dialect: "postgres",
+            sql: "SELECT CAST(value AS JSONB) AS a, CAST(value AS JSONB) AS b FROM events",
+            expected_anchors: &[],
+            expected_details: &[],
+        },
     ];
     let unparsed_dialect_cases = [
         JsonParseTestCase {
@@ -208,13 +215,6 @@ fn given_json_parse_calls_when_linting_then_repeats_in_one_select_are_reported()
             sql: "SELECT try_parse_json(value) AS a, try_parse_json(value) AS b FROM events",
             expected_anchors: &["try_parse_json"],
             expected_details: &["TRY_PARSE_JSON(value) is parsed 2 times in one SELECT."],
-        },
-        JsonParseTestCase {
-            description: "dialects without an equivalent are not checked",
-            dialect: "postgres",
-            sql: "SELECT CAST(value AS JSONB) AS a, CAST(value AS JSONB) AS b FROM events",
-            expected_anchors: &[],
-            expected_details: &[],
         },
     ];
     for test_case in &unparsed_dialect_cases {

@@ -1,9 +1,11 @@
 //! SQLCLEAN046 to SQLCLEAN053: report-only safety Rules for queries that cannot do what they appear to.
 
+use crate::lint::models::LintDialect;
 use std::borrow::Cow;
 use std::collections::HashSet;
 
 use crate::tree::main::is_aggregate::is_aggregate;
+use crate::tree::main::is_foreign_aggregate::is_foreign_aggregate;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::queries::models::Join;
 use sqlquack_syntax::expressions::queries::models::With;
@@ -11,12 +13,12 @@ use sqlquack_syntax::expressions::statements::models::Delete;
 use sqlquack_syntax::expressions::statements::models::Insert;
 use sqlquack_syntax::expressions::statements::models::Update;
 use sqlquack_syntax::tokens::models::{Token, TokenType};
-use sqlquack_syntax::{Dialect, Expression, ExpressionWalk};
+use sqlquack_syntax::{Expression, ExpressionWalk};
 
 use crate::lint::models::{LintDiagnostic, LintRuleMetadata};
 use crate::quality::constants::{
     DUPLICATE_CTE_NAME, INSERT_WITHOUT_COLUMNS, LITERAL_ZERO_DIVISION, MISPLACED_AGGREGATE,
-    NATURAL_JOIN, NON_SNOWFLAKE_AGGREGATE_CALLS, NULL_MATCH, REVERSED_BETWEEN, UNFILTERED_WRITE,
+    NATURAL_JOIN, NULL_MATCH, REVERSED_BETWEEN, UNFILTERED_WRITE,
 };
 use crate::quality::models::QualityRequest;
 use crate::quality::syntax::is_trivia;
@@ -185,14 +187,14 @@ pub(crate) fn diagnostics(request: &QualityRequest<'_>) -> Vec<LintDiagnostic> {
             AGGREGATE_REFUSAL,
             misplaced_aggregate_spans(
                 &significant,
-                &aggregate_names(request.statements, request.dialect),
+                &aggregate_names(request.statements, request.dialect, request.generic),
             ),
         );
     }
     found
 }
 
-fn duplicate_cte_spans(statements: &[Expression], dialect: Dialect) -> Vec<CharSpan> {
+fn duplicate_cte_spans(statements: &[Expression], dialect: LintDialect) -> Vec<CharSpan> {
     let mut spans: Vec<CharSpan> = Vec::new();
     for statement in statements {
         for with in statement.dfs().filter_map(with_clause) {
@@ -223,11 +225,11 @@ fn with_clause(node: &Expression) -> Option<&With> {
 }
 
 /// A CTE name as the dialect resolves it, so only names the engine treats as equal collide.
-fn cte_key(identifier: &Identifier, dialect: Dialect) -> String {
-    let quoted_names_ignore_case = matches!(dialect, Dialect::DuckDB | Dialect::SQLite);
+fn cte_key(identifier: &Identifier, dialect: LintDialect) -> String {
+    let quoted_names_ignore_case = matches!(dialect, LintDialect::DuckDB | LintDialect::SQLite);
     match dialect {
         _ if identifier.quoted && !quoted_names_ignore_case => identifier.name.clone(),
-        Dialect::Snowflake => identifier.name.to_uppercase(),
+        LintDialect::Snowflake => identifier.name.to_uppercase(),
         _ => identifier.name.to_lowercase(),
     }
 }
@@ -545,28 +547,31 @@ fn natural_join_spans(significant: &Significant<'_>) -> Vec<CharSpan> {
 }
 
 /// Function names the parser classified as aggregates, upper-cased without underscores.
-fn aggregate_names(statements: &[Expression], dialect: Dialect) -> HashSet<String> {
+fn aggregate_names(
+    statements: &[Expression],
+    dialect: LintDialect,
+    generic: bool,
+) -> HashSet<String> {
     statements
         .iter()
         .flat_map(|statement| statement.dfs())
-        .filter(|node| is_aggregate(node))
+        .filter(|node| is_aggregate(node, dialect))
         .filter_map(|node| match node {
+            Expression::Function(function)
+                if !generic && is_foreign_aggregate(&function.name, dialect) =>
+            {
+                None
+            }
             Expression::AggregateFunction(function)
-                if dialect == Dialect::Snowflake && is_non_snowflake_aggregate(&function.name) =>
+                if !generic && is_foreign_aggregate(&function.name, dialect) =>
             {
                 None
             }
             Expression::AggregateFunction(function) => Some(normalized_name(&function.name)),
+            Expression::Function(function) => Some(normalized_name(&function.name)),
             other => Some(normalized_name(other.variant_name())),
         })
         .collect()
-}
-
-/// Whether `name` is another dialect's aggregate that Snowflake does not have.
-fn is_non_snowflake_aggregate(name: &str) -> bool {
-    NON_SNOWFLAKE_AGGREGATE_CALLS
-        .iter()
-        .any(|aggregate| aggregate.eq_ignore_ascii_case(name))
 }
 
 fn normalized_name(name: &str) -> String {

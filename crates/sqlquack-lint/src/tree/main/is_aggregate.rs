@@ -1,12 +1,23 @@
 //! `is_aggregate`: whether a node is an aggregate call, as polyglot classified them.
 
+use crate::lint::models::LintDialect;
 use sqlquack_syntax::Expression;
 
-use crate::tree::constants::WINDOW_ONLY_CALLS;
+use crate::tree::constants::{
+    POSTGRES_AGGREGATE_CALLS, POSTGRES_FOREIGN_AGGREGATE_CALLS,
+    POSTGRES_SINGLE_ARGUMENT_AGGREGATES, WINDOW_ONLY_CALLS,
+};
+use crate::tree::main::call_name::call_name;
 
 /// Whether `expression` is an aggregate call; window-only calls and scalar helpers are not.
-pub(crate) fn is_aggregate(expression: &Expression) -> bool {
+pub(crate) fn is_aggregate(expression: &Expression, dialect: LintDialect) -> bool {
     match expression {
+        Expression::Function(_) | Expression::AggregateFunction(_)
+            if dialect == LintDialect::PostgreSQL =>
+        {
+            call_name(expression)
+                .is_some_and(|name| is_postgres_aggregate(name, call_arguments(expression)))
+        }
         Expression::AggregateFunction(function) => !WINDOW_ONLY_CALLS
             .iter()
             .any(|name| name.eq_ignore_ascii_case(&function.name)),
@@ -89,5 +100,21 @@ pub(crate) fn is_aggregate(expression: &Expression) -> bool {
                 | Expression::RegrSyy(_)
                 | Expression::RegrSlope(_)
         ),
+    }
+}
+
+/// Whether a call of `name` with `arguments` arguments is an aggregate, as polyglot read PostgreSQL.
+fn is_postgres_aggregate(name: &str, arguments: usize) -> bool {
+    let named = |names: &[&str]| names.iter().any(|known| known.eq_ignore_ascii_case(name));
+    (named(&POSTGRES_AGGREGATE_CALLS) || named(&POSTGRES_FOREIGN_AGGREGATE_CALLS))
+        && (arguments <= 1 || !named(&POSTGRES_SINGLE_ARGUMENT_AGGREGATES))
+}
+
+/// How many arguments a call passes.
+fn call_arguments(expression: &Expression) -> usize {
+    match expression {
+        Expression::Function(function) => function.args.len(),
+        Expression::AggregateFunction(function) => function.args.len(),
+        _ => 0,
     }
 }

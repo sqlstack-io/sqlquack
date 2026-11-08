@@ -1,9 +1,10 @@
+use crate::lint::models::LintDialect;
 use std::borrow::Cow;
 use std::collections::{HashMap, HashSet, VecDeque};
 
-use sqlquack_syntax::expressions::queries::models::With;
+use sqlquack_syntax::expressions::queries::models::{Select, With};
 use sqlquack_syntax::tokens::models::{Span, Token, TokenType};
-use sqlquack_syntax::{Dialect, Expression, ExpressionWalk};
+use sqlquack_syntax::{Expression, ExpressionWalk};
 
 use crate::lint::constants::{LINT_API_VERSION, SELECT_ITEM_END_TOKENS};
 use crate::lint::models::{
@@ -332,7 +333,7 @@ struct ExpressionRange {
 
 struct DiagnosticContext<'a> {
     sql: &'a str,
-    dialect: Dialect,
+    dialect: LintDialect,
     facts: &'a QueryFacts,
     tokens: &'a [Token],
     enabled: &'a HashSet<String>,
@@ -346,6 +347,7 @@ struct FactBuildOptions<'a> {
     allows_ceremonial_select: bool,
     allows_dynamic_output_star: bool,
     fixture_harness: Option<&'a FixtureHarness>,
+    dialect: LintDialect,
 }
 
 pub(crate) fn lint_json_impl(request_json: &str) -> Result<String, String> {
@@ -412,6 +414,7 @@ pub(crate) fn lint(request: LintRequest) -> Result<LintResponse, String> {
         allows_ceremonial_select: request.fixture_harness.is_some(),
         allows_dynamic_output_star: request.allows_dynamic_output_star,
         fixture_harness: request.fixture_harness.as_ref(),
+        dialect: dialect_type,
     };
     let facts = build_facts(&statements, &tokens, &request.sql, &options);
     let context = DiagnosticContext {
@@ -429,6 +432,7 @@ pub(crate) fn lint(request: LintRequest) -> Result<LintResponse, String> {
             cross_spans: &facts.cross_joins,
             relation_keys: &request.relation_keys,
             relation_names: &request.relation_names,
+            dialect: dialect_type,
         };
         diagnostics.extend(cross_join_diagnostics(&cross_joins, &CROSS_JOIN));
     }
@@ -456,6 +460,10 @@ pub(crate) fn lint(request: LintRequest) -> Result<LintResponse, String> {
             statements: &statements,
             tokens: &tokens,
             dialect: dialect_type,
+            generic: matches!(
+                request.dialect.to_ascii_lowercase().as_str(),
+                "generic" | ""
+            ),
             enabled: &enabled,
             max_literal_length: request
                 .max_literal_length
@@ -1042,6 +1050,11 @@ fn collect_unused_ctes(expression: &Expression, options: &FactBuildOptions<'_>) 
     let mut unused: Vec<String> = Vec::new();
     for node in expression.dfs() {
         let with: Option<&With> = match node {
+            Expression::Select(select)
+                if options.dialect == LintDialect::PostgreSQL && selects_only_values(select) =>
+            {
+                None
+            }
             Expression::Select(select) => select.with.as_ref(),
             Expression::Union(operation) => operation.with.as_ref(),
             Expression::Intersect(operation) => operation.with.as_ref(),
@@ -1057,6 +1070,18 @@ fn collect_unused_ctes(expression: &Expression, options: &FactBuildOptions<'_>) 
         }
     }
     unused
+}
+
+/// Whether `select` is `SELECT * FROM (VALUES ...)`, as PostgreSQL also writes `WITH ... VALUES`.
+fn selects_only_values(select: &Select) -> bool {
+    matches!(select.expressions.as_slice(), [Expression::Star(_)])
+        && select.from.as_ref().is_some_and(|from| {
+            matches!(
+                from.expressions.as_slice(),
+                [Expression::Subquery(subquery)]
+                    if subquery.alias.is_none() && matches!(subquery.this, Expression::Values(_))
+            )
+        })
 }
 
 /// Table names `root` references outside its own `with`, counted so a name the WITH also uses still counts.
@@ -1782,10 +1807,10 @@ fn simple_boolean_case_fix(sql: &str, tokens: &[Token], span: Span) -> Option<Li
     })
 }
 
-fn explicit_union_fix(dialect: Dialect, span: Span) -> Option<LintEdit> {
+fn explicit_union_fix(dialect: LintDialect, span: Span) -> Option<LintEdit> {
     matches!(
         dialect,
-        Dialect::PostgreSQL | Dialect::Snowflake | Dialect::DuckDB
+        LintDialect::PostgreSQL | LintDialect::Snowflake | LintDialect::DuckDB
     )
     .then(|| LintEdit {
         start: span.start,
