@@ -13,9 +13,9 @@ use sqlquack_rules::conversion::models::{ConversionOptions, ConvertedFunction};
 use sqlquack_semantics::types::models::{FunctionReturns, FunctionSpec, Schema};
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
+use crate::analysis::_helpers::declared_refusals::declared_refusals;
 use crate::analysis::constants::SCALAR_RESULT_COLUMN;
-use sqlquack_convert::analysis::main::declared_refusals::declared_refusals;
-use sqlquack_convert::analysis::main::placed::placed;
+use crate::analysis::main::placed::placed;
 
 /// Converts `body` as `spec` declares it; a NUMBER scalar's body must be of the declared type.
 pub fn analyze_function(
