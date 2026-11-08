@@ -490,3 +490,21 @@ note = "Re-read after o025-o031 were added: the seven time zone spellings of a t
 
 [review.definitions]
 "sf.expressions.data-types-datetime.date-time-constant" = "fbe8e08957ddc0bbb254581eaf8c532e8548f136ac6a9cb543093e1edb71810e"
+
+[[review]]
+id = "auditor-expressions-019"
+reviewer_lane = "auditor"
+family = "expressions"
+parser_tree = "2f01651a7d711b1b62adecd3de4731d201036462"
+reviewed_utc = "2026-11-08T12:11:54Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-datetime.date-time-constant",
+]
+note = "Re-read under the fingerprint formula with expect, stage and phase, after a date-time name with a precision before a string took its cast type from the parsed data type, as after a double colon: the 28 cases and their receipts against the parse trees and refusals of the parser at 33d5284f. Nine precision spellings changed only their tree and stay accepted where Snowflake parses them and stops with 2121; the other 19 are unchanged; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-datetime.date-time-constant" = "5d1eb5367280589f39c56f2b95d85731da5a3970d2768ac4ca04d7d4c7e9dd00"
+
+[review.definitions]
+"sf.expressions.data-types-datetime.date-time-constant" = "fbe8e08957ddc0bbb254581eaf8c532e8548f136ac6a9cb543093e1edb71810e"
