@@ -1,0 +1,75 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIMESTAMP_LTZ '2026-01-02 03:04:05' ;",
+   "sql_sha256": "1a7982b7fb162e7e1b9bed4697be078aa7e87e01fc6c916cc4340f2b62a5ff3d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIMESTAMPTZ '2026-01-02 03:04:05' ;",
+   "sql_sha256": "5ee293529f1e0d950714db52afe68643c1932954fb352248b646860b14154b43"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIMESTAMPNTZ '2026-01-02 03:04:05' ;",
+   "sql_sha256": "624d77c24c5c78d9f76e7f5e9abc8334b1b11c008dafd006422a1c8d5ea43666"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIMESTAMP_TZ '2026-01-02 03:04:05' ;",
+   "sql_sha256": "69fcf514472412f23dfd971799b928236fa3618f86a7a8b604e7de1e5d939a86"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIMESTAMP_NTZ '2026-01-02 03:04:05' ;",
+   "sql_sha256": "8a36862cebb9e2362f3742fed6479b8e95bf7e1d9cb0ff5fc2fa6c2b9a6f6c4e"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIMESTAMPLTZ '2026-01-02 03:04:05' ;",
+   "sql_sha256": "af2e829caa1c08836aeff567645c775cafe64e3889241fe93b64eae9c9228220"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIMESTAMP_NTZ(3) '2026-01-02 03:04:05' ;",
+   "sql_sha256": "df44dc074801f38a70409c7bfd032ebc31ab4b48ab58c4ed0cbd5dc3ee583d19"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT DATETIME '2026-01-02 03:04:05' ;",
+   "sql_sha256": "f2531b90a1d45e1eefb1b10bd7904efccc0ebaf57b352e1176c960fdc52afe8d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIMESTAMP_TZ(3) '2026-01-02 03:04:05' ;",
+   "sql_sha256": "fadd3f560bcd9345070e94a8684624818dc601cf8a9561861c5ba30443b001b6"
+  }
+ ],
+ "receipts": 9,
+ "receipts_file_sha256": "aa3ff207e91b57c010069068a11f43c09eff8d2ba04ac077684358a684fffd44",
+ "reconciled_receipts": 0,
+ "refusals": [],
+ "refused": 0,
+ "runs": [
+  {
+   "audit_sha256": "ca80939dbf9194731cc6b35d3a712018d63d477dcf8700137f84f766c5cc2f88",
+   "receipts": 9,
+   "refused_rows": 0,
+   "run_id": "tslit-ex-00",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": []
+}

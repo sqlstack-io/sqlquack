@@ -1,0 +1,120 @@
+category = "relational"
+construct = "node:select"
+session_profile = "utc-v1"
+
+[[case]]
+id = "typed_literal_timestamp_ntz"
+compile_error = true
+description = "A TIMESTAMP_NTZ keyword followed by a string literal: whether Snowflake accepts it as a typed literal."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT TIMESTAMP_NTZ '2026-01-02 03:04:05' AS v FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "typed_literal_timestamp_ltz"
+compile_error = true
+description = "A TIMESTAMP_LTZ keyword followed by a string literal: whether Snowflake accepts it as a typed literal."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT TIMESTAMP_LTZ '2026-01-02 03:04:05' AS v FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "typed_literal_timestamp_tz"
+compile_error = true
+description = "A TIMESTAMP_TZ keyword followed by a string literal: whether Snowflake accepts it as a typed literal."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT TIMESTAMP_TZ '2026-01-02 03:04:05' AS v FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "typed_literal_timestampntz"
+compile_error = true
+description = "A TIMESTAMPNTZ keyword followed by a string literal: whether Snowflake accepts it as a typed literal."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT TIMESTAMPNTZ '2026-01-02 03:04:05' AS v FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "typed_literal_timestampltz"
+compile_error = true
+description = "A TIMESTAMPLTZ keyword followed by a string literal: whether Snowflake accepts it as a typed literal."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT TIMESTAMPLTZ '2026-01-02 03:04:05' AS v FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "typed_literal_timestamptz"
+compile_error = true
+description = "A TIMESTAMPTZ keyword followed by a string literal: whether Snowflake accepts it as a typed literal."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT TIMESTAMPTZ '2026-01-02 03:04:05' AS v FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "typed_literal_timestamp_ntz_3"
+compile_error = true
+description = "A TIMESTAMP_NTZ(3) keyword followed by a string literal: whether Snowflake accepts it as a typed literal."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT TIMESTAMP_NTZ(3) '2026-01-02 03:04:05' AS v FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "typed_literal_timestamp_tz_3"
+compile_error = true
+description = "A TIMESTAMP_TZ(3) keyword followed by a string literal: whether Snowflake accepts it as a typed literal."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT TIMESTAMP_TZ(3) '2026-01-02 03:04:05' AS v FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "typed_literal_datetime"
+compile_error = true
+description = "A DATETIME keyword followed by a string literal: whether Snowflake accepts it as a typed literal."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT DATETIME '2026-01-02 03:04:05' AS v FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "typed_literal_timestamp"
+description = "A TIMESTAMP keyword followed by a string literal: whether Snowflake accepts it as a typed literal."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT TIMESTAMP '2026-01-02 03:04:05' AS v FROM input"
+order = "ordered"
+tags = ["boundary"]
+
+[[case]]
+id = "typed_literal_date"
+description = "A DATE literal, as a control, beside a column holding NULL and duplicates."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"], ["1"], ["NULL"]]
+query = "SELECT DATE '2026-01-02' AS v, k FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["null", "duplicates"]
+
+[[case]]
+id = "typed_literal_timestamp_over_no_rows"
+description = "A TIMESTAMP literal, as a control, over no rows."
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT TIMESTAMP '2026-01-02 03:04:05' AS v FROM input WHERE k > 5"
+order = "ordered"
+tags = ["empty-input"]

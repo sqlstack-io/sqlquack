@@ -31,16 +31,20 @@ pub(crate) fn project_key(key: String, own: &BTreeSet<String>) -> String {
     }
 }
 
-/// Every construct and spelling key the case's statement uses, sorted, its own functions as one project key.
+/// Every construct and spelling key of the case's statement, own functions as one key; a declared compile error may not parse.
 pub(crate) fn constructs(case: &LoadedCase, own: &BTreeSet<String>) -> Result<Vec<String>, String> {
     let sql = &case.source_sql;
     let lines = SourceLines::new(sql);
-    let statements = parse_source(sql, SourceDialect::Snowflake).map_err(|failure| {
-        format!(
-            "{}: a recorded statement does not parse: {failure:?}",
-            case.reference
-        )
-    })?;
+    let statements = match parse_source(sql, SourceDialect::Snowflake) {
+        Ok(statements) => statements,
+        Err(_) if case.compile_error => Vec::new(),
+        Err(failure) => {
+            return Err(format!(
+                "{}: a recorded statement does not parse: {failure:?}",
+                case.reference
+            ));
+        }
+    };
     let mut keys: BTreeSet<String> = token_spellings(sql);
     for statement in &statements {
         keys.extend(tree_spellings(statement));

@@ -75,8 +75,9 @@ translation are separate steps, each with its own coverage.
 classifies every function, operator, type, cast, join and clause.
 
 **Check.** `sqlquack check` reports SQL that Snowflake parses but then rejects, such as
-`INTERSECT ALL`, `FOR UPDATE WAIT`, `QUALIFY` without a window function, or a `* ILIKE` `REPLACE`
-or `RENAME` of a column the pattern removes. Each has its own `SQ02xx` code.
+`INTERSECT ALL`, `FOR UPDATE WAIT`, `QUALIFY` without a window function, a `* ILIKE` `REPLACE`
+or `RENAME` of a column the pattern removes, or `TIMESTAMP_NTZ(3) '...'`. Each has its own `SQ02xx`
+code.
 
 **Translate.** A first set of rules converts the relational core, exact NUMBER arithmetic,
 comparisons, conditionals, casts, basic string functions, aggregates and window functions. DuckDB
