@@ -111,6 +111,9 @@ pub enum Command {
         /// Parse each text on a thread with this many bytes of stack.
         #[arg(long)]
         thread_stack: Option<usize>,
+        /// Also analyse each parsed text, lineage and findings, under the dialect's profile.
+        #[arg(long)]
+        analyse: bool,
     },
     /// Deep nesting in every native parser; fails on an unlisted crash or hang, or a stale entry.
     DepthProbe {

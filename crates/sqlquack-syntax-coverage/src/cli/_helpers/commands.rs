@@ -18,6 +18,7 @@ use crate::cli::_helpers::local::{frozen_catalogue, local_verdict, parser_tree};
 use crate::cli::_helpers::output::{print, say};
 use crate::cli::_helpers::worker::Worker;
 use crate::cli::models::{Common, TranslationArguments};
+use crate::depth::main::analysis_verdict::analysis_verdict;
 use crate::formats::constants::{SNAPSHOT_FORMAT, SNOWFLAKE_DIALECT};
 use crate::formats::main::current_dialect::current_dialect;
 use crate::formats::main::load_coverage::load_coverage;
@@ -56,14 +57,15 @@ const PARSE_MEMORY_KIB: u64 = 4 * 1024 * 1024;
 pub(crate) fn worker_command(
     binary: PathBuf,
     local_parser: LocalParser,
-    thread_stack: Option<usize>,
+    (thread_stack, analyse): (Option<usize>, bool),
 ) -> Box<dyn Fn() -> Command> {
     let parser: String = local_parser
         .to_possible_value()
         .map_or_else(String::new, |value| value.get_name().to_owned());
     let stack: String =
         thread_stack.map_or_else(String::new, |bytes| format!(" --thread-stack {bytes}"));
-    let worker: String = format!("parse-worker --parser {parser}{stack}");
+    let analysis: &str = if analyse { " --analyse" } else { "" };
+    let worker: String = format!("parse-worker --parser {parser}{stack}{analysis}");
     Box::new(move || {
         let mut command = Command::new("sh");
         command
@@ -105,7 +107,7 @@ fn checked(coverage: &SyntaxCoverage) -> Result<CheckResult, ExitCode> {
     })?;
     let local_parser: LocalParser = current_dialect().local_parser;
     let worker: RefCell<Worker> = RefCell::new(Worker::new(
-        worker_command(binary, local_parser, None),
+        worker_command(binary, local_parser, (None, false)),
         PARSE_BOUND,
     ));
     let parses: bool = local_verdict(local_parser).is_some();
@@ -548,8 +550,13 @@ fn on_thread(
 pub(crate) fn parse_worker(
     parser: LocalParser,
     thread_stack: Option<usize>,
+    analyse: bool,
 ) -> Result<ExitCode, ExitCode> {
-    let verdict_of: fn(&str) -> LocalVerdict = local_verdict(parser).ok_or(ExitCode::FAILURE)?;
+    let verdict_of: fn(&str) -> LocalVerdict = match analyse {
+        true => analysis_verdict(parser),
+        false => local_verdict(parser),
+    }
+    .ok_or(ExitCode::FAILURE)?;
     let stdout = std::io::stdout();
     for line in std::io::stdin().lock().lines() {
         let line: String = line.map_err(|_| ExitCode::FAILURE)?;

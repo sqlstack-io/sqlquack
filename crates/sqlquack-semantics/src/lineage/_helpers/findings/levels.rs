@@ -21,6 +21,7 @@ use crate::lineage::_helpers::tracing::queries::{
     level_scope, output_key, unannotated, with_ctes_visiting,
 };
 use crate::lineage::_helpers::tracing::resolution::key;
+use crate::lineage::_helpers::tracing::reuse::{Reuse, reusing};
 use crate::lineage::constants::CLICKHOUSE_PROFILE;
 use crate::lineage::constants::COLUMNS_FUNCTION;
 use crate::lineage::models::NameFinding;
@@ -44,6 +45,7 @@ fn query_findings_level(
 ) -> Vec<NameFinding> {
     let branches = |with: Option<&With>, left: &Expression, right: &Expression| {
         let (ctes, mut found) = visited_ctes((query, with), (ctes, outer, aliases), context);
+        let _reuse: Reuse = reusing(&ctes);
         let mut branches: Vec<NameFinding> = query_findings(left, (&ctes, outer, aliases), context);
         branches.extend(query_findings(right, (&ctes, outer, aliases), context));
         branches.append(&mut found);
@@ -198,6 +200,7 @@ fn select_findings(
         (ctes, outer, aliases),
         context,
     );
+    let _reuse: Reuse = reusing(&ctes);
     let mut scope: LineageScope<'_> = level_scope(select, &ctes, outer, context);
     let level = NodeLevel {
         scope: &scope,
@@ -231,6 +234,7 @@ fn select_findings(
                 .iter_mut()
                 .filter(|source| source.query.derived && source.key == derived)
                 .for_each(|source| source.query.faulted = true);
+            scope.traced.get_mut().clear();
         }
         nested.extend(body);
         own.extend(unpivot_findings(item, &ctes, context));

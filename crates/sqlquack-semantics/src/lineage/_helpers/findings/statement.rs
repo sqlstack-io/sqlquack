@@ -6,6 +6,7 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 
 use crate::lineage::_helpers::findings::levels::query_findings;
+use crate::lineage::_helpers::tracing::reuse::{Analysis, Reuse, analysing, reusing};
 use crate::lineage::constants::NAME_PHASE;
 use crate::lineage::models::{LineageContext, NameFinding};
 
@@ -15,7 +16,12 @@ pub(crate) fn statement_findings(
     context: LineageContext<'_>,
 ) -> Vec<NameFinding> {
     let mut distinct: Vec<NameFinding> = Vec::new();
-    for finding in query_findings(statement, (&[], None, &[]), context) {
+    let found: Vec<NameFinding> = {
+        let _analysis: Analysis = analysing();
+        let _reuse: Reuse = reusing(&[]);
+        query_findings(statement, (&[], None, &[]), context)
+    };
+    for finding in found {
         if !distinct.contains(&finding) {
             distinct.push(finding);
         }

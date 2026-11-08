@@ -4,11 +4,11 @@ use std::rc::Rc;
 
 use sqlquack_syntax::expressions::names::models::{Column, Identifier, Literal};
 use sqlquack_syntax::expressions::queries::models::Select;
-use sqlquack_syntax::{DataType, Expression, ExpressionWalk};
+use sqlquack_syntax::{DataType, Expression};
 
 use crate::dialects::main::canonical_type::canonical_type;
-use crate::lineage::_helpers::tracing::expressions::is_aggregate;
 use crate::lineage::_helpers::tracing::resolution::key;
+use crate::lineage::_helpers::tracing::reuse::holds_aggregate;
 use crate::lineage::_helpers::typing::bigquery_typing::{bigquery_literal_type, bigquery_type};
 use crate::lineage::_helpers::typing::clickhouse_typing::{
     clickhouse_literal_type, clickhouse_type,
@@ -413,11 +413,8 @@ fn common_type(
 
 /// The columns a level's WHERE requires `IS NOT NULL`, unless it aggregates without grouping.
 pub(crate) fn filtered_non_null(select: &Select) -> Vec<&Column> {
-    let aggregates_all: bool = select.group_by.is_none()
-        && select
-            .expressions
-            .iter()
-            .any(|projection| projection.dfs().any(is_aggregate));
+    let aggregates_all: bool =
+        select.group_by.is_none() && select.expressions.iter().any(holds_aggregate);
     match &select.where_clause {
         Some(filter) if !aggregates_all => non_null_conjuncts(&filter.this),
         _ => Vec::new(),

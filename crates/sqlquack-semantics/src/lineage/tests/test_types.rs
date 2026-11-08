@@ -190,3 +190,10 @@ pub(crate) struct DeepSqliteTestCase {
     pub(crate) sql: String,
     pub(crate) expected_result: Result<(usize, usize, usize), &'static str>,
 }
+
+/// A nesting analysed at two depths, and how many times the shallow work the deep may take.
+pub(crate) struct NestingWorkTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) shape: fn(usize) -> String,
+    pub(crate) expected_growth_at_most: usize,
+}

@@ -294,6 +294,20 @@ pub(crate) fn families(
     }
 }
 
+/// How many families `families` gives `query`, without typing a projection.
+pub(crate) fn width(query: &Expression) -> Option<usize> {
+    match unannotated(query) {
+        Expression::Select(select) => (!select
+            .expressions
+            .iter()
+            .any(|projection| matches!(unannotated(projection), Expression::Star(_))))
+        .then_some(select.expressions.len()),
+        Expression::Subquery(subquery) => width(&subquery.this),
+        Expression::Paren(paren) => width(&paren.this),
+        _ => None,
+    }
+}
+
 fn snowflake_findings(
     query: &Expression,
     branches: Branches<'_, '_>,

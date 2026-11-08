@@ -10,8 +10,9 @@ use sqlquack_syntax::expressions::operators::models::Parameter;
 use crate::dialects::main::canonical_type::canonical_type;
 use crate::dialects::main::clickhouse_type::clickhouse_type;
 use crate::lineage::_helpers::tracing::lineages::{combined, constant, traced_if, unresolved};
-use crate::lineage::_helpers::tracing::queries::{expanded_star, resolved_query};
+use crate::lineage::_helpers::tracing::queries::{empty_scope, expanded_star, resolved_query};
 use crate::lineage::_helpers::tracing::resolution::{column_lineage, key, positional_column};
+use crate::lineage::_helpers::tracing::reuse::worked;
 use crate::lineage::_helpers::typing::bigquery_typing::bigquery_cast_spelling;
 use crate::lineage::_helpers::typing::duckdb_types::cast_spelling;
 use crate::lineage::_helpers::typing::postgres_typing::postgres_cast_spelling;
@@ -35,9 +36,16 @@ pub(crate) fn expression_lineage(
     scope: &LineageScope<'_>,
     context: LineageContext<'_>,
 ) -> Lineage {
-    crate::lineage::_helpers::tracing::stack::deeper(|| {
+    let node: usize = std::ptr::from_ref(expression) as usize;
+    if let Some(traced) = scope.traced.borrow().get(&node) {
+        return traced.clone();
+    }
+    worked();
+    let lineage: Lineage = crate::lineage::_helpers::tracing::stack::deeper(|| {
         expression_lineage_level(expression, scope, context)
-    })
+    });
+    scope.traced.borrow_mut().insert(node, lineage.clone());
+    lineage
 }
 
 fn expression_lineage_level(
@@ -142,14 +150,8 @@ fn expression_lineage_level(
                 .map(|parameter| key(parameter, context))
                 .collect();
             let inner = LineageScope {
-                sources: Vec::new(),
-                ctes: scope.ctes,
-                outer: Some(scope),
-                aliases: Vec::new(),
                 lambda_names: names,
-                merged: Vec::new(),
-                windows: Vec::new(),
-                non_null: Vec::new(),
+                ..empty_scope(scope.ctes, Some(scope))
             };
             expression_lineage(&lambda.body, &inner, context)
         }

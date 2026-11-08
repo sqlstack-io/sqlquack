@@ -11,9 +11,12 @@ use serde_json::json;
 use crate::cli::_helpers::commands::worker_command;
 use crate::cli::_helpers::output::{print, say};
 use crate::cli::_helpers::worker::Worker;
-use crate::depth::constants::{PROBE_BOUND, PROBE_STACK_BYTES, PROBED_PARSERS};
+use crate::depth::constants::{
+    ANALYSIS_BOUND, ANALYSIS_LADDER, DEPTH_LADDER, PROBE_BOUND, PROBE_STACK_BYTES, PROBED_PARSERS,
+};
 use crate::depth::main::compare_allowlist::compare_allowlist;
 use crate::depth::main::probe_construct::probe_construct;
+use crate::depth::main::probed_analyses::probed_analyses;
 use crate::depth::main::probed_constructs::probed_constructs;
 use crate::depth::models::{Allowlist, Construct, ConstructResult, DepthReport};
 use crate::formats::models::LocalParser;
@@ -28,12 +31,15 @@ fn read_allowlist(path: &Path) -> Result<Allowlist, ExitCode> {
         })
 }
 
-/// Every construct of every probed parser, probed by `jobs` threads each with its own worker.
+/// Every construct, and analysed construct, of every probed parser, on `jobs` threads.
 fn probe_all(binary: &Path, jobs: usize) -> Vec<ConstructResult> {
-    let mut tasks: Vec<(LocalParser, Construct)> = Vec::new();
+    let mut tasks: Vec<(LocalParser, Construct, bool)> = Vec::new();
     for parser in PROBED_PARSERS {
         for construct in probed_constructs(parser) {
-            tasks.push((parser, construct));
+            tasks.push((parser, construct, false));
+        }
+        for construct in probed_analyses(parser) {
+            tasks.push((parser, construct, true));
         }
     }
     let next: AtomicUsize = AtomicUsize::new(0);
@@ -43,15 +49,29 @@ fn probe_all(binary: &Path, jobs: usize) -> Vec<ConstructResult> {
             scope.spawn(|| {
                 loop {
                     let index: usize = next.fetch_add(1, Ordering::SeqCst);
-                    let Some(&(parser, construct)) = tasks.get(index) else {
+                    let Some(&(parser, construct, analyse)) = tasks.get(index) else {
                         break;
                     };
                     let mut worker: Worker = Worker::new(
-                        worker_command(binary.to_path_buf(), parser, Some(PROBE_STACK_BYTES)),
-                        PROBE_BOUND,
+                        worker_command(
+                            binary.to_path_buf(),
+                            parser,
+                            (Some(PROBE_STACK_BYTES), analyse),
+                        ),
+                        if analyse { ANALYSIS_BOUND } else { PROBE_BOUND },
                     );
-                    let result: ConstructResult =
-                        probe_construct(parser, &construct, &mut |sql| worker.verdict(sql));
+                    let result: ConstructResult = probe_construct(
+                        (
+                            parser,
+                            if analyse {
+                                &ANALYSIS_LADDER
+                            } else {
+                                &DEPTH_LADDER
+                            },
+                        ),
+                        &construct,
+                        &mut |sql| worker.verdict(sql),
+                    );
                     if let Ok(mut all) = results.lock()
                         && let Some(slot) = all.get_mut(index)
                     {
@@ -99,7 +119,7 @@ pub(crate) fn depth_probe(
     let mut report: DepthReport = compare_allowlist(&results, &known, profile);
     let expected: usize = PROBED_PARSERS
         .iter()
-        .map(|&parser| probed_constructs(parser).len())
+        .map(|&parser| probed_constructs(parser).len() + probed_analyses(parser).len())
         .sum();
     if results.len() != expected {
         report.problems.push(format!(

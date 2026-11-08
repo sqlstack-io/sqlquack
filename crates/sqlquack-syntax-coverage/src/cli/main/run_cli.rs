@@ -45,7 +45,8 @@ pub fn run_cli() -> ExitCode {
         Command::ParseWorker {
             parser,
             thread_stack,
-        } => parse_worker(parser, thread_stack),
+            analyse,
+        } => parse_worker(parser, thread_stack, analyse),
         Command::DepthProbe {
             profile,
             allowlist,

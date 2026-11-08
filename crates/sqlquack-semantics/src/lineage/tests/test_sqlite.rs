@@ -7,10 +7,10 @@ use crate::lineage::_helpers::findings::statement::statement_findings;
 use crate::lineage::models::{LineageContext, Nullability};
 use crate::lineage::tests::helpers::{
     deep_sqlite_analysis, found_findings, generic_calls, nested_derived_tables, owned_findings,
-    sqlite_outputs, sqlite_shop_schema,
+    sqlite_analysis_work, sqlite_outputs, sqlite_shop_schema,
 };
 use crate::lineage::tests::test_types::{
-    DeepSqliteTestCase, QueryFindingsTestCase, SqliteOutputsTestCase,
+    DeepSqliteTestCase, NestingWorkTestCase, QueryFindingsTestCase, SqliteOutputsTestCase,
 };
 
 #[test]
@@ -302,6 +302,74 @@ fn given_a_sqlite_tree_nested_to_the_parser_limit_when_analysed_on_a_small_stack
             deep_sqlite_analysis(test_case.sql),
             test_case.expected_result.map_err(str::to_owned),
             "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_sqlite_nesting_when_analysed_twice_as_deep_then_the_work_at_most_doubles() {
+    let test_cases = [
+        NestingWorkTestCase {
+            description: "derived tables, each filtered on the one inside",
+            shape: |depth| {
+                (0..depth).fold("SELECT id FROM orders".to_owned(), |query, _| {
+                    format!("SELECT * FROM ({query}) AS t WHERE t.id > 0")
+                })
+            },
+            expected_growth_at_most: 2,
+        },
+        NestingWorkTestCase {
+            description: "a UNION ALL chain, each branch reading the chain inside",
+            shape: |depth| {
+                (0..depth).fold("SELECT id FROM orders".to_owned(), |query, _| {
+                    format!("SELECT id FROM orders UNION ALL SELECT * FROM ({query}) AS t")
+                })
+            },
+            expected_growth_at_most: 2,
+        },
+        NestingWorkTestCase {
+            description: "joins, each on the one before",
+            shape: |depth| {
+                let joined: String = (1..=depth)
+                    .map(|index| {
+                        format!(
+                            " JOIN orders AS o{index} ON o{index}.id = o{}.id",
+                            index - 1
+                        )
+                    })
+                    .collect();
+                format!("SELECT o0.id FROM orders AS o0{joined}")
+            },
+            expected_growth_at_most: 2,
+        },
+        NestingWorkTestCase {
+            description: "CASE nested in its THEN",
+            shape: |depth| {
+                let value: String = (0..depth).fold("id".to_owned(), |value, _| {
+                    format!("CASE WHEN quantity > 0 THEN {value} ELSE 0 END")
+                });
+                format!("SELECT {value} AS x FROM orders")
+            },
+            expected_growth_at_most: 2,
+        },
+        NestingWorkTestCase {
+            description: "scalar subqueries, each projecting the one inside",
+            shape: |depth| {
+                let value: String = (0..depth).fold("id".to_owned(), |value, _| {
+                    format!("(SELECT {value} FROM orders AS o LIMIT 1)")
+                });
+                format!("SELECT {value} AS x FROM orders")
+            },
+            expected_growth_at_most: 2,
+        },
+    ];
+    for test_case in test_cases {
+        let shallow: usize = sqlite_analysis_work((test_case.shape)(200));
+        let deep: usize = sqlite_analysis_work((test_case.shape)(400));
+        assert!(
+            deep <= shallow * test_case.expected_growth_at_most,
+            "{}: {shallow} resolutions and traces at 200 levels, {deep} at 400",
             test_case.description
         );
     }

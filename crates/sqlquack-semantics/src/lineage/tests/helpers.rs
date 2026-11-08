@@ -764,6 +764,31 @@ pub(crate) fn deep_sqlite_analysis(sql: String) -> Result<(usize, usize, usize),
         .unwrap_or_else(|_| panic!("the analysis thread panicked"))
 }
 
+/// The queries resolved and expressions traced analysing `sql` on a 2 MiB thread.
+pub(crate) fn sqlite_analysis_work(sql: String) -> usize {
+    std::thread::Builder::new()
+        .stack_size(2 * 1024 * 1024)
+        .spawn(move || {
+            let parsed = sqlquack_syntax_sqlite::parse(&sql).unwrap_or_else(|error| {
+                panic!("{}", error.message);
+            });
+            let schema: TypedShopSchema = sqlite_shop_schema();
+            let context = LineageContext {
+                profile: &SQLITE,
+                schema: &schema,
+                sql: Some(&sql),
+            };
+            let statement: &sqlquack_syntax::Expression = &parsed.statements[0];
+            crate::lineage::_helpers::tracing::reuse::work_done();
+            crate::statement_lineage(statement, context);
+            crate::statement_name_findings(statement, context);
+            crate::lineage::_helpers::tracing::reuse::work_done()
+        })
+        .unwrap_or_else(|error| panic!("{error}"))
+        .join()
+        .unwrap_or_else(|_| panic!("the analysis thread panicked"))
+}
+
 /// The number of levels in the tree under `root`, counted level by level without recursion.
 fn tree_depth(root: &sqlquack_syntax::Expression) -> usize {
     use sqlquack_syntax::ExpressionWalk;
