@@ -95,7 +95,10 @@ impl<'a> Locator<'a> {
     ) -> (String, BTreeMap<String, Vec<SourceLocation>>) {
         let sql = self.identified(sql, node);
         let mut raises = self.raises.borrow().clone();
-        raises.retain(|id, _| sql.contains(&format!("{RAISE_ID_MARKER}{id}{TAG_END}")));
+        raises.retain(|id, _| {
+            sql.contains(&format!("{RAISE_ID_MARKER}{id}{TAG_END}"))
+                || sql.contains(&format!("'{RAISE_ID_MARKER}{id}'"))
+        });
         (sql, raises)
     }
 

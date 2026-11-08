@@ -1,6 +1,6 @@
 [
 	{ "label": "Getting Started", "items": ["docs", "docs/quickstart"] },
-	{ "label": "Concepts", "items": ["docs/project", "docs/policy", "docs/coverage"] },
+	{ "label": "Concepts", "items": ["docs/project", "docs/policy", "docs/helper-macros", "docs/coverage"] },
 	{
 		"label": "Diagnostics",
 		"items": [

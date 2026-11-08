@@ -24,6 +24,8 @@ mod test_function;
 mod test_output_names;
 #[path = "cli/test_project.rs"]
 mod test_project;
+#[path = "cli/test_read_check.rs"]
+mod test_read_check;
 #[path = "cli/test_review.rs"]
 mod test_review;
 #[path = "cli/test_run.rs"]

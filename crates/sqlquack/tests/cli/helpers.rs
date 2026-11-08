@@ -76,8 +76,9 @@ pub(crate) fn converted_column_names(sql: &str, flags: &[&str]) -> Vec<String> {
         .expect("sqlquack runs");
     let converted = String::from_utf8_lossy(&output.stdout);
     let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    let query = after_setup(&connection, &converted);
     let mut statement = connection
-        .prepare(converted.trim())
+        .prepare(query)
         .expect("the converted statement prepares");
     let _ = statement.query([]).expect("the converted statement runs");
     statement.column_names()
@@ -99,8 +100,9 @@ pub(crate) fn converted_run_error(sql: &str) -> Option<String> {
     connection
         .execute_batch("SET TimeZone = 'UTC'")
         .expect("UTC session");
+    let query = after_setup(&connection, &converted);
     connection
-        .prepare(converted.trim())
+        .prepare(query)
         .and_then(|mut statement| {
             statement
                 .query_map([], |_| Ok(()))
@@ -123,31 +125,58 @@ pub(crate) fn converted_first_value(sql: &str) -> String {
         .expect("sqlquack runs");
     let converted = String::from_utf8_lossy(&output.stdout);
     let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    let query = after_setup(&connection, &converted);
     connection
-        .query_row(converted.trim(), [], |row| row.get::<_, String>(0))
+        .query_row(query, [], |row| row.get::<_, String>(0))
         .expect("the converted statement returns a text value")
 }
 
+/// Runs the setup statements `convert` prints ahead of its SQL and returns the SQL after them.
+fn after_setup<'a>(connection: &duckdb::Connection, converted: &'a str) -> &'a str {
+    let (setup, query) = converted
+        .trim()
+        .rsplit_once(";\n")
+        .unwrap_or(("", converted.trim()));
+    connection
+        .execute_batch(setup)
+        .expect("the setup statements run");
+    query
+}
+
 /// The first value the converted `sql` returns over the source file `sources`, its tables made by `setup` on DuckDB.
-pub(crate) fn converted_value_over(sql: &str, (sources, setup): (&str, &str)) -> String {
+pub(crate) fn converted_value_over(sql: &str, tables: (&str, &str)) -> String {
+    converted_result_over(sql, tables).expect("the converted statement returns a text value")
+}
+
+/// The first value `sql` returns, converted and run after `setup` and its macros, or DuckDB's error.
+pub(crate) fn converted_result_over(
+    sql: &str,
+    (sources, setup): (&str, &str),
+) -> Result<String, String> {
     let directory = tempfile::tempdir().expect("temporary directory");
     std::fs::write(directory.path().join("query.sql"), sql).expect("query written");
     write_project_file(directory.path(), "sources/tables.yml", sources);
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .arg("convert")
-        .arg("--policy")
+        .args(["convert", "--json", "--policy"])
         .arg(repository_root().join("sqlquack.toml"))
         .arg("--project")
         .arg(directory.path())
         .arg(directory.path().join("query.sql"))
         .output()
         .expect("sqlquack runs");
-    let converted = String::from_utf8_lossy(&output.stdout);
+    let report: serde_json::Value = serde_json::from_slice(&output.stdout).expect("a JSON report");
     let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
     connection.execute_batch(setup).expect("tables made");
+    for statement in report["macros"].as_array().expect("macros listed") {
+        connection
+            .execute_batch(statement.as_str().unwrap_or_default())
+            .expect("the macro is made");
+    }
     connection
-        .query_row(converted.trim(), [], |row| row.get::<_, String>(0))
-        .expect("the converted statement returns a text value")
+        .query_row(report["sql"].as_str().unwrap_or_default(), [], |row| {
+            row.get::<_, String>(0)
+        })
+        .map_err(|error| error.to_string())
 }
 
 /// The exit code and standard error of converting `sql` with the override `definition`.
@@ -579,6 +608,11 @@ fn macro_values(converted: &serde_json::Value, macro_body: &str, call: &str) -> 
         })
         .unwrap_or_default();
     let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    for statement in converted["macros"].as_array().into_iter().flatten() {
+        connection
+            .execute_batch(statement.as_str().unwrap_or_default())
+            .expect("a helper macro is created");
+    }
     connection
         .execute_batch(&format!(
             "CREATE TABLE \"__SQLQUACK_RELATION__FEES\" AS \
@@ -795,7 +829,10 @@ pub(crate) fn run_convert(sql: &str, flags: &[&str], mention: &str) -> ConvertOu
     let json: serde_json::Value = serde_json::from_str(&stdout).unwrap_or_default();
     ConvertOutcome {
         exit_code: output.status.code(),
-        printed_sql: stdout.starts_with("SELECT") || stdout.starts_with("WITH"),
+        printed_sql: stdout
+            .lines()
+            .find(|line| !line.starts_with("CREATE "))
+            .is_some_and(|line| line.starts_with("SELECT") || line.starts_with("WITH")),
         json_converted: json["converted"].as_bool(),
         stderr_mentions: String::from_utf8_lossy(&output.stderr).contains(mention),
     }
@@ -853,8 +890,14 @@ pub(crate) fn python_outcome(
         time_zone: "UTC".to_owned(),
         null_order: "nulls_last".to_owned(),
     };
+    let macros: Vec<String> = report["macros"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter_map(|statement| statement.as_str().map(str::to_owned))
+        .collect();
     let rows = replay_on_duckdb(
-        (&[], report["sql"].as_str().unwrap_or_default()),
+        (&macros, report["sql"].as_str().unwrap_or_default()),
         Some(&replay),
         &settings,
     )?;

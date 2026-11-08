@@ -27,6 +27,7 @@ use sqlquack_duckdb_blocks::blocks::main::column_type::column_type;
 use sqlquack_duckdb_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_duckdb_blocks::checking::constants::SEMI_STRUCTURED_HOLDING_TYPE;
 use sqlquack_duckdb_blocks::layout::main::layout_sql::layout_sql;
+use sqlquack_duckdb_blocks::macros::main::helper_statements::helper_statements;
 use sqlquack_policy::policy::models::Policy;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::conversion::main::convert_statement::convert_statement;
@@ -384,6 +385,8 @@ fn report(sql: &str, sources: &str, settings: &str) -> Value {
                 }).collect::<Vec<_>>(),
                 // Where each raise ID in the SQL comes from, so a run's error points at the source.
                 "raises": done.raises,
+                // The helper macros the SQL calls, which the page creates before running it.
+                "setup": helper_statements(&[done.sql.as_str()]),
             })),
             Err(refusal) => refusals.push(placed(refusal, statement, &lines)),
         }

@@ -33,11 +33,21 @@ fn given_a_code_when_explained_then_its_title_help_and_example_print_or_the_comm
             expected_stderr_mention: "",
         },
         ExplainTestCase {
+            description: "a helper macro prints its call, what it computes and its definition",
+            code: "sqlquack.variant_text_v1",
+            expected_exit_code: Some(0),
+            expected_stdout_mentions: &[
+                "sqlquack.variant_text_v1(quack_site, quack_value): helper macro",
+                "CREATE OR REPLACE MACRO sqlquack.json_escaped_v1(",
+            ],
+            expected_stderr_mention: "",
+        },
+        ExplainTestCase {
             description: "an unregistered code exits 2 and says so",
             code: "SQ9999",
             expected_exit_code: Some(2),
             expected_stdout_mentions: &[],
-            expected_stderr_mention: "sqlquack explain: no diagnostic code, name or former name is `SQ9999`",
+            expected_stderr_mention: "sqlquack explain: no diagnostic code, name, former name or helper macro is `SQ9999`",
         },
     ];
     let directory = tempfile::tempdir().expect("temporary directory");

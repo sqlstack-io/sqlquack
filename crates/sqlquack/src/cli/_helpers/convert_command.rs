@@ -13,6 +13,7 @@ use sqlquack_core::diagnostics::models::{Diagnostic, Palette};
 use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb_blocks::layout::main::layout_sql::layout_sql;
+use sqlquack_duckdb_blocks::macros::main::explain_helper::explain_helper;
 use sqlquack_policy::policy::constants::{
     CURRENT_TIME, SESSION_TIME_ZONE, SESSION_TIMEZONE_UTC, TIMEZONE_PARAMETER,
 };
@@ -26,6 +27,7 @@ use crate::analysis::main::check_source::check_source;
 use crate::analysis::main::override_macros::override_macros;
 use crate::analysis::main::python_functions::python_functions;
 use crate::analysis::main::refused_construct::refused_construct;
+use crate::analysis::main::with_helpers::with_helpers;
 use crate::analysis::main::with_overrides::with_overrides;
 use crate::cli::_helpers::evidence::caller_choices;
 use crate::cli::_helpers::project::project_choices;
@@ -291,7 +293,7 @@ pub(crate) fn explain_command(
     stdout: &mut dyn Write,
     stderr: &mut dyn Write,
 ) -> ExitCode {
-    match explain_code(&arguments.code) {
+    match explain_code(&arguments.code).or_else(|| explain_helper(&arguments.code)) {
         Some(text) => {
             let _ = write!(stdout, "{text}");
             ExitCode::SUCCESS
@@ -299,7 +301,7 @@ pub(crate) fn explain_command(
         None => {
             let _ = writeln!(
                 stderr,
-                "sqlquack explain: no diagnostic code, name or former name is `{}`",
+                "sqlquack explain: no diagnostic code, name, former name or helper macro is `{}`",
                 arguments.code
             );
             ExitCode::from(2)
@@ -459,23 +461,28 @@ pub(crate) fn analysis_report(
                 .map(|divergence| divergence.reason.clone()),
         )
         .collect();
+    let converted_sql = match converted {
+        true => analysis
+            .conversions
+            .iter()
+            .map(|done| match compact {
+                true => done.sql.clone(),
+                false => layout_sql(&done.sql),
+            })
+            .collect::<Vec<String>>()
+            .join(";\n"),
+        false => String::new(),
+    };
+    let macros = with_helpers(
+        override_macros(&provenance.divergences, options),
+        &converted_sql,
+    );
     Ok(ConvertReport {
         converted,
         profile,
         notes,
         warnings: Vec::new(),
-        sql: match converted {
-            true => analysis
-                .conversions
-                .iter()
-                .map(|done| match compact {
-                    true => done.sql.clone(),
-                    false => layout_sql(&done.sql),
-                })
-                .collect::<Vec<String>>()
-                .join(";\n"),
-            false => String::new(),
-        },
+        sql: converted_sql,
         refusals: analysis
             .refusals
             .iter()
@@ -487,7 +494,7 @@ pub(crate) fn analysis_report(
             .map(convert_refusal)
             .collect(),
         python_functions: python_functions(&provenance.divergences, schema)?,
-        macros: override_macros(&provenance.divergences, options),
+        macros,
         overrides: override_listings(options),
         divergences: listed(provenance.divergences),
         assumptions,

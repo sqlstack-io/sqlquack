@@ -23,7 +23,9 @@ function's query. Use `-` to read standard input. The function, its arguments an
 the tables its body reads are declared in the [project](/docs/project/#functions) in the current
 folder.
 
-A converted body prints the macro's parameters and body. A refused body prints
+A converted body prints the macro's parameters and body, and under `macros` the statements
+creating the [helper macros](/docs/helper-macros/) the body calls, to run before you create the
+macro; the list is empty when it calls none. A refused body prints
 `{"converted": false, "name": …, "refusals": [diagnostics]}` instead, with the same diagnostics
 on standard error.
 

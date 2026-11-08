@@ -1,5 +1,6 @@
 use sqlquack_core::provenance::models::ProvenanceLog;
 
+use crate::macros::main::helper_statements::helper_statements;
 use crate::semi_structured::main::json_guarded::json_guarded;
 use crate::semi_structured::main::json_serialized::json_serialized;
 
@@ -21,12 +22,17 @@ pub(crate) fn sorted_document(depth: usize) -> String {
 pub(crate) fn written_sql(document: &str) -> String {
     let log = ProvenanceLog::default();
     let literal = format!("'{}'", document.replace('\'', "''"));
-    json_serialized(&json_guarded(&literal, false, &log), &log)
+    json_serialized(&json_guarded(&literal, false, None, &log), &log)
 }
 
 /// What DuckDB returns for `sql`, and its error when it raises.
 pub(crate) fn evaluated(sql: &str) -> (Option<String>, Option<String>) {
     let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    for statement in helper_statements(&[sql]) {
+        connection
+            .execute_batch(&statement)
+            .expect("the helper macros are created");
+    }
     connection
         .query_row(&format!("SELECT {sql}"), [], |row| {
             row.get::<_, Option<String>>(0)

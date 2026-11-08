@@ -236,6 +236,7 @@ pub(crate) fn as_json(
             Ok(json_guarded(
                 &format!("CAST({sql} AS VARCHAR)"),
                 false,
+                None,
                 context.log,
             ))
         }

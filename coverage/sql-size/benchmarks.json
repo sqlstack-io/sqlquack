@@ -3,22 +3,22 @@
   "rows": 1000000,
   "workloads": {
     "variant_one_field": {
-      "sql_bytes": 5845,
-      "seconds": 3.94,
+      "sql_bytes": 288,
+      "seconds": 1.44,
       "reference_seconds": 0.039,
-      "ratio": 102.0
+      "ratio": 36.7
     },
     "variant_staging": {
-      "sql_bytes": 19330,
-      "seconds": 4.745,
-      "reference_seconds": 0.223,
-      "ratio": 21.3
+      "sql_bytes": 970,
+      "seconds": 3.31,
+      "reference_seconds": 0.232,
+      "ratio": 14.3
     },
     "decimal_divide": {
       "sql_bytes": 4239,
-      "seconds": 6.792,
-      "reference_seconds": 0.037,
-      "ratio": 181.6
+      "seconds": 6.956,
+      "reference_seconds": 0.038,
+      "ratio": 184.8
     }
   }
 }

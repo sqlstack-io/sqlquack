@@ -15,6 +15,7 @@ use sqlquack_duckdb_blocks::blocks::main::text_to_float::text_to_float;
 use sqlquack_duckdb_blocks::blocks::main::text_to_number::text_to_number;
 use sqlquack_duckdb_blocks::blocks::main::varchar_length_check::varchar_length_check;
 use sqlquack_duckdb_blocks::blocks::main::varchar_length_try::varchar_length_try;
+use sqlquack_duckdb_blocks::blocks::models::NumberText;
 use sqlquack_duckdb_blocks::floats::constants::FLOAT_DECIMAL_DIGITS;
 use sqlquack_duckdb_blocks::floats::main::float_to_decimal::float_to_decimal;
 use sqlquack_duckdb_blocks::floats::main::float_to_text::float_to_text;
@@ -285,7 +286,11 @@ fn cast_sql(
         }
         (SnowflakeType::Varchar, SnowflakeType::Number { .. }, _) => {
             let _rule = cast_rule(CAST_PARSED_TEXT, log);
-            text_to_number(&operand.sql, to, text_failure(trying), log)
+            text_to_number(
+                &operand.sql,
+                NumberText::Typed(to, text_failure(trying)),
+                log,
+            )
         }
         (SnowflakeType::Varchar, SnowflakeType::Float, _) => {
             let _rule = cast_rule(CAST_PARSED_TEXT, log);

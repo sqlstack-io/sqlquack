@@ -91,7 +91,9 @@ With `--json`, `convert` prints one object:
 }
 ```
 
-`sql` is laid out as the text output prints it, or on one line with `--compact`. A refusal in
+`sql` is laid out as the text output prints it, or on one line with `--compact`. `macros` lists
+the statements to run first, in order: those creating the [helper macros](/docs/helper-macros/)
+the SQL calls, then your override macros. The text output prints them ahead of the SQL. A refusal in
 `refusals` carries the same [diagnostic fields](/docs/diagnostics/overview/#json-output).
 
 ## Exit status
