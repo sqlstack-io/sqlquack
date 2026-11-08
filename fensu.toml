@@ -58,7 +58,7 @@ tooling = [
   "crates/sqlquack-rules",
   "crates/sqlquack-duckdb-blocks",
   "crates/sqlquack-evidence",
-  "crates/sqlquack-format-check",
+  "tools/sqlquack-format-check",
   "crates/sqlquack-compare",
   "crates/sqlquack-policy",
 ]

@@ -8,7 +8,8 @@ use crate::columns::tests::test_types;
 /// Lets DuckDB 2.0 bind `->` lambdas, which it otherwise refuses at bind.
 const SINGLE_ARROW_LAMBDAS: &str = "SET lambda_syntax = 'ENABLE_SINGLE_ARROW'";
 /// The format corpus, beside the formatter's own corpus test.
-const FORMAT_CORPUS: &str = "../sqlquack-format/src/format/tests/fixtures/format_corpus.json";
+const FORMAT_CORPUS: &str =
+    "../../crates/sqlquack-format/src/format/tests/fixtures/format_corpus.json";
 
 #[test]
 fn given_duckdb_queries_when_laid_out_then_duckdb_binds_the_same_output_columns() {

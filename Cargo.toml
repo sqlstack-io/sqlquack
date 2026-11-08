@@ -20,7 +20,7 @@ members = [
     "crates/sqlquack-syntax-sqlite",
     "crates/sqlquack-fingerprint",
     "crates/sqlquack-format",
-    "crates/sqlquack-format-check",
+    "tools/sqlquack-format-check",
     "crates/sqlquack-syntax-duckdb",
     "crates/sqlquack-syntax-databricks",
     "crates/sqlquack-syntax-clickhouse",
