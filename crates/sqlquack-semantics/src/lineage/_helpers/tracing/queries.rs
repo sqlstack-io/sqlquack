@@ -743,13 +743,22 @@ pub(crate) fn expanded_star(
         .filter(|source| source.query.open)
         .collect();
     let mut columns: Vec<ScopedColumn> = Vec::new();
-    let offered = keys.into_iter().chain(
-        selected
-            .iter()
-            .flat_map(|source| source.query.columns.iter())
-            .filter(|column| !listed(&merged_keys, &column.key, context)),
-    );
-    for column in offered {
+    let in_place: bool = matches!(context.profile.name(), DUCKDB_PROFILE | SQLITE_PROFILE);
+    let offered: Vec<ScopedColumn> = match in_place {
+        true => keys_in_place(&keys, &selected, context),
+        false => keys
+            .into_iter()
+            .cloned()
+            .chain(
+                selected
+                    .iter()
+                    .flat_map(|source| source.query.columns.iter())
+                    .filter(|column| !listed(&merged_keys, &column.key, context))
+                    .cloned(),
+            )
+            .collect(),
+    };
+    for column in &offered {
         if !listed(&excluded, &column.key, context) {
             columns.push(star_column(column, star, scope, context));
         }
@@ -772,6 +781,52 @@ pub(crate) fn expanded_star(
         derived: false,
         faulted: false,
     }
+}
+
+/// DuckDB's and SQLite's star: each join key once, where and as its first source offers it.
+fn keys_in_place(
+    keys: &[&ScopedColumn],
+    selected: &[&ScopeSource],
+    context: LineageContext<'_>,
+) -> Vec<ScopedColumn> {
+    let offered: Vec<&ScopedColumn> = selected
+        .iter()
+        .flat_map(|source| source.query.columns.iter())
+        .collect();
+    let mut columns: Vec<ScopedColumn> = Vec::new();
+    for merged in keys {
+        if same_key(&offered, merged, context).is_none() {
+            columns.push((*merged).clone());
+        }
+    }
+    let mut placed: Vec<&ScopedColumn> = Vec::new();
+    for column in offered {
+        match same_key(keys, column, context) {
+            Some(merged) if same_key(&placed, merged, context).is_some() => {}
+            Some(merged) => {
+                placed.push(merged);
+                columns.push(ScopedColumn {
+                    name: column.name.clone(),
+                    key: column.key.clone(),
+                    lineage: merged.lineage.clone(),
+                });
+            }
+            None => columns.push(column.clone()),
+        }
+    }
+    columns
+}
+
+/// The first of `columns` naming the same key as `column`.
+fn same_key<'a>(
+    columns: &[&'a ScopedColumn],
+    column: &ScopedColumn,
+    context: LineageContext<'_>,
+) -> Option<&'a ScopedColumn> {
+    columns
+        .iter()
+        .find(|candidate| context.profile.same_identifier(&candidate.key, &column.key))
+        .copied()
 }
 
 fn star_column(

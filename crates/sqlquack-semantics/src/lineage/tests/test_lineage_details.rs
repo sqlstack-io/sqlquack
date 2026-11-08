@@ -1,6 +1,6 @@
 use sqlquack_syntax::{Dialect, ParseOptions};
 
-use crate::dialects::constants::{DUCKDB, SNOWFLAKE};
+use crate::dialects::constants::{DUCKDB, SNOWFLAKE, SQLITE};
 use crate::lineage::main::query_lineage::query_lineage;
 use crate::lineage::models::{LineageContext, TransformKind};
 use crate::lineage::tests::helpers::{shop_schema, written};
@@ -201,6 +201,54 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
                     "COUNTRY",
                     TransformKind::Direct,
                     &["CUSTOMERS.COUNTRY"],
+                    true,
+                ),
+                (
+                    "CUSTOMER_ID",
+                    TransformKind::Direct,
+                    &["ORDERS.CUSTOMER_ID"],
+                    true,
+                ),
+                ("AMOUNT", TransformKind::Direct, &["ORDERS.AMOUNT"], true),
+                ("ITEMS", TransformKind::Direct, &["ORDERS.ITEMS"], true),
+                ("STATUS", TransformKind::Direct, &["ORDERS.STATUS"], true),
+            ],
+            expected_row_sources: &["CUSTOMERS.ID", "ORDERS.ID"],
+            expected_rows_resolved: true,
+        },
+        LineageDetailTestCase {
+            description: "DuckDB's star keeps a USING key where the left side offers it",
+            sql: "SELECT * FROM ORDERS JOIN (SELECT id AS customer_id, name FROM CUSTOMERS) c \
+                  USING (customer_id)",
+            dialect: Dialect::DuckDB,
+            profile: &DUCKDB,
+            expected_outputs: &[
+                ("ID", TransformKind::Direct, &["ORDERS.ID"], true),
+                (
+                    "CUSTOMER_ID",
+                    TransformKind::Direct,
+                    &["ORDERS.CUSTOMER_ID"],
+                    true,
+                ),
+                ("AMOUNT", TransformKind::Direct, &["ORDERS.AMOUNT"], true),
+                ("ITEMS", TransformKind::Direct, &["ORDERS.ITEMS"], true),
+                ("STATUS", TransformKind::Direct, &["ORDERS.STATUS"], true),
+                ("name", TransformKind::Direct, &["CUSTOMERS.NAME"], true),
+            ],
+            expected_row_sources: &["CUSTOMERS.ID", "ORDERS.CUSTOMER_ID"],
+            expected_rows_resolved: true,
+        },
+        LineageDetailTestCase {
+            description: "SQLite's star keeps a FULL join's USING key in place, over both sides",
+            sql: "SELECT * FROM (SELECT name, id FROM CUSTOMERS) c FULL JOIN ORDERS USING (id)",
+            dialect: Dialect::SQLite,
+            profile: &SQLITE,
+            expected_outputs: &[
+                ("name", TransformKind::Direct, &["CUSTOMERS.NAME"], true),
+                (
+                    "id",
+                    TransformKind::Expression,
+                    &["CUSTOMERS.ID", "ORDERS.ID"],
                     true,
                 ),
                 (
