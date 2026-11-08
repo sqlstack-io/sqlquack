@@ -146,3 +146,40 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_the_tree_keeps_
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_create_without_a_complete_kind_when_parsing_then_it_is_refused() {
+    let test_cases = [
+        AcceptanceTestCase { description: "an account needs its kind (recorded syntax error)", sql: "CREATE v1 ADMIN_NAME = 'm' ADMIN_PASSWORD = 'm' EMAIL = 'm' EDITION = STANDARD ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "an application needs its source (recorded syntax error)", sql: "CREATE APPLICATION v1 ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "CREATE OR ALTER of an application needs its source (recorded syntax error)", sql: "CREATE OR ALTER APPLICATION v1 ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a lone name is no statement (recorded syntax error)", sql: "CREATE v1 ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a profile is an organization profile (recorded syntax error)", sql: "CREATE PROFILE v1 AS 'm' ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a profile from a stage is an organization profile (recorded syntax error)", sql: "CREATE PROFILE v1 FROM @d1.s1.st1/p1 ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a bare profile is an organization profile (recorded syntax error)", sql: "CREATE PROFILE v1 ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "PACKAGES needs POLICY (recorded syntax error)", sql: "CREATE PACKAGES v1 LANGUAGE PYTHON ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "POLICY needs its kind (recorded syntax error)", sql: "CREATE POLICY v1 LANGUAGE PYTHON ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "CREATE OR ALTER of a lone name (recorded syntax error)", sql: "CREATE OR ALTER v1 ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "CREATE OR ALTER of a secret needs its kind (recorded syntax error)", sql: "CREATE OR ALTER v1 TYPE = CLOUD_PROVIDER_TOKEN API_AUTHENTICATION = 'm' ENABLED = TRUE ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a cloud provider token secret needs its kind (recorded syntax error)", sql: "CREATE v1 TYPE = CLOUD_PROVIDER_TOKEN API_AUTHENTICATION = 'm' ENABLED = TRUE ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a generic string secret needs its kind (recorded syntax error)", sql: "CREATE v1 TYPE = GENERIC_STRING SECRET_STRING = 'm' ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "an OAuth secret needs its kind (recorded syntax error)", sql: "CREATE v1 TYPE = OAUTH2 API_AUTHENTICATION = v1 OAUTH_SCOPES = ( 'm' ) ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "an OAuth refresh token secret needs its kind (recorded syntax error)", sql: "CREATE v1 TYPE = OAUTH2 OAUTH_REFRESH_TOKEN = 'm' OAUTH_REFRESH_TOKEN_EXPIRY_TIME = 'm' API_AUTHENTICATION = v1 ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a password secret needs its kind (recorded syntax error)", sql: "CREATE v1 TYPE = PASSWORD USERNAME = 'm' PASSWORD = 'm' ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a symmetric key secret needs its kind (recorded syntax error)", sql: "CREATE v1 TYPE = SYMMETRIC_KEY ALGORITHM = GENERIC ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a workload identity secret needs its kind (recorded syntax error)", sql: "CREATE v1 TYPE = WORKLOAD_IDENTITY_FEDERATION ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "an application from a package is kept", sql: "CREATE APPLICATION v1 FROM APPLICATION PACKAGE p1 ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "an organization profile is kept", sql: "CREATE ORGANIZATION PROFILE v1 ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "a packages policy is kept", sql: "CREATE PACKAGES POLICY v1 LANGUAGE PYTHON ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "a secret with its kind is kept", sql: "CREATE SECRET v1 TYPE = PASSWORD USERNAME = 'm' PASSWORD = 'm' ;", dialect: Dialect::Snowflake, expected_accepted: true },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}

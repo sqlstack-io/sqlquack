@@ -287,6 +287,10 @@ fn given_snowflake_policy_and_integration_alters_without_a_name_when_parsing_the
         AcceptanceTestCase { description: "a string is no policy name (recorded syntax error)", sql: "ALTER MASKING POLICY 'v1' SET COMMENT = 'm' ;", dialect: Dialect::Snowflake, expected_accepted: false },
         AcceptanceTestCase { description: "a named policy still needs SET (recorded syntax error)", sql: "ALTER MASKING POLICY v1 COMMENT = 'm' ;", dialect: Dialect::Snowflake, expected_accepted: false },
         AcceptanceTestCase { description: "an organization user's SET names a property (recorded syntax error)", sql: "ALTER ORGANIZATION USER SET ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "an integration named refresh keeps its name before UNSET", sql: "ALTER INTEGRATION refresh UNSET COMMENT ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "an integration named refresh refreshes its secret", sql: "ALTER INTEGRATION refresh REFRESH OAUTH_CLIENT_SECRET ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "an organization user's visibility may be another value", sql: "ALTER ORGANIZATION USER v1 SET VISIBILITY = 'x' ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "VISIBILITY = ALL is followed by other properties", sql: "ALTER ORGANIZATION USER v1 SET VISIBILITY = ALL , COMMENT = 'm' ;", dialect: Dialect::Snowflake, expected_accepted: true },
     ];
 
     for test_case in test_cases {
@@ -320,6 +324,12 @@ fn given_snowflake_policy_and_integration_alters_without_a_name_when_parsing_the
             sql: "ALTER INTEGRATION REFRESH OAUTH_CLIENT_SECRET",
             pointer: "/0/alter_object/action",
             expected_value: json!("REFRESH OAUTH_CLIENT_SECRET"),
+        },
+        ProjectionTestCase {
+            description: "an integration named refresh keeps its name",
+            sql: "ALTER INTEGRATION refresh UNSET COMMENT",
+            pointer: "/0/alter_object/name/name/name",
+            expected_value: json!("refresh"),
         },
         ProjectionTestCase {
             description: "a named policy keeps its name",

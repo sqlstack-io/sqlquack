@@ -124,7 +124,7 @@ impl Parser {
         Ok((self.parse_object_name()?, if_exists))
     }
 
-    /// Parse the head of `kind`, or an omitted name where Snowflake parses one: before `SET <property> =`, an `UNSET <property>` list, or an INTEGRATION's `REFRESH <secret>`.
+    /// Parse the head of `kind`, or an omitted name where Snowflake parses one: before `SET <property> =`, an `UNSET <property>` list, or an INTEGRATION's `REFRESH` of one of its secrets.
     pub(super) fn parse_alter_head_or_omitted(&mut self, kind: &str) -> Result<(TableRef, bool)> {
         let word_at = |offset: usize| {
             self.tokens.get(self.current + offset).is_some_and(|token| {
@@ -154,7 +154,15 @@ impl Parser {
             Some(action @ "UNSET") if actions.contains(&action) => {
                 word_at(1) && (self.is_statement_end_at(2) || token_at(2, TokenType::Comma))
             }
-            Some(action @ "REFRESH") if actions.contains(&action) => word_at(1),
+            Some(action @ "REFRESH") if actions.contains(&action) => matches!(
+                self.text_at(1).as_deref(),
+                Some(
+                    "OAUTH_CLIENT_SECRET_2"
+                        | "OAUTH_CLIENT_SECRET"
+                        | "SAML2_SNOWFLAKE_PRIVATE_KEY"
+                        | "METADATA_URL"
+                )
+            ),
             _ => false,
         };
         match omitted {

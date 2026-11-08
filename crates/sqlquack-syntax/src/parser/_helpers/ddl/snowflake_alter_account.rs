@@ -492,11 +492,22 @@ impl Parser {
             let head = self.parse_alter_object_head()?;
             let action = self.expect_alter_words(&[&["SET"], &["UNSET"]])?;
             let properties = match action.as_str() {
-                "SET" if self.check_identifier("VISIBILITY") && self.check_next(TokenType::Eq) => {
-                    self.current += 2;
-                    self.expect_token(TokenType::All)?;
+                "SET"
+                    if self.check_identifier("VISIBILITY")
+                        && self.check_next(TokenType::Eq)
+                        && self
+                            .tokens
+                            .get(self.current + 2)
+                            .is_some_and(|token| token.token_type == TokenType::All) =>
+                {
+                    self.current += 3;
                     let value = Expression::Identifier(Identifier::new("ALL"));
-                    vec![property("VISIBILITY", None, Some(value))]
+                    let mut properties = vec![property("VISIBILITY", None, Some(value))];
+                    self.match_token(TokenType::Comma);
+                    if !self.is_statement_end_at(0) {
+                        properties.extend(self.parse_organization_set()?);
+                    }
+                    properties
                 }
                 "SET" => self.parse_organization_set()?,
                 _ => self.parse_group_unset()?,
