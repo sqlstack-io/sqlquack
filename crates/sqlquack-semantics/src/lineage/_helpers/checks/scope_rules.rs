@@ -1100,7 +1100,9 @@ pub(crate) fn set_order(query: &Expression, context: LineageContext<'_>) -> Vec<
         })
         .flat_map(|order| order.expressions.iter())
         .filter(|ordered| {
-            matches!(&ordered.this, Expression::Column(column) if !outputs.contains(&key(&column.name, context)))
+            matches!(&ordered.this, Expression::Column(column) if !outputs.iter().any(|output| {
+                context.profile.same_identifier(output, &key(&column.name, context))
+            }))
         })
         .map(|ordered| {
             issue(

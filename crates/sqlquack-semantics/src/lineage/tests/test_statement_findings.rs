@@ -254,6 +254,16 @@ fn given_a_duckdb_name_not_definitely_unresolved_when_resolving_names_then_nothi
             expected_findings: &[],
         },
         QueryFindingsTestCase {
+            description: "a set operation's ORDER BY naming an output in upper case",
+            sql: "SELECT id FROM orders UNION ALL SELECT id FROM customers ORDER BY ID",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a set operation's ORDER BY naming an upper-case output in lower case",
+            sql: "SELECT ID FROM orders UNION ALL SELECT ID FROM customers ORDER BY id",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
             description: "a list comprehension's variable",
             sql: "SELECT [x * 2 FOR x IN items IF x > 0] AS doubled FROM orders",
             expected_findings: &[],
@@ -388,6 +398,15 @@ fn given_a_duckdb_query_when_a_name_is_definitely_unresolved_then_it_is_still_fo
             description: "an unknown column of a closed relation",
             sql: "SELECT qty FROM orders",
             expected_findings: &[("E201", "Unknown column 'qty' in table 'orders'", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "a set operation's ORDER BY naming a branch column that is not an output",
+            sql: "SELECT id FROM orders UNION ALL SELECT id FROM customers ORDER BY customer_id",
+            expected_findings: &[(
+                "E201",
+                "Set-operation ORDER BY references a non-output column",
+                66,
+            )],
         },
         QueryFindingsTestCase {
             description: "a comprehension binds its variable, not its iterator",

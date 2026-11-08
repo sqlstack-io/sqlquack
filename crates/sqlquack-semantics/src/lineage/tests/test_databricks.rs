@@ -25,6 +25,73 @@ fn given_a_databricks_query_when_checking_it_then_only_rules_databricks_shares_a
             expected_findings: &[],
         },
         QueryFindingsTestCase {
+            description: "a LATERAL VIEW's generated column",
+            sql: "SELECT x FROM orders LATERAL VIEW explode(array(1, 2)) t AS x",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a LATERAL VIEW OUTER's generated column",
+            sql: "SELECT x FROM orders LATERAL VIEW OUTER explode(array(1, 2)) t AS x",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a LATERAL VIEW over a map, with a key and a value column",
+            sql: "SELECT k, v FROM orders LATERAL VIEW explode(map(1, 2)) t AS k, v",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a generated column qualified by the LATERAL VIEW's alias",
+            sql: "SELECT t.x FROM orders LATERAL VIEW explode(array(1, 2)) t AS x",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a LATERAL VIEW whose generator reads the FROM relation",
+            sql: "SELECT o.id, x FROM orders o LATERAL VIEW explode(array(o.quantity)) t AS x",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a LATERAL VIEW without column aliases, read by the generator's own name",
+            sql: "SELECT col FROM orders LATERAL VIEW explode(array(1, 2)) t",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a column neither the relation nor the LATERAL VIEW offers",
+            sql: "SELECT y FROM orders LATERAL VIEW explode(array(1, 2)) t AS x",
+            expected_findings: &[(
+                "E201",
+                "Unknown column 'y' (not found in any referenced table)",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a qualifier that is neither the relation nor the LATERAL VIEW",
+            sql: "SELECT u.x FROM orders LATERAL VIEW explode(array(1, 2)) t AS x",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'u' referenced by column 'x'",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a set operation's ORDER BY naming an output in upper case",
+            sql: "SELECT id FROM orders UNION ALL SELECT id FROM customers ORDER BY ID",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a set operation's ORDER BY naming an upper-case output in lower case",
+            sql: "SELECT ID FROM orders UNION ALL SELECT ID FROM customers ORDER BY id",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a set operation's ORDER BY naming a branch column that is not an output",
+            sql: "SELECT id FROM orders UNION ALL SELECT id FROM customers ORDER BY quantity",
+            expected_findings: &[(
+                "E201",
+                "Set-operation ORDER BY references a non-output column",
+                66,
+            )],
+        },
+        QueryFindingsTestCase {
             description: "two CTEs under one name (DUPLICATED_CTE_NAMES)",
             sql: "WITH c AS (SELECT 1 AS x), c AS (SELECT 2 AS x) SELECT x FROM c",
             expected_findings: &[("E233", "Duplicate CTE name 'c'", 55)],
@@ -52,6 +119,11 @@ fn given_a_databricks_query_when_checking_it_then_only_rules_databricks_shares_a
 #[test]
 fn given_a_databricks_query_when_naming_and_typing_outputs_then_they_are_the_warehouses_or_none() {
     let test_cases = [
+        DatabricksOutputsTestCase {
+            description: "a LATERAL VIEW's generated column is untyped beside a typed column",
+            sql: "SELECT id, x FROM orders LATERAL VIEW explode(array(quantity)) t AS x",
+            expected_outputs: &[("id", Some("INT")), ("x", None)],
+        },
         DatabricksOutputsTestCase {
             description: "literals typed as typeof reports them",
             sql: "SELECT 1 AS a, 2147483648 AS b, 9223372036854775808 AS c, 1.50 AS d, \

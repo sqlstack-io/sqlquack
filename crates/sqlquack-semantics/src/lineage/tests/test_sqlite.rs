@@ -17,6 +17,15 @@ use crate::lineage::tests::test_types::{
 fn given_a_sqlite_query_sqlite_rejects_when_checking_then_the_broken_rule_is_found() {
     let test_cases = [
         QueryFindingsTestCase {
+            description: "a set operation's ORDER BY naming a branch column that is not an output",
+            sql: "SELECT id FROM orders UNION ALL SELECT id FROM customers ORDER BY quantity",
+            expected_findings: &[(
+                "E201",
+                "Set-operation ORDER BY references a non-output column",
+                66,
+            )],
+        },
+        QueryFindingsTestCase {
             description: "two CTEs under one name",
             sql: "WITH x AS (SELECT 1 AS a), x AS (SELECT 2 AS a) SELECT a FROM x",
             expected_findings: &[("E233", "Duplicate CTE name 'x'", 55)],
@@ -73,6 +82,16 @@ fn given_a_sqlite_query_sqlite_rejects_when_checking_then_the_broken_rule_is_fou
 #[test]
 fn given_a_sqlite_query_sqlite_accepts_when_checking_then_nothing_is_found() {
     let test_cases = [
+        QueryFindingsTestCase {
+            description: "a set operation's ORDER BY naming an output in upper case",
+            sql: "SELECT id FROM orders UNION ALL SELECT id FROM customers ORDER BY ID",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a set operation's ORDER BY naming an upper-case output in lower case",
+            sql: "SELECT ID FROM orders UNION ALL SELECT ID FROM customers ORDER BY id",
+            expected_findings: &[],
+        },
         QueryFindingsTestCase {
             description: "a bare column in an aggregate query, read from any row of its group",
             sql: "SELECT id, status, SUM(price) AS total FROM orders GROUP BY id",
