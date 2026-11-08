@@ -48,23 +48,44 @@ fn untyped_literal(cast: &Cast) -> Option<(&'static str, String)> {
     let Expression::Literal(literal) = &cast.this else {
         return None;
     };
-    let DataType::Custom { name } = &cast.to else {
+    if !cast.typed_literal || !matches!(literal.as_ref(), Literal::String(_)) {
         return None;
-    };
-    let written: String = name.split_whitespace().collect();
-    let (base, _) = written.split_once('(')?;
-    let (_, function) = SNOWFLAKE_UNTYPED_LITERAL_TYPES
-        .iter()
-        .chain(SNOWFLAKE_UNPARAMETERIZED_LITERAL_TYPES)
-        .find(|(listed, _)| listed.eq_ignore_ascii_case(base))?;
-    (cast.typed_literal && matches!(literal.as_ref(), Literal::String(_))).then(|| {
-        (
-            "unsupported_type_literal",
-            format!(
-                "Snowflake has no {written} literal; cast the string instead, as '...'::{written} or {function}('...')"
-            ),
-        )
-    })
+    }
+    let (written, function) = parameterized_date_time(&cast.to)?;
+    Some((
+        "unsupported_type_literal",
+        format!(
+            "Snowflake has no {written} literal; cast the string instead, as '...'::{written} or {function}('...')"
+        ),
+    ))
+}
+
+/// A date-time type with a precision in Snowflake's spelling, and the function to suggest, or none.
+fn parameterized_date_time(data_type: &DataType) -> Option<(String, &'static str)> {
+    match data_type {
+        DataType::Timestamp {
+            precision: Some(precision),
+            timezone: true,
+        } => Some((format!("TIMESTAMP_TZ({precision})"), "TO_TIMESTAMP_TZ")),
+        DataType::Timestamp {
+            precision: Some(precision),
+            timezone: false,
+        } => Some((format!("TIMESTAMP({precision})"), "TO_TIMESTAMP")),
+        DataType::Time {
+            precision: Some(precision),
+            ..
+        } => Some((format!("TIME({precision})"), "TO_TIME")),
+        DataType::Custom { name } => {
+            let written: String = name.split_whitespace().collect();
+            let (base, _) = written.split_once('(')?;
+            let (_, function) = SNOWFLAKE_UNTYPED_LITERAL_TYPES
+                .iter()
+                .chain(SNOWFLAKE_UNPARAMETERIZED_LITERAL_TYPES)
+                .find(|(listed, _)| listed.eq_ignore_ascii_case(base))?;
+            Some((written, function))
+        }
+        _ => None,
+    }
 }
 
 /// A REPLACE or RENAME name the ILIKE pattern removes ignoring case; backslashes and non-ASCII skip.

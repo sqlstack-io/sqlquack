@@ -160,6 +160,11 @@ impl Parser {
                 _ => token.text.to_string(),
             })
             .collect();
+        let to = self
+            .date_time_literal_type(end)
+            .unwrap_or_else(|| DataType::Custom {
+                name: parts.join(" "),
+            });
         self.current = end;
         let string_token = self.advance()?;
         Ok(Some(Expression::Cast(Box::new(
@@ -169,9 +174,7 @@ impl Parser {
                         string_token.text.to_string(),
                     ),
                 )),
-                to: DataType::Custom {
-                    name: parts.join(" "),
-                },
+                to,
                 trailing_comments: Vec::new(),
                 double_colon_syntax: false,
                 typed_literal: true,
@@ -181,6 +184,22 @@ impl Parser {
                 span: SourceSpan::default(),
             },
         ))))
+    }
+
+    /// The type a date-time name with parameters before the string at `end` casts to, as `::` reads it.
+    fn date_time_literal_type(&mut self, end: usize) -> Option<DataType> {
+        let name = self.peek_text().to_ascii_uppercase();
+        let date_time = crate::expressions::types::constants::SNOWFLAKE_UNTYPED_LITERAL_TYPES
+            .iter()
+            .chain(crate::expressions::types::constants::SNOWFLAKE_UNPARAMETERIZED_LITERAL_TYPES)
+            .any(|(listed, _)| *listed == name);
+        if !date_time || end == self.current + 1 {
+            return None;
+        }
+        let start = self.current;
+        let parsed = self.parse_data_type().ok().filter(|_| self.current == end);
+        self.current = start;
+        parsed
     }
 
     /// Snowflake's syntax refusal of a time zone clause on a TIMESTAMP literal, where Snowflake stops.
