@@ -1,7 +1,8 @@
 use crate::format::models::FormatDialect;
 
 use crate::format::constants::{
-    BATCH_SEPARATOR_FAILURE, DEPTH_FAILURE, JOIN_FAILURE, PARSE_FAILURE, SEPARATION_FAILURE,
+    BATCH_SEPARATOR_FAILURE, BIGQUERY_OPAQUE_STATEMENT_FAILURE, DEPTH_FAILURE, JOIN_FAILURE,
+    PARSE_FAILURE, SCANNER_MISMATCH_FAILURE, SEPARATION_FAILURE,
     SQLSERVER_OPAQUE_STATEMENT_FAILURE, TYPE_DEPTH_FAILURE, UNSUPPORTED_DIALECT_FAILURE,
 };
 use crate::format::main::format_sql::format_sql;
@@ -276,6 +277,59 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             expected_outcome: Err(JOIN_FAILURE),
         },
         test_types::FormatSqlTestCase {
+            description: "PostgreSQL's own scanner decides which words are keywords, so CURRENT_DATE and COALESCE are recased, and a called name is recased as in every dialect",
+            sql: "select date_part('dow', current_date), coalesce(a, 0) from t",
+            line_width: None,
+            dialect: FormatDialect::PostgreSQL,
+            expected_outcome: Ok(
+                "SELECT\n  DATE_PART('dow', CURRENT_DATE),\n  COALESCE(a, 0)\nFROM t",
+            ),
+        },
+        test_types::FormatSqlTestCase {
+            description: "keyword-spelled column names keep their case",
+            sql: "select name, value, type from t",
+            line_width: None,
+            dialect: FormatDialect::PostgreSQL,
+            expected_outcome: Ok("SELECT\n  name,\n  value,\n  type\nFROM t"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a word matching an alias the parse tree records without a span keeps its case",
+            sql: "select * from t, lateral f(x) with ordinality as elem(value, ordinality)",
+            line_width: None,
+            dialect: FormatDialect::PostgreSQL,
+            expected_outcome: Ok(
+                "SELECT *\nFROM t, LATERAL F(x) WITH ordinality AS elem(value, ordinality)",
+            ),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a PostgreSQL TABLESAMPLE stays on its table's line",
+            sql: "select * from t tablesample system (50)",
+            line_width: None,
+            dialect: FormatDialect::PostgreSQL,
+            expected_outcome: Ok("SELECT *\nFROM t TABLESAMPLE SYSTEM (50)"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a token the PostgreSQL scanner reads differently from the shared tokenizer is refused",
+            sql: "select a <<->> b",
+            line_width: None,
+            dialect: FormatDialect::PostgreSQL,
+            expected_outcome: Err(SCANNER_MISMATCH_FAILURE),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a quantified LIKE puts its operand on its own lines",
+            sql: "select x from t where x like any (array['a'])",
+            line_width: None,
+            dialect: FormatDialect::PostgreSQL,
+            expected_outcome: Ok("SELECT x\nFROM t\nWHERE\n  x LIKE ANY(\n    ARRAY['a']\n  )"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "SELECT INTO starts its own line",
+            sql: "select a into temp b from c",
+            line_width: None,
+            dialect: FormatDialect::PostgreSQL,
+            expected_outcome: Ok("SELECT a\nINTO TEMP b\nFROM c"),
+        },
+        test_types::FormatSqlTestCase {
             description: "SQL Server bracketed names stay as written, a keyword inside brackets included",
             sql: "select [Order Id], [select] from [dbo].[Orders] o",
             line_width: None,
@@ -534,10 +588,147 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             expected_outcome: Err(SQLSERVER_OPAQUE_STATEMENT_FAILURE),
         },
         test_types::FormatSqlTestCase {
-            description: "PostgreSQL is refused until it has a format gate",
+            description: "a BigQuery dashed table path stays touching",
+            sql: "select * from my-project.ds.t as x",
+            line_width: None,
+            dialect: FormatDialect::BigQuery,
+            expected_outcome: Ok("SELECT *\nFROM my-project.ds.t AS x"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "BigQuery struct field names keep their case, so the columns of .* keep theirs",
+            sql: "select struct<type string, first int64>('a', 1).* from t",
+            line_width: None,
+            dialect: FormatDialect::BigQuery,
+            expected_outcome: Ok("SELECT STRUCT<type string, first int64> ('a', 1).*\nFROM t"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "BigQuery struct field names keep their case in a column type",
+            sql: "create table t (x struct<type string, first int64>, y array<struct<key string, date date>>)",
+            line_width: None,
+            dialect: FormatDialect::BigQuery,
+            expected_outcome: Ok(
+                "CREATE TABLE t(x STRUCT<type string, first int64>, y ARRAY<STRUCT<key string, date DATE>>)",
+            ),
+        },
+        test_types::FormatSqlTestCase {
+            description: "BigQuery type parameters stay inside their angle brackets",
+            sql: "select array<int64>[1, 2], struct<a int64>(1) from t",
+            line_width: None,
+            dialect: FormatDialect::BigQuery,
+            expected_outcome: Ok("SELECT\n  ARRAY<int64>[1, 2],\n  STRUCT<a int64> (1)\nFROM t"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a BigQuery system variable and query parameter keep their @",
+            sql: "select @@time_zone, @p from t",
+            line_width: None,
+            dialect: FormatDialect::BigQuery,
+            expected_outcome: Ok("SELECT\n  @@time_zone,\n  @p\nFROM t"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "BigQuery's * EXCEPT is a column list, not a set operation",
+            sql: "select * except (b), b+1 from t",
+            line_width: None,
+            dialect: FormatDialect::BigQuery,
+            expected_outcome: Ok("SELECT\n  * EXCEPT (b),\n  b + 1\nFROM t"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "SELECT AS STRUCT stays on the SELECT line",
+            sql: "select as struct 1 as a, 2 as b",
+            line_width: None,
+            dialect: FormatDialect::BigQuery,
+            expected_outcome: Ok("SELECT AS struct\n  1 AS a,\n  2 AS b"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a BigQuery set operation's prefix and modifiers share its line",
+            sql: "select 1 as x left union all corresponding select 2 as x",
+            line_width: None,
+            dialect: FormatDialect::BigQuery,
+            expected_outcome: Ok("SELECT 1 AS x\nLEFT UNION ALL corresponding\nSELECT 2 AS x"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "UNNEST ... WITH OFFSET does not start an OFFSET clause",
+            sql: "select a from unnest(x) as a with offset as o",
+            line_width: None,
+            dialect: FormatDialect::BigQuery,
+            expected_outcome: Ok("SELECT a\nFROM UNNEST(x) AS a WITH OFFSET AS o"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "IS DISTINCT FROM does not start a FROM clause",
+            sql: "select * from t qualify a is distinct from b",
+            line_width: None,
+            dialect: FormatDialect::BigQuery,
+            expected_outcome: Ok("SELECT *\nFROM t\nQUALIFY a IS DISTINCT FROM b"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "BigQuery names an unaliased item f0_, so its spacing is laid out",
+            sql: "select a+b from t",
+            line_width: None,
+            dialect: FormatDialect::BigQuery,
+            expected_outcome: Ok("SELECT a + b\nFROM t"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a BigQuery # comment is kept",
+            sql: "select a # note\nfrom t",
+            line_width: None,
+            dialect: FormatDialect::BigQuery,
+            expected_outcome: Ok("SELECT a # note\nFROM t"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a BigQuery operator whose operands the tree records without a span stays touching",
+            sql: "select 2*-3",
+            line_width: None,
+            dialect: FormatDialect::BigQuery,
+            expected_outcome: Err(SEPARATION_FAILURE),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a BigQuery ARRAY, a reserved word the shared tokenizer reads as a name, stays touching its brackets",
+            sql: "select array[1, 2] as a, array[1][offset(0)] as b",
+            line_width: None,
+            dialect: FormatDialect::BigQuery,
+            expected_outcome: Ok("SELECT\n  ARRAY[1, 2] AS a,\n  ARRAY[1][OFFSET(0)] AS b"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a BigQuery script statement is refused",
+            sql: "declare x int64",
+            line_width: None,
+            dialect: FormatDialect::BigQuery,
+            expected_outcome: Err(BIGQUERY_OPAQUE_STATEMENT_FAILURE),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a BigQuery foreign key's table keeps its case, since BigQuery table names are case-sensitive",
+            sql: "create table t (a int64, foreign key (a) references p (id) not enforced)",
+            line_width: None,
+            dialect: FormatDialect::BigQuery,
+            expected_outcome: Ok(
+                "CREATE TABLE t(a int64, FOREIGN KEY (a) REFERENCES p(id) NOT enforced)",
+            ),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a BigQuery search index's table keeps its case",
+            sql: "create search index ix on t (c)",
+            line_width: None,
+            dialect: FormatDialect::BigQuery,
+            expected_outcome: Ok("CREATE search INDEX ix ON t(c)"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a BigQuery INSERT's table keeps its case before its column list",
+            sql: "insert t (a) values (1)",
+            line_width: None,
+            dialect: FormatDialect::BigQuery,
+            expected_outcome: Ok("INSERT t(a)\nVALUES (1)"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a BigQuery table function keeps its case when qualified, and an unqualified one, always a built-in, recases",
+            sql: "select * from ds.tf(1), external_query('c', 'select 1')",
+            line_width: None,
+            dialect: FormatDialect::BigQuery,
+            expected_outcome: Ok("SELECT *\nFROM ds.tf(1), EXTERNAL_QUERY('c', 'select 1')"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "Databricks is refused until it has a format gate",
             sql: "SELECT a FROM t",
             line_width: None,
-            dialect: FormatDialect::PostgreSQL,
+            dialect: FormatDialect::Databricks,
             expected_outcome: Err(UNSUPPORTED_DIALECT_FAILURE),
         },
     ];
@@ -609,13 +800,37 @@ fn given_deeply_nested_sql_when_formatting_then_it_is_refused_or_laid_out_withou
         },
         test_types::DeepSqlTestCase {
             description: "1,500 parentheses around a FROM source are refused by the parser's nesting guard",
-            dialects: &[FormatDialect::Snowflake, FormatDialect::DuckDB],
+            dialects: &[
+                FormatDialect::Snowflake,
+                FormatDialect::DuckDB,
+                FormatDialect::PostgreSQL,
+            ],
             sql: || format!("SELECT * FROM {}t{}", "(".repeat(1_500), ")".repeat(1_500)),
             expected_refusal: Some(PARSE_FAILURE),
         },
         test_types::DeepSqlTestCase {
+            description: "1,500 parentheses around an expression are refused by the parser's nesting guard",
+            dialects: &[
+                FormatDialect::Snowflake,
+                FormatDialect::DuckDB,
+                FormatDialect::PostgreSQL,
+            ],
+            sql: || format!("SELECT {}1{}", "(".repeat(1_500), ")".repeat(1_500)),
+            expected_refusal: Some(PARSE_FAILURE),
+        },
+        test_types::DeepSqlTestCase {
+            description: "a chain of 5,000 added terms is refused by the PostgreSQL parser's depth limit",
+            dialects: &[FormatDialect::PostgreSQL],
+            sql: || format!("SELECT {}", vec!["1"; 5_000].join(" + ")),
+            expected_refusal: Some(PARSE_FAILURE),
+        },
+        test_types::DeepSqlTestCase {
             description: "1,500 nested subqueries are refused by the parser's depth guard",
-            dialects: &[FormatDialect::Snowflake, FormatDialect::DuckDB],
+            dialects: &[
+                FormatDialect::Snowflake,
+                FormatDialect::DuckDB,
+                FormatDialect::PostgreSQL,
+            ],
             sql: || {
                 format!(
                     "{}SELECT 1{}",
@@ -627,7 +842,11 @@ fn given_deeply_nested_sql_when_formatting_then_it_is_refused_or_laid_out_withou
         },
         test_types::DeepSqlTestCase {
             description: "1,500 nested NOTs are refused by the parser's depth guard",
-            dialects: &[FormatDialect::Snowflake, FormatDialect::DuckDB],
+            dialects: &[
+                FormatDialect::Snowflake,
+                FormatDialect::DuckDB,
+                FormatDialect::PostgreSQL,
+            ],
             sql: || format!("SELECT {}TRUE", "NOT ".repeat(1_500)),
             expected_refusal: Some(PARSE_FAILURE),
         },
@@ -639,43 +858,71 @@ fn given_deeply_nested_sql_when_formatting_then_it_is_refused_or_laid_out_withou
         },
         test_types::DeepSqlTestCase {
             description: "a chain of 513 added terms, one level past the limit, is refused",
-            dialects: &[FormatDialect::Snowflake, FormatDialect::DuckDB],
+            dialects: &[
+                FormatDialect::Snowflake,
+                FormatDialect::DuckDB,
+                FormatDialect::PostgreSQL,
+            ],
             sql: || format!("SELECT {}", vec!["1"; 513].join(" + ")),
             expected_refusal: Some(DEPTH_FAILURE),
         },
         test_types::DeepSqlTestCase {
             description: "a cast to a type with 300 `[]` suffixes is refused before parsing",
-            dialects: &[FormatDialect::Snowflake, FormatDialect::DuckDB],
+            dialects: &[
+                FormatDialect::Snowflake,
+                FormatDialect::DuckDB,
+                FormatDialect::PostgreSQL,
+            ],
             sql: || format!("SELECT CAST(NULL AS INT{})", "[]".repeat(300)),
             expected_refusal: Some(TYPE_DEPTH_FAILURE),
         },
         test_types::DeepSqlTestCase {
             description: "a cast to a type with 300 `[3]` suffixes is refused before parsing",
-            dialects: &[FormatDialect::Snowflake, FormatDialect::DuckDB],
+            dialects: &[
+                FormatDialect::Snowflake,
+                FormatDialect::DuckDB,
+                FormatDialect::PostgreSQL,
+            ],
             sql: || format!("SELECT CAST(NULL AS INT{})", "[3]".repeat(300)),
             expected_refusal: Some(TYPE_DEPTH_FAILURE),
         },
         test_types::DeepSqlTestCase {
             description: "a column of a type with 65 `[]` suffixes, one past the limit, is refused",
-            dialects: &[FormatDialect::Snowflake, FormatDialect::DuckDB],
+            dialects: &[
+                FormatDialect::Snowflake,
+                FormatDialect::DuckDB,
+                FormatDialect::PostgreSQL,
+            ],
             sql: || format!("CREATE TABLE t (c INT{})", "[]".repeat(65)),
             expected_refusal: Some(TYPE_DEPTH_FAILURE),
         },
         test_types::DeepSqlTestCase {
             description: "a column of a type with 64 `[]` suffixes, at the limit, is laid out",
-            dialects: &[FormatDialect::Snowflake, FormatDialect::DuckDB],
+            dialects: &[
+                FormatDialect::Snowflake,
+                FormatDialect::DuckDB,
+                FormatDialect::PostgreSQL,
+            ],
             sql: || format!("CREATE TABLE t (c INT{})", "[]".repeat(64)),
             expected_refusal: None,
         },
         test_types::DeepSqlTestCase {
             description: "a DuckDB `::` cast to a type with 300 `[]` suffixes is refused before parsing",
-            dialects: &[FormatDialect::Snowflake, FormatDialect::DuckDB],
+            dialects: &[
+                FormatDialect::Snowflake,
+                FormatDialect::DuckDB,
+                FormatDialect::PostgreSQL,
+            ],
             sql: || format!("SELECT NULL::INT{}", "[]".repeat(300)),
             expected_refusal: Some(TYPE_DEPTH_FAILURE),
         },
         test_types::DeepSqlTestCase {
             description: "a type alternating angle brackets with suffix runs, depth 182, is refused",
-            dialects: &[FormatDialect::Snowflake, FormatDialect::DuckDB],
+            dialects: &[
+                FormatDialect::Snowflake,
+                FormatDialect::DuckDB,
+                FormatDialect::PostgreSQL,
+            ],
             sql: || {
                 format!(
                     "SELECT CAST(NULL AS ARRAY<ARRAY<INT{}{})",
@@ -687,7 +934,11 @@ fn given_deeply_nested_sql_when_formatting_then_it_is_refused_or_laid_out_withou
         },
         test_types::DeepSqlTestCase {
             description: "a cast to 2 angle brackets around 63 suffixes, depth 65, is refused",
-            dialects: &[FormatDialect::Snowflake, FormatDialect::DuckDB],
+            dialects: &[
+                FormatDialect::Snowflake,
+                FormatDialect::DuckDB,
+                FormatDialect::PostgreSQL,
+            ],
             sql: || format!("SELECT CAST(NULL AS ARRAY<ARRAY<INT{}>>)", "[]".repeat(63)),
             expected_refusal: Some(TYPE_DEPTH_FAILURE),
         },
@@ -713,7 +964,11 @@ fn given_deeply_nested_sql_when_formatting_then_it_is_refused_or_laid_out_withou
         },
         test_types::DeepSqlTestCase {
             description: "a type alternating parenthesised constructors with suffix runs, depth 182, is refused",
-            dialects: &[FormatDialect::Snowflake, FormatDialect::DuckDB],
+            dialects: &[
+                FormatDialect::Snowflake,
+                FormatDialect::DuckDB,
+                FormatDialect::PostgreSQL,
+            ],
             sql: || {
                 format!(
                     "SELECT CAST(NULL AS ARRAY(ARRAY(INT{}{})",
@@ -746,7 +1001,11 @@ fn given_deeply_nested_sql_when_formatting_then_it_is_refused_or_laid_out_withou
         },
         test_types::DeepSqlTestCase {
             description: "a column alternating STRUCT(...), MAP(...) and ARRAY<...> with suffix runs is refused",
-            dialects: &[FormatDialect::Snowflake, FormatDialect::DuckDB],
+            dialects: &[
+                FormatDialect::Snowflake,
+                FormatDialect::DuckDB,
+                FormatDialect::PostgreSQL,
+            ],
             sql: || {
                 let run = "[]".repeat(30);
                 format!(
@@ -757,7 +1016,11 @@ fn given_deeply_nested_sql_when_formatting_then_it_is_refused_or_laid_out_withou
         },
         test_types::DeepSqlTestCase {
             description: "a cast to 2 parenthesised constructors around 63 suffixes, depth 65, is refused",
-            dialects: &[FormatDialect::Snowflake, FormatDialect::DuckDB],
+            dialects: &[
+                FormatDialect::Snowflake,
+                FormatDialect::DuckDB,
+                FormatDialect::PostgreSQL,
+            ],
             sql: || format!("SELECT CAST(NULL AS ARRAY(ARRAY(INT{})))", "[]".repeat(63)),
             expected_refusal: Some(TYPE_DEPTH_FAILURE),
         },
@@ -781,7 +1044,11 @@ fn given_deeply_nested_sql_when_formatting_then_it_is_refused_or_laid_out_withou
         },
         test_types::DeepSqlTestCase {
             description: "a chain of 512 added terms, at the limit, is laid out",
-            dialects: &[FormatDialect::Snowflake, FormatDialect::DuckDB],
+            dialects: &[
+                FormatDialect::Snowflake,
+                FormatDialect::DuckDB,
+                FormatDialect::PostgreSQL,
+            ],
             sql: || format!("SELECT {}", vec!["1"; 512].join(" + ")),
             expected_refusal: None,
         },
@@ -828,6 +1095,32 @@ fn given_wide_sql_when_formatting_as_sql_server_then_it_takes_about_as_long_as_s
         assert!(
             sqlserver <= baseline * test_case.expected_max_ratio,
             "{}: SQL Server took {sqlserver:?}, Snowflake {baseline:?}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_sql_growing_in_size_when_formatting_then_time_grows_linearly() {
+    let test_cases = [test_types::ScalingSqlTestCase {
+        description: "a BigQuery dashed name of many segments, whose touching run the guide marks once",
+        dialect: FormatDialect::BigQuery,
+        sql: |segments| format!("select x from {}.ds.t", vec!["a"; segments].join("-")),
+        sizes: (2_000, 8_000),
+        expected_max_ratio: 8,
+    }];
+    for test_case in test_cases {
+        let (small, large) = test_case.sizes;
+        let laid_out = format_sql(
+            &(test_case.sql)(large),
+            &FormatOptions::new(test_case.dialect),
+        );
+        assert!(laid_out.is_ok(), "{}: refused", test_case.description);
+        let short = format_time(&(test_case.sql)(small), test_case.dialect);
+        let long = format_time(&(test_case.sql)(large), test_case.dialect);
+        assert!(
+            long <= short * test_case.expected_max_ratio,
+            "{}: {large} took {long:?}, {small} took {short:?}",
             test_case.description
         );
     }

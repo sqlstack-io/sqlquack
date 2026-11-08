@@ -6,7 +6,7 @@ use sqlquack_syntax::{Dialect, ParseOptions};
 
 use crate::format::constants::DEFAULT_INDENT;
 
-/// The SQL dialects the formatter reads; SQL Server through its own Transact-SQL scanner and parser.
+/// The SQL dialects the formatter reads; BigQuery and SQL Server through their own scanners and parsers.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FormatDialect {
     Snowflake,

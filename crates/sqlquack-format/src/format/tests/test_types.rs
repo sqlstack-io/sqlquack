@@ -72,3 +72,31 @@ pub(super) struct TimedSqlTestCase {
     /// How many times Snowflake's time SQL Server may take.
     pub(super) expected_max_ratio: u32,
 }
+
+/// A query whose formatting time must grow linearly with its size, so a quadratic pass fails it.
+pub(super) struct ScalingSqlTestCase {
+    pub(super) description: &'static str,
+    pub(super) dialect: crate::format::models::FormatDialect,
+    /// The query at a given size.
+    pub(super) sql: fn(usize) -> String,
+    /// The small and the large size timed.
+    pub(super) sizes: (usize, usize),
+    /// How many times the small size's time the large one may take.
+    pub(super) expected_max_ratio: u32,
+}
+
+/// A statement BigQuery was recorded rejecting, with the syntax error it reported.
+pub(super) struct BigQueryReceiptTestCase {
+    /// The statement, as recorded.
+    pub(super) description: &'static str,
+    /// The recorded message and `line:column` of BigQuery's syntax error.
+    pub(super) expected_rejection: (&'static str, &'static str),
+}
+
+/// A statement PostgreSQL 18.6 was recorded on, with the syntax error it reported, if any.
+pub(super) struct PostgresReceiptTestCase {
+    /// The statement, as recorded.
+    pub(super) description: &'static str,
+    /// The recorded message and one-based character position of PostgreSQL's syntax error.
+    pub(super) expected_rejection: Option<(&'static str, usize)>,
+}

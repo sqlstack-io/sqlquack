@@ -3,6 +3,8 @@
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::{TokenKind, tokenize};
 
+use crate::format::_helpers::bigquery::lex_bigquery;
+use crate::format::_helpers::native::{native_keywords, native_kind};
 use crate::format::_helpers::sqlserver::lex_sqlserver;
 use crate::format::constants::{TOKENIZE_FAILURE, UNSUPPORTED_DIALECT_FAILURE};
 use crate::format::models::FormatDialect;
@@ -35,6 +37,7 @@ pub(crate) fn lex(
 ) -> Result<(Vec<Lexeme>, Vec<Comment>), String> {
     let Some(shared) = dialect.shared() else {
         return match dialect {
+            FormatDialect::BigQuery => lex_bigquery(sql),
             FormatDialect::SqlServer => lex_sqlserver(sql),
             _ => Err(UNSUPPORTED_DIALECT_FAILURE.to_string()),
         };
@@ -58,6 +61,12 @@ pub(crate) fn lex(
                 token.kind == TokenKind::LineComment,
             )),
             TokenKind::Whitespace => {}
+        }
+    }
+    if dialect == FormatDialect::PostgreSQL {
+        let keywords = native_keywords(sql, &lexemes)?;
+        for (lexeme, keyword) in lexemes.iter_mut().zip(keywords) {
+            lexeme.kind = native_kind(lexeme, keyword);
         }
     }
     Ok((lexemes, comments))
@@ -111,6 +120,7 @@ pub(crate) fn ends_operand(lexeme: &Lexeme) -> bool {
             | TokenType::False
             | TokenType::End
     ) || is_string_literal(lexeme.kind)
+        || (lexeme.kind == TokenType::Unknown && is_unquoted_word(&lexeme.raw))
 }
 
 /// Whether the token type is a string literal of any quoting.

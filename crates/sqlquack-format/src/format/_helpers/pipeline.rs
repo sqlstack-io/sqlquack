@@ -3,9 +3,11 @@
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::{CallMode, ExpressionWalk, parse_statements_with};
 
+use crate::format::_helpers::bigquery::parse_bigquery;
 use crate::format::_helpers::guide::layout_guide;
 use crate::format::_helpers::identifiers::parsed_names;
 use crate::format::_helpers::lexemes::{Lexeme, ends_operand, is_unquoted_word, lex};
+use crate::format::_helpers::native::parse_postgres;
 use crate::format::_helpers::printed_layout::{PrintedSql, wrap_lines};
 use crate::format::_helpers::sqlserver::parse_sqlserver;
 use crate::format::_helpers::token_layout::{
@@ -39,6 +41,8 @@ pub(crate) fn format_checked(sql: &str, options: &FormatOptions) -> Result<Forma
         return Err(TYPE_DEPTH_FAILURE.to_string());
     }
     let statements = match dialect {
+        FormatDialect::BigQuery => parse_bigquery(sql)?,
+        FormatDialect::PostgreSQL => parse_postgres(sql)?,
         FormatDialect::SqlServer => parse_sqlserver(sql)?,
         _ => {
             let shared = dialect.shared().ok_or(UNSUPPORTED_DIALECT_FAILURE)?;

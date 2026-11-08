@@ -16,6 +16,7 @@ const PROJECTION_FIELD: &str = "expressions";
 const SPAN_FIELD: &str = "span";
 const LEFT_FIELD: &str = "left";
 const RIGHT_FIELD: &str = "right";
+const COLUMN_ALIASES_FIELD: &str = "column_aliases";
 
 /// Per-token facts from the parse tree, and how many select lists it has.
 pub(crate) struct ParsedNames {
@@ -25,6 +26,8 @@ pub(crate) struct ParsedNames {
     pub(crate) aliases: Vec<bool>,
     /// Tokens the parse tree reads as the operator of a binary comparison, arithmetic or concatenation.
     pub(crate) binary_operators: Vec<bool>,
+    /// Words matching a name the parse tree records without a span, which therefore keep their case.
+    pub(crate) unspanned: Vec<bool>,
     /// The number of select lists in the parse tree.
     pub(crate) selects: usize,
 }
@@ -45,6 +48,8 @@ struct Ranges {
     /// Every recorded node range.
     spans: Vec<(usize, usize)>,
     binaries: Vec<Binary>,
+    /// Alias names recorded as bare strings, without a span.
+    unspanned: Vec<String>,
     selects: usize,
 }
 
@@ -91,6 +96,10 @@ pub(crate) fn parsed_names(
             .map(|lexeme| aliases.covers(lexeme))
             .collect(),
         binary_operators: binary_operators(&ranges, lexemes, &byte),
+        unspanned: lexemes
+            .iter()
+            .map(|lexeme| names_word(&ranges.unspanned, lexeme))
+            .collect(),
         selects: ranges.selects,
     })
 }
@@ -212,6 +221,7 @@ fn own_ranges(value: &Value) -> Ranges {
             .into_iter()
             .collect(),
         binaries: binary(value).into_iter().collect(),
+        unspanned: unspanned_names(value),
         selects: usize::from(
             value
                 .get(SELECT_FIELD)
@@ -227,6 +237,7 @@ impl Ranges {
         self.aliases.extend(other.aliases);
         self.spans.extend(other.spans);
         self.binaries.extend(other.binaries);
+        self.unspanned.extend(other.unspanned);
         self.selects += other.selects;
         self
     }
@@ -241,6 +252,29 @@ fn in_inner_node(spans: &[(usize, usize)], outer: (usize, usize), lexeme: &Lexem
             && start <= lexeme.start
             && lexeme.end <= end
     })
+}
+
+/// Whether `lexeme` spells one of `names`, ignoring ASCII case.
+fn names_word(names: &[String], lexeme: &Lexeme) -> bool {
+    names
+        .iter()
+        .any(|name| name.eq_ignore_ascii_case(&lexeme.raw))
+}
+
+/// The alias and column alias names `value` records as bare strings, which carry no span.
+fn unspanned_names(value: &Value) -> Vec<String> {
+    let alias = value.get(ALIAS_FIELD).and_then(Value::as_str);
+    let column_aliases = value
+        .get(COLUMN_ALIASES_FIELD)
+        .and_then(Value::as_array)
+        .into_iter()
+        .flatten()
+        .filter_map(Value::as_str);
+    alias
+        .into_iter()
+        .chain(column_aliases)
+        .map(str::to_string)
+        .collect()
 }
 
 /// The binary operator node `value` is, when it is one with a recorded span.
