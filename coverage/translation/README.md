@@ -40,7 +40,7 @@ A statement:
 | `shape_only` | Only types were recorded, or only two Snowflake spellings were compared. |
 | `declared_divergence` | Translated, and DuckDB raised a declared divergence's guard where Snowflake returned rows. |
 | `refused` | SQLQuack refused it, with its `SQ` code; an opt-in divergence counts as refused. |
-| `matching_rejection` | SQLQuack refused it, and its case declares `compile_error = true` and records Snowflake refusing to compile it (SQLSTATE class `42` or `0A`). It counts as `matching_error`; a recorded runtime error leaves the statement `refused`. |
+| `matching_rejection` | SQLQuack refused it, and its case declares `compile_error = true` and records Snowflake refusing to compile it (SQLSTATE class `42` or `0A`), and the refusal is specific to the invalid use: its code is not `SQ0002`, and no case of the same case file without `compile_error` is refused on one of its refused construct keys. It counts as `matching_error`; otherwise, or for a recorded runtime error, the statement stays `refused`. |
 | `unrecorded_translates`, `unrecorded_refused` | No Snowflake result is recorded yet. |
 | `differs` | DuckDB's result differs from Snowflake's: a bug. |
 
