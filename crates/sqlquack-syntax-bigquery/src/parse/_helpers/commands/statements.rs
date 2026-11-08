@@ -1,6 +1,7 @@
 //! `sql_statement` and `script` (googlesql.tm): the statements this parser builds, and the rest.
 
 use sqlquack_syntax::Expression;
+use sqlquack_syntax::expressions::names::models::Null;
 use sqlquack_syntax::expressions::queries::models::With;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
@@ -15,14 +16,12 @@ impl Parser<'_> {
             }
             if parser.is_op("|>") {
                 let start: usize = parser.offset();
-                let mut input: Expression =
-                    Expression::Null(sqlquack_syntax::expressions::names::models::Null);
                 while parser.is_op("|>") {
                     parser.at += 1;
-                    input = parser.deeper(|parser| parser.pipe(input))?;
+                    parser.deeper(|parser| parser.pipe(Expression::Null(Null)))?;
                 }
                 parser.gap("subpipeline_statement", start);
-                return Ok(input);
+                return Ok(Expression::Null(Null));
             }
             if parser.is(crate::parse::_helpers::tree::cursor::is_identifier)
                 && parser.char_at(1, ':')

@@ -1,10 +1,14 @@
 //! The parser's state: the tokens, where it is, and how tokens read as names.
 
+use std::collections::HashSet;
+
 use sqlquack_syntax::Gap;
 use sqlquack_syntax::expressions::names::models::Identifier;
 
 use crate::keywords::main::is_reserved::is_reserved;
-use crate::parse::constants::{CLAUSE_WORDS, FOR_WORD, PAIRED_CLAUSE_WORDS, QUERY_STARTS};
+use crate::parse::constants::{
+    CLAUSE_WORDS, FOR_WORD, PAIRED_CLAUSE_WORDS, QUERY_STARTS, TOO_DEEP_MESSAGE,
+};
 use crate::parse::errors::ParseError;
 use crate::scan::models::{NumberKind, Token, TokenKind};
 
@@ -12,6 +16,16 @@ pub(crate) type Parsing<T> = Result<T, ParseError>;
 
 /// Nesting deeper than this fails as a parser check, not as a syntax error.
 const MAX_DEPTH: usize = 200;
+
+/// Stack left below which a deeper level moves to a new segment, so the caller's stack size never decides.
+const RED_ZONE: usize = if cfg!(debug_assertions) {
+    4 << 20
+} else {
+    1 << 20
+};
+
+/// The size of each stack segment a deeper level allocates.
+const STACK_SEGMENT: usize = 8 << 20;
 
 pub(crate) struct Parser<'sql> {
     pub(crate) sql: &'sql str,
@@ -21,6 +35,10 @@ pub(crate) struct Parser<'sql> {
     pub(crate) gaps: Vec<Gap>,
     /// Whether the statement being parsed holds a gap, so it becomes a `Command`.
     pub(crate) opaque: bool,
+    /// The depth limit's error once any reading passed it, which refuses the statement whatever reading wins.
+    pub(crate) too_deep: Option<ParseError>,
+    /// The tokens where a call's keyword reading already failed, so a reparse goes straight to the ordinary call.
+    pub(crate) refused_specials: HashSet<usize>,
 }
 
 /// `identifier`: a quoted name, or an unquoted word that is not a reserved keyword.
@@ -65,6 +83,8 @@ impl<'sql> Parser<'sql> {
             depth: 0,
             gaps: Vec::new(),
             opaque: false,
+            too_deep: None,
+            refused_specials: HashSet::new(),
         }
     }
 
@@ -262,15 +282,19 @@ impl<'sql> Parser<'sql> {
 
     /// Runs `parse` one level deeper, failing past the depth limit.
     pub(crate) fn deeper<T>(&mut self, parse: impl FnOnce(&mut Self) -> Parsing<T>) -> Parsing<T> {
+        if let Some(too_deep) = &self.too_deep {
+            return Err(too_deep.clone());
+        }
         if self.depth >= MAX_DEPTH {
-            return Err(ParseError {
-                message: "the statement nests too deeply".to_owned(),
+            let error: ParseError = ParseError {
+                message: TOO_DEEP_MESSAGE.to_owned(),
                 position: self.offset(),
                 syntax: false,
-            });
+            };
+            return Err(self.too_deep.get_or_insert(error).clone());
         }
         self.depth += 1;
-        let result: Parsing<T> = parse(self);
+        let result: Parsing<T> = stacker::maybe_grow(RED_ZONE, STACK_SEGMENT, || parse(self));
         self.depth -= 1;
         result
     }
@@ -351,20 +375,6 @@ impl<'sql> Parser<'sql> {
             self.at += 1;
         }
         Err(self.error())
-    }
-
-    /// Skips one balanced `( ... )` group.
-    pub(crate) fn skip_parenthesized(&mut self) -> Parsing<()> {
-        self.expect_char('(')?;
-        let mut depth: usize = 1;
-        while depth > 0 {
-            match self.advance()?.kind {
-                TokenKind::Char('(') => depth += 1,
-                TokenKind::Char(')') => depth -= 1,
-                _ => {}
-            }
-        }
-        Ok(())
     }
 
     /// Whether a pipe set operation starts here: `[FULL|LEFT|INNER [OUTER]] UNION|EXCEPT|INTERSECT`.

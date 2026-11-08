@@ -1,8 +1,7 @@
 //! `query`, its terms, primaries, specifications, organization and pipe operators (SqlBaseParser.g4).
 
 use sqlquack_syntax::Expression;
-use sqlquack_syntax::expressions::names::models::Identifier;
-use sqlquack_syntax::expressions::names::models::Null;
+use sqlquack_syntax::expressions::names::models::{Identifier, Null};
 use sqlquack_syntax::expressions::operators::models::Alias;
 use sqlquack_syntax::expressions::queries::models::{
     ClusterBy, Cte, DistributeBy, From, GroupBy, Having, Limit, NamedWindow, OrderBy, Ordered,
@@ -90,13 +89,24 @@ pub(crate) fn wrapped(body: Expression) -> Select {
 
 /// Whether `body` has common table expressions of its own.
 fn has_with(body: &Expression) -> bool {
-    match body {
+    let mut base: &Expression = body;
+    while let Expression::PipeOperator(node) = base {
+        base = &node.this;
+    }
+    match base {
         Expression::Select(select) => select.with.is_some(),
         Expression::Union(node) => node.with.is_some(),
         Expression::Intersect(node) => node.with.is_some(),
         Expression::Except(node) => node.with.is_some(),
-        Expression::PipeOperator(node) => has_with(&node.this),
         _ => false,
+    }
+}
+
+/// `body` as a pipe's input: wrapped in a subquery when its first query has its own `WITH`.
+fn pipe_input(body: Expression) -> Expression {
+    match has_with(&body) {
+        true => subquery(body, None, false),
+        false => body,
     }
 }
 
@@ -212,10 +222,7 @@ fn reorganized(body: Expression, organization: Organization) -> Expression {
             false,
         );
     }
-    let mut body: Expression = match has_with(&body) {
-        true => subquery(body, None, false),
-        false => body,
-    };
+    let mut body: Expression = pipe_input(body);
     if let Some(items) = organization.order {
         let items: Vec<Expression> = items
             .into_iter()
@@ -236,16 +243,18 @@ fn reorganized(body: Expression, organization: Organization) -> Expression {
 }
 
 /// `body` with `with` as its common table expressions, wrapped when it has its own already.
-pub(crate) fn with_ctes(body: Expression, with: With) -> Expression {
-    if let Expression::PipeOperator(mut node) = body {
-        let mut input = &mut node.this;
-        while let Expression::PipeOperator(inner) = input {
-            input = &mut inner.this;
-        }
-        let first = std::mem::replace(input, Expression::Null(Null));
-        *input = with_ctes(first, with);
-        return Expression::PipeOperator(node);
+pub(crate) fn with_ctes(mut body: Expression, with: With) -> Expression {
+    let mut base: &mut Expression = &mut body;
+    while let Expression::PipeOperator(node) = base {
+        base = &mut node.this;
     }
+    let first: Expression = std::mem::replace(base, Expression::Null(Null));
+    *base = first_with_ctes(first, with);
+    body
+}
+
+/// A pipe chain's first query with `with` as its common table expressions.
+fn first_with_ctes(body: Expression, with: With) -> Expression {
     let has_with: bool = match &body {
         Expression::Select(select) => select.with.is_some(),
         Expression::Union(node) => node.with.is_some(),
@@ -286,6 +295,9 @@ impl Parser<'_> {
         let (body, parenthesised) = self.query_term()?;
         let organization: Organization = self.organization()?;
         let mut body: Expression = organized(body, organization, parenthesised);
+        if self.is_op("|>") || self.pipe_start_at(0) {
+            body = pipe_input(body);
+        }
         while self.is_op("|>") || self.pipe_start_at(0) {
             self.at += 1;
             body = self.deeper(|parser| parser.pipe(body))?;
@@ -717,10 +729,6 @@ impl Parser<'_> {
 
     /// `pipe_operator` after `|>`: `left |> ( KEYWORDS operands... )` as a `PipeOperator`.
     pub(crate) fn pipe(&mut self, left: Expression) -> Parsing<Expression> {
-        let left: Expression = match has_with(&left) {
-            true => subquery(left, None, false),
-            false => left,
-        };
         let word: String = self.word_at(0).unwrap_or_default();
         let operator: Expression = match word.as_str() {
             "SELECT" => {
@@ -830,15 +838,23 @@ impl Parser<'_> {
                 clause("MATCH_RECOGNIZE", vec![recognized])
             }
             "CALL" => {
-                let start: usize = self.offset();
                 self.at += 1;
-                self.multipart_identifier()?;
-                self.skip_parenthesized()?;
-                if self.kw("AS") || self.bare_alias_at(0, true) {
-                    self.table_alias()?;
+                let mut operands: Vec<Expression> = vec![self.aliased_tvf()?];
+                if self.kw("PARTITION") && self.kw_at(1, "BY") {
+                    self.at += 2;
+                    let keys: Vec<Expression> = self.comma_list(|parser| parser.expression())?;
+                    operands.push(clause("PARTITION BY", keys));
                 }
-                self.gap("pipe_call", start);
-                return Ok(left);
+                if self.kw("ORDER") && self.kw_at(1, "BY") {
+                    self.at += 2;
+                    let items: Vec<Expression> = self
+                        .comma_list(|parser| parser.sort_item())?
+                        .into_iter()
+                        .map(|item| Expression::Ordered(Box::new(item)))
+                        .collect();
+                    operands.push(clause("ORDER BY", items));
+                }
+                clause("CALL", operands)
             }
             _ if self.at_join() => {
                 let join = self.join_relation()?;

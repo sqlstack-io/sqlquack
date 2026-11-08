@@ -199,11 +199,10 @@ impl Parser<'_> {
                 node.negated = not;
                 Ok(kind(Box::new(node)))
             }
-            _ if not => {
+            _ => {
                 self.at = start;
-                Err(self.error())
+                Ok(value)
             }
-            _ => Ok(value),
         }
     }
 
