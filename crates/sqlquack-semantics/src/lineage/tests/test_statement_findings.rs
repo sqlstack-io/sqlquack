@@ -586,6 +586,36 @@ fn given_a_bare_duckdb_value_keyword_from_duckdbs_parser_when_resolving_names_th
             expected_findings: &[],
         },
         QueryFindingsTestCase {
+            description: "a keyword in an aggregate query, neither grouped nor aggregated",
+            sql: "SELECT current_date, count(*) AS n FROM orders",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a keyword beside a GROUP BY key",
+            sql: "SELECT id, current_date FROM orders GROUP BY id",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a keyword two CTEs offer as a column is ambiguous",
+            sql: "WITH a AS (SELECT 1 AS current_date), b AS (SELECT 2 AS current_date) \
+                  SELECT current_date FROM a, b",
+            expected_findings: &[(
+                "E221",
+                "Ambiguous unqualified column 'current_date' found in 2 referenced tables",
+                77,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a keyword a CTE offers as a column is judged for grouping",
+            sql: "WITH a AS (SELECT 1 AS current_date, 2 AS id) \
+                  SELECT current_date, count(*) AS n FROM a",
+            expected_findings: &[(
+                "E230",
+                "Column must be grouped or used in an aggregate function",
+                53,
+            )],
+        },
+        QueryFindingsTestCase {
             description: "a function name DuckDB does not read bare is still a column",
             sql: "SELECT now FROM orders",
             expected_findings: &[("E201", "Unknown column 'now' in table 'orders'", 7)],
