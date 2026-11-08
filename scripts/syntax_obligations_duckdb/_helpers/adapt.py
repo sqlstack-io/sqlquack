@@ -27,6 +27,7 @@ from scripts.syntax_obligations_duckdb.constants import (
     FORM_FILLS,
     FORM_PREFIX,
     GRAMMAR_REWRITES,
+    OBLIGATIONS_DIR,
     PROTECTED_TEXT,
     RETIRED_FILE,
     RETIRED_KIND,
@@ -151,3 +152,15 @@ def install() -> None:
         )
     setattr(obligations, "limit_drafts", dd_limit_drafts)  # noqa: B010
     setattr(obligations, "existing_ids", dd_existing_ids)  # noqa: B010
+
+
+def issued_ids(root: Path) -> set[str]:
+    """Every obligation id written under the root's obligations/."""
+    issued: set[str] = set()
+    for family in FAMILIES:
+        path: Path = root / OBLIGATIONS_DIR / f"{family}.toml"
+        if not path.exists():
+            continue
+        rows: list[dict[str, object]] = tomllib.loads(path.read_text()).get("obligation", [])
+        issued.update(str(row["id"]) for row in rows)
+    return issued
