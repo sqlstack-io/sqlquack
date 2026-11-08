@@ -58,6 +58,8 @@ SQLQuack's DuckDB result-type rules, in crates/sqlquack-semantics/src/lineage/_h
 and duckdb_types.rs, are ported from polyglot's engine type rules, and the fixture
 crates/sqlquack-semantics/src/lineage/tests/fixtures/duckdb_engine_types.json is polyglot's
 tests/fixtures/engine_types/duckdb.json, the result types DuckDB bound for its synthetic cases.
+The lint Rules' scope walk and aggregate classifier, in crates/sqlquack-lint/src/tree, are ported
+from polyglot's scope.rs and traversal.rs.
 
 polyglot is distributed under the following licence:
 
