@@ -9,6 +9,7 @@ use sqlquack_evidence::verify::types::CaseConverter;
 
 use crate::statements::_helpers::constructs::{constructs, own_functions, project_key};
 use crate::statements::_helpers::outcomes::outcome;
+use crate::statements::_helpers::rejections::{declared_compile_errors, keep_specific_rejections};
 use crate::statements::constants::STATEMENTS_FORMAT;
 use crate::statements::models::{Statement, StatementsFile};
 
@@ -42,6 +43,7 @@ pub fn write_translation_statements(
             constructs: constructs(case, &own)?,
         });
     }
+    let statements = keep_specific_rejections(statements, &declared_compile_errors(&cases));
     let count = statements.len();
     let file = StatementsFile {
         format: STATEMENTS_FORMAT,

@@ -52,6 +52,9 @@ pub enum Verdict {
         reasons: Vec<String>,
         /// The refused construct keys, sorted.
         constructs: Vec<String>,
+        /// Whether the recording shows Snowflake refusing to compile the case, as it declares.
+        #[serde(skip_serializing_if = "std::ops::Not::not")]
+        snowflake_rejected: bool,
     },
     /// The replay matched the recorded result, or an equivalence's spellings recorded one result.
     Passed,

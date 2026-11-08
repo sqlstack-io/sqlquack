@@ -81,4 +81,6 @@ pub(crate) struct CompileErrorTestCase {
     pub(crate) declared: bool,
     pub(crate) with_setup: bool,
     pub(crate) expected_failed: bool,
+    /// Whether a refusal of the case would match Snowflake's: a declared compile-class error.
+    pub(crate) expected_rejected: bool,
 }

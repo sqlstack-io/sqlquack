@@ -30,7 +30,7 @@ pub struct RecordedStatement {
     pub constructs: Vec<String>,
 }
 
-/// What one statement shows; only the first two are results matching Snowflake.
+/// What one statement shows; `matches` says which are results matching Snowflake.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum StatementOutcome {
@@ -42,6 +42,8 @@ pub enum StatementOutcome {
     /// DuckDB raised a declared divergence's guard where Snowflake returned rows.
     DeclaredDivergence,
     Refused,
+    /// SQLQuack refused it, and Snowflake refused to compile it too, as recorded.
+    MatchingRejection,
     Unproven,
     UnrecordedTranslates,
     UnrecordedRefused,
@@ -52,7 +54,10 @@ pub enum StatementOutcome {
 impl StatementOutcome {
     /// Whether the statement translates with results matching Snowflake's recording.
     pub fn matches(self) -> bool {
-        matches!(self, Self::Matching | Self::MatchingError)
+        matches!(
+            self,
+            Self::Matching | Self::MatchingError | Self::MatchingRejection
+        )
     }
 
     /// Whether a Snowflake result is recorded for it.
