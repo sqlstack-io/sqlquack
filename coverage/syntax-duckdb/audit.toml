@@ -1,0 +1,1457 @@
+# Reviewed omission audit of the DuckDB catalogue against the pinned PEG grammar and engine;
+# checked by scripts/audit_syntax_catalogue_duckdb.py, which fails on any unreviewed or stale row.
+#
+# [[gap]]: a grammar rule's keyword sequences no catalogued form spells, with the reason.
+# [[keyword]]: a keyword the grammar uses that no catalogued grammar names.
+# [[function]]: an engine function no grammar names, by name or by prefix.
+# [[type]]: an engine type name no grammar names. [[unwalked]]: a rule the walk does not reach.
+# [[unseen]]: syntax of a walked rule that yields no keyword sequence the gap walk compares, kept
+#   uncatalogued with its reason; the audit fails when a rule of UNSEEN_RULES (constants.py) has no
+#   row, when a row names a rule not in that list, or when a listed rule is no longer walked.
+
+grammar_sha256 = "9a1b57dbe20c683a6a166b7676f95946b656a9a7e92abc112a93c63e67d61e6e"
+engine_extract_sha256 = "fc83f816459976e50baf71cd4e6972bc1f65b681cb440f5e389ee6e7ad8f039d"
+
+limits = [
+    "Walk: every non-macro rule reachable from Statement in the PEG grammar files is walked; every other non-macro rule is listed under [[unwalked]] with a reason, and the audit fails on an unwalked rule that is not listed.",
+    "Spelling: an alternative is checked as its keyword literals in order. Identifiers, literals, punctuation and operator symbols are not compared; a referenced rule contributes words only when it spells only keywords and punctuation in at most 60 ways.",
+    "Containment: a sequence is covered when one catalogued form, with its page's definitions inlined, contains its keywords in order, not necessarily adjacent; a statement's sequence must start with the form's first keyword. A clause sequence may also be covered by a catalogued definition.",
+    "Below a statement, alternatives that spell fewer than 2 keywords are checked only by the [[keyword]] check.",
+    "Derived gaps: a gap that contains, as a contiguous run, a gap of a rule it reaches is counted (gaps_derived) but not reviewed; its reviewed root gives the reason. A gap that a [[gap]] row names under its own rule stays a root with its own reason (PARTITIONED BY and SET PARTITIONED BY / SET SORTED BY on tables, which reach COPY's PARTITIONED BY only through nested statements).",
+    "Blind spots: syntax spelled only by punctuation or operator symbols (slice bounds, .fn() calls, ~*, PRAGMA x = v, LIMIT n%) yields no keyword sequence, an optional clause whose rule spells fewer than 2 keywords or also spells identifiers or expressions (RETURNING, USING ( <columns> ), TABLE <name>) adds no words to its statement's sequences, so it is checked only by the [[keyword]] check, which any form spelling the word satisfies, and an optional keyword a parent rule spells before such a child rule (OR REPLACE on CreateStatement, before CREATE TYPE and the other variations) is checked with the parent's words only, which any CREATE form spelling OR REPLACE covers. None of these reaches a [[gap]] row; they were checked by reading the pages, and any of them left uncatalogued is an [[unseen]] row.",
+    "Engine names: functions, keywords and types are those duckdb_functions(), duckdb_keywords() and duckdb_types() report in a fresh in-memory database of the pinned 2.0.0 build with its statically linked extensions (ICU among them) and nothing installed; a name counts as catalogued when some grammar spells it as a word or operator.",
+    "Expansion: an alternative spelling more than 4096 keyword sequences stops the audit with an error instead of being truncated; none does at the pinned grammar.",
+]
+
+[[gap]]
+rule = "TransactionStatement"
+sequences = [
+    "START",
+    "END",
+]
+reason = "undocumented: the 2.0 grammar accepts START and END as transaction statements (a PostgreSQL spelling); transactions.md documents BEGIN TRANSACTION, COMMIT, ROLLBACK and ABORT"
+
+[[gap]]
+rule = "AttachStatement"
+sequences = [
+    "ATTACH IF NOT EXISTS DATABASE",
+    "ATTACH OR REPLACE IF NOT EXISTS DATABASE",
+]
+reason = "undocumented: the 2.0 grammar accepts IF NOT EXISTS followed by the optional DATABASE keyword; attach.md writes ATTACH [DATABASE] with IF NOT EXISTS only before a path without DATABASE"
+
+[[gap]]
+rule = "CommentStatement"
+sequences = [
+    "COMMENT ON FUNCTION IS",
+]
+reason = "undocumented: comment_on.md documents COMMENT ON for tables, views, indexes, sequences, types, macros and columns, and MACRO, not FUNCTION; COMMENT ON SCHEMA and COMMENT ON DATABASE, which the page names as unsupported, are the observed form dd.ddl.comment-on.schema-or-database"
+
+[[gap]]
+rule = "TruncateStatement"
+sequences = [
+    "TRUNCATE TABLE",
+]
+reason = "undocumented: the 2.0 grammar accepts the optional TABLE keyword after TRUNCATE (a PostgreSQL spelling); delete.md documents TRUNCATE <table-name> only"
+
+[[gap]]
+rule = "AnalyzeStatement"
+sequences = [
+    "ANALYZE VERBOSE",
+    "ANALYSE",
+    "ANALYSE VERBOSE",
+]
+reason = "undocumented: the 2.0 grammar accepts ANALYSE and ANALYZE VERBOSE (a PostgreSQL spelling); analyze.md documents ANALYZE [ <table-name> [ ( <column-name> ) ] ]"
+
+[[gap]]
+rule = "ShowExternalResourcesStmt"
+sequences = [
+    "SHOW EXTERNAL RESOURCES",
+    "SHOW ALL EXTERNAL RESOURCES",
+]
+reason = "undocumented: the 2.0 grammar accepts external resource statements; the 2.0 documentation has no external resource page"
+
+[[gap]]
+rule = "AttachToExternalResource"
+sequences = [
+    "ATTACH TO",
+]
+reason = "undocumented: the 2.0 grammar accepts ATTACH ... TO an external resource; the 2.0 documentation has no external resource page (attach.md documents ATTACH <path> [ AS <alias> ])"
+
+[[gap]]
+rule = "ConnectToExternalResource"
+sequences = [
+    "CONNECT TO",
+]
+reason = "undocumented: the 2.0 grammar accepts CONNECT TO an external resource; connect.md documents CONNECT <database> and DISCONNECT only"
+
+[[gap]]
+rule = "CreateExtensionRepositoryStmt"
+sequences = [
+    "CREATE OR REPLACE EXTENSION REPOSITORY IF NOT EXISTS",
+]
+reason = "rejected after parsing: OR REPLACE together with IF NOT EXISTS, which 2.0 refuses (Cannot combine OR REPLACE with IF NOT EXISTS); each alone is catalogued"
+
+[[gap]]
+rule = "DropExtensionRepositoryStmt"
+sequences = [
+    "DROP EXTENSION REPOSITORY IF EXISTS",
+]
+reason = "undocumented: the 2.0 grammar accepts IF EXISTS on DROP EXTENSION REPOSITORY; extension_repositories.md documents DROP EXTENSION REPOSITORY <name>"
+
+[[gap]]
+rule = "OverridingClause"
+sequences = [
+    "OVERRIDING USER VALUE",
+    "OVERRIDING SYSTEM VALUE",
+]
+reason = "undocumented: the 2.0 grammar accepts INSERT ... OVERRIDING { USER | SYSTEM } VALUE (a PostgreSQL spelling); insert.md documents no OVERRIDING clause"
+
+[[gap]]
+rule = "BeginTransaction"
+sequences = [
+    "START WORK",
+    "START TRANSACTION",
+    "BEGIN WORK",
+]
+reason = "undocumented: the 2.0 grammar accepts START TRANSACTION, START WORK and BEGIN WORK (a PostgreSQL spelling); transactions.md documents BEGIN TRANSACTION"
+
+[[gap]]
+rule = "RollbackTransaction"
+sequences = [
+    "ABORT WORK",
+    "ABORT TRANSACTION",
+    "ROLLBACK WORK",
+    "ROLLBACK TRANSACTION",
+]
+reason = "undocumented: the 2.0 grammar accepts ROLLBACK and ABORT with WORK or TRANSACTION (a PostgreSQL spelling); transactions.md documents ROLLBACK and ABORT"
+
+[[gap]]
+rule = "CommitTransaction"
+sequences = [
+    "COMMIT WORK",
+    "COMMIT TRANSACTION",
+    "END WORK",
+    "END TRANSACTION",
+]
+reason = "undocumented: the 2.0 grammar accepts COMMIT and END with WORK or TRANSACTION (a PostgreSQL spelling); transactions.md documents COMMIT"
+
+[[gap]]
+rule = "ExternalResourceKeyword"
+sequences = [
+    "EXTERNAL RESOURCE",
+]
+reason = "undocumented: the 2.0 grammar accepts EXTERNAL RESOURCE statements; the 2.0 documentation has no external resource page"
+
+[[gap]]
+rule = "CreateTypeStmt"
+sequences = [
+    "TYPE IF NOT EXISTS AS",
+]
+reason = "undocumented: the 2.0 grammar accepts CREATE TYPE IF NOT EXISTS; create_type.md documents CREATE TYPE <name> AS <type>"
+
+[[gap]]
+rule = "CreateViewStmt"
+sequences = [
+    "RECURSIVE VIEW AS",
+    "RECURSIVE VIEW IF NOT EXISTS AS",
+    "SECURE VIEW IF NOT EXISTS AS",
+    "SECURE RECURSIVE VIEW AS",
+    "SECURE RECURSIVE VIEW IF NOT EXISTS AS",
+]
+reason = "undocumented: the 2.0 grammar accepts RECURSIVE views and SECURE combined with RECURSIVE or IF NOT EXISTS; create_view.md documents CREATE [ OR REPLACE ] [ TEMP ] VIEW [ IF NOT EXISTS ] and CREATE SECURE VIEW alone"
+
+[[gap]]
+rule = "DropCollation"
+sequences = [
+    "COLLATION IF EXISTS",
+]
+reason = "undocumented: the 2.0 grammar accepts DROP COLLATION; collations are built in or loaded by extension, and drop.md documents no COLLATION object"
+
+[[gap]]
+rule = "DropSecret"
+sequences = [
+    "TEMP SECRET",
+    "TEMP SECRET IF EXISTS",
+]
+reason = "undocumented: the 2.0 grammar accepts the TEMP spelling in DROP TEMP SECRET; create_secret.md writes DROP [ PERSISTENT | TEMPORARY ] SECRET, which is catalogued"
+
+[[gap]]
+rule = "AlterDatabaseStmt"
+sequences = [
+    "DATABASE SET ALIAS TO",
+    "DATABASE IF EXISTS SET ALIAS TO",
+]
+reason = "undocumented: the 2.0 grammar accepts ALTER DATABASE ... SET ALIAS TO; alter_database.md documents only RENAME TO, and states it is unsupported in 2.0.0"
+
+[[gap]]
+rule = "ReadOrWrite"
+sequences = [
+    "READ ONLY",
+    "READ WRITE",
+]
+reason = "undocumented: the 2.0 grammar accepts a READ ONLY / READ WRITE transaction mode after BEGIN TRANSACTION; transactions.md documents no transaction modes"
+
+[[gap]]
+rule = "VacuumLegacyOptions"
+sequences = [
+    "VERBOSE ANALYZE",
+    "VERBOSE ANALYSE",
+    "FREEZE ANALYZE",
+    "FREEZE ANALYSE",
+    "FREEZE VERBOSE",
+    "FREEZE VERBOSE ANALYZE",
+    "FREEZE VERBOSE ANALYSE",
+    "FULL ANALYZE",
+    "FULL ANALYSE",
+    "FULL VERBOSE",
+    "FULL VERBOSE ANALYZE",
+    "FULL VERBOSE ANALYSE",
+    "FULL FREEZE",
+    "FULL FREEZE ANALYZE",
+    "FULL FREEZE ANALYSE",
+    "FULL FREEZE VERBOSE",
+    "FULL FREEZE VERBOSE ANALYZE",
+    "FULL FREEZE VERBOSE ANALYSE",
+]
+reason = "undocumented: the 2.0 grammar accepts the PostgreSQL unparenthesised VACUUM options (FULL, FREEZE, VERBOSE, ANALYSE); vacuum.md documents VACUUM [ ANALYZE ] and names VACUUM FULL as unsupported, catalogued as the observed form dd.utility.vacuum.vacuum-full; the other options and their combinations are undocumented, and 2.0 raises Not implemented for FULL in any of them"
+
+[[gap]]
+rule = "CommitAction"
+sequences = [
+    "ON COMMIT PRESERVE ROWS",
+    "ON COMMIT DELETE ROWS",
+]
+reason = "undocumented: the 2.0 grammar accepts ON COMMIT { PRESERVE | DELETE } ROWS on temporary tables (a PostgreSQL spelling); 2.0 raises Not implemented for ON COMMIT DELETE ROWS"
+
+[[gap]]
+rule = "OnConflictIndexTarget"
+sequences = [
+    "ON CONSTRAINT",
+]
+reason = "undocumented: the 2.0 grammar accepts ON CONFLICT ON CONSTRAINT <name> (a PostgreSQL spelling); insert.md documents ON CONFLICT ( <column-name> [ , ... ] )"
+
+[[gap]]
+rule = "CopyLegacyOption"
+sequences = [
+    "USING DELIMITERS",
+]
+reason = "undocumented: the 2.0 grammar accepts USING DELIMITERS, the PostgreSQL 7.3 COPY option"
+
+[[gap]]
+rule = "CopyFromDatabaseWithFlag"
+sequences = [
+    "FROM DATABASE TO DATA",
+]
+reason = "undocumented: the 2.0 grammar accepts the (DATA) flag of COPY FROM DATABASE; copy.md documents COPY FROM DATABASE <db> TO <db> [ ( SCHEMA ) ]"
+
+[[gap]]
+rule = "SeqOwnedBy"
+sequences = [
+    "OWNED BY",
+]
+reason = "rejected after parsing: CREATE SEQUENCE ... OWNED BY parses, and 2.0 refuses it (Unrecognized option \"owned\"); create_sequence.md documents no OWNED BY"
+
+[[gap]]
+rule = "CreateTriggerStmt"
+sequences = [
+    "TRIGGER IF NOT EXISTS INSTEAD OF ON",
+    "TRIGGER IF NOT EXISTS INSTEAD OF ON FOR EACH ROW",
+    "TRIGGER IF NOT EXISTS INSTEAD OF ON FOR EACH STATEMENT",
+    "TRIGGER INSTEAD OF ON FOR EACH STATEMENT",
+]
+reason = "undocumented: create_trigger.md names INSTEAD OF triggers only as unsupported, catalogued as the observed form dd.ddl.create-trigger.instead-of (CREATE TRIGGER <name> INSTEAD OF <event> ON <table> FOR EACH ROW); the 2.0 grammar also takes IF NOT EXISTS, FOR EACH STATEMENT and no FOR EACH clause with INSTEAD OF, which parse and are refused at execution (INSTEAD OF triggers are not yet supported)"
+
+[[gap]]
+rule = "SetopClause"
+sequences = [
+    "UNION DISTINCT",
+    "UNION DISTINCT BY NAME",
+    "EXCEPT BY NAME",
+    "EXCEPT DISTINCT",
+    "EXCEPT DISTINCT BY NAME",
+    "EXCEPT ALL BY NAME",
+]
+reason = "undocumented: the 2.0 grammar accepts an explicit DISTINCT on UNION and EXCEPT, and EXCEPT with BY NAME, which 2.0 refuses after parsing (Invalid combination of EXCEPT and BY NAME); setops.md documents UNION / INTERSECT / EXCEPT [ ALL ] and UNION [ ALL ] BY NAME"
+
+[[gap]]
+rule = "ZoneIntervalWithInterval"
+sequences = [
+    "INTERVAL YEAR",
+    "INTERVAL YEARS",
+    "INTERVAL MONTH",
+    "INTERVAL MONTHS",
+    "INTERVAL DAY",
+    "INTERVAL DAYS",
+    "INTERVAL HOUR",
+    "INTERVAL HOURS",
+    "INTERVAL MINUTE",
+    "INTERVAL MINUTES",
+    "INTERVAL SECOND",
+    "INTERVAL SECONDS",
+    "INTERVAL MILLISECOND",
+    "INTERVAL MILLISECONDS",
+    "INTERVAL MICROSECOND",
+    "INTERVAL MICROSECONDS",
+    "INTERVAL WEEK",
+    "INTERVAL WEEKS",
+    "INTERVAL QUARTER",
+    "INTERVAL QUARTERS",
+    "INTERVAL DECADE",
+    "INTERVAL DECADES",
+    "INTERVAL CENTURY",
+    "INTERVAL CENTURIES",
+    "INTERVAL MILLENNIUM",
+    "INTERVAL MILLENNIA",
+]
+reason = "undocumented: the 2.0 grammar accepts SET TIME ZONE INTERVAL '<string>' <unit> (a PostgreSQL spelling); set.md documents SET TimeZone = '<zone>'"
+
+[[gap]]
+rule = "MaterializedViewEntry"
+sequences = [
+    "MATERIALIZED VIEW",
+]
+reason = "undocumented: the 2.0 grammar accepts DROP MATERIALIZED VIEW; DuckDB has no materialized views (CREATE MATERIALIZED VIEW is a syntax error in 2.0) and drop.md documents none"
+
+[[gap]]
+rule = "TableUnpivotClause"
+sequences = [
+    "UNPIVOT EXCLUDE NULLS",
+]
+reason = "undocumented: the 2.0 grammar accepts EXCLUDE NULLS on UNPIVOT; unpivot.md documents UNPIVOT [ INCLUDE NULLS ] only, exclusion being the default"
+
+[[gap]]
+rule = "BitType"
+sequences = [
+    "BIT VARYING",
+]
+reason = "undocumented: the 2.0 grammar accepts BIT VARYING (a PostgreSQL spelling); bitstring.md documents BITSTRING and BIT"
+
+[[gap]]
+rule = "DropConstraint"
+sequences = [
+    "DROP CONSTRAINT CASCADE",
+    "DROP CONSTRAINT RESTRICT",
+    "DROP CONSTRAINT IF EXISTS",
+    "DROP CONSTRAINT IF EXISTS CASCADE",
+    "DROP CONSTRAINT IF EXISTS RESTRICT",
+]
+reason = "undocumented: alter_table.md names the DROP CONSTRAINT clause only as unsupported, catalogued as the observed form dd.ddl.alter-table.drop-constraint (ALTER TABLE <table-name> DROP CONSTRAINT <constraint-name>); the 2.0 grammar also takes IF EXISTS, CASCADE and RESTRICT, which 2.0 refuses while parsing like the documented spelling (Not implemented: No support for that ALTER TABLE option yet!)"
+
+[[gap]]
+rule = "DropColumn"
+sequences = [
+    "DROP COLUMN CASCADE",
+    "DROP COLUMN RESTRICT",
+    "DROP COLUMN IF EXISTS CASCADE",
+    "DROP COLUMN IF EXISTS RESTRICT",
+]
+reason = "undocumented: the 2.0 grammar accepts CASCADE and RESTRICT after ALTER TABLE ... DROP COLUMN (a PostgreSQL spelling); alter_table.md documents DROP [ COLUMN ] [ IF EXISTS ] <column-name>"
+
+[[gap]]
+rule = "SetPartitionedBy"
+sequences = [
+    "SET PARTITIONED BY",
+]
+reason = "outside the page set: ALTER TABLE ... SET PARTITIONED BY ( <expr> ) is documented only on the iceberg extension page writing_to_iceberg.md; 2.0 parses it and raises Not implemented for a DuckDB table"
+
+[[gap]]
+rule = "ResetPartitionedBy"
+sequences = [
+    "RESET PARTITIONED BY",
+]
+reason = "undocumented: the 2.0 grammar accepts ALTER TABLE ... RESET PARTITIONED BY, for catalogs that partition (DuckLake, Iceberg); the core 2.0 documentation of ALTER TABLE does not document it"
+
+[[gap]]
+rule = "SetSortedBy"
+sequences = [
+    "SET SORTED BY",
+]
+reason = "undocumented: no page of the 2.0 documentation, in or outside the page set, writes ALTER TABLE ... SET SORTED BY (the grammar's spelling for catalogs that sort); 2.0 parses it and raises Not implemented for a DuckDB table"
+
+[[gap]]
+rule = "ResetSortedBy"
+sequences = [
+    "RESET SORTED BY",
+]
+reason = "undocumented: the 2.0 grammar accepts ALTER TABLE ... RESET SORTED BY, for catalogs that sort (DuckLake, Iceberg); the core 2.0 documentation of ALTER TABLE does not document it"
+
+[[gap]]
+rule = "Oids"
+sequences = [
+    "WITH OIDS",
+    "WITHOUT OIDS",
+]
+reason = "undocumented: the reachable spellings are WITH WITH OIDS and WITH WITHOUT OIDS after CREATE INDEX and CREATE TABLE (create_index.gram WithList <- 'WITH' RelOptionOrOids, Oids <- WithOrWithoutOids 'OIDS'), and both raise Not implemented (OIDS for index are not yet implemented) inside extract_statements; the PostgreSQL spellings WITH OIDS and WITHOUT OIDS are syntax errors in both statements"
+
+[[gap]]
+rule = "SetIntersectClause"
+sequences = [
+    "INTERSECT DISTINCT",
+]
+reason = "undocumented: the 2.0 grammar accepts INTERSECT DISTINCT; setops.md documents INTERSECT [ ALL ]"
+
+[[gap]]
+rule = "OrderByAll"
+sequences = [
+    "ALL DESCENDING",
+    "ALL DESCENDING NULLS FIRST",
+    "ALL DESCENDING NULLS LAST",
+    "ALL ASCENDING",
+    "ALL ASCENDING NULLS FIRST",
+    "ALL ASCENDING NULLS LAST",
+]
+reason = "undocumented: the 2.0 grammar accepts ASCENDING and DESCENDING after ORDER BY ALL; orderby.md documents ORDER BY ALL [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ], which is catalogued"
+
+[[gap]]
+rule = "DoubleType"
+sequences = [
+    "DOUBLE PRECISION",
+]
+reason = "undocumented: the 2.0 grammar accepts DOUBLE PRECISION; numeric.md documents DOUBLE and its alias FLOAT8, and uses double precision only in prose"
+
+[[gap]]
+rule = "CharacterType"
+sequences = [
+    "CHARACTER VARYING",
+    "CHAR VARYING",
+    "NATIONAL CHARACTER",
+    "NATIONAL CHARACTER VARYING",
+    "NATIONAL CHAR",
+    "NATIONAL CHAR VARYING",
+    "NCHAR VARYING",
+]
+reason = "undocumented: the 2.0 grammar accepts CHARACTER VARYING, CHAR VARYING and the NATIONAL / NCHAR spellings; text.md documents VARCHAR and its aliases CHAR, BPCHAR, STRING and TEXT"
+
+[[gap]]
+rule = "PartitionOptions"
+sequences = [
+    "PARTITIONED BY",
+]
+reason = "outside the page set: CREATE TABLE ... PARTITIONED BY ( <expr> ) is documented only on the iceberg (writing_to_iceberg.md), delta and unity_catalog extension pages, for tables of those catalogs; 2.0 parses it and refuses it for a DuckDB table (PARTITIONED BY is not supported for tables in a duckdb catalog)"
+
+[[gap]]
+rule = "SortedOptions"
+sequences = [
+    "SORTED BY",
+]
+reason = "undocumented: the 2.0 grammar accepts CREATE TABLE ... SORTED BY, for catalogs that sort (DuckLake, Iceberg); create_table.md does not document it"
+
+[[gap]]
+rule = "ShowTables"
+sequences = [
+    "DESCRIBE TABLES FROM",
+    "DESC TABLES FROM",
+]
+reason = "undocumented: the 2.0 grammar accepts DESCRIBE TABLES FROM; list_tables.md documents SHOW TABLES FROM <name>, which is catalogued"
+
+[[gap]]
+rule = "ShowAllTables"
+sequences = [
+    "DESCRIBE ALL",
+    "DESCRIBE ALL TABLES",
+    "DESC ALL TABLES",
+]
+reason = "undocumented: the 2.0 grammar accepts DESCRIBE ALL [ TABLES ]; list_tables.md documents SHOW ALL TABLES, which is catalogued"
+
+[[gap]]
+rule = "YearToMonth"
+sequences = [
+    "YEAR TO MONTH",
+    "YEAR TO MONTHS",
+    "YEARS TO MONTH",
+    "YEARS TO MONTHS",
+]
+reason = "undocumented: the 2.0 grammar accepts the SQL-standard interval qualifier YEAR TO MONTH; interval.md documents none"
+
+[[gap]]
+rule = "DayToHour"
+sequences = [
+    "DAY TO HOUR",
+    "DAY TO HOURS",
+    "DAYS TO HOUR",
+    "DAYS TO HOURS",
+]
+reason = "undocumented: the 2.0 grammar accepts the SQL-standard interval qualifier DAY TO HOUR; interval.md documents none"
+
+[[gap]]
+rule = "DayToMinute"
+sequences = [
+    "DAY TO MINUTE",
+    "DAY TO MINUTES",
+    "DAYS TO MINUTE",
+    "DAYS TO MINUTES",
+]
+reason = "undocumented: the 2.0 grammar accepts the SQL-standard interval qualifier DAY TO MINUTE; interval.md documents none"
+
+[[gap]]
+rule = "DayToSecond"
+sequences = [
+    "DAY TO SECOND",
+    "DAY TO SECONDS",
+    "DAYS TO SECOND",
+    "DAYS TO SECONDS",
+]
+reason = "undocumented: the 2.0 grammar accepts the SQL-standard interval qualifier DAY TO SECOND; interval.md documents none"
+
+[[gap]]
+rule = "HourToMinute"
+sequences = [
+    "HOUR TO MINUTE",
+    "HOUR TO MINUTES",
+    "HOURS TO MINUTE",
+    "HOURS TO MINUTES",
+]
+reason = "undocumented: the 2.0 grammar accepts the SQL-standard interval qualifier HOUR TO MINUTE; interval.md documents none"
+
+[[gap]]
+rule = "HourToSecond"
+sequences = [
+    "HOUR TO SECOND",
+    "HOUR TO SECONDS",
+    "HOURS TO SECOND",
+    "HOURS TO SECONDS",
+]
+reason = "undocumented: the 2.0 grammar accepts the SQL-standard interval qualifier HOUR TO SECOND; interval.md documents none"
+
+[[gap]]
+rule = "MinuteToSecond"
+sequences = [
+    "MINUTE TO SECOND",
+    "MINUTE TO SECONDS",
+    "MINUTES TO SECOND",
+    "MINUTES TO SECONDS",
+]
+reason = "undocumented: the 2.0 grammar accepts the SQL-standard interval qualifier MINUTE TO SECOND; interval.md documents none"
+
+[[gap]]
+rule = "DelimiterAsOption"
+sequences = [
+    "DELIMITER AS",
+]
+reason = "undocumented: the 2.0 grammar accepts the PostgreSQL COPY option spelling DELIMITER AS '<c>'; copy.md documents the ( DELIMITER '<c>' ) option list"
+
+[[gap]]
+rule = "EscapeAsOption"
+sequences = [
+    "ESCAPE AS",
+]
+reason = "undocumented: the 2.0 grammar accepts the PostgreSQL COPY option spelling ESCAPE AS '<c>'; copy.md documents ( ESCAPE '<c>' )"
+
+[[gap]]
+rule = "QuoteAsOption"
+sequences = [
+    "QUOTE AS",
+]
+reason = "undocumented: the 2.0 grammar accepts the PostgreSQL COPY option spelling QUOTE AS '<c>'; copy.md documents ( QUOTE '<c>' )"
+
+[[gap]]
+rule = "ForceQuoteOption"
+sequences = [
+    "FORCE QUOTE",
+]
+reason = "undocumented: the 2.0 grammar accepts the PostgreSQL COPY option spelling FORCE QUOTE <columns>; copy.md documents ( FORCE_QUOTE <columns> )"
+
+[[gap]]
+rule = "PartitionByOption"
+sequences = [
+    "PARTITIONED BY",
+]
+reason = "undocumented: the 2.0 grammar accepts PARTITIONED BY as a COPY option spelling; copy.md documents PARTITION_BY"
+
+[[gap]]
+rule = "ForceNullOption"
+sequences = [
+    "FORCE NULL",
+    "FORCE NOT NULL",
+]
+reason = "undocumented: the 2.0 grammar accepts the PostgreSQL COPY option spellings FORCE NULL and FORCE NOT NULL; copy.md documents ( FORCE_NOT_NULL <columns> )"
+
+[[gap]]
+rule = "IntervalWithSimpleSpecifier"
+sequences = [
+    "INTERVAL YEAR",
+    "INTERVAL YEARS",
+    "INTERVAL MONTH",
+    "INTERVAL MONTHS",
+    "INTERVAL DAY",
+    "INTERVAL DAYS",
+    "INTERVAL HOUR",
+    "INTERVAL HOURS",
+    "INTERVAL MINUTE",
+    "INTERVAL MINUTES",
+    "INTERVAL SECOND",
+    "INTERVAL SECONDS",
+    "INTERVAL MILLISECOND",
+    "INTERVAL MILLISECONDS",
+    "INTERVAL MICROSECOND",
+    "INTERVAL MICROSECONDS",
+    "INTERVAL WEEK",
+    "INTERVAL WEEKS",
+    "INTERVAL QUARTER",
+    "INTERVAL QUARTERS",
+    "INTERVAL DECADE",
+    "INTERVAL DECADES",
+    "INTERVAL CENTURY",
+    "INTERVAL CENTURIES",
+    "INTERVAL MILLENNIUM",
+    "INTERVAL MILLENNIA",
+]
+reason = "undocumented: the 2.0 grammar accepts the SQL-standard interval type qualifier INTERVAL <unit> as a data type; interval.md documents INTERVAL as a type name and INTERVAL <amount> <unit> as a literal, whose unit is a placeholder value"
+
+[[gap]]
+rule = "IntervalToIntervalAsType"
+sequences = [
+    "YEAR TO MONTH",
+    "YEAR TO MONTHS",
+    "YEARS TO MONTH",
+    "YEARS TO MONTHS",
+    "DAY TO HOUR",
+    "DAY TO HOURS",
+    "DAYS TO HOUR",
+    "DAYS TO HOURS",
+    "DAY TO MINUTE",
+    "DAY TO MINUTES",
+    "DAYS TO MINUTE",
+    "DAYS TO MINUTES",
+    "DAY TO SECOND",
+    "DAY TO SECONDS",
+    "DAYS TO SECOND",
+    "DAYS TO SECONDS",
+    "HOUR TO MINUTE",
+    "HOUR TO MINUTES",
+    "HOURS TO MINUTE",
+    "HOURS TO MINUTES",
+    "HOUR TO SECOND",
+    "HOUR TO SECONDS",
+    "HOURS TO SECOND",
+    "HOURS TO SECONDS",
+    "MINUTE TO SECOND",
+    "MINUTE TO SECONDS",
+    "MINUTES TO SECOND",
+    "MINUTES TO SECONDS",
+]
+reason = "undocumented: the 2.0 grammar accepts SQL-standard interval qualifiers <unit> TO <unit> (INTERVAL YEAR TO MONTH and so on); interval.md documents none"
+
+[[gap]]
+rule = "GeneratedByDefault"
+sequences = [
+    "GENERATED BY DEFAULT",
+]
+reason = "undocumented: the 2.0 grammar accepts GENERATED BY DEFAULT (a PostgreSQL spelling identity syntax); create_table.md documents [ GENERATED ALWAYS ] AS ( <expr> ) [ VIRTUAL | STORED ]"
+
+[[gap]]
+rule = "IsLiteral"
+sequences = [
+    "IS TRUE",
+    "IS FALSE",
+    "IS UNKNOWN",
+    "IS NOT TRUE",
+    "IS NOT FALSE",
+    "IS NOT UNKNOWN",
+]
+reason = "undocumented: the 2.0 grammar accepts IS [ NOT ] TRUE / FALSE / UNKNOWN; comparison_operators.md documents IS [ NOT ] NULL and IS [ NOT ] DISTINCT FROM only"
+
+[[gap]]
+rule = "UpdateAction"
+sequences = [
+    "ON UPDATE RESTRICT",
+    "ON UPDATE CASCADE",
+    "ON UPDATE SET NULL",
+    "ON UPDATE SET DEFAULT",
+]
+reason = "undocumented: the 2.0 grammar accepts ON UPDATE referential actions; create_table.md and constraints.md document REFERENCES without actions"
+
+[[gap]]
+rule = "DeleteAction"
+sequences = [
+    "ON DELETE RESTRICT",
+    "ON DELETE SET NULL",
+    "ON DELETE SET DEFAULT",
+]
+reason = "undocumented: create_table.md documents REFERENCES without actions and names only ON DELETE CASCADE, as unsupported, catalogued as the observed form dd.ddl.create-table.foreign-key-on-delete-cascade; 2.0 refuses SET NULL and SET DEFAULT while parsing like CASCADE (FOREIGN KEY constraints cannot use CASCADE, SET NULL or SET DEFAULT), and RESTRICT is the default action spelled out"
+
+[[gap]]
+rule = "BetweenClause"
+sequences = [
+    "BETWEEN ASYMMETRIC AND",
+]
+reason = "undocumented: the 2.0 grammar accepts BETWEEN ASYMMETRIC (SQL standard); comparison_operators.md documents [ NOT ] BETWEEN <x> AND <y>"
+
+[[gap]]
+rule = "NoKeyAction"
+sequences = [
+    "NO ACTION",
+]
+reason = "undocumented: the 2.0 grammar accepts NO ACTION as a referential action; constraints are documented without actions, and NO ACTION appears only as a value of information_schema.referential_constraints"
+
+[[keyword]]
+keyword = "ACTION"
+reason = "used only by NoKeyAction, a reviewed gap"
+
+[[keyword]]
+keyword = "ANALYSE"
+reason = "used only by the ANALYSE spellings, reviewed gaps of AnalyzeStatement and VacuumLegacyOptions"
+
+[[keyword]]
+keyword = "ASYMMETRIC"
+reason = "used only by BetweenClause, a reviewed gap"
+
+[[keyword]]
+keyword = "BOTH"
+reason = "used only by TrimBoth: trim( BOTH ... FROM ... ), the SQL-standard trim syntax the 2.0 docs do not document (text.md documents trim(string[, characters]))"
+
+[[keyword]]
+keyword = "CENTURIES"
+reason = "a plural interval unit, a value of the interval-unit form's <unit> placeholder; interval.md writes units in prose and examples, not as a list"
+
+[[keyword]]
+keyword = "DAYS"
+reason = "a plural interval unit, a value of the interval-unit form's <unit> placeholder"
+
+[[keyword]]
+keyword = "DEC"
+reason = "used only by DecType, the undocumented DEC alias of DECIMAL (numeric.md documents DECIMAL and NUMERIC)"
+
+[[keyword]]
+keyword = "DECADES"
+reason = "a plural interval unit, a value of the interval-unit form's <unit> placeholder"
+
+[[keyword]]
+keyword = "DELIMITERS"
+reason = "used only by CopyLegacyOption, a reviewed gap"
+
+[[keyword]]
+keyword = "DESTROY"
+reason = "used only by DESTROY EXTERNAL RESOURCE; the 2.0 documentation has no external resource page"
+
+[[keyword]]
+keyword = "ENCODING"
+reason = "used only by EncodingOption <- 'ENCODING' StringLiteral (copy.gram), the PostgreSQL COPY option spelling ENCODING '<name>'; the rule spells one keyword, so no [[gap]] row can name it and this row is its only review; copy.md documents no ENCODING option, and csv/overview.md lists encoding as a read_csv parameter that is not available in COPY"
+
+[[keyword]]
+keyword = "EXACT"
+reason = "used only by NearestExact, the NEAREST-join modifier opposite APPROX (select.gram ApproxOrExact); from.md documents only the APPROX prefix and never writes EXACT"
+
+[[keyword]]
+keyword = "EXPORT_STATE"
+reason = "used only by the undocumented EXPORT_STATE clause of an aggregate call"
+
+[[keyword]]
+keyword = "EXTERNAL"
+reason = "used only by the external resource statements, reviewed gaps"
+
+[[keyword]]
+keyword = "FREEZE"
+reason = "used only by the PostgreSQL VACUUM FREEZE option (VacuumLegacyOptions, a reviewed gap) and the legacy COPY FREEZE option, undocumented in copy.md"
+
+[[keyword]]
+keyword = "HOURS"
+reason = "a plural interval unit, a value of the interval-unit form's <unit> placeholder"
+
+[[keyword]]
+keyword = "LEADING"
+reason = "used only by TrimLeading: trim( LEADING ... FROM ... ), undocumented in 2.0 (text.md documents ltrim)"
+
+[[keyword]]
+keyword = "MILLENNIA"
+reason = "a plural interval unit, a value of the interval-unit form's <unit> placeholder"
+
+[[keyword]]
+keyword = "MINUTES"
+reason = "a plural interval unit, a value of the interval-unit form's <unit> placeholder"
+
+[[keyword]]
+keyword = "MONTHS"
+reason = "a plural interval unit, a value of the interval-unit form's <unit> placeholder"
+
+[[keyword]]
+keyword = "NATIONAL"
+reason = "used only by the NATIONAL CHARACTER spellings of CharacterType, a reviewed gap"
+
+[[keyword]]
+keyword = "NCHAR"
+reason = "used only by the NCHAR spellings of CharacterType, a reviewed gap"
+
+[[keyword]]
+keyword = "NONE"
+reason = "used only by NoneLiteral, a value of a relation option (DefArg, WITH ( <option> = NONE )); the 2.0 docs document no NONE option value"
+
+[[keyword]]
+keyword = "OIDS"
+reason = "used only by WITH / WITHOUT OIDS, a reviewed gap"
+
+[[keyword]]
+keyword = "OVERRIDING"
+reason = "used only by OverridingClause, a reviewed gap"
+
+[[keyword]]
+keyword = "OWNED"
+reason = "used only by SeqOwnedBy, a reviewed gap"
+
+[[keyword]]
+keyword = "PARTITIONED"
+reason = "used only by CREATE TABLE ... PARTITIONED BY (PartitionOptions) and ALTER TABLE ... SET PARTITIONED BY (SetPartitionedBy), reviewed gaps documented only on extension pages outside the page set; by ALTER TABLE ... RESET PARTITIONED BY (ResetPartitionedBy), a reviewed gap no page documents; and by the PARTITIONED BY spellings of a COPY option, PartitionByOption (the reviewed gap) and PartitionedByCopyOption (copy.gram, a generic option whose sequence is derived from it)"
+
+[[keyword]]
+keyword = "PRECISION"
+reason = "used only by DOUBLE PRECISION, a reviewed gap"
+
+[[keyword]]
+keyword = "PRESERVE"
+reason = "used only by CommitAction, a reviewed gap"
+
+[[keyword]]
+keyword = "QUARTERS"
+reason = "a plural interval unit, a value of the interval-unit form's <unit> placeholder"
+
+[[keyword]]
+keyword = "QUOTE"
+reason = "used only by the PostgreSQL COPY option spellings QUOTE AS and FORCE QUOTE, reviewed gaps; copy.md writes QUOTE inside the option list"
+
+[[keyword]]
+keyword = "READ"
+reason = "used only by ReadOrWrite, a reviewed gap"
+
+[[keyword]]
+keyword = "REGISTER"
+reason = "used only by REGISTER EXTERNAL RESOURCE; the 2.0 documentation has no external resource page"
+
+[[keyword]]
+keyword = "RESOURCE"
+reason = "used only by the external resource statements, reviewed gaps"
+
+[[keyword]]
+keyword = "RESOURCES"
+reason = "used only by SHOW EXTERNAL RESOURCES, a reviewed gap"
+
+[[keyword]]
+keyword = "SECONDS"
+reason = "a plural interval unit, a value of the interval-unit form's <unit> placeholder"
+
+[[keyword]]
+keyword = "SETOF"
+reason = "used only by SetofType, the PostgreSQL SETOF type spelling, undocumented in 2.0"
+
+[[keyword]]
+keyword = "SORTED"
+reason = "used only by SORTED BY on CREATE and ALTER TABLE, reviewed gaps"
+
+[[keyword]]
+keyword = "SYSTEM"
+reason = "used only by OverridingClause, a reviewed gap"
+
+[[keyword]]
+keyword = "TRAILING"
+reason = "used only by TrimTrailing: trim( TRAILING ... FROM ... ), undocumented in 2.0 (text.md documents rtrim)"
+
+[[keyword]]
+keyword = "UNKNOWN"
+reason = "used only by IS [ NOT ] UNKNOWN, a reviewed gap of IsLiteral"
+
+[[keyword]]
+keyword = "USER"
+reason = "used only by OverridingClause, a reviewed gap; current_user and user are internal macros of schema main reviewed under [[function]]"
+
+[[keyword]]
+keyword = "VARYING"
+reason = "used only by CHARACTER VARYING and BIT VARYING, reviewed gaps"
+
+[[keyword]]
+keyword = "VERBOSE"
+reason = "used only by the PostgreSQL ANALYZE and VACUUM VERBOSE options, reviewed gaps"
+
+[[keyword]]
+keyword = "WEEKS"
+reason = "a plural interval unit, a value of the interval-unit form's <unit> placeholder"
+
+[[keyword]]
+keyword = "WORK"
+reason = "used only by the WORK spellings of the transaction statements, reviewed gaps"
+
+[[keyword]]
+keyword = "WRITE"
+reason = "used only by ReadOrWrite, a reviewed gap"
+
+[[keyword]]
+keyword = "YEARS"
+reason = "a plural interval unit, a value of the interval-unit form's <unit> placeholder"
+
+[[function]]
+prefix = "__"
+reason = "internal: a double-underscore name the binder uses (casts, BETWEEN, compression, barriers); never documented for users"
+
+[[function]]
+prefix = "collate_"
+reason = "collation functions behind COLLATE <name>: each built-in collation is reachable as COLLATE <collation-name>, catalogued in collations.md; the function itself is internal"
+
+[[function]]
+prefix = "icu_collate_"
+reason = "ICU collation functions behind COLLATE <name>: one per ICU locale, reachable as COLLATE <collation-name>; the function itself is internal"
+
+[[function]]
+name = "!__postfix"
+reason = "internal: the binder's postfix operator placeholder"
+
+[[function]]
+name = "add_parquet_key"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "arrow_scan"
+reason = "client-internal: the Arrow scan the Python and C clients register for a replacement scan; not a SQL-level function in the documentation"
+
+[[function]]
+name = "arrow_scan_dumb"
+reason = "client-internal: an Arrow scan variant used by the clients"
+
+[[function]]
+name = "assert_true"
+reason = "an internal macro of schema main (CASE WHEN condition THEN NULL ELSE error(...) END); no page of the 2.0 documentation names it"
+
+[[function]]
+name = "bitstring_byte_comparable"
+reason = "undocumented: bitstring.md does not list it"
+
+[[function]]
+name = "col_description"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "collations"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "combine"
+reason = "aggregate-state internal: combines exported aggregate states; documented only in the C API page"
+
+[[function]]
+name = "combine_aggr"
+reason = "aggregate-state internal; undocumented in the SQL pages"
+
+[[function]]
+name = "copy_database"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "count_star"
+reason = "the aggregate behind count(*), which is catalogued as count; count_star() appears only as an output column name"
+
+[[function]]
+name = "create_external_resource"
+reason = "external resources: the 2.0 documentation has no external resource page"
+
+[[function]]
+name = "current_connection_id"
+reason = "undocumented: utility.md does not list it"
+
+[[function]]
+name = "current_role"
+reason = "an internal macro of schema main that returns 'duckdb' (a PostgreSQL-style session name); no page of the 2.0 documentation names it"
+
+[[function]]
+name = "current_transaction_id"
+reason = "undocumented: utility.md does not list it"
+
+[[function]]
+name = "current_user"
+reason = "an internal macro of schema main that returns 'duckdb' (a PostgreSQL-style session name); no page of the 2.0 documentation names it"
+
+[[function]]
+name = "database_list"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "database_size"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "deregister_external_resource"
+reason = "external resources: undocumented in 2.0"
+
+[[function]]
+name = "destroy_external_resource"
+reason = "external resources: undocumented in 2.0"
+
+[[function]]
+name = "disable_checkpoint_on_shutdown"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "disable_object_cache"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "disable_optimizer"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "disable_print_progress_bar"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "disable_profile"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "disable_profiling"
+reason = "documented in the page set as the pragma PRAGMA disable_profiling (and PRAGMA disable_profile) on configuration/pragmas.md, which the pragma form dd.utility.pragmas.pragma catalogues with the name as a value of its <pragma-name> placeholder, so the name is spelled by no grammar; the table-function spelling CALL disable_profiling() is documented only on dev/profiling.md, an excluded page group"
+
+[[function]]
+name = "disable_progress_bar"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "disable_verification"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "disable_verify_parallelism"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "duckdb_approx_database_count"
+reason = "undocumented: duckdb_table_functions.md does not list it"
+
+[[function]]
+name = "duckdb_dialects"
+reason = "undocumented: duckdb_table_functions.md does not list it"
+
+[[function]]
+name = "duckdb_eviction_queues"
+reason = "undocumented: duckdb_table_functions.md does not list it"
+
+[[function]]
+name = "duckdb_external_resource_types"
+reason = "external resources: undocumented in 2.0"
+
+[[function]]
+name = "duckdb_external_resources"
+reason = "external resources: undocumented in 2.0"
+
+[[function]]
+name = "duckdb_table_sample"
+reason = "undocumented: duckdb_table_functions.md does not list it"
+
+[[function]]
+name = "enable_checkpoint_on_shutdown"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "enable_object_cache"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "enable_optimizer"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "enable_print_progress_bar"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "enable_profile"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "enable_profiling"
+reason = "documented in the page set as the pragma PRAGMA enable_profiling (and PRAGMA enable_profile) on configuration/pragmas.md, which the pragma form dd.utility.pragmas.pragma catalogues with the name as a value of its <pragma-name> placeholder, so the name is spelled by no grammar; the table-function spelling CALL enable_profiling(...) with named parameters is documented only on dev/profiling.md, an excluded page group"
+
+[[function]]
+name = "enable_progress_bar"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "enable_verification"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "extension_versions"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "finalize"
+reason = "aggregate-state internal: finalizes an exported aggregate state; documented only in the C API and extension pages"
+
+[[function]]
+name = "format_pg_type"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "format_type"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "functions"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "has_any_column_privilege"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "has_column_privilege"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "has_database_privilege"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "has_foreign_data_wrapper_privilege"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "has_function_privilege"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "has_language_privilege"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "has_schema_privilege"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "has_sequence_privilege"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "has_server_privilege"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "has_table_privilege"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "has_tablespace_privilege"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "import_database"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "index_key"
+reason = "undocumented: a user-callable scalar function that builds the keys of a named ART index from key values (its duckdb_functions() description); no page of the 2.0 documentation names it"
+
+[[function]]
+name = "inet_client_addr"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "inet_client_port"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "inet_server_addr"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "inet_server_port"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "invoke"
+reason = "undocumented in the SQL pages; mentioned only by the Rust client page"
+
+[[function]]
+name = "json_copy_strftime_if_date"
+reason = "an internal macro of schema main that the json extension registers as a JSON COPY formatting helper: its typed overloads (DATE, or the TIMESTAMP types) are defined as strftime(x, format) and its untyped overload as x, returning the value unchanged (json_copy_strftime_if_date(42, 1) gives 42); no page of the 2.0 documentation names it"
+
+[[function]]
+name = "json_copy_strftime_if_timestamp"
+reason = "an internal macro of schema main that the json extension registers as a JSON COPY formatting helper: its typed overloads (DATE, or the TIMESTAMP types) are defined as strftime(x, format) and its untyped overload as x, returning the value unchanged (json_copy_strftime_if_timestamp(42, 1) gives 42); no page of the 2.0 documentation names it"
+
+[[function]]
+name = "map_to_pg_oid"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "metadata_info"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "mod"
+reason = "undocumented as a function: numeric.md documents the % operator and fmod"
+
+[[function]]
+name = "nanosecond"
+reason = "undocumented: no page of the page set names nanosecond (datepart.md does not list it); only the Python API reference (clients/, an excluded page group) names a nanosecond method"
+
+[[function]]
+name = "obj_description"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pandas_scan"
+reason = "client-internal: the scan the Python client uses for a pandas DataFrame replacement scan"
+
+[[function]]
+name = "parse_duckdb_log_message"
+reason = "internal: behind duckdb_logs_parsed, which is catalogued"
+
+[[function]]
+name = "pg_collation_is_visible"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pg_conf_load_time"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pg_conversion_is_visible"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pg_function_is_visible"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pg_get_constraintdef"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pg_get_expr"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pg_get_viewdef"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pg_has_role"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pg_is_other_temp_schema"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pg_my_temp_schema"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pg_opclass_is_visible"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pg_operator_is_visible"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pg_opfamily_is_visible"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pg_postmaster_start_time"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pg_sleep"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pg_table_is_visible"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pg_ts_config_is_visible"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pg_ts_dict_is_visible"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pg_ts_parser_is_visible"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pg_ts_template_is_visible"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "pg_type_is_visible"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "platform"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "pragma_metadata_info"
+reason = "the table function behind PRAGMA metadata_info, undocumented in 2.0"
+
+[[function]]
+name = "pragma_show"
+reason = "the table function behind SHOW <table>; SHOW and DESCRIBE are catalogued"
+
+[[function]]
+name = "pragma_user_agent"
+reason = "the table function behind PRAGMA user_agent, undocumented in 2.0"
+
+[[function]]
+name = "python_arrow_scan"
+reason = "client-internal: the Python client's Arrow scan"
+
+[[function]]
+name = "python_map_function"
+reason = "client-internal: the Python client's map_batches support"
+
+[[function]]
+name = "read_single_csv_file"
+reason = "internal: the per-file reader behind read_csv, which is catalogued"
+
+[[function]]
+name = "read_single_json_file"
+reason = "internal: the per-file reader behind read_json, which is catalogued"
+
+[[function]]
+name = "read_single_parquet_file"
+reason = "internal: the per-file reader behind read_parquet, which is catalogued"
+
+[[function]]
+name = "register_external_resource"
+reason = "external resources: undocumented in 2.0"
+
+[[function]]
+name = "register_external_resource_type"
+reason = "external resources: undocumented in 2.0"
+
+[[function]]
+name = "seq_scan"
+reason = "internal: the table scan the planner names; never called by users"
+
+[[function]]
+name = "session_user"
+reason = "an internal macro of schema main that returns 'duckdb' (a PostgreSQL-style session name); no page of the 2.0 documentation names it"
+
+[[function]]
+name = "shobj_description"
+reason = "a pg_catalog compatibility macro (DuckDB defines it for PostgreSQL clients); the 2.0 SQL documentation does not document it"
+
+[[function]]
+name = "show_databases"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "show_tables"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "show_tables_expanded"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "storage_info"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "sum_no_overflow"
+reason = "internal: the optimizer's sum rewrite"
+
+[[function]]
+name = "summary"
+reason = "the table function behind SUMMARIZE, which is catalogued"
+
+[[function]]
+name = "table_info"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "test_all_types"
+reason = "a test fixture, documented only on the developer sqllogictest page (dev/), outside the SQL documentation"
+
+[[function]]
+name = "test_vector_types"
+reason = "a test fixture, documented only on the developer sqllogictest page (dev/), outside the SQL documentation"
+
+[[function]]
+name = "to_aggregate_state"
+reason = "aggregate-state internal; undocumented in the SQL pages"
+
+[[function]]
+name = "user"
+reason = "an internal macro of schema main defined as current_user (a PostgreSQL-style session name); no page of the 2.0 documentation names it"
+
+[[function]]
+name = "user_agent"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "variant_bytes_to_variant"
+reason = "internal: Parquet VARIANT decoding"
+
+[[function]]
+name = "variant_to_parquet_variant"
+reason = "internal: Parquet VARIANT encoding"
+
+[[function]]
+name = "vector_type"
+reason = "a testing function: returns the physical vector type, undocumented in the SQL pages"
+
+[[function]]
+name = "verify_parallelism"
+reason = "a pragma, reached as PRAGMA <name> [ ( <argument> ... ) ]: the pragma forms in pragmas.md cover every pragma name as a placeholder value"
+
+[[function]]
+name = "vertex_extract"
+reason = "undocumented: geometry.md does not list it"
+
+[[type]]
+name = "dec"
+reason = "an alias of DECIMAL the engine registers; numeric.md documents DECIMAL and NUMERIC only"
+
+[[type]]
+name = "guid"
+reason = "an alias of UUID the engine registers; numeric.md and the data type overview document UUID only"
+
+[[type]]
+name = "integral"
+reason = "an alias of INTEGER the engine registers; numeric.md does not list it"
+
+[[type]]
+name = "nvarchar"
+reason = "an alias of VARCHAR the engine registers; text.md does not list it"
+
+[[type]]
+name = "oid"
+reason = "an alias of BIGINT the engine registers for PostgreSQL clients; numeric.md does not list it"
+
+[[type]]
+name = "timestamp_us"
+reason = "an alias of TIMESTAMP the engine registers; timestamp.md documents TIMESTAMP, TIMESTAMP_NS, _MS and _S"
+
+[[type]]
+name = "varint"
+reason = "the former name of BIGNUM, kept as an alias; numeric.md documents BIGNUM"
+
+[[unseen]]
+rule = "CreateColumnList"
+syntax = "CREATE TABLE <table-name> ( <columns> ) WITH ( <option> = <value> [ , ... ] ), and CREATE TABLE <table-name> WITH ( ... ) AS <query> (CreateTableAs)"
+reason = "outside the page set: the table options of CREATE TABLE are documented only on the delta, iceberg and unity_catalog extension pages (core_extensions, an excluded page group), for tables of those catalogs; WithList spells the one keyword WITH, so the gap walk yields no sequence for it; 2.0 parses it and EXPLAIN plans it, and only executing it fails for a DuckDB table (Catalog Error: WITH clause is not supported for tables in a duckdb catalog)"
+
+[[unseen]]
+rule = "CreateStatement"
+syntax = "CREATE [ OR REPLACE ] { TEMPORARY | TEMP } TYPE [ IF NOT EXISTS ] <name> AS { ENUM ( <query> ) | ENUM ( <string> [ , ... ] ) | <type> }, where <type> is any type, including STRUCT ( ... ), UNION ( ... ) and array types"
+reason = "documented on no in-set page: only internals/pivot.md (internals, an excluded page group) writes CREATE TEMPORARY TYPE, as the internal rewrite of PIVOT, and the in-set create_type.md and enum.md pages write CREATE TYPE without TEMPORARY; Temporary is an optional keyword CreateStatement spells before CreateTypeStmt, so it is checked with CREATE TEMPORARY only, which the CREATE TEMPORARY TABLE forms cover; 2.0 parses and runs every spelling: AS ENUM with a query or a list, AS a base type such as INTEGER, AS STRUCT ( ... ), AS UNION ( ... ) and AS an array type, each with OR REPLACE or IF NOT EXISTS (a temporary type usable in casts, and an ENUM one in PIVOT IN)"
+
+[[unseen]]
+rule = "CreateViewStmt"
+syntax = "CREATE VIEW <view-name> WITH ( DEFER_BINDING ) AS <query>"
+reason = "documented on no page of docs/2.0; WithList spells the one keyword WITH, so the gap walk yields no sequence for it; 2.0 parses and runs it, creating the view without binding its query (a view over a missing table is created), and any option other than DEFER_BINDING is a Parser Error raised while parsing, inside extract_statements (Only DEFER_BINDING is currently supported as option for CREATE VIEW)"
+
+[[unseen]]
+rule = "PivotEnumTarget"
+syntax = "PIVOT <table-name> ON <pivot-column> IN <enum-type> [ USING ... ]"
+reason = "documented on no in-set page: only internals/pivot.md (internals, an excluded page group) writes IN followed by an ENUM type name without parentheses, as the internal rewrite of PIVOT; PivotEnumTarget is a bare Identifier and spells no keyword, so the gap walk yields no sequence for it; 2.0 parses and runs it, taking the pivot values from the ENUM type"
+
+[[unwalked]]
+rule = "Program"
+reason = "the start symbol, a list of TopLevelStatement separated by semicolons; walking starts at Statement"
+
+[[unwalked]]
+rule = "TopLevelStatement"
+reason = "an optional Statement followed by one or more semicolons or the end of input (common.gram TopLevelStatement <- Statement? (';'+ / EndOfInput)); it spells no keyword, and Statement is walked"
