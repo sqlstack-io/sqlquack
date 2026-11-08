@@ -312,7 +312,7 @@ fn given_sqlbuild_type_markers_when_parsing_then_they_are_annotations() {
             expected_node: "function",
         },
         ShapeTestCase {
-            description: "a type marker with an empty type stays a call",
+            description: "a type marker with an empty type stays a call, a conservative choice since SQLite accepts an empty typetoken",
             sql: "SELECT __polyglot_typed(x, '') FROM t",
             pointer: "/0/select/expressions/0",
             expected_node: "function",
