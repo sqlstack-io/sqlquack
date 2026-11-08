@@ -3,18 +3,22 @@
 from __future__ import annotations
 
 import json
+import re
 import shutil
+import subprocess
+import sys
 import tomllib
 from pathlib import Path
 from typing import cast
 
-from scripts.syntax_obligations.exceptions import ObligationError
 from scripts.syntax_obligations.types import Row
 from scripts.syntax_obligations_databricks._helpers.cases import runtime_only_forms
 from scripts.syntax_obligations_databricks.constants import CASES_DIR, FAMILIES, OBLIGATIONS_DIR
-from scripts.syntax_obligations_databricks.main.build import run_build
 
-ROOT: Path = Path(__file__).parents[4] / "coverage" / "syntax-databricks"
+REPOSITORY: Path = Path(__file__).parents[4]
+ROOT: Path = REPOSITORY / "coverage" / "syntax-databricks"
+BUILD_MODULE: str = "scripts.build_syntax_obligations_databricks"
+RAISED: re.Pattern[str] = re.compile(r"^[\w.]+(?:Error|Exception): (.*)$", re.MULTILINE)
 FAMILY: str = "transaction_session"
 POSITIVE_ID: str = "db.transaction_session.begin.o001"
 SUPPRESS_POSITIVE: str = (
@@ -50,13 +54,20 @@ def obligations_text(root: Path) -> str:
     return (root / "obligations" / f"{FAMILY}.toml").read_text()
 
 
+def build_process(arguments: list[str]) -> subprocess.CompletedProcess[str]:
+    """The build with `arguments`, run from the repository root in a fresh interpreter."""
+    return subprocess.run(
+        [sys.executable, "-m", BUILD_MODULE, *arguments],
+        cwd=REPOSITORY,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+
 def build_error(root: Path) -> str:
-    """The build's refusal, or the empty string when it wrote the root."""
-    try:
-        run_build(["--root", str(root)])
-    except ObligationError as raised:
-        return str(raised)
-    return ""
+    """The message of the exception the build process raised, or the empty string if none."""
+    return "".join(RAISED.findall(build_process(["--root", str(root)]).stderr))
 
 
 def runtime_forms() -> set[str]:

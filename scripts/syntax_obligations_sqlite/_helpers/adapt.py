@@ -9,7 +9,8 @@ from collections.abc import Callable
 from pathlib import Path
 
 from scripts.syntax_obligations import constants as shared
-from scripts.syntax_obligations._helpers import derive, grammar, ids, obligations, render
+from scripts.syntax_obligations._helpers import grammar, ids, obligations
+from scripts.syntax_obligations.classes import renderer
 from scripts.syntax_obligations.constants import ACTION_HAND, HAND_CASE_KEYS, PAIR_SIZE
 from scripts.syntax_obligations.exceptions import ObligationError
 from scripts.syntax_obligations.models import Draft, FormStyle, Spec
@@ -30,7 +31,7 @@ from scripts.syntax_obligations_sqlite.constants import (
 )
 
 _shared_existing_ids: Callable[[Path], dict[Key, str]] = ids.existing_ids
-_shared_class_rules: tuple[tuple[re.Pattern[str], str], ...] = derive.CLASS_RULES
+_shared_class_rules: tuple[tuple[re.Pattern[str], str], ...] = grammar.CLASS_RULES
 
 
 def _longest(*, form: str, keys: set[str]) -> str:
@@ -112,8 +113,8 @@ def sl_existing_ids(path: Path) -> dict[Key, str]:
 
 def install() -> None:
     """Register the SQLite styles, tokens, operand classes and limit reader."""
-    derive.CLASS_RULES = (*SL_CLASS_RULES, *_shared_class_rules)
-    render.REPEAT_FILLS.update(SL_REPEAT_FILLS)
+    grammar.CLASS_RULES = (*SL_CLASS_RULES, *_shared_class_rules)
+    renderer.REPEAT_FILLS.update(SL_REPEAT_FILLS)
     setattr(grammar, "TOKEN", SL_TOKEN)  # noqa: B010
     for family in FAMILIES:
         styles: dict[str, FormStyle] = shared.FAMILY_STYLES.setdefault(family, {})

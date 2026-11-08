@@ -10,7 +10,8 @@ from collections.abc import Callable
 from pathlib import Path
 
 from scripts.syntax_obligations import constants as shared
-from scripts.syntax_obligations._helpers import derive, grammar, ids, obligations
+from scripts.syntax_obligations._helpers import grammar as shared_grammar
+from scripts.syntax_obligations._helpers import ids, obligations
 from scripts.syntax_obligations.constants import ACTION_HAND, HAND_CASE_KEYS, PAIR_SIZE
 from scripts.syntax_obligations.exceptions import ObligationError
 from scripts.syntax_obligations.models import Draft, FormStyle, Node, Spec
@@ -38,7 +39,7 @@ from scripts.syntax_obligations_bigquery.constants import (
 )
 
 _shared_existing_ids: Callable[[Path], dict[Key, str]] = ids.existing_ids
-_shared_class_rules: tuple[tuple[re.Pattern[str], str], ...] = derive.CLASS_RULES
+_shared_class_rules: tuple[tuple[re.Pattern[str], str], ...] = shared_grammar.CLASS_RULES
 _shared_derive_trees: Callable[..., tuple[list[Draft], list[tuple[Node, ...]], Counter[str]]] = (
     obligations.derive_trees
 )
@@ -170,13 +171,13 @@ def bq_derive_trees(
     *, form: str, grammar: list[str]
 ) -> tuple[list[Draft], list[tuple[Node, ...]], Counter[str]]:
     """The shared derivation, with the class rules of the form's FORM_CLASS_RULES entries first."""
-    general: tuple[tuple[re.Pattern[str], str], ...] = derive.CLASS_RULES
+    general: tuple[tuple[re.Pattern[str], str], ...] = shared_grammar.CLASS_RULES
     scoped: tuple[tuple[re.Pattern[str], str], ...] = _scoped_class_rules(form=form)
-    derive.CLASS_RULES = (*scoped, *general)
+    shared_grammar.CLASS_RULES = (*scoped, *general)
     try:
         return _shared_derive_trees(form=form, grammar=grammar)
     finally:
-        derive.CLASS_RULES = general
+        shared_grammar.CLASS_RULES = general
 
 
 def documented_rows(*, path: Path) -> list[Row]:
@@ -187,7 +188,7 @@ def documented_rows(*, path: Path) -> list[Row]:
 def install(root: Path) -> Withdrawals:
     """Register the BigQuery styles, classes and readers; the result collects withdrawn drafts."""
     withdrawn: Withdrawals = Withdrawals()
-    derive.CLASS_RULES = (*BQ_CLASS_RULES, *_shared_class_rules)
+    shared_grammar.CLASS_RULES = (*BQ_CLASS_RULES, *_shared_class_rules)
     fills: dict[str, str] = catalogue_fills(root)
     for family in FAMILIES:
         styles: dict[str, FormStyle] = shared.FAMILY_STYLES.setdefault(family, {})
@@ -199,7 +200,7 @@ def install(root: Path) -> Withdrawals:
                 if form.startswith(f"{FORM_PREFIX}.{family}.")
             }
         )
-    setattr(grammar, "TOKEN", BQ_TOKEN)  # noqa: B010
+    setattr(shared_grammar, "TOKEN", BQ_TOKEN)  # noqa: B010
     setattr(obligations, "derive_trees", bq_derive_trees)  # noqa: B010
     setattr(obligations, "limit_drafts", bq_limit_drafts)  # noqa: B010
     setattr(obligations, "existing_ids", bq_existing_ids)  # noqa: B010
