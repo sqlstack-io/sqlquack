@@ -15,7 +15,9 @@ members = [
     "crates/sqlquack-polyglot-check",
     "crates/sqlquack-syntax-coverage",
     "crates/sqlquack-syntax-postgres",
+    "crates/sqlquack-lint",
     "crates/sqlquack-syntax-bigquery",
+    "crates/sqlquack-fingerprint",
     "crates/sqlquack-python",
 ]
 exclude = ["fuzz"]
@@ -49,6 +51,7 @@ polyglot-sql = { git = "https://github.com/sqlstack-io/polyglot.git", rev = "7d5
 proc-macro2 = "1"
 quote = "1"
 rayon = "1"
+rustc-hash = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 # The Python module; abi3, so one build loads into every CPython from 3.12.
@@ -60,6 +63,8 @@ sqlquack-convert = { path = "crates/sqlquack-convert" }
 sqlquack-core = { path = "crates/sqlquack-core" }
 sqlquack-duckdb = { path = "crates/sqlquack-duckdb", default-features = false }
 sqlquack-evidence = { path = "crates/sqlquack-evidence" }
+sqlquack-fingerprint = { path = "crates/sqlquack-fingerprint" }
+sqlquack-lint = { path = "crates/sqlquack-lint" }
 sqlquack-policy = { path = "crates/sqlquack-policy" }
 sqlquack-rules = { path = "crates/sqlquack-rules", default-features = false }
 sqlquack-semantics = { path = "crates/sqlquack-semantics" }

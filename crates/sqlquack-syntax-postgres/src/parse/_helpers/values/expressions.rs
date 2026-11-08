@@ -153,6 +153,7 @@ impl Parser<'_> {
             let operand: Expression = parser.prefix(flavor)?;
             let mut left: Expression = parser.spanned(first, operand);
             let mut pending: Option<u8> = None;
+            let mut links: usize = 0;
             while let Some(level) = parser.infix_level(flavor) {
                 if level < min {
                     break;
@@ -161,6 +162,9 @@ impl Parser<'_> {
                     return Err(parser.error());
                 }
                 let (node, nonassociative) = parser.infix(left, level, flavor)?;
+                if !matches!(node, Expression::And(_) | Expression::Or(_)) {
+                    links = parser.link(links)?;
+                }
                 left = parser.spanned(first, node);
                 pending = nonassociative.then_some(level);
             }
@@ -200,9 +204,9 @@ impl Parser<'_> {
                     })))
                 }
                 "unique" if flavor == Flavor::A => self.unique_predicate(),
-                _ => self.c_expr(flavor),
+                _ => self.primary(flavor),
             },
-            _ => self.c_expr(flavor),
+            _ => self.primary(flavor),
         }
     }
 

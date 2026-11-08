@@ -49,7 +49,13 @@ fn dot(this: Expression, field: Identifier) -> Expression {
 }
 
 impl Parser<'_> {
+    /// `c_expr` one level deeper, for callers outside the operator climb.
     pub(crate) fn c_expr(&mut self, flavor: Flavor) -> Parsing<Expression> {
+        self.deeper(|parser| parser.primary(flavor))
+    }
+
+    /// `c_expr` at the current depth; only the operator climb, already one level deeper, calls it.
+    pub(crate) fn primary(&mut self, flavor: Flavor) -> Parsing<Expression> {
         let Some(token) = self.peek().cloned() else {
             return Err(self.error());
         };
@@ -318,7 +324,11 @@ impl Parser<'_> {
 
     /// `opt_indirection`: `.field`, `.*`, `[i]` and `[i:j]` after a primary.
     pub(crate) fn indirection(&mut self, mut this: Expression) -> Parsing<Expression> {
+        let mut links: usize = 0;
         loop {
+            if self.is_char('.') || self.is_char('[') {
+                links = self.link(links)?;
+            }
             if self.is_char('.') {
                 if self.char_at(1, '*') {
                     self.at += 2;

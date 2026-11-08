@@ -2,7 +2,7 @@
 
 use sqlquack_syntax::DataType;
 
-use crate::parse::_helpers::tree::cursor::Parser;
+use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
 use crate::parse::errors::ParseError;
 use crate::scan::main::scan::scan;
 
@@ -10,7 +10,8 @@ use crate::scan::main::scan::scan;
 pub fn parse_type(text: &str) -> Result<DataType, ParseError> {
     let mut parser: Parser<'_> = Parser::new(text, scan(text));
     let setof: bool = parser.kw("setof");
-    let data_type: DataType = parser.typename()?;
+    let data_type: Parsing<DataType> = parser.typename();
+    let data_type: DataType = parser.unless_too_deep(data_type)?;
     if parser.peek().is_some() {
         return Err(parser.error());
     }
