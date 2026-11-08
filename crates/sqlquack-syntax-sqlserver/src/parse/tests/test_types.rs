@@ -38,3 +38,11 @@ pub(crate) struct ParseTimeTestCase {
     pub(crate) expected_budget_seconds: u64,
     pub(crate) expected_gaps: Result<Vec<&'static str>, String>,
 }
+
+/// An input whose node at `pointer` (a JSON pointer) must serialise to `expected_json`.
+pub(crate) struct ValueTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) pointer: &'static str,
+    pub(crate) expected_json: &'static str,
+}

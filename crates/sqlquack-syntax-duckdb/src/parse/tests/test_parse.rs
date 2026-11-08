@@ -1054,6 +1054,36 @@ fn given_sql_when_parsing_then_the_verdict_is_duckdb() {
 fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
     let test_cases = [
         ValueTestCase {
+            description: "SQLBuild's type marker asserts its type around its expression",
+            sql: "SELECT __polyglot_typed(t.x, 'varchar(5)') AS v FROM t",
+            pointer: "/0/select/expressions/0/alias/this/annotated/type_assertion/data_type",
+            expected_json: r#""var_char""#,
+        },
+        ValueTestCase {
+            description: "SQLBuild's marker name is compared without case",
+            sql: "SELECT __POLYGLOT_TYPED(x, 'BIGINT') FROM t",
+            pointer: "/0/select/expressions/0/annotated/type_assertion/data_type",
+            expected_json: r#""big_int""#,
+        },
+        ValueTestCase {
+            description: "SQLBuild's typed-like marker keeps the expression it is typed like",
+            sql: "SELECT __polyglot_typed_like(x, y + 1) FROM t",
+            pointer: "/0/select/expressions/0/annotated/type_like/add/right/literal/value",
+            expected_json: r#""1""#,
+        },
+        ValueTestCase {
+            description: "a type marker whose type text does not parse stays a call",
+            sql: "SELECT __polyglot_typed(x, 'int garbage') FROM t",
+            pointer: "/0/select/expressions/0/function/name",
+            expected_json: r#""__polyglot_typed""#,
+        },
+        ValueTestCase {
+            description: "a quoted marker name is a call, not a marker",
+            sql: "SELECT \"__polyglot_typed\"(x, 'BIGINT') FROM t",
+            pointer: "/0/select/expressions/0/function/name",
+            expected_json: r#""__polyglot_typed""#,
+        },
+        ValueTestCase {
             description: "FORCE CHECKPOINT is the force_checkpoint call",
             sql: "FORCE CHECKPOINT \"Db1\"",
             pointer: "/0/call/name/2/name",

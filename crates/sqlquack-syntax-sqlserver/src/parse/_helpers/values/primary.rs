@@ -225,6 +225,9 @@ impl<'sql> Parser<'sql> {
             "JSON_ARRAY" if bare => return self.json_array(),
             _ => {}
         }
+        if bare && let Some(marker) = self.typed_marker(&upper)? {
+            return Ok(marker);
+        }
         if bare
             && upper != IIF_FUNCTION
             && BUILT_IN_FUNCTIONS.binary_search(&upper.as_str()).is_err()
