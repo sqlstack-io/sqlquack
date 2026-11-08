@@ -17,10 +17,10 @@ use sqlquack_rules::conversion::main::within_budget::within_budget;
 use sqlquack_rules::conversion::models::{ConversionOptions, Converted};
 use sqlquack_semantics::types::models::Schema;
 
-use crate::analysis::_helpers::declared_refusals::declared_refusals;
 use crate::analysis::_helpers::override_calls::overrides_applied;
-use crate::analysis::_helpers::placed::placed;
 use crate::analysis::_helpers::volatile_calls::volatile_calls_kept;
+use crate::analysis::main::declared_refusals::declared_refusals;
+use crate::analysis::main::placed::placed;
 use crate::analysis::models::Analysis;
 
 /// Parses, classifies, and converts each statement or refuses it.

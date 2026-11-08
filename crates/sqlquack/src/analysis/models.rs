@@ -4,12 +4,11 @@ use std::collections::BTreeSet;
 use std::path::PathBuf;
 
 use serde::Serialize;
+use sqlquack_convert::analysis::main::analyze::analyze;
 use sqlquack_core::classification::constants::PROJECT_FUNCTION_CONSTRUCT;
-use sqlquack_core::classification::models::Occurrence;
 use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_core::provenance::models::Provenance;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::layout::main::checked_layout::checked_layout;
 use sqlquack_evidence::cases::models::LoadedCase;
 use sqlquack_evidence::constants::{INPUT_RELATION, ORDINAL_COLUMN};
@@ -19,7 +18,7 @@ use sqlquack_evidence::verify::types::CaseConverter;
 use sqlquack_policy::policy::constants::QUOTED_IDENTIFIERS_IGNORE_CASE;
 use sqlquack_policy::policy::models::SessionValue;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
-use sqlquack_rules::conversion::models::{ConversionOptions, Converted, Fixture};
+use sqlquack_rules::conversion::models::{ConversionOptions, Fixture};
 use sqlquack_semantics::types::models::Schema;
 
 use crate::analysis::_helpers::case_functions::case_functions;
@@ -27,24 +26,8 @@ use crate::analysis::_helpers::override_definition::load_override;
 use crate::analysis::constants::{
     CASE_SETUP_UNREPLAYED, PYTHON_RUNTIME_MISSING, STATEMENT_REFUSAL,
 };
-use crate::analysis::main::analyze::analyze;
 use crate::analysis::main::override_macros::override_macros;
 use crate::analysis::main::refused_construct::refused_construct;
-
-/// What the pipeline found in one SQL input.
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub struct Analysis {
-    /// Whether the input parsed.
-    pub parsed: bool,
-    /// Statements parsed.
-    pub statements: usize,
-    /// Every construct used, in source order.
-    pub occurrences: Vec<Occurrence>,
-    /// Every refusal; the input converts only when this is empty.
-    pub refusals: Vec<Refusal>,
-    /// The conversion of each statement that converted.
-    pub conversions: Vec<Converted>,
-}
 
 /// The production converter: the SQLQuack pipeline with the built-in rule catalogue.
 #[derive(Clone, Debug, Default)]

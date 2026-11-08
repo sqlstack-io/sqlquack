@@ -2,7 +2,7 @@
 
 use sqlquack_syntax::Expression;
 
-use crate::parse::_helpers::tree::cursor::Parser;
+use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
 use crate::parse::_helpers::tree::nodes::command;
 use crate::parse::errors::ParseError;
 use crate::scan::main::scan::scan;
@@ -22,7 +22,9 @@ pub fn parse(sql: &str) -> Result<Parsed, ParseError> {
         }
         let first: usize = parser.at;
         parser.opaque = false;
-        let statement: Expression = parser.statement()?;
+        let statement: Parsing<Expression> = parser.statement();
+        let statement: Expression = parser.unless_too_deep(statement)?;
+        parser.within_tree_depth(&statement)?;
         if !(parser.peek().is_none() || parser.is_char(';')) {
             return Err(parser.error());
         }

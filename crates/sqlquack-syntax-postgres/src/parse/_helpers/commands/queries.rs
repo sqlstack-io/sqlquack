@@ -11,7 +11,7 @@ use sqlquack_syntax::expressions::statements::models::Lock;
 
 use crate::parse::_helpers::commands::tables::clause;
 use crate::parse::_helpers::tree::cursor::{
-    Parser, Parsing, is_bare_label, is_col_id, is_col_label,
+    Parser, Parsing, Remembered, is_bare_label, is_col_id, is_col_label,
 };
 use crate::parse::_helpers::tree::nodes::{
     boolean, cte, function, keyword_call, literal, null, set_operation, star, subquery, table,
@@ -67,6 +67,12 @@ fn selectable(body: Expression) -> Expression {
 impl Parser<'_> {
     /// `select_with_parens`: `( query )`.
     pub(crate) fn select_with_parens(&mut self) -> Parsing<Expression> {
+        self.remember(Remembered::ParenthesizedQuery, |parser| {
+            parser.parenthesized_query()
+        })
+    }
+
+    fn parenthesized_query(&mut self) -> Parsing<Expression> {
         self.expect_char('(')?;
         let query: Expression = self.query()?;
         self.expect_char(')')?;

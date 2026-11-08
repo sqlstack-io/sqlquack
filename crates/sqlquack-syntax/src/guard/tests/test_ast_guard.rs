@@ -1,5 +1,28 @@
+use crate::expressions::functions::models::JSONCast;
+use crate::expressions::functions::models::Operator;
+use crate::expressions::functions::models::Xor;
+use crate::expressions::names::models::Identifier;
+use crate::expressions::operators::models::ArraySlice;
+use crate::expressions::operators::models::MethodCall;
+use crate::expressions::queries::models::MatchRecognize;
+use crate::expressions::queries::models::PipeOperator;
+use crate::expressions::statements::models::TableSample;
+use crate::expressions::tree::models::Expression;
+use crate::expressions::typed_functions::models::AtTimeZone;
+use crate::expressions::typed_functions::models::BinaryFunc;
+use crate::expressions::typed_functions::models::ModelAttribute;
+use crate::expressions::types::models::DataType;
+use crate::guard::tests::helpers::constructor_levels;
+use crate::guard::tests::helpers::debug_length;
+use crate::guard::tests::helpers::deep_trees;
 use crate::guard::tests::helpers::guarded_parse;
+use crate::guard::tests::helpers::guarded_parse_in;
 use crate::guard::tests::test_types::AstDepthTestCase;
+use crate::guard::tests::test_types::ChainStepTestCase;
+use crate::guard::tests::test_types::TreeOperationTestCase;
+use crate::guard::tests::test_types::TypeDepthTestCase;
+use crate::guard::tests::test_types::TYPE_DEPTHS;
+use crate::traversal::types::ExpressionWalk;
 
 #[test]
 fn given_a_long_flat_operator_chain_when_parsing_then_only_real_nesting_counts_as_depth() {
@@ -39,12 +62,47 @@ fn given_a_long_flat_operator_chain_when_parsing_then_only_real_nesting_counts_a
 }
 
 #[test]
-fn given_a_70k_term_chain_when_parsing_on_a_2_mb_thread_then_it_parses_or_is_refused_without_overflow(
+fn given_a_long_term_chain_when_parsing_on_a_2_mb_thread_then_it_parses_or_is_refused_without_overflow(
 ) {
     let test_cases = [
         AstDepthTestCase {
             description: "a + chain is flat and parses",
             sql: || format!("SELECT 1{}", "+1".repeat(70_000)),
+            expected_error: None,
+        },
+        AstDepthTestCase {
+            description: "a 50,000-term + chain as a call argument parses and serializes",
+            sql: || format!("SELECT f(1{}) FROM a", " + 1".repeat(50_000)),
+            expected_error: None,
+        },
+        AstDepthTestCase {
+            description: "a 50,000-term + chain as a SUM argument parses and serializes",
+            sql: || format!("SELECT SUM(1{}) FROM a", " + 1".repeat(50_000)),
+            expected_error: None,
+        },
+        AstDepthTestCase {
+            description: "a 50,000-term + chain as a COALESCE argument parses and serializes",
+            sql: || format!("SELECT COALESCE(1{}) FROM a", " + 1".repeat(50_000)),
+            expected_error: None,
+        },
+        AstDepthTestCase {
+            description: "a 50,000-term + chain in ARRAY_CONSTRUCT parses and serializes",
+            sql: || format!("SELECT ARRAY_CONSTRUCT(1{}) FROM a", " + 1".repeat(50_000)),
+            expected_error: None,
+        },
+        AstDepthTestCase {
+            description: "a 70,000-cast :: chain inside a call is refused",
+            sql: || format!("SELECT f(1{}) FROM a", "::INT".repeat(70_000)),
+            expected_error: Some("E_GUARD_AST_DEPTH_EXCEEDED"),
+        },
+        AstDepthTestCase {
+            description: "a 70,000-subscript chain inside a call is refused",
+            sql: || format!("SELECT f(v{}) FROM a", "[1]".repeat(70_000)),
+            expected_error: Some("E_GUARD_AST_DEPTH_EXCEEDED"),
+        },
+        AstDepthTestCase {
+            description: "a 100,000-term + chain is flat, parses and serializes",
+            sql: || format!("SELECT 1{}", "+1".repeat(100_000)),
             expected_error: None,
         },
         AstDepthTestCase {
@@ -120,5 +178,329 @@ fn given_a_70k_term_chain_when_parsing_on_a_2_mb_thread_then_it_parses_or_is_ref
             "{}: {outcome:?}",
             test_case.description
         );
+    }
+}
+
+#[test]
+fn given_a_deeply_nested_type_when_parsing_on_a_2_mb_thread_then_512_levels_parse_and_more_are_refused(
+) {
+    const NESTING: Option<&str> = Some("E_GUARD_NESTING_DEPTH_EXCEEDED");
+    const PARSER_DEPTH: Option<&str> = Some("E_GUARD_PARSER_DEPTH_EXCEEDED");
+    const FUNCTION_NESTING: Option<&str> = Some("E_GUARD_FUNCTION_NESTING_DEPTH_EXCEEDED");
+    let test_cases = [
+        TypeDepthTestCase {
+            description: "[] suffixes in a Snowflake CAST",
+            dialect: crate::Dialect::Snowflake,
+            sql: |n| format!("SELECT CAST(NULL AS INT{})", "[]".repeat(n)),
+            expected_errors: [None, NESTING, NESTING, NESTING],
+        },
+        TypeDepthTestCase {
+            description: "[3] suffixes in a DuckDB CAST",
+            dialect: crate::Dialect::DuckDB,
+            sql: |n| format!("SELECT CAST(NULL AS INT{})", "[3]".repeat(n)),
+            expected_errors: [None, NESTING, NESTING, NESTING],
+        },
+        TypeDepthTestCase {
+            description: "[] suffixes in a DuckDB :: cast",
+            dialect: crate::Dialect::DuckDB,
+            sql: |n| format!("SELECT x::INT{} FROM t", "[]".repeat(n)),
+            expected_errors: [None, NESTING, NESTING, NESTING],
+        },
+        TypeDepthTestCase {
+            description: "[] suffixes on a Snowflake column type",
+            dialect: crate::Dialect::Snowflake,
+            sql: |n| format!("CREATE TABLE t (c INT{})", "[]".repeat(n)),
+            expected_errors: [None, NESTING, NESTING, NESTING],
+        },
+        TypeDepthTestCase {
+            description: "nested ARRAY<> in a Snowflake CAST",
+            dialect: crate::Dialect::Snowflake,
+            sql: |n| {
+                format!(
+                    "SELECT CAST(NULL AS {}INT{})",
+                    "ARRAY<".repeat(n),
+                    ">".repeat(n)
+                )
+            },
+            expected_errors: [None, NESTING, PARSER_DEPTH, PARSER_DEPTH],
+        },
+        TypeDepthTestCase {
+            description: "ARRAY<> levels alternating with short [] runs",
+            dialect: crate::Dialect::Snowflake,
+            sql: |n| {
+                let levels = n / 4;
+                let inner = "[][][]>".repeat(levels);
+                let outer = "[]".repeat(n - 4 * levels);
+                format!(
+                    "SELECT CAST(NULL AS {}INT{inner}{outer})",
+                    "ARRAY<".repeat(levels)
+                )
+            },
+            expected_errors: [None, NESTING, PARSER_DEPTH, PARSER_DEPTH],
+        },
+        TypeDepthTestCase {
+            description: "ARRAY( levels each wrapping 60 [] suffixes",
+            dialect: crate::Dialect::Snowflake,
+            sql: |n| constructor_levels(n, "ARRAY("),
+            expected_errors: [None, NESTING, FUNCTION_NESTING, FUNCTION_NESTING],
+        },
+        TypeDepthTestCase {
+            description: "OBJECT( levels each wrapping 60 [] suffixes",
+            dialect: crate::Dialect::Snowflake,
+            sql: |n| constructor_levels(n, "OBJECT(a "),
+            expected_errors: [None, NESTING, FUNCTION_NESTING, FUNCTION_NESTING],
+        },
+        TypeDepthTestCase {
+            description: "MAP( values each wrapping 60 [] suffixes",
+            dialect: crate::Dialect::Snowflake,
+            sql: |n| constructor_levels(n, "MAP(VARCHAR, "),
+            expected_errors: [None, NESTING, FUNCTION_NESTING, FUNCTION_NESTING],
+        },
+        TypeDepthTestCase {
+            description: "STRUCT( levels each wrapping 60 [] suffixes",
+            dialect: crate::Dialect::DuckDB,
+            sql: |n| constructor_levels(n, "STRUCT(a "),
+            expected_errors: [None, NESTING, FUNCTION_NESTING, FUNCTION_NESTING],
+        },
+    ];
+    for test_case in test_cases {
+        for (index, levels) in TYPE_DEPTHS.into_iter().enumerate() {
+            let sql = (test_case.sql)(levels);
+            let dialect = test_case.dialect;
+            let outcome = std::thread::Builder::new()
+                .stack_size(2 << 20)
+                .spawn(move || guarded_parse_in(&sql, dialect))
+                .expect("the parse thread starts")
+                .join()
+                .expect("the parse thread finishes");
+            let code = outcome.as_ref().err().and_then(|error| {
+                error
+                    .split(|c: char| !(c.is_ascii_uppercase() || c == '_'))
+                    .find(|word| word.starts_with("E_"))
+            });
+            assert_eq!(
+                code, test_case.expected_errors[index],
+                "{} at {levels} levels: {outcome:?}",
+                test_case.description
+            );
+        }
+    }
+}
+
+#[test]
+fn given_long_chains_and_deep_nesting_on_a_2_mb_thread_when_cloning_comparing_formatting_serializing_or_dropping_then_none_overflows(
+) {
+    let test_cases = [
+        TreeOperationTestCase {
+            description: "clone",
+            operation: |tree| tree.clone().len() == tree.len(),
+            expected_completed: true,
+        },
+        TreeOperationTestCase {
+            description: "equality with a clone, and inequality between different statements",
+            operation: |tree| {
+                let clone = tree.clone();
+                clone == tree && clone[1..] != tree[..tree.len() - 1]
+            },
+            expected_completed: true,
+        },
+        TreeOperationTestCase {
+            description: "Debug formatting",
+            operation: |tree| debug_length(&tree) > 0,
+            expected_completed: true,
+        },
+        TreeOperationTestCase {
+            description: "serialization",
+            operation: |tree| serde_json::to_writer(std::io::sink(), &tree).is_ok(),
+            expected_completed: true,
+        },
+        TreeOperationTestCase {
+            description: "drop",
+            operation: |tree| {
+                drop(tree);
+                true
+            },
+            expected_completed: true,
+        },
+    ];
+    for test_case in test_cases {
+        let operation = test_case.operation;
+        let trees = std::thread::Builder::new()
+            .stack_size(256 << 20)
+            .spawn(deep_trees)
+            .expect("the parsing thread starts")
+            .join()
+            .expect("the trees parse");
+        let completed = std::thread::Builder::new()
+            .stack_size(2 << 20)
+            .spawn(move || operation(trees))
+            .expect("the thread starts")
+            .join()
+            .expect("the thread finishes");
+        assert_eq!(
+            completed, test_case.expected_completed,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_100_000_step_chain_of_a_node_parsers_build_in_a_loop_when_dropping_on_a_2_mb_thread_then_it_does_not_overflow(
+) {
+    let test_cases = [
+        ChainStepTestCase {
+            description: "BigQuery pipe operators",
+            step: |input| {
+                Expression::PipeOperator(Box::new(PipeOperator {
+                    this: input,
+                    expression: Expression::number(1),
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: "AT TIME ZONE",
+            step: |input| {
+                Expression::AtTimeZone(Box::new(AtTimeZone {
+                    this: input,
+                    zone: Expression::number(1),
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: "** powers",
+            step: |input| {
+                Expression::Power(Box::new(BinaryFunc {
+                    this: input,
+                    expression: Expression::number(1),
+                    original_name: None,
+                    inferred_type: None,
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: "XOR",
+            step: |input| {
+                Expression::Xor(Box::new(Xor {
+                    this: Some(Box::new(input)),
+                    expression: Some(Box::new(Expression::number(1))),
+                    expressions: Vec::new(),
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: "Snowflake ->> flow operators",
+            step: |input| {
+                Expression::Operator(Box::new(Operator {
+                    this: Box::new(input),
+                    operator: None,
+                    expression: Box::new(Expression::number(1)),
+                    comments: Vec::new(),
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: "model attributes",
+            step: |input| {
+                Expression::ModelAttribute(Box::new(ModelAttribute {
+                    this: Box::new(input),
+                    expression: Box::new(Expression::number(1)),
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: ".: casts",
+            step: |input| {
+                Expression::JSONCast(Box::new(JSONCast {
+                    this: Box::new(input),
+                    to: DataType::Json,
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: "array slices",
+            step: |input| {
+                Expression::ArraySlice(Box::new(ArraySlice {
+                    this: input,
+                    start: Some(Expression::number(1)),
+                    end: None,
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: "TABLESAMPLE after TABLESAMPLE",
+            step: |input| {
+                Expression::TableSample(Box::new(TableSample {
+                    this: Some(Box::new(input)),
+                    sample: None,
+                    expressions: Vec::new(),
+                    method: None,
+                    bucket_numerator: None,
+                    bucket_denominator: None,
+                    bucket_field: None,
+                    percent: Some(Box::new(Expression::number(1))),
+                    rows: None,
+                    size: None,
+                    seed: None,
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: "MATCH_RECOGNIZE after MATCH_RECOGNIZE",
+            step: |input| {
+                Expression::MatchRecognize(Box::new(MatchRecognize {
+                    this: Some(Box::new(input)),
+                    partition_by: None,
+                    order_by: None,
+                    measures: None,
+                    rows: None,
+                    after: None,
+                    pattern: None,
+                    define: None,
+                    alias: None,
+                    alias_explicit_as: false,
+                    options: vec![Expression::number(1)],
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: "method calls",
+            step: |input| {
+                Expression::MethodCall(Box::new(MethodCall {
+                    this: input,
+                    method: Identifier::new("f"),
+                    args: vec![Expression::number(1)],
+                }))
+            },
+            expected_depth: 100_000,
+        },
+    ];
+    for test_case in test_cases {
+        let step = test_case.step;
+        let depth = std::thread::Builder::new()
+            .stack_size(2 << 20)
+            .spawn(move || {
+                let mut chain = Expression::number(1);
+                for _ in 0..100_000 {
+                    chain = step(chain);
+                }
+                let depth = chain.tree_depth();
+                drop(chain);
+                depth
+            })
+            .expect("the thread starts")
+            .join()
+            .expect("the chain drops");
+        assert_eq!(depth, test_case.expected_depth, "{}", test_case.description);
     }
 }

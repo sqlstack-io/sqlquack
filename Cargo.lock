@@ -1175,6 +1175,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "rustc-hash"
+version = "2.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6b1e7f9a428571be2dc5bc0505c13fb6bf936822b894ec87abf8a08a4e51742d"
+
+[[package]]
 name = "rustc_version"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1351,6 +1357,7 @@ dependencies = [
  "serde_json",
  "sha2",
  "sqlquack-compare",
+ "sqlquack-convert",
  "sqlquack-core",
  "sqlquack-duckdb",
  "sqlquack-evidence",
@@ -1370,6 +1377,21 @@ version = "0.2.0"
 dependencies = [
  "arrow",
  "sqlquack-policy",
+]
+
+[[package]]
+name = "sqlquack-convert"
+version = "0.2.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sqlquack-core",
+ "sqlquack-duckdb",
+ "sqlquack-policy",
+ "sqlquack-rules",
+ "sqlquack-semantics",
+ "sqlquack-snowflake",
+ "sqlquack-syntax",
 ]
 
 [[package]]
@@ -1406,6 +1428,27 @@ dependencies = [
  "tempfile",
  "toml",
  "walkdir",
+]
+
+[[package]]
+name = "sqlquack-fingerprint"
+version = "0.2.0"
+dependencies = [
+ "sha2",
+ "sqlquack-syntax",
+ "sqlquack-syntax-postgres",
+]
+
+[[package]]
+name = "sqlquack-lint"
+version = "0.2.0"
+dependencies = [
+ "rayon",
+ "rustc-hash",
+ "serde",
+ "serde_json",
+ "sqlquack-syntax",
+ "sqlquack-syntax-postgres",
 ]
 
 [[package]]
@@ -1530,6 +1573,7 @@ version = "0.2.0"
 dependencies = [
  "serde_json",
  "sqlquack-syntax",
+ "stacker",
 ]
 
 [[package]]

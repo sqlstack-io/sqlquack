@@ -191,9 +191,11 @@ impl Parser<'_> {
 
     /// `table_ref` without its joins, with its source range.
     pub(crate) fn table_ref(&mut self) -> Parsing<Expression> {
-        let first: usize = self.at;
-        let node: Expression = self.table_item()?;
-        Ok(self.spanned(first, node))
+        self.deeper(|parser| {
+            let first: usize = parser.at;
+            let node: Expression = parser.table_item()?;
+            Ok(parser.spanned(first, node))
+        })
     }
 
     /// `table_ref` without its joins.

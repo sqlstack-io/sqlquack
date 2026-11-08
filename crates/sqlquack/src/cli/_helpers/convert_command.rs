@@ -27,12 +27,12 @@ use crate::analysis::main::override_macros::override_macros;
 use crate::analysis::main::python_functions::python_functions;
 use crate::analysis::main::refused_construct::refused_construct;
 use crate::analysis::main::with_overrides::with_overrides;
-use crate::analysis::models::Analysis;
 use crate::cli::_helpers::evidence::caller_choices;
 use crate::cli::models::{
     CheckArguments, CheckReport, ConvertArguments, ConvertRefusal, ConvertReport, ExplainArguments,
     OverrideListing, PolicyArguments,
 };
+use sqlquack_convert::analysis::models::Analysis;
 
 use crate::cli::_helpers::evidence::with_divergence_help;
 use crate::cli::main::convert_report::convert_report;

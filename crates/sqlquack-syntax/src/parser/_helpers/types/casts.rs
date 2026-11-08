@@ -364,6 +364,7 @@ impl Parser {
     /// Parse a data type.
     pub(crate) fn parse_data_type(&mut self) -> Result<DataType> {
         let data_type = self.with_parser_depth(|parser| parser.parse_data_type_inner())?;
+        self.within_type_depth(data_type.nesting_depth())?;
         Ok(self.normalize_dialect_data_type(data_type))
     }
 
@@ -1325,10 +1326,7 @@ impl Parser {
             } else {
                 self.expect_token(TokenType::RParen)?;
             }
-            element = DataType::Array {
-                element_type: Box::new(element),
-                dimension: None,
-            };
+            element = self.array_type(element, None, None)?;
             if !closes.is_empty() {
                 element = self.finish_data_type(element)?;
                 scopes.pop();
@@ -1485,6 +1483,7 @@ impl Parser {
     /// Parses a `::TYPE` cast type; DuckDB reads `INT[3]` as a fixed-size array.
     pub(crate) fn parse_data_type_for_cast(&mut self) -> Result<DataType> {
         let data_type = self.with_parser_depth(|parser| parser.parse_data_type_for_cast_inner())?;
+        self.within_type_depth(data_type.nesting_depth())?;
         Ok(self.normalize_dialect_data_type(data_type))
     }
 }

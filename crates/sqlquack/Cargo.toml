@@ -23,11 +23,12 @@ serde.workspace = true
 serde_json.workspace = true
 sha2.workspace = true
 sqlquack-compare.workspace = true
+sqlquack-convert.workspace = true
 sqlquack-core.workspace = true
 sqlquack-duckdb = { workspace = true, features = ["engine"] }
 sqlquack-evidence.workspace = true
 sqlquack-policy.workspace = true
-sqlquack-rules.workspace = true
+sqlquack-rules = { workspace = true, features = ["engine"] }
 sqlquack-semantics.workspace = true
 sqlquack-snowflake.workspace = true
 sqlquack-syntax.workspace = true

@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: format rust-lint python-check fensu syntax-coverage gate-build evidence-guard polyglot-guard generate-cases generated-cases generate-syntax-cases syntax-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-results check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
+.PHONY: format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug gate-build evidence-guard polyglot-guard engine-free generate-cases generated-cases generate-syntax-cases syntax-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-results check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -62,6 +62,16 @@ fensu:
 syntax-coverage: gate-build
 	$(GATE_DIR)/syntax-coverage diff coverage/syntax/baseline.json
 
+# Fails when a native parser crashes, panics or hangs on deeply nested SQL on a 2 MiB thread and
+# coverage/deep-nesting.toml does not list it, or when a listed failure no longer happens.
+depth-probe: gate-build
+	$(GATE_DIR)/syntax-coverage depth-probe --profile $(GATE_PROFILE)
+
+# The same probe on a debug build, whose larger frames fail at shallower depths; not in check-ci.
+depth-probe-debug:
+	cargo build --locked -p sqlquack-syntax-coverage --bin syntax-coverage
+	$(or $(CARGO_TARGET_DIR),target)/debug/syntax-coverage depth-probe --profile dev
+
 # Fails when a change modifies or deletes a recorded result, or adds an invalid one.
 evidence-guard:
 	uv run python -m scripts.check_evidence_append_only --base $(EVIDENCE_BASE)
@@ -69,6 +79,13 @@ evidence-guard:
 # Fails when a crate other than the dev-only exact check reaches polyglot at runtime.
 polyglot-guard:
 	uv run python -m scripts.check_polyglot_guard
+
+# Fails when the conversion pipeline crate, which builds without DuckDB's engine, reaches it.
+engine-free:
+	@tree="$$(cargo tree --locked -p sqlquack-convert -e normal --prefix none)" || exit 1; \
+	  if grep -E '^(duckdb|libduckdb-sys) ' <<<"$$tree"; then \
+	    echo "sqlquack-convert reaches DuckDB's engine" >&2; exit 1; \
+	  fi
 
 # Rewrites cases/generated/ from the generators in scripts/case_generators/.
 generate-cases:
@@ -109,7 +126,7 @@ referee-pending:
 	uv run python -m scripts.write_referee_pending $(REFEREE_ARGS)
 
 # The static gate, the first step of `gate`, and the Python API's tests.
-check-ci: rust-lint python-check fensu syntax-coverage evidence-guard polyglot-guard generated-cases syntax-cases referee-cases python-api
+check-ci: rust-lint python-check fensu syntax-coverage depth-probe evidence-guard polyglot-guard engine-free generated-cases syntax-cases referee-cases python-api
 
 # The gate builds everything it runs once, in `gate-build`: one profile, GATE_PROFILE (Cargo.toml's
 # `gate`), and one feature set, GATE_FEATURES. Cargo unifies features per invocation, so a build of a

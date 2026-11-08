@@ -1,13 +1,11 @@
 use sqlquack_core::parsing::main::parse_source::parse_source;
 use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_core::provenance::models::Provenance;
-use sqlquack_rules::conversion::models::{ConversionOptions, Converted};
+use sqlquack_rules::conversion::models::{ConversionOptions, Converted, UserOverride};
+use sqlquack_snowflake::typing::models::SnowflakeType;
 
 use crate::analysis::_helpers::override_calls::overrides_applied;
-use crate::analysis::_helpers::override_definition::load_override;
 use crate::analysis::tests::test_types::OverrideCallsTestCase;
-
-const UPPER_OVERRIDE: &str = "FUNCTION (\n  arguments (x VARCHAR),\n  returns VARCHAR,\n  replaces UPPER,\n  dialect duckdb,\n);\nupper(x)";
 
 #[test]
 fn given_an_override_when_converted_sql_skips_a_call_then_the_statement_is_refused() {
@@ -31,9 +29,15 @@ fn given_an_override_when_converted_sql_skips_a_call_then_the_statement_is_refus
             expected_refused: false,
         },
     ];
-    let (replaces, replacement) = load_override("shout", UPPER_OVERRIDE).expect("loads");
+    let replacement = UserOverride {
+        name: "SHOUT".to_owned(),
+        arguments: Vec::new(),
+        returns: SnowflakeType::Varchar,
+        body: "upper(x)".to_owned(),
+        sha256: String::new(),
+    };
     let mut options = ConversionOptions::default();
-    options.overrides.insert(replaces, replacement);
+    options.overrides.insert("UPPER".to_owned(), replacement);
     for test_case in test_cases {
         let statements =
             parse_source(test_case.sql, SourceDialect::Snowflake).expect("the statement parses");

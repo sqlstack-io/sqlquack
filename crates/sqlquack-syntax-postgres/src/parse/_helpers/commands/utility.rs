@@ -408,7 +408,7 @@ impl Parser<'_> {
         let start: usize = self.at;
         let statement: Expression = match self.keyword_at(0) {
             Some(word) if EXPLAINED_STARTS.contains(&word) => {
-                let statement: Expression = self.statement()?;
+                let statement: Expression = self.deeper(|parser| parser.statement())?;
                 let explainable: bool = match &statement {
                     Expression::CreateTable(node) => node.as_select.is_some(),
                     Expression::UtilityStatement(node) => {

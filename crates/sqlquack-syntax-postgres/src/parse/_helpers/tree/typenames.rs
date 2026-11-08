@@ -125,6 +125,10 @@ fn integer(text: &str) -> Option<u32> {
 impl Parser<'_> {
     /// `Typename`: a simple type, then `[n]...` bounds or `ARRAY [ [n] ]`.
     pub(crate) fn typename(&mut self) -> Parsing<DataType> {
+        self.deeper(|parser| parser.bounded_typename())
+    }
+
+    fn bounded_typename(&mut self) -> Parsing<DataType> {
         if self.eat_kw("setof") {
             return Ok(setof(self.typename()?));
         }
@@ -147,7 +151,10 @@ impl Parser<'_> {
                 dimension,
             });
         }
+        let mut bounds: usize = 0;
         while self.is_char('[') {
+            bounds += 1;
+            self.within_depth_by(bounds)?;
             let dimension: Option<u32> = self.array_bound()?;
             data_type = DataType::Array {
                 element_type: Box::new(data_type),

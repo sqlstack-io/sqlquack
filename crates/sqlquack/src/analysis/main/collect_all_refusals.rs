@@ -13,7 +13,7 @@ use sqlquack_rules::conversion::main::quoted_exclusions::quoted_exclusions;
 use sqlquack_rules::conversion::models::{CollectedRefusals, ConversionOptions};
 use sqlquack_semantics::types::models::Schema;
 
-use crate::analysis::_helpers::placed::placed;
+use sqlquack_convert::analysis::main::placed::placed;
 
 /// The refusals of every statement; the conversions found on the way are discarded.
 pub fn collect_all_refusals(

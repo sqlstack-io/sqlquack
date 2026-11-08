@@ -200,13 +200,6 @@ pub(crate) struct LoadOverrideTestCase {
     pub(crate) expected_outcome: Result<(&'static str, usize), &'static str>,
 }
 
-pub(crate) struct OverrideCallsTestCase {
-    pub(crate) description: &'static str,
-    pub(crate) sql: &'static str,
-    pub(crate) emitted: &'static str,
-    pub(crate) expected_refused: bool,
-}
-
 pub(crate) struct EverydayCorpusTestCase {
     pub(crate) description: &'static str,
     pub(crate) directory: &'static str,

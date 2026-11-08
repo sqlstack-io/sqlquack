@@ -4,7 +4,9 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Identifier;
 
 use crate::parse::_helpers::commands::routines::var;
-use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_col_id, is_col_label};
+use crate::parse::_helpers::tree::cursor::{
+    Parser, Parsing, Remembered, identifier, is_col_id, is_col_label,
+};
 use crate::parse::_helpers::tree::nodes::{keyword_call, tuple};
 use crate::parse::_helpers::values::expressions::Flavor;
 use crate::parse::constants::{JSON_ENCODINGS, JSON_QUERY_FUNCTION, QUERY_STARTS};
@@ -152,6 +154,13 @@ impl Parser<'_> {
             self.expect_char(')')?;
             return Ok(keyword_call("JSON_OBJECT", Vec::new(), options));
         }
+        self.remember(Remembered::JsonObjectArguments, |parser| {
+            parser.json_object_forms()
+        })
+    }
+
+    /// `JSON_OBJECT`'s pairs, or the old argument list as `json_object`, after its `(`.
+    fn json_object_forms(&mut self) -> Parsing<Expression> {
         self.alternatives(&[
             |parser| {
                 let pairs: Vec<Expression> =

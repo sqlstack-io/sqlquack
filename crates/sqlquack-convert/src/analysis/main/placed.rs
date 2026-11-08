@@ -6,7 +6,7 @@ use sqlquack_core::refusals::models::Refusal;
 use sqlquack_syntax::Expression;
 
 /// The refusal at its own place, else at its statement, else over the whole source.
-pub(crate) fn placed(mut refusal: Refusal, statement: &Expression, lines: &SourceLines) -> Refusal {
+pub fn placed(mut refusal: Refusal, statement: &Expression, lines: &SourceLines) -> Refusal {
     refusal.location = refusal
         .location
         .or_else(|| node_location(statement, lines))
