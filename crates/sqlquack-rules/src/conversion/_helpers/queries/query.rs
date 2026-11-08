@@ -11,7 +11,7 @@ use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::main::unresolved::unresolved;
 use sqlquack_core::refusals::models::Refusal;
-use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_duckdb_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::ordered_aggregates::order_checked;

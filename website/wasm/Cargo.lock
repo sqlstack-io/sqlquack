@@ -222,7 +222,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "sqlquack-duckdb"
+name = "sqlquack-duckdb-blocks"
 version = "0.2.0"
 dependencies = [
  "serde_json",
@@ -245,7 +245,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sqlquack-core",
- "sqlquack-duckdb",
+ "sqlquack-duckdb-blocks",
  "sqlquack-policy",
  "sqlquack-semantics",
  "sqlquack-snowflake-types",
@@ -302,7 +302,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sqlquack-core",
- "sqlquack-duckdb",
+ "sqlquack-duckdb-blocks",
  "sqlquack-policy",
  "sqlquack-rules",
  "sqlquack-semantics",

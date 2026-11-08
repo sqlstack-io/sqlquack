@@ -9,7 +9,7 @@ use sqlquack_core::classification::constants::PROJECT_FUNCTION_CONSTRUCT;
 use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_core::provenance::models::Provenance;
-use sqlquack_duckdb::layout::main::checked_layout::checked_layout;
+use sqlquack_duckdb_blocks::layout::main::checked_layout::checked_layout;
 use sqlquack_evidence::cases::models::LoadedCase;
 use sqlquack_evidence::constants::{INPUT_RELATION, ORDINAL_COLUMN};
 use sqlquack_evidence::replay::models::{PythonFunction, PythonReplay};

@@ -7,7 +7,7 @@ use crate::session::constants::{
     BUILTIN_SUBMICRO_CONSTRUCTS, BUILTIN_SUBMICRO_REASON, BUILTIN_TIMESTAMP_CONSTRUCTS,
     BUILTIN_TIMESTAMP_REASON, BUILTIN_ZONE_CONSTRUCTS,
 };
-use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
+use sqlquack_duckdb_blocks::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_policy::policy::constants::{
     CURRENT_TIME, NUMERIC_RANGE, SESSION_TIMEZONE_UTC, TIMESTAMP_RANGE, TIMESTAMP_TZ_SUBMICRO,
 };

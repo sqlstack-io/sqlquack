@@ -4,9 +4,9 @@ use serde_json::Value;
 use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
-use sqlquack_duckdb::blocks::main::cast::cast;
-use sqlquack_duckdb::blocks::main::string_literal::string_literal;
-use sqlquack_duckdb::raises::main::raised::raised;
+use sqlquack_duckdb_blocks::blocks::main::cast::cast;
+use sqlquack_duckdb_blocks::blocks::main::string_literal::string_literal;
+use sqlquack_duckdb_blocks::raises::main::raised::raised;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::held::{builds_held, built, leaf};

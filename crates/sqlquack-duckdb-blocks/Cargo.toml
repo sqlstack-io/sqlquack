@@ -1,5 +1,5 @@
 [package]
-name = "sqlquack-duckdb"
+name = "sqlquack-duckdb-blocks"
 version.workspace = true
 description = "DuckDB building blocks shared by SQLQuack rules."
 edition.workspace = true

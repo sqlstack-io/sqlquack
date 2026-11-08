@@ -56,7 +56,7 @@ tooling = [
   "crates/sqlquack-polyglot-check",
   "crates/sqlquack-python",
   "crates/sqlquack-rules",
-  "crates/sqlquack-duckdb",
+  "crates/sqlquack-duckdb-blocks",
   "crates/sqlquack-evidence",
   "crates/sqlquack-format-check",
   "crates/sqlquack-compare",
@@ -69,7 +69,7 @@ select = ["FPRSL301"]
 forbidden_packages = [
   "sqlquack",
   "sqlquack-rules",
-  "sqlquack-duckdb",
+  "sqlquack-duckdb-blocks",
   "sqlquack-evidence",
   "sqlquack-compare",
   "sqlquack-policy",

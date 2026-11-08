@@ -4,7 +4,7 @@ use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_semantics::types::models::TypedLeaves;
 
-use sqlquack_duckdb::semi_structured::constants::SOURCE_VARIANT_JSON;
+use sqlquack_duckdb_blocks::semi_structured::constants::SOURCE_VARIANT_JSON;
 
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Emitted};

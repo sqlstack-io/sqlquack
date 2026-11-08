@@ -13,13 +13,13 @@ rust-version.workspace = true
 # and the caller binds the SQL itself (the browser playground does, in DuckDB-WASM).
 [features]
 default = ["engine"]
-engine = ["sqlquack-duckdb/engine"]
+engine = ["sqlquack-duckdb-blocks/engine"]
 
 [dependencies]
 serde.workspace = true
 serde_json.workspace = true
 sqlquack-core.workspace = true
-sqlquack-duckdb.workspace = true
+sqlquack-duckdb-blocks.workspace = true
 sqlquack-policy.workspace = true
 sqlquack-semantics.workspace = true
 sqlquack-snowflake-types.workspace = true

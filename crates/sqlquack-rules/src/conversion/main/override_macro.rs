@@ -1,7 +1,7 @@
 //! `override_macro`: the DuckDB macro standing for a user override in converted SQL.
 
 use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_duckdb_blocks::blocks::main::quoted_identifier::quoted_identifier;
 
 use crate::conversion::main::override_macro_name::override_macro_name;
 use crate::conversion::models::UserOverride;

@@ -35,7 +35,7 @@ a parameter of every entry point; Snowflake is the only one implemented.
 | `sqlquack-semantics` | SQL semantics apart from conversion: dialect profiles (Snowflake and DuckDB), relation and column name resolution in query scopes, column types with the marks VARIANT values carry, and lineage (each output's value sources, plus the query's `row_sources`: the columns filters, join keys, groups, CONNECT BY, PIVOT FOR, ORDER BY under a limit and table-function inputs decide rows by, with `rows_resolved` false when one of those could not be traced). It builds without the conversion, DuckDB and evidence crates. |
 | `sqlquack-rules` | The conversion rules, their type conditions, and declared refusals. |
 | `sqlquack-convert` | The pipeline itself, `analyze`: parse, classify, convert each statement or refuse it. It builds without DuckDB's engine, so the bind check in the last step is skipped where it is linked alone; every crate that enables the engine gets the check, and `make engine-free` fails when this crate reaches DuckDB. |
-| `sqlquack-duckdb` | DuckDB building blocks shared by rules, and DuckDB's own parse-and-bind check of every converted statement. |
+| `sqlquack-duckdb-blocks` | DuckDB building blocks shared by rules, and DuckDB's own parse-and-bind check of every converted statement. |
 | `sqlquack-policy` | The policy file `sqlquack.toml`: schema, validation and type-pattern matching. |
 | `sqlquack-format` | The SQL formatter: lays SQL out over lines, changing only the whitespace between tokens and keyword case. A layout guide prints the authored tokens as a parse-tree pretty printer would; the output is refused unless it keeps every token, keeps comments attached and is idempotent. It builds on `sqlquack-syntax`, and for SQL Server on `sqlquack-syntax-sqlserver`, whose Transact-SQL scanner supplies the tokens and whose parser validates the input; for BigQuery on `sqlquack-syntax-bigquery`, whose GoogleSQL scanner supplies the tokens and whose parser validates the input; and for PostgreSQL on `sqlquack-syntax-postgres`, whose scanner decides keywords and whose parser validates the input. |
 | `sqlquack-format-check` | Development only: proves that formatting DuckDB SQL leaves the output columns DuckDB binds it to unchanged, on the format corpus. |
@@ -141,7 +141,7 @@ Conversion works on the parsed tree, statement by statement, in three layers:
 - **Typing** (`sqlquack-snowflake-types`): exact Snowflake result types, each function derived from
   recorded results, such as `NUMBER(p,s)` for `+ - * /`, the unification of CASE, COALESCE, IFF,
   NVL and set operation branches, and cast targets.
-- **Building blocks** (`sqlquack-duckdb`): DuckDB fragments with Snowflake semantics, such as exact
+- **Building blocks** (`sqlquack-duckdb-blocks`): DuckDB fragments with Snowflake semantics, such as exact
   decimal division rounding half away from zero, NULL-propagating concatenation, explicit NULL
   ordering, or text conversions that accept only spellings Snowflake is recorded to read.
 - **Rules** (`sqlquack-rules`): one rule per construct family, each stating the type conditions it

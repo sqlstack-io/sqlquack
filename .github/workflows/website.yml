@@ -11,7 +11,7 @@ on:
     paths:
       - website/**
       - crates/sqlquack-core/**
-      - crates/sqlquack-duckdb/**
+      - crates/sqlquack-duckdb-blocks/**
       - crates/sqlquack-rules/**
       - crates/sqlquack-semantics/**
       - crates/sqlquack-snowflake-types/**
@@ -21,7 +21,7 @@ on:
     paths:
       - website/**
       - crates/sqlquack-core/**
-      - crates/sqlquack-duckdb/**
+      - crates/sqlquack-duckdb-blocks/**
       - crates/sqlquack-rules/**
       - crates/sqlquack-semantics/**
       - crates/sqlquack-snowflake-types/**

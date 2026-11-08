@@ -12,7 +12,7 @@ use sqlquack_core::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
 use sqlquack_core::diagnostics::models::{Diagnostic, Palette};
 use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_core::refusals::models::Refusal;
-use sqlquack_duckdb::layout::main::layout_sql::layout_sql;
+use sqlquack_duckdb_blocks::layout::main::layout_sql::layout_sql;
 use sqlquack_policy::policy::constants::{
     CURRENT_TIME, SESSION_TIME_ZONE, SESSION_TIMEZONE_UTC, TIMEZONE_PARAMETER,
 };

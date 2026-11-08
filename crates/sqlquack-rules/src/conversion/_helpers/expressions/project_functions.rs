@@ -7,11 +7,11 @@ use sqlquack_core::refusals::constants::NEEDS_DIVERGENCE;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::main::refused_divergence::refused_divergence;
 use sqlquack_core::refusals::models::Refusal;
-use sqlquack_duckdb::blocks::main::cast::cast;
-use sqlquack_duckdb::blocks::main::column_type::column_type;
-use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
-use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
-use sqlquack_duckdb::semi_structured::main::json_guarded::json_guarded;
+use sqlquack_duckdb_blocks::blocks::main::cast::cast;
+use sqlquack_duckdb_blocks::blocks::main::column_type::column_type;
+use sqlquack_duckdb_blocks::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_duckdb_blocks::semi_structured::constants::JSON_FIDELITY;
+use sqlquack_duckdb_blocks::semi_structured::main::json_guarded::json_guarded;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;

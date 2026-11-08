@@ -4,10 +4,10 @@ use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
-use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
-use sqlquack_duckdb::semi_structured::main::json_filter::json_filter;
-use sqlquack_duckdb::semi_structured::main::json_reduce::json_reduce;
-use sqlquack_duckdb::semi_structured::main::json_transform::json_transform;
+use sqlquack_duckdb_blocks::semi_structured::constants::JSON_FIDELITY;
+use sqlquack_duckdb_blocks::semi_structured::main::json_filter::json_filter;
+use sqlquack_duckdb_blocks::semi_structured::main::json_reduce::json_reduce;
+use sqlquack_duckdb_blocks::semi_structured::main::json_transform::json_transform;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::objects::{as_json, semi_structured, variant};

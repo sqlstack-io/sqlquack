@@ -5,14 +5,14 @@ use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
-use sqlquack_duckdb::aggregates::constants::EXTREME_KEY_TIES;
-use sqlquack_duckdb::aggregates::main::json_variant_extreme::json_variant_extreme;
-use sqlquack_duckdb::arrays::constants::ARRAY_SORT_ORDER;
-use sqlquack_duckdb::blocks::main::cast::cast;
-use sqlquack_duckdb::blocks::main::exact_decimal_divide::exact_decimal_divide;
-use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
-use sqlquack_duckdb::floats::constants::FLOAT_SUM_ORDER;
-use sqlquack_duckdb::floats::main::exact_float_sum::exact_float_sum;
+use sqlquack_duckdb_blocks::aggregates::constants::EXTREME_KEY_TIES;
+use sqlquack_duckdb_blocks::aggregates::main::json_variant_extreme::json_variant_extreme;
+use sqlquack_duckdb_blocks::arrays::constants::ARRAY_SORT_ORDER;
+use sqlquack_duckdb_blocks::blocks::main::cast::cast;
+use sqlquack_duckdb_blocks::blocks::main::exact_decimal_divide::exact_decimal_divide;
+use sqlquack_duckdb_blocks::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_duckdb_blocks::floats::constants::FLOAT_SUM_ORDER;
+use sqlquack_duckdb_blocks::floats::main::exact_float_sum::exact_float_sum;
 use sqlquack_snowflake_types::typing::constants::{
     COUNT_PRECISION, MAX_PRECISION, SUM_EXTRA_DIGITS,
 };

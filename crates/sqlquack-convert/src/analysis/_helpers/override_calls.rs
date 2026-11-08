@@ -3,7 +3,7 @@
 use serde_json::Value;
 use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
-use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_duckdb_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_rules::conversion::main::override_macro_name::override_macro_name;
 use sqlquack_rules::conversion::models::{ConversionOptions, Converted};
 use sqlquack_syntax::Expression;

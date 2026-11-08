@@ -5,9 +5,9 @@ use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
-use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
-use sqlquack_duckdb::checking::main::check_printed::check_printed;
-use sqlquack_duckdb::checking::models::{FunctionStub, StubReturns};
+use sqlquack_duckdb_blocks::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_duckdb_blocks::checking::main::check_printed::check_printed;
+use sqlquack_duckdb_blocks::checking::models::{FunctionStub, StubReturns};
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::project_functions::held_type;
