@@ -1,4 +1,4 @@
-use crate::dialects::constants::{DUCKDB, POSTGRES, SNOWFLAKE, SQLITE};
+use crate::dialects::constants::{BIGQUERY, DUCKDB, POSTGRES, SNOWFLAKE, SQLITE};
 use crate::dialects::main::identifier_name::identifier_name;
 use crate::dialects::tests::test_types::IdentifierTestCase;
 
@@ -44,6 +44,14 @@ fn given_identifiers_when_resolving_by_profile_then_each_dialect_folds_and_compa
             compared_with: "customer_id",
             expected_resolved: "Customer_ID",
             expected_same: false,
+        },
+        IdentifierTestCase {
+            description: "BigQuery resolves a quoted identifier to lower case and compares it without case",
+            profile: &BIGQUERY,
+            written: ("Customer_ID", true),
+            compared_with: "CUSTOMER_id",
+            expected_resolved: "customer_id",
+            expected_same: true,
         },
         IdentifierTestCase {
             description: "SQLite keeps an identifier as written and compares it without case",

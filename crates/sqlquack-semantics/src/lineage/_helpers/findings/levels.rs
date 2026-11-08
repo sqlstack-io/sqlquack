@@ -424,7 +424,7 @@ fn clause_findings(
             }
             _ => {
                 for child in node.children() {
-                    if !date_part_argument(node, child) {
+                    if !date_part_argument(node, child, context) {
                         pending.push(child);
                     }
                 }

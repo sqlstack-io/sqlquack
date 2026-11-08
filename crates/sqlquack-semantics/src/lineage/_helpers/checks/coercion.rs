@@ -4,7 +4,10 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Literal;
 
 use crate::lineage::_helpers::checks::families::Family;
-use crate::lineage::constants::{DUCKDB_PROFILE, POSTGRES_PROFILE, SQLITE_PROFILE};
+use crate::lineage::constants::{
+    BIGQUERY_PROFILE, DECIMAL_BASE, DUCKDB_PROFILE, LAST_HOUR, LAST_MINUTE_OR_SECOND,
+    POSTGRES_PROFILE, SQLITE_PROFILE,
+};
 use crate::lineage::models::LineageContext;
 
 /// The length of an ISO date, `YYYY-MM-DD`, and where its dashes and parts are.
@@ -33,6 +36,8 @@ pub(crate) enum Engine {
     Postgres,
     /// SQLite, whose dynamic typing is not recorded: no type findings, only scope and name rules.
     Sqlite,
+    /// BigQuery (GoogleSQL): as PostgreSQL, and a string literal converts only to a date or time.
+    BigQuery,
 }
 
 impl Engine {
@@ -41,6 +46,7 @@ impl Engine {
             DUCKDB_PROFILE => Self::DuckDB,
             POSTGRES_PROFILE => Self::Postgres,
             SQLITE_PROFILE => Self::Sqlite,
+            BIGQUERY_PROFILE => Self::BigQuery,
             _ => Self::Snowflake,
         }
     }
@@ -50,7 +56,7 @@ impl Engine {
         match self {
             Self::DuckDB => &[Family::Integer, Family::Numeric],
             Self::Snowflake => &[Family::Integer, Family::Numeric, Family::String],
-            Self::Postgres | Self::Sqlite => &[],
+            Self::Postgres | Self::Sqlite | Self::BigQuery => &[],
         }
     }
 
@@ -71,7 +77,7 @@ impl Engine {
                 (Family::Integer, Family::Boolean),
                 (Family::Numeric, Family::Boolean),
             ],
-            Self::Postgres | Self::Sqlite => &[],
+            Self::Postgres | Self::Sqlite | Self::BigQuery => &[],
         }
     }
 }
@@ -107,8 +113,101 @@ pub(crate) fn string_literal(expression: &Expression) -> bool {
     }
 }
 
-/// Whether a string literal converts to `target` where it is compared or combined.
-pub(crate) fn literal_coerces(expression: &Expression, target: Family) -> bool {
+/// The text of a string literal, past aliases, parentheses and comments.
+fn string_literal_text(expression: &Expression) -> Option<&str> {
+    match expression {
+        Expression::Literal(literal) => match literal.as_ref() {
+            Literal::String(value) => Some(value),
+            _ => None,
+        },
+        Expression::Alias(alias) => string_literal_text(&alias.this),
+        Expression::Paren(paren) => string_literal_text(&paren.this),
+        Expression::Annotated(annotated)
+            if annotated.type_assertion.is_none() && annotated.type_like.is_none() =>
+        {
+            string_literal_text(&annotated.this)
+        }
+        _ => None,
+    }
+}
+
+/// The digits of `text` up to `separator`, at least one and at most `widest`, with the rest.
+fn digits_then(text: &str, widest: usize, separator: Option<char>) -> Option<(u32, &str)> {
+    let end: usize = text
+        .find(|character: char| !character.is_ascii_digit())
+        .unwrap_or(text.len());
+    if end == 0 || end > widest {
+        return None;
+    }
+    let rest: &str = &text[end..];
+    let rest: &str = match separator {
+        Some(separator) => rest.strip_prefix(separator)?,
+        None => rest,
+    };
+    let value: u32 = text[..end].bytes().fold(0, |value, digit| {
+        value * DECIMAL_BASE + u32::from(digit - b'0')
+    });
+    Some((value, rest))
+}
+
+/// `[Y]YYY-[M]M-[D]D` at the start of `text`, with what follows it.
+fn date_prefix(text: &str) -> Option<&str> {
+    let (_, rest) = digits_then(text, 4, Some('-'))?;
+    let (month, rest) = digits_then(rest, 2, Some('-'))?;
+    let (day, rest) = digits_then(rest, 2, None)?;
+    ((1..=12).contains(&month) && (1..=31).contains(&day)).then_some(rest)
+}
+
+/// `[H]H:[M]M[:[S]S[.F]]` at the start of `text`, with what follows it.
+fn time_prefix(text: &str) -> Option<&str> {
+    let (hour, rest) = digits_then(text, 2, Some(':'))?;
+    let (minute, rest) = digits_then(rest, 2, None)?;
+    let rest: &str = match rest.strip_prefix(':') {
+        Some(seconds) => {
+            let (second, rest) = digits_then(seconds, 2, None)?;
+            if second > LAST_MINUTE_OR_SECOND {
+                return None;
+            }
+            match rest.strip_prefix('.') {
+                Some(fraction) => {
+                    fraction.trim_start_matches(|character: char| character.is_ascii_digit())
+                }
+                None => rest,
+            }
+        }
+        None => rest,
+    };
+    (hour <= LAST_HOUR && minute <= LAST_MINUTE_OR_SECOND).then_some(rest)
+}
+
+/// Whether BigQuery reads string literal `expression` as a valid value of temporal `family`.
+pub(crate) fn literal_reads_as(expression: &Expression, family: Family) -> bool {
+    let Some(text) = string_literal_text(expression).map(str::trim) else {
+        return false;
+    };
+    match family {
+        Family::Date => date_prefix(text) == Some(""),
+        Family::Time => time_prefix(text) == Some(""),
+        Family::Timestamp => date_prefix(text).is_some_and(|rest| {
+            rest.is_empty()
+                || rest
+                    .strip_prefix([' ', 'T', 't'])
+                    .and_then(time_prefix)
+                    .is_some()
+        }),
+        _ => false,
+    }
+}
+
+/// Whether a string literal converts to `target`; in BigQuery only to a date, time or bytes.
+pub(crate) fn literal_coerces(engine: Engine, expression: &Expression, target: Family) -> bool {
+    if engine == Engine::BigQuery {
+        return string_literal(expression)
+            && matches!(
+                target,
+                Family::Date | Family::Time | Family::Timestamp | Family::Binary
+            );
+    }
     string_literal(expression)
         && (target.is_numeric()
             || matches!(target, Family::Date | Family::Time | Family::Timestamp)
@@ -130,8 +229,8 @@ pub(crate) fn comparable(
         || engine
             .comparison_pairs()
             .contains(&(right_family, left_family))
-        || literal_coerces(left, right_family)
-        || literal_coerces(right, left_family)
+        || literal_coerces(engine, left, right_family)
+        || literal_coerces(engine, right, left_family)
 }
 
 /// Accepted comparisons whose success depends on the runtime value.
@@ -154,7 +253,7 @@ pub(crate) fn runtime_equality(engine: Engine, left: Family, right: Family) -> b
 pub(crate) fn temporal_argument(engine: Engine, expression: &Expression, family: Family) -> bool {
     family.is_temporal()
         || (engine == Engine::Snowflake && family == Family::String)
-        || literal_coerces(expression, Family::Timestamp)
+        || literal_coerces(engine, expression, Family::Timestamp)
 }
 
 /// A function's temporal argument; Snowflake's DATE_TRUNC, EXTRACT and DATE_PART take no VARCHAR.
@@ -169,13 +268,32 @@ pub(crate) fn temporal_function_argument(
     temporal_argument(engine, expression, family)
 }
 
+/// Whether BigQuery reads a string literal operand of arithmetic `node` as the other's date or time.
+pub(crate) fn temporal_literal_arithmetic(
+    engine: Engine,
+    node: &Expression,
+    (left, right): (&Expression, &Expression),
+    (left_family, right_family): (Family, Family),
+) -> bool {
+    const TEMPORAL: [Family; 3] = [Family::Date, Family::Time, Family::Timestamp];
+    let target = |other: Family| match TEMPORAL.contains(&other) {
+        true => other,
+        false => Family::Date,
+    };
+    engine == Engine::BigQuery
+        && ((literal_reads_as(left, target(right_family))
+            && arithmetic(engine, node, (target(right_family), right_family)))
+            || (literal_reads_as(right, target(left_family))
+                && arithmetic(engine, node, (left_family, target(left_family)))))
+}
+
 /// Whether set-operation branches of these families combine.
 pub(crate) fn setop(engine: Engine, left: Family, right: Family) -> bool {
     let nested = |family: Family| matches!(family, Family::Array | Family::Map | Family::Struct);
     !left.fully_modelled()
         || !right.fully_modelled()
         || naturally_comparable(left, right)
-        || (engine != Engine::Postgres
+        || (!matches!(engine, Engine::Postgres | Engine::BigQuery)
             && (left == Family::String || right == Family::String)
             && !nested(left)
             && !nested(right))
@@ -212,7 +330,7 @@ pub(crate) fn arithmetic(
     }
     let add: bool = matches!(node, Expression::Add(_));
     let sub: bool = matches!(node, Expression::Sub(_));
-    if matches!(engine, Engine::DuckDB | Engine::Postgres)
+    if matches!(engine, Engine::DuckDB | Engine::Postgres | Engine::BigQuery)
         && ((matches!(node, Expression::Mul(_))
             && ((left == Interval && right.is_numeric())
                 || (right == Interval && left.is_numeric())))
@@ -241,6 +359,15 @@ pub(crate) fn arithmetic(
         (Interval, Interval),
     ];
     if (add && ADD.contains(&(left, right))) || (sub && SUB.contains(&(left, right))) {
+        return true;
+    }
+    if engine == Engine::BigQuery
+        && sub
+        && matches!(
+            (left, right),
+            (Date, Timestamp) | (Timestamp, Date) | (Time, Time)
+        )
+    {
         return true;
     }
     if matches!(engine, Engine::DuckDB | Engine::Postgres)

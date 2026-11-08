@@ -7,8 +7,8 @@ use sqlquack_syntax::expressions::types::models::DataType;
 
 use crate::lineage::_helpers::checks::coercion::{
     Engine, arithmetic, comparable, invalid_literal_for, invalid_temporal_literal, literal_coerces,
-    predicate, runtime_comparison, runtime_equality, string_literal, temporal_argument,
-    temporal_function_argument,
+    literal_reads_as, predicate, runtime_comparison, runtime_equality, string_literal,
+    temporal_argument, temporal_function_argument, temporal_literal_arithmetic,
 };
 use crate::lineage::_helpers::checks::duckdb_functions::{duckdb_arities, duckdb_function};
 use crate::lineage::_helpers::checks::families::{Family, data_type_family, expression_family};
@@ -20,7 +20,10 @@ use crate::lineage::_helpers::checks::relational::{
 use crate::lineage::_helpers::checks::signatures::{
     argument_finding, check_call, dispatch_name, has_signature, located, unify,
 };
-use crate::lineage::constants::{DUCKDB_KEYWORD_ONLY_FUNCTIONS, NAME_PHASE, TYPE_PHASE};
+use crate::lineage::_helpers::tracing::expressions::expression_lineage;
+use crate::lineage::constants::{
+    DUCKDB_KEYWORD_ONLY_FUNCTIONS, NAME_PHASE, RUNTIME_WARNING, TYPE_PHASE,
+};
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding};
 
 /// COALESCE without arguments, which polyglot checks against the catalog under this name.
@@ -75,7 +78,18 @@ pub(crate) fn node_findings(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<
     }
     let checked = check_call(node, level.engine(), &family);
     let signed: bool = checked.as_ref().is_some_and(|checked| checked.signed);
-    own.extend(checked.map(|checked| checked.findings).unwrap_or_default());
+    let mut call: Vec<NameFinding> = checked.map(|checked| checked.findings).unwrap_or_default();
+    if let Expression::Function(function) = node
+        && level.engine() == Engine::BigQuery
+    {
+        let refused: Vec<NameFinding> =
+            bigquery_call_findings((&function.name, &function.args), level, node);
+        if !refused.is_empty() {
+            call.retain(|finding| finding.code != RUNTIME_WARNING);
+        }
+        call.extend(refused);
+    }
+    own.extend(call);
     own.extend(expression_checks(node, level));
     if !(signed && !matches!(node, Expression::Function(_))) {
         own.extend(operator_checks(node, level, signed));
@@ -205,14 +219,14 @@ fn clause_predicates(
 fn predicate_code(engine: Engine) -> &'static str {
     match engine {
         Engine::DuckDB => "W215",
-        Engine::Snowflake | Engine::Postgres | Engine::Sqlite => "E211",
+        Engine::Snowflake | Engine::Postgres | Engine::Sqlite | Engine::BigQuery => "E211",
     }
 }
 
 /// Whether a logical operand accepts this value: a predicate family, or a boolean literal.
 fn predicate_value(engine: Engine, expression: &Expression, family: Family) -> bool {
     predicate(engine, family)
-        || (literal_coerces(expression, Family::Boolean)
+        || (literal_coerces(engine, expression, Family::Boolean)
             && !invalid_literal_for(expression, Family::Boolean))
 }
 
@@ -272,7 +286,7 @@ fn expression_checks(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<NameFin
                 let code: Option<&'static str> = match engine {
                     Engine::Snowflake => Some("E218"),
                     Engine::DuckDB => Some("W213"),
-                    Engine::Postgres | Engine::Sqlite => None,
+                    Engine::Postgres | Engine::Sqlite | Engine::BigQuery => None,
                 };
                 findings.extend(
                     code.map(|code| finding(code, "Invalid interval literal".to_owned(), node)),
@@ -425,6 +439,116 @@ fn expression_checks(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<NameFin
     findings
 }
 
+/// BigQuery built-in calls whose argument rules the generic signatures do not record.
+fn bigquery_call_findings(
+    (name, arguments): (&str, &[Expression]),
+    level: NodeLevel<'_, '_>,
+    node: &Expression,
+) -> Vec<NameFinding> {
+    let engine: Engine = level.engine();
+    let family = |expression: &Expression| level.family(expression);
+    let upper: String = name.to_ascii_uppercase();
+    match (upper.as_str(), arguments) {
+        ("IF", [_, when_true, when_false]) => {
+            unify(&[when_true, when_false], engine, &family, (false, node))
+                .into_iter()
+                .collect()
+        }
+        ("EXTRACT", [_, source]) => {
+            let found: Family = family(source);
+            argument_finding(
+                ("extract", 1),
+                (found, "a temporal argument"),
+                found.is_temporal(),
+                node,
+            )
+            .into_iter()
+            .collect()
+        }
+        ("DATE_ADD" | "DATE_SUB", [value, _]) => {
+            let found: Family = family(value);
+            let refused: bool = match found {
+                Family::Time
+                | Family::Interval
+                | Family::Json
+                | Family::Array
+                | Family::Map
+                | Family::Struct => true,
+                Family::String => string_literal(value) && !literal_reads_as(value, Family::Date),
+                _ => false,
+            };
+            refused
+                .then(|| {
+                    finding(
+                        "E213",
+                        format!(
+                            "Function '{}' argument 1 expects a date argument, found {}",
+                            name.to_ascii_lowercase(),
+                            found.name()
+                        ),
+                        node,
+                    )
+                })
+                .into_iter()
+                .collect()
+        }
+        ("TRIM" | "LTRIM" | "RTRIM", [value]) if family(value) == Family::Binary => {
+            vec![finding(
+                "E213",
+                format!(
+                    "Function '{}' of binary needs the bytes to remove",
+                    name.to_ascii_lowercase()
+                ),
+                node,
+            )]
+        }
+        _ => Vec::new(),
+    }
+}
+
+/// BigQuery arithmetic its types refuse though their families combine.
+fn bigquery_arithmetic_refusal(
+    node: &Expression,
+    (left, right): (&Expression, &Expression),
+    level: NodeLevel<'_, '_>,
+) -> Option<NameFinding> {
+    let spelt = |expression: &Expression| {
+        expression_lineage(expression, level.scope, level.context)
+            .data_type
+            .as_deref()
+            .and_then(|spelling| spelling.split(['(', '<']).next())
+            .map(|base| base.trim().to_ascii_uppercase())
+    };
+    let (left_spelt, right_spelt) = (spelt(left)?, spelt(right)?);
+    let (left_type, right_type) = (left_spelt.as_str(), right_spelt.as_str());
+    let refused: bool = match node {
+        Expression::Sub(_) => matches!(
+            (left_type, right_type),
+            ("DATE" | "DATETIME", "TIMESTAMP") | ("TIMESTAMP", "DATE" | "DATETIME")
+        ),
+        Expression::Mul(_) => matches!(
+            (left_type, right_type),
+            ("INTERVAL", "NUMERIC" | "BIGNUMERIC") | ("NUMERIC" | "BIGNUMERIC", "INTERVAL")
+        ),
+        Expression::Div(_) => matches!(
+            (left_type, right_type),
+            ("INTERVAL", "NUMERIC" | "BIGNUMERIC" | "FLOAT64")
+        ),
+        _ => false,
+    };
+    refused.then(|| {
+        finding(
+            "E212",
+            format!(
+                "Arithmetic operation expects numeric-compatible operands, found {} and {}",
+                left_spelt.to_ascii_lowercase(),
+                right_spelt.to_ascii_lowercase()
+            ),
+            node,
+        )
+    })
+}
+
 /// Scalar subqueries in a scalar position that return more than one column.
 fn scalar_subqueries(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<NameFinding> {
     let children: Vec<&Expression> = match node {
@@ -512,7 +636,7 @@ fn impossible_cast(
     impossible.then(|| {
         finding(
             match engine {
-                Engine::Snowflake | Engine::Postgres | Engine::Sqlite => "E218",
+                Engine::Snowflake | Engine::Postgres | Engine::Sqlite | Engine::BigQuery => "E218",
                 Engine::DuckDB => "W213",
             },
             format!("Cannot cast {} to {}", source.name(), target.name()),
@@ -628,7 +752,7 @@ fn operator_checks(node: &Expression, level: NodeLevel<'_, '_>, signed: bool) ->
                     let item: Family = family(value);
                     (!comparable(engine, (&test.this, value), (this, item))).then(|| {
                         finding(
-                            if runtime_comparison(this, item) {
+                            if engine != Engine::BigQuery && runtime_comparison(this, item) {
                                 "W210"
                             } else {
                                 "E217"
@@ -669,9 +793,14 @@ fn arithmetic_findings(
     if left_family == Family::Unknown || right_family == Family::Unknown {
         return Vec::new();
     }
+    if engine == Engine::BigQuery
+        && let Some(refusal) = bigquery_arithmetic_refusal(node, (left, right), level)
+    {
+        return vec![refusal];
+    }
     let literal_numeric: bool = !(engine == Engine::DuckDB && matches!(node, Expression::Add(_)))
-        && ((left_family.is_numeric() && literal_coerces(right, left_family))
-            || (right_family.is_numeric() && literal_coerces(left, right_family)));
+        && ((left_family.is_numeric() && literal_coerces(engine, right, left_family))
+            || (right_family.is_numeric() && literal_coerces(engine, left, right_family)));
     let mut findings: Vec<NameFinding> = Vec::new();
     if literal_numeric
         && (invalid_literal_for(left, right_family) || invalid_literal_for(right, left_family))
@@ -682,7 +811,10 @@ fn arithmetic_findings(
             node,
         ));
     }
-    if !literal_numeric && !arithmetic(engine, node, (left_family, right_family)) {
+    if !literal_numeric
+        && !arithmetic(engine, node, (left_family, right_family))
+        && !temporal_literal_arithmetic(engine, node, (left, right), (left_family, right_family))
+    {
         findings.push(finding(
             "E212",
             format!(

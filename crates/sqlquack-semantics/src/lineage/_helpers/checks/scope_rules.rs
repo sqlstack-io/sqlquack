@@ -14,8 +14,8 @@ use crate::lineage::_helpers::tracing::expressions::is_aggregate;
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::typing::postgres_typing::postgres_window_only;
 use crate::lineage::constants::{
-    POSTGRES_PROFILE, SCOPE_PHASE, SHAPE_COMMENT_SUFFIX, SHAPE_COSMETIC_FIELDS, SNOWFLAKE_PROFILE,
-    SQLITE_PROFILE,
+    BIGQUERY_WINDOW_ONLY_FUNCTIONS, NAME_FIELD, POSTGRES_PROFILE, SCOPE_PHASE,
+    SHAPE_COMMENT_SUFFIX, SHAPE_COSMETIC_FIELDS, SNOWFLAKE_PROFILE, SPAN_FIELD, SQLITE_PROFILE,
 };
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding, ScopeSource};
 
@@ -28,7 +28,7 @@ const MISPLACED_WINDOW: &str =
     "Window function is not allowed in this clause or inside another aggregate/window function";
 
 /// A finding for each window function without OVER that the all-engine placement rule misses (42809).
-fn unwindowed_calls(node: &Expression) -> Vec<NameFinding> {
+fn unwindowed_calls(node: &Expression, window_only: fn(&Expression) -> bool) -> Vec<NameFinding> {
     let scoped: Vec<&Expression> = in_scope(node);
     let mut wrapped: Vec<&Expression> = Vec::new();
     for expression in &scoped {
@@ -43,7 +43,7 @@ fn unwindowed_calls(node: &Expression) -> Vec<NameFinding> {
         let named: bool = matches!(
             expression,
             Expression::Function(_) | Expression::AggregateFunction(_)
-        ) && postgres_window_only(expression);
+        ) && window_only(expression);
         let typed: bool = matches!(
             expression,
             Expression::CumeDist(_) | Expression::PercentRank(_) | Expression::NthValue(_)
@@ -54,6 +54,19 @@ fn unwindowed_calls(node: &Expression) -> Vec<NameFinding> {
         }
     }
     findings
+}
+
+/// Whether `expression` calls one of BigQuery's analytic functions, which take only an OVER clause.
+fn bigquery_window_only(expression: &Expression) -> bool {
+    match expression {
+        Expression::Function(function) => BIGQUERY_WINDOW_ONLY_FUNCTIONS
+            .iter()
+            .any(|name| function.name.eq_ignore_ascii_case(name)),
+        Expression::AggregateFunction(function) => BIGQUERY_WINDOW_ONLY_FUNCTIONS
+            .iter()
+            .any(|name| function.name.eq_ignore_ascii_case(name)),
+        _ => false,
+    }
 }
 
 fn rule(code: &'static str, message: String, at: &Expression, select: &Expression) -> NameFinding {
@@ -270,7 +283,10 @@ fn structure_rules(
                 ));
             }
             if !names.insert(level.key(&cte.alias))
-                && matches!(engine, Engine::DuckDB | Engine::Postgres | Engine::Sqlite)
+                && matches!(
+                    engine,
+                    Engine::DuckDB | Engine::Postgres | Engine::Sqlite | Engine::BigQuery
+                )
             {
                 findings.push(rule(
                     "E233",
@@ -319,11 +335,12 @@ fn structure_rules(
             }
         }
     }
-    if matches!(
-        engine,
-        Engine::Postgres | Engine::Sqlite | Engine::Snowflake
-    ) {
-        findings.extend(unwindowed_calls(node));
+    match engine {
+        Engine::Postgres | Engine::Sqlite | Engine::Snowflake => {
+            findings.extend(unwindowed_calls(node, postgres_window_only));
+        }
+        Engine::BigQuery => findings.extend(unwindowed_calls(node, bigquery_window_only)),
+        Engine::DuckDB => {}
     }
     if select.qualify.is_some() && !has_window {
         findings.push(rule(
@@ -765,6 +782,69 @@ fn unmarked(node: &Expression) -> &Expression {
     }
 }
 
+/// Whether `current` is grouping expression `group`, columns compared by what they resolve to.
+fn same_group(group: &Expression, current: &Expression, level: RuleLevel<'_, '_>) -> bool {
+    if group == current {
+        return true;
+    }
+    if Engine::of(level.context) != Engine::BigQuery
+        || std::mem::discriminant(group) != std::mem::discriminant(current)
+    {
+        return false;
+    }
+    let (Ok(group_shape), Ok(current_shape)) =
+        (serde_json::to_value(group), serde_json::to_value(current))
+    else {
+        return false;
+    };
+    let (group_columns, current_columns) = (columns_in(group), columns_in(current));
+    without_columns(group_shape) == without_columns(current_shape)
+        && group_columns.len() == current_columns.len()
+        && group_columns
+            .iter()
+            .zip(&current_columns)
+            .all(|(left, right)| column_key(left, level) == column_key(right, level))
+}
+
+/// The column references of `expression`, in tree order.
+fn columns_in(expression: &Expression) -> Vec<&Column> {
+    let mut found: Vec<&Column> = Vec::new();
+    let mut pending: Vec<&Expression> = vec![expression];
+    while let Some(current) = pending.pop() {
+        if let Expression::Column(column) = current {
+            found.push(column);
+        }
+        let mut children: Vec<&Expression> = current.children();
+        children.reverse();
+        pending.extend(children);
+    }
+    found
+}
+
+/// A serialized expression with its columns and source ranges blanked and names in lower case.
+fn without_columns(value: serde_json::Value) -> serde_json::Value {
+    match value {
+        serde_json::Value::Object(map) if map.len() == 1 && map.contains_key("column") => {
+            serde_json::Value::Null
+        }
+        serde_json::Value::Object(map) => serde_json::Value::Object(
+            map.into_iter()
+                .filter(|(key, _)| key != SPAN_FIELD)
+                .map(|(key, item)| match item {
+                    serde_json::Value::String(name) if key == NAME_FIELD => {
+                        (key, serde_json::Value::String(name.to_ascii_lowercase()))
+                    }
+                    item => (key, without_columns(item)),
+                })
+                .collect(),
+        ),
+        serde_json::Value::Array(items) => {
+            serde_json::Value::Array(items.into_iter().map(without_columns).collect())
+        }
+        other => other,
+    }
+}
+
 fn unalias(expression: &Expression) -> &Expression {
     match expression {
         Expression::Alias(alias) => &alias.this,
@@ -909,7 +989,7 @@ fn grouping(
                 || matches!(current, Expression::WithinGroup(group) if is_aggregate(&group.this))
                 || unmarked_groups
                     .iter()
-                    .any(|group| **group == *unmarked(current))
+                    .any(|group| same_group(group, unmarked(current), level))
                 || same_shape(unmarked(current))
             {
                 continue;

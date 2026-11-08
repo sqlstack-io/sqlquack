@@ -93,6 +93,12 @@ pub(crate) struct DuckdbTypeTestCase {
     pub(crate) expected_type: Option<&'static str>,
 }
 
+pub(crate) struct BigqueryTypeTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_type: Option<&'static str>,
+}
+
 pub(crate) struct PostgresTypeTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,

@@ -307,10 +307,10 @@ pub(crate) fn columns_pattern_finding(
     })
 }
 
-/// The words of an unknown column: in the one FROM item, or in none of several.
+/// The words of an unknown column: in the one named FROM item, or in none of the items.
 fn unknown_message(written: &str, scope: &LineageScope<'_>, context: LineageContext<'_>) -> String {
     match scope.sources.as_slice() {
-        [only] => {
+        [only] if only.key.is_some() || only.query.written_name.is_some() => {
             let alias: &str = only.key.as_deref().unwrap_or_default();
             let table: String = match context.profile.name() {
                 DUCKDB_PROFILE if only.query.stored_relation.is_none() && !alias.is_empty() => {

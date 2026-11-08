@@ -169,7 +169,7 @@ pub(crate) fn set_findings(
         Engine::Sqlite => width_findings((operator, query), (left, right), branches, context)
             .into_iter()
             .collect(),
-        engine @ (Engine::DuckDB | Engine::Postgres) => {
+        engine @ (Engine::DuckDB | Engine::Postgres | Engine::BigQuery) => {
             binder_findings((engine, query, operator), (left, right), branches, context)
         }
     };
@@ -229,7 +229,8 @@ fn binder_findings(
         return vec![finding];
     }
     let literal = |branch: &Expression, index: usize, target: Family| {
-        projection_literal(branch, index).is_some_and(|value| literal_coerces(value, target))
+        projection_literal(branch, index)
+            .is_some_and(|value| literal_coerces(engine, value, target))
     };
     left_families
         .into_iter()

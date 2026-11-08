@@ -20,6 +20,12 @@ pub(crate) const DUCKDB_UNNEST_COLUMN: &str = "unnest";
 pub(crate) const SHAPE_COSMETIC_FIELDS: [&str; 2] = ["span", "double_colon_syntax"];
 /// The suffix of serialized comment fields, which group-key shapes drop.
 pub(crate) const SHAPE_COMMENT_SUFFIX: &str = "comments";
+/// BigQuery's array-flattening table function.
+pub(crate) const UNNEST_FUNCTION: &str = "UNNEST";
+/// The call name an array literal `[...]` parses to.
+pub(crate) const ARRAY_FUNCTION: &str = "ARRAY";
+/// The call name a `STRUCT(...)` value parses to.
+pub(crate) const STRUCT_FUNCTION: &str = "STRUCT";
 /// The wrapper Snowflake writes around a table function in FROM.
 pub(crate) const TABLE_WRAPPER: &str = "TABLE";
 /// Snowflake's name for the n-th column of a VALUES list, numbered from 1.
@@ -325,6 +331,40 @@ pub(crate) const CLICKHOUSE_FIXED_RESULTS: [(&str, &str); 32] = [
     ("toMonday", "Date"),
     ("dateDiff", "Int64"),
 ];
+/// The BigQuery profile's name.
+pub(crate) const BIGQUERY_PROFILE: &str = "BigQuery";
+/// BigQuery's functions that take a date part, with the part's argument position.
+pub(crate) const BIGQUERY_DATE_PART_FUNCTIONS: [(&str, usize); 9] = [
+    ("DATE_TRUNC", 1),
+    ("DATETIME_TRUNC", 1),
+    ("TIMESTAMP_TRUNC", 1),
+    ("TIME_TRUNC", 1),
+    ("LAST_DAY", 1),
+    ("DATE_DIFF", 2),
+    ("DATETIME_DIFF", 2),
+    ("TIMESTAMP_DIFF", 2),
+    ("TIME_DIFF", 2),
+];
+/// The date parts BigQuery writes with a weekday argument, as `WEEK(MONDAY)`.
+pub(crate) const BIGQUERY_WEEKDAY_PARTS: [&str; 1] = ["WEEK"];
+/// BigQuery's analytic functions, which an OVER clause must follow.
+pub(crate) const BIGQUERY_WINDOW_ONLY_FUNCTIONS: [&str; 11] = [
+    "ROW_NUMBER",
+    "RANK",
+    "DENSE_RANK",
+    "PERCENT_RANK",
+    "CUME_DIST",
+    "NTILE",
+    "LAG",
+    "LEAD",
+    "FIRST_VALUE",
+    "LAST_VALUE",
+    "NTH_VALUE",
+];
+/// The field a serialized node records its source range in, which equality ignores.
+pub(crate) const SPAN_FIELD: &str = "span";
+/// The field a serialized node records its name in.
+pub(crate) const NAME_FIELD: &str = "name";
 /// The PostgreSQL profile's name.
 pub(crate) const POSTGRES_PROFILE: &str = "PostgreSQL";
 /// The SQLite profile's name.
@@ -423,3 +463,18 @@ pub(crate) const DUCKDB_KEYWORD_ONLY_FUNCTIONS: [&str; 4] = [
     "localtime",
     "localtimestamp",
 ];
+
+/// The base of the digits in a date or time literal.
+pub(crate) const DECIMAL_BASE: u32 = 10;
+
+/// The last hour of a day in a time literal.
+pub(crate) const LAST_HOUR: u32 = 23;
+
+/// The last minute of an hour, or second of a minute, in a time literal.
+pub(crate) const LAST_MINUTE_OR_SECOND: u32 = 59;
+
+/// The arguments of `DATE(year, month, day)`.
+pub(crate) const DATE_FROM_PARTS_ARGUMENTS: usize = 3;
+
+/// The warning for a value converted at run time or of a family no rule models.
+pub(crate) const RUNTIME_WARNING: &str = "W216";

@@ -1,7 +1,8 @@
 //! The implemented dialect profiles.
 
 use crate::dialects::models::{
-    ClickHouse, DuckDb, Postgres, Profiles, Snowflake, SnowflakeQuotedIgnoringCase, Sqlite,
+    BigQuery, ClickHouse, DuckDb, Postgres, Profiles, Snowflake, SnowflakeQuotedIgnoringCase,
+    Sqlite,
 };
 
 /// The Snowflake profile.
@@ -18,6 +19,9 @@ pub const POSTGRES: Postgres = Postgres;
 
 /// The ClickHouse profile.
 pub const CLICKHOUSE: ClickHouse = ClickHouse;
+
+/// The BigQuery profile.
+pub const BIGQUERY: BigQuery = BigQuery;
 
 /// The SQLite profile.
 pub const SQLITE: Sqlite = Sqlite;

@@ -67,9 +67,36 @@ fn builtin_arity(engine: Engine, name: &str) -> Option<(usize, Option<usize>)> {
     })
 }
 
+/// BigQuery's built-ins' argument families, by canonical name.
+fn bigquery_argument_types(name: &str) -> Option<&'static [Accepts]> {
+    use Accepts::{Any, Boolean, Integer, Numeric, Sequence, Temporal};
+    Some(match name {
+        "sum" | "avg" | "stddev" | "stddev_pop" | "stddev_samp" | "variance" | "var_pop"
+        | "var_samp" => &[Numeric],
+        "min" | "max" | "count" | "row_number" | "rank" | "dense_rank" | "concat" | "coalesce"
+        | "nullif" | "ifnull" | "greatest" | "least" | "first_value" | "last_value" => &[Any],
+        "ntile" => &[Integer],
+        "lag" | "lead" => &[Any, Integer, Any],
+        "abs" | "round" | "floor" | "ceil" | "ceiling" => &[Numeric, Integer],
+        "sqrt" | "power" | "pow" | "mod" => &[Numeric, Numeric],
+        "upper" | "lower" | "trim" | "ltrim" | "rtrim" => &[Sequence, Sequence],
+        "substring" | "substr" => &[Sequence, Integer, Integer],
+        "left" | "right" => &[Sequence, Integer],
+        "replace" => &[Sequence, Sequence, Sequence],
+        "string_agg" => &[Sequence, Sequence],
+        "date_trunc" | "dateadd" => &[Temporal],
+        "datediff" => &[Temporal, Temporal],
+        "if" | "iff" => &[Boolean, Any, Any],
+        _ => return None,
+    })
+}
+
 /// A built-in's argument families; absence means unchecked, never invalid.
 fn argument_types(engine: Engine, name: &str) -> Option<&'static [Accepts]> {
     use Accepts::{Any, Boolean, Integer, Numeric, Sequence, String, Temporal};
+    if engine == Engine::BigQuery {
+        return bigquery_argument_types(name);
+    }
     let duckdb: bool = engine == Engine::DuckDB;
     Some(match name {
         "sum" | "avg" if duckdb => &[Any],
@@ -333,7 +360,8 @@ pub(crate) fn check_call(
         name.as_str(),
         "coalesce" | "ifnull" | "nvl" | "greatest" | "least" | "nullif"
     ) {
-        let lenient: bool = name == NULLIF && engine != Engine::Postgres;
+        let lenient: bool =
+            name == NULLIF && !matches!(engine, Engine::Postgres | Engine::BigQuery);
         findings.extend(unify(&arguments, engine, family, (lenient, node)));
     }
     if matches!(node, Expression::Coalesce(_)) && arguments.is_empty() {
@@ -373,8 +401,8 @@ fn argument_findings(
                     || (expected == Accepts::Temporal
                         && temporal_function_argument(name, engine, (argument, family))))));
     let literal: bool = match expected {
-        Accepts::Integer | Accepts::Numeric => literal_coerces(argument, Family::Numeric),
-        Accepts::Boolean => literal_coerces(argument, Family::Boolean),
+        Accepts::Integer | Accepts::Numeric => literal_coerces(engine, argument, Family::Numeric),
+        Accepts::Boolean => literal_coerces(engine, argument, Family::Boolean),
         _ => false,
     };
     let interval_aggregate: bool =

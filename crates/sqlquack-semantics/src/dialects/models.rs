@@ -146,6 +146,24 @@ impl DialectProfile for ClickHouse {
     }
 }
 
+/// BigQuery: columns, aliases, CTEs and relations match whatever their ASCII case.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct BigQuery;
+
+impl DialectProfile for BigQuery {
+    fn name(&self) -> &'static str {
+        "BigQuery"
+    }
+
+    fn resolved_identifier(&self, name: &str, _quoted: bool) -> String {
+        name.to_ascii_lowercase()
+    }
+
+    fn same_identifier(&self, left: &str, right: &str) -> bool {
+        left.eq_ignore_ascii_case(right)
+    }
+}
+
 /// The dialect SQL is written in, and the one it is resolved for, whose names may clash.
 #[derive(Clone, Copy, Debug)]
 pub struct Profiles {

@@ -9,6 +9,7 @@ use sqlquack_syntax::{DataType, Expression, ExpressionWalk};
 use crate::dialects::main::canonical_type::canonical_type;
 use crate::lineage::_helpers::tracing::expressions::is_aggregate;
 use crate::lineage::_helpers::tracing::resolution::key;
+use crate::lineage::_helpers::typing::bigquery_typing::{bigquery_literal_type, bigquery_type};
 use crate::lineage::_helpers::typing::clickhouse_typing::{
     clickhouse_literal_type, clickhouse_type,
 };
@@ -19,11 +20,11 @@ use crate::lineage::_helpers::typing::snowflake_typing::{
 };
 use crate::lineage::_helpers::typing::sqlite_typing::sqlite_literal_type;
 use crate::lineage::constants::{
-    ARGUMENT_TYPED_FUNCTIONS, BOOLEAN_TYPE, CLICKHOUSE_PROFILE, COALESCING_FUNCTIONS,
-    CONDITIONAL_ARGUMENTS, COUNT_TYPE, COUNTING_FUNCTIONS, DECIMAL_LITERAL_TYPE, DUCKDB_PROFILE,
-    FIRST_ARGUMENT_NULLABILITY, FLOAT_TYPES, FUNCTION_RESULT_TYPES, INTEGER_LITERAL_TYPE,
-    INTEGER_TYPES, OPERAND_TYPED_FUNCTIONS, POSTGRES_PROFILE, SNOWFLAKE_PROFILE, SQLITE_PROFILE,
-    TEXT_TYPE, UNMAPPED_TIMESTAMP,
+    ARGUMENT_TYPED_FUNCTIONS, BIGQUERY_PROFILE, BOOLEAN_TYPE, CLICKHOUSE_PROFILE,
+    COALESCING_FUNCTIONS, CONDITIONAL_ARGUMENTS, COUNT_TYPE, COUNTING_FUNCTIONS,
+    DECIMAL_LITERAL_TYPE, DUCKDB_PROFILE, FIRST_ARGUMENT_NULLABILITY, FLOAT_TYPES,
+    FUNCTION_RESULT_TYPES, INTEGER_LITERAL_TYPE, INTEGER_TYPES, OPERAND_TYPED_FUNCTIONS,
+    POSTGRES_PROFILE, SNOWFLAKE_PROFILE, SQLITE_PROFILE, TEXT_TYPE, UNMAPPED_TIMESTAMP,
 };
 use crate::lineage::models::{Lineage, LineageContext, Nullability, NullabilityRule};
 
@@ -78,6 +79,9 @@ pub(crate) fn literal_type(expression: &Expression, context: LineageContext<'_>)
             nullability,
         );
     }
+    if context.profile.name() == BIGQUERY_PROFILE {
+        return (bigquery_literal_type(expression).map(Rc::from), nullability);
+    }
     match expression {
         Expression::Literal(literal) if context.profile.name() == DUCKDB_PROFILE => (
             duckdb_literal_type(literal).map(|data_type| Rc::from(data_type.spelling())),
@@ -128,6 +132,7 @@ pub(crate) fn computed_type(
     let (data_type, nullability): ValueType = generic_type(expression, parts, context);
     let ruled: Option<Option<Rc<str>>> = match context.profile.name() {
         CLICKHOUSE_PROFILE => Some(clickhouse_type(expression, parts, context)),
+        BIGQUERY_PROFILE => Some(bigquery_type(expression, parts, context)),
         DUCKDB_PROFILE => duckdb_type(expression, parts),
         SNOWFLAKE_PROFILE => snowflake_type(expression, parts),
         POSTGRES_PROFILE => postgres_type(expression, parts),

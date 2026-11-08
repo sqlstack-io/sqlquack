@@ -4,6 +4,7 @@ use std::rc::Rc;
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
+use sqlquack_syntax::expressions::functions::models::Function;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal, TableRef};
 use sqlquack_syntax::expressions::operators::models::Lateral;
 use sqlquack_syntax::expressions::queries::models::{
@@ -15,10 +16,11 @@ use crate::lineage::_helpers::tracing::lineages::{combined, constant, direct, me
 use crate::lineage::_helpers::tracing::queries::{empty_scope, renamed, resolved_query};
 use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
 use crate::lineage::constants::{
-    DUCKDB_PROFILE, DUCKDB_TABLE_FUNCTION_COLUMNS, DUCKDB_UNNEST_COLUMN, DUCKDB_VALUES_COLUMN,
-    IDENTIFIER_FUNCTION, ONE_AGGREGATE, OUTER_LEFT_JOINS, OUTER_RIGHT_JOINS, SNOWFLAKE_PROFILE,
-    SNOWFLAKE_VALUES_COLUMN, SQLITE_PROFILE, SQLITE_VALUES_COLUMN, TABLE_FUNCTION_COLUMNS,
-    TABLE_WRAPPER,
+    ARRAY_FUNCTION, BIGQUERY_PROFILE, DUCKDB_PROFILE, DUCKDB_TABLE_FUNCTION_COLUMNS,
+    DUCKDB_UNNEST_COLUMN, DUCKDB_VALUES_COLUMN, IDENTIFIER_FUNCTION, ONE_AGGREGATE,
+    OUTER_LEFT_JOINS, OUTER_RIGHT_JOINS, SNOWFLAKE_PROFILE, SNOWFLAKE_VALUES_COLUMN,
+    SQLITE_PROFILE, SQLITE_VALUES_COLUMN, STRUCT_FUNCTION, TABLE_FUNCTION_COLUMNS, TABLE_WRAPPER,
+    UNNEST_FUNCTION,
 };
 use crate::lineage::models::{
     FromItems, Lineage, LineageContext, LineageScope, NamedQuery, Nullability, ResolvedQuery,
@@ -245,6 +247,15 @@ fn item_sources_level(
                 },
             }]
         }
+        Expression::Alias(alias) if unnested_fields(&alias.this, context).is_some() => {
+            let Expression::Function(function) = &alias.this else {
+                return vec![opaque_source()];
+            };
+            vec![ScopeSource {
+                key: Some(key(&alias.alias, context)),
+                ..open_function_source(function, scope, context)
+            }]
+        }
         Expression::Alias(alias) => {
             let inner = item_sources(&alias.this, scope, context);
             inner
@@ -294,25 +305,15 @@ fn item_sources_level(
         {
             vec![opaque_source()]
         }
-        Expression::Function(function) => {
-            let arguments: Vec<Lineage> = function
-                .args
-                .iter()
-                .map(|argument| expression_lineage(argument, scope, context))
-                .collect();
-            let reads: Option<Lineage> =
-                (!arguments.is_empty()).then(|| combined(arguments, TransformKind::Expression));
-            vec![ScopeSource {
-                key: None,
-                query: ResolvedQuery {
-                    open: true,
-                    open_relation: Some(plain_key(&function.name, context)),
-                    function_name: Some(plain_key(&function.name, context)),
-                    rows: input_rows(reads.as_ref()),
-                    open_reads: reads,
-                    ..ResolvedQuery::default()
-                },
-            }]
+        Expression::Function(function) if unnested_fields(item, context).is_some() => {
+            let fields: Vec<String> = unnested_fields(item, context).unwrap_or_default();
+            let names: Vec<&str> = fields.iter().map(String::as_str).collect();
+            vec![table_function_source(
+                (&function.name, &names),
+                &function.args,
+                scope,
+                context,
+            )]
         }
         Expression::Unnest(unnest)
             if unnest.expressions.is_empty()
@@ -327,6 +328,7 @@ fn item_sources_level(
                 context,
             )]
         }
+        Expression::Function(function) => vec![open_function_source(function, scope, context)],
         Expression::Values(values) => vec![values_source(values, scope, context)],
         Expression::JoinedTable(joined) => {
             let mut sources = item_sources(&joined.left, scope, context);
@@ -348,6 +350,58 @@ fn item_sources_level(
         Expression::Unpivot(unpivot) => vec![unpivot_source(unpivot, scope, context)],
         _ => vec![opaque_source()],
     }
+}
+
+/// A table function whose columns are unknown: they derive from everything its arguments read.
+fn open_function_source(
+    function: &Function,
+    scope: &LineageScope<'_>,
+    context: LineageContext<'_>,
+) -> ScopeSource {
+    let arguments: Vec<Lineage> = function
+        .args
+        .iter()
+        .map(|argument| expression_lineage(argument, scope, context))
+        .collect();
+    let reads: Option<Lineage> =
+        (!arguments.is_empty()).then(|| combined(arguments, TransformKind::Expression));
+    ScopeSource {
+        key: None,
+        query: ResolvedQuery {
+            open: true,
+            open_relation: Some(plain_key(&function.name, context)),
+            function_name: Some(plain_key(&function.name, context)),
+            rows: input_rows(reads.as_ref()),
+            open_reads: reads,
+            ..ResolvedQuery::default()
+        },
+    }
+}
+
+/// The fields of BigQuery's `UNNEST([STRUCT(x AS a, ...), ...])`, an unaliased one's columns; an alias also names the element.
+fn unnested_fields(node: &Expression, context: LineageContext<'_>) -> Option<Vec<String>> {
+    let Expression::Function(unnest) = node else {
+        return None;
+    };
+    let [Expression::Function(array)] = unnest.args.as_slice() else {
+        return None;
+    };
+    let Some(Expression::Function(first)) = array.args.first() else {
+        return None;
+    };
+    let shaped: bool = context.profile.name() == BIGQUERY_PROFILE
+        && unnest.name.eq_ignore_ascii_case(UNNEST_FUNCTION)
+        && array.name.eq_ignore_ascii_case(ARRAY_FUNCTION)
+        && first.name.eq_ignore_ascii_case(STRUCT_FUNCTION);
+    let fields: Vec<String> = first
+        .args
+        .iter()
+        .filter_map(|field| match field {
+            Expression::Alias(alias) => Some(alias.alias.name.clone()),
+            _ => None,
+        })
+        .collect();
+    (shaped && !fields.is_empty() && fields.len() == first.args.len()).then_some(fields)
 }
 
 /// A FROM item lineage does not trace: its columns are unknown and untraced.

@@ -169,7 +169,7 @@ pub(crate) fn recursive_findings(
     let Some(with) = select
         .with
         .as_ref()
-        .filter(|with| with.recursive && engine != Engine::Postgres)
+        .filter(|with| with.recursive && !matches!(engine, Engine::Postgres | Engine::BigQuery))
     else {
         return Vec::new();
     };
@@ -189,7 +189,7 @@ pub(crate) fn recursive_findings(
             let invalid: bool = match engine {
                 Engine::Snowflake => !setop_compatible(target, source),
                 Engine::Sqlite => false,
-                Engine::DuckDB | Engine::Postgres => {
+                Engine::DuckDB | Engine::Postgres | Engine::BigQuery => {
                     literal.is_some_and(|value| invalid_literal_for(value, target))
                         || (source == Family::String
                             && !matches!(target, Family::String | Family::Unknown)
@@ -201,7 +201,9 @@ pub(crate) fn recursive_findings(
                 findings.push(finding(
                     match engine {
                         Engine::Snowflake => "E215",
-                        Engine::DuckDB | Engine::Postgres | Engine::Sqlite => "W214",
+                        Engine::DuckDB | Engine::Postgres | Engine::Sqlite | Engine::BigQuery => {
+                            "W214"
+                        }
                     },
                     "Recursive branch cannot convert to the anchor column type".to_owned(),
                     node,
