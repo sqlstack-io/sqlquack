@@ -485,6 +485,190 @@ anchor = "doc.data-types-datetime / Date and time constants"
 note = "omit '<string>', observed"
 
 [[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o009"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIMESTAMP_NTZ in place of DATE, TIME or TIMESTAMP"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o010"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIMESTAMP_LTZ in place of DATE, TIME or TIMESTAMP"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o011"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIMESTAMP_TZ in place of DATE, TIME or TIMESTAMP"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o012"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIMESTAMPNTZ in place of DATE, TIME or TIMESTAMP"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o013"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIMESTAMPLTZ in place of DATE, TIME or TIMESTAMP"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o014"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIMESTAMPTZ in place of DATE, TIME or TIMESTAMP"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o015"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "DATETIME in place of DATE, TIME or TIMESTAMP"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o016"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIMESTAMP_NTZ(3) in place of DATE, TIME or TIMESTAMP, observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o017"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIMESTAMP_TZ(3) in place of DATE, TIME or TIMESTAMP, observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o018"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIMESTAMP_LTZ(3) in place of DATE, TIME or TIMESTAMP, observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o019"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIMESTAMPNTZ(3) in place of DATE, TIME or TIMESTAMP, observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o020"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIMESTAMPLTZ(3) in place of DATE, TIME or TIMESTAMP, observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o021"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIMESTAMPTZ(3) in place of DATE, TIME or TIMESTAMP, observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o022"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "DATETIME(3) in place of DATE, TIME or TIMESTAMP, observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o023"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIMESTAMP(3) in place of DATE, TIME or TIMESTAMP, observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o024"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIME(3) in place of DATE, TIME or TIMESTAMP, observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o025"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIMESTAMP(3) WITH TIME ZONE in place of DATE, TIME or TIMESTAMP, observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o026"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIMESTAMP WITH TIME ZONE in place of DATE, TIME or TIMESTAMP, observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o027"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIMESTAMP(3) WITH LOCAL TIME ZONE in place of DATE, TIME or TIMESTAMP, observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o028"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIMESTAMP WITH LOCAL TIME ZONE in place of DATE, TIME or TIMESTAMP, observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o029"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIMESTAMP(3) WITHOUT TIME ZONE in place of DATE, TIME or TIMESTAMP, observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o030"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIMESTAMP WITHOUT TIME ZONE in place of DATE, TIME or TIMESTAMP, observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.date-time-constant.o031"
+kind = "negative_neighbour"
+required = true
+target = "{ DATE | TIME | TIMESTAMP }"
+anchor = "doc.data-types-datetime / Date and time constants"
+note = "TIME WITH TIME ZONE in place of DATE, TIME or TIMESTAMP, observed"
+
+[[obligation]]
 id = "sf.expressions.data-types-datetime.datetime.o001"
 kind = "positive"
 required = true

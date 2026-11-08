@@ -132,6 +132,9 @@ impl Parser {
         }
 
         if self.check(TokenType::Time) {
+            if let Some(literal) = self.try_parse_snowflake_parameterized_literal()? {
+                return Ok(literal);
+            }
             let token = self.advance()?;
             let original_text = token.text.to_string();
             if self.check(TokenType::String) {
@@ -365,6 +368,7 @@ impl Parser {
                 to: data_type,
                 trailing_comments: Vec::new(),
                 double_colon_syntax: true,
+                typed_literal: false,
                 format: None,
                 default: None,
                 inferred_type: None,
@@ -729,6 +733,7 @@ impl Parser {
                     to: DataType::Date,
                     trailing_comments: Vec::new(),
                     double_colon_syntax: false,
+                    typed_literal: false,
                     format: None,
                     default: None,
                     inferred_type: None,
@@ -780,6 +785,7 @@ impl Parser {
                 },
                 trailing_comments: Vec::new(),
                 double_colon_syntax: false,
+                typed_literal: false,
                 format: None,
                 default: None,
                 inferred_type: None,
@@ -798,6 +804,12 @@ impl Parser {
     }
 
     fn parse_primary_timestamp_literal(&mut self) -> Result<Expression> {
+        if let Some(error) = self.zoned_timestamp_literal_error() {
+            return Err(error);
+        }
+        if let Some(literal) = self.try_parse_snowflake_parameterized_literal()? {
+            return Ok(literal);
+        }
         let token = self.advance()?;
         let original_text = token.text.to_string();
         if self.check(TokenType::String) {
@@ -811,6 +823,7 @@ impl Parser {
                     },
                     trailing_comments: Vec::new(),
                     double_colon_syntax: false,
+                    typed_literal: false,
                     format: None,
                     default: None,
                     inferred_type: None,
@@ -877,6 +890,7 @@ impl Parser {
                         to: data_type,
                         trailing_comments: Vec::new(),
                         double_colon_syntax: false,
+                        typed_literal: false,
                         format: None,
                         default: None,
                         inferred_type: None,
@@ -933,6 +947,7 @@ impl Parser {
                     to: data_type,
                     trailing_comments: Vec::new(),
                     double_colon_syntax: false,
+                    typed_literal: false,
                     format: None,
                     default: None,
                     inferred_type: None,
@@ -953,6 +968,15 @@ impl Parser {
     }
 
     fn parse_primary_datetime_literal(&mut self) -> Result<Expression> {
+        if self.applies_snowflake_context_rules() && self.check_next(TokenType::String) {
+            let string = self.current + 1;
+            if let Some(error) = self.untyped_literal_error(string) {
+                return Err(error);
+            }
+        }
+        if let Some(literal) = self.try_parse_snowflake_parameterized_literal()? {
+            return Ok(literal);
+        }
         let token = self.advance()?;
         let original_text = token.text.to_string();
         if self.check(TokenType::String) {
@@ -1039,6 +1063,7 @@ impl Parser {
                 to: data_type,
                 trailing_comments: Vec::new(),
                 double_colon_syntax: false,
+                typed_literal: false,
                 format: None,
                 default: None,
                 inferred_type: None,
@@ -1167,6 +1192,7 @@ impl Parser {
                         to: data_type,
                         trailing_comments: Vec::new(),
                         double_colon_syntax: false,
+                        typed_literal: false,
                         format: None,
                         default: None,
                         inferred_type: None,
@@ -1194,6 +1220,7 @@ impl Parser {
                         to: data_type,
                         trailing_comments: Vec::new(),
                         double_colon_syntax: false,
+                        typed_literal: false,
                         format: None,
                         default: None,
                         inferred_type: None,
@@ -1217,6 +1244,7 @@ impl Parser {
                     to: data_type,
                     trailing_comments: Vec::new(),
                     double_colon_syntax: false,
+                    typed_literal: false,
                     format: None,
                     default: None,
                     inferred_type: None,
@@ -1321,6 +1349,7 @@ impl Parser {
                 to: DataType::Binary { length: None },
                 trailing_comments: Vec::new(),
                 double_colon_syntax: false,
+                typed_literal: false,
                 format: None,
                 default: None,
                 inferred_type: None,
@@ -1485,6 +1514,7 @@ impl Parser {
                     to: data_type,
                     trailing_comments: Vec::new(),
                     double_colon_syntax: false,
+                    typed_literal: false,
                     format: None,
                     default: None,
                     inferred_type: None,

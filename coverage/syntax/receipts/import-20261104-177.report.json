@@ -1,0 +1,63 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIMESTAMP WITH LOCAL TIME ZONE '2026-01-02 03:04:05' ;",
+   "sql_sha256": "0358dcf847ba7760f983607740914af15456df2ae193a7dc34853bf08ffd447d"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIMESTAMP(3) WITH TIME ZONE '2026-01-02 03:04:05' ;",
+   "sql_sha256": "44ce7c1e096a4df53243eaea8e85005a295b0e80fec2869f28cf7479b414687b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIME WITH TIME ZONE '03:04:05' ;",
+   "sql_sha256": "576fd4a31d62eaebf584e8cf6263bee9d59b58ece3c5229a37d5ece2aa1fc17b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIMESTAMP WITHOUT TIME ZONE '2026-01-02 03:04:05' ;",
+   "sql_sha256": "ae81fdbcf702e086727de3b4c76d0f643455d574dc6b47c82323dc4795203856"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIMESTAMP(3) WITHOUT TIME ZONE '2026-01-02 03:04:05' ;",
+   "sql_sha256": "c00cd3e220917c18bef86599a3fe293f07acd94f022bfa5d36029355f8f05bdf"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIMESTAMP WITH TIME ZONE '2026-01-02 03:04:05' ;",
+   "sql_sha256": "d8ca0bcea6cb1e6e2b7aecda330bcc61b907777da8fcac3c11250c10ca8c549e"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT TIMESTAMP(3) WITH LOCAL TIME ZONE '2026-01-02 03:04:05' ;",
+   "sql_sha256": "e62940c6bd56c149819baae8149830f1562c353821c456313a3bee35e196bb03"
+  }
+ ],
+ "receipts": 7,
+ "receipts_file_sha256": "a140f16d713ba46332d837c73923bd3934e9726319dc29c26f2f48426e5152a3",
+ "reconciled_receipts": 0,
+ "refusals": [],
+ "refused": 0,
+ "runs": [
+  {
+   "audit_sha256": "9f7f632237f4721819b2ada1d56a6ead5d3496b535237fee333aeda76b83141b",
+   "receipts": 7,
+   "refused_rows": 0,
+   "run_id": "tltz-ex-00",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": []
+}
