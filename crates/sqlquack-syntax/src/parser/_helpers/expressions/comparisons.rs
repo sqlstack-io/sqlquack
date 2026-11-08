@@ -244,7 +244,9 @@ impl Parser {
                 let is_null = Expression::Is(Box::new(BinaryOp::new(left, Expression::Null(Null))));
                 Expression::Not(Box::new(UnaryOp::new(is_null)))
             } else {
-                self.current -= 1;
+                if self.is_at_end() || self.check(TokenType::Semicolon) {
+                    self.current -= 1;
+                }
                 return Ok((left, false));
             }
         } else if self.match_token(TokenType::In) {

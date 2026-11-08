@@ -157,7 +157,6 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
                         "snowflake_empty_select_list_trailing_order_by".to_owned(),
                         1,
                     ),
-                    ("snowflake_reserved_window_alias".to_owned(), 1),
                     ("snowflake_string_part_date_part".to_owned(), 1),
                     ("snowflake_frame_bare_preceding".to_owned(), 1),
                     ("snowflake_frame_value_without_direction".to_owned(), 1),

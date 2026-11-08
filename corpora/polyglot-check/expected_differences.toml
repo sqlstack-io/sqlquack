@@ -1116,13 +1116,6 @@ sqlquack_error = "Invalid expression / Unexpected token"
 note = "a test's format template, not SQL; both reject it, SQLQuack where IS meets the braces"
 
 [[rejection]]
-id = "snowflake_reserved_window_alias"
-sql = "SELECT col window FROM t"
-dialects = ["Snowflake"]
-sqlquack_error = "Invalid expression / Unexpected token"
-note = "WINDOW is fully reserved in Snowflake (reserved by ANSI), so it is no implicit alias; reserved implicit aliases are recorded as errno 1003"
-
-[[rejection]]
 id = "snowflake_set_operation_join_side"
 sql = "SELECT 1 AS a INNER UNION ALL BY NAME SELECT 2 AS a"
 dialects = ["Snowflake"]
