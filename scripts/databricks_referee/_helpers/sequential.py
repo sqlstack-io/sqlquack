@@ -1,22 +1,4 @@
-"""The sequential phase: cases that change account- or catalog-level state, one at a time.
-
-The account state of SNAPSHOT_KINDS is read before the first case. After each case, which is
-judged in its own schema as in a parallel run, the state is read again: an object the case added
-under a reviewed fixture name with a reviewed drop is dropped, and the state must then equal the
-baseline. A removed or changed object, any other added object, a failed drop or a state that
-differs from the baseline after cleanup stops the run at once, leaves the state as it is for
-review, and writes no receipt.
-
-Each step is journaled before it runs: the baseline first, then each case with its schema and the
-fixture-named objects it may create, then the case once its state is settled. When a run is
-stopped or freezes part way, `recover` reads the journal and drops only what the unsettled case
-may have created: its schema, and objects it added that its statement names under a fixture name
-with a reviewed drop. Anything else that differs from the baseline is reported and left alone.
-
-Each settled line also holds the case's answer and the restored baseline, so `resume` continues a
-stopped run: with the same referee source, the same cases in the same order and seed, and only
-once the account state, after recovering the unsettled case, equals the journal's baseline.
-"""
+"""The sequential phase: cases that change account- or catalog-level state, one at a time."""
 
 from __future__ import annotations
 
@@ -26,20 +8,26 @@ import urllib.parse
 from dataclasses import asdict, replace
 from datetime import datetime
 from pathlib import Path
-from typing import NoReturn
+from typing import Any, NoReturn, cast
 
 from scripts.databricks_referee._helpers import judge
-from scripts.databricks_referee._helpers.client import Client
 from scripts.databricks_referee._helpers.receipts import canonical, digest
+from scripts.databricks_referee._helpers.rows import (
+    count_of,
+    row_of,
+    rows_of,
+    snapshot_of,
+    texts_of,
+)
 from scripts.databricks_referee._helpers.run import (
-    Judged,
-    Versions,
     case_order,
     finish,
     judge_one,
     leftover_schemas,
     new_run,
 )
+from scripts.databricks_referee.classes.client import Client
+from scripts.databricks_referee.classes.versions import Versions
 from scripts.databricks_referee.constants import (
     CASE_SECONDS,
     DROP_BY_SCIM,
@@ -49,6 +37,7 @@ from scripts.databricks_referee.constants import (
     HISTORY_FAILED,
     HISTORY_PAGE,
     HISTORY_PATH,
+    JOURNAL_ANSWER,
     JOURNAL_BASELINE,
     JOURNAL_FAILURE,
     JOURNAL_FINISHED,
@@ -63,6 +52,8 @@ from scripts.databricks_referee.constants import (
     METASTORE_POLICY_NAMES,
     PAGING_SCIM,
     PAGING_TOKEN,
+    PYCACHE,
+    QUERY_MARK,
     SCIM_PAGE,
     SNAPSHOT_KINDS,
     STATE_SUCCEEDED,
@@ -71,15 +62,12 @@ from scripts.databricks_referee.constants import (
 )
 from scripts.databricks_referee.exceptions import RefereeError
 from scripts.databricks_referee.models import Failure, Observation, Run, SnapshotKind
-from scripts.databricks_referee.types import Row
-
-# Each kind's objects by name, each object as its fingerprint fields.
-type Snapshot = dict[str, dict[str, Row]]
+from scripts.databricks_referee.types import Judged, Row, Snapshot
 
 
-def with_query(path: str, query: str) -> str:
+def with_query(*, path: str, query: str) -> str:
     """The path with one more query parameter."""
-    return f"{path}{'&' if '?' in path else '?'}{query}"
+    return f"{path}{'&' if QUERY_MARK in path else '?'}{query}"
 
 
 def listed(*, client: Client, kind: SnapshotKind, path: str) -> list[Row]:
@@ -89,32 +77,34 @@ def listed(*, client: Client, kind: SnapshotKind, path: str) -> list[Row]:
         start: int = 1
         while True:
             reply: Row = client._call(
-                method="GET", path=with_query(path, f"startIndex={start}&count={SCIM_PAGE}")
+                method="GET",
+                path=with_query(path=path, query=f"startIndex={start}&count={SCIM_PAGE}"),
             )
-            page: list[Row] = list(reply.get(kind.items) or [])  # type: ignore[call-overload]
+            page: list[Row] = rows_of(reply.get(kind.items) or [])
             items += page
             start += len(page)
-            if not page or start > int(reply.get("totalResults") or 0):  # type: ignore[call-overload]
+            if not page or start > count_of(reply.get("totalResults") or 0):
                 return items
     token: str = ""
     while True:
         query: str = f"{PAGING_TOKEN}={urllib.parse.quote(token, safe='')}"
-        reply = client._call(method="GET", path=with_query(path, query) if token else path)
-        items += list(reply.get(kind.items) or [])  # type: ignore[call-overload]
+        reply = client._call(
+            method="GET", path=with_query(path=path, query=query) if token else path
+        )
+        items += rows_of(reply.get(kind.items) or [])
         token = str(reply.get("next_page_token") or "")
         if not token:
             return items
 
 
 def fingerprint(*, item: Row, fields: tuple[str, ...]) -> Row:
-    """The fields of an object a change alters; a list is sorted, and `a.b` is the sorted `b` of
-    each item of list `a`."""
+    """The fields of an object a change alters, each list sorted."""
     found: Row = {}
     for field in fields:
         head, _, tail = field.partition(".")
         value: object = item.get(head)
         if tail:
-            value = sorted(str(dict(entry).get(tail)) for entry in list(value or []))  # type: ignore[call-overload]
+            value = sorted(str(row_of(entry).get(tail)) for entry in rows_of(value or []))
         elif isinstance(value, list):
             value = sorted(value, key=canonical)
         found[field] = value
@@ -141,7 +131,7 @@ def snapshot(client: Client) -> Snapshot:
     return state
 
 
-def difference(before: Snapshot, after: Snapshot) -> Row:
+def difference(*, before: Snapshot, after: Snapshot) -> Row:
     """The objects added, removed and changed between two snapshots."""
     added: list[Row] = []
     removed: list[Row] = []
@@ -167,7 +157,7 @@ def drop_of(added: Row) -> int | None:
     if name.lower() not in FIXTURE_NAMES:
         return None
     variant: str | None = SNAPSHOT_KINDS[str(added["kind"])].variant
-    value: object = dict(added["fields"]).get(variant) if variant else None  # type: ignore[call-overload]
+    value: object = row_of(added["fields"]).get(variant) if variant else None
     for index, (kind, kind_variant, _) in enumerate(DROPS):
         if kind == added["kind"] and kind_variant == value:
             return index
@@ -183,7 +173,7 @@ def drop(*, client: Client, added: Row, index: int) -> Row:
     """Drop one added object by its reviewed drop; a failure stops the run."""
     statement: str = DROPS[index][2]
     if statement == DROP_BY_SCIM:
-        group: str = urllib.parse.quote(str(dict(added["fields"])["id"]), safe="")  # type: ignore[call-overload]
+        group: str = urllib.parse.quote(str(row_of(added["fields"])["id"]), safe="")
         path: str = f"{GROUPS_PATH}/{group}"
         client._call(method="DELETE", path=path)
         return {"kind": added["kind"], "name": added["name"], "statement": f"DELETE {path}"}
@@ -201,13 +191,12 @@ def stop(*, run: Run, report: Row) -> NoReturn:
 
 
 def sweep_metastore_policies(*, client: Client, run: Run, case: Row | None) -> list[Row]:
-    """Drop each fixture-named metastore policy, which no snapshot can see; stop on any answer but
-    one saying the policy is absent or could not have been created."""
+    """Drop each fixture-named metastore policy, which no snapshot can see, or stop the run."""
     answers: list[Row] = []
     for name in METASTORE_POLICY_NAMES:
         sql: str = METASTORE_POLICY_DROP.format(name=quoted(name))
-        status: Row = dict(client.execute(sql=sql, schema=None)["status"])  # type: ignore[call-overload]
-        message: str = str(dict(status.get("error") or {}).get("message", ""))  # type: ignore[call-overload]
+        status: Row = row_of(client.execute(sql=sql, schema=None)["status"])
+        message: str = str(row_of(status.get("error") or {}).get("message", ""))
         answer: Row = {"statement": sql, "state": status["state"], "message": message[:300]}
         answers.append(answer)
         if status["state"] == STATE_SUCCEEDED or not METASTORE_POLICY_ABSENT.match(message):
@@ -227,8 +216,8 @@ def sweep_metastore_policies(*, client: Client, run: Run, case: Row | None) -> l
 def settle(*, client: Client, baseline: Snapshot, case: Row, run: Run) -> list[Row]:
     """Restore the baseline after one case and return what was dropped, or stop the run."""
     stopped: Row = {"case_id": case["case_id"], "sql": case["sql"]}
-    found: Row = difference(baseline, snapshot(client))
-    added: list[Row] = list(found["added"])  # type: ignore[call-overload]
+    found: Row = difference(before=baseline, after=snapshot(client))
+    added: list[Row] = rows_of(found["added"])
     if found["removed"] or found["changed"]:
         reason: str = "the case removed or changed an object that existed before it"
         stop(run=run, report={**stopped, "reason": reason, "diff": found, "dropped": []})
@@ -246,7 +235,7 @@ def settle(*, client: Client, baseline: Snapshot, case: Row, run: Run) -> list[R
         except RefereeError as error:
             reason = f"a cleanup statement failed: {error}"
             stop(run=run, report={**stopped, "reason": reason, "diff": found, "dropped": dropped})
-    left: Row = difference(baseline, snapshot(client))
+    left: Row = difference(before=baseline, after=snapshot(client))
     if any(left.values()):
         reason = "the account state differs from the baseline after cleanup"
         stop(run=run, report={**stopped, "reason": reason, "diff": left, "dropped": dropped})
@@ -267,7 +256,7 @@ def journal_path(*, private: Path, run_id: str) -> Path:
     return private / f"{run_id}.sequential-journal.jsonl"
 
 
-def journal(path: Path, entry: Row) -> None:
+def journal(*, path: Path, entry: Row) -> None:
     """Append one journal line and flush it to disk before the step it names runs."""
     with path.open("a", encoding="utf-8") as file:
         file.write(json.dumps(entry, sort_keys=True) + "\n")
@@ -286,18 +275,24 @@ def recover(*, path: Path, private: Path) -> Row:
     pending: list[Row] = [
         e for e in entries if e["event"] == JOURNAL_PENDING and str(e["case_id"]) not in settled
     ]
-    report: Row = {"run_id": run_id, "unsettled": [e["case_id"] for e in pending], "dropped": []}
+    dropped: list[Row] = []
+    report: Row = {
+        "run_id": run_id,
+        "unsettled": [e["case_id"] for e in pending],
+        "dropped": dropped,
+    }
     if entries[-1]["event"] == JOURNAL_FINISHED:
         report["finished"] = True
     client: Client = Client()
-    dropped: list[Row] = report["dropped"]  # type: ignore[assignment]
     for schema in leftover_schemas(client=client, stem=str(first["schema_stem"])):
         judge.drop(client=client, schema=schema)
         dropped.append({"kind": "case schema", "name": schema})
-    recorded: set[str] = {name for e in pending for name in e["may_create"]}  # type: ignore[union-attr]
-    baseline: Snapshot = first["baseline"]  # type: ignore[assignment]
-    found: Row = difference(baseline, snapshot(client))
-    for entry in list(found["added"]):  # type: ignore[call-overload]
+    recorded: set[str] = set()
+    for e in pending:
+        recorded |= set(texts_of(e["may_create"]))
+    baseline: Snapshot = snapshot_of(first["baseline"])
+    found: Row = difference(before=baseline, after=snapshot(client))
+    for entry in rows_of(found["added"]):
         index: int | None = drop_of(entry)
         if index is not None and str(entry["name"]).lower() in recorded:
             dropped.append(drop(client=client, added=entry, index=index))
@@ -310,7 +305,7 @@ def recover(*, path: Path, private: Path) -> Row:
     )
     if any(METASTORE_POLICY_CASE.search(str(e["sql"])) for e in pending):
         report["policy_drops"] = sweep_metastore_policies(client=client, run=run, case=None)
-    report["left"] = difference(baseline, snapshot(client))
+    report["left"] = difference(before=baseline, after=snapshot(client))
     private.mkdir(parents=True, exist_ok=True)
     (private / f"{run_id}.sequential-recover.json").write_text(
         json.dumps(report, indent=2, sort_keys=True) + "\n"
@@ -321,7 +316,7 @@ def recover(*, path: Path, private: Path) -> Row:
 def referee_source() -> str:
     """The digest of the referee's own source, so a resumed run uses the code it started with."""
     root: Path = Path(__file__).resolve().parents[1]
-    files: list[Path] = sorted(p for p in root.rglob("*.py") if "__pycache__" not in p.parts)
+    files: list[Path] = sorted(p for p in root.rglob("*.py") if PYCACHE not in p.parts)
     return digest(canonical({str(p.relative_to(root)): p.read_text() for p in files}))
 
 
@@ -337,25 +332,25 @@ def answer(judged: Judged) -> Row:
     return {"kind": kind, "found": asdict(found), "version": version, "recorded_at": at}
 
 
-def judged_from(case: Row, entry: Row) -> Judged:
+def judged_from(*, case: Row, entry: Row) -> Judged:
     """A settled journal line's case answer, as it was judged."""
-    found: Row = dict(entry["answer"])  # type: ignore[call-overload]
+    found: Row = row_of(entry[JOURNAL_ANSWER])
     model: type[Observation] | type[Failure] = (
         Observation if found["kind"] == JOURNAL_OBSERVATION else Failure
     )
-    return case, model(**dict(found["found"])), dict(found["version"]), str(found["recorded_at"])  # type: ignore[call-overload]
+    fields: dict[str, Any] = row_of(found["found"])
+    return case, model(**fields), row_of(found["version"]), str(found["recorded_at"])
 
 
 def judge_remaining(
     *, cases: list[Row], run: Run, baseline: Snapshot, log: Path, judged: list[Judged]
 ) -> Row:
-    """Judge the cases not yet settled, one at a time, each settled line journaled with its
-    answer once the baseline is restored; then the final sweep, the final diff and the receipts."""
+    """Judge the cases not yet settled, one at a time, then sweep, compare and write receipts."""
     client: Client = Client()
     versions: Versions = Versions(client)
     versions.seen |= {canonical(version) for _, _, version, _ in judged}
     cleanup: dict[str, list[Row]] = {}
-    for index in case_order(len(cases), run.seed)[len(judged) :]:
+    for index in case_order(count=len(cases), seed=run.seed)[len(judged) :]:
         case: Row = cases[index]
         schema: str = f"{run.schema_stem}_{index}"
         try:
@@ -366,8 +361,8 @@ def judge_remaining(
                 "resume continues from it"
             ) from error
         journal(
-            log,
-            {
+            path=log,
+            entry={
                 "event": JOURNAL_PENDING,
                 "case_id": case["case_id"],
                 "sql": case["sql"],
@@ -382,20 +377,20 @@ def judge_remaining(
             dropped += sweep_metastore_policies(client=client, run=run, case=case)
         cleanup[str(case["case_id"])] = dropped
         journal(
-            log,
-            {
+            path=log,
+            entry={
                 "event": JOURNAL_SETTLED,
                 "case_id": case["case_id"],
                 "dropped": dropped,
-                "answer": answer(one),
+                JOURNAL_ANSWER: answer(one),
                 "account": JOURNAL_RESTORED,
             },
         )
     cleanup["final metastore policy sweep"] = sweep_metastore_policies(
         client=client, run=run, case=None
     )
-    journal(log, {"event": JOURNAL_FINISHED})
-    final: Row = difference(baseline, snapshot(client))
+    journal(path=log, entry={"event": JOURNAL_FINISHED})
+    final: Row = difference(before=baseline, after=snapshot(client))
     run.private.mkdir(parents=True, exist_ok=True)
     (run.private / f"{run.run_id}.sequential-cleanup.json").write_text(
         json.dumps(cleanup, indent=2, sort_keys=True) + "\n"
@@ -410,24 +405,20 @@ def judge_remaining(
 
 
 def record_sequential(*, cases: list[Row], out: Path, private: Path, seed: int | None) -> Row:
-    """Judge the cases one at a time, held cases included, restoring the account state after each;
-    write receipts as a parallel run does, only when every case left the baseline restored."""
+    """Judge the cases one at a time, held cases included, restoring the account after each."""
     run: Run = new_run(out=out, private=private, seed=seed)
     baseline: Snapshot = snapshot(Client())
-    named: list[Row] = [
-        {"kind": kind, "name": name}
-        for kind, objects in baseline.items()
-        for name in objects
-        if name.lower() in FIXTURE_NAMES
-    ]
+    named: list[Row] = []
+    for kind, objects in baseline.items():
+        named += [{"kind": kind, "name": name} for name in objects if name.lower() in FIXTURE_NAMES]
     if named:
         reason: str = "the account already holds objects with fixture names, before any case ran"
         stop(run=run, report={"case_id": None, "sql": None, "reason": reason, "objects": named})
     private.mkdir(parents=True, exist_ok=True)
     log: Path = journal_path(private=private, run_id=run.run_id)
     journal(
-        log,
-        {
+        path=log,
+        entry={
             "event": JOURNAL_BASELINE,
             "run_id": run.run_id,
             "schema_stem": run.schema_stem,
@@ -443,9 +434,7 @@ def record_sequential(*, cases: list[Row], out: Path, private: Path, seed: int |
 def resume_sequential(
     *, path: Path, cases: list[Row], out: Path, private: Path, seed: int | None
 ) -> Row:
-    """Continue a stopped sequential run from its journal, or refuse: when the referee source,
-    the cases, their order or the seed differ, when the run finished, or when the account state
-    differs from the baseline once the unsettled case is recovered."""
+    """Continue a stopped sequential run from its journal, or refuse when anything differs."""
     entries: list[Row] = [json.loads(line) for line in path.read_text().splitlines() if line]
     first: Row = entries[0]
     if first["event"] != JOURNAL_BASELINE:
@@ -461,18 +450,18 @@ def resume_sequential(
         if then != now:
             raise RefereeError(f"{what} differ from the stopped run's; it is not resumed")
     settled: list[Row] = [e for e in entries if e["event"] == JOURNAL_SETTLED]
-    order: list[int] = case_order(len(cases), seed)
+    order: list[int] = case_order(count=len(cases), seed=seed)
     judged: list[Judged] = []
     for index, entry in zip(order, settled, strict=False):
-        if entry["case_id"] != cases[index]["case_id"] or "answer" not in entry:
+        if entry["case_id"] != cases[index]["case_id"] or JOURNAL_ANSWER not in entry:
             raise RefereeError(f"{path} settled {entry['case_id']} out of order or without answer")
-        judged.append(judged_from(cases[index], entry))
+        judged.append(judged_from(case=cases[index], entry=entry))
     if len(judged) != len(settled):
         raise RefereeError(f"{path} settled more cases than were selected")
     recovered: Row = recover(path=path, private=private)
-    baseline: Snapshot = first["baseline"]  # type: ignore[assignment]
-    found: Row = difference(baseline, snapshot(Client()))
-    if any(dict(recovered["left"]).values()) or any(found.values()):  # type: ignore[call-overload]
+    baseline: Snapshot = snapshot_of(first["baseline"])
+    found: Row = difference(before=baseline, after=snapshot(Client()))
+    if any(row_of(recovered["left"]).values()) or any(found.values()):
         raise RefereeError(
             "the account state differs from the stopped run's baseline after recovery; "
             f"see {private / (str(first['run_id']) + '.sequential-recover.json')}; not resumed"
@@ -490,11 +479,7 @@ def resume_sequential(
 def refinish_sequential(
     *, path: Path, cases: list[Row], out: Path, private: Path, seed: int | None
 ) -> Row:
-    """The receipts of a finished sequential run whose account state ended as its baseline, its
-    failures judged again with the current reviewed rows: a failure a row now decides becomes an
-    observation of its recorded statement, found in the warehouse's history. Refuses when the
-    cases, their order or the seed differ, or any case is unsettled. The run's answers are
-    reused as recorded; only their phase decision is the current source's."""
+    """A finished sequential run's receipts, its failures judged again by the current rows."""
     entries: list[Row] = [json.loads(line) for line in path.read_text().splitlines() if line]
     first: Row = entries[0]
     if first["event"] != JOURNAL_BASELINE or entries[-1]["event"] != JOURNAL_FINISHED:
@@ -510,25 +495,20 @@ def refinish_sequential(
         if then != now:
             raise RefereeError(f"{what} differ from the run's; no receipt was written")
     settled: list[Row] = [e for e in entries if e["event"] == JOURNAL_SETTLED]
-    order: list[int] = case_order(len(cases), seed)
+    order: list[int] = case_order(count=len(cases), seed=seed)
     if len(settled) != len(cases):
         raise RefereeError(f"{path} settled {len(settled)} of {len(cases)} cases")
     client: Client = Client()
     judged: list[Judged] = []
     since: str | None = None
     for index, entry in zip(order, settled, strict=True):
-        if entry["case_id"] != cases[index]["case_id"] or "answer" not in entry:
+        if entry["case_id"] != cases[index]["case_id"] or JOURNAL_ANSWER not in entry:
             raise RefereeError(f"{path} settled {entry['case_id']} out of order or without answer")
-        case, found, version, at = judged_from(cases[index], entry)
-        if isinstance(found, Failure):
-            again: Observation | Failure = judge.observation_from(found)
-            if isinstance(again, Observation) and not again.statement_id:
-                identifier: str = recorded_statement(
-                    client=client, failure=found, since=since, until=at
-                )
-                again = judge.observation_from(replace(found, statement_id=identifier))
-            found = again
-        judged.append((case, found, version, at))
+        case, recorded, version, at = judged_from(case=cases[index], entry=entry)
+        again: Observation | Failure = judged_again(
+            client=client, found=recorded, since=since, until=at
+        )
+        judged.append((case, again, version, at))
         since = at
     run: Run = Run(
         run_id=run_id, schema_stem=str(first["schema_stem"]), out=out, private=private, seed=seed
@@ -539,10 +519,28 @@ def refinish_sequential(
     return {**report, "judged_by": first.get("referee"), "phases_by": referee_source()}
 
 
+def judged_again(
+    *, client: Client, found: Observation | Failure, since: str | None, until: str
+) -> Observation | Failure:
+    """A recorded answer as the current reviewed rows judge it."""
+    if not isinstance(found, Failure):
+        return found
+    again: Observation | Failure = judge.observation_from(found)
+    if isinstance(again, Observation) and not again.statement_id:
+        identifier: str = recorded_statement(client=client, failure=found, since=since, until=until)
+        again = judge.observation_from(replace(found, statement_id=identifier))
+    return again
+
+
+def recorded_message(*, client: Client, identifier: str) -> object:
+    """The error message of one statement the warehouse ran."""
+    reply: Row = client._call(method="GET", path=f"{STATEMENTS_PATH}/{identifier}")
+    error: Row = cast(Row, row_of(row_of(reply)["status"]).get("error", {}))
+    return error.get("message")
+
+
 def recorded_statement(*, client: Client, failure: Failure, since: str | None, until: str) -> str:
-    """The statement a journaled failure came from: the one failed statement on the warehouse
-    between the previous case's settling and this case's, whose error message is the recorded one.
-    Only one case runs at a time, so its window holds its own statements alone."""
+    """The one failed statement since the previous case settled with the recorded message."""
     end: int = millis(until)
     start: int = millis(since) if since is not None else end - 2 * int(CASE_SECONDS * 1000)
     query: str = urllib.parse.urlencode(
@@ -558,16 +556,13 @@ def recorded_statement(*, client: Client, failure: Failure, since: str | None, u
         raise RefereeError(f"more than {HISTORY_PAGE} statements ran between {since} and {until}")
     failed: list[str] = [
         str(row["query_id"])
-        for row in reply.get("res", [])  # type: ignore[union-attr]
+        for row in rows_of(reply.get("res", []))
         if row.get("status") == HISTORY_FAILED
     ]
     matching: list[str] = [
         identifier
         for identifier in failed
-        if dict(dict(client._call(method="GET", path=f"{STATEMENTS_PATH}/{identifier}"))["status"])
-        .get("error", {})
-        .get("message")  # type: ignore[union-attr]
-        == failure.message
+        if recorded_message(client=client, identifier=identifier) == failure.message
     ]
     if len(matching) != 1:
         raise RefereeError(

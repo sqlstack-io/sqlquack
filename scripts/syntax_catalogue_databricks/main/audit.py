@@ -8,7 +8,7 @@ import sys
 import tomllib
 from pathlib import Path
 
-from scripts.syntax_catalogue_databricks._helpers.audit import AuditResult, audit
+from scripts.syntax_catalogue_databricks._helpers.audit import audit
 from scripts.syntax_catalogue_databricks._helpers.fetch import pinned
 from scripts.syntax_catalogue_databricks._helpers.review import (
     audit_summary,
@@ -17,6 +17,7 @@ from scripts.syntax_catalogue_databricks._helpers.review import (
     source_hashes,
 )
 from scripts.syntax_catalogue_databricks.constants import AUDIT_FILE
+from scripts.syntax_catalogue_databricks.models import AuditResult
 
 
 def run_audit(argv: list[str] | None = None) -> int:

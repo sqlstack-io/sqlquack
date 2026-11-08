@@ -3,16 +3,12 @@
 from __future__ import annotations
 
 import json
-import urllib.parse
 import urllib.request
-from collections.abc import Callable
 from pathlib import Path
+from typing import cast
 
 import pytest
 
-from scripts.databricks_referee._helpers import client as client_module
-from scripts.databricks_referee._helpers import judge, sequential
-from scripts.databricks_referee._helpers.client import Client
 from scripts.databricks_referee._helpers.receipts import digest
 from scripts.databricks_referee._helpers.run import undecided_reason
 from scripts.databricks_referee._helpers.sequential import (
@@ -20,208 +16,102 @@ from scripts.databricks_referee._helpers.sequential import (
     refinish_sequential,
     resume_sequential,
 )
+from scripts.databricks_referee.classes import client as client_module
+from scripts.databricks_referee.classes.client import Client
 from scripts.databricks_referee.constants import REFEREE_CLASS, REPLY_LOST
 from scripts.databricks_referee.exceptions import RefereeError, ReplyLost, TokenRejected
 from scripts.databricks_referee.main.run import run_referee
 from scripts.databricks_referee.models import Failure
 from scripts.databricks_referee.types import Row
-
-UC: str = "/api/2.1/unity-catalog"
-GROUPS: str = "/api/2.0/preview/scim/v2/Groups"
-METASTORE: str = "0f0e0d0c-0000-4000-8000-000000000001"
-# The page length the fake lists use, so that every snapshot reads more than one page.
-PAGE: int = 2
-
-type Effect = Callable[["FakeClient"], Row | None]
-
-
-def succeeded(rows: list[list[str]] | None = None) -> Row:
-    return {"statement_id": "q1", "status": {"state": "SUCCEEDED"}, "result": {"data_array": rows}}
-
-
-def failed(message: str) -> Row:
-    return {"statement_id": "q1", "status": {"state": "FAILED", "error": {"message": message}}}
-
-
-class FakeClient(Client):
-    """A workspace with a few pre-existing objects; each statement's effect is given by a test."""
-
-    def __init__(self, effects: dict[str, Effect]) -> None:
-        self.effects: dict[str, Effect] = effects
-        self.warehouse: str = "w1"
-        self.statements: list[str] = []
-        # The warehouse's query history and each statement's message, as refinish reads them.
-        self.history: list[Row] = []
-        self.messages: dict[str, str] = {}
-        # Checks before a case that fail, by their turn from 1.
-        self.failing_checks: set[int] = set()
-        self.checks: int = 0
-        self.deleted: list[str] = []
-        self.lists: dict[str, tuple[str, list[Row]]] = {
-            f"{UC}/catalogs": (
-                "catalogs",
-                [
-                    {"name": "samples", "owner": "System user", "updated_at": 1},
-                    {"name": "system", "owner": "System user", "updated_at": 1},
-                    {"name": "workspace", "owner": "owner@example.com", "comment": None},
-                ],
-            ),
-            f"{UC}/schemas": (
-                "schemas",
-                [{"name": "default", "owner": "owner@example.com"}, {"name": "information_schema"}],
-            ),
-            f"{UC}/connections": ("connections", []),
-            f"{UC}/shares": ("shares", []),
-            f"{UC}/recipients": ("recipients", []),
-            f"{UC}/providers": ("providers", [{"name": "databricks", "owner": "System user"}]),
-            f"{UC}/external-locations": ("external_locations", []),
-            f"{UC}/storage-credentials": (
-                "storage_credentials",
-                [{"name": "managed", "owner": "System user"}],
-            ),
-            f"{UC}/credentials": (
-                "credentials",
-                [{"name": "managed", "owner": "System user", "purpose": "STORAGE"}],
-            ),
-            "/api/2.1/tag-policies": (
-                "tag_policies",
-                [{"tag_key": "class", "values": [{"name": "b"}, {"name": "a"}], "id": "p1"}],
-            ),
-            GROUPS: (
-                "Resources",
-                [
-                    {"id": "11", "displayName": "admins", "members": [{"value": "7"}]},
-                    {"id": "12", "displayName": "users", "members": [{"value": "7"}]},
-                    {"id": "13", "displayName": "analysts", "members": []},
-                ],
-            ),
-            f"{UC}/permissions/metastore/{METASTORE}": (
-                "privilege_assignments",
-                [{"principal": "referee", "privileges": ["CREATE_CATALOG", "CREATE_CONNECTION"]}],
-            ),
-            f"{UC}/permissions/catalog/workspace": (
-                "privilege_assignments",
-                [{"principal": "referee", "privileges": ["ALL_PRIVILEGES"]}],
-            ),
-            f"{UC}/tables": ("tables", []),
-            f"{UC}/functions": ("functions", []),
-            f"{UC}/volumes": ("volumes", []),
-        }
-
-    def objects(self, path: str) -> list[Row]:
-        return self.lists[path][1]
-
-    def _call(self, *, method: str, path: str, body: Row | None = None) -> Row:
-        base, _, query = path.partition("?")
-        asked: dict[str, str] = dict(urllib.parse.parse_qsl(query))
-        if method == "DELETE":
-            group: str = base.removeprefix(f"{GROUPS}/")
-            self.deleted.append(group)
-            self.lists[GROUPS][1][:] = [g for g in self.objects(GROUPS) if g["id"] != group]
-            return {}
-        assert method == "GET", path
-        if base.startswith("/api/2.0/sql/warehouses/"):
-            self.checks += 1
-            if self.checks in self.failing_checks:
-                raise RefereeError("HTTP 403 from the warehouse API: Invalid Token")
-            return {"state": "RUNNING"}
-        if base == "/api/2.0/sql/history/queries":
-            return {"res": self.history, "has_next_page": False}
-        if base.startswith("/api/2.0/sql/statements/"):
-            identifier: str = base.rsplit("/", 1)[1]
-            return {"status": {"state": "FAILED", "error": {"message": self.messages[identifier]}}}
-        if base == f"{UC}/current-metastore-assignment":
-            return {"metastore_id": METASTORE, "workspace_id": 1}
-        key, items = self.lists[base]
-        if base == GROUPS:
-            start: int = int(asked["startIndex"])
-            page: list[Row] = items[start - 1 : start - 1 + min(PAGE, int(asked["count"]))]
-            return {"totalResults": len(items), "startIndex": start, key: page}
-        offset: int = int(asked.get("page_token", "0"))
-        reply: Row = {key: items[offset : offset + PAGE]}
-        if offset + PAGE < len(items):
-            reply["next_page_token"] = str(offset + PAGE)
-        return reply
-
-    def execute(self, *, sql: str, schema: str | None) -> Row:
-        schemas: list[Row] = self.objects(f"{UC}/schemas")
-        if sql == "SELECT current_version()":
-            return succeeded([[json.dumps({"dbsql_version": "2026.44"})]])
-        if sql.startswith("CREATE SCHEMA workspace.sqlquack_referee_"):
-            schemas.append({"name": sql.removeprefix("CREATE SCHEMA workspace.")})
-            return succeeded()
-        if sql.startswith("DROP SCHEMA IF EXISTS workspace.sqlquack_referee_"):
-            name: str = sql.split(".")[1].removesuffix(" CASCADE")
-            schemas[:] = [s for s in schemas if s["name"] != name]
-            return succeeded()
-        if sql.startswith("SHOW SCHEMAS IN workspace LIKE"):
-            left: list[list[str]] = [
-                [str(s["name"])] for s in schemas if str(s["name"]).startswith("sqlquack_referee_")
-            ]
-            return succeeded(left)
-        if sql == "CREATE TABLE t1 ( c1 INT )":
-            return succeeded()
-        self.statements.append(sql)
-        effect: Effect | None = self.effects.get(sql)
-        reply: Row | None = effect(self) if effect is not None else None
-        if reply is None and effect is None and sql in POLICY_DROPS:
-            return failed(NOT_ADMIN)
-        return reply or succeeded()
-
-
-NOT_ADMIN: str = "PERMISSION_DENIED: User is not a metastore admin for Metastore 'm'."
-POLICY_DROPS: tuple[str, ...] = (
-    "DROP POLICY `v1` ON METASTORE",
-    "DROP POLICY `v1 Q` ON METASTORE",
-    "DROP POLICY `SELECT` ON METASTORE",
+from tests.unit.scripts.databricks_referee._test_types import (
+    CheckTestCase,
+    CleanupTestCase,
+    DeadlineTestCase,
+    ErrorTestCase,
+    HistoryTestCase,
+    LegacySetupTestCase,
+    PolicyAnswerTestCase,
+    PolicyRefusalTestCase,
+    PolicySweepTestCase,
+    RecoverTestCase,
+    RefinishTestCase,
+    ResendTestCase,
+    ResumeRefusalTestCase,
+    ResumeTestCase,
+    SequentialHeldTestCase,
+    StopTestCase,
+    TokenTestCase,
+    UndecidedTestCase,
 )
-SWEEP: list[Row] = [
-    {"statement": sql, "state": "FAILED", "message": NOT_ADMIN} for sql in POLICY_DROPS
-]
+from tests.unit.scripts.databricks_referee.helpers import (
+    GROUPS,
+    POLICY_DROPS,
+    SWEEP,
+    UC,
+    USERS_MISSING,
+    FakeClient,
+    Frozen,
+    adds,
+    case,
+    fail_on,
+    failed,
+    frozen_run,
+    receipts_in,
+    removes,
+    stop_report,
+    succeeded,
+    unmapped_run,
+    use,
+)
+
+UNSUPPORTED_ON_METASTORE: str = (
+    "The securable `m` of type METASTORE cannot be found, and METASTORE is not supported in ABAC"
+    " policies. Please verify both the securable type and name for correctness and try again."
+)
+UNDECIDED: str = "statement s9 was still running after 300 s; cancelled, so its case is undecided"
+LEGACY_SETUP: list[str] = ["CREATE TABLE t1 ( c1 INT )", "CREATE TABLE t2 ( c1 INT )"]
 
 
-def case(sql: str, case_id: str = "db.ddl.create-catalog.k1") -> Row:
-    return {
-        "capture": "execute_autocommit_in_throwaway_database",
-        "case_id": case_id,
-        "expect": "accept",
-        "obligations": [],
-        "session": {},
-        "session_sha256": "0" * 64,
-        "setup": ["CREATE TABLE t1 ( c1 INT )"],
-        "setup_sha256": "1" * 64,
-        "sql": sql,
-        "sql_sha256": "2" * 64,
-    }
+class Reply:
+    """An HTTP reply as urlopen gives it."""
+
+    def __init__(self, body: bytes) -> None:
+        self.body: bytes = body
+
+    def __enter__(self) -> Reply:
+        return self
+
+    def __exit__(self, *_: object) -> None:
+        return None
+
+    def read(self) -> bytes:
+        return self.body
 
 
-def adds(path: str, *items: Row) -> Effect:
-    def effect(fake: FakeClient) -> None:
-        fake.objects(path).extend(items)
-
-    return effect
-
-
-def removes(path: str, name: str) -> Effect:
-    def effect(fake: FakeClient) -> None:
-        fake.objects(path)[:] = [o for o in fake.objects(path) if o.get("name") != name]
-
-    return effect
-
-
-def use(monkeypatch: pytest.MonkeyPatch, fake: FakeClient) -> FakeClient:
-    monkeypatch.setattr(sequential, "Client", lambda: fake)
-    return fake
-
-
-def stop_report(private: Path) -> Row:
-    reports: list[Path] = list(private.glob("*.sequential-stop.json"))
-    assert len(reports) == 1
-    return json.loads(reports[0].read_text())
-
-
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        CleanupTestCase(
+            description="a case that creates catalog v1, then a case that changes nothing",
+            sql="CREATE CATALOG v1",
+            expected_receipts=2,
+            expected_phases=[
+                ("db.ddl.create-catalog.k1", "accepted"),
+                ("db.query.select.k2", "accepted"),
+            ],
+            expected_cleanup=[
+                {
+                    "kind": "catalog",
+                    "name": "v1",
+                    "statement": "DROP CATALOG IF EXISTS `v1` CASCADE",
+                }
+            ],
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_a_case_that_creates_catalog_v1_when_run_sequentially_then_it_is_dropped_and_receipted(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    test_case: CleanupTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     fake: FakeClient = use(
         monkeypatch,
@@ -236,26 +126,19 @@ def test_given_a_case_that_creates_catalog_v1_when_run_sequentially_then_it_is_d
     private: Path = tmp_path / "private"
 
     summary: Row = record_sequential(
-        cases=[case("CREATE CATALOG v1"), case("SELECT 1", "db.query.select.k2")],
+        cases=[case(test_case.sql), case("SELECT 1", "db.query.select.k2")],
         out=out,
         private=private,
         seed=7,
     )
 
-    receipts: list[Row] = [
-        json.loads(line) for path in out.glob("*.jsonl") for line in path.read_text().splitlines()
-    ]
+    receipts: list[Row] = receipts_in(out)
     cleanup: Row = json.loads(next(private.glob("*.sequential-cleanup.json")).read_text())
     final: Row = json.loads(next(private.glob("*.sequential-diff.json")).read_text())
-    assert summary["receipts"] == 2
-    assert sorted((r["case_id"], r["phase"]) for r in receipts) == [
-        ("db.ddl.create-catalog.k1", "accepted"),
-        ("db.query.select.k2", "accepted"),
-    ]
+    assert summary["receipts"] == test_case.expected_receipts
+    assert sorted((r["case_id"], r["phase"]) for r in receipts) == test_case.expected_phases
     assert cleanup == {
-        "db.ddl.create-catalog.k1": [
-            {"kind": "catalog", "name": "v1", "statement": "DROP CATALOG IF EXISTS `v1` CASCADE"}
-        ],
+        "db.ddl.create-catalog.k1": test_case.expected_cleanup,
         "db.query.select.k2": [],
         "final metastore policy sweep": SWEEP,
     }
@@ -264,80 +147,109 @@ def test_given_a_case_that_creates_catalog_v1_when_run_sequentially_then_it_is_d
     assert not list(private.glob("*.sequential-stop.json"))
 
 
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        StopTestCase(
+            description="a comment set on the workspace catalog",
+            sql="COMMENT ON CATALOG workspace IS 'x'",
+            expected_error="removed or changed an object that existed before it",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_a_case_that_changes_a_pre_existing_object_when_run_sequentially_then_the_run_stops(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    test_case: StopTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     def comment(fake: FakeClient) -> None:
         fake.objects(f"{UC}/catalogs")[2]["comment"] = "x"
 
-    use(monkeypatch, FakeClient({"COMMENT ON CATALOG workspace IS 'x'": comment}))
+    use(monkeypatch, FakeClient({test_case.sql: comment}))
     out: Path = tmp_path / "out"
 
-    with pytest.raises(RefereeError, match="removed or changed an object that existed before it"):
+    with pytest.raises(RefereeError, match=test_case.expected_error):
         record_sequential(
-            cases=[case("COMMENT ON CATALOG workspace IS 'x'")],
+            cases=[case(test_case.sql)],
             out=out,
             private=tmp_path / "private",
             seed=None,
         )
 
     report: Row = stop_report(tmp_path / "private")
+    changed: list[Row] = cast(list[Row], cast(Row, report["diff"])["changed"])
     assert not out.exists()
     assert (report["case_id"], report["sql"]) == (
         "db.ddl.create-catalog.k1",
         "COMMENT ON CATALOG workspace IS 'x'",
     )
-    assert report["diff"]["changed"][0]["name"] == "workspace"  # type: ignore[index]
+    assert changed[0]["name"] == "workspace"
     assert report["dropped"] == []
 
 
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        StopTestCase(
+            description="a script that creates a fixture-named and an other catalog",
+            sql="BEGIN CREATE CATALOG v1 ; CREATE CATALOG z9 ; END",
+            expected_error="no reviewed fixture name or drop",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_an_added_object_without_a_fixture_name_when_run_sequentially_then_the_run_stops(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    test_case: StopTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     fake: FakeClient = use(
         monkeypatch,
-        FakeClient(
-            {
-                "BEGIN CREATE CATALOG v1 ; CREATE CATALOG z9 ; END": adds(
-                    f"{UC}/catalogs", {"name": "v1"}, {"name": "z9"}
-                )
-            }
-        ),
+        FakeClient({test_case.sql: adds(f"{UC}/catalogs", {"name": "v1"}, {"name": "z9"})}),
     )
     out: Path = tmp_path / "out"
 
-    with pytest.raises(RefereeError, match="no reviewed fixture name or drop"):
+    with pytest.raises(RefereeError, match=test_case.expected_error):
         record_sequential(
-            cases=[case("BEGIN CREATE CATALOG v1 ; CREATE CATALOG z9 ; END")],
+            cases=[case(test_case.sql)],
             out=out,
             private=tmp_path / "private",
             seed=None,
         )
 
     report: Row = stop_report(tmp_path / "private")
+    added: list[Row] = cast(list[Row], cast(Row, report["diff"])["added"])
     assert not out.exists()
-    assert [a["name"] for a in report["diff"]["added"]] == ["v1", "z9"]  # type: ignore[index]
+    assert [a["name"] for a in added] == ["v1", "z9"]
     assert report["dropped"] == []
     assert not any(sql.startswith("DROP CATALOG") for sql in fake.statements)
 
 
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        StopTestCase(
+            description="a catalog drop the warehouse refuses",
+            sql="CREATE CATALOG v1",
+            expected_error="a cleanup statement failed",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_a_cleanup_statement_that_fails_when_run_sequentially_then_the_run_stops(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    test_case: StopTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     use(
         monkeypatch,
         FakeClient(
             {
-                "CREATE CATALOG v1": adds(f"{UC}/catalogs", {"name": "v1"}),
+                test_case.sql: adds(f"{UC}/catalogs", {"name": "v1"}),
                 "DROP CATALOG IF EXISTS `v1` CASCADE": lambda _: failed("[PERMISSION_DENIED] x"),
             }
         ),
     )
     out: Path = tmp_path / "out"
 
-    with pytest.raises(RefereeError, match="a cleanup statement failed"):
+    with pytest.raises(RefereeError, match=test_case.expected_error):
         record_sequential(
-            cases=[case("CREATE CATALOG v1")], out=out, private=tmp_path / "private", seed=None
+            cases=[case(test_case.sql)], out=out, private=tmp_path / "private", seed=None
         )
 
     report: Row = stop_report(tmp_path / "private")
@@ -346,41 +258,64 @@ def test_given_a_cleanup_statement_that_fails_when_run_sequentially_then_the_run
     assert "PERMISSION_DENIED" in str(report["reason"])
 
 
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        SequentialHeldTestCase(
+            description="a group created",
+            sql="CREATE GROUP g1",
+            expected_error="1 cases change account- or catalog-level state",
+            expected_deleted=["99"],
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_a_held_case_when_run_with_and_without_sequential_then_only_sequential_runs_it(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    test_case: SequentialHeldTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     fake: FakeClient = use(
         monkeypatch,
         FakeClient(
             {
-                "CREATE GROUP g1": adds(
+                test_case.sql: adds(
                     GROUPS, {"id": "99", "displayName": "g1", "members": [{"value": "7"}]}
                 )
             }
         ),
     )
     cases: Path = tmp_path / "cases.jsonl"
-    cases.write_text(json.dumps(case("CREATE GROUP g1", "db.security_admin.k3")) + "\n")
+    cases.write_text(json.dumps(case(test_case.sql, "db.security_admin.k3")) + "\n")
     command: list[str] = ["run", "--cases", str(cases), "--out", str(tmp_path / "out")]
 
-    with pytest.raises(RefereeError, match="1 cases change account- or catalog-level state"):
+    with pytest.raises(RefereeError, match=test_case.expected_error):
         run_referee([*command, "--private", str(tmp_path / "held")])
     assert not (tmp_path / "out").exists()
     assert fake.statements == []
 
     assert run_referee([*command, "--private", str(tmp_path / "private"), "--sequential"]) == 0
-    assert fake.deleted == ["99"]
+    assert fake.deleted == test_case.expected_deleted
     assert len(list((tmp_path / "out").glob("*.jsonl"))) == 1
 
 
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        PolicySweepTestCase(
+            description="a policy created on the metastore",
+            sql="CREATE POLICY v1 ON METASTORE COMMENT 'x'",
+            expected_drops=2,
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_a_metastore_policy_case_when_run_sequentially_then_its_policies_are_dropped_twice(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    test_case: PolicySweepTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     fake: FakeClient = use(monkeypatch, FakeClient({}))
     private: Path = tmp_path / "private"
 
     record_sequential(
-        cases=[case("CREATE POLICY v1 ON METASTORE COMMENT 'x'"), case("SELECT 1", "db.q.k2")],
+        cases=[case(test_case.sql), case("SELECT 1", "db.q.k2")],
         out=tmp_path / "out",
         private=private,
         seed=7,
@@ -390,32 +325,55 @@ def test_given_a_metastore_policy_case_when_run_sequentially_then_its_policies_a
     assert cleanup["db.ddl.create-catalog.k1"] == SWEEP
     assert cleanup["db.q.k2"] == []
     assert cleanup["final metastore policy sweep"] == SWEEP
-    assert [s for s in fake.statements if s in POLICY_DROPS] == [*POLICY_DROPS, *POLICY_DROPS]
+    assert (
+        list(filter(POLICY_DROPS.__contains__, fake.statements))
+        == [*POLICY_DROPS] * test_case.expected_drops
+    )
 
 
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        StopTestCase(
+            description="a drop of policy v1 that succeeds",
+            sql="DROP POLICY `v1` ON METASTORE",
+            expected_error="metastore policy drop",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_a_metastore_policy_drop_that_succeeds_when_run_sequentially_then_the_run_stops(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    test_case: StopTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    use(monkeypatch, FakeClient({"DROP POLICY `v1` ON METASTORE": lambda _: succeeded()}))
+    use(monkeypatch, FakeClient({test_case.sql: lambda _: succeeded()}))
     out: Path = tmp_path / "out"
 
-    with pytest.raises(RefereeError, match="metastore policy drop"):
+    with pytest.raises(RefereeError, match=test_case.expected_error):
         record_sequential(
             cases=[case("SELECT 1", "db.q.k2")], out=out, private=tmp_path / "private", seed=7
         )
 
     report: Row = stop_report(tmp_path / "private")
+    drops: list[Row] = cast(list[Row], report["policy_drops"])
     assert not out.exists()
     assert report["case_id"] is None
-    assert report["policy_drops"][0]["state"] == "SUCCEEDED"
+    assert drops[0]["state"] == "SUCCEEDED"
 
 
-class Frozen(Exception):
-    """The orb pausing in the middle of a case: nothing after it runs."""
-
-
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        RecoverTestCase(
+            description="a run frozen after its case created catalogs v1 and t2 and a schema",
+            expected_status=1,
+            expected_unsettled=["db.ddl.create-catalog.k1"],
+            expected_left=["t2"],
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_a_run_that_froze_mid_case_when_recovered_then_only_what_the_case_names_is_dropped(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    test_case: RecoverTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     def freeze(fake: FakeClient) -> None:
         fake.objects(f"{UC}/catalogs").extend([{"name": "v1"}, {"name": "t2"}])
@@ -449,76 +407,95 @@ def test_given_a_run_that_froze_mid_case_when_recovered_then_only_what_the_case_
     status: int = run_referee(["recover", "--journal", str(journal), "--private", str(private)])
 
     report: Row = json.loads(next(private.glob("*.sequential-recover.json")).read_text())
-    assert status == 1
-    assert report["unsettled"] == ["db.ddl.create-catalog.k1"]
-    assert [(d["kind"], d["name"]) for d in report["dropped"]] == [  # type: ignore[union-attr]
+    dropped: list[Row] = cast(list[Row], report["dropped"])
+    left: list[Row] = cast(list[Row], cast(Row, report["left"])["added"])
+    assert status == test_case.expected_status
+    assert report["unsettled"] == test_case.expected_unsettled
+    assert [(d["kind"], d["name"]) for d in dropped] == [
         ("case schema", f"{stem}_1"),
         ("catalog", "v1"),
     ]
-    assert [a["name"] for a in report["left"]["added"]] == ["t2"]  # type: ignore[index]
+    assert [a["name"] for a in left] == test_case.expected_left
     assert "DROP CATALOG IF EXISTS `t2` CASCADE" not in fake.statements
 
 
-UNSUPPORTED_ON_METASTORE: str = (
-    "The securable `m` of type METASTORE cannot be found, and METASTORE is not supported in ABAC"
-    " policies. Please verify both the securable type and name for correctness and try again."
-)
-
-
 @pytest.mark.parametrize(
-    ("message", "stops"),
-    [
-        (UNSUPPORTED_ON_METASTORE, False),
-        ("The securable `m` of type CATALOG cannot be found.", True),
-    ],
+    "test_case",
+    (
+        PolicyAnswerTestCase(
+            description="an answer that no ABAC policy can be attached to the metastore",
+            message=UNSUPPORTED_ON_METASTORE,
+            expected_receipts=1,
+        ),
+    ),
+    ids=lambda case: case.description,
 )
-def test_given_a_policy_drop_answer_when_swept_then_only_one_saying_none_can_exist_passes(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, message: str, stops: bool
+def test_given_a_policy_drop_answer_that_none_can_exist_when_swept_then_the_run_passes(
+    test_case: PolicyAnswerTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    use(monkeypatch, FakeClient({"DROP POLICY `v1 Q` ON METASTORE": lambda _: failed(message)}))
-    run = lambda: record_sequential(  # noqa: E731
+    use(
+        monkeypatch,
+        FakeClient({"DROP POLICY `v1 Q` ON METASTORE": lambda _: failed(test_case.message)}),
+    )
+
+    summary: Row = record_sequential(
         cases=[case("SELECT 1", "db.q.k2")], out=tmp_path / "out", private=tmp_path / "p", seed=7
     )
 
-    if stops:
-        with pytest.raises(RefereeError, match="metastore policy drop"):
-            run()
-    else:
-        assert run()["receipts"] == 1
+    assert summary["receipts"] == test_case.expected_receipts
 
 
-def frozen_run(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> tuple[FakeClient, Path, list[Row]]:
-    """A run of three cases that froze in the middle of its second, after creating catalog v1."""
-
-    def freeze(fake: FakeClient) -> None:
-        fake.objects(f"{UC}/catalogs").append({"name": "v1"})
-        fake.effects["CREATE CATALOG v1"] = adds(f"{UC}/catalogs", {"name": "v1"})
-        raise Frozen
-
-    fake: FakeClient = use(
-        monkeypatch,
-        FakeClient(
-            {
-                "CREATE CATALOG v1": freeze,
-                "DROP CATALOG IF EXISTS `v1` CASCADE": removes(f"{UC}/catalogs", "v1"),
-            }
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        PolicyRefusalTestCase(
+            description="an answer that a catalog securable cannot be found",
+            message="The securable `m` of type CATALOG cannot be found.",
+            expected_error="metastore policy drop",
         ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_another_policy_drop_answer_when_swept_then_the_run_stops(
+    test_case: PolicyRefusalTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    use(
+        monkeypatch,
+        FakeClient({"DROP POLICY `v1 Q` ON METASTORE": lambda _: failed(test_case.message)}),
     )
-    cases: list[Row] = [
-        case("SELECT 1", "db.q.k1"),
-        case("CREATE CATALOG v1", "db.ddl.create-catalog.k2"),
-        case("SELECT 2", "db.q.k3"),
-    ]
-    private: Path = tmp_path / "private"
-    with pytest.raises(Frozen):
-        record_sequential(cases=cases, out=tmp_path / "out", private=private, seed=None)
-    return fake, next(private.glob("*.sequential-journal.jsonl")), cases
+
+    with pytest.raises(RefereeError, match=test_case.expected_error):
+        record_sequential(
+            cases=[case("SELECT 1", "db.q.k2")],
+            out=tmp_path / "out",
+            private=tmp_path / "p",
+            seed=7,
+        )
 
 
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        ResumeTestCase(
+            description="a run frozen in its second of three cases",
+            expected_receipts=3,
+            expected_events=[
+                "baseline",
+                "pending",
+                "settled",
+                "pending",
+                "pending",
+                "settled",
+                "pending",
+                "settled",
+                "finished",
+            ],
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_a_run_killed_mid_case_when_resumed_then_it_finishes_without_judging_settled_cases_again(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    test_case: ResumeTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     fake, journal, cases = frozen_run(tmp_path, monkeypatch)
     fake.statements.clear()
@@ -527,12 +504,9 @@ def test_given_a_run_killed_mid_case_when_resumed_then_it_finishes_without_judgi
         path=journal, cases=cases, out=tmp_path / "out", private=tmp_path / "private", seed=None
     )
 
-    receipts: list[Row] = [
-        json.loads(line)
-        for line in next((tmp_path / "out").glob("*.jsonl")).read_text().splitlines()
-    ]
-    assert report["receipts"] == 3
-    assert sorted(r["case_id"] for r in receipts) == [
+    receipts: list[Row] = receipts_in(tmp_path / "out")
+    assert report["receipts"] == test_case.expected_receipts
+    assert sorted(str(r["case_id"]) for r in receipts) == [
         "db.ddl.create-catalog.k2",
         "db.q.k1",
         "db.q.k3",
@@ -541,26 +515,26 @@ def test_given_a_run_killed_mid_case_when_resumed_then_it_finishes_without_judgi
     assert fake.statements.count("CREATE CATALOG v1") == 1
     assert [c["name"] for c in fake.objects(f"{UC}/catalogs")] == ["samples", "system", "workspace"]
     events: list[str] = [json.loads(line)["event"] for line in journal.read_text().splitlines()]
-    assert events == [
-        "baseline",
-        "pending",
-        "settled",
-        "pending",
-        "pending",
-        "settled",
-        "pending",
-        "settled",
-        "finished",
-    ]
+    assert events == test_case.expected_events
 
 
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        ErrorTestCase(
+            description="a catalog someone else created while the run was stopped",
+            expected_error="differs from the stopped run's baseline",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_the_account_changed_while_stopped_when_resumed_then_it_refuses(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    test_case: ErrorTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     fake, journal, cases = frozen_run(tmp_path, monkeypatch)
     fake.objects(f"{UC}/catalogs").append({"name": "someone_elses"})
 
-    with pytest.raises(RefereeError, match="differs from the stopped run's baseline"):
+    with pytest.raises(RefereeError, match=test_case.expected_error):
         resume_sequential(
             path=journal, cases=cases, out=tmp_path / "out", private=tmp_path / "private", seed=None
         )
@@ -569,34 +543,61 @@ def test_given_the_account_changed_while_stopped_when_resumed_then_it_refuses(
 
 
 @pytest.mark.parametrize(
-    ("change", "refusal"),
-    [
-        ("order", "the cases or their order"),
-        ("selection", "the cases or their order"),
-        ("seed", "the shuffle seed"),
-    ],
+    "test_case",
+    (
+        ResumeRefusalTestCase(
+            description="order",
+            change="order",
+            seed=None,
+            expected_error="the cases or their order",
+        ),
+        ResumeRefusalTestCase(
+            description="selection",
+            change="selection",
+            seed=None,
+            expected_error="the cases or their order",
+        ),
+        ResumeRefusalTestCase(
+            description="seed", change="seed", seed=7, expected_error="the shuffle seed"
+        ),
+    ),
+    ids=lambda case: case.description,
 )
 def test_given_other_cases_or_seed_when_resumed_then_it_refuses(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, change: str, refusal: str
+    test_case: ResumeRefusalTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     fake, journal, cases = frozen_run(tmp_path, monkeypatch)
-    given: list[Row] = {"order": cases[::-1], "selection": cases[:2], "seed": cases}[change]
-    seed: int | None = 7 if change == "seed" else None
+    given: list[Row] = {"order": cases[::-1], "selection": cases[:2], "seed": cases}[
+        test_case.change
+    ]
     fake.statements.clear()
 
-    with pytest.raises(RefereeError, match=refusal):
+    with pytest.raises(RefereeError, match=test_case.expected_error):
         resume_sequential(
-            path=journal, cases=given, out=tmp_path / "out", private=tmp_path / "private", seed=seed
+            path=journal,
+            cases=given,
+            out=tmp_path / "out",
+            private=tmp_path / "private",
+            seed=test_case.seed,
         )
 
     assert fake.statements == []
 
 
-UNDECIDED: str = "statement s9 was still running after 300 s; cancelled, so its case is undecided"
-
-
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        UndecidedTestCase(
+            description="a recipient statement cancelled at the deadline",
+            expected_receipts=1,
+            expected_undecided=["db.r.k2"],
+            expected_reasons={"db.r.k2": "cancelled at the deadline"},
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_a_case_cancelled_at_the_deadline_when_run_then_it_alone_has_no_receipt(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    test_case: UndecidedTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     def cancelled(_: FakeClient) -> None:
         raise RefereeError(UNDECIDED)
@@ -608,21 +609,35 @@ def test_given_a_case_cancelled_at_the_deadline_when_run_then_it_alone_has_no_re
         cases=cases, out=tmp_path / "out", private=tmp_path / "private", seed=None
     )
 
-    assert (summary["receipts"], summary["undecided"]) == (1, ["db.r.k2"])
-    assert summary["undecided_reasons"] == {"db.r.k2": "cancelled at the deadline"}
+    assert (summary["receipts"], summary["undecided"]) == (
+        test_case.expected_receipts,
+        test_case.expected_undecided,
+    )
+    assert summary["undecided_reasons"] == test_case.expected_reasons
 
 
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        StopTestCase(
+            description="a recipient statement that ended CANCELED",
+            sql="CREATE RECIPIENT v1",
+            expected_error="no reviewed row maps",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_another_referee_failure_when_run_then_no_receipt_is_written(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    test_case: StopTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     def ended(_: FakeClient) -> None:
         raise RefereeError("statement ended CANCELED: 'CREATE RECIPIENT v1'")
 
-    use(monkeypatch, FakeClient({"CREATE RECIPIENT v1": ended}))
+    use(monkeypatch, FakeClient({test_case.sql: ended}))
 
-    with pytest.raises(RefereeError, match="no reviewed row maps"):
+    with pytest.raises(RefereeError, match=test_case.expected_error):
         record_sequential(
-            cases=[case("CREATE RECIPIENT v1", "db.r.k2")],
+            cases=[case(test_case.sql, "db.r.k2")],
             out=tmp_path / "out",
             private=tmp_path / "private",
             seed=None,
@@ -631,15 +646,28 @@ def test_given_another_referee_failure_when_run_then_no_receipt_is_written(
     assert not (tmp_path / "out").exists()
 
 
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        CheckTestCase(
+            description="the second check fails",
+            failing_checks=frozenset({2}),
+            expected_error="stopped before db.q.k2, which has not started",
+            expected_events=["baseline", "pending", "settled"],
+            expected_receipts=2,
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_a_check_that_fails_before_a_case_when_resumed_then_that_case_runs_once(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    test_case: CheckTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     fake: FakeClient = use(monkeypatch, FakeClient({}))
-    fake.failing_checks = {2}
+    fake.failing_checks = set(test_case.failing_checks)
     cases: list[Row] = [case("SELECT 1", "db.q.k1"), case("SELECT 2", "db.q.k2")]
     private: Path = tmp_path / "private"
 
-    with pytest.raises(RefereeError, match="stopped before db.q.k2, which has not started"):
+    with pytest.raises(RefereeError, match=test_case.expected_error):
         record_sequential(cases=cases, out=tmp_path / "out", private=private, seed=None)
     journal: Path = next(private.glob("*.sequential-journal.jsonl"))
     events: list[str] = [json.loads(line)["event"] for line in journal.read_text().splitlines()]
@@ -647,42 +675,25 @@ def test_given_a_check_that_fails_before_a_case_when_resumed_then_that_case_runs
         path=journal, cases=cases, out=tmp_path / "out", private=private, seed=None
     )
 
-    assert events == ["baseline", "pending", "settled"]
-    assert report["receipts"] == 2
+    assert events == test_case.expected_events
+    assert report["receipts"] == test_case.expected_receipts
     assert fake.statements.count("SELECT 2") == 1
 
 
-USERS_MISSING: str = "Users do not exist: v1"
-
-
-def unmapped_run(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> tuple[FakeClient, Path, list[Row]]:
-    """A finished run whose CREATE GROUP failed with a message no row mapped then, journaled
-    without its statement id, as journals were before failures kept one."""
-    fake: FakeClient = use(
-        monkeypatch, FakeClient({"CREATE GROUP v1 WITH USER v1": lambda _: failed(USERS_MISSING)})
-    )
-    cases: list[Row] = [
-        case("SELECT 1", "db.q.k1"),
-        case("CREATE GROUP v1 WITH USER v1", "db.g.k2"),
-    ]
-    private: Path = tmp_path / "private"
-    with monkeypatch.context() as unreviewed:
-        unreviewed.setattr(judge, "UNCLASSED_LATER", ())
-        with pytest.raises(RefereeError, match="no reviewed row maps"):
-            record_sequential(cases=cases, out=tmp_path / "out", private=private, seed=None)
-    journal: Path = next(private.glob("*.sequential-journal.jsonl"))
-    lines: list[Row] = [json.loads(line) for line in journal.read_text().splitlines()]
-    for line in lines:
-        if line["event"] == "settled" and line["answer"]["kind"] == "failure":
-            line["answer"]["found"].pop("statement_id")
-    journal.write_text("".join(json.dumps(line) + "\n" for line in lines))
-    return fake, journal, cases
-
-
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        RefinishTestCase(
+            description="a member user that does not exist, now reviewed",
+            expected_receipts=2,
+            expected_phase="semantic_error",
+            expected_query_id="h-case",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_a_failure_a_row_now_maps_when_refinished_then_its_statement_is_found_and_receipted(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    test_case: RefinishTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     fake, journal, cases = unmapped_run(tmp_path, monkeypatch)
     fake.history = [
@@ -697,25 +708,37 @@ def test_given_a_failure_a_row_now_maps_when_refinished_then_its_statement_is_fo
         path=journal, cases=cases, out=tmp_path / "out", private=tmp_path / "private", seed=None
     )
 
-    receipts: dict[str, Row] = {
-        r["case_id"]: r
-        for r in map(json.loads, next((tmp_path / "out").glob("*.jsonl")).read_text().splitlines())
-    }
-    assert report["receipts"] == 2
-    assert receipts["db.g.k2"]["phase"] == "semantic_error"
-    assert receipts["db.g.k2"]["query_id_sha256"] == digest("h-case")
+    receipts: dict[str, Row] = {str(r["case_id"]): r for r in receipts_in(tmp_path / "out")}
+    assert report["receipts"] == test_case.expected_receipts
+    assert receipts["db.g.k2"]["phase"] == test_case.expected_phase
+    assert receipts["db.g.k2"]["query_id_sha256"] == digest(test_case.expected_query_id)
     assert fake.statements == []
 
 
-@pytest.mark.parametrize("matching", [0, 2])
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        HistoryTestCase(
+            description="0",
+            messages=("other", "other"),
+            expected_error="0 failed statements",
+        ),
+        HistoryTestCase(
+            description="2",
+            messages=(USERS_MISSING, USERS_MISSING),
+            expected_error="2 failed statements",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_no_single_recorded_statement_when_refinished_then_no_receipt_is_written(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, matching: int
+    test_case: HistoryTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     fake, journal, cases = unmapped_run(tmp_path, monkeypatch)
     fake.history = [{"query_id": f"h{i}", "status": "FAILED"} for i in range(2)]
-    fake.messages = {f"h{i}": USERS_MISSING if i < matching else "other" for i in range(2)}
+    fake.messages = dict(zip(("h0", "h1"), test_case.messages, strict=True))
 
-    with pytest.raises(RefereeError, match=f"{matching} failed statements"):
+    with pytest.raises(RefereeError, match=test_case.expected_error):
         refinish_sequential(
             path=journal, cases=cases, out=tmp_path / "out", private=tmp_path / "private", seed=None
         )
@@ -723,8 +746,19 @@ def test_given_no_single_recorded_statement_when_refinished_then_no_receipt_is_w
     assert not (tmp_path / "out").exists()
 
 
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        TokenTestCase(
+            description="the first request's token rejected",
+            expected_reply={"ok": True},
+            expected_sent=["Bearer t1", "Bearer t2"],
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_a_rejected_token_when_calling_then_a_new_token_is_asked_for_once(
-    monkeypatch: pytest.MonkeyPatch,
+    test_case: TokenTestCase, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setenv("DATABRICKS_HOST", "https://example.com")
     monkeypatch.setenv("DATABRICKS_WAREHOUSE_ID", "w1")
@@ -736,37 +770,35 @@ def test_given_a_rejected_token_when_calling_then_a_new_token_is_asked_for_once(
         tokens.append("t")
         return f"t{len(tokens)}"
 
-    def send(request: urllib.request.Request, *, once: bool = False) -> Row:
+    def send(*, request: urllib.request.Request, once: bool = False) -> Row:
         sent.append(str(request.get_header("Authorization")))
-        if len(sent) == 1:
-            raise TokenRejected("HTTP 403 from the warehouse API: Invalid Token")
+        fail_on(
+            turn=len(sent),
+            turns={1},
+            failure=TokenRejected("HTTP 403 from the warehouse API: Invalid Token"),
+        )
         return {"ok": True}
 
     monkeypatch.setattr(client, "token", token)
     monkeypatch.setattr(client, "_send", send)
 
-    assert client._call(method="GET", path="/x") == {"ok": True}
-    assert sent == ["Bearer t1", "Bearer t2"]
+    assert client._call(method="GET", path="/x") == test_case.expected_reply
+    assert sent == test_case.expected_sent
 
 
-class Reply:
-    """An HTTP reply as urlopen gives it."""
-
-    def __init__(self, body: bytes) -> None:
-        self.body: bytes = body
-
-    def __enter__(self) -> Reply:
-        return self
-
-    def __exit__(self, *_: object) -> None:
-        return None
-
-    def read(self) -> bytes:
-        return self.body
-
-
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        ResendTestCase(
+            description="the first reply of each request lost",
+            expected_statement=["POST"],
+            expected_check=["GET", "GET"],
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_a_reply_that_never_arrives_when_calling_then_only_a_statement_is_not_sent_again(
-    monkeypatch: pytest.MonkeyPatch,
+    test_case: ResendTestCase, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setenv("DATABRICKS_HOST", "https://example.com")
     monkeypatch.setenv("DATABRICKS_WAREHOUSE_ID", "w1")
@@ -777,23 +809,37 @@ def test_given_a_reply_that_never_arrives_when_calling_then_only_a_statement_is_
 
     def urlopen(request: urllib.request.Request, timeout: float) -> Reply:
         sent.append(str(request.get_method()))
-        if len(sent) == 1:
-            raise TimeoutError("The read operation timed out")
+        fail_on(turn=len(sent), turns={1}, failure=TimeoutError("The read operation timed out"))
         return Reply(b'{"state": "RUNNING"}')
 
     monkeypatch.setattr(urllib.request, "urlopen", urlopen)
 
     with pytest.raises(ReplyLost, match=f"^{REPLY_LOST}"):
         client.execute(sql="BEGIN CREATE TABLE t1 ( c1 INT ) ; END", schema="s1")
-    assert sent == ["POST"]
+    assert sent == test_case.expected_statement
 
     sent.clear()
     client.check()
-    assert sent == ["GET", "GET"]
+    assert sent == test_case.expected_check
 
 
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        UndecidedTestCase(
+            description="one setup whose reply was lost and one the warehouse refused",
+            expected_receipts=1,
+            expected_undecided=["db.q.k2", "db.q.k3"],
+            expected_reasons={
+                "db.q.k2": "reply lost",
+                "db.q.k3": "setup failed: TABLE_OR_VIEW_ALREADY_EXISTS",
+            },
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_a_setup_that_failed_when_run_then_its_case_alone_is_undecided(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    test_case: UndecidedTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     def lost(_: FakeClient) -> None:
         raise ReplyLost(f"{REPLY_LOST}: The read operation timed out")
@@ -815,26 +861,37 @@ def test_given_a_setup_that_failed_when_run_then_its_case_alone_is_undecided(
         cases=cases, out=tmp_path / "out", private=tmp_path / "private", seed=None
     )
 
-    assert (summary["receipts"], summary["undecided"]) == (1, ["db.q.k2", "db.q.k3"])
-    assert summary["undecided_reasons"] == {
-        "db.q.k2": "reply lost",
-        "db.q.k3": "setup failed: TABLE_OR_VIEW_ALREADY_EXISTS",
-    }
+    assert (summary["receipts"], summary["undecided"]) == (
+        test_case.expected_receipts,
+        test_case.expected_undecided,
+    )
+    assert summary["undecided_reasons"] == test_case.expected_reasons
     assert "SELECT 2" not in fake.statements
     assert "SELECT 3" not in fake.statements
 
 
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        StopTestCase(
+            description="a setup statement the API never answered",
+            sql="CREATE TABLE t2 ( c1 INT )",
+            expected_error="no reviewed row maps",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_a_setup_the_api_never_answered_when_run_then_no_receipt_is_written(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    test_case: StopTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     def unreachable(_: FakeClient) -> None:
         raise RefereeError("the warehouse API is unreachable: timed out")
 
-    use(monkeypatch, FakeClient({"CREATE TABLE t2 ( c1 INT )": unreachable}))
+    use(monkeypatch, FakeClient({test_case.sql: unreachable}))
 
-    with pytest.raises(RefereeError, match="no reviewed row maps"):
+    with pytest.raises(RefereeError, match=test_case.expected_error):
         record_sequential(
-            cases=[{**case("SELECT 2", "db.q.k2"), "setup": ["CREATE TABLE t2 ( c1 INT )"]}],
+            cases=[{**case("SELECT 2", "db.q.k2"), "setup": [test_case.sql]}],
             out=tmp_path / "out",
             private=tmp_path / "private",
             seed=None,
@@ -843,35 +900,59 @@ def test_given_a_setup_the_api_never_answered_when_run_then_no_receipt_is_writte
     assert not (tmp_path / "out").exists()
 
 
-LEGACY_SETUP: list[str] = ["CREATE TABLE t1 ( c1 INT )", "CREATE TABLE t2 ( c1 INT )"]
-
-
 @pytest.mark.parametrize(
-    ("statement", "expected"),
-    [
-        ("BEGIN CREATE TABLE t1 ( c1 INT ) ; CREATE TABLE t2 ( c1 INT ) ; END", True),
-        ("DROP SCHEMA IF EXISTS workspace.s1 CASCADE", False),
-        ("BEGIN CREATE TABLE t9 ( c1 INT ) ; END", False),
-    ],
+    "test_case",
+    (
+        LegacySetupTestCase(
+            description="the case's own setup",
+            statement="BEGIN CREATE TABLE t1 ( c1 INT ) ; CREATE TABLE t2 ( c1 INT ) ; END",
+            expected_undecided=True,
+        ),
+        LegacySetupTestCase(
+            description="the case schema's drop",
+            statement="DROP SCHEMA IF EXISTS workspace.s1 CASCADE",
+            expected_undecided=False,
+        ),
+        LegacySetupTestCase(
+            description="another setup",
+            statement="BEGIN CREATE TABLE t9 ( c1 INT ) ; END",
+            expected_undecided=False,
+        ),
+    ),
+    ids=lambda case: case.description,
 )
 def test_given_a_journal_failure_from_before_setup_was_marked_when_judged_then_only_setup_counts(
-    statement: str, expected: bool
+    test_case: LegacySetupTestCase,
 ) -> None:
-    message: str = f"{statement!r} failed: {{'error_code': 'BAD_REQUEST'}}"
+    message: str = f"{test_case.statement!r} failed: {{'error_code': 'BAD_REQUEST'}}"
     failure: Failure = Failure(
         error_class=REFEREE_CLASS, sqlstate="", message=message, parser=False
     )
 
-    reason: str | None = undecided_reason({**case("SELECT 1"), "setup": LEGACY_SETUP}, failure)
-    assert (reason is not None) is expected
+    reason: str | None = undecided_reason(
+        case={**case("SELECT 1"), "setup": LEGACY_SETUP}, failure=failure
+    )
+    assert (reason is not None) is test_case.expected_undecided
 
 
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        DeadlineTestCase(
+            description="a 900 s deadline",
+            seconds="900",
+            expected_error=r"^statement s9 was still running after 900 s;",
+            expected_calls=["POST statements", "GET s9", "GET s9", "POST cancel"],
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_a_longer_case_deadline_when_a_statement_runs_on_then_it_is_cancelled_after_it(
-    monkeypatch: pytest.MonkeyPatch,
+    test_case: DeadlineTestCase, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setenv("DATABRICKS_HOST", "https://example.com")
     monkeypatch.setenv("DATABRICKS_WAREHOUSE_ID", "w1")
-    monkeypatch.setenv("DATABRICKS_REFEREE_CASE_SECONDS", "900")
+    monkeypatch.setenv("DATABRICKS_REFEREE_CASE_SECONDS", test_case.seconds)
     client: Client = Client()
     clock: list[float] = [0.0, 301.0, 899.0, 901.0]
     monkeypatch.setattr(client_module.time, "monotonic", lambda: clock.pop(0))
@@ -884,6 +965,6 @@ def test_given_a_longer_case_deadline_when_a_statement_runs_on_then_it_is_cancel
 
     monkeypatch.setattr(client, "_call", call)
 
-    with pytest.raises(RefereeError, match=r"^statement s9 was still running after 900 s;"):
+    with pytest.raises(RefereeError, match=test_case.expected_error):
         client.execute(sql="CREATE RECIPIENT v1 PROPERTIES ( v1 )", schema=None)
-    assert calls == ["POST statements", "GET s9", "GET s9", "POST cancel"]
+    assert calls == test_case.expected_calls

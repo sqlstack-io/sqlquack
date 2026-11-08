@@ -1,0 +1,27 @@
+# Approvals by the independent syntax auditor. Each listed form was read in full against its documentation
+# page, its obligations, its cases with their Databricks receipts, and the local parse trees. An approval holds
+# while the form's definition hash and fingerprint are unchanged; any change makes it stale until re-read.
+
+[[review]]
+id = "db-auditor-security_admin-001"
+reviewer_lane = "auditor"
+family = "security_admin"
+parser_tree = "90f341b5c9ff2c489c0ed994f07448481f70597f"
+reviewed_utc = "2026-11-08T09:04:25Z"
+verdict = "approved"
+forms = [
+  "db.security_admin.show-grant",
+  "db.security_admin.show-grant-on-share",
+  "db.security_admin.show-grant-to-recipient",
+]
+note = "Read against the pinned Databricks documentation pages and the Spark 4.2 SqlBaseParser grammar, the obligations, the cases with their Databricks receipts and repeats, and the parse trees of the strict parser; every case was parsed by the auditor's own build of the parser and every scored case agrees with its receipt."
+
+[review.fingerprints]
+"db.security_admin.show-grant" = "f4bbdc4ace066fd2534aca63890c27a1fa4f24440e893e2ddefb5cb1af822b58"
+"db.security_admin.show-grant-on-share" = "f002102c6fa1a65adea167f485aba0e2618d8d03d5580bf7f28bd09689c3143d"
+"db.security_admin.show-grant-to-recipient" = "dd738d783770eaf2dd83182b486fea65caf99ba3099ee5fb96d52bf41e807bd1"
+
+[review.definitions]
+"db.security_admin.show-grant" = "e632ff336f2ee478df322687496af8b62729166c95f1413dac2010858d9f8af9"
+"db.security_admin.show-grant-on-share" = "36715f789f5d82931fd9372236e945d7aca1b617bfc3325c5df462506a1619c9"
+"db.security_admin.show-grant-to-recipient" = "a77b29d603336821ef27495e98f9ac58637fdc3cd225416cb485187629227632"

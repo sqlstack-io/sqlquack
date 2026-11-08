@@ -7,39 +7,31 @@ from pathlib import Path
 import pytest
 
 from scripts.syntax_catalogue_databricks._helpers.pages import pin_differences, read_page
-from scripts.syntax_catalogue_databricks.constants import MANUAL_PREFIX
-
-URL: str = f"{MANUAL_PREFIX}sql-ref-example"
-ARTICLE: str = "<article><h1>EXAMPLE</h1><p>Text.</p></article>"
-
-
-def page(*, bundle: str, article: str) -> str:
-    """A reference page with one script bundle and one article."""
-    return f"<html><script src=/assets/js/main.{bundle}.js></script>{article}</html>"
-
-
-def cached(root: Path, html: str) -> Path:
-    """A cache holding the one page."""
-    (root / "pages").mkdir(parents=True)
-    (root / "pages" / "sql-ref-example.html").write_text(html)
-    return root
+from scripts.syntax_catalogue_databricks.models import DbPage
+from tests.unit.scripts.syntax_catalogue_databricks._test_types import PinTestCase
+from tests.unit.scripts.syntax_catalogue_databricks.helpers import ARTICLE, URL, cached, page
 
 
 @pytest.mark.parametrize(
-    ("fetched", "expected"),
+    "test_case",
     (
-        (page(bundle="c9f95641", article=ARTICLE), []),
-        (
-            page(bundle="31ad9c0d", article=ARTICLE.replace("Text.", "Edited text.")),
-            [f"article_sha256 changed: {URL}"],
+        PinTestCase(
+            description="a redeployed script bundle",
+            fetched=page(bundle="c9f95641", article=ARTICLE),
+            expected_differences=[],
+        ),
+        PinTestCase(
+            description="an edited article",
+            fetched=page(bundle="31ad9c0d", article=ARTICLE.replace("Text.", "Edited text.")),
+            expected_differences=[f"article_sha256 changed: {URL}"],
         ),
     ),
-    ids=("a redeployed script bundle", "an edited article"),
+    ids=lambda case: case.description,
 )
 def test_given_a_fetched_page_when_compared_with_its_pin_then_only_its_article_decides(
-    tmp_path: Path, fetched: str, expected: list[str]
+    test_case: PinTestCase, tmp_path: Path
 ) -> None:
-    pin = read_page(
+    pin: DbPage = read_page(
         cache=cached(tmp_path / "pin", page(bundle="31ad9c0d", article=ARTICLE)), url=URL
     )
     root: Path = tmp_path / "root"
@@ -52,7 +44,7 @@ def test_given_a_fetched_page_when_compared_with_its_pin_then_only_its_article_d
     )
 
     found: list[str] = pin_differences(
-        cache=cached(tmp_path / "fresh", fetched), root=root, urls=[URL]
+        cache=cached(tmp_path / "fresh", test_case.fetched), root=root, urls=[URL]
     )
 
-    assert found == expected
+    assert found == test_case.expected_differences

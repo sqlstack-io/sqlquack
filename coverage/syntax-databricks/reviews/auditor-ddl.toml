@@ -1,0 +1,60 @@
+# Approvals by the independent syntax auditor. Each listed form was read in full against its documentation
+# page, its obligations, its cases with their Databricks receipts, and the local parse trees. An approval holds
+# while the form's definition hash and fingerprint are unchanged; any change makes it stale until re-read.
+
+[[review]]
+id = "db-auditor-ddl-001"
+reviewer_lane = "auditor"
+family = "ddl"
+parser_tree = "90f341b5c9ff2c489c0ed994f07448481f70597f"
+reviewed_utc = "2026-11-08T09:04:25Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-table-manage-column.alter-table-add-column",
+  "db.ddl.alter-table-manage-column.drop",
+  "db.ddl.alter-table-manage-column.rename-column-to-to",
+  "db.ddl.alter-table-manage-partition.add-partition",
+  "db.ddl.alter-table-manage-partition.partition-set-location",
+  "db.ddl.clone.create-table-clone",
+  "db.ddl.clone.replace-table-clone",
+  "db.ddl.drop-database",
+  "db.ddl.drop-schema",
+  "db.ddl.partition",
+  "db.ddl.tblproperties.options",
+  "db.ddl.tblproperties.set-tblproperties",
+  "db.ddl.tblproperties.tblproperties",
+  "db.ddl.truncate-table",
+]
+note = "Read against the pinned Databricks documentation pages and the Spark 4.2 SqlBaseParser grammar, the obligations, the cases with their Databricks receipts and repeats, and the parse trees of the strict parser; every case was parsed by the auditor's own build of the parser and every scored case agrees with its receipt."
+
+[review.fingerprints]
+"db.ddl.alter-table-manage-column.alter-table-add-column" = "50209349d6ebae1303d59f43910131783a9ca3beeb916f03d836337e940f5b46"
+"db.ddl.alter-table-manage-column.drop" = "97475c7a5938c546a6a211c35ba1bee52f53b55079ed2811cb2fe595a2fda651"
+"db.ddl.alter-table-manage-column.rename-column-to-to" = "4733834dc2b469321a9663d7e2d22da74137edeeb7146041a99acf8ed1c9896e"
+"db.ddl.alter-table-manage-partition.add-partition" = "2758ea31afae994f398216c0489e20adde9e3e37f1bcc79138c8a235ce92d551"
+"db.ddl.alter-table-manage-partition.partition-set-location" = "2f946d205dbbfff77d1232c55cefd91c66ff46bc573ddbbe3abd8384dcf214d3"
+"db.ddl.clone.create-table-clone" = "bc2747cfd289a17b5c6b68e03776f9593a016e32d12c1a1956f9b6438c619379"
+"db.ddl.clone.replace-table-clone" = "a26deb2f2ee896f2a5abf19729e56fb67689309b7488a24dedaefd1f240dd772"
+"db.ddl.drop-database" = "cd0eefdb8b14fc66d1382cf044a8a66a1eb73837111e97b33677ae73368a37e7"
+"db.ddl.drop-schema" = "1c0730652fa70c123c859ebdfdaeca73b5ca9707105f80ca52b57bd659f94b17"
+"db.ddl.partition" = "921ad03eac47de7c65a308476597eba62c1d2b925432b8db7462a0964473a1af"
+"db.ddl.tblproperties.options" = "3de74d0bb269a3bd95e88d2304576f53b6ae8b4319e1bdd9ea765be57def60c9"
+"db.ddl.tblproperties.set-tblproperties" = "e201a559550f18daf4faff4e6431b80e0535d52aad7499659020d2a4301638f3"
+"db.ddl.tblproperties.tblproperties" = "2eee47045593bb3aeca94234e3c7f48f809848394c6544635081a1af6e1ae6ee"
+"db.ddl.truncate-table" = "de7c86913cc0968f3dea5dc4775784f4a853a8ac82e3a202b32e0eab102f03c7"
+
+[review.definitions]
+"db.ddl.alter-table-manage-column.alter-table-add-column" = "0184efac6e56c8cf99c4f42ce8815745cc6bab2f0c4ce680979ccd750fec97a3"
+"db.ddl.alter-table-manage-column.drop" = "1deeaf74ee1516565efc857383eaee0c57b938fdd2a5ab485438b2929598c30e"
+"db.ddl.alter-table-manage-column.rename-column-to-to" = "e823a7d4e94c04d20197a93a5cf0581a34be8c995d45ecbeebd820fb76927888"
+"db.ddl.alter-table-manage-partition.add-partition" = "551a3c9e341c83a5fcfae206b11145de008481d5b67fc12732ca7e632c9f421f"
+"db.ddl.alter-table-manage-partition.partition-set-location" = "b4afaa1ad1822488a678431f74b47d775c15957edb2da65b3639361f55536d99"
+"db.ddl.clone.create-table-clone" = "1ff56520187cd2c3ed80434aaf873573d8340a90fd94b346762bc8e1be8e03a0"
+"db.ddl.clone.replace-table-clone" = "d3de77384cd3073fd39ca3fc2a5affee1140477f540f71e5feaf69cf70dbcd58"
+"db.ddl.drop-database" = "767fb8a9b00e1535edd084b8adfdd0da511e3e6de92b1c431051f5a841d19b5b"
+"db.ddl.drop-schema" = "1652e9e051a38ca429672dea8a0f2bde6e739c5ef5553e759b7e3ca7e4daf549"
+"db.ddl.partition" = "7c11eb16709427596917f1fbf0e7247074a5c69f2b7228b7a615dc101ce68401"
+"db.ddl.tblproperties.options" = "4118a50f166bea208d0f88d2e4365b2c5515d48e90031baba4b4aa61b3f123d0"
+"db.ddl.tblproperties.set-tblproperties" = "c302c44e30e8f9469b1e406faf5e494658bfd3d53210cce0fab299b826f7e271"
+"db.ddl.tblproperties.tblproperties" = "33a663860db33db453a93672d44de95038003a966864e197d834f62809324eee"
+"db.ddl.truncate-table" = "924f42e74bf60636f12a2ea190ebbd1f558dbb9c0c4ce42e868190a4ee4e54ff"

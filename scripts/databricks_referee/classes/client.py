@@ -11,6 +11,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+from scripts.databricks_referee._helpers.rows import row_of
 from scripts.databricks_referee.constants import (
     CASE_SECONDS,
     CATALOG,
@@ -21,7 +22,9 @@ from scripts.databricks_referee.constants import (
     ENV_WAREHOUSE,
     HTTP_ATTEMPTS,
     HTTP_PAUSE_SECONDS,
+    HTTP_RETRY_STATUS,
     HTTP_SECONDS,
+    HTTP_SERVER_ERROR,
     POLL_SECONDS,
     REPLY_LOST,
     STATE_FAILED,
@@ -67,7 +70,6 @@ class Client:
     def token(self) -> str:
         """A bearer token from the workspace's OAuth endpoint."""
         with self._lock:
-            # Wall-clock age: a monotonic clock stands still while the machine is paused.
             if self._token and time.time() - self._issued < TOKEN_REFRESH_SECONDS:
                 return self._token
             pair: str = f"{environment(ENV_CLIENT_ID)}:{environment(ENV_CLIENT_SECRET)}"
@@ -78,21 +80,23 @@ class Client:
                 ).encode(),
                 headers={"Authorization": "Basic " + base64.b64encode(pair.encode()).decode()},
             )
-            reply: Row = self._send(request)
+            reply: Row = self._send(request=request)
             self._token, self._issued = str(reply["access_token"]), time.time()
             return self._token
 
-    def _send(self, request: urllib.request.Request, *, once: bool = False) -> Row:
-        """The JSON reply (empty for an empty body, as a SCIM DELETE sends), retrying 429 or 5xx
-        replies and transport failures; with `once`, a request whose reply never arrived is not
-        sent again, since it may have run."""
+    def _send(self, *, request: urllib.request.Request, once: bool = False) -> Row:
+        """The JSON reply, retried after a 429, a 5xx or a transport failure unless sent `once`."""
         for attempt in range(HTTP_ATTEMPTS):
             try:
                 with urllib.request.urlopen(request, timeout=HTTP_SECONDS) as reply:  # noqa: S310
                     sent: bytes = reply.read()
                     return json.loads(sent) if sent.strip() else {}
             except urllib.error.HTTPError as error:
-                if error.code != 429 and error.code < 500 or attempt == HTTP_ATTEMPTS - 1:
+                if (
+                    error.code != HTTP_RETRY_STATUS
+                    and error.code < HTTP_SERVER_ERROR
+                    or attempt == HTTP_ATTEMPTS - 1
+                ):
                     body: str = error.read().decode(errors="replace")[:500]
                     if error.code in TOKEN_REJECTED_CODES and TOKEN_REJECTED.search(body):
                         raise TokenRejected(
@@ -110,14 +114,13 @@ class Client:
         raise RefereeError("unreachable")
 
     def _call(self, *, method: str, path: str, body: Row | None = None, once: bool = False) -> Row:
-        """The reply to one API request; a rejected token is replaced once and the request sent
-        again, since the workspace did nothing with it."""
+        """The reply to one API request, sent again with a new token if its token is rejected."""
         try:
-            return self._send(self._request(method=method, path=path, body=body), once=once)
+            return self._send(request=self._request(method=method, path=path, body=body), once=once)
         except TokenRejected:
             with self._lock:
                 self._token = ""
-            return self._send(self._request(method=method, path=path, body=body), once=once)
+            return self._send(request=self._request(method=method, path=path, body=body), once=once)
 
     def _request(self, *, method: str, path: str, body: Row | None) -> urllib.request.Request:
         return urllib.request.Request(
@@ -145,9 +148,8 @@ class Client:
         if schema is not None:
             body["schema"] = schema
         deadline: float = time.monotonic() + self.case_seconds
-        # A statement is not idempotent: one whose reply was lost is never submitted again.
         reply: Row = self._call(method="POST", path=STATEMENTS_PATH, body=body, once=True)
-        while str(dict(reply["status"])["state"]) in STATES_PENDING:  # type: ignore[call-overload]
+        while str(row_of(reply["status"])["state"]) in STATES_PENDING:
             if time.monotonic() > deadline:
                 identifier: str = str(reply["statement_id"])
                 self._call(method="POST", path=f"{STATEMENTS_PATH}/{identifier}/cancel")
@@ -157,7 +159,7 @@ class Client:
                 )
             time.sleep(POLL_SECONDS)
             reply = self._call(method="GET", path=f"{STATEMENTS_PATH}/{reply['statement_id']}")
-        state: str = str(dict(reply["status"])["state"])  # type: ignore[call-overload]
+        state: str = str(row_of(reply["status"])["state"])
         if state in STATES_STOPPED or state not in (STATE_SUCCEEDED, STATE_FAILED):
             raise RefereeError(f"statement ended {state}: {sql[:200]!r}")
         return reply
@@ -165,7 +167,7 @@ class Client:
     def require(self, *, sql: str, schema: str | None) -> Row:
         """A statement that must succeed, such as setup or cleanup."""
         reply: Row = self.execute(sql=sql, schema=schema)
-        status: Row = dict(reply["status"])  # type: ignore[call-overload]
+        status: Row = row_of(reply["status"])
         if status["state"] != STATE_SUCCEEDED:
-            raise RefereeError(f"{sql[:200]!r} failed: {dict(status.get('error') or {})}")
+            raise RefereeError(f"{sql[:200]!r} failed: {row_of(status.get('error') or {})}")
         return reply

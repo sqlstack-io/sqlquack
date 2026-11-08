@@ -1,0 +1,27 @@
+# Approvals by the independent syntax auditor. Each listed form was read in full against its documentation
+# page, its obligations, its cases with their Databricks receipts, and the local parse trees. An approval holds
+# while the form's definition hash and fingerprint are unchanged; any change makes it stale until re-read.
+
+[[review]]
+id = "db-auditor-expressions-001"
+reviewer_lane = "auditor"
+family = "expressions"
+parser_tree = "90f341b5c9ff2c489c0ed994f07448481f70597f"
+reviewed_utc = "2026-11-08T08:52:53Z"
+verdict = "approved"
+forms = [
+  "db.expressions.boolean-type.true-false",
+  "db.expressions.parameter-marker.colon",
+  "db.expressions.parameter-marker.syntax",
+]
+note = "Read against the pinned Databricks documentation pages and the Spark 4.2 SqlBaseParser grammar, the obligations, the cases with their Databricks receipts and repeats, and the parse trees of the strict parser; every case was parsed by the auditor's own build of the parser and every scored case agrees with its receipt."
+
+[review.fingerprints]
+"db.expressions.boolean-type.true-false" = "f2f961d04a32da2264b3901a7f7c561af6144b52747200c543327613c22563de"
+"db.expressions.parameter-marker.colon" = "7fe09160a67d2b8abe5372c04f3e17130eeb2633d61a6634342f648ef2c39ba2"
+"db.expressions.parameter-marker.syntax" = "16ab305a1669fd26bf144475130435f7cae364f0587d8eecb9a6e481e8eb4de5"
+
+[review.definitions]
+"db.expressions.boolean-type.true-false" = "1be06e91956dd38f17e4268ac1969521fff2705194fe660f029d7f742b1d9615"
+"db.expressions.parameter-marker.colon" = "2440f0458000efe15ff564ab63d019dfa297a0961c8a27f37f33ce8c5c1db671"
+"db.expressions.parameter-marker.syntax" = "282c4a2c4e3a04f58c598970a5ea66ac0615ceb64d9f0061b6898af6b38453af"

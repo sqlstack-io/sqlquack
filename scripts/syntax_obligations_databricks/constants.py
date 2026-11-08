@@ -32,7 +32,6 @@ OBLIGATIONS_HEADER: str = (
 )
 
 SESSION: dict[str, str] = {}
-# Run in a fresh schema of its own for every case; the referee creates and drops it.
 SETUP: list[str] = [
     "CREATE TABLE t1 ( c1 INT , c2 INT )",
     "CREATE TABLE t2 ( c1 INT , c2 INT )",
@@ -265,12 +264,8 @@ DB_REPEAT_FILLS: dict[tuple[str, str], str] = {
     ("row_pattern_var", "A"): "B",
     ("measure", "m1"): "m2",
     ("expression", "1"): "2",
-    # EXECUTE IMMEDIATE refuses two USING arguments with one alias.
     ("alias", "v1"): "v2",
     ("var_name", "v1"): "v2",
-    # A list of keys names distinct keys: the parser refuses a repeated option or property key
-    # (DUPLICATE_KEY), and a constraint's column names must not be repeated (the constraint
-    # pages' key_column).
     ("key", "'k'"): "'k2'",
     ("option_key", "'k'"): "'k2'",
     ("property_key", "'k'"): "'k2'",
@@ -299,8 +294,6 @@ FORM_FILLS: dict[str, dict[str, str]] = {
         ),
         CREATE_FILLS,
     ),
-    # The create-view page's column_list is ( { column_alias [ COMMENT column_comment ] } [, ...] ).
-    # A metric view's body is a YAML specification; JSON is YAML, so the fill fits on one line.
     "db.ddl.create-view.": {
         **CREATE_FILLS,
         "column_list": "( c1 )",
@@ -309,38 +302,24 @@ FORM_FILLS: dict[str, dict[str, str]] = {
             '"measures": [{"name": "m1", "expr": "count(1)"}]}'
         ),
     },
-    # ROW FORMAT DELIMITED is compatible with a text file only (the parser refuses it with
-    # PARQUET), so the Hive-format table is stored as TEXTFILE.
-    # A CTAS partitions by the query's columns, so the query names them (and one more, since
-    # a table may not be partitioned by all its columns).
     "db.ddl.create-table-hiveformat": {
         **CREATE_FILLS,
         "file_format": "TEXTFILE",
         "select_statement": "SELECT 1 AS c1 , 2 AS c2 , 3 AS c3",
         **HIVE_IO_FORMATS,
     },
-    # A data-source temporary view's columns are typed (SqlBaseParser #createTempViewUsing:
-    # ( colTypeList )), though the page names them column_list.
     "db.ddl.create-view.temporary-view-using": {**CREATE_FILLS, "column_list": "( c1 INT )"},
-    # The create-table-like page's table_clauses are USING, LOCATION, TBLPROPERTIES, ROW FORMAT
-    # and STORED AS; COMMENT is not one of them.
     "db.ddl.create-table-like": {**CREATE_FILLS, "table_clauses": "TBLPROPERTIES ( 'k' = 'v' )"},
     "db.ddl.alter-table": {
         "cluster_by_clause": "( c1 )",
         "principal": "`u1`",
         "clustering_columns": "c1",
     },
-    # COLLATE applies to a string type (collation page), so the added column is a STRING.
     "db.ddl.alter-table-manage-column.add": {"data_type": "STRING", "default_clause": "'a'"},
-    # INPUTFORMAT and OUTPUTFORMAT take class names as string literals (SqlBaseParser fileFormat).
     "db.dml.insert-overwrite-directory-hive": {"file_format": "TEXTFILE", **HIVE_IO_FORMATS},
     "db.ddl.undrop-table": {"relation_name": "t2"},
-    # A Delta table feature by name (the alter-table page's example: DROP FEATURE deletionVectors)
-    # and a SerDe class name, a string literal (the page's SET SERDE examples).
     "db.ddl.alter-table.alter-table-drop-feature": {"feature_name": "deletionVectors"},
     "db.ddl.alter-table.alter-table-set-serde": {"serde_class": "'org.example.Serde'"},
-    # A clone source at a version or timestamp of its history (sql-ref-names temporal_spec);
-    # the setup's INSERT makes version 1 of t1.
     "db.ddl.clone.clone-source-temporal": {
         **CREATE_FILLS,
         "timestamp_expression": "current_timestamp ( )",
@@ -356,10 +335,8 @@ FORM_FILLS: dict[str, dict[str, str]] = {
         "expression": "array ( 1 )",
     },
     "db.query.select-tvf": {"function_name": "range"},
-    # COPY INTO's option values are string literals (the page's examples: 'mergeSchema' = 'true').
     "db.dml.copy-into": {"data_source": "PARQUET", "value": "'true'"},
     "db.dml.merge-into": {"target_table_name": "t1", "table_name": "t2"},
-    # CUME_DIST's over_clause includes OVER; the other forms write OVER before it.
     "db.functions.cume-dist": {"over_clause": "OVER ( ORDER BY 1 )"},
     **dict.fromkeys(
         (
@@ -370,11 +347,8 @@ FORM_FILLS: dict[str, dict[str, str]] = {
         ),
         {"over_clause": "( ORDER BY 1 )"},
     ),
-    # ESCAPE takes a single-character string literal (the like and ilike pages).
     "db.functions.ilike.ilike": {"escape": "'!'"},
     "db.functions.like.like": {"escape": "'!'"},
-    # A read_* function's option is a named argument, so its name is an identifier, not the
-    # string literal an OPTIONS clause key may be (the read_files page: format => 'file').
     **dict.fromkeys(
         (
             "db.functions.read-files",
@@ -384,16 +358,13 @@ FORM_FILLS: dict[str, dict[str, str]] = {
         ),
         {"option_key": "k1"},
     ),
-    # A control statement's operands name the label, cursor and variable its context declares.
     **dict.fromkeys(("db.scripting.iterate-stmt", "db.scripting.leave-stmt"), {"label": "l1"}),
     **dict.fromkeys(
         ("db.scripting.close-stmt", "db.scripting.fetch-stmt", "db.scripting.open-stmt"),
         {"cursor_name": "c1", "variable_name": "v1"},
     ),
     "db.scripting.get-diagnostics-stmt": {"variable_name": "v1"},
-    # EXECUTE IMMEDIATE runs its string, so the string is a statement that parses.
     "db.scripting.execute-immediate": {"sql_string": "'SELECT ?'"},
-    # A privilege and a securable object as sql-ref-privileges spells them.
     **dict.fromkeys(
         (
             "db.security_admin.deny",
@@ -404,7 +375,6 @@ FORM_FILLS: dict[str, dict[str, str]] = {
         {"privilege_types": "SELECT", "securable_object": "TABLE t1"},
     ),
     "db.security_admin.msck": {"object": "TABLE t1"},
-    # Principals of the shapes sql-ref-principal writes.
     "db.security_admin.principal": {
         "user_principal": "`u1@example.com`",
         "service_principal": "`00000000-0000-0000-0000-000000000000`",
@@ -412,18 +382,11 @@ FORM_FILLS: dict[str, dict[str, str]] = {
         "users": "users",
         "account_users": "`account users`",
     },
-    # LIST takes a path of a volume or an external location (the list page's examples).
     "db.utility.list": {"url": "'/Volumes/workspace/s1/v1'"},
-    # A JSON path after the colon is a field path, as in raw:store.bicycle (the colonsign page).
     "db.functions.colonsign": {"json_path": "a1"},
 }
 FORM_ELISIONS: dict[str, dict[str, str]] = {}
-# The families whose Runtime-only forms are observed rather than expected: the core set, whose
-# pages are reviewed for their applies-to banners (the other families are not yet).
 RUNTIME_SCOPE_FAMILIES: tuple[str, ...] = ("query", "dml", "ddl")
-# Forms that are one clause of a page that also applies to Databricks SQL, under the clause's own
-# applies-to banner, which leaves Databricks SQL out (sql-ref-syntax-ddl-alter-table, Parameters).
-# A page-level banner is read from sources.toml instead.
 RUNTIME_ONLY_CLAUSES: dict[str, str] = {
     "db.ddl.alter-table.alter-table-set-serde": "SET SERDE: Applies to: Databricks Runtime",
     "db.ddl.alter-table.alter-table-set-external": (
@@ -513,9 +476,6 @@ FORM_CONTEXTS: dict[str, tuple[str, str]] = {
     "db.query.select-match-recognize-pattern": (MATCH_OPEN, " DEFINE A AS TRUE )"),
     "db.query.select-pipeop": ("FROM t1 |> ", ""),
     "db.query.star": ("SELECT ", " FROM t1"),
-    # A table-valued function (its page's title, or its page's `is a table-valued function`) is
-    # a relation; a generator function stands alone in the select list, because a generator
-    # nested in an expression is refused (UNSUPPORTED_GENERATOR.NESTED_IN_EXPRESSIONS).
     **dict.fromkeys(
         (
             "db.functions.ai-detect-anomalies",
@@ -551,9 +511,7 @@ FORM_CONTEXTS: dict[str, tuple[str, str]] = {
         ),
         VALUE_CONTEXT,
     ),
-    # The page's Syntax is a whole query.
     "db.functions.vector-search": ("", ""),
-    # A clause page's form runs in a statement the page names as its host.
     "db.ddl.alter-materialized-view.column-comment-set-mask": ("ALTER MATERIALIZED VIEW mv1 ", ""),
     "db.ddl.alter-streaming-table.column-comment-set-mask": ("ALTER STREAMING TABLE st1 ", ""),
     **dict.fromkeys(
@@ -573,20 +531,14 @@ FORM_CONTEXTS: dict[str, tuple[str, str]] = {
     ),
     "db.ddl.create-streaming-table-auto-cdc": ("CREATE OR REFRESH STREAMING TABLE st1 ", ""),
     "db.ddl.partition": ("CREATE TABLE t3 ( c1 INT ) ", ""),
-    # LIKE in a partition spec is allowed only in ALTER SHARE ADD TABLE (sql-ref-partition).
     "db.ddl.partition.partition-spec": ("ALTER SHARE sh1 ADD TABLE t1 ", ""),
     "db.ddl.row-filter": ("CREATE TABLE t3 ( c1 INT ) WITH ", ""),
     "db.ddl.tblproperties.options": ("CREATE TABLE t3 ( c1 INT ) USING DELTA ", ""),
     "db.ddl.tblproperties.set-tblproperties": ("ALTER TABLE t1 ", ""),
     "db.ddl.tblproperties.tblproperties": ("CREATE TABLE t3 ( c1 INT ) ", ""),
     "db.ddl.tblproperties.unset-tblproperties": ("ALTER TABLE t1 ", ""),
-    # A securable object and a principal are the operands of GRANT (sql-ref-privileges,
-    # sql-ref-principal).
     "db.security_admin.principal": ("GRANT SELECT ON TABLE t1 TO ", ""),
     "db.security_admin.privileges": ("GRANT SELECT ON ", " TO `u1`"),
-    # A control statement runs in a compound statement (control-flow pages); a cursor statement
-    # after the cursor's declaration, and FETCH and CLOSE after OPEN; LEAVE and ITERATE inside the
-    # loop they name; GET DIAGNOSTICS and RESIGNAL inside a condition handler.
     **dict.fromkeys(
         (
             "db.scripting.case-stmt",
@@ -618,18 +570,12 @@ FORM_CONTEXTS: dict[str, tuple[str, str]] = {
 }
 FAMILY_CONTEXTS: dict[str, tuple[str, str]] = {
     **dict.fromkeys(STATEMENT_FAMILIES, ("", "")),
-    # A function call in parentheses, so that a word left at the end of a negative is not read
-    # as a column alias.
     "functions": EXPRESSION_CONTEXT,
     "expressions": EXPRESSION_CONTEXT,
 }
 DB_CLASS_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
-    # A clause, a column list or ALTER VIEW's rename is an operand the linked page defines,
-    # not a name, though its placeholder contains `col` or `name`.
     (re.compile(r"(?:column|partition)_clause$|column_list$|^rename$"), "operand"),
     (re.compile(r"^(?:query|subquery\d?|select_statement)$"), "query"),
-    # A Hive-format column's type placeholders (col_type1, col_type2) name a data type, not
-    # the column, though they contain `col`.
     (re.compile(r"^data_type$|^col(?:umn)?_type\d*$"), "data_type"),
     (re.compile(r"(?:^|_)(?:path|comment|location|pattern)$|^file_name$"), "string_literal"),
     (re.compile(r"(?:_name|_alias|_identifier)$|^name$"), "identifier"),
@@ -643,10 +589,6 @@ DB_TOKEN: re.Pattern[str] = re.compile(
     r"|(?P<bracket>[\[\]{}|]))"
 )
 IDENTIFIER_QUOTE: str = "`"
-# The reserved-words page (sql-ref-reserved-words): Databricks formally disallows no literal as
-# an identifier, but ANTI and fifteen other words must be back-ticked to serve as a table alias.
-# So a table-alias operand takes ANTI as its reserved word (refused unquoted, accepted in
-# backticks), and every other identifier operand takes the keyword SELECT, accepted both ways.
 TABLE_ALIAS_PLACEHOLDERS: frozenset[str] = frozenset(
     {"<table_alias>", "<target_alias>", "<source_alias>"}
 )

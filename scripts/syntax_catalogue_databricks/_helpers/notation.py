@@ -1,11 +1,4 @@
-"""Turn the reference's syntax blocks into the catalogue grammar notation.
-
-The pages write keywords in upper case and user-supplied parts as lower-case or camelCase words
-(`table_name`, `elementType`). The catalogue writes keywords as they are, user parts as
-`<snake_case>` placeholders and function names in upper case. A block is cut into productions at
-blank lines where every bracket is closed; a lone lower-case word after a blank line names a
-definition whose indented body follows it (`column_list` then `( ... )`).
-"""
+"""Turn the reference's syntax blocks into the catalogue grammar notation."""
 
 from __future__ import annotations
 
@@ -14,14 +7,17 @@ import re
 from scripts.syntax_catalogue._helpers.grammar import normalize
 from scripts.syntax_catalogue_databricks.constants import (
     CALL_OPEN,
+    CHOICE_BAR,
     CLAUSE_WORD,
     CLAUSE_WORDS,
     CLOSING,
     DEFINITION_HEAD_LINE,
     DOC_TOKEN,
     ELISION,
+    EMPTY_ANGLE_LENGTH,
     KEYWORD_TOKEN,
     LINE_COMMENT,
+    LINE_STARTERS,
     NAMED_ARROW,
     OPENING,
     REPEAT_COMMA,
@@ -105,7 +101,7 @@ def split_top(text: str) -> list[str]:
             depth += 1
         elif token in CLOSING:
             depth -= 1
-        if token == "|" and depth == 0:
+        if token == CHOICE_BAR and depth == 0:
             parts.append(" ".join(current))
             current = []
             continue
@@ -115,8 +111,7 @@ def split_top(text: str) -> list[str]:
 
 
 def convert(*, text: str, calls: frozenset[str], keywords: frozenset[str] = frozenset()) -> str:
-    """One production in catalogue notation; `calls` are the page's function names and
-    `keywords` the lower-case words it writes as keywords."""
+    """One production in catalogue notation, with the page's function names and keyword words."""
     text = REPEAT_COMMA.sub(" [ , ... ] ", text)
     text = REPEAT_PLAIN.sub(" [ ... ] ", text)
     tokens: list[str] = DOC_TOKEN.findall(text)
@@ -130,7 +125,7 @@ def convert(*, text: str, calls: frozenset[str], keywords: frozenset[str] = froz
     for index, token in enumerate(tokens):
         following: str = tokens[index + 1] if index + 1 < len(tokens) else ""
         previous: str = tokens[index - 1] if index else ""
-        first: bool = index == 0 or previous in ("(", ",", "{", "|")
+        first: bool = index == 0 or previous in LINE_STARTERS
         glued: bool = index + 1 < len(tokens) and not spaced[index + 1]
         call: bool = following == CALL_OPEN and (glued or (first and token.lower() in calls))
         if token == CLAUSE_WORD:
@@ -155,7 +150,7 @@ def clause_name(before: list[str]) -> str:
 
 def word_text(*, token: str, following: str, previous: str, call: bool) -> str:
     """One token: a keyword, a call name, a `<placeholder>`, a literal or punctuation."""
-    if token.startswith("<") and token.endswith(">") and len(token) > 2:
+    if token.startswith("<") and token.endswith(">") and len(token) > EMPTY_ANGLE_LENGTH:
         if previous.upper() in TYPE_OPENERS:
             return f"< <{snake(token[1:-1])}> >"
         return f"<{snake(token[1:-1])}>"
@@ -173,11 +168,7 @@ def word_text(*, token: str, following: str, previous: str, call: bool) -> str:
 def productions(
     *, text: str, calls: frozenset[str], keywords: frozenset[str] = frozenset()
 ) -> list[RawProduction]:
-    """The block's statements and definitions in catalogue notation.
-
-    A statement's top-level alternatives become one production each; a definition keeps its
-    body whole as `<name> ::= body`.
-    """
+    """The block's statements, one per top-level alternative, and definitions, in notation."""
     found: list[RawProduction] = []
     for raw in raw_productions(text):
         if raw.name:

@@ -18,7 +18,6 @@ SCHEMA_PREFIX: str = "sqlquack_referee_"
 
 ENV_HOST: str = "DATABRICKS_HOST"
 ENV_WAREHOUSE: str = "DATABRICKS_WAREHOUSE_ID"
-# Optional: a case deadline other than CASE_SECONDS, for a retry of cases that ran to it.
 ENV_CASE_SECONDS: str = "DATABRICKS_REFEREE_CASE_SECONDS"
 ENV_CLIENT_ID: str = "DATABRICKS_CLIENT_ID"
 ENV_CLIENT_SECRET: str = "DATABRICKS_CLIENT_SECRET"
@@ -26,13 +25,10 @@ TOKEN_PATH: str = "/oidc/v1/token"
 STATEMENTS_PATH: str = "/api/2.0/sql/statements"
 TOKEN_SCOPE: str = "all-apis"
 TOKEN_REFRESH_SECONDS: float = 1800.0
-# The warehouse, which a check before each case reads to prove the token still works.
 WAREHOUSES_PATH: str = "/api/2.0/sql/warehouses"
-# The warehouse's query history, which names the statements that ran in a time window.
 HISTORY_PATH: str = "/api/2.0/sql/history/queries"
 HISTORY_FAILED: str = "FAILED"
 HISTORY_PAGE: int = 100
-# The HTTP codes and body the workspace rejects an expired or revoked token with.
 TOKEN_REJECTED_CODES: frozenset[int] = frozenset({401, 403})
 TOKEN_REJECTED: re.Pattern[str] = re.compile(r"invalid (?:access )?token", re.I)
 WAIT_TIMEOUT: str = "30s"
@@ -48,10 +44,7 @@ STATE_FAILED: str = "FAILED"
 STATES_PENDING: frozenset[str] = frozenset({"PENDING", "RUNNING"})
 STATES_STOPPED: frozenset[str] = frozenset({"CANCELED", "CLOSED"})
 VERSION_QUERY: str = "SELECT current_version()"
-# current_version() is asked at most once a minute and once more after the last case; a run
-# whose answers differ writes no receipt, so each receipt's release is the one that answered it.
 VERSION_SECONDS: float = 60.0
-# A case schema's DROP ... IF EXISTS CASCADE is asked up to this many times.
 DROP_ATTEMPTS: int = 3
 
 ACCEPTED: str = "accepted"
@@ -67,17 +60,13 @@ BASIS_PARSER: str = (
 )
 BASIS_LATER: str = "the parsed statement failed with {error_class}"
 
-# The excerpt Spark's ParseException appends, in its older and newer header; only an error the
-# parser or the parse-tree builder raised carries it.
 PARSER_MARK: re.Pattern[str] = re.compile(r"\n== SQL(?: \(line \d+, position \d+\))? ==")
 ERROR_CLASS: re.Pattern[str] = re.compile(r"^\s*\[([A-Z][A-Z0-9_]*(?:\.[A-Z0-9_]+)*)\]")
-# A Unity Catalog service error: its class follows a per-request id, which receipts mask.
 SERVICE_ERROR_CLASS: re.Pattern[str] = re.compile(
     r"^\s*\[RequestId=[0-9a-f-]+ ErrorClass=([A-Z][A-Z0-9_]*(?:\.[A-Z0-9_]+)*)\]"
 )
 REQUEST_ID: re.Pattern[str] = re.compile(r"RequestId=[0-9a-f-]+")
 REQUEST_ID_MASK: str = "RequestId=<id>"
-# The per-case schema a message quotes: its run stem and case number differ between runs.
 CASE_SCHEMA: re.Pattern[str] = re.compile(r"\bsqlquack_referee_[0-9a-z_]+")
 CASE_SCHEMA_MASK: str = "sqlquack_referee_<run>"
 SQLSTATE_OF: re.Pattern[str] = re.compile(r"SQLSTATE: ([0-9A-Z]{5})")
@@ -85,9 +74,6 @@ URL: re.Pattern[str] = re.compile(r"\b[a-z][a-z0-9+.-]*://\S+")
 URL_MASK: str = "<url>"
 ADDRESS: re.Pattern[str] = re.compile(r"(?<=\w)@(?=\w)")
 ADDRESS_MASK: str = " at "
-# Names of the account and its workspace that a message may quote: the account id, the metastore,
-# the referee's principal and the workspace's storage bucket. Receipts are public, so each is
-# masked; none is part of the statement the case sent.
 ENVIRONMENT_MASKS: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"\baccount [0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\b"), "account <account>"),
     (re.compile(r"\bMetastore '[^']*'"), "Metastore '<metastore>'"),
@@ -96,16 +82,11 @@ ENVIRONMENT_MASKS: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"\bstorage bucket '[^']*'"), "storage bucket '<bucket>'"),
 )
 
-# The rule: a refusal whose message carries the parser's == SQL == excerpt was raised by the
-# parser or the parse-tree builder, and is a syntax_error, whatever its class or SQLSTATE says.
-# Each class the parser raises is reviewed here by its full class and subclass; any other parser
-# class stops the run, so a new one is reviewed before it is counted.
 PARSER_CLASSES: frozenset[str] = frozenset(
     {
         "PARSE_SYNTAX_ERROR",
         "PARSE_EMPTY_STATEMENT",
         "UNCLOSED_BRACKETED_COMMENT",
-        # The parse-tree builder refuses a statement the grammar admits.
         "CREATE_VIEW_WITH_IF_NOT_EXISTS_AND_REPLACE",
         "DUPLICATE_KEY",
         "MATCH_RECOGNIZE_MEASURES_MUST_BE_ALIASED",
@@ -116,22 +97,12 @@ PARSER_CLASSES: frozenset[str] = frozenset(
         "UNSUPPORTED_DATATYPE",
         "UNSUPPORTED_FEATURE.TEMPORARY_VIEW_WITH_SCHEMA_BINDING_MODE",
         "UNSUPPORTED_TIMESERIES_WITH_MORE_THAN_ONE_COLUMN",
-        # Databricks' parser refuses a sample fraction outside [0, 100] and IF NOT EXISTS on a
-        # temporary view; both classes are the warehouse's own (Spark 4.2.0 has neither), and
-        # their receipts carry the parser's excerpt.
         "INVALID_TABLESAMPLE_FRACTION",
         "TEMP_VIEW_IF_NOT_EXISTS_NOT_ALLOWED",
-        # The parse-tree builder checks a utility statement's operands and refuses them with the
-        # excerpt: SET PATH's schema names, SET QUERY_TAGS' form, SYNC's matching table names, and
-        # DESC ... AS JSON on one column.
         "INVALID_SQL_PATH_SCHEMA_REFERENCE",
         "SET_QUERY_TAGS_SYNTAX_INVALID",
         "SYNC_SRC_TARGET_TBL_NOT_SAME",
         "UNSUPPORTED_FEATURE.DESC_TABLE_COLUMN_JSON",
-        # The parser refuses a statement's form or a literal's text while building the plan:
-        # a SET, an empty IN list, a REFRESH path, a SHOW FUNCTIONS scope, a variable with neither
-        # type nor default, ANALYZE ... DELTA STATISTICS FOR, DROP INDEX, a staging path, a typed
-        # literal's value or type, and an AUTO CDC sequence clause without its storage clause.
         "AUTO_CDC_BITEMPORAL_REQUIRES_SYSTEM_SEQUENCE_BY",
         "AUTO_CDC_SYSTEM_SEQUENCE_BY_REQUIRES_BITEMPORAL",
         "INVALID_SET_SYNTAX",
@@ -148,10 +119,6 @@ PARSER_CLASSES: frozenset[str] = frozenset(
         "UNSUPPORTED_TYPED_LITERAL",
     }
 )
-# Spark also writes the excerpt, with its line and position, under an error raised while the
-# parsed statement runs (an ANSI runtime error of an expression). Each such class is reviewed here
-# by its full class and subclass and is a runtime_error, never a syntax_error; any other
-# excerpt-bearing class outside PARSER_CLASSES stops the run.
 EXCERPT_RUNTIME_CLASSES: frozenset[str] = frozenset(
     {
         "CAST_INVALID_INPUT",
@@ -159,15 +126,8 @@ EXCERPT_RUNTIME_CLASSES: frozenset[str] = frozenset(
         "INVALID_ARRAY_INDEX_IN_ELEMENT_AT",
     }
 )
-# A class the parse-tree builder raises, with the excerpt, for a feature the workspace has not
-# enabled: the text parsed, so the refusal is unsupported_feature, never syntax_error.
 EXCERPT_UNSUPPORTED_CLASSES: frozenset[str] = frozenset({"UC_SECRETS_NOT_ENABLED"})
-# The engine code a reviewed parser message without a SQLSTATE is recorded with, so that the
-# receipt's syntax_error carries a code dialect.toml's syntax_codes lists; the receipt's sqlstate
-# stays empty, as the engine sent it.
 PARSER_MESSAGE_CODE: str = "PARSE"
-# Reviewed phase of each error class raised after parsing, by its full class and subclass; any
-# other class stops the run. None is syntax_error: only the parser decides syntax.
 LATER_PHASES: dict[str, str] = {
     "AMBIGUOUS_REFERENCE": SEMANTIC_ERROR,
     "CANNOT_RESOLVE_STAR_EXPAND": SEMANTIC_ERROR,
@@ -196,7 +156,6 @@ LATER_PHASES: dict[str, str] = {
     "WRONG_NUM_ARGS.WITHOUT_SUGGESTION": SEMANTIC_ERROR,
     "WRONG_NUM_ARGS.WITH_SUGGESTION": SEMANTIC_ERROR,
     "REQUIRED_PARAMETER_NOT_FOUND": SEMANTIC_ERROR,
-    # Analysis or the catalog refuses a name, a missing object or the state of the setup's objects.
     "ALL_PARTITION_COLUMNS_NOT_ALLOWED": SEMANTIC_ERROR,
     "COLLATION_INVALID_NAME": SEMANTIC_ERROR,
     "COLUMN_NOT_FOUND_IN_TABLE": SEMANTIC_ERROR,
@@ -218,7 +177,6 @@ LATER_PHASES: dict[str, str] = {
     "ROUTINE_NOT_FOUND": SEMANTIC_ERROR,
     "SPECIFY_PARTITION_IS_NOT_ALLOWED": SEMANTIC_ERROR,
     "WRONG_COMMAND_FOR_OBJECT_TYPE": SEMANTIC_ERROR,
-    # Unity Catalog refuses a value, principal or object after the statement parsed.
     "INVALID_PARAMETER_VALUE": SEMANTIC_ERROR,
     "INVALID_PARAMETER_VALUE.INVALID_FIELD": SEMANTIC_ERROR,
     "INVALID_PARAMETER_VALUE.INVALID_PARAMETER_VALUE": SEMANTIC_ERROR,
@@ -226,12 +184,9 @@ LATER_PHASES: dict[str, str] = {
     "PRINCIPAL_DOES_NOT_EXIST.PRINCIPAL_DOES_NOT_EXIST": SEMANTIC_ERROR,
     "RESOURCE_DOES_NOT_EXIST": SEMANTIC_ERROR,
     "TABLE_DOES_NOT_EXIST.RESOURCE_DOES_NOT_EXIST": SEMANTIC_ERROR,
-    # The warehouse refuses what the statement asks for, not how it is written.
     "NOT_SUPPORTED_WITH_DB_SQL": UNSUPPORTED_FEATURE,
-    # A function the workspace refuses for the object it reads or for Unity Catalog.
     "EVENT_LOG_UNSUPPORTED_TABLE_TYPE": UNSUPPORTED_FEATURE,
     "UC_COMMAND_NOT_SUPPORTED.WITH_RECOMMENDATION": UNSUPPORTED_FEATURE,
-    # A function whose type the workspace has not enabled.
     "FEATURE_NOT_ENABLED": UNSUPPORTED_FEATURE,
     "DELTA_ALTER_TABLE_SET_MANAGED_UNSUPPORTED_COPY_MOVE_SYNTAX": UNSUPPORTED_FEATURE,
     "DELTA_ALTER_TABLE_UNSET_MANAGED_DOES_NOT_SUPPORT_CATALOG_OWNED": UNSUPPORTED_FEATURE,
@@ -254,12 +209,9 @@ LATER_PHASES: dict[str, str] = {
     "MIGRATION_NOT_SUPPORTED": UNSUPPORTED_FEATURE,
     "MIGRATION_ROLLBACK_NOT_SUPPORTED": UNSUPPORTED_FEATURE,
     "UC_COMMAND_NOT_SUPPORTED.WITHOUT_RECOMMENDATION": UNSUPPORTED_FEATURE,
-    # RESOLVE DBFS LOCATION, which only a federated Hive metastore catalog supports.
     "UC_COMMAND_NOT_SUPPORTED.NON_HMS_FEDERATED_ENTITY": UNSUPPORTED_FEATURE,
     "WRONG_COLUMN_DEFAULTS_FOR_DELTA_FEATURE_NOT_ENABLED": UNSUPPORTED_FEATURE,
-    # The path the statement names is refused when it runs (public DBFS root disabled).
     "DBFS_DISABLED": RUNTIME_ERROR,
-    # Analysis or the catalog refuses a name, a type or a use of a function in a non-core case.
     "CATALOG_DOES_NOT_EXIST.RESOURCE_DOES_NOT_EXIST": SEMANTIC_ERROR,
     "COLUMN_NOT_FOUND": SEMANTIC_ERROR,
     "CONFIG_NOT_AVAILABLE.WITHOUT_SUGGESTION": SEMANTIC_ERROR,
@@ -297,15 +249,12 @@ LATER_PHASES: dict[str, str] = {
     "UNRESOLVED_VARIABLE": SEMANTIC_ERROR,
     "VARIABLE_NOT_FOUND": SEMANTIC_ERROR,
     "WINDOW_FUNCTION_WITHOUT_OVER_CLAUSE": SEMANTIC_ERROR,
-    # Account- and catalog-level cases: the object a statement names is missing, already
-    # exists, is not empty, or has a name or value Unity Catalog refuses.
     "CATALOG_ALREADY_EXISTS": SEMANTIC_ERROR,
     "CATALOG_NOT_EMPTY": SEMANTIC_ERROR,
     "CONNECTION_TYPE_NOT_SUPPORTED": SEMANTIC_ERROR,
     "DELTA_SHARING_INVALID_SHARED_DATA_OBJECT_NAME": SEMANTIC_ERROR,
     "INVALID_PARAMETER_VALUE.UC_TAG_POLICY_VALUE_NOT_ALLOWED": SEMANTIC_ERROR,
     "INVALID_PARAMETER_VALUE.UNSUPPORTED_LOCATION_SCHEME": SEMANTIC_ERROR,
-    # A storage location given without a URI scheme, refused when Unity Catalog checks it.
     "INVALID_PARAMETER_VALUE.INVALID_LOCATION": SEMANTIC_ERROR,
     "NOT_FOUND.RESOURCE_DOES_NOT_EXIST": SEMANTIC_ERROR,
     "NO_SUCH_PROVIDER_EXCEPTION": SEMANTIC_ERROR,
@@ -319,8 +268,6 @@ LATER_PHASES: dict[str, str] = {
     "STREAMING_TABLE_QUERY_INVALID": SEMANTIC_ERROR,
     "TABLE_OR_VIEW_ALREADY_EXISTS": SEMANTIC_ERROR,
     "USER_DEFINED_FUNCTIONS.SQL_TABLE_UDF_MISSING_COLUMN_NAMES": SEMANTIC_ERROR,
-    # Utility, session and scripting statements refused after parsing, for the objects, columns,
-    # names or values they reference.
     "DELTA_MODE_NOT_SUPPORTED": SEMANTIC_ERROR,
     "DELTA_NON_PARTITION_COLUMN_REFERENCE": SEMANTIC_ERROR,
     "DELTA_UNSUPPORTED_CLUSTERING_COLUMN_PREDICATES.NO_CLUSTERING_COLUMNS": SEMANTIC_ERROR,
@@ -330,15 +277,12 @@ LATER_PHASES: dict[str, str] = {
     "DUPLICATE_VARIABLE_NAME_INSIDE_DECLARE": SEMANTIC_ERROR,
     "NOT_A_CONSTANT_STRING.WRONG_TYPE": SEMANTIC_ERROR,
     "POLICY_NOT_FOUND": SEMANTIC_ERROR,
-    # The warehouse refuses an operation on the object the statement names, not its text.
     "DELTA_TABLE_ONLY_OPERATION": UNSUPPORTED_FEATURE,
     "FORBIDDEN_OPERATION": UNSUPPORTED_FEATURE,
     "INVALID_TARGET_FOR_ALTER_COMMAND": UNSUPPORTED_FEATURE,
     "MATERIALIZED_VIEW_OPERATION_NOT_ALLOWED.REPLACE_DELTA_LIVE_TABLE": UNSUPPORTED_FEATURE,
     "STREAMING_TABLE_OPERATION_NOT_ALLOWED.NON_STREAMING_TABLE": UNSUPPORTED_FEATURE,
     "STREAMING_TABLE_OPERATION_NOT_ALLOWED.UNSUPPORTED_OPERATION": UNSUPPORTED_FEATURE,
-    # A value is refused when the parsed statement runs: a function's input, a setting's value,
-    # or a transaction statement with no transaction open.
     "CONVERSION_INVALID_INPUT": RUNTIME_ERROR,
     "EWKT_PARSE_ERROR": RUNTIME_ERROR,
     "GEOJSON_PARSE_ERROR": RUNTIME_ERROR,
@@ -346,17 +290,13 @@ LATER_PHASES: dict[str, str] = {
     "WKT_PARSE_ERROR": RUNTIME_ERROR,
     "ST_INVALID_SRID_VALUE": RUNTIME_ERROR,
     "USER_RAISED_EXCEPTION": RUNTIME_ERROR,
-    # A result struct with repeated field names is refused when the result is converted to Arrow.
     "DUPLICATED_FIELD_NAME_IN_ARROW_STRUCT": RUNTIME_ERROR,
     "INVALID_CONF_VALUE.TYPE_MISMATCH": RUNTIME_ERROR,
     "INVALID_STATEMENT_TIMEOUT.NOT_AN_INTEGER": RUNTIME_ERROR,
     "NO_ACTIVE_TRANSACTION": RUNTIME_ERROR,
-    # ANALYZE ... COMPUTE STORAGE METRICS reads the storage inventory when it runs.
     "ANALYZE_TABLE_COMPUTE_STORAGE_METRICS_INVENTORY_CONTENTS_NOT_VALID": RUNTIME_ERROR,
 }
 
-# Later classes the warehouse sends without a SQLSTATE: each is reviewed here, and its receipt
-# carries no code. Any other class without a SQLSTATE, and every parser class, still stops the run.
 LATER_WITHOUT_SQLSTATE: frozenset[str] = frozenset(
     {
         "CATALOG_NOT_EMPTY",
@@ -368,8 +308,6 @@ LATER_WITHOUT_SQLSTATE: frozenset[str] = frozenset(
     }
 )
 
-# A message that names no error class, reviewed by the message itself. A parser message (one that
-# carries the excerpt) is a syntax_error by the rule above; a later one has its reviewed phase.
 UNCLASSED: str = "UNCLASSED"
 UNCLASSED_PARSER: tuple[re.Pattern[str], ...] = (
     re.compile(r"^\S+ is not a valid byte length literal, expected syntax: "),
@@ -377,12 +315,9 @@ UNCLASSED_PARSER: tuple[re.Pattern[str], ...] = (
     re.compile(r"^Operation not allowed: "),
     re.compile(r"^Directory path and 'path' in OPTIONS should be specified one, but not both\."),
     re.compile(r"^Invalid time zone displacement value\.$", re.M),
-    # REFRESH CATALOG without FOREIGN: the parser's own message, with the excerpt.
     re.compile(r"^Expected keyword 'FOREIGN'\.$", re.M),
 )
 UNCLASSED_LATER: tuple[tuple[re.Pattern[str], str], ...] = (
-    # A Hive table's INPUTFORMAT or OUTPUTFORMAT class the warehouse cannot load: the message is
-    # the class name the cases supply, and nothing else.
     (re.compile(r"^org\.example\.(?:In|Out)$"), RUNTIME_ERROR),
     (
         re.compile(r"^Unable to infer the schema\. The schema specification is required "),
@@ -411,9 +346,7 @@ UNCLASSED_LATER: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"^\S+ source does not support user-specified schema\."), UNSUPPORTED_FEATURE),
     (re.compile(r"^CREATE EXTERNAL TABLE must be accompanied by LOCATION\b"), SEMANTIC_ERROR),
     (re.compile(r"^STORED AS with file format '[^']*' is invalid\."), SEMANTIC_ERROR),
-    # The warehouse resolves a LOCAL directory's path when it writes (file: with no path).
     (re.compile(r"^java\.net\.URISyntaxException: "), RUNTIME_ERROR),
-    # Non-core cases: analysis refuses an AUTO CDC flow's clauses, a securable or a share name.
     (
         re.compile(
             r"^class org\.apache\.spark\.sql\.catalyst\.expressions\.Literal cannot be cast to "
@@ -436,40 +369,32 @@ UNCLASSED_LATER: tuple[tuple[re.Pattern[str], str], ...] = (
         ),
         SEMANTIC_ERROR,
     ),
-    # The referee's principal may not read the metastore's policies: authorization, after parsing.
     (
         re.compile(
             r"^PERMISSION_DENIED: Principal '[^']*' does not have READ METADATA on Metastore "
         ),
         SEMANTIC_ERROR,
     ),
-    # Nor is it a metastore admin, which changing a metastore policy needs: also after parsing.
     (
         re.compile(r"^PERMISSION_DENIED: User is not a metastore admin for Metastore '[^']*'\.$"),
         SEMANTIC_ERROR,
     ),
-    # A recipient for open sharing, which this metastore has not enabled.
     (
         re.compile(
             r"^PERMISSION_DENIED: \nExternal Delta Sharing is not enabled on the metastore\."
         ),
         UNSUPPORTED_FEATURE,
     ),
-    # A group named as a member that does not exist.
     (re.compile(r"^Groups do not exist: \S+$"), SEMANTIC_ERROR),
-    # A user named as a member that does not exist.
     (re.compile(r"^Users do not exist: \S+$"), SEMANTIC_ERROR),
-    # A grantee that does not exist, refused once the statement parsed.
     (
         re.compile(r"^RESOURCE_DOES_NOT_EXIST: Could not find principal with name \S+$"),
         SEMANTIC_ERROR,
     ),
-    # A sharing identifier that names no metastore.
     (
         re.compile(r"^INVALID_PARAMETER_VALUE: \S+ is an invalid id for metastore\.$"),
         SEMANTIC_ERROR,
     ),
-    # A securable of a type the workspace does not have, named in a grant or a policy.
     (
         re.compile(
             r"^The securable `[^`]*` of type (?:MODEL_SERVICE|EXTERNAL_METADATA) cannot be "
@@ -477,7 +402,6 @@ UNCLASSED_LATER: tuple[tuple[re.Pattern[str], str], ...] = (
         ),
         SEMANTIC_ERROR,
     ),
-    # A statement with an optional name left out fails inside the warehouse after parsing.
     (re.compile(r"^None\.get$"), RUNTIME_ERROR),
     (re.compile(r"^Filtering (?:user|group) membership is not supported\.$"), UNSUPPORTED_FEATURE),
     (re.compile(r"^NOT_FOUND: Tag policy with name \S+ not found in account "), SEMANTIC_ERROR),
@@ -499,25 +423,15 @@ UNCLASSED_LATER: tuple[tuple[re.Pattern[str], str], ...] = (
     ),
 )
 REFEREE_CLASS: str = "REFEREE_UNDECIDED"
-# The referee failures a run may end with, each leaving its case undecided with no receipt: a case
-# statement cancelled at the deadline, a statement whose reply was lost, and a failed setup. Any
-# other referee failure stops the run.
 CANCELLED_AT_DEADLINE: re.Pattern[str] = re.compile(
     r"^statement \S+ was still running after \d+ s; cancelled, so its case is undecided$"
 )
-# A statement whose reply never arrived may have run, so it is not sent again.
 REPLY_LOST: str = "the reply to a statement was lost, so it may have run and is not sent again"
-# Why a case is undecided, as the run summary lists it; a setup failure adds the error class.
 UNDECIDED_DEADLINE: str = "cancelled at the deadline"
 UNDECIDED_REPLY_LOST: str = "reply lost"
 UNDECIDED_SETUP: str = "setup failed"
 SETUP_ERROR_CLASS: re.Pattern[str] = re.compile(r"\[([A-Z][A-Z0-9_]*(?:\.[A-Z0-9_]+)*)\]")
 
-# The referee isolates a case only inside its own schema. A case whose text changes an account-
-# or catalog-level object (a catalog, a schema of the catalog, a share, a connection, a group, a
-# governed tag, a metastore policy, a grant on one of them), or moves files outside a table, is
-# held: the run stops before any statement runs. Each pattern is searched in the whole text,
-# string literals included, so a script block or EXECUTE IMMEDIATE cannot hide one.
 ACCOUNT_KINDS: str = (
     r"(?:FOREIGN\s+)?CATALOG|(?:FOREIGN\s+)?SCHEMA|DATABASE|CONNECTION|SERVER"
     r"|(?:EXTERNAL\s+)?LOCATION|(?:STORAGE\s+|SERVICE\s+)?CREDENTIAL|SHARE|RECIPIENT|PROVIDER"
@@ -554,10 +468,6 @@ ACCOUNT_SCOPE: tuple[tuple[re.Pattern[str], str], ...] = (
         "moves files outside the case schema",
     ),
 )
-# The statement words a case may begin with: each runs inside the case schema unless a pattern
-# above holds it. A case beginning with another word is held, since the referee cannot place it;
-# a case beginning with a label, a literal, a parenthesis or an identifier the parser refuses is
-# kept, because the patterns above are searched in its whole text.
 CASE_SCOPE_HEADS: frozenset[str] = frozenset(
     {
         "ADD",
@@ -622,25 +532,14 @@ CASE_SCOPE_HEADS: frozenset[str] = frozenset(
         "WITH",
     }
 )
-# A case's first word, or a label (`l1 :`) before it.
 CASE_HEAD: re.Pattern[str] = re.compile(r"^[\s(]*(?:([a-z]\w*)\s*:(?!:)\s*)?([A-Za-z_]\w*)?")
-# The words that start a statement; a case starting with any other word starts with a name.
 STATEMENT_WORDS: re.Pattern[str] = re.compile(r"^[A-Z_]+$")
 
-# The sequential phase (`run --sequential`) runs the cases the scope guard holds, one at a time,
-# each judged in its own schema as above. Before the first case, and after each, it reads these
-# kinds of account- or catalog-level object over REST, each object keyed by its name and
-# fingerprinted by the fields a change alters; volatile fields are left out. The referee's own
-# case schemas are not part of the state. Metastore policies are not read: the referee's
-# principal may not read them (PERMISSION_DENIED ... READ METADATA on Metastore), so a case that
-# changes one is not seen.
 UNITY_CATALOG_PATH: str = "/api/2.1/unity-catalog"
 METASTORE_PATH: str = f"{UNITY_CATALOG_PATH}/current-metastore-assignment"
 GROUPS_PATH: str = "/api/2.0/preview/scim/v2/Groups"
 TAG_POLICIES_PATH: str = "/api/2.1/tag-policies"
 DEFAULT_SCHEMA: str = "default"
-# A Unity Catalog or tag-policy list returns next_page_token until its last page; a SCIM list is
-# read SCIM_PAGE objects at a time from startIndex until totalResults.
 PAGING_TOKEN: str = "page_token"
 PAGING_SCIM: str = "scim"
 SCIM_PAGE: int = 100
@@ -720,7 +619,6 @@ SNAPSHOT_KINDS: dict[str, SnapshotKind] = {
         fields=UNITY_CATALOG_FIELDS,
         paging=PAGING_TOKEN,
     ),
-    # The credentials list has no purpose filter: a storage credential is the kind above.
     KIND_SERVICE_CREDENTIAL: SnapshotKind(
         path=f"{UNITY_CATALOG_PATH}/credentials?max_results=0",
         items="credentials",
@@ -780,9 +678,6 @@ SNAPSHOT_KINDS: dict[str, SnapshotKind] = {
         paging=PAGING_TOKEN,
     ),
 }
-# The names the cases give the objects they create, lowercased as Unity Catalog stores them: a
-# fixture name, its backquoted `<name> Q` spelling, and the reserved word `SELECT`. Only an
-# object a case added under one of these names is dropped; any other added object stops the run.
 FIXTURE_NAMES: frozenset[str] = frozenset(
     {
         "v1",
@@ -810,9 +705,6 @@ FIXTURE_NAMES: frozenset[str] = frozenset(
         "abs q",
     }
 )
-# The reviewed drop of each kind (and, for workspace.default's tables, each table_type), in the
-# order cleanup runs them, dependents first; `{name}` is the backquoted name. A kind or table
-# type with no row here has no reviewed drop, and an object of it a case added stops the run.
 DROP_BY_SCIM: str = "SCIM DELETE"
 DROPS: tuple[tuple[str, str | None, str], ...] = (
     (KIND_SHARE, None, "DROP SHARE IF EXISTS {name}"),
@@ -833,36 +725,25 @@ DROPS: tuple[tuple[str, str | None, str], ...] = (
     (KIND_GROUP, None, DROP_BY_SCIM),
 )
 
-# Metastore policies are the one kind the snapshot cannot read. After every case that names a
-# policy on the metastore, and once more after the last case, the sequential phase drops each
-# fixture-named metastore policy (the grammar has no IF EXISTS here). An answer that no such
-# policy exists, or that the referee is not a metastore admin (so it could not have created one),
-# leaves the state as it was; a drop that succeeds, or any other answer, stops the run.
 METASTORE_POLICY_CASE: re.Pattern[str] = re.compile(r"\bPOLICY\b[^;]*\bON\s+METASTORE\b", re.I)
 METASTORE_POLICY_NAMES: tuple[str, ...] = ("v1", "v1 Q", "SELECT")
 METASTORE_POLICY_DROP: str = "DROP POLICY {name} ON METASTORE"
-# A sequential run's journal: the baseline, then each case as it starts and once it is settled.
 JOURNAL_BASELINE: str = "baseline"
 JOURNAL_PENDING: str = "pending"
 JOURNAL_SETTLED: str = "settled"
 JOURNAL_FINISHED: str = "finished"
-# What a settled case left behind: the account state equal to the baseline again.
 JOURNAL_RESTORED: str = "baseline restored"
-# A settled case's answer: an observation, or a failure no reviewed row maps.
 JOURNAL_OBSERVATION: str = "observation"
 JOURNAL_FAILURE: str = "failure"
-# The names a statement writes: backquoted identifiers and bare words.
 STATEMENT_NAMES: re.Pattern[str] = re.compile(r"`((?:[^`]|``)+)`|\b([A-Za-z_][A-Za-z0-9_]*)\b")
 METASTORE_POLICY_ABSENT: re.Pattern[str] = re.compile(
     r"^\s*(?:PERMISSION_DENIED: User is not a metastore admin for Metastore "
     r"|\[(?:RequestId=[0-9a-f-]+ ErrorClass=)?[A-Z_.]*(?:NOT_FOUND|DOES_NOT_EXIST)[A-Z_.]*\]"
-    # No ABAC policy can be attached to the metastore, so none could have been created.
     r"|The securable `[^`]*` of type METASTORE cannot be found, and METASTORE is not supported "
     r"in ABAC policies\.)"
 )
 
 COMPARED_KEYS: tuple[str, ...] = ("phase", "engine_code", "parse_only_sqlstate", "capture_method")
-# Cases a repeat compares by phase alone, each with the reason: the warehouse gives two answers.
 PHASE_ONLY_CASES: dict[str, str] = {
     "db.ddl.alter-table.alter-table-set-managed.k9dd5015a9cae": (
         "UNSET MANAGED on a new table answers MIGRATION_ROLLBACK_NOT_SUPPORTED (42809) or, once "
@@ -886,3 +767,9 @@ COMMAND_RECOVER: str = "recover"
 COMMAND_RESUME: str = "resume"
 COMMAND_REFINISH: str = "refinish"
 SHOWN_DIFFERENCES: int = 20
+HTTP_RETRY_STATUS: int = 429
+HTTP_SERVER_ERROR: int = 500
+SETUP_COMPOUND_FROM: int = 2
+QUERY_MARK: str = "?"
+PYCACHE: str = "__pycache__"
+JOURNAL_ANSWER: str = "answer"

@@ -18,10 +18,13 @@ from scripts.syntax_catalogue_databricks.constants import (
     DECISION_READING,
     DECISION_RUNTIME_ONLY,
     DECISION_SYNTAX,
+    DEFINITION_SEPARATOR,
     FAMILIES,
     FORM_PREFIX,
     FUNCTIONS,
     HAND_FILE,
+    KIND_SPECIAL,
+    KIND_STATEMENT,
     OPERATOR_TITLE,
     OPERATOR_WORDS,
     STATEMENT_FAMILIES,
@@ -31,18 +34,15 @@ from scripts.syntax_catalogue_databricks.models import (
     DbCatalogue,
     DbPage,
     Hand,
+    HandPage,
     HandReading,
     RawProduction,
 )
 from scripts.syntax_catalogue_databricks.types import Row
 
-KIND_STATEMENT: str = "statement"
-KIND_SPECIAL: str = "special"
-
 
 def page_keywords(page: DbPage) -> frozenset[str]:
-    """The lower-case words an operator or predicate page writes as keywords: its title's code
-    words and the connective words of OPERATOR_WORDS; none on any other page."""
+    """The lower-case words an operator or predicate page writes as keywords; none elsewhere."""
     if not page.path.startswith(f"{FUNCTIONS}/") or not OPERATOR_TITLE.search(page.title):
         return frozenset()
     return frozenset({*page.title_code.lower().split(), *OPERATOR_WORDS})
@@ -60,11 +60,7 @@ def page_calls(page: DbPage) -> frozenset[str]:
 def read_productions(
     *, page: DbPage, readings: dict[tuple[str, str], HandReading]
 ) -> tuple[list[RawProduction], set[str], set[tuple[str, str]], dict[str, str]]:
-    """The page's productions with hand readings applied, their decisions and readings used.
-
-    The last item maps each production read under a later heading than the page's first block
-    to that heading.
-    """
+    """The page's productions with hand readings applied, and what reading them decided."""
     found: list[RawProduction] = []
     decisions: set[str] = set()
     used: set[tuple[str, str]] = set()
@@ -84,9 +80,10 @@ def read_productions(
                 decisions.add(DECISION_READING)
                 read = [
                     RawProduction(
-                        name=line.split(" ::= ", 1)[0][1:-1], text=line.split(" ::= ", 1)[1]
+                        name=line.split(DEFINITION_SEPARATOR, 1)[0][1:-1],
+                        text=line.split(DEFINITION_SEPARATOR, 1)[1],
                     )
-                    if line.startswith("<") and " ::= " in line
+                    if line.startswith("<") and DEFINITION_SEPARATOR in line
                     else RawProduction(name="", text=line)
                     for line in reading.read
                 ]
@@ -118,10 +115,7 @@ def definitions_of(found: list[RawProduction]) -> list[tuple[str, str]]:
 def page_groups(
     *, page: DbPage, family: str, found: list[RawProduction], later: dict[str, str]
 ) -> list[FormGroup]:
-    """Statement forms one per production; a functions page's calls by the shared call rule.
-
-    A form read under a later heading than the page's first block (Literals) keeps that heading.
-    """
+    """Statement forms one per production; a functions page's calls by the shared call rule."""
     heading: tuple[str, ...] = (page.title, page.blocks[0].heading if page.blocks else "")
     statements: list[str] = list(dict.fromkeys(p.text for p in found if not p.name and p.text))
     if not statements:
@@ -138,19 +132,16 @@ def page_groups(
     ]
 
 
+def _referenced(*, production: RawProduction, found: list[RawProduction]) -> bool:
+    """True when another production of the page names the definition."""
+    return any(f"<{production.name}>" in other.text for other in found if other is not production)
+
+
 def promoted(found: list[RawProduction]) -> list[str]:
     """A page of definitions only: the bodies of those no other production on it refers to."""
-    texts: list[str] = [p.text for p in found]
     return list(
         dict.fromkeys(
-            p.text
-            for p in found
-            if p.name
-            and not any(
-                f"<{p.name}>" in text
-                for other, text in zip(found, texts, strict=True)
-                if other is not p
-            )
+            p.text for p in found if p.name and not _referenced(production=p, found=found)
         )
     )
 
@@ -180,7 +171,7 @@ def build_catalogue(
     """Every pinned page's source row, forms and definitions, and the problems found."""
     hand: Hand = load_hand(out / HAND_FILE)
     readings: dict[tuple[str, str], HandReading] = {(r.page, r.written): r for r in hand.readings}
-    hand_pages = {row.page: row for row in hand.pages}
+    hand_pages: dict[str, HandPage] = {row.page: row for row in hand.pages}
     existing: Existing = load_existing(out)
     sources: list[Row] = []
     forms: dict[str, list[Row]] = {family: [] for family in FAMILIES}
@@ -211,7 +202,7 @@ def build_catalogue(
             decisions.add(DECISION_HAND.format(basis=form.basis))
         named: list[tuple[str, str]] = definitions_of(found)
         status: str = STATUS_FORMS
-        disposition = hand_pages.get(page.path)
+        disposition: HandPage | None = hand_pages.get(page.path)
         if groups and disposition is not None:
             problems.append(f"{page.path}: has forms and a [[page]] disposition")
         if not groups:

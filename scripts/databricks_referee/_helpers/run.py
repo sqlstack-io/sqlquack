@@ -5,13 +5,10 @@ from __future__ import annotations
 import json
 import random
 import re
-import threading
-import time
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from scripts.databricks_referee._helpers.client import Client
 from scripts.databricks_referee._helpers.judge import observe
 from scripts.databricks_referee._helpers.receipts import (
     canonical,
@@ -20,10 +17,12 @@ from scripts.databricks_referee._helpers.receipts import (
     raw_record,
     receipt,
     run_audit,
-    version_of,
     write_jsonl,
 )
+from scripts.databricks_referee._helpers.rows import data_array, texts_of
 from scripts.databricks_referee._helpers.scope import held_cases
+from scripts.databricks_referee.classes.client import Client
+from scripts.databricks_referee.classes.versions import Versions
 from scripts.databricks_referee.constants import (
     CANCELLED_AT_DEADLINE,
     CAPTURE,
@@ -34,19 +33,16 @@ from scripts.databricks_referee.constants import (
     REPLY_LOST,
     RUN_PREFIX,
     SCHEMA_PREFIX,
+    SETUP_COMPOUND_FROM,
     SETUP_ERROR_CLASS,
     UNDECIDED_DEADLINE,
     UNDECIDED_REPLY_LOST,
     UNDECIDED_SETUP,
-    VERSION_QUERY,
-    VERSION_SECONDS,
     WORKERS,
 )
 from scripts.databricks_referee.exceptions import RefereeError
 from scripts.databricks_referee.models import Failure, Observation, Run
-from scripts.databricks_referee.types import Row
-
-type Judged = tuple[Row, Observation | Failure, Row, str]
+from scripts.databricks_referee.types import Judged, Row
 
 
 def read_cases(paths: list[Path]) -> list[Row]:
@@ -64,32 +60,9 @@ def read_cases(paths: list[Path]) -> list[Row]:
 
 def setup_text(setup: list[str]) -> list[str]:
     """The setup as one compound statement, so it costs one request."""
-    if len(setup) < 2:  # noqa: PLR2004
+    if len(setup) < SETUP_COMPOUND_FROM:
         return setup
     return ["BEGIN " + " ; ".join(setup) + " ; END"]
-
-
-class Versions:
-    """current_version(), asked again once VERSION_SECONDS have passed; every answer is kept."""
-
-    def __init__(self, client: Client) -> None:
-        self.client: Client = client
-        self.lock: threading.Lock = threading.Lock()
-        self.current: Row = {}
-        self.asked: float = 0.0
-        self.seen: set[str] = set()
-
-    def ask(self) -> Row:
-        """The release now answering, as current_version() reports it."""
-        version: Row = version_of(self.client.require(sql=VERSION_QUERY, schema=None))
-        self.seen.add(canonical(version))
-        return version
-
-    def get(self) -> Row:
-        with self.lock:
-            if not self.current or time.monotonic() - self.asked > VERSION_SECONDS:
-                self.current, self.asked = self.ask(), time.monotonic()
-            return self.current
 
 
 def judge_one(*, client: Client, versions: Versions, case: Row, schema: str) -> Judged:
@@ -100,7 +73,7 @@ def judge_one(*, client: Client, versions: Versions, case: Row, schema: str) -> 
             client=client,
             schema=schema,
             sql=str(case["sql"]),
-            setup=setup_text(list(case["setup"])),  # type: ignore[call-overload]
+            setup=setup_text(texts_of(case["setup"])),
         )
     except RefereeError as error:
         found = Failure(error_class=REFEREE_CLASS, sqlstate="", message=str(error), parser=False)
@@ -110,8 +83,20 @@ def judge_one(*, client: Client, versions: Versions, case: Row, schema: str) -> 
 def leftover_schemas(*, client: Client, stem: str) -> list[str]:
     """This run's referee schemas still in the catalog; other runs' schemas are not its own."""
     reply: Row = client.require(sql=f"SHOW SCHEMAS IN {CATALOG} LIKE '{stem}_*'", schema=None)
-    rows: list[list[str]] = dict(reply.get("result") or {}).get("data_array", [])  # type: ignore[call-overload]
+    rows: list[list[str]] = data_array(reply)
     return [row[0] for row in rows]
+
+
+def _every_case(found: list[tuple[Row, Failure]]) -> list[Row]:
+    """Each case of one unmapped class, with its message's first line."""
+    return [
+        {
+            "case_id": case["case_id"],
+            "sql": case["sql"],
+            "message": failure.message.strip().splitlines()[0][:300],
+        }
+        for case, failure in found
+    ]
 
 
 def unmapped_report(failures: list[tuple[Row, Failure]]) -> Row:
@@ -129,14 +114,7 @@ def unmapped_report(failures: list[tuple[Row, Failure]]) -> Row:
                 "example_case": found[0][0]["case_id"],
                 "example_sql": found[0][0]["sql"],
                 "example_message": found[0][1].message[:600],
-                "every_case": [
-                    {
-                        "case_id": case["case_id"],
-                        "sql": case["sql"],
-                        "message": failure.message.strip().splitlines()[0][:300],
-                    }
-                    for case, failure in found
-                ],
+                "every_case": _every_case(found),
             }
             for (error_class, parser), found in sorted(by_class.items())
         ]
@@ -155,7 +133,7 @@ def new_run(*, out: Path, private: Path, seed: int | None) -> Run:
     )
 
 
-def case_order(count: int, seed: int | None) -> list[int]:
+def case_order(*, count: int, seed: int | None) -> list[int]:
     """The cases' indexes in the order they run: as given, or shuffled by the seed."""
     order: list[int] = list(range(count))
     if seed is not None:
@@ -186,18 +164,14 @@ def record(*, cases: list[Row], out: Path, private: Path, seed: int | None) -> R
                     case=cases[index],
                     schema=f"{run.schema_stem}_{index}",
                 ),
-                case_order(len(cases), seed),
+                case_order(count=len(cases), seed=seed),
             )
         )
     return finish(client=client, versions=versions, judged=judged, run=run)
 
 
-def undecided_reason(case: Row, failure: Failure) -> str | None:
-    """Why the case was left undecided with no phase observed, or None when it was not: a
-    statement was cancelled at the deadline or its reply was lost, or one of the case's own setup
-    statements failed (named by the error class its message carries), so the case's statement
-    never ran. The reasons are listed in the run summary, so a setup that fails on every run is
-    seen rather than left undecided unnoticed."""
+def undecided_reason(*, case: Row, failure: Failure) -> str | None:
+    """Why the case was left undecided with no phase observed, or None when it was not."""
     if failure.error_class != REFEREE_CLASS:
         return None
     message: str = failure.message
@@ -205,7 +179,7 @@ def undecided_reason(case: Row, failure: Failure) -> str | None:
         return UNDECIDED_DEADLINE
     if message.startswith(REPLY_LOST):
         return UNDECIDED_REPLY_LOST
-    for text in setup_text(list(case["setup"])):  # type: ignore[call-overload]
+    for text in setup_text(texts_of(case["setup"])):
         prefix: str = f"{text[:200]!r} failed: "
         if message.startswith(prefix):
             named: re.Match[str] | None = SETUP_ERROR_CLASS.search(message, len(prefix))
@@ -214,9 +188,7 @@ def undecided_reason(case: Row, failure: Failure) -> str | None:
 
 
 def finish(*, client: Client, versions: Versions, judged: list[Judged], run: Run) -> Row:
-    """The end of every run: the release check, the unmapped-class report, the leftover-schema
-    check, and the receipts, written only when all three pass. An undecided case (see
-    `undecided_reason`) gets no receipt and is listed, so its form stays unverified."""
+    """The end of every run: three checks, then the receipts, written only when all three pass."""
     run_id: str = run.run_id
     private: Path = run.private
     out: Path = run.out
@@ -229,12 +201,13 @@ def finish(*, client: Client, versions: Versions, judged: list[Judged], run: Run
     failures: list[tuple[Row, Failure]] = [
         (case, found)
         for case, found, _, _ in judged
-        if isinstance(found, Failure) and undecided_reason(case, found) is None
+        if isinstance(found, Failure) and undecided_reason(case=case, failure=found) is None
     ]
     reasons: dict[str, str] = {
         str(case["case_id"]): reason
         for case, found, _, _ in judged
-        if isinstance(found, Failure) and (reason := undecided_reason(case, found)) is not None
+        if isinstance(found, Failure)
+        and (reason := undecided_reason(case=case, failure=found)) is not None
     }
     undecided: list[str] = sorted(reasons)
     private.mkdir(parents=True, exist_ok=True)
@@ -266,7 +239,8 @@ def finish(*, client: Client, versions: Versions, judged: list[Judged], run: Run
     ]
     raw_digests: list[str] = [digest(canonical(raw)) for raw in raws]
     phases: Row = dict(sorted(Counter(o.phase for _, o, _, _ in observed).items()))
-    versions: list[Row] = [json.loads(v) for v in sorted({canonical(v) for _, _, v, _ in observed})]
+    released: set[str] = {canonical(v) for _, _, v, _ in observed}
+    versions: list[Row] = [json.loads(v) for v in sorted(released)]
     audit: Row = run_audit(run_id=run_id, versions=versions, raw_digests=raw_digests, phases=phases)
     audit_sha: str = digest(canonical(audit))
     receipts: list[Row] = [
@@ -308,8 +282,7 @@ def by_case(path: Path) -> dict[str, Row]:
 
 
 def compare(*, first: Path, second: Path) -> list[str]:
-    """Cases whose phase, code, parse-only code or capture differ between two runs; a case in
-    PHASE_ONLY_CASES is compared by its phase alone."""
+    """Cases whose phase, code, parse-only code or capture differ between two runs."""
     one: dict[str, Row] = by_case(first)
     two: dict[str, Row] = by_case(second)
     differ: list[str] = sorted(set(one) ^ set(two))

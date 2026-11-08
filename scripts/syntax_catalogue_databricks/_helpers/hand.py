@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import tomllib
 from pathlib import Path
+from typing import cast
 
 from scripts.syntax_catalogue_databricks.constants import (
     HAND_BASES,
@@ -25,6 +26,11 @@ def _checked(*, table: str, row: Row, keys: frozenset[str]) -> Row:
     return row
 
 
+def _lines(value: object) -> tuple[str, ...]:
+    """A hand row's list of grammar lines."""
+    return tuple(str(line) for line in cast(list[object], value))
+
+
 def load_hand(path: Path) -> Hand:
     """hand.toml's [[form]], [[page]] and [[reading]] rows; an unknown key stops the build."""
     data: dict[str, list[Row]] = tomllib.loads(path.read_text()) if path.exists() else {}
@@ -39,7 +45,7 @@ def load_hand(path: Path) -> Hand:
                 anchor=str(row["anchor"]),
                 kind=str(row["kind"]),
                 label=str(row["label"]),
-                grammars=tuple(str(line) for line in row["grammar"]),
+                grammars=_lines(row["grammar"]),
                 basis=str(row["basis"]),
                 article_sha256=str(row["article_sha256"]),
             )
@@ -64,7 +70,7 @@ def load_hand(path: Path) -> Hand:
             HandReading(
                 page=str(row["page"]),
                 written=str(row["written"]),
-                read=tuple(str(line) for line in row["read"]),
+                read=_lines(row["read"]),
                 reason=str(row["reason"]),
             )
         )

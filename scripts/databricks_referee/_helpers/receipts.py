@@ -7,6 +7,7 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
+from scripts.databricks_referee._helpers.rows import data_array
 from scripts.databricks_referee.constants import (
     ACCEPTED,
     CAPTURE,
@@ -35,7 +36,7 @@ def digest(text: str) -> str:
 
 def version_of(reply: Row) -> Row:
     """current_version() as the warehouse answered it, refusing any release but the pinned one."""
-    rows: list[list[str]] = dict(reply.get("result") or {}).get("data_array", [])  # type: ignore[call-overload]
+    rows: list[list[str]] = data_array(reply)
     version: Row = json.loads(rows[0][0])
     if version.get("dbsql_version") != ENGINE_VERSION:
         raise RefereeError(f"the warehouse runs {version}, not Databricks SQL {ENGINE_VERSION}")

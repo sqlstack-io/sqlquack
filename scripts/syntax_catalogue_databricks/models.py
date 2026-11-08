@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from scripts.syntax_catalogue_databricks.classes.automaton import Automaton
+
 
 @dataclass(frozen=True)
 class SyntaxBlock:
@@ -88,3 +90,42 @@ class DbCatalogue:
     forms: dict[str, list[dict[str, object]]]
     definitions: dict[str, list[dict[str, object]]]
     problems: list[str]
+
+
+@dataclass(frozen=True)
+class AuditGap:
+    """Keyword sequences of one rule alternative that no catalogued line reads."""
+
+    rule: str
+    alternative: int
+    keywords: str
+
+
+@dataclass(frozen=True)
+class CatalogueLines:
+    """Each catalogued line's automaton and every upper-case word the catalogue spells."""
+
+    automata: list[tuple[str, Automaton, int]]
+    words: frozenset[str]
+
+
+@dataclass(frozen=True)
+class AuditResult:
+    """What the audit found and how much it checked."""
+
+    gaps: list[AuditGap]
+    derived_gaps: int
+    missing_keywords: list[str]
+    unused_keywords: list[str]
+    missing_words: list[str]
+    missing_index: list[str]
+    notation_blocks: list[str]
+    walked: list[str]
+    unwalked: list[str]
+    uncompared_tokens: list[str]
+    sequences_checked: int
+    productions_checked: int
+    keywords_checked: int
+    words_checked: int
+    index_checked: int
+    blocks_checked: int

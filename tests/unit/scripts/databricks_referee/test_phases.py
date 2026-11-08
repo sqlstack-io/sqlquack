@@ -8,18 +8,18 @@ from scripts.databricks_referee._helpers.judge import observation_of, published
 from scripts.databricks_referee.constants import LATER_PHASES, UNCLASSED_LATER
 from scripts.databricks_referee.exceptions import RefereeError
 from scripts.databricks_referee.models import Failure, Observation
-from scripts.databricks_referee.types import Row
-from tests.unit.scripts.databricks_referee._test_types import PhaseTestCase
+from tests.unit.scripts.databricks_referee._test_types import (
+    JudgedTypeTestCase,
+    PhaseCodeTestCase,
+    PhaseTableTestCase,
+    PhaseTestCase,
+    PublishTestCase,
+    RefusalTestCase,
+    StatelessTestCase,
+)
+from tests.unit.scripts.databricks_referee.helpers import refused
 
 PARSER_EXCERPT: str = "(line 1, pos 0)\n\n== SQL ==\nSELEC 1\n^^^\n"
-
-
-def failed(*, message: str, sqlstate: str) -> Row:
-    """A FAILED reply of the Statement Execution API."""
-    return {
-        "statement_id": "s1",
-        "status": {"state": "FAILED", "sql_state": sqlstate, "error": {"message": message}},
-    }
 
 
 @pytest.mark.parametrize(
@@ -233,113 +233,241 @@ def test_given_a_failed_reply_when_judged_then_only_a_reviewed_class_decides_the
     test_case: PhaseTestCase,
 ) -> None:
     found: Observation | Failure = observation_of(
-        failed(message=test_case.message, sqlstate=test_case.sqlstate)
+        refused(message=test_case.message, sqlstate=test_case.sqlstate)
     )
 
-    phase: str | None = found.phase if isinstance(found, Observation) else None
-    parse_only: str | None = found.parse_only_code if isinstance(found, Observation) else None
+    phase: str | None = getattr(found, "phase", None)
+    parse_only: str | None = getattr(found, "parse_only_code", None)
     assert (phase, parse_only) == (test_case.expected_phase, test_case.expected_parse_only)
 
 
-def test_given_a_message_without_an_error_class_when_judged_then_no_phase_is_given() -> None:
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        JudgedTypeTestCase(
+            description="a message naming no class and no reviewed text",
+            message="WINDOW must be used with at least one window function.",
+            sqlstate="",
+            expected_type=Failure,
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_message_without_an_error_class_when_judged_then_no_phase_is_given(
+    test_case: JudgedTypeTestCase,
+) -> None:
     found: Observation | Failure = observation_of(
-        failed(message="WINDOW must be used with at least one window function.", sqlstate="")
+        refused(message=test_case.message, sqlstate=test_case.sqlstate)
     )
 
-    assert isinstance(found, Failure)
+    assert isinstance(found, test_case.expected_type)
 
 
-def test_given_a_class_without_a_sqlstate_when_judged_then_only_a_reviewed_one_has_a_phase() -> (
-    None
-):
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        StatelessTestCase(
+            description="a reviewed class and an unreviewed class, both without a SQLSTATE",
+            reviewed_message="[NO_SUCH_STORAGE_CREDENTIAL_EXCEPTION] The credential 'v1'.",
+            other_message="[TABLE_OR_VIEW_NOT_FOUND] The table `t9` cannot be found.",
+            expected_phase="semantic_error",
+            expected_engine_code=None,
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_class_without_a_sqlstate_when_judged_then_only_a_reviewed_one_has_a_phase(
+    test_case: StatelessTestCase,
+) -> None:
     reviewed: Observation | Failure = observation_of(
-        failed(message="[NO_SUCH_STORAGE_CREDENTIAL_EXCEPTION] The credential 'v1'.", sqlstate="")
+        refused(message=test_case.reviewed_message, sqlstate="")
     )
     other: Observation | Failure = observation_of(
-        failed(message="[TABLE_OR_VIEW_NOT_FOUND] The table `t9` cannot be found.", sqlstate="")
+        refused(message=test_case.other_message, sqlstate="")
     )
 
     assert isinstance(reviewed, Observation)
-    assert (reviewed.phase, reviewed.engine_code) == ("semantic_error", None)
+    assert (reviewed.phase, reviewed.engine_code) == (
+        test_case.expected_phase,
+        test_case.expected_engine_code,
+    )
     assert isinstance(other, Failure)
 
 
-def test_given_a_failure_without_a_message_when_judged_then_the_run_stops() -> None:
-    with pytest.raises(RefereeError, match="without a message"):
-        observation_of(failed(message="", sqlstate="42601"))
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        RefusalTestCase(
+            description="a failed statement with an empty message",
+            message="",
+            sqlstate="42601",
+            expected_error="without a message",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_failure_without_a_message_when_judged_then_the_run_stops(
+    test_case: RefusalTestCase,
+) -> None:
+    with pytest.raises(RefereeError, match=test_case.expected_error):
+        observation_of(refused(message=test_case.message, sqlstate=test_case.sqlstate))
 
 
-def test_given_a_message_with_a_link_and_an_address_when_published_then_both_are_masked() -> None:
-    message: str = (
-        "[X] See https://docs.example.com/a?b=1 or mail ops@example.com. SQLSTATE: 42000\nmore"
-    )
-
-    assert published(message) == "[X] See <url> or mail ops at example.com. SQLSTATE: 42000"
-
-
-def test_given_a_service_error_when_published_then_its_request_id_is_masked() -> None:
-    message: str = "[RequestId=0d88598f-8343 ErrorClass=NOT_FOUND] Table t2 has no key."
-
-    assert published(message) == "[RequestId=<id> ErrorClass=NOT_FOUND] Table t2 has no key."
-
-
-def test_given_a_message_naming_the_case_schema_when_published_then_its_run_stem_is_masked() -> (
-    None
-):
-    message: str = (
-        "[TABLE_OR_VIEW_NOT_FOUND] The table `workspace`.`sqlquack_referee_20261107t021841_979538z_"
-        "1016`.`t1` cannot be found; sqlquack_referee_x is kept"
-    )
-
-    assert published(message) == (
-        "[TABLE_OR_VIEW_NOT_FOUND] The table `workspace`.`sqlquack_referee_<run>`.`t1` cannot be "
-        "found; sqlquack_referee_<run> is kept"
-    )
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        PublishTestCase(
+            description="a link and a mail address",
+            messages=(
+                "[X] See https://docs.example.com/a?b=1 or mail ops@example.com. SQLSTATE: 42000"
+                "\nmore",
+            ),
+            expected_published=("[X] See <url> or mail ops at example.com. SQLSTATE: 42000",),
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_message_with_a_link_and_an_address_when_published_then_both_are_masked(
+    test_case: PublishTestCase,
+) -> None:
+    assert tuple(published(m) for m in test_case.messages) == test_case.expected_published
 
 
-def test_given_a_parser_message_without_a_sqlstate_when_judged_then_its_code_is_a_syntax_code() -> (
-    None
-):
-    found: Observation | Failure = observation_of(
-        failed(
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        PublishTestCase(
+            description="a Unity Catalog service error",
+            messages=("[RequestId=0d88598f-8343 ErrorClass=NOT_FOUND] Table t2 has no key.",),
+            expected_published=("[RequestId=<id> ErrorClass=NOT_FOUND] Table t2 has no key.",),
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_service_error_when_published_then_its_request_id_is_masked(
+    test_case: PublishTestCase,
+) -> None:
+    assert tuple(published(m) for m in test_case.messages) == test_case.expected_published
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        PublishTestCase(
+            description="a table in a case schema and a bare case schema name",
+            messages=(
+                "[TABLE_OR_VIEW_NOT_FOUND] The table `workspace`.`sqlquack_referee_20261107t021841"
+                "_979538z_1016`.`t1` cannot be found; sqlquack_referee_x is kept",
+            ),
+            expected_published=(
+                "[TABLE_OR_VIEW_NOT_FOUND] The table `workspace`.`sqlquack_referee_<run>`.`t1` "
+                "cannot be found; sqlquack_referee_<run> is kept",
+            ),
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_message_naming_the_case_schema_when_published_then_its_run_stem_is_masked(
+    test_case: PublishTestCase,
+) -> None:
+    assert tuple(published(m) for m in test_case.messages) == test_case.expected_published
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        PhaseCodeTestCase(
+            description="an Operation not allowed message with the excerpt",
             message="\nOperation not allowed: Values must be specified for key(s): [c1](line 1, "
             "pos 0)\n\n== SQL ==\nINSERT INTO t1 PARTITION ( c1 ) VALUES ( 1 )\n^^^\n",
             sqlstate="",
-        )
+            expected_phase="syntax_error",
+            expected_engine_code="PARSE",
+            expected_parse_only=None,
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_parser_message_without_a_sqlstate_when_judged_then_its_code_is_a_syntax_code(
+    test_case: PhaseCodeTestCase,
+) -> None:
+    found: Observation | Failure = observation_of(
+        refused(message=test_case.message, sqlstate=test_case.sqlstate)
     )
 
     assert isinstance(found, Observation)
     assert (found.phase, found.engine_code, found.parse_only_code) == (
-        "syntax_error",
-        "PARSE",
-        None,
+        test_case.expected_phase,
+        test_case.expected_engine_code,
+        test_case.expected_parse_only,
     )
 
 
-def test_given_the_later_phase_tables_when_read_then_none_gives_a_syntax_error() -> None:
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        PhaseTableTestCase(
+            description="the later classes and the unclassed later messages",
+            expected_absent_phase="syntax_error",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_the_later_phase_tables_when_read_then_none_gives_a_syntax_error(
+    test_case: PhaseTableTestCase,
+) -> None:
     later: list[str] = [*LATER_PHASES.values(), *(phase for _, phase in UNCLASSED_LATER)]
 
-    assert "syntax_error" not in later
+    assert test_case.expected_absent_phase not in later
 
 
-def test_given_messages_naming_the_account_when_published_then_its_names_are_masked() -> None:
-    messages: list[str] = [
-        "NOT_FOUND: Tag policy with name v1 not found in account 0a1b2c3d-0000-4000-8000-00000000abcd",
-        "PERMISSION_DENIED: Principal 'agent-7' does not have READ METADATA on Metastore 'ms_eu_1'.",
-        "[X] Could not access the inventory for table's storage bucket 'root-bkt-9' under 'm'.",
-    ]
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        PublishTestCase(
+            description="the account id, the principal and the storage bucket",
+            messages=(
+                "NOT_FOUND: Tag policy with name v1 not found in account "
+                "0a1b2c3d-0000-4000-8000-00000000abcd",
+                "PERMISSION_DENIED: Principal 'agent-7' does not have READ METADATA on Metastore "
+                "'ms_eu_1'.",
+                "[X] Could not access the inventory for table's storage bucket 'root-bkt-9' under "
+                "'m'.",
+            ),
+            expected_published=(
+                "NOT_FOUND: Tag policy with name v1 not found in account <account>",
+                "PERMISSION_DENIED: Principal '<principal>' does not have READ METADATA on "
+                "Metastore '<metastore>'.",
+                "[X] Could not access the inventory for table's storage bucket '<bucket>' under "
+                "'m'.",
+            ),
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_messages_naming_the_account_when_published_then_its_names_are_masked(
+    test_case: PublishTestCase,
+) -> None:
+    assert tuple(published(m) for m in test_case.messages) == test_case.expected_published
 
-    assert [published(m) for m in messages] == [
-        "NOT_FOUND: Tag policy with name v1 not found in account <account>",
-        "PERMISSION_DENIED: Principal '<principal>' does not have READ METADATA on Metastore "
-        "'<metastore>'.",
-        "[X] Could not access the inventory for table's storage bucket '<bucket>' under 'm'.",
-    ]
 
-
-def test_given_a_message_naming_the_metastore_securable_when_published_then_it_is_masked() -> None:
-    message: str = "The securable `ms_eu_1` of type METASTORE cannot be found, and METASTORE is not"
-
-    assert published(message) == (
-        "The securable `<metastore>` of type METASTORE cannot be found, and METASTORE is not"
-    )
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        PublishTestCase(
+            description="the metastore named as a securable",
+            messages=(
+                "The securable `ms_eu_1` of type METASTORE cannot be found, and METASTORE is not",
+            ),
+            expected_published=(
+                "The securable `<metastore>` of type METASTORE cannot be found, and METASTORE is "
+                "not",
+            ),
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_message_naming_the_metastore_securable_when_published_then_it_is_masked(
+    test_case: PublishTestCase,
+) -> None:
+    assert tuple(published(m) for m in test_case.messages) == test_case.expected_published

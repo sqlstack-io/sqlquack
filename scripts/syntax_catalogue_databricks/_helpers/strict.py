@@ -1,107 +1,25 @@
-"""Strict containment: a grammar sequence is covered only as a contiguous run of a catalogued line.
-
-Each catalogued grammar line becomes an automaton over its upper-case words and the punctuation
-the audit compares. Placeholders, quoted text, numbers and escaped notation characters spell
-nothing, exactly as identifiers, literals and the other tokens spell nothing in a grammar
-sequence. A placeholder that a definition of the line's page (or, failing that, of any page)
-names stands for that definition or for nothing, as a rule too large to spell stands for nothing.
-`[ ]` is optional, `{ a | b }` a choice and `...` repeats the item it follows. A sequence is
-covered when the automaton reads it without a gap from some state; a statement's from the
-line's start.
-"""
+"""Strict containment: a grammar sequence is covered only as a contiguous run of a line."""
 
 from __future__ import annotations
 
 import re
 
+from scripts.syntax_catalogue_databricks.classes.automaton import Automaton
 from scripts.syntax_catalogue_databricks.constants import (
-    ANY_RUN,
+    BRACKET_ENDS,
+    CHOICE_BAR,
     CLAUSE_SUFFIX,
+    CLOSERS,
+    ESCAPED_PIPE,
     INLINE_DEPTH,
     KEYWORD_SYMBOL,
-    PUNCTUATION_TOKENS,
+    LINE_TOKEN,
+    OPTIONAL_OPEN,
+    PLACEHOLDER_NAME,
+    PUNCTUATION,
+    REPEAT,
     SPELLING_SYNONYMS,
 )
-
-LINE_TOKEN: re.Pattern[str] = re.compile(
-    r"\\[|\[\]{}]|<[A-Za-z_][^<>]*>|\.\.\.|\"[^\"]*\"|'[^']*'|<=>|>>>|>>|<<|==|<=|>=|<>|!=|!>|!<"
-    r"|\|\||\|>|::|->|=>|[\[\]{}|]|[A-Za-z_][A-Za-z0-9_]*|\S"
-)
-PUNCTUATION: frozenset[str] = frozenset(
-    spelling for spellings in PUNCTUATION_TOKENS.values() for spelling in spellings
-)
-ESCAPED_PIPE: str = "\\|"
-PLACEHOLDER_NAME: re.Pattern[str] = re.compile(r"^<([^<>\s][^<>]*)>$")
-REPEAT: str = "..."
-CLOSERS: dict[str, str] = {"[": "]", "{": "}"}
-
-
-class Automaton:
-    """A nondeterministic automaton: labelled and empty edges between numbered states."""
-
-    def __init__(self) -> None:
-        self.edges: list[list[tuple[str, int]]] = []
-        self.empty: list[list[int]] = []
-
-    def state(self) -> int:
-        self.edges.append([])
-        self.empty.append([])
-        return len(self.edges) - 1
-
-    def closure(self, states: set[int]) -> set[int]:
-        found: set[int] = set(states)
-        frontier: list[int] = list(states)
-        while frontier:
-            for target in self.empty[frontier.pop()]:
-                if target not in found:
-                    found.add(target)
-                    frontier.append(target)
-        return found
-
-    def reach(self, states: set[int]) -> set[int]:
-        """The states reachable along any edges: what a rule too large to spell may read."""
-        found: set[int] = set(states)
-        frontier: list[int] = list(states)
-        while frontier:
-            state: int = frontier.pop()
-            for target in [*self.empty[state], *(target for _, target in self.edges[state])]:
-                if target not in found:
-                    found.add(target)
-                    frontier.append(target)
-        return found
-
-    def targets(self, label: str) -> set[int]:
-        """Every state an edge labelled `label` leads to, from any state."""
-        if not hasattr(self, "_targets"):
-            index: dict[str, set[int]] = {}
-            for edges in self.edges:
-                for found, target in edges:
-                    index.setdefault(found, set()).add(target)
-            self._targets: dict[str, set[int]] = index
-        return self._targets.get(label, set())
-
-    def reads(self, *, sequence: tuple[str, ...], start: int | None) -> bool:
-        """True when the sequence is read without a gap from `start`, or from any state."""
-        current: set[int] | None = None if start is None else self.closure({start})
-        for symbol in sequence:
-            if symbol == ANY_RUN:
-                if current is not None:
-                    current = self.reach(current)
-                continue
-            moved: set[int] = (
-                self.targets(symbol)
-                if current is None
-                else {
-                    target
-                    for state in current
-                    for label, target in self.edges[state]
-                    if label == symbol
-                }
-            )
-            if not moved:
-                return False
-            current = self.closure(moved)
-        return True
 
 
 class _Builder:
@@ -139,7 +57,7 @@ class _Builder:
             self.automaton.empty[end].append(start)
         return parts[0][0], parts[-1][1]
 
-    def choice(self, parts: list[tuple[int, int]], *, optional: bool) -> tuple[int, int]:
+    def choice(self, *, parts: list[tuple[int, int]], optional: bool) -> tuple[int, int]:
         start: int = self.automaton.state()
         end: int = self.automaton.state()
         for part_start, part_end in parts:
@@ -158,15 +76,15 @@ class _Builder:
                     self.alternatives(tokens=rest, index=0, closer="", depth=depth + 1)[0]
                     for rest in found
                 ]
-                return self.choice(inner, optional=True)
+                return self.choice(parts=inner, optional=True)
         return None
 
-    def word(self, token: str, depth: int, recent: list[str]) -> tuple[int, int]:
+    def word(self, *, token: str, depth: int, recent: list[str]) -> tuple[int, int]:
         """One token: a word or compared punctuation, a definition, a clause, or nothing."""
         if KEYWORD_SYMBOL.match(token):
             return self.symbol(token)
         if token == ESCAPED_PIPE:
-            return self.symbol("|")
+            return self.symbol(CHOICE_BAR)
         if token in SPELLING_SYNONYMS:
             return self.symbol(SPELLING_SYNONYMS[token])
         if token in PUNCTUATION:
@@ -176,8 +94,8 @@ class _Builder:
             body: str | None = self.own.get(match.group(1), self.definitions.get(match.group(1)))
             if body is not None:
                 inner: tuple[int, int] = self.line(tokens=LINE_TOKEN.findall(body), depth=depth + 1)
-                return self.choice([inner], optional=True)
-            if match.group(1).endswith(CLAUSE_SUFFIX) and recent:  # a clause page's form
+                return self.choice(parts=[inner], optional=True)
+            if match.group(1).endswith(CLAUSE_SUFFIX) and recent:
                 linked: tuple[int, int] | None = self.clause(recent=recent, depth=depth)
                 if linked is not None:
                     return linked
@@ -194,34 +112,41 @@ class _Builder:
         while True:
             part, index = self.sequence(tokens=tokens, index=index, closer=closer, depth=depth)
             parts.append(part)
-            if index < len(tokens) and tokens[index] == "|":
+            if index < len(tokens) and tokens[index] == CHOICE_BAR:
                 index += 1
                 continue
-            return (parts[0] if len(parts) == 1 else self.choice(parts, optional=False)), index + 1
+            return (
+                parts[0] if len(parts) == 1 else self.choice(parts=parts, optional=False)
+            ), index + 1
 
     def sequence(
         self, *, tokens: list[str], index: int, closer: str, depth: int
     ) -> tuple[tuple[int, int], int]:
         items: list[tuple[int, int]] = []
         recent: list[str] = []
-        while index < len(tokens) and tokens[index] not in ("|", closer):
+        while index < len(tokens) and tokens[index] not in (CHOICE_BAR, closer):
             token: str = tokens[index]
             before: list[str] = recent
             recent = [*recent, token] if KEYWORD_SYMBOL.match(token) else []
-            if token == "[" and tokens[index + 1 : index + 3] == [REPEAT, "]"]:
+            if token == OPTIONAL_OPEN and tokens[index + 1 : index + 3] == [
+                REPEAT,
+                BRACKET_ENDS[0],
+            ]:
                 if items:
                     start, end = items[-1]
                     self.automaton.empty[end].append(start)
                 index += 3
                 continue
             if (
-                token == "["
-                and tokens[index + 2 : index + 4] == [REPEAT, "]"]
-                and tokens[index + 1] not in (*CLOSERS, "]", "}", "|")
-            ):  # `x [ , ... ]`: x, then the separator and x again any number of times
+                token == OPTIONAL_OPEN
+                and tokens[index + 2 : index + 4] == [REPEAT, BRACKET_ENDS[0]]
+                and tokens[index + 1] not in (*CLOSERS, *BRACKET_ENDS, CHOICE_BAR)
+            ):
                 if items:
                     start, end = items[-1]
-                    separator: tuple[int, int] = self.word(tokens[index + 1], depth, [])
+                    separator: tuple[int, int] = self.word(
+                        token=tokens[index + 1], depth=depth, recent=[]
+                    )
                     self.automaton.empty[end].append(separator[0])
                     self.automaton.empty[separator[1]].append(start)
                 index += 4
@@ -231,9 +156,9 @@ class _Builder:
                     tokens=tokens, index=index + 1, closer=CLOSERS[token], depth=depth
                 )
                 item: tuple[int, int] = (
-                    self.choice([inner], optional=True) if token == "[" else inner
+                    self.choice(parts=[inner], optional=True) if token == OPTIONAL_OPEN else inner
                 )
-            elif token in ("]", "}"):
+            elif token in BRACKET_ENDS:
                 index += 1
                 continue
             elif token == REPEAT:
@@ -243,7 +168,7 @@ class _Builder:
                 index += 1
                 continue
             else:
-                item = self.word(token, depth, before)
+                item = self.word(token=token, depth=depth, recent=before)
                 index += 1
             items.append(item)
         return self.chain(items), index

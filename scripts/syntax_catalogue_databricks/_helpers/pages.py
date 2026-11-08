@@ -82,9 +82,7 @@ def read_page(*, cache: Path, url: str) -> DbPage:
 
 
 def pin_differences(*, cache: Path, root: Path, urls: list[str]) -> list[str]:
-    """How a fetched cache differs from the root's pinned sources: pages added or gone, and pages
-    whose article or Syntax blocks changed. A page's script bundle names change on every deploy,
-    so the article hash, not the page hash, decides whether a page changed."""
+    """Pages added or gone, and pages whose article or Syntax blocks changed, against the pins."""
     pinned: dict[str, dict[str, object]] = {
         str(row["url"]): dict(row)
         for row in tomllib.loads((root / SOURCES_FILE).read_text()).get("source", [])

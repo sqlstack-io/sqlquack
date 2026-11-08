@@ -40,9 +40,7 @@ from scripts.syntax_obligations_databricks.constants import (
 
 
 def runtime_only_forms(*, root: Path, family: str) -> set[str]:
-    """The family's forms documented for Databricks Runtime only: every form of a page whose
-    applies-to banner leaves out Databricks SQL (its sources.toml decision), and each form that is
-    one Runtime-only clause (RUNTIME_ONLY_CLAUSES)."""
+    """The family's forms documented for Databricks Runtime only, by page banner and by clause."""
     if family not in RUNTIME_SCOPE_FAMILIES:
         return set()
     sources: set[str] = {
@@ -73,8 +71,7 @@ def family_cases(  # noqa: PLR0913
     receipts: ReceiptView,
     runtime_only: frozenset[str] = frozenset(),
 ) -> list[Row]:
-    """The cases of the family's forms, settled by their receipts (D92, D133); a Runtime-only
-    form's positives are observed, since the pinned engine is a Databricks SQL warehouse."""
+    """The cases of the family's forms, settled by their receipts (D92, D133)."""
     by_sql: dict[str, tuple[str, Rendered, list[str]]] = {}
     extremes: set[str] = set()
     conflicts: list[str] = []
@@ -91,15 +88,7 @@ def family_cases(  # noqa: PLR0913
         if not found:
             raise ObligationError(f"{identifier}: no case could be rendered")
         drafted.append((identifier, draft, found))
-    # A text a form that applies to Databricks SQL also accepts stays expected: a Hive-format line
-    # with neither STORED AS nor ROW FORMAT is CREATE TABLE [USING] (the hiveformat page's note).
-    general: set[str] = {
-        rendered.sql
-        for _, draft, found in drafted
-        if draft.form not in runtime_only
-        for rendered in found
-        if rendered.expect == EXPECT_ACCEPT
-    }
+    general: set[str] = _warehouse_accepted(drafted=drafted, runtime_only=runtime_only)
     for identifier, draft, found in drafted:
         if draft.form in runtime_only:
             found = [r if r.sql in general else _on_warehouse(r) for r in found]  # noqa: PLW2901
@@ -145,6 +134,17 @@ def family_cases(  # noqa: PLR0913
             )
         )
     return sorted(cases, key=lambda case: str(case["case_id"]))
+
+
+def _warehouse_accepted(
+    *, drafted: list[tuple[str, Draft, list[Rendered]]], runtime_only: frozenset[str]
+) -> set[str]:
+    """The texts a form that applies to Databricks SQL expects to be accepted."""
+    accepted: set[str] = set()
+    for _, draft, found in drafted:
+        if draft.form not in runtime_only:
+            accepted.update(rendered.sql for rendered in found if rendered.expect == EXPECT_ACCEPT)
+    return accepted
 
 
 def receipt_view(directory: Path) -> ReceiptView:

@@ -131,8 +131,12 @@ check fails on any mismatch.
 import json, sys
 from pyspark.sql import SparkSession  # pyspark 4.2.0
 
-spark = (SparkSession.builder.master("local[1]").config("spark.ui.enabled", "false")
-         .config("spark.sql.ansi.enabled", "true").getOrCreate())
+spark = (
+    SparkSession.builder.master("local[1]")
+    .config("spark.ui.enabled", "false")
+    .config("spark.sql.ansi.enabled", "true")
+    .getOrCreate()
+)
 parser = spark._jsparkSession.sessionState().sqlParser()
 mismatches = 0
 for path in sys.argv[1:]:

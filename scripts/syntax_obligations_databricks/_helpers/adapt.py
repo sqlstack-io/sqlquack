@@ -10,7 +10,10 @@ from collections.abc import Callable
 from pathlib import Path
 
 from scripts.syntax_obligations import constants as shared
-from scripts.syntax_obligations._helpers import derive, grammar, ids, obligations, render
+from scripts.syntax_obligations._helpers import derive, grammar, ids, obligations
+from scripts.syntax_obligations.classes import renderer
+from scripts.syntax_obligations.classes.renderer import Renderer
+from scripts.syntax_obligations.classes.walk import Walk
 from scripts.syntax_obligations.constants import (
     ACTION_HAND,
     ACTION_RESERVED_WORD,
@@ -44,11 +47,11 @@ from scripts.syntax_obligations_databricks.constants import (
 )
 
 _shared_existing_ids: Callable[[Path], dict[Key, str]] = ids.existing_ids
-_shared_token: Callable[..., str] = render._Renderer._token  # noqa: SLF001
-_shared_submissions: Callable[..., list[Rendered]] = render._Renderer.submissions  # noqa: SLF001
-_shared_spec: Callable[..., Spec] = derive._Walk.spec  # noqa: SLF001
+_shared_token: Callable[..., str] = Renderer._token  # noqa: SLF001
+_shared_submissions: Callable[..., list[Rendered]] = Renderer.submissions
+_shared_spec: Callable[..., Spec] = Walk.spec
 _shared_class_note: Callable[..., str] = derive._class_note  # noqa: SLF001
-_shared_class_rules: tuple[tuple[re.Pattern[str], str], ...] = derive.CLASS_RULES
+_shared_class_rules: tuple[tuple[re.Pattern[str], str], ...] = grammar.CLASS_RULES
 
 
 def _longest(*, form: str, keys: set[str]) -> str:
@@ -135,11 +138,11 @@ def backticked(text: str) -> str:
     return text
 
 
-def db_token(self: object, *, node: object, choices: object, dollar_quoted: bool = False) -> str:
+def db_token(self: object, *, node: Node, choices: object, dollar_quoted: bool = False) -> str:
     """The shared token, with a quoted-identifier fill in backticks (double quotes are strings)."""
     text: str = _shared_token(self, node=node, choices=choices, dollar_quoted=dollar_quoted)
     quoted: str = str(getattr(choices, "quote", ""))
-    if quoted and quoted == render.placeholder_name(node):  # type: ignore[arg-type]
+    if quoted and quoted == grammar.placeholder_name(node):
         return backticked(text)
     return text
 
@@ -159,17 +162,16 @@ def db_class_note(*, label: str, description: str, placeholder: str) -> str:
 
 
 def db_submissions(self: object, *, spec: Spec, depths: tuple[int, ...] = ()) -> list[Rendered]:
-    """The shared submissions; the reserved word is ANTI for a table alias, else an accepted
-    SELECT, and its quoted twin is written in backticks."""
+    """The shared submissions, with the reserved word and its backticked twin (see the README)."""
     if spec.action != ACTION_RESERVED_WORD:
         return _shared_submissions(self, spec=spec, depths=depths)
     alias: bool = spec.payload in TABLE_ALIAS_PLACEHOLDERS
     word: str = ALIAS_RESERVED_WORD if alias else RESERVED_WORD
-    render.RESERVED_WORD = word
+    renderer.RESERVED_WORD = word
     try:
         found: list[Rendered] = _shared_submissions(self, spec=spec, depths=depths)
     finally:
-        render.RESERVED_WORD = RESERVED_WORD
+        renderer.RESERVED_WORD = RESERVED_WORD
     quoted: str = f'"{word}"'
     return [
         dataclasses.replace(
@@ -183,8 +185,8 @@ def db_submissions(self: object, *, spec: Spec, depths: tuple[int, ...] = ()) ->
 
 def install() -> None:
     """Register the Databricks styles, tokens, operand classes and limit reader."""
-    derive.CLASS_RULES = (*DB_CLASS_RULES, *_shared_class_rules)
-    render.REPEAT_FILLS.update(DB_REPEAT_FILLS)
+    grammar.CLASS_RULES = (*DB_CLASS_RULES, *_shared_class_rules)
+    renderer.REPEAT_FILLS.update(DB_REPEAT_FILLS)
     setattr(grammar, "TOKEN", DB_TOKEN)  # noqa: B010
     for family in FAMILIES:
         styles: dict[str, FormStyle] = shared.FAMILY_STYLES.setdefault(family, {})
@@ -198,7 +200,7 @@ def install() -> None:
         )
     setattr(obligations, "limit_drafts", db_limit_drafts)  # noqa: B010
     setattr(obligations, "existing_ids", db_existing_ids)  # noqa: B010
-    setattr(render._Renderer, "_token", db_token)  # noqa: B010, SLF001
-    setattr(render._Renderer, "submissions", db_submissions)  # noqa: B010, SLF001
-    setattr(derive._Walk, "spec", db_spec)  # noqa: B010, SLF001
+    setattr(Renderer, "_token", db_token)  # noqa: B010
+    setattr(Renderer, "submissions", db_submissions)  # noqa: B010
+    setattr(Walk, "spec", db_spec)  # noqa: B010
     setattr(derive, "_class_note", db_class_note)  # noqa: B010

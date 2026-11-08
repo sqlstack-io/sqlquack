@@ -81,3 +81,16 @@ class ReceiptView:
 
     phases: dict[tuple[str, str], str]
     settlements: dict[tuple[str, str, str, str], tuple[str, str]]
+
+
+@dataclass(frozen=True)
+class Choices:
+    """The rendering choices for one case."""
+
+    full: bool = False
+    path: frozenset[int] = frozenset()
+    branch: dict[int, int] = field(default_factory=dict)
+    replace: dict[int, str] = field(default_factory=dict)
+    drop: frozenset[int] = frozenset()
+    quote: str = ""
+    absent: int = 0

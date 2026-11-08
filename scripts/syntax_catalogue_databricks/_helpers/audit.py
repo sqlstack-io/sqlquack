@@ -5,19 +5,14 @@ from __future__ import annotations
 import hashlib
 import itertools
 import tomllib
-from dataclasses import dataclass
 from pathlib import Path
+from typing import cast
 
-from scripts.syntax_catalogue_databricks._helpers.fetch import page_name
+from scripts.syntax_catalogue_databricks._helpers.fetch import pinned_pages
 from scripts.syntax_catalogue_databricks._helpers.grammar import read_keywords, read_rules
 from scripts.syntax_catalogue_databricks._helpers.pages import read_page
-from scripts.syntax_catalogue_databricks._helpers.strict import (
-    LINE_TOKEN,
-    PLACEHOLDER_NAME,
-    Automaton,
-    clause_index,
-    line_automaton,
-)
+from scripts.syntax_catalogue_databricks._helpers.strict import clause_index, line_automaton
+from scripts.syntax_catalogue_databricks.classes.automaton import Automaton
 from scripts.syntax_catalogue_databricks.constants import (
     ANY_RUN,
     BLOCK_DIGEST_WIDTH,
@@ -34,6 +29,7 @@ from scripts.syntax_catalogue_databricks.constants import (
     INDEX_LINK,
     KEYWORD_SYMBOL,
     LEADING_RULES,
+    LINE_TOKEN,
     MANUAL_PREFIX,
     MAX_EXPANSION,
     MAX_SET,
@@ -55,58 +51,22 @@ from scripts.syntax_catalogue_databricks.constants import (
     STRUCTURE_SYMBOLS,
     SYNONYM_TOKENS,
     SYNTAX_NOTATION,
+    TOKEN_SYNONYMS,
 )
 from scripts.syntax_catalogue_databricks.exceptions import DatabricksCatalogueError
-from scripts.syntax_catalogue_databricks.types import Node, Sequences
+from scripts.syntax_catalogue_databricks.models import (
+    AuditGap,
+    AuditResult,
+    CatalogueLines,
+    DbPage,
+)
+from scripts.syntax_catalogue_databricks.types import Node, Row, Sequences
 from scripts.syntax_obligations_databricks.constants import (
     EXPRESSION_CONTEXT,
     FAMILY_CONTEXTS,
     FORM_CONTEXTS,
     VALUE_CONTEXT,
 )
-
-TOKEN_SYNONYMS: dict[str, str] = {
-    token: target for token, target in SYNONYM_TOKENS.items() if target.isalpha()
-}
-
-
-@dataclass(frozen=True)
-class AuditGap:
-    """Keyword sequences of one rule alternative that no catalogued line reads."""
-
-    rule: str
-    alternative: int
-    keywords: str
-
-
-@dataclass(frozen=True)
-class CatalogueLines:
-    """Each catalogued line's automaton and every upper-case word the catalogue spells."""
-
-    automata: list[tuple[str, Automaton, int]]
-    words: frozenset[str]
-
-
-@dataclass(frozen=True)
-class AuditResult:
-    """What the audit found and how much it checked."""
-
-    gaps: list[AuditGap]
-    derived_gaps: int
-    missing_keywords: list[str]
-    unused_keywords: list[str]
-    missing_words: list[str]
-    missing_index: list[str]
-    notation_blocks: list[str]
-    walked: list[str]
-    unwalked: list[str]
-    uncompared_tokens: list[str]
-    sequences_checked: int
-    productions_checked: int
-    keywords_checked: int
-    words_checked: int
-    index_checked: int
-    blocks_checked: int
 
 
 def catalogue_rows(root: Path) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
@@ -121,12 +81,7 @@ def catalogue_rows(root: Path) -> tuple[list[dict[str, object]], list[dict[str, 
 
 
 def statement_context(form: dict[str, object]) -> tuple[str, str]:
-    """The text around a form in the statement its cases run in, as the obligations write it.
-
-    The parentheses of the expression context only keep a word left at the end of a negative
-    from being read as an alias, and are no part of the form: the context's closing parenthesis
-    would otherwise close a sequence the form leaves open, such as FIRST ( … IGNORE NULLS ).
-    """
+    """The text around a form in the statement its cases run in, without wrapper parentheses."""
     form_id: str = str(form["id"])
     owners: list[str] = [key for key in FORM_CONTEXTS if form_id.startswith(key)]
     context: tuple[str, str] = (
@@ -137,6 +92,16 @@ def statement_context(form: dict[str, object]) -> tuple[str, str]:
     return VALUE_CONTEXT if context == EXPRESSION_CONTEXT else context
 
 
+def _joined_bodies(bodies: dict[str, list[str]]) -> dict[str, str]:
+    """Each name's one body, or its bodies as a choice."""
+    return {n: b[0] if len(b) == 1 else "{ " + " | ".join(b) + " }" for n, b in bodies.items()}
+
+
+def _grammar_lines(form: Row) -> list[object]:
+    """A form row's grammar lines."""
+    return cast(list[object], form["grammar"])
+
+
 def catalogue_lines(root: Path) -> CatalogueLines:
     """Automata of every form's lines, definitions inlined; and every word the catalogue spells."""
     forms, definitions = catalogue_rows(root)
@@ -145,25 +110,23 @@ def catalogue_lines(root: Path) -> CatalogueLines:
         body: str = DEFINITION_PREFIX.sub("", str(row["grammar"]), count=1)
         by_page.setdefault(str(row["source"]), {}).setdefault(str(row["name"]), []).append(body)
     joined: dict[str, dict[str, str]] = {
-        page: {n: b[0] if len(b) == 1 else "{ " + " | ".join(b) + " }" for n, b in found.items()}
-        for page, found in by_page.items()
+        page: _joined_bodies(found) for page, found in by_page.items()
     }
     everywhere: dict[str, list[str]] = {}
     for found in joined.values():
         for name, body in found.items():
             everywhere.setdefault(name, []).append(body)
-    common: dict[str, str] = {
-        n: b[0] if len(b) == 1 else "{ " + " | ".join(b) + " }" for n, b in everywhere.items()
-    }
+    common: dict[str, str] = _joined_bodies(everywhere)
     automata: list[tuple[str, Automaton, int]] = []
     words: set[str] = set()
-    clauses: dict[tuple[str, ...], list[list[str]]] = clause_index(
-        [str(line) for form in forms for line in form["grammar"]]  # type: ignore[attr-defined]
-    )
+    every_line: list[str] = []
+    for form in forms:
+        every_line += [str(line) for line in _grammar_lines(form)]
+    clauses: dict[tuple[str, ...], list[list[str]]] = clause_index(every_line)
     for form in forms:
         own: dict[str, str] = joined.get(str(form["source"]), {})
         prefix, suffix = statement_context(form)
-        for index, line in enumerate(form["grammar"]):  # type: ignore[arg-type]
+        for index, line in enumerate(_grammar_lines(form)):
             for label, text in ((f"{form['id']}#{index}", str(line)),) + (
                 ((f"{form['id']}#{index}+context", f"{prefix}{line}{suffix}"),)
                 if prefix or suffix
@@ -183,7 +146,10 @@ def concatenations(parts: list[Sequences]) -> Sequences:
     """Every way to pick one sequence from each part, joined in order; ANY_RUN runs collapsed."""
     joined: Sequences = [()]
     for part in parts:
-        joined = list(dict.fromkeys(squeezed(head + tail) for head in joined for tail in part))
+        found: Sequences = []
+        for head in joined:
+            found += [squeezed(head + tail) for tail in part]
+        joined = list(dict.fromkeys(found))
         if len(joined) > MAX_EXPANSION:
             raise DatabricksCatalogueError(f"a production spells more than {MAX_EXPANSION} runs")
     return joined
@@ -242,7 +208,7 @@ class _Speller:
             return inner
         if kind == NODE_SEQ:
             parts: list[Sequences] = []
-            for item in node[1]:  # type: ignore[union-attr]
+            for item in children(node):
                 found: Sequences | None = self.spell(node=item, strict=strict)
                 if found is None:
                     return None
@@ -250,23 +216,33 @@ class _Speller:
             return concatenations(parts)
         if kind == NODE_CHOICE:
             out: Sequences = []
-            for item in node[1]:  # type: ignore[union-attr]
+            for item in children(node):
                 found = self.spell(node=item, strict=strict)
                 if found is None:
                     return None
                 out += found
             return list(dict.fromkeys(out))
         if kind in (NODE_OPTIONAL, NODE_STAR, NODE_PLUS):
-            found = self.spell(node=node[1], strict=strict)  # type: ignore[arg-type]
+            found = self.spell(node=child(node), strict=strict)
             if found is None:
                 return None
             return list(dict.fromkeys(found if kind == NODE_PLUS else [(), *found]))
         return [()]
 
 
+def children(node: Node) -> tuple[Node, ...]:
+    """The items of a sequence or choice node."""
+    return cast(tuple[Node, ...], node[1])
+
+
+def child(node: Node) -> Node:
+    """The item of an optional or repeated node."""
+    return cast(Node, node[1])
+
+
 def alternatives(node: Node) -> tuple[Node, ...]:
     """A rule's top-level alternatives."""
-    return node[1] if node[0] == NODE_CHOICE else (node,)  # type: ignore[return-value]
+    return children(node) if node[0] == NODE_CHOICE else (node,)
 
 
 def references(node: Node) -> list[str]:
@@ -275,9 +251,9 @@ def references(node: Node) -> list[str]:
     if kind == NODE_REF:
         return [str(node[1])]
     if kind in (NODE_SEQ, NODE_CHOICE):
-        return list(itertools.chain.from_iterable(references(n) for n in node[1]))  # type: ignore[union-attr]
+        return list(itertools.chain.from_iterable(references(n) for n in children(node)))
     if kind in (NODE_OPTIONAL, NODE_STAR, NODE_PLUS):
-        return references(node[1])  # type: ignore[arg-type]
+        return references(child(node))
     return []
 
 
@@ -287,9 +263,9 @@ def tokens_of(node: Node) -> set[str]:
     if kind == NODE_TOKEN:
         return {str(node[1])}
     if kind in (NODE_SEQ, NODE_CHOICE):
-        return set(itertools.chain.from_iterable(tokens_of(n) for n in node[1]))  # type: ignore[union-attr]
+        return set(itertools.chain.from_iterable(tokens_of(n) for n in children(node)))
     if kind in (NODE_OPTIONAL, NODE_STAR, NODE_PLUS):
-        return tokens_of(node[1])  # type: ignore[arg-type]
+        return tokens_of(child(node))
     return set()
 
 
@@ -320,6 +296,14 @@ def descendants(*, rules: dict[str, Node], name: str) -> set[str]:
     return seen
 
 
+def _pieces(words: tuple[str, ...]) -> set[tuple[str, ...]]:
+    """Every contiguous run of the words."""
+    found: set[tuple[str, ...]] = set()
+    for i in range(len(words)):
+        found |= {words[i:j] for j in range(i + 1, len(words) + 1)}
+    return found
+
+
 def split_derived(
     *, gaps: list[AuditGap], rules: dict[str, Node], own: frozenset[str]
 ) -> tuple[list[AuditGap], int]:
@@ -333,19 +317,39 @@ def split_derived(
     for gap in gaps:
         words: tuple[str, ...] = tuple(gap.keywords.split())
         if gap.rule not in below:
-            below[gap.rule] = {
-                run
-                for rule in descendants(rules=rules, name=gap.rule) - {gap.rule}
-                for run in by_rule.get(rule, [])
-            }
-        pieces: set[tuple[str, ...]] = {
-            words[i:j] for i in range(len(words)) for j in range(i + 1, len(words) + 1)
-        }
+            runs: set[tuple[str, ...]] = set()
+            for rule in descendants(rules=rules, name=gap.rule) - {gap.rule}:
+                runs.update(by_rule.get(rule, []))
+            below[gap.rule] = runs
+        pieces: set[tuple[str, ...]] = _pieces(words)
         if f"{gap.rule}: {gap.keywords}" not in own and not pieces.isdisjoint(below[gap.rule]):
             derived += 1
         else:
             roots.append(gap)
     return roots, derived
+
+
+def _reads_somewhere(
+    *,
+    sequence: tuple[str, ...],
+    leading: bool,
+    lines: CatalogueLines,
+    holding: dict[str, set[int]],
+    known: dict[tuple[bool, tuple[str, ...]], bool],
+) -> bool:
+    """True when a line holding every symbol of the sequence reads it; memoised in `known`."""
+    key: tuple[bool, tuple[str, ...]] = (leading, sequence)
+    if key not in known:
+        candidates: set[int] = set(range(len(lines.automata)))
+        for symbol in set(sequence) - {ANY_RUN}:
+            candidates &= holding.get(symbol, set())
+        known[key] = any(
+            lines.automata[i][1].reads(
+                sequence=sequence, start=lines.automata[i][2] if leading else None
+            )
+            for i in sorted(candidates)
+        )
+    return known[key]
 
 
 def gap_walk(
@@ -359,25 +363,12 @@ def gap_walk(
     speller: _Speller = _Speller(rules=rules, keywords=keywords)
     holding: dict[str, set[int]] = {}
     for position, (_, automaton, _) in enumerate(lines.automata):
-        for label in {label for edges in automaton.edges for label, _ in edges}:
+        labels: set[str] = set()
+        for edges in automaton.edges:
+            labels |= {label for label, _ in edges}
+        for label in labels:
             holding.setdefault(label, set()).add(position)
-    every: set[int] = set(range(len(lines.automata)))
     known: dict[tuple[bool, tuple[str, ...]], bool] = {}
-
-    def read(sequence: tuple[str, ...], leading: bool) -> bool:
-        """True when a line holding every symbol of the sequence reads it; memoised."""
-        key: tuple[bool, tuple[str, ...]] = (leading, sequence)
-        if key not in known:
-            candidates: set[int] = set(every)
-            for symbol in set(sequence) - {ANY_RUN}:
-                candidates &= holding.get(symbol, set())
-            known[key] = any(
-                lines.automata[i][1].reads(
-                    sequence=sequence, start=lines.automata[i][2] if leading else None
-                )
-                for i in sorted(candidates)
-            )
-        return known[key]
 
     gaps: list[AuditGap] = []
     checked: int = 0
@@ -395,7 +386,13 @@ def gap_walk(
                 ):
                     continue
                 checked += 1
-                if not read(sequence, name in LEADING_RULES):
+                if not _reads_somewhere(
+                    sequence=sequence,
+                    leading=name in LEADING_RULES,
+                    lines=lines,
+                    holding=holding,
+                    known=known,
+                ):
                     gaps.append(AuditGap(rule=name, alternative=index, keywords=" ".join(sequence)))
     return gaps, checked, productions
 
@@ -410,9 +407,9 @@ def helper_words(cache: Path) -> list[str]:
     return sorted(found)
 
 
-def index_pages(*, cache: Path, record: dict[str, object]) -> tuple[list[str], int]:
+def index_pages(*, cache: Path, record: Row) -> tuple[list[str], int]:
     """Function pages the alphabetical indexes link that the pinned page set lacks."""
-    pages: dict[str, str] = record["pages"]  # type: ignore[assignment]
+    pages: dict[str, str] = pinned_pages(record)
     linked: set[str] = set()
     for index in FUNCTION_INDEX_PAGES:
         text: str = (cache / PAGES_DIR / f"{index}.html").read_text()
@@ -423,18 +420,14 @@ def index_pages(*, cache: Path, record: dict[str, object]) -> tuple[list[str], i
     return missing, len(linked)
 
 
-def notation_blocks(*, cache: Path, record: dict[str, object]) -> tuple[list[str], int]:
-    """Code blocks the build does not read that write syntax notation, and how many it read.
-
-    Each is named `<page> § <heading> § <sha256 prefix of its text>`, so a changed block is a new
-    name and its old review row goes stale.
-    """
-    pages: dict[str, str] = record["pages"]  # type: ignore[assignment]
+def notation_blocks(*, cache: Path, record: Row) -> tuple[list[str], int]:
+    """Code blocks the build does not read that write syntax notation, and how many it read."""
+    pages: dict[str, str] = pinned_pages(record)
     found: list[str] = []
     checked: int = 0
     for url in sorted(pages):
         try:
-            page = read_page(cache=cache, url=url)
+            page: DbPage = read_page(cache=cache, url=url)
         except DatabricksCatalogueError:
             continue
         for block in page.others:
@@ -447,8 +440,23 @@ def notation_blocks(*, cache: Path, record: dict[str, object]) -> tuple[list[str
     return sorted(set(found)), checked
 
 
+def _missing_keywords(
+    *, keywords: dict[str, tuple[str, ...]], used: set[str], words: frozenset[str]
+) -> tuple[list[str], list[str]]:
+    """Keywords the catalogue never spells: of tokens the walked grammar uses, and of the others."""
+    missing: list[str] = []
+    unused: list[str] = []
+    for token, spelled in keywords.items():
+        absent: list[str] = [word for word in spelled if word not in words]
+        if token in used:
+            missing += absent
+        else:
+            unused += absent
+    return sorted(missing), sorted(unused)
+
+
 def audit(
-    *, cache: Path, root: Path, record: dict[str, object], own: frozenset[str] = frozenset()
+    *, cache: Path, root: Path, record: Row, own: frozenset[str] = frozenset()
 ) -> AuditResult:
     """Grammar sequences, keywords, helper words and index entries the catalogue lacks."""
     rules: dict[str, Node] = read_rules(cache)
@@ -463,23 +471,14 @@ def audit(
     words: list[str] = helper_words(cache)
     missing_index, linked = index_pages(cache=cache, record=record)
     blocks, blocks_checked = notation_blocks(cache=cache, record=record)
+    missing_keywords, unused_keywords = _missing_keywords(
+        keywords=keywords, used=used, words=lines.words
+    )
     return AuditResult(
         gaps=roots,
         derived_gaps=derived,
-        missing_keywords=sorted(
-            word
-            for token, spelled in keywords.items()
-            if token in used
-            for word in spelled
-            if word not in lines.words
-        ),
-        unused_keywords=sorted(
-            word
-            for token, spelled in keywords.items()
-            if token not in used
-            for word in spelled
-            if word not in lines.words
-        ),
+        missing_keywords=missing_keywords,
+        unused_keywords=unused_keywords,
         missing_words=[word for word in words if word not in lines.words],
         missing_index=missing_index,
         notation_blocks=blocks,
@@ -501,6 +500,3 @@ def audit(
         index_checked=linked,
         blocks_checked=blocks_checked,
     )
-
-
-__all__ = ["PLACEHOLDER_NAME", "AuditGap", "AuditResult", "audit", "page_name"]

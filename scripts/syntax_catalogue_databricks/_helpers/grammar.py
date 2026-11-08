@@ -6,8 +6,30 @@ import re
 from pathlib import Path
 
 from scripts.syntax_catalogue_databricks.constants import (
+    G4_ACTION,
+    G4_ACTION_CLOSE,
+    G4_ACTION_OPEN,
+    G4_BACKSLASH,
+    G4_BAR,
+    G4_GROUP_CLOSE,
+    G4_GROUP_OPEN,
+    G4_HEADER_SECTIONS,
     G4_LABEL_ASSIGN,
+    G4_LABEL_MARK,
+    G4_LEXEME,
+    G4_LITERAL,
+    G4_NON_GREEDY,
+    G4_NOT,
+    G4_PARSER_HEADER,
+    G4_PUNCT,
+    G4_QUOTE,
+    G4_QUOTED,
+    G4_QUOTES,
+    G4_RULE_COLON,
+    G4_RULE_END,
     G4_RULE_HEAD,
+    G4_WILDCARD,
+    G4_WORD,
     KEYWORD_LIST,
     LEXER_TOKEN,
     LEXER_WORD,
@@ -25,10 +47,6 @@ from scripts.syntax_catalogue_databricks.constants import (
 from scripts.syntax_catalogue_databricks.exceptions import DatabricksCatalogueError
 from scripts.syntax_catalogue_databricks.types import Node
 
-G4_LEXEME: re.Pattern[str] = re.compile(
-    r"(?P<word>[A-Za-z_][A-Za-z0-9_]*)|(?P<quoted>'(?:\\.|[^'\\])*')|(?P<punct>\+=|[:;|()?*+=#~.@])"
-)
-
 
 def strip_comments(text: str) -> str:
     """The grammar without `//` and `/* */` comments; quoted literals kept whole."""
@@ -45,8 +63,8 @@ def strip_comments(text: str) -> str:
                 raise DatabricksCatalogueError(f"unterminated comment at offset {index}")
             index = end + 2
             continue
-        if text[index] == "'":
-            match: re.Match[str] | None = re.compile(r"'(?:\\.|[^'\\])*'").match(text, index)
+        if text[index] == G4_QUOTE:
+            match: re.Match[str] | None = G4_LITERAL.match(text, index)
             if match is None:
                 raise DatabricksCatalogueError(f"unterminated literal at offset {index}")
             out.append(match.group(0))
@@ -63,15 +81,15 @@ def balanced_end(*, text: str, start: int) -> int:
     index: int = start
     while index < len(text):
         ch: str = text[index]
-        if ch in "\"'":
+        if ch in G4_QUOTES:
             close: int = index + 1
             while close < len(text) and text[close] != ch:
-                close += 2 if text[close] == "\\" else 1
+                close += 2 if text[close] == G4_BACKSLASH else 1
             index = close + 1
             continue
-        if ch == "{":
+        if ch == G4_ACTION_OPEN:
             depth += 1
-        elif ch == "}":
+        elif ch == G4_ACTION_CLOSE:
             depth -= 1
             if depth == 0:
                 return index + 1
@@ -87,10 +105,10 @@ def lexemes(text: str) -> list[tuple[str, str]]:
         if text[index].isspace():
             index += 1
             continue
-        if text[index] == "{":
+        if text[index] == G4_ACTION_OPEN:
             end: int = balanced_end(text=text, start=index)
             index = end + 1 if text.startswith("?", end) else end
-            out.append(("action", ""))
+            out.append((G4_ACTION, ""))
             continue
         match: re.Match[str] | None = G4_LEXEME.match(text, index)
         if match is None:
@@ -126,25 +144,25 @@ class _Parser:
         """Every rule after the grammar header, options and member actions."""
         found: dict[str, Node] = {}
         while self.peek()[0]:
-            if self.peek() == ("word", "parser"):
-                while self.take()[1] != ";":
+            if self.peek() == G4_PARSER_HEADER:
+                while self.take()[1] != G4_RULE_END:
                     pass
                 continue
-            if self.peek() in (("word", "options"), ("punct", "@")):
+            if self.peek() in G4_HEADER_SECTIONS:
                 self.take()
-                if self.peek()[0] == "word":
+                if self.peek()[0] == G4_WORD:
                     self.take()
-                if self.take()[0] != "action":
+                if self.take()[0] != G4_ACTION:
                     raise DatabricksCatalogueError("a header section without its block")
                 continue
-            if self.peek()[0] == "word" and self.peek(1) == ("punct", ":"):
+            if self.peek()[0] == G4_WORD and self.peek(1) == G4_RULE_COLON:
                 name: str = self.take()[1]
                 self.take()
                 try:
-                    body: Node = self.alternatives(";")
+                    body: Node = self.alternatives(G4_RULE_END)
                 except DatabricksCatalogueError as error:
                     raise DatabricksCatalogueError(f"{PARSER_FILE} rule {name}: {error}") from error
-                self.expect(";")
+                self.expect(G4_RULE_END)
                 if name in found:
                     raise DatabricksCatalogueError(f"{PARSER_FILE}: rule {name} defined twice")
                 found[name] = body
@@ -154,17 +172,17 @@ class _Parser:
 
     def alternatives(self, closer: str) -> Node:
         branches: list[Node] = [self.sequence(closer)]
-        while self.peek() == ("punct", "|"):
+        while self.peek() == G4_BAR:
             self.take()
             branches.append(self.sequence(closer))
         return branches[0] if len(branches) == 1 else (NODE_CHOICE, tuple(branches))
 
     def sequence(self, closer: str) -> Node:
         items: list[Node] = []
-        while self.peek() not in (("punct", closer), ("punct", "|")):
+        while self.peek() not in ((G4_PUNCT, closer), G4_BAR):
             if not self.peek()[0]:
                 raise DatabricksCatalogueError(f"unexpected end of grammar before {closer!r}")
-            if self.peek() == ("punct", "#"):
+            if self.peek() == G4_LABEL_MARK:
                 self.take()
                 self.take()
                 continue
@@ -174,31 +192,31 @@ class _Parser:
     def element(self) -> Node:
         """One element with its suffix: an action, subrule, token, rule reference or set."""
         kind, value = self.take()
-        if kind == "word" and self.peek()[1] in G4_LABEL_ASSIGN:
+        if kind == G4_WORD and self.peek()[1] in G4_LABEL_ASSIGN:
             self.take()
             kind, value = self.take()
         node: Node
-        if kind == "action":
+        if kind == G4_ACTION:
             node = (NODE_EMPTY,)
-        elif (kind, value) == ("punct", "("):
-            node = self.alternatives(")")
-            self.expect(")")
-        elif (kind, value) == ("punct", "~"):
+        elif (kind, value) == G4_GROUP_OPEN:
+            node = self.alternatives(G4_GROUP_CLOSE)
+            self.expect(G4_GROUP_CLOSE)
+        elif (kind, value) == G4_NOT:
             negated: Node = self.element()
             node = (NODE_TOKEN, f"~{negated[1] if len(negated) > 1 else ''}")
-        elif (kind, value) == ("punct", "."):
+        elif (kind, value) == G4_WILDCARD:
             node = (NODE_TOKEN, ".")
-        elif kind == "quoted":
+        elif kind == G4_QUOTED:
             node = (NODE_TOKEN, value)
-        elif kind == "word":
+        elif kind == G4_WORD:
             node = (NODE_TOKEN, value) if value[:1].isupper() else (NODE_REF, value)
         else:
             raise DatabricksCatalogueError(f"unexpected {value!r} in a rule")
-        suffix: str = self.peek()[1] if self.peek()[0] == "punct" else ""
+        suffix: str = self.peek()[1] if self.peek()[0] == G4_PUNCT else ""
         wrappers: dict[str, str] = {"?": NODE_OPTIONAL, "*": NODE_STAR, "+": NODE_PLUS}
         if suffix in wrappers:
             self.take()
-            if self.peek() == ("punct", "?"):
+            if self.peek() == G4_NON_GREEDY:
                 self.take()
             node = (wrappers[suffix], node)
         return node

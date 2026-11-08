@@ -1,4 +1,4 @@
-"""The private source cache: the pinned SQL language reference pages and the Spark grammar."""
+"""The private source cache of the pinned reference pages and Spark grammar, and its index rows."""
 
 from __future__ import annotations
 
@@ -9,8 +9,10 @@ import urllib.error
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from typing import cast
 
 from scripts.syntax_catalogue_databricks.constants import (
+    DBSQL_VERSION,
     FETCH_ATTEMPTS,
     FETCH_PAUSE_SECONDS,
     FETCH_RECORD,
@@ -18,6 +20,7 @@ from scripts.syntax_catalogue_databricks.constants import (
     FETCH_WORKERS,
     FUNCTION_INDEX_PAGES,
     INDEX_LINK,
+    INDEX_LINKED_KEY,
     INDEX_PAGE,
     MANUAL_PREFIX,
     PAGE_SUFFIX,
@@ -35,6 +38,7 @@ from scripts.syntax_catalogue_databricks.constants import (
     UTC_FORMAT,
 )
 from scripts.syntax_catalogue_databricks.exceptions import DatabricksCatalogueError
+from scripts.syntax_catalogue_databricks.types import Row
 
 
 def sha256(data: bytes) -> str:
@@ -82,8 +86,7 @@ def index_linked(*, cache: Path, pages: dict[str, str]) -> list[str]:
 
 
 def fetch(cache: Path) -> Path:
-    """Fill an empty cache with the sitemap's reference pages, the function pages its indexes link
-    that the sitemap omits, and the pinned Spark files."""
+    """Fill an empty cache with the reference pages and the pinned Spark files."""
     if cache.exists() and any(cache.iterdir()):
         raise DatabricksCatalogueError(f"{cache}: not empty; fetch into an empty directory")
     (cache / PAGES_DIR).mkdir(parents=True)
@@ -108,12 +111,12 @@ def fetch(cache: Path) -> Path:
         body: bytes = download(SPARK_RAW + path)
         (cache / SPARK_DIR / Path(path).name).write_bytes(body)
         spark[path] = sha256(body)
-    record: dict[str, object] = {
+    record: Row = {
         "retrieved_utc": retrieved,
         "sitemap_url": SITEMAP_URL,
         "sitemap_sha256": sha256(sitemap),
         "pages": pages,
-        "index_linked": linked,
+        INDEX_LINKED_KEY: linked,
         "spark_tag": SPARK_TAG,
         "spark_commit": SPARK_COMMIT,
         "spark_files": spark,
@@ -122,20 +125,58 @@ def fetch(cache: Path) -> Path:
     return cache
 
 
-def pinned(cache: Path) -> tuple[dict[str, object], str]:
+def pinned_pages(record: Row) -> dict[str, str]:
+    """The fetch record's pages, each URL with the SHA-256 of its HTML."""
+    return cast(dict[str, str], record["pages"])
+
+
+def pinned_files(record: Row) -> dict[str, str]:
+    """The fetch record's Spark files, each path with its SHA-256."""
+    return cast(dict[str, str], record["spark_files"])
+
+
+def index_linked_urls(record: Row) -> list[str]:
+    """The pages the fetch added from the function indexes, which the sitemap left out."""
+    return cast(list[str], record.get(INDEX_LINKED_KEY, []))
+
+
+def pinned(cache: Path) -> tuple[Row, str]:
     """The fetch record after checking every cached file against it, and its retrieval time."""
     path: Path = cache / FETCH_RECORD
     if not path.exists():
         raise DatabricksCatalogueError(f"{path}: missing; run the fetch first")
-    record: dict[str, object] = json.loads(path.read_text())
+    record: Row = json.loads(path.read_text())
     if sha256((cache / SITEMAP_FILE).read_bytes()) != record["sitemap_sha256"]:
         raise DatabricksCatalogueError(f"{cache / SITEMAP_FILE}: changed since the fetch")
-    pages: dict[str, str] = record["pages"]  # type: ignore[assignment]
+    pages: dict[str, str] = pinned_pages(record)
     for url, digest in pages.items():
         if sha256((cache / PAGES_DIR / page_name(url)).read_bytes()) != digest:
             raise DatabricksCatalogueError(f"{url}: cached page changed since the fetch")
-    files: dict[str, str] = record["spark_files"]  # type: ignore[assignment]
+    files: dict[str, str] = pinned_files(record)
     for name, digest in files.items():
         if sha256((cache / SPARK_DIR / Path(name).name).read_bytes()) != digest:
             raise DatabricksCatalogueError(f"{name}: cached Spark file changed since the fetch")
     return record, str(record["retrieved_utc"])
+
+
+def index_rows(*, record: Row, articles: dict[str, str]) -> list[Row]:
+    """Name and SHA-256 of the sitemap, of the page set and of each pinned Spark file."""
+    pages: dict[str, str] = pinned_pages(record)
+    page_set: str = "".join(f"{articles[url]}  {url}\n" for url in sorted(pages))
+    rows: list[Row] = [
+        {
+            "name": f"{record['sitemap_url']} (retrieved {record['retrieved_utc']})",
+            "sha256": str(record["sitemap_sha256"]),
+        },
+        {
+            "name": f"language-manual page set: {len(pages)} pages as `<article sha256>  <url>` "
+            f"lines (Databricks SQL {DBSQL_VERSION})",
+            "sha256": hashlib.sha256(page_set.encode()).hexdigest(),
+        },
+    ]
+    files: dict[str, str] = pinned_files(record)
+    rows += [
+        {"name": f"apache/spark {SPARK_TAG} ({SPARK_COMMIT}) {path}", "sha256": digest}
+        for path, digest in sorted(files.items())
+    ]
+    return rows

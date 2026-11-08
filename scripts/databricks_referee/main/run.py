@@ -7,6 +7,7 @@ import json
 import sys
 from pathlib import Path
 
+from scripts.databricks_referee._helpers.rows import row_of
 from scripts.databricks_referee._helpers.run import compare, read_cases, record
 from scripts.databricks_referee._helpers.sequential import (
     record_sequential,
@@ -25,15 +26,8 @@ from scripts.databricks_referee.constants import (
 from scripts.databricks_referee.types import Row
 
 
-def run_referee(argv: list[str] | None = None) -> int:
-    """`run --cases FILE... --out DIR --private DIR [--shuffle N] [--select IDS] [--sequential]`
-    or `compare`, or `recover --journal FILE --private DIR`, or `resume --journal FILE` with the
-    stopped sequential run's own `run` arguments. `--sequential` runs the cases one at a
-    time, held cases included, restoring the account state after each; `recover` cleans up after a
-    sequential run that stopped or froze, from its journal, and fails when anything is left;
-    `resume` recovers it and continues it only when its cases, order, seed, source and account
-    state match; `refinish --journal FILE`, with the same arguments, writes a finished sequential
-    run's receipts with its failures judged again by the current reviewed rows."""
+def _parser() -> argparse.ArgumentParser:
+    """The command line: run, resume, refinish, compare and recover."""
     parser: argparse.ArgumentParser = argparse.ArgumentParser(description=__doc__)
     commands: argparse._SubParsersAction = parser.add_subparsers(dest="command", required=True)
     run: argparse.ArgumentParser = commands.add_parser(COMMAND_RUN)
@@ -55,15 +49,11 @@ def run_referee(argv: list[str] | None = None) -> int:
     back: argparse.ArgumentParser = commands.add_parser(COMMAND_RECOVER)
     back.add_argument("--journal", type=Path, required=True)
     back.add_argument("--private", type=Path, required=True)
-    arguments: argparse.Namespace = parser.parse_args(argv)
-    if arguments.command == COMMAND_RECOVER:
-        report: Row = recover(path=arguments.journal, private=arguments.private)
-        print(json.dumps(report, sort_keys=True))
-        return 1 if any(dict(report["left"]).values()) else 0  # type: ignore[call-overload]
-    if arguments.command == COMMAND_COMPARE:
-        differ: list[str] = compare(first=arguments.first, second=arguments.second)
-        print("\n".join(differ[:SHOWN_DIFFERENCES]), file=sys.stderr)
-        return 1 if differ else 0
+    return parser
+
+
+def _selected_cases(arguments: argparse.Namespace) -> list[Row]:
+    """The cases of the files, only those named by --only or --select when either is given."""
     cases: list[Row] = read_cases(arguments.cases)
     chosen: set[str] = set(arguments.only or [])
     if arguments.select is not None:
@@ -72,6 +62,21 @@ def run_referee(argv: list[str] | None = None) -> int:
         }
     if chosen:
         cases = [case for case in cases if str(case["case_id"]) in chosen]
+    return cases
+
+
+def run_referee(argv: list[str] | None = None) -> int:
+    """Run, resume, refinish, compare or recover, as the command line asks."""
+    arguments: argparse.Namespace = _parser().parse_args(argv)
+    if arguments.command == COMMAND_RECOVER:
+        report: Row = recover(path=arguments.journal, private=arguments.private)
+        print(json.dumps(report, sort_keys=True))
+        return 1 if any(row_of(report["left"]).values()) else 0
+    if arguments.command == COMMAND_COMPARE:
+        differ: list[str] = compare(first=arguments.first, second=arguments.second)
+        print("\n".join(differ[:SHOWN_DIFFERENCES]), file=sys.stderr)
+        return 1 if differ else 0
+    cases: list[Row] = _selected_cases(arguments)
     if arguments.command in (COMMAND_RESUME, COMMAND_REFINISH):
         report = (
             resume_sequential if arguments.command == COMMAND_RESUME else refinish_sequential

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import itertools
 import re
 
 DBSQL_VERSION: str = "2026.44"
@@ -52,7 +53,6 @@ FAMILIES: tuple[str, ...] = (
 ARTICLE: re.Pattern[str] = re.compile(r"<article.*?</article>", re.S)
 TITLE_CODE: re.Pattern[str] = re.compile(r"<code>(.*?)</code>", re.S)
 OPERATOR_TITLE: re.Pattern[str] = re.compile(r"\b(?:operator|predicate)$")
-# Lower-case connective words an operator or predicate page writes as part of its syntax.
 OPERATOR_WORDS: frozenset[str] = frozenset(
     {"not", "and", "or", "is", "null", "true", "false", "unknown", "from", "distinct", "in"}
 )
@@ -153,8 +153,6 @@ HAND_FORM_KEYS: frozenset[str] = frozenset(
 )
 HAND_PAGE_KEYS: frozenset[str] = frozenset({"page", "status", "reason", "article_sha256"})
 HAND_READING_KEYS: frozenset[str] = frozenset({"page", "written", "read", "reason"})
-# section: a syntax block under a heading the build does not read, found by the notation-block
-# check of the omission audit.
 HAND_BASES: frozenset[str] = frozenset({"prose", "table", "list", "example", "section"})
 HAND_KINDS: frozenset[str] = frozenset({"statement", "call", "special"})
 STATUS_FORMS: str = "forms"
@@ -186,7 +184,6 @@ CLAUSE_WORDS: int = 3
 KEYWORD_TOKEN: re.Pattern[str] = re.compile(r"[A-Z][A-Z0-9_]*")
 STATEMENT_WORD: re.Pattern[str] = re.compile(r"^\s*([A-Z][A-Z_]+)\b")
 
-# The omission audit (scripts/audit_syntax_catalogue_databricks.py).
 AUDIT_FILE: str = "audit.toml"
 NODE_SEQ: str = "seq"
 NODE_CHOICE: str = "choice"
@@ -215,11 +212,9 @@ START_RULES: tuple[str, ...] = (
     "singleRoutineParamList",
 )
 LEADING_RULES: frozenset[str] = frozenset({"statement"})
-# Rules that list keywords usable as identifiers: they spell an identifier, as IDENTIFIER does.
 IDENTIFIER_RULES: frozenset[str] = frozenset(
     {"nonReserved", "ansiNonReserved", "strictNonReserved"}
 )
-# Punctuation and operator tokens the audit compares, each with every spelling the lexer gives it.
 PUNCTUATION_TOKENS: dict[str, tuple[str, ...]] = {
     "LEFT_PAREN": ("(",),
     "RIGHT_PAREN": (")",),
@@ -277,20 +272,11 @@ REVIEW_TOKEN: str = "token"
 REVIEW_WORD: str = "word"
 REVIEW_PAGE: str = "page"
 REVIEW_BLOCK: str = "block"
-# A code block under a heading the build does not read, other than an Examples heading or an
-# example run (a line opening with the > prompt), that writes syntax notation outside its string
-# literals: an optional or repeated part, a choice in braces, or an ellipsis. Each needs a
-# [[block]] row saying where its syntax is catalogued or why it is no syntax.
 EXAMPLE_HEADING: re.Pattern[str] = re.compile(r"(?i)^examples?\b")
 EXAMPLE_PROMPT: re.Pattern[str] = re.compile(r"^\s*>", re.MULTILINE)
 QUOTED_TEXT: re.Pattern[str] = re.compile(r"'[^'\n]*'|\"[^\"\n]*\"")
 SYNTAX_NOTATION: re.Pattern[str] = re.compile(r"\[[^\[\]\n]*\]|\{[^{}]*\|[^{}]*\}|\.\.\.")
 BLOCK_DIGEST_WIDTH: int = 12
-# Walked rules with syntax that no [[gap]] row can report; each needs an [[unseen]] row.
-# Lexer tokens the walked grammar uses whose spelling the gap walk does not compare: literals,
-# quoted names and strings, code bodies, hints, subscripts, markers and separators. Each needs a
-# reviewed [[unseen]] row naming where the pages document it; a missing row, or a listed token the
-# walked grammar no longer uses, is a problem.
 UNSEEN_TOKENS: tuple[str, ...] = (
     "BACKQUOTED_IDENTIFIER",
     "BEGIN_DOLLAR_QUOTED_STRING",
@@ -314,10 +300,7 @@ UNSEEN_TOKENS: tuple[str, ...] = (
     "STRING_LITERAL",
     "TINYINT_LITERAL",
 )
-# Lexer tokens that are names or the end of input: they have no spelling of their own to review.
 NAME_TOKENS: frozenset[str] = frozenset({"IDENTIFIER", "EOF"})
-# Rules that spell a name: inside another rule they spell nothing, as a catalogue placeholder
-# does, and their own alternatives are still walked (IDENTIFIER ( ... ) is checked there).
 NAME_RULES: frozenset[str] = frozenset(
     {
         "number",
@@ -342,11 +325,52 @@ NAME_RULES: frozenset[str] = frozenset(
         "errorCapturingIdentifier",
     }
 )
-# Symbols that only frame other parts; a sequence of these alone checks nothing of its own, so the
-# gap walk skips it. Every other symbol, keyword or operator, is checked.
 STRUCTURE_SYMBOLS: frozenset[str] = frozenset({ANY_RUN, "(", ")", ",", ".", ""})
-# Tokens the audit reads as another token; each needs a reviewed [[synonym]] row in audit.toml.
 SYNONYM_TOKENS: dict[str, str] = {"BANG": "NOT", "EQ": "="}
-# Spellings of one lexer token that the audit reads as the token's first spelling.
 SPELLING_SYNONYMS: dict[str, str] = {"==": "="}
 CLAUSE_SUFFIX: str = "_clause"
+TOKEN_SYNONYMS: dict[str, str] = {
+    token: target for token, target in SYNONYM_TOKENS.items() if target.isalpha()
+}
+KIND_STATEMENT: str = "statement"
+KIND_SPECIAL: str = "special"
+INDEX_LINKED_KEY: str = "index_linked"
+LINE_TOKEN: re.Pattern[str] = re.compile(
+    r"\\[|\[\]{}]|<[A-Za-z_][^<>]*>|\.\.\.|\"[^\"]*\"|'[^']*'|<=>|>>>|>>|<<|==|<=|>=|<>|!=|!>|!<"
+    r"|\|\||\|>|::|->|=>|[\[\]{}|]|[A-Za-z_][A-Za-z0-9_]*|\S"
+)
+PUNCTUATION: frozenset[str] = frozenset(itertools.chain.from_iterable(PUNCTUATION_TOKENS.values()))
+ESCAPED_PIPE: str = "\\|"
+PLACEHOLDER_NAME: re.Pattern[str] = re.compile(r"^<([^<>\s][^<>]*)>$")
+REPEAT: str = "..."
+CLOSERS: dict[str, str] = {"[": "]", "{": "}"}
+OPTIONAL_OPEN: str = "["
+CHOICE_BAR: str = "|"
+BRACKET_ENDS: tuple[str, str] = ("]", "}")
+LINE_STARTERS: tuple[str, ...] = ("(", ",", "{", "|")
+EMPTY_ANGLE_LENGTH: int = 2
+G4_LEXEME: re.Pattern[str] = re.compile(
+    r"(?P<word>[A-Za-z_][A-Za-z0-9_]*)|(?P<quoted>'(?:\\.|[^'\\])*')|(?P<punct>\+=|[:;|()?*+=#~.@])"
+)
+G4_LITERAL: re.Pattern[str] = re.compile(r"'(?:\\.|[^'\\])*'")
+G4_WORD: str = "word"
+G4_QUOTED: str = "quoted"
+G4_PUNCT: str = "punct"
+G4_ACTION: str = "action"
+G4_QUOTE: str = "'"
+G4_QUOTES: str = "\"'"
+G4_BACKSLASH: str = "\\"
+G4_ACTION_OPEN: str = "{"
+G4_ACTION_CLOSE: str = "}"
+G4_PARSER_HEADER: tuple[str, str] = (G4_WORD, "parser")
+G4_HEADER_SECTIONS: tuple[tuple[str, str], ...] = ((G4_WORD, "options"), (G4_PUNCT, "@"))
+G4_RULE_END: str = ";"
+G4_RULE_COLON: tuple[str, str] = (G4_PUNCT, ":")
+G4_BAR: tuple[str, str] = (G4_PUNCT, "|")
+G4_LABEL_MARK: tuple[str, str] = (G4_PUNCT, "#")
+G4_GROUP_OPEN: tuple[str, str] = (G4_PUNCT, "(")
+G4_GROUP_CLOSE: str = ")"
+G4_NOT: tuple[str, str] = (G4_PUNCT, "~")
+G4_WILDCARD: tuple[str, str] = (G4_PUNCT, ".")
+G4_NON_GREEDY: tuple[str, str] = (G4_PUNCT, "?")
+DEFINITION_SEPARATOR: str = " ::= "

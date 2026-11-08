@@ -1,0 +1,69 @@
+# Approvals by the independent syntax auditor. Each listed form was read in full against its documentation
+# page, its obligations, its cases with their Databricks receipts, and the local parse trees. An approval holds
+# while the form's definition hash and fingerprint are unchanged; any change makes it stale until re-read.
+
+[[review]]
+id = "db-auditor-utility-001"
+reviewer_lane = "auditor"
+family = "utility"
+parser_tree = "90f341b5c9ff2c489c0ed994f07448481f70597f"
+reviewed_utc = "2026-11-08T09:04:25Z"
+verdict = "approved"
+forms = [
+  "db.utility.cache-cache-table",
+  "db.utility.cache-uncache-table",
+  "db.utility.describe-connection",
+  "db.utility.describe-database",
+  "db.utility.describe-procedure",
+  "db.utility.describe-query",
+  "db.utility.describe-schema",
+  "db.utility.describe-volume",
+  "db.utility.explain",
+  "db.utility.show-catalogs",
+  "db.utility.show-columns",
+  "db.utility.show-create-table",
+  "db.utility.show-databases",
+  "db.utility.show-procedures",
+  "db.utility.show-schemas",
+  "db.utility.show-tables",
+  "db.utility.show-views",
+]
+note = "Read against the pinned Databricks documentation pages and the Spark 4.2 SqlBaseParser grammar, the obligations, the cases with their Databricks receipts and repeats, and the parse trees of the strict parser; every case was parsed by the auditor's own build of the parser and every scored case agrees with its receipt."
+
+[review.fingerprints]
+"db.utility.cache-cache-table" = "cd4f3edff4f3feda802be391beb6c77cbe15fd34c302784796f6f75e690b5dd7"
+"db.utility.cache-uncache-table" = "c529ab3c1a8ead332cf9b72fdfa565bc105d190c535edacc42af853e3f396587"
+"db.utility.describe-connection" = "8e92f13b5df6874b1fb5c1ce3ac65be01358b642ea5403a53360bd1135afc16c"
+"db.utility.describe-database" = "44df658d45d70c87fe997acb7bbdeff466166d561932481a8fe9f97b563b43cc"
+"db.utility.describe-procedure" = "00773cfa2852f864636b531299d000c7985eda065399036dbd7b4ca3fb44a409"
+"db.utility.describe-query" = "f98a1f485845d727f45cf2d0d11b73d2b7d11fd1f1d02107b921b350f8a35a64"
+"db.utility.describe-schema" = "bbb2750ecc7acdaa58dc18a7d6f3eacd7d93c52ec6604add9af3d06c0900946c"
+"db.utility.describe-volume" = "91a966ec74b31191bd2fe6c8da37b33cfa2e500417ff0c2727e30de9fcc0519e"
+"db.utility.explain" = "6e9b64cd7c08dd7129b9c11a0b9d316a8cc5b52c459f091b33b9484abbe5571a"
+"db.utility.show-catalogs" = "350545723d0ad838a070f3d990d80178ff8d7f217418b8115d9944e0ab2da906"
+"db.utility.show-columns" = "5678a604ceced9d9c8cb84f8b6f66893ac4ed97474008f81e0ea5f3343850463"
+"db.utility.show-create-table" = "38f0394180b4356becf11f71c5b3cef001770a8d82b731e55efe4fe9a6b7670b"
+"db.utility.show-databases" = "0dfb85bd53e4da5428e9d538a03e631ca35bff139b21dbaadf4287fa025fd20c"
+"db.utility.show-procedures" = "00abd7e2652eb4ce1c7ff4303a866e75c21dfec8265f402685452b05d3e3cad2"
+"db.utility.show-schemas" = "a1ddfc0753603bd609b0fbf466dc916d18cdbdcc9a8b2959fdf8de150b995ae1"
+"db.utility.show-tables" = "34ebacf6cc222b51bd342775388d6d3a2879921851eb8a80cc2c120a5de09596"
+"db.utility.show-views" = "423e5aa71a755baf18da06690ed258e2318f327679665fbf0a6b783c1e4912bc"
+
+[review.definitions]
+"db.utility.cache-cache-table" = "6a0d27100c17b7c0b2f8104da08e2814b325e8e4872c1080ecf466d59f700cbb"
+"db.utility.cache-uncache-table" = "486c4175a695df99d234399bb4107edbffe5fe8628401aa2040aeb919be45e45"
+"db.utility.describe-connection" = "066c883120be749be16e2470b16caf8758b7201d02e9126a1a0506f52b32de37"
+"db.utility.describe-database" = "fd182abe6a869e98b92afd128bb690ff576476d1104c6e0ce2cc2a5ca3e42be7"
+"db.utility.describe-procedure" = "1c2c7094802a4667989df0b2d973f61b30bb392ffef6480fb98f77abdf59a8d5"
+"db.utility.describe-query" = "92927a88821163b0ccb26ca45c92ffeeef453a823c17d36c55ec709a2b1d928a"
+"db.utility.describe-schema" = "b04979c9f05d8a939465f44122e0d51bd383fa3363ba7effc9a6e080c5756cc0"
+"db.utility.describe-volume" = "e9207808ac0f6bc65c946af9900d8b4c2613ac569731872f8fe35137c6bdd1eb"
+"db.utility.explain" = "fe7e2f48d7ec9875b37fac8767214a6d84fba7d10592148e0f0b55149eb31e28"
+"db.utility.show-catalogs" = "7d1c3d2a8ee25a05be89ea93c7808a0c8a2be56482cbd952b12d6e8abb812f9e"
+"db.utility.show-columns" = "893cd342313e71595b51d616220e39b065023974a4bd6fd601a480e51c68c9ce"
+"db.utility.show-create-table" = "78aa4d9469e5f02f0491b534508b252769db8188912b555729f2383e76b939f2"
+"db.utility.show-databases" = "f3eaf1dae1ef6041898db81b02fda6203c8d87f8971e5b43f4b6ad6b806b6f8b"
+"db.utility.show-procedures" = "310ff72e73b04acbdffab2150ef14941847152485277d953405febd26a2652d4"
+"db.utility.show-schemas" = "30f1397eb99ed92b97e1978e16b583edcd6e0464af22c840773ea787ddff465c"
+"db.utility.show-tables" = "412afaf90b9a51f559675abaac631e1b28f8abbf1e9c99a10b0d80020119a130"
+"db.utility.show-views" = "b7d5b4940d075dd22c6ecb5c8bb403d2a9d5cab23859255a04f2f10280e84293"

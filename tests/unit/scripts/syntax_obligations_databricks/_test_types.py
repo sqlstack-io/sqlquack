@@ -30,3 +30,10 @@ class StrayTestCase:
     description: str
     relative: str
     expected_code: int
+
+
+@dataclass(frozen=True)
+class ReservedWordTestCase:
+    description: str
+    runtime_only: bool
+    expected_keyword_expect: str

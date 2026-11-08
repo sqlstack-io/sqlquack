@@ -5,7 +5,6 @@ from __future__ import annotations
 import hashlib
 from pathlib import Path
 
-from scripts.syntax_catalogue_databricks._helpers.audit import AuditGap, AuditResult
 from scripts.syntax_catalogue_databricks.constants import (
     HELPER_FILES,
     LEXER_FILE,
@@ -20,6 +19,7 @@ from scripts.syntax_catalogue_databricks.constants import (
     SYNONYM_TOKENS,
     UNSEEN_TOKENS,
 )
+from scripts.syntax_catalogue_databricks.models import AuditGap, AuditResult
 from scripts.syntax_catalogue_databricks.types import Review
 
 
@@ -40,11 +40,7 @@ def rows(*, review: Review, table: str) -> list[dict[str, object]]:
 
 
 def covers(*, row: dict[str, object], gap: AuditGap) -> bool:
-    """True when a [[gap]] row names the gap's rule and alternative and lists or contains it.
-
-    A row with `sequences` covers exactly those sequences; a row with `contains` covers every
-    sequence of its alternative in which those words appear together.
-    """
+    """True when a [[gap]] row names the gap's rule and alternative and lists or contains it."""
     if row.get(REVIEW_RULE) != gap.rule or row.get("alternative") != gap.alternative:
         return False
     listed: object = row.get("sequences")

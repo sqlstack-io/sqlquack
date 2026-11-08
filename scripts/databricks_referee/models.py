@@ -14,7 +14,6 @@ class Failure:
     sqlstate: str
     message: str
     parser: bool
-    # Empty in a journal written before failures kept their statement.
     statement_id: str = ""
 
 
@@ -44,14 +43,7 @@ class Run:
 
 @dataclass(frozen=True)
 class SnapshotKind:
-    """One kind of account- or catalog-level object the sequential phase snapshots over REST.
-
-    `path` is listed page by page (`paging`); each object of the reply's `items` list is keyed by
-    its `name` field and fingerprinted by `fields`, where `a.b` is the sorted `b` of each item of
-    list `a`. An object whose `skip` field has the given value, or whose name starts with
-    `skip_prefix`, belongs to another kind or to the referee. `variant` names the field that
-    selects the object's reviewed drop.
-    """
+    """One kind of account- or catalog-level object the sequential phase snapshots over REST."""
 
     path: str
     items: str

@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
-from scripts.databricks_referee._helpers.client import Client
+import re
+
+from scripts.databricks_referee._helpers.rows import row_of
+from scripts.databricks_referee.classes.client import Client
 from scripts.databricks_referee.constants import (
     ACCEPTED,
     ADDRESS,
@@ -44,14 +47,14 @@ from scripts.databricks_referee.types import Row
 
 def failure_of(reply: Row) -> Failure:
     """The error class (or UNCLASSED), SQLSTATE and message of a failed statement."""
-    status: Row = dict(reply["status"])  # type: ignore[call-overload]
-    error: Row = dict(status.get("error") or {})  # type: ignore[call-overload]
+    status: Row = row_of(reply["status"])
+    error: Row = row_of(status.get("error") or {})
     message: str = str(error.get("message", ""))
     if not message.strip():
         raise RefereeError(f"a failed statement without a message: {status}")
-    found = ERROR_CLASS.match(message) or SERVICE_ERROR_CLASS.match(message)
+    found: re.Match[str] | None = ERROR_CLASS.match(message) or SERVICE_ERROR_CLASS.match(message)
     sqlstate: str = str(status.get("sql_state") or "")
-    stated = SQLSTATE_OF.search(message)
+    stated: re.Match[str] | None = SQLSTATE_OF.search(message)
     if not sqlstate and stated:
         sqlstate = stated.group(1)
     return Failure(
@@ -64,13 +67,7 @@ def failure_of(reply: Row) -> Failure:
 
 
 def phase_of(failure: Failure) -> str | None:
-    """The phase of a failure, or None when nothing reviewed decides it, which stops the run.
-
-    A refusal carrying the == SQL == excerpt is a syntax_error when its full class, or for a
-    message without one the message itself, is reviewed as the parser's, and a runtime_error when
-    its class is reviewed as an excerpt-bearing runtime error; any other failure takes the
-    reviewed phase of its class or message, never syntax_error.
-    """
+    """The phase of a failure, or None when nothing reviewed decides it, which stops the run."""
     if failure.error_class == UNCLASSED:
         message: str = failure.message.lstrip()
         if failure.parser:
@@ -96,8 +93,7 @@ def phase_of(failure: Failure) -> str | None:
 
 
 def published(message: str) -> str:
-    """The message as a receipt carries it: its first line, with URLs, addresses, request ids,
-    the account's and workspace's names and the per-case schema masked."""
+    """The message as a receipt carries it: its first line, with what is not public masked."""
     first: str = message.strip().splitlines()[0] if message.strip() else ""
     masked: str = REQUEST_ID.sub(
         REQUEST_ID_MASK, ADDRESS.sub(ADDRESS_MASK, URL.sub(URL_MASK, first))
@@ -110,7 +106,7 @@ def published(message: str) -> str:
 def observation_of(reply: Row) -> Observation | Failure:
     """The observation of a case's reply, or the failure whose class has no reviewed phase."""
     statement: str = str(reply.get("statement_id", ""))
-    if dict(reply["status"])["state"] == STATE_SUCCEEDED:  # type: ignore[call-overload]
+    if row_of(reply["status"])["state"] == STATE_SUCCEEDED:
         return Observation(
             phase=ACCEPTED,
             basis=BASIS_RAN,
@@ -143,8 +139,7 @@ def observation_from(failure: Failure) -> Observation | Failure:
 
 
 def observe(*, client: Client, schema: str, sql: str, setup: list[str]) -> Observation | Failure:
-    """The case run in a new schema holding only its setup; the schema is dropped afterwards,
-    also when the reply to its creation was lost."""
+    """The case run in a new schema holding only its setup; the schema is dropped afterwards."""
     try:
         client.require(sql=f"CREATE SCHEMA {CATALOG}.{schema}", schema=None)
         for text in setup:
@@ -155,8 +150,7 @@ def observe(*, client: Client, schema: str, sql: str, setup: list[str]) -> Obser
 
 
 def drop(*, client: Client, schema: str) -> None:
-    """Drop the case's schema, asking again after a failure: DROP ... IF EXISTS is idempotent,
-    so a retry changes nothing but a transient failure's outcome."""
+    """Drop the case's schema, asking again after a failure, since the drop is idempotent."""
     for attempt in range(DROP_ATTEMPTS):
         try:
             client.require(sql=f"DROP SCHEMA IF EXISTS {CATALOG}.{schema} CASCADE", schema=None)

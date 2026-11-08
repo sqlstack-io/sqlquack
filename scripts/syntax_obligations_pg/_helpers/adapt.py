@@ -9,7 +9,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 from scripts.syntax_obligations import constants as shared
-from scripts.syntax_obligations._helpers import derive, grammar, ids, obligations
+from scripts.syntax_obligations._helpers import grammar, ids, obligations
 from scripts.syntax_obligations.constants import ACTION_HAND, HAND_CASE_KEYS, PAIR_SIZE
 from scripts.syntax_obligations.exceptions import ObligationError
 from scripts.syntax_obligations.models import Draft, FormStyle, Spec
@@ -32,7 +32,7 @@ from scripts.syntax_obligations_pg.constants import (
 
 _shared_grammar_read: Callable[..., list[str]] = obligations._grammar_read  # noqa: SLF001
 _shared_existing_ids: Callable[[Path], dict[Key, str]] = ids.existing_ids
-_shared_class_rules: tuple[tuple[re.Pattern[str], str], ...] = derive.CLASS_RULES
+_shared_class_rules: tuple[tuple[re.Pattern[str], str], ...] = grammar.CLASS_RULES
 
 
 def style(*, form: str, family: str) -> FormStyle:
@@ -128,7 +128,7 @@ def pg_existing_ids(path: Path) -> dict[Key, str]:
 
 def install() -> None:
     """Register the Postgres styles, class rules, tokens, grammar read and limit reader."""
-    derive.CLASS_RULES = (*PG_CLASS_RULES, *_shared_class_rules)
+    grammar.CLASS_RULES = (*PG_CLASS_RULES, *_shared_class_rules)
     setattr(obligations, "_grammar_read", pg_grammar_read)  # noqa: B010
     setattr(grammar, "TOKEN", PG_TOKEN)  # noqa: B010
     for family in FAMILIES:

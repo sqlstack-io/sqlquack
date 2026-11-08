@@ -8,7 +8,9 @@ from scripts.syntax_obligations.constants import (
     ASSIGNMENT_SIZE,
     ASSIGNMENTS,
     BAR,
+    CLASS_RULES,
     CLOSERS,
+    DEFAULT_CLASS,
     GRAMMAR_DEFINITION,
     NAMED_ARGUMENT,
     NODE_CHOICE,
@@ -159,3 +161,11 @@ def placeholder_name(node: Node) -> str:
     if node.token_kind == TOKEN_LITERAL and quoted:
         return quoted.group(1).lower()
     return ""
+
+
+def operand_class(name: str) -> str:
+    """The operand class of a placeholder name, by the first matching rule."""
+    for pattern, label in CLASS_RULES:
+        if pattern.search(name):
+            return label
+    return DEFAULT_CLASS
