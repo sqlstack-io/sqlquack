@@ -1577,6 +1577,7 @@ dependencies = [
  "sqlquack-syntax-databricks",
  "sqlquack-syntax-duckdb",
  "sqlquack-syntax-postgres",
+ "sqlquack-syntax-sqlserver",
  "tempfile",
  "toml",
 ]
@@ -1619,6 +1620,15 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-syntax-sqlite"
+version = "0.2.0"
+dependencies = [
+ "serde_json",
+ "sqlquack-syntax",
+ "stacker",
+]
+
+[[package]]
+name = "sqlquack-syntax-sqlserver"
 version = "0.2.0"
 dependencies = [
  "serde_json",

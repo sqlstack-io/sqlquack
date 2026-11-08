@@ -652,6 +652,10 @@ pub enum LocalParser {
     DuckDb,
     /// `sqlquack_syntax_databricks`, through the isolated worker.
     Databricks,
+    /// `sqlquack_syntax_sqlserver`, through the isolated worker.
+    #[serde(rename = "sqlserver")]
+    #[value(name = "sqlserver")]
+    SqlServer,
     /// No parser yet: every case fails locally as `no_parser`.
     None,
 }

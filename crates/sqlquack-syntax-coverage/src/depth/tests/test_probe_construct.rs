@@ -103,6 +103,18 @@ fn given_a_parser_without_a_syntax_when_listing_constructs_then_only_its_own_are
             expected_probed: false,
         },
         ConstructsTestCase {
+            description: "SQL Server nests IF statements",
+            parser: LocalParser::SqlServer,
+            construct: "nested_if",
+            expected_probed: true,
+        },
+        ConstructsTestCase {
+            description: "SQL Server has no array type suffix",
+            parser: LocalParser::SqlServer,
+            construct: "type_suffix",
+            expected_probed: false,
+        },
+        ConstructsTestCase {
             description: "every parser nests FROM parentheses",
             parser: LocalParser::Postgres,
             construct: "from_parentheses",

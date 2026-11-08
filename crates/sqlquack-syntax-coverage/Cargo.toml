@@ -18,6 +18,7 @@ sqlquack-syntax.workspace = true
 sqlquack-syntax-bigquery.workspace = true
 sqlquack-syntax-duckdb.workspace = true
 sqlquack-syntax-databricks.workspace = true
+sqlquack-syntax-sqlserver.workspace = true
 sqlquack-syntax-postgres.workspace = true
 toml.workspace = true
 
