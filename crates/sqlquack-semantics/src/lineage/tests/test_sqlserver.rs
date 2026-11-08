@@ -60,6 +60,11 @@ fn given_a_sql_server_query_the_engine_rejects_when_checking_then_the_broken_rul
             sql: "SELECT id AS x FROM orders ORDER BY x + 1",
             expected_findings: &[("E201", "Unknown column 'x' in table 'orders'", 36)],
         },
+        QueryFindingsTestCase {
+            description: "a window-only function without OVER (10753)",
+            sql: "SELECT ROW_NUMBER() AS r FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 7)],
+        },
     ];
     let schema = sqlserver_shop_schema();
     for test_case in test_cases {
@@ -78,6 +83,11 @@ fn given_a_sql_server_query_the_engine_accepts_when_checking_then_nothing_is_fou
         QueryFindingsTestCase {
             description: "a delimited column in another case resolves",
             sql: "SELECT [ID], O.[Status] FROM Orders o",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a window-only function with OVER",
+            sql: "SELECT ROW_NUMBER() OVER (ORDER BY id) AS r FROM orders",
             expected_findings: &[],
         },
         QueryFindingsTestCase {
