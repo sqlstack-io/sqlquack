@@ -207,6 +207,13 @@ fn given_safety_rule_inputs_when_linting_then_exactly_the_mistakes_are_reported(
             expected_anchors: &["BOOL_AND(t.x)", "EVERY(t.y)"],
         },
         SafetyRuleTestCase {
+            description: "the SQL/JSON aggregates are PostgreSQL aggregates",
+            dialect: "postgres",
+            sql: "SELECT t.a FROM t WHERE JSON_ARRAYAGG(t.x) IS NULL OR JSON_OBJECTAGG(t.k VALUE t.v) IS NULL",
+            rule: "SQLCLEAN053",
+            expected_anchors: &["JSON_ARRAYAGG(t.x)", "JSON_OBJECTAGG(t.k VALUE t.v)"],
+        },
+        SafetyRuleTestCase {
             description: "multi-argument MAX is the scalar function in SQLite",
             dialect: "sqlite",
             sql: "SELECT order_id FROM orders WHERE max(amount, refunded) > 100",

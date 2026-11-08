@@ -97,6 +97,8 @@ pub(crate) const POSTGRES_FOREIGN_AGGREGATE_CALLS: [&str; 49] = [
     "sum_if",
     "sumif",
 ];
+/// The SQL/JSON aggregates the native PostgreSQL parser keeps as keyword calls.
+pub(crate) const JSON_AGGREGATE_KINDS: [&str; 2] = ["JSON_ARRAYAGG", "JSON_OBJECTAGG"];
 /// Aggregates polyglot classified only with at most one argument; PostgreSQL has no wider signature.
 pub(crate) const POSTGRES_SINGLE_ARGUMENT_AGGREGATES: [&str; 25] = [
     "any_value",

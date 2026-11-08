@@ -51,6 +51,13 @@ fn given_cross_joins_when_one_side_is_provably_one_row_then_only_multiplying_joi
             expected_messages: &[],
         },
         CrossJoinTestCase {
+            description: "a SQL/JSON aggregate without GROUP BY returns one row",
+            sql: "SELECT t.a FROM t CROSS JOIN (SELECT JSON_ARRAYAGG(u.x) AS m FROM u) AS s",
+            dialect: "postgres",
+            one_row_relations: &[],
+            expected_messages: &[],
+        },
+        CrossJoinTestCase {
             description: "an aggregate with GROUP BY can return many rows",
             sql: "WITH totals AS (SELECT customer_id, COUNT(*) AS order_count FROM orders GROUP BY customer_id) \
                   SELECT o.order_id FROM orders AS o CROSS JOIN totals AS t",
