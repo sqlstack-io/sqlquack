@@ -1769,23 +1769,23 @@ fn given_deep_nesting_when_parsing_on_a_small_stack_then_it_is_refused_cleanly_a
             expected_refusal: chain,
         },
         NestingTestCase {
-            description: "999 ANDs parse",
-            sql: || format!("SELECT true{}", " AND true".repeat(999)),
+            description: "AND is one conjunction to DuckDB with no limit of its own, so 5,000 ANDs parse",
+            sql: || format!("SELECT true{}", " AND true".repeat(5000)),
             expected_refusal: None,
         },
         NestingTestCase {
-            description: "AND is one conjunction to DuckDB, but the tree nests, so 5,000 nest too deeply",
-            sql: || format!("SELECT true{}", " AND true".repeat(5000)),
+            description: "10,000 ORs nest deeper than the tree may",
+            sql: || format!("SELECT true{}", " OR true".repeat(10_000)),
             expected_refusal: too_deep,
         },
         NestingTestCase {
-            description: "999 UNION ALL operands parse",
-            sql: || format!("SELECT 1{}", " UNION ALL SELECT 1".repeat(999)),
+            description: "5,000 UNION ALL operands parse",
+            sql: || format!("SELECT 1{}", " UNION ALL SELECT 1".repeat(5000)),
             expected_refusal: None,
         },
         NestingTestCase {
-            description: "5,000 UNION ALL operands nest too deeply",
-            sql: || format!("SELECT 1{}", " UNION ALL SELECT 1".repeat(5000)),
+            description: "10,000 INTERSECT operands nest deeper than the tree may",
+            sql: || format!("SELECT 1{}", " INTERSECT SELECT 1".repeat(10_000)),
             expected_refusal: too_deep,
         },
         NestingTestCase {

@@ -311,9 +311,7 @@ impl Parser<'_> {
     fn set_operation_chain(&mut self) -> Parsing<Expression> {
         let first: usize = self.at;
         let mut left: Expression = self.intersect_chain()?;
-        let mut links: usize = 0;
         while self.kw_in(0, &["UNION", "EXCEPT"]) {
-            links = self.flat_link(links)?;
             let operator: String = self.word_at(0).unwrap_or_default();
             self.at += 1;
             let quantifier: (bool, bool) = self.distinct_or_all();
@@ -343,9 +341,7 @@ impl Parser<'_> {
     fn intersect_chain(&mut self) -> Parsing<Expression> {
         let first: usize = self.at;
         let mut left: Expression = self.select_atom()?;
-        let mut links: usize = 0;
         while self.eat_kw("INTERSECT") {
-            links = self.flat_link(links)?;
             let quantifier: (bool, bool) = self.distinct_or_all();
             let right: Expression = self.deeper(|parser| parser.select_atom())?;
             left = self.spanned(first, set_operation("INTERSECT", left, right, quantifier));
