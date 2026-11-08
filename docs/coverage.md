@@ -213,3 +213,31 @@ a gap:
 `--coverage-projected` plans a recording: it counts every pending case that converts as passed,
 and lists the pending cases the converter refuses, which a recording would not cover. It cannot be
 combined with `--require-coverage`.
+
+## Generated SQL size and speed
+
+Generated SQL should be the simplest SQL that keeps the required behaviour, so its size and run time
+are measured apart from correctness, syntax and translation.
+
+`sqlquack verify --sql-sizes <file>` writes the bytes of DuckDB SQL each converted case emits, without
+the setup statements a case runs first. `make verify-recorded` writes it to `target/sql-sizes.json`
+(`SQL_SIZES`), and `make sql-sizes` checks it:
+
+- `coverage/sql-size/baseline.json` must hold the measured sizes exactly; `make sql-size-baseline`
+  rewrites it from the last verify, in the change that moves a size;
+- against the baseline at `RESULTS_BASE`, no case may grow by more than 64 bytes or 10% of its size,
+  whichever is larger, and the total of the cases both measure may not grow.
+
+Growth a change needs, such as a correctness fix that takes longer SQL, is ruled in
+`coverage/sql-size/allowances.toml`: a `[[case]]` entry lets one case grow from its base size to a
+stated size, a `[[total]]` entry lets the shared total grow by stated bytes, and each names its
+reason and ruling. An entry applies only while its `from` matches the base baseline, so it covers
+one change and is reported as applying to nothing once that change lands.
+
+`make sql-benchmark` converts three workloads and times them on DuckDB against hand-written SQL that
+reads the same rows: `payload:customer_id::VARCHAR` and a five-field JSON staging query over a
+million VARIANT rows, and `total / 3` of a NUMBER(12,2) over ten million rows. Each query reruns
+until a second has passed, at least three times, and the fastest run counts. A workload with no
+recorded ratio fails. It fails when a workload's time over its reference exceeds twice the ratio
+`coverage/sql-size/benchmarks.json` records; `make sql-benchmark SQL_BENCHMARK_ARGS=--update`
+records new ratios, on an otherwise idle machine. The gate runs it alone, last.

@@ -193,6 +193,9 @@ pub struct VerifyArguments {
     /// Write each case's translation outcome and constructs as JSON, for `syntax-coverage results`.
     #[arg(long)]
     pub translation_statements: Option<PathBuf>,
+    /// Write the bytes of DuckDB SQL each converted case emits as JSON, for the size ratchet.
+    #[arg(long)]
+    pub sql_sizes: Option<PathBuf>,
     /// Where coverage is checked against.
     #[command(flatten)]
     pub coverage: CoverageArguments,
