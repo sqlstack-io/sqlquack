@@ -10,7 +10,9 @@ use crate::cli::_helpers::audit_command::{
     audit_compare_command, audit_errors_command, audit_sample_command,
 };
 use crate::cli::_helpers::census_command::census_command;
-use crate::cli::_helpers::convert_command::{check_command, convert_command, explain_command};
+use crate::cli::_helpers::convert_command::{
+    check_command, convert_command, explain_command, fixture_run_command,
+};
 use crate::cli::_helpers::function_command::function_command;
 use crate::cli::_helpers::index_command::index_command;
 use crate::cli::_helpers::pending_command::pending_command;
@@ -21,16 +23,9 @@ use crate::terminal::main::colored_stream::colored_stream;
 
 /// Runs `sqlquack` with the process arguments.
 pub fn run_cli() -> ExitCode {
-    let cli = match Cli::try_parse() {
+    let cli = match parsed_arguments() {
         Ok(cli) => cli,
-        Err(error) => {
-            let _ = error.print();
-            return if error.use_stderr() {
-                ExitCode::from(2)
-            } else {
-                ExitCode::SUCCESS
-            };
-        }
+        Err(exit) => return exit,
     };
     let choice = match &cli.command {
         Command::Check(arguments) => arguments.colors.color,
@@ -62,6 +57,7 @@ fn run_command(
         Command::Convert(arguments) => {
             convert_command(arguments, (stdout, stderr), (out_palette, palette))
         }
+        Command::Run(arguments) => fixture_run_command(arguments, (stdout, stderr), palette),
         Command::Check(arguments) => check_command(arguments, stdout, stderr, palette),
         Command::Compare(arguments) => compare_command(arguments, stdout, stderr),
         Command::Explain(arguments) => explain_command(arguments, stdout, stderr),
@@ -71,4 +67,15 @@ fn run_command(
             (None, false) => audit_compare_command(arguments, stdout, stderr),
         },
     }
+}
+
+/// The process arguments, or how to exit once clap has printed its help or error.
+fn parsed_arguments() -> Result<Cli, ExitCode> {
+    Cli::try_parse().map_err(|error| {
+        let _ = error.print();
+        match error.use_stderr() {
+            true => ExitCode::from(2),
+            false => ExitCode::SUCCESS,
+        }
+    })
 }

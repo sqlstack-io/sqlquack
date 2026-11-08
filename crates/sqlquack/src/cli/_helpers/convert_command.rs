@@ -1,4 +1,4 @@
-//! `sqlquack convert`, `check` and `explain`: Snowflake SQL as DuckDB SQL, what is wrong with it, and what each code means.
+//! `sqlquack convert`, `check`, `explain` and `run`: DuckDB SQL for Snowflake SQL, its problems, its codes, and its rows.
 
 use std::io::{Read, Write};
 use std::path::Path;
@@ -28,10 +28,14 @@ use crate::analysis::main::python_functions::python_functions;
 use crate::analysis::main::refused_construct::refused_construct;
 use crate::analysis::main::with_overrides::with_overrides;
 use crate::cli::_helpers::evidence::caller_choices;
+use crate::cli::_helpers::project::project_choices;
 use crate::cli::models::{
-    CheckArguments, CheckReport, ConvertArguments, ConvertRefusal, ConvertReport, ExplainArguments,
-    OverrideListing, PolicyArguments,
+    CheckArguments, CheckReport, ColorArguments, ConvertArguments, ConvertRefusal, ConvertReport,
+    ExplainArguments, OutputArguments, OutputFormat, OverrideListing, PolicyArguments,
+    RunArguments, RunPrinted,
 };
+use crate::run::main::run_query::run_query;
+use crate::run::models::RunInputs;
 use crate::terminal::main::highlight_sql::highlight_sql;
 use sqlquack_convert::analysis::models::Analysis;
 
@@ -80,33 +84,13 @@ pub(crate) fn convert_command(
     if stdout.write_all(rendered.as_bytes()).is_err() {
         return ExitCode::FAILURE;
     }
-    for warning in &report.warnings {
-        let _ = writeln!(stderr, "sqlquack convert: warning: {warning}");
-    }
-    for note in &report.notes {
-        let _ = writeln!(stderr, "sqlquack convert: note: {note}");
-    }
-    for (divergence, constructs) in &report.divergences {
-        let kind = match report.assumptions.contains(divergence) {
-            true => "assumption",
-            false => "known divergence",
-        };
-        let _ = writeln!(
-            stderr,
-            "sqlquack convert: relies on {kind} {divergence} at {}",
-            constructs.join(", ")
-        );
-    }
-    let diagnostics: Vec<Diagnostic> = report
-        .refusals
-        .iter()
-        .filter_map(|refusal| refusal.diagnostic.clone())
-        .collect();
-    if !diagnostics.is_empty() {
-        let path = source_name(arguments.path.as_deref());
-        let rendered = render_styled_diagnostics(&diagnostics, &sql, &path, palette);
-        let _ = write!(stderr, "{rendered}");
-    }
+    let findings = conversion_findings(
+        "convert",
+        &report,
+        (&sql, arguments.path.as_deref()),
+        palette,
+    );
+    let _ = stderr.write_all(findings.as_bytes());
     match report.converted {
         true => {
             let _ = writeln!(
@@ -116,24 +100,166 @@ pub(crate) fn convert_command(
             );
             ExitCode::SUCCESS
         }
-        false => {
-            let profile = match report.profile.is_empty() {
-                true => "no matching session profile".to_owned(),
-                false => report.profile.clone(),
-            };
-            let count = report.refusals.len();
-            let noun = match count {
-                1 => "refusal",
-                _ => "refusals",
-            };
-            let _ = writeln!(
-                stderr,
-                "sqlquack convert: {}refused, {count} {noun}{} under {profile}",
-                palette.error, palette.reset
-            );
-            ExitCode::FAILURE
-        }
+        false => ExitCode::FAILURE,
     }
+}
+
+/// `sqlquack run`: exit 0 when the query ran as expected, 1 refused or different, 2 when it cannot.
+pub(crate) fn fixture_run_command(
+    arguments: &RunArguments,
+    (stdout, stderr): (&mut dyn Write, &mut dyn Write),
+    palette: &Palette,
+) -> ExitCode {
+    let printed = run_printed(arguments, palette);
+    let _ = stderr.write_all(printed.findings.as_bytes());
+    if stdout.write_all(printed.table.as_bytes()).is_err() {
+        return ExitCode::FAILURE;
+    }
+    let _ = stderr.write_all(printed.verdict.as_bytes());
+    printed.exit
+}
+
+/// What `run` prints for `arguments`, and how it exits.
+fn run_printed(arguments: &RunArguments, palette: &Palette) -> RunPrinted {
+    let failed = |findings: String, error: String| RunPrinted {
+        exit: ExitCode::from(2),
+        findings,
+        table: String::new(),
+        verdict: format!("sqlquack run: failed: {error}\n"),
+    };
+    let convert = ConvertArguments {
+        path: arguments.path.clone(),
+        schema: None,
+        overrides: arguments.overrides.clone(),
+        verified_overrides: arguments.verified_overrides.clone(),
+        session: arguments.session.clone(),
+        compact: true,
+        output: OutputArguments {
+            format: OutputFormat::Text,
+            json: false,
+        },
+        colors: ColorArguments::default(),
+        conversion: arguments.conversion.clone(),
+    };
+    let (sql, report) = match read_sql(arguments.path.as_deref())
+        .and_then(|sql| convert_report(&convert, &sql).map(|report| (sql, report)))
+    {
+        Ok(converted) => converted,
+        Err(error) => return failed(String::new(), error),
+    };
+    let findings = conversion_findings("run", &report, (&sql, arguments.path.as_deref()), palette);
+    if !report.converted {
+        return RunPrinted {
+            exit: ExitCode::FAILURE,
+            findings,
+            table: String::new(),
+            verdict: String::new(),
+        };
+    }
+    if !report.python_functions.is_empty() {
+        let error = "the query calls Python functions, which run cannot execute".to_owned();
+        return failed(findings, error);
+    }
+    let ran = project_choices(
+        &arguments.conversion,
+        (None, &arguments.session, arguments.overrides.as_deref()),
+    )
+    .and_then(|(policy, project)| {
+        run_query(&RunInputs {
+            source: &sql,
+            converted: &report.sql,
+            macros: &report.macros,
+            profile: &report.profile,
+            policy: policy.as_ref(),
+            schema: &project.schema,
+            fixtures: &arguments.fixtures,
+            expect: arguments.expect.as_deref(),
+        })
+    });
+    let outcome = match ran {
+        Ok(outcome) => outcome,
+        Err(error) => return failed(findings, error),
+    };
+    let count = match outcome.rows {
+        1 => "1 row".to_owned(),
+        count => format!("{count} rows"),
+    };
+    let (exit, verdict) = match outcome.differences {
+        None => (ExitCode::SUCCESS, format!("sqlquack run: done, {count}\n")),
+        Some(differences) if differences.is_empty() => (
+            ExitCode::SUCCESS,
+            format!("sqlquack run: done, {count} as expected\n"),
+        ),
+        Some(differences) => (
+            ExitCode::FAILURE,
+            differences.iter().fold(
+                "sqlquack run: the result differs from --expect\n".to_owned(),
+                |text, difference| text + "  " + difference + "\n",
+            ),
+        ),
+    };
+    RunPrinted {
+        exit,
+        findings,
+        table: outcome.table,
+        verdict,
+    }
+}
+
+/// What `command` noticed converting `sql`, and its refusals when it was refused, as text.
+fn conversion_findings(
+    command: &str,
+    report: &ConvertReport,
+    (sql, path): (&str, Option<&Path>),
+    palette: &Palette,
+) -> String {
+    let mut text = String::new();
+    for warning in &report.warnings {
+        text.push_str(&format!("sqlquack {command}: warning: {warning}\n"));
+    }
+    for note in &report.notes {
+        text.push_str(&format!("sqlquack {command}: note: {note}\n"));
+    }
+    for (divergence, constructs) in &report.divergences {
+        let kind = match report.assumptions.contains(divergence) {
+            true => "assumption",
+            false => "known divergence",
+        };
+        text.push_str(&format!(
+            "sqlquack {command}: relies on {kind} {divergence} at {}\n",
+            constructs.join(", ")
+        ));
+    }
+    let diagnostics: Vec<Diagnostic> = report
+        .refusals
+        .iter()
+        .filter_map(|refusal| refusal.diagnostic.clone())
+        .collect();
+    if !diagnostics.is_empty() {
+        text.push_str(&render_styled_diagnostics(
+            &diagnostics,
+            sql,
+            &source_name(path),
+            palette,
+        ));
+    }
+    if !report.converted {
+        let profile = match report.profile.is_empty() {
+            true => "no matching session profile".to_owned(),
+            false => report.profile.clone(),
+        };
+        let noun = match report.refusals.len() {
+            1 => "refusal",
+            _ => "refusals",
+        };
+        text.push_str(&format!(
+            "sqlquack {command}: {}refused, {} {noun}{} under {profile}\n",
+            palette.error,
+            report.refusals.len(),
+            palette.reset
+        ));
+    }
+    text
 }
 
 /// The SQL from the file, or from standard input when there is none or it is `-`.

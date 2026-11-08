@@ -41,7 +41,7 @@ a parameter of every entry point; Snowflake is the only one implemented.
 | `sqlquack-format-check` | Development only: proves that formatting DuckDB SQL leaves the output columns DuckDB binds it to unchanged, on the format corpus. |
 | `sqlquack-compare` | The strict comparator between a recorded result and a DuckDB replay or a fresh recording. |
 | `sqlquack-evidence` | Cases, case hashes, pending files, stored results, DuckDB replay, verification and audits. |
-| `sqlquack` | The `sqlquack` command line and the library entry points: the pipeline, the census, the index and the evidence commands. |
+| `sqlquack` | The `sqlquack` command line and the library entry points: the pipeline, `run` over fixtures, the census, the index and the evidence commands. |
 
 Fensu layer targets keep the rules out of every crate but the command line ones and
 `sqlquack-convert`, and keep the conversion, DuckDB and evidence crates out of syntax, core, typing
