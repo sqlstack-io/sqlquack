@@ -106,7 +106,7 @@ to the server grammar, and DO and CREATE FUNCTION are catalogued as statements.
 ## Obligations and cases
 
 ```sh
-python -m scripts.build_syntax_obligations_postgres [--root ROOT] [--focus focus/postgres.toml]
+python -m scripts.build_syntax_obligations_postgres [--root ROOT] [--focus coverage/syntax-postgres/focus.toml]
 ```
 
 Obligations are derived for every catalogued form by the shared builder
@@ -139,7 +139,7 @@ rebuild drops an id that `retired.toml` does not list, so a changed meaning alwa
 was recorded; both forms were approved with the new meaning, so those ids stay.
 
 Cases are written for every catalogued form of the families in `CASED_FAMILIES`, which now
-lists all eight; `focus/postgres.toml` set only the order in which they were taken up.
+lists all eight; `coverage/syntax-postgres/focus.toml` set only the order in which they were taken up.
 `pending.toml` lists cases held out of the receipts because the referee cannot yet run or judge
 them as written, each with the referee change it waits on; a pending case is not verified. Each case has the referee's shape: the session
 `{"TimeZone": "UTC", "statement_timeout": "30s"}`, capture `execute_in_rolled_back_transaction`,

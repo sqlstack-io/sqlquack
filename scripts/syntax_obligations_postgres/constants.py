@@ -11,7 +11,7 @@ OBLIGATIONS_DIR: str = "obligations"
 CASES_DIR: str = "cases"
 RETIRED_FILE: str = "retired.toml"
 RETIRED_KIND: str = "retired"
-DEFAULT_FOCUS: Path = Path("focus/postgres.toml")
+DEFAULT_FOCUS: Path = Path("coverage/syntax-postgres/focus.toml")
 FORM_PREFIX: str = "pg"
 FAMILIES: tuple[str, ...] = (
     "query",

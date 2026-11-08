@@ -662,7 +662,7 @@ pub enum LocalParser {
     None,
 }
 
-/// `focus/<dialect>.toml`: the forms one dialect works on first, in work order.
+/// `coverage/syntax-<dialect>/focus.toml`: the forms one dialect works on first, in work order.
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct FocusFile {

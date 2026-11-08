@@ -54,7 +54,7 @@ pub enum Command {
     },
     /// Counts for the whole catalogue and per family; fails on any unresolved reference.
     Summary {
-        /// A focus file (`focus/<dialect>.toml`): also report its forms; fails on any unknown id.
+        /// A focus file (`coverage/syntax-<dialect>/focus.toml`): also report its forms; fails on any unknown id.
         #[arg(long)]
         focus: Option<PathBuf>,
         #[command(flatten)]
