@@ -242,9 +242,9 @@ the ids the numbering skips. A rebuild from the same inputs is byte-identical. D
 2,118 ids: 1,513 in forms with suppressions (withdrawn, or no longer derived by a corrected
 grammar), 571 in forms now derived through a reading, and 34 from corrected grammars.
 
-13,224 obligations and 8,626 cases (obligations/cases): query 1,318/876, dml 218/164,
+13,225 obligations and 8,627 cases (obligations/cases): query 1,318/876, dml 218/164,
 ddl 3,216/2,241, transaction_session 42/32, security_admin 168/144, utility 363/282,
-functions 6,732/4,170, expressions 1,167/717 (before D310: 12,747 and 8,051 in 898 forms;
+functions 6,733/4,171, expressions 1,167/717 (before D310: 12,747 and 8,051 in 898 forms;
 at 153c7b86, when every suppression withdrew its obligation: 12,571 and 8,080).
 Every case with a receipt has been run against BigQuery (see Receipts); the 19 held cases have no
 receipt: they need paid capacity, a connection, or a resource outside the sandbox.
@@ -317,13 +317,16 @@ With the receipts in place the build settles every observe case that has one, an
 gate yields to the engine: a case whose own receipt gives its expectation is not refused because
 the pinned parser disagrees. The build prints these as `engine_over_parser` (4 at the pin): three
 string literals in table position and `CREATE PROPERTY GRAPH g1` with no tables, which the
-pinned parser takes and BigQuery refuses as syntax errors. The figures are now 8,626 cases, 8,623
-accept or reject, 3,319 that must parse, 39 under the object-type exception, 0 disagreements.
-8,607 cases have a receipt for their current text and the same 19 are held. The latest run,
-`receipts/bigquery-20261108T022009.099039Z.jsonl` with its reverse in `repeats/`, covers the 4
+pinned parser takes and BigQuery refuses as syntax errors. The figures are now 8,627 cases, 8,624
+accept or reject, 3,320 that must parse, 39 under the object-type exception, 0 disagreements.
+8,608 cases have a receipt for their current text and the same 19 are held. The latest run,
+`receipts/bigquery-20261108T081312.150491Z.jsonl` with its reverse in `repeats/`, covers the one
+case the second `TIMESTAMP_DIFF` limit row added: `WEEK(MONDAY)` on DATE arguments, which the
+page says behaves as `DATE_DIFF`, is accepted, and both runs billed no bytes. The run before it,
+`receipts/bigquery-20261108T022009.099039Z.jsonl` with its reverse, covers the 4
 cases the datetime date-part limit rows added (`ISOWEEK` for `DATETIME_TRUNC` and `EXTRACT`, and
 `WEEK(<weekday>)` and `ISOWEEK` for `LAST_DAY`): all 4 are accepted, and both runs billed no
-bytes. The run before it, `receipts/bigquery-20261107T203342.206143Z.jsonl`, covers the 46 cases
+bytes. The run before those, `receipts/bigquery-20261107T203342.206143Z.jsonl`, covers the 46 cases
 the CREATE MODEL corrections and the first date-part limit rows added or changed: the 18
 date-part cases are accepted and `TIMESTAMP_DIFF` with `WEEK(MONDAY)` is refused at analysis
 only.

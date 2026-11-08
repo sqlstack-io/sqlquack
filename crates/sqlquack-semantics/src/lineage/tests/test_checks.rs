@@ -1243,6 +1243,66 @@ fn given_a_bigquery_query_when_checking_it_then_findings_follow_googlesql() {
                 0,
             )],
         },
+        QueryFindingsTestCase {
+            description: "SAFE.DATE_ADD checks its arguments as DATE_ADD does (analyzer: rejected)",
+            sql: "SELECT SAFE.DATE_ADD(JSON '1', INTERVAL 1 DAY) AS v FROM orders",
+            expected_findings: &[(
+                "E213",
+                "Function 'date_add' argument 1 expects a date argument, found json",
+                0,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "IF over JSON and INT64 has no common type (analyzer: rejected)",
+            sql: "SELECT IF(rush, JSON '1', 1) AS v FROM orders",
+            expected_findings: &[("E213", "Cannot unify json and integer", 10)],
+        },
+        QueryFindingsTestCase {
+            description: "an IF condition of JSON is not BOOL (analyzer: rejected)",
+            sql: "SELECT IF(JSON 'true', 1, 2) AS v FROM orders",
+            expected_findings: &[(
+                "E213",
+                "Function 'if' argument 1 expects Boolean, found json",
+                0,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "IF over JSON and NULL is JSON (analyzer: accepted)",
+            sql: "SELECT IF(rush, JSON '1', NULL) AS v FROM orders",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "DATE_SUB on a STRUCT literal (analyzer: rejected)",
+            sql: "SELECT DATE_SUB(STRUCT(1 AS a), INTERVAL 1 DAY) AS v FROM orders",
+            expected_findings: &[(
+                "E213",
+                "Function 'date_sub' argument 1 expects a date argument, found struct",
+                0,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "TRIM of JSON is one error (analyzer: rejected)",
+            sql: "SELECT TRIM(JSON '\"x\"') AS v FROM orders",
+            expected_findings: &[(
+                "E213",
+                "Function 'trim' argument 1 expects a string or bytes argument, found json",
+                0,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "an INTERVAL count of STRING (analyzer: rejected)",
+            sql: "SELECT DATE_ADD(ordered_on, INTERVAL status DAY) AS v FROM orders",
+            expected_findings: &[(
+                "E213",
+                "Interval count expects an integer, found string",
+                37,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "an INTERVAL count of a string literal (analyzer: accepted)",
+            sql: "SELECT DATE_ADD(ordered_on, INTERVAL '1' DAY) AS v FROM orders",
+            expected_findings: &[],
+        },
     ];
     let schema = typed_bigquery_shop_schema();
     for test_case in test_cases {

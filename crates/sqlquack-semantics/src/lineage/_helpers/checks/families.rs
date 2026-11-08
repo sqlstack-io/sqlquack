@@ -37,6 +37,11 @@ impl Family {
         matches!(self, Self::Integer | Self::Numeric)
     }
 
+    /// BigQuery's JSON, ARRAY and STRUCT, which no other type converts to or from implicitly.
+    pub(crate) fn converts_to_nothing(self) -> bool {
+        matches!(self, Self::Json | Self::Array | Self::Struct)
+    }
+
     pub(crate) fn is_temporal(self) -> bool {
         matches!(
             self,
@@ -242,6 +247,13 @@ pub(crate) fn expression_family(
                         && function.name.eq_ignore_ascii_case("ARRAY") =>
                 {
                     Family::Array
+                }
+                Expression::Function(function)
+                    if family == Family::Unknown
+                        && Engine::of(context) == Engine::BigQuery
+                        && function.name.eq_ignore_ascii_case("STRUCT") =>
+                {
+                    Family::Struct
                 }
                 _ => family,
             };
