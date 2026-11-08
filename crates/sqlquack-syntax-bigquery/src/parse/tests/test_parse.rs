@@ -151,6 +151,56 @@ fn given_sql_when_parsing_then_the_verdict_is_googlesql() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
+            description: "DATE_DIFF takes its date part last",
+            sql: "SELECT DATE_DIFF('2017-12-30', '2014-12-30', YEAR)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "DATE_DIFF takes a WEEK(weekday) part",
+            sql: "SELECT DATE_DIFF('2024-06-15', '2024-01-08', WEEK(MONDAY))",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "DATE_ADD takes a date and an interval",
+            sql: "SELECT DATE_ADD('2020-01-01', INTERVAL 1 DAY)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "EXTRACT takes a WEEK(weekday) part",
+            sql: "SELECT EXTRACT(WEEK(THURSDAY) FROM DATE '2020-01-01')",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "EXTRACT takes an ISOWEEK part and a time zone",
+            sql: "SELECT EXTRACT(ISOWEEK FROM TIMESTAMP '2020-01-01' AT TIME ZONE 'UTC')",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "EXTRACT has no ordinary call with a time zone",
+            sql: "SELECT extract('HOUR', TIMESTAMP '2020-01-01', 'UTC')",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "EXTRACT has no ordinary call",
+            sql: "SELECT extract('HOUR', TIMESTAMP '2020-01-01')",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "DATETIME_DIFF takes an ISOWEEK part",
+            sql: "SELECT DATETIME_DIFF(DATETIME '2024-06-15', DATETIME '2024-01-08', ISOWEEK)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "DATE_TRUNC takes a WEEK(weekday) part",
+            sql: "SELECT DATE_TRUNC(DATE '2024-06-15', WEEK(MONDAY))",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "LAST_DAY takes a WEEK(weekday) part",
+            sql: "SELECT LAST_DAY(DATE '2024-06-15', WEEK(MONDAY))",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
             description: "a reserved word is not a type",
             sql: "SELECT CAST(1 AS SELECT)",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
@@ -1074,6 +1124,42 @@ fn given_pipe_operators_when_parsing_then_each_step_keeps_its_own_tree() {
             description: "a piped FROM query is not a piped SELECT * FROM query",
             sql: "FROM t |> WHERE t.a = 1",
             other_sql: "SELECT * FROM t |> WHERE t.a = 1",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "EXTRACT keeps its AT TIME ZONE",
+            sql: "SELECT EXTRACT(HOUR FROM TIMESTAMP '2020-01-01 00:00:00+00' AT TIME ZONE 'Asia/Tokyo')",
+            other_sql: "SELECT EXTRACT(HOUR FROM TIMESTAMP '2020-01-01 00:00:00+00')",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "EXTRACT keeps its WEEK weekday",
+            sql: "SELECT EXTRACT(WEEK(SUNDAY) FROM DATE '2020-01-01')",
+            other_sql: "SELECT EXTRACT(WEEK(MONDAY) FROM DATE '2020-01-01')",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "EXTRACT's backquoted `WEEK(SUNDAY)` is not WEEK(SUNDAY)",
+            sql: "SELECT EXTRACT(`WEEK(SUNDAY)` FROM DATE '2020-01-01')",
+            other_sql: "SELECT EXTRACT(WEEK(SUNDAY) FROM DATE '2020-01-01')",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "EXTRACT's backquoted `DAY` is DAY",
+            sql: "SELECT EXTRACT(`DAY` FROM DATE '2020-01-01')",
+            other_sql: "SELECT EXTRACT(DAY FROM DATE '2020-01-01')",
+            expected_same: true,
+        },
+        TreePairTestCase {
+            description: "EXTRACT's WEEK(weekday) is not WEEK",
+            sql: "SELECT EXTRACT(WEEK(SUNDAY) FROM DATE '2020-01-01')",
+            other_sql: "SELECT EXTRACT(WEEK FROM DATE '2020-01-01')",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "DATE_DIFF's first argument is a value, not a unit",
+            sql: "SELECT DATE_DIFF(day, d2, YEAR) FROM t",
+            other_sql: "SELECT DATE_DIFF('DAY', d2, YEAR) FROM t",
             expected_same: false,
         },
         TreePairTestCase {

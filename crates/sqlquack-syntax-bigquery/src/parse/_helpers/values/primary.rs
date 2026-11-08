@@ -16,9 +16,9 @@ use crate::parse::_helpers::tree::nodes::{
     null, parameter, paren, star, string, subquery, tuple,
 };
 use crate::parse::constants::{
-    CURRENT_LIKE, DATETIME_UNITS, INTERVAL_UNITS, LITERAL_TYPES, MIN_LAMBDA_LIST_PARAMETERS,
-    RESERVED_CALLS, SAFE_CAST_CALL, SYSTEM_VARIABLE_PREFIX, TIMESTAMP_ADD_NAMES,
-    TIMESTAMP_DIFF_NAMES, TRUE_LITERAL,
+    CURRENT_LIKE, DATETIME_UNITS, EXTRACT_CALL, INTERVAL_UNITS, LITERAL_TYPES,
+    MIN_LAMBDA_LIST_PARAMETERS, RESERVED_CALLS, SAFE_CAST_CALL, SYSTEM_VARIABLE_PREFIX,
+    TIMESTAMP_ADD_NAMES, TIMESTAMP_DIFF_NAMES, TRUE_LITERAL,
 };
 use crate::scan::models::{NumberKind, Token, TokenKind};
 
@@ -606,14 +606,24 @@ impl Parser<'_> {
             "EXTRACT" => self.attempt(|parser| {
                 parser.at += 2;
                 let field: Token = parser.expect_token(is_path_word)?;
+                let mut part: String = field.value.clone();
+                if parser.eat_char('(') {
+                    let weekday: Token = parser.expect_token(is_path_word)?;
+                    parser.expect_char(')')?;
+                    part = format!("{part}({})", weekday.value);
+                }
+                let part: Expression = match field.kind == TokenKind::Quoted && part.contains('(') {
+                    true => column_from(vec![identifier(&field)]),
+                    false => string(&part),
+                };
                 parser.expect_kw("FROM")?;
-                let source: Expression = parser.nested_value()?;
+                let mut args: Vec<Expression> = vec![part, parser.nested_value()?];
                 if parser.kw("AT") && parser.kw_at(1, "TIME") && parser.kw_at(2, "ZONE") {
                     parser.at += 3;
-                    parser.nested_value()?;
+                    args.push(parser.nested_value()?);
                 }
                 parser.expect_char(')')?;
-                Ok(call("extract", vec![string(&field.value), source]))
+                Ok(call("extract", args))
             }),
             "SUBSTR" | "SUBSTRING" => self.attempt(|parser| {
                 parser.at += 2;
@@ -716,6 +726,7 @@ impl Parser<'_> {
         };
         match attempt {
             Ok(expression) => Ok(Some(expression)),
+            Err((error, _reached)) if word == EXTRACT_CALL => Err(error),
             Err((_not_this_form, _reached)) => {
                 self.refused_specials.insert(start);
                 Ok(None)
