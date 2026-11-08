@@ -1,5 +1,5 @@
 # The call spellings SQLQuack keeps as written where polyglot lowers them into a cross-dialect
-# node, in Snowflake. The exact check (crates/sqlquack-polyglot-check) puts each kept call back
+# node, in Snowflake. The exact check (tools/sqlquack-polyglot-check) puts each kept call back
 # into polyglot's form by parsing the call's own text with polyglot's lowering; the result must
 # equal polyglot's tree, and every (name, node) pair it puts back must be listed here.
 #
@@ -1363,7 +1363,7 @@ note = "the same rule at the frame's end"
 # Statements both parsers parse where polyglot drops the quoting of a name SQLQuack keeps quoted.
 # The check counts an entry as kept quoting only when the statement, without whitespace and ignoring
 # case, contains `marker`, and the trees differ in nothing but identifiers whose `quoted` is false in
-# polyglot's tree and true in SQLQuack's; crates/sqlquack-polyglot-check/tests/runs/test_kept_quoting.rs
+# polyglot's tree and true in SQLQuack's; tools/sqlquack-polyglot-check/tests/runs/test_kept_quoting.rs
 # pins both.
 
 [[kept_quoting]]

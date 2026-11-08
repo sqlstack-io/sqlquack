@@ -9,7 +9,7 @@ select = ["FF"]
 analyzer = "rust"
 roots = ["crates", "tools"]
 tests = []
-tooling = ["crates/sqlquack-polyglot-check"]
+tooling = ["tools/sqlquack-polyglot-check"]
 rule_packs = ["rust"]
 select = ["FPRS"]
 
@@ -36,7 +36,7 @@ tests = []
 tooling = [
   "crates/sqlquack",
   "crates/sqlquack-convert",
-  "crates/sqlquack-polyglot-check",
+  "tools/sqlquack-polyglot-check",
   "crates/sqlquack-python",
 ]
 rule_packs = ["rust"]
@@ -53,7 +53,7 @@ tests = []
 tooling = [
   "crates/sqlquack",
   "crates/sqlquack-convert",
-  "crates/sqlquack-polyglot-check",
+  "tools/sqlquack-polyglot-check",
   "crates/sqlquack-python",
   "crates/sqlquack-rules",
   "crates/sqlquack-duckdb-blocks",

@@ -12,7 +12,7 @@ members = [
     "crates/sqlquack-compare",
     "crates/sqlquack-evidence",
     "crates/sqlquack",
-    "crates/sqlquack-polyglot-check",
+    "tools/sqlquack-polyglot-check",
     "tools/sqlquack-coverage",
     "crates/sqlquack-syntax-postgres",
     "crates/sqlquack-lint",
