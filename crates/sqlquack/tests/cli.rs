@@ -26,5 +26,7 @@ mod test_output_names;
 mod test_project;
 #[path = "cli/test_review.rs"]
 mod test_review;
+#[path = "cli/test_run.rs"]
+mod test_run;
 #[path = "cli/test_types.rs"]
 mod test_types;

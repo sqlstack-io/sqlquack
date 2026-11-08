@@ -14,4 +14,4 @@ license-files = ["LICENSE", "THIRD_PARTY_NOTICES"]
 
 [tool.maturin]
 bindings = "bin"
-features = ["bundled"]
+features = ["bundled", "extensions"]

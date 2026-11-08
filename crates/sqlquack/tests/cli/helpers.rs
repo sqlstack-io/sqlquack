@@ -9,8 +9,8 @@ use walkdir::WalkDir;
 
 use crate::test_types::{
     CommandOutcome, CompareTestCase, ConvertOutcome, CoverageOutcome, DivergenceOutcome,
-    ErrorCheckOutcome, FunctionMacroOutcome, FunctionStdinOutcome, ProjectOutcome, ProjectTestCase,
-    ReviewOutcome, ReviewedRepository,
+    ErrorCheckOutcome, FunctionMacroOutcome, FunctionStdinOutcome, ProjectFile, ProjectOutcome,
+    ProjectTestCase, ReviewOutcome, ReviewedRepository,
 };
 
 fn repository_root() -> PathBuf {
@@ -1140,10 +1140,70 @@ pub(crate) fn names(names: &[&str]) -> Vec<String> {
 
 /// `sqlquack convert --json` run inside a project folder built from `test_case`.
 pub(crate) fn project_convert(test_case: &ProjectTestCase) -> ProjectOutcome {
+    let directory = project_folder(test_case.files, test_case.folder, test_case.sql);
+    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(["convert", "--json"])
+        .args(test_case.flags)
+        .arg("query.sql")
+        .current_dir(directory.path())
+        .output()
+        .expect("sqlquack runs");
+    ProjectOutcome {
+        exit_code: output.status.code(),
+        stdout: String::from_utf8_lossy(&output.stdout).into_owned(),
+        stderr: String::from_utf8_lossy(&output.stderr).into_owned(),
+    }
+}
+
+/// `sqlquack run query.sql` with `flags` in a folder holding the project `files` and `sql`.
+pub(crate) fn project_run(files: &[ProjectFile], sql: &str, flags: &[&str]) -> ProjectOutcome {
+    let directory = project_folder(files, "", sql);
+    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(["run", "query.sql"])
+        .args(flags)
+        .current_dir(directory.path())
+        .output()
+        .expect("sqlquack runs");
+    ProjectOutcome {
+        exit_code: output.status.code(),
+        stdout: String::from_utf8_lossy(&output.stdout).into_owned(),
+        stderr: String::from_utf8_lossy(&output.stderr).into_owned(),
+    }
+}
+
+/// `sqlquack run` over a Parquet fixture `rows` writes with DuckDB, typed by `columns`.
+pub(crate) fn parquet_run(
+    files: &[ProjectFile],
+    (columns, rows): (&str, &str),
+    sql: &str,
+) -> ProjectOutcome {
+    let directory = project_folder(files, "", sql);
+    let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    let path = directory.path().join("orders.parquet");
+    connection
+        .execute_batch(&format!(
+            "CREATE TABLE t ({columns}); INSERT INTO t VALUES {rows}; COPY t TO '{}' (FORMAT parquet)",
+            path.display()
+        ))
+        .expect("Parquet written");
+    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(["run", "query.sql", "--fixture", "orders=./orders.parquet"])
+        .current_dir(directory.path())
+        .output()
+        .expect("sqlquack runs");
+    ProjectOutcome {
+        exit_code: output.status.code(),
+        stdout: String::from_utf8_lossy(&output.stdout).into_owned(),
+        stderr: String::from_utf8_lossy(&output.stderr).into_owned(),
+    }
+}
+
+/// A temporary folder holding the project `files` under `folder`, and `sql` as `query.sql`.
+fn project_folder(files: &[ProjectFile], folder: &str, sql: &str) -> tempfile::TempDir {
     let directory = tempfile::tempdir().expect("temporary directory");
-    let project = directory.path().join(test_case.folder);
+    let project = directory.path().join(folder);
     std::fs::create_dir_all(&project).expect("project folder created");
-    for file in test_case.files {
+    for file in files {
         let path = project.join(file.path);
         std::fs::create_dir_all(path.parent().expect("a parent directory"))
             .expect("directory created");
@@ -1157,17 +1217,6 @@ pub(crate) fn project_convert(test_case: &ProjectTestCase) -> ProjectOutcome {
             .collect();
         std::fs::write(path, text).expect("file written");
     }
-    std::fs::write(directory.path().join("query.sql"), test_case.sql).expect("query written");
-    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["convert", "--json"])
-        .args(test_case.flags)
-        .arg("query.sql")
-        .current_dir(directory.path())
-        .output()
-        .expect("sqlquack runs");
-    ProjectOutcome {
-        exit_code: output.status.code(),
-        stdout: String::from_utf8_lossy(&output.stdout).into_owned(),
-        stderr: String::from_utf8_lossy(&output.stderr).into_owned(),
-    }
+    std::fs::write(directory.path().join("query.sql"), sql).expect("query written");
+    directory
 }

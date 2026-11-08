@@ -16,6 +16,9 @@ default = ["engine"]
 engine = ["dep:duckdb"]
 # Compiles DuckDB into the binary, for distributions that must not need a system DuckDB.
 bundled = ["engine", "duckdb/bundled"]
+# DuckDB's parquet and json extensions compiled in, so `sqlquack run` reads Parquet fixtures and
+# JSON columns without downloading an extension.
+extensions = ["bundled", "duckdb/parquet", "duckdb/json"]
 
 [dependencies]
 duckdb = { workspace = true, optional = true }

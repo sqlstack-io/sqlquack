@@ -9,5 +9,6 @@ pub mod index;
 pub(crate) mod planning;
 pub mod project;
 pub mod review;
+pub mod run;
 pub mod statements;
 pub mod terminal;

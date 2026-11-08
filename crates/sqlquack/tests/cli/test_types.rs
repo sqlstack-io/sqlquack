@@ -346,3 +346,27 @@ pub(crate) struct ProjectOutcome {
     pub(crate) stdout: String,
     pub(crate) stderr: String,
 }
+
+/// A `sqlquack run` in a project folder: its fixtures and `--expect`, and how it must end.
+pub(crate) struct RunTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) files: &'static [ProjectFile],
+    pub(crate) sql: &'static str,
+    /// The flags after `run query.sql`, such as `--fixture` and `--expect`.
+    pub(crate) flags: &'static [&'static str],
+    pub(crate) expected_exit: Option<i32>,
+    /// The whole standard output: the result table, or nothing.
+    pub(crate) expected_stdout: &'static str,
+    pub(crate) expected_stderr_mention: &'static str,
+}
+
+/// A Parquet fixture DuckDB writes from `columns` and `rows`, and how `run` over it must end.
+pub(crate) struct ParquetRunTestCase {
+    pub(crate) description: &'static str,
+    /// The Parquet file's column definitions, such as `id INTEGER`.
+    pub(crate) columns: &'static str,
+    /// Its rows as a SQL VALUES list.
+    pub(crate) rows: &'static str,
+    pub(crate) expected_exit: Option<i32>,
+    pub(crate) expected_stdout: &'static str,
+}

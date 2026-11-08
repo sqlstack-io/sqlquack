@@ -2,6 +2,7 @@
 
 use std::collections::BTreeMap;
 use std::path::PathBuf;
+use std::process::ExitCode;
 
 use clap::builder::styling::Styles;
 use clap::{Args, ColorChoice, Parser, Subcommand, ValueEnum};
@@ -49,6 +50,8 @@ pub enum Command {
     Function(FunctionArguments),
     /// Convert Snowflake SQL from a file or standard input into DuckDB SQL, or refuse it.
     Convert(ConvertArguments),
+    /// Convert a query and run it on DuckDB over small fixtures, optionally checking its rows.
+    Run(RunArguments),
     /// Check that Snowflake SQL parses and holds nothing Snowflake rejects, without converting it.
     Check(CheckArguments),
     /// Replay converted SQL over a DuckDB inputs database and compare with recorded results.
@@ -120,6 +123,44 @@ pub struct ConvertArguments {
     /// The policy and what the caller confirms about its sessions.
     #[command(flatten)]
     pub conversion: PolicyArguments,
+}
+
+/// Arguments of `sqlquack run`.
+#[derive(Debug, Args)]
+pub struct RunArguments {
+    /// The SQL file holding one query; standard input when absent or `-`.
+    pub path: Option<PathBuf>,
+    /// TABLE=[rows] or TABLE=./file.csv (or .parquet): rows for a table the project declares; repeatable.
+    #[arg(long = "fixture", value_name = "TABLE=ROWS")]
+    pub fixtures: Vec<String>,
+    /// The rows the result must hold, as a JSON list; exits 1 when it holds others.
+    #[arg(long, value_name = "ROWS")]
+    pub expect: Option<String>,
+    /// User overrides: a FUNCTION() file, or a directory of them, each with `replaces` and `dialect duckdb`.
+    #[arg(long)]
+    pub overrides: Option<PathBuf>,
+    /// NAME=<sha256>: an override verified for the body with that hash, as `convert --json` reports.
+    #[arg(long = "verified-override", value_name = "NAME=SHA256")]
+    pub verified_overrides: Vec<String>,
+    /// A Snowflake session parameter of the caller's session, `NAME=VALUE`; repeatable.
+    #[arg(long = "session", value_name = "NAME=VALUE")]
+    pub session: Vec<String>,
+    /// The policy and what the caller confirms about its sessions.
+    #[command(flatten)]
+    pub conversion: PolicyArguments,
+}
+
+/// What `sqlquack run` prints, and how it exits.
+#[derive(Debug)]
+pub(crate) struct RunPrinted {
+    /// The exit status.
+    pub(crate) exit: ExitCode,
+    /// What conversion noticed, on standard error before the result.
+    pub(crate) findings: String,
+    /// The result table, on standard output.
+    pub(crate) table: String,
+    /// How the run ended, on standard error after the result.
+    pub(crate) verdict: String,
 }
 
 /// Arguments of `sqlquack function`.

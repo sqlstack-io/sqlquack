@@ -183,6 +183,12 @@ jobs:
           converted="$("${bin}/sqlquack" convert query.sql)"
           echo "${converted}"
           grep -q 'CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE"' <<< "${converted}"
+          # run executes the conversion on the bundled DuckDB, over inline rows and over a CSV file.
+          "${bin}/sqlquack" run query.sql --fixture 'orders=[[1, 2.5], [1, 4]]' --expect '[[1, 6.5]]'
+          printf 'customer_id,total\n2,1.25\n' > orders.csv
+          ran="$("${bin}/sqlquack" run query.sql --fixture orders=./orders.csv)"
+          echo "${ran}"
+          grep -q '^2 *1.25$' <<< "${ran}"
           # The README's Python example.
           "${bin}/python" -c 'import sqlquack
           result = sqlquack.convert(sql="SELECT 1 AS total", options=sqlquack.ConvertOptions(builtin_policy=True))
