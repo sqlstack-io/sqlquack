@@ -12,8 +12,8 @@ use sqlquack_semantics::types::models::{
 use sqlquack_snowflake::typing::main::cast_target::cast_target;
 
 use crate::analysis::_helpers::python_signature::python_signature;
-use crate::analysis::main::analyze_function::analyze_function;
 use crate::analysis::models::CaseFunctions;
+use sqlquack_convert::analysis::main::analyze_function::analyze_function;
 
 /// Every function typed into the schema, then each body converted to a macro in file order.
 pub(crate) fn case_functions(

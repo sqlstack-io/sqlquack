@@ -1,4 +1,3 @@
-pub mod analyze_function;
 pub mod assumption_id;
 pub mod builtin_claims;
 pub mod builtin_failure_modes;

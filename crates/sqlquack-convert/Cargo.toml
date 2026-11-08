@@ -17,10 +17,8 @@ sqlquack-duckdb.workspace = true
 sqlquack-policy.workspace = true
 sqlquack-rules.workspace = true
 sqlquack-semantics.workspace = true
-sqlquack-syntax.workspace = true
-
-[dev-dependencies]
 sqlquack-snowflake.workspace = true
+sqlquack-syntax.workspace = true
 
 [lints]
 workspace = true

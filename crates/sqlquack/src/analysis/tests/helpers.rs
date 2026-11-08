@@ -22,7 +22,6 @@ use sqlquack_semantics::types::models::{
 };
 use sqlquack_snowflake::typing::models::SnowflakeType;
 
-use crate::analysis::main::analyze_function::analyze_function;
 use crate::analysis::main::check_equivalence_cases::check_equivalence_cases;
 use crate::analysis::main::check_source::check_source;
 use crate::analysis::main::collect_all_refusals::collect_all_refusals;
@@ -35,6 +34,7 @@ use crate::analysis::tests::test_types::{
 use crate::cli::main::convert_report::convert_report;
 use crate::cli::models::{ConvertArguments, OutputArguments, OutputFormat, PolicyArguments};
 use sqlquack_convert::analysis::main::analyze::analyze;
+use sqlquack_convert::analysis::main::analyze_function::analyze_function;
 use sqlquack_rules::session::main::confirm_utc_session::confirm_utc_session;
 use sqlquack_rules::session::main::conversion_options::conversion_options;
 

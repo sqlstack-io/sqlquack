@@ -9,7 +9,7 @@ use sqlquack_core::refusals::types::ConstructPolicy;
 use sqlquack_syntax::Expression;
 
 /// The constructs the policy declares inexpressible, then the nodes of `source` Snowflake rejects.
-pub fn declared_refusals(
+pub(crate) fn declared_refusals(
     statement: &Expression,
     occurrences: &[Occurrence],
     policy: &dyn ConstructPolicy,
