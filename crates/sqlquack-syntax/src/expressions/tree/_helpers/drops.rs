@@ -1,6 +1,7 @@
-//! Iterative drops for nodes a parser chains in a loop, such as `x::INT::INT`, `v[1][1]` or `q |> WHERE a |> WHERE b`.
+//! Iterative drops for nodes a parser chains in a loop, such as `x::INT::INT`, `v[1][1]`, `v:a:a` or `q |> WHERE a |> WHERE b`.
 
 use crate::expressions::functions::models::JSONCast;
+use crate::expressions::functions::models::JSONExtract;
 use crate::expressions::functions::models::Operator;
 use crate::expressions::functions::models::Xor;
 use crate::expressions::operators::models::Alias;
@@ -62,6 +63,7 @@ drop_iteratively!(
     IsNull,
     IsTrueFalse,
     JSONCast,
+    JSONExtract,
     JsonExtractFunc,
     LikeOp,
     MatchRecognize,

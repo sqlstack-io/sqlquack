@@ -1,4 +1,5 @@
 use crate::expressions::functions::models::JSONCast;
+use crate::expressions::functions::models::JSONExtract;
 use crate::expressions::functions::models::Operator;
 use crate::expressions::functions::models::Xor;
 use crate::expressions::names::models::Identifier;
@@ -420,6 +421,24 @@ fn given_a_100_000_step_chain_of_a_node_parsers_build_in_a_loop_when_dropping_on
                 Expression::JSONCast(Box::new(JSONCast {
                     this: Box::new(input),
                     to: DataType::Json,
+                }))
+            },
+            expected_depth: 100_000,
+        },
+        ChainStepTestCase {
+            description: "Databricks v:a:a paths",
+            step: |input| {
+                Expression::JSONExtract(Box::new(JSONExtract {
+                    this: Box::new(input),
+                    expression: Box::new(Expression::number(1)),
+                    only_json_types: None,
+                    expressions: Vec::new(),
+                    variant_extract: None,
+                    json_query: None,
+                    option: None,
+                    quote: None,
+                    on_condition: None,
+                    requires_json: None,
                 }))
             },
             expected_depth: 100_000,
