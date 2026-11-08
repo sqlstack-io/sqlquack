@@ -1,0 +1,51 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM t, UNNEST(x) WITH ORDINALITY",
+   "sql_sha256": "47586a1689b78118f7a0caf05dfda25e45afcd85535b186a38dbc17665ae6cdb"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT user_id, value FROM table_name SAMPLE BERNOULLI (50) SEED (0)",
+   "sql_sha256": "59e84e730d7808d55f479b927d15392ec268cbf70a4725bbeb2c9c0eab7026bd"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT user_id, value FROM table_name SAMPLE BERNOULLI ($s)",
+   "sql_sha256": "5c6345cb11f24df2d452b5b17dc0753593acb4c9f0a792c1eca8e784791081a7"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT * FROM t, UNNEST(x)",
+   "sql_sha256": "e35a20bc58f4896f206a3b485d6c4fd33205b6c6819d32d870e45157bfbd1c7e"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT user_id, value FROM table_name SAMPLE BERNOULLI ($s) SEED (0)",
+   "sql_sha256": "ea156eb2d2a4b350f02b931d8d8ada87063223b2e22927241c53df1d1d70c85c"
+  }
+ ],
+ "receipts": 5,
+ "receipts_file_sha256": "e87437a8e6fe4b3f020647706d890061642ce5ba1df78b943a66e1e773feceeb",
+ "reconciled_receipts": 0,
+ "refusals": [],
+ "refused": 0,
+ "runs": [
+  {
+   "audit_sha256": "c4efce54d7ef64a074f2e6631e4201dcb288e11188c69c8eb143656ff86a8864",
+   "receipts": 5,
+   "refused_rows": 0,
+   "run_id": "fmtprobe2",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": []
+}

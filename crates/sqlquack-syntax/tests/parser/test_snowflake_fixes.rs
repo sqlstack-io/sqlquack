@@ -1461,6 +1461,16 @@ fn given_a_snowflake_from_clause_when_parsing_then_recorded_query_verdicts_hold(
             expected_kind: Some("select"),
         },
         SnowflakeVerdictTestCase {
+            description: "keeps a session variable as the sample size (recorded errno 2211, after parsing)",
+            sql: "SELECT user_id, value FROM table_name SAMPLE BERNOULLI ($s) SEED (0)",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a dollar sign without a variable name as the sample size",
+            sql: "SELECT * FROM t1 SAMPLE ( $ ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
             description: "a trailing comma in a VALUES row (recorded errno 1003)",
             sql: "SELECT 1 FROM ( VALUES ( 1 , ) ) ;",
             expected_kind: None,
