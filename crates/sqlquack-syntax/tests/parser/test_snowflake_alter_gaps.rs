@@ -303,12 +303,42 @@ fn given_snowflake_policy_and_integration_alters_without_a_name_when_parsing_the
 fn given_snowflake_policy_and_integration_alters_without_a_name_when_parsing_then_the_tree_keeps_the_action(
 ) {
     let test_cases = [
-        ProjectionTestCase { description: "an omitted name is empty", sql: "ALTER MASKING POLICY SET COMMENT = 'm'", pointer: "/0/alter_object/name/name/name", expected_value: json!("") },
-        ProjectionTestCase { description: "the omitted name's SET keeps its property", sql: "ALTER MASKING POLICY SET COMMENT = 'm'", pointer: "/0/alter_object/properties/0/kind", expected_value: json!("COMMENT") },
-        ProjectionTestCase { description: "an omitted name's REFRESH names its secret", sql: "ALTER INTEGRATION REFRESH OAUTH_CLIENT_SECRET", pointer: "/0/alter_object/action", expected_value: json!("REFRESH OAUTH_CLIENT_SECRET") },
-        ProjectionTestCase { description: "a named policy keeps its name", sql: "ALTER MASKING POLICY v1 SET COMMENT = 'm'", pointer: "/0/alter_object/name/name/name", expected_value: json!("v1") },
-        ProjectionTestCase { description: "the bare word TAG is an unset property", sql: "ALTER ACCOUNT UNSET TAG", pointer: "/0/alter_object/properties/0/kind", expected_value: json!("TAG") },
-        ProjectionTestCase { description: "an organization user's visibility is ALL", sql: "ALTER ORGANIZATION USER v1 SET VISIBILITY = ALL", pointer: "/0/alter_object/properties/0/kind", expected_value: json!("VISIBILITY") },
+        ProjectionTestCase {
+            description: "an omitted name is empty",
+            sql: "ALTER MASKING POLICY SET COMMENT = 'm'",
+            pointer: "/0/alter_object/name/name/name",
+            expected_value: json!(""),
+        },
+        ProjectionTestCase {
+            description: "the omitted name's SET keeps its property",
+            sql: "ALTER MASKING POLICY SET COMMENT = 'm'",
+            pointer: "/0/alter_object/properties/0/kind",
+            expected_value: json!("COMMENT"),
+        },
+        ProjectionTestCase {
+            description: "an omitted name's REFRESH names its secret",
+            sql: "ALTER INTEGRATION REFRESH OAUTH_CLIENT_SECRET",
+            pointer: "/0/alter_object/action",
+            expected_value: json!("REFRESH OAUTH_CLIENT_SECRET"),
+        },
+        ProjectionTestCase {
+            description: "a named policy keeps its name",
+            sql: "ALTER MASKING POLICY v1 SET COMMENT = 'm'",
+            pointer: "/0/alter_object/name/name/name",
+            expected_value: json!("v1"),
+        },
+        ProjectionTestCase {
+            description: "the bare word TAG is an unset property",
+            sql: "ALTER ACCOUNT UNSET TAG",
+            pointer: "/0/alter_object/properties/0/kind",
+            expected_value: json!("TAG"),
+        },
+        ProjectionTestCase {
+            description: "an organization user's visibility is ALL",
+            sql: "ALTER ORGANIZATION USER v1 SET VISIBILITY = ALL",
+            pointer: "/0/alter_object/properties/0/kind",
+            expected_value: json!("VISIBILITY"),
+        },
     ];
 
     for test_case in test_cases {
