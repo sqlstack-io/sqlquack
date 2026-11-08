@@ -18,6 +18,8 @@ mod test_query_lineage;
 mod test_recorded_types;
 #[path = "tests/test_sqlite.rs"]
 mod test_sqlite;
+#[path = "tests/test_sqlserver.rs"]
+mod test_sqlserver;
 #[path = "tests/test_statement_findings.rs"]
 mod test_statement_findings;
 #[path = "tests/test_stored_columns.rs"]

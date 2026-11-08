@@ -20,11 +20,12 @@ use crate::lineage::_helpers::typing::rules::{
     ValueType, computed_type, literal_type, mapped_timestamp, rendered_type, required_non_null,
 };
 use crate::lineage::_helpers::typing::sqlite_typing::sqlite_cast_spelling;
+use crate::lineage::_helpers::typing::sqlserver_typing::sqlserver_cast_spelling;
 use crate::lineage::constants::{
     AGGREGATE_FUNCTIONS, BIGQUERY_DATE_PART_FUNCTIONS, BIGQUERY_PROFILE, BIGQUERY_WEEKDAY_PARTS,
     BOOLEAN_TYPE, CLICKHOUSE_PROFILE, DATE_PART_FUNCTIONS, DUCKDB_PROFILE, POSITIONAL_COLUMN_BASE,
     POSTGRES_PROFILE, SNOWFLAKE_JSON_HOLDERS, SNOWFLAKE_PROFILE, SNOWFLAKE_VARIANT_TYPE,
-    SQLITE_PROFILE,
+    SQLITE_PROFILE, SQLSERVER_PROFILE,
 };
 use crate::lineage::models::{
     Lineage, LineageContext, LineageScope, Nullability, ResolvedQuery, RowReads, TransformKind,
@@ -109,6 +110,9 @@ fn expression_lineage_level(
                 DUCKDB_PROFILE => cast_spelling(&cast.to),
                 POSTGRES_PROFILE => postgres_cast_spelling(&cast.to),
                 SQLITE_PROFILE => sqlite_cast_spelling(&cast.to),
+                SQLSERVER_PROFILE => {
+                    sqlserver_cast_spelling(&cast.to).unwrap_or_else(|| rendered_type(&cast.to))
+                }
                 _ => rendered_type(&cast.to),
             };
             let target: Option<Rc<str>> =

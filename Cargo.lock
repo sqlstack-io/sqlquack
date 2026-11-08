@@ -1553,6 +1553,7 @@ dependencies = [
  "sqlquack-syntax-clickhouse",
  "sqlquack-syntax-postgres",
  "sqlquack-syntax-sqlite",
+ "sqlquack-syntax-sqlserver",
  "stacker",
 ]
 

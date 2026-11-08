@@ -369,6 +369,8 @@ pub(crate) const NAME_FIELD: &str = "name";
 pub(crate) const POSTGRES_PROFILE: &str = "PostgreSQL";
 /// The SQLite profile's name.
 pub(crate) const SQLITE_PROFILE: &str = "SQLite";
+/// The SQL Server profile's name.
+pub(crate) const SQLSERVER_PROFILE: &str = "SQL Server";
 /// SQLite's name for the n-th column of a VALUES list, numbered from 1.
 pub(crate) const SQLITE_VALUES_COLUMN: &str = "column";
 /// PostgreSQL's system columns, which every stored table has and no star expands.

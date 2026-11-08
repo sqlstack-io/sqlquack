@@ -23,6 +23,7 @@ sqlquack-syntax-bigquery.workspace = true
 sqlquack-syntax-postgres.workspace = true
 sqlquack-syntax-clickhouse.workspace = true
 sqlquack-syntax-sqlite.workspace = true
+sqlquack-syntax-sqlserver.workspace = true
 
 [lints]
 workspace = true

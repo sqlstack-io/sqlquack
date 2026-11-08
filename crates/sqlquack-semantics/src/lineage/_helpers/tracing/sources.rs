@@ -15,12 +15,13 @@ use crate::lineage::_helpers::tracing::expressions::expression_lineage;
 use crate::lineage::_helpers::tracing::lineages::{combined, constant, direct, merged, unresolved};
 use crate::lineage::_helpers::tracing::queries::{empty_scope, renamed, resolved_query};
 use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
+use crate::lineage::_helpers::typing::rules::mapped_timestamp;
 use crate::lineage::constants::{
     ARRAY_FUNCTION, BIGQUERY_PROFILE, DUCKDB_PROFILE, DUCKDB_TABLE_FUNCTION_COLUMNS,
     DUCKDB_UNNEST_COLUMN, DUCKDB_VALUES_COLUMN, IDENTIFIER_FUNCTION, ONE_AGGREGATE,
     OUTER_LEFT_JOINS, OUTER_RIGHT_JOINS, SNOWFLAKE_PROFILE, SNOWFLAKE_VALUES_COLUMN,
-    SQLITE_PROFILE, SQLITE_VALUES_COLUMN, STRUCT_FUNCTION, TABLE_FUNCTION_COLUMNS, TABLE_WRAPPER,
-    UNNEST_FUNCTION,
+    SQLITE_PROFILE, SQLITE_VALUES_COLUMN, SQLSERVER_PROFILE, STRUCT_FUNCTION,
+    TABLE_FUNCTION_COLUMNS, TABLE_WRAPPER, UNNEST_FUNCTION,
 };
 use crate::lineage::models::{
     FromItems, Lineage, LineageContext, LineageScope, NamedQuery, Nullability, ResolvedQuery,
@@ -520,12 +521,21 @@ fn stored_columns(
                 .profile
                 .resolved_identifier(&column.name, column.quoted),
             lineage: Lineage {
-                data_type: column.data_type.as_deref().map(Rc::from),
+                data_type: stored_type(column, context),
                 nullability: column.nullability,
                 ..direct(relation, &column.name, column.quoted)
             },
         })
         .collect()
+}
+
+/// A stored column's type; SQL Server's adapter creates SQLBuild's TIMESTAMP as its timestamp type.
+fn stored_type(column: &SchemaColumn, context: LineageContext<'_>) -> Option<Rc<str>> {
+    let data_type: Rc<str> = Rc::from(column.data_type.as_deref()?);
+    Some(match context.profile.name() == SQLSERVER_PROFILE {
+        true => mapped_timestamp(data_type, context),
+        false => data_type,
+    })
 }
 
 /// The columns of a built-in table function, when `name` is one.

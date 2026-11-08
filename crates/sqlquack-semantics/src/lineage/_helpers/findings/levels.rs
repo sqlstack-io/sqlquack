@@ -22,8 +22,7 @@ use crate::lineage::_helpers::tracing::queries::{
 };
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::tracing::reuse::{Reuse, reusing};
-use crate::lineage::constants::CLICKHOUSE_PROFILE;
-use crate::lineage::constants::COLUMNS_FUNCTION;
+use crate::lineage::constants::{CLICKHOUSE_PROFILE, COLUMNS_FUNCTION, SQLSERVER_PROFILE};
 use crate::lineage::models::NameFinding;
 use crate::lineage::models::{LineageContext, LineageScope, NamedQuery};
 
@@ -221,6 +220,7 @@ fn select_findings(
     let mut own: Vec<NameFinding> = alias_count_findings(select, &scope, context);
     own.extend(using_findings(select, &scope, context));
     let postgres: bool = Engine::of(context) == Engine::Postgres;
+    let sqlserver: bool = context.profile.name() == SQLSERVER_PROFILE;
     for item in from_items(select) {
         let reads: Option<&LineageScope<'_>> = lateral(item).then_some(&scope);
         let body: Vec<NameFinding> =
@@ -269,7 +269,11 @@ fn select_findings(
         let (found, inner) = clause_findings(
             projection,
             &Level {
-                outputs: if postgres { &unnamed } else { &others },
+                outputs: if postgres || sqlserver {
+                    &unnamed
+                } else {
+                    &others
+                },
                 ..level
             },
             context,
@@ -279,10 +283,11 @@ fn select_findings(
     }
     let own_outputs: Vec<String> = aliased_outputs(select, context);
     for clause in clauses(select) {
-        let outputs: &[String] = match postgres {
-            false => level.outputs,
-            true if output_name_place(select, clause) => &own_outputs,
-            true => &unnamed,
+        let outputs: &[String] = match (postgres, sqlserver) {
+            (true, _) if output_name_place(select, clause) => &own_outputs,
+            (_, true) if ordered_name_place(select, clause) => &own_outputs,
+            (true, _) | (_, true) => &unnamed,
+            _ => level.outputs,
         };
         let (found, inner) = clause_findings(clause, &Level { outputs, ..level }, context);
         own.extend(found);
@@ -315,22 +320,26 @@ fn aliased_outputs(select: &Select, context: LineageContext<'_>) -> Vec<String> 
 
 /// Where PostgreSQL reads output names: GROUP BY items and ORDER BY keys that are a bare name.
 fn output_name_place(select: &Select, clause: &Expression) -> bool {
-    let item = |candidate: &Expression| std::ptr::eq(candidate, clause);
-    let mut bare: &Expression = unannotated(clause);
-    while let Expression::Paren(paren) = bare {
-        bare = unannotated(&paren.this);
-    }
     select
         .group_by
         .iter()
         .flat_map(|group| &group.expressions)
-        .any(item)
-        || (matches!(bare, Expression::Column(column) if column.table.is_none())
-            && select
-                .order_by
-                .iter()
-                .flat_map(|order| &order.expressions)
-                .any(|ordered| item(&ordered.this)))
+        .any(|candidate| std::ptr::eq(candidate, clause))
+        || ordered_name_place(select, clause)
+}
+
+/// Where SQL Server reads output names: ORDER BY keys that are a bare name.
+fn ordered_name_place(select: &Select, clause: &Expression) -> bool {
+    let mut bare: &Expression = unannotated(clause);
+    while let Expression::Paren(paren) = bare {
+        bare = unannotated(&paren.this);
+    }
+    matches!(bare, Expression::Column(column) if column.table.is_none())
+        && select
+            .order_by
+            .iter()
+            .flat_map(|order| &order.expressions)
+            .any(|ordered| std::ptr::eq(&ordered.this, clause))
 }
 
 /// Whether a FROM item is LATERAL, reading the items before it.

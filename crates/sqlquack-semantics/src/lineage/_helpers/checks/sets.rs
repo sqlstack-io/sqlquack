@@ -9,7 +9,7 @@ use crate::lineage::_helpers::checks::families::{Family, expression_family, type
 use crate::lineage::_helpers::checks::issues::{issue, type_location};
 use crate::lineage::_helpers::tracing::expressions::expression_lineage;
 use crate::lineage::_helpers::tracing::queries::{empty_scope, level_scope, unannotated};
-use crate::lineage::constants::TYPE_PHASE;
+use crate::lineage::constants::{SQLSERVER_PROFILE, TYPE_PHASE};
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding, NamedQuery};
 
 /// Snowflake's binder kinds, which decide how set-operation branches combine.
@@ -164,11 +164,14 @@ pub(crate) fn set_findings(
     let Some((operator, left, right)) = operands(query) else {
         return Vec::new();
     };
+    let counts_only: bool = context.profile.name() == SQLSERVER_PROFILE;
     let findings: Vec<NameFinding> = match Engine::of(context) {
-        Engine::Snowflake => snowflake_findings(query, branches, context),
-        Engine::Sqlite => width_findings((operator, query), (left, right), branches, context)
-            .into_iter()
-            .collect(),
+        Engine::Snowflake if !counts_only => snowflake_findings(query, branches, context),
+        Engine::Sqlite | Engine::Snowflake => {
+            width_findings((operator, query), (left, right), branches, context)
+                .into_iter()
+                .collect()
+        }
         engine @ (Engine::DuckDB | Engine::Postgres | Engine::BigQuery) => {
             binder_findings((engine, query, operator), (left, right), branches, context)
         }

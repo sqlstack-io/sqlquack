@@ -9,3 +9,4 @@ pub(crate) mod rules;
 pub(crate) mod snowflake_sets;
 pub(crate) mod snowflake_typing;
 pub(crate) mod sqlite_typing;
+pub(crate) mod sqlserver_typing;

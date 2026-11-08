@@ -16,6 +16,7 @@ use crate::lineage::_helpers::typing::postgres_typing::postgres_window_only;
 use crate::lineage::constants::{
     BIGQUERY_WINDOW_ONLY_FUNCTIONS, NAME_FIELD, POSTGRES_PROFILE, SCOPE_PHASE,
     SHAPE_COMMENT_SUFFIX, SHAPE_COSMETIC_FIELDS, SNOWFLAKE_PROFILE, SPAN_FIELD, SQLITE_PROFILE,
+    SQLSERVER_PROFILE,
 };
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding, ScopeSource};
 
@@ -723,7 +724,7 @@ fn group_keys<'s>(
     groups
 }
 
-/// A DuckDB group key as grouping compares it: each column as the source and name it resolves to.
+/// A group key as DuckDB and SQL Server compare it: each column as the source and name it resolves to.
 fn duckdb_shape(expression: &Expression, level: RuleLevel<'_, '_>) -> Option<Value> {
     match serde_json::to_value(expression) {
         Ok(mut shape) => {
@@ -913,13 +914,15 @@ fn grouping(
     }
     let groups: Vec<&Expression> = group_keys(select, aliases, level);
     let unmarked_groups: Vec<&Expression> = groups.iter().map(|group| unmarked(group)).collect();
-    let group_shapes: Vec<(&'static str, Value)> = match Engine::of(level.context) {
-        Engine::DuckDB => unmarked_groups
+    let caseless: bool = Engine::of(level.context) == Engine::DuckDB
+        || level.context.profile.name() == SQLSERVER_PROFILE;
+    let group_shapes: Vec<(&'static str, Value)> = match caseless {
+        true => unmarked_groups
             .iter()
             .filter(|group| !matches!(group, Expression::Column(_)))
             .filter_map(|group| Some((group.variant_name(), duckdb_shape(group, level)?)))
             .collect(),
-        _ => Vec::new(),
+        false => Vec::new(),
     };
     let same_shape = |node: &Expression| {
         group_shapes
