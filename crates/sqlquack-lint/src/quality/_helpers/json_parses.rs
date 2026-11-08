@@ -57,6 +57,7 @@ fn parse_functions(dialect: LintDialect) -> &'static [&'static str] {
     match dialect {
         LintDialect::Snowflake => &["PARSE_JSON", "TRY_PARSE_JSON"],
         LintDialect::DuckDB => &["JSON"],
+        LintDialect::BigQuery => &["PARSE_JSON", "SAFE.PARSE_JSON"],
         LintDialect::PostgreSQL | LintDialect::SQLite => &[],
     }
 }
@@ -205,6 +206,9 @@ fn written(identifier: &Identifier, quote: char) -> String {
     }
 }
 
-fn identifier_quote(_dialect: LintDialect) -> char {
-    '"'
+fn identifier_quote(dialect: LintDialect) -> char {
+    match dialect {
+        LintDialect::BigQuery => '`',
+        _ => '"',
+    }
 }

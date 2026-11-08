@@ -226,7 +226,10 @@ fn with_clause(node: &Expression) -> Option<&With> {
 
 /// A CTE name as the dialect resolves it, so only names the engine treats as equal collide.
 fn cte_key(identifier: &Identifier, dialect: LintDialect) -> String {
-    let quoted_names_ignore_case = matches!(dialect, LintDialect::DuckDB | LintDialect::SQLite);
+    let quoted_names_ignore_case = matches!(
+        dialect,
+        LintDialect::DuckDB | LintDialect::SQLite | LintDialect::BigQuery
+    );
     match dialect {
         _ if identifier.quoted && !quoted_names_ignore_case => identifier.name.clone(),
         LintDialect::Snowflake => identifier.name.to_uppercase(),

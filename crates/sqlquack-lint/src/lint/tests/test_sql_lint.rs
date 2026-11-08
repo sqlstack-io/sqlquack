@@ -113,6 +113,26 @@ fn given_deeply_nested_from_parentheses_when_linting_postgres_then_the_parser_re
 }
 
 #[test]
+fn given_deeply_nested_from_parentheses_when_linting_bigquery_then_the_parser_refuses_cleanly() {
+    let test_cases = [test_types::NestingRefusalTestCase {
+        description: "BigQuery refuses deep nesting as a parse error",
+        dialect: "bigquery",
+        depth: 1500,
+        expected_code: "Parse error",
+    }];
+    for test_case in test_cases {
+        let sql = helpers::nested_from_sql(test_case.depth);
+        let error = helpers::diagnostics_for_dialect(&sql, test_case.dialect, &["SQLCLEAN001"])
+            .expect_err("deeply nested FROM parentheses should be refused");
+        assert!(
+            error.contains(test_case.expected_code),
+            "{}: {error}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_sql_cases_when_linting_then_diagnostics_match() -> Result<(), String> {
     let test_cases = [
         test_types::LintTestCase {

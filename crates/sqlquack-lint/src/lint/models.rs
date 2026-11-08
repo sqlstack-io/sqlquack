@@ -12,6 +12,7 @@ pub enum LintDialect {
     DuckDB,
     PostgreSQL,
     SQLite,
+    BigQuery,
 }
 
 /// SQL text tokenized and parsed under one dialect.

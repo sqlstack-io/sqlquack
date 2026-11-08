@@ -441,6 +441,7 @@ pub(crate) fn lint(request: LintRequest) -> Result<LintResponse, String> {
         diagnostics.extend(diagnostics_for_spans(
             &JOIN_EXPRESSION,
             &crate::lint::_helpers::join_predicates::join_expression_spans(
+                &request.sql,
                 &tokens,
                 &depths,
                 dialect_type,
@@ -1810,7 +1811,10 @@ fn simple_boolean_case_fix(sql: &str, tokens: &[Token], span: Span) -> Option<Li
 fn explicit_union_fix(dialect: LintDialect, span: Span) -> Option<LintEdit> {
     matches!(
         dialect,
-        LintDialect::PostgreSQL | LintDialect::Snowflake | LintDialect::DuckDB
+        LintDialect::PostgreSQL
+            | LintDialect::Snowflake
+            | LintDialect::DuckDB
+            | LintDialect::BigQuery
     )
     .then(|| LintEdit {
         start: span.start,
