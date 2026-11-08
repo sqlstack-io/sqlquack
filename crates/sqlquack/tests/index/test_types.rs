@@ -3,7 +3,7 @@ pub(crate) struct IndexOutcome {
     pub(crate) exit_code: Option<i32>,
     pub(crate) text_to_boolean_files: Vec<String>,
     pub(crate) text_to_number_files: Vec<String>,
-    pub(crate) parse_json_refusals: Vec<String>,
+    pub(crate) hash_refusals: Vec<String>,
     pub(crate) converted: u64,
     pub(crate) refused: u64,
 }

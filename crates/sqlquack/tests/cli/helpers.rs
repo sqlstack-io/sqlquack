@@ -265,7 +265,7 @@ pub(crate) fn policy_free_exit_code(arguments: &[&str], policy_file: Option<&str
     .expect("query written");
     std::fs::write(
         directory.path().join("json.sql"),
-        "SELECT PARSE_JSON('1') AS j",
+        "SELECT OBJECT_CONSTRUCT('a', 1) AS j",
     )
     .expect("query written");
     policy_file.iter().for_each(|path| {

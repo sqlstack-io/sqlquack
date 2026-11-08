@@ -4532,7 +4532,7 @@ uncertain = true
 category = "dbt_flatten"
 sql = '''select r.raw:id::varchar as event_id, try_parse_json(r.raw:body::varchar) as body
 from raw_events r'''
-expect = "refused SQ0008 fn:TRY_PARSE_JSON at 38..73"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -6028,7 +6028,7 @@ expect_repository = "translated"
 category = "dbt_flatten"
 sql = '''select r.raw:id::varchar as event_id, f.value:name::varchar as name
 from raw_events r, lateral flatten(input => parse_json(r.raw:body::varchar):products) f'''
-expect = "refused SQ0008 fn:PARSE_JSON at 112..143"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
