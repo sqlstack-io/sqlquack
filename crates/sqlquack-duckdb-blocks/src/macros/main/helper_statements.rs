@@ -31,7 +31,9 @@ pub fn helper_statements(sql: &[&str]) -> Vec<String> {
         .collect()
 }
 
-/// Whether `text` calls the helper `name`.
+/// Whether `text` calls the helper `name`, with any whitespace before its parenthesis.
 fn calls(text: &str, name: &str) -> bool {
-    text.contains(&format!("{HELPER_CALL_PREFIX}{name}("))
+    let called = format!("{HELPER_CALL_PREFIX}{name}");
+    text.match_indices(&called)
+        .any(|(at, _)| text[at + called.len()..].trim_start().starts_with('('))
 }

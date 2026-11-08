@@ -23,6 +23,19 @@ fn given_sql_when_listing_helpers_then_only_called_ones_come_dependencies_first(
                 "CREATE OR REPLACE MACRO sqlquack.variant_text_v1",
             ],
         },
+        HelperListTestCase {
+            description: "a line break between a helper's name and its parenthesis is still a call",
+            sql: "SELECT sqlquack.json_escaped_v1\n    (\"P\")",
+            expected_heads: vec![
+                "CREATE SCHEMA IF NOT EXISTS sqlquack",
+                "CREATE OR REPLACE MACRO sqlquack.json_escaped_v1",
+            ],
+        },
+        HelperListTestCase {
+            description: "a longer name beginning with a helper's name is not a call of it",
+            sql: r#"SELECT sqlquack.json_escaped_v10("P")"#,
+            expected_heads: vec![],
+        },
     ];
     for test_case in test_cases {
         let statements = helper_statements(&[test_case.sql]);
