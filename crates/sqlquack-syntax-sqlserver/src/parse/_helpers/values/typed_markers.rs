@@ -14,7 +14,7 @@ use crate::scan::main::scan::scan;
 const MARKER_ARITY: usize = 2;
 
 impl Parser<'_> {
-    /// The bare call `name` at its `(` as a marker (SQL Server gives 195: a deliberate departure).
+    /// The bare call `name` at its `(` as a marker, departing from SQL Server's 195; else `None`, cursor unmoved.
     pub(crate) fn typed_marker(&mut self, name: &str) -> Parsing<Option<Expression>> {
         let like: bool = name.eq_ignore_ascii_case(TYPED_LIKE_EXPRESSION_FUNCTION);
         if !like && !name.eq_ignore_ascii_case(TYPED_EXPRESSION_FUNCTION) {
