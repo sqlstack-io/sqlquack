@@ -5,7 +5,7 @@
 # RUST_TEST_JOBS (default 4) binaries run at a time, the slowest first. Each runs from its package
 # directory with the native library paths of the build scripts, as `cargo test` runs it; its whole
 # output is printed when it finishes, and any failing binary fails the run after every binary has
-# finished. Doc tests run last.
+# finished. Doc tests follow, then the tests marked `#[ignore = "timing"]`, one at a time.
 set -euo pipefail
 profile=${1:?usage: run_rust_tests.sh <profile>}
 jobs=${RUST_TEST_JOBS:-4}
@@ -76,5 +76,32 @@ while IFS="$(printf '\t')" read -r number name executable _; do
   fi
 done <"$work/ordered"
 cargo test --workspace --locked --profile "$profile" "${features[@]}" --doc || failed=1
+
+# Tests that hold a wall-clock budget, marked `#[ignore = "timing"]`, run last, one at a time and
+# single-threaded, so no other test shares the machine with them.
+{ grep -rh -A4 --include='*.rs' '#\[ignore = "timing"\]' crates || true; } \
+  | sed -n 's/^fn \([a-z0-9_]*\)(.*/\1/p' | sort -u >"$work/timing"
+: >"$work/timing-found"
+while IFS="$(printf '\t')" read -r _ name executable directory; do
+  (cd "$directory" && "$executable" --list --ignored) | sed -n 's/: test$//p' \
+    | while read -r path; do
+      grep -qxF "${path##*::}" "$work/timing" || continue
+      echo "${path##*::}" >>"$work/timing-found"
+      started=$(date +%s)
+      if (cd "$directory" && "$executable" --exact "$path" --ignored --test-threads=1 -q); then
+        echo "run_rust_tests: timing $name $path passed in $(( $(date +%s) - started )) s"
+      else
+        echo "run_rust_tests: FAILED timing $name $path"
+        echo failed >>"$work/timing-failed"
+      fi
+    done
+done <"$work/ordered"
+[ -e "$work/timing-failed" ] && failed=1
+missing=$(sort -u "$work/timing-found" | comm -23 "$work/timing" -)
+if [ -n "$missing" ]; then
+  echo "run_rust_tests: FAILED: timing tests not found in any binary: $missing"
+  failed=1
+fi
+echo "run_rust_tests: $(wc -l <"$work/timing") timing tests ran one at a time"
 [ "$failed" = 0 ] || { echo "run_rust_tests: FAILED" >&2; exit 1; }
 echo "run_rust_tests: passed"

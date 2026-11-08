@@ -311,6 +311,7 @@ fn given_untokenizable_sql_when_fingerprinted_then_the_tokenizer_message_is_repo
 }
 
 #[test]
+#[ignore = "timing"]
 fn given_pathological_nesting_when_fingerprinted_then_time_stays_linear() {
     let test_cases = [
         NestingTestCase {

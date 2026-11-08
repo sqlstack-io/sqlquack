@@ -5,6 +5,7 @@ use crate::parsing::tests::test_types::{ExtremeInputTestCase, PropertyTestCase};
 const EXTREME_INPUT_LIMIT: std::time::Duration = std::time::Duration::from_secs(10);
 
 #[test]
+#[ignore = "timing"]
 fn given_generated_sql_when_parsed_and_diagnosed_then_nothing_panics_hangs_or_points_outside() {
     let test_cases = [
         PropertyTestCase {
@@ -31,6 +32,7 @@ fn given_generated_sql_when_parsed_and_diagnosed_then_nothing_panics_hangs_or_po
 }
 
 #[test]
+#[ignore = "timing"]
 fn given_extreme_sql_when_parsed_and_diagnosed_then_it_finishes_without_panicking() {
     let test_cases = [
         ExtremeInputTestCase {

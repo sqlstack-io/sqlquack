@@ -1773,6 +1773,7 @@ fn given_numbers_beyond_38_digits_when_running_then_duckdb_raises_a_numeric_rang
 }
 
 #[test]
+#[ignore = "timing"]
 fn given_a_long_flat_chain_when_converting_then_it_converts_or_is_refused_within_budget() {
     let test_cases = [
         DeepChainTestCase {

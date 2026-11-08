@@ -77,6 +77,7 @@ fn given_an_identified_raise_when_duckdb_reports_it_then_its_id_reads_back() {
 }
 
 #[test]
+#[ignore = "timing"]
 fn given_an_expression_with_many_raises_when_identifying_them_then_time_grows_linearly() {
     let test_cases = [
         ManyRaisesTestCase {

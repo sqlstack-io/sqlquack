@@ -77,9 +77,24 @@ fn workspace_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
 }
 
+/// Indexes a copy of the repository policy and its conversion cases twice.
 pub(crate) fn index_repository_cases() -> CaseIndexOutcome {
-    let first = sqlquack(&workspace_root(), &["index"]);
-    let second = sqlquack(&workspace_root(), &["index"]);
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let root = workspace_root();
+    std::fs::copy(
+        root.join("sqlquack.toml"),
+        directory.path().join("sqlquack.toml"),
+    )
+    .expect("policy copied");
+    let cases = directory.path().join("cases/conversion");
+    std::fs::create_dir_all(&cases).expect("cases directory");
+    for entry in std::fs::read_dir(root.join("cases/conversion")).expect("conversion cases") {
+        let path = entry.expect("a directory entry").path();
+        std::fs::copy(&path, cases.join(path.file_name().expect("a file name")))
+            .expect("case copied");
+    }
+    let first = sqlquack(directory.path(), &["index"]);
+    let second = sqlquack(directory.path(), &["index"]);
     let text = String::from_utf8_lossy(&first.stdout);
     let block = text
         .split("\n\n")

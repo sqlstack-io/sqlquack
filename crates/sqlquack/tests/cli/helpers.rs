@@ -421,27 +421,23 @@ pub(crate) fn verify_error_check(
     }
 }
 
-/// Runs `sqlquack review` once on a copy of the policy, cases and recorded results.
-pub(crate) fn review_repository() -> ReviewedRepository {
-    let directory = tempfile::tempdir().expect("temporary directory");
+/// Runs `sqlquack review` on the policy, recorded results and the cases behind review `files`.
+pub(crate) fn review_repository(files: &[&str]) -> ReviewedRepository {
+    let directory = review_directory();
     let root = repository_root();
-    std::fs::copy(
-        root.join("sqlquack.toml"),
-        directory.path().join("sqlquack.toml"),
-    )
-    .expect("policy copied");
-    copy_files(&root.join("cases"), &directory.path().join("cases"));
+    for file in files {
+        let case = Path::new("cases").join(file).with_extension("toml");
+        let target = directory.path().join(&case);
+        std::fs::create_dir_all(target.parent().expect("a parent directory"))
+            .expect("directory created");
+        std::fs::copy(root.join(&case), target).expect("case copied");
+    }
     copy_files(
         &root.join("evidence/results"),
         &directory.path().join("evidence/results"),
     );
-    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["review", "--out", "exported"])
-        .current_dir(directory.path())
-        .output()
-        .expect("sqlquack runs");
     ReviewedRepository {
-        exit_code: output.status.code(),
+        exit_code: run_review(directory.path()),
         directory,
     }
 }
@@ -466,6 +462,26 @@ pub(crate) fn review_export(
 
 /// Reviews the project function cases, with the equivalence files every review needs.
 pub(crate) fn review_project_functions(file: &str, expected_lines: &[&str]) -> ReviewOutcome {
+    let directory = review_directory();
+    copy_files(
+        &repository_root().join("cases/project-functions"),
+        &directory.path().join("cases/project-functions"),
+    );
+    let exit_code = run_review(directory.path());
+    let text =
+        std::fs::read_to_string(directory.path().join("exported").join(file)).unwrap_or_default();
+    ReviewOutcome {
+        exit_code,
+        missing_lines: expected_lines
+            .iter()
+            .filter(|expected| !text.lines().any(|line| line.starts_with(*expected)))
+            .map(|expected| (*expected).to_owned())
+            .collect(),
+    }
+}
+
+/// A temporary directory holding the policy and the equivalence files every review needs.
+fn review_directory() -> tempfile::TempDir {
     let directory = tempfile::tempdir().expect("temporary directory");
     let root = repository_root();
     std::fs::copy(
@@ -473,10 +489,6 @@ pub(crate) fn review_project_functions(file: &str, expected_lines: &[&str]) -> R
         directory.path().join("sqlquack.toml"),
     )
     .expect("policy copied");
-    copy_files(
-        &root.join("cases/project-functions"),
-        &directory.path().join("cases/project-functions"),
-    );
     for entry in WalkDir::new(root.join("cases"))
         .into_iter()
         .flatten()
@@ -494,21 +506,18 @@ pub(crate) fn review_project_functions(file: &str, expected_lines: &[&str]) -> R
             .expect("directory created");
         std::fs::copy(entry.path(), target).expect("file copied");
     }
-    let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+    directory
+}
+
+/// The exit code of `sqlquack review --out exported` run in `directory`.
+fn run_review(directory: &Path) -> Option<i32> {
+    Command::new(env!("CARGO_BIN_EXE_sqlquack"))
         .args(["review", "--out", "exported"])
-        .current_dir(directory.path())
+        .current_dir(directory)
         .output()
-        .expect("sqlquack runs");
-    let text =
-        std::fs::read_to_string(directory.path().join("exported").join(file)).unwrap_or_default();
-    ReviewOutcome {
-        exit_code: output.status.code(),
-        missing_lines: expected_lines
-            .iter()
-            .filter(|expected| !text.lines().any(|line| line.starts_with(*expected)))
-            .map(|expected| (*expected).to_owned())
-            .collect(),
-    }
+        .expect("sqlquack runs")
+        .status
+        .code()
 }
 
 /// Converts `DOUBLED(PRICE NUMBER(10,2))` with `sqlquack function`, then runs its macro.

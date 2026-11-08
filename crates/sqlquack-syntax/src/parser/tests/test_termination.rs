@@ -8,6 +8,7 @@ use crate::parser::tests::test_types::DepthScopeTestCase;
 use crate::parser::tests::test_types::TerminationTestCase;
 
 #[test]
+#[ignore = "timing"]
 fn given_hostile_inputs_when_parsing_then_each_decides_within_the_budget() {
     let test_cases = [
         TerminationTestCase {
