@@ -11,6 +11,7 @@ use crate::format::_helpers::identifiers::ParsedNames;
 use crate::format::_helpers::lexemes::{
     Lexeme, bracket_partners, ends_operand, is_keyword, is_unquoted_word,
 };
+use crate::format::_helpers::sqlserver::StatementTokens;
 use crate::format::constants::{
     ALIAS_FOLLOWERS, BIGQUERY_INDEX_KEYWORD, BIGQUERY_INLINE_CALLS, BIGQUERY_REFERENCES_KEYWORD,
     BIGQUERY_SET_OPERATOR_PREFIXES, BIGQUERY_VALUE_TABLE_KINDS, CALL_TARGET_KEYWORDS,
@@ -22,7 +23,8 @@ use crate::format::constants::{
     POSTGRES_QUANTIFIERS, POSTGRES_SPACED_QUANTIFIER, SAMPLE_KEYWORDS, SAMPLE_ROW_KEYWORD,
     SEMANTIC_VIEW_CALL, SEMANTIC_VIEW_CLAUSES, SET_OPERATOR_MODIFIERS, SET_OPERATORS,
     SNOWFLAKE_INLINE_CALLS, SPACED_BEFORE_PARENTHESIS, SQLSERVER_APPLY_KEYWORD,
-    SQLSERVER_APPLY_PREFIXES, SQLSERVER_INLINE_CALLS, SQLSERVER_LIST_CLAUSES,
+    SQLSERVER_APPLY_PREFIXES, SQLSERVER_BEGIN_STATEMENTS, SQLSERVER_BLOCK_WORDS,
+    SQLSERVER_BRANCH_STATEMENTS, SQLSERVER_INLINE_CALLS, SQLSERVER_LIST_CLAUSES,
     SQLSERVER_OBJECT_PRECEDERS, SQLSERVER_SPACED_BEFORE_PARENTHESIS, STRUCT_TYPE_WORDS,
     TYPE_CONTINUATIONS, TYPED_LITERALS, VALUES_KEYWORD,
 };
@@ -35,21 +37,29 @@ pub(crate) struct GuideLayout {
     pub(crate) verbatim: Vec<(usize, usize)>,
     /// The number of select lists laid out.
     pub(crate) selects: usize,
+    /// Tokens that start a statement the parser read, or the block of a routine's body: keywords, never names, even after `AS`.
+    pub(crate) statement_starts: Vec<usize>,
 }
 
 /// Lay out `lexemes` with what the parse tree says about them in `names`.
 pub(crate) fn layout_guide(
     lexemes: &[Lexeme],
     names: &ParsedNames,
+    statement_ranges: &[StatementTokens],
     dialect: FormatDialect,
 ) -> GuideLayout {
     let mut guide = Guide::new(lexemes, names, dialect);
+    guide.statement_ranges = statement_ranges;
     guide.statements();
     guide.render()
 }
 
 struct Guide<'a> {
     lexemes: &'a [Lexeme],
+    /// Where the parser read each statement, nested ones included, when it reports that: SQL Server's.
+    statement_ranges: &'a [StatementTokens],
+    /// Tokens that start a statement or a routine body's block.
+    statement_starts: Vec<usize>,
     identifiers: &'a [bool],
     /// Tokens the parse tree names as an alias.
     aliases: &'a [bool],
@@ -119,6 +129,8 @@ impl<'a> Guide<'a> {
         }
         let mut guide = Self {
             lexemes,
+            statement_ranges: &[],
+            statement_starts: Vec::new(),
             identifiers: &names.identifiers,
             aliases: &names.aliases,
             unspanned: &names.unspanned,
@@ -688,6 +700,17 @@ impl<'a> Guide<'a> {
     }
 
     fn statements(&mut self) {
+        if !self.statement_ranges.is_empty() {
+            let tops: Vec<StatementTokens> = self.inner_statements(0, self.len() - 1, 0);
+            for top in tops {
+                self.gaps[top.first] = match top.first {
+                    0 => String::new(),
+                    _ => "\n".to_string(),
+                };
+                self.ranged_statement(top, 0);
+            }
+            return;
+        }
         let mut first = 0;
         for index in 0..self.len() {
             if self.lexemes[index].kind != TokenType::Semicolon || self.enclosing[index].is_some() {
@@ -701,6 +724,89 @@ impl<'a> Guide<'a> {
         }
         if first < self.len() {
             self.statement(first, self.len() - 1);
+        }
+    }
+
+    /// The statements at `depth` the parser read within tokens `first` to `last`.
+    fn inner_statements(&self, first: usize, last: usize, depth: usize) -> Vec<StatementTokens> {
+        self.statement_ranges
+            .iter()
+            .copied()
+            .filter(|range| range.depth == depth && first <= range.first && range.last <= last)
+            .collect()
+    }
+
+    /// Whether a block, `BEGIN ... END` or `BEGIN TRY`, starts at `index`, not a `BEGIN TRANSACTION`.
+    fn starts_block(&self, index: usize) -> bool {
+        self.is(index, "BEGIN") && !self.is_any(index + 1, &SQLSERVER_BEGIN_STATEMENTS)
+    }
+
+    /// Lay out a statement the parser read, at `indent`: the statements inside a block, branch, loop or procedure each on their own line, a block's indented one step, and its other words around them.
+    fn ranged_statement(&mut self, statement: StatementTokens, indent: usize) {
+        let first = statement.first;
+        let mut last = statement.last;
+        while last > first && self.kind(last) == Some(TokenType::Semicolon) {
+            self.gaps[last] = String::new();
+            last -= 1;
+        }
+        self.statement_starts.push(first);
+        let inner = self.inner_statements(first, statement.last, statement.depth + 1);
+        let Some(head_end) = inner.first().map(|inner| inner.first - 1) else {
+            self.query(first, last, indent);
+            return;
+        };
+        let block = self.starts_block(first);
+        let branches = self.is_any(first, &SQLSERVER_BRANCH_STATEMENTS);
+        if branches {
+            self.expr(first + 1, head_end, indent);
+        }
+        let opens_block = !block && !branches && head_end > first && self.is(head_end, "BEGIN");
+        if opens_block {
+            self.statement_starts.push(head_end);
+        }
+        if !block && !branches {
+            let mut head_last = head_end;
+            for word in ["BEGIN", "AS"] {
+                if head_last > first && self.is(head_last, word) {
+                    self.gaps[head_last] = newline(indent);
+                    head_last -= 1;
+                }
+            }
+            self.expr(first, head_last, indent);
+        }
+        let mut after = head_end + 1;
+        for statement in inner {
+            self.frame(after, statement.first.saturating_sub(1), indent);
+            let after_else = statement.first > 0 && self.is(statement.first - 1, "ELSE");
+            let inner_indent =
+                if block || opens_block || (branches && !self.starts_block(statement.first)) {
+                    indent + 1
+                } else {
+                    indent
+                };
+            if after_else && self.is(statement.first, "IF") {
+                self.gaps[statement.first] = " ".to_string();
+                self.ranged_statement(statement, indent);
+            } else {
+                self.gaps[statement.first] = newline(inner_indent);
+                self.ranged_statement(statement, inner_indent);
+            }
+            after = statement.last + 1;
+        }
+        self.frame(after, last, indent);
+    }
+
+    /// Put each BEGIN, END and ELSE among tokens `first` to `last`, the words around a block's statements, on its own line at `indent`.
+    fn frame(&mut self, first: usize, last: usize, indent: usize) {
+        if first > last {
+            return;
+        }
+        for index in first..=last {
+            if self.is_any(index, &SQLSERVER_BLOCK_WORDS) {
+                self.gaps[index] = newline(indent);
+            } else if self.kind(index) == Some(TokenType::Semicolon) {
+                self.gaps[index] = String::new();
+            }
         }
     }
 
@@ -1483,6 +1589,7 @@ impl<'a> Guide<'a> {
             tokens,
             verbatim,
             selects: self.selects,
+            statement_starts: self.statement_starts.clone(),
         }
     }
 }

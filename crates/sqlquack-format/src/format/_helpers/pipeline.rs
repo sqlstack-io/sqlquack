@@ -9,7 +9,7 @@ use crate::format::_helpers::identifiers::parsed_names;
 use crate::format::_helpers::lexemes::{Lexeme, ends_operand, is_unquoted_word, lex};
 use crate::format::_helpers::native::parse_postgres;
 use crate::format::_helpers::printed_layout::{PrintedSql, wrap_lines};
-use crate::format::_helpers::sqlserver::parse_sqlserver;
+use crate::format::_helpers::sqlserver::{parse_sqlserver, statement_tokens};
 use crate::format::_helpers::token_layout::{
     AuthoredPrint, AuthoredSql, Oracle, print_authored_tokens, verify_printed_tokens,
 };
@@ -40,14 +40,16 @@ pub(crate) fn format_checked(sql: &str, options: &FormatOptions) -> Result<Forma
     if nests_types_deeply(&lexemes) {
         return Err(TYPE_DEPTH_FAILURE.to_string());
     }
-    let statements = match dialect {
-        FormatDialect::BigQuery => parse_bigquery(sql)?,
-        FormatDialect::PostgreSQL => parse_postgres(sql)?,
+    let (statements, ranges) = match dialect {
+        FormatDialect::BigQuery => (parse_bigquery(sql)?, Vec::new()),
+        FormatDialect::PostgreSQL => (parse_postgres(sql)?, Vec::new()),
         FormatDialect::SqlServer => parse_sqlserver(sql)?,
         _ => {
             let shared = dialect.shared().ok_or(UNSUPPORTED_DIALECT_FAILURE)?;
-            parse_statements_with(sql, shared, &options.parse, CallMode::FaithfulLocated)
-                .map_err(|error| format!("{PARSE_FAILURE}: {error}"))?
+            let statements =
+                parse_statements_with(sql, shared, &options.parse, CallMode::FaithfulLocated)
+                    .map_err(|error| format!("{PARSE_FAILURE}: {error}"))?;
+            (statements, Vec::new())
         }
     };
     if statements
@@ -57,7 +59,8 @@ pub(crate) fn format_checked(sql: &str, options: &FormatOptions) -> Result<Forma
         return Err(DEPTH_FAILURE.to_string());
     }
     let names = parsed_names(sql, &statements, &lexemes)?;
-    let guide = layout_guide(&lexemes, &names, dialect);
+    let statement_ranges = statement_tokens(&ranges, &lexemes);
+    let guide = layout_guide(&lexemes, &names, &statement_ranges, dialect);
     if dialect == FormatDialect::Snowflake && guide.selects != names.selects {
         return Err(SELECT_LIST_FAILURE.to_string());
     }

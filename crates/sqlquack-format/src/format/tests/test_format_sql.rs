@@ -513,14 +513,23 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             sql: "CREATE FUNCTION f (@a int) RETURNS int AS BEGIN RETURN @a END",
             line_width: None,
             dialect: FormatDialect::SqlServer,
-            expected_outcome: Ok("CREATE FUNCTION f(@a int) RETURNS int AS BEGIN RETURN @a END"),
+            expected_outcome: Ok(
+                "CREATE FUNCTION f(@a int) RETURNS int\nAS\nBEGIN\n  RETURN @a\nEND",
+            ),
         },
         test_types::FormatSqlTestCase {
-            description: "CREATE PROCEDURE is kept opaque by the parser and refused",
-            sql: "create procedure p (@a int) as select @a",
+            description: "PRINT is kept opaque by the parser and refused",
+            sql: "print 'x'",
             line_width: None,
             dialect: FormatDialect::SqlServer,
             expected_outcome: Err(SQLSERVER_OPAQUE_STATEMENT_FAILURE),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a procedure name keeps its case before its parameter list",
+            sql: "create procedure p (@a int) as select @a",
+            line_width: None,
+            dialect: FormatDialect::SqlServer,
+            expected_outcome: Ok("CREATE PROCEDURE p(@a int)\nAS\nSELECT @a"),
         },
         test_types::FormatSqlTestCase {
             description: "UPDATE STATISTICS is kept opaque by the parser and refused",
@@ -737,6 +746,78 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             line_width: None,
             dialect: FormatDialect::Databricks,
             expected_outcome: Err(UNSUPPORTED_DIALECT_FAILURE),
+        },
+    ];
+    for test_case in test_cases {
+        let options = FormatOptions {
+            line_width: test_case.line_width,
+            ..FormatOptions::new(test_case.dialect)
+        };
+        let actual = format_sql(test_case.sql, &options);
+        assert_eq!(
+            actual
+                .map(|formatted| formatted.sql)
+                .map_err(|refusal| refusal.reason),
+            test_case
+                .expected_outcome
+                .map(str::to_string)
+                .map_err(str::to_string),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_sql_server_batches_when_formatting_then_each_statement_starts_its_own_line() {
+    let test_cases = [
+        test_types::FormatSqlTestCase {
+            description: "statements written without semicolons each start a line",
+            sql: "select a from t\nupdate t set a = 2\ndelete from t where a = 1",
+            line_width: None,
+            dialect: FormatDialect::SqlServer,
+            expected_outcome: Ok("SELECT a\nFROM t\nUPDATE t SET a = 2\nDELETE FROM t WHERE a = 1"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a branch's statement is indented under IF and ELSE, ELSE IF stays on one line, and a block's words line up with IF",
+            sql: "if @a = 1 select 1 else if @a = 2 select 2 else begin select 3 end",
+            line_width: None,
+            dialect: FormatDialect::SqlServer,
+            expected_outcome: Ok(
+                "IF @a = 1\n  SELECT 1\nELSE IF @a = 2\n  SELECT 2\nELSE\nBEGIN\n  SELECT 3\nEND",
+            ),
+        },
+        test_types::FormatSqlTestCase {
+            description: "TRY and CATCH blocks indent their statements",
+            sql: "begin try select 1 end try begin catch throw end catch",
+            line_width: None,
+            dialect: FormatDialect::SqlServer,
+            expected_outcome: Ok("BEGIN try\n  SELECT 1\nEND try\nBEGIN catch\n  throw\nEND catch"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a loop's block holds a branch and BREAK",
+            sql: "while @i < 10 begin if @i > 5 break set @i = @i + 1 end",
+            line_width: None,
+            dialect: FormatDialect::SqlServer,
+            expected_outcome: Ok(
+                "while @i < 10\nBEGIN\n  IF @i > 5\n    break\n  SET @i = @i + 1\nEND",
+            ),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a procedure's header, AS and body block each start a line, and the body's first word takes keyword case after AS",
+            sql: "create procedure dbo.p @a int, @b int = 0 output as begin set nocount on; select a from t where a = @a end",
+            line_width: None,
+            dialect: FormatDialect::SqlServer,
+            expected_outcome: Ok(
+                "CREATE PROCEDURE dbo.p @a int, @b int = 0 OUTPUT\nAS\nBEGIN\n  SET nocount ON;\n  SELECT a\n  FROM t\n  WHERE a = @a\nEND",
+            ),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a procedure's body without a block stays at the procedure's indent",
+            sql: "create or alter proc p as select 1 select 2",
+            line_width: None,
+            dialect: FormatDialect::SqlServer,
+            expected_outcome: Ok("CREATE OR ALTER PROC p\nAS\nSELECT 1\nSELECT 2"),
         },
     ];
     for test_case in test_cases {

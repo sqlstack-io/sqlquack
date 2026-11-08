@@ -220,6 +220,18 @@ pub(crate) const SQLSERVER_INLINE_CALLS: [&str; 2] = ["CAST", "SUBSTRING"];
 pub(crate) const SQLSERVER_APPLY_KEYWORD: &str = "APPLY";
 /// The words before APPLY in a SQL Server apply.
 pub(crate) const SQLSERVER_APPLY_PREFIXES: [&str; 2] = ["CROSS", "OUTER"];
+/// Words after BEGIN that make it a statement of its own, such as `BEGIN TRANSACTION`, not a block.
+pub(crate) const SQLSERVER_BEGIN_STATEMENTS: [&str; 5] = [
+    "TRAN",
+    "TRANSACTION",
+    "DISTRIBUTED",
+    "DIALOG",
+    "CONVERSATION",
+];
+/// SQL Server statements whose condition is followed by the statement they run.
+pub(crate) const SQLSERVER_BRANCH_STATEMENTS: [&str; 2] = ["IF", "WHILE"];
+/// The words around a SQL Server block's or branch's statements, each on its own line.
+pub(crate) const SQLSERVER_BLOCK_WORDS: [&str; 3] = ["BEGIN", "END", "ELSE"];
 /// SQL Server keywords after which a name names a table, view, routine, index or other object, kept as written since the database collation may be case-sensitive.
 pub(crate) const SQLSERVER_OBJECT_PRECEDERS: [&str; 22] = [
     "APPLY",

@@ -3,8 +3,9 @@
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::statements::models::{
     Commit, Declare, DeclareItem, ExecuteParameter, ExecuteStatement, Rollback, ScriptingBlock,
-    ScriptingBranch, ScriptingElse, ScriptingIf, ScriptingLoopKeyword, ScriptingSql,
-    ScriptingStatement, ScriptingWhile, SetItem, SetStatement, Transaction, TryCatch, Use,
+    ScriptingBranch, ScriptingElse, ScriptingIf, ScriptingJump, ScriptingJumpKeyword,
+    ScriptingLoopKeyword, ScriptingRaise, ScriptingSql, ScriptingStatement, ScriptingWhile,
+    SetItem, SetStatement, Transaction, TryCatch, Use,
 };
 use sqlquack_syntax::tokens::models::SourceSpan;
 use sqlquack_syntax::{Expression, ExpressionWalk};
@@ -100,10 +101,10 @@ impl<'sql> Parser<'sql> {
                     return Err(self.batch_first_error());
                 }
                 let start: usize = self.offset();
-                let statement: Expression = match self.kw("ALTER") {
-                    true => self.alter_statement()?,
-                    false => self.create_statement()?,
-                };
+                let statement: Expression = self.ranged(|parser| match parser.kw("ALTER") {
+                    true => parser.alter_statement(),
+                    false => parser.create_statement(),
+                })?;
                 statements.push(self.within_depth(statement, start)?);
                 while self.eat_char(';') {}
                 if !self.at_end() && !self.gapped() {
@@ -151,8 +152,7 @@ impl<'sql> Parser<'sql> {
 
     /// One statement, with a `;` after it if one is written.
     pub(crate) fn statement(&mut self) -> Parsing<Expression> {
-        let statement: Expression = self.deeper(|parser| parser.statement_body())?;
-        Ok(statement)
+        self.ranged(|parser| parser.deeper(|parser| parser.statement_body()))
     }
 
     fn statement_body(&mut self) -> Parsing<Expression> {
@@ -219,9 +219,37 @@ impl<'sql> Parser<'sql> {
                 };
                 Ok(Expression::ReturnStmt(Box::new(value)))
             }
-            "BREAK" | "CONTINUE" => Err(self.gap("loop_jump", start)),
+            "BREAK" | "CONTINUE" => {
+                self.at += 1;
+                let keyword: ScriptingJumpKeyword = match word.as_str() {
+                    "BREAK" => ScriptingJumpKeyword::Break,
+                    _ => ScriptingJumpKeyword::Continue,
+                };
+                let jump: ScriptingJump = ScriptingJump {
+                    span: SourceSpan(None),
+                    keyword,
+                    label: None,
+                };
+                Ok(Expression::ScriptingBlock(Box::new(block(vec![
+                    match keyword {
+                        ScriptingJumpKeyword::Break => ScriptingStatement::Break(jump),
+                        _ => ScriptingStatement::Continue(jump),
+                    },
+                ]))))
+            }
             "PRINT" => Err(self.gap("print", start)),
-            "THROW" => Err(self.gap("throw", start)),
+            "THROW" => {
+                self.at += 1;
+                if !self.statement_ends() {
+                    return Err(self.gap("throw", start));
+                }
+                Ok(Expression::ScriptingBlock(Box::new(block(vec![
+                    ScriptingStatement::Raise(ScriptingRaise {
+                        span: SourceSpan(None),
+                        exception: None,
+                    }),
+                ]))))
+            }
             "RAISERROR" => Err(self.gap("raiserror", start)),
             word if UNREAD_STATEMENTS.contains(&word) => Err(self.gap("statement", start)),
             "END" if self.kw_at(1, "CONVERSATION") => Err(self.gap("statement", start)),

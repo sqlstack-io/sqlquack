@@ -8,8 +8,8 @@ use sqlquack_syntax::expressions::columns::models::{
 use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
 use sqlquack_syntax::expressions::queries::models::With;
 use sqlquack_syntax::expressions::schema_objects::models::{
-    AlterView, AlterViewAction, CreateFunction, CreateSchema, CreateView, DropSchema, DropView,
-    FunctionBody, FunctionParameter, ViewColumn,
+    AlterView, AlterViewAction, CreateFunction, CreateProcedure, CreateSchema, CreateView,
+    DropSchema, DropView, FunctionBody, FunctionParameter, ParameterMode, ViewColumn,
 };
 use sqlquack_syntax::expressions::statements::models::Truncate;
 use sqlquack_syntax::expressions::tables::models::{
@@ -40,12 +40,92 @@ impl<'sql> Parser<'sql> {
             Some("INDEX" | "UNIQUE" | "NONCLUSTERED" | "CLUSTERED") if !or_alter => {
                 self.create_index()
             }
-            Some(
-                "PROC" | "PROCEDURE" | "TRIGGER" | "TYPE" | "SEQUENCE" | "SYNONYM" | "DEFAULT",
-            ) => Err(self.gap("create_object", start)),
+            Some("PROC" | "PROCEDURE") => self.create_procedure(or_alter),
+            Some("TRIGGER" | "TYPE" | "SEQUENCE" | "SYNONYM" | "DEFAULT") => {
+                Err(self.gap("create_object", start))
+            }
             Some(_) if !or_alter => Err(self.gap("create_object", start)),
             _ => Err(self.error()),
         }
+    }
+
+    /// `CREATE [OR ALTER] PROC[EDURE] name [parameters] [WITH RECOMPILE | ENCRYPTION] AS [statement ...]`, its body the rest of the batch, which may be empty.
+    fn create_procedure(&mut self, or_alter: bool) -> Parsing<Expression> {
+        let start: usize = self.offset();
+        let mut node: CreateProcedure = CreateProcedure::new(String::new());
+        node.use_proc_keyword = self.kw("PROC");
+        self.at += 1;
+        node.name = self.object_name()?;
+        node.or_alter = or_alter;
+        if self.is_char(';') {
+            return Err(self.gap("numbered_procedure", start));
+        }
+        node.has_parens = self.eat_char('(');
+        let listed: bool = self
+            .peek()
+            .is_some_and(|token| token.kind == TokenKind::Variable);
+        if listed {
+            node.parameters = self.comma_list(|parser| parser.procedure_parameter())?;
+        }
+        if node.has_parens {
+            self.expect_char(')')?;
+        }
+        if self.eat_kw("WITH") {
+            node.with_options = self.comma_list(|parser| match parser.word_at(0).as_deref() {
+                Some(option @ ("RECOMPILE" | "ENCRYPTION")) => {
+                    let option: String = option.to_owned();
+                    parser.at += 1;
+                    Ok(option)
+                }
+                _ => Err(parser.gap("procedure_option", parser.offset())),
+            })?;
+        }
+        if self.kw("FOR") {
+            return Err(self.gap("procedure_for_replication", self.offset()));
+        }
+        self.expect_kw("AS")?;
+        if self.kw("EXTERNAL") {
+            return Err(self.gap("clr_procedure", start));
+        }
+        let mut body: Vec<Expression> = Vec::new();
+        loop {
+            while self.eat_char(';') {}
+            if self.at_end() {
+                break;
+            }
+            body.push(self.statement()?);
+        }
+        node.body = Some(FunctionBody::Statements(body));
+        Ok(Expression::CreateProcedure(Box::new(node)))
+    }
+
+    /// `@name [AS] type [= default] [OUT | OUTPUT]`; `VARYING`, `NULL` and `READONLY` are gaps.
+    fn procedure_parameter(&mut self) -> Parsing<FunctionParameter> {
+        let token: Token = self.expect_token(|token| token.kind == TokenKind::Variable)?;
+        self.eat_kw("AS");
+        let data_type: DataType = self.data_type()?;
+        if self.kw_in(0, &["VARYING", "NULL", "NOT", "READONLY"]) {
+            return Err(self.gap("procedure_parameter_option", self.offset()));
+        }
+        let default: Option<Expression> = match self.eat_char('=') {
+            true => Some(self.scalar()?),
+            false => None,
+        };
+        let mode_text: Option<String> = match self.kw_in(0, &["OUT", "OUTPUT"]) {
+            true => self.peek().map(|token| token.value.clone()),
+            false => None,
+        };
+        self.at += usize::from(mode_text.is_some());
+        if self.kw("READONLY") {
+            return Err(self.gap("procedure_parameter_option", self.offset()));
+        }
+        Ok(FunctionParameter {
+            name: Some(identifier(&token)),
+            data_type,
+            mode: mode_text.as_ref().map(|_| ParameterMode::Out),
+            default,
+            mode_text,
+        })
     }
 
     /// `CREATE TABLE name ( column_def | table_constraint, ... )`.

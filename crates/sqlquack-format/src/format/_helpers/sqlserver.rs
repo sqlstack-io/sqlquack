@@ -6,7 +6,7 @@ use std::mem::{Discriminant, discriminant};
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax_sqlserver::scan::models::{NumberKind, Token, TokenKind};
-use sqlquack_syntax_sqlserver::{StrictFailure, parse_strict, scan};
+use sqlquack_syntax_sqlserver::{StatementRange, StrictFailure, parse_strict, scan};
 
 use crate::format::_helpers::lexemes::{Comment, Lexeme};
 use crate::format::_helpers::native::{CommentSyntax, gap_comments, shared_type};
@@ -21,15 +21,44 @@ const TRANSACT_SQL_COMMENTS: CommentSyntax = CommentSyntax {
     nested: true,
 };
 
-/// The statements Transact-SQL's grammar reads from `sql`, refused when any is kept as opaque text.
-pub(crate) fn parse_sqlserver(sql: &str) -> Result<Vec<Expression>, String> {
+/// One statement's tokens, from its first to its last, a `;` written right after it included, and how many statements enclose it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) struct StatementTokens {
+    pub(crate) first: usize,
+    pub(crate) last: usize,
+    pub(crate) depth: usize,
+}
+
+/// The statements Transact-SQL's grammar reads from `sql`, and where each was written, nested ones included; refused when any is kept as opaque text.
+pub(crate) fn parse_sqlserver(sql: &str) -> Result<(Vec<Expression>, Vec<StatementRange>), String> {
     let parsed = parse_strict(sql).map_err(|failure| match failure {
         StrictFailure::Parse(error) => format!("{PARSE_FAILURE}: {}", error.message),
     })?;
     if !parsed.gaps.is_empty() {
         return Err(SQLSERVER_OPAQUE_STATEMENT_FAILURE.to_string());
     }
-    Ok(parsed.statements)
+    Ok((parsed.statements, parsed.ranges))
+}
+
+/// The token range of each statement in `ranges`, among `lexemes`.
+pub(crate) fn statement_tokens(
+    ranges: &[StatementRange],
+    lexemes: &[Lexeme],
+) -> Vec<StatementTokens> {
+    ranges
+        .iter()
+        .filter_map(|range| {
+            let first = lexemes.partition_point(|lexeme| lexeme.start < range.start);
+            let last = lexemes
+                .partition_point(|lexeme| lexeme.end <= range.end)
+                .checked_sub(1)?;
+            (first <= last).then_some(StatementTokens {
+                first,
+                last,
+                depth: range.depth,
+            })
+        })
+        .collect()
 }
 
 /// The tokens and comments of `sql` as Transact-SQL's scanner reads them; a `GO` batch separator is refused.
