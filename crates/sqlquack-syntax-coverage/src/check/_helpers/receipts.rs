@@ -124,6 +124,8 @@ pub(crate) fn case_result(
     CaseResult {
         case_id: case.case_id.clone(),
         sql_sha256: case.sql_sha256.clone(),
+        expect: case.expect,
+        stage: case.stage,
         phase,
         local,
         reason,

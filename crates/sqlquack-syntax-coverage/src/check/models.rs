@@ -5,7 +5,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use serde::{Deserialize, Serialize};
 
 use crate::formats::models::{
-    AccountSetting, Form, Obligation, ObligationKind, Phase, Reading, Review,
+    AccountSetting, Expect, Form, Obligation, ObligationKind, Phase, Reading, Review, Stage,
 };
 
 /// The current parser's verdict on one case's SQL.
@@ -94,6 +94,12 @@ pub struct CaseResult {
     pub case_id: String,
     /// The case's declared SQL hash, part of its form's fingerprint.
     pub sql_sha256: String,
+    /// What Snowflake must do with the SQL, as the case declares; part of its form's fingerprint.
+    #[serde(skip)]
+    pub expect: Option<Expect>,
+    /// Where the case declares an accepted statement fails later; part of its form's fingerprint.
+    #[serde(skip)]
+    pub stage: Option<Stage>,
     /// The phase its admissible receipts agree on; none when there is no such single phase.
     pub phase: Option<Phase>,
     pub local: LocalVerdict,

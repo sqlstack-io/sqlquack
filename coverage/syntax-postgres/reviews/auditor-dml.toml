@@ -20,10 +20,10 @@ forms = [
 note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 6ba0c304; every scored case agrees with its receipt."
 
 [review.fingerprints]
-"pg.dml.copy.pre-7-3-from" = "3e6b0cf4fdde93f8d88a61a1438a300206bf0d1df431964f8ed14e4374369925"
-"pg.dml.copy.pre-7-3-to" = "79091f22bae6a053368f3075701244d9d30283c7a3adb1958df19679fefdf124"
-"pg.dml.copy.pre-9-0-from" = "b2e48eb0085d926e6cd5060ca0156ec84c81f01e5f7a2eb1461de14a384cabbc"
-"pg.dml.copy.pre-9-0-to" = "03183a5aec69d8872e6fdeafbeb03ba16187f044333e8b8bfd09683399d35a8e"
+"pg.dml.copy.pre-7-3-from" = "c87719da34b54dc3e6d54f0b2ddaf7c24f40ed7b768d33c419dffc85adf9f42e"
+"pg.dml.copy.pre-7-3-to" = "b243b4394794f8321595e9c15fa2c24fdb5bbb412b2bcb265b16fee135c163c6"
+"pg.dml.copy.pre-9-0-from" = "b778e3c01ebb084d184f24a54185778c574865d89da093602640640fadf3ed54"
+"pg.dml.copy.pre-9-0-to" = "6634e41e8639190fb519540cf378eb06bdc73e94015d1e768239c1507a2c4739"
 
 [review.definitions]
 "pg.dml.copy.pre-7-3-from" = "2ea22902b8dfa0c40bbe82c70fe2a3ff3b7dc7db958314ae20cc38fcbaa5bbe6"
@@ -44,7 +44,7 @@ forms = [
 note = "Re-read in full after the parser fix for the batch-1 hold, against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 17b35dd8; every scored case agrees with its receipt."
 
 [review.fingerprints]
-"pg.dml.truncate" = "0f14d2044f7ed2d00497a7ec070306fdb8fcb45ac0c2ef7816fa960d140a4311"
+"pg.dml.truncate" = "01290103bbfefcae3726b0fbbdfe29bba4d071088d69eef8c592ffb9526d7e58"
 
 [review.definitions]
 "pg.dml.truncate" = "f42221b5a8e4fde5336f454914f7057bdadfdf85af8333706fb137d2d48dc54b"
@@ -62,7 +62,7 @@ forms = [
 note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 37050ece; every scored case agrees with its receipt."
 
 [review.fingerprints]
-"pg.dml.copy.to" = "f4cf57f27bf4a3446913c4883f8ba6015746bad86c8c7136b662542b2d5ec7a7"
+"pg.dml.copy.to" = "cac846dff7cbf0ecb3dc936b3000257133ae1373dde95df59a771baff88fe67a"
 
 [review.definitions]
 "pg.dml.copy.to" = "b9601c2e9dd27a881b675b9c5f9ed36d2ca07528e83f65beee2e849732418a13"
@@ -80,7 +80,7 @@ forms = [
 note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree f2372a18; every scored case agrees with its receipt."
 
 [review.fingerprints]
-"pg.dml.copy.from" = "d166a99a10d057218e83789a0150750f1961cefbb6faa9b078e15002e8fa5470"
+"pg.dml.copy.from" = "c0935d5e141fa05932f29964b2474f54c84e7087cbf6fc43edf4f577ff28b59e"
 
 [review.definitions]
 "pg.dml.copy.from" = "13e22ed25819be82574017fb4d04be879a208da1b3a00ace94a2289e2c789391"
@@ -101,10 +101,10 @@ forms = [
 note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 456f03b3; every scored case agrees with its receipt."
 
 [review.fingerprints]
-"pg.dml.delete" = "49b76f08a5efdadd769b5799d24bf9fc7f9787c6efa4c927ffc6fb58bedb537c"
-"pg.dml.insert" = "93cbf75fb434dd45a84852854c6bda025016388a4b44c3ea651ea6c54c775cf7"
-"pg.dml.merge" = "1beca7bfb8f4da96fc1d4bcbd91ed707372e60937dc30f806bc9efc9383e277d"
-"pg.dml.update" = "d628f9c6268010d759206c8863f2f700c39b7a499d93208ea309378bbf6ca44e"
+"pg.dml.delete" = "082a372bfbfe659c86656e062e5a048a82490432208c3bc8f2d9e825acde3200"
+"pg.dml.insert" = "485a80e6d82fac881f2d652f5d0a356bc500f2d5d55e80e58c83e765f0072ca7"
+"pg.dml.merge" = "9f4815d4da4dd122be25778e5ee1a8e6384491ece2810120bb3c3416bd8a0543"
+"pg.dml.update" = "7d92a92b4828fd32cfedf4aae61503608f1aaf70d221d098b4ab210bf71a73e6"
 
 [review.definitions]
 "pg.dml.delete" = "1b68aaa7cfc85b9db2637d6086927271a9a6209d352d0cb14d8d73054821640c"
