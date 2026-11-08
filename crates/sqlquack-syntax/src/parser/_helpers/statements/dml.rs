@@ -168,6 +168,7 @@ impl Parser {
             no_from: !_has_from,
             current_of: None,
             returning_aliases: Vec::new(),
+            settings: Vec::new(),
         })))
     }
 

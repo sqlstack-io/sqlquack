@@ -1,6 +1,7 @@
 //! The outputs of a query, set operation or CTE, with their lineage.
 
 use std::borrow::Cow;
+use std::rc::Rc;
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
@@ -14,8 +15,8 @@ use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
 use crate::lineage::_helpers::tracing::sources::{from_sources, listed, values_query};
 use crate::lineage::_helpers::typing::rules::filtered_non_null;
 use crate::lineage::constants::{
-    DUCKDB_PROFILE, ORDINAL_BASE, POSTGRES_PROFILE, RECURSION_LIMIT, SQL_STAR, SUBTOTAL_GROUPINGS,
-    UNNAMED_CHARACTERS,
+    DUCKDB_PROFILE, ORDINAL_BASE, POSTGRES_PROFILE, RECURSION_LIMIT, SQL_STAR, SQLITE_PROFILE,
+    SUBTOTAL_GROUPINGS, UNNAMED_CHARACTERS,
 };
 use crate::lineage::models::{
     FromItems, Lineage, LineageContext, LineageScope, NamedQuery, Nullability, ResolvedQuery,
@@ -24,6 +25,17 @@ use crate::lineage::models::{
 
 /// The outputs of `query`, with `ctes` in reach and `outer` the enclosing level.
 pub(crate) fn resolved_query(
+    query: &Expression,
+    ctes: &[NamedQuery],
+    outer: Option<&LineageScope<'_>>,
+    context: LineageContext<'_>,
+) -> ResolvedQuery {
+    crate::lineage::_helpers::tracing::stack::deeper(|| {
+        resolved_query_level(query, ctes, outer, context)
+    })
+}
+
+fn resolved_query_level(
     query: &Expression,
     ctes: &[NamedQuery],
     outer: Option<&LineageScope<'_>>,
@@ -96,7 +108,7 @@ pub(crate) fn empty_scope<'a>(
     }
 }
 
-/// `query`'s outputs renamed by a column alias list, when it has one.
+/// `query`'s outputs renamed by a column alias list; a DuckDB VALUES list all renamed is judged.
 pub(crate) fn renamed(
     query: ResolvedQuery,
     aliases: &[Identifier],
@@ -118,9 +130,12 @@ pub(crate) fn renamed(
             None => column,
         })
         .collect();
+    let from_values: bool = query.from_values
+        && !(context.profile.name() == DUCKDB_PROFILE && aliases.len() >= columns.len());
     ResolvedQuery {
         columns,
         stored_relation: None,
+        from_values,
         ..query
     }
 }
@@ -277,7 +292,7 @@ pub(crate) fn with_ctes<'a>(
     with_ctes_visiting(with, (ctes, outer), context, &mut |_, _| false)
 }
 
-/// `with_ctes`, showing `visit` each CTE with the CTEs its body can read.
+/// `with_ctes`, showing `visit` each CTE with what its body reads, a DuckDB recursive one itself.
 pub(crate) fn with_ctes_visiting<'a>(
     with: Option<&With>,
     (ctes, outer): (&'a [NamedQuery], Option<&LineageScope<'_>>),
@@ -289,15 +304,27 @@ pub(crate) fn with_ctes_visiting<'a>(
     };
     let mut reach: Vec<NamedQuery> = ctes.to_vec();
     for cte in &with.ctes {
-        let faulted: bool = visit(cte, &reach);
         let name = key(&cte.alias, context);
-        let mut query: ResolvedQuery = match with.recursive || reads_itself(cte, &name, context) {
+        let reads_own: bool = reads_itself(cte, &name, context);
+        let mut query: ResolvedQuery = match with.recursive || reads_own {
             true => recursive_query(cte, (&name, &reach), outer, context),
             false => renamed(
                 resolved_query(&cte.this, &reach, outer, context),
                 &cte.columns,
                 context,
             ),
+        };
+        let faulted: bool = match reads_own && context.profile.name() == DUCKDB_PROFILE {
+            true => {
+                let mut own: Vec<NamedQuery> = reach.clone();
+                own.retain(|named| named.key != name);
+                own.push(NamedQuery {
+                    key: name.clone(),
+                    query: query.clone(),
+                });
+                visit(cte, &own)
+            }
+            false => visit(cte, &reach),
         };
         query.faulted = faulted;
         reach.retain(|named| named.key != name);
@@ -320,7 +347,7 @@ fn reads_itself(cte: &Cte, name: &str, context: LineageContext<'_>) -> bool {
     })
 }
 
-/// A recursive CTE: its anchor, then each iteration merged in until nothing changes.
+/// A recursive CTE: its anchor, then each iteration merged in; DuckDB keeps the anchor's types.
 fn recursive_query(
     cte: &Cte,
     (name, reach): (&str, &[NamedQuery]),
@@ -339,6 +366,11 @@ fn recursive_query(
         &cte.columns,
         context,
     );
+    let anchor_types: Vec<Option<Rc<str>>> = current
+        .columns
+        .iter()
+        .map(|column| column.lineage.data_type.clone())
+        .collect();
     for _ in 0..RECURSION_LIMIT {
         let mut iteration: Vec<NamedQuery> = reach.to_vec();
         iteration.push(NamedQuery {
@@ -350,7 +382,12 @@ fn recursive_query(
             &cte.columns,
             context,
         );
-        let joined: ResolvedQuery = positional(vec![current.clone(), next], context);
+        let mut joined: ResolvedQuery = positional(vec![current.clone(), next], context);
+        if context.profile.name() == DUCKDB_PROFILE {
+            for (column, data_type) in joined.columns.iter_mut().zip(&anchor_types) {
+                column.lineage.data_type.clone_from(data_type);
+            }
+        }
         if same_lineage(&joined, &current) {
             return joined;
         }
@@ -706,6 +743,7 @@ pub(crate) fn expanded_star(
         stored_relation: None,
         from_values: false,
         written_name: None,
+        function_name: None,
         open_reads: only.and_then(|only| only.query.open_reads.clone()),
         rows: RowReads::default(),
         outer_nullable: only.is_some_and(|only| only.query.outer_nullable),
@@ -758,7 +796,7 @@ fn output_name(projection: &Expression, context: LineageContext<'_>) -> String {
                 _ => String::new(),
             }
         }
-        _ if context.profile.name() == DUCKDB_PROFILE => String::new(),
+        _ if matches!(context.profile.name(), DUCKDB_PROFILE | SQLITE_PROFILE) => String::new(),
         _ if context.profile.name() == POSTGRES_PROFILE => postgres_name(projection),
         _ => snowflake_name(projection, context).unwrap_or_default(),
     }

@@ -60,6 +60,19 @@ fn given_large_literals_when_converting_then_time_stays_bounded() {
             expected_budget_seconds: 15,
         },
         LargeLiteralTestCase {
+            description: "4,000 unaliased DATE literals after a line comment, half one value, convert",
+            sql: format!(
+                "-- dates\nSELECT {}, {}",
+                (1000..3000)
+                    .map(|year| format!("DATE '{year}-01-01'"))
+                    .collect::<Vec<String>>()
+                    .join(", "),
+                vec!["DATE '2024-01-01'"; 2000].join(", ")
+            ),
+            expected_converted: true,
+            expected_budget_seconds: 15,
+        },
+        LargeLiteralTestCase {
             description: "VALUES of 100,000 rows refuses, not overflowing the stack",
             sql: format!("SELECT x FROM (VALUES {}) AS t(x)", rows(100_000)),
             expected_converted: false,

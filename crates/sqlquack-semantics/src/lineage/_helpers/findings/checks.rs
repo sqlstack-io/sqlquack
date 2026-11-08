@@ -1,8 +1,9 @@
 //! What a column reference, USING key or UNPIVOT operand resolves to, as a finding when nothing.
 
+use regex::Regex;
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
-use sqlquack_syntax::expressions::names::models::{Column, Identifier};
+use sqlquack_syntax::expressions::names::models::{Column, Identifier, Literal};
 use sqlquack_syntax::expressions::queries::models::Select;
 
 use crate::lineage::_helpers::checks::scope_rules::output_width;
@@ -10,12 +11,13 @@ use crate::lineage::_helpers::tracing::queries::empty_scope;
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::tracing::sources::item_sources;
 use crate::lineage::constants::{
-    ALIAS_COUNT_CODE, AMBIGUOUS_COLUMN_CODE, CONNECT_BY_LEVEL, NAME_PHASE, UNKNOWN_COLUMN_CODE,
-    UNKNOWN_QUALIFIER_CODE,
+    ALIAS_COUNT_CODE, AMBIGUOUS_COLUMN_CODE, COLUMNS_NO_MATCH, CONNECT_BY_LEVEL, NAME_PHASE,
+    UNKNOWN_COLUMN_CODE, UNKNOWN_QUALIFIER_CODE,
 };
 use crate::lineage::constants::{
-    DUCKDB_PROFILE, DUCKDB_ROWID, METADATA_PREFIX, POSITIONAL_PREFIX, POSTGRES_PROFILE,
-    POSTGRES_SYSTEM_COLUMNS, SEQUENCE_COLUMNS, SNOWFLAKE_PROFILE, SQL_STAR,
+    CLICKHOUSE_PROFILE, CLICKHOUSE_SINGLE_JOIN_SOURCES, DUCKDB_PROFILE, DUCKDB_ROWID,
+    METADATA_PREFIX, POSITIONAL_PREFIX, POSTGRES_PROFILE, POSTGRES_SYSTEM_COLUMNS,
+    SEQUENCE_COLUMNS, SNOWFLAKE_PROFILE, SQL_STAR,
 };
 use crate::lineage::models::NameFinding;
 use crate::lineage::models::{LineageContext, LineageScope, NamedQuery, ScopeSource};
@@ -50,12 +52,23 @@ pub(crate) fn column_finding(
         phase: NAME_PHASE,
         ..NameFinding::default()
     };
-    let written: String = name.name.to_lowercase();
+    let written: String = match context.profile.name() {
+        CLICKHOUSE_PROFILE => name.name.clone(),
+        _ => name.name.to_lowercase(),
+    };
     if pseudo_column(name, column.table.is_some(), context) {
         return None;
     }
     if let Some(qualifier) = &column.table {
-        return qualified_finding((qualifier, &wanted, &written), level, context).map(
+        let field_of_bound: bool = bound.iter().any(|name| {
+            context
+                .profile
+                .same_identifier(name, &key(qualifier, context))
+        });
+        if field_of_bound {
+            return None;
+        }
+        return qualified_finding((qualifier, &wanted, &written), (level, bound), context).map(
             |(code, message, at)| NameFinding {
                 span: at.or(span),
                 ..finding(code, message)
@@ -79,7 +92,10 @@ pub(crate) fn column_finding(
             return None;
         }
         let matches: usize = offering_count(current, &wanted, context);
-        if matches > 1 && !(level.filtering_join && std::ptr::eq(current, level.scope)) {
+        if matches > 1
+            && !(level.filtering_join && std::ptr::eq(current, level.scope))
+            && !single_join_prefers_left(current, context)
+        {
             return Some(finding(
                 AMBIGUOUS_COLUMN_CODE,
                 format!(
@@ -107,14 +123,20 @@ pub(crate) fn column_finding(
     }
     Some(finding(
         UNKNOWN_COLUMN_CODE,
-        unknown_message(&written, level.scope),
+        unknown_message(&written, level.scope, context),
     ))
+}
+
+/// Whether ClickHouse reads a name both sides of the one join offer from the left side.
+fn single_join_prefers_left(scope: &LineageScope<'_>, context: LineageContext<'_>) -> bool {
+    context.profile.name() == CLICKHOUSE_PROFILE
+        && scope.sources.len() == CLICKHOUSE_SINGLE_JOIN_SOURCES
 }
 
 /// A qualified reference's finding: its qualifier names no FROM item, or a closed one lacks it.
 fn qualified_finding(
     (qualifier, wanted, written): (&Identifier, &str, &str),
-    level: &Level<'_, '_>,
+    (level, bound): (&Level<'_, '_>, &[String]),
     context: LineageContext<'_>,
 ) -> Option<(
     &'static str,
@@ -125,23 +147,28 @@ fn qualified_finding(
     let mut scope: Option<&LineageScope<'_>> = Some(level.scope);
     while let Some(current) = scope {
         if let Some(source) = source_named(current, &alias, context) {
+            let table: String = match context.profile.name() {
+                DUCKDB_PROFILE if source.query.stored_relation.is_none() => qualifier.name.clone(),
+                _ => display_name(source, &alias),
+            };
             return (!unjudged(source)
                 && !source.query.faulted
                 && !offers(source, wanted, context))
             .then(|| {
                 (
                     UNKNOWN_COLUMN_CODE,
-                    format!(
-                        "Unknown column '{written}' in table '{}'",
-                        display_name(source, &alias)
-                    ),
+                    format!("Unknown column '{written}' in table '{table}'"),
                     None,
                 )
             });
         }
         scope = current.outer;
     }
-    if !definitely_no_relation(&alias, level, context) {
+    let no_relation: bool = match context.profile.name() {
+        CLICKHOUSE_PROFILE => clickhouse_no_relation(&alias, (level, bound), context),
+        _ => definitely_no_relation(&alias, level, context),
+    };
+    if !no_relation {
         return None;
     }
     Some((
@@ -154,20 +181,74 @@ fn qualified_finding(
     ))
 }
 
-/// Whether an unknown qualifier names nothing else: every item closed and named, none a struct.
+/// Whether a qualifier names nothing: on Snowflake and DuckDB only item names and struct columns.
 fn definitely_no_relation(alias: &str, level: &Level<'_, '_>, context: LineageContext<'_>) -> bool {
+    let by_name: bool = matches!(context.profile.name(), SNOWFLAKE_PROFILE | DUCKDB_PROFILE);
     let mut scope: Option<&LineageScope<'_>> = Some(level.scope);
     while let Some(current) = scope {
         if current.sources.iter().any(|source| {
-            unjudged(source)
-                || (source.key.is_none() && !source.query.derived)
-                || offers(source, alias, context)
+            let unnamed: bool = source.key.is_none() && !source.query.derived;
+            offers(source, alias, context)
+                || match by_name {
+                    true => source
+                        .query
+                        .function_name
+                        .as_deref()
+                        .map_or(unnamed, |name| context.profile.same_identifier(name, alias)),
+                    false => unjudged(source) || unnamed,
+                }
         }) {
             return false;
         }
         scope = current.outer;
     }
     true
+}
+
+/// Whether a ClickHouse qualifier names nothing in reach; wrong for an open relation's subcolumn reads.
+fn clickhouse_no_relation(
+    alias: &str,
+    (level, bound): (&Level<'_, '_>, &[String]),
+    context: LineageContext<'_>,
+) -> bool {
+    let named = |name: &str| context.profile.same_identifier(name, alias);
+    if bound.iter().chain(level.outputs).any(|name| named(name)) {
+        return false;
+    }
+    let mut scope: Option<&LineageScope<'_>> = Some(level.scope);
+    while let Some(current) = scope {
+        let in_scope = current
+            .ctes
+            .iter()
+            .map(|cte| cte.key.as_str())
+            .chain(current.aliases.iter().map(|alias| alias.key.as_str()))
+            .chain(current.lambda_names.iter().map(String::as_str));
+        if in_scope.into_iter().any(named)
+            || current
+                .sources
+                .iter()
+                .any(|source| clickhouse_source_names(source, alias, context))
+        {
+            return false;
+        }
+        scope = current.outer;
+    }
+    true
+}
+
+/// Whether a FROM item may be what a ClickHouse qualifier names: its table, or a known column it begins.
+fn clickhouse_source_names(source: &ScopeSource, alias: &str, context: LineageContext<'_>) -> bool {
+    let dotted: String = format!("{alias}.");
+    let table: Option<&str> = source
+        .query
+        .written_name
+        .as_deref()
+        .and_then(|written| written.rsplit('.').next());
+    (source.key.is_none() && !source.query.derived)
+        || table.is_some_and(|table| table.eq_ignore_ascii_case(alias))
+        || source.query.columns.iter().any(|offered| {
+            context.profile.same_identifier(&offered.key, alias) || offered.key.starts_with(&dotted)
+        })
 }
 
 /// A pseudo-column no relation lists: `METADATA$…`, `$n`, DuckDB's `rowid`, NEXTVAL or CURRVAL.
@@ -194,13 +275,51 @@ fn connect_by_level(name: &Identifier, level: &Level<'_, '_>, context: LineageCo
         && name.name.eq_ignore_ascii_case(CONNECT_BY_LEVEL)
 }
 
-/// The words of an unknown column: in the one FROM item, or in none of several.
-fn unknown_message(written: &str, scope: &LineageScope<'_>) -> String {
+/// A DuckDB COLUMNS pattern that matches no column of FROM items that list all of theirs.
+pub(crate) fn columns_pattern_finding(
+    pattern: &Expression,
+    level: &Level<'_, '_>,
+    context: LineageContext<'_>,
+) -> Option<NameFinding> {
+    let Expression::Literal(literal) = pattern else {
+        return None;
+    };
+    let (Literal::String(pattern), DUCKDB_PROFILE) = (literal.as_ref(), context.profile.name())
+    else {
+        return None;
+    };
+    let pattern: Regex = match Regex::new(pattern) {
+        Ok(pattern) => pattern,
+        Err(_) => return None,
+    };
+    let sources = &level.scope.sources;
+    (!sources.is_empty()
+        && !sources.iter().any(unjudged)
+        && !sources
+            .iter()
+            .flat_map(|source| source.query.columns.iter())
+            .any(|column| pattern.is_match(&column.name)))
+    .then(|| NameFinding {
+        code: UNKNOWN_COLUMN_CODE,
+        message: COLUMNS_NO_MATCH.to_owned(),
+        phase: NAME_PHASE,
+        ..NameFinding::default()
+    })
+}
+
+/// The words of an unknown column: in the one named FROM item, or in none of the items.
+fn unknown_message(written: &str, scope: &LineageScope<'_>, context: LineageContext<'_>) -> String {
     match scope.sources.as_slice() {
-        [only] => format!(
-            "Unknown column '{written}' in table '{}'",
-            display_name(only, only.key.as_deref().unwrap_or_default())
-        ),
+        [only] if only.key.is_some() || only.query.written_name.is_some() => {
+            let alias: &str = only.key.as_deref().unwrap_or_default();
+            let table: String = match context.profile.name() {
+                DUCKDB_PROFILE if only.query.stored_relation.is_none() && !alias.is_empty() => {
+                    alias.to_owned()
+                }
+                _ => display_name(only, alias),
+            };
+            format!("Unknown column '{written}' in table '{table}'")
+        }
         _ => format!("Unknown column '{written}' (not found in any referenced table)"),
     }
 }

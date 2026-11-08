@@ -1,8 +1,9 @@
 //! `create_table_statement` and `create_view_statement` (googlesql.tm), materialized views too.
 
-use sqlquack_syntax::DataType;
 use sqlquack_syntax::Expression;
-use sqlquack_syntax::expressions::columns::models::ColumnDef;
+use sqlquack_syntax::expressions::columns::models::{
+    ConstraintModifiers, ForeignKeyRef, TableConstraint,
+};
 use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
 use sqlquack_syntax::expressions::schema_objects::models::{CreateObject, CreateView, ViewColumn};
 use sqlquack_syntax::expressions::tables::models::{
@@ -160,10 +161,12 @@ impl Parser<'_> {
         if self.is_char('(') && !self.starts_query_at(1) {
             self.at += 1;
             loop {
-                if self.kw_in(0, &["CONSTRAINT", "PRIMARY", "FOREIGN"]) {
-                    self.table_constraint()?;
+                if self.kw_in(0, &["CONSTRAINT", "FOREIGN", "CHECK"])
+                    || (self.kw("PRIMARY") && self.kw_at(1, "KEY"))
+                {
+                    node.constraints.push(self.table_constraint()?);
                 } else {
-                    node.columns.push(self.column_definition()?);
+                    node.columns.push(self.table_column_definition()?);
                 }
                 if !self.eat_char(',') {
                     break;
@@ -225,80 +228,67 @@ impl Parser<'_> {
         Ok(node)
     }
 
-    /// A column: `name type [column attributes] [OPTIONS (...)]`.
-    fn column_definition(&mut self) -> Parsing<ColumnDef> {
-        let name: Identifier = self.ident()?;
-        let data_type: DataType = match self.is_char(',') || self.is_char(')') {
-            true => DataType::Unknown,
-            false => self.data_type()?,
+    /// `table_constraint_definition`: a primary key, a named foreign key or `CHECK`, then `[[NOT] ENFORCED]`.
+    fn table_constraint(&mut self) -> Parsing<TableConstraint> {
+        if self.kw("PRIMARY") {
+            let columns: Vec<Identifier> = self.primary_key_columns()?;
+            let modifiers: ConstraintModifiers = self.constraint_modifiers();
+            self.constraint_options()?;
+            return Ok(TableConstraint::PrimaryKey {
+                name: None,
+                columns,
+                key_parts: Vec::new(),
+                timeseries_columns: Vec::new(),
+                include_columns: Vec::new(),
+                modifiers,
+                has_constraint_keyword: false,
+            });
+        }
+        let name: Option<Identifier> = match self.eat_kw("CONSTRAINT") {
+            true => Some(self.ident()?),
+            false => None,
         };
-        let mut column: ColumnDef = ColumnDef::new(String::new(), data_type);
-        column.name = name;
-        loop {
-            if self.kw("NOT") && self.kw_at(1, "NULL") {
-                self.at += 2;
-                column.nullable = Some(false);
-            } else if self.eat_kw("DEFAULT") {
-                column.default = Some(self.expression()?);
-            } else if self.kw("PRIMARY") && self.kw_at(1, "KEY") {
-                self.at += 2;
-                column.primary_key = true;
-                self.expect_kws_not_enforced()?;
-            } else if self.kw("OPTIONS") && self.char_at(1, '(') {
-                self.at += 1;
-                self.options_list()?;
-            } else if self.kw("GENERATED") {
-                let start: usize = self.offset();
-                self.skip_until_column_end()?;
-                self.gap("generated_column", start);
-            } else {
-                return Ok(column);
+        let constraint: TableConstraint = match self.eat_kw("CHECK") {
+            true => TableConstraint::Check {
+                name,
+                expression: self.parenthesized_expression()?,
+                modifiers: self.constraint_modifiers(),
+            },
+            false => {
+                self.expect_kws(&["FOREIGN", "KEY"])?;
+                let columns: Vec<Identifier> = self.identifier_list()?;
+                let references: ForeignKeyRef = self.foreign_key_reference()?;
+                TableConstraint::ForeignKey {
+                    name,
+                    columns,
+                    references: Some(Box::new(references)),
+                    on_delete: None,
+                    on_update: None,
+                    modifiers: self.constraint_modifiers(),
+                }
             }
+        };
+        self.constraint_options()?;
+        Ok(constraint)
+    }
+
+    /// `[NOT] ENFORCED` as a constraint's modifiers.
+    fn constraint_modifiers(&mut self) -> ConstraintModifiers {
+        ConstraintModifiers {
+            enforced: self.enforced(),
+            ..ConstraintModifiers::default()
         }
     }
 
-    /// `NOT ENFORCED`, which BigQuery's keys require.
-    fn expect_kws_not_enforced(&mut self) -> Parsing<()> {
-        match self.eat_kws(&["NOT", "ENFORCED"]) {
-            true => Ok(()),
-            false => Err(self.error()),
-        }
-    }
-
-    /// Skips to the `,` or `)` ending a column definition at this depth.
-    fn skip_until_column_end(&mut self) -> Parsing<()> {
-        let mut depth: usize = 0;
-        while !self.ends_at(0) {
-            if depth == 0 && (self.is_char(',') || self.is_char(')')) {
-                return Ok(());
-            }
-            if self.is_char('(') {
-                depth += 1;
-            } else if self.is_char(')') {
-                depth -= 1;
-            }
-            self.advance()?;
+    /// A constraint's `OPTIONS (...)`, read as a gap.
+    fn constraint_options(&mut self) -> Parsing<()> {
+        if self.kw("OPTIONS") && self.char_at(1, '(') {
+            let start: usize = self.offset();
+            self.at += 1;
+            self.options_list()?;
+            self.gap("constraint_options", start);
         }
         Ok(())
-    }
-
-    /// An unenforced `PRIMARY KEY` or `FOREIGN KEY`, read and not kept: it carries no lineage.
-    fn table_constraint(&mut self) -> Parsing<()> {
-        if self.eat_kw("CONSTRAINT") {
-            self.ident()?;
-        }
-        if self.kw("PRIMARY") && self.kw_at(1, "KEY") {
-            self.at += 2;
-            self.identifier_list()?;
-            return self.expect_kws_not_enforced();
-        }
-        self.expect_kw("FOREIGN")?;
-        self.expect_kw("KEY")?;
-        self.identifier_list()?;
-        self.expect_kw("REFERENCES")?;
-        self.table_reference()?;
-        self.identifier_list()?;
-        self.expect_kws_not_enforced()
     }
 
     fn create_view(&mut self, head: Head) -> Parsing<Expression> {

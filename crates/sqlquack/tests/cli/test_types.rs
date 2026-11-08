@@ -203,6 +203,13 @@ pub(crate) struct ConvertDiagnosticTestCase {
     pub(crate) expected_json: (&'static str, &'static str, u64, u64),
 }
 
+pub(crate) struct PlacedNameTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_text: &'static str,
+    pub(crate) expected_span: (&'static str, u64, u64),
+}
+
 #[derive(Debug, PartialEq, Eq)]
 pub(crate) struct FunctionStdinOutcome {
     pub(crate) exit_code: Option<i32>,

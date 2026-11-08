@@ -8,7 +8,12 @@ use sqlquack_core::failures::constants::{RAISE_ID_MARKER, TAG_END};
 use sqlquack_core::parsing::models::{SourceLines, SourceLocation};
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::raises::main::identify_raises::identify_raises;
+use sqlquack_syntax::tokens::models::{Dialect, TokenType};
+use sqlquack_syntax::{TokenKind, tokenize};
 
+use crate::conversion::_helpers::support::tree::{
+    LITERAL_DATE, LITERAL_NUMBER, LITERAL_STRING, LITERAL_TIMESTAMP, node_kind,
+};
 use crate::conversion::constants::{SPAN_END, SPAN_FIELD, SPAN_START};
 
 /// The source ranges of the nodes of one converted tree, indexed when first asked for.
@@ -20,6 +25,8 @@ pub(crate) struct Locator<'a> {
     ranges: OnceCell<HashMap<usize, (usize, usize)>>,
     adopted: RefCell<HashMap<usize, usize>>,
     raises: RefCell<BTreeMap<String, Vec<SourceLocation>>>,
+    text: OnceCell<String>,
+    literals: OnceCell<Option<LiteralIndex>>,
 }
 
 /// Keeps a built node's copies of tree nodes located as their originals until dropped.
@@ -49,6 +56,8 @@ impl<'a> Locator<'a> {
             ranges: OnceCell::new(),
             adopted: RefCell::new(HashMap::new()),
             raises: RefCell::new(BTreeMap::new()),
+            text: OnceCell::new(),
+            literals: OnceCell::new(),
         }
     }
 
@@ -115,6 +124,56 @@ impl<'a> Locator<'a> {
         self.locate(node).map(|location| self.lines.text(&location))
     }
 
+    /// Where `node` is, or for a literal the parser keeps no range for, the one place it is written.
+    pub(crate) fn locate_written(&self, node: &Value) -> Option<SourceLocation> {
+        self.locate(node).or_else(|| {
+            let found = self.written_literal(node)?;
+            let [(written, _)] = found.as_slice() else {
+                return None;
+            };
+            let (start, end) = written.characters;
+            Some(self.lines.source_location(start, end))
+        })
+    }
+
+    /// Each place the source writes literal `node`, with any type keyword's gap; `None` if unknown.
+    pub(crate) fn written_literal(&self, node: &Value) -> Option<Vec<(Written, Option<&str>)>> {
+        let ("literal", payload) = node_kind(node)? else {
+            return None;
+        };
+        let value = payload.get("value")?.as_str()?;
+        let literal_type = payload.get("literal_type")?.as_str()?;
+        let keyword = match literal_type {
+            LITERAL_NUMBER | LITERAL_STRING => None,
+            LITERAL_DATE => Some("DATE"),
+            LITERAL_TIMESTAMP => Some("TIMESTAMP"),
+            _ => return None,
+        };
+        let source = self.text.get_or_init(|| self.source());
+        let index = self
+            .literals
+            .get_or_init(|| literal_index(source))
+            .as_ref()?;
+        let found = index
+            .get(&(literal_type == LITERAL_NUMBER, value.to_owned()))
+            .map_or(&[][..], Vec::as_slice);
+        let typed = |(written, before): &(Written, Option<Written>)| {
+            let before = (*before)?;
+            let (start, end) = before.bytes;
+            source[start..end].eq_ignore_ascii_case(keyword?).then(|| {
+                let spanned = Written {
+                    bytes: (start, written.bytes.1),
+                    characters: (before.characters.0, written.characters.1),
+                };
+                (spanned, Some(&source[end..written.bytes.0]))
+            })
+        };
+        Some(match keyword {
+            None => found.iter().map(|(written, _)| (*written, None)).collect(),
+            Some(_) => found.iter().filter_map(typed).collect(),
+        })
+    }
+
     /// `refusal`, placed at `node` unless a node inside it placed it already.
     pub(crate) fn placed(&self, mut refusal: Refusal, node: &Value) -> Refusal {
         if refusal.location.is_none() {
@@ -126,6 +185,56 @@ impl<'a> Locator<'a> {
 
 /// How deep inside a built node its copies of tree nodes are looked for.
 const ADOPTION_DEPTH: usize = 3;
+
+/// Where each number, by its text, and each string, by its value, is written, with the token before.
+type LiteralIndex = HashMap<(bool, String), Vec<(Written, Option<Written>)>>;
+
+/// Where a token, or a run of tokens, is written: its byte and character ranges.
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct Written {
+    bytes: (usize, usize),
+    characters: (usize, usize),
+}
+
+/// Where `source` writes each number and quoted string, with the token before; `None` if unlexed.
+fn literal_index(source: &str) -> Option<LiteralIndex> {
+    let tokens = match tokenize(source, Dialect::Snowflake) {
+        Ok(tokens) => tokens,
+        Err(_) => return None,
+    };
+    let mut index = LiteralIndex::new();
+    let (mut counted, mut characters) = (0, 0);
+    let mut previous: Option<Written> = None;
+    for token in &tokens {
+        let TokenKind::Significant(token_type) = token.kind else {
+            continue;
+        };
+        let start = characters + source[counted..token.start].chars().count();
+        characters = start + source[token.start..token.end].chars().count();
+        counted = token.end;
+        let written = Written {
+            bytes: (token.start, token.end),
+            characters: (start, characters),
+        };
+        let text = token.text(source);
+        let key = match token_type {
+            TokenType::Number => Some((true, text.to_owned())),
+            TokenType::String => unquoted(text).map(|value| (false, value)),
+            _ => None,
+        };
+        if let Some(key) = key {
+            index.entry(key).or_default().push((written, previous));
+        }
+        previous = Some(written);
+    }
+    Some(index)
+}
+
+/// A single-quoted string token's value, doubled quotes undone; `None` with a backslash escape.
+fn unquoted(text: &str) -> Option<String> {
+    let inner = text.strip_prefix('\'')?.strip_suffix('\'')?;
+    (!inner.contains('\\')).then(|| inner.replace("''", "'"))
+}
 
 /// Each node of a copy inside `built`, within `depth` levels, with its original.
 fn copies_inside(built: &Value, originals: &[Value], depth: usize) -> Vec<(usize, usize)> {

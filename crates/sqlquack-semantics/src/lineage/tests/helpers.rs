@@ -2,9 +2,9 @@ use std::collections::HashMap;
 
 use crate::lineage::models::NullabilityRule;
 use crate::lineage::models::{Nullability, SchemaColumn, SourceColumn};
-use sqlquack_syntax::{CallMode, Dialect, ParseOptions, parse_statements_with};
+use sqlquack_syntax::{CallMode, Dialect, Expression, ParseOptions, parse_statements_with};
 
-use crate::dialects::constants::{DUCKDB, POSTGRES};
+use crate::dialects::constants::{BIGQUERY, CLICKHOUSE, DUCKDB, POSTGRES, SQLITE};
 use crate::dialects::types::DialectProfile;
 use crate::lineage::_helpers::findings::statement::statement_findings;
 use crate::lineage::main::query_lineage::query_lineage;
@@ -123,6 +123,45 @@ pub(crate) fn found_findings(
             )
         })
         .collect()
+}
+
+/// The `(code, message, start)` findings of `sql`, parsed by the BigQuery parser.
+pub(crate) fn bigquery_findings(
+    sql: &str,
+    schema: &dyn LineageSchema,
+) -> Vec<(&'static str, String, usize)> {
+    let context = LineageContext {
+        profile: &BIGQUERY,
+        schema,
+        sql: Some(sql),
+    };
+    let parsed =
+        sqlquack_syntax_bigquery::parse(sql).unwrap_or_else(|error| panic!("{sql}: {error:?}"));
+    statement_findings(&parsed.statements[0], context)
+        .into_iter()
+        .map(|finding| {
+            (
+                finding.code,
+                finding.message,
+                finding.span.map_or(0, |span| span.start),
+            )
+        })
+        .collect()
+}
+
+/// The first output's type under the BigQuery profile.
+pub(crate) fn bigquery_output_type(schema: &TypedShopSchema, sql: &str) -> Option<String> {
+    let context = LineageContext {
+        profile: &BIGQUERY,
+        schema,
+        sql: Some(sql),
+    };
+    let parsed = sqlquack_syntax_bigquery::parse(sql).ok()?;
+    statement_lineage(parsed.statements.first()?, context)
+        .outputs
+        .first()?
+        .data_type
+        .clone()
 }
 
 /// `expected` as owned `(code, message, start)` findings.
@@ -271,6 +310,36 @@ pub(crate) fn typed_postgres_shop_schema() -> TypedShopSchema {
     schema
 }
 
+/// A BigQuery shop: orders of each scalar type, and a customers column in its catalog's case.
+pub(crate) fn typed_bigquery_shop_schema() -> TypedShopSchema {
+    TypedShopSchema {
+        closed: HashMap::from([
+            (
+                "orders".to_owned(),
+                vec![
+                    typed_column("id", "INT64"),
+                    typed_column("customer_id", "INT64"),
+                    typed_column("quantity", "INT64"),
+                    typed_column("price", "NUMERIC"),
+                    typed_column("ratio", "FLOAT64"),
+                    typed_column("status", "STRING"),
+                    typed_column("ordered_at", "TIMESTAMP"),
+                    typed_column("ordered_on", "DATE"),
+                    typed_column("rush", "BOOL"),
+                ],
+            ),
+            (
+                "customers".to_owned(),
+                vec![
+                    typed_column("id", "INT64"),
+                    typed_column("FullName", "STRING"),
+                ],
+            ),
+        ]),
+        ..TypedShopSchema::default()
+    }
+}
+
 pub(crate) fn typed_column(name: &str, data_type: &str) -> SchemaColumn {
     SchemaColumn {
         name: name.to_owned(),
@@ -308,6 +377,38 @@ fn engine_schema(fixture: &EngineTypeFixture) -> TypedShopSchema {
 /// Replays engine-recorded DuckDB result types: wrong types, exact count and per-category tally.
 pub(crate) fn replayed_engine_types(fixture: &str) -> EngineTypeReplay {
     replayed_types(fixture, canonical_duckdb, duckdb_output_type)
+}
+
+/// Each recorded ClickHouse result type against the ClickHouse profile's, `Nullable` set aside.
+pub(crate) fn replayed_clickhouse_engine_types(fixture: &str) -> EngineTypeReplay {
+    replayed_types(fixture, unwrapped_clickhouse, clickhouse_output_type)
+}
+
+/// A ClickHouse type without its top-level `LowCardinality` and `Nullable` wrappers.
+fn unwrapped_clickhouse(spelling: &str) -> String {
+    ["LowCardinality(", "Nullable("]
+        .iter()
+        .fold(spelling.trim(), |text, wrapper| {
+            text.strip_prefix(wrapper)
+                .and_then(|inner| inner.strip_suffix(')'))
+                .unwrap_or(text)
+        })
+        .to_owned()
+}
+
+/// The first output's type under the ClickHouse profile, when the native parser reads the query.
+fn clickhouse_output_type(schema: &TypedShopSchema, sql: &str) -> Option<String> {
+    let parsed = sqlquack_syntax_clickhouse::parse(sql).ok()?;
+    let context = LineageContext {
+        profile: &CLICKHOUSE,
+        schema,
+        sql: Some(sql),
+    };
+    statement_lineage(parsed.statements.first()?, context)
+        .outputs
+        .first()?
+        .data_type
+        .clone()
 }
 
 /// Each recorded PostgreSQL result type against the type SQLQuack reports with Engine::Postgres.
@@ -498,3 +599,178 @@ const CANONICAL_DUCKDB_NAMES: [(&[&str], &str); 19] = [
     (&["TIMETZ", "TIME WITH TIME ZONE"], "TIMETZ"),
     (&["BLOB", "BYTEA", "VARBINARY"], "BLOB"),
 ];
+
+/// A ClickHouse shop: types as ClickHouse names them.
+pub(crate) fn clickhouse_shop_schema() -> TypedShopSchema {
+    let table = |columns: &[(&str, &str)]| {
+        columns
+            .iter()
+            .map(|(name, data_type)| typed_column(name, data_type))
+            .collect()
+    };
+    TypedShopSchema {
+        closed: HashMap::from([
+            (
+                "orders".to_owned(),
+                table(&[
+                    ("id", "Int32"),
+                    ("quantity", "Int32"),
+                    ("price", "Decimal(10, 2)"),
+                    ("status", "String"),
+                ]),
+            ),
+            (
+                "customers".to_owned(),
+                table(&[("id", "Int32"), ("name", "String")]),
+            ),
+            (
+                "nested".to_owned(),
+                table(&[
+                    ("arr", "Array(Tuple(a Int32))"),
+                    ("tup", "Tuple(a Int32)"),
+                    ("zq.order_id", "Int32"),
+                ]),
+            ),
+        ]),
+        ..TypedShopSchema::default()
+    }
+}
+
+/// Three ClickHouse tables: `a` and `b` share `id` and `v`, whose types differ; `c` shares none.
+pub(crate) fn clickhouse_join_schema() -> TypedShopSchema {
+    let table = |columns: &[(&str, &str)]| {
+        columns
+            .iter()
+            .map(|(name, data_type)| typed_column(name, data_type))
+            .collect()
+    };
+    TypedShopSchema {
+        closed: HashMap::from([
+            (
+                "a".to_owned(),
+                table(&[("id", "Int32"), ("v", "Int32"), ("k", "String")]),
+            ),
+            (
+                "b".to_owned(),
+                table(&[("id", "Int32"), ("v", "String"), ("w", "Int64")]),
+            ),
+            ("c".to_owned(), table(&[("z", "Int32")])),
+        ]),
+        ..TypedShopSchema::default()
+    }
+}
+
+/// The first statement of `sql`, parsed by the native ClickHouse parser.
+pub(crate) fn parsed_clickhouse(sql: &str) -> Expression {
+    let mut parsed =
+        sqlquack_syntax_clickhouse::parse(sql).unwrap_or_else(|error| panic!("{sql}: {error:?}"));
+    parsed.statements.remove(0)
+}
+
+/// A SQLite shop, with the declared types its tables are created with.
+pub(crate) fn sqlite_shop_schema() -> TypedShopSchema {
+    TypedShopSchema {
+        closed: HashMap::from([
+            (
+                "orders".to_owned(),
+                vec![
+                    typed_column("id", "INTEGER"),
+                    typed_column("quantity", "INTEGER"),
+                    typed_column("price", "REAL"),
+                    typed_column("status", "TEXT"),
+                ],
+            ),
+            (
+                "customers".to_owned(),
+                vec![typed_column("id", "INTEGER"), typed_column("name", "TEXT")],
+            ),
+        ]),
+        ..TypedShopSchema::default()
+    }
+}
+
+/// Each SQLite output's name, type and nullability.
+pub(crate) fn sqlite_outputs(
+    schema: &TypedShopSchema,
+    sql: &str,
+) -> Vec<(String, Option<String>, Nullability)> {
+    let context = LineageContext {
+        profile: &SQLITE,
+        schema,
+        sql: Some(sql),
+    };
+    query_lineage(sql, Dialect::SQLite, &ParseOptions::default(), context)
+        .unwrap_or_else(|error| panic!("{sql}: {error}"))
+        .outputs
+        .into_iter()
+        .map(|output| (output.name, output.data_type, output.nullability))
+        .collect()
+}
+
+/// `sql`'s statement with its first output's call kept generic, as the native SQLite parser writes calls.
+pub(crate) fn generic_calls(sql: &str) -> sqlquack_syntax::Expression {
+    let written: String = sql.replacen("SELECT ", "SELECT zz_", 1);
+    let mut statements = parse_statements_with(
+        &written,
+        Dialect::SQLite,
+        &ParseOptions::default(),
+        CallMode::FaithfulLocated,
+    )
+    .unwrap_or_else(|error| panic!("{sql}: {error}"));
+    let mut statement = statements.remove(0);
+    let sqlquack_syntax::Expression::Select(select) = &mut statement else {
+        panic!("{sql}: not a SELECT");
+    };
+    let Some(sqlquack_syntax::Expression::Alias(alias)) = select.expressions.first_mut() else {
+        panic!("{sql}: no aliased first output");
+    };
+    let sqlquack_syntax::Expression::Function(function) = &mut alias.this else {
+        panic!("{sql}: the first output is not a call");
+    };
+    function.name = function.name.trim_start_matches("zz_").to_owned();
+    statement
+}
+
+/// A SELECT of `orders` wrapped in `depth` derived tables.
+pub(crate) fn nested_derived_tables(depth: usize) -> String {
+    let mut sql: String = "SELECT id FROM orders".to_owned();
+    for _ in 0..depth {
+        sql = format!("SELECT * FROM ({sql}) AS t");
+    }
+    sql
+}
+
+/// `sql`'s tree depth, outputs and findings, analysed on a 2 MiB thread, or the parser's refusal.
+pub(crate) fn deep_sqlite_analysis(sql: String) -> Result<(usize, usize, usize), String> {
+    std::thread::Builder::new()
+        .stack_size(2 * 1024 * 1024)
+        .spawn(move || {
+            let parsed = sqlquack_syntax_sqlite::parse(&sql).map_err(|error| error.message)?;
+            let schema: TypedShopSchema = sqlite_shop_schema();
+            let context = LineageContext {
+                profile: &SQLITE,
+                schema: &schema,
+                sql: Some(&sql),
+            };
+            let statement: &sqlquack_syntax::Expression = &parsed.statements[0];
+            Ok((
+                tree_depth(statement),
+                crate::statement_lineage(statement, context).outputs.len(),
+                crate::statement_name_findings(statement, context).len(),
+            ))
+        })
+        .unwrap_or_else(|error| panic!("{error}"))
+        .join()
+        .unwrap_or_else(|_| panic!("the analysis thread panicked"))
+}
+
+/// The number of levels in the tree under `root`, counted level by level without recursion.
+fn tree_depth(root: &sqlquack_syntax::Expression) -> usize {
+    use sqlquack_syntax::ExpressionWalk;
+    std::iter::successors(Some(vec![root]), |level| {
+        let next: Vec<&sqlquack_syntax::Expression> =
+            level.iter().flat_map(|node| node.children()).collect();
+        (!next.is_empty()).then_some(next)
+    })
+    .count()
+}

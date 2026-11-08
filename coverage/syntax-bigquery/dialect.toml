@@ -1,0 +1,26 @@
+format = "sqlquack-syntax-dialect/1"
+name = "bigquery"
+form_prefix = "bq"
+families = ["query", "dml", "ddl", "transaction_session", "security_admin", "utility", "functions", "expressions"]
+receipt_format = "sqlquack-syntax-receipt/2"
+parser_path = "crates/sqlquack-syntax-bigquery"
+local_parser = "bigquery"
+# The referee's parser classes: PR001-PR151 (each a MakeSyntaxError message of the pinned
+# googlesql.tm), PI001-PI002 (the parser's own refusals) and SYNTX (any other `Syntax error:`).
+# Analysis classes (SHAPE, ANLYS, INVLD and the rest) are not syntax; see README.md, Receipts.
+syntax_codes = ["PR001", "PR002", "PR003", "PR004", "PR005", "PR006", "PR007", "PR008", "PR009",
+  "PR010", "PR011", "PR012", "PR013", "PR014", "PR015", "PR016", "PR017", "PR018", "PR019",
+  "PR020", "PR021", "PR022", "PR023", "PR024", "PR025", "PR026", "PR027", "PR028", "PR029",
+  "PR030", "PR031", "PR032", "PR033", "PR034", "PR035", "PR036", "PR037", "PR038", "PR039",
+  "PR040", "PR041", "PR042", "PR043", "PR044", "PR045", "PR046", "PR047", "PR048", "PR049",
+  "PR050", "PR051", "PR052", "PR053", "PR054", "PR055", "PR056", "PR057", "PR058", "PR059",
+  "PR060", "PR061", "PR062", "PR063", "PR064", "PR065", "PR066", "PR067", "PR068", "PR069",
+  "PR070", "PR071", "PR072", "PR073", "PR074", "PR075", "PR076", "PR077", "PR078", "PR079",
+  "PR080", "PR081", "PR082", "PR083", "PR084", "PR085", "PR086", "PR087", "PR088", "PR089",
+  "PR090", "PR091", "PR092", "PR093", "PR094", "PR095", "PR096", "PR097", "PR098", "PR099",
+  "PR100", "PR101", "PR102", "PR103", "PR104", "PR105", "PR106", "PR107", "PR108", "PR109",
+  "PR110", "PR111", "PR112", "PR113", "PR114", "PR115", "PR116", "PR117", "PR118", "PR119",
+  "PR120", "PR121", "PR122", "PR123", "PR124", "PR125", "PR126", "PR127", "PR128", "PR129",
+  "PR130", "PR131", "PR132", "PR133", "PR134", "PR135", "PR136", "PR137", "PR138", "PR139",
+  "PR140", "PR141", "PR142", "PR143", "PR144", "PR145", "PR146", "PR147", "PR148", "PR149",
+  "PR150", "PR151", "PI001", "PI002", "SYNTX"]

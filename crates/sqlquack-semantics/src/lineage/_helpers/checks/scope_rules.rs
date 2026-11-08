@@ -2,6 +2,7 @@
 
 use std::collections::{HashMap, HashSet};
 
+use serde_json::Value;
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::{Column, Identifier, Literal};
@@ -12,7 +13,10 @@ use crate::lineage::_helpers::checks::issues::{in_scope, issue, rule_location};
 use crate::lineage::_helpers::tracing::expressions::is_aggregate;
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::typing::postgres_typing::postgres_window_only;
-use crate::lineage::constants::{POSTGRES_PROFILE, SCOPE_PHASE, SNOWFLAKE_PROFILE};
+use crate::lineage::constants::{
+    BIGQUERY_WINDOW_ONLY_FUNCTIONS, NAME_FIELD, POSTGRES_PROFILE, SCOPE_PHASE,
+    SHAPE_COMMENT_SUFFIX, SHAPE_COSMETIC_FIELDS, SNOWFLAKE_PROFILE, SPAN_FIELD, SQLITE_PROFILE,
+};
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding, ScopeSource};
 
 const COLUMNS_FUNCTION: &str = "columns";
@@ -24,7 +28,7 @@ const MISPLACED_WINDOW: &str =
     "Window function is not allowed in this clause or inside another aggregate/window function";
 
 /// A finding for each window function without OVER that the all-engine placement rule misses (42809).
-fn unwindowed_calls(node: &Expression) -> Vec<NameFinding> {
+fn unwindowed_calls(node: &Expression, window_only: fn(&Expression) -> bool) -> Vec<NameFinding> {
     let scoped: Vec<&Expression> = in_scope(node);
     let mut wrapped: Vec<&Expression> = Vec::new();
     for expression in &scoped {
@@ -39,7 +43,7 @@ fn unwindowed_calls(node: &Expression) -> Vec<NameFinding> {
         let named: bool = matches!(
             expression,
             Expression::Function(_) | Expression::AggregateFunction(_)
-        ) && postgres_window_only(expression);
+        ) && window_only(expression);
         let typed: bool = matches!(
             expression,
             Expression::CumeDist(_) | Expression::PercentRank(_) | Expression::NthValue(_)
@@ -50,6 +54,19 @@ fn unwindowed_calls(node: &Expression) -> Vec<NameFinding> {
         }
     }
     findings
+}
+
+/// Whether `expression` calls one of BigQuery's analytic functions, which take only an OVER clause.
+fn bigquery_window_only(expression: &Expression) -> bool {
+    match expression {
+        Expression::Function(function) => BIGQUERY_WINDOW_ONLY_FUNCTIONS
+            .iter()
+            .any(|name| function.name.eq_ignore_ascii_case(name)),
+        Expression::AggregateFunction(function) => BIGQUERY_WINDOW_ONLY_FUNCTIONS
+            .iter()
+            .any(|name| function.name.eq_ignore_ascii_case(name)),
+        _ => false,
+    }
 }
 
 fn rule(code: &'static str, message: String, at: &Expression, select: &Expression) -> NameFinding {
@@ -253,7 +270,7 @@ fn structure_rules(
         for cte in &with.ctes {
             let profile: &str = level.context.profile.name();
             let mismatched = |width: usize| match profile {
-                SNOWFLAKE_PROFILE => width != cte.columns.len(),
+                SNOWFLAKE_PROFILE | SQLITE_PROFILE => width != cte.columns.len(),
                 POSTGRES_PROFILE => width < cte.columns.len(),
                 _ => false,
             };
@@ -266,7 +283,10 @@ fn structure_rules(
                 ));
             }
             if !names.insert(level.key(&cte.alias))
-                && matches!(engine, Engine::DuckDB | Engine::Postgres)
+                && matches!(
+                    engine,
+                    Engine::DuckDB | Engine::Postgres | Engine::Sqlite | Engine::BigQuery
+                )
             {
                 findings.push(rule(
                     "E233",
@@ -278,7 +298,10 @@ fn structure_rules(
         }
     }
     let mut names: HashSet<String> = HashSet::new();
-    for item in from_items(select) {
+    for item in from_items(select)
+        .into_iter()
+        .filter(|_| engine != Engine::Sqlite)
+    {
         if let Some(name) = item_name(item)
             && !names.insert(level.key(name))
         {
@@ -312,8 +335,12 @@ fn structure_rules(
             }
         }
     }
-    if matches!(engine, Engine::Postgres) {
-        findings.extend(unwindowed_calls(node));
+    match engine {
+        Engine::Postgres | Engine::Sqlite | Engine::Snowflake => {
+            findings.extend(unwindowed_calls(node, postgres_window_only));
+        }
+        Engine::BigQuery => findings.extend(unwindowed_calls(node, bigquery_window_only)),
+        Engine::DuckDB => {}
     }
     if select.qualify.is_some() && !has_window {
         findings.push(rule(
@@ -330,7 +357,11 @@ fn structure_rules(
         .map(|limit| &limit.this)
         .chain(select.offset.iter().map(|offset| &offset.this));
     for value in bounds {
-        if invalid_bound(value) {
+        let invalid: bool = match engine {
+            Engine::Sqlite => matches!(value, Expression::Column(_)),
+            _ => invalid_bound(value),
+        };
+        if invalid {
             findings.push(rule(
                 "E234",
                 "LIMIT/OFFSET must be a non-negative constant numeric expression".to_owned(),
@@ -500,7 +531,11 @@ fn star_modifiers(
             .flatten()
             .chain(star.replace.iter().flatten().map(|alias| &alias.alias));
         for name in names {
-            if !inputs.contains(&level.key(name)) {
+            let wanted: String = level.key(name);
+            if !inputs
+                .iter()
+                .any(|input| level.context.profile.same_identifier(input, &wanted))
+            {
                 findings.push(rule(
                     "E201",
                     format!("Star modifier references unknown column '{}'", name.name),
@@ -688,6 +723,53 @@ fn group_keys<'s>(
     groups
 }
 
+/// A DuckDB group key as grouping compares it: each column as the source and name it resolves to.
+fn duckdb_shape(expression: &Expression, level: RuleLevel<'_, '_>) -> Option<Value> {
+    match serde_json::to_value(expression) {
+        Ok(mut shape) => {
+            resolved_columns(&mut shape, level);
+            Some(shape)
+        }
+        Err(_) => None,
+    }
+}
+
+/// `value` without spans, comments or `::` spelling, each column its lower-cased source and name.
+fn resolved_columns(value: &mut Value, level: RuleLevel<'_, '_>) {
+    match value {
+        Value::Object(fields) => {
+            fields.retain(|field, _| {
+                !SHAPE_COSMETIC_FIELDS.contains(&field.as_str())
+                    && !field.ends_with(SHAPE_COMMENT_SUFFIX)
+            });
+            let resolved: Option<Value> = match fields.get("column") {
+                Some(written) => match serde_json::from_value::<Column>(written.clone()) {
+                    Ok(column) => {
+                        let (table, name) = column_key(&column, level);
+                        Some(Value::from(vec![
+                            table.map(|table| table.to_ascii_lowercase()),
+                            Some(name.to_ascii_lowercase()),
+                        ]))
+                    }
+                    Err(_) => None,
+                },
+                None => None,
+            };
+            if let Some(resolved) = resolved {
+                fields.insert("column".to_owned(), resolved);
+            } else {
+                fields
+                    .values_mut()
+                    .for_each(|field| resolved_columns(field, level));
+            }
+        }
+        Value::Array(items) => items
+            .iter_mut()
+            .for_each(|item| resolved_columns(item, level)),
+        _ => {}
+    }
+}
+
 fn type_marker(node: &Expression) -> bool {
     matches!(node, Expression::Annotated(annotated)
         if annotated.type_assertion.is_some() || annotated.type_like.is_some())
@@ -697,6 +779,69 @@ fn unmarked(node: &Expression) -> &Expression {
     match node {
         Expression::Annotated(annotated) if type_marker(node) => unmarked(&annotated.this),
         _ => node,
+    }
+}
+
+/// Whether `current` is grouping expression `group`, columns compared by what they resolve to.
+fn same_group(group: &Expression, current: &Expression, level: RuleLevel<'_, '_>) -> bool {
+    if group == current {
+        return true;
+    }
+    if Engine::of(level.context) != Engine::BigQuery
+        || std::mem::discriminant(group) != std::mem::discriminant(current)
+    {
+        return false;
+    }
+    let (Ok(group_shape), Ok(current_shape)) =
+        (serde_json::to_value(group), serde_json::to_value(current))
+    else {
+        return false;
+    };
+    let (group_columns, current_columns) = (columns_in(group), columns_in(current));
+    without_columns(group_shape) == without_columns(current_shape)
+        && group_columns.len() == current_columns.len()
+        && group_columns
+            .iter()
+            .zip(&current_columns)
+            .all(|(left, right)| column_key(left, level) == column_key(right, level))
+}
+
+/// The column references of `expression`, in tree order.
+fn columns_in(expression: &Expression) -> Vec<&Column> {
+    let mut found: Vec<&Column> = Vec::new();
+    let mut pending: Vec<&Expression> = vec![expression];
+    while let Some(current) = pending.pop() {
+        if let Expression::Column(column) = current {
+            found.push(column);
+        }
+        let mut children: Vec<&Expression> = current.children();
+        children.reverse();
+        pending.extend(children);
+    }
+    found
+}
+
+/// A serialized expression with its columns and source ranges blanked and names in lower case.
+fn without_columns(value: serde_json::Value) -> serde_json::Value {
+    match value {
+        serde_json::Value::Object(map) if map.len() == 1 && map.contains_key("column") => {
+            serde_json::Value::Null
+        }
+        serde_json::Value::Object(map) => serde_json::Value::Object(
+            map.into_iter()
+                .filter(|(key, _)| key != SPAN_FIELD)
+                .map(|(key, item)| match item {
+                    serde_json::Value::String(name) if key == NAME_FIELD => {
+                        (key, serde_json::Value::String(name.to_ascii_lowercase()))
+                    }
+                    item => (key, without_columns(item)),
+                })
+                .collect(),
+        ),
+        serde_json::Value::Array(items) => {
+            serde_json::Value::Array(items.into_iter().map(without_columns).collect())
+        }
+        other => other,
     }
 }
 
@@ -739,12 +884,15 @@ fn offers(source: &ScopeSource, name: &str, level: RuleLevel<'_, '_>) -> bool {
         .any(|offered| level.context.profile.same_identifier(&offered.key, name))
 }
 
-/// Columns an aggregate query reads that are neither grouped nor aggregated.
+/// Ungrouped, unaggregated columns an aggregate query reads; none in SQLite, which reads any row.
 fn grouping(
     (node, select): (&Expression, &Select),
     aliases: &HashMap<String, &Expression>,
     level: RuleLevel<'_, '_>,
 ) -> Vec<NameFinding> {
+    if Engine::of(level.context) == Engine::Sqlite {
+        return Vec::new();
+    }
     let aggregate_query: bool = select.group_by.is_some()
         || select.expressions.iter().any(ordinary_aggregate)
         || select
@@ -765,13 +913,42 @@ fn grouping(
     }
     let groups: Vec<&Expression> = group_keys(select, aliases, level);
     let unmarked_groups: Vec<&Expression> = groups.iter().map(|group| unmarked(group)).collect();
-    let grouped_columns: HashSet<(Option<String>, String)> = groups
+    let group_shapes: Vec<(&'static str, Value)> = match Engine::of(level.context) {
+        Engine::DuckDB => unmarked_groups
+            .iter()
+            .filter(|group| !matches!(group, Expression::Column(_)))
+            .filter_map(|group| Some((group.variant_name(), duckdb_shape(group, level)?)))
+            .collect(),
+        _ => Vec::new(),
+    };
+    let same_shape = |node: &Expression| {
+        group_shapes
+            .iter()
+            .any(|(variant, _)| *variant == node.variant_name())
+            && duckdb_shape(node, level).is_some_and(|shape| {
+                group_shapes
+                    .iter()
+                    .any(|(_, group_shape)| *group_shape == shape)
+            })
+    };
+    let grouped_columns: Vec<(Option<String>, String)> = groups
         .iter()
         .filter_map(|group| match group {
             Expression::Column(column) => Some(column_key(column, level)),
             _ => None,
         })
         .collect();
+    let same = |left: &str, right: &str| level.context.profile.same_identifier(left, right);
+    let grouped = |(table, name): &(Option<String>, String)| {
+        grouped_columns.iter().any(|(grouped_table, grouped_name)| {
+            same(grouped_name, name)
+                && match (grouped_table, table) {
+                    (Some(left), Some(right)) => same(left, right),
+                    (None, None) => true,
+                    _ => false,
+                }
+        })
+    };
     let aliases_outside_order: bool = Engine::of(level.context) != Engine::Postgres;
     let mut read: Vec<(&Expression, bool)> = select
         .expressions
@@ -812,12 +989,13 @@ fn grouping(
                 || matches!(current, Expression::WithinGroup(group) if is_aggregate(&group.this))
                 || unmarked_groups
                     .iter()
-                    .any(|group| **group == *unmarked(current))
+                    .any(|group| same_group(group, unmarked(current), level))
+                || same_shape(unmarked(current))
             {
                 continue;
             }
             if let Expression::Column(column) = current {
-                if grouped_columns.contains(&column_key(column, level)) {
+                if grouped(&column_key(column, level)) {
                     continue;
                 }
                 if column.table.is_none() && named {

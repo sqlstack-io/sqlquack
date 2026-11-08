@@ -9,7 +9,6 @@ use sqlquack_syntax::expressions::columns::models::{
 use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
 use sqlquack_syntax::expressions::schema_objects::models::AlterObject;
 
-use crate::keywords::main::is_reserved::is_reserved;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
 use crate::parse::_helpers::tree::nodes::{table, tuple, var};
 use crate::parse::constants::{
@@ -433,8 +432,7 @@ impl Parser<'_> {
 
     /// `column_schema_inner [COLLATE ...]`, which the type reader takes whole.
     fn column_type(&mut self) -> Parsing<DataType> {
-        if self.kw_in(0, &["GENERATED", "AS"]) || is_reserved(&self.word_at(0).unwrap_or_default())
-        {
+        if self.kw_in(0, &["GENERATED", "AS"]) {
             return Err(self.error());
         }
         self.data_type()
@@ -600,7 +598,7 @@ impl Parser<'_> {
     }
 
     /// `( expression )`.
-    fn parenthesized_expression(&mut self) -> Parsing<Expression> {
+    pub(crate) fn parenthesized_expression(&mut self) -> Parsing<Expression> {
         self.expect_char('(')?;
         let expression: Expression = self.expression()?;
         self.expect_char(')')?;
@@ -608,7 +606,7 @@ impl Parser<'_> {
     }
 
     /// `foreign_key_reference`: `REFERENCES path ( columns )`, a match mode and its actions.
-    fn foreign_key_reference(&mut self) -> Parsing<ForeignKeyRef> {
+    pub(crate) fn foreign_key_reference(&mut self) -> Parsing<ForeignKeyRef> {
         self.expect_kw("REFERENCES")?;
         let target: TableRef = self.table_path()?;
         let columns: Vec<Identifier> = self.identifier_list()?;
@@ -656,37 +654,51 @@ impl Parser<'_> {
         }
     }
 
-    /// `[NOT] ENFORCED`, when written, as an operand.
-    fn constraint_enforcement(&mut self) -> Option<Expression> {
+    /// `[NOT] ENFORCED`, when written: whether the constraint is enforced.
+    pub(crate) fn enforced(&mut self) -> Option<bool> {
         if self.eat_kw("ENFORCED") {
-            return Some(var("ENFORCED"));
+            return Some(true);
         }
         if self.eat_kws(&["NOT", "ENFORCED"]) {
-            return Some(var("NOT ENFORCED"));
+            return Some(false);
         }
         None
     }
 
-    /// `primary_key_spec`: `PRIMARY KEY ( [column, ...] ) [[NOT] ENFORCED] [OPTIONS (...)]`.
-    pub(crate) fn primary_key_spec(&mut self) -> Parsing<Expression> {
+    /// `[NOT] ENFORCED`, when written, as an operand.
+    fn constraint_enforcement(&mut self) -> Option<Expression> {
+        self.enforced().map(|enforced| match enforced {
+            true => var("ENFORCED"),
+            false => var("NOT ENFORCED"),
+        })
+    }
+
+    /// `PRIMARY KEY ( [column, ...] )`'s columns, which take no ordering.
+    pub(crate) fn primary_key_columns(&mut self) -> Parsing<Vec<Identifier>> {
         self.expect_kws(&["PRIMARY", "KEY"])?;
         self.expect_char('(')?;
-        let mut columns: Vec<Expression> = Vec::new();
-        if !self.eat_char(')') {
-            columns = self.comma_list(|parser| {
-                let start: usize = parser.offset();
-                let column: Identifier = parser.ident()?;
-                if parser.kw_in(0, &["ASC", "DESC", "NULLS"]) {
-                    return Err(parser.error_with(
-                        "Ordering for primary keys is not supported",
-                        start,
-                        true,
-                    ));
-                }
-                Ok(named(column))
-            })?;
-            self.expect_char(')')?;
+        if self.eat_char(')') {
+            return Ok(Vec::new());
         }
+        let columns: Vec<Identifier> = self.comma_list(|parser| {
+            let start: usize = parser.offset();
+            let column: Identifier = parser.ident()?;
+            if parser.kw_in(0, &["ASC", "DESC", "NULLS"]) {
+                return Err(parser.error_with(
+                    "Ordering for primary keys is not supported",
+                    start,
+                    true,
+                ));
+            }
+            Ok(column)
+        })?;
+        self.expect_char(')')?;
+        Ok(columns)
+    }
+
+    /// `primary_key_spec`: `PRIMARY KEY ( [column, ...] ) [[NOT] ENFORCED] [OPTIONS (...)]`.
+    pub(crate) fn primary_key_spec(&mut self) -> Parsing<Expression> {
+        let columns: Vec<Expression> = self.primary_key_columns()?.into_iter().map(named).collect();
         let mut operands: Vec<Expression> = vec![tuple(columns)];
         operands.extend(self.constraint_enforcement());
         if self.eat_kw("OPTIONS") {

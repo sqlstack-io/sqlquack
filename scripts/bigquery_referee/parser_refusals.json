@@ -1,0 +1,763 @@
+{
+ "format": "sqlquack-bigquery-parser-refusals/1",
+ "source": "https://github.com/google/googlesql.git@2026.11.1 (d48c569aebd63870ff6acecf08b6611015ef1d9d) googlesql/parser/googlesql.tm",
+ "source_sha256": "38a88ee136bd770fca435b5ba4c60a45251a91daa51710fc5d783f957971737e",
+ "read": "every MakeSyntaxError call's message: its string literals in order, dynamic parts as .+?, anchored at the start; the bare 'Syntax error: ' prefixes and runtime status messages are left to the generic Syntax error: class",
+ "refusals": [
+  {
+   "code": "PR001",
+   "line": 1387,
+   "pattern": "^Syntax error: DEFINE MACRO statements cannot be composed from other expansions"
+  },
+  {
+   "code": "PR002",
+   "line": 1397,
+   "pattern": "^Hints are not allowed on DEFINE MACRO statements\\."
+  },
+  {
+   "code": "PR003",
+   "line": 1408,
+   "pattern": "^Hints are not allowed on DEFINE MACRO statements"
+  },
+  {
+   "code": "PR004",
+   "line": 1446,
+   "pattern": "^Mismatched end label; expected .+?, got "
+  },
+  {
+   "code": "PR005",
+   "line": 1471,
+   "pattern": "^Pipe operators are not supported on this statement"
+  },
+  {
+   "code": "PR006",
+   "line": 1580,
+   "pattern": "^RUN statement is not supported\\."
+  },
+  {
+   "code": "PR007",
+   "line": 1776,
+   "pattern": "^ADD ROW DELETION POLICY clause is not supported\\."
+  },
+  {
+   "code": "PR008",
+   "line": 1786,
+   "pattern": "^REPLACE ROW DELETION POLICY clause is not supported\\."
+  },
+  {
+   "code": "PR009",
+   "line": 1796,
+   "pattern": "^DROP ROW DELETION POLICY clause is not supported\\."
+  },
+  {
+   "code": "PR010",
+   "line": 1915,
+   "pattern": "^EXTERNAL TABLE FUNCTION is not supported"
+  },
+  {
+   "code": "PR011",
+   "line": 1988,
+   "pattern": "^ALTER TABLE FUNCTION is not supported"
+  },
+  {
+   "code": "PR012",
+   "line": 2052,
+   "pattern": "^ALTER .+? is not supported"
+  },
+  {
+   "code": "PR013",
+   "line": 2059,
+   "pattern": "^ALTER .+? does not support the ON clause"
+  },
+  {
+   "code": "PR014",
+   "line": 2111,
+   "pattern": "^Syntax error: Element list contains unexpected constraint"
+  },
+  {
+   "code": "PR015",
+   "line": 2208,
+   "pattern": "^Parenthesized SET statement requires a variable list"
+  },
+  {
+   "code": "PR016",
+   "line": 2215,
+   "pattern": "^Using SET with multiple variables requires parentheses around the variable list"
+  },
+  {
+   "code": "PR017",
+   "line": 2304,
+   "pattern": "^Syntax error: Templated types are not allowed in the RETURNS clause"
+  },
+  {
+   "code": "PR018",
+   "line": 2337,
+   "pattern": "^Syntax error: Default expression is only allowed for named parameters"
+  },
+  {
+   "code": "PR019",
+   "line": 2403,
+   "pattern": "^Syntax error: Unexpected end of parameter\\. Parameters should be in the format \\[<parameter mode>\\] <parameter name> <type>\\. If IN/OUT/INOUT is intended to be the name of a parameter, it must be escaped with backticks"
+  },
+  {
+   "code": "PR020",
+   "line": 2480,
+   "pattern": "^Keyword REMOTE is not supported"
+  },
+  {
+   "code": "PR021",
+   "line": 2489,
+   "pattern": "^WITH CONNECTION clause is not supported"
+  },
+  {
+   "code": "PR022",
+   "line": 2537,
+   "pattern": "^Syntax error: Unexpected lock mode in function body query"
+  },
+  {
+   "code": "PR023",
+   "line": 2576,
+   "pattern": "^The body of each CREATE FUNCTION statement is an expression, not a query; to use a query as an expression, the query must be wrapped with additional parentheses to make it a scalar subquery expression"
+  },
+  {
+   "code": "PR024",
+   "line": 2669,
+   "pattern": "^AS clause is not supported for CREATE DATA_POLICY"
+  },
+  {
+   "code": "PR025",
+   "line": 2677,
+   "pattern": "^WITH CONDITION is not supported\\."
+  },
+  {
+   "code": "PR026",
+   "line": 2777,
+   "pattern": "^Syntax error: CREATE EXTERNAL TABLE FUNCTION is not supported"
+  },
+  {
+   "code": "PR027",
+   "line": 2825,
+   "pattern": "^null_filtered is not a supported object type"
+  },
+  {
+   "code": "PR028",
+   "line": 3271,
+   "pattern": "^Syntax error: LABEL or PROPERTIES clause should be moved before DYNAMIC LABEL/PROPERTIES clause"
+  },
+  {
+   "code": "PR029",
+   "line": 3308,
+   "pattern": "^CREATE LOCALITY GROUP is not supported"
+  },
+  {
+   "code": "PR030",
+   "line": 3342,
+   "pattern": "^UNDROP .+? is not supported"
+  },
+  {
+   "code": "PR031",
+   "line": 3370,
+   "pattern": "^CREATE SNAPSHOT .+? is not supported"
+  },
+  {
+   "code": "PR032",
+   "line": 3412,
+   "pattern": "^Syntax error: Expected \\("
+  },
+  {
+   "code": "PR033",
+   "line": 3416,
+   "pattern": "^Syntax error: Expected keyword TABLE"
+  },
+  {
+   "code": "PR034",
+   "line": 3490,
+   "pattern": "^Syntax error: TEMP, TEMPORARY, PUBLIC, or PRIVATE modifiers are not supported for LIVE TABLE"
+  },
+  {
+   "code": "PR035",
+   "line": 3531,
+   "pattern": "^LOAD DATA statement with PARTITIONS is not supported"
+  },
+  {
+   "code": "PR036",
+   "line": 3583,
+   "pattern": "^LOAD DATA statement with TEMP TABLE is not supported"
+  },
+  {
+   "code": "PR037",
+   "line": 3611,
+   "pattern": "^\\S+ is not a supported object type"
+  },
+  {
+   "code": "PR038",
+   "line": 3640,
+   "pattern": "^\\S+ is not a supported nested object type"
+  },
+  {
+   "code": "PR039",
+   "line": 3717,
+   "pattern": "^A table must define at least one column\\."
+  },
+  {
+   "code": "PR040",
+   "line": 4058,
+   "pattern": "^Column DEFAULT value is not supported\\."
+  },
+  {
+   "code": "PR041",
+   "line": 4067,
+   "pattern": "^Syntax error: \"DEFAULT\" and \"\\[GENERATED \\[ALWAYS \\| BY DEFAULT\\]\\] AS\" clauses must not be both provided for the column"
+  },
+  {
+   "code": "PR042",
+   "line": 4175,
+   "pattern": "^Syntax error: Unexpected constraint enforcement clause"
+  },
+  {
+   "code": "PR043",
+   "line": 4183,
+   "pattern": "^Internal Error: Expected foreign key reference"
+  },
+  {
+   "code": "PR044",
+   "line": 4248,
+   "pattern": "^Ordering for primary keys is not supported"
+  },
+  {
+   "code": "PR045",
+   "line": 4309,
+   "pattern": "^Syntax error: Expected CONSTRAINT for check constraint definition\\. Check constraints on columns are not supported\\. Define check constraints as table elements instead"
+  },
+  {
+   "code": "PR046",
+   "line": 4315,
+   "pattern": "^Syntax error: Expected CONSTRAINT for foreign key definition"
+  },
+  {
+   "code": "PR047",
+   "line": 4318,
+   "pattern": "^Syntax error: Unkown table constraint type"
+  },
+  {
+   "code": "PR048",
+   "line": 4506,
+   "pattern": "^Syntax error: Unexpected lock mode in query"
+  },
+  {
+   "code": "PR049",
+   "line": 4660,
+   "pattern": "^EXPORT TABLE FUNCTION METADATA is not supported"
+  },
+  {
+   "code": "PR050",
+   "line": 5097,
+   "pattern": "^Syntax error: Trailing comma after the WITH clause before the main query is not allowed"
+  },
+  {
+   "code": "PR051",
+   "line": 5105,
+   "pattern": "^Syntax error: Unexpected \\|"
+  },
+  {
+   "code": "PR052",
+   "line": 5107,
+   "pattern": "^Syntax error: A pipe operator cannot follow the WITH clause before the main query; The main query usually starts with SELECT or FROM here"
+  },
+  {
+   "code": "PR053",
+   "line": 5141,
+   "pattern": "^Syntax error: Unexpected FROM"
+  },
+  {
+   "code": "PR054",
+   "line": 5152,
+   "pattern": "^Syntax error: .+? not supported after FROM query; Consider using pipe operator `\\|> .+?GROUP BY.+?AGGREGATE.+?`"
+  },
+  {
+   "code": "PR055",
+   "line": 5163,
+   "pattern": "^Syntax error: .+? not supported after FROM query; Consider using pipe operator `\\|> .+?` or parentheses around the FROM query"
+  },
+  {
+   "code": "PR056",
+   "line": 5221,
+   "pattern": "^Syntax error: Expected subpipeline starting with \\|>, not a subquery"
+  },
+  {
+   "code": "PR057",
+   "line": 5227,
+   "pattern": "^Syntax error: Expected subpipeline starting with \\|>"
+  },
+  {
+   "code": "PR058",
+   "line": 5400,
+   "pattern": "^Syntax error: Pipe RENAME can only rename columns by name alone; Renaming columns under table aliases or fields under paths is not supported"
+  },
+  {
+   "code": "PR059",
+   "line": 5431,
+   "pattern": "^Syntax error: GROUP BY should be part of a pipe AGGREGATE operator, without a leading pipe symbol"
+  },
+  {
+   "code": "PR060",
+   "line": 5493,
+   "pattern": "^Syntax error: The keyword \"AS\" is required before the alias for pipe RECURSIVE UNION"
+  },
+  {
+   "code": "PR061",
+   "line": 5627,
+   "pattern": "^Syntax error: Pipe DROP can only drop columns by name alone; Dropping columns under table aliases or fields under paths is not supported"
+  },
+  {
+   "code": "PR062",
+   "line": 5657,
+   "pattern": "^Syntax error: Pipe SET can only update columns by column name alone; Setting columns under table aliases or fields under paths is not supported"
+  },
+  {
+   "code": "PR063",
+   "line": 5718,
+   "pattern": "^Syntax error: Unexpected ELSE IF; Expected ELSEIF"
+  },
+  {
+   "code": "PR064",
+   "line": 5727,
+   "pattern": "^Syntax error: ELSEIF should be part of a pipe IF, without a leading pipe symbol"
+  },
+  {
+   "code": "PR065",
+   "line": 5738,
+   "pattern": "^Syntax error: ELSE should be part of a pipe IF, without a leading pipe symbol"
+  },
+  {
+   "code": "PR066",
+   "line": 5799,
+   "pattern": "^Syntax error: AS query is not allowed on pipe EXPORT DATA"
+  },
+  {
+   "code": "PR067",
+   "line": 5811,
+   "pattern": "^Syntax error: AS query is not allowed on pipe CREATE TABLE"
+  },
+  {
+   "code": "PR068",
+   "line": 5964,
+   "pattern": "^Syntax error: Unexpected FROM; FROM queries following a set operation must be parenthesized"
+  },
+  {
+   "code": "PR069",
+   "line": 5988,
+   "pattern": "^Syntax error: STRICT cannot be used with outer mode in set operations"
+  },
+  {
+   "code": "PR070",
+   "line": 5997,
+   "pattern": "^Syntax error: STRICT cannot be used with BY NAME in set operations"
+  },
+  {
+   "code": "PR071",
+   "line": 6028,
+   "pattern": "^Syntax error: Alias not allowed on parenthesized outer query"
+  },
+  {
+   "code": "PR072",
+   "line": 6056,
+   "pattern": "^Syntax error: SELECT list must not be empty"
+  },
+  {
+   "code": "PR073",
+   "line": 6268,
+   "pattern": "^Syntax error: Missing whitespace between literal and alias"
+  },
+  {
+   "code": "PR074",
+   "line": 6660,
+   "pattern": "^QUALIFY clause must be used in conjunction with WHERE or GROUP BY or HAVING clause"
+  },
+  {
+   "code": "PR075",
+   "line": 7186,
+   "pattern": "^Syntax error: Model arguments for table\\-valued function calls written as \"MODEL path\" must not be enclosed in parentheses\\. To fix this, replace \\(MODEL path\\) with MODEL path"
+  },
+  {
+   "code": "PR076",
+   "line": 7194,
+   "pattern": "^Syntax error: Connection arguments for table\\-valued function calls written as \"CONNECTION path\" must not be enclosed in parentheses\\. To fix this, replace \\(CONNECTION path\\) with CONNECTION path"
+  },
+  {
+   "code": "PR077",
+   "line": 7203,
+   "pattern": "^Syntax error: Named arguments for table\\-valued function calls written as \"name => value\" must not be enclosed in parentheses\\. To fix this, replace \\(name => value\\) with name => value"
+  },
+  {
+   "code": "PR078",
+   "line": 7212,
+   "pattern": "^Syntax error: Each subquery argument for table\\-valued function calls must be enclosed in parentheses\\. To fix this, replace SELECT\\.\\.\\. with \\(SELECT\\.\\.\\.\\)"
+  },
+  {
+   "code": "PR079",
+   "line": 7220,
+   "pattern": "^Syntax error: Each subquery argument for table\\-valued function calls must be enclosed in parentheses\\. To fix this, replace WITH\\.\\.\\. with \\(WITH\\.\\.\\.\\)"
+  },
+  {
+   "code": "PR080",
+   "line": 7247,
+   "pattern": "^Syntax error: Array element access is not allowed in the FROM clause without UNNEST; Use UNNEST\\(<expression>\\)"
+  },
+  {
+   "code": "PR081",
+   "line": 7254,
+   "pattern": "^Syntax error: Generalized field access is not allowed in the FROM clause without UNNEST; Use UNNEST\\(<expression>\\)"
+  },
+  {
+   "code": "PR082",
+   "line": 7284,
+   "pattern": "^Syntax error: .+?PIVOT.+?UNPIVOT.+? and FOR SYSTEM TIME AS OF may not be combined"
+  },
+  {
+   "code": "PR083",
+   "line": 8070,
+   "pattern": "^Hint cannot be used in between two .+?s"
+  },
+  {
+   "code": "PR084",
+   "line": 8097,
+   "pattern": "^Unable to parse hints in the right order"
+  },
+  {
+   "code": "PR085",
+   "line": 8134,
+   "pattern": "^Hint cannot be used at beginning of path pattern"
+  },
+  {
+   "code": "PR086",
+   "line": 8178,
+   "pattern": "^Quantifier cannot be used on a node pattern"
+  },
+  {
+   "code": "PR087",
+   "line": 8240,
+   "pattern": "^WHERE clause cannot be used together with property specification"
+  },
+  {
+   "code": "PR088",
+   "line": 8421,
+   "pattern": "^Syntax error: Expression to the left of IN must be parenthesized"
+  },
+  {
+   "code": "PR089",
+   "line": 8524,
+   "pattern": "^Syntax error: Expected end of input but got keyword .+?ON.+?USING"
+  },
+  {
+   "code": "PR090",
+   "line": 8659,
+   "pattern": "^Syntax error: .+?FULL.+?RIGHT.+? JOIN must be parenthesized when following a comma join\\.  Also, if the preceding comma join is a correlated CROSS JOIN that unnests an array, then CROSS JOIN syntax must be used in place of the comma join"
+  },
+  {
+   "code": "PR091",
+   "line": 8695,
+   "pattern": "^Query parameters cannot be used in place of table names"
+  },
+  {
+   "code": "PR092",
+   "line": 8705,
+   "pattern": "^System variables cannot be used in place of table names"
+  },
+  {
+   "code": "PR093",
+   "line": 8911,
+   "pattern": "^Syntax error: Unexpected AND"
+  },
+  {
+   "code": "PR094",
+   "line": 9043,
+   "pattern": "^QUALIFY is not supported"
+  },
+  {
+   "code": "PR095",
+   "line": 9105,
+   "pattern": "^FOR UPDATE is not supported"
+  },
+  {
+   "code": "PR096",
+   "line": 9505,
+   "pattern": "^Syntax error: Expected alias"
+  },
+  {
+   "code": "PR097",
+   "line": 9518,
+   "pattern": "^The argument to UNNEST is an expression, not a query; to use a query as an expression, the query must be wrapped with additional parentheses to make it a scalar subquery expression"
+  },
+  {
+   "code": "PR098",
+   "line": 9941,
+   "pattern": "^Syntax error: Expression to the left of LIKE must be parenthesized"
+  },
+  {
+   "code": "PR099",
+   "line": 9946,
+   "pattern": "^Syntax error: HINTs cannot be specified on LIKE clause with UNNEST"
+  },
+  {
+   "code": "PR100",
+   "line": 9963,
+   "pattern": "^Syntax error: Expression to the left of the comparison operator must be parenthesized"
+  },
+  {
+   "code": "PR101",
+   "line": 9968,
+   "pattern": "^Syntax error: HINTs cannot be specified on ANY/SOME/ALL clause with UNNEST"
+  },
+  {
+   "code": "PR102",
+   "line": 9990,
+   "pattern": "^Syntax error: HINTs cannot be specified on LIKE clause with value list"
+  },
+  {
+   "code": "PR103",
+   "line": 10019,
+   "pattern": "^Syntax error: HINTs cannot be specified on ANY/SOME/ALL clause with value list"
+  },
+  {
+   "code": "PR104",
+   "line": 10055,
+   "pattern": "^IS DISTINCT FROM is not supported"
+  },
+  {
+   "code": "PR105",
+   "line": 10066,
+   "pattern": "^Syntax error: HINTs cannot be specified on IN clause with UNNEST"
+  },
+  {
+   "code": "PR106",
+   "line": 10099,
+   "pattern": "^Syntax error: HINTs cannot be specified on IN clause with value list"
+  },
+  {
+   "code": "PR107",
+   "line": 10118,
+   "pattern": "^Syntax error: Expression to the left of BETWEEN must be parenthesized"
+  },
+  {
+   "code": "PR108",
+   "line": 10129,
+   "pattern": "^Syntax error: Expression in BETWEEN must be parenthesized"
+  },
+  {
+   "code": "PR109",
+   "line": 10161,
+   "pattern": "^Syntax error: Expression to the left of IS must be parenthesized"
+  },
+  {
+   "code": "PR110",
+   "line": 10209,
+   "pattern": "^Syntax error: Expression to the left of comparison must be parenthesized"
+  },
+  {
+   "code": "PR111",
+   "line": 10301,
+   "pattern": "^Syntax error: Unexpected \"\\-\""
+  },
+  {
+   "code": "PR112",
+   "line": 10421,
+   "pattern": "^Syntax error: Table name contains '\\-' character\\. .+?needs to be quoted: "
+  },
+  {
+   "code": "PR113",
+   "line": 10445,
+   "pattern": "^Syntax error: Table name contains '/' character\\. .+?needs to be quoted: "
+  },
+  {
+   "code": "PR114",
+   "line": 10490,
+   "pattern": "^Syntax error: Unexpected \"/\""
+  },
+  {
+   "code": "PR115",
+   "line": 10505,
+   "pattern": "^Syntax error: Unexpected \".+?\""
+  },
+  {
+   "code": "PR116",
+   "line": 10552,
+   "pattern": "^Syntax error: Unexpected floating point literal"
+  },
+  {
+   "code": "PR117",
+   "line": 10612,
+   "pattern": "^Syntax error: Unexpected floating point literal \".+?\" after \".+?\""
+  },
+  {
+   "code": "PR118",
+   "line": 10878,
+   "pattern": "^Syntax error: Trailing comma in type parameter list is not allowed\\."
+  },
+  {
+   "code": "PR119",
+   "line": 10925,
+   "pattern": "^Syntax error: unexpected ANY template type"
+  },
+  {
+   "code": "PR120",
+   "line": 11021,
+   "pattern": "^Syntax error: Unexpected braced constructor\\. Did you mean to use a ':' before the '\\{'\\?"
+  },
+  {
+   "code": "PR121",
+   "line": 11026,
+   "pattern": "^Syntax error: Invalid braced constructor element, expected ':' followed by an expression that computes the value"
+  },
+  {
+   "code": "PR122",
+   "line": 11189,
+   "pattern": "^Syntax error: \\?:: must be separated by whitespace or comments"
+  },
+  {
+   "code": "PR123",
+   "line": 11201,
+   "pattern": "^The argument to CAST is an expression, not a query; to use a query as an expression, the query must be wrapped with additional parentheses to make it a scalar subquery expression"
+  },
+  {
+   "code": "PR124",
+   "line": 11209,
+   "pattern": "^The argument to SAFE_CAST is an expression, not a query; to use a query as an expression, the query must be wrapped with additional parentheses to make it a scalar subquery expression"
+  },
+  {
+   "code": "PR125",
+   "line": 11312,
+   "pattern": "^Syntax error: Function call cannot be applied to this expression\\. Function calls require a path, e\\.g\\. a\\.b\\.c\\(\\)"
+  },
+  {
+   "code": "PR126",
+   "line": 11324,
+   "pattern": "^Syntax error: Double function call parentheses"
+  },
+  {
+   "code": "PR127",
+   "line": 11342,
+   "pattern": "^Syntax error: Unexpected \"\\(\""
+  },
+  {
+   "code": "PR128",
+   "line": 11410,
+   "pattern": "^Each function argument is an expression, not a query; to use a query as an expression, the query must be wrapped with additional parentheses to make it a scalar subquery expression"
+  },
+  {
+   "code": "PR129",
+   "line": 11509,
+   "pattern": "^Syntax error: Expecting lambda argument list"
+  },
+  {
+   "code": "PR130",
+   "line": 11653,
+   "pattern": "^ROW DELETION POLICY clause is not supported\\."
+  },
+  {
+   "code": "PR131",
+   "line": 11914,
+   "pattern": "^Syntax error: concatenated string literals must be separated by whitespace or comments"
+  },
+  {
+   "code": "PR132",
+   "line": 11926,
+   "pattern": "^Syntax error: string and bytes literals cannot be concatenated\\."
+  },
+  {
+   "code": "PR133",
+   "line": 11976,
+   "pattern": "^Syntax error: concatenated bytes literals must be separated by whitespace or comments"
+  },
+  {
+   "code": "PR134",
+   "line": 12456,
+   "pattern": "^Syntax error: OPTIONS \\(FROM <struct_expression>\\) is not supported"
+  },
+  {
+   "code": "PR135",
+   "line": 12473,
+   "pattern": "^Syntax error: FROM option must appear before all other options"
+  },
+  {
+   "code": "PR136",
+   "line": 13133,
+   "pattern": "^Syntax error: Parameters are not supported for DROP TABLE FUNCTION because table functions don't support overloading"
+  },
+  {
+   "code": "PR137",
+   "line": 13181,
+   "pattern": "^DROP AGGREGATE FUNCTION is not supported, use DROP FUNCTION"
+  },
+  {
+   "code": "PR138",
+   "line": 13186,
+   "pattern": "^Syntax error: Parameters are only supported for DROP FUNCTION"
+  },
+  {
+   "code": "PR139",
+   "line": 13191,
+   "pattern": "^Syntax error: '.+?' is not supported for DROP "
+  },
+  {
+   "code": "PR140",
+   "line": 13204,
+   "pattern": "^DROP .+? does not support the ON clause"
+  },
+  {
+   "code": "PR141",
+   "line": 13290,
+   "pattern": "^DEFINE MACRO statements cannot be nested under other statements or blocks\\."
+  },
+  {
+   "code": "PR142",
+   "line": 13438,
+   "pattern": "^Statement CASE\\.\\.\\.WHEN is not supported"
+  },
+  {
+   "code": "PR143",
+   "line": 13533,
+   "pattern": "^REPEAT is not supported"
+  },
+  {
+   "code": "PR144",
+   "line": 13547,
+   "pattern": "^FOR\\.\\.\\.IN is not supported"
+  },
+  {
+   "code": "PR145",
+   "line": 14219,
+   "pattern": "^PRIMARY KEY must be defined in the table element list as column attribute or constraint\\."
+  },
+  {
+   "code": "PR146",
+   "line": 14231,
+   "pattern": "^Syntax error: Expected end of input but got \",\""
+  },
+  {
+   "code": "PR147",
+   "line": 14305,
+   "pattern": "^Expected keyword DROP or keyword SET but got identifier"
+  },
+  {
+   "code": "PR148",
+   "line": 14309,
+   "pattern": "^Syntax error: IF EXISTS is not supported"
+  },
+  {
+   "code": "PR149",
+   "line": 14330,
+   "pattern": "^Syntax error: Unexpected keyword ON"
+  },
+  {
+   "code": "PR150",
+   "line": 14444,
+   "pattern": "^Script labels are not supported"
+  },
+  {
+   "code": "PR151",
+   "line": 14452,
+   "pattern": "^Syntax error: DEFINE MACRO statements are not supported because macro expansions are disabled"
+  }
+ ]
+}

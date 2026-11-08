@@ -4,7 +4,7 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::functions::models::{HavingMax, WithinGroup};
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::operators::models::{
-    NamedArgSeparator, NamedArgument, TableArgument,
+    CollationExpr, NamedArgSeparator, NamedArgument, TableArgument,
 };
 use sqlquack_syntax::expressions::queries::models::{
     Ordered, Over, WindowFrame, WindowFrameBound, WindowFrameKind,
@@ -12,9 +12,9 @@ use sqlquack_syntax::expressions::queries::models::{
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier, is_path_word};
 use crate::parse::_helpers::tree::nodes::{
-    aggregate, boolean, column_from, function, ordered, over, subquery, table, tuple,
-    window_function,
+    aggregate, boolean, column_from, function, ordered, over, table, tuple, window_function,
 };
+use crate::scan::models::TokenKind;
 
 impl Parser<'_> {
     /// A call of `name`: `( [DISTINCT|ALL] args )` and its trailing clauses.
@@ -136,13 +136,13 @@ impl Parser<'_> {
             })));
         }
         if self.kw("TABLE") && (self.char_at(1, '(') || self.is_at(1, is_identifier)) {
-            return self.table_argument();
+            return self.table_clause();
         }
         if self.is(is_identifier) && self.op_at(1, "=>") {
             let name: Identifier = self.name(is_identifier)?;
             self.at += 1;
             let value: Expression = match self.kw("TABLE") {
-                true => self.table_argument()?,
+                true => self.table_clause()?,
                 false => self.expression()?,
             };
             return Ok(Expression::NamedArgument(Box::new(NamedArgument {
@@ -152,42 +152,6 @@ impl Parser<'_> {
             })));
         }
         self.expression()
-    }
-
-    /// `functionTableSubqueryArgument`, partitioning and ordering parsed and not kept.
-    fn table_argument(&mut self) -> Parsing<Expression> {
-        self.expect_kw("TABLE")?;
-        let this: Expression = match self.is_char('(') {
-            true => {
-                self.at += 1;
-                let inner: Expression = match self.starts_query_at(0) {
-                    true => subquery(self.query()?, None, false),
-                    false => Expression::Table(Box::new(table(self.multipart_identifier()?))),
-                };
-                self.expect_char(')')?;
-                inner
-            }
-            false => Expression::Table(Box::new(table(self.multipart_identifier()?))),
-        };
-        let start: usize = self.offset();
-        let single: bool = self.eat_kws(&["WITH", "SINGLE", "PARTITION"]);
-        let partitioned: bool =
-            !single && self.kw_in(0, &["PARTITION", "DISTRIBUTE"]) && self.kw_at(1, "BY");
-        if single || partitioned {
-            if partitioned {
-                self.at += 2;
-                self.comma_list(|parser| parser.expression())?;
-            }
-            if self.kw_in(0, &["ORDER", "SORT"]) && self.kw_at(1, "BY") {
-                self.at += 2;
-                self.comma_list(|parser| parser.sort_item())?;
-            }
-            self.gap("table_argument_partitioning", start);
-        }
-        Ok(Expression::TableArgument(Box::new(TableArgument {
-            prefix: "TABLE".to_owned(),
-            this,
-        })))
     }
 
     /// `windowSpec`: a window name, or `( [PARTITION|DISTRIBUTE|CLUSTER BY ...] [ORDER|SORT BY ...] [frame] )`.
@@ -277,7 +241,40 @@ impl Parser<'_> {
 
     /// `sortItem`: `expression [ASC|DESC] [NULLS FIRST|LAST]`.
     pub(crate) fn sort_item(&mut self) -> Parsing<Ordered> {
-        let this: Expression = self.expression()?;
+        let mut this: Expression = self.expression()?;
+        if self.eat_kw("COLLATE") {
+            let quoted: bool = matches!(
+                self.peek().map(|token| token.kind),
+                Some(TokenKind::String { .. })
+            );
+            let collation: String = match self.peek().map(|token| token.kind) {
+                Some(TokenKind::String { .. }) => self.string_lit()?,
+                Some(TokenKind::Char('?')) => {
+                    self.at += 1;
+                    "?".to_owned()
+                }
+                Some(TokenKind::Char('@')) if self.is_at(1, is_path_word) => {
+                    self.at += 1;
+                    format!("@{}", self.advance()?.value)
+                }
+                Some(TokenKind::Op) if self.op_at(0, "@@") && self.is_at(1, is_path_word) => {
+                    self.at += 1;
+                    let mut parts: Vec<String> = vec![self.advance()?.value];
+                    while self.is_char('.') && self.is_at(1, is_path_word) {
+                        self.at += 1;
+                        parts.push(self.advance()?.value);
+                    }
+                    format!("@@{}", parts.join("."))
+                }
+                _ => return Err(self.error()),
+            };
+            this = Expression::Collation(Box::new(CollationExpr {
+                this,
+                collation,
+                quoted,
+                double_quoted: false,
+            }));
+        }
         let (mut desc, mut explicit_asc) = (false, false);
         if self.eat_kw("ASC") {
             explicit_asc = true;

@@ -28,7 +28,7 @@ fn constructed_type(parser: LocalParser, depth: usize) -> Option<String> {
         LocalParser::BigQuery => Some(nest("STRUCT<x ", "INT64", ">", depth)),
         LocalParser::DuckDb => Some(nest("STRUCT(a ", "INT", ")", depth)),
         LocalParser::Databricks => Some(nest("ARRAY<", "INT", ">", depth)),
-        LocalParser::Postgres | LocalParser::None => None,
+        LocalParser::Postgres | LocalParser::SqlServer | LocalParser::None => None,
     }
 }
 
@@ -42,6 +42,7 @@ fn mixed_type(parser: LocalParser, depth: usize) -> Option<String> {
         LocalParser::Postgres
         | LocalParser::BigQuery
         | LocalParser::Databricks
+        | LocalParser::SqlServer
         | LocalParser::None => return None,
     };
     Some(format!(
@@ -60,6 +61,11 @@ fn cast_with_suffix(depth: usize) -> String {
         "CAST(".repeat(levels),
         cast.repeat(levels)
     )
+}
+
+/// Whether `parser` reads `[]` subscripts and array type suffixes; T-SQL has neither.
+fn array_syntax(parser: LocalParser) -> bool {
+    parser != LocalParser::SqlServer
 }
 
 /// The probed constructs, in report order.
@@ -81,11 +87,15 @@ pub(crate) fn constructs() -> Vec<Construct> {
         },
         Construct {
             name: "from_subquery",
-            text: |_, depth| {
-                Some(format!(
+            text: |parser, depth| match parser {
+                LocalParser::SqlServer => Some(format!(
+                    "SELECT * FROM {}",
+                    nest("(SELECT * FROM ", "t", ") s", depth)
+                )),
+                _ => Some(format!(
                     "SELECT * FROM {}",
                     nest("(SELECT * FROM ", "t", ")", depth)
-                ))
+                )),
             },
         },
         Construct {
@@ -148,7 +158,13 @@ pub(crate) fn constructs() -> Vec<Construct> {
         },
         Construct {
             name: "not",
-            text: |_, depth| Some(format!("SELECT {}TRUE", "NOT ".repeat(depth))),
+            text: |parser, depth| match parser {
+                LocalParser::SqlServer => Some(format!(
+                    "SELECT 1 FROM t WHERE {}1 = 1",
+                    "NOT ".repeat(depth)
+                )),
+                _ => Some(format!("SELECT {}TRUE", "NOT ".repeat(depth))),
+            },
         },
         Construct {
             name: "case",
@@ -161,7 +177,12 @@ pub(crate) fn constructs() -> Vec<Construct> {
         },
         Construct {
             name: "function_arguments",
-            text: |_, depth| Some(format!("SELECT {}", nest("coalesce(", "1", ")", depth))),
+            text: |parser, depth| match parser {
+                LocalParser::SqlServer => {
+                    Some(format!("SELECT {}", nest("coalesce(", "1", ", 1)", depth)))
+                }
+                _ => Some(format!("SELECT {}", nest("coalesce(", "1", ")", depth))),
+            },
         },
         Construct {
             name: "cast",
@@ -169,23 +190,37 @@ pub(crate) fn constructs() -> Vec<Construct> {
         },
         Construct {
             name: "subscript",
-            text: |_, depth| Some(format!("SELECT {} FROM t", nest("a[", "0", "]", depth))),
+            text: |parser, depth| {
+                array_syntax(parser)
+                    .then(|| format!("SELECT {} FROM t", nest("a[", "0", "]", depth)))
+            },
         },
         Construct {
             name: "type_suffix",
-            text: |_, depth| Some(format!("SELECT CAST(NULL AS INT{})", "[]".repeat(depth))),
+            text: |parser, depth| {
+                array_syntax(parser)
+                    .then(|| format!("SELECT CAST(NULL AS INT{})", "[]".repeat(depth)))
+            },
         },
         Construct {
             name: "type_suffix_sized",
-            text: |_, depth| Some(format!("SELECT CAST(NULL AS INT{})", "[3]".repeat(depth))),
+            text: |parser, depth| {
+                array_syntax(parser)
+                    .then(|| format!("SELECT CAST(NULL AS INT{})", "[3]".repeat(depth)))
+            },
         },
         Construct {
             name: "double_colon_type_suffix",
-            text: |_, depth| Some(format!("SELECT NULL::INT{}", "[]".repeat(depth))),
+            text: |parser, depth| {
+                array_syntax(parser).then(|| format!("SELECT NULL::INT{}", "[]".repeat(depth)))
+            },
         },
         Construct {
             name: "column_type_suffix",
-            text: |_, depth| Some(format!("CREATE TABLE t (c INT{})", "[]".repeat(depth))),
+            text: |parser, depth| {
+                array_syntax(parser)
+                    .then(|| format!("CREATE TABLE t (c INT{})", "[]".repeat(depth)))
+            },
         },
         Construct {
             name: "type_constructor",
@@ -207,7 +242,7 @@ pub(crate) fn constructs() -> Vec<Construct> {
         },
         Construct {
             name: "cast_and_type_suffix",
-            text: |_, depth| Some(cast_with_suffix(depth)),
+            text: |parser, depth| array_syntax(parser).then(|| cast_with_suffix(depth)),
         },
         Construct {
             name: "flat_plus",
@@ -239,6 +274,10 @@ pub(crate) fn constructs() -> Vec<Construct> {
             name: "nested_cast_chain",
             text: |parser, depth| match parser {
                 LocalParser::BigQuery => None,
+                LocalParser::SqlServer => Some(format!(
+                    "SELECT {}",
+                    nested_chain("'a'", " COLLATE Latin1_General_CI_AS", depth)
+                )),
                 _ => Some(format!("SELECT {}", nested_chain("1", "::INT", depth))),
             },
         },
@@ -248,11 +287,15 @@ pub(crate) fn constructs() -> Vec<Construct> {
         },
         Construct {
             name: "nested_or_chain",
-            text: |_, depth| {
-                Some(format!(
+            text: |parser, depth| match parser {
+                LocalParser::SqlServer => Some(format!(
+                    "SELECT 1 FROM t WHERE {}",
+                    nested_chain("1 = 0", " OR 1 = 0", depth)
+                )),
+                _ => Some(format!(
                     "SELECT {}",
                     nested_chain("FALSE", " OR FALSE", depth)
-                ))
+                )),
             },
         },
         Construct {
@@ -265,6 +308,23 @@ pub(crate) fn constructs() -> Vec<Construct> {
                 LocalParser::BigQuery | LocalParser::Databricks => {
                     Some(nested_chain("FROM t", " |> WHERE TRUE", depth))
                 }
+                _ => None,
+            },
+        },
+        Construct {
+            name: "nested_if",
+            text: |parser, depth| match parser {
+                LocalParser::SqlServer => Some(format!("{}SELECT 1", "IF 1 = 1 ".repeat(depth))),
+                _ => None,
+            },
+        },
+        Construct {
+            name: "nested_at_time_zone_chain",
+            text: |parser, depth| match parser {
+                LocalParser::SqlServer => Some(format!(
+                    "SELECT {}",
+                    nested_chain("SYSDATETIMEOFFSET()", " AT TIME ZONE 'UTC'", depth)
+                )),
                 _ => None,
             },
         },

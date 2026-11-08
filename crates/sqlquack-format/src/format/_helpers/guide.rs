@@ -2,8 +2,9 @@
 
 use std::collections::HashMap;
 
-use sqlquack_syntax::Dialect;
+use crate::format::models::FormatDialect;
 use sqlquack_syntax::tokens::models::TokenType;
+use sqlquack_syntax_sqlserver::is_reserved;
 
 use crate::format::_helpers::identifiers::ParsedNames;
 use crate::format::_helpers::lexemes::{
@@ -16,6 +17,8 @@ use crate::format::constants::{
     PLACEHOLDER_NAME_PREFIX, PLACEHOLDER_WIDTH, POSTFIX_CAST_WIDTH, POSTGRES_INLINE_CALLS,
     SAMPLE_KEYWORDS, SAMPLE_ROW_KEYWORD, SEMANTIC_VIEW_CALL, SEMANTIC_VIEW_CLAUSES,
     SET_OPERATOR_MODIFIERS, SET_OPERATORS, SNOWFLAKE_INLINE_CALLS, SPACED_BEFORE_PARENTHESIS,
+    SQLSERVER_APPLY_KEYWORD, SQLSERVER_APPLY_PREFIXES, SQLSERVER_INLINE_CALLS,
+    SQLSERVER_LIST_CLAUSES, SQLSERVER_OBJECT_PRECEDERS, SQLSERVER_SPACED_BEFORE_PARENTHESIS,
     STRUCT_TYPE_WORDS, TYPE_CONTINUATIONS, TYPED_LITERALS, VALUES_KEYWORD,
 };
 
@@ -33,7 +36,7 @@ pub(crate) struct GuideLayout {
 pub(crate) fn layout_guide(
     lexemes: &[Lexeme],
     names: &ParsedNames,
-    dialect: Dialect,
+    dialect: FormatDialect,
 ) -> GuideLayout {
     let mut guide = Guide::new(lexemes, names, dialect);
     guide.statements();
@@ -49,7 +52,7 @@ struct Guide<'a> {
     verbatim: Vec<(usize, usize)>,
     /// The number of select lists laid out.
     selects: usize,
-    dialect: Dialect,
+    dialect: FormatDialect,
     partners: Vec<Option<usize>>,
     /// The innermost bracket each token is inside.
     enclosing: Vec<Option<usize>>,
@@ -61,6 +64,8 @@ struct Guide<'a> {
     angles: Vec<bool>,
     /// Tokens directly inside a struct type's field list, where a name keeps its case.
     field_lists: Vec<bool>,
+    /// SQL Server commas that separate the items of a FROM list.
+    from_list_commas: Vec<bool>,
     /// The one-line spacing before each token.
     base: Vec<&'static str>,
     /// The laid-out whitespace before each token.
@@ -84,7 +89,7 @@ fn sentinel_width(sequence: usize) -> usize {
 }
 
 impl<'a> Guide<'a> {
-    fn new(lexemes: &'a [Lexeme], names: &'a ParsedNames, dialect: Dialect) -> Self {
+    fn new(lexemes: &'a [Lexeme], names: &'a ParsedNames, dialect: FormatDialect) -> Self {
         let count = lexemes.len();
         let mut enclosing: Vec<Option<usize>> = vec![None; count];
         let mut open: Vec<usize> = Vec::new();
@@ -114,6 +119,7 @@ impl<'a> Guide<'a> {
             binary_operators: &names.binary_operators,
             angles: vec![false; count],
             field_lists: vec![false; count],
+            from_list_commas: vec![false; count],
             base: vec![""; count],
             gaps: vec![String::new(); count],
             dropped: vec![false; count],
@@ -124,6 +130,7 @@ impl<'a> Guide<'a> {
         guide.mark_stages();
         guide.mark_angles();
         guide.mark_field_lists();
+        guide.mark_from_list_commas();
         for index in 1..count {
             guide.base[index] = guide.space(index);
             guide.gaps[index] = guide.base[index].to_string();
@@ -172,7 +179,7 @@ impl<'a> Guide<'a> {
     }
 
     fn mark_stages(&mut self) {
-        if self.dialect != Dialect::Snowflake {
+        if self.dialect != FormatDialect::Snowflake {
             return;
         }
         let mut index = 0;
@@ -274,7 +281,10 @@ impl<'a> Guide<'a> {
             return "";
         }
         if next.kind == TokenType::LParen {
-            return if self.spaced_before_parenthesis(index - 1) || !self.calls(index - 1) {
+            return if self.spaced_before_parenthesis(index - 1)
+                || self.sqlserver_spaced_before_parenthesis(index - 1)
+                || !self.calls(index - 1)
+            {
                 " "
             } else {
                 ""
@@ -314,12 +324,67 @@ impl<'a> Guide<'a> {
             || (upper == SAMPLE_ROW_KEYWORD && after_sample)
     }
 
+    /// Lay out a SQL Server `TOP (SELECT ...)` count as a subquery; any other `TOP (...)` stays as written.
+    fn sqlserver_top_query(&mut self, opener: usize, closer: usize, indent: usize) {
+        if self.dialect == FormatDialect::SqlServer && self.starts_query(opener + 1) {
+            self.subquery(opener, closer, indent);
+        }
+    }
+
+    /// Whether the word at `index` names a SQL Server object before `(`, whose name resolves under the database collation, which may be case-sensitive: an unreserved word after a keyword that names a table, view, routine or index target, or after a comma of a FROM list.
+    fn sqlserver_object_name(&self, index: usize) -> bool {
+        self.dialect == FormatDialect::SqlServer
+            && index > 0
+            && self.kind(index + 1) == Some(TokenType::LParen)
+            && !is_reserved(&self.lexemes[index].raw)
+            && (self.is_any(index - 1, &SQLSERVER_OBJECT_PRECEDERS)
+                || self.from_list_commas[index - 1])
+    }
+
+    /// Mark the SQL Server commas whose nearest list clause at their depth is FROM, in one pass that keeps each depth's last list clause.
+    fn mark_from_list_commas(&mut self) {
+        if self.dialect != FormatDialect::SqlServer {
+            return;
+        }
+        let mut in_from: HashMap<Option<usize>, bool> = HashMap::new();
+        for index in 0..self.len() {
+            if self.is_any(index, &SQLSERVER_LIST_CLAUSES) {
+                in_from.insert(self.enclosing[index], self.is(index, "FROM"));
+            } else if self.lexemes[index].kind == TokenType::Comma {
+                self.from_list_commas[index] = in_from
+                    .get(&self.enclosing[index])
+                    .copied()
+                    .unwrap_or(false);
+            }
+        }
+    }
+
+    /// Whether token `index` is the APPLY of a SQL Server `CROSS APPLY` or `OUTER APPLY`.
+    fn sqlserver_apply(&self, index: usize) -> bool {
+        self.dialect == FormatDialect::SqlServer
+            && index > 0
+            && self.is(index, SQLSERVER_APPLY_KEYWORD)
+            && self.is_any(index - 1, &SQLSERVER_APPLY_PREFIXES)
+    }
+
+    /// Whether a SQL Server `CROSS APPLY` or `OUTER APPLY`, which the guide lays out as a join, starts at token `index`.
+    fn sqlserver_starts_apply(&self, index: usize) -> bool {
+        self.is_any(index, &SQLSERVER_APPLY_PREFIXES) && self.sqlserver_apply(index + 1)
+    }
+
+    /// Whether token `index` is a SQL Server keyword the guide separates from a following `(`.
+    fn sqlserver_spaced_before_parenthesis(&self, index: usize) -> bool {
+        self.dialect == FormatDialect::SqlServer
+            && self.is_word(index)
+            && self.is_any(index, &SQLSERVER_SPACED_BEFORE_PARENTHESIS)
+    }
+
     /// Whether a `:` at `index` binds tightly: a Snowflake path, a slice, or a DuckDB prefix alias.
     fn tight_colon(&self, index: usize) -> bool {
         let enclosing = self.enclosing[index].map(|opener| self.lexemes[opener].kind);
         self.path_colon(index)
             || self.in_subscript(index)
-            || (self.dialect == Dialect::DuckDB
+            || (self.dialect == FormatDialect::DuckDB
                 && enclosing != Some(TokenType::LBrace)
                 && !self.lambda_colon(index))
     }
@@ -361,12 +426,12 @@ impl<'a> Guide<'a> {
             ),
             None => false,
         };
-        self.dialect == Dialect::DuckDB && after_number && !operand_follows
+        self.dialect == FormatDialect::DuckDB && after_number && !operand_follows
     }
 
     /// Whether the `:` at `index` is a Snowflake path accessor such as `v:field`.
     fn path_colon(&self, index: usize) -> bool {
-        self.dialect == Dialect::Snowflake
+        self.dialect == FormatDialect::Snowflake
             && index > 0
             && self.lexemes[index].kind == TokenType::Colon
             && !matches!(
@@ -514,7 +579,7 @@ impl<'a> Guide<'a> {
 
     /// Whether a DuckDB FROM-first query, such as `FROM t WHERE x`, starts at `index`.
     fn starts_from_first(&self, index: usize) -> bool {
-        self.dialect == Dialect::DuckDB && self.is(index, "FROM")
+        self.dialect == FormatDialect::DuckDB && self.is(index, "FROM")
     }
 
     fn statements(&mut self) {
@@ -715,7 +780,10 @@ impl<'a> Guide<'a> {
             if self.is(item, "TOP") {
                 item += 1;
                 item = match self.partners.get(item).copied().flatten() {
-                    Some(closer) if closer > item => closer + 1,
+                    Some(closer) if closer > item => {
+                        self.sqlserver_top_query(item, closer, indent);
+                        closer + 1
+                    }
                     _ => item + 1,
                 };
                 continue;
@@ -725,7 +793,7 @@ impl<'a> Guide<'a> {
         self.selects += 1;
         for (first, end) in self.split_commas(item, projection_end) {
             self.gaps[first] = newline(indent + 1);
-            if self.dialect == Dialect::Snowflake
+            if self.dialect == FormatDialect::Snowflake
                 && !self.aliases[end]
                 && !self.plain_column(first, end)
             {
@@ -830,7 +898,9 @@ impl<'a> Guide<'a> {
                     segments.push((start, index - 1, joined));
                 }
                 (start, joined) = (index + 1, false);
-            } else if index > start && self.starts_join(index, first) {
+            } else if index > start
+                && (self.starts_join(index, first) || self.sqlserver_starts_apply(index))
+            {
                 segments.push((start, index - 1, joined));
                 self.gaps[index] = newline(indent);
                 (start, joined) = (index, true);
@@ -850,7 +920,7 @@ impl<'a> Guide<'a> {
 
     fn join(&mut self, first: usize, last: usize, indent: usize) {
         let mut join = first;
-        while join < last && !self.is(join, "JOIN") {
+        while join < last && !self.is(join, "JOIN") && !self.sqlserver_apply(join) {
             join += 1;
         }
         let condition = self
@@ -917,7 +987,7 @@ impl<'a> Guide<'a> {
             } else if self.is(index, "AND") && between {
                 between = false;
             } else if (self.is(index, "AND") || self.is(index, "OR"))
-                && self.dialect == Dialect::Snowflake
+                && self.dialect == FormatDialect::Snowflake
                 && !(index > 0 && self.is(index - 1, "CREATE"))
             {
                 self.gaps[index] = newline(indent);
@@ -1028,9 +1098,12 @@ impl<'a> Guide<'a> {
 
     fn inline_calls(&self) -> &'static [&'static str] {
         match self.dialect {
-            Dialect::Snowflake => &SNOWFLAKE_INLINE_CALLS,
-            Dialect::DuckDB => &DUCKDB_INLINE_CALLS,
-            Dialect::PostgreSQL | Dialect::SQLite => &POSTGRES_INLINE_CALLS,
+            FormatDialect::Snowflake => &SNOWFLAKE_INLINE_CALLS,
+            FormatDialect::DuckDB => &DUCKDB_INLINE_CALLS,
+            FormatDialect::PostgreSQL | FormatDialect::BigQuery | FormatDialect::Databricks => {
+                &POSTGRES_INLINE_CALLS
+            }
+            FormatDialect::SqlServer => &SQLSERVER_INLINE_CALLS,
         }
     }
 
@@ -1128,6 +1201,7 @@ impl<'a> Guide<'a> {
             || self.identifiers[index]
             || self.name_position(index)
             || self.field_name(index)
+            || self.sqlserver_object_name(index)
             || !(is_keyword(lexeme) || self.called_name(index))
         {
             lexeme.raw.clone()

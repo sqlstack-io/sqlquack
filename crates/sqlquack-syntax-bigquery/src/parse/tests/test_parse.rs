@@ -8,8 +8,8 @@ use crate::parse::main::parse::parse;
 use crate::parse::main::parse_strict::parse_strict;
 use crate::parse::tests::helpers::verdict;
 use crate::parse::tests::test_types::{
-    ExpectedVerdict, GapTestCase, MatchRecognizeTestCase, StrictFailureTestCase, StrictTestCase,
-    TreePairTestCase, ValueTestCase, VerdictTestCase,
+    DistinctTreesTestCase, ExpectedVerdict, GapTestCase, MatchRecognizeTestCase, NestingTestCase,
+    StrictFailureTestCase, StrictTestCase, TreePairTestCase, ValueTestCase, VerdictTestCase,
 };
 
 #[test]
@@ -18,6 +18,11 @@ fn given_sql_when_parsing_then_the_verdict_is_googlesql() {
         VerdictTestCase {
             description: "an empty input is refused",
             sql: "",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "NUMERIC takes no MAX precision, as BigQuery refuses it",
+            sql: "SELECT CAST(NULL AS NUMERIC(MAX))",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
@@ -126,9 +131,79 @@ fn given_sql_when_parsing_then_the_verdict_is_googlesql() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
+            description: "a named parameter is a quantifier bound",
+            sql: "SELECT * FROM t MATCH_RECOGNIZE (ORDER BY b MEASURES COUNT(*) AS n PATTERN (a{@n}) DEFINE a AS TRUE)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a positional parameter is a lower bound",
+            sql: "SELECT * FROM t MATCH_RECOGNIZE (ORDER BY b MEASURES COUNT(*) AS n PATTERN (a{?,}) DEFINE a AS TRUE)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a system variable path is a reluctant upper bound",
+            sql: "SELECT * FROM t MATCH_RECOGNIZE (ORDER BY b MEASURES COUNT(*) AS n PATTERN (a{,@@x.y}?) DEFINE a AS TRUE)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "an exact bound takes no reluctant ?",
+            sql: "SELECT * FROM t MATCH_RECOGNIZE (ORDER BY b MEASURES COUNT(*) AS n PATTERN (a{@n}?) DEFINE a AS TRUE)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
             description: "a row pattern cannot start with a quantifier",
             sql: "SELECT * FROM t MATCH_RECOGNIZE (ORDER BY b MEASURES COUNT(*) AS n PATTERN (+a) DEFINE a AS TRUE)",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "DATE_DIFF takes its date part last",
+            sql: "SELECT DATE_DIFF('2017-12-30', '2014-12-30', YEAR)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "DATE_DIFF takes a WEEK(weekday) part",
+            sql: "SELECT DATE_DIFF('2024-06-15', '2024-01-08', WEEK(MONDAY))",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "DATE_ADD takes a date and an interval",
+            sql: "SELECT DATE_ADD('2020-01-01', INTERVAL 1 DAY)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "EXTRACT takes a WEEK(weekday) part",
+            sql: "SELECT EXTRACT(WEEK(THURSDAY) FROM DATE '2020-01-01')",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "EXTRACT takes an ISOWEEK part and a time zone",
+            sql: "SELECT EXTRACT(ISOWEEK FROM TIMESTAMP '2020-01-01' AT TIME ZONE 'UTC')",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "EXTRACT has no ordinary call with a time zone",
+            sql: "SELECT extract('HOUR', TIMESTAMP '2020-01-01', 'UTC')",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "EXTRACT has no ordinary call",
+            sql: "SELECT extract('HOUR', TIMESTAMP '2020-01-01')",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "DATETIME_DIFF takes an ISOWEEK part",
+            sql: "SELECT DATETIME_DIFF(DATETIME '2024-06-15', DATETIME '2024-01-08', ISOWEEK)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "DATE_TRUNC takes a WEEK(weekday) part",
+            sql: "SELECT DATE_TRUNC(DATE '2024-06-15', WEEK(MONDAY))",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "LAST_DAY takes a WEEK(weekday) part",
+            sql: "SELECT LAST_DAY(DATE '2024-06-15', WEEK(MONDAY))",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a reserved word is not a type",
@@ -215,11 +290,6 @@ fn given_sql_when_parsing_then_the_verdict_is_googlesql() {
             sql: "CREATE OR REPLACE TABLE d.t (a DATE, b INT64 NOT NULL) PARTITION BY a \
                   CLUSTER BY b OPTIONS (description = 'x') AS SELECT 1",
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
-        },
-        VerdictTestCase {
-            description: "a primary key must be NOT ENFORCED",
-            sql: "CREATE TABLE t (a INT64, PRIMARY KEY (a))",
-            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
             description: "MERGE with INSERT ROW and NOT MATCHED BY SOURCE",
@@ -587,6 +657,101 @@ fn given_sql_when_parsing_then_the_verdict_is_googlesql() {
             sql: "INSERT t (SELECT 1) x",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
+        VerdictTestCase {
+            description: "a table's primary key takes no constraint name",
+            sql: "CREATE TABLE d.t (a INT64, CONSTRAINT k PRIMARY KEY (a) NOT ENFORCED)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "table constraints need no NOT ENFORCED, and CHECK is one",
+            sql: "CREATE TABLE d.t (a INT64, PRIMARY KEY (a), CONSTRAINT c CHECK (a > 0) ENFORCED, FOREIGN KEY (a) REFERENCES d.u (b) MATCH SIMPLE ON DELETE CASCADE)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a CREATE TABLE column takes GoogleSQL's column schema and attributes",
+            sql: "CREATE TABLE d.t (a STRUCT<x INT64 NOT NULL> OPTIONS (description = 'd'), b INT64 DEFAULT 1 NOT NULL, c INT64 PRIMARY KEY, e INT64 REFERENCES d.u (f) NOT ENFORCED, g INT64 GENERATED ALWAYS AS (1) STORED)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a column's DEFAULT follows its type, before NOT NULL",
+            sql: "CREATE TABLE d.t (a INT64 NOT NULL DEFAULT 1)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "an added column may be an array or a struct",
+            sql: "ALTER TABLE d.t ADD COLUMN a ARRAY<STRING COLLATE 'und:ci'>, ADD COLUMN b STRUCT<x INT64>",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "an ordering key takes COLLATE before its direction",
+            sql: "SELECT a FROM t ORDER BY a COLLATE 'und:ci' DESC NULLS LAST, b COLLATE @p",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "COLLATE takes a string or a parameter, not a name",
+            sql: "SELECT a FROM t ORDER BY a COLLATE x",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a table-valued function takes no DISTINCT",
+            sql: "SELECT * FROM f(DISTINCT 1)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a table-valued function takes no null treatment",
+            sql: "SELECT * FROM f(1 IGNORE NULLS)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a table-valued function is no window call",
+            sql: "SELECT * FROM f(1) OVER ()",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a table-valued function takes no positional lambda",
+            sql: "SELECT * FROM f(e -> e)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "IF names a table-valued function",
+            sql: "SELECT * FROM IF(1)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a TABLE argument's query is parenthesised again",
+            sql: "SELECT * FROM f(TABLE (SELECT 1))",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a TABLE argument may be a call with an alias",
+            sql: "SELECT * FROM f(TABLE g(1) AS x, CONNECTION DEFAULT, y => MODEL m)",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a TABLE argument's partitioning stays inside its parentheses",
+            sql: "SELECT * FROM f(TABLE t PARTITION BY a)",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "COLUMNS takes one expression",
+            sql: "SELECT * FROM f(COLUMNS(a, b))",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a pipe CALL takes an alias, PARTITION BY and ORDER BY",
+            sql: "FROM t |> CALL f(1) AS x PARTITION BY a ORDER BY b DESC",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a pipe CALL's alias precedes its PARTITION BY",
+            sql: "FROM t |> CALL f(1) PARTITION BY a AS x",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a pipe CALL's ORDER BY takes no trailing comma",
+            sql: "FROM t |> CALL f(1) ORDER BY a,",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
     ];
     for test_case in test_cases {
         assert_eq!(
@@ -714,6 +879,24 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             sql: "SELECT CAST(NULL AS BIGNUMERIC(10, 2))",
             pointer: "/0/select/expressions/0/cast/to/name",
             expected_json: "\"BIGNUMERIC(10, 2)\"",
+        },
+        ValueTestCase {
+            description: "STRING(MAX) keeps MAX apart from STRING",
+            sql: "SELECT CAST(NULL AS string(max))",
+            pointer: "/0/select/expressions/0/cast/to/name",
+            expected_json: "\"STRING(MAX)\"",
+        },
+        ValueTestCase {
+            description: "BYTES(MAX) keeps MAX inside a STRUCT",
+            sql: "SELECT CAST(NULL AS STRUCT<a BYTES(MAX)>)",
+            pointer: "/0/select/expressions/0/cast/to/fields/0/data_type/name",
+            expected_json: "\"BYTES(MAX)\"",
+        },
+        ValueTestCase {
+            description: "BIGDECIMAL(MAX, 2) is BIGNUMERIC with MAX precision and its scale",
+            sql: "SELECT CAST(NULL AS BIGDECIMAL(MAX, 2))",
+            pointer: "/0/select/expressions/0/cast/to/name",
+            expected_json: "\"BIGNUMERIC(MAX, 2)\"",
         },
         ValueTestCase {
             description: "RANGE keeps its element type",
@@ -967,6 +1150,42 @@ fn given_pipe_operators_when_parsing_then_each_step_keeps_its_own_tree() {
             expected_same: false,
         },
         TreePairTestCase {
+            description: "EXTRACT keeps its AT TIME ZONE",
+            sql: "SELECT EXTRACT(HOUR FROM TIMESTAMP '2020-01-01 00:00:00+00' AT TIME ZONE 'Asia/Tokyo')",
+            other_sql: "SELECT EXTRACT(HOUR FROM TIMESTAMP '2020-01-01 00:00:00+00')",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "EXTRACT keeps its WEEK weekday",
+            sql: "SELECT EXTRACT(WEEK(SUNDAY) FROM DATE '2020-01-01')",
+            other_sql: "SELECT EXTRACT(WEEK(MONDAY) FROM DATE '2020-01-01')",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "EXTRACT's backquoted `WEEK(SUNDAY)` is not WEEK(SUNDAY)",
+            sql: "SELECT EXTRACT(`WEEK(SUNDAY)` FROM DATE '2020-01-01')",
+            other_sql: "SELECT EXTRACT(WEEK(SUNDAY) FROM DATE '2020-01-01')",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "EXTRACT's backquoted `DAY` is DAY",
+            sql: "SELECT EXTRACT(`DAY` FROM DATE '2020-01-01')",
+            other_sql: "SELECT EXTRACT(DAY FROM DATE '2020-01-01')",
+            expected_same: true,
+        },
+        TreePairTestCase {
+            description: "EXTRACT's WEEK(weekday) is not WEEK",
+            sql: "SELECT EXTRACT(WEEK(SUNDAY) FROM DATE '2020-01-01')",
+            other_sql: "SELECT EXTRACT(WEEK FROM DATE '2020-01-01')",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "DATE_DIFF's first argument is a value, not a unit",
+            sql: "SELECT DATE_DIFF(day, d2, YEAR) FROM t",
+            other_sql: "SELECT DATE_DIFF('DAY', d2, YEAR) FROM t",
+            expected_same: false,
+        },
+        TreePairTestCase {
             description: "an alias after a parenthesised query is a pipe AS step",
             sql: "(SELECT 1 a) AS s",
             other_sql: "(SELECT 1 a) |> AS s",
@@ -1065,6 +1284,111 @@ fn given_joins_and_commas_when_parsing_then_their_order_and_grouping_are_kept() 
 }
 
 #[test]
+fn given_table_constraints_when_creating_a_table_then_each_is_kept() {
+    let tree = |constraint: &str| {
+        parse(&format!("CREATE TABLE d.t (a INT64, b INT64{constraint})"))
+            .map(|parsed| parsed.statements)
+    };
+    let test_cases = [DistinctTreesTestCase {
+        description: "no constraint and each table constraint give distinct trees",
+        texts: &[
+            "",
+            ", PRIMARY KEY (a) NOT ENFORCED",
+            ", PRIMARY KEY (b) NOT ENFORCED",
+            ", PRIMARY KEY (a)",
+            ", FOREIGN KEY (a) REFERENCES d.u (c) NOT ENFORCED",
+            ", CONSTRAINT k FOREIGN KEY (a) REFERENCES d.u (c) NOT ENFORCED",
+            ", CONSTRAINT j FOREIGN KEY (a) REFERENCES d.u (c) NOT ENFORCED",
+            ", CHECK (a > 0)",
+            " REFERENCES d.u (c) NOT ENFORCED",
+        ],
+        expected_distinct: 9,
+    }];
+    for test_case in test_cases {
+        let trees: Vec<_> = test_case.texts.iter().map(|text| tree(text)).collect();
+        let distinct: usize = trees
+            .iter()
+            .enumerate()
+            .filter(|(index, current)| !trees[..*index].contains(current))
+            .count();
+        assert_eq!(
+            distinct, test_case.expected_distinct,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_table_valued_function_calls_when_parsing_then_their_arguments_and_steps_are_kept() {
+    let tree = |sql: &str| parse(sql).map(|parsed| parsed.statements);
+    let test_cases = [
+        TreePairTestCase {
+            description: "FROM t |> CALL f(1) and FROM t |> CALL g(1) differ",
+            sql: "FROM t |> CALL f(1)",
+            other_sql: "FROM t |> CALL g(1)",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "FROM t |> CALL f(1) and FROM t |> CALL f(1) AS x differ",
+            sql: "FROM t |> CALL f(1)",
+            other_sql: "FROM t |> CALL f(1) AS x",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "FROM t |> CALL f(1) PARTITION BY a and FROM t |> CALL f(1) ORDER BY a differ",
+            sql: "FROM t |> CALL f(1) PARTITION BY a",
+            other_sql: "FROM t |> CALL f(1) ORDER BY a",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "FROM t |> CALL f(1) ORDER BY a and FROM t |> CALL f(1) ORDER BY a DESC differ",
+            sql: "FROM t |> CALL f(1) ORDER BY a",
+            other_sql: "FROM t |> CALL f(1) ORDER BY a DESC",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "FROM t |> CALL f(1) and FROM t |> WHERE f(1) differ",
+            sql: "FROM t |> CALL f(1)",
+            other_sql: "FROM t |> WHERE f(1)",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "FROM t |> CALL f(1) ORDER BY a COLLATE 'x' and FROM t |> CALL f(1) ORDER BY a differ",
+            sql: "FROM t |> CALL f(1) ORDER BY a COLLATE 'x'",
+            other_sql: "FROM t |> CALL f(1) ORDER BY a",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "SELECT * FROM f(MODEL m) and SELECT * FROM f(m) differ",
+            sql: "SELECT * FROM f(MODEL m)",
+            other_sql: "SELECT * FROM f(m)",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "SELECT * FROM f(TABLE g(1)) and SELECT * FROM f(TABLE g) differ",
+            sql: "SELECT * FROM f(TABLE g(1))",
+            other_sql: "SELECT * FROM f(TABLE g)",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "SELECT * FROM f(CONNECTION DEFAULT) and SELECT * FROM f(CONNECTION c) differ",
+            sql: "SELECT * FROM f(CONNECTION DEFAULT)",
+            other_sql: "SELECT * FROM f(CONNECTION c)",
+            expected_same: false,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            tree(test_case.sql) == tree(test_case.other_sql),
+            test_case.expected_same,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_match_recognize_when_parsing_then_its_pattern_and_options_are_kept() {
     let tree = |(pattern, options): (&str, &str)| {
         parse(&format!(
@@ -1107,6 +1431,18 @@ fn given_match_recognize_when_parsing_then_its_pattern_and_options_are_kept() {
             description: "a backquoted pattern variable is one name",
             pattern: ("`a b`", ""),
             other_pattern: ("a b", ""),
+            expected_same: false,
+        },
+        MatchRecognizeTestCase {
+            description: "a hex bound is kept as written",
+            pattern: ("a{0x2}", ""),
+            other_pattern: ("a{2}", ""),
+            expected_same: false,
+        },
+        MatchRecognizeTestCase {
+            description: "a parameter bound keeps its name",
+            pattern: ("a{@n}", ""),
+            other_pattern: ("a{@m}", ""),
             expected_same: false,
         },
         MatchRecognizeTestCase {
@@ -1211,6 +1547,427 @@ fn given_a_whole_backquoted_path_when_parsing_then_it_stays_split_and_marked() {
             tree(test_case.sql) == tree(test_case.other_sql),
             test_case.expected_same,
             "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_deep_nesting_when_parsing_on_a_small_stack_then_it_parses_or_is_refused_without_crashing()
+{
+    let too_deep: Option<&str> = Some("the statement nests too deeply");
+    let test_cases = [
+        NestingTestCase {
+            description: "100 parentheses around an expression parse",
+            sql: || format!("SELECT {}1{}", "(".repeat(100), ")".repeat(100)),
+            expected_refusal: None,
+        },
+        NestingTestCase {
+            description: "100 parentheses around a table in FROM parse",
+            sql: || format!("SELECT * FROM {}t1{}", "(".repeat(100), ")".repeat(100)),
+            expected_refusal: None,
+        },
+        NestingTestCase {
+            description: "100 rounds of a call, CASE and CAST nest past the limit",
+            sql: || {
+                let open: String = "abs(CASE WHEN true THEN CAST(".repeat(100);
+                format!("SELECT {open}1{}", " AS INT64) END)".repeat(100))
+            },
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "100 nested bare subscripts parse",
+            sql: || format!("SELECT {}0{} FROM t", "a[".repeat(100), "]".repeat(100)),
+            expected_refusal: None,
+        },
+        NestingTestCase {
+            description: "201 nested bare subscripts nest past the limit",
+            sql: || format!("SELECT {}0{} FROM t", "a[".repeat(201), "]".repeat(201)),
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "1,500 nested bare subscripts",
+            sql: || format!("SELECT {}0{} FROM t", "a[".repeat(1500), "]".repeat(1500)),
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "1,500 nested EXTRACT sources",
+            sql: || {
+                format!(
+                    "SELECT {}d{}",
+                    "EXTRACT(DAY FROM ".repeat(1500),
+                    ")".repeat(1500)
+                )
+            },
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "1,500 nested POSITION ... IN texts",
+            sql: || {
+                format!(
+                    "SELECT {}'b'{}",
+                    "POSITION('a' IN ".repeat(1500),
+                    ")".repeat(1500)
+                )
+            },
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "1,500 nested SUBSTR ... FROM texts",
+            sql: || {
+                format!(
+                    "SELECT {}'a'{}",
+                    "SUBSTR(".repeat(1500),
+                    " FROM 1)".repeat(1500)
+                )
+            },
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "1,500 nested TRIM(BOTH FROM ...) sources",
+            sql: || {
+                format!(
+                    "SELECT {}'a'{}",
+                    "TRIM(BOTH FROM ".repeat(1500),
+                    ")".repeat(1500)
+                )
+            },
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "201 nested OVERLAY inputs",
+            sql: || {
+                let open: String = "OVERLAY(".repeat(201);
+                format!("SELECT {open}'a'{}", " PLACING 'b' FROM 1)".repeat(201))
+            },
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "1,500 nested TABLE arguments of a table-valued function in FROM",
+            sql: || {
+                format!(
+                    "SELECT * FROM {}t{}",
+                    "f(TABLE ".repeat(1500),
+                    ")".repeat(1500)
+                )
+            },
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "1,500 nested TABLE arguments of a pipe CALL",
+            sql: || {
+                format!(
+                    "FROM t |> CALL {}u{}",
+                    "f(TABLE ".repeat(1500),
+                    ")".repeat(1500)
+                )
+            },
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "20,000 nested row pattern parentheses",
+            sql: || {
+                let pattern: String = format!("{}a{}", "(".repeat(20_000), ")".repeat(20_000));
+                format!(
+                    "SELECT * FROM t MATCH_RECOGNIZE (ORDER BY b MEASURES 1 AS m \
+                     PATTERN ({pattern}) DEFINE a AS TRUE)"
+                )
+            },
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "20,000 nested row pattern alternations",
+            sql: || {
+                let pattern: String = format!("{}a{}", "(a | ".repeat(20_000), ")".repeat(20_000));
+                format!(
+                    "SELECT * FROM t MATCH_RECOGNIZE (ORDER BY b MEASURES 1 AS m \
+                     PATTERN ({pattern}) DEFINE a AS TRUE)"
+                )
+            },
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "1,500 parentheses around an expression",
+            sql: || format!("SELECT {}1{}", "(".repeat(1500), ")".repeat(1500)),
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "1,500 parentheses around a table in FROM",
+            sql: || format!("SELECT * FROM {}t1{}", "(".repeat(1500), ")".repeat(1500)),
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "1,500 subqueries nested in FROM",
+            sql: || {
+                let open: String = "(SELECT * FROM ".repeat(1500);
+                format!("SELECT * FROM {open}t1{}", ")".repeat(1500))
+            },
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "1,500 scalar subqueries",
+            sql: || format!("SELECT {}1{}", "(SELECT ".repeat(1500), ")".repeat(1500)),
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "1,500 parentheses around a set operation operand",
+            sql: || {
+                format!(
+                    "{}SELECT 1{} UNION ALL SELECT 2",
+                    "(".repeat(1500),
+                    ")".repeat(1500)
+                )
+            },
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "1,500 ARRAY and STRUCT type wrappers",
+            sql: || {
+                let open: String = "ARRAY<STRUCT<a ".repeat(1500);
+                format!("SELECT CAST(NULL AS {open}INT64{})", ">>".repeat(1500))
+            },
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "past the limit, every other reading fails at once instead of retrying",
+            sql: || {
+                let open: String = "(SELECT 1 IN ".repeat(150);
+                format!("SELECT 1 IN {open}(1){}", ")".repeat(150))
+            },
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "7,990 additions parse",
+            sql: || format!("SELECT 1{}", " + 1".repeat(7_990)),
+            expected_refusal: None,
+        },
+        NestingTestCase {
+            description: "100,000 additions build a tree past the depth bound",
+            sql: || format!("SELECT 1{}", " + 1".repeat(100_000)),
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "60 parenthesised levels of 60 additions parse",
+            sql: || {
+                let mut chain: String = "1".to_owned();
+                for _ in 0..60 {
+                    chain = format!("({chain}{})", " + 1".repeat(60));
+                }
+                format!("SELECT {chain}")
+            },
+            expected_refusal: None,
+        },
+        NestingTestCase {
+            description: "100 parenthesised levels of 100 additions build a tree past the depth bound",
+            sql: || {
+                let mut chain: String = "1".to_owned();
+                for _ in 0..100 {
+                    chain = format!("({chain}{})", " + 1".repeat(100));
+                }
+                format!("SELECT {chain}")
+            },
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "100,000 UNION ALL operands build a tree past the depth bound",
+            sql: || format!("SELECT 1{}", " UNION ALL SELECT 1".repeat(100_000)),
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "100,000 pipe operators are read in linear time and refused by the depth bound",
+            sql: || format!("FROM t{}", " |> WHERE true".repeat(100_000)),
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "a WITH query's 100,000 pipe operators are refused by the depth bound",
+            sql: || {
+                let pipes: String = " |> WHERE true".repeat(100_000);
+                format!("WITH c AS (SELECT 1 AS a) SELECT a FROM c{pipes}")
+            },
+            expected_refusal: too_deep,
+        },
+        NestingTestCase {
+            description: "a statement of 100,000 leading pipe operators parses as a gap",
+            sql: || "|> WHERE true ".repeat(100_000),
+            expected_refusal: None,
+        },
+    ];
+    for test_case in test_cases {
+        let sql: String = (test_case.sql)();
+        let refusal: Option<String> = std::thread::Builder::new()
+            .stack_size(2 << 20)
+            .spawn(move || {
+                let parsed = parse(&sql);
+                let refusal: Option<String> =
+                    parsed.as_ref().err().map(|error| error.message.clone());
+                std::mem::forget(parsed);
+                refusal
+            })
+            .expect("the parse thread starts")
+            .join()
+            .expect("the parse thread finishes");
+        assert_eq!(
+            refusal.as_deref().map(|message| test_case
+                .expected_refusal
+                .is_some_and(|prefix| message.starts_with(prefix))),
+            test_case.expected_refusal.map(|_| true),
+            "{}: {refusal:?}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_long_pipe_chain_then_a_syntax_error_when_parsing_on_a_small_stack_then_the_error_returns()
+ {
+    let syntax_error: Option<&str> = Some("Syntax error");
+    let test_cases = [
+        NestingTestCase {
+            description: "100,000 pipe operators then a stray parenthesis",
+            sql: || format!("FROM t{} )", " |> WHERE TRUE".repeat(100_000)),
+            expected_refusal: syntax_error,
+        },
+        NestingTestCase {
+            description: "100,000 pipe operators then a stray word",
+            sql: || format!("FROM t{} stray", " |> WHERE TRUE".repeat(100_000)),
+            expected_refusal: syntax_error,
+        },
+        NestingTestCase {
+            description: "a WITH query's 100,000 pipe operators then a stray parenthesis",
+            sql: || {
+                let pipes: String = " |> WHERE TRUE".repeat(100_000);
+                format!("WITH c AS (SELECT 1 AS a) SELECT a FROM c{pipes} )")
+            },
+            expected_refusal: syntax_error,
+        },
+        NestingTestCase {
+            description: "a scalar subquery's 100,000 pipe operators then two closing parentheses",
+            sql: || format!("SELECT (FROM t{}))", " |> WHERE TRUE".repeat(100_000)),
+            expected_refusal: syntax_error,
+        },
+        NestingTestCase {
+            description: "100,000 pipe operators then a WHERE without its condition",
+            sql: || format!("FROM t{} |> WHERE )", " |> WHERE TRUE".repeat(100_000)),
+            expected_refusal: syntax_error,
+        },
+        NestingTestCase {
+            description: "100,000 pipe JOINs then a stray parenthesis",
+            sql: || format!("FROM t{} )", " |> JOIN u USING (a)".repeat(100_000)),
+            expected_refusal: syntax_error,
+        },
+        NestingTestCase {
+            description: "100,000 pipe SELECTs then a stray parenthesis",
+            sql: || format!("FROM t{} )", " |> SELECT a".repeat(100_000)),
+            expected_refusal: syntax_error,
+        },
+    ];
+    for test_case in test_cases {
+        let sql: String = (test_case.sql)();
+        // The partial chain is dropped on the small thread, so its drop must not recurse.
+        let refusal: Option<String> = std::thread::Builder::new()
+            .stack_size(2 << 20)
+            .spawn(move || parse(&sql).err().map(|error| error.message))
+            .expect("the parse thread starts")
+            .join()
+            .expect("the parse thread finishes");
+        assert_eq!(
+            refusal.as_deref().map(|message| test_case
+                .expected_refusal
+                .is_some_and(|prefix| message.starts_with(prefix))),
+            test_case.expected_refusal.map(|_| true),
+            "{}: {refusal:?}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_nested_keyword_calls_when_parsing_then_each_call_is_read_once() {
+    let test_cases = [
+        NestingTestCase {
+            description: "30 nested TRIM calls",
+            sql: || format!("SELECT {}'a'{}", "TRIM(".repeat(30), ")".repeat(30)),
+            expected_refusal: None,
+        },
+        NestingTestCase {
+            description: "30 nested TRIM calls with characters",
+            sql: || format!("SELECT {}'a'{}", "TRIM(".repeat(30), ", 'c')".repeat(30)),
+            expected_refusal: None,
+        },
+        NestingTestCase {
+            description: "30 nested POSITION calls with commas",
+            sql: || {
+                format!(
+                    "SELECT {}'a'{}",
+                    "POSITION(".repeat(30),
+                    ", 'b')".repeat(30)
+                )
+            },
+            expected_refusal: None,
+        },
+        NestingTestCase {
+            description: "30 nested OVERLAY calls with commas",
+            sql: || {
+                format!(
+                    "SELECT {}'a'{}",
+                    "OVERLAY(".repeat(30),
+                    ", 'b', 1)".repeat(30)
+                )
+            },
+            expected_refusal: None,
+        },
+        NestingTestCase {
+            description: "30 nested SUBSTR calls with a bare argument",
+            sql: || format!("SELECT {}'a'{}", "SUBSTR(".repeat(30), ")".repeat(30)),
+            expected_refusal: None,
+        },
+        NestingTestCase {
+            description: "30 nested ANY_VALUE calls",
+            sql: || {
+                format!(
+                    "SELECT {}x{} FROM t",
+                    "ANY_VALUE(".repeat(30),
+                    ")".repeat(30)
+                )
+            },
+            expected_refusal: None,
+        },
+        NestingTestCase {
+            description: "30 nested FIRST calls",
+            sql: || format!("SELECT {}x{} FROM t", "FIRST(".repeat(30), ")".repeat(30)),
+            expected_refusal: None,
+        },
+        NestingTestCase {
+            description: "30 nested LAST calls",
+            sql: || format!("SELECT {}x{} FROM t", "LAST(".repeat(30), ")".repeat(30)),
+            expected_refusal: None,
+        },
+        NestingTestCase {
+            description: "30 nested TIMESTAMPDIFF calls with a value first",
+            sql: || {
+                format!(
+                    "SELECT {}x{} FROM t",
+                    "TIMESTAMPDIFF(".repeat(30),
+                    ", y)".repeat(30)
+                )
+            },
+            expected_refusal: None,
+        },
+    ];
+    for test_case in test_cases {
+        let sql: String = (test_case.sql)();
+        let started: std::time::Instant = std::time::Instant::now();
+        let refusal: Option<String> = parse(&sql).err().map(|error| error.message);
+        let elapsed: std::time::Duration = started.elapsed();
+        assert_eq!(
+            refusal.as_deref(),
+            test_case.expected_refusal,
+            "{}",
+            test_case.description
+        );
+        assert!(
+            elapsed < std::time::Duration::from_secs(2),
+            "{}: {elapsed:?}",
             test_case.description
         );
     }

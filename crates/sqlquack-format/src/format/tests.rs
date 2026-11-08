@@ -4,5 +4,7 @@ mod helpers;
 mod test_format_corpus;
 #[path = "tests/test_format_sql.rs"]
 mod test_format_sql;
+#[path = "tests/test_sqlserver_receipts.rs"]
+mod test_sqlserver_receipts;
 #[path = "tests/test_types.rs"]
 mod test_types;

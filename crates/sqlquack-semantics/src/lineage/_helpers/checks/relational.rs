@@ -119,7 +119,7 @@ fn offered_family(
         .map_or(Family::Unknown, type_family)
 }
 
-/// USING keys whose two sides cannot compare; only a single two-item join is checked.
+/// USING keys of a single two-item join whose sides cannot compare; Snowflake skips conversions.
 pub(crate) fn using_findings(
     node: &Expression,
     select: &Select,
@@ -145,6 +145,9 @@ pub(crate) fn using_findings(
         let left: Family = offered_family(left_source, &name, context);
         let right: Family = offered_family(right_source, &name, context);
         let runtime: bool = runtime_comparison(left, right);
+        if runtime && engine == Engine::Snowflake {
+            continue;
+        }
         if !comparable(engine, (&join.this, &join.this), (left, right)) || runtime {
             findings.push(finding(
                 if runtime { "W210" } else { "E217" },
@@ -166,7 +169,7 @@ pub(crate) fn recursive_findings(
     let Some(with) = select
         .with
         .as_ref()
-        .filter(|with| with.recursive && engine != Engine::Postgres)
+        .filter(|with| with.recursive && !matches!(engine, Engine::Postgres | Engine::BigQuery))
     else {
         return Vec::new();
     };
@@ -185,7 +188,8 @@ pub(crate) fn recursive_findings(
             let literal: Option<&Expression> = projection_literal(&union.right, index);
             let invalid: bool = match engine {
                 Engine::Snowflake => !setop_compatible(target, source),
-                Engine::DuckDB | Engine::Postgres => {
+                Engine::Sqlite => false,
+                Engine::DuckDB | Engine::Postgres | Engine::BigQuery => {
                     literal.is_some_and(|value| invalid_literal_for(value, target))
                         || (source == Family::String
                             && !matches!(target, Family::String | Family::Unknown)
@@ -197,7 +201,9 @@ pub(crate) fn recursive_findings(
                 findings.push(finding(
                     match engine {
                         Engine::Snowflake => "E215",
-                        Engine::DuckDB | Engine::Postgres => "W214",
+                        Engine::DuckDB | Engine::Postgres | Engine::Sqlite | Engine::BigQuery => {
+                            "W214"
+                        }
                     },
                     "Recursive branch cannot convert to the anchor column type".to_owned(),
                     node,

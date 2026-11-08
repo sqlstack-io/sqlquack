@@ -2511,33 +2511,33 @@ result_repository = "1 rows 24ceef1cb6b0cbc0"
 [[query]]
 category = "select_literal"
 sql = '''SELECT 'it''s''''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..14"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..14"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..14"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..14"
 
 [[query]]
 category = "select_literal"
 sql = '''select 'it''s''''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..14"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..14"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..14"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..14"
 
 [[query]]
 category = "select_literal"
 sql = '''select /* c */ 'it''s''''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..22"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..22"
+expect = "refused SQ0009 syntax:unaliased_output_name at 15..22"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 15..22"
 
 [[query]]
 category = "select_literal"
 sql = '''SeLECt 'it''s''''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..14"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..14"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..14"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..14"
 
 [[query]]
 category = "select_literal"
 sql = '''select /* c */ 'it''s';
 '''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..22"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..22"
+expect = "refused SQ0009 syntax:unaliased_output_name at 15..22"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 15..22"
 
 [[query]]
 category = "select_literal_from"
@@ -2586,33 +2586,33 @@ result_repository = "5 rows b0a587d284db30eb"
 [[query]]
 category = "select_literal_from"
 sql = '''SELECT 'it''s' FROM orders'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..26"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..26"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..14"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..14"
 
 [[query]]
 category = "select_literal_from"
 sql = '''select 'it''s'	from orders -- trailing comment'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..26"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..26"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..14"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..14"
 
 [[query]]
 category = "select_literal_from"
 sql = '''select 'it''s'	from orders'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..26"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..26"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..14"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..14"
 
 [[query]]
 category = "select_literal_from"
 sql = '''select 'it''s'   from orders -- trailing comment'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..28"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..28"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..14"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..14"
 
 [[query]]
 category = "select_literal_from"
 sql = '''-- a comment
 SELECT 'it''s'	FROM ORDERS'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 13..39"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 13..39"
+expect = "refused SQ0009 syntax:unaliased_output_name at 20..27"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 20..27"
 
 [[query]]
 category = "select_literal"
@@ -2658,26 +2658,26 @@ result_repository = "1 rows e3b0c44298fc1c14"
 [[query]]
 category = "select_literal"
 sql = '''SELECT '''''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..9"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..9"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..9"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..9"
 
 [[query]]
 category = "select_literal"
 sql = '''select '''''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..9"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..9"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..9"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..9"
 
 [[query]]
 category = "select_literal"
 sql = '''SELECT '' -- trailing comment'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..9"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..9"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..9"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..9"
 
 [[query]]
 category = "select_literal"
 sql = '''SeleCt '''''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..9"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..9"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..9"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..9"
 
 [[query]]
 category = "select_literal_from"
@@ -2724,36 +2724,36 @@ result_repository = "5 rows 545c38b0922de197"
 [[query]]
 category = "select_literal_from"
 sql = '''SELECT '' FROM orders'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..21"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..21"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..9"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..9"
 
 [[query]]
 category = "select_literal_from"
 sql = '''SelEct ''   FRoM "ORDERS" -- trailing comment'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..25"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..25"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..9"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..9"
 
 [[query]]
 category = "select_literal_from"
 sql = '''select ''
   from orders'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..23"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..23"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..9"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..9"
 
 [[query]]
 category = "select_literal_from"
 sql = '''sELeCt ''	FrOm ordeRS
 '''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..21"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..21"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..9"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..9"
 
 [[query]]
 category = "select_literal_from"
 sql = '''-- a comment
 select ''
   from orders'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 13..36"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 13..36"
+expect = "refused SQ0009 syntax:unaliased_output_name at 20..22"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 20..22"
 
 [[query]]
 category = "select_literal"
@@ -2800,27 +2800,27 @@ result_repository = "1 rows 850f7dc43910ff89"
 [[query]]
 category = "select_literal"
 sql = '''SELECT 'café''''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..13"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..13"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..13"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..13"
 
 [[query]]
 category = "select_literal"
 sql = '''select 'café''''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..13"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..13"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..13"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..13"
 
 [[query]]
 category = "select_literal"
 sql = '''select 'café'
 '''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..13"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..13"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..13"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..13"
 
 [[query]]
 category = "select_literal"
 sql = '''SELeCT /* c */ 'café''''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..21"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..21"
+expect = "refused SQ0009 syntax:unaliased_output_name at 15..21"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 15..21"
 
 [[query]]
 category = "select_literal_from"
@@ -2868,33 +2868,33 @@ result_repository = "5 rows f05255107d9d5a25"
 [[query]]
 category = "select_literal_from"
 sql = '''SELECT 'café' FROM orders'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..25"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..25"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..13"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..13"
 
 [[query]]
 category = "select_literal_from"
 sql = '''select 'café' from orders -- trailing comment'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..25"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..25"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..13"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..13"
 
 [[query]]
 category = "select_literal_from"
 sql = '''seLECt 'café'	frOm OrdeRS -- trailing comment'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..25"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..25"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..13"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..13"
 
 [[query]]
 category = "select_literal_from"
 sql = '''-- a comment
 select 'café'   from orders'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 13..40"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 13..40"
+expect = "refused SQ0009 syntax:unaliased_output_name at 20..26"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 20..26"
 
 [[query]]
 category = "select_literal_from"
 sql = '''select 'café' from orders'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..25"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..25"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..13"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..13"
 
 [[query]]
 category = "select_literal"
@@ -2974,8 +2974,10 @@ result_repository = "1 rows bb10628e8f758901"
 category = "select_literal"
 sql = '''-- a comment
 select date '2024-01-15''''
-expect = "refused SQ0009 syntax:unaliased_output_name at 13..37"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 13..37"
+expect = "translated"
+expect_repository = "translated"
+result = "1 rows bb10628e8f758901"
+result_repository = "1 rows bb10628e8f758901"
 
 [[query]]
 category = "select_literal_from"
@@ -3055,8 +3057,10 @@ result_repository = "5 rows 4aa2b48e3747e05c"
 [[query]]
 category = "select_literal_from"
 sql = '''select date '2024-01-15'	from orders -- trailing comment'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..36"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..36"
+expect = "translated"
+expect_repository = "translated"
+result = "5 rows 4aa2b48e3747e05c"
+result_repository = "5 rows 4aa2b48e3747e05c"
 
 [[query]]
 category = "select_literal"
@@ -3114,14 +3118,18 @@ result_repository = "1 rows 25b66afc9d162eae"
 category = "select_literal"
 sql = '''-- a comment
 select TIMESTAMP '2024-01-15 10:00:00''''
-expect = "refused SQ0009 syntax:unaliased_output_name at 13..51"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 13..51"
+expect = "translated"
+expect_repository = "translated"
+result = "1 rows 25b66afc9d162eae"
+result_repository = "1 rows 25b66afc9d162eae"
 
 [[query]]
 category = "select_literal"
 sql = '''select TIMESTAMP '2024-01-15 10:00:00' -- trailing comment'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..38"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..38"
+expect = "translated"
+expect_repository = "translated"
+result = "1 rows 25b66afc9d162eae"
+result_repository = "1 rows 25b66afc9d162eae"
 
 [[query]]
 category = "select_literal"
@@ -3134,8 +3142,10 @@ result_repository = "1 rows 25b66afc9d162eae"
 [[query]]
 category = "select_literal"
 sql = '''select timestamp '2024-01-15 10:00:00' -- trailing comment'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..38"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..38"
+expect = "translated"
+expect_repository = "translated"
+result = "1 rows 25b66afc9d162eae"
+result_repository = "1 rows 25b66afc9d162eae"
 
 [[query]]
 category = "select_literal_from"
@@ -13189,33 +13199,33 @@ result_repository = "4 rows 824105ae1973a670"
 [[query]]
 category = "order_limit"
 sql = '''SELECT order_id, order_id FROM orders ORDER BY order_id DESC LIMIT 3'''
-expect = "refused SQ0004 statement at 0..68"
-expect_repository = "refused SQ0004 statement at 0..68"
+expect = "refused SQ0004 statement at 17..25"
+expect_repository = "refused SQ0004 statement at 17..25"
 
 [[query]]
 category = "order_limit"
 sql = '''select order_id, order_id   from orders   order by order_id desc   limit 3 -- trailing comment'''
-expect = "refused SQ0004 statement at 0..74"
-expect_repository = "refused SQ0004 statement at 0..74"
+expect = "refused SQ0004 statement at 17..25"
+expect_repository = "refused SQ0004 statement at 17..25"
 
 [[query]]
 category = "order_limit"
 sql = '''select order_id, order_id from orders order by order_id desc limit 3 -- trailing comment'''
-expect = "refused SQ0004 statement at 0..68"
-expect_repository = "refused SQ0004 statement at 0..68"
+expect = "refused SQ0004 statement at 17..25"
+expect_repository = "refused SQ0004 statement at 17..25"
 
 [[query]]
 category = "order_limit"
 sql = '''select order_id, order_id from orders order by order_id desc limit 3;
 '''
-expect = "refused SQ0004 statement at 0..68"
-expect_repository = "refused SQ0004 statement at 0..68"
+expect = "refused SQ0004 statement at 17..25"
+expect_repository = "refused SQ0004 statement at 17..25"
 
 [[query]]
 category = "order_limit"
 sql = '''sElecT OrdEr_ID, Order_iD	FRom ordeRS	ORDeR By oRdeR_iD Desc	LimIt 3;'''
-expect = "refused SQ0004 statement at 0..68"
-expect_repository = "refused SQ0004 statement at 0..68"
+expect = "refused SQ0004 statement at 17..25"
+expect_repository = "refused SQ0004 statement at 17..25"
 
 [[query]]
 category = "order_limit"

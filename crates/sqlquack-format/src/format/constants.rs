@@ -18,14 +18,27 @@ pub(crate) const SEPARATION_FAILURE: &str =
     "formatter would separate tokens written touching where the space could change their meaning";
 pub(crate) const JOIN_FAILURE: &str =
     "formatter would join tokens written apart where they could read as one";
+pub(crate) const SQLSERVER_OPAQUE_STATEMENT_FAILURE: &str =
+    "formatter does not lay out a statement the SQL Server parser keeps as opaque text";
+pub(crate) const BATCH_SEPARATOR_FAILURE: &str = "formatter does not lay out a GO batch separator, which a client reads and SQL Server never sees";
+/// The word a SQL Server client reads, alone on its line, as the end of a batch.
+pub(crate) const BATCH_SEPARATOR: &str = "GO";
+/// The start of a comment that runs to the end of its line.
+pub(crate) const LINE_COMMENT_START: &str = "--";
+/// The start of a BigQuery comment that runs to the end of its line.
+pub(crate) const HASH_COMMENT_START: char = '#';
+/// The start of a `/* ... */` comment.
+pub(crate) const BLOCK_COMMENT_START: &str = "/*";
+/// The end of a `/* ... */` comment.
+pub(crate) const BLOCK_COMMENT_END: &str = "*/";
 pub(crate) const SELECT_LIST_FAILURE: &str =
     "formatter could not find every select list, whose items without an alias it keeps as written";
-pub(crate) const UNSUPPORTED_DIALECT_FAILURE: &str =
-    "formatter does not support this dialect yet; only Snowflake and DuckDB have a format gate";
+pub(crate) const UNSUPPORTED_DIALECT_FAILURE: &str = "formatter does not support this dialect yet; only Snowflake, DuckDB and SQL Server have a format gate";
 /// The dialects whose format corpus subset gates the formatter.
-pub(crate) const FORMAT_GATED_DIALECTS: [sqlquack_syntax::Dialect; 2] = [
-    sqlquack_syntax::Dialect::Snowflake,
-    sqlquack_syntax::Dialect::DuckDB,
+pub(crate) const FORMAT_GATED_DIALECTS: [crate::format::models::FormatDialect; 3] = [
+    crate::format::models::FormatDialect::Snowflake,
+    crate::format::models::FormatDialect::DuckDB,
+    crate::format::models::FormatDialect::SqlServer,
 ];
 pub(crate) const DEPTH_FAILURE: &str =
     "formatter does not lay out SQL whose parse tree is more than 512 levels deep";
@@ -176,6 +189,44 @@ pub(crate) const POSTGRES_INLINE_CALLS: [&str; 14] = [
     "XMLELEMENT",
 ];
 
+/// SQL Server calls the guide keeps on one line however wide.
+pub(crate) const SQLSERVER_INLINE_CALLS: [&str; 2] = ["CAST", "SUBSTRING"];
+/// The SQL Server keyword that, after CROSS or OUTER, applies a table-valued expression like a join.
+pub(crate) const SQLSERVER_APPLY_KEYWORD: &str = "APPLY";
+/// The words before APPLY in a SQL Server apply.
+pub(crate) const SQLSERVER_APPLY_PREFIXES: [&str; 2] = ["CROSS", "OUTER"];
+/// SQL Server keywords after which a name names a table, view, routine, index or other object, kept as written since the database collation may be case-sensitive.
+pub(crate) const SQLSERVER_OBJECT_PRECEDERS: [&str; 22] = [
+    "APPLY",
+    "DELETE",
+    "EXEC",
+    "EXECUTE",
+    "FROM",
+    "FUNCTION",
+    "INDEX",
+    "INSERT",
+    "INTO",
+    "JOIN",
+    "MERGE",
+    "ON",
+    "PROC",
+    "PROCEDURE",
+    "REFERENCES",
+    "SEQUENCE",
+    "STATISTICS",
+    "TABLE",
+    "TRIGGER",
+    "UPDATE",
+    "USING",
+    "VIEW",
+];
+/// SQL Server clauses that hold a comma-separated list, which bound the search for the FROM a comma belongs to.
+pub(crate) const SQLSERVER_LIST_CLAUSES: [&str; 9] = [
+    "BY", "FROM", "OUTPUT", "RETURNS", "SELECT", "SET", "VALUES", "WHERE", "HAVING",
+];
+/// SQL Server keywords the guide separates from a following `(`: `TOP (n)` and a `WITH (hint)` table hint.
+pub(crate) const SQLSERVER_SPACED_BEFORE_PARENTHESIS: [&str; 2] = ["TOP", "WITH"];
+
 /// The line width past which the layout guide splits a call's arguments or a CASE.
 pub(crate) const GUIDE_WIDTH: usize = 80;
 /// Spaces per indent step of the layout guide; printing rescales it to the requested indent.
@@ -311,6 +362,10 @@ pub(crate) const BINARY_OPERATOR_NODES: [(&str, &[&str]); 10] = [
 ];
 /// The bytes the spacing guard reads as operator characters.
 pub(crate) const OPERATOR_BYTES: &str = "+-*/<>=!|&^%~:#?";
+/// The bytes DuckDB lexes as operator characters beyond the shared ones.
+pub(crate) const DUCKDB_OPERATOR_BYTES: &str = "@";
+/// The bytes PostgreSQL lexes as operator characters beyond the shared ones.
+pub(crate) const POSTGRES_OPERATOR_BYTES: &str = "@`";
 /// Operators the spacing guard lexes, longest match first, so a piece is never part of a longer one.
 pub(crate) const GUARD_OPERATORS: [&str; 22] = [
     "->>", "<=>", "||", "<=", ">=", "<>", "!=", "=>", "->", "::", ":=", "/*", "*/", "--", "**",

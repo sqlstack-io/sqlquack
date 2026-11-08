@@ -63,3 +63,17 @@ pub(crate) struct MatchRecognizeTestCase {
     pub(crate) other_pattern: (&'static str, &'static str),
     pub(crate) expected_same: bool,
 }
+
+/// Inputs that must give `expected_distinct` distinct trees.
+pub(crate) struct DistinctTreesTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) texts: &'static [&'static str],
+    pub(crate) expected_distinct: usize,
+}
+
+/// A generated input, too long to write out, and the message prefix it is refused with, or `None` when it parses.
+pub(crate) struct NestingTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: fn() -> String,
+    pub(crate) expected_refusal: Option<&'static str>,
+}

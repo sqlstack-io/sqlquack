@@ -74,6 +74,14 @@ fn databricks_verdict(sql: &str) -> LocalVerdict {
     native_verdict(sqlquack_syntax_databricks::parse_strict(sql))
 }
 
+/// SQLQuack's strict SQL Server T-SQL verdict: a gap, such as `nesting_depth`, makes it opaque.
+fn sqlserver_verdict(sql: &str) -> LocalVerdict {
+    match sqlquack_syntax_sqlserver::parse_strict(sql) {
+        Ok(parsed) => accepted(&parsed.statements, !parsed.gaps.is_empty()),
+        Err(_) => LocalVerdict::Rejected,
+    }
+}
+
 /// The verdict of each dialect's local parser, or none when the dialect has no parser yet.
 pub(crate) fn local_verdict(parser: LocalParser) -> Option<fn(&str) -> LocalVerdict> {
     match parser {
@@ -82,6 +90,7 @@ pub(crate) fn local_verdict(parser: LocalParser) -> Option<fn(&str) -> LocalVerd
         LocalParser::BigQuery => Some(bigquery_verdict),
         LocalParser::DuckDb => Some(duckdb_verdict),
         LocalParser::Databricks => Some(databricks_verdict),
+        LocalParser::SqlServer => Some(sqlserver_verdict),
         LocalParser::None => None,
     }
 }

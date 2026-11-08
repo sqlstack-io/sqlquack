@@ -8,17 +8,22 @@ use sqlquack_syntax::expressions::names::models::{Identifier, Star};
 use sqlquack_syntax::expressions::operators::models::Parameter;
 
 use crate::dialects::main::canonical_type::canonical_type;
+use crate::dialects::main::clickhouse_type::clickhouse_type;
 use crate::lineage::_helpers::tracing::lineages::{combined, constant, traced_if, unresolved};
 use crate::lineage::_helpers::tracing::queries::{expanded_star, resolved_query};
 use crate::lineage::_helpers::tracing::resolution::{column_lineage, key, positional_column};
+use crate::lineage::_helpers::typing::bigquery_typing::bigquery_cast_spelling;
 use crate::lineage::_helpers::typing::duckdb_types::cast_spelling;
 use crate::lineage::_helpers::typing::postgres_typing::postgres_cast_spelling;
 use crate::lineage::_helpers::typing::rules::{
     ValueType, computed_type, literal_type, mapped_timestamp, rendered_type, required_non_null,
 };
+use crate::lineage::_helpers::typing::sqlite_typing::sqlite_cast_spelling;
 use crate::lineage::constants::{
-    AGGREGATE_FUNCTIONS, BOOLEAN_TYPE, DATE_PART_FUNCTIONS, DUCKDB_PROFILE, POSITIONAL_COLUMN_BASE,
+    AGGREGATE_FUNCTIONS, BIGQUERY_DATE_PART_FUNCTIONS, BIGQUERY_PROFILE, BIGQUERY_WEEKDAY_PARTS,
+    BOOLEAN_TYPE, CLICKHOUSE_PROFILE, DATE_PART_FUNCTIONS, DUCKDB_PROFILE, POSITIONAL_COLUMN_BASE,
     POSTGRES_PROFILE, SNOWFLAKE_JSON_HOLDERS, SNOWFLAKE_PROFILE, SNOWFLAKE_VARIANT_TYPE,
+    SQLITE_PROFILE,
 };
 use crate::lineage::models::{
     Lineage, LineageContext, LineageScope, Nullability, ResolvedQuery, RowReads, TransformKind,
@@ -26,6 +31,16 @@ use crate::lineage::models::{
 
 /// The lineage of `expression` read in `scope`.
 pub(crate) fn expression_lineage(
+    expression: &Expression,
+    scope: &LineageScope<'_>,
+    context: LineageContext<'_>,
+) -> Lineage {
+    crate::lineage::_helpers::tracing::stack::deeper(|| {
+        expression_lineage_level(expression, scope, context)
+    })
+}
+
+fn expression_lineage_level(
     expression: &Expression,
     scope: &LineageScope<'_>,
     context: LineageContext<'_>,
@@ -79,8 +94,13 @@ pub(crate) fn expression_lineage(
         Expression::Cast(cast) | Expression::TryCast(cast) | Expression::SafeCast(cast) => {
             let inner: Lineage = expression_lineage(&cast.this, scope, context);
             let target: Option<String> = match context.profile.name() {
+                CLICKHOUSE_PROFILE => {
+                    rendered_type(&cast.to).and_then(|written| clickhouse_type(&written))
+                }
+                BIGQUERY_PROFILE => bigquery_cast_spelling(&cast.to),
                 DUCKDB_PROFILE => cast_spelling(&cast.to),
                 POSTGRES_PROFILE => postgres_cast_spelling(&cast.to),
+                SQLITE_PROFILE => sqlite_cast_spelling(&cast.to),
                 _ => rendered_type(&cast.to),
             };
             let target: Option<Rc<str>> =
@@ -171,7 +191,7 @@ fn children_lineage(
         .into_iter()
         .map(|child| match (child, floor) {
             (Expression::Star(_), TransformKind::Aggregation) => (child, constant()),
-            _ if date_part_argument(expression, child) => (child, constant()),
+            _ if date_part_argument(expression, child, context) => (child, constant()),
             _ => (child, expression_lineage(child, scope, context)),
         })
         .collect();
@@ -181,18 +201,37 @@ fn children_lineage(
 }
 
 /// Whether `child` is the date part keyword a function like DATEADD or LAST_DAY takes.
-pub(crate) fn date_part_argument(function: &Expression, child: &Expression) -> bool {
+pub(crate) fn date_part_argument(
+    function: &Expression,
+    child: &Expression,
+    context: LineageContext<'_>,
+) -> bool {
     let Expression::Function(function) = function else {
         return false;
     };
-    matches!(child, Expression::Column(column) if column.table.is_none() && !column.name.quoted)
-        && DATE_PART_FUNCTIONS.iter().any(|(name, position)| {
-            function.name.eq_ignore_ascii_case(name)
-                && function
-                    .args
-                    .get(*position)
-                    .is_some_and(|argument| std::ptr::eq(argument, child))
-        })
+    let bigquery: bool = context.profile.name() == BIGQUERY_PROFILE;
+    let functions: &[(&str, usize)] = match bigquery {
+        true => &BIGQUERY_DATE_PART_FUNCTIONS,
+        false => &DATE_PART_FUNCTIONS,
+    };
+    let part: bool = match child {
+        Expression::Column(column) => column.table.is_none() && !column.name.quoted,
+        Expression::Function(weekday) => {
+            bigquery
+                && BIGQUERY_WEEKDAY_PARTS
+                    .iter()
+                    .any(|name| weekday.name.eq_ignore_ascii_case(name))
+                && matches!(weekday.args.as_slice(), [Expression::Column(day)] if day.table.is_none() && !day.name.quoted)
+        }
+        _ => false,
+    };
+    part && functions.iter().any(|(name, position)| {
+        function.name.eq_ignore_ascii_case(name)
+            && function
+                .args
+                .get(*position)
+                .is_some_and(|argument| std::ptr::eq(argument, child))
+    })
 }
 
 /// `lineage` with the value's type and nullability.

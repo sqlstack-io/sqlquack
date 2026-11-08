@@ -23,7 +23,8 @@ an unknown type name has `syntax = false`, since BigQuery refuses it in analysis
   a `( KEYWORDS operands... )` clause: `SELECT`, `EXTEND`, `WINDOW` and `AGGREGATE` hold a
   `Select` with no `FROM`; `SET`, `DROP` and `RENAME` a `Star` with `replace`, `except` or
   `rename`; `WHERE`, `ORDER BY`, `LIMIT [OFFSET]`, `AS`, `DISTINCT`, `JOIN`, `PIVOT`, `UNPIVOT`
-  and `TABLESAMPLE` their operands. An `AGGREGATE` item or grouping key with `ASC`, `DESC` or
+  and `TABLESAMPLE` their operands, and `CALL` its call (an `Alias` over it when aliased) with
+  `( PARTITION BY ... )` and `( ORDER BY ... )` clauses. An `AGGREGATE` item or grouping key with `ASC`, `DESC` or
   `NULLS` is an `Ordered` over it, and `GROUP AND ORDER BY` adds a `GROUP AND ORDER BY`
   operand. They are not rewritten into standard clauses, which cannot keep a pipe step's table
   aliases, row order or value-table shape. A set operation after `|>`
@@ -61,9 +62,17 @@ an unknown type name has `syntax = false`, since BigQuery refuses it in analysis
   chained calls (`x.f(args)`, `x.(path)(args)`) as `MethodCall`. `(query) AS alias` is
   the same tree as `(query) |> AS alias`; `FOR SYSTEM_TIME AS OF` follows a table's alias. GoogleSQL has no alias column lists (`AS t(a, b)`,
   `WITH c(a) AS`), no `col:path` and no `x COLLATE name`, so they are refused.
+- A table-valued function call, in `FROM`, in a `TABLE` argument or after `|> CALL`, is a
+  `Function` over GoogleSQL's `tvf_argument`s: expressions (no positional lambda), `name =>`
+  values, and `MODEL`, `CONNECTION` (a path, `DEFAULT` or `( key = value, ... )`), `GRAPH`,
+  `DESCRIPTOR` and `TABLE` (a path, a call with an alias, or `( (query) )`) as `TableArgument`s,
+  with `COLUMNS (expression)`. It takes no `DISTINCT`, null treatment, `ORDER BY`, `LIMIT`,
+  `HAVING` or `OVER`, and `IF` names one.
 - `INSERT [INTO]`, `MERGE [INTO]` with `INSERT [(columns)] ROW`, `UPDATE ... FROM`,
   `DELETE [FROM]`, with `DEFAULT` as a value.
-- `CREATE [OR REPLACE] [TEMP] TABLE` with columns, `NOT ENFORCED` keys, `PARTITION BY`,
+- `CREATE [OR REPLACE] [TEMP] TABLE` with columns (the same column definitions as `ADD COLUMN`,
+  generated columns too), `PRIMARY KEY`, `FOREIGN KEY` and `CHECK` constraints as
+  `TableConstraint`s, `PARTITION BY`,
   `CLUSTER BY`, `WITH CONNECTION`, `OPTIONS`, `LIKE`, `CLONE` and `COPY` (a source's
   `FOR SYSTEM_TIME AS OF` in `clone_at_clause`) and `AS query`; `CREATE [MATERIALIZED] VIEW`.
 - The other `CREATE` kinds: `CREATE SCHEMA` as `CreateSchema`, and `[AGGREGATE] FUNCTION`,
@@ -93,7 +102,7 @@ A statement holding a construct the shared tree cannot hold becomes a `Command` 
 and `Parsed.gaps` names it with its byte range. A statement gap is named by its first word, such
 as `declare`, `set`, `begin`, `if`, `loop`, `while` or `export`; script blocks are skipped to
 their matching `END`. Other named gaps: `create` of a property graph, `graph` statements,
-`label`, `graph_table`, `graph_subquery`, `match_recognize`, `generated_column`,
+`label`, `graph_table`, `graph_subquery`,
 `proto_extension_field` (`x.(path)` with no call), `dot_star_modifiers` (`EXCEPT` or `REPLACE`
 after `expr.*`),
 `index_unnest` (an index's `UNNEST` paths), `table_source_where` and `table_clone_and_copy` (a
@@ -102,8 +111,32 @@ after `expr.*`),
 full, but the shared `DropObject` has no place for the table), `undrop_clauses`
 (`IF NOT EXISTS`, `FOR SYSTEM_TIME AS OF` and `OPTIONS` on `UNDROP`), `truncate_where`,
 `with_expression`, `select_with` (a `SELECT WITH <modifier>`), `aggregate_group_by_having` (an
-aggregate's own `GROUP BY`), and the pipe forms `pipe_set_operation`, `pipe_call`,
-`pipe_with` and `subpipeline_statement` (pipe operators with no input).
+aggregate's own `GROUP BY`), a table-valued function's `table_argument_partitioning` (`PARTITION
+BY` or `ORDER BY` inside a `TABLE ( ... )` argument), `input_table_argument` and
+`function_or_sequence_argument` (`INPUT TABLE`, and `name => FUNCTION path` or `SEQUENCE path`),
+and the pipe forms `pipe_set_operation`, `pipe_with` and `subpipeline_statement` (pipe
+operators with no input).
+
+## Nesting
+
+No input exhausts the caller's stack, and none takes more than polynomial time in its length:
+
+- Each nested level (parentheses, subqueries, calls, `CASE`, `CAST`, types, `NOT` and similar
+  prefixes, subscript indexes, the operands of keyword-led calls such as `EXTRACT` and `TRIM`,
+  table-valued function arguments, parenthesised FROM items, joins and row patterns) runs on a
+  stack that grows on demand, so a 2 MiB thread parses as an 8 MiB one does. A statement
+  nesting past 200 levels is refused with "the statement nests too deeply", a parser check
+  rather than a syntax error; once one reading passes the limit, every other reading fails at
+  once. A level can cost more than one unit, so the limit allows 98 nested subqueries, 197
+  parentheses or calls, and fewer levels of mixed constructs. GoogleSQL's parser has no such
+  limit, so deeper inputs it accepts are refused here.
+- Flat chains of operators, set operations, joins and pipe operators parse in linear time, but
+  a statement whose tree nests more than 8,000 levels is refused with the same error, so a
+  consumer that recurses over the tree has a bound. This covers a chain of more than about
+  8,000 operands and chains nested in another chain's operand, which build a tree as deep as
+  all of them together. GoogleSQL accepts both.
+- A keyword-led call is read as its keyword form at most once at each position, so nested
+  calls such as `TRIM(TRIM(...))` do not repeat each other's work.
 
 ## Measured
 

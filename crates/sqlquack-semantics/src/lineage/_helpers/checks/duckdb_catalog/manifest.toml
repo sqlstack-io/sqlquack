@@ -1,0 +1,5 @@
+engine = "duckdb"
+engine_version = "2.0.0"
+extensions = ["autocomplete", "avro", "aws", "azure", "core_functions", "delta", "ducklake", "encodings", "excel", "fts", "httpfs", "iceberg", "icu", "inet", "json", "lance", "mysql_scanner", "parquet", "postgres_scanner", "quack", "spatial", "sqlite_scanner", "tpcds", "tpch", "unity_catalog", "vortex", "vss"]
+unloadable_extensions = ["motherduck", "odbc_scanner", "ui"]
+method = "duckdb_functions() and parser probes of duckdb_keywords(); written by scripts/extract_duckdb_catalog.py"

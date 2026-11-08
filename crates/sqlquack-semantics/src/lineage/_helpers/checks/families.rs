@@ -4,6 +4,7 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::types::models::DataType;
 
+use crate::lineage::_helpers::checks::coercion::Engine;
 use crate::lineage::_helpers::checks::relational::query_families;
 use crate::lineage::_helpers::tracing::expressions::expression_lineage;
 use crate::lineage::models::{LineageContext, LineageScope};
@@ -230,10 +231,20 @@ pub(crate) fn expression_family(
     match expression {
         Expression::Null(_) => return Family::Unknown,
         Expression::Function(_) | Expression::AggregateFunction(_) => {
-            return expression_lineage(expression, scope, context)
+            let family: Family = expression_lineage(expression, scope, context)
                 .data_type
                 .as_deref()
                 .map_or(Family::Unknown, type_family);
+            return match expression {
+                Expression::Function(function)
+                    if family == Family::Unknown
+                        && Engine::of(context) == Engine::BigQuery
+                        && function.name.eq_ignore_ascii_case("ARRAY") =>
+                {
+                    Family::Array
+                }
+                _ => family,
+            };
         }
         Expression::Cast(cast) | Expression::TryCast(cast) | Expression::SafeCast(cast) => {
             return data_type_family(&cast.to);

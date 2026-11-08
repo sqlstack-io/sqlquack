@@ -1,0 +1,3313 @@
+# Reviewed inputs to scripts/build_syntax_catalogue_bigquery.py; read by the build only.
+#
+# [[form]]: a form read by hand where the syntax is in prose, a table or example code
+#   blocks rather than a syntax block. Bound to the sha256 of the page's Markdown; the build
+#   refuses a form whose page changed. Fields: source, anchor, kind, label, family, grammar,
+#   basis, page_sha256.
+# [[page]]: the reviewed status of a page that yields no form (no_syntax_block or out_of_scope),
+#   with the reason, bound to the page's sha256.
+# [[block]]: the reviewed disposition of one code block the build would otherwise read as
+#   notation, or would refuse to read (it follows prose, sits under an argument heading, or
+#   holds a URL, a table, a mixed-case word, a lower-case keyword, unbalanced brackets or a
+#   mistyped quote). Bound to the block's sha256; a block that changes is unreviewed again,
+#   and a review that names no current block is a problem. status is one of:
+#   notation (read as written), corrected (grammar replaces it; `<name> ::= ...` lines are
+#   definitions), restated (its words must appear in the page's forms), example,
+#   not_syntax, out_of_scope. family overrides the page's family when set.
+
+[[form]]
+source = "doc.lexical"
+anchor = "Literals / String and bytes literals / Formats for quoted literals"
+kind = "special"
+label = "quoted-string"
+family = "expressions"
+grammar = [
+  "{ <single_quoted_string> | <double_quoted_string> }",
+]
+basis = "table"
+page_sha256 = "c9186adc6e32fe65b476583b7067c9d7e82022c538781fd7a0c8b176a1536606"
+
+[[form]]
+source = "doc.lexical"
+anchor = "Literals / String and bytes literals / Formats for quoted literals"
+kind = "special"
+label = "triple-quoted-string"
+family = "expressions"
+grammar = [
+  "{ <triple_single_quoted_string> | <triple_double_quoted_string> }",
+]
+basis = "table"
+page_sha256 = "c9186adc6e32fe65b476583b7067c9d7e82022c538781fd7a0c8b176a1536606"
+
+[[form]]
+source = "doc.lexical"
+anchor = "Literals / String and bytes literals / Formats for quoted literals"
+kind = "special"
+label = "raw-string"
+family = "expressions"
+grammar = [
+  "<raw_string>",
+]
+basis = "table"
+page_sha256 = "c9186adc6e32fe65b476583b7067c9d7e82022c538781fd7a0c8b176a1536606"
+
+[[form]]
+source = "doc.lexical"
+anchor = "Literals / String and bytes literals / Formats for quoted literals"
+kind = "special"
+label = "bytes"
+family = "expressions"
+grammar = [
+  "<bytes_literal>",
+]
+basis = "table"
+page_sha256 = "c9186adc6e32fe65b476583b7067c9d7e82022c538781fd7a0c8b176a1536606"
+
+[[form]]
+source = "doc.lexical"
+anchor = "Literals / String and bytes literals / Formats for quoted literals"
+kind = "special"
+label = "raw-bytes"
+family = "expressions"
+grammar = [
+  "<raw_bytes_literal>",
+]
+basis = "table"
+page_sha256 = "c9186adc6e32fe65b476583b7067c9d7e82022c538781fd7a0c8b176a1536606"
+
+[[form]]
+source = "doc.lexical"
+anchor = "Literals / String and bytes literals"
+kind = "special"
+label = "literal-concatenation"
+family = "expressions"
+grammar = [
+  "<string_literal> <string_literal> [ ... ]",
+  "<bytes_literal> <bytes_literal> [ ... ]",
+]
+basis = "prose"
+page_sha256 = "c9186adc6e32fe65b476583b7067c9d7e82022c538781fd7a0c8b176a1536606"
+
+[[form]]
+source = "doc.lexical"
+anchor = "Literals / Integer literals"
+kind = "special"
+label = "integer"
+family = "expressions"
+grammar = [
+  "[ { + | - } ] { <decimal_digits> | <hex_integer> }",
+]
+basis = "prose"
+page_sha256 = "c9186adc6e32fe65b476583b7067c9d7e82022c538781fd7a0c8b176a1536606"
+
+[[form]]
+source = "doc.lexical"
+anchor = "Literals / `NUMERIC` literals"
+kind = "special"
+label = "numeric"
+family = "expressions"
+grammar = [
+  "NUMERIC <numeric_string>",
+]
+basis = "prose"
+page_sha256 = "c9186adc6e32fe65b476583b7067c9d7e82022c538781fd7a0c8b176a1536606"
+
+[[form]]
+source = "doc.lexical"
+anchor = "Literals / `BIGNUMERIC` literals"
+kind = "special"
+label = "bignumeric"
+family = "expressions"
+grammar = [
+  "BIGNUMERIC <numeric_string>",
+]
+basis = "prose"
+page_sha256 = "c9186adc6e32fe65b476583b7067c9d7e82022c538781fd7a0c8b176a1536606"
+
+[[form]]
+source = "doc.lexical"
+anchor = "Literals / Floating point literals"
+kind = "special"
+label = "floating-point"
+family = "expressions"
+grammar = [
+  "[ { + | - } ] <floating_point_literal>",
+]
+basis = "code_block"
+page_sha256 = "c9186adc6e32fe65b476583b7067c9d7e82022c538781fd7a0c8b176a1536606"
+
+[[form]]
+source = "doc.lexical"
+anchor = "Literals / Array literals"
+kind = "special"
+label = "array"
+family = "expressions"
+grammar = [
+  "[ ARRAY [ \"<\" <element_type> \">\" ] ] \"[\" [ <literal> [ , ... ] ] \"]\"",
+]
+basis = "prose"
+page_sha256 = "c9186adc6e32fe65b476583b7067c9d7e82022c538781fd7a0c8b176a1536606"
+
+[[form]]
+source = "doc.lexical"
+anchor = "Identifiers / Quoted identifiers"
+kind = "special"
+label = "quoted-identifier"
+family = "expressions"
+grammar = [
+  "<quoted_identifier>",
+]
+basis = "prose"
+page_sha256 = "c9186adc6e32fe65b476583b7067c9d7e82022c538781fd7a0c8b176a1536606"
+
+[[form]]
+source = "doc.lexical"
+anchor = "Query parameters / Positional query parameters"
+kind = "special"
+label = "positional-parameter"
+family = "expressions"
+grammar = [
+  "?",
+]
+basis = "prose"
+page_sha256 = "c9186adc6e32fe65b476583b7067c9d7e82022c538781fd7a0c8b176a1536606"
+
+[[form]]
+source = "doc.lexical"
+anchor = "Comments / Single-line comments"
+kind = "special"
+label = "hash-comment"
+family = "expressions"
+grammar = [
+  "\"#\" <comment_text>",
+]
+basis = "code_block"
+page_sha256 = "c9186adc6e32fe65b476583b7067c9d7e82022c538781fd7a0c8b176a1536606"
+
+[[form]]
+source = "doc.lexical"
+anchor = "Comments / Single-line comments"
+kind = "special"
+label = "dash-comment"
+family = "expressions"
+grammar = [
+  "-- <comment_text>",
+]
+basis = "code_block"
+page_sha256 = "c9186adc6e32fe65b476583b7067c9d7e82022c538781fd7a0c8b176a1536606"
+
+[[form]]
+source = "doc.lexical"
+anchor = "Comments / Multiline comments"
+kind = "special"
+label = "block-comment"
+family = "expressions"
+grammar = [
+  "/* <comment_text> */",
+]
+basis = "code_block"
+page_sha256 = "c9186adc6e32fe65b476583b7067c9d7e82022c538781fd7a0c8b176a1536606"
+
+[[form]]
+source = "doc.lexical"
+anchor = "Trailing commas"
+kind = "statement"
+label = "trailing-comma"
+family = "query"
+grammar = [
+  "SELECT <select_item> [ , ... ] , [ FROM <from_item> ]",
+]
+basis = "prose"
+page_sha256 = "c9186adc6e32fe65b476583b7067c9d7e82022c538781fd7a0c8b176a1536606"
+
+[[form]]
+source = "doc.lexical"
+anchor = "Terminating semicolons"
+kind = "statement"
+label = "statement-separator"
+family = "utility"
+grammar = [
+  "<statement> ; <statement> [ ; ]",
+]
+basis = "prose"
+page_sha256 = "c9186adc6e32fe65b476583b7067c9d7e82022c538781fd7a0c8b176a1536606"
+
+[[form]]
+source = "doc.procedural-language"
+anchor = "Loops / `LEAVE`"
+kind = "statement"
+label = "leave"
+family = "utility"
+grammar = [
+  "LEAVE",
+]
+basis = "heading"
+page_sha256 = "a135d3a5883a2d9f4fafae0f4575240f56c16542e979fbd855e9c613ad0feab1"
+
+[[form]]
+source = "doc.procedural-language"
+anchor = "Loops / `ITERATE`"
+kind = "statement"
+label = "iterate"
+family = "utility"
+grammar = [
+  "ITERATE",
+]
+basis = "heading"
+page_sha256 = "a135d3a5883a2d9f4fafae0f4575240f56c16542e979fbd855e9c613ad0feab1"
+
+[[form]]
+source = "doc.lexical"
+anchor = "Table names"
+kind = "special"
+label = "dashed-table-name"
+family = "expressions"
+grammar = [
+  "{ <dashed_project_id> . <dataset_name> . <table_name> | <dashed_table_name> }",
+]
+basis = "prose"
+page_sha256 = "c9186adc6e32fe65b476583b7067c9d7e82022c538781fd7a0c8b176a1536606"
+
+[[form]]
+source = "doc.query-syntax"
+anchor = "Join operation / Join operations in a sequence"
+kind = "statement"
+label = "consecutive-join-conditions"
+family = "query"
+grammar = [
+  "FROM <from_item> JOIN <from_item> JOIN <from_item> { ON <bool_expression> | USING ( <column_name> [ , ... ] ) } { ON <bool_expression> | USING ( <column_name> [ , ... ] ) }",
+  "FROM <from_item> JOIN <from_item> JOIN <from_item> JOIN <from_item> { ON <bool_expression> | USING ( <column_name> [ , ... ] ) } { ON <bool_expression> | USING ( <column_name> [ , ... ] ) } { ON <bool_expression> | USING ( <column_name> [ , ... ] ) }",
+]
+basis = "code_block"
+page_sha256 = "4ec686ef1316e93c61a613d26565c54e94e82b63b37446006c7d7c9bcc904f6a"
+
+[[form]]
+source = "doc.query-syntax"
+anchor = "`FROM` clause / `FOR SYSTEM_TIME AS OF`"
+kind = "statement"
+label = "for-system-time-as-of"
+family = "query"
+grammar = [
+  "FROM <table_name> [ <as_alias> ] FOR SYSTEM_TIME AS OF <timestamp_expression>",
+]
+basis = "code_block"
+page_sha256 = "4ec686ef1316e93c61a613d26565c54e94e82b63b37446006c7d7c9bcc904f6a"
+
+[[form]]
+source = "doc.data-types"
+anchor = "Boolean type"
+kind = "special"
+label = "boolean-literal"
+family = "expressions"
+grammar = [
+  "{ TRUE | FALSE }",
+]
+basis = "table"
+page_sha256 = "0c0aff6b8e6c373ffa58ec5ca4c1e69cf5300cc1d2d53a47affc849c7f1688a0"
+
+[[form]]
+source = "doc.data-types"
+anchor = "Nullable data types"
+kind = "special"
+label = "null-literal"
+family = "expressions"
+grammar = [
+  "NULL",
+]
+basis = "prose"
+page_sha256 = "0c0aff6b8e6c373ffa58ec5ca4c1e69cf5300cc1d2d53a47affc849c7f1688a0"
+
+[[form]]
+source = "doc.reference.system-variables"
+anchor = "System variables reference"
+kind = "special"
+label = "system-variable"
+family = "expressions"
+grammar = [
+  "@@<system_variable>",
+]
+basis = "code_block"
+page_sha256 = "5029efe43ad170bbcd3dd9f08f1a0445c8185ddae18157524dca078d01d30a56"
+
+[[form]]
+source = "doc.reference.system-variables"
+anchor = "Examples"
+kind = "statement"
+label = "set-system-variable"
+family = "transaction_session"
+grammar = [
+  "SET @@<system_variable> = <expression>",
+]
+basis = "code_block"
+page_sha256 = "5029efe43ad170bbcd3dd9f08f1a0445c8185ddae18157524dca078d01d30a56"
+
+[[page]]
+source = "doc.migrating-from-legacy-sql"
+status = "out_of_scope"
+reason = "compares legacy SQL, a different BigQuery dialect, with GoogleSQL; its legacy blocks are not GoogleSQL and its GoogleSQL blocks are examples of forms catalogued from their own pages"
+page_sha256 = "833cbb3730047b660cfbc09f06520562b90d6f7e4f4f38aefc58603a9a2df473"
+
+[[page]]
+source = "doc.collation-concepts"
+status = "no_syntax_block"
+reason = "explains collation; the COLLATE clauses it shows are catalogued from the DDL pages and the COLLATE function, and its code blocks are examples"
+page_sha256 = "c3733cb1af965eb45ad6abb4bb9ff2e5fb1b1ed0966fd51a71c34ca987f8f606"
+
+[[page]]
+source = "doc.conversion-rules"
+status = "no_syntax_block"
+reason = "conversion and coercion rules in tables; CAST and SAFE_CAST are catalogued from the conversion functions page"
+page_sha256 = "6563b7e974054e6c83d19b7901e21e9e0724914ffe98e02b64d0b0b9d67bfffb"
+
+[[page]]
+source = "doc.functions-all"
+status = "no_syntax_block"
+reason = "an index table of every function, linking each to its page; the audit checks its names against the catalogued calls"
+page_sha256 = "a283640033a4df7adb2a4c47b51e8989f0e0827e801d03fb0c23cae847e94721"
+
+[[page]]
+source = "doc.window-functions"
+status = "no_syntax_block"
+reason = "an index table of the window functions, linking each to its page"
+page_sha256 = "90ae5c6949c79950ba39c686de663bae13cfc82de7b18199da7955122f6e6dfd"
+
+[[page]]
+source = "doc.graph-conditional-expressions"
+status = "no_syntax_block"
+reason = "says GQL supports every GoogleSQL conditional expression and links to that page"
+page_sha256 = "bf2f7f59a20d5d2b8e1b7a94cbd0a56aa396e261c079019707c7f903aed41f98"
+
+[[page]]
+source = "doc.graph-data-types"
+status = "no_syntax_block"
+reason = "GRAPH_ELEMENT and GRAPH_PATH are types a graph query produces; the page gives no syntax for writing them"
+page_sha256 = "0ea48960d75da46e40511908dbfb7a76737a281704bcfd0535df427ab6a1b56f"
+
+[[page]]
+source = "doc.graph-intro"
+status = "no_syntax_block"
+reason = "an introduction to GQL statements; the statements are catalogued from the graph query statements page"
+page_sha256 = "bc692ffa5dda98a56a6d924a4e5c7a29acfb5d77dfbe6a49cd08681c5c6e9061"
+
+[[page]]
+source = "doc.text-analysis"
+status = "no_syntax_block"
+reason = "the analyzers and their JSON analyzer_options values, the content of string literals; CREATE SEARCH INDEX and TEXT_ANALYZE are catalogued from their own pages"
+page_sha256 = "71c08158c6342867bd01c16719e8c58d1683be7bb6a357c80bbc75d589e638f7"
+
+[[form]]
+source = "doc.procedural-language"
+anchor = "RETURN"
+kind = "statement"
+label = "return"
+family = "utility"
+grammar = [
+  "RETURN",
+]
+basis = "heading"
+page_sha256 = "a135d3a5883a2d9f4fafae0f4575240f56c16542e979fbd855e9c613ad0feab1"
+
+[[form]]
+source = "doc.functions-reference"
+anchor = "Chained function calls"
+kind = "special"
+label = "chained-function-calls"
+family = "expressions"
+grammar = [
+  "( <expression> ) . <function_name> ( [ <argument> [ , ... ] ] )",
+  "( <expression> ) . ( <function_path> ) ( [ <argument> [ , ... ] ] )",
+]
+basis = "code_block"
+page_sha256 = "ec2c0bf36b2b210b68a7bc17b007a9cdfbd6ff959b64e14fc2f79b57f5b8b232"
+
+[[form]]
+source = "doc.data-definition-language"
+anchor = "ALTER COLUMN SET GENERATED"
+kind = "statement"
+label = "alter-column-set-generated-default-mode"
+family = "ddl"
+grammar = [
+  "ALTER TABLE [ IF EXISTS ] <table_name> ALTER COLUMN [ IF EXISTS ] <column_name> SET GENERATED AS IDENTITY ( [ START WITH <start_value> ] [ INCREMENT BY <increment_value> ] )",
+]
+basis = "prose"
+page_sha256 = "e137dae1c195d2643576c250f9fe8469e93b554f4add7bfcd27fa3fa0025e1df"
+
+[[form]]
+source = "doc.data-definition-language"
+anchor = "ALTER COLUMN SET OPTIONS"
+kind = "statement"
+label = "alter-column-set-options-append"
+family = "ddl"
+grammar = [
+  "ALTER TABLE [ IF EXISTS ] <table_name> ALTER COLUMN [ IF EXISTS ] <column_name> SET OPTIONS ( DATA_POLICIES += <data_policies> )",
+]
+basis = "code_block"
+page_sha256 = "e137dae1c195d2643576c250f9fe8469e93b554f4add7bfcd27fa3fa0025e1df"
+
+[[block]]
+source = "doc.aggregate-dp-functions"
+block_sha256 = "a66a8eeb61de072a6c36e8b1bb9649f4911572cd21ce3cc7f1abb0bdc58b5680"
+status = "corrected"
+reason = "the synopsis prefixes the call with 'WITH DIFFERENTIAL_PRIVACY ...' to say it runs only inside a differentially private SELECT (catalogued as bq.query.differential-privacy); the call itself is the form"
+grammar = [
+  "AVG ( <expression> [ , contribution_bounds_per_group => ( <lower_bound> , <upper_bound> ) ] )",
+]
+family = ""
+
+[[block]]
+source = "doc.aggregate-dp-functions"
+block_sha256 = "47bb95cd7b9de25e9c10c4b731325b7e54da6733a833ae51658a4fd764e1415d"
+status = "corrected"
+reason = "as for AVG: the 'WITH DIFFERENTIAL_PRIVACY ...' prefix names the clause the call needs; the call is the form"
+grammar = [
+  "COUNT ( * [ , contribution_bounds_per_group => ( <lower_bound> , <upper_bound> ) ] )",
+]
+family = ""
+
+[[block]]
+source = "doc.aggregate-dp-functions"
+block_sha256 = "25978cdbda5228314a725c88de041779e8ae934a55b6a153c78e5a2d865a5614"
+status = "corrected"
+reason = "as for AVG: the 'WITH DIFFERENTIAL_PRIVACY ...' prefix names the clause the call needs; the call is the form"
+grammar = [
+  "COUNT ( <expression> [ , contribution_bounds_per_group => ( <lower_bound> , <upper_bound> ) ] )",
+]
+family = ""
+
+[[block]]
+source = "doc.aggregate-dp-functions"
+block_sha256 = "1bb6e3dc08590be8c36d8a95b64d34eca1f7db0f8c16a6f4c22a289d5875c5aa"
+status = "corrected"
+reason = "as for AVG: the 'WITH DIFFERENTIAL_PRIVACY ...' prefix names the clause the call needs; the call is the form"
+grammar = [
+  "PERCENTILE_CONT ( <expression> , <percentile> , contribution_bounds_per_row => ( <lower_bound> , <upper_bound> ) )",
+]
+family = ""
+
+[[block]]
+source = "doc.aggregate-dp-functions"
+block_sha256 = "8339ddb2b29d203cd7564350497623b7016f6af7ea16c125f159db8eb69defce"
+status = "corrected"
+reason = "as for AVG: the 'WITH DIFFERENTIAL_PRIVACY ...' prefix names the clause the call needs; the call is the form"
+grammar = [
+  "SUM ( <expression> [ , contribution_bounds_per_group => ( <lower_bound> , <upper_bound> ) ] )",
+]
+family = ""
+
+[[block]]
+source = "doc.aggregate-dp-functions"
+block_sha256 = "56528c94213cd29dafcb3c8daf868e7fd6cbf177e18737d2d0371e8b62ba43b4"
+status = "restated"
+reason = "the contribution_bounds_per_group and contribution_bounds_per_row named arguments, restated from the AVG, COUNT, SUM and PERCENTILE_CONT signatures"
+
+[[block]]
+source = "doc.aggregate-function-calls"
+block_sha256 = "df6e0e1029635e667db9b779ba6d815b9f42993f6fd42a82185c788d4d71ee17"
+status = "example"
+reason = "calls the page shows failing (marked -- Error), not syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-agg"
+block_sha256 = "eff091efebe07defc09b6df3f4614edc44c56c48e9650249ad091e3e2d259cce"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-agg"
+block_sha256 = "6f159006432f526e5cfdce58942df5854e55f50a82d874841d741c900e8b90b0"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-classify"
+block_sha256 = "d3d91760ad2df9f897d3ffb43da2e26d20b24e0b8c4824df5d440eb899b695a2"
+status = "example"
+reason = "an example call or expression under , with example names and values"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-classify"
+block_sha256 = "8423fb58f032a9d535a103f972a25659d02462f91de5a4008f17c2ceda611290"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-classify"
+block_sha256 = "61392125c7782b38227e9ae3386a712dc44319c5d4de87ab5a09816d22f92b59"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-classify"
+block_sha256 = "8faa1e54f50df53bfea69ae79e7217ec98a26b868951ed258deeb3b6609dfa58"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (sits under an argument heading of a BigQuery ML page): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-classify"
+block_sha256 = "70b14be05bc4fd147b9313df2aff75b1cdf3ccb4f943976145b607cdbf6b02e6"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-embed"
+block_sha256 = "f6c9573885018c8959226a11f188d40189159a4e48c1698c7db9602bb50627cf"
+status = "notation"
+reason = "the AI.EMBED signature for Text embedding, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-embed"
+block_sha256 = "11bbda2f4eb99161aa3ffb0000f8e3db2518f89e878644fddaa77810812ac278"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-embed"
+block_sha256 = "17878338cc6e50d403d9462515c9676afaa8505b455e3799a2d283b082e87a16"
+status = "notation"
+reason = "the AI.EMBED signature for Multimodal embedding, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-embed"
+block_sha256 = "11bbda2f4eb99161aa3ffb0000f8e3db2518f89e878644fddaa77810812ac278"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-evaluate"
+block_sha256 = "6113f6ed69cf62257f9276d3f2dff678b5bbcb980d469481c962b5d9de4efc66"
+status = "notation"
+reason = "the TimesFM AI.EVALUATE signature, under a variant heading of the Syntax section"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-evaluate"
+block_sha256 = "16c5af43c952c063307911a809117df0edb172f2081786276dc38298aeb93323"
+status = "corrected"
+reason = "the TabFM AI.EVALUATE signature; TRAINING_TABLE, TRAINING_QUERY, PREDICTION_TABLE and PREDICTION_QUERY are placeholders the page lists in pairs ('TRAINING_TABLE | TRAINING_QUERY')"
+grammar = [
+  "SELECT * FROM AI.EVALUATE ( { TABLE <TRAINING_TABLE> | ( <TRAINING_QUERY> ) } , { TABLE <PREDICTION_TABLE> | ( <PREDICTION_QUERY> ) } , label_col => 'LABEL_COL' )",
+]
+family = ""
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-forecast"
+block_sha256 = "10856d01af50479a1f60ba7fb6b551e25a10335fa02866e9628dd4dbc0b7519c"
+status = "notation"
+reason = "the univariate AI.FORECAST signature, under a variant heading of the Syntax section"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-forecast"
+block_sha256 = "2890599420ce78d2805923ba5c37a431926db22123dd14f61e53ce290995baa2"
+status = "corrected"
+reason = "the multivariate AI.FORECAST signature; PAST_COVARIATE_COLS and FUTURE_COVARIATE_COLS are argument placeholders the page does not list as bullets"
+grammar = [
+  "SELECT * FROM AI.FORECAST ( { TABLE <TABLE> | ( <QUERY_STATEMENT> ) } , target_cols => \"[\" <TARGET_COLS> \"]\" , timestamp_col => 'TIMESTAMP_COL' , model => 'MODEL' [ , id_cols => \"[\" <ID_COLS> \"]\" ] [ , horizon => <HORIZON> ] [ , confidence_level => <CONFIDENCE_LEVEL> ] [ , context_window => <CONTEXT_WINDOW> ] [ , past_covariate_cols => \"[\" <PAST_COVARIATE_COLS> \"]\" ] [ , future_covariate_cols => \"[\" <FUTURE_COVARIATE_COLS> \"]\" ] [ , output_historical_time_series => <OUTPUT_HISTORICAL_TIME_SERIES> ] )",
+]
+family = ""
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate"
+block_sha256 = "85a7b045a673185508ca150dcd6fbf64e131632de92070fb2697fcda0d2610f5"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate"
+block_sha256 = "70b14be05bc4fd147b9313df2aff75b1cdf3ccb4f943976145b607cdbf6b02e6"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate"
+block_sha256 = "5fa9476c9a773a223f80d18c844172593f0ef7efd2a7a154b68934e81e6f2b4c"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate"
+block_sha256 = "6f159006432f526e5cfdce58942df5854e55f50a82d874841d741c900e8b90b0"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate"
+block_sha256 = "9173955be5dfa519bfb072abdd2e05bc5bca1db79d1717b96614e5d3f9988f5c"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-bool"
+block_sha256 = "85a7b045a673185508ca150dcd6fbf64e131632de92070fb2697fcda0d2610f5"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-bool"
+block_sha256 = "70b14be05bc4fd147b9313df2aff75b1cdf3ccb4f943976145b607cdbf6b02e6"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-bool"
+block_sha256 = "9173955be5dfa519bfb072abdd2e05bc5bca1db79d1717b96614e5d3f9988f5c"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-double"
+block_sha256 = "85a7b045a673185508ca150dcd6fbf64e131632de92070fb2697fcda0d2610f5"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-double"
+block_sha256 = "70b14be05bc4fd147b9313df2aff75b1cdf3ccb4f943976145b607cdbf6b02e6"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-double"
+block_sha256 = "9173955be5dfa519bfb072abdd2e05bc5bca1db79d1717b96614e5d3f9988f5c"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-embedding"
+block_sha256 = "2337d4345fd995dc67ffa8b8731f6d582442b97d16f10f788adc0b2a43001b48"
+status = "notation"
+reason = "the AI.GENERATE_EMBEDDING signature for Text embedding, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-embedding"
+block_sha256 = "d11eb798688c5553542625ee5e6c23687d0f7db357161575ec927a69c4411893"
+status = "notation"
+reason = "the AI.GENERATE_EMBEDDING signature for Open models, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-embedding"
+block_sha256 = "f196b497ef8b0284b597ac51c32c5875760a33dbde23cffdddba2ad72ba766ce"
+status = "notation"
+reason = "the AI.GENERATE_EMBEDDING signature for Multimodal embedding, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-embedding"
+block_sha256 = "b0cf97364d3ae5afc078d834378c6e49e7e213e00e5172620234a008e58099eb"
+status = "notation"
+reason = "the AI.GENERATE_EMBEDDING signature for Multimodal embedding, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-embedding"
+block_sha256 = "c16c7372f909ff11e3adb046fa36c2014f420f129f36746e85fdcba9584d8046"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-embedding"
+block_sha256 = "d11eb798688c5553542625ee5e6c23687d0f7db357161575ec927a69c4411893"
+status = "notation"
+reason = "the AI.GENERATE_EMBEDDING signature for PCA, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-embedding"
+block_sha256 = "9b6174fb40529151e89e4ad4af0c555dbe4ff11faefd70db205d9be6fb0aa29e"
+status = "notation"
+reason = "the AI.GENERATE_EMBEDDING signature for Autoencoder, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-embedding"
+block_sha256 = "87797e61c8d207310fce6e4091ef1d838e21f07b6f1aaa60aabacb84aca4c74b"
+status = "notation"
+reason = "the AI.GENERATE_EMBEDDING signature for Matrix factorization, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-int"
+block_sha256 = "85a7b045a673185508ca150dcd6fbf64e131632de92070fb2697fcda0d2610f5"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-int"
+block_sha256 = "70b14be05bc4fd147b9313df2aff75b1cdf3ccb4f943976145b607cdbf6b02e6"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-int"
+block_sha256 = "9173955be5dfa519bfb072abdd2e05bc5bca1db79d1717b96614e5d3f9988f5c"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-text"
+block_sha256 = "770c71dacf430d4d216d636621d576a7876474a876d8172d7b879504e9ef233b"
+status = "notation"
+reason = "the AI.GENERATE_TEXT signature for Gemini, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-text"
+block_sha256 = "c753996287d3d63c34bd000019b3092a1d98643aa8a9c536157e15d9f86842db"
+status = "not_syntax"
+reason = "argument detail under Syntax for standard tables / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-text"
+block_sha256 = "efcda817589278129d1b7d195d3939c26c3f31b30188050afcb2e6ac6c739f3d"
+status = "notation"
+reason = "the AI.GENERATE_TEXT signature for Claude, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-text"
+block_sha256 = "0e82e2b684b01cdafcf11788ff2f4ba5cfeffec131789b9462e5482f1d066796"
+status = "notation"
+reason = "the AI.GENERATE_TEXT signature for Llama, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-text"
+block_sha256 = "0e82e2b684b01cdafcf11788ff2f4ba5cfeffec131789b9462e5482f1d066796"
+status = "notation"
+reason = "the AI.GENERATE_TEXT signature for Mistral AI, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-generate-text"
+block_sha256 = "29987a7025aa155a823e4555c85bdba25e9aa45a2eea321b4bb105b6afcd6213"
+status = "notation"
+reason = "the AI.GENERATE_TEXT signature for Open models, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-if"
+block_sha256 = "85a7b045a673185508ca150dcd6fbf64e131632de92070fb2697fcda0d2610f5"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-if"
+block_sha256 = "70b14be05bc4fd147b9313df2aff75b1cdf3ccb4f943976145b607cdbf6b02e6"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-key-drivers"
+block_sha256 = "4c35b5f493d393223c5400d4ee258e3844a4a6f38f5873166f2939cfe58f876a"
+status = "example"
+reason = "an example call or expression under , with example names and values"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-key-drivers"
+block_sha256 = "c84b18557898a83ebb2ccb0dc3291ef1037f6e39fc77500ee1fa037dce1980c7"
+status = "example"
+reason = "an example call or expression under Syntax / Arguments, with example names and values"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-key-drivers"
+block_sha256 = "463053499827a4387933c3abff7ba5aa0db45edbd3895167c305424ecd65ae81"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-parse-document"
+block_sha256 = "ce22b5b297523213ebfff8a903298e40c9888e6bdef626485df6a5e418f60d61"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-score"
+block_sha256 = "51527b8f597561faf4d8c7b7fe692291904b02ec95c07f207d5c400c87fba364"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-score"
+block_sha256 = "70b14be05bc4fd147b9313df2aff75b1cdf3ccb4f943976145b607cdbf6b02e6"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-search"
+block_sha256 = "09d8404c7003d96659954d9697005c2cb126e5dd3cbcf09a314208b3880169ee"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-similarity"
+block_sha256 = "037edea4c3e4e7c997d32366f3c15e23d44198b9b97d29943c456a41e7e38a40"
+status = "notation"
+reason = "the AI.SIMILARITY signature for Text embedding, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-similarity"
+block_sha256 = "11bbda2f4eb99161aa3ffb0000f8e3db2518f89e878644fddaa77810812ac278"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-similarity"
+block_sha256 = "9d7dcbd94d897fcfbcba8a8f3475f0131005036cdab1b64f6a8d741581297457"
+status = "notation"
+reason = "the AI.SIMILARITY signature for Multimodal embedding, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-ai-similarity"
+block_sha256 = "11bbda2f4eb99161aa3ffb0000f8e3db2518f89e878644fddaa77810812ac278"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create"
+block_sha256 = "a2ad3ba51b54268c1162e6f7f51946f83cbadcdff68da61414ec15e64c94aa3e"
+status = "example"
+reason = "an example under `CREATE MODEL` syntax / `TRANSFORM`"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create"
+block_sha256 = "b0701bde7e107bd834d4cee11801c13a575158d0f9bac21f03a04c7830648c41"
+status = "example"
+reason = "an example under `CREATE MODEL` syntax / `TRANSFORM`"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create"
+block_sha256 = "54638a9f5098c5b2c662daa872d8ac2d1f65115d1a9ad89fcdc6fb2ade0ed305"
+status = "example"
+reason = "an example under `CREATE MODEL` syntax / `TRANSFORM`"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create"
+block_sha256 = "1d2e834df30ebc0401194b4cfe502c29ff3055254980801e9e1ca0761233fd6a"
+status = "restated"
+reason = "the MODEL_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create"
+block_sha256 = "9338f40f43cd232d026bfa5fa4a02671d3d0ab9c524dff3a8cdb733652d6ff02"
+status = "restated"
+reason = "the AS part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create"
+block_sha256 = "b2fd5b7c5ac6086d1cbe20e487bdf3b5f4a8fb0734a6fcc85a6d2a46c7f53328"
+status = "restated"
+reason = "the AS part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create"
+block_sha256 = "743d445806bd639f03fde61c9b7cb2ba394e78f202da3a107f2d823a44d31408"
+status = "example"
+reason = "an example under `CREATE MODEL` syntax / `AS` / `holiday_statement`"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create"
+block_sha256 = "5dc58dd8a75e55adfd1b50e5f1114f9b12a4524829f0ae7434aff8ea42fe4a97"
+status = "not_syntax"
+reason = "argument detail under Quotas / Maximum number of `CREATE MODEL` statements (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-autoencoder"
+block_sha256 = "333c1caeddaabf66de36d8b36a12ab8605e266de7ffef185201979c837c6a73d"
+status = "corrected"
+reason = "model_option_list has a stray ']' after its MODEL_TYPE entry, and its ACTIVATION_FN choice opens one brace for two closing ones; the value list is braced as the other options' are"
+grammar = [
+  "{ CREATE MODEL | CREATE MODEL IF NOT EXISTS | CREATE OR REPLACE MODEL } <model_name> OPTIONS ( <model_option_list> ) AS <query_statement>",
+  "<model_option_list> ::= MODEL_TYPE = { 'AUTOENCODER' } [ , L1_REG_ACTIVATION = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , LEARN_RATE = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , OPTIMIZER = { { 'ADAGRAD' | 'ADAM' | 'FTRL' | 'RMSPROP' | 'SGD' } | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , ACTIVATION_FN = { { 'RELU' | 'RELU6' | 'ELU' | 'SELU' | 'SIGMOID' | 'TANH' } | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , BATCH_SIZE = { <int64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , DROPOUT = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , HIDDEN_UNITS = { <int_array> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , EARLY_STOP = { TRUE | FALSE } ] [ , MIN_REL_PROGRESS = <float64_value> ] [ , MAX_ITERATIONS = <int64_value> ] [ , WARM_START = { TRUE | FALSE } ] [ , NUM_TRIALS = <int64_value> ] [ , MAX_PARALLEL_TRIALS = <int64_value> ] [ , HPARAM_TUNING_ALGORITHM = { 'VIZIER_DEFAULT' | 'RANDOM_SEARCH' | 'GRID_SEARCH' } ] [ , HPARAM_TUNING_OBJECTIVES = { MEAN_SQUARED_ERROR | ... } ] [ , KMS_KEY_NAME = <string_value> ]",
+]
+family = ""
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-autoencoder"
+block_sha256 = "9464908f8f5d24ae487c2f702bdf6fea0bb68b3459325f59603e6fbcf09ad4fe"
+status = "restated"
+reason = "the MODEL_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-autoencoder"
+block_sha256 = "7db8bf2caaa1effc094eaa699789e8e3e70e93ba10f6d8e34e97b63665f1158c"
+status = "restated"
+reason = "the HIDDEN_UNITS part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-autoencoder"
+block_sha256 = "143ab5ccd0ee5368a0356e8bb7a927213efd9e1b92c5d9e01398daf161c6902b"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `HIDDEN_UNITS` (has a lower-case keyword): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-autoencoder"
+block_sha256 = "10b8a8885596eaefd02c2041998cd96ea088e918b73cc941fc59d87d154424af"
+status = "restated"
+reason = "the EARLY_STOP part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-autoencoder"
+block_sha256 = "d55ee493954cc0436ba65d16371e45e9478d83c11fec5d257157e4716b68150c"
+status = "restated"
+reason = "the WARM_START part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-autoencoder"
+block_sha256 = "d8f94cdea6d946a12a5f3647072f97b6b50d0d86e4bc6b0e72b7242886ff4dde"
+status = "restated"
+reason = "the HPARAM_TUNING_ALGORITHM part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-autoencoder"
+block_sha256 = "e0817213c25097d3719c4dfb7a5783b907c508943386ad012e26f45f1f058bc4"
+status = "restated"
+reason = "the HPARAM_TUNING_OBJECTIVES part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-autoencoder"
+block_sha256 = "943b42c45b3731840199914612e02011d5265dad3fae960d0778bbda2d63ee6a"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `KMS_KEY_NAME` (is one string literal, the content of a string value): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-autoencoder"
+block_sha256 = "076e9f6a2bac77da7589f1e05fbdda49946fb0a9dc640780c603de2846e39c6e"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / Internal parameter defaults (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-automl"
+block_sha256 = "8700381c17cef2952c682d1f9bd6b4239ae9a0c2512b1d0447cb38573e62bcce"
+status = "restated"
+reason = "the MODEL_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-automl"
+block_sha256 = "ec281de2df1d57b6d0a20690f41025d2cbfb336f2272b2a4ffe6327bdcb035e0"
+status = "restated"
+reason = "the OPTIMIZATION_OBJECTIVE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-automl"
+block_sha256 = "937c4b5fc60e53b96b09d992808d822cc45584a5bb4b48984b58f05d7747d707"
+status = "example"
+reason = "an example OPTIMIZATION_OBJECTIVE value; the syntax block writes the value as a placeholder"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-automl"
+block_sha256 = "943b42c45b3731840199914612e02011d5265dad3fae960d0778bbda2d63ee6a"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `KMS_KEY_NAME` (is one string literal, the content of a string value): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-boosted-tree"
+block_sha256 = "0434c7a02b5a82c5c39fd76f12723b0c57cc7eb70d3730cc4dc1e2f6e9b8b64a"
+status = "corrected"
+reason = "CATEGORY_ENCODING_METHOD's first value is written 'ONE_HOT_ENCODING` (a backquote closing the string), which pairs every later quote wrongly; read with the closing quote restored"
+grammar = [
+  "{ CREATE MODEL | CREATE MODEL IF NOT EXISTS | CREATE OR REPLACE MODEL } <model_name> OPTIONS ( <model_option_list> ) AS <query_statement>",
+  "<model_option_list> ::= MODEL_TYPE = { 'BOOSTED_TREE_CLASSIFIER' | 'BOOSTED_TREE_REGRESSOR' } [ , APPROX_GLOBAL_FEATURE_CONTRIB = { TRUE | FALSE } ] [ , CATEGORY_ENCODING_METHOD = { 'ONE_HOT_ENCODING' | 'TARGET_ENCODING' | 'LABEL_ENCODING' } ] [ , BOOSTER_TYPE = { { 'GBTREE' | 'DART' } | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , DART_NORMALIZE_TYPE = { { 'TREE' | 'FOREST' } | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , NUM_PARALLEL_TREE = { <int64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , MAX_TREE_DEPTH = { <int64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , DROPOUT = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , L1_REG = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , L2_REG = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , LEARN_RATE = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , TREE_METHOD = { { 'AUTO' | 'EXACT' | 'APPROX' | 'HIST' } | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , MIN_TREE_CHILD_WEIGHT = { <int64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , COLSAMPLE_BYTREE = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , COLSAMPLE_BYLEVEL = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , COLSAMPLE_BYNODE = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , MIN_SPLIT_LOSS = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , SUBSAMPLE = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , INSTANCE_WEIGHT_COL = <string_value> ] [ , AUTO_CLASS_WEIGHTS = { TRUE | FALSE } ] [ , CLASS_WEIGHTS = <struct_array> ] [ , ENABLE_GLOBAL_EXPLAIN = { TRUE | FALSE } ] [ , EARLY_STOP = { TRUE | FALSE } ] [ , MIN_REL_PROGRESS = <float64_value> ] [ , INPUT_LABEL_COLS = <string_array> ] [ , MAX_ITERATIONS = <int64_value> ] [ , DATA_SPLIT_METHOD = { 'AUTO_SPLIT' | 'RANDOM' | 'CUSTOM' | 'SEQ' | 'NO_SPLIT' } ] [ , DATA_SPLIT_EVAL_FRACTION = <float64_value> ] [ , DATA_SPLIT_TEST_FRACTION = <float64_value> ] [ , DATA_SPLIT_COL = <string_value> ] [ , NUM_TRIALS = <int64_value> ] [ , MAX_PARALLEL_TRIALS = <int64_value> ] [ , HPARAM_TUNING_ALGORITHM = { 'VIZIER_DEFAULT' | 'RANDOM_SEARCH' | 'GRID_SEARCH' } ] [ , HPARAM_TUNING_OBJECTIVES = { 'ROC_AUC' | 'R2_SCORE' | ... } ] [ , KMS_KEY_NAME = <string_value> ]",
+]
+family = ""
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-boosted-tree"
+block_sha256 = "4addf80d8352a9ca11ba0de0d933d90734c4083d6c4548f51712b9894f867019"
+status = "restated"
+reason = "the MODEL_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-boosted-tree"
+block_sha256 = "3cc98f4a6897edb28a6350047edc7c171cd4a45b04db8d5467ce8ecbd5f8a109"
+status = "restated"
+reason = "the APPROX_GLOBAL_FEATURE_CONTRIB part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-boosted-tree"
+block_sha256 = "f8f99613f768c80c729532f660f4ab2e14867986b196b64196e6acc8dcffd49a"
+status = "restated"
+reason = "the CATEGORY_ENCODING_METHOD part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-boosted-tree"
+block_sha256 = "ac0cefcd01d61184ab13283c02304657130ede9d5a6a15fb876975a27ba66f96"
+status = "restated"
+reason = "the AUTO_CLASS_WEIGHTS part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-boosted-tree"
+block_sha256 = "5e4adbc919760405ae3ca955bce290886c77cf8e95e67b05762e6a816e6d00b1"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `AUTO_CLASS_WEIGHTS` (sits under an argument heading of a BigQuery ML page): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-boosted-tree"
+block_sha256 = "637020d5292bdc25403773fb70b8934fae4cf2151143cc875f2c23b2aa243278"
+status = "example"
+reason = "an example CLASS_WEIGHTS value; the syntax block writes the value as struct_array"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-boosted-tree"
+block_sha256 = "baf230eeb4f009a767b11b47a4a2dbe3212266f03accd7bbac41712ef034b870"
+status = "restated"
+reason = "the ENABLE_GLOBAL_EXPLAIN part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-boosted-tree"
+block_sha256 = "10b8a8885596eaefd02c2041998cd96ea088e918b73cc941fc59d87d154424af"
+status = "restated"
+reason = "the EARLY_STOP part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-boosted-tree"
+block_sha256 = "dcf673cc7d3615abd40919f4d3c0a688ec11271a620eee884808f205517e065e"
+status = "restated"
+reason = "the DATA_SPLIT_METHOD part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-boosted-tree"
+block_sha256 = "e94ac04dfae769b5245c004c75e2f24487f54631c06dd0a07a4034ff9cd98798"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `DATA_SPLIT_METHOD` (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-boosted-tree"
+block_sha256 = "31c4c3e27bcd829e158df469d78228404c6f2ffec420ef9e634f36caf4491e10"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `DATA_SPLIT_METHOD` (has a lower-case keyword): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-boosted-tree"
+block_sha256 = "d8f94cdea6d946a12a5f3647072f97b6b50d0d86e4bc6b0e72b7242886ff4dde"
+status = "restated"
+reason = "the HPARAM_TUNING_ALGORITHM part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-boosted-tree"
+block_sha256 = "ca42c204c900809f2100ca4521422cf71c46f69945fa9d54c8647dc2af74a3a4"
+status = "restated"
+reason = "the HPARAM_TUNING_OBJECTIVES part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-boosted-tree"
+block_sha256 = "0d313eb0730faa8e324b6e97a8fad0198ea74e13f6629208ccadbe308e30caa4"
+status = "restated"
+reason = "the HPARAM_TUNING_OBJECTIVES part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-boosted-tree"
+block_sha256 = "943b42c45b3731840199914612e02011d5265dad3fae960d0778bbda2d63ee6a"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `KMS_KEY_NAME` (is one string literal, the content of a string value): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-boosted-tree"
+block_sha256 = "076e9f6a2bac77da7589f1e05fbdda49946fb0a9dc640780c603de2846e39c6e"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / Internal parameter defaults (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-contribution-analysis"
+block_sha256 = "0f9283c10e06de32eae55fb956ad3975cdaa02ae972f48077ea35cf472d79bfd"
+status = "restated"
+reason = "the MODEL_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-contribution-analysis"
+block_sha256 = "633197a25146bf8472ec5edbfe2bc7694fb6a6f3cd26b4a09292a8107bd768c9"
+status = "restated"
+reason = "the CONTRIBUTION_METRIC part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-contribution-analysis"
+block_sha256 = "ac267a9c2b6394d9f8d39bb7f44a72b44693e69ec32859aee94b06ef6fca1852"
+status = "restated"
+reason = "the CONTRIBUTION_METRIC part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-contribution-analysis"
+block_sha256 = "bf079afc598d044b98ead5e814884602eebc491276cbfab81320be12ccf8ef09"
+status = "restated"
+reason = "the CONTRIBUTION_METRIC part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-dnn-models"
+block_sha256 = "7de1105264b5415f5065e60c94f4059d1dcfcadf42f501763c34d75038179082"
+status = "restated"
+reason = "the MODEL_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-dnn-models"
+block_sha256 = "7db8bf2caaa1effc094eaa699789e8e3e70e93ba10f6d8e34e97b63665f1158c"
+status = "restated"
+reason = "the HIDDEN_UNITS part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-dnn-models"
+block_sha256 = "143ab5ccd0ee5368a0356e8bb7a927213efd9e1b92c5d9e01398daf161c6902b"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `HIDDEN_UNITS` (has a lower-case keyword): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-dnn-models"
+block_sha256 = "ac0cefcd01d61184ab13283c02304657130ede9d5a6a15fb876975a27ba66f96"
+status = "restated"
+reason = "the AUTO_CLASS_WEIGHTS part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-dnn-models"
+block_sha256 = "5e4adbc919760405ae3ca955bce290886c77cf8e95e67b05762e6a816e6d00b1"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `AUTO_CLASS_WEIGHTS` (sits under an argument heading of a BigQuery ML page): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-dnn-models"
+block_sha256 = "637020d5292bdc25403773fb70b8934fae4cf2151143cc875f2c23b2aa243278"
+status = "example"
+reason = "an example CLASS_WEIGHTS value; the syntax block writes the value as struct_array"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-dnn-models"
+block_sha256 = "10b8a8885596eaefd02c2041998cd96ea088e918b73cc941fc59d87d154424af"
+status = "restated"
+reason = "the EARLY_STOP part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-dnn-models"
+block_sha256 = "d55ee493954cc0436ba65d16371e45e9478d83c11fec5d257157e4716b68150c"
+status = "restated"
+reason = "the WARM_START part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-dnn-models"
+block_sha256 = "dcf673cc7d3615abd40919f4d3c0a688ec11271a620eee884808f205517e065e"
+status = "restated"
+reason = "the DATA_SPLIT_METHOD part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-dnn-models"
+block_sha256 = "e94ac04dfae769b5245c004c75e2f24487f54631c06dd0a07a4034ff9cd98798"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `DATA_SPLIT_METHOD` (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-dnn-models"
+block_sha256 = "31c4c3e27bcd829e158df469d78228404c6f2ffec420ef9e634f36caf4491e10"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `DATA_SPLIT_METHOD` (has a lower-case keyword): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-dnn-models"
+block_sha256 = "d8f94cdea6d946a12a5f3647072f97b6b50d0d86e4bc6b0e72b7242886ff4dde"
+status = "restated"
+reason = "the HPARAM_TUNING_ALGORITHM part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-dnn-models"
+block_sha256 = "ca42c204c900809f2100ca4521422cf71c46f69945fa9d54c8647dc2af74a3a4"
+status = "restated"
+reason = "the HPARAM_TUNING_OBJECTIVES part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-dnn-models"
+block_sha256 = "0d313eb0730faa8e324b6e97a8fad0198ea74e13f6629208ccadbe308e30caa4"
+status = "restated"
+reason = "the HPARAM_TUNING_OBJECTIVES part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-dnn-models"
+block_sha256 = "943b42c45b3731840199914612e02011d5265dad3fae960d0778bbda2d63ee6a"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `KMS_KEY_NAME` (is one string literal, the content of a string value): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-dnn-models"
+block_sha256 = "076e9f6a2bac77da7589f1e05fbdda49946fb0a9dc640780c603de2846e39c6e"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / Internal parameter defaults (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-glm"
+block_sha256 = "fa9588a3bcc45ab537381c706bab461e06830622dbed98d30c7cac7f1cdcbf31"
+status = "corrected"
+reason = "CATEGORY_ENCODING_METHOD's first value is written 'ONE_HOT_ENCODING` (a backquote closing the string), which pairs every later quote wrongly; read with the closing quote restored"
+grammar = [
+  "{ CREATE MODEL | CREATE MODEL IF NOT EXISTS | CREATE OR REPLACE MODEL } <model_name> OPTIONS ( <model_option_list> ) AS <query_statement>",
+  "<model_option_list> ::= MODEL_TYPE = { 'LINEAR_REG' | 'LOGISTIC_REG' } [ , OPTIMIZE_STRATEGY = { 'AUTO_STRATEGY' | 'BATCH_GRADIENT_DESCENT' | 'NORMAL_EQUATION' } ] [ , LEARN_RATE_STRATEGY = { 'LINE_SEARCH' | 'CONSTANT' } ] [ , LEARN_RATE = <float64_value> ] [ , LS_INIT_LEARN_RATE = <float64_value> ] [ , CALCULATE_P_VALUES = { TRUE | FALSE } ] [ , FIT_INTERCEPT = { TRUE | FALSE } ] [ , CATEGORY_ENCODING_METHOD = { 'ONE_HOT_ENCODING' | 'DUMMY_ENCODING' } ] [ , AUTO_CLASS_WEIGHTS = { TRUE | FALSE } ] [ , CLASS_WEIGHTS = <struct_array> ] [ , ENABLE_GLOBAL_EXPLAIN = { TRUE | FALSE } ] [ , INPUT_LABEL_COLS = <string_array> ] [ , L1_REG = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , L2_REG = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , MAX_ITERATIONS = <int64_value> ] [ , WARM_START = { TRUE | FALSE } ] [ , EARLY_STOP = { TRUE | FALSE } ] [ , MIN_REL_PROGRESS = <float64_value> ] [ , DATA_SPLIT_METHOD = { 'AUTO_SPLIT' | 'RANDOM' | 'CUSTOM' | 'SEQ' | 'NO_SPLIT' } ] [ , DATA_SPLIT_EVAL_FRACTION = <float64_value> ] [ , DATA_SPLIT_TEST_FRACTION = <float64_value> ] [ , DATA_SPLIT_COL = <string_value> ] [ , NUM_TRIALS = <int64_value> ] [ , MAX_PARALLEL_TRIALS = <int64_value> ] [ , HPARAM_TUNING_ALGORITHM = { 'VIZIER_DEFAULT' | 'RANDOM_SEARCH' | 'GRID_SEARCH' } ] [ , HPARAM_TUNING_OBJECTIVES = { 'R2_SCORE' | 'ROC_AUC' | ... } ] [ , MODEL_REGISTRY = { 'VERTEX_AI' } ] [ , VERTEX_AI_MODEL_ID = <string_value> ] [ , VERTEX_AI_MODEL_VERSION_ALIASES = <string_array> ] [ , KMS_KEY_NAME = <string_value> ]",
+]
+family = ""
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-glm"
+block_sha256 = "59fac9ced390fee16a851419b87c1927b11248b74617dd8850e44cc57c82d3ec"
+status = "restated"
+reason = "the MODEL_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-glm"
+block_sha256 = "7ecbbcb9e77bc2c79c7a31f05b40f55a78b0ed635d1098b063271cf14a54d3fc"
+status = "restated"
+reason = "the OPTIMIZE_STRATEGY part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-glm"
+block_sha256 = "c23e35aa2111782c676b4f17a5b3e0b0f6ec2d8989d300898add3dd32560675a"
+status = "restated"
+reason = "the LEARN_RATE_STRATEGY part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-glm"
+block_sha256 = "943a925f76e24605e24500fcd8fe250ee091ef006c6a8976f40c103b74732081"
+status = "restated"
+reason = "the FIT_INTERCEPT part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-glm"
+block_sha256 = "63066d01b0972b7ada6fb76813a7eacb2f92fa09715ef04823814d5b95574a6f"
+status = "restated"
+reason = "the CATEGORY_ENCODING_METHOD part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-glm"
+block_sha256 = "ac0cefcd01d61184ab13283c02304657130ede9d5a6a15fb876975a27ba66f96"
+status = "restated"
+reason = "the AUTO_CLASS_WEIGHTS part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-glm"
+block_sha256 = "5e4adbc919760405ae3ca955bce290886c77cf8e95e67b05762e6a816e6d00b1"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `AUTO_CLASS_WEIGHTS` (sits under an argument heading of a BigQuery ML page): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-glm"
+block_sha256 = "637020d5292bdc25403773fb70b8934fae4cf2151143cc875f2c23b2aa243278"
+status = "example"
+reason = "an example CLASS_WEIGHTS value; the syntax block writes the value as struct_array"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-glm"
+block_sha256 = "baf230eeb4f009a767b11b47a4a2dbe3212266f03accd7bbac41712ef034b870"
+status = "restated"
+reason = "the ENABLE_GLOBAL_EXPLAIN part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-glm"
+block_sha256 = "d55ee493954cc0436ba65d16371e45e9478d83c11fec5d257157e4716b68150c"
+status = "restated"
+reason = "the WARM_START part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-glm"
+block_sha256 = "10b8a8885596eaefd02c2041998cd96ea088e918b73cc941fc59d87d154424af"
+status = "restated"
+reason = "the EARLY_STOP part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-glm"
+block_sha256 = "dcf673cc7d3615abd40919f4d3c0a688ec11271a620eee884808f205517e065e"
+status = "restated"
+reason = "the DATA_SPLIT_METHOD part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-glm"
+block_sha256 = "e94ac04dfae769b5245c004c75e2f24487f54631c06dd0a07a4034ff9cd98798"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `DATA_SPLIT_METHOD` (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-glm"
+block_sha256 = "31c4c3e27bcd829e158df469d78228404c6f2ffec420ef9e634f36caf4491e10"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `DATA_SPLIT_METHOD` (has a lower-case keyword): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-glm"
+block_sha256 = "d8f94cdea6d946a12a5f3647072f97b6b50d0d86e4bc6b0e72b7242886ff4dde"
+status = "restated"
+reason = "the HPARAM_TUNING_ALGORITHM part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-glm"
+block_sha256 = "cc5ab418e93c18d6071c7b0ffc080e13956bf5a71f38b2c879098a7435a4c70b"
+status = "restated"
+reason = "the HPARAM_TUNING_OBJECTIVES part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-glm"
+block_sha256 = "044a2f4dd5a5f971b300f253bcc2b79085486b500bff7b0a9c1dbb7760b091e8"
+status = "restated"
+reason = "the HPARAM_TUNING_OBJECTIVES part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-glm"
+block_sha256 = "943b42c45b3731840199914612e02011d5265dad3fae960d0778bbda2d63ee6a"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `KMS_KEY_NAME` (is one string literal, the content of a string value): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-kmeans"
+block_sha256 = "47cbb20f1440a0f08a29ca3be4f63d83a3810e61bfcb3dfcf3916bb80951891b"
+status = "restated"
+reason = "the MODEL_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-kmeans"
+block_sha256 = "0c16471a008c50cd5c9bd514e68c741fd3383c6cad10c3df7f23bf6c468514aa"
+status = "restated"
+reason = "the KMEANS_INIT_METHOD part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-kmeans"
+block_sha256 = "bbf6a57075553b7b08c85e894c37803f45b2fb67900c152cd83bdc19b2ffde9e"
+status = "restated"
+reason = "the DISTANCE_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-kmeans"
+block_sha256 = "d571aeec77c8cf1ecde869fb6b6b10f32aa94e59a4b90004b25bd50300375450"
+status = "restated"
+reason = "the STANDARDIZE_FEATURES part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-kmeans"
+block_sha256 = "10b8a8885596eaefd02c2041998cd96ea088e918b73cc941fc59d87d154424af"
+status = "restated"
+reason = "the EARLY_STOP part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-kmeans"
+block_sha256 = "d55ee493954cc0436ba65d16371e45e9478d83c11fec5d257157e4716b68150c"
+status = "restated"
+reason = "the WARM_START part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-kmeans"
+block_sha256 = "d8f94cdea6d946a12a5f3647072f97b6b50d0d86e4bc6b0e72b7242886ff4dde"
+status = "restated"
+reason = "the HPARAM_TUNING_ALGORITHM part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-kmeans"
+block_sha256 = "5d6c5e183aca40b63f155abf02ec6b00e6f5bb02ebf63cd0a097cdcedd2670f7"
+status = "restated"
+reason = "the HPARAM_TUNING_OBJECTIVES part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-kmeans"
+block_sha256 = "943b42c45b3731840199914612e02011d5265dad3fae960d0778bbda2d63ee6a"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `KMS_KEY_NAME` (is one string literal, the content of a string value): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-matrix-factorization"
+block_sha256 = "e29328c23b1fb962e1f364dad5bea4bc5b26d27e2433c92296358e68accdd599"
+status = "restated"
+reason = "the MODEL_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-matrix-factorization"
+block_sha256 = "710cac39dee98451ad833fd447b7692767f6b11eb5a4217875f9adf0c65dc7f5"
+status = "restated"
+reason = "the FEEDBACK_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-matrix-factorization"
+block_sha256 = "10b8a8885596eaefd02c2041998cd96ea088e918b73cc941fc59d87d154424af"
+status = "restated"
+reason = "the EARLY_STOP part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-matrix-factorization"
+block_sha256 = "dcf673cc7d3615abd40919f4d3c0a688ec11271a620eee884808f205517e065e"
+status = "restated"
+reason = "the DATA_SPLIT_METHOD part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-matrix-factorization"
+block_sha256 = "e94ac04dfae769b5245c004c75e2f24487f54631c06dd0a07a4034ff9cd98798"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `DATA_SPLIT_METHOD` (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-matrix-factorization"
+block_sha256 = "31c4c3e27bcd829e158df469d78228404c6f2ffec420ef9e634f36caf4491e10"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `DATA_SPLIT_METHOD` (has a lower-case keyword): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-matrix-factorization"
+block_sha256 = "d8f94cdea6d946a12a5f3647072f97b6b50d0d86e4bc6b0e72b7242886ff4dde"
+status = "restated"
+reason = "the HPARAM_TUNING_ALGORITHM part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-matrix-factorization"
+block_sha256 = "8ad07e7ef553ee653a2d375074e1ebd0c3b5c9225510fe4b572f08c67014502d"
+status = "restated"
+reason = "the HPARAM_TUNING_OBJECTIVES part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-matrix-factorization"
+block_sha256 = "11f624b834e03fbfa818a38a0b502adc73a1b310e181e1c9daab52b75e5733bb"
+status = "restated"
+reason = "the HPARAM_TUNING_OBJECTIVES part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-matrix-factorization"
+block_sha256 = "943b42c45b3731840199914612e02011d5265dad3fae960d0778bbda2d63ee6a"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `KMS_KEY_NAME` (is one string literal, the content of a string value): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-multivariate-time-series"
+block_sha256 = "fa05e9970fd48294c2e167da70a461014f6ec9a0af8e2a75be67dd3936fbadeb"
+status = "restated"
+reason = "the MODEL_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-multivariate-time-series"
+block_sha256 = "9f254b93e5a7d7ac827c724a4251ab4d63e01894de9e4128d1261ac70416bbd7"
+status = "restated"
+reason = "the AUTO_ARIMA part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-multivariate-time-series"
+block_sha256 = "64097f155733a29f08de0801a8d025ed044b15eb3b39380c34a67222b51b1752"
+status = "restated"
+reason = "the DATA_FREQUENCY part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-multivariate-time-series"
+block_sha256 = "9b55b60d95c6e5cd8bd2540330a0e1f17733cd784f57fd8a4bd8e878f884f809"
+status = "restated"
+reason = "the INCLUDE_DRIFT part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-multivariate-time-series"
+block_sha256 = "eb68d58c3af1db201aba2c20c5cf16f516b9eaf4355637e3611bdd60652a7848"
+status = "restated"
+reason = "the HOLIDAY_REGION part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-multivariate-time-series"
+block_sha256 = "a8e65b19237a3f817a2a402e4bace7118151ee722f230bfd8ca9f0665bd3f40f"
+status = "restated"
+reason = "the HOLIDAY_REGION part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-multivariate-time-series"
+block_sha256 = "355e605eb0e62cd83b6ea6df96fbcd28e529f3f069501f41ed57f950e05fd5ce"
+status = "restated"
+reason = "the CLEAN_SPIKES_AND_DIPS part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-multivariate-time-series"
+block_sha256 = "7c7fb5119b8ecba13ae2d3195994240af64366156d9e0d8d16fab117ebf1d5ee"
+status = "restated"
+reason = "the ADJUST_STEP_CHANGES part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-multivariate-time-series"
+block_sha256 = "943b42c45b3731840199914612e02011d5265dad3fae960d0778bbda2d63ee6a"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `KMS_KEY_NAME` (is one string literal, the content of a string value): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-multivariate-time-series"
+block_sha256 = "9338f40f43cd232d026bfa5fa4a02671d3d0ab9c524dff3a8cdb733652d6ff02"
+status = "restated"
+reason = "the AS part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-multivariate-time-series"
+block_sha256 = "b2fd5b7c5ac6086d1cbe20e487bdf3b5f4a8fb0734a6fcc85a6d2a46c7f53328"
+status = "restated"
+reason = "the AS part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-multivariate-time-series"
+block_sha256 = "0651579818079bbb97602523a5e955a24fef2427209a1a7316392aecc1059ccc"
+status = "example"
+reason = "an example under `CREATE MODEL` syntax / `AS` / `holiday_statement`"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-multivariate-time-series"
+block_sha256 = "477c6832f6fda30cbdc6afa6a0ca84a22bbff5fba440d354436c3d8300fc5579"
+status = "example"
+reason = "an example under Custom holidays / Supplement built-in holidays with additional custom holidays"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-multivariate-time-series"
+block_sha256 = "793b0333ce5e09c1945aacd995cc7d970c0b3981d70a700105b7dbb70ce5d43a"
+status = "example"
+reason = "an example under Custom holidays / Model only custom holidays"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-multivariate-time-series"
+block_sha256 = "9355b9b0158d7e5b687f0af955aa700f731237904ee2d94d28120c092704ef62"
+status = "example"
+reason = "an example under Custom holidays / Change the metadata for built-in holidays"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-multivariate-time-series"
+block_sha256 = "d54e666a5d17bd3c3d5048c1bc3a0d00d832d94a03c19a14f04ea50ec7acacb4"
+status = "example"
+reason = "an example under Custom holidays / Model a subset of built-in holidays"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-onnx"
+block_sha256 = "e7cc9c7b9a77d01f3b0cb2b6c60d13ea372633266f053e1569fa2957be245b3e"
+status = "restated"
+reason = "the MODEL_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-onnx"
+block_sha256 = "3e1dd7107b8aa7952778b6f9d007ff1233a0943d065674e9326f4416cae4f549"
+status = "restated"
+reason = "the MODEL_PATH part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-onnx"
+block_sha256 = "943b42c45b3731840199914612e02011d5265dad3fae960d0778bbda2d63ee6a"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `KMS_KEY_NAME` (is one string literal, the content of a string value): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-pca"
+block_sha256 = "1ee4feb50b926bf2ffe49b2e521e61a6063e5ee95f5f6eb31b2a3828c083e23e"
+status = "restated"
+reason = "the MODEL_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-pca"
+block_sha256 = "fdeb6f8d373a5305c9ad9e4f4fba0f8e2f0cdb57cda2b58b47538b6cdf059958"
+status = "restated"
+reason = "the SCALE_FEATURES part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-pca"
+block_sha256 = "b8abc182d965d57c843cbd7046df45899ded87540bca444841b369b7b672fec6"
+status = "restated"
+reason = "the PCA_SOLVER part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-pca"
+block_sha256 = "943b42c45b3731840199914612e02011d5265dad3fae960d0778bbda2d63ee6a"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `KMS_KEY_NAME` (is one string literal, the content of a string value): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-random-forest"
+block_sha256 = "41624638b089774145dc2ae66b1c58e0141ace04dad61b1a2e80e38de86b033c"
+status = "corrected"
+reason = "model_option_list has a stray ']' after its MODEL_TYPE entry"
+grammar = [
+  "{ CREATE MODEL | CREATE MODEL IF NOT EXISTS | CREATE OR REPLACE MODEL } <model_name> OPTIONS ( <model_option_list> ) AS <query_statement>",
+  "<model_option_list> ::= MODEL_TYPE = { 'RANDOM_FOREST_CLASSIFIER' | 'RANDOM_FOREST_REGRESSOR' } [ , APPROX_GLOBAL_FEATURE_CONTRIB = { TRUE | FALSE } ] [ , NUM_PARALLEL_TREE = { <int64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , MAX_TREE_DEPTH = { <int64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , L1_REG = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , L2_REG = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , TREE_METHOD = { { 'AUTO' | 'EXACT' | 'APPROX' | 'HIST' } | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , MIN_TREE_CHILD_WEIGHT = { <int64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , COLSAMPLE_BYTREE = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , COLSAMPLE_BYLEVEL = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , COLSAMPLE_BYNODE = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , MIN_SPLIT_LOSS = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , SUBSAMPLE = { <float64_value> | HPARAM_RANGE ( <range> ) | HPARAM_CANDIDATES ( [ <candidates> ] ) } ] [ , INSTANCE_WEIGHT_COL = <string_value> ] [ , AUTO_CLASS_WEIGHTS = { TRUE | FALSE } ] [ , CLASS_WEIGHTS = <struct_array> ] [ , ENABLE_GLOBAL_EXPLAIN = { TRUE | FALSE } ] [ , EARLY_STOP = { TRUE | FALSE } ] [ , MIN_REL_PROGRESS = <float64_value> ] [ , INPUT_LABEL_COLS = <string_array> ] [ , DATA_SPLIT_METHOD = { 'AUTO_SPLIT' | 'RANDOM' | 'CUSTOM' | 'SEQ' | 'NO_SPLIT' } ] [ , DATA_SPLIT_EVAL_FRACTION = <float64_value> ] [ , DATA_SPLIT_TEST_FRACTION = <float64_value> ] [ , DATA_SPLIT_COL = <string_value> ] [ , NUM_TRIALS = <int64_value> ] [ , MAX_PARALLEL_TRIALS = <int64_value> ] [ , HPARAM_TUNING_ALGORITHM = { 'VIZIER_DEFAULT' | 'RANDOM_SEARCH' | 'GRID_SEARCH' } ] [ , HPARAM_TUNING_OBJECTIVES = { 'ROC_AUC' | 'R2_SCORE' | ... } ] [ , MODEL_REGISTRY = { 'VERTEX_AI' } ] [ , VERTEX_AI_MODEL_ID = <string_value> ] [ , VERTEX_AI_MODEL_VERSION_ALIASES = <string_array> ] [ , KMS_KEY_NAME = <string_value> ]",
+]
+family = ""
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-random-forest"
+block_sha256 = "b9108f717afcd6578f7fdbe4dd22fab773247ab18981f98a00cc38944c4fc7f4"
+status = "restated"
+reason = "the MODEL_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-random-forest"
+block_sha256 = "3cc98f4a6897edb28a6350047edc7c171cd4a45b04db8d5467ce8ecbd5f8a109"
+status = "restated"
+reason = "the APPROX_GLOBAL_FEATURE_CONTRIB part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-random-forest"
+block_sha256 = "ac0cefcd01d61184ab13283c02304657130ede9d5a6a15fb876975a27ba66f96"
+status = "restated"
+reason = "the AUTO_CLASS_WEIGHTS part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-random-forest"
+block_sha256 = "5e4adbc919760405ae3ca955bce290886c77cf8e95e67b05762e6a816e6d00b1"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `AUTO_CLASS_WEIGHTS` (sits under an argument heading of a BigQuery ML page): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-random-forest"
+block_sha256 = "637020d5292bdc25403773fb70b8934fae4cf2151143cc875f2c23b2aa243278"
+status = "example"
+reason = "an example CLASS_WEIGHTS value; the syntax block writes the value as struct_array"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-random-forest"
+block_sha256 = "baf230eeb4f009a767b11b47a4a2dbe3212266f03accd7bbac41712ef034b870"
+status = "restated"
+reason = "the ENABLE_GLOBAL_EXPLAIN part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-random-forest"
+block_sha256 = "10b8a8885596eaefd02c2041998cd96ea088e918b73cc941fc59d87d154424af"
+status = "restated"
+reason = "the EARLY_STOP part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-random-forest"
+block_sha256 = "dcf673cc7d3615abd40919f4d3c0a688ec11271a620eee884808f205517e065e"
+status = "restated"
+reason = "the DATA_SPLIT_METHOD part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-random-forest"
+block_sha256 = "e94ac04dfae769b5245c004c75e2f24487f54631c06dd0a07a4034ff9cd98798"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `DATA_SPLIT_METHOD` (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-random-forest"
+block_sha256 = "31c4c3e27bcd829e158df469d78228404c6f2ffec420ef9e634f36caf4491e10"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `DATA_SPLIT_METHOD` (has a lower-case keyword): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-random-forest"
+block_sha256 = "d8f94cdea6d946a12a5f3647072f97b6b50d0d86e4bc6b0e72b7242886ff4dde"
+status = "restated"
+reason = "the HPARAM_TUNING_ALGORITHM part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-random-forest"
+block_sha256 = "ca42c204c900809f2100ca4521422cf71c46f69945fa9d54c8647dc2af74a3a4"
+status = "restated"
+reason = "the HPARAM_TUNING_OBJECTIVES part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-random-forest"
+block_sha256 = "0d313eb0730faa8e324b6e97a8fad0198ea74e13f6629208ccadbe308e30caa4"
+status = "restated"
+reason = "the HPARAM_TUNING_OBJECTIVES part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-random-forest"
+block_sha256 = "943b42c45b3731840199914612e02011d5265dad3fae960d0778bbda2d63ee6a"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `KMS_KEY_NAME` (is one string literal, the content of a string value): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model"
+block_sha256 = "9151ed709a73cbb55de39df665488569d8da7e65b73a86e5213bb9a4c226015c"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `REMOTE WITH CONNECTION` (sits under an argument heading of a BigQuery ML page): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model"
+block_sha256 = "6069ffc0975ecc5d40597e4cd6f393ccdd11078604d753755e894d937c2f9df7"
+status = "restated"
+reason = "the ENDPOINT part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model"
+block_sha256 = "796fc19190640fc31431779b0e7e2553301d5f85bd174e9d6cd04b86ab555b13"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / Pretrained Gemini models (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-embedding-maas"
+block_sha256 = "9151ed709a73cbb55de39df665488569d8da7e65b73a86e5213bb9a4c226015c"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `REMOTE WITH CONNECTION` (sits under an argument heading of a BigQuery ML page): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-embedding-maas"
+block_sha256 = "2d12c0f9662205e4a70d09bf8e4206be3f13a675796c5ac7f4a043594e542b09"
+status = "restated"
+reason = "the ENDPOINT part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-https"
+block_sha256 = "9151ed709a73cbb55de39df665488569d8da7e65b73a86e5213bb9a4c226015c"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `REMOTE WITH CONNECTION` (sits under an argument heading of a BigQuery ML page): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-https"
+block_sha256 = "2e105ac58e02467dcb2726c394011f31283695840d4bf62cffbe16cde5012158"
+status = "restated"
+reason = "the ENDPOINT part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-https"
+block_sha256 = "b670984df2be3781cfefa4a48258a84cc3b210c51772917f210bc3d39624d445"
+status = "restated"
+reason = "the ENDPOINT part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-open"
+block_sha256 = "20486780f268d3c83de7499be6daa9d8cd84c4130d4d1085a296195709d096c9"
+status = "corrected"
+reason = "the option names of optional_model_option_list are links whose text the Markdown export drops; each is restored from its link's anchor (#hugging-face-token is HUGGING_FACE_TOKEN)"
+grammar = [
+  "{ CREATE MODEL | CREATE MODEL IF NOT EXISTS | CREATE OR REPLACE MODEL } <`project_id.dataset.model_name`> REMOTE WITH CONNECTION { DEFAULT | <`project_id.region.connection_id`> } OPTIONS ( { HUGGING_FACE_MODEL_ID = 'hugging_face_model_id' | MODEL_GARDEN_MODEL_NAME = 'model_garden_model_name' } [ , <optional_model_option_list> ] )",
+  "<optional_model_option_list> ::= [ , HUGGING_FACE_TOKEN = 'hugging_face_token' ] [ , MACHINE_TYPE = 'machine_type' ] [ , MIN_REPLICA_COUNT = <min_replica_count> ] [ , MAX_REPLICA_COUNT = <max_replica_count> ] [ , RESERVATION_AFFINITY_TYPE = { 'NO_RESERVATION' | 'ANY_RESERVATION' | 'SPECIFIC_RESERVATION' } ] [ , RESERVATION_AFFINITY_KEY = 'compute.googleapis.com/reservation-name' ] [ , RESERVATION_AFFINITY_VALUES = <reservation_affinity_values> ] [ , ENDPOINT_IDLE_TTL = <endpoint_idle_ttl> ]",
+]
+family = ""
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-open"
+block_sha256 = "9151ed709a73cbb55de39df665488569d8da7e65b73a86e5213bb9a4c226015c"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `REMOTE WITH CONNECTION` (sits under an argument heading of a BigQuery ML page): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-open"
+block_sha256 = "bb42be342c43de92011032b201a7a6ced5b965e877e717b034607bca0549f704"
+status = "restated"
+reason = "the HUGGING_FACE_MODEL_ID part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-open"
+block_sha256 = "9291d6c7ca131a653013251792528bd64fcd110bbf86052db2b3b05d458bffc0"
+status = "restated"
+reason = "the MODEL_GARDEN_MODEL_NAME part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-open"
+block_sha256 = "cd069c5c5c7efd3cbe160646474fc68ff9ba85fc9d61c1d06f515f2deffcc520"
+status = "restated"
+reason = "the HUGGING_FACE_TOKEN part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-open"
+block_sha256 = "4de20a068929db5eb1e279ec1384d25fc3ddf34b69d4eb3c9b5eedf17ede6d1c"
+status = "restated"
+reason = "the MACHINE_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-open"
+block_sha256 = "467c04a5041c159780c075fc5bdde37219381cacc0e0c2d85f8b490d5d2eee67"
+status = "restated"
+reason = "the MIN_REPLICA_COUNT part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-open"
+block_sha256 = "17a20e18b26b6300285c126c7d4163016b66569aa4aadd7eb1857429308acd53"
+status = "restated"
+reason = "the MAX_REPLICA_COUNT part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-open"
+block_sha256 = "6b3fa3bf15c6cdc76b93fce66a377a8d6fae8f5fc067beb418408db8955a59e9"
+status = "restated"
+reason = "the RESERVATION_AFFINITY_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-open"
+block_sha256 = "84046be008b9a8839aa7179d50fd5b3670b6ac756398d7559afb494f0e032966"
+status = "restated"
+reason = "the RESERVATION_AFFINITY_KEY part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-open"
+block_sha256 = "81395693eef509061eac60985a4d8a9362aa35b94beedd31f517c7aaecacae2c"
+status = "restated"
+reason = "the RESERVATION_AFFINITY_VALUES part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-open"
+block_sha256 = "e3dffcd1f474f6e4a044563ef034fd4f4ae9d4d7bbf528a54b673022f2c8db56"
+status = "restated"
+reason = "the ENDPOINT_IDLE_TTL part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-open"
+block_sha256 = "ceda9dd4aed641f574a31340eb6a4f55b54793a89678d5a384853329440f0775"
+status = "notation"
+reason = "the CREATE MODEL variant for a manually deployed open model, beside the automatically deployed one"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-open"
+block_sha256 = "9151ed709a73cbb55de39df665488569d8da7e65b73a86e5213bb9a4c226015c"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `REMOTE WITH CONNECTION` (sits under an argument heading of a BigQuery ML page): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-open"
+block_sha256 = "2d120c65e7b83e801bd86e0a7cd505b51a215cc1851805fec26e2daf40939395"
+status = "restated"
+reason = "the ENDPOINT part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-open"
+block_sha256 = "b670984df2be3781cfefa4a48258a84cc3b210c51772917f210bc3d39624d445"
+status = "restated"
+reason = "the ENDPOINT part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-service"
+block_sha256 = "9151ed709a73cbb55de39df665488569d8da7e65b73a86e5213bb9a4c226015c"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `REMOTE WITH CONNECTION` (sits under an argument heading of a BigQuery ML page): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-service"
+block_sha256 = "9e029ccbced784cc080ad7fcda36b1fdcac007fdf08aa127c4094bcb0bed5a2c"
+status = "restated"
+reason = "the REMOTE_SERVICE_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-service"
+block_sha256 = "f853c88206f798bd6255dd27ac63128c86bd163375edaffc2eba77413b0ecf1d"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `DOCUMENT_PROCESSOR` (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-service"
+block_sha256 = "5c07956da70d232b58380f581bb5feeef6ccc3abedc5bad9e93b3e7e282b562b"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `SPEECH_RECOGNIZER` (sits under an argument heading of a BigQuery ML page): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-tuned"
+block_sha256 = "9151ed709a73cbb55de39df665488569d8da7e65b73a86e5213bb9a4c226015c"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `REMOTE WITH CONNECTION` (sits under an argument heading of a BigQuery ML page): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-tuned"
+block_sha256 = "fb78817c50abb25e1639455ac42cfcf24c9a702fda4c5f38bd3e37cabe0b7e9d"
+status = "restated"
+reason = "the ENDPOINT part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-tuned"
+block_sha256 = "e95e2f78e4000c2a593368023808b250415df8d993384a5854ece02cc61f28a2"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `ENDPOINT` (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-tuned"
+block_sha256 = "04745c4862719a2f06c9a29185dabf298758ad1b9d1927b23b6b9427eea131f3"
+status = "restated"
+reason = "the PROMPT_COL part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-tuned"
+block_sha256 = "ec2fe220e986c09affd8c537792e862dad4ee1ffba8039734dfee145a3c82a9a"
+status = "restated"
+reason = "the INPUT_LABEL_COLS part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-tuned"
+block_sha256 = "effdc1f549cc113efe21bddbdfd03de8d6217019a3f8425493fdd0396235a8bc"
+status = "restated"
+reason = "the MAX_ITERATIONS part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-tuned"
+block_sha256 = "2671dab5ff1fd97c2af53b09410f0ce94850dc49d3a974ef86fe11e81fb6c9c9"
+status = "restated"
+reason = "the LEARNING_RATE_MULTIPLIER part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-tuned"
+block_sha256 = "dcf673cc7d3615abd40919f4d3c0a688ec11271a620eee884808f205517e065e"
+status = "restated"
+reason = "the DATA_SPLIT_METHOD part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-tuned"
+block_sha256 = "e94ac04dfae769b5245c004c75e2f24487f54631c06dd0a07a4034ff9cd98798"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `DATA_SPLIT_METHOD` (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-tuned"
+block_sha256 = "908b03fe51566d6591dfeec28dcb9eaf1cf2ffe2fc9227b18a68a774ec2e3fee"
+status = "restated"
+reason = "the EVALUATION_TASK part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-remote-model-tuned"
+block_sha256 = "1e18e14d848688fab2e3f9b82bf5bcfeba623735921bd3936986509d122f284b"
+status = "restated"
+reason = "the AS part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-tensorflow"
+block_sha256 = "55b057f8c319d235f6932f557b3a0db55429e473c1b49f190bb41e753be634da"
+status = "restated"
+reason = "the MODEL_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-tensorflow"
+block_sha256 = "3e1dd7107b8aa7952778b6f9d007ff1233a0943d065674e9326f4416cae4f549"
+status = "restated"
+reason = "the MODEL_PATH part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-tensorflow"
+block_sha256 = "943b42c45b3731840199914612e02011d5265dad3fae960d0778bbda2d63ee6a"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `KMS_KEY_NAME` (is one string literal, the content of a string value): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-tflite"
+block_sha256 = "51703d5164c66dc4a5bb3197eed7801b4aa58e7abd877575bcbd7baee433754e"
+status = "restated"
+reason = "the MODEL_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-tflite"
+block_sha256 = "3e1dd7107b8aa7952778b6f9d007ff1233a0943d065674e9326f4416cae4f549"
+status = "restated"
+reason = "the MODEL_PATH part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-tflite"
+block_sha256 = "943b42c45b3731840199914612e02011d5265dad3fae960d0778bbda2d63ee6a"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `KMS_KEY_NAME` (is one string literal, the content of a string value): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-time-series"
+block_sha256 = "546585817508113436c4039e4e1bacf1ee8204da5af91ecacd063d00faab2dc3"
+status = "restated"
+reason = "the MODEL_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-time-series"
+block_sha256 = "9f254b93e5a7d7ac827c724a4251ab4d63e01894de9e4128d1261ac70416bbd7"
+status = "restated"
+reason = "the AUTO_ARIMA part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-time-series"
+block_sha256 = "64097f155733a29f08de0801a8d025ed044b15eb3b39380c34a67222b51b1752"
+status = "restated"
+reason = "the DATA_FREQUENCY part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-time-series"
+block_sha256 = "9b55b60d95c6e5cd8bd2540330a0e1f17733cd784f57fd8a4bd8e878f884f809"
+status = "restated"
+reason = "the INCLUDE_DRIFT part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-time-series"
+block_sha256 = "eb68d58c3af1db201aba2c20c5cf16f516b9eaf4355637e3611bdd60652a7848"
+status = "restated"
+reason = "the HOLIDAY_REGION part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-time-series"
+block_sha256 = "a8e65b19237a3f817a2a402e4bace7118151ee722f230bfd8ca9f0665bd3f40f"
+status = "restated"
+reason = "the HOLIDAY_REGION part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-time-series"
+block_sha256 = "355e605eb0e62cd83b6ea6df96fbcd28e529f3f069501f41ed57f950e05fd5ce"
+status = "restated"
+reason = "the CLEAN_SPIKES_AND_DIPS part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-time-series"
+block_sha256 = "7c7fb5119b8ecba13ae2d3195994240af64366156d9e0d8d16fab117ebf1d5ee"
+status = "restated"
+reason = "the ADJUST_STEP_CHANGES part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-time-series"
+block_sha256 = "e88754b8e045e8746e234b62f699201e48177fa96fc4f6fc489a1e547057c04f"
+status = "restated"
+reason = "the DECOMPOSE_TIME_SERIES part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-time-series"
+block_sha256 = "943b42c45b3731840199914612e02011d5265dad3fae960d0778bbda2d63ee6a"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `KMS_KEY_NAME` (is one string literal, the content of a string value): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-time-series"
+block_sha256 = "9338f40f43cd232d026bfa5fa4a02671d3d0ab9c524dff3a8cdb733652d6ff02"
+status = "restated"
+reason = "the AS part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-time-series"
+block_sha256 = "b2fd5b7c5ac6086d1cbe20e487bdf3b5f4a8fb0734a6fcc85a6d2a46c7f53328"
+status = "restated"
+reason = "the AS part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-time-series"
+block_sha256 = "743d445806bd639f03fde61c9b7cb2ba394e78f202da3a107f2d823a44d31408"
+status = "example"
+reason = "an example under `CREATE MODEL` syntax / `AS` / `holiday_statement`"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-time-series"
+block_sha256 = "3bf417dfddf119041d3f9c8e9d29a2aaf34390c15b38926a131a428dd1d80922"
+status = "example"
+reason = "an example under Custom holidays / Supplement built-in holidays with additional custom holidays"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-time-series"
+block_sha256 = "5eb64a2adb9eaf217abba3afbde4423ac0d5e2b6e0a806725082ccaa4600670f"
+status = "example"
+reason = "an example under Custom holidays / Model only custom holidays"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-time-series"
+block_sha256 = "953e4f93e1cf1c40d427bcb28630e2ce732890ba5e85913684f85ed62095b7e1"
+status = "example"
+reason = "an example under Custom holidays / Change the metadata for built-in holidays"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-time-series"
+block_sha256 = "93fae6c1e0df3b1d91d39822baca3ea14659910feebf66ed7c6f63067288de3e"
+status = "example"
+reason = "an example under Custom holidays / Model a subset of built-in holidays"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-transform"
+block_sha256 = "c49952a9e53f6e0558cd65c824ab05504430e2e8841768a43422b81ac77fa784"
+status = "restated"
+reason = "the MODEL_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-wnd-models"
+block_sha256 = "4876aab7b367b62ec4cca5df664580740ff399eb65598f6ba9839c2191e23604"
+status = "restated"
+reason = "the MODEL_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-wnd-models"
+block_sha256 = "660d8e394506e5b58cb6646c7b136553dbd4086b6beca2b27702e63582050068"
+status = "restated"
+reason = "the LEARN_RATE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-wnd-models"
+block_sha256 = "a4b5d90f2ea24b8a1e002c2fcbe708924c7a1ad3c03a9231ea2c3ab048bf5e21"
+status = "example"
+reason = "an example per-tower LEARN_RATE value; the syntax block writes the value as a placeholder"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-wnd-models"
+block_sha256 = "76830ca98a7a6b31c24ae0b9bb3ac0d03ee9bbe88b0fb0c0ff4a1156b9d95e0e"
+status = "restated"
+reason = "the OPTIMIZER part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-wnd-models"
+block_sha256 = "b2bed929dea9d985a0d2b3d7caa0bec85f7d41a3fc46c83f08d7cfa7f51ccef5"
+status = "example"
+reason = "an example per-tower OPTIMIZER value; the syntax block writes the value as a placeholder"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-wnd-models"
+block_sha256 = "7db8bf2caaa1effc094eaa699789e8e3e70e93ba10f6d8e34e97b63665f1158c"
+status = "restated"
+reason = "the HIDDEN_UNITS part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-wnd-models"
+block_sha256 = "143ab5ccd0ee5368a0356e8bb7a927213efd9e1b92c5d9e01398daf161c6902b"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `HIDDEN_UNITS` (has a lower-case keyword): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-wnd-models"
+block_sha256 = "ac0cefcd01d61184ab13283c02304657130ede9d5a6a15fb876975a27ba66f96"
+status = "restated"
+reason = "the AUTO_CLASS_WEIGHTS part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-wnd-models"
+block_sha256 = "5e4adbc919760405ae3ca955bce290886c77cf8e95e67b05762e6a816e6d00b1"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `AUTO_CLASS_WEIGHTS` (sits under an argument heading of a BigQuery ML page): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-wnd-models"
+block_sha256 = "637020d5292bdc25403773fb70b8934fae4cf2151143cc875f2c23b2aa243278"
+status = "example"
+reason = "an example CLASS_WEIGHTS value; the syntax block writes the value as struct_array"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-wnd-models"
+block_sha256 = "10b8a8885596eaefd02c2041998cd96ea088e918b73cc941fc59d87d154424af"
+status = "restated"
+reason = "the EARLY_STOP part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-wnd-models"
+block_sha256 = "d55ee493954cc0436ba65d16371e45e9478d83c11fec5d257157e4716b68150c"
+status = "restated"
+reason = "the WARM_START part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-wnd-models"
+block_sha256 = "dcf673cc7d3615abd40919f4d3c0a688ec11271a620eee884808f205517e065e"
+status = "restated"
+reason = "the DATA_SPLIT_METHOD part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-wnd-models"
+block_sha256 = "e94ac04dfae769b5245c004c75e2f24487f54631c06dd0a07a4034ff9cd98798"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `DATA_SPLIT_METHOD` (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-wnd-models"
+block_sha256 = "31c4c3e27bcd829e158df469d78228404c6f2ffec420ef9e634f36caf4491e10"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `DATA_SPLIT_METHOD` (has a lower-case keyword): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-wnd-models"
+block_sha256 = "d8f94cdea6d946a12a5f3647072f97b6b50d0d86e4bc6b0e72b7242886ff4dde"
+status = "restated"
+reason = "the HPARAM_TUNING_ALGORITHM part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-wnd-models"
+block_sha256 = "ca42c204c900809f2100ca4521422cf71c46f69945fa9d54c8647dc2af74a3a4"
+status = "restated"
+reason = "the HPARAM_TUNING_OBJECTIVES part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-wnd-models"
+block_sha256 = "0d313eb0730faa8e324b6e97a8fad0198ea74e13f6629208ccadbe308e30caa4"
+status = "restated"
+reason = "the HPARAM_TUNING_OBJECTIVES part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-wnd-models"
+block_sha256 = "943b42c45b3731840199914612e02011d5265dad3fae960d0778bbda2d63ee6a"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `KMS_KEY_NAME` (is one string literal, the content of a string value): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-wnd-models"
+block_sha256 = "076e9f6a2bac77da7589f1e05fbdda49946fb0a9dc640780c603de2846e39c6e"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / Internal parameter defaults (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-xgboost"
+block_sha256 = "9a38e32cc7bd67267a73097f48f9a8a92ce8e70dc81ab2296add8f3b88021ca9"
+status = "restated"
+reason = "the MODEL_TYPE part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-xgboost"
+block_sha256 = "3e1dd7107b8aa7952778b6f9d007ff1233a0943d065674e9326f4416cae4f549"
+status = "restated"
+reason = "the MODEL_PATH part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-xgboost"
+block_sha256 = "943b42c45b3731840199914612e02011d5265dad3fae960d0778bbda2d63ee6a"
+status = "not_syntax"
+reason = "argument detail under `CREATE MODEL` syntax / `KMS_KEY_NAME` (is one string literal, the content of a string value): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-decode-image"
+block_sha256 = "a025956efb2e1fe68a2ed5deb48b4cf4a5d51ac80f7640daf5aed1093080240d"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (sits under an argument heading of a BigQuery ML page): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-decode-image"
+block_sha256 = "4180e7238a0aa6cd74ca526a59418ac92689739587518e8b780e33534e9029c6"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-entity-feature-time"
+block_sha256 = "ca7682ee7adecc5bb6f2ebb4b519a100a1ac2b0ced1aa0085c579cb5c0b27f2d"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-entity-feature-time"
+block_sha256 = "e17af8bb7643e52d9a1290b6a5f84c8601308c032ba5d2ea76338bd0a543f238"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-entity-feature-time"
+block_sha256 = "13218037c25dca088ac0985e8dc49c7953ea58f4d3ca3e1a1b36d74bffceaf16"
+status = "example"
+reason = "an example call or expression under Syntax / Arguments, with example names and values"
+
+[[block]]
+source = "doc.bigqueryml-syntax-entity-feature-time"
+block_sha256 = "9bd3363bb90fd9046d072dec251df1307b4590cdf5efc32e3c9a3048b2c260f1"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-evaluate"
+block_sha256 = "5fa5a4152d535f4cfc51cb5850cbe6eb069b1e1dcc8d4d1e1fd66eb3611bb427"
+status = "notation"
+reason = "the ML.EVALUATE signature for Time series, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-evaluate"
+block_sha256 = "1c5bf1afd0d355120931d68952aed13cf135f48f46d42bb3b469babfd45b2203"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-evaluate"
+block_sha256 = "42175bd3c7687a1de6f01c5f54739b12a15c5d3b335ae372ad86979289bc76fd"
+status = "notation"
+reason = "the ML.EVALUATE signature for Classification \\& regression, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-evaluate"
+block_sha256 = "9da4bffc83133efb3eb3ec8550a757cfdd6772e0b5e3cca8e3cd0903cf1cb017"
+status = "notation"
+reason = "the ML.EVALUATE signature for Remote over Gemini, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-evaluate"
+block_sha256 = "5bfc60615c3bc81628728a6d7ad6a2d34a06fe23de8a85ad38eeeb5f32eff820"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-evaluate"
+block_sha256 = "5bfc60615c3bc81628728a6d7ad6a2d34a06fe23de8a85ad38eeeb5f32eff820"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-evaluate"
+block_sha256 = "aba8ab029d77b532c313beb9f62b49797d5bc1e0e8fca26c8abba9b3f34c89cd"
+status = "notation"
+reason = "the ML.EVALUATE signature for Remote over Claude, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-evaluate"
+block_sha256 = "9da4bffc83133efb3eb3ec8550a757cfdd6772e0b5e3cca8e3cd0903cf1cb017"
+status = "notation"
+reason = "the ML.EVALUATE signature for Remote over Llama or Mistral AI, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-evaluate"
+block_sha256 = "6b090120187e0eaec0db6e9170323faba0a832016894c7bc48e3e941ab6a598f"
+status = "notation"
+reason = "the ML.EVALUATE signature for Remote over open, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-evaluate"
+block_sha256 = "42175bd3c7687a1de6f01c5f54739b12a15c5d3b335ae372ad86979289bc76fd"
+status = "notation"
+reason = "the ML.EVALUATE signature for All other models, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-explain-forecast"
+block_sha256 = "b988f70a3cc618c988d18d7192e31c93ea044a437d8418e5541ecab9e4cb4082"
+status = "not_syntax"
+reason = "argument detail under Mathematical explanation / `time_series_data` (follows prose, so it may be an example): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-explain-forecast"
+block_sha256 = "c4263865b511a8ca4ab07cbc2088fe79bb5dc8778bfaa64d93638aa5f858d61a"
+status = "not_syntax"
+reason = "argument detail under Mathematical explanation / `time_series_data` (follows prose, so it may be an example): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-explain-forecast"
+block_sha256 = "6a1a9341b23cc7363d27086c7f459951c8e714ad70ffbfd7e93f6d3820c6731a"
+status = "not_syntax"
+reason = "argument detail under Mathematical explanation / `time_series_adjusted_data` (follows prose, so it may be an example): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-export-model"
+block_sha256 = "da3266e2872783dbe9f354832d6b5e6ed27ac04393954f3379f17e108645c07d"
+status = "corrected"
+reason = "MODEL_NAME and STRING_VALUE are the page's placeholders"
+grammar = [
+  "EXPORT MODEL <model_name> [ OPTIONS ( URI = <string_value> ) ]",
+]
+family = ""
+
+[[block]]
+source = "doc.bigqueryml-syntax-export-model"
+block_sha256 = "b1b2fd44aa48cf5c32b849946d9fc04eedd21dad43f7017afdceba999d3ad0be"
+status = "not_syntax"
+reason = "the form of a model name, project.dataset.model"
+
+[[block]]
+source = "doc.bigqueryml-syntax-export-model"
+block_sha256 = "fe07a4686e1ce844303cbf8b5d3d22e068adbdf2f2d28c3917413bcd4aad6aa0"
+status = "restated"
+reason = "the URI part of the page's syntax block, restated under its own heading with its values (option values are string literals or expressions)"
+
+[[block]]
+source = "doc.bigqueryml-syntax-export-model"
+block_sha256 = "6d49189d206b7de1639dc1a4d74b29280a7afd90fdf5c06bbc7597686fa88f43"
+status = "corrected"
+reason = "MODEL_NAME, STRING_VALUE and INT_VALUE are the page's placeholders"
+grammar = [
+  "EXPORT MODEL <model_name> [ OPTIONS ( URI = <string_value> [ , TRIAL_ID = <int_value> ] ) ]",
+]
+family = ""
+
+[[block]]
+source = "doc.bigqueryml-syntax-export-model"
+block_sha256 = "56896727788cdbc6fa5590b49b4842a26b328fdf920c47baaccbc7d06d174fb4"
+status = "example"
+reason = "an example TRIAL_ID option value"
+
+[[block]]
+source = "doc.bigqueryml-syntax-feature-time"
+block_sha256 = "ca7682ee7adecc5bb6f2ebb4b519a100a1ac2b0ced1aa0085c579cb5c0b27f2d"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-feature-time"
+block_sha256 = "d826f28e7bc997e82ac4b6b61986b6fa2c268a59238a59688ffdb3df3d7916be"
+status = "example"
+reason = "an example call or expression under Syntax / Arguments, with example names and values"
+
+[[block]]
+source = "doc.bigqueryml-syntax-feature-time"
+block_sha256 = "9bd3363bb90fd9046d072dec251df1307b4590cdf5efc32e3c9a3048b2c260f1"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-generate-embedding"
+block_sha256 = "3858dc30d58ee6d600424096508323b334d4ab677c235dce12849b5759b5ba4a"
+status = "notation"
+reason = "the ML.GENERATE_EMBEDDING signature for Text embedding, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-generate-embedding"
+block_sha256 = "3b6cdadc8b76cdd31f29d3cd7a094d8850c2da02651cd052010736f0349e1bf2"
+status = "example"
+reason = "an example call or expression under Syntax / Arguments, with example names and values"
+
+[[block]]
+source = "doc.bigqueryml-syntax-generate-embedding"
+block_sha256 = "a694e231a1e908ed72b43398c9fc7c3c37b516338bf955f6f7267c7270a791d5"
+status = "notation"
+reason = "the ML.GENERATE_EMBEDDING signature for Open models, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-generate-embedding"
+block_sha256 = "180e1692846f9972add14453b8b8166f7a0f7ca6a6e6cb46c731a4b2d8aa2ca5"
+status = "notation"
+reason = "the ML.GENERATE_EMBEDDING signature for Multimodal embedding, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-generate-embedding"
+block_sha256 = "e8bb5325120f83103cc8083b004a134a66b5281fe367fe33931d420b247e60d4"
+status = "notation"
+reason = "the ML.GENERATE_EMBEDDING signature for Multimodal embedding, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-generate-embedding"
+block_sha256 = "b47da343fefd53f34154189c99e87f975f2621b8cc6192e82b3f8bb9592c077b"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-generate-embedding"
+block_sha256 = "9590f33972b4a78b77b6dba2dd15ac8e0321c94bf86e8ccbbb9735f486790efd"
+status = "notation"
+reason = "the ML.GENERATE_EMBEDDING signature for PCA, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-generate-embedding"
+block_sha256 = "3da0d3acb7a63c95058f239e814ef253a4248dbdcb2718fb730bb72d33b72aef"
+status = "notation"
+reason = "the ML.GENERATE_EMBEDDING signature for Autoencoder, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-generate-embedding"
+block_sha256 = "a1da7241a549fd22292b619d4b90679e84d1b5b025e43568825993ab268d36f5"
+status = "notation"
+reason = "the ML.GENERATE_EMBEDDING signature for Matrix factorization, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-generate-table"
+block_sha256 = "8f5337c1059873216cb27d8b826c012c0b744a87aa2bc24aaa980f39e1161ded"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-generate-table"
+block_sha256 = "5fa9476c9a773a223f80d18c844172593f0ef7efd2a7a154b68934e81e6f2b4c"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-generate-table"
+block_sha256 = "5f172d5388e1b2261f6ac8e22ce93dac05e00a56c7909bd52b7a1722a0ce0b3e"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-generate-text"
+block_sha256 = "ed52fc71ca58a0c2ea8f08ddbe9aa07c23ca74de88a529ea23b20b7393829dab"
+status = "notation"
+reason = "the ML.GENERATE_TEXT signature for Gemini, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-generate-text"
+block_sha256 = "c0a9e9e2d00588985652d97763bf8bfc123a2d114e47dde8ac9423dd2d66b8cb"
+status = "not_syntax"
+reason = "argument detail under Syntax for standard tables / Arguments (holds a URL, a triple-quoted string, a table or a comment block): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-generate-text"
+block_sha256 = "3c877d293a95efdcd37b7cbf973a4c91a3147356892deefcd08ab901eba8bb88"
+status = "not_syntax"
+reason = "argument detail under Syntax for standard tables / Arguments (has a mixed-case word): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-generate-text"
+block_sha256 = "78e220c3e998359fa24e7ee4b7bd454041fb9a885bed20712f9be386c9d4512f"
+status = "notation"
+reason = "the ML.GENERATE_TEXT signature for Claude, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-generate-text"
+block_sha256 = "a39eb4c1faaa1990505c42b3f1dca94fe527f20d984a2c9dfd1f946b83279066"
+status = "notation"
+reason = "the ML.GENERATE_TEXT signature for Llama, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-generate-text"
+block_sha256 = "a39eb4c1faaa1990505c42b3f1dca94fe527f20d984a2c9dfd1f946b83279066"
+status = "notation"
+reason = "the ML.GENERATE_TEXT signature for Mistral AI, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-generate-text"
+block_sha256 = "baec73406259c9fa7137fb41f1b05eb669ce21ad03465eaebf99f6e03b222137"
+status = "notation"
+reason = "the ML.GENERATE_TEXT signature for Open models, a variant the page documents beside its main syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-metrics"
+block_sha256 = "8dba1a1c5b152962af7a5fd7781c282c662a6439fc81c117df84e5e2bd3d4029"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (sits under an argument heading of a BigQuery ML page): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-metrics"
+block_sha256 = "1daaeb85cda4b7d599a3c26521996c4e9bd977d073ff96beb3a7c41ff382a462"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (sits under an argument heading of a BigQuery ML page): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-metrics"
+block_sha256 = "8dba1a1c5b152962af7a5fd7781c282c662a6439fc81c117df84e5e2bd3d4029"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (sits under an argument heading of a BigQuery ML page): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-metrics"
+block_sha256 = "1daaeb85cda4b7d599a3c26521996c4e9bd977d073ff96beb3a7c41ff382a462"
+status = "not_syntax"
+reason = "argument detail under Syntax / Arguments (sits under an argument heading of a BigQuery ML page): a value format, URL, result table or prose, not statement syntax"
+
+[[block]]
+source = "doc.bigqueryml-syntax-translate"
+block_sha256 = "d39a5beea03bdc26baec78d90ce9603995c095fad8f36aac8f2a4f3c6b123358"
+status = "example"
+reason = "an example call or expression under Syntax / Arguments, with example names and values"
+
+[[block]]
+source = "doc.bigqueryml-syntax-understand-text"
+block_sha256 = "4f9d58501c41cb2b080049900d291eb20ab0657e4085e18720c7662c41690ceb"
+status = "example"
+reason = "an example call or expression under Syntax / Arguments, with example names and values"
+
+[[block]]
+source = "doc.collation-concepts"
+block_sha256 = "c1158f480f0ed279d59b65e9b00b60ef9c27534d229e39b11f61275fbae57ef0"
+status = "example"
+reason = "a query with its result table showing collation's effect on ORDER BY"
+
+[[block]]
+source = "doc.collation-concepts"
+block_sha256 = "605c72708ead8b147b16bf7971f706aa62ab2253bac4e9bd7f9bf4b4e8bdedfc"
+status = "example"
+reason = "an abbreviated CREATE SCHEMA ... DEFAULT COLLATE example; the clause is catalogued in bq.ddl.create-schema"
+
+[[block]]
+source = "doc.collation-concepts"
+block_sha256 = "1df20e985dd637b21d7b6ffdea5dc204b41215d7f2365c63501a58dff22c062c"
+status = "example"
+reason = "an abbreviated CREATE TABLE ... DEFAULT COLLATE example; the clause is catalogued in bq.ddl.create-table"
+
+[[block]]
+source = "doc.collation-concepts"
+block_sha256 = "ac81d1ae14f3694b3c43a777939560f43e6b72062acb7e5237815c1a621749e6"
+status = "not_syntax"
+reason = "the format of a collation specification string, the content of a string literal; COLLATE with a string is catalogued from the DDL and function pages"
+
+[[block]]
+source = "doc.data-definition-language"
+block_sha256 = "210898de9c72cfa1e2e4c634c1dc611e79f8274c7062e0779ea6c8cc777e3a19"
+status = "notation"
+reason = "the column and column_schema definitions of CREATE TABLE, written after prose under their own heading"
+
+[[block]]
+source = "doc.data-definition-language"
+block_sha256 = "4816131203aa62088347d5f6df70b60d5df6973d3706afefac3f8ffcb08c321b"
+status = "restated"
+reason = "STRING COLLATE collate_specification, restated from the simple_type definition of the column grammar"
+
+[[block]]
+source = "doc.data-definition-language"
+block_sha256 = "43ce36ce7d50e5076ee7aeec2dc948fcc6751af75d5b9343426b2e8ad3896abf"
+status = "not_syntax"
+reason = "a JavaScript function the UDAF body must export, not SQL"
+
+[[block]]
+source = "doc.data-definition-language"
+block_sha256 = "7530f2233ecac954d87b159a525d4764d280092e994a5a80aa70485956d59c1c"
+status = "not_syntax"
+reason = "JavaScript functions the UDAF body must export, not SQL"
+
+[[block]]
+source = "doc.data-definition-language"
+block_sha256 = "d130b1dea6d317c3dcb40457ce206a9ce861e5cd122cfaa2bd524d5723421801"
+status = "not_syntax"
+reason = "a JavaScript function the UDAF body must export, not SQL"
+
+[[block]]
+source = "doc.data-definition-language"
+block_sha256 = "67f397ac02167f20de1355133897e6dc123c7d46b41ea28c330865471268bca7"
+status = "not_syntax"
+reason = "a JavaScript function the UDAF body must export, not SQL"
+
+[[block]]
+source = "doc.data-definition-language"
+block_sha256 = "8454d810333511f81974fbf221e3ce336bec7ef9b7330e4f21e4cc937b2ea622"
+status = "not_syntax"
+reason = "a JavaScript function the UDAF body must export, not SQL"
+
+[[block]]
+source = "doc.data-definition-language"
+block_sha256 = "b7e49b6f8fdbe78fa903a1f8959dcf7e619ff848cd2ba646a48df6f3bfed90a5"
+status = "not_syntax"
+reason = "a JavaScript function the UDAF body may export, not SQL"
+
+[[block]]
+source = "doc.data-definition-language"
+block_sha256 = "c0b2ee439781f4bc83d6764eb7c8eca5593db7ec3d0513bca76ac4c6fe7b12b8"
+status = "not_syntax"
+reason = "a JavaScript function the UDAF body may export, not SQL"
+
+[[block]]
+source = "doc.data-types"
+block_sha256 = "a25432db324aaceb013cac407384f73339d05673668f6b039060091143628039"
+status = "corrected"
+reason = "the generic DATA_TYPE(param[, ...]) is spelled out for the four types the section lists, with the parameters the STRING, BYTES, NUMERIC and BIGNUMERIC tables of the page give (L; P[, S]) and their DECIMAL and BIGDECIMAL aliases"
+grammar = [
+  "STRING ( <L> )",
+  "BYTES ( <L> )",
+  "NUMERIC ( <P> [ , <S> ] )",
+  "DECIMAL ( <P> [ , <S> ] )",
+  "BIGNUMERIC ( <P> [ , <S> ] )",
+  "BIGDECIMAL ( <P> [ , <S> ] )",
+]
+family = ""
+
+[[block]]
+source = "doc.data-types"
+block_sha256 = "64d17f70ee22b1a6d079f6a4e34b0b68b0845d914369dc3130c18ce056968e08"
+status = "restated"
+reason = "ARRAY<T>, restated by the ARRAY row of the page's type table"
+
+[[block]]
+source = "doc.data-types"
+block_sha256 = "9e7f6b84c2e19d939836767319d7c9918ef8d6fca207922bb25260aea50949a8"
+status = "example"
+reason = "array literal examples; array literals are catalogued from the lexical page"
+
+[[block]]
+source = "doc.data-types"
+block_sha256 = "2b07b82fb73095eabaf4d58fe2553f4b355e612becf11cfe2477c607dc366b94"
+status = "not_syntax"
+reason = "the canonical text format of a DATE value, the content of a string, not SQL syntax"
+
+[[block]]
+source = "doc.data-types"
+block_sha256 = "0734ce7dfa68cd15468ad910a5a7e2b537da98d2f264800f23c81abd5b75ac6a"
+status = "not_syntax"
+reason = "the canonical text format of a DATETIME value, the content of a string, not SQL syntax"
+
+[[block]]
+source = "doc.data-types"
+block_sha256 = "c0b3d7da06788af3db53c2124279c23ef5696722529feb3aea737c4410b96cf8"
+status = "not_syntax"
+reason = "the canonical text format of an INTERVAL value, the content of a string, not SQL syntax"
+
+[[block]]
+source = "doc.data-types"
+block_sha256 = "7dfe2d5da642ac8f606234b44fd6225b1fce9ab3d2a4313e5a5e7d113b1a2f92"
+status = "restated"
+reason = "STRUCT<T>, restated by the STRUCT row of the page's type table"
+
+[[block]]
+source = "doc.data-types"
+block_sha256 = "99c578ff3b2e4b65ad1edc02ebbe809869a01c8bed4ec2a7d948dcf5a069de98"
+status = "not_syntax"
+reason = "the canonical text format of a TIME value, the content of a string, not SQL syntax"
+
+[[block]]
+source = "doc.data-types"
+block_sha256 = "707e69f0cf5ff95d20ed95cdf21d7e49e51ea743e14c821862a75afed1f4bde2"
+status = "not_syntax"
+reason = "the canonical text format of a TIMESTAMP value, the content of a string, not SQL syntax"
+
+[[block]]
+source = "doc.data-types"
+block_sha256 = "8f04bbe9bc3dfe00f9aef708b65f4716e5c308cc2b501270cf83b33585b907d3"
+status = "not_syntax"
+reason = "the UTC suffix of a timestamp string, the content of a string, not SQL syntax"
+
+[[block]]
+source = "doc.data-types"
+block_sha256 = "3d0e0741fc6a3abcae3087917037948516d1f7a8f5342bb468c186a2846f83c8"
+status = "not_syntax"
+reason = "the offset suffix of a timestamp string, the content of a string, not SQL syntax"
+
+[[block]]
+source = "doc.dml-syntax"
+block_sha256 = "89e5412c539319890012ffbfeb873c181583bdad558c059b9595ac3e08a4c6a3"
+status = "corrected"
+reason = "the INSERT synopsis, written after prose; SELECT_QUERY is the page's placeholder for a query, so it is read as one. Its numbered names (column_1 … column_n, expr_1 … expr_k_n) are one column or one expr repeated, so they are written as the defined <expr> (value_expression or DEFAULT) and one column name followed by [ , ... ]"
+grammar = [
+  "INSERT [ INTO ] <target_name> [ ( <column_name> [ , ... ] ) ] <input>",
+  "<input> ::= VALUES <row> [ , ... ] | <select_query>",
+  "<row> ::= ( <expr> [ , ... ] )",
+  "<expr> ::= <value_expression> | DEFAULT",
+]
+family = ""
+
+[[block]]
+source = "doc.dml-syntax"
+block_sha256 = "8b9071bc32367c59897bd829eb3adca6bc447913d278baa22e03dd2be374ae42"
+status = "notation"
+reason = "the DELETE synopsis, written after prose under its statement heading"
+
+[[block]]
+source = "doc.dml-syntax"
+block_sha256 = "95793b2f5e4525f58a0a4fe096dbf58141d9b4dfa3288e4120e21020c0516fc5"
+status = "notation"
+reason = "the TRUNCATE TABLE synopsis, written after prose under its statement heading"
+
+[[block]]
+source = "doc.dml-syntax"
+block_sha256 = "73f5c67a59798c2b7f001467f9b794d7eb5fa6aacc00612095289ffbdcd16540"
+status = "notation"
+reason = "the UPDATE synopsis, written after prose under its statement heading"
+
+[[block]]
+source = "doc.dml-syntax"
+block_sha256 = "dddebe9fe7f1157636a07cc2d83ba41b79da9c9422b8d67c94b0c341af65aae2"
+status = "corrected"
+reason = "the MERGE synopsis, written after prose under its statement heading; its regular-expression marks `{ when_clause } +` (one or more) and `[, update_item]*` (zero or more) have no sign in the notation, so they are written as an item followed by `[ ... ]`. Its numbered names (column_1 … column_n, expr_1 … expr_n) are one column or one expr repeated, so they are written as one column name and the defined <expr> (expression or DEFAULT) followed by [ , ... ]"
+grammar = [
+  "MERGE [ INTO ] <target_name> [ [ AS ] <alias> ] USING <source_name> [ [ AS ] <alias> ] ON <merge_condition> <when_clause> [ ... ]",
+  "<when_clause> ::= <matched_clause> | <not_matched_by_target_clause> | <not_matched_by_source_clause>",
+  "<matched_clause> ::= WHEN MATCHED [ AND <search_condition> ] THEN { <merge_update_clause> | <merge_delete_clause> }",
+  "<not_matched_by_target_clause> ::= WHEN NOT MATCHED [ BY TARGET ] [ AND <search_condition> ] THEN <merge_insert_clause>",
+  "<not_matched_by_source_clause> ::= WHEN NOT MATCHED BY SOURCE [ AND <search_condition> ] THEN { <merge_update_clause> | <merge_delete_clause> }",
+  "<merge_condition> ::= <bool_expression>",
+  "<search_condition> ::= <bool_expression>",
+  "<merge_update_clause> ::= UPDATE SET <update_item> [ , <update_item> ] [ ... ]",
+  "<update_item> ::= <column_name> = <expression>",
+  "<merge_delete_clause> ::= DELETE",
+  "<merge_insert_clause> ::= INSERT [ ( <column_name> [ , ... ] ) ] <input>",
+  "<input> ::= VALUES ( <expr> [ , ... ] ) | ROW",
+  "<expr> ::= <expression> | DEFAULT",
+]
+family = ""
+
+[[block]]
+source = "doc.federated-query-functions"
+block_sha256 = "b4fe5023b21dc87f97e0fec45b9c8f7adeb6db4435b1e3597b1a3e6ccdae38f2"
+status = "corrected"
+reason = "the synopsis writes its arguments as quoted strings, one triple-quoted; they are string arguments, read as placeholders"
+grammar = [
+  "EXTERNAL_QUERY ( <connection_id> , <external_database_query> [ , <options> ] )",
+]
+family = ""
+
+[[block]]
+source = "doc.functions-reference"
+block_sha256 = "04b700ef173bb728bcf6e9476c4cb1128577f048b6cf34f7b75b52f5971c9f94"
+status = "corrected"
+reason = "named_argument is the page's placeholder for an argument name"
+grammar = [
+  "<named_argument> => <value>",
+]
+family = ""
+
+[[block]]
+source = "doc.geography-functions"
+block_sha256 = "8c929f23e2b24288396d7a2751dba504adf07f8a9d53a1e9118732ca477b5763"
+status = "not_syntax"
+reason = "the STRUCT type ST_REGIONSTATS returns, not call syntax"
+
+[[block]]
+source = "doc.lexical"
+block_sha256 = "5ab183f4bf82726a7afb240869fa15ed1a35e0ad046f706c802bd3f3fd597cae"
+status = "notation"
+reason = "the path expression grammar, written after prose"
+
+[[block]]
+source = "doc.lexical"
+block_sha256 = "121041078a066c3e2d095e61be45b48f53c578201395fe0036274187b6effcef"
+status = "not_syntax"
+reason = "the digit patterns of a floating point literal; literal forms are catalogued by hand from the lexical page"
+
+[[block]]
+source = "doc.lexical"
+block_sha256 = "0a0e1d4cd1571f973abf70022f8951fd8a52f9b3d7add849370493f61ba90a9e"
+status = "example"
+reason = "array literal examples; array literals are catalogued by hand from the lexical page"
+
+[[block]]
+source = "doc.lexical"
+block_sha256 = "c983172c9653a35cce17d6425d255115a6afcbbf07b280e9e0cc682feca696c3"
+status = "corrected"
+reason = "the quoted placeholder is a string literal in the canonical format; read as a string placeholder"
+grammar = [
+  "DATE <date_canonical_format>",
+]
+family = ""
+
+[[block]]
+source = "doc.lexical"
+block_sha256 = "bd4fdfe29c1dab90edbf75922fd10bd34541e7ca6e00f52552c2e6914436c481"
+status = "corrected"
+reason = "the quoted placeholder is a string literal in the canonical format; read as a string placeholder"
+grammar = [
+  "TIME <time_canonical_format>",
+]
+family = ""
+
+[[block]]
+source = "doc.lexical"
+block_sha256 = "64c73dac6ffb3c7737a77adc9bb530b5650bff7bb23aba896731ffab94d091f0"
+status = "corrected"
+reason = "the quoted placeholder is a string literal in the canonical format; read as a string placeholder"
+grammar = [
+  "DATETIME <datetime_canonical_format>",
+]
+family = ""
+
+[[block]]
+source = "doc.lexical"
+block_sha256 = "0559bf27ac5167779815d5d63f3bc36e949a16cd1e91beb1d6f89c26cfe732ba"
+status = "corrected"
+reason = "the quoted placeholder is a string literal in the canonical format; read as a string placeholder"
+grammar = [
+  "TIMESTAMP <timestamp_canonical_format>",
+]
+family = ""
+
+[[block]]
+source = "doc.lexical"
+block_sha256 = "5fa318832a09b44c5890b4a20005e8e671767020157c54b1a6669ee883bafc6e"
+status = "corrected"
+reason = "'[lower_bound, upper_bound)' is a string literal holding the bounds; read as a string placeholder"
+grammar = [
+  "RANGE \"<\" <T> \">\" <range_bounds_string>",
+]
+family = ""
+
+[[block]]
+source = "doc.lexical"
+block_sha256 = "cc4f7d078731a9e222a98116c54705b18d40901426c4bfea221e921247160ee7"
+status = "corrected"
+reason = "'json_formatted_data' is a string literal holding JSON text; read as a string placeholder"
+grammar = [
+  "JSON <json_formatted_data>",
+]
+family = ""
+
+[[block]]
+source = "doc.load-statements"
+block_sha256 = "210898de9c72cfa1e2e4c634c1dc611e79f8274c7062e0779ea6c8cc777e3a19"
+status = "notation"
+reason = "the column and column_schema definitions of LOAD DATA's column list, written after prose under their own heading"
+
+[[block]]
+source = "doc.load-statements"
+block_sha256 = "4816131203aa62088347d5f6df70b60d5df6973d3706afefac3f8ffcb08c321b"
+status = "restated"
+reason = "STRING COLLATE collate_specification, restated from the simple_type definition of the column grammar"
+
+[[block]]
+source = "doc.mathematical-functions"
+block_sha256 = "d8dc217525fc05276bcef71774bae166e236960d8d5a4c16e941c3b76d3ea42d"
+status = "example"
+reason = "RANGE_BUCKET calls with their results"
+
+[[block]]
+source = "doc.objectref-functions"
+block_sha256 = "3fea67aaace8550ec85638229150d8545a58ef382e1e74e5e9934c2264c9a8b1"
+status = "notation"
+reason = "the OBJ.MAKE_REF signatures, written after prose"
+
+[[block]]
+source = "doc.objectref-functions"
+block_sha256 = "595c7b1b4c386dfafa97023fe1a5a047ed8c46e9516b3eb14b7690d9181dd622"
+status = "not_syntax"
+reason = "the JSON shape of an ObjectRef value, not SQL"
+
+[[block]]
+source = "doc.operators"
+block_sha256 = "05ca64c10b77f92b4913e6abb38fa9417c0d85cd6efbf49dc8c596a61b8cd774"
+status = "corrected"
+reason = "three subtractions written on three lines of one block"
+grammar = [
+  "<date_expression> - <date_expression>",
+  "<timestamp_expression> - <timestamp_expression>",
+  "<datetime_expression> - <datetime_expression>",
+]
+family = ""
+
+[[block]]
+source = "doc.operators"
+block_sha256 = "79456083c835f9bce6a61c2ed0e6f0811d194b1051709775dee8c3b7bd92c9ae"
+status = "corrected"
+reason = "each line ends with '= <result type>', which names the result type and is not syntax"
+grammar = [
+  "<date_expression> + <interval_expression>",
+  "<date_expression> - <interval_expression>",
+  "<timestamp_expression> + <interval_expression>",
+  "<timestamp_expression> - <interval_expression>",
+  "<datetime_expression> + <interval_expression>",
+  "<datetime_expression> - <interval_expression>",
+]
+family = ""
+
+[[block]]
+source = "doc.operators"
+block_sha256 = "4df0c501c839c68977fe92acf7af6faebf47bfefab92c504388415df06d8e509"
+status = "corrected"
+reason = "each line ends with '= INTERVAL', which names the result type and is not syntax"
+grammar = [
+  "<interval_expression> * <integer_expression>",
+  "<interval_expression> / <integer_expression>",
+]
+family = ""
+
+[[block]]
+source = "doc.operators"
+block_sha256 = "e18df1c167b059bbafe4f43ce3494e19e4e65dc52a81e3e9b29f77107f339347"
+status = "notation"
+reason = "the IN operator synopsis, written after prose"
+
+[[block]]
+source = "doc.operators"
+block_sha256 = "8b8c6c25d16e3fbf6f3611dc23afa447681a5c62390b0b6023e10e590bf01cd9"
+status = "not_syntax"
+reason = "an equivalence the page uses to explain IN, not a separate form"
+
+[[block]]
+source = "doc.operators"
+block_sha256 = "cb47e495aa30f467d4803299727f5a5805a84475693923df43526749c80576e5"
+status = "not_syntax"
+reason = "an equivalence the page uses to explain IN, not a separate form"
+
+[[block]]
+source = "doc.operators"
+block_sha256 = "0f1cfc1b495180c10671f3e99aae1eeabfe6cc0355163f1c86a3d77cbb523fe9"
+status = "not_syntax"
+reason = "an equivalence the page uses to explain NOT IN, not a separate form"
+
+[[block]]
+source = "doc.operators"
+block_sha256 = "31bd5f202454ba7458a0b5b826cb18fb139be8cba147f61393e9c8e31eff1886"
+status = "not_syntax"
+reason = "an equivalence the page uses to explain NOT IN, not a separate form"
+
+[[block]]
+source = "doc.operators"
+block_sha256 = "1ff5b5a9f056e1863e268550dab0def8fab2841f0577042fb1a6c2ebd57f6932"
+status = "restated"
+reason = "IN UNNEST, restated from the IN synopsis's value_set"
+
+[[block]]
+source = "doc.operators"
+block_sha256 = "ce452e6fd97c4d0c208841f6d1150232a94a21681c337071f4e35075c628f2a2"
+status = "corrected"
+reason = "the patterns definition lists its two alternatives on separate lines without the | between them"
+grammar = [
+  "<search_value> [ NOT ] LIKE <quantifier> <patterns>",
+  "<quantifier> ::= { ANY | SOME | ALL }",
+  "<patterns> ::= { ( <expression> [ , ... ] ) | UNNEST ( <array_expression> ) }",
+]
+family = ""
+
+[[block]]
+source = "doc.pipe-syntax"
+block_sha256 = "4a45267ad4cf8f154a762d0d1be62f20ce84b88db060c16e9d264d7897392040"
+status = "example"
+reason = "the example table and query of the page's comparison"
+
+[[block]]
+source = "doc.pipe-syntax"
+block_sha256 = "3c12fffa588e1bb7815946a712d7c721286a7f530dbd35c6139b443ee5689301"
+status = "example"
+reason = "a standard-syntax query of the page's comparison, with its result"
+
+[[block]]
+source = "doc.pipe-syntax"
+block_sha256 = "8dfc0e926895307aebff9520ed37c02c091950d279aea846ac270c286ab074c8"
+status = "example"
+reason = "a pipe-syntax query of the page's comparison, with its result"
+
+[[block]]
+source = "doc.pipe-syntax"
+block_sha256 = "6beb981613806c1928667e5350a4b336e97822548b0a24b8aaa9c01fa4773275"
+status = "example"
+reason = "a standard and a pipe-syntax query compared"
+
+[[block]]
+source = "doc.pipe-syntax"
+block_sha256 = "15fa2401684d337bc2ad2585abe9f3d6d1939c35bf30e868720f1b1634f54e97"
+status = "example"
+reason = "a standard and a pipe-syntax query compared"
+
+[[block]]
+source = "doc.pipe-syntax"
+block_sha256 = "deda8832a9618c0c5d89611a83ed85b622250a0d525484de681f6f13a6712a3c"
+status = "example"
+reason = "a standard and a pipe-syntax query compared"
+
+[[block]]
+source = "doc.pipe-syntax"
+block_sha256 = "578203b3a93d5ba7fde92a9b43739c80cc952d0ff7be274babd46bd5da09f066"
+status = "example"
+reason = "queries showing how EXCEPT operations group"
+
+[[block]]
+source = "doc.procedural-language"
+block_sha256 = "55b0cc00a7d8220a95740f21c1aa97b67a54ead2f20eba9faea65d4f26de153b"
+status = "example"
+reason = "a nested BEGIN ... EXCEPTION example"
+
+[[block]]
+source = "doc.procedural-language"
+block_sha256 = "c1fc0b8ed52db03b8410fc7631428641b332eb006df56c8532750999e2e8e43d"
+status = "example"
+reason = "label name examples marked -- Works"
+
+[[block]]
+source = "doc.query-syntax"
+block_sha256 = "e486aca708bd7e4dbf4fb5aee983a882f6ddad7e00b81f5fb5789647f27c7c19"
+status = "example"
+reason = "a SELECT DISTINCT query with its result"
+
+[[block]]
+source = "doc.query-syntax"
+block_sha256 = "aac826b4218745d95ce1269b989ace9a358dcd2b43c9e9ffb11c2988575eb933"
+status = "corrected"
+reason = "the last line defines unpivot_alias and row_value_alias together ('unpivot_alias and row_value_alias:'); split into two definitions"
+grammar = [
+  "FROM <from_item> [ , ... ] <unpivot_operator>",
+  "<unpivot_operator> ::= UNPIVOT [ { INCLUDE NULLS | EXCLUDE NULLS } ] ( { <single_column_unpivot> | <multi_column_unpivot> } ) [ <unpivot_alias> ]",
+  "<single_column_unpivot> ::= <values_column> FOR <name_column> IN ( <columns_to_unpivot> )",
+  "<multi_column_unpivot> ::= <values_column_set> FOR <name_column> IN ( <column_sets_to_unpivot> )",
+  "<values_column_set> ::= ( <values_column> [ , ... ] )",
+  "<columns_to_unpivot> ::= <unpivot_column> [ <row_value_alias> ] [ , ... ]",
+  "<column_sets_to_unpivot> ::= ( <unpivot_column> [ <row_value_alias> ] [ , ... ] )",
+  "<unpivot_alias> ::= [ AS ] <alias>",
+  "<row_value_alias> ::= [ AS ] <alias>",
+]
+family = ""
+
+[[block]]
+source = "doc.query-syntax"
+block_sha256 = "ffd764dca88bf4bf3702c6da9d83d4a080c6eb246b08a724718eb03ad1830169"
+status = "example"
+reason = "a GROUP BY query with its result"
+
+[[block]]
+source = "doc.query-syntax"
+block_sha256 = "9e2d303284ef919cf66d2e6dabddca6bca73052fc63c3ef642f342802463ef0a"
+status = "example"
+reason = "a HAVING query using an aggregate alias"
+
+[[block]]
+source = "doc.query-syntax"
+block_sha256 = "9cd1d0693d2ddd6013fbd996a36212f75c13621cc8d8634a25c43ef1229d1dc1"
+status = "example"
+reason = "a HAVING query with an aggregate"
+
+[[block]]
+source = "doc.query-syntax"
+block_sha256 = "ea95846ec97589fb27cafe947603ec5bb0861f0a22d09ac946da26720e18ce43"
+status = "notation"
+reason = "the AGGREGATION_THRESHOLD clause synopsis, written after prose"
+
+[[block]]
+source = "doc.search-functions"
+block_sha256 = "f52b87ca7672b8d0dc73044831d6a0c4514ea02aab7f07c7e44f908973576066"
+status = "not_syntax"
+reason = "the grammar of the search query string SEARCH takes, the content of a string, not SQL"
+
+[[block]]
+source = "doc.search-functions"
+block_sha256 = "ea464d04d4a554d2cabc4c9ff76d9159c19169f4f1e3948f57123ca6a608c056"
+status = "notation"
+reason = "the VECTOR_SEARCH signature with a query table, written after prose"
+
+[[block]]
+source = "doc.search-functions"
+block_sha256 = "94504b8d218f54130bf7e96f02a1554e2a4ce7b96dc377dbc9fe6089f0aad8e0"
+status = "notation"
+reason = "the VECTOR_SEARCH signature with a single query value, written after prose"
+
+[[block]]
+source = "doc.subqueries"
+block_sha256 = "6b3458317627ea73322767ce6f8449311d55f71f7743a6ea8fc565024c1b49a6"
+status = "notation"
+reason = "the two IN subquery forms, written after prose"
+
+[[block]]
+source = "doc.text-analysis"
+block_sha256 = "67f7dbed4cc4a15b605dfc66b5346434673caf43dddd6e90847a5db678241f7e"
+status = "not_syntax"
+reason = "a JSON analyzer_options value, the content of a string literal passed to CREATE SEARCH INDEX or TEXT_ANALYZE, not SQL syntax"
+
+[[block]]
+source = "doc.text-analysis"
+block_sha256 = "0c386917bbccba2d1dc77505dba6dc70ebb7bf35d839fe82d4231730da20add4"
+status = "not_syntax"
+reason = "a JSON analyzer_options value, the content of a string literal passed to CREATE SEARCH INDEX or TEXT_ANALYZE, not SQL syntax"
+
+[[block]]
+source = "doc.text-analysis"
+block_sha256 = "52120de5d23452756039083229bd9446159a26adc9c26863dd025daedb77dee6"
+status = "not_syntax"
+reason = "a JSON analyzer_options value, the content of a string literal passed to CREATE SEARCH INDEX or TEXT_ANALYZE, not SQL syntax"
+
+[[block]]
+source = "doc.text-analysis"
+block_sha256 = "0572e517a151e34ea73ba59fc2027baae30e174693bad7ae110a190ab9117f05"
+status = "not_syntax"
+reason = "a JSON analyzer_options value, the content of a string literal passed to CREATE SEARCH INDEX or TEXT_ANALYZE, not SQL syntax"
+
+[[block]]
+source = "doc.text-analysis"
+block_sha256 = "7eb65021df17d0e1dd5e42fe85ae645095177b437555155935a6af50f2e9d0a4"
+status = "not_syntax"
+reason = "a JSON analyzer_options value, the content of a string literal passed to CREATE SEARCH INDEX or TEXT_ANALYZE, not SQL syntax"
+
+[[block]]
+source = "doc.text-analysis"
+block_sha256 = "0b6878f01e319b6816d9680a42582d8c47ceb1e7fb3677c9cd7d1d1474b9a380"
+status = "not_syntax"
+reason = "a JSON analyzer_options value, the content of a string literal passed to CREATE SEARCH INDEX or TEXT_ANALYZE, not SQL syntax"
+
+[[block]]
+source = "doc.text-analysis"
+block_sha256 = "3c97841a53879ad7dff73be98156053e77e81f6a3c781b9db486b524c9d8b1a7"
+status = "not_syntax"
+reason = "a JSON analyzer_options value, the content of a string literal passed to CREATE SEARCH INDEX or TEXT_ANALYZE, not SQL syntax"
+
+[[block]]
+source = "doc.text-analysis"
+block_sha256 = "511d5d45390bd5af34acb9ce1e807bdd19de372ef30319028738710472fc61bf"
+status = "not_syntax"
+reason = "a JSON analyzer_options value, the content of a string literal passed to CREATE SEARCH INDEX or TEXT_ANALYZE, not SQL syntax"
+
+[[block]]
+source = "doc.text-analysis"
+block_sha256 = "c2b063f6cec09df09b5e25493729003a43020fddbc71286f4377c13f24d59779"
+status = "not_syntax"
+reason = "a JSON analyzer_options value, the content of a string literal passed to CREATE SEARCH INDEX or TEXT_ANALYZE, not SQL syntax"
+
+[[block]]
+source = "doc.text-analysis"
+block_sha256 = "07d19180468d3f47aec2cd5c8dea2c3ab1717eecea023232ebab6da5cb0a9891"
+status = "not_syntax"
+reason = "a JSON analyzer_options value, the content of a string literal passed to CREATE SEARCH INDEX or TEXT_ANALYZE, not SQL syntax"
+
+[[block]]
+source = "doc.text-analysis"
+block_sha256 = "dabfc78520ec185ddc454f50b7175f0c54a2e5920630a64961375e570308c49d"
+status = "not_syntax"
+reason = "a JSON analyzer_options value, the content of a string literal passed to CREATE SEARCH INDEX or TEXT_ANALYZE, not SQL syntax"
+
+[[block]]
+source = "doc.text-analysis"
+block_sha256 = "b15bd269d6dd8681d5322d2e4bf732b1a043388a6c345a2b772bf6f6b52752de"
+status = "not_syntax"
+reason = "a JSON analyzer_options value, the content of a string literal passed to CREATE SEARCH INDEX or TEXT_ANALYZE, not SQL syntax"
+
+[[block]]
+source = "doc.text-analysis"
+block_sha256 = "d9fe5f06c39a4d5305c48582939c42ed87e45fba05dbca517fe915b2afd55922"
+status = "not_syntax"
+reason = "a JSON analyzer_options value, the content of a string literal passed to CREATE SEARCH INDEX or TEXT_ANALYZE, not SQL syntax"
+
+[[block]]
+source = "doc.text-analysis"
+block_sha256 = "4c61079e674e1e8547d9b116d8047355a03384e3c79b9888088e3170bfa7a355"
+status = "not_syntax"
+reason = "a JSON analyzer_options value, the content of a string literal passed to CREATE SEARCH INDEX or TEXT_ANALYZE, not SQL syntax"
+
+[[block]]
+source = "doc.time-series-functions"
+block_sha256 = "73e68c31be150660899a49ccebc6414a5ebae973c35e356f4fa3260f14dadec1"
+status = "corrected"
+reason = "'DEFAULT NULL' marks start_timestamp and end_timestamp as optional with a NULL default; read as optional trailing arguments"
+grammar = [
+  "APPENDS ( TABLE <table> [ , <start_timestamp> [ , <end_timestamp> ] ] )",
+]
+family = ""
+
+[[block]]
+source = "doc.time-series-functions"
+block_sha256 = "a99d4178f0effea78a6fab592e00c92fc4936c024d1e89621a8b6fea5fd8f968"
+status = "corrected"
+reason = "'DEFAULT NULL' gives start_timestamp a NULL default, but end_timestamp after it is required, so both are passed; the DEFAULT NULL words are not SQL"
+grammar = [
+  "CHANGES ( TABLE <table> , <start_timestamp> , <end_timestamp> )",
+]
+family = ""
+
+[[block]]
+source = "doc.time-series-functions"
+block_sha256 = "20ab7f43acb26209fbb71057c1d515788fc8e315e3e4b0b7e823c1f7d0e5849a"
+status = "notation"
+reason = "the two GAP_FILL signatures; 'values' is the page's name for an argument value"
+
+[[block]]
+source = "doc.time-series-functions"
+block_sha256 = "e9341493c2586ad5c78ca4196b927c9d2dcf9b5d7974d9c43355996e819b629d"
+status = "not_syntax"
+reason = "the value format of GAP_FILL's value_columns argument, an array of STRUCT values"
+
+[[block]]
+source = "doc.window-function-calls"
+block_sha256 = "146c3689bf3bc71983000056fe2e009c99b00b00d36f847a577c87dd0ec0383d"
+status = "example"
+reason = "the default window frame the text describes, restated by the window_frame_clause definitions"
+
+[[block]]
+source = "doc.window-function-calls"
+block_sha256 = "3f872cd32143c8518b4cb4dc7292a39550c94bb4f051f607b781bcefc00a69a1"
+status = "example"
+reason = "two queries comparing window frames"
+
+[[block]]
+source = "doc.window-function-calls"
+block_sha256 = "ab3411e7343ef6487c2dae9c2007488b457eb22cc204e7215c3245c3eddefac0"
+status = "example"
+reason = "queries showing which named window combinations work"
+
+[[block]]
+source = "doc.bigqueryml-syntax-create-pca"
+block_sha256 = "8cfb1e89be86dfcb780cffa0f5328282dfeca2e4833101dc4dcc39a919135d58"
+status = "corrected"
+reason = "the page writes `NUM_PRINCIPAL_COMPONENTS = int64_value | PCA_EXPLAINED_VARIANCE_RATIO = float64_value` with a bare bar at the top of model_option_list, which splits the whole list in two; the bar chooses between the two options only, so they are braced"
+grammar = [
+  "{ CREATE MODEL | CREATE MODEL IF NOT EXISTS | CREATE OR REPLACE MODEL } <model_name> OPTIONS ( <model_option_list> ) AS <query_statement>",
+  "<model_option_list> ::= MODEL_TYPE = PCA , { NUM_PRINCIPAL_COMPONENTS = <int64_value> | PCA_EXPLAINED_VARIANCE_RATIO = <float64_value> } [ , SCALE_FEATURES = { TRUE | FALSE } ] [ , PCA_SOLVER = { 'FULL' | 'RANDOMIZED' | 'AUTO' } ] [ , MODEL_REGISTRY = { 'VERTEX_AI' } ] [ , VERTEX_AI_MODEL_ID = <string_value> ] [ , VERTEX_AI_MODEL_VERSION_ALIASES = <string_array> ] [ , KMS_KEY_NAME = <string_value> ]",
+]
+family = ""
+
+[[block]]
+source = "doc.graph-patterns"
+block_sha256 = "47f248fac98019b5946b749bc2620b17a850db52cd8de16d719868a0e05f4979"
+status = "corrected"
+reason = "the last definition, `element_property: element_property_name : element_property_value`, reads as a second definition head; the colon after element_property_name is the property filter's literal separator (`{ id: 7 }`), so it is written as a literal"
+grammar = [
+  "{ <node_pattern> | <edge_pattern> }",
+  "<node_pattern> ::= ( <pattern_filler> )",
+  "<edge_pattern> ::= { <full_edge_any> | <full_edge_left> | <full_edge_right> | <abbreviated_edge_any> | <abbreviated_edge_left> | <abbreviated_edge_right> }",
+  "<full_edge_any> ::= \"-[\" <pattern_filler> \"]-\"",
+  "<full_edge_left> ::= \"<-[\" <pattern_filler> \"]-\"",
+  "<full_edge_right> ::= \"-[\" <pattern_filler> \"]->\"",
+  "<abbreviated_edge_any> ::= -",
+  "<abbreviated_edge_left> ::= <-",
+  "<abbreviated_edge_right> ::= ->",
+  "<pattern_filler> ::= [ <graph_pattern_variable> ] [ <is_label_condition> ] [ { <where_clause> | <property_filters> } ] [ <cost_expression> ]",
+  "<is_label_condition> ::= { IS | : } <label_expression>",
+  "<cost_expression> ::= COST <expression>",
+  "<where_clause> ::= WHERE <bool_expression>",
+  "<property_filters> ::= \"{\" <element_property> [ , ... ] \"}\"",
+  "<element_property> ::= <element_property_name> \":\" <element_property_value>",
+]
+family = ""
+
+[[block]]
+source = "doc.data-types"
+block_sha256 = "7dfe2d5da642ac8f606234b44fd6225b1fce9ab3d2a4313e5a5e7d113b1a2f92"
+status = "corrected"
+reason = "`STRUCT<T>` declares a struct type whose field type list T may name its fields or not (data-types.md:1110, :1126); it is not a restatement of the named-field form, so it is the definition of a struct type with optional field names"
+grammar = [
+  "<struct_type> ::= STRUCT \"<\" [ <field_name> ] <field_type> [ , ... ] \">\"",
+]
+family = ""
+
+[[block]]
+source = "doc.bigqueryml-syntax-bag-of-words"
+block_sha256 = "331e5cc6ddeaf77dd954e5736e1ee74bde2134134b895d63c82db10a1e071a33"
+status = "corrected"
+reason = "the synopsis writes the call and its OVER ( ) on separate lines, which reads as two productions; OVER ( ) belongs to the ML.BAG_OF_WORDS call (it is an analytic function), not a form of its own"
+grammar = [
+  "ML.BAG_OF_WORDS ( <tokenized_document> [ , <top_k> ] [ , <frequency_threshold> ] ) OVER ( )",
+]
+family = ""
+
+[[block]]
+source = "doc.bigqueryml-syntax-tf-idf"
+block_sha256 = "133914c1ac7252b27a5dd360cce1c17dba51edae8a92ca4529f046b60c180e5b"
+status = "corrected"
+reason = "the synopsis writes the call and its OVER ( ) on separate lines, which reads as two productions; OVER ( ) belongs to the ML.TF_IDF call (it is an analytic function), not a form of its own"
+grammar = [
+  "ML.TF_IDF ( <tokenized_document> [ , <top_k> ] [ , <frequency_threshold> ] ) OVER ( )",
+]
+family = ""
+
+[[block]]
+source = "doc.operators"
+block_sha256 = "b1b750b1d693d67f554958207b8cde9fbd7e993a2d449bd4039bd12542151893"
+status = "corrected"
+reason = "the page defines `element` as the graph pattern variable for a node or edge element, not the element definition of CREATE PROPERTY GRAPH, so it is written as <graph_pattern_variable>, the name the graph pattern grammar gives it"
+grammar = [
+  "ALL_DIFFERENT ( <graph_pattern_variable> , <graph_pattern_variable> [ , ... ] )",
+]
+family = ""
+
+[[block]]
+source = "doc.operators"
+block_sha256 = "c03ab2a519162b6d81d0b60aae2fc73d0325af06ff5418865f8e283c9bc511be"
+status = "corrected"
+reason = "the page defines `element` as the graph pattern variable for a node or edge element, not the element definition of CREATE PROPERTY GRAPH, so it is written as <graph_pattern_variable>, the name the graph pattern grammar gives it"
+grammar = [
+  "SAME ( <graph_pattern_variable> , <graph_pattern_variable> [ , ... ] )",
+]
+family = ""
+
+[[block]]
+source = "doc.graph-operators"
+block_sha256 = "b1b750b1d693d67f554958207b8cde9fbd7e993a2d449bd4039bd12542151893"
+status = "corrected"
+reason = "the page defines `element` as the graph pattern variable for a node or edge element, not the element definition of CREATE PROPERTY GRAPH, so it is written as <graph_pattern_variable>, the name the graph pattern grammar gives it"
+grammar = [
+  "ALL_DIFFERENT ( <graph_pattern_variable> , <graph_pattern_variable> [ , ... ] )",
+]
+family = ""
+
+[[block]]
+source = "doc.graph-operators"
+block_sha256 = "c03ab2a519162b6d81d0b60aae2fc73d0325af06ff5418865f8e283c9bc511be"
+status = "corrected"
+reason = "the page defines `element` as the graph pattern variable for a node or edge element, not the element definition of CREATE PROPERTY GRAPH, so it is written as <graph_pattern_variable>, the name the graph pattern grammar gives it"
+grammar = [
+  "SAME ( <graph_pattern_variable> , <graph_pattern_variable> [ , ... ] )",
+]
+family = ""

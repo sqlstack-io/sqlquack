@@ -1,12 +1,13 @@
 //! The spacing guard: whitespace changes between tokens are checked on the bytes, not the tokenizer.
 
-use sqlquack_syntax::Dialect;
+use crate::format::models::FormatDialect;
+use sqlquack_syntax::tokens::models::TokenType;
 
 use crate::format::_helpers::lexemes::{Lexeme, is_keyword};
 use crate::format::_helpers::token_layout::AuthoredSql;
 use crate::format::constants::{
-    GUARD_OPERATORS, JOIN_FAILURE, OPERATOR_BYTES, SEPARABLE_KEYWORDS, SEPARABLE_OPERATORS,
-    SEPARATION_FAILURE, UNSEPARABLE_NEIGHBOURS,
+    DUCKDB_OPERATOR_BYTES, GUARD_OPERATORS, JOIN_FAILURE, OPERATOR_BYTES, POSTGRES_OPERATOR_BYTES,
+    SEPARABLE_KEYWORDS, SEPARABLE_OPERATORS, SEPARATION_FAILURE, UNSEPARABLE_NEIGHBOURS,
 };
 
 /// Refuse output that separates touching tokens, or joins separated ones, where that could change their reading.
@@ -14,7 +15,7 @@ pub(crate) fn verify_touching_tokens(
     before: &AuthoredSql<'_>,
     after: &AuthoredSql<'_>,
     binary_operators: &[bool],
-    dialect: Dialect,
+    dialect: FormatDialect,
 ) -> Result<(), String> {
     let pairs = before.lexemes.windows(2).zip(after.lexemes.windows(2));
     for (index, (source, printed)) in pairs.enumerate() {
@@ -22,7 +23,7 @@ pub(crate) fn verify_touching_tokens(
         let touches = printed[0].end == printed[1].start;
         let operator = |offset: usize| {
             binary_operators[index + offset]
-                && separable_operator(before.sql, &source[offset], &source[1 - offset])
+                && separable_operator(before.sql, &source[offset], &source[1 - offset], dialect)
         };
         if touched && !touches && !separable(&source[0], &source[1]) && !operator(0) && !operator(1)
         {
@@ -52,7 +53,12 @@ fn separable(previous: &Lexeme, next: &Lexeme) -> bool {
 }
 
 /// Whether the parse tree's binary `operator` may be spaced from `neighbour`: the guard's own lexing of the source finds exactly it, and neither side is a path or name accessor.
-fn separable_operator(sql: &str, operator: &Lexeme, neighbour: &Lexeme) -> bool {
+fn separable_operator(
+    sql: &str,
+    operator: &Lexeme,
+    neighbour: &Lexeme,
+    dialect: FormatDialect,
+) -> bool {
     let bytes = sql.as_bytes();
     let is_operator_byte = |byte: &u8| OPERATOR_BYTES.as_bytes().contains(byte);
     let start = bytes[..operator.start]
@@ -67,12 +73,17 @@ fn separable_operator(sql: &str, operator: &Lexeme, neighbour: &Lexeme) -> bool 
         && start == operator.start
         && matches!(&bytes[..start], [.., digit, b'e' | b'E'] if digit.is_ascii_digit() || *digit == b'.');
     let accessor = UNSEPARABLE_NEIGHBOURS.contains(&neighbour.raw.as_str())
-        || neighbour.raw.starts_with(['@', '$']);
+        || (neighbour.raw.starts_with(['@', '$']) && !sqlserver_variable(neighbour, dialect));
     SEPARABLE_OPERATORS.contains(&operator.raw.as_str())
         && !exponent
         && !accessor
         && !sql[start..end].contains(':')
         && operator_pieces(&sql[start..end], start).contains(&(operator.start, operator.end))
+}
+
+/// Whether `lexeme` is a whole SQL Server `@variable` or `@@function` token, which no operator character can extend.
+fn sqlserver_variable(lexeme: &Lexeme, dialect: FormatDialect) -> bool {
+    dialect == FormatDialect::SqlServer && lexeme.kind == TokenType::Parameter
 }
 
 /// The byte ranges of a run of operator characters, read left to right taking the longest operator each time.
@@ -92,18 +103,23 @@ fn operator_pieces(run: &str, offset: usize) -> Vec<(usize, usize)> {
     pieces
 }
 
-/// Whether printing `previous` and `next` with no space between them could read as different tokens; DuckDB lexes `@` as an operator character, Snowflake as part of a stage name.
-fn could_fuse(previous: &str, next: &str, dialect: Dialect) -> bool {
+/// Whether printing `previous` and `next` with no space between them could read as different tokens; DuckDB and PostgreSQL lex `@` as an operator character, and PostgreSQL the backtick too, where Snowflake reads `@` as part of a stage name.
+fn could_fuse(previous: &str, next: &str, dialect: FormatDialect) -> bool {
     let (Some(left), Some(right)) = (previous.chars().last(), next.chars().next()) else {
         return false;
     };
-    let at_operator = dialect == Dialect::DuckDB;
-    let word = |character: char| {
-        character.is_alphanumeric()
-            || matches!(character, '_' | '$' | '\'' | '"' | '`')
-            || (character == '@' && !at_operator)
+    let dialect_operators = match dialect {
+        FormatDialect::DuckDB => DUCKDB_OPERATOR_BYTES,
+        FormatDialect::PostgreSQL => POSTGRES_OPERATOR_BYTES,
+        _ => "",
     };
-    let operator =
-        |character: char| OPERATOR_BYTES.contains(character) || (character == '@' && at_operator);
+    let operator = |character: char| {
+        OPERATOR_BYTES.contains(character) || dialect_operators.contains(character)
+    };
+    let word = |character: char| {
+        !operator(character)
+            && (character.is_alphanumeric()
+                || matches!(character, '_' | '$' | '\'' | '"' | '`' | '@'))
+    };
     (word(left) && word(right)) || (operator(left) && operator(right))
 }

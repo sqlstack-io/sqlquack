@@ -381,14 +381,6 @@ impl<'sql> Parser<'sql> {
         Err(self.too_deep.get_or_insert(error).clone())
     }
 
-    /// An AND, OR or set-operation chain's link count after one more, refused past `MAX_CHAIN`.
-    pub(crate) fn flat_link(&mut self, links: usize) -> Parsing<usize> {
-        match links + 1 < MAX_CHAIN {
-            true => Ok(links + 1),
-            false => Err(self.nests_too_deeply()),
-        }
-    }
-
     /// Tries `parse`; on failure rewinds and returns the error and how far it got.
     pub(crate) fn attempt<T>(
         &mut self,

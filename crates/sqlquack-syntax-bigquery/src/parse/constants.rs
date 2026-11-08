@@ -182,9 +182,8 @@ pub(crate) const RESERVED_CALLS: [&str; 8] = [
 ];
 
 /// The names `TIMESTAMPADD` and `TIMESTAMPDIFF` go by.
-pub(crate) const TIMESTAMP_ADD_NAMES: [&str; 3] = ["TIMESTAMPADD", "DATEADD", "DATE_ADD"];
-pub(crate) const TIMESTAMP_DIFF_NAMES: [&str; 4] =
-    ["TIMESTAMPDIFF", "DATEDIFF", "DATE_DIFF", "TIMEDIFF"];
+pub(crate) const TIMESTAMP_ADD_NAMES: [&str; 2] = ["TIMESTAMPADD", "DATEADD"];
+pub(crate) const TIMESTAMP_DIFF_NAMES: [&str; 3] = ["TIMESTAMPDIFF", "DATEDIFF", "TIMEDIFF"];
 
 /// `unitInMultiUnits`: interval units, singular and plural, each with its shared-tree unit name.
 pub(crate) const INTERVAL_UNITS: [(&str, IntervalUnit); 22] = [
@@ -409,3 +408,15 @@ pub(crate) const MIN_CONSECUTIVE_CONDITIONS: usize = 2;
 
 /// The pipe `EXTEND` operator, which alone of `EXTEND` and `WINDOW` takes a `WINDOW` clause.
 pub(crate) const PIPE_EXTEND: &str = "EXTEND";
+
+/// EXTRACT, whose call must take its keyword reading: GoogleSQL has no ordinary EXTRACT call.
+pub(crate) const EXTRACT_CALL: &str = "EXTRACT";
+
+/// The refusal of a statement nested past the parser's depth limit or the tree depth bound.
+pub(crate) const TOO_DEEP_MESSAGE: &str = "the statement nests too deeply";
+
+/// The deepest tree a statement may build, flat chains included, so a consumer that recurses over it has a bound.
+pub(crate) const MAX_TREE_DEPTH: usize = 8_000;
+
+/// The stack a refused tree's drop takes per level, since the shared tree drops recursively.
+pub(crate) const TREE_DROP_FRAME: usize = 1 << 10;

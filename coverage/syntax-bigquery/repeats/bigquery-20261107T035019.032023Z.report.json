@@ -1,0 +1,285 @@
+{
+  "bytes": {
+    "dry_run_bytes_billed": 0,
+    "dry_run_bytes_processed": 0,
+    "executed_bytes_billed": 0,
+    "executed_bytes_processed": 0
+  },
+  "case_bytes_billed": {
+    "bq.ddl.alter-column-set-default.k2d33a670627b": 0,
+    "bq.ddl.alter-column-set-default.kd3376098572f": 0,
+    "bq.ddl.alter-column-set-generated.k1e86df156599": 0,
+    "bq.ddl.alter-column-set-generated.k2f76da251f38": 0,
+    "bq.ddl.alter-column-set-generated.ke7038aa76f6f": 0,
+    "bq.ddl.alter-schema-drop-replica.kf96c99040267": 0,
+    "bq.ddl.alter-schema-set-default-collate.k86569c660d52": 0,
+    "bq.ddl.alter-schema-set-default-collate.kf96757f616f9": 0,
+    "bq.ddl.alter-schema-set-options.k5703d33c555c": 0,
+    "bq.ddl.alter-schema-set-options.k5916743381eb": 0,
+    "bq.ddl.alter-schema-set-options.kbda9f3fe1bbe": 0,
+    "bq.ddl.alter-table-add-primary-key.k778a639b6727": 0,
+    "bq.ddl.alter-table-add-primary-key.k9adf951b1d44": 0,
+    "bq.ddl.alter-table-add-primary-key.kf8a7f0f23e37": 0,
+    "bq.ddl.alter-table-drop-column.k095cd265ab1b": 0,
+    "bq.ddl.alter-table-drop-constraint.kf00494588bc0": 0,
+    "bq.ddl.alter-table-drop-primary-key.k8083624625df": 0,
+    "bq.ddl.alter-table-rename-column.k2c1922baee4d": 0,
+    "bq.ddl.alter-table-rename-column.k56d44023c608": 0,
+    "bq.ddl.alter-table-rename-to.keb15957284cb": 0,
+    "bq.ddl.alter-table-set-default-collate.kcf7f333391ee": 0,
+    "bq.ddl.alter-table-set-options.k5e4a79fd2a4c": 0,
+    "bq.ddl.alter-table-set-options.k87c126b02974": 0,
+    "bq.ddl.alter-table-set-options.ka5da7debb4e2": 0,
+    "bq.ddl.create-schema.kc3e3549bfeae": 0,
+    "bq.ddl.create-snapshot-table.k051b993b7b6e": 0,
+    "bq.ddl.create-table-clone.k7eb3d032cbbb": 0,
+    "bq.ddl.create-table-copy.k952070687614": 0,
+    "bq.ddl.create-table-like.k3663fb6c83fc": 0,
+    "bq.ddl.data-definition-language.alter-column-set-generated-default-mode.kbb2e9b33eba9": 0,
+    "bq.ddl.data-definition-language.alter-column-set-generated-default-mode.kf24f057df611": 0,
+    "bq.ddl.drop-function.k33811bdb3d45": 0,
+    "bq.ddl.drop-function.k5dd60188facd": 0,
+    "bq.ddl.drop-model.k8ae9cd0231a0": 0,
+    "bq.ddl.drop-procedure.k032dc1ddca04": 0,
+    "bq.ddl.drop-procedure.k30ec3b46dd0f": 0,
+    "bq.ddl.drop-procedure.k5c73be533e2c": 0,
+    "bq.ddl.drop-property-graph.kcaa0c314f12e": 0,
+    "bq.ddl.drop-property-graph.ke3dbe2fad8f5": 0,
+    "bq.ddl.drop-property-graph.kf7da376453d4": 0,
+    "bq.ddl.drop-schema.k2bb6d10d428f": 0,
+    "bq.ddl.drop-schema.k49c3c64f6c79": 0,
+    "bq.ddl.drop-schema.k5b3dfa89c3f0": 0,
+    "bq.ddl.drop-schema.k62fbc36826f4": 0,
+    "bq.ddl.drop-schema.k9813c357915e": 0,
+    "bq.ddl.drop-schema.kfbe1a156d45b": 0,
+    "bq.ddl.drop-search-index.k8fb8956ed4ed": 0,
+    "bq.ddl.drop-table.kc961d45feb22": 0,
+    "bq.ddl.drop-table.kf48f5eab4871": 0,
+    "bq.ddl.drop-vector-index.kc1b09aa3128a": 0,
+    "bq.ddl.undrop-schema.k6b45b0af0223": 0,
+    "bq.dml.export-data.k69c5977fb3ed": 0,
+    "bq.dml.export-data.k77468a252ea7": 0,
+    "bq.dml.export-data.ka33bba43e2b8": 0,
+    "bq.dml.truncate-table.k75654e9b8521": 0,
+    "bq.dml.truncate-table.kafa3eec98932": 0,
+    "bq.dml.truncate-table.kb5967d8ee96f": 0,
+    "bq.security_admin.drop-row-access-policy.all-row-access-policies.k98473ecf1fe7": 0,
+    "bq.security_admin.drop-row-access-policy.row-access-policy-on.kc6b84059ba89": 0,
+    "bq.utility.labels.loop-end-loop.k74311fd48c75": 0,
+    "bq.utility.labels.loop-end-loop.k7cf8a38a1335": 0,
+    "bq.utility.labels.loop-end-loop.k95a253b11800": 0,
+    "bq.utility.labels.loop-end-loop.kbf3aacdd5a5d": 0,
+    "bq.utility.labels.loop-end-loop.kd9163f0635dc": 0,
+    "bq.utility.labels.while-do-end-while.k0bf8b50dab60": 0,
+    "bq.utility.labels.while-do-end-while.k3c98ee0885b8": 0,
+    "bq.utility.labels.while-do-end-while.k4ac4efc6a466": 0,
+    "bq.utility.labels.while-do-end-while.k9f5f844332c8": 0,
+    "bq.utility.labels.while-do-end-while.kfb1509842120": 0,
+    "bq.utility.loops.loop-end-loop.k364acd5296cd": 0,
+    "bq.utility.loops.loop-end-loop.k90dd9f69b92a": 0,
+    "bq.utility.loops.while-do-end-while.k730eff70fa5b": 0,
+    "bq.utility.loops.while-do-end-while.kecc1ad27e5bf": 0
+  },
+  "end_state": {
+    "SQLQUACK_DATASET": {
+      "models": [],
+      "options": {
+        "defaultTableExpirationMs": "3600000",
+        "labels": [
+          "sqlquack_run"
+        ],
+        "maxTimeTravelHours": "168"
+      },
+      "routines": [
+        [
+          "f1",
+          "SCALAR_FUNCTION"
+        ],
+        [
+          "p1",
+          "PROCEDURE"
+        ]
+      ],
+      "tables": {
+        "t1": {
+          "fields": [
+            [
+              "c1",
+              "INTEGER",
+              null
+            ],
+            [
+              "c2",
+              "INTEGER",
+              null
+            ],
+            [
+              "c3",
+              "INTEGER",
+              null
+            ],
+            [
+              "v1",
+              "INTEGER",
+              null
+            ]
+          ],
+          "rows": "0",
+          "type": "TABLE"
+        },
+        "t2": {
+          "fields": [
+            [
+              "c1",
+              "INTEGER",
+              null
+            ],
+            [
+              "c2",
+              "INTEGER",
+              null
+            ],
+            [
+              "c3",
+              "INTEGER",
+              null
+            ],
+            [
+              "v1",
+              "INTEGER",
+              null
+            ]
+          ],
+          "rows": "0",
+          "type": "TABLE"
+        }
+      }
+    },
+    "SQLQUACK_DATASET2": {
+      "models": [],
+      "options": {
+        "defaultTableExpirationMs": "3600000",
+        "labels": [
+          "sqlquack_run"
+        ],
+        "maxTimeTravelHours": "168"
+      },
+      "routines": [],
+      "tables": {}
+    }
+  },
+  "engine": "bigquery v2 jobs.insert, location US, useLegacySql false",
+  "fixtures": [
+    "p1",
+    "t1",
+    "t2",
+    "g1",
+    "f1"
+  ],
+  "held": {
+    "BQ.ABORT_SESSION acts on sessions outside the run": 1,
+    "every retry of the dry run gave HTTP 500 internalError": 1,
+    "reservations, capacity commitments and BI Engine are billed features": 6,
+    "the statement acts on the project, IAM, reservations or data policies, outside the run datasets": 5,
+    "the statement names a dataset or regional resource outside the case's own datasets": 2,
+    "the statement needs a connection resource": 4
+  },
+  "phases": {
+    "accepted": 788,
+    "runtime_error": 24,
+    "semantic_error": 2452,
+    "syntax_error": 5279
+  },
+  "problems": [],
+  "receipts": 8543,
+  "referee": "56a6944afbfd3b6c381b1643b64bec71dc22b3ae",
+  "run_id": "bigquery-20261107T035019.032023Z",
+  "start_state": {
+    "SQLQUACK_DATASET": {
+      "models": [],
+      "options": {
+        "defaultTableExpirationMs": "3600000",
+        "labels": [
+          "sqlquack_run"
+        ],
+        "maxTimeTravelHours": "168"
+      },
+      "routines": [
+        [
+          "f1",
+          "SCALAR_FUNCTION"
+        ],
+        [
+          "p1",
+          "PROCEDURE"
+        ]
+      ],
+      "tables": {
+        "t1": {
+          "fields": [
+            [
+              "c1",
+              "INTEGER",
+              null
+            ],
+            [
+              "c2",
+              "INTEGER",
+              null
+            ],
+            [
+              "c3",
+              "INTEGER",
+              null
+            ],
+            [
+              "v1",
+              "INTEGER",
+              null
+            ]
+          ],
+          "rows": "0",
+          "type": "TABLE"
+        },
+        "t2": {
+          "fields": [
+            [
+              "c1",
+              "INTEGER",
+              null
+            ],
+            [
+              "c2",
+              "INTEGER",
+              null
+            ],
+            [
+              "c3",
+              "INTEGER",
+              null
+            ],
+            [
+              "v1",
+              "INTEGER",
+              null
+            ]
+          ],
+          "rows": "0",
+          "type": "TABLE"
+        }
+      }
+    },
+    "SQLQUACK_DATASET2": {
+      "models": [],
+      "options": {
+        "defaultTableExpirationMs": "3600000",
+        "labels": [
+          "sqlquack_run"
+        ],
+        "maxTimeTravelHours": "168"
+      },
+      "routines": [],
+      "tables": {}
+    }
+  }
+}

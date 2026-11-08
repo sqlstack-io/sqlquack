@@ -8,6 +8,24 @@ pub(crate) const TABLE_FUNCTION_COLUMNS: [(&str, &[&str]); 3] = [
     ("SPLIT_TO_TABLE", &["SEQ", "INDEX", "VALUE"]),
     ("STRTOK_SPLIT_TO_TABLE", &["SEQ", "INDEX", "VALUE"]),
 ];
+/// DuckDB's built-in table functions of one column, named after the function.
+pub(crate) const DUCKDB_TABLE_FUNCTION_COLUMNS: [(&str, &[&str]); 3] = [
+    ("GENERATE_SERIES", &["generate_series"]),
+    ("RANGE", &["range"]),
+    ("UNNEST", &[DUCKDB_UNNEST_COLUMN]),
+];
+/// The one column DuckDB's UNNEST in FROM returns.
+pub(crate) const DUCKDB_UNNEST_COLUMN: &str = "unnest";
+/// Serialized expression fields that do not change what a group key means: spans and `::` spelling.
+pub(crate) const SHAPE_COSMETIC_FIELDS: [&str; 2] = ["span", "double_colon_syntax"];
+/// The suffix of serialized comment fields, which group-key shapes drop.
+pub(crate) const SHAPE_COMMENT_SUFFIX: &str = "comments";
+/// BigQuery's array-flattening table function.
+pub(crate) const UNNEST_FUNCTION: &str = "UNNEST";
+/// The call name an array literal `[...]` parses to.
+pub(crate) const ARRAY_FUNCTION: &str = "ARRAY";
+/// The call name a `STRUCT(...)` value parses to.
+pub(crate) const STRUCT_FUNCTION: &str = "STRUCT";
 /// The wrapper Snowflake writes around a table function in FROM.
 pub(crate) const TABLE_WRAPPER: &str = "TABLE";
 /// Snowflake's name for the n-th column of a VALUES list, numbered from 1.
@@ -86,6 +104,10 @@ pub(crate) const AGGREGATE_FUNCTIONS: &[&str] = &[
 pub(crate) const POSITIONAL_COLUMN_BASE: usize = 1;
 /// Snowflake's `IDENTIFIER(...)`: a relation named at run time, not traced.
 pub(crate) const IDENTIFIER_FUNCTION: &str = "IDENTIFIER";
+/// Stack a recursive walk keeps free before it continues on a new segment.
+pub(crate) const STACK_RED_ZONE: usize = 256 * 1024;
+/// The size of each stack segment a deep walk adds.
+pub(crate) const STACK_SEGMENT: usize = 4 * 1024 * 1024;
 /// Iterations of a recursive CTE's lineage before it is left untraced.
 pub(crate) const RECURSION_LIMIT: usize = 32;
 /// Characters in an unaliased expression whose Snowflake output name lineage does not model.
@@ -254,8 +276,101 @@ pub(crate) const DUCKDB_JSON_TYPES: [&str; 2] = ["JSON", "JSONB"];
 pub(crate) const FIRST_ARGUMENT_NULLABILITY: [&str; 2] = ["UPPER", "LOWER"];
 /// The Snowflake profile's name.
 pub(crate) const SNOWFLAKE_PROFILE: &str = "Snowflake";
+/// The ClickHouse profile's name.
+pub(crate) const CLICKHOUSE_PROFILE: &str = "ClickHouse";
+/// The FROM items of a query with one join, whose shared names ClickHouse reads from the left.
+pub(crate) const CLICKHOUSE_SINGLE_JOIN_SOURCES: usize = 2;
+/// What ClickHouse's comparisons, logical operators and predicates return.
+pub(crate) const CLICKHOUSE_BOOLEAN_RESULT: &str = "UInt8";
+/// What ClickHouse's counts and ranking functions return.
+pub(crate) const CLICKHOUSE_COUNT_TYPE: &str = "UInt64";
+/// ClickHouse's text type.
+pub(crate) const CLICKHOUSE_STRING_TYPE: &str = "String";
+/// What ClickHouse's `now()` and one-argument `toDateTime` return.
+pub(crate) const CLICKHOUSE_DATETIME_TYPE: &str = "DateTime";
+/// How ClickHouse spells every Decimal type's name.
+pub(crate) const CLICKHOUSE_DECIMAL_PREFIX: &str = "Decimal(";
+/// How ClickHouse spells every FixedString type's name.
+pub(crate) const CLICKHOUSE_FIXED_STRING_PREFIX: &str = "FixedString(";
+/// The prefix of a hexadecimal number literal.
+pub(crate) const CLICKHOUSE_HEX_PREFIX: &str = "0x";
+/// The wrappers that do not change a value's type for arithmetic and functions.
+pub(crate) const CLICKHOUSE_NULLABLE_WRAPPERS: [&str; 2] = ["Nullable", "LowCardinality"];
+/// Built-ins whose ClickHouse 26.1 result type does not depend on their arguments' types.
+pub(crate) const CLICKHOUSE_FIXED_RESULTS: [(&str, &str); 32] = [
+    ("toDate", "Date"),
+    ("today", "Date"),
+    ("toString", "String"),
+    ("toInt8", "Int8"),
+    ("toInt16", "Int16"),
+    ("toInt32", "Int32"),
+    ("toInt64", "Int64"),
+    ("toUInt8", "UInt8"),
+    ("toUInt16", "UInt16"),
+    ("toUInt32", "UInt32"),
+    ("toUInt64", "UInt64"),
+    ("toFloat32", "Float32"),
+    ("toFloat64", "Float64"),
+    ("toYYYYMM", "UInt32"),
+    ("toYYYYMMDD", "UInt32"),
+    ("toYear", "UInt16"),
+    ("toMonth", "UInt8"),
+    ("toDayOfMonth", "UInt8"),
+    ("toHour", "UInt8"),
+    ("length", "UInt64"),
+    ("lengthUTF8", "UInt64"),
+    ("concat", "String"),
+    ("substring", "String"),
+    ("trim", "String"),
+    ("replaceAll", "String"),
+    ("formatDateTime", "String"),
+    ("toStartOfMonth", "Date"),
+    ("toStartOfQuarter", "Date"),
+    ("toStartOfYear", "Date"),
+    ("toStartOfWeek", "Date"),
+    ("toMonday", "Date"),
+    ("dateDiff", "Int64"),
+];
+/// The BigQuery profile's name.
+pub(crate) const BIGQUERY_PROFILE: &str = "BigQuery";
+/// BigQuery's functions that take a date part, with the part's argument position.
+pub(crate) const BIGQUERY_DATE_PART_FUNCTIONS: [(&str, usize); 9] = [
+    ("DATE_TRUNC", 1),
+    ("DATETIME_TRUNC", 1),
+    ("TIMESTAMP_TRUNC", 1),
+    ("TIME_TRUNC", 1),
+    ("LAST_DAY", 1),
+    ("DATE_DIFF", 2),
+    ("DATETIME_DIFF", 2),
+    ("TIMESTAMP_DIFF", 2),
+    ("TIME_DIFF", 2),
+];
+/// The date parts BigQuery writes with a weekday argument, as `WEEK(MONDAY)`.
+pub(crate) const BIGQUERY_WEEKDAY_PARTS: [&str; 1] = ["WEEK"];
+/// BigQuery's analytic functions, which an OVER clause must follow.
+pub(crate) const BIGQUERY_WINDOW_ONLY_FUNCTIONS: [&str; 11] = [
+    "ROW_NUMBER",
+    "RANK",
+    "DENSE_RANK",
+    "PERCENT_RANK",
+    "CUME_DIST",
+    "NTILE",
+    "LAG",
+    "LEAD",
+    "FIRST_VALUE",
+    "LAST_VALUE",
+    "NTH_VALUE",
+];
+/// The field a serialized node records its source range in, which equality ignores.
+pub(crate) const SPAN_FIELD: &str = "span";
+/// The field a serialized node records its name in.
+pub(crate) const NAME_FIELD: &str = "name";
 /// The PostgreSQL profile's name.
 pub(crate) const POSTGRES_PROFILE: &str = "PostgreSQL";
+/// The SQLite profile's name.
+pub(crate) const SQLITE_PROFILE: &str = "SQLite";
+/// SQLite's name for the n-th column of a VALUES list, numbered from 1.
+pub(crate) const SQLITE_VALUES_COLUMN: &str = "column";
 /// PostgreSQL's system columns, which every stored table has and no star expands.
 pub(crate) const POSTGRES_SYSTEM_COLUMNS: [&str; 6] =
     ["tableoid", "xmin", "cmin", "xmax", "cmax", "ctid"];
@@ -327,6 +442,10 @@ pub(crate) const CONNECT_BY_LEVEL: &str = "LEVEL";
 pub(crate) const METADATA_PREFIX: &str = "METADATA$";
 /// The prefix of a positional column reference, `$1`.
 pub(crate) const POSITIONAL_PREFIX: char = '$';
+/// DuckDB's COLUMNS star expression, written as a call.
+pub(crate) const COLUMNS_FUNCTION: &str = "columns";
+/// A DuckDB COLUMNS pattern that matches no column, worded as polyglot words it.
+pub(crate) const COLUMNS_NO_MATCH: &str = "COLUMNS pattern matches no input columns";
 /// DuckDB's row identifier pseudo-column.
 pub(crate) const DUCKDB_ROWID: &str = "rowid";
 /// Sequence pseudo-columns, read after the sequence's name.
@@ -344,3 +463,18 @@ pub(crate) const DUCKDB_KEYWORD_ONLY_FUNCTIONS: [&str; 4] = [
     "localtime",
     "localtimestamp",
 ];
+
+/// The base of the digits in a date or time literal.
+pub(crate) const DECIMAL_BASE: u32 = 10;
+
+/// The last hour of a day in a time literal.
+pub(crate) const LAST_HOUR: u32 = 23;
+
+/// The last minute of an hour, or second of a minute, in a time literal.
+pub(crate) const LAST_MINUTE_OR_SECOND: u32 = 59;
+
+/// The arguments of `DATE(year, month, day)`.
+pub(crate) const DATE_FROM_PARTS_ARGUMENTS: usize = 3;
+
+/// The warning for a value converted at run time or of a family no rule models.
+pub(crate) const RUNTIME_WARNING: &str = "W216";

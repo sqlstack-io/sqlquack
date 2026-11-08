@@ -1,0 +1,1 @@
+"""BigQuery syntax catalogue tests."""

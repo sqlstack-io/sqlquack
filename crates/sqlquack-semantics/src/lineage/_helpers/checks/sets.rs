@@ -166,7 +166,10 @@ pub(crate) fn set_findings(
     };
     let findings: Vec<NameFinding> = match Engine::of(context) {
         Engine::Snowflake => snowflake_findings(query, branches, context),
-        engine @ (Engine::DuckDB | Engine::Postgres) => {
+        Engine::Sqlite => width_findings((operator, query), (left, right), branches, context)
+            .into_iter()
+            .collect(),
+        engine @ (Engine::DuckDB | Engine::Postgres | Engine::BigQuery) => {
             binder_findings((engine, query, operator), (left, right), branches, context)
         }
     };
@@ -175,6 +178,38 @@ pub(crate) fn set_findings(
         .into_iter()
         .map(|finding| NameFinding { span, ..finding })
         .collect()
+}
+
+/// The finding of branches whose column counts differ, which every engine refuses.
+fn width_finding(
+    operator: &str,
+    (left, right): (&[Family], &[Family]),
+    query: &Expression,
+) -> Option<NameFinding> {
+    (left.len() != right.len()).then(|| {
+        issue(
+            ("E216", TYPE_PHASE),
+            format!(
+                "{operator} operands return different column counts: left {}, right {}",
+                left.len(),
+                right.len()
+            ),
+            None,
+            query,
+        )
+    })
+}
+
+/// SQLite's findings: column counts only, as its coercions are not recorded.
+fn width_findings(
+    (operator, query): (&str, &Expression),
+    (left, right): (&Expression, &Expression),
+    branches: Branches<'_, '_>,
+    context: LineageContext<'_>,
+) -> Option<NameFinding> {
+    let left_families: Vec<Family> = families(left, branches, context)?;
+    let right_families: Vec<Family> = families(right, branches, context)?;
+    width_finding(operator, (&left_families, &right_families), query)
 }
 
 /// DuckDB's and PostgreSQL's findings: column counts, then each column's families.
@@ -190,20 +225,12 @@ fn binder_findings(
     ) else {
         return Vec::new();
     };
-    if left_families.len() != right_families.len() {
-        return vec![issue(
-            ("E216", TYPE_PHASE),
-            format!(
-                "{operator} operands return different column counts: left {}, right {}",
-                left_families.len(),
-                right_families.len()
-            ),
-            None,
-            query,
-        )];
+    if let Some(finding) = width_finding(operator, (&left_families, &right_families), query) {
+        return vec![finding];
     }
     let literal = |branch: &Expression, index: usize, target: Family| {
-        projection_literal(branch, index).is_some_and(|value| literal_coerces(value, target))
+        projection_literal(branch, index)
+            .is_some_and(|value| literal_coerces(engine, value, target))
     };
     left_families
         .into_iter()

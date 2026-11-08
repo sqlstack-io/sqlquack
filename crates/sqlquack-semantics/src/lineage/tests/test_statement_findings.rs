@@ -218,6 +218,11 @@ fn given_a_snowflake_name_not_definitely_unresolved_when_resolving_names_then_no
             sql: "SELECT t.\"AMOUNT + 1\" FROM (SELECT amount + 1 FROM orders) t",
             expected_findings: &[],
         },
+        QueryFindingsTestCase {
+            description: "an unaliased FLATTEN read under its own name",
+            sql: "SELECT flatten.value FROM orders AS o, LATERAL FLATTEN(INPUT => o.items)",
+            expected_findings: &[],
+        },
     ];
     let schema = shop_schema();
     for test_case in test_cases {
@@ -266,6 +271,31 @@ fn given_a_duckdb_name_not_definitely_unresolved_when_resolving_names_then_nothi
         QueryFindingsTestCase {
             description: "a struct field of a derived column",
             sql: "SELECT payload.city FROM (SELECT {'city': 'x'} AS payload) t",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an unaliased table function read under its own name",
+            sql: "SELECT range.range FROM range(3)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an unaliased open table function read under its own name",
+            sql: "SELECT read_parquet.id FROM read_parquet('orders.parquet')",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an unaliased file scan read under its file's stem",
+            sql: "SELECT y.id FROM 'exports/y.csv'",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a struct field of a lambda parameter over an open relation",
+            sql: "SELECT list_transform(u.items, lambda x: x.city) AS cities FROM undeclared u",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a struct field of a list comprehension's variable",
+            sql: "SELECT [x.city FOR x IN u.items] AS cities FROM undeclared u",
             expected_findings: &[],
         },
     ];
@@ -386,6 +416,42 @@ fn given_a_duckdb_query_when_a_name_is_definitely_unresolved_then_it_is_still_fo
                 7,
             )],
         },
+        QueryFindingsTestCase {
+            description: "a qualifier beside a source whose columns are unknown",
+            sql: "SELECT zq.id FROM orders o JOIN undeclared u ON TRUE",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'zq' referenced by column 'id'",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a qualifier over a renamed VALUES list",
+            sql: "SELECT zq.d FROM (VALUES (1)) AS v(d)",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'zq' referenced by column 'd'",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a file scan's stem once the scan is aliased",
+            sql: "SELECT y.id FROM 'exports/y.csv' AS q",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'y' referenced by column 'id'",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a qualifier other than an unaliased table function's own name",
+            sql: "SELECT zq.range FROM range(3)",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'zq' referenced by column 'range'",
+                7,
+            )],
+        },
     ];
     let schema = duckdb_shop_schema();
     for test_case in test_cases {
@@ -446,6 +512,56 @@ fn given_a_duckdb_lateral_star_over_an_earlier_item_when_resolving_names_then_it
                 .iter()
                 .map(|(code, message, start)| (*code, (*message).to_owned(), *start))
                 .collect::<Vec<(&str, String, usize)>>(),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_query_when_a_name_or_window_is_definitely_wrong_then_it_is_found() {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "a qualifier over a VALUES list",
+            sql: "SELECT zq.d FROM VALUES ('x') AS v(d)",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'zq' referenced by column 'd'",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a qualifier beside an unaliased FLATTEN",
+            sql: "SELECT zq.value FROM orders AS o, LATERAL FLATTEN(INPUT => o.items)",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'zq' referenced by column 'value'",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a qualifier over a relation whose columns are unknown",
+            sql: "SELECT zq.id FROM undeclared AS u",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'zq' referenced by column 'id'",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "ranking calls without OVER, beside one with it",
+            sql: "SELECT id, ROW_NUMBER() AS n, LAG(id) AS l, RANK() OVER (ORDER BY id) AS r FROM orders",
+            expected_findings: &[
+                ("E232", "Window function requires an OVER clause", 11),
+                ("E232", "Window function requires an OVER clause", 30),
+            ],
+        },
+    ];
+    let schema = shop_schema();
+    for test_case in test_cases {
+        assert_eq!(
+            found_findings(test_case.sql, (Dialect::Snowflake, &SNOWFLAKE, &schema)),
+            owned_findings(test_case.expected_findings),
             "{}",
             test_case.description
         );

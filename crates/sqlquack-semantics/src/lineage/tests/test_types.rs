@@ -74,7 +74,26 @@ pub(crate) struct ResolvedReadTestCase {
     pub(crate) expected_resolved: bool,
 }
 
+pub(crate) struct ClickhouseJoinTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_output: (Option<&'static str>, Nullability),
+    pub(crate) expected_codes: &'static [&'static str],
+}
+
+pub(crate) struct ClickhouseTypeTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_output: ExpectedTypedOutput,
+}
+
 pub(crate) struct DuckdbTypeTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_type: Option<&'static str>,
+}
+
+pub(crate) struct BigqueryTypeTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,
     pub(crate) expected_type: Option<&'static str>,
@@ -156,4 +175,18 @@ pub(crate) struct QueryFindingsTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,
     pub(crate) expected_findings: &'static [(&'static str, &'static str, usize)],
+}
+
+/// SQLite outputs: the query and each output's name, type and nullability.
+pub(crate) struct SqliteOutputsTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_outputs: &'static [(&'static str, Option<&'static str>, Nullability)],
+}
+
+/// A deeply nested SQLite query: its tree depth, outputs and findings, or the parser's refusal.
+pub(crate) struct DeepSqliteTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: String,
+    pub(crate) expected_result: Result<(usize, usize, usize), &'static str>,
 }

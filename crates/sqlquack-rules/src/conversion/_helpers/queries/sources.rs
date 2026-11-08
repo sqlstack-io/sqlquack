@@ -18,9 +18,7 @@ use crate::conversion::_helpers::expressions::semi_structured::guarded_column;
 use crate::conversion::_helpers::queries::clauses::condition_sql;
 use crate::conversion::_helpers::queries::flatten::lateral_flatten;
 use crate::conversion::_helpers::queries::pivot::pivot_subquery;
-use crate::conversion::_helpers::queries::query::{
-    NESTED_REPEAT, convert_query, require_distinct_names,
-};
+use crate::conversion::_helpers::queries::query::{NESTED_REPEAT, convert_query, repeated_name};
 use crate::conversion::_helpers::support::collecting::{
     collecting, events, opaque, record, recorded, replace_since, suspended, unresolved_since,
 };
@@ -853,7 +851,9 @@ fn subquery_source(
                 missing(construct.clone(), "a column alias has no name".to_owned())
             })?;
         }
-        require_distinct_names(&columns, Some(NESTED_REPEAT))?;
+        if let Some((index, refusal)) = repeated_name(&columns, Some(NESTED_REPEAT)) {
+            return Err(context.locator.placed(refusal, &renamed[index]));
+        }
     }
     let alias = subquery
         .get("alias")

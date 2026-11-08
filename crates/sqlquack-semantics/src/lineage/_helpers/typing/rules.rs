@@ -9,17 +9,22 @@ use sqlquack_syntax::{DataType, Expression, ExpressionWalk};
 use crate::dialects::main::canonical_type::canonical_type;
 use crate::lineage::_helpers::tracing::expressions::is_aggregate;
 use crate::lineage::_helpers::tracing::resolution::key;
+use crate::lineage::_helpers::typing::bigquery_typing::{bigquery_literal_type, bigquery_type};
+use crate::lineage::_helpers::typing::clickhouse_typing::{
+    clickhouse_literal_type, clickhouse_type,
+};
 use crate::lineage::_helpers::typing::duckdb_typing::{duckdb_literal_type, duckdb_type};
 use crate::lineage::_helpers::typing::postgres_typing::{postgres_literal_type, postgres_type};
 use crate::lineage::_helpers::typing::snowflake_typing::{
     snowflake_literal_type, snowflake_type, snowflake_unified,
 };
+use crate::lineage::_helpers::typing::sqlite_typing::sqlite_literal_type;
 use crate::lineage::constants::{
-    ARGUMENT_TYPED_FUNCTIONS, BOOLEAN_TYPE, COALESCING_FUNCTIONS, CONDITIONAL_ARGUMENTS,
-    COUNT_TYPE, COUNTING_FUNCTIONS, DECIMAL_LITERAL_TYPE, DUCKDB_PROFILE,
-    FIRST_ARGUMENT_NULLABILITY, FLOAT_TYPES, FUNCTION_RESULT_TYPES, INTEGER_LITERAL_TYPE,
-    INTEGER_TYPES, OPERAND_TYPED_FUNCTIONS, POSTGRES_PROFILE, SNOWFLAKE_PROFILE, TEXT_TYPE,
-    UNMAPPED_TIMESTAMP,
+    ARGUMENT_TYPED_FUNCTIONS, BIGQUERY_PROFILE, BOOLEAN_TYPE, CLICKHOUSE_PROFILE,
+    COALESCING_FUNCTIONS, CONDITIONAL_ARGUMENTS, COUNT_TYPE, COUNTING_FUNCTIONS,
+    DECIMAL_LITERAL_TYPE, DUCKDB_PROFILE, FIRST_ARGUMENT_NULLABILITY, FLOAT_TYPES,
+    FUNCTION_RESULT_TYPES, INTEGER_LITERAL_TYPE, INTEGER_TYPES, OPERAND_TYPED_FUNCTIONS,
+    POSTGRES_PROFILE, SNOWFLAKE_PROFILE, SQLITE_PROFILE, TEXT_TYPE, UNMAPPED_TIMESTAMP,
 };
 use crate::lineage::models::{Lineage, LineageContext, Nullability, NullabilityRule};
 
@@ -68,6 +73,15 @@ pub(crate) fn rendered_type(data_type: &DataType) -> Option<String> {
 /// A literal's type and nullability.
 pub(crate) fn literal_type(expression: &Expression, context: LineageContext<'_>) -> ValueType {
     let (data_type, nullability): ValueType = generic_literal_type(expression);
+    if context.profile.name() == CLICKHOUSE_PROFILE {
+        return (
+            clickhouse_literal_type(expression).map(Rc::from),
+            nullability,
+        );
+    }
+    if context.profile.name() == BIGQUERY_PROFILE {
+        return (bigquery_literal_type(expression).map(Rc::from), nullability);
+    }
     match expression {
         Expression::Literal(literal) if context.profile.name() == DUCKDB_PROFILE => (
             duckdb_literal_type(literal).map(|data_type| Rc::from(data_type.spelling())),
@@ -77,6 +91,10 @@ pub(crate) fn literal_type(expression: &Expression, context: LineageContext<'_>)
             postgres_literal_type(literal).map(Rc::from).or(data_type),
             nullability,
         ),
+        Expression::Literal(literal) if context.profile.name() == SQLITE_PROFILE => {
+            (sqlite_literal_type(literal).map(Rc::from), nullability)
+        }
+        _ if context.profile.name() == SQLITE_PROFILE => (None, nullability),
         Expression::Literal(literal) if context.profile.name() == SNOWFLAKE_PROFILE => {
             match snowflake_literal_type(literal) {
                 Some(recorded) => (recorded, nullability),
@@ -105,7 +123,7 @@ fn generic_literal_type(expression: &Expression) -> ValueType {
     (data_type.map(Rc::from), nullability)
 }
 
-/// The type and nullability of `expression`, its children's lineage given in `parts`.
+/// The type and nullability of `expression` from its children's `parts`; untyped in SQLite.
 pub(crate) fn computed_type(
     expression: &Expression,
     parts: &[(&Expression, Lineage)],
@@ -113,9 +131,18 @@ pub(crate) fn computed_type(
 ) -> ValueType {
     let (data_type, nullability): ValueType = generic_type(expression, parts, context);
     let ruled: Option<Option<Rc<str>>> = match context.profile.name() {
+        CLICKHOUSE_PROFILE => Some(clickhouse_type(expression, parts, context)),
+        BIGQUERY_PROFILE => Some(bigquery_type(expression, parts, context)),
         DUCKDB_PROFILE => duckdb_type(expression, parts),
         SNOWFLAKE_PROFILE => snowflake_type(expression, parts),
         POSTGRES_PROFILE => postgres_type(expression, parts),
+        SQLITE_PROFILE => {
+            let nullability: Nullability = match nullability {
+                Nullability::Nullable => Nullability::Nullable,
+                _ => Nullability::Unknown,
+            };
+            return (None, nullability);
+        }
         _ => None,
     };
     let data_type: Option<Rc<str>> = ruled.unwrap_or(data_type);

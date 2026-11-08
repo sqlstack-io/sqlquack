@@ -16,9 +16,9 @@ use crate::parse::_helpers::tree::nodes::{
     null, parameter, paren, star, string, subquery, tuple,
 };
 use crate::parse::constants::{
-    CURRENT_LIKE, DATETIME_UNITS, INTERVAL_UNITS, LITERAL_TYPES, MIN_LAMBDA_LIST_PARAMETERS,
-    RESERVED_CALLS, SAFE_CAST_CALL, SYSTEM_VARIABLE_PREFIX, TIMESTAMP_ADD_NAMES,
-    TIMESTAMP_DIFF_NAMES, TRUE_LITERAL,
+    CURRENT_LIKE, DATETIME_UNITS, EXTRACT_CALL, INTERVAL_UNITS, LITERAL_TYPES,
+    MIN_LAMBDA_LIST_PARAMETERS, RESERVED_CALLS, SAFE_CAST_CALL, SYSTEM_VARIABLE_PREFIX,
+    TIMESTAMP_ADD_NAMES, TIMESTAMP_DIFF_NAMES, TRUE_LITERAL,
 };
 use crate::scan::models::{NumberKind, Token, TokenKind};
 
@@ -590,36 +590,50 @@ impl Parser<'_> {
             .map(|token| token.value.clone())
             .unwrap_or_default();
         let lower: String = name.to_ascii_lowercase();
+        let start: usize = self.at;
+        if self.refused_specials.contains(&start) {
+            return Ok(None);
+        }
         let attempt = match word {
             "POSITION" => self.attempt(|parser| {
                 parser.at += 2;
-                let substring: Expression = parser.value_expression(0)?;
+                let substring: Expression = parser.nested_value()?;
                 parser.expect_kw("IN")?;
-                let text: Expression = parser.value_expression(0)?;
+                let text: Expression = parser.nested_value()?;
                 parser.expect_char(')')?;
                 Ok(call("position", vec![substring, text]))
             }),
             "EXTRACT" => self.attempt(|parser| {
                 parser.at += 2;
                 let field: Token = parser.expect_token(is_path_word)?;
+                let mut part: String = field.value.clone();
+                if parser.eat_char('(') {
+                    let weekday: Token = parser.expect_token(is_path_word)?;
+                    parser.expect_char(')')?;
+                    part = format!("{part}({})", weekday.value);
+                }
+                let part: Expression = match field.kind == TokenKind::Quoted && part.contains('(') {
+                    true => column_from(vec![identifier(&field)]),
+                    false => string(&part),
+                };
                 parser.expect_kw("FROM")?;
-                let source: Expression = parser.value_expression(0)?;
+                let mut args: Vec<Expression> = vec![part, parser.nested_value()?];
                 if parser.kw("AT") && parser.kw_at(1, "TIME") && parser.kw_at(2, "ZONE") {
                     parser.at += 3;
-                    parser.value_expression(0)?;
+                    args.push(parser.nested_value()?);
                 }
                 parser.expect_char(')')?;
-                Ok(call("extract", vec![string(&field.value), source]))
+                Ok(call("extract", args))
             }),
             "SUBSTR" | "SUBSTRING" => self.attempt(|parser| {
                 parser.at += 2;
-                let text: Expression = parser.value_expression(0)?;
+                let text: Expression = parser.nested_value()?;
                 if !(parser.eat_kw("FROM") || parser.eat_char(',')) {
                     return Err(parser.error());
                 }
-                let mut args: Vec<Expression> = vec![text, parser.value_expression(0)?];
+                let mut args: Vec<Expression> = vec![text, parser.nested_value()?];
                 if parser.eat_kw("FOR") || parser.eat_char(',') {
-                    args.push(parser.value_expression(0)?);
+                    args.push(parser.nested_value()?);
                 }
                 parser.expect_char(')')?;
                 Ok(call(&lower, args))
@@ -637,10 +651,10 @@ impl Parser<'_> {
                 }
                 let characters: Option<Expression> = match parser.kw("FROM") {
                     true => None,
-                    false => Some(parser.value_expression(0)?),
+                    false => Some(parser.nested_value()?),
                 };
                 parser.expect_kw("FROM")?;
-                let source: Expression = parser.value_expression(0)?;
+                let source: Expression = parser.nested_value()?;
                 parser.expect_char(')')?;
                 let name: &str = match side {
                     "" => "trim",
@@ -653,14 +667,13 @@ impl Parser<'_> {
             }),
             "OVERLAY" => self.attempt(|parser| {
                 parser.at += 2;
-                let input: Expression = parser.value_expression(0)?;
+                let input: Expression = parser.nested_value()?;
                 parser.expect_kw("PLACING")?;
-                let replacement: Expression = parser.value_expression(0)?;
+                let replacement: Expression = parser.nested_value()?;
                 parser.expect_kw("FROM")?;
-                let mut args: Vec<Expression> =
-                    vec![input, replacement, parser.value_expression(0)?];
+                let mut args: Vec<Expression> = vec![input, replacement, parser.nested_value()?];
                 if parser.eat_kw("FOR") {
-                    args.push(parser.value_expression(0)?);
+                    args.push(parser.nested_value()?);
                 }
                 parser.expect_char(')')?;
                 Ok(call("overlay", args))
@@ -681,9 +694,9 @@ impl Parser<'_> {
                         _ => parser.string_literal()?,
                     };
                     parser.expect_char(',')?;
-                    let first: Expression = parser.value_expression(0)?;
+                    let first: Expression = parser.nested_value()?;
                     parser.expect_char(',')?;
-                    let second: Expression = parser.value_expression(0)?;
+                    let second: Expression = parser.nested_value()?;
                     parser.expect_char(')')?;
                     Ok(call(&lower, vec![unit, first, second]))
                 });
@@ -713,8 +726,17 @@ impl Parser<'_> {
         };
         match attempt {
             Ok(expression) => Ok(Some(expression)),
-            Err((_not_this_form, _reached)) => Ok(None),
+            Err((error, _reached)) if word == EXTRACT_CALL => Err(error),
+            Err((_not_this_form, _reached)) => {
+                self.refused_specials.insert(start);
+                Ok(None)
+            }
         }
+    }
+
+    /// A keyword-led call's operand, one level deeper.
+    fn nested_value(&mut self) -> Parsing<Expression> {
+        self.deeper(|parser| parser.value_expression(0))
     }
 
     /// `( [args] )` of a chained call.
@@ -732,7 +754,7 @@ impl Parser<'_> {
     fn postfixes(&mut self, mut this: Expression) -> Parsing<Expression> {
         loop {
             if self.eat_char('[') {
-                let index: Expression = self.value_expression(0)?;
+                let index: Expression = self.nested_value()?;
                 self.expect_char(']')?;
                 this = Expression::Subscript(Box::new(Subscript { this, index }));
             } else if self.is_char('.') && self.char_at(1, '(') {

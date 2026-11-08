@@ -16,9 +16,9 @@ use crate::parse::_helpers::tree::nodes::{
 };
 use crate::parse::constants::{
     COMMA_AFTER_CONSECUTIVE_CONDITIONS, IDENTIFIER_CLAUSE, JOIN_CONDITION_COUNT,
-    MIN_CONSECUTIVE_CONDITIONS, OUTER_JOIN_AFTER_COMMA,
+    MIN_CONSECUTIVE_CONDITIONS, OUTER_JOIN_AFTER_COMMA, SYSTEM_VARIABLE_PREFIX,
 };
-use crate::scan::models::{NumberKind, TokenKind};
+use crate::scan::models::{NumberKind, Token, TokenKind};
 
 /// `item` with `joins` after it, as one joined table when there are any.
 fn collapse(item: Expression, joins: Vec<Join>) -> Expression {
@@ -28,8 +28,16 @@ fn collapse(item: Expression, joins: Vec<Join>) -> Expression {
     }
 }
 
+/// A row pattern's name as written: a backquoted one keeps its backquotes, escaped.
+fn pattern_name(name: Identifier) -> String {
+    match name.quoted {
+        true => format!("`{}`", name.name.replace('\\', "\\\\").replace('`', "\\`")),
+        false => name.name,
+    }
+}
+
 /// `item` under `alias`: its column names rename it, as lineage reads an aliased FROM item.
-fn aliased(item: Expression, alias: Option<TableAlias>) -> Expression {
+pub(crate) fn aliased(item: Expression, alias: Option<TableAlias>) -> Expression {
     let Some(alias) = alias else {
         return item;
     };
@@ -456,7 +464,7 @@ impl Parser<'_> {
             }
         }
         self.at += 1;
-        let (item, joins) = self.relation()?;
+        let (item, joins) = self.deeper(|parser| parser.relation())?;
         self.expect_char(')')?;
         self.watermark()?;
         let alias: Option<TableAlias> = self.table_alias()?;
@@ -470,9 +478,9 @@ impl Parser<'_> {
 
     /// A `relationPrimary` that begins with a name: a table-valued function call or a table.
     fn named_relation(&mut self, is_lateral: bool) -> Parsing<Expression> {
-        let name: Vec<Identifier> = self.multipart_identifier()?;
+        let name: Vec<Identifier> = self.tvf_name()?;
         if self.is_char('(') {
-            let call: Expression = self.function_call(name)?;
+            let call: Expression = self.tvf(name)?;
             if self.kw("IDENTIFIED") && self.kw_at(1, "BY") {
                 let clause: usize = self.offset();
                 self.at += 2;
@@ -550,7 +558,7 @@ impl Parser<'_> {
             if parser.eat_kw("SYSTEM_VERSION") || parser.eat_kw("VERSION") {
                 parser.version_value()?;
             } else if parser.eat_kw("SYSTEM_TIME") || parser.eat_kw("TIMESTAMP") {
-                parser.value_expression(0)?;
+                parser.deeper(|parser| parser.value_expression(0))?;
             } else {
                 return Err(parser.error());
             }
@@ -798,19 +806,13 @@ impl Parser<'_> {
         }
         let mut factor: String = match self.eat_char('(') {
             true => {
-                let inner: String = self.row_pattern()?;
+                let inner: String = self.deeper(|parser| parser.row_pattern())?;
                 self.expect_char(')')?;
                 format!("({inner})")
             }
             false => {
                 let symbol: Identifier = self.ident()?;
-                match symbol.quoted {
-                    true => format!(
-                        "`{}`",
-                        symbol.name.replace('\\', "\\\\").replace('`', "\\`")
-                    ),
-                    false => symbol.name,
-                }
+                pattern_name(symbol)
             }
         };
         let reluctant_allowed: bool = if self.eat_char('?') {
@@ -847,16 +849,31 @@ impl Parser<'_> {
         Ok(factor)
     }
 
-    /// A quantifier bound: an integer as written, or nothing.
+    /// A quantifier bound, `int_literal_or_parameter`, as written, or nothing.
     fn row_pattern_bound(&mut self) -> Parsing<String> {
-        match self.peek_at(0) {
-            Some(token) if token.kind == TokenKind::Number(NumberKind::Integer) => {
+        let name = |token: &Token| matches!(token.kind, TokenKind::Word | TokenKind::Quoted);
+        let Some(token) = self.peek_at(0) else {
+            return Ok(String::new());
+        };
+        let prefix: &str = match token.kind {
+            TokenKind::Number(NumberKind::Integer | NumberKind::Hex) | TokenKind::Char('?') => {
                 let value: String = token.value.clone();
                 self.at += 1;
-                Ok(value)
+                return Ok(value);
             }
-            _ => Ok(String::new()),
+            TokenKind::Char('@') if self.is_at(1, name) => "@",
+            TokenKind::Op if token.value == SYSTEM_VARIABLE_PREFIX && self.is_at(1, name) => {
+                SYSTEM_VARIABLE_PREFIX
+            }
+            _ => return Ok(String::new()),
+        };
+        self.at += 1;
+        let mut parts: Vec<String> = vec![pattern_name(self.name(name)?)];
+        while prefix == SYSTEM_VARIABLE_PREFIX && self.is_char('.') && self.is_at(1, name) {
+            self.at += 1;
+            parts.push(pattern_name(self.name(name)?));
         }
+        Ok(format!("{prefix}{}", parts.join(".")))
     }
 
     /// `pivotClause` or `unpivotClause` over `input`.
@@ -885,7 +902,7 @@ impl Parser<'_> {
         self.expect_char('(')?;
         let aggregates: Vec<Expression> = self.comma_list(|parser| parser.named_expression())?;
         self.expect_kw("FOR")?;
-        let column: Expression = self.value_expression(0)?;
+        let column: Expression = self.deeper(|parser| parser.value_expression(0))?;
         self.expect_kw("IN")?;
         let pivoted: Vec<Expression> = self.parenthesized(|parser| {
             let value: Expression = parser.expression()?;

@@ -177,10 +177,9 @@ impl<'sql> Parser<'sql> {
                 Ok(right) => left = build(left, right),
                 Err(_) => break,
             }
-            links = match left {
-                Expression::And(_) | Expression::Or(_) => self.flat_link(links)?,
-                _ => self.link(links)?,
-            };
+            if !matches!(left, Expression::And(_) | Expression::Or(_)) {
+                links = self.link(links)?;
+            }
         }
         Ok(left)
     }

@@ -166,9 +166,13 @@ Nesting is bounded so that no input exhausts the caller's stack or takes exponen
 - A flat chain of operators or indirections (`::`, `.`, `[]`, `!`) is refused
   with DuckDB's own message once it reaches 1,000 links, DuckDB's expression depth. DuckDB's
   own boundary differs from this by at most two links, depending on the context. DuckDB reads
-  an `AND` or `OR` chain as one conjunction and does not limit set operations, but their trees
-  here are as deep as the chain, so 1,000 links of either are refused as nesting too deeply,
-  where DuckDB accepts them.
+  an `AND` or `OR` chain as one conjunction and does not limit set operations, so neither has a
+  chain limit here; their trees are as deep as the chain, so only a chain past the tree depth
+  below is refused.
+- A statement whose finished tree is more than 8,000 levels deep, counted iteratively after it
+  parses, is refused as nesting too deeply, where DuckDB accepts it: a chain of about 8,000
+  `AND`, `OR` or set-operation links, or nested levels that each stay within the limits above
+  but multiply, such as 60 parenthesised queries each with a 200-link `UNION ALL` chain.
 - A typed literal is tried only when a string follows the type, and `TRIM`'s `characters FROM`
   only when `FROM` follows at the call's own level, so nested calls parse in linear time.
 

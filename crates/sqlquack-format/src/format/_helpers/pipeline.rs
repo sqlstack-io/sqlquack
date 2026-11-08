@@ -1,12 +1,13 @@
 //! The formatting pipeline: lex, parse, lay out against the guide, then check the output.
 
 use sqlquack_syntax::tokens::models::TokenType;
-use sqlquack_syntax::{CallMode, Dialect, ExpressionWalk, parse_statements_with};
+use sqlquack_syntax::{CallMode, ExpressionWalk, parse_statements_with};
 
 use crate::format::_helpers::guide::layout_guide;
 use crate::format::_helpers::identifiers::parsed_names;
 use crate::format::_helpers::lexemes::{Lexeme, ends_operand, is_unquoted_word, lex};
 use crate::format::_helpers::printed_layout::{PrintedSql, wrap_lines};
+use crate::format::_helpers::sqlserver::parse_sqlserver;
 use crate::format::_helpers::token_layout::{
     AuthoredPrint, AuthoredSql, Oracle, print_authored_tokens, verify_printed_tokens,
 };
@@ -16,7 +17,7 @@ use crate::format::constants::{
     PARSE_FAILURE, SELECT_LIST_FAILURE, TOKEN_PRESERVATION_FAILURE, TYPE_CONSTRUCTOR_WORDS,
     TYPE_DEPTH_FAILURE, UNSUPPORTED_DIALECT_FAILURE, UNSUPPORTED_SYNTAX_FAILURE,
 };
-use crate::format::models::{FormatOptions, Formatted};
+use crate::format::models::{FormatDialect, FormatOptions, Formatted};
 
 /// Format `sql`, or return why it is left as written.
 pub(crate) fn format_checked(sql: &str, options: &FormatOptions) -> Result<Formatted, String> {
@@ -31,14 +32,20 @@ pub(crate) fn format_checked(sql: &str, options: &FormatOptions) -> Result<Forma
             changed: false,
         });
     }
-    if dialect == Dialect::Snowflake && has_unsupported_syntax(&lexemes) {
+    if dialect == FormatDialect::Snowflake && has_unsupported_syntax(&lexemes) {
         return Err(UNSUPPORTED_SYNTAX_FAILURE.to_string());
     }
     if nests_types_deeply(&lexemes) {
         return Err(TYPE_DEPTH_FAILURE.to_string());
     }
-    let statements = parse_statements_with(sql, dialect, &options.parse, CallMode::FaithfulLocated)
-        .map_err(|error| format!("{PARSE_FAILURE}: {error}"))?;
+    let statements = match dialect {
+        FormatDialect::SqlServer => parse_sqlserver(sql)?,
+        _ => {
+            let shared = dialect.shared().ok_or(UNSUPPORTED_DIALECT_FAILURE)?;
+            parse_statements_with(sql, shared, &options.parse, CallMode::FaithfulLocated)
+                .map_err(|error| format!("{PARSE_FAILURE}: {error}"))?
+        }
+    };
     if statements
         .iter()
         .any(|statement| statement.tree_depth() > MAX_TREE_DEPTH)
@@ -47,7 +54,7 @@ pub(crate) fn format_checked(sql: &str, options: &FormatOptions) -> Result<Forma
     }
     let names = parsed_names(sql, &statements, &lexemes)?;
     let guide = layout_guide(&lexemes, &names, dialect);
-    if dialect == Dialect::Snowflake && guide.selects != names.selects {
+    if dialect == FormatDialect::Snowflake && guide.selects != names.selects {
         return Err(SELECT_LIST_FAILURE.to_string());
     }
     let oracle = Oracle::new(guide);
@@ -111,7 +118,7 @@ fn keep_verbatim(
     authored: &AuthoredSql<'_>,
     printed: String,
     verbatim: &[(usize, usize)],
-    dialect: Dialect,
+    dialect: FormatDialect,
 ) -> Result<String, String> {
     if verbatim.is_empty() {
         return Ok(printed);

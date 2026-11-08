@@ -4,10 +4,14 @@ use std::collections::BTreeSet;
 use std::rc::Rc;
 
 use crate::dialects::types::DialectProfile;
+use crate::lineage::_helpers::typing::bigquery_typing::bigquery_common_type;
+use crate::lineage::_helpers::typing::clickhouse_typing::clickhouse_common_type;
 use crate::lineage::_helpers::typing::duckdb_types::{DuckType, common_type, parsed_type};
 use crate::lineage::_helpers::typing::postgres_typing::postgres_set_type;
 use crate::lineage::_helpers::typing::snowflake_sets::snowflake_set_type;
-use crate::lineage::constants::{DUCKDB_PROFILE, POSTGRES_PROFILE, SNOWFLAKE_PROFILE};
+use crate::lineage::constants::{
+    BIGQUERY_PROFILE, CLICKHOUSE_PROFILE, DUCKDB_PROFILE, POSTGRES_PROFILE, SNOWFLAKE_PROFILE,
+};
 use crate::lineage::models::{Lineage, Nullability, RowReads, SourceColumn, TransformKind};
 use crate::lineage::types::SharedColumns;
 
@@ -97,6 +101,15 @@ fn typed_as(part: &Lineage, data_type: &str, profile: &dyn DialectProfile) -> bo
     }
 }
 
+/// ClickHouse's common type of merged branches, each as ClickHouse names its type.
+fn clickhouse_merged_type(parts: &[&Lineage]) -> Option<Rc<str>> {
+    let types: Vec<String> = parts
+        .iter()
+        .map(|part| part.data_type.as_deref().map(str::to_owned))
+        .collect::<Option<_>>()?;
+    clickhouse_common_type(&types).map(Rc::from)
+}
+
 /// The type DuckDB combines every typed branch into, when each branch's type is modelled.
 fn duckdb_common_type(parts: &[&Lineage]) -> Option<Rc<str>> {
     let mut combined: Option<DuckType> = None;
@@ -147,6 +160,14 @@ pub(crate) fn merged(parts: Vec<Lineage>, profile: &dyn DialectProfile) -> Linea
     let data_type: Option<Rc<str>> = match first_type {
         Some(first) if all_typed_as(&typed, &first, profile) => Some(first),
         _ if profile.name() == DUCKDB_PROFILE => duckdb_common_type(&typed),
+        _ if profile.name() == CLICKHOUSE_PROFILE => clickhouse_merged_type(&typed),
+        _ if profile.name() == BIGQUERY_PROFILE => {
+            let branches: Vec<(Option<Rc<str>>, bool)> = typed
+                .iter()
+                .map(|part| (part.data_type.clone(), part.kind == TransformKind::Constant))
+                .collect();
+            bigquery_common_type(&branches)
+        }
         _ => None,
     };
     let nullability: Nullability = match (
