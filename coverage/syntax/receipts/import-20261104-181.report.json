@@ -1,0 +1,63 @@
+{
+ "format": "sqlquack-syntax-receipt/1",
+ "inputs": [
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT a NOT, b FROM t",
+   "sql_sha256": "0902dd5f0b0278f173d86d8ba30eef0893ce60e7667305c0e152d516f1219241"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT a FROM t WHERE a NOT OR b",
+   "sql_sha256": "3fab1aeb8787570740fa87e29fe4386df94a989771723e6862a0a93a1e021c59"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT a NOT AS b FROM t",
+   "sql_sha256": "643107418f517961e36f3ab0b4d79cb439a151fdbd24f80bd12417c0f09c1f49"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT a FROM t WHERE a NOT IN (1)",
+   "sql_sha256": "8220b16fbb6b02042407666585373588f158e29c6a7f748d56f2cfa84dba8673"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT a FROM t WHERE a NOT AND b",
+   "sql_sha256": "d17e8f322a07ad1e8d047cf5b64409f656029ea446b8ea2053b501126bb71847"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT a NOT b FROM t",
+   "sql_sha256": "d42811ade760833490c0a4c28f15b920b10c8c5f9ff75f879c7693af46a4103b"
+  },
+  {
+   "setup": [],
+   "setup_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "sql": "SELECT 1 NOT FROM t",
+   "sql_sha256": "d99aae40edd687945ec0ff54dd23c7f5477b894f01a88dedc6b0eaf378f28ae8"
+  }
+ ],
+ "receipts": 7,
+ "receipts_file_sha256": "255dc2ff0c4a54e945d2a51ff1d2e172bc1230fa85b0270d4396ba6ff83d9b0c",
+ "reconciled_receipts": 0,
+ "refusals": [],
+ "refused": 0,
+ "runs": [
+  {
+   "audit_sha256": "e02e7a856dd5f87b1abb5127eb7f2c8d4331f08e6b3cf2535831febe9620a4b3",
+   "receipts": 7,
+   "refused_rows": 0,
+   "run_id": "dnprobe",
+   "status": "imported"
+  }
+ ],
+ "superseding": 0,
+ "withdrawn": []
+}
