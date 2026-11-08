@@ -10,6 +10,10 @@ pub const ALLOWLIST_FILE: &str = "coverage/deep-nesting.toml";
 pub const DEPTH_LADDER: [usize; 6] = [50, 200, 1_000, 3_000, 10_000, 100_000];
 /// The time one probe parse may take before it fails as a timeout.
 pub const PROBE_BOUND: Duration = Duration::from_secs(15);
+/// The time one parse and its analysis may take: linear analysis ends far inside it, quadratic not.
+pub const ANALYSIS_BOUND: Duration = Duration::from_millis(500);
+/// The depths each analysed construct is analysed at, up to about the deepest any parser reads.
+pub const ANALYSIS_LADDER: [usize; 4] = [50, 200, 450, 900];
 /// The stack of the thread each probe parse runs on, the smallest an in-process caller is assumed to give.
 pub const PROBE_STACK_BYTES: usize = 2 * 1024 * 1024;
 /// How many runs of `[]` a mixed type nests between its constructor levels.

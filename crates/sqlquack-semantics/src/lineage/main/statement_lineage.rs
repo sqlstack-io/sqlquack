@@ -3,10 +3,12 @@
 use sqlquack_syntax::Expression;
 
 use crate::lineage::_helpers::tracing::queries::{projects_star, resolved_query};
+use crate::lineage::_helpers::tracing::reuse::{Analysis, analysing};
 use crate::lineage::models::{LineageContext, OutputLineage, QueryLineage};
 
 /// The lineage of each output column of the parsed query `statement`.
 pub fn statement_lineage(statement: &Expression, context: LineageContext<'_>) -> QueryLineage {
+    let _analysis: Analysis = analysing();
     let resolved = resolved_query(statement, &[], None, context);
     QueryLineage {
         outputs: resolved

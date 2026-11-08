@@ -14,9 +14,10 @@ use crate::lineage::_helpers::checks::duckdb_functions::{duckdb_arities, duckdb_
 use crate::lineage::_helpers::checks::families::{Family, data_type_family, expression_family};
 use crate::lineage::_helpers::checks::issues::{issue, type_location};
 use crate::lineage::_helpers::checks::relational::{
-    in_subquery_findings, query_families, range_frame_findings, recursive_findings,
-    row_comparison_findings, scalar_query, using_findings,
+    in_subquery_findings, range_frame_findings, recursive_findings, row_comparison_findings,
+    scalar_query, using_findings,
 };
+use crate::lineage::_helpers::checks::sets::width;
 use crate::lineage::_helpers::checks::signatures::{
     argument_finding, check_call, dispatch_name, has_signature, located, unify,
 };
@@ -420,7 +421,6 @@ fn expression_checks(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<NameFin
             findings.extend(row_comparison_findings(
                 node,
                 (&comparison.left, &comparison.right),
-                read,
             ));
         }
         Expression::Between(between)
@@ -595,10 +595,7 @@ fn scalar_subqueries(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<NameFin
     children
         .into_iter()
         .filter(|child| {
-            scalar_query(child).is_some_and(|query| {
-                query_families(query, level.scope, level.context)
-                    .is_some_and(|types| types.len() > 1)
-            })
+            scalar_query(child).is_some_and(|query| width(query).is_some_and(|width| width > 1))
         })
         .map(|_| {
             finding(

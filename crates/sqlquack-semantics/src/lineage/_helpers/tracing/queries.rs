@@ -1,6 +1,7 @@
 //! The outputs of a query, set operation or CTE, with their lineage.
 
 use std::borrow::Cow;
+use std::cell::RefCell;
 use std::rc::Rc;
 
 use sqlquack_syntax::Expression;
@@ -12,6 +13,7 @@ use crate::lineage::_helpers::tracing::expressions::{expression_lineage, is_aggr
 use crate::lineage::_helpers::tracing::lineages::{combined, set_merged, traced_if, unresolved};
 use crate::lineage::_helpers::tracing::postgres_names::postgres_name;
 use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
+use crate::lineage::_helpers::tracing::reuse::{holds_aggregate, reused, worked};
 use crate::lineage::_helpers::tracing::sources::{from_sources, listed, values_query};
 use crate::lineage::_helpers::typing::rules::filtered_non_null;
 use crate::lineage::constants::{
@@ -30,9 +32,16 @@ pub(crate) fn resolved_query(
     outer: Option<&LineageScope<'_>>,
     context: LineageContext<'_>,
 ) -> ResolvedQuery {
-    crate::lineage::_helpers::tracing::stack::deeper(|| {
-        resolved_query_level(query, ctes, outer, context)
-    })
+    let resolve = || {
+        worked();
+        crate::lineage::_helpers::tracing::stack::deeper(|| {
+            resolved_query_level(query, ctes, outer, context)
+        })
+    };
+    match outer {
+        None => reused(query, ctes, resolve),
+        Some(_) => resolve(),
+    }
 }
 
 fn resolved_query_level(
@@ -105,6 +114,7 @@ pub(crate) fn empty_scope<'a>(
         merged: Vec::new(),
         windows: Vec::new(),
         non_null: Vec::new(),
+        traced: RefCell::default(),
     }
 }
 
@@ -447,6 +457,7 @@ fn level_scope_and_rows<'a>(
     };
     scope.windows = named_windows(select, &scope, context);
     scope.non_null = filtered_non_null(select);
+    scope.traced.get_mut().clear();
     (scope, rows)
 }
 
@@ -486,10 +497,11 @@ fn select_query(
             lineage: expression_lineage(projection, &scope, context),
         };
         query.rows.rows_of(&column.lineage);
-        if !projection.dfs().any(is_aggregate) {
+        if !holds_aggregate(projection) {
             ungrouped.push(column.lineage.clone());
         }
         scope.aliases.push(column.clone());
+        scope.traced.get_mut().clear();
         aggregated.push(is_aggregate(unwrapped_projection(projection)));
         query.columns.push(column);
     }

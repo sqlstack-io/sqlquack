@@ -14,6 +14,7 @@ clap.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 sha2.workspace = true
+sqlquack-semantics.workspace = true
 sqlquack-syntax.workspace = true
 sqlquack-syntax-bigquery.workspace = true
 sqlquack-syntax-duckdb.workspace = true

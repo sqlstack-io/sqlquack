@@ -1,4 +1,5 @@
 use crate::check::models::{LocalFailure, LocalVerdict};
+use crate::depth::constants::DEPTH_LADDER;
 use crate::depth::main::probe_construct::probe_construct;
 use crate::depth::main::probed_constructs::probed_constructs;
 use crate::depth::tests::helpers::{PARENTHESES, accepted, by_length, failed};
@@ -51,15 +52,19 @@ fn given_a_parser_that_fails_past_some_depth_when_probing_then_the_first_failing
     ];
     for test_case in test_cases {
         let mut parses: usize = 0;
-        let result = probe_construct(LocalParser::Postgres, &PARENTHESES, &mut |sql| {
-            parses += 1;
-            by_length(
-                test_case.threshold,
-                &test_case.deep,
-                &test_case.shallow,
-                sql,
-            )
-        });
+        let result = probe_construct(
+            (LocalParser::Postgres, &DEPTH_LADDER),
+            &PARENTHESES,
+            &mut |sql| {
+                parses += 1;
+                by_length(
+                    test_case.threshold,
+                    &test_case.deep,
+                    &test_case.shallow,
+                    sql,
+                )
+            },
+        );
         assert_eq!(
             (result.failed_at, parses),
             (test_case.expected_failed_at, test_case.expected_parses),

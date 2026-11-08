@@ -8,7 +8,7 @@ use crate::lineage::_helpers::checks::coercion::{
 };
 use crate::lineage::_helpers::checks::families::{Family, expression_family, type_family};
 use crate::lineage::_helpers::checks::issues::issue;
-use crate::lineage::_helpers::checks::sets::{Branches, families};
+use crate::lineage::_helpers::checks::sets::{Branches, families, width};
 use crate::lineage::constants::TYPE_PHASE;
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding};
 
@@ -86,13 +86,11 @@ pub(crate) fn in_subquery_findings(
 pub(crate) fn row_comparison_findings(
     node: &Expression,
     (left, right): (&Expression, &Expression),
-    (scope, context): (&LineageScope<'_>, LineageContext<'_>),
 ) -> Vec<NameFinding> {
     let mut findings: Vec<NameFinding> = Vec::new();
     for (row, query) in [(left, right), (right, left)] {
         if let (Expression::Tuple(row), Some(query)) = (row, scalar_query(query))
-            && query_families(query, scope, context)
-                .is_some_and(|types| types.len() != row.expressions.len())
+            && width(query).is_some_and(|width| width != row.expressions.len())
         {
             findings.push(finding(
                 "E216",

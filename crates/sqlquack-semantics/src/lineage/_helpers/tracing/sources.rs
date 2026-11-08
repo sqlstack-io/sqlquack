@@ -48,22 +48,31 @@ pub(crate) fn from_sources(
                 key.lineage.nullability = Nullability::Nullable;
             }
         }
-        let scope = LineageScope {
-            sources: from.sources.clone(),
-            merged: from.merged.clone(),
+        let mut scope = LineageScope {
+            sources: std::mem::take(&mut from.sources),
+            merged: std::mem::take(&mut from.merged),
             ..empty_scope(ctes, outer)
         };
         let mut added: Vec<ScopeSource> = item_sources(item, &scope, context);
-        if let Some(join) = join {
-            let (merged, rows) = joined(join, (&scope, &added), context);
-            from.merged = merged;
-            from.rows.absorb(&rows);
-            if OUTER_RIGHT_JOINS.contains(&join.kind) {
-                from.sources = from.sources.into_iter().map(outer_nullable).collect();
-            }
-            if OUTER_LEFT_JOINS.contains(&join.kind) || outer_as_of(join.kind, context) {
-                added = added.into_iter().map(outer_nullable).collect();
-            }
+        let earlier: usize = scope.sources.len();
+        let Some(join) = join else {
+            from.sources = scope.sources;
+            from.merged = scope.merged;
+            from.sources.extend(added);
+            continue;
+        };
+        scope.sources.append(&mut added);
+        scope.traced.get_mut().clear();
+        let (merged, rows) = joined(join, (&scope, earlier), context);
+        added = scope.sources.split_off(earlier);
+        from.sources = scope.sources;
+        from.merged = merged;
+        from.rows.absorb(&rows);
+        if OUTER_RIGHT_JOINS.contains(&join.kind) {
+            from.sources = from.sources.into_iter().map(outer_nullable).collect();
+        }
+        if OUTER_LEFT_JOINS.contains(&join.kind) || outer_as_of(join.kind, context) {
+            added = added.into_iter().map(outer_nullable).collect();
         }
         from.sources.extend(added);
     }
@@ -107,26 +116,22 @@ fn flattened<'a>(
 /// The merged keys after a join, and the columns its conditions and keys decide rows by.
 fn joined(
     join: &Join,
-    (left, right): (&LineageScope<'_>, &[ScopeSource]),
+    (both, earlier): (&LineageScope<'_>, usize),
     context: LineageContext<'_>,
 ) -> (Vec<ScopedColumn>, RowReads) {
-    let mut merged_keys: Vec<ScopedColumn> = left.merged.clone();
+    let (left, right): (&[ScopeSource], &[ScopeSource]) = both.sources.split_at(earlier);
+    let mut merged_keys: Vec<ScopedColumn> = both.merged.clone();
     let mut rows: RowReads = RowReads::default();
-    let both = LineageScope {
-        sources: left.sources.iter().chain(right).cloned().collect(),
-        merged: left.merged.clone(),
-        ..empty_scope(left.ctes, left.outer)
-    };
     for condition in join.on.iter().chain(join.match_condition.iter()) {
-        let read: Lineage = expression_lineage(condition, &both, context);
+        let read: Lineage = expression_lineage(condition, both, context);
         rows.read(&read);
     }
     let names: Vec<String> = match natural(join.kind) {
-        true => common_names(left, right, context),
+        true => common_names((&both.merged, left), right, context),
         false => join.using.iter().map(|name| key(name, context)).collect(),
     };
     for name in names {
-        let left_side: Lineage = side_column(&left.merged, &left.sources, &name, context);
+        let left_side: Lineage = side_column(&both.merged, left, &name, context);
         let right_side: Lineage = side_column(&[], right, &name, context);
         rows.read(&left_side);
         rows.read(&right_side);
@@ -171,18 +176,13 @@ fn natural(kind: JoinKind) -> bool {
 
 /// The column names both sides of a NATURAL join know.
 fn common_names(
-    left: &LineageScope<'_>,
+    (merged, left): (&[ScopedColumn], &[ScopeSource]),
     right: &[ScopeSource],
     context: LineageContext<'_>,
 ) -> Vec<String> {
-    let left_names: Vec<String> = left
-        .merged
+    let left_names: Vec<String> = merged
         .iter()
-        .chain(
-            left.sources
-                .iter()
-                .flat_map(|source| source.query.columns.iter()),
-        )
+        .chain(left.iter().flat_map(|source| source.query.columns.iter()))
         .map(|column| column.key.clone())
         .collect();
     let mut names: Vec<String> = Vec::new();
