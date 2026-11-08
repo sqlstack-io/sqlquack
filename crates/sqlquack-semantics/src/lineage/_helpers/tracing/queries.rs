@@ -743,13 +743,22 @@ pub(crate) fn expanded_star(
         .filter(|source| source.query.open)
         .collect();
     let mut columns: Vec<ScopedColumn> = Vec::new();
-    let offered = keys.into_iter().chain(
-        selected
-            .iter()
-            .flat_map(|source| source.query.columns.iter())
-            .filter(|column| !listed(&merged_keys, &column.key, context)),
-    );
-    for column in offered {
+    let in_place: bool = matches!(context.profile.name(), DUCKDB_PROFILE | SQLITE_PROFILE);
+    let offered: Vec<ScopedColumn> = match in_place {
+        true => keys_in_place(&keys, &selected, context),
+        false => keys
+            .into_iter()
+            .cloned()
+            .chain(
+                selected
+                    .iter()
+                    .flat_map(|source| source.query.columns.iter())
+                    .filter(|column| !listed(&merged_keys, &column.key, context))
+                    .cloned(),
+            )
+            .collect(),
+    };
+    for column in &offered {
         if !listed(&excluded, &column.key, context) {
             columns.push(star_column(column, star, scope, context));
         }
@@ -772,6 +781,43 @@ pub(crate) fn expanded_star(
         derived: false,
         faulted: false,
     }
+}
+
+/// DuckDB's and SQLite's star over USING and NATURAL keys: each key once, where the first source
+/// offers it and under that column's name. A key no selected source offers comes first.
+fn keys_in_place(
+    keys: &[&ScopedColumn],
+    selected: &[&ScopeSource],
+    context: LineageContext<'_>,
+) -> Vec<ScopedColumn> {
+    let offered: Vec<&ScopedColumn> = selected
+        .iter()
+        .flat_map(|source| source.query.columns.iter())
+        .collect();
+    let same = |left: &ScopedColumn, right: &ScopedColumn| {
+        context.profile.same_identifier(&left.key, &right.key)
+    };
+    let mut columns: Vec<ScopedColumn> = keys
+        .iter()
+        .filter(|merged| !offered.iter().any(|column| same(merged, column)))
+        .map(|merged| (*merged).clone())
+        .collect();
+    let mut placed: Vec<&ScopedColumn> = Vec::new();
+    for column in offered {
+        match keys.iter().find(|merged| same(merged, column)) {
+            Some(merged) if placed.iter().any(|done| same(done, merged)) => {}
+            Some(merged) => {
+                placed.push(merged);
+                columns.push(ScopedColumn {
+                    name: column.name.clone(),
+                    key: column.key.clone(),
+                    lineage: merged.lineage.clone(),
+                });
+            }
+            None => columns.push(column.clone()),
+        }
+    }
+    columns
 }
 
 fn star_column(
