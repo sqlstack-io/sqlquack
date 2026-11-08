@@ -12,6 +12,26 @@ use crate::parser::models::Parser;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
+/// The kinds whose ALTER Snowflake parses without a name, and before which actions; recorded receipts refuse the omission for other kinds, such as BACKUP POLICY or SECRET, and for SNAPSHOT POLICY's UNSET.
+const OMITTED_NAME_ACTIONS: &[(&str, &[&str])] = &[
+    ("AGGREGATION POLICY", &["SET", "UNSET"]),
+    ("AUTHENTICATION POLICY", &["SET", "UNSET"]),
+    ("FEATURE POLICY", &["SET", "UNSET"]),
+    ("JOIN POLICY", &["SET", "UNSET"]),
+    ("MAINTENANCE POLICY", &["SET", "UNSET"]),
+    ("MASKING POLICY", &["SET", "UNSET"]),
+    ("NETWORK POLICY", &["SET", "UNSET"]),
+    ("PACKAGES POLICY", &["SET", "UNSET"]),
+    ("PASSWORD POLICY", &["SET", "UNSET"]),
+    ("SESSION POLICY", &["SET", "UNSET"]),
+    ("SNAPSHOT POLICY", &["SET"]),
+    ("STORAGE LIFECYCLE POLICY", &["SET", "UNSET"]),
+    ("INTEGRATION", &["SET", "UNSET", "REFRESH"]),
+    ("CATALOG INTEGRATION", &["SET"]),
+    ("EXTERNAL ACCESS INTEGRATION", &["SET", "UNSET"]),
+    ("SECURITY INTEGRATION", &["SET"]),
+];
+
 impl Parser {
     /// Parse a Snowflake ALTER of a kind this module owns, or None when the next words name another kind.
     pub(crate) fn parse_alter_snowflake_object(&mut self) -> Result<Option<Expression>> {
@@ -102,6 +122,45 @@ impl Parser {
     pub(super) fn parse_alter_object_head(&mut self) -> Result<(TableRef, bool)> {
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
         Ok((self.parse_object_name()?, if_exists))
+    }
+
+    /// Parse the head of `kind`, or an omitted name where Snowflake parses one: before `SET <property> =`, an `UNSET <property>` list, or an INTEGRATION's `REFRESH <secret>`.
+    pub(super) fn parse_alter_head_or_omitted(&mut self, kind: &str) -> Result<(TableRef, bool)> {
+        let word_at = |offset: usize| {
+            self.tokens.get(self.current + offset).is_some_and(|token| {
+                !matches!(
+                    token.token_type,
+                    TokenType::String | TokenType::QuotedIdentifier
+                ) && token
+                    .text
+                    .starts_with(|c: char| c.is_ascii_alphabetic() || c == '_')
+                    && !crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS
+                        .contains(&token.text.to_ascii_uppercase().as_str())
+            })
+        };
+        let token_at = |offset: usize, token_type: TokenType| {
+            self.tokens
+                .get(self.current + offset)
+                .is_some_and(|token| token.token_type == token_type)
+        };
+        let actions = OMITTED_NAME_ACTIONS
+            .iter()
+            .find(|(omits, _)| *omits == kind)
+            .map_or(&[][..], |(_, actions)| *actions);
+        let omitted = match self.text_at(0).as_deref() {
+            Some(action @ "SET") if actions.contains(&action) => {
+                word_at(1) && token_at(2, TokenType::Eq)
+            }
+            Some(action @ "UNSET") if actions.contains(&action) => {
+                word_at(1) && (self.is_statement_end_at(2) || token_at(2, TokenType::Comma))
+            }
+            Some(action @ "REFRESH") if actions.contains(&action) => word_at(1),
+            _ => false,
+        };
+        match omitted {
+            true => Ok((TableRef::new(""), false)),
+            false => self.parse_alter_object_head(),
+        }
     }
 
     /// Parse an object name: an identifier, never a string or an unquoted reserved keyword.

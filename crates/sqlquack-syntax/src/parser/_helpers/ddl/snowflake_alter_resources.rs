@@ -213,7 +213,7 @@ impl Parser {
             return Ok(None);
         };
         let kind = words.join(" ");
-        let head = self.parse_alter_object_head()?;
+        let head = self.parse_alter_head_or_omitted(&kind)?;
         if matches!(kind.as_str(), "RESOURCE MONITOR") {
             return self.parse_alter_resource_monitor(head).map(Some);
         }
