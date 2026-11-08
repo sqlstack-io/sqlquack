@@ -237,7 +237,8 @@ fn given_a_color_choice_when_checked_or_converted_then_only_a_colored_stream_is_
             expected_stdout: "{\n  \"converted\": true,\n  \"profile\": \"the built-in default\",\n  \
                 \"sql\": \"SELECT 'a' AS \\\"S\\\"\",\n  \"refusals\": [],\n  \"divergences\": {},\n  \
                 \"assumptions\": [],\n  \"divergence_failures\": {},\n  \"notes\": [],\n  \
-                \"python_functions\": [],\n  \"macros\": [],\n  \"overrides\": []\n}\n",
+                \"warnings\": [],\n  \"python_functions\": [],\n  \"macros\": [],\n  \
+                \"overrides\": []\n}\n",
             expected_stderr: STYLED_CONVERTED,
         },
     ];

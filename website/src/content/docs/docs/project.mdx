@@ -1,0 +1,130 @@
+---
+title: "Projects"
+description: "Declare your tables in YAML source files so SQLQuack knows their columns and types."
+---
+
+SQLQuack needs to know a table's columns and their Snowflake types to convert a query that reads
+it. You declare them once in a project folder, and every command run there reads them.
+
+A project is a folder holding a `sources/` folder of YAML files. Here is one:
+
+```yaml
+# sources/shop.yml
+sources:
+  - name: orders
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: status
+        type: VARCHAR
+      - name: total
+        type: NUMBER(12,2)
+```
+
+Run `convert` in the folder and the query's table is known:
+
+```console
+$ sqlquack convert revenue.sql
+sqlquack convert: converting…
+SELECT
+    "ORDERS"."STATUS" AS "STATUS",
+    CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE"
+FROM "ORDERS" AS "ORDERS"
+GROUP BY "ORDERS"."STATUS"
+sqlquack convert: done, converted under the built-in default
+```
+
+`convert`, `census`, `index` and `function` all read the project in the current folder. To use
+one elsewhere, pass `--project path/to/folder`.
+
+## Source files
+
+Every `.yml` or `.yaml` file under `sources/` is read. Each source has a `name` and its
+`columns`, each with a `name` and a `type`. Other keys, such as `description`, are ignored, so a
+SQLBuild project's source files work unchanged.
+
+Names are unquoted, so `orders` declares the table `ORDERS`, as Snowflake folds it. A source with
+an `expression` is a query rather than a table, and is skipped.
+
+A source with a column that has no `type` is left out whole, so a `SELECT *` never misses a
+column. SQLQuack warns about it:
+
+```console
+sqlquack convert: warning: ./sources/more.yml: the source customers is left out, because its column email has no type
+```
+
+A table declared in two files is an error naming both.
+
+## Choosing the folders
+
+Put a `sqlquack.toml` in the project to keep the sources somewhere else:
+
+```toml
+[project]
+sources = "warehouse/tables"
+```
+
+Paths are relative to the project folder, and a folder you name must exist. `functions` and
+`overrides` work the same way.
+
+A `sqlquack.toml` holding only `[project]` keeps the built-in [policy](/docs/policy/). To use your
+own policy, keep the policy tables in the same file.
+
+## Functions
+
+Your own SQL functions go in `functions/sql/`, one file each, named after the function. The file
+starts with a header giving the arguments and the return type, then the body:
+
+```sql
+-- functions/sql/is_shipped.sql
+FUNCTION (
+  arguments (order_status VARCHAR),
+  returns BOOLEAN,
+);
+
+order_status = 'shipped'
+```
+
+Now a query can call `is_shipped(status)`. `returns table (name TYPE, ...)` declares a table
+function.
+
+Python functions go in `functions/python/`, marked with `@udf`:
+
+```python
+# functions/python/label.py
+from sqlquack import udf
+
+
+@udf(arguments={"status": "VARCHAR"}, returns="VARCHAR")
+def main(status):
+    return None if status is None else status.title()
+```
+
+SQLQuack reads the decorator without running the file. A Python function only runs where a Python
+runtime registers it, so the built-in policy refuses calls to it. With a policy that allows
+`project_udf`, such as the repository's `sqlquack.toml`, confirm the runtime once:
+
+```toml
+[project.confirm]
+python_runtime = true
+```
+
+## Overrides
+
+Files under `overrides/` replace a Snowflake built-in with your own DuckDB SQL. See
+[`convert`](/docs/cli/convert/).
+
+## Session settings
+
+`[project.session]` holds your Snowflake session parameters, so you don't pass `--session` every
+time:
+
+```toml
+[project.session]
+TIMEZONE = "UTC"
+```
+
+A `--session` flag replaces the project's value for one run. `[project.confirm]` also takes
+`utc_session` and `declared_offsets`, which confirm what `--utc-session` and
+`--confirm-declared-offsets` do. The confirmations hold whichever policy a run uses, including one
+chosen with `--policy` or `--builtin-policy`.

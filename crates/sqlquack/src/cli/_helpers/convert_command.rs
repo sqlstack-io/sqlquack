@@ -80,6 +80,9 @@ pub(crate) fn convert_command(
     if stdout.write_all(rendered.as_bytes()).is_err() {
         return ExitCode::FAILURE;
     }
+    for warning in &report.warnings {
+        let _ = writeln!(stderr, "sqlquack convert: warning: {warning}");
+    }
     for note in &report.notes {
         let _ = writeln!(stderr, "sqlquack convert: note: {note}");
     }
@@ -253,6 +256,7 @@ pub(crate) fn refused_session(reason: String) -> ConvertReport {
         assumptions: Vec::new(),
         divergence_failures: BTreeMap::new(),
         notes: Vec::new(),
+        warnings: Vec::new(),
         python_functions: Vec::new(),
         macros: Vec::new(),
         overrides: Vec::new(),
@@ -333,6 +337,7 @@ pub(crate) fn analysis_report(
         converted,
         profile,
         notes,
+        warnings: Vec::new(),
         sql: match converted {
             true => analysis
                 .conversions

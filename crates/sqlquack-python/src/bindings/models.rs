@@ -18,6 +18,8 @@ pub struct Rendered<T: Serialize> {
 #[derive(Debug, Default, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct ConvertRequest {
+    /// `--project`.
+    pub project: Option<PathBuf>,
     /// `--schema`.
     pub schema: Option<PathBuf>,
     /// `--policy`; the command line's default when absent.

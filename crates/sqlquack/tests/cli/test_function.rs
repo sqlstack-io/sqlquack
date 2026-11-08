@@ -114,7 +114,7 @@ fn given_a_body_on_standard_input_when_converting_then_refusals_print_as_json_an
                 converted: None,
                 first_code: None,
                 stderr_lines: vec![
-                    "sqlquack function: failed: the schema declares no function TRIPLED".to_owned(),
+                    "sqlquack function: failed: no function TRIPLED is declared; declare it in the project's functions folder".to_owned(),
                 ],
             },
         },

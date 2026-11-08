@@ -29,6 +29,7 @@ pub(crate) fn convert_json(sql: &str, request: &str, path: &str) -> PyResult<Str
         },
         colors: ColorArguments::default(),
         conversion: PolicyArguments {
+            project: request.project,
             policy: request.policy,
             builtin_policy: request.builtin_policy,
             strict: request.strict,

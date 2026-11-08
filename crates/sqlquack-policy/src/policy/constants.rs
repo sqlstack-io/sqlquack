@@ -3,6 +3,9 @@
 /// The policy file at the repository root.
 pub const POLICY_FILE_NAME: &str = "sqlquack.toml";
 
+/// The table of a project's settings in `sqlquack.toml`; a file holding only it uses the built-in policy.
+pub const PROJECT_TABLE: &str = "project";
+
 /// The time zone every session profile runs in, Snowflake's `TIMEZONE` and DuckDB's `TimeZone`.
 pub const SESSION_TIME_ZONE: &str = "UTC";
 

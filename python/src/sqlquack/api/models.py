@@ -65,6 +65,7 @@ class Conversion:
 class ConvertOptions:
     """The `sqlquack convert` flags, one field each; the defaults are the flags' own."""
 
+    project: str | os.PathLike[str] | None = None
     schema: str | os.PathLike[str] | None = None
     policy: str | os.PathLike[str] | None = None
     builtin_policy: bool = False

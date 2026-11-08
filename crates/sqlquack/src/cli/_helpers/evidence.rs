@@ -37,26 +37,17 @@ pub(crate) fn load_evidence(paths: &EvidencePaths) -> Result<Evidence, String> {
     Ok(Evidence { policy, cases })
 }
 
-/// The `--policy` file, else an existing `sqlquack.toml`, else none (the built-in policy).
-pub(crate) fn chosen_policy(path: Option<&Path>, builtin: bool) -> Result<Option<Policy>, String> {
-    let default = Path::new(POLICY_FILE_NAME);
-    let path = match (builtin, path) {
-        (true, _) => return Ok(None),
-        (false, Some(path)) => path,
-        (false, None) if default.is_file() => default,
-        (false, None) => return Ok(None),
-    };
+/// The `--policy` file, validated.
+pub(crate) fn policy_file(path: &Path) -> Result<Policy, String> {
     if !path.is_file() {
         return Err(format!(
             "no policy file at {}; pass --policy with an existing file, or leave --policy out to \
-             use the built-in policy, which refuses every known divergence but the clock and \
-             checks that only raise",
+             use the project's sqlquack.toml or, without one, the built-in policy, which refuses \
+             every known divergence but the clock and checks that only raise",
             path.display()
         ));
     }
-    load_policy(path)
-        .map(Some)
-        .map_err(|error| error.to_string())
+    load_policy(path).map_err(|error| error.to_string())
 }
 
 /// The conversion options of `policy` under the caller's choices, or the built-in default.
@@ -167,11 +158,12 @@ fn divergence_help(
             ),
         };
     };
-    let file = arguments
-        .policy
-        .as_deref()
-        .unwrap_or(Path::new(POLICY_FILE_NAME))
-        .display();
+    let file = match (&arguments.policy, &arguments.project) {
+        (Some(policy), _) => policy.clone(),
+        (None, Some(project)) => project.join(POLICY_FILE_NAME),
+        (None, None) => POLICY_FILE_NAME.into(),
+    };
+    let file = file.display();
     let Some(divergence) = policy.divergences.get(id) else {
         return format!(
             "{file} has no [divergences.{id}]; copy it from the repository's sqlquack.toml"
@@ -188,20 +180,28 @@ fn divergence_help(
     }
     let mut fixes: Vec<String> = Vec::new();
     let confirmation = match id {
-        SESSION_TIMEZONE_UTC => Some(("--utc-session", arguments.utc_session)),
+        SESSION_TIMEZONE_UTC => Some(("utc_session", "--utc-session", arguments.utc_session)),
         DECLARED_OFFSET => Some((
+            "declared_offsets",
             "--confirm-declared-offsets",
             arguments.confirm_declared_offsets,
         )),
-        PROJECT_UDF => Some(("--python-runtime", arguments.python_runtime)),
+        PROJECT_UDF => Some((
+            "python_runtime",
+            "--python-runtime",
+            arguments.python_runtime,
+        )),
         _ => None,
     };
     let confirmable = match confirmation {
-        Some((flag, false)) => {
-            fixes.push(format!("confirm its assumption with {flag}"));
+        Some((key, flag, false)) => {
+            fixes.push(format!(
+                "confirm its assumption: add `{key} = true` under [project.confirm] in {file}, or \
+                 pass {flag} for one run"
+            ));
             true
         }
-        Some((_, true)) => true,
+        Some((_, _, true)) => true,
         None => false,
     };
     let mode = match arguments.strict {

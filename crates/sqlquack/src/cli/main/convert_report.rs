@@ -4,8 +4,7 @@ use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 
 use crate::cli::_helpers::convert_command::{analysis_report, chosen_options, refused_session};
-use crate::cli::_helpers::evidence::chosen_policy;
-use crate::cli::_helpers::schema::load_schema;
+use crate::cli::_helpers::project::project_choices;
 use crate::cli::models::{ConvertArguments, ConvertReport};
 use sqlquack_convert::analysis::main::analyze::analyze;
 use sqlquack_rules::session::main::parse_session::parse_session;
@@ -13,16 +12,22 @@ use sqlquack_rules::session::main::session_conversion_options::session_conversio
 
 /// The report `convert` prints for `sql` under `arguments`, or why it cannot be made (exit 2).
 pub fn convert_report(arguments: &ConvertArguments, sql: &str) -> Result<ConvertReport, String> {
-    let schema = arguments
-        .schema
-        .as_deref()
-        .map(load_schema)
-        .transpose()?
-        .unwrap_or_default();
-    let policy = chosen_policy(
-        arguments.conversion.policy.as_deref(),
-        arguments.conversion.builtin_policy,
+    let (policy, project) = project_choices(
+        &arguments.conversion,
+        (
+            arguments.schema.as_deref(),
+            &arguments.session,
+            arguments.overrides.as_deref(),
+        ),
     )?;
+    let schema = project.schema;
+    let warnings = project.warnings;
+    let arguments = &ConvertArguments {
+        session: project.session,
+        overrides: project.overrides,
+        conversion: project.conversion,
+        ..arguments.clone()
+    };
     let parameters = parse_session(&arguments.session)?;
     let session = (
         arguments.conversion.strict,
@@ -31,7 +36,12 @@ pub fn convert_report(arguments: &ConvertArguments, sql: &str) -> Result<Convert
     let (options, profile) = match session_conversion_options(policy.as_ref(), session, &parameters)
     {
         Ok(matched) => matched,
-        Err(reason) => return Ok(refused_session(reason)),
+        Err(reason) => {
+            return Ok(ConvertReport {
+                warnings,
+                ..refused_session(reason)
+            });
+        }
     };
     let options = chosen_options(arguments, policy.as_ref(), options)?;
     let catalogue = builtin_catalogue();
@@ -44,10 +54,11 @@ pub fn convert_report(arguments: &ConvertArguments, sql: &str) -> Result<Convert
     if analysis.parsed && analysis.statements == 0 {
         return Err("the input holds no SQL statement".to_owned());
     }
-    analysis_report(
+    let report = analysis_report(
         &analysis,
         (sql, arguments.compact),
         (&schema, &options, policy.as_ref()),
         (&arguments.conversion, &parameters, profile),
-    )
+    )?;
+    Ok(ConvertReport { warnings, ..report })
 }

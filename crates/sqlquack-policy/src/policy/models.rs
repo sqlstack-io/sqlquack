@@ -26,6 +26,45 @@ pub struct Policy {
     /// Limits on converting one statement; absent, the built-in defaults apply.
     #[serde(default)]
     pub conversion_budget: Option<ConversionBudgetPolicy>,
+    /// The project around the file: its folders, session and confirmations.
+    #[serde(default)]
+    pub project: ProjectPolicy,
+}
+
+/// `[project]`: folders that differ from the defaults, the caller's session and what it confirms.
+#[derive(Clone, Debug, Default, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ProjectPolicy {
+    /// The folder of source YAML files, relative to the file; `sources` when absent.
+    #[serde(default)]
+    pub sources: Option<String>,
+    /// The folder of SQL and Python function files, relative to the file; `functions` when absent.
+    #[serde(default)]
+    pub functions: Option<String>,
+    /// The folder of override files, relative to the file; `overrides` when absent.
+    #[serde(default)]
+    pub overrides: Option<String>,
+    /// Snowflake session parameters of the caller's session, as `--session` gives them.
+    #[serde(default)]
+    pub session: BTreeMap<String, SessionValue>,
+    /// What the caller confirms, as the command-line confirmation flags do.
+    #[serde(default)]
+    pub confirm: ProjectConfirm,
+}
+
+/// `[project.confirm]`: assumptions the project confirms for every run.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ProjectConfirm {
+    /// `--python-runtime`.
+    #[serde(default)]
+    pub python_runtime: bool,
+    /// `--utc-session`.
+    #[serde(default)]
+    pub utc_session: bool,
+    /// `--confirm-declared-offsets`.
+    #[serde(default)]
+    pub declared_offsets: bool,
 }
 
 /// How long converting one statement may take and how much SQL it may emit, before it is refused.
@@ -149,6 +188,17 @@ pub enum SessionValue {
     Integer(i64),
     /// A text parameter.
     Text(String),
+}
+
+impl SessionValue {
+    /// The value as text: booleans in lower case, integers in digits, text as written.
+    pub fn text(&self) -> String {
+        match self {
+            Self::Boolean(flag) => flag.to_string(),
+            Self::Integer(number) => number.to_string(),
+            Self::Text(text) => text.clone(),
+        }
+    }
 }
 
 /// The input tags a category's case files must cover between them.

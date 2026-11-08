@@ -6,6 +6,7 @@ from sqlquack._native import __version__
 from sqlquack.api.exceptions import SqlQuackError
 from sqlquack.api.main.check import check
 from sqlquack.api.main.convert import convert
+from sqlquack.api.main.udf import udf
 from sqlquack.api.models import CheckResult, Conversion, ConvertOptions, Diagnostic, Span
 
 __all__ = [
@@ -18,4 +19,5 @@ __all__ = [
     "__version__",
     "check",
     "convert",
+    "udf",
 ]

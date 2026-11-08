@@ -74,13 +74,16 @@ SQL in rendered diagnostics. It returns a `CheckResult`:
 | `report` | `Mapping[str, Any]` | Exactly `sqlquack convert --json`'s report. |
 
 `ConvertOptions` has one field per [`convert`](/docs/cli/convert/) flag, with the same defaults:
-`schema`, `policy`, `builtin_policy`, `session`, `strict`, `utc_session`,
+`project`, `schema`, `policy`, `builtin_policy`, `session`, `strict`, `utc_session`,
 `confirm_declared_offsets`, `python_runtime`, `loud_divergences_only`, `overrides`,
-`verified_overrides` and `compact`. `schema`, `policy` and `overrides` take a path (`str` or `os.PathLike`), not
+`verified_overrides` and `compact`. `project`, `schema`, `policy` and `overrides` take a path (`str` or `os.PathLike`), not
 the parsed contents. `session` and `verified_overrides` take a mapping, such as
-`session={"TIMEZONE": "UTC"}`, not a list of `NAME=VALUE` strings. With `policy` and
-`builtin_policy` both unset, `convert` reads `sqlquack.toml` from the current directory and raises
-`SqlQuackError` when there is none.
+`session={"TIMEZONE": "UTC"}`, not a list of `NAME=VALUE` strings.
+
+`project` takes a [project](/docs/project/) folder, as `--project` does: its sources, functions,
+overrides and settings apply, and its `sqlquack.toml` is the policy unless `policy` or
+`builtin_policy` choose another. Without `project`, the current folder is the project, as it is on
+the command line.
 
 ## Diagnostics
 

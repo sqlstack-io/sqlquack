@@ -9,8 +9,10 @@ use sqlquack_snowflake::typing::main::cast_target::cast_target;
 use crate::analysis::constants::VARIANT_HOLDING_TYPE;
 use crate::analysis::constants::{
     AGGREGATE_OR_WINDOW_NAMES, OVERRIDE_ARGUMENTS, OVERRIDE_DIALECT, OVERRIDE_DUCKDB,
-    OVERRIDE_HEADER, OVERRIDE_REPLACES, OVERRIDE_RETURNS, SHA256_HEX_LENGTH,
+    OVERRIDE_REPLACES, OVERRIDE_RETURNS, SHA256_HEX_LENGTH,
 };
+use crate::project::main::function_header::function_header;
+use crate::project::main::named_types::named_types;
 use sqlquack_duckdb::blocks::main::column_type::column_type;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_evidence::replay::main::bind_macro::bind_macro;
@@ -62,43 +64,16 @@ pub(crate) fn load_override(name: &str, text: &str) -> Result<(String, UserOverr
 /// The function `text` replaces, upper case, and the override named `name`, or why it is not one.
 fn override_definition(name: &str, text: &str) -> Result<(String, UserOverride), String> {
     let failed = |reason: &str| format!("override {name}: {reason}");
-    let rest = text.trim_start();
-    let rest = rest
-        .get(..OVERRIDE_HEADER.len())
-        .filter(|head| head.eq_ignore_ascii_case(OVERRIDE_HEADER))
-        .map(|_| rest[OVERRIDE_HEADER.len()..].trim_start())
-        .ok_or_else(|| failed("does not start with FUNCTION ("))?;
-    let rest = rest
-        .strip_prefix('(')
-        .ok_or_else(|| failed("does not start with FUNCTION ("))?;
-    let close = closing(rest).ok_or_else(|| failed("its FUNCTION ( header is not closed"))?;
-    let header = &rest[..close];
-    let body = rest[close + 1..]
-        .trim_start()
-        .strip_prefix(';')
-        .ok_or_else(|| failed("its header must end with );"))?
-        .trim();
-    let body = body.trim_end_matches(';').trim_end();
-    if body.is_empty() {
-        return Err(failed("has no body"));
-    }
+    let (properties, body) = function_header(text).map_err(|reason| failed(&reason))?;
     let (mut arguments, mut returns, mut replaces, mut dialect) = (None, None, None, None);
-    for property in top_level(header)
-        .iter()
-        .map(|part| part.trim())
-        .filter(|part| !part.is_empty())
-    {
-        let (key, value) = property
-            .split_once(|character: char| character.is_whitespace() || character == '(')
-            .map(|(key, _)| (key, property[key.len()..].trim()))
-            .ok_or_else(|| failed(&format!("the property `{property}` has no value")))?;
-        match key.to_ascii_lowercase().as_str() {
+    for (key, value) in properties {
+        match key.as_str() {
             OVERRIDE_ARGUMENTS => {
-                arguments = Some(parameters(value).map_err(|reason| failed(&reason))?)
+                arguments = Some(parameters(&value).map_err(|reason| failed(&reason))?)
             }
             OVERRIDE_RETURNS => {
                 returns = Some(
-                    cast_target(value, &ProvenanceLog::default())
+                    cast_target(&value, &ProvenanceLog::default())
                         .map_err(|reason| failed(&reason))?
                         .data_type,
                 );
@@ -128,73 +103,19 @@ fn override_definition(name: &str, text: &str) -> Result<(String, UserOverride),
                 .iter()
                 .map(|byte| format!("{byte:02x}"))
                 .collect(),
-            body: body.to_owned(),
+            body,
         },
     ))
 }
 
 /// `(name TYPE, ...)` as parameters.
 fn parameters(value: &str) -> Result<Vec<ColumnSpec>, String> {
-    let inner = value
-        .strip_prefix('(')
-        .and_then(|inner| inner.strip_suffix(')'))
-        .ok_or_else(|| "arguments must be written `arguments (name TYPE, ...)`".to_owned())?;
     let mut parameters: Vec<ColumnSpec> = Vec::new();
-    for parameter in top_level(inner)
-        .iter()
-        .map(|part| part.trim())
-        .filter(|part| !part.is_empty())
-    {
-        let (name, type_name) = parameter
-            .split_once(char::is_whitespace)
-            .ok_or_else(|| format!("the argument `{parameter}` has no type"))?;
-        let identifier = name.chars().enumerate().all(|(index, character)| {
-            character == '_'
-                || character.is_ascii_alphabetic()
-                || (index > 0 && character.is_ascii_digit())
-        });
-        if !identifier {
-            return Err(format!(
-                "the argument name `{name}` is not a plain identifier"
-            ));
-        }
-        let target = cast_target(type_name.trim(), &ProvenanceLog::default())?;
+    for (name, type_name) in named_types(value)? {
+        let target = cast_target(&type_name, &ProvenanceLog::default())?;
         parameters.push(ColumnSpec::new(name.to_ascii_uppercase(), target.data_type));
     }
     Ok(parameters)
-}
-
-/// The byte offset of the parenthesis closing `text`'s open one, or None.
-fn closing(text: &str) -> Option<usize> {
-    let mut depth: usize = 1;
-    for (offset, character) in text.char_indices() {
-        match character {
-            '(' => depth += 1,
-            ')' if depth == 1 => return Some(offset),
-            ')' => depth -= 1,
-            _ => {}
-        }
-    }
-    None
-}
-
-/// `text` split at commas outside parentheses.
-fn top_level(text: &str) -> Vec<&str> {
-    let mut parts: Vec<&str> = Vec::new();
-    let (mut depth, mut start) = (0_usize, 0_usize);
-    for (offset, character) in text.char_indices() {
-        match character {
-            '(' => depth += 1,
-            ')' => depth = depth.saturating_sub(1),
-            ',' if depth == 0 => {
-                parts.push(&text[start..offset]);
-                start = offset + 1;
-            }
-            _ => {}
-        }
-    }
-    parts.push(&text[start..]);
-    parts
 }
 
 /// The upper-case name and lower-case hash of a `NAME=<sha256>` verification, or why it is not one.

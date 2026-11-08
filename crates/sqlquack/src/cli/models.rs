@@ -13,7 +13,8 @@ use sqlquack_evidence::constants::{
 };
 use sqlquack_evidence::coverage::constants::{DOMAINS_DIR, HAZARDS_FILE};
 use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
-use sqlquack_policy::policy::models::DivergenceFailure;
+use sqlquack_policy::policy::models::{DivergenceFailure, Policy};
+use sqlquack_semantics::types::models::Schema;
 
 use crate::analysis::models::PythonSignature;
 use crate::census::constants::DEFAULT_TEXT_LIMIT;
@@ -91,7 +92,7 @@ pub struct CheckArguments {
 }
 
 /// Arguments of `sqlquack convert`.
-#[derive(Debug, Args)]
+#[derive(Clone, Debug, Args)]
 pub struct ConvertArguments {
     /// The SQL file; standard input when absent or `-`.
     pub path: Option<PathBuf>,
@@ -129,9 +130,9 @@ pub struct FunctionArguments {
     /// The function's name, as the schema declares it.
     #[arg(long)]
     pub name: String,
-    /// The schema file declaring the function and the relations its body reads.
+    /// A schema file declaring the function and the relations its body reads, with the project's.
     #[arg(long)]
-    pub schema: PathBuf,
+    pub schema: Option<PathBuf>,
     /// A Snowflake session parameter of the caller's session, `NAME=VALUE`; repeatable.
     #[arg(long = "session", value_name = "NAME=VALUE")]
     pub session: Vec<String>,
@@ -281,7 +282,7 @@ pub struct IndexArguments {
 }
 
 /// Arguments of `sqlquack census`.
-#[derive(Debug, Args)]
+#[derive(Clone, Debug, Args)]
 pub struct CensusArguments {
     /// SQL files, or directories searched for `.sql` files: one query or compiled model per file.
     #[arg(required = true)]
@@ -322,9 +323,12 @@ pub struct CensusArguments {
 }
 
 /// The policy conversion relies on, and what the caller confirms about its sessions.
-#[derive(Debug, Args)]
+#[derive(Clone, Debug, Args)]
 pub struct PolicyArguments {
-    /// The policy file; by default `sqlquack.toml` here, or the built-in policy without one.
+    /// The project folder: its `sqlquack.toml` and its sources, functions and overrides; default here.
+    #[arg(long, value_name = "FOLDER")]
+    pub project: Option<PathBuf>,
+    /// The policy file; by default the project's `sqlquack.toml`, or the built-in policy without one.
     #[arg(long)]
     pub policy: Option<PathBuf>,
     /// Use the built-in policy even where a policy file exists: it warns on the clock and raising checks.
@@ -358,7 +362,7 @@ pub enum OutputFormat {
 }
 
 /// The report format: `--format json`, or its short form `--json`.
-#[derive(Debug, Args)]
+#[derive(Clone, Debug, Args)]
 pub struct OutputArguments {
     /// Print the report as text or as JSON.
     #[arg(long, value_enum, default_value_t = OutputFormat::Text)]
@@ -369,7 +373,7 @@ pub struct OutputArguments {
 }
 
 /// How standard output and standard error are coloured.
-#[derive(Debug, Default, Args)]
+#[derive(Clone, Debug, Default, Args)]
 pub struct ColorArguments {
     /// When to colour output: `auto` colours a terminal, honouring NO_COLOR and CLICOLOR_FORCE.
     #[arg(long, value_enum, value_name = "WHEN", default_value_t = ColorChoice::Auto)]
@@ -402,6 +406,8 @@ pub struct ConvertReport {
     pub divergence_failures: BTreeMap<String, DivergenceFailure>,
     /// What the session parameters changed about conversion.
     pub notes: Vec<String>,
+    /// What the project leaves out, such as a source with an untyped column.
+    pub warnings: Vec<String>,
     /// The Python functions the SQL calls, which the caller registers before running it.
     pub python_functions: Vec<PythonSignature>,
     /// The macros of the user overrides the SQL calls, which the caller runs before it.
@@ -462,4 +468,32 @@ pub(crate) struct Comparison {
     pub(crate) sql: PathBuf,
     /// Whether the rows compare in order.
     pub(crate) ordered: bool,
+}
+
+/// What a command reads from the project once the caller's flags are applied.
+#[derive(Debug)]
+pub struct ProjectChoices {
+    /// The schema of `--schema` merged with the project's sources and functions.
+    pub schema: Schema,
+    /// `[project.session]`, each parameter a `--session` flag gives replaced by the flag's value.
+    pub session: Vec<String>,
+    /// `--overrides`, or the project's overrides folder.
+    pub overrides: Option<PathBuf>,
+    /// The caller's flags with `[project.confirm]` added: a flag confirms on top of the file.
+    pub conversion: PolicyArguments,
+    /// What the project leaves out, such as a source with an untyped column.
+    pub warnings: Vec<String>,
+}
+
+/// What `sqlquack function` converts under, from the project and the flags.
+#[derive(Debug)]
+pub(crate) struct FunctionInputs {
+    /// The policy, or None for the built-in one.
+    pub(crate) policy: Option<Policy>,
+    /// The caller's Snowflake session parameters, by name.
+    pub(crate) parameters: BTreeMap<String, String>,
+    /// The project's tables and functions.
+    pub(crate) schema: Schema,
+    /// The caller's flags with the project's confirmations added.
+    pub(crate) conversion: PolicyArguments,
 }

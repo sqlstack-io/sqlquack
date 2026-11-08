@@ -318,3 +318,31 @@ pub(crate) struct LayoutFlagsTestCase {
     pub(crate) flags: &'static [&'static str],
     pub(crate) expected_sql: &'static str,
 }
+
+/// A file of a project, by its path under the project folder.
+#[derive(Clone, Copy)]
+pub(crate) struct ProjectFile {
+    pub(crate) path: &'static str,
+    /// Repository files whose text comes first, such as the repository's policy file.
+    pub(crate) repository: &'static [&'static str],
+    pub(crate) text: &'static str,
+}
+
+/// A project's files, its `sqlquack.toml` among them, the convert flags, and what the report must hold.
+pub(crate) struct ProjectTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) files: &'static [ProjectFile],
+    /// The project's folder under the folder convert runs in; `""` for that folder itself.
+    pub(crate) folder: &'static str,
+    pub(crate) flags: &'static [&'static str],
+    pub(crate) sql: &'static str,
+    pub(crate) expected_exit: Option<i32>,
+    pub(crate) expected_output: &'static str,
+}
+
+/// How `sqlquack convert --json` ended in a project folder.
+pub(crate) struct ProjectOutcome {
+    pub(crate) exit_code: Option<i32>,
+    pub(crate) stdout: String,
+    pub(crate) stderr: String,
+}
