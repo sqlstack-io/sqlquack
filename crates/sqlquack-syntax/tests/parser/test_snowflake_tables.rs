@@ -283,8 +283,13 @@ fn given_a_snowflake_sample_clause_when_parsing_then_recorded_verdicts_hold() {
             expected_kind: Some("select"),
         },
         SnowflakeVerdictTestCase {
-            description: "a dollar sign without a variable name as the sample size",
+            description: "a dollar sign without a variable name as the sample size (recorded errno 1003)",
             sql: "SELECT * FROM t1 SAMPLE ( $ ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a space between the dollar sign and the variable name in the sample size (recorded errno 1003)",
+            sql: "SELECT user_id, value FROM table_name SAMPLE BERNOULLI ($ s)",
             expected_kind: None,
         },
     ];
