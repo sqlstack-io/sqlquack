@@ -14,6 +14,7 @@ use crate::lineage::_helpers::tracing::queries::{empty_scope, expanded_star, res
 use crate::lineage::_helpers::tracing::resolution::{column_lineage, key, positional_column};
 use crate::lineage::_helpers::tracing::reuse::worked;
 use crate::lineage::_helpers::typing::bigquery_typing::bigquery_cast_spelling;
+use crate::lineage::_helpers::typing::databricks_typing::databricks_cast_spelling;
 use crate::lineage::_helpers::typing::duckdb_types::cast_spelling;
 use crate::lineage::_helpers::typing::postgres_typing::postgres_cast_spelling;
 use crate::lineage::_helpers::typing::rules::{
@@ -23,9 +24,9 @@ use crate::lineage::_helpers::typing::sqlite_typing::sqlite_cast_spelling;
 use crate::lineage::_helpers::typing::sqlserver_typing::sqlserver_cast_spelling;
 use crate::lineage::constants::{
     AGGREGATE_FUNCTIONS, BIGQUERY_DATE_PART_FUNCTIONS, BIGQUERY_PROFILE, BIGQUERY_WEEKDAY_PARTS,
-    BOOLEAN_TYPE, CLICKHOUSE_PROFILE, DATE_PART_FUNCTIONS, DUCKDB_PROFILE, POSITIONAL_COLUMN_BASE,
-    POSTGRES_PROFILE, SNOWFLAKE_JSON_HOLDERS, SNOWFLAKE_PROFILE, SNOWFLAKE_VARIANT_TYPE,
-    SQLITE_PROFILE, SQLSERVER_PROFILE,
+    BOOLEAN_TYPE, CLICKHOUSE_PROFILE, DATABRICKS_PROFILE, DATE_PART_FUNCTIONS, DUCKDB_PROFILE,
+    POSITIONAL_COLUMN_BASE, POSTGRES_PROFILE, SNOWFLAKE_JSON_HOLDERS, SNOWFLAKE_PROFILE,
+    SNOWFLAKE_VARIANT_TYPE, SQLITE_PROFILE, SQLSERVER_PROFILE,
 };
 use crate::lineage::models::{
     Lineage, LineageContext, LineageScope, Nullability, ResolvedQuery, RowReads, TransformKind,
@@ -113,6 +114,7 @@ fn expression_lineage_level(
                 SQLSERVER_PROFILE => {
                     sqlserver_cast_spelling(&cast.to).unwrap_or_else(|| rendered_type(&cast.to))
                 }
+                DATABRICKS_PROFILE => databricks_cast_spelling(&cast.to),
                 _ => rendered_type(&cast.to),
             };
             let target: Option<Rc<str>> =

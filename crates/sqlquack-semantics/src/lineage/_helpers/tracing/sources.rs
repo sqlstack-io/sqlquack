@@ -17,9 +17,9 @@ use crate::lineage::_helpers::tracing::queries::{empty_scope, renamed, resolved_
 use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
 use crate::lineage::_helpers::typing::rules::mapped_timestamp;
 use crate::lineage::constants::{
-    ARRAY_FUNCTION, BIGQUERY_PROFILE, DUCKDB_PROFILE, DUCKDB_TABLE_FUNCTION_COLUMNS,
-    DUCKDB_UNNEST_COLUMN, DUCKDB_VALUES_COLUMN, IDENTIFIER_FUNCTION, ONE_AGGREGATE,
-    OUTER_LEFT_JOINS, OUTER_RIGHT_JOINS, SNOWFLAKE_PROFILE, SNOWFLAKE_VALUES_COLUMN,
+    ARRAY_FUNCTION, BIGQUERY_PROFILE, DATABRICKS_PROFILE, DATABRICKS_VALUES_COLUMN, DUCKDB_PROFILE,
+    DUCKDB_TABLE_FUNCTION_COLUMNS, DUCKDB_UNNEST_COLUMN, DUCKDB_VALUES_COLUMN, IDENTIFIER_FUNCTION,
+    ONE_AGGREGATE, OUTER_LEFT_JOINS, OUTER_RIGHT_JOINS, SNOWFLAKE_PROFILE, SNOWFLAKE_VALUES_COLUMN,
     SQLITE_PROFILE, SQLITE_VALUES_COLUMN, SQLSERVER_PROFILE, STRUCT_FUNCTION,
     TABLE_FUNCTION_COLUMNS, TABLE_WRAPPER, UNNEST_FUNCTION,
 };
@@ -625,6 +625,7 @@ pub(crate) fn values_query(
     let generated = |position: usize| match context.profile.name() {
         DUCKDB_PROFILE => format!("{DUCKDB_VALUES_COLUMN}{position}"),
         SQLITE_PROFILE => format!("{SQLITE_VALUES_COLUMN}{}", position + 1),
+        DATABRICKS_PROFILE => format!("{DATABRICKS_VALUES_COLUMN}{}", position + 1),
         _ => format!("{SNOWFLAKE_VALUES_COLUMN}{}", position + 1),
     };
     let columns: Vec<ScopedColumn> = (0..width)

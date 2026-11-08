@@ -171,6 +171,12 @@ pub(crate) struct DialectTypeTestCase {
     pub(crate) expected_outputs: &'static [ExpectedTypedOutput],
 }
 
+pub(crate) struct DatabricksOutputsTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_outputs: &'static [(&'static str, Option<&'static str>)],
+}
+
 pub(crate) struct QueryFindingsTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,
