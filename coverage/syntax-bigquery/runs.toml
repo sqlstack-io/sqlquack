@@ -72,3 +72,14 @@ bytes_billed = 0
 reversed_run = "bigquery-20261108T022015.711491Z"
 reversed_receipts = "repeats/bigquery-20261108T022015.711491Z.jsonl"
 reversed_compared = "4 and 4 receipts; 0 differ"
+
+[[run]]
+run_id = "bigquery-20261108T081312.150491Z"
+referee = "03940b5d0264b761dd402f330295fd25e67e112e"
+isolation = "run_datasets, case_datasets"
+receipts = "receipts/bigquery-20261108T081312.150491Z.jsonl"
+held = 0
+bytes_billed = 0
+reversed_run = "bigquery-20261108T081337.629459Z"
+reversed_receipts = "repeats/bigquery-20261108T081337.629459Z.jsonl"
+reversed_compared = "1 and 1 receipts; 0 differ"

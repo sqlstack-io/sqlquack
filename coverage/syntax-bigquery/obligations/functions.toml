@@ -42811,6 +42811,14 @@ anchor = "doc.timestamp-functions / `TIMESTAMP_DIFF`"
 note = "a WEEK(<weekday>) part; parses, refused by analysis for a TIMESTAMP"
 
 [[obligation]]
+id = "bq.functions.timestamp.timestamp-diff.o011"
+kind = "alternative"
+required = true
+target = "<granularity> → WEEK ( <weekday> )"
+anchor = "doc.timestamp-functions / `TIMESTAMP_DIFF`"
+note = "a WEEK(<weekday>) part on DATE arguments, which the page says behaves as DATE_DIFF"
+
+[[obligation]]
 id = "bq.functions.timestamp.timestamp-micros.o001"
 kind = "positive"
 required = true

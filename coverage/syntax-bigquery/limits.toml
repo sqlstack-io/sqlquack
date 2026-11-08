@@ -5546,6 +5546,15 @@ sql = "SELECT TIMESTAMP_DIFF ( TIMESTAMP '2024-06-15 00:00:00+00' , TIMESTAMP '2
 context = "raw"
 
 [[limit]]
+form = "bq.functions.timestamp.timestamp-diff"
+kind = "alternative"
+target = "<granularity> → WEEK ( <weekday> )"
+note = "a WEEK(<weekday>) part on DATE arguments, which the page says behaves as DATE_DIFF"
+anchor = "doc.timestamp-functions / `TIMESTAMP_DIFF`"
+sql = "SELECT TIMESTAMP_DIFF ( DATE '2024-06-15' , DATE '2024-01-01' , WEEK ( MONDAY ) )"
+context = "raw"
+
+[[limit]]
 form = "bq.functions.date.date-trunc"
 kind = "alternative"
 target = "<date_granularity> → WEEK ( <weekday> )"

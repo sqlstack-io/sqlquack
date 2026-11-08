@@ -29,6 +29,9 @@ use crate::lineage::models::{LineageContext, LineageScope, NameFinding};
 /// COALESCE without arguments, which polyglot checks against the catalog under this name.
 const COALESCE: &str = "coalesce";
 
+/// BigQuery's runtime-error prefix, whose call takes the bare call's argument types.
+const SAFE_PREFIX: &str = "SAFE.";
+
 /// What a node's checks read: its level's scope and the engine.
 #[derive(Clone, Copy)]
 pub(crate) struct NodeLevel<'s, 'a> {
@@ -260,6 +263,18 @@ fn expression_checks(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<NameFin
             findings.extend(recursive_findings(node, select, read));
         }
         Expression::WindowFunction(_) => findings.extend(range_frame_findings(node, read)),
+        Expression::Interval(interval) if engine == Engine::BigQuery => {
+            if let Some(count) = interval.this.as_ref() {
+                let found: Family = family(count);
+                if !matches!(found, Family::Unknown | Family::Integer) && !string_literal(count) {
+                    findings.push(finding(
+                        "E213",
+                        format!("Interval count expects an integer, found {}", found.name()),
+                        node,
+                    ));
+                }
+            }
+        }
         Expression::Cast(cast) | Expression::TryCast(cast) | Expression::SafeCast(cast) => {
             findings.extend(unknown_cast_target(&cast.to, level, node));
             if matches!(node, Expression::Cast(_)) {
@@ -448,11 +463,39 @@ fn bigquery_call_findings(
     let engine: Engine = level.engine();
     let family = |expression: &Expression| level.family(expression);
     let upper: String = name.to_ascii_uppercase();
-    match (upper.as_str(), arguments) {
-        ("IF", [_, when_true, when_false]) => {
-            unify(&[when_true, when_false], engine, &family, (false, node))
-                .into_iter()
-                .collect()
+    let bare: &str = upper.strip_prefix(SAFE_PREFIX).unwrap_or(&upper);
+    let called: String = bare.to_ascii_lowercase();
+    match (bare, arguments) {
+        ("IF", [condition, when_true, when_false]) => {
+            let mut found: Vec<NameFinding> = Vec::new();
+            let tested: Family = family(condition);
+            if tested.converts_to_nothing() {
+                found.push(finding(
+                    "E213",
+                    format!(
+                        "Function '{called}' argument 1 expects Boolean, found {}",
+                        tested.name()
+                    ),
+                    node,
+                ));
+            }
+            let unified: Option<NameFinding> =
+                unify(&[when_true, when_false], engine, &family, (false, node));
+            let (left, right) = (family(when_true), family(when_false));
+            let apart: bool = left != right
+                && left != Family::Unknown
+                && right != Family::Unknown
+                && (left.converts_to_nothing() || right.converts_to_nothing());
+            found.extend(unified.or_else(|| {
+                apart.then(|| {
+                    finding(
+                        "E213",
+                        format!("Cannot unify {} and {}", left.name(), right.name()),
+                        node,
+                    )
+                })
+            }));
+            found
         }
         ("EXTRACT", [_, source]) => {
             let found: Family = family(source);
@@ -482,8 +525,7 @@ fn bigquery_call_findings(
                     finding(
                         "E213",
                         format!(
-                            "Function '{}' argument 1 expects a date argument, found {}",
-                            name.to_ascii_lowercase(),
+                            "Function '{called}' argument 1 expects a date argument, found {}",
                             found.name()
                         ),
                         node,
@@ -492,13 +534,20 @@ fn bigquery_call_findings(
                 .into_iter()
                 .collect()
         }
-        ("TRIM" | "LTRIM" | "RTRIM", [value]) if family(value) == Family::Binary => {
+        ("TRIM" | "LTRIM" | "RTRIM", [value, ..]) if family(value).converts_to_nothing() => {
             vec![finding(
                 "E213",
                 format!(
-                    "Function '{}' of binary needs the bytes to remove",
-                    name.to_ascii_lowercase()
+                    "Function '{called}' argument 1 expects a string or bytes argument, found {}",
+                    family(value).name()
                 ),
+                node,
+            )]
+        }
+        ("TRIM" | "LTRIM" | "RTRIM", [value]) if family(value) == Family::Binary => {
+            vec![finding(
+                "E213",
+                format!("Function '{called}' of binary needs the bytes to remove"),
                 node,
             )]
         }
