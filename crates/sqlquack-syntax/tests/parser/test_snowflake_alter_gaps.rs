@@ -260,3 +260,96 @@ fn given_snowflake_table_actions_and_method_calls_when_parsing_then_the_tree_kee
         );
     }
 }
+
+#[test]
+fn given_snowflake_policy_and_integration_alters_without_a_name_when_parsing_then_only_receipted_omissions_are_accepted(
+) {
+    let test_cases = [
+        AcceptanceTestCase { description: "a masking policy's comment is set without a name (recorded semantic error)", sql: "ALTER MASKING POLICY SET COMMENT = 'm' ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "a password policy's property is unset without a name (recorded semantic error)", sql: "ALTER PASSWORD POLICY UNSET PASSWORD_MIN_LENGTH ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "a storage lifecycle policy's property is unset without a name (recorded semantic error)", sql: "ALTER STORAGE LIFECYCLE POLICY UNSET ARCHIVE_FOR_DAYS ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "an integration is enabled without a name (recorded semantic error)", sql: "ALTER INTEGRATION SET ENABLED = TRUE ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "an integration's secret is refreshed without a name (recorded semantic error)", sql: "ALTER INTEGRATION REFRESH OAUTH_CLIENT_SECRET ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "a catalog integration's authentication is set without a name (recorded semantic error)", sql: "ALTER CATALOG INTEGRATION SET REST_AUTHENTICATION = ( BEARER_TOKEN = 'm' ) ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "an external access integration's rules are unset without a name (recorded semantic error)", sql: "ALTER EXTERNAL ACCESS INTEGRATION UNSET ALLOWED_NETWORK_RULES ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "the account's tags are unset by the word TAG (recorded semantic error)", sql: "ALTER ACCOUNT UNSET TAG ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "the account's contacts are unset by the word CONTACT (recorded semantic error)", sql: "ALTER ACCOUNT UNSET CONTACT ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "the account still unsets a named tag", sql: "ALTER ACCOUNT UNSET TAG v1 ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "an organization user is visible to all (recorded semantic error)", sql: "ALTER ORGANIZATION USER v1 SET VISIBILITY = ALL ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "a nameless SET TAG (recorded syntax error)", sql: "ALTER MASKING POLICY SET TAG v1 = 'm' ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a nameless UNSET TAG (recorded syntax error)", sql: "ALTER MASKING POLICY UNSET TAG v1 ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a nameless SET BODY (recorded syntax error)", sql: "ALTER MASKING POLICY SET BODY -> 'm' ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a nameless SET with nothing to set (recorded syntax error)", sql: "ALTER INTEGRATION SET ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a nameless REFRESH with no secret (recorded syntax error)", sql: "ALTER INTEGRATION REFRESH ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a backup policy needs its name (recorded syntax error)", sql: "ALTER BACKUP POLICY SET COMMENT = 'm' ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a secret needs its name (recorded syntax error)", sql: "ALTER SECRET SET COMMENT = 'm' ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a snapshot policy's UNSET needs its name (recorded syntax error)", sql: "ALTER SNAPSHOT POLICY UNSET COMMENT ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a string is no policy name (recorded syntax error)", sql: "ALTER MASKING POLICY 'v1' SET COMMENT = 'm' ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a named policy still needs SET (recorded syntax error)", sql: "ALTER MASKING POLICY v1 COMMENT = 'm' ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "an organization user's SET names a property (recorded syntax error)", sql: "ALTER ORGANIZATION USER SET ;", dialect: Dialect::Snowflake, expected_accepted: false },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_snowflake_policy_and_integration_alters_without_a_name_when_parsing_then_the_tree_keeps_the_action(
+) {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "an omitted name is empty",
+            sql: "ALTER MASKING POLICY SET COMMENT = 'm'",
+            pointer: "/0/alter_object/name/name/name",
+            expected_value: json!(""),
+        },
+        ProjectionTestCase {
+            description: "the omitted name's SET keeps its property",
+            sql: "ALTER MASKING POLICY SET COMMENT = 'm'",
+            pointer: "/0/alter_object/properties/0/kind",
+            expected_value: json!("COMMENT"),
+        },
+        ProjectionTestCase {
+            description: "an omitted name's REFRESH names its secret",
+            sql: "ALTER INTEGRATION REFRESH OAUTH_CLIENT_SECRET",
+            pointer: "/0/alter_object/action",
+            expected_value: json!("REFRESH OAUTH_CLIENT_SECRET"),
+        },
+        ProjectionTestCase {
+            description: "a named policy keeps its name",
+            sql: "ALTER MASKING POLICY v1 SET COMMENT = 'm'",
+            pointer: "/0/alter_object/name/name/name",
+            expected_value: json!("v1"),
+        },
+        ProjectionTestCase {
+            description: "the bare word TAG is an unset property",
+            sql: "ALTER ACCOUNT UNSET TAG",
+            pointer: "/0/alter_object/properties/0/kind",
+            expected_value: json!("TAG"),
+        },
+        ProjectionTestCase {
+            description: "an organization user's visibility is ALL",
+            sql: "ALTER ORGANIZATION USER v1 SET VISIBILITY = ALL",
+            pointer: "/0/alter_object/properties/0/kind",
+            expected_value: json!("VISIBILITY"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            statements(test_case.sql, Dialect::Snowflake, CallMode::Faithful)
+                .pointer(test_case.pointer)
+                .cloned()
+                .unwrap_or_default(),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}

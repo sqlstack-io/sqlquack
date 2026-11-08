@@ -267,10 +267,16 @@ impl Parser {
                         action.push_str(" FORCE");
                     }
                     (operands, vec![])
-                } else if self.check_identifier("TAG") && !self.check_next(TokenType::Eq) {
+                } else if self.check_identifier("TAG")
+                    && !self.check_next(TokenType::Eq)
+                    && !self.is_statement_end_at(1)
+                {
                     self.skip();
                     (vec![], self.parse_group_tags(set)?)
-                } else if self.check_identifier("CONTACT") && !self.check_next(TokenType::Eq) {
+                } else if self.check_identifier("CONTACT")
+                    && !self.check_next(TokenType::Eq)
+                    && !self.is_statement_end_at(1)
+                {
                     self.skip();
                     (vec![], self.parse_account_contacts(set)?)
                 } else if set {
@@ -374,7 +380,7 @@ impl Parser {
 
     /// Parse ALTER [ <integration_type> ] INTEGRATION after its kind.
     fn parse_alter_integration(&mut self, kind: &str) -> Result<Expression> {
-        let head = self.parse_alter_object_head()?;
+        let head = self.parse_alter_head_or_omitted(kind)?;
         let mut action = self.expect_alter_words(&[&["SET"], &["UNSET"], &["REFRESH"]])?;
         let parts: ActionParts = match action.as_str() {
             "SET" if self.check_identifier("TAG") && !self.check_next(TokenType::Eq) => {
@@ -486,6 +492,12 @@ impl Parser {
             let head = self.parse_alter_object_head()?;
             let action = self.expect_alter_words(&[&["SET"], &["UNSET"]])?;
             let properties = match action.as_str() {
+                "SET" if self.check_identifier("VISIBILITY") && self.check_next(TokenType::Eq) => {
+                    self.current += 2;
+                    self.expect_token(TokenType::All)?;
+                    let value = Expression::Identifier(Identifier::new("ALL"));
+                    vec![property("VISIBILITY", None, Some(value))]
+                }
                 "SET" => self.parse_organization_set()?,
                 _ => self.parse_group_unset()?,
             };
