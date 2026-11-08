@@ -229,7 +229,7 @@ class _Parser:
         """A parenthesised list, choice or sequence, and the features its actions test."""
         body, features = self.alternatives(closer=TM_GROUP_CLOSE)
         tested: list[str] = list(itertools.chain.from_iterable(features))
-        members: list[Node] = list(body[0][1]) if len(body) == 1 else []  # type: ignore[arg-type]
+        members: list[Node] = node_members(body[0]) if len(body) == 1 else []
         if members and members[-1][0] == SEPARATOR:
             separator: Node = (NODE_LIT, str(members[-1][1]))
             return (NODE_LIST, (NODE_SEQ, members[:-1]), separator), tested
@@ -267,6 +267,21 @@ class _Parser:
         while self.peek()[0] == TOKEN_PUNCT and self.peek()[1] in TM_WRAPPERS:
             item = (TM_WRAPPERS[self.take()[1]], item)
         return item
+
+
+def as_node(value: object) -> Node:
+    """A grammar node, refused when the value is anything else."""
+    if not isinstance(value, tuple):
+        raise BigQueryCatalogueError(f"not a grammar node: {value!r}")
+    return value
+
+
+def node_members(node: Node) -> list[Node]:
+    """A sequence's or choice's member nodes."""
+    found: object = node[1]
+    if not isinstance(found, list):
+        raise BigQueryCatalogueError(f"a {node[0]} node holds no member list")
+    return [as_node(member) for member in found]
 
 
 def symbol(name: str) -> Node:

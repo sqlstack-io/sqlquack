@@ -159,19 +159,21 @@ def fetch(cache: Path) -> dict[str, object]:
     with (docs / FETCH_LOG).open("w") as log:
         for record in records:
             log.write(json.dumps(record.__dict__, sort_keys=True) + "\n")
+    found: list[str] = [r.path for r in records if r.status == HTTP_OK]
+    not_found: list[str] = [r.path for r in records if r.status != HTTP_OK]
     index: dict[str, object] = {
         "navigation": NAV_PAGE,
         "navigation_pages": seeds,
-        "pages": [r.path for r in records if r.status == HTTP_OK],
-        "not_found": [r.path for r in records if r.status != HTTP_OK],
+        "pages": found,
+        "not_found": not_found,
     }
     (docs / INDEX_FILE).write_text(json.dumps(index, indent=1) + "\n")
     checkout_grammar(cache / GRAMMAR_DIR)
     summary: dict[str, object] = {
         "started_utc": started,
         "finished_utc": now_utc(),
-        "pages": len(index["pages"]),  # type: ignore[arg-type]
-        "not_found": len(index["not_found"]),  # type: ignore[arg-type]
+        "pages": len(found),
+        "not_found": len(not_found),
         "googlesql_tag": GOOGLESQL_TAG,
         "googlesql_commit": GOOGLESQL_COMMIT,
     }

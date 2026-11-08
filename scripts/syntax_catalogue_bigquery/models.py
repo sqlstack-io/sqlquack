@@ -105,7 +105,7 @@ class GrammarRule:
 
     name: str
     body: Node
-    features: tuple[str, ...]
+    features: tuple[tuple[str, ...], ...]
     line: int
 
 

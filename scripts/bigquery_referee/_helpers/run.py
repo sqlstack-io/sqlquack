@@ -6,7 +6,7 @@ import json
 import re
 import subprocess
 from collections import Counter
-from collections.abc import Iterator
+from collections.abc import Generator
 from concurrent.futures import Future, ThreadPoolExecutor
 from contextlib import contextmanager
 from pathlib import Path
@@ -36,6 +36,7 @@ from scripts.bigquery_referee._helpers.receipts import (
     run_audit,
     write_jsonl,
 )
+from scripts.bigquery_referee._helpers.values import field, items_of
 from scripts.bigquery_referee.constants import (
     BYTES_KEY,
     CAPTURE,
@@ -93,7 +94,7 @@ def fixtures_for(cases: list[Row]) -> list[Fixture]:
     """The distinct setup statements of the cases, in first-use order, each a declared fixture."""
     statements: list[str] = []
     for case in cases:
-        statements += [str(s) for s in case["setup"] if str(s) not in statements]
+        statements += [str(s) for s in items_of(case["setup"]) if str(s) not in statements]
     fixtures: list[Fixture] = []
     for statement in statements:
         shaped: re.Match[str] | None = re.match(FIXTURE_STATEMENT, statement)
@@ -118,7 +119,7 @@ def build_fixtures(*, transport: Transport, fixtures: list[Fixture], names: RunN
 
 
 @contextmanager
-def run_datasets(*, transport: Transport, names: RunNames) -> Iterator[None]:
+def run_datasets(*, transport: Transport, names: RunNames) -> Generator[None]:
     """The run's two datasets, created for the run and dropped with their contents after it."""
     created: list[str] = []
     try:
@@ -207,7 +208,7 @@ def observe_in_case_datasets(
 
 def executed_billed(observation: Observation) -> int:
     """Bytes billed by the case's executed jobs; dry runs bill nothing."""
-    return int(bytes_of(list(observation.jobs))["executed_bytes_billed"])
+    return bytes_of(list(observation.jobs))["executed_bytes_billed"]
 
 
 def unmapped_report(observed: list[Observed]) -> list[str]:
@@ -221,9 +222,8 @@ def unmapped_report(observed: list[Observed]) -> list[str]:
     return [f"{key} x{count}: {sample[key]}" for key, count in sorted(counts.items())]
 
 
-def receipts_of(*, observed: list[Observed], context: Row) -> list[Row]:
+def receipts_of(*, observed: list[Observed], digests: dict[str, str], context: Row) -> list[Row]:
     """The published receipts of the scored cases, each bound to its raw record and the audit."""
-    digests: dict[str, str] = dict(context["raw_digests"])
     return [
         receipt(
             case=case,
@@ -302,7 +302,7 @@ def record(
     if unmapped:
         raise RefereeError("errors with no reviewed class:\n" + "\n".join(unmapped))
     raw_digests: list[tuple[str, str]] = [
-        (str(raw["case"]["case_id"]), digest(canonical(raw))) for raw in raws
+        (str(field(value=raw, path=("case", "case_id"))), digest(canonical(raw))) for raw in raws
     ]
     scored: list[Observation] = [o for _, o, _ in observed if not o.held]
     phases: dict[str, int] = dict(sorted(Counter(o.phase for o in scored).items()))
@@ -310,7 +310,7 @@ def record(
     jobs: list[Row] = []
     for _, observation, _ in observed:
         jobs += observation.jobs
-    spent: Row = bytes_of(jobs)
+    spent: dict[str, int] = bytes_of(jobs)
     case_bytes: Row = {
         str(case["case_id"]): executed_billed(observation)
         for case, observation, _ in sorted(observed, key=lambda item: str(item[0]["case_id"]))
@@ -326,9 +326,9 @@ def record(
     )
     receipts: list[Row] = receipts_of(
         observed=observed,
+        digests=dict(raw_digests),
         context={
             "run_id": run_id,
-            "raw_digests": raw_digests,
             "run_audit_sha256": digest(canonical(audit)),
         },
     )

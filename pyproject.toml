@@ -12,6 +12,8 @@ dev = [
   # DuckDB's Python functions need numpy; the guard measurement's raise hook is one.
   "numpy==2.5.4",
   "fensu>=0.28.0",
+  # The BigQuery referee's authenticated transport to the BigQuery API.
+  "google-auth[requests]==2.62.1",
   "pytest>=8.4",
   "pytest-xdist>=3.8",
   "ruff>=0.12.0",

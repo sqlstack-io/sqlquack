@@ -9,6 +9,11 @@ from scripts.syntax_catalogue.models import HandForm
 from scripts.syntax_catalogue_bigquery.models import BlockReview, HandInputs, HandPage
 
 
+def strings(value: object) -> tuple[str, ...]:
+    """A list of strings as a tuple; anything else as empty."""
+    return tuple(str(v) for v in value) if isinstance(value, list) else ()
+
+
 def load_hand(path: Path) -> HandInputs:
     """hand.toml, or nothing reviewed yet when it does not exist."""
     data: dict[str, list[dict[str, object]]] = (
@@ -21,7 +26,7 @@ def load_hand(path: Path) -> HandInputs:
             anchor=str(row["anchor"]),
             kind=str(row["kind"]),
             label=str(row["label"]),
-            grammars=tuple(str(grammar) for grammar in row["grammar"]),  # type: ignore[union-attr]
+            grammars=strings(row["grammar"]),
             basis=str(row["basis"]),
             page_sha256=str(row["page_sha256"]),
         )
@@ -42,7 +47,7 @@ def load_hand(path: Path) -> HandInputs:
             block_sha256=str(row["block_sha256"]),
             status=str(row["status"]),
             reason=str(row["reason"]),
-            grammar=tuple(str(g) for g in row.get("grammar", [])),  # type: ignore[union-attr]
+            grammar=strings(row.get("grammar", [])),
             family=str(row.get("family", "")),
         )
         blocks[(review.source, review.block_sha256)] = review

@@ -22,7 +22,7 @@ from scripts.syntax_catalogue_bigquery._helpers.groups import (
     syntax_table_groups,
     type_groups,
 )
-from scripts.syntax_catalogue_bigquery._helpers.hand import load_hand
+from scripts.syntax_catalogue_bigquery._helpers.hand import load_hand, strings
 from scripts.syntax_catalogue_bigquery._helpers.notation import grammar_like, unlinked
 from scripts.syntax_catalogue_bigquery._helpers.pages import load_pages
 from scripts.syntax_catalogue_bigquery.constants import (
@@ -204,7 +204,7 @@ class _PageReader:
                 continue
             wrapped: re.Match[str] | None = SELECTED_CALL.match(grammar)
             selected: bool = is_function_page(self.page.path) and bool(wrapped) and not family
-            written: str = wrapped.group(1) if selected and wrapped else grammar
+            written: str = wrapped.group(1) if selected and wrapped is not None else grammar
             if selected:
                 self.build.decisions.add(DECISION_SELECTED_CALL)
             called: str = call_name(written)
@@ -485,7 +485,7 @@ class _Builder:
     def add_page(self, *, page: BigQueryPage, build: PageBuild) -> set[str]:
         """Emit the page's forms and definitions with stable ids; the restated grammar shas."""
         restated: set[str] = set()
-        own: dict[str, dict[str, str]] = block_uses(build=build)
+        own: dict[str, dict[str, tuple[str, str]]] = block_uses(build=build)
         for family, base in sorted(build.groups):
             kept, section_restated = self.kept(page=page, build=build, key=(family, base))
             restated |= section_restated
@@ -503,9 +503,9 @@ class _Builder:
             )
             for form in forms:
                 local: dict[str, tuple[str, str]] = {}
-                for grammar in form["grammar"]:  # type: ignore[union-attr]
-                    local.update(own.get(str(grammar), {}))
-                written: list[str] = [str(name) for name in form["uses"]]  # type: ignore[union-attr]
+                for grammar in strings(form["grammar"]):
+                    local.update(own.get(grammar, {}))
+                written: list[str] = list(strings(form["uses"]))
                 form["uses"] = own_uses(uses=written, own=local)
                 if not self.owners.get(str(form["grammar_sha256"])):
                     self.owners[str(form["grammar_sha256"])] = form

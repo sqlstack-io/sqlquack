@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 from collections.abc import Callable
 
+from scripts.bigquery_referee._helpers.values import field, row_of
 from scripts.bigquery_referee.types import Row
 
 PROJECT: str = "test-project-1"
@@ -167,7 +168,7 @@ class RecordedBigQuery:
         route: str = re.sub(
             r"/datasets/\w+", "/datasets/<d>", re.sub(r"/jobs/\w+", "/jobs/<j>", bare)
         )
-        dry: bool = bool(dict(sent.get("configuration") or {}).get("dryRun"))
+        dry: bool = bool(row_of(sent.get("configuration")).get("dryRun"))
         dataset: str = "".join(re.findall(r"/datasets/(\w+)", bare))
         return self._routes()[(method, route, dry)](sent, dataset)
 
@@ -186,15 +187,15 @@ class RecordedBigQuery:
 
     def _dry_job(self, sent: Row, _: str) -> tuple[int, Row]:
         self.jobs.append(sent)
-        return self.dry(str(sent["configuration"]["query"]["query"]))
+        return self.dry(str(field(value=sent, path=("configuration", "query", "query"))))
 
     def _run_job(self, sent: Row, _: str) -> tuple[int, Row]:
         self.jobs.append(sent)
-        self.executed.append(str(sent["configuration"]["query"]["query"]))
+        self.executed.append(str(field(value=sent, path=("configuration", "query", "query"))))
         return 200, {"status": {"state": "RUNNING"}}
 
     def _create(self, sent: Row, _: str) -> tuple[int, Row]:
-        self.created.append(str(sent["datasetReference"]["datasetId"]))
+        self.created.append(str(field(value=sent, path=("datasetReference", "datasetId"))))
         return 200, sent
 
     def _drop(self, _: Row, dataset: str) -> tuple[int, Row]:

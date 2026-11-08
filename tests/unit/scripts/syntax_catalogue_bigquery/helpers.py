@@ -6,6 +6,7 @@ import itertools
 import tomllib
 from pathlib import Path
 
+from scripts.syntax_catalogue_bigquery._helpers.hand import strings
 from scripts.syntax_catalogue_bigquery.constants import AUDIT_FILE, CATALOGUE_DIR, UNSEEN_RULES
 from scripts.syntax_catalogue_bigquery.models import AuditGap, AuditResult
 from scripts.syntax_catalogue_bigquery.types import Review
@@ -27,9 +28,10 @@ def committed() -> dict[str, list[dict[str, object]]]:
 
 def review_without(removed: tuple[tuple[str, str, str], ...]) -> Review:
     """The committed review less each row whose `key` field is `value` in table `table`."""
-    review: dict[str, list[dict[str, object]]] = committed()
+    tables: dict[str, list[dict[str, object]]] = committed()
     for table, key, value in removed:
-        review[table] = list(filter(lambda row: str(row[key]) != value, review[table]))
+        tables[table] = list(filter(lambda row: str(row[key]) != value, tables[table]))
+    review: Review = {table: rows for table, rows in tables.items()}
     return review
 
 
@@ -78,12 +80,12 @@ def sequences_of(rule: str) -> list[str]:
     return list(map(str, items_of(rows=rows, field="sequences")))
 
 
-def items_of(*, rows: list[dict[str, object]], field: str) -> list[object]:
+def items_of(*, rows: list[dict[str, object]], field: str) -> list[str]:
     """Every row's list field, chained in file order."""
-    return list(itertools.chain.from_iterable(row[field] for row in rows))  # type: ignore[misc]
+    return list(itertools.chain.from_iterable(strings(row[field]) for row in rows))
 
 
-def spelled_otherwise(*, rows: list[dict[str, object]], field: str) -> list[object]:
+def spelled_otherwise(*, rows: list[dict[str, object]], field: str) -> list[str]:
     """The list field of the rows reviewed as spelled_otherwise."""
     kept: list[dict[str, object]] = list(
         filter(lambda row: row["kind"] == "spelled_otherwise", rows)
@@ -93,8 +95,10 @@ def spelled_otherwise(*, rows: list[dict[str, object]], field: str) -> list[obje
 
 def gaps_of(row: dict[str, object]) -> list[AuditGap]:
     """One gap per sequence of a [[gap]] row."""
-    sequences: list[object] = row["sequences"]  # type: ignore[assignment]
-    return [AuditGap(rule=str(row["rule"]), alternative=1, keywords=str(s)) for s in sequences]
+    return [
+        AuditGap(rule=str(row["rule"]), alternative=1, keywords=s)
+        for s in strings(row["sequences"])
+    ]
 
 
 def catalogue_paths() -> list[Path]:

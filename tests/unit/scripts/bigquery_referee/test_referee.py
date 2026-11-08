@@ -26,6 +26,7 @@ from scripts.bigquery_referee._helpers.names import (
     substitute,
 )
 from scripts.bigquery_referee._helpers.refusals import refusal_rows
+from scripts.bigquery_referee._helpers.values import count_of, field, row_of
 from scripts.bigquery_referee.constants import (
     INTERNAL_HELD,
     MODE_CASE_DATASETS,
@@ -235,7 +236,7 @@ def test_given_a_recorded_dry_run_reply_when_judged_then_the_phase_follows_its_c
         ),
         RefusalMessageTestCase(
             description="a query as a function argument",
-            message=str(FUNCTION_ARGUMENT_BODY["error"]["message"]),
+            message=str(field(value=FUNCTION_ARGUMENT_BODY, path=("error", "message"))),
             expected_code="PR128",
         ),
         RefusalMessageTestCase(
@@ -265,6 +266,7 @@ def test_given_a_parser_refusal_message_when_classed_then_its_grammar_row_decide
         classes=dry_run_classes(),
         said=str,
     )
+    assert found is not None
     assert (found.code, found.phase) == (test_case.expected_code, "syntax_error")
 
 
@@ -325,8 +327,8 @@ def test_given_any_job_when_submitted_then_it_caps_bytes_billed(
     jobs: list[Row] = fake.jobs[-len(test_case.expected_dry_runs) :]
     assert [
         (
-            bool(job["configuration"].get("dryRun")),
-            job["configuration"]["query"]["maximumBytesBilled"],
+            bool(row_of(job["configuration"]).get("dryRun")),
+            field(value=job, path=("configuration", "query", "maximumBytesBilled")),
         )
         for job in jobs
     ] == [(dry, "10485760") for dry in test_case.expected_dry_runs]
@@ -801,8 +803,8 @@ def test_given_cases_when_recorded_forward_and_reversed_then_the_receipts_agree(
     published: str = forward.read_text() + json.dumps(report)
     assert (
         report["phases"],
-        sum(dict(report["held"]).values()),
-        sorted(report["bytes"]),
+        sum(count_of(held) for held in row_of(report["held"]).values()),
+        sorted(row_of(report["bytes"])),
         differ,
         capsys.readouterr().out.strip(),
         leaks(text=published, names=_NAMES),
@@ -1005,6 +1007,6 @@ def test_given_an_endless_loop_when_executed_then_the_stop_is_its_receipt(
         done.phase,
         done.engine_code,
         fake.cancels,
-        fake.sent[0]["configuration"]["jobTimeoutMs"],
-        fake.sent[0]["configuration"]["query"]["maximumBytesBilled"],
+        field(value=fake.sent[0], path=("configuration", "jobTimeoutMs")),
+        field(value=fake.sent[0], path=("configuration", "query", "maximumBytesBilled")),
     ) == ("runtime_error", test_case.expected_code, test_case.expected_cancels, "10000", "10485760")

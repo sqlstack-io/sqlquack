@@ -9,6 +9,7 @@ import uuid
 from collections.abc import Callable
 
 from scripts.bigquery_referee._helpers.names import normalise
+from scripts.bigquery_referee._helpers.values import count_of, field, items_of, row_of, rows_of
 from scripts.bigquery_referee.constants import (
     ATTEMPTS,
     BACKOFF_LIMIT_SECONDS,
@@ -118,7 +119,7 @@ def _referenced(query: dict[str, object]) -> list[str]:
     """The datasets a dry run reports the statement reads or targets, as `project.dataset`."""
     items: list[object] = []
     for key in ("referencedTables", "referencedRoutines"):
-        items += list(query.get(key) or [])
+        items += items_of(query.get(key))
     for key in ("ddlTargetTable", "ddlDestinationTable", "ddlTargetRoutine", "ddlTargetDataset"):
         items.append(query.get(key))
     policy: object = query.get("ddlTargetRowAccessPolicy")
@@ -149,16 +150,15 @@ def job_record(*, job: JobResult, dry: bool) -> Row:
     return {"dry_run": dry, "reply": job.raw}
 
 
-def bytes_of(jobs: list[Row]) -> Row:
+def bytes_of(jobs: list[Row]) -> dict[str, int]:
     """Bytes processed and billed, summed from the jobs' statistics, dry-run estimates apart."""
     sums: dict[str, int] = dict.fromkeys(BYTE_KEYS, 0)
     for job in jobs:
-        body: object = job["reply"]
-        statistics, query = _query_statistics(body if isinstance(body, dict) else {})
+        statistics, query = _query_statistics(row_of(job["reply"]))
         prefix: str = "dry_run" if job["dry_run"] else "executed"
-        sums[f"{prefix}_bytes_processed"] += int(statistics.get("totalBytesProcessed") or 0)
-        sums[f"{prefix}_bytes_billed"] += int(query.get("totalBytesBilled") or 0)
-    return dict(sums)
+        sums[f"{prefix}_bytes_processed"] += count_of(statistics.get("totalBytesProcessed"))
+        sums[f"{prefix}_bytes_billed"] += count_of(query.get("totalBytesBilled"))
+    return sums
 
 
 def dry_run(*, transport: Transport, sql: str, names: RunNames) -> JobResult:
@@ -266,16 +266,13 @@ def drop_dataset(*, transport: Transport, dataset: str, names: RunNames) -> None
 def _listed(*, transport: Transport, path: str, key: str, names: RunNames) -> list[Row]:
     request: Request = ("GET", f"{path}?maxResults={LIST_LIMIT}", None)
     _, reply = call(transport=transport, request=request, names=names)
-    return [item for item in reply.get(key) or [] if isinstance(item, dict)]
+    return rows_of(reply.get(key))
 
 
 def _table_state(*, transport: Transport, path: str, names: RunNames) -> Row:
     """One table's type, row count and fields."""
     _, table = call(transport=transport, request=("GET", path, None), names=names)
-    schema: object = table.get("schema")
-    fields: list[dict[str, object]] = (
-        (schema.get("fields") or []) if isinstance(schema, dict) else []
-    )
+    fields: list[Row] = rows_of(row_of(table.get("schema")).get("fields"))
     return {
         "type": table.get("type"),
         "rows": table.get("numRows"),
@@ -292,7 +289,7 @@ def dataset_state(*, transport: Transport, dataset: str, names: RunNames) -> Row
         return {"dataset": MISSING}
     tables: dict[str, object] = {}
     for item in _listed(transport=transport, path=f"{path}/tables", key="tables", names=names):
-        table_id: str = str(item["tableReference"]["tableId"])
+        table_id: str = str(field(value=item, path=("tableReference", "tableId")))
         tables[table_id] = _table_state(
             transport=transport, path=f"{path}/tables/{table_id}", names=names
         )
@@ -300,16 +297,20 @@ def dataset_state(*, transport: Transport, dataset: str, names: RunNames) -> Row
         transport=transport, path=f"{path}/routines", key="routines", names=names
     )
     routines: list[list[str]] = sorted(
-        [str(item["routineReference"]["routineId"]), str(item.get("routineType"))]
+        [
+            str(field(value=item, path=("routineReference", "routineId"))),
+            str(item.get("routineType")),
+        ]
         for item in listed
     )
     models: list[str] = sorted(
-        str(item["modelReference"]["modelId"])
+        str(field(value=item, path=("modelReference", "modelId")))
         for item in _listed(transport=transport, path=f"{path}/models", key="models", names=names)
     )
     options: Row = {key: reply[key] for key in DATASET_OPTIONS if key in reply}
-    if isinstance(options.get("labels"), dict):
-        options["labels"] = sorted(options["labels"])
+    labels: object = options.get("labels")
+    if isinstance(labels, dict):
+        options["labels"] = sorted(labels)
     return {"options": options, "tables": tables, "routines": routines, "models": models}
 
 

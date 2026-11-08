@@ -8,6 +8,7 @@ import json
 import re
 from pathlib import Path
 
+from scripts.bigquery_referee._helpers.values import rows_of
 from scripts.bigquery_referee.constants import (
     BACKSLASH,
     BARE_SYNTAX_PATTERNS,
@@ -134,7 +135,7 @@ def syntax_classes() -> tuple[ErrorClass, ...]:
         PARSER_GRAMMAR_SHA256,
     ):
         raise RefereeError(f"{PARSER_REFUSALS_FILE.name} is not read from the pinned grammar")
-    refusals: list[Row] = list(document["refusals"])
+    refusals: list[Row] = rows_of(document["refusals"])
     found: list[ErrorClass] = [
         ErrorClass(PARSER_REASON, str(row["pattern"]), str(row["code"]), SYNTAX_ERROR)
         for row in refusals

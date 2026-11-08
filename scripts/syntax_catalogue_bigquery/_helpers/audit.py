@@ -9,9 +9,15 @@ from collections.abc import Iterator
 from pathlib import Path
 
 from scripts.syntax_catalogue._helpers.grammar import bare_words
+from scripts.syntax_catalogue_bigquery._helpers.hand import strings
 from scripts.syntax_catalogue_bigquery._helpers.keywords import keyword_table
 from scripts.syntax_catalogue_bigquery._helpers.pages import load_pages
-from scripts.syntax_catalogue_bigquery._helpers.tm import dispatched_words, read_rules
+from scripts.syntax_catalogue_bigquery._helpers.tm import (
+    as_node,
+    dispatched_words,
+    node_members,
+    read_rules,
+)
 from scripts.syntax_catalogue_bigquery.constants import (
     CATALOGUE_DIR,
     DATA_TYPES_PAGE,
@@ -139,7 +145,7 @@ class _Speller:
     def spell_list(self, *, node: Node, strict: bool) -> Sequences | None:
         """A sequence's or choice's keyword sequences."""
         parts: list[Sequences] = []
-        for item in node[1]:  # type: ignore[union-attr]
+        for item in node_members(node):
             spelled: Sequences | None = self.spell(node=item, strict=strict)
             if spelled is None:
                 return None
@@ -161,7 +167,7 @@ class _Speller:
         if kind in NODE_LISTS:
             return self.spell_list(node=node, strict=strict)
         if kind in NODE_WRAPPERS:
-            inner: Sequences | None = self.spell(node=node[1], strict=strict)  # type: ignore[arg-type]
+            inner: Sequences | None = self.spell(node=as_node(node[1]), strict=strict)
             if inner is None or kind in NODE_REQUIRED_WRAPPERS:
                 return inner
             return list(dict.fromkeys([(), *inner]))
@@ -170,7 +176,7 @@ class _Speller:
 
 def alternatives(rule: GrammarRule) -> list[Node]:
     """A rule's top-level alternatives."""
-    return list(rule.body[1])  # type: ignore[arg-type]
+    return node_members(rule.body)
 
 
 def references(node: Node) -> Iterator[str]:
@@ -179,10 +185,10 @@ def references(node: Node) -> Iterator[str]:
     if kind == NODE_REF:
         yield str(node[1])
     elif kind in NODE_LISTS:
-        for item in node[1]:  # type: ignore[union-attr]
+        for item in node_members(node):
             yield from references(item)
     elif kind in NODE_WRAPPERS:
-        yield from references(node[1])  # type: ignore[arg-type]
+        yield from references(as_node(node[1]))
 
 
 def statement_rules(rules: dict[str, GrammarRule]) -> list[str]:
@@ -190,7 +196,7 @@ def statement_rules(rules: dict[str, GrammarRule]) -> list[str]:
     found: list[str] = []
     for dispatcher in STATEMENT_DISPATCH:
         for alternative in alternatives(rules[dispatcher]):
-            items: list[Node] = list(alternative[1])  # type: ignore[arg-type]
+            items: list[Node] = node_members(alternative)
             if len(items) == 1 and items[0][0] == NODE_REF and items[0][1] not in found:
                 found.append(str(items[0][1]))
     return found
@@ -392,7 +398,7 @@ def catalogue_grammars(
     for data in tables:
         for form in data.get("form", []):
             page: dict[str, str] = definitions.get(str(form["source"]), {})
-            for line in [str(g) for g in form["grammar"]]:  # type: ignore[union-attr]
+            for line in strings(form["grammar"]):
                 forms.append((str(form["id"]), _Compiled(grammar=line, definitions=page)))
                 words |= {w.upper() for w in bare_words(line)}
         for definition in data.get("definition", []):
@@ -594,7 +600,7 @@ def form_grammars(root: Path) -> str:
     lines: list[str] = []
     for data in catalogue_tables(root):
         for form in data.get("form", []):
-            lines.extend(str(g) for g in form["grammar"])  # type: ignore[union-attr]
+            lines.extend(strings(form["grammar"]))
     return "\n".join(lines)
 
 
