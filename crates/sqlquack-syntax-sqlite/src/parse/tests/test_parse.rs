@@ -3,8 +3,9 @@
 use crate::parse::constants::{INCOMPLETE_INPUT, TOO_DEEP, UNSUPPORTED_FRAME};
 use crate::parse::main::parse::parse;
 use crate::parse::tests::test_types::{
-    NestingTestCase, SerializedNestingTestCase, VerdictTestCase,
+    NestingTestCase, SerializedNestingTestCase, ShapeTestCase, VerdictTestCase,
 };
+use serde_json::Value;
 
 /// The stack of the thread the nesting cases run on: Rust's default for a spawned thread.
 const TEST_STACK: usize = 2 * 1024 * 1024;
@@ -284,6 +285,53 @@ fn given_nesting_up_to_the_depth_limit_when_parsing_then_trees_serialize_on_a_sm
             outcome,
             test_case.expected_outcome.map_err(str::to_owned),
             "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_sqlbuild_type_markers_when_parsing_then_they_are_annotations() {
+    let test_cases = [
+        ShapeTestCase {
+            description: "SQLBuild's type marker is an annotation around its expression",
+            sql: "SELECT __polyglot_typed(t.x, 'varchar(5)') AS v FROM t",
+            pointer: "/0/select/expressions/0/alias/this/annotated",
+            expected_node: "type_assertion",
+        },
+        ShapeTestCase {
+            description: "SQLBuild's typed-like marker keeps the expression it is typed like",
+            sql: "SELECT __polyglot_typed_like(x, y + 1) FROM t",
+            pointer: "/0/select/expressions/0/annotated",
+            expected_node: "type_like",
+        },
+        ShapeTestCase {
+            description: "a type marker whose type text SQLite's typetoken does not read stays a call",
+            sql: "SELECT __polyglot_typed(x, 'int(') FROM t",
+            pointer: "/0/select/expressions/0",
+            expected_node: "function",
+        },
+        ShapeTestCase {
+            description: "a type marker with an empty type stays a call, a conservative choice since SQLite accepts an empty typetoken",
+            sql: "SELECT __polyglot_typed(x, '') FROM t",
+            pointer: "/0/select/expressions/0",
+            expected_node: "function",
+        },
+        ShapeTestCase {
+            description: "any run of names is an SQLite type, so it asserts a custom type",
+            sql: "SELECT __polyglot_typed(x, 'int garbage') FROM t",
+            pointer: "/0/select/expressions/0/annotated/type_assertion",
+            expected_node: "name",
+        },
+    ];
+    for test_case in test_cases {
+        let parsed = parse(test_case.sql).expect(test_case.description);
+        let tree: Value = serde_json::to_value(&parsed.statements).expect(test_case.description);
+        let node: Option<&Value> = tree.pointer(test_case.pointer);
+        assert!(
+            node.and_then(Value::as_object)
+                .is_some_and(|object| object.contains_key(test_case.expected_node)),
+            "{}: {node:?}",
             test_case.description
         );
     }

@@ -1,9 +1,14 @@
 //! Calls (parse.y's `idj LP ...` rules) and windows (`filter_over`, `window`, `frame_opt`).
 
+use sqlquack_syntax::DataType;
 use sqlquack_syntax::Expression;
-use sqlquack_syntax::expressions::names::models::Identifier;
+use sqlquack_syntax::expressions::names::models::{Identifier, Literal};
 use sqlquack_syntax::expressions::queries::models::{
     Ordered, Over, WindowFrame, WindowFrameBound, WindowFrameExclude, WindowFrameKind,
+};
+use sqlquack_syntax::expressions::statements::models::Annotated;
+use sqlquack_syntax::expressions::tree::constants::{
+    TYPED_EXPRESSION_FUNCTION, TYPED_LIKE_EXPRESSION_FUNCTION,
 };
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_nm};
@@ -11,7 +16,11 @@ use crate::parse::_helpers::tree::nodes::{aggregate, function, over, star, windo
 use crate::parse::constants::{
     DISTINCT_WINDOW, MAX_COLUMN, MAX_FUNCTION_ARG, ORDER_BY_TERMS, UNSUPPORTED_FRAME,
 };
+use crate::scan::main::scan::scan;
 use crate::scan::models::TokenKind;
+
+/// A type-assertion marker takes the expression and the type, or the expression it is typed like.
+const MARKER_ARITY: usize = 2;
 
 /// A frame bound's kind, as `sqlite3WindowAlloc` orders them.
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -19,6 +28,57 @@ enum Side {
     Preceding,
     Current,
     Following,
+}
+
+/// A SQLBuild type marker call as an `Annotated` node, as sqlquack-syntax lowers it; else the args.
+fn typed_marker(name: &Identifier, args: Vec<Expression>) -> Result<Expression, Vec<Expression>> {
+    let [this, second]: [Expression; MARKER_ARITY] = args.try_into()?;
+    if name.quoted {
+        return Err(vec![this, second]);
+    }
+    if name
+        .name
+        .eq_ignore_ascii_case(TYPED_LIKE_EXPRESSION_FUNCTION)
+    {
+        return Ok(annotated(this, None, Some(Box::new(second))));
+    }
+    if !name.name.eq_ignore_ascii_case(TYPED_EXPRESSION_FUNCTION) {
+        return Err(vec![this, second]);
+    }
+    let Expression::Literal(literal) = &second else {
+        return Err(vec![this, second]);
+    };
+    let Literal::String(text) = literal.as_ref() else {
+        return Err(vec![this, second]);
+    };
+    match type_text(text) {
+        Ok(data_type) => Ok(annotated(this, Some(data_type), None)),
+        Err(_) => Err(vec![this, second]),
+    }
+}
+
+/// The type `text` names when all of it is one non-empty `typetoken`, as a `CAST` reads it.
+fn type_text(text: &str) -> Parsing<DataType> {
+    let mut parser: Parser<'_> = Parser::new(text, scan(text));
+    let data_type: DataType = parser.type_token()?;
+    match parser.at > 0 && parser.peek().is_none() {
+        true => Ok(data_type),
+        false => Err(parser.error()),
+    }
+}
+
+/// `this` annotated with an asserted type, or with the expression whose type it takes.
+fn annotated(
+    this: Expression,
+    type_assertion: Option<DataType>,
+    type_like: Option<Box<Expression>>,
+) -> Expression {
+    Expression::Annotated(Box::new(Annotated {
+        this,
+        trailing_comments: Vec::new(),
+        type_assertion,
+        type_like,
+    }))
 }
 
 /// The side of a frame bound.
@@ -95,6 +155,14 @@ impl Parser<'_> {
         if args.is_empty() {
             order_by.clear();
         }
+        let plain: bool = !distinct && filter.is_none() && order_by.is_empty() && window.is_none();
+        let args: Vec<Expression> = match plain {
+            true => match typed_marker(&name, args) {
+                Ok(marker) => return Ok(marker),
+                Err(args) => args,
+            },
+            false => args,
+        };
         let call = function(vec![name], args);
         let node: Expression = match distinct || filter.is_some() || !order_by.is_empty() {
             true => {
