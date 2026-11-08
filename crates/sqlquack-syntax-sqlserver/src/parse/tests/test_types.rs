@@ -47,6 +47,14 @@ pub(crate) struct ValueTestCase {
     pub(crate) expected_json: &'static str,
 }
 
+/// An input whose node at `pointer` (a JSON pointer) records the range of `expected_text`.
+pub(crate) struct NodeSpanTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) pointer: &'static str,
+    pub(crate) expected_text: &'static str,
+}
+
 /// An input and each statement it holds, nested ones included, as its written text and depth.
 pub(crate) struct RangeTestCase {
     pub(crate) description: &'static str,

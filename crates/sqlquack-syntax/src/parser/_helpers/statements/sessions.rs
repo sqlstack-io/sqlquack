@@ -1154,6 +1154,7 @@ impl Parser {
                         default,
                         has_as: false,
                         additional_names: multi_names,
+                        span: SourceSpan::default(),
                     })));
                     return Ok(Some(Expression::Declare(Box::new(Declare {
                         expressions,
@@ -1213,6 +1214,7 @@ impl Parser {
                     default: None,
                     has_as: false,
                     additional_names: Vec::new(),
+                    span: SourceSpan::default(),
                 }))));
             } else {
                 return Ok(Some(Expression::DeclareItem(Box::new(DeclareItem {
@@ -1221,6 +1223,7 @@ impl Parser {
                     default: None,
                     has_as: false,
                     additional_names: Vec::new(),
+                    span: SourceSpan::default(),
                 }))));
             }
         }
@@ -1253,6 +1256,7 @@ impl Parser {
                     default: None,
                     has_as,
                     additional_names: Vec::new(),
+                    span: SourceSpan::default(),
                 }))));
             } else {
                 return Ok(Some(Expression::DeclareItem(Box::new(DeclareItem {
@@ -1261,6 +1265,7 @@ impl Parser {
                     default: None,
                     has_as,
                     additional_names: Vec::new(),
+                    span: SourceSpan::default(),
                 }))));
             }
         }
@@ -1289,6 +1294,7 @@ impl Parser {
             default,
             has_as,
             additional_names: Vec::new(),
+            span: SourceSpan::default(),
         }))))
     }
 

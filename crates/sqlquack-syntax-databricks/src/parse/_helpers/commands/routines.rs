@@ -10,6 +10,7 @@ use sqlquack_syntax::expressions::schema_objects::models::{
 use sqlquack_syntax::expressions::tables::models::{
     LocationProperty, Properties, SchemaCommentProperty,
 };
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::commands::creates::{Head, property};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
@@ -121,6 +122,7 @@ impl Parser<'_> {
             mode: None,
             default,
             mode_text: None,
+            span: SourceSpan::default(),
         })
     }
 

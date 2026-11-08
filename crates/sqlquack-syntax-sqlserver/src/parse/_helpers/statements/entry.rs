@@ -11,7 +11,7 @@ use sqlquack_syntax::tokens::models::SourceSpan;
 use sqlquack_syntax::{Expression, ExpressionWalk};
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_any_name, is_name};
-use crate::parse::_helpers::tree::nodes::{binary, column_from, paren, var};
+use crate::parse::_helpers::tree::nodes::{column_from, paren, var};
 use crate::parse::_helpers::values::primary::variable;
 use crate::parse::constants::{
     MAX_DEPTH, STATISTICS_SWITCH, THROW_OUTSIDE_CATCH, UNREAD_STATEMENTS,
@@ -486,6 +486,7 @@ impl<'sql> Parser<'sql> {
             return Err(self.gap("declare_cursor", start));
         }
         let expressions: Vec<Expression> = self.comma_list(|parser| {
+            let first: usize = parser.at;
             let name: Token = parser.expect_token(|token| token.kind == TokenKind::Variable)?;
             let has_as: bool = parser.eat_kw("AS");
             if parser.kw_in(0, &["CURSOR", "TABLE"]) {
@@ -504,6 +505,7 @@ impl<'sql> Parser<'sql> {
                 default,
                 has_as,
                 additional_names: Vec::new(),
+                span: parser.range_from(first),
             })))
         })?;
         Ok(Expression::Declare(Box::new(Declare {
@@ -623,6 +625,7 @@ impl<'sql> Parser<'sql> {
         let mut parameters: Vec<ExecuteParameter> = Vec::new();
         if !self.statement_ends() && !self.kw("WITH") {
             parameters = self.comma_list(|parser| {
+                let first: usize = parser.at;
                 let mut name: String = String::new();
                 if parser
                     .peek()
@@ -645,6 +648,7 @@ impl<'sql> Parser<'sql> {
                     name,
                     value,
                     output,
+                    span: parser.range_from(first),
                 })
             })?;
         }
@@ -659,10 +663,11 @@ impl<'sql> Parser<'sql> {
 
     /// `EXEC`'s dynamic text: string literals and variables joined by `+`, nothing else.
     fn execute_text(&mut self) -> Parsing<Expression> {
+        let first: usize = self.at;
         let mut text: Expression = self.execute_text_part()?;
         while self.eat_char('+') {
             let right: Expression = self.execute_text_part()?;
-            text = binary(Expression::Add, text, right);
+            text = self.binary(first, Expression::Add, text, right);
         }
         Ok(text)
     }
@@ -701,13 +706,12 @@ impl<'sql> Parser<'sql> {
 
     fn primary_or_signed(&mut self) -> Parsing<Expression> {
         if self.is_char('-') || self.is_char('+') {
+            let first: usize = self.at;
             let negative: bool = self.is_char('-');
             self.at += 1;
             let this: Expression = self.primary()?;
             return Ok(match negative {
-                true => Expression::Neg(Box::new(
-                    sqlquack_syntax::expressions::operators::models::UnaryOp::new(this),
-                )),
+                true => self.unary(first, Expression::Neg, this),
                 false => this,
             });
         }

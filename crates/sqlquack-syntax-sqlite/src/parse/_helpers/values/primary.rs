@@ -4,6 +4,7 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::{BooleanLiteral, Identifier, Literal};
 use sqlquack_syntax::expressions::operators::models::{Parameter, ParameterStyle, Placeholder};
 use sqlquack_syntax::expressions::types::models::DataType;
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_idj, is_ids, is_nm};
 use crate::parse::_helpers::tree::nodes::{
@@ -215,6 +216,7 @@ impl Parser<'_> {
                 quoted: false,
                 string_quoted: false,
                 expression: None,
+                span: SourceSpan::default(),
             }))),
             _ => {
                 self.gap("parameter", token.start);

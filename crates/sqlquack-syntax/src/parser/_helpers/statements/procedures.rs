@@ -14,6 +14,7 @@ use crate::parser::models::Dialect;
 use crate::parser::models::Parser;
 use crate::tokens::models::CallMode;
 use crate::tokens::models::DialectType;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::TokenType;
 use crate::tokens::types::Result;
 
@@ -102,6 +103,7 @@ impl Parser {
                 mode: None,
                 default,
                 mode_text: None,
+                span: SourceSpan::default(),
             });
         }
         self.expect_token(TokenType::RParen)?;

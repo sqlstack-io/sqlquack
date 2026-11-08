@@ -386,6 +386,7 @@ impl Parser {
                     quoted: false,
                     string_quoted: false,
                     expression: None,
+                    span: SourceSpan::default(),
                 }));
                 let result = self.parse_colon_json_path(param)?;
                 return self.maybe_parse_subscript(result);
@@ -1541,6 +1542,7 @@ impl Parser {
                     quoted: false,
                     string_quoted: false,
                     expression: None,
+                    span: SourceSpan::default(),
                 }))));
             } else {
                 return Err(self.parse_error("Expected parameter name after %("));
@@ -1555,6 +1557,7 @@ impl Parser {
                 quoted: false,
                 string_quoted: false,
                 expression: None,
+                span: SourceSpan::default(),
             }))));
         }
         self.current -= 1;
@@ -1684,6 +1687,7 @@ impl Parser {
             quoted: false,
             string_quoted: false,
             expression: None,
+            span: SourceSpan::default(),
         })))
     }
 
@@ -1714,6 +1718,7 @@ impl Parser {
             quoted,
             string_quoted,
             expression: None,
+            span: SourceSpan::default(),
         })))
     }
 
@@ -1728,6 +1733,7 @@ impl Parser {
                     quoted: false,
                     string_quoted: false,
                     expression: None,
+                    span: SourceSpan::default(),
                 })));
             }
             return Err(self.parse_error(format!("Invalid colon parameter: :{}", num_token.text)));
@@ -1748,6 +1754,7 @@ impl Parser {
                 quoted: false,
                 string_quoted: false,
                 expression: None,
+                span: SourceSpan::default(),
             })))
         } else {
             Err(self.parse_error("Expected parameter name after :"))
@@ -1776,6 +1783,7 @@ impl Parser {
                     quoted: false,
                     string_quoted: false,
                     expression,
+                    span: SourceSpan::default(),
                 })));
             } else {
                 return Err(self.parse_error("Expected identifier after ${"));
@@ -1791,6 +1799,7 @@ impl Parser {
                     quoted: false,
                     string_quoted: false,
                     expression: None,
+                    span: SourceSpan::default(),
                 }));
                 let result = self.parse_colon_json_path(param_expr)?;
                 return self.maybe_parse_subscript(result);
@@ -1817,6 +1826,7 @@ impl Parser {
                 quoted: name_token.token_type == TokenType::QuotedIdentifier,
                 string_quoted: false,
                 expression: None,
+                span: SourceSpan::default(),
             })));
         }
         Err(self.parse_error("Expected number or identifier after $"))
@@ -1837,6 +1847,7 @@ impl Parser {
                     quoted: false,
                     string_quoted: false,
                     expression: None,
+                    span: SourceSpan::default(),
                 })));
             } else {
                 return Err(self.parse_error("Expected parameter name after %("));
@@ -1851,6 +1862,7 @@ impl Parser {
                 quoted: false,
                 string_quoted: false,
                 expression: None,
+                span: SourceSpan::default(),
             })));
         }
         Err(self.parse_error("Expected 's' or '(' after % for parameter"))

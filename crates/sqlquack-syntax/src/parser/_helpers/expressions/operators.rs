@@ -160,6 +160,7 @@ impl Parser {
                 mode,
                 default,
                 mode_text: mode_text.clone(),
+                span: SourceSpan::default(),
             });
 
             if !self.match_token(TokenType::Comma) {
@@ -192,6 +193,7 @@ impl Parser {
                 mode: None,
                 default,
                 mode_text: None,
+                span: SourceSpan::default(),
             });
             if !self.match_token(TokenType::Comma) {
                 break;

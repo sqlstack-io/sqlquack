@@ -7,7 +7,7 @@ use sqlquack_syntax::expressions::operators::models::{
 use sqlquack_syntax::expressions::typed_functions::models::AtTimeZone;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_any_name};
-use crate::parse::_helpers::tree::nodes::{between, binary, exists, in_list, null_test};
+use crate::parse::_helpers::tree::nodes::{between, exists, in_list, null_test};
 use crate::scan::models::{Token, TokenKind};
 
 /// The engine's error for a value where a condition is expected (error 4145).
@@ -38,10 +38,6 @@ pub(crate) fn is_condition(expression: &Expression) -> bool {
         Expression::Paren(paren) => is_condition(&paren.this),
         _ => false,
     }
-}
-
-fn unary(kind: fn(Box<UnaryOp>) -> Expression, this: Expression) -> Expression {
-    kind(Box::new(UnaryOp::new(this)))
 }
 
 type Build = fn(Box<BinaryOp>) -> Expression;
@@ -132,6 +128,7 @@ impl<'sql> Parser<'sql> {
         build: Build,
         operand: fn(&mut Self) -> Parsing<Expression>,
     ) -> Parsing<Expression> {
+        let first: usize = self.at;
         let start: usize = self.offset();
         let mut left: Expression = operand(self)?;
         let depth: usize = self.depth();
@@ -146,7 +143,7 @@ impl<'sql> Parser<'sql> {
             if !is_condition(&right) {
                 return Err(self.non_boolean(right_start));
             }
-            left = binary(build, left, right);
+            left = self.binary(first, build, left, right);
         }
         self.restore_depth(depth);
         Ok(left)
@@ -164,11 +161,12 @@ impl<'sql> Parser<'sql> {
         if !self.kw("NOT") {
             return self.predicate();
         }
+        let first: usize = self.at;
         self.at += 1;
         let start: usize = self.offset();
         let this: Expression = self.deeper(|parser| parser.not_expression())?;
         match is_condition(&this) {
-            true => Ok(unary(Expression::Not, this)),
+            true => Ok(self.unary(first, Expression::Not, this)),
             false => Err(self.non_boolean(start)),
         }
     }
@@ -220,7 +218,7 @@ impl<'sql> Parser<'sql> {
                 });
             }
             let right: Expression = self.operand()?;
-            return Ok(binary(build, left, right));
+            return Ok(self.binary(start, build, left, right));
         }
         let not: bool = self.kw("NOT");
         let offset: usize = usize::from(not);
@@ -263,8 +261,8 @@ impl<'sql> Parser<'sql> {
             if self.eat_kws(&["DISTINCT", "FROM"]) {
                 let right: Expression = self.operand()?;
                 return Ok(match not {
-                    true => binary(Expression::NullSafeEq, left, right),
-                    false => binary(Expression::NullSafeNeq, left, right),
+                    true => self.binary(start, Expression::NullSafeEq, left, right),
+                    false => self.binary(start, Expression::NullSafeNeq, left, right),
                 });
             }
             self.expect_kw("NULL")?;
@@ -295,7 +293,7 @@ impl<'sql> Parser<'sql> {
             let right_start: usize = self.at;
             let right: Expression = self.deeper(operand)?;
             let right: Expression = self.value(right, right_start)?;
-            left = binary(build, left, right);
+            left = self.binary(start, build, left, right);
         }
         self.restore_depth(depth);
         Ok(left)
@@ -319,11 +317,12 @@ impl<'sql> Parser<'sql> {
             _ => None,
         };
         if let Some(kind) = kind {
+            let first: usize = self.at;
             self.at += 1;
             let start: usize = self.at;
             let this: Expression = self.deeper(|parser| parser.unary_expression())?;
             let this: Expression = self.value(this, start)?;
-            return Ok(unary(kind, this));
+            return Ok(self.unary(first, kind, this));
         }
         let start: usize = self.at;
         let mut this: Expression = self.primary()?;
