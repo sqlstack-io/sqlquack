@@ -336,11 +336,10 @@ fn structure_rules(
         }
     }
     match engine {
-        Engine::Postgres | Engine::Sqlite | Engine::Snowflake => {
+        Engine::Postgres | Engine::Sqlite | Engine::Snowflake | Engine::DuckDB => {
             findings.extend(unwindowed_calls(node, postgres_window_only));
         }
         Engine::BigQuery => findings.extend(unwindowed_calls(node, bigquery_window_only)),
-        Engine::DuckDB => {}
     }
     if select.qualify.is_some() && !has_window {
         findings.push(rule(

@@ -69,10 +69,22 @@ pub(crate) fn node_findings(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<
     let family = |expression: &Expression| level.family(expression);
     let mut own: Vec<NameFinding> = match node {
         Expression::Function(function) => {
-            catalog_arity((&function.name, function.args.len()), level, node)
+            let written: &str = function
+                .span
+                .0
+                .and_then(|span| {
+                    level
+                        .context
+                        .sql?
+                        .get(span.start..)?
+                        .get(..function.name.len())
+                })
+                .filter(|written| written.eq_ignore_ascii_case(&function.name))
+                .unwrap_or(&function.name);
+            catalog_arity((&function.name, written, function.args.len()), level, node)
         }
         Expression::Coalesce(function) if function.expressions.is_empty() => {
-            catalog_arity((COALESCE, 0), level, node)
+            catalog_arity((COALESCE, COALESCE, 0), level, node)
         }
         _ => Vec::new(),
     };
@@ -132,9 +144,9 @@ fn unknown_duckdb_call(
     }
 }
 
-/// A call whose argument count no signature in the catalog accepts.
+/// A call whose argument count no signature in the catalog accepts, named as `written`.
 fn catalog_arity(
-    (name, count): (&str, usize),
+    (name, written, count): (&str, &str, usize),
     level: NodeLevel<'_, '_>,
     node: &Expression,
 ) -> Vec<NameFinding> {
@@ -165,7 +177,7 @@ fn catalog_arity(
     vec![finding(
         "E203",
         format!(
-            "Invalid arity for function '{name}': got {count}, expected {}",
+            "Invalid arity for function '{written}': got {count}, expected {}",
             expected.join(", ")
         ),
         node,

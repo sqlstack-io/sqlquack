@@ -14,7 +14,9 @@ use crate::lineage::_helpers::tracing::lineages::{combined, set_merged, traced_i
 use crate::lineage::_helpers::tracing::postgres_names::postgres_name;
 use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
 use crate::lineage::_helpers::tracing::reuse::{holds_aggregate, reused, worked};
-use crate::lineage::_helpers::tracing::sources::{from_sources, listed, values_query};
+use crate::lineage::_helpers::tracing::sources::{
+    from_sources, listed, pivot_sources, values_query,
+};
 use crate::lineage::_helpers::typing::rules::filtered_non_null;
 use crate::lineage::constants::{
     DUCKDB_PROFILE, ORDINAL_BASE, POSTGRES_PROFILE, RECURSION_LIMIT, SQL_STAR, SQLITE_PROFILE,
@@ -92,6 +94,14 @@ fn resolved_query_level(
         Expression::Values(values) => {
             let scope = empty_scope(ctes, outer);
             values_query(values, &scope, context)
+        }
+        Expression::Pivot(pivot) if !pivot.unpivot => {
+            let ctes = with_ctes(pivot.with.as_ref(), ctes, outer, context);
+            let scope = empty_scope(&ctes, outer);
+            pivot_sources(pivot, &scope, context)
+                .into_iter()
+                .next()
+                .map_or_else(ResolvedQuery::default, |source| source.query)
         }
         _ => ResolvedQuery {
             open: true,
