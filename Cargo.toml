@@ -19,6 +19,7 @@ members = [
     "crates/sqlquack-syntax-bigquery",
     "crates/sqlquack-fingerprint",
     "crates/sqlquack-format",
+    "crates/sqlquack-format-check",
     "crates/sqlquack-python",
 ]
 exclude = ["fuzz"]

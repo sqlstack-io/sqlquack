@@ -1448,6 +1448,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "sqlquack-format-check"
+version = "0.2.0"
+dependencies = [
+ "duckdb",
+ "serde_json",
+ "sqlquack-format",
+ "sqlquack-syntax",
+]
+
+[[package]]
 name = "sqlquack-lint"
 version = "0.2.0"
 dependencies = [

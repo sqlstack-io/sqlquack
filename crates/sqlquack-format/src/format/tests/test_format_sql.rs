@@ -1,7 +1,7 @@
 use sqlquack_syntax::Dialect;
 
 use crate::format::constants::{
-    DEPTH_FAILURE, PARSE_FAILURE, SEPARATION_FAILURE, TYPE_DEPTH_FAILURE,
+    DEPTH_FAILURE, JOIN_FAILURE, PARSE_FAILURE, SEPARATION_FAILURE, TYPE_DEPTH_FAILURE,
     UNSUPPORTED_DIALECT_FAILURE,
 };
 use crate::format::main::format_sql::format_sql;
@@ -18,6 +18,15 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             line_width: None,
             dialect: Dialect::Snowflake,
             expected_outcome: Ok("CREATE TABLE t(x object(type varchar, first int, key int))"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "DuckDB struct field names spelled like keywords keep their case in a column type",
+            sql: "create table t (x struct(type varchar, first int, key int, date date))",
+            line_width: None,
+            dialect: Dialect::DuckDB,
+            expected_outcome: Ok(
+                "CREATE TABLE t(x struct(type varchar, first int, key int, date DATE))",
+            ),
         },
         test_types::FormatSqlTestCase {
             description: "an unquoted PUT file URI is not split at its slashes",
@@ -209,11 +218,39 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             expected_outcome: Ok("SELECT a\nFROM t -- one\n-- two"),
         },
         test_types::FormatSqlTestCase {
-            description: "DuckDB is refused until it has a format gate",
-            sql: "SELECT a FROM t",
+            description: "a minus is not joined to a DuckDB `@`, which would read as the operator `-@`",
+            sql: "select - @a",
             line_width: None,
             dialect: Dialect::DuckDB,
-            expected_outcome: Err(UNSUPPORTED_DIALECT_FAILURE),
+            expected_outcome: Err(JOIN_FAILURE),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a plus is not joined to a DuckDB `@`",
+            sql: "select + @a",
+            line_width: None,
+            dialect: Dialect::DuckDB,
+            expected_outcome: Err(JOIN_FAILURE),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a DuckDB `@` is not joined to a plus sign",
+            sql: "select @ +1",
+            line_width: None,
+            dialect: Dialect::DuckDB,
+            expected_outcome: Err(JOIN_FAILURE),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a DuckDB `@` is not joined to a minus sign, which would read as the operator `@-`",
+            sql: "select @ -1",
+            line_width: None,
+            dialect: Dialect::DuckDB,
+            expected_outcome: Err(JOIN_FAILURE),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a DuckDB `@` is not joined to a minus before a column",
+            sql: "select @ - a",
+            line_width: None,
+            dialect: Dialect::DuckDB,
+            expected_outcome: Err(JOIN_FAILURE),
         },
         test_types::FormatSqlTestCase {
             description: "PostgreSQL is refused until it has a format gate",
@@ -249,11 +286,13 @@ fn given_deeply_nested_sql_when_formatting_then_it_is_refused_or_laid_out_withou
     let test_cases = [
         test_types::DeepSqlTestCase {
             description: "1,500 parentheses around a FROM source are refused by the parser's nesting guard",
+            dialects: &[Dialect::Snowflake, Dialect::DuckDB],
             sql: || format!("SELECT * FROM {}t{}", "(".repeat(1_500), ")".repeat(1_500)),
             expected_refusal: Some(PARSE_FAILURE),
         },
         test_types::DeepSqlTestCase {
             description: "1,500 nested subqueries are refused by the parser's depth guard",
+            dialects: &[Dialect::Snowflake, Dialect::DuckDB],
             sql: || {
                 format!(
                     "{}SELECT 1{}",
@@ -265,41 +304,55 @@ fn given_deeply_nested_sql_when_formatting_then_it_is_refused_or_laid_out_withou
         },
         test_types::DeepSqlTestCase {
             description: "1,500 nested NOTs are refused by the parser's depth guard",
+            dialects: &[Dialect::Snowflake, Dialect::DuckDB],
             sql: || format!("SELECT {}TRUE", "NOT ".repeat(1_500)),
             expected_refusal: Some(PARSE_FAILURE),
         },
         test_types::DeepSqlTestCase {
             description: "a chain of 5,000 added terms is refused before its tree is walked",
+            dialects: &[Dialect::Snowflake, Dialect::DuckDB],
             sql: || format!("SELECT {}", vec!["1"; 5_000].join(" + ")),
             expected_refusal: Some(DEPTH_FAILURE),
         },
         test_types::DeepSqlTestCase {
             description: "a chain of 513 added terms, one level past the limit, is refused",
+            dialects: &[Dialect::Snowflake, Dialect::DuckDB],
             sql: || format!("SELECT {}", vec!["1"; 513].join(" + ")),
             expected_refusal: Some(DEPTH_FAILURE),
         },
         test_types::DeepSqlTestCase {
             description: "a cast to a type with 300 `[]` suffixes is refused before parsing",
+            dialects: &[Dialect::Snowflake, Dialect::DuckDB],
             sql: || format!("SELECT CAST(NULL AS INT{})", "[]".repeat(300)),
             expected_refusal: Some(TYPE_DEPTH_FAILURE),
         },
         test_types::DeepSqlTestCase {
             description: "a cast to a type with 300 `[3]` suffixes is refused before parsing",
+            dialects: &[Dialect::Snowflake, Dialect::DuckDB],
             sql: || format!("SELECT CAST(NULL AS INT{})", "[3]".repeat(300)),
             expected_refusal: Some(TYPE_DEPTH_FAILURE),
         },
         test_types::DeepSqlTestCase {
             description: "a column of a type with 65 `[]` suffixes, one past the limit, is refused",
+            dialects: &[Dialect::Snowflake, Dialect::DuckDB],
             sql: || format!("CREATE TABLE t (c INT{})", "[]".repeat(65)),
             expected_refusal: Some(TYPE_DEPTH_FAILURE),
         },
         test_types::DeepSqlTestCase {
             description: "a column of a type with 64 `[]` suffixes, at the limit, is laid out",
+            dialects: &[Dialect::Snowflake, Dialect::DuckDB],
             sql: || format!("CREATE TABLE t (c INT{})", "[]".repeat(64)),
             expected_refusal: None,
         },
         test_types::DeepSqlTestCase {
+            description: "a DuckDB `::` cast to a type with 300 `[]` suffixes is refused before parsing",
+            dialects: &[Dialect::Snowflake, Dialect::DuckDB],
+            sql: || format!("SELECT NULL::INT{}", "[]".repeat(300)),
+            expected_refusal: Some(TYPE_DEPTH_FAILURE),
+        },
+        test_types::DeepSqlTestCase {
             description: "a type alternating angle brackets with suffix runs, depth 182, is refused",
+            dialects: &[Dialect::Snowflake, Dialect::DuckDB],
             sql: || {
                 format!(
                     "SELECT CAST(NULL AS ARRAY<ARRAY<INT{}{})",
@@ -311,16 +364,19 @@ fn given_deeply_nested_sql_when_formatting_then_it_is_refused_or_laid_out_withou
         },
         test_types::DeepSqlTestCase {
             description: "a cast to 2 angle brackets around 63 suffixes, depth 65, is refused",
+            dialects: &[Dialect::Snowflake, Dialect::DuckDB],
             sql: || format!("SELECT CAST(NULL AS ARRAY<ARRAY<INT{}>>)", "[]".repeat(63)),
             expected_refusal: Some(TYPE_DEPTH_FAILURE),
         },
         test_types::DeepSqlTestCase {
             description: "a cast to 2 angle brackets around 62 suffixes, depth 64, is laid out",
+            dialects: &[Dialect::Snowflake],
             sql: || format!("SELECT CAST(NULL AS ARRAY<ARRAY<INT{}>>)", "[]".repeat(62)),
             expected_refusal: None,
         },
         test_types::DeepSqlTestCase {
             description: "a struct of 100 one-suffix fields stays shallow and is laid out",
+            dialects: &[Dialect::Snowflake],
             sql: || {
                 format!(
                     "SELECT CAST(NULL AS STRUCT<{}>)",
@@ -334,6 +390,7 @@ fn given_deeply_nested_sql_when_formatting_then_it_is_refused_or_laid_out_withou
         },
         test_types::DeepSqlTestCase {
             description: "a type alternating parenthesised constructors with suffix runs, depth 182, is refused",
+            dialects: &[Dialect::Snowflake, Dialect::DuckDB],
             sql: || {
                 format!(
                     "SELECT CAST(NULL AS ARRAY(ARRAY(INT{}{})",
@@ -345,6 +402,7 @@ fn given_deeply_nested_sql_when_formatting_then_it_is_refused_or_laid_out_withou
         },
         test_types::DeepSqlTestCase {
             description: "a type alternating quoted parenthesised constructors with suffix runs, depth 182, is refused",
+            dialects: &[Dialect::Snowflake, Dialect::DuckDB],
             sql: || {
                 format!(
                     "SELECT CAST(NULL AS \"ARRAY\"(\"ARRAY\"(INT{}{})",
@@ -356,6 +414,7 @@ fn given_deeply_nested_sql_when_formatting_then_it_is_refused_or_laid_out_withou
         },
         test_types::DeepSqlTestCase {
             description: "a column alternating quoted STRUCT<...> and ARRAY<...> with suffix runs is refused",
+            dialects: &[Dialect::Snowflake, Dialect::DuckDB],
             sql: || {
                 let run = "[]".repeat(40);
                 format!("CREATE TABLE t (c \"STRUCT\"<a \"ARRAY\"<INT{run}>{run}>{run})")
@@ -364,6 +423,7 @@ fn given_deeply_nested_sql_when_formatting_then_it_is_refused_or_laid_out_withou
         },
         test_types::DeepSqlTestCase {
             description: "a column alternating STRUCT(...), MAP(...) and ARRAY<...> with suffix runs is refused",
+            dialects: &[Dialect::Snowflake, Dialect::DuckDB],
             sql: || {
                 let run = "[]".repeat(30);
                 format!(
@@ -374,16 +434,19 @@ fn given_deeply_nested_sql_when_formatting_then_it_is_refused_or_laid_out_withou
         },
         test_types::DeepSqlTestCase {
             description: "a cast to 2 parenthesised constructors around 63 suffixes, depth 65, is refused",
+            dialects: &[Dialect::Snowflake, Dialect::DuckDB],
             sql: || format!("SELECT CAST(NULL AS ARRAY(ARRAY(INT{})))", "[]".repeat(63)),
             expected_refusal: Some(TYPE_DEPTH_FAILURE),
         },
         test_types::DeepSqlTestCase {
             description: "a cast to 2 parenthesised constructors around 62 suffixes, depth 64, is laid out",
+            dialects: &[Dialect::Snowflake, Dialect::DuckDB],
             sql: || format!("SELECT CAST(NULL AS ARRAY(ARRAY(INT{})))", "[]".repeat(62)),
             expected_refusal: None,
         },
         test_types::DeepSqlTestCase {
             description: "a cast to 300 nested ARRAY<...> types is refused before parsing",
+            dialects: &[Dialect::Snowflake, Dialect::DuckDB],
             sql: || {
                 format!(
                     "SELECT CAST(NULL AS {}INT{})",
@@ -395,19 +458,22 @@ fn given_deeply_nested_sql_when_formatting_then_it_is_refused_or_laid_out_withou
         },
         test_types::DeepSqlTestCase {
             description: "a chain of 512 added terms, at the limit, is laid out",
+            dialects: &[Dialect::Snowflake, Dialect::DuckDB],
             sql: || format!("SELECT {}", vec!["1"; 512].join(" + ")),
             expected_refusal: None,
         },
     ];
     for test_case in test_cases {
-        let outcome = format_sql(&(test_case.sql)(), &FormatOptions::new(Dialect::Snowflake));
-        assert_eq!(
-            outcome
-                .err()
-                .map(|refusal| refusal_start(&refusal.reason).to_string()),
-            test_case.expected_refusal.map(str::to_string),
-            "{}",
-            test_case.description
-        );
+        for &dialect in test_case.dialects {
+            let outcome = format_sql(&(test_case.sql)(), &FormatOptions::new(dialect));
+            assert_eq!(
+                outcome
+                    .err()
+                    .map(|refusal| refusal_start(&refusal.reason).to_string()),
+                test_case.expected_refusal.map(str::to_string),
+                "{dialect:?}: {}",
+                test_case.description
+            );
+        }
     }
 }

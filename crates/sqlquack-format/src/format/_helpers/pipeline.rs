@@ -12,16 +12,16 @@ use crate::format::_helpers::token_layout::{
 };
 use crate::format::_helpers::touching::verify_touching_tokens;
 use crate::format::constants::{
-    DEPTH_FAILURE, MAX_TREE_DEPTH, MAX_TYPE_NESTING, NOT_IDEMPOTENT_FAILURE, PARSE_FAILURE,
-    SELECT_LIST_FAILURE, TOKEN_PRESERVATION_FAILURE, TYPE_CONSTRUCTOR_WORDS, TYPE_DEPTH_FAILURE,
-    UNSUPPORTED_DIALECT_FAILURE, UNSUPPORTED_SYNTAX_FAILURE,
+    DEPTH_FAILURE, FORMAT_GATED_DIALECTS, MAX_TREE_DEPTH, MAX_TYPE_NESTING, NOT_IDEMPOTENT_FAILURE,
+    PARSE_FAILURE, SELECT_LIST_FAILURE, TOKEN_PRESERVATION_FAILURE, TYPE_CONSTRUCTOR_WORDS,
+    TYPE_DEPTH_FAILURE, UNSUPPORTED_DIALECT_FAILURE, UNSUPPORTED_SYNTAX_FAILURE,
 };
 use crate::format::models::{FormatOptions, Formatted};
 
 /// Format `sql`, or return why it is left as written.
 pub(crate) fn format_checked(sql: &str, options: &FormatOptions) -> Result<Formatted, String> {
     let dialect = options.dialect;
-    if dialect != Dialect::Snowflake {
+    if !FORMAT_GATED_DIALECTS.contains(&dialect) {
         return Err(UNSUPPORTED_DIALECT_FAILURE.to_string());
     }
     let (lexemes, comments) = lex(sql, dialect)?;
@@ -47,7 +47,7 @@ pub(crate) fn format_checked(sql: &str, options: &FormatOptions) -> Result<Forma
     }
     let names = parsed_names(sql, &statements, &lexemes)?;
     let guide = layout_guide(&lexemes, &names, dialect);
-    if guide.selects != names.selects {
+    if dialect == Dialect::Snowflake && guide.selects != names.selects {
         return Err(SELECT_LIST_FAILURE.to_string());
     }
     let oracle = Oracle::new(guide);
@@ -70,7 +70,7 @@ pub(crate) fn format_checked(sql: &str, options: &FormatOptions) -> Result<Forma
         comments: &printed_comments,
     };
     verify_printed_tokens(&authored, &printed, &print.recases)?;
-    verify_touching_tokens(&authored, &printed, &names.binary_operators)?;
+    verify_touching_tokens(&authored, &printed, &names.binary_operators, dialect)?;
     if print_layout(&printed, &oracle, options)?.sql != print.sql {
         return Err(NOT_IDEMPOTENT_FAILURE.to_string());
     }
