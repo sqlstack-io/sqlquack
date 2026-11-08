@@ -9,6 +9,18 @@ use crate::test_types::{AcceptanceTestCase, ProjectionTestCase};
 fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake() {
     let test_cases = [
         AcceptanceTestCase {
+            description: "a space between the dollar sign and a variable name (recorded errno 1003)",
+            sql: "SELECT $ s",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a session variable that follows its dollar sign",
+            sql: "SELECT $s",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
             description: "UNDROP takes a stage (recorded success)",
             sql: "UNDROP STAGE \"v1 Q\" ;",
             dialect: Dialect::Snowflake,

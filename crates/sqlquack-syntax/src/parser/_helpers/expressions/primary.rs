@@ -1774,6 +1774,11 @@ impl Parser {
             || self.config.dialect == Some(crate::tokens::models::DialectType::DuckDB)
                 && self.peek().token_type.is_keyword()
         {
+            if self.applies_snowflake_context_rules()
+                && self.peek().span.start != self.tokens[self.current - 1].span.end
+            {
+                return Err(self.parse_error("Invalid expression / Unexpected token"));
+            }
             let name_token = self.advance()?;
             return self.maybe_parse_subscript(Expression::Parameter(Box::new(Parameter {
                 name: Some(name_token.text.to_string()),
