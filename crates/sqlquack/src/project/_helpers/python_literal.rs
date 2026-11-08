@@ -1,4 +1,4 @@
-//! A Python call's keyword arguments as JSON: the strings, numbers, booleans, None, lists and dicts a `@udf(...)` holds.
+//! A Python call's keyword arguments as JSON: the strings, numbers, booleans, None, lists and dicts a `@udf(...)` holds, each dict as its `[key, value]` pairs in written order.
 
 use serde_json::{Map, Value};
 
@@ -83,20 +83,20 @@ impl Reader {
             }
             Some('{') => {
                 self.index += 1;
-                let mut entries: Map<String, Value> = Map::new();
+                let mut entries: Vec<Value> = Vec::new();
                 while self.peek() != Some('}') {
                     let key = match self.value()? {
                         Value::String(key) => key,
                         other => return Err(format!("a dict key is not text: {other}")),
                     };
                     self.take(':')?;
-                    entries.insert(key, self.value()?);
+                    entries.push(Value::Array(vec![Value::String(key), self.value()?]));
                     if self.peek() != Some('}') {
                         self.take(',')?;
                     }
                 }
                 self.index += 1;
-                Ok(Value::Object(entries))
+                Ok(Value::Array(entries))
             }
             Some(_) => match self.word().as_str() {
                 "True" => Ok(Value::Bool(true)),

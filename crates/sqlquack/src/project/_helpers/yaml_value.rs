@@ -5,6 +5,8 @@ use std::collections::HashMap;
 use saphyr_parser::{Event, Parser, ScalarStyle, StrInput};
 use serde_json::{Map, Number, Value};
 
+use crate::project::constants::MERGE_KEY;
+
 /// The first document of `text` as a JSON value: plain scalars typed as YAML 1.2's core schema does.
 pub(crate) fn yaml_value(text: &str) -> Result<Value, String> {
     let mut reader = Reader {
@@ -63,6 +65,7 @@ impl<'input> Reader<'input> {
             }
             Event::MappingStart(anchor, _) => {
                 let mut entries: Map<String, Value> = Map::new();
+                let mut merged: Vec<Value> = Vec::new();
                 loop {
                     let key = match self.next()? {
                         Event::MappingEnd => break,
@@ -73,9 +76,15 @@ impl<'input> Reader<'input> {
                         other => other.to_string(),
                     };
                     let event = self.next()?;
-                    entries.insert(key, self.node(event)?);
+                    let value = self.node(event)?;
+                    match key.as_str() {
+                        MERGE_KEY => merged.push(value),
+                        _ => {
+                            entries.insert(key, value);
+                        }
+                    }
                 }
-                (Value::Object(entries), anchor)
+                (Value::Object(with_merged(entries, merged)?), anchor)
             }
             _ => return Err("the YAML holds an unexpected event".to_owned()),
         };
@@ -106,4 +115,26 @@ pub(crate) fn number(text: &str) -> Option<Number> {
         (Err(_not_integer), Ok(float)) => Number::from_f64(float),
         (Err(_not_integer), Err(_not_float)) => None,
     }
+}
+
+/// `entries` with the unset keys of each mapping `<<` names, the first winning, as PyYAML merges.
+fn with_merged(
+    mut entries: Map<String, Value>,
+    merged: Vec<Value>,
+) -> Result<Map<String, Value>, String> {
+    for value in merged {
+        let mappings = match value {
+            Value::Array(items) => items,
+            mapping => vec![mapping],
+        };
+        for mapping in mappings {
+            let Value::Object(mapping) = mapping else {
+                return Err("a `<<` merge key must name a mapping or a list of them".to_owned());
+            };
+            for (key, value) in mapping {
+                entries.entry(key).or_insert(value);
+            }
+        }
+    }
+    Ok(entries)
 }

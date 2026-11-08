@@ -126,4 +126,5 @@ TIMEZONE = "UTC"
 
 A `--session` flag replaces the project's value for one run. `[project.confirm]` also takes
 `utc_session` and `declared_offsets`, which confirm what `--utc-session` and
-`--confirm-declared-offsets` do.
+`--confirm-declared-offsets` do. The confirmations hold whichever policy a run uses, including one
+chosen with `--policy` or `--builtin-policy`.

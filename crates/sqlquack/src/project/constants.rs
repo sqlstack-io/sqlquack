@@ -40,3 +40,6 @@ pub const SQL_EXTENSION: &str = "sql";
 pub const TABLE_KIND: &str = "table";
 /// How a clash names a declared function.
 pub const FUNCTION_KIND: &str = "function";
+
+/// The YAML key that merges another mapping's keys into the one holding it.
+pub const MERGE_KEY: &str = "<<";

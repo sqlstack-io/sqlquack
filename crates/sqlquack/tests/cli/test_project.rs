@@ -75,6 +75,27 @@ fn given_a_sqlbuild_project_when_converting_then_its_folders_declare_tables_and_
             expected_output: "\"name\": \"SHOUT\"",
         },
         ProjectTestCase {
+            description: "a Python function's arguments keep their written order, not sorted by name",
+            files: &[
+                ProjectFile {
+                    path: "sqlquack.toml",
+                    repository: &["sqlquack.toml"],
+                    text: "[project.confirm]\npython_runtime = true\n",
+                },
+                SOURCES,
+                ProjectFile {
+                    path: "functions/python/label.py",
+                    repository: &[],
+                    text: "from sqlbuild.functions import udf\n\n@udf(arguments={'name': 'VARCHAR', 'amount': 'NUMBER(10,2)'}, returns='VARCHAR')\ndef main(name, amount):\n    return name\n",
+                },
+            ],
+            folder: "",
+            flags: &[],
+            sql: "SELECT label(status, id) AS l FROM raw__orders",
+            expected_exit: Some(0),
+            expected_output: "\"arguments\": [\n        \"VARCHAR\",\n        \"DECIMAL(10,2)\"\n      ]",
+        },
+        ProjectTestCase {
             description: "a Python function file may import udf from sqlquack instead",
             files: &[
                 ProjectFile {
@@ -261,6 +282,38 @@ fn given_a_project_when_a_declaration_clashes_or_is_unconfirmed_then_the_error_s
             sql: "SELECT shout(status) AS s FROM raw__orders",
             expected_exit: Some(1),
             expected_output: "add `python_runtime = true` under [project.confirm] in sqlquack.toml, or pass --python-runtime for one run",
+        },
+        ProjectTestCase {
+            description: "a source listing no columns is left out with a warning",
+            files: &[
+                POLICY_FILE,
+                ProjectFile {
+                    path: "sources/raw.yml",
+                    repository: &[],
+                    text: "sources:\n  - name: raw__empty\n",
+                },
+            ],
+            folder: "",
+            flags: &[],
+            sql: "SELECT 1 AS n",
+            expected_exit: Some(0),
+            expected_output: "sqlquack convert: warning: ./sources/raw.yml: the source raw__empty is left out, because it lists no columns",
+        },
+        ProjectTestCase {
+            description: "a YAML merge key brings in another mapping's columns, as PyYAML does",
+            files: &[
+                POLICY_FILE,
+                ProjectFile {
+                    path: "sources/raw.yml",
+                    repository: &[],
+                    text: "base: &base\n  columns:\n    - name: amount\n      type: NUMBER(10,2)\nsources:\n  - name: raw__payments\n    <<: *base\n",
+                },
+            ],
+            folder: "",
+            flags: &[],
+            sql: "SELECT amount * 2 AS doubled FROM raw__payments",
+            expected_exit: Some(0),
+            expected_output: "\"converted\": true",
         },
         ProjectTestCase {
             description: "a source with an untyped column is left out with a warning naming it",

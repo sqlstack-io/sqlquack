@@ -44,9 +44,9 @@ pub(crate) fn source_relations(path: &Path) -> Result<SourceTables, String> {
         .map_err(|error| failed(format!("is not a SQLBuild source file: {error}")))?;
     let mut found = SourceTables::default();
     for source in file.sources {
-        match untyped_column(&source) {
-            Some(column) => found.warnings.push(format!(
-                "{}: the source {} is left out, because its column {column} has no type",
+        match left_out(&source) {
+            Some(reason) => found.warnings.push(format!(
+                "{}: the source {} is left out, because {reason}",
                 path.display(),
                 source.name
             )),
@@ -56,16 +56,19 @@ pub(crate) fn source_relations(path: &Path) -> Result<SourceTables, String> {
     Ok(found)
 }
 
-/// The first column of a table source without a text type.
-fn untyped_column(source: &SourceEntry) -> Option<&str> {
-    match source.expression {
-        Some(_) => None,
-        None => source
-            .columns
-            .iter()
-            .find(|column| !matches!(column.type_name, Some(Value::String(_))))
-            .map(|column| column.name.as_str()),
+/// Why a table source is left out: it lists no columns, or a column has no text type.
+fn left_out(source: &SourceEntry) -> Option<String> {
+    if source.expression.is_some() {
+        return None;
     }
+    if source.columns.is_empty() {
+        return Some("it lists no columns".to_owned());
+    }
+    source
+        .columns
+        .iter()
+        .find(|column| !matches!(column.type_name, Some(Value::String(_))))
+        .map(|column| format!("its column {} has no type", column.name))
 }
 
 /// A source as a table and its `[column, type]` pairs; None for an inline query or an untyped column.

@@ -82,7 +82,8 @@ the parsed contents. `session` and `verified_overrides` take a mapping, such as
 
 `project` takes a [project](/docs/project/) folder, as `--project` does: its sources, functions,
 overrides and settings apply, and its `sqlquack.toml` is the policy unless `policy` or
-`builtin_policy` choose another.
+`builtin_policy` choose another. Without `project`, the current folder is the project, as it is on
+the command line.
 
 ## Diagnostics
 

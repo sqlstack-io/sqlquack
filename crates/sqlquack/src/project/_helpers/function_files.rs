@@ -75,15 +75,20 @@ pub(crate) fn python_function(text: &str) -> Result<Value, String> {
     function.insert("language".to_owned(), json!("python"));
     for (key, value) in keywords {
         match (key.as_str(), value) {
-            (OVERRIDE_ARGUMENTS, Value::Object(arguments)) => {
+            (OVERRIDE_ARGUMENTS, Value::Array(arguments)) => {
                 let mut named: Vec<(String, String)> = Vec::new();
-                for (name, type_name) in arguments {
-                    let Value::String(type_name) = type_name else {
-                        return Err(format!(
-                            "line {line}: the argument {name}'s type is not text"
-                        ));
-                    };
-                    named.push((name, type_name));
+                for argument in &arguments {
+                    match argument.as_array().map(Vec::as_slice) {
+                        Some([Value::String(name), Value::String(type_name)]) => {
+                            named.push((name.clone(), type_name.clone()));
+                        }
+                        Some([Value::String(name), _]) => {
+                            return Err(format!(
+                                "line {line}: the argument {name}'s type is not text"
+                            ));
+                        }
+                        _ => return Err(format!("line {line}: arguments is not a dict")),
+                    }
                 }
                 function.insert(key, pairs(named));
             }
