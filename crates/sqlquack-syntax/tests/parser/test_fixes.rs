@@ -400,6 +400,44 @@ fn given_a_reserved_keyword_after_a_select_item_when_parsing_snowflake_then_it_i
             expected_accepted: false,
         },
         AcceptanceTestCase {
+            description: "Snowflake rejects a NOT before FROM (recorded errno 1003)",
+            sql: "SELECT 1 NOT FROM t",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description:
+                "Snowflake rejects a NOT between an item and its bare alias (recorded errno 1003)",
+            sql: "SELECT a NOT b FROM t",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake rejects a NOT before AS (recorded errno 1003)",
+            sql: "SELECT a NOT AS b FROM t",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description:
+                "Snowflake rejects a NOT before the next select item (recorded errno 1003)",
+            sql: "SELECT a NOT, b FROM t",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake rejects a NOT before AND (recorded errno 1003)",
+            sql: "SELECT a FROM t WHERE a NOT AND b",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "Snowflake rejects a NOT before OR (recorded errno 1003)",
+            sql: "SELECT a FROM t WHERE a NOT OR b",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
             description: "A NOT before IN still negates it",
             sql: "SELECT 1 NOT IN (2) ;",
             dialect: Dialect::Snowflake,
