@@ -15,6 +15,7 @@ members = [
     "crates/sqlquack-syntax-coverage",
     "crates/sqlquack-syntax-postgres",
     "crates/sqlquack-syntax-bigquery",
+    "crates/sqlquack-syntax-sqlite",
     "crates/sqlquack-python",
 ]
 exclude = ["fuzz"]
@@ -66,6 +67,7 @@ sqlquack-syntax = { path = "crates/sqlquack-syntax" }
 sqlquack-syntax-derive = { path = "crates/sqlquack-syntax-derive" }
 sqlquack-syntax-postgres = { path = "crates/sqlquack-syntax-postgres" }
 sqlquack-syntax-bigquery = { path = "crates/sqlquack-syntax-bigquery" }
+sqlquack-syntax-sqlite = { path = "crates/sqlquack-syntax-sqlite" }
 stacker = "0.1"
 syn = { version = "2", features = ["full"] }
 tempfile = "3"

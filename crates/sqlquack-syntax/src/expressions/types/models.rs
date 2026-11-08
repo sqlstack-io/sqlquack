@@ -133,6 +133,9 @@ pub enum OracleTimestampTimeZone {
 #[serde(tag = "data_type", rename_all = "snake_case")]
 pub enum DataType {
     Vertica {
+        #[serde(
+            serialize_with = "crate::expressions::tree::main::_serialize_on_grown_stack::serialize_on_grown_stack"
+        )]
         vertica_type: Box<VerticaDataType>,
     },
     Boolean,
@@ -250,6 +253,9 @@ pub enum DataType {
     Uuid,
 
     Array {
+        #[serde(
+            serialize_with = "crate::expressions::tree::main::_serialize_on_grown_stack::serialize_on_grown_stack"
+        )]
         element_type: Box<DataType>,
         /// Optional dimension size for PostgreSQL (e.g., [3] in INT[3])
         #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -258,15 +264,27 @@ pub enum DataType {
 
     /// Materialize postfix LIST type, such as `INT LIST`.
     List {
+        #[serde(
+            serialize_with = "crate::expressions::tree::main::_serialize_on_grown_stack::serialize_on_grown_stack"
+        )]
         element_type: Box<DataType>,
     },
 
     Struct {
+        #[serde(
+            serialize_with = "crate::expressions::tree::main::_serialize_on_grown_stack::serialize_on_grown_stack"
+        )]
         fields: Vec<StructField>,
         nested: bool,
     },
     Map {
+        #[serde(
+            serialize_with = "crate::expressions::tree::main::_serialize_on_grown_stack::serialize_on_grown_stack"
+        )]
         key_type: Box<DataType>,
+        #[serde(
+            serialize_with = "crate::expressions::tree::main::_serialize_on_grown_stack::serialize_on_grown_stack"
+        )]
         value_type: Box<DataType>,
     },
 
@@ -281,26 +299,41 @@ pub enum DataType {
     },
 
     Union {
+        #[serde(
+            serialize_with = "crate::expressions::tree::main::_serialize_on_grown_stack::serialize_on_grown_stack"
+        )]
         fields: Vec<(String, DataType)>,
     },
 
     Vector {
         #[serde(default)]
+        #[serde(
+            serialize_with = "crate::expressions::tree::main::_serialize_on_grown_stack::serialize_on_grown_stack"
+        )]
         element_type: Option<Box<DataType>>,
         dimension: Option<u32>,
     },
 
     Object {
+        #[serde(
+            serialize_with = "crate::expressions::tree::main::_serialize_on_grown_stack::serialize_on_grown_stack"
+        )]
         fields: Vec<(String, DataType, bool)>,
         modifier: Option<String>,
     },
 
     Nullable {
+        #[serde(
+            serialize_with = "crate::expressions::tree::main::_serialize_on_grown_stack::serialize_on_grown_stack"
+        )]
         inner: Box<DataType>,
     },
 
     /// An element or value type declared NOT NULL, as in Snowflake's `ARRAY ( INT NOT NULL )`.
     NotNull {
+        #[serde(
+            serialize_with = "crate::expressions::tree::main::_serialize_on_grown_stack::serialize_on_grown_stack"
+        )]
         inner: Box<DataType>,
     },
 
@@ -332,6 +365,55 @@ pub struct HanaDataType {
 }
 
 impl DataType {
+    /// The longest chain of types nested inside this one: 0 for `INT`, 2 for `INT[][]`.
+    pub(crate) fn nesting_depth(&self) -> usize {
+        let mut deepest = 0;
+        let mut pending: Vec<(&DataType, usize)> = vec![(self, 0)];
+        while let Some((data_type, depth)) = pending.pop() {
+            deepest = deepest.max(depth);
+            let next = depth + 1;
+            match data_type {
+                DataType::Array { element_type, .. }
+                | DataType::List { element_type }
+                | DataType::Vector {
+                    element_type: Some(element_type),
+                    ..
+                }
+                | DataType::Nullable {
+                    inner: element_type,
+                }
+                | DataType::NotNull {
+                    inner: element_type,
+                } => pending.push((element_type, next)),
+                DataType::Map {
+                    key_type,
+                    value_type,
+                } => pending.extend([(key_type.as_ref(), next), (value_type.as_ref(), next)]),
+                DataType::Struct { fields, .. } => {
+                    pending.extend(fields.iter().map(|field| (&field.data_type, next)));
+                }
+                DataType::Object { fields, .. } => {
+                    pending.extend(fields.iter().map(|(_, field, _)| (field, next)));
+                }
+                DataType::Union { fields } => {
+                    pending.extend(fields.iter().map(|(_, field)| (field, next)));
+                }
+                DataType::Vertica { vertica_type } => match vertica_type.as_ref() {
+                    VerticaDataType::Array { element_type, .. }
+                    | VerticaDataType::Set { element_type, .. } => {
+                        pending.push((element_type, next));
+                    }
+                    VerticaDataType::Row { fields } => {
+                        pending.extend(fields.iter().map(|field| (&field.data_type, next)));
+                    }
+                    _ => {}
+                },
+                _ => {}
+            }
+        }
+        deepest
+    }
+
     /// Whether this type is [`DataType::Unknown`] or has an unknown part, as `ARRAY<UNKNOWN>`.
     pub fn contains_unknown(&self) -> bool {
         match self {

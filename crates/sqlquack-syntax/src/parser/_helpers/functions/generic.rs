@@ -1322,6 +1322,7 @@ impl Parser {
             if self.match_keywords(&[TokenType::Partition, TokenType::By])
                 || self.match_keywords(&[TokenType::Distribute, TokenType::By])
             {
+                self.skip_semantic_view_excluding();
                 self.parse_expression_list()?
             } else {
                 Vec::new()
@@ -1766,7 +1767,7 @@ impl Parser {
         if let Some(qualifier) = self.try_parse_snowflake_interval_qualifier()? {
             return Ok(Some(qualifier));
         }
-        if self.is_function_start() {
+        if !self.applies_snowflake_context_rules() && self.is_function_start() {
             let start = self.parse_primary()?;
             if self.check_keyword_text("TO") {
                 let saved = self.current;

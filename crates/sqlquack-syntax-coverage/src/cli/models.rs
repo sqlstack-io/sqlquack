@@ -4,6 +4,7 @@ use std::path::PathBuf;
 
 use clap::{Args, Parser, Subcommand};
 
+use crate::depth::constants::ALLOWLIST_FILE;
 use crate::formats::constants::COVERAGE_ROOT;
 use crate::formats::models::LocalParser;
 
@@ -107,6 +108,24 @@ pub enum Command {
         /// The dialect parser that gives the verdicts.
         #[arg(long, value_enum)]
         parser: LocalParser,
+        /// Parse each text on a thread with this many bytes of stack.
+        #[arg(long)]
+        thread_stack: Option<usize>,
+    },
+    /// Deep nesting in every native parser; fails on an unlisted crash or hang, or a stale entry.
+    DepthProbe {
+        /// The Cargo profile this binary was built with; it selects the allowlist entries.
+        #[arg(long)]
+        profile: String,
+        /// The known failures.
+        #[arg(long, default_value = ALLOWLIST_FILE)]
+        allowlist: PathBuf,
+        /// Parse workers run at once.
+        #[arg(long, default_value_t = 4)]
+        jobs: usize,
+        /// Print JSON on stdout alone.
+        #[arg(long)]
+        json: bool,
     },
     /// What conversion makes of every case Snowflake parsed, by form and family.
     Translation {

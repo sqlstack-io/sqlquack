@@ -7,6 +7,7 @@ use std::sync::Arc;
 use crate::expressions::names::main::identifier_from_token::identifier_from_token;
 use crate::expressions::names::models::BooleanLiteral;
 use crate::expressions::names::models::Column;
+use crate::expressions::names::models::DefaultKeyword;
 use crate::expressions::names::models::Identifier;
 use crate::expressions::names::models::Literal;
 use crate::expressions::operators::models::Alias;
@@ -995,9 +996,13 @@ impl Parser {
 
         loop {
             let expr = if self.match_token(TokenType::Default) {
-                Expression::Var(Box::new(crate::expressions::statements::models::Var {
-                    this: "DEFAULT".to_string(),
-                }))
+                if self.is_snowflake() {
+                    Expression::DefaultKeyword(DefaultKeyword)
+                } else {
+                    Expression::Var(Box::new(crate::expressions::statements::models::Var {
+                        this: "DEFAULT".to_string(),
+                    }))
+                }
             } else {
                 self.parse_expression()?
             };
@@ -1033,7 +1038,7 @@ impl Parser {
             if !self.match_token(TokenType::Comma) {
                 break;
             }
-            if self.check(TokenType::RParen) {
+            if self.check(TokenType::RParen) && !self.is_snowflake() {
                 break;
             }
         }
@@ -1046,6 +1051,9 @@ impl Parser {
         let mut identifiers: Vec<Identifier> = Vec::new();
 
         loop {
+            if self.is_snowflake_reserved_keyword() {
+                return Err(self.parse_error("Expected an identifier"));
+            }
             let start = self.peek().span;
             let quoted = self.check(TokenType::QuotedIdentifier);
             let name = self.expect_identifier_or_safe_keyword()?;

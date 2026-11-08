@@ -4,6 +4,7 @@
 
 pub mod check;
 pub mod cli;
+pub mod depth;
 pub mod formats;
 pub mod report;
 pub mod results;

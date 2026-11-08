@@ -421,6 +421,8 @@ pub(crate) struct ParserConfig {
     pub record_call_spans: bool,
     /// SQLQuack: record each expression and statement node's source range (for locations).
     pub record_node_spans: bool,
+    /// Whether a Snowflake CREATE SEMANTIC VIEW is being checked, where a window may PARTITION BY EXCLUDING.
+    pub(crate) in_semantic_view: bool,
 }
 
 #[derive(Debug)]
