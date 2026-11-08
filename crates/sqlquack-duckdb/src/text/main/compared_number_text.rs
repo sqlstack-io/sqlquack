@@ -1,8 +1,8 @@
 //! `compared_number_text`: text compared with a NUMBER, read as a NUMBER at that scale.
 
 use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_snowflake::typing::constants::MAX_PRECISION;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::constants::MAX_PRECISION;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::blocks::constants::{CONVERSION_WHITESPACE, INLINE_ARGUMENT_LIMIT};
 use crate::blocks::main::text_to_number::text_to_number;

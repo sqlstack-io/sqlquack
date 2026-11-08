@@ -103,7 +103,7 @@ pub fn fixture_tables(sources: &str) -> String {
                 .filter_map(|column| {
                     let held = match column_type(column.data_type, &log) {
                         Ok(held) => held,
-                        Err(_) if column.data_type == sqlquack_snowflake::typing::models::SnowflakeType::SemiStructured => {
+                        Err(_) if column.data_type == sqlquack_snowflake_types::typing::models::SnowflakeType::SemiStructured => {
                             SEMI_STRUCTURED_HOLDING_TYPE.to_owned()
                         }
                         Err(_) => return None,

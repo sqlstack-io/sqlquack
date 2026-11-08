@@ -28,7 +28,7 @@ use sqlquack_duckdb::text::main::code_point_text::code_point_text;
 use sqlquack_duckdb::text::main::hex_decoded_text::hex_decoded_text;
 use sqlquack_duckdb::text::main::hex_text::hex_text;
 use sqlquack_duckdb::text::main::title_case::title_case;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::expressions::text_functions::integer_operand;

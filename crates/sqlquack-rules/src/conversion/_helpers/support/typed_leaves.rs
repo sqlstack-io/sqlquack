@@ -10,7 +10,7 @@ use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Emitted};
 
 use sqlquack_semantics::types::models::ColumnSpec;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 /// A converted query's SQL and result columns, or its refusal.
 pub(crate) type ConvertedQuery = Result<(String, Vec<ColumnSpec>), Refusal>;

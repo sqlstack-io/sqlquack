@@ -8,7 +8,7 @@ use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::semi_structured::main::json_filter::json_filter;
 use sqlquack_duckdb::semi_structured::main::json_reduce::json_reduce;
 use sqlquack_duckdb::semi_structured::main::json_transform::json_transform;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::objects::{as_json, semi_structured, variant};
 use crate::conversion::_helpers::expressions::scalar::{call_name, convert_expression};

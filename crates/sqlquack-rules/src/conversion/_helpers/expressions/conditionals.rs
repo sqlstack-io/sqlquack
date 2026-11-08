@@ -7,9 +7,9 @@ use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_semantics::types::main::utc_kept::utc_kept;
-use sqlquack_snowflake::typing::main::text_reading::text_reading;
-use sqlquack_snowflake::typing::main::unify::unify;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::main::text_reading::text_reading;
+use sqlquack_snowflake_types::typing::main::unify::unify;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::casts::cast_to;
 use crate::conversion::_helpers::expressions::operators::{boolean_operand, comparable};

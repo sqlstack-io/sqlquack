@@ -13,12 +13,14 @@ use sqlquack_duckdb::blocks::main::exact_decimal_divide::exact_decimal_divide;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_duckdb::floats::constants::FLOAT_SUM_ORDER;
 use sqlquack_duckdb::floats::main::exact_float_sum::exact_float_sum;
-use sqlquack_snowflake::typing::constants::{COUNT_PRECISION, MAX_PRECISION, SUM_EXTRA_DIGITS};
-use sqlquack_snowflake::typing::main::average::average;
-use sqlquack_snowflake::typing::main::count::count;
-use sqlquack_snowflake::typing::main::framed_average::framed_average;
-use sqlquack_snowflake::typing::main::sum::sum;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::constants::{
+    COUNT_PRECISION, MAX_PRECISION, SUM_EXTRA_DIGITS,
+};
+use sqlquack_snowflake_types::typing::main::average::average;
+use sqlquack_snowflake_types::typing::main::count::count;
+use sqlquack_snowflake_types::typing::main::framed_average::framed_average;
+use sqlquack_snowflake_types::typing::main::sum::sum;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::arrays::array_function;
 use crate::conversion::_helpers::expressions::casts::zoned_text;

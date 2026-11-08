@@ -33,10 +33,10 @@ use sqlquack_duckdb::times::models::TimeFormat;
 use sqlquack_duckdb::variants::main::json_kind_cast::json_kind_cast;
 use sqlquack_duckdb::zones::main::text_to_utc_zoned::text_to_utc_zoned;
 use sqlquack_semantics::types::main::zoned_in_utc::zoned_in_utc;
-use sqlquack_snowflake::typing::constants::CAST_TARGET;
-use sqlquack_snowflake::typing::constants::STRUCTURED_UNSUPPORTED;
-use sqlquack_snowflake::typing::main::cast_target::cast_target;
-use sqlquack_snowflake::typing::models::{CastTarget, SnowflakeType};
+use sqlquack_snowflake_types::typing::constants::CAST_TARGET;
+use sqlquack_snowflake_types::typing::constants::STRUCTURED_UNSUPPORTED;
+use sqlquack_snowflake_types::typing::main::cast_target::cast_target;
+use sqlquack_snowflake_types::typing::models::{CastTarget, SnowflakeType};
 
 use crate::conversion::_helpers::expressions::objects::as_json;
 use crate::conversion::_helpers::expressions::operators::is_iso_date;

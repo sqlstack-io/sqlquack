@@ -4,7 +4,7 @@ use sha2::{Digest, Sha256};
 use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_rules::conversion::models::UserOverride;
 use sqlquack_semantics::types::models::ColumnSpec;
-use sqlquack_snowflake::typing::main::cast_target::cast_target;
+use sqlquack_snowflake_types::typing::main::cast_target::cast_target;
 
 use crate::analysis::constants::VARIANT_HOLDING_TYPE;
 use crate::analysis::constants::{
@@ -19,7 +19,7 @@ use sqlquack_evidence::replay::main::bind_macro::bind_macro;
 use sqlquack_evidence::replay::main::single_expression::single_expression;
 use sqlquack_rules::conversion::main::override_macro::override_macro;
 use sqlquack_rules::conversion::main::override_macro_name::override_macro_name;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 /// The function the override named `name` replaces and the override, once DuckDB binds a call.
 pub(crate) fn load_override(name: &str, text: &str) -> Result<(String, UserOverride), String> {

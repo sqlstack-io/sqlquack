@@ -26,7 +26,7 @@ use sqlquack_duckdb::semi_structured::main::json_zoned_wall::json_zoned_wall;
 use sqlquack_duckdb::semi_structured::models::PathStep;
 use sqlquack_duckdb::variants::main::json_kind_cast::json_kind_cast;
 use sqlquack_duckdb::variants::main::json_type_name::json_type_name;
-use sqlquack_snowflake::typing::models::{CastTarget, SnowflakeType};
+use sqlquack_snowflake_types::typing::models::{CastTarget, SnowflakeType};
 
 use crate::conversion::_helpers::expressions::held::read_json;
 use crate::conversion::_helpers::expressions::scalar::{convert_expression, convert_held};

@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 /// One column of a relation: its Snowflake name, as resolved, and type.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]

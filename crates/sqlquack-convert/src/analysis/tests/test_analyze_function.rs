@@ -5,7 +5,7 @@ use sqlquack_rules::conversion::models::ConversionOptions;
 use sqlquack_semantics::types::models::{
     ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits, Schema,
 };
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::analysis::main::analyze_function::analyze_function;
 use crate::analysis::tests::test_types::AnalyzeFunctionTestCase;

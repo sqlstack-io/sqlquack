@@ -1,4 +1,4 @@
-"""NUMBER sample values and the arithmetic result types crates/sqlquack-snowflake documents."""
+"""NUMBER sample values and the arithmetic result types sqlquack-snowflake-types documents."""
 
 from __future__ import annotations
 

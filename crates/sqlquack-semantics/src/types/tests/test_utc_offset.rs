@@ -1,4 +1,4 @@
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::types::main::utc_kept::utc_kept;
 use crate::types::main::zoned_in_utc::zoned_in_utc;

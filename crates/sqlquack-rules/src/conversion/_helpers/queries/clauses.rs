@@ -10,7 +10,7 @@ use sqlquack_duckdb::blocks::constants::RAISE_MARKER;
 use sqlquack_duckdb::blocks::main::explicit_null_order::explicit_null_order;
 use sqlquack_semantics::dialects::constants::SNOWFLAKE_TO_DUCKDB;
 use sqlquack_semantics::scopes::main::resolve_name::resolve_name;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::operators::boolean_operand;
 use crate::conversion::_helpers::expressions::scalar::convert_expression;

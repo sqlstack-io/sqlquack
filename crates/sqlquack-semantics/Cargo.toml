@@ -16,7 +16,7 @@ serde.workspace = true
 serde_json.workspace = true
 sqlquack-syntax.workspace = true
 sqlquack-core.workspace = true
-sqlquack-snowflake.workspace = true
+sqlquack-snowflake-types.workspace = true
 stacker.workspace = true
 
 [dev-dependencies]

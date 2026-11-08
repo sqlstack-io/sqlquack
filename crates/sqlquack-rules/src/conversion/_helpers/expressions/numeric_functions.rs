@@ -9,8 +9,8 @@ use sqlquack_duckdb::floats::main::exponential::exponential;
 use sqlquack_duckdb::floats::main::natural_logarithm::natural_logarithm;
 use sqlquack_duckdb::floats::main::power_of_ten::power_of_ten;
 use sqlquack_duckdb::floats::main::square_root::square_root;
-use sqlquack_snowflake::typing::constants::MAX_PRECISION;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::constants::MAX_PRECISION;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::casts::number_literal_text;
 use crate::conversion::_helpers::expressions::scalar::convert_expression;

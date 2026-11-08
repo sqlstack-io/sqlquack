@@ -6,7 +6,7 @@ use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::hashing::main::hash_value::hash_value;
 use sqlquack_duckdb::semi_structured::main::json_hash_key::json_hash_key;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::support::divergence::diverge;

@@ -1,4 +1,4 @@
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::lineage::main::stored_columns::stored_columns;
 use crate::lineage::tests::test_types::StoredColumnsTestCase;

@@ -227,7 +227,7 @@ version = "0.2.0"
 dependencies = [
  "serde_json",
  "sqlquack-core",
- "sqlquack-snowflake",
+ "sqlquack-snowflake-types",
 ]
 
 [[package]]
@@ -248,7 +248,7 @@ dependencies = [
  "sqlquack-duckdb",
  "sqlquack-policy",
  "sqlquack-semantics",
- "sqlquack-snowflake",
+ "sqlquack-snowflake-types",
  "sqlquack-syntax",
 ]
 
@@ -261,13 +261,13 @@ dependencies = [
  "serde",
  "serde_json",
  "sqlquack-core",
- "sqlquack-snowflake",
+ "sqlquack-snowflake-types",
  "sqlquack-syntax",
  "stacker",
 ]
 
 [[package]]
-name = "sqlquack-snowflake"
+name = "sqlquack-snowflake-types"
 version = "0.2.0"
 dependencies = [
  "serde",
@@ -306,7 +306,7 @@ dependencies = [
  "sqlquack-policy",
  "sqlquack-rules",
  "sqlquack-semantics",
- "sqlquack-snowflake",
+ "sqlquack-snowflake-types",
  "sqlquack-syntax",
  "wasm-bindgen",
 ]

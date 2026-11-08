@@ -3,21 +3,21 @@
 use std::rc::Rc;
 
 use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_snowflake::typing::constants::{
+use sqlquack_snowflake_types::typing::constants::{
     DATEDIFF_PRECISIONS, TIME_DIFF_MICROSECONDS_TYPE, TIME_DIFF_TYPE, UNIT_ALIASES,
 };
-use sqlquack_snowflake::typing::main::average::average;
-use sqlquack_snowflake::typing::main::cast_target::cast_target;
-use sqlquack_snowflake::typing::main::count::count;
-use sqlquack_snowflake::typing::main::number_literal::number_literal;
-use sqlquack_snowflake::typing::main::numeric_add_subtract::numeric_add_subtract;
-use sqlquack_snowflake::typing::main::numeric_divide::numeric_divide;
-use sqlquack_snowflake::typing::main::numeric_modulo::numeric_modulo;
-use sqlquack_snowflake::typing::main::numeric_multiply::numeric_multiply;
-use sqlquack_snowflake::typing::main::ranking::ranking;
-use sqlquack_snowflake::typing::main::sum::sum;
-use sqlquack_snowflake::typing::main::unify::unify;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::main::average::average;
+use sqlquack_snowflake_types::typing::main::cast_target::cast_target;
+use sqlquack_snowflake_types::typing::main::count::count;
+use sqlquack_snowflake_types::typing::main::number_literal::number_literal;
+use sqlquack_snowflake_types::typing::main::numeric_add_subtract::numeric_add_subtract;
+use sqlquack_snowflake_types::typing::main::numeric_divide::numeric_divide;
+use sqlquack_snowflake_types::typing::main::numeric_modulo::numeric_modulo;
+use sqlquack_snowflake_types::typing::main::numeric_multiply::numeric_multiply;
+use sqlquack_snowflake_types::typing::main::ranking::ranking;
+use sqlquack_snowflake_types::typing::main::sum::sum;
+use sqlquack_snowflake_types::typing::main::unify::unify;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::types::models::IntervalUnit;

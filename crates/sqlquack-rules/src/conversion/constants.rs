@@ -1,6 +1,6 @@
 //! The conversion rules, each with the constructs it converts and its type conditions.
 
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::models::{CallShape, SpellingPair, SpellingRule};
 

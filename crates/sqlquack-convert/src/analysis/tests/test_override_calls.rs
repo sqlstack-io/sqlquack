@@ -2,7 +2,7 @@ use sqlquack_core::parsing::main::parse_source::parse_source;
 use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_core::provenance::models::Provenance;
 use sqlquack_rules::conversion::models::{ConversionOptions, Converted, UserOverride};
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::analysis::_helpers::override_calls::overrides_applied;
 use crate::analysis::tests::test_types::OverrideCallsTestCase;

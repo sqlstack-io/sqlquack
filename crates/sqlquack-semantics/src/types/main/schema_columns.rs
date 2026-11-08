@@ -1,6 +1,6 @@
 //! `schema_columns`: a schema relation's columns as a statement reads them, marks applied.
 
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::types::models::{ColumnSpec, TypedLeaves};
 

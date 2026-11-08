@@ -13,7 +13,7 @@ use sqlquack_duckdb::text::constants::{
 };
 use sqlquack_duckdb::text::main::folded_text::folded_text;
 use sqlquack_duckdb::text::main::guarded_pattern::guarded_pattern;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::result_types::result_type;
 use crate::conversion::_helpers::expressions::scalar::{call_name, convert_expression};

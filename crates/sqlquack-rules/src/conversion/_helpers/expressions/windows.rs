@@ -13,9 +13,9 @@ use sqlquack_duckdb::blocks::main::window_frame::window_frame;
 use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::semi_structured::main::json_output::json_output;
 use sqlquack_semantics::types::main::utc_kept::utc_kept;
-use sqlquack_snowflake::typing::main::ranking::ranking;
-use sqlquack_snowflake::typing::main::unify::unify;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::main::ranking::ranking;
+use sqlquack_snowflake_types::typing::main::unify::unify;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::calls::convert_aggregate;
 use crate::conversion::_helpers::expressions::intervals::interval_literal;

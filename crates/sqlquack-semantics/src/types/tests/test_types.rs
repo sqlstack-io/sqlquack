@@ -1,5 +1,5 @@
 use crate::types::models::ColumnSpec;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 pub(crate) struct SchemaColumnsTestCase {
     pub(crate) description: &'static str,

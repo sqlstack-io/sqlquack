@@ -3,7 +3,7 @@
 use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_duckdb::blocks::main::column_type::column_type;
 use sqlquack_semantics::types::models::{FunctionReturns, FunctionSpec};
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::analysis::constants::{SCALAR_ABI, VARIANT_ABI, VARIANT_TEXT_TYPE};
 use crate::analysis::models::PythonSignature;

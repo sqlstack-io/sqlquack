@@ -9,7 +9,7 @@ use sqlquack_duckdb::held::main::variant_integer_leaf::variant_integer_leaf;
 use sqlquack_duckdb::held::main::variant_json::variant_json;
 use sqlquack_duckdb::held::main::variant_json_leaf::variant_json_leaf;
 use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::objects::as_json;
 use crate::conversion::_helpers::support::divergence::diverge;

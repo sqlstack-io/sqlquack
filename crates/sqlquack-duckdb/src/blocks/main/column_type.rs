@@ -1,7 +1,7 @@
 //! `column_type`: the DuckDB column type a Snowflake type is held in.
 
 use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::blocks::_helpers::types_map::duckdb_type;
 

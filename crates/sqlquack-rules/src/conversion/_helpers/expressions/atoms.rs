@@ -9,9 +9,9 @@ use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::string_literal::string_literal;
 use sqlquack_duckdb::semi_structured::constants::VARIANT_CHAIN_TYPE;
-use sqlquack_snowflake::typing::main::literal_digits::literal_digits;
-use sqlquack_snowflake::typing::main::number_literal::number_literal;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::main::literal_digits::literal_digits;
+use sqlquack_snowflake_types::typing::main::number_literal::number_literal;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::casts::cast_to;
 use crate::conversion::_helpers::expressions::scalar::{convert_expression, convert_held};
@@ -33,7 +33,7 @@ use crate::conversion::constants::{
 };
 use sqlquack_semantics::scopes::models::ScopeRelation;
 use sqlquack_semantics::types::models::Holding;
-use sqlquack_snowflake::typing::constants::MAX_PRECISION;
+use sqlquack_snowflake_types::typing::constants::MAX_PRECISION;
 
 /// The integer digits a unary plus gives a NUMBER at least, within 38: + 1 is NUMBER(2,0).
 const PLUS_INTEGER_DIGITS: u8 = 2;

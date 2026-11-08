@@ -1,6 +1,6 @@
 //! `utc_kept`: whether a value chosen from others keeps the UTC offset they all hold.
 
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 /// Whether a TIMESTAMP_TZ `result` picked from `values` holds +00:00: each is one, or NULL.
 pub fn utc_kept(values: &[(SnowflakeType, bool)], result: SnowflakeType) -> bool {

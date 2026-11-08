@@ -20,7 +20,7 @@ use sqlquack_rules::conversion::models::{ConversionBudget, ConversionOptions, Co
 use sqlquack_semantics::types::models::{
     ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits, Schema,
 };
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::analysis::main::check_equivalence_cases::check_equivalence_cases;
 use crate::analysis::main::check_source::check_source;

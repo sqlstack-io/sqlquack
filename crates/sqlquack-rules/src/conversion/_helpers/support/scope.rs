@@ -11,7 +11,7 @@ use sqlquack_semantics::names::main::relation_columns::relation_columns;
 use sqlquack_semantics::scopes::main::resolve_name::resolve_name;
 use sqlquack_semantics::scopes::models::{Resolution, Scope as SemanticScope};
 use sqlquack_semantics::types::models::TypedLeaves;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::support::locations::Locator;
 use crate::conversion::_helpers::support::tree::node_construct;

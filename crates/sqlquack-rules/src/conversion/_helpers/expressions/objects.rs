@@ -13,7 +13,7 @@ use sqlquack_duckdb::variants::main::json_object_construct::json_object_construc
 use sqlquack_duckdb::variants::main::json_object_delete::json_object_delete;
 use sqlquack_duckdb::variants::main::json_object_insert::json_object_insert;
 use sqlquack_duckdb::variants::main::json_typed_text::json_typed_text;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::held::{built, leaves};
 use crate::conversion::_helpers::expressions::scalar::{convert_expression, convert_held};

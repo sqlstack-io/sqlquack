@@ -1,6 +1,6 @@
 //! How the check finds the columns of the relations a statement reads.
 
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::checking::models::FunctionStub;
 

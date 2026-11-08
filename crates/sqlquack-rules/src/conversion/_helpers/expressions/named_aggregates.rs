@@ -16,10 +16,10 @@ use sqlquack_duckdb::checking::constants::SEMI_STRUCTURED_HOLDING_TYPE;
 use sqlquack_duckdb::raises::main::raised::raised;
 use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::variants::main::json_object_agg::json_object_agg;
-use sqlquack_snowflake::typing::constants::COUNT_IF_TYPE;
-use sqlquack_snowflake::typing::constants::MAX_PRECISION;
-use sqlquack_snowflake::typing::main::count::count;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::constants::COUNT_IF_TYPE;
+use sqlquack_snowflake_types::typing::constants::MAX_PRECISION;
+use sqlquack_snowflake_types::typing::main::count::count;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::expressions::statistics::{is_statistic, statistic};

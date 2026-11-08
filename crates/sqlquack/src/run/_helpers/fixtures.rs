@@ -9,7 +9,7 @@ use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_duckdb::checking::main::create_table::create_table;
 use sqlquack_duckdb::checking::main::quoted_relation::quoted_relation;
 use sqlquack_semantics::types::models::Schema;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::run::_helpers::session::{duckdb_error, literal};
 

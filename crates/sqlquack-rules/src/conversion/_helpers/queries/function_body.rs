@@ -8,7 +8,7 @@ use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_duckdb::checking::main::check_printed::check_printed;
 use sqlquack_duckdb::checking::models::{FunctionStub, StubReturns};
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::project_functions::held_type;
 use crate::conversion::_helpers::queries::query::convert_query;

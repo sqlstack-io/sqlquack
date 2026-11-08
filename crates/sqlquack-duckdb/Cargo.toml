@@ -24,7 +24,7 @@ extensions = ["bundled", "duckdb/parquet", "duckdb/json"]
 duckdb = { workspace = true, optional = true }
 serde_json.workspace = true
 sqlquack-core.workspace = true
-sqlquack-snowflake.workspace = true
+sqlquack-snowflake-types.workspace = true
 
 [dev-dependencies]
 duckdb.workspace = true

@@ -9,7 +9,7 @@ use sqlquack_rules::conversion::models::ConversionOptions;
 use sqlquack_semantics::types::models::{
     ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits, Schema,
 };
-use sqlquack_snowflake::typing::main::cast_target::cast_target;
+use sqlquack_snowflake_types::typing::main::cast_target::cast_target;
 
 use crate::analysis::_helpers::python_signature::python_signature;
 use crate::analysis::models::CaseFunctions;

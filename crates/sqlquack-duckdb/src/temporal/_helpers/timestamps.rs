@@ -1,6 +1,6 @@
 //! Integer epoch arithmetic on DuckDB timestamps.
 
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::blocks::constants::{
     DUCKDB_FRACTIONAL_PRECISION, NANOSECOND_DIGITS, NANOSECOND_TIMESTAMP_MICROS, TIMESTAMP_RANGE,

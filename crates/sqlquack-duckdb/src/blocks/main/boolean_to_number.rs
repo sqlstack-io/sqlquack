@@ -1,7 +1,7 @@
 //! `boolean_to_number`: bOOLEAN to NUMBER: true is 1.
 
 use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::blocks::constants::BOOLEAN_NUMBER;
 use crate::blocks::main::cast::cast;

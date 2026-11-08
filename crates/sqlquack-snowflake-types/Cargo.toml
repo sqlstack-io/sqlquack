@@ -1,5 +1,5 @@
 [package]
-name = "sqlquack-snowflake"
+name = "sqlquack-snowflake-types"
 version.workspace = true
 description = "The Snowflake typing layer: exact Snowflake result types for SQLQuack rules."
 edition.workspace = true

@@ -14,7 +14,7 @@ on:
       - crates/sqlquack-duckdb/**
       - crates/sqlquack-rules/**
       - crates/sqlquack-semantics/**
-      - crates/sqlquack-snowflake/**
+      - crates/sqlquack-snowflake-types/**
       - crates/sqlquack-syntax/**
       - .github/workflows/website.yml
   pull_request:
@@ -24,7 +24,7 @@ on:
       - crates/sqlquack-duckdb/**
       - crates/sqlquack-rules/**
       - crates/sqlquack-semantics/**
-      - crates/sqlquack-snowflake/**
+      - crates/sqlquack-snowflake-types/**
       - crates/sqlquack-syntax/**
       - .github/workflows/website.yml
   workflow_dispatch:

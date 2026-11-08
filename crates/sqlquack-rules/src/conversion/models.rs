@@ -12,7 +12,7 @@ use sqlquack_core::parsing::models::SourceLocation;
 use sqlquack_core::provenance::models::Provenance;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_semantics::types::models::ColumnSpec;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 /// A known divergence the policy allows in the current mode.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]

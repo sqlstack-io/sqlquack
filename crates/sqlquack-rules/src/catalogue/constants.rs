@@ -11,7 +11,7 @@ use sqlquack_core::failures::constants::{
     ZONE_FAILURES,
 };
 use sqlquack_core::failures::models::{ErrorKind, FailureMode};
-use sqlquack_snowflake::typing::constants::VARIANT_COMMON_TYPE;
+use sqlquack_snowflake_types::typing::constants::VARIANT_COMMON_TYPE;
 
 /// Constructs DuckDB cannot express. Each entry needs a reason and evidence before it is added.
 pub const NOT_EXPRESSIBLE: &[NotExpressibleDeclaration] = &[];

@@ -7,8 +7,8 @@ use sqlquack_duckdb::blocks::main::exact_decimal_divide::exact_decimal_divide;
 use sqlquack_duckdb::floats::constants::FLOAT_SUM_ORDER;
 use sqlquack_duckdb::floats::main::exact_float_sum::exact_float_sum;
 use sqlquack_policy::policy::constants::NUMERIC_RANGE;
-use sqlquack_snowflake::typing::constants::MAX_PRECISION;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::constants::MAX_PRECISION;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::casts::cast_to;
 use crate::conversion::_helpers::support::divergence::diverge;

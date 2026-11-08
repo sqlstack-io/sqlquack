@@ -1,4 +1,4 @@
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::dialects::constants::SNOWFLAKE_TO_DUCKDB;
 use crate::scopes::main::resolve_name::resolve_name;

@@ -4,8 +4,8 @@ use std::collections::BTreeMap;
 
 use serde::Deserialize;
 use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_snowflake::typing::main::cast_target::cast_target;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::main::cast_target::cast_target;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::types::constants::DECLARABLE_OFFSETS;
 use crate::types::models::{

@@ -10,7 +10,7 @@ use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::semi_structured::main::json_flatten::json_flatten;
 use sqlquack_duckdb::semi_structured::main::json_flatten_recursive::json_flatten_recursive;
 use sqlquack_duckdb::semi_structured::models::FlattenMode;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::held::read_json;
 use crate::conversion::_helpers::expressions::scalar::convert_held;

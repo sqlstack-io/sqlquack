@@ -1,7 +1,7 @@
 //! `json_scalar`: a VARIANT cast to NUMBER, FLOAT, BOOLEAN, DATE or TIMESTAMP_NTZ.
 
 use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::blocks::main::cast::cast;
 use crate::blocks::main::text_to_boolean::text_to_boolean;

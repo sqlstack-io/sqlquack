@@ -3,8 +3,8 @@
 use std::rc::Rc;
 
 use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_snowflake::typing::main::cast_target::cast_target;
-use sqlquack_snowflake::typing::models::{CastTarget, SnowflakeType};
+use sqlquack_snowflake_types::typing::main::cast_target::cast_target;
+use sqlquack_snowflake_types::typing::models::{CastTarget, SnowflakeType};
 
 use crate::dialects::main::canonical_type::canonical_type;
 use crate::lineage::constants::{

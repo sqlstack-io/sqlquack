@@ -9,7 +9,7 @@ use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_duckdb::checking::main::check_printed::check_printed;
 use sqlquack_duckdb::held::main::variant_written::variant_written;
 use sqlquack_duckdb::semi_structured::main::json_output::json_output;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 use sqlquack_syntax::Expression;
 
 use crate::conversion::_helpers::queries::function_body::{

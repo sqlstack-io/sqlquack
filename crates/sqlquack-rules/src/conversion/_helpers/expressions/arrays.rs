@@ -17,7 +17,7 @@ use sqlquack_duckdb::arrays::main::json_arrays_overlap::json_arrays_overlap;
 use sqlquack_duckdb::arrays::main::json_to_array::json_to_array;
 use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_duckdb::variants::main::json_array_cat::json_array_cat;
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::objects::{
     free_variant, refused, semi_structured, variant,

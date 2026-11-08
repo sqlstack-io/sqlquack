@@ -12,7 +12,7 @@ use sqlquack_duckdb::temporal::main::submicro_check::submicro_check;
 use sqlquack_duckdb::temporal::main::truncate_timestamp::truncate_timestamp;
 use sqlquack_duckdb::temporal::main::truncate_timestamp_to_date::truncate_timestamp_to_date;
 use sqlquack_duckdb::times::constants::{MICROSECOND_PRECISION, TIME_SUBMICRO};
-use sqlquack_snowflake::typing::models::SnowflakeType;
+use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Literal};

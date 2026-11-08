@@ -31,7 +31,7 @@ a parameter of every entry point; Snowflake is the only one implemented.
 | `sqlquack-syntax-derive` | The derive that generates the tree's child traversal. |
 | `sqlquack-polyglot-check` | Development only: proves `sqlquack-syntax` parses exactly as polyglot does, on every corpus. |
 | `sqlquack-core` | Parsing with complexity guards, construct classification, refusals and provenance. |
-| `sqlquack-snowflake` | The Snowflake typing layer. Polyglot leaves many Snowflake expressions untyped, so exact types (`NUMBER(p, s)`, timestamp kinds, semi-structured values) are computed here. |
+| `sqlquack-snowflake-types` | The Snowflake typing layer. Polyglot leaves many Snowflake expressions untyped, so exact types (`NUMBER(p, s)`, timestamp kinds, semi-structured values) are computed here. |
 | `sqlquack-semantics` | SQL semantics apart from conversion: dialect profiles (Snowflake and DuckDB), relation and column name resolution in query scopes, column types with the marks VARIANT values carry, and lineage (each output's value sources, plus the query's `row_sources`: the columns filters, join keys, groups, CONNECT BY, PIVOT FOR, ORDER BY under a limit and table-function inputs decide rows by, with `rows_resolved` false when one of those could not be traced). It builds without the conversion, DuckDB and evidence crates. |
 | `sqlquack-rules` | The conversion rules, their type conditions, and declared refusals. |
 | `sqlquack-convert` | The pipeline itself, `analyze`: parse, classify, convert each statement or refuse it. It builds without DuckDB's engine, so the bind check in the last step is skipped where it is linked alone; every crate that enables the engine gets the check, and `make engine-free` fails when this crate reaches DuckDB. |
@@ -138,7 +138,7 @@ rule for `:` paths must read the path from the source tokens.
 
 Conversion works on the parsed tree, statement by statement, in three layers:
 
-- **Typing** (`sqlquack-snowflake`): exact Snowflake result types, each function derived from
+- **Typing** (`sqlquack-snowflake-types`): exact Snowflake result types, each function derived from
   recorded results, such as `NUMBER(p,s)` for `+ - * /`, the unification of CASE, COALESCE, IFF,
   NVL and set operation branches, and cast targets.
 - **Building blocks** (`sqlquack-duckdb`): DuckDB fragments with Snowflake semantics, such as exact

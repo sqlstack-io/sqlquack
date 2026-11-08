@@ -9,9 +9,9 @@ use sqlquack_duckdb::blocks::main::cast::cast;
 use sqlquack_duckdb::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_duckdb::held::main::variant_json_branch::variant_json_branch;
 use sqlquack_duckdb::semi_structured::constants::JSON_FIDELITY;
-use sqlquack_snowflake::typing::main::text_reading::text_reading;
-use sqlquack_snowflake::typing::main::unify::unify;
-use sqlquack_snowflake::typing::models::{CastTarget, SnowflakeType};
+use sqlquack_snowflake_types::typing::main::text_reading::text_reading;
+use sqlquack_snowflake_types::typing::main::unify::unify;
+use sqlquack_snowflake_types::typing::models::{CastTarget, SnowflakeType};
 
 use crate::conversion::_helpers::expressions::conditionals::read_text;
 use crate::conversion::_helpers::expressions::semi_structured::{held_cast, variant_cast};
