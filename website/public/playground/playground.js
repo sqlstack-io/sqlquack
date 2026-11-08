@@ -163,12 +163,14 @@ async function run() {
 		for (const diagnostic of diagnostics ?? []) spans.push({ kind, span: diagnostic.span, text: rendered(diagnostic, chars) });
 	};
 
+	// A source left out, as `sqlquack convert` warns about it; the other sources still declare.
+	const warnings = (report.warnings ?? []).map((w) => terminal(`<span class="warn">warning:</span> ${escape(w)}`)).join('');
 	const parse = report.parse;
 	add(parse.diagnostics, 'error');
 	setStage(
 		'parse',
 		parse.status,
-		parse.diagnostics ? parse.diagnostics.map((d) => terminal(rendered(d, chars))).join('') : '',
+		warnings + (parse.diagnostics ? parse.diagnostics.map((d) => terminal(rendered(d, chars))).join('') : ''),
 		parse.statements ? `${parse.statements} statement${parse.statements === 1 ? '' : 's'}` : '',
 	);
 
