@@ -24,7 +24,7 @@ use crate::scan::models::{NumberKind, Token, TokenKind};
 
 /// `this.method(args)`, a chained call; a parenthesized path method keeps its dotted name.
 fn method_call(this: Expression, method: Identifier, args: Vec<Expression>) -> Expression {
-    Expression::MethodCall(Box::new(MethodCall { this, method, args }))
+    Expression::MethodCall(Box::new(MethodCall::new(this, method, args)))
 }
 
 /// A numeric literal: GoogleSQL's numbers carry no type suffix.

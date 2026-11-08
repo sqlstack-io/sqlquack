@@ -1011,6 +1011,7 @@ impl Parser {
                 },
                 if_not_exists,
                 or_replace,
+                temporary: false,
             })));
         }
 
@@ -1093,6 +1094,7 @@ impl Parser {
             definition,
             if_not_exists,
             or_replace,
+            temporary: false,
         })))
     }
 
@@ -1119,6 +1121,7 @@ impl Parser {
             definition: TypeDefinition::Alias { data_type, comment },
             if_not_exists,
             or_replace,
+            temporary: false,
         })))
     }
 
@@ -1181,6 +1184,7 @@ impl Parser {
             },
             if_not_exists,
             or_replace: false,
+            temporary: false,
         })))
     }
 

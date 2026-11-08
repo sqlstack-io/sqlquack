@@ -1489,6 +1489,7 @@ impl Parser {
                     quoted: false,
                     span: SourceSpan::default(),
                     inferred_type: None,
+                    export_state: false,
                 }));
             return Ok(TableRef {
                 sample_call: None,
@@ -1512,6 +1513,7 @@ impl Parser {
                 version: None,
                 span: None,
                 whole_quoted: false,
+                catalog_parts: Vec::new(),
             });
         }
 
@@ -1544,6 +1546,7 @@ impl Parser {
                     version: None,
                     span: None,
                     whole_quoted: false,
+                    catalog_parts: Vec::new(),
                 })
             } else {
                 let table = self.parse_bigquery_table_part()?;
@@ -1572,6 +1575,7 @@ impl Parser {
                         version: None,
                         span: None,
                         whole_quoted: false,
+                        catalog_parts: Vec::new(),
                     })
                 } else {
                     let trailing_comments = self.previous_trailing_comments().to_vec();
@@ -1597,6 +1601,7 @@ impl Parser {
                         version: None,
                         span: None,
                         whole_quoted: false,
+                        catalog_parts: Vec::new(),
                     })
                 }
             }
@@ -1624,6 +1629,7 @@ impl Parser {
                 version: None,
                 span: None,
                 whole_quoted: false,
+                catalog_parts: Vec::new(),
             })
         }
     }

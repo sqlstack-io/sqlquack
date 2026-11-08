@@ -425,6 +425,7 @@ impl Expression {
             Expression::Comment(_) => "comment",
             Expression::SetStatement(_) => "set_statement",
             Expression::UnsetStatement(_) => "unset_statement",
+            Expression::ResetStatement(_) => "reset_statement",
             Expression::CreateSchema(_) => "create_schema",
             Expression::DropSchema(_) => "drop_schema",
             Expression::DropNamespace(_) => "drop_namespace",

@@ -738,6 +738,11 @@ pub enum JoinKind {
     LeftArray,
     Paste,
     Positional,
+    NaturalSemi,
+    NaturalAnti,
+    AsOfFull,
+    AsOfSemi,
+    AsOfAnti,
 }
 
 /// Parenthesized table expression with joins: `(t1 CROSS JOIN t2)`.
@@ -1260,6 +1265,9 @@ pub struct Cte {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// DuckDB `USING KEY` entries as expressions, when any is more than a bare column.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub key_items: Vec<Expression>,
 }
 
 /// Window specification

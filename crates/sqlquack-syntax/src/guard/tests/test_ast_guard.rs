@@ -476,11 +476,11 @@ fn given_a_100_000_step_chain_of_a_node_parsers_build_in_a_loop_when_dropping_on
         ChainStepTestCase {
             description: "method calls",
             step: |input| {
-                Expression::MethodCall(Box::new(MethodCall {
-                    this: input,
-                    method: Identifier::new("f"),
-                    args: vec![Expression::number(1)],
-                }))
+                Expression::MethodCall(Box::new(MethodCall::new(
+                    input,
+                    Identifier::new("f"),
+                    vec![Expression::number(1)],
+                )))
             },
             expected_depth: 100_000,
         },

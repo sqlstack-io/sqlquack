@@ -134,6 +134,7 @@ impl Parser {
                         quoted: false,
                         span: SourceSpan::default(),
                         inferred_type: None,
+                        export_state: false,
                     }))
                 } else if self.match_token(TokenType::Cube) {
                     self.expect_token(TokenType::LParen)?;
@@ -153,6 +154,7 @@ impl Parser {
                         quoted: false,
                         span: SourceSpan::default(),
                         inferred_type: None,
+                        export_state: false,
                     }))
                 } else if self.match_token(TokenType::Rollup) {
                     self.expect_token(TokenType::LParen)?;
@@ -172,6 +174,7 @@ impl Parser {
                         quoted: false,
                         span: SourceSpan::default(),
                         inferred_type: None,
+                        export_state: false,
                     }))
                 } else {
                     self.parse_expression()?
@@ -269,6 +272,7 @@ impl Parser {
                         quoted: false,
                         span: SourceSpan::default(),
                         inferred_type: None,
+                        export_state: false,
                     }))
                 } else if self.match_token(TokenType::Cube) {
                     self.expect_token(TokenType::LParen)?;
@@ -288,6 +292,7 @@ impl Parser {
                         quoted: false,
                         span: SourceSpan::default(),
                         inferred_type: None,
+                        export_state: false,
                     }))
                 } else if self.match_token(TokenType::Rollup) {
                     self.expect_token(TokenType::LParen)?;
@@ -307,6 +312,7 @@ impl Parser {
                         quoted: false,
                         span: SourceSpan::default(),
                         inferred_type: None,
+                        export_state: false,
                     }))
                 } else if self.check(TokenType::LParen) {
                     self.skip();

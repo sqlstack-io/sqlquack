@@ -1571,6 +1571,7 @@ dependencies = [
  "sha2",
  "sqlquack-syntax",
  "sqlquack-syntax-bigquery",
+ "sqlquack-syntax-duckdb",
  "sqlquack-syntax-postgres",
  "tempfile",
  "toml",
@@ -1583,6 +1584,15 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.119",
+]
+
+[[package]]
+name = "sqlquack-syntax-duckdb"
+version = "0.2.0"
+dependencies = [
+ "serde_json",
+ "sqlquack-syntax",
+ "stacker",
 ]
 
 [[package]]

@@ -498,6 +498,9 @@ pub struct CreateFunction {
     /// Snowflake properties such as IMPORTS, SECRETS or SERVICE, each kept as its source text
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub snowflake_properties: Vec<String>,
+    /// DuckDB: a macro's further overloads, each a `CreateFunction` with only its parameters, body and `is_table_function`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub overloads: Vec<Expression>,
 }
 
 /// A SET option in CREATE FUNCTION (PostgreSQL)
@@ -663,6 +666,7 @@ impl CreateFunction {
             packages: None,
             parameter_style: None,
             snowflake_properties: Vec::new(),
+            overloads: Vec::new(),
         }
     }
 }
@@ -1067,6 +1071,9 @@ pub struct CreateType {
     /// OR REPLACE clause
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub or_replace: bool,
+    /// TEMP or TEMPORARY
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub temporary: bool,
 }
 
 /// Type definition
@@ -1123,6 +1130,7 @@ impl CreateType {
             definition: TypeDefinition::Enum(values),
             if_not_exists: false,
             or_replace: false,
+            temporary: false,
         }
     }
 
@@ -1132,6 +1140,7 @@ impl CreateType {
             definition: TypeDefinition::Composite(attributes),
             if_not_exists: false,
             or_replace: false,
+            temporary: false,
         }
     }
 }

@@ -40,6 +40,7 @@ pub(crate) fn star(table: Option<Identifier>) -> Expression {
         rename: None,
         trailing_comments: Vec::new(),
         span: None,
+        qualified: None,
     })
 }
 
@@ -491,6 +492,7 @@ pub(crate) fn cte(
         alias_first: true,
         comments: Vec::new(),
         span: SourceSpan(None),
+        key_items: Vec::new(),
     }
 }
 

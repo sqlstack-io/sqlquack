@@ -64,12 +64,18 @@ fn bigquery_verdict(sql: &str) -> LocalVerdict {
     native_verdict(sqlquack_syntax_bigquery::parse_strict(sql))
 }
 
+/// SQLQuack's strict DuckDB verdict.
+fn duckdb_verdict(sql: &str) -> LocalVerdict {
+    native_verdict(sqlquack_syntax_duckdb::parse_strict(sql))
+}
+
 /// The verdict of each dialect's local parser, or none when the dialect has no parser yet.
 pub(crate) fn local_verdict(parser: LocalParser) -> Option<fn(&str) -> LocalVerdict> {
     match parser {
         LocalParser::Snowflake => Some(snowflake_verdict),
         LocalParser::Postgres => Some(postgres_verdict),
         LocalParser::BigQuery => Some(bigquery_verdict),
+        LocalParser::DuckDb => Some(duckdb_verdict),
         LocalParser::None => None,
     }
 }

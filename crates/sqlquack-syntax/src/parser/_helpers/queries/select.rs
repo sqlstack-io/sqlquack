@@ -344,6 +344,7 @@ impl Parser {
                 rename: None,
                 trailing_comments: Vec::new(),
                 span: None,
+                qualified: None,
             })]
         };
 
@@ -699,6 +700,7 @@ impl Parser {
                     version: None,
                     span: None,
                     whole_quoted: false,
+                    catalog_parts: Vec::new(),
                 })
             }
         })
@@ -787,6 +789,7 @@ impl Parser {
                     version: None,
                     span: None,
                     whole_quoted: false,
+                    catalog_parts: Vec::new(),
                 }));
             }
 
@@ -824,6 +827,7 @@ impl Parser {
                         version: None,
                         span: None,
                         whole_quoted: false,
+                        catalog_parts: Vec::new(),
                     })
                 } else {
                     if self.match_token(TokenType::LParen) {
@@ -848,6 +852,7 @@ impl Parser {
                             quoted: false,
                             span: SourceSpan::default(),
                             inferred_type: None,
+                            export_state: false,
                         }))
                     } else {
                         let table_name = third_ident;
@@ -875,6 +880,7 @@ impl Parser {
                             version: None,
                             span: None,
                             whole_quoted: false,
+                            catalog_parts: Vec::new(),
                         })
                     }
                 }
@@ -901,6 +907,7 @@ impl Parser {
                         quoted: false,
                         span: SourceSpan::default(),
                         inferred_type: None,
+                        export_state: false,
                     }))
                 } else {
                     let table_name = second_ident;
@@ -928,6 +935,7 @@ impl Parser {
                         version: None,
                         span: None,
                         whole_quoted: false,
+                        catalog_parts: Vec::new(),
                     })
                 }
             }
@@ -1042,6 +1050,7 @@ impl Parser {
                             quoted: false,
                             span: SourceSpan::default(),
                             inferred_type: None,
+                            export_state: false,
                         }))
                     } else {
                         let args = if self.check(TokenType::RParen) {
@@ -1094,6 +1103,7 @@ impl Parser {
                                 quoted: false,
                                 span: SourceSpan::default(),
                                 inferred_type: None,
+                                export_state: false,
                             };
                             let func_expr = Expression::Function(Box::new(func));
 
@@ -1127,6 +1137,7 @@ impl Parser {
                                             version: None,
                                             span: None,
                                             whole_quoted: false,
+                                            catalog_parts: Vec::new(),
                                         })
                                     } else {
                                         let tc = self.previous_trailing_comments().to_vec();
@@ -1152,6 +1163,7 @@ impl Parser {
                                             version: None,
                                             span: None,
                                             whole_quoted: false,
+                                            catalog_parts: Vec::new(),
                                         })
                                     }
                                 } else {
@@ -1178,6 +1190,7 @@ impl Parser {
                                         version: None,
                                         span: None,
                                         whole_quoted: false,
+                                        catalog_parts: Vec::new(),
                                     })
                                 }
                             } else {
@@ -1283,6 +1296,7 @@ impl Parser {
                         quoted: false,
                         span: SourceSpan::default(),
                         inferred_type: None,
+                        export_state: false,
                     }))
                 };
 
@@ -1742,6 +1756,7 @@ impl Parser {
                 version: None,
                 span: None,
                 whole_quoted: false,
+                catalog_parts: Vec::new(),
             })
         })
     }

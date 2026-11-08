@@ -1006,6 +1006,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             })));
         }
 
@@ -1036,6 +1037,7 @@ impl Parser {
                 version: None,
                 span: None,
                 whole_quoted: false,
+                catalog_parts: Vec::new(),
             }
         } else {
             TableRef::new(table_name.name)
@@ -1256,6 +1258,7 @@ impl Parser {
                     version: None,
                     span: None,
                     whole_quoted: false,
+                    catalog_parts: Vec::new(),
                 }
             } else {
                 TableRef {
@@ -1280,6 +1283,7 @@ impl Parser {
                     version: None,
                     span: None,
                     whole_quoted: false,
+                    catalog_parts: Vec::new(),
                 }
             }
         } else {
@@ -1317,6 +1321,7 @@ impl Parser {
                         version: None,
                         span: None,
                         whole_quoted: false,
+                        catalog_parts: Vec::new(),
                     }
                 } else {
                     TableRef {
@@ -1341,6 +1346,7 @@ impl Parser {
                         version: None,
                         span: None,
                         whole_quoted: false,
+                        catalog_parts: Vec::new(),
                     }
                 }
             } else {

@@ -471,6 +471,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }));
 
             if self.match_token(TokenType::Within) {
@@ -501,6 +502,7 @@ impl Parser {
                         rename: None,
                         trailing_comments: Vec::new(),
                         span: None,
+                        qualified: None,
                     })
                 });
                 return Ok(Some(Expression::ApproxDistinct(Box::new(
@@ -620,6 +622,7 @@ impl Parser {
                             rename: None,
                             trailing_comments: Vec::new(),
                             span: None,
+                            qualified: None,
                         }),
                         right: pattern,
                         escape: None,
@@ -711,6 +714,7 @@ impl Parser {
             quoted: false,
             span: SourceSpan::default(),
             inferred_type: None,
+            export_state: false,
         })))
     }
 
@@ -994,6 +998,7 @@ impl Parser {
             quoted: false,
             span: SourceSpan::default(),
             inferred_type: None,
+            export_state: false,
         }));
         self.maybe_parse_over(func_expr)
     }
@@ -1109,6 +1114,7 @@ impl Parser {
                     rename: None,
                     trailing_comments: Vec::new(),
                     span: None,
+                    qualified: None,
                 })
             } else if let Some(lambda) = self.parse_function_lambda()? {
                 lambda
@@ -1348,6 +1354,7 @@ impl Parser {
             quoted: false,
             span: SourceSpan::default(),
             inferred_type: None,
+            export_state: false,
         }));
         self.maybe_parse_over(func)
     }
@@ -1375,6 +1382,7 @@ impl Parser {
             quoted: false,
             span: SourceSpan::default(),
             inferred_type: None,
+            export_state: false,
         }));
         self.maybe_parse_over(func)
     }
@@ -1424,6 +1432,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }));
             self.maybe_parse_subscript(func)
         } else {
@@ -1442,6 +1451,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }));
             self.maybe_parse_subscript(func)
         }
@@ -1864,6 +1874,7 @@ impl Parser {
             quoted: false,
             span: SourceSpan::default(),
             inferred_type: None,
+            export_state: false,
         })))
     }
 

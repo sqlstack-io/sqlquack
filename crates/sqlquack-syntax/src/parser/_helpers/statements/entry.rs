@@ -257,7 +257,7 @@ impl Parser {
         method: Identifier,
         args: Vec<Expression>,
     ) -> Expression {
-        Expression::MethodCall(Box::new(MethodCall { this, method, args }))
+        Expression::MethodCall(Box::new(MethodCall::new(this, method, args)))
     }
 
     /// Parses every remaining statement, split on semicolons, one `Expression` each.

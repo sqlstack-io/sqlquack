@@ -147,8 +147,7 @@ impl Parser {
                 order_by: Vec::new(),
                 limit: None,
                 ignore_nulls: None,
-                inferred_type: None,
-                span: SourceSpan::default(),
+                ..AggregateFunction::default()
             }));
 
             let within = Expression::WithinGroup(Box::new(WithinGroup {
@@ -168,8 +167,7 @@ impl Parser {
                     order_by: Vec::new(),
                     limit: None,
                     ignore_nulls: None,
-                    inferred_type: None,
-                    span: SourceSpan::default(),
+                    ..AggregateFunction::default()
                 })));
             }
 
@@ -199,8 +197,7 @@ impl Parser {
                 order_by,
                 limit: agg_limit,
                 ignore_nulls,
-                inferred_type: None,
-                span: SourceSpan::default(),
+                ..AggregateFunction::default()
             })))
         } else {
             if !distinct
@@ -1111,8 +1108,7 @@ impl Parser {
             use_bracket_syntax: true,
             no_parens: false,
             quoted: false,
-            span: SourceSpan::default(),
-            inferred_type: None,
+            ..Function::default()
         }));
         Ok(expr)
     }

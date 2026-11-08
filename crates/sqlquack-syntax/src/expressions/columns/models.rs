@@ -814,6 +814,17 @@ pub enum AlterTableAction {
     Raw {
         sql: String,
     },
+    /// DuckDB `DROP [COLUMN] [IF EXISTS] s.f`: a struct field, by its names from the column.
+    DropField {
+        names: Vec<Identifier>,
+        if_exists: bool,
+        cascade: bool,
+    },
+    /// DuckDB `RENAME [COLUMN] s.f TO name`: a struct field, by its names from the column.
+    RenameField {
+        names: Vec<Identifier>,
+        new_name: Identifier,
+    },
 }
 
 /// Actions for ALTER COLUMN

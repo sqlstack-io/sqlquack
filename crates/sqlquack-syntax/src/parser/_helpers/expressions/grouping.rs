@@ -235,6 +235,7 @@ impl Parser {
                     quoted: false,
                     span: SourceSpan::default(),
                     inferred_type: None,
+                    export_state: false,
                 }))));
             }
             let args = self.parse_expression_list()?;
@@ -271,6 +272,7 @@ impl Parser {
                     quoted: false,
                     span: SourceSpan::default(),
                     inferred_type: None,
+                    export_state: false,
                 }))));
             } else {
                 return Err(self.parse_error("IF function requires 2 or 3 arguments"));
@@ -887,6 +889,7 @@ impl Parser {
                     rename: None,
                     trailing_comments: Vec::new(),
                     span: None,
+                    qualified: None,
                 }));
             } else if self.match_token(TokenType::LParen) {
                 let mut columns: Vec<Expression> = Vec::new();
@@ -1004,6 +1007,7 @@ impl Parser {
                     rename: None,
                     trailing_comments: Vec::new(),
                     span: None,
+                    qualified: None,
                 }));
             } else if self.merge_action_ends() {
                 return Err(self.parse_error("Expected SET in MERGE UPDATE"));
@@ -1017,6 +1021,7 @@ impl Parser {
                         rename: None,
                         trailing_comments: Vec::new(),
                         span: None,
+                        qualified: None,
                     }));
                 } else {
                     let mut assignments: Vec<Expression> = Vec::new();

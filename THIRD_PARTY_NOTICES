@@ -16,7 +16,9 @@ fixtures at v30.14.0 (tests/fixtures/identity.sql, tests/test_parser.py and test
 as extracted by polyglot's fixture tooling. polyglot, below, is itself inspired by sqlglot and
 ships sqlglot's licence. corpora/polyglot-check/sqlglot_postgres.json holds the SQL of
 tests/dialects/test_postgres.py at the same version, and corpora/polyglot-check/sqlglot_sqlite.json
-that of tests/dialects/test_sqlite.py.
+that of tests/dialects/test_sqlite.py. corpora/duckdb-core/extras.jsonl repeats the DuckDB and
+generic statements of corpora/polyglot-check/sqlglot.json and polyglot_tests.json with DuckDB's
+verdict on each.
 
 The referee corpus referee/corpora/sqlglot.json holds the query statements passed to
 `validate_identity` and `validate_all` in tests/dialects/test_snowflake.py at the sqlglot commit

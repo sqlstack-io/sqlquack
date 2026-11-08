@@ -1507,6 +1507,7 @@ impl Parser {
             packages: None,
             parameter_style: None,
             snowflake_properties: return_nullability.into_iter().collect(),
+            overloads: Vec::new(),
         };
         function = self.parse_create_function_properties(function)?;
 

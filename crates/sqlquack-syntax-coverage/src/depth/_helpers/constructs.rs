@@ -26,6 +26,7 @@ fn constructed_type(parser: LocalParser, depth: usize) -> Option<String> {
     match parser {
         LocalParser::Snowflake => Some(nest("ARRAY(", "INT", ")", depth)),
         LocalParser::BigQuery => Some(nest("STRUCT<x ", "INT64", ">", depth)),
+        LocalParser::DuckDb => Some(nest("STRUCT(a ", "INT", ")", depth)),
         LocalParser::Postgres | LocalParser::None => None,
     }
 }
@@ -34,14 +35,16 @@ fn constructed_type(parser: LocalParser, depth: usize) -> Option<String> {
 fn mixed_type(parser: LocalParser, depth: usize) -> Option<String> {
     let levels: usize = (depth / MIXED_SUFFIX_RUN).max(1);
     let run: String = "[]".repeat(MIXED_SUFFIX_RUN);
-    match parser {
-        LocalParser::Snowflake => Some(format!(
-            "{}INT{}{run}",
-            "ARRAY(".repeat(levels),
-            format!("{run})").repeat(levels)
-        )),
-        LocalParser::Postgres | LocalParser::BigQuery | LocalParser::None => None,
-    }
+    let open: &str = match parser {
+        LocalParser::Snowflake => "ARRAY(",
+        LocalParser::DuckDb => "STRUCT(a ",
+        LocalParser::Postgres | LocalParser::BigQuery | LocalParser::None => return None,
+    };
+    Some(format!(
+        "{}INT{}{run}",
+        open.repeat(levels),
+        format!("{run})").repeat(levels)
+    ))
 }
 
 /// Casts nested about `depth / MIXED_SUFFIX_RUN` deep, each to a type with a run of `[]`.

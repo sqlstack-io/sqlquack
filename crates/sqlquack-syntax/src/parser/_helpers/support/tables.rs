@@ -111,6 +111,7 @@ impl Parser {
             version: None,
             span: None,
             whole_quoted: false,
+            catalog_parts: Vec::new(),
         })))
     }
 

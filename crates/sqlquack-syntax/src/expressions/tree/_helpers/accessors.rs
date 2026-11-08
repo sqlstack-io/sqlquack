@@ -119,6 +119,7 @@ impl Expression {
             | Expression::Set(_)
             | Expression::SetStatement(_)
             | Expression::UnsetStatement(_)
+            | Expression::ResetStatement(_)
             | Expression::Transaction(_)
             | Expression::Commit(_)
             | Expression::Rollback(_)
@@ -693,6 +694,7 @@ impl Expression {
             rename: None,
             trailing_comments: Vec::new(),
             span: None,
+            qualified: None,
         })
     }
 

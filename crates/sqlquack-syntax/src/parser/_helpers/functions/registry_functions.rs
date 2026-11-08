@@ -185,6 +185,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }))))
         } else {
             self.expect_token(TokenType::RParen)?;
@@ -252,6 +253,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }))));
         }
         self.expect_token(TokenType::RParen)?;
@@ -386,6 +388,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }))))
         }
     }
@@ -424,6 +427,7 @@ impl Parser {
             quoted: false,
             span: SourceSpan::default(),
             inferred_type: None,
+            export_state: false,
         }))))
     }
 
@@ -463,6 +467,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }))))
         } else {
             self.expect_token(TokenType::RParen)?;
@@ -480,6 +485,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }))))
         }
     }
@@ -530,6 +536,7 @@ impl Parser {
             quoted: false,
             span: SourceSpan::default(),
             inferred_type: None,
+            export_state: false,
         }))))
     }
 
@@ -593,6 +600,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }))));
         }
         let first = self.parse_expression()?;
@@ -612,6 +620,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }))));
         }
         self.expect_token(TokenType::Comma)?;
@@ -701,6 +710,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }))));
         }
         self.expect_token(TokenType::RParen)?;
@@ -766,6 +776,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }))));
         }
 
@@ -814,6 +825,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }))))
         }
     }
@@ -850,6 +862,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }))))
         }
     }
@@ -918,6 +931,7 @@ impl Parser {
             quoted: false,
             span: SourceSpan::default(),
             inferred_type: None,
+            export_state: false,
         }))))
     }
 
@@ -949,6 +963,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }))));
         }
 
@@ -1055,6 +1070,7 @@ impl Parser {
                 quoted,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }))))
         }
     }
@@ -1103,6 +1119,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }))))
         } else {
             self.expect_token(TokenType::RParen)?;
@@ -1121,6 +1138,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }))))
         }
     }
@@ -1266,6 +1284,7 @@ impl Parser {
                     quoted: false,
                     span: SourceSpan::default(),
                     inferred_type: None,
+                    export_state: false,
                 }))))
             }
         } else {
@@ -1284,6 +1303,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }))))
         }
     }
@@ -1329,6 +1349,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }))));
         }
         let args = self.parse_expression_list()?;

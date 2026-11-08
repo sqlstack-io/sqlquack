@@ -53,6 +53,9 @@ pub struct Function {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
     pub inferred_type: Option<DataType>,
+    /// DuckDB `EXPORT_STATE`: the call returns its aggregate state.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub export_state: bool,
 }
 
 impl Function {
@@ -83,6 +86,7 @@ impl Function {
             quoted: false,
             span: SourceSpan::default(),
             inferred_type: None,
+            export_state: false,
         }
     }
 }
@@ -122,6 +126,15 @@ pub struct AggregateFunction {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// The name's parts as written, when it is qualified (as `Function` keeps them).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub qualified_name: Vec<Identifier>,
+    /// Whether a part of the name was quoted.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub quoted: bool,
+    /// DuckDB `EXPORT_STATE`: the call returns its aggregate state.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub export_state: bool,
 }
 
 /// A window function call; `over` holds PARTITION BY, ORDER BY and the frame.

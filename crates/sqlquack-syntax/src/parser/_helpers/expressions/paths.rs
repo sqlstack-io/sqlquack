@@ -1046,6 +1046,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }));
             return self.maybe_parse_subscript(func);
         }
@@ -1085,6 +1086,7 @@ impl Parser {
                     quoted: false,
                     span: SourceSpan::default(),
                     inferred_type: None,
+                    export_state: false,
                 })));
             }
             return self.maybe_parse_over(func_expr);

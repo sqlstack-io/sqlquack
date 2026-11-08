@@ -1759,6 +1759,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }))));
         }
 
@@ -1805,6 +1806,7 @@ impl Parser {
             quoted: false,
             span: SourceSpan::default(),
             inferred_type: None,
+            export_state: false,
         }));
 
         if self.match_token(TokenType::Over) && self.match_token(TokenType::LParen) {

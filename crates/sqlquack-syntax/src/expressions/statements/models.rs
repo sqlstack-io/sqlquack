@@ -572,6 +572,20 @@ pub struct UnsetStatement {
     pub parenthesized: bool,
 }
 
+/// `RESET`: returns session settings to their defaults, in any dialect that has it.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ResetStatement {
+    /// The scope written before the target, such as `SESSION` or `GLOBAL`, upper-cased.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub scope: Option<String>,
+    /// The setting reset; none for `RESET ALL` and for a bare `RESET`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub name: Option<Expression>,
+    /// Whether `ALL` was written as the target.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub all: bool,
+}
+
 /// A single SET item (variable assignment)
 #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SetItem {

@@ -61,6 +61,7 @@ pub(crate) fn star(table: Option<Identifier>, except: Option<Vec<Identifier>>) -
         rename: None,
         trailing_comments: Vec::new(),
         span: None,
+        qualified: None,
     }
 }
 
@@ -539,6 +540,7 @@ pub(crate) fn cte(alias: Identifier, columns: Vec<Identifier>, this: Expression)
         alias_first: true,
         comments: Vec::new(),
         span: SourceSpan(None),
+        key_items: Vec::new(),
     }
 }
 

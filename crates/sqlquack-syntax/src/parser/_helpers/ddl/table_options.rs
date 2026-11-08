@@ -1432,6 +1432,7 @@ impl Parser {
                     quoted: false,
                     span: SourceSpan::default(),
                     inferred_type: None,
+                    export_state: false,
                 })));
             } else {
                 let saved_pos = self.current;

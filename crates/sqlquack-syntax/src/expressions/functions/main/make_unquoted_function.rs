@@ -19,5 +19,6 @@ pub(crate) fn make_unquoted_function(name: &str, args: Vec<Expression>) -> Expre
         quoted: false,
         span: SourceSpan::default(),
         inferred_type: None,
+        export_state: false,
     }))
 }

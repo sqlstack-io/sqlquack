@@ -157,7 +157,7 @@ owner = "sqlquack-syntax-bigquery"
 parser = "bigquery"
 construct = "from_parentheses"
 profile = "dev"
-depth = 200
+depth = 50
 failure = "crash"
 owner = "sqlquack-syntax-bigquery"
 

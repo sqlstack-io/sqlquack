@@ -691,6 +691,25 @@ pub struct MethodCall {
     pub this: Expression,
     pub method: Identifier,
     pub args: Vec<Expression>,
+    /// Whether DISTINCT was specified inside the call.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub distinct: bool,
+    /// ORDER BY inside the call.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub order_by: Vec<Ordered>,
+}
+
+impl MethodCall {
+    /// A method call with no `DISTINCT` and no argument `ORDER BY`.
+    pub fn new(this: Expression, method: Identifier, args: Vec<Expression>) -> Self {
+        Self {
+            this,
+            method,
+            args,
+            distinct: false,
+            order_by: Vec::new(),
+        }
+    }
 }
 
 /// Array slice (array[start:end])

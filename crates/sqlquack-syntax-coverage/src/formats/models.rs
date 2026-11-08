@@ -646,6 +646,10 @@ pub enum LocalParser {
     #[serde(rename = "bigquery")]
     #[value(name = "bigquery")]
     BigQuery,
+    /// `sqlquack_syntax_duckdb`, through the isolated worker.
+    #[serde(rename = "duckdb")]
+    #[value(name = "duckdb")]
+    DuckDb,
     /// No parser yet: every case fails locally as `no_parser`.
     None,
 }

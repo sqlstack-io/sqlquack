@@ -398,6 +398,7 @@ impl Parser {
                     quoted: false,
                     span: SourceSpan::default(),
                     inferred_type: None,
+                    export_state: false,
                 }))))
             }
             (crate::functions::typed::models::TypedParseKind::Variadic, "ARRAY_INTERSECT") => {
@@ -491,6 +492,7 @@ impl Parser {
                         quoted: false,
                         span: SourceSpan::default(),
                         inferred_type: None,
+                        export_state: false,
                     }))))
                 }
             }
@@ -512,6 +514,7 @@ impl Parser {
                         quoted: false,
                         span: SourceSpan::default(),
                         inferred_type: None,
+                        export_state: false,
                     }))))
                 } else if args.len() == BINARY_ARITY {
                     Ok(Some(Expression::Nvl(Box::new(
@@ -537,6 +540,7 @@ impl Parser {
                         quoted: false,
                         span: SourceSpan::default(),
                         inferred_type: None,
+                        export_state: false,
                     }))))
                 }
             }
@@ -567,6 +571,7 @@ impl Parser {
                         quoted: false,
                         span: SourceSpan::default(),
                         inferred_type: None,
+                        export_state: false,
                     }))))
                 }
             }
@@ -594,6 +599,7 @@ impl Parser {
                     quoted: false,
                     span: SourceSpan::default(),
                     inferred_type: None,
+                    export_state: false,
                 }))))
             }
             (crate::functions::typed::models::TypedParseKind::Variadic, "CHAR") => {
@@ -633,6 +639,7 @@ impl Parser {
                         quoted: false,
                         span: SourceSpan::default(),
                         inferred_type: None,
+                        export_state: false,
                     }))))
                 }
             }
@@ -660,6 +667,7 @@ impl Parser {
                     quoted: false,
                     span: SourceSpan::default(),
                     inferred_type: None,
+                    export_state: false,
                 }))))
             }
             (crate::functions::typed::models::TypedParseKind::Variadic, "MATCH") => {
@@ -711,6 +719,7 @@ impl Parser {
                     quoted: false,
                     span: SourceSpan::default(),
                     inferred_type: None,
+                    export_state: false,
                 }))))
             }
             (crate::functions::typed::models::TypedParseKind::CastLike, "TRY_CAST") => {
@@ -780,6 +789,9 @@ impl Parser {
             ignore_nulls: None,
             inferred_type: None,
             span: SourceSpan::default(),
+            export_state: false,
+            qualified_name: Vec::new(),
+            quoted: false,
         }))
     }
 }

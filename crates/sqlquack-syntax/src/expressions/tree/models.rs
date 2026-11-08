@@ -417,6 +417,7 @@ use crate::expressions::statements::models::Raw;
 use crate::expressions::statements::models::RecursiveWithSearch;
 use crate::expressions::statements::models::Refresh;
 use crate::expressions::statements::models::ReplacePartition;
+use crate::expressions::statements::models::ResetStatement;
 use crate::expressions::statements::models::Rollback;
 use crate::expressions::statements::models::Schema;
 use crate::expressions::statements::models::ScriptingBlock;
@@ -1204,6 +1205,7 @@ pub enum Expression {
     Comment(Box<Comment>),
     SetStatement(Box<SetStatement>),
     UnsetStatement(Box<UnsetStatement>),
+    ResetStatement(Box<ResetStatement>),
     CreateSchema(Box<CreateSchema>),
     DropSchema(Box<DropSchema>),
     DropNamespace(Box<DropNamespace>),

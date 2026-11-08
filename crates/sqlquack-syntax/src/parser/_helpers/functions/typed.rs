@@ -138,6 +138,7 @@ impl Parser {
                         rename: None,
                         trailing_comments: Vec::new(),
                         span: None,
+                        qualified: None,
                     })]
                 } else if self.check(TokenType::RParen) {
                     Vec::new()
@@ -440,6 +441,7 @@ impl Parser {
                     quoted: false,
                     span: SourceSpan::default(),
                     inferred_type: None,
+                    export_state: false,
                 })))
             }
 
@@ -604,6 +606,9 @@ impl Parser {
                 ignore_nulls: None,
                 inferred_type: None,
                 span: SourceSpan::default(),
+                export_state: false,
+                qualified_name: Vec::new(),
+                quoted: false,
             })))
         } else {
             Ok(Expression::Function(Box::new(Function {
@@ -620,6 +625,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             })))
         }
     }
@@ -642,6 +648,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             })));
         }
         if self.check(TokenType::LParen) {
@@ -711,6 +718,7 @@ impl Parser {
                     quoted: false,
                     span: SourceSpan::default(),
                     inferred_type: None,
+                    export_state: false,
                 })));
             } else {
                 self.current = saved_pos;
@@ -736,6 +744,7 @@ impl Parser {
             quoted: false,
             span: SourceSpan::default(),
             inferred_type: None,
+            export_state: false,
         })))
     }
 
@@ -845,6 +854,9 @@ impl Parser {
                     ignore_nulls: None,
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    export_state: false,
+                    qualified_name: Vec::new(),
+                    quoted: false,
                 })))
             } else {
                 Ok(Expression::Function(Box::new(Function {
@@ -861,6 +873,7 @@ impl Parser {
                     quoted: false,
                     span: SourceSpan::default(),
                     inferred_type: None,
+                    export_state: false,
                 })))
             }
         } else {
@@ -1198,6 +1211,7 @@ impl Parser {
                         quoted: false,
                         span: SourceSpan::default(),
                         inferred_type: None,
+                        export_state: false,
                     })))
                 }
             }
@@ -1498,6 +1512,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             }));
 
             return Ok(func_expr);
@@ -1605,6 +1620,7 @@ impl Parser {
                 quoted: false,
                 span: SourceSpan::default(),
                 inferred_type: None,
+                export_state: false,
             })))
         } else {
             self.expect_token(TokenType::RParen)?;

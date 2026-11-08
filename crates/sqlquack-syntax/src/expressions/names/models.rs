@@ -311,6 +311,9 @@ pub struct TableRef {
     /// Source position span
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub span: Option<Span>,
+    /// The parts `catalog` joins, each with its quoting, when a name has more than three parts.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub catalog_parts: Vec<Identifier>,
 }
 
 impl TableRef {
@@ -337,6 +340,7 @@ impl TableRef {
             version: None,
             span: None,
             whole_quoted: false,
+            catalog_parts: Vec::new(),
         }
     }
 
@@ -383,6 +387,7 @@ impl TableRef {
             version: None,
             span: None,
             whole_quoted: false,
+            catalog_parts: Vec::new(),
         }
     }
 
@@ -417,6 +422,18 @@ pub struct Star {
     /// Source position span
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub span: Option<Span>,
+    /// The name parts of qualified `except` and `rename` entries, with their quoting.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub qualified: Option<Box<StarParts>>,
+}
+
+/// A star's qualified `except` and `rename` names: each entry's parts, with their quoting.
+#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct StarParts {
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub except: Vec<Vec<Identifier>>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub rename: Vec<Vec<Identifier>>,
 }
 
 /// ByteString

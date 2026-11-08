@@ -994,6 +994,7 @@ impl Parser {
             rename,
             trailing_comments: star_trailing_comments,
             span: None,
+            qualified: None,
         })
     }
 
