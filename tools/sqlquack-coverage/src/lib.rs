@@ -1,4 +1,4 @@
-//! Development check of documented Snowflake syntax coverage; never a runtime dependency.
+//! Development check of each dialect's documented syntax coverage, the translation results and the nesting-depth probe; never a runtime dependency.
 
 #![forbid(unsafe_code)]
 

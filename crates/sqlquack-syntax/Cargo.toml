@@ -1,6 +1,6 @@
 [package]
 name = "sqlquack-syntax"
-description = "SQLQuack's tokenizer, parser and syntax tree for Snowflake and DuckDB"
+description = "SQLQuack's tokenizer, parser and shared syntax tree: Snowflake, and DuckDB, PostgreSQL and SQLite as polyglot parses them"
 version.workspace = true
 edition = "2021"
 license.workspace = true
