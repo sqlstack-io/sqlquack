@@ -22,6 +22,11 @@ The referee corpus referee/corpora/sqlglot.json holds the query statements passe
 `validate_identity` and `validate_all` in tests/dialects/test_snowflake.py at the sqlglot commit
 its `origin` field names. Only Snowflake's syntax verdict on each statement is recorded.
 
+The formatter corpus crates/sqlquack-format/src/format/tests/fixtures/format_corpus.json holds
+SELECT and WITH queries from sqlglot's dialect identity test fixtures, as extracted by polyglot,
+with the layouts SQLClean's formatter gives them. It is copied unchanged from SQLClean
+(https://github.com/sqlstack-io/sqlclean), with its notice FORMAT_CORPUS_NOTICE.md beside it.
+
 sqlglot is distributed under the following licence:
 
 MIT License
