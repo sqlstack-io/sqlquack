@@ -271,6 +271,7 @@ impl Parser {
         let session_variable = self.check(TokenType::Dollar)
             && self.peek_nth(1).is_some_and(|token| {
                 matches!(token.token_type, TokenType::Var | TokenType::Identifier)
+                    && token.span.start == self.peek().span.end
             });
         if self.applies_snowflake_context_rules()
             && !self.check(TokenType::Number)
