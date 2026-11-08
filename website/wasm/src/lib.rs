@@ -122,6 +122,8 @@ pub fn fixture_tables(sources: &str) -> String {
 struct Catalog {
     schema: Schema,
     columns: BTreeMap<String, Vec<SchemaColumn>>,
+    /// Why a source is left out, as `sqlquack convert` warns about it.
+    warnings: Vec<String>,
 }
 
 impl LineageSchema for Catalog {
@@ -130,16 +132,13 @@ impl LineageSchema for Catalog {
     }
 }
 
-/// The source file `text`, read as `sqlquack convert` reads a project's `sources/*.yml`; a source
-/// left out for an untyped column is an error, so the playground says why.
+/// The source file `text`, read as `sqlquack convert` reads a project's `sources/*.yml`: a source
+/// left out for a column without a type SQLQuack reads is a warning, and the rest still declare.
 fn catalog(text: &str) -> Result<Catalog, String> {
     if text.trim().is_empty() {
         return Ok(Catalog::default());
     }
     let found = source_tables(text)?;
-    if !found.warnings.is_empty() {
-        return Err(found.warnings.join("; "));
-    }
     let relations: serde_json::Map<String, Value> = found.tables.into_iter().collect();
     let schema =
         parse_schema(&json!({ "relations": relations }).to_string()).map_err(
@@ -163,7 +162,11 @@ fn catalog(text: &str) -> Result<Catalog, String> {
             (relation.clone(), named)
         })
         .collect();
-    Ok(Catalog { schema, columns })
+    Ok(Catalog {
+        schema,
+        columns,
+        warnings: found.warnings,
+    })
 }
 
 /// The playground's policy and session settings.
@@ -249,11 +252,21 @@ fn placed(mut refusal: Refusal, statement: &Expression, lines: &SourceLines) -> 
     refusal
 }
 
+/// Every stage's result for `sql` over `sources`, with a warning for each source left out.
 fn report(sql: &str, sources: &str, settings: &str) -> Value {
     let catalog = match catalog(sources) {
         Ok(catalog) => catalog,
         Err(error) => return json!({ "sources_error": error }),
     };
+    let mut report = stages(sql, &catalog, settings);
+    if !catalog.warnings.is_empty() {
+        report["warnings"] = json!(catalog.warnings);
+    }
+    report
+}
+
+/// Each stage's result for `sql` over `catalog`, as JSON.
+fn stages(sql: &str, catalog: &Catalog, settings: &str) -> Value {
     let settings: Settings = match settings.trim() {
         "" => Settings::default(),
         text => match serde_json::from_str(text) {
@@ -293,7 +306,7 @@ fn report(sql: &str, sources: &str, settings: &str) -> Value {
         (false, 1) => {
             let context = LineageContext {
                 profile: &SNOWFLAKE,
-                schema: &catalog,
+                schema: catalog,
                 sql: Some(sql),
             };
             query_name_findings(sql, Dialect::Snowflake, &ParseOptions::default(), context)

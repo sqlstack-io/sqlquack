@@ -188,7 +188,14 @@ test('an undeclared relation is refused by name, and the stub the page adds stay
 	);
 	// The stub's placeholder type is not a Snowflake type: no column is assumed, so it still refuses.
 	const stub = `${PAGE_SOURCES}  - name: t\n    columns:\n      - name: column_name\n        type: SNOWFLAKE_TYPE\n`;
-	assert.deepEqual(JSON.parse(analyze('SELECT * FROM t', stub)).translate.diagnostics.map((d) => d.code), ['SQ0004']);
+	const stubbed = JSON.parse(analyze('SELECT * FROM t', stub));
+	assert.deepEqual(stubbed.translate.diagnostics.map((d) => d.code), ['SQ0004']);
+	// The page says why the stub is left out, as `sqlquack convert` warns, and analysis goes on.
+	assert.deepEqual(stubbed.warnings, [
+		'the source t is left out, because its column column_name has no type SQLQuack reads: unknown Snowflake type `SNOWFLAKE_TYPE`',
+	]);
+	// The other sources still declare beside the one left out.
+	assert.equal(JSON.parse(analyze('SELECT * FROM orders', stub)).translate.status, 'pass');
 	// Every table of the sample sources without semi-structured columns translates as declared.
 	for (const relation of ['ORDERS', 'CUSTOMERS', 'PRODUCTS', 'ORDER_ITEMS']) {
 		assert.equal(JSON.parse(analyze(`SELECT * FROM ${relation.toLowerCase()}`, PAGE_SOURCES)).translate.status, 'pass', relation);
