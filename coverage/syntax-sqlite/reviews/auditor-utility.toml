@@ -17,7 +17,7 @@ forms = [
 note = "Read against the pinned SQLite 3.54.1 documentation and parse.y, the obligations, the cases with their receipts and repeat, and the parse trees of the strict parser; every case was re-run by the auditor on the pinned engine and every scored case agrees with its receipt."
 
 [review.fingerprints]
-"sl.utility.sql-stmt-list" = "c1234817fb7b88128ab3995eca55e6766411129d0b30fe3ffecb65d443eae5df"
+"sl.utility.sql-stmt-list" = "85024e91d0c4801510c64aa1577d20d51814590f62cc9275b17c0bdcd60bc598"
 
 [review.definitions]
 "sl.utility.sql-stmt-list" = "1c971a756624b1e9bfd6bbe207021f4b46c9ab601fa8c6c5004acbf28f4b9254"

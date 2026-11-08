@@ -19,11 +19,11 @@ forms = [
 note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 2f0c38a72e97; every scored case agrees with its Snowflake receipt."
 
 [review.fingerprints]
-"sf.utility.execute-alert" = "29237d6c7a060ef9489317fe883af146cb71a225f2ae1b9ad815b741991cfe57"
-"sf.utility.execute-dcm-project.test-all" = "6537c1fd7288cbc33cc4648195fa8a921483915701755abc9eef25667a2ed6bb"
-"sf.utility.execute-task.task-retry-graph-run" = "5607f76c0a5d4e3304edf1243cb9e7ae24f49e298b3a218bc4033cda0af532c6"
-"sf.utility.execute-task.task-retry-last" = "de9911e5e03a0b747679aa2771e8255ace9e33fc8b7bf44f9f439ce6c9b8576d"
-"sf.utility.explain" = "5824d4291f91a272ac141e2ebad08873dfea4c143ad85590f52f2b4b477b162c"
+"sf.utility.execute-alert" = "72d046ac3f75e821f06bffd1d10c944735f262bd79314f453ae2c7124411a897"
+"sf.utility.execute-dcm-project.test-all" = "da5d99901d29d011cf9d2c34f3be6bb8b3855015eda898ad8b0dfab432f5b83b"
+"sf.utility.execute-task.task-retry-graph-run" = "ddd8ba992bbde67ece049a5e15bea32b9aefae5fde6aaeac1fb8d946611f31cd"
+"sf.utility.execute-task.task-retry-last" = "bd0c9f7b3eea9e217215720ab328b56a5ceb0955d981ce528bc6820734f2592f"
+"sf.utility.explain" = "04b52e4cd0f8d87fe8c3eb4b599834cf077852a717a8a8c2f6b573855258b04a"
 
 [review.definitions]
 "sf.utility.execute-alert" = "8e95792bafdcfa6f8efb05ee69f238b5ba8696cccc1639f67ed76a5b0f680b00"
@@ -45,7 +45,7 @@ forms = [
 note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main a398f2e56279; every scored case agrees with its Snowflake receipt."
 
 [review.fingerprints]
-"sf.utility.execute-task.task" = "a70399d53e6167f1068b77bf91fc249db62a7d7cfc18558f684102c32fddaed0"
+"sf.utility.execute-task.task" = "932d3faff1962ab101d32efa577d772f06c65538459e21e4c0328388742ff7e2"
 
 [review.definitions]
 "sf.utility.execute-task.task" = "7767464e993edc3b3c39d2168e5cd3c79879415648c6c3972ab53ddf5ed6e3d7"
@@ -63,7 +63,7 @@ forms = [
 note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main cbe394ec714e; every scored case agrees with its Snowflake receipt."
 
 [review.fingerprints]
-"sf.utility.execute-dcm-project.purge" = "7db11b83c456be2b15894b2770c9c615c60828377aedca84da3b922bc4d04f72"
+"sf.utility.execute-dcm-project.purge" = "67c191e3ed1ed40f97ee05d81b3145af83cf11229705dd845ba17b1dee43b31f"
 
 [review.definitions]
 "sf.utility.execute-dcm-project.purge" = "d6ed3e88a606d462dcc79381e11336dec8a40afbad2541fb38892c3879b6cc1c"
@@ -83,9 +83,9 @@ forms = [
 note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main b196cbd257c1; every scored case agrees with its Snowflake receipt."
 
 [review.fingerprints]
-"sf.utility.execute-code-bundle" = "dde5582ad606fd5d3606c1b176014c24c43c7c77df39c1563bb909f19bc8d63e"
-"sf.utility.execute-notebook" = "3ea105b906e4f7991f6e8b84dbf134a5283aa99ba13eaff68de4a08b5425bb73"
-"sf.utility.execute-task-graph.graph-retry-last" = "3cb93c674ff0b194cbb15ea343c0f637717afb14dfb5d71c24f463553d23c8f4"
+"sf.utility.execute-code-bundle" = "eb258d83b14aa642fd6bc5bd28c0aecd6390b1f70d322d7dd538be41ddaccaa4"
+"sf.utility.execute-notebook" = "e81b4b373974378557f336ac513825a33a5f4baa304a128a6f96ad2f46d7ee3e"
+"sf.utility.execute-task-graph.graph-retry-last" = "a6faab3ac12626d259d4bb3c75888f2e06888d52a36a10f1dff4d5ec2268884f"
 
 [review.definitions]
 "sf.utility.execute-code-bundle" = "c16d88e8ce02a60b39760b47133af578be1993fe286d20de7791dee02a2c45bc"

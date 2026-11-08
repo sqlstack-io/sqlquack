@@ -15,7 +15,7 @@ forms = [
 note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 2fa1b9cda5fc; every scored case agrees with its Snowflake receipt."
 
 [review.fingerprints]
-"sf.scripting.exception" = "a35bc56ed126fdbc92fc8c72e0d6fab623ad98e7321a7cbe04f9e304282c95a3"
+"sf.scripting.exception" = "2150c78fa7e8718ab980032acdeda772618b2fc2ac74f949ebf1893c2fcd6695"
 
 [review.definitions]
 "sf.scripting.exception" = "14125a27663d77f87b96d9b0533c6c0d07ece425022635b49cfa4761d749d3f4"
@@ -46,20 +46,20 @@ forms = [
 note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 77c1a3a59f20; every scored case agrees with its Snowflake receipt."
 
 [review.fingerprints]
-"sf.scripting.await" = "01b2219e6fbaf7ddb54778ed74ce3ef1c2068ea7807fa5462dca3a62876850bc"
-"sf.scripting.case.end" = "4f5eb5eaaca2e69ac23ed9c09042c81c788926c0fff761b3928df7ce2ba23560"
-"sf.scripting.case.end.syntax" = "145f5c6e72de66d74b0de10fd7282b3321931ac1e07de27f0b60a00a2a05a687"
-"sf.scripting.declare.cursor-declaration" = "f8654ccf9e7ca831243678b5494f3bc9ebf91c71e2171cefff91774dfe20c584"
-"sf.scripting.declare.resultset" = "a19a6abab8526c5c32913d9ca3ae7df780e438b0341ee13ac55daf39e20fa9cd"
-"sf.scripting.for.do-end-for" = "5c65f4f5fc7da55523dded9c0b4d29b2fd37e3495214a6a62c8f56ceb607d1ef"
-"sf.scripting.for.to-do-loop-end" = "fd0a854feab7ce11050bc31cf4d1a058a99097cf6185404274f39c5ba88df275"
-"sf.scripting.if" = "34aa23e39b5adef618ca5eb6accf9f96313a4db6b96e63551816bd021567868a"
-"sf.scripting.let.let-cursor-for" = "f74f41e8ce5837ca5012a7044579eac8b2a5ddc2973313bbbb84f070817833f4"
-"sf.scripting.let.let-default" = "ac333c9eb2f155fb4cdebd0027cc3ad326a617b5501033a940c42c4b68992784"
-"sf.scripting.let.let-resultset-default" = "eef0a7be4b937ffbe69cb76bdfdda2985859044f1e854ad29a4d957c262f5d16"
-"sf.scripting.loop" = "45fea0e6c83c162de6ad4ef3b11101e20ebcf75c0c93fad9e14170d854b6ed1f"
-"sf.scripting.repeat" = "55a8d54ae4ee886411d4f372c73b6f586c4ada3cd250eb01c0778bcf7c2cfe35"
-"sf.scripting.while" = "ea828409e1d552da24f8d7cb64ff267ba5dc78c7f38fe69db239b260dc94412d"
+"sf.scripting.await" = "5a29de16478f5ca8a7fbc034b5904b2e659dc4d094a70c1de072fcaad0db3342"
+"sf.scripting.case.end" = "28c782b1d699c22b08bff5b68cc80b89edad28da67b2e9eb5f4afdc510604e87"
+"sf.scripting.case.end.syntax" = "4be0cdf6ae5dd45bb713ee879081b195e1c9d655740f31258ec60c4824cf139f"
+"sf.scripting.declare.cursor-declaration" = "2a41657de2acf936470b67e8968af2b1adcec2746f675fbbafe5ecb22e3326d4"
+"sf.scripting.declare.resultset" = "13b46a6e09e00f106e046a8c86c3f3585bef4dcfa226b5b736f31ab057110053"
+"sf.scripting.for.do-end-for" = "f58417a61117d903211e658ca3d3c8f5c9dc40dfc9b58a1c87e170d69923c18d"
+"sf.scripting.for.to-do-loop-end" = "3971149e577f86111055dcda5a1145d658a3cf56b331e1886e6dd96b3a77e1cd"
+"sf.scripting.if" = "01421bdc62cefcc6cca79404a43f9784c0521c0aa7c9d8802d78f848c31e3883"
+"sf.scripting.let.let-cursor-for" = "98e872e7a83cd3c51c6fdbf35f8ee2bb1234cecf8c36dc4676ac66ec225eae44"
+"sf.scripting.let.let-default" = "b2f701b74c833b545c82d2bf36d2343ee54bb97e6b11ba3e3bab4e349a071139"
+"sf.scripting.let.let-resultset-default" = "d033240599c887589a351e9d591e8a03cb43a1b4b7f9b97966a57ad0e5158ee8"
+"sf.scripting.loop" = "e9f10c09ed9cfdba4bedadb04e442c2179337283cedd2ac53c97c92b54c02cb2"
+"sf.scripting.repeat" = "d5bed8a9a49c3aa22c34d9620a8b7d45d9cd83c7d147ba53c7aa25ae3f9025ca"
+"sf.scripting.while" = "d193db2ee03334e55aa95d395a0489110fa0b1dc94b7034fc83535ec403c8dbc"
 
 [review.definitions]
 "sf.scripting.await" = "cc9537556d3396b2784bea6ba88aa17f93eaf07ba190681b5cb5bced495e1810"
@@ -102,19 +102,19 @@ forms = [
 note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 2f0c38a72e97; every scored case agrees with its Snowflake receipt."
 
 [review.fingerprints]
-"sf.scripting.break" = "775195fe47dcef007f3963bf2237b290f7ef7197f9ea01cc523f51d26251522b"
-"sf.scripting.cancel" = "2d619a4996eb214bce4dbb02d0457795f090532c9a99dc7d8c750dc14bb771a3"
-"sf.scripting.close" = "621267246af5a2e3436cedb980e2eba7ace9e3d951d7a8d3a97ffd8296886ec1"
-"sf.scripting.continue" = "4f58c83afb9f8a79ec28d3190b319792713f5dbfdd4d0acd97061d1096afbb65"
-"sf.scripting.declare.exception" = "0d702c9c9e158da1e907e7fc820d0a290dc86da3546efc040688795a20d0c01c"
-"sf.scripting.declare.variable-declaration" = "8c3d1a6ec39e3d426b2a78dcb2e001489d12997dc4fd01dfca43099d7d118ad4"
-"sf.scripting.fetch" = "8c82c3920ec1080f28d252a8f80520751e52ccf53dab3ff7a8cfc303d173184b"
-"sf.scripting.let.let" = "a8d1a3d1bee65d199103471abdac126b71fa78191892c1ae89f8316d14503424"
-"sf.scripting.let.let-cursor-for.cursor-assignment-syntax" = "608f5f3b954c260804205724218eb0d96c46f55e9f801a6e4e0a11adfdb27421"
-"sf.scripting.let.let-default.variable-assignment-syntax" = "b5081c56ef5d43b5f6691a132c8f50bb0961c3408ee93448aa072f1e0b60e2f9"
-"sf.scripting.null" = "c6f2139d53ad4f87fc84a50aac4b612182a6aef93b2746180985b7652c278f07"
-"sf.scripting.open" = "942a1151126f521770831aa11a9eda1c4f436c1e63b6ceb5c27ddc9ffdea8090"
-"sf.scripting.raise" = "28af85c091763714a0b269cb34c2b813db13c14123734ce2a8439ad7cd7373f1"
+"sf.scripting.break" = "1a1d3c1a9915f03872c404f6c7fff3ede24e547c616b30d1c067ba7a99a91884"
+"sf.scripting.cancel" = "2890a43a525db4c2c2a0af7c57be55a1fb77194529e24482b9fbc8a51dd3a2bc"
+"sf.scripting.close" = "a22081e577af361ddb5e063c061dabee2b17dd52e92c44c020cff947def3f83b"
+"sf.scripting.continue" = "f55ff45d02fe57d431d62074f3401cfbe8c1a94513f9f196f95e9bc6c8879b3c"
+"sf.scripting.declare.exception" = "912c5d294499241305e54a1ae1f8057b2d6399363891e9e0e47acf59e3acdaca"
+"sf.scripting.declare.variable-declaration" = "e61fa6b54bf3532cb246b69a6cafe06ca9d0781633009663e23ad91be3010032"
+"sf.scripting.fetch" = "38aab07f08c764f8cab40ac71c0ade674e53f1b5d1ed9da1cf7dba7c82695122"
+"sf.scripting.let.let" = "cad3600fb4c29239b213a5bf7c721bcd52d121232bd1db4da1009e447b2c9794"
+"sf.scripting.let.let-cursor-for.cursor-assignment-syntax" = "15fcada17b0d97c0188a48e100924836d65fc777718eae02f15810baff1d87c7"
+"sf.scripting.let.let-default.variable-assignment-syntax" = "c746fd2af59d82b36bd59f455cc66baf84202ca37b6c217c6e712476f799aaa1"
+"sf.scripting.null" = "f695a3caf1fedfcd9e6efa365b9e13621c663ddda5390df7558822927c6da835"
+"sf.scripting.open" = "41f2caceb551c5c55c62858ed962f275865a90bf089463bad23da8a585ab4a69"
+"sf.scripting.raise" = "9c4a2489598702aa3e5365f7ff4332579d9c590f232e237a459b59edddd01d57"
 
 [review.definitions]
 "sf.scripting.break" = "00d4566d1cbdcedaa8179d1139054d3b70444bd5f826da61861096193058a24a"
@@ -145,8 +145,8 @@ forms = [
 note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main f3c75ab3a132; every scored case agrees with its Snowflake receipt."
 
 [review.fingerprints]
-"sf.scripting.begin" = "46e6ed9d59c3a4a09f0dd7089e6bca774cc33cb068ccdbd3b42c3f03e79c2a6b"
-"sf.scripting.return" = "0d61faaf889aae1230bb81c97a8811b373c353c6be8c2e8e2074e6c8a93c16e4"
+"sf.scripting.begin" = "efa32cce472106f68deaabeccf69616dd90e3a9fe6059b6520254bccdfb6b1a6"
+"sf.scripting.return" = "88254b46bdd4071dd3265c2f50c93d3164eb3c68e9f70f7be563838342d1327b"
 
 [review.definitions]
 "sf.scripting.begin" = "9a5fcab650f947737da6cfcea876bb4fca95167d94368d4c00ee8c508de7f7c8"
@@ -165,7 +165,7 @@ forms = [
 note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main e8577215435f; every scored case agrees with its Snowflake receipt."
 
 [review.fingerprints]
-"sf.scripting.declare.declare" = "5dba05ba45a725e2fbc91314fcec9a9c24e9331f7b7e8e55bb4884d360ce3a71"
+"sf.scripting.declare.declare" = "78bd7293886e04878bfdeceddbf5e1f69a1255b9420b8718ca07452db7ec45f5"
 
 [review.definitions]
 "sf.scripting.declare.declare" = "d1a2db11ffc5ddcaad2d03f47571b6ecfced8545b9d56406ac984f1ffed6a459"
