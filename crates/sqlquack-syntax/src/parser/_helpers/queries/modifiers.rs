@@ -268,7 +268,6 @@ impl Parser {
             }));
         }
 
-        // Snowflake also takes a session variable as the size, as in SAMPLE BERNOULLI ($s).
         let session_variable = self.check(TokenType::Dollar)
             && self.peek_nth(1).is_some_and(|token| {
                 matches!(token.token_type, TokenType::Var | TokenType::Identifier)
