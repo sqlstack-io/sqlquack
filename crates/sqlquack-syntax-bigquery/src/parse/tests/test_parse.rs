@@ -21,6 +21,11 @@ fn given_sql_when_parsing_then_the_verdict_is_googlesql() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
+            description: "NUMERIC takes no MAX precision, as BigQuery refuses it",
+            sql: "SELECT CAST(NULL AS NUMERIC(MAX))",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
             description: "a reserved keyword is no bare table name",
             sql: "SELECT * FROM SELECT",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
@@ -874,6 +879,24 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             sql: "SELECT CAST(NULL AS BIGNUMERIC(10, 2))",
             pointer: "/0/select/expressions/0/cast/to/name",
             expected_json: "\"BIGNUMERIC(10, 2)\"",
+        },
+        ValueTestCase {
+            description: "STRING(MAX) keeps MAX apart from STRING",
+            sql: "SELECT CAST(NULL AS string(max))",
+            pointer: "/0/select/expressions/0/cast/to/name",
+            expected_json: "\"STRING(MAX)\"",
+        },
+        ValueTestCase {
+            description: "BYTES(MAX) keeps MAX inside a STRUCT",
+            sql: "SELECT CAST(NULL AS STRUCT<a BYTES(MAX)>)",
+            pointer: "/0/select/expressions/0/cast/to/fields/0/data_type/name",
+            expected_json: "\"BYTES(MAX)\"",
+        },
+        ValueTestCase {
+            description: "BIGDECIMAL(MAX, 2) is BIGNUMERIC with MAX precision and its scale",
+            sql: "SELECT CAST(NULL AS BIGDECIMAL(MAX, 2))",
+            pointer: "/0/select/expressions/0/cast/to/name",
+            expected_json: "\"BIGNUMERIC(MAX, 2)\"",
         },
         ValueTestCase {
             description: "RANGE keeps its element type",

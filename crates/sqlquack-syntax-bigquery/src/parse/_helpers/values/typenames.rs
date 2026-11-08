@@ -41,6 +41,15 @@ impl Parser<'_> {
         Ok(Some(length))
     }
 
+    /// `( MAX`, the largest length or precision a STRING, BYTES or BIGNUMERIC takes.
+    fn eat_max(&mut self) -> bool {
+        let max: bool = self.is_char('(') && self.word_at(1).as_deref() == Some("MAX");
+        if max {
+            self.at += 2;
+        }
+        max
+    }
+
     /// The type written from token `from` to here, as GoogleSQL prints it: `ARRAY<STRING(10)>`.
     fn type_text(&self, from: usize) -> String {
         let mut text: String = String::new();
@@ -123,12 +132,31 @@ impl Parser<'_> {
                     name: format!("RANGE<{element}>"),
                 }
             }
+            "STRING" | "BYTES" if self.eat_max() => {
+                self.expect_char(')')?;
+                DataType::Custom {
+                    name: format!("{word}(MAX)"),
+                }
+            }
             "STRING" => DataType::String {
                 length: self.optional_length()?,
             },
             "BYTES" => DataType::VarBinary {
                 length: self.optional_length()?,
             },
+            "BIGNUMERIC" | "BIGDECIMAL" if self.eat_max() => {
+                let scale: Option<u32> = match self.eat_char(',') {
+                    true => Some(self.integer()?),
+                    false => None,
+                };
+                self.expect_char(')')?;
+                DataType::Custom {
+                    name: match scale {
+                        Some(scale) => format!("BIGNUMERIC(MAX, {scale})"),
+                        None => "BIGNUMERIC(MAX)".to_owned(),
+                    },
+                }
+            }
             "NUMERIC" | "DECIMAL" | "BIGNUMERIC" | "BIGDECIMAL" => {
                 let (mut precision, mut scale) = (None, None);
                 if self.eat_char('(') {
