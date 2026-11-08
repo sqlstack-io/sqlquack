@@ -50,8 +50,7 @@ pub(crate) enum Remembered {
     JsonObjectArguments,
 }
 
-/// How a remembered construct's parse ended: its result, where it stopped, and the gaps it found.
-/// Only failures and `JSON_OBJECT` arguments are kept, so the copies stay bounded.
+/// A remembered parse's result, end and gaps; only failures and `JSON_OBJECT` arguments are kept.
 struct Outcome {
     result: Parsing<Expression>,
     reached: usize,
@@ -478,7 +477,7 @@ impl<'sql> Parser<'sql> {
         result
     }
 
-    /// Drops kept argument trees strictly inside `start..end`; only that span's replay reached them.
+    /// Drops the kept argument trees inside `start..end`; only that span's replay reached them.
     fn forget_trees_within(&mut self, start: usize, end: usize) {
         let inner: Vec<(usize, usize)> = self
             .kept_trees
