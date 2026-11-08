@@ -380,6 +380,13 @@ impl Parser {
                         if self.match_identifier("TTL") {
                             let expr = self.parse_expression()?;
                             col_def.ttl_expr = Some(Box::new(expr));
+                        } else if self.is_snowflake()
+                            && !col_def.constraint_order.is_empty()
+                            && (self.check_identifier("RELY") || self.check_identifier("NORELY"))
+                        {
+                            let word = self.advance_text()?.to_ascii_uppercase();
+                            let after = col_def.constraint_order.len() - 1;
+                            col_def.constraint_properties.push((after, word));
                         } else {
                             if self.skip_column_modifier() {
                                 continue;
@@ -494,9 +501,19 @@ impl Parser {
 
     fn parse_column_named_constraint(&mut self, mut col_def: ColumnDef) -> Result<ColumnDef> {
         let constraint_name = self.expect_identifier()?;
+        let foreign_key = self.check(TokenType::ForeignKey)
+            && self.check_next(TokenType::Key)
+            && self
+                .peek_nth(2)
+                .is_some_and(|token| token.token_type == TokenType::References);
+        if foreign_key {
+            self.skip();
+            self.skip();
+        }
         if self.match_token(TokenType::References) {
             let mut fk_ref = self.parse_foreign_key_ref()?;
             fk_ref.constraint_name = Some(constraint_name);
+            fk_ref.has_foreign_key_keywords |= foreign_key;
             col_def
                 .constraints
                 .push(ColumnConstraint::References(Box::new(fk_ref)));

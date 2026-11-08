@@ -39,6 +39,9 @@ pub struct ColumnDef {
     /// Track original order of constraints for accurate regeneration
     #[serde(default)]
     pub constraint_order: Vec<ConstraintType>,
+    /// Snowflake RELY/NORELY, each with the `constraint_order` index of the constraint it follows.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub constraint_properties: Vec<(usize, String)>,
     /// Teradata: FORMAT 'pattern'
     #[serde(default)]
     pub format: Option<String>,
@@ -138,6 +141,7 @@ impl ColumnDef {
             comment: None,
             constraints: Vec::new(),
             constraint_order: Vec::new(),
+            constraint_properties: Vec::new(),
             format: None,
             title: None,
             inline_length: None,

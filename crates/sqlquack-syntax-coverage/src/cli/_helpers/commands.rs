@@ -47,17 +47,23 @@ const BOUNDARY_KINDS: [ObligationKind; 4] = [
 
 /// The time one local parse may take before it fails as a timeout.
 const PARSE_BOUND: Duration = Duration::from_secs(10);
+/// The exit code of a Rust process whose main thread panicked, which the worker reads as a panic.
+const PANIC_EXIT: u8 = 101;
 /// The worker's virtual memory bound in KiB, 4 GiB; exceeding it fails the case as a crash.
 const PARSE_MEMORY_KIB: u64 = 4 * 1024 * 1024;
 
-/// The worker command: this binary, its memory bounded by the shell before it starts.
-fn worker_command(binary: PathBuf, local_parser: LocalParser) -> Box<dyn Fn() -> Command> {
-    let worker: String = format!(
-        "parse-worker --parser {}",
-        local_parser
-            .to_possible_value()
-            .map_or_else(String::new, |value| value.get_name().to_owned())
-    );
+/// The worker command: this binary, memory-bounded by the shell, parsing on a `thread_stack` thread.
+pub(crate) fn worker_command(
+    binary: PathBuf,
+    local_parser: LocalParser,
+    thread_stack: Option<usize>,
+) -> Box<dyn Fn() -> Command> {
+    let parser: String = local_parser
+        .to_possible_value()
+        .map_or_else(String::new, |value| value.get_name().to_owned());
+    let stack: String =
+        thread_stack.map_or_else(String::new, |bytes| format!(" --thread-stack {bytes}"));
+    let worker: String = format!("parse-worker --parser {parser}{stack}");
     Box::new(move || {
         let mut command = Command::new("sh");
         command
@@ -99,7 +105,7 @@ fn checked(coverage: &SyntaxCoverage) -> Result<CheckResult, ExitCode> {
     })?;
     let local_parser: LocalParser = current_dialect().local_parser;
     let worker: RefCell<Worker> = RefCell::new(Worker::new(
-        worker_command(binary, local_parser),
+        worker_command(binary, local_parser, None),
         PARSE_BOUND,
     ));
     let parses: bool = local_verdict(local_parser).is_some();
@@ -522,15 +528,37 @@ pub(crate) fn diff(
     })
 }
 
+/// `verdict_of(sql)` on a thread with `bytes` of stack; a panic there exits as a panicking worker.
+fn on_thread(
+    bytes: usize,
+    verdict_of: fn(&str) -> LocalVerdict,
+    sql: &str,
+) -> Result<LocalVerdict, ExitCode> {
+    std::thread::scope(|scope| {
+        std::thread::Builder::new()
+            .stack_size(bytes)
+            .spawn_scoped(scope, || verdict_of(sql))
+            .map_err(|_| ExitCode::FAILURE)?
+            .join()
+            .map_err(|_| ExitCode::from(PANIC_EXIT))
+    })
+}
+
 /// Reads one JSON string of SQL per line and prints the local verdict on each, flushed.
-pub(crate) fn parse_worker(parser: LocalParser) -> Result<ExitCode, ExitCode> {
+pub(crate) fn parse_worker(
+    parser: LocalParser,
+    thread_stack: Option<usize>,
+) -> Result<ExitCode, ExitCode> {
     let verdict_of: fn(&str) -> LocalVerdict = local_verdict(parser).ok_or(ExitCode::FAILURE)?;
     let stdout = std::io::stdout();
     for line in std::io::stdin().lock().lines() {
         let line: String = line.map_err(|_| ExitCode::FAILURE)?;
         let sql: String = serde_json::from_str(&line).map_err(|_| ExitCode::FAILURE)?;
-        let verdict: String =
-            serde_json::to_string(&verdict_of(&sql)).map_err(|_| ExitCode::FAILURE)?;
+        let verdict: LocalVerdict = match thread_stack {
+            None => verdict_of(&sql),
+            Some(bytes) => on_thread(bytes, verdict_of, &sql)?,
+        };
+        let verdict: String = serde_json::to_string(&verdict).map_err(|_| ExitCode::FAILURE)?;
         let mut out = stdout.lock();
         writeln!(out, "{verdict}")
             .and_then(|()| out.flush())

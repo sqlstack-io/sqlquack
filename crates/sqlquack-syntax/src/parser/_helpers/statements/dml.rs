@@ -1,6 +1,7 @@
 //! Parser statements: dml.
 
 use crate::expressions::names::models::BooleanLiteral;
+use crate::expressions::names::models::DefaultKeyword;
 use crate::expressions::names::models::Identifier;
 use crate::expressions::names::models::TableRef;
 use crate::expressions::operators::models::ConditionalInsert;
@@ -35,6 +36,7 @@ impl Parser {
 
         let mut tables: Vec<TableRef> = Vec::new();
         let mut early_output = None;
+        self.check_snowflake_delete_head()?;
         let _has_from = if self.check(TokenType::From) {
             self.skip();
             true
@@ -176,6 +178,14 @@ impl Parser {
         Ok(
             if force_index.is_none() && self.match_token(TokenType::As) {
                 (Some(self.expect_identifier_with_quoted()?), true)
+            } else if self.is_snowflake()
+                && self.check(TokenType::Using)
+                && self
+                    .tokens
+                    .get(self.current + 1)
+                    .is_none_or(|token| token.token_type == TokenType::Semicolon)
+            {
+                (Some(Identifier::new(self.advance_text()?)), false)
             } else if force_index.is_none()
                 && self.is_identifier_token()
                 && !self.check(TokenType::Using)
@@ -211,6 +221,15 @@ impl Parser {
                             trailing_comments: Vec::new(),
                             span: SourceSpan::default(),
                         }))
+                    } else if self.is_snowflake()
+                        && !matches!(
+                            self.tokens
+                                .get(self.current + 1)
+                                .map(|token| token.token_type),
+                            Some(TokenType::Select | TokenType::With | TokenType::LParen)
+                        )
+                    {
+                        return Err(self.parse_error("Expected a query in DELETE USING ( )"));
                     } else {
                         self.parse_primary()?
                     };
@@ -348,7 +367,16 @@ impl Parser {
                 } else {
                     table_modifier.as_deref()
                 };
-                self.parse_create_table(or_replace, temporary, leading_comments, modifier)
+                let table_start = self.current;
+                let parsed =
+                    self.parse_create_table(or_replace, temporary, leading_comments, modifier);
+                let checkable = !define && !secure && matches!(modifier, None | Some("TRANSIENT"));
+                self.keep_snowflake_create_table(
+                    parsed,
+                    (create_pos, table_start),
+                    or_replace,
+                    checkable,
+                )
             }
             TokenType::Dictionary => {
                 self.parse_create_table(or_replace, temporary, leading_comments, Some("DICTIONARY"))
@@ -639,7 +667,7 @@ impl Parser {
 
             let values = if self.match_token(TokenType::Values) {
                 self.expect_token(TokenType::LParen)?;
-                let row = self.parse_expression_list()?;
+                let row = self.parse_into_clause_values()?;
                 self.expect_token(TokenType::RParen)?;
                 vec![row]
             } else {
@@ -705,5 +733,24 @@ impl Parser {
                 overwrite,
             },
         ))))
+    }
+
+    /// A multi-table intoClause's VALUES items: an expression or the DEFAULT keyword, each.
+    fn parse_into_clause_values(&mut self) -> Result<Vec<Expression>> {
+        let mut values: Vec<Expression> = Vec::new();
+        loop {
+            let ends_item = self.peek_nth(1).is_some_and(|next| {
+                matches!(next.token_type, TokenType::Comma | TokenType::RParen)
+            });
+            if self.check(TokenType::Default) && ends_item {
+                self.skip();
+                values.push(Expression::DefaultKeyword(DefaultKeyword));
+            } else {
+                values.push(self.parse_expression()?);
+            }
+            if !self.match_token(TokenType::Comma) {
+                return Ok(values);
+            }
+        }
     }
 }

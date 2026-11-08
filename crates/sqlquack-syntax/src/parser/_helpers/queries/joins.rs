@@ -82,6 +82,15 @@ impl Parser {
                 let table = self.parse_join_table_suffix(&kind, table)?;
 
                 let has_match_condition = self.check_identifier("MATCH_CONDITION");
+                if has_match_condition
+                    && self.is_snowflake()
+                    && !matches!(
+                        kind,
+                        JoinKind::AsOf | JoinKind::AsOfLeft | JoinKind::AsOfRight
+                    )
+                {
+                    return Err(self.parse_error("MATCH_CONDITION belongs to an ASOF JOIN"));
+                }
                 let has_inline_condition = self.check(TokenType::On)
                     || self.check(TokenType::Using)
                     || has_match_condition;

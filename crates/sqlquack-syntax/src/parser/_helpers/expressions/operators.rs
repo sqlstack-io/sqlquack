@@ -266,6 +266,19 @@ impl Parser {
         })))
     }
 
+    /// Refuses null handling or volatility in a Snowflake Java, Scala or Python procedure, as every receipt does (errno 1003).
+    fn refuse_handler_null_or_volatility(&self, language: Option<&str>, found: bool) -> Result<()> {
+        let handler = language.is_some_and(|language| {
+            ["JAVA", "SCALA", "PYTHON"].contains(&language.to_ascii_uppercase().as_str())
+        });
+        match self.is_snowflake() && found && handler {
+            true => Err(self.parse_error(
+                "A Java, Scala or Python procedure takes no null handling or volatility",
+            )),
+            false => Ok(()),
+        }
+    }
+
     /// Parse CREATE PROCEDURE statement
     pub(crate) fn parse_create_procedure(
         &mut self,
@@ -297,9 +310,18 @@ impl Parser {
         let mut return_type = None;
         let mut execute_as = None;
         let mut with_options: Vec<String> = Vec::new();
+        let mut null_or_volatility = false;
 
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
             if let Some(property) = self.parse_snowflake_routine_property()? {
+                null_or_volatility |= matches!(
+                    property.to_ascii_uppercase().as_str(),
+                    "CALLED ON NULL INPUT"
+                        | "RETURNS NULL ON NULL INPUT"
+                        | "STRICT"
+                        | "VOLATILE"
+                        | "IMMUTABLE"
+                );
                 with_options.push(property);
             } else if self.match_token(TokenType::Returns) {
                 self.check_snowflake_table_columns()?;
@@ -378,6 +400,7 @@ impl Parser {
                 break;
             }
         }
+        self.refuse_handler_null_or_volatility(language.as_deref(), null_or_volatility)?;
 
         Ok(Expression::CreateProcedure(Box::new(CreateProcedure {
             name,

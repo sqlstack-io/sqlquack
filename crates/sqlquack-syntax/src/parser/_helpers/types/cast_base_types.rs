@@ -141,17 +141,11 @@ impl Parser {
             if self.match_token(TokenType::Lt) {
                 let element_type = self.parse_data_type()?;
                 self.expect_gt()?;
-                DataType::Array {
-                    element_type: Box::new(element_type),
-                    dimension: None,
-                }
+                self.array_type(element_type, None, None)?
             } else if self.match_token(TokenType::LParen) {
                 let element_type = self.parse_data_type_for_cast()?;
                 self.expect_token(TokenType::RParen)?;
-                DataType::Array {
-                    element_type: Box::new(element_type),
-                    dimension: None,
-                }
+                self.array_type(element_type, None, None)?
             } else {
                 DataType::Custom { name }
             }

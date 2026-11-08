@@ -12,6 +12,7 @@ use crate::expressions::types::models::OracleCharacterLengthSemantics;
 use crate::expressions::types::models::OracleDataType;
 use crate::expressions::types::models::OracleTimestampTimeZone;
 use crate::expressions::types::models::StructField;
+use crate::guard::constants::MAX_DATA_TYPE_DEPTH;
 use crate::parser::constants::ARRAY;
 use crate::parser::constants::EXCLUDE;
 use crate::parser::constants::INCLUDE;
@@ -541,9 +542,37 @@ impl Parser {
         }
     }
 
+    /// Refuses a type nested `depth` levels deep, counting every array, row and map level as one.
+    pub(crate) fn within_type_depth(&self, depth: usize) -> Result<()> {
+        if depth <= MAX_DATA_TYPE_DEPTH {
+            return Ok(());
+        }
+        Err(Error::parse(
+            format!(
+                "E_GUARD_NESTING_DEPTH_EXCEEDED: value {depth} exceeds configured limit {MAX_DATA_TYPE_DEPTH}"
+            ),
+            self.previous().span,
+        ))
+    }
+
+    /// An array of `element`, whose nesting depth is `element_depth` when known, up to the limit.
+    pub(crate) fn array_type(
+        &self,
+        element: DataType,
+        dimension: Option<u32>,
+        element_depth: Option<usize>,
+    ) -> Result<DataType> {
+        self.within_type_depth(element_depth.unwrap_or_else(|| element.nesting_depth()) + 1)?;
+        Ok(DataType::Array {
+            element_type: Box::new(element),
+            dimension,
+        })
+    }
+
     /// Parse optional array dimensions after a type: [], [N], [N][M], ARRAY, ARRAY[N], etc.
     pub(crate) fn maybe_parse_array_dimensions(&mut self, base_type: DataType) -> Result<DataType> {
         let mut current_type = base_type;
+        let mut depth: Option<usize> = None;
 
         if self.check_identifier("ARRAY") {
             self.skip();
@@ -559,10 +588,8 @@ impl Parser {
             } else {
                 None
             };
-            current_type = DataType::Array {
-                element_type: Box::new(current_type),
-                dimension,
-            };
+            current_type = self.array_type(current_type, dimension, depth)?;
+            depth = Some(depth.map_or_else(|| current_type.nesting_depth(), |known| known + 1));
         }
 
         while self.match_token(TokenType::LBracket) {
@@ -574,10 +601,8 @@ impl Parser {
             };
             self.expect_token(TokenType::RBracket)?;
 
-            current_type = DataType::Array {
-                element_type: Box::new(current_type),
-                dimension,
-            };
+            current_type = self.array_type(current_type, dimension, depth)?;
+            depth = Some(depth.map_or_else(|| current_type.nesting_depth(), |known| known + 1));
         }
 
         Ok(current_type)
@@ -704,10 +729,7 @@ impl Parser {
                 if self.match_token(TokenType::Lt) {
                     let element_type = self.parse_data_type()?;
                     self.expect_gt()?;
-                    Ok(DataType::Array {
-                        element_type: Box::new(element_type),
-                        dimension: None,
-                    })
+                    self.array_type(element_type, None, None)
                 } else {
                     Ok(DataType::Custom {
                         name: "ARRAY".to_string(),
