@@ -562,3 +562,47 @@ pub(crate) fn generic_calls(sql: &str) -> sqlquack_syntax::Expression {
     function.name = function.name.trim_start_matches("zz_").to_owned();
     statement
 }
+
+/// A SELECT of `orders` wrapped in `depth` derived tables.
+pub(crate) fn nested_derived_tables(depth: usize) -> String {
+    let mut sql: String = "SELECT id FROM orders".to_owned();
+    for _ in 0..depth {
+        sql = format!("SELECT * FROM ({sql}) AS t");
+    }
+    sql
+}
+
+/// `sql`'s tree depth, outputs and findings, analysed on a 2 MiB thread, or the parser's refusal.
+pub(crate) fn deep_sqlite_analysis(sql: String) -> Result<(usize, usize, usize), String> {
+    std::thread::Builder::new()
+        .stack_size(2 * 1024 * 1024)
+        .spawn(move || {
+            let parsed = sqlquack_syntax_sqlite::parse(&sql).map_err(|error| error.message)?;
+            let schema: TypedShopSchema = sqlite_shop_schema();
+            let context = LineageContext {
+                profile: &SQLITE,
+                schema: &schema,
+                sql: Some(&sql),
+            };
+            let statement: &sqlquack_syntax::Expression = &parsed.statements[0];
+            Ok((
+                tree_depth(statement),
+                crate::statement_lineage(statement, context).outputs.len(),
+                crate::statement_name_findings(statement, context).len(),
+            ))
+        })
+        .unwrap_or_else(|error| panic!("{error}"))
+        .join()
+        .unwrap_or_else(|_| panic!("the analysis thread panicked"))
+}
+
+/// The number of levels in the tree under `root`, counted level by level without recursion.
+fn tree_depth(root: &sqlquack_syntax::Expression) -> usize {
+    use sqlquack_syntax::ExpressionWalk;
+    std::iter::successors(Some(vec![root]), |level| {
+        let next: Vec<&sqlquack_syntax::Expression> =
+            level.iter().flat_map(|node| node.children()).collect();
+        (!next.is_empty()).then_some(next)
+    })
+    .count()
+}

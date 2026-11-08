@@ -1470,6 +1470,8 @@ dependencies = [
  "sqlquack-snowflake",
  "sqlquack-syntax",
  "sqlquack-syntax-postgres",
+ "sqlquack-syntax-sqlite",
+ "stacker",
 ]
 
 [[package]]

@@ -6,9 +6,12 @@ use crate::dialects::constants::SQLITE;
 use crate::lineage::_helpers::findings::statement::statement_findings;
 use crate::lineage::models::{LineageContext, Nullability};
 use crate::lineage::tests::helpers::{
-    found_findings, generic_calls, owned_findings, sqlite_outputs, sqlite_shop_schema,
+    deep_sqlite_analysis, found_findings, generic_calls, nested_derived_tables, owned_findings,
+    sqlite_outputs, sqlite_shop_schema,
 };
-use crate::lineage::tests::test_types::{QueryFindingsTestCase, SqliteOutputsTestCase};
+use crate::lineage::tests::test_types::{
+    DeepSqliteTestCase, QueryFindingsTestCase, SqliteOutputsTestCase,
+};
 
 #[test]
 fn given_a_sqlite_query_sqlite_rejects_when_checking_then_the_broken_rule_is_found() {
@@ -268,6 +271,36 @@ fn given_sqlite_window_only_calls_by_name_when_checking_then_each_without_over_i
                 ))
                 .collect::<Vec<_>>(),
             owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_sqlite_tree_nested_to_the_parser_limit_when_analysed_on_a_small_stack_then_it_completes()
+{
+    let test_cases = [
+        DeepSqliteTestCase {
+            description: "998 nested derived tables, a tree about 2,000 levels deep",
+            sql: nested_derived_tables(998),
+            expected_result: Ok((1998, 1, 0)),
+        },
+        DeepSqliteTestCase {
+            description: "990 chained additions in one output",
+            sql: format!("SELECT 1{} AS a FROM orders", " + 1".repeat(990)),
+            expected_result: Ok((993, 1, 0)),
+        },
+        DeepSqliteTestCase {
+            description: "derived tables nested past the parser limit are refused",
+            sql: nested_derived_tables(1100),
+            expected_result: Err("the statement nests too deeply"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            deep_sqlite_analysis(test_case.sql),
+            test_case.expected_result.map_err(str::to_owned),
             "{}",
             test_case.description
         );

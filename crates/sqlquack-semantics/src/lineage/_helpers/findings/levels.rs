@@ -28,6 +28,16 @@ pub(crate) fn query_findings(
     (ctes, outer, aliases): (&[NamedQuery], Option<&LineageScope<'_>>, &[String]),
     context: LineageContext<'_>,
 ) -> Vec<NameFinding> {
+    crate::lineage::_helpers::tracing::stack::deeper(|| {
+        query_findings_level(query, (ctes, outer, aliases), context)
+    })
+}
+
+fn query_findings_level(
+    query: &Expression,
+    (ctes, outer, aliases): (&[NamedQuery], Option<&LineageScope<'_>>, &[String]),
+    context: LineageContext<'_>,
+) -> Vec<NameFinding> {
     let branches = |with: Option<&With>, left: &Expression, right: &Expression| {
         let (ctes, mut found) = visited_ctes(with, (ctes, outer, aliases), context);
         let mut branches: Vec<NameFinding> = query_findings(left, (&ctes, outer, aliases), context);

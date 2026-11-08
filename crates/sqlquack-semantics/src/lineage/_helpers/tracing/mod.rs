@@ -6,3 +6,4 @@ pub(crate) mod postgres_names;
 pub(crate) mod queries;
 pub(crate) mod resolution;
 pub(crate) mod sources;
+pub(crate) mod stack;

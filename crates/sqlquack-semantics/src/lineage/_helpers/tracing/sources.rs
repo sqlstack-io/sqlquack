@@ -216,6 +216,14 @@ pub(crate) fn item_sources(
     scope: &LineageScope<'_>,
     context: LineageContext<'_>,
 ) -> Vec<ScopeSource> {
+    crate::lineage::_helpers::tracing::stack::deeper(|| item_sources_level(item, scope, context))
+}
+
+fn item_sources_level(
+    item: &Expression,
+    scope: &LineageScope<'_>,
+    context: LineageContext<'_>,
+) -> Vec<ScopeSource> {
     match item {
         Expression::Table(table) => vec![table_source(table, scope, context)],
         Expression::Subquery(subquery) => {

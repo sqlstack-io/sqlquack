@@ -32,6 +32,16 @@ pub(crate) fn expression_lineage(
     scope: &LineageScope<'_>,
     context: LineageContext<'_>,
 ) -> Lineage {
+    crate::lineage::_helpers::tracing::stack::deeper(|| {
+        expression_lineage_level(expression, scope, context)
+    })
+}
+
+fn expression_lineage_level(
+    expression: &Expression,
+    scope: &LineageScope<'_>,
+    context: LineageContext<'_>,
+) -> Lineage {
     match expression {
         Expression::Column(column) => {
             let read: Lineage = column_lineage(column.table.as_ref(), &column.name, scope, context);

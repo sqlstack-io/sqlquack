@@ -30,6 +30,17 @@ pub(crate) fn resolved_query(
     outer: Option<&LineageScope<'_>>,
     context: LineageContext<'_>,
 ) -> ResolvedQuery {
+    crate::lineage::_helpers::tracing::stack::deeper(|| {
+        resolved_query_level(query, ctes, outer, context)
+    })
+}
+
+fn resolved_query_level(
+    query: &Expression,
+    ctes: &[NamedQuery],
+    outer: Option<&LineageScope<'_>>,
+    context: LineageContext<'_>,
+) -> ResolvedQuery {
     match query {
         Expression::Select(select) => select_query(select, ctes, outer, context),
         Expression::Union(union) if union.by_name => {
