@@ -976,3 +976,29 @@ fn given_wide_sql_when_formatting_as_sql_server_then_it_takes_about_as_long_as_s
         );
     }
 }
+
+#[test]
+fn given_sql_growing_in_size_when_formatting_then_time_grows_linearly() {
+    let test_cases = [test_types::ScalingSqlTestCase {
+        description: "a BigQuery dashed name of many segments, whose touching run the guide marks once",
+        dialect: FormatDialect::BigQuery,
+        sql: |segments| format!("select x from {}.ds.t", vec!["a"; segments].join("-")),
+        sizes: (2_000, 8_000),
+        expected_max_ratio: 8,
+    }];
+    for test_case in test_cases {
+        let (small, large) = test_case.sizes;
+        let laid_out = format_sql(
+            &(test_case.sql)(large),
+            &FormatOptions::new(test_case.dialect),
+        );
+        assert!(laid_out.is_ok(), "{}: refused", test_case.description);
+        let short = format_time(&(test_case.sql)(small), test_case.dialect);
+        let long = format_time(&(test_case.sql)(large), test_case.dialect);
+        assert!(
+            long <= short * test_case.expected_max_ratio,
+            "{}: {large} took {long:?}, {small} took {short:?}",
+            test_case.description
+        );
+    }
+}

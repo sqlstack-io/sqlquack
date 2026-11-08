@@ -1,5 +1,8 @@
 //! GoogleSQL's own scanner and parser, which give the formatter BigQuery's tokens and trees.
 
+use std::collections::HashMap;
+use std::mem::{Discriminant, discriminant};
+
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax_bigquery::keywords::main::is_reserved::is_reserved;
@@ -54,18 +57,20 @@ pub(crate) fn lex_bigquery(sql: &str) -> Result<(Vec<Lexeme>, Vec<Comment>), Str
         .zip(starts)
         .flat_map(|(start, end)| gap_comments(sql, start, end, GOOGLESQL_COMMENTS))
         .collect();
-    let lexemes: Vec<Lexeme> = tokens
-        .iter()
-        .map(|token| {
-            let raw = &sql[token.start..token.end];
-            Lexeme {
-                start: token.start,
-                end: token.end,
-                kind: token_type(token, raw),
-                raw: raw.to_string(),
-            }
-        })
-        .collect();
+    let mut kinds: HashMap<(&str, Discriminant<TokenKind>), TokenType> = HashMap::new();
+    let mut lexemes: Vec<Lexeme> = Vec::with_capacity(tokens.len());
+    for token in &tokens {
+        let raw = &sql[token.start..token.end];
+        let kind = *kinds
+            .entry((raw, discriminant(&token.kind)))
+            .or_insert_with(|| token_type(token, raw));
+        lexemes.push(Lexeme {
+            start: token.start,
+            end: token.end,
+            kind,
+            raw: raw.to_string(),
+        });
+    }
     Ok((lexemes, comments))
 }
 

@@ -73,6 +73,18 @@ pub(super) struct TimedSqlTestCase {
     pub(super) expected_max_ratio: u32,
 }
 
+/// A query whose formatting time must grow linearly with its size, so a quadratic pass fails it.
+pub(super) struct ScalingSqlTestCase {
+    pub(super) description: &'static str,
+    pub(super) dialect: crate::format::models::FormatDialect,
+    /// The query at a given size.
+    pub(super) sql: fn(usize) -> String,
+    /// The small and the large size timed.
+    pub(super) sizes: (usize, usize),
+    /// How many times the small size's time the large one may take.
+    pub(super) expected_max_ratio: u32,
+}
+
 /// A statement BigQuery was recorded rejecting, with the syntax error it reported.
 pub(super) struct BigQueryReceiptTestCase {
     /// The statement, as recorded.

@@ -236,6 +236,7 @@ impl<'a> Guide<'a> {
         for index in 1..self.len().saturating_sub(1) {
             let lexemes = self.lexemes;
             let dash = lexemes[index].kind == TokenType::Dash
+                && !self.in_run[index]
                 && !self.binary_operators[index]
                 && touching(&lexemes[index - 1], &lexemes[index])
                 && touching(&lexemes[index], &lexemes[index + 1]);
