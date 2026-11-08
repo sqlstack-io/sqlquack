@@ -157,3 +157,17 @@ pub(crate) struct QueryFindingsTestCase {
     pub(crate) sql: &'static str,
     pub(crate) expected_findings: &'static [(&'static str, &'static str, usize)],
 }
+
+/// SQLite outputs: the query and each output's name, type and nullability.
+pub(crate) struct SqliteOutputsTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_outputs: &'static [(&'static str, Option<&'static str>, Nullability)],
+}
+
+/// A deeply nested SQLite query: its tree depth, outputs and findings, or the parser's refusal.
+pub(crate) struct DeepSqliteTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: String,
+    pub(crate) expected_result: Result<(usize, usize, usize), &'static str>,
+}

@@ -4,7 +4,7 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Literal;
 
 use crate::lineage::_helpers::checks::families::Family;
-use crate::lineage::constants::{DUCKDB_PROFILE, POSTGRES_PROFILE};
+use crate::lineage::constants::{DUCKDB_PROFILE, POSTGRES_PROFILE, SQLITE_PROFILE};
 use crate::lineage::models::LineageContext;
 
 /// The length of an ISO date, `YYYY-MM-DD`, and where its dashes and parts are.
@@ -30,6 +30,8 @@ pub(crate) enum Engine {
     Snowflake,
     /// PostgreSQL: no implicit predicate, comparison or string set-operation coercions.
     Postgres,
+    /// SQLite, whose dynamic typing is not recorded: no type findings, only scope and name rules.
+    Sqlite,
 }
 
 impl Engine {
@@ -37,6 +39,7 @@ impl Engine {
         match context.profile.name() {
             DUCKDB_PROFILE => Self::DuckDB,
             POSTGRES_PROFILE => Self::Postgres,
+            SQLITE_PROFILE => Self::Sqlite,
             _ => Self::Snowflake,
         }
     }
@@ -46,7 +49,7 @@ impl Engine {
         match self {
             Self::DuckDB => &[Family::Integer, Family::Numeric],
             Self::Snowflake => &[Family::Integer, Family::Numeric, Family::String],
-            Self::Postgres => &[],
+            Self::Postgres | Self::Sqlite => &[],
         }
     }
 
@@ -67,7 +70,7 @@ impl Engine {
                 (Family::Integer, Family::Boolean),
                 (Family::Numeric, Family::Boolean),
             ],
-            Self::Postgres => &[],
+            Self::Postgres | Self::Sqlite => &[],
         }
     }
 }

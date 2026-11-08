@@ -50,6 +50,29 @@ fn given_duckdb_functions_when_typing_outputs_then_each_has_the_engine_type() {
             expected_type: Some("VARCHAR"),
         },
         DuckdbTypeTestCase {
+            description: "a recursive CTE keeps its anchor's type when its recursive branch is text",
+            sql: "WITH RECURSIVE r(n) AS (SELECT 1 UNION ALL SELECT 'x' FROM r WHERE n < 3) \
+                  SELECT n AS v FROM r",
+            expected_type: Some("INTEGER"),
+        },
+        DuckdbTypeTestCase {
+            description: "a recursive CTE keeps its anchor's text type over an integer branch",
+            sql: "WITH RECURSIVE r(n) AS (SELECT 'a' UNION ALL SELECT 1 FROM r WHERE length(n) < 3) \
+                  SELECT n AS v FROM r",
+            expected_type: Some("VARCHAR"),
+        },
+        DuckdbTypeTestCase {
+            description: "a recursive CTE keeps an INTEGER anchor over a DECIMAL step",
+            sql: "WITH RECURSIVE r(n) AS (SELECT 1 UNION SELECT n + 1.5 FROM r WHERE n < 3) \
+                  SELECT n AS v FROM r",
+            expected_type: Some("INTEGER"),
+        },
+        DuckdbTypeTestCase {
+            description: "a plain UNION ALL of an integer and a text literal unifies to text",
+            sql: "SELECT 1 AS v UNION ALL SELECT 'x'",
+            expected_type: Some("VARCHAR"),
+        },
+        DuckdbTypeTestCase {
             description: "ROW_NUMBER is BIGINT",
             sql: "SELECT ROW_NUMBER() OVER (ORDER BY quantity) AS v FROM t",
             expected_type: Some("BIGINT"),

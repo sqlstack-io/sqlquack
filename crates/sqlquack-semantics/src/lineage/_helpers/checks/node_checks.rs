@@ -48,8 +48,9 @@ fn finding(code: &'static str, message: String, node: &Expression) -> NameFindin
 
 /// The type findings of `node`, as polyglot's type checks report them, in its order.
 pub(crate) fn node_findings(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<NameFinding> {
+    let sqlite: bool = level.engine() == Engine::Sqlite;
     let mut findings: Vec<NameFinding> = match node {
-        Expression::Select(select) => clause_predicates(select, node, level),
+        Expression::Select(select) if !sqlite => clause_predicates(select, node, level),
         _ => Vec::new(),
     };
     if let Expression::Function(function) = node
@@ -67,6 +68,10 @@ pub(crate) fn node_findings(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<
         }
         _ => Vec::new(),
     };
+    if sqlite {
+        findings.extend(located(own, node));
+        return findings;
+    }
     let checked = check_call(node, level.engine(), &family);
     let signed: bool = checked.as_ref().is_some_and(|checked| checked.signed);
     own.extend(checked.map(|checked| checked.findings).unwrap_or_default());
@@ -166,7 +171,7 @@ fn clause_predicates(
 fn predicate_code(engine: Engine) -> &'static str {
     match engine {
         Engine::DuckDB => "W215",
-        Engine::Snowflake | Engine::Postgres => "E211",
+        Engine::Snowflake | Engine::Postgres | Engine::Sqlite => "E211",
     }
 }
 
@@ -233,7 +238,7 @@ fn expression_checks(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<NameFin
                 let code: Option<&'static str> = match engine {
                     Engine::Snowflake => Some("E218"),
                     Engine::DuckDB => Some("W213"),
-                    Engine::Postgres => None,
+                    Engine::Postgres | Engine::Sqlite => None,
                 };
                 findings.extend(
                     code.map(|code| finding(code, "Invalid interval literal".to_owned(), node)),
@@ -473,7 +478,7 @@ fn impossible_cast(
     impossible.then(|| {
         finding(
             match engine {
-                Engine::Snowflake | Engine::Postgres => "E218",
+                Engine::Snowflake | Engine::Postgres | Engine::Sqlite => "E218",
                 Engine::DuckDB => "W213",
             },
             format!("Cannot cast {} to {}", source.name(), target.name()),

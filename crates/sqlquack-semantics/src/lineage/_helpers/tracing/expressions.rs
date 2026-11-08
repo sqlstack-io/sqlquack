@@ -16,9 +16,11 @@ use crate::lineage::_helpers::typing::postgres_typing::postgres_cast_spelling;
 use crate::lineage::_helpers::typing::rules::{
     ValueType, computed_type, literal_type, mapped_timestamp, rendered_type, required_non_null,
 };
+use crate::lineage::_helpers::typing::sqlite_typing::sqlite_cast_spelling;
 use crate::lineage::constants::{
     AGGREGATE_FUNCTIONS, BOOLEAN_TYPE, DATE_PART_FUNCTIONS, DUCKDB_PROFILE, POSITIONAL_COLUMN_BASE,
     POSTGRES_PROFILE, SNOWFLAKE_JSON_HOLDERS, SNOWFLAKE_PROFILE, SNOWFLAKE_VARIANT_TYPE,
+    SQLITE_PROFILE,
 };
 use crate::lineage::models::{
     Lineage, LineageContext, LineageScope, Nullability, ResolvedQuery, RowReads, TransformKind,
@@ -26,6 +28,16 @@ use crate::lineage::models::{
 
 /// The lineage of `expression` read in `scope`.
 pub(crate) fn expression_lineage(
+    expression: &Expression,
+    scope: &LineageScope<'_>,
+    context: LineageContext<'_>,
+) -> Lineage {
+    crate::lineage::_helpers::tracing::stack::deeper(|| {
+        expression_lineage_level(expression, scope, context)
+    })
+}
+
+fn expression_lineage_level(
     expression: &Expression,
     scope: &LineageScope<'_>,
     context: LineageContext<'_>,
@@ -81,6 +93,7 @@ pub(crate) fn expression_lineage(
             let target: Option<String> = match context.profile.name() {
                 DUCKDB_PROFILE => cast_spelling(&cast.to),
                 POSTGRES_PROFILE => postgres_cast_spelling(&cast.to),
+                SQLITE_PROFILE => sqlite_cast_spelling(&cast.to),
                 _ => rendered_type(&cast.to),
             };
             let target: Option<Rc<str>> =
