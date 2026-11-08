@@ -7,6 +7,7 @@ from itertools import product
 
 from scripts.case_generators._helpers.numbers import (
     common_digits,
+    division_exact,
     division_guarded,
     exact,
     fit,
@@ -240,18 +241,22 @@ def pair_cases(*, entry: OperatorFile, left: NumberType, right: NumberType) -> l
             )
         )
     if guarded:
+        exact_divisors: bool = division_exact(left=left, right=right)
         cases.append(
             Case(
                 id=f"{left.slug}_{entry.slug}_{right.slug}_numeric_range",
                 description=(
-                    f"{left.name} {operator} {right.name} by divisors whose exact quotient "
+                    f"{left.name} {operator} {right.name} by the largest divisors, "
+                    "which DuckDB divides exactly in 128 bits."
+                    if exact_divisors
+                    else f"{left.name} {operator} {right.name} by divisors whose exact quotient "
                     "needs more than 128 bits in DuckDB (divergence numeric_range)."
                 ),
                 columns=columns,
                 rows=cells(rows=guarded, left=left, right=right),
                 expression=f"a {operator} b",
                 tags=("boundary",),
-                expected_divergence=NUMERIC_RANGE,
+                expected_divergence=None if exact_divisors else NUMERIC_RANGE,
             )
         )
     if operator != Operator.DIVIDE:

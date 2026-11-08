@@ -190,7 +190,7 @@ origin = "generated: numeric_arithmetic@4"
 
 [[case]]
 id = "n5_0_divide_n38_0_numeric_range"
-description = "NUMBER(5,0) / NUMBER(38,0) by divisors whose exact quotient needs more than 128 bits in DuckDB (divergence numeric_range)."
+description = "NUMBER(5,0) / NUMBER(38,0) by the largest divisors, which DuckDB divides exactly in 128 bits."
 columns = [{ name = "a", type = "NUMBER(5,0)" }, { name = "b", type = "NUMBER(38,0)" }]
 rows = [
   ["7", "99999999999999999999999999999999999999"],
@@ -199,7 +199,6 @@ rows = [
 expression = "a / b"
 tags = ["boundary"]
 origin = "generated: numeric_arithmetic@4"
-expected_divergence = "numeric_range"
 
 [[case]]
 id = "n5_0_divide_n5_0"
@@ -315,7 +314,7 @@ origin = "generated: numeric_arithmetic@4"
 
 [[case]]
 id = "n10_2_divide_n38_0_numeric_range"
-description = "NUMBER(10,2) / NUMBER(38,0) by divisors whose exact quotient needs more than 128 bits in DuckDB (divergence numeric_range)."
+description = "NUMBER(10,2) / NUMBER(38,0) by the largest divisors, which DuckDB divides exactly in 128 bits."
 columns = [{ name = "a", type = "NUMBER(10,2)" }, { name = "b", type = "NUMBER(38,0)" }]
 rows = [
   ["7.25", "99999999999999999999999999999999999999"],
@@ -324,7 +323,6 @@ rows = [
 expression = "a / b"
 tags = ["boundary"]
 origin = "generated: numeric_arithmetic@4"
-expected_divergence = "numeric_range"
 
 [[case]]
 id = "n10_2_divide_n5_0"

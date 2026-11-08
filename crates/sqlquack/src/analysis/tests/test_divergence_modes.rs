@@ -89,12 +89,13 @@ fn given_a_known_divergence_when_converting_then_default_mode_warns_and_strict_m
             },
         },
         DivergenceModeTestCase {
-            description: "dividing by NUMBER(38,0) converts by default with a runtime guard",
+            description: "dividing by NUMBER(38,0) needs no numeric_range, as the exact quotient \
+                          is no longer limited to 128 bits",
             sql: "SELECT amount / customer_id AS share FROM orders",
-            strict: false,
+            strict: true,
             expected_outcome: DivergenceModeOutcome {
                 converted: true,
-                divergences: numeric_range("node:div"),
+                divergences: vec![],
                 categories: vec![],
             },
         },
