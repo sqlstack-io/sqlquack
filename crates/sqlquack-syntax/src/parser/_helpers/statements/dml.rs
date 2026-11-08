@@ -554,8 +554,14 @@ impl Parser {
         let ends_at = |offset: usize| {
             token_type_at(offset).is_none_or(|token_type| token_type == TokenType::Semicolon)
         };
-        if ends_at(1) || token_type_at(2) == Some(TokenType::Eq) {
+        if ends_at(1) {
             return Err(self.parse_error("Expected an object kind and a name"));
+        }
+        if token_type_at(2) == Some(TokenType::Eq) {
+            let property = self.tokens[self.current + 1].text.to_ascii_uppercase();
+            return Err(self.parse_error(format!(
+                "Expected an object kind and its name before the property {property}"
+            )));
         }
         let partial = self.check_identifier("PROFILE")
             || self.check_identifier("POLICY")
