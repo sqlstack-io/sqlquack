@@ -135,6 +135,22 @@ fn given_a_duckdb_select_when_checking_its_scope_rules_then_broken_rules_are_fou
             sql: "SELECT O.Status, COUNT(*) AS n FROM orders AS o GROUP BY o.status",
             expected_findings: &[],
         },
+        QueryFindingsTestCase {
+            description: "a ranking function without OVER (1.4: Binder Error)",
+            sql: "SELECT id, row_number() AS position FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 0)],
+        },
+        QueryFindingsTestCase {
+            description: "an offset function without OVER inside an expression (1.4: Binder Error)",
+            sql: "SELECT lag(quantity) + 1 AS previous FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 11)],
+        },
+        QueryFindingsTestCase {
+            description: "window functions with OVER and the first and last aggregates (1.4: accepted)",
+            sql: "SELECT row_number() OVER (), lag(quantity) OVER (ORDER BY id), first(id), last(id) \
+                  FROM orders GROUP BY ALL",
+            expected_findings: &[],
+        },
     ];
     let schema = typed_duckdb_shop_schema();
     for test_case in test_cases {

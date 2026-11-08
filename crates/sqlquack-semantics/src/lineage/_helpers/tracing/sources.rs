@@ -645,8 +645,8 @@ pub(crate) fn values_query(
     renamed(query, &values.column_aliases, context)
 }
 
-/// PIVOT: the input's other columns pass through; each pivoted column aggregates its values.
-fn pivot_sources(
+/// PIVOT: the input's other or GROUP BY columns pass through; each pivoted column aggregates.
+pub(crate) fn pivot_sources(
     pivot: &Pivot,
     scope: &LineageScope<'_>,
     context: LineageContext<'_>,
@@ -655,10 +655,14 @@ fn pivot_sources(
         sources: item_sources(&pivot.this, scope, context),
         ..empty_scope(scope.ctes, scope.outer)
     };
-    let used: Vec<String> = pivot
-        .expressions
+    let simplified: bool = pivot.fields.is_empty();
+    let (aggregates, headers): (&[Expression], &[Expression]) = match simplified {
+        true => (&pivot.using, &pivot.expressions),
+        false => (&pivot.expressions, &pivot.fields),
+    };
+    let used: Vec<String> = aggregates
         .iter()
-        .chain(pivot.fields.iter())
+        .chain(headers.iter())
         .flat_map(|expression| expression.dfs())
         .filter_map(|node| match node {
             Expression::Column(column) => Some(key(&column.name, context)),
@@ -666,31 +670,51 @@ fn pivot_sources(
         })
         .collect();
     let aggregated = combined(
-        pivot
-            .expressions
+        aggregates
             .iter()
             .map(|aggregate| expression_lineage(aggregate, &input, context))
             .collect(),
         TransformKind::Aggregation,
     );
-    let values: Vec<String> = pivot
-        .fields
-        .iter()
-        .flat_map(|field| match field {
-            Expression::In(within) => within.expressions.iter().collect::<Vec<&Expression>>(),
-            _ => Vec::new(),
-        })
-        .map(|value| pivoted_name(value, pivot.expressions.len(), context))
-        .collect();
-    let passed: Vec<ScopedColumn> = passed_columns(&input.sources, &used, context);
+    let values: Vec<String> = match simplified {
+        true => Vec::new(),
+        false => headers
+            .iter()
+            .flat_map(|field| match field {
+                Expression::In(within) => within.expressions.iter().collect::<Vec<&Expression>>(),
+                _ => Vec::new(),
+            })
+            .map(|value| pivoted_name(value, aggregates.len(), context))
+            .collect(),
+    };
+    let grouped: Option<Vec<&Expression>> = pivot.group.as_deref().map(|group| match group {
+        Expression::Tuple(tuple) => tuple.expressions.iter().collect(),
+        Expression::Group(plain)
+            if plain.grouping_sets.is_none()
+                && plain.cube.is_none()
+                && plain.rollup.is_none()
+                && plain.totals.is_none()
+                && plain.all.is_none() =>
+        {
+            plain.expressions.iter().collect()
+        }
+        other => vec![other],
+    });
+    let (passed, grouped_known): (Vec<ScopedColumn>, bool) = match &grouped {
+        Some(grouped) => grouped_columns(grouped, &input.sources, context),
+        None => (passed_columns(&input.sources, &used, context), true),
+    };
     let dynamic = values.is_empty() || values.iter().any(String::is_empty);
     let mut rows: RowReads = RowReads::default();
-    for field in &pivot.fields {
-        let pivoted: &Expression = match field {
+    for header in headers {
+        let pivoted: &Expression = match header {
             Expression::In(within) => &within.this,
             other => other,
         };
         rows.read(&expression_lineage(pivoted, &input, context));
+    }
+    for grouping in grouped.iter().flatten() {
+        rows.read(&expression_lineage(grouping, &input, context));
     }
     for source in &input.sources {
         rows.absorb(&source.query.rows);
@@ -705,7 +729,7 @@ fn pivot_sources(
             true => passed,
             false => passed.into_iter().chain(pivoted).collect(),
         },
-        open: dynamic || input.sources.iter().any(|source| source.query.open),
+        open: dynamic || !grouped_known || input.sources.iter().any(|source| source.query.open),
         rows,
         ..ResolvedQuery::default()
     };
@@ -713,6 +737,33 @@ fn pivot_sources(
         key: pivot.alias.as_ref().map(|alias| key(alias, context)),
         query: renamed(query, &pivot.alias_columns, context),
     }]
+}
+
+/// The input columns a PIVOT's GROUP BY names, and whether it names only known columns.
+fn grouped_columns(
+    grouped: &[&Expression],
+    sources: &[ScopeSource],
+    context: LineageContext<'_>,
+) -> (Vec<ScopedColumn>, bool) {
+    let mut columns: Vec<ScopedColumn> = Vec::new();
+    let mut known: bool = true;
+    for grouping in grouped {
+        let found: Option<&ScopedColumn> = match grouping {
+            Expression::Column(column) => {
+                let wanted: String = key(&column.name, context);
+                sources
+                    .iter()
+                    .flat_map(|source| source.query.columns.iter())
+                    .find(|offered| context.profile.same_identifier(&offered.key, &wanted))
+            }
+            _ => None,
+        };
+        match found {
+            Some(column) => columns.push(column.clone()),
+            None => known = false,
+        }
+    }
+    (columns, known)
 }
 
 /// A pivoted value's column: quoted text in Snowflake, bare in DuckDB (unnamed beside several aggregates).

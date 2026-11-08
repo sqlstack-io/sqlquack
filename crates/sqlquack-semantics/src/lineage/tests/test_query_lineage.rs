@@ -290,6 +290,35 @@ fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_tra
             expected_open_star: false,
         },
         QueryLineageTestCase {
+            description: "a DuckDB PIVOT with GROUP BY passes only the grouped columns through",
+            sql: "SELECT * FROM (SELECT id, customer_id, status, amount FROM orders) \
+                  PIVOT (SUM(amount) FOR status IN ('open') GROUP BY customer_id)",
+            dialect: Dialect::DuckDB,
+            profile: &DUCKDB,
+            expected_outputs: &[
+                (
+                    "customer_id",
+                    TransformKind::Direct,
+                    &["orders.customer_id"],
+                ),
+                ("open", TransformKind::Aggregation, &["orders.amount"]),
+            ],
+            expected_open_star: false,
+        },
+        QueryLineageTestCase {
+            description: "a DuckDB PIVOT statement keeps its GROUP BY columns; its pivoted ones are unnamed",
+            sql: "PIVOT (SELECT id, customer_id, status, amount FROM orders) ON status USING SUM(amount) \
+                  GROUP BY customer_id",
+            dialect: Dialect::DuckDB,
+            profile: &DUCKDB,
+            expected_outputs: &[(
+                "customer_id",
+                TransformKind::Direct,
+                &["orders.customer_id"],
+            )],
+            expected_open_star: true,
+        },
+        QueryLineageTestCase {
             description: "a pivoted column is named by its value exactly, quotes included",
             sql: "SELECT p.\"'open'\" AS open_amount FROM (SELECT customer_id, status, amount FROM orders) \
                   PIVOT (SUM(amount) FOR status IN ('open')) AS p",
