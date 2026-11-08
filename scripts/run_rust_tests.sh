@@ -78,10 +78,13 @@ done <"$work/ordered"
 cargo test --workspace --locked --profile "$profile" "${features[@]}" --doc || failed=1
 
 # Tests that hold a wall-clock budget, marked `#[ignore = "timing"]`, run last, one at a time and
-# single-threaded, so no other test shares the machine with them.
-{ grep -rh -A4 --include='*.rs' '#\[ignore = "timing"\]' crates || true; } \
+# single-threaded, so no other test shares the machine with them. They are searched for in every
+# workspace member's directory, wherever it lives, so moving a package cannot drop its marks.
+mapfile -t members < <(cargo metadata --no-deps --format-version 1 --locked \
+  | jq -r '.packages[].manifest_path | sub("/Cargo.toml$"; "")' | sort -u)
+{ grep -rh -A4 --include='*.rs' '#\[ignore = "timing"\]' "${members[@]}" || true; } \
   | sed -n 's/^fn \([a-z0-9_]*\)(.*/\1/p' | sort -u >"$work/timing"
-marks=$({ grep -rh --include='*.rs' '#\[ignore = "timing"\]' crates || true; } | wc -l)
+marks=$({ grep -rh --include='*.rs' '#\[ignore = "timing"\]' "${members[@]}" || true; } | wc -l)
 if [ "$marks" -ne "$(wc -l <"$work/timing")" ]; then
   echo "run_rust_tests: FAILED: $marks timing marks name $(wc -l <"$work/timing") distinct test functions"
   failed=1
@@ -107,6 +110,11 @@ if [ -n "$missing" ]; then
   echo "run_rust_tests: FAILED: timing tests not found in any binary: $missing"
   failed=1
 fi
-echo "run_rust_tests: $(wc -l <"$work/timing") timing tests ran one at a time"
+ran=$(sort -u "$work/timing-found" | wc -l)
+if [ "$ran" -ne "$marks" ]; then
+  echo "run_rust_tests: FAILED: the workspace members hold $marks timing marks, and $ran timing tests ran"
+  failed=1
+fi
+echo "run_rust_tests: $ran timing tests ran one at a time"
 [ "$failed" = 0 ] || { echo "run_rust_tests: FAILED" >&2; exit 1; }
 echo "run_rust_tests: passed"
