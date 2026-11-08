@@ -319,3 +319,9 @@ required obligation is met and a current family review covers its fingerprint. I
   gapped `Command` node, and gaps `INDEXED BY` and `IN table`, as its README lists. In 126 of
   them the gapped statement also accepts a negative case that SQLite refuses, which the checker
   reports as a disagreement; no other case disagrees.
+
+`baseline.json` is the `snapshot` of these claims, bound to the commit that added the catalogue.
+`make syntax-coverage`, part of `check-ci`, runs `diff --root coverage/syntax-sqlite` against it,
+so a verified form or met obligation the parser stops supporting, or a catalogue change the
+baseline was not re-recorded for, fails the gate. Re-record it with
+`syntax-coverage snapshot --root coverage/syntax-sqlite --catalogue-commit <commit> --json`.
