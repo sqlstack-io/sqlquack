@@ -9,6 +9,7 @@ use sqlquack_syntax::expressions::queries::models::Select;
 use crate::lineage::_helpers::checks::scope_rules::output_width;
 use crate::lineage::_helpers::tracing::queries::empty_scope;
 use crate::lineage::_helpers::tracing::resolution::key;
+use crate::lineage::_helpers::tracing::reuse::holds_unpivot;
 use crate::lineage::_helpers::tracing::sources::item_sources;
 use crate::lineage::constants::{
     ALIAS_COUNT_CODE, AMBIGUOUS_COLUMN_CODE, COLUMNS_NO_MATCH, CONNECT_BY_LEVEL, NAME_PHASE,
@@ -359,13 +360,16 @@ fn lacks(side: &[ScopeSource], wanted: &str, context: LineageContext<'_>) -> boo
     !side.iter().any(unjudged) && !side.iter().any(|source| offers(source, wanted, context))
 }
 
-/// UNPIVOT operands its closed input does not offer.
+/// UNPIVOT operands its closed input does not offer; an item holding no UNPIVOT is not walked.
 pub(crate) fn unpivot_findings(
     item: &Expression,
     ctes: &[NamedQuery],
     context: LineageContext<'_>,
 ) -> Vec<NameFinding> {
     let mut findings: Vec<NameFinding> = Vec::new();
+    if !holds_unpivot(item) {
+        return findings;
+    }
     for node in item.dfs() {
         let Expression::Unpivot(unpivot) = node else {
             continue;

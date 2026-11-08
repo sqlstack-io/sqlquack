@@ -1,6 +1,6 @@
 //! The analysis probe: deep nestings parsed and then analysed, lineage and findings, over one table.
 
-use sqlquack_semantics::dialects::constants::{DUCKDB, POSTGRES, SNOWFLAKE};
+use sqlquack_semantics::dialects::constants::{DUCKDB, POSTGRES, SNOWFLAKE, SQLITE};
 use sqlquack_semantics::dialects::types::DialectProfile;
 use sqlquack_semantics::lineage::models::{LineageContext, Nullability, SchemaColumn};
 use sqlquack_semantics::lineage::types::LineageSchema;
@@ -43,7 +43,7 @@ fn orders(parser: LocalParser) -> Option<(Orders, &'static dyn DialectProfile)> 
                 ],
                 &SNOWFLAKE,
             ),
-            LocalParser::DuckDb | LocalParser::Postgres => (
+            LocalParser::DuckDb | LocalParser::Postgres | LocalParser::Sqlite => (
                 "orders",
                 vec![
                     column("id", "INTEGER"),
@@ -52,13 +52,13 @@ fn orders(parser: LocalParser) -> Option<(Orders, &'static dyn DialectProfile)> 
                 ],
                 match parser {
                     LocalParser::DuckDb => &DUCKDB,
+                    LocalParser::Sqlite => &SQLITE,
                     _ => &POSTGRES,
                 },
             ),
             LocalParser::BigQuery
             | LocalParser::Databricks
             | LocalParser::SqlServer
-            | LocalParser::Sqlite
             | LocalParser::None => return None,
         };
     Some((Orders { relation, columns }, profile))
@@ -87,10 +87,12 @@ fn parsed(parser: LocalParser, sql: &str) -> Result<Vec<Expression>, LocalVerdic
         LocalParser::Postgres => sqlquack_syntax_postgres::parse_strict(sql)
             .map(|parsed| parsed.statements)
             .map_err(|_| LocalVerdict::Rejected),
+        LocalParser::Sqlite => sqlquack_syntax_sqlite::parse_strict(sql)
+            .map(|parsed| parsed.statements)
+            .map_err(|_| LocalVerdict::Rejected),
         LocalParser::BigQuery
         | LocalParser::Databricks
         | LocalParser::SqlServer
-        | LocalParser::Sqlite
         | LocalParser::None => Err(LocalVerdict::Failed {
             failure: LocalFailure::NoParser,
         }),
@@ -136,6 +138,11 @@ pub(crate) fn duckdb_analysis(sql: &str) -> LocalVerdict {
 /// SQLQuack's PostgreSQL verdict on `sql`, which it then analyses.
 pub(crate) fn postgres_analysis(sql: &str) -> LocalVerdict {
     analysed_verdict(LocalParser::Postgres, sql)
+}
+
+/// SQLQuack's SQLite verdict on `sql`, which it then analyses.
+pub(crate) fn sqlite_analysis(sql: &str) -> LocalVerdict {
+    analysed_verdict(LocalParser::Sqlite, sql)
 }
 
 /// `shape` at `depth` for a parser with an analysis profile.

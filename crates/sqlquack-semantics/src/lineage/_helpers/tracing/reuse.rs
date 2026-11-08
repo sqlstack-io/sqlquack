@@ -20,6 +20,7 @@ struct Frame {
 struct Kept {
     frames: Vec<Frame>,
     aggregates: HashMap<usize, bool>,
+    unpivots: HashMap<usize, bool>,
 }
 
 thread_local! {
@@ -67,16 +68,36 @@ pub(crate) fn analysing() -> Analysis {
 
 /// Whether `node` or any node under it is an aggregate, each node judged once per analysis.
 pub(crate) fn holds_aggregate(node: &Expression) -> bool {
+    holds(node, &|kept| &mut kept.aggregates, &is_aggregate)
+}
+
+/// Whether `node` or any node under it is an UNPIVOT, each node judged once per analysis.
+pub(crate) fn holds_unpivot(node: &Expression) -> bool {
+    holds(node, &|kept| &mut kept.unpivots, &|node| {
+        matches!(node, Expression::Unpivot(_))
+    })
+}
+
+/// Whether `node` or any node under it is `wanted`, kept by node address in `judged`.
+fn holds(
+    node: &Expression,
+    judged: &dyn Fn(&mut Kept) -> &mut HashMap<usize, bool>,
+    wanted: &dyn Fn(&Expression) -> bool,
+) -> bool {
     let address: usize = std::ptr::from_ref(node) as usize;
-    match with_kept(|kept| kept.aggregates.get(&address).copied()) {
-        None => node.dfs().any(is_aggregate),
-        Some(Some(holds)) => holds,
+    match with_kept(|kept| judged(kept).get(&address).copied()) {
+        None => node.dfs().any(wanted),
+        Some(Some(holds_it)) => holds_it,
         Some(None) => {
-            let holds: bool = crate::lineage::_helpers::tracing::stack::deeper(|| {
-                is_aggregate(node) || node.children().into_iter().any(holds_aggregate)
+            let holds_it: bool = crate::lineage::_helpers::tracing::stack::deeper(|| {
+                wanted(node)
+                    || node
+                        .children()
+                        .into_iter()
+                        .any(|child| holds(child, judged, wanted))
             });
-            with_kept(|kept| kept.aggregates.insert(address, holds));
-            holds
+            with_kept(|kept| judged(kept).insert(address, holds_it));
+            holds_it
         }
     }
 }
