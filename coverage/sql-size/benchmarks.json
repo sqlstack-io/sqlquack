@@ -4,21 +4,21 @@
   "workloads": {
     "variant_one_field": {
       "sql_bytes": 288,
-      "seconds": 1.44,
-      "reference_seconds": 0.039,
-      "ratio": 36.7
+      "seconds": 1.087,
+      "reference_seconds": 0.04,
+      "ratio": 27.3
     },
     "variant_staging": {
       "sql_bytes": 970,
-      "seconds": 3.31,
+      "seconds": 3.18,
       "reference_seconds": 0.232,
-      "ratio": 14.3
+      "ratio": 13.7
     },
     "decimal_divide": {
       "sql_bytes": 4239,
-      "seconds": 6.956,
-      "reference_seconds": 0.038,
-      "ratio": 184.8
+      "seconds": 6.922,
+      "reference_seconds": 0.037,
+      "ratio": 184.7
     }
   }
 }

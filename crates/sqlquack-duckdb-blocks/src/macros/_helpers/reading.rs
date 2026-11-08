@@ -18,8 +18,8 @@ use crate::semi_structured::constants::{
 const WHITESPACE: &str = r"[ \t\n\r]*";
 /// A string without a raw control character or a UTF-16 surrogate escape.
 const PLAIN_STRING: &str = r#""(?:[^"\\\x00-\x1f]|\\["/bfnrt]|\\u(?:[0-9a-cA-CefEF][0-9a-fA-F]{3}|[dD][0-7][0-9a-fA-F]{2}))*""#;
-/// An integer of up to 18 digits but -0, or a decimal of up to 9 + 5 digits ending non-zero.
-const PLAIN_NUMBER: &str = r"-?[1-9][0-9]{0,17}|0|-?(?:0|[1-9][0-9]{0,8})\.[0-9]{0,4}[1-9]";
+/// An integer of up to 18 digits but -0, or a decimal of up to 9 + 5 digits not all zero after the point.
+const PLAIN_NUMBER: &str = r"-?[1-9][0-9]{0,17}|0|-?(?:0|[1-9][0-9]{0,8})\.(?:[0-9]{0,4}[1-9]|[0-9]{0,3}[1-9]0|[0-9]{0,2}[1-9]00|[0-9]?[1-9]000|[1-9]0000)";
 
 /// The full check: the text as DuckDB `JSON`, blank text NULL, raising where Snowflake may differ.
 pub(crate) fn read_body() -> String {
