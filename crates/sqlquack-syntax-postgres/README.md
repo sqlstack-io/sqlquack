@@ -9,6 +9,33 @@ carries the message, the byte position and whether the SQLSTATE is 42601. Other 
 as an invalid Unicode escape (22025), the `UNIQUE` predicate (0A000) or the stack depth limit
 (54001), have `syntax = false`.
 
+## Nesting
+
+Nesting is bounded so that no input exhausts the caller's stack or takes exponential time:
+
+- Each nested level (parentheses, subqueries, FROM items, calls, CASE, prefixes such as `NOT`,
+  statements inside `BEGIN ATOMIC` and `EXPLAIN`, and type names) runs on a stack that grows on
+  demand (the default `stacker` feature), and a statement nesting past 300 levels is refused with
+  54001's "stack depth limit exceeded". A type's `[]` bounds count against the same limit. Once
+  one reading passes the limit, every other reading fails at once and the statement is refused.
+  PostgreSQL's own limit depends on its stack size, so it accepts some deeper texts.
+- A flat chain of operators (other than `AND` and `OR`), casts or indirections is refused with
+  the same error past 1,000 links. `AND`, `OR` and set operations are not counted.
+- Each statement's tree, as `tree_depth` measures it, is refused with the same error past 8,000
+  levels. This covers chains nested in another chain's first operand, which the counts above miss,
+  and long `AND`, `OR` and set-operation chains. A release build serialises such a tree on a
+  2 MiB thread.
+- Local parser limit, tree depth: PostgreSQL 18.6 accepts nested casts to about 13,200 levels
+  (132 levels of 99 casts each) before its own 54001, so a statement 8,000 to 13,200 levels deep is
+  refused here and accepted by the engine.
+- A parenthesized query, and `JSON_OBJECT`'s arguments, that fail to parse from a token have the
+  failure replayed there. `JSON_OBJECT`'s arguments also keep their tree, because its readings each
+  read the nested arguments; keeping an outer one drops those kept inside it, so the kept trees
+  never overlap. A parenthesized query's tree is not kept, since keeping a copy at every level grows
+  with depth times size. Kept trees are cloned on a stack grown to their depth, and together may
+  hold at most 65,536 nodes plus 32 per input token; an input past that is refused with the same
+  error. This is a local parser limit: PostgreSQL accepts such inputs.
+
 ## Gaps
 
 A statement holding a construct the shared tree cannot hold becomes a `Command` with the

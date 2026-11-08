@@ -1,6 +1,9 @@
 //! The parser's state: the tokens, where it is, and how tokens read as names.
 
+use std::collections::{BTreeMap, HashMap};
+
 use sqlquack_syntax::expressions::names::models::Identifier;
+use sqlquack_syntax::{Expression, ExpressionWalk};
 
 use crate::keywords::models::KeywordCategory;
 use crate::parse::constants::{EXPRESSION_KEYWORDS, QUERY_STARTS};
@@ -13,11 +16,60 @@ pub(crate) type Parsing<T> = Result<T, ParseError>;
 /// Recursion deeper than this fails as PostgreSQL's stack depth limit does (54001), not as syntax.
 const MAX_DEPTH: usize = 300;
 
+/// The longest flat chain of operators other than AND and OR, or of indirections.
+const MAX_CHAIN: usize = 1000;
+
+/// The deepest statement tree; a release build serialises one this deep on a 2 MiB thread.
+const MAX_TREE_DEPTH: usize = 8000;
+
+/// Stack a release build's recursive clone of a remembered tree may use per level of its depth.
+#[cfg(feature = "stacker")]
+const CLONE_LEVEL_BYTES: usize = 2 * 1024;
+
+/// Stack a debug build's recursive clone of a remembered tree may use per level of its depth.
+#[cfg(feature = "stacker")]
+const CLONE_LEVEL_BYTES_DEBUG: usize = 8 * 1024;
+
+/// Stack kept free beyond the clone's own estimate when the stack is grown for it.
+#[cfg(feature = "stacker")]
+const CLONE_STACK_MARGIN: usize = 1024 * 1024;
+
+/// Remembered nodes allowed per input token, beyond `MEMO_BASE_NODES`, before the input is refused.
+const MEMO_NODES_PER_TOKEN: usize = 32;
+
+/// Remembered nodes allowed whatever the input's length.
+const MEMO_BASE_NODES: usize = 64 * 1024;
+
+/// PostgreSQL's message for 54001, which recursion and chains past their limits both raise.
+const STACK_DEPTH_EXCEEDED: &str = "stack depth limit exceeded";
+
+/// A construct whose parse depends only on the token it starts at, so it is parsed once there.
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+pub(crate) enum Remembered {
+    ParenthesizedQuery,
+    JsonObjectArguments,
+}
+
+/// A remembered parse's result, end and gaps; only failures and `JSON_OBJECT` arguments are kept.
+struct Outcome {
+    result: Parsing<Expression>,
+    reached: usize,
+    gaps: Vec<Gap>,
+}
+
 pub(crate) struct Parser<'sql> {
     pub(crate) sql: &'sql str,
     pub(crate) tokens: Vec<Token>,
     pub(crate) at: usize,
     depth: usize,
+    /// The depth limit's error once any path, even one later backtracked, has gone past it.
+    too_deep: Option<ParseError>,
+    /// Constructs already parsed from a token, replayed when another alternative reaches them.
+    remembered: HashMap<(Remembered, usize), Outcome>,
+    /// The nodes of every tree kept in `remembered`, bounded by the memo budget.
+    remembered_nodes: usize,
+    /// The start token and node count of every `JSON_OBJECT` argument tree kept in `remembered`.
+    kept_trees: BTreeMap<usize, usize>,
     pub(crate) gaps: Vec<Gap>,
     /// Whether the statement being parsed holds a gap, so it becomes a `Command`.
     pub(crate) opaque: bool,
@@ -97,6 +149,10 @@ impl<'sql> Parser<'sql> {
             tokens,
             at: 0,
             depth: 0,
+            too_deep: None,
+            remembered: HashMap::new(),
+            remembered_nodes: 0,
+            kept_trees: BTreeMap::new(),
             gaps: Vec::new(),
             opaque: false,
         }
@@ -331,19 +387,135 @@ impl<'sql> Parser<'sql> {
         });
     }
 
-    /// Runs `parse` one level deeper, failing past the depth limit as PostgreSQL does.
+    /// Runs `parse` one level deeper; past the limit it and every later call fail, as 54001.
     pub(crate) fn deeper<T>(&mut self, parse: impl FnOnce(&mut Self) -> Parsing<T>) -> Parsing<T> {
+        if let Some(error) = &self.too_deep {
+            return Err(error.clone());
+        }
         if self.depth >= MAX_DEPTH {
-            return Err(ParseError {
-                message: "stack depth limit exceeded".to_owned(),
-                position: self.offset(),
-                syntax: false,
-            });
+            return Err(self.refuse_depth());
         }
         self.depth += 1;
-        let result: Parsing<T> = parse(self);
+        let result: Parsing<T> = self.with_stack(parse);
         self.depth -= 1;
         result
+    }
+
+    /// Refuses the statement when `levels` more levels here, such as array bounds, pass the limit.
+    pub(crate) fn within_depth_by(&mut self, levels: usize) -> Parsing<()> {
+        match self.depth + levels > MAX_DEPTH {
+            true => Err(self.refuse_depth()),
+            false => Ok(()),
+        }
+    }
+
+    /// Refuses `statement` when its tree nests deeper than `MAX_TREE_DEPTH`, as 54001.
+    pub(crate) fn within_tree_depth(&mut self, statement: &Expression) -> Parsing<()> {
+        match statement.tree_depth() > MAX_TREE_DEPTH {
+            true => Err(self.refuse_depth()),
+            false => Ok(()),
+        }
+    }
+
+    /// A flat chain's link count after one more link, refusing the statement past `MAX_CHAIN`.
+    pub(crate) fn link(&mut self, links: usize) -> Parsing<usize> {
+        match links < MAX_CHAIN {
+            true => Ok(links + 1),
+            false => Err(self.refuse_depth()),
+        }
+    }
+
+    /// The depth limit's error, recorded so every later level and the statement fail with it.
+    fn refuse_depth(&mut self) -> ParseError {
+        let error: ParseError = ParseError {
+            message: STACK_DEPTH_EXCEEDED.to_owned(),
+            position: self.offset(),
+            syntax: false,
+        };
+        self.too_deep.get_or_insert(error).clone()
+    }
+
+    /// `parse` of `construct` from the cursor, or a replay of its earlier parse from there.
+    pub(crate) fn remember(
+        &mut self,
+        construct: Remembered,
+        parse: impl FnOnce(&mut Self) -> Parsing<Expression>,
+    ) -> Parsing<Expression> {
+        let key: (Remembered, usize) = (construct, self.at);
+        if let Some(outcome) = self.remembered.get(&key) {
+            self.at = outcome.reached;
+            self.opaque |= !outcome.gaps.is_empty();
+            self.gaps.extend(outcome.gaps.iter().cloned());
+            return copied(&outcome.result);
+        }
+        let gaps: usize = self.gaps.len();
+        let result: Parsing<Expression> = match parse(self) {
+            Ok(tree) if tree.tree_depth() > MAX_TREE_DEPTH => Err(self.refuse_depth()),
+            result => result,
+        };
+        let kept: Parsing<Expression> = match (&result, construct) {
+            (Err(error), _) => Err(error.clone()),
+            (Ok(_), Remembered::ParenthesizedQuery) => return result,
+            (Ok(tree), Remembered::JsonObjectArguments) => {
+                self.forget_trees_within(key.1, self.at);
+                let nodes: usize = tree.dfs().count();
+                self.kept_trees.insert(key.1, nodes);
+                self.remembered_nodes += nodes;
+                let budget: usize = MEMO_BASE_NODES + MEMO_NODES_PER_TOKEN * self.tokens.len();
+                if self.remembered_nodes > budget {
+                    return Err(self.refuse_depth());
+                }
+                copied(&result)
+            }
+        };
+        let outcome: Outcome = Outcome {
+            result: kept,
+            reached: self.at,
+            gaps: self.gaps[gaps.min(self.gaps.len())..].to_vec(),
+        };
+        self.remembered.insert(key, outcome);
+        result
+    }
+
+    /// Drops the kept argument trees inside `start..end`; only that span's replay reached them.
+    fn forget_trees_within(&mut self, start: usize, end: usize) {
+        let inner: Vec<(usize, usize)> = self
+            .kept_trees
+            .range(start + 1..end)
+            .map(|(&at, &nodes)| (at, nodes))
+            .collect();
+        for (at, nodes) in inner {
+            self.kept_trees.remove(&at);
+            self.remembered
+                .remove(&(Remembered::JsonObjectArguments, at));
+            self.remembered_nodes -= nodes;
+        }
+    }
+
+    /// `result`, or the depth limit's error if any path went past it.
+    pub(crate) fn unless_too_deep<T>(&self, result: Parsing<T>) -> Parsing<T> {
+        match &self.too_deep {
+            Some(error) => Err(error.clone()),
+            None => result,
+        }
+    }
+
+    /// Runs `parse` on a grown stack when this one is nearly used up, whatever the thread's size.
+    #[inline(always)]
+    fn with_stack<T>(&mut self, parse: impl FnOnce(&mut Self) -> Parsing<T>) -> Parsing<T> {
+        #[cfg(feature = "stacker")]
+        {
+            let red_zone: usize = match cfg!(debug_assertions) {
+                true => 4 * 1024 * 1024,
+                false => 1024 * 1024,
+            };
+            stacker::maybe_grow(red_zone, 8 * 1024 * 1024, || parse(self))
+        }
+
+        #[cfg(not(feature = "stacker"))]
+        {
+            parse(self)
+        }
     }
 
     /// Tries `parse`; on failure rewinds and returns the error and how far it got.
@@ -403,4 +575,18 @@ impl<'sql> Parser<'sql> {
         }
         Ok(parts)
     }
+}
+
+/// A copy of a remembered parse; its tree is cloned recursively, so on a stack grown to its depth.
+fn copied(result: &Parsing<Expression>) -> Parsing<Expression> {
+    #[cfg(feature = "stacker")]
+    if let Ok(tree) = result {
+        let per_level: usize = match cfg!(debug_assertions) {
+            true => CLONE_LEVEL_BYTES_DEBUG,
+            false => CLONE_LEVEL_BYTES,
+        };
+        let needed: usize = (tree.tree_depth() + 1) * per_level;
+        return stacker::maybe_grow(needed, needed + CLONE_STACK_MARGIN, || Ok(tree.clone()));
+    }
+    result.clone()
 }
