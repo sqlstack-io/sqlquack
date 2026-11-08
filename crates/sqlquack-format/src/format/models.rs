@@ -6,11 +6,34 @@ use sqlquack_syntax::{Dialect, ParseOptions};
 
 use crate::format::constants::DEFAULT_INDENT;
 
+/// The SQL dialects the formatter reads; SQL Server through its own Transact-SQL scanner and parser.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FormatDialect {
+    Snowflake,
+    DuckDB,
+    PostgreSQL,
+    BigQuery,
+    Databricks,
+    SqlServer,
+}
+
+impl FormatDialect {
+    /// The shared tokenizer's dialect, for the dialects it reads.
+    pub(crate) fn shared(self) -> Option<Dialect> {
+        match self {
+            Self::Snowflake => Some(Dialect::Snowflake),
+            Self::DuckDB => Some(Dialect::DuckDB),
+            Self::PostgreSQL => Some(Dialect::PostgreSQL),
+            Self::BigQuery | Self::Databricks | Self::SqlServer => None,
+        }
+    }
+}
+
 /// How SQL is laid out.
 #[derive(Debug, Clone)]
 pub struct FormatOptions {
     /// The dialect the SQL is tokenized and parsed in.
-    pub dialect: Dialect,
+    pub dialect: FormatDialect,
     /// Lines longer than this are re-broken; absent, only the parse-tree layout applies.
     pub line_width: Option<usize>,
     /// Spaces per indent step.
@@ -23,7 +46,7 @@ pub struct FormatOptions {
 
 impl FormatOptions {
     /// Default layout for `dialect`: no line width, two-space indent.
-    pub fn new(dialect: Dialect) -> Self {
+    pub fn new(dialect: FormatDialect) -> Self {
         Self {
             dialect,
             line_width: None,

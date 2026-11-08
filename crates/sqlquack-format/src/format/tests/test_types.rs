@@ -24,15 +24,14 @@ pub(super) struct Departure {
 pub(super) struct CorpusOutcome {
     pub(super) formatted: usize,
     pub(super) refused: usize,
-    /// Corpus queries that matched a departure.
+    /// Departures whose query is in the corpus, each counted once however often it occurs.
     pub(super) departed: usize,
     pub(super) failures: Vec<String>,
 }
 
-/// One corpus query's outcome: whether it was formatted or departs, and the checks it failed.
+/// One corpus query's outcome: whether it was formatted, and the checks it failed.
 pub(super) struct EntryOutcome {
     pub(super) formatted: bool,
-    pub(super) departed: bool,
     pub(super) failures: Vec<String>,
 }
 
@@ -41,7 +40,7 @@ pub(super) struct DeepSqlTestCase {
     pub(super) description: &'static str,
     pub(super) sql: fn() -> String,
     /// The dialects it is formatted in.
-    pub(super) dialects: &'static [sqlquack_syntax::Dialect],
+    pub(super) dialects: &'static [crate::format::models::FormatDialect],
     /// The start of the refusal reason; `None` when the query is laid out.
     pub(super) expected_refusal: Option<&'static str>,
 }
@@ -50,8 +49,26 @@ pub(super) struct DeepSqlTestCase {
 pub(super) struct FormatSqlTestCase {
     pub(super) description: &'static str,
     pub(super) sql: &'static str,
-    pub(super) dialect: sqlquack_syntax::Dialect,
+    pub(super) dialect: crate::format::models::FormatDialect,
     pub(super) line_width: Option<usize>,
     /// The laid-out SQL, or the reason it is refused.
     pub(super) expected_outcome: Result<&'static str, &'static str>,
+}
+
+/// A corpus statement SQLQuack refuses, with SQL Server's recorded verdicts and the formatter's refusal.
+pub(super) struct SqlServerReceiptTestCase {
+    /// The statement, as recorded.
+    pub(super) description: &'static str,
+    /// What each recorded SQL Server run reported: its first error number and message, or `None` when it was accepted.
+    pub(super) expected_runs: &'static [Option<(u64, &'static str)>],
+    /// The start of the formatter's refusal reason.
+    pub(super) expected_refusal: &'static str,
+}
+
+/// A wide query whose SQL Server formatting time is bounded by Snowflake's on the same text, so a quadratic pass fails it.
+pub(super) struct TimedSqlTestCase {
+    pub(super) description: &'static str,
+    pub(super) sql: fn() -> String,
+    /// How many times Snowflake's time SQL Server may take.
+    pub(super) expected_max_ratio: u32,
 }

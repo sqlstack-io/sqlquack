@@ -1,7 +1,6 @@
 //! DuckDB's description of a query's output columns, before and after the formatter lays it out.
 
-use sqlquack_format::{FormatOptions, format_sql};
-use sqlquack_syntax::Dialect;
+use sqlquack_format::{FormatDialect, FormatOptions, format_sql};
 
 /// One query at one line width: refused, or laid out with its source bound or not, and any change in its columns.
 pub(crate) enum LayoutCheck {
@@ -14,7 +13,7 @@ pub(crate) enum LayoutCheck {
 fn duckdb_layout(sql: &str, line_width: Option<usize>) -> Result<String, String> {
     let options = FormatOptions {
         line_width,
-        ..FormatOptions::new(Dialect::DuckDB)
+        ..FormatOptions::new(FormatDialect::DuckDB)
     };
     format_sql(sql, &options)
         .map(|formatted| formatted.sql)

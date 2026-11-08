@@ -5,4 +5,4 @@
 pub mod format;
 
 pub use crate::format::main::format_sql::format_sql;
-pub use crate::format::models::{FormatOptions, FormatRefusal, Formatted};
+pub use crate::format::models::{FormatDialect, FormatOptions, FormatRefusal, Formatted};

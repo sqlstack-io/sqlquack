@@ -1,31 +1,37 @@
 //! Helpers of the format tests.
 
 use serde_json::Value;
-use sqlquack_syntax::{Dialect, TokenKind, tokenize};
+use sqlquack_syntax::{TokenKind, tokenize};
+use sqlquack_syntax_sqlserver::scan;
+
+use crate::format::models::FormatDialect;
 
 use crate::format::constants::{DEPTH_FAILURE, PARSE_FAILURE, TYPE_DEPTH_FAILURE};
 use crate::format::main::format_sql::format_sql;
 use crate::format::models::FormatOptions;
 use crate::format::tests::test_types::{CorpusOutcome, EntryOutcome, FormatCorpusTestCase};
 
+/// SQL Server's recorded verdicts on the corpus statements SQLQuack refuses.
+const SQLSERVER_RECEIPTS: &str = include_str!("fixtures/sqlserver_receipts.jsonl");
+
 /// The line width the corpus is also wrapped at, as SQLClean's corpus test does.
 const CORPUS_LINE_WIDTH: usize = 40;
 /// The corpus dialect names SQLQuack tokenizes, with their dialects.
-const DIALECTS: [(&str, Dialect); 3] = [
-    ("snowflake", Dialect::Snowflake),
-    ("duckdb", Dialect::DuckDB),
-    ("postgres", Dialect::PostgreSQL),
+const DIALECTS: [(&str, FormatDialect); 3] = [
+    ("snowflake", FormatDialect::Snowflake),
+    ("duckdb", FormatDialect::DuckDB),
+    ("tsql", FormatDialect::SqlServer),
 ];
 
-fn dialect(name: &str) -> Dialect {
+fn dialect(name: &str) -> FormatDialect {
     DIALECTS
         .iter()
         .find(|(known, _)| *known == name)
-        .map_or(Dialect::Snowflake, |(_, dialect)| *dialect)
+        .map_or(FormatDialect::Snowflake, |(_, dialect)| *dialect)
 }
 
 /// Format `sql`; `None` when the formatter refuses it.
-fn format_once(sql: &str, dialect: Dialect, line_width: Option<usize>) -> Option<String> {
+fn format_once(sql: &str, dialect: FormatDialect, line_width: Option<usize>) -> Option<String> {
     let options = FormatOptions {
         line_width,
         ..FormatOptions::new(dialect)
@@ -36,8 +42,14 @@ fn format_once(sql: &str, dialect: Dialect, line_width: Option<usize>) -> Option
 }
 
 /// The significant token texts of `sql`.
-fn token_texts(sql: &str, dialect: Dialect) -> Vec<String> {
-    tokenize(sql, dialect)
+fn token_texts(sql: &str, dialect: FormatDialect) -> Vec<String> {
+    let Some(shared) = dialect.shared() else {
+        return scan(sql)
+            .iter()
+            .map(|token| sql[token.start..token.end].to_string())
+            .collect();
+    };
+    tokenize(sql, shared)
         .unwrap_or_default()
         .iter()
         .filter(|token| matches!(token.kind, TokenKind::Significant(_)))
@@ -46,7 +58,7 @@ fn token_texts(sql: &str, dialect: Dialect) -> Vec<String> {
 }
 
 /// Whether `printed` has the tokens of `sql` except for words printed in upper case.
-fn only_keyword_case_differs(sql: &str, printed: &str, dialect: Dialect) -> bool {
+fn only_keyword_case_differs(sql: &str, printed: &str, dialect: FormatDialect) -> bool {
     let (before, after) = (token_texts(sql, dialect), token_texts(printed, dialect));
     before.len() == after.len()
         && before.iter().zip(&after).all(|(left, right)| {
@@ -56,13 +68,13 @@ fn only_keyword_case_differs(sql: &str, printed: &str, dialect: Dialect) -> bool
 }
 
 /// Whether a layout of an earlier formatter release is relaid with its tokens kept.
-fn relays_previous(previous: &str, dialect: Dialect) -> bool {
+fn relays_previous(previous: &str, dialect: FormatDialect) -> bool {
     format_once(previous, dialect, None)
         .is_some_and(|relaid| only_keyword_case_differs(previous, &relaid, dialect))
 }
 
 /// Whether formatting `stable` again leaves it as it is.
-fn stays(stable: &str, dialect: Dialect, line_width: Option<usize>) -> bool {
+fn stays(stable: &str, dialect: FormatDialect, line_width: Option<usize>) -> bool {
     format_once(stable, dialect, line_width).as_deref() == Some(stable)
 }
 
@@ -123,13 +135,19 @@ fn check_entry(entry: &Value, test_case: &FormatCorpusTestCase) -> EntryOutcome 
     ];
     EntryOutcome {
         formatted: actual.is_some(),
-        departed: departure.is_some(),
         failures: checks
             .into_iter()
             .filter(|(passed, _)| !passed)
             .map(|(_, failure)| failure)
             .collect(),
     }
+}
+
+/// Whether `corpus` holds `sql` for `dialect`.
+fn in_corpus(corpus: &[Value], dialect: &str, sql: &str) -> bool {
+    corpus
+        .iter()
+        .any(|entry| entry["dialect"] == dialect && entry["sql"] == sql)
 }
 
 /// Format every corpus query of one dialect; return the formatted, refused and departing counts and failures.
@@ -146,7 +164,11 @@ pub(super) fn check_dialect_corpus(
     CorpusOutcome {
         formatted,
         refused: outcomes.len() - formatted,
-        departed: outcomes.iter().filter(|outcome| outcome.departed).count(),
+        departed: test_case
+            .departures
+            .iter()
+            .filter(|departure| in_corpus(corpus, test_case.dialect, departure.sql))
+            .count(),
         failures: outcomes
             .into_iter()
             .flat_map(|outcome| outcome.failures)
@@ -160,4 +182,35 @@ pub(super) fn refusal_start(reason: &str) -> &str {
         .into_iter()
         .find(|failure| reason.starts_with(failure))
         .unwrap_or(reason)
+}
+
+/// What every recorded SQL Server run of `statement` reported: its first error number and message, or `None`.
+pub(super) fn recorded_sqlserver_verdicts(statement: &str) -> Vec<Option<(u64, String)>> {
+    SQLSERVER_RECEIPTS
+        .lines()
+        .filter_map(|line| serde_json::from_str::<Value>(line).ok())
+        .filter(|receipt| receipt["statement"] == statement)
+        .map(|receipt| {
+            receipt["engine_code"].as_u64().map(|code| {
+                (
+                    code,
+                    receipt["message"].as_str().unwrap_or_default().to_string(),
+                )
+            })
+        })
+        .collect()
+}
+
+/// The start of the reason the formatter refuses `statement` with as SQL Server; `None` when it is laid out.
+pub(super) fn sqlserver_refusal(statement: &str) -> Option<String> {
+    format_sql(statement, &FormatOptions::new(FormatDialect::SqlServer))
+        .err()
+        .map(|refusal| refusal_start(&refusal.reason).to_string())
+}
+
+/// How long formatting `sql` in `dialect` takes, laid out or refused.
+pub(super) fn format_time(sql: &str, dialect: FormatDialect) -> std::time::Duration {
+    let start = std::time::Instant::now();
+    let _ = format_sql(sql, &FormatOptions::new(dialect));
+    start.elapsed()
 }
