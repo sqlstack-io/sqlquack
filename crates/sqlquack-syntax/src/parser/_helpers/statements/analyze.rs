@@ -235,7 +235,6 @@ impl Parser {
         if self.is_at_end() {
             return false;
         }
-        // Snowflake rejects every reserved keyword as an implicit relation alias except WINDOW.
         if self.is_snowflake_reserved_keyword() && !self.check(TokenType::Window) {
             return false;
         }

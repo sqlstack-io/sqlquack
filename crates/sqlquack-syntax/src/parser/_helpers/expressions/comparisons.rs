@@ -244,7 +244,6 @@ impl Parser {
                 let is_null = Expression::Is(Box::new(BinaryOp::new(left, Expression::Null(Null))));
                 Expression::Not(Box::new(UnaryOp::new(is_null)))
             } else {
-                // A NOT that starts no negated comparison is left for the caller, not dropped.
                 self.current -= 1;
                 return Ok((left, false));
             }
