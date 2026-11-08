@@ -19,6 +19,44 @@ impl Severity {
     }
 }
 
+/// The escape sequences that style diagnostics and SQL; empty strings render plain text.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Palette {
+    /// An error's label, code, underline and summary.
+    pub error: &'static str,
+    /// The headline message.
+    pub message: &'static str,
+    /// The `-->` arrow, the gutter and its line numbers.
+    pub gutter: &'static str,
+    /// The `note` label.
+    pub note: &'static str,
+    /// The `help` label.
+    pub help: &'static str,
+    /// A summary that reports success.
+    pub success: &'static str,
+    /// A SQL keyword or type name.
+    pub keyword: &'static str,
+    /// A SQL string literal.
+    pub string: &'static str,
+    /// A SQL number.
+    pub number: &'static str,
+    /// A SQL comment.
+    pub comment: &'static str,
+    /// A SQL identifier, quoted or not, including function names.
+    pub identifier: &'static str,
+    /// Ends any of the styles above.
+    pub reset: &'static str,
+}
+
+impl Palette {
+    /// The style of a diagnostic of `severity`.
+    pub fn severity(&self, severity: Severity) -> &'static str {
+        match severity {
+            Severity::Error => self.error,
+        }
+    }
+}
+
 /// One registered diagnostic code; codes are never reused or renumbered.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 pub struct CodeEntry {

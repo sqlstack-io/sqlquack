@@ -41,6 +41,7 @@ publish = false
 rust-version = "1.88"
 
 [workspace.dependencies]
+anstream = "1.0"
 arrow = { version = "60", default-features = false, features = ["ipc"] }
 clap = { version = "4.5", features = ["derive"] }
 duckdb = "=1.20000.0"

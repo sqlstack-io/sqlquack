@@ -48,6 +48,7 @@ sqlquack check: found 1 problem
 |--------|---------|
 | `--format text\|json` | Print the report as text for people or JSON for programs. Default `text`. |
 | `--json` | The same as `--format json`. |
+| `--color auto\|always\|never` | Colour diagnostics. Default `auto`: only on a terminal, honouring `NO_COLOR` and `CLICOLOR_FORCE`. |
 
 With `--json`, `check` prints `{"ok": …, "diagnostics": [...]}`. See
 [JSON output](/docs/diagnostics/overview/#json-output).

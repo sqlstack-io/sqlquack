@@ -64,6 +64,7 @@ SQL that does not parse, or that Snowflake rejects, is refused with the same cod
 | `--verified-override NAME=SHA256` | An override verified for the body with that hash, as `convert --json` reports. |
 | `--compact` | Print each statement on one line instead, in the JSON report too. |
 | `--format text\|json`, `--json` | Print the report as text or JSON. |
+| `--color auto\|always\|never` | Highlight the SQL and colour diagnostics, as for [`check`](/docs/cli/check/#options). JSON is never coloured. |
 
 `convert` also takes the policy flags: `--policy`, `--builtin-policy`, `--strict`,
 `--utc-session`, `--confirm-declared-offsets`, `--python-runtime` and `--loud-divergences-only`.

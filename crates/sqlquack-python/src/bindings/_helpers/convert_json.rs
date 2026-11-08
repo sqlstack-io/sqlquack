@@ -3,7 +3,9 @@
 use pyo3::exceptions::PyValueError;
 use pyo3::{PyResult, pyfunction};
 use sqlquack::cli::main::convert_report::convert_report;
-use sqlquack::cli::models::{ConvertArguments, OutputArguments, OutputFormat, PolicyArguments};
+use sqlquack::cli::models::{
+    ColorArguments, ConvertArguments, OutputArguments, OutputFormat, PolicyArguments,
+};
 use sqlquack_core::diagnostics::main::render_diagnostics::render_diagnostics;
 use sqlquack_core::diagnostics::models::Diagnostic;
 
@@ -25,6 +27,7 @@ pub(crate) fn convert_json(sql: &str, request: &str, path: &str) -> PyResult<Str
             format: OutputFormat::Json,
             json: false,
         },
+        colors: ColorArguments::default(),
         conversion: PolicyArguments {
             policy: request.policy,
             builtin_policy: request.builtin_policy,

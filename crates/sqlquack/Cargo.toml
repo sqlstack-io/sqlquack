@@ -21,6 +21,7 @@ path = "src/bin/sqlquack.rs"
 bundled = ["sqlquack-duckdb/bundled"]
 
 [dependencies]
+anstream.workspace = true
 clap.workspace = true
 rayon.workspace = true
 serde.workspace = true

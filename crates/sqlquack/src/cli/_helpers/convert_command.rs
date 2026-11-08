@@ -7,9 +7,9 @@ use std::process::ExitCode;
 use sqlquack_core::diagnostics::constants::SESSION_PARAMETERS;
 use sqlquack_core::diagnostics::main::diagnose::diagnose;
 use sqlquack_core::diagnostics::main::explain_code::explain_code;
-use sqlquack_core::diagnostics::main::render_diagnostics::render_diagnostics;
+use sqlquack_core::diagnostics::main::render_styled_diagnostics::render_styled_diagnostics;
 use sqlquack_core::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
-use sqlquack_core::diagnostics::models::Diagnostic;
+use sqlquack_core::diagnostics::models::{Diagnostic, Palette};
 use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb::layout::main::layout_sql::layout_sql;
@@ -32,6 +32,7 @@ use crate::cli::models::{
     CheckArguments, CheckReport, ConvertArguments, ConvertRefusal, ConvertReport, ExplainArguments,
     OverrideListing, PolicyArguments,
 };
+use crate::terminal::main::highlight_sql::highlight_sql;
 use sqlquack_convert::analysis::models::Analysis;
 
 use crate::cli::_helpers::evidence::with_divergence_help;
@@ -44,8 +45,8 @@ const STDIN_NAME: &str = "<stdin>";
 
 pub(crate) fn convert_command(
     arguments: &ConvertArguments,
-    stdout: &mut dyn Write,
-    stderr: &mut dyn Write,
+    (stdout, stderr): (&mut dyn Write, &mut dyn Write),
+    (sql_palette, palette): (&Palette, &Palette),
 ) -> ExitCode {
     let _ = writeln!(stderr, "sqlquack convert: converting…");
     let report = match read_sql(arguments.path.as_deref())
@@ -53,22 +54,27 @@ pub(crate) fn convert_command(
     {
         Ok(report) => report,
         Err(error) => {
-            let _ = writeln!(stderr, "sqlquack convert: failed: {error}");
+            let _ = writeln!(
+                stderr,
+                "sqlquack convert: {}failed{}: {error}",
+                palette.error, palette.reset
+            );
             return ExitCode::from(2);
         }
     };
     let (report, sql) = report;
     let rendered = match arguments.output.json() {
         true => serde_json::to_string_pretty(&report).unwrap_or_default() + "\n",
-        false if report.converted => {
-            report
+        false if report.converted => highlight_sql(
+            &(report
                 .macros
                 .iter()
                 .map(|statement| format!("{statement};\n"))
                 .collect::<String>()
                 + &report.sql
-                + "\n"
-        }
+                + "\n"),
+            sql_palette,
+        ),
         false => String::new(),
     };
     if stdout.write_all(rendered.as_bytes()).is_err() {
@@ -95,14 +101,15 @@ pub(crate) fn convert_command(
         .collect();
     if !diagnostics.is_empty() {
         let path = source_name(arguments.path.as_deref());
-        let _ = write!(stderr, "{}", render_diagnostics(&diagnostics, &sql, &path));
+        let rendered = render_styled_diagnostics(&diagnostics, &sql, &path, palette);
+        let _ = write!(stderr, "{rendered}");
     }
     match report.converted {
         true => {
             let _ = writeln!(
                 stderr,
-                "sqlquack convert: done, converted under {}",
-                report.profile
+                "sqlquack convert: {}done, converted{} under {}",
+                palette.success, palette.reset, report.profile
             );
             ExitCode::SUCCESS
         }
@@ -118,7 +125,8 @@ pub(crate) fn convert_command(
             };
             let _ = writeln!(
                 stderr,
-                "sqlquack convert: refused, {count} {noun} under {profile}"
+                "sqlquack convert: {}refused, {count} {noun}{} under {profile}",
+                palette.error, palette.reset
             );
             ExitCode::FAILURE
         }
@@ -174,6 +182,7 @@ pub(crate) fn check_command(
     arguments: &CheckArguments,
     stdout: &mut dyn Write,
     stderr: &mut dyn Write,
+    palette: &Palette,
 ) -> ExitCode {
     let _ = writeln!(stderr, "sqlquack check: checking…");
     let path = arguments.path.as_deref();
@@ -181,7 +190,11 @@ pub(crate) fn check_command(
         match read_sql(path).and_then(|sql| check_source(&sql).map(|found| (sql, found))) {
             Ok(checked) => checked,
             Err(error) => {
-                let _ = writeln!(stderr, "sqlquack check: failed: {error}");
+                let _ = writeln!(
+                    stderr,
+                    "sqlquack check: {}failed{}: {error}",
+                    palette.error, palette.reset
+                );
                 return ExitCode::from(2);
             }
         };
@@ -195,11 +208,16 @@ pub(crate) fn check_command(
             return ExitCode::FAILURE;
         }
     }
-    let rendered = render_diagnostics(&report.diagnostics, &sql, &source_name(path));
+    let rendered =
+        render_styled_diagnostics(&report.diagnostics, &sql, &source_name(path), palette);
     let _ = write!(stderr, "{rendered}");
     match report.diagnostics.len() {
         0 => {
-            let _ = writeln!(stderr, "sqlquack check: done, no problems");
+            let _ = writeln!(
+                stderr,
+                "sqlquack check: {}done, no problems{}",
+                palette.success, palette.reset
+            );
             ExitCode::SUCCESS
         }
         count => {
@@ -207,7 +225,11 @@ pub(crate) fn check_command(
                 1 => "problem",
                 _ => "problems",
             };
-            let _ = writeln!(stderr, "sqlquack check: found {count} {noun}");
+            let _ = writeln!(
+                stderr,
+                "sqlquack check: {}found {count} {noun}{}",
+                palette.error, palette.reset
+            );
             ExitCode::FAILURE
         }
     }
