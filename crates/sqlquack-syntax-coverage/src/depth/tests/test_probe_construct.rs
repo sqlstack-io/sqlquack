@@ -97,6 +97,18 @@ fn given_a_parser_without_a_syntax_when_listing_constructs_then_only_its_own_are
             expected_probed: true,
         },
         ConstructsTestCase {
+            description: "Databricks extracts JSON paths with :",
+            parser: LocalParser::Databricks,
+            construct: "json_path",
+            expected_probed: true,
+        },
+        ConstructsTestCase {
+            description: "Postgres has no : path",
+            parser: LocalParser::Postgres,
+            construct: "json_path",
+            expected_probed: false,
+        },
+        ConstructsTestCase {
             description: "Postgres has no pipe operator",
             parser: LocalParser::Postgres,
             construct: "nested_pipe_chain",

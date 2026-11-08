@@ -214,6 +214,13 @@ pub(crate) fn constructs() -> Vec<Construct> {
             text: |_, depth| Some(format!("SELECT {}", chain("1", " + ", depth))),
         },
         Construct {
+            name: "json_path",
+            text: |parser, depth| match parser {
+                LocalParser::Databricks => Some(format!("SELECT v{} FROM t", ":a".repeat(depth))),
+                _ => None,
+            },
+        },
+        Construct {
             name: "flat_or",
             text: |_, depth| {
                 Some(format!(
