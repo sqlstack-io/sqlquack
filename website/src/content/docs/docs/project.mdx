@@ -45,8 +45,8 @@ SQLBuild project's source files work unchanged.
 
 A source with an `expression` is a query rather than a table, and is skipped.
 
-A source with a column that has no `type` is left out whole, so a `SELECT *` never misses a
-column. SQLQuack warns about it:
+A source with a column that has no `type`, or a type SQLQuack can't read, is left out whole, so a
+`SELECT *` never misses a column. SQLQuack warns about it:
 
 ```console
 sqlquack convert: warning: ./sources/more.yml: the source customers is left out, because its column email has no type

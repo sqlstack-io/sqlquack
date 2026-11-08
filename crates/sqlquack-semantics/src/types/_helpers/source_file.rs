@@ -2,6 +2,8 @@
 
 use serde::Deserialize;
 use serde_json::{Map, Value, json};
+use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_snowflake_types::typing::main::cast_target::cast_target;
 
 use crate::types::_helpers::yaml_value::yaml_value;
 use crate::types::models::SourceTables;
@@ -75,7 +77,7 @@ fn folded_name(name: &str) -> String {
     }
 }
 
-/// Why a table source is left out: it lists no columns, or a column has no text type.
+/// Why a table source is left out: it lists no columns, or a column has no type SQLQuack reads.
 fn left_out(source: &SourceEntry) -> Option<String> {
     if source.expression.is_some() {
         return None;
@@ -83,11 +85,23 @@ fn left_out(source: &SourceEntry) -> Option<String> {
     if source.columns.is_empty() {
         return Some("it lists no columns".to_owned());
     }
+    let log = ProvenanceLog::default();
     source
         .columns
         .iter()
-        .find(|column| !matches!(column.type_name, Some(Value::String(_))))
-        .map(|column| format!("its column {} has no type", column.name))
+        .find_map(|column| untyped(column, &log))
+}
+
+/// Why `column` has no type SQLQuack reads: none is given, or the one given does not parse.
+fn untyped(column: &SourceColumn, log: &ProvenanceLog) -> Option<String> {
+    let Some(Value::String(type_name)) = &column.type_name else {
+        return Some(format!("its column {} has no type", column.name));
+    };
+    let error = cast_target(type_name, log).err()?;
+    Some(format!(
+        "its column {} has no type SQLQuack reads: {error}",
+        column.name
+    ))
 }
 
 /// A source as a table name and its columns; None for an inline query or an untyped column.
