@@ -85,6 +85,13 @@ pub(crate) fn python_function(text: &str) -> Result<Value, String> {
                 let mut named: Vec<(String, String)> = Vec::new();
                 for argument in &arguments {
                     match argument.as_array().map(Vec::as_slice) {
+                        Some([Value::String(name), _])
+                            if named.iter().any(|(earlier, _)| earlier == name) =>
+                        {
+                            return Err(format!(
+                                "line {line}: the argument {name} is given twice; Python keeps only the last"
+                            ));
+                        }
                         Some([Value::String(name), Value::String(type_name)]) => {
                             named.push((name.clone(), type_name.clone()));
                         }

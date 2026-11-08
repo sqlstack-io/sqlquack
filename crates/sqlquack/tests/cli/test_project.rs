@@ -347,6 +347,23 @@ fn given_a_project_when_a_declaration_clashes_or_is_unconfirmed_then_the_error_s
             expected_exit: Some(2),
             expected_output: "plain.py: has no @udf(...) decorator",
         },
+        ProjectTestCase {
+            description: "a Python function naming one argument twice is an error, as Python keeps only the last",
+            files: &[
+                POLICY_FILE,
+                SOURCES,
+                ProjectFile {
+                    path: "functions/python/label.py",
+                    repository: &[],
+                    text: "from sqlbuild.functions import udf\n\n@udf(arguments={'a': 'INTEGER', 'a': 'VARCHAR'}, returns='VARCHAR')\ndef main(a):\n    return a\n",
+                },
+            ],
+            folder: "",
+            flags: &[],
+            sql: "SELECT 1 AS n",
+            expected_exit: Some(2),
+            expected_output: "line 3: the argument a is given twice; Python keeps only the last",
+        },
     ];
     for test_case in test_cases {
         let outcome = project_convert(&test_case);
