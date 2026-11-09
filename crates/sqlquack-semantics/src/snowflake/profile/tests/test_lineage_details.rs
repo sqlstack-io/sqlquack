@@ -1,6 +1,6 @@
 use sqlquack_syntax::{Dialect, ParseOptions};
 
-use crate::dialects::constants::{DUCKDB, SNOWFLAKE, SQLITE};
+use crate::dialects::constants::SNOWFLAKE;
 use crate::lineage::main::query_lineage::query_lineage;
 use crate::lineage::models::{LineageContext, TransformKind};
 use crate::lineage::tests::helpers::{shop_schema, written};
@@ -217,54 +217,6 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
             expected_rows_resolved: true,
         },
         LineageDetailTestCase {
-            description: "DuckDB's star keeps a USING key where the left side offers it",
-            sql: "SELECT * FROM ORDERS JOIN (SELECT id AS customer_id, name FROM CUSTOMERS) c \
-                  USING (customer_id)",
-            dialect: Dialect::DuckDB,
-            profile: &DUCKDB,
-            expected_outputs: &[
-                ("ID", TransformKind::Direct, &["ORDERS.ID"], true),
-                (
-                    "CUSTOMER_ID",
-                    TransformKind::Direct,
-                    &["ORDERS.CUSTOMER_ID"],
-                    true,
-                ),
-                ("AMOUNT", TransformKind::Direct, &["ORDERS.AMOUNT"], true),
-                ("ITEMS", TransformKind::Direct, &["ORDERS.ITEMS"], true),
-                ("STATUS", TransformKind::Direct, &["ORDERS.STATUS"], true),
-                ("name", TransformKind::Direct, &["CUSTOMERS.NAME"], true),
-            ],
-            expected_row_sources: &["CUSTOMERS.ID", "ORDERS.CUSTOMER_ID"],
-            expected_rows_resolved: true,
-        },
-        LineageDetailTestCase {
-            description: "SQLite's star keeps a FULL join's USING key in place, over both sides",
-            sql: "SELECT * FROM (SELECT name, id FROM CUSTOMERS) c FULL JOIN ORDERS USING (id)",
-            dialect: Dialect::SQLite,
-            profile: &SQLITE,
-            expected_outputs: &[
-                ("name", TransformKind::Direct, &["CUSTOMERS.NAME"], true),
-                (
-                    "id",
-                    TransformKind::Expression,
-                    &["CUSTOMERS.ID", "ORDERS.ID"],
-                    true,
-                ),
-                (
-                    "CUSTOMER_ID",
-                    TransformKind::Direct,
-                    &["ORDERS.CUSTOMER_ID"],
-                    true,
-                ),
-                ("AMOUNT", TransformKind::Direct, &["ORDERS.AMOUNT"], true),
-                ("ITEMS", TransformKind::Direct, &["ORDERS.ITEMS"], true),
-                ("STATUS", TransformKind::Direct, &["ORDERS.STATUS"], true),
-            ],
-            expected_row_sources: &["CUSTOMERS.ID", "ORDERS.ID"],
-            expected_rows_resolved: true,
-        },
-        LineageDetailTestCase {
             description: "a CTE reading itself without RECURSIVE is recursive, not a stored table",
             sql: "WITH chain AS (SELECT id, customer_id AS parent FROM orders \
                   UNION ALL SELECT o.id, c.parent FROM chain c JOIN orders o ON o.customer_id = c.id) \
@@ -353,21 +305,6 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
             expected_rows_resolved: true,
         },
         LineageDetailTestCase {
-            description: "DuckDB's WINDOW clause adds what the named window reads",
-            sql: "SELECT SUM(amount) OVER w AS running FROM orders \
-                  WINDOW w AS (PARTITION BY customer_id ORDER BY id)",
-            dialect: Dialect::DuckDB,
-            profile: &DUCKDB,
-            expected_outputs: &[(
-                "running",
-                TransformKind::Aggregation,
-                &["orders.amount", "orders.customer_id", "orders.id"],
-                true,
-            )],
-            expected_row_sources: &[],
-            expected_rows_resolved: true,
-        },
-        LineageDetailTestCase {
             description: "a quoted column of an unknown relation keeps its quotes",
             sql: "SELECT \"ticketId\" FROM support.tickets",
             dialect: Dialect::Snowflake,
@@ -391,15 +328,6 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
                 ("", TransformKind::Expression, &["ORDERS.ITEMS"], true),
                 ("", TransformKind::Expression, &["ORDERS.AMOUNT"], true),
             ],
-            expected_row_sources: &[],
-            expected_rows_resolved: true,
-        },
-        LineageDetailTestCase {
-            description: "an unaliased DuckDB cast has no name lineage models",
-            sql: "SELECT amount::INT FROM orders",
-            dialect: Dialect::DuckDB,
-            profile: &DUCKDB,
-            expected_outputs: &[("", TransformKind::Cast, &["orders.amount"], true)],
             expected_row_sources: &[],
             expected_rows_resolved: true,
         },

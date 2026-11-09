@@ -1,10 +1,11 @@
 use sqlquack_syntax::{Dialect, ParseOptions};
 
-use crate::dialects::constants::{DUCKDB, POSTGRES, SNOWFLAKE};
+use crate::dialects::constants::SNOWFLAKE;
 use crate::lineage::main::query_lineage::query_lineage;
 use crate::lineage::models::{LineageContext, TransformKind};
-use crate::lineage::tests::helpers::{duckdb_shop_schema, lineage_outputs, shop_schema};
-use crate::lineage::tests::test_types::{QueryLineageTestCase, ResolvedReadTestCase};
+use crate::lineage::tests::helpers::shop_schema;
+use crate::lineage::tests::test_types::QueryLineageTestCase;
+use crate::snowflake::profile::tests::test_types::ResolvedReadTestCase;
 
 #[test]
 fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_transform() {
@@ -274,51 +275,6 @@ fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_tra
             expected_open_star: true,
         },
         QueryLineageTestCase {
-            description: "DuckDB names a pivoted column by its value's text, without quotes",
-            sql: "SELECT * FROM (SELECT customer_id, status, amount FROM orders) PIVOT (SUM(amount) FOR status IN ('open', 'shipped'))",
-            dialect: Dialect::DuckDB,
-            profile: &DUCKDB,
-            expected_outputs: &[
-                (
-                    "customer_id",
-                    TransformKind::Direct,
-                    &["orders.customer_id"],
-                ),
-                ("open", TransformKind::Aggregation, &["orders.amount"]),
-                ("shipped", TransformKind::Aggregation, &["orders.amount"]),
-            ],
-            expected_open_star: false,
-        },
-        QueryLineageTestCase {
-            description: "a DuckDB PIVOT with GROUP BY passes only the grouped columns through",
-            sql: "SELECT * FROM (SELECT id, customer_id, status, amount FROM orders) \
-                  PIVOT (SUM(amount) FOR status IN ('open') GROUP BY customer_id)",
-            dialect: Dialect::DuckDB,
-            profile: &DUCKDB,
-            expected_outputs: &[
-                (
-                    "customer_id",
-                    TransformKind::Direct,
-                    &["orders.customer_id"],
-                ),
-                ("open", TransformKind::Aggregation, &["orders.amount"]),
-            ],
-            expected_open_star: false,
-        },
-        QueryLineageTestCase {
-            description: "a DuckDB PIVOT statement keeps its GROUP BY columns; its pivoted ones are unnamed",
-            sql: "PIVOT (SELECT id, customer_id, status, amount FROM orders) ON status USING SUM(amount) \
-                  GROUP BY customer_id",
-            dialect: Dialect::DuckDB,
-            profile: &DUCKDB,
-            expected_outputs: &[(
-                "customer_id",
-                TransformKind::Direct,
-                &["orders.customer_id"],
-            )],
-            expected_open_star: true,
-        },
-        QueryLineageTestCase {
             description: "a pivoted column is named by its value exactly, quotes included",
             sql: "SELECT p.\"'open'\" AS open_amount FROM (SELECT customer_id, status, amount FROM orders) \
                   PIVOT (SUM(amount) FOR status IN ('open')) AS p",
@@ -366,28 +322,6 @@ fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_tra
             expected_outputs: &[
                 ("doubled", TransformKind::Expression, &["ORDERS.AMOUNT"]),
                 ("next", TransformKind::Expression, &["ORDERS.AMOUNT"]),
-            ],
-            expected_open_star: false,
-        },
-        QueryLineageTestCase {
-            description: "DuckDB names VALUES columns col0 onwards and ignores case",
-            sql: "SELECT v.col0 AS first, id FROM (VALUES (1)) v, ORDERS",
-            dialect: Dialect::DuckDB,
-            profile: &DUCKDB,
-            expected_outputs: &[
-                ("first", TransformKind::Constant, &[]),
-                ("id", TransformKind::Direct, &["ORDERS.ID"]),
-            ],
-            expected_open_star: false,
-        },
-        QueryLineageTestCase {
-            description: "DuckDB names an unaliased number by its text",
-            sql: "SELECT 1, id FROM ORDERS",
-            dialect: Dialect::DuckDB,
-            profile: &DUCKDB,
-            expected_outputs: &[
-                ("1", TransformKind::Constant, &[]),
-                ("id", TransformKind::Direct, &["ORDERS.ID"]),
             ],
             expected_open_star: false,
         },
@@ -506,60 +440,6 @@ fn given_a_column_its_relation_lacks_when_tracing_lineage_then_one_stored_relati
                     .collect::<Vec<String>>(),
                 test_case.expected_resolved
             ),
-            "{}",
-            test_case.description
-        );
-    }
-}
-
-#[test]
-fn given_unaliased_postgres_outputs_when_tracing_lineage_then_each_takes_figurecolnames_name() {
-    let test_cases = [QueryLineageTestCase {
-        description: "each output takes the name 18.6 reports for it in RowDescription",
-        sql: "SELECT id, amount + 1, count(*), CAST(amount AS int), status::text, \
-                  CASE WHEN true THEN 1 END, upper(status), 1, (SELECT max(id) FROM orders), \
-                  DATE '2024-01-01', trim(status) FROM orders GROUP BY id, amount, status",
-        dialect: Dialect::PostgreSQL,
-        profile: &POSTGRES,
-        expected_outputs: &[
-            ("id", TransformKind::Direct, &["orders.id"]),
-            ("?column?", TransformKind::Expression, &["orders.amount"]),
-            ("count", TransformKind::Aggregation, &[]),
-            ("amount", TransformKind::Cast, &["orders.amount"]),
-            ("status", TransformKind::Cast, &["orders.status"]),
-            ("case", TransformKind::Constant, &[]),
-            ("upper", TransformKind::Expression, &["orders.status"]),
-            ("?column?", TransformKind::Constant, &[]),
-            ("max", TransformKind::Aggregation, &["orders.id"]),
-            ("date", TransformKind::Constant, &[]),
-            ("btrim", TransformKind::Expression, &["orders.status"]),
-        ],
-        expected_open_star: false,
-    }];
-    let schema = duckdb_shop_schema();
-    for test_case in test_cases {
-        let traced = lineage_outputs(
-            test_case.sql,
-            (test_case.dialect, test_case.profile),
-            &schema,
-        );
-        let traced: Vec<(&str, TransformKind, Vec<&str>)> = traced
-            .iter()
-            .map(|(name, kind, sources)| {
-                (
-                    name.as_str(),
-                    *kind,
-                    sources.iter().map(String::as_str).collect(),
-                )
-            })
-            .collect();
-        assert_eq!(
-            traced,
-            test_case
-                .expected_outputs
-                .iter()
-                .map(|(name, kind, sources)| (*name, *kind, sources.to_vec()))
-                .collect::<Vec<_>>(),
             "{}",
             test_case.description
         );

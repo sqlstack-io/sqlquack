@@ -1,18 +1,18 @@
-//! The ClickHouse profile against `DESCRIBE (query)` in ClickHouse 26.1 under SQLBuild's settings.
+use sqlquack_syntax::Expression;
 
+use crate::clickhouse::profile::tests::helpers::clickhouse_join_schema;
+use crate::clickhouse::profile::tests::helpers::clickhouse_shop_schema;
+use crate::clickhouse::profile::tests::helpers::parsed_clickhouse;
+use crate::clickhouse::profile::tests::helpers::replayed_clickhouse_engine_types;
+use crate::clickhouse::profile::tests::test_types::ClickhouseJoinTestCase;
+use crate::clickhouse::profile::tests::test_types::ClickhouseTypeTestCase;
 use crate::dialects::constants::CLICKHOUSE;
 use crate::lineage::_helpers::findings::statement::statement_findings;
 use crate::lineage::main::statement_lineage::statement_lineage;
 use crate::lineage::models::LineageContext;
 use crate::lineage::models::Nullability::{NonNull, Nullable, Unknown};
-use crate::lineage::tests::helpers::{
-    clickhouse_join_schema, clickhouse_shop_schema, owned_findings, parsed_clickhouse,
-    replayed_clickhouse_engine_types,
-};
-use crate::lineage::tests::test_types::{
-    ClickhouseJoinTestCase, ClickhouseTypeTestCase, EngineTypeReplayTestCase, QueryFindingsTestCase,
-};
-use sqlquack_syntax::Expression;
+use crate::lineage::tests::helpers::owned_findings;
+use crate::lineage::tests::test_types::{EngineTypeReplayTestCase, QueryFindingsTestCase};
 
 /// Result types ClickHouse 26.1 reported for built-in calls and expressions, under SQLBuild's settings.
 const ENGINE_TYPES: &str = include_str!("fixtures/clickhouse_engine_types.json");

@@ -1,5 +1,6 @@
-use crate::lineage::tests::helpers::{bigquery_output_type, typed_bigquery_shop_schema};
-use crate::lineage::tests::test_types::BigqueryTypeTestCase;
+use crate::bigquery::profile::tests::helpers::bigquery_output_type;
+use crate::bigquery::profile::tests::helpers::typed_bigquery_shop_schema;
+use crate::bigquery::profile::tests::test_types::BigqueryTypeTestCase;
 
 /// Each expected type is the one GoogleSQL's analyzer gives the same query over the same columns.
 #[test]

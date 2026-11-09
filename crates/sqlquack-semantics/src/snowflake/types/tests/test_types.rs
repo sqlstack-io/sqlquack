@@ -1,4 +1,4 @@
-use crate::snowflake::types::models::ColumnSpec;
+use crate::snowflake::types::models::{ColumnSpec, Holding};
 use crate::snowflake::typing::models::SnowflakeType;
 
 pub(crate) struct SchemaColumnsTestCase {
@@ -13,4 +13,10 @@ pub(crate) struct UtcOffsetTestCase {
     pub(crate) values: Vec<(SnowflakeType, bool)>,
     pub(crate) result: SnowflakeType,
     pub(crate) expected_utc_offset: bool,
+}
+
+pub(crate) struct StoredColumnsTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) written: Holding,
+    pub(crate) expected_read: Holding,
 }

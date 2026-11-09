@@ -1,9 +1,9 @@
-//! SQL Server's names and types under its default collation, as SQL Server 2022 describes queries.
-
-use crate::lineage::tests::helpers::{
-    owned_findings, sqlserver_findings, sqlserver_outputs, sqlserver_shop_schema,
-};
-use crate::lineage::tests::test_types::{QueryFindingsTestCase, SqlServerOutputsTestCase};
+use crate::lineage::tests::helpers::owned_findings;
+use crate::lineage::tests::test_types::QueryFindingsTestCase;
+use crate::sqlserver::profile::tests::helpers::sqlserver_findings;
+use crate::sqlserver::profile::tests::helpers::sqlserver_outputs;
+use crate::sqlserver::profile::tests::helpers::sqlserver_shop_schema;
+use crate::sqlserver::profile::tests::test_types::SqlServerOutputsTestCase;
 
 #[test]
 fn given_a_sql_server_query_the_engine_rejects_when_checking_then_the_broken_rule_is_found() {

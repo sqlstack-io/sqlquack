@@ -1,17 +1,19 @@
-//! SQLite's scope rules, and the types and names it records, as sqlite3 3.53 prepares queries.
-
 use sqlquack_syntax::Dialect;
 
 use crate::dialects::constants::SQLITE;
 use crate::lineage::_helpers::findings::statement::statement_findings;
 use crate::lineage::models::{LineageContext, Nullability};
-use crate::lineage::tests::helpers::{
-    deep_sqlite_analysis, found_findings, generic_calls, nested_derived_tables, owned_findings,
-    sqlite_analysis_work, sqlite_outputs, sqlite_shop_schema,
-};
-use crate::lineage::tests::test_types::{
-    DeepSqliteTestCase, NestingWorkTestCase, QueryFindingsTestCase, SqliteOutputsTestCase,
-};
+use crate::lineage::tests::helpers::{found_findings, owned_findings};
+use crate::lineage::tests::test_types::QueryFindingsTestCase;
+use crate::sqlite::profile::tests::helpers::deep_sqlite_analysis;
+use crate::sqlite::profile::tests::helpers::generic_calls;
+use crate::sqlite::profile::tests::helpers::nested_derived_tables;
+use crate::sqlite::profile::tests::helpers::sqlite_analysis_work;
+use crate::sqlite::profile::tests::helpers::sqlite_outputs;
+use crate::sqlite::profile::tests::helpers::sqlite_shop_schema;
+use crate::sqlite::profile::tests::test_types::DeepSqliteTestCase;
+use crate::sqlite::profile::tests::test_types::NestingWorkTestCase;
+use crate::sqlite::profile::tests::test_types::SqliteOutputsTestCase;
 
 #[test]
 fn given_a_sqlite_query_sqlite_rejects_when_checking_then_the_broken_rule_is_found() {

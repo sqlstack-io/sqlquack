@@ -1,6 +1,6 @@
-use crate::lineage::tests::test_types::StoredColumnsTestCase;
 use crate::snowflake::types::main::stored_columns::stored_columns;
 use crate::snowflake::types::models::{ColumnSpec, Holding};
+use crate::snowflake::types::tests::test_types::StoredColumnsTestCase;
 use crate::snowflake::typing::models::SnowflakeType;
 
 #[test]

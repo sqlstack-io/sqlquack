@@ -1,9 +1,10 @@
 use std::collections::HashMap;
 
-use crate::lineage::tests::helpers::{duckdb_output_type, replayed_engine_types, typed_column};
-use crate::lineage::tests::test_types::{
-    DuckdbTypeTestCase, EngineTypeReplayTestCase, TypedShopSchema,
-};
+use crate::duckdb::profile::tests::helpers::duckdb_output_type;
+use crate::duckdb::profile::tests::helpers::replayed_engine_types;
+use crate::duckdb::profile::tests::test_types::DuckdbTypeTestCase;
+use crate::lineage::tests::helpers::typed_column;
+use crate::lineage::tests::test_types::{EngineTypeReplayTestCase, TypedShopSchema};
 
 /// Result types DuckDB itself bound for synthetic expressions, recorded by polyglot's tooling.
 const ENGINE_TYPES: &str = include_str!("fixtures/duckdb_engine_types.json");

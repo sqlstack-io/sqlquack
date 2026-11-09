@@ -1,5 +1,8 @@
-use crate::lineage::tests::helpers::{databricks_findings, databricks_outputs, owned_findings};
-use crate::lineage::tests::test_types::{DatabricksOutputsTestCase, QueryFindingsTestCase};
+use crate::databricks::profile::tests::helpers::databricks_findings;
+use crate::databricks::profile::tests::helpers::databricks_outputs;
+use crate::databricks::profile::tests::test_types::DatabricksOutputsTestCase;
+use crate::lineage::tests::helpers::owned_findings;
+use crate::lineage::tests::test_types::QueryFindingsTestCase;
 
 #[test]
 fn given_a_databricks_query_when_checking_it_then_only_rules_databricks_shares_are_found() {

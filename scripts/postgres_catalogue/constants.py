@@ -38,10 +38,10 @@ QUERIES: dict[str, str] = {
 }
 
 TYPES_FIXTURE: Path = Path(
-    "crates/sqlquack-semantics/src/lineage/tests/fixtures/postgres_engine_types.json"
+    "crates/sqlquack-semantics/src/postgres/profile/tests/fixtures/postgres_engine_types.json"
 )
 SYNTAX_TYPES_FIXTURE: Path = Path(
-    "crates/sqlquack-semantics/src/lineage/tests/fixtures/postgres_syntax_types.json"
+    "crates/sqlquack-semantics/src/postgres/profile/tests/fixtures/postgres_syntax_types.json"
 )
 SYNTAX_CASES: Path = Path("coverage/syntax-postgres/cases")
 QUERY_HEADS: tuple[str, ...] = ("SELECT", "WITH", "VALUES", "TABLE")

@@ -5,7 +5,8 @@ use crate::lineage::main::query_lineage::query_lineage;
 use crate::lineage::models::LineageContext;
 use crate::lineage::models::Nullability::{NonNull, Nullable, Unknown};
 use crate::lineage::tests::helpers::typed_shop_schema;
-use crate::lineage::tests::test_types::{OutputTypeTestCase, ProjectsStarTestCase};
+use crate::snowflake::profile::tests::test_types::OutputTypeTestCase;
+use crate::snowflake::profile::tests::test_types::ProjectsStarTestCase;
 
 #[test]
 fn given_a_query_when_typing_outputs_then_types_and_nullability_follow_the_values() {
