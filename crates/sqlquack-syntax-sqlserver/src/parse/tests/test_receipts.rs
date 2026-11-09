@@ -45,6 +45,11 @@ fn given_recorded_sql_server_verdicts_when_parsing_each_statement_then_the_parse
             receipts: include_str!("fixtures/join_hint_receipts.jsonl"),
             expected_disagreements: Vec::new(),
         },
+        ReceiptsTestCase {
+            description: "table hints under SQL Server 2022 PARSEONLY, every pair of one-word hints among them",
+            receipts: include_str!("fixtures/table_hint_receipts.jsonl"),
+            expected_disagreements: Vec::new(),
+        },
     ];
     for test_case in test_cases {
         assert_eq!(

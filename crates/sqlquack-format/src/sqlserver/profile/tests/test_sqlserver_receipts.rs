@@ -22,11 +22,6 @@ fn given_recorded_sqlserver_verdicts_when_formatting_the_refused_corpus_then_eac
             expected_refusal: PARSE_FAILURE,
         },
         test_types::SqlServerReceiptTestCase {
-            description: "SELECT * FROM t WITH (TABLOCK, INDEX(myindex))",
-            expected_runs: &[None, None],
-            expected_refusal: OPAQUE_STATEMENT_FAILURE,
-        },
-        test_types::SqlServerReceiptTestCase {
             description: "SELECT Employee_ID, Department_ID FROM @MyTableVar",
             expected_runs: &[
                 Some((1087, "Must declare the table variable \"@MyTableVar\".")),

@@ -370,6 +370,15 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             ),
         },
         test_types::FormatSqlTestCase {
+            description: "table hints stay with their table, an index or a FORCESEEK's columns in their own parentheses",
+            sql: "select a from t with (nolock, forceseek(ix_t(a, b))) join u with (index = 2, spatial_window_max_cells = 512) on 1 = 1",
+            line_width: None,
+            dialect: FormatDialect::SqlServer,
+            expected_outcome: Ok(
+                "SELECT a\nFROM t WITH (nolock, FORCESEEK(ix_t(a, b)))\nJOIN u WITH (INDEX = 2, spatial_window_max_cells = 512)\n  ON 1 = 1",
+            ),
+        },
+        test_types::FormatSqlTestCase {
             description: "a GO that is not alone on its line is a name and is laid out",
             sql: "SELECT go FROM t",
             line_width: None,

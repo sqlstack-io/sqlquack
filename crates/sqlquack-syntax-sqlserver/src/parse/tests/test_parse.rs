@@ -665,6 +665,12 @@ fn given_for_clauses_when_parsing_then_the_tree_keeps_them() {
             expected_json: r#""HASH""#,
         },
         ValueTestCase {
+            description: "a parameterized FORCESEEK keeps its index and its columns",
+            sql: "SELECT a FROM t WITH (NOLOCK, FORCESEEK(i (a, b)))",
+            pointer: "/0/select/from/expressions/0/table/hints/0/with_table_hint/expressions/1",
+            expected_json: r#"{"index_table_hint":{"expressions":[{"identifier":{"name":"i","quoted":false,"span":{"column":42,"end":41,"line":1,"start":40},"trailing_comments":[]}}],"target":{"tuple":{"expressions":[{"identifier":{"name":"a","quoted":false,"span":{"column":45,"end":44,"line":1,"start":43},"trailing_comments":[]}},{"identifier":{"name":"b","quoted":false,"span":{"column":48,"end":47,"line":1,"start":46},"trailing_comments":[]}}]}},"this":{"var":{"this":"FORCESEEK"}}}}"#,
+        },
+        ValueTestCase {
             description: "FOR BROWSE is kept as the select's browse-mode lock",
             sql: "SELECT a FROM t FOR BROWSE",
             pointer: "/0/select/locks",

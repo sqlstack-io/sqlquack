@@ -10,7 +10,7 @@ use sqlquack_syntax::expressions::queries::models::{
     SelectInto, Top, Where, With,
 };
 use sqlquack_syntax::expressions::statements::models::Version;
-use sqlquack_syntax::expressions::tables::models::WithTableHint;
+use sqlquack_syntax::expressions::tables::models::{IndexTableHint, WithTableHint};
 use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::{SourceSpan, Span};
 use sqlquack_syntax::{DataType, Expression};
@@ -21,8 +21,11 @@ use crate::parse::_helpers::tree::nodes::{
     set_operation, subquery, table, values, var,
 };
 use crate::parse::_helpers::values::primary::variable;
-use crate::parse::constants::{COMPOUND_ASSIGNMENTS, UNION_OPERATOR};
-use crate::scan::models::{Token, TokenKind};
+use crate::parse::constants::{
+    COMPOUND_ASSIGNMENTS, CONFLICTING_LOCKS, ISOLATION_LEVELS, LOCK_GRANULARITIES, TABLE_HINTS,
+    UNION_OPERATOR,
+};
+use crate::scan::models::{NumberKind, Token, TokenKind};
 
 /// Words that end a select item or a table source rather than naming its alias.
 const NOT_ALIASES: [&str; 22] = [
@@ -48,27 +51,6 @@ const NOT_ALIASES: [&str; 22] = [
     "ON",
     "WINDOW",
     "OFFSET",
-];
-
-/// Table hints that are one word.
-const TABLE_HINTS: [&str; 17] = [
-    "NOLOCK",
-    "READUNCOMMITTED",
-    "UPDLOCK",
-    "REPEATABLEREAD",
-    "SERIALIZABLE",
-    "READCOMMITTED",
-    "TABLOCK",
-    "TABLOCKX",
-    "PAGLOCK",
-    "ROWLOCK",
-    "NOWAIT",
-    "READPAST",
-    "XLOCK",
-    "SNAPSHOT",
-    "NOEXPAND",
-    "HOLDLOCK",
-    "READCOMMITTEDLOCK",
 ];
 
 /// The physical join hints that may stand between `INNER`, or a side and its `OUTER`, and `JOIN`; `REMOTE` only after `INNER` (1072).
@@ -635,25 +617,7 @@ impl<'sql> Parser<'sql> {
                 expressions: vec![var(&word)],
             }))];
         } else if self.kw("WITH") && self.char_at(1, '(') {
-            self.at += 2;
-            let mut hints: Vec<Expression> = Vec::new();
-            loop {
-                match self.word_at(0) {
-                    Some(word) if TABLE_HINTS.contains(&word.as_str()) => {
-                        self.at += 1;
-                        hints.push(var(&word));
-                    }
-                    Some(_) => return Err(self.gap("table_hint", self.offset())),
-                    None => return Err(self.error()),
-                }
-                if !self.eat_char(',') && self.is_char(')') {
-                    break;
-                }
-            }
-            self.expect_char(')')?;
-            reference.hints = vec![Expression::WithTableHint(Box::new(WithTableHint {
-                expressions: hints,
-            }))];
+            reference.hints = vec![self.table_hints(&[])?];
         }
         Ok(Expression::Table(Box::new(reference)))
     }
@@ -697,6 +661,91 @@ impl<'sql> Parser<'sql> {
             kind: kind.to_owned(),
             expression,
         })
+    }
+
+    /// `WITH ( hint [[,] hint ...] )`, the cursor at `WITH`, checked as SQL Server checks the hints of one table; `refused` holds those not allowed where the table stands.
+    pub(crate) fn table_hints(&mut self, refused: &[(&str, &str)]) -> Parsing<Expression> {
+        self.at += 2;
+        let (mut hints, mut names): (Vec<Expression>, Vec<String>) = (Vec::new(), Vec::new());
+        loop {
+            let Some(word) = self.word_at(0) else {
+                return Err(self.error());
+            };
+            let (hint, name): (Expression, &str) = match word.as_str() {
+                "INDEX" => {
+                    self.at += 1;
+                    let values: Vec<Expression> = match self.eat_char('=') {
+                        true => vec![self.index_value()?],
+                        false => self.parenthesized(Parser::index_value)?,
+                    };
+                    (index_hint("INDEX", values, None), "INDEX")
+                }
+                "FORCESEEK" if self.char_at(1, '(') => {
+                    self.at += 2;
+                    let index: Expression = self.index_value()?;
+                    let columns: Vec<Expression> =
+                        self.parenthesized(|parser| Ok(Expression::Identifier(parser.name()?)))?;
+                    self.expect_char(')')?;
+                    let columns = Expression::Tuple(Box::new(Tuple {
+                        expressions: columns,
+                    }));
+                    (
+                        index_hint("FORCESEEK", vec![index], Some(columns)),
+                        "FORCESEEK()",
+                    )
+                }
+                "SPATIAL_WINDOW_MAX_CELLS" => {
+                    let first: usize = self.at;
+                    self.at += 1;
+                    self.expect_char('=')?;
+                    let cells: Expression = self.integer()?;
+                    let hint: Expression =
+                        self.binary(first, Expression::PropertyEQ, var(&word), cells);
+                    (hint, "SPATIAL_WINDOW_MAX_CELLS")
+                }
+                hint if TABLE_HINTS.contains(&hint) => {
+                    self.at += 1;
+                    (var(hint), hint)
+                }
+                _ => {
+                    let raw: String = self.tokens[self.at].value.clone();
+                    return Err(self.error_with(&format!(
+                        "\"{raw}\" is not a recognized table hints option."
+                    )));
+                }
+            };
+            if let Some((_, message)) = refused.iter().find(|(hint, _)| *hint == name) {
+                return Err(self.error_with(message));
+            }
+            hints.push(hint);
+            names.push(name.to_owned());
+            if !self.eat_char(',') && self.is_char(')') {
+                break;
+            }
+        }
+        self.expect_char(')')?;
+        if let Some(message) = hint_conflict(&names) {
+            return Err(self.error_with(message));
+        }
+        Ok(Expression::WithTableHint(Box::new(WithTableHint {
+            expressions: hints,
+        })))
+    }
+
+    /// An index in a table hint: its name, or its id as an integer.
+    fn index_value(&mut self) -> Parsing<Expression> {
+        match self.peek().map(|token| token.kind) {
+            Some(TokenKind::Number(_)) => self.integer(),
+            _ => Ok(Expression::Identifier(self.name()?)),
+        }
+    }
+
+    /// An unsigned integer literal.
+    fn integer(&mut self) -> Parsing<Expression> {
+        match self.peek().map(|token| token.kind) {
+            Some(TokenKind::Number(NumberKind::Integer)) => self.primary_value(),
+            _ => Err(self.error()),
+        }
     }
 
     /// `TABLESAMPLE [SYSTEM] (size [PERCENT | ROWS]) [REPEATABLE (seed)]`, the cursor at `TABLESAMPLE`.
@@ -942,6 +991,55 @@ impl<'sql> Parser<'sql> {
             joins.push(node);
         }
     }
+}
+
+/// An `INDEX` or parameterized `FORCESEEK` table hint.
+fn index_hint(name: &str, values: Vec<Expression>, columns: Option<Expression>) -> Expression {
+    Expression::IndexTableHint(Box::new(IndexTableHint {
+        this: Box::new(var(name)),
+        expressions: values,
+        target: columns.map(Box::new),
+    }))
+}
+
+/// SQL Server's error for one table's hints that cannot stand together, by the name of each hint.
+fn hint_conflict(names: &[String]) -> Option<&'static str> {
+    let has = |hint: &str| names.iter().any(|name| name == hint);
+    let levels: usize = ISOLATION_LEVELS
+        .iter()
+        .filter(|level| level.iter().any(|hint| has(hint)))
+        .count();
+    let granularities: usize = LOCK_GRANULARITIES.iter().filter(|hint| has(hint)).count();
+    let dirty: bool = ISOLATION_LEVELS[0].iter().any(|hint| has(hint));
+    let locks: bool = (granularities > 0 || has("UPDLOCK") || has("XLOCK")) && dirty;
+    let seeks: usize = names.iter().filter(|name| *name == "FORCESEEK()").count();
+    if levels > 1 || granularities > 1 || (has("UPDLOCK") && has("XLOCK")) || locks {
+        return Some(CONFLICTING_LOCKS);
+    }
+    if has("FORCESCAN") && (has("FORCESEEK") || seeks > 0) {
+        return Some(
+            "The FORCESCAN hint is specified simultaneously with the FORCESEEK hint. Remove one of the hints and resubmit the query.",
+        );
+    }
+    if seeks > 1 {
+        return Some(
+            "There are multiple FORCESEEK hints specified on the same table or view. Remove the extra FORCESEEK hints and resubmit the query.",
+        );
+    }
+    if seeks > 0 && (has("INDEX") || has("FORCESEEK")) {
+        return Some(
+            "The parameterized FORCESEEK hint cannot be simultaneously used with INDEX hints or a non-parameterized FORCESEEK hint on the same object.",
+        );
+    }
+    if names
+        .iter()
+        .filter(|name| *name == "SPATIAL_WINDOW_MAX_CELLS")
+        .count()
+        > 1
+    {
+        return Some("The SPATIAL_WINDOW_MAX_CELLS hint cannot be specified more than once.");
+    }
+    None
 }
 
 /// Puts a `WITH` on the query it heads.

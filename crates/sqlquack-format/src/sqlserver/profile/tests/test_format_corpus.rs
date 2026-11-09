@@ -8,8 +8,8 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
     let test_cases = [test_types::FormatCorpusTestCase {
         description: "SQL Server identity corpus",
         dialect: "tsql",
-        expected_formatted: 64,
-        expected_refused: 11,
+        expected_formatted: 65,
+        expected_refused: 10,
         departures: &[
             Departure {
                 sql: "SELECT val FROM (VALUES ((TRUE), (FALSE), (NULL))) AS t(val)",
@@ -39,14 +39,6 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 sql: "SELECT * FROM t WHERE NOT c",
                 formatted: None,
                 reason: "SQL Server rejects it: `An expression of non-boolean type specified in a context where a condition is expected, near 'c'.` (4145); SQLQuack's parser refuses it (`An expression of non-boolean type specified in a context where a condition is expected.`); SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT * FROM t WITH (TABLOCK, INDEX(myindex))",
-                formatted: None,
-                reason: "SQL Server accepts it; SQLQuack's parser keeps a table hint list opaque (gap `table_hint`), so the formatter refuses rather than guess; SQLClean formatted it",
                 receipt: Some(
                     "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
