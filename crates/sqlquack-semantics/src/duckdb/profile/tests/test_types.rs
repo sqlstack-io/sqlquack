@@ -14,4 +14,6 @@ pub(crate) struct ResolvedReadTestCase {
 pub(crate) struct SingleAnalysisTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,
+    pub(crate) expected_outputs: &'static [&'static str],
+    pub(crate) expected_finding_count: usize,
 }

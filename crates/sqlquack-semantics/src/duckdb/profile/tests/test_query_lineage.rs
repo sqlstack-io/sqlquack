@@ -210,10 +210,16 @@ fn given_ctes_when_analysing_lineage_and_findings_together_then_the_lineage_reus
                   b AS (SELECT a.id, a.amount + 1 AS amount FROM a JOIN customers AS c ON c.id = a.id), \
                   u AS (SELECT id, amount FROM a UNION ALL SELECT id, amount FROM b) \
                   SELECT id, SUM(amount) AS total FROM u GROUP BY id",
+            expected_outputs: &["id", "total"],
+            expected_finding_count: 0,
         },
         SingleAnalysisTestCase {
-            description: "a CTE naming an unknown column, so there are findings to keep",
-            sql: "WITH a AS (SELECT id, missing FROM orders) SELECT id, missing FROM a",
+            description: "a query reading a column its CTE lacks, so there is a finding to keep",
+            sql: "WITH a AS (SELECT id, amount FROM orders), \
+                  b AS (SELECT a.id, a.amount FROM a JOIN customers AS c ON c.id = a.id) \
+                  SELECT id, missing FROM b",
+            expected_outputs: &["id", "missing"],
+            expected_finding_count: 1,
         },
     ];
     let schema = shop_schema();
@@ -238,6 +244,23 @@ fn given_ctes_when_analysing_lineage_and_findings_together_then_the_lineage_reus
         let together = statement_lineage_and_findings(&statements[0], context);
         let together_work: usize = work_done();
         assert_eq!(together, (lineage, findings), "{}", test_case.description);
+        assert_eq!(
+            (
+                together
+                    .0
+                    .outputs
+                    .iter()
+                    .map(|output| output.name.as_str())
+                    .collect::<Vec<&str>>(),
+                together.1.len()
+            ),
+            (
+                test_case.expected_outputs.to_vec(),
+                test_case.expected_finding_count
+            ),
+            "{}",
+            test_case.description
+        );
         assert!(
             (together_work - findings_work) * 2 <= lineage_work,
             "{}: lineage alone {lineage_work}, after the findings {}",

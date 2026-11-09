@@ -7,3 +7,4 @@ pub(crate) mod resolution;
 pub(crate) mod reuse;
 pub(crate) mod sources;
 pub(crate) mod stack;
+pub(crate) mod statement;

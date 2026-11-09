@@ -303,8 +303,7 @@ fn by_name(
     }
 }
 
-/// The CTEs in reach inside a query with `with`: the enclosing ones, then its own in order; the
-/// list a visiting walk kept earlier in this analysis when there is no enclosing level.
+/// The CTEs in reach inside a query with `with`: the enclosing ones, then its own, or as kept.
 pub(crate) fn with_ctes<'a>(
     with: Option<&With>,
     ctes: &'a [NamedQuery],
@@ -319,16 +318,15 @@ pub(crate) fn with_ctes<'a>(
     {
         return Reach::Kept(kept);
     }
-    Reach::Owned(ctes_reach(with, (ctes, outer), context, &mut |_, _| false))
+    Reach::Owned(ctes_reach(with, (ctes, outer), context, |_, _| false))
 }
 
-/// `with_ctes`, showing `visit` each CTE with what its body reads, a DuckDB recursive one itself;
-/// kept for the analysis when there is no enclosing level.
+/// `with_ctes`, showing `visit` each CTE with what its body reads, a DuckDB recursive one itself.
 pub(crate) fn with_ctes_visiting<'a>(
     with: Option<&With>,
     (ctes, outer): (&'a [NamedQuery], Option<&LineageScope<'_>>),
     context: LineageContext<'_>,
-    visit: &mut dyn FnMut(&Cte, &[NamedQuery]) -> bool,
+    visit: impl FnMut(&Cte, &[NamedQuery]) -> bool,
 ) -> Reach<'a> {
     let Some(with) = with else {
         return Reach::Borrowed(ctes);
@@ -345,7 +343,7 @@ fn ctes_reach(
     with: &With,
     (ctes, outer): (&[NamedQuery], Option<&LineageScope<'_>>),
     context: LineageContext<'_>,
-    visit: &mut dyn FnMut(&Cte, &[NamedQuery]) -> bool,
+    mut visit: impl FnMut(&Cte, &[NamedQuery]) -> bool,
 ) -> Vec<NamedQuery> {
     let mut reach: Vec<NamedQuery> = ctes.to_vec();
     for cte in &with.ctes {

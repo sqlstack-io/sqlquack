@@ -96,7 +96,7 @@ fn visited_ctes<'a>(
         (Engine::DuckDB, Some(with)) => unread_ctes(owner, with, context),
         _ => Vec::new(),
     };
-    let reach = with_ctes_visiting(with, (ctes, outer), context, &mut |cte, reach| {
+    let reach = with_ctes_visiting(with, (ctes, outer), context, |cte, reach| {
         let body: Vec<NameFinding> = query_findings(&cte.this, (reach, outer, aliases), context);
         let faulted: bool =
             postgres && (!body.is_empty() || reads_faulted(&cte.this, reach, context));
