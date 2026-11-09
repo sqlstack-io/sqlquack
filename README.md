@@ -59,6 +59,27 @@ result = sqlquack.convert(
 
 [Python API](https://sqlquack.io/docs/python/)
 
+## Running the suites
+
+SQLQuack's parsers and conversion rules are checked against evidence recorded on the real engines. Rerunning it needs no account:
+
+```bash
+git clone https://github.com/sqlstack-io/sqlquack && cd sqlquack
+uv sync
+make check-syntax DIALECT=snowflake    # rerun the parser against recorded syntax evidence
+make check-convert DIALECT=snowflake   # replay recorded translations on DuckDB
+```
+
+| Command | What it does |
+|---|---|
+| `make pending DIALECT=snowflake` | What isn't recorded yet, in both suites |
+| `make check-syntax DIALECT=snowflake` | Rerun the parser against recorded evidence (offline) |
+| `make record-syntax DIALECT=duckdb` | Record evidence for new syntax cases |
+| `make check-convert DIALECT=snowflake [CASES=cases/temporal]` | Replay recorded translations on DuckDB (offline) |
+| `make record-convert DIALECT=snowflake` | Record new translation cases on Snowflake |
+
+Recording needs the dialect's engine: DuckDB and SQLite record locally, while Snowflake, BigQuery and Databricks need a connection. Recording Snowflake syntax evidence isn't public yet. `make help` lists every target.
+
 ---
 
 Built in Rust. Free and open source. [Apache 2.0](https://github.com/sqlstack-io/sqlquack/blob/main/LICENSE).
