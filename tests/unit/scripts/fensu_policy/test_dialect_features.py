@@ -214,9 +214,7 @@ def test_given_folders_when_matching_features_then_lists_missing(
         ),
         SharedLinesTestCase(
             "a /* inside a string does not hide the dialect code after it",
-            'let open = "/* not a comment";\n'
-            "let d = Dialect::Snowflake;\n"
-            'let close = "*/";\n',
+            'let open = "/* not a comment";\nlet d = Dialect::Snowflake;\nlet close = "*/";\n',
             False,
             (2,),
         ),
@@ -228,15 +226,13 @@ def test_given_folders_when_matching_features_then_lists_missing(
         ),
         SharedLinesTestCase(
             "a quote in a char literal does not open a string",
-            "let quote = '\"'; let d = Dialect::Snowflake;\n"
-            'let s = "text";\n',
+            'let quote = \'"\'; let d = Dialect::Snowflake;\nlet s = "text";\n',
             False,
             (1,),
         ),
         SharedLinesTestCase(
             "nested block comments and raw strings hide what they hold",
-            "/* outer /* inner */ Dialect::Snowflake */\n"
-            'let s = r#"a "Dialect::Snowflake" b"#;\n',
+            '/* outer /* inner */ Dialect::Snowflake */\nlet s = r#"a "Dialect::Snowflake" b"#;\n',
             False,
             (),
         ),
