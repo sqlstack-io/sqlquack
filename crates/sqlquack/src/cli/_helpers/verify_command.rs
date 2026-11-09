@@ -6,6 +6,7 @@ use std::path::Path;
 use std::process::ExitCode;
 
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
+use sqlquack_blocks::macros::main::helper_statements::helper_statements;
 use sqlquack_compare::comparison::models::RowOrder;
 use sqlquack_evidence::cases::models::LoadedCase;
 use sqlquack_evidence::constants::{SESSION_DEFAULTS_FILE, SESSION_DEFAULTS_NAME};
@@ -43,6 +44,9 @@ use crate::cli::models::{
 use crate::statements::main::write_sql_sizes::write_sql_sizes;
 use crate::statements::main::write_translation_statements::write_translation_statements;
 use sqlquack_rules::session::main::conversion_options::conversion_options;
+
+/// The search path over read-only inputs: their tables, then the helper macros kept in memory.
+const HELPERS_BESIDE_INPUTS: &str = "SET search_path = 'inputs.main,memory.sqlquack'";
 
 pub(crate) fn verify_command(
     arguments: &VerifyArguments,
@@ -576,9 +580,15 @@ fn judged(
         .display()
         .to_string()
         .replace('\'', "''");
-    let setup = [format!(
-        "ATTACH '{database}' AS inputs (READ_ONLY); USE inputs;"
-    )];
+    let attach = format!("ATTACH '{database}' AS inputs (READ_ONLY); USE inputs;");
+    let helpers = helper_statements(&[&sql]);
+    let setup: Vec<String> = match helpers.is_empty() {
+        true => vec![attach],
+        false => helpers
+            .into_iter()
+            .chain([attach, HELPERS_BESIDE_INPUTS.to_owned()])
+            .collect(),
+    };
     let replayed = match replay_on_engine((&setup, &sql), None, settings) {
         Ok(replayed) => replayed,
         Err(error) => return ("duckdb_error", error),

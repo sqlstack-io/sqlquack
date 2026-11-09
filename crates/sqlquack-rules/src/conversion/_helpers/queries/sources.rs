@@ -5,6 +5,7 @@ use std::cell::RefCell;
 use serde_json::{Value, json};
 use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_blocks::checking::main::quoted_relation::quoted_relation;
+use sqlquack_blocks::semi_structured::models::PathStep;
 use sqlquack_diagnostics::classification::models::{Construct, ConstructFamily};
 use sqlquack_diagnostics::refusals::main::missing::missing;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
@@ -14,7 +15,7 @@ use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::project_functions::{exact_arguments, held_type};
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
-use crate::conversion::_helpers::expressions::semi_structured::guarded_column;
+use crate::conversion::_helpers::expressions::semi_structured::{guarded_column, path_steps};
 use crate::conversion::_helpers::queries::clauses::condition_sql;
 use crate::conversion::_helpers::queries::flatten::lateral_flatten;
 use crate::conversion::_helpers::queries::pivot::pivot_subquery;
@@ -604,7 +605,11 @@ fn table_source(
         .filter(|column| may_read(context.locator.tree(), &column.name))
     {
         let quoted = quoted_identifier(&column.name, log);
-        guarded.push(format!("{} AS {quoted}", guarded_column(&quoted, context)?));
+        let reads = literal_reads(context.locator.tree(), &column.name);
+        guarded.push(format!(
+            "{} AS {quoted}",
+            guarded_column(&quoted, reads.as_deref(), context)?
+        ));
     }
     let relation = match guarded.is_empty() {
         true => relation_name,
@@ -917,6 +922,52 @@ fn reads_unnamed_or(tree: &Value, name: &str) -> bool {
         }),
         _ => false,
     }
+}
+
+/// The literal paths `tree` reads column `name` through; `None` when it may read it otherwise.
+fn literal_reads(tree: &Value, name: &str) -> Option<Vec<Vec<PathStep>>> {
+    if let Some(("j_s_o_n_extract", payload)) = node_kind(tree)
+        && let Some(steps) = literal_path(payload, name)
+    {
+        return Some(vec![steps]);
+    }
+    match tree {
+        Value::String(text) => (!text.eq_ignore_ascii_case(name)
+            && !text.to_ascii_lowercase().starts_with(NATURAL_JOIN_PREFIX))
+        .then(Vec::new),
+        Value::Array(items) => items
+            .iter()
+            .map(|item| literal_reads(item, name))
+            .collect::<Option<Vec<_>>>()
+            .map(|reads| reads.concat()),
+        Value::Object(fields) => fields
+            .iter()
+            .map(|(key, value)| match key.as_str() {
+                "star" | "parameter" | "pivot" | "unpivot" | "columns" => None,
+                "count" | "aggregate_function" if counts_rows(value) => Some(Vec::new()),
+                _ => literal_reads(value, name),
+            })
+            .collect::<Option<Vec<_>>>()
+            .map(|reads| reads.concat()),
+        _ => Some(Vec::new()),
+    }
+}
+
+/// The steps of `column:path` when the path is a literal and its base is column `name`.
+fn literal_path(payload: &Value, name: &str) -> Option<Vec<PathStep>> {
+    let ("column", column) = node_kind(payload.get("this")?)? else {
+        return None;
+    };
+    let named = column.get("name").and_then(identifier_name)?;
+    if !named.eq_ignore_ascii_case(name) {
+        return None;
+    }
+    let text = payload
+        .get("expression")?
+        .get("literal")?
+        .get("value")?
+        .as_str()?;
+    path_steps(text)
 }
 
 /// Whether a COUNT payload is COUNT(*) alone, which reads no column.

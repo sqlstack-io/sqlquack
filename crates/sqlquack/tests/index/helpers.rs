@@ -19,10 +19,7 @@ const CORPUS: &[(&str, &str)] = &[
         "plain.sql",
         "SELECT customer_id FROM customers WHERE customer_id > 10",
     ),
-    (
-        "notes.sql",
-        "SELECT PARSE_JSON(note) AS parsed FROM customers",
-    ),
+    ("notes.sql", "SELECT HASH(note) AS hashed FROM customers"),
 ];
 
 fn sqlquack(directory: &Path, arguments: &[&str]) -> Output {
@@ -63,7 +60,7 @@ pub(crate) fn index_shop_corpus() -> IndexOutcome {
         exit_code: output.status.code(),
         text_to_boolean_files: names(&index, "building_blocks", "duckdb.text_to_boolean", "files"),
         text_to_number_files: names(&index, "building_blocks", "duckdb.text_to_number", "files"),
-        parse_json_refusals: names(&index, "refusals", "fn:PARSE_JSON", "files"),
+        hash_refusals: names(&index, "refusals", "fn:HASH", "files"),
         converted: index["totals"]["converted"].as_u64().unwrap_or_default(),
         refused: index["totals"]["refused"].as_u64().unwrap_or_default(),
     }

@@ -56,14 +56,14 @@ pub enum Command {
     Check(CheckArguments),
     /// Replay converted SQL over a DuckDB inputs database and compare with recorded results.
     Compare(CompareArguments),
-    /// Explain a diagnostic code, such as `SQ0203`, with its help and an example.
+    /// Explain a diagnostic code, such as `SQ0203`, or a helper macro, such as `variant_text_v1`.
     Explain(ExplainArguments),
 }
 
 /// Arguments of `sqlquack explain`.
 #[derive(Debug, Args)]
 pub struct ExplainArguments {
-    /// The code, its snake_case name, or a guard's former `E_GUARD_*` name.
+    /// The code, its snake_case name, a guard's former `E_GUARD_*` name, or a helper macro.
     pub code: String,
 }
 
@@ -442,7 +442,7 @@ pub struct ConvertReport {
     pub warnings: Vec<String>,
     /// The Python functions the SQL calls, which the caller registers before running it.
     pub python_functions: Vec<PythonSignature>,
-    /// The macros of the user overrides the SQL calls, which the caller runs before it.
+    /// The helper macros, then the override macros, the SQL calls: run them first, in order.
     pub macros: Vec<String>,
     /// Every user override loaded: its name, the function it replaces and its body's hash.
     pub overrides: Vec<OverrideListing>,

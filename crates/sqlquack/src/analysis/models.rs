@@ -28,6 +28,7 @@ use crate::analysis::constants::{
 };
 use crate::analysis::main::override_macros::override_macros;
 use crate::analysis::main::refused_construct::refused_construct;
+use crate::analysis::main::with_helpers::with_helpers;
 
 /// The production converter: the SQLQuack pipeline with the built-in rule catalogue.
 #[derive(Clone, Debug, Default)]
@@ -128,11 +129,14 @@ impl CaseConverter for PipelineConverter {
             (true, [converted]) => Conversion::Converted {
                 sql: converted.sql.clone(),
                 raises: converted.raises.clone(),
-                setup: functions
-                    .setup
-                    .into_iter()
-                    .chain(override_macros(&converted.provenance.divergences, &options))
-                    .collect(),
+                setup: with_helpers(
+                    functions
+                        .setup
+                        .into_iter()
+                        .chain(override_macros(&converted.provenance.divergences, &options))
+                        .collect(),
+                    &converted.sql,
+                ),
                 python,
                 provenance: merge_provenance(
                     std::iter::once(&converted.provenance).chain(&functions.provenance),

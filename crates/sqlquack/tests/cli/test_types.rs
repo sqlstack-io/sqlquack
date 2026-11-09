@@ -136,6 +136,13 @@ pub(crate) struct ValueTestCase {
     pub(crate) expected_value: &'static str,
 }
 
+pub(crate) struct ReadCheckTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_value: Option<&'static str>,
+    pub(crate) expected_repeat_raised: bool,
+}
+
 pub(crate) struct RunErrorTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,

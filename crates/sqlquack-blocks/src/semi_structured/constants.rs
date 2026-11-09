@@ -95,10 +95,6 @@ pub const JSON_UNSAFE_TOKEN_PATTERN: &str =
 pub const JSON_NUMBER_PATTERN: &str = r"-?[0-9]+(?:\.[0-9]+)?";
 /// A UTF-16 surrogate escape, which Snowflake may write as invalid UTF-8.
 pub const JSON_SURROGATE_PATTERN: &str = r"\\u[dD][89abAB]";
-/// A `\u00` control escape after an even run of backslashes, before its last hex digit.
-pub const JSON_CONTROL_ESCAPE_PREFIX_PATTERN: &str = r"((?:^|[^\\])(?:\\\\)*)\\u00([01])";
-/// The replacement keeping that run and escape start, for the digit in lower case after it.
-pub const JSON_CONTROL_ESCAPE_PREFIX: &str = r"\1\\u00\2";
 /// The hex digits DuckDB writes in upper case and Snowflake in lower case.
 pub const JSON_ESCAPE_HEX_LETTERS: &str = "ABCDEF";
 /// Any JSON number, exponent included.

@@ -241,9 +241,11 @@ without writing a raw record. It becomes a receipt only when:
 
 Its `raw_record_sha256` is the hash of the entry as canonical JSON.
 
-A receipt is evidence only while it is current. A later receipt can supersede it, or the run report
-beside its file can withdraw it: the report's `withdrawn` list names withdrawn receipts by
-`receipt_sha256`. A retired receipt stays published but is dropped before checking. A
+A receipt is evidence only while it is current. A later receipt can supersede it, or a run report
+in the receipts directory can withdraw it: the report's `withdrawn` list names each withdrawn
+receipt by `receipt_sha256`, with the `reason`. Receipts files and reports are append-only in every
+dialect, so a receipt with no newer recording is retired by adding a report that withdraws it, never
+by deleting or editing a file. A retired receipt stays published but is dropped before checking. A
 supersession or withdrawal that names no published receipt, or a receipt of another case, is a
 format problem. So is a published receipt superseded more than once, and a supersession cycle.
 

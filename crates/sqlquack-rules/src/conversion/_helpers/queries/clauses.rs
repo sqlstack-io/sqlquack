@@ -1,8 +1,8 @@
 //! WHERE-style conditions, GROUP BY, ORDER BY and LIMIT.
 
 use serde_json::Value;
-use sqlquack_blocks::blocks::constants::RAISE_MARKER;
 use sqlquack_blocks::blocks::main::explicit_null_order::explicit_null_order;
+use sqlquack_blocks::raises::main::may_raise::may_raise;
 use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::refusals::main::missing::missing;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
@@ -52,7 +52,7 @@ pub(crate) fn condition_sql(condition: &Value, site: Site<'_>) -> Result<String,
             ),
         ));
     }
-    if !emitted.sql.contains(RAISE_MARKER) {
+    if !may_raise(&emitted.sql) {
         return Ok(emitted.sql);
     }
     let conjuncts = conjuncts_of(condition);
@@ -60,7 +60,7 @@ pub(crate) fn condition_sql(condition: &Value, site: Site<'_>) -> Result<String,
     let mut guarded: Vec<String> = Vec::new();
     for conjunct in conjuncts {
         let sql = boolean_operand(conjunct, site)?;
-        match sql.contains(RAISE_MARKER) {
+        match may_raise(&sql) {
             true => guarded.push(sql),
             false => free.push(sql),
         }

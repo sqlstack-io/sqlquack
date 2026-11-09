@@ -1,5 +1,5 @@
-use crate::helpers::{run_with_environment, run_with_input};
-use crate::test_types::{CheckCommandTestCase, ColorTestCase};
+use crate::helpers::{first_refusal_help, run_with_environment, run_with_input};
+use crate::test_types::{CheckCommandTestCase, ColorTestCase, DivergenceHelpTestCase};
 
 const PLAIN_CHECK: &str = "sqlquack check: checking…\n\
     error[SQ0203]: QUALIFY needs a window function\n \
@@ -257,6 +257,34 @@ fn given_a_color_choice_when_checked_or_converted_then_only_a_colored_stream_is_
                 test_case.expected_stdout,
                 test_case.expected_stderr
             ),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_uncompiled_dbt_jinja_when_converting_then_the_help_points_to_dbt_compile() {
+    let test_cases = [
+        DivergenceHelpTestCase {
+            description: "a pasted model with Jinja expressions",
+            sql: "select {{ dbt_utils.generate_surrogate_key(['order_id']) }} as k \
+                  from {{ ref('stg_orders') }}",
+            flags: &[],
+            expected_help: "this looks like uncompiled dbt Jinja; run `dbt compile` and check the \
+                SQL it writes under target/compiled",
+        },
+        DivergenceHelpTestCase {
+            description: "a parse failure without Jinja keeps no help",
+            sql: "SELECT a, FROM orders WHERE (b = 1",
+            flags: &[],
+            expected_help: "",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            first_refusal_help(test_case.sql, test_case.flags),
+            test_case.expected_help,
             "{}",
             test_case.description
         );

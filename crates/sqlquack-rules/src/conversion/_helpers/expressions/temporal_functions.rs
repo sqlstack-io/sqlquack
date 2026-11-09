@@ -439,7 +439,7 @@ pub(crate) fn months_between(
     let (divided, _) = exact_decimal_divide(
         (&numerator, MAX_PRECISION, 0),
         (&month.to_string(), MAX_PRECISION, 0),
-        (MONTHS_BETWEEN_TYPE, false),
+        (MONTHS_BETWEEN_TYPE, false, Some(&month.to_string())),
         log,
     )
     .map_err(refuse)?;

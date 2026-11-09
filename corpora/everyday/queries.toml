@@ -2222,13 +2222,13 @@ expect_repository = "translated"
 [[query]]
 category = "semi_structured"
 sql = '''SELECT TRY_PARSE_JSON('{"a": 1}') AS j'''
-expect = "refused SQ0008 fn:TRY_PARSE_JSON at 7..33"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
 sql = '''SELECT PARSE_JSON('{"a": 1}'):a::INT AS a'''
-expect = "refused SQ0008 fn:PARSE_JSON at 7..29"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2240,7 +2240,7 @@ expect_repository = "translated"
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ARRAY_CONSTRUCT(1, 2, 3) AS arr'''
-expect = "refused SQ0008 fn:ARRAY_CONSTRUCT at 7..31"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -3727,7 +3727,7 @@ expect_repository = "translated"
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ticket_id, ARRAY_CAT(tags, ARRAY_CONSTRUCT('x')) AS tags FROM tickets'''
-expect = "refused SQ0008 fn:ARRAY_CONSTRUCT at 34..54"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]

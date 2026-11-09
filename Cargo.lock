@@ -1469,6 +1469,7 @@ version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
+ "sqlquack-diagnostics",
  "sqlquack-parse",
  "sqlquack-syntax",
 ]
@@ -1497,7 +1498,9 @@ version = "0.2.0"
 dependencies = [
  "sha2",
  "sqlquack-syntax",
+ "sqlquack-syntax-bigquery",
  "sqlquack-syntax-postgres",
+ "sqlquack-syntax-sqlserver",
 ]
 
 [[package]]

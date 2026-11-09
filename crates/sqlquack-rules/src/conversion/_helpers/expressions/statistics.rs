@@ -223,6 +223,7 @@ fn exact_variance(
                 scale: result,
             },
             false,
+            None,
         ),
         log,
     )

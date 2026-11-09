@@ -283,3 +283,7 @@ pub const SPLIT_TEXT_PART: &str = "duckdb.split_text_part";
 pub const TEXT_TO_UTC_ZONED: &str = "duckdb.text_to_utc_zoned";
 /// Zoned text whose offset is not +00:00, whose wall time a DuckDB instant does not keep.
 pub const TIMESTAMP_TZ_OFFSET: &str = "timestamp_tz_offset";
+/// Digits a scaled dividend may have when rounding doubles it: doubled, it fits 128 bits.
+pub const SHORT_FORM_DIGITS: usize = 37;
+/// Digits of a power of ten DuckDB reads as an integer literal.
+pub const INTEGER_LITERAL_DIGITS: usize = 18;

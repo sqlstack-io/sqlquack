@@ -12,6 +12,7 @@ use sqlquack_blocks::blocks::main::column_type::column_type;
 use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_blocks::checking::constants::SEMI_STRUCTURED_HOLDING_TYPE;
 use sqlquack_blocks::layout::main::layout_sql::layout_sql;
+use sqlquack_blocks::macros::main::helper_statements::helper_statements;
 use sqlquack_diagnostics::classification::main::classify::classify;
 use sqlquack_diagnostics::classification::models::SourceDialect;
 use sqlquack_diagnostics::diagnostics::constants::SESSION_PARAMETERS;
@@ -23,8 +24,8 @@ use sqlquack_diagnostics::failures::main::raise_id::raise_id;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_diagnostics::refusals::main::refuse_constructs::refuse_constructs;
 use sqlquack_diagnostics::refusals::main::refuse_unparsed::refuse_unparsed;
-use sqlquack_diagnostics::snowflake::refusals::main::snowflake_rejections::snowflake_rejections;
 use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
+use sqlquack_diagnostics::snowflake::refusals::main::snowflake_rejections::snowflake_rejections;
 use sqlquack_parse::parsing::main::parse_source::parse_source;
 use sqlquack_policy::policy::models::Policy;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
@@ -398,6 +399,8 @@ fn stages(sql: &str, catalog: &Catalog, settings: &str) -> Value {
                 }).collect::<Vec<_>>(),
                 // Where each raise ID in the SQL comes from, so a run's error points at the source.
                 "raises": done.raises,
+                // The helper macros the SQL calls, which the page creates before running it.
+                "setup": helper_statements(&[done.sql.as_str()]),
             })),
             Err(refusal) => refusals.push(placed(refusal, statement, &lines)),
         }

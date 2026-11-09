@@ -355,10 +355,14 @@ fn exact_arithmetic(
         return Err("exact arithmetic needs NUMBER operands".to_owned());
     };
     if operator == Arithmetic::Divide {
+        let constant = match &right.literal {
+            Some(Literal::Number(text)) => Some(text.as_str()),
+            _ => None,
+        };
         let (sql, guarded) = exact_decimal_divide(
             (&left.sql, left_precision, left_scale),
             (&right.sql, right_precision, right_scale),
-            (result, false),
+            (result, false, constant),
             log,
         )?;
         if guarded {

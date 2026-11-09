@@ -542,7 +542,7 @@ impl AggregateCall<'_> {
         let (divided, guarded) = exact_decimal_divide(
             (&total_sql, precision, scale),
             (&counted, COUNT_PRECISION, 0),
-            (data_type, self.framed),
+            (data_type, self.framed, None),
             log,
         )
         .map_err(refuse)?;

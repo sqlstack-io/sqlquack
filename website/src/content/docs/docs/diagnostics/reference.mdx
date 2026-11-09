@@ -43,7 +43,7 @@ Why a statement was not converted.
 
 **the SQL does not parse** (`parse_fidelity`)
 
-SQLQuack's Snowflake parser could not read the SQL, so nothing in it was converted. The span points where the parser stopped and the label carries the parser's message. Check the SQL at that point against Snowflake's grammar; if Snowflake accepts the statement, SQLQuack's parser is missing the syntax and the statement should be reported with the label.
+SQLQuack's Snowflake parser could not read the SQL, so nothing in it was converted. The span points where the parser stopped and the label carries the parser's message. Check the SQL at that point against Snowflake's grammar; if Snowflake accepts the statement, SQLQuack's parser is missing the syntax and the statement should be reported with the label. Where the line holds dbt Jinja, the help says to compile the model with dbt first, since Snowflake does not parse Jinja either.
 
 **Example:**
 

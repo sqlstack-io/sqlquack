@@ -3,10 +3,11 @@
 use crate::classification::models::ConstructFamily;
 use crate::diagnostics::_helpers::code_entry::code_entry;
 use crate::diagnostics::_helpers::coded::coded;
+use crate::diagnostics::_helpers::jinja::holds_jinja;
 use crate::diagnostics::_helpers::line_index::LineIndex;
 use crate::diagnostics::constants::{
     CASE_ONLY_MATCH, CASE_ONLY_MATCH_HELP, CONVERSION_BUDGET, DIVERGENCE_REFUSED,
-    FUNCTION_OPERAND_HELP, GUARD_PREFIX, MISSING_RULE, NOT_EXPRESSIBLE, PARSE_FIDELITY,
+    FUNCTION_OPERAND_HELP, GUARD_PREFIX, JINJA_HELP, MISSING_RULE, NOT_EXPRESSIBLE, PARSE_FIDELITY,
     REPEATED_RESULT_NAME, REPEATED_RESULT_NAME_HELP, SUGGESTED_NAME_MAX_CHARS, TYPE_CONDITION,
     UNALIASED_OUTPUT_NAME, UNPARSED_PREFIX, UNRESOLVED_NAME, ZONED_LOCAL_TIME,
     ZONED_LOCAL_TIME_HELP, ZONED_LOCAL_TIME_NOTE,
@@ -31,6 +32,9 @@ pub fn diagnose(refusals: &[Refusal], source: &str) -> Vec<Diagnostic> {
             && refusal.reason.contains(REPEATED_RESULT_NAME)
         {
             diagnostic.help = Some(REPEATED_RESULT_NAME_HELP.to_owned());
+        }
+        if refusal.category == RefusalCategory::ParseFidelity && holds_jinja(refusal, source) {
+            diagnostic.help = Some(JINJA_HELP.to_owned());
         }
         if refusal.category == RefusalCategory::TypeCondition
             && refusal.reason.contains(ZONED_LOCAL_TIME)

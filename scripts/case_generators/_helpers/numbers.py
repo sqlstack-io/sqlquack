@@ -104,6 +104,18 @@ def division_guarded(*, left: NumberType, right: NumberType, divisor: Decimal) -
         return unscaled >= Decimal(10) ** (MAX_PRECISION - shift)
 
 
+def division_exact(*, left: NumberType, right: NumberType) -> bool:
+    """Whether exact_decimal_divide divides columns of these types in 128 bits for every divisor."""
+    result: NumberType = result_type(operator=Operator.DIVIDE, left=left, right=right)
+    shift: int = result.scale + right.scale - left.scale
+    return (
+        shift >= 0
+        and left.precision + left.scale <= MAX_PRECISION
+        and right.precision + right.scale <= MAX_PRECISION
+        and left.precision + shift <= MAX_PRECISION
+    )
+
+
 def common_digits(*, value: Decimal, left: NumberType, right: NumberType) -> bool:
     """Whether `value` fits the common type comparison coerces both operands to."""
     if left.is_float or right.is_float:

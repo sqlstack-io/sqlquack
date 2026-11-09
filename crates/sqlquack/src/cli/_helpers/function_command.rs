@@ -5,6 +5,7 @@ use std::path::Path;
 use std::process::ExitCode;
 
 use serde::Serialize;
+use sqlquack_blocks::macros::main::helper_statements::helper_statements;
 use sqlquack_diagnostics::classification::models::SourceDialect;
 use sqlquack_diagnostics::diagnostics::constants::SESSION_PARAMETERS;
 use sqlquack_diagnostics::diagnostics::main::diagnose::diagnose;
@@ -39,6 +40,14 @@ enum Failure {
     },
 }
 
+/// What a converted `function` prints: the function and the helper macros its body calls.
+#[derive(Serialize)]
+struct FunctionOutput<'converted> {
+    #[serde(flatten)]
+    converted: &'converted ConvertedFunction,
+    macros: Vec<String>,
+}
+
 /// What `function` prints on standard output when the body is refused.
 #[derive(Serialize)]
 struct FunctionRefusal<'report> {
@@ -61,7 +70,11 @@ pub(crate) fn function_command(
             let _ = writeln!(
                 stdout,
                 "{}",
-                serde_json::to_string_pretty(&converted).unwrap_or_default()
+                serde_json::to_string_pretty(&FunctionOutput {
+                    converted: &converted,
+                    macros: helper_statements(&[&converted.body]),
+                })
+                .unwrap_or_default()
             );
             let _ = writeln!(
                 stderr,

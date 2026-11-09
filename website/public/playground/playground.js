@@ -131,7 +131,19 @@ function showCaption(example) {
 }
 
 let latest = null;
+// The helper macros the translated statement calls, created before it runs.
+let latestSetup = [];
 let latestRaises = {};
+
+// The helper macro definitions a translation calls, folded away above its SQL.
+function helperMacros(setup) {
+	if (!setup.length) return '';
+	const count = setup.length - 1;
+	return (
+		`<details class="pg-helpers"><summary>${count} SQLQuack helper macro${count === 1 ? '' : 's'}, created before the SQL runs</summary>` +
+		`<pre class="terminal sql">${escape(setup.map((statement) => `${statement};`).join('\n'))}</pre></details>`
+	);
+}
 // The editor's current text and underlines, so a run's error can add its own.
 let shown = { chars: [], spans: [] };
 let current = 0;
@@ -197,7 +209,9 @@ async function run() {
 	let body = '';
 	if (translate.status !== 'skipped') {
 		// Translated SQL keeps its line layout and scrolls sideways; diagnostics still wrap.
-		body = (translate.statements ?? []).map((s) => `<pre class="terminal sql">${escape(s.sql)}</pre>`).join('');
+		body = (translate.statements ?? [])
+			.map((s) => helperMacros(s.setup ?? []) + `<pre class="terminal sql">${escape(s.sql)}</pre>`)
+			.join('');
 		body = unknownRelationHints(translate.diagnostics) + body + conversionNotes(translate);
 		body += (translate.diagnostics ?? []).map((d) => terminal(tone(rendered(d, chars)))).join('');
 	}
@@ -214,6 +228,7 @@ async function run() {
 	const statements = translate.statements ?? [];
 	if (translate.status === 'pass' && statements.length === 1) {
 		latest = statements[0].sql;
+		latestSetup = statements[0].setup ?? [];
 		latestRaises = statements[0].raises ?? {};
 		if (duckdb) execute();
 		else showDuckDBLoading();
@@ -383,6 +398,7 @@ async function execute() {
 		try {
 			const tables = JSON.parse((await engine('fixture', { sources: sourcesBox.value })).result);
 			if (tables.error) throw new Error(`sources: ${tables.error}`);
+			for (const statement of latestSetup) await conn.query(statement);
 			for (const table of tables.tables) await conn.query(table.replace(/^CREATE TABLE/, 'CREATE OR REPLACE TABLE'));
 			if (rowsBox.value.trim()) await conn.query(rowsBox.value);
 			const started = performance.now();
