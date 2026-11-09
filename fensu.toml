@@ -18,6 +18,19 @@ rule_modules = [
 ]
 select = ["FPRS", "XSQ001", "XSQ002", "XSQ003", "XSQ004", "XSQ007"]
 
+# The playground engine, website/wasm, imports these two Snowflake conversion entries. fensu reads
+# only the root cargo workspace, and website/wasm keeps its own, so FPRSL105 cannot see that importer.
+# CHI-1159 moves the playground onto the Snowflake pipeline's `analyze`; drop both entries then.
+[[targets.rust.rule_exceptions]]
+rule = "FPRSL105"
+path = "crates/sqlquack-convert/src/snowflake/conversion/main/convert_statement.rs"
+reason = "imported by the playground engine website/wasm, outside the root cargo workspace (CHI-1159)"
+
+[[targets.rust.rule_exceptions]]
+rule = "FPRSL105"
+path = "crates/sqlquack-convert/src/snowflake/conversion/main/within_budget.rs"
+reason = "imported by the playground engine website/wasm, outside the root cargo workspace (CHI-1159)"
+
 # A crate that is also a Python distribution keeps its pyproject.toml and shipped notices beside Cargo.toml.
 [targets.rust.rule_options.FPRSR311]
 allowed_entries = [
