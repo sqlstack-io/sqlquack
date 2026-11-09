@@ -1,5 +1,7 @@
-use crate::format::tests::helpers::{native_bigquery_refusal, recorded_bigquery_rejections};
-use crate::format::tests::test_types;
+use crate::bigquery::profile::tests::helpers::{
+    native_bigquery_refusal, recorded_bigquery_rejections,
+};
+use crate::bigquery::profile::tests::test_types;
 
 #[test]
 fn given_recorded_bigquery_verdicts_when_parsing_natively_then_the_parser_also_refuses() {

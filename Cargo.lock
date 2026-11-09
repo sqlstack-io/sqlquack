@@ -1511,11 +1511,9 @@ name = "sqlquack-format"
 version = "0.2.0"
 dependencies = [
  "serde_json",
+ "sqlquack-format",
+ "sqlquack-parse",
  "sqlquack-syntax",
- "sqlquack-syntax-bigquery",
- "sqlquack-syntax-postgres",
- "sqlquack-syntax-snowflake",
- "sqlquack-syntax-sqlserver",
 ]
 
 [[package]]

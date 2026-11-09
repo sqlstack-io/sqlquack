@@ -18,36 +18,11 @@ pub(crate) const SEPARATION_FAILURE: &str =
     "formatter would separate tokens written touching where the space could change their meaning";
 pub(crate) const JOIN_FAILURE: &str =
     "formatter would join tokens written apart where they could read as one";
-pub(crate) const BIGQUERY_OPAQUE_STATEMENT_FAILURE: &str =
-    "formatter does not lay out a statement the BigQuery parser keeps as opaque text";
-pub(crate) const SQLSERVER_OPAQUE_STATEMENT_FAILURE: &str =
-    "formatter does not lay out a statement the SQL Server parser keeps as opaque text";
-pub(crate) const BATCH_SEPARATOR_FAILURE: &str = "formatter does not lay out a GO batch separator, which a client reads and SQL Server never sees";
-/// The word a SQL Server client reads, alone on its line, as the end of a batch.
-pub(crate) const BATCH_SEPARATOR: &str = "GO";
-/// The start of a comment that runs to the end of its line.
-pub(crate) const LINE_COMMENT_START: &str = "--";
-/// The start of a BigQuery comment that runs to the end of its line.
-pub(crate) const HASH_COMMENT_START: char = '#';
-/// The start of a `/* ... */` comment.
-pub(crate) const BLOCK_COMMENT_START: &str = "/*";
-/// The end of a `/* ... */` comment.
-pub(crate) const BLOCK_COMMENT_END: &str = "*/";
-pub(crate) const POSTGRES_OPAQUE_STATEMENT_FAILURE: &str =
-    "formatter does not lay out a statement the PostgreSQL parser keeps as opaque text";
-pub(crate) const SCANNER_MISMATCH_FAILURE: &str =
-    "formatter tokens differ from the PostgreSQL scanner's, so the layout cannot be checked";
 pub(crate) const SELECT_LIST_FAILURE: &str =
     "formatter could not find every select list, whose items without an alias it keeps as written";
-pub(crate) const UNSUPPORTED_DIALECT_FAILURE: &str = "formatter does not support this dialect yet; only Snowflake, DuckDB, PostgreSQL, BigQuery and SQL Server have a format gate";
-/// The dialects whose format corpus subset gates the formatter.
-pub(crate) const FORMAT_GATED_DIALECTS: [crate::format::models::FormatDialect; 5] = [
-    crate::format::models::FormatDialect::Snowflake,
-    crate::format::models::FormatDialect::DuckDB,
-    crate::format::models::FormatDialect::PostgreSQL,
-    crate::format::models::FormatDialect::BigQuery,
-    crate::format::models::FormatDialect::SqlServer,
-];
+/// Why SQL in a dialect the crate was built without, through its feature, is left as written.
+pub const NOT_COMPILED_FAILURE: &str =
+    "formatter was built without this dialect's feature, so it cannot read its SQL";
 pub(crate) const DEPTH_FAILURE: &str =
     "formatter does not lay out SQL whose parse tree is more than 512 levels deep";
 /// The deepest parse tree the formatter walks; a deeper one, such as a chain of thousands of `+`, is refused before it can exhaust the stack.
@@ -67,202 +42,15 @@ pub(crate) const TYPE_CONSTRUCTOR_WORDS: [&str; 10] = [
 pub(crate) const UNSUPPORTED_SYNTAX_FAILURE: &str =
     "formatter does not lay out bind variables or string stage references with options";
 
-/// Snowflake calls the guide keeps on one line however wide; others split past the guide width.
-pub(crate) const SNOWFLAKE_INLINE_CALLS: [&str; 81] = [
-    "ABS",
-    "AI_AGG",
-    "AI_SUMMARIZE_AGG",
-    "APPROX_PERCENTILE_ACCUMULATE",
-    "APPROX_PERCENTILE_COMBINE",
-    "APPROX_PERCENTILE_ESTIMATE",
-    "APPROX_TOP_K",
-    "APPROX_TOP_K_ACCUMULATE",
-    "APPROX_TOP_K_COMBINE",
-    "APPROX_TOP_K_ESTIMATE",
-    "ARRAY_APPEND",
-    "ARRAY_CONTAINS",
-    "ARRAY_DISTINCT",
-    "ARRAY_PREPEND",
-    "ARRAY_REMOVE",
-    "ASIN",
-    "ATAN",
-    "ATAN2",
-    "BITMAP_CONSTRUCT_AGG",
-    "BIT_AND",
-    "BIT_OR",
-    "BIT_XOR",
-    "BOOLXOR_AGG",
-    "CAST",
-    "CEIL",
-    "CEILING",
-    "COALESCE",
-    "COS",
-    "COUNT",
-    "CURRENT_SCHEMAS",
-    "DAY",
-    "DAYOFMONTH",
-    "DAYOFWEEK",
-    "DAYOFYEAR",
-    "DEGREES",
-    "EXP",
-    "FLATTEN",
-    "FLOOR",
-    "GENERATOR",
-    "HASH_AGG",
-    "HLL",
-    "HOUR",
-    "KURTOSIS",
-    "LOG",
-    "MAP_CONTAINS_KEY",
-    "MAP_KEYS",
-    "MAX",
-    "MIN",
-    "MINUTE",
-    "MODE",
-    "MONTH",
-    "MONTHS_BETWEEN",
-    "NEXT_DAY",
-    "NTH_VALUE",
-    "OBJECT_AGG",
-    "PARSE_JSON",
-    "PERCENTILE_CONT",
-    "PERCENTILE_DISC",
-    "POW",
-    "QUARTER",
-    "RADIANS",
-    "RANDOM",
-    "REGR_AVGX",
-    "REGR_AVGY",
-    "REGR_COUNT",
-    "REGR_INTERCEPT",
-    "REGR_R2",
-    "REGR_SLOPE",
-    "REGR_SXX",
-    "REGR_SXY",
-    "REGR_SYY",
-    "SECOND",
-    "STDDEV",
-    "STDDEV_POP",
-    "STDDEV_SAMP",
-    "SUM",
-    "TABLE",
-    "TAN",
-    "TRIM",
-    "TRY_CAST",
-    "YEAR",
-];
-/// DuckDB calls the guide keeps on one line however wide.
-pub(crate) const DUCKDB_INLINE_CALLS: [&str; 25] = [
-    "AVG",
-    "CAST",
-    "COALESCE",
-    "COUNT",
-    "CUME_DIST",
-    "EPOCH_MS",
-    "EXP",
-    "FIRST",
-    "JSON_EXTRACT",
-    "LAST_VALUE",
-    "LEN",
-    "LENGTH",
-    "LOG",
-    "LOGICAL_OR",
-    "MIN",
-    "MODE",
-    "NTH_VALUE",
-    "NTILE",
-    "PERCENTILE_CONT",
-    "PERCENTILE_DISC",
-    "PERCENT_RANK",
-    "RANK",
-    "SUM",
-    "TRIM",
-    "TRY_CAST",
-];
-/// BigQuery calls the guide keeps on one line however wide.
-pub(crate) const BIGQUERY_INLINE_CALLS: [&str; 1] = ["JSON_OBJECT"];
-/// PostgreSQL calls the guide keeps on one line however wide.
-pub(crate) const POSTGRES_INLINE_CALLS: [&str; 15] = [
-    "ARRAY_LENGTH",
-    "CAST",
-    "COUNT",
-    "DATE_PART",
-    "EXP",
-    "EXTRACT",
-    "JSON_AGG",
-    "LOGICAL_OR",
-    "MODE",
-    "PERCENTILE_CONT",
-    "SUBSTRING",
-    "SUM",
-    "TRIM",
-    "TRY_CAST",
-    "XMLELEMENT",
-];
-/// PostgreSQL table functions the guide keeps on one line in a FROM clause, however wide.
-pub(crate) const POSTGRES_INLINE_SOURCES: [&str; 1] = ["UNNEST"];
-/// PostgreSQL quantifiers of an array or subquery comparison, such as `= ANY(...)`.
-pub(crate) const POSTGRES_QUANTIFIERS: [&str; 3] = ["ANY", "SOME", "ALL"];
 /// PostgreSQL pattern operators whose quantified operand the guide puts on its own lines.
-pub(crate) const POSTGRES_PATTERN_OPERATORS: [&str; 2] = ["LIKE", "ILIKE"];
-/// The PostgreSQL quantifier the guide keeps spaced from `(` after a pattern operator.
-pub(crate) const POSTGRES_SPACED_QUANTIFIER: &str = "ALL";
-/// The PostgreSQL clause of SELECT ... INTO, which starts its own line.
-pub(crate) const POSTGRES_INTO_CLAUSE: &str = "INTO";
+pub(crate) const PATTERN_OPERATORS: [&str; 2] = ["LIKE", "ILIKE"];
 
 /// The BigQuery keyword of a foreign key, after which a name names the referenced table.
-pub(crate) const BIGQUERY_REFERENCES_KEYWORD: &str = "REFERENCES";
+pub(crate) const REFERENCES_KEYWORD: &str = "REFERENCES";
 /// The BigQuery keyword whose ON names the indexed table, as in `CREATE SEARCH INDEX ix ON t(c)`.
-pub(crate) const BIGQUERY_INDEX_KEYWORD: &str = "INDEX";
-/// SQL Server calls the guide keeps on one line however wide.
-pub(crate) const SQLSERVER_INLINE_CALLS: [&str; 2] = ["CAST", "SUBSTRING"];
+pub(crate) const INDEX_KEYWORD: &str = "INDEX";
 /// The SQL Server keyword that, after CROSS or OUTER, applies a table-valued expression like a join.
-pub(crate) const SQLSERVER_APPLY_KEYWORD: &str = "APPLY";
-/// The words before APPLY in a SQL Server apply.
-pub(crate) const SQLSERVER_APPLY_PREFIXES: [&str; 2] = ["CROSS", "OUTER"];
-/// Words after BEGIN that make it a statement of its own, such as `BEGIN TRANSACTION`, not a block.
-pub(crate) const SQLSERVER_BEGIN_STATEMENTS: [&str; 5] = [
-    "TRAN",
-    "TRANSACTION",
-    "DISTRIBUTED",
-    "DIALOG",
-    "CONVERSATION",
-];
-/// SQL Server statements whose condition is followed by the statement they run.
-pub(crate) const SQLSERVER_BRANCH_STATEMENTS: [&str; 2] = ["IF", "WHILE"];
-/// The words around a SQL Server block's or branch's statements, each on its own line.
-pub(crate) const SQLSERVER_BLOCK_WORDS: [&str; 3] = ["BEGIN", "END", "ELSE"];
-/// SQL Server keywords after which a name names a table, view, routine, index or other object, kept as written since the database collation may be case-sensitive.
-pub(crate) const SQLSERVER_OBJECT_PRECEDERS: [&str; 22] = [
-    "APPLY",
-    "DELETE",
-    "EXEC",
-    "EXECUTE",
-    "FROM",
-    "FUNCTION",
-    "INDEX",
-    "INSERT",
-    "INTO",
-    "JOIN",
-    "MERGE",
-    "ON",
-    "PROC",
-    "PROCEDURE",
-    "REFERENCES",
-    "SEQUENCE",
-    "STATISTICS",
-    "TABLE",
-    "TRIGGER",
-    "UPDATE",
-    "USING",
-    "VIEW",
-];
-/// SQL Server clauses that hold a comma-separated list, which bound the search for the FROM a comma belongs to.
-pub(crate) const SQLSERVER_LIST_CLAUSES: [&str; 9] = [
-    "BY", "FROM", "OUTPUT", "RETURNS", "SELECT", "SET", "VALUES", "WHERE", "HAVING",
-];
-/// SQL Server keywords the guide separates from a following `(`: `TOP (n)` and a `WITH (hint)` table hint.
-pub(crate) const SQLSERVER_SPACED_BEFORE_PARENTHESIS: [&str; 2] = ["TOP", "WITH"];
+pub(crate) const APPLY_KEYWORD: &str = "APPLY";
 
 /// The line width past which the layout guide splits a call's arguments or a CASE.
 pub(crate) const GUIDE_WIDTH: usize = 80;
@@ -357,8 +145,6 @@ pub(crate) const PLACEHOLDER_NAME_PREFIX: &str = "__";
 pub(crate) const CALL_TARGET_KEYWORDS: [&str; 3] = ["INTO", "TABLE", "MACRO"];
 /// Words a FROM continues rather than starting a clause after: `IS DISTINCT FROM` and PostgreSQL's `ROWS FROM (...)`.
 pub(crate) const FROM_CONTINUED: [&str; 2] = ["DISTINCT", "ROWS"];
-/// The PostgreSQL clauses that may follow a recursive CTE's body, each with the word before its last token: `SEARCH ... SET column` and `CYCLE ... USING column`.
-pub(crate) const POSTGRES_CTE_CLAUSES: [(&str, &str); 2] = [("SEARCH", "SET"), ("CYCLE", "USING")];
 /// Words after a CTE's `AS` that start its body.
 pub(crate) const CTE_BODY_PREFIXES: [&str; 2] = ["MATERIALIZED", "NOT"];
 /// The keyword that starts an INSERT statement.
@@ -403,10 +189,6 @@ pub(crate) const BINARY_OPERATOR_NODES: [(&str, &[&str]); 10] = [
 ];
 /// The bytes the spacing guard reads as operator characters.
 pub(crate) const OPERATOR_BYTES: &str = "+-*/<>=!|&^%~:#?";
-/// The bytes DuckDB lexes as operator characters beyond the shared ones.
-pub(crate) const DUCKDB_OPERATOR_BYTES: &str = "@";
-/// The bytes PostgreSQL lexes as operator characters beyond the shared ones.
-pub(crate) const POSTGRES_OPERATOR_BYTES: &str = "@`";
 /// Operators the spacing guard lexes, longest match first, so a piece is never part of a longer one.
 pub(crate) const GUARD_OPERATORS: [&str; 22] = [
     "->>", "<=>", "||", "<=", ">=", "<>", "!=", "=>", "->", "::", ":=", "/*", "*/", "--", "**",
@@ -434,10 +216,8 @@ pub(crate) const SET_OPERATOR_MODIFIERS: [&str; 7] = [
     "STRICT",
     "ON",
 ];
-/// Words before a BigQuery set operator that start its line, such as `LEFT UNION ALL`.
-pub(crate) const BIGQUERY_SET_OPERATOR_PREFIXES: [&str; 4] = ["INNER", "LEFT", "FULL", "OUTER"];
 /// The kinds of a BigQuery value-table SELECT, such as `SELECT AS STRUCT`.
-pub(crate) const BIGQUERY_VALUE_TABLE_KINDS: [&str; 2] = ["STRUCT", "VALUE"];
+pub(crate) const VALUE_TABLE_KINDS: [&str; 2] = ["STRUCT", "VALUE"];
 /// The branch keywords of a CASE expression.
 pub(crate) const CASE_BRANCHES: [&str; 3] = ["WHEN", "THEN", "ELSE"];
 /// The sampling unit spaced before `(` after SAMPLE or TABLESAMPLE.

@@ -1,55 +1,55 @@
 //! The formatting pipeline: lex, parse, lay out against the guide, then check the output.
 
+use sqlquack_parse::parse_statements_with;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::{CallMode, ExpressionWalk};
-use sqlquack_syntax_snowflake::parse_statements_with;
 
-use crate::format::_helpers::bigquery::parse_bigquery;
+use crate::dialects::main::is_unquoted_word::is_unquoted_word;
+use crate::dialects::main::profile::profile;
+use crate::dialects::models::FormatProfile;
+use crate::dialects::models::Lexeme;
 use crate::format::_helpers::guide::layout_guide;
 use crate::format::_helpers::identifiers::parsed_names;
-use crate::format::_helpers::lexemes::{Lexeme, ends_operand, is_unquoted_word, lex};
-use crate::format::_helpers::native::parse_postgres;
+use crate::format::_helpers::lexemes::{ends_operand, lex};
 use crate::format::_helpers::printed_layout::{PrintedSql, wrap_lines};
-use crate::format::_helpers::sqlserver::{parse_sqlserver, statement_tokens};
+use crate::format::_helpers::statements::statement_tokens;
 use crate::format::_helpers::token_layout::{
     AuthoredPrint, AuthoredSql, Oracle, print_authored_tokens, verify_printed_tokens,
 };
 use crate::format::_helpers::touching::verify_touching_tokens;
 use crate::format::constants::{
-    DEPTH_FAILURE, FORMAT_GATED_DIALECTS, MAX_TREE_DEPTH, MAX_TYPE_NESTING, NOT_IDEMPOTENT_FAILURE,
-    PARSE_FAILURE, SELECT_LIST_FAILURE, TOKEN_PRESERVATION_FAILURE, TYPE_CONSTRUCTOR_WORDS,
-    TYPE_DEPTH_FAILURE, UNSUPPORTED_DIALECT_FAILURE, UNSUPPORTED_SYNTAX_FAILURE,
+    DEPTH_FAILURE, MAX_TREE_DEPTH, MAX_TYPE_NESTING, NOT_IDEMPOTENT_FAILURE, PARSE_FAILURE,
+    SELECT_LIST_FAILURE, TOKEN_PRESERVATION_FAILURE, TYPE_CONSTRUCTOR_WORDS, TYPE_DEPTH_FAILURE,
+    UNSUPPORTED_SYNTAX_FAILURE,
 };
-use crate::format::models::{FormatDialect, FormatOptions, Formatted};
+use crate::format::models::{FormatOptions, Formatted};
 
 /// Format `sql`, or return why it is left as written.
 pub(crate) fn format_checked(sql: &str, options: &FormatOptions) -> Result<Formatted, String> {
-    let dialect = options.dialect;
-    if !FORMAT_GATED_DIALECTS.contains(&dialect) {
-        return Err(UNSUPPORTED_DIALECT_FAILURE.to_string());
-    }
-    let (lexemes, comments) = lex(sql, dialect)?;
+    let profile = &profile(options.dialect)?;
+    let (lexemes, comments) = lex(sql, profile)?;
     if lexemes.is_empty() {
         return Ok(Formatted {
             sql: sql.to_string(),
             changed: false,
         });
     }
-    if dialect == FormatDialect::Snowflake && has_unsupported_syntax(&lexemes) {
+    if profile.rules.refuses_binds && has_unsupported_syntax(&lexemes) {
         return Err(UNSUPPORTED_SYNTAX_FAILURE.to_string());
     }
     if nests_types_deeply(&lexemes) {
         return Err(TYPE_DEPTH_FAILURE.to_string());
     }
-    let (statements, ranges) = match dialect {
-        FormatDialect::BigQuery => (parse_bigquery(sql)?, Vec::new()),
-        FormatDialect::PostgreSQL => (parse_postgres(sql)?, Vec::new()),
-        FormatDialect::SqlServer => parse_sqlserver(sql)?,
-        _ => {
-            let shared = dialect.shared().ok_or(UNSUPPORTED_DIALECT_FAILURE)?;
-            let statements =
-                parse_statements_with(sql, shared, &options.parse, CallMode::FaithfulLocated)
-                    .map_err(|error| format!("{PARSE_FAILURE}: {error}"))?;
+    let (statements, spans) = match profile.parse {
+        Some(parse) => parse(sql)?,
+        None => {
+            let statements = parse_statements_with(
+                sql,
+                profile.dialect,
+                &options.parse,
+                CallMode::FaithfulLocated,
+            )
+            .map_err(|error| format!("{PARSE_FAILURE}: {error}"))?;
             (statements, Vec::new())
         }
     };
@@ -60,9 +60,9 @@ pub(crate) fn format_checked(sql: &str, options: &FormatOptions) -> Result<Forma
         return Err(DEPTH_FAILURE.to_string());
     }
     let names = parsed_names(sql, &statements, &lexemes)?;
-    let statement_ranges = statement_tokens(&ranges, &lexemes);
-    let guide = layout_guide(&lexemes, &names, &statement_ranges, dialect);
-    if dialect == FormatDialect::Snowflake && guide.selects != names.selects {
+    let statement_ranges = statement_tokens(&spans, &lexemes);
+    let guide = layout_guide(&lexemes, &names, &statement_ranges, &profile.rules);
+    if profile.rules.keeps_unaliased_items && guide.selects != names.selects {
         return Err(SELECT_LIST_FAILURE.to_string());
     }
     let oracle = Oracle::new(guide);
@@ -71,22 +71,22 @@ pub(crate) fn format_checked(sql: &str, options: &FormatOptions) -> Result<Forma
         lexemes: &lexemes,
         comments: &comments,
     };
-    let print = print_layout(&authored, &oracle, options)?;
+    let print = print_layout(&authored, &oracle, options, profile)?;
     if print.sql == sql {
         return Ok(Formatted {
             sql: print.sql,
             changed: false,
         });
     }
-    let (printed_lexemes, printed_comments) = lex(&print.sql, dialect)?;
+    let (printed_lexemes, printed_comments) = lex(&print.sql, profile)?;
     let printed = AuthoredSql {
         sql: &print.sql,
         lexemes: &printed_lexemes,
         comments: &printed_comments,
     };
     verify_printed_tokens(&authored, &printed, &print.recases)?;
-    verify_touching_tokens(&authored, &printed, &names.binary_operators, dialect)?;
-    if print_layout(&printed, &oracle, options)?.sql != print.sql {
+    verify_touching_tokens(&authored, &printed, &names.binary_operators, &profile.rules)?;
+    if print_layout(&printed, &oracle, options, profile)?.sql != print.sql {
         return Err(NOT_IDEMPOTENT_FAILURE.to_string());
     }
     Ok(Formatted {
@@ -100,6 +100,7 @@ fn print_layout(
     authored: &AuthoredSql<'_>,
     oracle: &Oracle,
     options: &FormatOptions,
+    profile: &FormatProfile,
 ) -> Result<AuthoredPrint, String> {
     let print = print_authored_tokens(authored, oracle)?;
     let Some(mut sql) = PrintedSql::new(&print.sql, &print.tokens, &options.token_widths) else {
@@ -116,7 +117,7 @@ fn print_layout(
     }
     sql.lead_operators_of_multiline_operands();
     Ok(AuthoredPrint {
-        sql: keep_verbatim(authored, sql.render(), &oracle.verbatim, options.dialect)?,
+        sql: keep_verbatim(authored, sql.render(), &oracle.verbatim, profile)?,
         ..print
     })
 }
@@ -126,12 +127,12 @@ fn keep_verbatim(
     authored: &AuthoredSql<'_>,
     printed: String,
     verbatim: &[(usize, usize)],
-    dialect: FormatDialect,
+    profile: &FormatProfile,
 ) -> Result<String, String> {
     if verbatim.is_empty() {
         return Ok(printed);
     }
-    let (lexemes, _) = lex(&printed, dialect)?;
+    let (lexemes, _) = lex(&printed, profile)?;
     if lexemes.len() != authored.lexemes.len() {
         return Err(TOKEN_PRESERVATION_FAILURE.to_string());
     }

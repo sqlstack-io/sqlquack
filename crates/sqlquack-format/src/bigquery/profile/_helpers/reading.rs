@@ -1,21 +1,24 @@
-//! GoogleSQL's own scanner and parser, which give the formatter BigQuery's tokens and trees.
+//! Reading SQL with GoogleSQL's own scanner and parser, which give the formatter BigQuery's tokens and trees.
 
 use std::collections::HashMap;
 use std::mem::{Discriminant, discriminant};
 
-use sqlquack_syntax::Expression;
+use sqlquack_parse::bigquery::keywords::main::is_reserved::is_reserved;
+use sqlquack_parse::bigquery::scan::main::scan::scan;
+use sqlquack_parse::bigquery::scan::main::uncovered::uncovered;
+use sqlquack_parse::bigquery::scan::models::{Token, TokenKind};
+use sqlquack_parse::bigquery::{StrictFailure, parse_strict};
 use sqlquack_syntax::tokens::models::TokenType;
-use sqlquack_syntax_bigquery::keywords::main::is_reserved::is_reserved;
-use sqlquack_syntax_bigquery::scan::main::scan::scan;
-use sqlquack_syntax_bigquery::scan::main::uncovered::uncovered;
-use sqlquack_syntax_bigquery::scan::models::{Token, TokenKind};
-use sqlquack_syntax_bigquery::{StrictFailure, parse_strict};
+use sqlquack_syntax::{Dialect, Expression};
 
-use crate::format::_helpers::lexemes::{Comment, Lexeme};
-use crate::format::_helpers::native::{CommentSyntax, gap_comments, shared_type};
-use crate::format::constants::{
-    BIGQUERY_OPAQUE_STATEMENT_FAILURE, PARSE_FAILURE, TOKENIZE_FAILURE,
-};
+use crate::bigquery::profile::constants::OPAQUE_STATEMENT_FAILURE;
+use crate::dialects::main::gap_comments::gap_comments;
+use crate::dialects::main::shared_type::shared_type;
+use crate::dialects::models::Comment;
+use crate::dialects::models::CommentSyntax;
+use crate::dialects::models::Lexeme;
+use crate::dialects::models::StatementSpan;
+use crate::format::constants::{PARSE_FAILURE, TOKENIZE_FAILURE};
 
 /// GoogleSQL's comments: `#` and `--` to the end of the line, and `/* */`, which do not nest.
 const GOOGLESQL_COMMENTS: CommentSyntax = CommentSyntax {
@@ -24,7 +27,7 @@ const GOOGLESQL_COMMENTS: CommentSyntax = CommentSyntax {
 };
 
 /// The statements GoogleSQL's grammar reads from `sql`, refused when any is kept as opaque text.
-pub(crate) fn parse_bigquery(sql: &str) -> Result<Vec<Expression>, String> {
+pub(crate) fn parse_bigquery(sql: &str) -> Result<(Vec<Expression>, Vec<StatementSpan>), String> {
     let parsed = parse_strict(sql).map_err(|failure| match failure {
         StrictFailure::Parse(error) => format!("{PARSE_FAILURE}: {}", error.message),
         StrictFailure::Uncovered { position } => {
@@ -32,9 +35,9 @@ pub(crate) fn parse_bigquery(sql: &str) -> Result<Vec<Expression>, String> {
         }
     })?;
     if !parsed.gaps.is_empty() {
-        return Err(BIGQUERY_OPAQUE_STATEMENT_FAILURE.to_string());
+        return Err(OPAQUE_STATEMENT_FAILURE.to_string());
     }
-    Ok(parsed.statements)
+    Ok((parsed.statements, Vec::new()))
 }
 
 /// The tokens and comments of `sql` as GoogleSQL's scanner reads them; a word is a keyword when reserved or spelled as one.
@@ -88,13 +91,13 @@ fn token_type(token: &Token, raw: &str) -> TokenType {
         TokenKind::String { .. } if triple("'''") => TokenType::TripleSingleQuotedString,
         TokenKind::String { .. } if triple("\"\"\"") => TokenType::TripleDoubleQuotedString,
         TokenKind::String { .. } => TokenType::String,
-        TokenKind::Word => match shared_type(raw) {
+        TokenKind::Word => match shared_type(raw, Dialect::PostgreSQL) {
             Some(TokenType::Var) | None if is_reserved(raw) => TokenType::Unknown,
             shared => shared.unwrap_or(TokenType::Var),
         },
         TokenKind::Op | TokenKind::Char(_) if raw.starts_with('@') => TokenType::DAt,
         TokenKind::Op | TokenKind::Char(_) | TokenKind::Fault(_) => {
-            shared_type(raw).unwrap_or(TokenType::Operator)
+            shared_type(raw, Dialect::PostgreSQL).unwrap_or(TokenType::Operator)
         }
     }
 }

@@ -1,5 +1,7 @@
-use crate::format::tests::helpers::{native_postgres_rejection, recorded_postgres_rejections};
-use crate::format::tests::test_types;
+use crate::postgres::profile::tests::helpers::{
+    native_postgres_rejection, recorded_postgres_rejections,
+};
+use crate::postgres::profile::tests::test_types;
 
 #[test]
 fn given_recorded_postgres_verdicts_when_parsing_natively_then_the_parser_agrees() {

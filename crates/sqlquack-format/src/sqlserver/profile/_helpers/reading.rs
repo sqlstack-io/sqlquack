@@ -1,18 +1,22 @@
-//! SQL Server's own Transact-SQL scanner and parser, which give the formatter SQL Server's tokens and trees.
+//! Reading SQL with SQL Server's own Transact-SQL scanner and parser, which give the formatter SQL Server's tokens and trees.
 
 use std::collections::HashMap;
 use std::mem::{Discriminant, discriminant};
 
-use sqlquack_syntax::Expression;
+use sqlquack_parse::sqlserver::scan::models::{NumberKind, Token, TokenKind};
+use sqlquack_parse::sqlserver::{StrictFailure, parse_strict, scan};
 use sqlquack_syntax::tokens::models::TokenType;
-use sqlquack_syntax_sqlserver::scan::models::{NumberKind, Token, TokenKind};
-use sqlquack_syntax_sqlserver::{StatementRange, StrictFailure, parse_strict, scan};
+use sqlquack_syntax::{Dialect, Expression};
 
-use crate::format::_helpers::lexemes::{Comment, Lexeme};
-use crate::format::_helpers::native::{CommentSyntax, gap_comments, shared_type};
-use crate::format::constants::{
-    BATCH_SEPARATOR, BATCH_SEPARATOR_FAILURE, PARSE_FAILURE, SQLSERVER_OPAQUE_STATEMENT_FAILURE,
-    TOKENIZE_FAILURE,
+use crate::dialects::main::gap_comments::gap_comments;
+use crate::dialects::main::shared_type::shared_type;
+use crate::dialects::models::Comment;
+use crate::dialects::models::CommentSyntax;
+use crate::dialects::models::Lexeme;
+use crate::dialects::models::StatementSpan;
+use crate::format::constants::{PARSE_FAILURE, TOKENIZE_FAILURE};
+use crate::sqlserver::profile::constants::{
+    BATCH_SEPARATOR, BATCH_SEPARATOR_FAILURE, OPAQUE_STATEMENT_FAILURE,
 };
 
 /// Transact-SQL's comments: `--` to the end of the line, and `/* */`, which nest.
@@ -21,44 +25,24 @@ const TRANSACT_SQL_COMMENTS: CommentSyntax = CommentSyntax {
     nested: true,
 };
 
-/// One statement's tokens, from its first to its last, a `;` written right after it included, and how many statements enclose it.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) struct StatementTokens {
-    pub(crate) first: usize,
-    pub(crate) last: usize,
-    pub(crate) depth: usize,
-}
-
 /// The statements Transact-SQL's grammar reads from `sql`, and where each was written, nested ones included; refused when any is kept as opaque text.
-pub(crate) fn parse_sqlserver(sql: &str) -> Result<(Vec<Expression>, Vec<StatementRange>), String> {
+pub(crate) fn parse_sqlserver(sql: &str) -> Result<(Vec<Expression>, Vec<StatementSpan>), String> {
     let parsed = parse_strict(sql).map_err(|failure| match failure {
         StrictFailure::Parse(error) => format!("{PARSE_FAILURE}: {}", error.message),
     })?;
     if !parsed.gaps.is_empty() {
-        return Err(SQLSERVER_OPAQUE_STATEMENT_FAILURE.to_string());
+        return Err(OPAQUE_STATEMENT_FAILURE.to_string());
     }
-    Ok((parsed.statements, parsed.ranges))
-}
-
-/// The token range of each statement in `ranges`, among `lexemes`.
-pub(crate) fn statement_tokens(
-    ranges: &[StatementRange],
-    lexemes: &[Lexeme],
-) -> Vec<StatementTokens> {
-    ranges
+    let spans: Vec<StatementSpan> = parsed
+        .ranges
         .iter()
-        .filter_map(|range| {
-            let first = lexemes.partition_point(|lexeme| lexeme.start < range.start);
-            let last = lexemes
-                .partition_point(|lexeme| lexeme.end <= range.end)
-                .checked_sub(1)?;
-            (first <= last).then_some(StatementTokens {
-                first,
-                last,
-                depth: range.depth,
-            })
+        .map(|range| StatementSpan {
+            start: range.start,
+            end: range.end,
+            depth: range.depth,
         })
-        .collect()
+        .collect();
+    Ok((parsed.statements, spans))
 }
 
 /// The tokens and comments of `sql` as Transact-SQL's scanner reads them; a `GO` batch separator is refused.
@@ -147,9 +131,9 @@ fn token_type(token: &Token, raw: &str) -> TokenType {
         TokenKind::String { national: false } => TokenType::String,
         TokenKind::Number(NumberKind::Binary) => TokenType::HexString,
         TokenKind::Number(_) => TokenType::Number,
-        TokenKind::Word => shared_type(raw).unwrap_or(TokenType::Var),
+        TokenKind::Word => shared_type(raw, Dialect::PostgreSQL).unwrap_or(TokenType::Var),
         TokenKind::Op | TokenKind::Char(_) | TokenKind::Fault(_) => {
-            shared_type(raw).unwrap_or(TokenType::Operator)
+            shared_type(raw, Dialect::PostgreSQL).unwrap_or(TokenType::Operator)
         }
     }
 }
