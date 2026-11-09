@@ -61,6 +61,34 @@ FIELD_RULE_CONFIG: str = (
             (),
         ),
         ConversionFieldLinesTestCase(
+            "destructuring a field from a column fails",
+            "let ColumnSpec { holding, .. } = spec;\n",
+            (1,),
+        ),
+        ConversionFieldLinesTestCase(
+            "a match arm binding fields fails on each bound field's line",
+            "match spec {\n    ColumnSpec {\n        name,\n        utc_offset: true,\n"
+            "        ref mut declared_offsets,\n        ..\n    } => name,\n}\n",
+            (4, 5),
+        ),
+        ConversionFieldLinesTestCase(
+            "an if-let pattern without a rest, and a parameter pattern, fail",
+            "if let ColumnSpec { widened: w, name, data_type } = spec {}\n"
+            "fn f(ColumnSpec::<T> { sourced, .. }: ColumnSpec<T>) {}\n",
+            (1, 2),
+        ),
+        ConversionFieldLinesTestCase(
+            "a pattern binding only other fields, or a nested pattern's field, passes",
+            "let ColumnSpec { name, data_type: Inner { holding, .. }, .. } = spec;\n",
+            (),
+        ),
+        ConversionFieldLinesTestCase(
+            "a literal building a column from a base passes, as do type headers",
+            "let c = ColumnSpec {\n    holding,\n    suffixed: false,\n    ..base\n};\n"
+            "impl ColumnSpec {\n    fn f() {}\n}\npub struct ColumnSpec<T> {\n    holding: H,\n}\n",
+            (),
+        ),
+        ConversionFieldLinesTestCase(
             "a field named in a string or comment passes",
             '// column.holding\nlet s = "column.widened";\n',
             (),
