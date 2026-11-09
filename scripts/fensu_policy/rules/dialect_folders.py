@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from fensu import AnalyzerId, Family, Fault, Project, RuleContext, rule
 
 from scripts.fensu_policy._helpers.dialect_features import (
@@ -90,7 +92,7 @@ def dialect_folders_gated(*, project: Project, ctx: RuleContext) -> list[Fault]:
         if crate.name not in directories:
             continue
         features: CrateFeatures = crate_features(ctx=ctx, manifest_path=str(crate.manifest_path))
-        manifest: str = str(ctx.repo_root / str(crate.manifest_path))
+        manifest: Path = ctx.repo_root / str(crate.manifest_path)
         faults.extend(
             ctx.path_fault(
                 path=manifest,

@@ -88,3 +88,10 @@ class SharedLinesTestCase:
     source: str
     registry: bool
     expected_lines: tuple[int, ...]
+
+
+@dataclass(frozen=True)
+class ManifestFaultTestCase:
+    description: str
+    features: str
+    expected_message: str

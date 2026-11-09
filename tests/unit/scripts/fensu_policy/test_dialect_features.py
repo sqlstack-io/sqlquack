@@ -2,6 +2,12 @@
 
 from __future__ import annotations
 
+import os
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
 import pytest
 
 from scripts.fensu_policy._helpers.dialect_features import (
@@ -18,6 +24,7 @@ from scripts.fensu_policy.models import CrateFeatures, DialectVocabulary, Source
 from tests.unit.scripts.fensu_policy._test_types import (
     FeatureGateTestCase,
     FolderFeatureTestCase,
+    ManifestFaultTestCase,
     PathDialectTestCase,
     SharedLinesTestCase,
 )
@@ -30,6 +37,17 @@ VOCABULARY: DialectVocabulary = DialectVocabulary(
     },
     folders=frozenset({"snowflake", "clickhouse"}),
     crates={"sqlquack_syntax_duckdb": "duckdb", "sqlquack_types_snowflake": "snowflake"},
+)
+
+REPOSITORY: Path = Path(__file__).resolve().parents[4]
+WORKSPACE_MANIFEST: str = '[workspace]\nmembers = ["crates/sqlquack-semantics"]\nresolver = "2"\n'
+CRATE_MANIFEST: str = (
+    '[package]\nname = "sqlquack-semantics"\nversion = "0.1.0"\nedition = "2021"\n\n'
+)
+GATED_MODULE: str = '#[cfg(feature = "snowflake")]\nmod snowflake;\n'
+FOLDER_RULE_CONFIG: str = (
+    '[targets.rust]\nanalyzer = "rust"\nroots = ["crates"]\ntests = []\n'
+    'rule_modules = ["scripts.fensu_policy.rules.dialect_folders"]\nselect = ["XSQ007"]\n'
 )
 
 REGISTRY: str = (
@@ -222,3 +240,51 @@ def test_given_shared_source_when_checking_then_lists_dialect_lines(
     )
 
     assert tuple(line.line for line in found) == test_case.expected_lines
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    [
+        ManifestFaultTestCase(
+            "a dialect folder without its feature is reported",
+            "[features]\ndefault = []\n",
+            "has src/snowflake/ but no `snowflake` feature",
+        ),
+        ManifestFaultTestCase(
+            "a dialect in the default features is reported",
+            '[features]\ndefault = ["snowflake"]\nsnowflake = []\n',
+            "default features turn on `snowflake`",
+        ),
+    ],
+    ids=lambda case: case.description,
+)
+def test_given_manifest_fault_when_running_fensu_then_reports_it(
+    test_case: ManifestFaultTestCase, tmp_path: Path
+) -> None:
+    crate: Path = tmp_path / "crates" / "sqlquack-semantics"
+    (crate / "src" / "snowflake").mkdir(parents=True)
+    (tmp_path / "Cargo.toml").write_text(WORKSPACE_MANIFEST)
+    (crate / "Cargo.toml").write_text(CRATE_MANIFEST + test_case.features)
+    (crate / "src" / "lib.rs").write_text(GATED_MODULE)
+    (crate / "src" / "snowflake" / "mod.rs").write_text("pub fn profile() {}\n")
+    (tmp_path / "fensu.toml").write_text(FOLDER_RULE_CONFIG)
+    shutil.copytree(
+        REPOSITORY / "scripts" / "fensu_policy",
+        tmp_path / "scripts" / "fensu_policy",
+        ignore=shutil.ignore_patterns("__pycache__"),
+    )
+    (tmp_path / "scripts" / "__init__.py").write_text("")
+
+    completed: subprocess.CompletedProcess[str] = subprocess.run(
+        [str(Path(sys.executable).with_name("fensu")), "check", "--no-cache"],
+        cwd=tmp_path,
+        env={**os.environ, "PYTHONPATH": str(tmp_path)},
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    output: str = completed.stdout + completed.stderr
+    assert completed.returncode == 1, output
+    assert test_case.expected_message in output
+    assert "Found 1 fault" in output
