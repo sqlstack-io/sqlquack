@@ -531,7 +531,7 @@ impl<'a> Guide<'a> {
             && self.after_pattern_operator(opener - 1)
     }
 
-    /// Whether the `:` at `index` is a Snowflake path accessor such as `v:field`.
+    /// Whether the `:` at `index` is a path accessor such as Snowflake's `v:field` or Databricks' `v:['field']`.
     fn path_colon(&self, index: usize) -> bool {
         self.rules.path_colons
             && index > 0
@@ -543,6 +543,7 @@ impl<'a> Guide<'a> {
             && self.lexemes.get(index + 1).is_some_and(|next| {
                 is_unquoted_word(&next.raw)
                     || matches!(next.kind, TokenType::QuotedIdentifier | TokenType::String)
+                    || (self.rules.bracket_paths && next.kind == TokenType::LBracket)
             })
     }
 
@@ -986,6 +987,7 @@ impl<'a> Guide<'a> {
             || (self.is(index, "USING") && self.is(index + 1, "SAMPLE"))
             || ((self.is(index, "GROUP") || self.is(index, "ORDER")) && self.is(index + 1, "BY"))
             || self.is_any(index, self.rules.clause_keywords)
+            || (self.is_any(index, self.rules.by_clauses) && self.is(index + 1, "BY"))
     }
 
     fn select(&mut self, select: usize, last: usize, indent: usize) {
@@ -1083,7 +1085,9 @@ impl<'a> Guide<'a> {
                     self.expr(clause + 1, end, indent + 1);
                 }
             }
-            "GROUP" | "ORDER" => {
+            word if matches!(word, "GROUP" | "ORDER")
+                || self.is_any(clause, self.rules.by_clauses) =>
+            {
                 let body = clause + 2;
                 if body > end || (self.is(body, "ALL") && body == end) {
                     return;

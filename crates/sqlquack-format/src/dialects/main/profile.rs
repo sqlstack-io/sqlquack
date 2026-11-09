@@ -39,7 +39,7 @@ pub(crate) fn profile(dialect: FormatDialect) -> Result<FormatProfile, &'static 
         #[cfg(not(feature = "sqlserver"))]
         FormatDialect::SqlServer => Err(crate::format::constants::NOT_COMPILED_FAILURE),
         #[cfg(feature = "databricks")]
-        FormatDialect::Databricks => databricks_profile(),
+        FormatDialect::Databricks => Ok(databricks_profile()),
         #[cfg(not(feature = "databricks"))]
         FormatDialect::Databricks => Err(crate::format::constants::NOT_COMPILED_FAILURE),
     }

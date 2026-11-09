@@ -1,3 +1,3 @@
-//! Databricks SQL: known to the formatter, but refused until it has a format gate.
+//! Databricks SQL: how the formatter reads and lays out its SQL.
 
 pub(crate) mod profile;
