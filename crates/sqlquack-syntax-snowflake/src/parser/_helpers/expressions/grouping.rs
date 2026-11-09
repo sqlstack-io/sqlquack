@@ -883,7 +883,7 @@ impl Parser {
                     this: "ALL BY NAME".to_string(),
                 })));
             } else if self.match_token(TokenType::Star) {
-                elements.push(Expression::Star(
+                elements.push(Expression::Star(Box::new(
                     sqlquack_syntax::expressions::names::models::Star {
                         table: None,
                         ilike: None,
@@ -894,7 +894,7 @@ impl Parser {
                         span: None,
                         qualified: None,
                     },
-                ));
+                )));
             } else if self.match_token(TokenType::LParen) {
                 let mut columns: Vec<Expression> = Vec::new();
                 loop {
@@ -1005,7 +1005,7 @@ impl Parser {
                     this: "ALL BY NAME".to_string(),
                 })));
             } else if self.match_token(TokenType::Star) {
-                elements.push(Expression::Star(
+                elements.push(Expression::Star(Box::new(
                     sqlquack_syntax::expressions::names::models::Star {
                         table: None,
                         ilike: None,
@@ -1016,12 +1016,12 @@ impl Parser {
                         span: None,
                         qualified: None,
                     },
-                ));
+                )));
             } else if self.merge_action_ends() {
                 return Err(self.parse_error("Expected SET in MERGE UPDATE"));
             } else if self.match_token(TokenType::Set) {
                 if self.match_token(TokenType::Star) {
-                    elements.push(Expression::Star(
+                    elements.push(Expression::Star(Box::new(
                         sqlquack_syntax::expressions::names::models::Star {
                             table: None,
                             ilike: None,
@@ -1032,7 +1032,7 @@ impl Parser {
                             span: None,
                             qualified: None,
                         },
-                    ));
+                    )));
                 } else {
                     let mut assignments: Vec<Expression> = Vec::new();
                     loop {

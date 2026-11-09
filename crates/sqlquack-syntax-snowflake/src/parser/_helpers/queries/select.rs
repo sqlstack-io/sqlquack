@@ -60,7 +60,7 @@ impl Parser {
                     let star_trailing_comments = self.previous_trailing_comments().to_vec();
                     let star =
                         self.parse_star_modifiers_with_comments(None, star_trailing_comments)?;
-                    Expression::Star(star)
+                    Expression::Star(Box::new(star))
                 };
 
                 expressions.push(self.spanned(item_start, star_expr));
@@ -336,7 +336,7 @@ impl Parser {
             self.skip();
             self.parse_select_expressions()?
         } else {
-            vec![Expression::Star(
+            vec![Expression::Star(Box::new(
                 sqlquack_syntax::expressions::names::models::Star {
                     table: None,
                     ilike: None,
@@ -347,7 +347,7 @@ impl Parser {
                     span: None,
                     qualified: None,
                 },
-            )]
+            ))]
         };
 
         let prewhere = if self.match_token(TokenType::Prewhere) {

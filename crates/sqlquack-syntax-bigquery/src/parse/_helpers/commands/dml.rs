@@ -283,7 +283,10 @@ impl Parser<'_> {
                 self.at += 1;
                 self.expect_kw("SET")?;
                 if stage == MergeStage::Matched && self.eat_char('*') {
-                    tuple(vec![var("UPDATE"), Expression::Star(star(None, None))])
+                    tuple(vec![
+                        var("UPDATE"),
+                        Expression::Star(Box::new(star(None, None))),
+                    ])
                 } else {
                     tuple(vec![var("UPDATE"), tuple(self.assignments()?)])
                 }
@@ -291,14 +294,20 @@ impl Parser<'_> {
             (MergeStage::NotMatched, Some("INSERT")) => {
                 self.at += 1;
                 if self.eat_kw("ROW") {
-                    tuple(vec![var("INSERT"), Expression::Star(star(None, None))])
+                    tuple(vec![
+                        var("INSERT"),
+                        Expression::Star(Box::new(star(None, None))),
+                    ])
                 } else if self.kw("VALUES") {
                     self.at += 1;
                     let values: Vec<Expression> =
                         self.parenthesized(|parser| parser.dml_value())?;
                     tuple(vec![var("INSERT"), tuple(Vec::new()), tuple(values)])
                 } else if self.eat_char('*') {
-                    tuple(vec![var("INSERT"), Expression::Star(star(None, None))])
+                    tuple(vec![
+                        var("INSERT"),
+                        Expression::Star(Box::new(star(None, None))),
+                    ])
                 } else {
                     let columns: Vec<Expression> = self
                         .parenthesized(|parser| Ok(column_from(parser.multipart_identifier()?)))?;
@@ -306,7 +315,7 @@ impl Parser<'_> {
                         tuple(vec![
                             var("INSERT"),
                             tuple(columns),
-                            Expression::Star(star(None, None)),
+                            Expression::Star(Box::new(star(None, None))),
                         ])
                     } else {
                         self.expect_kw("VALUES")?;

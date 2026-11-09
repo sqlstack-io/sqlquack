@@ -80,7 +80,7 @@ fn limit(this: Expression) -> Limit {
 /// `SELECT * FROM (body)`, for a body that cannot take a clause itself.
 pub(crate) fn wrapped(body: Expression) -> Select {
     let mut select: Select = Select::new();
-    select.expressions = vec![Expression::Star(star(None, None))];
+    select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
     select.from = Some(From {
         expressions: vec![subquery(body, None, false)],
     });
@@ -458,7 +458,7 @@ impl Parser<'_> {
                 self.at += 1;
                 let item: Expression = self.table_identifier_reference()?;
                 let mut select: Select = Select::new();
-                select.expressions = vec![Expression::Star(star(None, None))];
+                select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
                 select.from = Some(From {
                     expressions: vec![item],
                 });
@@ -758,13 +758,16 @@ impl Parser<'_> {
                     replace: Some(replace),
                     ..star(None, None)
                 };
-                clause("SET", vec![Expression::Star(star)])
+                clause("SET", vec![Expression::Star(Box::new(star))])
             }
             "DROP" => {
                 self.at += 1;
                 let except: Vec<Identifier> =
                     self.pipe_list(|parser| parser.pipe_column("DROP"))?;
-                clause("DROP", vec![Expression::Star(star(None, Some(except)))])
+                clause(
+                    "DROP",
+                    vec![Expression::Star(Box::new(star(None, Some(except))))],
+                )
             }
             "RENAME" => {
                 self.at += 1;
@@ -777,7 +780,7 @@ impl Parser<'_> {
                     rename: Some(renames),
                     ..star(None, None)
                 };
-                clause("RENAME", vec![Expression::Star(star)])
+                clause("RENAME", vec![Expression::Star(Box::new(star))])
             }
             "DISTINCT" => {
                 self.at += 1;

@@ -121,7 +121,7 @@ impl Parser<'_> {
                 self.at += 1;
                 let mut node: Star = star(None, None);
                 self.star_transformers(&mut node)?;
-                Ok(Expression::Star(node))
+                Ok(Expression::Star(Box::new(node)))
             }
             TokenKind::BareWord | TokenKind::QuotedIdentifier if is_identifier(&token) => {
                 self.name_operand()
@@ -246,7 +246,7 @@ impl Parser<'_> {
                 None,
             );
             self.star_transformers(&mut node)?;
-            return Ok(Expression::Star(node));
+            return Ok(Expression::Star(Box::new(node)));
         }
         self.within_depth(parts.len().saturating_sub(COLUMN_NAME_PARTS))?;
         Ok(column_from(parts))

@@ -59,7 +59,7 @@ fn limit(this: Expression) -> Limit {
 /// `SELECT * FROM (body)`, for a body that cannot take a clause itself.
 pub(crate) fn wrapped(body: Expression) -> Select {
     let mut select: Select = Select::new();
-    select.expressions = vec![Expression::Star(star(None, None))];
+    select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
     select.from = Some(From {
         expressions: vec![subquery(body, None, false)],
     });
@@ -328,7 +328,7 @@ impl Parser<'_> {
                 self.at += 1;
                 let item: Expression = self.table_identifier_reference()?;
                 let mut select: Select = Select::new();
-                select.expressions = vec![Expression::Star(star(None, None))];
+                select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
                 select.from = Some(From {
                     expressions: vec![item],
                 });
@@ -367,7 +367,7 @@ impl Parser<'_> {
                 self.gap("multi_select_from", start);
             }
         } else {
-            select.expressions = vec![Expression::Star(star(None, None))];
+            select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
         }
         Ok(self.spanned(first, Expression::Select(Box::new(select))))
     }
@@ -610,19 +610,19 @@ impl Parser<'_> {
                     Ok(Alias::new(parser.expression()?, name))
                 })?;
                 let mut select: Select = pipe_input(left, false);
-                select.expressions = vec![Expression::Star(
+                select.expressions = vec![Expression::Star(Box::new(
                     sqlquack_syntax::expressions::names::models::Star {
                         replace: Some(replace),
                         ..star(None, None)
                     },
-                )];
+                ))];
                 select
             }
             "DROP" => {
                 self.at += 1;
                 let except: Vec<Identifier> = self.name_parts_list()?;
                 let mut select: Select = pipe_input(left, false);
-                select.expressions = vec![Expression::Star(star(None, Some(except)))];
+                select.expressions = vec![Expression::Star(Box::new(star(None, Some(except))))];
                 select
             }
             "AS" => {
@@ -634,7 +634,7 @@ impl Parser<'_> {
                     explicit: true,
                 };
                 let mut select: Select = Select::new();
-                select.expressions = vec![Expression::Star(star(None, None))];
+                select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
                 select.from = Some(From {
                     expressions: vec![subquery(left, Some(alias), false)],
                 });
@@ -679,7 +679,7 @@ impl Parser<'_> {
                 };
                 let pivoted: Expression = self.pivot_or_unpivot(input)?;
                 let mut select: Select = Select::new();
-                select.expressions = vec![Expression::Star(star(None, None))];
+                select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
                 select.from = Some(From {
                     expressions: vec![pivoted],
                 });

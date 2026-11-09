@@ -499,16 +499,18 @@ impl Parser {
         if let Expression::Count(ref count_expr) = func {
             if count_expr.distinct {
                 let this_expr = count_expr.this.clone().unwrap_or_else(|| {
-                    Expression::Star(sqlquack_syntax::expressions::names::models::Star {
-                        table: None,
-                        ilike: None,
-                        except: None,
-                        replace: None,
-                        rename: None,
-                        trailing_comments: Vec::new(),
-                        span: None,
-                        qualified: None,
-                    })
+                    Expression::Star(Box::new(
+                        sqlquack_syntax::expressions::names::models::Star {
+                            table: None,
+                            ilike: None,
+                            except: None,
+                            replace: None,
+                            rename: None,
+                            trailing_comments: Vec::new(),
+                            span: None,
+                            qualified: None,
+                        },
+                    ))
                 });
                 return Ok(Some(Expression::ApproxDistinct(Box::new(
                     sqlquack_syntax::expressions::typed_functions::models::AggFunc {
@@ -619,7 +621,7 @@ impl Parser {
                     Expression::ILike(Box::new(LikeOp {
                         span: SourceSpan::default(),
                         negated: false,
-                        left: Expression::Star(Star {
+                        left: Expression::Star(Box::new(Star {
                             table: None,
                             ilike: None,
                             except: None,
@@ -628,7 +630,7 @@ impl Parser {
                             trailing_comments: Vec::new(),
                             span: None,
                             qualified: None,
-                        }),
+                        })),
                         right: pattern,
                         escape: None,
                         quantifier: None,
@@ -636,14 +638,14 @@ impl Parser {
                     }))
                 } else {
                     let star = self.parse_star_modifiers(None)?;
-                    Expression::Star(star)
+                    Expression::Star(Box::new(star))
                 }
             } else {
                 let table_name = self.expect_identifier_or_keyword_with_quoted()?;
                 self.expect_token(TokenType::Dot)?;
                 self.expect_token(TokenType::Star)?;
                 let star = self.parse_star_modifiers(Some(table_name))?;
-                Expression::Star(star)
+                Expression::Star(Box::new(star))
             };
 
             self.expect_token(TokenType::RBrace)?;
@@ -1138,7 +1140,7 @@ impl Parser {
 
             let arg = if self.check(TokenType::Star) {
                 self.skip();
-                Expression::Star(Star {
+                Expression::Star(Box::new(Star {
                     table: None,
                     ilike: None,
                     except: None,
@@ -1147,7 +1149,7 @@ impl Parser {
                     trailing_comments: Vec::new(),
                     span: None,
                     qualified: None,
-                })
+                }))
             } else if let Some(lambda) = self.parse_function_lambda()? {
                 lambda
             } else {
@@ -1170,7 +1172,7 @@ impl Parser {
 
         self.skip();
         let star = self.parse_star_modifiers(None)?;
-        Ok(Expression::Star(star))
+        Ok(Expression::Star(Box::new(star)))
     }
 
     fn try_parse_primary_identifier_start(&mut self) -> Result<Option<Expression>> {
@@ -1313,7 +1315,7 @@ impl Parser {
         self.expect_token(TokenType::Dot)?;
         if self.match_token(TokenType::Star) {
             let star = self.parse_star_modifiers(Some(ident))?;
-            return Ok(Expression::Star(star));
+            return Ok(Expression::Star(Box::new(star)));
         }
         let col_ident = self.expect_identifier_or_keyword_with_quoted()?;
         let trailing_comments = self.previous_trailing_comments().to_vec();
@@ -1593,7 +1595,7 @@ impl Parser {
             if self.match_token(TokenType::Star) {
                 let ident = Identifier::new(name).with_span(token.span);
                 let star = self.parse_star_modifiers(Some(ident))?;
-                return Ok(Expression::Star(star));
+                return Ok(Expression::Star(Box::new(star)));
             }
 
             if self.check(TokenType::Number) {
@@ -1880,7 +1882,7 @@ impl Parser {
         self.expect_token(TokenType::Dot)?;
         if self.match_token(TokenType::Star) {
             let star = self.parse_star_modifiers(Some(ident))?;
-            return Ok(Expression::Star(star));
+            return Ok(Expression::Star(Box::new(star)));
         }
         let col_ident = self.expect_identifier_or_keyword_with_quoted()?;
         let trailing_comments = self.previous_trailing_comments().to_vec();

@@ -274,7 +274,10 @@ impl Parser<'_> {
             self.at += 1;
             let mut star = crate::parse::_helpers::tree::nodes::star(None, None);
             self.star_transformers(&mut star)?;
-            return Ok(call("tupleElement", vec![left, Expression::Star(star)]));
+            return Ok(call(
+                "tupleElement",
+                vec![left, Expression::Star(Box::new(star))],
+            ));
         }
         if self.is_at(0, crate::parse::_helpers::tree::cursor::is_identifier) {
             let field: Identifier = self.ident()?;

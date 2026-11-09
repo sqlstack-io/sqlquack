@@ -102,7 +102,7 @@ impl Parser<'_> {
         let mut order_by: Vec<Ordered> = Vec::new();
         if self.op("STAR") {
             self.at += 1;
-            args.push(Expression::Star(star(None, None)));
+            args.push(Expression::Star(Box::new(star(None, None))));
         } else {
             distinct = self.eat_kw("DISTINCT");
             if !distinct {

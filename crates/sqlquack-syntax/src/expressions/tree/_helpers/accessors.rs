@@ -686,7 +686,7 @@ impl Expression {
 
     /// Create a wildcard star (`*`) expression with no EXCEPT/REPLACE/RENAME modifiers.
     pub fn star() -> Self {
-        Expression::Star(Star {
+        Expression::Star(Box::new(Star {
             table: None,
             ilike: None,
             except: None,
@@ -695,7 +695,7 @@ impl Expression {
             trailing_comments: Vec::new(),
             span: None,
             qualified: None,
-        })
+        }))
     }
 
     /// Wrap this expression in an `AS` alias (e.g. `expr AS name`).

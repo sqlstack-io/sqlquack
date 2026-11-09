@@ -32,7 +32,7 @@ pub(crate) fn column(table: Option<Identifier>, name: Identifier) -> Expression 
 }
 
 pub(crate) fn star(table: Option<Identifier>) -> Expression {
-    Expression::Star(Star {
+    Expression::Star(Box::new(Star {
         table,
         ilike: None,
         except: None,
@@ -41,7 +41,7 @@ pub(crate) fn star(table: Option<Identifier>) -> Expression {
         trailing_comments: Vec::new(),
         span: None,
         qualified: None,
-    })
+    }))
 }
 
 pub(crate) fn literal(value: Literal) -> Expression {

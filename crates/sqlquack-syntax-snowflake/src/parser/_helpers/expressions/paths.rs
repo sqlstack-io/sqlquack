@@ -1099,7 +1099,7 @@ impl Parser {
             self.refuse_snowflake_reserved_part()?;
             if self.match_token(TokenType::Star) {
                 let star = self.parse_star_modifiers(Some(ident))?;
-                let star_expr = Expression::Star(star);
+                let star_expr = Expression::Star(Box::new(star));
 
                 return Ok(star_expr);
             }
