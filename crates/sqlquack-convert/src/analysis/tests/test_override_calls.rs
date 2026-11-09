@@ -1,7 +1,7 @@
 use sqlquack_diagnostics::provenance::models::Provenance;
 use sqlquack_parse::parsing::main::parse_source::parse_source;
 use sqlquack_rules::conversion::models::{ConversionOptions, Converted, UserOverride};
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 use sqlquack_syntax::Dialect;
 
 use crate::analysis::_helpers::override_calls::overrides_applied;

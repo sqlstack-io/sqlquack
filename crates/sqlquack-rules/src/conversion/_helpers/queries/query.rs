@@ -12,7 +12,7 @@ use sqlquack_diagnostics::refusals::main::missing::missing;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::main::unresolved::unresolved;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::ordered_aggregates::order_checked;
 use crate::conversion::_helpers::expressions::scalar::convert_held;
@@ -42,9 +42,9 @@ use crate::conversion::constants::{
 };
 use crate::conversion::constants::{VALUES_COLUMN_PREFIX, VALUES_ROWS, VALUES_ROWS_LIMIT};
 use sqlquack_semantics::dialects::constants::SNOWFLAKE_TO_DUCKDB;
-use sqlquack_semantics::scopes::main::star_relations::star_relations;
-use sqlquack_semantics::scopes::models::ScopeRelation;
-use sqlquack_semantics::types::models::ColumnSpec;
+use sqlquack_semantics::snowflake::scopes::main::star_relations::star_relations;
+use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
+use sqlquack_semantics::snowflake::types::models::ColumnSpec;
 
 /// The most characters Snowflake keeps of an unaliased item's text as its name, as recorded.
 const OUTPUT_NAME_MAX_CHARS: usize = 255;

@@ -37,10 +37,10 @@ use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_snowflake_types::typing::constants::{
+use sqlquack_semantics::snowflake::typing::constants::{
     DATEDIFF_PRECISIONS, MAX_PRECISION, TIME_DIFF_MICROSECONDS_TYPE, TIME_DIFF_TYPE, UNIT_ALIASES,
 };
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::casts::cast_to;
 use crate::conversion::_helpers::expressions::operators::is_iso_date;

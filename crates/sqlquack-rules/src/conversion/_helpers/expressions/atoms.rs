@@ -9,9 +9,9 @@ use sqlquack_diagnostics::classification::models::{Construct, ConstructFamily};
 use sqlquack_diagnostics::refusals::main::missing::missing;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_snowflake_types::typing::main::literal_digits::literal_digits;
-use sqlquack_snowflake_types::typing::main::number_literal::number_literal;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::main::literal_digits::literal_digits;
+use sqlquack_semantics::snowflake::typing::main::number_literal::number_literal;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::casts::cast_to;
 use crate::conversion::_helpers::expressions::scalar::{convert_expression, convert_held};
@@ -31,9 +31,9 @@ use crate::conversion::constants::{
     NUMBER_LITERAL, PARENTHESES, POSITIONAL_COLUMN, SCALAR_SUBQUERY, SEQUENCE_COLUMN,
     SEQUENCE_PEERS, TYPED_LITERAL_KINDS, TYPED_LITERAL_PAIR, UNARY_PLUS,
 };
-use sqlquack_semantics::scopes::models::ScopeRelation;
-use sqlquack_semantics::types::models::Holding;
-use sqlquack_snowflake_types::typing::constants::MAX_PRECISION;
+use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
+use sqlquack_semantics::snowflake::types::models::Holding;
+use sqlquack_semantics::snowflake::typing::constants::MAX_PRECISION;
 
 /// The integer digits a unary plus gives a NUMBER at least, within 38: + 1 is NUMBER(2,0).
 const PLUS_INTEGER_DIGITS: u8 = 2;

@@ -12,7 +12,7 @@ use sqlquack_diagnostics::refusals::constants::NEEDS_DIVERGENCE;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::main::refused_divergence::refused_divergence;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::support::scope::{Context, Emitted};
@@ -24,7 +24,7 @@ use crate::conversion::constants::{
 use crate::conversion::main::override_macro_name::override_macro_name;
 use crate::conversion::models::UserOverride;
 use sqlquack_policy::policy::constants::{PROJECT_UDF, PYTHON_VALUE_CROSSING, USER_OVERRIDE};
-use sqlquack_semantics::types::models::{
+use sqlquack_semantics::snowflake::types::models::{
     FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits,
 };
 

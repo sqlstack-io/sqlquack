@@ -13,14 +13,14 @@ use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::refusals::main::missing::missing;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_snowflake_types::typing::constants::{
+use sqlquack_semantics::snowflake::typing::constants::{
     COUNT_PRECISION, MAX_PRECISION, SUM_EXTRA_DIGITS,
 };
-use sqlquack_snowflake_types::typing::main::average::average;
-use sqlquack_snowflake_types::typing::main::count::count;
-use sqlquack_snowflake_types::typing::main::framed_average::framed_average;
-use sqlquack_snowflake_types::typing::main::sum::sum;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::main::average::average;
+use sqlquack_semantics::snowflake::typing::main::count::count;
+use sqlquack_semantics::snowflake::typing::main::framed_average::framed_average;
+use sqlquack_semantics::snowflake::typing::main::sum::sum;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::arrays::array_function;
 use crate::conversion::_helpers::expressions::casts::zoned_text;

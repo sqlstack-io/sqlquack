@@ -38,8 +38,7 @@ sqlquack-blocks = { workspace = true, features = ["engine"] }
 sqlquack-evidence.workspace = true
 sqlquack-policy.workspace = true
 sqlquack-rules = { workspace = true, features = ["engine"] }
-sqlquack-semantics.workspace = true
-sqlquack-snowflake-types.workspace = true
+sqlquack-semantics = { workspace = true, features = ["snowflake"] }
 sqlquack-syntax.workspace = true
 walkdir.workspace = true
 

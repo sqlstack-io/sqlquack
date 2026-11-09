@@ -2,15 +2,15 @@
 
 use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_semantics::types::models::TypedLeaves;
+use sqlquack_semantics::snowflake::types::models::TypedLeaves;
 
 use sqlquack_blocks::semi_structured::constants::SOURCE_VARIANT_JSON;
 
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Emitted};
 
-use sqlquack_semantics::types::models::ColumnSpec;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::types::models::ColumnSpec;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 /// A converted query's SQL and result columns, or its refusal.
 pub(crate) type ConvertedQuery = Result<(String, Vec<ColumnSpec>), Refusal>;

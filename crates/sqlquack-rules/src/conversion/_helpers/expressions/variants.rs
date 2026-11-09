@@ -22,7 +22,7 @@ use sqlquack_blocks::variants::main::json_object_pick::json_object_pick;
 use sqlquack_blocks::variants::main::json_split::json_split;
 use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::arrays::array_function;
 use crate::conversion::_helpers::expressions::casts::number_literal_text;

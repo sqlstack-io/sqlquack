@@ -10,8 +10,8 @@ use sqlquack_parse::parsing::main::parse_source::parse_source;
 use sqlquack_rules::conversion::main::convert_function_body::convert_function_body;
 use sqlquack_rules::conversion::main::quoted_exclusions::quoted_exclusions;
 use sqlquack_rules::conversion::models::{ConversionOptions, ConvertedFunction};
-use sqlquack_semantics::types::models::{FunctionReturns, FunctionSpec, Schema};
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::types::models::{FunctionReturns, FunctionSpec, Schema};
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 use sqlquack_syntax::tokens::models::SourceLines;
 
 use crate::analysis::_helpers::declared_refusals::declared_refusals;

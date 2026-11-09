@@ -1395,7 +1395,6 @@ dependencies = [
  "sqlquack-policy",
  "sqlquack-rules",
  "sqlquack-semantics",
- "sqlquack-snowflake-types",
  "sqlquack-syntax",
  "tempfile",
  "toml",
@@ -1409,7 +1408,7 @@ dependencies = [
  "duckdb",
  "serde_json",
  "sqlquack-diagnostics",
- "sqlquack-snowflake-types",
+ "sqlquack-semantics",
 ]
 
 [[package]]
@@ -1432,7 +1431,6 @@ dependencies = [
  "sqlquack-policy",
  "sqlquack-rules",
  "sqlquack-semantics",
- "sqlquack-snowflake-types",
  "sqlquack-syntax",
 ]
 
@@ -1593,7 +1591,6 @@ dependencies = [
  "sqlquack-diagnostics",
  "sqlquack-policy",
  "sqlquack-semantics",
- "sqlquack-snowflake-types",
  "sqlquack-syntax",
 ]
 
@@ -1606,7 +1603,6 @@ dependencies = [
  "serde",
  "serde_json",
  "sqlquack-diagnostics",
- "sqlquack-snowflake-types",
  "sqlquack-syntax",
  "sqlquack-syntax-bigquery",
  "sqlquack-syntax-clickhouse",
@@ -1616,14 +1612,6 @@ dependencies = [
  "sqlquack-syntax-sqlite",
  "sqlquack-syntax-sqlserver",
  "stacker",
-]
-
-[[package]]
-name = "sqlquack-snowflake-types"
-version = "0.2.0"
-dependencies = [
- "serde",
- "sqlquack-diagnostics",
 ]
 
 [[package]]

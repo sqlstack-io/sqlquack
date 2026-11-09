@@ -11,7 +11,7 @@ use sqlquack_parse::parsing::main::parse_source::parse_source;
 use sqlquack_rules::conversion::main::collect_refusals::collect_refusals;
 use sqlquack_rules::conversion::main::quoted_exclusions::quoted_exclusions;
 use sqlquack_rules::conversion::models::{CollectedRefusals, ConversionOptions};
-use sqlquack_semantics::types::models::Schema;
+use sqlquack_semantics::snowflake::types::models::Schema;
 use sqlquack_syntax::tokens::models::SourceLines;
 
 use sqlquack_convert::analysis::main::placed::placed;

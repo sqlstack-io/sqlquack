@@ -28,7 +28,7 @@ use sqlquack_diagnostics::failures::main::tagged_message::tagged_message;
 use sqlquack_diagnostics::refusals::main::missing::missing;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::expressions::text_functions::integer_operand;

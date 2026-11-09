@@ -26,7 +26,7 @@ use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_snowflake_types::typing::models::{CastTarget, SnowflakeType};
+use sqlquack_semantics::snowflake::typing::models::{CastTarget, SnowflakeType};
 
 use crate::conversion::_helpers::expressions::held::read_json;
 use crate::conversion::_helpers::expressions::scalar::{convert_expression, convert_held};

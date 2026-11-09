@@ -4,10 +4,10 @@ use std::cell::RefCell;
 use std::collections::BTreeSet;
 
 use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::support::scope::{Emitted, Scope};
-use sqlquack_semantics::names::constants::UNKNOWN_RELATION_PREFIX;
+use sqlquack_semantics::snowflake::names::constants::UNKNOWN_RELATION_PREFIX;
 
 /// What collecting found so far in the statement being converted.
 #[derive(Default)]

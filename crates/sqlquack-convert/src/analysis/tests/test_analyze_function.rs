@@ -2,10 +2,10 @@ use sqlquack_diagnostics::classification::models::SourceDialect;
 use sqlquack_diagnostics::refusals::models::RefusalCategory;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::conversion::models::ConversionOptions;
-use sqlquack_semantics::types::models::{
+use sqlquack_semantics::snowflake::types::models::{
     ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits, Schema,
 };
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::analysis::main::analyze_function::analyze_function;
 use crate::analysis::tests::test_types::AnalyzeFunctionTestCase;

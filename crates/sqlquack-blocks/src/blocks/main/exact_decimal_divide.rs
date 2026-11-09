@@ -2,7 +2,7 @@
 
 use sqlquack_diagnostics::failures::constants::DIVISION_BY_ZERO;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::blocks::_helpers::text::tagged_error;
 use crate::blocks::constants::{EXACT_DECIMAL_DIVIDE, MAX_DECIMAL_PRECISION};

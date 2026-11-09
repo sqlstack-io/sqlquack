@@ -10,7 +10,7 @@ use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::refusals::main::missing::missing;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::held::read_json;
 use crate::conversion::_helpers::expressions::scalar::convert_held;
@@ -23,8 +23,8 @@ use crate::conversion::_helpers::support::tree::{
     require_understood,
 };
 use crate::conversion::constants::{FLATTEN_COLUMNS, FLATTEN_ORDERED_COLUMNS, FLATTEN_RULE};
-use sqlquack_semantics::scopes::models::ScopeRelation;
-use sqlquack_semantics::types::models::{ColumnSpec, Holding};
+use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
+use sqlquack_semantics::snowflake::types::models::{ColumnSpec, Holding};
 
 /// The name of the table function LATERAL converts.
 const FLATTEN_NAME: &str = "FLATTEN";

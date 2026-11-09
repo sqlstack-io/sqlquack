@@ -9,7 +9,7 @@ use sqlquack_blocks::held::main::variant_json_leaf::variant_json_leaf;
 use sqlquack_blocks::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::objects::as_json;
 use crate::conversion::_helpers::support::divergence::diverge;

@@ -10,7 +10,7 @@ use sqlquack_diagnostics::refusals::main::missing::missing;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::main::unresolved::unresolved;
 use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::project_functions::{exact_arguments, held_type};
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
@@ -39,10 +39,10 @@ use crate::conversion::constants::{FULL_JOIN_KEYWORD, INNER_JOIN_KEYWORD};
 /// How the parsed tree spells a NATURAL join's kind, lower-cased.
 const NATURAL_JOIN_PREFIX: &str = "natural";
 use sqlquack_semantics::lineage::main::stored_columns::stored_columns;
-use sqlquack_semantics::names::constants::RELATION_KEY_SEPARATOR;
-use sqlquack_semantics::names::main::relation_key::relation_key;
-use sqlquack_semantics::scopes::models::ScopeRelation;
-use sqlquack_semantics::types::models::{ColumnSpec, FunctionReturns};
+use sqlquack_semantics::snowflake::names::constants::RELATION_KEY_SEPARATOR;
+use sqlquack_semantics::snowflake::names::main::relation_key::relation_key;
+use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
+use sqlquack_semantics::snowflake::types::models::{ColumnSpec, FunctionReturns};
 
 /// The FROM clause with its joins, and the relations it brings into scope.
 pub(crate) fn convert_from(

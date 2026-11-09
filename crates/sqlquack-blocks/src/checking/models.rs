@@ -1,6 +1,6 @@
 //! Stand-ins for project functions in DuckDB's check.
 
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 /// What a project function returns, for the stand-in the check defines.
 #[derive(Clone, Debug, PartialEq, Eq)]

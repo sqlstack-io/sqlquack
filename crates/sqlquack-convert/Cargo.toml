@@ -17,8 +17,7 @@ sqlquack-parse.workspace = true
 sqlquack-blocks.workspace = true
 sqlquack-policy.workspace = true
 sqlquack-rules.workspace = true
-sqlquack-semantics.workspace = true
-sqlquack-snowflake-types.workspace = true
+sqlquack-semantics = { workspace = true, features = ["snowflake"] }
 sqlquack-syntax.workspace = true
 
 [lints]

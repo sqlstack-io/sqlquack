@@ -1,7 +1,7 @@
 //! `date_part_value`: one part of a DATE or naive timestamp, as a BIGINT.
 
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::blocks::constants::DATE_PART;
 use crate::temporal::_helpers::timestamps::{

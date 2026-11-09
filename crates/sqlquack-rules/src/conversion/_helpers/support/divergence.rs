@@ -3,8 +3,8 @@
 use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::refusals::main::refused_divergence::refused_divergence;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_snowflake_types::typing::constants::MAX_PRECISION;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::constants::MAX_PRECISION;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::support::scope::Context;
 

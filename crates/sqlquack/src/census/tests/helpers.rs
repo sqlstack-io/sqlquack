@@ -5,8 +5,8 @@ use sqlquack_diagnostics::classification::models::SourceDialect;
 use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_rules::conversion::models::{AllowedDivergence, ConversionOptions};
-use sqlquack_semantics::types::models::{ColumnSpec, Schema};
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::types::models::{ColumnSpec, Schema};
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::census::_helpers::coverage::{CoverageInput, greedy_order};
 use crate::census::_helpers::timed::run_census_timed;

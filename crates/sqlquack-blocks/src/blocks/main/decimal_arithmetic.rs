@@ -1,7 +1,7 @@
 //! `decimal_arithmetic`: exact decimal `+`, `-` or `*`: operands widened to 38 digits, then the Snowflake type.
 
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::blocks::constants::DECIMAL_ARITHMETIC;
 use crate::blocks::main::cast::cast;

@@ -16,10 +16,10 @@ use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_snowflake_types::typing::constants::COUNT_IF_TYPE;
-use sqlquack_snowflake_types::typing::constants::MAX_PRECISION;
-use sqlquack_snowflake_types::typing::main::count::count;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::constants::COUNT_IF_TYPE;
+use sqlquack_semantics::snowflake::typing::constants::MAX_PRECISION;
+use sqlquack_semantics::snowflake::typing::main::count::count;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::expressions::statistics::{is_statistic, statistic};

@@ -4,7 +4,6 @@ members = [
     "crates/sqlquack-derive",
     "crates/sqlquack-diagnostics",
     "crates/sqlquack-parse",
-    "crates/sqlquack-snowflake-types",
     "crates/sqlquack-semantics",
     "crates/sqlquack-rules",
     "crates/sqlquack-convert",
@@ -81,7 +80,6 @@ sqlquack-parse = { path = "crates/sqlquack-parse" }
 sqlquack-policy = { path = "crates/sqlquack-policy" }
 sqlquack-rules = { path = "crates/sqlquack-rules", default-features = false }
 sqlquack-semantics = { path = "crates/sqlquack-semantics" }
-sqlquack-snowflake-types = { path = "crates/sqlquack-snowflake-types" }
 sqlquack-syntax = { path = "crates/sqlquack-syntax" }
 sqlquack-derive = { path = "crates/sqlquack-derive" }
 sqlquack-syntax-postgres = { path = "crates/sqlquack-syntax-postgres" }

@@ -1,4 +1,4 @@
-"""NUMBER sample values and the arithmetic result types sqlquack-snowflake-types documents."""
+"""NUMBER sample values and the arithmetic result types the Snowflake typing in sqlquack-semantics documents."""
 
 from __future__ import annotations
 

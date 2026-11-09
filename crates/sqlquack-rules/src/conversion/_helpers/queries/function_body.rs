@@ -8,7 +8,7 @@ use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_diagnostics::refusals::main::missing::missing;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::project_functions::held_type;
 use crate::conversion::_helpers::queries::query::convert_query;
@@ -19,8 +19,10 @@ use crate::conversion::constants::{
 };
 use crate::conversion::main::override_macro_name::override_macro_name;
 use crate::conversion::models::ConversionOptions;
-use sqlquack_semantics::scopes::models::ScopeRelation;
-use sqlquack_semantics::types::models::{ColumnSpec, FunctionReturns, FunctionSpec, Schema};
+use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
+use sqlquack_semantics::snowflake::types::models::{
+    ColumnSpec, FunctionReturns, FunctionSpec, Schema,
+};
 
 /// The body `tree` over the function's parameters, checked for typed leaves compared by text.
 pub(crate) fn converted_body(

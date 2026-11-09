@@ -19,7 +19,7 @@ use sqlquack_policy::policy::constants::QUOTED_IDENTIFIERS_IGNORE_CASE;
 use sqlquack_policy::policy::models::SessionValue;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::conversion::models::{ConversionOptions, Fixture};
-use sqlquack_semantics::types::models::Schema;
+use sqlquack_semantics::snowflake::types::models::Schema;
 
 use crate::analysis::_helpers::case_functions::case_functions;
 use crate::analysis::_helpers::override_definition::load_override;

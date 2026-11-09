@@ -17,10 +17,10 @@ use sqlquack_policy::policy::models::DivergenceMode;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::catalogue::models::{NotExpressibleDeclaration, RuleCatalogue};
 use sqlquack_rules::conversion::models::{ConversionBudget, ConversionOptions, Converted};
-use sqlquack_semantics::types::models::{
+use sqlquack_semantics::snowflake::types::models::{
     ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits, Schema,
 };
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 use sqlquack_syntax::tokens::models::SourceLocation;
 
 use crate::analysis::main::check_equivalence_cases::check_equivalence_cases;

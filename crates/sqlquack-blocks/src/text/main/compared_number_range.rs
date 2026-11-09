@@ -3,7 +3,7 @@
 use sqlquack_diagnostics::failures::constants::NUMBER_OUT_OF_RANGE;
 use sqlquack_diagnostics::failures::main::tagged_message::tagged_message;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
-use sqlquack_snowflake_types::typing::constants::MAX_PRECISION;
+use sqlquack_semantics::snowflake::typing::constants::MAX_PRECISION;
 
 use crate::blocks::constants::NUMBER_RANGE_MESSAGE;
 use crate::raises::main::raised::raised;

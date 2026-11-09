@@ -10,8 +10,8 @@ use sqlquack_diagnostics::failures::main::raise_id::raise_id;
 use sqlquack_diagnostics::failures::models::FailureMode;
 use sqlquack_diagnostics::provenance::models::Provenance;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_semantics::types::models::ColumnSpec;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::types::models::ColumnSpec;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 use sqlquack_syntax::tokens::models::SourceLocation;
 
 /// A known divergence the policy allows in the current mode.

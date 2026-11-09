@@ -12,7 +12,7 @@ use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::diagnostics::constants::ZONED_LOCAL_TIME;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::support::divergence::diverge;
 use crate::conversion::_helpers::support::scope::{Context, Literal};

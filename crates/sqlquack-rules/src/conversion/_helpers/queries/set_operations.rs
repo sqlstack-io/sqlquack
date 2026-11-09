@@ -9,9 +9,9 @@ use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::refusals::main::missing::missing;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_snowflake_types::typing::main::text_reading::text_reading;
-use sqlquack_snowflake_types::typing::main::unify::unify;
-use sqlquack_snowflake_types::typing::models::{CastTarget, SnowflakeType};
+use sqlquack_semantics::snowflake::typing::main::text_reading::text_reading;
+use sqlquack_semantics::snowflake::typing::main::unify::unify;
+use sqlquack_semantics::snowflake::typing::models::{CastTarget, SnowflakeType};
 
 use crate::conversion::_helpers::expressions::conditionals::read_text;
 use crate::conversion::_helpers::expressions::semi_structured::{held_cast, variant_cast};
@@ -33,8 +33,8 @@ use crate::conversion::constants::{
     NULL_BRANCHES, SEMI_STRUCTURED_HOLDING, SET_OPERATION, TEXT_BRANCHES, UNION_BY_NAME,
     VARCHAR_NAME, VARIANT_NAME, VARIANT_TEXT_BRANCHES,
 };
-use sqlquack_semantics::scopes::models::ScopeRelation;
-use sqlquack_semantics::types::models::{ColumnSpec, Holding};
+use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
+use sqlquack_semantics::snowflake::types::models::{ColumnSpec, Holding};
 
 /// The relation name for the result of a set operation that is then ordered or limited.
 const SET_RESULT: &str = "_SET";

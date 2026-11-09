@@ -7,8 +7,8 @@ use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_policy::policy::constants::NUMERIC_RANGE;
-use sqlquack_snowflake_types::typing::constants::MAX_PRECISION;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::constants::MAX_PRECISION;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::casts::cast_to;
 use crate::conversion::_helpers::support::divergence::diverge;

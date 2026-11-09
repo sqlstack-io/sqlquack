@@ -9,8 +9,8 @@ use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions
 use sqlquack_diagnostics::refusals::main::unresolved::unresolved;
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::dialects::constants::SNOWFLAKE_TO_DUCKDB;
-use sqlquack_semantics::scopes::main::resolve_name::resolve_name;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::scopes::main::resolve_name::resolve_name;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::operators::boolean_operand;
 use crate::conversion::_helpers::expressions::scalar::convert_expression;

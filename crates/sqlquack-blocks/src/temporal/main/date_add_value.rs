@@ -1,7 +1,7 @@
 //! `date_add_value`: a DATE or naive timestamp moved by whole calendar or clock units.
 
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::blocks::constants::{
     DATE_ADD, DATE_ADD_DAY_LIMIT, DATE_ADD_MONTH_LIMIT, DUCKDB_FRACTIONAL_PRECISION,

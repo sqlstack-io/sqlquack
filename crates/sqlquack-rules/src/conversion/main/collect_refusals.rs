@@ -15,8 +15,8 @@ use crate::conversion::_helpers::support::tree::{session_tree, strip_positions};
 use crate::conversion::_helpers::support::typed_leaves::ConvertedQuery;
 use crate::conversion::main::convert_statement::convert_statement;
 use crate::conversion::models::{CollectedRefusals, ConversionOptions};
-use sqlquack_semantics::types::models::Schema;
-use sqlquack_semantics::types::models::TypedLeaves;
+use sqlquack_semantics::snowflake::types::models::Schema;
+use sqlquack_semantics::snowflake::types::models::TypedLeaves;
 
 /// The statement's refusals, converting past each refused node; its conversion is discarded.
 pub fn collect_refusals(

@@ -7,7 +7,7 @@ use sqlquack_blocks::blocks::main::string_literal::string_literal;
 use sqlquack_blocks::raises::main::raised::raised;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::queries::clauses::condition_sql;
@@ -19,8 +19,8 @@ use crate::conversion::constants::{
     HIERARCHY_COLUMN_PREFIX, HIERARCHY_DEPTH_TAG, HIERARCHY_LEVEL, HIERARCHY_MAX_DEPTH,
     HIERARCHY_NESTED_QUERIES, HIERARCHY_PRIOR, HIERARCHY_RULE, HIERARCHY_WALK,
 };
-use sqlquack_semantics::scopes::models::ScopeRelation;
-use sqlquack_semantics::types::models::ColumnSpec;
+use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
+use sqlquack_semantics::snowflake::types::models::ColumnSpec;
 
 /// A hierarchical query's FROM: its walk, the select rewritten to read the walk's columns.
 pub(crate) struct Walk {

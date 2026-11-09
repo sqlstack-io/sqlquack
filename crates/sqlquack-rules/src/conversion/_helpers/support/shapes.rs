@@ -2,7 +2,7 @@
 
 use serde_json::Value;
 use sqlquack_diagnostics::provenance::models::ShapeArgument;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::call_name;
 use crate::conversion::_helpers::support::scope::Emitted;

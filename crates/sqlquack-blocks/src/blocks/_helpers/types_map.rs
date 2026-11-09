@@ -2,7 +2,7 @@
 
 use crate::blocks::constants::{DUCKDB_FRACTIONAL_PRECISION, NANOSECOND_DIGITS, TYPE_NAME};
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 /// The DuckDB type the policy pairs with `data_type`, or why there is none.
 pub(crate) fn duckdb_type(data_type: SnowflakeType, log: &ProvenanceLog) -> Result<String, String> {

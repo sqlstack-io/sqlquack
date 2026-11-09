@@ -8,8 +8,8 @@ use sqlquack::cli::models::{
 };
 use sqlquack_diagnostics::diagnostics::main::render_diagnostics::render_diagnostics;
 use sqlquack_diagnostics::diagnostics::models::Diagnostic;
-use sqlquack_semantics::types::errors::SchemaError;
-use sqlquack_semantics::types::main::parse_schema::parse_schema;
+use sqlquack_semantics::snowflake::types::errors::SchemaError;
+use sqlquack_semantics::snowflake::types::main::parse_schema::parse_schema;
 
 use crate::bindings::models::{ConvertRequest, Rendered};
 

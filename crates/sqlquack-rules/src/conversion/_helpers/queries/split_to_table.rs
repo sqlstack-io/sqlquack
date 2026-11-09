@@ -8,7 +8,7 @@ use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::refusals::main::missing::missing;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::queries::flatten::Flattened;
@@ -18,8 +18,8 @@ use crate::conversion::_helpers::support::tree::{
     Payload, function_construct, integer_literal, list,
 };
 use crate::conversion::constants::{CHR_NAME, SPLIT_TO_TABLE_COLUMNS, SPLIT_TO_TABLE_RULE};
-use sqlquack_semantics::scopes::models::ScopeRelation;
-use sqlquack_semantics::types::models::ColumnSpec;
+use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
+use sqlquack_semantics::snowflake::types::models::ColumnSpec;
 
 /// The name of the table function this module converts.
 pub(crate) const SPLIT_TO_TABLE_NAME: &str = "SPLIT_TO_TABLE";

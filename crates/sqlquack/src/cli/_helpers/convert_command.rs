@@ -18,7 +18,7 @@ use sqlquack_policy::policy::constants::{
 };
 use sqlquack_policy::policy::models::{DivergenceFailure, Policy};
 use sqlquack_rules::conversion::models::ConversionOptions;
-use sqlquack_semantics::types::models::Schema;
+use sqlquack_semantics::snowflake::types::models::Schema;
 use std::collections::{BTreeMap, BTreeSet};
 
 use crate::analysis::main::assumption_id::assumption_id;

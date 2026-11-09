@@ -21,8 +21,7 @@ sqlquack-parse = { path = "../../crates/sqlquack-parse" }
 sqlquack-blocks = { path = "../../crates/sqlquack-blocks", default-features = false }
 sqlquack-policy = { path = "../../crates/sqlquack-policy" }
 sqlquack-rules = { path = "../../crates/sqlquack-rules", default-features = false }
-sqlquack-semantics = { path = "../../crates/sqlquack-semantics" }
-sqlquack-snowflake-types = { path = "../../crates/sqlquack-snowflake-types" }
+sqlquack-semantics = { path = "../../crates/sqlquack-semantics", features = ["snowflake"] }
 sqlquack-syntax = { path = "../../crates/sqlquack-syntax", default-features = false }
 wasm-bindgen = "=0.2.130"
 

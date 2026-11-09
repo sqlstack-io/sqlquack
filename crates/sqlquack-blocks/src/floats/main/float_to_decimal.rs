@@ -2,7 +2,7 @@
 
 use sqlquack_diagnostics::failures::constants::NUMBER_OUT_OF_RANGE;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use sqlquack_diagnostics::failures::main::tagged_message::tagged_message;
 

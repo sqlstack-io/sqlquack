@@ -5,7 +5,7 @@ use std::collections::BTreeSet;
 use serde_json::{Map, Value, json};
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_semantics::types::models::ColumnSpec;
+use sqlquack_semantics::snowflake::types::models::ColumnSpec;
 
 use crate::conversion::_helpers::support::tree::{
     LITERAL_STRING, Payload, field, identifier_name, list, node_construct, node_kind,

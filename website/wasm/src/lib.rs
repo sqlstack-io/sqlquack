@@ -38,10 +38,10 @@ use sqlquack_semantics::dialects::constants::SNOWFLAKE;
 use sqlquack_semantics::lineage::main::query_name_findings::query_name_findings;
 use sqlquack_semantics::lineage::models::{LineageContext, Nullability, SchemaColumn};
 use sqlquack_semantics::lineage::types::LineageSchema;
-use sqlquack_semantics::types::errors::SchemaError;
-use sqlquack_semantics::types::main::parse_schema::parse_schema;
-use sqlquack_semantics::types::main::source_tables::source_tables;
-use sqlquack_semantics::types::models::Schema;
+use sqlquack_semantics::snowflake::types::errors::SchemaError;
+use sqlquack_semantics::snowflake::types::main::parse_schema::parse_schema;
+use sqlquack_semantics::snowflake::types::main::source_tables::source_tables;
+use sqlquack_semantics::snowflake::types::models::Schema;
 use sqlquack_syntax::tokens::main::node_location::node_location;
 use sqlquack_syntax::tokens::models::SourceLines;
 use sqlquack_syntax::{Dialect, Expression, ParseOptions};
@@ -104,7 +104,7 @@ pub fn fixture_tables(sources: &str) -> String {
                 .filter_map(|column| {
                     let held = match column_type(column.data_type, &log) {
                         Ok(held) => held,
-                        Err(_) if column.data_type == sqlquack_snowflake_types::typing::models::SnowflakeType::SemiStructured => {
+                        Err(_) if column.data_type == sqlquack_semantics::snowflake::typing::models::SnowflakeType::SemiStructured => {
                             SEMI_STRUCTURED_HOLDING_TYPE.to_owned()
                         }
                         Err(_) => return None,

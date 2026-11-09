@@ -1,7 +1,7 @@
 //! `create_table`: a relation as a DuckDB table, the way converted SQL reads it.
 
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::blocks::constants::NAME_SEPARATOR;
 use crate::blocks::main::column_type::column_type;

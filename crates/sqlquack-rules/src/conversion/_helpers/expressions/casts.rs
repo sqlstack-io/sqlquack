@@ -32,11 +32,11 @@ use sqlquack_diagnostics::provenance::models::{ProvenanceLog, RuleScope};
 use sqlquack_diagnostics::refusals::main::missing::missing;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_semantics::types::main::zoned_in_utc::zoned_in_utc;
-use sqlquack_snowflake_types::typing::constants::CAST_TARGET;
-use sqlquack_snowflake_types::typing::constants::STRUCTURED_UNSUPPORTED;
-use sqlquack_snowflake_types::typing::main::cast_target::cast_target;
-use sqlquack_snowflake_types::typing::models::{CastTarget, SnowflakeType};
+use sqlquack_semantics::snowflake::types::main::zoned_in_utc::zoned_in_utc;
+use sqlquack_semantics::snowflake::typing::constants::CAST_TARGET;
+use sqlquack_semantics::snowflake::typing::constants::STRUCTURED_UNSUPPORTED;
+use sqlquack_semantics::snowflake::typing::main::cast_target::cast_target;
+use sqlquack_semantics::snowflake::typing::models::{CastTarget, SnowflakeType};
 
 use crate::conversion::_helpers::expressions::objects::as_json;
 use crate::conversion::_helpers::expressions::operators::is_iso_date;

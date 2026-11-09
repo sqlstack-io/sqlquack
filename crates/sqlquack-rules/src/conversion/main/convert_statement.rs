@@ -8,7 +8,7 @@ use sqlquack_blocks::semi_structured::main::json_output::json_output;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_diagnostics::refusals::main::missing::missing;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::tokens::models::SourceLines;
 
@@ -23,8 +23,8 @@ use crate::conversion::_helpers::support::tree::{node_construct, session_tree};
 use crate::conversion::constants::{NULL_BRANCHES, OUTPUT_ALIAS};
 use crate::conversion::models::{ConversionOptions, Converted};
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_semantics::types::models::TypedLeaves;
-use sqlquack_semantics::types::models::{ColumnSpec, Holding, Schema};
+use sqlquack_semantics::snowflake::types::models::TypedLeaves;
+use sqlquack_semantics::snowflake::types::models::{ColumnSpec, Holding, Schema};
 
 /// Converts a statement over the schema's relations, placing refusals in `lines`; DuckDB must bind it.
 pub fn convert_statement(

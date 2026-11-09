@@ -1,8 +1,8 @@
 //! Snowflake type spellings compared by the type they denote.
 
+use crate::snowflake::typing::main::cast_target::cast_target;
+use crate::snowflake::typing::models::{CastTarget, SnowflakeType};
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
-use sqlquack_snowflake_types::typing::main::cast_target::cast_target;
-use sqlquack_snowflake_types::typing::models::{CastTarget, SnowflakeType};
 
 use crate::dialects::constants::SNOWFLAKE_LONGEST_VARCHAR;
 use crate::dialects::main::canonical_type::canonical_type;

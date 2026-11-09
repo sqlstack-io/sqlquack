@@ -1,6 +1,6 @@
 //! `stored_columns`: a stored relation's columns as a later statement reads them.
 
-use crate::types::models::{ColumnSpec, Holding};
+use crate::snowflake::types::models::{ColumnSpec, Holding};
 
 /// The columns, each VARIANT another statement wrote from a typed build read back as JSON.
 pub fn stored_columns(columns: Vec<ColumnSpec>) -> Vec<ColumnSpec> {

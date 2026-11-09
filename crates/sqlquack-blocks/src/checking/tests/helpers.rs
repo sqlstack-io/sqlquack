@@ -1,4 +1,4 @@
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::checking::errors::CheckStage;
 use crate::checking::main::check_printed::check_printed;

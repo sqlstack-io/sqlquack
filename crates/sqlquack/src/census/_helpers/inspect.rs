@@ -9,8 +9,10 @@ use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_diagnostics::refusals::types::ConstructPolicy;
 
 use sqlquack_rules::conversion::models::ConversionOptions;
-use sqlquack_semantics::names::constants::{UNKNOWN_RELATION_PREFIX, UNKNOWN_RELATION_SUFFIX};
-use sqlquack_semantics::types::models::{ColumnSpec, Schema};
+use sqlquack_semantics::snowflake::names::constants::{
+    UNKNOWN_RELATION_PREFIX, UNKNOWN_RELATION_SUFFIX,
+};
+use sqlquack_semantics::snowflake::types::models::{ColumnSpec, Schema};
 
 use sqlquack_diagnostics::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_diagnostics::provenance::models::Provenance;

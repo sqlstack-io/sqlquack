@@ -6,10 +6,10 @@ use sqlquack_evidence::cases::models::{CaseFunction, FunctionBodyLanguage, Input
 use sqlquack_evidence::replay::models::PythonFunction;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::conversion::models::ConversionOptions;
-use sqlquack_semantics::types::models::{
+use sqlquack_semantics::snowflake::types::models::{
     ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits, Schema,
 };
-use sqlquack_snowflake_types::typing::main::cast_target::cast_target;
+use sqlquack_semantics::snowflake::typing::main::cast_target::cast_target;
 
 use crate::analysis::_helpers::python_signature::python_signature;
 use crate::analysis::models::CaseFunctions;

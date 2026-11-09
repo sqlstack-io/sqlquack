@@ -6,7 +6,7 @@ use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::refusals::main::missing::missing;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
-use sqlquack_semantics::types::models::Volatility;
+use sqlquack_semantics::snowflake::types::models::Volatility;
 
 use crate::conversion::_helpers::expressions::atoms::{
     boolean_literal, column, commented, literal, negate, null_literal, parentheses,

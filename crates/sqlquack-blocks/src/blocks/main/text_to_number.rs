@@ -2,7 +2,7 @@
 
 use sqlquack_diagnostics::failures::constants::NUMBER_NOT_RECOGNIZED;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::blocks::_helpers::text::{
     conversion_failure, once_bound, overflow_failure, space_trimmed,

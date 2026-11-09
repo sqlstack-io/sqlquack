@@ -3,7 +3,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::PathBuf;
 
-use sqlquack_semantics::types::models::{ColumnSpec, Schema};
+use sqlquack_semantics::snowflake::types::models::{ColumnSpec, Schema};
 
 use crate::census::_helpers::corpus::{model_plain_name, model_relation, referenced_model};
 use crate::census::_helpers::inspect::FileCensus;

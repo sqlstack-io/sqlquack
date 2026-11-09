@@ -4,7 +4,7 @@ use sqlquack_syntax::Dialect;
 
 use crate::dialects::types::DialectProfile;
 use crate::lineage::models::{Nullability, NullabilityRule, SchemaColumn, TransformKind};
-use crate::types::models::Holding;
+use crate::snowflake::types::models::Holding;
 
 pub(crate) struct StoredColumnsTestCase {
     pub(crate) description: &'static str,
