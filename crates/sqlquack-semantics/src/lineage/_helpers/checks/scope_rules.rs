@@ -14,8 +14,8 @@ use crate::lineage::_helpers::findings::checks::keyword_function;
 use crate::lineage::_helpers::tracing::expressions::is_aggregate;
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::constants::{
-    BIGQUERY_WINDOW_ONLY_FUNCTIONS, NAME_FIELD, SCOPE_PHASE, SHAPE_COMMENT_SUFFIX,
-    SHAPE_COSMETIC_FIELDS, SPAN_FIELD,
+    NAME_FIELD, SCOPE_PHASE, SHAPE_COMMENT_SUFFIX, SHAPE_COSMETIC_FIELDS, SPAN_FIELD,
+    WINDOW_ONLY_FUNCTIONS,
 };
 use crate::lineage::models::Engine;
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding, ScopeSource};
@@ -64,10 +64,10 @@ fn unwindowed_calls(
 /// Whether `expression` calls one of BigQuery's analytic functions, which take only an OVER clause.
 fn bigquery_window_only(expression: &Expression) -> bool {
     match expression {
-        Expression::Function(function) => BIGQUERY_WINDOW_ONLY_FUNCTIONS
+        Expression::Function(function) => WINDOW_ONLY_FUNCTIONS
             .iter()
             .any(|name| function.name.eq_ignore_ascii_case(name)),
-        Expression::AggregateFunction(function) => BIGQUERY_WINDOW_ONLY_FUNCTIONS
+        Expression::AggregateFunction(function) => WINDOW_ONLY_FUNCTIONS
             .iter()
             .any(|name| function.name.eq_ignore_ascii_case(name)),
         _ => false,

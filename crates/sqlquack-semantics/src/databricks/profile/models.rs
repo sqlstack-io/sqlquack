@@ -171,6 +171,10 @@ impl DialectRules for DatabricksRules {
         false
     }
 
+    fn window_only_functions(&self) -> &'static [&'static str] {
+        &[]
+    }
+
     fn pseudo_columns(&self) -> &'static [&'static str] {
         &[]
     }

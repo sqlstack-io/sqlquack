@@ -5,12 +5,13 @@ use std::rc::Rc;
 use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::dialects::types::DialectProfile;
-use crate::lineage::constants::{DATE_PART_FUNCTIONS, SNOWFLAKE_VALUES_COLUMN};
+use crate::lineage::constants::{
+    DATE_PART_FUNCTIONS, SNOWFLAKE_VALUES_COLUMN, WINDOW_ONLY_FUNCTIONS,
+};
 use crate::lineage::models::Engine;
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
-use crate::postgres::profile::main::postgres_window_only::postgres_window_only;
 use crate::snowflake::profile::_helpers::sets::snowflake_set_type;
 use crate::snowflake::profile::_helpers::type_names::same_snowflake_type;
 use crate::snowflake::profile::_helpers::typing::{
@@ -81,7 +82,7 @@ impl DialectProfile for SnowflakeQuotedIgnoringCase {
     }
 }
 
-/// Snowflake's lineage rules; window-only calls are those PostgreSQL's catalogue lists.
+/// Snowflake's lineage rules; window-only calls are the standard window functions.
 #[derive(Clone, Copy, Debug, Default)]
 pub(crate) struct SnowflakeRules;
 
@@ -210,6 +211,10 @@ impl DialectRules for SnowflakeRules {
         true
     }
 
+    fn window_only_functions(&self) -> &'static [&'static str] {
+        &WINDOW_ONLY_FUNCTIONS
+    }
+
     fn pseudo_columns(&self) -> &'static [&'static str] {
         &[]
     }
@@ -268,9 +273,5 @@ impl DialectRules for SnowflakeRules {
 
     fn cast_spelling(&self, data_type: &DataType) -> Option<String> {
         snowflake_cast_spelling(data_type)
-    }
-
-    fn window_only(&self, expression: &Expression) -> bool {
-        postgres_window_only(expression)
     }
 }

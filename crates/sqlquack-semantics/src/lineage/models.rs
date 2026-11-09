@@ -366,6 +366,10 @@ impl DialectRules for SharedRules {
         false
     }
 
+    fn window_only_functions(&self) -> &'static [&'static str] {
+        &[]
+    }
+
     fn pseudo_columns(&self) -> &'static [&'static str] {
         &[]
     }

@@ -5,12 +5,11 @@ use std::rc::Rc;
 use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::dialects::types::DialectProfile;
-use crate::lineage::constants::DATE_PART_FUNCTIONS;
+use crate::lineage::constants::{DATE_PART_FUNCTIONS, WINDOW_ONLY_FUNCTIONS};
 use crate::lineage::models::Engine;
 use crate::lineage::models::{Lineage, LineageContext, Nullability};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
-use crate::postgres::profile::main::postgres_window_only::postgres_window_only;
 use crate::sqlite::profile::_helpers::typing::{sqlite_cast_spelling, sqlite_literal_type};
 use crate::sqlite::profile::constants::SQLITE_VALUES_COLUMN;
 
@@ -36,7 +35,7 @@ impl DialectProfile for Sqlite {
     }
 }
 
-/// SQLite's lineage rules; window-only calls are those PostgreSQL's catalogue lists.
+/// SQLite's lineage rules; window-only calls are the standard window functions.
 #[derive(Clone, Copy, Debug, Default)]
 pub(crate) struct SqliteRules;
 
@@ -165,6 +164,10 @@ impl DialectRules for SqliteRules {
         false
     }
 
+    fn window_only_functions(&self) -> &'static [&'static str] {
+        &WINDOW_ONLY_FUNCTIONS
+    }
+
     fn pseudo_columns(&self) -> &'static [&'static str] {
         &[]
     }
@@ -210,9 +213,5 @@ impl DialectRules for SqliteRules {
     /// No name: SQLite leaves an unaliased output that is not a column unnamed here.
     fn unaliased_name(&self, _projection: &Expression) -> Option<String> {
         Some(String::new())
-    }
-
-    fn window_only(&self, expression: &Expression) -> bool {
-        postgres_window_only(expression)
     }
 }

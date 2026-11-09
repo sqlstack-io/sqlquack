@@ -11,17 +11,16 @@ rust-version.workspace = true
 
 [features]
 default = []
-# Each dialect's profile and lineage rules. Snowflake, DuckDB, SQLite, ClickHouse and SQL Server
-# find window-only calls in PostgreSQL's catalogue of window functions, so they turn it on.
+# Each dialect's profile and lineage rules.
 bigquery = []
-clickhouse = ["postgres"]
+clickhouse = []
 databricks = []
-duckdb = ["postgres"]
+duckdb = []
 postgres = []
 # Also Snowflake's scalar types and typing rules, and its typed names, scopes and schemas.
-snowflake = ["postgres"]
-sqlite = ["postgres"]
-sqlserver = ["postgres"]
+snowflake = []
+sqlite = []
+sqlserver = []
 
 [dependencies]
 regex.workspace = true

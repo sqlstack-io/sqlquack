@@ -5,6 +5,7 @@ use std::rc::Rc;
 
 use sqlquack_syntax::{DataType, Expression};
 
+use crate::lineage::_helpers::checks::window_only::named_window_only;
 use crate::lineage::main::rendered_type::rendered_type;
 use crate::lineage::models::{Engine, Nullability};
 use crate::lineage::models::{
@@ -163,6 +164,9 @@ pub(crate) trait DialectRules: Sync {
     /// The system columns every stored table has and no star expands.
     fn system_columns(&self) -> &'static [&'static str];
 
+    /// The built-in functions the dialect runs only with OVER, by name.
+    fn window_only_functions(&self) -> &'static [&'static str];
+
     /// A literal's type and nullability, given the shared rules' `generic` answer.
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
         let _ = expression;
@@ -217,8 +221,7 @@ pub(crate) trait DialectRules: Sync {
 
     /// Whether `expression` calls a built-in function the dialect runs only with OVER.
     fn window_only(&self, expression: &Expression) -> bool {
-        let _ = expression;
-        false
+        named_window_only(expression, self.window_only_functions())
     }
 
     /// The `(least, most)` argument counts of the built-in function `name`, when recorded.

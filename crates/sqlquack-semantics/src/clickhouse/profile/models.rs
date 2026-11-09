@@ -10,13 +10,14 @@ use crate::clickhouse::profile::_helpers::typing::{
 };
 use crate::clickhouse::profile::constants::CLICKHOUSE_TIMESTAMP_TYPE;
 use crate::dialects::types::DialectProfile;
-use crate::lineage::constants::{DATE_PART_FUNCTIONS, SNOWFLAKE_VALUES_COLUMN};
+use crate::lineage::constants::{
+    DATE_PART_FUNCTIONS, SNOWFLAKE_VALUES_COLUMN, WINDOW_ONLY_FUNCTIONS,
+};
 use crate::lineage::main::rendered_type::rendered_type;
 use crate::lineage::models::Engine;
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
-use crate::postgres::profile::main::postgres_window_only::postgres_window_only;
 
 /// ClickHouse: names keep their case and compare exactly; types compare as ClickHouse names them.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -51,7 +52,7 @@ impl DialectProfile for ClickHouse {
     }
 }
 
-/// ClickHouse's lineage rules; window-only calls are those PostgreSQL's catalogue lists.
+/// ClickHouse's lineage rules; window-only calls are the standard window functions.
 #[derive(Clone, Copy, Debug, Default)]
 pub(crate) struct ClickHouseRules;
 
@@ -180,6 +181,10 @@ impl DialectRules for ClickHouseRules {
         false
     }
 
+    fn window_only_functions(&self) -> &'static [&'static str] {
+        &WINDOW_ONLY_FUNCTIONS
+    }
+
     fn pseudo_columns(&self) -> &'static [&'static str] {
         &[]
     }
@@ -221,9 +226,5 @@ impl DialectRules for ClickHouseRules {
 
     fn cast_spelling(&self, data_type: &DataType) -> Option<String> {
         rendered_type(data_type).and_then(|written| canonical(&written))
-    }
-
-    fn window_only(&self, expression: &Expression) -> bool {
-        postgres_window_only(expression)
     }
 }

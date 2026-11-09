@@ -1,7 +1,10 @@
-use sqlquack_syntax::{Dialect, ParseOptions};
+use sqlquack_syntax::expressions::functions::models::{AggregateFunction, Function};
+use sqlquack_syntax::{Dialect, Expression, ParseOptions};
 
+use crate::clickhouse::profile::models::ClickHouseRules;
 use crate::dialects::constants::POSTGRES;
 use crate::dialects::types::DialectProfile;
+use crate::duckdb::profile::models::DuckDbRules;
 use crate::lineage::main::query_lineage::query_lineage;
 use crate::lineage::main::statement_lineage::statement_lineage;
 use crate::lineage::models::LineageContext;
@@ -10,7 +13,11 @@ use crate::lineage::tests::helpers::replayed_types;
 use crate::lineage::tests::helpers::typed_column;
 use crate::lineage::tests::helpers::typed_duckdb_shop_schema;
 use crate::lineage::tests::test_types::{EngineTypeReplay, TypedShopSchema};
-use crate::lineage::types::LineageSchema;
+use crate::lineage::types::{DialectRules, LineageSchema};
+use crate::postgres::profile::models::PostgresRules;
+use crate::snowflake::profile::models::SnowflakeRules;
+use crate::sqlite::profile::models::SqliteRules;
+use crate::sqlserver::profile::models::SqlServerRules;
 
 /// Each recorded PostgreSQL result type against the type SQLQuack reports with Engine::Postgres.
 pub(crate) fn replayed_postgres_engine_types(fixture: &str) -> EngineTypeReplay {
@@ -142,3 +149,36 @@ const CANONICAL_POSTGRES_NAMES: [(&[&str], &str); 14] = [
     (&["TIMETZ", "TIME WITH TIME ZONE"], "TIMETZ"),
     (&["TEXT"], "TEXT"),
 ];
+
+/// Each window-checking dialect's answer for `name` called plainly, quoted and as an aggregate.
+pub(crate) fn window_only_answers(name: &str) -> Vec<(&'static str, [bool; 3])> {
+    let quoted = Function {
+        quoted: true,
+        ..Function::new(name, Vec::new())
+    };
+    let calls: [Expression; 3] = [
+        Expression::Function(Box::new(Function::new(name, Vec::new()))),
+        Expression::Function(Box::new(quoted)),
+        Expression::AggregateFunction(Box::new(AggregateFunction {
+            name: name.to_owned(),
+            ..AggregateFunction::default()
+        })),
+    ];
+    let dialects: [(&'static str, &dyn DialectRules); 6] = [
+        ("PostgreSQL", &PostgresRules),
+        ("Snowflake", &SnowflakeRules),
+        ("DuckDB", &DuckDbRules),
+        ("SQLite", &SqliteRules),
+        ("ClickHouse", &ClickHouseRules),
+        ("SQL Server", &SqlServerRules),
+    ];
+    dialects
+        .into_iter()
+        .map(|(dialect, rules)| {
+            (
+                dialect,
+                calls.each_ref().map(|call| rules.window_only(call)),
+            )
+        })
+        .collect()
+}

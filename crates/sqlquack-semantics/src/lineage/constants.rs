@@ -220,8 +220,8 @@ pub(crate) const SQL_STAR: &str = "*";
 pub(crate) const FIRST_ARGUMENT_NULLABILITY: [&str; 2] = ["UPPER", "LOWER"];
 /// The FROM items of a query with one join.
 pub(crate) const SINGLE_JOIN_SOURCES: usize = 2;
-/// BigQuery's analytic functions, which an OVER clause must follow.
-pub(crate) const BIGQUERY_WINDOW_ONLY_FUNCTIONS: [&str; 11] = [
+/// The window functions both <https://www.postgresql.org/docs/current/functions-window.html> and BigQuery's <https://cloud.google.com/bigquery/docs/reference/standard-sql/numbering_functions> and <https://cloud.google.com/bigquery/docs/reference/standard-sql/navigation_functions> list, which run only with OVER.
+pub(crate) const WINDOW_ONLY_FUNCTIONS: [&str; 11] = [
     "ROW_NUMBER",
     "RANK",
     "DENSE_RANK",

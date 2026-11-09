@@ -5,17 +5,19 @@ use std::rc::Rc;
 use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::dialects::types::DialectProfile;
-use crate::lineage::constants::{DATE_PART_FUNCTIONS, SNOWFLAKE_VALUES_COLUMN};
+use crate::lineage::constants::{
+    DATE_PART_FUNCTIONS, SNOWFLAKE_VALUES_COLUMN, WINDOW_ONLY_FUNCTIONS,
+};
 use crate::lineage::models::Engine;
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
 use crate::postgres::profile::_helpers::names::postgres_name;
 use crate::postgres::profile::_helpers::typing::{
-    postgres_cast_spelling, postgres_literal_type, postgres_set_type, postgres_type,
+    called, postgres_cast_spelling, postgres_literal_type, postgres_set_type, postgres_type,
+    window_function,
 };
 use crate::postgres::profile::constants::POSTGRES_SYSTEM_COLUMNS;
-use crate::postgres::profile::main::postgres_window_only::postgres_window_only;
 
 /// PostgreSQL: unquoted identifiers resolve to lower case, and resolved names compare exactly.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -171,6 +173,10 @@ impl DialectRules for PostgresRules {
         false
     }
 
+    fn window_only_functions(&self) -> &'static [&'static str] {
+        &WINDOW_ONLY_FUNCTIONS
+    }
+
     fn pseudo_columns(&self) -> &'static [&'static str] {
         &[]
     }
@@ -228,7 +234,8 @@ impl DialectRules for PostgresRules {
         Some(postgres_name(projection))
     }
 
+    /// Whether `expression` calls a function PostgreSQL's catalogue runs only with OVER.
     fn window_only(&self, expression: &Expression) -> bool {
-        postgres_window_only(expression)
+        called(expression).is_some_and(|(name, _)| window_function(&name))
     }
 }

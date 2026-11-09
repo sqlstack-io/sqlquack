@@ -15,12 +15,11 @@ use crate::duckdb::profile::constants::{
     DUCKDB_ROWID, DUCKDB_TABLE_FUNCTION_COLUMNS, DUCKDB_UNNEST_COLUMN, DUCKDB_VALUE_KEYWORDS,
     DUCKDB_VALUES_COLUMN,
 };
-use crate::lineage::constants::DATE_PART_FUNCTIONS;
+use crate::lineage::constants::{DATE_PART_FUNCTIONS, WINDOW_ONLY_FUNCTIONS};
 use crate::lineage::models::Engine;
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
-use crate::postgres::profile::main::postgres_window_only::postgres_window_only;
 
 /// DuckDB: identifiers keep their case as written, and names compare without regard to ASCII case.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -44,7 +43,7 @@ impl DialectProfile for DuckDb {
     }
 }
 
-/// DuckDB's lineage rules; window-only calls are those PostgreSQL's catalogue lists.
+/// DuckDB's lineage rules; window-only calls are the standard window functions.
 #[derive(Clone, Copy, Debug, Default)]
 pub(crate) struct DuckDbRules;
 
@@ -173,6 +172,10 @@ impl DialectRules for DuckDbRules {
         true
     }
 
+    fn window_only_functions(&self) -> &'static [&'static str] {
+        &WINDOW_ONLY_FUNCTIONS
+    }
+
     fn pseudo_columns(&self) -> &'static [&'static str] {
         &[DUCKDB_ROWID]
     }
@@ -240,10 +243,6 @@ impl DialectRules for DuckDbRules {
             },
             _ => String::new(),
         })
-    }
-
-    fn window_only(&self, expression: &Expression) -> bool {
-        postgres_window_only(expression)
     }
 
     fn builtin_arities(&self, name: &str) -> Option<Vec<(usize, Option<usize>)>> {
