@@ -107,3 +107,20 @@ pub(crate) fn gaps_on_small_stack(sql: String) -> Result<Vec<&'static str>, Stri
         .join()
         .expect("the parse thread finishes")
 }
+
+/// Each recorded statement whose verdict contradicts SQL Server's: a tree for a statement it rejects, or a refusal of one it accepts.
+pub(crate) fn disagreements(receipts: &str) -> Vec<String> {
+    receipts
+        .lines()
+        .filter_map(|line| serde_json::from_str::<Value>(line).ok())
+        .filter_map(|receipt| {
+            let sql: &str = receipt["statement"].as_str()?;
+            let accepted: bool = receipt["outcome"] == "ok";
+            let ours: ExpectedVerdict = verdict(sql);
+            let gap: bool = matches!(ours, ExpectedVerdict::Gap(_));
+            let refused: bool = matches!(ours, ExpectedVerdict::Refused { .. });
+            let agrees: bool = gap || refused != accepted;
+            (!agrees).then(|| format!("{sql}: SQL Server {}, parser {ours:?}", receipt["outcome"]))
+        })
+        .collect()
+}
