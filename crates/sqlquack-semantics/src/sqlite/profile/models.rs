@@ -5,6 +5,7 @@ use std::rc::Rc;
 use sqlquack_syntax::{DataType, Expression};
 
 use crate::dialects::types::DialectProfile;
+use crate::lineage::models::Engine;
 use crate::lineage::models::{Lineage, LineageContext, Nullability};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -34,6 +35,10 @@ impl DialectProfile for Sqlite {
 pub(crate) struct SqliteRules;
 
 impl DialectRules for SqliteRules {
+    fn coercion_engine(&self) -> Engine {
+        Engine::Sqlite
+    }
+
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
         match expression {
             Expression::Literal(literal) => (sqlite_literal_type(literal).map(Rc::from), generic.1),

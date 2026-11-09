@@ -4,10 +4,10 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::types::models::DataType;
 
-use crate::lineage::_helpers::checks::coercion::Engine;
 use crate::lineage::_helpers::checks::relational::query_families;
 use crate::lineage::_helpers::tracing::expressions::expression_lineage;
 use crate::lineage::main::type_family::type_family;
+use crate::lineage::models::Engine;
 use crate::lineage::models::Family;
 use crate::lineage::models::{LineageContext, LineageScope};
 

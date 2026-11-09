@@ -240,7 +240,27 @@ pub struct NameFinding {
 #[derive(Clone, Copy, Debug, Default)]
 pub(crate) struct SharedRules;
 
-impl DialectRules for SharedRules {}
+impl DialectRules for SharedRules {
+    fn coercion_engine(&self) -> Engine {
+        Engine::Snowflake
+    }
+}
+
+/// The engine whose binder the checks follow.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum Engine {
+    DuckDB,
+    /// Snowflake; implicit conversion on USING keys isn't checked, as polyglot leaves it.
+    Snowflake,
+    /// PostgreSQL: no implicit predicate, comparison or string set-operation coercions.
+    Postgres,
+    /// SQLite, whose dynamic typing is not recorded: no type findings, only scope and name rules.
+    Sqlite,
+    /// BigQuery (GoogleSQL): as PostgreSQL, and a string literal converts only to a date or time.
+    BigQuery,
+    /// Databricks SQL, coercions not recorded: no type findings, only scope and name rules.
+    Databricks,
+}
 
 /// A type's family, the class the type checks compare.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

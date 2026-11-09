@@ -9,7 +9,6 @@ use sqlquack_syntax::expressions::names::models::{Column, Identifier, Literal};
 use sqlquack_syntax::expressions::queries::models::{OrderBy, Select};
 
 use crate::dialects::main::dialect_rules::dialect_rules;
-use crate::lineage::_helpers::checks::coercion::Engine;
 use crate::lineage::_helpers::checks::issues::{in_scope, issue, rule_location};
 use crate::lineage::_helpers::findings::checks::keyword_function;
 use crate::lineage::_helpers::tracing::expressions::is_aggregate;
@@ -19,6 +18,7 @@ use crate::lineage::constants::{
     SHAPE_COMMENT_SUFFIX, SHAPE_COSMETIC_FIELDS, SNOWFLAKE_PROFILE, SPAN_FIELD, SQLITE_PROFILE,
     SQLSERVER_PROFILE,
 };
+use crate::lineage::models::Engine;
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding, ScopeSource};
 
 const COLUMNS_FUNCTION: &str = "columns";

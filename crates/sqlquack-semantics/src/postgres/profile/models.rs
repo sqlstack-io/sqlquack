@@ -5,6 +5,7 @@ use std::rc::Rc;
 use sqlquack_syntax::{DataType, Expression};
 
 use crate::dialects::types::DialectProfile;
+use crate::lineage::models::Engine;
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -40,6 +41,10 @@ impl DialectProfile for Postgres {
 pub(crate) struct PostgresRules;
 
 impl DialectRules for PostgresRules {
+    fn coercion_engine(&self) -> Engine {
+        Engine::Postgres
+    }
+
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
         match expression {
             Expression::Literal(literal) => (

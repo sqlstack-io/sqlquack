@@ -4,12 +4,13 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 
 use crate::lineage::_helpers::checks::coercion::{
-    Engine, comparable, invalid_literal_for, literal_coerces, predicate, temporal_function_argument,
+    comparable, invalid_literal_for, literal_coerces, predicate, temporal_function_argument,
 };
 use crate::lineage::_helpers::checks::issues::{issue, type_location};
 use crate::lineage::constants::TYPE_PHASE;
 use crate::lineage::main::call::call;
 use crate::lineage::main::string_literal::string_literal;
+use crate::lineage::models::Engine;
 use crate::lineage::models::Family;
 use crate::lineage::models::NameFinding;
 

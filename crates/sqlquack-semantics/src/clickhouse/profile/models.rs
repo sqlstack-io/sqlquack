@@ -11,6 +11,7 @@ use crate::clickhouse::profile::_helpers::typing::{
 use crate::clickhouse::profile::constants::CLICKHOUSE_TIMESTAMP_TYPE;
 use crate::dialects::types::DialectProfile;
 use crate::lineage::main::rendered_type::rendered_type;
+use crate::lineage::models::Engine;
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -50,6 +51,10 @@ impl DialectProfile for ClickHouse {
 pub(crate) struct ClickHouseRules;
 
 impl DialectRules for ClickHouseRules {
+    fn coercion_engine(&self) -> Engine {
+        Engine::Snowflake
+    }
+
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
         (clickhouse_literal_type(expression).map(Rc::from), generic.1)
     }

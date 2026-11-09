@@ -7,7 +7,6 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::queries::models::{JoinKind, Select, With};
 
-use crate::lineage::_helpers::checks::coercion::Engine;
 use crate::lineage::_helpers::checks::issues::in_scope;
 use crate::lineage::_helpers::checks::node_checks::{NodeLevel, node_findings};
 use crate::lineage::_helpers::checks::scope_rules::{RuleLevel, select_rules, set_order};
@@ -23,6 +22,7 @@ use crate::lineage::_helpers::tracing::queries::{
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::tracing::reuse::{Reuse, reusing};
 use crate::lineage::constants::{CLICKHOUSE_PROFILE, COLUMNS_FUNCTION, SQLSERVER_PROFILE};
+use crate::lineage::models::Engine;
 use crate::lineage::models::NameFinding;
 use crate::lineage::models::{LineageContext, LineageScope, NamedQuery};
 

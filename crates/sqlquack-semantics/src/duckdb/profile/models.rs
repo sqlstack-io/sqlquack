@@ -10,6 +10,7 @@ use crate::duckdb::profile::_helpers::duck_types::{
 };
 use crate::duckdb::profile::_helpers::functions::{duckdb_arities, duckdb_function};
 use crate::duckdb::profile::_helpers::typing::{duckdb_literal_type, duckdb_type};
+use crate::lineage::models::Engine;
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -38,6 +39,10 @@ impl DialectProfile for DuckDb {
 pub(crate) struct DuckDbRules;
 
 impl DialectRules for DuckDbRules {
+    fn coercion_engine(&self) -> Engine {
+        Engine::DuckDB
+    }
+
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
         match expression {
             Expression::Literal(literal) => (

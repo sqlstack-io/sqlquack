@@ -3,13 +3,11 @@
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Literal;
 
-use crate::lineage::constants::{
-    BIGQUERY_PROFILE, DATABRICKS_PROFILE, DECIMAL_BASE, DUCKDB_PROFILE, LAST_HOUR,
-    LAST_MINUTE_OR_SECOND, POSTGRES_PROFILE, SQLITE_PROFILE,
-};
+use crate::dialects::main::dialect_rules::dialect_rules;
+use crate::lineage::constants::{DECIMAL_BASE, LAST_HOUR, LAST_MINUTE_OR_SECOND};
 use crate::lineage::main::string_literal::string_literal;
-use crate::lineage::models::Family;
 use crate::lineage::models::LineageContext;
+use crate::lineage::models::{Engine, Family};
 
 /// The length of an ISO date, `YYYY-MM-DD`, and where its dashes and parts are.
 const ISO_DATE_LENGTH: usize = 10;
@@ -48,32 +46,9 @@ const HEX_RADIX: u32 = 16;
 const OCTAL_RADIX: u32 = 8;
 const BINARY_RADIX: u32 = 2;
 
-/// The engine whose binder the checks follow.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum Engine {
-    DuckDB,
-    /// Snowflake; implicit conversion on USING keys isn't checked, as polyglot leaves it.
-    Snowflake,
-    /// PostgreSQL: no implicit predicate, comparison or string set-operation coercions.
-    Postgres,
-    /// SQLite, whose dynamic typing is not recorded: no type findings, only scope and name rules.
-    Sqlite,
-    /// BigQuery (GoogleSQL): as PostgreSQL, and a string literal converts only to a date or time.
-    BigQuery,
-    /// Databricks SQL, coercions not recorded: no type findings, only scope and name rules.
-    Databricks,
-}
-
 impl Engine {
     pub(crate) fn of(context: LineageContext<'_>) -> Self {
-        match context.profile.name() {
-            DUCKDB_PROFILE => Self::DuckDB,
-            POSTGRES_PROFILE => Self::Postgres,
-            SQLITE_PROFILE => Self::Sqlite,
-            BIGQUERY_PROFILE => Self::BigQuery,
-            DATABRICKS_PROFILE => Self::Databricks,
-            _ => Self::Snowflake,
-        }
+        dialect_rules(context.profile).coercion_engine()
     }
 
     /// The families a predicate position accepts besides BOOLEAN.

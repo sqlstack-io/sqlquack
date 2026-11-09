@@ -8,6 +8,7 @@ use crate::bigquery::profile::_helpers::typing::{
     bigquery_cast_spelling, bigquery_common_type, bigquery_literal_type, bigquery_type,
 };
 use crate::dialects::types::DialectProfile;
+use crate::lineage::models::Engine;
 use crate::lineage::models::{Lineage, LineageContext, TransformKind};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -35,6 +36,10 @@ impl DialectProfile for BigQuery {
 pub(crate) struct BigQueryRules;
 
 impl DialectRules for BigQueryRules {
+    fn coercion_engine(&self) -> Engine {
+        Engine::BigQuery
+    }
+
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
         (bigquery_literal_type(expression).map(Rc::from), generic.1)
     }

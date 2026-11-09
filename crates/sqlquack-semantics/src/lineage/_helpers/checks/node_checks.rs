@@ -7,7 +7,7 @@ use sqlquack_syntax::expressions::types::models::DataType;
 
 use crate::dialects::main::dialect_rules::dialect_rules;
 use crate::lineage::_helpers::checks::coercion::{
-    Engine, arithmetic, comparable, invalid_literal_for, invalid_temporal_literal, literal_coerces,
+    arithmetic, comparable, invalid_literal_for, invalid_temporal_literal, literal_coerces,
     literal_reads_as, predicate, runtime_comparison, runtime_equality, temporal_argument,
     temporal_function_argument, temporal_literal_arithmetic,
 };
@@ -26,6 +26,7 @@ use crate::lineage::constants::{
     DUCKDB_KEYWORD_ONLY_FUNCTIONS, NAME_PHASE, RUNTIME_WARNING, SQLSERVER_PROFILE, TYPE_PHASE,
 };
 use crate::lineage::main::string_literal::string_literal;
+use crate::lineage::models::Engine;
 use crate::lineage::models::Family;
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding};
 
