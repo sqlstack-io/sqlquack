@@ -110,3 +110,10 @@ class DialectNameRuleTestCase:
     path: str
     source: str
     expected_fault_count: int
+
+
+@dataclass(frozen=True)
+class QuotedLineTestCase:
+    description: str
+    source: str
+    expected_quoted: tuple[tuple[int, str], ...]

@@ -198,7 +198,7 @@ def dialect_name_lines(*, source: str, dialects: tuple[str, ...]) -> tuple[Sourc
             dialects="|".join(re.escape(dialect.upper()) for dialect in dialects)
         )
     )
-    raw_lines: list[str] = strip_comments(source=source).splitlines()
+    raw_lines: list[str] = strip_comments(source=source).split("\n")
     code: str = strip_comments_and_strings(source=source)
     starts: set[int] = set()
     for pattern in (*PROFILE_NAME_CALLS, constant):

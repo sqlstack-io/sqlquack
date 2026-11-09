@@ -16,6 +16,7 @@ from scripts.fensu_policy.models import SourceLine
 from tests.unit.scripts.fensu_policy._test_types import (
     DialectNameLinesTestCase,
     DialectNameRuleTestCase,
+    QuotedLineTestCase,
 )
 
 REPOSITORY: Path = Path(__file__).resolve().parents[4]
@@ -101,6 +102,27 @@ def test_given_source_when_checking_then_lists_dialect_name_lines(
     )
 
     assert tuple(line.line for line in found) == test_case.expected_lines
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    [
+        QuotedLineTestCase(
+            "line separators inside a string do not shift the quoted line",
+            'let s = "a\x0cb\u2028c\rd";\nlet engine = context.profile.name();\n',
+            ((2, "let engine = context.profile.name();"),),
+        ),
+    ],
+    ids=lambda case: case.description,
+)
+def test_given_source_when_checking_then_quotes_each_finding_line(
+    test_case: QuotedLineTestCase,
+) -> None:
+    found: tuple[SourceLine, ...] = dialect_name_lines(
+        source=test_case.source, dialects=DEFAULT_DIALECTS
+    )
+
+    assert tuple((line.line, line.text) for line in found) == test_case.expected_quoted
 
 
 @pytest.mark.parametrize(
