@@ -8,6 +8,7 @@ from scripts.duckdb_catalog.constants import (
     PARSER_KEYWORDS_QUERY,
     PROBE_ARGUMENTS,
     PROBE_TABLE,
+    SYNTAX_FORM_PROBES,
     SYNTAX_MARKER,
     TRANSFORMER_REWRITTEN_NAMES,
     UNKNOWN_FUNCTION_MARKERS,
@@ -41,6 +42,18 @@ def special_forms(*, connection: duckdb.DuckDBPyConnection, known: set[str]) -> 
         ):
             special.append(name)
     return special
+
+
+def syntax_forms(connection: duckdb.DuckDBPyConnection) -> list[str]:
+    """Names the parser emits as calls for its own syntax, kept where DuckDB runs that syntax."""
+    forms: list[str] = []
+    for name, probe in SYNTAX_FORM_PROBES.items():
+        try:
+            connection.execute(probe)
+        except duckdb.Error:
+            continue
+        forms.append(name)
+    return forms
 
 
 def reaches_past_lookup(
