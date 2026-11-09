@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-DATA_DIR: Path = Path("crates/sqlquack-semantics/src/postgres/lineage/_helpers/postgres_catalog")
+DATA_DIR: Path = Path("crates/sqlquack-semantics/src/postgres/profile/_helpers/postgres_catalog")
 QUERIES: dict[str, str] = {
     "pg_proc": (
         "SELECT p.proname AS name, p.prokind AS kind, p.proretset AS returns_set, "

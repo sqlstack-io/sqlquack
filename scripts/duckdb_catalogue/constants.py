@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-DATA_DIR: Path = Path("crates/sqlquack-semantics/src/duckdb/lineage/_helpers/duckdb_catalog")
+DATA_DIR: Path = Path("crates/sqlquack-semantics/src/duckdb/profile/_helpers/duckdb_catalog")
 BUILT_IN_FUNCTIONS_QUERY: str = (
     "SELECT DISTINCT lower(function_name) AS name, function_type AS kind, "
     "CASE WHEN function_type IN ('scalar', 'aggregate', 'window') "

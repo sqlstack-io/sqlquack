@@ -26,7 +26,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 ),
                 reason: "SQLClean refused it; PostgreSQL 18.6 parses it, and SQLQuack's parser does too",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 parses it, then stops at binding with 42P01",
+                    "crates/sqlquack-format/src/postgres/profile/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 parses it, then stops at binding with 42P01",
                 ),
             },
             Departure {
@@ -34,7 +34,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "PostgreSQL 18.6 rejects a table alias on a ROWS FROM function, and SQLQuack's parser refuses it too; SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 rejects it, 42601 at 41: syntax error at or near \"alias1\"",
+                    "crates/sqlquack-format/src/postgres/profile/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 rejects it, 42601 at 41: syntax error at or near \"alias1\"",
                 ),
             },
             Departure {
@@ -42,7 +42,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "PostgreSQL 18.6 rejects a table alias on a ROWS FROM function, and SQLQuack's parser refuses it too; SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 rejects it, 42601 at 49: syntax error at or near \"alias1\"",
+                    "crates/sqlquack-format/src/postgres/profile/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 rejects it, 42601 at 49: syntax error at or near \"alias1\"",
                 ),
             },
             Departure {
@@ -68,7 +68,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: Some("SELECT date_col - INTERVAL '30' DAY\nFROM t"),
                 reason: "SQLClean refused it; PostgreSQL 18.6 parses it, and SQLQuack's parser does too",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 parses it, then stops at binding with 42P01",
+                    "crates/sqlquack-format/src/postgres/profile/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 parses it, then stops at binding with 42P01",
                 ),
             },
             Departure {
@@ -76,7 +76,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: Some("SELECT date_col - INTERVAL '1' HOUR AS one_hour_later"),
                 reason: "SQLClean refused it; PostgreSQL 18.6 parses it, and SQLQuack's parser does too",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 parses it, then stops at binding with 42703",
+                    "crates/sqlquack-format/src/postgres/profile/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 parses it, then stops at binding with 42703",
                 ),
             },
             Departure {
@@ -84,7 +84,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: Some("SELECT DATE_ADD(CURRENT_DATE, INTERVAL '7' DAY)"),
                 reason: "SQLClean refused it; PostgreSQL 18.6 parses it, and SQLQuack's parser does too; SQLQuack upper-cases the called name, as in every dialect, and PostgreSQL folds an unquoted function name",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 parses it and runs it",
+                    "crates/sqlquack-format/src/postgres/profile/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 parses it and runs it",
                 ),
             },
             Departure {
@@ -92,7 +92,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "PostgreSQL 18.6 rejects it as a syntax error, and the native parser agrees",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 rejects it, 42601 at 53: syntax error at or near \"offset\"",
+                    "crates/sqlquack-format/src/postgres/profile/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 rejects it, 42601 at 53: syntax error at or near \"offset\"",
                 ),
             },
             Departure {
@@ -112,7 +112,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "PostgreSQL 18.6 rejects it as a syntax error, and the native parser agrees",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 rejects it, 42601 at 146: syntax error at or near \"KEYS\"",
+                    "crates/sqlquack-format/src/postgres/profile/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 rejects it, 42601 at 146: syntax error at or near \"KEYS\"",
                 ),
             },
             Departure {
@@ -120,7 +120,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "PostgreSQL 18.6 rejects it as a syntax error, and the native parser agrees",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 rejects it, 42601 at 30: syntax error at or near \"%\"",
+                    "crates/sqlquack-format/src/postgres/profile/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 rejects it, 42601 at 30: syntax error at or near \"%\"",
                 ),
             },
             Departure {
@@ -128,7 +128,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "PostgreSQL 18.6 rejects it as a syntax error, and the native parser agrees",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 rejects it, 42601 at 30: syntax error at or near \"%\"",
+                    "crates/sqlquack-format/src/postgres/profile/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 rejects it, 42601 at 30: syntax error at or near \"%\"",
                 ),
             },
             Departure {
@@ -136,7 +136,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "PostgreSQL 18.6 rejects it as a syntax error, and the native parser agrees",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 rejects it, 42601 at 31: syntax error at end of input",
+                    "crates/sqlquack-format/src/postgres/profile/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 rejects it, 42601 at 31: syntax error at end of input",
                 ),
             },
             Departure {
@@ -144,7 +144,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: Some("SELECT MLEAST(VARIADIC ARRAY[]::numeric[])"),
                 reason: "SQLClean refused it; PostgreSQL 18.6 parses it, and SQLQuack's parser does too",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 parses it, then stops at binding with 42883",
+                    "crates/sqlquack-format/src/postgres/profile/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 parses it, then stops at binding with 42883",
                 ),
             },
             Departure {
@@ -152,7 +152,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "PostgreSQL 18.6 rejects it as a syntax error, and the native parser agrees",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 rejects it, 42601 at 30: syntax error at or near \"table\"",
+                    "crates/sqlquack-format/src/postgres/profile/tests/fixtures/pg18.6_receipts.jsonl: PostgreSQL 18.6 rejects it, 42601 at 30: syntax error at or near \"table\"",
                 ),
             },
             Departure {

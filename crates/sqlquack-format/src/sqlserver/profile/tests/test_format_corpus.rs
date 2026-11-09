@@ -40,7 +40,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server accepts it; SQLQuack's parser keeps a TABLESAMPLE clause opaque (gap `tablesample`), so the formatter refuses rather than guess; SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -48,7 +48,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server accepts it; SQLQuack's parser keeps a TABLESAMPLE clause opaque (gap `tablesample`), so the formatter refuses rather than guess; SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -56,7 +56,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server accepts it; SQLQuack's parser keeps a TABLESAMPLE clause opaque (gap `tablesample`), so the formatter refuses rather than guess; SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -64,7 +64,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server rejects it: `An expression of non-boolean type specified in a context where a condition is expected, near 'c'.` (4145); SQLQuack's parser refuses it (`An expression of non-boolean type specified in a context where a condition is expected.`); SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -72,7 +72,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server accepts it; SQLQuack's parser keeps a table hint list opaque (gap `table_hint`), so the formatter refuses rather than guess; SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -80,7 +80,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server rejects it: `Must declare the table variable \"@MyTableVar\".` (1087); SQLQuack's parser keeps a table variable source opaque (gap `table_variable`); SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -88,7 +88,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server rejects it: `Must declare the table variable \"@MyTableVar\".` (1087); SQLQuack's parser keeps a table variable source opaque (gap `table_variable`); SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -96,7 +96,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server accepts it; SQLQuack's parser keeps a FOR XML, FOR JSON or FOR BROWSE clause opaque (gap `for_xml_json`), so the formatter refuses rather than guess; SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -104,7 +104,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server accepts it; SQLQuack's parser keeps a FOR XML, FOR JSON or FOR BROWSE clause opaque (gap `for_xml_json`) on FOR JSON in a scalar subquery, a parser false reject; SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -112,7 +112,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server rejects it at binding: `Invalid column name 'j'.` (207, then 8155), as a FOR JSON derived table needs a column list; SQLQuack's parser keeps a FOR XML, FOR JSON or FOR BROWSE clause opaque (gap `for_xml_json`), even with one; SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -120,7 +120,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server accepts it; SQLQuack's parser keeps a FOR XML, FOR JSON or FOR BROWSE clause opaque (gap `for_xml_json`), so the formatter refuses rather than guess; SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -128,7 +128,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server accepts it; SQLQuack's parser keeps a FOR XML, FOR JSON or FOR BROWSE clause opaque (gap `for_xml_json`), so the formatter refuses rather than guess; SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -136,7 +136,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server rejects it: `Incorrect syntax near 'PERCENT'.` (102); SQLQuack's parser refuses it (`Incorrect syntax near the end of the input.`); SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -144,7 +144,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server rejects it: `Incorrect syntax near 'TIES'.` (102); SQLQuack's parser refuses it (`Incorrect syntax near the end of the input.`); SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -152,7 +152,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server accepts it; SQLQuack's parser keeps a FOR SYSTEM_TIME clause opaque (gap `system_time`), so the formatter refuses rather than guess; SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -160,7 +160,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server accepts it; SQLQuack's parser keeps a FOR SYSTEM_TIME clause opaque (gap `system_time`), so the formatter refuses rather than guess; SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -168,7 +168,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server rejects it: `Incorrect syntax near 'c'.` (102); SQLQuack's parser keeps a FOR SYSTEM_TIME clause opaque (gap `system_time`); SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -176,7 +176,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server rejects it: `Incorrect syntax near 'c'.` (102); SQLQuack's parser keeps a FOR SYSTEM_TIME clause opaque (gap `system_time`); SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -184,7 +184,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server rejects it: `Incorrect syntax near 'c'.` (102); SQLQuack's parser keeps a FOR SYSTEM_TIME clause opaque (gap `system_time`); SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -192,7 +192,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server accepts it; SQLQuack's parser keeps a FOR SYSTEM_TIME clause opaque (gap `system_time`), so the formatter refuses rather than guess; SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -200,7 +200,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server accepts it; SQLQuack's parser keeps a join hint opaque (gap `join_hint`), so the formatter refuses rather than guess; SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -208,7 +208,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server rejects it: `Incorrect syntax near the keyword 'schema'.` (156); SQLQuack's parser refuses it (`Incorrect syntax near 'schema'.`); SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
             Departure {
@@ -216,7 +216,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "SQL Server rejects it: `Must declare the table variable \"@x\".` (1087); SQLQuack's parser keeps a table variable source opaque (gap `table_variable`); SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/sqlserver_receipts.jsonl",
+                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
             },
         ],

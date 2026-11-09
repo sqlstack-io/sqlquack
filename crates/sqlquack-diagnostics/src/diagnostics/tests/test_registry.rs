@@ -39,7 +39,7 @@ fn given_guard_names_in_the_syntax_crate_when_looked_up_then_each_has_a_register
         description: "every E_GUARD_* name the syntax crate raises maps to an SQ code",
         roots: &[
             "../sqlquack-syntax/src/guard",
-            "../sqlquack-syntax/src/parser",
+            "../sqlquack-syntax-snowflake/src/parser",
         ],
         expected_unregistered: Vec::new(),
     }];

@@ -16,7 +16,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "BigQuery rejects it: `Syntax error: Unexpected \"*\" at [1:17]`; SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/bigquery_receipts.jsonl",
+                    "crates/sqlquack-format/src/bigquery/profile/tests/fixtures/bigquery_receipts.jsonl",
                 ),
             },
             Departure {
@@ -24,7 +24,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "BigQuery rejects it: a wildcard table needs backquotes (`Syntax error: Expected end of input but got \"*\" at [1:18]`); SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/bigquery_receipts.jsonl",
+                    "crates/sqlquack-format/src/bigquery/profile/tests/fixtures/bigquery_receipts.jsonl",
                 ),
             },
             Departure {
@@ -32,7 +32,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "BigQuery rejects it: HASH is a reserved keyword (`Syntax error: Unexpected keyword HASH at [1:13]`); SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/bigquery_receipts.jsonl",
+                    "crates/sqlquack-format/src/bigquery/profile/tests/fixtures/bigquery_receipts.jsonl",
                 ),
             },
             Departure {
@@ -40,7 +40,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "BigQuery rejects it: AT is a reserved keyword (`Syntax error: Unexpected keyword AT at [1:13]`); SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/bigquery_receipts.jsonl",
+                    "crates/sqlquack-format/src/bigquery/profile/tests/fixtures/bigquery_receipts.jsonl",
                 ),
             },
             Departure {
@@ -48,7 +48,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "BigQuery rejects it: GoogleSQL has no CTE column list (`Syntax error: Expected \")\" but got identifier \"c\" at [1:10]`); SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/bigquery_receipts.jsonl",
+                    "crates/sqlquack-format/src/bigquery/profile/tests/fixtures/bigquery_receipts.jsonl",
                 ),
             },
             Departure {
@@ -56,7 +56,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 formatted: None,
                 reason: "BigQuery rejects it: GoogleSQL has no alias column list (`Syntax error: Expected end of input but got \"(\" at [1:21]`); SQLClean formatted it",
                 receipt: Some(
-                    "crates/sqlquack-format/src/format/tests/fixtures/bigquery_receipts.jsonl",
+                    "crates/sqlquack-format/src/bigquery/profile/tests/fixtures/bigquery_receipts.jsonl",
                 ),
             },
             Departure {
