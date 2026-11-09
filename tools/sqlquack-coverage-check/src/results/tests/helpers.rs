@@ -135,8 +135,9 @@ pub(crate) fn measure(
     write(&translation, "not-translatable.toml", not_translatable);
     write(&translation, "reviews/results.toml", review);
     write(&translation, "obligations/functions.toml", "");
+    std::fs::create_dir_all(directory.path().join("cases")).expect("cases root");
     let coverage = load_coverage(&root, None).expect("coverage loads");
-    let files = load_results_files((&translation, directory.path()), &coverage)?;
+    let files = load_results_files((&translation, &directory.path().join("cases")), &coverage)?;
     measure_results(
         &coverage,
         &files,
@@ -188,15 +189,15 @@ pub(crate) fn obligation(number: u32, fields: &str) -> String {
     )
 }
 
-/// The COUNT_IF case file under `repository`, and an IFF one the obligations may wrongly cite.
-pub(crate) fn count_if_cases(repository: &Path) {
+/// The COUNT_IF case file under `parent`'s `cases/`, and an IFF one the obligations may wrongly cite.
+pub(crate) fn count_if_cases(parent: &Path) {
     write(
-        repository,
+        parent,
         "cases/translation/functions/count-if.toml",
         "construct = \"sf.functions.count-if\"\n",
     );
     write(
-        repository,
+        parent,
         "cases/translation/functions/iff.toml",
         "construct = \"sf.functions.iff\"\n",
     );
@@ -220,7 +221,7 @@ pub(crate) fn measure_obligations(
     write(&translation, "retired-obligations.toml", retired);
     count_if_cases(directory.path());
     let coverage = load_coverage(&root, None).expect("coverage loads");
-    let files = load_results_files((&translation, directory.path()), &coverage)?;
+    let files = load_results_files((&translation, &directory.path().join("cases")), &coverage)?;
     measure_results(
         &coverage,
         &files,

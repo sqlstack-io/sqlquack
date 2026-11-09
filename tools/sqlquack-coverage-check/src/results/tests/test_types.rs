@@ -101,3 +101,20 @@ pub(crate) struct ObligationDiffTestCase {
     pub(crate) retired: bool,
     pub(crate) expected_regressions: usize,
 }
+
+/// Where `syntax-coverage results` reads its cases, beside stale local copies of both kinds.
+pub(crate) struct ResultsRootsTestCase {
+    pub(crate) description: &'static str,
+    /// The recorded syntax cases' root, under the test directory.
+    pub(crate) evidence: &'static str,
+    /// The recorded translation cases' root, under the test directory.
+    pub(crate) cases: &'static str,
+    pub(crate) expected_exit: ExitCode,
+}
+
+/// The arguments after `syntax-coverage results`, and whether they parse.
+pub(crate) struct ResultsArgumentsTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) arguments: &'static [&'static str],
+    pub(crate) expected_parses: bool,
+}

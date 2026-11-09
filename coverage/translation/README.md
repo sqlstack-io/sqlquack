@@ -79,9 +79,16 @@ each obligation's state, the `held` and `unmeasured` obligations with their reas
 
 ```sh
 make verify-recorded           # verify, then the measure against the baseline and the target branch
-syntax-coverage results target/translation-statements.json --report target/translation-results.json
-syntax-coverage results target/translation-statements.json --write-baseline
+make translation-files         # these files and the cases they cite, without a replay; in check-ci
+syntax-coverage results target/translation-statements.json $ROOTS --report target/translation-results.json
+syntax-coverage results target/translation-statements.json $ROOTS --write-baseline
 ```
+
+`$ROOTS` is `--evidence <pinned>/syntax/snowflake --cases <pinned>/convert/snowflake/cases`, the
+pinned evidence's recorded syntax and translation cases (`make` passes them as `RESULTS_ROOTS`).
+Both are required, and they are the only places the command reads cases from: an obligation's
+`cases/translation/...` citation resolves under `--cases`, never under the working directory, so
+a stale local copy of either cannot stand in for missing evidence.
 
 The check fails on obligations it cannot read whole: a missing `obligations/` directory, an
 unknown key, a form the catalogue does not hold or that is absent from its source, an id that is

@@ -12,9 +12,10 @@ use crate::results::models::{
     RetiredFile, TranslationObligation,
 };
 
-/// Every obligation under `directory/obligations` and every retired id, or every problem.
+/// Every obligation under `directory/obligations` and every retired id, or every problem; the
+/// cases they cite are read under `cases`, which must exist.
 pub(crate) fn load_obligations(
-    (directory, repository): (&Path, &Path),
+    (directory, cases): (&Path, &Path),
     catalogued: &BTreeMap<&str, &str>,
 ) -> Result<(Vec<TranslationObligation>, BTreeSet<String>), Vec<String>> {
     let folder = directory.join(OBLIGATIONS_DIR);
@@ -74,23 +75,31 @@ pub(crate) fn load_obligations(
     }
     let (retired, retired_problems) = load_retired(directory, &ids);
     problems.extend(retired_problems);
-    problems.extend(construct_problems(repository, &obligations));
+    match cases.is_dir() {
+        true => problems.extend(construct_problems(cases, &obligations)),
+        false => problems.push(format!(
+            "{}: the recorded translation cases are not there; pass their root with --cases",
+            cases.display()
+        )),
+    }
     match problems.is_empty() {
         true => Ok((obligations, retired)),
         false => Err(problems),
     }
 }
 
-/// Every cited case whose file is missing or whose `construct` is not the obligation's form.
-fn construct_problems(repository: &Path, obligations: &[TranslationObligation]) -> Vec<String> {
+/// Every cited case whose file under `cases` is missing or whose `construct` is not the
+/// obligation's form; a citation's `cases/` prefix names that root.
+fn construct_problems(cases: &Path, obligations: &[TranslationObligation]) -> Vec<String> {
     let mut constructs: BTreeMap<&str, Result<String, String>> = BTreeMap::new();
     let mut problems: Vec<String> = Vec::new();
     for obligation in obligations {
         for case in &obligation.cases {
             let file = case.split_once('#').map_or(case.as_str(), |(file, _)| file);
+            let path = file.strip_prefix(OBLIGATION_CASES_PREFIX).unwrap_or(file);
             let construct = constructs
                 .entry(file)
-                .or_insert_with(|| case_construct(&repository.join(file)));
+                .or_insert_with(|| case_construct(&cases.join(path)));
             match construct {
                 Ok(construct) if *construct == obligation.form => {}
                 Ok(construct) => problems.push(format!(

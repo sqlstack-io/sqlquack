@@ -190,24 +190,34 @@ fn against_target(path: &Path, head: &ResultsBaseline) -> Result<Vec<String>, St
     })
 }
 
+/// The measure of the statements at `statements` over the cases under `cases`; without
+/// statements, only the translation files and the cases they cite are checked.
 pub(crate) fn results(
-    statements: &Path,
+    (statements, cases): (Option<&Path>, &Path),
     (write_baseline, report_path, against): (bool, Option<&Path>, Option<&Path>),
     common: &Common,
 ) -> Result<ExitCode, ExitCode> {
     say(&format!(
-        "loading {} and {}",
+        "loading {}, its evidence {}, the cases {}{}",
         common.root.display(),
-        statements.display()
+        common.evidence.as_deref().unwrap_or(&common.root).display(),
+        cases.display(),
+        statements.map_or(String::new(), |path| format!(" and {}", path.display()))
     ));
     let coverage = load_coverage(&common.root, common.evidence.as_deref())
         .map_err(|problems| fail(&problems))?;
     snowflake_only("results")?;
     let coverage_root: &Path = common.root.parent().unwrap_or(Path::new("."));
     let directory: PathBuf = coverage_root.join(TRANSLATION_DIR);
-    let repository: &Path = coverage_root.parent().unwrap_or(Path::new("."));
-    let files = load_results_files((&directory, repository), &coverage)
-        .map_err(|problems| fail(&problems))?;
+    let files =
+        load_results_files((&directory, cases), &coverage).map_err(|problems| fail(&problems))?;
+    let Some(statements) = statements else {
+        say(&format!(
+            "done: the translation files and the {} obligations' cited cases check out",
+            files.obligations.len()
+        ));
+        return Ok(ExitCode::SUCCESS);
+    };
     let recorded: StatementsFile = read_json(statements).map_err(|problem| fail(&[problem]))?;
     let report =
         measure_results(&coverage, &files, &recorded).map_err(|problems| fail(&problems))?;
