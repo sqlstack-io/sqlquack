@@ -190,8 +190,7 @@ fn against_target(path: &Path, head: &ResultsBaseline) -> Result<Vec<String>, St
     })
 }
 
-/// The measure of the statements at `statements` over the cases under `cases`; without
-/// statements, only the translation files and the cases they cite are checked.
+/// The measure of `statements` over the cases under `cases`, or without them the files alone.
 pub(crate) fn results(
     (statements, cases): (Option<&Path>, &Path),
     (write_baseline, report_path, against): (bool, Option<&Path>, Option<&Path>),

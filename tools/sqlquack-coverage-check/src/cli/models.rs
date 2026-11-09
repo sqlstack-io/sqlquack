@@ -145,8 +145,7 @@ pub enum Command {
         /// The file `sqlquack verify --translation-statements` writes; not read with --files-only.
         #[arg(required_unless_present = "files_only")]
         statements: Option<PathBuf>,
-        /// The recorded translation cases, where obligations' `cases/...` citations resolve. With
-        /// `--evidence`, which it requires, it is the only place cases are read from.
+        /// The recorded translation cases' root; with `--evidence`, the only place cases are read.
         #[arg(long, requires = "evidence")]
         cases: PathBuf,
         /// Check the translation files and the cases they cite, without the measure.

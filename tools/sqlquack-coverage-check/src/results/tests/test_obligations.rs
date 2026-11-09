@@ -1,4 +1,3 @@
-use std::path::Path;
 use std::process::ExitCode;
 
 use clap::Parser;
@@ -10,7 +9,8 @@ use crate::results::constants::STATEMENTS_FORMAT;
 use crate::results::main::diff_results::diff_results;
 use crate::results::models::{ObligationState, ResultState, ResultsBaseline, StatementOutcome};
 use crate::results::tests::helpers::{
-    COUNT_IF_CASE, LINKS, citing, count_if_cases, measure_obligations, obligation, statement, tree,
+    COUNT_IF_CASE, LINKS, citing, copy_folder, count_if_cases, measure_obligations, obligation,
+    statement, tree,
 };
 use crate::results::tests::test_types::{
     ObligationDiffTestCase, ObligationLoadTestCase, ObligationStateTestCase,
@@ -427,15 +427,6 @@ fn given_a_met_obligation_when_it_stops_being_met_then_the_diff_regresses() {
             "{}",
             test_case.description
         );
-    }
-}
-
-/// Copies the files of the folder `name` under `from` to the same folder under `to`.
-fn copy_folder(name: &str, from: &Path, to: &Path) {
-    std::fs::create_dir_all(to.join(name)).expect("folder");
-    for entry in std::fs::read_dir(from.join(name)).expect("folder") {
-        let path = entry.expect("entry").path();
-        std::fs::copy(&path, to.join(name).join(path.file_name().expect("name"))).expect("copy");
     }
 }
 

@@ -231,3 +231,12 @@ pub(crate) fn measure_obligations(
         },
     )
 }
+
+/// Copies the files of the folder `name` under `from` to the same folder under `to`.
+pub(crate) fn copy_folder(name: &str, from: &Path, to: &Path) {
+    std::fs::create_dir_all(to.join(name)).expect("folder");
+    for entry in std::fs::read_dir(from.join(name)).expect("folder") {
+        let path = entry.expect("entry").path();
+        std::fs::copy(&path, to.join(name).join(path.file_name().expect("name"))).expect("copy");
+    }
+}

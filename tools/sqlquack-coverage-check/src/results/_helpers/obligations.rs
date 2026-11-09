@@ -12,8 +12,7 @@ use crate::results::models::{
     RetiredFile, TranslationObligation,
 };
 
-/// Every obligation under `directory/obligations` and every retired id, or every problem; the
-/// cases they cite are read under `cases`, which must exist.
+/// Every obligation under `directory/obligations`, its cited cases under `cases`, and retired ids.
 pub(crate) fn load_obligations(
     (directory, cases): (&Path, &Path),
     catalogued: &BTreeMap<&str, &str>,
@@ -88,8 +87,7 @@ pub(crate) fn load_obligations(
     }
 }
 
-/// Every cited case whose file under `cases` is missing or whose `construct` is not the
-/// obligation's form; a citation's `cases/` prefix names that root.
+/// Every cited case missing under `cases`, the `cases/` prefix stripped, or of another form.
 fn construct_problems(cases: &Path, obligations: &[TranslationObligation]) -> Vec<String> {
     let mut constructs: BTreeMap<&str, Result<String, String>> = BTreeMap::new();
     let mut problems: Vec<String> = Vec::new();
