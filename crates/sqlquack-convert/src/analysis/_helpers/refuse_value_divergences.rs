@@ -4,7 +4,7 @@ use sqlquack_policy::policy::models::{DivergenceFailure, Policy};
 use sqlquack_rules::conversion::models::ConversionOptions;
 
 /// `options` without every divergence whose failure can be a different value rather than an error.
-pub fn refuse_value_divergences(
+pub(crate) fn refuse_value_divergences(
     mut options: ConversionOptions,
     policy: &Policy,
 ) -> ConversionOptions {

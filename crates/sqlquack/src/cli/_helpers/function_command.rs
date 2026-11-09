@@ -5,24 +5,17 @@ use std::path::Path;
 use std::process::ExitCode;
 
 use serde::Serialize;
-use sqlquack_core::diagnostics::constants::SESSION_PARAMETERS;
-use sqlquack_core::diagnostics::main::diagnose::diagnose;
 use sqlquack_core::diagnostics::main::render_diagnostics::render_diagnostics;
-use sqlquack_core::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
 use sqlquack_core::diagnostics::models::Diagnostic;
-use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_duckdb_blocks::macros::main::helper_statements::helper_statements;
-use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::conversion::models::ConvertedFunction;
 
 use crate::census::main::resolve_references::resolve_references;
-use crate::cli::_helpers::evidence::caller_choices;
-use crate::cli::_helpers::evidence::with_divergence_help;
+use crate::cli::_helpers::evidence::conversion_choices;
 use crate::cli::_helpers::project::project_choices;
 use crate::cli::models::{FunctionArguments, FunctionInputs};
-use sqlquack_convert::analysis::main::analyze_function::analyze_function;
+use sqlquack_convert::analysis::main::convert_function::convert_function;
 use sqlquack_rules::session::main::parse_session::parse_session;
-use sqlquack_rules::session::main::session_conversion_options::session_conversion_options;
 
 /// The path naming standard input.
 const STDIN_PATH: &str = "-";
@@ -160,37 +153,11 @@ fn convert(
         ))
     })?;
     let body = resolve_references(&read_body(&arguments.body).map_err(Failure::Usage)?);
-    let options = match session_conversion_options(
-        policy.as_ref(),
-        (conversion.strict, conversion.utc_session),
-        parameters,
-    ) {
-        Ok((options, _)) => options,
-        Err(reason) => {
-            return Err(Failure::Refused {
-                diagnostics: unplaced_diagnostic(SESSION_PARAMETERS, reason)
-                    .into_iter()
-                    .collect(),
-                body,
-            });
-        }
-    };
-    let options = match policy {
-        Some(policy) => caller_choices(options, policy, conversion),
-        None => options,
-    };
-    analyze_function(
+    convert_function(
         (&body, spec),
-        SourceDialect::Snowflake,
-        &builtin_catalogue(),
-        (schema, &options),
+        policy.as_ref(),
+        (&conversion_choices(conversion), parameters),
+        schema,
     )
-    .map_err(|refusals| Failure::Refused {
-        diagnostics: with_divergence_help(
-            &refusals,
-            diagnose(&refusals, &body),
-            (policy.as_ref(), conversion, parameters),
-        ),
-        body,
-    })
+    .map_err(|diagnostics| Failure::Refused { diagnostics, body })
 }
