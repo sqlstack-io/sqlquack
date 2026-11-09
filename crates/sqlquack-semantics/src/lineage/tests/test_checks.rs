@@ -833,6 +833,81 @@ fn given_a_postgres_query_when_checking_types_and_names_then_findings_follow_pos
             expected_findings: &[("E232", "Window function requires an OVER clause", 17)],
         },
         QueryFindingsTestCase {
+            description: "a word compared with a decimal column (18.6: 22P02)",
+            sql: "SELECT id FROM orders WHERE price > 'placed'",
+            expected_findings: &[(
+                "E218",
+                "Comparison contains an invalid coercible literal",
+                28,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a decimal compared with an integer column (18.6: 22P02)",
+            sql: "SELECT id FROM orders WHERE quantity = '1.5'",
+            expected_findings: &[(
+                "E218",
+                "Comparison contains an invalid coercible literal",
+                28,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "integers PostgreSQL reads in hex, octal, binary and with underscores (18.6: accepted)",
+            sql: "SELECT id FROM orders WHERE quantity IN (' 12 ', '0x1F', '0o17', '0b101', '1_000', '+5')",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an IN list holding a word beside an integer (18.6: 22P02)",
+            sql: "SELECT id FROM orders WHERE quantity IN ('1', 'many')",
+            expected_findings: &[("E218", "IN list contains an invalid coercible literal", 28)],
+        },
+        QueryFindingsTestCase {
+            description: "numbers some numeric type reads: NaN, inf, an exponent, underscores, hex (18.6: accepted)",
+            sql: "SELECT id FROM orders WHERE price IN ('NaN', '-inf', '1e3', '1_000.5', '.5', '0x1F')",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a misplaced underscore no numeric type reads (18.6: 22P02)",
+            sql: "SELECT id FROM orders WHERE price < '1._5'",
+            expected_findings: &[(
+                "E218",
+                "Comparison contains an invalid coercible literal",
+                28,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a date that does not exist, in BETWEEN (18.6: 22008)",
+            sql: "SELECT rush FROM shipments WHERE shipped_on BETWEEN '2026-01-01' AND '2026-02-30'",
+            expected_findings: &[("E218", "BETWEEN contains an invalid coercible literal", 33)],
+        },
+        QueryFindingsTestCase {
+            description: "a leap second, a spaced day word and epoch (18.6: accepted)",
+            sql: "SELECT rush FROM shipments WHERE shipped_at IN ('2026-01-01 23:59:60', ' today ', 'epoch')",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a word that is no timestamp (18.6: 22007)",
+            sql: "SELECT rush FROM shipments WHERE shipped_at > 'placed'",
+            expected_findings: &[(
+                "E218",
+                "Comparison contains an invalid coercible literal",
+                33,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "boolean prefixes, on and off (18.6: accepted)",
+            sql: "SELECT rush FROM shipments WHERE rush IN ('tr', 'ye', 'n', 'on', 'of', 'off') AND 'on'",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a lone o is neither on nor off (18.6: 22P02)",
+            sql: "SELECT rush FROM shipments WHERE rush = 'o'",
+            expected_findings: &[(
+                "E218",
+                "Comparison contains an invalid coercible literal",
+                33,
+            )],
+        },
+        QueryFindingsTestCase {
             description: "window functions with OVER, plain aggregates and a windowed subquery (18.6: accepted)",
             sql: "SELECT row_number() OVER (), cume_dist() OVER (ORDER BY quantity), max(quantity) OVER (), \
                   (SELECT nth_value(id, 2) OVER (ORDER BY id) FROM orders LIMIT 1) FROM orders",

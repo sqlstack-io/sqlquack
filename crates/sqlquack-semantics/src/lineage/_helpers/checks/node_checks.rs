@@ -236,6 +236,23 @@ fn clause_predicates(
         .collect()
 }
 
+/// Whether a string literal compared with a typed value is checked against that type.
+fn checks_literals(engine: Engine) -> bool {
+    matches!(engine, Engine::DuckDB | Engine::Postgres)
+}
+
+/// A refused literal: DuckDB's warning, or PostgreSQL's error, which it raises while planning.
+fn invalid_literal_code(engine: Engine) -> &'static str {
+    match engine {
+        Engine::Postgres => "E218",
+        Engine::DuckDB
+        | Engine::Snowflake
+        | Engine::Sqlite
+        | Engine::BigQuery
+        | Engine::Databricks => "W213",
+    }
+}
+
 fn predicate_code(engine: Engine) -> &'static str {
     match engine {
         Engine::DuckDB => "W215",
@@ -251,7 +268,7 @@ fn predicate_code(engine: Engine) -> &'static str {
 fn predicate_value(engine: Engine, expression: &Expression, family: Family) -> bool {
     predicate(engine, family)
         || (literal_coerces(engine, expression, Family::Boolean)
-            && !invalid_literal_for(expression, Family::Boolean))
+            && !invalid_literal_for(engine, expression, Family::Boolean))
 }
 
 /// Whether a clause condition accepts this value; Snowflake's conditions take only BOOLEAN.
@@ -397,6 +414,9 @@ fn expression_checks(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<NameFin
         Expression::Count(function) => {
             findings.extend(function.filter.iter().filter_map(condition));
         }
+        Expression::AggregateFunction(function) => {
+            findings.extend(function.filter.iter().filter_map(condition));
+        }
         Expression::Neg(unary) => {
             let found: Family = family(&unary.this);
             if found != Family::Unknown && !found.is_numeric() && found != Family::Interval {
@@ -413,14 +433,14 @@ fn expression_checks(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<NameFin
             }
         }
         Expression::In(test) => {
-            if engine == Engine::DuckDB
+            if checks_literals(engine)
                 && test
                     .expressions
                     .iter()
-                    .any(|value| invalid_literal_for(value, family(&test.this)))
+                    .any(|value| invalid_literal_for(engine, value, family(&test.this)))
             {
                 findings.push(finding(
-                    "W213",
+                    invalid_literal_code(engine),
                     "IN list contains an invalid coercible literal".to_owned(),
                     node,
                 ));
@@ -435,12 +455,12 @@ fn expression_checks(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<NameFin
         | Expression::Gt(comparison)
         | Expression::Lte(comparison)
         | Expression::Gte(comparison) => {
-            if engine == Engine::DuckDB
-                && (invalid_literal_for(&comparison.left, family(&comparison.right))
-                    || invalid_literal_for(&comparison.right, family(&comparison.left)))
+            if checks_literals(engine)
+                && (invalid_literal_for(engine, &comparison.left, family(&comparison.right))
+                    || invalid_literal_for(engine, &comparison.right, family(&comparison.left)))
             {
                 findings.push(finding(
-                    "W213",
+                    invalid_literal_code(engine),
                     "Comparison contains an invalid coercible literal".to_owned(),
                     node,
                 ));
@@ -461,12 +481,12 @@ fn expression_checks(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<NameFin
             ));
         }
         Expression::Between(between)
-            if engine == Engine::DuckDB
-                && (invalid_literal_for(&between.low, family(&between.this))
-                    || invalid_literal_for(&between.high, family(&between.this))) =>
+            if checks_literals(engine)
+                && (invalid_literal_for(engine, &between.low, family(&between.this))
+                    || invalid_literal_for(engine, &between.high, family(&between.this))) =>
         {
             findings.push(finding(
-                "W213",
+                invalid_literal_code(engine),
                 "BETWEEN contains an invalid coercible literal".to_owned(),
                 node,
             ));
@@ -875,7 +895,8 @@ fn arithmetic_findings(
             || (right_family.is_numeric() && literal_coerces(engine, left, right_family)));
     let mut findings: Vec<NameFinding> = Vec::new();
     if literal_numeric
-        && (invalid_literal_for(left, right_family) || invalid_literal_for(right, left_family))
+        && (invalid_literal_for(engine, left, right_family)
+            || invalid_literal_for(engine, right, left_family))
     {
         findings.push(finding(
             "W211",

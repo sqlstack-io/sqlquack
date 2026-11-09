@@ -420,6 +420,8 @@ pub(crate) const SNOWFLAKE_RANKING_FUNCTIONS: [&str; 3] = ["ROW_NUMBER", "RANK",
 pub(crate) const UNMAPPED_TIMESTAMP: &str = "TIMESTAMP";
 /// Snowflake types whose value may be a JSON null.
 pub(crate) const SNOWFLAKE_JSON_HOLDERS: [&str; 1] = ["VARIANT"];
+/// Snowflake's TO_VARIANT, whose result is a JSON null only when its argument is one.
+pub(crate) const SNOWFLAKE_TO_VARIANT: &str = "TO_VARIANT";
 /// GROUP BY constructs whose subtotal rows NULL the keys they roll up, as functions spell them.
 pub(crate) const SUBTOTAL_GROUPINGS: [&str; 3] = ["ROLLUP", "CUBE", "GROUPING SETS"];
 /// Functions with a date or time part keyword argument, not a column, and its position.

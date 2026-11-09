@@ -2,10 +2,10 @@
 
 use std::rc::Rc;
 
-use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::{Identifier, Star};
 use sqlquack_syntax::expressions::operators::models::Parameter;
+use sqlquack_syntax::{DataType, Expression};
 
 use crate::dialects::main::canonical_type::canonical_type;
 use crate::dialects::main::clickhouse_type::clickhouse_type;
@@ -20,13 +20,14 @@ use crate::lineage::_helpers::typing::postgres_typing::postgres_cast_spelling;
 use crate::lineage::_helpers::typing::rules::{
     ValueType, computed_type, literal_type, mapped_timestamp, rendered_type, required_non_null,
 };
+use crate::lineage::_helpers::typing::snowflake_typing::snowflake_cast_spelling;
 use crate::lineage::_helpers::typing::sqlite_typing::sqlite_cast_spelling;
 use crate::lineage::_helpers::typing::sqlserver_typing::sqlserver_cast_spelling;
 use crate::lineage::constants::{
     AGGREGATE_FUNCTIONS, BIGQUERY_DATE_PART_FUNCTIONS, BIGQUERY_PROFILE, BIGQUERY_WEEKDAY_PARTS,
     BOOLEAN_TYPE, CLICKHOUSE_PROFILE, DATABRICKS_PROFILE, DATE_PART_FUNCTIONS, DUCKDB_PROFILE,
     POSITIONAL_COLUMN_BASE, POSTGRES_PROFILE, SNOWFLAKE_JSON_HOLDERS, SNOWFLAKE_PROFILE,
-    SNOWFLAKE_VARIANT_TYPE, SQLITE_PROFILE, SQLSERVER_PROFILE,
+    SNOWFLAKE_TO_VARIANT, SNOWFLAKE_VARIANT_TYPE, SQLITE_PROFILE, SQLSERVER_PROFILE,
 };
 use crate::lineage::models::{
     Lineage, LineageContext, LineageScope, Nullability, ResolvedQuery, RowReads, TransformKind,
@@ -115,11 +116,17 @@ fn expression_lineage_level(
                     sqlserver_cast_spelling(&cast.to).unwrap_or_else(|| rendered_type(&cast.to))
                 }
                 DATABRICKS_PROFILE => databricks_cast_spelling(&cast.to),
+                SNOWFLAKE_PROFILE => snowflake_cast_spelling(&cast.to),
                 _ => rendered_type(&cast.to),
             };
             let target: Option<Rc<str>> =
                 target.map(|target| mapped_timestamp(Rc::from(target), context));
             let nullability: Nullability = match expression {
+                Expression::Cast(_)
+                    if is_text_type(&cast.to) && variant_of_value(&cast.this, scope, context) =>
+                {
+                    Nullability::NonNull
+                }
                 Expression::Cast(_) => cast_nullability(&inner, target.as_deref(), context),
                 _ => Nullability::Unknown,
             };
@@ -298,6 +305,43 @@ fn query_reads(query: ResolvedQuery) -> RowReads {
         read.read(&column.lineage);
     }
     read
+}
+
+/// Whether `data_type` is a text type, the cast of a TO_VARIANT that keeps its value's text.
+fn is_text_type(data_type: &DataType) -> bool {
+    matches!(
+        data_type,
+        DataType::Char { .. }
+            | DataType::VarChar { .. }
+            | DataType::String { .. }
+            | DataType::Text
+            | DataType::TextWithLength { .. }
+    )
+}
+
+/// Whether `value` is Snowflake's TO_VARIANT of a non-null value no JSON null can hold.
+fn variant_of_value(
+    value: &Expression,
+    scope: &LineageScope<'_>,
+    context: LineageContext<'_>,
+) -> bool {
+    let Expression::Function(function) = value else {
+        return false;
+    };
+    let [argument] = function.args.as_slice() else {
+        return false;
+    };
+    if context.profile.name() != SNOWFLAKE_PROFILE
+        || function.quoted
+        || !function.name.eq_ignore_ascii_case(SNOWFLAKE_TO_VARIANT)
+    {
+        return false;
+    }
+    let argument: Lineage = expression_lineage(argument, scope, context);
+    argument.nullability == Nullability::NonNull
+        && argument.data_type.as_deref().is_some_and(|spelling| {
+            !SNOWFLAKE_JSON_HOLDERS.contains(&canonical_type(spelling).as_str())
+        })
 }
 
 /// A cast keeps its value's nullability, unless a Snowflake JSON null may become SQL NULL.
