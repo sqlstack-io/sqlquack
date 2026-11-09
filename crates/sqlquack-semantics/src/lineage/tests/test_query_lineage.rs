@@ -501,9 +501,18 @@ fn given_a_column_its_relation_lacks_when_tracing_lineage_then_one_stored_relati
             .iter()
             .map(|source| format!("{}.{}", source.relation, source.column))
             .collect();
-        eprintln!(
-            "P2 {} => {:?} {:?} {:?}",
-            test_case.description, sources, output.resolved, output.kind
+        assert_eq!(
+            (sources, output.resolved),
+            (
+                test_case
+                    .expected_sources
+                    .iter()
+                    .map(|source| (*source).to_owned())
+                    .collect::<Vec<String>>(),
+                test_case.expected_resolved
+            ),
+            "{}",
+            test_case.description
         );
     }
 }
