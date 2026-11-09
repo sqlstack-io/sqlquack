@@ -6845,6 +6845,8 @@
     "semi-structured/strip_null_value.toml#strip_null_value_index_and_case": 1534,
     "semi-structured/strip_null_value.toml#strip_null_value_path": 2395,
     "semi-structured/strip_null_value.toml#strip_null_value_root": 976,
+    "semi-structured/table_flatten.toml#table_flatten_named_variant_path": 2157,
+    "semi-structured/table_flatten.toml#table_flatten_positional_array": 2783,
     "semi-structured/try_parse_json_truncated.toml#parse_json_markup": 443,
     "semi-structured/try_parse_json_truncated.toml#parse_json_truncated_document": 406,
     "semi-structured/try_parse_json_truncated.toml#try_parse_json_markup_and_words": 824,
