@@ -17,14 +17,14 @@ use crate::lineage::_helpers::typing::rules::{
     computed_type, literal_type, mapped_timestamp, required_non_null,
 };
 use crate::lineage::constants::{
-    AGGREGATE_FUNCTIONS, BIGQUERY_DATE_PART_FUNCTIONS, BIGQUERY_PROFILE, BIGQUERY_WEEKDAY_PARTS,
-    BOOLEAN_TYPE, DATE_PART_FUNCTIONS, POSITIONAL_COLUMN_BASE, SNOWFLAKE_JSON_HOLDERS,
-    SNOWFLAKE_PROFILE, SNOWFLAKE_TO_VARIANT, SNOWFLAKE_VARIANT_TYPE,
+    AGGREGATE_FUNCTIONS, BOOLEAN_TYPE, POSITIONAL_COLUMN_BASE, SNOWFLAKE_JSON_HOLDERS,
+    SNOWFLAKE_TO_VARIANT, SNOWFLAKE_VARIANT_TYPE,
 };
 use crate::lineage::main::rendered_type::rendered_type;
 use crate::lineage::models::{
     Lineage, LineageContext, LineageScope, Nullability, ResolvedQuery, RowReads, TransformKind,
 };
+use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
 
 /// The lineage of `expression` read in `scope`.
@@ -210,18 +210,15 @@ pub(crate) fn date_part_argument(
     let Expression::Function(function) = function else {
         return false;
     };
-    let bigquery: bool = context.profile.name() == BIGQUERY_PROFILE;
-    let functions: &[(&str, usize)] = match bigquery {
-        true => &BIGQUERY_DATE_PART_FUNCTIONS,
-        false => &DATE_PART_FUNCTIONS,
-    };
+    let rules: &dyn DialectRules = dialect_rules(context.profile);
+    let functions: &[(&str, usize)] = rules.date_part_functions();
     let part: bool = match child {
         Expression::Column(column) => column.table.is_none() && !column.name.quoted,
         Expression::Function(weekday) => {
-            bigquery
-                && BIGQUERY_WEEKDAY_PARTS
-                    .iter()
-                    .any(|name| weekday.name.eq_ignore_ascii_case(name))
+            rules
+                .weekday_date_parts()
+                .iter()
+                .any(|name| weekday.name.eq_ignore_ascii_case(name))
                 && matches!(weekday.args.as_slice(), [Expression::Column(day)] if day.table.is_none() && !day.name.quoted)
         }
         _ => false,
@@ -314,7 +311,7 @@ fn json_null_free_variant(
     let (Expression::Function(function), [(_, argument)]) = (expression, parts) else {
         return false;
     };
-    context.profile.name() == SNOWFLAKE_PROFILE
+    dialect_rules(context.profile).variants_hold_json_null()
         && !function.quoted
         && function.name.eq_ignore_ascii_case(SNOWFLAKE_TO_VARIANT)
         && argument.data_type.as_deref().is_some_and(|spelling| {
@@ -333,12 +330,10 @@ fn cast_nullability(
             SNOWFLAKE_JSON_HOLDERS.contains(&canonical_type(spelling).as_str())
         })
     };
-    match context.profile.name() {
-        SNOWFLAKE_PROFILE
-            if inner.nullability != Nullability::Nullable
-                && semi_structured(inner.data_type.as_deref())
-                && !target
-                    .is_some_and(|target| canonical_type(target) == SNOWFLAKE_VARIANT_TYPE) =>
+    match dialect_rules(context.profile).variants_hold_json_null() {
+        true if inner.nullability != Nullability::Nullable
+            && semi_structured(inner.data_type.as_deref())
+            && !target.is_some_and(|target| canonical_type(target) == SNOWFLAKE_VARIANT_TYPE) =>
         {
             match inner.data_type {
                 Some(_) => Nullability::Nullable,

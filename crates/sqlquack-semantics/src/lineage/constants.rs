@@ -238,20 +238,6 @@ pub(crate) const CLICKHOUSE_PROFILE: &str = "ClickHouse";
 pub(crate) const CLICKHOUSE_SINGLE_JOIN_SOURCES: usize = 2;
 /// The BigQuery profile's name.
 pub(crate) const BIGQUERY_PROFILE: &str = "BigQuery";
-/// BigQuery's functions that take a date part, with the part's argument position.
-pub(crate) const BIGQUERY_DATE_PART_FUNCTIONS: [(&str, usize); 9] = [
-    ("DATE_TRUNC", 1),
-    ("DATETIME_TRUNC", 1),
-    ("TIMESTAMP_TRUNC", 1),
-    ("TIME_TRUNC", 1),
-    ("LAST_DAY", 1),
-    ("DATE_DIFF", 2),
-    ("DATETIME_DIFF", 2),
-    ("TIMESTAMP_DIFF", 2),
-    ("TIME_DIFF", 2),
-];
-/// The date parts BigQuery writes with a weekday argument, as `WEEK(MONDAY)`.
-pub(crate) const BIGQUERY_WEEKDAY_PARTS: [&str; 1] = ["WEEK"];
 /// BigQuery's analytic functions, which an OVER clause must follow.
 pub(crate) const BIGQUERY_WINDOW_ONLY_FUNCTIONS: [&str; 11] = [
     "ROW_NUMBER",

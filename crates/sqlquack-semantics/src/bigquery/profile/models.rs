@@ -7,6 +7,7 @@ use sqlquack_syntax::{DataType, Dialect, Expression};
 use crate::bigquery::profile::_helpers::typing::{
     bigquery_cast_spelling, bigquery_common_type, bigquery_literal_type, bigquery_type,
 };
+use crate::bigquery::profile::constants::{BIGQUERY_DATE_PART_FUNCTIONS, BIGQUERY_WEEKDAY_PARTS};
 use crate::dialects::types::DialectProfile;
 use crate::lineage::models::{CteAliasWidth, Engine, OutputReach};
 use crate::lineage::models::{Lineage, LineageContext, TransformKind};
@@ -69,6 +70,18 @@ impl DialectRules for BigQueryRules {
     }
 
     fn refuses_distinct_order_by_unselected(&self) -> bool {
+        false
+    }
+
+    fn date_part_functions(&self) -> &'static [(&'static str, usize)] {
+        &BIGQUERY_DATE_PART_FUNCTIONS
+    }
+
+    fn weekday_date_parts(&self) -> &'static [&'static str] {
+        &BIGQUERY_WEEKDAY_PARTS
+    }
+
+    fn variants_hold_json_null(&self) -> bool {
         false
     }
 

@@ -9,6 +9,7 @@ use crate::databricks::profile::_helpers::typing::{
     databricks_cast_spelling, databricks_literal_type, databricks_type,
 };
 use crate::dialects::types::DialectProfile;
+use crate::lineage::constants::DATE_PART_FUNCTIONS;
 use crate::lineage::models::{CteAliasWidth, Engine, OutputReach};
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
@@ -74,6 +75,18 @@ impl DialectRules for DatabricksRules {
     }
 
     fn refuses_distinct_order_by_unselected(&self) -> bool {
+        false
+    }
+
+    fn date_part_functions(&self) -> &'static [(&'static str, usize)] {
+        &DATE_PART_FUNCTIONS
+    }
+
+    fn weekday_date_parts(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn variants_hold_json_null(&self) -> bool {
         false
     }
 

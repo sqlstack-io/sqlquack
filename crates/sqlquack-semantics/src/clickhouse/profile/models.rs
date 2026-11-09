@@ -10,6 +10,7 @@ use crate::clickhouse::profile::_helpers::typing::{
 };
 use crate::clickhouse::profile::constants::CLICKHOUSE_TIMESTAMP_TYPE;
 use crate::dialects::types::DialectProfile;
+use crate::lineage::constants::DATE_PART_FUNCTIONS;
 use crate::lineage::main::rendered_type::rendered_type;
 use crate::lineage::models::{CteAliasWidth, Engine, OutputReach};
 use crate::lineage::models::{Lineage, LineageContext};
@@ -84,6 +85,18 @@ impl DialectRules for ClickHouseRules {
     }
 
     fn refuses_distinct_order_by_unselected(&self) -> bool {
+        false
+    }
+
+    fn date_part_functions(&self) -> &'static [(&'static str, usize)] {
+        &DATE_PART_FUNCTIONS
+    }
+
+    fn weekday_date_parts(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn variants_hold_json_null(&self) -> bool {
         false
     }
 

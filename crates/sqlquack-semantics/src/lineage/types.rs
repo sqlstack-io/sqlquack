@@ -82,6 +82,15 @@ pub(crate) trait DialectRules: Sync {
     /// Whether a DISTINCT of columns refuses an ORDER BY of a column it does not select.
     fn refuses_distinct_order_by_unselected(&self) -> bool;
 
+    /// The functions that take a date part keyword, each with the part's argument position.
+    fn date_part_functions(&self) -> &'static [(&'static str, usize)];
+
+    /// The date parts written with a weekday argument, as `WEEK(MONDAY)`.
+    fn weekday_date_parts(&self) -> &'static [&'static str];
+
+    /// Whether a semi-structured value may hold a JSON null that a cast turns into SQL NULL.
+    fn variants_hold_json_null(&self) -> bool;
+
     /// A literal's type and nullability, given the shared rules' `generic` answer.
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
         let _ = expression;

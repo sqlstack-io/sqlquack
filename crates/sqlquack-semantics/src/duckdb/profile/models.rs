@@ -10,6 +10,7 @@ use crate::duckdb::profile::_helpers::duck_types::{
 };
 use crate::duckdb::profile::_helpers::functions::{duckdb_arities, duckdb_function};
 use crate::duckdb::profile::_helpers::typing::{duckdb_literal_type, duckdb_type};
+use crate::lineage::constants::DATE_PART_FUNCTIONS;
 use crate::lineage::models::{CteAliasWidth, Engine, OutputReach};
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
@@ -72,6 +73,18 @@ impl DialectRules for DuckDbRules {
     }
 
     fn refuses_distinct_order_by_unselected(&self) -> bool {
+        false
+    }
+
+    fn date_part_functions(&self) -> &'static [(&'static str, usize)] {
+        &DATE_PART_FUNCTIONS
+    }
+
+    fn weekday_date_parts(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn variants_hold_json_null(&self) -> bool {
         false
     }
 

@@ -5,6 +5,7 @@ use std::rc::Rc;
 use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::dialects::types::DialectProfile;
+use crate::lineage::constants::DATE_PART_FUNCTIONS;
 use crate::lineage::models::{CteAliasWidth, Engine, OutputReach};
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
@@ -114,6 +115,18 @@ impl DialectRules for SnowflakeRules {
     }
 
     fn refuses_distinct_order_by_unselected(&self) -> bool {
+        true
+    }
+
+    fn date_part_functions(&self) -> &'static [(&'static str, usize)] {
+        &DATE_PART_FUNCTIONS
+    }
+
+    fn weekday_date_parts(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn variants_hold_json_null(&self) -> bool {
         true
     }
 
