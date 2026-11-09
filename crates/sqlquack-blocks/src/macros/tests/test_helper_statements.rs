@@ -195,6 +195,51 @@ fn given_a_released_helper_when_defined_then_its_definition_is_unchanged() {
             name: "variant_timestamp_ntz_v1",
             expected_md5: Some("5d0504a84287d99b6725bb1b917d8466"),
         },
+        PinnedDefinitionTestCase {
+            description: "timestamp_text_v1's released definition is unchanged; a change takes a new version",
+            name: "timestamp_text_v1",
+            expected_md5: Some("100a2b398e7c1e131969da9297a62b24"),
+        },
+        PinnedDefinitionTestCase {
+            description: "try_timestamp_text_v1's released definition is unchanged; a change takes a new version",
+            name: "try_timestamp_text_v1",
+            expected_md5: Some("7640845d87be228faf66e9ed84d4326a"),
+        },
+        PinnedDefinitionTestCase {
+            description: "date_text_v1's released definition is unchanged; a change takes a new version",
+            name: "date_text_v1",
+            expected_md5: Some("ce2bac08a72d1b71c56359974a3eea5d"),
+        },
+        PinnedDefinitionTestCase {
+            description: "try_date_text_v1's released definition is unchanged; a change takes a new version",
+            name: "try_date_text_v1",
+            expected_md5: Some("35603478cb0081d0a0a4ec7f575b1c6a"),
+        },
+        PinnedDefinitionTestCase {
+            description: "zoned_text_v1's released definition is unchanged; a change takes a new version",
+            name: "zoned_text_v1",
+            expected_md5: Some("87f3973edab23f28d6d5e3f38c8f7068"),
+        },
+        PinnedDefinitionTestCase {
+            description: "try_zoned_text_v1's released definition is unchanged; a change takes a new version",
+            name: "try_zoned_text_v1",
+            expected_md5: Some("cc16ca7e985fb7afb4ad4da149dc79cd"),
+        },
+        PinnedDefinitionTestCase {
+            description: "utc_zoned_text_v1's released definition is unchanged; a change takes a new version",
+            name: "utc_zoned_text_v1",
+            expected_md5: Some("b1bcbedc46f2c7b91defff1be6f82d78"),
+        },
+        PinnedDefinitionTestCase {
+            description: "try_utc_zoned_text_v1's released definition is unchanged; a change takes a new version",
+            name: "try_utc_zoned_text_v1",
+            expected_md5: Some("0a15e68699dbf4a31224f060a59bb5ac"),
+        },
+        PinnedDefinitionTestCase {
+            description: "time_zone_v1's released definition is unchanged; a change takes a new version",
+            name: "time_zone_v1",
+            expected_md5: Some("a41a0270b8028db02b1b191d968a1d80"),
+        },
     ];
     for test_case in test_cases {
         let opening = format!("CREATE OR REPLACE MACRO sqlquack.{}(", test_case.name);

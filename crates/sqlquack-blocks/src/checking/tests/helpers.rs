@@ -34,6 +34,13 @@ pub(crate) fn failed_stage_over(sql: &str, relations: &[&str]) -> Option<CheckSt
         .map(|failure| failure.stage)
 }
 
+/// `stage` as this build reports it: without the engine, DuckDB neither parses nor binds the SQL.
+pub(crate) fn built_stage(stage: Option<CheckStage>) -> Option<CheckStage> {
+    stage.filter(|stage| {
+        cfg!(feature = "engine") || !matches!(stage, CheckStage::Parse | CheckStage::Bind)
+    })
+}
+
 /// `depth` selects joined by `UNION ALL`, each pair in its own parentheses.
 pub(crate) fn nested_union(depth: usize) -> String {
     (2..=depth).fold("(SELECT 1)".to_owned(), |inner, value| {
