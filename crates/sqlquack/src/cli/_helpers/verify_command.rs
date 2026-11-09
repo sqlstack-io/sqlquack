@@ -35,7 +35,6 @@ use sqlquack_rules::conversion::models::ConversionOptions;
 use crate::analysis::main::builtin_claims::builtin_claims;
 use crate::analysis::main::builtin_failure_modes::builtin_failure_modes;
 use crate::analysis::main::check_equivalence_cases::check_equivalence_cases;
-use crate::analysis::main::confirm_assumption::confirm_assumption;
 use crate::analysis::models::PipelineConverter;
 use crate::cli::_helpers::evidence::{Evidence, load_evidence};
 use crate::cli::models::{
@@ -43,6 +42,7 @@ use crate::cli::models::{
 };
 use crate::statements::main::write_sql_sizes::write_sql_sizes;
 use crate::statements::main::write_translation_statements::write_translation_statements;
+use sqlquack_convert::analysis::main::confirm_assumption::confirm_assumption;
 use sqlquack_rules::session::main::conversion_options::conversion_options;
 
 /// The search path over read-only inputs: their tables, then the helper macros kept in memory.
