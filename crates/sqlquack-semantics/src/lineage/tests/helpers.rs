@@ -187,6 +187,7 @@ pub(crate) fn typed_shop_schema() -> TypedShopSchema {
             ("TO_JSON".to_owned(), "TEXT".to_owned()),
             ("LISTAGG".to_owned(), "TEXT".to_owned()),
             ("TO_VARIANT".to_owned(), "VARIANT".to_owned()),
+            ("PARSE_JSON".to_owned(), "VARIANT".to_owned()),
         ]),
         rules: HashMap::from([
             ("IFF".to_owned(), NullabilityRule::ConditionalResult),

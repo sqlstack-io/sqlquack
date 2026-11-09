@@ -165,6 +165,59 @@ fn given_a_query_when_typing_outputs_then_nulls_and_numbers_follow_the_recorded_
             ],
         },
         DialectTypeTestCase {
+            description: "TO_VARIANT of each non-JSON family casts to text as null as its value",
+            sql: "SELECT TO_VARIANT(c.name)::VARCHAR AS text, TO_VARIANT('null')::VARCHAR AS null_word, \
+                  TO_VARIANT(c.id)::VARCHAR AS number, TO_VARIANT(1.5::FLOAT)::VARCHAR AS float, \
+                  TO_VARIANT(TRUE)::VARCHAR AS boolean, TO_VARIANT(s.shipped_on)::VARCHAR AS date, \
+                  TO_VARIANT(s.cutoff)::VARCHAR AS time, TO_VARIANT(s.shipped_at)::VARCHAR AS ts, \
+                  TO_VARIANT(o.amount)::VARCHAR AS nullable_number \
+                  FROM customers c, shipments s, orders o",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[
+                ("text", Some("VARCHAR"), NonNull),
+                ("null_word", Some("VARCHAR"), NonNull),
+                ("number", Some("VARCHAR"), NonNull),
+                ("float", Some("VARCHAR"), NonNull),
+                ("boolean", Some("VARCHAR"), NonNull),
+                ("date", Some("VARCHAR"), NonNull),
+                ("time", Some("VARCHAR"), NonNull),
+                ("ts", Some("VARCHAR"), NonNull),
+                ("nullable_number", Some("VARCHAR"), Nullable),
+            ],
+        },
+        DialectTypeTestCase {
+            description: "TO_VARIANT of a VARIANT, which may be a JSON null, or a path into one, may cast to NULL; \
+                          a whole OBJECT or ARRAY never is a JSON null",
+            sql: "SELECT TO_VARIANT(e.payload)::VARCHAR AS variant, \
+                  TO_VARIANT(PARSE_JSON('null'))::VARCHAR AS parsed, \
+                  TO_VARIANT(c.name):a::VARCHAR AS path, \
+                  TO_VARIANT('{}'::OBJECT)::VARCHAR AS object, TO_VARIANT('[]'::ARRAY)::VARCHAR AS array \
+                  FROM customers c, events e",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[
+                ("variant", Some("VARCHAR"), Nullable),
+                ("parsed", Some("VARCHAR"), Nullable),
+                ("path", Some("VARCHAR"), Unknown),
+                ("object", Some("VARCHAR"), NonNull),
+                ("array", Some("VARCHAR"), NonNull),
+            ],
+        },
+        DialectTypeTestCase {
+            description: "a TO_VARIANT column of a CTE, filtered IS NOT NULL, casts to non-null text",
+            sql: "WITH d AS (SELECT DISTINCT TO_VARIANT(o.status) AS tag_value FROM orders o), \
+                  p AS (SELECT DISTINCT PARSE_JSON(o.status) AS tag_value FROM orders o) \
+                  SELECT d.tag_value::VARCHAR AS tag_text, p.tag_value::VARCHAR AS parsed_text \
+                  FROM d, p WHERE d.tag_value IS NOT NULL AND p.tag_value IS NOT NULL",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[
+                ("tag_text", Some("VARCHAR"), NonNull),
+                ("parsed_text", Some("VARCHAR"), Nullable),
+            ],
+        },
+        DialectTypeTestCase {
             description: "DATEDIFF takes its unit's recorded NUMBER, and TIMEs their own",
             sql: "SELECT DATEDIFF(day, shipped_on, shipped_at) AS a, \
                   DATEDIFF('second', shipped_at, shipped_at) AS b, \

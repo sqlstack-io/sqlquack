@@ -51,16 +51,11 @@ jobs:
         run: make check-ci
       - name: Run tests
         run: make test
-      - name: Replay recorded cases on DuckDB
+      # `make verify-recorded`, with the same verify flags as `make gate`, then the measure and SQL
+      # size checks.
+      - name: Replay recorded translations on DuckDB and check their baselines
         run: >-
-          cargo run --locked -p sqlquack -- verify --require-verified --python .venv/bin/python
-          --translation-statements target/translation-statements.json --sql-sizes target/sql-sizes.json
-      - name: Check the result-matching measure against its baselines
-        run: >-
-          make translation-results RESULTS_BASE="$EVIDENCE_BASE"
-      - name: Check the generated SQL's size against its baselines
-        run: >-
-          make sql-sizes RESULTS_BASE="$EVIDENCE_BASE"
+          make check-convert DIALECT=snowflake VERIFY_PROFILE=dev RESULTS_BASE="$EVIDENCE_BASE"
 
   polyglot-check:
     name: Exact parser check on DuckShop

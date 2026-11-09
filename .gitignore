@@ -11,6 +11,7 @@ __pycache__/
 # The Python module `make python-module` builds into its package.
 /python/src/sqlquack/*.so
 .ruff_cache/
+.pytest_cache/
 
 # Fensu
 .fensu/cache/
@@ -27,6 +28,7 @@ __pycache__/
 .vscode/
 
 # Local agent configuration and generated skills
+/.amp/
 .claude/*
 /.agents/skills/
 /.claude/skills/

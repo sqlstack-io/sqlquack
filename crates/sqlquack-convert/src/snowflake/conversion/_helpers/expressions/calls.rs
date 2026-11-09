@@ -82,6 +82,9 @@ use crate::snowflake::conversion::constants::{
 };
 use sqlquack_policy::policy::constants::NUMERIC_RANGE;
 
+/// The suffix of LEAST and GREATEST forms that skip NULL arguments.
+const IGNORE_NULLS_SUFFIX: &str = "_IGNORE_NULLS";
+
 /// SEQ4() or SEQ8() in a query level reading only a generator: the row's number from 0.
 fn generator_sequence(
     name: &str,
@@ -338,14 +341,16 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
         ("NVL2", [tested, when_set, otherwise]) => {
             nvl2((tested, when_set, otherwise), &construct, site)
         }
-        ("LEAST" | "GREATEST", parts) if !parts.is_empty() => {
+        ("LEAST" | "GREATEST" | "LEAST_IGNORE_NULLS" | "GREATEST_IGNORE_NULLS", parts)
+            if !parts.is_empty() =>
+        {
             least_greatest(&name, parts, &construct, site)
         }
         _ => Err(missing(construct, format!("no rule converts fn:{name}"))),
     }
 }
 
-/// LEAST or GREATEST, NULL when any argument is NULL, as in Snowflake.
+/// LEAST or GREATEST, NULL when any argument is NULL; the _IGNORE_NULLS forms skip NULLs.
 fn least_greatest(
     name: &str,
     arguments: &[Value],
@@ -361,19 +366,23 @@ fn least_greatest(
         comparable(converted[0].clone(), other.clone(), construct, site.context)?;
     }
     let (branches, target) = unified(&converted, construct, site.context)?;
+    let (function, ignoring) = match name.strip_suffix(IGNORE_NULLS_SUFFIX) {
+        Some(function) => (function.to_ascii_lowercase(), true),
+        None => (name.to_ascii_lowercase(), false),
+    };
+    let call = format!("{function}({})", branches.join(", "));
     let any_null: Vec<String> = branches
         .iter()
         .map(|branch| format!("{branch} IS NULL"))
         .collect();
-    Ok(Emitted::new(
-        format!(
-            "(CASE WHEN {} THEN NULL ELSE {}({}) END)",
-            any_null.join(" OR "),
-            name.to_ascii_lowercase(),
-            branches.join(", ")
+    let sql = match ignoring {
+        true => call,
+        false => format!(
+            "(CASE WHEN {} THEN NULL ELSE {call} END)",
+            any_null.join(" OR ")
         ),
-        target,
-    ))
+    };
+    Ok(Emitted::new(sql, target))
 }
 
 fn nullif(left: &Value, right: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {

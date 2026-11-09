@@ -133,6 +133,8 @@ pub(crate) struct Lineage {
     pub(crate) data_type: Option<Rc<str>>,
     /// Whether the value may be NULL.
     pub(crate) nullability: Nullability,
+    /// Whether the value is a VARIANT that cannot hold a JSON null, as TO_VARIANT of a non-VARIANT.
+    pub(crate) json_null_free: bool,
 }
 
 /// One column a FROM item offers, with its lineage.

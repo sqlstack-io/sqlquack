@@ -19,6 +19,7 @@ pub(crate) fn constant() -> Lineage {
         rows_lost: false,
         data_type: None,
         nullability: Nullability::Unknown,
+        json_null_free: false,
     }
 }
 
@@ -78,6 +79,7 @@ pub(crate) fn combined(parts: Vec<Lineage>, floor: TransformKind) -> Lineage {
         rows_lost,
         data_type: None,
         nullability: Nullability::Unknown,
+        json_null_free: false,
     }
 }
 
@@ -162,6 +164,7 @@ pub(crate) fn merged(parts: Vec<Lineage>, profile: &dyn DialectProfile) -> Linea
         rows_lost,
         data_type,
         nullability,
+        json_null_free: false,
     }
 }
 

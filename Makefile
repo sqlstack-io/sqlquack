@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug gate-build evidence-guard polyglot-guard engine-free generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-results sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
+.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug gate-build evidence-guard polyglot-guard engine-free generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -59,10 +59,14 @@ fensu:
 
 # Fails on any unresolved coverage reference, a form or obligation the baseline claims and the
 # current parser no longer supports, or a catalogue change the baseline was not re-recorded for.
+# The dialects whose syntax claims check-ci holds to their baseline, through `make check-syntax`.
+# REQUIRE_BASELINE=1 fails instead of falling back to `summary`, which does not compare with one.
+CHECK_SYNTAX_DIALECTS ?= snowflake sqlite duckdb
+
 syntax-coverage: gate-build
-	$(GATE_DIR)/syntax-coverage diff coverage/syntax/baseline.json
-	$(GATE_DIR)/syntax-coverage diff --root coverage/syntax-sqlite coverage/syntax-sqlite/baseline.json
-	$(GATE_DIR)/syntax-coverage diff --root coverage/syntax-duckdb coverage/syntax-duckdb/baseline.json
+	@set -e; for dialect in $(CHECK_SYNTAX_DIALECTS); do \
+	  $(MAKE) --no-print-directory check-syntax DIALECT=$$dialect REQUIRE_BASELINE=1; \
+	done
 
 # Fails when a native parser crashes, panics or hangs on deeply nested SQL on a 2 MiB thread and
 # coverage/deep-nesting.toml does not list it, or when a listed failure no longer happens.
@@ -136,7 +140,7 @@ referee-pending:
 	uv run python -m scripts.write_referee_pending $(REFEREE_ARGS)
 
 # The static gate, the first step of `gate`, and the Python API's tests.
-check-ci: rust-lint python-check fensu syntax-coverage depth-probe evidence-guard polyglot-guard engine-free generated-cases syntax-cases dialect-cases referee-cases python-api distribution-notices
+check-ci: rust-lint python-check fensu syntax-coverage depth-probe evidence-guard polyglot-guard engine-free generated-cases syntax-cases dialect-cases referee-cases python-api distribution-notices ## The static gate CI runs.
 
 # Each distribution ships the licence and third-party notices; its copies must match the root files.
 distribution-notices:
@@ -167,8 +171,9 @@ test-rust: gate-build
 	RUST_TEST_JOBS=$(RUST_TEST_JOBS) RUST_TEST_FEATURES=$(GATE_FEATURES) \
 	  scripts/run_rust_tests.sh $(RUST_TEST_PROFILE)
 
-# What every merge to main must pass, on the exact head: the static gate and the Rust tests.
-check-merge: check-ci test-rust
+# What every merge to main must pass, on the exact head: the static gate and the Rust tests. It does
+# not replay the recorded cases; `make verify-recorded` does, and CI runs it on every pull request.
+check-merge: check-ci test-rust ## The merge gate: check-ci and the Rust tests; it replays no recordings.
 
 test-python: python-api
 	uv run pytest $(filter-out $(PYTHON_API_TESTS),$(PYTHON_TESTS)) --ignore=$(PYTHON_API_TESTS) \
@@ -191,9 +196,13 @@ python-api: python-module
 python-wheel: | .venv/bin/python
 	cd python && uvx --from "maturin[patchelf]>=1.9,<2" maturin build --release --locked
 
-# Replays every recorded case on DuckDB; every rule and equivalence needs a passed case.
+# Replays every recorded case on DuckDB; every rule and equivalence needs a passed case. CI and
+# `make gate` both run verify-recorded, so these are the one set of verify flags.
 # Backup pushes may drop --require-verified; failed cases and error findings still block.
 VERIFY_FLAGS ?= --require-verified --strict-errors
+# The cargo profile verify is built with: release locally, dev in CI, where the tests' debug build
+# is already cached.
+VERIFY_PROFILE ?= release
 # Verify reports evidence coverage (docs/coverage.md) and writes it to COVERAGE_REPORT as JSON.
 # REQUIRE_COVERAGE=1 fails on any gap; it stays 0 until the generated hazard cases are recorded.
 COVERAGE_REPORT ?= target/coverage-report.json
@@ -219,12 +228,82 @@ SQL_SIZE_BASELINE := coverage/sql-size/baseline.json
 SQL_SIZE_BASE_FILE := target/sql-size-base.json
 SQL_SIZE_ALLOWANCES := coverage/sql-size/allowances.toml
 
-verify-recorded:
+verify-recorded: ## Replay every recorded translation on DuckDB; check-convert DIALECT=snowflake runs it.
 	mkdir -p $(dir $(COVERAGE_REPORT))
-	cargo run --release --locked -p sqlquack -- verify $(VERIFY_FLAGS) $(COVERAGE_FLAGS) --python $(VERIFY_PYTHON) \
+	cargo run --profile $(VERIFY_PROFILE) --locked -p sqlquack -- verify $(VERIFY_FLAGS) $(COVERAGE_FLAGS) --python $(VERIFY_PYTHON) \
+	  --cases $(call suite_dir,convert,snowflake) \
 	  --translation-statements $(TRANSLATION_STATEMENTS) --sql-sizes $(SQL_SIZES)
 	$(MAKE) translation-results
 	$(MAKE) sql-sizes
+
+# The suites, one pattern for every dialect; README.md, "Running the suites", walks through them.
+# DIALECT is always named, so no dialect is the unnamed default. The check- targets replay committed
+# evidence offline and need no account; the record- targets need the dialect's engine or account,
+# and refuse when RECORDER=0, as in CI.
+DIALECT ?=
+SUITE_DIALECTS := snowflake duckdb postgres sqlite bigquery databricks clickhouse sqlserver
+# Where a suite's committed inputs for a dialect live: $(call suite_dir,<suite>,<dialect>). Every
+# suite target reads its paths from here, so moving the inputs changes this one definition.
+suite_dir = $(if $(filter syntax,$(1)),$(if $(filter snowflake,$(2)),coverage/syntax,coverage/syntax-$(2)),cases)
+SYNTAX_ROOT = $(call suite_dir,syntax,$(DIALECT))
+CONVERT_CASES = $(call suite_dir,convert,$(DIALECT))
+# The referee that records each dialect's syntax receipts on its engine, with the arguments its
+# coverage README gives passed in RECORD_ARGS. Snowflake's capture tool and the Postgres referee are
+# not in the repository yet.
+RECORD_SYNTAX_duckdb = uv run python -m scripts.run_duckdb_receipts run
+RECORD_SYNTAX_sqlite = uv run python -m scripts.run_sqlite_receipts run
+RECORD_SYNTAX_bigquery = uv run -q --no-project --with google-auth --with requests python -m scripts.run_bigquery_receipts run
+RECORD_SYNTAX_databricks = uv run python -m scripts.run_databricks_receipts run
+
+define suite_dialect
+@case " $(SUITE_DIALECTS) " in *" $(DIALECT) "*) ;; *) \
+  echo "$@: name the dialect, as in make $@ DIALECT=snowflake; one of $(SUITE_DIALECTS)" >&2; exit 2;; esac
+endef
+
+define convert_dialect
+@test "$(DIALECT)" = snowflake || { \
+  echo "$@: name DIALECT=snowflake; Snowflake is the only source dialect today, and every conversion targets DuckDB" >&2; exit 2; }
+endef
+
+define recording
+@test "$(RECORDER)" = 1 || { echo "$@: recording is off when RECORDER=$(RECORDER)" >&2; exit 2; }
+endef
+
+help: ## List the suite and gate targets.
+	@awk -F':.*## ' '/^[a-z][a-z-]*:.*## /{printf "  %-15s %s\n", $$1, $$2}' $(firstword $(MAKEFILE_LIST))
+
+pending: ## What DIALECT has not recorded yet, in both suites.
+	$(suite_dialect)
+	$(if $(wildcard $(SYNTAX_ROOT)),$(MAKE) --no-print-directory gate-build)
+	$(if $(wildcard $(SYNTAX_ROOT)),$(GATE_DIR)/syntax-coverage missing --root $(SYNTAX_ROOT),@echo "pending: $(DIALECT) has no syntax suite yet")
+	$(if $(filter snowflake,$(DIALECT)),cargo run --profile $(VERIFY_PROFILE) --locked -p sqlquack -- pending --cases $(CONVERT_CASES),@echo "pending: $(DIALECT) has no translation suite; Snowflake is the only source dialect today")
+
+check-syntax: ## Rerun DIALECT's parser against its recorded syntax evidence, offline.
+	$(suite_dialect)
+	@test -d $(SYNTAX_ROOT) || { echo "check-syntax: $(DIALECT) has no recorded syntax evidence yet" >&2; exit 2; }
+	@test "$(REQUIRE_BASELINE)" != 1 || test -f $(SYNTAX_ROOT)/baseline.json || { \
+	  echo "check-syntax: $(SYNTAX_ROOT)/baseline.json is missing, so nothing would catch a lost form or obligation" >&2; exit 2; }
+	$(MAKE) --no-print-directory gate-build
+	$(GATE_DIR)/syntax-coverage $(if $(wildcard $(SYNTAX_ROOT)/baseline.json),diff --root $(SYNTAX_ROOT) $(SYNTAX_ROOT)/baseline.json,summary --root $(SYNTAX_ROOT))
+
+record-syntax: ## Record DIALECT's syntax receipts on its engine; options in RECORD_ARGS.
+	$(suite_dialect)
+	$(recording)
+	@test $(DIALECT) != snowflake || { \
+	  echo "record-syntax: Snowflake's syntax capture tool is not public yet; it comes into the repository with the evidence move" >&2; exit 2; }
+	@test -n "$(RECORD_SYNTAX_$(DIALECT))" || { echo "record-syntax: $(DIALECT)'s syntax referee is not in the repository yet" >&2; exit 2; }
+	$(RECORD_SYNTAX_$(DIALECT)) $(RECORD_ARGS)
+
+check-convert: ## Replay DIALECT's recorded translations on DuckDB, offline; CASES narrows it.
+	$(convert_dialect)
+	$(if $(CASES),cargo run --profile $(VERIFY_PROFILE) --locked -p sqlquack -- verify --strict-errors --cases $(CASES) --python $(VERIFY_PYTHON))
+	$(if $(CASES),,$(MAKE) --no-print-directory verify-recorded)
+
+record-convert: ## Record DIALECT's pending translation cases on Snowflake; options in RECORD_ARGS.
+	$(convert_dialect)
+	$(recording)
+	cargo run --profile $(VERIFY_PROFILE) --locked -p sqlquack -- pending --cases $(CONVERT_CASES)
+	uv run sqlquack-record $(RECORD_ARGS)
 
 # The generated-SQL size ratchet over the sizes verify wrote; see verify-recorded.
 sql-sizes:
@@ -334,11 +413,11 @@ fuzz-smoke:
 	done
 
 # Everything CI runs: the static gate, the tests, the recorded-case replay, the exact check and the
-# timed conversion on DuckShop, and the fuzz smoke. The pre-push verify hook runs this.
+# timed conversion on DuckShop, and the fuzz smoke.
 # After the static gate, the independent targets run in parallel, each target's output kept
-# together; any failure fails the gate. The verify hook builds what they need beforehand. The fuzz
-# smoke and then the SQL timing benchmark run alone afterwards, so each gets the machine to itself.
-gate: check-ci $(if $(filter command line,$(origin DUCKSHOP_COMPILED)),,duckshop-compiled)
+# together; any failure fails the gate. The fuzz smoke and then the SQL timing benchmark run alone
+# afterwards, so each gets the machine to itself.
+gate: check-ci $(if $(filter command line,$(origin DUCKSHOP_COMPILED)),,duckshop-compiled) ## Everything: check-ci, the tests, the replay, DuckShop, fuzz and the SQL benchmark.
 	$(MAKE) -j --output-sync=target gate-parallel
 	$(MAKE) fuzz-smoke
 	$(MAKE) sql-benchmark
