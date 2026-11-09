@@ -3,12 +3,13 @@
 use crate::fingerprint::_helpers::calls::{
     calls, is_unquoted_word, matching_closers, name_positions,
 };
+use crate::fingerprint::_helpers::context::folds_in_context;
 use crate::fingerprint::_helpers::significant_texts::significant_texts;
 use crate::fingerprint::errors::FingerprintError;
 use crate::fingerprint::main::is_reserved_keyword::is_reserved_keyword;
 use crate::fingerprint::models::FingerprintDialect;
 
-/// Significant token texts of `sql`, with unquoted reserved keywords and called names, outside name positions, upper-cased.
+/// Significant token texts of `sql`, with unquoted reserved keywords, context keywords where they act as keywords and called names, outside name positions, upper-cased.
 pub fn canonical_tokens(
     sql: &str,
     dialect: FingerprintDialect,
@@ -22,6 +23,7 @@ pub fn canonical_tokens(
         let folds = !names[index]
             && is_unquoted_word(raw)
             && (is_reserved_keyword(dialect, &uppers[index])
+                || folds_in_context(dialect, &uppers, index)
                 || calls(raw, &uppers, &closers, index));
         texts.push(if folds {
             uppers[index].clone()

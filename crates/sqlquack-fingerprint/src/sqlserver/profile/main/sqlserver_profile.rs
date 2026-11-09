@@ -10,5 +10,6 @@ pub(crate) fn sqlserver_profile() -> FingerprintProfile {
     FingerprintProfile {
         texts: sqlserver_texts,
         is_reserved,
+        folds_in_context: |_, _| false,
     }
 }

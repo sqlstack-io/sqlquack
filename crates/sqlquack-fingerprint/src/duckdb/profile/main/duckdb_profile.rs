@@ -11,5 +11,6 @@ pub(crate) fn duckdb_profile() -> FingerprintProfile {
     FingerprintProfile {
         texts: |sql| shared_texts(sql, Dialect::DuckDB),
         is_reserved: |word| RESERVED_KEYWORDS.contains(word),
+        folds_in_context: |_, _| false,
     }
 }

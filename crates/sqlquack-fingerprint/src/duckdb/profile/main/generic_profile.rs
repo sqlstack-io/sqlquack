@@ -11,5 +11,6 @@ pub(crate) fn generic_profile() -> FingerprintProfile {
     FingerprintProfile {
         texts: |sql| shared_texts(sql, Dialect::DuckDB),
         is_reserved: is_generic_reserved,
+        folds_in_context: |_, _| false,
     }
 }

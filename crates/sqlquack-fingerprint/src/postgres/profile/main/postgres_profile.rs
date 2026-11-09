@@ -9,5 +9,6 @@ pub(crate) fn postgres_profile() -> FingerprintProfile {
     FingerprintProfile {
         texts: postgres_texts,
         is_reserved: |word| RESERVED_KEYWORDS.contains(word),
+        folds_in_context: |_, _| false,
     }
 }

@@ -14,6 +14,7 @@ rust-version.workspace = true
 [features]
 default = []
 bigquery = ["sqlquack-parse/bigquery"]
+databricks = ["generic-keywords", "shared-tokenizer"]
 duckdb = ["generic-keywords", "shared-tokenizer"]
 postgres = ["keyword-lists", "sqlquack-parse/postgres"]
 snowflake = ["keyword-lists", "shared-tokenizer"]
@@ -34,6 +35,7 @@ sqlquack-syntax.workspace = true
 # The tests fingerprint every dialect.
 sqlquack-fingerprint = { workspace = true, features = [
   "bigquery",
+  "databricks",
   "duckdb",
   "postgres",
   "snowflake",

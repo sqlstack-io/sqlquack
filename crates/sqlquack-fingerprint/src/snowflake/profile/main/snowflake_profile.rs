@@ -11,5 +11,6 @@ pub(crate) fn snowflake_profile() -> FingerprintProfile {
     FingerprintProfile {
         texts: |sql| shared_texts(sql, Dialect::Snowflake),
         is_reserved: |word| RESERVED_KEYWORDS.contains(word),
+        folds_in_context: |_, _| false,
     }
 }
