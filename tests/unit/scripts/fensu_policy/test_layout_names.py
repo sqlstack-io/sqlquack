@@ -56,6 +56,21 @@ VARIANTS: dict[str, str] = variant_map(entries=DEFAULT_DIALECT_VARIANTS)
         ),
         CrateNameTestCase("the bare product crate passes", "sqlquack", "crates/sqlquack", None),
         CrateNameTestCase(
+            "the parse front door passes", "sqlquack-parse", "crates/sqlquack-parse", None
+        ),
+        CrateNameTestCase(
+            "the diagnostics crate passes",
+            "sqlquack-diagnostics",
+            "crates/sqlquack-diagnostics",
+            None,
+        ),
+        CrateNameTestCase(
+            "a dialect suffix on the diagnostics role passes only as a dialect",
+            "sqlquack-diagnostics-shared",
+            "crates/sqlquack-diagnostics-shared",
+            "not a dialect",
+        ),
+        CrateNameTestCase(
             "dialect before role fails",
             "sqlquack-snowflake-types",
             "crates/sqlquack-snowflake-types",
@@ -131,6 +146,30 @@ def test_given_crate_when_naming_then_reports_problem(test_case: CrateNameTestCa
             (("sqlquack-syntax-sqlite", "sqlite"),),
         ),
         DependencyDialectTestCase(
+            "a role crate may use a dependency its own dialect feature gates",
+            "sqlquack-semantics",
+            "crates/sqlquack-semantics",
+            ("sqlquack-syntax", "sqlquack-syntax-clickhouse"),
+            (),
+            frozenset({"sqlquack-syntax-clickhouse"}),
+        ),
+        DependencyDialectTestCase(
+            "a role crate's ungated dependency still fails beside a gated one",
+            "sqlquack-semantics",
+            "crates/sqlquack-semantics",
+            ("sqlquack-syntax-clickhouse", "sqlquack-syntax-databricks"),
+            (("sqlquack-syntax-databricks", "databricks"),),
+            frozenset({"sqlquack-syntax-clickhouse"}),
+        ),
+        DependencyDialectTestCase(
+            "a dialect-named crate gains nothing from a gated dependency on another dialect",
+            "sqlquack-types-snowflake",
+            "crates/sqlquack-types-snowflake",
+            ("sqlquack-syntax-sqlite",),
+            (("sqlquack-syntax-sqlite", "sqlite"),),
+            frozenset({"sqlquack-syntax-sqlite"}),
+        ),
+        DependencyDialectTestCase(
             "a front door may use every dialect",
             "sqlquack-parse",
             "crates/sqlquack-parse",
@@ -158,6 +197,7 @@ def test_given_dependencies_when_checking_then_lists_unnamed_dialects(
         ),
         dialects=ALL_DIALECTS,
         front_doors=DEFAULT_FRONT_DOORS,
+        gated=test_case.gated,
     )
 
     assert found == test_case.expected_pairs

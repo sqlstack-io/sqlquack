@@ -27,6 +27,22 @@ VARIANT: re.Pattern[str] = re.compile(r"^\s*(?:#\[[^\]]*\]\s*)*([A-Z][A-Za-z0-9]
 LINE_COMMENT: re.Pattern[str] = re.compile(r"//.*$", re.MULTILINE)
 BLOCK_COMMENT: re.Pattern[str] = re.compile(r"/\*.*?\*/", re.DOTALL)
 STRING_LITERAL: re.Pattern[str] = re.compile(r'"(?:\\.|[^"\\])*"')
+SOURCE_ROOT: str = "src"
+RUST_SUFFIX: str = ".rs"
+RUST_NAME_SEPARATOR: str = "_"
+FEATURES_TABLE: str = "features"
+DEPENDENCIES_TABLE: str = "dependencies"
+OPTIONAL_KEY: str = "optional"
+DEFAULT_FEATURE: str = "default"
+DEPENDENCY_FEATURE_PREFIX: str = "dep:"
+FEATURE_SEPARATOR: str = "/"
+WEAK_FEATURE_MARK: str = "?"
+CFG_WORD: str = "cfg"
+CFG_FEATURE: re.Pattern[str] = re.compile(r'\bfeature\s*=\s*"([^"]+)"')
+ATTRIBUTE_LINE: re.Pattern[str] = re.compile(r"^\s*#!?\[.*\]\s*$")
+DIALECT_VARIANT_PATH: str = r"\b[A-Za-z]*{enum}::({variant})\b"
+DIALECT_MODULE_PATH: str = r"(::\s*{dialect}\b|\b{dialect}\s*::)"
+MODULE_DECLARATION: str = r"(?:^|\])\s*(?:pub(?:\([^)]*\))?\s+)?mod\s+{dialect}\s*;\s*$"
 
 DEFAULT_DIALECTS: tuple[str, ...] = (
     "snowflake",
@@ -57,6 +73,7 @@ DEFAULT_ROLES: tuple[str, ...] = (
     "lint",
     "fingerprint",
     "compare",
+    "diagnostics",
     "evidence",
     "policy",
     "python",
@@ -110,5 +127,14 @@ SHARED_SYNTAX_MODULES: RuleOption[tuple[str, ...]] = RuleOption.string_list(
     description=(
         "The only top-level modules and test folders the shared sqlquack-syntax crate may hold: "
         "the tree, tokens, spans and diagnostics every dialect parser builds on."
+    ),
+)
+
+DIALECT_REGISTRIES: RuleOption[tuple[str, ...]] = RuleOption.string_list(
+    name="dialect_registries",
+    default=("crates/sqlquack-semantics/src/dialects",),
+    description=(
+        "Folders that map each dialect to its folder's code. Their lines may name a dialect "
+        'when a #[cfg(feature = "<dialect>")] attribute gates the line or sits directly above it.'
     ),
 )

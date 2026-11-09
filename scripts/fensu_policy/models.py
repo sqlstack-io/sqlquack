@@ -28,3 +28,21 @@ class SourceLine:
 
     line: int
     text: str
+
+
+@dataclass(frozen=True)
+class CrateFeatures:
+    """The features a crate manifest declares, and the dependencies it marks optional."""
+
+    features: dict[str, tuple[str, ...]]
+    optional_dependencies: frozenset[str]
+
+
+@dataclass(frozen=True)
+class DialectVocabulary:
+    """The ways Rust code in one crate can name a dialect, each mapped to that dialect."""
+
+    dialects: tuple[str, ...]
+    variants: dict[str, str]
+    folders: frozenset[str]
+    crates: dict[str, str]

@@ -80,14 +80,19 @@ def named_dialects(*, name: str, dialects: tuple[str, ...]) -> frozenset[str]:
 
 
 def unnamed_dependency_dialects(
-    *, crate: CrateDependencies, dialects: tuple[str, ...], front_doors: tuple[str, ...]
+    *,
+    crate: CrateDependencies,
+    dialects: tuple[str, ...],
+    front_doors: tuple[str, ...],
+    gated: frozenset[str],
 ) -> tuple[tuple[str, str], ...]:
-    """Return (dependency, dialect) pairs where a crate uses a dialect its own name omits."""
+    """Return (dependency, dialect) pairs a crate uses without naming or feature-gating them."""
     if crate.name in front_doors or crate.directory.split("/")[0] == TOOLS_ROOT:
         return ()
     own: frozenset[str] = named_dialects(name=crate.name, dialects=dialects)
+    allowed: frozenset[str] = frozenset() if own else gated
     found: list[tuple[str, str]] = []
-    for dependency in sorted(crate.runtime_dependencies):
+    for dependency in sorted(set(crate.runtime_dependencies) - allowed):
         missing: frozenset[str] = named_dialects(name=dependency, dialects=dialects) - own
         found.extend((dependency, dialect) for dialect in sorted(missing))
     return tuple(found)
@@ -116,15 +121,18 @@ def variant_map(*, entries: tuple[str, ...]) -> dict[str, str]:
     return mapping
 
 
+def _blank(match: re.Match[str]) -> str:
+    return re.sub(r"[^\n]", " ", match.group(0))
+
+
+def strip_comments(*, source: str) -> str:
+    """Blank out comments, keeping line breaks so line numbers hold."""
+    return LINE_COMMENT.sub(_blank, BLOCK_COMMENT.sub(_blank, source))
+
+
 def strip_comments_and_strings(*, source: str) -> str:
     """Blank out comments and string literals, keeping line breaks so line numbers hold."""
-
-    def blank(match: re.Match[str]) -> str:
-        return re.sub(r"[^\n]", " ", match.group(0))
-
-    without_blocks: str = BLOCK_COMMENT.sub(blank, source)
-    without_lines: str = LINE_COMMENT.sub(blank, without_blocks)
-    return STRING_LITERAL.sub(blank, without_lines)
+    return STRING_LITERAL.sub(_blank, strip_comments(source=source))
 
 
 def enum_variants(*, source: str, name: str) -> tuple[str, ...] | None:

@@ -22,6 +22,7 @@ class DependencyDialectTestCase:
     directory: str
     runtime_dependencies: tuple[str, ...]
     expected_pairs: tuple[tuple[str, str], ...]
+    gated: frozenset[str] = frozenset()
 
 
 @dataclass(frozen=True)
@@ -56,3 +57,34 @@ class ScriptRuleTestCase:
     files: tuple[RuleFile, ...] = ()
     scope: str = "tooling"
     scope_root: str | None = "scripts"
+
+
+@dataclass(frozen=True)
+class FeatureGateTestCase:
+    description: str
+    manifest: str
+    expected_gated: frozenset[str]
+    expected_defaults: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class PathDialectTestCase:
+    description: str
+    parts: tuple[str, ...]
+    expected_dialect: str | None
+
+
+@dataclass(frozen=True)
+class FolderFeatureTestCase:
+    description: str
+    manifest: str
+    folders: frozenset[str]
+    expected_missing: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class SharedLinesTestCase:
+    description: str
+    source: str
+    registry: bool
+    expected_lines: tuple[int, ...]

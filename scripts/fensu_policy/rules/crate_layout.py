@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from fensu import AnalyzerId, Family, Fault, Project, RuleContext, rule
 
+from scripts.fensu_policy._helpers.dialect_features import feature_gated_dependencies
 from scripts.fensu_policy._helpers.layout_names import (
     crate_module,
     crate_name_problem,
@@ -15,6 +16,7 @@ from scripts.fensu_policy._helpers.layout_names import (
     unnamed_dependency_dialects,
     variant_map,
 )
+from scripts.fensu_policy._helpers.manifests import crate_features
 from scripts.fensu_policy.constants import (
     DIALECT_ENUM,
     DIALECT_VARIANTS,
@@ -62,13 +64,17 @@ def crate_name_shape(*, project: Project, ctx: RuleContext) -> list[Fault]:
     code="XSQ002",
     family=Family.CUSTOM,
     slug="dialect-named-dependents",
-    message="a crate that uses a dialect-named crate must name that dialect too",
+    message=(
+        "a crate that uses a dialect-named crate names that dialect, or gates the dependency "
+        "behind a feature of the same name"
+    ),
     remediation=(
-        "Reach the dialect through sqlquack-parse or another front door, or move the code into "
-        "a crate named for the dialect; the dialect's knowledge must not hide in a neutral name."
+        "Reach the dialect through sqlquack-parse or another front door, move the code into a "
+        "crate named for the dialect, or, in a multi-dialect role crate, keep it in src/<dialect>/ "
+        "and make the dependency optional, turned on only by the <dialect> feature."
     ),
     analyzers=(AnalyzerId.RUST,),
-    cacheable=True,
+    cacheable=False,
     options=(DIALECTS, FRONT_DOORS),
 )
 def dialect_named_dependents(*, project: Project, ctx: RuleContext) -> list[Fault]:
@@ -87,8 +93,12 @@ def dialect_named_dependents(*, project: Project, ctx: RuleContext) -> list[Faul
                 and RUNTIME_DEPENDENCY_KINDS.intersection(dependency.kinds)
             ),
         )
+        gated: frozenset[str] = feature_gated_dependencies(
+            features=crate_features(ctx=ctx, manifest_path=str(crate.manifest_path)),
+            dialects=dialects,
+        )
         for dependency, dialect in unnamed_dependency_dialects(
-            crate=dependencies, dialects=dialects, front_doors=front_doors
+            crate=dependencies, dialects=dialects, front_doors=front_doors, gated=gated
         ):
             faults.append(
                 ctx.path_fault(
