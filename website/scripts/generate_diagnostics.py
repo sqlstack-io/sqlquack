@@ -1,7 +1,7 @@
 """Write the diagnostics reference page from SQLQuack's diagnostic code registry.
 
-The registry, `crates/sqlquack-diagnostics/src/diagnostics/constants.rs`, is the one source of every `SQ`
-code. This script reads its `CODES` entries and writes
+The registry, `crates/sqlquack-diagnostics/src/diagnostics/constants.rs`, is the one source of
+every `SQ` code. This script reads its `CODES` entries and writes
 `website/src/content/docs/docs/diagnostics/reference.mdx`. With `--check` it writes nothing and
 exits 1 when the page differs from what the registry gives.
 
