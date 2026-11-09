@@ -1,7 +1,8 @@
 //! The formatting pipeline: lex, parse, lay out against the guide, then check the output.
 
 use sqlquack_syntax::tokens::models::TokenType;
-use sqlquack_syntax::{CallMode, ExpressionWalk, parse_statements_with};
+use sqlquack_syntax::{CallMode, ExpressionWalk};
+use sqlquack_syntax_snowflake::parse_statements_with;
 
 use crate::format::_helpers::bigquery::parse_bigquery;
 use crate::format::_helpers::guide::layout_guide;

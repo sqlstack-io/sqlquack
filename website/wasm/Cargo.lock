@@ -233,6 +233,7 @@ dependencies = [
  "sqlquack-policy",
  "sqlquack-semantics",
  "sqlquack-syntax",
+ "sqlquack-syntax-snowflake",
 ]
 
 [[package]]
@@ -258,6 +259,7 @@ name = "sqlquack-parse"
 version = "0.2.0"
 dependencies = [
  "sqlquack-syntax",
+ "sqlquack-syntax-snowflake",
 ]
 
 [[package]]
@@ -278,6 +280,7 @@ dependencies = [
  "serde_json",
  "sqlquack-diagnostics",
  "sqlquack-syntax",
+ "sqlquack-syntax-snowflake",
  "stacker",
 ]
 
@@ -288,6 +291,18 @@ dependencies = [
  "serde",
  "serde_json",
  "sqlquack-derive",
+ "stacker",
+ "thiserror 1.0.69",
+ "unicode-segmentation",
+]
+
+[[package]]
+name = "sqlquack-syntax-snowflake"
+version = "0.2.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sqlquack-syntax",
  "stacker",
  "thiserror 1.0.69",
  "unicode-segmentation",

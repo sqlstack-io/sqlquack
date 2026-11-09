@@ -12,6 +12,7 @@ libfuzzer-sys = "0.4"
 sqlquack-diagnostics = { path = "../crates/sqlquack-diagnostics" }
 sqlquack-parse = { path = "../crates/sqlquack-parse" }
 sqlquack-syntax = { path = "../crates/sqlquack-syntax" }
+sqlquack-syntax-snowflake = { path = "../crates/sqlquack-syntax-snowflake" }
 
 # Kept out of the SQLQuack workspace; run with `cargo +nightly fuzz run tolerant` or `diagnose`.
 [workspace]

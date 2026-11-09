@@ -1395,6 +1395,7 @@ dependencies = [
  "sqlquack-policy",
  "sqlquack-semantics",
  "sqlquack-syntax",
+ "sqlquack-syntax-snowflake",
  "tempfile",
  "toml",
  "walkdir",
@@ -1431,6 +1432,7 @@ dependencies = [
  "sqlquack-policy",
  "sqlquack-semantics",
  "sqlquack-syntax",
+ "sqlquack-syntax-snowflake",
 ]
 
 [[package]]
@@ -1447,6 +1449,7 @@ dependencies = [
  "sqlquack-syntax-databricks",
  "sqlquack-syntax-duckdb",
  "sqlquack-syntax-postgres",
+ "sqlquack-syntax-snowflake",
  "sqlquack-syntax-sqlite",
  "sqlquack-syntax-sqlserver",
  "tempfile",
@@ -1471,6 +1474,7 @@ dependencies = [
  "sqlquack-diagnostics",
  "sqlquack-parse",
  "sqlquack-syntax",
+ "sqlquack-syntax-snowflake",
 ]
 
 [[package]]
@@ -1499,6 +1503,7 @@ dependencies = [
  "sqlquack-syntax",
  "sqlquack-syntax-bigquery",
  "sqlquack-syntax-postgres",
+ "sqlquack-syntax-snowflake",
  "sqlquack-syntax-sqlserver",
 ]
 
@@ -1510,6 +1515,7 @@ dependencies = [
  "sqlquack-syntax",
  "sqlquack-syntax-bigquery",
  "sqlquack-syntax-postgres",
+ "sqlquack-syntax-snowflake",
  "sqlquack-syntax-sqlserver",
 ]
 
@@ -1535,6 +1541,7 @@ dependencies = [
  "sqlquack-syntax-bigquery",
  "sqlquack-syntax-databricks",
  "sqlquack-syntax-postgres",
+ "sqlquack-syntax-snowflake",
 ]
 
 [[package]]
@@ -1542,6 +1549,7 @@ name = "sqlquack-parse"
 version = "0.2.0"
 dependencies = [
  "sqlquack-syntax",
+ "sqlquack-syntax-snowflake",
 ]
 
 [[package]]
@@ -1566,6 +1574,7 @@ dependencies = [
  "sqlquack-evidence",
  "sqlquack-policy",
  "sqlquack-syntax",
+ "sqlquack-syntax-snowflake",
  "toml",
  "walkdir",
 ]
@@ -1599,6 +1608,7 @@ dependencies = [
  "sqlquack-syntax-databricks",
  "sqlquack-syntax-duckdb",
  "sqlquack-syntax-postgres",
+ "sqlquack-syntax-snowflake",
  "sqlquack-syntax-sqlite",
  "sqlquack-syntax-sqlserver",
  "stacker",
@@ -1659,6 +1669,18 @@ dependencies = [
  "serde_json",
  "sqlquack-syntax",
  "stacker",
+]
+
+[[package]]
+name = "sqlquack-syntax-snowflake"
+version = "0.2.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sqlquack-syntax",
+ "stacker",
+ "thiserror 1.0.69",
+ "unicode-segmentation",
 ]
 
 [[package]]

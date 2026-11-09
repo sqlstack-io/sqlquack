@@ -42,11 +42,14 @@ OPENING_BRACKETS: frozenset[str] = frozenset({"(", "[", "{"})
 CLOSING_BRACKETS: frozenset[str] = frozenset({")", "]", "}"})
 
 CRATE_NAME: str = "sqlquack_syntax"
-CRATE_DOC: str = "SQLQuack's tokenizer, parser and syntax tree for Snowflake and DuckDB."
+CRATE_DOC: str = (
+    "SQLQuack's shared syntax tree, tokens, spans and diagnostics for every dialect parser."
+)
 FILE_DOCS: dict[str, str] = {}
 DIRECTORY_DOCS: dict[str, str] = {}
 REWRITTEN_ROOTS: tuple[tuple[str, str, bool], ...] = (
-    ("crates/sqlquack-syntax/tests", "sqlquack_syntax", True),
+    ("crates/sqlquack-syntax-snowflake/src", "sqlquack_syntax", True),
+    ("crates/sqlquack-syntax-snowflake/tests", "sqlquack_syntax", True),
     ("crates/sqlquack-diagnostics/src", "sqlquack_syntax", True),
     ("crates/sqlquack-convert/src", "sqlquack_syntax", True),
     ("crates/sqlquack-blocks/src", "sqlquack_syntax", True),

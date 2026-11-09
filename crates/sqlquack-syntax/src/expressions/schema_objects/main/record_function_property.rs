@@ -3,7 +3,7 @@
 use crate::expressions::schema_objects::models::CreateFunction;
 use crate::expressions::schema_objects::models::FunctionPropertyKind;
 
-pub(crate) fn record_function_property(
+pub fn record_function_property(
     mut function: CreateFunction,
     kind: FunctionPropertyKind,
 ) -> CreateFunction {

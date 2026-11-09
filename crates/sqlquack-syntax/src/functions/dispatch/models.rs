@@ -2,7 +2,7 @@
 
 /// Parser dispatch behavior for phase-4 registry-driven typed-function handling.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) enum ParserDispatchBehavior {
+pub enum ParserDispatchBehavior {
     ExprListFunction,
     OptionalExprListFunction,
     FunctionArgumentsFunction,

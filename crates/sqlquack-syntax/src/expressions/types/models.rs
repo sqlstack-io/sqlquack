@@ -360,7 +360,7 @@ pub struct HanaDataType {
 
 impl DataType {
     /// The longest chain of types nested inside this one: 0 for `INT`, 2 for `INT[][]`.
-    pub(crate) fn nesting_depth(&self) -> usize {
+    pub fn nesting_depth(&self) -> usize {
         let mut deepest = 0;
         let mut pending: Vec<(&DataType, usize)> = vec![(self, 0)];
         while let Some((data_type, depth)) = pending.pop() {
@@ -481,7 +481,7 @@ impl DataType {
     }
 
     /// Canonical unsigned type names and their bit-width aliases.
-    pub(crate) fn from_unsigned_name(name: &str) -> Option<Self> {
+    pub fn from_unsigned_name(name: &str) -> Option<Self> {
         match name.to_ascii_uppercase().as_str() {
             "UTINYINT" | "UINT8" => Some(Self::UInt8),
             "USMALLINT" | "UINT16" => Some(Self::UInt16),

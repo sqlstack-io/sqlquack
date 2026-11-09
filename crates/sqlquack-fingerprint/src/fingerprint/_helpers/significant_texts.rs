@@ -25,7 +25,7 @@ pub(crate) fn significant_texts(
         FingerprintDialect::Snowflake => Dialect::Snowflake,
         FingerprintDialect::SQLite => Dialect::SQLite,
     };
-    Ok(sqlquack_syntax::tokenize(sql, lossless)
+    Ok(sqlquack_syntax_snowflake::tokenize(sql, lossless)
         .map_err(|error| FingerprintError::Tokenize(error.to_string()))?
         .iter()
         .filter(|token| matches!(token.kind, TokenKind::Significant(_)))

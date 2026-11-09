@@ -1,8 +1,5 @@
 use std::sync::Arc;
 
-use crate::parser::models::Dialect;
-use crate::tokens::errors::Error;
-use crate::tokens::models::DialectType;
 use crate::tokens::models::ParserTokenText;
 use crate::tokens::models::Token;
 use crate::tokens::models::TokenType;
@@ -90,16 +87,4 @@ pub(crate) fn parser_tokens_borrow_source(sql: &str) -> bool {
     tokens
         .iter()
         .all(|token| matches!(&token.text, ParserTokenText::Source { .. }))
-}
-
-pub(crate) fn error_position(
-    error: &Error,
-) -> (Option<usize>, Option<usize>, Option<usize>, Option<usize>) {
-    (error.line(), error.column(), error.start(), error.end())
-}
-
-pub(crate) fn parse_error(sql: &str) -> Error {
-    Dialect::get(DialectType::Generic)
-        .parse(sql)
-        .expect_err("the query does not parse")
 }

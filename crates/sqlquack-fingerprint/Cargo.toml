@@ -12,6 +12,7 @@ rust-version.workspace = true
 [dependencies]
 sha2.workspace = true
 sqlquack-syntax.workspace = true
+sqlquack-syntax-snowflake.workspace = true
 sqlquack-syntax-bigquery.workspace = true
 sqlquack-syntax-postgres.workspace = true
 sqlquack-syntax-sqlserver.workspace = true

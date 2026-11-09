@@ -3,7 +3,8 @@
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::time::{Duration, Instant};
 
-use sqlquack_syntax::{Dialect, ParseOptions, parse_tolerant};
+use sqlquack_syntax::{Dialect, ParseOptions};
+use sqlquack_syntax_snowflake::parse_tolerant;
 
 use crate::diagnostics::constants::MAX_SHOWN_LINE;
 use crate::diagnostics::main::{diagnose::diagnose, render_diagnostics::render_diagnostics};

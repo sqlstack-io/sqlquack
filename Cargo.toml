@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "crates/sqlquack-syntax",
+    "crates/sqlquack-syntax-snowflake",
     "crates/sqlquack-derive",
     "crates/sqlquack-diagnostics",
     "crates/sqlquack-parse",
@@ -79,6 +80,7 @@ sqlquack-parse = { path = "crates/sqlquack-parse" }
 sqlquack-policy = { path = "crates/sqlquack-policy" }
 sqlquack-semantics = { path = "crates/sqlquack-semantics" }
 sqlquack-syntax = { path = "crates/sqlquack-syntax" }
+sqlquack-syntax-snowflake = { path = "crates/sqlquack-syntax-snowflake" }
 sqlquack-derive = { path = "crates/sqlquack-derive" }
 sqlquack-syntax-postgres = { path = "crates/sqlquack-syntax-postgres" }
 sqlquack-syntax-bigquery = { path = "crates/sqlquack-syntax-bigquery" }

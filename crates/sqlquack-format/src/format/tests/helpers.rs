@@ -1,7 +1,8 @@
 //! Helpers of the format tests.
 
 use serde_json::Value;
-use sqlquack_syntax::{TokenKind, tokenize};
+use sqlquack_syntax::TokenKind;
+use sqlquack_syntax_snowflake::tokenize;
 
 use crate::format::models::FormatDialect;
 

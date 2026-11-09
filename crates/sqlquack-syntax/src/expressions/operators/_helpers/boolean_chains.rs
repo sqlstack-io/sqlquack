@@ -1,9 +1,9 @@
 //! Operators: boolean chains.
 
 use crate::expressions::names::models::Null;
+use crate::expressions::operators::constants::BALANCED_CHAIN_MAX_TERMS;
 use crate::expressions::operators::models::BinaryOp;
 use crate::expressions::tree::models::Expression;
-use crate::parser::constants::BALANCED_CHAIN_MAX_TERMS;
 
 pub(crate) fn should_rebalance_boolean_chain(expr: &Expression, is_and: bool) -> bool {
     let mut leaf_count = 0usize;

@@ -182,7 +182,7 @@ impl Identifier {
     }
 
     /// The legacy string form of a named type field, quoted with SQL-standard delimiters.
-    pub(crate) fn to_type_field_name(&self) -> String {
+    pub fn to_type_field_name(&self) -> String {
         if self.quoted {
             format!("\"{}\"", self.name.replace('"', "\"\""))
         } else {

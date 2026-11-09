@@ -1,5 +1,5 @@
 //! Functions.
 
-pub(crate) mod dispatch;
-pub(crate) mod names;
-pub(crate) mod typed;
+pub mod dispatch;
+pub mod names;
+pub mod typed;

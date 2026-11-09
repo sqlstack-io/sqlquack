@@ -5,7 +5,8 @@ use std::collections::BTreeSet;
 use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::operators::models::ParameterStyle;
 use sqlquack_syntax::tokens::models::TokenType;
-use sqlquack_syntax::{Dialect, Expression, ExpressionWalk, TokenKind, tokenize};
+use sqlquack_syntax::{Dialect, Expression, ExpressionWalk, TokenKind};
+use sqlquack_syntax_snowflake::tokenize;
 
 use crate::statements::constants::{CALL, CALL_BARE, CALL_NAMED, CALL_OVER, SPELLING};
 

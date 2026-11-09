@@ -1,7 +1,8 @@
 //! Faithful calls put back into polyglot's lowered form, one call at a time.
 
 use serde_json::{Map, Value};
-use sqlquack_syntax::{CallMode, Dialect, ParseOptions, parse_statements_with};
+use sqlquack_syntax::{CallMode, Dialect, ParseOptions};
+use sqlquack_syntax_snowflake::parse_statements_with;
 
 use crate::comparison::constants::{
     AGGREGATE_KEY, ANNOTATED_KEY, COMMENTS_SUFFIX, ERROR_KIND, FUNCTION_KEY, JSON_EXTRACT_KEY,

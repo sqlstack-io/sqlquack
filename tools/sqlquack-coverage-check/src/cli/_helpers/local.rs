@@ -30,7 +30,7 @@ fn accepted(statements: &[Expression], gapped: bool) -> LocalVerdict {
 
 /// SQLQuack's Snowflake verdict; a Command or Raw node anywhere makes the parse opaque.
 fn snowflake_verdict(sql: &str) -> LocalVerdict {
-    match sqlquack_syntax::parse_statements_with(
+    match sqlquack_syntax_snowflake::parse_statements_with(
         sql,
         Dialect::Snowflake,
         &ParseOptions::default(),

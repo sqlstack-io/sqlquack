@@ -30,6 +30,7 @@ sqlquack-blocks.workspace = true
 sqlquack-policy.workspace = true
 sqlquack-semantics.workspace = true
 sqlquack-syntax.workspace = true
+sqlquack-syntax-snowflake.workspace = true
 
 [dev-dependencies]
 # The tests run the Snowflake rules and pipeline.

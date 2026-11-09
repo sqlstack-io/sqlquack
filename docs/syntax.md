@@ -186,7 +186,7 @@ entry's located parse, without `span` fields, must equal its faithful parse.
 SQLQuack also fixes valid Snowflake that polyglot rejects. Each fix is a `[[fix]]` entry in the
 same file: an id, a marker the statement contains (whitespace removed) and polyglot's errors on it.
 The check counts a statement as fixed, not different, only when SQLQuack parses it, polyglot's
-error is one listed, and the marker appears; `crates/sqlquack-syntax/tests/fixes.rs` pins the tree
+error is one listed, and the marker appears; `crates/sqlquack-syntax-snowflake/tests/parser/test_fixes.rs` pins the tree
 each fix produces. The first fix: `v[3]:a`, a key path on an array element.
 
 The opposite case, a statement SQLQuack rejects and polyglot parses, is a `[[rejection]]` entry:
@@ -225,7 +225,7 @@ NULLS options. The only entry: `ORDER BY ALL`.
 The faithful parse also keeps a quoted variant path key that holds `.`, `[`, `]`, `"` or `:` in
 brackets (`v:a."x.y"` is the path `a["x.y"]`), where polyglot joins it with dots (`a.x.y`), which
 reads as two keys. The check compares variant paths written flat, so this bracketing is the only
-difference it allows there; `crates/sqlquack-syntax/tests/faithful.rs` pins the paths.
+difference it allows there; `crates/sqlquack-syntax-snowflake/tests/parser/test_faithful.rs` pins the paths.
 
 ## Corpora
 

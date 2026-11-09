@@ -13,8 +13,13 @@ pub(crate) fn parse_guarded(sql: &str, dialect: Dialect) -> Result<Vec<Expressio
             ..ComplexityGuardOptions::default()
         }),
     };
-    sqlquack_syntax::parse_statements_with(sql, dialect, &options, CallMode::FaithfulLocated)
-        .map_err(|error| failure(&error))
+    sqlquack_syntax_snowflake::parse_statements_with(
+        sql,
+        dialect,
+        &options,
+        CallMode::FaithfulLocated,
+    )
+    .map_err(|error| failure(&error))
 }
 
 fn failure(error: &Error) -> ParseFailure {

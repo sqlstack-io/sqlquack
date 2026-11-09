@@ -24,6 +24,7 @@ sqlquack-evidence.workspace = true
 sqlquack-policy.workspace = true
 sqlquack-convert = { workspace = true, features = ["engine", "snowflake"] }
 sqlquack-syntax.workspace = true
+sqlquack-syntax-snowflake.workspace = true
 toml.workspace = true
 walkdir.workspace = true
 

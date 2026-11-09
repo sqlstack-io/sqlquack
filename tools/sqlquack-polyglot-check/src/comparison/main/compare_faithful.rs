@@ -1,7 +1,8 @@
 //! `compare_faithful`: SQLQuack's faithful parse against its lowered parse.
 
 use serde_json::Value;
-use sqlquack_syntax::{CallMode, Dialect, ParseOptions, parse_statements_with};
+use sqlquack_syntax::{CallMode, Dialect, ParseOptions};
+use sqlquack_syntax_snowflake::parse_statements_with;
 
 use crate::comparison::_helpers::faithful::{comments, relower, with_flat_paths, without_comments};
 use crate::comparison::models::{FaithfulComparison, Spelling};

@@ -5,10 +5,8 @@ use std::sync::LazyLock;
 
 use crate::lint::models::LintDialect;
 use sqlquack_syntax::tokens::models::{Token, TokenType, Tokenizer, TokenizerConfig};
-use sqlquack_syntax::{
-    ComplexityGuardOptions, Dialect, Expression, ExpressionWalk, ParseOptions, dialect_tokens,
-    parse_expressions, parse_statements,
-};
+use sqlquack_syntax::{ComplexityGuardOptions, Dialect, Expression, ExpressionWalk, ParseOptions};
+use sqlquack_syntax_snowflake::{dialect_tokens, parse_expressions, parse_statements};
 
 use crate::lint::constants::UNPARSED_DIALECTS;
 use crate::lint::models::ParsedSql;

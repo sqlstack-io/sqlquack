@@ -3,23 +3,7 @@
 use crate::lossless::errors::TokenizeFailure;
 use crate::lossless::models::LosslessToken;
 use crate::lossless::models::TokenKind;
-use crate::parser::models::DuckDBDialect;
-use crate::parser::models::PostgresDialect;
-use crate::parser::models::SnowflakeDialect;
-use crate::parser::models::SqliteDialect;
-use crate::parser::types::DialectImpl;
-use crate::tokens::models::Dialect;
-use crate::tokens::models::TokenizerConfig;
 use std::ops::Range;
-
-pub(crate) fn tokenizer_config(dialect: Dialect) -> TokenizerConfig {
-    match dialect {
-        Dialect::Snowflake => SnowflakeDialect.tokenizer_config(),
-        Dialect::DuckDB => DuckDBDialect.tokenizer_config(),
-        Dialect::PostgreSQL => PostgresDialect.tokenizer_config(),
-        Dialect::SQLite => SqliteDialect.tokenizer_config(),
-    }
-}
 
 /// Splits the gap `sql[start..end]` into whitespace and comment tokens.
 pub(crate) fn trivia(

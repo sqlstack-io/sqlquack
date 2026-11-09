@@ -2,7 +2,7 @@
 
 /// High-level parse category for canonical typed function dispatch.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) enum TypedParseKind {
+pub enum TypedParseKind {
     AggregateLike,
     Unary,
     Binary,
@@ -13,7 +13,7 @@ pub(crate) enum TypedParseKind {
 
 /// Typed-function metadata for canonicalization and future dispatch organization.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) struct TypedFunctionSpec {
+pub struct TypedFunctionSpec {
     pub canonical_name: &'static str,
     /// Alias spellings that canonicalize to `canonical_name`.
     pub aliases: &'static [&'static str],
@@ -22,7 +22,7 @@ pub(crate) struct TypedFunctionSpec {
 
 /// Registry metadata group for specialized typed-function parser families.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) enum TypedDispatchGroup {
+pub enum TypedDispatchGroup {
     Aggregate,
     Window,
     Json,

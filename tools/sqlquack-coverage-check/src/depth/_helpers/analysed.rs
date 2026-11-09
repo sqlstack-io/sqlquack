@@ -67,7 +67,7 @@ fn orders(parser: LocalParser) -> Option<(Orders, &'static dyn DialectProfile)> 
 /// The statements `parser` reads from `sql`, or its verdict when it reads none.
 fn parsed(parser: LocalParser, sql: &str) -> Result<Vec<Expression>, LocalVerdict> {
     match parser {
-        LocalParser::Snowflake => sqlquack_syntax::parse_statements_with(
+        LocalParser::Snowflake => sqlquack_syntax_snowflake::parse_statements_with(
             sql,
             Dialect::Snowflake,
             &ParseOptions::default(),

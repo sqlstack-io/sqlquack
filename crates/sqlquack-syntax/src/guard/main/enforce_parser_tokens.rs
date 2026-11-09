@@ -5,7 +5,7 @@ use crate::guard::models::ComplexityGuardOptions;
 use crate::tokens::models::ParserToken;
 use crate::tokens::types::Result;
 
-pub(crate) fn enforce_parser_tokens(
+pub fn enforce_parser_tokens(
     tokens: &[ParserToken],
     options: &ComplexityGuardOptions,
 ) -> Result<()> {

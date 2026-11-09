@@ -3,7 +3,7 @@
 use crate::expressions::types::models::IntervalUnit;
 
 /// Parse an interval unit from a string (used for splitting compound interval strings)
-pub(crate) fn parse_interval_unit_from_string(s: &str) -> Option<IntervalUnit> {
+pub fn parse_interval_unit_from_string(s: &str) -> Option<IntervalUnit> {
     let unit = s.trim().to_ascii_uppercase();
 
     fn parse_base_unit(base: &str) -> Option<IntervalUnit> {

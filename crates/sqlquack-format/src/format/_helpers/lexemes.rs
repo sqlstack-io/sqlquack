@@ -1,7 +1,8 @@
 //! The significant tokens and comments of SQL, read from the lossless tokenizer.
 
+use sqlquack_syntax::TokenKind;
 use sqlquack_syntax::tokens::models::TokenType;
-use sqlquack_syntax::{TokenKind, tokenize};
+use sqlquack_syntax_snowflake::tokenize;
 
 use crate::format::_helpers::bigquery::lex_bigquery;
 use crate::format::_helpers::native::{native_keywords, native_kind};

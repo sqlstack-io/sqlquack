@@ -5,10 +5,7 @@ use crate::functions::names::_helpers::lookups::DUCKDB_AGGREGATE_FUNCTION_NAME_S
 use crate::tokens::models::DialectType;
 
 /// Whether `name` parses as an aggregate in the source dialect.
-pub(crate) fn is_aggregate_function_name_for_dialect(
-    name: &str,
-    dialect: Option<DialectType>,
-) -> bool {
+pub fn is_aggregate_function_name_for_dialect(name: &str, dialect: Option<DialectType>) -> bool {
     let upper = name.to_uppercase();
     (is_aggregate_function_name(name))
         || (matches!(dialect, Some(DialectType::DuckDB))

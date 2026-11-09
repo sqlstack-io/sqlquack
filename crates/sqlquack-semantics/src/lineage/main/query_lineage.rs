@@ -1,6 +1,7 @@
 //! `query_lineage`: the column lineage of the one query in some SQL.
 
-use sqlquack_syntax::{CallMode, Dialect, ParseOptions, parse_statements_with};
+use sqlquack_syntax::{CallMode, Dialect, ParseOptions};
+use sqlquack_syntax_snowflake::parse_statements_with;
 
 use crate::lineage::main::statement_lineage::statement_lineage;
 use crate::lineage::models::{LineageContext, QueryLineage};

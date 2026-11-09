@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
-use sqlquack_syntax::{CallMode, Dialect, ParseOptions, parse_statements_with};
+use sqlquack_syntax::{CallMode, Dialect, ParseOptions};
+use sqlquack_syntax_snowflake::parse_statements_with;
 
 use crate::dialects::constants::SQLITE;
 use crate::lineage::main::query_lineage::query_lineage;

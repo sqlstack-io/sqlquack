@@ -740,7 +740,7 @@ note = "polyglot lowers it to node:year"
 
 # Valid Snowflake polyglot rejects and SQLQuack parses. The check counts an entry as fixed only
 # when polyglot's error contains one of `polyglot_errors` and the statement, without whitespace and
-# ignoring case, contains `marker`; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins
+# ignoring case, contains `marker`; crates/sqlquack-syntax-snowflake/tests/parser/test_fixes.rs pins
 # SQLQuack's tree for each fix.
 
 [[fix]]
@@ -847,7 +847,7 @@ note = "Snowflake accepts a bare trailing LIMIT (recorded as accepted) and reads
 
 # Statements SQLQuack rejects where polyglot parses them or fails with another error. The check counts an entry as rejected only
 # for this exact statement in a listed dialect when SQLQuack's error contains `sqlquack_error`;
-# crates/sqlquack-syntax/src/parser/tests/test_typed_expressions.rs pins the error.
+# crates/sqlquack-syntax-snowflake/src/parser/tests/test_typed_expressions.rs pins the error.
 
 [[rejection]]
 id = "malformed_typed_type_text"
@@ -1374,7 +1374,7 @@ note = "SELECT * EXCLUDE (\"note\") excludes the case-sensitive column note, not
 [[kept_quoting]]
 id = "comment_on_quoted_name"
 marker = "COMMENTON"
-note = "COMMENT ON TABLE \"v1\" names the case-sensitive object v1, not V1; polyglot drops the quotes of a COMMENT ON name; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
+note = "COMMENT ON TABLE \"v1\" names the case-sensitive object v1, not V1; polyglot drops the quotes of a COMMENT ON name; crates/sqlquack-syntax-snowflake/tests/parser/test_fixes.rs pins the tree"
 
 # Wrapper nodes SQLQuack keeps where polyglot drops them. The check counts an entry only when the
 # statement, without whitespace and ignoring case, contains `marker`, and both trees are equal once
@@ -1384,7 +1384,7 @@ note = "COMMENT ON TABLE \"v1\" names the case-sensitive object v1, not V1; poly
 id = "unary_plus"
 marker = "+"
 node = "pos"
-note = "SELECT + 1 keeps its unary plus, a documented Snowflake operator; polyglot drops it and keeps only the operand; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
+note = "SELECT + 1 keeps its unary plus, a documented Snowflake operator; polyglot drops it and keeps only the operand; crates/sqlquack-syntax-snowflake/tests/parser/test_fixes.rs pins the tree"
 
 # Fields SQLQuack keeps as written where polyglot drops or infers them. The check counts an entry
 # only when the statement, without whitespace and ignoring case, contains `marker`, the trees differ,
@@ -1394,7 +1394,7 @@ note = "SELECT + 1 keeps its unary plus, a documented Snowflake operator; polygl
 id = "snowflake_secondary_role_list"
 marker = "SECONDARYROLES"
 field = "roles"
-note = "USE SECONDARY ROLES a, b, c lists its roles one by one with their quoting; polyglot joins them into one unquoted name; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
+note = "USE SECONDARY ROLES a, b, c lists its roles one by one with their quoting; polyglot joins them into one unquoted name; crates/sqlquack-syntax-snowflake/tests/parser/test_fixes.rs pins the tree"
 
 [[kept_field]]
 id = "snowflake_show_unnamed_container"
@@ -1406,19 +1406,19 @@ note = "SHOW ... IN a.b names no container kind, so SQLQuack records none; polyg
 id = "snowflake_timestamp_without_time_zone"
 marker = "WITHOUTTIMEZONE"
 field = "to"
-note = "Snowflake documents TIMESTAMP WITHOUT TIME ZONE as a synonym of TIMESTAMP_NTZ, so SQLQuack's cast target is TIMESTAMPNTZ, as for TIMESTAMP_NTZ; polyglot reads it as bare TIMESTAMP, whose meaning follows TIMESTAMP_TYPE_MAPPING; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
+note = "Snowflake documents TIMESTAMP WITHOUT TIME ZONE as a synonym of TIMESTAMP_NTZ, so SQLQuack's cast target is TIMESTAMPNTZ, as for TIMESTAMP_NTZ; polyglot reads it as bare TIMESTAMP, whose meaning follows TIMESTAMP_TYPE_MAPPING; crates/sqlquack-syntax-snowflake/tests/parser/test_fixes.rs pins the tree"
 
 [[kept_field]]
 id = "snowflake_clone_time_travel"
 marker = "CLONE"
 field = "at_clause"
-note = "a database or schema clone's AT | BEFORE ( TIMESTAMP | OFFSET | STATEMENT => <expr> ) parses into its keyword, kind and expression; polyglot keeps the clause as raw text; crates/sqlquack-syntax/tests/parser/test_snowflake_create_clone.rs pins the tree"
+note = "a database or schema clone's AT | BEFORE ( TIMESTAMP | OFFSET | STATEMENT => <expr> ) parses into its keyword, kind and expression; polyglot keeps the clause as raw text; crates/sqlquack-syntax-snowflake/tests/parser/test_snowflake_create_clone.rs pins the tree"
 
 [[kept_field]]
 id = "snowflake_table_clone_time_travel"
 marker = "CLONE"
 field = "clone_at_clause"
-note = "a table clone's AT | BEFORE ( TIMESTAMP | OFFSET | STATEMENT => <expr> ) parses into its keyword, kind and expression; polyglot keeps the clause as raw text; crates/sqlquack-syntax/tests/parser/test_snowflake_create_clone.rs pins the tree"
+note = "a table clone's AT | BEFORE ( TIMESTAMP | OFFSET | STATEMENT => <expr> ) parses into its keyword, kind and expression; polyglot keeps the clause as raw text; crates/sqlquack-syntax-snowflake/tests/parser/test_snowflake_create_clone.rs pins the tree"
 
 # Clauses whose ALL SQLQuack keeps apart from its keys, where polyglot reads ALL as a bare-word key.
 # The check counts an entry only when the statement, without whitespace and ignoring case, contains
@@ -1430,7 +1430,7 @@ note = "a table clone's AT | BEFORE ( TIMESTAMP | OFFSET | STATEMENT => <expr> )
 id = "snowflake_order_by_all"
 marker = "ORDERBYALL"
 clause = "order_by"
-note = "ORDER BY ALL sorts by every SELECT-list column in order, so SQLQuack records it as an ALL of the clause with its DESC and NULLS options; polyglot reads ALL as a key named ALL, which a column called ALL would also give; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
+note = "ORDER BY ALL sorts by every SELECT-list column in order, so SQLQuack records it as an ALL of the clause with its DESC and NULLS options; polyglot reads ALL as a key named ALL, which a column called ALL would also give; crates/sqlquack-syntax-snowflake/tests/parser/test_fixes.rs pins the tree"
 
 # Statements polyglot keeps as one opaque command where SQLQuack parses them into structured nodes.
 # The check counts an entry only when polyglot's tree is a single command, SQLQuack's tree starts
@@ -1440,25 +1440,25 @@ note = "ORDER BY ALL sorts by every SELECT-list column in order, so SQLQuack rec
 id = "snowflake_storage_integration_properties"
 marker = "CREATESTORAGEINTEGRATION"
 sqlquack_node = "create_object"
-note = "a Snowflake CREATE STORAGE INTEGRATION parses into its name and its property list, each property's kind and value; polyglot keeps the statement as raw SQL; crates/sqlquack-syntax/tests/parser/test_snowflake_create_properties.rs pins the tree"
+note = "a Snowflake CREATE STORAGE INTEGRATION parses into its name and its property list, each property's kind and value; polyglot keeps the statement as raw SQL; crates/sqlquack-syntax-snowflake/tests/parser/test_snowflake_create_properties.rs pins the tree"
 
 [[structured]]
 id = "snowflake_scripting_block"
 marker = "BEGIN"
 sqlquack_node = "scripting_block"
-note = "a Snowflake Scripting block parses into its declarations, statements and handlers; crates/sqlquack-syntax/tests/parser/test_scripting.rs pins the tree"
+note = "a Snowflake Scripting block parses into its declarations, statements and handlers; crates/sqlquack-syntax-snowflake/tests/parser/test_scripting.rs pins the tree"
 
 [[structured]]
 id = "snowflake_create_stage"
 marker = "STAGE"
 sqlquack_node = "create_object"
-note = "a Snowflake CREATE STAGE parses into a STAGE object with its properties, such as FILE_FORMAT = ( FORMAT_NAME = ... ); polyglot keeps it as raw text; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
+note = "a Snowflake CREATE STAGE parses into a STAGE object with its properties, such as FILE_FORMAT = ( FORMAT_NAME = ... ); polyglot keeps it as raw text; crates/sqlquack-syntax-snowflake/tests/parser/test_fixes.rs pins the tree"
 
 [[structured]]
 id = "snowflake_create_file_format"
 marker = "FILEFORMAT"
 sqlquack_node = "create_object"
-note = "a Snowflake CREATE FILE FORMAT parses into a FILE FORMAT object with its modifier and options; polyglot keeps it as raw text; crates/sqlquack-syntax/tests/parser/test_fixes.rs pins the tree"
+note = "a Snowflake CREATE FILE FORMAT parses into a FILE FORMAT object with its modifier and options; polyglot keeps it as raw text; crates/sqlquack-syntax-snowflake/tests/parser/test_fixes.rs pins the tree"
 
 [[rejection]]
 id = "snowflake_stage_reserved_name"

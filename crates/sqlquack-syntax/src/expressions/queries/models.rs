@@ -1097,7 +1097,7 @@ pub struct Limit {
 
 impl Limit {
     /// Preserve the legacy count-only set-operation AST when no metadata is needed.
-    pub(crate) fn into_set_limit(self) -> Box<Expression> {
+    pub fn into_set_limit(self) -> Box<Expression> {
         if self.percent || !self.comments.is_empty() {
             Box::new(Expression::Limit(Box::new(self)))
         } else {

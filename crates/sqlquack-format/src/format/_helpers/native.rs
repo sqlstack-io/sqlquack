@@ -1,12 +1,13 @@
 //! Reading SQL with a dialect's own scanner and parser: its tokens with the comments in the blanks it skipped between them, and PostgreSQL's keywords and statements, which the formatter checks the shared tokens against.
 
 use sqlquack_syntax::tokens::models::TokenType;
-use sqlquack_syntax::{Dialect, Expression, TokenKind, tokenize};
+use sqlquack_syntax::{Dialect, Expression, TokenKind};
 use sqlquack_syntax_postgres::scan::main::scan::scan as scan_postgres;
 use sqlquack_syntax_postgres::scan::models::{
     Token as PostgresToken, TokenKind as PostgresTokenKind,
 };
 use sqlquack_syntax_postgres::{StrictFailure, parse_strict};
+use sqlquack_syntax_snowflake::tokenize;
 
 use crate::format::_helpers::lexemes::{Comment, Lexeme, comment, is_keyword, is_unquoted_word};
 use crate::format::constants::{

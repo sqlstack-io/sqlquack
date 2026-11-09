@@ -20,6 +20,7 @@ serde_json.workspace = true
 sqlquack-syntax.workspace = true
 
 [dev-dependencies]
+sqlquack-syntax-snowflake.workspace = true
 # The tests read Snowflake's error kinds and rejections too.
 sqlquack-diagnostics = { workspace = true, features = ["snowflake"] }
 sqlquack-parse.workspace = true

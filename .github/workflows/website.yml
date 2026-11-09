@@ -16,6 +16,7 @@ on:
       - crates/sqlquack-convert/**
       - crates/sqlquack-semantics/**
       - crates/sqlquack-syntax/**
+      - crates/sqlquack-syntax-snowflake/**
       - .github/workflows/website.yml
   pull_request:
     paths:
@@ -26,6 +27,7 @@ on:
       - crates/sqlquack-convert/**
       - crates/sqlquack-semantics/**
       - crates/sqlquack-syntax/**
+      - crates/sqlquack-syntax-snowflake/**
       - .github/workflows/website.yml
   workflow_dispatch:
 
