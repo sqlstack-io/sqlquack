@@ -6,8 +6,8 @@ use sqlquack_syntax::Dialect;
 use crate::dialects::models::{FormatProfile, LayoutRules};
 use crate::sqlserver::profile::_helpers::reading::{lex_sqlserver, parse_sqlserver};
 use crate::sqlserver::profile::constants::{
-    APPLY_PREFIXES, BEGIN_STATEMENTS, BLOCK_WORDS, BRANCH_STATEMENTS, INLINE_CALLS, LIST_CLAUSES,
-    OBJECT_PRECEDERS, SPACED_BEFORE_PARENTHESIS,
+    APPLY_PREFIXES, BEGIN_STATEMENTS, BLOCK_WORDS, BRANCH_STATEMENTS, FOR_CLAUSES, INLINE_CALLS,
+    LIST_CLAUSES, OBJECT_PRECEDERS, SPACED_BEFORE_PARENTHESIS,
 };
 
 /// How Transact-SQL is read, by its own scanner and parser, and laid out; the shared tokenizer types its words as PostgreSQL's.
@@ -25,6 +25,7 @@ pub(crate) fn sqlserver_profile() -> FormatProfile {
             object_name_preceders: &OBJECT_PRECEDERS,
             from_list_commas: true,
             list_clauses: &LIST_CLAUSES,
+            for_clauses: &FOR_CLAUSES,
             apply_prefixes: &APPLY_PREFIXES,
             spaced_before_parenthesis: &SPACED_BEFORE_PARENTHESIS,
             whole_variables: true,

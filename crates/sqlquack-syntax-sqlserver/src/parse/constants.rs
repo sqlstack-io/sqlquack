@@ -426,3 +426,20 @@ pub(crate) const MAX_DEPTH: usize = 512;
 /// The engine's error 10704 for a THROW without arguments outside a CATCH block.
 pub(crate) const THROW_OUTSIDE_CATCH: &str =
     "To rethrow an error, a THROW statement must be used inside a CATCH block.";
+
+/// The modes a `FOR XML` clause may name.
+pub(crate) const XML_MODES: [&str; 4] = ["RAW", "AUTO", "EXPLICIT", "PATH"];
+/// The `FOR XML` modes that take an element name, as in `PATH('row')`.
+pub(crate) const NAMED_XML_MODES: [&str; 2] = ["RAW", "PATH"];
+/// The modes a `FOR JSON` clause may name.
+pub(crate) const JSON_MODES: [&str; 2] = ["AUTO", "PATH"];
+/// SQL Server's error 13620, for a `FOR JSON` clause with both ROOT and WITHOUT_ARRAY_WRAPPER.
+pub(crate) const JSON_ROOT_WITHOUT_WRAPPER: &str = "ROOT option and WITHOUT_ARRAY_WRAPPER option cannot be used together in FOR JSON. Remove one of these options.";
+/// SQL Server's error 198, for `FOR BROWSE` after a set operation.
+pub(crate) const BROWSE_IN_SET_OPERATION: &str =
+    "Browse mode is invalid for statements containing a UNION, INTERSECT or EXCEPT operator.";
+/// SQL Server's error 176, for `FOR BROWSE` anywhere but after a statement's own query.
+pub(crate) const BROWSE_NESTED: &str = "The FOR BROWSE clause is no longer supported in views.";
+/// SQL Server's error 171, for `FOR BROWSE` after the query of an INSERT or a SELECT INTO.
+pub(crate) const BROWSE_WITH_WRITE: &str =
+    "Browse mode cannot be used with INSERT, SELECT INTO, or UPDATE statements.";
