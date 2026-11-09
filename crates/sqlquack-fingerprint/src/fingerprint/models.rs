@@ -7,6 +7,8 @@ use crate::fingerprint::errors::FingerprintError;
 pub enum FingerprintDialect {
     /// No named dialect.
     Generic,
+    /// BigQuery, through its native scanner.
+    BigQuery,
     /// DuckDB.
     DuckDB,
     /// PostgreSQL, through its native scanner.
@@ -15,17 +17,21 @@ pub enum FingerprintDialect {
     Snowflake,
     /// SQLite.
     SQLite,
+    /// SQL Server, through its native scanner.
+    SqlServer,
 }
 
 impl FingerprintDialect {
-    /// The dialect named `name`: `generic`, `duckdb`, `postgres`, `postgresql`, `snowflake` or `sqlite`.
+    /// The dialect named `name`: `generic`, `bigquery`, `duckdb`, `postgres`, `postgresql`, `snowflake`, `sqlite`, `sqlserver`, `tsql` or `mssql`.
     pub fn from_name(name: &str) -> Result<Self, FingerprintError> {
         match name {
             "generic" => Ok(Self::Generic),
+            "bigquery" => Ok(Self::BigQuery),
             "duckdb" => Ok(Self::DuckDB),
             "postgres" | "postgresql" => Ok(Self::PostgreSQL),
             "snowflake" => Ok(Self::Snowflake),
             "sqlite" => Ok(Self::SQLite),
+            "sqlserver" | "tsql" | "mssql" => Ok(Self::SqlServer),
             _ => Err(FingerprintError::UnknownDialect(name.to_owned())),
         }
     }
