@@ -1,7 +1,7 @@
 use crate::lineage::tests::helpers::typed_duckdb_shop_schema;
 
+use sqlquack_parse::parse_statements_with;
 use sqlquack_syntax::{CallMode, Dialect, ParseOptions};
-use sqlquack_syntax_snowflake::parse_statements_with;
 
 use crate::dialects::constants::DUCKDB;
 use crate::duckdb::profile::tests::helpers::duckdb_parser_findings;

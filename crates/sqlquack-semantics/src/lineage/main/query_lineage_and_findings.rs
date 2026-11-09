@@ -1,7 +1,7 @@
 //! `query_lineage_and_findings`: a query's lineage and its name findings, from one parse.
 
+use sqlquack_parse::parse_statements_with;
 use sqlquack_syntax::{CallMode, Dialect, ParseOptions};
-use sqlquack_syntax_snowflake::parse_statements_with;
 
 use crate::lineage::_helpers::findings::statement::statement_findings;
 use crate::lineage::main::statement_lineage::statement_lineage;

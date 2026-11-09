@@ -29,7 +29,7 @@ saphyr-parser.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 sqlquack-syntax.workspace = true
-sqlquack-syntax-snowflake.workspace = true
+sqlquack-parse.workspace = true
 sqlquack-diagnostics.workspace = true
 stacker.workspace = true
 

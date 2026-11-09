@@ -9,9 +9,28 @@ homepage.workspace = true
 publish.workspace = true
 rust-version.workspace = true
 
+# Each dialect's own parser crate, for the scanners, keywords and strict parses only it has.
+# Snowflake's parser also reads DuckDB, PostgreSQL and SQLite, so it is always on.
+[features]
+default = []
+bigquery = ["dep:sqlquack-syntax-bigquery"]
+clickhouse = ["dep:sqlquack-syntax-clickhouse"]
+databricks = ["dep:sqlquack-syntax-databricks"]
+duckdb = ["dep:sqlquack-syntax-duckdb"]
+postgres = ["dep:sqlquack-syntax-postgres"]
+sqlite = ["dep:sqlquack-syntax-sqlite"]
+sqlserver = ["dep:sqlquack-syntax-sqlserver"]
+
 [dependencies]
 sqlquack-syntax.workspace = true
 sqlquack-syntax-snowflake.workspace = true
+sqlquack-syntax-bigquery = { workspace = true, optional = true }
+sqlquack-syntax-clickhouse = { workspace = true, optional = true }
+sqlquack-syntax-databricks = { workspace = true, optional = true }
+sqlquack-syntax-duckdb = { workspace = true, optional = true }
+sqlquack-syntax-postgres = { workspace = true, optional = true }
+sqlquack-syntax-sqlite = { workspace = true, optional = true }
+sqlquack-syntax-sqlserver = { workspace = true, optional = true }
 
 [lints]
 workspace = true

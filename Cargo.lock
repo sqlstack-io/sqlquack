@@ -1432,7 +1432,6 @@ dependencies = [
  "sqlquack-policy",
  "sqlquack-semantics",
  "sqlquack-syntax",
- "sqlquack-syntax-snowflake",
 ]
 
 [[package]]
@@ -1549,7 +1548,14 @@ name = "sqlquack-parse"
 version = "0.2.0"
 dependencies = [
  "sqlquack-syntax",
+ "sqlquack-syntax-bigquery",
+ "sqlquack-syntax-clickhouse",
+ "sqlquack-syntax-databricks",
+ "sqlquack-syntax-duckdb",
+ "sqlquack-syntax-postgres",
  "sqlquack-syntax-snowflake",
+ "sqlquack-syntax-sqlite",
+ "sqlquack-syntax-sqlserver",
 ]
 
 [[package]]
@@ -1601,6 +1607,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sqlquack-diagnostics",
+ "sqlquack-parse",
  "sqlquack-semantics",
  "sqlquack-syntax",
  "sqlquack-syntax-bigquery",
@@ -1608,7 +1615,6 @@ dependencies = [
  "sqlquack-syntax-databricks",
  "sqlquack-syntax-duckdb",
  "sqlquack-syntax-postgres",
- "sqlquack-syntax-snowflake",
  "sqlquack-syntax-sqlite",
  "sqlquack-syntax-sqlserver",
  "stacker",
