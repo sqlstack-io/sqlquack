@@ -24,11 +24,18 @@ fn disagreements(receipts: &str) -> Vec<String> {
 
 #[test]
 fn given_recorded_sql_server_verdicts_when_parsing_each_statement_then_the_parser_agrees() {
-    let test_cases = [ReceiptsTestCase {
-        description: "FOR XML, FOR JSON and FOR BROWSE under SQL Server 2022 PARSEONLY",
-        receipts: include_str!("fixtures/result_clause_receipts.jsonl"),
-        expected_disagreements: Vec::new(),
-    }];
+    let test_cases = [
+        ReceiptsTestCase {
+            description: "FOR XML, FOR JSON and FOR BROWSE under SQL Server 2022 PARSEONLY",
+            receipts: include_str!("fixtures/result_clause_receipts.jsonl"),
+            expected_disagreements: Vec::new(),
+        },
+        ReceiptsTestCase {
+            description: "FOR SYSTEM_TIME under SQL Server 2022 PARSEONLY, its variables declared, since an undeclared one fails binding (137) rather than syntax",
+            receipts: include_str!("fixtures/system_time_receipts.jsonl"),
+            expected_disagreements: Vec::new(),
+        },
+    ];
     for test_case in test_cases {
         assert_eq!(
             disagreements(test_case.receipts),

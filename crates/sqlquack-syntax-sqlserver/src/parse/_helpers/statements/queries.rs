@@ -9,13 +9,15 @@ use sqlquack_syntax::expressions::queries::models::{
     Fetch, From, GroupBy, Having, Join, JoinKind, Offset, OrderBy, Select, SelectInto, Top, Where,
     With,
 };
+use sqlquack_syntax::expressions::statements::models::Version;
 use sqlquack_syntax::expressions::tables::models::WithTableHint;
+use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::{SourceSpan, Span};
 use sqlquack_syntax::{DataType, Expression};
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_any_name, is_name};
 use crate::parse::_helpers::tree::nodes::{
-    JoinConstraint, TableAlias, alias, cte, function, join, joined_table, literal, paren,
+    JoinConstraint, TableAlias, alias, cte, function, join, joined_table, literal, null, paren,
     set_operation, subquery, table, values, var,
 };
 use crate::parse::_helpers::values::primary::variable;
@@ -609,7 +611,7 @@ impl<'sql> Parser<'sql> {
         }
         let mut reference: TableRef = table(name);
         if self.kw("FOR") && self.kw_at(1, "SYSTEM_TIME") {
-            return Err(self.gap("system_time", start));
+            reference.version = Some(Box::new(self.system_time()?));
         }
         let explicit: bool = self.kw("AS");
         reference.alias = self.table_alias()?;
@@ -648,6 +650,64 @@ impl<'sql> Parser<'sql> {
             }))];
         }
         Ok(Expression::Table(Box::new(reference)))
+    }
+
+    /// `FOR SYSTEM_TIME { AS OF b | FROM b TO b | BETWEEN b AND b | CONTAINED IN (b, b) | ALL }`, the cursor at `FOR`.
+    fn system_time(&mut self) -> Parsing<Version> {
+        self.at += 2;
+        let (kind, bounds): (&str, Vec<Expression>) = if self.eat_kw("ALL") {
+            ("ALL", Vec::new())
+        } else if self.kw("AS") && self.kw_at(1, "OF") {
+            self.at += 2;
+            ("AS OF", vec![self.system_time_bound()?])
+        } else if self.eat_kw("FROM") {
+            let from: Expression = self.system_time_bound()?;
+            self.expect_kw("TO")?;
+            ("FROM", vec![from, self.system_time_bound()?])
+        } else if self.eat_kw("BETWEEN") {
+            let from: Expression = self.system_time_bound()?;
+            self.expect_kw("AND")?;
+            ("BETWEEN", vec![from, self.system_time_bound()?])
+        } else if self.kw("CONTAINED") && self.kw_at(1, "IN") {
+            self.at += 2;
+            self.expect_char('(')?;
+            let from: Expression = self.system_time_bound()?;
+            self.expect_char(',')?;
+            let to: Expression = self.system_time_bound()?;
+            self.expect_char(')')?;
+            ("CONTAINED IN", vec![from, to])
+        } else {
+            return Err(self.error());
+        };
+        let expression: Option<Box<Expression>> = match bounds.len() {
+            0 => None,
+            1 => bounds.into_iter().next().map(Box::new),
+            _ => Some(Box::new(Expression::Tuple(Box::new(Tuple {
+                expressions: bounds,
+            })))),
+        };
+        Ok(Version {
+            this: Box::new(Expression::Identifier(Identifier::new("SYSTEM_TIME"))),
+            kind: kind.to_owned(),
+            expression,
+        })
+    }
+
+    /// A `FOR SYSTEM_TIME` bound: a constant, `NULL` or a variable; SQL Server refuses an expression there (102).
+    fn system_time_bound(&mut self) -> Parsing<Expression> {
+        match self.peek().map(|token| token.kind) {
+            Some(
+                TokenKind::String { .. }
+                | TokenKind::Number(_)
+                | TokenKind::Variable
+                | TokenKind::Char('{'),
+            ) => self.primary_value(),
+            _ if self.kw("NULL") => {
+                self.at += 1;
+                Ok(null())
+            }
+            _ => Err(self.error()),
+        }
     }
 
     /// `name ( [value | DEFAULT, ...] ) [[AS] alias [(columns)]]`, a table-valued function, the cursor at the `(`.
