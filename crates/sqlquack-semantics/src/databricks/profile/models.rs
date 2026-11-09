@@ -90,6 +90,22 @@ impl DialectRules for DatabricksRules {
         false
     }
 
+    fn full_alias_list_ends_values(&self) -> bool {
+        false
+    }
+
+    fn self_reading_ctes_see_themselves(&self) -> bool {
+        false
+    }
+
+    fn recursion_keeps_anchor_types(&self) -> bool {
+        false
+    }
+
+    fn star_keys_in_place(&self) -> bool {
+        false
+    }
+
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
         match expression {
             Expression::Literal(literal) => {
@@ -115,5 +131,13 @@ impl DialectRules for DatabricksRules {
 
     fn cast_spelling(&self, data_type: &DataType) -> Option<String> {
         databricks_cast_spelling(data_type)
+    }
+
+    /// A struct field's name, and otherwise no name.
+    fn unaliased_name(&self, projection: &Expression) -> Option<String> {
+        Some(match projection {
+            Expression::Dot(dot) => dot.field.name.clone(),
+            _ => String::new(),
+        })
     }
 }

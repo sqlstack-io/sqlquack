@@ -2,6 +2,7 @@
 
 use std::rc::Rc;
 
+use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::dialects::types::DialectProfile;
@@ -88,6 +89,22 @@ impl DialectRules for DuckDbRules {
         false
     }
 
+    fn full_alias_list_ends_values(&self) -> bool {
+        true
+    }
+
+    fn self_reading_ctes_see_themselves(&self) -> bool {
+        true
+    }
+
+    fn recursion_keeps_anchor_types(&self) -> bool {
+        true
+    }
+
+    fn star_keys_in_place(&self) -> bool {
+        true
+    }
+
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
         match expression {
             Expression::Literal(literal) => (
@@ -127,6 +144,18 @@ impl DialectRules for DuckDbRules {
 
     fn cast_spelling(&self, data_type: &DataType) -> Option<String> {
         cast_spelling(data_type)
+    }
+
+    /// A struct field's name, a number's text, and otherwise no name.
+    fn unaliased_name(&self, projection: &Expression) -> Option<String> {
+        Some(match projection {
+            Expression::Dot(dot) => dot.field.name.clone(),
+            Expression::Literal(literal) => match literal.as_ref() {
+                Literal::Number(text) => text.clone(),
+                _ => String::new(),
+            },
+            _ => String::new(),
+        })
     }
 
     fn window_only(&self, expression: &Expression) -> bool {

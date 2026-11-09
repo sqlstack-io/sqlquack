@@ -91,6 +91,18 @@ pub(crate) trait DialectRules: Sync {
     /// Whether a semi-structured value may hold a JSON null that a cast turns into SQL NULL.
     fn variants_hold_json_null(&self) -> bool;
 
+    /// Whether a column alias list naming every output of a VALUES list stops it reading as VALUES.
+    fn full_alias_list_ends_values(&self) -> bool;
+
+    /// Whether a CTE whose body reads itself is checked with its own result in reach.
+    fn self_reading_ctes_see_themselves(&self) -> bool;
+
+    /// Whether a recursive CTE's columns keep the types its anchor gives them.
+    fn recursion_keeps_anchor_types(&self) -> bool;
+
+    /// Whether a star lists each join key once, where and as its first source offers it.
+    fn star_keys_in_place(&self) -> bool;
+
     /// A literal's type and nullability, given the shared rules' `generic` answer.
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
         let _ = expression;
@@ -137,7 +149,7 @@ pub(crate) trait DialectRules: Sync {
         rendered_type(data_type)
     }
 
-    /// The name the dialect gives an unaliased output that is not a column, when it names it.
+    /// The dialect's name for an unaliased output that is no column; `None` defers to Snowflake's.
     fn unaliased_name(&self, projection: &Expression) -> Option<String> {
         let _ = projection;
         None

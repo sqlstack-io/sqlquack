@@ -285,6 +285,22 @@ impl DialectRules for SharedRules {
     fn variants_hold_json_null(&self) -> bool {
         false
     }
+
+    fn full_alias_list_ends_values(&self) -> bool {
+        false
+    }
+
+    fn self_reading_ctes_see_themselves(&self) -> bool {
+        false
+    }
+
+    fn recursion_keeps_anchor_types(&self) -> bool {
+        false
+    }
+
+    fn star_keys_in_place(&self) -> bool {
+        false
+    }
 }
 
 /// The engine whose binder the checks follow.

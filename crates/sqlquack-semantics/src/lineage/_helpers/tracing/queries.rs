@@ -19,8 +19,7 @@ use crate::lineage::_helpers::tracing::sources::{
 };
 use crate::lineage::_helpers::typing::rules::filtered_non_null;
 use crate::lineage::constants::{
-    DATABRICKS_PROFILE, DUCKDB_PROFILE, ORDINAL_BASE, RECURSION_LIMIT, SQL_STAR, SQLITE_PROFILE,
-    SUBTOTAL_GROUPINGS, UNNAMED_CHARACTERS,
+    ORDINAL_BASE, RECURSION_LIMIT, SQL_STAR, SUBTOTAL_GROUPINGS, UNNAMED_CHARACTERS,
 };
 use crate::lineage::models::{
     FromItems, Lineage, LineageContext, LineageScope, NamedQuery, Nullability, ResolvedQuery,
@@ -151,7 +150,8 @@ pub(crate) fn renamed(
         })
         .collect();
     let from_values: bool = query.from_values
-        && !(context.profile.name() == DUCKDB_PROFILE && aliases.len() >= columns.len());
+        && !(dialect_rules(context.profile).full_alias_list_ends_values()
+            && aliases.len() >= columns.len());
     ResolvedQuery {
         columns,
         stored_relation: None,
@@ -334,7 +334,9 @@ pub(crate) fn with_ctes_visiting<'a>(
                 context,
             ),
         };
-        let faulted: bool = match reads_own && context.profile.name() == DUCKDB_PROFILE {
+        let sees_itself: bool =
+            reads_own && dialect_rules(context.profile).self_reading_ctes_see_themselves();
+        let faulted: bool = match sees_itself {
             true => {
                 let mut own: Vec<NamedQuery> = reach.clone();
                 own.retain(|named| named.key != name);
@@ -403,7 +405,7 @@ fn recursive_query(
             context,
         );
         let mut joined: ResolvedQuery = positional(vec![current.clone(), next], context);
-        if context.profile.name() == DUCKDB_PROFILE {
+        if dialect_rules(context.profile).recursion_keeps_anchor_types() {
             for (column, data_type) in joined.columns.iter_mut().zip(&anchor_types) {
                 column.lineage.data_type.clone_from(data_type);
             }
@@ -743,7 +745,7 @@ pub(crate) fn expanded_star(
         .filter(|source| source.query.open)
         .collect();
     let mut columns: Vec<ScopedColumn> = Vec::new();
-    let in_place: bool = matches!(context.profile.name(), DUCKDB_PROFILE | SQLITE_PROFILE);
+    let in_place: bool = dialect_rules(context.profile).star_keys_in_place();
     let offered: Vec<ScopedColumn> = match in_place {
         true => keys_in_place(&keys, &selected, context),
         false => keys
@@ -861,28 +863,11 @@ fn star_column(
     }
 }
 
-/// An output's name: its alias, column, DuckDB struct field or Snowflake's generated name.
+/// An output's name: its alias, its column, the dialect's name for it or Snowflake's generated one.
 fn output_name(projection: &Expression, context: LineageContext<'_>) -> String {
     match projection {
         Expression::Alias(alias) => alias.alias.name.clone(),
         Expression::Column(column) => column.name.name.clone(),
-        Expression::Dot(dot) if context.profile.name() == DUCKDB_PROFILE => dot.field.name.clone(),
-        Expression::Literal(literal) if context.profile.name() == DUCKDB_PROFILE => {
-            match literal.as_ref() {
-                Literal::Number(text) => text.clone(),
-                _ => String::new(),
-            }
-        }
-        Expression::Dot(dot) if context.profile.name() == DATABRICKS_PROFILE => {
-            dot.field.name.clone()
-        }
-        _ if matches!(
-            context.profile.name(),
-            DUCKDB_PROFILE | SQLITE_PROFILE | DATABRICKS_PROFILE
-        ) =>
-        {
-            String::new()
-        }
         _ => match dialect_rules(context.profile).unaliased_name(projection) {
             Some(name) => name,
             None => snowflake_name(projection, context).unwrap_or_default(),

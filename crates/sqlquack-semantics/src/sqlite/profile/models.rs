@@ -84,6 +84,22 @@ impl DialectRules for SqliteRules {
         false
     }
 
+    fn full_alias_list_ends_values(&self) -> bool {
+        false
+    }
+
+    fn self_reading_ctes_see_themselves(&self) -> bool {
+        false
+    }
+
+    fn recursion_keeps_anchor_types(&self) -> bool {
+        false
+    }
+
+    fn star_keys_in_place(&self) -> bool {
+        true
+    }
+
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
         match expression {
             Expression::Literal(literal) => (sqlite_literal_type(literal).map(Rc::from), generic.1),
@@ -108,6 +124,11 @@ impl DialectRules for SqliteRules {
 
     fn cast_spelling(&self, data_type: &DataType) -> Option<String> {
         sqlite_cast_spelling(data_type)
+    }
+
+    /// No name: SQLite leaves an unaliased output that is not a column unnamed here.
+    fn unaliased_name(&self, _projection: &Expression) -> Option<String> {
+        Some(String::new())
     }
 
     fn window_only(&self, expression: &Expression) -> bool {

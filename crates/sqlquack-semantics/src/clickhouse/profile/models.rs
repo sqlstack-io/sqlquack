@@ -100,6 +100,22 @@ impl DialectRules for ClickHouseRules {
         false
     }
 
+    fn full_alias_list_ends_values(&self) -> bool {
+        false
+    }
+
+    fn self_reading_ctes_see_themselves(&self) -> bool {
+        false
+    }
+
+    fn recursion_keeps_anchor_types(&self) -> bool {
+        false
+    }
+
+    fn star_keys_in_place(&self) -> bool {
+        false
+    }
+
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
         (clickhouse_literal_type(expression).map(Rc::from), generic.1)
     }
