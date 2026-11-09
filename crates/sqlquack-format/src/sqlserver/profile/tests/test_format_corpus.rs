@@ -8,8 +8,8 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
     let test_cases = [test_types::FormatCorpusTestCase {
         description: "SQL Server identity corpus",
         dialect: "tsql",
-        expected_formatted: 63,
-        expected_refused: 12,
+        expected_formatted: 64,
+        expected_refused: 11,
         departures: &[
             Departure {
                 sql: "SELECT val FROM (VALUES ((TRUE), (FALSE), (NULL))) AS t(val)",
@@ -103,14 +103,6 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 sql: "SELECT [x] FROM [a].[b] FOR SYSTEM_TIME CONTAINED IN (c, d)",
                 formatted: None,
                 reason: "SQL Server rejects it: `Incorrect syntax near 'c'.` (102); SQLQuack's parser refuses it (`Incorrect syntax near 'c'.`); SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT x FROM a INNER LOOP JOIN b ON b.id = a.id",
-                formatted: None,
-                reason: "SQL Server accepts it; SQLQuack's parser keeps a join hint opaque (gap `join_hint`), so the formatter refuses rather than guess; SQLClean formatted it",
                 receipt: Some(
                     "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),

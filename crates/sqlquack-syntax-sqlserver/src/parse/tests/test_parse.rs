@@ -659,6 +659,12 @@ fn given_for_clauses_when_parsing_then_the_tree_keeps_them() {
             expected_json: r#"{"bucket_denominator":null,"bucket_field":null,"bucket_numerator":null,"explicit_method":true,"is_percent":false,"is_using_sample":false,"method":"System","method_before_size":true,"offset":null,"seed":{"literal":{"literal_type":"number","value":"7"}},"size":{"literal":{"literal_type":"number","value":"5"}},"suppress_method_output":false,"unit_after_size":true,"use_sample_keyword":false,"use_seed_keyword":false}"#,
         },
         ValueTestCase {
+            description: "a join hint is kept on its join, upper-cased",
+            sql: "SELECT a FROM t LEFT OUTER hash JOIN u ON 1 = 1",
+            pointer: "/0/select/joins/0/join_hint",
+            expected_json: r#""HASH""#,
+        },
+        ValueTestCase {
             description: "FOR BROWSE is kept as the select's browse-mode lock",
             sql: "SELECT a FROM t FOR BROWSE",
             pointer: "/0/select/locks",

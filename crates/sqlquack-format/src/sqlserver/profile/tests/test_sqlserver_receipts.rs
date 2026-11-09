@@ -83,11 +83,6 @@ fn given_recorded_sqlserver_verdicts_when_formatting_the_refused_corpus_then_eac
             expected_refusal: PARSE_FAILURE,
         },
         test_types::SqlServerReceiptTestCase {
-            description: "SELECT x FROM a INNER LOOP JOIN b ON b.id = a.id",
-            expected_runs: &[None, None],
-            expected_refusal: OPAQUE_STATEMENT_FAILURE,
-        },
-        test_types::SqlServerReceiptTestCase {
             description: "SELECT NEXT VALUE FOR db.schema.sequence_name OVER (ORDER BY foo), col",
             expected_runs: &[
                 Some((156, "Incorrect syntax near the keyword 'schema'.")),
