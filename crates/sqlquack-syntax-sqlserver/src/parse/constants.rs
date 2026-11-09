@@ -433,6 +433,10 @@ pub(crate) const XML_MODES: [&str; 4] = ["RAW", "AUTO", "EXPLICIT", "PATH"];
 pub(crate) const NAMED_XML_MODES: [&str; 2] = ["RAW", "PATH"];
 /// The modes a `FOR JSON` clause may name.
 pub(crate) const JSON_MODES: [&str; 2] = ["AUTO", "PATH"];
+/// The `FOR JSON` option that names a root element.
+pub(crate) const JSON_ROOT: &str = "ROOT";
+/// The `FOR JSON` option that leaves out the array brackets, which a root element cannot go with.
+pub(crate) const JSON_WITHOUT_ARRAY_WRAPPER: &str = "WITHOUT_ARRAY_WRAPPER";
 /// SQL Server's error 13620, for a `FOR JSON` clause with both ROOT and WITHOUT_ARRAY_WRAPPER.
 pub(crate) const JSON_ROOT_WITHOUT_WRAPPER: &str = "ROOT option and WITHOUT_ARRAY_WRAPPER option cannot be used together in FOR JSON. Remove one of these options.";
 /// SQL Server's error 198, for `FOR BROWSE` after a set operation.
@@ -481,6 +485,10 @@ pub(crate) const ISOLATION_LEVELS: [&[&str]; 6] = [
 ];
 /// The lock granularities table hints name; a table's hints name at most one, and none with read-uncommitted (1047).
 pub(crate) const LOCK_GRANULARITIES: [&str; 4] = ["ROWLOCK", "PAGLOCK", "TABLOCK", "TABLOCKX"];
+/// How the table-hint checks name a `FORCESEEK` that names its index and columns.
+pub(crate) const PARAMETERIZED_FORCESEEK: &str = "FORCESEEK()";
+/// The table hint that caps the cells a spatial index search reads, given once at most (1017).
+pub(crate) const SPATIAL_WINDOW_MAX_CELLS: &str = "SPATIAL_WINDOW_MAX_CELLS";
 /// SQL Server's error 1047, for one table's locking hints that cannot stand together.
 pub(crate) const CONFLICTING_LOCKS: &str = "Conflicting locking hints specified.";
 /// The hints SQL Server refuses on the target of an INSERT, UPDATE or DELETE, each with its error (1069, 10724, 10745, 1065).
@@ -491,7 +499,7 @@ pub(crate) const DML_TARGET_REFUSED_HINTS: [(&str, &str); 6] = [
         "The FORCESEEK hint is not allowed for target tables of INSERT, UPDATE, or DELETE statements.",
     ),
     (
-        "FORCESEEK()",
+        PARAMETERIZED_FORCESEEK,
         "The FORCESEEK hint is not allowed for target tables of INSERT, UPDATE, or DELETE statements.",
     ),
     (

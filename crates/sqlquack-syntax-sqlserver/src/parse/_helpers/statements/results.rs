@@ -9,8 +9,8 @@ use sqlquack_syntax::expressions::tables::models::QueryOption;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
 use crate::parse::_helpers::tree::nodes::{literal, var};
 use crate::parse::constants::{
-    BROWSE_IN_SET_OPERATION, BROWSE_NESTED, BROWSE_WITH_WRITE, JSON_MODES,
-    JSON_ROOT_WITHOUT_WRAPPER, NAMED_XML_MODES, XML_MODES,
+    BROWSE_IN_SET_OPERATION, BROWSE_NESTED, BROWSE_WITH_WRITE, JSON_MODES, JSON_ROOT,
+    JSON_ROOT_WITHOUT_WRAPPER, JSON_WITHOUT_ARRAY_WRAPPER, NAMED_XML_MODES, XML_MODES,
 };
 use crate::scan::models::TokenKind;
 
@@ -26,14 +26,14 @@ fn result_select(query: &mut Expression) -> Option<&mut Select> {
     }
 }
 
-/// Whether `query` ends in a `FOR XML` or `FOR JSON` clause.
-pub(crate) fn has_xml_or_json(query: &Expression) -> Option<&'static str> {
+/// The result clause `query` ends in, `XML` or `JSON`; absent when it ends in neither.
+pub(crate) fn xml_or_json_clause_name(query: &Expression) -> Option<&'static str> {
     match query {
         Expression::Select(select) if !select.for_xml.is_empty() => Some("XML"),
         Expression::Select(select) if !select.for_json.is_empty() => Some("JSON"),
-        Expression::Paren(paren) => has_xml_or_json(&paren.this),
+        Expression::Paren(paren) => xml_or_json_clause_name(&paren.this),
         Expression::Subquery(subquery) if subquery.alias.is_none() => {
-            has_xml_or_json(&subquery.this)
+            xml_or_json_clause_name(&subquery.this)
         }
         _ => None,
     }
@@ -51,9 +51,9 @@ pub(crate) fn has_browse(query: &Expression) -> bool {
 
 impl<'sql> Parser<'sql> {
     /// `FOR XML mode [, directive ...]` or `FOR JSON mode [, option ...]` after `query`, when it comes next.
-    pub(crate) fn xml_or_json_clause(&mut self, query: &mut Expression) -> Parsing<()> {
+    pub(crate) fn xml_or_json_clause(&mut self, mut query: Expression) -> Parsing<Expression> {
         if !(self.kw("FOR") && self.kw_in(1, &["XML", "JSON"])) {
-            return Ok(());
+            return Ok(query);
         }
         let start: usize = self.offset();
         let json: bool = self.kw_at(1, "JSON");
@@ -62,7 +62,7 @@ impl<'sql> Parser<'sql> {
             true => self.json_options()?,
             false => self.xml_options()?,
         };
-        let Some(select) = result_select(query) else {
+        let Some(select) = result_select(&mut query) else {
             return Err(self.gap("set_operation_for_xml_json", start));
         };
         if select.into.is_some() {
@@ -75,18 +75,18 @@ impl<'sql> Parser<'sql> {
             true => select.for_json = options,
             false => select.for_xml = options,
         }
-        Ok(())
+        Ok(query)
     }
 
     /// `FOR BROWSE` after a statement's `query`, when it comes next.
-    pub(crate) fn browse_clause(&mut self, query: &mut Expression) -> Parsing<()> {
+    pub(crate) fn browse_clause(&mut self, mut query: Expression) -> Parsing<Expression> {
         if !(self.kw("FOR") && self.kw_at(1, "BROWSE")) {
-            return Ok(());
+            return Ok(query);
         }
-        if has_xml_or_json(query).is_some() {
+        if xml_or_json_clause_name(&query).is_some() {
             return Err(self.error());
         }
-        let Some(select) = result_select(query) else {
+        let Some(select) = result_select(&mut query) else {
             return Err(self.error_with(BROWSE_IN_SET_OPERATION));
         };
         if select.into.is_some() {
@@ -100,7 +100,7 @@ impl<'sql> Parser<'sql> {
             wait: None,
             key: None,
         }];
-        Ok(())
+        Ok(query)
     }
 
     /// Refuses a `FOR BROWSE` where only a statement's own query takes one.
@@ -198,8 +198,8 @@ impl<'sql> Parser<'sql> {
             seen.push(word.clone());
             options.push(option(&word, argument));
         }
-        if seen.iter().any(|word| word == "ROOT")
-            && seen.iter().any(|word| word == "WITHOUT_ARRAY_WRAPPER")
+        if seen.iter().any(|word| word == JSON_ROOT)
+            && seen.iter().any(|word| word == JSON_WITHOUT_ARRAY_WRAPPER)
         {
             return Err(self.error_with(JSON_ROOT_WITHOUT_WRAPPER));
         }

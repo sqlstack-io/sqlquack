@@ -1088,7 +1088,7 @@ impl<'a> Guide<'a> {
             }
             word if matches!(word, "GROUP" | "ORDER")
                 || self.is_any(clause, self.rules.by_clauses)
-                || (word == "FOR" && self.is_any(clause + 1, self.rules.for_clauses)) =>
+                || (self.is(clause, "FOR") && self.is_any(clause + 1, self.rules.for_clauses)) =>
             {
                 let body = clause + 2;
                 if body > end || (self.is(body, "ALL") && body == end) {

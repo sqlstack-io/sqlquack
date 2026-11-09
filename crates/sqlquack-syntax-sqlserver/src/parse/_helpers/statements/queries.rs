@@ -22,8 +22,8 @@ use crate::parse::_helpers::tree::nodes::{
 };
 use crate::parse::_helpers::values::primary::variable;
 use crate::parse::constants::{
-    COMPOUND_ASSIGNMENTS, CONFLICTING_LOCKS, ISOLATION_LEVELS, LOCK_GRANULARITIES, TABLE_HINTS,
-    UNION_OPERATOR,
+    COMPOUND_ASSIGNMENTS, CONFLICTING_LOCKS, ISOLATION_LEVELS, LOCK_GRANULARITIES,
+    PARAMETERIZED_FORCESEEK, SPATIAL_WINDOW_MAX_CELLS, TABLE_HINTS, UNION_OPERATOR,
 };
 use crate::scan::models::{NumberKind, Token, TokenKind};
 
@@ -77,7 +77,7 @@ impl<'sql> Parser<'sql> {
         if let Some(with) = with {
             set_with(&mut query, with);
         }
-        self.browse_clause(&mut query)?;
+        let query: Expression = self.browse_clause(query)?;
         self.query_tail()?;
         Ok(query)
     }
@@ -155,8 +155,7 @@ impl<'sql> Parser<'sql> {
                     _ => return Err(parser.gap("set_operation_order", parser.offset())),
                 }
             }
-            parser.xml_or_json_clause(&mut query)?;
-            Ok(query)
+            parser.xml_or_json_clause(query)
         })
     }
 
@@ -698,14 +697,14 @@ impl<'sql> Parser<'sql> {
                         "FORCESEEK()",
                     )
                 }
-                "SPATIAL_WINDOW_MAX_CELLS" => {
+                SPATIAL_WINDOW_MAX_CELLS => {
                     let first: usize = self.at;
                     self.at += 1;
                     self.expect_char('=')?;
                     let cells: Expression = self.integer()?;
                     let hint: Expression =
                         self.binary(first, Expression::PropertyEQ, var(&word), cells);
-                    (hint, "SPATIAL_WINDOW_MAX_CELLS")
+                    (hint, SPATIAL_WINDOW_MAX_CELLS)
                 }
                 hint if TABLE_HINTS.contains(&hint) => {
                     self.at += 1;
@@ -928,25 +927,21 @@ impl<'sql> Parser<'sql> {
     fn joins(&mut self) -> Parsing<Vec<Join>> {
         let mut joins: Vec<Join> = Vec::new();
         loop {
-            let hint_at = |offset: usize| -> Option<String> {
-                self.word_at(offset).filter(|word| {
-                    JOIN_HINTS.contains(&word.as_str()) && self.kw_at(offset + 1, "JOIN")
-                })
+            let hint_at = |offset: usize| -> bool {
+                self.word_at(offset)
+                    .is_some_and(|word| JOIN_HINTS.contains(&word.as_str()))
+                    && self.kw_at(offset + 1, "JOIN")
             };
-            let (kind, words, keywords, hint): (JoinKind, usize, (bool, bool), Option<String>) =
+            let (kind, words, keywords): (JoinKind, usize, (bool, bool)) =
                 match (self.word_at(0).as_deref(), self.word_at(1).as_deref()) {
-                    (Some("CROSS"), Some("JOIN")) => (JoinKind::Cross, 2, (false, false), None),
-                    (Some("CROSS"), Some("APPLY")) => {
-                        (JoinKind::CrossApply, 2, (false, false), None)
-                    }
-                    (Some("OUTER"), Some("APPLY")) => {
-                        (JoinKind::OuterApply, 2, (false, false), None)
-                    }
-                    (Some("JOIN"), _) => (JoinKind::Inner, 1, (false, false), None),
-                    (Some("INNER"), Some("JOIN")) => (JoinKind::Inner, 2, (true, false), None),
+                    (Some("CROSS"), Some("JOIN")) => (JoinKind::Cross, 2, (false, false)),
+                    (Some("CROSS"), Some("APPLY")) => (JoinKind::CrossApply, 2, (false, false)),
+                    (Some("OUTER"), Some("APPLY")) => (JoinKind::OuterApply, 2, (false, false)),
+                    (Some("JOIN"), _) => (JoinKind::Inner, 1, (false, false)),
+                    (Some("INNER"), Some("JOIN")) => (JoinKind::Inner, 2, (true, false)),
                     (Some("INNER"), Some(_)) => match hint_at(1) {
-                        Some(hint) => (JoinKind::Inner, 3, (true, false), Some(hint)),
-                        None => return Err(self.error_at(self.at + 1)),
+                        true => (JoinKind::Inner, 3, (true, false)),
+                        false => return Err(self.error_at(self.at + 1)),
                     },
                     (Some(side @ ("LEFT" | "RIGHT" | "FULL")), Some(next)) => {
                         let kind: JoinKind = match side {
@@ -954,18 +949,18 @@ impl<'sql> Parser<'sql> {
                             "RIGHT" => JoinKind::Right,
                             _ => JoinKind::Full,
                         };
-                        let outer: bool = next == "OUTER";
+                        let outer: bool = self.kw_at(1, "OUTER");
                         let at: usize = 1 + usize::from(outer);
                         match (self.kw_at(at, "JOIN"), hint_at(at)) {
-                            (true, _) => (kind, at + 1, (false, outer), None),
-                            (false, Some(hint)) if hint == "REMOTE" => {
+                            (true, _) => (kind, at + 1, (false, outer)),
+                            (false, true) if self.kw_at(at, "REMOTE") => {
                                 return Err(self.error_at(self.at + at));
                             }
-                            (false, Some(hint)) => (kind, at + 2, (false, outer), Some(hint)),
-                            (false, None) if outer || JOIN_HINTS.contains(&next) => {
+                            (false, true) => (kind, at + 2, (false, outer)),
+                            (false, false) if outer || JOIN_HINTS.contains(&next) => {
                                 return Err(self.error_at(self.at + at));
                             }
-                            (false, None) => return Ok(joins),
+                            (false, false) => return Ok(joins),
                         }
                     }
                     (Some("LOOP" | "HASH" | "MERGE" | "REMOTE"), Some(_))
@@ -975,6 +970,10 @@ impl<'sql> Parser<'sql> {
                     }
                     _ => return Ok(joins),
                 };
+            let hint: Option<String> = words
+                .checked_sub(2)
+                .and_then(|at| self.word_at(at))
+                .filter(|word| JOIN_HINTS.contains(&word.as_str()));
             self.at += words;
             let right: Expression = self.table_source()?;
             let constraint: JoinConstraint = match kind {
@@ -1006,17 +1005,25 @@ fn index_hint(name: &str, values: Vec<Expression>, columns: Option<Expression>) 
     }))
 }
 
+/// Whether `names` holds any of `hints`.
+fn names_any(names: &[String], hints: &[&str]) -> bool {
+    names.iter().any(|name| hints.contains(&name.as_str()))
+}
+
 /// SQL Server's error for one table's hints that cannot stand together, by the name of each hint.
 fn hint_conflict(names: &[String]) -> Option<&'static str> {
     let has = |hint: &str| names.iter().any(|name| name == hint);
     let levels: usize = ISOLATION_LEVELS
         .iter()
-        .filter(|level| level.iter().any(|hint| has(hint)))
+        .filter(|level| names_any(names, level))
         .count();
     let granularities: usize = LOCK_GRANULARITIES.iter().filter(|hint| has(hint)).count();
-    let dirty: bool = ISOLATION_LEVELS[0].iter().any(|hint| has(hint));
+    let dirty: bool = names_any(names, ISOLATION_LEVELS[0]);
     let locks: bool = (granularities > 0 || has("UPDLOCK") || has("XLOCK")) && dirty;
-    let seeks: usize = names.iter().filter(|name| *name == "FORCESEEK()").count();
+    let seeks: usize = names
+        .iter()
+        .filter(|name| *name == PARAMETERIZED_FORCESEEK)
+        .count();
     if levels > 1 || granularities > 1 || (has("UPDLOCK") && has("XLOCK")) || locks {
         return Some(CONFLICTING_LOCKS);
     }
@@ -1037,7 +1044,7 @@ fn hint_conflict(names: &[String]) -> Option<&'static str> {
     }
     if names
         .iter()
-        .filter(|name| *name == "SPATIAL_WINDOW_MAX_CELLS")
+        .filter(|name| *name == SPATIAL_WINDOW_MAX_CELLS)
         .count()
         > 1
     {

@@ -7,7 +7,7 @@ use sqlquack_syntax::expressions::statements::models::{Merge, OutputClause, When
 use sqlquack_syntax::expressions::types::models::Tuple;
 
 use crate::parse::_helpers::statements::queries::set_with;
-use crate::parse::_helpers::statements::results::{has_browse, has_xml_or_json};
+use crate::parse::_helpers::statements::results::{has_browse, xml_or_json_clause_name};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_name};
 use crate::parse::_helpers::tree::nodes::{column_from, delete, insert, table, update, var};
 use crate::parse::constants::{
@@ -33,7 +33,7 @@ impl<'sql> Parser<'sql> {
             _ => {
                 let mut query: Expression = self.query_expression()?;
                 set_with(&mut query, with);
-                self.browse_clause(&mut query)?;
+                let query: Expression = self.browse_clause(query)?;
                 self.query_tail()?;
                 return Ok(query);
             }
@@ -103,7 +103,7 @@ impl<'sql> Parser<'sql> {
             if has_browse(&query) {
                 return Err(self.error_with(BROWSE_WITH_WRITE));
             }
-            if let Some(clause) = has_xml_or_json(&query) {
+            if let Some(clause) = xml_or_json_clause_name(&query) {
                 return Err(self.error_with(&format!(
                     "The FOR {clause} clause is not allowed in a INSERT statement."
                 )));
