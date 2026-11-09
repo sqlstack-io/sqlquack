@@ -8,7 +8,7 @@ use crate::bigquery::profile::_helpers::typing::{
     bigquery_cast_spelling, bigquery_common_type, bigquery_literal_type, bigquery_type,
 };
 use crate::dialects::types::DialectProfile;
-use crate::lineage::models::{Engine, OutputReach};
+use crate::lineage::models::{CteAliasWidth, Engine, OutputReach};
 use crate::lineage::models::{Lineage, LineageContext, TransformKind};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -57,6 +57,18 @@ impl DialectRules for BigQueryRules {
     }
 
     fn checks_set_widths_only(&self) -> bool {
+        false
+    }
+
+    fn cte_alias_width(&self) -> CteAliasWidth {
+        CteAliasWidth::Unchecked
+    }
+
+    fn groups_match_caselessly(&self) -> bool {
+        false
+    }
+
+    fn refuses_distinct_order_by_unselected(&self) -> bool {
         false
     }
 

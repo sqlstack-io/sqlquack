@@ -9,7 +9,7 @@ use crate::databricks::profile::_helpers::typing::{
     databricks_cast_spelling, databricks_literal_type, databricks_type,
 };
 use crate::dialects::types::DialectProfile;
-use crate::lineage::models::{Engine, OutputReach};
+use crate::lineage::models::{CteAliasWidth, Engine, OutputReach};
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -62,6 +62,18 @@ impl DialectRules for DatabricksRules {
     }
 
     fn checks_set_widths_only(&self) -> bool {
+        false
+    }
+
+    fn cte_alias_width(&self) -> CteAliasWidth {
+        CteAliasWidth::Unchecked
+    }
+
+    fn groups_match_caselessly(&self) -> bool {
+        false
+    }
+
+    fn refuses_distinct_order_by_unselected(&self) -> bool {
         false
     }
 

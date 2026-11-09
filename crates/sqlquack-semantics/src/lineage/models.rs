@@ -260,6 +260,18 @@ impl DialectRules for SharedRules {
     fn checks_set_widths_only(&self) -> bool {
         false
     }
+
+    fn cte_alias_width(&self) -> CteAliasWidth {
+        CteAliasWidth::Unchecked
+    }
+
+    fn groups_match_caselessly(&self) -> bool {
+        false
+    }
+
+    fn refuses_distinct_order_by_unselected(&self) -> bool {
+        false
+    }
 }
 
 /// The engine whose binder the checks follow.
@@ -276,6 +288,17 @@ pub(crate) enum Engine {
     BigQuery,
     /// Databricks SQL, coercions not recorded: no type findings, only scope and name rules.
     Databricks,
+}
+
+/// How a CTE's column aliases must match the columns its query returns.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum CteAliasWidth {
+    /// Any number of aliases.
+    Unchecked,
+    /// One alias per column.
+    Exact,
+    /// No more aliases than columns.
+    AtMost,
 }
 
 /// Which output names of a SELECT its own clauses may read.

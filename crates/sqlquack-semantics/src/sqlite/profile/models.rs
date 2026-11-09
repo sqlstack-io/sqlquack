@@ -5,7 +5,7 @@ use std::rc::Rc;
 use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::dialects::types::DialectProfile;
-use crate::lineage::models::{Engine, OutputReach};
+use crate::lineage::models::{CteAliasWidth, Engine, OutputReach};
 use crate::lineage::models::{Lineage, LineageContext, Nullability};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -57,6 +57,18 @@ impl DialectRules for SqliteRules {
 
     fn checks_set_widths_only(&self) -> bool {
         true
+    }
+
+    fn cte_alias_width(&self) -> CteAliasWidth {
+        CteAliasWidth::Exact
+    }
+
+    fn groups_match_caselessly(&self) -> bool {
+        false
+    }
+
+    fn refuses_distinct_order_by_unselected(&self) -> bool {
+        false
     }
 
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {

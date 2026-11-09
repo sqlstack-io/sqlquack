@@ -10,7 +10,7 @@ use crate::duckdb::profile::_helpers::duck_types::{
 };
 use crate::duckdb::profile::_helpers::functions::{duckdb_arities, duckdb_function};
 use crate::duckdb::profile::_helpers::typing::{duckdb_literal_type, duckdb_type};
-use crate::lineage::models::{Engine, OutputReach};
+use crate::lineage::models::{CteAliasWidth, Engine, OutputReach};
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -60,6 +60,18 @@ impl DialectRules for DuckDbRules {
     }
 
     fn checks_set_widths_only(&self) -> bool {
+        false
+    }
+
+    fn cte_alias_width(&self) -> CteAliasWidth {
+        CteAliasWidth::Unchecked
+    }
+
+    fn groups_match_caselessly(&self) -> bool {
+        true
+    }
+
+    fn refuses_distinct_order_by_unselected(&self) -> bool {
         false
     }
 

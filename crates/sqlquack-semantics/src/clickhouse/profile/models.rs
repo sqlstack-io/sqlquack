@@ -11,7 +11,7 @@ use crate::clickhouse::profile::_helpers::typing::{
 use crate::clickhouse::profile::constants::CLICKHOUSE_TIMESTAMP_TYPE;
 use crate::dialects::types::DialectProfile;
 use crate::lineage::main::rendered_type::rendered_type;
-use crate::lineage::models::{Engine, OutputReach};
+use crate::lineage::models::{CteAliasWidth, Engine, OutputReach};
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -72,6 +72,18 @@ impl DialectRules for ClickHouseRules {
     }
 
     fn checks_set_widths_only(&self) -> bool {
+        false
+    }
+
+    fn cte_alias_width(&self) -> CteAliasWidth {
+        CteAliasWidth::Unchecked
+    }
+
+    fn groups_match_caselessly(&self) -> bool {
+        false
+    }
+
+    fn refuses_distinct_order_by_unselected(&self) -> bool {
         false
     }
 

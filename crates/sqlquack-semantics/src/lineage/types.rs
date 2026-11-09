@@ -6,7 +6,7 @@ use std::rc::Rc;
 use sqlquack_syntax::{DataType, Expression};
 
 use crate::lineage::main::rendered_type::rendered_type;
-use crate::lineage::models::{Engine, Nullability, OutputReach};
+use crate::lineage::models::{CteAliasWidth, Engine, Nullability, OutputReach};
 use crate::lineage::models::{
     Lineage, LineageContext, NullabilityRule, SchemaColumn, SourceColumn,
 };
@@ -72,6 +72,15 @@ pub(crate) trait DialectRules: Sync {
 
     /// Whether set operations check only that their branches return as many columns.
     fn checks_set_widths_only(&self) -> bool;
+
+    /// How a CTE's column aliases must match the columns its query returns.
+    fn cte_alias_width(&self) -> CteAliasWidth;
+
+    /// Whether GROUP BY expressions match the expressions they group whatever their keyword case.
+    fn groups_match_caselessly(&self) -> bool;
+
+    /// Whether a DISTINCT of columns refuses an ORDER BY of a column it does not select.
+    fn refuses_distinct_order_by_unselected(&self) -> bool;
 
     /// A literal's type and nullability, given the shared rules' `generic` answer.
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
