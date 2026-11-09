@@ -5,7 +5,7 @@ use std::rc::Rc;
 use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::dialects::types::DialectProfile;
-use crate::lineage::constants::DATE_PART_FUNCTIONS;
+use crate::lineage::constants::{DATE_PART_FUNCTIONS, SNOWFLAKE_VALUES_COLUMN};
 use crate::lineage::main::rendered_type::rendered_type;
 use crate::lineage::models::{CteAliasWidth, Engine, OutputReach};
 use crate::lineage::models::{Lineage, LineageContext};
@@ -105,6 +105,42 @@ impl DialectRules for SqlServerRules {
     }
 
     fn star_keys_in_place(&self) -> bool {
+        false
+    }
+
+    fn has_lateral_views(&self) -> bool {
+        false
+    }
+
+    fn as_of_keeps_unmatched_left(&self) -> bool {
+        false
+    }
+
+    fn bare_unnest_column(&self) -> Option<&'static str> {
+        None
+    }
+
+    fn unnests_struct_fields(&self) -> bool {
+        false
+    }
+
+    fn names_file_scans_by_stem(&self) -> bool {
+        false
+    }
+
+    fn maps_stored_timestamps(&self) -> bool {
+        true
+    }
+
+    fn table_function_columns(&self) -> &'static [(&'static str, &'static [&'static str])] {
+        &[]
+    }
+
+    fn values_column_name(&self, position: usize) -> String {
+        format!("{SNOWFLAKE_VALUES_COLUMN}{}", position + 1)
+    }
+
+    fn pivots_name_bare(&self) -> bool {
         false
     }
 

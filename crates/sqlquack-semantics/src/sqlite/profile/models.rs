@@ -12,6 +12,7 @@ use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
 use crate::postgres::profile::main::postgres_window_only::postgres_window_only;
 use crate::sqlite::profile::_helpers::typing::{sqlite_cast_spelling, sqlite_literal_type};
+use crate::sqlite::profile::constants::SQLITE_VALUES_COLUMN;
 
 /// SQLite: identifiers keep their case as written, and names compare without regard to ASCII case.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -98,6 +99,42 @@ impl DialectRules for SqliteRules {
 
     fn star_keys_in_place(&self) -> bool {
         true
+    }
+
+    fn has_lateral_views(&self) -> bool {
+        false
+    }
+
+    fn as_of_keeps_unmatched_left(&self) -> bool {
+        false
+    }
+
+    fn bare_unnest_column(&self) -> Option<&'static str> {
+        None
+    }
+
+    fn unnests_struct_fields(&self) -> bool {
+        false
+    }
+
+    fn names_file_scans_by_stem(&self) -> bool {
+        false
+    }
+
+    fn maps_stored_timestamps(&self) -> bool {
+        false
+    }
+
+    fn table_function_columns(&self) -> &'static [(&'static str, &'static [&'static str])] {
+        &[]
+    }
+
+    fn values_column_name(&self, position: usize) -> String {
+        format!("{SQLITE_VALUES_COLUMN}{}", position + 1)
+    }
+
+    fn pivots_name_bare(&self) -> bool {
+        false
     }
 
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {

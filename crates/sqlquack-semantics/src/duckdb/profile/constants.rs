@@ -48,3 +48,13 @@ pub(crate) const DUCKDB_WIDEST_INTEGER: u16 = 128;
 pub(crate) const ONE_ARGUMENT: usize = 1;
 /// The arguments of a two-argument function.
 pub(crate) const TWO_ARGUMENTS: usize = 2;
+/// DuckDB's built-in table functions of one column, named after the function.
+pub(crate) const DUCKDB_TABLE_FUNCTION_COLUMNS: [(&str, &[&str]); 3] = [
+    ("GENERATE_SERIES", &["generate_series"]),
+    ("RANGE", &["range"]),
+    ("UNNEST", &[DUCKDB_UNNEST_COLUMN]),
+];
+/// The one column DuckDB's UNNEST in FROM returns.
+pub(crate) const DUCKDB_UNNEST_COLUMN: &str = "unnest";
+/// DuckDB's name for the n-th column of a VALUES list, numbered from 1.
+pub(crate) const DUCKDB_VALUES_COLUMN: &str = "col";

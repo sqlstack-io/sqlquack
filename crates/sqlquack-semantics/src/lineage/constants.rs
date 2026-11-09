@@ -8,14 +8,6 @@ pub(crate) const TABLE_FUNCTION_COLUMNS: [(&str, &[&str]); 3] = [
     ("SPLIT_TO_TABLE", &["SEQ", "INDEX", "VALUE"]),
     ("STRTOK_SPLIT_TO_TABLE", &["SEQ", "INDEX", "VALUE"]),
 ];
-/// DuckDB's built-in table functions of one column, named after the function.
-pub(crate) const DUCKDB_TABLE_FUNCTION_COLUMNS: [(&str, &[&str]); 3] = [
-    ("GENERATE_SERIES", &["generate_series"]),
-    ("RANGE", &["range"]),
-    ("UNNEST", &[DUCKDB_UNNEST_COLUMN]),
-];
-/// The one column DuckDB's UNNEST in FROM returns.
-pub(crate) const DUCKDB_UNNEST_COLUMN: &str = "unnest";
 /// Serialized expression fields that do not change what a group key means: spans and `::` spelling.
 pub(crate) const SHAPE_COSMETIC_FIELDS: [&str; 2] = ["span", "double_colon_syntax"];
 /// The suffix of serialized comment fields, which group-key shapes drop.
@@ -30,8 +22,6 @@ pub(crate) const STRUCT_FUNCTION: &str = "STRUCT";
 pub(crate) const TABLE_WRAPPER: &str = "TABLE";
 /// Snowflake's name for the n-th column of a VALUES list, numbered from 1.
 pub(crate) const SNOWFLAKE_VALUES_COLUMN: &str = "COLUMN";
-/// DuckDB's name for the n-th column of a VALUES list, numbered from 1.
-pub(crate) const DUCKDB_VALUES_COLUMN: &str = "col";
 /// The DuckDB profile's name, which numbers VALUES columns its own way.
 pub(crate) const DUCKDB_PROFILE: &str = "DuckDB";
 /// Window and group aggregate functions SQLQuack's faithful parse keeps as plain calls.
@@ -236,8 +226,6 @@ pub(crate) const SNOWFLAKE_PROFILE: &str = "Snowflake";
 pub(crate) const CLICKHOUSE_PROFILE: &str = "ClickHouse";
 /// The FROM items of a query with one join, whose shared names ClickHouse reads from the left.
 pub(crate) const CLICKHOUSE_SINGLE_JOIN_SOURCES: usize = 2;
-/// The BigQuery profile's name.
-pub(crate) const BIGQUERY_PROFILE: &str = "BigQuery";
 /// BigQuery's analytic functions, which an OVER clause must follow.
 pub(crate) const BIGQUERY_WINDOW_ONLY_FUNCTIONS: [&str; 11] = [
     "ROW_NUMBER",
@@ -258,16 +246,6 @@ pub(crate) const SPAN_FIELD: &str = "span";
 pub(crate) const NAME_FIELD: &str = "name";
 /// The PostgreSQL profile's name.
 pub(crate) const POSTGRES_PROFILE: &str = "PostgreSQL";
-/// The SQLite profile's name.
-pub(crate) const SQLITE_PROFILE: &str = "SQLite";
-/// The SQL Server profile's name.
-pub(crate) const SQLSERVER_PROFILE: &str = "SQL Server";
-/// SQLite's name for the n-th column of a VALUES list, numbered from 1.
-pub(crate) const SQLITE_VALUES_COLUMN: &str = "column";
-/// The Databricks SQL profile's name.
-pub(crate) const DATABRICKS_PROFILE: &str = "Databricks";
-/// Databricks' name for the n-th column of a VALUES list, numbered from 1.
-pub(crate) const DATABRICKS_VALUES_COLUMN: &str = "col";
 /// PostgreSQL's system columns, which every stored table has and no star expands.
 pub(crate) const POSTGRES_SYSTEM_COLUMNS: [&str; 6] =
     ["tableoid", "xmin", "cmin", "xmax", "cmax", "ctid"];

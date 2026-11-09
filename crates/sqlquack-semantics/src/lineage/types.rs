@@ -103,6 +103,33 @@ pub(crate) trait DialectRules: Sync {
     /// Whether a star lists each join key once, where and as its first source offers it.
     fn star_keys_in_place(&self) -> bool;
 
+    /// Whether a SELECT may add rows through LATERAL VIEW clauses.
+    fn has_lateral_views(&self) -> bool;
+
+    /// Whether an ASOF JOIN keeps unmatched left rows, NULL-filling the right.
+    fn as_of_keeps_unmatched_left(&self) -> bool;
+
+    /// The one column an UNNEST in FROM without alias or ordinality returns, when it is a source.
+    fn bare_unnest_column(&self) -> Option<&'static str>;
+
+    /// Whether an unaliased UNNEST of an array of STRUCT values returns the structs' fields.
+    fn unnests_struct_fields(&self) -> bool;
+
+    /// Whether an unaliased file scan takes its file's stem as its name.
+    fn names_file_scans_by_stem(&self) -> bool;
+
+    /// Whether stored TIMESTAMP columns read as the type the adapter creates them as.
+    fn maps_stored_timestamps(&self) -> bool;
+
+    /// The dialect's own built-in table functions, each with its columns.
+    fn table_function_columns(&self) -> &'static [(&'static str, &'static [&'static str])];
+
+    /// The name of a VALUES list's column at the zero-based `position`.
+    fn values_column_name(&self, position: usize) -> String;
+
+    /// Whether pivoted columns take a string's bare text, unnamed beside several aggregates.
+    fn pivots_name_bare(&self) -> bool;
+
     /// A literal's type and nullability, given the shared rules' `generic` answer.
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
         let _ = expression;

@@ -11,6 +11,9 @@ use crate::duckdb::profile::_helpers::duck_types::{
 };
 use crate::duckdb::profile::_helpers::functions::{duckdb_arities, duckdb_function};
 use crate::duckdb::profile::_helpers::typing::{duckdb_literal_type, duckdb_type};
+use crate::duckdb::profile::constants::{
+    DUCKDB_TABLE_FUNCTION_COLUMNS, DUCKDB_UNNEST_COLUMN, DUCKDB_VALUES_COLUMN,
+};
 use crate::lineage::constants::DATE_PART_FUNCTIONS;
 use crate::lineage::models::{CteAliasWidth, Engine, OutputReach};
 use crate::lineage::models::{Lineage, LineageContext};
@@ -102,6 +105,42 @@ impl DialectRules for DuckDbRules {
     }
 
     fn star_keys_in_place(&self) -> bool {
+        true
+    }
+
+    fn has_lateral_views(&self) -> bool {
+        false
+    }
+
+    fn as_of_keeps_unmatched_left(&self) -> bool {
+        false
+    }
+
+    fn bare_unnest_column(&self) -> Option<&'static str> {
+        Some(DUCKDB_UNNEST_COLUMN)
+    }
+
+    fn unnests_struct_fields(&self) -> bool {
+        false
+    }
+
+    fn names_file_scans_by_stem(&self) -> bool {
+        true
+    }
+
+    fn maps_stored_timestamps(&self) -> bool {
+        false
+    }
+
+    fn table_function_columns(&self) -> &'static [(&'static str, &'static [&'static str])] {
+        &DUCKDB_TABLE_FUNCTION_COLUMNS
+    }
+
+    fn values_column_name(&self, position: usize) -> String {
+        format!("{DUCKDB_VALUES_COLUMN}{position}")
+    }
+
+    fn pivots_name_bare(&self) -> bool {
         true
     }
 

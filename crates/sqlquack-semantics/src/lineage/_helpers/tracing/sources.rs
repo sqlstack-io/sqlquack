@@ -11,17 +11,15 @@ use sqlquack_syntax::expressions::queries::models::{
     Join, JoinKind, LateralView, Pivot, Select, Unpivot, Values,
 };
 
+use crate::dialects::main::dialect_rules::dialect_rules;
 use crate::lineage::_helpers::tracing::expressions::expression_lineage;
 use crate::lineage::_helpers::tracing::lineages::{combined, constant, direct, merged, unresolved};
 use crate::lineage::_helpers::tracing::queries::{empty_scope, renamed, resolved_query};
 use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
 use crate::lineage::_helpers::typing::rules::mapped_timestamp;
 use crate::lineage::constants::{
-    ARRAY_FUNCTION, BIGQUERY_PROFILE, DATABRICKS_PROFILE, DATABRICKS_VALUES_COLUMN, DUCKDB_PROFILE,
-    DUCKDB_TABLE_FUNCTION_COLUMNS, DUCKDB_UNNEST_COLUMN, DUCKDB_VALUES_COLUMN, IDENTIFIER_FUNCTION,
-    ONE_AGGREGATE, OUTER_LEFT_JOINS, OUTER_RIGHT_JOINS, SNOWFLAKE_PROFILE, SNOWFLAKE_VALUES_COLUMN,
-    SQLITE_PROFILE, SQLITE_VALUES_COLUMN, SQLSERVER_PROFILE, STRUCT_FUNCTION,
-    TABLE_FUNCTION_COLUMNS, TABLE_WRAPPER, UNNEST_FUNCTION,
+    ARRAY_FUNCTION, IDENTIFIER_FUNCTION, ONE_AGGREGATE, OUTER_LEFT_JOINS, OUTER_RIGHT_JOINS,
+    STRUCT_FUNCTION, TABLE_FUNCTION_COLUMNS, TABLE_WRAPPER, UNNEST_FUNCTION,
 };
 use crate::lineage::models::{
     FromItems, Lineage, LineageContext, LineageScope, NamedQuery, Nullability, ResolvedQuery,
@@ -77,7 +75,7 @@ pub(crate) fn from_sources(
         }
         from.sources.extend(added);
     }
-    if context.profile.name() == DATABRICKS_PROFILE {
+    if dialect_rules(context.profile).has_lateral_views() {
         for view in &select.lateral_views {
             let scope = LineageScope {
                 sources: std::mem::take(&mut from.sources),
@@ -127,9 +125,9 @@ fn lateral_view_source(
     }
 }
 
-/// Snowflake's ASOF JOIN keeps unmatched left rows, NULL-filling the right; DuckDB's is inner.
+/// An ASOF JOIN that keeps unmatched left rows, NULL-filling the right, as Snowflake's does.
 fn outer_as_of(kind: JoinKind, context: LineageContext<'_>) -> bool {
-    kind == JoinKind::AsOf && context.profile.name() == SNOWFLAKE_PROFILE
+    kind == JoinKind::AsOf && dialect_rules(context.profile).as_of_keeps_unmatched_left()
 }
 
 /// `source` on the side of an outer join that may be NULL-filled: every column it offers may be NULL.
@@ -367,10 +365,15 @@ fn item_sources_level(
             if unnest.expressions.is_empty()
                 && !unnest.with_ordinality
                 && unnest.alias.is_none()
-                && context.profile.name() == DUCKDB_PROFILE =>
+                && dialect_rules(context.profile)
+                    .bare_unnest_column()
+                    .is_some() =>
         {
+            let column: &str = dialect_rules(context.profile)
+                .bare_unnest_column()
+                .unwrap_or_default();
             vec![table_function_source(
-                (DUCKDB_UNNEST_COLUMN, &[DUCKDB_UNNEST_COLUMN]),
+                (column, &[column]),
                 std::slice::from_ref(&unnest.this),
                 scope,
                 context,
@@ -437,7 +440,7 @@ fn unnested_fields(node: &Expression, context: LineageContext<'_>) -> Option<Vec
     let Some(Expression::Function(first)) = array.args.first() else {
         return None;
     };
-    let shaped: bool = context.profile.name() == BIGQUERY_PROFILE
+    let shaped: bool = dialect_rules(context.profile).unnests_struct_fields()
         && unnest.name.eq_ignore_ascii_case(UNNEST_FUNCTION)
         && array.name.eq_ignore_ascii_case(ARRAY_FUNCTION)
         && first.name.eq_ignore_ascii_case(STRUCT_FUNCTION);
@@ -501,7 +504,7 @@ fn file_stem(name: &Identifier, context: LineageContext<'_>) -> Option<String> {
     let path: &str = name.name.as_str();
     let file: bool = name.quoted && path.contains(['.', '/', '\\']);
     let stem: &str = path.rsplit(['/', '\\']).next()?.split('.').next()?;
-    (context.profile.name() == DUCKDB_PROFILE && file && !stem.is_empty())
+    (dialect_rules(context.profile).names_file_scans_by_stem() && file && !stem.is_empty())
         .then(|| context.profile.resolved_identifier(stem, false))
 }
 
@@ -579,18 +582,19 @@ fn stored_columns(
 /// A stored column's type; SQL Server's adapter creates SQLBuild's TIMESTAMP as its timestamp type.
 fn stored_type(column: &SchemaColumn, context: LineageContext<'_>) -> Option<Rc<str>> {
     let data_type: Rc<str> = Rc::from(column.data_type.as_deref()?);
-    Some(match context.profile.name() == SQLSERVER_PROFILE {
-        true => mapped_timestamp(data_type, context),
-        false => data_type,
-    })
+    Some(
+        match dialect_rules(context.profile).maps_stored_timestamps() {
+            true => mapped_timestamp(data_type, context),
+            false => data_type,
+        },
+    )
 }
 
 /// The columns of a built-in table function, when `name` is one.
 fn built_in_columns(name: &str, context: LineageContext<'_>) -> Option<&'static [&'static str]> {
-    let duckdb: bool = context.profile.name() == DUCKDB_PROFILE;
     TABLE_FUNCTION_COLUMNS
         .iter()
-        .chain(DUCKDB_TABLE_FUNCTION_COLUMNS.iter().filter(|_| duckdb))
+        .chain(dialect_rules(context.profile).table_function_columns())
         .find(|(function, _)| name.eq_ignore_ascii_case(function))
         .map(|(_, columns)| *columns)
 }
@@ -669,12 +673,7 @@ pub(crate) fn values_query(
         .map(|row| row.expressions.len())
         .max()
         .unwrap_or(0);
-    let generated = |position: usize| match context.profile.name() {
-        DUCKDB_PROFILE => format!("{DUCKDB_VALUES_COLUMN}{position}"),
-        SQLITE_PROFILE => format!("{SQLITE_VALUES_COLUMN}{}", position + 1),
-        DATABRICKS_PROFILE => format!("{DATABRICKS_VALUES_COLUMN}{}", position + 1),
-        _ => format!("{SNOWFLAKE_VALUES_COLUMN}{}", position + 1),
-    };
+    let generated = |position: usize| dialect_rules(context.profile).values_column_name(position);
     let columns: Vec<ScopedColumn> = (0..width)
         .map(|position| {
             let name = generated(position);
@@ -814,15 +813,15 @@ fn grouped_columns(
     (columns, known)
 }
 
-/// A pivoted value's column: quoted text in Snowflake, bare in DuckDB (unnamed beside several aggregates).
+/// A pivoted value's column: quoted text in Snowflake, bare where the dialect names pivots bare.
 fn pivoted_name(value: &Expression, aggregates: usize, context: LineageContext<'_>) -> String {
-    let duckdb: bool = context.profile.name() == DUCKDB_PROFILE;
-    if duckdb && aggregates != ONE_AGGREGATE {
+    let bare: bool = dialect_rules(context.profile).pivots_name_bare();
+    if bare && aggregates != ONE_AGGREGATE {
         return String::new();
     }
     match value {
         Expression::Literal(literal) => match literal.as_ref() {
-            Literal::String(text) if duckdb => text.clone(),
+            Literal::String(text) if bare => text.clone(),
             Literal::String(text) => format!("'{text}'"),
             Literal::Number(text) => text.clone(),
             _ => String::new(),
