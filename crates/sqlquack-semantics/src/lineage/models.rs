@@ -1,8 +1,10 @@
 //! Column lineage of a query: each output column, the source columns it reads, and how.
 
 use std::cell::RefCell;
-use std::collections::{BTreeSet, HashMap};
+use std::collections::BTreeSet;
 use std::rc::Rc;
+
+use rustc_hash::FxHashMap;
 
 use sqlquack_syntax::expressions::names::models::Column;
 use sqlquack_syntax::tokens::models::Span;
@@ -175,7 +177,7 @@ pub(crate) struct LineageScope<'a> {
     /// Columns the level's WHERE requires to be NOT NULL, never NULL where the level reads them.
     pub(crate) non_null: Vec<&'a Column>,
     /// Each expression's lineage in this level, by node address; any change to the level clears it.
-    pub(crate) traced: RefCell<HashMap<usize, Lineage>>,
+    pub(crate) traced: RefCell<FxHashMap<usize, Lineage>>,
 }
 
 /// A query's outputs while resolving; `open` when it also offers columns not known by name.

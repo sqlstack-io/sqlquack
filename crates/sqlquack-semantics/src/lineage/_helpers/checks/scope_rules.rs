@@ -107,10 +107,16 @@ impl RuleLevel<'_, '_> {
             .any(|source| source.query.open || source.query.columns.is_empty())
     }
 
-    fn input_names(&self) -> HashSet<String> {
-        let mut names: HashSet<String> = HashSet::new();
+    fn input_names(&self) -> HashSet<&str> {
+        let mut names: HashSet<&str> = HashSet::new();
         for source in &self.scope.sources {
-            names.extend(source.query.columns.iter().map(|column| column.key.clone()));
+            names.extend(
+                source
+                    .query
+                    .columns
+                    .iter()
+                    .map(|column| column.key.as_str()),
+            );
         }
         names
     }
@@ -244,8 +250,15 @@ fn output_aliases<'s>(
     select: &'s Select,
     level: RuleLevel<'_, '_>,
 ) -> HashMap<String, &'s Expression> {
-    let inputs: HashSet<String> = level.input_names();
     let mut aliases: HashMap<String, &Expression> = HashMap::new();
+    if !select
+        .expressions
+        .iter()
+        .any(|projection| matches!(projection, Expression::Alias(_)))
+    {
+        return aliases;
+    }
+    let inputs: HashSet<&str> = level.input_names();
     let mut duplicate: HashSet<String> = HashSet::new();
     for projection in &select.expressions {
         let Expression::Alias(alias) = projection else {
@@ -254,7 +267,7 @@ fn output_aliases<'s>(
         let alias_key: String = level.key(&alias.alias);
         let passthrough: bool = matches!(&alias.this, Expression::Column(column)
             if column.table.is_none() && level.key(&column.name) == alias_key);
-        if passthrough || inputs.contains(&alias_key) || duplicate.contains(&alias_key) {
+        if passthrough || inputs.contains(alias_key.as_str()) || duplicate.contains(&alias_key) {
             continue;
         }
         if aliases.insert(alias_key.clone(), &alias.this).is_some() {
@@ -524,10 +537,11 @@ fn star_modifiers(
     (node, select): (&Expression, &Select),
     level: RuleLevel<'_, '_>,
 ) -> Vec<NameFinding> {
-    if level.open() {
+    let modified = |projection: &Expression| matches!(projection, Expression::Star(star) if star.except.is_some() || star.replace.is_some());
+    if level.open() || !select.expressions.iter().any(modified) {
         return Vec::new();
     }
-    let inputs: HashSet<String> = level.input_names();
+    let inputs: HashSet<&str> = level.input_names();
     let mut findings: Vec<NameFinding> = Vec::new();
     for projection in &select.expressions {
         let Expression::Star(star) = projection else {

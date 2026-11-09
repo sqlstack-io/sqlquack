@@ -241,8 +241,9 @@ fn select_findings(
         nested.extend(body);
         own.extend(unpivot_findings(item, &ctes, context));
     }
+    let own_outputs: Vec<String> = aliased_outputs(select, context);
     let mut outputs: Vec<String> = aliases.to_vec();
-    outputs.extend(aliased_outputs(select, context));
+    outputs.extend(own_outputs.iter().cloned());
     let level = Level {
         scope: &scope,
         outputs: &outputs,
@@ -264,9 +265,10 @@ fn select_findings(
         let own_name: String = output_key(unannotated(projection), context);
         let mut others: Vec<String> = aliases.to_vec();
         others.extend(
-            aliased_outputs(select, context)
-                .into_iter()
-                .filter(|alias| !context.profile.same_identifier(alias, &own_name)),
+            own_outputs
+                .iter()
+                .filter(|alias| !context.profile.same_identifier(alias, &own_name))
+                .cloned(),
         );
         let (found, inner) = clause_findings(
             projection,
@@ -282,7 +284,6 @@ fn select_findings(
         own.extend(found);
         nested.extend(inner);
     }
-    let own_outputs: Vec<String> = aliased_outputs(select, context);
     for clause in clauses(select) {
         let named_place: bool = ordered_name_place(select, clause)
             || (rules.group_keys_read_outputs() && group_key_place(select, clause));

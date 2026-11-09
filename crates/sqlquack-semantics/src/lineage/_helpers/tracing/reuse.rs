@@ -1,9 +1,10 @@
 //! Work the walks would otherwise repeat at every level of a deep tree, done once per analysis.
 
 use std::cell::RefCell;
-use std::collections::{HashMap, HashSet};
 use std::ops::Deref;
 use std::rc::Rc;
+
+use rustc_hash::{FxHashMap, FxHashSet};
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
@@ -15,7 +16,7 @@ use crate::lineage::models::{NamedQuery, ResolvedQuery};
 /// The queries resolved with one CTE list in reach and no enclosing level, by their nodes' addresses.
 struct Frame {
     ctes: (usize, usize),
-    resolved: HashMap<usize, ResolvedQuery>,
+    resolved: FxHashMap<usize, ResolvedQuery>,
 }
 
 /// A node's address, with the address and length of the CTE list it was read with.
@@ -25,14 +26,14 @@ type Placed = (usize, (usize, usize));
 #[derive(Default)]
 struct Kept {
     frames: Vec<Frame>,
-    aggregates: HashMap<usize, bool>,
-    unpivots: HashMap<usize, bool>,
+    aggregates: FxHashMap<usize, bool>,
+    unpivots: FxHashMap<usize, bool>,
     /// Each WITH's CTE list over a settled list, by the WITH's address and that list.
-    reaches: HashMap<Placed, Rc<[NamedQuery]>>,
+    reaches: FxHashMap<Placed, Rc<[NamedQuery]>>,
     /// The lists this analysis owns until it ends, so no other list can take their addresses.
-    settled_lists: HashSet<(usize, usize)>,
+    settled_lists: FxHashSet<(usize, usize)>,
     /// Queries resolved with a settled list and no enclosing level, for the whole analysis.
-    settled: HashMap<Placed, ResolvedQuery>,
+    settled: FxHashMap<Placed, ResolvedQuery>,
 }
 
 thread_local! {
@@ -93,7 +94,7 @@ pub(crate) fn holds_unpivot(node: &Expression) -> bool {
 /// Whether `node` or any node under it is `wanted`, kept by node address in `judged`.
 fn holds(
     node: &Expression,
-    judged: &dyn Fn(&mut Kept) -> &mut HashMap<usize, bool>,
+    judged: &dyn Fn(&mut Kept) -> &mut FxHashMap<usize, bool>,
     wanted: &dyn Fn(&Expression) -> bool,
 ) -> bool {
     let address: usize = std::ptr::from_ref(node) as usize;
@@ -143,7 +144,7 @@ pub(crate) fn reusing(ctes: &[NamedQuery]) -> Reuse {
         if !kept_already {
             kept.frames.push(Frame {
                 ctes,
-                resolved: HashMap::new(),
+                resolved: FxHashMap::default(),
             });
         }
         !kept_already

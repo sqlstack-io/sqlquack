@@ -1597,6 +1597,7 @@ name = "sqlquack-semantics"
 version = "0.2.0"
 dependencies = [
  "regex",
+ "rustc-hash",
  "saphyr-parser",
  "serde",
  "serde_json",
