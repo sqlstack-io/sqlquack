@@ -3,7 +3,8 @@ analyzer = "python"
 roots = ["recorder/src/sqlquack_record", "python/src/sqlquack"]
 tests = ["tests"]
 tooling = ["scripts"]
-select = ["FF"]
+rule_modules = ["scripts.fensu_policy.rules.script_names"]
+select = ["FF", "XSQ005", "XSQ006"]
 
 [targets.rust]
 analyzer = "rust"
@@ -11,7 +12,8 @@ roots = ["crates", "tools"]
 tests = []
 tooling = ["tools/sqlquack-polyglot-check"]
 rule_packs = ["rust"]
-select = ["FPRS"]
+rule_modules = ["scripts.fensu_policy.rules.crate_layout"]
+select = ["FPRS", "XSQ001", "XSQ002", "XSQ003", "XSQ004"]
 
 # A crate that is also a Python distribution keeps its pyproject.toml and shipped notices beside Cargo.toml.
 [targets.rust.rule_options.FPRSR311]
