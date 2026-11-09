@@ -1499,11 +1499,9 @@ name = "sqlquack-fingerprint"
 version = "0.2.0"
 dependencies = [
  "sha2",
+ "sqlquack-fingerprint",
+ "sqlquack-parse",
  "sqlquack-syntax",
- "sqlquack-syntax-bigquery",
- "sqlquack-syntax-postgres",
- "sqlquack-syntax-snowflake",
- "sqlquack-syntax-sqlserver",
 ]
 
 [[package]]
