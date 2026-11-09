@@ -43,10 +43,16 @@ VARIANTS: dict[str, str] = variant_map(entries=DEFAULT_DIALECT_VARIANTS)
             None,
         ),
         CrateNameTestCase(
-            "a source and target pair passes",
+            "a conversion crate naming its source passes",
+            "sqlquack-convert-snowflake",
+            "crates/sqlquack-convert-snowflake",
+            None,
+        ),
+        CrateNameTestCase(
+            "a source and target pair is refused",
             "sqlquack-rules-snowflake-duckdb",
             "crates/sqlquack-rules-snowflake-duckdb",
-            None,
+            "only its source dialect",
         ),
         CrateNameTestCase("the bare product crate passes", "sqlquack", "crates/sqlquack", None),
         CrateNameTestCase(
@@ -68,10 +74,10 @@ VARIANTS: dict[str, str] = variant_map(entries=DEFAULT_DIALECT_VARIANTS)
             "not a dialect",
         ),
         CrateNameTestCase(
-            "the same dialect twice fails",
-            "sqlquack-rules-duckdb-duckdb",
-            "crates/sqlquack-rules-duckdb-duckdb",
-            "more than one",
+            "naming two dialects fails",
+            "sqlquack-rules-snowflake-sqlite",
+            "crates/sqlquack-rules-snowflake-sqlite",
+            "more than one dialect",
         ),
         CrateNameTestCase(
             "a folder named differently fails", "sqlquack-lint", "crates/lint", "name the folder"
@@ -111,16 +117,16 @@ def test_given_crate_when_naming_then_reports_problem(test_case: CrateNameTestCa
             (("sqlquack-syntax-postgres", "postgres"),),
         ),
         DependencyDialectTestCase(
-            "a pair crate may use both of its dialects",
-            "sqlquack-rules-snowflake-duckdb",
-            "crates/sqlquack-rules-snowflake-duckdb",
-            ("sqlquack-types-snowflake", "sqlquack-blocks-duckdb"),
+            "a source-named crate may use crates of the same dialect",
+            "sqlquack-rules-snowflake",
+            "crates/sqlquack-rules-snowflake",
+            ("sqlquack-types-snowflake", "sqlquack-blocks-snowflake"),
             (),
         ),
         DependencyDialectTestCase(
-            "a pair crate may not use a third dialect",
-            "sqlquack-rules-snowflake-duckdb",
-            "crates/sqlquack-rules-snowflake-duckdb",
+            "a source-named crate may not use another dialect's crate",
+            "sqlquack-rules-snowflake",
+            "crates/sqlquack-rules-snowflake",
             ("sqlquack-syntax-sqlite",),
             (("sqlquack-syntax-sqlite", "sqlite"),),
         ),

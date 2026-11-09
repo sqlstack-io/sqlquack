@@ -30,7 +30,7 @@ from scripts.fensu_policy.models import CrateDependencies, CrateName, SourceLine
 def read_crate_name(
     *, name: str, roles: tuple[str, ...], dialects: tuple[str, ...]
 ) -> CrateName | str:
-    """Read a product crate name, or say why it does not follow sqlquack-<role>[-<dialect>...]."""
+    """Read a product crate name, or say why it does not follow sqlquack-<role>[-<dialect>]."""
     if name == CRATE_PREFIX:
         return CrateName(role="", dialects=())
     parts: list[str] = name.split(CRATE_SEPARATOR)
@@ -45,8 +45,11 @@ def read_crate_name(
     unknown: tuple[str, ...] = tuple(part for part in rest if part not in dialects)
     if unknown:
         return f"`{name}` qualifies its role with `{'-'.join(unknown)}`, which is not a dialect"
-    if len(rest) > MAX_NAMED_DIALECTS or len(set(rest)) != len(rest):
-        return f"`{name}` names more than one dialect or a source and target pair"
+    if len(rest) > MAX_NAMED_DIALECTS:
+        return (
+            f"`{name}` names more than one dialect; every conversion targets DuckDB, so a "
+            "conversion crate names only its source dialect"
+        )
     return CrateName(role=role, dialects=rest)
 
 

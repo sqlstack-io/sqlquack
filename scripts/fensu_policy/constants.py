@@ -20,7 +20,7 @@ CATALOG_WORD: str = "catalog"
 RUNTIME_DEPENDENCY_KINDS: frozenset[str] = frozenset({"normal", "build"})
 VARIANT_SEPARATOR: str = "="
 MIN_CRATE_NAME_PARTS: int = 2
-MAX_NAMED_DIALECTS: int = 2
+MAX_NAMED_DIALECTS: int = 1
 NESTED_PATH_PARTS: int = 2
 ENUM_BODY: str = r"\benum\s+{name}\b[^{{]*\{{(?P<body>[^}}]*)\}}"
 VARIANT: re.Pattern[str] = re.compile(r"^\s*(?:#\[[^\]]*\]\s*)*([A-Z][A-Za-z0-9]*)\b", re.MULTILINE)

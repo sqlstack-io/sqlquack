@@ -32,10 +32,11 @@ from scripts.fensu_policy.models import CrateDependencies, SourceLine
     code="XSQ001",
     family=Family.CUSTOM,
     slug="crate-name-shape",
-    message="crate names read sqlquack-<role>[-<dialect>[-<dialect>]], and tools end in -check",
+    message="crate names read sqlquack-<role>[-<dialect>], and tools end in -check",
     remediation=(
-        "Rename the crate and its folder so the role comes first and any dialect after it, "
-        "for example sqlquack-types-snowflake; name a development tool sqlquack-<subject>-check."
+        "Rename the crate and its folder so the role comes first and one dialect after it, "
+        "for example sqlquack-types-snowflake; a conversion crate names only its source, since "
+        "every conversion targets DuckDB; name a development tool sqlquack-<subject>-check."
     ),
     analyzers=(AnalyzerId.RUST,),
     cacheable=True,

@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class CrateName:
-    """A product crate name read as sqlquack-<role>[-<dialect>[-<dialect>]]."""
+    """A product crate name read as sqlquack-<role>[-<dialect>]."""
 
     role: str
     dialects: tuple[str, ...]
