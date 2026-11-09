@@ -230,6 +230,7 @@ SQL_SIZE_ALLOWANCES := coverage/sql-size/allowances.toml
 verify-recorded: ## Replay every recorded translation on DuckDB; check-convert DIALECT=snowflake runs it.
 	mkdir -p $(dir $(COVERAGE_REPORT))
 	cargo run --profile $(VERIFY_PROFILE) --locked -p sqlquack -- verify $(VERIFY_FLAGS) $(COVERAGE_FLAGS) --python $(VERIFY_PYTHON) \
+	  --cases $(call suite_dir,convert,snowflake) \
 	  --translation-statements $(TRANSLATION_STATEMENTS) --sql-sizes $(SQL_SIZES)
 	$(MAKE) translation-results
 	$(MAKE) sql-sizes
@@ -240,8 +241,11 @@ verify-recorded: ## Replay every recorded translation on DuckDB; check-convert D
 # and refuse when RECORDER=0, as in CI.
 DIALECT ?=
 SUITE_DIALECTS := snowflake duckdb postgres sqlite bigquery databricks clickhouse sqlserver
-# Each dialect's committed syntax evidence. Snowflake's predates the per-dialect folders.
-SYNTAX_ROOT = $(if $(filter snowflake,$(DIALECT)),coverage/syntax,coverage/syntax-$(DIALECT))
+# Where a suite's committed inputs for a dialect live: $(call suite_dir,<suite>,<dialect>). Every
+# suite target reads its paths from here, so moving the inputs changes this one definition.
+suite_dir = $(if $(filter syntax,$(1)),$(if $(filter snowflake,$(2)),coverage/syntax,coverage/syntax-$(2)),cases)
+SYNTAX_ROOT = $(call suite_dir,syntax,$(DIALECT))
+CONVERT_CASES = $(call suite_dir,convert,$(DIALECT))
 # The referee that records each dialect's syntax receipts on its engine, with the arguments its
 # coverage README gives passed in RECORD_ARGS. Snowflake's capture tool and the Postgres referee are
 # not in the repository yet.
@@ -271,7 +275,7 @@ pending: ## What DIALECT has not recorded yet, in both suites.
 	$(suite_dialect)
 	$(if $(wildcard $(SYNTAX_ROOT)),$(MAKE) --no-print-directory gate-build)
 	$(if $(wildcard $(SYNTAX_ROOT)),$(GATE_DIR)/syntax-coverage missing --root $(SYNTAX_ROOT),@echo "pending: $(DIALECT) has no syntax suite yet")
-	$(if $(filter snowflake,$(DIALECT)),cargo run --profile $(VERIFY_PROFILE) --locked -p sqlquack -- pending,@echo "pending: $(DIALECT) has no translation suite; Snowflake is the only source dialect today")
+	$(if $(filter snowflake,$(DIALECT)),cargo run --profile $(VERIFY_PROFILE) --locked -p sqlquack -- pending --cases $(CONVERT_CASES),@echo "pending: $(DIALECT) has no translation suite; Snowflake is the only source dialect today")
 
 check-syntax: ## Rerun DIALECT's parser against its recorded syntax evidence, offline.
 	$(suite_dialect)
@@ -295,7 +299,7 @@ check-convert: ## Replay DIALECT's recorded translations on DuckDB, offline; CAS
 record-convert: ## Record DIALECT's pending translation cases on Snowflake; options in RECORD_ARGS.
 	$(convert_dialect)
 	$(recording)
-	cargo run --profile $(VERIFY_PROFILE) --locked -p sqlquack -- pending
+	cargo run --profile $(VERIFY_PROFILE) --locked -p sqlquack -- pending --cases $(CONVERT_CASES)
 	uv run sqlquack-record $(RECORD_ARGS)
 
 # The generated-SQL size ratchet over the sizes verify wrote; see verify-recorded.
