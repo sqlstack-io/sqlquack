@@ -6,7 +6,7 @@ use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::dialects::types::DialectProfile;
 use crate::lineage::constants::{DATE_PART_FUNCTIONS, SNOWFLAKE_VALUES_COLUMN};
-use crate::lineage::models::{CteAliasWidth, Engine, OutputReach};
+use crate::lineage::models::{CteAliasWidth, Engine, OutputReach, QualifierTargets};
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -14,6 +14,7 @@ use crate::postgres::profile::_helpers::names::postgres_name;
 use crate::postgres::profile::_helpers::typing::{
     postgres_cast_spelling, postgres_literal_type, postgres_set_type, postgres_type,
 };
+use crate::postgres::profile::constants::POSTGRES_SYSTEM_COLUMNS;
 use crate::postgres::profile::main::postgres_window_only::postgres_window_only;
 
 /// PostgreSQL: unquoted identifiers resolve to lower case, and resolved names compare exactly.
@@ -140,6 +141,42 @@ impl DialectRules for PostgresRules {
 
     fn pivots_name_bare(&self) -> bool {
         false
+    }
+
+    fn findings_keep_written_case(&self) -> bool {
+        false
+    }
+
+    fn value_keywords(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn single_join_prefers_left(&self) -> bool {
+        false
+    }
+
+    fn messages_name_unstored_items_by_alias(&self) -> bool {
+        false
+    }
+
+    fn qualifier_targets(&self) -> QualifierTargets {
+        QualifierTargets::OpenItems
+    }
+
+    fn pseudo_columns(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn has_connect_by_level(&self) -> bool {
+        false
+    }
+
+    fn checks_columns_patterns(&self) -> bool {
+        false
+    }
+
+    fn system_columns(&self) -> &'static [&'static str] {
+        &POSTGRES_SYSTEM_COLUMNS
     }
 
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {

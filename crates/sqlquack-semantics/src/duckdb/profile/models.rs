@@ -12,10 +12,11 @@ use crate::duckdb::profile::_helpers::duck_types::{
 use crate::duckdb::profile::_helpers::functions::{duckdb_arities, duckdb_function};
 use crate::duckdb::profile::_helpers::typing::{duckdb_literal_type, duckdb_type};
 use crate::duckdb::profile::constants::{
-    DUCKDB_TABLE_FUNCTION_COLUMNS, DUCKDB_UNNEST_COLUMN, DUCKDB_VALUES_COLUMN,
+    DUCKDB_ROWID, DUCKDB_TABLE_FUNCTION_COLUMNS, DUCKDB_UNNEST_COLUMN, DUCKDB_VALUE_KEYWORDS,
+    DUCKDB_VALUES_COLUMN,
 };
 use crate::lineage::constants::DATE_PART_FUNCTIONS;
-use crate::lineage::models::{CteAliasWidth, Engine, OutputReach};
+use crate::lineage::models::{CteAliasWidth, Engine, OutputReach, QualifierTargets};
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -142,6 +143,42 @@ impl DialectRules for DuckDbRules {
 
     fn pivots_name_bare(&self) -> bool {
         true
+    }
+
+    fn findings_keep_written_case(&self) -> bool {
+        false
+    }
+
+    fn value_keywords(&self) -> &'static [&'static str] {
+        &DUCKDB_VALUE_KEYWORDS
+    }
+
+    fn single_join_prefers_left(&self) -> bool {
+        false
+    }
+
+    fn messages_name_unstored_items_by_alias(&self) -> bool {
+        true
+    }
+
+    fn qualifier_targets(&self) -> QualifierTargets {
+        QualifierTargets::ItemNames
+    }
+
+    fn pseudo_columns(&self) -> &'static [&'static str] {
+        &[DUCKDB_ROWID]
+    }
+
+    fn has_connect_by_level(&self) -> bool {
+        false
+    }
+
+    fn checks_columns_patterns(&self) -> bool {
+        true
+    }
+
+    fn system_columns(&self) -> &'static [&'static str] {
+        &[]
     }
 
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {

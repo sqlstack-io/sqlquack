@@ -22,8 +22,6 @@ pub(crate) const STRUCT_FUNCTION: &str = "STRUCT";
 pub(crate) const TABLE_WRAPPER: &str = "TABLE";
 /// Snowflake's name for the n-th column of a VALUES list, numbered from 1.
 pub(crate) const SNOWFLAKE_VALUES_COLUMN: &str = "COLUMN";
-/// The DuckDB profile's name, which numbers VALUES columns its own way.
-pub(crate) const DUCKDB_PROFILE: &str = "DuckDB";
 /// Window and group aggregate functions SQLQuack's faithful parse keeps as plain calls.
 pub(crate) const AGGREGATE_FUNCTIONS: &[&str] = &[
     "ANY_VALUE",
@@ -220,12 +218,8 @@ pub(crate) const CONDITIONAL_ARGUMENTS: usize = 3;
 pub(crate) const SQL_STAR: &str = "*";
 /// Functions NULL exactly when their first argument is, whatever the catalog's rules.
 pub(crate) const FIRST_ARGUMENT_NULLABILITY: [&str; 2] = ["UPPER", "LOWER"];
-/// The Snowflake profile's name.
-pub(crate) const SNOWFLAKE_PROFILE: &str = "Snowflake";
-/// The ClickHouse profile's name.
-pub(crate) const CLICKHOUSE_PROFILE: &str = "ClickHouse";
-/// The FROM items of a query with one join, whose shared names ClickHouse reads from the left.
-pub(crate) const CLICKHOUSE_SINGLE_JOIN_SOURCES: usize = 2;
+/// The FROM items of a query with one join.
+pub(crate) const SINGLE_JOIN_SOURCES: usize = 2;
 /// BigQuery's analytic functions, which an OVER clause must follow.
 pub(crate) const BIGQUERY_WINDOW_ONLY_FUNCTIONS: [&str; 11] = [
     "ROW_NUMBER",
@@ -244,11 +238,6 @@ pub(crate) const BIGQUERY_WINDOW_ONLY_FUNCTIONS: [&str; 11] = [
 pub(crate) const SPAN_FIELD: &str = "span";
 /// The field a serialized node records its name in.
 pub(crate) const NAME_FIELD: &str = "name";
-/// The PostgreSQL profile's name.
-pub(crate) const POSTGRES_PROFILE: &str = "PostgreSQL";
-/// PostgreSQL's system columns, which every stored table has and no star expands.
-pub(crate) const POSTGRES_SYSTEM_COLUMNS: [&str; 6] =
-    ["tableoid", "xmin", "cmin", "xmax", "cmax", "ctid"];
 /// Snowflake's VARIANT type.
 pub(crate) const SNOWFLAKE_VARIANT_TYPE: &str = "VARIANT";
 /// The aggregates of a PIVOT whose columns DuckDB names by value alone.
@@ -291,8 +280,6 @@ pub(crate) const POSITIONAL_PREFIX: char = '$';
 pub(crate) const COLUMNS_FUNCTION: &str = "columns";
 /// A DuckDB COLUMNS pattern that matches no column, worded as polyglot words it.
 pub(crate) const COLUMNS_NO_MATCH: &str = "COLUMNS pattern matches no input columns";
-/// DuckDB's row identifier pseudo-column.
-pub(crate) const DUCKDB_ROWID: &str = "rowid";
 /// Sequence pseudo-columns, read after the sequence's name.
 pub(crate) const SEQUENCE_COLUMNS: [&str; 2] = ["NEXTVAL", "CURRVAL"];
 /// The phase of scope-rule findings: grouping, aggregate and window placement, structure.
@@ -301,20 +288,6 @@ pub(crate) const SCOPE_PHASE: u8 = 0;
 pub(crate) const NAME_PHASE: u8 = 1;
 /// The phase of type findings: comparisons, arithmetic, casts, arguments and set operations.
 pub(crate) const TYPE_PHASE: u8 = 2;
-/// DuckDB keywords a bare name reads as their function when no column in scope has that name.
-pub(crate) const DUCKDB_VALUE_KEYWORDS: [&str; 11] = [
-    "current_catalog",
-    "current_date",
-    "current_role",
-    "current_schema",
-    "current_time",
-    "current_timestamp",
-    "current_user",
-    "localtime",
-    "localtimestamp",
-    "session_user",
-    "user",
-];
 /// DuckDB keywords that are not callable functions: only the bracket-free form is valid.
 pub(crate) const DUCKDB_KEYWORD_ONLY_FUNCTIONS: [&str; 4] = [
     "current_time",

@@ -58,3 +58,19 @@ pub(crate) const DUCKDB_TABLE_FUNCTION_COLUMNS: [(&str, &[&str]); 3] = [
 pub(crate) const DUCKDB_UNNEST_COLUMN: &str = "unnest";
 /// DuckDB's name for the n-th column of a VALUES list, numbered from 1.
 pub(crate) const DUCKDB_VALUES_COLUMN: &str = "col";
+/// DuckDB's row identifier pseudo-column.
+pub(crate) const DUCKDB_ROWID: &str = "rowid";
+/// DuckDB keywords a bare name reads as their function when no column in scope has that name.
+pub(crate) const DUCKDB_VALUE_KEYWORDS: [&str; 11] = [
+    "current_catalog",
+    "current_date",
+    "current_role",
+    "current_schema",
+    "current_time",
+    "current_timestamp",
+    "current_user",
+    "localtime",
+    "localtimestamp",
+    "session_user",
+    "user",
+];

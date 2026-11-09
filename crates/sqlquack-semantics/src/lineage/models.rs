@@ -337,6 +337,42 @@ impl DialectRules for SharedRules {
     fn pivots_name_bare(&self) -> bool {
         false
     }
+
+    fn findings_keep_written_case(&self) -> bool {
+        false
+    }
+
+    fn value_keywords(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn single_join_prefers_left(&self) -> bool {
+        false
+    }
+
+    fn messages_name_unstored_items_by_alias(&self) -> bool {
+        false
+    }
+
+    fn qualifier_targets(&self) -> QualifierTargets {
+        QualifierTargets::OpenItems
+    }
+
+    fn pseudo_columns(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn has_connect_by_level(&self) -> bool {
+        false
+    }
+
+    fn checks_columns_patterns(&self) -> bool {
+        false
+    }
+
+    fn system_columns(&self) -> &'static [&'static str] {
+        &[]
+    }
 }
 
 /// The engine whose binder the checks follow.
@@ -364,6 +400,17 @@ pub(crate) enum CteAliasWidth {
     Exact,
     /// No more aliases than columns.
     AtMost,
+}
+
+/// What a column's qualifier may name besides the FROM items that offer the column.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum QualifierTargets {
+    /// A FROM item by its name or its table function's name, or an unnamed item.
+    ItemNames,
+    /// Any FROM item lineage cannot judge, or an unnamed one.
+    OpenItems,
+    /// Any name in reach: outputs, CTEs, aliases, lambda parameters and FROM items.
+    AnyName,
 }
 
 /// Which output names of a SELECT its own clauses may read.

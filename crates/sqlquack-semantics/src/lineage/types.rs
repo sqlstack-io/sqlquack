@@ -6,7 +6,7 @@ use std::rc::Rc;
 use sqlquack_syntax::{DataType, Expression};
 
 use crate::lineage::main::rendered_type::rendered_type;
-use crate::lineage::models::{CteAliasWidth, Engine, Nullability, OutputReach};
+use crate::lineage::models::{CteAliasWidth, Engine, Nullability, OutputReach, QualifierTargets};
 use crate::lineage::models::{
     Lineage, LineageContext, NullabilityRule, SchemaColumn, SourceColumn,
 };
@@ -129,6 +129,33 @@ pub(crate) trait DialectRules: Sync {
 
     /// Whether pivoted columns take a string's bare text, unnamed beside several aggregates.
     fn pivots_name_bare(&self) -> bool;
+
+    /// Whether a name finding quotes the name as written rather than in lower case.
+    fn findings_keep_written_case(&self) -> bool;
+
+    /// Keywords a bare name reads as their value when no column in reach has that name.
+    fn value_keywords(&self) -> &'static [&'static str];
+
+    /// Whether a name both sides of a query's one join offer is read from the left side.
+    fn single_join_prefers_left(&self) -> bool;
+
+    /// Whether an unknown column's message names a FROM item that is no stored table by its alias.
+    fn messages_name_unstored_items_by_alias(&self) -> bool;
+
+    /// What a column's qualifier may name besides the FROM items that offer the column.
+    fn qualifier_targets(&self) -> QualifierTargets;
+
+    /// The dialect's own pseudo-columns, which no relation lists.
+    fn pseudo_columns(&self) -> &'static [&'static str];
+
+    /// Whether a hierarchical query offers the LEVEL pseudo-column.
+    fn has_connect_by_level(&self) -> bool;
+
+    /// Whether a COLUMNS pattern that matches no column is a finding.
+    fn checks_columns_patterns(&self) -> bool;
+
+    /// The system columns every stored table has and no star expands.
+    fn system_columns(&self) -> &'static [&'static str];
 
     /// A literal's type and nullability, given the shared rules' `generic` answer.
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
