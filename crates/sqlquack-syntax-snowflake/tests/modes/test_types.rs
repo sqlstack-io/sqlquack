@@ -37,11 +37,12 @@ pub(crate) struct LosslessTestCase {
 pub(crate) struct StrictCoverageTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,
+    pub(crate) expected_refused_in: &'static [Dialect],
 }
 
 pub(crate) struct CoverageTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,
     pub(crate) spans: &'static [(usize, usize)],
-    pub(crate) expected: &'static str,
+    pub(crate) expected_written: &'static str,
 }

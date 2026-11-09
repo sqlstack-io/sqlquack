@@ -57,10 +57,7 @@ pub(crate) fn tolerant_finishes_within(sql: &'static str, seconds: u64) -> bool 
 
 /// `parse_strict`'s outcome, written out.
 pub(crate) fn strict_written(sql: &str, dialect: Dialect) -> String {
-    match parse_strict(sql, dialect, &ParseOptions::default()) {
-        Ok(statements) => format!("Ok({statements:?})"),
-        Err(failure) => format!("Err({failure:?})"),
-    }
+    format!("{:?}", parse_strict(sql, dialect, &ParseOptions::default()))
 }
 
 /// The parse, then a separate lossless tokenize of `sql`, as strict parsing first did, written out.
@@ -73,10 +70,7 @@ pub(crate) fn parse_then_tokenize_written(sql: &str, dialect: Dialect) -> String
                     .map(|_| statements)
                     .map_err(StrictFailure::from)
             });
-    match outcome {
-        Ok(statements) => format!("Ok({statements:?})"),
-        Err(failure) => format!("Err({failure:?})"),
-    }
+    format!("{outcome:?}")
 }
 
 /// `lossless_tokens` over `spans` of `sql`, character offsets of variable tokens, written out.
@@ -94,8 +88,8 @@ pub(crate) fn coverage_written(sql: &str, spans: &[(usize, usize)]) -> String {
             )
         })
         .collect();
-    match lossless_tokens(sql, &significant, false) {
-        Ok(tokens) => format!("Ok({})", tokens.len()),
-        Err(failure) => format!("Err({failure:?})"),
-    }
+    format!(
+        "{:?}",
+        lossless_tokens(sql, &significant, false).map(|tokens| tokens.len())
+    )
 }

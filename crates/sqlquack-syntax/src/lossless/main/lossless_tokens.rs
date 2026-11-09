@@ -7,8 +7,7 @@ use crate::lossless::models::LosslessToken;
 use crate::lossless::models::TokenKind;
 use crate::tokens::models::{Span, TokenType};
 
-/// `significant`, a tokenizer's tokens of `sql` in order, with the whitespace and comments between
-/// them; refused when two overlap or a gap holds anything else.
+/// `significant` with the blanks and comments between them; refused on an overlap or other text.
 pub fn lossless_tokens(
     sql: &str,
     significant: &[(Span, TokenType)],
