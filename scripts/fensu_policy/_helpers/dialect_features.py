@@ -19,12 +19,14 @@ from scripts.fensu_policy.constants import (
     DEPENDENCY_FEATURE_PREFIX,
     DIALECT_ENUM,
     DIALECT_MODULE_PATH,
+    DIALECT_PROFILE_CONSTANT,
     DIALECT_VARIANT_PATH,
     FEATURE_SEPARATOR,
     FEATURES_TABLE,
     MODULE_DECLARATION,
     NESTED_PATH_PARTS,
     OPTIONAL_KEY,
+    PROFILE_NAME_CALL,
     RUST_SUFFIX,
     SOURCE_ROOT,
     WEAK_FEATURE_MARK,
@@ -187,3 +189,19 @@ def shared_dialect_lines(
         pending, pending_gates = None, frozenset()
     found.extend([pending] if pending is not None and not registry else [])
     return tuple(sorted(set(found), key=lambda line: line.line))
+
+
+def dialect_name_lines(*, source: str, dialects: tuple[str, ...]) -> tuple[SourceLine, ...]:
+    """Return the lines that read a profile's name or use a dialect's `<DIALECT>_PROFILE` name."""
+    constant: re.Pattern[str] = re.compile(
+        DIALECT_PROFILE_CONSTANT.format(
+            dialects="|".join(re.escape(dialect.upper()) for dialect in dialects)
+        )
+    )
+    raw_lines: list[str] = strip_comments(source=source).splitlines()
+    code_lines: list[str] = strip_comments_and_strings(source=source).splitlines()
+    return tuple(
+        SourceLine(line=number, text=raw.strip())
+        for number, (raw, code) in enumerate(zip(raw_lines, code_lines, strict=True), start=1)
+        if PROFILE_NAME_CALL.search(code) or constant.search(code)
+    )

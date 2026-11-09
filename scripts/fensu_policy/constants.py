@@ -50,6 +50,8 @@ ATTRIBUTE_LINE: re.Pattern[str] = re.compile(r"^\s*#!?\[.*\]\s*$")
 DIALECT_VARIANT_PATH: str = r"\b[A-Za-z]*{enum}::({variant})\b"
 DIALECT_MODULE_PATH: str = r"(::\s*{dialect}\b|\b{dialect}\s*::)"
 MODULE_DECLARATION: str = r"(?:^|\])\s*(?:pub(?:\([^)]*\))?\s+)?mod\s+{dialect}\s*;\s*$"
+PROFILE_NAME_CALL: re.Pattern[str] = re.compile(r"\bprofile(?:\(\))?\s*\.\s*name\s*\(\s*\)")
+DIALECT_PROFILE_CONSTANT: str = r"\b(?:{dialects})_PROFILE\b"
 
 DEFAULT_DIALECTS: tuple[str, ...] = (
     "snowflake",
