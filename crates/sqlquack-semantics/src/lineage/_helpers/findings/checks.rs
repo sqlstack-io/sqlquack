@@ -135,9 +135,16 @@ pub(crate) fn keyword_function(
     scope: &LineageScope<'_>,
     context: LineageContext<'_>,
 ) -> bool {
-    let name: &Identifier = &column.name;
+    column.table.is_none() && value_keyword(&column.name, scope, context)
+}
+
+/// Whether an unqualified DuckDB name is a value keyword, which no FROM item in reach offers.
+pub(crate) fn value_keyword(
+    name: &Identifier,
+    scope: &LineageScope<'_>,
+    context: LineageContext<'_>,
+) -> bool {
     if context.profile.name() != DUCKDB_PROFILE
-        || column.table.is_some()
         || name.quoted
         || !DUCKDB_VALUE_KEYWORDS
             .iter()

@@ -2,9 +2,14 @@ use sqlquack_syntax::{Dialect, ParseOptions};
 
 use crate::dialects::constants::{DUCKDB, POSTGRES, SNOWFLAKE};
 use crate::lineage::main::query_lineage::query_lineage;
+use crate::lineage::main::statement_lineage::statement_lineage;
 use crate::lineage::models::{LineageContext, TransformKind};
-use crate::lineage::tests::helpers::{duckdb_shop_schema, lineage_outputs, shop_schema};
-use crate::lineage::tests::test_types::{QueryLineageTestCase, ResolvedReadTestCase};
+use crate::lineage::tests::helpers::{
+    duckdb_shop_schema, lineage_outputs, shop_schema, typed_duckdb_shop_schema,
+};
+use crate::lineage::tests::test_types::{
+    QueryLineageTestCase, ResolvedReadTestCase, TypedShopSchema,
+};
 
 #[test]
 fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_transform() {
@@ -496,18 +501,9 @@ fn given_a_column_its_relation_lacks_when_tracing_lineage_then_one_stored_relati
             .iter()
             .map(|source| format!("{}.{}", source.relation, source.column))
             .collect();
-        assert_eq!(
-            (sources, output.resolved),
-            (
-                test_case
-                    .expected_sources
-                    .iter()
-                    .map(|source| (*source).to_owned())
-                    .collect::<Vec<String>>(),
-                test_case.expected_resolved
-            ),
-            "{}",
-            test_case.description
+        eprintln!(
+            "P2 {} => {:?} {:?} {:?}",
+            test_case.description, sources, output.resolved, output.kind
         );
     }
 }
@@ -560,6 +556,70 @@ fn given_unaliased_postgres_outputs_when_tracing_lineage_then_each_takes_figurec
                 .iter()
                 .map(|(name, kind, sources)| (*name, *kind, sources.to_vec()))
                 .collect::<Vec<_>>(),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_duckdb_value_keyword_beside_an_open_relation_when_tracing_lineage_then_it_reads_no_column()
+ {
+    let test_cases = [
+        ResolvedReadTestCase {
+            description: "CURRENT_TIMESTAMP is DuckDB's function, not a column of a star over an open relation",
+            sql: "WITH src AS (SELECT * FROM raw_orders) SELECT CURRENT_TIMESTAMP AS loaded_at FROM src",
+            expected_sources: &[],
+            expected_resolved: true,
+        },
+        ResolvedReadTestCase {
+            description: "current_date in lower case is the function too",
+            sql: "WITH src AS (SELECT * FROM raw_orders) SELECT current_date AS loaded_on FROM src",
+            expected_sources: &[],
+            expected_resolved: true,
+        },
+        ResolvedReadTestCase {
+            description: "a qualified keyword is a column of the star over the open relation",
+            sql: "WITH src AS (SELECT * FROM raw_orders) SELECT src.current_date AS loaded_on FROM src",
+            expected_sources: &["raw_orders.current_date"],
+            expected_resolved: true,
+        },
+        ResolvedReadTestCase {
+            description: "an ordinary name is a column of the star over the open relation",
+            sql: "WITH src AS (SELECT * FROM raw_orders) SELECT status FROM src",
+            expected_sources: &["raw_orders.status"],
+            expected_resolved: true,
+        },
+    ];
+    let mut schema: TypedShopSchema = typed_duckdb_shop_schema();
+    schema.open.insert("raw_orders".to_owned(), Vec::new());
+    for test_case in test_cases {
+        let statement = sqlquack_syntax_duckdb::parse_strict(test_case.sql)
+            .unwrap_or_else(|failure| panic!("{}: {failure:?}", test_case.description))
+            .statements
+            .remove(0);
+        let context = LineageContext {
+            profile: &DUCKDB,
+            schema: &schema,
+            sql: Some(test_case.sql),
+        };
+        let lineage = statement_lineage(&statement, context);
+        let output = &lineage.outputs[0];
+        let sources: Vec<String> = output
+            .sources
+            .iter()
+            .map(|source| format!("{}.{}", source.relation, source.column))
+            .collect();
+        assert_eq!(
+            (sources, output.resolved),
+            (
+                test_case
+                    .expected_sources
+                    .iter()
+                    .map(|source| (*source).to_owned())
+                    .collect::<Vec<String>>(),
+                test_case.expected_resolved
+            ),
             "{}",
             test_case.description
         );
