@@ -81,7 +81,7 @@ fn given_two_queries_when_fingerprinted_then_only_meaningful_edits_change_the_di
 
 #[test]
 #[ignore = "timing"]
-fn given_pathological_nesting_when_fingerprinted_then_time_stays_linear() {
+fn given_pathological_nesting_when_fingerprinted_as_snowflake_then_time_stays_linear() {
     let test_cases = [NestingTestCase {
         description: "unclosed calls",
         dialect: FingerprintDialect::Snowflake,
