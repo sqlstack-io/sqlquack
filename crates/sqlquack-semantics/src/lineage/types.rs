@@ -67,6 +67,12 @@ pub(crate) trait DialectRules: Sync {
     /// Which output names of a SELECT its own clauses may read.
     fn output_reach(&self) -> OutputReach;
 
+    /// Whether calls are checked against the signatures of the functions they name.
+    fn checks_call_signatures(&self) -> bool;
+
+    /// Whether set operations check only that their branches return as many columns.
+    fn checks_set_widths_only(&self) -> bool;
+
     /// A literal's type and nullability, given the shared rules' `generic` answer.
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
         let _ = expression;

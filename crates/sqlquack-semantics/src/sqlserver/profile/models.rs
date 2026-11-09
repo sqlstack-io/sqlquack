@@ -59,6 +59,14 @@ impl DialectRules for SqlServerRules {
         OutputReach::OrderedNamePlaces
     }
 
+    fn checks_call_signatures(&self) -> bool {
+        false
+    }
+
+    fn checks_set_widths_only(&self) -> bool {
+        true
+    }
+
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
         match expression {
             Expression::Literal(literal) => (

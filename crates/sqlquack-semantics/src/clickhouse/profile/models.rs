@@ -67,6 +67,14 @@ impl DialectRules for ClickHouseRules {
         OutputReach::Anywhere
     }
 
+    fn checks_call_signatures(&self) -> bool {
+        true
+    }
+
+    fn checks_set_widths_only(&self) -> bool {
+        false
+    }
+
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
         (clickhouse_literal_type(expression).map(Rc::from), generic.1)
     }

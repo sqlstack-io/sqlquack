@@ -57,6 +57,14 @@ impl DialectRules for PostgresRules {
         OutputReach::OutputNamePlaces
     }
 
+    fn checks_call_signatures(&self) -> bool {
+        true
+    }
+
+    fn checks_set_widths_only(&self) -> bool {
+        false
+    }
+
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
         match expression {
             Expression::Literal(literal) => (

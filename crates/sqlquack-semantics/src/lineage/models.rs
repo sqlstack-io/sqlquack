@@ -252,6 +252,14 @@ impl DialectRules for SharedRules {
     fn output_reach(&self) -> OutputReach {
         OutputReach::Anywhere
     }
+
+    fn checks_call_signatures(&self) -> bool {
+        true
+    }
+
+    fn checks_set_widths_only(&self) -> bool {
+        false
+    }
 }
 
 /// The engine whose binder the checks follow.

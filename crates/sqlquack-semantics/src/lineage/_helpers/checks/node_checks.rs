@@ -23,7 +23,7 @@ use crate::lineage::_helpers::checks::signatures::{
 };
 use crate::lineage::_helpers::tracing::expressions::expression_lineage;
 use crate::lineage::constants::{
-    DUCKDB_KEYWORD_ONLY_FUNCTIONS, NAME_PHASE, RUNTIME_WARNING, SQLSERVER_PROFILE, TYPE_PHASE,
+    DUCKDB_KEYWORD_ONLY_FUNCTIONS, NAME_PHASE, RUNTIME_WARNING, TYPE_PHASE,
 };
 use crate::lineage::main::string_literal::string_literal;
 use crate::lineage::models::Engine;
@@ -94,7 +94,7 @@ pub(crate) fn node_findings(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<
         }
         _ => Vec::new(),
     };
-    let signatures_abstain: bool = sqlite || level.context.profile.name() == SQLSERVER_PROFILE;
+    let signatures_abstain: bool = !dialect_rules(level.context.profile).checks_call_signatures();
     if signatures_abstain {
         findings.extend(located(own, node));
         return findings;
