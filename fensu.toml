@@ -16,8 +16,9 @@ rule_modules = [
   "scripts.fensu_policy.rules.crate_layout",
   "scripts.fensu_policy.rules.dialect_folders",
   "scripts.fensu_policy.rules.dialect_names",
+  "scripts.fensu_policy.rules.conversion_fields",
 ]
-select = ["FPRS", "XSQ001", "XSQ002", "XSQ003", "XSQ004", "XSQ007", "XSQ008"]
+select = ["FPRS", "XSQ001", "XSQ002", "XSQ003", "XSQ004", "XSQ007", "XSQ008", "XSQ009"]
 
 # The playground engine, website/wasm, imports these two Snowflake conversion entries. fensu reads
 # only the root cargo workspace, and website/wasm keeps its own, so FPRSL105 cannot see that importer.

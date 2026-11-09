@@ -55,6 +55,20 @@ PROFILE_NAME_CALLS: tuple[re.Pattern[str], ...] = (
     re.compile(r"\bDialectProfile\s*::\s*name\s*\("),
 )
 DIALECT_PROFILE_CONSTANT: str = r"\b(?:{dialects})_PROFILE\b"
+CONVERSION_FIELDS: tuple[str, ...] = (
+    "holding",
+    "typed_leaves",
+    "decimal_leaves",
+    "untainted",
+    "sourced",
+    "utc_offset",
+    "declared_offsets",
+    "widened",
+    "suffixed",
+)
+CONVERSION_FIELD_READ: re.Pattern[str] = re.compile(
+    r"\.\s*(?:{fields})\b(?!\s*\()".format(fields="|".join(CONVERSION_FIELDS))
+)
 
 DEFAULT_DIALECTS: tuple[str, ...] = (
     "snowflake",

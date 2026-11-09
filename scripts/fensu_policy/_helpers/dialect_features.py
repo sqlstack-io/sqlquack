@@ -14,6 +14,7 @@ from scripts.fensu_policy.constants import (
     ATTRIBUTE_LINE,
     CFG_FEATURE,
     CFG_WORD,
+    CONVERSION_FIELD_READ,
     DEFAULT_FEATURE,
     DEPENDENCIES_TABLE,
     DEPENDENCY_FEATURE_PREFIX,
@@ -198,10 +199,19 @@ def dialect_name_lines(*, source: str, dialects: tuple[str, ...]) -> tuple[Sourc
             dialects="|".join(re.escape(dialect.upper()) for dialect in dialects)
         )
     )
+    return _matched_lines(source=source, patterns=(*PROFILE_NAME_CALLS, constant))
+
+
+def conversion_field_lines(*, source: str) -> tuple[SourceLine, ...]:
+    """Return each line where code reads a field recording how the conversion holds values."""
+    return _matched_lines(source=source, patterns=(CONVERSION_FIELD_READ,))
+
+
+def _matched_lines(*, source: str, patterns: tuple[re.Pattern[str], ...]) -> tuple[SourceLine, ...]:
     raw_lines: list[str] = strip_comments(source=source).split("\n")
     code: str = strip_comments_and_strings(source=source)
     starts: set[int] = set()
-    for pattern in (*PROFILE_NAME_CALLS, constant):
+    for pattern in patterns:
         starts.update(match.start() for match in pattern.finditer(code))
     numbers: list[int] = sorted({code.count("\n", 0, start) + 1 for start in starts})
     return tuple(SourceLine(line=number, text=raw_lines[number - 1].strip()) for number in numbers)
