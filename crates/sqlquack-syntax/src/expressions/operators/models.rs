@@ -577,6 +577,10 @@ pub struct Parameter {
     /// Optional secondary expression for ${kind:name} syntax (Hive hiveconf variables)
     #[serde(default)]
     pub expression: Option<String>,
+    /// SQLQuack: the node's source range, recorded by a parser that sets it.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 /// Parameter placeholder styles

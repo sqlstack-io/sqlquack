@@ -15,6 +15,7 @@ use sqlquack_syntax::expressions::statements::models::Truncate;
 use sqlquack_syntax::expressions::tables::models::{
     CreateIndex, CreateTable, DropTable, IndexColumn,
 };
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::keywords::main::is_reserved::is_reserved;
 use crate::parse::_helpers::statements::queries::set_with;
@@ -104,6 +105,7 @@ impl<'sql> Parser<'sql> {
 
     /// `@name [AS] type [= default] [OUT | OUTPUT]`; `VARYING`, `NULL` and `READONLY` are gaps.
     fn procedure_parameter(&mut self) -> Parsing<FunctionParameter> {
+        let first: usize = self.at;
         let token: Token = self.expect_token(|token| token.kind == TokenKind::Variable)?;
         self.eat_kw("AS");
         let data_type: DataType = self.data_type()?;
@@ -128,6 +130,7 @@ impl<'sql> Parser<'sql> {
             mode: mode_text.as_ref().map(|_| ParameterMode::Out),
             default,
             mode_text,
+            span: self.range_from(first),
         })
     }
 
@@ -375,6 +378,7 @@ impl<'sql> Parser<'sql> {
                     mode: None,
                     default: None,
                     mode_text: None,
+                    span: SourceSpan::default(),
                 })
             })?;
         }

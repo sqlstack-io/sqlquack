@@ -2713,8 +2713,8 @@ expect_repository = "refused SQ0002 fn:CURRENT_WAREHOUSE at 7..26"
 [[query]]
 category = "misc"
 sql = '''SELECT $1 FROM orders'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 0..21"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 0..21"
+expect = "refused SQ0009 syntax:unaliased_output_name at 7..9"
+expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..9"
 
 [[query]]
 category = "misc"
@@ -2725,8 +2725,8 @@ expect_repository = "refused SQ0002 node:table at 21..44"
 [[query]]
 category = "misc"
 sql = '''SELECT order_id FROM orders WHERE customer_id = :customer_id'''
-expect = "refused SQ0002 node:parameter at 34..60"
-expect_repository = "refused SQ0002 node:parameter at 34..60"
+expect = "refused SQ0002 node:parameter at 48..60"
+expect_repository = "refused SQ0002 node:parameter at 48..60"
 
 [[query]]
 category = "misc"

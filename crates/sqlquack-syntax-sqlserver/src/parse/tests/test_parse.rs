@@ -5,7 +5,7 @@ use serde_json::Value;
 use crate::parse::main::parse_strict::parse_strict;
 use crate::parse::tests::helpers::{identifier_texts, verdict};
 use crate::parse::tests::test_types::{
-    ExpectedVerdict, RangeTestCase, SpanTestCase, ValueTestCase, VerdictTestCase,
+    ExpectedVerdict, NodeSpanTestCase, RangeTestCase, SpanTestCase, ValueTestCase, VerdictTestCase,
 };
 
 #[test]
@@ -469,6 +469,101 @@ fn given_names_when_parsing_then_every_identifier_records_the_range_of_its_own_t
         assert_eq!(
             texts,
             names.into_iter().map(Some).collect::<Vec<Option<String>>>(),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_operators_and_assignments_when_parsing_then_each_node_records_the_range_of_its_own_text() {
+    let test_cases = [
+        NodeSpanTestCase {
+            description: "a variable compared with `=` records its own range, and so does the comparison",
+            sql: "SELECT 1 WHERE @a=1",
+            pointer: "/0/select/where_clause/this/eq/left/parameter/span",
+            expected_text: "@a",
+        },
+        NodeSpanTestCase {
+            description: "a comparison over a variable records its whole range",
+            sql: "SELECT 1 WHERE @a=1",
+            pointer: "/0/select/where_clause/this/eq/span",
+            expected_text: "@a=1",
+        },
+        NodeSpanTestCase {
+            description: "a comparison with the variable on the right records its whole range",
+            sql: "SELECT 1 WHERE 1=@a",
+            pointer: "/0/select/where_clause/this/eq/span",
+            expected_text: "1=@a",
+        },
+        NodeSpanTestCase {
+            description: "a comparison in an IF condition records its whole range",
+            sql: "IF @a=1 SELECT 1",
+            pointer: "/0/scripting_block/body/0/if/branches/0/condition/eq/span",
+            expected_text: "@a=1",
+        },
+        NodeSpanTestCase {
+            description: "arithmetic over a system variable records its whole range",
+            sql: "SELECT @@rowcount+1",
+            pointer: "/0/select/expressions/0/add/span",
+            expected_text: "@@rowcount+1",
+        },
+        NodeSpanTestCase {
+            description: "an AND over comparisons records its whole range",
+            sql: "SELECT 1 WHERE @a=1 AND b=2",
+            pointer: "/0/select/where_clause/this/and/span",
+            expected_text: "@a=1 AND b=2",
+        },
+        NodeSpanTestCase {
+            description: "a negative number records its range",
+            sql: "DECLARE @a int=-1",
+            pointer: "/0/declare/expressions/0/declare_item/default/neg/span",
+            expected_text: "-1",
+        },
+        NodeSpanTestCase {
+            description: "a declared variable records its range through its value",
+            sql: "DECLARE @a int=-1",
+            pointer: "/0/declare/expressions/0/declare_item/span",
+            expected_text: "@a int=-1",
+        },
+        NodeSpanTestCase {
+            description: "a procedure parameter records its range through its default",
+            sql: "CREATE PROCEDURE p @a int=1 AS SELECT 1",
+            pointer: "/0/create_procedure/parameters/0/span",
+            expected_text: "@a int=1",
+        },
+        NodeSpanTestCase {
+            description: "a named EXEC argument records its range",
+            sql: "EXEC p @a=1",
+            pointer: "/0/execute/parameters/0/span",
+            expected_text: "@a=1",
+        },
+        NodeSpanTestCase {
+            description: "a SET assignment's variable records its range",
+            sql: "SET @a=@a+1",
+            pointer: "/0/set_statement/items/0/name/parameter/span",
+            expected_text: "@a",
+        },
+        NodeSpanTestCase {
+            description: "a SET assignment's value records its range",
+            sql: "SET @a=@a+1",
+            pointer: "/0/set_statement/items/0/value/add/span",
+            expected_text: "@a+1",
+        },
+    ];
+    for test_case in test_cases {
+        let parsed = parse_strict(test_case.sql).expect(test_case.description);
+        let tree: Value = serde_json::to_value(&parsed.statements).expect(test_case.description);
+        let offset = |key: &str| -> Option<usize> {
+            let offset: u64 = tree.pointer(test_case.pointer)?.get(key)?.as_u64()?;
+            usize::try_from(offset).ok()
+        };
+        let text: Option<&str> = offset("start")
+            .zip(offset("end"))
+            .and_then(|(start, end)| test_case.sql.get(start..end));
+        assert_eq!(
+            text,
+            Some(test_case.expected_text),
             "{}",
             test_case.description
         );

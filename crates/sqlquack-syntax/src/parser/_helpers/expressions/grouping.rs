@@ -1508,6 +1508,7 @@ impl Parser {
                 quoted: false,
                 string_quoted: false,
                 expression: None,
+                span: SourceSpan::default(),
             }))));
         }
         Ok(None)

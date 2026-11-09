@@ -8,9 +8,7 @@ use sqlquack_syntax::expressions::types::models::Tuple;
 
 use crate::parse::_helpers::statements::queries::set_with;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_name};
-use crate::parse::_helpers::tree::nodes::{
-    binary, column_from, delete, insert, table, update, var,
-};
+use crate::parse::_helpers::tree::nodes::{column_from, delete, insert, table, update, var};
 
 fn tuple(expressions: Vec<Expression>) -> Expression {
     Expression::Tuple(Box::new(Tuple { expressions }))
@@ -231,10 +229,11 @@ impl<'sql> Parser<'sql> {
                     self.at += 1;
                     self.expect_kw("SET")?;
                     let assignments: Vec<Expression> = self.comma_list(|parser| {
+                        let first: usize = parser.at;
                         let parts: Vec<Identifier> = parser.multipart(4)?;
                         parser.expect_char('=')?;
                         let value: Expression = parser.scalar()?;
-                        Ok(binary(Expression::Eq, column_from(parts), value))
+                        Ok(parser.binary(first, Expression::Eq, column_from(parts), value))
                     })?;
                     tuple(vec![var("UPDATE"), tuple(assignments)])
                 }

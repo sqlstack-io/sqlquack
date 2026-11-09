@@ -16,6 +16,7 @@ use sqlquack_syntax::expressions::tables::models::{
     CreateTable, DropTable, EngineProperty, OnCluster, PartitionedByProperty, SampleProperty,
     SchemaCommentProperty, SettingsProperty,
 };
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::commands::statements::alter;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
@@ -420,6 +421,7 @@ impl Parser<'_> {
                 mode: None,
                 default: None,
                 mode_text: None,
+                span: SourceSpan::default(),
             })
             .collect();
         node.body = Some(FunctionBody::Expression(Expression::Lambda(lambda)));

@@ -41,6 +41,7 @@ pub(crate) fn variable(token: &Token) -> Expression {
         quoted: false,
         string_quoted: false,
         expression: None,
+        span: SourceSpan(Some(token.span)),
     }))
 }
 

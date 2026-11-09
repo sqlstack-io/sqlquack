@@ -92,6 +92,7 @@ pub(crate) fn parameter(name: Option<String>) -> Expression {
         quoted: false,
         string_quoted: false,
         expression: None,
+        span: SourceSpan::default(),
     }))
 }
 

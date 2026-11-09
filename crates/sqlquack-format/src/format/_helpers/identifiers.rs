@@ -4,7 +4,7 @@ use serde_json::Value;
 use sqlquack_syntax::Expression;
 
 use crate::format::_helpers::lexemes::Lexeme;
-use crate::format::constants::BINARY_OPERATOR_NODES;
+use crate::format::constants::{ASSIGNMENT_OPERATOR, BINARY_OPERATOR_NODES};
 
 /// The fields of a serialised identifier node.
 const IDENTIFIER_FIELDS: [&str; 4] = ["name", "quoted", "trailing_comments", "span"];
@@ -19,6 +19,16 @@ const RIGHT_FIELD: &str = "right";
 const COLUMN_ALIASES_FIELD: &str = "column_aliases";
 /// The field of a serialised UPDATE that holds its `column = value` pairs.
 const SET_FIELD: &str = "set";
+/// The fields and nodes of the assignments the tree keeps outside binary operator nodes.
+const NAME_FIELD: &str = "name";
+const VALUE_FIELD: &str = "value";
+const KIND_FIELD: &str = "kind";
+const DEFAULT_FIELD: &str = "default";
+const OPERATOR_NODE: &str = "operator";
+const VAR_NODE: &str = "var";
+const DECLARE_ITEM_NODE: &str = "declare_item";
+/// Value nodes printed as one token, such as `1`, `'x'`, `NULL` or `DEFAULT`.
+const SINGLE_TOKEN_NODES: [&str; 4] = ["literal", "null", "boolean", "var"];
 
 /// Per-token facts from the parse tree, and how many select lists it has.
 pub(crate) struct ParsedNames {
@@ -40,6 +50,8 @@ struct Binary {
     span: Option<(usize, usize)>,
     left_end: Option<usize>,
     right_start: Option<usize>,
+    /// Whether the right operand is the single last token of the range, so the operator is the token before it.
+    before_last: bool,
 }
 
 /// The ranges the parse tree records: every identifier and every alias name, in characters.
@@ -134,6 +146,9 @@ fn binary_operators(
                 .iter()
                 .copied()
                 .rfind(|&index| lexemes[index].end <= right_start),
+            (None, None) if binary.before_last => {
+                inside.len().checked_sub(2).map(|before| inside[before])
+            }
             (None, None) if binary.span.is_some() => {
                 let candidates: Vec<usize> = inside
                     .iter()
@@ -303,23 +318,82 @@ fn binary(value: &Value) -> Option<Binary> {
             .and_then(|span| Some((span_offset(span, "start")?, span_offset(span, "end")?))),
         left_end: operand_span(LEFT_FIELD).and_then(|span| span_offset(span, "end")),
         right_start: operand_span(RIGHT_FIELD).and_then(|span| span_offset(span, "start")),
+        before_last: false,
     })
 }
 
-/// The `=` of each `column = value` pair of an UPDATE's SET, which the tree keeps as a pair, not a comparison.
+/// The `=` of each assignment the tree keeps outside a binary operator node: an UPDATE's `column = value` pairs, a `SET @v = value` item, a `SELECT @v = value` item, and the value of a declared variable, a procedure parameter or an EXEC argument.
 fn assignments(value: &Value) -> Vec<Binary> {
-    let pairs = value.get(SET_FIELD).and_then(Value::as_array);
-    pairs
+    let after = |end: usize| Binary {
+        spellings: &[ASSIGNMENT_OPERATOR],
+        span: None,
+        left_end: Some(end),
+        right_start: None,
+        before_last: false,
+    };
+    let pairs = value
+        .get(SET_FIELD)
+        .and_then(Value::as_array)
         .into_iter()
         .flatten()
         .filter_map(|pair| identifier_range(pair.as_array()?.first()?))
-        .map(|(_, end)| Binary {
-            spellings: &["="],
-            span: None,
-            left_end: Some(end),
-            right_start: None,
+        .map(|(_, end)| end);
+    let set_item = value
+        .get(VALUE_FIELD)
+        .filter(|_| value.get(KIND_FIELD).is_some_and(Value::is_null))
+        .and_then(|_| node_range(value.get(NAME_FIELD)?))
+        .map(|(_, end)| end);
+    let select_assignment = value
+        .get(OPERATOR_NODE)
+        .filter(|node| {
+            node.get(OPERATOR_NODE)
+                .and_then(|operator| operator.get(VAR_NODE)?.get(ALIASED_FIELD))
+                .is_some_and(|spelling| spelling == ASSIGNMENT_OPERATOR)
         })
+        .and_then(|node| node_range(node.get(ALIASED_FIELD)?))
+        .map(|(_, end)| end);
+    pairs
+        .chain(set_item)
+        .chain(select_assignment)
+        .map(after)
+        .chain(valued(value))
         .collect()
+}
+
+/// The `=` before the value of a declared variable, a procedure parameter or a named EXEC argument, placed by the node's range and its value's.
+fn valued(value: &Value) -> Option<Binary> {
+    let node = value.get(DECLARE_ITEM_NODE).unwrap_or(value);
+    let span = node.get(SPAN_FIELD)?;
+    let (start, end) = (span_offset(span, "start")?, span_offset(span, "end")?);
+    let argument = node.get(NAME_FIELD).and_then(Value::as_str);
+    let assigned = node.get(DEFAULT_FIELD).or(node.get(VALUE_FIELD))?;
+    if let Some(name) = argument.filter(|name| !name.is_empty()) {
+        return Some(Binary {
+            spellings: &[ASSIGNMENT_OPERATOR],
+            span: None,
+            left_end: Some(start + name.chars().count()),
+            right_start: None,
+            before_last: false,
+        });
+    }
+    let right_start = node_range(assigned).map(|(start, _)| start);
+    let single_token = assigned
+        .as_object()
+        .and_then(|fields| fields.keys().next())
+        .is_some_and(|kind| SINGLE_TOKEN_NODES.contains(&kind.as_str()));
+    (right_start.is_some() || single_token).then_some(Binary {
+        spellings: &[ASSIGNMENT_OPERATOR],
+        span: Some((start, end)),
+        left_end: None,
+        right_start,
+        before_last: right_start.is_none(),
+    })
+}
+
+/// The range of the node one-field wrapper `value` holds, when recorded.
+fn node_range(value: &Value) -> Option<(usize, usize)> {
+    let span = value.as_object()?.values().next()?.get(SPAN_FIELD)?;
+    Some((span_offset(span, "start")?, span_offset(span, "end")?))
 }
 
 /// The character range of `value` when it is an identifier node with a recorded span.

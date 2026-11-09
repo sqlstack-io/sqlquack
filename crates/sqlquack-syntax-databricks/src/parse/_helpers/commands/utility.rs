@@ -9,6 +9,7 @@ use sqlquack_syntax::expressions::statements::models::{
     Cache, Comment, Declare, DeclareItem, Describe, ResetStatement, SetItem, SetStatement, Show,
     Truncate, Uncache, Use, UseKind,
 };
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::commands::alters::partition;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
@@ -881,6 +882,7 @@ impl Parser<'_> {
             default,
             has_as: false,
             additional_names: names,
+            span: SourceSpan::default(),
         };
         Ok(Expression::Declare(Box::new(Declare {
             expressions: vec![Expression::DeclareItem(Box::new(item))],
