@@ -4,7 +4,7 @@ use std::time::Duration;
 
 use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 
-use crate::conversion::models::{ConversionOptions, Converted};
+use crate::snowflake::conversion::models::{ConversionOptions, Converted};
 
 /// `converted`, or a refusal when converting it outran the time or size budget.
 pub fn within_budget(

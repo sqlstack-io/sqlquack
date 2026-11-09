@@ -1,6 +1,6 @@
 //! The rules every conversion may use, and declared refusals.
 
-use crate::catalogue::models::NotExpressibleDeclaration;
+use crate::snowflake::catalogue::models::NotExpressibleDeclaration;
 use sqlquack_diagnostics::failures::constants::{
     BOOLEAN_NOT_RECOGNIZED, CHARACTER_CODE_FAILURES, DATE_FORMAT_MISMATCH, DATE_NOT_RECOGNIZED,
     DIVISION_BY_ZERO, DIVISION_FAILURES, FLATTEN_FAILURES, HEX_DECODE_FAILURES,
@@ -16,7 +16,7 @@ use sqlquack_semantics::snowflake::typing::constants::VARIANT_COMMON_TYPE;
 /// Constructs DuckDB cannot express. Each entry needs a reason and evidence before it is added.
 pub const NOT_EXPRESSIBLE: &[NotExpressibleDeclaration] = &[];
 
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::{
     ADD_MONTHS_RULE, ALIAS, ARRAY_AGG_RULE, ARRAY_APPEND_RULE, ARRAY_CAT_RULE, ARRAY_COMPACT_RULE,
     ARRAY_CONSTRUCT_COMPACT_RULE, ARRAY_CONSTRUCT_RULE, ARRAY_CONTAINS_RULE, ARRAY_EXCEPT_RULE,
     ARRAY_EXTREME_RULE, ARRAY_FLATTEN_RULE, ARRAY_POSITION_RULE, ARRAY_RANGE_RULE,
@@ -56,7 +56,7 @@ use crate::conversion::constants::{
     WINDOW_AGGREGATE, WINDOW_FIRST_LAST, WINDOW_OFFSET, WINDOW_RANKING, WINDOW_VALUE_FRAME,
     ZERO_IF_NULL_RULE, ZONE_COLUMNS, ZONED_PARTS,
 };
-use crate::conversion::models::RuleSpec;
+use crate::snowflake::conversion::models::RuleSpec;
 
 /// A TIMESTAMP_NTZ compared with a TIMESTAMP_LTZ or TIMESTAMP_TZ in the UTC session.
 pub const NAIVE_LOCAL_COMPARISON: &str = "rule.naive_local_comparison";

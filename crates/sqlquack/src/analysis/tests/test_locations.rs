@@ -1,5 +1,5 @@
+use sqlquack_convert::snowflake::conversion::models::ConversionBudget;
 use sqlquack_diagnostics::refusals::models::RefusalCategory;
-use sqlquack_rules::conversion::models::ConversionBudget;
 
 use crate::analysis::tests::helpers::{function_refusal_places, refusal_places};
 use crate::analysis::tests::test_types::{FunctionLocationTestCase, LocationTestCase};

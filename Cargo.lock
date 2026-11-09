@@ -1393,7 +1393,6 @@ dependencies = [
  "sqlquack-evidence",
  "sqlquack-parse",
  "sqlquack-policy",
- "sqlquack-rules",
  "sqlquack-semantics",
  "sqlquack-syntax",
  "tempfile",
@@ -1426,10 +1425,10 @@ dependencies = [
  "serde",
  "serde_json",
  "sqlquack-blocks",
+ "sqlquack-convert",
  "sqlquack-diagnostics",
  "sqlquack-parse",
  "sqlquack-policy",
- "sqlquack-rules",
  "sqlquack-semantics",
  "sqlquack-syntax",
 ]
@@ -1562,10 +1561,10 @@ dependencies = [
  "serde",
  "serde_json",
  "sqlquack",
+ "sqlquack-convert",
  "sqlquack-diagnostics",
  "sqlquack-evidence",
  "sqlquack-policy",
- "sqlquack-rules",
  "sqlquack-syntax",
  "toml",
  "walkdir",
@@ -1582,19 +1581,6 @@ dependencies = [
  "sqlquack-diagnostics",
  "sqlquack-policy",
  "sqlquack-semantics",
-]
-
-[[package]]
-name = "sqlquack-rules"
-version = "0.2.0"
-dependencies = [
- "serde",
- "serde_json",
- "sqlquack-blocks",
- "sqlquack-diagnostics",
- "sqlquack-policy",
- "sqlquack-semantics",
- "sqlquack-syntax",
 ]
 
 [[package]]

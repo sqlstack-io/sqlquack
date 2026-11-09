@@ -2,9 +2,9 @@ use sqlquack_diagnostics::classification::models::{Construct, ConstructFamily};
 use sqlquack_diagnostics::refusals::models::Disposition;
 use sqlquack_diagnostics::refusals::types::ConstructPolicy;
 
-use crate::catalogue::main::builtin_catalogue::builtin_catalogue;
-use crate::catalogue::models::{NotExpressibleDeclaration, RuleCatalogue};
-use crate::catalogue::tests::test_types::CatalogueTestCase;
+use crate::snowflake::catalogue::main::builtin_catalogue::builtin_catalogue;
+use crate::snowflake::catalogue::models::{NotExpressibleDeclaration, RuleCatalogue};
+use crate::snowflake::catalogue::tests::test_types::CatalogueTestCase;
 
 #[test]
 fn given_catalogue_when_asked_about_construct_then_reports_its_disposition() {

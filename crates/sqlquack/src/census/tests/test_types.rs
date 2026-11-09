@@ -1,4 +1,4 @@
-use sqlquack_rules::conversion::models::ConversionOptions;
+use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
 
 pub(crate) struct RewriteTestCase {
     pub(crate) description: &'static str,

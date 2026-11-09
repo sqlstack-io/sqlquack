@@ -1,2 +1,2 @@
-pub(crate) mod clock_format;
-pub(crate) mod strftime_pattern;
+pub(in crate::snowflake) mod _clock_format;
+pub(in crate::snowflake) mod _strftime_pattern;

@@ -15,17 +15,21 @@ use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::held::{built, leaves};
-use crate::conversion::_helpers::expressions::scalar::{convert_expression, convert_held};
-use crate::conversion::_helpers::queries::query::star;
-use crate::conversion::_helpers::support::declared::rely_on_declared;
-use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal, VariantRoot};
-use crate::conversion::_helpers::support::site::Site;
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::expressions::held::{built, leaves};
+use crate::snowflake::conversion::_helpers::expressions::scalar::{
+    convert_expression, convert_held,
+};
+use crate::snowflake::conversion::_helpers::queries::query::star;
+use crate::snowflake::conversion::_helpers::support::declared::rely_on_declared;
+use crate::snowflake::conversion::_helpers::support::divergence::diverge;
+use crate::snowflake::conversion::_helpers::support::scope::{
+    Context, Emitted, Literal, VariantRoot,
+};
+use crate::snowflake::conversion::_helpers::support::site::Site;
+use crate::snowflake::conversion::_helpers::support::tree::{
     node_construct, node_kind, payload_object, require_understood,
 };
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::{
     KEEP_NULL_CONSTRUCTOR, MICROSECOND_DIGITS, OBJECT_CONSTANT_KIND, OBJECT_CONSTRUCT_RULE,
     OBJECT_CONSTRUCTOR, OBJECT_DELETE_RULE, OBJECT_INSERT_RULE, TYPE_SUFFIX_UNREMOVED,
 };

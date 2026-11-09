@@ -11,18 +11,18 @@ use sqlquack_semantics::snowflake::typing::main::text_reading::text_reading;
 use sqlquack_semantics::snowflake::typing::main::unify::unify;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::casts::cast_to;
-use crate::conversion::_helpers::expressions::operators::{boolean_operand, comparable};
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
-use crate::conversion::_helpers::expressions::temporal::unified_cast;
-use crate::conversion::_helpers::support::declared::declared_of;
-use crate::conversion::_helpers::support::divergence::require_widening_range;
-use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal};
-use crate::conversion::_helpers::support::site::Site;
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::expressions::casts::cast_to;
+use crate::snowflake::conversion::_helpers::expressions::operators::{boolean_operand, comparable};
+use crate::snowflake::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::snowflake::conversion::_helpers::expressions::temporal::unified_cast;
+use crate::snowflake::conversion::_helpers::support::declared::declared_of;
+use crate::snowflake::conversion::_helpers::support::divergence::require_widening_range;
+use crate::snowflake::conversion::_helpers::support::scope::{Context, Emitted, Literal};
+use crate::snowflake::conversion::_helpers::support::site::Site;
+use crate::snowflake::conversion::_helpers::support::tree::{
     field, list, node_construct, node_kind, payload_object, require_understood,
 };
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::{
     CASE, CASE_SUBJECT, COALESCE, DECODE_RULE, DIV0_RULE, IFF, NULL_BRANCHES, NULL_IF_ZERO_RULE,
     NVL2_RULE, SEMI_STRUCTURED_HOLDING, TEXT_BRANCHES, ZERO_IF_NULL_RULE,
 };

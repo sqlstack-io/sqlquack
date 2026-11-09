@@ -5,8 +5,8 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 
 use crate::classification::main::classify::classify;
-use crate::classification::models::SourceDialect;
 use crate::classification::models::{ConstructFamily, Occurrence};
+use crate::snowflake::classification::main::cast_type_name::cast_type_name;
 use sqlquack_parse::parsing::main::parse_source::parse_source;
 use sqlquack_syntax::tokens::models::SourceLines;
 
@@ -17,11 +17,7 @@ pub(crate) fn parse_one(sql: &str) -> Expression {
 }
 
 fn occurrences(sql: &str) -> Vec<Occurrence> {
-    classify(
-        &parse_one(sql),
-        &SourceLines::new(sql),
-        SourceDialect::Snowflake,
-    )
+    classify(&parse_one(sql), &SourceLines::new(sql), cast_type_name)
 }
 
 pub(crate) fn missing_keys(sql: &str, expected: &[&str]) -> Vec<String> {

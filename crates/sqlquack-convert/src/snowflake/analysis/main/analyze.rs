@@ -5,29 +5,29 @@ use sqlquack_parse::parsing::main::parse_source::parse_source;
 use sqlquack_syntax::Expression;
 use std::time::Instant;
 
-use sqlquack_diagnostics::classification::models::SourceDialect;
 use sqlquack_diagnostics::refusals::main::refuse_unparsed::refuse_unparsed;
 use sqlquack_diagnostics::refusals::types::ConstructPolicy;
+use sqlquack_diagnostics::snowflake::classification::main::cast_type_name::cast_type_name;
+use sqlquack_syntax::Dialect;
 use sqlquack_syntax::tokens::models::SourceLines;
 
+use crate::snowflake::conversion::main::convert_statement::convert_statement;
+use crate::snowflake::conversion::main::quoted_exclusions::quoted_exclusions;
+use crate::snowflake::conversion::main::within_budget::within_budget;
+use crate::snowflake::conversion::models::{ConversionOptions, Converted};
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_rules::conversion::main::convert_statement::convert_statement;
-use sqlquack_rules::conversion::main::quoted_exclusions::quoted_exclusions;
-use sqlquack_rules::conversion::main::within_budget::within_budget;
-use sqlquack_rules::conversion::models::{ConversionOptions, Converted};
 use sqlquack_semantics::snowflake::types::models::Schema;
 
-use crate::analysis::_helpers::declared_refusals::declared_refusals;
-use crate::analysis::_helpers::override_calls::overrides_applied;
-use crate::analysis::_helpers::volatile_calls::volatile_calls_kept;
 use crate::analysis::main::placed::placed;
-use crate::analysis::models::Analysis;
+use crate::snowflake::analysis::_helpers::declared_refusals::declared_refusals;
+use crate::snowflake::analysis::_helpers::override_calls::overrides_applied;
+use crate::snowflake::analysis::_helpers::volatile_calls::volatile_calls_kept;
+use crate::snowflake::analysis::models::Analysis;
 
 /// Parses, classifies, and converts each statement or refuses it.
 pub fn analyze(
     sql: &str,
-    dialect: SourceDialect,
     policy: &dyn ConstructPolicy,
     (schema, options): (&Schema, &ConversionOptions),
 ) -> Analysis {
@@ -36,7 +36,7 @@ pub fn analyze(
         quoted_exclusions: quoted_exclusions(sql),
         ..options.clone()
     };
-    let statements = match parse_source(sql, dialect.syntax()) {
+    let statements = match parse_source(sql, Dialect::Snowflake) {
         Ok(statements) => statements,
         Err(failure) => {
             let refusal = refuse_unparsed(&failure, &lines);
@@ -57,7 +57,7 @@ pub fn analyze(
         conversions: Vec::new(),
     };
     for statement in &statements {
-        let occurrences = classify(statement, &lines, dialect);
+        let occurrences = classify(statement, &lines, cast_type_name);
         let declared: Vec<Refusal> =
             declared_refusals(statement, &occurrences, policy, (sql, &lines));
         let refused = !declared.is_empty();

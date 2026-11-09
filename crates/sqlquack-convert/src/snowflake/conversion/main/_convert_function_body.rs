@@ -5,22 +5,22 @@ use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::tokens::models::SourceLines;
 
-use crate::conversion::_helpers::queries::function_body::{
+use crate::snowflake::conversion::_helpers::queries::function_body::{
     check_body, converted_body, held_types, parameters_joined, refused, require_declared_types,
     selected_columns,
 };
-use crate::conversion::_helpers::support::depth::positioned;
-use crate::conversion::_helpers::support::locations::Locator;
-use crate::conversion::_helpers::support::scope::{Context, StatementTracks};
-use crate::conversion::_helpers::support::tree::session_tree;
-use crate::conversion::models::{ConversionOptions, ConvertedFunction};
+use crate::snowflake::conversion::_helpers::support::depth::positioned;
+use crate::snowflake::conversion::_helpers::support::locations::Locator;
+use crate::snowflake::conversion::_helpers::support::scope::{Context, StatementTracks};
+use crate::snowflake::conversion::_helpers::support::tree::session_tree;
+use crate::snowflake::conversion::models::{ConversionOptions, ConvertedFunction};
 use sqlquack_semantics::snowflake::types::models::TypedLeaves;
 use sqlquack_semantics::snowflake::types::models::{
     FunctionLanguage, FunctionReturns, FunctionSpec, Schema,
 };
 
 /// The macro body of a SQL function; `query` is its body, a scalar's wrapped as one CAST column.
-pub fn convert_function_body(
+pub(in crate::snowflake) fn convert_function_body(
     query: &Expression,
     spec: &FunctionSpec,
     (schema, options, lines): (&Schema, &ConversionOptions, &SourceLines),

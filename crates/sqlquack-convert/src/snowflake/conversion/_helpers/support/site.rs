@@ -1,6 +1,6 @@
 //! Where an expression is converted: its scope, the statement context and its clause.
 
-use crate::conversion::_helpers::support::scope::{Context, Scope};
+use crate::snowflake::conversion::_helpers::support::scope::{Context, Scope};
 
 /// Whether aggregates and windows may appear where an expression sits, and if it is a WHERE filter.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

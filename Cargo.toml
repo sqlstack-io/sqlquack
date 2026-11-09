@@ -5,7 +5,6 @@ members = [
     "crates/sqlquack-diagnostics",
     "crates/sqlquack-parse",
     "crates/sqlquack-semantics",
-    "crates/sqlquack-rules",
     "crates/sqlquack-convert",
     "crates/sqlquack-blocks",
     "crates/sqlquack-policy",
@@ -78,7 +77,6 @@ sqlquack-format = { path = "crates/sqlquack-format" }
 sqlquack-lint = { path = "crates/sqlquack-lint" }
 sqlquack-parse = { path = "crates/sqlquack-parse" }
 sqlquack-policy = { path = "crates/sqlquack-policy" }
-sqlquack-rules = { path = "crates/sqlquack-rules", default-features = false }
 sqlquack-semantics = { path = "crates/sqlquack-semantics" }
 sqlquack-syntax = { path = "crates/sqlquack-syntax" }
 sqlquack-derive = { path = "crates/sqlquack-derive" }

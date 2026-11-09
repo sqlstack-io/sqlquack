@@ -12,17 +12,21 @@ use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::held::read_json;
-use crate::conversion::_helpers::expressions::scalar::convert_held;
-use crate::conversion::_helpers::queries::split_to_table::{SPLIT_TO_TABLE_NAME, lateral_split};
-use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Context, Scope};
-use crate::conversion::_helpers::support::site::{Placement, Site};
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::expressions::held::read_json;
+use crate::snowflake::conversion::_helpers::expressions::scalar::convert_held;
+use crate::snowflake::conversion::_helpers::queries::split_to_table::{
+    SPLIT_TO_TABLE_NAME, lateral_split,
+};
+use crate::snowflake::conversion::_helpers::support::divergence::diverge;
+use crate::snowflake::conversion::_helpers::support::scope::{Context, Scope};
+use crate::snowflake::conversion::_helpers::support::site::{Placement, Site};
+use crate::snowflake::conversion::_helpers::support::tree::{
     Payload, field, function_construct, identifier_name, list, node_construct, payload_object,
     require_understood,
 };
-use crate::conversion::constants::{FLATTEN_COLUMNS, FLATTEN_ORDERED_COLUMNS, FLATTEN_RULE};
+use crate::snowflake::conversion::constants::{
+    FLATTEN_COLUMNS, FLATTEN_ORDERED_COLUMNS, FLATTEN_RULE,
+};
 use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
 use sqlquack_semantics::snowflake::types::models::{ColumnSpec, Holding};
 

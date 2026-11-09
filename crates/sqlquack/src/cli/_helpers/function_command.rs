@@ -6,23 +6,22 @@ use std::process::ExitCode;
 
 use serde::Serialize;
 use sqlquack_blocks::macros::main::helper_statements::helper_statements;
-use sqlquack_diagnostics::classification::models::SourceDialect;
+use sqlquack_convert::snowflake::catalogue::main::builtin_catalogue::builtin_catalogue;
+use sqlquack_convert::snowflake::conversion::models::ConvertedFunction;
 use sqlquack_diagnostics::diagnostics::constants::SESSION_PARAMETERS;
 use sqlquack_diagnostics::diagnostics::main::diagnose::diagnose;
 use sqlquack_diagnostics::diagnostics::main::render_diagnostics::render_diagnostics;
 use sqlquack_diagnostics::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
 use sqlquack_diagnostics::diagnostics::models::Diagnostic;
-use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
-use sqlquack_rules::conversion::models::ConvertedFunction;
 
 use crate::census::main::resolve_references::resolve_references;
 use crate::cli::_helpers::evidence::caller_choices;
 use crate::cli::_helpers::evidence::with_divergence_help;
 use crate::cli::_helpers::project::project_choices;
 use crate::cli::models::{FunctionArguments, FunctionInputs};
-use sqlquack_convert::analysis::main::analyze_function::analyze_function;
-use sqlquack_rules::session::main::parse_session::parse_session;
-use sqlquack_rules::session::main::session_conversion_options::session_conversion_options;
+use sqlquack_convert::snowflake::analysis::main::analyze_function::analyze_function;
+use sqlquack_convert::snowflake::session::main::parse_session::parse_session;
+use sqlquack_convert::snowflake::session::main::session_conversion_options::session_conversion_options;
 
 /// The path naming standard input.
 const STDIN_PATH: &str = "-";
@@ -179,18 +178,14 @@ fn convert(
         Some(policy) => caller_choices(options, policy, conversion),
         None => options,
     };
-    analyze_function(
-        (&body, spec),
-        SourceDialect::Snowflake,
-        &builtin_catalogue(),
-        (schema, &options),
-    )
-    .map_err(|refusals| Failure::Refused {
-        diagnostics: with_divergence_help(
-            &refusals,
-            diagnose(&refusals, &body),
-            (policy.as_ref(), conversion, parameters),
-        ),
-        body,
+    analyze_function((&body, spec), &builtin_catalogue(), (schema, &options)).map_err(|refusals| {
+        Failure::Refused {
+            diagnostics: with_divergence_help(
+                &refusals,
+                diagnose(&refusals, &body),
+                (policy.as_ref(), conversion, parameters),
+            ),
+            body,
+        }
     })
 }

@@ -9,20 +9,24 @@ use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::held::{builds_held, built, leaf};
-use crate::conversion::_helpers::expressions::scalar::{convert_expression, convert_held};
-use crate::conversion::_helpers::expressions::strings::text_operand;
-use crate::conversion::_helpers::expressions::windows::{order_item, order_key};
-use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal, VariantRoot};
-use crate::conversion::_helpers::support::site::{Placement, Site};
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::expressions::held::{builds_held, built, leaf};
+use crate::snowflake::conversion::_helpers::expressions::scalar::{
+    convert_expression, convert_held,
+};
+use crate::snowflake::conversion::_helpers::expressions::strings::text_operand;
+use crate::snowflake::conversion::_helpers::expressions::windows::{order_item, order_key};
+use crate::snowflake::conversion::_helpers::support::divergence::diverge;
+use crate::snowflake::conversion::_helpers::support::scope::{
+    Context, Emitted, Literal, VariantRoot,
+};
+use crate::snowflake::conversion::_helpers::support::site::{Placement, Site};
+use crate::snowflake::conversion::_helpers::support::tree::{
     Payload, field, flag, function_construct, list, node_construct, payload_object,
     require_understood,
 };
-use crate::conversion::_helpers::support::typed_leaves::compared_value;
-use crate::conversion::constants::DUPLICATE_VARIANTS;
-use crate::conversion::constants::{
+use crate::snowflake::conversion::_helpers::support::typed_leaves::compared_value;
+use crate::snowflake::conversion::constants::DUPLICATE_VARIANTS;
+use crate::snowflake::conversion::constants::{
     ARRAY_AGG_RULE, LISTAGG_RULE, PERCENTILE_DECIMALS, PERCENTILE_EXTRA_DIGITS,
     PERCENTILE_FRACTION_DIGITS, PERCENTILE_MAX_PRECISION, PERCENTILE_RULE,
 };

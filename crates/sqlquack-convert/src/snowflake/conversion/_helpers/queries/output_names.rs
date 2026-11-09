@@ -2,7 +2,7 @@
 
 use serde_json::Value;
 
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::support::tree::{
     LITERAL_DATE, LITERAL_NUMBER, LITERAL_STRING, LITERAL_TIMESTAMP, is_inert, list, node_kind,
     unexpected_fields,
 };

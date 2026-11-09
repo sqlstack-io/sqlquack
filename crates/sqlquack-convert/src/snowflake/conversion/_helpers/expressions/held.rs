@@ -11,9 +11,9 @@ use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::objects::as_json;
-use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Context, Emitted, VariantRoot};
+use crate::snowflake::conversion::_helpers::expressions::objects::as_json;
+use crate::snowflake::conversion::_helpers::support::divergence::diverge;
+use crate::snowflake::conversion::_helpers::support::scope::{Context, Emitted, VariantRoot};
 
 /// Whether a builder of `values` holds its result as a DuckDB VARIANT: one keeps a FLOAT's type.
 pub(crate) fn builds_held(values: &[Emitted]) -> bool {

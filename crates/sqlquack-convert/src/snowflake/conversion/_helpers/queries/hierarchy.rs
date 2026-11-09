@@ -9,13 +9,15 @@ use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
-use crate::conversion::_helpers::queries::clauses::condition_sql;
-use crate::conversion::_helpers::queries::sources::convert_from;
-use crate::conversion::_helpers::support::scope::{Context, Scope};
-use crate::conversion::_helpers::support::site::{Placement, Site};
-use crate::conversion::_helpers::support::tree::{Payload, node_construct, require_understood};
-use crate::conversion::constants::{
+use crate::snowflake::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::snowflake::conversion::_helpers::queries::clauses::condition_sql;
+use crate::snowflake::conversion::_helpers::queries::sources::convert_from;
+use crate::snowflake::conversion::_helpers::support::scope::{Context, Scope};
+use crate::snowflake::conversion::_helpers::support::site::{Placement, Site};
+use crate::snowflake::conversion::_helpers::support::tree::{
+    Payload, node_construct, require_understood,
+};
+use crate::snowflake::conversion::constants::{
     HIERARCHY_COLUMN_PREFIX, HIERARCHY_DEPTH_TAG, HIERARCHY_LEVEL, HIERARCHY_MAX_DEPTH,
     HIERARCHY_NESTED_QUERIES, HIERARCHY_PRIOR, HIERARCHY_RULE, HIERARCHY_WALK,
 };

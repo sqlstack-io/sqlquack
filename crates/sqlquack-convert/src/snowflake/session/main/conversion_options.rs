@@ -1,6 +1,8 @@
 //! `conversion_options`: the known divergences the policy allows in one mode, and its budget.
 
-use crate::conversion::models::{AllowedDivergence, ConversionBudget, ConversionOptions};
+use crate::snowflake::conversion::models::{
+    AllowedDivergence, ConversionBudget, ConversionOptions,
+};
 use sqlquack_policy::policy::models::{DivergenceMode, Policy};
 
 /// The divergences `policy` converts with a warning, in strict mode or by default.

@@ -6,8 +6,8 @@ use sqlquack_semantics::snowflake::types::models::TypedLeaves;
 
 use sqlquack_blocks::semi_structured::constants::SOURCE_VARIANT_JSON;
 
-use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Context, Emitted};
+use crate::snowflake::conversion::_helpers::support::divergence::diverge;
+use crate::snowflake::conversion::_helpers::support::scope::{Context, Emitted};
 
 use sqlquack_semantics::snowflake::types::models::ColumnSpec;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;

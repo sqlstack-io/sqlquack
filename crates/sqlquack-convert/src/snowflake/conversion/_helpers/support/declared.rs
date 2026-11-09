@@ -4,7 +4,7 @@ use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
 
-use crate::conversion::_helpers::support::scope::{Context, Emitted};
+use crate::snowflake::conversion::_helpers::support::scope::{Context, Emitted};
 use sqlquack_policy::policy::constants::DECLARED_OFFSET;
 
 /// The declared columns any of `values` relies on, sorted and without repeats.

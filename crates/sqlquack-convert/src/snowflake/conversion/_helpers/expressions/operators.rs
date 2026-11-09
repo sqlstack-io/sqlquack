@@ -29,21 +29,25 @@ use sqlquack_semantics::snowflake::typing::main::numeric_modulo::numeric_modulo;
 use sqlquack_semantics::snowflake::typing::main::numeric_multiply::numeric_multiply;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::casts::cast_to;
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
-use crate::conversion::_helpers::expressions::temporal::{literal_date, timestamp_literal};
-use crate::conversion::_helpers::support::divergence::{diverge, require_widening_range};
-use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal};
-use crate::conversion::_helpers::support::site::Site;
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::expressions::casts::cast_to;
+use crate::snowflake::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::snowflake::conversion::_helpers::expressions::temporal::{
+    literal_date, timestamp_literal,
+};
+use crate::snowflake::conversion::_helpers::support::divergence::{
+    diverge, require_widening_range,
+};
+use crate::snowflake::conversion::_helpers::support::scope::{Context, Emitted, Literal};
+use crate::snowflake::conversion::_helpers::support::site::Site;
+use crate::snowflake::conversion::_helpers::support::tree::{
     field, node_construct, payload_object, require_understood,
 };
-use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
-use crate::conversion::constants::DATE_NAME;
+use crate::snowflake::conversion::_helpers::support::typed_leaves::compared_by_text;
+use crate::snowflake::conversion::constants::DATE_NAME;
 use sqlquack_blocks::blocks::constants::NANOSECOND_DIGITS;
 
-use crate::catalogue::constants::NAIVE_LOCAL_COMPARISON;
-use crate::conversion::constants::{
+use crate::snowflake::catalogue::constants::NAIVE_LOCAL_COMPARISON;
+use crate::snowflake::conversion::constants::{
     COMPARISON, DATE_DAY_ARITHMETIC, DATE_LITERAL_COMPARISON, DATE_TIMESTAMP_COMPARISON, DAY_UNIT,
     DECIMAL_ARITHMETIC, DECIMAL_DIVISION, DECIMAL_MODULO, FLOAT_ARITHMETIC, FLOAT_MODULO, LOGIC,
     MICROSECOND_DIGITS, MOD_PAIR, NULL_ARITHMETIC, NULL_SAFE_COMPARISON, NULL_SUM_PRECISION,

@@ -33,7 +33,7 @@ allowed_entries = [
     "pyproject.toml",
 ]
 
-# Layer: only the command-line crates and the pipeline crate may depend on the conversion rules.
+# Layer: only the command-line crates may depend on the conversion rules and pipeline.
 [targets.rust_rules_layer]
 analyzer = "rust"
 roots = ["crates", "tools"]
@@ -48,7 +48,7 @@ rule_packs = ["rust"]
 select = ["FPRSL301"]
 
 [targets.rust_rules_layer.rule_options.FPRSL301]
-forbidden_packages = ["sqlquack-rules"]
+forbidden_packages = ["sqlquack-convert"]
 
 # Layer: syntax, core, Snowflake typing and semantics build without conversion, DuckDB or evidence.
 [targets.rust_analysis_layer]
@@ -60,7 +60,6 @@ tooling = [
   "crates/sqlquack-convert",
   "tools/sqlquack-polyglot-check",
   "crates/sqlquack-python",
-  "crates/sqlquack-rules",
   "crates/sqlquack-blocks",
   "crates/sqlquack-evidence",
   "tools/sqlquack-format-check",
@@ -73,7 +72,7 @@ select = ["FPRSL301"]
 [targets.rust_analysis_layer.rule_options.FPRSL301]
 forbidden_packages = [
   "sqlquack",
-  "sqlquack-rules",
+  "sqlquack-convert",
   "sqlquack-blocks",
   "sqlquack-evidence",
   "sqlquack-compare",

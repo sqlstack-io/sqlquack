@@ -320,8 +320,8 @@ when the analysis API needs them.
      bounded number of times. DuckDB is unchanged. 144 spellings are listed, all spelling-only.
    - Done: the pipeline parses faithfully and the rules convert the parsed tree, not the
      canonical one. A call reaches a rule only through its spelling's entry in
-     `CALL_SPELLINGS` (`crates/sqlquack-rules/src/conversion/constants.rs`), and every entry is
-     a spelling recorded cases use. Spellings polyglot merged into a shared node without cases of
+     `CALL_SPELLINGS` (`crates/sqlquack-convert/src/snowflake/conversion/constants.rs`), and
+     every entry is a spelling recorded cases use. Spellings polyglot merged into a shared node without cases of
      their own (`LEN`, `CHAR_LENGTH`, `CHARACTER_LENGTH`, `UCASE`, `LCASE`, `IF`, `IIF`,
      `STARTS_WITH`, `ENDS_WITH`, `DATE_DIFF`, `TIMEDIFF`, `TIMESTAMPDIFF`, `YEAR`, `QUARTER`,
      `MONTH`, `DAY`, `HOUR`, `MINUTE`, `SECOND`) were refused until they had cases. Of these,
@@ -334,8 +334,8 @@ when the analysis API needs them.
    - Done: the fidelity check retired with `sqlquack-core`'s `printing`, `canonical`, `reparse`
      and `comparison` domains, and `sqlquack-core` no longer depends on polyglot. The six
      equivalences remain as recorded spelling pairs (`SPELLING_PAIRS` in
-     `crates/sqlquack-rules/src/conversion/constants.rs`): `sqlquack verify` still requires both
-     spellings of every pair to record one result, and a rule that converts both spellings of a
+     `crates/sqlquack-convert/src/snowflake/conversion/constants.rs`): `sqlquack verify` still
+     requires both spellings of every pair to record one result, and a rule that converts both spellings of a
      pair records it in its provenance (`RLIKE`, and `TEXT` and `STRING` cast targets). The census
      loses its print-back section; files the check refused are refused by other rules.
      `make polyglot-guard` allows the check crate only.

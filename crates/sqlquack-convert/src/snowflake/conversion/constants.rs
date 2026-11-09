@@ -2,7 +2,7 @@
 
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::models::{CallShape, SpellingPair, SpellingRule};
+use crate::snowflake::conversion::models::{CallShape, SpellingPair, SpellingRule};
 
 /// HASH.
 pub const HASH_RULE: &str = "rule.hash";

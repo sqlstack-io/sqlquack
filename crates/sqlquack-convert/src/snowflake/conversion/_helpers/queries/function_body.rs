@@ -1,6 +1,6 @@
 //! Pieces of a SQL function body's conversion: type checks, the parameters join and DuckDB's check.
 
-use crate::conversion::_helpers::support::typed_leaves::checked;
+use crate::snowflake::conversion::_helpers::support::typed_leaves::checked;
 use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_blocks::checking::main::check_printed::check_printed;
 use sqlquack_blocks::checking::models::{FunctionStub, StubReturns};
@@ -10,15 +10,15 @@ use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::project_functions::held_type;
-use crate::conversion::_helpers::queries::query::convert_query;
-use crate::conversion::_helpers::support::scope::{Context, Scope};
-use crate::conversion::_helpers::support::tree::node_construct;
-use crate::conversion::constants::{
+use crate::snowflake::conversion::_helpers::expressions::project_functions::held_type;
+use crate::snowflake::conversion::_helpers::queries::query::convert_query;
+use crate::snowflake::conversion::_helpers::support::scope::{Context, Scope};
+use crate::snowflake::conversion::_helpers::support::tree::node_construct;
+use crate::snowflake::conversion::constants::{
     BODY_ALIAS, NO_PARAMETERS_COLUMN, PARAMETERS_RELATION, VARIANT_HELD_UNREAD,
 };
-use crate::conversion::main::override_macro_name::override_macro_name;
-use crate::conversion::models::ConversionOptions;
+use crate::snowflake::conversion::main::override_macro_name::override_macro_name;
+use crate::snowflake::conversion::models::ConversionOptions;
 use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
 use sqlquack_semantics::snowflake::types::models::{
     ColumnSpec, FunctionReturns, FunctionSpec, Schema,

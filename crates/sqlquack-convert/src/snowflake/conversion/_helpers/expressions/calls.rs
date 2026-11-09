@@ -22,55 +22,59 @@ use sqlquack_semantics::snowflake::typing::main::framed_average::framed_average;
 use sqlquack_semantics::snowflake::typing::main::sum::sum;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::arrays::array_function;
-use crate::conversion::_helpers::expressions::casts::zoned_text;
-use crate::conversion::_helpers::expressions::casts::{
+use crate::snowflake::conversion::_helpers::expressions::arrays::array_function;
+use crate::snowflake::conversion::_helpers::expressions::casts::zoned_text;
+use crate::snowflake::conversion::_helpers::expressions::casts::{
     to_boolean_call, to_double_call, to_number_call, to_varchar_call,
 };
-use crate::conversion::_helpers::expressions::conditionals::unified;
-use crate::conversion::_helpers::expressions::conditionals::{
+use crate::snowflake::conversion::_helpers::expressions::conditionals::unified;
+use crate::snowflake::conversion::_helpers::expressions::conditionals::{
     decode, div0, null_if_zero, nvl2, zero_if_null,
 };
-use crate::conversion::_helpers::expressions::hashing::hash_call;
-use crate::conversion::_helpers::expressions::lambdas::{lambda_call, reduce_call};
-use crate::conversion::_helpers::expressions::numeric_functions::{
+use crate::snowflake::conversion::_helpers::expressions::hashing::hash_call;
+use crate::snowflake::conversion::_helpers::expressions::lambdas::{lambda_call, reduce_call};
+use crate::snowflake::conversion::_helpers::expressions::numeric_functions::{
     absolute, bitwise, logarithm, power, rounding, sign,
 };
-use crate::conversion::_helpers::expressions::objects::{
+use crate::snowflake::conversion::_helpers::expressions::objects::{
     object_construct, object_delete, object_insert,
 };
-use crate::conversion::_helpers::expressions::operators::{comparable, equal_null, mod_call};
-use crate::conversion::_helpers::expressions::project_functions::{override_call, project_call};
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
-use crate::conversion::_helpers::expressions::semi_structured::{
+use crate::snowflake::conversion::_helpers::expressions::operators::{
+    comparable, equal_null, mod_call,
+};
+use crate::snowflake::conversion::_helpers::expressions::project_functions::{
+    override_call, project_call,
+};
+use crate::snowflake::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::snowflake::conversion::_helpers::expressions::semi_structured::{
     parse_json, variant_get, variant_inspect,
 };
-use crate::conversion::_helpers::expressions::strings::{
+use crate::snowflake::conversion::_helpers::expressions::strings::{
     bytes_as_text, chr, concatenate, concatenate_with_separator, edit_distance, hex_encode,
     initcap, jaro_winkler, repeat, text_contains, text_md5, text_operand, text_sha2, trim_call,
     try_hex_decode,
 };
-use crate::conversion::_helpers::expressions::temporal_functions::{
+use crate::snowflake::conversion::_helpers::expressions::temporal_functions::{
     add_months, convert_timezone, current_time, date_add, date_diff_call, date_from_parts_call,
     date_part, date_trunc, day_name, last_day, months_between, temporal_text,
     timestamp_from_parts_call, to_time, to_timestamp, to_timestamp_tz,
 };
-use crate::conversion::_helpers::expressions::text_functions::{
+use crate::snowflake::conversion::_helpers::expressions::text_functions::{
     left_right, pad, regexp, replace, split_part, stripped_type_name, suffixed_column,
     system_typeof_call, translate, type_name,
 };
-use crate::conversion::_helpers::expressions::text_search::charindex_call;
-use crate::conversion::_helpers::expressions::variants::variant_function;
-use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Context, Emitted};
-use crate::conversion::_helpers::support::site::{Placement, Site};
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::expressions::text_search::charindex_call;
+use crate::snowflake::conversion::_helpers::expressions::variants::variant_function;
+use crate::snowflake::conversion::_helpers::support::divergence::diverge;
+use crate::snowflake::conversion::_helpers::support::scope::{Context, Emitted};
+use crate::snowflake::conversion::_helpers::support::site::{Placement, Site};
+use crate::snowflake::conversion::_helpers::support::tree::{
     Payload, field, flag, function_construct, list, node_construct, node_kind, payload_object,
     require_understood,
 };
-use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
-use crate::conversion::constants::MAX_KIND;
-use crate::conversion::constants::{
+use crate::snowflake::conversion::_helpers::support::typed_leaves::compared_by_text;
+use crate::snowflake::conversion::constants::MAX_KIND;
+use crate::snowflake::conversion::constants::{
     AVERAGE, AVG_NAME, COUNT, GENERATOR_RULE, GENERATOR_SEQUENCE_COLUMN, LEAST_GREATEST,
     LOCAL_ZONE_SUFFIX, MIN_MAX, MIN_MAX_FLOAT, NOT_SNOWFLAKE_FUNCTIONS, NULLIF,
     PART_FUNCTIONS_PAIR, REGEXP_LIKE_NAME, RLIKE_PAIR, SORTED_ARRAY_FUNCTION, STAR_KIND, SUM,

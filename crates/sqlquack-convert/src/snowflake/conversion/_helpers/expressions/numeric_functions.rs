@@ -12,14 +12,14 @@ use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::constants::MAX_PRECISION;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::casts::number_literal_text;
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
-use crate::conversion::_helpers::expressions::temporal_functions::date_trunc;
-use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Emitted, Literal};
-use crate::conversion::_helpers::support::site::Site;
+use crate::snowflake::conversion::_helpers::expressions::casts::number_literal_text;
+use crate::snowflake::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::snowflake::conversion::_helpers::expressions::temporal_functions::date_trunc;
+use crate::snowflake::conversion::_helpers::support::divergence::diverge;
+use crate::snowflake::conversion::_helpers::support::scope::{Emitted, Literal};
+use crate::snowflake::conversion::_helpers::support::site::Site;
 
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::{
     BITWISE, HALF_AWAY_FROM_ZERO, HALF_TO_EVEN, LN_NAME, LOGARITHM, NUMERIC_FUNCTION, POWER_BASE,
     POWER_BASE_TWO, POWER_RULE, ROUND_FUNCTION, ROUND_WITH_MODE_ARGUMENTS, ROUNDING, SIGN_RULE,
     SQRT_NAME,

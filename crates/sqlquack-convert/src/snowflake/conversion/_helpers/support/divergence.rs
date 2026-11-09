@@ -6,7 +6,7 @@ use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::constants::MAX_PRECISION;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::support::scope::Context;
+use crate::snowflake::conversion::_helpers::support::scope::Context;
 
 use sqlquack_policy::policy::constants::NUMERIC_RANGE;
 

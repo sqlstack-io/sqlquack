@@ -3,11 +3,11 @@
 use std::path::Path;
 
 use sqlquack::analysis::models::PipelineConverter;
+use sqlquack_convert::snowflake::session::main::conversion_options::conversion_options;
 use sqlquack_evidence::cases::main::load_cases::load_cases;
 use sqlquack_evidence::verify::models::Conversion;
 use sqlquack_evidence::verify::types::CaseConverter;
 use sqlquack_policy::policy::main::load_policy::load_policy;
-use sqlquack_rules::session::main::conversion_options::conversion_options;
 use sqlquack_syntax::Dialect;
 
 use crate::corpora::models::CorpusEntry;

@@ -24,28 +24,30 @@ use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::arrays::array_function;
-use crate::conversion::_helpers::expressions::casts::number_literal_text;
-use crate::conversion::_helpers::expressions::held::{built, leaves, read_json};
-use crate::conversion::_helpers::expressions::objects::{
+use crate::snowflake::conversion::_helpers::expressions::arrays::array_function;
+use crate::snowflake::conversion::_helpers::expressions::casts::number_literal_text;
+use crate::snowflake::conversion::_helpers::expressions::held::{built, leaves, read_json};
+use crate::snowflake::conversion::_helpers::expressions::objects::{
     free_variant, refused, semi_structured, text_literal, variant,
 };
-use crate::conversion::_helpers::expressions::ordered_aggregates::{
+use crate::snowflake::conversion::_helpers::expressions::ordered_aggregates::{
     sorted_array_agg, unordered_array_agg_call,
 };
-use crate::conversion::_helpers::expressions::scalar::{
+use crate::snowflake::conversion::_helpers::expressions::scalar::{
     call_name, convert_expression, convert_held,
 };
-use crate::conversion::_helpers::expressions::strings::text_operand;
-use crate::conversion::_helpers::support::divergence::{allows, diverge};
-use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal, VariantRoot};
-use crate::conversion::_helpers::support::site::{Placement, Site};
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::expressions::strings::text_operand;
+use crate::snowflake::conversion::_helpers::support::divergence::{allows, diverge};
+use crate::snowflake::conversion::_helpers::support::scope::{
+    Context, Emitted, Literal, VariantRoot,
+};
+use crate::snowflake::conversion::_helpers::support::site::{Placement, Site};
+use crate::snowflake::conversion::_helpers::support::tree::{
     Payload, flag, function_construct, list, node_kind, require_understood,
 };
-use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
-use crate::conversion::constants::DUPLICATE_VARIANTS;
-use crate::conversion::constants::{
+use crate::snowflake::conversion::_helpers::support::typed_leaves::compared_by_text;
+use crate::snowflake::conversion::constants::DUPLICATE_VARIANTS;
+use crate::snowflake::conversion::constants::{
     ARRAY_AGG_RULE, ARRAY_APPEND_RULE, ARRAY_CAT_RULE, ARRAY_COMPACT_RULE,
     ARRAY_CONSTRUCT_COMPACT_RULE, ARRAY_CONSTRUCT_NAME, ARRAY_CONSTRUCT_RULE, ARRAY_CONTAINS_RULE,
     ARRAY_EXCEPT_RULE, ARRAY_POSITION_RULE, ARRAY_POSITION_TYPE, ARRAY_SIZE_RULE,

@@ -6,15 +6,15 @@ use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::tokens::models::SourceLines;
 
-use crate::conversion::_helpers::queries::query::convert_query;
-use crate::conversion::_helpers::support::collecting::{Collector, collected};
-use crate::conversion::_helpers::support::depth::within_depth;
-use crate::conversion::_helpers::support::locations::Locator;
-use crate::conversion::_helpers::support::scope::{Context, StatementTracks};
-use crate::conversion::_helpers::support::tree::{session_tree, strip_positions};
-use crate::conversion::_helpers::support::typed_leaves::ConvertedQuery;
-use crate::conversion::main::convert_statement::convert_statement;
-use crate::conversion::models::{CollectedRefusals, ConversionOptions};
+use crate::snowflake::conversion::_helpers::queries::query::convert_query;
+use crate::snowflake::conversion::_helpers::support::collecting::{Collector, collected};
+use crate::snowflake::conversion::_helpers::support::depth::within_depth;
+use crate::snowflake::conversion::_helpers::support::locations::Locator;
+use crate::snowflake::conversion::_helpers::support::scope::{Context, StatementTracks};
+use crate::snowflake::conversion::_helpers::support::tree::{session_tree, strip_positions};
+use crate::snowflake::conversion::_helpers::support::typed_leaves::ConvertedQuery;
+use crate::snowflake::conversion::main::convert_statement::convert_statement;
+use crate::snowflake::conversion::models::{CollectedRefusals, ConversionOptions};
 use sqlquack_semantics::snowflake::types::models::Schema;
 use sqlquack_semantics::snowflake::types::models::TypedLeaves;
 

@@ -1,6 +1,8 @@
 //! Reading the serialised source tree: node kinds, payload fields and refusals.
 
-use crate::conversion::_helpers::support::collecting::{collecting, events, record, skipped};
+use crate::snowflake::conversion::_helpers::support::collecting::{
+    collecting, events, record, skipped,
+};
 use serde_json::{Map, Value};
 use sqlquack_diagnostics::classification::constants::{
     PROJECT_FUNCTION_CONSTRUCT, PROJECT_FUNCTION_PLACEHOLDER,

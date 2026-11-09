@@ -2,8 +2,8 @@
 
 use sqlquack_syntax::DataType;
 
-use crate::classification::_helpers::names::base_type_name;
-use crate::classification::constants::{
+use crate::snowflake::classification::_helpers::names::base_type_name;
+use crate::snowflake::classification::constants::{
     LOCAL_TIME_ZONE_ALIASES, NO_TIME_ZONE_ALIASES, TIME_ZONE_ALIASES,
 };
 

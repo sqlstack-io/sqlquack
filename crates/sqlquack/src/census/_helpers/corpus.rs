@@ -5,7 +5,7 @@ use std::sync::atomic::Ordering;
 
 use rayon::ThreadPoolBuilder;
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
-use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
+use sqlquack_convert::snowflake::catalogue::main::builtin_catalogue::builtin_catalogue;
 use std::collections::BTreeSet;
 
 use sqlquack_semantics::snowflake::names::constants::RELATION_KEY_SEPARATOR;

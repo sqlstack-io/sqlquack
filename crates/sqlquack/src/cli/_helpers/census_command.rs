@@ -4,7 +4,7 @@ use std::io::Write;
 use std::process::ExitCode;
 use std::time::Instant;
 
-use sqlquack_diagnostics::classification::models::SourceDialect;
+use crate::analysis::models::SourceDialect;
 
 use crate::analysis::main::with_overrides::with_overrides;
 use crate::census::constants::{COVERAGE_POINTS, RULE_ID_PREFIX, SLOWEST_FILES};
@@ -15,7 +15,7 @@ use crate::census::models::CensusOptions;
 use crate::cli::_helpers::evidence::divergence_options;
 use crate::cli::_helpers::project::project_choices;
 use crate::cli::models::CensusArguments;
-use sqlquack_rules::catalogue::constants::RULES;
+use sqlquack_convert::snowflake::catalogue::constants::RULES;
 
 pub(crate) fn census_command(
     arguments: &CensusArguments,

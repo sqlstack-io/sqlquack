@@ -1,11 +1,10 @@
 //! The functions a case defines: their schema, DuckDB macros and provenance.
 
-use sqlquack_diagnostics::classification::models::SourceDialect;
+use sqlquack_convert::snowflake::catalogue::main::builtin_catalogue::builtin_catalogue;
+use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_evidence::cases::models::{CaseFunction, FunctionBodyLanguage, InputColumn};
 use sqlquack_evidence::replay::models::PythonFunction;
-use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
-use sqlquack_rules::conversion::models::ConversionOptions;
 use sqlquack_semantics::snowflake::types::models::{
     ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits, Schema,
 };
@@ -13,7 +12,7 @@ use sqlquack_semantics::snowflake::typing::main::cast_target::cast_target;
 
 use crate::analysis::_helpers::python_signature::python_signature;
 use crate::analysis::models::CaseFunctions;
-use sqlquack_convert::analysis::main::analyze_function::analyze_function;
+use sqlquack_convert::snowflake::analysis::main::analyze_function::analyze_function;
 
 /// Every function typed into the schema, then each body converted to a macro in file order.
 pub(crate) fn case_functions(
@@ -45,7 +44,6 @@ pub(crate) fn case_functions(
         }
         let body = analyze_function(
             (&function.body, spec),
-            SourceDialect::Snowflake,
             &builtin_catalogue(),
             (&schema, options),
         )

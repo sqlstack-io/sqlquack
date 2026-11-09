@@ -5,11 +5,13 @@ use std::path::PathBuf;
 
 use serde::Serialize;
 use sqlquack_blocks::layout::main::checked_layout::checked_layout;
-use sqlquack_convert::analysis::main::analyze::analyze;
+use sqlquack_convert::snowflake::analysis::main::analyze::analyze;
+use sqlquack_convert::snowflake::catalogue::main::builtin_catalogue::builtin_catalogue;
+use sqlquack_convert::snowflake::conversion::models::{ConversionOptions, Fixture};
 use sqlquack_diagnostics::classification::constants::PROJECT_FUNCTION_CONSTRUCT;
-use sqlquack_diagnostics::classification::models::SourceDialect;
 use sqlquack_diagnostics::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_diagnostics::provenance::models::Provenance;
+use sqlquack_diagnostics::snowflake::classification::main::cast_type_name::cast_type_name;
 use sqlquack_evidence::cases::models::LoadedCase;
 use sqlquack_evidence::constants::{INPUT_RELATION, ORDINAL_COLUMN};
 use sqlquack_evidence::replay::models::{PythonFunction, PythonReplay};
@@ -17,9 +19,8 @@ use sqlquack_evidence::verify::models::Conversion;
 use sqlquack_evidence::verify::types::CaseConverter;
 use sqlquack_policy::policy::constants::QUOTED_IDENTIFIERS_IGNORE_CASE;
 use sqlquack_policy::policy::models::SessionValue;
-use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
-use sqlquack_rules::conversion::models::{ConversionOptions, Fixture};
 use sqlquack_semantics::snowflake::types::models::Schema;
+use sqlquack_syntax::{DataType, Dialect};
 
 use crate::analysis::_helpers::case_functions::case_functions;
 use crate::analysis::_helpers::override_definition::load_override;
@@ -108,7 +109,6 @@ impl CaseConverter for PipelineConverter {
         };
         let analysis = analyze(
             &case.source_sql,
-            SourceDialect::Snowflake,
             &builtin_catalogue(),
             (&functions.schema, &options),
         );
@@ -173,4 +173,43 @@ pub struct PythonSignature {
     pub volatility: String,
     /// `called` with None for a NULL argument, or `returns_null` without a call.
     pub null_input: String,
+}
+
+/// A dialect SQLQuack converts from. Every entry point takes it as a parameter.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SourceDialect {
+    /// Snowflake SQL.
+    Snowflake,
+}
+
+impl SourceDialect {
+    /// The parser and printer dialect for this source.
+    pub fn syntax(self) -> Dialect {
+        match self {
+            Self::Snowflake => Dialect::Snowflake,
+        }
+    }
+
+    /// The lower-case name used on the command line and in reports.
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::Snowflake => "snowflake",
+        }
+    }
+
+    /// The source dialect with this command-line name.
+    pub fn from_name(name: &str) -> Option<Self> {
+        match name.to_ascii_lowercase().as_str() {
+            "snowflake" => Some(Self::Snowflake),
+            _ => None,
+        }
+    }
+
+    /// How classification spells a cast's target type in this dialect.
+    pub fn type_name(self) -> fn(&DataType) -> String {
+        match self {
+            Self::Snowflake => cast_type_name,
+        }
+    }
 }

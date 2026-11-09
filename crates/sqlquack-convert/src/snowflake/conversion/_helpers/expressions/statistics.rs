@@ -10,10 +10,12 @@ use sqlquack_policy::policy::constants::NUMERIC_RANGE;
 use sqlquack_semantics::snowflake::typing::constants::MAX_PRECISION;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::casts::cast_to;
-use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Context, Emitted};
-use crate::conversion::constants::{COVARIANCE_RULE, VARIANCE_FLOAT_RULE, VARIANCE_RULE};
+use crate::snowflake::conversion::_helpers::expressions::casts::cast_to;
+use crate::snowflake::conversion::_helpers::support::divergence::diverge;
+use crate::snowflake::conversion::_helpers::support::scope::{Context, Emitted};
+use crate::snowflake::conversion::constants::{
+    COVARIANCE_RULE, VARIANCE_FLOAT_RULE, VARIANCE_RULE,
+};
 
 /// Variances and standard deviations: the name, whether over the population, and whether a root.
 const VARIANCE_AGGREGATES: &[(&str, bool, bool)] = &[

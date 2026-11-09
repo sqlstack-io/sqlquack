@@ -1,7 +1,7 @@
 //! `refuse_value_divergences`: conversion options relying only on divergences that fail loudly.
 
+use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
 use sqlquack_policy::policy::models::{DivergenceFailure, Policy};
-use sqlquack_rules::conversion::models::ConversionOptions;
 
 /// `options` without every divergence whose failure can be a different value rather than an error.
 pub fn refuse_value_divergences(

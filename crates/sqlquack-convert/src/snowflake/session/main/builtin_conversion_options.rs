@@ -1,7 +1,7 @@
 //! `builtin_conversion_options`: the built-in default's options: the clock and loud checks.
 
-use crate::conversion::models::{AllowedDivergence, ConversionOptions};
-use crate::session::constants::{
+use crate::snowflake::conversion::models::{AllowedDivergence, ConversionOptions};
+use crate::snowflake::session::constants::{
     BUILTIN_CLOCK_CONSTRUCTS, BUILTIN_CLOCK_REASON, BUILTIN_CLOCK_ZONE, BUILTIN_JSON_CONSTRUCTS,
     BUILTIN_JSON_REASON, BUILTIN_NUMERIC_CONSTRUCTS, BUILTIN_NUMERIC_REASON,
     BUILTIN_SUBMICRO_CONSTRUCTS, BUILTIN_SUBMICRO_REASON, BUILTIN_TIMESTAMP_CONSTRUCTS,

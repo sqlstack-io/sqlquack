@@ -1,9 +1,3 @@
-//! The conversion pipeline: parse, convert with the rules, or refuse.
+//! The dialect-free steps of the conversion pipeline.
 
-pub(crate) mod _helpers;
-pub mod constants;
 pub mod main;
-pub mod models;
-
-#[cfg(test)]
-mod tests;

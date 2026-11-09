@@ -1,6 +1,6 @@
 //! `convert_statement`: DuckDB SQL for one canonical Snowflake query, or the first refusal.
 
-use crate::conversion::_helpers::support::typed_leaves::checked;
+use crate::snowflake::conversion::_helpers::support::typed_leaves::checked;
 use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_blocks::checking::main::check_printed::check_printed;
 use sqlquack_blocks::held::main::variant_written::variant_written;
@@ -12,16 +12,16 @@ use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::tokens::models::SourceLines;
 
-use crate::conversion::_helpers::queries::function_body::{
+use crate::snowflake::conversion::_helpers::queries::function_body::{
     column_types, function_stub, override_stub,
 };
-use crate::conversion::_helpers::queries::query::convert_query;
-use crate::conversion::_helpers::support::depth::positioned;
-use crate::conversion::_helpers::support::locations::Locator;
-use crate::conversion::_helpers::support::scope::{Context, StatementTracks};
-use crate::conversion::_helpers::support::tree::{node_construct, session_tree};
-use crate::conversion::constants::{NULL_BRANCHES, OUTPUT_ALIAS};
-use crate::conversion::models::{ConversionOptions, Converted};
+use crate::snowflake::conversion::_helpers::queries::query::convert_query;
+use crate::snowflake::conversion::_helpers::support::depth::positioned;
+use crate::snowflake::conversion::_helpers::support::locations::Locator;
+use crate::snowflake::conversion::_helpers::support::scope::{Context, StatementTracks};
+use crate::snowflake::conversion::_helpers::support::tree::{node_construct, session_tree};
+use crate::snowflake::conversion::constants::{NULL_BRANCHES, OUTPUT_ALIAS};
+use crate::snowflake::conversion::models::{ConversionOptions, Converted};
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_semantics::snowflake::types::models::TypedLeaves;
 use sqlquack_semantics::snowflake::types::models::{ColumnSpec, Holding, Schema};

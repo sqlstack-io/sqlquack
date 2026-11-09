@@ -7,14 +7,14 @@ use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
-use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Emitted, Literal};
-use crate::conversion::_helpers::support::site::Site;
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::snowflake::conversion::_helpers::support::divergence::diverge;
+use crate::snowflake::conversion::_helpers::support::scope::{Emitted, Literal};
+use crate::snowflake::conversion::_helpers::support::site::Site;
+use crate::snowflake::conversion::_helpers::support::tree::{
     field, is_inert, node_construct, node_kind, payload_object,
 };
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::{
     INTERVAL_ARITHMETIC, INTERVAL_DATE_UNITS, INTERVAL_FIELDS, INTERVAL_KIND, INTERVAL_MAX_DIGITS,
     INTERVAL_REFUSAL, INTERVAL_SIMPLE_UNIT, INTERVAL_TIMESTAMP_PRECISION, INTERVAL_UNITS,
 };

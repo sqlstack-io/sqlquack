@@ -14,10 +14,10 @@ use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Context, Literal};
+use crate::snowflake::conversion::_helpers::support::divergence::diverge;
+use crate::snowflake::conversion::_helpers::support::scope::{Context, Literal};
 
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::{
     HOURS_PER_DAY, MAX_FRACTION_DIGITS, MAX_OFFSET_HOURS, MICROSECOND_DIGITS, MINUTE_TEXT_LENGTH,
     MINUTES_PER_HOUR, NANOSECOND_RANGE_END, NANOSECOND_RANGE_START, OFFSET_WITH_COLON,
     OFFSET_WITHOUT_COLON, ZERO_OFFSETS,

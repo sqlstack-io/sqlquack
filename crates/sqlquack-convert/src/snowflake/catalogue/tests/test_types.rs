@@ -1,7 +1,7 @@
 use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::refusals::models::Disposition;
 
-use crate::catalogue::models::RuleCatalogue;
+use crate::snowflake::catalogue::models::RuleCatalogue;
 
 pub(crate) struct CatalogueTestCase {
     pub(crate) description: &'static str,

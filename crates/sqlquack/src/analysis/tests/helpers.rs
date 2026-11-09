@@ -1,7 +1,12 @@
 use std::collections::BTreeSet;
 
+use crate::analysis::models::SourceDialect;
 use sha2::{Digest, Sha256};
-use sqlquack_diagnostics::classification::models::SourceDialect;
+use sqlquack_convert::snowflake::catalogue::main::builtin_catalogue::builtin_catalogue;
+use sqlquack_convert::snowflake::catalogue::models::{NotExpressibleDeclaration, RuleCatalogue};
+use sqlquack_convert::snowflake::conversion::models::{
+    ConversionBudget, ConversionOptions, Converted,
+};
 use sqlquack_diagnostics::diagnostics::models::DiagnosticSpan;
 use sqlquack_diagnostics::failures::main::engine_failure::engine_failure;
 use sqlquack_diagnostics::provenance::main::merge_provenance::merge_provenance;
@@ -14,9 +19,6 @@ use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 use sqlquack_policy::policy::constants::PROJECT_UDF;
 use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_policy::policy::models::DivergenceMode;
-use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
-use sqlquack_rules::catalogue::models::{NotExpressibleDeclaration, RuleCatalogue};
-use sqlquack_rules::conversion::models::{ConversionBudget, ConversionOptions, Converted};
 use sqlquack_semantics::snowflake::types::models::{
     ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits, Schema,
 };
@@ -37,10 +39,10 @@ use crate::cli::main::convert_report::convert_report;
 use crate::cli::models::{
     ColorArguments, ConvertArguments, OutputArguments, OutputFormat, PolicyArguments,
 };
-use sqlquack_convert::analysis::main::analyze::analyze;
-use sqlquack_convert::analysis::main::analyze_function::analyze_function;
-use sqlquack_rules::session::main::confirm_utc_session::confirm_utc_session;
-use sqlquack_rules::session::main::conversion_options::conversion_options;
+use sqlquack_convert::snowflake::analysis::main::analyze::analyze;
+use sqlquack_convert::snowflake::analysis::main::analyze_function::analyze_function;
+use sqlquack_convert::snowflake::session::main::confirm_utc_session::confirm_utc_session;
+use sqlquack_convert::snowflake::session::main::conversion_options::conversion_options;
 
 fn shop_schema() -> Schema {
     let mut schema = shop_relations();
@@ -155,7 +157,6 @@ pub(crate) fn refused(category: RefusalCategory) -> AnalysisSummary {
 pub(crate) fn summarise(sql: &str) -> AnalysisSummary {
     let analysis = analyze(
         sql,
-        SourceDialect::Snowflake,
         &builtin_catalogue(),
         (&shop_schema(), &ConversionOptions::default()),
     );
@@ -191,7 +192,6 @@ pub(crate) fn function_body_results(name: &str, body: &str, call: &str) -> Vec<S
     let spec = &schema.functions[name];
     let converted = analyze_function(
         (body, spec),
-        SourceDialect::Snowflake,
         &builtin_catalogue(),
         (&schema, &ConversionOptions::default()),
     )
@@ -244,7 +244,6 @@ pub(crate) fn event_results_allowing(sql: &str, payload: &str, allowed: &[&str])
     }
     let analysis = analyze(
         sql,
-        SourceDialect::Snowflake,
         &builtin_catalogue(),
         (&shop_schema(), &conversion_options(&policy, false)),
     );
@@ -309,12 +308,7 @@ pub(crate) fn session_outcome(
 }
 
 fn outcome(sql: &str, options: &ConversionOptions) -> DivergenceModeOutcome {
-    let analysis = analyze(
-        sql,
-        SourceDialect::Snowflake,
-        &builtin_catalogue(),
-        (&shop_schema(), options),
-    );
+    let analysis = analyze(sql, &builtin_catalogue(), (&shop_schema(), options));
     let provenance = merge_provenance(
         analysis
             .conversions
@@ -368,7 +362,6 @@ pub(crate) fn guards_gated(sql: &str) -> bool {
         load_policy(&repository_root().join(POLICY_FILE_NAME)).expect("repository policy loads");
     let analysis = analyze(
         sql,
-        SourceDialect::Snowflake,
         &builtin_catalogue(),
         (&shop_schema(), &conversion_options(&policy, false)),
     );
@@ -385,7 +378,6 @@ pub(crate) fn timed_conversion(sql: &str) -> (Option<String>, std::time::Duratio
     let started = std::time::Instant::now();
     let analysis = analyze(
         sql,
-        SourceDialect::Snowflake,
         &builtin_catalogue(),
         (&shop_schema(), &conversion_options(&policy, false)),
     );
@@ -430,12 +422,7 @@ pub(crate) fn budget_refusal(
         load_policy(&repository_root().join(POLICY_FILE_NAME)).expect("repository policy loads");
     let mut options = conversion_options(&policy, false);
     options.budget = budget;
-    let analysis = analyze(
-        sql,
-        SourceDialect::Snowflake,
-        &builtin_catalogue(),
-        (&shop_schema(), &options),
-    );
+    let analysis = analyze(sql, &builtin_catalogue(), (&shop_schema(), &options));
     analysis
         .refusals
         .first()
@@ -460,12 +447,7 @@ pub(crate) fn refusal_places<'s>(
             .into_iter()
             .collect(),
     };
-    let analysis = analyze(
-        sql,
-        SourceDialect::Snowflake,
-        &catalogue,
-        (&shop_schema(), &options),
-    );
+    let analysis = analyze(sql, &catalogue, (&shop_schema(), &options));
     analysis
         .refusals
         .iter()
@@ -487,7 +469,6 @@ pub(crate) fn function_refusal_places(body: &str) -> Vec<(RefusalCategory, &str,
     };
     let refusals = analyze_function(
         (body, &spec),
-        SourceDialect::Snowflake,
         &builtin_catalogue(),
         (&shop_schema(), &ConversionOptions::default()),
     )
@@ -534,7 +515,6 @@ pub(crate) fn shop_conversion(sql: &str) -> Result<Converted, Vec<String>> {
         load_policy(&repository_root().join(POLICY_FILE_NAME)).expect("repository policy loads");
     let analysis = analyze(
         sql,
-        SourceDialect::Snowflake,
         &builtin_catalogue(),
         (&shop_schema(), &conversion_options(&policy, false)),
     );
@@ -637,7 +617,6 @@ pub(crate) fn converted_sql(statements: &[&str]) -> Vec<Option<String>> {
         .map(|sql| {
             let analysis = analyze(
                 sql,
-                SourceDialect::Snowflake,
                 &builtin_catalogue(),
                 (&shop_schema(), &ConversionOptions::default()),
             );

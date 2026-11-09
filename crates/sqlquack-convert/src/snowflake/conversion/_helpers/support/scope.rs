@@ -13,11 +13,11 @@ use sqlquack_semantics::snowflake::types::models::TypedLeaves;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 use sqlquack_syntax::tokens::models::SourceLocation;
 
-use crate::conversion::_helpers::support::locations::Locator;
-use crate::conversion::_helpers::support::tree::node_construct;
-use crate::conversion::constants::SUBQUERY_PARAMETER_PREFIX;
+use crate::snowflake::conversion::_helpers::support::locations::Locator;
+use crate::snowflake::conversion::_helpers::support::tree::node_construct;
+use crate::snowflake::conversion::constants::SUBQUERY_PARAMETER_PREFIX;
 
-use crate::conversion::models::ConversionOptions;
+use crate::snowflake::conversion::models::ConversionOptions;
 use sqlquack_semantics::snowflake::types::models::{ColumnSpec, Holding, Schema};
 
 /// A converted scalar: DuckDB SQL whose type is the DuckDB pairing of `data_type`.

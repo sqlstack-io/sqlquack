@@ -1,9 +1,9 @@
 //! Pipeline results.
 
+use crate::snowflake::conversion::models::Converted;
 use serde::Serialize;
 use sqlquack_diagnostics::classification::models::Occurrence;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_rules::conversion::models::Converted;
 
 /// What the pipeline found in one SQL input.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]

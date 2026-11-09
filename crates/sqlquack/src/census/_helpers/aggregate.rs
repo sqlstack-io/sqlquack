@@ -3,8 +3,8 @@
 use std::cmp::Reverse;
 use std::collections::{BTreeMap, BTreeSet};
 
+use crate::analysis::models::SourceDialect;
 use sqlquack_diagnostics::classification::models::Construct;
-use sqlquack_diagnostics::classification::models::SourceDialect;
 use sqlquack_diagnostics::refusals::models::RefusalCategory;
 
 use crate::analysis::main::assumption_id::assumption_id;

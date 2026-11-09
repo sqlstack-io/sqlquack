@@ -9,9 +9,3 @@ pub const PROJECT_FUNCTION_CONSTRUCT: &str = "<udf>";
 pub const CURSOR_PLACEHOLDER: &str = "__sqlquack_cursor";
 /// The construct name of an unrendered microbatch cursor bound.
 pub const CURSOR_CONSTRUCT: &str = "<cursor>";
-/// Spellings of a timestamp without time zone a cast is classified under, the first one used.
-pub const NO_TIME_ZONE_ALIASES: [&str; 2] = ["TIMESTAMPNTZ", "TIMESTAMP_NTZ"];
-/// Spellings of a timestamp with local time zone, the first one used.
-pub const LOCAL_TIME_ZONE_ALIASES: [&str; 2] = ["TIMESTAMPLTZ", "TIMESTAMP_LTZ"];
-/// Spellings of a timestamp with time zone, the first one used.
-pub const TIME_ZONE_ALIASES: [&str; 2] = ["TIMESTAMPTZ", "TIMESTAMP_TZ"];

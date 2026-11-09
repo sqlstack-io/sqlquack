@@ -15,17 +15,17 @@ use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::result_types::result_type;
-use crate::conversion::_helpers::expressions::scalar::{call_name, convert_expression};
-use crate::conversion::_helpers::expressions::strings::text_operand;
-use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Emitted, Literal, resolve};
-use crate::conversion::_helpers::support::site::Site;
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::expressions::result_types::result_type;
+use crate::snowflake::conversion::_helpers::expressions::scalar::{call_name, convert_expression};
+use crate::snowflake::conversion::_helpers::expressions::strings::text_operand;
+use crate::snowflake::conversion::_helpers::support::divergence::diverge;
+use crate::snowflake::conversion::_helpers::support::scope::{Emitted, Literal, resolve};
+use crate::snowflake::conversion::_helpers::support::site::Site;
+use crate::snowflake::conversion::_helpers::support::tree::{
     field, flag, function_construct, identifier_name, list, node_construct, node_kind,
     payload_object, require_understood,
 };
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::{
     COMPUTED_SUBSTR_LENGTH, FUNCTION_KIND, ILIKE_FOLDING, INFIX_NEGATION, LENGTH_TYPE, LIKE,
     LIKE_WILDCARDS, NEGATED_FACET, NO_QUANTIFIER, NULL_KIND, POSIX_SPACE_CLASS, QUANTIFIER_FACET,
     REGEXP, REGEXP_COLUMN_PATTERN, REGEXP_CONTROL_ESCAPES, REGEXP_COUNT_TYPE, REGEXP_COUNTING,

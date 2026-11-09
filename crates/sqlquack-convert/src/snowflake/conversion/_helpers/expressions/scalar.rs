@@ -8,50 +8,64 @@ use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions
 use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_semantics::snowflake::types::models::Volatility;
 
-use crate::conversion::_helpers::expressions::atoms::{
+use crate::snowflake::conversion::_helpers::expressions::atoms::{
     boolean_literal, column, commented, literal, negate, null_literal, parentheses,
     positional_column, scalar_subquery, unary_plus,
 };
-use crate::conversion::_helpers::expressions::calls::{convert_aggregate, convert_function};
-use crate::conversion::_helpers::expressions::casts::convert_cast;
-use crate::conversion::_helpers::expressions::conditionals::{case_expression, coalesce, iff, nvl};
-use crate::conversion::_helpers::expressions::intervals::{adds_interval, interval_arithmetic};
-use crate::conversion::_helpers::expressions::named_aggregates::{
+use crate::snowflake::conversion::_helpers::expressions::calls::{
+    convert_aggregate, convert_function,
+};
+use crate::snowflake::conversion::_helpers::expressions::casts::convert_cast;
+use crate::snowflake::conversion::_helpers::expressions::conditionals::{
+    case_expression, coalesce, iff, nvl,
+};
+use crate::snowflake::conversion::_helpers::expressions::intervals::{
+    adds_interval, interval_arithmetic,
+};
+use crate::snowflake::conversion::_helpers::expressions::named_aggregates::{
     is_named_aggregate, named_aggregate,
 };
-use crate::conversion::_helpers::expressions::objects::object_constant;
-use crate::conversion::_helpers::expressions::operators::{
+use crate::snowflake::conversion::_helpers::expressions::objects::object_constant;
+use crate::snowflake::conversion::_helpers::expressions::operators::{
     arithmetic, comparison_predicate, logic, modulo, negation, null_safe_comparison,
 };
-use crate::conversion::_helpers::expressions::ordered_aggregates::within_group;
-use crate::conversion::_helpers::expressions::ordered_aggregates::{
+use crate::snowflake::conversion::_helpers::expressions::ordered_aggregates::within_group;
+use crate::snowflake::conversion::_helpers::expressions::ordered_aggregates::{
     order_checked, unordered_array_agg, unordered_array_agg_call,
 };
-use crate::conversion::_helpers::expressions::predicates::{
+use crate::snowflake::conversion::_helpers::expressions::predicates::{
     between, exists, in_predicate, null_test,
 };
-use crate::conversion::_helpers::expressions::result_types::result_type;
-use crate::conversion::_helpers::expressions::semi_structured::{variant_path, variant_subscript};
-use crate::conversion::_helpers::expressions::spellings::{as_typed, as_written, rlike_as_call};
-use crate::conversion::_helpers::expressions::statistics::is_statistic;
-use crate::conversion::_helpers::expressions::strings::{
+use crate::snowflake::conversion::_helpers::expressions::result_types::result_type;
+use crate::snowflake::conversion::_helpers::expressions::semi_structured::{
+    variant_path, variant_subscript,
+};
+use crate::snowflake::conversion::_helpers::expressions::spellings::{
+    as_typed, as_written, rlike_as_call,
+};
+use crate::snowflake::conversion::_helpers::expressions::statistics::is_statistic;
+use crate::snowflake::conversion::_helpers::expressions::strings::{
     case_mapping, concat_operator, text_affix, trim,
 };
-use crate::conversion::_helpers::expressions::temporal_functions::{date_diff, extract};
-use crate::conversion::_helpers::expressions::text_functions::{length, like, substring};
-use crate::conversion::_helpers::expressions::text_search::position_in;
-use crate::conversion::_helpers::expressions::variants::variant_function;
-use crate::conversion::_helpers::expressions::windows::convert_window;
-use crate::conversion::_helpers::support::collecting::{
+use crate::snowflake::conversion::_helpers::expressions::temporal_functions::{date_diff, extract};
+use crate::snowflake::conversion::_helpers::expressions::text_functions::{
+    length, like, substring,
+};
+use crate::snowflake::conversion::_helpers::expressions::text_search::position_in;
+use crate::snowflake::conversion::_helpers::expressions::variants::variant_function;
+use crate::snowflake::conversion::_helpers::expressions::windows::convert_window;
+use crate::snowflake::conversion::_helpers::support::collecting::{
     collecting, events, placeholder, record, stopped,
 };
-use crate::conversion::_helpers::support::scope::{Context, Emitted, SubqueryTrack, SubqueryValue};
-use crate::conversion::_helpers::support::shapes::{shape_argument, shape_construct};
-use crate::conversion::_helpers::support::site::Site;
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::support::scope::{
+    Context, Emitted, SubqueryTrack, SubqueryValue,
+};
+use crate::snowflake::conversion::_helpers::support::shapes::{shape_argument, shape_construct};
+use crate::snowflake::conversion::_helpers::support::site::Site;
+use crate::snowflake::conversion::_helpers::support::tree::{
     function_construct, node_construct, node_kind, payload_object, require_understood,
 };
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::{
     AGGREGATE_CALL_KIND, ARRAY_LITERAL_KIND, CALL_KIND, IFF_NAME, NONDETERMINISTIC_FUNCTIONS,
     OBJECT_CONSTANT_KIND, RLIKE_PAIR, SUBQUERY_READS_LAMBDA, SYSTEM_TYPEOF_NAME,
     TYPE_SUFFIX_UNREMOVED, VARIANT_HELD_UNREAD, VOLATILE_SUBQUERY_IN_LAMBDA,

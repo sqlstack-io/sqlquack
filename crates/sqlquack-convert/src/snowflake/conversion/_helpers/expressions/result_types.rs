@@ -6,9 +6,11 @@ use sqlquack_semantics::snowflake::typing::main::cast_target::cast_target;
 use sqlquack_semantics::snowflake::typing::main::count::count;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::casts::data_type_name;
-use crate::conversion::_helpers::support::tree::node_kind;
-use crate::conversion::constants::{FUNCTION_RESULT_TYPES, PREDICATE_KINDS, TEXT_RESULT_KINDS};
+use crate::snowflake::conversion::_helpers::expressions::casts::data_type_name;
+use crate::snowflake::conversion::_helpers::support::tree::node_kind;
+use crate::snowflake::conversion::constants::{
+    FUNCTION_RESULT_TYPES, PREDICATE_KINDS, TEXT_RESULT_KINDS,
+};
 
 /// The type `node` has whatever its operands, or none when they decide it.
 pub(crate) fn result_type(node: &Value) -> Option<SnowflakeType> {

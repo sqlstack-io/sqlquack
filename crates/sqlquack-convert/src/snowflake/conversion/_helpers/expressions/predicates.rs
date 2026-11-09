@@ -8,18 +8,18 @@ use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::operators::{
+use crate::snowflake::conversion::_helpers::expressions::operators::{
     comparable, same_family, temporal_text_literal,
 };
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
-use crate::conversion::_helpers::queries::query::convert_query;
-use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::Emitted;
-use crate::conversion::_helpers::support::site::Site;
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::snowflake::conversion::_helpers::queries::query::convert_query;
+use crate::snowflake::conversion::_helpers::support::divergence::diverge;
+use crate::snowflake::conversion::_helpers::support::scope::Emitted;
+use crate::snowflake::conversion::_helpers::support::site::Site;
+use crate::snowflake::conversion::_helpers::support::tree::{
     field, flag, list, node_construct, node_kind, payload_object, require_understood,
 };
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::{
     BETWEEN, EXISTS, IN_LIST, IN_SUBQUERY, IS_NULL, NOT_IN_SUBQUERY, VARIANT_EQUALITY,
     VARIANT_HELD_UNREAD,
 };

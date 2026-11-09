@@ -1,7 +1,6 @@
-//! Snowflake's error kinds and rejections, and the tests that parse Snowflake SQL.
+//! Snowflake's error kinds, rejections and cast type names, and the tests that parse Snowflake SQL.
 
-#[cfg(test)]
-mod classification;
+pub mod classification;
 #[cfg(test)]
 mod diagnostics;
 pub mod failures;

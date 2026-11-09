@@ -5,13 +5,13 @@ use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
 
-use crate::conversion::_helpers::expressions::strings::text_operand;
-use crate::conversion::_helpers::support::scope::Emitted;
-use crate::conversion::_helpers::support::site::Site;
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::expressions::strings::text_operand;
+use crate::snowflake::conversion::_helpers::support::scope::Emitted;
+use crate::snowflake::conversion::_helpers::support::site::Site;
+use crate::snowflake::conversion::_helpers::support::tree::{
     field, is_inert, node_construct, payload_object, require_understood,
 };
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::{
     POSITION_PAIR, TEXT_SEARCH_POSITION, TEXT_SEARCH_POSITION_TYPE,
 };
 

@@ -13,20 +13,22 @@ use sqlquack_semantics::snowflake::typing::main::literal_digits::literal_digits;
 use sqlquack_semantics::snowflake::typing::main::number_literal::number_literal;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::casts::cast_to;
-use crate::conversion::_helpers::expressions::scalar::{convert_expression, convert_held};
-use crate::conversion::_helpers::queries::query::convert_query;
-use crate::conversion::_helpers::support::collecting::{
+use crate::snowflake::conversion::_helpers::expressions::casts::cast_to;
+use crate::snowflake::conversion::_helpers::expressions::scalar::{
+    convert_expression, convert_held,
+};
+use crate::snowflake::conversion::_helpers::queries::query::convert_query;
+use crate::snowflake::conversion::_helpers::support::collecting::{
     collecting, guessed, opaque_in_scope, placeholder,
 };
-use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Emitted, Literal, Scope, resolve};
-use crate::conversion::_helpers::support::site::Site;
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::support::divergence::diverge;
+use crate::snowflake::conversion::_helpers::support::scope::{Emitted, Literal, Scope, resolve};
+use crate::snowflake::conversion::_helpers::support::site::Site;
+use crate::snowflake::conversion::_helpers::support::tree::{
     LITERAL_NUMBER, LITERAL_STRING, Payload, field, identifier_name, node_construct, node_kind,
     payload_object, require_understood,
 };
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::{
     COLUMN, COMMENT, CONSTANT_LITERAL, DOLLAR_PARAMETER, DOLLAR_STRING_KIND, NEGATE,
     NUMBER_LITERAL, PARENTHESES, POSITIONAL_COLUMN, SCALAR_SUBQUERY, SEQUENCE_COLUMN,
     SEQUENCE_PEERS, TYPED_LITERAL_KINDS, TYPED_LITERAL_PAIR, UNARY_PLUS,

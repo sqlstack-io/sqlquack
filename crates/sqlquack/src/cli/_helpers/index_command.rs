@@ -4,7 +4,7 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use sqlquack_diagnostics::classification::models::SourceDialect;
+use crate::analysis::models::SourceDialect;
 use sqlquack_evidence::cases::main::load_cases::load_cases;
 use sqlquack_policy::policy::models::Policy;
 use walkdir::WalkDir;

@@ -13,23 +13,27 @@ use sqlquack_semantics::snowflake::typing::main::text_reading::text_reading;
 use sqlquack_semantics::snowflake::typing::main::unify::unify;
 use sqlquack_semantics::snowflake::typing::models::{CastTarget, SnowflakeType};
 
-use crate::conversion::_helpers::expressions::conditionals::read_text;
-use crate::conversion::_helpers::expressions::semi_structured::{held_cast, variant_cast};
-use crate::conversion::_helpers::expressions::temporal::unified_cast;
-use crate::conversion::_helpers::expressions::windows::canonical_variant;
-use crate::conversion::_helpers::queries::clauses::order_and_limit;
-use crate::conversion::_helpers::queries::query::{
+use crate::snowflake::conversion::_helpers::expressions::conditionals::read_text;
+use crate::snowflake::conversion::_helpers::expressions::semi_structured::{
+    held_cast, variant_cast,
+};
+use crate::snowflake::conversion::_helpers::expressions::temporal::unified_cast;
+use crate::snowflake::conversion::_helpers::expressions::windows::canonical_variant;
+use crate::snowflake::conversion::_helpers::queries::clauses::order_and_limit;
+use crate::snowflake::conversion::_helpers::queries::query::{
     ConvertedQuery, QueryRequest, convert_query, convert_with, require_distinct_names,
 };
-use crate::conversion::_helpers::support::declared::merged;
-use crate::conversion::_helpers::support::divergence::{diverge, require_widening_range};
-use crate::conversion::_helpers::support::scope::{Context, Emitted, Scope};
-use crate::conversion::_helpers::support::site::{Placement, Site};
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::support::declared::merged;
+use crate::snowflake::conversion::_helpers::support::divergence::{
+    diverge, require_widening_range,
+};
+use crate::snowflake::conversion::_helpers::support::scope::{Context, Emitted, Scope};
+use crate::snowflake::conversion::_helpers::support::site::{Placement, Site};
+use crate::snowflake::conversion::_helpers::support::tree::{
     field, flag, node_construct, payload_object, require_understood,
 };
-use crate::conversion::constants::DUPLICATE_VARIANTS;
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::DUPLICATE_VARIANTS;
+use crate::snowflake::conversion::constants::{
     NULL_BRANCHES, SEMI_STRUCTURED_HOLDING, SET_OPERATION, TEXT_BRANCHES, UNION_BY_NAME,
     VARCHAR_NAME, VARIANT_NAME, VARIANT_TEXT_BRANCHES,
 };

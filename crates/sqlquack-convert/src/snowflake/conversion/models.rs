@@ -1,6 +1,6 @@
 //! Conversion inputs and results.
 
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::{
     DEFAULT_BUDGET_MILLISECONDS, DEFAULT_BUDGET_MINIMUM_BYTES, DEFAULT_BUDGET_SIZE_RATIO,
 };
 use std::collections::BTreeMap;

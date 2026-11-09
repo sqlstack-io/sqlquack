@@ -7,11 +7,11 @@ use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::types::models::ColumnSpec;
 
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::support::tree::{
     LITERAL_STRING, Payload, field, identifier_name, list, node_construct, node_kind,
     payload_object, require_understood,
 };
-use crate::conversion::constants::PIVOT_AGGREGATES;
+use crate::snowflake::conversion::constants::PIVOT_AGGREGATES;
 
 /// `pivot` over a source of `columns` as a subquery grouping its other columns, one aggregate per key.
 pub(crate) fn pivot_subquery(pivot: &Payload, columns: &[ColumnSpec]) -> Result<Value, Refusal> {

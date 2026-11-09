@@ -4,13 +4,13 @@ use serde_json::{Map, Value, json};
 
 use sqlquack_diagnostics::refusals::models::Refusal;
 
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::support::tree::{
     Payload, function_construct, is_inert, node_construct, node_kind,
 };
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::{
     AGGREGATE_CALL_KIND, CALL_KIND, CALL_SPELLINGS, REGEXP_LIKE_NAME,
 };
-use crate::conversion::models::{CallShape, SpellingRule};
+use crate::snowflake::conversion::models::{CallShape, SpellingRule};
 
 /// The node a call is converted as when its spelling has evidence, with that spelling.
 pub(crate) fn as_typed(node: &Value) -> Option<(Value, &'static SpellingRule)> {

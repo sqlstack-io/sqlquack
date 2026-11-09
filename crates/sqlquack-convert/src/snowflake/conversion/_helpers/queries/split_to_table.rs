@@ -10,14 +10,16 @@ use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
-use crate::conversion::_helpers::queries::flatten::Flattened;
-use crate::conversion::_helpers::support::scope::{Context, Literal, Scope};
-use crate::conversion::_helpers::support::site::{Placement, Site};
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::snowflake::conversion::_helpers::queries::flatten::Flattened;
+use crate::snowflake::conversion::_helpers::support::scope::{Context, Literal, Scope};
+use crate::snowflake::conversion::_helpers::support::site::{Placement, Site};
+use crate::snowflake::conversion::_helpers::support::tree::{
     Payload, function_construct, integer_literal, list,
 };
-use crate::conversion::constants::{CHR_NAME, SPLIT_TO_TABLE_COLUMNS, SPLIT_TO_TABLE_RULE};
+use crate::snowflake::conversion::constants::{
+    CHR_NAME, SPLIT_TO_TABLE_COLUMNS, SPLIT_TO_TABLE_RULE,
+};
 use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
 use sqlquack_semantics::snowflake::types::models::ColumnSpec;
 

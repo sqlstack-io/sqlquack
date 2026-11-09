@@ -1,14 +1,14 @@
 //! User overrides, which converted SQL must apply to every call of the function they replace.
 
+use crate::snowflake::conversion::main::override_macro_name::override_macro_name;
+use crate::snowflake::conversion::models::{ConversionOptions, Converted};
 use serde_json::Value;
 use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
-use sqlquack_rules::conversion::main::override_macro_name::override_macro_name;
-use sqlquack_rules::conversion::models::{ConversionOptions, Converted};
 use sqlquack_syntax::Expression;
 
-use crate::analysis::_helpers::volatile_calls::call_nodes;
+use crate::snowflake::analysis::_helpers::volatile_calls::call_nodes;
 
 /// `converted`, or a refusal where a call of an overridden function does not reach the override.
 pub(crate) fn overrides_applied(

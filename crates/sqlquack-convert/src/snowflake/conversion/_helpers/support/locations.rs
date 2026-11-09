@@ -11,10 +11,10 @@ use sqlquack_syntax::tokens::models::{Dialect, TokenType};
 use sqlquack_syntax::tokens::models::{SourceLines, SourceLocation};
 use sqlquack_syntax::{TokenKind, tokenize};
 
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::support::tree::{
     LITERAL_DATE, LITERAL_NUMBER, LITERAL_STRING, LITERAL_TIMESTAMP, node_kind,
 };
-use crate::conversion::constants::{SPAN_END, SPAN_FIELD, SPAN_START};
+use crate::snowflake::conversion::constants::{SPAN_END, SPAN_FIELD, SPAN_START};
 
 /// The source ranges of the nodes of one converted tree, indexed when first asked for.
 #[derive(Debug)]

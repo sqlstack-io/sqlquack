@@ -1,6 +1,6 @@
 //! Which format fields may follow one another with no separator between.
 
-use crate::text_formats::constants::{
+use crate::snowflake::text_formats::constants::{
     BARE_FRACTION, BARE_FRACTION_PATTERNS, MONTH_NAME_FIELDS, MONTH_NAME_FOLLOWERS,
     TEMPORAL_TEXT_FIELDS, TEMPORAL_TEXT_SEPARATORS,
 };

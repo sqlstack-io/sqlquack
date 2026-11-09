@@ -1,5 +1,5 @@
+use sqlquack_convert::snowflake::conversion::models::ConversionBudget;
 use sqlquack_diagnostics::refusals::models::RefusalCategory;
-use sqlquack_rules::conversion::models::ConversionBudget;
 
 pub(crate) struct AnalyzeTestCase {
     pub(crate) description: &'static str,

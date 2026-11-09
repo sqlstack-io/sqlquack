@@ -19,17 +19,17 @@ use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::objects::{
+use crate::snowflake::conversion::_helpers::expressions::objects::{
     free_variant, refused, semi_structured, variant,
 };
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
-use crate::conversion::_helpers::expressions::text_functions::integer_operand;
-use crate::conversion::_helpers::expressions::variants::array_construct;
-use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::Emitted;
-use crate::conversion::_helpers::support::site::Site;
-use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
-use crate::conversion::constants::{
+use crate::snowflake::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::snowflake::conversion::_helpers::expressions::text_functions::integer_operand;
+use crate::snowflake::conversion::_helpers::expressions::variants::array_construct;
+use crate::snowflake::conversion::_helpers::support::divergence::diverge;
+use crate::snowflake::conversion::_helpers::support::scope::Emitted;
+use crate::snowflake::conversion::_helpers::support::site::Site;
+use crate::snowflake::conversion::_helpers::support::typed_leaves::compared_by_text;
+use crate::snowflake::conversion::constants::{
     ARRAY_APPEND_RULE, ARRAY_EXTREME_RULE, ARRAY_FLATTEN_RULE, ARRAY_MAX_NAME, ARRAY_RANGE_RULE,
     ARRAY_REVERSE_RULE, ARRAY_SET_RULE, ARRAY_SLICE_RULE, ARRAY_SORT_RULE, TO_ARRAY_RULE,
 };

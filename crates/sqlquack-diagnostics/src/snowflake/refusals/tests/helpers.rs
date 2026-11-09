@@ -1,10 +1,10 @@
 use crate::classification::main::classify::classify;
 use crate::classification::models::Occurrence;
-use crate::classification::models::SourceDialect;
 use crate::diagnostics::main::diagnose::diagnose;
 use crate::refusals::main::refuse_constructs::refuse_constructs;
 use crate::refusals::main::refuse_unparsed::refuse_unparsed;
 use crate::refusals::models::{Refusal, RefusalCategory};
+use crate::snowflake::classification::main::cast_type_name::cast_type_name;
 use crate::snowflake::refusals::main::snowflake_rejections::snowflake_rejections;
 use crate::snowflake::refusals::tests::test_types::DeclaringPolicy;
 use sqlquack_parse::parsing::main::parse_source::parse_source;
@@ -15,7 +15,7 @@ fn occurrences(sql: &str) -> Vec<Occurrence> {
     parse_source(sql, Dialect::Snowflake)
         .expect("test SQL parses")
         .iter()
-        .flat_map(|statement| classify(statement, &SourceLines::new(sql), SourceDialect::Snowflake))
+        .flat_map(|statement| classify(statement, &SourceLines::new(sql), cast_type_name))
         .collect()
 }
 

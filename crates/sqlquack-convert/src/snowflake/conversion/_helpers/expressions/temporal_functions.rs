@@ -42,23 +42,23 @@ use sqlquack_semantics::snowflake::typing::constants::{
 };
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::casts::cast_to;
-use crate::conversion::_helpers::expressions::operators::is_iso_date;
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
-use crate::conversion::_helpers::expressions::temporal::temporal_cast;
-use crate::conversion::_helpers::expressions::temporal::{
+use crate::snowflake::conversion::_helpers::expressions::casts::cast_to;
+use crate::snowflake::conversion::_helpers::expressions::operators::is_iso_date;
+use crate::snowflake::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::snowflake::conversion::_helpers::expressions::temporal::temporal_cast;
+use crate::snowflake::conversion::_helpers::expressions::temporal::{
     proven_time_text, time_submicro, zoned_local,
 };
-use crate::conversion::_helpers::support::declared::rely_on_declared;
-use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::failure::text_failure;
-use crate::conversion::_helpers::support::scope::Context;
-use crate::conversion::_helpers::support::scope::{Emitted, Literal};
-use crate::conversion::_helpers::support::site::Site;
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::support::declared::rely_on_declared;
+use crate::snowflake::conversion::_helpers::support::divergence::diverge;
+use crate::snowflake::conversion::_helpers::support::failure::text_failure;
+use crate::snowflake::conversion::_helpers::support::scope::Context;
+use crate::snowflake::conversion::_helpers::support::scope::{Emitted, Literal};
+use crate::snowflake::conversion::_helpers::support::site::Site;
+use crate::snowflake::conversion::_helpers::support::tree::{
     field, node_construct, payload_object, require_understood,
 };
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::{
     ADD_MONTHS_RULE, CURRENT_TIME_RULE, DATE_ARITHMETIC, DATE_FORMAT_RULE, DATE_NAME,
     DATE_PART_RULE, DATE_PARTS, DAY_NAME_RULE, DAY_UNIT, DECIMAL_EPOCH_RULE,
     FRACTIONAL_DATE_AMOUNT, FROM_PARTS, LAST_DAY_RULE, MAX_FRACTION_DIGITS_U8, MICROSECOND_DIGITS,
@@ -69,8 +69,8 @@ use crate::conversion::constants::{
     TO_DATE_TEMPORAL, TO_TIMESTAMP_TEMPORAL, UTC_OFFSET_ARITHMETIC, UTC_ZONE, ZONE_COLUMNS,
     ZONED_PARTS,
 };
-use crate::text_formats::main::clock_format::clock_format;
-use crate::text_formats::main::strftime_pattern::strftime_pattern;
+use crate::snowflake::text_formats::main::_clock_format::clock_format;
+use crate::snowflake::text_formats::main::_strftime_pattern::strftime_pattern;
 use sqlquack_blocks::raises::main::raised::raised;
 use sqlquack_blocks::temporal::constants::{DUCKDB_CURRENT_DATE, DUCKDB_CURRENT_TIMESTAMP};
 use sqlquack_policy::policy::constants::{

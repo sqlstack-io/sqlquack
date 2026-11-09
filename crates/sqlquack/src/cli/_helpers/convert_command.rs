@@ -6,6 +6,7 @@ use std::process::ExitCode;
 
 use sqlquack_blocks::layout::main::layout_sql::layout_sql;
 use sqlquack_blocks::macros::main::explain_helper::explain_helper;
+use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
 use sqlquack_diagnostics::diagnostics::constants::SESSION_PARAMETERS;
 use sqlquack_diagnostics::diagnostics::main::diagnose::diagnose;
 use sqlquack_diagnostics::diagnostics::main::explain_code::explain_code;
@@ -18,7 +19,6 @@ use sqlquack_policy::policy::constants::{
     CURRENT_TIME, SESSION_TIME_ZONE, SESSION_TIMEZONE_UTC, TIMEZONE_PARAMETER,
 };
 use sqlquack_policy::policy::models::{DivergenceFailure, Policy};
-use sqlquack_rules::conversion::models::ConversionOptions;
 use sqlquack_semantics::snowflake::types::models::Schema;
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -39,7 +39,7 @@ use crate::cli::models::{
 use crate::run::main::run_query::run_query;
 use crate::run::models::RunInputs;
 use crate::terminal::main::highlight_sql::highlight_sql;
-use sqlquack_convert::analysis::models::Analysis;
+use sqlquack_convert::snowflake::analysis::models::Analysis;
 
 use crate::cli::_helpers::evidence::with_divergence_help;
 use crate::cli::main::convert_report::convert_report;

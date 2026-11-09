@@ -14,12 +14,3 @@ pub(crate) fn snake_case(camel: &str) -> String {
     }
     snake
 }
-
-pub(crate) fn base_type_name(rendered: &str) -> String {
-    let base = rendered
-        .split(['(', '<', ' '])
-        .next()
-        .unwrap_or(rendered)
-        .trim();
-    base.to_ascii_uppercase()
-}

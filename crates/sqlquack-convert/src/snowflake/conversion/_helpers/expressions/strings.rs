@@ -30,16 +30,16 @@ use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
-use crate::conversion::_helpers::expressions::text_functions::integer_operand;
-use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Emitted, Literal};
-use crate::conversion::_helpers::support::site::Site;
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::snowflake::conversion::_helpers::expressions::text_functions::integer_operand;
+use crate::snowflake::conversion::_helpers::support::divergence::diverge;
+use crate::snowflake::conversion::_helpers::support::scope::{Emitted, Literal};
+use crate::snowflake::conversion::_helpers::support::site::Site;
+use crate::snowflake::conversion::_helpers::support::tree::{
     field, function_construct, integer_literal, list, node_construct, node_kind, payload_object,
     require_understood,
 };
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::{
     BASE64_BINARY, BASE64_DECODER, CASE_MAPPING, CONCAT, CONCAT_WS, EDIT_DISTANCE,
     HEX_DECODE_MESSAGE, JARO_WINKLER, SHA2_DEFAULT_BITS, TEXT_AFFIX, TEXT_CHR, TEXT_CONTAINS,
     TEXT_HEX, TEXT_HEX_DECODE, TEXT_INITCAP, TEXT_MD5, TEXT_POSITION_LIMIT, TEXT_REPEAT, TEXT_SHA2,

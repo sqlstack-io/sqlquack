@@ -1,11 +1,11 @@
+use crate::snowflake::conversion::models::{ConversionOptions, Converted, UserOverride};
 use sqlquack_diagnostics::provenance::models::Provenance;
 use sqlquack_parse::parsing::main::parse_source::parse_source;
-use sqlquack_rules::conversion::models::{ConversionOptions, Converted, UserOverride};
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 use sqlquack_syntax::Dialect;
 
-use crate::analysis::_helpers::override_calls::overrides_applied;
-use crate::analysis::tests::test_types::OverrideCallsTestCase;
+use crate::snowflake::analysis::_helpers::override_calls::overrides_applied;
+use crate::snowflake::analysis::tests::test_types::OverrideCallsTestCase;
 
 #[test]
 fn given_an_override_when_converted_sql_skips_a_call_then_the_statement_is_refused() {

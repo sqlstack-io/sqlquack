@@ -4,12 +4,12 @@ use serde_json::Value;
 use sqlquack_diagnostics::provenance::models::ShapeArgument;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::scalar::call_name;
-use crate::conversion::_helpers::support::scope::Emitted;
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::expressions::scalar::call_name;
+use crate::snowflake::conversion::_helpers::support::scope::Emitted;
+use crate::snowflake::conversion::_helpers::support::tree::{
     LITERAL_NUMBER, LITERAL_STRING, identifier_name, node_kind,
 };
-use crate::conversion::constants::{CALL_KIND, SHAPE_CALL_KINDS, SHAPE_WRAPPER_KINDS};
+use crate::snowflake::conversion::constants::{CALL_KIND, SHAPE_CALL_KINDS, SHAPE_WRAPPER_KINDS};
 
 /// The construct key a shape records for `node`: `fn:<NAME>` for calls, else `node:<kind>`.
 pub(crate) fn shape_construct(node: &Value) -> String {

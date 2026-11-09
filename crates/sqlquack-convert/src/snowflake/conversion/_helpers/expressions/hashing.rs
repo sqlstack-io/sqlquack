@@ -8,12 +8,12 @@ use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
-use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::Emitted;
-use crate::conversion::_helpers::support::site::Site;
+use crate::snowflake::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::snowflake::conversion::_helpers::support::divergence::diverge;
+use crate::snowflake::conversion::_helpers::support::scope::Emitted;
+use crate::snowflake::conversion::_helpers::support::site::Site;
 
-use crate::conversion::constants::{HASH_RESULT_PRECISION, HASH_RULE};
+use crate::snowflake::conversion::constants::{HASH_RESULT_PRECISION, HASH_RULE};
 use sqlquack_policy::policy::constants::HASH_DIVERGENCE;
 
 /// HASH of one or more values, each held so that values Snowflake finds equal hash equally.

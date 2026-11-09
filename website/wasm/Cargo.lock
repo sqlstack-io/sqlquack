@@ -222,6 +222,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "sqlquack-convert"
+version = "0.2.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sqlquack-blocks",
+ "sqlquack-diagnostics",
+ "sqlquack-parse",
+ "sqlquack-policy",
+ "sqlquack-semantics",
+ "sqlquack-syntax",
+]
+
+[[package]]
 name = "sqlquack-derive"
 version = "0.2.0"
 dependencies = [
@@ -252,19 +266,6 @@ version = "0.2.0"
 dependencies = [
  "serde",
  "toml",
-]
-
-[[package]]
-name = "sqlquack-rules"
-version = "0.2.0"
-dependencies = [
- "serde",
- "serde_json",
- "sqlquack-blocks",
- "sqlquack-diagnostics",
- "sqlquack-policy",
- "sqlquack-semantics",
- "sqlquack-syntax",
 ]
 
 [[package]]
@@ -299,10 +300,10 @@ dependencies = [
  "serde",
  "serde_json",
  "sqlquack-blocks",
+ "sqlquack-convert",
  "sqlquack-diagnostics",
  "sqlquack-parse",
  "sqlquack-policy",
- "sqlquack-rules",
  "sqlquack-semantics",
  "sqlquack-syntax",
  "wasm-bindgen",

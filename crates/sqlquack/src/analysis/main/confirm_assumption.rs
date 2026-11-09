@@ -1,7 +1,7 @@
 //! `confirm_assumption`: conversion options trusting the caller's word for a named assumption.
 
+use sqlquack_convert::snowflake::conversion::models::{AllowedDivergence, ConversionOptions};
 use sqlquack_policy::policy::models::Policy;
-use sqlquack_rules::conversion::models::{AllowedDivergence, ConversionOptions};
 
 /// `options` relying on the policy's assumption `id` in any mode: the caller confirmed it.
 pub fn confirm_assumption(

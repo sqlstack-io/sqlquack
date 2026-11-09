@@ -1,6 +1,6 @@
 //! `confirm_utc_session`: conversion options trusting the caller's word that sessions run in UTC.
 
-use crate::conversion::models::{AllowedDivergence, ConversionOptions};
+use crate::snowflake::conversion::models::{AllowedDivergence, ConversionOptions};
 use sqlquack_policy::policy::constants::SESSION_TIMEZONE_UTC;
 use sqlquack_policy::policy::models::Policy;
 

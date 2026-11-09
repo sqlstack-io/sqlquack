@@ -4,10 +4,12 @@ use serde_json::Value;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
 
-use crate::conversion::_helpers::expressions::named_aggregates::is_named_aggregate;
-use crate::conversion::_helpers::expressions::scalar::call_name;
-use crate::conversion::_helpers::support::tree::{Payload, list, node_construct, node_kind};
-use crate::conversion::constants::{
+use crate::snowflake::conversion::_helpers::expressions::named_aggregates::is_named_aggregate;
+use crate::snowflake::conversion::_helpers::expressions::scalar::call_name;
+use crate::snowflake::conversion::_helpers::support::tree::{
+    Payload, list, node_construct, node_kind,
+};
+use crate::snowflake::conversion::constants::{
     AGGREGATE_KINDS, GROUP_BY_ALL, GROUP_BY_ALL_REFUSED_KINDS, STAR_KIND,
 };
 

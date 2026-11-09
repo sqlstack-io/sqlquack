@@ -1,6 +1,6 @@
 //! `quoted_exclusions`: whether SQL text quotes a name in a star's EXCLUDE list.
 
-use crate::conversion::_helpers::support::comments::uncommented;
+use crate::snowflake::conversion::_helpers::support::comments::uncommented;
 
 /// Whether a name after EXCLUDE, alone or in its parenthesised list, is a quoted identifier.
 pub fn quoted_exclusions(sql: &str) -> bool {

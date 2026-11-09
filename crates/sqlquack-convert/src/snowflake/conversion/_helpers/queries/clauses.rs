@@ -12,19 +12,19 @@ use sqlquack_semantics::dialects::constants::SNOWFLAKE_TO_DUCKDB;
 use sqlquack_semantics::snowflake::scopes::main::resolve_name::resolve_name;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::operators::boolean_operand;
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
-use crate::conversion::_helpers::expressions::windows::{
+use crate::snowflake::conversion::_helpers::expressions::operators::boolean_operand;
+use crate::snowflake::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::snowflake::conversion::_helpers::expressions::windows::{
     canonical_variant, grouping_key, order_item,
 };
-use crate::conversion::_helpers::queries::group_all::group_all_positions;
-use crate::conversion::_helpers::support::scope::{Emitted, Scope, resolve};
-use crate::conversion::_helpers::support::site::{Placement, Site};
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::queries::group_all::group_all_positions;
+use crate::snowflake::conversion::_helpers::support::scope::{Emitted, Scope, resolve};
+use crate::snowflake::conversion::_helpers::support::site::{Placement, Site};
+use crate::snowflake::conversion::_helpers::support::tree::{
     Payload, field, flag, function_construct, identifier_name, integer_literal, list,
     node_construct, node_kind, payload_object, require_understood,
 };
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::{
     AMBIGUOUS_SUFFIX, GROUP_BY_ALIAS_RULE, GROUP_BY_ALL_RULE, LIMIT, ORDER_BY, SYSTEM_TYPEOF_NAME,
     TYPE_SUFFIX_UNREMOVED, VARIANT_HELD_UNREAD,
 };

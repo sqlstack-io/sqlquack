@@ -5,8 +5,8 @@ use std::collections::BTreeSet;
 
 use sqlquack_diagnostics::classification::constants::PROJECT_FUNCTION_CONSTRUCT;
 use sqlquack_diagnostics::classification::main::classify::classify;
-use sqlquack_diagnostics::classification::models::SourceDialect;
 use sqlquack_diagnostics::classification::models::{Construct, ConstructFamily};
+use sqlquack_diagnostics::snowflake::classification::main::cast_type_name::cast_type_name;
 use sqlquack_evidence::cases::models::LoadedCase;
 use sqlquack_parse::parsing::main::parse_source::parse_source;
 use sqlquack_syntax::tokens::models::SourceLines;
@@ -50,7 +50,7 @@ pub(crate) fn constructs(case: &LoadedCase, own: &BTreeSet<String>) -> Result<Ve
     let mut keys: BTreeSet<String> = token_spellings(sql);
     for statement in &statements {
         keys.extend(tree_spellings(statement));
-        for occurrence in classify(statement, &lines, SourceDialect::Snowflake) {
+        for occurrence in classify(statement, &lines, cast_type_name) {
             keys.insert(project_key(occurrence.construct.key(), own));
         }
     }

@@ -5,8 +5,8 @@ use sqlquack_diagnostics::refusals::main::missing::missing;
 use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_syntax::{Expression, ExpressionWalk};
 
-use crate::conversion::_helpers::support::tree::node_construct;
-use crate::conversion::constants::MAX_TREE_DEPTH;
+use crate::snowflake::conversion::_helpers::support::tree::node_construct;
+use crate::snowflake::conversion::constants::MAX_TREE_DEPTH;
 
 /// Nothing, or a budget refusal when `tree` nests deeper than conversion can recurse safely.
 pub(crate) fn within_depth(tree: &Expression) -> Result<(), Refusal> {

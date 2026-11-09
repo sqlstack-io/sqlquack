@@ -28,19 +28,23 @@ use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::models::{CastTarget, SnowflakeType};
 
-use crate::conversion::_helpers::expressions::held::read_json;
-use crate::conversion::_helpers::expressions::scalar::{convert_expression, convert_held};
-use crate::conversion::_helpers::expressions::temporal::temporal_cast;
-use crate::conversion::_helpers::support::divergence::{allows, diverge};
-use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal, VariantRoot};
-use crate::conversion::_helpers::support::site::Site;
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::expressions::held::read_json;
+use crate::snowflake::conversion::_helpers::expressions::scalar::{
+    convert_expression, convert_held,
+};
+use crate::snowflake::conversion::_helpers::expressions::temporal::temporal_cast;
+use crate::snowflake::conversion::_helpers::support::divergence::{allows, diverge};
+use crate::snowflake::conversion::_helpers::support::scope::{
+    Context, Emitted, Literal, VariantRoot,
+};
+use crate::snowflake::conversion::_helpers::support::site::Site;
+use crate::snowflake::conversion::_helpers::support::tree::{
     field, node_construct, node_kind, payload_object, require_understood,
 };
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::{
     IS_INTEGER_NAME, KIND_CAST_TARGETS, VARIANT_KIND_CAST, VARIANT_KIND_RULE,
 };
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::{
     LITERAL_KIND, NEGATE_KIND, PARSE_JSON_RULE, PARSE_JSON_VARIANT, SUBSCRIPT_PAIR,
     TRY_PARSE_JSON_NAME, VARIANT_CAST, VARIANT_COMPUTED_GET, VARIANT_HELD_UNREAD, VARIANT_INSPECT,
     VARIANT_NAME, VARIANT_PATH, VARIANT_TYPE_NAME,

@@ -1,14 +1,13 @@
-use sqlquack_diagnostics::classification::models::SourceDialect;
+use crate::snowflake::catalogue::main::builtin_catalogue::builtin_catalogue;
+use crate::snowflake::conversion::models::ConversionOptions;
 use sqlquack_diagnostics::refusals::models::RefusalCategory;
-use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
-use sqlquack_rules::conversion::models::ConversionOptions;
 use sqlquack_semantics::snowflake::types::models::{
     ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits, Schema,
 };
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::analysis::main::analyze_function::analyze_function;
-use crate::analysis::tests::test_types::AnalyzeFunctionTestCase;
+use crate::snowflake::analysis::main::analyze_function::analyze_function;
+use crate::snowflake::analysis::tests::test_types::AnalyzeFunctionTestCase;
 
 #[test]
 fn given_a_sql_function_body_when_converted_without_the_engine_then_it_is_a_macro_body_or_refused()
@@ -42,7 +41,6 @@ fn given_a_sql_function_body_when_converted_without_the_engine_then_it_is_a_macr
     for test_case in test_cases {
         let outcome = analyze_function(
             (test_case.body, &spec),
-            SourceDialect::Snowflake,
             &builtin_catalogue(),
             (&Schema::default(), &ConversionOptions::default()),
         );

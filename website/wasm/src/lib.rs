@@ -13,8 +13,14 @@ use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_blocks::checking::constants::SEMI_STRUCTURED_HOLDING_TYPE;
 use sqlquack_blocks::layout::main::layout_sql::layout_sql;
 use sqlquack_blocks::macros::main::helper_statements::helper_statements;
+use sqlquack_convert::snowflake::catalogue::main::builtin_catalogue::builtin_catalogue;
+use sqlquack_convert::snowflake::conversion::main::convert_statement::convert_statement;
+use sqlquack_convert::snowflake::conversion::main::quoted_exclusions::quoted_exclusions;
+use sqlquack_convert::snowflake::conversion::main::within_budget::within_budget;
+use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
+use sqlquack_convert::snowflake::session::main::parse_session::parse_session;
+use sqlquack_convert::snowflake::session::main::session_conversion_options::session_conversion_options;
 use sqlquack_diagnostics::classification::main::classify::classify;
-use sqlquack_diagnostics::classification::models::SourceDialect;
 use sqlquack_diagnostics::diagnostics::constants::SESSION_PARAMETERS;
 use sqlquack_diagnostics::diagnostics::main::diagnose::diagnose;
 use sqlquack_diagnostics::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
@@ -25,16 +31,10 @@ use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_diagnostics::refusals::main::refuse_constructs::refuse_constructs;
 use sqlquack_diagnostics::refusals::main::refuse_unparsed::refuse_unparsed;
 use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
+use sqlquack_diagnostics::snowflake::classification::main::cast_type_name::cast_type_name;
 use sqlquack_diagnostics::snowflake::refusals::main::snowflake_rejections::snowflake_rejections;
 use sqlquack_parse::parsing::main::parse_source::parse_source;
 use sqlquack_policy::policy::models::Policy;
-use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
-use sqlquack_rules::conversion::main::convert_statement::convert_statement;
-use sqlquack_rules::conversion::main::quoted_exclusions::quoted_exclusions;
-use sqlquack_rules::conversion::main::within_budget::within_budget;
-use sqlquack_rules::conversion::models::ConversionOptions;
-use sqlquack_rules::session::main::parse_session::parse_session;
-use sqlquack_rules::session::main::session_conversion_options::session_conversion_options;
 use sqlquack_semantics::dialects::constants::SNOWFLAKE;
 use sqlquack_semantics::lineage::main::query_name_findings::query_name_findings;
 use sqlquack_semantics::lineage::models::{LineageContext, Nullability, SchemaColumn};
@@ -356,7 +356,7 @@ fn stages(sql: &str, catalog: &Catalog, settings: &str) -> Value {
     let mut refusals = Vec::new();
     let mut converted = Vec::new();
     for statement in &statements {
-        let occurrences = classify(statement, &lines, SourceDialect::Snowflake);
+        let occurrences = classify(statement, &lines, cast_type_name);
         let declared: Vec<Refusal> = refuse_constructs(&occurrences, &policy)
             .into_iter()
             .filter(|refusal| refusal.category == RefusalCategory::NotExpressible)

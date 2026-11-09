@@ -2,7 +2,7 @@
 
 use std::collections::BTreeMap;
 
-use crate::conversion::models::ConversionOptions;
+use crate::snowflake::conversion::models::ConversionOptions;
 use sqlquack_policy::policy::constants::SESSION_TIMEZONE_UTC;
 use sqlquack_policy::policy::constants::{
     DATABASE_PARAMETER, DEFAULT_SESSION_PROFILE, QUOTED_IDENTIFIERS_IGNORE_CASE,
@@ -10,11 +10,11 @@ use sqlquack_policy::policy::constants::{
 };
 use sqlquack_policy::policy::models::{Policy, SessionValue};
 
-use crate::session::_helpers::session_profiles::matching_profile;
-use crate::session::constants::BUILTIN_PROFILE;
-use crate::session::main::builtin_conversion_options::builtin_conversion_options;
-use crate::session::main::confirm_utc_session::confirm_utc_session;
-use crate::session::main::conversion_options::conversion_options;
+use crate::snowflake::session::_helpers::session_profiles::matching_profile;
+use crate::snowflake::session::constants::BUILTIN_PROFILE;
+use crate::snowflake::session::main::builtin_conversion_options::builtin_conversion_options;
+use crate::snowflake::session::main::confirm_utc_session::confirm_utc_session;
+use crate::snowflake::session::main::conversion_options::conversion_options;
 
 /// Options for a session with `parameters`, under the recorded profile they match, and its name.
 pub fn session_conversion_options(

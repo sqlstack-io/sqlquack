@@ -1,4 +1,4 @@
-use sqlquack_rules::conversion::models::ConversionOptions;
+use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
 
 use crate::census::tests::helpers::{
     CHAIN, CURSOR_BOUND, CYCLE, DECIMAL_CHAIN, HELD_CHAIN, MANY_PLACED, PLACED, QUOTED_LOWER_CASE,

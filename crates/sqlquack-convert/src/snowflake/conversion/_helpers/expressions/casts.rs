@@ -39,27 +39,31 @@ use sqlquack_semantics::snowflake::typing::constants::STRUCTURED_UNSUPPORTED;
 use sqlquack_semantics::snowflake::typing::main::cast_target::cast_target;
 use sqlquack_semantics::snowflake::typing::models::{CastTarget, SnowflakeType};
 
-use crate::conversion::_helpers::expressions::objects::as_json;
-use crate::conversion::_helpers::expressions::operators::is_iso_date;
-use crate::conversion::_helpers::expressions::scalar::{convert_expression, convert_held};
-use crate::conversion::_helpers::expressions::semi_structured::{
+use crate::snowflake::conversion::_helpers::expressions::objects::as_json;
+use crate::snowflake::conversion::_helpers::expressions::operators::is_iso_date;
+use crate::snowflake::conversion::_helpers::expressions::scalar::{
+    convert_expression, convert_held,
+};
+use crate::snowflake::conversion::_helpers::expressions::semi_structured::{
     held_cast, variant_cast, variant_null,
 };
-use crate::conversion::_helpers::expressions::temporal::{
+use crate::snowflake::conversion::_helpers::expressions::temporal::{
     is_temporal, literal_date, proven_time_text, temporal_cast, time_submicro, timestamp_literal,
     zoned_literal_utc,
 };
-use crate::conversion::_helpers::expressions::variants::{to_variant, written_array};
-use crate::conversion::_helpers::support::declared::rely_on_declared;
-use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::failure::text_failure;
-use crate::conversion::_helpers::support::scope::{Context, Emitted, Literal, VariantRoot};
-use crate::conversion::_helpers::support::shapes::type_family;
-use crate::conversion::_helpers::support::site::Site;
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::expressions::variants::{to_variant, written_array};
+use crate::snowflake::conversion::_helpers::support::declared::rely_on_declared;
+use crate::snowflake::conversion::_helpers::support::divergence::diverge;
+use crate::snowflake::conversion::_helpers::support::failure::text_failure;
+use crate::snowflake::conversion::_helpers::support::scope::{
+    Context, Emitted, Literal, VariantRoot,
+};
+use crate::snowflake::conversion::_helpers::support::shapes::type_family;
+use crate::snowflake::conversion::_helpers::support::site::Site;
+use crate::snowflake::conversion::_helpers::support::tree::{
     LITERAL_NUMBER, field, node_construct, node_kind, payload_object, require_understood,
 };
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::{
     CAST_BOOLEAN, CAST_NUMERIC, CAST_PARSED_TEXT, CAST_SAME_TYPE, CAST_TEMPORAL, CAST_TEXT_LITERAL,
     CAST_TEXT_TIME, CAST_TEXT_TIMESTAMP, CAST_TO_TEXT, CAST_UTC_ZONED, FLOAT_SCALE_FACET,
     FLOAT_TO_DOUBLE, KEEP_NULL_CONSTRUCTOR, KIND_CAST_TARGETS, MICROSECOND_DIGITS,
@@ -68,7 +72,7 @@ use crate::conversion::constants::{
     TO_VARCHAR_PAIR, TO_VARIANT_RULE, VARIANT_CAST, VARIANT_KIND_CAST, VARIANT_NAME,
     VARIANT_TEXT_FUNCTION, VARIANT_TO_VARCHAR,
 };
-use crate::text_formats::constants::NTZ_OUTPUT_PATTERN;
+use crate::snowflake::text_formats::constants::NTZ_OUTPUT_PATTERN;
 use sqlquack_policy::policy::constants::{
     DATE_TEXT_SPELLING, SESSION_TIMEZONE_UTC, TIMESTAMP_RANGE, TIMESTAMP_TEXT_ROUNDING,
     TIMESTAMP_TZ_OFFSET,

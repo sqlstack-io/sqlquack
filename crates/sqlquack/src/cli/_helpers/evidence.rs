@@ -12,19 +12,19 @@ use sqlquack_policy::policy::constants::{POLICY_FILE_NAME, SESSION_TIME_ZONE, TI
 use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_policy::policy::models::{DivergenceFailure, DivergenceMode, Policy};
 
-use sqlquack_rules::conversion::models::ConversionOptions;
+use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
 
 use crate::analysis::main::assumption_id::assumption_id;
 use crate::analysis::main::confirm_assumption::confirm_assumption;
 use crate::analysis::main::refuse_value_divergences::refuse_value_divergences;
 use crate::cli::models::{EvidencePaths, PolicyArguments};
+use sqlquack_convert::snowflake::session::main::builtin_conversion_options::builtin_conversion_options;
+use sqlquack_convert::snowflake::session::main::confirm_utc_session::confirm_utc_session;
+use sqlquack_convert::snowflake::session::main::conversion_options::conversion_options;
 use sqlquack_policy::policy::constants::{
     CURRENT_TIME, DECLARED_OFFSET, NUMERIC_RANGE, PROJECT_UDF, SESSION_TIMEZONE_UTC,
     TIMESTAMP_RANGE, TIMESTAMP_TZ_SUBMICRO,
 };
-use sqlquack_rules::session::main::builtin_conversion_options::builtin_conversion_options;
-use sqlquack_rules::session::main::confirm_utc_session::confirm_utc_session;
-use sqlquack_rules::session::main::conversion_options::conversion_options;
 
 pub(crate) struct Evidence {
     pub(crate) policy: Policy,

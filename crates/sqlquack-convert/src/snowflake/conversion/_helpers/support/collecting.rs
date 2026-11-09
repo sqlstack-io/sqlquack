@@ -6,7 +6,7 @@ use std::collections::BTreeSet;
 use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::support::scope::{Emitted, Scope};
+use crate::snowflake::conversion::_helpers::support::scope::{Emitted, Scope};
 use sqlquack_semantics::snowflake::names::constants::UNKNOWN_RELATION_PREFIX;
 
 /// What collecting found so far in the statement being converted.

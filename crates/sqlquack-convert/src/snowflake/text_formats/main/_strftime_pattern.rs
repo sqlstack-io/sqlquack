@@ -1,12 +1,15 @@
 //! `strftime_pattern`: a date or timestamp format as a strftime pattern, or None.
 
-use crate::text_formats::_helpers::adjacency::{
+use crate::snowflake::text_formats::_helpers::adjacency::{
     bare_fraction, field_at, field_recorded, separator_at,
 };
-use crate::text_formats::constants::BARE_FRACTION;
+use crate::snowflake::text_formats::constants::BARE_FRACTION;
 
 /// The strftime pattern of a format of known fields between separators, or None.
-pub(crate) fn strftime_pattern(format: &str, precision: Option<u8>) -> Option<String> {
+pub(in crate::snowflake) fn strftime_pattern(
+    format: &str,
+    precision: Option<u8>,
+) -> Option<String> {
     let with_time = precision.is_some();
     let upper = format.to_ascii_uppercase();
     let mut rest = upper.as_str();

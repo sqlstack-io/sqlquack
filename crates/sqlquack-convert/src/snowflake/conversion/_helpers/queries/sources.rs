@@ -13,29 +13,35 @@ use sqlquack_diagnostics::refusals::main::unresolved::unresolved;
 use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::project_functions::{exact_arguments, held_type};
-use crate::conversion::_helpers::expressions::scalar::convert_expression;
-use crate::conversion::_helpers::expressions::semi_structured::{guarded_column, path_steps};
-use crate::conversion::_helpers::queries::clauses::condition_sql;
-use crate::conversion::_helpers::queries::flatten::lateral_flatten;
-use crate::conversion::_helpers::queries::pivot::pivot_subquery;
-use crate::conversion::_helpers::queries::query::{NESTED_REPEAT, convert_query, repeated_name};
-use crate::conversion::_helpers::support::collecting::{
+use crate::snowflake::conversion::_helpers::expressions::project_functions::{
+    exact_arguments, held_type,
+};
+use crate::snowflake::conversion::_helpers::expressions::scalar::convert_expression;
+use crate::snowflake::conversion::_helpers::expressions::semi_structured::{
+    guarded_column, path_steps,
+};
+use crate::snowflake::conversion::_helpers::queries::clauses::condition_sql;
+use crate::snowflake::conversion::_helpers::queries::flatten::lateral_flatten;
+use crate::snowflake::conversion::_helpers::queries::pivot::pivot_subquery;
+use crate::snowflake::conversion::_helpers::queries::query::{
+    NESTED_REPEAT, convert_query, repeated_name,
+};
+use crate::snowflake::conversion::_helpers::support::collecting::{
     collecting, events, opaque, record, recorded, replace_since, suspended, unresolved_since,
 };
-use crate::conversion::_helpers::support::scope::{Context, Scope};
-use crate::conversion::_helpers::support::site::{Placement, Site};
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::support::scope::{Context, Scope};
+use crate::snowflake::conversion::_helpers::support::site::{Placement, Site};
+use crate::snowflake::conversion::_helpers::support::tree::{
     Payload, field, function_construct, identifier_name, integer_literal, is_inert, list,
     node_construct, node_kind, payload_object, require_understood,
 };
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::{
     ASOF_JOIN, ASOF_KIND, CORRELATED_DERIVED, FROM_RELATION, FROM_SUBQUERY, GENERATOR_MAX_ROWS,
     GENERATOR_NAME, GENERATOR_RULE, GENERATOR_SEQUENCE_COLUMN, JOIN_CROSS, JOIN_ON, JOIN_USING,
     LATERAL_KEY, LATERAL_SUBQUERY, OPAQUE_ALIAS_PREFIX, PIVOT_RULE, PROJECT_TABLE_FUNCTION,
     TABLE_WRAPPER, UNALIASED_SUBQUERY_PREFIX, USING_ALIAS_PREFIX,
 };
-use crate::conversion::constants::{FULL_JOIN_KEYWORD, INNER_JOIN_KEYWORD};
+use crate::snowflake::conversion::constants::{FULL_JOIN_KEYWORD, INNER_JOIN_KEYWORD};
 
 /// How the parsed tree spells a NATURAL join's kind, lower-cased.
 const NATURAL_JOIN_PREFIX: &str = "natural";

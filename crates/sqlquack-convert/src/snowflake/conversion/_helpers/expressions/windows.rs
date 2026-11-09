@@ -17,25 +17,25 @@ use sqlquack_semantics::snowflake::typing::main::ranking::ranking;
 use sqlquack_semantics::snowflake::typing::main::unify::unify;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::calls::convert_aggregate;
-use crate::conversion::_helpers::expressions::intervals::interval_literal;
-use crate::conversion::_helpers::expressions::named_aggregates::named_aggregate;
-use crate::conversion::_helpers::expressions::ordered_aggregates::within_group;
-use crate::conversion::_helpers::expressions::scalar::{call_name, convert_expression};
-use crate::conversion::_helpers::expressions::spellings::{as_typed, as_written};
-use crate::conversion::_helpers::expressions::statistics::is_statistic;
-use crate::conversion::_helpers::expressions::temporal::unified_cast;
-use crate::conversion::_helpers::support::declared::merged;
-use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Context, Emitted};
-use crate::conversion::_helpers::support::shapes::type_family;
-use crate::conversion::_helpers::support::site::{Placement, Site};
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::expressions::calls::convert_aggregate;
+use crate::snowflake::conversion::_helpers::expressions::intervals::interval_literal;
+use crate::snowflake::conversion::_helpers::expressions::named_aggregates::named_aggregate;
+use crate::snowflake::conversion::_helpers::expressions::ordered_aggregates::within_group;
+use crate::snowflake::conversion::_helpers::expressions::scalar::{call_name, convert_expression};
+use crate::snowflake::conversion::_helpers::expressions::spellings::{as_typed, as_written};
+use crate::snowflake::conversion::_helpers::expressions::statistics::is_statistic;
+use crate::snowflake::conversion::_helpers::expressions::temporal::unified_cast;
+use crate::snowflake::conversion::_helpers::support::declared::merged;
+use crate::snowflake::conversion::_helpers::support::divergence::diverge;
+use crate::snowflake::conversion::_helpers::support::scope::{Context, Emitted};
+use crate::snowflake::conversion::_helpers::support::shapes::type_family;
+use crate::snowflake::conversion::_helpers::support::site::{Placement, Site};
+use crate::snowflake::conversion::_helpers::support::tree::{
     Payload, field, flag, function_construct, integer_literal, list, node_construct, node_kind,
     payload_object, require_understood,
 };
-use crate::conversion::_helpers::support::typed_leaves::compared_by_text;
-use crate::conversion::constants::{
+use crate::snowflake::conversion::_helpers::support::typed_leaves::compared_by_text;
+use crate::snowflake::conversion::constants::{
     CALL_KIND, DISTINCT_WINDOW_AGGREGATE, FRAME_FACET, FUNCTION_FACET, NO_PARTITION, NTILE_NAME,
     PARTITION_FACET, RATIO_TO_REPORT_NAME, SEVERAL_PARTITION_KEYS, UNORDERED_WINDOW_AGGREGATES,
     VARIANT_EQUALITY_BY_TEXT, VARIANT_ORDER_KEY, VARIANT_PARTITION, WINDOW_AGGREGATE,

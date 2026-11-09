@@ -14,33 +14,35 @@ use sqlquack_diagnostics::refusals::main::unresolved::unresolved;
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::ordered_aggregates::order_checked;
-use crate::conversion::_helpers::expressions::scalar::convert_held;
-use crate::conversion::_helpers::expressions::windows::canonical_variant;
-use crate::conversion::_helpers::queries::clauses::{
+use crate::snowflake::conversion::_helpers::expressions::ordered_aggregates::order_checked;
+use crate::snowflake::conversion::_helpers::expressions::scalar::convert_held;
+use crate::snowflake::conversion::_helpers::expressions::windows::canonical_variant;
+use crate::snowflake::conversion::_helpers::queries::clauses::{
     clause_condition, condition_sql, group_by, group_positions, order_and_limit, variant_group_keys,
 };
-use crate::conversion::_helpers::queries::group_all::group_all_positions;
-use crate::conversion::_helpers::queries::hierarchy::hierarchy;
-use crate::conversion::_helpers::queries::output_names::recorded_name_shape;
-use crate::conversion::_helpers::queries::set_operations::convert_set_operation;
-use crate::conversion::_helpers::queries::sources::convert_from;
-use crate::conversion::_helpers::support::locations::Locator;
-use crate::conversion::_helpers::support::scope::read_column;
-use crate::conversion::_helpers::support::scope::{Context, Emitted, Scope};
-use crate::conversion::_helpers::support::site::{Placement, Site};
-use crate::conversion::_helpers::support::tree::{
+use crate::snowflake::conversion::_helpers::queries::group_all::group_all_positions;
+use crate::snowflake::conversion::_helpers::queries::hierarchy::hierarchy;
+use crate::snowflake::conversion::_helpers::queries::output_names::recorded_name_shape;
+use crate::snowflake::conversion::_helpers::queries::set_operations::convert_set_operation;
+use crate::snowflake::conversion::_helpers::queries::sources::convert_from;
+use crate::snowflake::conversion::_helpers::support::locations::Locator;
+use crate::snowflake::conversion::_helpers::support::scope::read_column;
+use crate::snowflake::conversion::_helpers::support::scope::{Context, Emitted, Scope};
+use crate::snowflake::conversion::_helpers::support::site::{Placement, Site};
+use crate::snowflake::conversion::_helpers::support::tree::{
     LITERAL_DATE, LITERAL_NUMBER, LITERAL_STRING, LITERAL_TIMESTAMP, Payload, field, flag,
     function_construct, identifier_name, list, node_construct, node_kind, payload_object,
     require_understood,
 };
-use crate::conversion::constants::WINDOW_MARKER;
-use crate::conversion::constants::{
+use crate::snowflake::conversion::constants::WINDOW_MARKER;
+use crate::snowflake::conversion::constants::{
     ALIAS, COMMENT, COMMON_TABLE, DISTINCT, GENERATOR_SEQUENCE_COLUMN, GROUP_BY, HAVING,
     HIERARCHY_COLUMN_PREFIX, QUALIFY, SELECT, STAR, SYSTEM_TYPEOF_NAME, TYPE_SUFFIX_UNREMOVED,
     USING_ALIAS_PREFIX, VARIANT_HELD_UNREAD, WHERE,
 };
-use crate::conversion::constants::{VALUES_COLUMN_PREFIX, VALUES_ROWS, VALUES_ROWS_LIMIT};
+use crate::snowflake::conversion::constants::{
+    VALUES_COLUMN_PREFIX, VALUES_ROWS, VALUES_ROWS_LIMIT,
+};
 use sqlquack_semantics::dialects::constants::SNOWFLAKE_TO_DUCKDB;
 use sqlquack_semantics::snowflake::scopes::main::star_relations::star_relations;
 use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;

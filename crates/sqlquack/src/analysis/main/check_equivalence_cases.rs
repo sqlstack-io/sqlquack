@@ -2,8 +2,8 @@
 
 use std::collections::BTreeSet;
 
+use sqlquack_convert::snowflake::conversion::constants::SPELLING_PAIRS;
 use sqlquack_evidence::cases::models::{CaseRole, LoadedCase};
-use sqlquack_rules::conversion::constants::SPELLING_PAIRS;
 
 /// Pair cases naming an undeclared pair, and declared pairs without cases.
 pub fn check_equivalence_cases(cases: &[LoadedCase]) -> Vec<String> {

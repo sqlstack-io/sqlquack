@@ -10,13 +10,15 @@ use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::conversion::_helpers::expressions::objects::{as_json, semi_structured, variant};
-use crate::conversion::_helpers::expressions::scalar::{call_name, convert_expression};
-use crate::conversion::_helpers::support::divergence::diverge;
-use crate::conversion::_helpers::support::scope::{Emitted, Scope};
-use crate::conversion::_helpers::support::site::{Placement, Site};
-use crate::conversion::_helpers::support::tree::{identifier_name, list, node_kind};
-use crate::conversion::constants::{
+use crate::snowflake::conversion::_helpers::expressions::objects::{
+    as_json, semi_structured, variant,
+};
+use crate::snowflake::conversion::_helpers::expressions::scalar::{call_name, convert_expression};
+use crate::snowflake::conversion::_helpers::support::divergence::diverge;
+use crate::snowflake::conversion::_helpers::support::scope::{Emitted, Scope};
+use crate::snowflake::conversion::_helpers::support::site::{Placement, Site};
+use crate::snowflake::conversion::_helpers::support::tree::{identifier_name, list, node_kind};
+use crate::snowflake::conversion::constants::{
     CALL_KIND, FILTER_FUNCTION, LAMBDA_KIND, LAMBDA_PARAMETER_PREFIX, LAMBDA_RULE, REDUCE_RULE,
     STRING_ARRAY_FUNCTION, TEXT_PARAMETER_TYPES,
 };

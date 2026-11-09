@@ -1,10 +1,10 @@
 use std::collections::BTreeMap;
 use std::path::Path;
 
-use sqlquack_diagnostics::classification::models::SourceDialect;
+use crate::analysis::models::SourceDialect;
+use sqlquack_convert::snowflake::conversion::models::{AllowedDivergence, ConversionOptions};
 use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 use sqlquack_policy::policy::main::load_policy::load_policy;
-use sqlquack_rules::conversion::models::{AllowedDivergence, ConversionOptions};
 use sqlquack_semantics::snowflake::types::models::{ColumnSpec, Schema};
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
@@ -16,7 +16,7 @@ use crate::census::models::{CensusOptions, CensusReport};
 use crate::census::tests::test_types::{
     BlockerSummary, CensusSummary, PlanSummary, ShopFile, UpstreamSummary,
 };
-use sqlquack_rules::session::main::conversion_options::conversion_options;
+use sqlquack_convert::snowflake::session::main::conversion_options::conversion_options;
 
 pub(crate) const SHOP: &[ShopFile] = &[
     ShopFile {

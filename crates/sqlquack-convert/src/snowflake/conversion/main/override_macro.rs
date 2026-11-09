@@ -3,8 +3,8 @@
 use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
-use crate::conversion::main::override_macro_name::override_macro_name;
-use crate::conversion::models::UserOverride;
+use crate::snowflake::conversion::main::override_macro_name::override_macro_name;
+use crate::snowflake::conversion::models::UserOverride;
 
 /// `CREATE OR REPLACE MACRO` for `replacement`, its parameters as the body reads them.
 pub fn override_macro(replacement: &UserOverride) -> String {
