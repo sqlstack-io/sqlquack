@@ -143,7 +143,7 @@ fn given_a_query_when_typing_outputs_then_nulls_and_numbers_follow_the_recorded_
             ],
         },
         DialectTypeTestCase {
-            description: "DATEADD keeps a TIMESTAMP(9)'s type, widens TIME to TIME(9), keeps a DATE's",
+            description: "DATEADD widens a timestamp to precision 9 and TIME to TIME(9), keeps a DATE's",
             sql: "SELECT DATEADD(day, 1, shipped_at) AS a, DATEADD(d, 1, shipped_on) AS b, \
                   DATEADD(hour, 1, cutoff) AS c, DATEADD(hour, 1, shipped_on) AS d, \
                   DATEADD(minute, 30, pickup_time) AS e, DATEADD(day, 1, packed_at) AS f \
@@ -156,7 +156,19 @@ fn given_a_query_when_typing_outputs_then_nulls_and_numbers_follow_the_recorded_
                 ("c", Some("TIME(9)"), Unknown),
                 ("d", None, Unknown),
                 ("e", Some("TIME(9)"), Unknown),
-                ("f", None, Unknown),
+                ("f", Some("TIMESTAMP_NTZ(9)"), Unknown),
+            ],
+        },
+        DialectTypeTestCase {
+            description: "a cast to TIME keeps the precision it states",
+            sql: "SELECT CAST(cutoff AS TIME(3)) AS a, cutoff::TIME AS b, '10:00'::TIME(0) AS c \
+                  FROM shipments",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[
+                ("a", Some("TIME(3)"), NonNull),
+                ("b", Some("TIME"), NonNull),
+                ("c", Some("TIME(0)"), NonNull),
             ],
         },
         DialectTypeTestCase {
