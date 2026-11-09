@@ -27,17 +27,17 @@ a parameter of every entry point; Snowflake is the only one implemented.
 
 | Crate | Role |
 |---|---|
-| `sqlquack-syntax` | The tokenizer with lossless tokens, the parser with strict and tolerant modes, and the shared syntax tree. Its parser reads Snowflake, and also DuckDB, PostgreSQL and SQLite as polyglot does. Derived from polyglot; see [syntax.md](syntax.md). Every parse in the pipeline goes through it. |
+| `sqlquack-syntax` | The shared syntax tree, lossless tokens, spans, complexity guards and parse diagnostics that every dialect parser builds on. It names no dialect. Derived from polyglot; see [syntax.md](syntax.md). |
+| `sqlquack-syntax-snowflake` | The Snowflake parser, with strict and tolerant modes, building the shared tree. It also reads DuckDB, PostgreSQL and SQLite as polyglot does. |
 | `sqlquack-derive` | The derive that generates the tree's child traversal. |
 | `sqlquack-syntax-bigquery`, `-clickhouse`, `-databricks`, `-duckdb`, `-postgres`, `-sqlite`, `-sqlserver` | Native parsers, one per dialect, each following its engine's own grammar and building the shared `sqlquack-syntax` tree. Each README lists what it covers and its gaps. |
-| `sqlquack-core` | Parsing with complexity guards, construct classification, refusals and provenance. |
-| `sqlquack-snowflake-types` | The Snowflake typing layer. Polyglot leaves many Snowflake expressions untyped, so exact types (`NUMBER(p, s)`, timestamp kinds, semi-structured values) are computed here. |
-| `sqlquack-semantics` | SQL semantics apart from conversion: dialect profiles (Snowflake and DuckDB), relation and column name resolution in query scopes, column types with the marks VARIANT values carry, and lineage (each output's value sources, plus the query's `row_sources`: the columns filters, join keys, groups, CONNECT BY, PIVOT FOR, ORDER BY under a limit and table-function inputs decide rows by, with `rows_resolved` false when one of those could not be traced). It builds without the conversion, DuckDB and evidence crates. |
-| `sqlquack-rules` | The conversion rules, their type conditions, and declared refusals. |
-| `sqlquack-convert` | The pipeline itself, `analyze`: parse, classify, convert each statement or refuse it. It builds without DuckDB's engine, so the bind check in the last step is skipped where it is linked alone; every crate that enables the engine gets the check, and `make engine-free` fails when this crate reaches DuckDB. |
-| `sqlquack-blocks` | DuckDB building blocks shared by rules, and DuckDB's own parse-and-bind check of every converted statement. |
+| `sqlquack-parse` | The one way the other crates reach a parser. The Snowflake parser's entry points are always there; each native parser is a module behind the feature of its dialect's name. |
+| `sqlquack-diagnostics` | Diagnostics, the failure taxonomy, refusals, constructs and conversion provenance. Snowflake's error taxonomy and rejections sit in `src/snowflake/` behind the `snowflake` feature. |
+| `sqlquack-semantics` | SQL semantics apart from conversion: dialect profiles (Snowflake and DuckDB), relation and column name resolution in query scopes, column types with the marks VARIANT values carry, and lineage (each output's value sources, plus the query's `row_sources`: the columns filters, join keys, groups, CONNECT BY, PIVOT FOR, ORDER BY under a limit and table-function inputs decide rows by, with `rows_resolved` false when one of those could not be traced). Snowflake's typing layer is in `src/snowflake/`: polyglot leaves many Snowflake expressions untyped, so exact types (`NUMBER(p, s)`, timestamp kinds, semi-structured values) are computed there. It builds without the conversion, DuckDB and evidence crates. |
+| `sqlquack-convert` | Conversion to DuckDB: the rule catalogue, the rules with their type conditions and declared refusals (`src/snowflake/`), and the pipeline itself, `analyze`: parse, classify, convert each statement or refuse it. It builds without DuckDB's engine, so the bind check in the last step is skipped where it is linked alone; every crate that enables the engine gets the check, and `make engine-free` fails when this crate reaches DuckDB. |
+| `sqlquack-blocks` | DuckDB building blocks shared by rules, and, behind the `engine` feature, DuckDB's own parse-and-bind check of every converted statement. |
 | `sqlquack-policy` | The policy file `sqlquack.toml`: schema, validation and type-pattern matching. |
-| `sqlquack-format` | The SQL formatter: lays SQL out over lines, changing only the whitespace between tokens and keyword case. A layout guide prints the authored tokens as a parse-tree pretty printer would; the output is refused unless it keeps every token, keeps comments attached and is idempotent. It builds on `sqlquack-syntax`, and for SQL Server on `sqlquack-syntax-sqlserver`, whose Transact-SQL scanner supplies the tokens and whose parser validates the input; for BigQuery on `sqlquack-syntax-bigquery`, whose GoogleSQL scanner supplies the tokens and whose parser validates the input; and for PostgreSQL on `sqlquack-syntax-postgres`, whose scanner decides keywords and whose parser validates the input. |
+| `sqlquack-format` | The SQL formatter: lays SQL out over lines, changing only the whitespace between tokens and keyword case. A layout guide prints the authored tokens as a parse-tree pretty printer would; the output is refused unless it keeps every token, keeps comments attached and is idempotent. It reaches parsers through `sqlquack-parse`: for SQL Server the Transact-SQL scanner supplies the tokens and its parser validates the input; for BigQuery the GoogleSQL scanner does the same; and for PostgreSQL the native scanner decides keywords and its parser validates the input. |
 | `sqlquack-lint` | The lint engine and its rules over SQLQuack's tokens and syntax trees, ported from SQLClean, which uses it. |
 | `sqlquack-fingerprint` | Change fingerprints of SQL that ignore whitespace, comments and keyword case, over SQLQuack's tokenizers; SQLClean uses them. |
 | `sqlquack-compare` | The strict comparator between a recorded result and a DuckDB replay or a fresh recording. |
@@ -54,8 +54,15 @@ Development tools live under `tools/`. No shipped crate depends on them:
 | `sqlquack-format-check` | Proves that formatting DuckDB SQL leaves the output columns DuckDB binds it to unchanged, on the format corpus. |
 
 Fensu layer targets keep the rules out of every crate but the command line ones and
-`sqlquack-convert`, and keep the conversion, DuckDB and evidence crates out of syntax, core, typing
+`sqlquack-convert`, and keep the conversion, DuckDB and evidence crates out of syntax, diagnostics
 and semantics.
+
+Dialect code lives only in each crate's `src/<dialect>/` folder, behind a feature of the same
+name, and no dialect is a default feature (fensu rule XSQ007). Shared code names no dialect: it asks
+the dialect's profile through the crate's `src/dialects` registry, which keeps the run-time dialect
+values of the public APIs and returns an error naming the dialect when its feature is not built in.
+Semantics, format, lint, fingerprint, diagnostics and convert take one feature per dialect they
+support, and `sqlquack-blocks` takes `engine` to link DuckDB; a consumer enables the ones it uses.
 
 DuckDB is pinned exactly (`duckdb = "=1.20000.0"`, DuckDB v2.0.0). Its build script downloads the
 matching prebuilt `libduckdb`, so binaries are run with `cargo run`, which sets the library path.
@@ -113,7 +120,7 @@ else at the whole input.
 The tree keeps every call as written, so each spelling reaches a rule only through its own entry in
 `CALL_SPELLINGS`, backed by recorded cases that use it. Where two spellings mean the same thing,
 recorded pairs prove it: a case file under `cases/fidelity/` declares `equivalence = "<id>"`, one of
-the pairs in `SPELLING_PAIRS` (`sqlquack-rules`), and gives every case a second, `canonical`
+the pairs in `SPELLING_PAIRS` (`sqlquack-convert`), and gives every case a second, `canonical`
 spelling. Both are recorded, and `sqlquack verify` requires the two results to be identical. A rule
 that converts both spellings of a pair cites the pair in its provenance.
 
@@ -148,13 +155,13 @@ rule for `:` paths must read the path from the source tokens.
 
 Conversion works on the parsed tree, statement by statement, in three layers:
 
-- **Typing** (`sqlquack-snowflake-types`): exact Snowflake result types, each function derived from
+- **Typing** (`sqlquack-semantics`, `src/snowflake/`): exact Snowflake result types, each function derived from
   recorded results, such as `NUMBER(p,s)` for `+ - * /`, the unification of CASE, COALESCE, IFF,
   NVL and set operation branches, and cast targets.
 - **Building blocks** (`sqlquack-blocks`): DuckDB fragments with Snowflake semantics, such as exact
   decimal division rounding half away from zero, NULL-propagating concatenation, explicit NULL
   ordering, or text conversions that accept only spellings Snowflake is recorded to read.
-- **Rules** (`sqlquack-rules`): one rule per construct family, each stating the type conditions it
+- **Rules** (`sqlquack-convert`, `src/snowflake/`): one rule per construct family, each stating the type conditions it
   needs and refusing outside them. Names resolve through `sqlquack-semantics` against a schema
   of typed relations and the statement's CTEs, as Snowflake reads them and refusing names DuckDB
   cannot tell apart; anything unresolved is refused.
@@ -700,7 +707,7 @@ a SHA-256 digest, and an error may hold only `errno`, `sqlstate` and a text `mes
 
 ### Error checks
 
-A raised error passes only as the same failure. `sqlquack-core`'s `failures` module maps each
+A raised error passes only as the same failure. `sqlquack-diagnostics`' `failures` module maps each
 recorded Snowflake error (errno and SQLSTATE) to a kind (numeric overflow, number text, date
 text, division by zero, JSON parse, VARIANT cast, string too long, …) and DuckDB messages to
 kinds. Building blocks raise tagged errors, `sqlquack:<errno>: <message>`, naming the exact
