@@ -211,7 +211,7 @@ pub(crate) fn translate(
     ))
 }
 
-/// SPLIT_PART with a literal delimiter; part 0 counts as 1, and an empty delimiter keeps the text.
+/// SPLIT_PART; part 0 counts as 1, and an empty delimiter keeps the text.
 pub(crate) fn split_part(
     arguments: &[Value],
     construct: &Construct,
@@ -225,7 +225,10 @@ pub(crate) fn split_part(
         ));
     };
     let text = text_operand(text, construct, site)?;
-    let delimiter = text_literal(delimiter, construct, site)?;
+    let delimiter = match convert_expression(delimiter, site)?.literal {
+        Some(Literal::Text(delimiter)) => delimiter,
+        _ => return split_part_by_column((&text, delimiter, part), construct, site),
+    };
     if delimiter.is_empty() {
         return match convert_expression(part, site)?.literal {
             Some(Literal::Number(number))
@@ -243,6 +246,25 @@ pub(crate) fn split_part(
     let delimiter = string_literal(&delimiter, site.context.log);
     Ok(Emitted::new(
         split_text_part(&text, (&delimiter, &part), site.context.log),
+        SnowflakeType::Varchar,
+    ))
+}
+
+/// SPLIT_PART with a delimiter from a column: an empty delimiter leaves the text as its one part.
+fn split_part_by_column(
+    (text, delimiter, part): (&str, &Value, &Value),
+    construct: &Construct,
+    site: Site<'_>,
+) -> Result<Emitted, Refusal> {
+    let delimiter = text_operand(delimiter, construct, site)?;
+    let part = integer_operand(part, construct, site)?;
+    let split = split_text_part("s['t']", ("s['d']", "s['n']"), site.context.log);
+    Ok(Emitted::new(
+        format!(
+            "list_transform([struct_pack(t := {text}, d := {delimiter}, n := {part})], lambda s: \
+             CASE WHEN s['d'] IS NULL THEN NULL WHEN s['d'] <> '' THEN {split} WHEN s['n'] IN (0, 1, -1) THEN s['t'] \
+             WHEN s['t'] IS NOT NULL AND s['n'] IS NOT NULL THEN '' END)[1]"
+        ),
         SnowflakeType::Varchar,
     ))
 }

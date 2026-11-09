@@ -10,6 +10,7 @@ use sqlquack_syntax::expressions::operators::models::{
 };
 use sqlquack_syntax::expressions::typed_functions::models::{Map, Slice};
 use sqlquack_syntax::expressions::types::models::{Array, Interval, IntervalUnitSpec, Struct};
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{
     Parser, Parsing, identifier, is_col_label, is_function_name, is_identifier,
@@ -59,6 +60,7 @@ fn parameter(name: Option<String>, index: Option<u32>, style: ParameterStyle) ->
         quoted: false,
         string_quoted: false,
         expression: None,
+        span: SourceSpan::default(),
     }))
 }
 

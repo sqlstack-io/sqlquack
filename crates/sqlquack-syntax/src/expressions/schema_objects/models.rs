@@ -15,6 +15,7 @@ use crate::expressions::tables::models::UniqueKeyProperty;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
 use crate::expressions::types::models::StructField;
+use crate::tokens::models::SourceSpan;
 
 /// View column definition with optional COMMENT and OPTIONS (BigQuery)
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -582,6 +583,10 @@ pub struct FunctionParameter {
     /// Original text of the mode keyword for case-preserving output (e.g., "inout", "VARIADIC")
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub mode_text: Option<String>,
+    /// SQLQuack: the node's source range, recorded by a parser that sets it.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 /// Parameter mode (IN, OUT, INOUT, VARIADIC)

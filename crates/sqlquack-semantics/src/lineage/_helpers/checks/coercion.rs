@@ -26,6 +26,27 @@ const SECOND: std::ops::Range<usize> = 17..19;
 /// `24:00:00`, the end of a day, is the one valid time past hour 23.
 const DAY_END_HOUR: u32 = 24;
 const LAST_MINUTE: u32 = 59;
+/// PostgreSQL reads second 60, a leap second, as the next minute.
+const POSTGRES_LAST_SECOND: u32 = 60;
+/// The words PostgreSQL reads as a date or timestamp, past an optional sign on `infinity`.
+const POSTGRES_TEMPORAL_WORDS: [&str; 8] = [
+    "infinity",
+    "-infinity",
+    "+infinity",
+    "epoch",
+    "today",
+    "tomorrow",
+    "yesterday",
+    "now",
+];
+/// The words `numeric`, `real` or `double precision` reads, after an optional sign.
+const POSTGRES_NUMBER_WORDS: [&str; 3] = ["inf", "infinity", "nan"];
+/// The words whose every prefix PostgreSQL reads as a boolean.
+const POSTGRES_BOOLEAN_WORDS: [&str; 4] = ["true", "false", "yes", "no"];
+const DECIMAL_RADIX: u32 = 10;
+const HEX_RADIX: u32 = 16;
+const OCTAL_RADIX: u32 = 8;
+const BINARY_RADIX: u32 = 2;
 
 /// The engine whose binder the checks follow.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -370,12 +391,15 @@ pub(crate) fn arithmetic(
         && ((left == String && right.is_numeric()) || (right == String && left.is_numeric()))
 }
 
-/// Whether `expression` is a string literal that cannot convert to `target`.
-pub(crate) fn invalid_literal_for(expression: &Expression, target: Family) -> bool {
+/// Whether `expression` is a string literal that cannot convert to `target` under `engine`.
+pub(crate) fn invalid_literal_for(engine: Engine, expression: &Expression, target: Family) -> bool {
     match expression {
-        Expression::Alias(alias) => invalid_literal_for(&alias.this, target),
-        Expression::Paren(paren) => invalid_literal_for(&paren.this, target),
+        Expression::Alias(alias) => invalid_literal_for(engine, &alias.this, target),
+        Expression::Paren(paren) => invalid_literal_for(engine, &paren.this, target),
         Expression::Literal(literal) => match literal.as_ref() {
+            Literal::String(value) if engine == Engine::Postgres => {
+                invalid_postgres_literal(value, target)
+            }
             Literal::String(value) => match target {
                 Family::Integer | Family::Numeric => value.trim().parse::<f64>().is_err(),
                 Family::Date | Family::Timestamp => invalid_temporal_literal(value),
@@ -389,6 +413,82 @@ pub(crate) fn invalid_literal_for(expression: &Expression, target: Family) -> bo
         },
         _ => false,
     }
+}
+
+/// Whether PostgreSQL's input function for every type of `target` refuses `value`.
+fn invalid_postgres_literal(value: &str, target: Family) -> bool {
+    let text: &str = value.trim_matches(|character: char| character.is_ascii_whitespace());
+    let lower: String = text.to_ascii_lowercase();
+    match target {
+        Family::Integer => !postgres_number(&lower, true),
+        Family::Numeric => !postgres_number(&lower, false),
+        Family::Date | Family::Timestamp => {
+            invalid_temporal(text, POSTGRES_LAST_SECOND)
+                || (!text.chars().any(|character| character.is_ascii_digit())
+                    && !POSTGRES_TEMPORAL_WORDS.contains(&lower.as_str()))
+        }
+        Family::Boolean => !postgres_boolean(&lower),
+        _ => false,
+    }
+}
+
+/// Whether PostgreSQL reads lower-cased `text` as an integer, or as `numeric`, `real` or `double precision`.
+fn postgres_number(text: &str, integer: bool) -> bool {
+    let unsigned: &str = text.strip_prefix(['+', '-']).unwrap_or(text);
+    if !integer && POSTGRES_NUMBER_WORDS.contains(&unsigned) {
+        return true;
+    }
+    if let Some(digits) = unsigned.strip_prefix("0x") {
+        return !integer || digit_groups(digits, HEX_RADIX, true);
+    }
+    if let Some(digits) = unsigned.strip_prefix("0o") {
+        return digit_groups(digits, OCTAL_RADIX, true);
+    }
+    if let Some(digits) = unsigned.strip_prefix("0b") {
+        return digit_groups(digits, BINARY_RADIX, true);
+    }
+    if integer {
+        return digit_groups(unsigned, DECIMAL_RADIX, false);
+    }
+    let (mantissa, exponent): (&str, Option<&str>) = match unsigned.split_once('e') {
+        Some((mantissa, exponent)) => (mantissa, Some(exponent)),
+        None => (unsigned, None),
+    };
+    let (whole, fraction): (&str, &str) = mantissa.split_once('.').unwrap_or((mantissa, ""));
+    let decimal = |part: &str| part.is_empty() || digit_groups(part, DECIMAL_RADIX, false);
+    (!whole.is_empty() || !fraction.is_empty())
+        && decimal(whole)
+        && decimal(fraction)
+        && exponent.is_none_or(|exponent| {
+            let digits: &str = exponent.strip_prefix(['+', '-']).unwrap_or(exponent);
+            digit_groups(digits, DECIMAL_RADIX, false)
+        })
+}
+
+/// Digits of `radix` with single underscores between them, or after a base prefix when `prefixed`.
+fn digit_groups(text: &str, radix: u32, prefixed: bool) -> bool {
+    let mut after_digit: bool = prefixed;
+    let mut any_digit: bool = false;
+    for character in text.chars() {
+        if character == '_' && after_digit {
+            after_digit = false;
+        } else if character.is_digit(radix) {
+            after_digit = true;
+            any_digit = true;
+        } else {
+            return false;
+        }
+    }
+    any_digit && after_digit
+}
+
+/// Whether PostgreSQL reads lower-cased `text` as a boolean: a word's prefix, `on`, `of`, `off`, `1` or `0`.
+fn postgres_boolean(text: &str) -> bool {
+    !text.is_empty()
+        && (POSTGRES_BOOLEAN_WORDS
+            .iter()
+            .any(|word| word.starts_with(text))
+            || matches!(text, "on" | "of" | "off" | "1" | "0"))
 }
 
 /// An ISO calendar date that does not exist; other forms stay unchecked.
@@ -418,6 +518,16 @@ fn invalid_iso_date(value: &str) -> bool {
 
 /// A temporal literal no engine reads: an impossible date or time, or no digits at all.
 pub(crate) fn invalid_temporal_literal(value: &str) -> bool {
+    invalid_temporal(value, LAST_MINUTE)
+        || (!value.chars().any(|character| character.is_ascii_digit())
+            && !matches!(
+                value.to_ascii_lowercase().as_str(),
+                "infinity" | "-infinity" | "epoch" | "today" | "tomorrow" | "yesterday" | "now"
+            ))
+}
+
+/// An impossible ISO date, or an ISO time past `last_second` or otherwise out of range.
+fn invalid_temporal(value: &str, last_second: u32) -> bool {
     let bytes: &[u8] = value.as_bytes();
     let part = |range: std::ops::Range<usize>| value.get(range).unwrap_or_default().parse::<u32>();
     let invalid_time: bool = bytes.len() >= ISO_TIMESTAMP_LENGTH
@@ -428,16 +538,10 @@ pub(crate) fn invalid_temporal_literal(value: &str) -> bool {
             (Ok(hour), Ok(minute), Ok(second)) => {
                 hour > DAY_END_HOUR
                     || minute > LAST_MINUTE
-                    || second > LAST_MINUTE
+                    || second > last_second
                     || (hour == DAY_END_HOUR && (minute != 0 || second != 0))
             }
             _ => false,
         };
-    invalid_iso_date(value)
-        || invalid_time
-        || (!value.chars().any(|character| character.is_ascii_digit())
-            && !matches!(
-                value.to_ascii_lowercase().as_str(),
-                "infinity" | "-infinity" | "epoch" | "today" | "tomorrow" | "yesterday" | "now"
-            ))
+    invalid_iso_date(value) || invalid_time
 }

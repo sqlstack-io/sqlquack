@@ -1,3 +1,5 @@
+use crate::lineage::tests::helpers::typed_duckdb_shop_schema;
+
 use sqlquack_syntax::{CallMode, Dialect, ParseOptions};
 use sqlquack_syntax_snowflake::parse_statements_with;
 
@@ -297,6 +299,115 @@ fn given_a_bare_duckdb_value_keyword_from_duckdbs_parser_when_resolving_names_th
             description: "a qualified keyword is a column of its relation",
             sql: "SELECT o.current_date FROM orders o",
             expected_findings: &[("E201", "Unknown column 'current_date' in table 'orders'", 9)],
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            duckdb_parser_findings(test_case.sql),
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_an_aggregate_filter_from_duckdbs_parser_when_checking_types_then_a_text_condition_is_found()
+ {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "a text FILTER condition on COUNT(*)",
+            sql: "SELECT COUNT(*) FILTER (WHERE status) AS n FROM orders",
+            expected_findings: &[("W215", "Expected boolean condition, found string", 30)],
+        },
+        QueryFindingsTestCase {
+            description: "a comparison FILTER condition",
+            sql: "SELECT COUNT(*) FILTER (WHERE status = 'open') AS n FROM orders",
+            expected_findings: &[],
+        },
+    ];
+    let schema = typed_duckdb_shop_schema();
+    for test_case in test_cases {
+        let statement = sqlquack_syntax_duckdb::parse_strict(test_case.sql)
+            .unwrap_or_else(|failure| panic!("{}: {failure:?}", test_case.description))
+            .statements
+            .remove(0);
+        let context = LineageContext {
+            profile: &DUCKDB,
+            schema: &schema,
+            sql: Some(test_case.sql),
+        };
+        let findings: Vec<(&'static str, String, usize)> = statement_findings(&statement, context)
+            .into_iter()
+            .map(|finding| {
+                (
+                    finding.code,
+                    finding.message,
+                    finding.span.map_or(0, |span| span.start),
+                )
+            })
+            .collect();
+        assert_eq!(
+            findings,
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_duckdb_syntax_its_parser_emits_as_calls_when_checking_then_the_forms_duckdb_runs_are_known()
+ {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "EXTRACT, which DuckDB rewrites to date_part",
+            sql: "SELECT EXTRACT(YEAR FROM amount) AS v FROM orders",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "date_part, the call EXTRACT becomes",
+            sql: "SELECT date_part('year', amount) AS v FROM orders",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an ARRAY subquery",
+            sql: "SELECT ARRAY(SELECT id FROM orders) AS v",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a postfix factorial",
+            sql: "SELECT amount! AS v FROM orders",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a prefix operator DuckDB has",
+            sql: "SELECT @amount AS v FROM orders",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a prefix OPERATOR() form DuckDB has",
+            sql: "SELECT OPERATOR(-) amount AS v FROM orders",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "GROUP BY GROUPING SETS",
+            sql: "SELECT status, id, count(*) AS n FROM orders GROUP BY GROUPING SETS ((status), (id))",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a prefix operator DuckDB does not have stays unknown",
+            sql: "SELECT |/ amount AS v FROM orders",
+            expected_findings: &[("E202", "Unknown function '|/' for dialect DuckDB", 0)],
+        },
+        QueryFindingsTestCase {
+            description: "a name DuckDB has nothing for stays unknown",
+            sql: "SELECT not_a_function(amount) AS v FROM orders",
+            expected_findings: &[(
+                "E202",
+                "Unknown function 'not_a_function' for dialect DuckDB",
+                7,
+            )],
         },
     ];
     for test_case in test_cases {

@@ -4,6 +4,7 @@ use std::rc::Rc;
 
 use sqlquack_syntax::expressions::names::models::Identifier;
 
+use crate::lineage::_helpers::findings::checks::value_keyword;
 use crate::lineage::_helpers::tracing::lineages::{
     combined, constant, direct, traced_if, unresolved,
 };
@@ -132,6 +133,7 @@ fn unqualified(
     let alias: Option<&ScopedColumn> = scope.aliases.iter().find(|alias| same(&alias.key));
     match (open.as_slice(), alias) {
         ([], Some(alias)) => Some(alias.lineage.clone()),
+        ([_], None) if value_keyword(written, scope, context) => Some(constant()),
         ([only], None) => Some(opened(only, written, context)),
         ([], None) => None,
         _ => Some(unresolved()),

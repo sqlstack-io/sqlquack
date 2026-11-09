@@ -325,7 +325,7 @@ fn argument_findings(
     if family == Family::String
         && (valid || implicit || literal)
         && target.is_some_and(|target| {
-            !string_literal(argument) || invalid_literal_for(argument, target)
+            !string_literal(argument) || invalid_literal_for(engine, argument, target)
         })
     {
         findings.push(issue(

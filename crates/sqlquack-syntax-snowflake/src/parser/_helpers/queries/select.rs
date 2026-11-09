@@ -1689,6 +1689,7 @@ impl Parser {
                         quoted: false,
                         string_quoted: false,
                         expression: None,
+                        span: SourceSpan::default(),
                     }))
                 } else {
                     return Err(self.parse_error("Expected identifier after {"));
@@ -1721,6 +1722,7 @@ impl Parser {
                     quoted: false,
                     string_quoted: false,
                     expression,
+                    span: SourceSpan::default(),
                 }))
             } else {
                 return Err(self.parse_error("Expected identifier after ${"));

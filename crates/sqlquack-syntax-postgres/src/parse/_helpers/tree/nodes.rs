@@ -64,6 +64,7 @@ pub(crate) fn parameter(index: u32) -> Expression {
         quoted: false,
         string_quoted: false,
         expression: None,
+        span: SourceSpan::default(),
     }))
 }
 

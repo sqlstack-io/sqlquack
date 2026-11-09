@@ -409,6 +409,10 @@ pub struct ExecuteParameter {
     /// TSQL OUTPUT modifier on parameter
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub output: bool,
+    /// SQLQuack: the node's source range, recorded by a parser that sets it.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 /// MySQL/MariaDB KILL [CONNECTION | QUERY] <id>.
@@ -940,6 +944,10 @@ pub struct DeclareItem {
     /// BigQuery: additional variable names in multi-variable DECLARE (DECLARE X, Y, Z INT64)
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub additional_names: Vec<Expression>,
+    /// SQLQuack: the node's source range, recorded by a parser that sets it.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
 }
 
 /// Set

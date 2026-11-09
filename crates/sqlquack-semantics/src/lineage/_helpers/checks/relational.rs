@@ -190,7 +190,7 @@ pub(crate) fn recursive_findings(
                 Engine::Snowflake => !setop_compatible(target, source),
                 Engine::Sqlite | Engine::Databricks => false,
                 Engine::DuckDB | Engine::Postgres | Engine::BigQuery => {
-                    literal.is_some_and(|value| invalid_literal_for(value, target))
+                    literal.is_some_and(|value| invalid_literal_for(engine, value, target))
                         || (source == Family::String
                             && !matches!(target, Family::String | Family::Unknown)
                             && literal.is_none())

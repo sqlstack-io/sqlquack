@@ -7,6 +7,7 @@ use sqlquack_syntax::expressions::schema_objects::models::{
     ParameterMode,
 };
 use sqlquack_syntax::expressions::statements::models::Var;
+use sqlquack_syntax::tokens::models::SourceSpan;
 use sqlquack_syntax::{DataType, Expression};
 
 use crate::parse::_helpers::commands::tables::unsupported;
@@ -298,6 +299,7 @@ impl Parser<'_> {
             }),
             default,
             mode_text: None,
+            span: SourceSpan::default(),
         })
     }
 

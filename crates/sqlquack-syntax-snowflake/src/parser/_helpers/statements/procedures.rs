@@ -14,6 +14,7 @@ use sqlquack_syntax::expressions::types::models::DataType;
 use sqlquack_syntax::expressions::types::models::StructField;
 use sqlquack_syntax::tokens::models::CallMode;
 use sqlquack_syntax::tokens::models::DialectType;
+use sqlquack_syntax::tokens::models::SourceSpan;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
 
@@ -102,6 +103,7 @@ impl Parser {
                 mode: None,
                 default,
                 mode_text: None,
+                span: SourceSpan::default(),
             });
         }
         self.expect_token(TokenType::RParen)?;

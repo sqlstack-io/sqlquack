@@ -1,0 +1,43 @@
+category = "temporal"
+construct = "fn:TO_TIMESTAMP_NTZ"
+session_profile = "utc-v1"
+
+[[case]]
+id = "to_timestamp_ntz_of_utc_tz"
+description = "TO_TIMESTAMP_NTZ of CONVERT_TIMEZONE('UTC', tz) over TIMESTAMP_TZ values at several offsets: the UTC wall-clock time, typed as Snowflake records it."
+columns = [{ name = "tz", type = "TIMESTAMP_TZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789 +02:00'"],
+  ["'2024-02-29 23:30:00 -05:00'"],
+  ["'2024-03-31 00:30:00 +05:30'"],
+  ["'1969-12-31 23:59:59.999999 +00:00'"],
+  ["NULL"],
+]
+expression = "TO_TIMESTAMP_NTZ(CONVERT_TIMEZONE('UTC', tz))"
+tags = ["null", "boundary"]
+expected_divergence = "timestamp_tz_submicro"
+
+[[case]]
+id = "to_timestamp_ntz_of_utc_ltz"
+description = "TO_TIMESTAMP_NTZ of CONVERT_TIMEZONE('UTC', ltz) over TIMESTAMP_LTZ values under a UTC session."
+columns = [{ name = "ltz", type = "TIMESTAMP_LTZ(9)" }]
+rows = [
+  ["'2024-02-29 13:45:01.123456789'"],
+  ["'1969-12-31 23:59:59'"],
+  ["NULL"],
+]
+expression = "TO_TIMESTAMP_NTZ(CONVERT_TIMEZONE('UTC', ltz))"
+tags = ["null", "boundary"]
+expected_divergence = "timestamp_tz_submicro"
+
+[[case]]
+id = "to_timestamp_ntz_of_utc_current_timestamp"
+description = "The snapshot time expression TO_TIMESTAMP_NTZ(CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())): only the column name and type are the receipt; the value reads the clock, so it is typing evidence."
+evidence = "typing"
+columns = [{ name = "n", type = "NUMBER(10,2)" }]
+rows = [
+  ["1.00"],
+]
+query = "SELECT TO_TIMESTAMP_NTZ(CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())) AS t FROM input"
+order = "ordered"
+tags = ["boundary"]

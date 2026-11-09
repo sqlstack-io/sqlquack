@@ -1104,7 +1104,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: GENERATOR_RULE,
         constructs: &["fn:GENERATOR", "fn:SEQ4", "fn:SEQ8"],
-        conditions: "TABLE(GENERATOR(ROWCOUNT => n)) for a literal n from 0 to 100000, the recorded range, as the only source of its query level: n rows, where SEQ4() numbers them from 0 as NUMBER(10,0) and SEQ8() as NUMBER(19,0) without gaps. SEQ4 and SEQ8 elsewhere, TIMELIMIT and a ROWCOUNT other than a literal are not converted.",
+        conditions: "TABLE(GENERATOR(ROWCOUNT => n)) for n a whole number from 0 to 100000, the recorded range, written with integer literals, signs, parentheses, +, - and *, as the only source of its query level: n rows, where SEQ4() numbers them from 0 as NUMBER(10,0) and SEQ8() as NUMBER(19,0) without gaps. No arguments, or a NULL ROWCOUNT and TIMELIMIT, give 0 rows; ROWCOUNT beside a literal TIMELIMIT of 1 second or more gives n rows, as recorded. SEQ4 and SEQ8 elsewhere, TIMELIMIT alone or under 1 second, a negative ROWCOUNT and any other ROWCOUNT are not converted.",
         failures: &[],
     },
     RuleSpec {
@@ -1138,7 +1138,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: TEXT_REPLACE,
         constructs: &["fn:REPLACE", "fn:SPLIT_PART"],
-        conditions: "VARCHAR operands. REPLACE without a replacement removes matches, and an empty search changes nothing. SPLIT_PART takes a literal delimiter (when empty, only part 1, which is the whole text); part 0 counts as 1, negative parts count from the end, and a part past the end is empty.",
+        conditions: "VARCHAR operands. REPLACE without a replacement removes matches, and an empty search changes nothing. SPLIT_PART takes a literal or column delimiter; an empty delimiter gives the whole text for parts 0, 1 and -1 and empty text for other parts, and a NULL delimiter gives NULL; part 0 counts as 1, negative parts count from the end, and a part past the end is empty.",
         failures: &[],
     },
     RuleSpec {
@@ -1250,7 +1250,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: TEXT_SEARCH_POSITION,
         constructs: &["fn:CHARINDEX", "fn:POSITION", "node:str_position"],
-        conditions: "CHARINDEX(s, t), POSITION(s, t) and POSITION(s IN t) of two VARCHAR operands, without a start position: the first position of s in t counted in characters from 1, case-sensitive, 0 when absent and 1 for an empty s, also in empty t, as NUMBER(9,0); NULL when either operand is NULL.",
+        conditions: "CHARINDEX(s, t), POSITION(s, t) and POSITION(s IN t) of two VARCHAR operands: the first position of s in t counted in characters from 1, case-sensitive, 0 when absent and 1 for an empty s, also in empty t, as NUMBER(9,0); NULL when either operand is NULL. CHARINDEX(s, t, p) and POSITION(s, t, p) with an integer p find the first match at or after p, a p below 1 reading as 1, counted from the start of t, 0 past the end, and NULL for a NULL p.",
         failures: &[],
     },
     RuleSpec {
@@ -1388,7 +1388,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: WINDOW_OFFSET,
         constructs: &["fn:LAG", "fn:LEAD", "node:window_function"],
-        conditions: "An ORDER BY, no frame, an integer literal offset and a default of the value's type or an integer literal beside a NUMBER or FLOAT value, as recorded. With IGNORE NULLS the offset counts only rows whose value is not NULL, as recorded.",
+        conditions: "An ORDER BY, no frame, an integer literal offset (a negative one turns LAG into LEAD and LEAD into LAG, except with IGNORE NULLS) and a default of the value's type or an integer literal beside a NUMBER or FLOAT value, as recorded. With IGNORE NULLS the offset counts only rows whose value is not NULL, as recorded.",
         failures: &[FailureMode {
             kind: ErrorKind::NumericOverflow,
             snowflake: &[NUMBER_OUT_OF_RANGE],
@@ -1681,7 +1681,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: TO_TIMESTAMP_TEMPORAL,
         constructs: &["fn:TO_TIMESTAMP", "fn:TO_TIMESTAMP_NTZ"],
-        conditions: "A DATE or TIMESTAMP_NTZ(p) operand without a scale, cast to TIMESTAMP_NTZ(9) as CAST does, as recorded: a DATE is its midnight, a timestamp keeps its value, and the result is TIMESTAMP_NTZ(9) whatever p is; values outside DuckDB's nanosecond range rely on timestamp_range. TRY_ forms of these operands are not converted, as Snowflake rejects them (error 1065).",
+        conditions: "A DATE or TIMESTAMP_NTZ(p) operand without a scale, or for TO_TIMESTAMP_NTZ a TIMESTAMP_TZ known to hold the UTC offset, cast to TIMESTAMP_NTZ(9) as CAST does, as recorded: a DATE is its midnight, a timestamp keeps its value, a TIMESTAMP_TZ keeps its wall-clock time, and the result is TIMESTAMP_NTZ(9) whatever p is; values outside DuckDB's nanosecond range rely on timestamp_range. TRY_ forms of these operands are not converted, as Snowflake rejects them (error 1065).",
         failures: &[],
     },
     RuleSpec {

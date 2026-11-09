@@ -6,6 +6,7 @@ use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::schema_objects::models::{
     CreateFunction, FunctionBody, FunctionParameter,
 };
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_type_func_name};
 use crate::parse::constants::{MACRO_KIND, STATEMENT_STARTS};
@@ -161,6 +162,7 @@ impl Parser<'_> {
             mode: None,
             default,
             mode_text: None,
+            span: SourceSpan::default(),
         })
     }
 

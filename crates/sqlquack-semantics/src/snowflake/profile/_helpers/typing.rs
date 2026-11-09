@@ -3,10 +3,11 @@
 use std::rc::Rc;
 
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
-use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::types::models::IntervalUnit;
+use sqlquack_syntax::{DataType, Expression};
 
+use crate::lineage::main::rendered_type::rendered_type;
 use crate::lineage::models::Lineage;
 use crate::snowflake::profile::constants::{
     SNOWFLAKE_COUNT_FUNCTIONS, SNOWFLAKE_DATE_ADD_FUNCTIONS, SNOWFLAKE_DATE_DIFF_FUNCTIONS,
@@ -116,13 +117,13 @@ fn temporal_call_type(
     None
 }
 
-/// DATEADD as recorded: TIMESTAMP(9) kept, TIME to TIME(9), DATE for a date part; others untyped.
+/// DATEADD as recorded: a timestamp's kind at precision 9, TIME to TIME(9), DATE for a date part.
 fn date_add_type(unit: Option<&str>, value: Option<SnowflakeType>) -> Option<Rc<str>> {
     let unit: &str = unit?;
     let kept: SnowflakeType = match value? {
-        timestamp @ (SnowflakeType::TimestampNtz { precision: 9 }
-        | SnowflakeType::TimestampLtz { precision: 9 }
-        | SnowflakeType::TimestampTz { precision: 9 }) => timestamp,
+        SnowflakeType::TimestampNtz { .. } => SnowflakeType::TimestampNtz { precision: 9 },
+        SnowflakeType::TimestampLtz { .. } => SnowflakeType::TimestampLtz { precision: 9 },
+        SnowflakeType::TimestampTz { .. } => SnowflakeType::TimestampTz { precision: 9 },
         SnowflakeType::Time { .. } if SNOWFLAKE_TIME_UNITS.contains(&unit) => {
             SnowflakeType::Time { precision: 9 }
         }
@@ -256,5 +257,16 @@ fn spelled(typed: Result<SnowflakeType, String>) -> Option<Rc<str>> {
     match typed {
         Ok(data_type) => Some(Rc::from(data_type.to_string())),
         Err(_unrecorded) => None,
+    }
+}
+
+/// A Snowflake cast target's spelling; TIME keeps the fractional-second precision it states.
+pub(crate) fn snowflake_cast_spelling(data_type: &DataType) -> Option<String> {
+    match data_type {
+        DataType::Time {
+            precision: Some(precision),
+            timezone: false,
+        } => Some(format!("TIME({precision})")),
+        other => rendered_type(other),
     }
 }

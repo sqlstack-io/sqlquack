@@ -244,6 +244,7 @@ impl Parser {
                     value,
                     positional: false,
                     output,
+                    span: SourceSpan::default(),
                 });
             } else {
                 let output = self.match_token(TokenType::Output);
@@ -259,6 +260,7 @@ impl Parser {
                     }),
                     positional: true,
                     output,
+                    span: SourceSpan::default(),
                 });
             }
 

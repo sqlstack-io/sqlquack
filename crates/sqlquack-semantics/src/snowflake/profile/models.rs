@@ -2,7 +2,7 @@
 
 use std::rc::Rc;
 
-use sqlquack_syntax::Expression;
+use sqlquack_syntax::{DataType, Expression};
 
 use crate::dialects::types::DialectProfile;
 use crate::lineage::models::{Lineage, LineageContext};
@@ -12,7 +12,7 @@ use crate::postgres::profile::main::postgres_window_only::postgres_window_only;
 use crate::snowflake::profile::_helpers::sets::snowflake_set_type;
 use crate::snowflake::profile::_helpers::type_names::same_snowflake_type;
 use crate::snowflake::profile::_helpers::typing::{
-    snowflake_literal_type, snowflake_type, snowflake_unified,
+    snowflake_cast_spelling, snowflake_literal_type, snowflake_type, snowflake_unified,
 };
 use crate::snowflake::profile::constants::SNOWFLAKE_TIMESTAMP_TYPE;
 
@@ -114,6 +114,10 @@ impl DialectRules for SnowflakeRules {
             None => snowflake_set_type(&branches.iter().collect::<Vec<&Lineage>>()),
             merged => merged,
         }
+    }
+
+    fn cast_spelling(&self, data_type: &DataType) -> Option<String> {
+        snowflake_cast_spelling(data_type)
     }
 
     fn window_only(&self, expression: &Expression) -> bool {
