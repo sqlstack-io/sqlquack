@@ -2,7 +2,7 @@
 
 use std::rc::Rc;
 
-use sqlquack_syntax::{DataType, Expression};
+use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::dialects::types::DialectProfile;
 use crate::lineage::models::Engine;
@@ -19,6 +19,10 @@ pub struct Sqlite;
 impl DialectProfile for Sqlite {
     fn name(&self) -> &'static str {
         "SQLite"
+    }
+
+    fn dialect(&self) -> Dialect {
+        Dialect::SQLite
     }
 
     fn resolved_identifier(&self, name: &str, _quoted: bool) -> String {

@@ -2,7 +2,7 @@
 
 use std::rc::Rc;
 
-use sqlquack_syntax::{DataType, Expression};
+use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::databricks::profile::_helpers::type_names::same_databricks_type;
 use crate::databricks::profile::_helpers::typing::{
@@ -21,6 +21,10 @@ pub struct Databricks;
 impl DialectProfile for Databricks {
     fn name(&self) -> &'static str {
         "Databricks"
+    }
+
+    fn dialect(&self) -> Dialect {
+        Dialect::Databricks
     }
 
     fn resolved_identifier(&self, name: &str, _quoted: bool) -> String {

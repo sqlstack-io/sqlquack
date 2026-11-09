@@ -2,7 +2,7 @@
 
 use std::rc::Rc;
 
-use sqlquack_syntax::{DataType, Expression};
+use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::bigquery::profile::_helpers::typing::{
     bigquery_cast_spelling, bigquery_common_type, bigquery_literal_type, bigquery_type,
@@ -20,6 +20,10 @@ pub struct BigQuery;
 impl DialectProfile for BigQuery {
     fn name(&self) -> &'static str {
         "BigQuery"
+    }
+
+    fn dialect(&self) -> Dialect {
+        Dialect::BigQuery
     }
 
     fn resolved_identifier(&self, name: &str, _quoted: bool) -> String {

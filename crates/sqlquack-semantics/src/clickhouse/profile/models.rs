@@ -2,7 +2,7 @@
 
 use std::rc::Rc;
 
-use sqlquack_syntax::{DataType, Expression};
+use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::clickhouse::profile::_helpers::type_names::clickhouse_type as canonical;
 use crate::clickhouse::profile::_helpers::typing::{
@@ -24,6 +24,10 @@ pub struct ClickHouse;
 impl DialectProfile for ClickHouse {
     fn name(&self) -> &'static str {
         "ClickHouse"
+    }
+
+    fn dialect(&self) -> Dialect {
+        Dialect::ClickHouse
     }
 
     fn resolved_identifier(&self, name: &str, _quoted: bool) -> String {

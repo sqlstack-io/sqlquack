@@ -2,7 +2,7 @@
 
 use std::rc::Rc;
 
-use sqlquack_syntax::{DataType, Expression};
+use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::dialects::types::DialectProfile;
 use crate::duckdb::profile::_helpers::duck_types::{
@@ -23,6 +23,10 @@ pub struct DuckDb;
 impl DialectProfile for DuckDb {
     fn name(&self) -> &'static str {
         "DuckDB"
+    }
+
+    fn dialect(&self) -> Dialect {
+        Dialect::DuckDB
     }
 
     fn resolved_identifier(&self, name: &str, _quoted: bool) -> String {

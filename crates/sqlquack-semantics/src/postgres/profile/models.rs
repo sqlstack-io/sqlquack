@@ -2,7 +2,7 @@
 
 use std::rc::Rc;
 
-use sqlquack_syntax::{DataType, Expression};
+use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::dialects::types::DialectProfile;
 use crate::lineage::models::Engine;
@@ -22,6 +22,10 @@ pub struct Postgres;
 impl DialectProfile for Postgres {
     fn name(&self) -> &'static str {
         "PostgreSQL"
+    }
+
+    fn dialect(&self) -> Dialect {
+        Dialect::PostgreSQL
     }
 
     fn resolved_identifier(&self, name: &str, quoted: bool) -> String {

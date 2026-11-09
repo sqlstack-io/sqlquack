@@ -2,7 +2,7 @@
 
 use std::rc::Rc;
 
-use sqlquack_syntax::{DataType, Expression};
+use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::dialects::types::DialectProfile;
 use crate::lineage::main::rendered_type::rendered_type;
@@ -23,6 +23,10 @@ pub struct SqlServer;
 impl DialectProfile for SqlServer {
     fn name(&self) -> &'static str {
         "SQL Server"
+    }
+
+    fn dialect(&self) -> Dialect {
+        Dialect::SqlServer
     }
 
     fn resolved_identifier(&self, name: &str, _quoted: bool) -> String {

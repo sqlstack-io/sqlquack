@@ -2,7 +2,7 @@
 
 use std::rc::Rc;
 
-use sqlquack_syntax::{DataType, Expression};
+use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::dialects::types::DialectProfile;
 use crate::lineage::models::Engine;
@@ -24,6 +24,10 @@ pub struct Snowflake;
 impl DialectProfile for Snowflake {
     fn name(&self) -> &'static str {
         "Snowflake"
+    }
+
+    fn dialect(&self) -> Dialect {
+        Dialect::Snowflake
     }
 
     fn resolved_identifier(&self, name: &str, quoted: bool) -> String {
@@ -53,6 +57,10 @@ pub struct SnowflakeQuotedIgnoringCase;
 impl DialectProfile for SnowflakeQuotedIgnoringCase {
     fn name(&self) -> &'static str {
         "Snowflake"
+    }
+
+    fn dialect(&self) -> Dialect {
+        Dialect::Snowflake
     }
 
     fn resolved_identifier(&self, name: &str, _quoted: bool) -> String {
