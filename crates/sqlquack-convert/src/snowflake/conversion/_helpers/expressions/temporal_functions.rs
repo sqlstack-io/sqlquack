@@ -17,7 +17,6 @@ use sqlquack_blocks::temporal::main::epoch_to_timestamp::epoch_to_timestamp;
 use sqlquack_blocks::temporal::main::formatted_text_to_date::formatted_text_to_date;
 use sqlquack_blocks::temporal::main::formatted_text_to_timestamp::formatted_text_to_timestamp;
 use sqlquack_blocks::temporal::main::text_to_timestamp::text_to_timestamp;
-use sqlquack_blocks::temporal::main::text_to_zoned::text_to_zoned;
 use sqlquack_blocks::temporal::main::timestamp_format::timestamp_format;
 use sqlquack_blocks::temporal::main::timestamp_from_parts::timestamp_from_parts;
 use sqlquack_blocks::temporal::main::truncate_timestamp_to_date::truncate_timestamp_to_date;
@@ -32,6 +31,7 @@ use sqlquack_blocks::times::main::time_add_value::time_add_value;
 use sqlquack_blocks::times::main::time_diff_value::time_diff_value;
 use sqlquack_blocks::times::main::timestamp_time::timestamp_time;
 use sqlquack_blocks::times::models::TimeFormat;
+use sqlquack_blocks::zones::main::text_to_zoned::text_to_zoned;
 use sqlquack_blocks::zones::main::utc_zoned::utc_zoned;
 use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
@@ -63,16 +63,16 @@ use crate::snowflake::conversion::constants::{
     DATE_PART_RULE, DATE_PARTS, DAY_NAME_RULE, DAY_UNIT, DECIMAL_EPOCH_RULE,
     FRACTIONAL_DATE_AMOUNT, FROM_PARTS, LAST_DAY_RULE, MAX_FRACTION_DIGITS_U8, MICROSECOND_DIGITS,
     MONTH_UNIT, MONTHS_BETWEEN_MONTH_NANOSECONDS, MONTHS_BETWEEN_RULE, MONTHS_BETWEEN_TYPE,
-    NULL_BRANCHES, NUMBER_TEXT_FORMAT, OFFSET_FREE_UNITS, RECORDED_TIME_ZONES, SCALE_DIGITS,
-    TEMPORAL_TEXT_FORMAT, TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC,
-    TIME_ZONE_CONVERSION, TIMESTAMP_FORMAT_RULE, TIMESTAMP_NTZ_NAME, TIMESTAMP_TIME_RULE,
-    TO_DATE_TEMPORAL, TO_TIMESTAMP_TEMPORAL, UTC_OFFSET_ARITHMETIC, UTC_ZONE, ZONE_COLUMNS,
-    ZONED_PARTS,
+    NULL_BRANCHES, NUMBER_TEXT_FORMAT, OFFSET_FREE_UNITS, SCALE_DIGITS, TEMPORAL_TEXT_FORMAT,
+    TEXT_TO_TIME_RULE, TEXT_TO_TIMESTAMP_RULE, TIME_ARITHMETIC, TIME_ZONE_CONVERSION,
+    TIMESTAMP_FORMAT_RULE, TIMESTAMP_NTZ_NAME, TIMESTAMP_TIME_RULE, TO_DATE_TEMPORAL,
+    TO_TIMESTAMP_TEMPORAL, UTC_OFFSET_ARITHMETIC, UTC_ZONE, ZONE_COLUMNS, ZONED_PARTS,
 };
 use crate::snowflake::text_formats::main::_clock_format::clock_format;
 use crate::snowflake::text_formats::main::_strftime_pattern::strftime_pattern;
-use sqlquack_blocks::raises::main::raised::raised;
 use sqlquack_blocks::temporal::constants::{DUCKDB_CURRENT_DATE, DUCKDB_CURRENT_TIMESTAMP};
+use sqlquack_blocks::zones::constants::RECORDED_TIME_ZONES;
+use sqlquack_blocks::zones::main::recorded_zone::recorded_zone;
 use sqlquack_policy::policy::constants::{
     CURRENT_TIME, DATE_TEXT_SPELLING, SESSION_TIMEZONE_UTC, TIME_ZONE_SPELLING, TIMESTAMP_RANGE,
 };
@@ -1195,21 +1195,8 @@ fn zone_operand(node: &Value, construct: &Construct, site: Site<'_>) -> Result<Z
             let log = site.context.log;
             let _column = log.rule(ZONE_COLUMNS);
             diverge(site.context, TIME_ZONE_SPELLING, construct)?;
-            let names: Vec<String> = RECORDED_TIME_ZONES
-                .iter()
-                .map(|zone| string_literal(zone, log))
-                .collect();
-            let unrecorded = raised(&format!(
-                "{TIME_ZONE_SPELLING}: a time zone name whose spelling no recording shows \
-                 Snowflake accepting"
-            ));
             Ok(Zone {
-                sql: format!(
-                    "list_transform([{}], lambda z: CASE WHEN z IS NULL OR z IN ({}) THEN z \
-                     ELSE CAST({unrecorded} AS VARCHAR) END)[1]",
-                    emitted.sql,
-                    names.join(", ")
-                ),
+                sql: recorded_zone(&emitted.sql),
                 literal: None,
             })
         }

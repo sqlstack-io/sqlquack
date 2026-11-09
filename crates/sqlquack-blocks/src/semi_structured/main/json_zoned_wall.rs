@@ -5,7 +5,7 @@ use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use crate::blocks::models::TextFailure;
 use crate::semi_structured::_helpers::guards::{bound, fidelity_error};
 use crate::semi_structured::constants::{JSON_ZONED_WALL, NANOS_PER_SECOND};
-use crate::temporal::main::text_to_zoned::text_to_zoned;
+use crate::zones::main::text_to_zoned::text_to_zoned;
 
 /// Strings as zoned text, whole numbers as epoch seconds, JSON null as NULL; others raise.
 pub fn json_zoned_wall(sql: &str, log: &ProvenanceLog) -> String {

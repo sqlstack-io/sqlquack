@@ -322,7 +322,7 @@ fn most_frequent(
         _ => String::new(),
     };
     Ok(format!(
-        "(CASE WHEN length(list_filter({counts}, lambda n: n = list_max({counts}))) > 1{signs} \
+        "(CASE WHEN list_sort({counts}, 'DESC')[1] = list_sort({counts}, 'DESC')[2]{signs} \
          THEN {raise} ELSE mode({value}) END)"
     ))
 }

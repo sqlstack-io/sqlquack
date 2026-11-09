@@ -148,6 +148,11 @@ fn given_mode_when_converting_then_one_most_frequent_value_converts_and_ties_rai
             expected_outcome: Err("mode_of_no_rows"),
         },
         FirstValueTestCase {
+            description: "MODE of a timestamp read through a lambda over no rows raises",
+            sql: "SELECT MODE(TO_TIMESTAMP_NTZ(note || '')) AS v FROM customers WHERE customer_id > 100",
+            expected_outcome: Err("mode_of_no_rows"),
+        },
+        FirstValueTestCase {
             description: "MODE over a window stays refused",
             sql: "SELECT MODE(amount) OVER (PARTITION BY customer_id) AS v FROM orders",
             expected_outcome: Err("MODE"),

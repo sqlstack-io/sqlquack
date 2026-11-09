@@ -48,3 +48,7 @@ pub const DATE_TIMESTAMP_KEY: &str = "duckdb.date_timestamp_key";
 pub const DAY_NANOSECONDS: i64 = 86_400_000_000_000;
 /// Microseconds in a day.
 pub const DAY_MICROSECONDS: i64 = 86_400_000_000;
+/// The lambda parameter holding a TIME text read's pattern groups.
+pub const TIME_GROUPS: &str = "time_groups";
+/// The lambda parameter holding a TIME text read's nanoseconds after midnight.
+pub const TIME_NANOS: &str = "time_nanos";

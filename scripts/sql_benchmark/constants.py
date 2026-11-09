@@ -14,6 +14,7 @@ ROWS_PLACEHOLDER: str = "{rows}"
 SCHEMA: dict[str, list[list[str]]] = {
     "EVENTS": [["PAYLOAD", "VARIANT"]],
     "ORDERS": [["TOTAL", "NUMBER(12,2)"]],
+    "TEXTS": [["S", "VARCHAR"]],
 }
 
 EVENTS_ROWS: str = """
@@ -27,6 +28,13 @@ FROM range({rows}) AS t(i)
 ORDERS_ROWS: str = """
 CREATE TABLE "ORDERS" AS
 SELECT CAST(((i * 7919) % 2000000000) / 100.0 - 10000000 AS DECIMAL(12,2)) AS "TOTAL"
+FROM range({rows}) AS t(i)
+"""
+
+TEXTS_ROWS: str = """
+CREATE TABLE "TEXTS" AS SELECT printf('%04d-%02d-%02d %02d:%02d:%02d.%06d',
+    2000 + i % 30, 1 + i % 12, 1 + i % 28, i % 24, i % 60, (i * 7) % 60,
+    (i * 7919) % 1000000) AS "S"
 FROM range({rows}) AS t(i)
 """
 
@@ -62,5 +70,17 @@ FROM "EVENTS\"""",
         snowflake="SELECT total / 3 AS third FROM orders",
         reference="""SELECT CAST("TOTAL" AS DECIMAL(18,8)) / 3 AS third FROM "ORDERS\"""",
         row_factor=10,
+    ),
+    Workload(
+        name="timestamp_text",
+        rows=TEXTS_ROWS,
+        snowflake="SELECT s::TIMESTAMP_NTZ AS t FROM texts",
+        reference="""SELECT CAST("S" AS TIMESTAMP_NS) AS t FROM "TEXTS\"""",
+    ),
+    Workload(
+        name="zoned_text",
+        rows=TEXTS_ROWS,
+        snowflake="SELECT s::TIMESTAMP_TZ AS t FROM texts",
+        reference="""SELECT CAST("S" AS TIMESTAMPTZ) AS t FROM "TEXTS\"""",
     ),
 )

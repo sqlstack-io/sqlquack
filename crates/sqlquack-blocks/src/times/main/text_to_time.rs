@@ -12,7 +12,7 @@ use crate::times::_helpers::nanos::{time_of_nanos, truncated_nanos};
 use crate::times::constants::{
     AUTO_TIME_PATTERN, AUTO_TIME_REJECTED, COMPACT_HOUR_MINUTE_PATTERN,
     COMPACT_HOUR_MINUTE_REJECTED, HOUR_MINUTE_PATTERN, HOUR_MINUTE_REJECTED, MICROSECOND_PRECISION,
-    NANOS_PER_SECOND, TEXT_TO_TIME, TIME_SUBMICRO,
+    NANOS_PER_SECOND, TEXT_TO_TIME, TIME_GROUPS, TIME_NANOS, TIME_SUBMICRO,
 };
 use crate::times::models::TimeFormat;
 
@@ -33,18 +33,17 @@ pub fn text_to_time(
         }
     };
     let pattern = string_literal(pattern, log);
-    let group = |index: u8| format!("regexp_extract({text}, {pattern}, {index})");
-    let number = |index: u8| {
-        format!(
-            "CAST(coalesce(nullif({}, ''), '0') AS BIGINT)",
-            group(index)
-        )
+    let names = match format {
+        TimeFormat::Auto => "['h', 'm', 'r', 's', 'q', 'f']",
+        TimeFormat::HourMinute | TimeFormat::CompactHourMinute => "['h', 'm']",
     };
-    let (hour, minute) = (number(1), number(2));
+    let number =
+        |name: &str| format!("CAST(coalesce(nullif({TIME_GROUPS}['{name}'], ''), '0') AS BIGINT)");
+    let (hour, minute) = (number("h"), number("m"));
     let (second, fraction) = match format {
         TimeFormat::Auto => (
-            number(4),
-            format!("CAST(rpad({}, 9, '0') AS BIGINT)", group(6)),
+            number("s"),
+            format!("CAST(rpad({TIME_GROUPS}['f'], 9, '0') AS BIGINT)"),
         ),
         _ => ("0".to_owned(), "0".to_owned()),
     };
@@ -83,13 +82,17 @@ pub fn text_to_time(
         .collect();
     let body = format!(
         "(CASE WHEN {text} IS NULL THEN NULL \
-         WHEN regexp_matches({text}, {pattern}) THEN \
+         WHEN {TIME_GROUPS}['h'] <> '' THEN \
          CASE WHEN {hour} > 23 OR {minute} > 59 THEN {failed} \
-         WHEN {second} > 59 THEN {unproven} {submicro}ELSE {} END \
+         WHEN {second} > 59 THEN {unproven} {submicro}ELSE list_transform([{nanos}], \
+         lambda {TIME_NANOS}: {})[1] END \
          WHEN trim({text}, ' ') = '' OR NOT regexp_matches({text}, '[0-9]'){} THEN {failed} \
          ELSE {unproven} END)",
-        time_of_nanos(&truncated_nanos(&nanos, precision)),
+        time_of_nanos(&truncated_nanos(TIME_NANOS, precision)),
         recorded_rejections.concat()
     );
-    format!("list_transform([{sql}], lambda {text}: {body})[1]")
+    format!(
+        "list_transform([{sql}], lambda {text}: list_transform([regexp_extract({text}, {pattern}, \
+         {names})], lambda {TIME_GROUPS}: {body})[1])[1]"
+    )
 }
