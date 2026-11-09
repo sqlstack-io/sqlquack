@@ -26,6 +26,27 @@ fn given_a_snowflake_query_when_checking_built_in_calls_and_types_then_definite_
             )],
         },
         QueryFindingsTestCase {
+            description: "CUME_DIST without OVER, as Snowflake parses it",
+            sql: "SELECT CUME_DIST() AS w FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "PERCENT_RANK without OVER, as Snowflake parses it",
+            sql: "SELECT PERCENT_RANK() AS w FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "NTH_VALUE without OVER, as Snowflake parses it",
+            sql: "SELECT NTH_VALUE(id, 1) AS w FROM orders",
+            expected_findings: &[("E232", "Window function requires an OVER clause", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "CUME_DIST, PERCENT_RANK and NTH_VALUE under OVER",
+            sql: "SELECT CUME_DIST() OVER (ORDER BY id) AS c, PERCENT_RANK() OVER (ORDER BY id) AS p, \
+                  NTH_VALUE(id, 1) OVER (ORDER BY id) AS n FROM orders",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
             description: "a number condition in WHERE",
             sql: "SELECT id FROM orders WHERE amount",
             expected_findings: &[(

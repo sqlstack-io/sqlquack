@@ -1,0 +1,33 @@
+category = "translation"
+construct = "sf.functions.cume-dist"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_cume_dist_without_over"
+compile_error = true
+description = "CUME_DIST() written without OVER, which Snowflake refuses when compiling (2064, missing window specification). Catches: a value returned instead of the error"
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT CUME_DIST() AS r FROM (SELECT 1 AS x) t"
+order = "ordered"
+tags = ["type-combination", "error"]
+
+[[case]]
+id = "t002_percent_rank_without_over"
+compile_error = true
+description = "PERCENT_RANK() written without OVER, which Snowflake refuses when compiling (2064, missing window specification). Catches: a value returned instead of the error"
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT PERCENT_RANK() AS r FROM (SELECT 1 AS x) t"
+order = "ordered"
+tags = ["type-combination", "error"]
+
+[[case]]
+id = "t003_nth_value_without_over"
+compile_error = true
+description = "NTH_VALUE(x, 1) written without OVER, which Snowflake refuses when compiling (2064, missing window specification). Catches: a value returned instead of the error"
+columns = [{ name = "k", type = "NUMBER(38,0)" }]
+rows = [["1"]]
+query = "SELECT NTH_VALUE(x, 1) AS r FROM (SELECT 1 AS x) t"
+order = "ordered"
+tags = ["type-combination", "error"]
