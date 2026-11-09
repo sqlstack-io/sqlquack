@@ -22,6 +22,22 @@ pub const VARIANT_BOOLEAN_V1: &str = "variant_boolean_v1";
 pub const VARIANT_DATE_V1: &str = "variant_date_v1";
 /// A VARIANT cast to TIMESTAMP_NTZ.
 pub const VARIANT_TIMESTAMP_NTZ_V1: &str = "variant_timestamp_ntz_v1";
+/// Text read as a timestamp, raising Snowflake's error for text it does not read.
+pub const TIMESTAMP_TEXT_V1: &str = "timestamp_text_v1";
+/// Text read as a timestamp, NULL for text Snowflake does not read, as TRY_ forms.
+pub const TRY_TIMESTAMP_TEXT_V1: &str = "try_timestamp_text_v1";
+/// Text read as a date, raising Snowflake's error for text it does not read.
+pub const DATE_TEXT_V1: &str = "date_text_v1";
+/// Text read as a date, NULL for text Snowflake does not read, as TRY_ forms.
+pub const TRY_DATE_TEXT_V1: &str = "try_date_text_v1";
+/// Text read as the UTC wall time of the instant it names.
+pub const ZONED_TEXT_V1: &str = "zoned_text_v1";
+/// Text read as the UTC wall time of the instant it names, NULL where Snowflake reads none.
+pub const TRY_ZONED_TEXT_V1: &str = "try_zoned_text_v1";
+/// Text read as an instant whose offset must be +00:00.
+pub const UTC_ZONED_TEXT_V1: &str = "utc_zoned_text_v1";
+/// Text read as an instant whose offset must be +00:00, NULL where Snowflake reads none.
+pub const TRY_UTC_ZONED_TEXT_V1: &str = "try_utc_zoned_text_v1";
 /// The full read check of JSON text.
 pub const JSON_READ_V1: &str = "json_read_v1";
 /// The fast read check of JSON text, falling back to the full one.

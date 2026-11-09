@@ -1,22 +1,20 @@
-//! `text_to_zoned`: text in the recorded spellings as the UTC wall time of the instant it names.
+//! `inline_zoned`: `text_to_zoned` written out, for its helper macros' bodies and VARIANT reads.
 
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::{
-    DATE_TEXT_SPELLING, ISO_TIMESTAMP_PATTERN, TEXT_TO_ZONED, ZONE_OFFSET_LIMITS,
+    CONVERSION_WHITESPACE, DATE_TEXT_SPELLING, ISO_TIMESTAMP_PATTERN, ZONE_OFFSET_LIMITS,
     ZONE_OFFSET_PATTERN,
 };
 use crate::blocks::models::TextFailure;
 use crate::raises::main::raised::raised;
-use crate::temporal::_helpers::text::{bound, whitespace_trimmed};
 use crate::temporal::constants::NANOS_PER_MINUTE;
 use crate::temporal::main::text_to_timestamp::text_to_timestamp;
 
-/// A nanosecond UTC wall time: the text's wall time less its offset; text without one is UTC.
-pub fn text_to_zoned(value: &str, on_failure: TextFailure, log: &ProvenanceLog) -> String {
-    log.building_block(TEXT_TO_ZONED);
+/// `text_to_zoned` written out, as a helper macro's body and a VARIANT's string read it.
+pub fn inline_zoned(value: &str, on_failure: TextFailure, log: &ProvenanceLog) -> String {
     let sql = "z";
-    let trimmed = whitespace_trimmed(sql);
+    let trimmed = format!("trim({sql}, {CONVERSION_WHITESPACE})");
     let wall = text_to_timestamp(sql, (on_failure, false), log);
     let zone = format!("regexp_extract({trimmed}, '^{ISO_TIMESTAMP_PATTERN}$', 6)");
     let part = |group: u8| {
@@ -37,5 +35,5 @@ pub fn text_to_zoned(value: &str, on_failure: TextFailure, log: &ProvenanceLog) 
         "(CASE WHEN {sql} IS NULL THEN NULL ELSE \
          make_timestamp_ns(epoch_ns({wall}) - CAST({offset} AS BIGINT) * {NANOS_PER_MINUTE}) END)"
     );
-    bound(value, sql, &body)
+    format!("list_transform([{value}], lambda {sql}: {body})[1]")
 }

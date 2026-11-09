@@ -2,19 +2,24 @@
 
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
+use crate::blocks::models::TextFailure;
+
 use crate::macros::_helpers::reading::{checked_body, read_body};
 use crate::macros::_helpers::scalars::{number_body, scalar_body};
+use crate::macros::_helpers::temporal::{timestamp_body, utc_zoned_body, zoned_body};
 use crate::macros::_helpers::writing::{escaped_body, json_text_body, text_body};
 use crate::macros::constants::{
-    HELPER_CALL_PREFIX, JSON_CHECKED_V1, JSON_ESCAPED_V1, JSON_READ_V1, NUMBER_LARGEST_PARAMETER,
-    NUMBER_TYPE_PARAMETER, OBJECTS_PARAMETER, SITE_PARAMETER, TEXT_PARAMETER, TRYING_PARAMETER,
-    VALUE_PARAMETER, VALUES_PARAMETER, VARIANT_BOOLEAN_V1, VARIANT_DATE_V1, VARIANT_FLOAT_V1,
-    VARIANT_JSON_TEXT_V1, VARIANT_NUMBER_V1, VARIANT_TEXT_V1, VARIANT_TIMESTAMP_NTZ_V1,
+    DATE_TEXT_V1, HELPER_CALL_PREFIX, JSON_CHECKED_V1, JSON_ESCAPED_V1, JSON_READ_V1,
+    NUMBER_LARGEST_PARAMETER, NUMBER_TYPE_PARAMETER, OBJECTS_PARAMETER, SITE_PARAMETER,
+    TEXT_PARAMETER, TIMESTAMP_TEXT_V1, TRY_DATE_TEXT_V1, TRY_TIMESTAMP_TEXT_V1,
+    TRY_UTC_ZONED_TEXT_V1, TRY_ZONED_TEXT_V1, TRYING_PARAMETER, UTC_ZONED_TEXT_V1, VALUE_PARAMETER,
+    VALUES_PARAMETER, VARIANT_BOOLEAN_V1, VARIANT_DATE_V1, VARIANT_FLOAT_V1, VARIANT_JSON_TEXT_V1,
+    VARIANT_NUMBER_V1, VARIANT_TEXT_V1, VARIANT_TIMESTAMP_NTZ_V1, ZONED_TEXT_V1,
 };
 use crate::macros::models::HelperMacro;
 
 /// The helper macros, dependencies first.
-pub(crate) fn helper_macros() -> [HelperMacro; 10] {
+pub(crate) fn helper_macros() -> [HelperMacro; 18] {
     [
         HelperMacro {
             name: JSON_READ_V1,
@@ -48,6 +53,79 @@ pub(crate) fn helper_macros() -> [HelperMacro; 10] {
             body: escaped_body,
             explain: "DuckDB's JSON text with Snowflake's escapes: DEL written as \\u007f and the \
                       hex digits of \\u escapes in lower case.",
+        },
+        HelperMacro {
+            name: TIMESTAMP_TEXT_V1,
+            parameters: &[SITE_PARAMETER, TEXT_PARAMETER],
+            body: || timestamp_body(TextFailure::Text, false),
+            explain: "Text read as TIMESTAMP_NTZ(9) as Snowflake reads it in the recorded AUTO \
+                      spellings: ISO dates and times, a fraction cut to nine digits and an offset \
+                      dropped; unpadded dates and times; MM/DD/YYYY HH:MM:SS; RFC 2822 times at \
+                      +0000; and epoch integer text, read as seconds, milliseconds, microseconds or \
+                      nanoseconds by size. Leading and trailing spaces, tabs and line feeds are \
+                      ignored. Raises Snowflake's error for impossible values in a read spelling, \
+                      date_text_spelling for text in a spelling no recording shows, and \
+                      timestamp_range beyond DuckDB's nanosecond range.",
+        },
+        HelperMacro {
+            name: TRY_TIMESTAMP_TEXT_V1,
+            parameters: &[SITE_PARAMETER, TEXT_PARAMETER],
+            body: || timestamp_body(TextFailure::Null, false),
+            explain: "Text read as timestamp_text_v1 reads it, as TRY_ forms do: impossible values \
+                      in a read spelling, empty text, text without a digit and the spellings \
+                      recorded reading as NULL are NULL. Text in a spelling no recording shows still \
+                      raises date_text_spelling.",
+        },
+        HelperMacro {
+            name: DATE_TEXT_V1,
+            parameters: &[SITE_PARAMETER, TEXT_PARAMETER],
+            body: || timestamp_body(TextFailure::Text, true),
+            explain: "Text read as DATE as Snowflake reads it in the recorded AUTO spellings: ISO \
+                      dates and timestamps, MM/DD/YYYY, D-Mon-YY and D-Mon-YYYY, unpadded dates, RFC \
+                      2822 times at +0000 and epoch integer text. Leading and trailing spaces, tabs \
+                      and line feeds are ignored. Raises Snowflake's error for impossible values in \
+                      a read spelling and date_text_spelling for text in a spelling no recording \
+                      shows.",
+        },
+        HelperMacro {
+            name: TRY_DATE_TEXT_V1,
+            parameters: &[SITE_PARAMETER, TEXT_PARAMETER],
+            body: || timestamp_body(TextFailure::Null, true),
+            explain: "Text read as date_text_v1 reads it, as TRY_ forms do: impossible values in a \
+                      read spelling, empty text, text without a digit and the spellings recorded \
+                      reading as NULL are NULL. Text in a spelling no recording shows still raises \
+                      date_text_spelling.",
+        },
+        HelperMacro {
+            name: ZONED_TEXT_V1,
+            parameters: &[SITE_PARAMETER, TEXT_PARAMETER],
+            body: || zoned_body(TextFailure::Text),
+            explain: "Text read as the instant it names, as the UTC wall time of a TIMESTAMP_NS: its \
+                      wall time as timestamp_text_v1 reads it, less its offset (Z, +HH:MM or +HHMM); \
+                      text without an offset is UTC. Raises as timestamp_text_v1 does, and \
+                      date_text_spelling for an offset beyond the recorded ones.",
+        },
+        HelperMacro {
+            name: TRY_ZONED_TEXT_V1,
+            parameters: &[SITE_PARAMETER, TEXT_PARAMETER],
+            body: || zoned_body(TextFailure::Null),
+            explain: "Text read as zoned_text_v1 reads it, with try_timestamp_text_v1's NULLs. An \
+                      offset beyond the recorded ones still raises date_text_spelling.",
+        },
+        HelperMacro {
+            name: UTC_ZONED_TEXT_V1,
+            parameters: &[SITE_PARAMETER, TEXT_PARAMETER],
+            body: || utc_zoned_body(TextFailure::Text),
+            explain: "Text read as zoned_text_v1 reads it, for a TIMESTAMP_TZ whose offset DuckDB \
+                      does not keep: raises timestamp_tz_offset where the text's offset is not \
+                      +00:00, so its wall time is UTC's.",
+        },
+        HelperMacro {
+            name: TRY_UTC_ZONED_TEXT_V1,
+            parameters: &[SITE_PARAMETER, TEXT_PARAMETER],
+            body: || utc_zoned_body(TextFailure::Null),
+            explain: "Text read as utc_zoned_text_v1 reads it, with try_timestamp_text_v1's NULLs. \
+                      An offset other than +00:00 still raises timestamp_tz_offset.",
         },
         HelperMacro {
             name: VARIANT_TEXT_V1,
