@@ -158,8 +158,8 @@ def shared_dialect_lines(
     *, source: str, vocabulary: DialectVocabulary, registry: bool
 ) -> tuple[SourceLine, ...]:
     """Return shared lines naming a dialect, except gated folder modules and registry lines."""
-    raw_lines: list[str] = strip_comments(source=source).splitlines()
-    code_lines: list[str] = strip_comments_and_strings(source=source).splitlines()
+    raw_lines: list[str] = strip_comments(source=source).split("\n")
+    code_lines: list[str] = strip_comments_and_strings(source=source).split("\n")
     found: list[SourceLine] = []
     pending: SourceLine | None = None
     pending_gates: frozenset[str] = frozenset()
