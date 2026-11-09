@@ -97,7 +97,21 @@ impl Dialect {
         let complexity_guard = options
             .complexity_guard
             .unwrap_or_else(|| self.default_complexity_guard());
-        self.parse_with_config(sql, complexity_guard, mode)
+        self.parse_with_config(sql, complexity_guard, mode, None)
+    }
+
+    /// `parse_with_mode`, also giving each significant token's span and type, as the parser read them.
+    pub(crate) fn parse_reading_tokens(
+        &self,
+        sql: &str,
+        options: &ParseOptions,
+        mode: CallMode,
+        significant: &mut Vec<(Span, TokenType)>,
+    ) -> Result<Vec<Expression>> {
+        let complexity_guard = options
+            .complexity_guard
+            .unwrap_or_else(|| self.default_complexity_guard());
+        self.parse_with_config(sql, complexity_guard, mode, Some(significant))
     }
 
     #[cfg(test)]
@@ -106,7 +120,7 @@ impl Dialect {
         sql: &str,
         complexity_guard: ComplexityGuardOptions,
     ) -> Result<Vec<Expression>> {
-        self.parse_with_config(sql, complexity_guard, CallMode::Lowered)
+        self.parse_with_config(sql, complexity_guard, CallMode::Lowered, None)
     }
 
     pub(crate) fn parse_with_config(
@@ -114,10 +128,14 @@ impl Dialect {
         sql: &str,
         complexity_guard: ComplexityGuardOptions,
         mode: CallMode,
+        significant: Option<&mut Vec<(Span, TokenType)>>,
     ) -> Result<Vec<Expression>> {
         enforce_input(sql, &complexity_guard)?;
         let source: Arc<str> = Arc::from(sql);
         let (tokens, token_guard_stats) = self.tokenizer.tokenize_for_parser(&source)?;
+        if let Some(significant) = significant {
+            significant.extend(tokens.iter().map(|token| (token.span, token.token_type)));
+        }
         let config = crate::parser::models::ParserConfig {
             dialect: Some(self.dialect_type),
             complexity_guard,
