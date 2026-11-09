@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from collections.abc import Callable
 from pathlib import Path, PurePosixPath
@@ -14,7 +15,7 @@ from scripts.evidence_guard._helpers.syntax_receipts import added_syntax_receipt
 from scripts.evidence_guard.constants import (
     ADDED_STATUS,
     REFEREE_DIRECTORY,
-    SYNTAX_RECEIPTS_DIRECTORY,
+    SYNTAX_RECEIPTS_PATTERN,
     UNGUARDED_FILES,
 )
 from scripts.evidence_guard.models import ChangedPath
@@ -45,7 +46,7 @@ def run_evidence_guard(argv: list[str] | None = None) -> int:
             added_referee_problems
             if change.path.startswith(REFEREE_DIRECTORY)
             else added_syntax_receipt_problems
-            if change.path.startswith(SYNTAX_RECEIPTS_DIRECTORY)
+            if re.match(SYNTAX_RECEIPTS_PATTERN, change.path)
             else added_result_problems
         )
         problems.extend(

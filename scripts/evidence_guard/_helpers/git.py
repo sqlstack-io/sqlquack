@@ -5,14 +5,22 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
-from scripts.evidence_guard.constants import GIT_FIELD_SEPARATOR, RESULTS_DIRS
+from scripts.evidence_guard.constants import GIT_FIELD_SEPARATOR, RESULTS_PATHSPECS
 from scripts.evidence_guard.models import ChangedPath
 
 
 def changed_results(*, repository: Path, base: str, head: str) -> list[ChangedPath]:
-    """Every change under the results directories between the merge base of `base` and `head`."""
+    """Every change between the merge base of `base` and `head` under the results pathspecs."""
     output: str = subprocess.run(
-        ("git", "diff", "--name-status", "--no-renames", f"{base}...{head}", "--", *RESULTS_DIRS),
+        (
+            "git",
+            "diff",
+            "--name-status",
+            "--no-renames",
+            f"{base}...{head}",
+            "--",
+            *RESULTS_PATHSPECS,
+        ),
         cwd=repository,
         check=True,
         capture_output=True,
