@@ -31,6 +31,16 @@ rule = "FPRSL105"
 path = "crates/sqlquack-convert/src/snowflake/conversion/main/within_budget.rs"
 reason = "imported by the playground engine website/wasm, outside the root cargo workspace (CHI-1159)"
 
+# D693: format, lint and fingerprint take a dialect at run time, so each keeps one registry that maps
+# a dialect value to its src/<dialect>/ profile, with every line behind that dialect's feature.
+[targets.rust.rule_options.XSQ007]
+dialect_registries = [
+    "crates/sqlquack-semantics/src/dialects",
+    "crates/sqlquack-format/src/dialects",
+    "crates/sqlquack-lint/src/dialects",
+    "crates/sqlquack-fingerprint/src/dialects",
+]
+
 # A crate that is also a Python distribution keeps its pyproject.toml and shipped notices beside Cargo.toml.
 [targets.rust.rule_options.FPRSR311]
 allowed_entries = [
