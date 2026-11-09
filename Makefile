@@ -60,11 +60,12 @@ fensu:
 # Fails on any unresolved coverage reference, a form or obligation the baseline claims and the
 # current parser no longer supports, or a catalogue change the baseline was not re-recorded for.
 # The dialects whose syntax claims check-ci holds to their baseline, through `make check-syntax`.
+# REQUIRE_BASELINE=1 fails instead of falling back to `summary`, which does not compare with one.
 CHECK_SYNTAX_DIALECTS ?= snowflake sqlite duckdb
 
 syntax-coverage: gate-build
 	@set -e; for dialect in $(CHECK_SYNTAX_DIALECTS); do \
-	  $(MAKE) --no-print-directory check-syntax DIALECT=$$dialect; \
+	  $(MAKE) --no-print-directory check-syntax DIALECT=$$dialect REQUIRE_BASELINE=1; \
 	done
 
 # Fails when a native parser crashes, panics or hangs on deeply nested SQL on a 2 MiB thread and
@@ -280,6 +281,8 @@ pending: ## What DIALECT has not recorded yet, in both suites.
 check-syntax: ## Rerun DIALECT's parser against its recorded syntax evidence, offline.
 	$(suite_dialect)
 	@test -d $(SYNTAX_ROOT) || { echo "check-syntax: $(DIALECT) has no recorded syntax evidence yet" >&2; exit 2; }
+	@test "$(REQUIRE_BASELINE)" != 1 || test -f $(SYNTAX_ROOT)/baseline.json || { \
+	  echo "check-syntax: $(SYNTAX_ROOT)/baseline.json is missing, so nothing would catch a lost form or obligation" >&2; exit 2; }
 	$(MAKE) --no-print-directory gate-build
 	$(GATE_DIR)/syntax-coverage $(if $(wildcard $(SYNTAX_ROOT)/baseline.json),diff --root $(SYNTAX_ROOT) $(SYNTAX_ROOT)/baseline.json,summary --root $(SYNTAX_ROOT))
 
