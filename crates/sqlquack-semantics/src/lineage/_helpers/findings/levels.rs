@@ -1,6 +1,5 @@
 //! Walking a query level by level: each level's clauses read in its scope, inner queries after.
 
-use std::borrow::Cow;
 use std::collections::HashMap;
 
 use sqlquack_syntax::Expression;
@@ -21,7 +20,7 @@ use crate::lineage::_helpers::tracing::queries::{
     level_scope, output_key, unannotated, with_ctes_visiting,
 };
 use crate::lineage::_helpers::tracing::resolution::key;
-use crate::lineage::_helpers::tracing::reuse::{Reuse, reusing};
+use crate::lineage::_helpers::tracing::reuse::{Reach, Reuse, reusing};
 use crate::lineage::constants::COLUMNS_FUNCTION;
 use crate::lineage::models::Engine;
 use crate::lineage::models::NameFinding;
@@ -90,7 +89,7 @@ fn visited_ctes<'a>(
     (owner, with): (&Expression, Option<&With>),
     (ctes, outer, aliases): (&'a [NamedQuery], Option<&LineageScope<'_>>, &[String]),
     context: LineageContext<'_>,
-) -> (Cow<'a, [NamedQuery]>, Vec<NameFinding>) {
+) -> (Reach<'a>, Vec<NameFinding>) {
     let mut found: Vec<NameFinding> = Vec::new();
     let postgres: bool = Engine::of(context) == Engine::Postgres;
     let unread: Vec<String> = match (Engine::of(context), with) {

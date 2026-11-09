@@ -15,12 +15,28 @@ pub(crate) fn statement_findings(
     statement: &Expression,
     context: LineageContext<'_>,
 ) -> Vec<NameFinding> {
-    let mut distinct: Vec<NameFinding> = Vec::new();
     let found: Vec<NameFinding> = {
         let _analysis: Analysis = analysing();
-        let _reuse: Reuse = reusing(&[]);
-        query_findings(statement, (&[], None, &[]), context)
+        analysed_findings(statement, context)
     };
+    ordered_findings(statement, found)
+}
+
+/// Every finding of `statement` within the analysis already running, in the order walked.
+pub(crate) fn analysed_findings(
+    statement: &Expression,
+    context: LineageContext<'_>,
+) -> Vec<NameFinding> {
+    let _reuse: Reuse = reusing(&[]);
+    query_findings(statement, (&[], None, &[]), context)
+}
+
+/// `found` once each, scope rules and names first, then each other phase in `statement`'s order.
+pub(crate) fn ordered_findings(
+    statement: &Expression,
+    found: Vec<NameFinding>,
+) -> Vec<NameFinding> {
+    let mut distinct: Vec<NameFinding> = Vec::new();
     for finding in found {
         if !distinct.contains(&finding) {
             distinct.push(finding);

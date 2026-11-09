@@ -10,3 +10,8 @@ pub(crate) struct ResolvedReadTestCase {
     pub(crate) expected_sources: &'static [&'static str],
     pub(crate) expected_resolved: bool,
 }
+
+pub(crate) struct SingleAnalysisTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+}
