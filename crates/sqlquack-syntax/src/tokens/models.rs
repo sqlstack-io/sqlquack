@@ -1428,6 +1428,11 @@ pub struct Tokenizer {
 }
 
 impl Tokenizer {
+    /// Whether this tokenizer's block comments nest, as lossless trivia must read them.
+    pub fn nested_comments(&self) -> bool {
+        self.config.nested_comments
+    }
+
     /// Create a new tokenizer with the given configuration
     pub fn new(config: TokenizerConfig) -> Self {
         Self {
