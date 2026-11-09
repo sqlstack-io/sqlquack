@@ -17,7 +17,7 @@ use crate::conversion::_helpers::expressions::project_functions::{exact_argument
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
 use crate::conversion::_helpers::expressions::semi_structured::{guarded_column, path_steps};
 use crate::conversion::_helpers::queries::clauses::condition_sql;
-use crate::conversion::_helpers::queries::flatten::lateral_flatten;
+use crate::conversion::_helpers::queries::flatten::{FLATTEN_NAME, lateral_flatten};
 use crate::conversion::_helpers::queries::pivot::pivot_subquery;
 use crate::conversion::_helpers::queries::query::{NESTED_REPEAT, convert_query, repeated_name};
 use crate::conversion::_helpers::support::collecting::{
@@ -73,7 +73,7 @@ pub(crate) fn convert_from(
     let sources = list(from, "expressions");
     let separator = match sources
         .iter()
-        .any(|source| source.get(LATERAL_KEY).is_some())
+        .any(|source| lateral_payload(source).is_some())
     {
         true => " CROSS JOIN ",
         false => ", ",
@@ -81,13 +81,17 @@ pub(crate) fn convert_from(
     let mut sql = String::from(" FROM ");
     for (position, source) in sources.iter().enumerate() {
         let before = events();
-        if let Some(lateral) = source.get(LATERAL_KEY) {
+        let lateral = match position {
+            0 => source.get(LATERAL_KEY).cloned(),
+            _ => lateral_payload(source),
+        };
+        if let Some(lateral) = lateral {
             let flattened = match position {
                 0 => Err(missing(
                     node_construct(LATERAL_KEY),
                     "LATERAL as the first FROM source".to_owned(),
                 )),
-                _ => lateral_flatten(lateral, &relations, outer, context)
+                _ => lateral_flatten(&lateral, &relations, outer, context)
                     .map(|flattened| (flattened.sql, flattened.relation)),
             }
             .map_err(|refusal| context.locator.placed(refusal, source));
@@ -177,8 +181,8 @@ fn convert_join(
         .get("match_condition")
         .filter(|matching| !matching.is_null());
     let before = events();
-    if let (Some(lateral), "Implicit" | "Cross", None) = (source.get(LATERAL_KEY), kind, on) {
-        let flattened = lateral_flatten(lateral, earlier, outer, context)
+    if let (Some(lateral), "Implicit" | "Cross", None) = (lateral_payload(source), kind, on) {
+        let flattened = lateral_flatten(&lateral, earlier, outer, context)
             .map(|flattened| (flattened.sql, flattened.relation));
         return recovered(flattened, source, (before, earlier.len()));
     }
@@ -506,6 +510,28 @@ fn source_alias(source: &Value) -> Option<String> {
         "table" => alias.or_else(|| payload.get("name").and_then(identifier_name)),
         _ => alias,
     }
+}
+
+/// The LATERAL payload of `LATERAL f(...) alias` or `TABLE(FLATTEN(...)) alias`, correlated alike.
+fn lateral_payload(source: &Value) -> Option<Value> {
+    if let Some(lateral) = source.get(LATERAL_KEY) {
+        return Some(lateral.clone());
+    }
+    let ("alias", aliased) = node_kind(source)? else {
+        return None;
+    };
+    let call = table_call(aliased.get("this")?)?;
+    let flatten = call
+        .get("name")
+        .and_then(Value::as_str)
+        .is_some_and(|name| name.eq_ignore_ascii_case(FLATTEN_NAME));
+    let alias = identifier_name(aliased.get("alias")?)?;
+    let unlisted = aliased
+        .get("column_aliases")
+        .and_then(Value::as_array)
+        .is_none_or(Vec::is_empty);
+    (flatten && unlisted && alias == alias.to_ascii_uppercase())
+        .then(|| json!({ "this": { "function": call }, "alias": alias }))
 }
 
 fn lateral_subquery(source: &Value) -> bool {
