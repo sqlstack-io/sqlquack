@@ -5,7 +5,7 @@ use std::path::Path;
 
 use crate::results::constants::{
     BOUNDARY_SUBKINDS, OBLIGATION_CASES_PREFIX, OBLIGATION_FILE_EXTENSION, OBLIGATIONS_DIR,
-    RETIRED_OBLIGATIONS_FILE, TRANSLATION_CASES,
+    RELATIVE_PATH_PARTS, RETIRED_OBLIGATIONS_FILE, TRANSLATION_CASES,
 };
 use crate::results::models::{
     CaseFileHeader, ObligationKind, ObligationState, ObligationsFile, RecordedStatement,
@@ -87,7 +87,7 @@ pub(crate) fn load_obligations(
     }
 }
 
-/// Every cited case missing under `cases`, the `cases/` prefix stripped, or of another form.
+/// Every cited case outside, or missing under, `cases`, the `cases/` prefix stripped, or of another form.
 fn construct_problems(cases: &Path, obligations: &[TranslationObligation]) -> Vec<String> {
     let mut constructs: BTreeMap<&str, Result<String, String>> = BTreeMap::new();
     let mut problems: Vec<String> = Vec::new();
@@ -95,6 +95,16 @@ fn construct_problems(cases: &Path, obligations: &[TranslationObligation]) -> Ve
         for case in &obligation.cases {
             let file = case.split_once('#').map_or(case.as_str(), |(file, _)| file);
             let path = file.strip_prefix(OBLIGATION_CASES_PREFIX).unwrap_or(file);
+            if path
+                .split('/')
+                .any(|part| part.is_empty() || RELATIVE_PATH_PARTS.contains(&part))
+            {
+                problems.push(format!(
+                    "obligation {}: cites {case}, whose path has an empty, . or .. part",
+                    obligation.id
+                ));
+                continue;
+            }
             let construct = constructs
                 .entry(file)
                 .or_insert_with(|| case_construct(&cases.join(path)));
