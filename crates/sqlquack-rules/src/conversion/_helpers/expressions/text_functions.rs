@@ -2,6 +2,8 @@
 
 use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
+use sqlquack_core::failures::constants::INVALID_PARAMETER_VALUE;
+use sqlquack_core::failures::main::tagged_message::tagged_message;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
 use sqlquack_duckdb_blocks::blocks::main::cast::cast;
@@ -42,6 +44,13 @@ const TUPLE_KIND: &str = "tuple";
 const ILIKE_KIND: &str = "i_like";
 /// `\b`, an ASCII word boundary in both engines, as REGEXP_SUBSTR was recorded.
 const WORD_BOUNDARY_ESCAPE: char = 'b';
+/// `\b` as written in a pattern.
+const WORD_BOUNDARY: &str = "\\b";
+/// Where REGEXP_SUBSTR's parameters and group sit among the arguments after its pattern.
+const PARAMETERS_INDEX: usize = 2;
+const GROUP_INDEX: usize = 3;
+/// The start of Snowflake's message for a REGEXP_SUBSTR argument out of range.
+const INVALID_PARAMETER_MESSAGE: &str = "Invalid parameter value. Reason:";
 
 /// LPAD or RPAD: padded or cut to the length; an empty pad only cuts, as Snowflake documents.
 pub(crate) fn pad(
@@ -448,10 +457,20 @@ pub(crate) fn regexp(
         .map_err(|reason| refuse(&reason))?
         .then(|| log.rule(REGEXP_POSIX_SPACE));
     let pattern = string_literal(&pattern_text, log);
-    let mut literals: Vec<String> = Vec::with_capacity(rest.len());
+    let mut emitted: Vec<Emitted> = Vec::with_capacity(rest.len());
     for argument in rest {
-        let emitted = convert_expression(argument, site)?;
-        match emitted.literal {
+        emitted.push(convert_expression(argument, site)?);
+    }
+    let computed = emitted
+        .iter()
+        .enumerate()
+        .any(|(index, argument)| index != PARAMETERS_INDEX && argument.literal.is_none());
+    if computed && matches!(name, "REGEXP_SUBSTR") {
+        return regexp_substr_computed(&text, &pattern_text, &emitted, (construct, site));
+    }
+    let mut literals: Vec<String> = Vec::with_capacity(rest.len());
+    for argument in emitted {
+        match argument.literal {
             Some(Literal::Text(text) | Literal::Number(text)) => literals.push(text),
             None => return Err(refuse("a REGEXP argument other than a literal")),
         }
@@ -589,6 +608,118 @@ pub(crate) fn regexp(
         _ => sql,
     };
     Ok(Emitted::new(sql, data_type))
+}
+
+/// REGEXP_SUBSTR whose position, occurrence or group is computed, read as A's receipts record.
+fn regexp_substr_computed(
+    text: &str,
+    pattern_text: &str,
+    arguments: &[Emitted],
+    (construct, site): (&Construct, Site<'_>),
+) -> Result<Emitted, Refusal> {
+    let refuse = |reason: &str| outside_conditions(construct.clone(), reason.to_owned());
+    let log = site.context.log;
+    let integer = |argument: Option<&Emitted>| match argument {
+        None => Ok("1".to_owned()),
+        Some(argument) => match argument.data_type {
+            SnowflakeType::Number { scale: 0, .. } | SnowflakeType::Null => {
+                Ok(argument.sql.clone())
+            }
+            other => Err(refuse(&format!(
+                "a REGEXP_SUBSTR position, occurrence or group of {other}"
+            ))),
+        },
+    };
+    let position = integer(arguments.first())?;
+    let occurrence = integer(arguments.get(1))?;
+    let parameters = match arguments
+        .get(PARAMETERS_INDEX)
+        .map(|argument| &argument.literal)
+    {
+        None => String::new(),
+        Some(Some(Literal::Text(parameters))) => parameters.clone(),
+        Some(_) => return Err(refuse("REGEXP_SUBSTR parameters other than a text literal")),
+    };
+    let flags = extracting_flags(&parameters)
+        .ok_or_else(|| refuse("REGEXP_SUBSTR parameters other than c, e, i, m and s"))?;
+    let group = match arguments.get(GROUP_INDEX) {
+        Some(group) => integer(Some(group))?,
+        None if parameters.contains('e') => "1".to_owned(),
+        None => "0".to_owned(),
+    };
+    let starts_later = arguments.first().is_some_and(
+        |position| !matches!(&position.literal, Some(Literal::Number(one)) if one == "1"),
+    );
+    if starts_later && pattern_text.contains(WORD_BOUNDARY) {
+        return Err(refuse(
+            "a word boundary after a start position, which no recording shows",
+        ));
+    }
+    let _parameters = (!flags.is_empty()).then(|| log.rule(REGEXP_PARAMETERS));
+    let pattern = string_literal(&format!("{flags}{}", greedy(pattern_text)), log);
+    let groups = capture_groups(pattern_text);
+    let extracted: Vec<String> = (0..=groups)
+        .map(|index| {
+            format!(
+                "WHEN {index} THEN regexp_extract_all(u, {pattern}, {index})\
+                 [CAST(least(r['o'], length(u) + 2) AS BIGINT)]"
+            )
+        })
+        .collect();
+    let raise = |reason: &str| {
+        raised(&tagged_message(
+            INVALID_PARAMETER_VALUE,
+            &format!("{INVALID_PARAMETER_MESSAGE} {reason}"),
+        ))
+    };
+    let empty_match = empty_match_guard("REGEXP_SUBSTR", &pattern, (construct, site))?;
+    Ok(Emitted::new(
+        format!(
+            "list_transform([struct_pack(t := {text}, p := {position}, o := {occurrence}, \
+             g := {group})], lambda r: CASE WHEN {empty_match} THEN CAST(NULL AS VARCHAR) \
+             WHEN r['t'] IS NULL OR r['p'] IS NULL \
+             OR r['o'] IS NULL OR r['g'] IS NULL THEN NULL \
+             WHEN r['p'] < 1 THEN CAST({} AS VARCHAR) WHEN r['o'] < 1 THEN CAST({} AS VARCHAR) \
+             WHEN r['g'] < 0 THEN CAST({} AS VARCHAR) \
+             ELSE list_transform([substr(r['t'], CAST(least(r['p'], length(r['t']) + 1) AS BIGINT))], \
+             lambda u: CASE CAST(least(r['g'], {}) AS BIGINT) {} ELSE NULL END)[1] END)[1]",
+            raise("Position must be positive"),
+            raise("Occurrence must be positive"),
+            raise("Capture group must be non-negative"),
+            groups + 1,
+            extracted.join(" ")
+        ),
+        SnowflakeType::Varchar,
+    ))
+}
+
+/// The capturing groups of a pattern `shared_pattern` accepted, which has no group modifiers.
+fn capture_groups(pattern: &str) -> usize {
+    let mut characters = pattern.chars().peekable();
+    let (mut groups, mut in_bracket) = (0, false);
+    while let Some(character) = characters.next() {
+        match character {
+            '\\' => {
+                characters.next();
+            }
+            '[' if !in_bracket => {
+                in_bracket = true;
+                characters.next_if_eq(&'^');
+                characters.next_if_eq(&']');
+            }
+            '[' if characters.peek() == Some(&':') => {
+                while let Some(class) = characters.next() {
+                    if class == ':' && characters.next_if_eq(&']').is_some() {
+                        break;
+                    }
+                }
+            }
+            ']' => in_bracket = false,
+            '(' if !in_bracket => groups += 1,
+            _ => {}
+        }
+    }
+    groups
 }
 
 /// A condition raising regexp_pattern_syntax where the pattern matches empty text; FALSE otherwise.
