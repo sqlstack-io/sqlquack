@@ -6,7 +6,7 @@ use std::rc::Rc;
 use sqlquack_syntax::{DataType, Expression};
 
 use crate::lineage::main::rendered_type::rendered_type;
-use crate::lineage::models::{CteAliasWidth, Engine, Nullability, OutputReach, QualifierTargets};
+use crate::lineage::models::{Engine, Nullability};
 use crate::lineage::models::{
     Lineage, LineageContext, NullabilityRule, SchemaColumn, SourceColumn,
 };
@@ -64,8 +64,11 @@ pub(crate) trait DialectRules: Sync {
     /// Whether lineage keeps to the name rules, leaving out the scope, type and set-operation ones.
     fn checks_names_only(&self) -> bool;
 
-    /// Which output names of a SELECT its own clauses may read.
-    fn output_reach(&self) -> OutputReach;
+    /// Whether every clause of a SELECT, its select list too, may read the outputs named in it.
+    fn outputs_read_anywhere(&self) -> bool;
+
+    /// Where outputs are not read anywhere, whether GROUP BY keys may read them as ORDER BY keys do.
+    fn group_keys_read_outputs(&self) -> bool;
 
     /// Whether calls are checked against the signatures of the functions they name.
     fn checks_call_signatures(&self) -> bool;
@@ -73,8 +76,8 @@ pub(crate) trait DialectRules: Sync {
     /// Whether set operations check only that their branches return as many columns.
     fn checks_set_widths_only(&self) -> bool;
 
-    /// How a CTE's column aliases must match the columns its query returns.
-    fn cte_alias_width(&self) -> CteAliasWidth;
+    /// Whether a CTE with `aliases` column aliases over a query of `outputs` columns is refused.
+    fn refuses_cte_alias_count(&self, aliases: usize, outputs: usize) -> bool;
 
     /// Whether GROUP BY expressions match the expressions they group whatever their keyword case.
     fn groups_match_caselessly(&self) -> bool;
@@ -142,8 +145,11 @@ pub(crate) trait DialectRules: Sync {
     /// Whether an unknown column's message names a FROM item that is no stored table by its alias.
     fn messages_name_unstored_items_by_alias(&self) -> bool;
 
-    /// What a column's qualifier may name besides the FROM items that offer the column.
-    fn qualifier_targets(&self) -> QualifierTargets;
+    /// Whether a qualifier may name any name in reach: outputs, CTEs, aliases and lambda parameters.
+    fn qualifiers_reach_every_name(&self) -> bool;
+
+    /// Whether a qualifier names a FROM item only by its name or its table function's name.
+    fn qualifiers_name_items_by_name(&self) -> bool;
 
     /// The dialect's own pseudo-columns, which no relation lists.
     fn pseudo_columns(&self) -> &'static [&'static str];

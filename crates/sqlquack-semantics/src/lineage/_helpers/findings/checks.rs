@@ -19,8 +19,8 @@ use crate::lineage::constants::{
 use crate::lineage::constants::{
     METADATA_PREFIX, POSITIONAL_PREFIX, SEQUENCE_COLUMNS, SINGLE_JOIN_SOURCES, SQL_STAR,
 };
+use crate::lineage::models::NameFinding;
 use crate::lineage::models::{LineageContext, LineageScope, NamedQuery, ScopeSource};
-use crate::lineage::models::{NameFinding, QualifierTargets};
 
 /// The level a clause is read in: its scope, the aliases it may read, CONNECT BY and filter joins.
 #[derive(Clone, Copy)]
@@ -206,9 +206,9 @@ fn qualified_finding(
         }
         scope = current.outer;
     }
-    let no_relation: bool = match dialect_rules(context.profile).qualifier_targets() {
-        QualifierTargets::AnyName => clickhouse_no_relation(&alias, (level, bound), context),
-        targets => definitely_no_relation(&alias, (level, targets), context),
+    let no_relation: bool = match dialect_rules(context.profile).qualifiers_reach_every_name() {
+        true => clickhouse_no_relation(&alias, (level, bound), context),
+        false => definitely_no_relation(&alias, level, context),
     };
     if !no_relation {
         return None;
@@ -224,12 +224,8 @@ fn qualified_finding(
 }
 
 /// Whether a qualifier names nothing: where it names items, only item names and struct columns.
-fn definitely_no_relation(
-    alias: &str,
-    (level, targets): (&Level<'_, '_>, QualifierTargets),
-    context: LineageContext<'_>,
-) -> bool {
-    let by_name: bool = targets == QualifierTargets::ItemNames;
+fn definitely_no_relation(alias: &str, level: &Level<'_, '_>, context: LineageContext<'_>) -> bool {
+    let by_name: bool = dialect_rules(context.profile).qualifiers_name_items_by_name();
     let mut scope: Option<&LineageScope<'_>> = Some(level.scope);
     while let Some(current) = scope {
         if current.sources.iter().any(|source| {

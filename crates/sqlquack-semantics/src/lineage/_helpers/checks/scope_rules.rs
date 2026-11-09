@@ -17,7 +17,6 @@ use crate::lineage::constants::{
     BIGQUERY_WINDOW_ONLY_FUNCTIONS, NAME_FIELD, SCOPE_PHASE, SHAPE_COMMENT_SUFFIX,
     SHAPE_COSMETIC_FIELDS, SPAN_FIELD,
 };
-use crate::lineage::models::CteAliasWidth;
 use crate::lineage::models::Engine;
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding, ScopeSource};
 use crate::lineage::types::DialectRules;
@@ -275,11 +274,7 @@ fn structure_rules(
     if let Some(with) = &select.with {
         let mut names: HashSet<String> = HashSet::new();
         for cte in &with.ctes {
-            let mismatched = |width: usize| match rules.cte_alias_width() {
-                CteAliasWidth::Exact => width != cte.columns.len(),
-                CteAliasWidth::AtMost => width < cte.columns.len(),
-                CteAliasWidth::Unchecked => false,
-            };
+            let mismatched = |width: usize| rules.refuses_cte_alias_count(cte.columns.len(), width);
             if !cte.columns.is_empty() && output_width(&cte.this).is_some_and(mismatched) {
                 findings.push(rule(
                     "E223",

@@ -24,8 +24,9 @@ use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::tracing::reuse::{Reuse, reusing};
 use crate::lineage::constants::COLUMNS_FUNCTION;
 use crate::lineage::models::Engine;
+use crate::lineage::models::NameFinding;
 use crate::lineage::models::{LineageContext, LineageScope, NamedQuery};
-use crate::lineage::models::{NameFinding, OutputReach};
+use crate::lineage::types::DialectRules;
 
 /// The findings of `query` and its inner queries; `aliases` are enclosing levels' output aliases.
 pub(crate) fn query_findings(
@@ -221,7 +222,8 @@ fn select_findings(
     let mut own: Vec<NameFinding> = alias_count_findings(select, &scope, context);
     own.extend(using_findings(select, &scope, context));
     let postgres: bool = Engine::of(context) == Engine::Postgres;
-    let reach: OutputReach = dialect_rules(context.profile).output_reach();
+    let rules: &dyn DialectRules = dialect_rules(context.profile);
+    let anywhere: bool = rules.outputs_read_anywhere();
     for item in from_items(select) {
         let reads: Option<&LineageScope<'_>> = lateral(item).then_some(&scope);
         let body: Vec<NameFinding> =
@@ -270,9 +272,9 @@ fn select_findings(
         let (found, inner) = clause_findings(
             projection,
             &Level {
-                outputs: match reach {
-                    OutputReach::Anywhere => &others,
-                    OutputReach::OutputNamePlaces | OutputReach::OrderedNamePlaces => &unnamed,
+                outputs: match anywhere {
+                    true => &others,
+                    false => &unnamed,
                 },
                 ..level
             },
@@ -283,11 +285,12 @@ fn select_findings(
     }
     let own_outputs: Vec<String> = aliased_outputs(select, context);
     for clause in clauses(select) {
-        let outputs: &[String] = match reach {
-            OutputReach::Anywhere => level.outputs,
-            OutputReach::OutputNamePlaces if output_name_place(select, clause) => &own_outputs,
-            OutputReach::OrderedNamePlaces if ordered_name_place(select, clause) => &own_outputs,
-            OutputReach::OutputNamePlaces | OutputReach::OrderedNamePlaces => &unnamed,
+        let named_place: bool = ordered_name_place(select, clause)
+            || (rules.group_keys_read_outputs() && group_key_place(select, clause));
+        let outputs: &[String] = match (anywhere, named_place) {
+            (true, _) => level.outputs,
+            (false, true) => &own_outputs,
+            (false, false) => &unnamed,
         };
         let (found, inner) = clause_findings(clause, &Level { outputs, ..level }, context);
         own.extend(found);
@@ -318,17 +321,16 @@ fn aliased_outputs(select: &Select, context: LineageContext<'_>) -> Vec<String> 
         .collect()
 }
 
-/// Where PostgreSQL reads output names: GROUP BY items and ORDER BY keys that are a bare name.
-fn output_name_place(select: &Select, clause: &Expression) -> bool {
+/// Whether `clause` is a GROUP BY item of `select`.
+fn group_key_place(select: &Select, clause: &Expression) -> bool {
     select
         .group_by
         .iter()
         .flat_map(|group| &group.expressions)
         .any(|candidate| std::ptr::eq(candidate, clause))
-        || ordered_name_place(select, clause)
 }
 
-/// Where SQL Server reads output names: ORDER BY keys that are a bare name.
+/// Whether `clause` is an ORDER BY key of `select` that is a bare name.
 fn ordered_name_place(select: &Select, clause: &Expression) -> bool {
     let mut bare: &Expression = unannotated(clause);
     while let Expression::Paren(paren) = bare {

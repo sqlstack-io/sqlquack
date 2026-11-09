@@ -250,8 +250,12 @@ impl DialectRules for SharedRules {
         false
     }
 
-    fn output_reach(&self) -> OutputReach {
-        OutputReach::Anywhere
+    fn outputs_read_anywhere(&self) -> bool {
+        true
+    }
+
+    fn group_keys_read_outputs(&self) -> bool {
+        false
     }
 
     fn checks_call_signatures(&self) -> bool {
@@ -262,8 +266,8 @@ impl DialectRules for SharedRules {
         false
     }
 
-    fn cte_alias_width(&self) -> CteAliasWidth {
-        CteAliasWidth::Unchecked
+    fn refuses_cte_alias_count(&self, _aliases: usize, _outputs: usize) -> bool {
+        false
     }
 
     fn groups_match_caselessly(&self) -> bool {
@@ -354,8 +358,12 @@ impl DialectRules for SharedRules {
         false
     }
 
-    fn qualifier_targets(&self) -> QualifierTargets {
-        QualifierTargets::OpenItems
+    fn qualifiers_reach_every_name(&self) -> bool {
+        false
+    }
+
+    fn qualifiers_name_items_by_name(&self) -> bool {
+        false
     }
 
     fn pseudo_columns(&self) -> &'static [&'static str] {
@@ -389,39 +397,6 @@ pub(crate) enum Engine {
     BigQuery,
     /// Databricks SQL, coercions not recorded: no type findings, only scope and name rules.
     Databricks,
-}
-
-/// How a CTE's column aliases must match the columns its query returns.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum CteAliasWidth {
-    /// Any number of aliases.
-    Unchecked,
-    /// One alias per column.
-    Exact,
-    /// No more aliases than columns.
-    AtMost,
-}
-
-/// What a column's qualifier may name besides the FROM items that offer the column.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum QualifierTargets {
-    /// A FROM item by its name or its table function's name, or an unnamed item.
-    ItemNames,
-    /// Any FROM item lineage cannot judge, or an unnamed one.
-    OpenItems,
-    /// Any name in reach: outputs, CTEs, aliases, lambda parameters and FROM items.
-    AnyName,
-}
-
-/// Which output names of a SELECT its own clauses may read.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum OutputReach {
-    /// Every clause, the select list included, may read the outputs named before it.
-    Anywhere,
-    /// Only the clauses that take output names; the select list reads none of its siblings.
-    OutputNamePlaces,
-    /// Only the places an ordering takes output names; the select list reads none of its siblings.
-    OrderedNamePlaces,
 }
 
 /// A type's family, the class the type checks compare.

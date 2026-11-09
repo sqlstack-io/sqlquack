@@ -12,7 +12,7 @@ use crate::clickhouse::profile::constants::CLICKHOUSE_TIMESTAMP_TYPE;
 use crate::dialects::types::DialectProfile;
 use crate::lineage::constants::{DATE_PART_FUNCTIONS, SNOWFLAKE_VALUES_COLUMN};
 use crate::lineage::main::rendered_type::rendered_type;
-use crate::lineage::models::{CteAliasWidth, Engine, OutputReach, QualifierTargets};
+use crate::lineage::models::Engine;
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -64,8 +64,12 @@ impl DialectRules for ClickHouseRules {
         true
     }
 
-    fn output_reach(&self) -> OutputReach {
-        OutputReach::Anywhere
+    fn outputs_read_anywhere(&self) -> bool {
+        true
+    }
+
+    fn group_keys_read_outputs(&self) -> bool {
+        false
     }
 
     fn checks_call_signatures(&self) -> bool {
@@ -76,8 +80,8 @@ impl DialectRules for ClickHouseRules {
         false
     }
 
-    fn cte_alias_width(&self) -> CteAliasWidth {
-        CteAliasWidth::Unchecked
+    fn refuses_cte_alias_count(&self, _aliases: usize, _outputs: usize) -> bool {
+        false
     }
 
     fn groups_match_caselessly(&self) -> bool {
@@ -168,8 +172,12 @@ impl DialectRules for ClickHouseRules {
         false
     }
 
-    fn qualifier_targets(&self) -> QualifierTargets {
-        QualifierTargets::AnyName
+    fn qualifiers_reach_every_name(&self) -> bool {
+        true
+    }
+
+    fn qualifiers_name_items_by_name(&self) -> bool {
+        false
     }
 
     fn pseudo_columns(&self) -> &'static [&'static str] {

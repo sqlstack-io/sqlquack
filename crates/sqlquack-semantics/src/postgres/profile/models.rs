@@ -6,7 +6,7 @@ use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::dialects::types::DialectProfile;
 use crate::lineage::constants::{DATE_PART_FUNCTIONS, SNOWFLAKE_VALUES_COLUMN};
-use crate::lineage::models::{CteAliasWidth, Engine, OutputReach, QualifierTargets};
+use crate::lineage::models::Engine;
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -55,8 +55,12 @@ impl DialectRules for PostgresRules {
         false
     }
 
-    fn output_reach(&self) -> OutputReach {
-        OutputReach::OutputNamePlaces
+    fn outputs_read_anywhere(&self) -> bool {
+        false
+    }
+
+    fn group_keys_read_outputs(&self) -> bool {
+        true
     }
 
     fn checks_call_signatures(&self) -> bool {
@@ -67,8 +71,8 @@ impl DialectRules for PostgresRules {
         false
     }
 
-    fn cte_alias_width(&self) -> CteAliasWidth {
-        CteAliasWidth::AtMost
+    fn refuses_cte_alias_count(&self, aliases: usize, outputs: usize) -> bool {
+        aliases > outputs
     }
 
     fn groups_match_caselessly(&self) -> bool {
@@ -159,8 +163,12 @@ impl DialectRules for PostgresRules {
         false
     }
 
-    fn qualifier_targets(&self) -> QualifierTargets {
-        QualifierTargets::OpenItems
+    fn qualifiers_reach_every_name(&self) -> bool {
+        false
+    }
+
+    fn qualifiers_name_items_by_name(&self) -> bool {
+        false
     }
 
     fn pseudo_columns(&self) -> &'static [&'static str] {
