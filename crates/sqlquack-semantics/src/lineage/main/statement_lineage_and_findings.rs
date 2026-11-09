@@ -4,11 +4,10 @@ use sqlquack_syntax::Expression;
 
 use crate::lineage::_helpers::findings::statement::{analysed_findings, ordered_findings};
 use crate::lineage::_helpers::tracing::reuse::{Analysis, analysing};
-use crate::lineage::main::statement_lineage::analysed_lineage;
+use crate::lineage::_helpers::tracing::statement::analysed_lineage;
 use crate::lineage::models::{LineageContext, NameFinding, QueryLineage};
 
-/// `statement_lineage` and `statement_name_findings` of `statement` from one analysis, so the
-/// lineage reads the CTEs the findings walk already resolved.
+/// `statement_lineage` and `statement_name_findings` of `statement`, from one analysis.
 pub fn statement_lineage_and_findings(
     statement: &Expression,
     context: LineageContext<'_>,

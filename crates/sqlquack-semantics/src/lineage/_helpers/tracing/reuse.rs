@@ -186,8 +186,7 @@ pub(crate) fn kept_reach(with: &With, ctes: &[NamedQuery]) -> Option<Rc<[NamedQu
     .flatten()
 }
 
-/// `reach`, the list `with` gives over `ctes`, kept for the analysis when `ctes` is settled; a list
-/// kept already has the same contents and stays, so no kept address is ever freed.
+/// `reach`, the list `with` gives over `ctes`, kept for the analysis once `ctes` is settled.
 pub(crate) fn keep_reach<'a>(
     with: &With,
     ctes: &[NamedQuery],
@@ -208,8 +207,7 @@ pub(crate) fn keep_reach<'a>(
     Reach::Kept(shared)
 }
 
-/// `query` resolved with `ctes` and no enclosing level: kept from earlier when a walk keeps `ctes`,
-/// or for the whole analysis when `ctes` is settled.
+/// `query` resolved with `ctes` and no enclosing level, kept while `ctes` is kept or settled.
 pub(crate) fn reused(
     query: &Expression,
     ctes: &[NamedQuery],
