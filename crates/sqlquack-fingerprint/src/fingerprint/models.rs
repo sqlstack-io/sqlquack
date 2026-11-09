@@ -22,7 +22,7 @@ pub enum FingerprintDialect {
 }
 
 impl FingerprintDialect {
-    /// The dialect named `name`: `generic`, `bigquery`, `duckdb`, `postgres`, `postgresql`, `snowflake`, `sqlite`, `sqlserver` or `tsql`.
+    /// The dialect named `name`: `generic`, `bigquery`, `duckdb`, `postgres`, `postgresql`, `snowflake`, `sqlite`, `sqlserver`, `tsql` or `mssql`.
     pub fn from_name(name: &str) -> Result<Self, FingerprintError> {
         match name {
             "generic" => Ok(Self::Generic),
@@ -31,7 +31,7 @@ impl FingerprintDialect {
             "postgres" | "postgresql" => Ok(Self::PostgreSQL),
             "snowflake" => Ok(Self::Snowflake),
             "sqlite" => Ok(Self::SQLite),
-            "sqlserver" | "tsql" => Ok(Self::SqlServer),
+            "sqlserver" | "tsql" | "mssql" => Ok(Self::SqlServer),
             _ => Err(FingerprintError::UnknownDialect(name.to_owned())),
         }
     }

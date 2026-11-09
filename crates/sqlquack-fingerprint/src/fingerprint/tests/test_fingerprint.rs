@@ -416,6 +416,11 @@ fn given_dialect_names_when_resolved_then_each_spelling_names_its_dialect() {
             expected_dialect: Ok(FingerprintDialect::SqlServer),
         },
         DialectNameTestCase {
+            description: "SQL Server by its other short name",
+            name: "mssql",
+            expected_dialect: Ok(FingerprintDialect::SqlServer),
+        },
+        DialectNameTestCase {
             description: "SQL Server by its own name",
             name: "sqlserver",
             expected_dialect: Ok(FingerprintDialect::SqlServer),
