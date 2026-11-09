@@ -501,7 +501,7 @@ fn given_a_select_list_when_parsing_snowflake_then_it_needs_an_item_and_top_need
 }
 
 #[test]
-fn given_auditor_tree_findings_when_parsing_faithfully_then_the_tree_records_what_was_written() {
+fn given_reviewed_tree_findings_when_parsing_faithfully_then_the_tree_records_what_was_written() {
     let test_cases = [
         ProjectionTestCase {
             description: "DATEDIFF's date part is a date part, not a column",
