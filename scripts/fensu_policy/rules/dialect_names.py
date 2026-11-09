@@ -24,7 +24,8 @@ from scripts.fensu_policy.models import SourceLine
     remediation=(
         "Add a method to the dialect profile that answers the question the comparison stands "
         "for, answer it in each src/<dialect>/ profile, and call it here instead of reading "
-        "`profile.name()` or a `<DIALECT>_PROFILE` name."
+        "a profile's name (`<receiver>profile.name()` or `DialectProfile::name(...)`) or a "
+        "`<DIALECT>_PROFILE` name."
     ),
     analyzers=(AnalyzerId.RUST,),
     cacheable=False,

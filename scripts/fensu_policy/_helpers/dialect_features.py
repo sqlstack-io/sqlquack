@@ -26,7 +26,7 @@ from scripts.fensu_policy.constants import (
     MODULE_DECLARATION,
     NESTED_PATH_PARTS,
     OPTIONAL_KEY,
-    PROFILE_NAME_CALL,
+    PROFILE_NAME_CALLS,
     RUST_SUFFIX,
     SOURCE_ROOT,
     WEAK_FEATURE_MARK,
@@ -192,16 +192,16 @@ def shared_dialect_lines(
 
 
 def dialect_name_lines(*, source: str, dialects: tuple[str, ...]) -> tuple[SourceLine, ...]:
-    """Return the lines that read a profile's name or use a dialect's `<DIALECT>_PROFILE` name."""
+    """Return each line where a match starts across the whole code, so split chains are found."""
     constant: re.Pattern[str] = re.compile(
         DIALECT_PROFILE_CONSTANT.format(
             dialects="|".join(re.escape(dialect.upper()) for dialect in dialects)
         )
     )
     raw_lines: list[str] = strip_comments(source=source).splitlines()
-    code_lines: list[str] = strip_comments_and_strings(source=source).splitlines()
-    return tuple(
-        SourceLine(line=number, text=raw.strip())
-        for number, (raw, code) in enumerate(zip(raw_lines, code_lines, strict=True), start=1)
-        if PROFILE_NAME_CALL.search(code) or constant.search(code)
-    )
+    code: str = strip_comments_and_strings(source=source)
+    starts: set[int] = set()
+    for pattern in (*PROFILE_NAME_CALLS, constant):
+        starts.update(match.start() for match in pattern.finditer(code))
+    numbers: list[int] = sorted({code.count("\n", 0, start) + 1 for start in starts})
+    return tuple(SourceLine(line=number, text=raw_lines[number - 1].strip()) for number in numbers)

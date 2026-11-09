@@ -52,6 +52,22 @@ NAME_RULE_CONFIG: str = (
             (1, 2),
         ),
         DialectNameLinesTestCase(
+            "a receiver whose name ends in profile fails, called or not",
+            "let left = source_profile.name();\nlet right = target_profile().name();\n",
+            (1, 2),
+        ),
+        DialectNameLinesTestCase(
+            "a chain the formatter splits fails on the line the profile starts",
+            "let engine = level\n    .context\n    .profile\n    .name()\n    == DUCKDB;\n"
+            "let other = target_profile()\n    .name();\n",
+            (3, 6),
+        ),
+        DialectNameLinesTestCase(
+            "the trait's name called as a path fails",
+            "let name = DialectProfile::name(profile);\nlet split = DialectProfile::\n    name(p);\n",
+            (1, 2),
+        ),
+        DialectNameLinesTestCase(
             "asking the profile a question passes",
             "if context.profile.folds_unquoted_to_upper() {\n"
             "    context.profile.resolved_identifier(name, false)\n}\n",
