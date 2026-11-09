@@ -340,6 +340,7 @@ pub enum ParserTokenText {
 impl Deref for ParserTokenText {
     type Target = str;
 
+    #[inline]
     fn deref(&self) -> &Self::Target {
         match self {
             Self::Source { source, start, end } => &source[*start..*end],
@@ -355,12 +356,14 @@ impl fmt::Display for ParserTokenText {
 }
 
 impl PartialEq<str> for ParserTokenText {
+    #[inline]
     fn eq(&self, other: &str) -> bool {
         self.deref() == other
     }
 }
 
 impl PartialEq<&str> for ParserTokenText {
+    #[inline]
     fn eq(&self, other: &&str) -> bool {
         self.deref() == *other
     }
@@ -376,10 +379,12 @@ pub struct ParserToken {
 }
 
 impl ParserToken {
+    #[inline]
     pub fn text(&self) -> &str {
         &self.text
     }
 
+    #[inline]
     pub fn text_owned(&self) -> String {
         self.text.to_string()
     }
