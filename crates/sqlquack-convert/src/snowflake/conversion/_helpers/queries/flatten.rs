@@ -31,7 +31,7 @@ use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
 use sqlquack_semantics::snowflake::types::models::{ColumnSpec, Holding};
 
 /// The name of the table function LATERAL converts.
-const FLATTEN_NAME: &str = "FLATTEN";
+pub(crate) const FLATTEN_NAME: &str = "FLATTEN";
 
 /// A converted LATERAL FLATTEN: its join text and the relation it brings into scope.
 pub(crate) struct Flattened {

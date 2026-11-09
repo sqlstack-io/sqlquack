@@ -28,7 +28,6 @@ use sqlquack_syntax::tokens::models::SourceLocation;
 use crate::analysis::main::check_equivalence_cases::check_equivalence_cases;
 use crate::analysis::main::check_source::check_source;
 use crate::analysis::main::collect_all_refusals::collect_all_refusals;
-use crate::analysis::main::confirm_assumption::confirm_assumption;
 use crate::analysis::main::refused_construct::refused_construct;
 use crate::analysis::main::with_helpers::with_helpers;
 use crate::analysis::models::PipelineConverter;
@@ -41,6 +40,7 @@ use crate::cli::models::{
 };
 use sqlquack_convert::snowflake::analysis::main::analyze::analyze;
 use sqlquack_convert::snowflake::analysis::main::analyze_function::analyze_function;
+use sqlquack_convert::snowflake::analysis::main::confirm_assumption::confirm_assumption;
 use sqlquack_convert::snowflake::session::main::confirm_utc_session::confirm_utc_session;
 use sqlquack_convert::snowflake::session::main::conversion_options::conversion_options;
 

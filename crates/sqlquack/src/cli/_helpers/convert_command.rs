@@ -22,14 +22,13 @@ use sqlquack_policy::policy::models::{DivergenceFailure, Policy};
 use sqlquack_semantics::snowflake::types::models::Schema;
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::analysis::main::assumption_id::assumption_id;
 use crate::analysis::main::check_source::check_source;
 use crate::analysis::main::override_macros::override_macros;
 use crate::analysis::main::python_functions::python_functions;
 use crate::analysis::main::refused_construct::refused_construct;
 use crate::analysis::main::with_helpers::with_helpers;
 use crate::analysis::main::with_overrides::with_overrides;
-use crate::cli::_helpers::evidence::caller_choices;
+use crate::cli::_helpers::evidence::conversion_choices;
 use crate::cli::_helpers::project::project_choices;
 use crate::cli::models::{
     CheckArguments, CheckReport, ColorArguments, ConvertArguments, ConvertRefusal, ConvertReport,
@@ -39,10 +38,12 @@ use crate::cli::models::{
 use crate::run::main::run_query::run_query;
 use crate::run::models::RunInputs;
 use crate::terminal::main::highlight_sql::highlight_sql;
+use sqlquack_convert::snowflake::analysis::main::assumption_id::assumption_id;
+use sqlquack_convert::snowflake::analysis::main::caller_choices::caller_choices;
 use sqlquack_convert::snowflake::analysis::models::Analysis;
 
-use crate::cli::_helpers::evidence::with_divergence_help;
 use crate::cli::main::convert_report::convert_report;
+use sqlquack_convert::snowflake::analysis::main::with_divergence_help::with_divergence_help;
 
 /// The path naming standard input.
 const STDIN_PATH: &str = "-";
@@ -398,7 +399,7 @@ pub(crate) fn chosen_options(
     options: ConversionOptions,
 ) -> Result<ConversionOptions, String> {
     let options = match policy {
-        Some(policy) => caller_choices(options, policy, &arguments.conversion),
+        Some(policy) => caller_choices(options, policy, &conversion_choices(&arguments.conversion)),
         None if arguments.conversion.loud_divergences_only => {
             let mut options = options;
             options
@@ -489,7 +490,7 @@ pub(crate) fn analysis_report(
             .zip(with_divergence_help(
                 &analysis.refusals,
                 diagnose(&analysis.refusals, sql),
-                (policy, arguments, parameters),
+                (policy, &conversion_choices(arguments), parameters),
             ))
             .map(convert_refusal)
             .collect(),

@@ -151,6 +151,12 @@ pub const SQUARE_ROOT_OF_NEGATIVE: SnowflakeCode = SnowflakeCode {
     sqlstate: "22P01",
 };
 
+/// REGEXP_SUBSTR with a position or occurrence below 1, or a negative capture group.
+pub const INVALID_PARAMETER_VALUE: SnowflakeCode = SnowflakeCode {
+    errno: 100_050,
+    sqlstate: "22023",
+};
+
 /// Every Snowflake error the recordings hold, and its kind.
 pub const SNOWFLAKE_ERRORS: &[(SnowflakeCode, ErrorKind)] = &[
     (NUMBER_OUT_OF_RANGE, ErrorKind::NumericOverflow),
@@ -178,6 +184,7 @@ pub const SNOWFLAKE_ERRORS: &[(SnowflakeCode, ErrorKind)] = &[
     (HEX_DECODE_FAILED, ErrorKind::InvalidArgument),
     (SQUARE_ROOT_OF_NEGATIVE, ErrorKind::InvalidArgument),
     (UNKNOWN_TIME_ZONE, ErrorKind::InvalidArgument),
+    (INVALID_PARAMETER_VALUE, ErrorKind::InvalidArgument),
     (
         SnowflakeCode {
             errno: 1007,
@@ -261,6 +268,12 @@ pub const RANGE_STEP_FAILURES: &[FailureMode] = &[FailureMode {
 pub const HEX_DECODE_FAILURES: &[FailureMode] = &[FailureMode {
     kind: ErrorKind::InvalidArgument,
     snowflake: &[HEX_DECODE_FAILED],
+}];
+
+/// How REGEXP_SUBSTR fails for a position, occurrence or capture group out of range.
+pub const REGEXP_PARAMETER_FAILURES: &[FailureMode] = &[FailureMode {
+    kind: ErrorKind::InvalidArgument,
+    snowflake: &[INVALID_PARAMETER_VALUE],
 }];
 
 /// How CHR fails for a code point no character has.

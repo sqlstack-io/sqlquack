@@ -2271,8 +2271,8 @@ expect_repository = "translated"
 [[query]]
 category = "semi_structured"
 sql = '''SELECT ticket_id, f.value::STRING AS tag FROM tickets t, TABLE(FLATTEN(t.tags)) f'''
-expect = "refused SQ0002 fn:FLATTEN at 57..81"
-expect_repository = "refused SQ0002 fn:FLATTEN at 57..81"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
