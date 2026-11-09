@@ -369,7 +369,7 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
         },
         test_types::FormatSqlTestCase {
             description: "a SQL Server statement the parser keeps as opaque text is refused",
-            sql: "SELECT * FROM t TABLESAMPLE (10 PERCENT)",
+            sql: "SELECT * FROM t OPTION (MAXDOP 1)",
             line_width: None,
             dialect: FormatDialect::SqlServer,
             expected_outcome: Err(OPAQUE_STATEMENT_FAILURE),

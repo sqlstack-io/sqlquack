@@ -8,8 +8,8 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
     let test_cases = [test_types::FormatCorpusTestCase {
         description: "SQL Server identity corpus",
         dialect: "tsql",
-        expected_formatted: 60,
-        expected_refused: 15,
+        expected_formatted: 63,
+        expected_refused: 12,
         departures: &[
             Departure {
                 sql: "SELECT val FROM (VALUES ((TRUE), (FALSE), (NULL))) AS t(val)",
@@ -34,30 +34,6 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 ),
                 reason: "A set operation's ORDER BY puts its items on the next line, as in every other dialect and SQL Server's own `ORDER BY\\n  1`; SQLClean kept them on the ORDER BY line",
                 receipt: None,
-            },
-            Departure {
-                sql: "SELECT * FROM t TABLESAMPLE (10 PERCENT)",
-                formatted: None,
-                reason: "SQL Server accepts it; SQLQuack's parser keeps a TABLESAMPLE clause opaque (gap `tablesample`), so the formatter refuses rather than guess; SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT * FROM t TABLESAMPLE (20 ROWS)",
-                formatted: None,
-                reason: "SQL Server accepts it; SQLQuack's parser keeps a TABLESAMPLE clause opaque (gap `tablesample`), so the formatter refuses rather than guess; SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT * FROM t TABLESAMPLE (10 PERCENT) REPEATABLE (123)",
-                formatted: None,
-                reason: "SQL Server accepts it; SQLQuack's parser keeps a TABLESAMPLE clause opaque (gap `tablesample`), so the formatter refuses rather than guess; SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
             },
             Departure {
                 sql: "SELECT * FROM t WHERE NOT c",
