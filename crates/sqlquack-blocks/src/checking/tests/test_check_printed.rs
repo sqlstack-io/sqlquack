@@ -1,5 +1,5 @@
 use crate::checking::errors::CheckStage;
-use crate::checking::tests::helpers::{failed_stage, failed_stage_over, nested_union};
+use crate::checking::tests::helpers::{built_stage, failed_stage, failed_stage_over, nested_union};
 use crate::checking::tests::test_types::{CheckTestCase, RelationsTestCase};
 
 #[test]
@@ -83,7 +83,7 @@ fn given_printed_sql_when_duckdb_checks_it_then_only_one_bindable_statement_pass
     for test_case in test_cases {
         assert_eq!(
             failed_stage(&test_case.sql),
-            test_case.expected_stage,
+            built_stage(test_case.expected_stage),
             "{}",
             test_case.description
         );
@@ -107,7 +107,7 @@ fn given_a_relation_an_earlier_check_defined_when_a_later_check_lacks_it_then_it
     for test_case in test_cases {
         assert_eq!(
             failed_stage_over("SELECT \"ID\" FROM \"CUSTOMERS\"", test_case.relations),
-            test_case.expected_stage,
+            built_stage(test_case.expected_stage),
             "{}",
             test_case.description
         );

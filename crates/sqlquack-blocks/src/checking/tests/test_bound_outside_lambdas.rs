@@ -1,6 +1,6 @@
 use crate::checking::errors::CheckStage;
 use crate::checking::main::bound_outside_lambdas::bound_outside_lambdas;
-use crate::checking::tests::helpers::failed_stage;
+use crate::checking::tests::helpers::{built_stage, failed_stage};
 use crate::checking::tests::test_types::BindingTestCase;
 
 const LATEST: &str = "(SELECT max(\"PLACED\") FROM \"ORDERS\")";
@@ -90,7 +90,10 @@ fn given_a_subquery_in_a_lambda_body_when_bound_outside_lambdas_then_duckdb_bind
             |expression: &str| failed_stage(&format!("SELECT {expression} FROM \"ORDERS\""));
         assert_eq!(
             (checked(test_case.sql), checked(&printed)),
-            test_case.expected_stages,
+            (
+                built_stage(test_case.expected_stages.0),
+                built_stage(test_case.expected_stages.1)
+            ),
             "{}",
             test_case.description
         );
