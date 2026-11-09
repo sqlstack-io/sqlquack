@@ -1,0 +1,152 @@
+# Approved reviews. Each listed form was read in full against its
+# SQLite 3.54.1 documentation, its obligations, its cases with their SQLite 3.54.1 receipts, and the
+# local parse trees. An approval holds while the form's definition hash and fingerprint are unchanged;
+# any change makes it stale until re-read.
+
+[[review]]
+id = "sl-expressions-001"
+family = "expressions"
+parser_tree = "1cc1e8670f6a0f2987045786698eb71c2ba3e5ba"
+reviewed_utc = "2026-11-08T08:10:17Z"
+verdict = "approved"
+forms = [
+  "sl.expressions.aggregate-function-invocation",
+  "sl.expressions.comment-syntax.block",
+  "sl.expressions.comment-syntax.line",
+  "sl.expressions.datatype3.blob-affinity",
+  "sl.expressions.datatype3.built-in-collations",
+  "sl.expressions.datatype3.integer-affinity",
+  "sl.expressions.datatype3.numeric-affinity",
+  "sl.expressions.datatype3.real-affinity",
+  "sl.expressions.datatype3.text-affinity",
+  "sl.expressions.expr.between",
+  "sl.expressions.expr.binary",
+  "sl.expressions.expr.binary-operators",
+  "sl.expressions.expr.bind-parameter",
+  "sl.expressions.expr.case",
+  "sl.expressions.expr.cast",
+  "sl.expressions.expr.collate",
+  "sl.expressions.expr.column",
+  "sl.expressions.expr.exists",
+  "sl.expressions.expr.function",
+  "sl.expressions.expr.is",
+  "sl.expressions.expr.like",
+  "sl.expressions.expr.literal",
+  "sl.expressions.expr.null-test",
+  "sl.expressions.expr.parenthesized",
+  "sl.expressions.expr.string-and-blob-literals",
+  "sl.expressions.expr.unary",
+  "sl.expressions.expr.unary-operators",
+  "sl.expressions.filter-clause",
+  "sl.expressions.function-arguments",
+  "sl.expressions.json.arrow",
+  "sl.expressions.json.double-arrow",
+  "sl.expressions.literal-value",
+  "sl.expressions.numeric-literal.decimal",
+  "sl.expressions.numeric-literal.hexadecimal",
+  "sl.expressions.over-clause",
+  "sl.expressions.signed-number",
+  "sl.expressions.simple-function-invocation",
+  "sl.expressions.type-name",
+  "sl.expressions.window-function-invocation",
+]
+note = "Read against the pinned SQLite 3.54.1 documentation and parse.y, the obligations, the cases with their receipts and repeat, and the parse trees of the strict parser; every case was re-run independently on the pinned engine and every scored case agrees with its receipt."
+
+[review.fingerprints]
+"sl.expressions.aggregate-function-invocation" = "1d677427c2ba68f50f594c540c94cf9aa0c2243a11c2cfef35d27aecf993f254"
+"sl.expressions.comment-syntax.block" = "6768257bd0c190c88919240b16a30b654f64b815887ffe83784cd444975a75e2"
+"sl.expressions.comment-syntax.line" = "08e8f3b60c8148dd2124fe0baf18ba9e40f7012a6ab1e258a0d8b82b31f3938a"
+"sl.expressions.datatype3.blob-affinity" = "c117e155746514cb5d585cebecbceb976d591f8316add110af064c1b5693c543"
+"sl.expressions.datatype3.built-in-collations" = "34a1e9a4be3377e82b333aaf70bdf09f730b4f80d78ac41c39807132fc1fd049"
+"sl.expressions.datatype3.integer-affinity" = "dd49533c379cc6761dab916983359f05e0e1ef903d1d525a6d773e98b018de27"
+"sl.expressions.datatype3.numeric-affinity" = "f496e99e6e5d8f796a649db39b81e8750b9bee9b9097100f024ee482d7a7be17"
+"sl.expressions.datatype3.real-affinity" = "f9116761dba96f74e991f4afc32e01f8072445681aea827ce9aa4f338dc8f73d"
+"sl.expressions.datatype3.text-affinity" = "34ef5623bc642aca1ae83081c60ea03d299048b30ec134ba874d32b62294f37a"
+"sl.expressions.expr.between" = "5997ec44ed35e1da0e21f911a20976c9e93166476d2445b5e66bfff0cf0f0802"
+"sl.expressions.expr.binary" = "7d443ae1e86d7b129bb5e925389d37263da47a7ec950b121e1a4f916aceeb320"
+"sl.expressions.expr.binary-operators" = "977c9deb8db10658f475c7e33f6dfa95238d489ee2bf0c62171e28a7fde9fce8"
+"sl.expressions.expr.bind-parameter" = "20efaad3a1c977be08460a992be55a796e2213fb730e670b401fd82484f6b62f"
+"sl.expressions.expr.case" = "fcde3cd2d2b5d4f3a49e01ff8a03b5298d7d43c13cf5fe085afe65049212e929"
+"sl.expressions.expr.cast" = "173ff20f4af809122ade763c29e6f844391f94b8110225d040aaff9b3a22c9e6"
+"sl.expressions.expr.collate" = "bc5f636207f31db0559c00a856ab0c453b825b2ef7ab6bd4e9b5e0888ac4f493"
+"sl.expressions.expr.column" = "55f86b9ef9fe352730aa5139ec919489628278df36b9b646cb6093692d9e92e8"
+"sl.expressions.expr.exists" = "11c9ae3900d68247d8632493347a360ec893e58b1dec592bfabb4ef99027c38b"
+"sl.expressions.expr.function" = "114b3e4f6420f9092e788a87b5a7c7b14b4136476ffbe16afd175862f4f38eb1"
+"sl.expressions.expr.is" = "1348686098fa58b4f562a63a94f95f643a07d873257b80a67ac83b86bf873428"
+"sl.expressions.expr.like" = "58b1f5604b9d014dbe348f31889a7829fb759f6d47e7affe12e010a21d9944a3"
+"sl.expressions.expr.literal" = "d39e9a551011be3f1e6b1bfe730c5b4ce685cc416f2201dd0074953da07786f3"
+"sl.expressions.expr.null-test" = "175d8f0ba75f68282e6f417aa2de00948cc5efff2097f5ee286c331299fc51c7"
+"sl.expressions.expr.parenthesized" = "92f00c2fe273b43f31866a41d5df72c4c0903c40066e274cca57ce259f292844"
+"sl.expressions.expr.string-and-blob-literals" = "bb0dfdddf78c7ec55122723cb8a145aac8964975d416e5749fb12329b72ec408"
+"sl.expressions.expr.unary" = "12da3f38f4e795c1abf492ca59c0124f37841601f3c997a4947be98f1b5d81ff"
+"sl.expressions.expr.unary-operators" = "c461445d680b921f5127c8f52407ebdcb5e0f3b8bb79113ac708857a9a359081"
+"sl.expressions.filter-clause" = "eef0f44c6d061005e5c954ab2986780738005e7de178d6dead0120199cdc75e3"
+"sl.expressions.function-arguments" = "f5fe7c3222f8fd860e8d00b2883024f3d1946bcaaf2e14bb8603a471265140fa"
+"sl.expressions.json.arrow" = "c69ca973e7dc6f91bd2fce29477e98470a6ee9f1bfd2d58d7b331a4d39246cd2"
+"sl.expressions.json.double-arrow" = "6142714bff8f169c9d5978b53bb90ceac8720896f2ec4d88cbc7171e0bac4660"
+"sl.expressions.literal-value" = "ce1516dbdd836de2edb15419b2c8ac7ef8b7912a3d1a3da9a4a196409ece095f"
+"sl.expressions.numeric-literal.decimal" = "db78b5411dd790d03e4a3c3c62a6c7661e31fe5f15527b80fb60385c7e83b38e"
+"sl.expressions.numeric-literal.hexadecimal" = "0714527a925c3d70768a6b87fc354042f75720d4feca7c8ca8e93fa622de42bb"
+"sl.expressions.over-clause" = "0e897e69d6d1a3c065307d3802a25bc7d385f0398281925b0b810afa6d0571d1"
+"sl.expressions.signed-number" = "e5fd51e264b8e1b7c314ab81ff59f41990c40dcc7de56bd63779ef2dd363625b"
+"sl.expressions.simple-function-invocation" = "a392faf4275fefcbf15cb446919d5c7ae400997349d46611ed69d50dc0f0a98c"
+"sl.expressions.type-name" = "5a902e3e1f63c190e38a273a911e87993e410c6245aab2ca551b8a14e6d43880"
+"sl.expressions.window-function-invocation" = "4958c846fef8e355fec5483cacf6da43e3c20e61f3d25bba026aa0a7d88b63fb"
+
+[review.definitions]
+"sl.expressions.aggregate-function-invocation" = "7d5225a596d1b572feb39060bbea8c5fc38be6353a85445897deecc64a13ea05"
+"sl.expressions.comment-syntax.block" = "859373cf4f651eb1f3aa12b8b7cf2e57499c0534adf9cb9697849628ca6125a9"
+"sl.expressions.comment-syntax.line" = "e57929bd6b11083c948da523fcfe09fb353064211ea9663012a1c1734f7ac2fd"
+"sl.expressions.datatype3.blob-affinity" = "d9165717746167620284d9da025427482e5476b3079a2ffc5a3670b8f9c45a44"
+"sl.expressions.datatype3.built-in-collations" = "e2157a7ffdc01bada149b0e5a725cda35d09f0cd5049636dd99c2bb9530b4457"
+"sl.expressions.datatype3.integer-affinity" = "1cdd5c532b8086d74f5cbc00f098bd2fbb4ae625d6595b94887a09b0930e1375"
+"sl.expressions.datatype3.numeric-affinity" = "abc869086f643f8b8b73c3833f1367042a2cf7d6cbd80659604c1d5827213c90"
+"sl.expressions.datatype3.real-affinity" = "feba8b3327ae03988ef51e3ceebb093a206c4bb00875499e03ff0aba2be718bd"
+"sl.expressions.datatype3.text-affinity" = "9401f3a264dd34fd08efc0df47979eb50cb67a3a0c07b66a1514fe9ca0d0db05"
+"sl.expressions.expr.between" = "ecd5b16f5595c36e7d4b13ad39ec9a1239c93094ee19b904b0c2447d7db4624e"
+"sl.expressions.expr.binary" = "f020f8d68ac7fcb5c5881e9308643d85d34fb85772e149d32433733e6fe03471"
+"sl.expressions.expr.binary-operators" = "667c75a079b1b0ba47726c3d973bc3dc11226fccefc61bc93d7db725b1917dd2"
+"sl.expressions.expr.bind-parameter" = "05977e37d54508ef9470139665b740d0823e9eab17e9bbd8e4d1a92bc7292060"
+"sl.expressions.expr.case" = "368986e1788f8b6659a41636ca6d52863c03ebf86dee58ccf393ca99d8ec08f6"
+"sl.expressions.expr.cast" = "86c0325b1bede9c6ca459c065d0473db1397be4cf93bd562828c3bceac8900aa"
+"sl.expressions.expr.collate" = "7590d29b55c7a4474e390466b4c7e100b21dc899146092d4781c684ba16d9801"
+"sl.expressions.expr.column" = "e391c48d92a546792130825a1d309c8fd6aae288687b04d0b2b221aa56c186b7"
+"sl.expressions.expr.exists" = "a8dc9873dd0080a9b9ed52b1a2d6e3b59e45df12ff168169448574680c617a51"
+"sl.expressions.expr.function" = "3337bcf9bfb226cff619db48e02395b7c0cffe08482dca1600adf8caa4220367"
+"sl.expressions.expr.is" = "ae496a19e30778e9a198589c6db98e181c0280b021a5f47e2098db107e8c3797"
+"sl.expressions.expr.like" = "6fac23ef50b3eab85a847dcc6ec4997d600d872abac307a4a8770e1a763753a1"
+"sl.expressions.expr.literal" = "e49c45856e13e638d98ee341b693250efc06132ecb8fcb6135e9b94b7ad34154"
+"sl.expressions.expr.null-test" = "165f23db85b25dea5cc333ee4fb835a63b16be45cfe93ec623494226edc1610d"
+"sl.expressions.expr.parenthesized" = "68c02cb89ab5926c400e974257f35ac96a023c645d2b49302bceeb09f25fd0a5"
+"sl.expressions.expr.string-and-blob-literals" = "0dcfabf5f1532e8cf81a9e5f5cbeefcc6e9a18ff8e614d7e5a11a7cacdf61a2d"
+"sl.expressions.expr.unary" = "5b4c1d9f7e0d0cc9e2645b6c828f21e8401ad7be91da4d9f6cc44c2fd3cfc0ee"
+"sl.expressions.expr.unary-operators" = "66296fbb2459bb54210aac94c8ea41d9f9f24071fb4d6e14403de7b70e14cd38"
+"sl.expressions.filter-clause" = "1aed64c30d47aaf120012ddc058c08843e30a4c77734ea217ca6f85fe8445c05"
+"sl.expressions.function-arguments" = "5726b9a1b90552dff11342755dfd1bd76301144590c637b604081e40bb2beae6"
+"sl.expressions.json.arrow" = "c3551340ef5b2a61662c196396e1999685ead6ab13430f90f2094ab9d8d52c5b"
+"sl.expressions.json.double-arrow" = "e1631dca065f8beab1d0167d7dda46b5d71a9db5fb0d4bc1432fa196fecf17c4"
+"sl.expressions.literal-value" = "b9a6e951ce91b5b491fac9f265cfe5b8848607b374c1b0b1026d1f0f58d9583c"
+"sl.expressions.numeric-literal.decimal" = "9b5070aa8b02039c47698b0eb8511bf554c4ea693f5b1ed2cd31e080123d64bc"
+"sl.expressions.numeric-literal.hexadecimal" = "4e9f8e7547b20f26cb37ee8897b39bc81f5cfbca9f3031c1ee0bacc50b6503ad"
+"sl.expressions.over-clause" = "79206d05611519db7fcc2800c9d98100fb9a17ed006cf755639a351f1c526d39"
+"sl.expressions.signed-number" = "3b35ddcb15f978025d8a2570ad38fe5930da603217c97098ec4cde5dd9995a4e"
+"sl.expressions.simple-function-invocation" = "7dd4ba952cfdcb967afe22304caae693c6e70576e509f4461dc837a116928127"
+"sl.expressions.type-name" = "8a0e2e3b60ba57a4574bcafd7e5911d35b6b7948a7c0de5f939172ba8e06075f"
+"sl.expressions.window-function-invocation" = "d44c4af709d52f40941e3daca3edd582ba9b3071bca58db851105250850b436d"
+
+[[review]]
+id = "sl-expressions-002"
+family = "expressions"
+parser_tree = "1cc1e8670f6a0f2987045786698eb71c2ba3e5ba"
+reviewed_utc = "2026-11-08T08:47:53Z"
+verdict = "approved"
+forms = [
+  "sl.expressions.numeric-literal.fraction",
+]
+note = "Read against the pinned SQLite 3.54.1 documentation and the tokenizer, the obligations, the cases with their receipts and repeat, and the parse trees of the strict parser; every case was re-run independently on the pinned engine and every scored case agrees with its receipt."
+
+[review.fingerprints]
+"sl.expressions.numeric-literal.fraction" = "a16644d9d175f1079ee74bd7bffe2994d3d4cb216b8cf6052322cb2b6b3427e5"
+
+[review.definitions]
+"sl.expressions.numeric-literal.fraction" = "60b90ebc35b8ab1f7c4f66a6e3a2914ae81c0709ec0c1e5f6e2997208d9a7518"

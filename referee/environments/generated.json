@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "name": "generated",
+  "session_parameters": {
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC"
+  },
+  "setup_sql": [
+    "CREATE TEMPORARY TABLE all_types (c_number NUMBER(38, 0), c_decimal NUMBER(12, 2), c_int INT, c_float FLOAT, c_varchar VARCHAR, c_varchar_10 VARCHAR(10), c_char CHAR(4), c_binary BINARY, c_boolean BOOLEAN, c_date DATE, c_time TIME, c_ntz TIMESTAMP_NTZ, c_ntz_3 TIMESTAMP_NTZ(3), c_ltz TIMESTAMP_LTZ, c_tz TIMESTAMP_TZ, c_variant VARIANT, c_object OBJECT, c_array ARRAY, c_geography GEOGRAPHY, c_geometry GEOMETRY)",
+    "CREATE TEMPORARY TABLE orders (order_id NUMBER(38, 0) NOT NULL, customer_id NUMBER(38, 0), status VARCHAR, amount NUMBER(10, 2), placed_at TIMESTAMP_NTZ, region VARCHAR, details VARIANT)",
+    "CREATE TEMPORARY TABLE customers (customer_id NUMBER(38, 0) NOT NULL, name VARCHAR, region VARCHAR, signup_date DATE)",
+    "CREATE TEMPORARY TABLE order_lines (order_id NUMBER(38, 0), line_no NUMBER(38, 0), product_id NUMBER(38, 0), quantity NUMBER(38, 0), unit_price NUMBER(10, 2))",
+    "CREATE TEMPORARY TABLE products (product_id NUMBER(38, 0), name VARCHAR, category VARCHAR, tags ARRAY, attributes OBJECT)",
+    "CREATE TEMPORARY TABLE \"MixedCase\" (\"Id\" NUMBER(38, 0), \"id\" NUMBER(38, 0), \"Label\" VARCHAR, plain_note VARCHAR)"
+  ]
+}

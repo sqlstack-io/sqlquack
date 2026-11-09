@@ -1,0 +1,1 @@
+"""BigQuery obligation builder tests."""

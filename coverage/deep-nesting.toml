@@ -1,0 +1,11 @@
+# Deep-nesting failures the depth probe tolerates until their owners fix them.
+#
+# `syntax-coverage depth-probe` parses every construct at each ladder depth on a 2 MiB thread, in
+# every native parser, and fails on a crash, panic or 15 s timeout no entry here names, and on an
+# entry whose construct no longer fails. A parser is fit for in-process use (native routes, lint,
+# the formatter) only once it has no entry. Each fix removes its own entries in the same change;
+# each new parser adds its entries, or its depth fix, in the change that links it.
+#
+# `depth` is the shallowest ladder depth that fails; `profile` is the Cargo profile probed: `gate`
+# in check-ci, `dev` in `make depth-probe-debug`.
+

@@ -1,0 +1,17 @@
+[
+	{ "label": "Getting Started", "items": ["docs", "docs/quickstart"] },
+	{ "label": "Concepts", "items": ["docs/project", "docs/policy", "docs/helper-macros", "docs/coverage"] },
+	{
+		"label": "Diagnostics",
+		"items": [
+			{ "label": "Overview", "slug": "docs/diagnostics/overview" },
+			"docs/diagnostics/reference"
+		]
+	},
+	{ "label": "Python", "items": ["docs/python"] },
+	{
+		"label": "CLI Reference",
+		"items": ["docs/cli/check", "docs/cli/convert", "docs/cli/run", "docs/cli/function", "docs/cli/census", "docs/cli/index-command"]
+	},
+	{ "label": "About", "items": ["docs/credits"] }
+]

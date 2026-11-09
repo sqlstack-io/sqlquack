@@ -1,0 +1,109 @@
+//! Census defaults and the placeholders that stand in for sqlbuild references.
+
+use sqlquack_diagnostics::refusals::models::RefusalCategory;
+
+/// Rule counts at which the convertible share is reported.
+pub const COVERAGE_POINTS: &[usize] = &[10, 25, 50, 75, 100, 150, 200, 250];
+
+/// Constructs listed in the text report unless asked otherwise.
+pub const DEFAULT_TEXT_LIMIT: usize = 50;
+
+/// Stack for each census worker. Polyglot's trees and their JSON form are deep for generated SQL.
+pub const WORKER_STACK_BYTES: usize = 256 * 1024 * 1024;
+
+/// The table that stands in for sqlbuild model, source, seed and fixture references.
+pub const RELATION_PLACEHOLDER: &str = "__sqlquack_relation";
+
+/// The table function that stands in for sqlbuild table-function references.
+pub const TABLE_FUNCTION_PLACEHOLDER: &str = "__sqlquack_table_fn";
+
+/// sqlbuild reference calls replaced by a relation.
+pub const RELATION_CALLS: &[&str] = &[
+    "__ref",
+    "__source",
+    "__seed",
+    "__dbt_ref",
+    "__empty_fixture",
+];
+
+/// sqlbuild reference calls naming a model, which a complete scan holds a file for.
+pub const MODEL_CALLS: &[&str] = &["__ref", "__dbt_ref"];
+
+/// A timestamp cursor bound as SQLBuild's Snowflake adapter renders one: text in its naive form.
+pub const TIMESTAMP_CURSOR_BOUND: &str = "'2000-01-01T00:00:00'";
+
+/// An integer cursor bound as SQLBuild's Snowflake adapter renders one: a bare integer.
+pub const INTEGER_CURSOR_BOUND: &str = "0";
+
+/// sqlbuild cursor intrinsics replaced by a column.
+pub const CURSOR_CALLS: &[&str] = &["__cursor_start", "__cursor_end"];
+
+/// When set, census writes each converted file's known divergences there as `<path>.json`.
+pub const GUARDS_DIR_VARIABLE: &str = "SQLQUACK_GUARDS_DIR";
+
+/// When set, census writes each converted file's DuckDB SQL there, named after its path.
+pub const CONVERTED_DIR_VARIABLE: &str = "SQLQUACK_CONVERTED_DIR";
+
+/// How often census reports progress on stderr.
+pub const PROGRESS_INTERVAL_SECONDS: u64 = 5;
+
+/// Files the census lists, slowest first, when it finishes.
+pub const SLOWEST_FILES: usize = 10;
+
+/// The fewest roots a combination holds.
+pub const PAIR: usize = 2;
+
+/// The most roots a combination holds.
+pub const LARGEST_COMBINATION: usize = 3;
+
+/// Root combinations reported for each size, pairs and triples.
+pub const COMBINATIONS_PER_SIZE: usize = 15;
+
+/// The roots with most sole files, paired with each other as combination candidates.
+pub const COMBINATION_SEED_PAIRS: usize = 20;
+
+/// The roots with most sole files, added to each two-root file's pair as triple candidates.
+pub const COMBINATION_SEED_TRIPLES: usize = 12;
+
+/// How a blocker names an unresolved relation that is neither a model nor in the schema.
+pub const RELATION_ROOT_PREFIX: &str = "relation:";
+
+/// How a blocker names a model that converts but was read before chaining typed it.
+pub const MODEL_ROOT_PREFIX: &str = "model:";
+
+/// The root of models refused only because they read each other.
+pub const CYCLE_ROOT: &str = "cycle";
+
+/// A `model:` root without its name, when names are not asked for.
+pub const UPSTREAM_MODEL_ROOT: &str = "upstream model";
+
+/// The label of a converted file reading a model that does not convert end to end.
+pub const UPSTREAM_REFUSED_LABEL: &str = "upstream_refused:";
+
+/// The label on a converted file reading, at some depth, a model the scan holds no file for.
+pub const UPSTREAM_MISSING_LABEL: &str = "upstream_missing:";
+
+/// A `relation:` root without its name, when names are not asked for.
+pub const UNKNOWN_RELATION_ROOT: &str = "unknown relation";
+
+/// How many of a file's refusals the text report places before counting the rest.
+pub const PLACED_PER_FILE: usize = 5;
+
+/// Greedy plan steps reported.
+pub const PLAN_STEPS: usize = 10;
+
+/// The most roots one plan step supports together.
+pub const PLAN_SET_SIZE: usize = 3;
+
+/// Roots still blocking files, after the assumed constructs, listed in the plan.
+pub const NEXT_ROOTS: usize = 20;
+
+/// The refusal categories a rule could resolve, the only roots plan steps support.
+pub const PLANNABLE_CATEGORIES: &[RefusalCategory] = &[
+    RefusalCategory::MissingRule,
+    RefusalCategory::TypeCondition,
+    RefusalCategory::DivergenceRefused,
+];
+
+/// How `--assume-supported` names a rule rather than a construct.
+pub const RULE_ID_PREFIX: &str = "rule.";

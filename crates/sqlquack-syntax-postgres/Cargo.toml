@@ -1,0 +1,25 @@
+[package]
+name = "sqlquack-syntax-postgres"
+version.workspace = true
+description = "SQLQuack's PostgreSQL 18 scanner and parser into the shared sqlquack-syntax tree."
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+publish = false
+rust-version.workspace = true
+
+# Stack growth is the only feature; without it, deep nesting needs a large enough thread stack.
+[features]
+default = ["stacker"]
+stacker = ["dep:stacker"]
+
+[dependencies]
+sqlquack-syntax.workspace = true
+stacker = { workspace = true, optional = true }
+
+[dev-dependencies]
+serde_json.workspace = true
+
+[lints]
+workspace = true

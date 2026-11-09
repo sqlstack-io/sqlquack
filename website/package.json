@@ -1,0 +1,26 @@
+{
+  "name": "sqlquack-website",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "node scripts/prepare_playground.mjs && astro dev",
+    "build": "node scripts/prepare_playground.mjs && astro build",
+    "preview": "astro preview",
+    "test:engine": "node scripts/prepare_playground.mjs && node --test tests/playground.test.mjs",
+    "check:figures": "node scripts/check_figures.mjs"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.42.4",
+    "@duckdb/duckdb-wasm": "1.33.1-dev114.0",
+    "@lucide/astro": "^1.48.0",
+    "astro": "^7.3.5",
+    "sharp": "^0.35.4",
+    "starlight-llms-txt": "^0.12.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}

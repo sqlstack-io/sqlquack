@@ -1,0 +1,26 @@
+# Approved reviews. Each listed form was read in full against its documentation
+# page, its obligations, its cases with their Databricks receipts, and the local parse trees. An approval holds
+# while the form's definition hash and fingerprint are unchanged; any change makes it stale until re-read.
+
+[[review]]
+id = "db-dml-001"
+family = "dml"
+parser_tree = "90f341b5c9ff2c489c0ed994f07448481f70597f"
+reviewed_utc = "2026-11-08T09:04:25Z"
+verdict = "approved"
+forms = [
+  "db.dml.delete-from",
+  "db.dml.insert-into.values-default",
+  "db.dml.update",
+]
+note = "Read against the pinned Databricks documentation pages and the Spark 4.2 SqlBaseParser grammar, the obligations, the cases with their Databricks receipts and repeats, and the parse trees of the strict parser; every case was parsed by an independent build of the parser and every scored case agrees with its receipt."
+
+[review.fingerprints]
+"db.dml.delete-from" = "3b54438fbb3adbc6587806b262422c1a5d2a294707d36a890f03fd34d045b23f"
+"db.dml.insert-into.values-default" = "7f6efe73fa14ae3b6cf7b33ff67efe55ccf5b04bd8df16ee29f031a2dced6e28"
+"db.dml.update" = "beb21beb18827768da250dfa2c53b18d0c2fbd4872d5bce513f0e3a4159ee4b9"
+
+[review.definitions]
+"db.dml.delete-from" = "f992cfb93fee5d6d0e818d2f23445fd436498696d18dc31653080aa64f9279e5"
+"db.dml.insert-into.values-default" = "31253ad16e121434be8b85477a9bf639b31c85946c5c3b7afeebbbd82aee1e5f"
+"db.dml.update" = "d38c51f6c28d4ef4166a3468df152a07ce5ab5fba56af530c8071696a085839e"

@@ -1,0 +1,137 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      CARGO_TERM_COLOR: always
+      CARGO_INCREMENTAL: "0"
+      # The Snowflake recorder is never built or run in CI.
+      RECORDER: "0"
+      # `uv run` would otherwise sync the default groups, recorder included.
+      UV_NO_SYNC: "1"
+      # The evidence pin check and the result baselines compare with the pull request base or the
+      # previous main commit.
+      EVIDENCE_BASE: ${{ github.event.pull_request.base.sha || github.event.before || 'origin/main' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.12.3"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Install the pinned Rust toolchain
+        run: rustup toolchain install
+      # Caches the dependency builds, polyglot above all, keyed by Cargo.lock and the toolchain.
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: verify
+      - name: Install Python
+        run: uv python install 3.12
+      - name: Install development tools without the recorder
+        run: uv sync --locked --no-group recorder
+      - name: Run static checks
+        run: make check-ci
+      - name: Run tests
+        run: make test
+      # `make verify-recorded`, with the same verify flags as `make gate`, then the measure and SQL
+      # size checks.
+      - name: Replay recorded translations on DuckDB and check their baselines
+        run: >-
+          make check-convert DIALECT=snowflake VERIFY_PROFILE=dev RESULTS_BASE="$EVIDENCE_BASE"
+
+  polyglot-check:
+    name: Exact parser check on DuckShop
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      CARGO_TERM_COLOR: always
+      CARGO_INCREMENTAL: "0"
+      # The DuckShop benchmarks and the SQLBuild release that compiles them, pinned together.
+      SQLBUILD_REF: a7bc60e0abee5bb19d67e5bdc948e048a1df82e0
+      SQLBUILD_VERSION: 0.187.2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: sqlstack-io/sqlbuild
+          ref: ${{ env.SQLBUILD_REF }}
+          path: sqlbuild
+          sparse-checkout: benchmarks
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.12.3"
+      - name: Install the pinned Rust toolchain
+        run: rustup toolchain install
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: verify
+          save-if: false
+      - name: Compile DuckShop and DuckShop 10K
+        run: |
+          uv venv -p 3.12 "$RUNNER_TEMP/sqlbuild"
+          VIRTUAL_ENV="$RUNNER_TEMP/sqlbuild" uv pip install "sqlbuild==$SQLBUILD_VERSION"
+          python3 sqlbuild/benchmarks/duckshop-10k/generate.py --out "$RUNNER_TEMP/duckshop-10k"
+          (cd sqlbuild/benchmarks/duckshop/project && "$RUNNER_TEMP/sqlbuild/bin/sqb" compile)
+          (cd "$RUNNER_TEMP/duckshop-10k" && "$RUNNER_TEMP/sqlbuild/bin/sqb" compile)
+      - name: Compare with polyglot
+        run: |
+          cargo run --locked --release -p sqlquack-polyglot-check -- \
+            directory sqlbuild/benchmarks/duckshop/project/target/compiled --dialect snowflake
+          cargo run --locked --release -p sqlquack-polyglot-check -- \
+            directory "$RUNNER_TEMP/duckshop-10k/target/compiled" --dialect snowflake
+      - name: Convert DuckShop within the time budget
+        run: |
+          make census-duckshop DUCKSHOP_COMPILED="sqlbuild/benchmarks/duckshop/project/target/compiled $RUNNER_TEMP/duckshop-10k/target/compiled"
+
+  fuzz:
+    name: Fuzz tolerant parsing
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      CARGO_TERM_COLOR: always
+      # Seconds of fuzzing after the build.
+      FUZZ_SECONDS: "90"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install nightly Rust
+        run: rustup toolchain install nightly --profile minimal
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-fuzz
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: fuzz
+          shared-key: fuzz
+      - name: Seed the corpus with the exact check's statements
+        run: python3 -m scripts.seed_fuzz_corpus --out fuzz/corpus/tolerant
+      - name: Fuzz
+        working-directory: fuzz
+        # The prebuilt cargo-fuzz is a musl binary and would default to its own target.
+        run: >-
+          cargo +nightly fuzz run --target x86_64-unknown-linux-gnu tolerant corpus/tolerant --
+          -max_total_time="$FUZZ_SECONDS" -max_len=4096 -timeout=10 -rss_limit_mb=2048
+      - name: Keep any failing input
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuzz-artifacts
+          path: fuzz/artifacts
+          if-no-files-found: ignore

@@ -1,0 +1,714 @@
+# How a recorded statement's constructs link to catalogue forms, for the result-matching measure
+#. Function calls link by name to the function forms whose grammar calls that name
+# in the same shape: a plain call, a call over a window, a call with named arguments, or a bare name
+# without parentheses. Each call's own shape decides, not the statement's. Some forms share a name and
+# a shape, so one call credits each of them: TRUNC's numeric and date forms, both GENERATOR forms
+# for a ROWCOUNT call, and the window forms that appear twice (APPROX_COUNT_DISTINCT, HASH_AGG,
+# HLL and HLL_ACCUMULATE OVER with and without `*`, and the two MINHASH OVER forms). A `spelling:` key separates
+# what one construct merges, such as `<>` and `!=`, or a simple and a searched CASE. This file links
+# everything else. A [[link]] applies when the statement uses every one of its
+# constructs. A [[no_form]] construct is part of other forms' grammar and names no form itself.
+# Every construct a recorded statement uses must be accounted for here or by a function name, or
+# the checker fails. A reviewer reads this file in full before a figure is published.
+
+# Function calls whose grammar names the function through a sub-grammar or a leading keyword.
+[[link]]
+constructs = ["fn:TO_TIMESTAMP"]
+forms = ["sf.functions.to-timestamp"]
+
+[[link]]
+constructs = ["fn:TO_TIMESTAMP_LTZ"]
+forms = ["sf.functions.to-timestamp"]
+
+[[link]]
+constructs = ["fn:TO_TIMESTAMP_NTZ"]
+forms = ["sf.functions.to-timestamp"]
+
+[[link]]
+constructs = ["fn:TO_TIMESTAMP_TZ"]
+forms = ["sf.functions.to-timestamp"]
+
+[[link]]
+constructs = ["fn:TRY_TO_TIMESTAMP"]
+forms = ["sf.functions.try-to-timestamp"]
+
+[[link]]
+constructs = ["fn:TRY_TO_TIMESTAMP_LTZ"]
+forms = ["sf.functions.try-to-timestamp"]
+
+[[link]]
+constructs = ["fn:TRY_TO_TIMESTAMP_NTZ"]
+forms = ["sf.functions.try-to-timestamp"]
+
+[[link]]
+constructs = ["fn:TRY_TO_TIMESTAMP_TZ"]
+forms = ["sf.functions.try-to-timestamp"]
+
+[[link]]
+constructs = ["fn:EQUAL_NULL"]
+forms = ["sf.functions.equal-null"]
+
+[[link]]
+constructs = ["fn:TABLE"]
+forms = ["sf.expressions.functions-table"]
+
+# Query clauses and set operators.
+[[link]]
+constructs = ["node:select"]
+forms = ["sf.query.select.select"]
+
+[[link]]
+constructs = ["node:star"]
+forms = ["sf.query.select.select"]
+
+[[link]]
+constructs = ["clause:distinct"]
+forms = ["sf.query.select.select"]
+
+[[link]]
+constructs = ["node:table"]
+forms = ["sf.query.from"]
+
+[[link]]
+constructs = ["join:implicit"]
+forms = ["sf.query.from"]
+
+[[link]]
+constructs = ["clause:with"]
+forms = ["sf.query.with.select"]
+
+[[link]]
+constructs = ["clause:with_recursive"]
+forms = ["sf.query.with.select.syntax"]
+
+# The converter refuses WITH RECURSIVE at its WITH node, so a refusal there names that form too.
+[[link]]
+constructs = ["node:with", "clause:with_recursive"]
+forms = ["sf.query.with.select.syntax"]
+
+[[link]]
+constructs = ["clause:where"]
+forms = ["sf.query.where"]
+
+[[link]]
+constructs = ["clause:group_by"]
+forms = ["sf.query.group-by.groupitem"]
+
+[[link]]
+constructs = ["clause:group_by_all"]
+forms = ["sf.query.group-by.all"]
+
+[[link]]
+constructs = ["clause:having"]
+forms = ["sf.query.having"]
+
+[[link]]
+constructs = ["clause:order_by"]
+forms = ["sf.query.order-by.orderitem"]
+
+[[link]]
+constructs = ["clause:order_by_all"]
+forms = ["sf.query.order-by.all"]
+
+# The converter refuses ORDER BY ALL at its ORDER BY node, so a refusal there names that form too.
+[[link]]
+constructs = ["node:order_by", "clause:order_by_all"]
+forms = ["sf.query.order-by.all"]
+
+[[link]]
+constructs = ["clause:qualify"]
+forms = ["sf.query.qualify.qualify", "sf.query.qualify.select-from-qualify"]
+
+[[link]]
+constructs = ["clause:sample"]
+forms = ["sf.query.sample"]
+
+# The converter refuses a sampled table at its table node, so a refusal there names SAMPLE too.
+[[link]]
+constructs = ["node:table", "clause:sample"]
+forms = ["sf.query.sample"]
+
+[[link]]
+constructs = ["clause:limit"]
+forms = ["sf.query.limit.limit"]
+
+[[link]]
+constructs = ["clause:fetch"]
+forms = ["sf.query.limit.fetch"]
+
+[[link]]
+constructs = ["clause:offset"]
+forms = ["sf.query.limit.fetch"]
+
+[[link]]
+constructs = ["clause:top"]
+forms = ["sf.query.top-n"]
+
+# The converter refuses TOP at its SELECT node, so a refusal there names TOP's form too.
+[[link]]
+constructs = ["node:select", "clause:top"]
+forms = ["sf.query.top-n"]
+
+[[link]]
+constructs = ["clause:union_distinct"]
+forms = ["sf.query.operators-query.union", "sf.query.operators-query.intersect-minus-except-union"]
+
+[[link]]
+constructs = ["node:union"]
+forms = ["sf.query.operators-query.union", "sf.query.operators-query.intersect-minus-except-union"]
+
+[[link]]
+constructs = ["clause:union_all"]
+forms = ["sf.query.operators-query.union", "sf.query.operators-query.intersect-minus-except-union"]
+
+[[link]]
+constructs = ["clause:union_by_name"]
+forms = ["sf.query.operators-query.union"]
+
+[[link]]
+constructs = ["node:except", "spelling:except"]
+forms = ["sf.query.operators-query.except", "sf.query.operators-query.intersect-minus-except-union"]
+
+[[link]]
+constructs = ["node:except", "spelling:minus"]
+forms = ["sf.query.operators-query.minus", "sf.query.operators-query.intersect-minus-except-union"]
+
+[[link]]
+constructs = ["node:intersect"]
+forms = ["sf.query.operators-query.intersect", "sf.query.operators-query.intersect-minus-except-union"]
+
+[[link]]
+constructs = ["clause:connect_by"]
+forms = ["sf.query.connect-by"]
+
+[[link]]
+constructs = ["node:prior"]
+forms = ["sf.query.connect-by"]
+
+[[link]]
+constructs = ["node:connect_by_root"]
+forms = ["sf.query.connect-by"]
+
+[[link]]
+constructs = ["fn:SYS_CONNECT_BY_PATH"]
+forms = ["sf.query.connect-by"]
+
+[[link]]
+constructs = ["join:inner"]
+forms = ["sf.query.join.join"]
+
+[[link]]
+constructs = ["join:left"]
+forms = ["sf.query.join.join"]
+
+[[link]]
+constructs = ["join:right"]
+forms = ["sf.query.join.join"]
+
+[[link]]
+constructs = ["join:full"]
+forms = ["sf.query.join.join"]
+
+[[link]]
+constructs = ["join:cross"]
+forms = ["sf.query.join.join"]
+
+[[link]]
+constructs = ["clause:join_using"]
+forms = ["sf.query.join.join.syntax"]
+
+# The converter refuses the merged columns of SELECT * over a USING join at the star, so a refusal there names that form too.
+[[link]]
+constructs = ["node:star", "clause:join_using"]
+forms = ["sf.query.join.join.syntax"]
+
+[[link]]
+constructs = ["join:natural"]
+forms = ["sf.query.join.join-2"]
+
+[[link]]
+constructs = ["join:natural_left"]
+forms = ["sf.query.join.join-2"]
+
+[[link]]
+constructs = ["join:as_of", "clause:match_condition"]
+forms = ["sf.query.asof-join"]
+
+[[link]]
+constructs = ["node:lateral"]
+forms = ["sf.query.join-lateral"]
+
+[[link]]
+constructs = ["node:pivot"]
+forms = ["sf.query.pivot"]
+
+[[link]]
+constructs = ["node:pivot_alias"]
+forms = ["sf.query.pivot"]
+
+[[link]]
+constructs = ["node:unpivot"]
+forms = ["sf.query.unpivot"]
+
+[[link]]
+constructs = ["node:match_recognize"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+# MATCH_RECOGNIZE's own functions, which exist only inside its MEASURES and DEFINE.
+[[link]]
+constructs = ["node:match_recognize", "fn:CLASSIFIER"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
+constructs = ["node:match_recognize", "fn:MATCH_NUMBER"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
+constructs = ["node:match_recognize", "fn:MATCH_SEQUENCE_NUMBER"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
+constructs = ["node:match_recognize", "fn:FIRST"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
+constructs = ["node:match_recognize", "fn:PREV"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
+constructs = ["node:match_recognize", "fn:NEXT"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
+constructs = ["node:match_recognize", "fn:LAST"]
+forms = ["sf.query.match-recognize.match-recognize-pattern-define-as"]
+
+[[link]]
+constructs = ["node:resample"]
+forms = ["sf.query.resample"]
+
+# RESAMPLE's metadata functions, which exist only over a RESAMPLE clause.
+[[link]]
+constructs = ["node:resample", "fn:BUCKET_START"]
+forms = ["sf.query.resample"]
+
+[[link]]
+constructs = ["node:resample", "fn:IS_GENERATED"]
+forms = ["sf.query.resample"]
+
+[[link]]
+constructs = ["fn:IDENTIFIER"]
+forms = ["sf.expressions.identifier-literal"]
+
+# The ** spread of an array into a list of arguments.
+[[link]]
+constructs = ["node:variadic"]
+forms = ["sf.expressions.operators-expansion"]
+
+[[link]]
+constructs = ["node:values"]
+forms = ["sf.query.values"]
+
+# Operators and predicates.
+[[link]]
+constructs = ["node:add"]
+forms = ["sf.expressions.operators-arithmetic.add"]
+
+[[link]]
+constructs = ["node:sub"]
+forms = ["sf.expressions.operators-arithmetic.subtract"]
+
+[[link]]
+constructs = ["node:mul"]
+forms = ["sf.expressions.operators-arithmetic.multiply"]
+
+[[link]]
+constructs = ["node:div"]
+forms = ["sf.expressions.operators-arithmetic.divide"]
+
+[[link]]
+constructs = ["node:mod"]
+forms = ["sf.expressions.operators-arithmetic.modulo"]
+
+[[link]]
+constructs = ["node:neg"]
+forms = ["sf.expressions.operators-arithmetic.unary-minus"]
+
+[[link]]
+constructs = ["node:eq"]
+forms = ["sf.expressions.operators-comparison.equal"]
+
+[[link]]
+constructs = ["node:neq", "spelling:neq_angle"]
+forms = ["sf.expressions.operators-comparison.not-equal-angle"]
+
+[[link]]
+constructs = ["node:neq", "spelling:neq_bang"]
+forms = ["sf.expressions.operators-comparison.not-equal-bang"]
+
+[[link]]
+constructs = ["node:gt"]
+forms = ["sf.expressions.operators-comparison.greater"]
+
+[[link]]
+constructs = ["node:gte"]
+forms = ["sf.expressions.operators-comparison.greater-or-equal"]
+
+[[link]]
+constructs = ["node:lt"]
+forms = ["sf.expressions.operators-comparison.less"]
+
+[[link]]
+constructs = ["node:lte"]
+forms = ["sf.expressions.operators-comparison.less-or-equal"]
+
+[[link]]
+constructs = ["node:and"]
+forms = ["sf.expressions.operators-logical.and"]
+
+[[link]]
+constructs = ["node:or"]
+forms = ["sf.expressions.operators-logical.or"]
+
+[[link]]
+constructs = ["node:not"]
+forms = ["sf.expressions.operators-logical.not"]
+
+[[link]]
+constructs = ["node:exists"]
+forms = ["sf.expressions.operators-subquery.exists"]
+
+[[link]]
+constructs = ["node:all"]
+forms = ["sf.expressions.operators-subquery.comparisonoperator-all-any"]
+
+[[link]]
+constructs = ["node:any"]
+forms = ["sf.expressions.operators-subquery.comparisonoperator-all-any"]
+
+[[link]]
+constructs = ["node:in"]
+forms = ["sf.functions.in.in"]
+
+[[link]]
+constructs = ["node:in", "node:subquery"]
+forms = ["sf.functions.in.in-2", "sf.expressions.operators-subquery.in"]
+
+[[link]]
+constructs = ["node:in", "node:tuple"]
+forms = ["sf.functions.in.in.syntax"]
+
+[[link]]
+constructs = ["node:between"]
+forms = ["sf.functions.between"]
+
+[[link]]
+constructs = ["node:like"]
+forms = ["sf.functions.like.like.syntax"]
+
+[[link]]
+constructs = ["node:like", "node:tuple"]
+forms = ["sf.functions.like-any"]
+
+[[link]]
+constructs = ["node:i_like"]
+forms = ["sf.functions.ilike.ilike.syntax"]
+
+[[link]]
+constructs = ["node:i_like", "node:tuple"]
+forms = ["sf.functions.ilike-any"]
+
+[[link]]
+constructs = ["node:regexp_like", "spelling:rlike"]
+forms = ["sf.functions.rlike.rlike.syntax"]
+
+[[link]]
+constructs = ["node:regexp_like", "spelling:regexp"]
+forms = ["sf.functions.regexp"]
+
+[[link]]
+constructs = ["node:is_null"]
+forms = ["sf.functions.is-null"]
+
+[[link]]
+constructs = ["node:null_safe_eq"]
+forms = ["sf.functions.is-distinct-from"]
+
+[[link]]
+constructs = ["node:null_safe_neq"]
+forms = ["sf.functions.is-distinct-from"]
+
+[[link]]
+constructs = ["node:case", "spelling:case_searched"]
+forms = ["sf.functions.case.end"]
+
+[[link]]
+constructs = ["node:case", "spelling:case_simple"]
+forms = ["sf.functions.case.end.syntax"]
+
+[[link]]
+constructs = ["node:concat"]
+forms = ["sf.functions.concat.concat-subscript-dot"]
+
+[[link]]
+constructs = ["node:extract"]
+forms = ["sf.functions.extract.extract-from"]
+
+[[link]]
+constructs = ["node:str_position"]
+forms = ["sf.functions.position.position-in"]
+
+[[link]]
+constructs = ["node:window_function"]
+forms = ["sf.functions.functions-window-syntax"]
+
+# Casts, their spellings, and the data types they name.
+[[link]]
+constructs = ["node:cast"]
+forms = ["sf.functions.cast.cast-as"]
+
+[[link]]
+constructs = ["syntax:double_colon_cast"]
+forms = ["sf.functions.cast.double-colon"]
+
+[[link]]
+constructs = ["node:try_cast"]
+forms = ["sf.functions.try-cast"]
+
+[[link]]
+constructs = ["cast:NUMBER"]
+forms = ["sf.expressions.data-types-numeric.number"]
+
+[[link]]
+constructs = ["cast:DECIMAL"]
+forms = ["sf.expressions.data-types-numeric.decimal"]
+
+[[link]]
+constructs = ["cast:INT"]
+forms = ["sf.expressions.data-types-numeric.int"]
+
+[[link]]
+constructs = ["cast:BIGINT"]
+forms = ["sf.expressions.data-types-numeric.int"]
+
+[[link]]
+constructs = ["cast:SMALLINT"]
+forms = ["sf.expressions.data-types-numeric.int"]
+
+[[link]]
+constructs = ["cast:TINYINT"]
+forms = ["sf.expressions.data-types-numeric.int"]
+
+[[link]]
+constructs = ["cast:BYTEINT"]
+forms = ["sf.expressions.data-types-numeric.int"]
+
+[[link]]
+constructs = ["cast:FLOAT"]
+forms = ["sf.expressions.data-types-numeric.float"]
+
+[[link]]
+constructs = ["cast:DOUBLE"]
+forms = ["sf.expressions.data-types-numeric.double"]
+
+[[link]]
+constructs = ["cast:VARCHAR"]
+forms = ["sf.expressions.data-types-text.varchar"]
+
+[[link]]
+constructs = ["cast:STRING"]
+forms = ["sf.expressions.data-types-text.string"]
+
+[[link]]
+constructs = ["cast:BINARY"]
+forms = ["sf.expressions.data-types-text.binary"]
+
+[[link]]
+constructs = ["cast:VARBINARY"]
+forms = ["sf.expressions.data-types-text.varbinary"]
+
+[[link]]
+constructs = ["cast:CHAR"]
+forms = ["sf.expressions.data-types-text.char"]
+
+# NCHAR is a synonym the CHAR page documents.
+[[link]]
+constructs = ["cast:NCHAR"]
+forms = ["sf.expressions.data-types-text.char"]
+
+[[link]]
+constructs = ["cast:DATETIME"]
+forms = ["sf.expressions.data-types-datetime.datetime"]
+
+[[link]]
+constructs = ["cast:INTERVAL"]
+forms = ["sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier"]
+
+[[link]]
+constructs = ["cast:MAP"]
+forms = ["sf.expressions.data-types-structured.map"]
+
+[[link]]
+constructs = ["cast:UUID"]
+forms = ["sf.expressions.data-types-uuid"]
+
+[[link]]
+constructs = ["cast:BOOLEAN"]
+forms = ["sf.expressions.data-types-logical"]
+
+[[link]]
+constructs = ["cast:DATE"]
+forms = ["sf.expressions.data-types-datetime.date"]
+
+[[link]]
+constructs = ["cast:TIME"]
+forms = ["sf.expressions.data-types-datetime.time"]
+
+[[link]]
+constructs = ["cast:TIMESTAMP"]
+forms = ["sf.expressions.data-types-datetime.timestamp"]
+
+[[link]]
+constructs = ["cast:TIMESTAMPNTZ"]
+forms = ["sf.expressions.data-types-datetime.timestamp-variations"]
+
+[[link]]
+constructs = ["cast:TIMESTAMPLTZ"]
+forms = ["sf.expressions.data-types-datetime.timestamp-variations"]
+
+[[link]]
+constructs = ["cast:TIMESTAMPTZ"]
+forms = ["sf.expressions.data-types-datetime.timestamp-variations"]
+
+[[link]]
+constructs = ["cast:VARIANT"]
+forms = ["sf.expressions.data-types-semistructured.variant"]
+
+[[link]]
+constructs = ["cast:ARRAY"]
+forms = ["sf.expressions.data-types-semistructured.array"]
+
+[[link]]
+constructs = ["cast:OBJECT"]
+forms = ["sf.expressions.data-types-semistructured.object"]
+
+# Semi-structured access and constants.
+[[link]]
+constructs = ["node:j_s_o_n_extract"]
+forms = ["sf.functions.get-path.colon"]
+
+[[link]]
+constructs = ["node:subscript", "spelling:subscript_index"]
+forms = ["sf.expressions.data-types-semistructured.array-index-access"]
+
+[[link]]
+constructs = ["node:subscript", "spelling:subscript_key"]
+forms = ["sf.expressions.data-types-semistructured.object-key-access"]
+
+[[link]]
+constructs = ["node:array_func"]
+forms = ["sf.expressions.data-types-semistructured.subscript-dot"]
+
+[[link]]
+constructs = ["node:map_func"]
+forms = ["sf.expressions.data-types-semistructured.colon-subscript-dot"]
+
+[[link]]
+constructs = ["node:braced_wildcard"]
+forms = ["sf.expressions.data-types-semistructured.colon-subscript-dot"]
+
+[[link]]
+constructs = ["node:interval"]
+forms = ["sf.expressions.data-types-datetime.interval.interval-constants"]
+
+# Literal constants: numbers, typed date and time literals, and the two string quotings.
+[[link]]
+constructs = ["node:literal", "spelling:number"]
+forms = ["sf.expressions.data-types-numeric.numeric-constant"]
+
+[[link]]
+constructs = ["node:literal", "spelling:datetime_literal"]
+forms = ["sf.expressions.data-types-datetime.date-time-constant"]
+
+[[link]]
+constructs = ["spelling:quoted_string"]
+forms = ["sf.expressions.data-types-text.single-quoted-string-constant"]
+
+[[link]]
+constructs = ["spelling:dollar_string"]
+forms = ["sf.expressions.data-types-text.dollar-quoted-string-constant"]
+
+# Parameters: $name session variables, ? and :name bind variables, and $1 positional columns.
+[[link]]
+constructs = ["node:parameter", "spelling:session_variable"]
+forms = ["sf.expressions.session-variables"]
+
+[[link]]
+constructs = ["node:parameter", "spelling:bind_variable"]
+forms = ["sf.expressions.bind-variables"]
+
+[[link]]
+constructs = ["node:placeholder"]
+forms = ["sf.expressions.bind-variables"]
+
+[[link]]
+constructs = ["node:parameter", "spelling:positional_column"]
+forms = ["sf.query.select.select.selecting-specific-columns"]
+
+# Casts to DECFLOAT, IPADDRESS, PERIOD and VECTOR, ROLLUP and CUBE in GROUP BY, the COLLATE operator,
+# NTH_VALUE with its FROM and NULLS clauses, and unary plus.
+[[link]]
+constructs = ["cast:DECFLOAT"]
+forms = ["sf.expressions.data-types-numeric.decfloat"]
+
+[[link]]
+constructs = ["cast:IPADDRESS"]
+forms = ["sf.expressions.data-types-ipaddress"]
+
+[[link]]
+constructs = ["cast:PERIOD"]
+forms = ["sf.expressions.data-types-period"]
+
+[[link]]
+constructs = ["cast:VECTOR"]
+forms = ["sf.expressions.data-types-vector"]
+
+[[link]]
+constructs = ["fn:ROLLUP"]
+forms = ["sf.query.group-by-rollup"]
+
+[[link]]
+constructs = ["fn:CUBE"]
+forms = ["sf.query.group-by-cube"]
+
+[[link]]
+constructs = ["node:collation"]
+forms = ["sf.functions.collate.collate.syntax"]
+
+[[link]]
+constructs = ["node:nth_value"]
+forms = ["sf.functions.nth-value"]
+
+[[link]]
+constructs = ["node:pos"]
+forms = ["sf.expressions.operators-arithmetic.unary-plus"]
+
+[[no_form]]
+constructs = ["node:column", "node:alias", "node:null", "node:boolean", "node:paren", "node:annotated"]
+reason = "Column references, aliases, NULL, TRUE and FALSE, parentheses and comments are part of every form's grammar rather than forms of their own."
+
+[[no_form]]
+constructs = ["node:var"]
+reason = "A date or time part keyword such as YEAR is an argument of the function that takes it."
+
+[[no_form]]
+constructs = ["node:lambda", "node:named_argument", "node:within_group"]
+reason = "Lambda arguments, named arguments and WITHIN GROUP belong to the function forms that take them, which link by name."
+
+[[no_form]]
+constructs = ["node:method_call"]
+reason = "A schema-qualified call such as SNOWFLAKE.CORE.NULL_COUNT(...) links by its qualified name and call shape, like any other call."
+
+[[no_form]]
+constructs = ["fn:<udf>"]
+reason = "A project function the case itself defines, which is not documented Snowflake syntax."

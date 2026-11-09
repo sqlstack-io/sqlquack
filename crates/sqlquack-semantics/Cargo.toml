@@ -1,0 +1,56 @@
+[package]
+name = "sqlquack-semantics"
+version.workspace = true
+description = "SQL semantics for SQLQuack: scopes, name resolution, types and lineage, per dialect."
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+publish.workspace = true
+rust-version.workspace = true
+
+[features]
+default = []
+# Each dialect's profile and lineage rules.
+bigquery = []
+clickhouse = []
+databricks = []
+duckdb = []
+postgres = []
+# Also Snowflake's scalar types and typing rules, and its typed names, scopes and schemas.
+snowflake = []
+sqlite = []
+sqlserver = []
+
+[dependencies]
+regex.workspace = true
+saphyr-parser.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sqlquack-syntax.workspace = true
+sqlquack-parse.workspace = true
+sqlquack-diagnostics.workspace = true
+stacker.workspace = true
+
+[dev-dependencies]
+# The tests read every dialect.
+sqlquack-semantics = { workspace = true, features = [
+  "bigquery",
+  "clickhouse",
+  "databricks",
+  "duckdb",
+  "postgres",
+  "snowflake",
+  "sqlite",
+  "sqlserver",
+] }
+sqlquack-syntax-bigquery.workspace = true
+sqlquack-syntax-duckdb.workspace = true
+sqlquack-syntax-postgres.workspace = true
+sqlquack-syntax-clickhouse.workspace = true
+sqlquack-syntax-sqlite.workspace = true
+sqlquack-syntax-sqlserver.workspace = true
+sqlquack-syntax-databricks.workspace = true
+
+[lints]
+workspace = true

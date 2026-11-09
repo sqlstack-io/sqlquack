@@ -1,0 +1,10 @@
+# The pinned DuckDB 2.0.0 sources: the documentation and railroad diagrams of
+# duckdb-web, and the PEG grammar of the engine release the omission audit reads.
+
+[[index]]
+name = "https://github.com/duckdb/duckdb-web.git@b68c2955a464bac75ffca9e679e28e36956e14f1 docs/2.0 page list"
+sha256 = "ec50d037be4ac4b3785296d3bb62ae069722f68d5aa9b74ae708f4df015a9033"
+
+[[index]]
+name = "https://github.com/duckdb/duckdb.git@v2.0.0 (d54cbbe3df17e8e5ce68312f483b4155836112aa) src/parser/peg/grammar/statements/*.gram"
+sha256 = "9a1b57dbe20c683a6a166b7676f95946b656a9a7e92abc112a93c63e67d61e6e"

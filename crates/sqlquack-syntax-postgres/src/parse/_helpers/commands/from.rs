@@ -1,0 +1,454 @@
+//! `from_clause` (gram.y): table references, joins, `LATERAL`, function tables and aliases.
+
+use sqlquack_syntax::Expression;
+use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
+use sqlquack_syntax::expressions::operators::models::Alias;
+use sqlquack_syntax::expressions::queries::models::{Join, JoinKind};
+
+use crate::parse::_helpers::commands::routines::var;
+use crate::parse::_helpers::commands::tables::{clause, name_value};
+use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_col_id, is_col_label};
+use crate::parse::_helpers::tree::nodes::{
+    JoinConstraint, TableAlias, join, joined_table, keyword_call, lateral, subquery, table, tuple,
+};
+use crate::parse::_helpers::values::expressions::Flavor;
+use crate::parse::constants::VALUE_FUNCTIONS;
+
+/// `call` under its alias, when it has one.
+fn aliased(call: Expression, alias: Option<TableAlias>) -> Expression {
+    match alias {
+        None => call,
+        Some(alias) => {
+            let mut node: Alias = Alias::new(call, alias.name);
+            node.column_aliases = alias.columns;
+            node.alias_explicit_as = alias.explicit;
+            node.alias_keyword = alias.explicit.then(|| "AS".to_owned());
+            Expression::Alias(Box::new(node))
+        }
+    }
+}
+
+/// A parenthesized join and its alias: a name alone stays on the join, column aliases wrap it.
+fn joined_alias(left: Expression, joins: Vec<Join>, alias: Option<TableAlias>) -> Expression {
+    let named: bool = alias.as_ref().is_some_and(|alias| alias.columns.is_empty());
+    let table: Expression = match (joins.is_empty(), left) {
+        (true, Expression::JoinedTable(mut inner)) if named && inner.alias.is_none() => {
+            inner.alias = alias.map(|alias| alias.name);
+            return Expression::JoinedTable(inner);
+        }
+        (true, left) => left,
+        (false, left) if named => return joined_table(left, joins, alias.map(|alias| alias.name)),
+        (false, left) => joined_table(left, joins, None),
+    };
+    match named {
+        true => table,
+        false => aliased(table, alias),
+    }
+}
+
+impl Parser<'_> {
+    /// `from_list`: the comma-separated items, and every join, in order.
+    pub(crate) fn parse_from_list(&mut self) -> Parsing<(Vec<Expression>, Vec<Join>)> {
+        let mut items: Vec<Expression> = Vec::new();
+        let mut joins: Vec<Join> = Vec::new();
+        loop {
+            items.push(self.table_ref()?);
+            joins.extend(self.joins()?);
+            if !self.eat_char(',') {
+                return Ok((items, joins));
+            }
+        }
+    }
+
+    /// Whether a join begins at the cursor.
+    fn at_join(&self) -> bool {
+        match self.keyword_at(0) {
+            Some("join" | "cross" | "natural") => true,
+            Some("inner") => self.kw_at(1, "join"),
+            Some("left" | "right" | "full") => self.kw_at(1, "join") || self.kw_at(1, "outer"),
+            _ => false,
+        }
+    }
+
+    /// The joins after a table reference, left to right.
+    pub(crate) fn joins(&mut self) -> Parsing<Vec<Join>> {
+        let mut joins: Vec<Join> = Vec::new();
+        while self.at_join() {
+            let first: usize = self.at;
+            let mut node: Join = self.deeper(|parser| parser.one_join())?;
+            node.span = self.source_range(first);
+            joins.push(node);
+        }
+        Ok(joins)
+    }
+
+    fn one_join(&mut self) -> Parsing<Join> {
+        if self.eat_kw("cross") {
+            self.expect_kw("join")?;
+            return Ok(join(
+                self.table_ref()?,
+                JoinKind::Cross,
+                JoinConstraint::None,
+                (false, false),
+            ));
+        }
+        let natural: bool = self.eat_kw("natural");
+        let (mut inner, mut outer) = (false, false);
+        let side: Option<&str> = match self.keyword_at(0) {
+            Some(word @ ("left" | "right" | "full")) => {
+                self.at += 1;
+                outer = self.eat_kw("outer");
+                Some(word)
+            }
+            Some("inner") => {
+                self.at += 1;
+                inner = true;
+                None
+            }
+            _ => None,
+        };
+        self.expect_kw("join")?;
+        let kind: JoinKind = match (natural, side) {
+            (true, Some("left")) => JoinKind::NaturalLeft,
+            (true, Some("right")) => JoinKind::NaturalRight,
+            (true, Some("full")) => JoinKind::NaturalFull,
+            (true, _) => JoinKind::Natural,
+            (false, Some("left")) => JoinKind::Left,
+            (false, Some("right")) => JoinKind::Right,
+            (false, Some("full")) => JoinKind::Full,
+            (false, _) => JoinKind::Inner,
+        };
+        let mut right: Expression = self.table_ref()?;
+        if natural {
+            return Ok(join(right, kind, JoinConstraint::None, (inner, outer)));
+        }
+        if self.at_join() {
+            let nested: Vec<Join> = self.joins()?;
+            right = joined_table(right, nested, None);
+        }
+        if self.eat_kw("on") {
+            let on: Expression = self.a_expr()?;
+            return Ok(join(
+                right,
+                kind,
+                JoinConstraint::On(Box::new(on)),
+                (inner, outer),
+            ));
+        }
+        self.expect_kw("using")?;
+        let using: Vec<Identifier> = self.name_list()?;
+        let mut node: Join = join(right, kind, JoinConstraint::Using(using), (inner, outer));
+        if self.eat_kw("as") {
+            node.using_alias = Some(self.name(is_col_id)?);
+        }
+        Ok(node)
+    }
+
+    /// `ROWS FROM (...)`, `XMLTABLE (...)` or `JSON_TABLE (...)`, with its alias.
+    fn keyword_table(&mut self, is_lateral: bool) -> Parsing<Option<Expression>> {
+        match self.keyword_at(0) {
+            Some("rows") if self.kw_at(1, "from") && self.char_at(2, '(') => {
+                self.at += 2;
+                let calls: Vec<Expression> = self.parenthesized(|parser| {
+                    let call: Expression = parser.windowless_call()?;
+                    match parser.kw("as") && parser.char_at(1, '(') {
+                        true => {
+                            parser.at += 1;
+                            let columns: Vec<Expression> = parser.column_definitions()?;
+                            Ok(keyword_call("COLUMN DEFINITIONS", vec![call], columns))
+                        }
+                        false => Ok(call),
+                    }
+                })?;
+                let options: Vec<Expression> = match self.ordinality() {
+                    true => vec![var("WITH ORDINALITY")],
+                    false => Vec::new(),
+                };
+                let call: Expression = keyword_call("ROWS FROM", calls, options);
+                Ok(Some(self.function_with_alias(call, is_lateral)?))
+            }
+            Some(word @ ("xmltable" | "json_table")) if self.char_at(1, '(') => {
+                self.at += 1;
+                let call: Expression = match word {
+                    "xmltable" => self.xml_table()?,
+                    _ => self.json_table()?,
+                };
+                let alias: Option<TableAlias> = self.alias_clause(true)?;
+                Ok(Some(match is_lateral {
+                    true => {
+                        let (name, columns) = match alias {
+                            Some(alias) => (Some(alias.name), alias.columns),
+                            None => (None, Vec::new()),
+                        };
+                        lateral(call, name, columns)
+                    }
+                    false => aliased(call, alias),
+                }))
+            }
+            _ => Ok(None),
+        }
+    }
+
+    /// `table_ref` without its joins, with its source range.
+    pub(crate) fn table_ref(&mut self) -> Parsing<Expression> {
+        self.deeper(|parser| {
+            let first: usize = parser.at;
+            let node: Expression = parser.table_item()?;
+            Ok(parser.spanned(first, node))
+        })
+    }
+
+    /// `table_ref` without its joins.
+    fn table_item(&mut self) -> Parsing<Expression> {
+        if self.eat_kw("lateral") {
+            if self.is_char('(') {
+                let query: Expression = self.select_with_parens()?;
+                let alias: Option<TableAlias> = self.alias_clause(true)?;
+                return Ok(self.subquery_ref(query, alias, true));
+            }
+            if let Some(call) = self.keyword_table(true)? {
+                return Ok(call);
+            }
+            return self.function_table(true);
+        }
+        if self.is_char('(') {
+            return self.parenthesized_ref();
+        }
+        if let Some(call) = self.keyword_table(false)? {
+            return Ok(call);
+        }
+        if self.function_ahead() {
+            return self.function_table(false);
+        }
+        let mut relation: TableRef = self.relation()?;
+        if let Some(alias) = self.alias_clause(true)? {
+            relation.alias = Some(alias.name);
+            relation.alias_explicit_as = alias.explicit;
+            relation.column_aliases = alias.columns;
+        }
+        if self.eat_kw("tablesample") {
+            let method: Vec<Identifier> = self.qualified_name()?;
+            let mut operands: Vec<Expression> = vec![name_value(&method)];
+            self.expect_char('(')?;
+            operands.extend(self.expr_list()?);
+            self.expect_char(')')?;
+            let mut options: Vec<Expression> = Vec::new();
+            if self.eat_kw("repeatable") {
+                self.expect_char('(')?;
+                options.push(clause("REPEATABLE", vec![self.a_expr()?]));
+                self.expect_char(')')?;
+            }
+            relation.sample_call = Some(Box::new(keyword_call("TABLESAMPLE", operands, options)));
+        }
+        Ok(Expression::Table(Box::new(relation)))
+    }
+
+    /// Whether a function table starts here: a name and then `(`, or a value function.
+    fn function_ahead(&self) -> bool {
+        if let Some(word) = self.keyword_at(0)
+            && VALUE_FUNCTIONS.iter().any(|(name, _)| *name == word)
+        {
+            return true;
+        }
+        let mut offset: usize = 0;
+        while self.peek_at(offset).is_some_and(is_col_label) && self.char_at(offset + 1, '.') {
+            offset += 2;
+        }
+        self.peek_at(offset).is_some_and(is_col_label) && self.char_at(offset + 1, '(')
+    }
+
+    /// `relation_expr`: `[ONLY] qualified_name [*]` or `ONLY (qualified_name)`.
+    pub(crate) fn relation(&mut self) -> Parsing<TableRef> {
+        let only: bool = self.eat_kw("only");
+        let name: Vec<Identifier> = match only && self.is_char('(') {
+            true => {
+                self.at += 1;
+                let name: Vec<Identifier> = self.table_name()?;
+                self.expect_char(')')?;
+                name
+            }
+            false => self.table_name()?,
+        };
+        if !only {
+            self.eat_char('*');
+        }
+        let mut relation: TableRef = table(name);
+        relation.only = only;
+        Ok(relation)
+    }
+
+    /// `relation_expr` as an expression, for `TABLE`.
+    pub(crate) fn relation_expression(&mut self) -> Parsing<Expression> {
+        Ok(Expression::Table(Box::new(self.relation()?)))
+    }
+
+    /// `func_table func_alias_clause`, after any `LATERAL`.
+    fn function_table(&mut self, is_lateral: bool) -> Parsing<Expression> {
+        let call: Expression = match self.keyword_at(0) {
+            Some(word)
+                if self.is_special_call(word)
+                    || VALUE_FUNCTIONS.iter().any(|(name, _)| *name == word) =>
+            {
+                self.c_expr(Flavor::B)?
+            }
+            _ => {
+                let mut parts: Vec<Identifier> = vec![identifier(&self.advance()?)];
+                while self.eat_char('.') {
+                    parts.push(self.name(is_col_label)?);
+                }
+                self.function_call(parts, true)?
+            }
+        };
+        let call: Expression = match self.ordinality() {
+            true => match call {
+                Expression::Function(mut function) => {
+                    function.name = format!("{} WITH ORDINALITY", function.name);
+                    Expression::Function(function)
+                }
+                other => keyword_call("WITH ORDINALITY", vec![other], Vec::new()),
+            },
+            false => call,
+        };
+        self.function_with_alias(call, is_lateral)
+    }
+
+    /// A function table under its `func_alias_clause`; a column definition list wraps the call.
+    fn function_with_alias(&mut self, call: Expression, is_lateral: bool) -> Parsing<Expression> {
+        let (alias, columns) = self.function_alias()?;
+        let (call, alias) = match columns.is_empty() {
+            true => (call, alias),
+            false => {
+                let mut operands: Vec<Expression> = vec![call];
+                if let Some(alias) = alias {
+                    if alias.explicit {
+                        operands.push(var("AS"));
+                    }
+                    operands.push(Expression::Identifier(alias.name));
+                }
+                (keyword_call("COLUMN DEFINITIONS", operands, columns), None)
+            }
+        };
+        if is_lateral {
+            let (name, columns) = match alias {
+                Some(alias) => (Some(alias.name), alias.columns),
+                None => (None, Vec::new()),
+            };
+            return Ok(lateral(call, name, columns));
+        }
+        Ok(aliased(call, alias))
+    }
+
+    /// `WITH ORDINALITY`, when present.
+    fn ordinality(&mut self) -> bool {
+        let found: bool = self.kw("with") && self.kw_at(1, "ordinality");
+        self.at += 2 * usize::from(found);
+        found
+    }
+
+    /// `func_alias_clause`: an alias, and the columns it defines with their types, if any.
+    fn function_alias(&mut self) -> Parsing<(Option<TableAlias>, Vec<Expression>)> {
+        if self.kw("as") && self.char_at(1, '(') {
+            self.at += 1;
+            return Ok((None, self.column_definitions()?));
+        }
+        let explicit: bool = self.eat_kw("as");
+        let name: Identifier = match self.is(is_col_id) {
+            true => self.name(is_col_id)?,
+            false if explicit => return Err(self.error()),
+            false => return Ok((None, Vec::new())),
+        };
+        let mut columns: Vec<Identifier> = Vec::new();
+        let mut definitions: Vec<Expression> = Vec::new();
+        if self.is_char('(') {
+            match self.attempt(|parser| parser.name_list()) {
+                Ok(names) => columns = names,
+                Err(_) => definitions = self.column_definitions()?,
+            }
+        }
+        let alias: TableAlias = TableAlias {
+            name,
+            columns,
+            explicit,
+        };
+        Ok((Some(alias), definitions))
+    }
+
+    /// `( ColId Typename [COLLATE any_name], ... )`, each as `(name, type [, (COLLATE, name)])`.
+    fn column_definitions(&mut self) -> Parsing<Vec<Expression>> {
+        self.parenthesized(|parser| {
+            let mut parts: Vec<Expression> = vec![
+                Expression::Identifier(parser.name(is_col_id)?),
+                Expression::DataType(parser.typename()?),
+            ];
+            if parser.eat_kw("collate") {
+                let name: Vec<Identifier> = parser.qualified_name()?;
+                parts.push(clause("COLLATE", vec![name_value(&name)]));
+            }
+            Ok(tuple(parts))
+        })
+    }
+
+    /// `alias_clause`: `[AS] ColId [( name_list )]`, when present and `allowed`.
+    fn alias_clause(&mut self, allowed: bool) -> Parsing<Option<TableAlias>> {
+        if !allowed {
+            return Ok(None);
+        }
+        let explicit: bool = self.eat_kw("as");
+        let name: Identifier = match self.is(is_col_id) {
+            true => self.name(is_col_id)?,
+            false if explicit => return Err(self.error()),
+            false => return Ok(None),
+        };
+        let columns: Vec<Identifier> = match self.is_char('(') {
+            true => self.name_list()?,
+            false => Vec::new(),
+        };
+        Ok(Some(TableAlias {
+            name,
+            columns,
+            explicit,
+        }))
+    }
+
+    fn subquery_ref(
+        &self,
+        query: Expression,
+        alias: Option<TableAlias>,
+        is_lateral: bool,
+    ) -> Expression {
+        subquery(query, alias, is_lateral)
+    }
+
+    /// `(` in FROM: a subquery, or a parenthesized joined table.
+    fn parenthesized_ref(&mut self) -> Parsing<Expression> {
+        let reached: Option<usize> = match self.starts_query_at(1) {
+            false => None,
+            true => match self.attempt(|parser| {
+                let query: Expression = parser.select_with_parens()?;
+                let alias: Option<TableAlias> = parser.alias_clause(true)?;
+                Ok(parser.subquery_ref(query, alias, false))
+            }) {
+                Ok(node) => return Ok(node),
+                Err((error, _)) => Some(error.position),
+            },
+        };
+        let joined = self.attempt(|parser| {
+            parser.expect_char('(')?;
+            let left: Expression = parser.table_ref()?;
+            let joins: Vec<Join> = parser.joins()?;
+            if joins.is_empty() && !matches!(left, Expression::JoinedTable(_)) {
+                return Err(parser.error());
+            }
+            parser.expect_char(')')?;
+            let alias: Option<TableAlias> = parser.alias_clause(true)?;
+            Ok(joined_alias(left, joins, alias))
+        });
+        match (joined, reached) {
+            (Ok(node), _) => Ok(node),
+            (Err((error, _)), Some(reached)) if error.position < reached => {
+                Err(self.error_at_position(reached))
+            }
+            (Err((error, _)), _) => Err(error),
+        }
+    }
+}

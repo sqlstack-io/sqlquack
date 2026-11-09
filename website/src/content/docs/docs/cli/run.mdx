@@ -1,0 +1,124 @@
+---
+title: "sqlquack run"
+description: "Convert a query and run it on DuckDB over a few rows you give it."
+sidebar:
+  label: "run"
+---
+
+`sqlquack run` converts a Snowflake query, runs it on DuckDB over small fixtures, and prints the
+rows. Use it to see what a converted query returns before you trust it, or to pin that down in a
+test. DuckDB comes with `sqlquack`, so there is nothing else to install.
+
+## Usage
+
+Take a [project](/docs/project/) with one source:
+
+```yaml
+# sources/orders.yml
+sources:
+  - name: orders
+    columns:
+      - name: id
+        type: INTEGER
+      - name: amount
+        type: NUMBER(10,2)
+```
+
+and a query in `doubled.sql`:
+
+```sql
+SELECT id, amount * 2 AS doubled
+FROM orders
+ORDER BY id
+```
+
+Give `orders` two rows and run it:
+
+```console
+$ sqlquack run doubled.sql --fixture 'orders=[[1, 2.5], [2, 4]]'
+ID  DOUBLED
+1   5.00
+2   8.00
+sqlquack run: done, 2 rows
+```
+
+Every table the project declares exists, typed as its source says. A table without a fixture is
+empty. The column names are the ones Snowflake would give: unquoted names in upper case.
+
+## Fixtures
+
+`--fixture TABLE=ROWS` fills one table, and you can repeat it. `TABLE` is the source's name, or
+its whole `database.schema.table` name when two sources share a name. Case does not matter.
+
+Rows are a JSON list. A row is either a list of values in column order, or an object naming the
+columns it sets, the rest NULL:
+
+```console
+$ sqlquack run doubled.sql --fixture 'orders=[{"id": 1, "amount": 2.5}, {"id": 2}]'
+ID  DOUBLED
+1   5.00
+2   NULL
+sqlquack run: done, 2 rows
+```
+
+A value that contains a `/` is a file instead: a CSV file with a header row, or a Parquet file.
+Its columns fill the table's columns of the same name.
+
+```console
+$ cat data/orders.csv
+id,amount
+1,2.5
+2,4
+$ sqlquack run doubled.sql --fixture orders=./data/orders.csv
+ID  DOUBLED
+1   5.00
+2   8.00
+sqlquack run: done, 2 rows
+```
+
+Write `./orders.csv` rather than `orders.csv`, so the value holds a `/`.
+
+## Checking the result
+
+`--expect` gives the rows the result must hold, written the same way as fixture rows. Each value
+is cast to the result column's type before comparing, so `5` matches `5.00`:
+
+```console
+$ sqlquack run doubled.sql --fixture 'orders=[[1, 2.5], [2, 4]]' --expect '[[1, 5], [2, 8]]'
+ID  DOUBLED
+1   5.00
+2   8.00
+sqlquack run: done, 2 rows as expected
+```
+
+When the query has an `ORDER BY`, the rows must come in the same order. Otherwise they may come
+in any order. A difference exits 1 and shows where:
+
+```console
+$ sqlquack run doubled.sql --fixture 'orders=[[1, 2.5], [2, 4]]' --expect '[[1, 5], [2, 9]]'
+ID  DOUBLED
+1   5.00
+2   8.00
+sqlquack run: the result differs from --expect
+  row 2: expected (2, 9.00)
+  row 2: got      (2, 8.00)
+```
+
+Object keys in fixtures and in `--expect` name columns the way Snowflake does. `id` means the
+column `ID`, and `"id"` in double quotes means a column named exactly `id`. When no column has
+the folded name, a key matches the one column with that name in any case, so `note` finds a
+column declared as `"note"`.
+
+## What it does not run
+
+`run` takes one query. It refuses what `convert` refuses, with the same diagnostics, and runs
+nothing. A query that calls a Python function is not run.
+
+`run` also takes `--project`, `--session`, `--overrides` and the
+[policy flags](/docs/policy/#flags), as [`convert`](/docs/cli/convert/) does.
+
+## Exit status
+
+`0` when the query ran, and its rows match `--expect` if you gave one. `1` when the query is
+refused or the rows differ. `2` when it can't run: a bad fixture, a missing file, or a DuckDB
+error.

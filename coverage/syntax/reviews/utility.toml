@@ -1,0 +1,89 @@
+# Approved reviews. Each listed form was read in full against its documentation
+# page, its obligations, its cases with their Snowflake receipts, and the local parse trees. An approval holds
+# while the form's definition hash and fingerprint are unchanged; any change makes it stale until re-read.
+
+[[review]]
+id = "utility-001"
+family = "utility"
+parser_tree = "4b9e8db3635aac38f12852384d0e0e4844c780b9"
+reviewed_utc = "2026-11-05T01:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.utility.execute-alert",
+  "sf.utility.execute-dcm-project.test-all",
+  "sf.utility.execute-task.task-retry-graph-run",
+  "sf.utility.execute-task.task-retry-last",
+  "sf.utility.explain",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 2f0c38a72e97; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.execute-alert" = "72d046ac3f75e821f06bffd1d10c944735f262bd79314f453ae2c7124411a897"
+"sf.utility.execute-dcm-project.test-all" = "da5d99901d29d011cf9d2c34f3be6bb8b3855015eda898ad8b0dfab432f5b83b"
+"sf.utility.execute-task.task-retry-graph-run" = "ddd8ba992bbde67ece049a5e15bea32b9aefae5fde6aaeac1fb8d946611f31cd"
+"sf.utility.execute-task.task-retry-last" = "bd0c9f7b3eea9e217215720ab328b56a5ceb0955d981ce528bc6820734f2592f"
+"sf.utility.explain" = "04b52e4cd0f8d87fe8c3eb4b599834cf077852a717a8a8c2f6b573855258b04a"
+
+[review.definitions]
+"sf.utility.execute-alert" = "8e95792bafdcfa6f8efb05ee69f238b5ba8696cccc1639f67ed76a5b0f680b00"
+"sf.utility.execute-dcm-project.test-all" = "35c5e8df0c1b1466742ffe97e4961ac93e5ccc5f7cbff9c79bc6474499061e5d"
+"sf.utility.execute-task.task-retry-graph-run" = "e7fe9238ac8d31a527171dcf12189db7311b6284c6eb9a93e0368517f54dd2d4"
+"sf.utility.execute-task.task-retry-last" = "aed2a06fd050574f75bf4d2075d7b0023b4c739287aa3ee8df6a5373e86b4984"
+"sf.utility.explain" = "adef967d56411996bc47f55d5d607768e45c0bdc74c708b11b0a5fe287b7cc3a"
+
+[[review]]
+id = "utility-002"
+family = "utility"
+parser_tree = "a8d9cb164ed163f3c02fff0e18aedb62c1dde5be"
+reviewed_utc = "2026-11-05T10:20:00Z"
+verdict = "approved"
+forms = [
+  "sf.utility.execute-task.task",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main a398f2e56279; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.execute-task.task" = "932d3faff1962ab101d32efa577d772f06c65538459e21e4c0328388742ff7e2"
+
+[review.definitions]
+"sf.utility.execute-task.task" = "7767464e993edc3b3c39d2168e5cd3c79879415648c6c3972ab53ddf5ed6e3d7"
+
+[[review]]
+id = "utility-003"
+family = "utility"
+parser_tree = "e792d6e8f27909ce93bc04d35d415b3fd2c288cb"
+reviewed_utc = "2026-11-05T16:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.utility.execute-dcm-project.purge",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main cbe394ec714e; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.execute-dcm-project.purge" = "67c191e3ed1ed40f97ee05d81b3145af83cf11229705dd845ba17b1dee43b31f"
+
+[review.definitions]
+"sf.utility.execute-dcm-project.purge" = "d6ed3e88a606d462dcc79381e11336dec8a40afbad2541fb38892c3879b6cc1c"
+
+[[review]]
+id = "utility-004"
+family = "utility"
+parser_tree = "e1ca97fcc09a5cd594868745c3e0b4f612866974"
+reviewed_utc = "2026-11-05T15:33:19Z"
+verdict = "approved"
+forms = [
+  "sf.utility.execute-code-bundle",
+  "sf.utility.execute-notebook",
+  "sf.utility.execute-task-graph.graph-retry-last",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main b196cbd257c1; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.execute-code-bundle" = "eb258d83b14aa642fd6bc5bd28c0aecd6390b1f70d322d7dd538be41ddaccaa4"
+"sf.utility.execute-notebook" = "e81b4b373974378557f336ac513825a33a5f4baa304a128a6f96ad2f46d7ee3e"
+"sf.utility.execute-task-graph.graph-retry-last" = "a6faab3ac12626d259d4bb3c75888f2e06888d52a36a10f1dff4d5ec2268884f"
+
+[review.definitions]
+"sf.utility.execute-code-bundle" = "c16d88e8ce02a60b39760b47133af578be1993fe286d20de7791dee02a2c45bc"
+"sf.utility.execute-notebook" = "efda46598201cea03a4d64af6e20a5865ef4cd68049ba5b3ae44b1047bf76126"
+"sf.utility.execute-task-graph.graph-retry-last" = "5d3899caa702d4ec1b99cca9d3b4bd764b601fa2c7b151d18262de5d6fa7a99c"

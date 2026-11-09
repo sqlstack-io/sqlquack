@@ -1,0 +1,29 @@
+# Documentation indexes the pinned page list was read from (llms.txt files and the docs navigation tree).
+
+[[index]]
+name = "docs-nav-reference.json"
+sha256 = "be17dd7074e4ecc539950b574b7e14063d4e39270fedf41f4bd654540c8675cf"
+
+[[index]]
+name = "sql-reference-data-types.md"
+sha256 = "7a76d825f94742c8047acbb05212a0b7318411ef6ed10a0674c7f164d5bbe037"
+
+[[index]]
+name = "sql-reference-snowflake-scripting.md"
+sha256 = "b85befb96ecbd98a4cf2e7f3f97afb9582f6ca7edce2f984952f5e3ad996c927"
+
+[[index]]
+name = "sql-reference_classes_llms.txt"
+sha256 = "a0632e9d7ddf4d2143307967d4f524a2d51aac9eb9bafb9e115637269492973c"
+
+[[index]]
+name = "sql-reference_functions_llms.txt"
+sha256 = "9fdb1161984305e369118d702094b3aa3d3af5aa41068ad43495a686da818d99"
+
+[[index]]
+name = "sql-reference_llms.txt"
+sha256 = "714ec24812af7d00d26cf8bce857033d9f5783cc14c2c2cfdcf1ec588b49032b"
+
+[[index]]
+name = "sql-reference_sql_llms.txt"
+sha256 = "f17044674f5bd705236cff2ff90c89e0024a8a96fedcbc930824ebf04d54e0af"

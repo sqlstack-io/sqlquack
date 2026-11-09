@@ -1,0 +1,80 @@
+---
+title: "sqlquack census"
+description: "Count the constructs a body of SQL uses and how much of it converts."
+sidebar:
+  label: "census"
+---
+
+`sqlquack census` reads SQL files, counts the constructs they use, and reports how many files
+convert, what refuses the rest, and what to support next.
+
+## Usage
+
+```bash
+sqlquack census [OPTIONS] <PATHS>...
+```
+
+```bash
+sqlquack census target/compiled/my_project/models --builtin-policy
+sqlquack census target/compiled --chain-models --json --builtin-policy
+```
+
+Each `.sql` file is one query, or one model compiled by
+[SQLBuild](https://github.com/sqlstack-io/sqlbuild) or dbt; SQLBuild's reference calls are
+recognised. A directory is searched for `.sql` files. The tables they read come from the
+[project](/docs/project/) you run it in. Compiled models name relations as
+`database.schema.table`; see [Projects](/docs/project/#naming-tables) for how
+they resolve.
+
+```console
+$ sqlquack census target/compiled/my_project/models --builtin-policy
+Census of 25 snowflake SQL files
+  parsed 25 (25 statements), unparsed 0, empty 0
+  distinct constructs 21 (4 clause, 4 fn, 1 join, 12 node)
+  files refused: missing rule 0, outside type conditions 0, unresolved name 0, not expressible 0, parse fidelity 0, conversion budget 0, divergence refused 2
+  convertible: strict 23 (every model upstream converts too), unit-testable 23 (the file's own SQL converts; 0 with an upstream model refused or not scanned)
+  with no named assumption: strict 23, unit-testable 23 (relying on one: none)
+
+Refusals by category and construct (top 50)
+       2  a known divergence the policy refuses: fn:SUM
+```
+
+The report holds counts and construct names only, never SQL text or file names. `--names` adds
+file, model and relation names to the slowest files and the blockers.
+
+## Reading the counts
+
+| Count | Meaning |
+|-------|---------|
+| `unit-testable` | The file's own SQL converts. |
+| `strict` | It converts and so does every model upstream of it. |
+| `with no named assumption` | The same counts, leaving out files that rely on an assumption such as `session_timezone_utc`. |
+
+With `--chain-models`, each converted file types the relation its file name references, read
+by any qualifier as dbt writes it, and the files reading it convert again. A file reading a refused model is labelled
+`upstream_refused:<model>`, and one reading a model the scan holds no file for,
+`upstream_missing:<relation>`.
+
+## Planning support
+
+`--assume-supported` (with `--chain-models`) takes construct keys or `rule.<id>`s and reports how
+many files would then convert, what blocks the rest next, and a plan of the constructs each step
+should support together. Every such figure is an upper bound: it counts only the refusals
+collected, and supporting a construct may uncover others.
+
+## Options
+
+| Option | Meaning |
+|--------|---------|
+| `--project <folder>` | The [project](/docs/project/) declaring the tables the files read. Default the current folder. |
+| `--chain-models` | Type each converted file as the relation its name references, and convert again. |
+| `--assume-supported <keys>` | Construct keys or `rule.<id>`s to treat as supported, comma-separated. |
+| `--cursor-type timestamp\|integer` | Replace SQLBuild's cursor intrinsics with a bound as SQLBuild renders one. |
+| `--names` | Print file, model and relation names in the slowest files and the blockers. |
+| `--limit <n>` | Constructs listed in the text report. Default 50. |
+| `--dialect <dialect>` | The dialect the SQL is written in. Default `snowflake`. |
+| `--overrides`, `--verified-override` | As for [`convert`](/docs/cli/convert/#options). |
+| `--format text\|json`, `--json` | Print the report as text or JSON. |
+
+`census` also takes the [policy flags](/docs/policy/#flags). It takes no session parameters and
+converts under `utc-v1`.

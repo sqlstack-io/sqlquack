@@ -1,0 +1,1 @@
+"""Referee generator tests."""

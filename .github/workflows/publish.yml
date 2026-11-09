@@ -1,0 +1,147 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to publish, for example v0.52.0"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  release-tag:
+    name: Resolve release tag
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      tag: ${{ steps.release-tag.outputs.tag }}
+      tree: ${{ steps.prebuilt.outputs.tree }}
+      prebuilt-run-id: ${{ steps.prebuilt.outputs.run_id }}
+    steps:
+      - name: Resolve release tag
+        id: release-tag
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          case "${TAG}" in
+            v0*) ;;
+            *)
+              echo "Refusing to publish tag '${TAG}'. PyPI publishing is limited to v0* tags."
+              exit 1
+              ;;
+          esac
+
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.release-tag.outputs.tag }}
+
+      # Release Distributions builds every distribution on the release pull request. Its run is
+      # reused only when it succeeded and its commit has exactly the release tag's tree, so the
+      # reused distributions come from the same sources and the same reviewed build workflow.
+      - name: Find distributions built from the release tree
+        id: prebuilt
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tree="$(git rev-parse 'HEAD^{tree}')"
+          echo "tree=${tree}" >> "${GITHUB_OUTPUT}"
+          runs="$(gh api \
+            "repos/${GITHUB_REPOSITORY}/actions/workflows/release-distributions.yml/runs?event=workflow_dispatch&status=success&per_page=50" \
+            --jq '.workflow_runs[]
+              | select(.conclusion == "success" and .event == "workflow_dispatch")
+              | "\(.id) \(.head_sha)"')" || runs=""
+          run_id=""
+          while read -r candidate head_sha; do
+            [[ -n "${candidate}" ]] || continue
+            candidate_tree="$(gh api "repos/${GITHUB_REPOSITORY}/git/commits/${head_sha}" \
+              --jq .tree.sha 2>/dev/null)" || continue
+            [[ "${candidate_tree}" == "${tree}" ]] || continue
+            artifacts="$(gh api \
+              "repos/${GITHUB_REPOSITORY}/actions/runs/${candidate}/artifacts?per_page=100")" \
+              || continue
+            if ! jq -e '([.artifacts[] | select(.expired)] | length == 0)
+                and ([.artifacts[].name] | index("release-manifest") and index("dist-sdist"))' \
+                <<< "${artifacts}" > /dev/null; then
+              echo "Run ${candidate} built tree ${tree}, but its artifacts are incomplete or expired"
+              continue
+            fi
+            run_id="${candidate}"
+            break
+          done <<< "${runs}"
+          echo "run_id=${run_id}" >> "${GITHUB_OUTPUT}"
+          if [[ -n "${run_id}" ]]; then
+            echo "Publishing distributions prebuilt by run ${run_id} from tree ${tree}" \
+              | tee -a "${GITHUB_STEP_SUMMARY}"
+          else
+            echo "No prebuilt distributions for tree ${tree}; building from the tag" \
+              | tee -a "${GITHUB_STEP_SUMMARY}"
+          fi
+
+  distributions:
+    name: Distributions
+    needs: release-tag
+    permissions:
+      actions: read
+      contents: read
+    uses: ./.github/workflows/build-distributions.yml
+    with:
+      ref: ${{ needs.release-tag.outputs.tag }}
+      upload: true
+      prebuilt-run-id: ${{ needs.release-tag.outputs.prebuilt-run-id }}
+
+  pypi:
+    name: Publish to PyPI
+    needs:
+      - release-tag
+      - distributions
+    runs-on: ubuntu-24.04
+    environment: pypi
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: dist-*
+          path: dist
+          merge-multiple: true
+      - name: Check distributions match the release tag
+        env:
+          TAG: ${{ needs.release-tag.outputs.tag }}
+          TREE: ${{ needs.release-tag.outputs.tree }}
+          BUILT_TREE: ${{ needs.distributions.outputs.tree }}
+        run: |
+          if [[ -z "${TREE}" || "${BUILT_TREE}" != "${TREE}" ]]; then
+            echo "Distributions were built from tree ${BUILT_TREE:-<none>}, not ${TREE:-<none>}" >&2
+            exit 1
+          fi
+          version="${TAG#v}"
+          shopt -s nullglob
+          files=(dist/*)
+          if (( ${#files[@]} == 0 )); then
+            echo "No distributions were downloaded" >&2
+            exit 1
+          fi
+          for file in "${files[@]}"; do
+            name="$(basename "${file}")"
+            case "${name}" in
+              sqlquack-"${version}"-*.whl|sqlquack-"${version}".tar.gz) ;;
+              sqlquack_cli-"${version}"-*.whl|sqlquack_cli-"${version}".tar.gz) ;;
+              *)
+                echo "Unexpected distribution ${name} for ${TAG}" >&2
+                exit 1
+                ;;
+            esac
+          done
+          printf '%s\n' "${files[@]}"
+      - name: Publish distributions
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist

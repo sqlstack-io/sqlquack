@@ -1,0 +1,67 @@
+# Approved reviews. Each listed form was read in full against its
+# PostgreSQL 18.6 documentation, its obligations, its cases with their PostgreSQL 18.6 receipts, and the
+# local parse trees. An approval holds while the form's definition hash and fingerprint are unchanged;
+# any change makes it stale until re-read.
+
+[[review]]
+id = "pg-query-001"
+family = "query"
+parser_tree = "6ba0c304312d074bf7620a74cc760722b322888d"
+reviewed_utc = "2026-11-06T07:48:06Z"
+verdict = "approved"
+forms = [
+  "pg.query.queries-table-expressions.join-on",
+  "pg.query.queries-table-expressions.join-using",
+  "pg.query.queries-table-expressions.natural-join",
+  "pg.query.select.table",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 6ba0c304; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.query.queries-table-expressions.join-on" = "45684a60b2165c16c7b0e76eab701ad1c4732cc1853d46d895c17a01346a994b"
+"pg.query.queries-table-expressions.join-using" = "f61b6a611c0ba2d86bf9aa18bb340b3a0bdcefb691b8cab7370640531578e4a7"
+"pg.query.queries-table-expressions.natural-join" = "653d818b092235addc02e0d62ac93a19dfcb6fd51bcf5e5bbbb99c2b2ba858e8"
+"pg.query.select.table" = "14e16e1994deeb6a2d339538730c7500dd9283f8cd266a2bbf13938fa243c01f"
+
+[review.definitions]
+"pg.query.queries-table-expressions.join-on" = "f5aba286bdfc75ebc9fb8d5ad1bee558adb3acd27f35819546864afc72d14fdb"
+"pg.query.queries-table-expressions.join-using" = "9cfbaa6c8c2da89d9605797b060ea13ee7369426d57e6cbcb57aa1c64ee4043f"
+"pg.query.queries-table-expressions.natural-join" = "01b4cef40f7344adce54f644e8524bb791830e1b6a74797edb776bbf598b08c9"
+"pg.query.select.table" = "4df360aaab0ae703b1a84af140f41c9660401458c1f3bcde4ba6e13598771a2e"
+
+[[review]]
+id = "pg-query-002"
+family = "query"
+parser_tree = "37050ece2046c9560a4ea42f87abfa43e1432125"
+reviewed_utc = "2026-11-06T08:56:35Z"
+verdict = "approved"
+forms = [
+  "pg.query.values",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 37050ece; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.query.values" = "aa98f555c7c37a0302bcbae23069c8c1d6630c5bda785a2fac81f92e9c825f28"
+
+[review.definitions]
+"pg.query.values" = "5723e702074da772320e60753158f01c8280525e08436dbb89c9a7d367e96f87"
+
+[[review]]
+id = "pg-query-003"
+family = "query"
+parser_tree = "456f03b38854dcee53403e8c19c657bde430a76e"
+reviewed_utc = "2026-11-07T04:24:14Z"
+verdict = "approved"
+forms = [
+  "pg.query.select-into",
+  "pg.query.select.select",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 456f03b3; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.query.select-into" = "830cbde740780d71e7172056a95b02489a1e2e138feb5557fd448650691c2548"
+"pg.query.select.select" = "7c1bda10fa06c38be0d2d83035dd935c05d7a2f9c890bec279a44384f04281fb"
+
+[review.definitions]
+"pg.query.select-into" = "36f6dc00c653c04497be846becc78d8519d3943b0d7ba7c07a205d2528458d07"
+"pg.query.select.select" = "8cbeccadef634b217f8d60d4e91890fa0e93497f48023fb0a1fe2f95a9e2111b"

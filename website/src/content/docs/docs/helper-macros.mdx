@@ -1,0 +1,73 @@
+---
+title: "Helper macros"
+description: "The versioned DuckDB macros converted SQL calls, and how to create them before running it."
+---
+
+Converted SQL that reads a VARIANT or date and time text calls small DuckDB macros in a `sqlquack` schema, such as
+`sqlquack.variant_text_v1`, instead of repeating the same long expression at every use.
+`convert` prints the statements creating the macros a query calls ahead of the query, so its
+output runs as it is in any DuckDB session:
+
+```console
+$ sqlquack convert staging.sql --builtin-policy
+CREATE SCHEMA IF NOT EXISTS sqlquack;
+CREATE OR REPLACE MACRO sqlquack.json_escaped_v1(quack_text) AS ...;
+CREATE OR REPLACE MACRO sqlquack.variant_text_v1(quack_site, quack_value) AS ...;
+SELECT
+    sqlquack.variant_text_v1('#0d01742fedea', json_extract("EVENTS"."PAYLOAD", '$."customer_id"')) AS "CUSTOMER_ID"
+FROM ...
+```
+
+A query that calls no helper macro prints no setup statements.
+
+## Running converted SQL
+
+Run the setup statements once per DuckDB connection, before the query. They are safe to run
+again: each macro is created with `CREATE OR REPLACE`.
+
+| Where | What creates the macros |
+|-------|-------------------------|
+| `sqlquack convert` text output | The statements printed ahead of the query. |
+| `sqlquack convert --json` | The `macros` list, in order, before your own override macros. |
+| `sqlquack function` | The `macros` list, before you create the function's macro. See [function](/docs/cli/function/). |
+| Python | `Conversion.macros`, in order. See [Python](/docs/python/#converting). |
+| The playground | It runs them for you; the setup shows above the SQL. |
+
+## Versions
+
+Each macro's name ends in its version, such as `_v1`. A released version's definition never
+changes, so SQL converted by one release keeps running beside SQL converted by a later one. A
+changed macro gets a new version and a new name.
+
+## The macros
+
+`sqlquack explain <name>` prints a macro's arguments, what it computes and its definition:
+
+```bash
+sqlquack explain variant_text_v1
+```
+
+| Macro | What it computes |
+|-------|------------------|
+| `json_read_v1` | JSON text read as a VARIANT, raising `json_fidelity` where DuckDB might read it differently from Snowflake. |
+| `json_checked_v1` | The same read, faster: plain JSON is read as it is, anything else goes through `json_read_v1`. |
+| `json_escaped_v1` | JSON text with Snowflake's escapes. |
+| `variant_text_v1` | A VARIANT cast to `VARCHAR`, as Snowflake writes it. |
+| `variant_json_text_v1` | A VARIANT as Snowflake writes it as JSON text. |
+| `variant_number_v1` | A VARIANT cast to `NUMBER(p, s)`, with Snowflake's errors. |
+| `variant_float_v1` | A VARIANT cast to `FLOAT`, with Snowflake's errors. |
+| `variant_boolean_v1` | A VARIANT cast to `BOOLEAN`, with Snowflake's errors. |
+| `variant_date_v1` | A VARIANT cast to `DATE`, with Snowflake's errors. |
+| `variant_timestamp_ntz_v1` | A VARIANT cast to `TIMESTAMP_NTZ`, with Snowflake's errors. |
+| `timestamp_text_v1` | Text read as `TIMESTAMP_NTZ(9)` in the spellings Snowflake was recorded reading, with its errors. |
+| `try_timestamp_text_v1` | The same read as TRY_ forms do it: impossible values and the spellings recorded as `NULL` are `NULL`. |
+| `date_text_v1` | Text read as `DATE` in the spellings Snowflake was recorded reading, with its errors. |
+| `try_date_text_v1` | The same read as TRY_ forms do it. |
+| `zoned_text_v1` | Text read as the instant it names, as a UTC wall time; text without an offset is UTC. |
+| `try_zoned_text_v1` | The same read as TRY_ forms do it. |
+| `utc_zoned_text_v1` | Text read as `zoned_text_v1` reads it, raising `timestamp_tz_offset` for an offset other than +00:00. |
+| `try_utc_zoned_text_v1` | The same read as TRY_ forms do it. |
+| `time_zone_v1` | A time zone name passed through when NULL or a name Snowflake was recorded accepting, case included; raises `time_zone_spelling` for any other name. |
+
+A raising macro takes the raise site first, such as `'#0d01742fedea'`, so its error names the
+place in your SQL it came from, as an inline raise does.

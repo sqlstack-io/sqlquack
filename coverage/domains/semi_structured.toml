@@ -1,0 +1,471 @@
+# Declared domains of the semi-structured rules: GET, paths, objects and arrays.
+# Format: see docs/coverage.md.
+version = 1
+
+[[rule]]
+id = "rule.variant_computed_get"
+
+[[rule.form]]
+construct = "fn:GET"
+also = ["node:subscript"]
+arguments = [
+  { families = ["variant"] },
+  { families = ["text", "integer"], kinds = ["value"] },
+]
+template = "GET({0}, {1})"
+category = "semi-structured-array"
+variants = ["{0}[{1}]"]
+
+[[rule.probe]]
+construct = "fn:GET"
+arguments = [
+  { families = ["variant"] },
+  { families = ["integer"], kinds = ["literal"] },
+]
+template = "GET({0}, {1})"
+category = "semi-structured-array"
+benign = { "0" = "PARSE_JSON('[1,2,3]')", "1" = "-1" }
+
+[[rule]]
+id = "rule.array_position"
+
+[[rule.form]]
+construct = "fn:ARRAY_POSITION"
+arguments = [{ families = ["variant", "null"] }, { families = ["variant"] }]
+template = "ARRAY_POSITION({0}, {1})"
+category = "semi-structured-array"
+benign = { "0" = "PARSE_JSON('1')", "1" = "PARSE_JSON('[1,2]')" }
+divergences = { "0.variant.json_null" = "json_fidelity", "0.variant.empty_containers" = "json_fidelity", "0.variant.case_keys" = "json_fidelity", "0.variant.path_keys" = "json_fidelity", "0.variant.nesting" = "json_fidelity", "0.variant.number_spellings" = "json_fidelity", "0.variant.large_numbers" = "json_fidelity" }
+
+[[rule]]
+id = "rule.array_cat"
+
+[[rule.form]]
+construct = "fn:ARRAY_CAT"
+arguments = [
+  { families = ["variant"] },
+  { families = ["variant"] },
+]
+template = "ARRAY_CAT({0}, {1})"
+category = "semi-structured-array"
+divergences = { "variant.large_numbers" = "", "0.variant.number_spellings" = "", "1.variant.number_spellings" = "" }
+
+[[rule]]
+id = "rule.array_compact"
+
+[[rule.form]]
+construct = "fn:ARRAY_COMPACT"
+arguments = [
+  { families = ["variant"] },
+]
+template = "ARRAY_COMPACT({0})"
+category = "semi-structured-array"
+divergences = { "variant.large_numbers" = "", "0.variant.number_spellings" = "" }
+
+[[rule]]
+id = "rule.array_construct"
+
+[[rule.form]]
+construct = "fn:ARRAY_CONSTRUCT"
+arguments = []
+
+[[rule.form]]
+construct = "fn:ARRAY_CONSTRUCT"
+arguments = [
+  { families = ["variant", "text", "boolean", "integer", "float"] },
+]
+repeat = true
+template = "ARRAY_CONSTRUCT({0})"
+category = "semi-structured-array"
+divergences = { "boolean.null" = "json_fidelity", "integer.null" = "json_fidelity", "text.null" = "json_fidelity", "float.null" = "json_fidelity", "float.nan_infinity" = "json_fidelity", "float.negative_zero" = "json_fidelity", "0.variant.null" = "json_fidelity", "0.variant.number_spellings" = "json_fidelity", "0.variant.large_numbers" = "json_fidelity" }
+
+# A FLOAT beside each other value holds the array as a typed VARIANT, which every value then joins.
+[[rule.form]]
+construct = "fn:ARRAY_CONSTRUCT"
+arguments = [
+  { families = ["float"] },
+  { families = ["variant", "text", "boolean", "integer", "float"] },
+]
+template = "ARRAY_CONSTRUCT({0}, {1})"
+category = "semi-structured-array"
+divergences = { "0.float.null" = "json_fidelity", "0.float.nan_infinity" = "json_fidelity", "0.float.negative_zero" = "json_fidelity", "1.boolean.null" = "json_fidelity", "1.text.null" = "json_fidelity", "1.integer.null" = "json_fidelity", "1.variant.null" = "json_fidelity", "1.float.null" = "json_fidelity", "1.float.nan_infinity" = "json_fidelity", "1.float.negative_zero" = "json_fidelity", "1.integer.beyond_64_bits" = "json_fidelity", "1.integer.digits_38" = "json_fidelity", "1.variant.large_numbers" = "json_fidelity", "1.variant.number_spellings" = "json_fidelity", "1.variant.scalars" = "json_fidelity" }
+
+# A bracket literal builds as ARRAY_CONSTRUCT does.
+[[rule.form]]
+construct = "node:array_func"
+arguments = [
+  { families = ["variant", "text", "boolean", "integer"] },
+]
+repeat = true
+template = "[{0}]"
+category = "semi-structured-array"
+divergences = { "boolean.null" = "json_fidelity", "integer.null" = "json_fidelity", "text.null" = "json_fidelity", "0.variant.null" = "json_fidelity", "0.variant.number_spellings" = "json_fidelity", "0.variant.large_numbers" = "json_fidelity" }
+
+# The empty bracket literal [], recorded by the array literal cases.
+[[rule.form]]
+construct = "node:array_func"
+arguments = []
+
+[[rule]]
+id = "rule.array_construct_compact"
+
+[[rule.form]]
+construct = "fn:ARRAY_CONSTRUCT_COMPACT"
+arguments = []
+
+[[rule.form]]
+construct = "fn:ARRAY_CONSTRUCT_COMPACT"
+arguments = [
+  { families = ["variant", "text", "boolean", "integer", "null"] },
+]
+repeat = true
+template = "ARRAY_CONSTRUCT_COMPACT({0})"
+category = "semi-structured-array"
+divergences = { "0.variant.json_null" = "json_fidelity", "0.variant.number_spellings" = "json_fidelity", "0.variant.large_numbers" = "json_fidelity" }
+
+[[rule]]
+id = "rule.array_contains"
+
+[[rule.form]]
+construct = "fn:ARRAY_CONTAINS"
+arguments = [
+  { families = ["variant"] },
+  { families = ["variant"] },
+]
+template = "ARRAY_CONTAINS({0}, {1})"
+category = "semi-structured-array"
+benign = { "0" = "PARSE_JSON('1')", "1" = "PARSE_JSON('[1,2]')" }
+divergences = { "0.variant.json_null" = "json_fidelity", "0.variant.empty_containers" = "json_fidelity", "0.variant.case_keys" = "json_fidelity", "0.variant.path_keys" = "json_fidelity", "0.variant.nesting" = "json_fidelity", "0.variant.number_spellings" = "json_fidelity", "0.variant.large_numbers" = "json_fidelity", "1.variant.json_null" = "json_fidelity", "1.variant.empty_containers" = "json_fidelity", "1.variant.case_keys" = "json_fidelity", "1.variant.path_keys" = "json_fidelity", "1.variant.nesting" = "json_fidelity", "1.variant.number_spellings" = "json_fidelity", "1.variant.large_numbers" = "json_fidelity", "1.variant.scalars" = "json_fidelity" }
+
+[[rule]]
+id = "rule.array_except"
+
+[[rule.form]]
+construct = "fn:ARRAY_EXCEPT"
+arguments = [
+  { families = ["variant"] },
+  { families = ["variant"] },
+]
+template = "ARRAY_EXCEPT({0}, {1})"
+category = "semi-structured-array"
+benign = { "0" = "PARSE_JSON('[\"a\",\"b\"]')", "1" = "PARSE_JSON('[\"b\"]')" }
+divergences = { "0.variant.json_null" = "json_fidelity", "0.variant.empty_containers" = "json_fidelity", "0.variant.case_keys" = "json_fidelity", "0.variant.path_keys" = "json_fidelity", "0.variant.nesting" = "json_fidelity", "0.variant.number_spellings" = "json_fidelity", "0.variant.large_numbers" = "json_fidelity", "0.variant.scalars" = "json_fidelity", "1.variant.json_null" = "json_fidelity", "1.variant.empty_containers" = "json_fidelity", "1.variant.case_keys" = "json_fidelity", "1.variant.path_keys" = "json_fidelity", "1.variant.nesting" = "json_fidelity", "1.variant.number_spellings" = "json_fidelity", "1.variant.large_numbers" = "json_fidelity", "1.variant.scalars" = "json_fidelity" }
+
+[[rule]]
+id = "rule.array_size"
+
+[[rule.form]]
+construct = "fn:ARRAY_SIZE"
+arguments = [
+  { families = ["variant"] },
+]
+template = "ARRAY_SIZE({0})"
+category = "semi-structured-array"
+
+# ARRAY_SIZE(ARRAY_AGG(x)) as a count: rule.array_agg's cases record it.
+[[rule.form]]
+construct = "fn:ARRAY_SIZE"
+arguments = [
+  { families = ["integer", "text", "boolean"] },
+]
+
+[[rule]]
+id = "rule.array_to_string"
+
+[[rule.form]]
+construct = "fn:ARRAY_TO_STRING"
+arguments = [
+  { families = ["variant"] },
+  { families = ["text"], kinds = ["literal"] },
+]
+template = "ARRAY_TO_STRING({0}, {1})"
+category = "semi-structured-array"
+divergences = { "variant.large_numbers" = "", "0.variant.number_spellings" = "" }
+
+[[rule.form]]
+construct = "fn:ARRAY_TO_STRING"
+arguments = [
+  { families = ["variant"] },
+  { families = ["null"] },
+]
+template = "ARRAY_TO_STRING({0}, {1})"
+category = "semi-structured-array"
+
+[[rule]]
+id = "rule.object_keys"
+
+[[rule.form]]
+construct = "fn:OBJECT_KEYS"
+arguments = [
+  { families = ["variant"] },
+]
+template = "OBJECT_KEYS({0})"
+category = "semi-structured-object"
+divergences = { "variant.large_numbers" = "", "0.variant.number_spellings" = "" }
+
+[[rule]]
+id = "rule.object_pick"
+
+[[rule.form]]
+construct = "fn:OBJECT_PICK"
+arguments = [
+  { families = ["variant"] },
+  { families = ["text"], kinds = ["literal"] },
+]
+repeat = true
+template = "OBJECT_PICK({0}, {1})"
+category = "semi-structured-object"
+divergences = { "variant.large_numbers" = "", "0.variant.number_spellings" = "" }
+
+# Keys from an array builder only: a VARIANT holding an array is not picked by (recorded {}).
+[[rule.form]]
+construct = "fn:OBJECT_PICK"
+arguments = [
+  { families = ["variant"] },
+  { families = ["variant"], grammar = true },
+]
+template = "OBJECT_PICK({0}, ARRAY_CONSTRUCT({1}))"
+category = "semi-structured-object"
+benign = { "1" = "'a'" }
+sql_types = { "1" = "VARCHAR" }
+divergences = { "0.variant.large_numbers" = "", "0.variant.number_spellings" = "" }
+
+[[rule]]
+id = "rule.split"
+
+[[rule.form]]
+construct = "fn:SPLIT"
+arguments = [
+  { families = ["text"] },
+  { families = ["text", "null"] },
+]
+template = "SPLIT({0}, {1})"
+category = "semi-structured-array"
+
+[[rule]]
+id = "rule.variant_kind"
+
+[[rule.form]]
+construct = "fn:IS_OBJECT"
+also = ["fn:IS_ARRAY", "fn:IS_BOOLEAN"]
+arguments = [
+  { families = ["variant"] },
+]
+template = "IS_OBJECT({0})"
+category = "semi-structured-check"
+variants = ["IS_ARRAY({0})", "IS_BOOLEAN({0})"]
+
+[[rule]]
+id = "rule.variant_typed_check"
+
+[[rule.form]]
+construct = "fn:IS_DATE"
+also = ["fn:IS_TIME", "fn:IS_TIMESTAMP_NTZ", "fn:IS_TIMESTAMP_LTZ", "fn:IS_TIMESTAMP_TZ", "fn:IS_BINARY"]
+arguments = [
+  { families = ["variant"] },
+]
+template = "IS_DATE({0})"
+category = "semi-structured-check"
+variants = ["IS_TIME({0})", "IS_TIMESTAMP_NTZ({0})", "IS_TIMESTAMP_LTZ({0})", "IS_TIMESTAMP_TZ({0})", "IS_BINARY({0})"]
+
+[[rule]]
+id = "rule.object_construct"
+
+[[rule.form]]
+construct = "fn:OBJECT_CONSTRUCT"
+also = ["node:map_func"]
+arguments = []
+
+[[rule.form]]
+construct = "fn:OBJECT_CONSTRUCT"
+also = ["fn:OBJECT_CONSTRUCT_KEEP_NULL", "node:map_func"]
+arguments = [
+  { families = ["text"] },
+  { families = ["variant", "text", "boolean", "integer", "float", "decimal", "null"] },
+]
+repeat = true
+one_wise = true
+template = "OBJECT_CONSTRUCT_KEEP_NULL('k', {1}, {0}, 1)"
+category = "semi-structured-object"
+divergences = { "1.float.nan_infinity" = "json_fidelity", "1.float.negative_zero" = "json_fidelity", "1.decimal.digits_38" = "json_fidelity", "1.decimal.beyond_double" = "json_fidelity", "1.decimal.half_way" = "json_fidelity" }
+
+# A FLOAT beside each other value, under keys differing only by case, holds a typed VARIANT.
+[[rule.form]]
+construct = "fn:OBJECT_CONSTRUCT"
+also = ["fn:OBJECT_CONSTRUCT_KEEP_NULL"]
+arguments = [
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["float"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["variant", "text", "boolean", "integer", "float"] },
+]
+template = "OBJECT_CONSTRUCT({0}, {1}, {2}, {3})"
+category = "semi-structured-object"
+benign = { "0" = "'k'", "2" = "'K'" }
+variants = ["OBJECT_CONSTRUCT_KEEP_NULL({0}, {1}, {2}, {3})"]
+divergences = { "1.float.nan_infinity" = "json_fidelity", "1.float.negative_zero" = "json_fidelity", "3.float.nan_infinity" = "json_fidelity", "3.float.negative_zero" = "json_fidelity", "3.integer.beyond_64_bits" = "json_fidelity", "3.integer.digits_38" = "json_fidelity", "3.variant.large_numbers" = "json_fidelity", "3.variant.number_spellings" = "json_fidelity", "3.variant.scalars" = "json_fidelity" }
+
+[[rule.probe]]
+construct = "fn:OBJECT_CONSTRUCT"
+also = ["fn:OBJECT_CONSTRUCT_KEEP_NULL"]
+arguments = [
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["date", "timestamp_ntz", "timestamp_ltz"] },
+]
+template = "OBJECT_CONSTRUCT('k', {1})"
+category = "semi-structured-object"
+benign = { "0" = "'k'" }
+variants = ["OBJECT_CONSTRUCT_KEEP_NULL('k', {1})"]
+divergences = { "timestamp_ntz.sub_microsecond" = "variant_typed_values", "timestamp_ntz.half_millisecond" = "variant_typed_values", "1.timestamp_ltz.extreme_years" = "variant_typed_values" }
+
+[[rule]]
+id = "rule.object_delete"
+
+[[rule.form]]
+construct = "fn:OBJECT_DELETE"
+arguments = [
+  { families = ["variant"] },
+  { families = ["text"], kinds = ["literal"] },
+]
+repeat = true
+template = "OBJECT_DELETE({0}, {1})"
+category = "semi-structured-object"
+divergences = { "variant.large_numbers" = "", "0.variant.number_spellings" = "" }
+
+[[rule]]
+id = "rule.object_insert"
+
+[[rule.form]]
+construct = "fn:OBJECT_INSERT"
+arguments = [
+  { families = ["variant"] },
+  { families = ["text"], kinds = ["literal"] },
+  { families = ["variant", "text", "boolean", "integer", "float", "null"] },
+]
+template = "OBJECT_INSERT({0}, {1}, {2})"
+category = "semi-structured-object"
+benign = { "1" = "'k'" }
+divergences = { "0.variant.large_numbers" = "", "0.variant.number_spellings" = "", "2.float.nan_infinity" = "json_fidelity", "2.float.negative_zero" = "json_fidelity" }
+
+[[rule.form]]
+construct = "fn:OBJECT_INSERT"
+arguments = [
+  { families = ["boolean"], kinds = ["literal"], grammar = true },
+  { families = ["variant"] },
+  { families = ["text"], kinds = ["literal"] },
+  { families = ["variant", "text", "boolean", "integer", "float", "null"] },
+]
+template = "OBJECT_INSERT({1}, {2}, {3}, {0})"
+category = "semi-structured-object"
+benign = { "2" = "'a'" }
+divergences = { "1.variant.large_numbers" = "", "1.variant.number_spellings" = "", "3.float.nan_infinity" = "json_fidelity", "3.float.negative_zero" = "json_fidelity" }
+
+[[rule]]
+id = "rule.parse_json"
+
+[[rule.form]]
+construct = "fn:PARSE_JSON"
+also = ["fn:TRY_PARSE_JSON"]
+arguments = [
+  { families = ["text"] },
+]
+template = "TRY_PARSE_JSON({0})"
+category = "json-text"
+benign = { "0" = "'{\"a\":1}'" }
+divergences = { "text.dollar_prefix" = "json_fidelity", "text.slash_prefix" = "json_fidelity", "text.dots_brackets" = "json_fidelity", "text.quotes_backslashes" = "json_fidelity", "text.non_ascii" = "json_fidelity", "text.title_case_digraph" = "json_fidelity", "text.case_only" = "json_fidelity", "text.whitespace" = "json_fidelity", "text.number_text" = "json_fidelity" }
+
+[[rule.form]]
+construct = "fn:PARSE_JSON"
+also = ["fn:TRY_PARSE_JSON"]
+arguments = [
+  { families = ["variant"] },
+]
+
+[[rule]]
+id = "rule.parse_json_variant"
+
+[[rule.form]]
+construct = "fn:PARSE_JSON"
+also = ["fn:TRY_PARSE_JSON"]
+arguments = [
+  { families = ["variant"] },
+]
+template = "TRY_PARSE_JSON({0})"
+category = "semi-structured"
+divergences = { "0.variant.number_spellings" = "json_fidelity", "0.variant.large_numbers" = "json_fidelity", "0.variant.scalars" = "json_fidelity" }
+
+[[rule]]
+id = "rule.variant_inspect"
+
+[[rule.form]]
+construct = "fn:TO_JSON"
+also = ["fn:IS_NULL_VALUE", "fn:STRIP_NULL_VALUE"]
+arguments = [
+  { families = ["variant"] },
+]
+template = "TO_JSON({0})"
+category = "semi-structured-output"
+variants = ["IS_NULL_VALUE({0})", "STRIP_NULL_VALUE({0}) IS NULL"]
+
+[[rule]]
+id = "rule.variant_path"
+
+[[rule.form]]
+construct = "fn:GET"
+also = ["fn:GET_PATH", "fn:GET_IGNORE_CASE", "node:subscript"]
+arguments = [
+  { families = ["variant"] },
+  { families = ["text", "integer"], kinds = ["literal"] },
+]
+template = "GET({0}, {1})"
+category = "semi-structured"
+variants = ["GET_PATH({0}, {1})", "GET_IGNORE_CASE({0}, {1})"]
+
+[[rule.form]]
+construct = "node:j_s_o_n_extract"
+arguments = [
+  { families = ["variant"] },
+]
+template = "{0}:a"
+category = "semi-structured"
+
+[[rule.form]]
+construct = "fn:GET"
+also = ["node:subscript"]
+arguments = [
+  { families = ["variant"] },
+  { families = ["text", "integer"], kinds = ["value"] },
+]
+
+[[rule]]
+id = "rule.variant_typeof"
+
+[[rule.form]]
+construct = "fn:TYPEOF"
+arguments = [
+  { families = ["variant"] },
+]
+template = "TYPEOF({0})"
+category = "semi-structured"
+
+[[rule]]
+id = "rule.reduce"
+
+[[rule.form]]
+construct = "fn:REDUCE"
+arguments = [
+  { families = ["variant"] },
+]
+template = "REDUCE({0}, NULL::DOUBLE, (total, item) -> IFF(TRY_TO_DOUBLE(item:amount::VARCHAR) IS NULL, total, COALESCE(total, 0) + TRY_TO_DOUBLE(item:amount::VARCHAR)))"
+category = "semi-structured-array"
+benign = { "0" = "PARSE_JSON('[{\"amount\":\"1.5\"}]')" }
+
+# The initial value and the lambda as REDUCE's cases write them.
+[[rule.form]]
+construct = "fn:REDUCE"
+arguments = [
+  { families = ["variant"] },
+  { families = ["float"], grammar = true },
+  { families = ["float"], grammar = true },
+]
+

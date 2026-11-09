@@ -1,0 +1,1 @@
+"""Generator entry points."""

@@ -1,0 +1,104 @@
+# Approved reviews. Each listed form was read in full against its documentation
+# page, its obligations, its cases with their Databricks receipts, and the local parse trees. An approval holds
+# while the form's definition hash and fingerprint are unchanged; any change makes it stale until re-read.
+
+[[review]]
+id = "db-query-001"
+family = "query"
+parser_tree = "90f341b5c9ff2c489c0ed994f07448481f70597f"
+reviewed_utc = "2026-11-08T09:04:25Z"
+verdict = "approved"
+forms = [
+  "db.query.pipeline.table",
+  "db.query.pipeline.table.syntax",
+  "db.query.select",
+  "db.query.select-clusterby",
+  "db.query.select-cte",
+  "db.query.select-distributeby",
+  "db.query.select-groupby.group-by",
+  "db.query.select-groupby.group-by-all",
+  "db.query.select-groupby.group-by-rollup-cube",
+  "db.query.select-groupby.hive-grouping-sets",
+  "db.query.select-groupby.nested-grouping-sets",
+  "db.query.select-groupby.subscript-dot",
+  "db.query.select-having",
+  "db.query.select-hints.join-hint-alias",
+  "db.query.select-lateral-view",
+  "db.query.select-match-recognize-define",
+  "db.query.select-match-recognize-measures",
+  "db.query.select-match-recognize-pattern",
+  "db.query.select-named-window",
+  "db.query.select-orderby",
+  "db.query.select-pipeop",
+  "db.query.select-pivot",
+  "db.query.select-sampling",
+  "db.query.select-setops",
+  "db.query.select-sortby",
+  "db.query.select-tvf",
+  "db.query.select-values.select",
+  "db.query.select-values.values",
+  "db.query.star",
+]
+note = "Read against the pinned Databricks documentation pages and the Spark 4.2 SqlBaseParser grammar, the obligations, the cases with their Databricks receipts and repeats, and the parse trees of the strict parser; every case was parsed by an independent build of the parser and every scored case agrees with its receipt."
+
+[review.fingerprints]
+"db.query.pipeline.table" = "bf0f1ce569840787bb99bac1908633002c0391104ad4ce8a7312a224a3553f38"
+"db.query.pipeline.table.syntax" = "a070e2493b50f09bc80163d4a322064dbaf4f2c11de2fbe90e9e73cd643e4bb1"
+"db.query.select" = "7842c4765b1eea5a47fd4db3963d1d45e646cd3b8e81fefae0c78ca59c0bd8d9"
+"db.query.select-clusterby" = "e3859d1c1db996dc886bf989387e0626fc65ed18e736c237e46cabe85c2c0842"
+"db.query.select-cte" = "3f311c7699e369cb13a6370317262cc431cdacd554587c1abacc80e25b9fa9e1"
+"db.query.select-distributeby" = "69945ce2bddd7ebcda842a0cfdb500e2d8cb280c7b848ff121baa1df53803f2d"
+"db.query.select-groupby.group-by" = "74a8475051cc8d2665338e3a18ccb4f0a27459ea1407c3b0f5fb34c7f46ddcf5"
+"db.query.select-groupby.group-by-all" = "fdb0b014ccb6c13488b232745aed51b0a1f09c78bf870acb707bdb83f256180e"
+"db.query.select-groupby.group-by-rollup-cube" = "3069d340d0d567265cb8869b91e2af65274d8a45ee8917c6e051066335a02573"
+"db.query.select-groupby.hive-grouping-sets" = "02e0326dcc8dd9bafe7dcfaa90a5d02e244782844905e970681e79aee6f9514d"
+"db.query.select-groupby.nested-grouping-sets" = "b3a3978e787659e83e850a644b7ea71fa6d356911321cc0d78d92835fab86117"
+"db.query.select-groupby.subscript-dot" = "84ab432f1d135440aa246f7d0d7bc672a441ae6ea6dc734a8615071c8a7ef837"
+"db.query.select-having" = "3c0d65f75691bb330f5eb61be1a38fa2818ef55cb7025522454109a95b6960b0"
+"db.query.select-hints.join-hint-alias" = "dae9060cf74aaef14d4c3e8de5144bbc42530150a36e54a8ca04f45ff83e2f74"
+"db.query.select-lateral-view" = "f05a174a33ad760eccfca0ad3896fad99ca08f83c7215eacfbec44de7300ba91"
+"db.query.select-match-recognize-define" = "80edda1a84c1a3cae2823857f6c018d4d5520a31ef83d03706935fa7f3b85d47"
+"db.query.select-match-recognize-measures" = "920a0f88623f73b2a1c04f8652641fcc009a3e9b71622f4f89938edefd159d81"
+"db.query.select-match-recognize-pattern" = "89846a013ab1c5d1326c1865e06b9d5ca023f460aac9a5dec92327ae4775ff86"
+"db.query.select-named-window" = "b00d0e7c6f690067a10c2c8ea895bee006938534328997f1367d8417d40f59db"
+"db.query.select-orderby" = "c98184f0a9eabd8f8974f10e345f5b69d8e1e8e0023551e0ca9976bb200a8916"
+"db.query.select-pipeop" = "0dbe53289da108e6e9bcb643bcbd09246d8957deb64f1ff5e8c0b9cf99851ff7"
+"db.query.select-pivot" = "f80c1e65e1eb17551e71c6aa7f391d421aba55a6f4e7e3aad1037298c722c05f"
+"db.query.select-sampling" = "13407a8c369d7758e096e915463b113d8e3733a8337e7bc7f4eea99d321dbe9b"
+"db.query.select-setops" = "b39de41cb73540df0e533be3547286d5e843eeec8091abc8d63ef89c0344a2d8"
+"db.query.select-sortby" = "b1aafafcc18ac3a5893be201e9858520f285bb1a59a0ad1165dc1b3af7223d46"
+"db.query.select-tvf" = "d3024cfbb5f8504524c2676d77d1df21f751a45f465b0f2d509da68fb7406a4a"
+"db.query.select-values.select" = "bba8eecc0f803d62ef4dfcf4ed5a0a12078ec68d7aa1d5477c52890f80c616eb"
+"db.query.select-values.values" = "e06cdb75666e85588f9f6224ceadb0bd060404b27d52fe99db6c0a9c1693879e"
+"db.query.star" = "0fdc7d0fbd5bab8a975be00de364d6fc1bb4ccc1c40202a5839863e54855cb93"
+
+[review.definitions]
+"db.query.pipeline.table" = "5c55e86be057cce2b5ff7a855224c21874b3a3c65cd303f6c17b00271283bd79"
+"db.query.pipeline.table.syntax" = "02d70304922c1b0a37a826e63381f5b975ef0421522135568f2093f1477ea88b"
+"db.query.select" = "fcd9b40d1fc28db0f7e428cb6540faa5805aee233e8526a0011dd44ecc1489a3"
+"db.query.select-clusterby" = "38fe8efe128232ce2782263687cd4dfb92089b732949e7c16c775ac0ecb64cc9"
+"db.query.select-cte" = "215961353463e448a0a2f0d114a1b8e05f01e0dbbaedc47892809e699d4d724e"
+"db.query.select-distributeby" = "64638d47badc45e7856b65200d10962f063836f74b7dfc5140b754a9140f7f85"
+"db.query.select-groupby.group-by" = "466e6081b946b74b6accb69b8307427b364773a8b63e68176861331c001adaee"
+"db.query.select-groupby.group-by-all" = "fd02a9e674ca8c80d6fcd5c5cbcc833b0708bbb955f0066d71a50a2d2e0dc52b"
+"db.query.select-groupby.group-by-rollup-cube" = "082253722d146a7c94983c8f75d09a73c6fa0babb503871a4f451ac54ed0cce8"
+"db.query.select-groupby.hive-grouping-sets" = "85bfba731332bf9f53018fc6044b84ed9b34be412986814337225d7a3bfe7943"
+"db.query.select-groupby.nested-grouping-sets" = "bfcad8d728918fb014efe9913a078941efab771931173b89c9d6e85306590033"
+"db.query.select-groupby.subscript-dot" = "d48fa943701abfff4856461d7cd0dd852594ee4e236ab764f5464e5dd90d8f1f"
+"db.query.select-having" = "e317eca079db2b0c88124bebc89dde607cd15e7569cd884bc65eba18747170f1"
+"db.query.select-hints.join-hint-alias" = "3dc8860bca29976ba422aa5960f8bf31159b5b902dc46e6ce20bc0aa7009844a"
+"db.query.select-lateral-view" = "4fc13d0b9b9bd9f0a9fabae1aa8408595f1947754a6f51786b019ca08e0f7291"
+"db.query.select-match-recognize-define" = "60649a9e4139a9208e903aac0657d6595ef27a6ab3f0f150e7a23cdc8b001739"
+"db.query.select-match-recognize-measures" = "5108ed9bf7cc6a9a9e6e128dae8976b711fb1809b5ebe8bd0bf42059ac90f801"
+"db.query.select-match-recognize-pattern" = "da3764573ce778518db7a6ddec3a1ac369602103521306e75164a0fea7f29cc5"
+"db.query.select-named-window" = "2bad67d99f5d696b1627c74c3f10eef466c261bf28787c3d89023f95e1598dd6"
+"db.query.select-orderby" = "dcbd6e450349b3754118af1aceb361929911f62ee9a3eb62ddfeb13e17039eea"
+"db.query.select-pipeop" = "ad1f8276ad1fdef0a4aea1866421af90ea361f8caac9f7ba1770cfe4948a0cd3"
+"db.query.select-pivot" = "d3197b6aa0ebe2d38ba40b2e5936295f348d2fcb646ea41bd1925898a384792c"
+"db.query.select-sampling" = "0224367882da90c10a5d28b0de27850cb7c7b4bbbbabc01644e17ea9293ccd18"
+"db.query.select-setops" = "ef6bddadec818c3e805bb7b8084e5c214234d71fa19f170a6d66bfb17909853f"
+"db.query.select-sortby" = "bea5669fe98850779e1ca4cdcbaff545888afe15a083f98d29be51bbca3d1858"
+"db.query.select-tvf" = "818f80ef4ded304c78ab467ccf6b054ca13fbf730a69dd0ee3fd9745ec5b9705"
+"db.query.select-values.select" = "90f5d9b4130452acf461fedaecc1a1d8501063737cb2e57921f2cfa66dd27456"
+"db.query.select-values.values" = "a6db7aa8f5c62ba3c3a5baca1a5ed5b2a2543b3b997855eea36478ac5a8081a7"
+"db.query.star" = "164b0d09702bed1e4f3243bf557f5ea71a523e969996d731243fb5ef7519b02a"

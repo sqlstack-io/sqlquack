@@ -1,0 +1,349 @@
+# Declared domains of aggregate calls and multi-argument text functions.
+# Format: see docs/coverage.md.
+version = 1
+
+[[rule]]
+id = "rule.average"
+
+[[rule.form]]
+construct = "node:avg"
+arguments = [
+  { families = ["integer", "decimal"] },
+]
+rows = "group"
+template = "AVG({0})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+sql_types = { "0" = "NUMBER(20,2)" }
+
+[[rule]]
+id = "rule.sum"
+
+[[rule.form]]
+construct = "node:sum"
+arguments = [
+  { families = ["integer", "decimal"] },
+]
+rows = "group"
+template = "SUM({0})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["integer", "decimal"] },
+]
+facets = { function = ["SUM"], frame = ["unordered", "ordered", "rows", "whole_partition"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "SUM({0}) OVER (PARTITION BY g)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["SUM({0}) OVER (PARTITION BY g ORDER BY ordinal)", "SUM({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)", "SUM({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)"]
+
+[[rule]]
+id = "rule.sum_float"
+
+[[rule.form]]
+construct = "node:sum"
+arguments = [
+  { families = ["float"] },
+]
+rows = "group"
+template = "SUM({0})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+divergences = { "float.binary_fractions" = "float_sum_order", "float.large_integers" = "float_sum_order", "float.notation_boundaries" = "float_sum_order" }
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["float"] },
+]
+facets = { function = ["SUM"], frame = ["unordered", "ordered", "rows", "whole_partition"] }
+rows = "window"
+template = "SUM({0}) OVER (PARTITION BY g)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["SUM({0}) OVER (PARTITION BY g ORDER BY ordinal)", "SUM({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)", "SUM({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)"]
+divergences = { "float.binary_fractions" = "float_sum_order", "float.large_integers" = "float_sum_order", "float.notation_boundaries" = "float_sum_order" }
+
+# Partitioned by text, as every FLOAT SUM window case is.
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["float"] },
+]
+facets = { function = ["SUM"], frame = ["unordered", "ordered", "rows", "whole_partition"] }
+each = { partition = ["text"] }
+
+[[rule]]
+id = "rule.count"
+
+[[rule.form]]
+construct = "node:count"
+arguments = []
+template = "COUNT(*)"
+
+[[rule.form]]
+construct = "node:count"
+arguments = [
+  { families = ["integer", "decimal", "float", "text", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "variant"] },
+]
+rows = "group"
+template = "COUNT({0})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["integer", "decimal", "float", "text", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "variant"] },
+]
+facets = { function = ["COUNT"], frame = ["unordered", "ordered", "rows", "whole_partition"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "COUNT({0}) OVER (PARTITION BY g)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["COUNT({0}) OVER (PARTITION BY g ORDER BY ordinal)", "COUNT({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)", "COUNT({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)"]
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = []
+facets = { function = ["COUNT"], frame = ["unordered", "ordered", "rows", "whole_partition"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "COUNT(*) OVER (PARTITION BY g)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["COUNT(*) OVER (PARTITION BY g ORDER BY ordinal)", "COUNT(*) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)", "COUNT(*) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)"]
+
+[[rule]]
+id = "rule.min_max"
+
+[[rule.form]]
+construct = "node:min"
+also = ["node:max"]
+arguments = [
+  { families = ["integer", "decimal", "float", "text", "boolean", "date", "timestamp_ntz", "timestamp_ltz", "timestamp_tz"] },
+]
+rows = "group"
+template = "MIN({0})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+variants = ["MAX({0})"]
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["integer", "decimal", "float", "text", "boolean", "date", "timestamp_ntz", "timestamp_ltz", "timestamp_tz"] },
+]
+facets = { function = ["MIN", "MAX"], frame = ["unordered", "ordered", "rows", "whole_partition"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "MAX({0}) OVER (PARTITION BY g)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["MIN({0}) OVER (PARTITION BY g)", "MIN({0}) OVER (PARTITION BY g ORDER BY ordinal)", "MIN({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)", "MIN({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)", "MAX({0}) OVER (PARTITION BY g ORDER BY ordinal)", "MAX({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)", "MAX({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)"]
+
+[[rule]]
+id = "rule.min_max_float"
+
+[[rule.form]]
+construct = "node:min"
+also = ["node:max"]
+arguments = [
+  { families = ["float"] },
+]
+rows = "group"
+template = "MAX({0})"
+query = "SELECT g, {expression} AS r FROM input GROUP BY g ORDER BY g"
+category = "aggregate"
+
+[[rule.form]]
+construct = "node:window_function"
+arguments = [
+  { families = ["float"] },
+]
+facets = { function = ["MIN", "MAX"], frame = ["unordered", "ordered", "rows", "whole_partition"] }
+each = { partition = ["none", "text", "integer", "decimal", "float", "boolean", "date", "time", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "several"] }
+rows = "window"
+template = "MIN({0}) OVER (PARTITION BY g)"
+query = "SELECT g, {expression} AS r FROM input ORDER BY ordinal"
+category = "window"
+variants = ["MIN({0}) OVER (PARTITION BY g ORDER BY ordinal)", "MIN({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)", "MIN({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)", "MAX({0}) OVER (PARTITION BY g)", "MAX({0}) OVER (PARTITION BY g ORDER BY ordinal)", "MAX({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)", "MAX({0}) OVER (PARTITION BY g ORDER BY ordinal ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)"]
+
+[[rule]]
+id = "rule.concat"
+
+[[rule.form]]
+construct = "node:concat"
+arguments = [
+  { families = ["text", "integer", "decimal", "boolean", "date"] },
+  { families = ["text", "integer", "decimal", "boolean", "date"] },
+]
+repeat = true
+one_wise = true
+template = "{0} || {1}"
+category = "string"
+
+[[rule.form]]
+construct = "fn:CONCAT"
+arguments = [
+  { families = ["text", "integer", "decimal", "boolean", "date"] },
+  { families = ["text", "integer", "decimal", "boolean", "date"] },
+]
+repeat = true
+one_wise = true
+template = "CONCAT({0}, {1})"
+category = "string"
+
+[[rule]]
+id = "rule.concat_ws"
+
+[[rule.form]]
+construct = "fn:CONCAT_WS"
+arguments = [
+  { families = ["text", "integer", "decimal", "boolean", "date", "null"] },
+  { families = ["text", "integer", "decimal", "boolean", "date", "null"] },
+]
+repeat = true
+one_wise = true
+template = "CONCAT_WS({0}, {1})"
+category = "string"
+
+[[rule]]
+id = "rule.least_greatest"
+
+[[rule.form]]
+construct = "fn:LEAST"
+also = ["fn:GREATEST"]
+arguments = [
+  { families = ["integer", "decimal"] },
+  { families = ["integer", "decimal"] },
+]
+repeat = true
+template = "LEAST({0}, {1})"
+category = "comparison"
+variants = ["GREATEST({0}, {1})"]
+
+[[rule.form]]
+construct = "fn:LEAST"
+also = ["fn:GREATEST"]
+arguments = [
+  { families = ["float"] },
+  { families = ["float"] },
+]
+repeat = true
+template = "LEAST({0}, {1})"
+category = "comparison"
+variants = ["GREATEST({0}, {1})"]
+
+[[rule.form]]
+construct = "fn:LEAST"
+also = ["fn:GREATEST"]
+arguments = [
+  { families = ["text"] },
+  { families = ["text"] },
+]
+repeat = true
+template = "LEAST({0}, {1})"
+category = "comparison"
+variants = ["GREATEST({0}, {1})"]
+
+[[rule.form]]
+construct = "fn:LEAST"
+also = ["fn:GREATEST"]
+arguments = [
+  { families = ["boolean"] },
+  { families = ["boolean"] },
+]
+repeat = true
+template = "LEAST({0}, {1})"
+category = "comparison"
+variants = ["GREATEST({0}, {1})"]
+
+[[rule.form]]
+construct = "fn:LEAST"
+also = ["fn:GREATEST"]
+arguments = [
+  { families = ["date"] },
+  { families = ["date"] },
+]
+repeat = true
+template = "LEAST({0}, {1})"
+category = "comparison"
+variants = ["GREATEST({0}, {1})"]
+
+[[rule.form]]
+construct = "fn:LEAST"
+also = ["fn:GREATEST"]
+arguments = [
+  { families = ["timestamp_ntz"] },
+  { families = ["timestamp_ntz"] },
+]
+repeat = true
+template = "LEAST({0}, {1})"
+category = "comparison"
+variants = ["GREATEST({0}, {1})"]
+
+[[rule.form]]
+construct = "fn:LEAST"
+also = ["fn:GREATEST"]
+arguments = [
+  { families = ["timestamp_tz"] },
+  { families = ["timestamp_tz"] },
+]
+repeat = true
+template = "LEAST({0}, {1})"
+category = "comparison"
+variants = ["GREATEST({0}, {1})"]
+
+[[rule.form]]
+construct = "fn:LEAST"
+also = ["fn:GREATEST"]
+arguments = [
+  { families = ["timestamp_ltz"] },
+  { families = ["timestamp_ltz"] },
+]
+repeat = true
+template = "LEAST({0}, {1})"
+category = "comparison"
+variants = ["GREATEST({0}, {1})"]
+
+[[rule.form]]
+construct = "fn:LEAST"
+also = ["fn:GREATEST"]
+arguments = [
+  { families = ["decimal"] },
+  { families = ["integer"] },
+  { families = ["float"] },
+]
+template = "LEAST({0}, {1}, {2})"
+category = "comparison"
+variants = ["GREATEST({0}, {1}, {2})"]
+extra_rows = [["0.1", "1", "0.1"], ["1234567890123456.7", "9007199254740993", "9007199254740992"], ["NULL", "1", "1.5"]]
+
+[[rule]]
+id = "rule.trim"
+
+[[rule.form]]
+construct = "node:trim"
+also = ["fn:LTRIM", "fn:RTRIM"]
+arguments = [
+  { families = ["text"] },
+]
+template = "TRIM({0})"
+category = "string"
+
+[[rule.form]]
+construct = "node:trim"
+also = ["fn:LTRIM", "fn:RTRIM"]
+arguments = [
+  { families = ["text"] },
+  { families = ["text"] },
+]
+template = "LTRIM({0}, {1})"
+category = "string"

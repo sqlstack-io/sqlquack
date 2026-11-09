@@ -1,0 +1,189 @@
+# Obligation ids this root has retired, grouped by the commit that retired them.
+# scripts/build_syntax_obligations_duckdb.py never issues them again: it reserves each number and
+# fails if a retired id appears in obligations/.
+
+[[retired]]
+retired_in = "a39fc2139bd97be5a8f3e225a3b0ec29de407b37"
+reason = "its negative, [ ::], was refused only because :: lexes as the cast operator; [ : : ] parses (StepSliceBound), so the derived obligation is suppressed in limits.toml"
+ids = [
+  "dd.expressions.list.open-slice.o014",
+]
+
+[[retired]]
+retired_in = "410d0ee684dcbc069a15f1f576763fd1b06cffef"
+reason = "dd.utility.extension-repositories.install-path no longer claims FORCE: the in-set extension_repositories.md writes only INSTALL '<url>', and FORCE INSTALL '<path>' appears only on the excluded troubleshooting.md; the FORCE present and absent obligations and the neighbour without INSTALL, which left a bare string, are no longer derived"
+ids = [
+  "dd.utility.extension-repositories.install-path.o002",
+  "dd.utility.extension-repositories.install-path.o003",
+  "dd.utility.extension-repositories.install-path.o006",
+]
+
+[[retired]]
+retired_in = "323f38b86d2c559e9d6cf6cb94c1792485e6e95f"
+reason = "set.md lists the LOCAL scope of SET and RESET as not yet implemented and 2.0.0 refuses it while parsing, so under the observed-limit rule the scope list is derived as [ SESSION | GLOBAL ] and LOCAL is a hand-written observed [[limit]] row; the obligations on [ LOCAL | SESSION | GLOBAL ] no longer hold as written and are issued under new ids"
+ids = [
+  "dd.transaction_session.set.reset.o002",
+  "dd.transaction_session.set.reset.o003",
+  "dd.transaction_session.set.reset.o004",
+  "dd.transaction_session.set.reset.o005",
+  "dd.transaction_session.set.reset.o006",
+  "dd.transaction_session.set.set-to.o002",
+  "dd.transaction_session.set.set-to.o003",
+  "dd.transaction_session.set.set-to.o004",
+  "dd.transaction_session.set.set-to.o005",
+  "dd.transaction_session.set.set-to.o006",
+]
+
+[[retired]]
+retired_in = "323f38b86d2c559e9d6cf6cb94c1792485e6e95f"
+reason = "EXPLAIN (SQL) takes a query, INSERT, UPDATE, DELETE or MERGE INTO (profiling.md), so its operand is now a choice of those five: the obligation to omit <query> alone is replaced by the choice's own obligations, and the nesting of the operand is no longer derived (the operand is one plain statement, suppressed in limits.toml; a nested query is the query forms' own nesting obligation)"
+ids = [
+  "dd.utility.profiling.explain-sql.o002",
+  "dd.utility.profiling.explain-sql.o008",
+]
+
+[[retired]]
+retired_in = "a633d0e37c330c4696f6da676c19aa3460d38c9b"
+reason = "the reading of CREATE TRIGGER no longer pairs BEFORE or UPDATE with FOR EACH ROW, which 2.0.0 refuses (observed limits, README), so { BEFORE | AFTER } is no longer one choice: BEFORE and AFTER each open their own branch with the events and FOR EACH options 2.0.0 takes, and the obligations of the old choice and of omitting it or the UPDATE after AFTER are replaced by the branches' own"
+ids = [
+  "dd.ddl.create-trigger.create-trigger-before-after.o009",
+  "dd.ddl.create-trigger.create-trigger-before-after.o010",
+  "dd.ddl.create-trigger.create-trigger-before-after.o055",
+  "dd.ddl.create-trigger.create-trigger-before-after.o056",
+]
+
+[[retired]]
+retired_in = "983bad191f2c8b2fa1eddd6a28889e70ff15fea2"
+reason = "the pivot and unpivot readings now write the table-function alternative as <table-function-name> ( 3 ): DuckDB reads a bare name in that position as a table name (review finding: the receipts said 'Table with name range does not exist!'), so the choice of FROM item, its alternatives and the neighbour without the FROM item no longer hold as written and are issued under new ids, with cases that call a table function"
+ids = [
+  "dd.query.pivot.from-pivot-for-in.o002",
+  "dd.query.pivot.from-pivot-for-in.o003",
+  "dd.query.pivot.from-pivot-for-in.o004",
+  "dd.query.pivot.from-pivot-for-in.o005",
+  "dd.query.pivot.from-pivot-for-in.o047",
+  "dd.query.pivot.pivot-pivot-wider.o004",
+  "dd.query.pivot.pivot-pivot-wider.o005",
+  "dd.query.pivot.pivot-pivot-wider.o006",
+  "dd.query.pivot.pivot-pivot-wider.o007",
+  "dd.query.pivot.pivot-pivot-wider.o117",
+  "dd.query.unpivot.from-unpivot-for-in.o002",
+  "dd.query.unpivot.from-unpivot-for-in.o003",
+  "dd.query.unpivot.from-unpivot-for-in.o004",
+  "dd.query.unpivot.from-unpivot-for-in.o005",
+  "dd.query.unpivot.from-unpivot-for-in.o028",
+  "dd.query.unpivot.unpivot-pivot-longer-on.o004",
+  "dd.query.unpivot.unpivot-pivot-longer-on.o005",
+  "dd.query.unpivot.unpivot-pivot-longer-on.o006",
+  "dd.query.unpivot.unpivot-pivot-longer-on.o007",
+  "dd.query.unpivot.unpivot-pivot-longer-on.o038",
+]
+
+[[retired]]
+retired_in = "a3b7eb358502aeaea828cd13ead4d277712485cc"
+reason = "the bitwise OR grammar <x> | <y> was read as a choice between <x> and <y>, so its obligations named alternatives and its cases had no operator (review finding); the lone | cannot be written as a literal in the grammar notation, so the form is an empty reading with hand-written [[limit]] rows that use the operator, issued under new ids"
+ids = [
+  "dd.expressions.bitstring.op-pipe.o001",
+  "dd.expressions.bitstring.op-pipe.o002",
+  "dd.expressions.bitstring.op-pipe.o003",
+  "dd.expressions.bitstring.op-pipe.o004",
+  "dd.expressions.bitstring.op-pipe.o005",
+  "dd.expressions.numeric.op-pipe.o001",
+  "dd.expressions.numeric.op-pipe.o002",
+  "dd.expressions.numeric.op-pipe.o003",
+  "dd.expressions.numeric.op-pipe.o004",
+  "dd.expressions.numeric.op-pipe.o005",
+]
+
+[[retired]]
+retired_in = "a3b7eb358502aeaea828cd13ead4d277712485cc"
+reason = "the brackets of the list literal and of the list type were read as optional groups, so their presence and absence were obligations and no case had a list (review finding); the readings write them as literal brackets, so the optional group they named no longer exists"
+ids = [
+  "dd.expressions.list.list-literal.o002",
+  "dd.expressions.list.list-literal.o003",
+  "dd.expressions.list.list-type.o005",
+  "dd.expressions.list.list-type.o006",
+]
+
+[[retired]]
+retired_in = "a3b7eb358502aeaea828cd13ead4d277712485cc"
+reason = "current_timestamp, localtime and localtimestamp were read as placeholders, so the operand obligation was filled with a column reference (review finding); the readings write them as keywords, which have no operand"
+ids = [
+  "dd.expressions.timestamptz.current-timestamp.o002",
+  "dd.expressions.timestamptz.localtime.o002",
+  "dd.expressions.timestamptz.localtimestamp.o002",
+]
+
+[[retired]]
+retired_in = "a3b7eb358502aeaea828cd13ead4d277712485cc"
+reason = "the grammar copied the heading map_from_entries(STRUCT(k, v)[]), which describes the argument's type, so its obligations were on a STRUCT call and an optional empty group that the documented call does not have (review finding); the reading takes one argument, a list of structs"
+ids = [
+  "dd.functions.map.map-from-entries.o002",
+  "dd.functions.map.map-from-entries.o003",
+  "dd.functions.map.map-from-entries.o004",
+  "dd.functions.map.map-from-entries.o005",
+  "dd.functions.map.map-from-entries.o006",
+  "dd.functions.map.map-from-entries.o008",
+  "dd.functions.map.map-from-entries.o010",
+]
+
+[[retired]]
+retired_in = "a3b7eb358502aeaea828cd13ead4d277712485cc"
+reason = "the documented list argument [part, ...] of date_part was read as an optional group, so its presence and absence were obligations and no case had a list (review finding); the readings write it as a list literal of part names"
+ids = [
+  "dd.functions.timestamp.date-part.o002",
+  "dd.functions.timestamp.date-part.o003",
+  "dd.functions.timestamptz.date-part.o002",
+  "dd.functions.timestamptz.date-part.o003",
+]
+
+[[retired]]
+retired_in = "25e09f87605915dc69169a2de16f68fdf9ebd63a"
+reason = "the ON CONFLICT clause of INSERT was one placeholder, filled with ON CONFLICT DO NOTHING, because insert.js misspells its definition's name as on-confict-clause and the form did not use it (review finding); the reading writes the clause out as the definition draws it, so the obligations on the placeholder are replaced by the clause's own"
+ids = [
+  "dd.dml.insert.o081",
+  "dd.dml.insert.o082",
+]
+
+[[retired]]
+retired_in = "25e09f87605915dc69169a2de16f68fdf9ebd63a"
+reason = "the parameter names level and scope of write_log were read as placeholders, so the cases passed v1 := v1 (review finding); the reading writes them as keywords and fills their values from the page, so the obligations on level and scope no longer hold as written and are issued under new ids"
+ids = [
+  "dd.functions.overview.write-log.o003",
+  "dd.functions.overview.write-log.o004",
+  "dd.functions.overview.write-log.o005",
+  "dd.functions.overview.write-log.o006",
+  "dd.functions.overview.write-log.o007",
+  "dd.functions.overview.write-log.o008",
+  "dd.functions.overview.write-log.o009",
+  "dd.functions.overview.write-log.o010",
+  "dd.functions.overview.write-log.o011",
+  "dd.functions.overview.write-log.o012",
+]
+
+[[retired]]
+retired_in = "b0dac35b0ce42196fbca5102b7faefeecb2eac5b"
+reason = "the create-macro reading took overloads only after a scalar body and with untyped parameters, saying only scalar macros are overloaded, while create_macro.md overloads table macros (tbl_range) and typed parameters (is_maximal) (review finding); the reading now gives the overload an optional parameter type and lets a parenthesised table body take table overloads, so the obligations whose targets quote the old body choice or overload group no longer hold as written and are issued under new ids"
+ids = [
+  "dd.ddl.create-macro.o054",
+  "dd.ddl.create-macro.o055",
+  "dd.ddl.create-macro.o058",
+  "dd.ddl.create-macro.o059",
+  "dd.ddl.create-macro.o060",
+  "dd.ddl.create-macro.o061",
+  "dd.ddl.create-macro.o062",
+  "dd.ddl.create-macro.o063",
+  "dd.ddl.create-macro.o064",
+  "dd.ddl.create-macro.o065",
+  "dd.ddl.create-macro.o066",
+  "dd.ddl.create-macro.o067",
+  "dd.ddl.create-macro.o068",
+  "dd.ddl.create-macro.o069",
+  "dd.ddl.create-macro.o070",
+  "dd.ddl.create-macro.o071",
+  "dd.ddl.create-macro.o072",
+  "dd.ddl.create-macro.o073",
+  "dd.ddl.create-macro.o085",
+  "dd.ddl.create-macro.o086",
+  "dd.ddl.create-macro.o087",
+  "dd.ddl.create-macro.o089",
+]

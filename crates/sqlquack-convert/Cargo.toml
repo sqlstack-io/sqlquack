@@ -1,0 +1,39 @@
+[package]
+name = "sqlquack-convert"
+version.workspace = true
+description = "SQLQuack's conversion to DuckDB: the rule catalogue, the converter and the pipeline that parses, classifies, converts or refuses."
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+publish.workspace = true
+rust-version.workspace = true
+
+# `engine`: DuckDB parses and binds every converted statement. Off, the converter skips that check,
+# and the caller binds the SQL itself (the browser playground does, in DuckDB-WASM).
+# `snowflake`: the Snowflake-to-DuckDB rules and pipeline.
+[features]
+default = []
+engine = ["sqlquack-blocks/engine"]
+snowflake = [
+  "sqlquack-diagnostics/snowflake",
+  "sqlquack-semantics/duckdb",
+  "sqlquack-semantics/snowflake",
+]
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+sqlquack-diagnostics.workspace = true
+sqlquack-parse.workspace = true
+sqlquack-blocks.workspace = true
+sqlquack-policy.workspace = true
+sqlquack-semantics.workspace = true
+sqlquack-syntax.workspace = true
+
+[dev-dependencies]
+# The tests run the Snowflake rules and pipeline.
+sqlquack-convert = { workspace = true, features = ["snowflake"] }
+
+[lints]
+workspace = true

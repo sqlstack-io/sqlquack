@@ -1,0 +1,52 @@
+[package]
+name = "sqlquack"
+version.workspace = true
+description = "Snowflake-to-DuckDB SQL conversion that refuses to guess."
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme = "../../README.md"
+keywords = ["sql", "duckdb", "snowflake", "transpiler"]
+categories = ["database", "command-line-utilities"]
+publish.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "sqlquack"
+path = "src/bin/sqlquack.rs"
+
+[features]
+# DuckDB compiled in, as the sqlquack-cli wheel ships it.
+bundled = ["sqlquack-blocks/bundled"]
+# DuckDB's parquet and json extensions, as the sqlquack-cli wheel ships them for `sqlquack run`.
+extensions = ["bundled", "sqlquack-blocks/extensions"]
+
+[dependencies]
+anstream.workspace = true
+clap.workspace = true
+duckdb.workspace = true
+rayon.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+sqlquack-compare.workspace = true
+sqlquack-convert = { workspace = true, features = ["engine", "snowflake"] }
+sqlquack-diagnostics = { workspace = true, features = ["snowflake"] }
+sqlquack-parse.workspace = true
+sqlquack-blocks = { workspace = true, features = ["engine"] }
+sqlquack-evidence.workspace = true
+sqlquack-policy.workspace = true
+sqlquack-semantics = { workspace = true, features = ["snowflake"] }
+sqlquack-syntax.workspace = true
+sqlquack-syntax-snowflake.workspace = true
+walkdir.workspace = true
+
+[dev-dependencies]
+arrow.workspace = true
+duckdb.workspace = true
+tempfile.workspace = true
+toml.workspace = true
+
+[lints]
+workspace = true

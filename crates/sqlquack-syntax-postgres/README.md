@@ -1,0 +1,261 @@
+# sqlquack-syntax-postgres
+
+A PostgreSQL 18 scanner and parser that builds the shared `sqlquack-syntax` tree. It follows the
+18.6 sources (`scan.l`, `gram.y`, `parser.c` and `kwlist.h` from `postgresql-18.6.tar.bz2`, sha256
+`555610c24d53e4316da5b7d3fc25c279d96856d5e0e23ee308c328c5fa881d9f`).
+
+`parse(sql)` returns every statement, or the error PostgreSQL's raw parser reports. `ParseError`
+carries the message, the byte position and whether the SQLSTATE is 42601. Other parser errors, such
+as an invalid Unicode escape (22025), the `UNIQUE` predicate (0A000) or the stack depth limit
+(54001), have `syntax = false`.
+
+## Nesting
+
+Nesting is bounded so that no input exhausts the caller's stack or takes exponential time:
+
+- Each nested level (parentheses, subqueries, FROM items, calls, CASE, prefixes such as `NOT`,
+  statements inside `BEGIN ATOMIC` and `EXPLAIN`, and type names) runs on a stack that grows on
+  demand (the default `stacker` feature), and a statement nesting past 300 levels is refused with
+  54001's "stack depth limit exceeded". A type's `[]` bounds count against the same limit. Once
+  one reading passes the limit, every other reading fails at once and the statement is refused.
+  PostgreSQL's own limit depends on its stack size, so it accepts some deeper texts.
+- A flat chain of operators (other than `AND` and `OR`), casts or indirections is refused with
+  the same error past 1,000 links. `AND`, `OR` and set operations are not counted.
+- Each statement's tree, as `tree_depth` measures it, is refused with the same error past 8,000
+  levels. This covers chains nested in another chain's first operand, which the counts above miss,
+  and long `AND`, `OR` and set-operation chains. A release build serialises such a tree on a
+  2 MiB thread.
+- Local parser limit, tree depth: PostgreSQL 18.6 accepts nested casts to about 13,200 levels
+  (132 levels of 99 casts each) before its own 54001, so a statement 8,000 to 13,200 levels deep is
+  refused here and accepted by the engine.
+- A parenthesized query, and `JSON_OBJECT`'s arguments, that fail to parse from a token have the
+  failure replayed there. `JSON_OBJECT`'s arguments also keep their tree, because its readings each
+  read the nested arguments; keeping an outer one drops those kept inside it, so the kept trees
+  never overlap. A parenthesized query's tree is not kept, since keeping a copy at every level grows
+  with depth times size. Kept trees are cloned on a stack grown to their depth, and together may
+  hold at most 65,536 nodes plus 32 per input token; an input past that is refused with the same
+  error. This is a local parser limit: PostgreSQL accepts such inputs.
+
+## Gaps
+
+A statement holding a construct the shared tree cannot hold becomes a `Command` with the
+statement's text, and `Parsed.gaps` names each construct with its byte range. A gap statement is
+accepted as opaque, never as parsed. For a statement gap (its first keyword), the text up to the
+next top-level `;` is not checked further. `TREAT` is checked against the full grammar.
+
+| Gap | Construct |
+| --- | --- |
+| a statement's first keyword, such as `create` or `alter` | every statement other than `SELECT`, `VALUES`, `TABLE`, `INSERT`, `UPDATE`, `DELETE`, `MERGE`, `TRUNCATE`, `COPY`, `COMMENT`, `SECURITY LABEL`, `CREATE [OR REPLACE] FUNCTION` or `PROCEDURE`, `CREATE TABLE` and `CREATE TABLE AS`, `CREATE [OR REPLACE] AGGREGATE`, `CREATE DATABASE`, `CREATE [OR REPLACE] [MATERIALIZED] VIEW`, `CREATE INDEX`, `SEQUENCE`, `TRIGGER`, `TYPE` and `FOREIGN TABLE`, the catalog `CREATE` statements listed under their own heading, every `DROP`, every `ALTER`, `GRANT` and `REVOKE`, and the utility and session statements listed under their own heading |
+| `treat` | `TREAT (… AS type)` |
+
+## Lossy mappings
+
+These parse without a gap, but the shared tree keeps less than the source said:
+
+- `IS [NOT] UNKNOWN` becomes `IsNull`, which means the same for a boolean.
+- `CURRENT_DATE`, `CURRENT_TIMESTAMP [(p)]` and the other SQL-value functions become `Function`
+  nodes, with `no_parens` set when written without parentheses.
+- `EXTRACT`, `POSITION`, `SUBSTRING`, `OVERLAY`, `TRIM`, `NORMALIZE` and `COLLATION FOR` become the
+  plain calls PostgreSQL turns them into (for example `TRIM(LEADING …)` becomes `ltrim`).
+- `LIMIT ALL` becomes `LIMIT NULL`; `FETCH FIRST ROW ONLY` without a count on a set operation
+  becomes `LIMIT 1`.
+- `INTERVAL (p) '…'` keeps the interval type but not its precision.
+- `VALUES` given `ORDER BY`, `LIMIT` or `WITH` becomes `SELECT * FROM (VALUES …)`.
+
+## CREATE TABLE
+
+`CREATE TABLE` and `CREATE TABLE AS` become `CreateTable`. Columns go in `columns`, typed-table and
+`AS` columns with no type. Each column's storage, compression, options, collation and
+constraints are keyword tuples in `ColumnDef.options`, in source order, such as
+`(NOT NULL, NO INHERIT)` or `(CONSTRAINT, c, REFERENCES, p, (ON DELETE, SET NULL, (a)))`. Table
+constraints and `LIKE` are `(ELEMENT, n, tuple)` in `properties`, where `n` counts the columns before
+them. `OF`, the partition bound, `PARTITION BY`, `USING`, `WITH`, `WITHOUT OIDS`, `ON COMMIT` and
+`TABLESPACE` are keyword tuples there too. `UNLOGGED` is the `table_modifier`. The grammar's own
+errors are kept: repeated `COLLATE`, `GENERATED BY DEFAULT AS (…)`, conflicting constraint
+attributes and missing hash bounds (42601); attributes a constraint kind cannot take,
+`MATCH PARTIAL` and an `ON UPDATE` column list (0A000); an unknown partitioning strategy (22023);
+and a repeated hash bound (42710).
+
+## CREATE AGGREGATE
+
+`CREATE AGGREGATE` becomes a `CreateObject` of kind `AGGREGATE`. Its argument list is the call in
+`operands`, as `COMMENT ON AGGREGATE` names it, and each definition element is a property whose
+value is absent when written bare. The pre-8.2 form has no argument list and the source
+`OLD STYLE`. An `OUT` or `INOUT` argument, and a `VARIADIC` direct argument without one `VARIADIC`
+aggregated argument of the same type name, are refused (0A000). Type names are compared as
+PostgreSQL's `equal()` compares them, so `int` matches `integer` and `pg_catalog.int4` but not `int4`.
+
+## CREATE DATABASE
+
+`CREATE DATABASE` becomes `CreateDatabase`, each option a `(name, value)` tuple in `properties`, in
+order. `CONNECTION LIMIT` is named `connection_limit`, as PostgreSQL names it; a value is a number,
+a string or word, a boolean, or `DEFAULT`.
+
+## CREATE VIEW, INDEX, SEQUENCE, TRIGGER, TYPE and FOREIGN TABLE
+
+`CREATE VIEW` and `MATERIALIZED VIEW` become `CreateView`. `UNLOGGED`, `RECURSIVE`, `WITH (…)`,
+`USING`, `TABLESPACE`, `WITH NO DATA` and `(CHECK OPTION, LOCAL | CASCADED)` go in `options`;
+`WITH DATA` and a bare `WITH CHECK OPTION` are the defaults PostgreSQL gives them. A recursive view
+with a check option is refused (0A000), as gram.y refuses it. `CREATE INDEX`, `SEQUENCE`, `TRIGGER`
+and `TYPE` become `CreateObject`, with the persistence or the `UNIQUE`, `CONSTRAINT` or `RECURSIVE`
+word in `modifier` and each clause a keyword tuple in `operands`, in grammar order. An index without
+`USING` records `btree`, and `NULLS DISTINCT` is the default. Trigger events are listed in
+PostgreSQL's bit order (`INSERT`, `DELETE`, `UPDATE`, `TRUNCATE`), `FOR EACH STATEMENT` is the
+default, `EXECUTE PROCEDURE` equals `EXECUTE FUNCTION`, and each function argument is the string
+gram.y makes of it. A sequence's options are those of `ALTER SEQUENCE`. `CREATE TYPE` records `AS`,
+`AS ENUM` or `AS RANGE` in `source`, with the attributes or labels in `operands` and a definition
+list in `properties`. `CREATE FOREIGN TABLE` becomes `CreateTable` with the `table_modifier`
+`FOREIGN` and `(SERVER, s)` and `OPTIONS` in `properties`. `CREATE ASSERTION` is parsed and refused
+(0A000). `CREATE` followed by a word no statement allows is refused (42601).
+
+## Catalog CREATE statements
+
+`CREATE ACCESS METHOD`, `CAST`, `COLLATION`, `[DEFAULT] CONVERSION`, `DOMAIN`, `EVENT TRIGGER`,
+`EXTENSION`, `FOREIGN DATA WRAPPER`, `LANGUAGE`, `OPERATOR`, `OPERATOR CLASS`, `OPERATOR FAMILY`,
+`PUBLICATION`, `RULE`, `SCHEMA`, `SERVER`, `STATISTICS`, `SUBSCRIPTION`, `TABLESPACE`, `TEXT SEARCH`
+and `TRANSFORM` become `CreateObject`, with each clause a keyword tuple in `operands`, in grammar
+order, and a definition list in `properties`. `DEFAULT` (conversions, operator classes) and `TRUSTED`
+(languages) are the `modifier`. gram.y's rewrites are kept: `CREATE [OR REPLACE] LANGUAGE l` without
+`HANDLER` is `CREATE EXTENSION [IF NOT EXISTS] l`; `PROCEDURAL`, `NO VALIDATOR`, `FOR SEARCH`,
+`DO ALSO`, `CREATE SERVER ... VERSION NULL` and empty rule actions add nothing; a domain's `COLLATE`
+comes before its constraints; a transform lists `FROM SQL` before `TO SQL`; and `COLLATION ... FROM`
+is its `from` element. Publication objects take their kind as in `ALTER PUBLICATION`. A rule action is
+a query, `INSERT`, `UPDATE`, `DELETE` or `(NOTIFY, channel [, payload])`. A schema element is
+`CREATE TABLE`, `INDEX`, `SEQUENCE`, `TRIGGER` or `VIEW`, or a `GRANT` on objects. `CREATE EXTENSION ... FROM` and schema elements after `IF NOT EXISTS` are refused
+(0A000), as are `OR REPLACE` and a persistence where gram.y has none (42601).
+
+## CREATE ROLE, USER, GROUP, POLICY and USER MAPPING
+
+`CREATE ROLE`, `USER` and `GROUP` become `CreateObject` of their own kind, each option a
+`(name, value)` tuple in `operands`, in order, named as gram.y's `DefElem` names it: `NOLOGIN` is
+`(canlogin, false)`, `ENCRYPTED PASSWORD` is `password`, `IN GROUP` is `addroleto`, `USER` and `ROLE`
+are `rolemembers`. An unknown option (42601), `UNENCRYPTED PASSWORD` (0A000) and a reserved role name
+(42939) are refused. `CREATE POLICY` writes gram.y's defaults out: `(AS, PERMISSIVE)`, `(FOR, ALL)`
+and `(TO, (PUBLIC))`. `CREATE USER MAPPING FOR USER` is `FOR CURRENT_USER`.
+
+## DROP
+
+Every `DROP` statement becomes `DropObject`. One plain name is its `name`; anything else, such as a
+list, signatures, `name ON table`, `name USING method`, `(source AS target)` or `FOR type LANGUAGE l`,
+goes in `objects`, in order. `CASCADE`, `IF EXISTS`, `CONCURRENTLY` and `DROP DATABASE`'s `FORCE` are
+flags; `RESTRICT` is the default and adds nothing. As in gram.y, `DROP ROLE`, `USER` and `GROUP` all
+have kind `ROLE`, `PROCEDURAL` adds nothing, `DROP USER MAPPING FOR USER` is `FOR CURRENT_USER`, and
+`FORCE` given twice equals `FORCE`.
+
+## ALTER
+
+`ALTER TABLE`, `FOREIGN TABLE`, `INDEX`, `SEQUENCE`, `VIEW` and `MATERIALIZED VIEW` become
+`AlterObject`, with the relation kind in `kind` and the relation in `name` (`ONLY` and `*` as
+`TableRef` keeps them). Each `alter_table_cmd` is a keyword tuple in `operands`, in source order,
+such as `(ADD COLUMN, columnDef)` or `(ALTER COLUMN, c, (SET STATISTICS, 16))`, with an empty
+`action`. A rename, `SET SCHEMA`, `[NO] DEPENDS ON EXTENSION`, `ATTACH` or `DETACH PARTITION`,
+`ALL IN TABLESPACE` and a sequence's `SeqOptList` name themselves in `action`, their values in
+`operands`. Numbers are kept as values, so `SET STATISTICS 0x10` equals `SET STATISTICS 16`.
+`ALTER FUNCTION`, `PROCEDURE`, `ROUTINE` and `AGGREGATE` also become `AlterObject`. The signature,
+as `COMMENT ON` builds it, is the first operand and its name parts are `name`, so `a.b.c.d` keeps
+`a.b` as the catalog. Options are tuples, as in `CREATE FUNCTION`, with an empty `action`; a rename, a
+new owner, `SET SCHEMA` and `[NO] DEPENDS ON EXTENSION` name themselves in `action`. `RESTRICT` changes
+nothing, as in PostgreSQL. In every routine, the special `SET` and `RESET` forms are the settings
+PostgreSQL's raw tree makes of them: `SET TIME ZONE 'x'` is `SET timezone = 'x'`, `LOCAL` and
+`DEFAULT` set the default, and `SCHEMA`, `NAMES`, `ROLE`, `SESSION AUTHORIZATION` and `XML OPTION`
+set `search_path`, `client_encoding`, `role`, `session_authorization` and `xmloption`.
+`SET CATALOG` is refused (0A000), as is a time zone interval with fields beyond `HOUR` and `MINUTE`
+(42601). The other object kinds also become `AlterObject`, named as their grammar names them: one name, an
+`any_name`, `name ON table` (`TRIGGER`, `RULE`), or an operator signature or large object number in
+`operands` with an empty `name`. `OPERATOR CLASS` and `FAMILY` keep `(USING, method)`. Each kind's
+own action names itself in `action`: enum values, attribute commands, domain constraints, mappings,
+publication objects, subscription publications, foreign-data options, operator family members,
+`SET STATISTICS`, `REFRESH VERSION` and settings. Publication objects take the kind before them, as
+`preprocess_pubobj_list` gives it, so `TABLE a, b` equals `TABLE a, TABLE b`, and its errors are kept
+(42601). In `operator_def_list`, `NONE` and a bare name both have no argument. `DROP VALUE` (0A000)
+and missing kind words, such as `ALTER TEXT SEARCH t`, are refused. `ALTER` followed by a word no statement kind allows is refused (42601); other `ALTER` statements
+stay opaque gaps. The grammar's own errors are kept, including `NOT VALID` on `ALTER CONSTRAINT`
+(0A000), a column number out of range, and identity options `SET` cannot take.
+
+## ALTER ROLE, USER, GROUP, POLICY, SYSTEM and USER MAPPING
+
+`ALTER ROLE`, `USER` and `GROUP` make one `AlterRoleStmt` or `RenameStmt`, so all three are
+`AlterObject` of kind `ROLE`. A role name is `name`; `ALL`, `PUBLIC` and the `CURRENT_*` words are
+the first operand with an empty `name`. Options are the `(name, value)` tuples of `CREATE ROLE`, with
+an empty `action`, so `ALTER GROUP g ADD USER a` equals `ALTER ROLE g USER a`; `DROP USER` has
+`action` `DROP`. `[IN DATABASE d] SET` and `RESET` are `(IN DATABASE, d)` and the setting tuple of
+`ALTER DATABASE`. A rename names itself in `action`, and a `RoleSpec` that is not a role name is
+refused there (42939). `ALTER POLICY` keeps `(ON, table)`, then `TO`, `USING` and `WITH CHECK` as
+written, with no defaults; only a rename takes `IF EXISTS`. `ALTER SYSTEM` takes `generic_set` and
+`generic_reset` only, so `FROM CURRENT` and the special forms are refused (42601). `ALTER USER
+MAPPING FOR USER` is `FOR CURRENT_USER`, and its `OPTIONS` are a `(OPTIONS, ...)` tuple.
+
+## GRANT, REVOKE and ALTER DEFAULT PRIVILEGES
+
+`GRANT` and `REVOKE` become `Grant` and `Revoke`, for objects and for roles alike. The objects go in
+order in `objects`, as their kind names them: a relation, a name, an `any_name`, a signature, a large
+object number or a parameter name, with `securable` empty. A target without a kind word is `TABLE`,
+as gram.y gives it. `ALL [PRIVILEGES]` is no privileges, `ALL (a)` one privilege with an empty name, and
+`ALTER SYSTEM` the privilege `alter system`. `GROUP` before a grantee changes nothing. `PUBLIC` and the
+`CURRENT_*` words are grantees named by the upper-case keyword, unquoted, which no folded role name
+can be. `GRANTED BY` is `granted_by`. A role grant keeps each `grant_role_opt` as `(name, bool)` in
+`options`, `OPTION` and `TRUE` being true; `REVOKE name OPTION FOR` is `(name, false)`. `WITH GRANT
+OPTION` and `GRANT OPTION FOR` set `grant_option`, and `RESTRICT` changes nothing. `ALTER DEFAULT
+PRIVILEGES` becomes `AlterDefaultPrivileges`: its `FOR ROLE` (or `FOR USER`) and `IN SCHEMA` options in
+order, then the `Grant` or `Revoke`, whose kind is the plural object kind; `ROUTINES` is `FUNCTIONS`.
+A `GRANT` inside `CREATE SCHEMA` grants on objects only.
+
+## Utility and session statements
+
+Transactions, `SET`, `RESET`, `SHOW`, `SET CONSTRAINTS`, `LOCK`, `DISCARD`, `CHECKPOINT`, `CLUSTER`,
+`VACUUM`, `ANALYZE`, `REINDEX`, `LISTEN`, `NOTIFY`, `UNLISTEN`, `LOAD`, `CLOSE`, `DECLARE`, `FETCH`,
+`MOVE`, `DEALLOCATE`, `DO`, `EXPLAIN`, `CALL`, `REFRESH MATERIALIZED VIEW`, `IMPORT FOREIGN SCHEMA` and
+`REASSIGN OWNED` become `UtilityStatement`: the statement's keywords in `kind`, its options and its
+operands in order. Each takes gram.y's raw tree: `ABORT` is `ROLLBACK` and `END` is `COMMIT`; `WORK`,
+`TRANSACTION`, `AND NO CHAIN`, `SET SESSION` and `WITHOUT HOLD` change nothing; `SET` and `RESET` are
+both `SET`, with the setting tuple of `ALTER DATABASE`; `SHOW TIME ZONE` is `SHOW timezone`. Keyword
+options are the `DefElem`s gram.y lists for them, so `VACUUM FULL t` equals `VACUUM (FULL) t`, and
+`CONCURRENTLY` is `REINDEX`'s last option. `CLUSTER index ON table` is `CLUSTER table USING index`. A
+lock mode is always written out, `ACCESS EXCLUSIVE` by default. `DECLARE`'s cursor options are a set.
+`FETCH` and `MOVE` write out the direction and count: `NEXT` and a bare cursor are `FORWARD 1`, `FIRST`
+and `LAST` are `ABSOLUTE 1` and `-1`. `CALL` keeps the call whole. `PREPARE` and `EXECUTE` become
+`PrepareStatement` and `ExecuteStatement`.
+
+## DML clauses, SQL/JSON and SQL/XML
+
+`OVERRIDING USER|SYSTEM VALUE` is `Insert.overriding` (`USER` or `SYSTEM`), or an `(OVERRIDING, kind)`
+part of a `MERGE` insert. `RETURNING WITH (OLD AS o, NEW AS n)` is `returning_aliases`, each
+`(OLD|NEW, alias)` in order. `WHERE CURRENT OF c` is `current_of` on `Update` and `Delete`, with no
+`where_clause`. An `UPDATE` whose `SET (a, b) = source` takes anything but a row of as many items
+keeps its whole SET list in `assignments`, each `(targets, source)` in order, and leaves `set`
+empty. A SET target or `INSERT` column with a subfield or subscript, such as `a.b` or `a[1]`, is
+the column under its indirection; any such target sends the SET list to `assignments`, and an
+`INSERT` column list to `column_targets`, leaving `columns` empty. In `ON CONFLICT DO UPDATE` and a
+`MERGE` update the SET list is `col = value` items, or the `(targets, source)` list whenever
+`UPDATE` would use `assignments`. A conflict target column with `COLLATE` or an operator class is an
+`INDEX ELEMENT` call of the column, `(COLLATE, name)` and `(OPCLASS, name[, (options)])`.
+`DELETE … USING` holding anything but plain tables keeps the list in `using_items` and its joins in
+`using_joins`, leaving `using` empty. `COPY … FROM … WHERE` is `CopyStmt.where_clause`. `FOR
+UPDATE`-style locking after a set operation is the operation's `locks`, and `FETCH … WITH TIES` its
+`with_ties`.
+
+`TABLESAMPLE method (args) [REPEATABLE (seed)]` is the table's `sample_call`, a `TABLESAMPLE` call
+of the method name and its arguments with `(REPEATABLE, seed)`. `ROWS FROM (f(), g() AS (a int))`
+is a `ROWS FROM` call of the functions, with `WITH ORDINALITY` as its option. A column definition
+list, `f() AS x(a int)` or `f() AS (a int)`, makes the function a `COLUMN DEFINITIONS` call of the
+function and its alias, holding each `(name, type[, (COLLATE, name)])`. `WITH ORDINALITY` on a
+special call is a `WITH ORDINALITY` call of it. `JOIN … USING (c) AS j` is the join's
+`using_alias`. A CTE's `SEARCH {DEPTH|BREADTH} FIRST BY cols SET col` and `CYCLE cols SET col [TO v
+DEFAULT d] USING col` are its `search_cycle` calls, in that order; `CYCLE` without `TO` writes out
+gram.y's `TO true DEFAULT false`.
+
+`IS [NOT] JSON [VALUE|ARRAY|OBJECT|SCALAR] [WITH|WITHOUT UNIQUE [KEYS]]` is `IsJson`, with `VALUE`
+read as no type and `WITHOUT UNIQUE` as none; `IS [NOT] [form] NORMALIZED` is the `is_normalized`
+call gram.y makes, with the form as a string; `IS NOT` becomes `NOT`, as `makeNotExpr` makes it.
+
+The other SQL/JSON and SQL/XML calls, `XMLTABLE`, `JSON_TABLE`, `MERGE_ACTION()` and
+`x IS DOCUMENT` become `KeywordCall { kind, operands, options }`: the call's keywords, its operands
+in order, and each clause as a tuple led by its keywords, such as `(RETURNING, type)`,
+`(ON ERROR, NULL)`, `(PASSING, (value, name), …)` or `(NAME, label)`. They hold what gram.y's raw
+tree holds: a default gram.y fills in reads as written out (`JSON_ARRAY` without a null clause is
+`ABSENT ON NULL`), noise words leave no trace (`ARRAY` in a wrapper, `ON SCALAR STRING`, `KEYS`,
+`BY REF`), `FORMAT JSON` is a `FORMAT JSON` call around its value, and `XMLTABLE` columns keep
+`PATH`, `DEFAULT` and `NOT NULL` in that order whatever order they were written in. `XMLEXISTS` is
+the `xmlexists(row, document)` call gram.y makes, and the old `JSON_OBJECT(a, b)` the
+`json_object` call. gram.y's own errors are kept: an unknown `FORMAT JSON ENCODING` (22023), a
+non-constant `JSON_TABLE` path (0A000), and repeated or unknown `XMLTABLE` column options (42601).

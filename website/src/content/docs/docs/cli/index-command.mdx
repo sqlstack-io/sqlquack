@@ -1,0 +1,34 @@
+---
+title: "sqlquack index"
+description: "Map the rules and building blocks each conversion relies on to the files using them."
+sidebar:
+  label: "index"
+---
+
+Every conversion records the rules it applied and, for each rule, the DuckDB building blocks and
+Snowflake typing functions it called. `sqlquack index` inverts those records: building block to
+rules to files, and rule to files, with refused constructs listed the same way.
+
+## Usage
+
+```bash
+sqlquack index [OPTIONS] [PATHS]...
+```
+
+```bash
+sqlquack index models --json --builtin-policy
+```
+
+Every list is sorted, so the output for two revisions can be diffed to see which files a change to
+one rule affects.
+
+## Options
+
+| Option | Meaning |
+|--------|---------|
+| `--project <folder>` | The [project](/docs/project/) declaring the tables the SQL files read. Default the current folder. |
+| `--chain-models` | Type each converted file as the relation its name references, and convert again. |
+| `--format text\|json`, `--json` | Print the report as text or JSON. |
+
+`index` also takes the [policy flags](/docs/policy/#flags). It takes no session parameters and
+converts under `utc-v1`.

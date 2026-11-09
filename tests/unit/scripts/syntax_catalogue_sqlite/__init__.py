@@ -1,0 +1,1 @@
+"""SQLite syntax catalogue tests."""

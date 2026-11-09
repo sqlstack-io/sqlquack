@@ -1,0 +1,27 @@
+[package]
+name = "sqlquack-syntax"
+description = "SQLQuack's shared syntax tree, tokens, spans and diagnostics, which every dialect parser builds on"
+version.workspace = true
+edition = "2021"
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme.workspace = true
+publish.workspace = true
+rust-version.workspace = true
+
+# Stack growth for deep trees is the only feature.
+[features]
+default = ["stacker"]
+stacker = ["dep:stacker"]
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+sqlquack-derive.workspace = true
+stacker = { workspace = true, optional = true }
+thiserror.workspace = true
+unicode-segmentation.workspace = true
+
+[lints]
+workspace = true

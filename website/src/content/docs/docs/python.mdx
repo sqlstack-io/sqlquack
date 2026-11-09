@@ -1,0 +1,105 @@
+---
+title: "Python"
+description: "Check and convert Snowflake SQL from Python with the sqlquack package."
+---
+
+The `sqlquack` Python package runs the same code as the command line. `check` and `convert` return
+frozen results with typed diagnostics, the text the command line renders, and, for `convert`, its
+exact `--json` report.
+
+```python
+import sqlquack
+
+sqlquack.check(sql="SELECT 1 QUALIFY TRUE").diagnostics[0].code  # "SQ0203"
+result = sqlquack.convert(
+    sql="SELECT 1 AS total", options=sqlquack.ConvertOptions(builtin_policy=True)
+)
+result.sql  # 'SELECT CAST(1 AS DECIMAL(1,0)) AS "TOTAL"'
+```
+
+## Install
+
+The package requires Python 3.12 or newer. One wheel loads into every CPython from 3.12, and it
+ships DuckDB's library beside itself. On Linux it needs glibc 2.34 or newer. An older interpreter
+rejects the wheel as "not a supported wheel on this platform", so install it into a 3.12
+environment:
+
+```bash
+pip install sqlquack
+python -c "import sqlquack; print(sqlquack.__version__)"
+```
+
+### Build from source
+
+The wheel also builds from the repository with [uv](https://docs.astral.sh/uv/):
+
+```bash
+uv sync --locked --no-group recorder
+make python-wheel
+uv venv --python 3.12 .sqlquack-env
+uv pip install --python .sqlquack-env target/wheels/sqlquack-*.whl
+.sqlquack-env/bin/python -c "import sqlquack; print(sqlquack.__version__)"
+```
+
+With an existing Python 3.12 or newer, `pip install target/wheels/sqlquack-*.whl` works too.
+
+## Checking
+
+`check(*, sql, path="<string>")` parses `sql` and finds what Snowflake rejects. `path` names the
+SQL in rendered diagnostics. It returns a `CheckResult`:
+
+| Field | Type | Meaning |
+|-------|------|---------|
+| `ok` | `bool` | `True` when nothing was found. |
+| `diagnostics` | `tuple[Diagnostic, ...]` | Every problem found. |
+| `rendered` | `str` | The diagnostics as the command line prints them. |
+
+## Converting
+
+`convert(*, sql, options=None, path="<string>")` converts `sql` or refuses it, as
+`sqlquack convert` does. It returns a `Conversion`:
+
+| Field | Type | Meaning |
+|-------|------|---------|
+| `converted` | `bool` | Whether every statement converted. |
+| `sql` | `str` | The DuckDB SQL. |
+| `macros` | `tuple[str, ...]` | Statements creating the DuckDB macros the SQL needs, [helper macros](/docs/helper-macros/) first, to run in order first. |
+| `profile` | `str` | The session profile it converted under. |
+| `diagnostics` | `tuple[Diagnostic, ...]` | The refusals. |
+| `divergences` | `Mapping[str, tuple[str, ...]]` | Known divergences relied on, with their constructs. |
+| `assumptions` | `tuple[str, ...]` | The divergences among them that are assumptions. |
+| `divergence_failures` | `Mapping[str, str]` | How each divergence relied on fails, as the policy file says: `value` (it can return another value) or `loud` (it raises instead). |
+| `notes` | `tuple[str, ...]` | Notes the command line prints. |
+| `rendered` | `str` | The refusals as the command line prints them. |
+| `report` | `Mapping[str, Any]` | Exactly `sqlquack convert --json`'s report. |
+
+`ConvertOptions` has one field per [`convert`](/docs/cli/convert/) flag, with the same defaults:
+`project`, `policy`, `builtin_policy`, `session`, `strict`, `utc_session`,
+`confirm_declared_offsets`, `python_runtime`, `loud_divergences_only`, `overrides`,
+`verified_overrides` and `compact`. `project`, `policy` and `overrides` take a path (`str` or
+`os.PathLike`), not the parsed contents. `session` and `verified_overrides` take a mapping, such as
+`session={"TIMEZONE": "UTC"}`, not a list of `NAME=VALUE` strings.
+
+`schema` declares tables in memory, beside the project's, as a mapping of table names to
+`[column, Snowflake type]` pairs:
+
+```python
+options = sqlquack.ConvertOptions(schema={"ORDERS": [["ORDER_ID", "NUMBER(38,0)"]]})
+```
+
+`project` takes a [project](/docs/project/) folder, as `--project` does: its sources, functions,
+overrides and settings apply, and its `sqlquack.toml` is the policy unless `policy` or
+`builtin_policy` choose another. Without `project`, the current folder is the project, as it is on
+the command line.
+
+## Diagnostics
+
+`Diagnostic` has `code`, `name`, `alias`, `severity`, `message`, `span`, `label`, `notes` and
+`help`, as in the [JSON output](/docs/diagnostics/overview/#json-output). `span` is a `Span` with
+`start`, `end`, `line`, `column`, `end_line` and `end_column`, or `None` for problems outside the
+SQL.
+
+## Errors
+
+Where the command line exits 2, the functions raise `SqlQuackError`, a `ValueError`: for example,
+for input that holds no SQL statement or a `schema` that is not a valid mapping.

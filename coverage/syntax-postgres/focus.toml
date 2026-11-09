@@ -1,0 +1,245 @@
+# Work order for the PostgreSQL catalogue: the forms SQLBuild's Postgres test SQL uses, each
+# with the SQLBuild purposes (A-H in the multi-dialect plan) that need it. A temporary ordering
+# only; no form carries a field for it. Read by `syntax-coverage summary --focus`.
+#
+# Derived from sqlstack-io/sqlbuild at sqlbuild_commit. The SQL is every string the Postgres
+# e2e tests (tests/e2e/.../main/postgres and the ingestr Postgres tests), the integration tests
+# that name Postgres, the waffle-shop playground templates those tests copy, the Rust test cases
+# whose dialect is postgres or postgresql, the analysis failure corpus, the compiler
+# differential's generated seed/0-postgres project and the Postgres adapter reach, with
+# template markers replaced by identifiers. Each statement the PostgreSQL 18.6 parser accepts is
+# classified by its parse tree and tokens.
+#
+# A statement is compiled when it is a model, test, audit or scenario body SQLBuild compiles
+# (118 occurrences); adapter when the Postgres adapter or the shared adapter contract emits it
+# (146); harness when a test only runs it against the server (189). Uses: a compiled statement's
+# forms need A, B and C; also D for functions, casts, types, literals and arithmetic, string, json
+# and datetime operators; lexical forms need A and E (and D for literals); data types need A
+# and D; H when the SQL is a custom-rule test input and G when it is a local-replay scenario or
+# its model. Adapter statements give D to the types and casts they spell (the adapter
+# normalises type strings through the analysis dialect); harness statements give no use.
+# Clauses inside SELECT (WITH, set operations, GROUP BY, ORDER BY, LIMIT) belong to
+# pg.query.select.select. note gives the compiled or adapter occurrences and one origin.
+
+dialect = "postgres"
+sqlbuild_commit = "9082be135fb4f0afa08ca051cd245cc20b958965"
+
+[[focus]]
+form = "pg.query.select.select"
+uses = ["A", "B", "C", "G", "H"]
+note = "117 statements; e.g. tests/e2e/src/sqlbuild/cli/commands/main/postgres/helpers.py:474"
+
+[[focus]]
+form = "pg.query.queries-table-expressions.join-on"
+uses = ["A", "B", "C"]
+note = "11 statements; e.g. tests/e2e/src/sqlbuild/cli/commands/main/load/helpers.py:363"
+
+[[focus]]
+form = "pg.expressions.sql-syntax-lexical.identifier"
+uses = ["A", "E", "G", "H"]
+note = "115 statements; e.g. tests/e2e/src/sqlbuild/cli/commands/main/postgres/helpers.py:474"
+
+[[focus]]
+form = "pg.expressions.sql-expressions.column-reference"
+uses = ["A", "B", "C", "G", "H"]
+note = "91 statements; e.g. tests/e2e/src/sqlbuild/cli/commands/main/postgres/helpers.py:474"
+
+[[focus]]
+form = "pg.expressions.sql-syntax-lexical.integer"
+uses = ["A", "D", "E", "G"]
+note = "43 statements; e.g. tests/e2e/src/sqlbuild/cli/commands/main/postgres/helpers.py:913"
+
+[[focus]]
+form = "pg.expressions.sql-syntax-lexical.string"
+uses = ["A", "D", "E", "G"]
+note = "31 statements; e.g. tests/e2e/src/sqlbuild/cli/commands/main/postgres/test_postgres.py:712"
+
+[[focus]]
+form = "pg.expressions.sql-expressions.cast"
+uses = ["A", "B", "C", "D", "G"]
+note = "25 statements; e.g. tests/e2e/src/sqlbuild/cli/commands/main/postgres/helpers.py:903"
+
+[[focus]]
+form = "pg.expressions.sql-expressions.function-call"
+uses = ["A", "B", "C", "G"]
+note = "23 statements; e.g. tests/e2e/src/sqlbuild/cli/commands/main/postgres/test_postgres.py:712"
+
+[[focus]]
+form = "pg.expressions.datatype.timestamp"
+uses = ["A", "D", "G"]
+note = "16 statements; e.g. tests/e2e/src/sqlbuild/cli/commands/main/postgres/test_postgres.py:723"
+
+[[focus]]
+form = "pg.expressions.sql-expressions.aggregate"
+uses = ["A", "B", "C", "G"]
+note = "13 statements; e.g. tests/e2e/src/sqlbuild/cli/commands/main/postgres/helpers.py:411"
+
+[[focus]]
+form = "pg.expressions.sql-syntax-lexical.quoted-identifier"
+uses = ["A", "E"]
+note = "12 statements; e.g. tests/integration/src/sqlbuild/compiler/pipeline/test_star_shape_order.py:23"
+
+[[focus]]
+form = "pg.expressions.comparison.op-eq"
+uses = ["A", "B", "C", "H"]
+note = "10 statements; e.g. tests/e2e/src/sqlbuild/cli/commands/main/load/helpers.py:363"
+
+[[focus]]
+form = "pg.expressions.datatype.date"
+uses = ["A", "D", "G"]
+note = "5 statements; e.g. src/sqlbuild/playground_templates/waffle_shop/models/marts/daily_order_partitioned.sql"
+
+[[focus]]
+form = "pg.expressions.sql-expressions.aggregate-star"
+uses = ["A", "B", "C", "G"]
+note = "5 statements; e.g. tests/e2e/src/sqlbuild/cli/commands/main/postgres/helpers.py:411"
+
+[[focus]]
+form = "pg.expressions.comparison.op-lt"
+uses = ["A", "B", "C", "G"]
+note = "4 statements; e.g. src/sqlbuild/playground_templates/waffle_shop/models/marts/daily_order_partitioned.sql"
+
+[[focus]]
+form = "pg.expressions.logical.not"
+uses = ["A", "B", "C"]
+note = "4 statements; e.g. scripts/compiler_differential/_helpers/analysis_corpus/failure_cases.py:57"
+
+[[focus]]
+form = "pg.expressions.math.op-star"
+uses = ["A", "B", "C", "D"]
+note = "4 statements; e.g. tests/e2e/src/sqlbuild/cli/commands/main/load/helpers.py:363"
+
+[[focus]]
+form = "pg.expressions.sql-syntax-lexical.decimal"
+uses = ["A", "D", "E", "G"]
+note = "4 statements; e.g. src/sqlbuild/playground_templates/waffle_shop/tests/scenarios/daily_revenue_minimal.sql"
+
+[[focus]]
+form = "pg.expressions.comparison.op-gt-eq"
+uses = ["A", "B", "C", "G"]
+note = "3 statements; e.g. tests/e2e/src/sqlbuild/cli/commands/main/postgres/test_dlt_postgres.py:76"
+
+[[focus]]
+form = "pg.expressions.datatype-boolean.boolean-literal"
+uses = ["A", "D"]
+note = "3 statements; e.g. crates/sqlbuild-analysis/src/compiler/tests/test_sql_test_relation_markers.rs:12"
+
+[[focus]]
+form = "pg.expressions.datatype-datetime.typed-datetime-literal"
+uses = ["A", "D", "G"]
+note = "3 statements; e.g. compiler_differential seed/0-postgres:tests/scenarios/stg_fulfillment_0_scenario.sql"
+
+[[focus]]
+form = "pg.expressions.datatype-oid.regclass"
+uses = ["D"]
+note = "3 statements; e.g. src/sqlbuild/adapters/postgres/classes/postgres_adapter.py:713"
+
+[[focus]]
+form = "pg.expressions.logical.and"
+uses = ["A", "B", "C"]
+note = "3 statements; e.g. src/sqlbuild/playground_templates/waffle_shop/models/marts/daily_order_partitioned.sql"
+
+[[focus]]
+form = "pg.expressions.sql-expressions.aggregate-distinct"
+uses = ["A", "B", "C"]
+note = "3 statements; e.g. src/sqlbuild/playground_templates/waffle_shop/models/marts/daily_order_partitioned.sql"
+
+[[focus]]
+form = "pg.expressions.sql-syntax-lexical.dollar-quoted-string"
+uses = ["A", "D", "E", "H"]
+note = "3 statements; e.g. crates/sqlbuild-analysis/src/compiler/tests/test_sql_test_relation_markers.rs:12"
+
+[[focus]]
+form = "pg.expressions.sql-syntax-lexical.type-string"
+uses = ["A", "D", "E", "G"]
+note = "3 statements; e.g. compiler_differential seed/0-postgres:tests/scenarios/stg_fulfillment_0_scenario.sql"
+
+[[focus]]
+form = "pg.expressions.datatype.bigint"
+uses = ["A", "D"]
+note = "2 statements; e.g. tests/e2e/src/sqlbuild/cli/commands/main/postgres/helpers.py:903"
+
+[[focus]]
+form = "pg.expressions.datatype.character-varying"
+uses = ["A", "D"]
+note = "2 statements; e.g. compiler_differential seed/0-postgres:models/analysis/contracted_stg_sales_0.sql"
+
+[[focus]]
+form = "pg.expressions.datatype.integer"
+uses = ["A", "D"]
+note = "2 statements; e.g. scripts/compiler_differential/_helpers/analysis_corpus/failure_cases.py:331"
+
+[[focus]]
+form = "pg.expressions.sql-syntax-lexical.block-comment"
+uses = ["A", "E"]
+note = "2 statements; e.g. tests/integration/src/sqlbuild/cli/commands/main/test_rules.py:2227"
+
+[[focus]]
+form = "pg.expressions.comparison.is-null"
+uses = ["A", "B", "C"]
+note = "1 statements; e.g. src/sqlbuild/playground_templates/waffle_shop/tests/unit/test_stg_orders.sql"
+
+[[focus]]
+form = "pg.expressions.comparison.op-gt"
+uses = ["A", "B", "C"]
+note = "1 statements; e.g. compiler_differential seed/0-postgres:models/analysis/combined_stg_fulfillment_0.sql"
+
+[[focus]]
+form = "pg.expressions.comparison.op-lt-eq"
+uses = ["A", "B", "C", "G"]
+note = "1 statements; e.g. src/sqlbuild/playground_templates/waffle_shop/tests/scenarios/daily_revenue_multi_order.sql"
+
+[[focus]]
+form = "pg.expressions.conditional.case-searched"
+uses = ["A", "B", "C", "G"]
+note = "1 statements; e.g. tests/e2e/src/sqlbuild/cli/commands/main/postgres/test_postgres.py:712"
+
+[[focus]]
+form = "pg.expressions.math.op-slash"
+uses = ["A", "B", "C", "D"]
+note = "1 statements; e.g. src/sqlbuild/playground_templates/waffle_shop/models/marts/daily_revenue.sql"
+
+[[focus]]
+form = "pg.expressions.sql-syntax-lexical.escape-string"
+uses = ["A", "D", "E", "H"]
+note = "1 statements; e.g. crates/sqlbuild-rules/src/engine/tests/test_query_facts.rs:204"
+
+[[focus]]
+form = "pg.functions.aggregate.sum"
+uses = ["A", "B", "C", "D", "G"]
+note = "12 statements; e.g. tests/e2e/src/sqlbuild/cli/commands/main/postgres/helpers.py:411"
+
+[[focus]]
+form = "pg.functions.aggregate.count"
+uses = ["A", "B", "C", "D", "G"]
+note = "9 statements; e.g. tests/e2e/src/sqlbuild/cli/commands/main/postgres/helpers.py:411"
+
+[[focus]]
+form = "pg.functions.conditional.coalesce"
+uses = ["A", "B", "C", "D"]
+note = "3 statements; e.g. tests/e2e/src/sqlbuild/cli/commands/main/load/helpers.py:377"
+
+[[focus]]
+form = "pg.functions.datetime.date-trunc"
+uses = ["A", "B", "C", "D", "G"]
+note = "2 statements; e.g. tests/e2e/src/sqlbuild/cli/commands/main/postgres/test_postgres.py:712"
+
+[[focus]]
+form = "pg.functions.aggregate.max"
+uses = ["A", "B", "C", "D"]
+note = "1 statements; e.g. src/sqlbuild/playground_templates/waffle_shop/models/intermediate/customer_status_snapshot.sql"
+
+[[focus]]
+form = "pg.functions.math.round"
+uses = ["A", "B", "C", "D"]
+note = "1 statements; e.g. crates/sqlbuild-analysis/src/sql_macros/tests/test_expansion.rs:349"
+
+[[focus]]
+form = "pg.functions.string.upper"
+uses = ["A", "B", "C", "D"]
+note = "1 statements; e.g. compiler_differential seed/0-postgres:models/analysis/chain_2_stg_sales_0.sql"
+
+[[focus]]
+form = "pg.dml.update"
+uses = ["A", "B", "C"]
+note = "1 statements; e.g. crates/sqlbuild-analysis/src/compiler/tests/test_sql_test_relation_markers.rs:75"

@@ -1,0 +1,20 @@
+[package]
+name = "sqlquack-syntax-databricks"
+version.workspace = true
+description = "SQLQuack's Databricks SQL scanner and parser into the shared sqlquack-syntax tree."
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+publish = false
+rust-version.workspace = true
+
+[dependencies]
+sqlquack-syntax.workspace = true
+stacker.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true
+
+[lints]
+workspace = true

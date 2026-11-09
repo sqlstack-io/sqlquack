@@ -1,0 +1,809 @@
+# Reviewed inputs of the SQLite 3.54.1 catalogue; read by scripts/build_syntax_catalogue_sqlite.py.
+#
+# [[diagram]] reads one syntax diagram of the documentation archive (its syntax/<name>.html page,
+#   shown again on the lang_*.html pages) into the catalogue notation, bound to the SHA-256 of its
+#   SVG: <name> is a box, [ ] an optional part, { a | b } a choice and `x ...` a repetition.
+#   Each grammar line becomes one form; labels name them. The italic grey labels of a diagram
+#   are annotations, not syntax.
+# [[form]] is a form catalogued by hand from a page whose syntax is in a table, list or prose,
+#   bound to the page's SHA-256.
+# [[override]] reads a documented signature or PRAGMA by hand where the page's notation is not a
+#   plain call or PRAGMA line; `text` is the signature as the page writes it, or the PRAGMA name.
+# [[page]] is the reviewed status of an in-set page with no diagram, signature or hand form.
+
+[[form]]
+source = "doc.lang-expr"
+family = "expressions"
+anchor = "Operators, and Parse-Affecting Attributes"
+kind = "special"
+label = "unary-operators"
+grammar = ["~ <expr>", "+ <expr>", "- <expr>", "NOT <expr>"]
+basis = "table"
+page_sha256 = "77859a49a5cbdbf78165bded31c436c591d9846a9a7da5e36d52423e36107d57"
+
+[[form]]
+source = "doc.lang-expr"
+family = "expressions"
+anchor = "Operators, and Parse-Affecting Attributes"
+kind = "special"
+label = "binary-operators"
+grammar = [
+  "<expr> || <expr>",
+  "<expr> -> <expr>",
+  "<expr> ->> <expr>",
+  "<expr> * <expr>",
+  "<expr> / <expr>",
+  "<expr> % <expr>",
+  "<expr> + <expr>",
+  "<expr> - <expr>",
+  "<expr> & <expr>",
+  "<expr> \\| <expr>",
+  "<expr> << <expr>",
+  "<expr> >> <expr>",
+  "<expr> < <expr>",
+  "<expr> > <expr>",
+  "<expr> <= <expr>",
+  "<expr> >= <expr>",
+  "<expr> = <expr>",
+  "<expr> == <expr>",
+  "<expr> <> <expr>",
+  "<expr> != <expr>",
+  "<expr> IS <expr>",
+  "<expr> IS NOT <expr>",
+  "<expr> IS DISTINCT FROM <expr>",
+  "<expr> IS NOT DISTINCT FROM <expr>",
+  "<expr> AND <expr>",
+  "<expr> OR <expr>",
+]
+basis = "table"
+page_sha256 = "77859a49a5cbdbf78165bded31c436c591d9846a9a7da5e36d52423e36107d57"
+
+[[form]]
+source = "doc.lang-expr"
+family = "expressions"
+anchor = "Literal Values (Constants)"
+kind = "special"
+label = "string-and-blob-literals"
+grammar = ["'<characters>'", "X'<hex-digits>'", "x'<hex-digits>'"]
+basis = "prose"
+page_sha256 = "77859a49a5cbdbf78165bded31c436c591d9846a9a7da5e36d52423e36107d57"
+
+[[form]]
+source = "doc.lang-expr"
+family = "expressions"
+anchor = "Parameters"
+kind = "special"
+label = "parameters"
+grammar = ["?<nnn>", "?", ":<aaaa>", "@<aaaa>", "$<aaaa>"]
+basis = "list"
+page_sha256 = "77859a49a5cbdbf78165bded31c436c591d9846a9a7da5e36d52423e36107d57"
+
+[[form]]
+source = "doc.lang-keywords"
+family = "expressions"
+anchor = "SQLite Keywords"
+kind = "special"
+label = "quoted-names"
+grammar = ["'<keyword>'", "\"<keyword>\"", "\\[<keyword>\\]", "`<keyword>`"]
+basis = "list"
+page_sha256 = "0cb8b8361365c28b9186d3358c27d73bcbbfa7902fe8cd6a57acb0d5adf91745"
+
+[[form]]
+source = "doc.datatype3"
+family = "expressions"
+anchor = "Affinity Name Examples"
+kind = "special"
+label = "integer-affinity"
+grammar = ["{ INT | INTEGER | TINYINT | SMALLINT | MEDIUMINT | BIGINT | UNSIGNED BIG INT | INT2 | INT8 }"]
+basis = "table"
+page_sha256 = "af1844e46b9f8934131480582e99df10b47bc0569310a1854dc49857eeef6e6c"
+
+[[form]]
+source = "doc.datatype3"
+family = "expressions"
+anchor = "Affinity Name Examples"
+kind = "special"
+label = "text-affinity"
+grammar = ["{ CHARACTER ( 20 ) | VARCHAR ( 255 ) | VARYING CHARACTER ( 255 ) | NCHAR ( 55 ) | NATIVE CHARACTER ( 70 ) | NVARCHAR ( 100 ) | TEXT | CLOB }"]
+basis = "table"
+page_sha256 = "af1844e46b9f8934131480582e99df10b47bc0569310a1854dc49857eeef6e6c"
+
+[[form]]
+source = "doc.datatype3"
+family = "expressions"
+anchor = "Affinity Name Examples"
+kind = "special"
+label = "blob-affinity"
+grammar = ["BLOB"]
+basis = "table"
+page_sha256 = "af1844e46b9f8934131480582e99df10b47bc0569310a1854dc49857eeef6e6c"
+
+[[form]]
+source = "doc.datatype3"
+family = "expressions"
+anchor = "Affinity Name Examples"
+kind = "special"
+label = "real-affinity"
+grammar = ["{ REAL | DOUBLE | DOUBLE PRECISION | FLOAT }"]
+basis = "table"
+page_sha256 = "af1844e46b9f8934131480582e99df10b47bc0569310a1854dc49857eeef6e6c"
+
+[[form]]
+source = "doc.datatype3"
+family = "expressions"
+anchor = "Affinity Name Examples"
+kind = "special"
+label = "numeric-affinity"
+grammar = ["{ NUMERIC | DECIMAL ( 10 , 5 ) | BOOLEAN | DATE | DATETIME }"]
+basis = "table"
+page_sha256 = "af1844e46b9f8934131480582e99df10b47bc0569310a1854dc49857eeef6e6c"
+
+[[form]]
+source = "doc.datatype3"
+family = "expressions"
+anchor = "Collating Sequences"
+kind = "special"
+label = "built-in-collations"
+grammar = ["<expr> COLLATE { BINARY | NOCASE | RTRIM }"]
+basis = "prose"
+page_sha256 = "af1844e46b9f8934131480582e99df10b47bc0569310a1854dc49857eeef6e6c"
+
+[[form]]
+source = "doc.stricttables"
+family = "ddl"
+anchor = "STRICT Tables"
+kind = "statement"
+label = "strict-column-types"
+grammar = ["CREATE TABLE <table-name> ( <column-name> { INT | INTEGER | REAL | TEXT | BLOB | ANY } [ , <column-name> { INT | INTEGER | REAL | TEXT | BLOB | ANY } ... ] ) STRICT"]
+basis = "list"
+page_sha256 = "841b25cc7d55773425c5ec0928fd0eaf809b7d57c15e19029d7fbb130cafcd54"
+
+[[form]]
+source = "doc.lang-datefunc"
+family = "functions"
+anchor = "Modifiers"
+kind = "call"
+label = "modifiers"
+grammar = ["DATETIME ( <time-value> , { 'NNN days' | 'NNN hours' | 'NNN minutes' | 'NNN seconds' | 'NNN months' | 'NNN years' | '±HH:MM' | '±HH:MM:SS' | '±HH:MM:SS.SSS' | '±YYYY-MM-DD' | '±YYYY-MM-DD HH:MM' | '±YYYY-MM-DD HH:MM:SS' | '±YYYY-MM-DD HH:MM:SS.SSS' | 'ceiling' | 'floor' | 'start of month' | 'start of year' | 'start of day' | 'end of month' | 'end of year' | 'end of day' | 'weekday N' | 'unixepoch' | 'julianday' | 'auto' | 'localtime' | 'utc' | 'subsec' | 'subsecond' } )"]
+basis = "list"
+page_sha256 = "4e8179554f5097120b8a484192806a7251711fc38421cf9530f3678602655d1f"
+
+[[override]]
+source = "doc.lang-datefunc"
+text = "date(time-value, modifier, modifier, ...)"
+grammar = ["DATE ( [ <time-value> [ , <modifier> ... ] ] )"]
+reason = "the page writes modifier twice before the ellipsis, but its prose says the time-value 'can be followed by zero or more modifiers' and that a missing time-value means 'now'"
+
+[[override]]
+source = "doc.lang-datefunc"
+text = "time(time-value, modifier, modifier, ...)"
+grammar = ["TIME ( [ <time-value> [ , <modifier> ... ] ] )"]
+reason = "as for date(): zero or more modifiers, and the time-value may be omitted"
+
+[[override]]
+source = "doc.lang-datefunc"
+text = "datetime(time-value, modifier, modifier, ...)"
+grammar = ["DATETIME ( [ <time-value> [ , <modifier> ... ] ] )"]
+reason = "as for date(): zero or more modifiers, and the time-value may be omitted"
+
+[[override]]
+source = "doc.lang-datefunc"
+text = "julianday(time-value, modifier, modifier, ...)"
+grammar = ["JULIANDAY ( [ <time-value> [ , <modifier> ... ] ] )"]
+reason = "as for date(): zero or more modifiers, and the time-value may be omitted"
+
+[[override]]
+source = "doc.lang-datefunc"
+text = "unixepoch(time-value, modifier, modifier, ...)"
+grammar = ["UNIXEPOCH ( [ <time-value> [ , <modifier> ... ] ] )"]
+reason = "as for date(): zero or more modifiers, and the time-value may be omitted"
+
+[[override]]
+source = "doc.lang-datefunc"
+text = "strftime(format, time-value, modifier, modifier, ...)"
+grammar = ["STRFTIME ( <format> [ , <time-value> [ , <modifier> ... ] ] )"]
+reason = "as for date(): zero or more modifiers after the time-value, which may be omitted"
+
+[[override]]
+source = "doc.pragma"
+text = "count_changes"
+grammar = ["PRAGMA COUNT_CHANGES", "PRAGMA COUNT_CHANGES = <boolean>"]
+reason = "the page's markup closes an italic it never opens around 'boolean', so the value reads as a keyword; it is the boolean placeholder of the other pragmas"
+
+[[page]]
+source = "doc.lang-naming"
+status = "no_syntax_block"
+reason = "prose on how unqualified and schema-qualified names are resolved; the schema-name . object-name syntax is in the catalogued diagrams"
+page_sha256 = "3f95923f86a6e7a8cba21dc68501249f57ca94099a65b66cd55ebf98bbee262e"
+
+[[page]]
+source = "doc.lang-replace"
+status = "no_syntax_block"
+reason = "says REPLACE is an alias for INSERT OR REPLACE; both spellings are the insert-stmt diagram's REPLACE and INSERT OR REPLACE branches"
+page_sha256 = "1d2f4cab2a91cc7e94bc828c45b2e515c10d41b05ed4c362c2b5264654747c64"
+
+[[diagram]]
+name = "aggregate-function-invocation"
+svg_sha256 = "31aa2afa8bd9037d396f5df6cf981b8d857820ba5cb23f192dddda3fd2b3f240"
+grammar = [
+  "<aggregate-func> ( [ { [ DISTINCT ] <expr> [ , <expr> ... ] [ ORDER BY <ordering-term> [ , <ordering-term> ... ] ] | * } ] ) [ <filter-clause> ]",
+]
+
+[[diagram]]
+name = "alter-table-stmt"
+svg_sha256 = "e5e7d61d12968c4b1f3999149e7b49501c20ccd3474158e1171b2702b5cc867a"
+grammar = [
+  "ALTER TABLE [ <schema-name> . ] <table-name> RENAME TO <new-table-name>",
+  "ALTER TABLE [ <schema-name> . ] <table-name> RENAME [ COLUMN ] <column-name> TO <new-column-name>",
+  "ALTER TABLE [ <schema-name> . ] <table-name> ADD [ COLUMN ] <column-def>",
+  "ALTER TABLE [ <schema-name> . ] <table-name> ADD [ CONSTRAINT <constraint-name> ] CHECK ( <expr> ) [ <conflict-clause> ]",
+  "ALTER TABLE [ <schema-name> . ] <table-name> DROP [ COLUMN ] <column-name>",
+  "ALTER TABLE [ <schema-name> . ] <table-name> DROP CONSTRAINT <constraint-name>",
+  "ALTER TABLE [ <schema-name> . ] <table-name> ALTER [ COLUMN ] <column-name> SET NOT NULL [ <conflict-clause> ]",
+  "ALTER TABLE [ <schema-name> . ] <table-name> ALTER [ COLUMN ] <column-name> DROP NOT NULL",
+]
+labels = ["rename-table", "rename-column", "add-column", "add-check", "drop-column", "drop-constraint", "set-not-null", "drop-not-null"]
+note = "one form per branch after the table name"
+
+[[diagram]]
+name = "analyze-stmt"
+svg_sha256 = "2d8c03298ce0e9408870565a7dec4bb70ca74820e8f3b8ff6159802d9fe9868d"
+grammar = [
+  "ANALYZE [ { <schema-name> | <index-or-table-name> | <schema-name> . <table-or-index-name> } ]",
+]
+
+[[diagram]]
+name = "attach-stmt"
+svg_sha256 = "47ba2ae171ffbc941803c9453867cdc4191ad6012392ab101a20f8e0cf44552f"
+grammar = [
+  "ATTACH [ DATABASE ] <expr> AS <schema-name>",
+]
+
+[[diagram]]
+name = "begin-stmt"
+svg_sha256 = "66b4a1feb753f79d1a70497017ddc149a83b642e17253c529b5eaa4497246cd4"
+grammar = [
+  "BEGIN [ { DEFERRED | IMMEDIATE | EXCLUSIVE } ] [ TRANSACTION ]",
+]
+
+[[diagram]]
+name = "column-constraint"
+svg_sha256 = "0e00a81ad5fbf0db13994423ba1847f26fefca02fceb41d1d28ee792a43661ae"
+grammar = [
+  "[ CONSTRAINT <name> ] PRIMARY KEY [ { ASC | DESC } ] <conflict-clause> [ AUTOINCREMENT ]",
+  "[ CONSTRAINT <name> ] NOT NULL <conflict-clause>",
+  "[ CONSTRAINT <name> ] UNIQUE <conflict-clause>",
+  "[ CONSTRAINT <name> ] CHECK ( <expr> )",
+  "[ CONSTRAINT <name> ] DEFAULT { ( <expr> ) | <literal-value> | <signed-number> }",
+  "[ CONSTRAINT <name> ] COLLATE <collation-name>",
+  "[ CONSTRAINT <name> ] <foreign-key-clause>",
+  "[ CONSTRAINT <name> ] [ GENERATED ALWAYS ] AS ( <expr> ) [ { STORED | VIRTUAL } ]",
+]
+labels = ["primary-key", "not-null", "unique", "check", "default", "collate", "foreign-key", "generated"]
+note = "one form per constraint after the optional CONSTRAINT name; conflict-clause may itself be empty (its diagram has a bypass)"
+
+[[diagram]]
+name = "column-def"
+svg_sha256 = "ce97129385dfde5ffd1cf2deb235c7fa99c98761bc7a5865368fa954bd4fb644"
+grammar = [
+  "<column-name> [ <type-name> ] [ <column-constraint> ... ]",
+]
+
+[[diagram]]
+name = "column-name-list"
+svg_sha256 = "e134549c7fcddda7972d5ce0f63a8574b726b2a217a549c6ed8c8ac976303239"
+grammar = [
+  "( <column-name> [ , <column-name> ... ] )",
+]
+
+[[diagram]]
+name = "comment-syntax"
+svg_sha256 = "1fdf0a34680e781389113cec7888549d25d0e168e643ca07a8d8fd841e401a0e"
+grammar = [
+  "-- [ <anything-except-newline> ... ] { <newline> | <end-of-input> }",
+  "/* [ <anything-except-*/> ... ] { */ | <end-of-input> }",
+]
+labels = ["line", "block"]
+note = "lexical: comments are written without spaces between their parts"
+
+[[diagram]]
+name = "commit-stmt"
+svg_sha256 = "675d7f4179b243467e891daa1b7b9acf419f18427f5c9cfe2a35675388f36c4a"
+grammar = [
+  "{ COMMIT | END } [ TRANSACTION ]",
+]
+
+[[diagram]]
+name = "common-table-expression"
+svg_sha256 = "66344dab4930bbd7adc6c47522fc44a6c93b2dee5225e28c027cfc2e8858bb66"
+grammar = [
+  "<table-name> [ ( <column-name> [ , <column-name> ... ] ) ] AS [ [ NOT ] MATERIALIZED ] ( <select-stmt> )",
+]
+
+[[diagram]]
+name = "compound-operator"
+svg_sha256 = "f1f43a3cac737366dfea8dd58a63d4ff1c3bee2d80b425718348aedd50ca85bc"
+grammar = [
+  "{ UNION | UNION ALL | INTERSECT | EXCEPT }",
+]
+
+[[diagram]]
+name = "compound-select-stmt"
+svg_sha256 = "564e307b4eca1ee4ee9c1c4921552fc9360a7d830eb271d3710f250e6cac2889"
+grammar = [
+  "[ WITH [ RECURSIVE ] <common-table-expression> [ , <common-table-expression> ... ] ] <select-core> { UNION | UNION ALL | INTERSECT | EXCEPT } <select-core> [ { UNION | UNION ALL | INTERSECT | EXCEPT } <select-core> ... ] [ ORDER BY <ordering-term> [ , <ordering-term> ... ] ] [ LIMIT <expr> [ { OFFSET <expr> | , <expr> } ] ]",
+]
+note = "the diagram loops back for further compound operators and select-cores, read as the optional repetition after the first operator"
+
+[[diagram]]
+name = "conflict-clause"
+svg_sha256 = "7fc09a1d550cd888711087fc768a2001249e128df1e0b8be463b79f1d456bac5"
+grammar = [
+  "[ ON CONFLICT { ROLLBACK | ABORT | FAIL | IGNORE | REPLACE } ]",
+]
+
+[[diagram]]
+name = "create-index-stmt"
+svg_sha256 = "7d3817d0aaa2e76628890b7070c024d21c835ee2e843f58da2787b138cbe189c"
+grammar = [
+  "CREATE [ UNIQUE ] INDEX [ IF NOT EXISTS ] [ <schema-name> . ] <index-name> ON <table-name> ( <indexed-column> [ , <indexed-column> ... ] ) [ WHERE <expr> ]",
+]
+
+[[diagram]]
+name = "create-table-stmt"
+svg_sha256 = "adb1e6cc5b9504d480858ea24c4c8c8826aac4ac9be6c5df628fb1ad67ffe4df"
+grammar = [
+  "CREATE [ { TEMP | TEMPORARY } ] TABLE [ IF NOT EXISTS ] [ <schema-name> . ] <table-name> ( <column-def> [ , <column-def> ... ] [ , <table-constraint> ... ] ) [ <table-options> ]",
+  "CREATE [ { TEMP | TEMPORARY } ] TABLE [ IF NOT EXISTS ] [ <schema-name> . ] <table-name> AS <select-stmt>",
+]
+labels = ["columns", "as-select"]
+note = "a comma separates the column definitions from the first table constraint; between two table constraints the diagram's comma is optional (parse.y tconscomma)"
+
+[[diagram]]
+name = "create-trigger-stmt"
+svg_sha256 = "e8fb42dd06b9bf70c0112e8c41f1261b07cf61e2c039e39e9c291ad51a2a4a96"
+grammar = [
+  "CREATE [ { TEMP | TEMPORARY } ] TRIGGER [ IF NOT EXISTS ] [ <schema-name> . ] <trigger-name> [ { BEFORE | AFTER | INSTEAD OF } ] { DELETE | INSERT | UPDATE [ OF <column-name> [ , <column-name> ... ] ] } ON <table-name> [ FOR EACH ROW ] [ WHEN <expr> ] BEGIN { <update-stmt> | <insert-stmt> | <delete-stmt> | <select-stmt> } ; [ { <update-stmt> | <insert-stmt> | <delete-stmt> | <select-stmt> } ; ... ] END",
+]
+
+[[diagram]]
+name = "create-view-stmt"
+svg_sha256 = "9a8ec657bb8ac0d2c42a576d4c6fc264529c6ef5f0a2a6294007c484950d0448"
+grammar = [
+  "CREATE [ { TEMP | TEMPORARY } ] VIEW [ IF NOT EXISTS ] [ <schema-name> . ] <view-name> [ ( <column-name> [ , <column-name> ... ] ) ] AS <select-stmt>",
+]
+
+[[diagram]]
+name = "create-virtual-table-stmt"
+svg_sha256 = "980b67f4c641f622a4063ace8220e3886034ab5ac2ef6f1ed1aa65a70a164781"
+grammar = [
+  "CREATE VIRTUAL TABLE [ IF NOT EXISTS ] [ <schema-name> . ] <table-name> USING <module-name> [ ( <module-argument> [ , <module-argument> ... ] ) ]",
+]
+
+[[diagram]]
+name = "cte-table-name"
+svg_sha256 = "cebcc485490d5dfbc664fd2815d8184615b5008f5d52b1bc14d1d1bf3d1f54de"
+grammar = [
+  "<table-name> [ ( <column-name> [ , <column-name> ... ] ) ]",
+]
+
+[[diagram]]
+name = "delete-stmt"
+svg_sha256 = "609bad6fb470b84aa85534dd6fd9e6ca5d2cdf2d2fc17c32f3d3060ac81ed898"
+grammar = [
+  "[ WITH [ RECURSIVE ] <common-table-expression> [ , <common-table-expression> ... ] ] DELETE FROM <qualified-table-name> [ WHERE <expr> ] [ <returning-clause> ]",
+]
+
+[[diagram]]
+name = "detach-stmt"
+svg_sha256 = "e633cf23ddf67b52dbd9cf5cdbf3b4946157259350644cff1e4c88178adde578"
+grammar = [
+  "DETACH [ DATABASE ] <schema-name>",
+]
+
+[[diagram]]
+name = "drop-index-stmt"
+svg_sha256 = "3e243f36c57526b0ac9d4db682289927ea5c78be39e6f19de1d267bd546fd879"
+grammar = [
+  "DROP INDEX [ IF EXISTS ] [ <schema-name> . ] <index-name>",
+]
+
+[[diagram]]
+name = "drop-table-stmt"
+svg_sha256 = "0f69815ab4885c73385de3a0f4acbc494a3328c272a41ab5e9721e17e1d3a024"
+grammar = [
+  "DROP TABLE [ IF EXISTS ] [ <schema-name> . ] <table-name>",
+]
+
+[[diagram]]
+name = "drop-trigger-stmt"
+svg_sha256 = "ef2445ac89cf82d2f61839c3640f3b481eaf70978c979129a18399b5e0f97fe3"
+grammar = [
+  "DROP TRIGGER [ IF EXISTS ] [ <schema-name> . ] <trigger-name>",
+]
+
+[[diagram]]
+name = "drop-view-stmt"
+svg_sha256 = "8c33da6ee32ee686c755de98586f42483b4f9edde90257c5ed1daca31aece1e2"
+grammar = [
+  "DROP VIEW [ IF EXISTS ] [ <schema-name> . ] <view-name>",
+]
+
+[[diagram]]
+name = "expr"
+svg_sha256 = "519d7bf9fbed0e47397bb70ba2c1b8425c131a7099afa07bd8fc0d843dfc6bd6"
+grammar = [
+  "<literal-value>",
+  "<bind-parameter>",
+  "[ [ <schema-name> . ] <table-name> . ] <column-name>",
+  "<unary-operator> <expr>",
+  "<expr> <binary-operator> <expr>",
+  "<function-name> ( <function-arguments> ) [ <filter-clause> ] [ <over-clause> ]",
+  "( <expr> [ , <expr> ... ] )",
+  "CAST ( <expr> AS <type-name> )",
+  "<expr> COLLATE <collation-name>",
+  "<expr> [ NOT ] { LIKE <expr> [ ESCAPE <expr> ] | { GLOB | REGEXP | MATCH } <expr> }",
+  "<expr> { ISNULL | NOTNULL | NOT NULL }",
+  "<expr> IS [ NOT ] [ DISTINCT FROM ] <expr>",
+  "<expr> [ NOT ] BETWEEN <expr> AND <expr>",
+  "<expr> [ NOT ] IN { ( [ { <select-stmt> | <expr> [ , <expr> ... ] } ] ) | [ <schema-name> . ] { <table-name> | <table-function> ( [ <expr> [ , <expr> ... ] ] ) } }",
+  "[ [ NOT ] EXISTS ] ( <select-stmt> )",
+  "CASE [ <expr> ] WHEN <expr> THEN <expr> [ WHEN <expr> THEN <expr> ... ] [ ELSE <expr> ] END",
+  "<raise-function>",
+]
+labels = ["literal", "bind-parameter", "column", "unary", "binary", "function", "parenthesized", "cast", "collate", "like", "null-test", "is", "between", "in", "exists", "case", "raise"]
+note = "one form per branch of the diagram"
+
+[[diagram]]
+name = "factored-select-stmt"
+svg_sha256 = "445b7f2d612ce906a0cc0534f1c13830e9f4d75d2c16c819963307a3a702ec05"
+grammar = [
+  "[ WITH [ RECURSIVE ] <common-table-expression> [ , <common-table-expression> ... ] ] <select-core> [ <compound-operator> <select-core> ... ] [ ORDER BY <ordering-term> [ , <ordering-term> ... ] ] [ LIMIT <expr> [ { OFFSET <expr> | , <expr> } ] ]",
+]
+
+[[diagram]]
+name = "filter-clause"
+svg_sha256 = "079d4b24c241ed8fa81dcdadf441722db060d53b0203226f821d012e5ea7575d"
+grammar = [
+  "FILTER ( WHERE <expr> )",
+]
+
+[[diagram]]
+name = "foreign-key-clause"
+svg_sha256 = "e8cc90ee05f433f7ac45b7f726da933ab668d3948d1534c2b22ec6368c541c54"
+grammar = [
+  "REFERENCES <foreign-table> [ ( <column-name> [ , <column-name> ... ] ) ] [ { ON { DELETE | UPDATE } { SET NULL | SET DEFAULT | CASCADE | RESTRICT | NO ACTION } | MATCH <name> } ... ] [ [ NOT ] DEFERRABLE [ { INITIALLY DEFERRED | INITIALLY IMMEDIATE } ] ]",
+]
+
+[[diagram]]
+name = "frame-spec"
+svg_sha256 = "05cc767c94361158acefaceafe074179958eb3d3cf1f60a5b1ae16148fa31369"
+grammar = [
+  "{ RANGE | ROWS | GROUPS } { BETWEEN { UNBOUNDED PRECEDING | <expr> PRECEDING | CURRENT ROW | <expr> FOLLOWING } AND { <expr> PRECEDING | CURRENT ROW | <expr> FOLLOWING | UNBOUNDED FOLLOWING } | UNBOUNDED PRECEDING | <expr> PRECEDING | CURRENT ROW } [ { EXCLUDE NO OTHERS | EXCLUDE CURRENT ROW | EXCLUDE GROUP | EXCLUDE TIES } ]",
+]
+
+[[diagram]]
+name = "function-arguments"
+svg_sha256 = "f7c4a1f4d94f6c8f5d9ae86ac18dc95c8386bf4d0d58f7f7a9b8c93028aef5b2"
+grammar = [
+  "[ { [ DISTINCT ] <expr> [ , <expr> ... ] [ ORDER BY <ordering-term> [ , <ordering-term> ... ] ] | * } ]",
+]
+
+[[diagram]]
+name = "indexed-column"
+svg_sha256 = "49c5f41f285d8f27e5867fe06b7445ae3169fbbc8650a347d85b275d0d8ff607"
+grammar = [
+  "{ <column-name> | <expr> } [ COLLATE <collation-name> ] [ { ASC | DESC } ]",
+]
+
+[[diagram]]
+name = "insert-stmt"
+svg_sha256 = "2c6388d49fce8b22428a7697f724626dfe803d82c3b01b84866e25a820590cc0"
+grammar = [
+  "[ WITH [ RECURSIVE ] <common-table-expression> [ , <common-table-expression> ... ] ] { REPLACE | INSERT [ OR { ABORT | FAIL | IGNORE | REPLACE | ROLLBACK } ] } INTO [ <schema-name> . ] <table-name> [ AS <alias> ] [ ( <column-name> [ , <column-name> ... ] ) ] VALUES ( <expr> [ , <expr> ... ] ) [ , ( <expr> [ , <expr> ... ] ) ... ] [ <upsert-clause> ] [ <returning-clause> ]",
+  "[ WITH [ RECURSIVE ] <common-table-expression> [ , <common-table-expression> ... ] ] { REPLACE | INSERT [ OR { ABORT | FAIL | IGNORE | REPLACE | ROLLBACK } ] } INTO [ <schema-name> . ] <table-name> [ AS <alias> ] [ ( <column-name> [ , <column-name> ... ] ) ] <select-stmt> [ <upsert-clause> ] [ <returning-clause> ]",
+  "[ WITH [ RECURSIVE ] <common-table-expression> [ , <common-table-expression> ... ] ] { REPLACE | INSERT [ OR { ABORT | FAIL | IGNORE | REPLACE | ROLLBACK } ] } INTO [ <schema-name> . ] <table-name> [ AS <alias> ] [ ( <column-name> [ , <column-name> ... ] ) ] DEFAULT VALUES [ <returning-clause> ]",
+]
+labels = ["values", "select", "default-values"]
+note = "one form per source of rows"
+
+[[diagram]]
+name = "join-clause"
+svg_sha256 = "750ef0cdf5ff693806de284467b9bf1ff05420ed60ba729b95413b31a2c1e8e9"
+grammar = [
+  "<table-or-subquery> [ <join-operator> <table-or-subquery> [ <join-constraint> ] ... ]",
+]
+
+[[diagram]]
+name = "join-constraint"
+svg_sha256 = "83db46f706f3a0e671216feef7b11ebed305649a247d208fc8512c5f94070b8a"
+grammar = [
+  "[ { ON <expr> | USING ( <column-name> [ , <column-name> ... ] ) } ]",
+]
+
+[[diagram]]
+name = "join-operator"
+svg_sha256 = "9010bc03b64f548083e3c2e9ce14ab25745b41eb0cfa57c5f9a74008b3fce637"
+grammar = [
+  ",",
+  "[ NATURAL ] [ { { LEFT | RIGHT | FULL } [ OUTER ] | INNER } ] JOIN",
+  "CROSS JOIN",
+]
+labels = ["comma", "join", "cross-join"]
+
+[[diagram]]
+name = "literal-value"
+svg_sha256 = "a1244d8ecbba38070620a0f2b9e0a82eed9275ad3a6c73737d688277137b7b95"
+grammar = [
+  "{ <numeric-literal> | <string-literal> | <blob-literal> | NULL | TRUE | FALSE | CURRENT_TIME | CURRENT_DATE | CURRENT_TIMESTAMP }",
+]
+
+[[diagram]]
+name = "numeric-literal"
+svg_sha256 = "eb0b6a4b662e0a3352cc5e2eeff57ceb66c1cfed20d3ceb02ec4d31a2b464910"
+grammar = [
+  "<digits> [ . [ <digits> ] ] [ { E | e } [ { + | - } ] <digits> ]",
+  ". <digits> [ { E | e } [ { + | - } ] <digits> ]",
+  "{ 0x | 0X } <hexdigits>",
+]
+labels = ["decimal", "fraction", "hexadecimal"]
+note = "lexical, written without spaces: <digits> is one or more digits and <hexdigits> one or more hexadecimal digits, each allowing a single underscore between two digits"
+
+[[diagram]]
+name = "ordering-term"
+svg_sha256 = "aa6bdf4530c2fc1853689d5d5c1eca03ade5b51ed492784d876a6fe259d74e0f"
+grammar = [
+  "<expr> [ COLLATE <collation-name> ] [ { ASC | DESC } ] [ { NULLS FIRST | NULLS LAST } ]",
+]
+
+[[diagram]]
+name = "over-clause"
+svg_sha256 = "e2d7ef2c027d9ae36dd2d7ed592eeb172d3ceac37ef7de5d41dcf7799c75cbec"
+grammar = [
+  "OVER { <window-name> | ( [ <base-window-name> ] [ PARTITION BY <expr> [ , <expr> ... ] ] [ ORDER BY <ordering-term> [ , <ordering-term> ... ] ] [ <frame-spec> ] ) }",
+]
+
+[[diagram]]
+name = "pragma-stmt"
+svg_sha256 = "a4d53d680fc8129a75aca5d6c04c1f4dac2b2b214aaf32ef412b77150644ac2e"
+grammar = [
+  "PRAGMA [ <schema-name> . ] <pragma-name> [ { = <pragma-value> | ( <pragma-value> ) } ]",
+]
+
+[[diagram]]
+name = "pragma-value"
+svg_sha256 = "7eb9ea72db88cf6bc49f9a1a9aa0591fde109fe42f8e16a5b7fa146831d7d294"
+grammar = [
+  "{ <signed-number> | <name> | <signed-literal> }",
+]
+
+[[diagram]]
+name = "qualified-table-name"
+svg_sha256 = "606690b366ee7bff7c5680d88fda7f996a356c359e3874547eb2217bf61f4d0b"
+grammar = [
+  "[ <schema-name> . ] <table-name> [ AS <alias> ] [ { INDEXED BY <index-name> | NOT INDEXED } ]",
+]
+
+[[diagram]]
+name = "raise-function"
+svg_sha256 = "8ab322a2d7ab6e2fdfb01da78b4c8462d684573ae46c6131567ec2836086ab58"
+grammar = [
+  "RAISE ( { IGNORE | { ROLLBACK | ABORT | FAIL } , <expr> } )",
+]
+
+[[diagram]]
+name = "recursive-cte"
+svg_sha256 = "19fc9b11f07827c6f40123464ac80608d2cd3b2c5a5f29def31f36f9ec35dba3"
+grammar = [
+  "<cte-table-name> AS ( <initial-select> { UNION | UNION ALL } <recursive-select> )",
+]
+
+[[diagram]]
+name = "reindex-stmt"
+svg_sha256 = "29b9c0e24b9df4f8b04d9c3bb9481df6c0aebd091efc41c095f1353130b37542"
+grammar = [
+  "REINDEX [ { <collation-name> | [ <schema-name> . ] { <table-name> | <index-name> } | EXPRESSIONS } ]",
+]
+
+[[diagram]]
+name = "release-stmt"
+svg_sha256 = "6e242aaa17f56a526aa066ab7fc05526134a92284d852618e66d57c8ca32d954"
+grammar = [
+  "RELEASE [ SAVEPOINT ] <savepoint-name>",
+]
+
+[[diagram]]
+name = "result-column"
+svg_sha256 = "e622fd881fd4a694bb7d0d06d372d90867e1cb46c57c3a5685140dd9ca316617"
+grammar = [
+  "{ <expr> [ [ AS ] <column-alias> ] | * | <table-name> . * }",
+]
+
+[[diagram]]
+name = "returning-clause"
+svg_sha256 = "f8b1124eb3904667f5b3dfa0168aef4d652604b5ead81195dad22d6820042937"
+grammar = [
+  "RETURNING { <expr> [ [ AS ] <column-alias> ] | * } [ , { <expr> [ [ AS ] <column-alias> ] | * } ... ]",
+]
+
+[[diagram]]
+name = "rollback-stmt"
+svg_sha256 = "1915f32bd6ad116fbcf50e238e94833d46059863db22b354da647f589400e039"
+grammar = [
+  "ROLLBACK [ TRANSACTION ] [ TO [ SAVEPOINT ] <savepoint-name> ]",
+]
+
+[[diagram]]
+name = "savepoint-stmt"
+svg_sha256 = "e3794f64ced86319710a1853e6329062577a211b4e82f7160b0f141feadb7192"
+grammar = [
+  "SAVEPOINT <savepoint-name>",
+]
+
+[[diagram]]
+name = "select-core"
+svg_sha256 = "9ef8670ff2d88be9bc77bb3fc8b904bbca9c2505a26551bf5babcac1e1efb261"
+grammar = [
+  "SELECT [ { DISTINCT | ALL } ] <result-column> [ , <result-column> ... ] [ FROM { <table-or-subquery> [ , <table-or-subquery> ... ] | <join-clause> } ] [ WHERE <expr> ] [ GROUP BY <expr> [ , <expr> ... ] ] [ HAVING <expr> ] [ WINDOW <window-name> AS <window-defn> [ , <window-name> AS <window-defn> ... ] ]",
+  "VALUES ( <expr> [ , <expr> ... ] ) [ , ( <expr> [ , <expr> ... ] ) ... ]",
+]
+labels = ["select", "values"]
+note = "HAVING is reachable without GROUP BY"
+
+[[diagram]]
+name = "select-stmt"
+svg_sha256 = "f44042ff91bc08c975f345e47641221173acc24959d84c2d9e35e6d02fe21bac"
+grammar = [
+  "[ WITH [ RECURSIVE ] <common-table-expression> [ , <common-table-expression> ... ] ] <select-core> [ <compound-operator> <select-core> ... ] [ ORDER BY <ordering-term> [ , <ordering-term> ... ] ] [ LIMIT <expr> [ { OFFSET <expr> | , <expr> } ] ]",
+]
+note = "the diagram draws select-core inline; it is read as a reference to select-core, whose two alternatives it repeats"
+
+[[diagram]]
+name = "signed-number"
+svg_sha256 = "a830fbfbae64b05ca37439c7ffa509280510ddcebd626ad105bb7f384d2519b7"
+grammar = [
+  "[ { + | - } ] <numeric-literal>",
+]
+
+[[diagram]]
+name = "simple-function-invocation"
+svg_sha256 = "21ef96740693fa1e56fab29e1c5ba5875ca895630ab78b7bfdb6e3b29f23dc4b"
+grammar = [
+  "<simple-func> ( [ { <expr> [ , <expr> ... ] | * } ] )",
+]
+
+[[diagram]]
+name = "simple-select-stmt"
+svg_sha256 = "4bda534d471a7457d0b6da08674afe51998794977f48cfc9f84e00ccb3fd7d16"
+grammar = [
+  "[ WITH [ RECURSIVE ] <common-table-expression> [ , <common-table-expression> ... ] ] <select-core> [ ORDER BY <ordering-term> [ , <ordering-term> ... ] ] [ LIMIT <expr> [ { OFFSET <expr> | , <expr> } ] ]",
+]
+
+[[diagram]]
+name = "sql-stmt"
+svg_sha256 = "91cf38a17f53ca3fde5e5ab9380c45c957f3e02fb7b02c9b3752bab1587e7471"
+grammar = [
+  "[ EXPLAIN [ QUERY PLAN ] ] { <alter-table-stmt> | <analyze-stmt> | <attach-stmt> | <begin-stmt> | <commit-stmt> | <create-index-stmt> | <create-table-stmt> | <create-trigger-stmt> | <create-view-stmt> | <create-virtual-table-stmt> | <delete-stmt> | <delete-stmt-limited> | <detach-stmt> | <drop-index-stmt> | <drop-table-stmt> | <drop-trigger-stmt> | <drop-view-stmt> | <insert-stmt> | <pragma-stmt> | <reindex-stmt> | <release-stmt> | <rollback-stmt> | <savepoint-stmt> | <select-stmt> | <update-stmt> | <update-stmt-limited> | <vacuum-stmt> }",
+]
+
+[[diagram]]
+name = "sql-stmt-list"
+svg_sha256 = "967bfe3f69047194e80a2941159ce8c767447e30d87af34a82de67d276f9b347"
+grammar = [
+  "[ <sql-stmt> ] [ ; [ <sql-stmt> ] ... ]",
+]
+
+[[diagram]]
+name = "table-constraint"
+svg_sha256 = "f25880891f5d437e8f356d23652c86245bf1494fb173e1913139464050eeed9e"
+grammar = [
+  "[ CONSTRAINT <name> ] PRIMARY KEY ( <indexed-column> AUTOINCREMENT ) <conflict-clause>",
+  "[ CONSTRAINT <name> ] { PRIMARY KEY | UNIQUE } ( <indexed-column> [ , <indexed-column> ... ] ) <conflict-clause>",
+  "[ CONSTRAINT <name> ] CHECK ( <expr> )",
+  "[ CONSTRAINT <name> ] FOREIGN KEY ( <column-name> [ , <column-name> ... ] ) <foreign-key-clause>",
+]
+labels = ["primary-key-autoincrement", "primary-key-or-unique", "check", "foreign-key"]
+
+[[diagram]]
+name = "table-options"
+svg_sha256 = "e9bd74561578e4d170d361b972e62e00767ff33e5d53cc28c249f657a10c6271"
+grammar = [
+  "{ WITHOUT ROWID | STRICT } [ , { WITHOUT ROWID | STRICT } ... ]",
+]
+
+[[diagram]]
+name = "table-or-subquery"
+svg_sha256 = "4cc490bd013087f208da05e3dae94e32f496d6c4a0fa2ccaa12f7933200be476"
+grammar = [
+  "[ <schema-name> . ] <table-name> [ [ AS ] <table-alias> ] [ { INDEXED BY <index-name> | NOT INDEXED } ]",
+  "[ <schema-name> . ] <table-function-name> ( <expr> [ , <expr> ... ] ) [ [ AS ] <table-alias> ]",
+  "( <select-stmt> ) [ [ AS ] <table-alias> ]",
+  "( { <table-or-subquery> [ , <table-or-subquery> ... ] | <join-clause> } )",
+]
+labels = ["table", "table-function", "subquery", "nested"]
+
+[[diagram]]
+name = "type-name"
+svg_sha256 = "4c87380b775a939e41c2231fc4f5346d65540ffdc783de2a9656f3c2b7e8a596"
+grammar = [
+  "<name> [ <name> ... ] [ { ( <signed-number> ) | ( <signed-number> , <signed-number> ) } ]",
+]
+
+[[diagram]]
+name = "update-stmt"
+svg_sha256 = "d0c81b0d2d4c8640478a9629d21dbc202e666cda9b6f71af7b04f191230d4d41"
+grammar = [
+  "[ WITH [ RECURSIVE ] <common-table-expression> [ , <common-table-expression> ... ] ] UPDATE [ OR { ABORT | FAIL | IGNORE | REPLACE | ROLLBACK } ] <qualified-table-name> SET { <column-name> | <column-name-list> } = <expr> [ , { <column-name> | <column-name-list> } = <expr> ... ] [ FROM { <table-or-subquery> [ , <table-or-subquery> ... ] | <join-clause> } ] [ WHERE <expr> ] [ <returning-clause> ]",
+]
+
+[[diagram]]
+name = "upsert-clause"
+svg_sha256 = "dc679b2caba13ae21af1a19fc24c5e532c05ee9165ef00d081216dfc1581047e"
+grammar = [
+  "ON CONFLICT [ ( <indexed-column> [ , <indexed-column> ... ] ) [ WHERE <expr> ] ] DO { NOTHING | UPDATE SET { <column-name> | <column-name-list> } = <expr> [ , { <column-name> | <column-name-list> } = <expr> ... ] [ WHERE <expr> ] } [ { ON CONFLICT [ ( <indexed-column> [ , <indexed-column> ... ] ) [ WHERE <expr> ] ] DO { NOTHING | UPDATE SET { <column-name> | <column-name-list> } = <expr> [ , { <column-name> | <column-name-list> } = <expr> ... ] [ WHERE <expr> ] } } ... ]",
+]
+note = "the diagram loops back for a further ON CONFLICT clause after a DO UPDATE or DO NOTHING, read as a repetition (the italic 'conflict target' label is an annotation)"
+
+[[diagram]]
+name = "vacuum-stmt"
+svg_sha256 = "e1479e2ed59549c32d21bafa71c92a190dbcff23147f7bce99e03a06de554441"
+grammar = [
+  "VACUUM [ <schema-name> ] [ INTO <filename> ]",
+]
+
+[[diagram]]
+name = "window-defn"
+svg_sha256 = "ad2c96176dcb937e21242c7a394e7c8144d74ff8caeae5188cf9ccaf29813a6c"
+grammar = [
+  "( [ <base-window-name> ] [ PARTITION BY <expr> [ , <expr> ... ] ] [ ORDER BY <ordering-term> [ , <ordering-term> ... ] ] [ <frame-spec> ] )",
+]
+
+[[diagram]]
+name = "window-function-invocation"
+svg_sha256 = "6c76b595a4a46b2f83b36d20d7c21e1839e9a4ad037b1b695044d421b15c555c"
+grammar = [
+  "<window-func> ( [ { <expr> [ , <expr> ... ] | * } ] ) [ <filter-clause> ] OVER { <window-defn> | <window-name> }",
+]
+
+[[diagram]]
+name = "with-clause"
+svg_sha256 = "76c731fbcadc95e09dc533fe8c7e9514db519eee258d5c51dbf574edb06fdd27"
+grammar = [
+  "WITH [ RECURSIVE ] <cte-table-name> AS [ [ NOT ] MATERIALIZED ] ( <select-stmt> ) [ , <cte-table-name> AS [ [ NOT ] MATERIALIZED ] ( <select-stmt> ) ... ]",
+]
+
+
+[[form]]
+source = "doc.lang-createtrigger"
+family = "ddl"
+anchor = "TEMP Triggers on Non-TEMP Tables"
+kind = "statement"
+label = "temp-on-qualified-table"
+grammar = [
+  "CREATE { TEMP | TEMPORARY } TRIGGER [ IF NOT EXISTS ] <trigger-name> [ { BEFORE | AFTER | INSTEAD OF } ] { DELETE | INSERT | UPDATE [ OF <column-name> [ , <column-name> ... ] ] } ON <schema-name> . <table-name> [ FOR EACH ROW ] [ WHEN <expr> ] BEGIN { <update-stmt> | <insert-stmt> | <delete-stmt> | <select-stmt> } ; [ { <update-stmt> | <insert-stmt> | <delete-stmt> | <select-stmt> } ; ... ] END",
+]
+basis = "prose"
+page_sha256 = "de6586fb15092651a64c8fa2c04b23253f080c9a19820d4bb172b7e71d5dbec3"
+
+[[page]]
+source = "doc.syntax.delete-stmt-limited"
+status = "out_of_scope"
+reason = "not the pinned build: lang_delete.html documents ORDER BY and LIMIT on DELETE only 'If SQLite is compiled with the SQLITE_ENABLE_UPDATE_DELETE_LIMIT compile-time option'; parse.y has the rule only under %if SQLITE_ENABLE_UPDATE_DELETE_LIMIT || SQLITE_UDL_CAPABLE_PARSER, and the pinned engine, built from the release amalgamation without either, refuses DELETE FROM t1 LIMIT 1 while parsing (near \"LIMIT\": syntax error). DELETE without them is the delete-stmt diagram, catalogued"
+page_sha256 = "efd26d433f64d185392b22c1b299585673d441eb4c3385c7388f66a1d02af20d"
+
+[[page]]
+source = "doc.syntax.update-stmt-limited"
+status = "out_of_scope"
+reason = "not the pinned build: lang_update.html documents ORDER BY and LIMIT on UPDATE only 'If SQLite is built with the SQLITE_ENABLE_UPDATE_DELETE_LIMIT compile-time option'; parse.y has the rule only under %if SQLITE_ENABLE_UPDATE_DELETE_LIMIT || SQLITE_UDL_CAPABLE_PARSER, and the pinned engine, built from the release amalgamation without either, refuses UPDATE t1 SET a = 1 LIMIT 1 while parsing (near \"LIMIT\": syntax error). UPDATE without them is the update-stmt diagram, catalogued"
+page_sha256 = "b0eba3862b2bbd7dda577b5e73750594827fadb3b949d8720d0a5cc9a4d86273"
+
+[[form]]
+source = "doc.lang-select"
+family = "query"
+anchor = "Strange JOIN names"
+kind = "special"
+label = "join-keywords-any-order"
+grammar = ["{ CROSS | FULL | INNER | LEFT | NATURAL | OUTER | RIGHT } [ { CROSS | FULL | INNER | LEFT | NATURAL | OUTER | RIGHT } [ { CROSS | FULL | INNER | LEFT | NATURAL | OUTER | RIGHT } ] ] JOIN"]
+basis = "prose"
+page_sha256 = "9253cff3c4951f4fa82c6e7433115319119b36cb085b036dfba61813441b73d6"
+

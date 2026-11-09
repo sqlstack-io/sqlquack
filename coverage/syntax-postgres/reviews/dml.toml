@@ -1,0 +1,107 @@
+# Approved reviews. Each listed form was read in full against its
+# PostgreSQL 18.6 documentation, its obligations, its cases with their PostgreSQL 18.6 receipts, and the
+# local parse trees. An approval holds while the form's definition hash and fingerprint are unchanged;
+# any change makes it stale until re-read.
+
+[[review]]
+id = "pg-dml-001"
+family = "dml"
+parser_tree = "6ba0c304312d074bf7620a74cc760722b322888d"
+reviewed_utc = "2026-11-06T07:48:06Z"
+verdict = "approved"
+forms = [
+  "pg.dml.copy.pre-7-3-from",
+  "pg.dml.copy.pre-7-3-to",
+  "pg.dml.copy.pre-9-0-from",
+  "pg.dml.copy.pre-9-0-to",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 6ba0c304; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.dml.copy.pre-7-3-from" = "c87719da34b54dc3e6d54f0b2ddaf7c24f40ed7b768d33c419dffc85adf9f42e"
+"pg.dml.copy.pre-7-3-to" = "b243b4394794f8321595e9c15fa2c24fdb5bbb412b2bcb265b16fee135c163c6"
+"pg.dml.copy.pre-9-0-from" = "b778e3c01ebb084d184f24a54185778c574865d89da093602640640fadf3ed54"
+"pg.dml.copy.pre-9-0-to" = "6634e41e8639190fb519540cf378eb06bdc73e94015d1e768239c1507a2c4739"
+
+[review.definitions]
+"pg.dml.copy.pre-7-3-from" = "2ea22902b8dfa0c40bbe82c70fe2a3ff3b7dc7db958314ae20cc38fcbaa5bbe6"
+"pg.dml.copy.pre-7-3-to" = "22cbf4b67db07477359e34f1f58ec4b955630afa826e95b6ec1b2c2d35cd3c9d"
+"pg.dml.copy.pre-9-0-from" = "bcda80f9d1e52716c42d1dbafea4eb5ac39e2bd984367fb13afef1683c21cd89"
+"pg.dml.copy.pre-9-0-to" = "75754882ccc1f4e448419f07ee7a3ca0be5efc0722e6877d13586098bf834a09"
+
+[[review]]
+id = "pg-dml-002"
+family = "dml"
+parser_tree = "17b35dd8e162cf4f53a47da96498f6a4669a9164"
+reviewed_utc = "2026-11-06T08:23:56Z"
+verdict = "approved"
+forms = [
+  "pg.dml.truncate",
+]
+note = "Re-read in full after the parser fix for the batch-1 hold, against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 17b35dd8; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.dml.truncate" = "01290103bbfefcae3726b0fbbdfe29bba4d071088d69eef8c592ffb9526d7e58"
+
+[review.definitions]
+"pg.dml.truncate" = "f42221b5a8e4fde5336f454914f7057bdadfdf85af8333706fb137d2d48dc54b"
+
+[[review]]
+id = "pg-dml-003"
+family = "dml"
+parser_tree = "37050ece2046c9560a4ea42f87abfa43e1432125"
+reviewed_utc = "2026-11-06T08:56:35Z"
+verdict = "approved"
+forms = [
+  "pg.dml.copy.to",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 37050ece; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.dml.copy.to" = "cac846dff7cbf0ecb3dc936b3000257133ae1373dde95df59a771baff88fe67a"
+
+[review.definitions]
+"pg.dml.copy.to" = "b9601c2e9dd27a881b675b9c5f9ed36d2ca07528e83f65beee2e849732418a13"
+
+[[review]]
+id = "pg-dml-004"
+family = "dml"
+parser_tree = "f2372a18396b91d6573c5252d00bcec9315e56e5"
+reviewed_utc = "2026-11-06T21:57:37Z"
+verdict = "approved"
+forms = [
+  "pg.dml.copy.from",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree f2372a18; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.dml.copy.from" = "c0935d5e141fa05932f29964b2474f54c84e7087cbf6fc43edf4f577ff28b59e"
+
+[review.definitions]
+"pg.dml.copy.from" = "13e22ed25819be82574017fb4d04be879a208da1b3a00ace94a2289e2c789391"
+
+[[review]]
+id = "pg-dml-005"
+family = "dml"
+parser_tree = "456f03b38854dcee53403e8c19c657bde430a76e"
+reviewed_utc = "2026-11-07T04:24:14Z"
+verdict = "approved"
+forms = [
+  "pg.dml.delete",
+  "pg.dml.insert",
+  "pg.dml.merge",
+  "pg.dml.update",
+]
+note = "Read in full against the PostgreSQL 18.6 documentation (release SGML), the obligations, the cases with their PostgreSQL 18.6 receipts, and the parse trees of the strict parser at tree 456f03b3; every scored case agrees with its receipt."
+
+[review.fingerprints]
+"pg.dml.delete" = "082a372bfbfe659c86656e062e5a048a82490432208c3bc8f2d9e825acde3200"
+"pg.dml.insert" = "485a80e6d82fac881f2d652f5d0a356bc500f2d5d55e80e58c83e765f0072ca7"
+"pg.dml.merge" = "9f4815d4da4dd122be25778e5ee1a8e6384491ece2810120bb3c3416bd8a0543"
+"pg.dml.update" = "7d92a92b4828fd32cfedf4aae61503608f1aaf70d221d098b4ab210bf71a73e6"
+
+[review.definitions]
+"pg.dml.delete" = "1b68aaa7cfc85b9db2637d6086927271a9a6209d352d0cb14d8d73054821640c"
+"pg.dml.insert" = "f785f04a6cbdc987c949abb4a4e54d3deed6e68d69719f068204c679844c3dc4"
+"pg.dml.merge" = "12a4a293663784f0f8f272f565dcc530585b44e4fd617b1d07df0bd281b997b4"
+"pg.dml.update" = "fd549baf499e8d806ebd9ec34146d801fa023f4b720813b17b4c161a179fddce"

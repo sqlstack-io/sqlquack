@@ -1,0 +1,64 @@
+---
+title: "Introduction"
+description: "A warehouse SQL compiler in Rust: parse, check and translate to DuckDB, or refuse with a precise reason."
+---
+
+import Card from '../../../components/docs/Card.astro';
+import CardGroup from '../../../components/docs/CardGroup.astro';
+
+SQLQuack is a Snowflake SQL compiler. It parses Snowflake SQL with its own parser, reports what
+Snowflake would reject with rustc-style diagnostics, and converts the rest into DuckDB SQL. Every
+conversion comes from a rule verified against results recorded on Snowflake. Anything no rule
+covers is refused with a code, the exact span and a reason.
+
+```console
+$ sqlquack convert revenue.sql --builtin-policy
+error[SQ0004]: a name does not resolve
+ --> revenue.sql:2:6
+  |
+2 | FROM orders
+  |      ^^^^^^ relation `ORDERS` has no known columns
+  |
+  = help: declare the relation and its columns in a source file of the project (`sources/*.yml`)
+```
+
+Once `sources/orders.yml` declares `ORDERS`, the same file converts:
+
+```console
+$ sqlquack convert revenue.sql --builtin-policy
+SELECT
+    "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID",
+    CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE"
+FROM "ORDERS" AS "ORDERS"
+WHERE ("ORDERS"."STATUS" = 'shipped')
+GROUP BY "ORDERS"."CUSTOMER_ID"
+sqlquack convert: done, converted under the built-in default
+```
+
+## What it does
+
+| Step | Command | Result |
+|------|---------|--------|
+| Parse and check | `sqlquack check` | What Snowflake would reject, as coded diagnostics. No schema needed. |
+| Convert | `sqlquack convert` | DuckDB SQL for each statement, or the refusals that stop it. |
+| Convert a function | `sqlquack function` | A SQL project function's body as a DuckDB macro. |
+| Measure a project | `sqlquack census` | How much of a body of SQL converts, and what blocks the rest. |
+| Trace rules | `sqlquack index` | Which rules and building blocks each file's conversion relies on. |
+
+Converted SQL is proven only where both sessions run in UTC: Snowflake's `TIMEZONE` and DuckDB's
+`TimeZone` must be `'UTC'`. See [Policy and sessions](/docs/policy/).
+
+<CardGroup cols={2}>
+	<Card title="Quickstart" icon="rocket" href="/docs/quickstart/">
+		Build SQLQuack, check a file and convert it.
+	</Card>
+	<Card title="Playground" icon="terminal" href="/playground/">
+		Paste Snowflake SQL and see each stage in the browser.
+	</Card>
+	<Card title="Diagnostics" icon="triangle-exclamation" href="/docs/diagnostics/reference/">
+		Every `SQ` code, what it means and how to fix it.
+	</Card>
+	<Card title="Python" icon="code" href="/docs/python/">
+		`sqlquack.check` and `sqlquack.convert` from Python.
+	</Card>
+</CardGroup>

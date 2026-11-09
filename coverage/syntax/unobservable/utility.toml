@@ -1,0 +1,483 @@
+# Never-submitted obligations (cause = "not_submitted"): every case citing the obligation was held
+# offline by the capture guard, so nothing ran. Each stays in the denominator, never counts as
+# satisfied, and is reported as "unverifiable: not submitted". The reason names the guard rule.
+
+[[unobservable]]
+obligation = "sf.utility.call-with.language-javascript-as-call.o100"
+form = "sf.utility.call-with.language-javascript-as-call"
+construct = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE JAVASCRIPT RETURNS NULL ON INPUT AS 'm' CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.language-javascript-as-call.k331a4c04a9f2", sql_sha256 = "331a4c04a9f2b8de6d28942f2eac387d22d894d5b316672e59d4ff4b3ed02d61" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.language-javascript-as-call.o101"
+form = "sf.utility.call-with.language-javascript-as-call"
+construct = "the form without its required AS #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE JAVASCRIPT 'm' CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.language-javascript-as-call.k6509da96bd12", sql_sha256 = "6509da96bd121cd9f9778a9bfe1b4be918f64ee601fb517a9556b2e3d4e58a02" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.language-javascript-as-call.o102"
+form = "sf.utility.call-with.language-javascript-as-call"
+construct = "the form without its required ( #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE JAVASCRIPT AS 'm' CALL v1 ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.language-javascript-as-call.ka99fc28aa1d8", sql_sha256 = "a99fc28aa1d85edda5f57e3fc6a48af8297e66f40f274a9a34db5b0f99c24b2a" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.language-javascript-as-call.o103"
+form = "sf.utility.call-with.language-javascript-as-call"
+construct = "the form without its required ) #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE JAVASCRIPT AS 'm' CALL v1 ( ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.language-javascript-as-call.k068183606d15", sql_sha256 = "068183606d155d71aaed9481cf7af958b21e465e0f5c09bd3107f84ae19f9b32" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-java-runtime-version.java.o141"
+form = "sf.utility.call-with.table-language-java-runtime-version.java"
+construct = "the form without its required ( #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-java-runtime-version.k6a27925803e2", sql_sha256 = "6a27925803e29e1e4a6000329c81f777ec54ded0a45b87eb1608f45d962c9f32" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-java-runtime-version.java.o142"
+form = "sf.utility.call-with.table-language-java-runtime-version.java"
+construct = "the form without its required ) #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' HANDLER = 'm' CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-java-runtime-version.kcb50fe9918c8", sql_sha256 = "cb50fe9918c84968cc10490b297e3fe2900a49b7aadbb550b0db947a393ed71b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-java-runtime-version.java.o143"
+form = "sf.utility.call-with.table-language-java-runtime-version.java"
+construct = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' RETURNS NULL ON INPUT CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-java-runtime-version.k4a82ef05a489", sql_sha256 = "4a82ef05a4890ab903fb99489af120305706a4168c767115cde35df4d6f6fc45" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-java-runtime-version.java.o144"
+form = "sf.utility.call-with.table-language-java-runtime-version.java"
+construct = "the form without its required ( #3: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' CALL v1 ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-java-runtime-version.k569ccd81c39c", sql_sha256 = "569ccd81c39cdfd2c792d813abe191f540820617f53dbf34d23606d12c48a136" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-java-runtime-version.java.o145"
+form = "sf.utility.call-with.table-language-java-runtime-version.java"
+construct = "the form without its required ) #3: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' CALL v1 ( ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-java-runtime-version.k78e5c753eeab", sql_sha256 = "78e5c753eeab8a48844315135b39f6e7f4091ccef57f7a2c57b2531652c537d3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-java-runtime-version.o146"
+form = "sf.utility.call-with.table-language-java-runtime-version"
+construct = "the form without its required ( #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-java-runtime-version.k6a27925803e2", sql_sha256 = "6a27925803e29e1e4a6000329c81f777ec54ded0a45b87eb1608f45d962c9f32" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-java-runtime-version.o147"
+form = "sf.utility.call-with.table-language-java-runtime-version"
+construct = "the form without its required ) #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' HANDLER = 'm' CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-java-runtime-version.kcb50fe9918c8", sql_sha256 = "cb50fe9918c84968cc10490b297e3fe2900a49b7aadbb550b0db947a393ed71b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-java-runtime-version.o148"
+form = "sf.utility.call-with.table-language-java-runtime-version"
+construct = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' RETURNS NULL ON INPUT CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-java-runtime-version.k4a82ef05a489", sql_sha256 = "4a82ef05a4890ab903fb99489af120305706a4168c767115cde35df4d6f6fc45" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-java-runtime-version.o149"
+form = "sf.utility.call-with.table-language-java-runtime-version"
+construct = "the form without its required ( #3: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' CALL v1 ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-java-runtime-version.k569ccd81c39c", sql_sha256 = "569ccd81c39cdfd2c792d813abe191f540820617f53dbf34d23606d12c48a136" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-java-runtime-version.o150"
+form = "sf.utility.call-with.table-language-java-runtime-version"
+construct = "the form without its required ) #3: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' CALL v1 ( ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-java-runtime-version.k78e5c753eeab", sql_sha256 = "78e5c753eeab8a48844315135b39f6e7f4091ccef57f7a2c57b2531652c537d3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-python-runtime-version.o144"
+form = "sf.utility.call-with.table-language-python-runtime-version"
+construct = "the form without its required ( #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = 'snowflake-snowpark-python' ) HANDLER = 'm' AS 'm' CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-python-runtime-version.kf62c69472cda", sql_sha256 = "f62c69472cda3de1da314c220c8c9f0a22e78fe28bffe90ce59bbe37a91f4ec3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-python-runtime-version.o145"
+form = "sf.utility.call-with.table-language-python-runtime-version"
+construct = "the form without its required ) #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' HANDLER = 'm' AS 'm' CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-python-runtime-version.kf6bb940b1bb6", sql_sha256 = "f6bb940b1bb65647b5ea778eeb882f66280736e16b15ca2e4b9151e3e68588f1" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-python-runtime-version.o146"
+form = "sf.utility.call-with.table-language-python-runtime-version"
+construct = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' ) HANDLER = 'm' RETURNS NULL ON INPUT AS 'm' CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-python-runtime-version.k9db07b0cae9c", sql_sha256 = "9db07b0cae9ca83f46c203b989c88ca2cfe466f80c2e723e7006548211d3fc80" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-python-runtime-version.o147"
+form = "sf.utility.call-with.table-language-python-runtime-version"
+construct = "the form without its required AS #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' ) HANDLER = 'm' 'm' CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-python-runtime-version.k6c8d471766ba", sql_sha256 = "6c8d471766ba01d0c0b75576445224b2b3757e719722dc452707f2d242e966a3" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-python-runtime-version.o148"
+form = "sf.utility.call-with.table-language-python-runtime-version"
+construct = "the form without its required ( #3: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' ) HANDLER = 'm' AS 'm' CALL v1 ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-python-runtime-version.k3ae248d88d7d", sql_sha256 = "3ae248d88d7d807845b1c14be221fce0cabb616b64a05e83bc3f4b95409d4b8b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-python-runtime-version.o149"
+form = "sf.utility.call-with.table-language-python-runtime-version"
+construct = "the form without its required ) #3: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' ) HANDLER = 'm' AS 'm' CALL v1 ( ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-python-runtime-version.k4d1583f45da9", sql_sha256 = "4d1583f45da9cf667e323c8f6f3afd94242eec89235c6a3e5fcd3e148878213d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-python-runtime-version.python.o137"
+form = "sf.utility.call-with.table-language-python-runtime-version.python"
+construct = "the form without its required ( #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = 'snowflake-snowpark-python' ) HANDLER = 'm1.run' CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-python-runtime-version.python.kc7f5a0cddf16", sql_sha256 = "c7f5a0cddf16f2c14cde47a68fcbf9013442a67d52da4002b2673d2f2d42d958" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-python-runtime-version.python.o138"
+form = "sf.utility.call-with.table-language-python-runtime-version.python"
+construct = "the form without its required ) #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' HANDLER = 'm1.run' CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-python-runtime-version.python.kc2af3b6df1ce", sql_sha256 = "c2af3b6df1ce9623d98f508d44806f3624b2393f1ec2aa66f1645329bc1e19ab" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-python-runtime-version.python.o139"
+form = "sf.utility.call-with.table-language-python-runtime-version.python"
+construct = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' ) HANDLER = 'm1.run' RETURNS NULL ON INPUT CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-python-runtime-version.python.k31cacfbab81a", sql_sha256 = "31cacfbab81a7a43fe329a570138a0189d732454217a7b50483d9bc97d01db3d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-python-runtime-version.python.o140"
+form = "sf.utility.call-with.table-language-python-runtime-version.python"
+construct = "the form without its required ( #3: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' ) HANDLER = 'm1.run' CALL v1 ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-python-runtime-version.python.k2dca672b7e3e", sql_sha256 = "2dca672b7e3e2606d2327091c2ad2f819d63d14c76bf1f22df0d5adf5fe6b61d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-python-runtime-version.python.o141"
+form = "sf.utility.call-with.table-language-python-runtime-version.python"
+construct = "the form without its required ) #3: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = 'm' PACKAGES = ( 'snowflake-snowpark-python' ) HANDLER = 'm1.run' CALL v1 ( ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-python-runtime-version.python.k22590d2b0ad8", sql_sha256 = "22590d2b0ad8e195fde211456d2d5cb762c7cad5844b9f828fa47f26633cf04d" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-scala-runtime-version.o146"
+form = "sf.utility.call-with.table-language-scala-runtime-version"
+construct = "the form without its required ( #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-scala-runtime-version.k2a73791f2fa1", sql_sha256 = "2a73791f2fa18e5750bccd94c18c3bfd7d52baaf39934f75f4d5c7e736058079" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-scala-runtime-version.o147"
+form = "sf.utility.call-with.table-language-scala-runtime-version"
+construct = "the form without its required ) #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' HANDLER = 'm' CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-scala-runtime-version.k12a92d177921", sql_sha256 = "12a92d177921837626eb9a1f6271649eef1ed0b585435fc785119637e56ab88b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-scala-runtime-version.o148"
+form = "sf.utility.call-with.table-language-scala-runtime-version"
+construct = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' RETURNS NULL ON INPUT CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-scala-runtime-version.k7f79a1a71ae6", sql_sha256 = "7f79a1a71ae689c6372300c70acacf81a87694fe3735a368763c9bb28d831054" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-scala-runtime-version.o149"
+form = "sf.utility.call-with.table-language-scala-runtime-version"
+construct = "the form without its required ( #3: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' CALL v1 ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-scala-runtime-version.kdfb3abb3ffa3", sql_sha256 = "dfb3abb3ffa3822fc5b53059876e7adf4547e3ec8b426937ee31b992b31c943e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-scala-runtime-version.o150"
+form = "sf.utility.call-with.table-language-scala-runtime-version"
+construct = "the form without its required ) #3: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' CALL v1 ( ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-scala-runtime-version.k38f37957ebb3", sql_sha256 = "38f37957ebb32d7b5507b5952444b4bfb8dcc9af08f6ca6bfd2f406be4826eaa" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-scala-runtime-version.scala.o141"
+form = "sf.utility.call-with.table-language-scala-runtime-version.scala"
+construct = "the form without its required ( #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-scala-runtime-version.k2a73791f2fa1", sql_sha256 = "2a73791f2fa18e5750bccd94c18c3bfd7d52baaf39934f75f4d5c7e736058079" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-scala-runtime-version.scala.o142"
+form = "sf.utility.call-with.table-language-scala-runtime-version.scala"
+construct = "the form without its required ) #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' HANDLER = 'm' CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-scala-runtime-version.k12a92d177921", sql_sha256 = "12a92d177921837626eb9a1f6271649eef1ed0b585435fc785119637e56ab88b" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-scala-runtime-version.scala.o143"
+form = "sf.utility.call-with.table-language-scala-runtime-version.scala"
+construct = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' RETURNS NULL ON INPUT CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-scala-runtime-version.k7f79a1a71ae6", sql_sha256 = "7f79a1a71ae689c6372300c70acacf81a87694fe3735a368763c9bb28d831054" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-scala-runtime-version.scala.o144"
+form = "sf.utility.call-with.table-language-scala-runtime-version.scala"
+construct = "the form without its required ( #3: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' CALL v1 ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-scala-runtime-version.kdfb3abb3ffa3", sql_sha256 = "dfb3abb3ffa3822fc5b53059876e7adf4547e3ec8b426937ee31b992b31c943e" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-scala-runtime-version.scala.o145"
+form = "sf.utility.call-with.table-language-scala-runtime-version.scala"
+construct = "the form without its required ) #3: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' CALL v1 ( ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-scala-runtime-version.k38f37957ebb3", sql_sha256 = "38f37957ebb32d7b5507b5952444b4bfb8dcc9af08f6ca6bfd2f406be4826eaa" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-sql-as.o110"
+form = "sf.utility.call-with.table-language-sql-as"
+construct = "the form without its required NULL in [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL RETURNS NULL ON INPUT AS 'BEGIN RETURN 1 ; END' CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-sql-as.ke9c8b1fb5be5", sql_sha256 = "e9c8b1fb5be5314b781e375e74db0200d25ee798361418c85ec65cf2a8797c63" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-sql-as.o111"
+form = "sf.utility.call-with.table-language-sql-as"
+construct = "the form without its required AS #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL 'BEGIN RETURN 1 ; END' CALL v1 ( ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-sql-as.kccdc37aeaf14", sql_sha256 = "ccdc37aeaf14148e63d2a59d41a7b77ddbcf3b650524c1af02ee9573fe792089" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-sql-as.o112"
+form = "sf.utility.call-with.table-language-sql-as"
+construct = "the form without its required ( #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'BEGIN RETURN 1 ; END' CALL v1 ) ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-sql-as.k078e2868a0c8", sql_sha256 = "078e2868a0c8fc8680b15f67c001e560b9d78801146eab66f8ff499575d8bf16" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.call-with.table-language-sql-as.o113"
+form = "sf.utility.call-with.table-language-sql-as"
+construct = "the form without its required ) #2: WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE SQL AS 'BEGIN RETURN 1 ; END' CALL v1 ( ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.call-with.table-language-sql-as.k26833ff78694", sql_sha256 = "26833ff786946e6d7ada0e2b7381357013966fe6b4f12ed023721f188c1672cd" },
+]
+runs = []
+probes = []
+
+[[unobservable]]
+obligation = "sf.utility.execute-task-graph.graph-retry-graph-run.o015"
+form = "sf.utility.execute-task-graph.graph-retry-graph-run"
+construct = "the form without its required GRAPH #2: EXECUTE TASK GRAPH v1 RETRY RUN GROUP 'm' ;"
+reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
+cause = "not_submitted"
+cases = [
+  { case_id = "sf.utility.execute-task-graph.graph-retry-graph-run.k883728c26ef5", sql_sha256 = "883728c26ef5b633e4645f20334b8b0b805e1a43857bd40096dcf80649c84d52" },
+]
+runs = []
+probes = []

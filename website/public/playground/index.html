@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Playground · SQLQuack · Run warehouse SQL locally</title>
+		<meta
+			name="description"
+			content="A warehouse SQL compiler in Rust: parse, check and translate to DuckDB, or refuse with a precise reason."
+		/>
+		<meta property="og:title" content="SQLQuack Playground · Run warehouse SQL locally. Verified results, or a clear no" />
+		<meta property="og:description" content="A SQLGlot alternative in Rust that would rather reject your SQL than return the wrong answer." />
+		<meta property="og:type" content="website" />
+		<meta property="og:image" content="https://sqlquack.io/assets/og-sqlquack-v2.png" />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:alt" content="SQLQuack: a warehouse SQL compiler that translates to DuckDB, or refuses to guess." />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:image" content="https://sqlquack.io/assets/og-sqlquack-v2.png" />
+		<link rel="icon" type="image/png" sizes="128x128" href="/favicon.png" />
+		<link rel="preload" href="/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+		<link rel="stylesheet" href="/styles.css" />
+		<link rel="modulepreload" href="playground.js" />
+		<link rel="modulepreload" href="engine-version.js" />
+		<link rel="modulepreload" href="duckdb-version.js" />
+		<link rel="modulepreload" href="examples.js" />
+		<link rel="modulepreload" href="spans.js" />
+		<script>
+			(function () {
+				var stored = localStorage.getItem('sqlquack-theme');
+				var dark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+				document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+			})();
+		</script>
+	</head>
+	<body>
+		<header class="site-header">
+			<div class="wrap">
+				<div class="brand-lockup">
+					<a class="brand" href="/" aria-label="SQLQuack home">
+						<img class="logo-for-light" src="/assets/logo-light.png" alt="SQLQuack" width="133" height="30" />
+						<img class="logo-for-dark" src="/assets/logo-dark.png" alt="SQLQuack" width="133" height="30" />
+					</a>
+					<a class="brand-byline" href="https://sqlstack.io">by SQLStack</a>
+				</div>
+				<nav class="nav" aria-label="Main">
+					<a class="hide-sm" href="/#how">How it works</a>
+					<a href="/docs/">Docs</a>
+					<a class="hide-sm" href="/playground/" aria-current="page">Playground</a>
+					<a class="nav-icon" href="https://github.com/sqlstack-io/sqlquack" aria-label="SQLQuack on GitHub">
+						<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" /></svg>
+					</a>
+					<button class="theme-toggle" type="button" aria-label="Toggle dark mode" data-theme-toggle>
+						<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>
+						<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
+					</button>
+				</nav>
+			</div>
+		</header>
+
+		<main>
+			<div class="wrap playground-head">
+				<h1>Playground</h1>
+				<p>
+					Type Snowflake SQL. SQLQuack parses it, checks it, translates it to DuckDB SQL and runs it in DuckDB, all in
+					your browser. Each stage passes or fails on its own, so you can see which step stopped and where.
+				</p>
+			</div>
+			<div class="wrap pg-examples" id="pg-examples" role="group" aria-label="Examples"></div>
+			<div class="wrap playground">
+				<div class="pg-inputs">
+					<label class="pg-label" for="pg-sql"><span>Snowflake SQL</span></label>
+					<div class="pg-editor">
+						<div class="pg-marks" id="pg-marks" aria-hidden="true"></div>
+						<textarea id="pg-sql" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+					</div>
+					<p class="pg-note">Hover an underline for its diagnostic.</p>
+					<p class="pg-note pg-caption" id="pg-caption" hidden></p>
+					<details open>
+						<summary>Sources: the tables your SQL reads</summary>
+						<textarea class="pg-small" id="pg-sources" spellcheck="false" aria-label="Source file (YAML)"></textarea>
+						<p class="pg-note">Each table's columns and Snowflake types, as a <a href="/docs/project/">project</a>'s <code>sources/*.yml</code> file declares them. Unquoted names are upper case.</p>
+					</details>
+					<details>
+						<summary>Fixture rows for DuckDB</summary>
+						<textarea class="pg-small" id="pg-rows" spellcheck="false" aria-label="Fixture rows as DuckDB SQL"></textarea>
+						<p class="pg-note">DuckDB SQL run after the sources' tables are created, before the translated query.</p>
+					</details>
+					<details>
+						<summary>Policy and session</summary>
+						<textarea class="pg-small" id="pg-policy" spellcheck="false" aria-label="Policy file (TOML)" placeholder="Empty: the built-in default, which refuses every known divergence but the clock and checks that only raise"></textarea>
+						<p class="pg-note">A policy file, as for <code>--policy</code>. <button class="pg-link" type="button" id="pg-load-policy">Load the repository's sqlquack.toml</button></p>
+						<textarea class="pg-small pg-short" id="pg-session" spellcheck="false" aria-label="Session parameters" placeholder="TIMEZONE=UTC"></textarea>
+						<p class="pg-note">Snowflake session parameters, one <code>NAME=VALUE</code> per line, as for <code>--session</code>.</p>
+						<p class="pg-note"><label><input type="checkbox" id="pg-strict" /> <code>--strict</code></label> <label><input type="checkbox" id="pg-utc" /> <code>--utc-session</code></label></p>
+					</details>
+				</div>
+				<div class="pg-stages" aria-live="polite">
+					<p class="pg-verdict" id="pg-verdict" hidden></p>
+					<section class="pg-stage" id="stage-parse">
+						<header><span class="pg-num">1</span><h2>Parse as Snowflake</h2><span class="pg-sub"></span><span class="pg-status">…</span></header>
+						<div class="pg-body"></div>
+					</section>
+					<section class="pg-stage" id="stage-checks">
+						<header><span class="pg-num">2</span><h2>Snowflake checks</h2><span class="pg-sub"></span><span class="pg-status">…</span></header>
+						<div class="pg-body"></div>
+					</section>
+					<section class="pg-stage" id="stage-translate">
+						<header><span class="pg-num">3</span><h2>Translate to DuckDB</h2><span class="pg-sub"></span><span class="pg-status">…</span></header>
+						<div class="pg-body"></div>
+					</section>
+					<section class="pg-stage" id="stage-run">
+						<header><span class="pg-num">4</span><h2>Run in DuckDB-WASM</h2><span class="pg-sub"></span><span class="pg-status">…</span></header>
+						<div class="pg-body"></div>
+						<p class="pg-note pg-stage-note">Runs DuckDB-WASM in your browser, a preview build. SQLQuack's checks rest on native DuckDB 2.0; this run is a demonstration, not that check.</p>
+					</section>
+				</div>
+			</div>
+			<div class="pg-tip" id="pg-tip" hidden></div>
+		</main>
+
+		<footer>
+			<div class="wrap">
+				<span>SQLQuack · Apache-2.0</span>
+				<span>
+					<a href="/docs/">Docs</a> ·
+					<a href="/playground/">Playground</a> ·
+					<a href="/docs/credits/">Credits</a> ·
+					<a href="https://github.com/sqlstack-io/sqlquack">GitHub</a>
+				</span>
+			</div>
+			<div class="wrap sqlstack-family">
+				<a class="sqlstack-parent" href="https://sqlstack.io">
+					<img class="sqlstack-for-light" src="/assets/sqlstack.png" alt="" width="28" height="23" />
+					<img class="sqlstack-for-dark" src="/assets/sqlstack-dark.png" alt="" width="28" height="23" />
+					<span>Part of SQLStack</span>
+				</a>
+				<nav class="sqlstack-tools" aria-label="SQLStack tools">
+					<a href="https://sqlbuild.com">SQLBuild</a>
+					<a href="https://sqlclean.io">SQLClean</a>
+					<a href="/">SQLQuack</a>
+					<a href="https://docs.streambuild.dev">SQLTide</a>
+					<a href="https://fensu.io">Fensu</a>
+				</nav>
+			</div>
+		</footer>
+
+		<script>
+			document.querySelector('[data-theme-toggle]').addEventListener('click', function () {
+				var next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+				document.documentElement.dataset.theme = next;
+				localStorage.setItem('sqlquack-theme', next);
+			});
+		</script>
+		<script type="module" src="playground.js"></script>
+	</body>
+</html>

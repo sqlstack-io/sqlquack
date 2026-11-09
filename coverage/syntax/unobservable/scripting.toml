@@ -1,0 +1,191 @@
+# Documented obligations whose construct Snowflake answers only with an internal error (603), so no
+# capture can establish a phase. Each obligation stays in the denominator, never
+# counts as verified, and is reported as "unverifiable: Snowflake internal error". Its case stays in
+# cases/<family>.jsonl. Fields: obligation, form, construct, reason, the cases that were captured
+# (case_id, sql_sha256), the runs (the original capture, the exact re-run and the diagnostic probes,
+# none of them imported), and each probe that bears on the construct with its sql_sha256 and result.
+# Probe results are diagnostics, never syntax evidence.
+# A [[diagnostic]] entry records a 603 on a construct that no obligation requires any more: the
+# obligation named was narrowed so that it can be observed. It has the same fields, except that
+# `captured` lists the retired cases that hit the 603 in place of `cases`. Diagnostics are listed in
+# the report and never count towards any score.
+
+[[unobservable]]
+obligation = "sf.scripting.declare.procedure-returns-table-as.o010"
+form = "sf.scripting.declare.procedure-returns-table-as"
+construct = "a block-local procedure argument without its data type: PROCEDURE ( v1 )"
+reason = "internal error 603 (300002:3928222921) on every capture of the case and in a procedure body; no context gives an established phase"
+cases = [
+  { case_id = "sf.scripting.declare.procedure-returns-table-as.k82ae9c11079c", sql_sha256 = "82ae9c11079cc50f98f4b7dda8f42d3b438e8d996ae9bbd4ff2090daa2eb788e" },
+]
+runs = ["scripting-2-20261104T010552Z", "rerun-603-1", "probe-1"]
+probes = [
+  { probe = "P3a", sql_sha256 = "8229ab46ce725381059e1ae1c93d256d456c76ca7a7ce80e4d43f8bf82b2c202", result = "603 300002:3928222921" },
+]
+
+[[unobservable]]
+obligation = "sf.scripting.declare.procedure-returns-table-as.o007"
+form = "sf.scripting.declare.procedure-returns-table-as"
+construct = "a block-local procedure argument without its name: PROCEDURE ( INT )"
+reason = "internal error 603 (300002:526413464) on every capture of the case and in a procedure body; no context gives an established phase"
+cases = [
+  { case_id = "sf.scripting.declare.procedure-returns-table-as.k93c42e8b56f3", sql_sha256 = "93c42e8b56f31c11c26ef08f96066727783e53676cc177190b7be213e1d5bae9" },
+]
+runs = ["scripting-2-20261104T010552Z", "rerun-603-1", "probe-1"]
+probes = [
+  { probe = "P3b", sql_sha256 = "8efbbfe4f0ce13ff8af2d877d8b1ec609542d9a8b88ad1774e0fed040e688dc5", result = "603 300002:526413464" },
+]
+[[diagnostic]]
+obligation = "sf.scripting.break.o008"
+form = "sf.scripting.break"
+construct = "a double-quoted loop label containing a blank"
+reason = "internal error 603 (300010:2141090603) on every capture of the case and in every probe that keeps a blank in the quoted label, in an anonymous block and in a procedure body, with any letter case; the same label without the blank is accepted"
+captured = [
+  { case_id = "sf.scripting.break.k21f7c040141a", sql_sha256 = "21f7c040141a1f78da15a66d5443c735e17cb745301854c97d928d695ae95c2a" },
+]
+runs = ["scripting-2-20261104T010552Z", "rerun-603-1", "probe-1"]
+probes = [
+  { probe = "P1a", sql_sha256 = "b431738649c025a8bd729a2cc78afdccc49d786084baa3eb3672cc2cb90d6a8a", result = "603 300010:2141090603" },
+  { probe = "P1b", sql_sha256 = "b597cb22e27280b78dca453375eb378dee112a5f04dfd4b36b7b74b984d44a3f", result = "accepted" },
+  { probe = "P1c", sql_sha256 = "ec1f27586fc7ce96d9a7b54368b486f92a34ec6a31e518f371713444245b580f", result = "603 300010:2141090603" },
+]
+
+[[diagnostic]]
+obligation = "sf.scripting.continue.o008"
+form = "sf.scripting.continue"
+construct = "a double-quoted loop label containing a blank"
+reason = "internal error 603 (300010:2141090603) on every capture of the case and in every probe that keeps a blank in the quoted label, in an anonymous block and in a procedure body, with any letter case; the same label without the blank is accepted"
+captured = [
+  { case_id = "sf.scripting.continue.ka6cb0f18b216", sql_sha256 = "a6cb0f18b216e5fb3b3fe24215f91b228839717e4e1a66cc5333ed7d880d3175" },
+]
+runs = ["scripting-2-20261104T010552Z", "rerun-603-1", "probe-1"]
+probes = [
+  { probe = "P1a", sql_sha256 = "b431738649c025a8bd729a2cc78afdccc49d786084baa3eb3672cc2cb90d6a8a", result = "603 300010:2141090603" },
+  { probe = "P1b", sql_sha256 = "b597cb22e27280b78dca453375eb378dee112a5f04dfd4b36b7b74b984d44a3f", result = "accepted" },
+  { probe = "P1c", sql_sha256 = "ec1f27586fc7ce96d9a7b54368b486f92a34ec6a31e518f371713444245b580f", result = "603 300010:2141090603" },
+]
+
+[[diagnostic]]
+obligation = "sf.scripting.loop.o013"
+form = "sf.scripting.loop"
+construct = "a double-quoted loop label containing a blank"
+reason = "internal error 603 (300010:2141090603) on every capture of the case and in every probe that keeps a blank in the quoted label, in an anonymous block and in a procedure body, with any letter case; the same label without the blank is accepted"
+captured = [
+  { case_id = "sf.scripting.loop.k692ce5bbf93d", sql_sha256 = "692ce5bbf93d81f2e3e5d9c7e12ec841c8674bf58c5cf4573bd3a196d1c15d16" },
+]
+runs = ["scripting-2-20261104T010552Z", "rerun-603-1", "probe-1"]
+probes = [
+  { probe = "P1a", sql_sha256 = "b431738649c025a8bd729a2cc78afdccc49d786084baa3eb3672cc2cb90d6a8a", result = "603 300010:2141090603" },
+  { probe = "P1b", sql_sha256 = "b597cb22e27280b78dca453375eb378dee112a5f04dfd4b36b7b74b984d44a3f", result = "accepted" },
+  { probe = "P1c", sql_sha256 = "ec1f27586fc7ce96d9a7b54368b486f92a34ec6a31e518f371713444245b580f", result = "603 300010:2141090603" },
+]
+
+[[diagnostic]]
+obligation = "sf.scripting.repeat.o018"
+form = "sf.scripting.repeat"
+construct = "a double-quoted loop label containing a blank"
+reason = "internal error 603 (300010:2141090603) on every capture of the case and in every probe that keeps a blank in the quoted label, in an anonymous block and in a procedure body, with any letter case; the same label without the blank is accepted"
+captured = [
+  { case_id = "sf.scripting.repeat.ke79c2a9583a6", sql_sha256 = "e79c2a9583a65583a62071a765e148be31ec4bc97276fbcec212359a327c3521" },
+]
+runs = ["scripting-2-20261104T010552Z", "rerun-603-1", "probe-1"]
+probes = [
+  { probe = "P1a", sql_sha256 = "b431738649c025a8bd729a2cc78afdccc49d786084baa3eb3672cc2cb90d6a8a", result = "603 300010:2141090603" },
+  { probe = "P1b", sql_sha256 = "b597cb22e27280b78dca453375eb378dee112a5f04dfd4b36b7b74b984d44a3f", result = "accepted" },
+  { probe = "P1c", sql_sha256 = "ec1f27586fc7ce96d9a7b54368b486f92a34ec6a31e518f371713444245b580f", result = "603 300010:2141090603" },
+]
+
+[[diagnostic]]
+obligation = "sf.scripting.while.o022"
+form = "sf.scripting.while"
+construct = "a double-quoted loop label containing a blank"
+reason = "internal error 603 (300010:2141090603) on every capture of the case and in every probe that keeps a blank in the quoted label, in an anonymous block and in a procedure body, with any letter case; the same label without the blank is accepted"
+captured = [
+  { case_id = "sf.scripting.while.k5d4068fb44a6", sql_sha256 = "5d4068fb44a6ae62144f668b943dfed8caeed4c8bfdf0fcb978671ab062736f8" },
+]
+runs = ["scripting-2-20261104T010552Z", "rerun-603-1", "probe-1"]
+probes = [
+  { probe = "P1a", sql_sha256 = "b431738649c025a8bd729a2cc78afdccc49d786084baa3eb3672cc2cb90d6a8a", result = "603 300010:2141090603" },
+  { probe = "P1b", sql_sha256 = "b597cb22e27280b78dca453375eb378dee112a5f04dfd4b36b7b74b984d44a3f", result = "accepted" },
+  { probe = "P1c", sql_sha256 = "ec1f27586fc7ce96d9a7b54368b486f92a34ec6a31e518f371713444245b580f", result = "603 300010:2141090603" },
+]
+
+[[diagnostic]]
+obligation = "sf.scripting.for.do-end-for.o025"
+form = "sf.scripting.for.do-end-for"
+construct = "a double-quoted loop label containing a blank"
+reason = "internal error 603 (300010:2141090603) on every capture of the case and in every probe that keeps a blank in the quoted label, in an anonymous block and in a procedure body, with any letter case; the same label without the blank is accepted; the cited case, which quotes only the label, gave the same 603 in run scripting-4"
+captured = [
+  { case_id = "sf.scripting.for.do-end-for.ke9b4a198690b", sql_sha256 = "e9b4a198690bd8feb6587d2e8df5a650a2deec6173bca9501cb7f7e4e98fe55a" },
+]
+runs = ["scripting-2-20261104T010552Z", "rerun-603-1", "probe-1", "scripting-4-20261104T013200Z"]
+probes = [
+  { probe = "P1a", sql_sha256 = "b431738649c025a8bd729a2cc78afdccc49d786084baa3eb3672cc2cb90d6a8a", result = "603 300010:2141090603" },
+  { probe = "P1b", sql_sha256 = "b597cb22e27280b78dca453375eb378dee112a5f04dfd4b36b7b74b984d44a3f", result = "accepted" },
+  { probe = "P1c", sql_sha256 = "ec1f27586fc7ce96d9a7b54368b486f92a34ec6a31e518f371713444245b580f", result = "603 300010:2141090603" },
+]
+
+[[diagnostic]]
+obligation = "sf.scripting.for.to-do-loop-end.o032"
+form = "sf.scripting.for.to-do-loop-end"
+construct = "a double-quoted loop label containing a blank"
+reason = "internal error 603 (300010:2141090603) on every capture of the case and in every probe that keeps a blank in the quoted label, in an anonymous block and in a procedure body, with any letter case; the same label without the blank is accepted; the cited case, which quotes only the label, gave the same 603 in run scripting-4"
+captured = [
+  { case_id = "sf.scripting.for.to-do-loop-end.kcc18e3343634", sql_sha256 = "cc18e33436346875b88dd54cc96bd2cd2b46f22ec11d94bf8ccf17dbad878d44" },
+]
+runs = ["scripting-2-20261104T010552Z", "rerun-603-1", "probe-1", "scripting-4-20261104T013200Z"]
+probes = [
+  { probe = "P1a", sql_sha256 = "b431738649c025a8bd729a2cc78afdccc49d786084baa3eb3672cc2cb90d6a8a", result = "603 300010:2141090603" },
+  { probe = "P1b", sql_sha256 = "b597cb22e27280b78dca453375eb378dee112a5f04dfd4b36b7b74b984d44a3f", result = "accepted" },
+  { probe = "P1c", sql_sha256 = "ec1f27586fc7ce96d9a7b54368b486f92a34ec6a31e518f371713444245b580f", result = "603 300010:2141090603" },
+]
+
+[[diagnostic]]
+obligation = "sf.scripting.declare.procedure-returns-table-as.o036"
+form = "sf.scripting.declare.procedure-returns-table-as"
+construct = "a double-quoted block-local procedure name containing a blank"
+reason = "internal error 603 (300010:2141090603) on every capture of the case and in every probe that keeps a blank in the quoted procedure name, in an anonymous block and in a procedure body, with any letter case; the same name without the blank is accepted"
+captured = [
+  { case_id = "sf.scripting.declare.procedure-returns-table-as.k5bc483a3cf7c", sql_sha256 = "5bc483a3cf7c3d52f08afe31e39ee3e6a854d44a0ef2e093f4f9c8ac648c1cf8" },
+]
+runs = ["scripting-2-20261104T010552Z", "rerun-603-1", "probe-1"]
+probes = [
+  { probe = "P2a", sql_sha256 = "d440c337d193c00e2d44c545dee5b179f5b446d170951f622fff7a99214698db", result = "603 300010:2141090603" },
+  { probe = "P2b", sql_sha256 = "df0f8c4aa47e736549abb7e328eb718c84fe28c16fbee1f2ce702800dabf08f6", result = "accepted" },
+  { probe = "P2c", sql_sha256 = "0c5840a1f1f14c863d7213f86604eb1ba173989ea1656d0528e18ee25fc2918b", result = "603 300010:2141090603" },
+]
+
+[[diagnostic]]
+obligation = "sf.scripting.declare.procedure-returns-table-as.o038"
+form = "sf.scripting.declare.procedure-returns-table-as"
+construct = "a double-quoted block-local procedure argument name containing a blank"
+reason = "internal error 603 (300010:2141090603) on the original case, which also quoted the procedure name, in its exact re-run, and on the variant that quotes only the argument name (run scripting-4); the same argument name without the blank, \"SELECT\", is accepted"
+captured = [
+  { case_id = "sf.scripting.declare.procedure-returns-table-as.kd8c284f355aa", sql_sha256 = "d8c284f355aa4fa7cef6239e9585a780f3318e23277175a9c121e9a8f4cd70e8" },
+]
+runs = ["scripting-2-20261104T010552Z", "rerun-603-1", "scripting-4-20261104T013200Z"]
+probes = [
+  { probe = "original", sql_sha256 = "767a5fbd099cfe544882bb8e9a9a22b7bacbeb472d20705052fe4035d2ad56ba", result = "603 300010:2141090603" },
+]
+
+[[diagnostic]]
+obligation = "sf.scripting.if.o043"
+form = "sf.scripting.if"
+construct = "5,000 ELSEIF branches in one IF (145 KB), an extreme-value probe"
+reason = "internal error 603 (300010:2141090603) after about 3 to 4 seconds; a probe size, not documented syntax, so the obligation is withdrawn and the 1,000-branch extreme stays scored"
+captured = [
+  { case_id = "sf.scripting.if.k685d9d2a067e", sql_sha256 = "685d9d2a067ee23f80925091867c597eae975e4c8d4d6436b906b9bd14248576" },
+]
+runs = ["extreme-1"]
+probes = []
+
+[[diagnostic]]
+obligation = "sf.scripting.case.end.syntax.o030"
+form = "sf.scripting.case.end.syntax"
+construct = "5,000 WHEN branches in one searched CASE (115 KB), an extreme-value probe"
+reason = "internal error 603 (300010:2141090603) after about 3 to 4 seconds; a probe size, not documented syntax, so the obligation is withdrawn and the 1,000-branch extreme stays scored"
+captured = [
+  { case_id = "sf.scripting.case.end.syntax.k93f2857ca62c", sql_sha256 = "93f2857ca62cd9f2093aaac340647dc07ae0c281d08ceb1e1237f47c990983d5" },
+]
+runs = ["extreme-1"]
+probes = []

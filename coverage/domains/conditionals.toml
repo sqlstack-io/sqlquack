@@ -1,0 +1,355 @@
+# Declared domains of conditionals: COALESCE, NVL, IFF, DECODE, CASE, NULLIF, ZEROIFNULL.
+# Format: see docs/coverage.md.
+version = 1
+
+[[rule]]
+id = "rule.coalesce"
+
+[[rule.form]]
+construct = "node:coalesce"
+also = ["node:nvl"]
+arguments = [
+  { families = ["integer", "decimal", "float"] },
+  { families = ["integer", "decimal", "float", "null"] },
+]
+repeat = true
+template = "COALESCE({0}, {1})"
+category = "conditional"
+variants = ["NVL({0}, {1})"]
+
+[[rule.form]]
+construct = "node:coalesce"
+also = ["node:nvl"]
+arguments = [
+  { families = ["text"] },
+  { families = ["text", "null"] },
+]
+repeat = true
+template = "COALESCE({0}, {1})"
+category = "conditional"
+variants = ["NVL({0}, {1})"]
+
+[[rule.form]]
+construct = "node:coalesce"
+also = ["node:nvl"]
+arguments = [
+  { families = ["boolean"] },
+  { families = ["boolean", "null"] },
+]
+repeat = true
+template = "COALESCE({0}, {1})"
+category = "conditional"
+variants = ["NVL({0}, {1})"]
+
+[[rule.form]]
+construct = "node:coalesce"
+also = ["node:nvl"]
+arguments = [
+  { families = ["date", "timestamp_ntz"] },
+  { families = ["date", "timestamp_ntz", "null"] },
+]
+repeat = true
+template = "COALESCE({0}, {1})"
+category = "conditional"
+variants = ["NVL({0}, {1})"]
+
+[[rule.form]]
+construct = "node:coalesce"
+also = ["node:nvl"]
+arguments = [
+  { families = ["timestamp_ntz", "timestamp_ltz"] },
+  { families = ["timestamp_ntz", "timestamp_ltz", "null"] },
+]
+repeat = true
+template = "COALESCE({0}, {1})"
+category = "conditional"
+variants = ["NVL({0}, {1})"]
+
+[[rule.form]]
+construct = "node:coalesce"
+also = ["node:nvl"]
+arguments = [
+  { families = ["timestamp_ntz", "timestamp_tz"] },
+  { families = ["timestamp_ntz", "timestamp_tz", "null"] },
+]
+repeat = true
+template = "COALESCE({0}, {1})"
+category = "conditional"
+variants = ["NVL({0}, {1})"]
+
+[[rule.form]]
+construct = "node:coalesce"
+also = ["node:nvl"]
+arguments = [
+  { families = ["variant"] },
+  { families = ["variant", "null"] },
+]
+repeat = true
+template = "COALESCE({0}, {1})"
+category = "conditional"
+variants = ["NVL({0}, {1})"]
+divergences = { "1.variant.large_numbers" = "", "1.variant.number_spellings" = "" }
+
+[[rule]]
+id = "rule.iff"
+
+[[rule.form]]
+construct = "node:if_func"
+arguments = [
+  { families = ["boolean"] },
+  { families = ["integer", "decimal", "float", "null"] },
+  { families = ["integer", "decimal", "float", "null"] },
+]
+template = "IFF({0}, {1}, {2})"
+category = "conditional"
+
+[[rule.form]]
+construct = "node:if_func"
+arguments = [
+  { families = ["boolean"] },
+  { families = ["text", "null"] },
+  { families = ["text", "null"] },
+]
+template = "IFF({0}, {1}, {2})"
+category = "conditional"
+
+[[rule.form]]
+construct = "node:if_func"
+arguments = [
+  { families = ["boolean"] },
+  { families = ["boolean", "null"] },
+  { families = ["boolean", "null"] },
+]
+template = "IFF({0}, {1}, {2})"
+category = "conditional"
+
+[[rule.form]]
+construct = "node:if_func"
+arguments = [
+  { families = ["boolean"] },
+  { families = ["date", "timestamp_ntz", "null"] },
+  { families = ["date", "timestamp_ntz", "null"] },
+]
+template = "IFF({0}, {1}, {2})"
+category = "conditional"
+
+[[rule.form]]
+construct = "node:if_func"
+arguments = [
+  { families = ["boolean"] },
+  { families = ["timestamp_ntz", "timestamp_ltz", "null"] },
+  { families = ["timestamp_ntz", "timestamp_ltz", "null"] },
+]
+template = "IFF({0}, {1}, {2})"
+category = "conditional"
+
+[[rule.form]]
+construct = "node:if_func"
+arguments = [
+  { families = ["boolean"] },
+  { families = ["timestamp_ntz", "timestamp_tz", "null"] },
+  { families = ["timestamp_ntz", "timestamp_tz", "null"] },
+]
+template = "IFF({0}, {1}, {2})"
+category = "conditional"
+
+[[rule.form]]
+construct = "node:if_func"
+arguments = [
+  { families = ["boolean"] },
+  { families = ["variant", "null"] },
+  { families = ["variant", "null"] },
+]
+template = "IFF({0}, {1}, {2})"
+category = "conditional"
+
+[[rule]]
+id = "rule.decode"
+
+[[rule.form]]
+construct = "fn:DECODE"
+arguments = [
+  { families = ["integer", "decimal", "float"] },
+  { families = ["integer", "decimal", "float", "null"] },
+  { families = ["integer", "null"] },
+]
+repeat = true
+one_wise = true
+template = "DECODE({0}, {1}, {2})"
+category = "conditional"
+
+[[rule.form]]
+construct = "fn:DECODE"
+arguments = [
+  { families = ["text"] },
+  { families = ["text", "null"] },
+  { families = ["text", "null"] },
+]
+repeat = true
+one_wise = true
+template = "DECODE({0}, {1}, {2})"
+category = "conditional"
+
+[[rule.form]]
+construct = "fn:DECODE"
+arguments = [
+  { families = ["boolean"] },
+  { families = ["boolean", "null"] },
+  { families = ["boolean", "null"] },
+]
+repeat = true
+one_wise = true
+template = "DECODE({0}, {1}, {2})"
+category = "conditional"
+
+[[rule.form]]
+construct = "fn:DECODE"
+arguments = [
+  { families = ["date"] },
+  { families = ["date", "null"] },
+  { families = ["date", "null"] },
+]
+repeat = true
+one_wise = true
+template = "DECODE({0}, {1}, {2})"
+category = "conditional"
+
+[[rule.form]]
+construct = "fn:DECODE"
+arguments = [
+  { families = ["timestamp_ntz"] },
+  { families = ["timestamp_ntz", "null"] },
+  { families = ["timestamp_ntz", "null"] },
+]
+repeat = true
+one_wise = true
+template = "DECODE({0}, {1}, {2})"
+category = "conditional"
+
+[[rule.form]]
+construct = "fn:DECODE"
+arguments = [
+  { families = ["timestamp_tz", "timestamp_ltz"] },
+  { families = ["timestamp_tz", "timestamp_ltz", "null"] },
+  { families = ["timestamp_tz", "null"] },
+]
+repeat = true
+one_wise = true
+template = "DECODE({0}, {1}, {2})"
+category = "conditional"
+
+[[rule.form]]
+construct = "fn:DECODE"
+# Searches compare with the subject as NUMBERs: FLOAT against NUMBER is refused.
+arguments = [
+  { families = ["integer"] },
+  { families = ["decimal"] },
+  { families = ["integer", "float"] },
+  { families = ["decimal", "float"] },
+]
+one_wise = true
+template = "DECODE({0}, {1}, {2}, {3})"
+category = "conditional"
+
+[[rule.probe]]
+construct = "fn:DECODE"
+arguments = [
+  { families = ["boolean"] },
+  { families = ["boolean"] },
+  { families = ["text"], kinds = ["literal"] },
+]
+template = "DECODE({0}, {1}, {2})"
+category = "conditional"
+benign = { "2" = "'yes'" }
+
+[[rule]]
+id = "rule.case"
+
+[[rule.form]]
+construct = "node:case"
+
+[[rule]]
+id = "rule.nullif"
+
+[[rule.form]]
+construct = "fn:NULLIF"
+arguments = [
+  { families = ["integer", "decimal"] },
+  { families = ["integer", "decimal"] },
+]
+template = "NULLIF({0}, {1})"
+category = "conditional"
+
+[[rule.form]]
+construct = "fn:NULLIF"
+arguments = [
+  { families = ["float"] },
+  { families = ["float"] },
+]
+template = "NULLIF({0}, {1})"
+category = "conditional"
+
+[[rule.form]]
+construct = "fn:NULLIF"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"] },
+]
+template = "NULLIF({0}, {1})"
+category = "conditional"
+
+[[rule.form]]
+construct = "fn:NULLIF"
+arguments = [
+  { families = ["boolean"] },
+  { families = ["boolean"] },
+]
+template = "NULLIF({0}, {1})"
+category = "conditional"
+
+[[rule.form]]
+construct = "fn:NULLIF"
+arguments = [
+  { families = ["date"] },
+  { families = ["date"] },
+]
+template = "NULLIF({0}, {1})"
+category = "conditional"
+
+[[rule.form]]
+construct = "fn:NULLIF"
+arguments = [
+  { families = ["timestamp_ntz"] },
+  { families = ["timestamp_ntz"] },
+]
+template = "NULLIF({0}, {1})"
+category = "conditional"
+
+[[rule.form]]
+construct = "fn:NULLIF"
+arguments = [
+  { families = ["timestamp_tz"] },
+  { families = ["timestamp_tz"] },
+]
+template = "NULLIF({0}, {1})"
+category = "conditional"
+
+[[rule.form]]
+construct = "fn:NULLIF"
+arguments = [
+  { families = ["timestamp_ltz"] },
+  { families = ["timestamp_ltz"] },
+]
+template = "NULLIF({0}, {1})"
+category = "conditional"
+
+[[rule]]
+id = "rule.zeroifnull"
+
+[[rule.form]]
+construct = "fn:ZEROIFNULL"
+arguments = [
+  { families = ["integer", "decimal", "float"] },
+]
+template = "ZEROIFNULL({0})"
+category = "numeric"

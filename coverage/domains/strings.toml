@@ -1,0 +1,209 @@
+# Declared domains of string functions and HASH.
+# Format: see docs/coverage.md.
+version = 1
+
+[[rule]]
+id = "rule.case_mapping"
+
+[[rule.form]]
+construct = "node:upper"
+also = ["node:lower"]
+arguments = [
+  { families = ["text"] },
+]
+template = "UPPER({0})"
+category = "string"
+variants = ["LOWER({0})"]
+
+[[rule]]
+id = "rule.contains"
+
+[[rule.form]]
+construct = "fn:CONTAINS"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"] },
+]
+template = "CONTAINS({0}, {1})"
+category = "string"
+
+[[rule]]
+id = "rule.charindex"
+
+[[rule.form]]
+construct = "fn:CHARINDEX"
+also = ["fn:POSITION", "node:str_position"]
+arguments = [
+  { families = ["text"] },
+  { families = ["text"] },
+]
+template = "CHARINDEX({0}, {1})"
+category = "string"
+variants = ["POSITION({0}, {1})", "POSITION({0} IN {1})"]
+
+[[rule]]
+id = "rule.editdistance"
+
+[[rule.form]]
+construct = "fn:EDITDISTANCE"
+arguments = [
+  { families = ["text"] },
+  { families = ["text"] },
+]
+template = "EDITDISTANCE({0}, {1})"
+category = "string"
+
+[[rule]]
+id = "rule.md5"
+
+[[rule.form]]
+construct = "fn:MD5"
+arguments = [
+  { families = ["text"] },
+]
+template = "MD5({0})"
+category = "string"
+
+[[rule]]
+id = "rule.text_affix"
+
+[[rule.form]]
+construct = "node:starts_with"
+also = ["node:ends_with"]
+arguments = [
+  { families = ["text"] },
+  { families = ["text"] },
+]
+template = "STARTSWITH({0}, {1})"
+category = "string"
+variants = ["ENDSWITH({0}, {1})"]
+
+[[rule]]
+id = "rule.text_chr"
+
+[[rule.form]]
+construct = "fn:CHR"
+arguments = [
+  { families = ["integer"] },
+]
+template = "CHR({0})"
+category = "string"
+
+[[rule]]
+id = "rule.text_hex"
+
+[[rule.form]]
+construct = "fn:HEX_ENCODE"
+arguments = [
+  { families = ["text"] },
+]
+template = "HEX_ENCODE({0})"
+category = "string"
+
+[[rule.form]]
+construct = "fn:HEX_ENCODE"
+arguments = [
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["text"] },
+]
+template = "HEX_ENCODE({1}, {0})"
+category = "string"
+benign = { "0" = "0" }
+
+[[rule]]
+id = "rule.text_hex_decode"
+
+[[rule.form]]
+construct = "fn:TRY_HEX_DECODE_STRING"
+arguments = [
+  { families = ["text"] },
+]
+template = "TRY_HEX_DECODE_STRING({0})"
+category = "string"
+
+[[rule]]
+id = "rule.base64_binary"
+
+# The decoded bytes are read only inside HEX_ENCODE, TO_VARCHAR with UTF-8 and SUBSTR within them.
+[[rule.form]]
+construct = "fn:HEX_ENCODE"
+arguments = [
+  { families = ["text"] },
+]
+template = "HEX_ENCODE(TRY_BASE64_DECODE_BINARY({0}))"
+category = "string"
+# Padding, line breaks, the URL-safe alphabet and padding bits left set.
+extra_rows = [["'b3JkZXI='"], ["'b3JkZXI'"], ["'YQ=='"], ["'YQ'"], ["'YR=='"], ["'YQ==='"], ["'b3Jk' || CHR(10) || 'ZXI='"], ["'b3J-ZXI_'"], ["'/+8='"], ["NULL"]]
+
+[[rule.form]]
+construct = "fn:HEX_ENCODE"
+arguments = [
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["text"] },
+]
+template = "HEX_ENCODE(TRY_BASE64_DECODE_BINARY({1}), {0})"
+category = "string"
+benign = { "0" = "0" }
+
+[[rule.form]]
+construct = "fn:TO_VARCHAR"
+also = ["fn:TO_CHAR"]
+arguments = [
+  { families = ["text"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+template = "TO_VARCHAR(TRY_BASE64_DECODE_BINARY({0}), {1})"
+category = "string"
+benign = { "1" = "'UTF-8'" }
+# ASCII and multi-byte text, a zero byte, and padding left out.
+extra_rows = [["'b3JkZXI='"], ["'w6k='"], ["'8J+YgA=='"], ["'AA=='"], ["'YQ'"], ["''"], ["NULL"]]
+
+[[rule.form]]
+construct = "fn:HEX_ENCODE"
+arguments = [
+  { families = ["text"] },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+]
+template = "HEX_ENCODE(SUBSTRING(TRY_BASE64_DECODE_BINARY({0}), {1}, {2}))"
+category = "string"
+benign = { "1" = "2", "2" = "3" }
+extra_rows = [["'b3JkZXJfc3RhdHVzX3VwZGF0ZV9maWVsZHM='"], ["'YWJj'"], ["'YQ=='"], ["''"], ["NULL"]]
+
+[[rule.form]]
+construct = "fn:TO_VARCHAR"
+arguments = [
+  { families = ["text"] },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+template = "TO_VARCHAR(SUBSTRING(TRY_BASE64_DECODE_BINARY({0}), {1}, {2}), {3})"
+category = "string"
+benign = { "1" = "3", "2" = "1", "3" = "'UTF-8'" }
+extra_rows = [["'b3JkZXJfc3RhdHVzX3VwZGF0ZV9maWVsZHM='"], ["'YWJj'"], ["'YQ=='"], ["''"], ["NULL"]]
+
+[[rule.form]]
+construct = "fn:TO_VARCHAR"
+arguments = [
+  { families = ["text"] },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+template = "TO_VARCHAR(SUBSTRING(TRY_BASE64_DECODE_BINARY({0}), {1}), {2})"
+category = "string"
+benign = { "1" = "2", "2" = "'UTF-8'" }
+extra_rows = [["'b3JkZXJfc3RhdHVzX3VwZGF0ZV9maWVsZHM='"], ["'YWJj'"], ["'YQ=='"], ["''"], ["NULL"]]
+
+[[rule]]
+id = "rule.hash"
+
+[[rule.form]]
+construct = "fn:HASH"
+arguments = [
+  { families = ["text", "integer", "boolean", "date", "variant", "null"] },
+]
+repeat = true
+# HASH values are never Snowflake's (the hash divergence); cases check that equal input hashes equal.
+template = "HASH({0}) = HASH({0})"
+category = "numeric"

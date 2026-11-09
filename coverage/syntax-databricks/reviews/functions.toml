@@ -1,0 +1,2495 @@
+# Approved reviews. Each listed form was read in full against its documentation
+# page, its obligations, its cases with their Databricks receipts, and the local parse trees. An approval holds
+# while the form's definition hash and fingerprint are unchanged; any change makes it stale until re-read.
+
+[[review]]
+id = "db-functions-001"
+family = "functions"
+parser_tree = "90f341b5c9ff2c489c0ed994f07448481f70597f"
+reviewed_utc = "2026-11-08T08:52:53Z"
+verdict = "approved"
+forms = [
+  "db.functions.abs",
+  "db.functions.acos",
+  "db.functions.acosh",
+  "db.functions.add-months",
+  "db.functions.aes-decrypt",
+  "db.functions.aes-encrypt",
+  "db.functions.agg",
+  "db.functions.aggregate",
+  "db.functions.ai-analyze-sentiment",
+  "db.functions.ai-classify",
+  "db.functions.ai-decide",
+  "db.functions.ai-detect-anomalies",
+  "db.functions.ai-enrich",
+  "db.functions.ai-extract",
+  "db.functions.ai-fix-grammar",
+  "db.functions.ai-forecast",
+  "db.functions.ai-gen",
+  "db.functions.ai-generate-text",
+  "db.functions.ai-mask",
+  "db.functions.ai-parse-document",
+  "db.functions.ai-predict-class",
+  "db.functions.ai-predict-value",
+  "db.functions.ai-prep-search",
+  "db.functions.ai-query",
+  "db.functions.ai-search",
+  "db.functions.ai-similarity",
+  "db.functions.ai-summarize",
+  "db.functions.ai-top-drivers",
+  "db.functions.ai-transcribe",
+  "db.functions.ai-translate",
+  "db.functions.ampersandsign",
+  "db.functions.and",
+  "db.functions.any",
+  "db.functions.any-value",
+  "db.functions.approx-count-distinct",
+  "db.functions.approx-percentile",
+  "db.functions.approx-top-k",
+  "db.functions.approx-top-k-accumulate",
+  "db.functions.approx-top-k-combine",
+  "db.functions.approx-top-k-estimate",
+  "db.functions.array",
+  "db.functions.array-agg",
+  "db.functions.array-append",
+  "db.functions.array-compact",
+  "db.functions.array-contains",
+  "db.functions.array-distinct",
+  "db.functions.array-except",
+  "db.functions.array-insert",
+  "db.functions.array-intersect",
+  "db.functions.array-join",
+  "db.functions.array-max",
+  "db.functions.array-min",
+  "db.functions.array-position",
+  "db.functions.array-prepend",
+  "db.functions.array-remove",
+  "db.functions.array-repeat",
+  "db.functions.array-size",
+  "db.functions.array-sort",
+  "db.functions.array-union",
+  "db.functions.arrays-overlap",
+  "db.functions.arrays-zip",
+  "db.functions.ascii",
+  "db.functions.asin",
+  "db.functions.asinh",
+  "db.functions.assert-true",
+  "db.functions.asterisksign",
+  "db.functions.atan",
+  "db.functions.atan2",
+  "db.functions.atanh",
+  "db.functions.avg",
+  "db.functions.bangeqsign",
+  "db.functions.bangsign",
+  "db.functions.base64",
+  "db.functions.between",
+  "db.functions.bigint",
+  "db.functions.bin",
+  "db.functions.binary",
+  "db.functions.bit-and",
+  "db.functions.bit-count",
+  "db.functions.bit-get",
+  "db.functions.bit-length",
+  "db.functions.bit-or",
+  "db.functions.bit-reverse",
+  "db.functions.bit-xor",
+  "db.functions.bitmap-and-agg",
+  "db.functions.bitmap-bit-position",
+  "db.functions.bitmap-bucket-number",
+  "db.functions.bitmap-construct-agg",
+  "db.functions.bitmap-count",
+  "db.functions.bitmap-or-agg",
+  "db.functions.bool-and",
+  "db.functions.bool-or",
+  "db.functions.boolean",
+  "db.functions.bracketsign",
+  "db.functions.bround",
+  "db.functions.btrim",
+  "db.functions.cardinality",
+  "db.functions.caretsign",
+  "db.functions.case.end",
+  "db.functions.case.end.syntax",
+  "db.functions.cast",
+  "db.functions.cbrt",
+  "db.functions.ceil",
+  "db.functions.ceiling",
+  "db.functions.char",
+  "db.functions.char-length",
+  "db.functions.character-length",
+  "db.functions.charindex",
+  "db.functions.chr",
+  "db.functions.classifier",
+  "db.functions.cloud-files-state",
+  "db.functions.coalesce",
+  "db.functions.collate",
+  "db.functions.collation",
+  "db.functions.collations",
+  "db.functions.collect-list",
+  "db.functions.collect-set",
+  "db.functions.coloncolonsign",
+  "db.functions.colonsign",
+  "db.functions.concat",
+  "db.functions.concat-ws",
+  "db.functions.contains",
+  "db.functions.conv",
+  "db.functions.convert-timezone",
+  "db.functions.copy-file",
+  "db.functions.corr",
+  "db.functions.cos",
+  "db.functions.cosh",
+  "db.functions.cot",
+  "db.functions.count-if",
+  "db.functions.count-min-sketch",
+  "db.functions.count.count",
+  "db.functions.count.count.syntax",
+  "db.functions.counter-diff",
+  "db.functions.covar-pop",
+  "db.functions.covar-samp",
+  "db.functions.crc32",
+  "db.functions.create-file",
+  "db.functions.csc",
+  "db.functions.cube",
+  "db.functions.cume-dist",
+  "db.functions.curdate",
+  "db.functions.current-catalog",
+  "db.functions.current-database",
+  "db.functions.current-date",
+  "db.functions.current-metastore",
+  "db.functions.current-oauth-custom-identity-claim",
+  "db.functions.current-path",
+  "db.functions.current-recipient",
+  "db.functions.current-schema",
+  "db.functions.current-snapshot-version",
+  "db.functions.current-time",
+  "db.functions.current-timestamp",
+  "db.functions.current-timezone",
+  "db.functions.current-user",
+  "db.functions.current-version",
+  "db.functions.data-skipping-summary",
+  "db.functions.date",
+  "db.functions.date-add",
+  "db.functions.date-format",
+  "db.functions.date-from-unix-date",
+  "db.functions.date-part",
+  "db.functions.date-sub",
+  "db.functions.date-trunc",
+  "db.functions.dateadd2",
+  "db.functions.datediff",
+  "db.functions.day",
+  "db.functions.dayname",
+  "db.functions.dayofmonth",
+  "db.functions.dayofweek",
+  "db.functions.dayofyear",
+  "db.functions.decimal",
+  "db.functions.decode",
+  "db.functions.decode-cs",
+  "db.functions.degrees",
+  "db.functions.dense-rank",
+  "db.functions.div",
+  "db.functions.dotsign.dot",
+  "db.functions.dotsign.dot.syntax",
+  "db.functions.double",
+  "db.functions.e",
+  "db.functions.element-at",
+  "db.functions.elt",
+  "db.functions.encode",
+  "db.functions.endswith",
+  "db.functions.eqeqsign",
+  "db.functions.eqsign",
+  "db.functions.equal-null",
+  "db.functions.event-log",
+  "db.functions.every",
+  "db.functions.exists",
+  "db.functions.exp",
+  "db.functions.explode",
+  "db.functions.explode-outer",
+  "db.functions.expm1",
+  "db.functions.extract",
+  "db.functions.factorial",
+  "db.functions.filter",
+  "db.functions.find-in-set",
+  "db.functions.first",
+  "db.functions.first-value",
+  "db.functions.flatten",
+  "db.functions.float",
+  "db.functions.floor",
+  "db.functions.forall",
+  "db.functions.format-number",
+  "db.functions.format-string",
+  "db.functions.from-avro",
+  "db.functions.from-csv",
+  "db.functions.from-json",
+  "db.functions.from-protobuf",
+  "db.functions.from-unixtime",
+  "db.functions.from-utc-timestamp",
+  "db.functions.from-xml",
+  "db.functions.get",
+  "db.functions.get-json-object",
+  "db.functions.getbit",
+  "db.functions.getdate",
+  "db.functions.greatest",
+  "db.functions.grouping",
+  "db.functions.grouping-id",
+  "db.functions.gteqsign",
+  "db.functions.gtgtgtsign",
+  "db.functions.gtgtsign",
+  "db.functions.gtsign",
+  "db.functions.h3-boundaryasgeojson",
+  "db.functions.h3-boundaryaswkb",
+  "db.functions.h3-boundaryaswkt",
+  "db.functions.h3-centerasgeojson",
+  "db.functions.h3-centeraswkb",
+  "db.functions.h3-centeraswkt",
+  "db.functions.h3-compact",
+  "db.functions.h3-coverash3",
+  "db.functions.h3-coverash3string",
+  "db.functions.h3-distance",
+  "db.functions.h3-h3tostring",
+  "db.functions.h3-hexring",
+  "db.functions.h3-ischildof",
+  "db.functions.h3-ispentagon",
+  "db.functions.h3-isvalid",
+  "db.functions.h3-kring",
+  "db.functions.h3-kringdistances",
+  "db.functions.h3-longlatash3",
+  "db.functions.h3-longlatash3string",
+  "db.functions.h3-maxchild",
+  "db.functions.h3-minchild",
+  "db.functions.h3-pointash3",
+  "db.functions.h3-pointash3string",
+  "db.functions.h3-polyfillash3",
+  "db.functions.h3-polyfillash3string",
+  "db.functions.h3-resolution",
+  "db.functions.h3-stringtoh3",
+  "db.functions.h3-tessellateaswkb",
+  "db.functions.h3-tochildren",
+  "db.functions.h3-toparent",
+  "db.functions.h3-try-coverash3",
+  "db.functions.h3-try-coverash3string",
+  "db.functions.h3-try-distance",
+  "db.functions.h3-try-polyfillash3",
+  "db.functions.h3-try-polyfillash3string",
+  "db.functions.h3-try-tessellateaswkb",
+  "db.functions.h3-try-validate",
+  "db.functions.h3-uncompact",
+  "db.functions.h3-validate",
+  "db.functions.hash",
+  "db.functions.hex",
+  "db.functions.histogram-numeric",
+  "db.functions.hll-sketch-agg",
+  "db.functions.hll-sketch-estimate",
+  "db.functions.hll-union",
+  "db.functions.hll-union-agg",
+  "db.functions.hmac",
+  "db.functions.hour",
+  "db.functions.http-request",
+  "db.functions.hypot",
+  "db.functions.if",
+  "db.functions.iff",
+  "db.functions.ifnull",
+  "db.functions.ilike.ilike-any-some-all",
+  "db.functions.in.in",
+  "db.functions.in.in-2",
+  "db.functions.in.in.syntax",
+  "db.functions.initcap",
+  "db.functions.inline",
+  "db.functions.inline-outer",
+  "db.functions.input-file-block-length",
+  "db.functions.input-file-block-start",
+  "db.functions.input-file-name",
+  "db.functions.instr",
+  "db.functions.int",
+  "db.functions.ip-as-binary",
+  "db.functions.ip-as-string",
+  "db.functions.ip-cidr",
+  "db.functions.ip-cidr-contains",
+  "db.functions.ip-host",
+  "db.functions.ip-network",
+  "db.functions.ip-network-first",
+  "db.functions.ip-network-last",
+  "db.functions.ip-prefix-length",
+  "db.functions.ip-version",
+  "db.functions.is-account-group-member",
+  "db.functions.is-member",
+  "db.functions.is-valid-utf8",
+  "db.functions.is-variant-null",
+  "db.functions.isdistinct",
+  "db.functions.isearch",
+  "db.functions.isfalse",
+  "db.functions.isnan",
+  "db.functions.isnotnull",
+  "db.functions.isnull",
+  "db.functions.isnullop",
+  "db.functions.istrue",
+  "db.functions.jaro-winkler-similarity",
+  "db.functions.java-method",
+  "db.functions.json-array-length",
+  "db.functions.json-object-keys",
+  "db.functions.json-tuple",
+  "db.functions.kll-merge-agg-bigint",
+  "db.functions.kll-merge-agg-double",
+  "db.functions.kll-merge-agg-float",
+  "db.functions.kll-sketch-agg-bigint",
+  "db.functions.kll-sketch-agg-double",
+  "db.functions.kll-sketch-agg-float",
+  "db.functions.kll-sketch-get-n-bigint",
+  "db.functions.kll-sketch-get-n-double",
+  "db.functions.kll-sketch-get-n-float",
+  "db.functions.kll-sketch-get-quantile-bigint",
+  "db.functions.kll-sketch-get-quantile-double",
+  "db.functions.kll-sketch-get-quantile-float",
+  "db.functions.kll-sketch-get-rank-bigint",
+  "db.functions.kll-sketch-get-rank-double",
+  "db.functions.kll-sketch-get-rank-float",
+  "db.functions.kll-sketch-merge-bigint",
+  "db.functions.kll-sketch-merge-double",
+  "db.functions.kll-sketch-merge-float",
+  "db.functions.kll-sketch-to-string-bigint",
+  "db.functions.kll-sketch-to-string-double",
+  "db.functions.kll-sketch-to-string-float",
+  "db.functions.kurtosis",
+  "db.functions.lag",
+  "db.functions.last",
+  "db.functions.last-day",
+  "db.functions.last-snapshot-version",
+  "db.functions.last-value",
+  "db.functions.lcase",
+  "db.functions.lead",
+  "db.functions.least",
+  "db.functions.left",
+  "db.functions.len",
+  "db.functions.length",
+  "db.functions.levenshtein",
+  "db.functions.like.like-any-some-all",
+  "db.functions.list-files",
+  "db.functions.list-secrets",
+  "db.functions.listagg",
+  "db.functions.ln",
+  "db.functions.localtime",
+  "db.functions.localtimestamp",
+  "db.functions.locate",
+  "db.functions.log",
+  "db.functions.log10",
+  "db.functions.log1p",
+  "db.functions.log2",
+  "db.functions.lower",
+  "db.functions.lpad",
+  "db.functions.lteqgtsign",
+  "db.functions.lteqsign",
+  "db.functions.ltgtsign",
+  "db.functions.ltltsign",
+  "db.functions.ltrim",
+  "db.functions.ltsign",
+  "db.functions.luhn-check",
+  "db.functions.make-date",
+  "db.functions.make-dt-interval",
+  "db.functions.make-interval",
+  "db.functions.make-time",
+  "db.functions.make-timestamp",
+  "db.functions.make-timestamp-ltz",
+  "db.functions.make-timestamp-ntz",
+  "db.functions.make-valid-utf8",
+  "db.functions.make-ym-interval",
+  "db.functions.map",
+  "db.functions.map-concat",
+  "db.functions.map-contains-key",
+  "db.functions.map-entries",
+  "db.functions.map-filter",
+  "db.functions.map-from-arrays",
+  "db.functions.map-from-entries",
+  "db.functions.map-keys",
+  "db.functions.map-values",
+  "db.functions.map-zip-with",
+  "db.functions.mask",
+  "db.functions.match-number",
+  "db.functions.match-recognize-first",
+  "db.functions.match-recognize-last",
+  "db.functions.match-recognize-next",
+  "db.functions.match-recognize-prev",
+  "db.functions.max",
+  "db.functions.max-by.max-by",
+  "db.functions.max-by.max-by.syntax",
+  "db.functions.md5",
+  "db.functions.mean",
+  "db.functions.measure",
+  "db.functions.median",
+  "db.functions.min",
+  "db.functions.min-by.min-by",
+  "db.functions.min-by.min-by.syntax",
+  "db.functions.minussign",
+  "db.functions.minussignunary",
+  "db.functions.minute",
+  "db.functions.mod",
+  "db.functions.mode",
+  "db.functions.monotonically-increasing-id",
+  "db.functions.month",
+  "db.functions.monthname",
+  "db.functions.months-between",
+  "db.functions.named-struct",
+  "db.functions.nanvl",
+  "db.functions.negative",
+  "db.functions.next-day",
+  "db.functions.now",
+  "db.functions.nth-value",
+  "db.functions.ntile",
+  "db.functions.nullif",
+  "db.functions.nullifzero",
+  "db.functions.nvl",
+  "db.functions.nvl2",
+  "db.functions.octet-length",
+  "db.functions.or",
+  "db.functions.overlay.overlay",
+  "db.functions.overlay.overlay-placing-from",
+  "db.functions.parse-json",
+  "db.functions.parse-timestamp",
+  "db.functions.parse-url",
+  "db.functions.percent-rank",
+  "db.functions.percentile",
+  "db.functions.percentile-approx",
+  "db.functions.percentile-cont",
+  "db.functions.percentile-disc",
+  "db.functions.percentsign",
+  "db.functions.pi",
+  "db.functions.pipepipesign",
+  "db.functions.pipesign.syntax",
+  "db.functions.pipesign.syntax.syntax",
+  "db.functions.plussign",
+  "db.functions.plussignunary",
+  "db.functions.pmod",
+  "db.functions.posexplode",
+  "db.functions.posexplode-outer",
+  "db.functions.position.position",
+  "db.functions.position.position-in",
+  "db.functions.positive",
+  "db.functions.pow",
+  "db.functions.power",
+  "db.functions.printf",
+  "db.functions.quarter",
+  "db.functions.questiondoublecolonsign",
+  "db.functions.radians",
+  "db.functions.raise-error",
+  "db.functions.rand",
+  "db.functions.randn",
+  "db.functions.random",
+  "db.functions.randstr",
+  "db.functions.range",
+  "db.functions.rank",
+  "db.functions.read-files",
+  "db.functions.read-kafka",
+  "db.functions.read-kinesis",
+  "db.functions.read-pubsub",
+  "db.functions.read-pulsar",
+  "db.functions.read-state-metadata",
+  "db.functions.read-statestore",
+  "db.functions.reduce",
+  "db.functions.reflect",
+  "db.functions.regexp",
+  "db.functions.regexp-count",
+  "db.functions.regexp-extract",
+  "db.functions.regexp-extract-all",
+  "db.functions.regexp-instr",
+  "db.functions.regexp-like",
+  "db.functions.regexp-replace",
+  "db.functions.regexp-substr",
+  "db.functions.regr-avgx",
+  "db.functions.regr-avgy",
+  "db.functions.regr-count",
+  "db.functions.regr-intercept",
+  "db.functions.regr-r2",
+  "db.functions.regr-slope",
+  "db.functions.regr-sxx",
+  "db.functions.regr-sxy",
+  "db.functions.regr-syy",
+  "db.functions.remote-query",
+  "db.functions.repeat",
+  "db.functions.replace",
+  "db.functions.reverse",
+  "db.functions.right",
+  "db.functions.rint",
+  "db.functions.rlike",
+  "db.functions.round",
+  "db.functions.row-number",
+  "db.functions.rpad",
+  "db.functions.rtrim",
+  "db.functions.schema-of-avro",
+  "db.functions.schema-of-csv",
+  "db.functions.schema-of-json",
+  "db.functions.schema-of-json-agg",
+  "db.functions.schema-of-variant",
+  "db.functions.schema-of-variant-agg",
+  "db.functions.schema-of-xml",
+  "db.functions.search",
+  "db.functions.sec",
+  "db.functions.second",
+  "db.functions.secret",
+  "db.functions.sentences",
+  "db.functions.sequence",
+  "db.functions.session-user",
+  "db.functions.session-window",
+  "db.functions.sha",
+  "db.functions.sha1",
+  "db.functions.sha2",
+  "db.functions.shiftleft",
+  "db.functions.shiftright",
+  "db.functions.shiftrightunsigned",
+  "db.functions.shuffle",
+  "db.functions.sign",
+  "db.functions.signum",
+  "db.functions.sin",
+  "db.functions.sinh",
+  "db.functions.size",
+  "db.functions.skewness",
+  "db.functions.slashsign",
+  "db.functions.slice",
+  "db.functions.smallint",
+  "db.functions.some",
+  "db.functions.sort-array",
+  "db.functions.soundex",
+  "db.functions.space",
+  "db.functions.spark-partition",
+  "db.functions.split",
+  "db.functions.split-part",
+  "db.functions.sql-keywords",
+  "db.functions.sqrt",
+  "db.functions.st-addpoint",
+  "db.functions.st-area",
+  "db.functions.st-asbinary",
+  "db.functions.st-asewkb",
+  "db.functions.st-asewkt",
+  "db.functions.st-asgeojson",
+  "db.functions.st-astext",
+  "db.functions.st-aswkb",
+  "db.functions.st-aswkt",
+  "db.functions.st-azimuth",
+  "db.functions.st-boundary",
+  "db.functions.st-buffer",
+  "db.functions.st-centroid",
+  "db.functions.st-closestpoint",
+  "db.functions.st-collect",
+  "db.functions.st-concavehull",
+  "db.functions.st-contains",
+  "db.functions.st-convexhull",
+  "db.functions.st-covers",
+  "db.functions.st-difference",
+  "db.functions.st-dimension",
+  "db.functions.st-disjoint",
+  "db.functions.st-distance",
+  "db.functions.st-distancesphere",
+  "db.functions.st-distancespheroid",
+  "db.functions.st-dump",
+  "db.functions.st-dwithin",
+  "db.functions.st-endpoint",
+  "db.functions.st-envelope",
+  "db.functions.st-envelope-agg",
+  "db.functions.st-equals",
+  "db.functions.st-estimatesrid",
+  "db.functions.st-exteriorring",
+  "db.functions.st-flipcoordinates",
+  "db.functions.st-force2d",
+  "db.functions.st-geogfromewkt",
+  "db.functions.st-geogfromgeojson",
+  "db.functions.st-geogfromtext",
+  "db.functions.st-geogfromwkb",
+  "db.functions.st-geogfromwkt",
+  "db.functions.st-geohash",
+  "db.functions.st-geometryn",
+  "db.functions.st-geometrytype",
+  "db.functions.st-geomfromewkb",
+  "db.functions.st-geomfromewkt",
+  "db.functions.st-geomfromgeohash",
+  "db.functions.st-geomfromgeojson",
+  "db.functions.st-geomfromtext",
+  "db.functions.st-geomfromwkb",
+  "db.functions.st-geomfromwkt",
+  "db.functions.st-interiorringn",
+  "db.functions.st-intersection",
+  "db.functions.st-intersects",
+  "db.functions.st-isempty",
+  "db.functions.st-isvalid",
+  "db.functions.st-length",
+  "db.functions.st-m",
+  "db.functions.st-makeenvelope",
+  "db.functions.st-makeline",
+  "db.functions.st-makepoint",
+  "db.functions.st-makepolygon",
+  "db.functions.st-multi",
+  "db.functions.st-ndims",
+  "db.functions.st-npoints",
+  "db.functions.st-nrings",
+  "db.functions.st-numgeometries",
+  "db.functions.st-numinteriorrings",
+  "db.functions.st-numpoints",
+  "db.functions.st-perimeter",
+  "db.functions.st-point",
+  "db.functions.st-pointfromgeohash",
+  "db.functions.st-pointn",
+  "db.functions.st-pointonsurface",
+  "db.functions.st-removepoint",
+  "db.functions.st-reverse",
+  "db.functions.st-rotate",
+  "db.functions.st-scale",
+  "db.functions.st-setpoint",
+  "db.functions.st-setsrid",
+  "db.functions.st-simplify",
+  "db.functions.st-srid",
+  "db.functions.st-startpoint",
+  "db.functions.st-touches",
+  "db.functions.st-transform",
+  "db.functions.st-translate",
+  "db.functions.st-union",
+  "db.functions.st-union-agg",
+  "db.functions.st-within",
+  "db.functions.st-x",
+  "db.functions.st-xmax",
+  "db.functions.st-xmin",
+  "db.functions.st-y",
+  "db.functions.st-ymax",
+  "db.functions.st-ymin",
+  "db.functions.st-z",
+  "db.functions.st-zmax",
+  "db.functions.st-zmin",
+  "db.functions.stack",
+  "db.functions.startswith",
+  "db.functions.std",
+  "db.functions.stddev",
+  "db.functions.stddev-pop",
+  "db.functions.stddev-samp",
+  "db.functions.str-to-map",
+  "db.functions.string",
+  "db.functions.string-agg",
+  "db.functions.struct",
+  "db.functions.substr.substr",
+  "db.functions.substr.substr-from",
+  "db.functions.substring-index",
+  "db.functions.substring.substring",
+  "db.functions.substring.substring-from",
+  "db.functions.sum",
+  "db.functions.table-changes",
+  "db.functions.tan",
+  "db.functions.tanh",
+  "db.functions.theta-difference",
+  "db.functions.theta-intersection",
+  "db.functions.theta-intersection-agg",
+  "db.functions.theta-sketch-agg",
+  "db.functions.theta-sketch-estimate",
+  "db.functions.theta-union",
+  "db.functions.theta-union-agg",
+  "db.functions.tildesign",
+  "db.functions.time",
+  "db.functions.time-bucket",
+  "db.functions.time-from-micros",
+  "db.functions.time-from-millis",
+  "db.functions.time-from-seconds",
+  "db.functions.time-to-micros",
+  "db.functions.time-to-millis",
+  "db.functions.time-to-seconds",
+  "db.functions.time-trunc",
+  "db.functions.timestamp",
+  "db.functions.timestamp-micros",
+  "db.functions.timestamp-millis",
+  "db.functions.timestamp-nanos",
+  "db.functions.timestamp-seconds",
+  "db.functions.tinyint",
+  "db.functions.to-avro",
+  "db.functions.to-binary",
+  "db.functions.to-char",
+  "db.functions.to-csv",
+  "db.functions.to-date",
+  "db.functions.to-file",
+  "db.functions.to-geography",
+  "db.functions.to-geometry",
+  "db.functions.to-json",
+  "db.functions.to-number",
+  "db.functions.to-protobuf",
+  "db.functions.to-time",
+  "db.functions.to-timestamp",
+  "db.functions.to-timestamp-ltz",
+  "db.functions.to-timestamp-ntz",
+  "db.functions.to-unix-timestamp",
+  "db.functions.to-utc-timestamp",
+  "db.functions.to-varchar",
+  "db.functions.to-variant-object",
+  "db.functions.to-xml",
+  "db.functions.transform",
+  "db.functions.transform-keys",
+  "db.functions.transform-values",
+  "db.functions.translate",
+  "db.functions.trim.trim",
+  "db.functions.trim.trim-both-from",
+  "db.functions.trim.trim-both-from.syntax",
+  "db.functions.trim.trim-from",
+  "db.functions.trim.trim-leading-from",
+  "db.functions.trim.trim-leading-from.syntax",
+  "db.functions.trim.trim-trailing-from",
+  "db.functions.trim.trim-trailing-from.syntax",
+  "db.functions.trunc",
+  "db.functions.try-add",
+  "db.functions.try-aes-decrypt",
+  "db.functions.try-avg",
+  "db.functions.try-cast",
+  "db.functions.try-copy-file",
+  "db.functions.try-divide",
+  "db.functions.try-element-at",
+  "db.functions.try-ip-as-binary",
+  "db.functions.try-ip-as-string",
+  "db.functions.try-ip-cidr",
+  "db.functions.try-ip-host",
+  "db.functions.try-make-interval",
+  "db.functions.try-make-timestamp",
+  "db.functions.try-make-timestamp-ltz",
+  "db.functions.try-make-timestamp-ntz",
+  "db.functions.try-mod",
+  "db.functions.try-multiply",
+  "db.functions.try-parse-json",
+  "db.functions.try-parse-timestamp",
+  "db.functions.try-reflect",
+  "db.functions.try-secret",
+  "db.functions.try-subtract",
+  "db.functions.try-sum",
+  "db.functions.try-to-binary",
+  "db.functions.try-to-date",
+  "db.functions.try-to-file",
+  "db.functions.try-to-geography",
+  "db.functions.try-to-geometry",
+  "db.functions.try-to-number",
+  "db.functions.try-to-time",
+  "db.functions.try-to-timestamp",
+  "db.functions.try-url-decode",
+  "db.functions.try-validate-utf8",
+  "db.functions.try-variant-get",
+  "db.functions.try-zstd-decompress",
+  "db.functions.tuple-difference-double",
+  "db.functions.tuple-difference-integer",
+  "db.functions.tuple-difference-theta-double",
+  "db.functions.tuple-difference-theta-integer",
+  "db.functions.tuple-intersection-agg-double",
+  "db.functions.tuple-intersection-agg-integer",
+  "db.functions.tuple-intersection-double",
+  "db.functions.tuple-intersection-integer",
+  "db.functions.tuple-intersection-theta-double",
+  "db.functions.tuple-intersection-theta-integer",
+  "db.functions.tuple-sketch-agg-double",
+  "db.functions.tuple-sketch-agg-integer",
+  "db.functions.tuple-sketch-estimate-double",
+  "db.functions.tuple-sketch-estimate-integer",
+  "db.functions.tuple-sketch-summary-double",
+  "db.functions.tuple-sketch-summary-integer",
+  "db.functions.tuple-sketch-theta-double",
+  "db.functions.tuple-sketch-theta-integer",
+  "db.functions.tuple-union-agg-double",
+  "db.functions.tuple-union-agg-integer",
+  "db.functions.tuple-union-double",
+  "db.functions.tuple-union-integer",
+  "db.functions.tuple-union-theta-double",
+  "db.functions.tuple-union-theta-integer",
+  "db.functions.typeof",
+  "db.functions.ucase",
+  "db.functions.unbase64",
+  "db.functions.unhex",
+  "db.functions.uniform",
+  "db.functions.unix-date",
+  "db.functions.unix-micros",
+  "db.functions.unix-millis",
+  "db.functions.unix-nanos",
+  "db.functions.unix-seconds",
+  "db.functions.unix-timestamp",
+  "db.functions.upper",
+  "db.functions.url-decode",
+  "db.functions.url-encode",
+  "db.functions.user",
+  "db.functions.uuid",
+  "db.functions.validate-utf8",
+  "db.functions.var-pop",
+  "db.functions.var-samp",
+  "db.functions.variance",
+  "db.functions.variant-explode",
+  "db.functions.variant-explode-outer",
+  "db.functions.variant-get",
+  "db.functions.vector-avg",
+  "db.functions.vector-cosine-similarity",
+  "db.functions.vector-inner-product",
+  "db.functions.vector-l2-distance",
+  "db.functions.vector-norm",
+  "db.functions.vector-normalize",
+  "db.functions.vector-search.vector-search",
+  "db.functions.vector-search.vector-search-2",
+  "db.functions.vector-sum",
+  "db.functions.version",
+  "db.functions.weekday",
+  "db.functions.weekofyear",
+  "db.functions.width-bucket",
+  "db.functions.window",
+  "db.functions.window-time",
+  "db.functions.xpath",
+  "db.functions.xpath-boolean",
+  "db.functions.xpath-double",
+  "db.functions.xpath-float",
+  "db.functions.xpath-int",
+  "db.functions.xpath-long",
+  "db.functions.xpath-number",
+  "db.functions.xpath-short",
+  "db.functions.xpath-string",
+  "db.functions.xxhash64",
+  "db.functions.year",
+  "db.functions.zeroifnull",
+  "db.functions.zip-with",
+  "db.functions.zstd-compress",
+  "db.functions.zstd-decompress",
+]
+note = "Read against the pinned Databricks documentation pages and the Spark 4.2 SqlBaseParser grammar, the obligations, the cases with their Databricks receipts and repeats, and the parse trees of the strict parser; every case was parsed by an independent build of the parser and every scored case agrees with its receipt."
+
+[review.fingerprints]
+"db.functions.abs" = "7ba844ac07d6bfd3b75df34328e745342712ba325ba098044a8587bafc19ec45"
+"db.functions.acos" = "4458293306799e0279c8ec8012a5f6542c3f1e5fa316852536fa7cf41aae8dac"
+"db.functions.acosh" = "c30b3b46d8b2d5260d861fd27ef74eda5e6673fcfe8ad977eba849cbfef4802f"
+"db.functions.add-months" = "e72ccb71de65ed2b277356b7727676da1c6b24e5b5003c4168e73bc702f3a997"
+"db.functions.aes-decrypt" = "8000fc2777ca92bf793018cc211756fc01e8cdcc9e014e266cfd494d4a87ace7"
+"db.functions.aes-encrypt" = "462a4342bcfd8e06bad60afebedd6c768125e333e8643f6d422002f2cd082392"
+"db.functions.agg" = "dd03afbe0f8512d97471b9abea228a990c36982161cd5c1da619259ab8420298"
+"db.functions.aggregate" = "7dbe44a5258d5b1f6047eafffa9a35bef42fc5c9e8ac396d1f57d253cb72c47c"
+"db.functions.ai-analyze-sentiment" = "fb698cdda84b59eaa669ddbed7dd07bd0f42bb5e79e8048f7626763e5fafe684"
+"db.functions.ai-classify" = "0074cf45872eb2b7fad860fd843fe750dd57c26e8a1417cb7efcdaa3386e5e26"
+"db.functions.ai-decide" = "67d3c27bc93dc7055bdc860bb239aaed8af8f3dca891981acbc605244da99f25"
+"db.functions.ai-detect-anomalies" = "7bafb85c720fc1c9f1ba9f7df4d899b7e6c36b5c41722487dc9ce3ffdccee958"
+"db.functions.ai-enrich" = "6561742ed3759e634039419c47ce3cccd7c4642b6403f7d184fd06eefc78aecd"
+"db.functions.ai-extract" = "f92d98482dbfb083a8a5bf9a8b7a15cf3658bf356f17b226e6f8f9921f6b4a79"
+"db.functions.ai-fix-grammar" = "997fbd80b549bd765e2952f27e4bdda69173167cb97304ffba15bef4663bdc66"
+"db.functions.ai-forecast" = "491e46d21dd34ed05c72e0688172fc3361c5927b74fc2be1f0532d9569fe7383"
+"db.functions.ai-gen" = "701a6c57c41a54c2e448a8c39f903a077c698fee0200eb57478bcd7f8859e685"
+"db.functions.ai-generate-text" = "987545f4eef5405126baedad3028eed8102eba4aa9d65923e7add49d446be7ee"
+"db.functions.ai-mask" = "7a27f75d26adb2c96df221a0195e9f97cea84cbea78cd2d5befe16eb3e8572ad"
+"db.functions.ai-parse-document" = "1c13bcf2327904c9dc201a1fbc7905803addf55fc0e02facb2acb52c77c21dd5"
+"db.functions.ai-predict-class" = "0f47b636d4c12e6d18b2a6f3836dfcee3033b0b6670281b29ced889195ffefb2"
+"db.functions.ai-predict-value" = "4907acf75964af7a3115ac51f79f8164ad8927f56b7de318e34cdbef67b20fde"
+"db.functions.ai-prep-search" = "7fe98d54510e69a7c6a8e98ef7a08f28942a2e3f66df7c4ae5884915dc0c5679"
+"db.functions.ai-query" = "73d02f4bdd83a65f7bb8926b2166a2ae2e8fe593cbf646670ea489a7e4984f4a"
+"db.functions.ai-search" = "97437c20665afa79230dc30e57e64384fa5ae123e203e94a426dd6584d9c93ec"
+"db.functions.ai-similarity" = "9ef61e40337b73a9d4d5c74c219c7e5692a63c3ec6f996d5973e74c819b5837f"
+"db.functions.ai-summarize" = "6c4c343bf9f6bc42ec4cbcf89744b485cd59d2c2afdf3923ca9deeacbde52c32"
+"db.functions.ai-top-drivers" = "acdd2cdc8567da79f4b48a4a08fb794b786e61830d03bc97ae910fb6d9f12714"
+"db.functions.ai-transcribe" = "9d29f7b1bbcc2d7a2bd597c194c7299d2b37e35b72ee95f3a3894292e27bcdb6"
+"db.functions.ai-translate" = "4301490d03f80e916a3a795755c4ca950d8f366df6cb684b566edac8dfac1fce"
+"db.functions.ampersandsign" = "e53464ffda5c1b84f029dd8ead06d18b8ad46217c49b592999668cf46af6e0d7"
+"db.functions.and" = "e72efb4f9bcc17b5666b046c0c40d17bb6903efe61637109d8982ff919c3a2f9"
+"db.functions.any" = "68af30aceeff0398f70898a639def33fd1f8cac1443315f18f8a93d2691a850b"
+"db.functions.any-value" = "27a43c073046ed3a36148474d044db20e138abc7fe91f5a708d91a674f3959fa"
+"db.functions.approx-count-distinct" = "ba6c1476582200f6fc239578104f29430dce0a4f71cbc1a06e8a886aadf09347"
+"db.functions.approx-percentile" = "c9ce438ab2639aeb7bd40021e7dd7b49a1fcc92dc9c3168a821c9a2fa8c2d346"
+"db.functions.approx-top-k" = "e344b0b448f5f05186b3292399dde44c99de32ca5b13cd0798d621d1fd13d3b1"
+"db.functions.approx-top-k-accumulate" = "e789786174c66575d608b1cc2e76b80387fe4af74afef6d9e68fc476ff785786"
+"db.functions.approx-top-k-combine" = "ecba3fed9351fc08854ca896361c41af1e5172b63348d870c3f3f364821c4e99"
+"db.functions.approx-top-k-estimate" = "f142be4c5ac2b05fbe757a1da1200ec7677e84d6b4964e9aaa031ca43bcd2070"
+"db.functions.array" = "c012d3f427232c2c086e573dcc88970219797526ad503647b1987d168488a6a0"
+"db.functions.array-agg" = "9ce35eeceb70cc16a385a987a49f3ac6b313cacd792993613d3a51ca12c40594"
+"db.functions.array-append" = "55ef7c93da75494e6ce4ff9f9c61a42e3003bce50b77dfc5a0ebaa97a1a7609e"
+"db.functions.array-compact" = "2ef9108fea554a5f05080dffe0387d9aec98546afdf40c25299d259424566f6d"
+"db.functions.array-contains" = "74478935ad6d914bfa698cbf699e6f0e1f21fac3154c8bb20096dde0de400a70"
+"db.functions.array-distinct" = "9dabb9dae3f875027f6a32803415f7dfd5a294e1e7b155dd0e0fda1db83e613b"
+"db.functions.array-except" = "3db1658b0b99b10445c3c7481ea00e2073569d74c713f4295f4fdf2bffe51969"
+"db.functions.array-insert" = "f493d8d8f8d8db332370ae5017d0edf74e4e8ad01c883f6584e94394c851d428"
+"db.functions.array-intersect" = "3b08353b6f5b021838e0e58d3f67463bee88e84aff39772d8310e0933b01809d"
+"db.functions.array-join" = "d94ac718ef6ecde43ebe442b35f36a6a4f0cbe6f0fe830b7bfd7c436244e172a"
+"db.functions.array-max" = "7911167590e41cab319aee324ed6f26a3dc9fee77e0a3254fcf2ce29ea8c4be8"
+"db.functions.array-min" = "125c9938600bb01c8b8c52603f7f4e7702d13f06f8e1003b7cc35365acd8cda2"
+"db.functions.array-position" = "8318638ab9807ba2aaca16dd5e17d86b378679e7109749160af8c3f25060a572"
+"db.functions.array-prepend" = "44b99cb63ec8d0333bfe79627d2be1532458189bde02c3b9199368e1c36720f5"
+"db.functions.array-remove" = "5c594b1d980b01d3ffc3da569b878259172c7c85bb337c16ee0aec8ae00bcdb1"
+"db.functions.array-repeat" = "022bf43f878db9104c850a2ef754cbced4637c33b3d4676323cd03d83e606826"
+"db.functions.array-size" = "6d3a34defeb88211686e3d7404b1eb8c0511e4477e3899735faee0c703d64090"
+"db.functions.array-sort" = "3f70b0c07db04b3ff40200e41908aeb8ee34c5d4753950344011715dafba0867"
+"db.functions.array-union" = "5fc5a139782c6f6b82975967440c2b0f12caa17fac4b2f854432dbdd91ae1037"
+"db.functions.arrays-overlap" = "5058b50a5e3fb5898f37af609737a0be63e5b2d819d52717359a4b879fc439e2"
+"db.functions.arrays-zip" = "8c2d2d189e693c90b340411aa4e7ed634a50569a90c01716242f832f90726b5c"
+"db.functions.ascii" = "bb70e14d7e664ad7b7eebdb9ca25f614a81f4d436a5502f8d190dfef119ba37e"
+"db.functions.asin" = "a3400f2da0dd5440089741da3605ff79e7ba028d03a182981128f33246945e25"
+"db.functions.asinh" = "6d504244bf6523a4477370eb48453b64b7c3322db48110e1bfc448ffb4d51eb7"
+"db.functions.assert-true" = "acec3bbb8e8a2b398fcc455b09cab1a406d59d4907e252a003d4f29e31161110"
+"db.functions.asterisksign" = "ef69e4a1014ce48b8e45cb9702946cee85a32aab908a7e14cbc88ece8deb0ebe"
+"db.functions.atan" = "f001dc71daf68702cbaf2bc1ba9bba22c8fd2e57af4377639bfd1b0dbe2dee98"
+"db.functions.atan2" = "bc566b6b71e4f28790cf357b89164a4d8ae59e54aae289baad7230b8fe38ac02"
+"db.functions.atanh" = "a9649a451962980d16de8347806e9eff88867df9c82bd7677c4b9ee43941da6b"
+"db.functions.avg" = "656b81a65c988423ecae440a9ab8143f6d923db1c58d85593857c29f29be4f08"
+"db.functions.bangeqsign" = "1627ba31d980eca551af069d69818ed5ac228c8947cca4803597aba435df1b81"
+"db.functions.bangsign" = "c74fd51995152e13e7ccd0aa726b4279463bdee7489a6a4f456ca38b4c863852"
+"db.functions.base64" = "7daad060cccd5f26533b97ed8ffc9acbd5c29ddc20d2c8772c8dd8e35b8fc258"
+"db.functions.between" = "588db654a4505671584d614539ae7099dacee10f937ee70312ab8c8884064149"
+"db.functions.bigint" = "28ccc1abcab3ca6e602ccb6995a15ed202ced27c1b82a192c9cc0d09f1058214"
+"db.functions.bin" = "bd008bed80de176e7594fc3f3d2fb3d2d9141bad7feaf2f7eb8c305e8a1e227f"
+"db.functions.binary" = "1c817b2f3f99c93c4d07403fac4df97535fef65cc3193cc27277f5283d969e2b"
+"db.functions.bit-and" = "2f783ce96904899fd0b03668553ae1a5ef36269c3e6a54d95c55e48f32b95d00"
+"db.functions.bit-count" = "fecdd88f648d86c060e333e8f1074f6b40c8e2a21a9a3ecb4c6e6ea1dccdcc07"
+"db.functions.bit-get" = "224bbc80599fc1597d2694358ae7e0b2a781275e66d217312c2e9cf0d0e14296"
+"db.functions.bit-length" = "59ffb642a6ae2f70eb22ab08330babb704b31020d3277035effde82170ca8369"
+"db.functions.bit-or" = "794c84cdf3d4050844f4d6ecb7fb164b0a896ee2fe377daf4607dc623cf5c86a"
+"db.functions.bit-reverse" = "351d2372637c921f5f10457e8c498158c4c033ebee3f11199f275d8c540dee6f"
+"db.functions.bit-xor" = "3e82793498bb6c07e4e0020e6a7d85769ba7dea784e75581979057c211a8498d"
+"db.functions.bitmap-and-agg" = "a8dd75b5351b4262ba20951eac0f66a73b76c3cb9c068983c905ca78323feab2"
+"db.functions.bitmap-bit-position" = "267aefc160b6cd6ea3f3dca85e921bd6642f5bbdfc54bf7ad353543235dfed44"
+"db.functions.bitmap-bucket-number" = "dbf3e6aeb44ce136be84d823c2e2ace3c7b26eb0c9f7276f79348c5a84ad0c8b"
+"db.functions.bitmap-construct-agg" = "11eb434a65f3c5b38019a473e9f91b4548f817dd134d5ca7fc8d6e16442df81c"
+"db.functions.bitmap-count" = "15435aca486b35de98f06143aa11565083316414e8b487f23cc44c85064173f0"
+"db.functions.bitmap-or-agg" = "0ba02b5db69e5b4d3de8610a9ff695b0f50201fa9005926461baecde671e220f"
+"db.functions.bool-and" = "94aa95d2e1407d1dc6ff5bebfab861c1188d315ddbfc85b85e2ffd084f1a607b"
+"db.functions.bool-or" = "2eb65081dd3495c468fef51a016992c66460486bda5c0fe89fdc4bdf7a588a7c"
+"db.functions.boolean" = "9df8683c827342a1e37f3f4a466f256e220dcbc88a3fd61bc3fc7122e9c54f02"
+"db.functions.bracketsign" = "9fac62d983b56a65d39080f1c0523046cc27daf6342dbd6207b41d3131debb76"
+"db.functions.bround" = "393ed560f25748d244ad6d453a8284e6eef43d5d2ceb9ee1d56828aa7489fb2a"
+"db.functions.btrim" = "470b06113f9ee04bbeada8c3293a7d5e481435edc1558820a72475ccabcc98eb"
+"db.functions.cardinality" = "7810da34c256cdce73f894e676cffac7735f7c042d9b56a438150a76c9da680f"
+"db.functions.caretsign" = "eb089f38cd8276c6c9521503508a8da4e7c26759387aede4ca05af99578ff6d4"
+"db.functions.case.end" = "21e116f70cf0258cd1e0fe7fe6199c6d48ab27b195fdd1d33efa8baa86bb1c94"
+"db.functions.case.end.syntax" = "cd6c887b7351e8a42adb8e385874abc8a195f9648eaf4dd6e2e2377708e0cf9b"
+"db.functions.cast" = "7082867a51e84975f8a81978e598bcc6e3501836139710fde2ba1cfbfc7b6259"
+"db.functions.cbrt" = "f05d9bd54fe31d353eda416f6b1af4ddc85f41b464d266919cf5ac86495790b7"
+"db.functions.ceil" = "803281016142a24e6c32c1d4ab53a8c574c04ccb48a4de96219333e2bd76f355"
+"db.functions.ceiling" = "9df6455eea450989c145a879015d5b1267e1fde1570fdb924b7166029500b415"
+"db.functions.char" = "ed43fb9dfac55cc58a0c897965f08a7bed9e1e9d1173dcf32c8642606e3fa06a"
+"db.functions.char-length" = "4430fe1d675f3b7fe194de57a81fcc08a7adc94992a7f451c100f4e320ce893d"
+"db.functions.character-length" = "07ae876d85e342dc8bfab1a44aa4b8b165717211ab75c97842a4ab8803161fce"
+"db.functions.charindex" = "87ba013266804be80ed0f415654d3aaeebf2997863bb1ff3c7a8731850d6fc98"
+"db.functions.chr" = "e0271b60d32068f47931a7544a324f1235de9488dd50d8f3e2d701126aed2f19"
+"db.functions.classifier" = "294f8af21ce9bd5586b9b8da2945900a0d21d4ef948eaf339be2e52afa959986"
+"db.functions.cloud-files-state" = "6cb0deae0bb2efb6a33763a2494a38c6fdf62bab45dfd71bc63afc4b91b7c4f1"
+"db.functions.coalesce" = "2427c2fb47400adb57814a372cd86af67cd5bf7c2ffac787917142432e5118b8"
+"db.functions.collate" = "1c25a535d8ad8b8b51482f2135a3d80bc585288b1eead5ccc6fad92ad7dddf5c"
+"db.functions.collation" = "a75fdc1821af34d43f297c66563aef7fc9d9540d9a3f969a00f4d96736fa9b02"
+"db.functions.collations" = "3006c52b6a361938d8f4d59fb32bbf3cd35918e5b8d2d04b7af38357244b05c4"
+"db.functions.collect-list" = "16ad1c8cff264b753b47bd5bffa56b5cc4ebb7cd5adffdf008dde40c40946133"
+"db.functions.collect-set" = "9a29c9fbc82ce00186e8edf5d34fe774a50e33b986ccccf3e4ad00c9c5a75fc3"
+"db.functions.coloncolonsign" = "b10a87e930f4c0dafa5e6683cb8f00bd30d5af498117abccfaf62be4b439da4e"
+"db.functions.colonsign" = "3275ccb49211d70a4157eeabc7bb9554d269a5fc90eb62742432ee328672a611"
+"db.functions.concat" = "012154a805d2f5022f5f0aa4428ff1ee7ccd7ee27337b037f204a31f2b76a86c"
+"db.functions.concat-ws" = "40d39ce787b927517f34a29b768362765e04b8417b361313f67ab5cbab5c8018"
+"db.functions.contains" = "b2d77d5b25e4c016fb82107d91e477ffdab0d91c0803838098aa7632f4c308c1"
+"db.functions.conv" = "d515e35ea5699d9556d0143413db4ce8a2640b41a501abd685adb82c9cf3e633"
+"db.functions.convert-timezone" = "feb570559492a669d8f5fec42380850ae26b6c54a3f20cba73f954ec501a356f"
+"db.functions.copy-file" = "c9fe0f3df2208cf20f7ff4b8b20cd6a0d27979fc059d58d85aae647c56083aa3"
+"db.functions.corr" = "484e329b2c9a5a7b345f6360ed3c6ffd86373a01716dc607e8694d3be79cb563"
+"db.functions.cos" = "600f7c0fc38f7db37f2cac2ea363dc95a8300a14aa72a6cafc2ac27c1812b6f9"
+"db.functions.cosh" = "1c666d03bdbf2bd64989b453b26b55fceb9711e44bef9c53ac32bd36d5c146c2"
+"db.functions.cot" = "89d1c27a0cb7b6ddec6a5d498dbfe9d48650236056a4ebd6fc870e8204efcc9a"
+"db.functions.count-if" = "7382352bc9821f9f6b0870762ff9c58edda6bcc742be1b5cf6c0108c47204959"
+"db.functions.count-min-sketch" = "4aefdaf988a332bd3c60b1d2b554d85237e0349b6f108c45175deb8fc4f0e98d"
+"db.functions.count.count" = "2dde57f8cddf4e7defc3535bef94940e24b1b62595097dcc05f6b976d58cc687"
+"db.functions.count.count.syntax" = "e42923a78d9e539d652f6cb7591a023f461b88190ecafd7b682bd78011ecf830"
+"db.functions.counter-diff" = "e0b40b7688e2ecd5c2833870ec3733872ac16e748d4041447ca00797effebdeb"
+"db.functions.covar-pop" = "837d48c09d597f814dc617b3fcef6ed278ae88e98891a20df0426ca813ec9d17"
+"db.functions.covar-samp" = "ad02332fc12fb8dd6e9df89ff73a56a0cf0ab7e7f6eff2823ea4d9eddb9ca9b5"
+"db.functions.crc32" = "ff2870b3d5c8af310169d0da2e4df691a1ef3291ca1f48ca7ca003e6cd74cbcb"
+"db.functions.create-file" = "95a7365b76f2c5377a0f14d85a5d55b9cca73009fadc71ec686a791779d610d3"
+"db.functions.csc" = "4943e703fab4e5d7ab01d51b8e786ef76cf48830795be90b0bd6bc71912b9851"
+"db.functions.cube" = "9fc33eb6f0b14c93ce72d7465c9dd61aa581ac4623a9e237f25a27e30861cc0a"
+"db.functions.cume-dist" = "bbe71a493144513a644bfa89f3e53a236e206c582cdfb20a99a856be8bb738ef"
+"db.functions.curdate" = "412d40389e72e73e2e23d276215095a65677e93153c005981c4418f0c23c2dff"
+"db.functions.current-catalog" = "5762f332fce49269126c9aa8204fea6c0a97369907d44fb43e3322f07fbf52a4"
+"db.functions.current-database" = "567a8c913874db7d1b9322a4dbd15673861bdbb4016c3334983f6f6ed3d983df"
+"db.functions.current-date" = "c3c809c9b759faa94afb74b019571b3dcdd30e2db2bac81253d824372d74790f"
+"db.functions.current-metastore" = "cf1be8356e073e6e9f0c86dee0a7f08ad2a8a952b360a1aa3ac121e580fea17e"
+"db.functions.current-oauth-custom-identity-claim" = "907237f9eccf088ed12afc3ccb33f4214b3bd41a0f8e37f7126aaa5de6836101"
+"db.functions.current-path" = "e42685f25657c97b81b429aa03a2c17fd0499becd47ab4c9985ce910628ad3f8"
+"db.functions.current-recipient" = "25fcef4bd80e3e3a3923f2d6cca87b9610ecb6035add4766a7fd27e80676726d"
+"db.functions.current-schema" = "e2a2eecf44481510d9430b819a74feda7fd663c25b73dfccb8076a9103f9022c"
+"db.functions.current-snapshot-version" = "fed4b216d41c58e3a83f147ee54e69c02a57a276ef110a0208fadb10abee2169"
+"db.functions.current-time" = "230d2e091b4b9bebda8dd28dbb6d40ec3384315679ee45b9bb243bb38f1a5159"
+"db.functions.current-timestamp" = "fdc981b85a9fb9f0f43f4f8ca1d9cb0071774eb0ecf5bf982fd752fcb65f48f4"
+"db.functions.current-timezone" = "a44b6a1c0736a4a70a85ad2f61463d054aa298739037c5488e2b560ca4876b38"
+"db.functions.current-user" = "64ee2cad6672f97d93f30d28057fcf778e791fa6eeab9f0c21437d7299928f1a"
+"db.functions.current-version" = "561d8147df28e4e2cd1df731d9ab72e782518ecbe5c526b32dee568a9179447c"
+"db.functions.data-skipping-summary" = "4f79a427a028b1aac4d3a636270c8558d8f6626737380f81d97e5b5e1af482c4"
+"db.functions.date" = "0657c3151036ef93ee6b46859742566598fbef6775763f45a1c672ed2cc3a959"
+"db.functions.date-add" = "1fde0a5991a4e92f2a7f31031abd874c5f3a8fc12d23575d6689308b892a656d"
+"db.functions.date-format" = "1433d15a4d9afa7cbd41b72c282227b621c699f3e95748fc4ac49854228c53a2"
+"db.functions.date-from-unix-date" = "abb459bab54655c44d30894a70d6012dcdb649806eeedb16ed4123779e875d34"
+"db.functions.date-part" = "da864a3d94fd57f13bd9b47e3eec5119ebd91bc956ff9ac6e19b280cf2107214"
+"db.functions.date-sub" = "4b29f99ccb2e8f45e3bcf580430dc5e13049ba451f03713ed5526db7d13e47e2"
+"db.functions.date-trunc" = "872106334983e2b26aaa7dbab4eeef37ab9171731f2681f74e7bacd12a21fb76"
+"db.functions.dateadd2" = "a00639665c201584a226ba921da7e75479a036ce148842bed22e830ceaf614f3"
+"db.functions.datediff" = "bc35438c9a5a23551b8b6cfa929287a9918dfb9b8cdf3eb6aac5cb393b6bf247"
+"db.functions.day" = "fb9cf5275d298ab34043160c215aa3d684df351114f41d9f887aaac024953640"
+"db.functions.dayname" = "e5c53ad794292ca89d9d7a893886b99ac0d5b1aa967671f6495a754d36b7bd25"
+"db.functions.dayofmonth" = "fffc2d00bc932bb3d30703ee63e6fb732556fbe61e16995a59c53afb332825c0"
+"db.functions.dayofweek" = "86ac49f0433c20e214d8928aad179803eaca122ee2ac56cd8d452dc0e20da110"
+"db.functions.dayofyear" = "de66cfd3371745ac28ead87633d07c74cb2f8e45d79b9240f0ba4073776a9bea"
+"db.functions.decimal" = "836e60a3c127c9312e6bc0624fd69319e72e3cb2302d77ecb3fad8b7073519b4"
+"db.functions.decode" = "3bd0aa3efad45cbe6ef8a695efbd24c502aeedbe1ccda4dbdc4f8895d8448949"
+"db.functions.decode-cs" = "df62997f22cc1f36eac874b64c06354ae16c73e900334868f2aecdd511190739"
+"db.functions.degrees" = "a9e85c7f2f7dff3f18d7ca9e11290eeb978888f1f1592cbf1c32988eab0681a4"
+"db.functions.dense-rank" = "e0836d57eca0b80f6fea3e3ec35e0e2dea061114247dedf4d997f69e38ea2980"
+"db.functions.div" = "05e0efbc3a47378f786895ad265c4012eebb11c7a52e3c00e02fef0aa6fd7170"
+"db.functions.dotsign.dot" = "53230a75b6351ad7bec3cd0fbb8316c0b2e6d091c9acf025e2690a217743d3ff"
+"db.functions.dotsign.dot.syntax" = "53230a75b6351ad7bec3cd0fbb8316c0b2e6d091c9acf025e2690a217743d3ff"
+"db.functions.double" = "ef406a006038afd600e195cc972231852df80886b785c997377c3bd27f2c9f20"
+"db.functions.e" = "25d304e46eb3b300d9a5735c0869b4211ab1122e5590451a7acf936f3592a376"
+"db.functions.element-at" = "b82de76023d25dfade7ec5fba016e1474179275bee5213140beccb406fc0bfc3"
+"db.functions.elt" = "f0cc9d1142211d51a6d7142584ce7314b113c0ea4f024f7f290781a91188ba96"
+"db.functions.encode" = "fe908bc632dbac5169f09267409d0a1b94c9be741011221110b115ba10eb35ad"
+"db.functions.endswith" = "98321984607b952ed65ba5fd2c97979407993961bb1238f8812491ad0762e23b"
+"db.functions.eqeqsign" = "e37080aebd7a2369595e01101707d6e8ec3b9f18d5a8d5ba8ed7b8a2685a39fb"
+"db.functions.eqsign" = "62a81fb52dd7cd60ab542dd7b89b3880daa2a6f6b9d704fe102b4115970659a1"
+"db.functions.equal-null" = "1e665f0377f99bd546b4d0eebb5552714b1bbcfd1019138a30f08d70039d8c37"
+"db.functions.event-log" = "11217a6f42fca384a8ee0e08934ae5686b65ed418513179f7dae71615a35f599"
+"db.functions.every" = "393b3227ffd46484ad5de25cd5c62eae734bc33405104f083bf38215ff965e9b"
+"db.functions.exists" = "c74194ad6631c3b1237872c7117e65afab9d6d4435844ddba1e8df0a5f4f0ae9"
+"db.functions.exp" = "1f599d016f6f67b5d0022c67b6af4a168466ff74e078ad5da454fff5a2a2b38f"
+"db.functions.explode" = "2d0c73bc6f81a2e5341877c26f74cc1fe6556936ef8f1f485d2863bb52545f4b"
+"db.functions.explode-outer" = "2aed15764515001ad9e6b63806da0d4f273178a9ee6682dbdbf1e36ffb07a117"
+"db.functions.expm1" = "b785e761a32f520c6733d80fc96012d9aa03c9a438e670877ee953f526ee0e6d"
+"db.functions.extract" = "2d98e7b913751defa369408f835bc4b3d6be264f493802c445da6a1a5ab4c7c3"
+"db.functions.factorial" = "8a6de6b1d115377d74f2612adb9d3f929e3a9042d71bc9756ff3bcb659180566"
+"db.functions.filter" = "85f7ffacef42e44995fa578bbbbdecdbcc193ece1973026ab55685a49f74d190"
+"db.functions.find-in-set" = "b4b18468be82ec0a9dc6d10da8e7b2d7719a8553c9e486be0da04add1318a68f"
+"db.functions.first" = "10c64018222f3b0573de4831c021e38913818714c2e16b2b83204b641ce3160a"
+"db.functions.first-value" = "1d52c32514893a34a7b7f7a773751554b6f40883e353d3a6f93445f1fd523351"
+"db.functions.flatten" = "428d5195a542a08512cb77776fc583449ed5cffcc22a2e77670529397bbb7016"
+"db.functions.float" = "1467aba4e8245273cf0dce7714186724704dc2a6dc19ef8ca7d221bd6eab8e42"
+"db.functions.floor" = "6865ce425eac5800ef1f67c792219f874ddd6bc71b07a415194a0458cd654c78"
+"db.functions.forall" = "73adde10e7aa72628563b9d350d03a843f51c6c3fb47bf7e8e5556c3205e16e7"
+"db.functions.format-number" = "848432070ad386e1c39928db5bcf1ead979f50d5b3fc5566bf2f2ee23e4d2c74"
+"db.functions.format-string" = "26fefcaecd54d5d48eb743c2d13680f7c3222ae0be02f4a82426654ce5033b88"
+"db.functions.from-avro" = "6a8247070eb766e70f43aeb17fc3342a471dd46967c0973e70129e241ef6bf01"
+"db.functions.from-csv" = "858bf40c82d18b08e30cd18791639e137142599b193809223f8ce997d8412fc6"
+"db.functions.from-json" = "973bbba3036d9946b953b67ca7d9d9af397d03b380eeb70178d592ae98a783c9"
+"db.functions.from-protobuf" = "c4cd035f562078eb6a4a69da7b3cae90c3a0157e36a9c942ecf7b2999f43492a"
+"db.functions.from-unixtime" = "97aed4557c1717bac9580b9ed58fca0ec7bfef4a39f8192692546cfd11eb8215"
+"db.functions.from-utc-timestamp" = "132e80596fcfc0372cad6bc15dbbf3accdd93445ef2f2493faa539030e18a507"
+"db.functions.from-xml" = "4119ddc862eb7cebdc2bb63b8ef4b2159605d31771201cdb67520432b139fa59"
+"db.functions.get" = "9cbf8cdaa13167f8a487e409e73f87bdbcac33ca9b3377cf599b5b178a08458f"
+"db.functions.get-json-object" = "9cba994dc1686169ebcb1168c29acc9e6120ea90735c00b0de9f45c7b72fe887"
+"db.functions.getbit" = "9d69271c414e7ee17d4ac80f5883920ff4afa0a13c1daf9ec3dafdb992647866"
+"db.functions.getdate" = "c634cb57b60012d11ae3bd943fb387f7df0e9493ffbc1acbae79ab1aff56cc54"
+"db.functions.greatest" = "3da5a5ec4117aa8b183441871e1f939cd41345e296db4d7b89a45769cd132a58"
+"db.functions.grouping" = "e48e5801e793c344b0468115b24a64d714a44f313941727d0a9c21c01a8bd6fb"
+"db.functions.grouping-id" = "aa4c5dfec6c4b1f74c3fe9bafe071361f78c72a1e0a6c02bc0a9b6230fb66b72"
+"db.functions.gteqsign" = "aafb5771714742fcc3ece94a93df8fa33b74e1f3de7a1666ea3f9dd77908a145"
+"db.functions.gtgtgtsign" = "45147a2fc31bb451b30ab72fc43a2151be07487653c4122089a1bff80cf4e029"
+"db.functions.gtgtsign" = "ad5dc9d2206e14df33f0d5c2eff368fb02c87859109a9f837f85423be80ab546"
+"db.functions.gtsign" = "715de659a364392dc9f62b41e23cf4b8fc6ac78fdfce25b9e54e06008d9d2859"
+"db.functions.h3-boundaryasgeojson" = "204eac70a27e23f5a0b2ba072fb91af9ea6ad08f3dbba50dc16385a78d9d2425"
+"db.functions.h3-boundaryaswkb" = "b2342c56ad39d02ae9c2e72dc4f2b134c773aa258a03f24f23810bff329951c4"
+"db.functions.h3-boundaryaswkt" = "d5534e06f723f9c393e78b938b03f3046f27404f362f53c6aa9621bd880037ca"
+"db.functions.h3-centerasgeojson" = "4be89d54d9c4e0e8c2fb5623c80ffbe40502574be5494ec6adcad0fa03834b2b"
+"db.functions.h3-centeraswkb" = "f18189be4eba4cbbf7a2b1497ba2570bbdf853d14251b059958232e3b71a7f8a"
+"db.functions.h3-centeraswkt" = "494943ddcaf1a1f541ef08f1e9c1d119c8c4cd3427aafc597f4ab1adac2ccf57"
+"db.functions.h3-compact" = "ea044ad420fda4ac2b3357120fd8af49938757ff04731c7d3effc1153b7cd9eb"
+"db.functions.h3-coverash3" = "3dc81069857514d2cbb4068f1c7db763dc98bd2ab24bf3fc80f238765de6fd39"
+"db.functions.h3-coverash3string" = "27ff219310c320440184cc8f625edea0904406361693a8a5bd01a5319db9d69d"
+"db.functions.h3-distance" = "52b9b26daa509036951708a8f3a01ca3b0ad4e1bbbf758c005838ba2610b4d1e"
+"db.functions.h3-h3tostring" = "0d9aa9ec63c4f951b4be1e59ec35ac17e3c01a4d5e6dce04f3437099bc45cae0"
+"db.functions.h3-hexring" = "bdd34bf3627aceca5bda0ef680dd619de18afb6eb1749eeca053e31c9eac6af2"
+"db.functions.h3-ischildof" = "d24275f75e5b443d6c4bb9bcb03129c280b49c52f4c430c4339e7e5754924a03"
+"db.functions.h3-ispentagon" = "4da12da1bd4216fdd71d0bdb206d80d058b6ef36f8fe407263dd2b92bfb0fb3b"
+"db.functions.h3-isvalid" = "f99d7c13680dcfb9db8043eeb0c3230598ebb37e74169169482087411f7477fb"
+"db.functions.h3-kring" = "33b174fc5c9c6212f23c8ed71b12d5ca7d2a6223d1bcb4a48e21d2fd2be0feb0"
+"db.functions.h3-kringdistances" = "dccadb7e332b5ee13e492d82e87c9337efe918afe6f4b976277a0ecf8d4523d5"
+"db.functions.h3-longlatash3" = "f0c24f8bee9309f850dd6734bb227d54a3d8918577687072c3c0cf94a15bdc0b"
+"db.functions.h3-longlatash3string" = "79ec063e2b4d3ac4e6e3971bb489c17e5ab2f52b1219c6b824b75d93c5c015c6"
+"db.functions.h3-maxchild" = "3dae61c3447f220916588e02c9194bebd729f47b0777cb0753882d657e2a67d6"
+"db.functions.h3-minchild" = "b54d511b063c155d7acc7310d16543d2cc3ab2b9a2ab1cd996e9dc68220b7455"
+"db.functions.h3-pointash3" = "cc61f8c838fc13a406773451bc254155b6c6c1c46eff9f1698d2656f1b59665d"
+"db.functions.h3-pointash3string" = "2f5e83e6914a6b6cb96a21386029df123e3050d312fc3635162f1102bbb79d82"
+"db.functions.h3-polyfillash3" = "75ee020a287df251d514a8b227a67ba42e846ffe7b387508f98f612e09cb4987"
+"db.functions.h3-polyfillash3string" = "67433b0db4c812cafdc07f0ca6498d92c4152aa5abb30057bc7c5d2eb905cae6"
+"db.functions.h3-resolution" = "9c9e29488081063d0d8807386c021c53f8f35104ff0fbaf1751e8bd8e9b6fb0d"
+"db.functions.h3-stringtoh3" = "a86a7f2674e372173ea7c8e93e21cf7f1caa156f367742b509be69bcc702f686"
+"db.functions.h3-tessellateaswkb" = "5b3fcde1694979fcc25555d2c2a81421d82a489c6c49767e28d5dcfa83d912b6"
+"db.functions.h3-tochildren" = "abce9b5fd08984cabcf02fe24c09a4db309726fc91534a0060e97db88ad5fde5"
+"db.functions.h3-toparent" = "996f68bd226efc2ca2f8cdde327bee5cd1f6c34681670cfcbaff03a9a355a84c"
+"db.functions.h3-try-coverash3" = "06cc37d69f90263fb179fbd78cd3bbad74b6a66777e8b74d20c5099fe644fc51"
+"db.functions.h3-try-coverash3string" = "f117bdd12ce33f11246e036cfcfbb9c2724304f5bd7cb58ec4dfcca7927a8e4f"
+"db.functions.h3-try-distance" = "28059af119feb94aa257df12eae9faf142d0f21d4ae7fc4909a25d8bf6487c2e"
+"db.functions.h3-try-polyfillash3" = "20917911d01202ef83dffb219cb2a87ae51972a1eaf3c9982be5e97c1747463e"
+"db.functions.h3-try-polyfillash3string" = "2e1a6125a60f4af4ab24fe37f394a717d7d4d6bb9d385c6ebe89ecdb748457bb"
+"db.functions.h3-try-tessellateaswkb" = "60c543d8f733d3603e26fe26e893a7bfc7d3a5cc5e69161f4559815a09af9ad0"
+"db.functions.h3-try-validate" = "af32e120442c2875a9d518413664f86b9d04034acfcf91b5f5e75407ebeaf0c2"
+"db.functions.h3-uncompact" = "a7e4d75073b7980b0ee71a3fa2ca77565fafd22f6d4379bb006f8264b124a746"
+"db.functions.h3-validate" = "ae4af5e493055902173213c9740863ae0ef7a18d57d786eac6f75ac430203af3"
+"db.functions.hash" = "c994d67e00b4f6afe4dba1094d96693be5a0a938fa24677a98f002d254c9d13f"
+"db.functions.hex" = "79689d4a45381538e7ec61762516adb9ff4f92516ebf0e45d1ebe96cd05ac3c1"
+"db.functions.histogram-numeric" = "c60c5ab2c5ac5faa7612d56fb01dee6725f7ceba03d30de8a9614428f66a6e5c"
+"db.functions.hll-sketch-agg" = "4abf25cca44bb9ac825a07aaa681e1b7a59ca4f6c6f20b887ed884ea8f2d3023"
+"db.functions.hll-sketch-estimate" = "171c0a3a772bf7f3bffde1c76fe0b2a1da00c4572aaddeb9f807ad5cb761390c"
+"db.functions.hll-union" = "1787cc1890037b2760f0fd039fe94e6c8f32da64ee5e9d49fa95f5340cb39418"
+"db.functions.hll-union-agg" = "024729223ff95b2cdf3390d19e94cb5e8432e4763261e79eb274eb790f7a80a1"
+"db.functions.hmac" = "06084bf59089dae4e54fd7f5cf8d1a8fa0d686cfaca77bf5bc551e3927830d85"
+"db.functions.hour" = "e4e14a5b8b8359b2423aeeb069f22e55110ce55f37803d77afec4cb0957cc52f"
+"db.functions.http-request" = "6fc6693aba314ac68315cc103f3e3a7ecfc7addce89b92b2e9d955938bf0b27d"
+"db.functions.hypot" = "327ccdba43d6fc368b7080bfe93b4e8b7f76495a3273cbfaedb29c5d7a7d288a"
+"db.functions.if" = "3b520c3a83244e73a1921ea14a6deeda1f74d066b906e9f1733bf7ff13242dbd"
+"db.functions.iff" = "82e1c918dd0c559c0dd9be3daf0a3ef7596af239c2e2b4dc2c84cdf9c9f56b97"
+"db.functions.ifnull" = "31690a356dcf450d18c564e6b60bc4ed404eadb10a4656a28f2c64f30c703aef"
+"db.functions.ilike.ilike-any-some-all" = "b5ab9d464aa082f95a9e90a9ec8608337fbdb5ac8524c516fac8f52a11d15290"
+"db.functions.in.in" = "a6644b1bee3ff8b65279dc84b663cb3cc1c0fed8c4b264162004464c28b3d409"
+"db.functions.in.in-2" = "b40a1201e947bad2f2ccd10852b6ec8c88b057de447669a969f124c1f37749ed"
+"db.functions.in.in.syntax" = "0ecf7783639973dd3154a2c1c6ea6a5ed2e36faf9dd2999a804744730a566d1c"
+"db.functions.initcap" = "121a2027374c2c9a729fac0e7fadec5fe4e8b2f5b3b99e783be52e048d11ea82"
+"db.functions.inline" = "a323567c92638f9ffddc8762f5fcd997e6736293e36d8cd42e4ea28345c1d40b"
+"db.functions.inline-outer" = "5b252323906b9d90131efef2a845a673e0c31c1a869385f092d3b92a49bb63c7"
+"db.functions.input-file-block-length" = "b6dd731f4352d69e0be0fec7186f7960535c68575b206972d84971c900ef9576"
+"db.functions.input-file-block-start" = "80ce9ca92834e7dab369e474c8b8caaf330248ecfd148fcbaf09eee39d021dae"
+"db.functions.input-file-name" = "4a66ed9c85d83430a6b8303a87867e2b07da14dee5f7f576cd8d62b93e31ce4a"
+"db.functions.instr" = "365b6a7b55bb5b7ddff48d0e22adbe18beb1dc791181c04b613606886eceea24"
+"db.functions.int" = "38140250676a17be5c2f8d92d1fc22af3ed717ec6b8e9c68dedaf2f07df7f488"
+"db.functions.ip-as-binary" = "5612f95605f0ab23376efdd5ce4593401285808eed4858031ddc22e0cf53f4c3"
+"db.functions.ip-as-string" = "437e4570efc74cc589e9efd902426ad4f941e7b86e05b46d948a3535e5f1f567"
+"db.functions.ip-cidr" = "67c343f7607b55fc8920a753998936868be9813f85dca62c2349e981a1877dd1"
+"db.functions.ip-cidr-contains" = "7aa7f9b2aaf14fef2fe0b1d4ba47ace31b6064be8a9b106bf5f3f1ef2db063ab"
+"db.functions.ip-host" = "2db3e3e885b2ab8f79605863b5cf9d656c13a0f32b6d2061fa04252d7d080a44"
+"db.functions.ip-network" = "d595e8e610df892a94454bff8cc356ca682263ef77dd7f3fa6455af08cb3728b"
+"db.functions.ip-network-first" = "724e3449e417f44a8f5fe26a9edd58bd858231aad19998f3805d7417c45ebc75"
+"db.functions.ip-network-last" = "4846c801e4b3e84d2e0b127316406d660cf048cedfd19e8060ddfe43c6eb1485"
+"db.functions.ip-prefix-length" = "47b30b9ff6930e3e6d97016f0f0cc790daccf8a73030e7b232b8ffda7f52ca01"
+"db.functions.ip-version" = "7426397c297e086afc9c22c8c05fcfb7eed34b238c7cfa86225f21baea566df9"
+"db.functions.is-account-group-member" = "88081b145e1599e3f264a7a0393bf68ea1fe6ffbc8627d72746a3ed139fc24f2"
+"db.functions.is-member" = "eade518bf728a1c5ea1a0e6072931d1df36b630e3a0c2d3a8c9208fbad3a77cc"
+"db.functions.is-valid-utf8" = "96a96856cb82962bcc91cdc104d826525d15d2b60fdd2c9061ffed649daada31"
+"db.functions.is-variant-null" = "072aa957d979d4af164fd7d1fd8362b54465fda1e4bf7ee58e1c3c7e209ad59f"
+"db.functions.isdistinct" = "a30f4f1aff4e0bb911d7697f854c8142844c150c4354861d9a16fa8ef04cab98"
+"db.functions.isearch" = "e7f1a25bc42a40c37330f438dc276690bb6484f6c10f1b79eb935efde3f59c14"
+"db.functions.isfalse" = "633188e94cbfcbdec10d20a8702a523a2d51d3092eca07e6ff65f4643e5952a7"
+"db.functions.isnan" = "55e96f04753878907bfc2bdcff69e2f927fd51442fd7d624daef5a66328fb4d8"
+"db.functions.isnotnull" = "5e80151c83cf7d42d6f4c9dd2982e1627759d72137ee1209c58c04cc2fa0ba45"
+"db.functions.isnull" = "5384682931405a6d466fed6c13673eb3037c260b5618807ac226e36037e8b343"
+"db.functions.isnullop" = "8aaafcfd5125e70aa661d4c565cd236f2358d38a272d9d863f77c3ac48d72b7f"
+"db.functions.istrue" = "833588aea7658cf5541be061009669d208196f66a1fa2a51a029ce4275abe2a0"
+"db.functions.jaro-winkler-similarity" = "bb8319e3131f6cef50765e6aa94b1b0333953a1e7711d0ab7279eeec1abefaa1"
+"db.functions.java-method" = "aa03f0d4d1110e6f9bbada3ad9f6b8e5be1569cd4662f5a639ceb3d7de958a41"
+"db.functions.json-array-length" = "2a64675fa35eac93304d5be33ee0d10d8a2b6aa31faab58842a9c99355126c0e"
+"db.functions.json-object-keys" = "b26061d0426a6dc2eefcf3672b19e0554317879ceb71ef2a5c3ecf811ae9af3c"
+"db.functions.json-tuple" = "71810aba7fb424adafa0f48289ea2c421b35c85ca2f0734f5cd9605ee595a47b"
+"db.functions.kll-merge-agg-bigint" = "683b081995384501e0164e95b782d82ac4d2066fdb86d370929688370f124095"
+"db.functions.kll-merge-agg-double" = "2d20259b2e715082b2710227a276eb3c7f4d36ab273e353ed855a8581d03f4fe"
+"db.functions.kll-merge-agg-float" = "1b0a23979809f5bfdb7bbd614ee69b5c7960691beb4877dc6448fbc4c1574ab2"
+"db.functions.kll-sketch-agg-bigint" = "297845af7a76d4abb2bdf8444e302ff0e28b0742081d22da2421fc4e41266785"
+"db.functions.kll-sketch-agg-double" = "a919a92755710b7e0906f015107f7f172b764f2685efd6b88e7abec3245dc582"
+"db.functions.kll-sketch-agg-float" = "275e8198ce94b6a4c9015116cbf81c7dcfaef1c210263d10cab394e49a2d0f90"
+"db.functions.kll-sketch-get-n-bigint" = "495a17fb993600d2108a098af672736f9e14481a16e6f0f52fb0d95de29b0dbb"
+"db.functions.kll-sketch-get-n-double" = "23d9df3c781ad6ce720c3c5657fa83d61537578ede48a07dc7f5fd744ba9fa3e"
+"db.functions.kll-sketch-get-n-float" = "24cc894b4a24e6f1a057dee7ebc108fcdf6365ea1dfd89c9079c5c27509822dd"
+"db.functions.kll-sketch-get-quantile-bigint" = "723ecf1d50e741306fdcb1fb2fa563bce70423b7ff6dd6a22d2a9f0349479db1"
+"db.functions.kll-sketch-get-quantile-double" = "ac5b5ea6cabe522f95a4bce1cd7efd3de5f4d3a22442cd1c4d8b533c4c54a172"
+"db.functions.kll-sketch-get-quantile-float" = "6eb557c058dd2d9277624f29e664d756edf6142fb99c5550fb47cfef83c840c2"
+"db.functions.kll-sketch-get-rank-bigint" = "38dfa65310f76542284e1a4a501fdb5793c32fe2aed99355ff93d181eca412a5"
+"db.functions.kll-sketch-get-rank-double" = "ce820197ebe5fd24b8e7da6bba8721a4cab5f351dd06a0ae7c7006ad95676d8a"
+"db.functions.kll-sketch-get-rank-float" = "b0aa3f653b30694546a8d50d06601fbb5c9cd56e682835b8ee6afaf7637d9e6f"
+"db.functions.kll-sketch-merge-bigint" = "e7c22a3c029c936fa4a63ed0f6259d5e3ff2c6d7ce815821816e2816033b26cb"
+"db.functions.kll-sketch-merge-double" = "0b52e40084fa8874e1d0aa6a0772b0de1cbe8c68f8d1d01868ee69b740fa6a93"
+"db.functions.kll-sketch-merge-float" = "6485448c3bfdb6c32401fe78fa08d3eb3eeee304dae5e1db97cba98a1774fa2c"
+"db.functions.kll-sketch-to-string-bigint" = "d3910c4e0efd5c864ed5eec592aa4a87a92aa8286f3c9d778505954c879eeec3"
+"db.functions.kll-sketch-to-string-double" = "de491eeda4b1a4cf5ef21f073e3a2f99a3e46cfee59e94c9f5983d707304d719"
+"db.functions.kll-sketch-to-string-float" = "63737689aeaee090a1d2a11f2edd70a9b1ad2cfd4daa85aa4271bc69e2e2b5c5"
+"db.functions.kurtosis" = "6dc90991747d97ef4cda272e958e7c0b9bce0fe9874bbacd1b839a412d165b4d"
+"db.functions.lag" = "935078e08994b0f1b2c2b0751469c09cc71ab357bcde3c79d604b98b0c72f206"
+"db.functions.last" = "a45540c9c602768af625a2c09b346f8b1ea5db9a493410b80368a386e73f8a21"
+"db.functions.last-day" = "415701084f02ac3247798cda193e7d6d0223823e097cdf635ce61f71ad8c7b16"
+"db.functions.last-snapshot-version" = "005ae9d6d5334c0b5b5914caaa2e24c8e299265735b5e4c3fe5fc505ea0c55cd"
+"db.functions.last-value" = "9ec108dd3bb09adaee067f72e72a337b5c3175571df599aff8e6020c1e9012fd"
+"db.functions.lcase" = "34793ad1838fa3a867da6297fde108414fdf2be71f39ff38ba50c63616dcd2ca"
+"db.functions.lead" = "a0f1c135e0d1695626eb8ffe63c88e9f9de395188a2d6d4229151c762150d823"
+"db.functions.least" = "8e0203bb875046114f3ceb683397d87c3a9d25706cea1ea9d09eeee8a1a4cda2"
+"db.functions.left" = "97920bc86d37ccb2d651d46eeab6783be89e79acb70ec01b284a068494415824"
+"db.functions.len" = "c192b0483c72e0f118e868fc357da30238bc578b9effd552949de3399d32e0d3"
+"db.functions.length" = "afb18dd4f3f68baf1846ceb35a09186006080c012cd2fc1d63a2ea3ea38bbaa6"
+"db.functions.levenshtein" = "485092a8e82136a910c08ca67352fc1cd04117b6145e72e14bd9b388545b6d9b"
+"db.functions.like.like-any-some-all" = "03faca706a8e8c75f18f75bbc56e61b7607d1ebde03fe619ae5d51d136412caf"
+"db.functions.list-files" = "3cdff950b24ccc35be86822a14943da1f9a6b33e563dd3caecf629feb653383f"
+"db.functions.list-secrets" = "1e31a26b09b797bcaae146c3c2e499525568463887422ce9ef93631b5b93743a"
+"db.functions.listagg" = "203db11fff91195c261a2e2dbf02091112afcff7af8dcff8507bf8864f17f087"
+"db.functions.ln" = "b5ae2d44e42fde9759fc3847ff7ec66e9932a19cdf9216ce43fdbdccbc13b4ca"
+"db.functions.localtime" = "3df2e32586477698b843baf1e3f0145872b18a43ab6784eeaac4744745d50d11"
+"db.functions.localtimestamp" = "4100f1f2203e233239f9f70b52671668d145c642de694003d2f1e3c9ee511e3f"
+"db.functions.locate" = "90228e24e8e7ddb3cf4aff5838104a2c6bb0f6c8b4caabd82113463bfa614470"
+"db.functions.log" = "e3e88ea8f01747f53df304edae22ee0fb6a2351097e2525631b09e0af27ecf3d"
+"db.functions.log10" = "8e1a4df9a226b9ef1151022bb3b146ea4659283881bee1a5506d344093186da0"
+"db.functions.log1p" = "3a5f47d6f2a194dfe9e100079615910bcd9f82c1bab76def444bad642ed53e86"
+"db.functions.log2" = "f88434df44ec944d471f3d9a5ffa96e4435f7daf64fdcb9b079f960252224d7a"
+"db.functions.lower" = "36ebe59a91dac7022175ac240b30b45e972155c0e7082bccddab0e5eeb1596bd"
+"db.functions.lpad" = "cc045ff74e39434b13ba5dc5751c7e03fe9a9da147e8578191ff6a1e18b694ae"
+"db.functions.lteqgtsign" = "e5b1adb6ed59c8a22bddd8c645e1a2a20ebcc0986c269a4ddf21dc86e9c6fe67"
+"db.functions.lteqsign" = "bdae8a058e689de1321239d334e89ffb108b988980859b5c7cadf2a802a6f032"
+"db.functions.ltgtsign" = "c95c372ac5c2f164690662a0008f72b329aa5b096a79db470d9c9b196065209e"
+"db.functions.ltltsign" = "d9b9809b2c9d056eb281a30ebfabdd3d20e79ef87806f10a04db0b14479e76d4"
+"db.functions.ltrim" = "d9d5ee6bd3a0ae5e62c09855d2ae0ce2576430f58bb5f8e457087dae19b350a0"
+"db.functions.ltsign" = "412e21c3a51305a3549bd5a6261e2559945d24f97f7e1f966b5536ab71f8e01e"
+"db.functions.luhn-check" = "9c0a3386f5eacc41c889975d2efaf0c6b60006fd83ddf9f4c911da3a151dc692"
+"db.functions.make-date" = "2ceb34edf836253ec778b39ad421438544583a7e39168a3f95da8ac2cf49c798"
+"db.functions.make-dt-interval" = "be32c75b65b41bdd8a769e49efcf578a77483cdc7b8f3a66ddb8ae750e4b5985"
+"db.functions.make-interval" = "dc52526dcb43bddd9e5301005fd0d163c307f0799bad43d0bb31e4bb575a0a46"
+"db.functions.make-time" = "9e2dc16d9929d44e7514efa639f6ec9c2d304b05c2be2a5914c600b3b58a7b43"
+"db.functions.make-timestamp" = "84dfb4a035d7c8a2689f07e647e110778ce1077370b3711b9262e0e24d5d5ebe"
+"db.functions.make-timestamp-ltz" = "13690f3add04a397775231986b5b4fe953f82944178408c1147b93301d789e14"
+"db.functions.make-timestamp-ntz" = "63f0353671b2beda77f838eda79f9de0b19f9b1453a472f3b03bf87fd5bf9189"
+"db.functions.make-valid-utf8" = "e0d7fdb2fece24782d7f149e497501836e2a5611935c16f267089dfae871108f"
+"db.functions.make-ym-interval" = "1b0c85b5ea90df1f250225cb05b6ef500219d55ec1eb5acfc695b4cd8a94c5eb"
+"db.functions.map" = "b709554afd9c0b24f4161d1d02cf621ad63af591df67c2511a468158aa556d22"
+"db.functions.map-concat" = "6c61454a1950728e7a69fdaf9646fdb0a19550756c2f66cbf56d40e835ba8d04"
+"db.functions.map-contains-key" = "365ae89e7aeecccdfc9baf9b92323460bba15a3a872621b825b1362a389ecb24"
+"db.functions.map-entries" = "2d36dd206e2b25e41018d463b17714bf9e3f4ffb17439486006366590c01f454"
+"db.functions.map-filter" = "25ea9c70edf8e60e4d12d1c28059adc229f2f438cc949cc7c64602015f83477c"
+"db.functions.map-from-arrays" = "352e0cc159e97b2a6bfdd93b419c3dd4da8dc5a93f7f01a5e0deb6b59cf68b99"
+"db.functions.map-from-entries" = "82d4ea843c345dd6b3624e87c42bf0f24880f8c7cc84c57008c4c03db7bb1b34"
+"db.functions.map-keys" = "65386da506d94a017934dfa1d9db6ae7a60b90e287ba09893eeae1c332d78174"
+"db.functions.map-values" = "0a30829891e68f55b57a909f3a407bad644c422e0cfc2f11fcb653f26b547645"
+"db.functions.map-zip-with" = "3320f797eaea90db4ad49621e017bdea41433a57c6cb88ac0aa4709d4a9f9ff0"
+"db.functions.mask" = "9939600718ae377db639c65a1745502e05a382f8d9d3849630adbfe6d08d8d9e"
+"db.functions.match-number" = "b79e71cc97fbeb7e8af662997b4693a80fc2cd708fbf9269d0ca5258ef3fd931"
+"db.functions.match-recognize-first" = "f911db878b1200172278144843c3f25c80078c624db9978e25deca5901406f54"
+"db.functions.match-recognize-last" = "49e5446a2847f440d20c12f04f762a702234cbce2101a19b796bd07a526ea290"
+"db.functions.match-recognize-next" = "694df116f6c6194280d1f7372a643949c03a63f6a28fc720a31b4f78846fea60"
+"db.functions.match-recognize-prev" = "f55957d50a85c71d1519fcb3de79b4501789a381e43ebac65ee594b5af66eb08"
+"db.functions.max" = "f245dde4d6c6a10f4dddb965a7476258fa02951829f78c52b7bebf99423baeba"
+"db.functions.max-by.max-by" = "e1aed3691777111d869397f1dface759cfce3b51591f87a1d4beb4eb54016525"
+"db.functions.max-by.max-by.syntax" = "96d8c99f25a67566ce2084f4bf299f882fa9593c4859e20da82a60a84463fcb8"
+"db.functions.md5" = "5d9cd23c1cbc8305409794c702e06b2de7d6d2e8aa5e2e06ceb161d705cf7dc4"
+"db.functions.mean" = "3423227904d97e4a492bd8bac84b1ec985e17ce6159003e11ac920804988ea4b"
+"db.functions.measure" = "426d860f13ba81360b5c4adc45b706f1a25d0eaf949a3381e0beab245def73eb"
+"db.functions.median" = "4e3a22f85b125c9631fa14a127faf367a8f27f9e8b78e2d0744c478093e42e15"
+"db.functions.min" = "e517088e9fb5070709d86fcce89379aaa0024b35a9f27ad3859d50aa4b7d53e0"
+"db.functions.min-by.min-by" = "8ccabe7a2b34f8ba89ba2928a43ade9d1463ab1a6740e61a52468ba0b46c80a4"
+"db.functions.min-by.min-by.syntax" = "0fbad86741fa595af1fdecb66606ed258c8307d88a9fe76802326e79b5749b47"
+"db.functions.minussign" = "20dc24eb6db96ef8e2d7e417faddbf4093c28051bd262412eb767b41c9f01894"
+"db.functions.minussignunary" = "cb2577aec9e728450f689363790cdd0ca84bfea9fd65e44a28ae9ed5b8e28e9d"
+"db.functions.minute" = "5244c13dcfd8423db89d2b71f6cf4bed9fb782b0630d20563b9fd53f868ebde0"
+"db.functions.mod" = "9b4c89dd591555cb781569a4d5664cd822079330a48d2b2851b7e223719c19ec"
+"db.functions.mode" = "eb19e696138ee2ee6060677aaed6e4494e350eba135ce7f5f6f5bf254cbd79c8"
+"db.functions.monotonically-increasing-id" = "31a205ef4d12b4010242ab490d000a43a94b60c76f2cbcba5396fe78f731fc49"
+"db.functions.month" = "53b7d5c9c758066e9744a8ac29e239099da8dff06c85f2c50d593d7b99833cdb"
+"db.functions.monthname" = "e2e6800c5c4a68001d6eb622313dc2ad6e7a7defeb643bcc8869a90f28685259"
+"db.functions.months-between" = "db38c3c1c72e9579d6c5707d7b0ec6f208e3194e24c691d6dacadf597e72980c"
+"db.functions.named-struct" = "b702eeb3f469528f53fa363faa321956fb170d535a3a82743e147e0e341677a0"
+"db.functions.nanvl" = "d240a5bfa72f569bf2470adbdc13c3e12e1562c01966543369623347e85eb533"
+"db.functions.negative" = "19a64d2b24943be1065ffa91a96aae8690250a089da8e349c5e58ee16cb32535"
+"db.functions.next-day" = "74d20c8b04c6a9f0d23b1277d4298c19854fe5d06778f59163ac2d98c1e96ab7"
+"db.functions.now" = "d7cf57f27f7ce89e5bbe9f03f048f8fbbffd6e727ef5b91c91379baaf29c3345"
+"db.functions.nth-value" = "62d1ff86ec99f01e9db0581ba486f034b00e387e2c2a0631264354559a6c44a7"
+"db.functions.ntile" = "7bff4c2974b14d9e99267346cb89975475ddc413a8f37bc227fab0ed8d1c2992"
+"db.functions.nullif" = "d2c37332dd6ced19f9df0751aff0599f908cbc8289f7e877b5b2e513286e6c06"
+"db.functions.nullifzero" = "aa135a2a734338bf89f2f5b0ab69eab947c5b6436c08eb936269ea7ab7315b22"
+"db.functions.nvl" = "f071a6f64b5763eb77e050bdf307dbad74f28570da84a47c8efa24b3006560e6"
+"db.functions.nvl2" = "7794e27625d2bba589e8aa90428bcd7e44dd1c097526ac6935f3feb2f9698a51"
+"db.functions.octet-length" = "f318dd1bf42b6376ec49d30c4cbf685871fc8ad8135993feb118cd05a6ca7580"
+"db.functions.or" = "c83ca8cd2f96218575a9cb626ea5fa02279133c6949e4239ab10706c015c2fbb"
+"db.functions.overlay.overlay" = "6a338ffff8873c96480c65b1321a8704c87e34e15e9b6fb84f971d0f8e59a12c"
+"db.functions.overlay.overlay-placing-from" = "d8e5af9f76173604ac572c29d5b1798c655beb824d360dd6fc2663a37bb39a76"
+"db.functions.parse-json" = "5bcf2f3b5fa1cc848082032198babae3be8bf3b59ddfb752592a01187123800a"
+"db.functions.parse-timestamp" = "9f1a3fb2ae2a6888d1725fcbd65ea099013a7c97bbb92b106ad99f2fbe7f526f"
+"db.functions.parse-url" = "edba192b847162d029fac870f15dc469f66c25fa5768e5d4c53b81aae2ed29bf"
+"db.functions.percent-rank" = "9eeeaaaa45349b70aff5484f8f54abbf792f9952abba26d7ef5f750920a12761"
+"db.functions.percentile" = "877b0e1339e7d03fe9ba51a70f3f2b97f9e79b21cfd0a28a73710eb14034b626"
+"db.functions.percentile-approx" = "7fb272d00edec79fe41ef1d7dc1ca2170e23e17339f09ea83685006697d316ef"
+"db.functions.percentile-cont" = "6e48c519523d2ffebabcebead201a2687aa3e3e62197456d040c59d440c9f014"
+"db.functions.percentile-disc" = "0e8cec140f55badf16c993e581f0761e8717cecdb6edf7c4a046d9b444184d4a"
+"db.functions.percentsign" = "3d01c2b476d6a567906d859e8860036eb7126206789321bed54ed0b25adfd72a"
+"db.functions.pi" = "536ac6fbb4d230d9a2d951a9f01de6556e398167eee110cc7e4a24f44b32bfd2"
+"db.functions.pipepipesign" = "e20c47b059810eb4c815de906ba0a60cc10a39f320ac6bf46f6a85b94ac7f6c2"
+"db.functions.pipesign.syntax" = "30030bb5f12f91963a8ad77fee2cee4ee470bcff956e060ceed3b0c3cb813e69"
+"db.functions.pipesign.syntax.syntax" = "30030bb5f12f91963a8ad77fee2cee4ee470bcff956e060ceed3b0c3cb813e69"
+"db.functions.plussign" = "983b2c723814a9417e5e26e39f7f6ea56f466598efa6d0f0f82fce73a54621d3"
+"db.functions.plussignunary" = "1a7f16443095c644fb9a0f65d57f84002bd9b306027d9fb96128ff246ae2572d"
+"db.functions.pmod" = "30ff8e6fd5d3fb48adebfbedb8203fcb4694a9911029ef89d675aeee56724d3e"
+"db.functions.posexplode" = "d9e9831cf9cdfbc34fca1243a73ce64295178d1a60044197c72bc4c995f37db3"
+"db.functions.posexplode-outer" = "e3ee4837e8b1b48ffff30df80c8a7fb08925cf81da68ffbc57f7831566e10953"
+"db.functions.position.position" = "afbec4212c86b2513b78fd2609f44bf8a087d524fa9228cf5b5faa7007d79a6c"
+"db.functions.position.position-in" = "98d4f45112333cc800d2ba067cf8d2a84fa7c0498b1d22aa0c20b2b953acad66"
+"db.functions.positive" = "acf1f6914c32335e94c0553d3fc17db66623553299896728a08b2513e9b9d672"
+"db.functions.pow" = "6c9fff0067e7f55db55108d66f09da203fa648372927c59934a01f3b97d1f3df"
+"db.functions.power" = "1e96f79d24d2a9ae1a210d02ea1805caa32d182162b2c1664f926b72c3344728"
+"db.functions.printf" = "9bff7db6e9fc6892d74e037d877831043e0d463cedf5cd9b68e9f8b618719661"
+"db.functions.quarter" = "3515face637c655c8e2720926ed124c2b0191c8f869c967b11441255e14867c3"
+"db.functions.questiondoublecolonsign" = "f4375a81da56d3eb1ce49565e77c1919d60d9ec170705f7fca1b9c1b3e9150b5"
+"db.functions.radians" = "66fc47577942a345fe081d0e773bb8df98781a0e361d8806950d660ad0b69d3d"
+"db.functions.raise-error" = "45fcb4f383f1165d05cfca401961aac333908d1777497c4818dccee981c89b53"
+"db.functions.rand" = "e51db9be0e11c6d77e0960577cca2d6fc31746c4e3ed609e75a52e48aa0dae8f"
+"db.functions.randn" = "2123ecc6e253fec498d6b358d34cc22d8ecb9ffa47b71df9603652fc7d3d5628"
+"db.functions.random" = "264163c2e20e158f043d5d60d857eecf34a051738b3d9b7fe462d1d40ebb9b09"
+"db.functions.randstr" = "aae01fb841e63713d5cbfb71d3f792b06fd41362bcb602d5a45b7bfa6f204214"
+"db.functions.range" = "95786bc2d16aad8d4826dbca2cdc1fde051412b2a5f68c6475341e90d0ed5c86"
+"db.functions.rank" = "1822aa792e35f5250a67d88e82657aa232bbf553ae0d2b17b38691fa20650d23"
+"db.functions.read-files" = "0e35f0c295beaf3bf464a303db63c769d99f53dbd92c5244ea79cc6cbe3ea212"
+"db.functions.read-kafka" = "a2801ab5274a9be9e578b99911e57f4f4c27d14370b7c855a1ed99b22d8c5c59"
+"db.functions.read-kinesis" = "58ddf88f248ad48c6de5fbc350a32614b390a22a2b675181f14a9fc0c350f7c1"
+"db.functions.read-pubsub" = "62f9ac9c268c83c7153c57bcbbc0b1077a9f11e02c3d53e4604b90ff9cab3af9"
+"db.functions.read-pulsar" = "74ec9c8f245f835a80758fbdce140f76183f2b7d56223270796d961c4a03d81a"
+"db.functions.read-state-metadata" = "b9beb93b3ee0419c5ec977b4d7efbd5f420550b8f7fc196935ab27703f13de2d"
+"db.functions.read-statestore" = "51fcaa8d6ea0dce332d183b1182de9d9756a326299a5ced3c51d8a971c7f553f"
+"db.functions.reduce" = "1eae6ff063d2af320c9d993ef84f4416e58e81c29113a66fd610bd5c2245976e"
+"db.functions.reflect" = "f0390d63f1a8555cea5145b1f0353e9638722a74f3b1a6791901805d2c94ecf4"
+"db.functions.regexp" = "5d98605cb506067264b3ca40b0dc3d529f458b405b584e91875fd8a449d04e19"
+"db.functions.regexp-count" = "9b0b80995ac72993dc74381eac39012917fe5df98fdfff4d1146bf1067b0a7ec"
+"db.functions.regexp-extract" = "6eaf6ecda35e1396a2a2c6170e94e83e4c37812af252608dc8eab0025a5466a0"
+"db.functions.regexp-extract-all" = "bf319a54da33d7f8397c098bc0914e649b49dbb14b6c9923019014c823cf9b7e"
+"db.functions.regexp-instr" = "b2814ddffbaabd5bd763a8e25cdb9a16e35da80669539ac6941c3af11e38bc1f"
+"db.functions.regexp-like" = "c4d1597b7b84fcdb3d543fefe4032b8b4f58e67d64823b680e412ef0d430e088"
+"db.functions.regexp-replace" = "0d97e306b5b0a025ec9e27dc30f99e78e9658f7c6f2e29dd669518b785a5618a"
+"db.functions.regexp-substr" = "2c5a33ed6881bacc0348bd28f75d7944ace1d292c1618d3065daf298ff15de8e"
+"db.functions.regr-avgx" = "d59bff8ff9f097afcd9bfcdb6b9bdf7a79305f50800fe2b0ded682d250bdf0ce"
+"db.functions.regr-avgy" = "3e6fc1d60a12f7b3d644e6876750758e4fbb184cc79864f49ce7d86fefa41540"
+"db.functions.regr-count" = "a6a5c6a2326d22e0d6bb85a0031a0edb2ecb148ed55420f5748f1a460a9e6a95"
+"db.functions.regr-intercept" = "e22269d605fda0b7aa47266e897807bcd3633e9e48c95ab77cd10f44d07f3c8b"
+"db.functions.regr-r2" = "99359d1863c07e7c007aada8cb76cb6504eddf1740be5ac73c5544ab7b96157f"
+"db.functions.regr-slope" = "ecdedced0397a6e69abd2745bf7e237da970225f2ac1c7d61f909310c9d4ffb9"
+"db.functions.regr-sxx" = "e448ac2304b79eccf0fe82cad5d0d34033a29dda9a5bb26455172d6b2514f3e5"
+"db.functions.regr-sxy" = "cb048dce3292cac7debd71a1c0786cee7118b2be4b5a632e2375695a9c8c2730"
+"db.functions.regr-syy" = "ffcf1d6e2c195ac41ffddb4607924e5c4c2887ef534e7e8f053969f5d49c93e3"
+"db.functions.remote-query" = "a20bb4609f6920c796a6a3d6a2086d4b068a58cdd9c74723e9762c6fd15ce10f"
+"db.functions.repeat" = "e7f9ae1c4c8ac3a1f5c8d08e0e692bcf9c38997f00400b5c349ab7258e928e83"
+"db.functions.replace" = "31f140cb2b8de720429dc7d23805d55446c02367311adcb0ff3650407e9a299a"
+"db.functions.reverse" = "5b303ca4dff2621f88211573fff61b00a56bf9e778c5163770f5616a168baf16"
+"db.functions.right" = "0381cc31f6b5c694d7593ad11a0e603da3d0244ce87f856cb3af38f754d78d8c"
+"db.functions.rint" = "36924d5bde9fae5f8c21d5083b8be9248a381d2b2d2ab3e9d77be86d585ede16"
+"db.functions.rlike" = "0e36f60516fe7e9013c4e2c7628173e692749bb23910f6c549662564fe1f3660"
+"db.functions.round" = "2d1c0f58855a3a82e0bb2acb66146cd1d3a9329d716e97387f455713daad4b0e"
+"db.functions.row-number" = "076f0a99c530d96b91a695bc012593e3645cae5e27a653985b2e0c98343d073c"
+"db.functions.rpad" = "9e0f8ab80d88a1c28e90b5c65f4bdc0141d1a8dfa2b446023ff1aadeb0c2a8f5"
+"db.functions.rtrim" = "3eb97128f875279f799a9fcd97c31db6f4f268f31820985519777608bf91235a"
+"db.functions.schema-of-avro" = "304a7835f024e988a1fd84d8bbb6f4ded21438ebc935f1cf54ecb605bd4a8ae9"
+"db.functions.schema-of-csv" = "102dd408325f1ac79a0849396347d59a5b61940895e123c8878ac5383f48a343"
+"db.functions.schema-of-json" = "91b65788eca2f69902116203d9e6d6468f2d0a4d3cdbca353dd55c00b499b954"
+"db.functions.schema-of-json-agg" = "96e6ea69608190303a2b469e7cdaf6bd48b940c5bf9796c808499a4cc3bdfd6f"
+"db.functions.schema-of-variant" = "9ed17013e9ff5719cf494ffa71017ddfd5d90ac978277c1868c28b0be546704b"
+"db.functions.schema-of-variant-agg" = "68d86455666ab2272c0e0dce6e7fcd8fc4dcc4b0d2d3d374332e377adf4b5d27"
+"db.functions.schema-of-xml" = "45a9862f9f64fb2f2dd0d8548b0914a7ab18d589e5be46382e7723903834a170"
+"db.functions.search" = "743acc1d1b97e22d3ac6088b275f3c6594a6808daf7e722c7edae60041645ad5"
+"db.functions.sec" = "4bff8fb04f1f5675db04aaa0561012ab6c45e3a29e74e3089290ca6052d87a4f"
+"db.functions.second" = "90506f07835c9dac864f94bacbf5fdbf0ec8b1a9c6d5158e7a1d467d85462714"
+"db.functions.secret" = "5e74dfde537481c9efb777c20e865b41e549c54532a7a645966243da80b9c67f"
+"db.functions.sentences" = "aebb5f8747c89155ed111ae7df5534da1ad71a80c7cabe00993721b32b268e1c"
+"db.functions.sequence" = "66ea7a4e6cfde7591e6de396b8a34fe0353e295c116cc968d76fbdd8918ff830"
+"db.functions.session-user" = "4d60e2efae520a85407c2b50a20f07339394eb0a37c52102bb3e49d1cf1ed61e"
+"db.functions.session-window" = "cb443836ec32987ba802bfa46d6af699a728d64c1e3ef38310df6491c24bdf42"
+"db.functions.sha" = "ae28996a5a381cc037424086ec586f3faecc18a1a96f19ad7a53c829a1db1d43"
+"db.functions.sha1" = "1c80d3cf8ffe9fdbada8a3ef351fbd967d072af04e0a0ac1ceb0f7d5fe6878af"
+"db.functions.sha2" = "38a1caf241d0f783d301ff2b43960e2acc026c88c26eecb62b9bd115c45a5721"
+"db.functions.shiftleft" = "73f86eda0ad395cc2b332fcfe2524296de36c776d999d73ed08fb50449607232"
+"db.functions.shiftright" = "42a6853debea3062184ed30d403f72e157886683af4f2c2cd4b26cc42c11c508"
+"db.functions.shiftrightunsigned" = "860a035b12e37611f61ef452dec1be2aaa6c3db55ab54f9407bc00815963d747"
+"db.functions.shuffle" = "504d80d17de7fc08d0c91a21f24b36817562e79711ad97efc4548c7cbb796316"
+"db.functions.sign" = "66954cf8e54c92d1fdb4dd49d5825f2a1654c3815fd7b1fcf0588ce9c6e9f218"
+"db.functions.signum" = "7cb0c73ee8d776292ba3feef328af79473ce91c4ba3e6d71221dd4a7a1357fdc"
+"db.functions.sin" = "4ab7ea26f85b70866f99136cba9b31e7114007d7680fca6d51aaf4a87f85e24f"
+"db.functions.sinh" = "ad4413cd48e9a10e045d29c187f72e8e237288bb4fafee359b3fde354259cf0c"
+"db.functions.size" = "df766326c17f81315d7603487fa924a218ba3468974582167405afa1833faf1a"
+"db.functions.skewness" = "f2457bd101dc7cb88e3e8e8f0bd3a2a9091582269ad5d4d589f6dd1473315460"
+"db.functions.slashsign" = "135ad3f669d3a1453a2f53d4c2b8f2ae93e23e7bff88af29695475feb9a587d5"
+"db.functions.slice" = "168d22bb7af80f8900d37ec2cc31a65438026d1f1040a4bad6404cc0fcd8852c"
+"db.functions.smallint" = "1ba0b83ea49abae1cb07a03d13a5f3ff19246287282edd9c092e46fb40bf02f4"
+"db.functions.some" = "9a271f148a21fda046fe59d3d81ca6274c8a1ee0e9262b3b4c2ca2e58d5e4f43"
+"db.functions.sort-array" = "2ce75d18bb6b1de03ce93327bd01d76df290795fd3887b9b7a34817b781dc16b"
+"db.functions.soundex" = "f94d57f621891bfb20e0f4d60b1f57c41c25a38ae3f69f0e8fe129e7c5aa76cb"
+"db.functions.space" = "235cfaa01e26baa86e4d75e83bc4e285bbd0649dca6802d3ddf8c02e8db7e468"
+"db.functions.spark-partition" = "35e0cc996f107e3848e18b206c1a30d4d62e64e0932cabe29e055871a08d0e75"
+"db.functions.split" = "055a54ed60a2a8e4a88e6a65b8bf254fa0ccd21a776d390da6cdda569993e03a"
+"db.functions.split-part" = "c921c13fe169ef0e66a72d2337f0894388b8411023aedfc2c340ea81d7536229"
+"db.functions.sql-keywords" = "ddc4e73238361b30676533ca6e437f3aced38c3410c9dcef8ecd758001208ca3"
+"db.functions.sqrt" = "89fc97cef5e35ac895cac7cfeaf2201e0089fc555c7e95dd2c42c8f4fcc09080"
+"db.functions.st-addpoint" = "ad3eda7b263421560c874ffa7e3753b48ffd97020657b29eb1b8f2251bbe9b63"
+"db.functions.st-area" = "fc5daaded3d8273212f4d5cebf72429264143b324384cc0694381300e9582caa"
+"db.functions.st-asbinary" = "3c7d16ff33f61dddb5f52386df8138a17672fa07730103e3ea2490251bf27eca"
+"db.functions.st-asewkb" = "4ee229680fcb60bad86270c84deac5aace888abb33be76bd4ca68a6f51a45ad6"
+"db.functions.st-asewkt" = "b0aef7f0dedae2eb8ad23f8270767da6d6a3172b64484c1a32ec15be23b5ea96"
+"db.functions.st-asgeojson" = "e76081616f190eb190fa30ae09809a261a6706c131540e4af3bfbdbc56b11da4"
+"db.functions.st-astext" = "97440b5297c1387e3c0df910b3fa7fc7224de71717db82e780dbacc306af20ce"
+"db.functions.st-aswkb" = "26b24126346f094084090264b4a394a51c411ce3eefea6b85e2e15f71f15592c"
+"db.functions.st-aswkt" = "ec5e16dfab8f4d33109346dda7187d674b3e1fdc99145393e2a934d799a055fc"
+"db.functions.st-azimuth" = "f81e4c3eea29cd89664ab733969b64629e45fc628a66fd20b90605a7e5cdee20"
+"db.functions.st-boundary" = "de2b672d7be524319a321ed16fc616dae96e725496e1ac3dbc4b8cca51242e2f"
+"db.functions.st-buffer" = "5fd160e0d4015885c214744bec5e7a7daa88ce7bb326096c26cd89996d4a621d"
+"db.functions.st-centroid" = "17d1d642d15a5bbc744b87554bd3f6ed418e8a0955b0125b42b9ff8e869cb0c7"
+"db.functions.st-closestpoint" = "78ff87e9dd9342f7d9d81b987a3eac594bdd51a90486b5ac8d7f25a7d458e0e3"
+"db.functions.st-collect" = "eed52e31623557442cba0e0e5fabc26d752e3e0909ebc8f69871fdf068718fe2"
+"db.functions.st-concavehull" = "52bf6415c3ed67cd57987e8c6497e53811c328ad65c5304e42f9a093c8718f64"
+"db.functions.st-contains" = "911beebf284935534dd44d6ee869cd821321e746cdb9b01f9084f7c16418fd86"
+"db.functions.st-convexhull" = "e9a390203f959a09aefdcfd750cf31fd6a2d41c3a14d3cd9cd294ace8f84304c"
+"db.functions.st-covers" = "3ab9eb2ec1283862ba96863f5725a81c7a922baf332eb81eaea46f217aee68fc"
+"db.functions.st-difference" = "01821261c170e9075e7e013d73c7ba06bc9733da75f20ce6d7273e3c8e441c7e"
+"db.functions.st-dimension" = "84313e4dd8b734a1c76f5a7311e71fb61b6a22fff4fea4ede3b945bdfc1cf41b"
+"db.functions.st-disjoint" = "70b49b661eeb03e0a0cd3a57f6860bc3ccc4f9e60740a70f5f489e3f9273bcc2"
+"db.functions.st-distance" = "467e53272edb4fa9ca6a421732caf4356c8eadca51de63c01a822322bcdf1b0a"
+"db.functions.st-distancesphere" = "271b72ac84fbad5ccf4ac1ef3ddfce8cdc805de013318b4e161135c8cd9c8d9a"
+"db.functions.st-distancespheroid" = "46fcb264b9700af3b543d2a7cf72eb1d2ed716a1af477d28b04fad51d0335bef"
+"db.functions.st-dump" = "5f1a8287ee4fcf0515e8843a9b513e0221dee02a39437c0d67e70c7a7db80f46"
+"db.functions.st-dwithin" = "32a06e8a0c0646d09c3579be1d3275026e129a9dc9cc38a697ac6d4616bac924"
+"db.functions.st-endpoint" = "ca953da88bdd4e83df099e28ba772c03256ecb266691fa7ad1fd268f667146d5"
+"db.functions.st-envelope" = "75017e47aed6d4424b18791255886065259f83d1d7f9faf0b19f17f081ab6e16"
+"db.functions.st-envelope-agg" = "5f29e5f6604142f83b74f141aebc86b22280f1317d04460a626a4a8de2caa94e"
+"db.functions.st-equals" = "e52f3b609a8dd43c6c5ba765505a3ab4b3307d0f429b131885265f141d91b689"
+"db.functions.st-estimatesrid" = "0214296d2a37d9692ece034dd20c0479480c0fd957ba538611926354f3fd8599"
+"db.functions.st-exteriorring" = "f1351b7c8f07f50de58f3f3497046faeb971918c13d63b0b3596930f5bf631ca"
+"db.functions.st-flipcoordinates" = "d2bde2233a6eed710261610c846bcb97099fde30eeb677f2d99d696cf17a46fc"
+"db.functions.st-force2d" = "e5be4c6133f60415d3701fc1e6b4ac319eaaa0964bd457ee6c0e52e86b7bd0be"
+"db.functions.st-geogfromewkt" = "2a0a0bc23d80e62e297d0be77bce413f6a22a2ac2a4d6f718a142c253e4b3b9a"
+"db.functions.st-geogfromgeojson" = "d295ce1b45d26385ae99ef3caf2b886c903209fe6b2f9d9f446c1f1fe29c1a4b"
+"db.functions.st-geogfromtext" = "42a3d26009eb20f1f433fb1287534744e77168ed8a53c3d38358dec2783274bb"
+"db.functions.st-geogfromwkb" = "789688c1b9ec25199ac930da70ea448e27b50727941a77c6a05abcadc9c58abe"
+"db.functions.st-geogfromwkt" = "aee150b9a70299a3bff5c68301488eefc066021cf77e19669f833ca37e932379"
+"db.functions.st-geohash" = "a5320b1939f2953398a7bbab2fde243e3c718160e76795b89ab4f46bfe49415c"
+"db.functions.st-geometryn" = "6ad958fc5349712e8b062c4a2faa78d9566e1defb225ad8f9c7ad0b65c1064f6"
+"db.functions.st-geometrytype" = "3eccc84436e32cf02c81c75404d9a8c1a9e8d2ad9f232668329682d5dfb4498c"
+"db.functions.st-geomfromewkb" = "bb239a081b364cb41673c3bf01b3b84cd66565baf9a62c07c640ba1d08e0e94c"
+"db.functions.st-geomfromewkt" = "e32f48c9057d90768ea139bd1bf0f52c54243ef02d47ec047065356c5b30a3aa"
+"db.functions.st-geomfromgeohash" = "c0de22e7be59d1525b8af1c1884aa49b25f490f023c1168b4a087fe2ed6844b0"
+"db.functions.st-geomfromgeojson" = "8378b4ed86c72f5ca5a21f7e9e3adcf57ab6b4540f758be111b7e62992f7ae95"
+"db.functions.st-geomfromtext" = "3134b601fadf66ace8534c94ded781c576a2d7e45f6173249437ddd39714a7bc"
+"db.functions.st-geomfromwkb" = "7d28a4d65c21525af5b25eb055385f9421d152686158d32262fcec87dc13ea8c"
+"db.functions.st-geomfromwkt" = "6e9dd22e306697e93842fe278c9062cc4b75d46451601f2376d6a92998523c37"
+"db.functions.st-interiorringn" = "b4702a638b7e4d32d100c040544199e448d0aab127d7c5894aa9696a3f36ad74"
+"db.functions.st-intersection" = "bc2322084a7cbc973b78f82a5df6b93f903032dd99efd61a979f113f5ca77ab0"
+"db.functions.st-intersects" = "e05bbddde92d5eb460e7403bd3ed9231d14ce7e9e3e53614d7839625546c485c"
+"db.functions.st-isempty" = "61aa79963dd5e1a926d716f1a4910c1976a2b5865ac0ff2653e4cd4f8e0729c2"
+"db.functions.st-isvalid" = "ea6748c72a0e6f4fb1e5a48ad057526d5bd957ec54ba2ac9c80d614a9e6d0a1d"
+"db.functions.st-length" = "6d81a83c1bd80f4432c1445bb41c55237a761b8e23d704efca9bdf3322381631"
+"db.functions.st-m" = "7c1f29ec1fc2a610bdcafbc203902cf24589029a215dddd3f5a802e56a03a244"
+"db.functions.st-makeenvelope" = "67cab7ec4205b066640d6d17397ff88073ae56bbbee3a67e7329a29966ef2a48"
+"db.functions.st-makeline" = "ece344181d53f6b04ab933b7d4ae28c7b56565e3b10a435d15c898f2c2aa0c98"
+"db.functions.st-makepoint" = "73cc22b696e404adedfca848f67e7d64ec78755843855b6ee96bc9761f9b384e"
+"db.functions.st-makepolygon" = "5fc6594e24c3cd4b55f8adf1246461a393021148723f45497cb9956307ab8878"
+"db.functions.st-multi" = "1d1e4759401ab77ca8c8fcebf3f105647295f988c1c4670d9dca546113146f5a"
+"db.functions.st-ndims" = "f1ff9a415bcfd294a652330bb77eb45e5cc1d4f910df7c8c0d35e58276f5344b"
+"db.functions.st-npoints" = "6737364f4e88f7418c31ff1300e22a1582542a19354f1f98a17bde33d1f5220c"
+"db.functions.st-nrings" = "2f5658a7373c3615f0bfbdef8e01ecc457fcff44f4ecef7198ab31dfbf59e7fb"
+"db.functions.st-numgeometries" = "fcc80bd88caa0db53e2b0100b51326f33f5bc5cf950cae7ca5944445c29d0c30"
+"db.functions.st-numinteriorrings" = "5cf407f8d69d05a0642c2690a9849a19733faed8cfc9ac32aeeb3fdfea7d48ce"
+"db.functions.st-numpoints" = "5355075984858e32762ad2ee8f35ec697a02261a16fe4a27130c513ab3fbd00f"
+"db.functions.st-perimeter" = "25de2471ad4c2b74cdbab685fd84f616514fb4523415ef6940890eed487f77e8"
+"db.functions.st-point" = "f775911530e4f18881bc6fded0b5d00c339bc7727f80e3bad93313c34fcd2ae7"
+"db.functions.st-pointfromgeohash" = "b747221b2b300323e13d30ec2dd6ad11f23dc8dd7ee6c8f24f2b3db45d0e4ce1"
+"db.functions.st-pointn" = "71a684ea17dc3b7e53992030b0bd2c1faa60570ad3f215ddc03fe669332e8b5c"
+"db.functions.st-pointonsurface" = "fbb90793a2506a8897922d4d4e8e3f95debde7661e0bc7e5f39ee360278e597c"
+"db.functions.st-removepoint" = "fb064096322f1d10b184f4a9901fb177f5da706421924a980deb944fd4b34c18"
+"db.functions.st-reverse" = "64923b9a805a0282acde814940f3cbecae8a1cc594d35201f307384331e97b64"
+"db.functions.st-rotate" = "9c5c7b10289e143194482690e32d07231f4031bbb777df04c9e692024a99df9a"
+"db.functions.st-scale" = "a01bb9274b2aaef610459fc84491aa04f05a34843ffbba649d0cb8efd5478f0f"
+"db.functions.st-setpoint" = "25b38fa94463634bd9bed21ed177cdaf745062d03f6a423ebe6d0c3383581337"
+"db.functions.st-setsrid" = "cdb4c47a755397b429e4eaf00e5ced4a147ed03aa3a590aec12699195f0c390b"
+"db.functions.st-simplify" = "7c406f75f449d0f0aa0f6d3bc6dad4ac215770fb159300834033edeb41ad7420"
+"db.functions.st-srid" = "4f201da307a5c6c2bacc46fab10d282c23d57a1c7a6457f1569304ba7653c86a"
+"db.functions.st-startpoint" = "6aa9a03f61a6204e2d9c117e4e77470e8e339da21dbe3d537c8abb7e803b9551"
+"db.functions.st-touches" = "fb8e35c378fcf1d6b499c603b9cc5b7e923b86cbc9f509818b7d2d21fbfc2268"
+"db.functions.st-transform" = "b64d1079d26eadc3051bfc8e97cc5807400283384886a8888605f31916e40b7d"
+"db.functions.st-translate" = "e0e53ffb67381b90f9363be0805cb6133d07ebb0b63e51a7d9cbbe6da990fcb1"
+"db.functions.st-union" = "eb169fe4bbdc3dbf57ee644bd4655dc84e9cc1d48def891fa69e57f9845d3b48"
+"db.functions.st-union-agg" = "5a34ccdddf1b01a1ceb47fb024d2f0bdf7945dd84101121df22102aa421b3591"
+"db.functions.st-within" = "884d93bee6e475e3c350275b4aa4fe1c3aa641aaa4d431cb5a9b4c7c28c17760"
+"db.functions.st-x" = "b0f1cae15351a42f8a05e76dae2bc02a64fd580f4b2843064847ec396cc1f1fd"
+"db.functions.st-xmax" = "7959c1ca842800f44d022d9dcfa9943e8956d65e8c6346c9ad513b31ca1f83cc"
+"db.functions.st-xmin" = "6ef7acfd5a8b9ca30b4a9ae8c4c97af2aea41e3db993932d87f731c3b7acf619"
+"db.functions.st-y" = "330f54bcdec543b69e3ed8eba50f6a06d6a8b6fad2a014fb6e05c7de8b53e5bb"
+"db.functions.st-ymax" = "e8775831f92f7cede1ffbbd2388788cab28e199f27749373634f7cf3c3af1b99"
+"db.functions.st-ymin" = "8ac3d108be431047321156b610c7e69655bb950e6e43647d66a463879692216e"
+"db.functions.st-z" = "846ff7d1e88495ae554b94fceb1bbe91fe948bccc20f3509af5d53fe9aaa31cc"
+"db.functions.st-zmax" = "0ab15024ef2b437c2a5fa6031200889de5e4f2820b7cec2b79ef430b252c0136"
+"db.functions.st-zmin" = "f28e81b2f096ced6fc7a9b996c77ee43613a19052aa22e782d9dadd3e8434bee"
+"db.functions.stack" = "1856514893917c3cb23f0d5a54b81f79d5d0092065767766d7aff929ae723149"
+"db.functions.startswith" = "28ff6673fddadf0b7ed798813130278270cb78fea982178a8b9e44d382d07601"
+"db.functions.std" = "a60938a4f5ee70605e19ba5aaeb7918ffdf89f68a7dab423c01d18afaac7c18b"
+"db.functions.stddev" = "3e1872a04fba800bb31495e24720ff99c4650c26de4caeac8688782b0c46102e"
+"db.functions.stddev-pop" = "c4bc9d7777ddd7f28b51ac71c7eb4e15beeb4f7c1b3d6567e2a7d57ddb6ea69c"
+"db.functions.stddev-samp" = "92290d1558bf5d609eb2b9afb49ee6721df4b63a234c3c28a5b35ac85a773a52"
+"db.functions.str-to-map" = "53bc75af3b5e25224f48b3d58429b14160b040cbce14edf35e8f2a1d75404ceb"
+"db.functions.string" = "ea3779e8c3079a485df451fa5be9a2fafc9107b4217ea3326a9de99182cda06b"
+"db.functions.string-agg" = "72da44ea97f607b298a79958225c98344ff6022381528b2958350edb5d13b6d8"
+"db.functions.struct" = "b9aa236eb924f61d9a18cb721d0c03217c5a1c1a3c1367e53aa29a33c05251a3"
+"db.functions.substr.substr" = "5b52028de63ca8bc805a07127093f14c9d895a825bd175f240ec9f654c2a3c91"
+"db.functions.substr.substr-from" = "0bf473be9275c4d82946f9ebd054649a8545673919781bae15642b72b00fdf24"
+"db.functions.substring-index" = "df41ba8a1477ae4dca9041f007ec09f6129ff77146ef2428258be4e1487177d1"
+"db.functions.substring.substring" = "d7a4fca9687adda0cb27ada4967755c8342f691083956ef68ecc91669c28ee4b"
+"db.functions.substring.substring-from" = "131819b61800c68d9c435474f60c18f7c1eb909b4261acd155dd8eea6be5e863"
+"db.functions.sum" = "2965b865e4058d28b11551eab2642ba398c8dff864c20cc12caafb0f739ef032"
+"db.functions.table-changes" = "45f8b48d6d7c33236148d7cd1a4441f729d2eb81499a93e75d65bef9cb7df4ab"
+"db.functions.tan" = "64dff5aa2bc7556e1722b85a3c0637307e4c2bc12da4138349f36d6aa58a84f7"
+"db.functions.tanh" = "28f604de228c14022af87a26e100edd7118c7a9508f336d1b109f3b790f813b7"
+"db.functions.theta-difference" = "393dc0767fb40a8235f9b74a4e91bf493200f94e8cd3ab7b46ab22483dc108e0"
+"db.functions.theta-intersection" = "c59abc1777607b730189f061472c96bc34643dda4c3a1a30f790addd309270ec"
+"db.functions.theta-intersection-agg" = "eed6ca422741b6676144193c5ad6dc0cf61176852717885176846d24d8fb8bab"
+"db.functions.theta-sketch-agg" = "526ecdc782feb8a6f9e984f32b603c7126685912ace1d0cc188d29508f665d3d"
+"db.functions.theta-sketch-estimate" = "1f3419e8012cfa2974dd037f6962149d2789d87573b0733c46bf2958e298b00b"
+"db.functions.theta-union" = "0f4fccde6ac82583957175e42d12fb9f4222739640c0fe761b51baa066186c5f"
+"db.functions.theta-union-agg" = "9a57b60b56632b52e1b8ebf34aef3b2b58138fb6518fd22d31badfd2dfe50b80"
+"db.functions.tildesign" = "994a90ee9e1d88b6e35fba466684067fe180f8ec3a507ef8ab27780e877b58e9"
+"db.functions.time" = "51d7ddda21533976bf489957059bfc4b46c538cbc49176079666febdbaa7cc64"
+"db.functions.time-bucket" = "f769c7cbb3e370ba73b6f87771237d2edae65728050b46881a615e004d314cb3"
+"db.functions.time-from-micros" = "84c0b1ecccf737c121c7591777f366ba5d403efadfcb4c15baa8880c81cef46c"
+"db.functions.time-from-millis" = "ffb1c19e6610769fd0ad0a194e8c0f51ba647be9ae0ebcafe8da532d61225757"
+"db.functions.time-from-seconds" = "e96ab6a3e305479cb862f9cec2787b834b500cfd29978a331d8e3978e8426a25"
+"db.functions.time-to-micros" = "73f61a55ea9dce83d4e1d02fe0a91b8c466eb5e1127bcccc1e58b8f6ef6ef2b8"
+"db.functions.time-to-millis" = "9d21b4f8bcd2153f5fd6b000b40020b61132bf5890ca4e94912b7cd6b21f5e77"
+"db.functions.time-to-seconds" = "69f778377ed02b3f1f6ba45e81bade589723f5abbee8599a36d8c55965f6fcbe"
+"db.functions.time-trunc" = "c4152b8bb37f694bdd708cacfff544c9ccae2237ac388efc4380939b94a20914"
+"db.functions.timestamp" = "e1387381e7236f838c3e4945cbb3ad4157a5efaa729dda87715145faade9efba"
+"db.functions.timestamp-micros" = "701e7f631e62233fd094988e24f65446195102dc80db47f6fd24c65532b6b607"
+"db.functions.timestamp-millis" = "0ea467a941929c13aa8276108f0f9420c6be5b142679281dc9873fdab2955755"
+"db.functions.timestamp-nanos" = "a20768e3744afc6e3fa027b945f8cd06bb7eca25b229fee9fc94a256ab836320"
+"db.functions.timestamp-seconds" = "faa043e7be54461143a8a5820ee870ba5066458ce033d94cb86f5a5d7787ba7d"
+"db.functions.tinyint" = "1f7ccaeda42a92504fc69cdec26c0eff5447ac21a901d4ef513c67cb36b58bdf"
+"db.functions.to-avro" = "a1ae59be048953594ab372c5577fe891e9d950d5f1231d8e9553a6802d884dbb"
+"db.functions.to-binary" = "ccaa412a1bc77757fee38164ea01d2fdaf52a3d177fe290eff2ab46a755285b9"
+"db.functions.to-char" = "05a32fa6a7eabaa93ccb98ac9a4f54cb5e2bb98d0c129598269dba2339b2f1d1"
+"db.functions.to-csv" = "5c5d8d04a3863f84c0a05f87defad5179cf0d40037f55e32feab9312520ff82d"
+"db.functions.to-date" = "80a241a91bedebd9bff0788826ffce5d014205fdb6dfc23a9fa8460f0df169eb"
+"db.functions.to-file" = "775024ec1231afb2fec7b3cd65606166d45024ebe458064fb8ef1d6a7e5dcec3"
+"db.functions.to-geography" = "3385848714f01bca40ee403cc1b22377cef061fb3c9245c110c8953a7eb4a44d"
+"db.functions.to-geometry" = "a0468f8c87511f506ede1e040a47f5bb552febf365d9ac00f808e064c9bbb3f4"
+"db.functions.to-json" = "54ae709dbed565b040987dc58f7bc55598c0f675c3814498302cb75343200140"
+"db.functions.to-number" = "d16858be2152cd2511f8832db29c92cc22a25d3bc0d3923fed1da0e77226b382"
+"db.functions.to-protobuf" = "5af16cec9ada5ed056392cfe2bcdbc69387e20cf6f1052e0479e1514c19927f9"
+"db.functions.to-time" = "f4ea1f67d1503cb90b9272a6fe4025e23e4b34ab3f9c756bbd057fdd7721e6d0"
+"db.functions.to-timestamp" = "a0b7c63e33ccaa8e579ca972322ee42b10f4b85204840e14c8aa7afb11c1949e"
+"db.functions.to-timestamp-ltz" = "d43519f9ce75adbcff5f9117dde1cf11b75646b714cf8b541874f96f19b473dc"
+"db.functions.to-timestamp-ntz" = "bcebec81c4b812c9bf3129beb3b628c310ca97351cffa2a36c14329c7054bab7"
+"db.functions.to-unix-timestamp" = "3c1bfcf1c633ce0c36ba9dccbb43b1b755ac5a8667eae8ed429046068fac5b7e"
+"db.functions.to-utc-timestamp" = "966ad01c0135abbcfe927d2888f586aede7e85a695a26bd34100a8f2ad0d2592"
+"db.functions.to-varchar" = "296b23d7f7f1635b1c7fb67330b0861d4927750267fd74742c558393a3691484"
+"db.functions.to-variant-object" = "a07b17496ed11175f332b3343a8b773b95b6fa293cae8310616d5c821ad3c20f"
+"db.functions.to-xml" = "78120549a7d30fad43427e6c2392ae3ce1411a963290fd234edaf38c6ab64c50"
+"db.functions.transform" = "4383293fd207d6960a42efc98a75b39d5ebcb69f63feb099f67e917d141f7006"
+"db.functions.transform-keys" = "e83865e80263466da8155018ba5e17c5410667e5435baef086a8da7192486510"
+"db.functions.transform-values" = "8bac607115a6d0d6b474bb4c62616a2f966ef3cfc14c0578ea64a01ffca5abfe"
+"db.functions.translate" = "c2a8562cae8ab901fa9faade4040ee6de344ad5f52fab68eb4b48cadb999c7c4"
+"db.functions.trim.trim" = "4b9dc965c8a8dc4b54a8cd8b352ac2bed6b4e56d29c516725c9117b606c227bf"
+"db.functions.trim.trim-both-from" = "b4a270d3a691d82cc1db1393b594529a1872d3f6181d7f6fcb658ef53b129000"
+"db.functions.trim.trim-both-from.syntax" = "ebd17a03188830c98caac1ace870b82ba1f793d257b6681f97bafd9fc58d1582"
+"db.functions.trim.trim-from" = "8d6a915f8cb54f1f08b50c5e81feda42ab04949a44c13d3b3204382dc94ed7de"
+"db.functions.trim.trim-leading-from" = "fcd4918d3b6514435b12a22eeed706d6ca925cbc9c4a739910ab1b0eef73a630"
+"db.functions.trim.trim-leading-from.syntax" = "dec0994168ed60c3e8e8438e9e43777da93c9bd0dfc242bf2b675d9dfbebe938"
+"db.functions.trim.trim-trailing-from" = "8427da1bcd74559ba756c71519752fbba39d43bf8c2fca295526a9a934df836c"
+"db.functions.trim.trim-trailing-from.syntax" = "14d3fa6cb3d92f24ada616327e5f8c529ff684cafeb6e05ce9d71f8bdfa5a4de"
+"db.functions.trunc" = "5743c318eb7bbaa131009bf678d8acff5e297c31b787363a764cd0f50a915bd3"
+"db.functions.try-add" = "5bc23e284f3b7a400f03f26e55708fdecdbd95cf1a4b5e39160a604d16c5dee1"
+"db.functions.try-aes-decrypt" = "bf8ad2ca535d5bf4fe9ec7b12e07104be1b82e89c02e71dbe9d97b6ad9e39b09"
+"db.functions.try-avg" = "432e6fc4aec3f34773df20df22fdabfbf551ab19e95f1e2dc769d32329a6f51d"
+"db.functions.try-cast" = "4363800601937d1bee4901f967a1b7fff968cdbb18775ce7efef199d52c1ae01"
+"db.functions.try-copy-file" = "2d8ab48fc1b6da1f1b37153f97117f3fa1d1073515b25f05c90fb5ab1fab5f6c"
+"db.functions.try-divide" = "d817df08d4b5a1c42e1cf4ec369028a4e8f016c708d7ebb5928fc497cccfdebc"
+"db.functions.try-element-at" = "24c4c6cc2052546e6bdd88f190dcd4ad3305fd3b8e4a13b84a492c94f5477294"
+"db.functions.try-ip-as-binary" = "f35005db22063e99c716bc7e682781a4045ec29d93cad22bff26adff32283209"
+"db.functions.try-ip-as-string" = "605802da3ca89825abcb4392eb487f578178a355a6edd5d3e4d62b96d91a2640"
+"db.functions.try-ip-cidr" = "92cded76148018a060c68bf2cea344869585064b0e372c4af931823cbc305d2b"
+"db.functions.try-ip-host" = "83801513496ae33271c34be358ea7342d362d0eeb52fc1ee3561ff88dcf58b65"
+"db.functions.try-make-interval" = "da61fc47029dea0e319c2e94e2aec6688b8d31ccfdaf9195e048d694996854ae"
+"db.functions.try-make-timestamp" = "84c6fbf3e5f020a1fb67dec0fba33540106e4b8b3a8df6d8f49ab27808e34369"
+"db.functions.try-make-timestamp-ltz" = "eb92a0b4175485ef179351b8fd7df3f9cad967f11cfe5e75f68bf528f63a49f1"
+"db.functions.try-make-timestamp-ntz" = "bc91297b2de1a1dca1ed6f5f99da0f7cbd32cb415a7c107492e875f6520c1107"
+"db.functions.try-mod" = "c61224cd7ecabd99b733452ef8d0a10fd08bfb53d05b1a94ebef1545b6d4e01d"
+"db.functions.try-multiply" = "a175e360399e0e7390d0e5dd59ae9d168de8fcc353419fec520cf1e6c8e30e7a"
+"db.functions.try-parse-json" = "75fce59cdede049d4ff9b6cecb86b6ecae724011b4d474049d69e03a7a827697"
+"db.functions.try-parse-timestamp" = "9f5ccdb6af66a4e23cc224a6bf4f4db9820a13b8ccfb692957876f0c598d91a8"
+"db.functions.try-reflect" = "7f76da232ae86cddbca1a663341e67fc3919460445adf28de8fb507827a8c0dd"
+"db.functions.try-secret" = "e6c4133da609aa149be818995a3d9a5bc43988d889e4067d25249689016112e9"
+"db.functions.try-subtract" = "3786b53a09f39b10e001e3e84896b5c98575a964daff3f400d17961e0c646c21"
+"db.functions.try-sum" = "4b8bcf189f8ccdb6300c05765daf30577cf17ddaa57a6a3d3066eacd90935964"
+"db.functions.try-to-binary" = "45df9906f43494eb1bb245f28618ebb65fb18e93b570af9e91026c8521363383"
+"db.functions.try-to-date" = "ab54679b4f2b2a87aeba9ac26a8ff3b133d2e616e888e394b082c24218c0739c"
+"db.functions.try-to-file" = "d22af3d9e1390bdbb121510c2ab73a16858350365cc0f541955a55e4999f9baa"
+"db.functions.try-to-geography" = "9e7dca26a7e5d4e58490465498319deb7f721b2b21f8538daa4238642dac6578"
+"db.functions.try-to-geometry" = "4eae36baae3a5a0944faab26ed262dfea1e4e544c88fdc68d55abe08f01ffc37"
+"db.functions.try-to-number" = "70d118880061c0fcc2fc8ed983c2d419b3faf5fdb19dd96c977f1a6afb2bc30d"
+"db.functions.try-to-time" = "82bdb4ee4969f527495104241d4d92d27f95362423006a0fdd61823d2fc20fd3"
+"db.functions.try-to-timestamp" = "21c1b86922a8b9a629d0389cf426c4e786c26bf352f48d7fc45e1e3a168fd0dc"
+"db.functions.try-url-decode" = "44f0d831c1f6078df4bb57066102527fcdc3ff8381ccff5d68ab502d010f83a6"
+"db.functions.try-validate-utf8" = "ad257725ef73f0f1d14c5a61142a81e911e8ee9dd4d9f31a07198b27216c2c0f"
+"db.functions.try-variant-get" = "9e05bdbe96bd65ca2b56115b6590c175edd93abd9fc90fb80851ea230845dc04"
+"db.functions.try-zstd-decompress" = "9b8d2e3d3af9fd5682c68c86c720ef53034529a9f89d29adb01cdc475062f013"
+"db.functions.tuple-difference-double" = "c0d808876ada5475f775f9086ae524b1c3612f4cb5d890ac8cf067e4b49b776e"
+"db.functions.tuple-difference-integer" = "d0223c0b49f86c3929ad33998bacbc4eaf92c24ddfdfa808f374cbff5dc36365"
+"db.functions.tuple-difference-theta-double" = "3375aa129d788ff4fb0baf51af1b6b91904f6eaf354771c88b2a23c46f003174"
+"db.functions.tuple-difference-theta-integer" = "b0fd20b22cc8a8ff85aee6685edba8a6d94c1a72b8e9dd2ae1f327ac2372c7b2"
+"db.functions.tuple-intersection-agg-double" = "323497d749a140e61c85792031dc76ad318a2c832f201cc7f4f4112fe4607880"
+"db.functions.tuple-intersection-agg-integer" = "44cf3e35b3cc850b82d2e19b4815f6ceff3663eba2b8bf6bfc9421a05facd122"
+"db.functions.tuple-intersection-double" = "2f4820eba6704029670f5fb95283d95ba84c0dc1ee077f6541b9466e05ddb6ce"
+"db.functions.tuple-intersection-integer" = "ede81fd41b80fede3a0de40866883ac8a3039db8f6bcd09b76974484e1e1c4f8"
+"db.functions.tuple-intersection-theta-double" = "fb1e1708ac281d2038c212d0ee7c1604c1c5f304343bb8ba3c2f88e664974eee"
+"db.functions.tuple-intersection-theta-integer" = "7ce53a73ca912506d606023d30a1c92f9fe05c3980ca050b0cfba873e1bf4f54"
+"db.functions.tuple-sketch-agg-double" = "7066ae97fd24efcb690cc0d49ef2d3c58adf6a308e1c8f204c059dfb688e93d1"
+"db.functions.tuple-sketch-agg-integer" = "c5b62ed70035e8c584362639ec2249d8659e03f4fb7596e216a369e59cad89bc"
+"db.functions.tuple-sketch-estimate-double" = "cb62a90fd9b875136223421ebfd2350ef700a0418dc1287c628aee4a5ab35853"
+"db.functions.tuple-sketch-estimate-integer" = "c6e83b55c06f52a281a6913153c633745ad12a0a9842bdebfcebf2d985f3c158"
+"db.functions.tuple-sketch-summary-double" = "7c8319c3fef5a290ad9347c13cf3f3e0120a5298d4ab30dbfac87d8511cde331"
+"db.functions.tuple-sketch-summary-integer" = "647e57d7d9cea71403e86fab940f6c333d9499b5e6402fb83fdd57ff2d8f51f0"
+"db.functions.tuple-sketch-theta-double" = "3f2bf3fa06f6e0a5d613203bc668587c3dcc554951d5fbae85f17802bef7ab39"
+"db.functions.tuple-sketch-theta-integer" = "bd0bf39de212ce508cc02e1251275a6cd27b507e5730861ea8fe2a5817abf4bc"
+"db.functions.tuple-union-agg-double" = "2ab218c65f06ae336d9952d8530c70998112ce3750b0d09031da97c4f26bdcab"
+"db.functions.tuple-union-agg-integer" = "918efb127c59313f3977c181793ae36d4884d6cdd253af5589f2aadbb3593d66"
+"db.functions.tuple-union-double" = "99b79013f1516081065039dc2ae696bda054122f07187e10dfe1ef8c0c6f240a"
+"db.functions.tuple-union-integer" = "3057b2ac20eaacf67ee41891bd81d58233db6988eb533ae4f8f94c276215f127"
+"db.functions.tuple-union-theta-double" = "a008f6ac9f0a488ef129928132691d9566917d4104518aa6c0bc620375a90220"
+"db.functions.tuple-union-theta-integer" = "3a766717e60c3b36047c4134f93f658603344ac608814a06fe19e0310ef256f5"
+"db.functions.typeof" = "17e2129a6aed1b078c76fe857557689c0e75838908f7413441f061da56845cc4"
+"db.functions.ucase" = "4b2231b7664d27fba2ed5fdc4b45352e5cb617142215c083801ad87273ba4761"
+"db.functions.unbase64" = "7a184b6fd7b6e19d22d4edc81b73205f23720a971ff4b89e8ab85b3f859dd6fc"
+"db.functions.unhex" = "2d0ce2b4d66981ef982b24f860beadd67885c4704b0a9d9890f0b2127f101ac8"
+"db.functions.uniform" = "d161525c6f653518cdb3ddda9507cef50fedcd992c46d839e7ee1701d14ea053"
+"db.functions.unix-date" = "012698a8ff4bc1788cc3d482940aba0902f2361a5ab74cba4831e19fef14e53f"
+"db.functions.unix-micros" = "a86c9c35b70aa5aab176b804cd14590cf11215e2d88fe6ce42f12ba9e554bb47"
+"db.functions.unix-millis" = "f460347276d12af798b6d5185581c07f0425b4371b40b1aa81da69fb156817e0"
+"db.functions.unix-nanos" = "8851a8ef89c5b42809d3c719cae828c0bee4f0a69d7992f555d03e9043f92343"
+"db.functions.unix-seconds" = "0a9f2a80c6a44d18a0fd172e812bd3e80549880156f85a6842e8985abb0f87c7"
+"db.functions.unix-timestamp" = "15f2aa3ac1d37b2d005b10ff482eca4b3d0c19ebfdc73f9f1f86f026523cfd00"
+"db.functions.upper" = "68f10611ba882a75bfaa2ce6a6ff2edfa9a18a8d40708fbb9d3705bb7dfcda52"
+"db.functions.url-decode" = "19cb697640da5358180e7a19fd03cf88b7bcefed8a86438612811de138eeb599"
+"db.functions.url-encode" = "9e05105838af28983455ce897a0ff1dd2c570a6615694835d7b8402ed316f318"
+"db.functions.user" = "5ad1262dc01b9c4e26eb0bdddad7a44660cac1a9c5272c30a5e9ddeb39eefecd"
+"db.functions.uuid" = "ae8fcf3abd5325e1f1fcfe708da8054e9f15213c5936caad86168e9d947aa09f"
+"db.functions.validate-utf8" = "58c9c17f9794ba3fd1839d66acfea2bdae4def08b693c72881240d4724cfc049"
+"db.functions.var-pop" = "732bf988dae83f7394bba60ffcf2f01cb62ecfea439a96a64d79300c78c5dfed"
+"db.functions.var-samp" = "1c3907179930191a3080cd9e80fa59c5c18aabe74cdb15badc4d6b2b6fff025d"
+"db.functions.variance" = "8469cdbee187d18b2d4a8e375c7877ecfb2ee067ad8cf8882a650d8788e93a7f"
+"db.functions.variant-explode" = "ad2583c232aded68d5a5f4ae164e9f2863998736a1fc8b1e936f67159dbcc75a"
+"db.functions.variant-explode-outer" = "1b5679d17dacd2ed816c4219d5dc6012de1d9e3cba58d41438c591841fec9383"
+"db.functions.variant-get" = "e9f2443e419318493d3abbee2d4454896eacbf4c788ec167cf077f72fd889663"
+"db.functions.vector-avg" = "a9d55d37b22193bf31dfff310ab5dda3a52a1dc6d1ba98d9854d5fd7e9be9599"
+"db.functions.vector-cosine-similarity" = "36859e6be601b7cbac5b9f4c780577c7cd64dcce8e4835389b0b6aac1a57d952"
+"db.functions.vector-inner-product" = "5a31de8ba0efab1981fd3fb358bbad2c16af5367d2bbb42d6a2f8c46dc39e1d7"
+"db.functions.vector-l2-distance" = "1876871d8edbd22aaedf5f42c0d1ad88f68ab8b1aa2be452ef603ee392338b01"
+"db.functions.vector-norm" = "8a9a60f5909d421c6ecfb57f850eaaf3d63fea4b3eb56ec03e469166842de558"
+"db.functions.vector-normalize" = "e101a915fb0d68a6d28f667c09a9862ba2b94a588ba30b9596fb5173e84e60fc"
+"db.functions.vector-search.vector-search" = "434697865b4fb51bd61aa39e1f858e9deccd8046fe4aa16178cf5a36bb8197e2"
+"db.functions.vector-search.vector-search-2" = "a2481d9420866b21f164eae1d58813b8d89819c37853d59a16002da1706aea7a"
+"db.functions.vector-sum" = "710a857bb704fbebfe88ac8a41f61e3bb909d65885319eccace4c4ba758cedd0"
+"db.functions.version" = "cd8fd236132053b4edb3cc16e5d592b8329903b1d64b673163721a6ce2d20ef1"
+"db.functions.weekday" = "f5f03dbae97feb4d39ea57972c8abdd65196ed3decb481b2c29c649441449bdb"
+"db.functions.weekofyear" = "576cc9dc657604dd50824cf01024104266bea1f5329d05cec74d9e3868bd455d"
+"db.functions.width-bucket" = "b58125d35f869578fc94b66956a236435137de3f6f8cdcc5cd4279eb92b60aaf"
+"db.functions.window" = "3a1fad83e20111aa41c7b8a84885d81c84e8319c20dd7cdfa9a339c0ca6eb63c"
+"db.functions.window-time" = "cda2737c36218805d44c189cdd48e8655a86b819beea0598f833b982ba79f4b2"
+"db.functions.xpath" = "b3ecb9abf947beea60420a6851d2b7a79f49c853560e12862c610c491c424536"
+"db.functions.xpath-boolean" = "05a3b77895c20695f52a9269c8b3bfb337d295ab9c5aae8d186b0489529d72d1"
+"db.functions.xpath-double" = "30eb1015f7e577c8baa03261afb3797732fe436d8b6c6685296cc5fd98580e35"
+"db.functions.xpath-float" = "3ab7902f668a9948e7f99eeb22fe8affc0feb2504a546db7e23538b08883507c"
+"db.functions.xpath-int" = "eb88ee7fe7e6cd050e710a0bc73fdf13c57ea42f157dcac73f54420ae479e265"
+"db.functions.xpath-long" = "23c94c943430b5457c5d270119b37d802fff2dca3ed1797c69eb2223aeb5ef5e"
+"db.functions.xpath-number" = "724e3ac2004a98b2c0a30997234029b6c42c79513acbc764eb8450b82663e429"
+"db.functions.xpath-short" = "691878a336ac5e24daa716b1f77f80cf7e455e9a210b8b9c6e231e6e57565648"
+"db.functions.xpath-string" = "3fd0ec888a8659732bc122ca7ebd43c8fffd63773f76854f46496b2ec30f6cb3"
+"db.functions.xxhash64" = "4d56c44c36e8b66fb7ae7f2a99391edf5c8e5bd81163adfc7138da8d9e108aef"
+"db.functions.year" = "0126a1dbf5f69aba6437f9a3253aa1573a5fe2c84cc659c5628743b421d7f443"
+"db.functions.zeroifnull" = "31bf13c89c5b4a0e6a271a2d6ce30eaf834bb7541da1bc4b38ed0c89cffce4ce"
+"db.functions.zip-with" = "0e4b6b228b5b387967f14bc40b584320dcb7425e9d040e7ffb2413ec35c06500"
+"db.functions.zstd-compress" = "5f51e29f2aea11df967e659c42b5263cd5e9a23e20a2d0259f86ec90a492def2"
+"db.functions.zstd-decompress" = "268aa6d8db6a8ac5b269d71e5212f001987016b7e9f24cf06e46d0813b2255cb"
+
+[review.definitions]
+"db.functions.abs" = "ff4341efba89db6e2a6d56ec9b7124ba7615eedf1cc31456233c532d7a2d2336"
+"db.functions.acos" = "b829ccffbce4847e2cb0d38fb82ab0b40307a5b44fbc9be0069eec57149f200f"
+"db.functions.acosh" = "6cceecf19d6703f343230af8f7c29c53a352c86f1169cb304b28fc76061b1bd4"
+"db.functions.add-months" = "35f1746637aa684d381e95fd2e4c8b91318da14e2cd287f3231f0e860fbe95e4"
+"db.functions.aes-decrypt" = "a024b8519f74d1fc6256d09569455820eb480796bef81fa06d9e64f1541b3ba0"
+"db.functions.aes-encrypt" = "e5e8ef747731d0da7b73c51de959efa0bc51f554f1cad357e176984cb58b913a"
+"db.functions.agg" = "dac78cd86af05ace33aaf1d3530804a0c8c3ec65ba70b646d02640b24d5e529c"
+"db.functions.aggregate" = "094636bcfbb71b6203ea48fdac4516ad48fedb74646a0b6bb1c4db57d363b91c"
+"db.functions.ai-analyze-sentiment" = "6ceb19bf3dd7f49e61f453d7a07bb4ea69cfb379c725a836130dc2561a5abd5e"
+"db.functions.ai-classify" = "7dda6e9d8490afce8401c30c3245a027dede9415ae443c9fc60755f0fcbcfeb5"
+"db.functions.ai-decide" = "453a9aa65139f0d41b2e31eb52a9bcc24148c236dc7b7e01756918df73c11dcd"
+"db.functions.ai-detect-anomalies" = "a23ca6a478f88979c86b87782d3b6e0ac0d77369777570e4a4a1740585bd9e88"
+"db.functions.ai-enrich" = "381929bc0ca42ca3a9ce5bb5ffb7ad1ab2be47df9644988778a4f05e4ed48cfd"
+"db.functions.ai-extract" = "ca8239704c66176be1901fff158fa4bc257fa05aad62aa72d354ffba97074e20"
+"db.functions.ai-fix-grammar" = "c5e76dede92d513ab768d670fa3bbb2032a847d387edb4a58e9fc5f45c5426bf"
+"db.functions.ai-forecast" = "268ef0c02caf770a22c4fd941a50ae51aaf37777d655974a845b2319f3fb8f43"
+"db.functions.ai-gen" = "53fa4cbbcfd905078cb614de1073f88c7eb87fb1609dd1073c5084a2caf8a16e"
+"db.functions.ai-generate-text" = "75330385cec9aed6d90ce65cc40334c4c817d8945916a04b78dc7305442ba657"
+"db.functions.ai-mask" = "0881e51465e6d0216a35e36453c329427ac7f2c1a97c794569ae218903afef5c"
+"db.functions.ai-parse-document" = "998331ab4bcd1a336f8538214f6ea98be06a22b3bd05a19f609565df8e821b66"
+"db.functions.ai-predict-class" = "ed8d191a7c01c82abd21ea5a74bf977c768b35f362b8ef390fc60ca85df7b891"
+"db.functions.ai-predict-value" = "88cbeb59cd45a38ed67c897939ee3a683141a7202f67f680fbff6786c625e148"
+"db.functions.ai-prep-search" = "3da09758a4ce891fc8b3037b137a3849db98015a46aecadc9b94f5e367329264"
+"db.functions.ai-query" = "c181e079a75283c6e7fb8e1c45e4b81ef0b5979a6475984617f770e752814d16"
+"db.functions.ai-search" = "a396160c92a6db4ed1dbb3975bff35346f607a3b9dbe51122ef3cb497fa3831b"
+"db.functions.ai-similarity" = "bc35924e7ff7ec39775471a44be1b7e97d52c3562aa4c1125298c1aabec9ecb4"
+"db.functions.ai-summarize" = "23b2b69dff6361d3c3ca10a66a3b6a2b5243f8a266acbdbac34585622350ddf2"
+"db.functions.ai-top-drivers" = "9987679346584a177f54aff7595e9e41a2b5320404f34c40940df6e3a0438190"
+"db.functions.ai-transcribe" = "5e1d49d045b6365516cc03f486706b4003aaafaf97be109f7456c678f9d734b9"
+"db.functions.ai-translate" = "606898c85d48680b974d42ebc89a52cddc2b2f87487c820cd133af4bc2ea52c4"
+"db.functions.ampersandsign" = "e955c33cdedd095ff0f5ddee607e2dc56541ee2cbc091536827b18729226dddd"
+"db.functions.and" = "fe68c1a89c70ec943ad49d1efbb024212cf161f1e48a13b6157ddda53aabfa5a"
+"db.functions.any" = "93d1d9f040cfe1cf49266e78a3c88aaaa93e6393470747f647c2c23639128a95"
+"db.functions.any-value" = "382b5252e4c69b4ca7f1efcae9759d94a7ade9fac77fcfad32e67e912e629a0f"
+"db.functions.approx-count-distinct" = "5fded620f8923df50c7479093edaeafde34229a64ddb3ae7e7453ba40e285dc3"
+"db.functions.approx-percentile" = "e0f6b0206ad8528565b2d6eba3baaa7049d4de32101d35a79d3e667eb3142660"
+"db.functions.approx-top-k" = "800901e6d167327887134140d1732530403490fcd368022fcb5836f6602c855d"
+"db.functions.approx-top-k-accumulate" = "c78923d4801990bc98dfada4ecd85b51f9d4120a12050807aafbf926617371bc"
+"db.functions.approx-top-k-combine" = "d59526fa967d2bdf7218978c86a791fa89eaea025548a4978097fcc30698eb2b"
+"db.functions.approx-top-k-estimate" = "e85026d3d5c0b19b53c061f6569c990109f6115ee091ae6b60102282bfe7ff5c"
+"db.functions.array" = "f6adf14860f98ec69ad97a5d5d0e93e03deb55a8a6775063ccb9cc66deb93caf"
+"db.functions.array-agg" = "903db10475405f692492336d1d29ee2397f53e2f2b16fa1f152bdae8577b9d17"
+"db.functions.array-append" = "4f5ac2ee56104f159aabbdbafa28104cb04192d1579f52337f26d82b7fbcc0bd"
+"db.functions.array-compact" = "651651b468b2f3fb3ee22142c002dea8df291d9491f0e6e79e39684106180735"
+"db.functions.array-contains" = "6ecc32f500f9e247bbd223955055ffc4c6bfe9ab9c6d6d317e25dfdf7d1d8a31"
+"db.functions.array-distinct" = "ed2bb3c2d14955acd3fb2fc123012a512afa2d83a68259627f7dc0200b143695"
+"db.functions.array-except" = "72ed21fd62445247da60fac7f3c3dab301d027be844849f545de61075316e047"
+"db.functions.array-insert" = "41a1fb7030002994460d82ad920a3d5f99397e1ee9af06ff2e7110e12638e0d3"
+"db.functions.array-intersect" = "c2ef2c2b98211a4a74a797404d9b99c1c43d2cfc845093c4f78798859e4202da"
+"db.functions.array-join" = "946767da861e082462b87908eed503d8436c61ce5706945bbdf75b41f0a975b3"
+"db.functions.array-max" = "55925361bb20ecd09bc9b037657e58fb33230590f6d8dac0c73651df34dc3d2c"
+"db.functions.array-min" = "d1a6dc438f4278263b1b246ba59e4f737fdd4758b2887a32ce5a93cf1742d5e1"
+"db.functions.array-position" = "da9f4cfdeb4447033b8745825ac5dec8c3fab18e6d91493f2394d5a1868a7fb0"
+"db.functions.array-prepend" = "468bbc46f9e92c3ba3827549d5f60e19a97d65bc23c707340356eb0791a6b92d"
+"db.functions.array-remove" = "07aecce6c949f753be3b0be7acc28a1ab6d12d854795457e57a858ccd1e61044"
+"db.functions.array-repeat" = "b71bdcce328d177f74265907c44d7df0dc762ac3cc4425299092451e0cfbbba4"
+"db.functions.array-size" = "f54343fc913ddabae6cbc04973d2c80cdd8bdc35c7aeaf7f0a26559455075373"
+"db.functions.array-sort" = "14bdc75a7baf1bfc8da2db1c493560904122e644637cc283e241e15965fcf20c"
+"db.functions.array-union" = "4a8a4a30da36ca25024753673aab3abe44f07efa1915501b6deb881066e396cd"
+"db.functions.arrays-overlap" = "1f82652ddadd96a50ae1b111cfa1f830d488500b56c4a05ef3ec8bf9c2e27ad6"
+"db.functions.arrays-zip" = "6eec8d589edc5c5baf81ea800863644cff5b86121fc19d557cfacf3cbc0fed84"
+"db.functions.ascii" = "6b34f27ee5b02d6214d7b4bb7bec9a956e2686e1386b0bf1af1e586a96591732"
+"db.functions.asin" = "4c3f60425355a0055352d4a3c5dfb875ece1e43556c883c83f4a673e88f189c5"
+"db.functions.asinh" = "5073415abfa1d4de6e300b8126f56099dc43bf2f78ec21a125136fcd86ff53b3"
+"db.functions.assert-true" = "16e209da74b4105665f49bb6c98c0502eb4b43e1621767f4d8ad1c0b48fbb9a6"
+"db.functions.asterisksign" = "a88ac21392cb1514411c1d917ed697705b2b85ee86a8fb9f30505808e89d2719"
+"db.functions.atan" = "ec64378594ac5ce85dd7693790d7f7b83319ce0d297ebb60562ffc0370b0b0a6"
+"db.functions.atan2" = "4a62fc2acb74a045dbf14677722b2e46933b4b8a548268a91d5178cfbb4f53e4"
+"db.functions.atanh" = "17105ac1ed0c879a284098c627fe1c1c76d527a8fc11a3857ea3d0a95601d716"
+"db.functions.avg" = "f8dacce52d98500677b9b26b468bf908ed1feb02e4f8482a349c49286604a432"
+"db.functions.bangeqsign" = "21ffae832ccc6e5ad40dfff9f36afdcd534b2f608df20fa682a1f41b00b4ef53"
+"db.functions.bangsign" = "b8b4e54a67f0ba26fb5a8c8b1484b4c8e6ca29043fc26788810c6d8364396f73"
+"db.functions.base64" = "ca5bd7d023c82707023b0332ddf4a5cf3f896d4bbb50e32980ef299e4fd4916f"
+"db.functions.between" = "c944fb75fb49fb47f377d10b918fbc59cc48a9ed63074c9e5bf63971b7ff2da3"
+"db.functions.bigint" = "759f4067e3ac9e0149c5803fdc29a38371b3fee2ed1b4b05a59c70da8562a6d3"
+"db.functions.bin" = "c00f919bfaf2c1028918d95894f1e2b865527e1468d8d6ce42d069afc9aa330b"
+"db.functions.binary" = "61934751f693fcfffc76a9cc2a60c3a3b5cfa117c6fffe55796bf2c4e05364a6"
+"db.functions.bit-and" = "c44e52f5c56db9ba542f213d8422bb7cf08d5bd1474db9b63f5f1a2bc110907a"
+"db.functions.bit-count" = "669fd800faa171e224796439c379d7b47a6d8dd0810e3e7455a056c71a5686ac"
+"db.functions.bit-get" = "d57c8088fcd6fa549530e75d4a94faab23f7131cae7c605dcd0d98343d9c6bbd"
+"db.functions.bit-length" = "857212bd91ad2d7a6387857d611e71f0ffa67144258a18f80f24a45e0a7558a4"
+"db.functions.bit-or" = "a17729f0c142ec150c5ad951e20480e41973a4616584a65873d71b3072b04267"
+"db.functions.bit-reverse" = "e930cd428f596964c5a25a567cbd78a3f22dfb7da350040347f4e65101e5ca6a"
+"db.functions.bit-xor" = "af6e4b41cc0ca0cb183d7a420f8a33dd6dbdbf0b1bba0354602720c951a6e63d"
+"db.functions.bitmap-and-agg" = "8de8c588145f1c1a53903fdc65962d8ae70c2f42ef398dd985ec1a78e4f483b5"
+"db.functions.bitmap-bit-position" = "bbd4d66d21fe200a353efcd0e9bcab3f596560058cb183131ef950dab5ac311f"
+"db.functions.bitmap-bucket-number" = "66e2c56d77e4080490fa7153366201e1b3b7a1c15d4d638c3f51440002c276b0"
+"db.functions.bitmap-construct-agg" = "9ef36ab52476f48a516368ab5118499c5c550327b76acab0534d49953f5a464f"
+"db.functions.bitmap-count" = "cdb0f9435404feafba3a6977078e67d433996bd65c282445d89ba564d2732003"
+"db.functions.bitmap-or-agg" = "dd79b6eac15d8a5aa412606bf1de6779c446f25bc7458eb2dbe7e33e768a1296"
+"db.functions.bool-and" = "18090c13d2fd977a2f0e5dcfd2a67fd725bc0b249f45831e82285fc88883b8d7"
+"db.functions.bool-or" = "747e6df00b2a3d8328a2ee581c6419ff738a12a1ad4d66f78220de163a3b8ed9"
+"db.functions.boolean" = "ffedd2457bf94ee314ebfbf0addcd6bb5d5ccbcde7b6aced0d08b0495e150adf"
+"db.functions.bracketsign" = "510b3f1e73ba52b9b996511af2e8a1364f9a1e9d26b4754aa76dd95177fc59bf"
+"db.functions.bround" = "e6b103dc9cc7c0034dae2ebc53e272d31d5c198adeb47ff69dfcc97282d0fd7c"
+"db.functions.btrim" = "8c3b534a57de5d2025ee1142179abfe98cc143f77f0e704e372d30465bd31ec7"
+"db.functions.cardinality" = "9188dca154b733721dfadc519f63380138ff4c5eef70fdf9ad0bb656078e827f"
+"db.functions.caretsign" = "9a57ab63af846095b79f22138328348d07895e5e85c304cb146a5007be7ab905"
+"db.functions.case.end" = "2c289eaddf433d2ea8f0aa7fa51efd215546390bb7ea2a94af731de98267fdf1"
+"db.functions.case.end.syntax" = "d454387d2e3974cdb66905aad4443f9eb58c6ccf3003a5535333c72274d438c3"
+"db.functions.cast" = "05aee9fa63b5c39e0a185472d4ebe4853e320d4887ee48f45e7f99bbbc575f8b"
+"db.functions.cbrt" = "86221fe6f73769fa441912e843c70e7782dc753d49517649860d2047cbed82d8"
+"db.functions.ceil" = "da3803591d283a0f5bb32dbbbff9b87e49506dc18b94941593d32a6f9c022842"
+"db.functions.ceiling" = "ca844ba6e92a5572db835f45153765bec997172b6e916aa63e433046378f0b56"
+"db.functions.char" = "bbc6694c06873a36ce3ffeb816e859f372585515d6f3009ab6080184f6a702f7"
+"db.functions.char-length" = "4d6f43b0446a3a62a1a47c2f05b8f0b68061d69f7a030f29a2cfabc67466f740"
+"db.functions.character-length" = "04271e3b689847bb46e6d79044bec42b5cd24767cfc8fd81c93d8cece8c13de4"
+"db.functions.charindex" = "374795460baa9d04c9468e1f85f28201cf3c63d207a83117f5fc85637bed2ff9"
+"db.functions.chr" = "4b14da9d0ae26782d2f7de452f2b8753a377c6058a3f57aaa74beffa1d46aaf0"
+"db.functions.classifier" = "a885cdc9689ed5e3034b74b5a62768790f741ef9164925918a110fb31d839a96"
+"db.functions.cloud-files-state" = "58f1e6aea0a9eceb13ee6cbb518fbaeacea5735c2b8d5a9cb9631faf06719b44"
+"db.functions.coalesce" = "426114ab47f3d26d25c6b5e983e035f254105befcbb4efb25751d7cf2958d46f"
+"db.functions.collate" = "da1c480f2fbeb9c03ce0c51bcff3ab30254737ba8c8d4dc93d868ae2f973a86f"
+"db.functions.collation" = "c60d1132dbab26b322938e09a13f4d00889c1f07b49cb2b777d7ef371fc9a60b"
+"db.functions.collations" = "5193401f35730e811875bf432293a52849c2ed2f0ae745ebfde591ab1b375268"
+"db.functions.collect-list" = "9dd13724b81460b600ba6c5f2743363061fd0e036fc065c1174c0cf38da2ebf2"
+"db.functions.collect-set" = "7455c6336d461b0e8469ec51fa1fcb4954be9584108b7e8459c50cf6a741a497"
+"db.functions.coloncolonsign" = "9290e5d9efbfded64530091b52a23a66fb4987dec8719c356386c38bc69e18d1"
+"db.functions.colonsign" = "5c7d0828d99cba2a0325ecd99fe15db4ba2b18d951ad94fcf08bc48ce28ff0ad"
+"db.functions.concat" = "4ec02822c7bf9f32822b0ab7977bea9007c6292e86e7c2403e7089e33a17f5dd"
+"db.functions.concat-ws" = "bbd7c8a2e8f79cdb27ff2d3a5f6caf949b0d62c7f7fdc1e16646644fd27de3da"
+"db.functions.contains" = "d5ac0f6ccf9fcf150feb4fc9bc5089ecaeca8cf1b726f3a4b3e3b94c02c9ec4f"
+"db.functions.conv" = "25b38e44a82b4bbf0184a82e465e568f2e86974c42af1e05caf828fc6003f384"
+"db.functions.convert-timezone" = "b7c8cd393347c8223026a788e8dde746488d958ac0af8bb87768fba8b7584932"
+"db.functions.copy-file" = "5209169f91dc8dbfdbad2d4d84a1e3de846b370375d8e779f0649c877a9dc49a"
+"db.functions.corr" = "6037b7e7834a5c7a715c6400ceaef2505646b99f42a875da3eb210943f9a3d3a"
+"db.functions.cos" = "0fb323c7f08681d5e51dcfa77d45dbb6e72d5023f34d80e5c67592db4edff5ab"
+"db.functions.cosh" = "0c3f1430b81f0e1b47544ca95d333ae9f79556e7161f7d92450e7dc93ca8dcf8"
+"db.functions.cot" = "c4759f5a5aa51df7ed94f813e15ecafda7646a20d8198b2e3e5a8e4d2bb2770f"
+"db.functions.count-if" = "4ac823858044a104a004158e3a4c588c4ed02dbfed212769d103664c01fbeaed"
+"db.functions.count-min-sketch" = "e0ad133a95cbc243558b86d05869b3e80c3cf12ae185ba4b5b10ad12780c4c00"
+"db.functions.count.count" = "3755b2bd712eb8f0d1e0f7fa21205c365978772e1bfd652f1de8e50ac1bd20a2"
+"db.functions.count.count.syntax" = "67f4265960326300dc12494a5db8c0bca3e6777613bcdd2e19dbec8fa0fd6d69"
+"db.functions.counter-diff" = "96c76ebf9942b04bdb2b6021a6061554803dfa05eecc43e756203e712ff536f2"
+"db.functions.covar-pop" = "9aab9ada090bbe8b5e8236a02224c378655e0f5481235740f33a89b7a50ef7ce"
+"db.functions.covar-samp" = "0aa9196fdff98d4b84dddab3c6e24b799f9765b81c25c0b15c2e6d19b7bead86"
+"db.functions.crc32" = "3270ef1559db31fb5888447da7476070c4c35ed4d9914b94f0b51281d6b9db0a"
+"db.functions.create-file" = "dabee9e777868304fff9176ce3353e321fe1bb4e0882a475f524df56485aea37"
+"db.functions.csc" = "78924fa489978be312c77a62212425952148a00cc78c808097a627af6e53f222"
+"db.functions.cube" = "9a75386131e8d53bfd2ca2818c1d58cfe4150447aa3d47f75f83c663ec96d5aa"
+"db.functions.cume-dist" = "09f5f040822ebca1ffef8c90df3f41b767a50a821872b51a087087e9bcc53290"
+"db.functions.curdate" = "3df533f10af79eb20974670b6b34327b734e0226bde45a61235e32849b54992c"
+"db.functions.current-catalog" = "d01e47db441ab0f98bda91b8a76e6bf8bb0fee3a1b55cd83569c5f269356f0fb"
+"db.functions.current-database" = "9a5d8db215f945a56094b4ec6ca8f6bace271f630bcda8108339f247ab4639e6"
+"db.functions.current-date" = "96281fc991d2498a3d7b1b34d67cfb57461fbaf3d50275dc0241f3c615608c03"
+"db.functions.current-metastore" = "94ea66a05141dd854026a568dcf9d9c0248cb834a566300d917079474ea59d8b"
+"db.functions.current-oauth-custom-identity-claim" = "ae1c3c04c65c6e76b18b794a48066287d40f021065cc3a324cf79c04adee8d4b"
+"db.functions.current-path" = "97b4779eaf317e92ca6963ea2e070a9517439be212eb95d030b776de2525e662"
+"db.functions.current-recipient" = "2458f1d234db7d4c79cceeedf8334f03c61a6938d2d675e364b1ac47f686a56c"
+"db.functions.current-schema" = "84722b61093d8b611759f0cedeb1bbd2a13d6f6e50c7141ae59939819c692cbc"
+"db.functions.current-snapshot-version" = "3523ed2063c51851a9bf3c4cd479afc92ff7e93552088f9ebbd86dea12f613c1"
+"db.functions.current-time" = "ac68cddc5aa6c257b60a1a94fa94c3cb2abd526fd0f00ae3d586cf255ac2287b"
+"db.functions.current-timestamp" = "a0fd037a442def8ed881bca07066f18da5c0b834772dd531dc375889c719a25f"
+"db.functions.current-timezone" = "0fe60f3143a419a38f41f4337bed95ec8e10ecbb6512fedb82df7ce841f14a3d"
+"db.functions.current-user" = "72dbcdaa8f9b54c6ac6ec06a347228ee863e16862d39dd0e36f6d5e4435436a2"
+"db.functions.current-version" = "204c0804ec2139317dc8c8b7df461c04c960abed48950e1fb9643ea8d5426d9a"
+"db.functions.data-skipping-summary" = "85a749a2370a9b538d36e8520bca3b791a18f828433d41d1dfa8106bfd5edf4a"
+"db.functions.date" = "f9a7176d7c13b9092e92a6f7d41becabfb70c71958074bbf6236f40fd8523727"
+"db.functions.date-add" = "272b114c353b02b25847c98e27e54c6aff1103edb540098f4ee0d4e8282bef3b"
+"db.functions.date-format" = "1691281aa69078efa4826f6cbe8931b7aaeecb25402246338248ee3634e44188"
+"db.functions.date-from-unix-date" = "cd17c1cb4b8a0d01893e84c5c8113fb000f08c8169226f657ce676e63299607b"
+"db.functions.date-part" = "89b971aaf95e8363ea134f0517c169ccf28f5ad4113aa8e2668173667343a7c1"
+"db.functions.date-sub" = "65d5dad981281afe633f5a1b21b6d0770bcdfb25cf8f11ecbc17422f01543da9"
+"db.functions.date-trunc" = "aec151d1179fe9d887a06740754e69fab852ff750f5dc605c156e4107d41de91"
+"db.functions.dateadd2" = "1d20dbce0e9befa8ffc41ffd1eccb85a97ad1c02e29b99ad737eac64b16340d9"
+"db.functions.datediff" = "532307f947b79909bfae5ce1af6ed0566ad4a8517c6c83d411d4e589b71b2387"
+"db.functions.day" = "4a73fedc5299aafe7ba38c34187562fd385aef21364aa876514ff103d648f101"
+"db.functions.dayname" = "4fac9f870adab0803d2e3f05e041f0e51e02c01c8b04f81dafa6dd3a5a0bb7bf"
+"db.functions.dayofmonth" = "3d971b2f2a34b89c04282b424b0a05e3cef44fb28898ea3c57d6e3a917af94b6"
+"db.functions.dayofweek" = "6b27a1bf148de827cd032c86fc1c997ebfaf20135636c37e713eb4146c7f2ac1"
+"db.functions.dayofyear" = "e827d64b9ef7b7b1b37bd5afa5aa51a74187b58bf37eaad045b14296fc17471d"
+"db.functions.decimal" = "7549ae454890b086d81783876b2531eef3f2f8c1612aff4fa278f2041a8650e4"
+"db.functions.decode" = "9827bd6a8c21a36aa5751df1b5132bacc8dcc29acbf293af6be2130b3485dbd4"
+"db.functions.decode-cs" = "415efa586293f4fff741a091cc79cad88984cc999a481e0f2205e73b2efbe2ef"
+"db.functions.degrees" = "a8accda54ff6076c22ca924042cf216892f562ded41dfc79c45e105964b67b1c"
+"db.functions.dense-rank" = "82acec374dfc1f65127d833eb5618b351feda8e23ab5df3be96e0c30a70e0771"
+"db.functions.div" = "41d62eb22d19f59ccd90f2adc23f5be0ff3949555641c8c52100a8b407503749"
+"db.functions.dotsign.dot" = "5fb94e9facfd237d2330dfd9221afc4ef9934d0e677e5284964147a2de0f872d"
+"db.functions.dotsign.dot.syntax" = "ecfad06ced4c52ea7a4d9ecf28d7920f7440755c4ebffa97e185f4bd8eec9a64"
+"db.functions.double" = "dd738280efd26b4362cf43863936dbf78601099aad6a2616afa65db1971954c1"
+"db.functions.e" = "939f5d89463624096cb614f6bdb3e595a5f26b204ab55bcaef71335a07553421"
+"db.functions.element-at" = "2d36ff6db300cabadb9874f932508180a4c24ae3e6cf6eb77a229a51668857f1"
+"db.functions.elt" = "cbd68c63b06eebadc72e84710621f38088463ec9d3d5634c463ff069f2124c12"
+"db.functions.encode" = "40518319512f47183eaf3dc8b2bf1be670d865d6bee41011d23199288cd9f2e4"
+"db.functions.endswith" = "0b82098f1381cc32764509562f0e06f3a152642f26e27efe115e019ea921b0e3"
+"db.functions.eqeqsign" = "c3e03ef987a840035864ffa7aafe04b5572dc8e2bde507f82d7753441cca8e99"
+"db.functions.eqsign" = "e3243c0ba74805c332064c80442c217e6963055fb00af77fdff5880a1f773711"
+"db.functions.equal-null" = "0dd5d5bbcac7313babe01b3b393cab055677db022fbb4bbd48c6fa686adef377"
+"db.functions.event-log" = "8a8d98b5eb5bb6ed573942e7169f05a753597b8ae09b8202d62a4961ffbfde77"
+"db.functions.every" = "9925ecc4b25727df4213a693b7112e14bede7e0c41afeca1249c85faffcb0e00"
+"db.functions.exists" = "bb29af76a30527bad555f9d7c0fa94b714e4b7c7cf118558bc60ecb3181bcf5c"
+"db.functions.exp" = "a5db618b99464d637d3069eed82eb8a027a5be77a877075244c1bf320ea76cd9"
+"db.functions.explode" = "d5b564d9bac0e8fae025879353ac41786bcc009c7dd0bfbbd377716135ed37af"
+"db.functions.explode-outer" = "d0cf85b5afb45dd2bf31ede45e161bda537afb4d51df18da6ebbe889aecbf29f"
+"db.functions.expm1" = "88ee96798d5f3e24aeb4b11ddfc1c1403ff781e05e78fae045efcd69f8787611"
+"db.functions.extract" = "7084e3bd4e3141b0e398730559d323b33488cd84b968853b5447a609ca3794dc"
+"db.functions.factorial" = "f9cd80bd7653e473cdda6b163cdd5d379a30a19ffe3511317e5cc475f1aecf69"
+"db.functions.filter" = "e1f77633414026ee64af273be7049835be5dd3ca0a351e5ce415fad00a5a6865"
+"db.functions.find-in-set" = "1054637916ae61478b0914746383b9d266fe829ce8aa4dbddcd214b7db8dcce8"
+"db.functions.first" = "92dc8f21ca6518120bd4556498775ca1c288299dfd50dff2d2ec66582b1fd70b"
+"db.functions.first-value" = "685fbcc2330a6dd396e091dc5ad39cede59df0c3b0a824eaa061d3509a5098df"
+"db.functions.flatten" = "929d4ea695e67d4d1a99c7798e18036715bee78fb29e4159d0c855ba2e909245"
+"db.functions.float" = "053a4b10bcb37a4bf28e805239542a2c56a1f58b540b41007c6b76d2e152775a"
+"db.functions.floor" = "beb6369b38f9dcf7297a77f007776c31b0d7c01d34390a22a9a738ed3ef8fb46"
+"db.functions.forall" = "cb1f00d87fa420378e3866b522beeab490bfda7b2c41b832cac56f9b5443e661"
+"db.functions.format-number" = "7bdf2acff606d9d9c2de41ae6ed2c1fb84ea6a3397a41e0ffb5baa95a8602ed2"
+"db.functions.format-string" = "f58ae815cd67c537d01c7859ee4b7b5fe595d63bc04badc72e9e47709d9e6812"
+"db.functions.from-avro" = "81afc9e0cd2f60deba797382cfe49c6c79e1511fe67de1cc508c2a2f2175fde5"
+"db.functions.from-csv" = "6b6d215370e022a5a9b899fb6baf9a697db422874ed82b6e39b91805335a50e2"
+"db.functions.from-json" = "6365997453ec4bc0cd5e2b1985036a51baf1d923b6ece31b917555cf3eff59c7"
+"db.functions.from-protobuf" = "091a4c762ee13762ff5766cd6dca35bc4f25b03b9562dbcd37e671d2fa0d0939"
+"db.functions.from-unixtime" = "4bf7858ed8ba40847317a6746feb7230172a1b008d4b22f2c54fd86e8ad91b4d"
+"db.functions.from-utc-timestamp" = "25bc047b56c8e8fd13061f03ea2e616ec82b9890bc074fe8349061d7d68cafe8"
+"db.functions.from-xml" = "ea54f827f2d397cdf5f235cd57007de8bfe502fef72a48b0ddf024f84a54b54e"
+"db.functions.get" = "90acbfbeca2e0dc3e7ffe461b485c9c34e6cc163a862fead26bf43979cd11e29"
+"db.functions.get-json-object" = "4426600d407f2cb15881a0466792cb86d591929681f9ad4db749ee9a8a69e213"
+"db.functions.getbit" = "e9de2a8844eb38ad356ea64b930e577349be9fe45ec0fd58c3786c25d756df1d"
+"db.functions.getdate" = "5c6e0e845365a8d87b22d85888c14fc825b591bc82c3cbcab58813e94e07259a"
+"db.functions.greatest" = "4a3f5c72638af88c36ac9620060787d3227e3d4fe7f3177467bcac2e03484bb1"
+"db.functions.grouping" = "7bb0e96d31855c159d00fe6891946db83435ac9ac406dedce7d1336d6c3ad3f9"
+"db.functions.grouping-id" = "e66c18d47df984350b480b8747615e763499c8f6294e044d029ec4656f2de9d0"
+"db.functions.gteqsign" = "9175cbac6c90b8c41043ea799bcc3dd69f627a1ca496c101577ed4f8bfb987d2"
+"db.functions.gtgtgtsign" = "84738efd9c1880908fbe7f40b7ac85c5878d8ba12f16813c3386ae89c44dfefb"
+"db.functions.gtgtsign" = "df6ff6591d283defd54feb30e17010e3288a363689e7b65d69cd2c9741bd76b5"
+"db.functions.gtsign" = "071623109e08b8330cca4c33614623416553c9d6fa000669756e2dd622a9b0a1"
+"db.functions.h3-boundaryasgeojson" = "eac6942d1c889ec043c859449e1dd2b3e43a843c022a45ff550d4f8db21d1ca0"
+"db.functions.h3-boundaryaswkb" = "b893ebb436e8ab09f2c4d65249d2e60989cb4fde2cabd0d1cafc7f729fc73a7c"
+"db.functions.h3-boundaryaswkt" = "26e09a18d56bb08f2cb286e6276314396f8839d7caf51b3de91a0211e198eddf"
+"db.functions.h3-centerasgeojson" = "356fb7d7191fc27d1dee29559c11a2e5ba7bafcdbc111669c0acdcce7bfbdfc0"
+"db.functions.h3-centeraswkb" = "39872497478322db76026d10725f29001bfe4ef33968ff9c2519f3afcd29ee63"
+"db.functions.h3-centeraswkt" = "b3828631a0a3633332db3462352c32155fa0ccda87ea13534895e8d91f9d5bcd"
+"db.functions.h3-compact" = "acca5f4a248acc71c4b670d050b6bec940a05e479b9f4d6fea24b63bff9704cf"
+"db.functions.h3-coverash3" = "1add1324b3013c928978dc26370ea188e0d55f460a2566b9c77a805f3392d66a"
+"db.functions.h3-coverash3string" = "7632dbfa6db5fe70a09f7aa690a71cda91d7aba0ffde036ea92a21f94a54f2bc"
+"db.functions.h3-distance" = "16d7129b43064a27334c9ba3f7b1e1eb93c67c198518ab8ca92aacf23052e2fc"
+"db.functions.h3-h3tostring" = "1cf3d89f7dc648853f49884f72b2acd4c00b75d0454a36134057dffe5835cdda"
+"db.functions.h3-hexring" = "2a89822e9466fc20a2a9cdfb4a7c88c2b9a6f89168f3d00983f87e18ef11b14f"
+"db.functions.h3-ischildof" = "b7f48e3340350b5e4352bc6aff1368b2a9f5b6766d2db311eebbe3b506baf12e"
+"db.functions.h3-ispentagon" = "466f1781568600d4dd4571101b49c725dd3cd103bb518455a9458ee0172a06b2"
+"db.functions.h3-isvalid" = "025882a44566f681162516fb3d10273ecb568598af3788a1eae7adb87afe1a71"
+"db.functions.h3-kring" = "f555700065fa1f63c87542e3329d36b82d3308392468dd98f56d4fe5246ea0cf"
+"db.functions.h3-kringdistances" = "bcc6fb54f9149dc57af3e1a8d9001d08c2655c8f8cf1ac93d978e11425f9d437"
+"db.functions.h3-longlatash3" = "75cdbc4e29fe3edbc203bb9ec757128c05495b483bfdc94b5de10c92ea4b6696"
+"db.functions.h3-longlatash3string" = "5ef0f9d055f1683477728462000dfdd9849aa662625e1d9fcbef9d9eff1a8d9c"
+"db.functions.h3-maxchild" = "12d0040304876332d8d9122c8f9fa81e568f17d399147d7db0634f7dbb072f68"
+"db.functions.h3-minchild" = "5221cab41c1181794d03c840bf079e65cc727df23a696566cbda5440e2f76e56"
+"db.functions.h3-pointash3" = "639855ea66302349a26eaa8541c1f7dd330b03dbe326739ee5952657b55db2fe"
+"db.functions.h3-pointash3string" = "add53a8db21e66687ae820d49240c0b7017cb5b4ab154d042ab96c3f7b87a88b"
+"db.functions.h3-polyfillash3" = "c8021562dc5a8028ecd177040bb9c40081561414306363969b0e166290d5c334"
+"db.functions.h3-polyfillash3string" = "7b10d4c58220f615e59f6a31849b67ff02e437418190543e897b413a2061e0ab"
+"db.functions.h3-resolution" = "7f9977cfe27cd19180ebd887df3a57a07d0d25f3ed4bfe7e1855ae1273824af2"
+"db.functions.h3-stringtoh3" = "76301ccec0e877a8cab2d7a7b91fee2f9b4d5666e1ac9e8da755196913a63494"
+"db.functions.h3-tessellateaswkb" = "b1c031acbe0f78e666d85227e8c9d1e6ed8627096fc74fa959fb3c5622fc97ab"
+"db.functions.h3-tochildren" = "31443152d1af5461ca5ae232113b69eea6eee2c25d39bec9f2b51ae809023533"
+"db.functions.h3-toparent" = "a65917618ae1ebbfe10ea0f71d146e9220df5dafca6ad10d8608518cf12087f6"
+"db.functions.h3-try-coverash3" = "167601a4fa895504a5dc3725b58e2f6046a329a9ec19fe7bdb86f712f4374605"
+"db.functions.h3-try-coverash3string" = "9fa1a34e4329f94aa2794cb33d83ac3949e3cdfb238a5db0cd12d4276af2bdb2"
+"db.functions.h3-try-distance" = "30ef6b530b833f7d1db8b49bd6f6f1919456d8dd574c237de4e7b05246d7bde4"
+"db.functions.h3-try-polyfillash3" = "b53e67ec11ced3b8a6932be48df08e28f3806312278a382338f3b1782be4985a"
+"db.functions.h3-try-polyfillash3string" = "69ff6a9ccbbbd85b5630b288f46ca681a3ef5190c794e05106143d68276103af"
+"db.functions.h3-try-tessellateaswkb" = "01c24f99ea0e71eb608358623a14bd6e4e7c71349013106e3e55f076e46ffaff"
+"db.functions.h3-try-validate" = "cd259bdf0ad5b9bc1b25b161d8bfe18412370373950fc7605373e3f5b3ebf21d"
+"db.functions.h3-uncompact" = "0bfc3a462e417f97effb230d3f97678307ceb3d75cb908e3c2a34c479e177fa3"
+"db.functions.h3-validate" = "6e52080417b00d3ed5816c5c0385dda0e527d98dd57caafd2442e27e8c75bf82"
+"db.functions.hash" = "5bc073880a7c476bd26597cd6490a2a2b3f2581b5b9c4dc2bc6358afde926f70"
+"db.functions.hex" = "8d6e8d35f80ee3b408034dec1f323774265fd371d657f3888d53f992c30d445d"
+"db.functions.histogram-numeric" = "39e97f0cdc0a58b7fd488de0d00414269c60483d4a8a35b0f37d02fb5af10492"
+"db.functions.hll-sketch-agg" = "6d60c23ad792367a7dd3fc74b90687ccfb724469c9d823d522cf0faf95e60c93"
+"db.functions.hll-sketch-estimate" = "9971d41e85d56c6d5588d54a375536c75794304f187e93487b534e8055c6c916"
+"db.functions.hll-union" = "6ccf0f21f89067096c56efd967bbdfc707c7077135d9bfec9e8de036da972e5d"
+"db.functions.hll-union-agg" = "55e0740098a08411a3eac37ae74853c5432aeeb4f39579aedcee7986de5de551"
+"db.functions.hmac" = "e36fd43d7f00a245085a84c1e5171fa98cd6b8063b027e1ed39338fba0e50861"
+"db.functions.hour" = "140c189821c148a6e7a886231a98eb106f9acb7112e541c95bec89d6b893ac98"
+"db.functions.http-request" = "9460a568d8417f56ad2b8c3c08e70c1040393fec8d40abcbce2b2d334f8f1e88"
+"db.functions.hypot" = "ea8461703ead5f1fe50cdd872ae7a918cccb5c9cc407c6fe6ed8f5d1b32a9131"
+"db.functions.if" = "2e229d02189eeaa0cce4e7f7134fa61eb4c82d5b31beb85c9cd1f10fdf4b7f9c"
+"db.functions.iff" = "e02f31c5f56defe553bb72fc53769e9f6c0bc0dcf347d2f4308454bb3835a60d"
+"db.functions.ifnull" = "d21b1030c5646c5d7ab23e7fbceff2f1c6338ae68dd34b13169e3c5bc9236589"
+"db.functions.ilike.ilike-any-some-all" = "4d595882ff79bee80c644ef0f125b3211da363d8499779577ca0a1f0ce031d2f"
+"db.functions.in.in" = "b0aad771704dc48ddfd73b85db762cf90629eb083ced07d11d5a4bb2362a5d6c"
+"db.functions.in.in-2" = "d8573fb10b45d72bdd20f662075a9c5870e2817cea23ded354fd95dc2ad5c9e6"
+"db.functions.in.in.syntax" = "e81675f4419f3621292c96b53cc50ea9d0948ceb3e4a4014066bd22a3719aad2"
+"db.functions.initcap" = "3afba363aad7a1ea54054715c31aa1c2d394e0e1a7d934f76c53e2831e218f1b"
+"db.functions.inline" = "aba998b30e37d59e7c3845aab91a6958facd543ed6514882d674c3868230a07d"
+"db.functions.inline-outer" = "e557c9d87ce6738c823e72765daa9144a61aaaa2f55c5d0dff3dc2adfafadb70"
+"db.functions.input-file-block-length" = "f887769bed3ea218d7ac25c80e489589a7e397abd62c382606416df5b17caca5"
+"db.functions.input-file-block-start" = "9aecf35774b1e0cbd4ca98cedabcb8b3ddb20d1ef15197453bc5d4e48ce4206e"
+"db.functions.input-file-name" = "e96953d61d5ccf3a197955b6ac3d3cf07c49c2a4052e3aee02dc1704cbd43ee2"
+"db.functions.instr" = "6a09a33b396e2895d44b04d796b8ccfe65a2298b5b3a9df5f2e26b47758237e5"
+"db.functions.int" = "8d3ea56add56145a30160f269f96fcaef70302fbd2bbed4fb81f6385750509d3"
+"db.functions.ip-as-binary" = "d339033d5baec2b8e6458443130e9cbab179f1a7a93ac567cd193b76fca9bada"
+"db.functions.ip-as-string" = "32f771533dde42491430694f12f2e713e59448fcc256efade73cb08a518cb915"
+"db.functions.ip-cidr" = "cd63b129428b7453cf8c141e7612709de02bc612d2da15f1c0a6f9180085cd80"
+"db.functions.ip-cidr-contains" = "38b0025f8f90fe22b6db1f3f12d89eb68b453bc080c376f46d702e115870da4a"
+"db.functions.ip-host" = "1cd47adaa4d413788d68f222a68161158bb5c5479eceaea4da6a0a7980805899"
+"db.functions.ip-network" = "869c4aa7c2a20f43f6e1d7ddde911cc95ee8d3d716f7fdcb60e75d7e0caa2bb3"
+"db.functions.ip-network-first" = "87e0723a24a38c60a974cf75aaa55d639f858888295cfdb993936e919e92bd81"
+"db.functions.ip-network-last" = "2e9bd60e3f8692bfbd575dd48ef6b8acd83fd8e39583ea1ac683aba1becceca1"
+"db.functions.ip-prefix-length" = "1e141e5a1d61135e9641ebcacba2de2629d9b539cb5ba11ed55868b77dcdfa01"
+"db.functions.ip-version" = "ecaf70908da4af1dbf0c3b2c413f4edf03c5c0d6338e478ccf451a3bb8f18a8e"
+"db.functions.is-account-group-member" = "a9f7dc438fdb30fb8f8710834407ba278ab8973c66a484aa7c49af94c97946ce"
+"db.functions.is-member" = "68667dda0d22dd16d632aed03fbd09864c1192bb10673445cb52fd47292cf676"
+"db.functions.is-valid-utf8" = "d55eccba0e01af057d34df5653c82ae2447e3e2237593b0d404091c291ac74bd"
+"db.functions.is-variant-null" = "33e0ecc3cb48695f684417113688bbf5e52e8f50b6cca7177fd0f3f02ffb7176"
+"db.functions.isdistinct" = "ec94b8c0450554b801f519d95379c2662f5442fdd6e382fc0652b65a8388e839"
+"db.functions.isearch" = "d9acfd314f4018bfcdaf5ea90d3b6fa9c43455f1bbd85e453d242411dd77b102"
+"db.functions.isfalse" = "98747e3f196bc753c454ac005dc5ef6e0c1a26259c86d7a0650a65b028cd238e"
+"db.functions.isnan" = "a8a15a6930a7da6dda01600ec98cf273baba7f09e8af20a37e43f30dc183a4c7"
+"db.functions.isnotnull" = "ddd6abfad73e2138a9a9125bc8b8b0c0e10f9abd0cabbd0cfa24edb1f614321a"
+"db.functions.isnull" = "f59ff0bc8087176dc56c180cd7823e7590868dc55d3bceef1bbfc1d6bd9ecfcb"
+"db.functions.isnullop" = "1f350535102847d7aa6178c83f1a233de946cf211b556a412c9c378f3b51ec8a"
+"db.functions.istrue" = "7fc3d792603940869d07a26b51f8c9f2f9fcf531d9e5018c740e609efd7e5ceb"
+"db.functions.jaro-winkler-similarity" = "15068b2c1807aabe68d9d3e90890216960108a37c76e2bb0d509defdb81187ed"
+"db.functions.java-method" = "1ae051fa70b0c0acbb0462b25c3fb030704bfbbe23f3d0352fa741727788bf39"
+"db.functions.json-array-length" = "14b6360b5a67f42ac7bf7b28ca1fccfde2674568ba842388796a3b42d7773138"
+"db.functions.json-object-keys" = "3dae73e8e8f64cb35c9b9b181db70cc2c52d335b6f872c0ff57461936cf9c1ad"
+"db.functions.json-tuple" = "cc0c2329e906a7cb68c8b88144d5171d3dd5ba996a9422234c5eee5573b53f91"
+"db.functions.kll-merge-agg-bigint" = "d2fb6ea50eb234e61539982f12581fcb1024afe009318f5ed89b0a1e8b9d6764"
+"db.functions.kll-merge-agg-double" = "125cd5572d53d69cb1fd151524d6e91363b23eddcba6507a65bd6abcceeccbfb"
+"db.functions.kll-merge-agg-float" = "ea5e42b5b8586d39c674128f5aa8a8743bd12894046b577f42f108edecf537ab"
+"db.functions.kll-sketch-agg-bigint" = "c6350c01b8f446f3788bc40f6db7b536f0a63ddc205451269b6c587b3843be1b"
+"db.functions.kll-sketch-agg-double" = "1d91092dc5f95120042dc388772885edda988f97f2f72009be9149c025f57fda"
+"db.functions.kll-sketch-agg-float" = "523015fc096e5069c7a4735a1cb99c52bed067ba4eb44d3e80aa7fbbdd040706"
+"db.functions.kll-sketch-get-n-bigint" = "4d32a0acf41bf897de7d598ad2c2e0564a40dcaab762b9974c509ff54456454e"
+"db.functions.kll-sketch-get-n-double" = "c4b2868b05b60190afd2f53a51d5644cd197e15f853520196f573c272a012de5"
+"db.functions.kll-sketch-get-n-float" = "ec067fea00a92d4899ca8600d195ae0da96bd4ac79c8f67fe14d48d1ada4f491"
+"db.functions.kll-sketch-get-quantile-bigint" = "019e3f192ded886dcfd1b5727aa0d4e85281ca39c2ebfb91313bd50d7764b5c1"
+"db.functions.kll-sketch-get-quantile-double" = "225c9bf8c7d4bbe35b0a0d5efc1f4e2473a23596e5adf09d07a9b00fa22e2b76"
+"db.functions.kll-sketch-get-quantile-float" = "dad936e0f8d987adf7b9f3b9dcb53639566ad73147dda12b51a071778f3e7975"
+"db.functions.kll-sketch-get-rank-bigint" = "f52c818cf341916ad991385bc7a0200dd13f60d71a475f04f634506e48720c4d"
+"db.functions.kll-sketch-get-rank-double" = "80b9dea5785ebacd46681d468585aebb0e5dfe9aab28d272f24d0e0194032ee3"
+"db.functions.kll-sketch-get-rank-float" = "1688c0d26e6ffd43313990f745af3deb390985acd15f8c3f57a0e51c8d408d83"
+"db.functions.kll-sketch-merge-bigint" = "a5c7d2dde474299c36fb6dacc8689cb2476fe1753ed0c05f44e5a9129cb71ae9"
+"db.functions.kll-sketch-merge-double" = "510cc0839a4e760f7877866f85c22ec853cbcbbac9e67b29dc6033c15b35d7a7"
+"db.functions.kll-sketch-merge-float" = "6200afbb877809a637101aa0d90a63bdd2ae4a667bfff461230643f8a57e7dea"
+"db.functions.kll-sketch-to-string-bigint" = "87b6e9321673034dd8b77bca7cbce688ab8852b26df135d6dbb1055cc9fab37c"
+"db.functions.kll-sketch-to-string-double" = "c32ef14051b0f8f230f112fa8d1f41b5680002effc2fff04ccd3a64b865df283"
+"db.functions.kll-sketch-to-string-float" = "551d64bc3b71a3a2d04efe26b730dfe4d4c9c56c8841857f56cdc827fdb3506d"
+"db.functions.kurtosis" = "3145282bf58ac6d52bb118069bedd171983d7176bce997236bc7d554ca88ebfd"
+"db.functions.lag" = "bada07745588f11b09ebb4345be90c02bf93f273410ec019fc63f04d1b0512b5"
+"db.functions.last" = "f87b5b4070124f2dd9f89c088035502705b07ee581ef434ef7e054e594b9beb0"
+"db.functions.last-day" = "6b4f10ad21bcf879fb7b35242880504505df9d4617f87b375268564671b7ff92"
+"db.functions.last-snapshot-version" = "8383cc1c97ade523f0850cb59f568d6c20e5b21960d7557d1544aefba991de08"
+"db.functions.last-value" = "8a87cf43edf54a44fe9d1f93b2cd70320afa44b41eb2867e20af8dee2e0bf2ee"
+"db.functions.lcase" = "e1feef051f7065081c648f28393d3fde214d38c9bb5bb3be333c532543b2306e"
+"db.functions.lead" = "cacb75ffd65a518f08d2360fc31a484d76c1886b2ceac25607947c51050cb3eb"
+"db.functions.least" = "be22c686e6d5fb2957c2c4e19bd2f15b36b2eaa4159c5c753f5191a93a8a441a"
+"db.functions.left" = "997ebcec889f859b7d8921f125322c6b7054d326648769dce99510de865dffc8"
+"db.functions.len" = "c7d0499abb434655d2463f3adbb2d884148bbdfe45446e4a54d307e4932ea2d2"
+"db.functions.length" = "ed5151f3e751cef75185f423a9ecf233b35f5aeb6a31433ded0a59680ec891d6"
+"db.functions.levenshtein" = "6cb6515a748f932e17db8a59d659a1d1aad44900fdae3108b1144ac4428f4fbb"
+"db.functions.like.like-any-some-all" = "960ea4ce8201c8f1b06a32d40b58b175ab8920689ac30d3afc7dd09a27dfe504"
+"db.functions.list-files" = "f7a86eb781a8436b1faaef12a772aafa89f988bc16d40b31d53ff5b0dfbf45ff"
+"db.functions.list-secrets" = "06128455bdc1eaf3f802e5a1318fdad6ee57aa528c05de8d950cfa5673564f13"
+"db.functions.listagg" = "a8d389a948fb8eb8c6cbf4c7551edfea72f9d04661c2fe54f7c68611f5d5a8a0"
+"db.functions.ln" = "bcc392cc2718edff9f5dbc9f164479434fab070fbcb21c0493cc622852aa3ce7"
+"db.functions.localtime" = "a4a534b5aab7860e689683c3436ee6e8a462905c9732473009b94b172737c08f"
+"db.functions.localtimestamp" = "6dec6075b42dc1d108c48c55cd093fbdb987c90e0b9212351f54d44909b00624"
+"db.functions.locate" = "a1a6f25de9286fb2dfef6894249ec7f233618c33377c81013a3df84a2d9c03c3"
+"db.functions.log" = "0dfd98adee543035d9d567a0b25baea305691099c27540bc805e275f14c0f4c2"
+"db.functions.log10" = "b1759c2550010ad2cfa598455fa354fd5d1d792e8384048098cf7a5e6191d576"
+"db.functions.log1p" = "2faa8682d0a28bf108801dcd8d9e11756f44a27ba780ffea8dd2c54fe9ac79e1"
+"db.functions.log2" = "1a5143e16c0ee3a164fbeecb9bfd08a3ea040658eeb82571f93c6c4eb98748fa"
+"db.functions.lower" = "dc0783b4bac29610c98cd19747caee47e92eeac9a46f6640b4693775a5b7a1df"
+"db.functions.lpad" = "3cd42e844e0723187e74eb1869318dd43819387aa8cf00806fc112074361c53d"
+"db.functions.lteqgtsign" = "751a24ba41b80cd48957e8b039c8a18a5fb93809b496ae599a08a56311623747"
+"db.functions.lteqsign" = "b8fe243435379299d31bbe50896d8199844d23e4adb524779910003d171fda1a"
+"db.functions.ltgtsign" = "f0034fd96ed36c550de5641e80323116ad6a8034a526037647571efadc28353d"
+"db.functions.ltltsign" = "b8c85f4abb34b076898b979ea42464eb6ed0b76ef26c2772a6910c8b1508f685"
+"db.functions.ltrim" = "84ae6c185fa491a90fadfb8f1594e2dfdd29e582c4e7132ff5340e2f9374b531"
+"db.functions.ltsign" = "d87544903b9083069e7e108d27c7e4b6384e43e9685a8f4a8b0dc6359f6055f6"
+"db.functions.luhn-check" = "377b47145f331775b8f3772b4603108399e58cc51c5e7fb3824a163474518220"
+"db.functions.make-date" = "e6f3cd5db328fa2e64cc5d25587193c38b128cc1ffff5f073b55858634f83756"
+"db.functions.make-dt-interval" = "39ae19f37414ccf2e4d55821d336e63473f3c20fb649bc352c19889dfc19886e"
+"db.functions.make-interval" = "a043f37af5d91390073e344204d2392426006fb1e66c5e75ec365d38333f5765"
+"db.functions.make-time" = "63dfb344da94c3cb5e72db219715469045c894812471afce8796ad9da2e5d311"
+"db.functions.make-timestamp" = "61922637800d9296a774a0b26d8c10a22c8ced1ef17d6db1ccadc5338a121eac"
+"db.functions.make-timestamp-ltz" = "e1768aea30917fd495b26905a9256615890b96d90695b5ea078984b377376f6a"
+"db.functions.make-timestamp-ntz" = "d5b0519909c356a291e613c1ac771e3c97aaeb2cd10a768a7e00c5e79e7d58ff"
+"db.functions.make-valid-utf8" = "9bf3ee9c32d85077f2928ad54948d3fa530341f529b963a4a8605a60092e335c"
+"db.functions.make-ym-interval" = "28dceab0789d37f4eb0f7cab4311ead644a0072aaf28a4cd87ba4dd5879b6f77"
+"db.functions.map" = "3a0e294c35c6be19cf4804833808772d59457e0998571a60ea9bdaff9e68ca2b"
+"db.functions.map-concat" = "3a14bbf1421d0af70323d3a75c9ff662510ed1a4687f2300dc234dbab8e3bf9e"
+"db.functions.map-contains-key" = "643ff9b340acbda9960e8a4526dbe10264e6b7cb9a8c199e7363901a64d0f3bd"
+"db.functions.map-entries" = "219035c06c3b88e1c9b7e188312ff7e83a26eb5293c1b11f4c2b3db4a4d7390a"
+"db.functions.map-filter" = "75a0eac35c0479a2b81c6c14f03d3d4dd71d4c1fc76757fc442cdca7420178e1"
+"db.functions.map-from-arrays" = "2272295183e5abd2b70dc3b4aba79611a1ef50585a8b586b11c186443216baca"
+"db.functions.map-from-entries" = "c072176737571f6244c73a36fa2132f892a158e0a3d75c3c63463a65e1ffe1c8"
+"db.functions.map-keys" = "4c5da2446373feb441e82d58f59705152438430e629c3776a33a1cc9a5b6ba8b"
+"db.functions.map-values" = "f23de1354cd06a2a5a1e3c5c23134a3fad2b45d271feb618eea96631b0d78911"
+"db.functions.map-zip-with" = "a93791b400b215e03993135d72e53816884a757e3cbe800459fd97908f071388"
+"db.functions.mask" = "5ec63987513d90ec11b5a37aa0f33cab405baf82fc063ae4f57df7c93a1240bf"
+"db.functions.match-number" = "93164ded62446f17033e4aa87b50c469c9ce9da07e3372908e338f3629421bb5"
+"db.functions.match-recognize-first" = "f068de362c55019216318f0b13796e69842fc4b1d686dd6c9b572439d945f7a8"
+"db.functions.match-recognize-last" = "2fb6a3aa9134a8f601e04a8d1fce35e0e315a7eb20d55fc1d1128ca66095bf9f"
+"db.functions.match-recognize-next" = "07ddbeb3f7e727b109693407d520a79fc8a3ccb284a2caddd736403a527c2c2e"
+"db.functions.match-recognize-prev" = "104eeeb05f3ae2d522758e41610977acd62d11f72f63e45fee4756ccb4a29b75"
+"db.functions.max" = "1889565b838e1b89d76424f0afaec155804f89c3df276069b6b11838c3e4de13"
+"db.functions.max-by.max-by" = "ed35e8918f539a63a38b3751fd52c986602d77378fcad227542dd58c3eb7e053"
+"db.functions.max-by.max-by.syntax" = "8c8914f49c9ffc3148eb7cfccc37ab04111dd3f93dad9ee0efcdbb2b66b91f14"
+"db.functions.md5" = "d7a1fff0f47230fed734c4c69b33ffe8e058c69847a7934ea6d0358def4ca252"
+"db.functions.mean" = "56c0f3757e86978d9e713e6d08c5476bedbbc694e948c2cae4d78f36f9e76ff8"
+"db.functions.measure" = "1eb5227595bc221699977d9f14646dabf9d533ea5ae33ff89a4ae51a9db5d27e"
+"db.functions.median" = "d77600c0ad22c118f849c718978631b919780d8fe964cb60f289bb303e58cc61"
+"db.functions.min" = "8fa686b2a775d9e9eef02061cdc52cb2d125ffc0fb169ed6ed766ffdb68b104a"
+"db.functions.min-by.min-by" = "7aeb6c4c61392e8b9522a15a2441fd01f1694ab0199d988ab8bbcb8173569ee4"
+"db.functions.min-by.min-by.syntax" = "76b825ccfb4d501b16abc2e324075989a1cdf28d1cd2c559b716c7afbfddbfab"
+"db.functions.minussign" = "1f2e32fe963a01db7e796c0e7d6f7befd7b730258bfdf916da185e9af55a0541"
+"db.functions.minussignunary" = "4a9cdd34423b73c912999fc4b2a0367c5461ca05322c5ea35068603a6a686b78"
+"db.functions.minute" = "a52c544a2e1c9f865459fac527d729fdb66aa81aa9ef9f382ec3ad66204d00b1"
+"db.functions.mod" = "876b23a63a80dfdf17bfc16b62de3a8a14a7c26102ec390946b1e45e0b8e8033"
+"db.functions.mode" = "dcf70f36d0e85acfa199b9de54e3e63a842cc2e9eec49f5396693584ae2c2c2d"
+"db.functions.monotonically-increasing-id" = "f19e8adac9c3637ca469c1750086b4361630827b3bf78db5f89d3872a76ea78e"
+"db.functions.month" = "5e51e764c55091c791d990daf9748eb81918ba048ba5f11a03492fbd96b57685"
+"db.functions.monthname" = "4b15c2a5deb41439e2657fb75722b45440c85fd9b7697624de5f15c9edf2e2e0"
+"db.functions.months-between" = "5cacd67d8a6329fd2deb943e99a9bb4544194c37f285632a358afdbb77eb949e"
+"db.functions.named-struct" = "0a50b12b019e5c9a50d8b7bbcff81c9d8ec6cb84011d7c0687624f83c261ce20"
+"db.functions.nanvl" = "66b76ec74e70ed16101231a09afaf1bbfda903b84afa78b8cd6ddeaeefd2305d"
+"db.functions.negative" = "c22da420a9eaf42ae88c8fa3b5d5aa65e9846a6a60585c9db813c52efeb286b6"
+"db.functions.next-day" = "e4e1d285868171750af243a23a10e24b7fac95a7125b4b2fe3e25cf118de9a0f"
+"db.functions.now" = "a4f63b339d10063e8c48e0602291ffb7e9649b5272acac8bb02245746664adaa"
+"db.functions.nth-value" = "fca9de6e7ab2ef2756ea9fcae06d76f23f335527a0718217b88e7b8d7381cedc"
+"db.functions.ntile" = "78b4c7345d16a4bb347f2c0fe3608ae35854f3200fcc8e1cb9b975ae857ae77f"
+"db.functions.nullif" = "cc942357f2e0ae6da6267e5389661abf19ef7fc90b492e4be0aec702d0c1cf48"
+"db.functions.nullifzero" = "5dcbd2d3427f44acc456e1032022202952b7090d6981eb687b00939720cb098c"
+"db.functions.nvl" = "a29912aad469c03ae3c597e119b32f2be9671e01a538af62ae60632da40c236b"
+"db.functions.nvl2" = "d23a45dae8eea4af0210a2e2bfb87eab2494fee266680b8271e0dd5c2cfcc924"
+"db.functions.octet-length" = "5e79e95fe5e53fca70d1bcfff4d42ca2a463730ec0f0fa27e186bbfdfda4f739"
+"db.functions.or" = "f47e68155b87908d7c5d07b233b39c929d439dc5d9062662fa21d9376046e0a3"
+"db.functions.overlay.overlay" = "e2d4ecbeb89966738a19d8cf50240b1950c8e7e4d1a5a1da4be4f1c1c737af87"
+"db.functions.overlay.overlay-placing-from" = "b846fd8d714e1c6ebaa53c98e5a7b92c0b28a1d690aea9797b86d4dfd2859ba3"
+"db.functions.parse-json" = "7b7a641719d841ac6c7835d50df1c7f84308aeb781f49180f9203c44ed000c99"
+"db.functions.parse-timestamp" = "7f98e0f3d04be00edcd85d054c638dc23082f54af8b5d0959b433a484f3bbd08"
+"db.functions.parse-url" = "9b37137898cfc6a7976a3ef7f72aab6400f06f2a536eca39b2b72be3d06f502c"
+"db.functions.percent-rank" = "50b1cb3adde986dfbf00664277911756a03f29deb39d3e847511686ef8dbe929"
+"db.functions.percentile" = "ae00dfcbd0f0950e2e95b4ec70f013a3f7b04123462b552c44dfb1ece698f78a"
+"db.functions.percentile-approx" = "0764ec9c7b8b13251e769d71d7b3f5e98c0d02b1645dc973778545fc9589dc56"
+"db.functions.percentile-cont" = "bf5eb6f06f44e3cd606223639ca9dc82b7363d42113159cb50df933ff3d33dd3"
+"db.functions.percentile-disc" = "7dd7d480eed4baac79598bed92032415433553bb4d7d51a3127dc2d03fd27ef9"
+"db.functions.percentsign" = "75e064b5cb127ede5b31fb09b09c83ff4de6456ffa4befb42231ba5a71601c83"
+"db.functions.pi" = "5904c2fb714e994d37f55bb5f5dc8e34c1b4c74d549eccbb9e3c59deb5314dfa"
+"db.functions.pipepipesign" = "dec80515f4d40bec87a629d8e07e660a3f8b369ba938476b7334f945a01b5fa2"
+"db.functions.pipesign.syntax" = "7e7ff8632af8ea982689fdba24ec8b6ee3aea17d8837faafacf17005187f1b0e"
+"db.functions.pipesign.syntax.syntax" = "d8d34bd716e121184d17345b6c43952cf1ea06859ec1a6018533b21c19ed24ae"
+"db.functions.plussign" = "bc3b6e14fcbea205d0b534594723e0a324b02dda3eb57a78ae40777f29602280"
+"db.functions.plussignunary" = "06d8738ebdf56e0e6c3e5fc59a4508808a6d352a25114222550f71f86d7339b0"
+"db.functions.pmod" = "ad8a6b790438e61f0dab995137c9df8194e4651cc677b0f74e39b8491f5b1840"
+"db.functions.posexplode" = "8ea7f18d3b22313f618a98e0c686df57e7fabe26bb390b1f664d3c9d07446409"
+"db.functions.posexplode-outer" = "261b38857c275fc2095ae242e3006b6df43bad1473770722dffdd397f1c05545"
+"db.functions.position.position" = "012f3a5b50c15e13b8dba030f50f40845f2073f0407d1cec7ecdf79881ec9854"
+"db.functions.position.position-in" = "6b5a31f35c20397680642dd44cee62994cd0f83ec36bdc0e742c53bf96f3f534"
+"db.functions.positive" = "8d096f8580d62e770bfba4cc3f1df17839ca40f86e4752c3fc45a1c63312f3c0"
+"db.functions.pow" = "514559f140d14287e1ce3d556afb414f8eedc9215de28511cb57018df865c101"
+"db.functions.power" = "0d8050d5fb490b798511720b17342c9d7e0881f74ea016c65329d860d6fc44f2"
+"db.functions.printf" = "6150411bec8b85dbe4b7bad1a377b3a6655b24ab0f89d8f3ecb05c3f2f4c15fd"
+"db.functions.quarter" = "33d9ada5656bd4d16c74fadcbf8d8fb950db562b5f18415467a66d38f18ee1c4"
+"db.functions.questiondoublecolonsign" = "cb4e3413aed1c243ce274e9bca278a611da7b37427721a093ec7f1bc4b2aa7e4"
+"db.functions.radians" = "9c36015ea75d75ae0dfe1266f84beda7626058af40e86b81a376691f9e8895f0"
+"db.functions.raise-error" = "1a7de7a92fb96ec83018c97558a4e28131ea179a1b17f90541afe1646d2055e2"
+"db.functions.rand" = "28ee2df86353eac0ef5d1ac2ac3fee6ee4fd449e8e538820e29a5ce9056b8bc2"
+"db.functions.randn" = "c2f919236c2ea6d88e44479975a118ed5f044ea664251622ed69d2ee45fc6eeb"
+"db.functions.random" = "a7871cd6b2d7c6264d387057cc277683a374660ab663d44e7f050f2b5b2c8217"
+"db.functions.randstr" = "adac56de8463de2d1a12e4263d6a12acd26c02ca8e7241b81435c8460ce89caf"
+"db.functions.range" = "67d4a580514df1d5206c5c5a30fe015bc2a1b23e08e848f249d8f88495355748"
+"db.functions.rank" = "bdc1d42a4a6ecc11f47dbf6296764ae41a64c6e0caedd67aa88f217f0cacf213"
+"db.functions.read-files" = "70e9225dca0eff083bfa14a11e4d31beb2e91b94a7bff12741aa41e72933efaa"
+"db.functions.read-kafka" = "676fa131c5b6c3c392bba3d005e1bde435936ff2d1fd4b218b2070a669cabec0"
+"db.functions.read-kinesis" = "a57c44d17bf44814f1c629785ee070798a5d3eb1f24a601168374417d640c856"
+"db.functions.read-pubsub" = "73e33705a1f928ba353101a4eced7d2f60778748e7f5ffe45d04afaab9a957a8"
+"db.functions.read-pulsar" = "f5b6785ee5f9a902a2dd744bdce85df0778f6434000a9c1c45c393ec15c2c20e"
+"db.functions.read-state-metadata" = "836b8443d6aaf19749dd7a8460e0540db30e55abf17eb84e3348aecad8695f2e"
+"db.functions.read-statestore" = "575745ff9c908352d828d006f1461336afc57f3a986d075f2bc3478c988e98de"
+"db.functions.reduce" = "de342772c71f0fbc0a06cbfa51bd05d813e1afb10fbc9c058b7f1c990047c11d"
+"db.functions.reflect" = "45a89dadbb109d31923e048ba46636279ecd880402ceed744c3bcfb1dc0c9a1d"
+"db.functions.regexp" = "abefde1e26eb0c20386d5b2d4abe733a50e803af5ca6a68ca72b33c905b8c59f"
+"db.functions.regexp-count" = "9a2632b825abad8b97399fa9bd1e6168846607e5ae96672e4def700255aec9bf"
+"db.functions.regexp-extract" = "bfe040c00cc6de3d534b9f1b542953dce6b8fded2f7f4d932f8e1deac5185fe7"
+"db.functions.regexp-extract-all" = "fd11701e0aa06c0e6b3acf6daf31a2477d276af2bb007647a141ad9ae2070596"
+"db.functions.regexp-instr" = "826325372b4c2f2ccdf6ebd58ee5a121c7e3749e73d761d83afc6868a92444a0"
+"db.functions.regexp-like" = "f4e305046ae9a6f14390f1d760db0abb665e8abe5a4ebd0a0e754e50c8414cd5"
+"db.functions.regexp-replace" = "085f3993e7ffa744205ee52915097a6aaaac3ebb7bd9657b1c36049f175109d7"
+"db.functions.regexp-substr" = "d1a800fe4a784b68bb258c328d401fd333e78dca2c14f037882d2f22df2297ea"
+"db.functions.regr-avgx" = "92103cf98490331b664e775549dfcef08539e89f233ed4fc081ff2290704b843"
+"db.functions.regr-avgy" = "ae109056fd038498d3a399a5b39663b159cfddfa0257226fa5482f8ccb249e8a"
+"db.functions.regr-count" = "e0393526c03c417032ddae276beb3b0aa33cb1e57ae924da7166579da9bd0bee"
+"db.functions.regr-intercept" = "e84b738da4e4c57f8d4c3ef27d1248dc4cd85b67dd31e75a099a2aaddbc2534e"
+"db.functions.regr-r2" = "2e9963f4c5989dfda1aab46c608ed8246746da8c384e57471cc1e7e86f2c0baa"
+"db.functions.regr-slope" = "f78d3abc7c62205026197581f80a67779319cba483c13aa250812ff86625d752"
+"db.functions.regr-sxx" = "edbfc8eab7bc123c65cc39c0ff81de9789d32a21d8192a5c35b2db7a7e4b4ce2"
+"db.functions.regr-sxy" = "41e24ee7c0c14bae1476217a3a5f15faad6f0ce294a86437a28f47a1893c1486"
+"db.functions.regr-syy" = "3f4706440673a690a81489c2dc05b66f52d43edf59788951c3b62d4353eee982"
+"db.functions.remote-query" = "aa813c5f452271f98a103923997891a4bf0bbef0eb7c4328c15def0b89fdb4ed"
+"db.functions.repeat" = "e90e29e05f172d433b10cc5557bfcdca907ec97318ee3f4b7c4d2b3bfcba6205"
+"db.functions.replace" = "ca52036bc5bf1095358079266f9e096c8306a9610d576e84e2e960ee06c6a18b"
+"db.functions.reverse" = "193ac07ad873c9eaf533b536a1cc1140c0c34d26643839f071d4f18a26a417ad"
+"db.functions.right" = "32dc0565aafc8c2e624da141b2542b035bc99714fe5414fabfbfd27514fe83a9"
+"db.functions.rint" = "d84b8c79016d02fc99bcb33d2342e9dbe7dba844c6686bb9d3c081540a860c80"
+"db.functions.rlike" = "65479a6f443ab764cf2f282fb502742e54645e7107160ce3fca365485af94e13"
+"db.functions.round" = "ca57769b748503dca5a72fe3a11ae7d8d77606fbbeb170459cc1454ab74e69c5"
+"db.functions.row-number" = "d11f57550130bd1bcf533aeea5d03c30d4a6043db0173977ac9251c8a96a9291"
+"db.functions.rpad" = "37aa706e03740781f9af45895cdbdb5742045f3f953d941a355232d296d8e3e4"
+"db.functions.rtrim" = "0d64c7b8645ad229dd470031e860ef5cb0bfce00a0261bc40b217052a8a34226"
+"db.functions.schema-of-avro" = "b281388dfad7f55f62b7afdcc61d565a10cdadab1bdd24b3b77ff2f89a89e902"
+"db.functions.schema-of-csv" = "d34fa6fb4142b3bf6b5f634d32f1527222b30d6ec3c46cfe865a9bee74d605eb"
+"db.functions.schema-of-json" = "0bdff51fa89be65ac315ae3ff0b5ee90a138fa304b725b39d015b1cf5c7e55f3"
+"db.functions.schema-of-json-agg" = "ae0352f2d0d723cb034e9519644fd5b494ecdde57d9931e3a847630a83569e9d"
+"db.functions.schema-of-variant" = "b765c5d55d0ad749ab8729729f55c901455b35c85fe3d35a86739d188d14d93c"
+"db.functions.schema-of-variant-agg" = "266b457c60ec436f98b3dfe3ec88d7f257f0fab14579c397719e54f289849d1b"
+"db.functions.schema-of-xml" = "7c33134fad9e63571da582abd52e142a29fcda84f7efc7a043807a6452babe79"
+"db.functions.search" = "64e87406ca4282803560a73e49c240fbb94a17b12234ec8d88a7b0250cc10b94"
+"db.functions.sec" = "f8972fac54a5bc8c95ec3c7500e297cc5518eddf4f7db9c1acdba55a3f5f6ff2"
+"db.functions.second" = "0f08858009f5cd26b6fbe58386d6ca1b977d018dc867540773257ddf4f7cb137"
+"db.functions.secret" = "29b3af0c466274303cf75cae10777176a357eb8d18a54ed656e0d3422577449f"
+"db.functions.sentences" = "21562c08a22ea1c1c9256dc9cd7a6295e494caa735ef0e710adfd16fd0f8026b"
+"db.functions.sequence" = "f8f067a94b3ba870a3ed52cd43f262f387a7b09f2759e1480d3e81eaec992328"
+"db.functions.session-user" = "fc11980c0b0e9bbeb5fa87440afb40fb68df62b9c08a467739f2fa3dd86cfda0"
+"db.functions.session-window" = "27c774dadee59734ef5e636a3d31a70f21404a8dbc560332837e15a43df8a781"
+"db.functions.sha" = "60fe5a4b4ad5a9037e2489b7aa4d9fa2c00c2a312189abc395de0b88e218859d"
+"db.functions.sha1" = "640ffff47c0a07baf5da2d5483281dc5284e9d16b61b4c5efa4d15b27f1dc5c7"
+"db.functions.sha2" = "e95a2a15a55ad7e3df51389c7c68757750390a6f5593608b384a269ab271422f"
+"db.functions.shiftleft" = "2486eef7f4bb7027e1d0f38080522376f9685cc9cc47c14b3f788edd19aab337"
+"db.functions.shiftright" = "815df9418676361d1af0c26ffbcb35ea6ada034777c323036f4c32e09f1f7264"
+"db.functions.shiftrightunsigned" = "7ac99f0f3a762dfc70db39d32d9783235eccad3884d465120068a6ca4fd1ef38"
+"db.functions.shuffle" = "28873ae0ce2e06b77bdb318a2c8cfdb428d862966fbb2ccb61079c22e46a2679"
+"db.functions.sign" = "a0aecdcd3cb0d6f3fde55f1d936353b82b7efdd18f65ae4ce4fe8b837fe0920a"
+"db.functions.signum" = "2d94f11ee838e7a379ef90ff131dc065c17a4307ff550820afb9a40292feb3d0"
+"db.functions.sin" = "17566ec4e75c60f2ad90921ebebc118b4134078ccaba45635b47e493bb23faff"
+"db.functions.sinh" = "792d5ae83cd384fad8adfd69b530fb8650bff9078893a5f63d4bb383098bef46"
+"db.functions.size" = "2f9810a94d90c6d4001693b3e9aa946a2b4905c6e0d4f4b00914d5c74762bbba"
+"db.functions.skewness" = "54a356a2051b08425288d096713ed188b40e8e6ad6248dc63e2edda22e4e0367"
+"db.functions.slashsign" = "5339b9e50bd858d6aa815fb65d100766ab16366851f21c209b87261cfc723396"
+"db.functions.slice" = "32a6edfd55cec91af5e907c6cecfb967cf2411c96bc07302905cbcdc552036a4"
+"db.functions.smallint" = "f83b0f8f015c1a02a059d503b87f09fd044a2cb5c5f90441027c4eb0ca775615"
+"db.functions.some" = "cb64a405344fb9ad71a247e8945ddc823162dbe6254ffa63c7a056a76dfb4f7c"
+"db.functions.sort-array" = "3557fb19b498b31b1d047aa655d9e7b34cd3535cd896d22ce5eebe1f433ffc9a"
+"db.functions.soundex" = "4de5d674147c26f9eb3437096c38d08e9c5591e7fa4ab08163d31f5f038b5442"
+"db.functions.space" = "8417dc6eaef88e130b7dd91779c11e92526c50692c42b040ae7f44e85d18ea12"
+"db.functions.spark-partition" = "9573b021bb57a0164fcda04eb29be5794d2577ed738006d9896178d91fea7e60"
+"db.functions.split" = "bb2578cb15d9b2ee2c3b710bb19b9e6b972a694005140882e1b9a4fd408f982a"
+"db.functions.split-part" = "92ef8798bb5c259d9d71d54940eae8568d2a794b06d42b048bb8fe55b04bfcde"
+"db.functions.sql-keywords" = "aa67d41996c3f63292311b196c2ad12a475e18af393d1aa23e1f9896db1fe378"
+"db.functions.sqrt" = "3bc18ea98d84b831263b80b2bb8a26892ecde7f19c2f3e85f31faa1e30ae19e2"
+"db.functions.st-addpoint" = "68ffd4652b75383cbb3ec25a673e7624c9d286beaa9a17b16934f5029171d378"
+"db.functions.st-area" = "dfd3cf7ebaacef9f217e732368022ac7af4c157a1992168a0b7cf4a8871c0f32"
+"db.functions.st-asbinary" = "eb080f061e6c5557630dd0374e244f1313ce7863a62cc1f3ed422a688cf4f54b"
+"db.functions.st-asewkb" = "2e12175b559ec9bcc37c217791921aa82b9efa2db105e618a610bd3dfa0b5494"
+"db.functions.st-asewkt" = "c5878b4f9a8e3703d3839ec31dc75c82c757e3eacd71c033ef328720e61e5486"
+"db.functions.st-asgeojson" = "b870a7d5d27f95d1b851c379f9bdf2fb8110b3a654961816beb0d274983d1707"
+"db.functions.st-astext" = "16eacc29cba2f6c348cbeb65aae92bd16f8b062fcd28123fe960409df047fae1"
+"db.functions.st-aswkb" = "11cd2defc7f6848f948a8af244f1d5420b9a7db097d8beefd8b7724bfe8d6e5e"
+"db.functions.st-aswkt" = "22543b2c0b5009abdf7ec4c3cb8588a97131d2dcd70322db499eddb659b75def"
+"db.functions.st-azimuth" = "b135465bbc50fc36dc530e15c1e28bc10e27c985e1533bd39ec2d543973b040e"
+"db.functions.st-boundary" = "22d0b6fd73e7f60336bb33403844a088a75ef2106e87f7ecae7ec1941edea97b"
+"db.functions.st-buffer" = "111579857cdf4420b0a6211a6c004da4af869f3e0d263566c957600b973b27b7"
+"db.functions.st-centroid" = "5059c0357e59e433680f26b32e8f87dde5e6df317785bbfab4156b2822c5675c"
+"db.functions.st-closestpoint" = "919397fce185940a21f77c23360fdb4ed2b38a4aa45684ca163806ebc85f85ec"
+"db.functions.st-collect" = "e500c79a0d404b9226bab905d40a59f1b676e4c256295033b2027127f3b55913"
+"db.functions.st-concavehull" = "8d4426b7994c8636a3158e270d11c10cc7ca6d35e280fb70ded0272bd26cb890"
+"db.functions.st-contains" = "957442dff9d4454d916fde1379a6c55e7daaf3ef98c0fe72a7d7d069ec3c3e7d"
+"db.functions.st-convexhull" = "45be65bb227c986a5243efba1bbd51e54badf527c3639e838fc94fa3323ab41d"
+"db.functions.st-covers" = "f933707bfdc772e004f84df094d08079e3e1eb820b0cc8694eb72b7cf51e3a96"
+"db.functions.st-difference" = "1ea14c0652a4a638c746531e50c0b278112bbf2c12978fe47d85d1ce9936f1ad"
+"db.functions.st-dimension" = "15a5a7a6999c6b02d88e1a55c80f8eaa6bb66ba64e96d168e9a8acfec2e166a7"
+"db.functions.st-disjoint" = "e18457423d1fddfd8ebf2dbe91b4b8c7b37ead89d77d99c9a618544be6457ca2"
+"db.functions.st-distance" = "b4662a16ead23069aba98ff255c4ca3241a3d716acdc3b97dd595460e99b59f4"
+"db.functions.st-distancesphere" = "57e5d9b5b5dc2dfa9039017eee77cece346fee62d21a502021573530bb7a78e0"
+"db.functions.st-distancespheroid" = "b443907bcf30f70701c00c7b2f44d87cae46338ad9dd3e22b4cf562d2733446d"
+"db.functions.st-dump" = "8a37329e12e89b28f4db71900e3c392bf0e0aa99537603ded43478bf7ce432a3"
+"db.functions.st-dwithin" = "5eb87904ce3143951d83c4e0efe1a3bf80eeb105d51310a4d1b26bc5334fa971"
+"db.functions.st-endpoint" = "9f683d4c04b2117fe3ed2e6aeee353132f20d640dc7439d8602f3037b1491d25"
+"db.functions.st-envelope" = "6f02c012b08867bb766d3008d143c4d0a17fbca2d5fd2c44a57a02b39c392eb9"
+"db.functions.st-envelope-agg" = "880fb7fb2f649dcf6b462a16f89da7ae1199b1a967d80d5a7c273526e7af0c10"
+"db.functions.st-equals" = "e561002aedbc17db8a2e6f9052c279eaa5984b9731645fbb3f0db3431c0dd0c3"
+"db.functions.st-estimatesrid" = "a40d308312e9004fbb1bc59dcccd8b24db31c7b026090558a4f28555a53d9573"
+"db.functions.st-exteriorring" = "486a40034f41a5af4fb49feab794ec63ae119071b4d9592d513db87d745bf446"
+"db.functions.st-flipcoordinates" = "88db9c52036c9cdca6089d0a04f785cad1ceced1fe80484a9bc31ff4701cde8c"
+"db.functions.st-force2d" = "21cb799d56ce2492e185e14f06f458468b0a409267d553bd4052cabe972cab2c"
+"db.functions.st-geogfromewkt" = "1ca384f000a94ad8b0e8322361d820c2e7cc0788fd62af53447640c624147072"
+"db.functions.st-geogfromgeojson" = "6fe912f79d7d1b8a9d69eab66486586c3b8d03e72493e3947b4dc197ae46a3b0"
+"db.functions.st-geogfromtext" = "ac923b14243552de4c8219c94696149432691ff1757b3f4f86a38c338efe09dd"
+"db.functions.st-geogfromwkb" = "103d6ce3afaa8c721117409530c88726066e8b6c5d63674389bf7e4c8a8ca1e9"
+"db.functions.st-geogfromwkt" = "e308816f9ed528502b5029e2b5dbedec391f0ebc391697bfbd9ca8ddea15fc6a"
+"db.functions.st-geohash" = "c2f3165ee854c2bb007726ab38affcc2ab40db74d3243f4d2bc2c6665705ea46"
+"db.functions.st-geometryn" = "fa2e605a6cdc36a552ff104c092df9b2b0424a0227a2806b81e79b17c71039bf"
+"db.functions.st-geometrytype" = "c1e7d23a4fb72622794e21137af2326fbe188f412e5dd1c0e50af80dc174372f"
+"db.functions.st-geomfromewkb" = "33f6cd2246564beee7413018ace96efa54e72a7d5e77210414bd157ad503075a"
+"db.functions.st-geomfromewkt" = "230d8e0b2bfd1478d9ab9e2855e9fb10f43ac0ab4585afceacaa48fee2c15fca"
+"db.functions.st-geomfromgeohash" = "c633dc2e5a25ce3b3fda8346ae828b6555d4eb194f78de18169470709a85ae58"
+"db.functions.st-geomfromgeojson" = "8cfe17d6b7b0fd41e15c854241b8496ba3dcb888e3d226b22b9e1d6e5c158a7b"
+"db.functions.st-geomfromtext" = "960529dd67e1729ce77c31dd740af9b2cb4a579a801c9f9ca83edc71e192f723"
+"db.functions.st-geomfromwkb" = "70f2e8d2f321e664d4f78441c2ae4907c2a37b66baeed4cbf0bcfe47f676f5ea"
+"db.functions.st-geomfromwkt" = "2763325d02cadc2ac698bc0374a96757d5190c39c8700eac27c3f0cac20edaac"
+"db.functions.st-interiorringn" = "00fba86474c133795e0507be5e01e5b223895f1239242330d167ec78748e0cc2"
+"db.functions.st-intersection" = "05d9454a7374d07a045ea0abe1c29cab7dad2e30944c1f3f5eaaf53d3474468b"
+"db.functions.st-intersects" = "f7346f5d41379ee7a3de4cfa86fd9d23a989200db6ce6095037a93258664c2d1"
+"db.functions.st-isempty" = "8456a6df42d971d1b9ef0384ab9190d42baf1e309a2d7ac66bc383f1aea5cc01"
+"db.functions.st-isvalid" = "5d5255ceb59ace6fda3855ff903ddc08c6c22ddd4e7a4e2de724ba2a4932546a"
+"db.functions.st-length" = "4f513e1755a4a736bf8d392c47e0c06ceee04e0aaaba77e5f4824a7be154f64c"
+"db.functions.st-m" = "632a591ade7291875604e38b280d7998e524bb5715e64f7cb8ecd1aba763d0db"
+"db.functions.st-makeenvelope" = "e6e07e288bb5807a6541842f7583c42b0475bb2396c932047d45f750d1c77f0d"
+"db.functions.st-makeline" = "397915f03dbda63c29b2fc8e78f30611de659960f33ed915600334debbe05c50"
+"db.functions.st-makepoint" = "3815b1752e45a95ab69fee87699bd7bfcdffe590a829f5cf51309a413c095853"
+"db.functions.st-makepolygon" = "5e995f33ad592f8e461e19db1b9b38aab5504ad0f7741793669a19ab7e08e14f"
+"db.functions.st-multi" = "1784bb2aa68c87686cb685fc99468b45c91d1ce82c82b1c86a5bcae897d4b5ab"
+"db.functions.st-ndims" = "035d4582237dbb2a01ce98ad4238ab96cd37b697544c5db52c3cacfc5fa45b3c"
+"db.functions.st-npoints" = "677a462be87c3e31831959d5aaae054d02a212cfb583e691aead49e60b18a752"
+"db.functions.st-nrings" = "7ad4f6db1b38b7572c472c57ceda758cb39ab10a33a7c25b2275bd891f0bf2b7"
+"db.functions.st-numgeometries" = "763aa4cfe4a22c4631f56acb6cb6d93f7554e780713eaa3b48ffcb59eb58b486"
+"db.functions.st-numinteriorrings" = "303adb41921e1ac477c126513fae4fabab13582c1675c95bf9661672614890ad"
+"db.functions.st-numpoints" = "6595e068a16a7b6334886778e00015afe2813fe03e46423789decfaf73664493"
+"db.functions.st-perimeter" = "b6e428ce467d674d67bbc39e903f28e1342ceff0f3b5c31bfe085f3fa81cb340"
+"db.functions.st-point" = "ea1fc1a1087e9c249943dfc0c46fe8d41ee16906a481158945f0c3c3e377d213"
+"db.functions.st-pointfromgeohash" = "a91170b9a95566f0d2d5c66d73955a8c1e07d272f146991f7c98b7868ec8634a"
+"db.functions.st-pointn" = "58f763b7ddf257262eba6fe13893e563a3cdb06f1cb588107083e06fd8467aba"
+"db.functions.st-pointonsurface" = "6582340eb61ad1a4fdc2b281bc538a8edb0104a4aebc05f3535acfbfc33712fc"
+"db.functions.st-removepoint" = "4060c08f46e58d8be89ec9ee8e69e998c96f585c4a6e3e40497ae87b3bf640f3"
+"db.functions.st-reverse" = "5ada89965f247c1265a27011335ea7775183e7dd17f87ea5fb2eb2e0ebd731c7"
+"db.functions.st-rotate" = "8de33393c23a6a6f01ed850400d4dcf11d5fb3cbdf861f3aabc44f7c2fc6d51e"
+"db.functions.st-scale" = "1d54fba273524737746b6236b8bfd8620871f1c0bf49508165f2faa215cafd05"
+"db.functions.st-setpoint" = "4468315563b21d49aec47115a07de18648158bba8cdfd9f3dd28afebb93a481f"
+"db.functions.st-setsrid" = "6531f9b24cf1468080fe855f6fe59a2caf1558d827a343be1508fc3140838192"
+"db.functions.st-simplify" = "18689c22cebb921f98a4740bb2ef016ef1d269ad90de05a72ce0d141c38d8fcc"
+"db.functions.st-srid" = "c1bc45ebdd5bff5bd94419b771e38814636ef2734ecb3ce1b2b741d992ac7d44"
+"db.functions.st-startpoint" = "d7078b378b2d380951a1e7c067e6bf3400af0cb8c056fcb5ed458710b72db055"
+"db.functions.st-touches" = "de5e6ce2da670a02a4d61693c3fb26237170d8a20095e4500db3001ec6ef2c25"
+"db.functions.st-transform" = "5c2575bf6705270df65b3d0b39c894490122ea68441c9e7fc55175733153c96d"
+"db.functions.st-translate" = "dd001a04494bbafc48d0df0e10c0ee15fb5135c1b12b7b2e854422a0ed0d1fe8"
+"db.functions.st-union" = "4bc873de488154ae369a99f61588d5601f2b2ff842fba38b582713044ebf9e01"
+"db.functions.st-union-agg" = "f5b69695a3962c4f07faaee46a12439a9a948df9ae34d6ff2186ccd10f70cf19"
+"db.functions.st-within" = "4db54241d3e5403a80293323b9b80b51a161c63708bbbed3688ee19fef5a15a7"
+"db.functions.st-x" = "eb4a1c55b826e7abb8a8b681b8d6c05cda987f6641e3ddace9401c184953a994"
+"db.functions.st-xmax" = "93e2fdadda718c7b9d659126496b2722e6d28456411104556f28bcd24dc8a94c"
+"db.functions.st-xmin" = "24e69aabc9843586b0f2eb2ef0b4bd1101f8e356e7bac701aa1cad868aed7a32"
+"db.functions.st-y" = "cc3cacf8bf6caaf628248fcb8236b6d0536c75543f3e63d47ff173fbae2a88dd"
+"db.functions.st-ymax" = "684635beb933d3ff7a39a39ec3af07f607e80011a350291ff37eabbd99bf3f7a"
+"db.functions.st-ymin" = "3b5fea5c1fdaa0a3d6ff8d6edde15f54e1f2606658f835a5e5ad11c7dd21017c"
+"db.functions.st-z" = "b794fd084fc10465d53071c58834aa46a54b20fbdf3a3a3d52b08162c08c0247"
+"db.functions.st-zmax" = "99c91114dc7fa8486133d6b2ae44b3042a3700de80024c9be2bcac8b0f3b1f48"
+"db.functions.st-zmin" = "77bf79b46d4a0c6ef0020a17220a1c681f9dccc5edd7f71b546654150691db01"
+"db.functions.stack" = "a9fcc95e42fcedfc96bde5af62a211af506974d29ea66d576e376f7a567e94c0"
+"db.functions.startswith" = "a4ce1fe0fb37fbb52d747f4886f29dda27b418f149de334d89c4209e24adcc22"
+"db.functions.std" = "8ce4272ca7a2caf82a19c067496f3b4dadb44e47749f08750dac5b2126f664c9"
+"db.functions.stddev" = "6e403b1942219d7720b2bd2312bf1c2c235c36d16441ad8290f0c1f2745a9572"
+"db.functions.stddev-pop" = "ab3e3f3e9eca93f1656cb4ea4d06f0707a475c3495f6b964aa4dacfada5f3d61"
+"db.functions.stddev-samp" = "961593c0f822db5d737ff0f37ea04b8b96defe6cd87fb86e2070daf91e74bcc3"
+"db.functions.str-to-map" = "1182132f34d195c18cc00dc351ae704a74534ba625c270193de4a8677e3b2331"
+"db.functions.string" = "f4b6bd27d9f3457101b244a0dce183522169789d9680ca3f6cde140be9ad748c"
+"db.functions.string-agg" = "e601ead12cd1e06f60a46130c38008155e4d824811828885a128e9d7f5ad14b4"
+"db.functions.struct" = "27d33fa783aeb86ea9769504812eca99a9b8ac064e631fa018ed0ba79eead9c0"
+"db.functions.substr.substr" = "dee4676e73ce52f5ba70853929db0d8264dcadbb94084f6de4c2e4cf269ba020"
+"db.functions.substr.substr-from" = "5fb173146d7f30267c9cf854324c4912c2d22015a03ac708980d77fe63ac7b32"
+"db.functions.substring-index" = "2b3ab6c6cfb6f977d921f34a8e72018386b7ebf3e359fb695814bff44f64a602"
+"db.functions.substring.substring" = "6082b998f9075adbb305ebe991f10e59ef88d41df47124a7296abee574bd8ac5"
+"db.functions.substring.substring-from" = "1a495fbea39685205684a74124e048eb8beff18e1ca2458a23525d6983eaa0ec"
+"db.functions.sum" = "6bb799b00f5df2228f557e75cf9b1dcaf644fd61910ec97a1ed90620d8099c5a"
+"db.functions.table-changes" = "8b2498ddf88ea143d1c0223f6ec6108415fd99b1e56f97b6c8a219d86928bcce"
+"db.functions.tan" = "e568ecd46e6727acf61f4c3fb209c2e65125500813dc48560f5efe65e5b10f79"
+"db.functions.tanh" = "8e8ff151c5b43dd60e67fcf544af7360ee32d66f40ecf4af7f9a219f9f65b0e2"
+"db.functions.theta-difference" = "654d3dd4d98193b8ca7a97e11f6bc729a8b9736105dbdfbcea7a3d11edcefd12"
+"db.functions.theta-intersection" = "9eaaf6373633750cc204ef75a94b40b0a4746aa9d544543cdd0318d9ffbeb2e2"
+"db.functions.theta-intersection-agg" = "b8e3ec1f5a54f9537cc7182ef413263c13e648329424e5dfc70c66fcec39fb86"
+"db.functions.theta-sketch-agg" = "041e3e6db6d8933f4446c9eaf6d4f5efc29bb33ad82e2c8f578d77e4f3a017fc"
+"db.functions.theta-sketch-estimate" = "2dbf5d20e4b1b0af682a4cfa6f5b67c63df9c5a23787ef184aaf555f91a9f6f8"
+"db.functions.theta-union" = "45dcdbe8d4a2c788b381380dc96ee6c739dce32e4e9a3b5492ee9afa4a67a691"
+"db.functions.theta-union-agg" = "a8082edfa976aea553ef834fc073e486338d9670023aa2fe116c0b437aa000f3"
+"db.functions.tildesign" = "bacf920737918b109b3e43714d137c64a0010c39bf5b1e94e92990a693efc7fb"
+"db.functions.time" = "4574c4fe3dc406eabb0d4edbee655b5744248b8d9ba4ef18894fbd67b73abde3"
+"db.functions.time-bucket" = "f4b705f91b072f70d0880b703fd0ce19e4f69a2b1bc9de18a556df8e538e2d8d"
+"db.functions.time-from-micros" = "979690a0fb0c5926e6f8735025a8addac353351a2daea7ea71756f88645b3235"
+"db.functions.time-from-millis" = "30bd30ed7a7771fecad2023ae16ed580aff2a5e159409f7f8074f5e9cdc8c62d"
+"db.functions.time-from-seconds" = "e8cc11cad1e95a6938bd3bc345d872e46c273ecfbf2d2281c420995ac2442679"
+"db.functions.time-to-micros" = "644948bfb10360be40dd90bbb32548e7382485fdd8c88489c369c009ad4add2c"
+"db.functions.time-to-millis" = "f60eff5c8e5d3dd520c559b7418e7ef7c0a87a1f411370dbbcab7135461692fc"
+"db.functions.time-to-seconds" = "1ff321e93e0c5afe87d8b5ee343871ca578d335ee259e037af3b54873d80081f"
+"db.functions.time-trunc" = "6d943944ed0a60fefe7f58c3dafc252376ddc1dd21e27448cd37dc40d8425364"
+"db.functions.timestamp" = "5c41916b3d8a3079e626775fac977cef4cdd167b8d2c2161f154582fa672b070"
+"db.functions.timestamp-micros" = "5ac8bde1f3455922dbad90b77ba3f4ecdd7a169fbf7a0f78de0f39c1bbf649ae"
+"db.functions.timestamp-millis" = "35801988d930ac304a50895b00ac9bfcd396f2246d0f7d7c6dd5740bca0b761d"
+"db.functions.timestamp-nanos" = "f070d6a6a0ddc117e0d318cf07611b199bab82fcb15d3277ca7238f419ffc08d"
+"db.functions.timestamp-seconds" = "4df71ffbb3ff4b3474252c6f26efb9f95b2d5936dea4b9167e38db6a3c7cf2b2"
+"db.functions.tinyint" = "dcdc5b5252436365ff852079263acb8c0ed26e70b5de726c7d7d15914039c368"
+"db.functions.to-avro" = "1625b7bd30584690a95e85bc02c9d32e9641d31d1e3786d35a9a781561da91c2"
+"db.functions.to-binary" = "bc3eed790137ac52cc6ba7dba3e59e2b6c00aacbed22ec62ca2f0c08b4bd8aed"
+"db.functions.to-char" = "ae5f8c68a5e2dbc2eface60e3c7f2bdf3d1646bdf0371dec3fd25211d06b1c17"
+"db.functions.to-csv" = "d08b6b5d818490b55994a1a9e8bbc9d2ab0b2cfd2da6b7bbcf28aa1d1bd80937"
+"db.functions.to-date" = "db55c706aba899ff8543f1c47c1a72de626f30ce50525d29e13245095b41b023"
+"db.functions.to-file" = "65166dc1a68efa49b9deb26c34615626d076e683010c537602a6964a72b8ab90"
+"db.functions.to-geography" = "65f02595dcd7421390a92612a304b5986373f1b79a20e03b0cb8dcb2c1173d06"
+"db.functions.to-geometry" = "00552aec19ad2e32ff6f1a77f9e8102389c97464ac74a13dc320520dcab04827"
+"db.functions.to-json" = "9fa646ab8146e36e478aa9d7fff553f8b8ad61f665ed5d7655eff13f6607547a"
+"db.functions.to-number" = "244b5b162ebb3befe65a70eefce53e42551edd349b717e98d02e34965dfd1160"
+"db.functions.to-protobuf" = "dda59ceb6a102a1ed603c25683ab6d2d0e263f74a7c5cf1b5eefa09b1fa0baa0"
+"db.functions.to-time" = "e3373d6dc6032b29ab8e4e7460abc670a128d0408ef27604780e72bbaac43ec8"
+"db.functions.to-timestamp" = "ffac0851023867571f914cc83f3dd1cbf2cb80f3892716db83a0eeee3eb59375"
+"db.functions.to-timestamp-ltz" = "997c17bb3afee115cb291408876546b00d055de54b032877f3d57ac5f41ee1bb"
+"db.functions.to-timestamp-ntz" = "a3538d85cad647e547e339e198836a9ef512e7151b087ba5db26235ead8a7134"
+"db.functions.to-unix-timestamp" = "3f9dc7fb715560db445d14c34f56d234b3a9af31cc1c2d54be3f2cd904fd56d7"
+"db.functions.to-utc-timestamp" = "e7db2aad5c825d34b4ced4e8a475664ff0250df3d08616f32746c9a57d7e8371"
+"db.functions.to-varchar" = "23337ffd423d0655836c4079b8ca6e883ae41a0699af294c3e2a609401d5db66"
+"db.functions.to-variant-object" = "c5e3e71bda4df1582458db0ff3f97cf30ce9ac2217d477c1bef99e40e4a07382"
+"db.functions.to-xml" = "1cbecefba8406a85e81f3b7cde1f6419f7534e5e25814254343cfde53eebc46d"
+"db.functions.transform" = "ace0cfb788b35263193a266a8599dc5c43fea80c589b92d1c0ecf52c71522122"
+"db.functions.transform-keys" = "a9a5d45440c1d36290c709c5b9571b9da1ed3ea77c53f59f4a18fe196ffe87b2"
+"db.functions.transform-values" = "1b2617435c9fb1c53ddcb163e578975142574d51d602bf6f5296f5dfd3be1578"
+"db.functions.translate" = "40a5339d625e47571c7d600997df3d2d327f5841121695e2b7c1e98015a7b625"
+"db.functions.trim.trim" = "2722f3b9f1148167a7826d5236e9a75819f2455ab28689f06ee8a8b4a791ad98"
+"db.functions.trim.trim-both-from" = "eaf23228d17d007364d5aca03c54705c2bf6d644d420a1aa24caede510dd3789"
+"db.functions.trim.trim-both-from.syntax" = "159705f49bf6b6d4fac614f18691967bc01940419596910d5c50c62b1b337046"
+"db.functions.trim.trim-from" = "e7183dd537a4e8bddc9ac32b55db7a8f4916b51462136108d43151b2686d7730"
+"db.functions.trim.trim-leading-from" = "b5ccb4f28c84d043d01d3d89ebc07adf905048a17831e69feab4cc442a25c575"
+"db.functions.trim.trim-leading-from.syntax" = "bffcba98509c1d7c6d7a0e032b3b314e67f6f6c8d8c9ed66f546f285cb0b12c9"
+"db.functions.trim.trim-trailing-from" = "79fd652b25d1595a42c9cab86243c24133b2e80159d4e9eb392c8104240f9ea4"
+"db.functions.trim.trim-trailing-from.syntax" = "dc4a97c9f5db57b593e5ef784b04aae96aaa912676200aa93996be5b288a766f"
+"db.functions.trunc" = "ff6bc71ac41412d5a1f498999c1a6bb9dd58b13b55a99bee67b91438eb67d44a"
+"db.functions.try-add" = "cf4f4390ff65d4452f5315c656684147dd5f00422dfeac22e5bc1225c4bd25e5"
+"db.functions.try-aes-decrypt" = "7b214f888539abc9b34aa3490bbc9ede393d9fe598d1e0567784da985e1e543b"
+"db.functions.try-avg" = "3452636bac6a528d29827364179ec79fbb2e7f3bf790cf757e18fb7388f5e2e4"
+"db.functions.try-cast" = "8165153df7c86b0af876d07583226088c229f046ca15ffff4f884304474c9a4f"
+"db.functions.try-copy-file" = "7f07b8f6641ab33e55566ba74bf0705aeda459333ea9ab21c610db7e7290edb0"
+"db.functions.try-divide" = "a60e63ba8880f0a39517e333d3a7bd813b72d5d2f36621f626a93f0ff6017dfe"
+"db.functions.try-element-at" = "9810aa8d48881f11105aea94e9e288eefb3e882be0db2dbf02ff2ecf0ce1c08a"
+"db.functions.try-ip-as-binary" = "1dcf2e3fa44cc0b3495aeaef823d67cb3e6c38ff48b745fed24d2c2383d813ba"
+"db.functions.try-ip-as-string" = "a9e59766fe716acbaafe2ef2b2019e1470c37b05d8896d43f744039d431d10ad"
+"db.functions.try-ip-cidr" = "84fc8b9e1f17c0c33090a502919a88f8a25433a2f85ed2f1f2ed03b2a8cc31ff"
+"db.functions.try-ip-host" = "9cef22301f1a32070c77a1b070112f920192bb63dda2556b043083bb24c3ada3"
+"db.functions.try-make-interval" = "c88ef7587af71d9de52b5080eede590687d716a051fe62125e2f815038fc9c0e"
+"db.functions.try-make-timestamp" = "ba2b619135a8f1432f759e5eea2648d6e7808012290b5295cd0a910ccb68b3af"
+"db.functions.try-make-timestamp-ltz" = "6f83c59e19ad408b23855dc4a5e6eedcfb9706decd2414568b8e2f2ca89586d0"
+"db.functions.try-make-timestamp-ntz" = "25b1ea518c17a593e1c7ba2007aec72e6ba13c5df27755d61a24081e94d15518"
+"db.functions.try-mod" = "b3bc455e3e3f6cd4d86d7b5ce20a4553ebf6bfe0418f9ea9d70dee6d4d72e118"
+"db.functions.try-multiply" = "aa0fec04becb084436485bf9694406880055d3e9b45762188142517daae7db44"
+"db.functions.try-parse-json" = "3a28553cd4d703f1bb8820edef0d5f2dc93d0af8ad75fa1e98c8aba12c0aa40d"
+"db.functions.try-parse-timestamp" = "6691cb4b21bce5a7f7d7f5ae9bf472a35a97ed20b0c7c8eda3820ffd85a3bbb5"
+"db.functions.try-reflect" = "550fe4603999d5f6552b509ca790533c369a8eaf8ede6c3099a01f5a194b9e07"
+"db.functions.try-secret" = "fb5cb6501e230300e426765d909d094c37bf424187eb67cba15558b9880cea30"
+"db.functions.try-subtract" = "4e1f572330396732d6f952f10c866593eae730e417f0f761fa9ff3c774f1b91d"
+"db.functions.try-sum" = "e534a8cc85a2ec16a02ab11c8e00952a4b739bd12f4aa768132699a6e775355f"
+"db.functions.try-to-binary" = "0f9de3547454b3c777af85eae4ceb2ad200f2d9ab7f97f9536475136c74a1fcb"
+"db.functions.try-to-date" = "6710c7c759e9bb32ea40ffd5ab3255bc66ee25d2ffdd6024db83f42e9749991d"
+"db.functions.try-to-file" = "ab6da9470f5f2fdf714cd349911132d4a048b027b98a607317fec7ae6390c656"
+"db.functions.try-to-geography" = "9383a76282f5eed9e93881f48e89e67c3f0253a9ed5c5f2f6de8f18699b4afe7"
+"db.functions.try-to-geometry" = "c037682c36581aafb29912de93a23c4551bb3c7ce336653454937d9fcb1438d0"
+"db.functions.try-to-number" = "f1a265c6a7647becccf7f4a4c2606b0b258bcbaed4d324c8e1ed5f67bb4e93ca"
+"db.functions.try-to-time" = "adf2e9b736a4395b9821030d293fdd5fa0bed1119666ef0825b0de2e544b1f98"
+"db.functions.try-to-timestamp" = "1b48e6d1208cbdc26572bec54af39f2cafd25556d47964841eadcd6490b33f39"
+"db.functions.try-url-decode" = "60f1d48020bb76f6ce93ad88801a642789669f17e901d40f7060f53e76e7e9ff"
+"db.functions.try-validate-utf8" = "b6f88fbc14765366df7b68b58ec17f3bd7c1e107a00564fb29dc65f07c5273d6"
+"db.functions.try-variant-get" = "77e2dfe2579132dd2606e9b209dbffc65c71928cf33e0b4c30fedd983b230169"
+"db.functions.try-zstd-decompress" = "1973f00da556e5d003c554bd6164763c57fc430179552bd84b549b7ffc8878d9"
+"db.functions.tuple-difference-double" = "b80c78c9e0cced4c29cffcb795d827cbed8605dca61515e4cff64c408c834c33"
+"db.functions.tuple-difference-integer" = "31f1b76c17e523228a260c8c952694339e53889d76424b4d2a78688168dff126"
+"db.functions.tuple-difference-theta-double" = "00a137e4391beb7f788936489557c6227c45e35d4028db8d63f08c73f6a4fe5e"
+"db.functions.tuple-difference-theta-integer" = "f8801da0e679016d3444f8674d088bcdb1c4219433357d1bcc004b665a50a2aa"
+"db.functions.tuple-intersection-agg-double" = "59feaf39c344a751fcd726b24619682dfca0d57c4b3518f24db316539cd80d84"
+"db.functions.tuple-intersection-agg-integer" = "ca93e7a6b97cd8bd9636feef22dc3ac24e75af2d948ef1cc7fbc6c0b327f52e8"
+"db.functions.tuple-intersection-double" = "25661265845a51f417d27e786bffff0ef61887438a4e445f007e1009dc7118f0"
+"db.functions.tuple-intersection-integer" = "a0abca23a54fd6694e90bf710b7e73a09a4fb1a8c1db41ea98ac4dcff382e4d4"
+"db.functions.tuple-intersection-theta-double" = "eaf4f58e222b3f7a2a5cd620bf463086825b6a2c31c0e8c31e10033fe0612947"
+"db.functions.tuple-intersection-theta-integer" = "74acbf5bb7228aeab6ea2a27abce6432ad596f219d014b22a0bfc4599182c00c"
+"db.functions.tuple-sketch-agg-double" = "13b8af858f0b453dbe1001ea0d2e7e61f7510c3b4530a631ef30c169444c0e75"
+"db.functions.tuple-sketch-agg-integer" = "2167e15136152a7a606e9cfdfcf0dffb27dfb59f7a7888a9245b1f81ef9008d4"
+"db.functions.tuple-sketch-estimate-double" = "24299b092d113566fe93a4d62f106bb69a6b8e87e8e5867052bcd81441944383"
+"db.functions.tuple-sketch-estimate-integer" = "7961cee48408c827132ce8654d399b4e558275882497d770bb7eb224c143a2d3"
+"db.functions.tuple-sketch-summary-double" = "6b823e069d4576156411c508c2ed19285a206cf867b2dd08f65bc438856f87d3"
+"db.functions.tuple-sketch-summary-integer" = "4a29184e5935ed2ca8709e836793bdcc4036a0f8e2934b171e15a0c10cd14eca"
+"db.functions.tuple-sketch-theta-double" = "e864338c405b34ed5dee5258872461743eeb08d163d83f11715bd449fe1fc8d5"
+"db.functions.tuple-sketch-theta-integer" = "f1e77d4c4cdfbd049a80899e4e6ece2c8b3d43f86bb1d74b44a4ba37dd33747a"
+"db.functions.tuple-union-agg-double" = "8748b6f95dd0f246e6c30773e3691916b2081f19fd89a2f36738743342020d31"
+"db.functions.tuple-union-agg-integer" = "827c7ef760580952a0aa1815821ca62c8bd82c556028b3748ba88d335da858d8"
+"db.functions.tuple-union-double" = "31c98f8b3b28d6a1e7dcec07db5c637276b6c2ba07aab6760f75d9df5f3eb73b"
+"db.functions.tuple-union-integer" = "139d424f969285787f13b651da829efca6baa308cfdd397671ddae5e4f9271b6"
+"db.functions.tuple-union-theta-double" = "7cf879337992d2e6a829dd934ebce5234053e4a016c933c6a4823e3396333adb"
+"db.functions.tuple-union-theta-integer" = "fa56d27590cffdd43465bb60cdc26fe695ffef0c32e1b645c5f963951502f779"
+"db.functions.typeof" = "a7829d3d93229c65c2d3a7fd4fc51f0f261736e742998caffb14d720f5128ac9"
+"db.functions.ucase" = "85a697a47fc0aa72ada649f792cd644d8507dec4d2bc8e0892038f4f2dfab6a1"
+"db.functions.unbase64" = "4e0f230d22a1eae70028578260e869c29a5aebf5d49b949f39183acdd622fbe3"
+"db.functions.unhex" = "2bafa7bef16c567a41eff31e62816ce48cec4649505a2fabbb43c147d1080c90"
+"db.functions.uniform" = "39309516e201a2e8df26a60e562f81967e7e434e1eca464c0182e931a117fba7"
+"db.functions.unix-date" = "4ae3f471bc61f4b1b52189b29fea901d6d6698078f76a11c1038c75f69f4a7cc"
+"db.functions.unix-micros" = "ad7bc5a14a77c610f751c5efbc1882ac9cf037d3e01a07e2baf4415b8f92153e"
+"db.functions.unix-millis" = "dc1afdc3867a4546a3f20f44da8a8f8dc228a8043fd81357f2242856323174a6"
+"db.functions.unix-nanos" = "619c887f9762cb56415d9f6c4a840de3a09836e76e7acb9ddb759b7d25a27383"
+"db.functions.unix-seconds" = "c70c704478ec80a95eb18b217d7fb23336a6b539e6cc56f08471dcd2fe934045"
+"db.functions.unix-timestamp" = "731766f99ad2ce1ec95279b2fea28349811bb90db2cb6ffa0fffffc7cc66e0a9"
+"db.functions.upper" = "fb7f156fea89fb86b7909f76dce44a0a0eefdf9dd664e3c51a72426a510a3352"
+"db.functions.url-decode" = "99b9b78afe52c3aef6b7aa6e6326735535786377b5b55f9129c6ace8659db659"
+"db.functions.url-encode" = "f5b9da754e768b21735862d16a8277efd7e0f83e9b7e03452e57bbdeb1c17534"
+"db.functions.user" = "f5c66832f7dceba1bb343b8898104d2065a4c7efacea88e44def82396ff86b41"
+"db.functions.uuid" = "d885dacb3d9bd7c11c8a042e9835dea13d56a1ddb2014dc88a232ddb8ec4e29d"
+"db.functions.validate-utf8" = "33b4f5f3924f19eeb2fab0d4426b6fe2a9965d1a794341a91aabbb6a179b47a3"
+"db.functions.var-pop" = "896b4b3dbfbccd4165559a9003a97ee8a8b15822f74a07c602fd0206026fecf5"
+"db.functions.var-samp" = "1f4db4362b8dde07e1575f74431bccd7bcd07c6663c2991542c47a859fb484b5"
+"db.functions.variance" = "ee7d304bb43a168fbb64e0b3147c73d0b16fbfe83db70dbc7ea42b0f4d7e2817"
+"db.functions.variant-explode" = "eb042767d6920c5751a751d8e5ef5b042beeac355a48b932ab5955e511cac4e4"
+"db.functions.variant-explode-outer" = "85e5fc54e6441fe118d2a68fba5c555bf4f3099a84d4982ea148c304468aba4e"
+"db.functions.variant-get" = "b3815f052fad412f9c8c108dbef98d06031c8498ad2717ce9fc8debf785a9d0a"
+"db.functions.vector-avg" = "8563ec3a3791eb02b8dec5a48f304251aeb5652cd6546992832d9e433b7431c8"
+"db.functions.vector-cosine-similarity" = "6e72cb76ca3b450c9dbac83ccd49cb661cd40f3d47803f29309e921ac7b03828"
+"db.functions.vector-inner-product" = "558bf51b6679608b9eb84554251d9c1a5fdf56f5735d1969dc4446a773fd34e3"
+"db.functions.vector-l2-distance" = "2b136d3a42e7c3cef35554b3af183102526817dac63711f4858fabf6fc68aa4a"
+"db.functions.vector-norm" = "702c81c39c248bed440b5ea41ccd13bbb073bf2597c7f52707c919bc91f3ec9c"
+"db.functions.vector-normalize" = "e2d77bc432b371b5418c84ae501f8c74abf1fb1c4f78508086aa94b36e4d554c"
+"db.functions.vector-search.vector-search" = "63b8e6ba745983bb457ae419d29499081a933548750a8c2853b77e8805861a5e"
+"db.functions.vector-search.vector-search-2" = "2b896f989de018a33c24a693bf551da23e5b680c1a2a2af1c56664ad9f759f42"
+"db.functions.vector-sum" = "76091491a4634347562f39d866250fb0073ee36d899c0618cd750bb23eb52382"
+"db.functions.version" = "5e4582b3fdb30bf4cba816b8686772182f3a6827ba8f6835e9c5a59007e2aa2e"
+"db.functions.weekday" = "85d83731d8c461f073fd7d820219c37effc054de267e0a61d7e9d7f17648bb09"
+"db.functions.weekofyear" = "c780ec9bd1863f2664a24f7ca9d9d52b17336358fe05c688afb490db2e2c6788"
+"db.functions.width-bucket" = "3779ae81547fd58d5f4b9513a0edf000488c96662b0d4d20f3bbbaa21a3f2ea0"
+"db.functions.window" = "bdbe813c4fad4403d376199f801aa60ff68ad82cccc46a4ab50f40e9a8971a16"
+"db.functions.window-time" = "ae68143377ea669b719165119003905399bd10b7e1a8380421a3d0c09c9aaa22"
+"db.functions.xpath" = "b7ee469d3fbac99acd8b253e60db13207774a52745171af2c6e54f0f1422fd8e"
+"db.functions.xpath-boolean" = "f8b1b231216486b77fa37a903c912df72d238492b99f673ec58fd59be4f2f419"
+"db.functions.xpath-double" = "4f1603fbd83b630a5247428f43a56d9bb3a609898d0087529c41e72dd96076bb"
+"db.functions.xpath-float" = "114bb04c1b9de0adb5d1721af13e6053df5718bb9b09e6e8a1a46efc6b0c192f"
+"db.functions.xpath-int" = "43e9c69ea9275bec2cab98f7ba89b53c17acf10b387d334a4de5a5b4a26e2788"
+"db.functions.xpath-long" = "224dcdf97f15efd2a45c339239af2e489d875598be1f35ee7407f1671858800d"
+"db.functions.xpath-number" = "617265cd7c9da7eeb1cee583a668a7764bd5716f916aa34974405525b3af2e65"
+"db.functions.xpath-short" = "67dd65b16edf36ee5a0e25bc871cf31ff57732757217f22196eebcc2c6482117"
+"db.functions.xpath-string" = "cbd02776ced8d4664967f068f6dfd0251ec6eaffd9e0601e13ca113cf75a7309"
+"db.functions.xxhash64" = "2fbd7e780fc9e1ace6a53171a4beb362c0ac94c16817b37eceb54abd00159c44"
+"db.functions.year" = "a47c276648e8d5b6659306b1c42177474fd7c464e7f73a632a1f1f4fa869a1b3"
+"db.functions.zeroifnull" = "55563ff2bed637a29c328198b6714bf0697b934d5dbb356f6f73920c469602fc"
+"db.functions.zip-with" = "4f20280818a3c3cceb5e47a88afbbcc1851ea4a63d339a5760239a2f7cb0db37"
+"db.functions.zstd-compress" = "82fe2a1d56a244c02b797fc539c1f0d485e485d664f03955a322784d383afc3f"
+"db.functions.zstd-decompress" = "f668a4b69c1934e99bbe1dbcea7a364e8ca961d36535c210b6a2df3d5a6142c4"

@@ -1,0 +1,58 @@
+[project]
+name = "sqlquack-workspace"
+version = "0.0.0"
+description = "Development tooling for SQLQuack: the recorder, repository checks and their tests."
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+  # The DuckDB release the Rust crates embed, for running emitted SQL in repository scripts.
+  "duckdb==2.0.0",
+  # DuckDB's Python functions need numpy; the guard measurement's raise hook is one.
+  "numpy==2.5.4",
+  "fensu>=0.28.0",
+  # The BigQuery referee's authenticated transport to the BigQuery API.
+  "google-auth[requests]==2.62.1",
+  # The DuckShop measure reads the Arrow files recorded from Snowflake.
+  "pyarrow==23.0.1",
+  "pytest>=8.4",
+  "pytest-xdist>=3.8",
+  "ruff>=0.12.0",
+  "ty>=0.0.1a19",
+]
+# The Snowflake recorder. Maintainers install it locally; CI never builds or runs it.
+recorder = ["sqlquack-record"]
+
+[tool.uv]
+package = false
+default-groups = ["dev", "recorder"]
+
+[tool.uv.workspace]
+members = ["recorder"]
+
+[tool.uv.sources]
+sqlquack-record = { workspace = true }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--import-mode=importlib"
+pythonpath = [".", "python/src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "I", "PLR0913", "PLR0915", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/test_*.py" = ["E501"]
+"tests/**/helpers.py" = ["PLR0913"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["sqlquack", "sqlquack_record", "scripts", "tests"]
+
+[tool.ty.environment]
+# The Python module's package, which `make python-module` builds in place.
+extra-paths = ["python/src"]

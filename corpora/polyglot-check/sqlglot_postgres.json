@@ -1,0 +1,2845 @@
+{
+ "origin": "sqlglot v30.14.0 tests/dialects/test_postgres.py: the SQL of validate_identity and validate_all calls and their postgres read and write SQL",
+ "entries": [
+  {
+   "dialect": "postgres",
+   "sql": "WITH t AS (SELECT 1 AS \"null\") SELECT t.null FROM t",
+   "from": "test_postgres.py:25"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "WITH t AS (SELECT 1 AS \"true\") SELECT t.true FROM t",
+   "from": "test_postgres.py:26"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST('a' AS TEXT COLLATE \"de_DE\")",
+   "from": "test_postgres.py:27"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT '%' SIMILAR TO '^%' ESCAPE '^'",
+   "from": "test_postgres.py:28"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT GET_BIT(CAST(44 AS BIT(10)), 6)",
+   "from": "test_postgres.py:29"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM t GROUP BY ROLLUP (a || '^' || b)",
+   "from": "test_postgres.py:30"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT COSH(1.5)",
+   "from": "test_postgres.py:31"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT EXP(1)",
+   "from": "test_postgres.py:32"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT MODE() WITHIN GROUP (ORDER BY status DESC) AS most_common FROM orders",
+   "from": "test_postgres.py:33"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT ST_DISTANCE(gg1, gg2, FALSE) AS sphere_dist",
+   "from": "test_postgres.py:36"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SHA384(x)",
+   "from": "test_postgres.py:37"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "1.x",
+   "from": "test_postgres.py:38"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "1. AS x",
+   "from": "test_postgres.py:38"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "|/ x",
+   "from": "test_postgres.py:39"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SQRT(x)",
+   "from": "test_postgres.py:39"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "||/ x",
+   "from": "test_postgres.py:40"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CBRT(x)",
+   "from": "test_postgres.py:40"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT EXTRACT(QUARTER FROM CAST('2025-04-26' AS DATE))",
+   "from": "test_postgres.py:41"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT DATE_TRUNC('QUARTER', CAST('2025-04-26' AS DATE))",
+   "from": "test_postgres.py:42"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "STRING_TO_ARRAY('xx~^~yy~^~zz', '~^~', 'yy')",
+   "from": "test_postgres.py:43"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT x FROM t WHERE CAST($1 AS TEXT) = 'ok'",
+   "from": "test_postgres.py:44"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM t TABLESAMPLE SYSTEM (50) REPEATABLE (55)",
+   "from": "test_postgres.py:45"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x @@ y",
+   "from": "test_postgres.py:46"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "doc @? '$.a[*] ? (@ > 2)'",
+   "from": "test_postgres.py:47"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM events WHERE doc @? '$.a[*] ? (@ > 2)'",
+   "from": "test_postgres.py:48"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS MONEY)",
+   "from": "test_postgres.py:49"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS INT4RANGE)",
+   "from": "test_postgres.py:50"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS INT4MULTIRANGE)",
+   "from": "test_postgres.py:51"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS INT8RANGE)",
+   "from": "test_postgres.py:52"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS INT8MULTIRANGE)",
+   "from": "test_postgres.py:53"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS NUMRANGE)",
+   "from": "test_postgres.py:54"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS NUMMULTIRANGE)",
+   "from": "test_postgres.py:55"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS TSRANGE)",
+   "from": "test_postgres.py:56"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS TSMULTIRANGE)",
+   "from": "test_postgres.py:57"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS TSTZRANGE)",
+   "from": "test_postgres.py:58"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS TSTZMULTIRANGE)",
+   "from": "test_postgres.py:59"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS DATERANGE)",
+   "from": "test_postgres.py:60"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS DATEMULTIRANGE)",
+   "from": "test_postgres.py:61"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x$",
+   "from": "test_postgres.py:62"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "LENGTH(x)",
+   "from": "test_postgres.py:63"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "LENGTH(x, utf8)",
+   "from": "test_postgres.py:64"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CHAR_LENGTH(x)",
+   "from": "test_postgres.py:65"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CHARACTER_LENGTH(x)",
+   "from": "test_postgres.py:66"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT ARRAY[1, 2, 3]",
+   "from": "test_postgres.py:67"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT ARRAY(SELECT 1)",
+   "from": "test_postgres.py:68"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "STRING_AGG(x, y)",
+   "from": "test_postgres.py:69"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "STRING_AGG(x, ',' ORDER BY y)",
+   "from": "test_postgres.py:70"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "STRING_AGG(x, ',' ORDER BY y DESC)",
+   "from": "test_postgres.py:71"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "STRING_AGG(DISTINCT x, ',' ORDER BY y DESC)",
+   "from": "test_postgres.py:72"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CASE WHEN SUBSTRING('abcdefg') IN ('ab') THEN 1 ELSE 0 END",
+   "from": "test_postgres.py:73"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "COMMENT ON TABLE mytable IS 'this'",
+   "from": "test_postgres.py:74"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "COMMENT ON MATERIALIZED VIEW my_view IS 'this'",
+   "from": "test_postgres.py:75"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "COMMENT ON TYPE mood IS 'x'",
+   "from": "test_postgres.py:76"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "COMMENT ON TYPE foo.mood IS 'x'",
+   "from": "test_postgres.py:77"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "COMMENT ON VIEW foo.bat IS 'x'",
+   "from": "test_postgres.py:78"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "COMMENT ON MATERIALIZED VIEW foo.my_view IS 'x'",
+   "from": "test_postgres.py:79"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "COMMENT ON SEQUENCE public.seq IS 'x'",
+   "from": "test_postgres.py:80"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "COMMENT ON INDEX public.idx IS 'x'",
+   "from": "test_postgres.py:81"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT e'\\xDEADBEEF'",
+   "from": "test_postgres.py:82"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CAST(e'\\176' AS BYTEA)",
+   "from": "test_postgres.py:83"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM x WHERE SUBSTRING('Thomas' FROM '...$') IN ('mas')",
+   "from": "test_postgres.py:84"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT TRIM(' X' FROM ' XXX ')",
+   "from": "test_postgres.py:85"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT TRIM(LEADING 'bla' FROM ' XXX ' COLLATE utf8_bin)",
+   "from": "test_postgres.py:86"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM JSON_TO_RECORDSET(z) AS y(\"rank\" INT)",
+   "from": "test_postgres.py:87"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT ~x",
+   "from": "test_postgres.py:88"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x ~ 'y'",
+   "from": "test_postgres.py:89"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x ~* 'y'",
+   "from": "test_postgres.py:90"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM r CROSS JOIN LATERAL UNNEST(ARRAY[1]) AS s(location)",
+   "from": "test_postgres.py:91"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(1 AS DECIMAL) / CAST(2 AS DECIMAL) * -100",
+   "from": "test_postgres.py:92"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "EXEC AS myfunc @id = 123",
+   "from": "test_postgres.py:93"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CURRENT_SCHEMA",
+   "from": "test_postgres.py:94"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CURRENT_USER",
+   "from": "test_postgres.py:95"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CURRENT_ROLE",
+   "from": "test_postgres.py:96"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT VERSION()",
+   "from": "test_postgres.py:97"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM ONLY t1",
+   "from": "test_postgres.py:98"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT INTERVAL '-1 MONTH'",
+   "from": "test_postgres.py:99"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT INTERVAL '4.1 DAY'",
+   "from": "test_postgres.py:100"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT INTERVAL '3.14159 HOUR'",
+   "from": "test_postgres.py:101"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT INTERVAL '2.5 MONTH'",
+   "from": "test_postgres.py:102"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT INTERVAL '-10.75 MINUTE'",
+   "from": "test_postgres.py:103"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT INTERVAL '0.123456789 SECOND'",
+   "from": "test_postgres.py:104"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT date_col - INTERVAL '30' FROM t",
+   "from": "test_postgres.py:105"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT date_col - INTERVAL '1' AS one_second_later",
+   "from": "test_postgres.py:106"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT date_col - INTERVAL '30' DAY FROM t",
+   "from": "test_postgres.py:107"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT date_col - INTERVAL '30 DAY' FROM t",
+   "from": "test_postgres.py:107"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT date_col - INTERVAL '1' HOUR AS one_hour_later",
+   "from": "test_postgres.py:111"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT date_col - INTERVAL '1 HOUR' AS one_hour_later",
+   "from": "test_postgres.py:111"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT SUM(x) OVER (PARTITION BY y ORDER BY interval ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) - SUM(x) OVER (PARTITION BY y ORDER BY interval ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS total",
+   "from": "test_postgres.py:115"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM test_data, LATERAL JSONB_ARRAY_ELEMENTS(data) WITH ORDINALITY AS elem(value, ordinality)",
+   "from": "test_postgres.py:118"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT id, name FROM xml_data AS t, XMLTABLE('/root/user' PASSING t.xml COLUMNS id INT PATH '@id', name TEXT PATH 'name/text()') AS x",
+   "from": "test_postgres.py:121"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT id, value FROM xml_content AS t, XMLTABLE(XMLNAMESPACES('http://example.com/ns1' AS ns1, 'http://example.com/ns2' AS ns2), '/root/data' PASSING t.xml COLUMNS id INT PATH '@ns1:id', value TEXT PATH 'ns2:value/text()') AS x",
+   "from": "test_postgres.py:124"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM t WHERE some_column >= CURRENT_DATE + INTERVAL '1 day 1 hour' AND some_another_column IS TRUE",
+   "from": "test_postgres.py:127"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "UPDATE \"x\" SET \"y\" = CAST('0 days 60.000000 seconds' AS INTERVAL) WHERE \"x\".\"id\" IN (2, 3)",
+   "from": "test_postgres.py:130"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "WITH t1 AS MATERIALIZED (SELECT 1), t2 AS NOT MATERIALIZED (SELECT 2) SELECT * FROM t1, t2",
+   "from": "test_postgres.py:133"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "LAST_VALUE(\"col1\") OVER (ORDER BY \"col2\" RANGE BETWEEN INTERVAL '1 DAY' PRECEDING AND '1 month' FOLLOWING)",
+   "from": "test_postgres.py:136"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ALTER TABLE ONLY \"Album\" ADD CONSTRAINT \"FK_AlbumArtistId\" FOREIGN KEY (\"ArtistId\") REFERENCES \"Artist\" (\"ArtistId\") ON DELETE CASCADE",
+   "from": "test_postgres.py:139"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ALTER TABLE ONLY \"Album\" ADD CONSTRAINT \"FK_AlbumArtistId\" FOREIGN KEY (\"ArtistId\") REFERENCES \"Artist\" (\"ArtistId\") ON DELETE RESTRICT",
+   "from": "test_postgres.py:142"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM JSON_ARRAY_ELEMENTS('[1,true, [2,false]]') WITH ORDINALITY",
+   "from": "test_postgres.py:145"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM JSON_ARRAY_ELEMENTS('[1,true, [2,false]]') WITH ORDINALITY AS kv_json",
+   "from": "test_postgres.py:148"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM JSON_ARRAY_ELEMENTS('[1,true, [2,false]]') WITH ORDINALITY AS kv_json(a, b)",
+   "from": "test_postgres.py:151"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT SUM(x) OVER a, SUM(y) OVER b FROM c WINDOW a AS (PARTITION BY d), b AS (PARTITION BY e)",
+   "from": "test_postgres.py:154"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CASE WHEN SUBSTRING('abcdefg' FROM 1) IN ('ab') THEN 1 ELSE 0 END",
+   "from": "test_postgres.py:157"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CASE WHEN SUBSTRING('abcdefg' FROM 1 FOR 2) IN ('ab') THEN 1 ELSE 0 END",
+   "from": "test_postgres.py:160"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM \"x\" WHERE SUBSTRING(\"x\".\"foo\" FROM 1 FOR 2) IN ('mas')",
+   "from": "test_postgres.py:163"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM x WHERE SUBSTRING('Thomas' FROM '%#\"o_a#\"_' FOR '#') IN ('mas')",
+   "from": "test_postgres.py:166"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT SUBSTRING('bla' + 'foo' || 'bar' FROM 3 - 1 + 5 FOR 4 + SOME_FUNC(arg1, arg2))",
+   "from": "test_postgres.py:169"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT TO_TIMESTAMP(1284352323.5), TO_TIMESTAMP('05 Dec 2000', 'DD Mon YYYY')",
+   "from": "test_postgres.py:172"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT TO_TIMESTAMP('05 Dec 2000 10:00 AM', 'DD Mon YYYY HH:MI AM')",
+   "from": "test_postgres.py:175"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT TO_TIMESTAMP('05 Dec 2000 10:00 PM', 'DD Mon YYYY HH:MI PM')",
+   "from": "test_postgres.py:178"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM foo, LATERAL (SELECT * FROM bar WHERE bar.id = foo.bar_id) AS ss",
+   "from": "test_postgres.py:181"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT c.oid, n.nspname, c.relname FROM pg_catalog.pg_class AS c LEFT JOIN pg_catalog.pg_namespace AS n ON n.oid = c.relnamespace WHERE c.relname OPERATOR(pg_catalog.~) '^(courses)$' COLLATE pg_catalog.default AND pg_catalog.PG_TABLE_IS_VISIBLE(c.oid) ORDER BY 2, 3",
+   "from": "test_postgres.py:184"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT date_add(current_date, interval '7' day)",
+   "from": "test_postgres.py:192"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CURRENT_DATE + INTERVAL '7 DAY'",
+   "from": "test_postgres.py:192"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT e'foo \\' bar'",
+   "from": "test_postgres.py:196"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT e'foo '' bar'",
+   "from": "test_postgres.py:196"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT e'\\n'",
+   "from": "test_postgres.py:200"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT e'\\t'",
+   "from": "test_postgres.py:201"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT e'update table_name set a = \\'foo\\' where 1 = 0' AS x FROM tab",
+   "from": "test_postgres.py:202"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT e'update table_name set a = ''foo'' where 1 = 0' AS x FROM tab",
+   "from": "test_postgres.py:202"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "select count() OVER(partition by a order by a range offset preceding exclude current row)",
+   "from": "test_postgres.py:206"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT COUNT() OVER (PARTITION BY a ORDER BY a range BETWEEN offset preceding AND CURRENT ROW EXCLUDE CURRENT ROW)",
+   "from": "test_postgres.py:206"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT SUBSTRING('Thomas' FOR 3 FROM 2)",
+   "from": "test_postgres.py:214"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT SUBSTRING('Thomas' FROM 2 FOR 3)",
+   "from": "test_postgres.py:214"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT DATE_PART('isodow'::varchar(6), current_date)",
+   "from": "test_postgres.py:221"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT EXTRACT(CAST('isodow' AS VARCHAR(6)) FROM CURRENT_DATE)",
+   "from": "test_postgres.py:221"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "END WORK AND NO CHAIN",
+   "from": "test_postgres.py:225"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "COMMIT AND NO CHAIN",
+   "from": "test_postgres.py:225"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "END AND CHAIN",
+   "from": "test_postgres.py:229"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "COMMIT AND CHAIN",
+   "from": "test_postgres.py:229"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x ? 'x'",
+   "from": "test_postgres.py:233"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT $$a$$",
+   "from": "test_postgres.py:237"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT 'a'",
+   "from": "test_postgres.py:237"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT $$Dianne's horse$$",
+   "from": "test_postgres.py:241"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT 'Dianne''s horse'",
+   "from": "test_postgres.py:241"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT $$The price is $9.95$$ AS msg",
+   "from": "test_postgres.py:245"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT 'The price is $9.95' AS msg",
+   "from": "test_postgres.py:245"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "COMMENT ON TABLE mytable IS $$doc this$$",
+   "from": "test_postgres.py:249"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "COMMENT ON TABLE mytable IS 'doc this'",
+   "from": "test_postgres.py:249"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "UPDATE MYTABLE T1 SET T1.COL = 13",
+   "from": "test_postgres.py:252"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "UPDATE MYTABLE AS T1 SET T1.COL = 13",
+   "from": "test_postgres.py:252"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x !~ 'y'",
+   "from": "test_postgres.py:256"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "NOT x ~ 'y'",
+   "from": "test_postgres.py:256"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x !~* 'y'",
+   "from": "test_postgres.py:260"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "NOT x ~* 'y'",
+   "from": "test_postgres.py:260"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x ~~ 'y'",
+   "from": "test_postgres.py:264"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x LIKE 'y'",
+   "from": "test_postgres.py:264"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x ~~* 'y'",
+   "from": "test_postgres.py:268"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x ILIKE 'y'",
+   "from": "test_postgres.py:268"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x !~~ 'y'",
+   "from": "test_postgres.py:272"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x NOT LIKE 'y'",
+   "from": "test_postgres.py:272"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x !~~* 'y'",
+   "from": "test_postgres.py:276"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x NOT ILIKE 'y'",
+   "from": "test_postgres.py:276"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT 'testa 1' NOT LIKE ALL (ARRAY['testa%', 'testb%'])",
+   "from": "test_postgres.py:280"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT 'testa 1' NOT LIKE ANY(ARRAY['testa%', 'testb%'])",
+   "from": "test_postgres.py:281"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT 'testa 1' NOT ILIKE ALL (ARRAY['testa%', 'testb%'])",
+   "from": "test_postgres.py:282"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT 'testa 1' NOT ILIKE ANY(ARRAY['testa%', 'testb%'])",
+   "from": "test_postgres.py:283"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT NOT 'testa 1' LIKE ALL (ARRAY['testa%', 'testb%'])",
+   "from": "test_postgres.py:284"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT NOT ('testa 1' LIKE ALL (ARRAY['testa%', 'testb%']))",
+   "from": "test_postgres.py:285"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "'45 days'::interval day",
+   "from": "test_postgres.py:294"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST('45 days' AS INTERVAL DAY)",
+   "from": "test_postgres.py:294"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "'x' 'y' 'z'",
+   "from": "test_postgres.py:298"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CONCAT('x', 'y', 'z')",
+   "from": "test_postgres.py:298"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x::cstring",
+   "from": "test_postgres.py:302"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS CSTRING)",
+   "from": "test_postgres.py:302"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x::oid",
+   "from": "test_postgres.py:306"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS OID)",
+   "from": "test_postgres.py:306"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x::regclass",
+   "from": "test_postgres.py:310"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS REGCLASS)",
+   "from": "test_postgres.py:310"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x::regcollation",
+   "from": "test_postgres.py:314"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS REGCOLLATION)",
+   "from": "test_postgres.py:314"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x::regconfig",
+   "from": "test_postgres.py:318"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS REGCONFIG)",
+   "from": "test_postgres.py:318"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x::regdictionary",
+   "from": "test_postgres.py:322"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS REGDICTIONARY)",
+   "from": "test_postgres.py:322"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x::regnamespace",
+   "from": "test_postgres.py:326"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS REGNAMESPACE)",
+   "from": "test_postgres.py:326"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x::regoper",
+   "from": "test_postgres.py:330"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS REGOPER)",
+   "from": "test_postgres.py:330"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x::regoperator",
+   "from": "test_postgres.py:334"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS REGOPERATOR)",
+   "from": "test_postgres.py:334"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x::regproc",
+   "from": "test_postgres.py:338"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS REGPROC)",
+   "from": "test_postgres.py:338"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x::regprocedure",
+   "from": "test_postgres.py:342"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS REGPROCEDURE)",
+   "from": "test_postgres.py:342"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x::regrole",
+   "from": "test_postgres.py:346"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS REGROLE)",
+   "from": "test_postgres.py:346"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x::regtype",
+   "from": "test_postgres.py:350"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS REGTYPE)",
+   "from": "test_postgres.py:350"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "123::CHARACTER VARYING",
+   "from": "test_postgres.py:354"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(123 AS VARCHAR)",
+   "from": "test_postgres.py:354"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "TO_TIMESTAMP(123::DOUBLE PRECISION)",
+   "from": "test_postgres.py:358"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "TO_TIMESTAMP(CAST(123 AS DOUBLE PRECISION))",
+   "from": "test_postgres.py:358"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT to_timestamp(123)::time without time zone",
+   "from": "test_postgres.py:362"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CAST(TO_TIMESTAMP(123) AS TIME)",
+   "from": "test_postgres.py:362"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT SUM(x) OVER (PARTITION BY a ORDER BY d ROWS 1 PRECEDING)",
+   "from": "test_postgres.py:366"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT SUM(x) OVER (PARTITION BY a ORDER BY d ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)",
+   "from": "test_postgres.py:366"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT SUBSTRING(2022::CHAR(4) || LPAD(3::CHAR(2), 2, '0') FROM 3 FOR 4)",
+   "from": "test_postgres.py:370"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT SUBSTRING(CAST(2022 AS CHAR(4)) || LPAD(CAST(3 AS CHAR(2)), 2, '0') FROM 3 FOR 4)",
+   "from": "test_postgres.py:370"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT m.name FROM manufacturers AS m LEFT JOIN LATERAL GET_PRODUCT_NAMES(m.id) pname ON TRUE WHERE pname IS NULL",
+   "from": "test_postgres.py:374"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT m.name FROM manufacturers AS m LEFT JOIN LATERAL GET_PRODUCT_NAMES(m.id) AS pname ON TRUE WHERE pname IS NULL",
+   "from": "test_postgres.py:374"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT p1.id, p2.id, v1, v2 FROM polygons AS p1, polygons AS p2, LATERAL VERTICES(p1.poly) v1, LATERAL VERTICES(p2.poly) v2 WHERE (v1 <-> v2) < 10 AND p1.id <> p2.id",
+   "from": "test_postgres.py:378"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT p1.id, p2.id, v1, v2 FROM polygons AS p1, polygons AS p2, LATERAL VERTICES(p1.poly) AS v1, LATERAL VERTICES(p2.poly) AS v2 WHERE (v1 <-> v2) < 10 AND p1.id <> p2.id",
+   "from": "test_postgres.py:378"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT id, email, CAST(deleted AS TEXT) FROM users WHERE deleted NOTNULL",
+   "from": "test_postgres.py:382"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT id, email, CAST(deleted AS TEXT) FROM users WHERE deleted IS NOT NULL",
+   "from": "test_postgres.py:382"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT id, email, CAST(deleted AS TEXT) FROM users WHERE NOT deleted ISNULL",
+   "from": "test_postgres.py:386"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT id, email, CAST(deleted AS TEXT) FROM users WHERE NOT deleted IS NULL",
+   "from": "test_postgres.py:386"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "'{\"x\": {\"y\": 1}}'::json->'x'->'y'",
+   "from": "test_postgres.py:390"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST('{\"x\": {\"y\": 1}}' AS JSON) -> 'x' -> 'y'",
+   "from": "test_postgres.py:390"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "'[1,2,3]'::json->>2",
+   "from": "test_postgres.py:394"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST('[1,2,3]' AS JSON) ->> 2",
+   "from": "test_postgres.py:394"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "'{\"a\":1,\"b\":2}'::json->>'b'",
+   "from": "test_postgres.py:398"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST('{\"a\":1,\"b\":2}' AS JSON) ->> 'b'",
+   "from": "test_postgres.py:398"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "'{\"a\":[1,2,3],\"b\":[4,5,6]}'::json#>'{a,2}'",
+   "from": "test_postgres.py:402"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST('{\"a\":[1,2,3],\"b\":[4,5,6]}' AS JSON) #> '{a,2}'",
+   "from": "test_postgres.py:402"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "'{\"a\":[1,2,3],\"b\":[4,5,6]}'::json#>>'{a,2}'",
+   "from": "test_postgres.py:406"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST('{\"a\":[1,2,3],\"b\":[4,5,6]}' AS JSON) #>> '{a,2}'",
+   "from": "test_postgres.py:406"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "'[1,2,3]'::json->2",
+   "from": "test_postgres.py:410"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST('[1,2,3]' AS JSON) -> 2",
+   "from": "test_postgres.py:410"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT JSON_ARRAY_ELEMENTS((foo->'sections')::JSON) AS sections",
+   "from": "test_postgres.py:414"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT JSON_ARRAY_ELEMENTS(CAST((foo -> 'sections') AS JSON)) AS sections",
+   "from": "test_postgres.py:414"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "MERGE INTO x USING (SELECT id) AS y ON a = b WHEN MATCHED THEN UPDATE SET x.a = y.b WHEN NOT MATCHED THEN INSERT (a, b) VALUES (y.a, y.b)",
+   "from": "test_postgres.py:418"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "MERGE INTO x USING (SELECT id) AS y ON a = b WHEN MATCHED THEN UPDATE SET a = y.b WHEN NOT MATCHED THEN INSERT (a, b) VALUES (y.a, y.b)",
+   "from": "test_postgres.py:418"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM t1*",
+   "from": "test_postgres.py:422"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM t1",
+   "from": "test_postgres.py:422"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT SUBSTRING('afafa' for 1)",
+   "from": "test_postgres.py:426"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT SUBSTRING('afafa' FROM 1 FOR 1)",
+   "from": "test_postgres.py:426"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS INT8)",
+   "from": "test_postgres.py:430"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS BIGINT)",
+   "from": "test_postgres.py:430"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "\n            WITH\n              json_data AS (SELECT '{\"field_id\": [1, 2, 3]}'::JSON AS data),\n              field_ids AS (SELECT 'field_id' AS field_id)\n\n            SELECT\n                JSON_ARRAY_ELEMENTS(json_data.data -> field_ids.field_id) AS element\n            FROM json_data, field_ids\n            ",
+   "from": "test_postgres.py:434"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "WITH json_data AS (\n  SELECT\n    CAST('{\"field_id\": [1, 2, 3]}' AS JSON) AS data\n), field_ids AS (\n  SELECT\n    'field_id' AS field_id\n)\nSELECT\n  JSON_ARRAY_ELEMENTS(JSON_EXTRACT_PATH(json_data.data, field_ids.field_id)) AS element\nFROM json_data, field_ids",
+   "from": "test_postgres.py:434"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x ? y",
+   "from": "test_postgres.py:457"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT E'a\\tb'",
+   "from": "test_postgres.py:464"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT e'a\\tb'",
+   "from": "test_postgres.py:464"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CAST('2025-02-01 00:00:00' AS TIMESTAMP) - MAKE_INTERVAL(years => 1)",
+   "from": "test_postgres.py:472"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT NOW() + MAKE_INTERVAL(years => 1, months => 2, days => 3)",
+   "from": "test_postgres.py:479"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CURRENT_TIMESTAMP + MAKE_INTERVAL(years => 1, months => 2, days => 3)",
+   "from": "test_postgres.py:479"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT NOW() - MAKE_INTERVAL(years => 1, months => 2, days => 3)",
+   "from": "test_postgres.py:486"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CURRENT_TIMESTAMP - MAKE_INTERVAL(years => 1, months => 2, days => 3)",
+   "from": "test_postgres.py:486"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CURRENT_TIMESTAMP + INTERVAL '-3 MONTH'",
+   "from": "test_postgres.py:493"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT ARRAY[]::INT[] AS foo",
+   "from": "test_postgres.py:501"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CAST(ARRAY[] AS INT[]) AS foo",
+   "from": "test_postgres.py:501"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT ARRAY[1, 2, 3] @> ARRAY[1, 2]",
+   "from": "test_postgres.py:518"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT REGEXP_REPLACE('mr .', '[^a-zA-Z]', '', 'g')",
+   "from": "test_postgres.py:529"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE t (c INT)",
+   "from": "test_postgres.py:536"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM \"test_table\" ORDER BY RANDOM() LIMIT 5",
+   "from": "test_postgres.py:542"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT (data -> 'en-US') AS acat FROM my_table",
+   "from": "test_postgres.py:551"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT (data ->> 'en-US') AS acat FROM my_table",
+   "from": "test_postgres.py:558"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT JSON_EXTRACT_PATH_TEXT(x, k1, k2, k3) FROM t",
+   "from": "test_postgres.py:565"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x #> 'y'",
+   "from": "test_postgres.py:577"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x #>> 'y'",
+   "from": "test_postgres.py:587"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x -> 'y' -> 0 -> 'z'",
+   "from": "test_postgres.py:597"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "JSON_EXTRACT_PATH('{\"f2\":{\"f3\":1},\"f4\":{\"f5\":99,\"f6\":\"foo\"}}','f4')",
+   "from": "test_postgres.py:604"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "JSON_EXTRACT_PATH('{\"f2\":{\"f3\":1},\"f4\":{\"f5\":99,\"f6\":\"foo\"}}', 'f4')",
+   "from": "test_postgres.py:604"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "JSON_EXTRACT_PATH_TEXT('{\"farm\": [\"a\", \"b\", \"c\"]}', 'farm', '0')",
+   "from": "test_postgres.py:619"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "JSON_EXTRACT_PATH(x, 'x', 'y', 'z')",
+   "from": "test_postgres.py:631"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM t TABLESAMPLE SYSTEM (50)",
+   "from": "test_postgres.py:642"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY amount)",
+   "from": "test_postgres.py:649"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "e'x'",
+   "from": "test_postgres.py:659"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT DATE_PART('minute', timestamp '2023-01-04 04:05:06.789')",
+   "from": "test_postgres.py:667"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT EXTRACT(minute FROM CAST('2023-01-04 04:05:06.789' AS TIMESTAMP))",
+   "from": "test_postgres.py:667"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT DATE_PART('month', date '20220502')",
+   "from": "test_postgres.py:675"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT EXTRACT(month FROM CAST('20220502' AS DATE))",
+   "from": "test_postgres.py:675"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT (DATE '2016-01-10', DATE '2016-02-01') OVERLAPS (DATE '2016-01-20', DATE '2016-02-10')",
+   "from": "test_postgres.py:683"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT (CAST('2016-01-10' AS DATE), CAST('2016-02-01' AS DATE)) OVERLAPS (CAST('2016-01-20' AS DATE), CAST('2016-02-10' AS DATE))",
+   "from": "test_postgres.py:683"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT DATE_PART('epoch', CAST('2023-01-04 04:05:06.789' AS TIMESTAMP))",
+   "from": "test_postgres.py:690"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x ^ y",
+   "from": "test_postgres.py:696"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "POWER(x, y)",
+   "from": "test_postgres.py:696"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x # y",
+   "from": "test_postgres.py:703"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT GENERATE_SERIES(1, 5)",
+   "from": "test_postgres.py:710"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT GENERATE_SERIES(1, 5) AS x",
+   "from": "test_postgres.py:717"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT GENERATE_SERIES(1, 5) AS x WHERE x > 2 ORDER BY x DESC LIMIT 3",
+   "from": "test_postgres.py:724"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT y, GENERATE_SERIES(1, 3) AS g FROM t",
+   "from": "test_postgres.py:731"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT GENERATE_SERIES(1, 2) AS a, GENERATE_SERIES(11, 13) AS b",
+   "from": "test_postgres.py:738"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT y, GENERATE_SERIES(1, 2) AS a, GENERATE_SERIES(11, 13) AS b FROM t",
+   "from": "test_postgres.py:745"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "WITH dates AS (SELECT GENERATE_SERIES('2020-01-01'::DATE, '2024-01-01'::DATE, '1 day'::INTERVAL) AS date), date_table AS (SELECT DISTINCT DATE_TRUNC('MONTH', date) AS date FROM dates) SELECT * FROM date_table",
+   "from": "test_postgres.py:752"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "WITH dates AS (SELECT GENERATE_SERIES(CAST('2020-01-01' AS DATE), CAST('2024-01-01' AS DATE), CAST('1 day' AS INTERVAL)) AS date), date_table AS (SELECT DISTINCT DATE_TRUNC('MONTH', date) AS date FROM dates) SELECT * FROM date_table",
+   "from": "test_postgres.py:752"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "GENERATE_SERIES(a, b, '  2   days  ')",
+   "from": "test_postgres.py:759"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "GENERATE_SERIES(a, b, INTERVAL '2 DAYS')",
+   "from": "test_postgres.py:759"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "GENERATE_SERIES('2019-01-01'::TIMESTAMP, NOW(), '1day')",
+   "from": "test_postgres.py:767"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "GENERATE_SERIES(CAST('2019-01-01' AS TIMESTAMP), CURRENT_TIMESTAMP, INTERVAL '1 DAY')",
+   "from": "test_postgres.py:767"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM GENERATE_SERIES(a, b)",
+   "from": "test_postgres.py:779"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM t CROSS JOIN GENERATE_SERIES(2, 4)",
+   "from": "test_postgres.py:795"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM t CROSS JOIN GENERATE_SERIES(2, 4) AS s",
+   "from": "test_postgres.py:804"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM x FETCH 1 ROW",
+   "from": "test_postgres.py:813"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM x FETCH FIRST 1 ROWS ONLY",
+   "from": "test_postgres.py:813"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT fname, lname, age FROM person ORDER BY age DESC NULLS FIRST, fname ASC NULLS LAST, lname",
+   "from": "test_postgres.py:823"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT fname, lname, age FROM person ORDER BY age DESC, fname ASC, lname",
+   "from": "test_postgres.py:823"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM x WHERE SUBSTRING(col1 FROM 3 + LENGTH(col1) - 10 FOR 10) IN (col2)",
+   "from": "test_postgres.py:839"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT TRIM(BOTH ' XXX ')",
+   "from": "test_postgres.py:846"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT TRIM(' XXX ')",
+   "from": "test_postgres.py:846"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "TRIM(LEADING FROM ' XXX ')",
+   "from": "test_postgres.py:854"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "LTRIM(' XXX ')",
+   "from": "test_postgres.py:854"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "TRIM(TRAILING FROM ' XXX ')",
+   "from": "test_postgres.py:863"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "RTRIM(' XXX ')",
+   "from": "test_postgres.py:863"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "TRIM(BOTH 'as' FROM 'as string as')",
+   "from": "test_postgres.py:872"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT TRIM(LEADING ' XXX ' COLLATE \"de_DE\")",
+   "from": "test_postgres.py:879"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT LTRIM(' XXX ' COLLATE \"de_DE\")",
+   "from": "test_postgres.py:879"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT TRIM(TRAILING ' XXX ' COLLATE \"de_DE\")",
+   "from": "test_postgres.py:883"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT RTRIM(' XXX ' COLLATE \"de_DE\")",
+   "from": "test_postgres.py:883"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "LEVENSHTEIN(col1, col2)",
+   "from": "test_postgres.py:887"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "LEVENSHTEIN_LESS_EQUAL(col1, col2, 1)",
+   "from": "test_postgres.py:888"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "LEVENSHTEIN(col1, col2, 1, 2, 3)",
+   "from": "test_postgres.py:889"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "LEVENSHTEIN_LESS_EQUAL(col1, col2, 1, 2, 3, 4)",
+   "from": "test_postgres.py:890"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "'{\"a\":1,\"b\":2}'::json->'b'",
+   "from": "test_postgres.py:892"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST('{\"a\":1,\"b\":2}' AS JSON) -> 'b'",
+   "from": "test_postgres.py:892"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "merge into x as x using (select id) as y on a = b WHEN matched then update set X.\"A\" = y.b",
+   "from": "test_postgres.py:899"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "MERGE INTO x AS x USING (SELECT id) AS y ON a = b WHEN MATCHED THEN UPDATE SET \"A\" = y.b",
+   "from": "test_postgres.py:899"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "merge into x as z using (select id) as y on a = b WHEN matched then update set X.a = y.b",
+   "from": "test_postgres.py:907"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "MERGE INTO x AS z USING (SELECT id) AS y ON a = b WHEN MATCHED THEN UPDATE SET a = y.b",
+   "from": "test_postgres.py:907"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "merge into x as z using (select id) as y on a = b WHEN matched then update set Z.a = y.b",
+   "from": "test_postgres.py:914"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "merge into x using (select id) as y on a = b WHEN matched then update set x.a = y.b",
+   "from": "test_postgres.py:921"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "MERGE INTO x USING (SELECT id) AS y ON a = b WHEN MATCHED THEN UPDATE SET a = y.b",
+   "from": "test_postgres.py:921"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x / y ^ z",
+   "from": "test_postgres.py:928"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x / POWER(y, z)",
+   "from": "test_postgres.py:928"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(x AS NAME)",
+   "from": "test_postgres.py:935"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "COPY tbl (col1, col2) FROM 'file' WITH (FORMAT format, HEADER MATCH, FREEZE TRUE)",
+   "from": "test_postgres.py:951"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "COPY tbl (col1, col2) TO 'file' WITH (FORMAT format, HEADER MATCH, FREEZE TRUE)",
+   "from": "test_postgres.py:954"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "COPY (SELECT * FROM t) TO 'file' WITH (FORMAT format, HEADER MATCH, FREEZE TRUE)",
+   "from": "test_postgres.py:957"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "cast(a as FLOAT)",
+   "from": "test_postgres.py:960"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(a AS DOUBLE PRECISION)",
+   "from": "test_postgres.py:960"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "cast(a as FLOAT8)",
+   "from": "test_postgres.py:961"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "cast(a as FLOAT4)",
+   "from": "test_postgres.py:962"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(a AS REAL)",
+   "from": "test_postgres.py:962"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "1 / DIV(4, 2)",
+   "from": "test_postgres.py:964"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(DIV(4, 2) AS DECIMAL(5, 3))",
+   "from": "test_postgres.py:975"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT TO_DATE('01/01/2000', 'MM/DD/YYYY')",
+   "from": "test_postgres.py:986"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT js, js IS JSON AS \"json?\", js IS JSON VALUE AS \"scalar?\", js IS JSON SCALAR AS \"scalar?\", js IS JSON OBJECT AS \"object?\", js IS JSON ARRAY AS \"array?\" FROM t",
+   "from": "test_postgres.py:994"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT js, js IS JSON ARRAY WITH UNIQUE KEYS AS \"array w. UK?\", js IS JSON ARRAY WITHOUT UNIQUE KEYS AS \"array w/o UK?\", js IS JSON ARRAY UNIQUE KEYS AS \"array w UK 2?\" FROM t",
+   "from": "test_postgres.py:997"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "MERGE INTO target_table USING source_table AS source ON target.id = source.id WHEN MATCHED THEN DO NOTHING WHEN NOT MATCHED THEN DO NOTHING RETURNING MERGE_ACTION(), *",
+   "from": "test_postgres.py:1000"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT 1 FROM ((VALUES (1)) AS vals(id) LEFT OUTER JOIN tbl ON vals.id = tbl.id)",
+   "from": "test_postgres.py:1003"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT OVERLAY(a PLACING b FROM 1)",
+   "from": "test_postgres.py:1006"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT OVERLAY(a PLACING b FROM 1 FOR 1)",
+   "from": "test_postgres.py:1007"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT JSONB_EXISTS('{\"a\": [1,2,3]}', 'a')",
+   "from": "test_postgres.py:1010"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "WITH t AS (SELECT ARRAY[1, 2, 3] AS col) SELECT * FROM t WHERE 1 <= ANY(col) AND 2 = ANY(col)",
+   "from": "test_postgres.py:1017"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "/*+ some comment*/ SELECT b.foo, b.bar FROM baz AS b",
+   "from": "test_postgres.py:1028"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "/* + some comment */ SELECT b.foo, b.bar FROM baz AS b",
+   "from": "test_postgres.py:1028"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY a) FILTER(WHERE CAST(b AS BOOLEAN)) AS mean_value FROM (VALUES (0, 't')) AS fake_data(a, b)",
+   "from": "test_postgres.py:1033"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT JSON_OBJECT_AGG(k, v) FROM t",
+   "from": "test_postgres.py:1037"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT JSONB_OBJECT_AGG(k, v) FROM t",
+   "from": "test_postgres.py:1045"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT DATE_BIN('30 days', timestamp_col, (SELECT MIN(TIMESTAMP) from table)) FROM table",
+   "from": "test_postgres.py:1053"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT DATE_BIN('30 days', timestamp_col, (SELECT MIN(TIMESTAMP) FROM table)) FROM table",
+   "from": "test_postgres.py:1053"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT ANY_VALUE(1) AS col",
+   "from": "test_postgres.py:1062"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM foo WHERE id = %s",
+   "from": "test_postgres.py:1073"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM foo WHERE id = %(id_param)s",
+   "from": "test_postgres.py:1074"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM foo WHERE id = ?",
+   "from": "test_postgres.py:1075"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT '{\"a\":1, \"b\":2, \"c\":3}'::jsonb ?| array['b', 'c']",
+   "from": "test_postgres.py:1078"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CAST('{\"a\":1, \"b\":2, \"c\":3}' AS JSONB) ?| ARRAY['b', 'c']",
+   "from": "test_postgres.py:1078"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT '[\"a\", \"b\"]'::jsonb ?& array['a', 'b']",
+   "from": "test_postgres.py:1084"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CAST('[\"a\", \"b\"]' AS JSONB) ?& ARRAY['a', 'b']",
+   "from": "test_postgres.py:1084"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT '[\"a\", {\"b\":1}]'::jsonb #- '{1,b}'",
+   "from": "test_postgres.py:1090"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CAST('[\"a\", {\"b\":1}]' AS JSONB) #- '{1,b}'",
+   "from": "test_postgres.py:1090"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT JSON_AGG(DISTINCT name) FROM users",
+   "from": "test_postgres.py:1095"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT JSON_AGG(c1 ORDER BY c1) FROM (VALUES ('c'), ('b'), ('a')) AS t(c1)",
+   "from": "test_postgres.py:1096"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT JSON_AGG(DISTINCT c1 ORDER BY c1) FROM (VALUES ('c'), ('b'), ('a')) AS t(c1)",
+   "from": "test_postgres.py:1099"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT REGEXP_REPLACE('aaa', 'a', 'b')",
+   "from": "test_postgres.py:1102"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT TO_CHAR(foo, bar)",
+   "from": "test_postgres.py:1113"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE table1 (a INT, b INT, PRIMARY KEY (a))",
+   "from": "test_postgres.py:1123"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT NUMRANGE(1.1, 2.2) -|- NUMRANGE(2.2, 3.3)",
+   "from": "test_postgres.py:1130"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT SLOPE(point '(4,4)', point '(0,0)')",
+   "from": "test_postgres.py:1131"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT SLOPE(CAST('(4,4)' AS POINT), CAST('(0,0)' AS POINT))",
+   "from": "test_postgres.py:1131"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "WIDTH_BUCKET(10, ARRAY[5, 15])",
+   "from": "test_postgres.py:1136"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "WIDTH_BUCKET(10, 5, 15, 25)",
+   "from": "test_postgres.py:1139"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "UPDATE foo SET a = bar.a, b = bar.b FROM bar WHERE foo.id = bar.id",
+   "from": "test_postgres.py:1142"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT MLEAST(VARIADIC ARRAY[10, -1, 5, 4.4])",
+   "from": "test_postgres.py:1153"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT MLEAST(VARIADIC ARRAY[]::numeric[])",
+   "from": "test_postgres.py:1154"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT MLEAST(VARIADIC CAST(ARRAY[] AS DECIMAL[]))",
+   "from": "test_postgres.py:1154"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM schema_name.table_name st WHERE JSON_EXTRACT_PATH_TEXT((st.data)::json, variadic array['test'::text]) = 'test'::text",
+   "from": "test_postgres.py:1158"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM schema_name.table_name AS st WHERE JSON_EXTRACT_PATH_TEXT(CAST((st.data) AS JSON), VARIADIC ARRAY[CAST('test' AS TEXT)]) = CAST('test' AS TEXT)",
+   "from": "test_postgres.py:1158"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TYPE widget",
+   "from": "test_postgres.py:1185"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TYPE float8range AS RANGE (subtype = float8, subtype_diff = float8mi)",
+   "from": "test_postgres.py:1186"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ALTER INDEX \"IX_Ratings_Column1\" RENAME TO \"IX_Ratings_Column2\"",
+   "from": "test_postgres.py:1201"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE x (a TEXT COLLATE \"de_DE\")",
+   "from": "test_postgres.py:1202"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE x (a TEXT COLLATE pg_catalog.\"default\")",
+   "from": "test_postgres.py:1203"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE t (col INT[3][5])",
+   "from": "test_postgres.py:1204"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE t (col INT[3])",
+   "from": "test_postgres.py:1205"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE INDEX IF NOT EXISTS ON t(c)",
+   "from": "test_postgres.py:1206"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE INDEX et_vid_idx ON et(vid) INCLUDE (fid)",
+   "from": "test_postgres.py:1207"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE INDEX idx_x ON x USING BTREE(x, y) WHERE (NOT y IS NULL)",
+   "from": "test_postgres.py:1208"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE test (elems JSONB[])",
+   "from": "test_postgres.py:1209"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE public.y (x TSTZRANGE NOT NULL)",
+   "from": "test_postgres.py:1210"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE test (foo HSTORE)",
+   "from": "test_postgres.py:1211"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE test (foo JSONB)",
+   "from": "test_postgres.py:1212"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE test (foo VARCHAR(64)[])",
+   "from": "test_postgres.py:1213"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE test (foo INT) PARTITION BY HASH(foo)",
+   "from": "test_postgres.py:1214"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "INSERT INTO x VALUES (1, 'a', 2.0) RETURNING a",
+   "from": "test_postgres.py:1215"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "INSERT INTO x VALUES (1, 'a', 2.0) RETURNING a, b",
+   "from": "test_postgres.py:1216"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "INSERT INTO x VALUES (1, 'a', 2.0) RETURNING *",
+   "from": "test_postgres.py:1217"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "UPDATE tbl_name SET foo = 123 RETURNING a",
+   "from": "test_postgres.py:1218"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE cities_partdef PARTITION OF cities DEFAULT",
+   "from": "test_postgres.py:1219"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE t (c CHAR(2) UNIQUE NOT NULL) INHERITS (t1)",
+   "from": "test_postgres.py:1220"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE s.t (c CHAR(2) UNIQUE NOT NULL) INHERITS (s.t1, s.t2)",
+   "from": "test_postgres.py:1221"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION x(INT) RETURNS INT SET search_path = 'public'",
+   "from": "test_postgres.py:1222"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "TRUNCATE TABLE t1 CONTINUE IDENTITY",
+   "from": "test_postgres.py:1223"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "TRUNCATE TABLE t1 RESTART IDENTITY",
+   "from": "test_postgres.py:1224"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "TRUNCATE TABLE t1 CASCADE",
+   "from": "test_postgres.py:1225"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "TRUNCATE TABLE t1 RESTRICT",
+   "from": "test_postgres.py:1226"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "TRUNCATE TABLE t1 CONTINUE IDENTITY CASCADE",
+   "from": "test_postgres.py:1227"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "TRUNCATE TABLE t1 RESTART IDENTITY RESTRICT",
+   "from": "test_postgres.py:1228"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ALTER TABLE t1 SET LOGGED",
+   "from": "test_postgres.py:1229"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ALTER TABLE t1 SET UNLOGGED",
+   "from": "test_postgres.py:1230"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ALTER TABLE t1 SET WITHOUT CLUSTER",
+   "from": "test_postgres.py:1231"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ALTER TABLE t1 SET WITHOUT OIDS",
+   "from": "test_postgres.py:1232"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ALTER TABLE t1 SET ACCESS METHOD method",
+   "from": "test_postgres.py:1233"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ALTER TABLE t1 SET TABLESPACE tablespace",
+   "from": "test_postgres.py:1234"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ALTER TABLE t1 SET (fillfactor = 5, autovacuum_enabled = TRUE)",
+   "from": "test_postgres.py:1235"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "INSERT INTO book (isbn, title) VALUES ($1, $2) ON CONFLICT(isbn) WHERE deleted_at IS NULL DO UPDATE SET title = EXCLUDED.title RETURNING id, isbn",
+   "from": "test_postgres.py:1236"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "INSERT INTO newtable AS t(a, b, c) VALUES (1, 2, 3) ON CONFLICT(c) DO UPDATE SET a = t.a + 1 WHERE t.a < 1",
+   "from": "test_postgres.py:1239"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "INSERT INTO tbl (a, b) VALUES (1, 'x') ON CONFLICT(a, LOWER(b)) DO UPDATE SET b = excluded.b",
+   "from": "test_postgres.py:1242"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ALTER TABLE tested_table ADD CONSTRAINT unique_example UNIQUE (column_name) NOT VALID",
+   "from": "test_postgres.py:1245"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION pymax(a INT, b INT) RETURNS INT LANGUAGE plpython3u AS $$\n  if a > b:\n    return a\n  return b\n$$",
+   "from": "test_postgres.py:1248"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE t (vid INT NOT NULL, CONSTRAINT ht_vid_nid_fid_idx EXCLUDE (INT4RANGE(vid, nid) WITH &&, INT4RANGE(fid, fid, '[]') WITH &&))",
+   "from": "test_postgres.py:1251"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE t (i INT, a TEXT, PRIMARY KEY (i) INCLUDE (a))",
+   "from": "test_postgres.py:1254"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE t (i INT, PRIMARY KEY (i), EXCLUDE USING gist(col varchar_pattern_ops DESC NULLS LAST WITH &&) WITH (sp1=1, sp2=2))",
+   "from": "test_postgres.py:1255"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE t (i INT, EXCLUDE USING btree(INT4RANGE(vid, nid, '[]') ASC NULLS FIRST WITH &&) INCLUDE (col1, col2))",
+   "from": "test_postgres.py:1258"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE t (i INT, EXCLUDE USING gin(col1 WITH &&, col2 WITH ||) USING INDEX TABLESPACE tablespace WHERE (id > 5))",
+   "from": "test_postgres.py:1261"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE A (LIKE B INCLUDING CONSTRAINT INCLUDING COMPRESSION EXCLUDING COMMENTS)",
+   "from": "test_postgres.py:1264"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE cust_part3 PARTITION OF customers FOR VALUES WITH (MODULUS 3, REMAINDER 2)",
+   "from": "test_postgres.py:1267"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE measurement_y2016m07 PARTITION OF measurement (unitsales DEFAULT 0) FOR VALUES FROM ('2016-07-01') TO ('2016-08-01')",
+   "from": "test_postgres.py:1270"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE measurement_ym_older PARTITION OF measurement_year_month FOR VALUES FROM (MINVALUE, MINVALUE) TO (2016, 11)",
+   "from": "test_postgres.py:1273"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE measurement_ym_y2016m11 PARTITION OF measurement_year_month FOR VALUES FROM (2016, 11) TO (2016, 12)",
+   "from": "test_postgres.py:1276"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE cities_ab PARTITION OF cities (CONSTRAINT city_id_nonzero CHECK (city_id <> 0)) FOR VALUES IN ('a', 'b')",
+   "from": "test_postgres.py:1279"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE cities_ab PARTITION OF cities (CONSTRAINT city_id_nonzero CHECK (city_id <> 0)) FOR VALUES IN ('a', 'b') PARTITION BY RANGE(population)",
+   "from": "test_postgres.py:1282"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE INDEX foo ON bar.baz USING btree(col1 varchar_pattern_ops ASC, col2)",
+   "from": "test_postgres.py:1285"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE INDEX index_issues_on_title_trigram ON public.issues USING gin(title public.gin_trgm_ops)",
+   "from": "test_postgres.py:1288"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "INSERT INTO x VALUES (1, 'a', 2.0) ON CONFLICT(id) DO NOTHING RETURNING *",
+   "from": "test_postgres.py:1291"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "INSERT INTO x VALUES (1, 'a', 2.0) ON CONFLICT(id) DO UPDATE SET x.id = 1 RETURNING *",
+   "from": "test_postgres.py:1294"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "INSERT INTO x VALUES (1, 'a', 2.0) ON CONFLICT(id) DO UPDATE SET x.id = excluded.id RETURNING *",
+   "from": "test_postgres.py:1297"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "INSERT INTO x VALUES (1, 'a', 2.0) ON CONFLICT ON CONSTRAINT pkey DO NOTHING RETURNING *",
+   "from": "test_postgres.py:1300"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "INSERT INTO x VALUES (1, 'a', 2.0) ON CONFLICT ON CONSTRAINT pkey DO UPDATE SET x.id = 1 RETURNING *",
+   "from": "test_postgres.py:1303"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "DELETE FROM event USING sales AS s WHERE event.eventid = s.eventid RETURNING a",
+   "from": "test_postgres.py:1306"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "WITH t(c) AS (SELECT 1) SELECT * INTO UNLOGGED foo FROM (SELECT c AS c FROM t) AS temp",
+   "from": "test_postgres.py:1309"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE test (x TIMESTAMP WITHOUT TIME ZONE[][])",
+   "from": "test_postgres.py:1312"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE test (x TIMESTAMP[][])",
+   "from": "test_postgres.py:1312"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION add(integer, integer) RETURNS INT LANGUAGE SQL IMMUTABLE RETURNS NULL ON NULL INPUT AS 'select $1 + $2;'",
+   "from": "test_postgres.py:1316"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION add(integer, integer) RETURNS INT LANGUAGE SQL IMMUTABLE STRICT AS 'select $1 + $2;'",
+   "from": "test_postgres.py:1319"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION add(INT, INT) RETURNS INT SET search_path TO 'public' AS 'select $1 + $2;' LANGUAGE SQL IMMUTABLE",
+   "from": "test_postgres.py:1322"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION x(INT) RETURNS INT SET foo FROM CURRENT",
+   "from": "test_postgres.py:1326"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE CONSTRAINT TRIGGER my_trigger AFTER INSERT OR DELETE OR UPDATE OF col_a, col_b ON public.my_table DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION DO_STH()",
+   "from": "test_postgres.py:1334"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE UNLOGGED TABLE foo AS WITH t(c) AS (SELECT 1) SELECT * FROM (SELECT c AS c FROM t) AS temp",
+   "from": "test_postgres.py:1337"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ALTER TABLE foo ADD COLUMN id BIGINT NOT NULL PRIMARY KEY DEFAULT 1, ADD CONSTRAINT fk_orders_user FOREIGN KEY (id) REFERENCES foo (id)",
+   "from": "test_postgres.py:1340"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE t (col integer ARRAY[3])",
+   "from": "test_postgres.py:1343"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE t (col integer ARRAY)",
+   "from": "test_postgres.py:1347"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE t (col INT[])",
+   "from": "test_postgres.py:1347"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION x(INT) RETURNS INT SET search_path TO 'public'",
+   "from": "test_postgres.py:1351"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE OR REPLACE FUNCTION function_name (input_a character varying DEFAULT NULL::character varying)",
+   "from": "test_postgres.py:1359"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE OR REPLACE FUNCTION function_name(input_a VARCHAR DEFAULT CAST(NULL AS VARCHAR))",
+   "from": "test_postgres.py:1359"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION foo(a INT)",
+   "from": "test_postgres.py:1365"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION foo(IN a INT)",
+   "from": "test_postgres.py:1366"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION foo(OUT a INT)",
+   "from": "test_postgres.py:1367"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION foo(INOUT a INT)",
+   "from": "test_postgres.py:1368"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION foo(VARIADIC a INT[])",
+   "from": "test_postgres.py:1369"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION foo(out INT)",
+   "from": "test_postgres.py:1370"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION foo(inout VARCHAR)",
+   "from": "test_postgres.py:1371"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION foo(variadic INT[])",
+   "from": "test_postgres.py:1372"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION foo(a INT, OUT b INT, INOUT c VARCHAR, VARIADIC d INT[])",
+   "from": "test_postgres.py:1373"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE OR REPLACE FUNCTION foo(INOUT id UUID)",
+   "from": "test_postgres.py:1376"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE OR REPLACE FUNCTION foo(id UUID, OUT created_at TIMESTAMPTZ)",
+   "from": "test_postgres.py:1377"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION foo(OUT x INT DEFAULT 5)",
+   "from": "test_postgres.py:1380"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION foo(INOUT y VARCHAR DEFAULT 'test')",
+   "from": "test_postgres.py:1381"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION foo(IN a INT DEFAULT 0, OUT b INT)",
+   "from": "test_postgres.py:1382"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION foo(VARIADIC args INT[] DEFAULT ARRAY[]::INT[])",
+   "from": "test_postgres.py:1383"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION foo(VARIADIC args INT[] DEFAULT CAST(ARRAY[] AS INT[]))",
+   "from": "test_postgres.py:1383"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION foo(OUT result INT, IN input INT DEFAULT 10)",
+   "from": "test_postgres.py:1389"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE products (product_no INT UNIQUE, name TEXT, price DECIMAL)",
+   "from": "test_postgres.py:1391"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE products (product_no INT CONSTRAINT must_be_different UNIQUE, name TEXT CONSTRAINT present NOT NULL, price DECIMAL)",
+   "from": "test_postgres.py:1395"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE products (product_no INT, name TEXT, price DECIMAL, UNIQUE (product_no, name))",
+   "from": "test_postgres.py:1399"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE products (product_no INT UNIQUE, name TEXT, price DECIMAL CHECK (price > 0), discounted_price DECIMAL CONSTRAINT positive_discount CHECK (discounted_price > 0), CHECK (product_no > 1), CONSTRAINT valid_discount CHECK (price > discounted_price))",
+   "from": "test_postgres.py:1403"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "\n            CREATE INDEX index_ci_builds_on_commit_id_and_artifacts_expireatandidpartial\n            ON public.ci_builds\n            USING btree (commit_id, artifacts_expire_at, id)\n            WHERE (\n                ((type)::text = 'Ci::Build'::text)\n                AND ((retried = false) OR (retried IS NULL))\n                AND ((name)::text = ANY (ARRAY[\n                    ('sast'::character varying)::text,\n                    ('dependency_scanning'::character varying)::text,\n                    ('sast:container'::character varying)::text,\n                    ('container_scanning'::character varying)::text,\n                    ('dast'::character varying)::text\n                ]))\n            )\n            ",
+   "from": "test_postgres.py:1412"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE INDEX index_ci_builds_on_commit_id_and_artifacts_expireatandidpartial ON public.ci_builds USING btree(commit_id, artifacts_expire_at, id) WHERE ((CAST((type) AS TEXT) = CAST('Ci::Build' AS TEXT)) AND ((retried = FALSE) OR (retried IS NULL)) AND (CAST((name) AS TEXT) = ANY(ARRAY[CAST((CAST('sast' AS VARCHAR)) AS TEXT), CAST((CAST('dependency_scanning' AS VARCHAR)) AS TEXT), CAST((CAST('sast:container' AS VARCHAR)) AS TEXT), CAST((CAST('container_scanning' AS VARCHAR)) AS TEXT), CAST((CAST('dast' AS VARCHAR)) AS TEXT)])))",
+   "from": "test_postgres.py:1412"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE INDEX index_ci_pipelines_on_project_idandrefandiddesc ON public.ci_pipelines USING btree(project_id, ref, id DESC)",
+   "from": "test_postgres.py:1431"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "TRUNCATE TABLE ONLY t1, t2*, ONLY t3, t4, t5* RESTART IDENTITY CASCADE",
+   "from": "test_postgres.py:1434"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "TRUNCATE TABLE ONLY t1, t2, ONLY t3, t4, t5 RESTART IDENTITY CASCADE",
+   "from": "test_postgres.py:1434"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE x (a UUID, b BYTEA)",
+   "from": "test_postgres.py:1439"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE tbl (col INT UNIQUE NULLS NOT DISTINCT DEFAULT 9.99)",
+   "from": "test_postgres.py:1450"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE tbl (col UUID UNIQUE DEFAULT GEN_RANDOM_UUID())",
+   "from": "test_postgres.py:1451"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE tbl (col UUID, UNIQUE NULLS NOT DISTINCT (col))",
+   "from": "test_postgres.py:1452"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE tbl (col_a INT GENERATED ALWAYS AS (1 + 2) STORED)",
+   "from": "test_postgres.py:1453"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE tbl (col_a INTERVAL GENERATED ALWAYS AS (a - b) STORED)",
+   "from": "test_postgres.py:1454"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE INDEX CONCURRENTLY ix_table_id ON tbl USING btree(id)",
+   "from": "test_postgres.py:1458"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE INDEX CONCURRENTLY IF NOT EXISTS ix_table_id ON tbl USING btree(id)",
+   "from": "test_postgres.py:1459"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "DROP INDEX ix_table_id",
+   "from": "test_postgres.py:1462"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "DROP INDEX IF EXISTS ix_table_id",
+   "from": "test_postgres.py:1463"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "DROP INDEX CONCURRENTLY ix_table_id",
+   "from": "test_postgres.py:1464"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "DROP INDEX CONCURRENTLY IF EXISTS ix_table_id",
+   "from": "test_postgres.py:1465"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "\n        CREATE TABLE IF NOT EXISTS public.rental\n        (\n            inventory_id INT NOT NULL,\n            CONSTRAINT rental_customer_id_fkey FOREIGN KEY (customer_id)\n                REFERENCES public.customer (customer_id) MATCH FULL\n                ON UPDATE CASCADE\n                ON DELETE RESTRICT,\n            CONSTRAINT rental_inventory_id_fkey FOREIGN KEY (inventory_id)\n                REFERENCES public.inventory (inventory_id) MATCH PARTIAL\n                ON UPDATE CASCADE\n                ON DELETE RESTRICT,\n            CONSTRAINT rental_staff_id_fkey FOREIGN KEY (staff_id)\n                REFERENCES public.staff (staff_id) MATCH SIMPLE\n                ON UPDATE CASCADE\n                ON DELETE RESTRICT,\n            INITIALLY IMMEDIATE\n        )\n        ",
+   "from": "test_postgres.py:1467"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE IF NOT EXISTS public.rental (inventory_id INT NOT NULL, CONSTRAINT rental_customer_id_fkey FOREIGN KEY (customer_id) REFERENCES public.customer (customer_id) MATCH FULL ON UPDATE CASCADE ON DELETE RESTRICT, CONSTRAINT rental_inventory_id_fkey FOREIGN KEY (inventory_id) REFERENCES public.inventory (inventory_id) MATCH PARTIAL ON UPDATE CASCADE ON DELETE RESTRICT, CONSTRAINT rental_staff_id_fkey FOREIGN KEY (staff_id) REFERENCES public.staff (staff_id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT, INITIALLY IMMEDIATE)",
+   "from": "test_postgres.py:1467"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM UNNEST(ARRAY[1, 2], ARRAY['foo', 'bar', 'baz']) AS x(a, b)",
+   "from": "test_postgres.py:1505"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT TRIM(ARRAY_TO_STRING(ARRAY(SELECT val FROM UNNEST(ARRAY['a', 'b']) WITH ORDINALITY AS u(val, rn)), ' '))",
+   "from": "test_postgres.py:1508"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT UNNEST(c) FROM t",
+   "from": "test_postgres.py:1512"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT UNNEST(ARRAY[1])",
+   "from": "test_postgres.py:1520"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT a, LOGICAL_OR(b) FROM table GROUP BY a",
+   "from": "test_postgres.py:1553"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT a, BOOL_OR(b) FROM table GROUP BY a",
+   "from": "test_postgres.py:1553"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CONCAT('abcde', 2, NULL, 22)",
+   "from": "test_postgres.py:1559"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CONCAT(a, b)",
+   "from": "test_postgres.py:1561"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "a || b",
+   "from": "test_postgres.py:1571"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT u & 5 FROM t",
+   "from": "test_postgres.py:1583"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT (U&'\\FE01' || 'Test literal') AS label FROM data",
+   "from": "test_postgres.py:1584"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT U&'d!0061t!+000061' UESCAPE '!' AS label",
+   "from": "test_postgres.py:1585"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT u&'\\0441\\043B\\043E\\043D'",
+   "from": "test_postgres.py:1586"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT U&'\\0441\\043B\\043E\\043D'",
+   "from": "test_postgres.py:1586"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT U&'Hello winter \\2603 !'",
+   "from": "test_postgres.py:1590"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "VAR_SAMP(x)",
+   "from": "test_postgres.py:1601"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "VAR_POP(x)",
+   "from": "test_postgres.py:1605"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "VARIANCE(x)",
+   "from": "test_postgres.py:1609"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CORR(a, b)",
+   "from": "test_postgres.py:1625"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CORR(a, b) OVER (PARTITION BY c)",
+   "from": "test_postgres.py:1632"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CORR(a, b) FILTER(WHERE c > 0)",
+   "from": "test_postgres.py:1639"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT CORR(a, b) FILTER(WHERE c > 0) OVER (PARTITION BY d)",
+   "from": "test_postgres.py:1646"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM ROWS FROM (FUNC1(col1, col2))",
+   "from": "test_postgres.py:1688"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM ROWS FROM (FUNC1(col1) AS alias1(\"col1\" TEXT), FUNC2(col2) AS alias2(\"col2\" INT)) WITH ORDINALITY",
+   "from": "test_postgres.py:1689"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT * FROM table1, ROWS FROM (FUNC1(col1) AS alias1(\"col1\" TEXT)) WITH ORDINALITY AS alias3(\"col3\" INT, \"col4\" TEXT)",
+   "from": "test_postgres.py:1692"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT ARRAY_LENGTH(ARRAY[1, 2, 3], 1)",
+   "from": "test_postgres.py:1697"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ARRAY_LENGTH(arr, 1)",
+   "from": "test_postgres.py:1699"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ARRAY_LENGTH(arr, foo)",
+   "from": "test_postgres.py:1726"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT XMLELEMENT(NAME foo)",
+   "from": "test_postgres.py:1743"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT XMLELEMENT(NAME foo, XMLATTRIBUTES('xyz' AS bar))",
+   "from": "test_postgres.py:1744"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT XMLELEMENT(NAME test, XMLATTRIBUTES(a, b)) FROM test",
+   "from": "test_postgres.py:1745"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT XMLELEMENT(NAME foo, XMLATTRIBUTES(CURRENT_DATE AS bar), 'cont', 'ent')",
+   "from": "test_postgres.py:1746"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT XMLELEMENT(NAME \"foo$bar\", XMLATTRIBUTES('xyz' AS \"a&b\"))",
+   "from": "test_postgres.py:1749"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT XMLELEMENT(NAME foo, XMLATTRIBUTES('xyz' AS bar), XMLELEMENT(NAME abc), XMLCOMMENT('test'), XMLELEMENT(NAME xyz))",
+   "from": "test_postgres.py:1752"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ANALYZE TBL",
+   "from": "test_postgres.py:1757"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ANALYZE TBL(col1, col2)",
+   "from": "test_postgres.py:1758"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ANALYZE VERBOSE SKIP_LOCKED TBL(col1, col2)",
+   "from": "test_postgres.py:1759"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ANALYZE BUFFER_USAGE_LIMIT 1337 TBL",
+   "from": "test_postgres.py:1760"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "WITH RECURSIVE search_graph(id, link, data, depth) AS (SELECT g.id, g.link, g.data, 1 FROM graph AS g UNION ALL SELECT g.id, g.link, g.data, sg.depth + 1 FROM graph AS g, search_graph AS sg WHERE g.id = sg.link) CYCLE id SET is_cycle USING path SELECT * FROM search_graph",
+   "from": "test_postgres.py:1768"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ROUND(x)",
+   "from": "test_postgres.py:1806"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ROUND(x, y)",
+   "from": "test_postgres.py:1807"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ROUND(CAST(x AS DOUBLE PRECISION))",
+   "from": "test_postgres.py:1808"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ROUND(CAST(x AS DECIMAL), 4)",
+   "from": "test_postgres.py:1809"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ROUND(CAST(x AS INT), 4)",
+   "from": "test_postgres.py:1810"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ROUND(CAST(CAST(x AS DOUBLE PRECISION) AS DECIMAL), 4)",
+   "from": "test_postgres.py:1811"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ROUND(x::DOUBLE, 4)",
+   "from": "test_postgres.py:1811"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ROUND(CAST(x AS DECIMAL(18, 3)), 4)",
+   "from": "test_postgres.py:1819"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TABLE foo (data XML)",
+   "from": "test_postgres.py:1825"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "GRANT EXECUTE ON FUNCTION calculate_bonus(integer) TO analyst",
+   "from": "test_postgres.py:1853"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "GRANT EXECUTE ON FUNCTION CALCULATE_BONUS(integer) TO analyst",
+   "from": "test_postgres.py:1853"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "REVOKE EXECUTE ON FUNCTION calculate_bonus(integer) FROM analyst",
+   "from": "test_postgres.py:1892"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "REVOKE EXECUTE ON FUNCTION CALCULATE_BONUS(integer) FROM analyst",
+   "from": "test_postgres.py:1892"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "BEGIN",
+   "from": "test_postgres.py:1908"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TRIGGER proc_trigger BEFORE INSERT ON users FOR EACH ROW EXECUTE PROCEDURE LOG_CHANGES()",
+   "from": "test_postgres.py:1998"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TRIGGER proc_trigger BEFORE INSERT ON users FOR EACH ROW EXECUTE FUNCTION LOG_CHANGES()",
+   "from": "test_postgres.py:1998"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TRIGGER \"MyTrigger\" BEFORE INSERT ON \"MyTable\" FOR EACH ROW EXECUTE FUNCTION MYFUNCTION()",
+   "from": "test_postgres.py:2002"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT a <<->> b",
+   "from": "test_postgres.py:2007"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT r IS NOT NULL FROM t",
+   "from": "test_postgres.py:2010"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT NOT r IS NULL FROM t",
+   "from": "test_postgres.py:2011"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT NOT r IS NOT NULL FROM t",
+   "from": "test_postgres.py:2012"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT r NOTNULL FROM t",
+   "from": "test_postgres.py:2013"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT r ISNULL FROM t",
+   "from": "test_postgres.py:2014"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT r IS NULL FROM t",
+   "from": "test_postgres.py:2014"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT col[1]",
+   "from": "test_postgres.py:1531"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "a > INTERVAL '1 00:00' AND TRUE",
+   "from": "test_postgres.py:1949"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "ARRAY[1, 2, 3] && ARRAY[1, 2]",
+   "from": "test_postgres.py:1008"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "a ?| b",
+   "from": "test_postgres.py:1077"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "a ?& b",
+   "from": "test_postgres.py:1083"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "a #- b",
+   "from": "test_postgres.py:1089"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy')",
+   "from": "test_postgres.py:1169"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TYPE mood AS ENUM ()",
+   "from": "test_postgres.py:1174"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TYPE inventory_item AS (name TEXT, supplier_id INT, price DECIMAL)",
+   "from": "test_postgres.py:1176"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE TYPE public.mood AS ENUM ('sad', 'ok')",
+   "from": "test_postgres.py:1181"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION add(integer, integer) RETURNS integer AS 'select $1 + $2;' LANGUAGE SQL IMMUTABLE CALLED ON NULL INPUT",
+   "from": "test_postgres.py:1330"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CREATE FUNCTION add(integer, integer) RETURNS INT LANGUAGE SQL IMMUTABLE CALLED ON NULL INPUT AS 'select $1 + $2;'",
+   "from": "test_postgres.py:1330"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "1::\"int\"",
+   "from": "test_postgres.py:947"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(1 AS INT)",
+   "from": "test_postgres.py:947"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "1::\"udt\"",
+   "from": "test_postgres.py:948"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "CAST(1 AS \"udt\")",
+   "from": "test_postgres.py:948"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "SELECT ARRAY[1, 2, 3] <@ ARRAY[1, 2]",
+   "from": "test_postgres.py:218"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "x::JSON -> 'duration' ->> -1",
+   "from": "test_postgres.py:210"
+  },
+  {
+   "dialect": "postgres",
+   "sql": "JSON_EXTRACT_PATH_TEXT(CAST(x AS JSON) -> 'duration', -1)",
+   "from": "test_postgres.py:210"
+  }
+ ]
+}

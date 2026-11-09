@@ -1,0 +1,13 @@
+sources:
+  - name: input
+    columns:
+      - name: n
+        type: NUMBER(10,2)
+      - name: g
+        type: VARCHAR
+      - name: v
+        type: VARIANT
+      - name: t
+        type: TIMESTAMP_NTZ(9)
+      - name: '"lc"'
+        type: NUMBER(10,0)

@@ -1,0 +1,1624 @@
+{
+ "engine": "clickhouse",
+ "engine_version": "26.1.12.23 (official build)",
+ "method": "DESCRIBE (query) in clickhouse local over empty Memory tables, after SQLBuild's ClickHouse adapter session settings; each probe run twice with identical output",
+ "schema": {
+  "tables": [
+   {
+    "name": "t",
+    "columns": [
+     {
+      "name": "s",
+      "type": "String"
+     },
+     {
+      "name": "lcs",
+      "type": "LowCardinality(String)"
+     },
+     {
+      "name": "ns",
+      "type": "Nullable(String)"
+     },
+     {
+      "name": "fs",
+      "type": "FixedString(3)"
+     },
+     {
+      "name": "d",
+      "type": "Date"
+     },
+     {
+      "name": "d32",
+      "type": "Date32"
+     },
+     {
+      "name": "dt",
+      "type": "DateTime"
+     },
+     {
+      "name": "dtz",
+      "type": "DateTime('UTC')"
+     },
+     {
+      "name": "dt64",
+      "type": "DateTime64(3)"
+     },
+     {
+      "name": "dt64z",
+      "type": "DateTime64(3, 'UTC')"
+     },
+     {
+      "name": "i",
+      "type": "Int32"
+     },
+     {
+      "name": "f",
+      "type": "Float64"
+     },
+     {
+      "name": "dec",
+      "type": "Decimal(10, 2)"
+     }
+    ]
+   },
+   {
+    "name": "orders",
+    "columns": [
+     {
+      "name": "id",
+      "type": "Int32"
+     },
+     {
+      "name": "quantity",
+      "type": "Int32"
+     },
+     {
+      "name": "price",
+      "type": "Decimal(10, 2)"
+     },
+     {
+      "name": "status",
+      "type": "String"
+     },
+     {
+      "name": "ordered_at",
+      "type": "DateTime"
+     }
+    ]
+   },
+   {
+    "name": "customers",
+    "columns": [
+     {
+      "name": "id",
+      "type": "Int32"
+     },
+     {
+      "name": "name",
+      "type": "String"
+     }
+    ]
+   }
+  ]
+ },
+ "cases": [
+  {
+   "id": "call: toDate(d)",
+   "category": "toDate",
+   "sql": "SELECT toDate(d) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toDate(d32)",
+   "category": "toDate",
+   "sql": "SELECT toDate(d32) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toDate(dt)",
+   "category": "toDate",
+   "sql": "SELECT toDate(dt) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toDate(dtz)",
+   "category": "toDate",
+   "sql": "SELECT toDate(dtz) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toDate(dt64)",
+   "category": "toDate",
+   "sql": "SELECT toDate(dt64) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toDate(dt64z)",
+   "category": "toDate",
+   "sql": "SELECT toDate(dt64z) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toDate(s)",
+   "category": "toDate",
+   "sql": "SELECT toDate(s) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toDate(i)",
+   "category": "toDate",
+   "sql": "SELECT toDate(i) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: today()",
+   "category": "today",
+   "sql": "SELECT today() AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toString(i)",
+   "category": "toString",
+   "sql": "SELECT toString(i) AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: toString(f)",
+   "category": "toString",
+   "sql": "SELECT toString(f) AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: toString(dec)",
+   "category": "toString",
+   "sql": "SELECT toString(dec) AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: toString(d)",
+   "category": "toString",
+   "sql": "SELECT toString(d) AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: toString(dtz)",
+   "category": "toString",
+   "sql": "SELECT toString(dtz) AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: toString(dt64z)",
+   "category": "toString",
+   "sql": "SELECT toString(dt64z) AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: toString(lcs)",
+   "category": "toString",
+   "sql": "SELECT toString(lcs) AS v FROM t",
+   "type": "LowCardinality(String)"
+  },
+  {
+   "id": "call: toString(fs)",
+   "category": "toString",
+   "sql": "SELECT toString(fs) AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: toString(ns)",
+   "category": "toString",
+   "sql": "SELECT toString(ns) AS v FROM t",
+   "type": "Nullable(String)"
+  },
+  {
+   "id": "call: toInt8(s)",
+   "category": "toInt8",
+   "sql": "SELECT toInt8(s) AS v FROM t",
+   "type": "Int8"
+  },
+  {
+   "id": "call: toInt8(i)",
+   "category": "toInt8",
+   "sql": "SELECT toInt8(i) AS v FROM t",
+   "type": "Int8"
+  },
+  {
+   "id": "call: toInt8(f)",
+   "category": "toInt8",
+   "sql": "SELECT toInt8(f) AS v FROM t",
+   "type": "Int8"
+  },
+  {
+   "id": "call: toInt8(dec)",
+   "category": "toInt8",
+   "sql": "SELECT toInt8(dec) AS v FROM t",
+   "type": "Int8"
+  },
+  {
+   "id": "call: toInt8(ns)",
+   "category": "toInt8",
+   "sql": "SELECT toInt8(ns) AS v FROM t",
+   "type": "Nullable(Int8)"
+  },
+  {
+   "id": "call: toInt8(lcs)",
+   "category": "toInt8",
+   "sql": "SELECT toInt8(lcs) AS v FROM t",
+   "type": "LowCardinality(Int8)"
+  },
+  {
+   "id": "call: toInt16(s)",
+   "category": "toInt16",
+   "sql": "SELECT toInt16(s) AS v FROM t",
+   "type": "Int16"
+  },
+  {
+   "id": "call: toInt16(i)",
+   "category": "toInt16",
+   "sql": "SELECT toInt16(i) AS v FROM t",
+   "type": "Int16"
+  },
+  {
+   "id": "call: toInt16(f)",
+   "category": "toInt16",
+   "sql": "SELECT toInt16(f) AS v FROM t",
+   "type": "Int16"
+  },
+  {
+   "id": "call: toInt16(dec)",
+   "category": "toInt16",
+   "sql": "SELECT toInt16(dec) AS v FROM t",
+   "type": "Int16"
+  },
+  {
+   "id": "call: toInt16(ns)",
+   "category": "toInt16",
+   "sql": "SELECT toInt16(ns) AS v FROM t",
+   "type": "Nullable(Int16)"
+  },
+  {
+   "id": "call: toInt16(lcs)",
+   "category": "toInt16",
+   "sql": "SELECT toInt16(lcs) AS v FROM t",
+   "type": "LowCardinality(Int16)"
+  },
+  {
+   "id": "call: toInt32(s)",
+   "category": "toInt32",
+   "sql": "SELECT toInt32(s) AS v FROM t",
+   "type": "Int32"
+  },
+  {
+   "id": "call: toInt32(i)",
+   "category": "toInt32",
+   "sql": "SELECT toInt32(i) AS v FROM t",
+   "type": "Int32"
+  },
+  {
+   "id": "call: toInt32(f)",
+   "category": "toInt32",
+   "sql": "SELECT toInt32(f) AS v FROM t",
+   "type": "Int32"
+  },
+  {
+   "id": "call: toInt32(dec)",
+   "category": "toInt32",
+   "sql": "SELECT toInt32(dec) AS v FROM t",
+   "type": "Int32"
+  },
+  {
+   "id": "call: toInt32(ns)",
+   "category": "toInt32",
+   "sql": "SELECT toInt32(ns) AS v FROM t",
+   "type": "Nullable(Int32)"
+  },
+  {
+   "id": "call: toInt32(lcs)",
+   "category": "toInt32",
+   "sql": "SELECT toInt32(lcs) AS v FROM t",
+   "type": "LowCardinality(Int32)"
+  },
+  {
+   "id": "call: toInt64(s)",
+   "category": "toInt64",
+   "sql": "SELECT toInt64(s) AS v FROM t",
+   "type": "Int64"
+  },
+  {
+   "id": "call: toInt64(i)",
+   "category": "toInt64",
+   "sql": "SELECT toInt64(i) AS v FROM t",
+   "type": "Int64"
+  },
+  {
+   "id": "call: toInt64(f)",
+   "category": "toInt64",
+   "sql": "SELECT toInt64(f) AS v FROM t",
+   "type": "Int64"
+  },
+  {
+   "id": "call: toInt64(dec)",
+   "category": "toInt64",
+   "sql": "SELECT toInt64(dec) AS v FROM t",
+   "type": "Int64"
+  },
+  {
+   "id": "call: toInt64(ns)",
+   "category": "toInt64",
+   "sql": "SELECT toInt64(ns) AS v FROM t",
+   "type": "Nullable(Int64)"
+  },
+  {
+   "id": "call: toInt64(lcs)",
+   "category": "toInt64",
+   "sql": "SELECT toInt64(lcs) AS v FROM t",
+   "type": "LowCardinality(Int64)"
+  },
+  {
+   "id": "call: toUInt8(s)",
+   "category": "toUInt8",
+   "sql": "SELECT toUInt8(s) AS v FROM t",
+   "type": "UInt8"
+  },
+  {
+   "id": "call: toUInt8(i)",
+   "category": "toUInt8",
+   "sql": "SELECT toUInt8(i) AS v FROM t",
+   "type": "UInt8"
+  },
+  {
+   "id": "call: toUInt8(f)",
+   "category": "toUInt8",
+   "sql": "SELECT toUInt8(f) AS v FROM t",
+   "type": "UInt8"
+  },
+  {
+   "id": "call: toUInt8(dec)",
+   "category": "toUInt8",
+   "sql": "SELECT toUInt8(dec) AS v FROM t",
+   "type": "UInt8"
+  },
+  {
+   "id": "call: toUInt8(ns)",
+   "category": "toUInt8",
+   "sql": "SELECT toUInt8(ns) AS v FROM t",
+   "type": "Nullable(UInt8)"
+  },
+  {
+   "id": "call: toUInt8(lcs)",
+   "category": "toUInt8",
+   "sql": "SELECT toUInt8(lcs) AS v FROM t",
+   "type": "LowCardinality(UInt8)"
+  },
+  {
+   "id": "call: toUInt16(s)",
+   "category": "toUInt16",
+   "sql": "SELECT toUInt16(s) AS v FROM t",
+   "type": "UInt16"
+  },
+  {
+   "id": "call: toUInt16(i)",
+   "category": "toUInt16",
+   "sql": "SELECT toUInt16(i) AS v FROM t",
+   "type": "UInt16"
+  },
+  {
+   "id": "call: toUInt16(f)",
+   "category": "toUInt16",
+   "sql": "SELECT toUInt16(f) AS v FROM t",
+   "type": "UInt16"
+  },
+  {
+   "id": "call: toUInt16(dec)",
+   "category": "toUInt16",
+   "sql": "SELECT toUInt16(dec) AS v FROM t",
+   "type": "UInt16"
+  },
+  {
+   "id": "call: toUInt16(ns)",
+   "category": "toUInt16",
+   "sql": "SELECT toUInt16(ns) AS v FROM t",
+   "type": "Nullable(UInt16)"
+  },
+  {
+   "id": "call: toUInt16(lcs)",
+   "category": "toUInt16",
+   "sql": "SELECT toUInt16(lcs) AS v FROM t",
+   "type": "LowCardinality(UInt16)"
+  },
+  {
+   "id": "call: toUInt32(s)",
+   "category": "toUInt32",
+   "sql": "SELECT toUInt32(s) AS v FROM t",
+   "type": "UInt32"
+  },
+  {
+   "id": "call: toUInt32(i)",
+   "category": "toUInt32",
+   "sql": "SELECT toUInt32(i) AS v FROM t",
+   "type": "UInt32"
+  },
+  {
+   "id": "call: toUInt32(f)",
+   "category": "toUInt32",
+   "sql": "SELECT toUInt32(f) AS v FROM t",
+   "type": "UInt32"
+  },
+  {
+   "id": "call: toUInt32(dec)",
+   "category": "toUInt32",
+   "sql": "SELECT toUInt32(dec) AS v FROM t",
+   "type": "UInt32"
+  },
+  {
+   "id": "call: toUInt32(ns)",
+   "category": "toUInt32",
+   "sql": "SELECT toUInt32(ns) AS v FROM t",
+   "type": "Nullable(UInt32)"
+  },
+  {
+   "id": "call: toUInt32(lcs)",
+   "category": "toUInt32",
+   "sql": "SELECT toUInt32(lcs) AS v FROM t",
+   "type": "LowCardinality(UInt32)"
+  },
+  {
+   "id": "call: toUInt64(s)",
+   "category": "toUInt64",
+   "sql": "SELECT toUInt64(s) AS v FROM t",
+   "type": "UInt64"
+  },
+  {
+   "id": "call: toUInt64(i)",
+   "category": "toUInt64",
+   "sql": "SELECT toUInt64(i) AS v FROM t",
+   "type": "UInt64"
+  },
+  {
+   "id": "call: toUInt64(f)",
+   "category": "toUInt64",
+   "sql": "SELECT toUInt64(f) AS v FROM t",
+   "type": "UInt64"
+  },
+  {
+   "id": "call: toUInt64(dec)",
+   "category": "toUInt64",
+   "sql": "SELECT toUInt64(dec) AS v FROM t",
+   "type": "UInt64"
+  },
+  {
+   "id": "call: toUInt64(ns)",
+   "category": "toUInt64",
+   "sql": "SELECT toUInt64(ns) AS v FROM t",
+   "type": "Nullable(UInt64)"
+  },
+  {
+   "id": "call: toUInt64(lcs)",
+   "category": "toUInt64",
+   "sql": "SELECT toUInt64(lcs) AS v FROM t",
+   "type": "LowCardinality(UInt64)"
+  },
+  {
+   "id": "call: toFloat32(s)",
+   "category": "toFloat32",
+   "sql": "SELECT toFloat32(s) AS v FROM t",
+   "type": "Float32"
+  },
+  {
+   "id": "call: toFloat32(i)",
+   "category": "toFloat32",
+   "sql": "SELECT toFloat32(i) AS v FROM t",
+   "type": "Float32"
+  },
+  {
+   "id": "call: toFloat32(f)",
+   "category": "toFloat32",
+   "sql": "SELECT toFloat32(f) AS v FROM t",
+   "type": "Float32"
+  },
+  {
+   "id": "call: toFloat32(dec)",
+   "category": "toFloat32",
+   "sql": "SELECT toFloat32(dec) AS v FROM t",
+   "type": "Float32"
+  },
+  {
+   "id": "call: toFloat32(ns)",
+   "category": "toFloat32",
+   "sql": "SELECT toFloat32(ns) AS v FROM t",
+   "type": "Nullable(Float32)"
+  },
+  {
+   "id": "call: toFloat32(lcs)",
+   "category": "toFloat32",
+   "sql": "SELECT toFloat32(lcs) AS v FROM t",
+   "type": "LowCardinality(Float32)"
+  },
+  {
+   "id": "call: toFloat64(s)",
+   "category": "toFloat64",
+   "sql": "SELECT toFloat64(s) AS v FROM t",
+   "type": "Float64"
+  },
+  {
+   "id": "call: toFloat64(i)",
+   "category": "toFloat64",
+   "sql": "SELECT toFloat64(i) AS v FROM t",
+   "type": "Float64"
+  },
+  {
+   "id": "call: toFloat64(f)",
+   "category": "toFloat64",
+   "sql": "SELECT toFloat64(f) AS v FROM t",
+   "type": "Float64"
+  },
+  {
+   "id": "call: toFloat64(dec)",
+   "category": "toFloat64",
+   "sql": "SELECT toFloat64(dec) AS v FROM t",
+   "type": "Float64"
+  },
+  {
+   "id": "call: toFloat64(ns)",
+   "category": "toFloat64",
+   "sql": "SELECT toFloat64(ns) AS v FROM t",
+   "type": "Nullable(Float64)"
+  },
+  {
+   "id": "call: toFloat64(lcs)",
+   "category": "toFloat64",
+   "sql": "SELECT toFloat64(lcs) AS v FROM t",
+   "type": "LowCardinality(Float64)"
+  },
+  {
+   "id": "call: toYYYYMM(d)",
+   "category": "toYYYYMM",
+   "sql": "SELECT toYYYYMM(d) AS v FROM t",
+   "type": "UInt32"
+  },
+  {
+   "id": "call: toYYYYMM(d32)",
+   "category": "toYYYYMM",
+   "sql": "SELECT toYYYYMM(d32) AS v FROM t",
+   "type": "UInt32"
+  },
+  {
+   "id": "call: toYYYYMM(dt)",
+   "category": "toYYYYMM",
+   "sql": "SELECT toYYYYMM(dt) AS v FROM t",
+   "type": "UInt32"
+  },
+  {
+   "id": "call: toYYYYMM(dtz)",
+   "category": "toYYYYMM",
+   "sql": "SELECT toYYYYMM(dtz) AS v FROM t",
+   "type": "UInt32"
+  },
+  {
+   "id": "call: toYYYYMM(dt64)",
+   "category": "toYYYYMM",
+   "sql": "SELECT toYYYYMM(dt64) AS v FROM t",
+   "type": "UInt32"
+  },
+  {
+   "id": "call: toYYYYMM(dt64z)",
+   "category": "toYYYYMM",
+   "sql": "SELECT toYYYYMM(dt64z) AS v FROM t",
+   "type": "UInt32"
+  },
+  {
+   "id": "call: toYYYYMMDD(d)",
+   "category": "toYYYYMMDD",
+   "sql": "SELECT toYYYYMMDD(d) AS v FROM t",
+   "type": "UInt32"
+  },
+  {
+   "id": "call: toYYYYMMDD(d32)",
+   "category": "toYYYYMMDD",
+   "sql": "SELECT toYYYYMMDD(d32) AS v FROM t",
+   "type": "UInt32"
+  },
+  {
+   "id": "call: toYYYYMMDD(dt)",
+   "category": "toYYYYMMDD",
+   "sql": "SELECT toYYYYMMDD(dt) AS v FROM t",
+   "type": "UInt32"
+  },
+  {
+   "id": "call: toYYYYMMDD(dtz)",
+   "category": "toYYYYMMDD",
+   "sql": "SELECT toYYYYMMDD(dtz) AS v FROM t",
+   "type": "UInt32"
+  },
+  {
+   "id": "call: toYYYYMMDD(dt64)",
+   "category": "toYYYYMMDD",
+   "sql": "SELECT toYYYYMMDD(dt64) AS v FROM t",
+   "type": "UInt32"
+  },
+  {
+   "id": "call: toYYYYMMDD(dt64z)",
+   "category": "toYYYYMMDD",
+   "sql": "SELECT toYYYYMMDD(dt64z) AS v FROM t",
+   "type": "UInt32"
+  },
+  {
+   "id": "call: toYear(d)",
+   "category": "toYear",
+   "sql": "SELECT toYear(d) AS v FROM t",
+   "type": "UInt16"
+  },
+  {
+   "id": "call: toYear(d32)",
+   "category": "toYear",
+   "sql": "SELECT toYear(d32) AS v FROM t",
+   "type": "UInt16"
+  },
+  {
+   "id": "call: toYear(dt)",
+   "category": "toYear",
+   "sql": "SELECT toYear(dt) AS v FROM t",
+   "type": "UInt16"
+  },
+  {
+   "id": "call: toYear(dtz)",
+   "category": "toYear",
+   "sql": "SELECT toYear(dtz) AS v FROM t",
+   "type": "UInt16"
+  },
+  {
+   "id": "call: toYear(dt64)",
+   "category": "toYear",
+   "sql": "SELECT toYear(dt64) AS v FROM t",
+   "type": "UInt16"
+  },
+  {
+   "id": "call: toYear(dt64z)",
+   "category": "toYear",
+   "sql": "SELECT toYear(dt64z) AS v FROM t",
+   "type": "UInt16"
+  },
+  {
+   "id": "call: toMonth(d)",
+   "category": "toMonth",
+   "sql": "SELECT toMonth(d) AS v FROM t",
+   "type": "UInt8"
+  },
+  {
+   "id": "call: toMonth(d32)",
+   "category": "toMonth",
+   "sql": "SELECT toMonth(d32) AS v FROM t",
+   "type": "UInt8"
+  },
+  {
+   "id": "call: toMonth(dt)",
+   "category": "toMonth",
+   "sql": "SELECT toMonth(dt) AS v FROM t",
+   "type": "UInt8"
+  },
+  {
+   "id": "call: toMonth(dtz)",
+   "category": "toMonth",
+   "sql": "SELECT toMonth(dtz) AS v FROM t",
+   "type": "UInt8"
+  },
+  {
+   "id": "call: toMonth(dt64)",
+   "category": "toMonth",
+   "sql": "SELECT toMonth(dt64) AS v FROM t",
+   "type": "UInt8"
+  },
+  {
+   "id": "call: toMonth(dt64z)",
+   "category": "toMonth",
+   "sql": "SELECT toMonth(dt64z) AS v FROM t",
+   "type": "UInt8"
+  },
+  {
+   "id": "call: toDayOfMonth(d)",
+   "category": "toDayOfMonth",
+   "sql": "SELECT toDayOfMonth(d) AS v FROM t",
+   "type": "UInt8"
+  },
+  {
+   "id": "call: toDayOfMonth(d32)",
+   "category": "toDayOfMonth",
+   "sql": "SELECT toDayOfMonth(d32) AS v FROM t",
+   "type": "UInt8"
+  },
+  {
+   "id": "call: toDayOfMonth(dt)",
+   "category": "toDayOfMonth",
+   "sql": "SELECT toDayOfMonth(dt) AS v FROM t",
+   "type": "UInt8"
+  },
+  {
+   "id": "call: toDayOfMonth(dtz)",
+   "category": "toDayOfMonth",
+   "sql": "SELECT toDayOfMonth(dtz) AS v FROM t",
+   "type": "UInt8"
+  },
+  {
+   "id": "call: toDayOfMonth(dt64)",
+   "category": "toDayOfMonth",
+   "sql": "SELECT toDayOfMonth(dt64) AS v FROM t",
+   "type": "UInt8"
+  },
+  {
+   "id": "call: toDayOfMonth(dt64z)",
+   "category": "toDayOfMonth",
+   "sql": "SELECT toDayOfMonth(dt64z) AS v FROM t",
+   "type": "UInt8"
+  },
+  {
+   "id": "call: toHour(dt)",
+   "category": "toHour",
+   "sql": "SELECT toHour(dt) AS v FROM t",
+   "type": "UInt8"
+  },
+  {
+   "id": "call: toHour(dtz)",
+   "category": "toHour",
+   "sql": "SELECT toHour(dtz) AS v FROM t",
+   "type": "UInt8"
+  },
+  {
+   "id": "call: toHour(dt64)",
+   "category": "toHour",
+   "sql": "SELECT toHour(dt64) AS v FROM t",
+   "type": "UInt8"
+  },
+  {
+   "id": "call: toHour(dt64z)",
+   "category": "toHour",
+   "sql": "SELECT toHour(dt64z) AS v FROM t",
+   "type": "UInt8"
+  },
+  {
+   "id": "call: length(s)",
+   "category": "length",
+   "sql": "SELECT length(s) AS v FROM t",
+   "type": "UInt64"
+  },
+  {
+   "id": "call: length(lcs)",
+   "category": "length",
+   "sql": "SELECT length(lcs) AS v FROM t",
+   "type": "LowCardinality(UInt64)"
+  },
+  {
+   "id": "call: length(ns)",
+   "category": "length",
+   "sql": "SELECT length(ns) AS v FROM t",
+   "type": "Nullable(UInt64)"
+  },
+  {
+   "id": "call: length(fs)",
+   "category": "length",
+   "sql": "SELECT length(fs) AS v FROM t",
+   "type": "UInt64"
+  },
+  {
+   "id": "call: lengthUTF8(s)",
+   "category": "lengthUTF8",
+   "sql": "SELECT lengthUTF8(s) AS v FROM t",
+   "type": "UInt64"
+  },
+  {
+   "id": "call: lengthUTF8(lcs)",
+   "category": "lengthUTF8",
+   "sql": "SELECT lengthUTF8(lcs) AS v FROM t",
+   "type": "LowCardinality(UInt64)"
+  },
+  {
+   "id": "call: lengthUTF8(ns)",
+   "category": "lengthUTF8",
+   "sql": "SELECT lengthUTF8(ns) AS v FROM t",
+   "type": "Nullable(UInt64)"
+  },
+  {
+   "id": "call: lengthUTF8(fs)",
+   "category": "lengthUTF8",
+   "sql": "SELECT lengthUTF8(fs) AS v FROM t",
+   "type": "UInt64"
+  },
+  {
+   "id": "call: upper(s)",
+   "category": "upper",
+   "sql": "SELECT upper(s) AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: upper(lcs)",
+   "category": "upper",
+   "sql": "SELECT upper(lcs) AS v FROM t",
+   "type": "LowCardinality(String)"
+  },
+  {
+   "id": "call: upper(ns)",
+   "category": "upper",
+   "sql": "SELECT upper(ns) AS v FROM t",
+   "type": "Nullable(String)"
+  },
+  {
+   "id": "call: upper(fs)",
+   "category": "upper",
+   "sql": "SELECT upper(fs) AS v FROM t",
+   "type": "FixedString(3)"
+  },
+  {
+   "id": "call: lower(s)",
+   "category": "lower",
+   "sql": "SELECT lower(s) AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: lower(lcs)",
+   "category": "lower",
+   "sql": "SELECT lower(lcs) AS v FROM t",
+   "type": "LowCardinality(String)"
+  },
+  {
+   "id": "call: lower(ns)",
+   "category": "lower",
+   "sql": "SELECT lower(ns) AS v FROM t",
+   "type": "Nullable(String)"
+  },
+  {
+   "id": "call: lower(fs)",
+   "category": "lower",
+   "sql": "SELECT lower(fs) AS v FROM t",
+   "type": "FixedString(3)"
+  },
+  {
+   "id": "call: trim(s)",
+   "category": "trim",
+   "sql": "SELECT trim(s) AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: trim(lcs)",
+   "category": "trim",
+   "sql": "SELECT trim(lcs) AS v FROM t",
+   "type": "LowCardinality(String)"
+  },
+  {
+   "id": "call: trim(ns)",
+   "category": "trim",
+   "sql": "SELECT trim(ns) AS v FROM t",
+   "type": "Nullable(String)"
+  },
+  {
+   "id": "call: trim(fs)",
+   "category": "trim",
+   "sql": "SELECT trim(fs) AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: concat(s, 'x')",
+   "category": "concat",
+   "sql": "SELECT concat(s, 'x') AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: concat(lcs, 'x')",
+   "category": "concat",
+   "sql": "SELECT concat(lcs, 'x') AS v FROM t",
+   "type": "LowCardinality(String)"
+  },
+  {
+   "id": "call: concat(ns, 'x')",
+   "category": "concat",
+   "sql": "SELECT concat(ns, 'x') AS v FROM t",
+   "type": "Nullable(String)"
+  },
+  {
+   "id": "call: concat(fs, 'x')",
+   "category": "concat",
+   "sql": "SELECT concat(fs, 'x') AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: concat(i, 'x')",
+   "category": "concat",
+   "sql": "SELECT concat(i, 'x') AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: substring(s, 1, 2)",
+   "category": "substring",
+   "sql": "SELECT substring(s, 1, 2) AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: substring(lcs, 1, 2)",
+   "category": "substring",
+   "sql": "SELECT substring(lcs, 1, 2) AS v FROM t",
+   "type": "LowCardinality(String)"
+  },
+  {
+   "id": "call: substring(ns, 1, 2)",
+   "category": "substring",
+   "sql": "SELECT substring(ns, 1, 2) AS v FROM t",
+   "type": "Nullable(String)"
+  },
+  {
+   "id": "call: substring(fs, 1, 2)",
+   "category": "substring",
+   "sql": "SELECT substring(fs, 1, 2) AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: replaceAll(s, 'a', 'b')",
+   "category": "replaceAll",
+   "sql": "SELECT replaceAll(s, 'a', 'b') AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: replaceAll(lcs, 'a', 'b')",
+   "category": "replaceAll",
+   "sql": "SELECT replaceAll(lcs, 'a', 'b') AS v FROM t",
+   "type": "LowCardinality(String)"
+  },
+  {
+   "id": "call: replaceAll(ns, 'a', 'b')",
+   "category": "replaceAll",
+   "sql": "SELECT replaceAll(ns, 'a', 'b') AS v FROM t",
+   "type": "Nullable(String)"
+  },
+  {
+   "id": "call: replaceAll(fs, 'a', 'b')",
+   "category": "replaceAll",
+   "sql": "SELECT replaceAll(fs, 'a', 'b') AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: formatDateTime(d, '%Y')",
+   "category": "formatDateTime",
+   "sql": "SELECT formatDateTime(d, '%Y') AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: formatDateTime(dt, '%Y')",
+   "category": "formatDateTime",
+   "sql": "SELECT formatDateTime(dt, '%Y') AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: formatDateTime(dtz, '%Y')",
+   "category": "formatDateTime",
+   "sql": "SELECT formatDateTime(dtz, '%Y') AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: formatDateTime(dt64, '%Y')",
+   "category": "formatDateTime",
+   "sql": "SELECT formatDateTime(dt64, '%Y') AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: formatDateTime(dt64z, '%Y')",
+   "category": "formatDateTime",
+   "sql": "SELECT formatDateTime(dt64z, '%Y') AS v FROM t",
+   "type": "String"
+  },
+  {
+   "id": "call: toStartOfMonth(d)",
+   "category": "toStartOfMonth",
+   "sql": "SELECT toStartOfMonth(d) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfMonth(d32)",
+   "category": "toStartOfMonth",
+   "sql": "SELECT toStartOfMonth(d32) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfMonth(dt)",
+   "category": "toStartOfMonth",
+   "sql": "SELECT toStartOfMonth(dt) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfMonth(dtz)",
+   "category": "toStartOfMonth",
+   "sql": "SELECT toStartOfMonth(dtz) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfMonth(dt64)",
+   "category": "toStartOfMonth",
+   "sql": "SELECT toStartOfMonth(dt64) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfMonth(dt64z)",
+   "category": "toStartOfMonth",
+   "sql": "SELECT toStartOfMonth(dt64z) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfQuarter(d)",
+   "category": "toStartOfQuarter",
+   "sql": "SELECT toStartOfQuarter(d) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfQuarter(d32)",
+   "category": "toStartOfQuarter",
+   "sql": "SELECT toStartOfQuarter(d32) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfQuarter(dt)",
+   "category": "toStartOfQuarter",
+   "sql": "SELECT toStartOfQuarter(dt) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfQuarter(dtz)",
+   "category": "toStartOfQuarter",
+   "sql": "SELECT toStartOfQuarter(dtz) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfQuarter(dt64)",
+   "category": "toStartOfQuarter",
+   "sql": "SELECT toStartOfQuarter(dt64) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfQuarter(dt64z)",
+   "category": "toStartOfQuarter",
+   "sql": "SELECT toStartOfQuarter(dt64z) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfYear(d)",
+   "category": "toStartOfYear",
+   "sql": "SELECT toStartOfYear(d) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfYear(d32)",
+   "category": "toStartOfYear",
+   "sql": "SELECT toStartOfYear(d32) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfYear(dt)",
+   "category": "toStartOfYear",
+   "sql": "SELECT toStartOfYear(dt) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfYear(dtz)",
+   "category": "toStartOfYear",
+   "sql": "SELECT toStartOfYear(dtz) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfYear(dt64)",
+   "category": "toStartOfYear",
+   "sql": "SELECT toStartOfYear(dt64) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfYear(dt64z)",
+   "category": "toStartOfYear",
+   "sql": "SELECT toStartOfYear(dt64z) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfWeek(d)",
+   "category": "toStartOfWeek",
+   "sql": "SELECT toStartOfWeek(d) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfWeek(d32)",
+   "category": "toStartOfWeek",
+   "sql": "SELECT toStartOfWeek(d32) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfWeek(dt)",
+   "category": "toStartOfWeek",
+   "sql": "SELECT toStartOfWeek(dt) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfWeek(dtz)",
+   "category": "toStartOfWeek",
+   "sql": "SELECT toStartOfWeek(dtz) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfWeek(dt64)",
+   "category": "toStartOfWeek",
+   "sql": "SELECT toStartOfWeek(dt64) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfWeek(dt64z)",
+   "category": "toStartOfWeek",
+   "sql": "SELECT toStartOfWeek(dt64z) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toMonday(d)",
+   "category": "toMonday",
+   "sql": "SELECT toMonday(d) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toMonday(d32)",
+   "category": "toMonday",
+   "sql": "SELECT toMonday(d32) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toMonday(dt)",
+   "category": "toMonday",
+   "sql": "SELECT toMonday(dt) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toMonday(dtz)",
+   "category": "toMonday",
+   "sql": "SELECT toMonday(dtz) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toMonday(dt64)",
+   "category": "toMonday",
+   "sql": "SELECT toMonday(dt64) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toMonday(dt64z)",
+   "category": "toMonday",
+   "sql": "SELECT toMonday(dt64z) AS v FROM t",
+   "type": "Date"
+  },
+  {
+   "id": "call: toStartOfDay(d)",
+   "category": "toStartOfDay",
+   "sql": "SELECT toStartOfDay(d) AS v FROM t",
+   "type": "DateTime"
+  },
+  {
+   "id": "call: toStartOfDay(d32)",
+   "category": "toStartOfDay",
+   "sql": "SELECT toStartOfDay(d32) AS v FROM t",
+   "type": "DateTime"
+  },
+  {
+   "id": "call: toStartOfDay(dt)",
+   "category": "toStartOfDay",
+   "sql": "SELECT toStartOfDay(dt) AS v FROM t",
+   "type": "DateTime"
+  },
+  {
+   "id": "call: toStartOfDay(dtz)",
+   "category": "toStartOfDay",
+   "sql": "SELECT toStartOfDay(dtz) AS v FROM t",
+   "type": "DateTime('UTC')"
+  },
+  {
+   "id": "call: toStartOfDay(dt64)",
+   "category": "toStartOfDay",
+   "sql": "SELECT toStartOfDay(dt64) AS v FROM t",
+   "type": "DateTime"
+  },
+  {
+   "id": "call: toStartOfDay(dt64z)",
+   "category": "toStartOfDay",
+   "sql": "SELECT toStartOfDay(dt64z) AS v FROM t",
+   "type": "DateTime('UTC')"
+  },
+  {
+   "id": "call: toStartOfHour(d)",
+   "category": "toStartOfHour",
+   "sql": "SELECT toStartOfHour(d) AS v FROM t",
+   "type": "DateTime"
+  },
+  {
+   "id": "call: toStartOfHour(d32)",
+   "category": "toStartOfHour",
+   "sql": "SELECT toStartOfHour(d32) AS v FROM t",
+   "type": "DateTime"
+  },
+  {
+   "id": "call: toStartOfHour(dt)",
+   "category": "toStartOfHour",
+   "sql": "SELECT toStartOfHour(dt) AS v FROM t",
+   "type": "DateTime"
+  },
+  {
+   "id": "call: toStartOfHour(dtz)",
+   "category": "toStartOfHour",
+   "sql": "SELECT toStartOfHour(dtz) AS v FROM t",
+   "type": "DateTime('UTC')"
+  },
+  {
+   "id": "call: toStartOfHour(dt64)",
+   "category": "toStartOfHour",
+   "sql": "SELECT toStartOfHour(dt64) AS v FROM t",
+   "type": "DateTime"
+  },
+  {
+   "id": "call: toStartOfHour(dt64z)",
+   "category": "toStartOfHour",
+   "sql": "SELECT toStartOfHour(dt64z) AS v FROM t",
+   "type": "DateTime('UTC')"
+  },
+  {
+   "id": "call: dateDiff('day', d, d)",
+   "category": "dateDiff",
+   "sql": "SELECT dateDiff('day', d, d) AS v FROM t",
+   "type": "Int64"
+  },
+  {
+   "id": "call: dateDiff('day', d32, d32)",
+   "category": "dateDiff",
+   "sql": "SELECT dateDiff('day', d32, d32) AS v FROM t",
+   "type": "Int64"
+  },
+  {
+   "id": "call: dateDiff('day', dt, dt)",
+   "category": "dateDiff",
+   "sql": "SELECT dateDiff('day', dt, dt) AS v FROM t",
+   "type": "Int64"
+  },
+  {
+   "id": "call: dateDiff('day', dtz, dtz)",
+   "category": "dateDiff",
+   "sql": "SELECT dateDiff('day', dtz, dtz) AS v FROM t",
+   "type": "Int64"
+  },
+  {
+   "id": "call: dateDiff('day', dt64, dt64)",
+   "category": "dateDiff",
+   "sql": "SELECT dateDiff('day', dt64, dt64) AS v FROM t",
+   "type": "Int64"
+  },
+  {
+   "id": "call: dateDiff('day', dt64z, dt64z)",
+   "category": "dateDiff",
+   "sql": "SELECT dateDiff('day', dt64z, dt64z) AS v FROM t",
+   "type": "Int64"
+  },
+  {
+   "id": "query: SELECT 3 AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT 3 AS v FROM orders",
+   "type": "UInt8"
+  },
+  {
+   "id": "query: SELECT 300 AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT 300 AS v FROM orders",
+   "type": "UInt16"
+  },
+  {
+   "id": "query: SELECT -1 AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT -1 AS v FROM orders",
+   "type": "Int8"
+  },
+  {
+   "id": "query: SELECT 1.5 AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT 1.5 AS v FROM orders",
+   "type": "Float64"
+  },
+  {
+   "id": "query: SELECT 'x' AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT 'x' AS v FROM orders",
+   "type": "String"
+  },
+  {
+   "id": "query: SELECT true AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT true AS v FROM orders",
+   "type": "Bool"
+  },
+  {
+   "id": "query: SELECT count() AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT count() AS v FROM orders",
+   "type": "UInt64"
+  },
+  {
+   "id": "query: SELECT count(id) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT count(id) AS v FROM orders",
+   "type": "UInt64"
+  },
+  {
+   "id": "query: SELECT uniq(status) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT uniq(status) AS v FROM orders",
+   "type": "UInt64"
+  },
+  {
+   "id": "query: SELECT sum(quantity) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT sum(quantity) AS v FROM orders",
+   "type": "Int64"
+  },
+  {
+   "id": "query: SELECT sum(price) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT sum(price) AS v FROM orders",
+   "type": "Decimal(38, 2)"
+  },
+  {
+   "id": "query: SELECT avg(quantity) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT avg(quantity) AS v FROM orders",
+   "type": "Float64"
+  },
+  {
+   "id": "query: SELECT min(price) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT min(price) AS v FROM orders",
+   "type": "Decimal(10, 2)"
+  },
+  {
+   "id": "query: SELECT quantity / 2 AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT quantity / 2 AS v FROM orders",
+   "type": "Float64"
+  },
+  {
+   "id": "query: SELECT quantity + 1 AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT quantity + 1 AS v FROM orders",
+   "type": "Int64"
+  },
+  {
+   "id": "query: SELECT quantity - 1 AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT quantity - 1 AS v FROM orders",
+   "type": "Int64"
+  },
+  {
+   "id": "query: SELECT quantity * quantity AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT quantity * quantity AS v FROM orders",
+   "type": "Int64"
+  },
+  {
+   "id": "query: SELECT 1 + 1 AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT 1 + 1 AS v FROM orders",
+   "type": "UInt16"
+  },
+  {
+   "id": "query: SELECT 1 - 1 AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT 1 - 1 AS v FROM orders",
+   "type": "Int16"
+  },
+  {
+   "id": "query: SELECT abs(quantity) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT abs(quantity) AS v FROM orders",
+   "type": "UInt32"
+  },
+  {
+   "id": "query: SELECT -quantity AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT -quantity AS v FROM orders",
+   "type": "Int32"
+  },
+  {
+   "id": "query: SELECT round(price) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT round(price) AS v FROM orders",
+   "type": "Decimal(10, 2)"
+  },
+  {
+   "id": "query: SELECT round(quantity / 3, 2) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT round(quantity / 3, 2) AS v FROM orders",
+   "type": "Float64"
+  },
+  {
+   "id": "query: SELECT quantity > 1 AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT quantity > 1 AS v FROM orders",
+   "type": "UInt8"
+  },
+  {
+   "id": "query: SELECT status LIKE 'a%' AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT status LIKE 'a%' AS v FROM orders",
+   "type": "UInt8"
+  },
+  {
+   "id": "query: SELECT CAST(quantity AS BIGINT) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT CAST(quantity AS BIGINT) AS v FROM orders",
+   "type": "Int64"
+  },
+  {
+   "id": "query: SELECT CAST(status AS VARCHAR) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT CAST(status AS VARCHAR) AS v FROM orders",
+   "type": "String"
+  },
+  {
+   "id": "query: SELECT CAST(quantity AS DOUBLE) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT CAST(quantity AS DOUBLE) AS v FROM orders",
+   "type": "Float64"
+  },
+  {
+   "id": "query: SELECT if(quantity > 1, 1, 300) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT if(quantity > 1, 1, 300) AS v FROM orders",
+   "type": "UInt16"
+  },
+  {
+   "id": "query: SELECT CASE WHEN quantity > 1 THEN 1 ELSE -1 END AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT CASE WHEN quantity > 1 THEN 1 ELSE -1 END AS v FROM orders",
+   "type": "Int16"
+  },
+  {
+   "id": "query: SELECT row_number() OVER (ORDER BY id) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT row_number() OVER (ORDER BY id) AS v FROM orders",
+   "type": "UInt64"
+  },
+  {
+   "id": "query: SELECT id AS v FROM orders UNION ALL SELECT 1 FROM orders",
+   "category": "expression",
+   "sql": "SELECT id AS v FROM orders UNION ALL SELECT 1 FROM orders",
+   "type": "Int32"
+  },
+  {
+   "id": "query: SELECT 1 AS v FROM orders UNION ALL SELECT 300 FROM orders",
+   "category": "expression",
+   "sql": "SELECT 1 AS v FROM orders UNION ALL SELECT 300 FROM orders",
+   "type": "UInt16"
+  },
+  {
+   "id": "query: SELECT id AS v FROM orders LEFT JOIN customers ON orders.id = customers.id",
+   "category": "expression",
+   "sql": "SELECT id AS v FROM orders LEFT JOIN customers ON orders.id = customers.id",
+   "type": "Int32"
+  },
+  {
+   "id": "query: SELECT name AS v FROM orders LEFT JOIN customers ON orders.id = customers.id",
+   "category": "expression",
+   "sql": "SELECT name AS v FROM orders LEFT JOIN customers ON orders.id = customers.id",
+   "type": "Nullable(String)"
+  },
+  {
+   "id": "query: SELECT now() AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT now() AS v FROM orders",
+   "type": "DateTime"
+  },
+  {
+   "id": "query: SELECT toDate(ordered_at) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT toDate(ordered_at) AS v FROM orders",
+   "type": "Date"
+  },
+  {
+   "id": "query: SELECT length(status) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT length(status) AS v FROM orders",
+   "type": "UInt64"
+  },
+  {
+   "id": "query: SELECT concat(status, 'x') AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT concat(status, 'x') AS v FROM orders",
+   "type": "String"
+  },
+  {
+   "id": "query: SELECT 255 AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT 255 AS v FROM orders",
+   "type": "UInt8"
+  },
+  {
+   "id": "query: SELECT 256 AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT 256 AS v FROM orders",
+   "type": "UInt16"
+  },
+  {
+   "id": "query: SELECT -128 AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT -128 AS v FROM orders",
+   "type": "Int8"
+  },
+  {
+   "id": "query: SELECT -129 AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT -129 AS v FROM orders",
+   "type": "Int16"
+  },
+  {
+   "id": "query: SELECT 4294967296 AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT 4294967296 AS v FROM orders",
+   "type": "UInt64"
+  },
+  {
+   "id": "query: SELECT CAST(quantity AS BIGINT UNSIGNED) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT CAST(quantity AS BIGINT UNSIGNED) AS v FROM orders",
+   "type": "UInt64"
+  },
+  {
+   "id": "query: SELECT CAST(quantity AS Nullable(Int64)) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT CAST(quantity AS Nullable(Int64)) AS v FROM orders",
+   "type": "Nullable(Int64)"
+  },
+  {
+   "id": "query: SELECT CAST(price AS DECIMAL(12, 4)) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT CAST(price AS DECIMAL(12, 4)) AS v FROM orders",
+   "type": "Decimal(12, 4)"
+  },
+  {
+   "id": "query: SELECT quantity::String AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT quantity::String AS v FROM orders",
+   "type": "String"
+  },
+  {
+   "id": "query: SELECT id AS v FROM orders RIGHT JOIN customers ON orders.id = customers.id",
+   "category": "expression",
+   "sql": "SELECT id AS v FROM orders RIGHT JOIN customers ON orders.id = customers.id",
+   "type": "Nullable(Int32)"
+  },
+  {
+   "id": "query: SELECT quantity AS v FROM orders RIGHT JOIN customers ON orders.id = customers.id",
+   "category": "expression",
+   "sql": "SELECT quantity AS v FROM orders RIGHT JOIN customers ON orders.id = customers.id",
+   "type": "Nullable(Int32)"
+  },
+  {
+   "id": "query: SELECT abs(-1) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT abs(-1) AS v FROM orders",
+   "type": "UInt8"
+  },
+  {
+   "id": "query: SELECT -abs(quantity) AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT -abs(quantity) AS v FROM orders",
+   "type": "Int64"
+  },
+  {
+   "id": "query: SELECT id AS v FROM orders JOIN customers ON orders.id = customers.id JOIN orders AS o2 ON o2.id = orders.id",
+   "category": "expression",
+   "sql": "SELECT id AS v FROM orders JOIN customers ON orders.id = customers.id JOIN orders AS o2 ON o2.id = orders.id",
+   "type": null
+  },
+  {
+   "id": "query: SELECT Status AS v FROM orders",
+   "category": "expression",
+   "sql": "SELECT Status AS v FROM orders",
+   "type": null
+  },
+  {
+   "id": "query: SELECT quantity AS q FROM orders WHERE q > 1",
+   "category": "expression",
+   "sql": "SELECT quantity AS q FROM orders WHERE q > 1",
+   "type": "Int32"
+  }
+ ]
+}

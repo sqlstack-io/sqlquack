@@ -1,0 +1,491 @@
+# Approved reviews. Each listed form was read in full against its documentation
+# page, its obligations, its cases with their Snowflake receipts, and the local parse trees. An approval holds
+# while the form's definition hash and fingerprint are unchanged; any change makes it stale until re-read.
+
+[[review]]
+id = "expressions-001"
+family = "expressions"
+parser_tree = "02250357e9eb979f37deb92221e8d382917f3701"
+reviewed_utc = "2026-11-04T18:40:00Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.operators-subquery.exists",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 9f38f55eb2d0; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.operators-subquery.exists" = "12fda91976b06a051e00db6b05c61c3e2d2f5273f8dfc6b61ed6df98d3d39c40"
+
+[review.definitions]
+"sf.expressions.operators-subquery.exists" = "c03ab6d6f597bda839e456edb5c7c85d22448662ae3d9540b3c12224c710d508"
+
+[[review]]
+id = "expressions-002"
+family = "expressions"
+parser_tree = "02250357e9eb979f37deb92221e8d382917f3701"
+reviewed_utc = "2026-11-04T20:20:00Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-datetime.date",
+  "sf.expressions.data-types-datetime.datetime",
+  "sf.expressions.data-types-datetime.timestamp",
+  "sf.expressions.data-types-logical",
+  "sf.expressions.data-types-numeric.decfloat",
+  "sf.expressions.data-types-numeric.decimal",
+  "sf.expressions.data-types-numeric.float",
+  "sf.expressions.data-types-numeric.int",
+  "sf.expressions.data-types-semistructured.array",
+  "sf.expressions.data-types-semistructured.object",
+  "sf.expressions.data-types-semistructured.variant",
+  "sf.expressions.data-types-text.binary",
+  "sf.expressions.data-types-unknown",
+  "sf.expressions.data-types-unstructured",
+  "sf.expressions.operators-arithmetic.divide",
+  "sf.expressions.operators-arithmetic.modulo",
+  "sf.expressions.operators-arithmetic.multiply",
+  "sf.expressions.operators-arithmetic.subtract",
+  "sf.expressions.operators-arithmetic.unary-minus",
+  "sf.expressions.operators-comparison.equal",
+  "sf.expressions.operators-comparison.greater",
+  "sf.expressions.operators-comparison.greater-or-equal",
+  "sf.expressions.operators-comparison.less",
+  "sf.expressions.operators-comparison.less-or-equal",
+  "sf.expressions.operators-comparison.not-equal-angle",
+  "sf.expressions.operators-comparison.not-equal-bang",
+  "sf.expressions.operators-logical.not",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 9f38f55eb2d0; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-datetime.date" = "3a4073aba2a0ae0099dce812722e1988f4f261f1840964aa86f13fc247d44e73"
+"sf.expressions.data-types-datetime.datetime" = "9040ee7371a5536469d019ac07cbeb9f1d89d28df22ac191b15e09589fedbaf2"
+"sf.expressions.data-types-datetime.timestamp" = "a5860679aeb87aff5adc95bac66d1eedeaf90fa4cdd64a3be5355ebf5be3ed60"
+"sf.expressions.data-types-logical" = "be7e204dbd98bb704946c08aba4c5e4c668372d13084e83c68d9b5ecfa4d834a"
+"sf.expressions.data-types-numeric.decfloat" = "cc3e15a828b207e5c91c2cfefe19d244f832e9c0733bd6c128a53099af9a8365"
+"sf.expressions.data-types-numeric.decimal" = "6c4e630a33700349dd4a33a9ccc668494f46303db23127ca5edb2d4f8faf2d01"
+"sf.expressions.data-types-numeric.float" = "7621fe688152bebd9651c881fb04b47bc3631fca37823cebb19ec195b2c5bb1c"
+"sf.expressions.data-types-numeric.int" = "7a09b4607992c18fcdfc9876ced01caf02f222f8dc1504bfbc39ad8cdc651572"
+"sf.expressions.data-types-semistructured.array" = "baf9849aa5094b758df48a83f3046ec81c03334543b40a23ca65032f85381f13"
+"sf.expressions.data-types-semistructured.object" = "34d4b718149b7ca37b120334f853a42ec7c6fbd5a51ed132c816bfdb362c6c5d"
+"sf.expressions.data-types-semistructured.variant" = "ad2c78dfefa2de8eab1ba029125afab9fbe65ef32c75a5f1b9d26f576c8a2522"
+"sf.expressions.data-types-text.binary" = "d6ff889b294cb14d3fd8a67c94f659ed16d7ccc5a0f9ee714abd4bf71dac6ec5"
+"sf.expressions.data-types-unknown" = "e7b32fb886698c58417ef4fd189156b05d014c20b9946d99b1a15e0641818398"
+"sf.expressions.data-types-unstructured" = "c678ccc7270ecfb2169903de305aaed39cb4ef20447b061d0f1ba5f78c1e86d0"
+"sf.expressions.operators-arithmetic.divide" = "290c2409e1df821697054d35816db9204d0a5c85e3c2166d9f6680e7e18f0aa2"
+"sf.expressions.operators-arithmetic.modulo" = "7082bd9bcfb892738d4640ebf3ae79e218cbff48a3490412ec4bce7ab427ab1f"
+"sf.expressions.operators-arithmetic.multiply" = "8589dadda8d8118a477e52dfe29a00f56eb544e8e36a106183884657065880be"
+"sf.expressions.operators-arithmetic.subtract" = "e026db06af3a754cb45ca3a6d5937a4fb6d7bd6efb119b6b8b3cf7f16bb35793"
+"sf.expressions.operators-arithmetic.unary-minus" = "80b8a62450f37c452ad4a00a67997d2c6ee448a684234c545b27e291db54cdd7"
+"sf.expressions.operators-comparison.equal" = "30c19ea40565cd743aba5b4bef487b4e6af1d2b06d7ac9889ccf46c2fff56cc2"
+"sf.expressions.operators-comparison.greater" = "afe0f13edce1bb67a31414ed866239479998eed1d22c583aa00e711db3a1c959"
+"sf.expressions.operators-comparison.greater-or-equal" = "8055c404664da135d56e934182bf088a2c02088501e66d67eedfc942babea288"
+"sf.expressions.operators-comparison.less" = "3356000ea89adce08a616edcf6917fdfffe7156a6eb61733f90ad48190052087"
+"sf.expressions.operators-comparison.less-or-equal" = "960d7fc92f47260d1d190b8be2314a68e8a4d666d3eec586f86d9e0d02ce0e24"
+"sf.expressions.operators-comparison.not-equal-angle" = "915fddd0af624c703e3bbc4d09076be0cbf6ecc9073c4cd071b0f53c34d5ece6"
+"sf.expressions.operators-comparison.not-equal-bang" = "d3bbc1c2a57fd794bc75b61a4fc851852f349e939857ec823a0cc8a21604b12e"
+"sf.expressions.operators-logical.not" = "a98eda409e8b1e6b95e0b58501d6c5baba886a0cbf0701f5c7a352a500b4dab7"
+
+[review.definitions]
+"sf.expressions.data-types-datetime.date" = "32053196077adaa1801fe1c28a0e20f086d9708895b5901fbd25ea3bed1e9ce1"
+"sf.expressions.data-types-datetime.datetime" = "fe63b43fa9ae3c0d794b625b5bbeed96d16ac6be1497edf456da17e0896a5829"
+"sf.expressions.data-types-datetime.timestamp" = "4bbe33674992d324debffb470c4ba8db78f360497f64928a379ff0e210a2cc33"
+"sf.expressions.data-types-logical" = "d6a4cca2593a1f1137acda6183ee1e7f21b9d64eeed07f128ee72d187d711aab"
+"sf.expressions.data-types-numeric.decfloat" = "a195d4c0ed85dc8852c2c76a2956adf9b0aa4c17c4a58e58889b8663e0a08be5"
+"sf.expressions.data-types-numeric.decimal" = "b674805ca315fcd66e361873448bed7b1a114db800dfb0ade47cc7da4fbf7ca9"
+"sf.expressions.data-types-numeric.float" = "49b9635eccea426c675d18c5fa43f365b2a1036f3ebf906b2636532d0d48fc04"
+"sf.expressions.data-types-numeric.int" = "459c5bd4170a806483d0f718eb887887eb3011107898e9ebd00825175300d65f"
+"sf.expressions.data-types-semistructured.array" = "efb96cfdc37cedb2374c5585d9f16530555b40adff41bb17949f2c85c3ed98ac"
+"sf.expressions.data-types-semistructured.object" = "6bde6c67f79197ed967fbb658351dcdc137177c907738c283f90d1ac861e1c0f"
+"sf.expressions.data-types-semistructured.variant" = "6ace57cd834043ab83b0124243d072aacb70aec09fd1b61728ddc2b03cdd2c09"
+"sf.expressions.data-types-text.binary" = "2b79aacee8a1747671c0f8f15e5654b4ac683b086b6c98ed4f615084f3aed282"
+"sf.expressions.data-types-unknown" = "365b4d95322fead376a42ca11f17297a267e3790ee61f5ac826fd88289fa7e2c"
+"sf.expressions.data-types-unstructured" = "5fde84dca670bed6e7614209cd30342694955aa564006cec3372df6400ad10cb"
+"sf.expressions.operators-arithmetic.divide" = "e86c3174d03fcf21cbb45e73dfb3017c9188c2e71fad41dd8426c5eb4467d63a"
+"sf.expressions.operators-arithmetic.modulo" = "8a319c09c727062ddb9765c85b74c5ceb4fc713ba1862852c8c45db7d617546f"
+"sf.expressions.operators-arithmetic.multiply" = "b997e93b69ade6024ca0cfa21567b3890a51f3abe8f0310ff5098ba6f481640e"
+"sf.expressions.operators-arithmetic.subtract" = "5e19772de79b70f17f4c7d25edd2bb35538e773784306dd34050afe3af216dba"
+"sf.expressions.operators-arithmetic.unary-minus" = "b9d96e67cc62461312cb3117a51c57d0d6f501232d0c5ddd44dd76ba93ef6ae0"
+"sf.expressions.operators-comparison.equal" = "f29e6a32367044d21b5b158dcffbaf81453c937df773c38cceb8de9a8c97af0f"
+"sf.expressions.operators-comparison.greater" = "d3552d1c522699a9554d5282e2166e297225e26b3f87835064b62e939dc70dd3"
+"sf.expressions.operators-comparison.greater-or-equal" = "c44cade9704cce5a3daba36158ecf7f4384efc5205378470b42ee7523f25bc59"
+"sf.expressions.operators-comparison.less" = "3762a82339ab43c872e3ca2b6caf153023f8871716360949152463aae78e57c5"
+"sf.expressions.operators-comparison.less-or-equal" = "48c80d0164ef2e04af3a1d02773e851b2c52616d80c85cba57187b9cf2aa4757"
+"sf.expressions.operators-comparison.not-equal-angle" = "47637a29a32eb0994e51cdabc51b907de913f5bc1ee5d38e8815d877e882ca5c"
+"sf.expressions.operators-comparison.not-equal-bang" = "4cf6d7d2476e0184f1fd8af4da943389d36573383f87c1e628ac583e2cc1f3c8"
+"sf.expressions.operators-logical.not" = "dabe96681a71715f3036db826c8e281562f0dfbbd42e982228015481ee7cf94c"
+
+[[review]]
+id = "expressions-003"
+family = "expressions"
+parser_tree = "08415e197894427f047442a0d66d6fd21c478ad8"
+reviewed_utc = "2026-11-04T21:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-semistructured.colon-subscript-dot",
+  "sf.expressions.data-types-semistructured.subscript-dot",
+  "sf.expressions.identifiers-syntax.double-quoted-identifier",
+  "sf.expressions.identifiers-syntax.unquoted-identifier",
+  "sf.expressions.name-resolution",
+  "sf.expressions.schema-variables",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 77c1a3a59f20; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-semistructured.colon-subscript-dot" = "db98811de748155f7893353f441d6001694cfaddd31882a3493797fdacdc7b15"
+"sf.expressions.data-types-semistructured.subscript-dot" = "e883a09ca14a61f118f4ca4b408b1eb459c7a513635426599da6e8082c688287"
+"sf.expressions.identifiers-syntax.double-quoted-identifier" = "8dc8574e29f761ce7f2c6e5ce9862dde833a875613525ba4b771d272b2acf071"
+"sf.expressions.identifiers-syntax.unquoted-identifier" = "7cc8c10940627730f806a76d5b8456830e524babc66fb7f276883c27fff61558"
+"sf.expressions.name-resolution" = "fa6e3d01b0e3605bd48a6066306f0031dbbaad9323736237f04dd072c3d739c9"
+"sf.expressions.schema-variables" = "1fee3d4b2c5f6195d4ad6848c585f06dc0950119def18c929acb9a102ea9bcc5"
+
+[review.definitions]
+"sf.expressions.data-types-semistructured.colon-subscript-dot" = "28a697f09e91f7fbce35c73453739f02fe2a2d49e94c2033e04c2e0b3ceed377"
+"sf.expressions.data-types-semistructured.subscript-dot" = "262543b4416efcfb2150de1e79626506c2c387724d47aaa056ad3fa11a1c612b"
+"sf.expressions.identifiers-syntax.double-quoted-identifier" = "c9a97321bce04bf85c56b740488262b1cda6b6598d70b91692da53007a1006b6"
+"sf.expressions.identifiers-syntax.unquoted-identifier" = "c0668b13719c46906c309f69020c56081b00ea26dbf0f163107671a1503266bf"
+"sf.expressions.name-resolution" = "d86311b020152f866a6e99fd13c621c70f143a48a4bb2196034094b19abf2fbf"
+"sf.expressions.schema-variables" = "29e0b184b49e982f27eedadac1de5f840f6591c3c3c54cedc6b619b947830255"
+
+[[review]]
+id = "expressions-004"
+family = "expressions"
+parser_tree = "08415e197894427f047442a0d66d6fd21c478ad8"
+reviewed_utc = "2026-11-04T22:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-datetime.time",
+  "sf.expressions.data-types-numeric.number",
+  "sf.expressions.data-types-text.varbinary",
+  "sf.expressions.data-types-user-defined",
+  "sf.expressions.operators-arithmetic.unary-plus",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 77c1a3a59f20; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-datetime.time" = "32ca076af51a0fff763dc42ef7711cee095f8b699b6fee3f7aae626c78a8448c"
+"sf.expressions.data-types-numeric.number" = "43afb0f1ce4e539dcf072cf8b54d73b3b9224a052c2d5cab3b616889fdf2ceda"
+"sf.expressions.data-types-text.varbinary" = "dd1a57427c510249732e0f9e709884752f31bb46037c176972944a0ccb6cfd50"
+"sf.expressions.data-types-user-defined" = "8a227450093447a5d26c16aad286b3c876050bfa108a14c1f8e5197bb4f7ad33"
+"sf.expressions.operators-arithmetic.unary-plus" = "ad07c1e12601d653b8f8b301061fc93f2518eedde316981672df4509c23ab99f"
+
+[review.definitions]
+"sf.expressions.data-types-datetime.time" = "32427728eb849138511523f76d67646192740655c8d7a8370db27bec02eabc99"
+"sf.expressions.data-types-numeric.number" = "e58430a9beae7cec2e6386ef6502f3d51970c76bba15fe8b18dfa5a5edef02f8"
+"sf.expressions.data-types-text.varbinary" = "a9390c7d3f3a1bfde928c0e688a182639a03841a11edc091be73e20033ead4bc"
+"sf.expressions.data-types-user-defined" = "7f577456bd86183fb97f4c16c62ce5f69a6ea4823897355db2bea3c8627f7a55"
+"sf.expressions.operators-arithmetic.unary-plus" = "82d3abe4799ef8968f4a44141ac282cd8a874c59b131ca4ef7a8b1c38e1d7345"
+
+[[review]]
+id = "expressions-005"
+family = "expressions"
+parser_tree = "4b9e8db3635aac38f12852384d0e0e4844c780b9"
+reviewed_utc = "2026-11-05T01:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-numeric.numeric-constant",
+  "sf.expressions.data-types-structured.object",
+  "sf.expressions.data-types-text.dollar-quoted-string-constant",
+  "sf.expressions.data-types-vector",
+  "sf.expressions.literals-table",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 2f0c38a72e97; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-numeric.numeric-constant" = "d3e2348e20386076818bd9d998e5db1f77fb13a1b94971738bfcf15076aca9de"
+"sf.expressions.data-types-structured.object" = "135a80cf8b6d786713b29e5ff32f2af3bafe9e6376d1860db069f6ebdaaef134"
+"sf.expressions.data-types-text.dollar-quoted-string-constant" = "2c53b14f18615cb0e15c82bf9e44493459e941cf4a426ffd4930ee84fcb1e931"
+"sf.expressions.data-types-vector" = "da2a081329cd656ca6ae2e59bf0240ab7d94d2d5ad27c452c411d629a614cb76"
+"sf.expressions.literals-table" = "190bb17fde63caab76237c800953aefeffef553068e54c181088b44878919746"
+
+[review.definitions]
+"sf.expressions.data-types-numeric.numeric-constant" = "7382e950400d6ec92efbe54c97613888ca701fcfd6e3ec71adeba85782d89af0"
+"sf.expressions.data-types-structured.object" = "fdc91faa7305273bb6f169bd404cbb6f82cd01e09c53a55fbc5ef1edaf4a4550"
+"sf.expressions.data-types-text.dollar-quoted-string-constant" = "d961810e0b15256f7d4c8193b8c89f66eade406163cef59e733da8020420a44b"
+"sf.expressions.data-types-vector" = "edb384eb47358e8626fde3d1b1d0e0d702cc763c5767782e2141e8afcc7b3990"
+"sf.expressions.literals-table" = "560abcfbf37f485469f1ccb69d117e21878d707bd1399369731e585e704947c7"
+
+[[review]]
+id = "expressions-006"
+family = "expressions"
+parser_tree = "8067a98cd6e46bf4aa559f564d592abcc74b18c5"
+reviewed_utc = "2026-11-05T03:20:00Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-semistructured.array-index-access",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 174f4f1af7cf; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-semistructured.array-index-access" = "c286cbda474ed558dab484990d241339e604236bbaa49c8372924f3672d0ca13"
+
+[review.definitions]
+"sf.expressions.data-types-semistructured.array-index-access" = "8974e2edd9a75b53b42e9d7b90f3155cf6e70f876917cf91d916339e0c36fd3e"
+
+[[review]]
+id = "expressions-007"
+family = "expressions"
+parser_tree = "eda600c68071bdfef7dc5f23902654d8571672de"
+reviewed_utc = "2026-11-05T06:40:00Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-period",
+  "sf.expressions.functions-table",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 198e4aeae1a4; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-period" = "a9f88d365fbcd3f4125883a16bbc76faa8afbf934e8e95fdf428500466b7902d"
+"sf.expressions.functions-table" = "a3c1bba8080f76f8421f4fcf16295bf9e704bb395ae3c7e45fc74303e4f6f5b5"
+
+[review.definitions]
+"sf.expressions.data-types-period" = "5b946197f0d71098a608607263a71e0e6b96cc8c512e6b14310fea948c2190b3"
+"sf.expressions.functions-table" = "670c81d046c383de8843226617dc7af5488a3f73a22b728f2ef8143ce5c6911b"
+
+[[review]]
+id = "expressions-008"
+family = "expressions"
+parser_tree = "ec36eaa7279269463ecc99566a35e53196da2788"
+reviewed_utc = "2026-11-05T07:40:00Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.operators-logical.and",
+  "sf.expressions.operators-logical.or",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 77e10eeb25a7; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.operators-logical.and" = "51c39ad61b018e00056d97d8ab0a4860cc58e177d931b800a78ca6e652c0e5c8"
+"sf.expressions.operators-logical.or" = "dcc8b90090e67c8b8f38868c37e8398791af46fcf052efea05cfce5d841a0054"
+
+[review.definitions]
+"sf.expressions.operators-logical.and" = "7d5720b544c4bbe97bfc94e082d889e9a7ee04101835cb2b54dcdcd2b734dd41"
+"sf.expressions.operators-logical.or" = "cf321404dca8397b9f8d03e73858ba4166850fb9b76c4aa94c423f92021dd67c"
+
+[[review]]
+id = "expressions-009"
+family = "expressions"
+parser_tree = "a8d9cb164ed163f3c02fff0e18aedb62c1dde5be"
+reviewed_utc = "2026-11-05T10:20:00Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-datetime.date-time-constant",
+  "sf.expressions.data-types-datetime.interval.interval-constants",
+  "sf.expressions.data-types-semistructured.object-key-access",
+  "sf.expressions.data-types-text.char",
+  "sf.expressions.data-types-text.single-quoted-string-constant",
+  "sf.expressions.data-types-text.varchar",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main a398f2e56279; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-datetime.date-time-constant" = "16a08fb586601bdc30529a8f347941311b8f3800b0a9f322ff8f6842089e4fa2"
+"sf.expressions.data-types-datetime.interval.interval-constants" = "f03b4fbf11f61165bb0c609507f017710c5d48e0df21870b9137e342efba581d"
+"sf.expressions.data-types-semistructured.object-key-access" = "923a932a98b25f460950eb3025b4d1eee08ddd321e9f5a7ba2d1d34c77d04e60"
+"sf.expressions.data-types-text.char" = "a8900b48a58180510a9b71e769354b9a7c326ba1010c5d083d8ee1172bcb686e"
+"sf.expressions.data-types-text.single-quoted-string-constant" = "226c8af80fcdfaefd7e7af41bf5258e6628291888bdfb282be690bd963f7d79b"
+"sf.expressions.data-types-text.varchar" = "9e8f9f19dfb0463ad15d68e0401df9f818a8d8a4f390338573cd124856f61b3e"
+
+[review.definitions]
+"sf.expressions.data-types-datetime.date-time-constant" = "365bfe1cb862302c33cb2126895fd0058ad2f4d5f03c3c504c1b2a580918a1b1"
+"sf.expressions.data-types-datetime.interval.interval-constants" = "8672ce1c682bf7074cc2469bf00b8a73dc5ce3906846fb73eefab62bcae2084f"
+"sf.expressions.data-types-semistructured.object-key-access" = "ccebffdf78f0c4a5bcb248d0879c58b9fb7642ed04ddeca7746edecef102e821"
+"sf.expressions.data-types-text.char" = "455c7b7dce95356d4b3cf34ee5cb73c90a19f6447894858c38bf913c9c2a3cc2"
+"sf.expressions.data-types-text.single-quoted-string-constant" = "b6b92489bd932ad764395728e0717214db482613c5ca1d536f643d47f7f12261"
+"sf.expressions.data-types-text.varchar" = "427bcf21946ebf49537218ea6ab68ff7cf9583eb34fdcc286386f08328965309"
+
+[[review]]
+id = "expressions-010"
+family = "expressions"
+parser_tree = "464a70bb8f8057d3224c6eb8090d7ad3d7b0826f"
+reviewed_utc = "2026-11-05T11:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-ipaddress.typed-literal",
+  "sf.expressions.data-types-structured.array",
+  "sf.expressions.data-types-structured.map",
+  "sf.expressions.operators-subquery.comparisonoperator-all-any",
+  "sf.expressions.snowflake-db-classes",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main f3c75ab3a132; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-ipaddress.typed-literal" = "bdf50463583729dcf320acee299f6afcf41281bd72cc65c79e5d632365719f48"
+"sf.expressions.data-types-structured.array" = "e781d3f7e0035d3b43f2beecebbc3b80a1bd4ed62a7410e2d2615ec18da24ab6"
+"sf.expressions.data-types-structured.map" = "f43ea6283452394ac80d090fd1da262c10b6e0d66067e8c70c2b0ae7f339ae0f"
+"sf.expressions.operators-subquery.comparisonoperator-all-any" = "61ff544aa2fedd2e2848dcbf14a046b1ce8f2e051e43f3c81c11f9e6e4879bc3"
+"sf.expressions.snowflake-db-classes" = "f8dc35fe00bf41c93fd285b9d37d59e49833c996c4ec38a438e400cc3862bf3d"
+
+[review.definitions]
+"sf.expressions.data-types-ipaddress.typed-literal" = "9f90525933ac5810a8150cb6b4c998ea5f0ca1123d9cb3d9217d7fd119614036"
+"sf.expressions.data-types-structured.array" = "120f4e35f67be459aa4df054ebfe4037020f44d30aa063cca30ca53a3a4f85d0"
+"sf.expressions.data-types-structured.map" = "d0e560df32d95369dfdba6b0d0155ddfb948235b1332b3b3ead77a48eccfa9ae"
+"sf.expressions.operators-subquery.comparisonoperator-all-any" = "ce58140e4ebe55f56329c7a2ce1955cbce11ec2c798a773da93b6e032555f788"
+"sf.expressions.snowflake-db-classes" = "bad20a427797d8e42cbfc4e28bd305e588efec4e4acf71045a9c2ca5bee6c405"
+
+[[review]]
+id = "expressions-011"
+family = "expressions"
+parser_tree = "1a31cbb8716db274d8f16c7d2da3dbfabfff06a6"
+reviewed_utc = "2026-11-05T13:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.commands-model-function.model-default-version",
+  "sf.expressions.commands-model-function.model-version-or-alias",
+  "sf.expressions.operators-arithmetic.add",
+  "sf.expressions.operators-expansion",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main f28341e6c376; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.commands-model-function.model-default-version" = "e1e31edb1cea83178de9f9454c5aa23fd491311c8179c2a94594d6563de9557e"
+"sf.expressions.commands-model-function.model-version-or-alias" = "c61bd3d12282448827d183b6e10b4d7f8805325ad70383f7b17612e028c1cb63"
+"sf.expressions.operators-arithmetic.add" = "fd9d62eb2b04587e7798c55d871b8bcf42efe6a95ec7461cf742e26042e9bbe0"
+"sf.expressions.operators-expansion" = "028bf187ac476fdc12ddd226599c7916de95a0469a23bdbea2da75fa1ebb8da2"
+
+[review.definitions]
+"sf.expressions.commands-model-function.model-default-version" = "34ce3c94b354e54982cfe7b0cc3c87f56ea0dbf350e3b696dbb990cf27c678fc"
+"sf.expressions.commands-model-function.model-version-or-alias" = "d41d821a949118ef6f38898c63fed9023f562190c8e2c2485bb8c0024144ba5a"
+"sf.expressions.operators-arithmetic.add" = "81032f8220ea95b9699931cf497391a96caa0c1a3eb62ea0546c1d727298bb43"
+"sf.expressions.operators-expansion" = "8e78f3c943a9bd4515338bd9fd27deac664c3b405f419b9b6e2141f73917afda"
+
+[[review]]
+id = "expressions-012"
+family = "expressions"
+parser_tree = "e792d6e8f27909ce93bc04d35d415b3fd2c288cb"
+reviewed_utc = "2026-11-05T16:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-ipaddress",
+  "sf.expressions.data-types-uuid",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main cbe394ec714e; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-ipaddress" = "6db05624653e1fbb5843012c82e46a63980e6ee1b0abc2e63cbf672160886cce"
+"sf.expressions.data-types-uuid" = "a624195ab04dc42189cb6e6f49d4fa4f69ba28e97aa0fc6cf81c9f1fb16ccee9"
+
+[review.definitions]
+"sf.expressions.data-types-ipaddress" = "42380416ab7c22fbf8de28c3391b995fa0a88bdfcfce98b4ed702a6c9ad7c561"
+"sf.expressions.data-types-uuid" = "493de8dcb447e07a2b8497987520d155dfc2030e774f330a19c2290e84647364"
+
+[[review]]
+id = "expressions-013"
+family = "expressions"
+parser_tree = "e1ca97fcc09a5cd594868745c3e0b4f612866974"
+reviewed_utc = "2026-11-05T15:33:19Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-period.typed-literal",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main b196cbd257c1; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-period.typed-literal" = "cff270b343044ba90c54d46ac053059718cc394ec04f07a868456e1445015f45"
+
+[review.definitions]
+"sf.expressions.data-types-period.typed-literal" = "0ad7e7d59cc30e23f6306eb38c758492d0d7c8abe8050e59f4e9bf0473f7e545"
+
+[[review]]
+id = "expressions-014"
+family = "expressions"
+parser_tree = "2de58a44aca56391ee1dbe36a091556e469b7a9d"
+reviewed_utc = "2026-11-05T21:15:00Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.operators-flow",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main e8577215435f; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.operators-flow" = "0c4eba847bdc618b9d4c3fe5317cced7e4ab431098c2930a58710b4889a00f24"
+
+[review.definitions]
+"sf.expressions.operators-flow" = "3e3de4414d8cdf76e3914c5e49efb8d73462e8a0b90e96a53784791441605c8d"
+
+[[review]]
+id = "expressions-015"
+family = "expressions"
+parser_tree = "2de58a44aca56391ee1dbe36a091556e469b7a9d"
+reviewed_utc = "2026-11-05T23:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-datetime.timestamp-variations",
+  "sf.expressions.identifier-literal",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main e8577215435f; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-datetime.timestamp-variations" = "5334644e46063eb403d456044fd5d6e9767e13ea1cb0efbfa8ec79a7a7e40d5a"
+"sf.expressions.identifier-literal" = "38b982d383c3a355aeabcf36be6512ffe788cd83dbc8f766f9bee7f0725cc79c"
+
+[review.definitions]
+"sf.expressions.data-types-datetime.timestamp-variations" = "c5aee53a49abc97848292516688ff51bdbb71c9b3eab90e5e17be1a239ba2c52"
+"sf.expressions.identifier-literal" = "6a6e2aa9d390636159e63ade723676774c8aa4776bf415e1a16fdff49e946740"
+
+[[review]]
+id = "expressions-016"
+family = "expressions"
+parser_tree = "90d1828438bc1814b7b71e8aeda823626d48b9f0"
+reviewed_utc = "2026-11-07T04:58:00Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-datetime.date-time-constant",
+]
+note = "Re-read after o009-o017 were added: the nine negative neighbours, their cases and their import-171 receipts (seven 1003, two 2121), against the parse trees and refusals of the parser at 32ba12e8c242; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-datetime.date-time-constant" = "c8570c5f675d9f63f8af68ba7b683a31451d1d5c88f0e7c7f2d02a81c2f6d7b5"
+
+[review.definitions]
+"sf.expressions.data-types-datetime.date-time-constant" = "31d338a953d80790742befe3292530218a691cf8a112a56d8fd37ed9c7650f64"
+
+[[review]]
+id = "expressions-017"
+family = "expressions"
+parser_tree = "0d2197f74b5cdf9671cce329570657f8a5ddf2af"
+reviewed_utc = "2026-11-07T13:47:55Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-datetime.date-time-constant",
+]
+note = "Re-read after o018-o024 were added: the seven precision spellings before a string (TIMESTAMP_LTZ(3), TIMESTAMPNTZ(3), TIMESTAMPLTZ(3), TIMESTAMPTZ(3), DATETIME(3), TIMESTAMP(3), TIME(3)), their cases and their import-175 receipts (all 2121), against the parse trees and refusals of the parser at c12707138; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-datetime.date-time-constant" = "d0ed46f05949d0fb3b504b2897e5fcde790bac56a8702d75f84b5495f3184e04"
+
+[review.definitions]
+"sf.expressions.data-types-datetime.date-time-constant" = "16b01a2321c5b096282ec8d6cb1d60770b7930a2addc61e580d549d1b6e713af"
+
+[[review]]
+id = "expressions-018"
+family = "expressions"
+parser_tree = "d8d59bf920d53af8cfe584ab74fca3430d48bb5c"
+reviewed_utc = "2026-11-07T14:30:07Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-datetime.date-time-constant",
+]
+note = "Re-read after o025-o031 were added: the seven time zone spellings of a typed literal (TIMESTAMP and TIMESTAMP(3) with WITH TIME ZONE, WITH LOCAL TIME ZONE or WITHOUT TIME ZONE, and TIME WITH TIME ZONE), their cases and their import-177 receipts (all 1003/42000; each case's SQL hash matches its receipt), against the parse trees and refusals of the parser at 89fcbea97. Every scored case agrees with its Snowflake receipt, and each refusal stops where Snowflake does: WITH for the WITH forms, TIME after WITHOUT, and WITH after TIME."
+
+[review.fingerprints]
+"sf.expressions.data-types-datetime.date-time-constant" = "6231a89a54081856e4008964b88ca8060b84dc94adc1daa683192e9ad9df947d"
+
+[review.definitions]
+"sf.expressions.data-types-datetime.date-time-constant" = "fbe8e08957ddc0bbb254581eaf8c532e8548f136ac6a9cb543093e1edb71810e"
+
+[[review]]
+id = "expressions-019"
+family = "expressions"
+parser_tree = "2f01651a7d711b1b62adecd3de4731d201036462"
+reviewed_utc = "2026-11-08T12:11:54Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-datetime.date-time-constant",
+]
+note = "Re-read under the fingerprint formula with expect, stage and phase, after a date-time name with a precision before a string took its cast type from the parsed data type, as after a double colon: the 28 cases and their receipts against the parse trees and refusals of the parser at 33d5284f. Nine precision spellings changed only their tree and stay accepted where Snowflake parses them and stops with 2121; the other 19 are unchanged; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-datetime.date-time-constant" = "5d1eb5367280589f39c56f2b95d85731da5a3970d2768ac4ca04d7d4c7e9dd00"
+
+[review.definitions]
+"sf.expressions.data-types-datetime.date-time-constant" = "fbe8e08957ddc0bbb254581eaf8c532e8548f136ac6a9cb543093e1edb71810e"

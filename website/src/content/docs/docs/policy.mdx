@@ -1,0 +1,96 @@
+---
+title: "Policy and sessions"
+description: "Choose which known divergences conversion may rely on, and under which Snowflake session."
+---
+
+Some conversions match Snowflake except for a documented difference, called a known divergence.
+`HASH` is one: DuckDB computes its own 64-bit hash, consistent within one run but never
+Snowflake's value. A policy file lists every known divergence and whether conversion may rely on
+it. Anything relying on a refused divergence is refused with
+[`SQ0008`](/docs/diagnostics/reference/#sq0008).
+
+```console
+$ sqlquack convert due.sql
+error[SQ0008]: the conversion needs a known divergence the policy refuses: `fn:HASH`
+ --> due.sql:2:8
+  |
+2 |        HASH(customer_id) AS bucket
+  |        ^^^^^^^^^^^^^^^^^ fn:HASH needs known divergence `hash`, which the policy refuses in this mode
+```
+
+## Choosing a policy
+
+`convert`, `function`, `census` and `index` read the policy from the [project](/docs/project/)'s
+`sqlquack.toml`, or from the file `--policy` names. Without one, or when `sqlquack.toml` holds only
+`[project]`, they use the built-in policy, which refuses every known
+divergence except these, which convert with a warning:
+
+| Divergence | Where | Warning | Refused by |
+| --- | --- | --- | --- |
+| `current_time`, `session_timezone_utc` | `CURRENT_DATE()`, `CURRENT_TIMESTAMP()`, and `DATEADD`, `DATEDIFF`, `TIMESTAMPDIFF`, `TIMEDIFF`, `COALESCE` and comparisons of a `TIMESTAMP_LTZ`, or of a `TIMESTAMP_TZ` with text that has no offset, such as `DATEADD(day, -30, CURRENT_TIMESTAMP())` or `DATEDIFF('day', ordered_at, CURRENT_TIMESTAMP())` | Both engines take the value when the query runs, in the session's time zone, which must be UTC in both for the values to agree. | `--strict`, `--loud-divergences-only`, a `TIMEZONE` other than UTC |
+| `numeric_range` | `+`, `-`, `*`, `SUM` | If a result needs more than 38 digits, DuckDB raises an Overflow error; it never returns a different number. | `--strict` |
+| `json_fidelity` | Reading a VARIANT, OBJECT or ARRAY column: a path such as `payload:page`, `GET`, `FLATTEN`, a `::` or `CAST` of what they return or to `VARIANT`, text a function or `||` reads from them, and a VARIANT in `UNION ALL`; building one with `PARSE_JSON`, `TRY_PARSE_JSON`, `TO_VARIANT`, `ARRAY_CONSTRUCT`, `ARRAY_CONSTRUCT_COMPACT`, an array literal such as `[1, 2]`, `FILTER` or `TRANSFORM` | If the JSON holds something DuckDB might read differently from Snowflake, such as an exponent, `-0.0`, a decimal longer than a double keeps, a key repeated in an object the query reads, or text that is not strict JSON, or an array would hold a SQL NULL, the converted SQL raises an error; it never returns a different value. Comparing or grouping an uncast VARIANT, `TO_VARCHAR` of a VARIANT, `OBJECT_CONSTRUCT`, an object literal and `REDUCE` are still refused; use the `::` spelling instead of `TO_VARCHAR`. | `--strict` |
+| `timestamp_range` | `DATEADD`, `TIMEADD`, `TIMESTAMPADD`, adding or subtracting an interval, comparing timestamps at nanosecond precision | If a timestamp lands outside 1677-09-21 00:12:43.145224192 to 2262-04-11 23:47:16.854775807 UTC, the converted SQL raises an error; it never returns a different value. | `--strict` |
+| `timestamp_tz_submicro` | `COALESCE`, `IFNULL` or `NVL` of a `TIMESTAMP_NTZ` with a `TIMESTAMP_LTZ`, such as `COALESCE(shipped_at, CURRENT_TIMESTAMP())` | A naive value with digits below the microsecond raises an error rather than being rounded; it never returns a different value. | `--strict` |
+
+`--builtin-policy` chooses the built-in policy even where a `sqlquack.toml` exists. A `--policy` file
+that does not exist, or a policy file that is not valid, is an error.
+
+A policy file is complete on its own: the comparator, session profiles and edge-case tables are
+required, and a divergence the file leaves out is refused. A file holding only one
+`[divergences.<id>]` table is rejected. Start from a copy of the repository's
+[`sqlquack.toml`](https://github.com/sqlstack-io/sqlquack/blob/main/sqlquack.toml) in the directory
+you run `sqlquack` from. To allow a divergence, change `default` in its existing table from
+`"refuse"` to `"warn"`:
+
+```toml
+[divergences.hash]
+constructs = ["fn:HASH"]
+default = "warn"
+strict = "refuse"
+```
+
+A conversion that relies on an allowed divergence names it on standard error:
+
+```console
+sqlquack convert: relies on known divergence hash at fn:HASH
+sqlquack convert: done, converted under utc-v1
+```
+
+## Flags
+
+| Flag | Effect |
+|------|--------|
+| `--policy <file>` | The policy file. Default the project's `sqlquack.toml`, or the built-in policy without one. |
+| `--builtin-policy` | Use the built-in policy even where a `sqlquack.toml` exists: every known divergence is refused but the clock and the checks that only raise, listed above. |
+| `--strict` | Refuse every divergence the policy refuses in strict mode. |
+| `--utc-session` | Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`. |
+| `--confirm-declared-offsets` | Confirm the `TIMESTAMP_TZ` offsets the schema declares. |
+| `--python-runtime` | Confirm a Python runtime registers the project's Python functions. |
+| `--loud-divergences-only` | Rely only on divergences whose converted SQL raises rather than returns another value. |
+
+A project can confirm the same three for every run under `[project.confirm]` in its
+`sqlquack.toml`; see [Projects](/docs/project/#session-settings).
+
+## Sessions
+
+Converted SQL is proven only where both sessions run in UTC: Snowflake's `TIMEZONE` and DuckDB's
+`TimeZone` must be `'UTC'`. Statements whose result depends on the session time zone carry the
+`session_timezone_utc` assumption, and strict mode refuses them unless you pass `--utc-session`.
+
+`--session NAME=VALUE` passes your Snowflake session parameters, one flag each, or
+`[project.session]` in the project's `sqlquack.toml` for every run (see
+[Projects](/docs/project/#session-settings)):
+
+- Conversion runs under the recorded session profile they match: `utc-v1`, or `utc-qiic-v1` for
+  `QUOTED_IDENTIFIERS_IGNORE_CASE = true`. A parameter left unset takes Snowflake's documented
+  default.
+- Parameters that match no profile are refused by name with
+  [`SQ0007`](/docs/diagnostics/reference/#sq0007), so a misspelt name never falls back to defaults.
+- These are accepted and ignored, because they cannot change a result: `QUERY_TAG`,
+  `USE_CACHED_RESULT`, `STATEMENT_TIMEOUT_IN_SECONDS`, `STATEMENT_QUEUED_TIMEOUT_IN_SECONDS`,
+  `ABORT_DETACHED_QUERY` and `CLIENT_SESSION_KEEP_ALIVE`.
+- `DATABASE` and `SCHEMA` set the current database and schema, which complete relation names
+  written without them. See [Projects](/docs/project/#naming-tables).
+- `TIMEZONE = UTC`, or no `TIMEZONE`, leaves time-zone-dependent statements to the
+  `session_timezone_utc` assumption. Any other `TIMEZONE` refuses them, even with `--utc-session`.

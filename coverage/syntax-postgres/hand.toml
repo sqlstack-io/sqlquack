@@ -1,0 +1,1934 @@
+# Reviewed inputs to scripts/build_syntax_catalogue_postgres.py; read by the build only.
+#
+# [[form]]: a form read by hand where the syntax is not in a command synopsis or a signature
+#   table: prose, a table, examples, or a synopsis that needs reading. Bound to the sha256 of
+#   the page's SGML; the build refuses a form whose page changed. Fields: source, anchor,
+#   kind, label, family (default: the page's), grammar, basis, page_sha256.
+# [[block]]: the disposition of every synopsis block outside a command's Synopsis, keyed by
+#   the block's sha256: form (each production a form), calls (signatures grouped as
+#   functions), definition (a sub-grammar the page's forms use), restated (the syntax of
+#   the listed forms; the page joins their also_sources), fragment or hand (with a reason).
+# [[signatures]]: signature table sections that catalogue no form, with the reason.
+
+[[block]]
+source = "sql-analyze"
+block_sha256 = "3ab00cb7cea49053fb5bdb91882ae1a91f0f7e5742d2d3a2bc3fd401ef6dc2ec"
+first_line = "ANALYZE [ VERBOSE ] [ <table_and_columns> [, ...] ]"
+disposition = "form"
+kind = "statement"
+label = "pre-11"
+
+[[block]]
+source = "sql-cluster"
+block_sha256 = "dc4a2c0ff1e58b6ef0520d9fa0a5ad9dac29fec0ab717281a504fbe544e826b8"
+first_line = "CLUSTER [ VERBOSE ] [ <table_name> [ USING <index_name> ] ]"
+disposition = "form"
+kind = "statement"
+label = "pre-17"
+
+[[block]]
+source = "sql-cluster"
+block_sha256 = "417fb4ef84ceb261a199f4a7de89b5d68e8e0251746737417ca54b1cfbe17516"
+first_line = "CLUSTER <index_name> ON <table_name>"
+disposition = "form"
+kind = "statement"
+label = "pre-8-3"
+
+[[block]]
+source = "sql-copy"
+block_sha256 = "5c7fa29949d55c417aa274fc33630b00f1267bc1499c50aa0c5089ceb0a7e514"
+first_line = "WHERE <condition>"
+disposition = "restated"
+forms = ["pg.dml.copy.from"]
+
+[[block]]
+source = "sql-copy"
+block_sha256 = "7e0fd9c86d46ab1bc25844472235d2b4d9755f463a8d5a41ac25e8e6190b48b9"
+first_line = "COPY <table_name> [ ( <column_name> [, ...] ) ]"
+disposition = "form"
+kind = "statement"
+label = "pre-9-0"
+
+[[block]]
+source = "sql-copy"
+block_sha256 = "f827de190df23e779f5ecdd66259dcf01e230516dcc082168e896da186acc015"
+first_line = "COPY [ BINARY ] <table_name>"
+disposition = "form"
+kind = "statement"
+label = "pre-7-3"
+
+[[block]]
+source = "sql-createrole"
+block_sha256 = "5fd28543179f9d02ba04dac517373dcdbdcd8b8c83ec8d2dcd3184f2d3c8f10d"
+first_line = "CREATE ROLE <name> [ WITH ADMIN <role_name> ]"
+disposition = "restated"
+forms = ["pg.security_admin.create-role"]
+
+[[block]]
+source = "sql-createrole"
+block_sha256 = "05abb423258506e8511555b18a1a461d104fbab286d233058b130d3d749f008b"
+first_line = "USER <role_name> [, ...]"
+disposition = "hand"
+reason = "legacy CREATE ROLE option USER, catalogued by hand as a statement"
+
+[[block]]
+source = "sql-createrole"
+block_sha256 = "82f9bc951dd053fa558abf309c265497f7d7a72d2442effc8b77aa3dc493046f"
+first_line = "IN GROUP <role_name> [, ...]"
+disposition = "hand"
+reason = "legacy CREATE ROLE option IN GROUP, catalogued by hand as a statement"
+
+[[block]]
+source = "sql-createtrigger"
+block_sha256 = "b62327e67f7165ef6a78a4ff3691d216799529377c5832c2c291a48653e020db"
+first_line = "UPDATE OF <column_name1> [, <column_name2> ... ]"
+disposition = "restated"
+forms = ["pg.ddl.create-trigger"]
+
+[[block]]
+source = "sql-createview"
+block_sha256 = "1e00ee9618acc64e38303ffc4222a4cc28d05080a2d015360fd2f3f7d358b1c3"
+first_line = "CREATE RECURSIVE VIEW [ <schema> . ] <view_name> (<column_names>) AS SELECT <...>;"
+disposition = "restated"
+forms = ["pg.ddl.create-view"]
+
+[[block]]
+source = "sql-createview"
+block_sha256 = "84a4ff1e28d34bec4c29488ea5d49d758941c86c48dfced923de7e89dc19cd74"
+first_line = "CREATE VIEW [ <schema> . ] <view_name> AS WITH RECURSIVE <view_name> (<column_names>) AS (SELECT <.."
+disposition = "fragment"
+reason = "the CREATE VIEW ... WITH RECURSIVE statement a recursive view is equivalent to; an illustration of CREATE VIEW and SELECT's WITH RECURSIVE"
+
+[[block]]
+source = "sql-explain"
+block_sha256 = "e864e0e3e1dc296b819515d1437dec3c0665339300e5ad484edaf3a5796c3832"
+first_line = "EXPLAIN [ ANALYZE ] [ VERBOSE ] <statement>"
+disposition = "form"
+kind = "statement"
+label = "pre-9-0"
+
+[[block]]
+source = "sql-reset"
+block_sha256 = "0753d69b574c0ef8544623992c417b4faaf74060029cdde65aee409dbbd14c36"
+first_line = "SET <configuration_parameter> TO DEFAULT"
+disposition = "restated"
+forms = ["pg.transaction_session.set.configuration-parameter"]
+
+[[block]]
+source = "sql-select"
+block_sha256 = "6e8da5c9cb2d56818bb0c854361f7da5dae7b1dd2bd43804614e8758440a2584"
+first_line = "<non_recursive_term> UNION [ ALL | DISTINCT ] <recursive_term>"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "sql-select"
+block_sha256 = "5c7fa29949d55c417aa274fc33630b00f1267bc1499c50aa0c5089ceb0a7e514"
+first_line = "WHERE <condition>"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "sql-select"
+block_sha256 = "04464e5fd567484be9a3b935e6bc57e994f0ee31160479e56310bba89823c66f"
+first_line = "GROUP BY [ ALL | DISTINCT ] <grouping_element> [, ...]"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "sql-select"
+block_sha256 = "0eaa616ff75865b1851985f314acb10064447deff256383ec49871bcc45eee8e"
+first_line = "HAVING <condition>"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "sql-select"
+block_sha256 = "ced3c7bbb300fc5aa8f0d6fa9c09aed16774291499f907e171a39892313406d3"
+first_line = "WINDOW <window_name> AS ( <window_definition> ) [, ...]"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "sql-select"
+block_sha256 = "d390739d1fbb9142a68d682ddb7e34fa7652d79085d32e8470b5fe235b7889f9"
+first_line = "[ <existing_window_name> ]"
+disposition = "definition"
+names = ["window_definition"]
+listed = false
+
+[[block]]
+source = "sql-select"
+block_sha256 = "66f36c651ab9cefce94224ccfe07f008764237d0c296fddccb175d64ece7f0bb"
+first_line = "{ RANGE | ROWS | GROUPS } <frame_start> [ <frame_exclusion> ]"
+disposition = "definition"
+names = ["frame_clause"]
+listed = true
+
+[[block]]
+source = "sql-select"
+block_sha256 = "f5e73516a1a611cab0c7db7bac3c2f358ffb1c666a1e3d3ab07d31511a570d50"
+first_line = "UNBOUNDED PRECEDING"
+disposition = "definition"
+names = ["frame_start", "frame_end"]
+listed = true
+
+[[block]]
+source = "sql-select"
+block_sha256 = "cc430dc79eba584339856d1b10c7cc004751a06fa56852bca6aba080daaf3a98"
+first_line = "EXCLUDE CURRENT ROW"
+disposition = "definition"
+names = ["frame_exclusion"]
+listed = true
+
+[[block]]
+source = "sql-select"
+block_sha256 = "9e728903b056a7a773dfc826a6b55ead080ec33ac1b4f365ef3af51acc6bf8e9"
+first_line = "<select_statement> UNION [ ALL | DISTINCT ] <select_statement>"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "sql-select"
+block_sha256 = "35b855b4eae97674bab3228e8c9867dfbb27206ae62552e17a7fabca676b43cc"
+first_line = "<select_statement> INTERSECT [ ALL | DISTINCT ] <select_statement>"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "sql-select"
+block_sha256 = "fd2304d8b237c5e806944d794ca4fd7330b15e543670ea723a79c32273a040fb"
+first_line = "<select_statement> EXCEPT [ ALL | DISTINCT ] <select_statement>"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "sql-select"
+block_sha256 = "82a0020930eab181a0f4dc6fd3c1ad234252e3b0a30d71e05d53d1674c5e2e15"
+first_line = "ORDER BY <expression> [ ASC | DESC | USING <operator> ] [ NULLS { FIRST | LAST } ] [, ...]"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "sql-select"
+block_sha256 = "e4112baf3149da78ebe1f0913386cce175d0adcd696a99decde6a5f44f9431cc"
+first_line = "LIMIT { <count> | ALL }"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "sql-select"
+block_sha256 = "3c982a791e076dc09709192b3d623fd7b869f5eefe177795eff939fa6c4afb5f"
+first_line = "OFFSET <start> { ROW | ROWS }"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "sql-select"
+block_sha256 = "c4aab6c54b85e1a347f0bef2c3a777c2a953395c54a8fe522968472250ddec10"
+first_line = "FOR <lock_strength> [ OF <from_reference> [, ...] ] [ NOWAIT | SKIP LOCKED ]"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "sql-select"
+block_sha256 = "e7dbf8b47aff0da43ecc1f827a2bc497458449c316c529a8759b77544e299940"
+first_line = "UPDATE"
+disposition = "definition"
+names = ["lock_strength"]
+listed = true
+
+[[block]]
+source = "sql-vacuum"
+block_sha256 = "ab7d3b8f13e5f664fd1aa649150e90add84f64094dac3a2365bfc4d966eddfac"
+first_line = "VACUUM [ FULL ] [ FREEZE ] [ VERBOSE ] [ ANALYZE ] [ <table_and_columns> [, ...] ]"
+disposition = "form"
+kind = "statement"
+label = "pre-9-0"
+
+[[block]]
+source = "sql-syntax-lexical"
+block_sha256 = "d11769a81b5900c8db716aba2104a49cc89a400be230653246765a393037907f"
+first_line = "<digits>"
+disposition = "form"
+kind = "special"
+labels = ["integer", "decimal", "decimal-leading-point", "exponent"]
+
+[[block]]
+source = "sql-syntax-lexical"
+block_sha256 = "2124c3352c3793a72685a09ac6a9e3c763a0e0f89b7ffb96871c92459f5cf6f8"
+first_line = "0x<hexdigits>"
+disposition = "form"
+kind = "special"
+labels = ["hex-integer", "octal-integer", "binary-integer"]
+
+[[block]]
+source = "sql-syntax-lexical"
+block_sha256 = "fe55d6e2202b5085cfc3061d07a1d52fd5eaba5f54a0c22bc17cc7b22735de04"
+first_line = "<type> '<string>'"
+disposition = "form"
+kind = "special"
+labels = ["type-string", "string-cast", "cast-string"]
+
+[[block]]
+source = "sql-syntax-lexical"
+block_sha256 = "3d573bd798efe6d60b5bde64b1d91a2f408bf69c71f4a930dadded5b3a0c7a33"
+first_line = "<typename> ( '<string>' )"
+disposition = "form"
+kind = "special"
+labels = ["function-style-string"]
+
+[[block]]
+source = "sql-expressions"
+block_sha256 = "fa596b903c7fc8208feea0074d13050366d7b39d26e4b3708064ee819855e4ef"
+first_line = "<correlation>.<columnname>"
+disposition = "form"
+kind = "special"
+labels = ["column-reference"]
+
+[[block]]
+source = "sql-expressions"
+block_sha256 = "81f57d3af5549dd672a4d7a122f2f497bcd6b3186b16e6fdff3cfbee8a44fc99"
+first_line = "$<number>"
+disposition = "form"
+kind = "special"
+labels = ["positional-parameter"]
+
+[[block]]
+source = "sql-expressions"
+block_sha256 = "4fe24785bda423a5e032aeb59ca2377e954d3695afddde9712b775e3bc616bdd"
+first_line = "<expression>[<subscript>]"
+disposition = "form"
+kind = "special"
+labels = ["subscript"]
+
+[[block]]
+source = "sql-expressions"
+block_sha256 = "ef8e790f647bdc89b3db28caeaf57aef5d50df6c8376f13b4e81ae5b1ebbebac"
+first_line = "<expression>[<lower_subscript>:<upper_subscript>]"
+disposition = "form"
+kind = "special"
+labels = ["slice"]
+
+[[block]]
+source = "sql-expressions"
+block_sha256 = "b1a2290f559fc1261a698e0fe238ef5c406d660ab8a2ac12e64adf4d56a99f2e"
+first_line = "<expression>.<fieldname>"
+disposition = "form"
+kind = "special"
+labels = ["field-selection"]
+
+[[block]]
+source = "sql-expressions"
+block_sha256 = "6ff4d61eee6ca0d1920995a0ba48e013c811cbd37db56b234dd5380ff78d027b"
+first_line = "OPERATOR(<schema>.<operatorname>)"
+disposition = "form"
+kind = "special"
+labels = ["operator-call"]
+
+[[block]]
+source = "sql-expressions"
+block_sha256 = "2371fb2816f73f43c27d85ffa70c0d4408f6f95bfb53ce99ad7c7f48612c4a05"
+first_line = "<function_name> ([ <expression> [ , <expression> ... ] ] )"
+disposition = "form"
+kind = "special"
+labels = ["function-call"]
+
+[[block]]
+source = "sql-expressions"
+block_sha256 = "c24876adc4df95ec77d080e0de6e388954a4e7710c1ea7f528430fda95c7d528"
+first_line = "<aggregate_name> (<expression> [ , ... ] [ <order_by_clause> ] ) [ FILTER ( WHERE <filter_clause> ) "
+disposition = "form"
+kind = "special"
+labels = ["aggregate", "aggregate-all", "aggregate-distinct", "aggregate-star", "aggregate-within-group"]
+
+[[block]]
+source = "sql-expressions"
+block_sha256 = "41e77c40fe7b92459e7eea81d18dcbc26654b1edc8e488c37e3f3543a69d60b2"
+first_line = "<function_name> ([ <expression> [ , <expression> ... ] ]) [ FILTER ( WHERE <filter_clause> ) ] OVER "
+disposition = "form"
+kind = "special"
+labels = ["window-call-name", "window-call-definition", "window-star-name", "window-star-definition"]
+
+[[block]]
+source = "sql-expressions"
+block_sha256 = "d390739d1fbb9142a68d682ddb7e34fa7652d79085d32e8470b5fe235b7889f9"
+first_line = "[ <existing_window_name> ]"
+disposition = "definition"
+names = ["window_definition"]
+listed = false
+
+[[block]]
+source = "sql-expressions"
+block_sha256 = "66f36c651ab9cefce94224ccfe07f008764237d0c296fddccb175d64ece7f0bb"
+first_line = "{ RANGE | ROWS | GROUPS } <frame_start> [ <frame_exclusion> ]"
+disposition = "definition"
+names = ["frame_clause"]
+listed = true
+
+[[block]]
+source = "sql-expressions"
+block_sha256 = "f5e73516a1a611cab0c7db7bac3c2f358ffb1c666a1e3d3ab07d31511a570d50"
+first_line = "UNBOUNDED PRECEDING"
+disposition = "definition"
+names = ["frame_start", "frame_end"]
+listed = true
+
+[[block]]
+source = "sql-expressions"
+block_sha256 = "cc430dc79eba584339856d1b10c7cc004751a06fa56852bca6aba080daaf3a98"
+first_line = "EXCLUDE CURRENT ROW"
+disposition = "definition"
+names = ["frame_exclusion"]
+listed = true
+
+[[block]]
+source = "sql-expressions"
+block_sha256 = "3aec3f6b40319675787b7699939df43370fa98bbabcd6a28cd6ef86c6d7fb9d4"
+first_line = "CAST ( <expression> AS <type> )"
+disposition = "form"
+kind = "special"
+labels = ["cast", "cast-double-colon"]
+
+[[block]]
+source = "sql-expressions"
+block_sha256 = "7dfa6cc099ee2c213514768c59dec07dc724e8e654cc1e923c39208b7bee34e8"
+first_line = "<typename> ( <expression> )"
+disposition = "form"
+kind = "special"
+labels = ["function-style-cast"]
+
+[[block]]
+source = "sql-expressions"
+block_sha256 = "98b8c627f0bc36412f191e12615db0b3ccd875671b0696410748f231c03794c5"
+first_line = "<expr> COLLATE <collation>"
+disposition = "form"
+kind = "special"
+labels = ["collate"]
+
+[[block]]
+source = "ddl-priv"
+block_sha256 = "a7e31707a0c790be0bb03f7e67e2980c67d656e721a9d53a42c5b071796ef089"
+first_line = "<grantee>=<privilege-abbreviation>[ * ].../<grantor>"
+disposition = "fragment"
+reason = "the text form of an aclitem value as psql and aclexplode show it; data, not SQL syntax"
+
+[[block]]
+source = "ddl-schemas"
+block_sha256 = "353b3ae13d09f02ea41388ca1e67bbbfd4092de1c759ea278e2fd662a36d4e06"
+first_line = "<schema>.<table>"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["schema-qualified-name"]
+
+[[block]]
+source = "ddl-schemas"
+block_sha256 = "0c0a6dc5a2d54e9cafbe77587525d458540a275749b16a3638f9524aa4dbd56b"
+first_line = "<database>.<schema>.<table>"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["database-qualified-name"]
+
+[[block]]
+source = "ddl-schemas"
+block_sha256 = "b8d30158d410ebef5d60f3d855b19c4dfeb5804e7a1f5d74bcd643ffd0e97af4"
+first_line = "OPERATOR(<schema>.<operator>)"
+disposition = "restated"
+forms = ["pg.expressions.sql-expressions.operator-call"]
+
+[[block]]
+source = "queries-overview"
+block_sha256 = "92b3f7a6d01191a02f69c4d061fdde18962a936a73a08516c4b26f6f5b0cf0f1"
+first_line = "[ WITH <with_queries> ] SELECT <select_list> FROM <table_expression> [ <sort_specification> ]"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-table-expressions"
+block_sha256 = "55f67d9fe2ee17f26e1b53eb8a9a48114c433d28bcf562604e81bab0db34e180"
+first_line = "FROM <table_reference> [ , <table_reference> [ , ... ] ]"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-table-expressions"
+block_sha256 = "c47c46f2aef4040b4f72a8e0e75cf6d2a49f427002ab53896adafbea3e941543"
+first_line = "<T1> <join_type> <T2> [ <join_condition> ]"
+disposition = "fragment"
+reason = "the general shape of a joined table, with join_type and join_condition left open; the concrete join syntax is the next block, catalogued as forms"
+
+[[block]]
+source = "queries-table-expressions"
+block_sha256 = "e64378940f01d7c5e428f64adbd106ba9781c5c86d59596bd0f11eff23e8a992"
+first_line = "<T1> CROSS JOIN <T2>"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-table-expressions"
+block_sha256 = "f68e34f6f8c4219968b09dba18994be28558cbee712a6df67f6471b5d48e7526"
+first_line = "<T1> { [ INNER ] | { LEFT | RIGHT | FULL } [ OUTER ] } JOIN <T2> ON <boolean_expression>"
+disposition = "form"
+kind = "special"
+labels = ["join-on", "join-using", "natural-join"]
+
+[[block]]
+source = "queries-table-expressions"
+block_sha256 = "778fa7eba1e41c418fab3ba148a004559915a55d6b6919497e279e8e780c8ae9"
+first_line = "FROM <table_reference> AS <alias>"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-table-expressions"
+block_sha256 = "a274d0427a048486903d1cd6b3a797f121e919ca2a649f689fd470a30475fc43"
+first_line = "FROM <table_reference> <alias>"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-table-expressions"
+block_sha256 = "0fa9612139b7beedb8abb95a4995bf607bf8632996945ddac30e058ddc7b0384"
+first_line = "FROM <table_reference> [ AS ] <alias> ( <column1> [ , <column2> [ , ... ] ] )"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-table-expressions"
+block_sha256 = "ccbb2de946450b879573ea58966e30c6d048c6c27769d71c59b1f46151932770"
+first_line = "<function_call> [ WITH ORDINALITY ] [ [ AS ] <table_alias> [ (<column_alias> [ , ... ]) ] ]"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-table-expressions"
+block_sha256 = "667ee21372adb9ad356e1a14095475f2a5e0228eccbdffd73164cb0255d930f6"
+first_line = "UNNEST( <array_expression> [ , ... ] ) [ WITH ORDINALITY ] [ [ AS ] <table_alias> [ (<column_alias> "
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-table-expressions"
+block_sha256 = "2dac448273e666858d1baac293693f04146dd5edea53fb783dbdd455bc7906db"
+first_line = "<function_call> [ AS ] <alias> (<column_definition> [ , ... ])"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-table-expressions"
+block_sha256 = "4354632169919f63e1c2510ffababbefa3e54715ab0e980b74d73d205e7da3aa"
+first_line = "WHERE <search_condition>"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-table-expressions"
+block_sha256 = "528e9fea2693e59fb11b4597d8686970cb049d8f7bea879e77ac7ffd3b5f9abd"
+first_line = "SELECT <select_list>"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-table-expressions"
+block_sha256 = "af4a3651d0568ba8c63f80143ee768fe1be80e9bc3a4532d5a3650f7f0170f79"
+first_line = "SELECT <select_list> FROM ... [ WHERE ... ] GROUP BY ... HAVING <boolean_expression>"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-select-lists"
+block_sha256 = "093fb5e063d82788a04a58edaa44227e8354b60b4b5f9b7ad2486524c0774dfb"
+first_line = "SELECT DISTINCT <select_list> ..."
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-select-lists"
+block_sha256 = "21781a95e10f155444c400adcd9d645051591a1dd0328ef31c1858f87cf2e270"
+first_line = "SELECT DISTINCT ON (<expression> [ , <expression> ... ]) <select_list> ..."
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-union"
+block_sha256 = "1212b217bb6e69ac18f98caa8f4ac9fd3b38178d005c158abc2c891fe93eea20"
+first_line = "<query1> UNION [ ALL ] <query2>"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-union"
+block_sha256 = "cf5c7eeea1ef729ab9c4f968984de7986ff2c04ebcc3ab9adb03b6221148d004"
+first_line = "<query1> UNION <query2> EXCEPT <query3>"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-union"
+block_sha256 = "73f1fda1912e3dc328c7e31148b8ccba321853e9c5c3a6128232303b40e4aa6c"
+first_line = "(<query1> UNION <query2>) EXCEPT <query3>"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-union"
+block_sha256 = "e4b6660d8ac385bc76d21bf9240d3f4c868f49141706c307f8feaafc8d8c3274"
+first_line = "<query1> UNION <query2> INTERSECT <query3>"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-union"
+block_sha256 = "51aee00c1886bf453b7120b9710bae7ed3f21c33d021661998fe3242932e2a60"
+first_line = "<query1> UNION (<query2> INTERSECT <query3>)"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-union"
+block_sha256 = "91f15bc89ae0aa510c38d7d5dd479a18e23333db42278d0b4587a3c1ee7f3656"
+first_line = "SELECT a FROM b UNION SELECT x FROM y LIMIT 10"
+disposition = "fragment"
+reason = "an example query showing how LIMIT binds to a UNION; SELECT's syntax covers it"
+
+[[block]]
+source = "queries-union"
+block_sha256 = "1aa3fcc87ebad87a16e9ee13910395d29fa2a48ccb2820b840375c89f402b2f1"
+first_line = "(SELECT a FROM b UNION SELECT x FROM y) LIMIT 10"
+disposition = "fragment"
+reason = "an example query showing how LIMIT binds to a UNION; SELECT's syntax covers it"
+
+[[block]]
+source = "queries-union"
+block_sha256 = "a000f25b7eab3acd9376b657b2195963f5aa0f003ecf558a22aeac9b0add6f40"
+first_line = "SELECT a FROM b UNION (SELECT x FROM y LIMIT 10)"
+disposition = "fragment"
+reason = "an example query showing how LIMIT binds to a UNION; SELECT's syntax covers it"
+
+[[block]]
+source = "queries-order"
+block_sha256 = "c5ede2177b973b98ef05b42dd882753db716b4aca5f0d431f698a5ed7b985347"
+first_line = "SELECT <select_list>"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-limit"
+block_sha256 = "c6dba354f7a6a482d51a9755789a5be7b1c6a4681b930a47faef6bed09c7c13a"
+first_line = "SELECT <select_list>"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "queries-values"
+block_sha256 = "1a93ad08609b5b183563f148e629dd7e8ec00199ed8b1852f6ac512f008a413f"
+first_line = "VALUES ( <expression> [, ...] ) [, ...]"
+disposition = "restated"
+forms = ["pg.query.values"]
+
+[[block]]
+source = "queries-values"
+block_sha256 = "ff923b2bf772c3c5bce1b2b980e8b40e0bd1456ef6e68659c84c185cdfccc7f1"
+first_line = "SELECT <select_list> FROM <table_expression>"
+disposition = "restated"
+forms = ["pg.query.select.select"]
+
+[[block]]
+source = "datatype-datetime"
+block_sha256 = "df6deda790ce0afd980ce3525a682bf7235d28b11bd6e8f2b96d3913b0c27903"
+first_line = "<type> [ (<p>) ] '<value>'"
+disposition = "form"
+kind = "special"
+labels = ["typed-datetime-literal"]
+
+[[block]]
+source = "datatype-datetime"
+block_sha256 = "01e9b43020f3448dd5ca1d1f498a4098171c3dc0071177faa5f6c881dd16d947"
+first_line = "[ @ ] <quantity> <unit> [ <quantity> <unit>... ] [ <direction> ]"
+disposition = "fragment"
+reason = "the text inside a string constant (interval input); SQL's grammar sees a string literal, and the type's input function reads its contents"
+
+[[block]]
+source = "datatype-datetime"
+block_sha256 = "09de6265a809b51f7dbabe787f687869255adc0e729f51e57fefe25206cec656"
+first_line = "P <quantity> <unit> [ <quantity> <unit> ... ] [ T [ <quantity> <unit> ... ] ]"
+disposition = "fragment"
+reason = "the text inside a string constant (ISO 8601 interval input); SQL's grammar sees a string literal, and the type's input function reads its contents"
+
+[[block]]
+source = "datatype-datetime"
+block_sha256 = "dc0070300190a63216874e5b030b9c38e1416e3eb89e4c732777cb00bcee4611"
+first_line = "P [ <years>-<months>-<days> ] [ T <hours>:<minutes>:<seconds> ]"
+disposition = "fragment"
+reason = "the text inside a string constant (ISO 8601 interval input); SQL's grammar sees a string literal, and the type's input function reads its contents"
+
+[[block]]
+source = "datatype-geometric"
+block_sha256 = "3df3b078c8d7bc72188e30dee732bf279bedf87cf79bb0b0446dc014fa5b6ced"
+first_line = "( <x> , <y> )"
+disposition = "fragment"
+reason = "the text inside a string constant (point input); SQL's grammar sees a string literal, and the type's input function reads its contents"
+
+[[block]]
+source = "datatype-geometric"
+block_sha256 = "cd37d2b0eb54e3ffb87db5eb6c94690f764e9783e433e6face04f385ddd2c5cc"
+first_line = "{ <A>, <B>, <C> }"
+disposition = "fragment"
+reason = "the text inside a string constant (line input); SQL's grammar sees a string literal, and the type's input function reads its contents"
+
+[[block]]
+source = "datatype-geometric"
+block_sha256 = "20828a10fb20a2e45c18c61c484910e294b80da9bd55d4cfd3598dea86cc47ff"
+first_line = "[ ( <x1> , <y1> ) , ( <x2> , <y2> ) ]"
+disposition = "fragment"
+reason = "the text inside a string constant (line and line segment input); SQL's grammar sees a string literal, and the type's input function reads its contents"
+
+[[block]]
+source = "datatype-geometric"
+block_sha256 = "b31cb4279b8401f533015c9bf7a61f994c0b3ad5915b56b563eed98e511bb616"
+first_line = "( ( <x1> , <y1> ) , ( <x2> , <y2> ) )"
+disposition = "fragment"
+reason = "the text inside a string constant (box input); SQL's grammar sees a string literal, and the type's input function reads its contents"
+
+[[block]]
+source = "datatype-geometric"
+block_sha256 = "1514dd3c6ca387225d6852ea10d75747cab24ee6fd61cb7dbded413de57777a7"
+first_line = "[ ( <x1> , <y1> ) , ... , ( <xn> , <yn> ) ]"
+disposition = "fragment"
+reason = "the text inside a string constant (path input); SQL's grammar sees a string literal, and the type's input function reads its contents"
+
+[[block]]
+source = "datatype-geometric"
+block_sha256 = "4a1dcd280bfb8b8ca00583d95be5f06f0ea1cebd2002dff3013e070393e9f1c5"
+first_line = "( ( <x1> , <y1> ) , ... , ( <xn> , <yn> ) )"
+disposition = "fragment"
+reason = "the text inside a string constant (polygon input); SQL's grammar sees a string literal, and the type's input function reads its contents"
+
+[[block]]
+source = "datatype-geometric"
+block_sha256 = "f163f78a11ecf311bdd8e241bdb759bad092313089f7c427429b64226c777cad"
+first_line = "< ( <x> , <y> ) , <r> >"
+disposition = "fragment"
+reason = "the text inside a string constant (circle input); SQL's grammar sees a string literal, and the type's input function reads its contents"
+
+[[block]]
+source = "datatype-xml"
+block_sha256 = "8743e168d9ab45c3c474a864c57de1e5c0a086ff90f2f9dff5db8c352202651b"
+first_line = "XMLPARSE ( { DOCUMENT | CONTENT } <value>)"
+disposition = "calls"
+family = "functions"
+
+[[block]]
+source = "datatype-xml"
+block_sha256 = "45f60b8cb0b1273e15baf7efba8b0e551f704c1d48f41b558c91b1b5b8afb000"
+first_line = "XMLSERIALIZE ( { DOCUMENT | CONTENT } <value> AS <type> [ [ NO ] INDENT ] )"
+disposition = "calls"
+family = "functions"
+
+[[block]]
+source = "datatype-xml"
+block_sha256 = "6cc4af20d7ce09e2234ba6ed48db8bae2c926e3a425bb6a4f94eb3af75fc7c3c"
+first_line = "SET XML OPTION { DOCUMENT | CONTENT };"
+disposition = "form"
+kind = "statement"
+family = "transaction_session"
+labels = ["set-xml-option"]
+
+[[block]]
+source = "datatype-xml"
+block_sha256 = "92fd69decc20081be9d23fab7ca4b6a31c65f0fcc56c24ac32413e894f5506f6"
+first_line = "SET xmloption TO { DOCUMENT | CONTENT };"
+disposition = "restated"
+forms = ["pg.transaction_session.set.configuration-parameter"]
+
+[[block]]
+source = "datatype-json"
+block_sha256 = "a9b04e3bcf7b39580545527d0e0305725ce63a2a1aaf06b96199b3e0220dba4f"
+first_line = "<Object> > <Array> > <Boolean> > <Number> > <String> > <null>"
+disposition = "fragment"
+reason = "the sort order of jsonb values, written as a comparison chain; not SQL syntax"
+
+[[block]]
+source = "datatype-json"
+block_sha256 = "4d4badb2f34e16106456edcfc47c50fdb8abc746c329928a9acfce12f97b972e"
+first_line = "<key-1>, <value-1>, <key-2> ..."
+disposition = "fragment"
+reason = "the order jsonb object keys and values are compared in; not SQL syntax"
+
+[[block]]
+source = "datatype-json"
+block_sha256 = "23b5d7c20d5bf54ba3697bb6fe98b32b5bb0f524bcc87cf2e4fdc68aa765e817"
+first_line = "<element-1>, <element-2> ..."
+disposition = "fragment"
+reason = "the order jsonb array elements are compared in; not SQL syntax"
+
+[[block]]
+source = "arrays"
+block_sha256 = "2b21c13b15137165329952cc372bb5f40523462aa20f2c0c03023d9ea4450459"
+first_line = "'{ <val1> <delim> <val2> <delim> ... }'"
+disposition = "fragment"
+reason = "the text inside a string constant (array input); SQL's grammar sees a string literal, and the type's input function reads its contents"
+
+[[block]]
+source = "rowtypes"
+block_sha256 = "7365342cf279b332d8054c5f222c74f1b8118b6c04b8198d48ebbce3accd9dd8"
+first_line = "'( <val1> , <val2> , ... )'"
+disposition = "fragment"
+reason = "the text inside a string constant (composite value input); SQL's grammar sees a string literal, and the type's input function reads its contents"
+
+[[block]]
+source = "rangetypes"
+block_sha256 = "912b836c7ebbd04bb4ae82381b57a8b3727735b588e3e9c598824e334a054a48"
+first_line = "(<lower-bound>,<upper-bound>)"
+disposition = "fragment"
+reason = "the text inside a string constant (range input); SQL's grammar sees a string literal, and the type's input function reads its contents"
+
+[[block]]
+source = "functions"
+block_sha256 = "f7451a3c6a68e8ccb33fcd2001610bfab776f5ae20e007ffd4fdd82c17af762d"
+first_line = "repeat ( <text>, <integer> )"
+disposition = "fragment"
+reason = "an example of the chapter's signature notation; repeat is catalogued from its table"
+
+[[block]]
+source = "functions-logical"
+block_sha256 = "2a635068bc96ca34a463c8071a45a29d6ed0d88993e13d702aac13a7f0041d00"
+first_line = "<boolean> AND <boolean>"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["and", "or", "not"]
+
+[[block]]
+source = "functions-comparison"
+block_sha256 = "b7b0ac221448cf323ef15dacec70fb28003e31a245cc0d81dc12e54de1edf272"
+first_line = "<a> BETWEEN <x> AND <y>"
+disposition = "restated"
+forms = ["pg.expressions.comparison.between-and"]
+
+[[block]]
+source = "functions-comparison"
+block_sha256 = "18fbc5ca457e3f20bcfb0c77b23940ecf227b3864629e1003d5b04a28ea6e596"
+first_line = "<a> >= <x> AND <a> <= <y>"
+disposition = "fragment"
+reason = "the comparison BETWEEN is equivalent to; an illustration, not a form of its own"
+
+[[block]]
+source = "functions-comparison"
+block_sha256 = "91d77d8e8b896796705d76b063532b18a06f497d92f827f6a3d43a34cf86c898"
+first_line = "<a> IS DISTINCT FROM <b>"
+disposition = "restated"
+forms = ["pg.expressions.comparison.is-distinct-from", "pg.expressions.comparison.is-not-distinct-from"]
+
+[[block]]
+source = "functions-comparison"
+block_sha256 = "a6fdc88993e43739c2fb718eb06ecedd64d64b82c3983728ef5e4cf05e62673c"
+first_line = "<expression> IS NULL"
+disposition = "restated"
+forms = ["pg.expressions.comparison.is-null", "pg.expressions.comparison.is-not-null"]
+
+[[block]]
+source = "functions-comparison"
+block_sha256 = "20c2321a66e754ca8d5abf4ab00eb55e7fd0a16bffba5b97b93f718f1ae5e58e"
+first_line = "<expression> ISNULL"
+disposition = "restated"
+forms = ["pg.expressions.comparison.isnull", "pg.expressions.comparison.notnull"]
+
+[[block]]
+source = "functions-comparison"
+block_sha256 = "2fab938bb54d8877010989bb6e46aad3efd9ecf5c4327693c201ddd5a78715cb"
+first_line = "<boolean_expression> IS TRUE"
+disposition = "restated"
+forms = ["pg.expressions.comparison.is-true", "pg.expressions.comparison.is-not-true", "pg.expressions.comparison.is-false", "pg.expressions.comparison.is-not-false", "pg.expressions.comparison.is-unknown", "pg.expressions.comparison.is-not-unknown"]
+
+[[block]]
+source = "functions-string"
+block_sha256 = "7bc2dcb49ed86f0841922414c824b590f50366aaf0ad7422f201d3f30957b583"
+first_line = "format(<formatstr text> [ , <formatarg \"any\"> [ , ... ] ])"
+disposition = "restated"
+forms = ["pg.functions.string.format"]
+
+[[block]]
+source = "functions-string"
+block_sha256 = "41c4702722a3391233ae5fc4a6f27a43060c2154fdb20c94803bee4b3aca674f"
+first_line = "%[<position>][<flags>][<width>]<type>"
+disposition = "fragment"
+reason = "the text inside a string constant (a format() format specifier); SQL's grammar sees a string literal, and the type's input function reads its contents"
+
+[[block]]
+source = "functions-matching"
+block_sha256 = "dea36a3ac9ca28c2d884408eaee16cc4b2b11deb28452693313bfa496cada8d9"
+first_line = "<string> LIKE <pattern> [ ESCAPE <escape-character> ]"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["like", "not-like"]
+
+[[block]]
+source = "functions-matching"
+block_sha256 = "da5f7fe135e17dc374e2d718e8cc2a316371aad43caeacdfe077d43a187da8d8"
+first_line = "<string> SIMILAR TO <pattern> [ ESCAPE <escape-character> ]"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["similar-to", "not-similar-to"]
+
+[[block]]
+source = "functions-matching"
+block_sha256 = "faa03ba4ddd1bb71a2054626379895ba162c1beaf1cddaf7df4030fc364f1615"
+first_line = "substring(<string> similar <pattern> escape <escape-character>)"
+disposition = "restated"
+forms = ["pg.functions.string.substring-similar-escape"]
+
+[[block]]
+source = "functions-matching"
+block_sha256 = "fb3fecca87471b4d71b7fa2f7ccc6dc434286addd4fa1e44011bc9e6560ac96f"
+first_line = "substring(<string> from <pattern> for <escape-character>)"
+disposition = "restated"
+forms = ["pg.functions.string.substring-from-for"]
+
+[[block]]
+source = "functions-matching"
+block_sha256 = "73f6ab06cf69021d73a2f3aadeb0149cd50427839b164fbf38350ae8c3eb52f8"
+first_line = "substring(<string>, <pattern>, <escape-character>)"
+disposition = "calls"
+
+[[block]]
+source = "functions-datetime"
+block_sha256 = "72b145aafed39e84d84d34c2f74e9b740282b4bef257ff3ead08ce40a14c83a5"
+first_line = "(<start1>, <end1>) OVERLAPS (<start2>, <end2>)"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["overlaps", "overlaps-length"]
+
+[[block]]
+source = "functions-datetime"
+block_sha256 = "9eaf3fe74d44572d7ffc0207c1f775ac954480ba02afca7de3028cb50caf8baf"
+first_line = "EXTRACT(<field> FROM <source>)"
+disposition = "restated"
+forms = ["pg.functions.datetime.extract"]
+
+[[block]]
+source = "functions-datetime"
+block_sha256 = "af08200ef96c62cd709b2dc25bd6655d2cb6e4c56b54cdbe4c2285bc626e06fd"
+first_line = "date_part('<field>', <source>)"
+disposition = "restated"
+forms = ["pg.functions.datetime.date-part"]
+
+[[block]]
+source = "functions-datetime"
+block_sha256 = "611cd7867d125d518c3161ed784a7159ad52ee6b1b2e84f18bc048ff1179b924"
+first_line = "date_trunc(<field>, <source> [ , <time_zone> ])"
+disposition = "restated"
+forms = ["pg.functions.datetime.date-trunc"]
+
+[[block]]
+source = "functions-datetime"
+block_sha256 = "8827a4467dff25d3c7523a775fa25f0f0e4766340fc6215ab56a87f6a8a6794c"
+first_line = "date_bin(<stride>, <source>, <origin>)"
+disposition = "restated"
+forms = ["pg.functions.datetime.date-bin"]
+
+[[block]]
+source = "functions-datetime"
+block_sha256 = "48566846e07ed9cddb81feefed1175a6da0f4c7c5a9cafc695d382f8aed65965"
+first_line = "CURRENT_DATE"
+disposition = "restated"
+forms = ["pg.functions.datetime.current-date-noparens", "pg.functions.datetime.current-time-noparens", "pg.functions.datetime.current-timestamp-noparens", "pg.functions.datetime.current-time", "pg.functions.datetime.current-timestamp", "pg.functions.datetime.localtime-noparens", "pg.functions.datetime.localtimestamp-noparens", "pg.functions.datetime.localtime", "pg.functions.datetime.localtimestamp"]
+
+[[block]]
+source = "functions-datetime"
+block_sha256 = "bc67827b66fc08e2c4633314555a6393ebfcd1060fc5977e908239cb2d4d8046"
+first_line = "transaction_timestamp()"
+disposition = "restated"
+forms = ["pg.functions.datetime.transaction-timestamp", "pg.functions.datetime.statement-timestamp", "pg.functions.datetime.clock-timestamp", "pg.functions.datetime.timeofday", "pg.functions.datetime.now"]
+
+[[block]]
+source = "functions-datetime"
+block_sha256 = "a1ef63cb63780010b99918085352317f16fdd9d2b27f5b1952b86280a4ac83ad"
+first_line = "pg_sleep ( <double precision> )"
+disposition = "calls"
+
+[[block]]
+source = "functions-xml"
+block_sha256 = "0276663353fba27791f2903baaf4a5fe60429a2742b969b4661345228b55ce6e"
+first_line = "xmltext ( <text> )"
+disposition = "calls"
+
+[[block]]
+source = "functions-xml"
+block_sha256 = "07dd448c69bb539c6156fdb975380b2c30b12fbbba6dc3fec2c87586d9234484"
+first_line = "xmlcomment ( <text> )"
+disposition = "calls"
+
+[[block]]
+source = "functions-xml"
+block_sha256 = "a6f208936e9a89ceec308e6a5d0c16f681bd9ffbf4c3898cb92496b03aebe632"
+first_line = "xmlconcat ( <xml> [ , ... ] )"
+disposition = "calls"
+
+[[block]]
+source = "functions-xml"
+block_sha256 = "ff85590a3893571a082a8b664a983928a0206b737253f8257ea7d1ade0aa3897"
+first_line = "xmlelement ( NAME <name> [ , XMLATTRIBUTES ( <attvalue> [ AS <attname> ] [ , ... ] ) ] [ , <content>"
+disposition = "calls"
+
+[[block]]
+source = "functions-xml"
+block_sha256 = "ccb39d8f21aef61e65adc9d8084c3d03c4fcde03ca6e1d32eb02e9f687754995"
+first_line = "xmlforest ( <content> [ AS <name> ] [ , ... ] )"
+disposition = "calls"
+
+[[block]]
+source = "functions-xml"
+block_sha256 = "a35533b87e077dcad218055e63f744a3560861b63a208aca612c582ce4519f44"
+first_line = "xmlpi ( NAME <name> [ , <content> ] )"
+disposition = "calls"
+
+[[block]]
+source = "functions-xml"
+block_sha256 = "fe356ffb6dcc5d62b83d472bd7b19aecc72a603084c421037b143ddd8005278b"
+first_line = "xmlroot ( <xml>, VERSION {<text>|NO VALUE} [ , STANDALONE {YES|NO|NO VALUE} ] )"
+disposition = "calls"
+
+[[block]]
+source = "functions-xml"
+block_sha256 = "87cce5d9b7fcb5408021ce6757d17bc47e0e8df35411c0edd0f2f4921d06262f"
+first_line = "xmlagg ( <xml> )"
+disposition = "calls"
+
+[[block]]
+source = "functions-xml"
+block_sha256 = "42f3dc7364849fdfecf9529438f47960e80bce306d19abbea1c79693ebdc8307"
+first_line = "<xml> IS DOCUMENT"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["is-document"]
+
+[[block]]
+source = "functions-xml"
+block_sha256 = "7d6fe423ed49574de48c48c81b6c4319c679ca238034894cad8a6a7427e77d8d"
+first_line = "<xml> IS NOT DOCUMENT"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["is-not-document"]
+
+[[block]]
+source = "functions-xml"
+block_sha256 = "de4a5ba1a92f73a58d53729e5f58f4a1f2aeda58a721f4350f7659b5811bfd09"
+first_line = "XMLEXISTS ( <text> PASSING [ BY {REF|VALUE} ] <xml> [ BY {REF|VALUE} ] )"
+disposition = "calls"
+
+[[block]]
+source = "functions-xml"
+block_sha256 = "ae04f07f83b4ac632f84c7e90cd40753c0129197f73c8904905d21fe23fe812b"
+first_line = "xml_is_well_formed ( <text> )"
+disposition = "calls"
+
+[[block]]
+source = "functions-xml"
+block_sha256 = "ceec97ce992225c83be128fbfdf30cbc87945d024dc16161d9420c6b21be92fc"
+first_line = "xpath ( <xpath text>, <xml xml> [ , <nsarray text[]> ] )"
+disposition = "calls"
+
+[[block]]
+source = "functions-xml"
+block_sha256 = "ea668302f22e2ac54f9a61cd85c47c050040b023e18ed9ee487fcdde1f077737"
+first_line = "xpath_exists ( <xpath text>, <xml xml> [ , <nsarray text[]> ] )"
+disposition = "calls"
+
+[[block]]
+source = "functions-xml"
+block_sha256 = "9c6595fec9a8cb151602e00ff285066f028f2e5913c683078739c77c1bc6c687"
+first_line = "XMLTABLE ("
+disposition = "calls"
+
+[[block]]
+source = "functions-xml"
+block_sha256 = "4710f7d1c90242a6c3f9ab219e8db0d0d6094c6d3ad320551ae56e1b404ecfee"
+first_line = "table_to_xml ( <table regclass>, <nulls boolean>,"
+disposition = "calls"
+
+[[block]]
+source = "functions-xml"
+block_sha256 = "a5f3f2b7d8cddd372e76b3ae3ecfc294983bbc5210ed14218fa1f16bc06acb67"
+first_line = "table_to_xmlschema ( <table regclass>, <nulls boolean>,"
+disposition = "calls"
+
+[[block]]
+source = "functions-xml"
+block_sha256 = "91610331ad0c24e01751117150b2ab931e0deef4e21d5788c110305c4be507ff"
+first_line = "table_to_xml_and_xmlschema ( <table regclass>, <nulls boolean>,"
+disposition = "calls"
+
+[[block]]
+source = "functions-xml"
+block_sha256 = "601454ac38f19fb8f694f77a1cc06531c0891fdf98924f72e894d7da770a3394"
+first_line = "schema_to_xml ( <schema name>, <nulls boolean>,"
+disposition = "calls"
+
+[[block]]
+source = "functions-json"
+block_sha256 = "309fb6c30bc61d6ccda72de87ff7ba05c36b137d67404cb3b10a4bdb1cdc411c"
+first_line = "? (<condition>)"
+disposition = "fragment"
+reason = "a jsonpath filter expression, written inside a jsonpath string constant"
+
+[[block]]
+source = "functions-json"
+block_sha256 = "fce0c5e75e14c2f523e134fd8c7f8ec84ba4cf1d72bddc582086004e2e3602fa"
+first_line = "JSON_EXISTS ("
+disposition = "restated"
+forms = ["pg.functions.json.json-exists"]
+
+[[block]]
+source = "functions-json"
+block_sha256 = "4b1b3fed9708618bbea8e6a78910930af090e48b1d010cf9915bf5ec1c68f64e"
+first_line = "JSON_QUERY ("
+disposition = "restated"
+forms = ["pg.functions.json.json-query"]
+
+[[block]]
+source = "functions-json"
+block_sha256 = "8fbd23f5c3e5a3d3cae234682de4d283a9478cff247ccefc788d6e5bf4a3cf1a"
+first_line = "JSON_VALUE ("
+disposition = "restated"
+forms = ["pg.functions.json.json-value"]
+
+[[block]]
+source = "functions-json"
+block_sha256 = "280c709801f6d1e15c987f7ecb42312336d54554103cd898d111ec6e3b71a6c5"
+first_line = "JSON_TABLE ("
+disposition = "calls"
+
+[[block]]
+source = "functions-conditional"
+block_sha256 = "c220c949341b2a619184a9e60953ba8d6c051203c5bdb564455509fa20a81e21"
+first_line = "CASE WHEN <condition> THEN <result>"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["case-searched"]
+whole = true
+
+[[block]]
+source = "functions-conditional"
+block_sha256 = "fa964806896e09da997d24dd3bc00aabee5af45298c2df972e40a1493efed364"
+first_line = "CASE <expression>"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["case-simple"]
+whole = true
+
+[[block]]
+source = "functions-conditional"
+block_sha256 = "011994ce129180ce7004fa05f33aec7310e249149c51d1a64a31bfa894ba7e49"
+first_line = "COALESCE(<value> [ , ... ])"
+disposition = "calls"
+
+[[block]]
+source = "functions-conditional"
+block_sha256 = "295f7e570fdea51190f0194fdebaee61564cf37bfb020abc20fdf715ea181273"
+first_line = "NULLIF(<value1>, <value2>)"
+disposition = "calls"
+
+[[block]]
+source = "functions-conditional"
+block_sha256 = "288b0ff7296b63ecfde35aea44b9d24a88ae5e46d517283bd88160dc004de699"
+first_line = "GREATEST(<value> [ , ... ])"
+disposition = "calls"
+
+[[block]]
+source = "functions-conditional"
+block_sha256 = "81072d4267118e94fe84076143e82fc7bfc80faee8202684fa22d792ee8074c8"
+first_line = "LEAST(<value> [ , ... ])"
+disposition = "calls"
+
+[[block]]
+source = "functions-subquery"
+block_sha256 = "ba0352bd6161957ea5bff6f1716f24832a39c9ca692a20990cac292118c94c29"
+first_line = "EXISTS (<subquery>)"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["exists"]
+
+[[block]]
+source = "functions-subquery"
+block_sha256 = "b5764ba9dcc310dd96f59cddb33df8ba23758dc2c6a5817272d68c4a3c21e392"
+first_line = "<expression> IN (<subquery>)"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["in"]
+
+[[block]]
+source = "functions-subquery"
+block_sha256 = "f3ced12a4cc508564fd00b5022649bf629ef206020757f0006c66d85cf046262"
+first_line = "<row_constructor> IN (<subquery>)"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["in-row"]
+
+[[block]]
+source = "functions-subquery"
+block_sha256 = "b37a91bff9db273b7bb9c722cf32ef2b7443d9783bc607e6cef5cceca4c1fb2b"
+first_line = "<expression> NOT IN (<subquery>)"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["not-in"]
+
+[[block]]
+source = "functions-subquery"
+block_sha256 = "59e52c08d17ed2bf1c335b7a61404864de61964a5d11ad8ba26d8b9eefe1082b"
+first_line = "<row_constructor> NOT IN (<subquery>)"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["not-in-row"]
+
+[[block]]
+source = "functions-subquery"
+block_sha256 = "31406e57c8a246afb1e97fc683008896e99e7d7d5a88a0c82db7beb325a5dd31"
+first_line = "<expression> <operator> ANY (<subquery>)"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["any", "some"]
+
+[[block]]
+source = "functions-subquery"
+block_sha256 = "423330def9c53b362ab2e02bd53ad56a3b9c2a6a5b399fa6c5a23dcbf19ef374"
+first_line = "<row_constructor> <operator> ANY (<subquery>)"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["any-row", "some-row"]
+
+[[block]]
+source = "functions-subquery"
+block_sha256 = "a16ec3d732416a95b3006a88ae238e0c3fabcac72d01cdd93c882b246030b173"
+first_line = "<expression> <operator> ALL (<subquery>)"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["all"]
+
+[[block]]
+source = "functions-subquery"
+block_sha256 = "52afae4f460e09c5289385cf9ddb0893bde4d948593414bee15b056851eaf2e0"
+first_line = "<row_constructor> <operator> ALL (<subquery>)"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["all-row"]
+
+[[block]]
+source = "functions-subquery"
+block_sha256 = "c71e56f55baf4a0f2f33e3cc4f24403505fb2e75005174d99663dee694ef1b3b"
+first_line = "<row_constructor> <operator> (<subquery>)"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["row-comparison"]
+
+[[block]]
+source = "functions-comparisons"
+block_sha256 = "fecf1002dc9d6845b44ce07bb93a8de54b561ae30b561df3eea6989673c19221"
+first_line = "<expression> IN (<value> [ , ... ])"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["in-list"]
+
+[[block]]
+source = "functions-comparisons"
+block_sha256 = "3b3125bfd3415c6490e003d3099f305091b654c357577abf01f2f3ac41690a0a"
+first_line = "<expression> = <value1>"
+disposition = "fragment"
+reason = "the OR chain IN is equivalent to; an illustration, not a form of its own"
+
+[[block]]
+source = "functions-comparisons"
+block_sha256 = "b6fad4687120f2e6fa7eb98626ef019059a89fac3e5539294f6c148193f4691f"
+first_line = "<expression> NOT IN (<value> [ , ... ])"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["not-in-list"]
+
+[[block]]
+source = "functions-comparisons"
+block_sha256 = "0c698618e87b0242f5c9f8ac737537388f963f0a767532f93e03fbf2f63c1f02"
+first_line = "<expression> <> <value1>"
+disposition = "fragment"
+reason = "the AND chain NOT IN is equivalent to; an illustration, not a form of its own"
+
+[[block]]
+source = "functions-comparisons"
+block_sha256 = "01c5290b5a4d001a1c5079553b5e83b006bb962c5dff70df6a4e1fe75c3229cc"
+first_line = "<expression> <operator> ANY (<array expression>)"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["any-array", "some-array"]
+
+[[block]]
+source = "functions-comparisons"
+block_sha256 = "335a649b2fc41917dfa4d15f4091abeb781214bf047f99148153c1d0e1648ca3"
+first_line = "<expression> <operator> ALL (<array expression>)"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["all-array"]
+
+[[block]]
+source = "functions-comparisons"
+block_sha256 = "4f09d381cdda19333abd4271f53dabea0979829fd15937803dde121d95a7805f"
+first_line = "<row_constructor> <operator> <row_constructor>"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["row-comparison"]
+
+[[block]]
+source = "functions-comparisons"
+block_sha256 = "c203f1f94d043ff4b1270f1e8d7ea0b2655d24d1c5646f9e67270d28a7d09e88"
+first_line = "<row_constructor> IS DISTINCT FROM <row_constructor>"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["row-is-distinct-from"]
+
+[[block]]
+source = "functions-comparisons"
+block_sha256 = "a5e48a77ddbf14131389fe658c1e4c8c149e1175f4c7b5dbe931368aa66ff1ce"
+first_line = "<row_constructor> IS NOT DISTINCT FROM <row_constructor>"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["row-is-not-distinct-from"]
+
+[[block]]
+source = "functions-comparisons"
+block_sha256 = "9cf777b82cd5a7aa3a31ab0767fd5bc9166599eb89a008512246b2912698ea4e"
+first_line = "<record> <operator> <record>"
+disposition = "form"
+kind = "special"
+family = "expressions"
+labels = ["record-comparison"]
+
+[[block]]
+source = "functions-event-triggers"
+block_sha256 = "186554b00591f8ffdb267cb6083a2ef4fa64aa8035bef765315b646a029a1826"
+first_line = "pg_event_trigger_ddl_commands ()"
+disposition = "calls"
+
+[[block]]
+source = "functions-event-triggers"
+block_sha256 = "9f764d2e0ef11457a5312034422b819dba6db158239f7c1268b0e85b9f6857ec"
+first_line = "pg_event_trigger_dropped_objects ()"
+disposition = "calls"
+
+[[block]]
+source = "functions-statistics"
+block_sha256 = "dcd48131144469073fe6902a7c39d54f038c67c1a74cbf86b18ce8c353a80855"
+first_line = "pg_mcv_list_items ( <pg_mcv_list> )"
+disposition = "calls"
+
+[[block]]
+source = "indexes-intro"
+block_sha256 = "eb12d6e480081df0762ebdbbe51b84f87e9a8d2dcb9161d27564943fd1013a7f"
+first_line = "<indexed-column> <indexable-operator> <comparison-value>"
+disposition = "fragment"
+reason = "the shape of a predicate an index can serve, in prose terms; not a form"
+
+[[block]]
+source = "indexes-intro"
+block_sha256 = "90f7084d8bbf4780b4131e02753e9f4aa29a5f5acebbc9d28471aa116a10515d"
+first_line = "<comparison-value> <operator> <indexed-column>"
+disposition = "fragment"
+reason = "the commuted shape of a predicate an index can serve, in prose terms; not a form"
+
+[[block]]
+source = "indexes-types"
+block_sha256 = "9d4c2d6540f5d3c7b3cd558dff8fb72dffc300934ba11e31f9b9362fe488818f"
+first_line = "< <= = >= >"
+disposition = "fragment"
+reason = "the operators an index access method supports, listed; each operator is catalogued from its function table"
+
+[[block]]
+source = "indexes-types"
+block_sha256 = "43e6557480fedbbf25df85348fec42458db5bd3febcf439bc1a34206a44c77da"
+first_line = "="
+disposition = "fragment"
+reason = "the operators an index access method supports, listed; each operator is catalogued from its function table"
+
+[[block]]
+source = "indexes-types"
+block_sha256 = "f4d4f46de9bb68e3b32ce55ad0f3a186889598284f9c885e4da784d0b936efcf"
+first_line = "<< &< &> >> <<| &<| |&> |>> @> <@ ~= &&"
+disposition = "fragment"
+reason = "the operators an index access method supports, listed; each operator is catalogued from its function table"
+
+[[block]]
+source = "indexes-types"
+block_sha256 = "f56d0e26d2915968f1852536c06cd59f97a69841032f416814701ce56c9b463a"
+first_line = "<< >> ~= <@ <<| |>>"
+disposition = "fragment"
+reason = "the operators an index access method supports, listed; each operator is catalogued from its function table"
+
+[[block]]
+source = "indexes-types"
+block_sha256 = "7d124e90a6ba6e22431b268cd93b260676046b950b256e087aea999ca3f09eda"
+first_line = "<@ @> = &&"
+disposition = "fragment"
+reason = "the operators an index access method supports, listed; each operator is catalogued from its function table"
+
+[[block]]
+source = "indexes-unique"
+block_sha256 = "34c99717b0aaf566b8957827755a7f3ae20a26900042841583c1cbe33df42066"
+first_line = "CREATE UNIQUE INDEX <name> ON <table> (<column> [ , ... ]) [ NULLS [ NOT ] DISTINCT ];"
+disposition = "restated"
+forms = ["pg.ddl.create-index"]
+
+[[block]]
+source = "indexes-opclass"
+block_sha256 = "3bcaf6442a2030993bb779899fbb439e2f5a308f520d853a3bf4cfa5fc9e84f6"
+first_line = "CREATE INDEX <name> ON <table> (<column> <opclass> [ ( <opclass_options> ) ] [ <sort options> ] [ , "
+disposition = "restated"
+forms = ["pg.ddl.create-index"]
+
+[[block]]
+source = "textsearch-controls"
+block_sha256 = "43ca48c758eb69c61eb480a293ea789d5cc4298b1ecd7abca59da8490b8f3c36"
+first_line = "to_tsvector([ <config> <regconfig>, ] <document> <text>) returns <tsvector>"
+disposition = "restated"
+forms = ["pg.functions.textsearch.to-tsvector"]
+
+[[block]]
+source = "textsearch-controls"
+block_sha256 = "9de36c929db1bb154b6e43422dadac5089369408b6f143b12385b0bdd896aefb"
+first_line = "to_tsquery([ <config> <regconfig>, ] <querytext> <text>) returns <tsquery>"
+disposition = "restated"
+forms = ["pg.functions.textsearch.to-tsquery"]
+
+[[block]]
+source = "textsearch-controls"
+block_sha256 = "2745649ff151d9f5c37082175eb0f37261e452f39d84275b7deb385aa86ba407"
+first_line = "plainto_tsquery([ <config> <regconfig>, ] <querytext> <text>) returns <tsquery>"
+disposition = "restated"
+forms = ["pg.functions.textsearch.plainto-tsquery"]
+
+[[block]]
+source = "textsearch-controls"
+block_sha256 = "67345bf585ef688dc3e2cb5462eb5fc100b47606bec251fa759eac1a54c901e0"
+first_line = "phraseto_tsquery([ <config> <regconfig>, ] <querytext> <text>) returns <tsquery>"
+disposition = "restated"
+forms = ["pg.functions.textsearch.phraseto-tsquery"]
+
+[[block]]
+source = "textsearch-controls"
+block_sha256 = "c97c5f4ed88e7f0486bd767d848ca5d621c6880ab8d0c58c0b1dcbf7acf7e204"
+first_line = "websearch_to_tsquery([ <config> <regconfig>, ] <querytext> <text>) returns <tsquery>"
+disposition = "restated"
+forms = ["pg.functions.textsearch.websearch-to-tsquery"]
+
+[[block]]
+source = "textsearch-controls"
+block_sha256 = "5b60d417d3ca9fba73ffcb68f3c0a782dfcd48a0ea9c3d3d1c7993c9e07c94f8"
+first_line = "{D-weight, C-weight, B-weight, A-weight}"
+disposition = "fragment"
+reason = "the text inside a string constant (ts_rank weights array); SQL's grammar sees a string literal, and the type's input function reads its contents"
+
+[[block]]
+source = "textsearch-controls"
+block_sha256 = "fd869f644fb5a1d0d4c12c1e26dd1d030a46247b6d9a81205a76f0aeee331de9"
+first_line = "ts_headline([ <config> <regconfig>, ] <document> <text>, <query> <tsquery> [ , <options> <text> ]) r"
+disposition = "restated"
+forms = ["pg.functions.textsearch.ts-headline"]
+
+[[block]]
+source = "textsearch-features"
+block_sha256 = "d3bbf19592bc403cb4be0dffc0ecca12305e1bc2c40f9b77ddba76c491943c3f"
+first_line = "tsvector_update_trigger(<tsvector_column_name>, <config_name>, <text_column_name> [ , ... ])"
+disposition = "restated"
+forms = ["pg.functions.trigger.tsvector-update-trigger", "pg.functions.trigger.tsvector-update-trigger-column"]
+
+[[block]]
+source = "textsearch-features"
+block_sha256 = "b50365f8f3b30bb7ab5f27fef0d8ae9785d477ddf2a2aaa1e9b3b10c9471ee5e"
+first_line = "ts_stat(<sqlquery> <text>, [ <weights> <text>, ]"
+disposition = "restated"
+forms = ["pg.functions.textsearch.ts-stat"]
+
+[[block]]
+source = "textsearch-debugging"
+block_sha256 = "91bbba8d5da3f401a4c3b692cf854518990066fb7cb3c32ffa619e453288d753"
+first_line = "ts_debug([ <config> <regconfig>, ] <document> <text>,"
+disposition = "restated"
+forms = ["pg.functions.textsearch.ts-debug"]
+
+[[block]]
+source = "textsearch-debugging"
+block_sha256 = "0330e706230527f3b519e2f49433641ccf6ccd08106e3586e971bbe7feba97a3"
+first_line = "ts_parse(<parser_name> <text>, <document> <text>,"
+disposition = "restated"
+forms = ["pg.functions.textsearch.ts-parse"]
+
+[[block]]
+source = "textsearch-debugging"
+block_sha256 = "fea2d0cd0ef6c3ec4a7ef10fd37cf0bd35c4720adc18d0b7704198cd2cdc71e5"
+first_line = "ts_token_type(<parser_name> <text>, OUT <tokid> <integer>,"
+disposition = "restated"
+forms = ["pg.functions.textsearch.ts-token-type"]
+
+[[block]]
+source = "textsearch-debugging"
+block_sha256 = "f458ba102946e774f36e7d00d25d47a21eb57ceaebe017464f6534ff700eed87"
+first_line = "ts_lexize(<dict> <regdictionary>, <token> <text>) returns <text[]>"
+disposition = "restated"
+forms = ["pg.functions.textsearch.ts-lexize"]
+
+[[block]]
+source = "textsearch-psql"
+block_sha256 = "cedf949a040c6305e5cae1da5a714825aaf872cfc35b46a0b411132463214cbb"
+first_line = "\\dF{d,p,t}[ + ] [ PATTERN ]"
+disposition = "fragment"
+reason = "a psql meta-command, read by psql and never sent to the server"
+
+[[signatures]]
+source = "functions-json"
+anchor = "The SQL/JSON Path Language"
+reason = "jsonpath operators and methods: the jsonpath language is written inside a jsonpath string constant, which SQL's grammar reads as a string literal; the jsonb_path_* functions and the @? and @@ operators that take a jsonpath are catalogued"
+
+[[form]]
+source = "doc.sql-createrole"
+anchor = "Compatibility"
+kind = "statement"
+label = "with-user"
+grammar = ["CREATE ROLE <name> [ WITH ] USER <role_name> [, ...]"]
+basis = "synopsis"
+page_sha256 = "45b54a17c850ebd2059484f673e834035418aae6bf6e18d10241cba36be54c98"
+
+[[form]]
+source = "doc.sql-createrole"
+anchor = "Compatibility"
+kind = "statement"
+label = "in-group"
+grammar = ["CREATE ROLE <name> [ WITH ] IN GROUP <role_name> [, ...]"]
+basis = "synopsis"
+page_sha256 = "45b54a17c850ebd2059484f673e834035418aae6bf6e18d10241cba36be54c98"
+
+[[form]]
+source = "doc.functions-comparison"
+anchor = "Comparison Operators table"
+kind = "special"
+label = "op-lt"
+family = "expressions"
+grammar = ["<datatype> < <datatype>"]
+basis = "table"
+page_sha256 = "8e416231deadfa822b96c2e6020a2f5fdd1cb5b6a76febd7988088832592db32"
+
+[[form]]
+source = "doc.functions-comparison"
+anchor = "Comparison Operators table"
+kind = "special"
+label = "op-gt"
+family = "expressions"
+grammar = ["<datatype> > <datatype>"]
+basis = "table"
+page_sha256 = "8e416231deadfa822b96c2e6020a2f5fdd1cb5b6a76febd7988088832592db32"
+
+[[form]]
+source = "doc.functions-comparison"
+anchor = "Comparison Operators table"
+kind = "special"
+label = "op-lt-eq"
+family = "expressions"
+grammar = ["<datatype> <= <datatype>"]
+basis = "table"
+page_sha256 = "8e416231deadfa822b96c2e6020a2f5fdd1cb5b6a76febd7988088832592db32"
+
+[[form]]
+source = "doc.functions-comparison"
+anchor = "Comparison Operators table"
+kind = "special"
+label = "op-gt-eq"
+family = "expressions"
+grammar = ["<datatype> >= <datatype>"]
+basis = "table"
+page_sha256 = "8e416231deadfa822b96c2e6020a2f5fdd1cb5b6a76febd7988088832592db32"
+
+[[form]]
+source = "doc.functions-comparison"
+anchor = "Comparison Operators table"
+kind = "special"
+label = "op-eq"
+family = "expressions"
+grammar = ["<datatype> = <datatype>"]
+basis = "table"
+page_sha256 = "8e416231deadfa822b96c2e6020a2f5fdd1cb5b6a76febd7988088832592db32"
+
+[[form]]
+source = "doc.functions-comparison"
+anchor = "Comparison Operators table"
+kind = "special"
+label = "op-lt-gt"
+family = "expressions"
+grammar = ["<datatype> <> <datatype>"]
+basis = "table"
+page_sha256 = "8e416231deadfa822b96c2e6020a2f5fdd1cb5b6a76febd7988088832592db32"
+
+[[form]]
+source = "doc.functions-comparison"
+anchor = "Comparison Operators table"
+kind = "special"
+label = "op-bang-eq"
+family = "expressions"
+grammar = ["<datatype> != <datatype>"]
+basis = "table"
+page_sha256 = "8e416231deadfa822b96c2e6020a2f5fdd1cb5b6a76febd7988088832592db32"
+
+[[form]]
+source = "doc.sql-syntax-lexical"
+anchor = "Identifiers and Key Words"
+kind = "special"
+label = "identifier"
+grammar = ["<identifier>"]
+basis = "prose"
+page_sha256 = "12ded506249792f4726a1e1b9a87eee6c656b164b25f0cc341eeec3e02a61dd9"
+
+[[form]]
+source = "doc.sql-syntax-lexical"
+anchor = "Identifiers and Key Words"
+kind = "special"
+label = "quoted-identifier"
+grammar = ["\"<identifier>\""]
+basis = "prose"
+page_sha256 = "12ded506249792f4726a1e1b9a87eee6c656b164b25f0cc341eeec3e02a61dd9"
+
+[[form]]
+source = "doc.sql-syntax-lexical"
+anchor = "Identifiers and Key Words"
+kind = "special"
+label = "unicode-identifier"
+grammar = ["U&\"<identifier>\" [ UESCAPE '<escape_character>' ]"]
+basis = "prose"
+page_sha256 = "12ded506249792f4726a1e1b9a87eee6c656b164b25f0cc341eeec3e02a61dd9"
+
+[[form]]
+source = "doc.sql-syntax-lexical"
+anchor = "Constants / String Constants"
+kind = "special"
+label = "string"
+grammar = ["'<characters>'"]
+basis = "prose"
+page_sha256 = "12ded506249792f4726a1e1b9a87eee6c656b164b25f0cc341eeec3e02a61dd9"
+
+[[form]]
+source = "doc.sql-syntax-lexical"
+anchor = "Constants / String Constants"
+kind = "special"
+label = "string-continuation"
+grammar = ["'<characters>' <newline> '<characters>'"]
+basis = "prose"
+page_sha256 = "12ded506249792f4726a1e1b9a87eee6c656b164b25f0cc341eeec3e02a61dd9"
+
+[[form]]
+source = "doc.sql-syntax-lexical"
+anchor = "Constants / String Constants with C-Style Escapes"
+kind = "special"
+label = "escape-string"
+grammar = ["E'<characters>'"]
+basis = "prose"
+page_sha256 = "12ded506249792f4726a1e1b9a87eee6c656b164b25f0cc341eeec3e02a61dd9"
+
+[[form]]
+source = "doc.sql-syntax-lexical"
+anchor = "Constants / String Constants with Unicode Escapes"
+kind = "special"
+label = "unicode-string"
+grammar = ["U&'<characters>' [ UESCAPE '<escape_character>' ]"]
+basis = "prose"
+page_sha256 = "12ded506249792f4726a1e1b9a87eee6c656b164b25f0cc341eeec3e02a61dd9"
+
+[[form]]
+source = "doc.sql-syntax-lexical"
+anchor = "Constants / Dollar-Quoted String Constants"
+kind = "special"
+label = "dollar-quoted-string"
+grammar = ["$[ <tag> ]$<characters>$[ <tag> ]$"]
+basis = "prose"
+page_sha256 = "12ded506249792f4726a1e1b9a87eee6c656b164b25f0cc341eeec3e02a61dd9"
+
+[[form]]
+source = "doc.sql-syntax-lexical"
+anchor = "Constants / Bit-String Constants"
+kind = "special"
+label = "bit-string"
+grammar = ["B'<binary_digits>'"]
+basis = "prose"
+page_sha256 = "12ded506249792f4726a1e1b9a87eee6c656b164b25f0cc341eeec3e02a61dd9"
+
+[[form]]
+source = "doc.sql-syntax-lexical"
+anchor = "Constants / Bit-String Constants"
+kind = "special"
+label = "hex-bit-string"
+grammar = ["X'<hex_digits>'"]
+basis = "prose"
+page_sha256 = "12ded506249792f4726a1e1b9a87eee6c656b164b25f0cc341eeec3e02a61dd9"
+
+[[form]]
+source = "doc.sql-syntax-lexical"
+anchor = "Constants / Numeric Constants"
+kind = "special"
+label = "digit-separators"
+grammar = ["<digits>_<digits>"]
+basis = "prose"
+page_sha256 = "12ded506249792f4726a1e1b9a87eee6c656b164b25f0cc341eeec3e02a61dd9"
+
+[[form]]
+source = "doc.sql-syntax-lexical"
+anchor = "Comments"
+kind = "special"
+label = "line-comment"
+grammar = ["-- <comment_text>"]
+basis = "prose"
+page_sha256 = "12ded506249792f4726a1e1b9a87eee6c656b164b25f0cc341eeec3e02a61dd9"
+
+[[form]]
+source = "doc.sql-syntax-lexical"
+anchor = "Comments"
+kind = "special"
+label = "block-comment"
+grammar = ["/* <comment_text> [ /* <comment_text> */ ] */"]
+basis = "prose"
+page_sha256 = "12ded506249792f4726a1e1b9a87eee6c656b164b25f0cc341eeec3e02a61dd9"
+
+[[form]]
+source = "doc.sql-expressions"
+anchor = "Scalar Subqueries"
+kind = "special"
+label = "scalar-subquery"
+grammar = ["( <subquery> )"]
+basis = "prose"
+page_sha256 = "b402e5c5c61c46ea158c2a3b9afa6f7d05ba7e44856f0a5e430783d1dd492565"
+
+[[form]]
+source = "doc.sql-expressions"
+anchor = "Array Constructors"
+kind = "special"
+label = "array-constructor"
+grammar = ["ARRAY[ [ <expression> [, ...] ] ]", "ARRAY[ ARRAY[ [ <expression> [, ...] ] ] [, ...] ]", "ARRAY[ [ [ <expression> [, ...] ] ] [, ...] ]"]
+basis = "example"
+page_sha256 = "b402e5c5c61c46ea158c2a3b9afa6f7d05ba7e44856f0a5e430783d1dd492565"
+
+[[form]]
+source = "doc.sql-expressions"
+anchor = "Array Constructors"
+kind = "special"
+label = "array-subquery"
+grammar = ["ARRAY( <subquery> )"]
+basis = "example"
+page_sha256 = "b402e5c5c61c46ea158c2a3b9afa6f7d05ba7e44856f0a5e430783d1dd492565"
+
+[[form]]
+source = "doc.sql-expressions"
+anchor = "Row Constructors"
+kind = "special"
+label = "row-constructor"
+grammar = ["ROW( [ <expression> [, ...] ] )", "( <expression>, <expression> [, ...] )", "ROW( <table_name>.* [, ...] )"]
+basis = "prose"
+page_sha256 = "b402e5c5c61c46ea158c2a3b9afa6f7d05ba7e44856f0a5e430783d1dd492565"
+
+[[form]]
+source = "doc.sql-syntax-calling-funcs"
+anchor = "Using Named Notation"
+kind = "special"
+label = "named-notation"
+grammar = ["<function_name>( <parameter_name> => <expression> [, ...] )"]
+basis = "example"
+page_sha256 = "7ead0ddc38a80de9ce14e50da57e3571499d58ef53c47b46f1a6e5c18a6ab771"
+
+[[form]]
+source = "doc.sql-syntax-calling-funcs"
+anchor = "Using Named Notation"
+kind = "special"
+label = "named-notation-colon-equals"
+grammar = ["<function_name>( <parameter_name> := <expression> [, ...] )"]
+basis = "example"
+page_sha256 = "7ead0ddc38a80de9ce14e50da57e3571499d58ef53c47b46f1a6e5c18a6ab771"
+
+[[form]]
+source = "doc.sql-syntax-calling-funcs"
+anchor = "Using Mixed Notation"
+kind = "special"
+label = "mixed-notation"
+grammar = ["<function_name>( <expression> [, ...], <parameter_name> => <expression> [, ...] )"]
+basis = "example"
+page_sha256 = "7ead0ddc38a80de9ce14e50da57e3571499d58ef53c47b46f1a6e5c18a6ab771"
+
+[[form]]
+source = "doc.arrays"
+anchor = "Declaration of Array Types"
+kind = "special"
+label = "array-type"
+grammar = ["<type_name>[ [ <size> ] ] [ ... ]", "<type_name> ARRAY [ [ <size> ] ]"]
+basis = "example"
+page_sha256 = "0c4fffad47b1ef4a3702d2dbf25cabe12bd6732bd635f10ca939ae5f6ce88a81"
+
+[[form]]
+source = "doc.datatype-numeric"
+anchor = "Floating-Point Types"
+kind = "special"
+label = "float-precision"
+grammar = ["float [ ( <p> ) ]"]
+basis = "prose"
+page_sha256 = "c4464cbe99440cc9a11dbb237a6bc6034de4639a620e79dbbf631cd667728a90"
+
+[[form]]
+source = "doc.datatype-datetime"
+anchor = "Date/Time Types"
+kind = "special"
+label = "interval-fields"
+grammar = ["interval { YEAR | MONTH | DAY | HOUR | MINUTE | SECOND | YEAR TO MONTH | DAY TO HOUR | DAY TO MINUTE | DAY TO SECOND | HOUR TO MINUTE | HOUR TO SECOND | MINUTE TO SECOND } [ ( <p> ) ]"]
+basis = "prose"
+page_sha256 = "03414110ec06708a8af85f386672ae594310b9d84e51a036f694b2b98a71098d"
+
+[[form]]
+source = "doc.datatype-datetime"
+anchor = "Date/Time Input / Interval Input"
+kind = "special"
+label = "interval-literal-fields"
+grammar = ["INTERVAL [ ( <p> ) ] '<value>' [ { YEAR | MONTH | DAY | HOUR | MINUTE | SECOND | YEAR TO MONTH | DAY TO HOUR | DAY TO MINUTE | DAY TO SECOND | HOUR TO MINUTE | HOUR TO SECOND | MINUTE TO SECOND } [ ( <p> ) ] ]"]
+basis = "prose"
+page_sha256 = "03414110ec06708a8af85f386672ae594310b9d84e51a036f694b2b98a71098d"
+
+[[form]]
+source = "doc.datatype-boolean"
+anchor = "Boolean Type"
+kind = "special"
+label = "boolean-literal"
+grammar = ["{ TRUE | FALSE }"]
+basis = "prose"
+page_sha256 = "90542b5da2e40bd94fdde7a041a2add381e503146663bcd841c4dc918476d074"
+
+[[form]]
+source = "doc.datatype-json"
+anchor = "jsonpath Type"
+kind = "special"
+label = "jsonpath-type"
+grammar = ["jsonpath"]
+basis = "heading"
+page_sha256 = "5c9f513138bfee1f7ebaa115efe12b6a392a7043af25fe2619a41349c8ecf81a"
+
+[[form]]
+source = "doc.rangetypes"
+anchor = "Built-in Range and Multirange Types"
+kind = "special"
+label = "builtin-range-types"
+grammar = ["{ int4range | int8range | numrange | tsrange | tstzrange | daterange }"]
+basis = "prose"
+page_sha256 = "014a2b51d8af730ddf431d5e9e131f306073227b0038ebd9f67bf1381a2770dc"
+
+[[form]]
+source = "doc.rangetypes"
+anchor = "Built-in Range and Multirange Types"
+kind = "special"
+label = "builtin-multirange-types"
+grammar = ["{ int4multirange | int8multirange | nummultirange | tsmultirange | tstzmultirange | datemultirange }"]
+basis = "prose"
+page_sha256 = "014a2b51d8af730ddf431d5e9e131f306073227b0038ebd9f67bf1381a2770dc"
+
+[[form]]
+source = "doc.rangetypes"
+anchor = "Constructing Ranges and Multiranges"
+kind = "call"
+label = "range-constructor"
+grammar = ["<range_type>( <lower>, <upper> [, '<bounds>' ] )"]
+basis = "prose"
+page_sha256 = "014a2b51d8af730ddf431d5e9e131f306073227b0038ebd9f67bf1381a2770dc"
+
+[[form]]
+source = "doc.rangetypes"
+anchor = "Constructing Ranges and Multiranges"
+kind = "call"
+label = "multirange-constructor"
+grammar = ["<multirange_type>( [ <range> [, ...] ] )"]
+basis = "prose"
+page_sha256 = "014a2b51d8af730ddf431d5e9e131f306073227b0038ebd9f67bf1381a2770dc"
+
+[[form]]
+source = "doc.functions-matching"
+anchor = "LIKE"
+kind = "special"
+label = "ilike"
+family = "expressions"
+grammar = ["<string> ILIKE <pattern> [ ESCAPE <escape-character> ]"]
+basis = "prose"
+page_sha256 = "99009063125eb80b83c010c67e4d857676fe6621ae24c708dd5ea93fe472cfd8"
+
+[[form]]
+source = "doc.functions-matching"
+anchor = "LIKE"
+kind = "special"
+label = "not-ilike"
+family = "expressions"
+grammar = ["<string> NOT ILIKE <pattern> [ ESCAPE <escape-character> ]"]
+basis = "prose"
+page_sha256 = "99009063125eb80b83c010c67e4d857676fe6621ae24c708dd5ea93fe472cfd8"
+
+[[form]]
+source = "doc.sql-set"
+anchor = "Parameters"
+kind = "statement"
+label = "schema"
+grammar = ["SET [ SESSION | LOCAL ] SCHEMA '<value>'"]
+basis = "prose"
+page_sha256 = "d63b590640a2270e11b4f10e096b1f980bb05d104a512bd987d8994bba1517be"
+
+[[form]]
+source = "doc.sql-set"
+anchor = "Parameters"
+kind = "statement"
+label = "names"
+grammar = ["SET [ SESSION | LOCAL ] NAMES [ '<value>' | DEFAULT ]"]
+basis = "prose"
+page_sha256 = "d63b590640a2270e11b4f10e096b1f980bb05d104a512bd987d8994bba1517be"
+
+[[form]]
+source = "doc.sql-createfunction"
+anchor = "Parameters"
+kind = "statement"
+label = "sql-body-return"
+grammar = ["CREATE [ OR REPLACE ] FUNCTION <name> ( [ [ <argmode> ] [ <argname> ] <argtype> [ { DEFAULT | = } <default_expr> ] [, ...] ] ) [ RETURNS <rettype> | RETURNS TABLE ( <column_name> <column_type> [, ...] ) ] [ LANGUAGE SQL ] RETURN <expression>"]
+basis = "prose"
+page_sha256 = "7d6900e975a4fc3dd92251ba8dca80d2d778397048b16d29ec05da513f392530"
+
+[[form]]
+source = "doc.sql-createfunction"
+anchor = "Parameters"
+kind = "statement"
+label = "sql-body-atomic"
+grammar = ["CREATE [ OR REPLACE ] FUNCTION <name> ( [ [ <argmode> ] [ <argname> ] <argtype> [ { DEFAULT | = } <default_expr> ] [, ...] ] ) [ RETURNS <rettype> | RETURNS TABLE ( <column_name> <column_type> [, ...] ) ] [ LANGUAGE SQL ] BEGIN ATOMIC <statement> ; [ ... ] END"]
+basis = "prose"
+page_sha256 = "7d6900e975a4fc3dd92251ba8dca80d2d778397048b16d29ec05da513f392530"
+
+[[form]]
+source = "doc.sql-createprocedure"
+anchor = "Parameters"
+kind = "statement"
+label = "sql-body-atomic"
+grammar = ["CREATE [ OR REPLACE ] PROCEDURE <name> ( [ [ <argmode> ] [ <argname> ] <argtype> [ { DEFAULT | = } <default_expr> ] [, ...] ] ) [ LANGUAGE SQL ] BEGIN ATOMIC <statement> ; [ ... ] END"]
+basis = "prose"
+page_sha256 = "8f9071a156f46324c39813358e22884c765dbf868a25f9eeb4d093cff50d4fc3"

@@ -1,0 +1,3095 @@
+# Pinned GoogleSQL for BigQuery reference pages (the grammar pins are in indexes.toml);
+# written by
+# scripts/fetch_syntax_docs_bigquery.py (pins) and
+# scripts/build_syntax_catalogue_bigquery.py (each page's title, family, status and
+# decisions). The documentation is not versioned, so
+# it is pinned by fetch date: each page's Markdown export (<url>.md.txt) with its retrieval
+# time and sha256. The pages and the grammar checkout stay in the private cache.
+
+[[source]]
+id = "doc.aead-encryption-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/aead_encryption_functions"
+title = "standard-sql/aead_encryption_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:56Z"
+page_sha256 = "d76dca1dab056b7d9d665a7db91bae67ccdace553a10542438fc614d3a8b4974"
+syntax_sha256 = "3d08684210dfb83407c989c73c7215c5bccac45daf9148409757f26eb97ded9a"
+syntax_blocks = 16
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.aggregate-dp-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/aggregate-dp-functions"
+title = "standard-sql/aggregate-dp-functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:56Z"
+page_sha256 = "714d72079d4a08e4e56d5eee0e5765108edd5cd4b2d6bf1a8e53abd73c42693c"
+syntax_sha256 = "6fbb1329f3114842a855d7259a5542ed382babdcd73416577452c85c6b669243"
+syntax_blocks = 5
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+]
+
+[[source]]
+id = "doc.aggregate-function-calls"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/aggregate-function-calls"
+title = "standard-sql/aggregate-function-calls"
+family = "expressions"
+retrieved_utc = "2026-11-06T17:39:56Z"
+page_sha256 = "2350bbc8353f4e365115ccf92ebb537bd5e97d9680bc0b00f2414d9c17937bbd"
+syntax_sha256 = "9c15b4d36f1459f389503a630609eb9ddb81835baed445a5933b0b87c9d0787f"
+syntax_blocks = 3
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.aggregate-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/aggregate_functions"
+title = "standard-sql/aggregate_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:56Z"
+page_sha256 = "0b04c191e88e904c7dd095f70c346bfa2c6c0334b92b83019871ba8a777c1647"
+syntax_sha256 = "8c5c46df9295c061c3e86cb4ffdc5853d5e3ea44a316f24a8cb8f947eaf2fdd2"
+syntax_blocks = 38
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.approximate-aggregate-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/approximate_aggregate_functions"
+title = "standard-sql/approximate_aggregate_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:56Z"
+page_sha256 = "9a604f4141ccd5bc5a9c6b11f51d12d333d202425b8508cc5237c2d1760795bb"
+syntax_sha256 = "081113d36d2f3e9f8348226bd001609d1144c71bb88fa7e060f67752ac398407"
+syntax_blocks = 4
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.array-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/array_functions"
+title = "standard-sql/array_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:56Z"
+page_sha256 = "a11c47ce70b1216f6f3744b6ac0e0afa6a97b2658994b0348f645016209bb7a1"
+syntax_sha256 = "996916abe23f92d37cb7c53d97d6e6eca8fa808ec7713c711dacafef7d855de2"
+syntax_blocks = 11
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-advanced-weights"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-advanced-weights"
+title = "The ML.ADVANCED_WEIGHTS function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:56Z"
+page_sha256 = "1567064775ac843dd609a5dcc7547df5078a4ae2cdbb5519dc31705e9b378000"
+syntax_sha256 = "3e104a0412cf81652b69de880e5162ccf1e52e7c079bbbd1a874bec92f02549a"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-agg"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-agg"
+title = "The AI.AGG function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:56Z"
+page_sha256 = "ded50f1661145d8b186eb0b27741a7f9710bd55142864103b8613e6d9be9dc0c"
+syntax_sha256 = "b14f8f49b361c28615270a3b19d354128ab1ff42a99857663bef6c35e8b9f5d0"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-chunk-document"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-chunk-document"
+title = "The AI.CHUNK_DOCUMENT function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:56Z"
+page_sha256 = "008a702d7048b458ced7bf16d1fccda34d82992a7e346b0dc59bb0e0a8bca117"
+syntax_sha256 = "07526760281aeeb99477f486dec49525429d83024a88c0468822b0884a94768c"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-classify"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-classify"
+title = "The AI.CLASSIFY function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:56Z"
+page_sha256 = "feaf126ddb60256f2ba1a55a0314af558671e3887271d8ed2948899271ef9e34"
+syntax_sha256 = "4451a1a30811634d71abe868f6e684f158cd86967033a1f2ea720b9cf9241029"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-count-tokens"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-count-tokens"
+title = "The AI.COUNT_TOKENS function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:56Z"
+page_sha256 = "ea442a6c9eb2795f928f7eb6949d9c8d04e25ab2575f4135766e1979a12aefa9"
+syntax_sha256 = "34ec4eeec28077cc4af4f84b3d257579c32d9229d148e3ef334af4c2d9ffd713"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-detect-anomalies"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-detect-anomalies"
+title = "The AI.DETECT_ANOMALIES function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:56Z"
+page_sha256 = "187f10dab05beb36db389ceb1ec411f91f226430f0d1c1701358e04ca0bdbac2"
+syntax_sha256 = "e55d682305d7e5a3666f68afabb0e2956bc670a3f94f6215015c57eff6b515ac"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a function synopsis written inside SELECT or SELECT * FROM is read as the call itself",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-embed"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-embed"
+title = "The AI.EMBED function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:56Z"
+page_sha256 = "b41b9371c41c0d150ef8176c3b4724ff48e06ffe5f80ec7f72dd784a07da1e07"
+syntax_sha256 = "1028b16913b9de5275856cbc4d3ee9ae276a2f44192342463a67f0e5323fe94b"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "a block outside a syntax section reviewed as notation and read as one (hand.toml)",
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-evaluate"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-evaluate"
+title = "The AI.EVALUATE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:56Z"
+page_sha256 = "7af8b147622d5a074afbb8fbfff89eb4d401ef564e547fbbc9bd849f7eb11adf"
+syntax_sha256 = "d78b261724d8303275c22fdfd9b2601a15fa82712e851b8428999dd9d2b85da5"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "a block outside a syntax section reviewed as notation and read as one (hand.toml)",
+  "a function synopsis written inside SELECT or SELECT * FROM is read as the call itself",
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-forecast"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-forecast"
+title = "The AI.FORECAST function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:56Z"
+page_sha256 = "4fc1ad007ceca0b15d51035a1d8bdd98ac4ba32918116524eb64ddf40b9064cf"
+syntax_sha256 = "dbc0dd6f7bb561411e7307a33a953a6b7d150f4b5a7f146044f044170da7fcc5"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "a block outside a syntax section reviewed as notation and read as one (hand.toml)",
+  "a function synopsis written inside SELECT or SELECT * FROM is read as the call itself",
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-generate"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-generate"
+title = "The AI.GENERATE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:56Z"
+page_sha256 = "2617d28f643567a478396de8ea7f286a03e83f8a24817dcbfcba933c20cfd607"
+syntax_sha256 = "9f48df70ea35a4926159efe67ad854ca4aa11d493a49d6a859192d7fee39d881"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-generate-bool"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-generate-bool"
+title = "The AI.GENERATE_BOOL function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "d08dfac292eeac1fbb6bec63370b81f368f68245343f5dc81daa62748a5b2a85"
+syntax_sha256 = "f4a3a64424246affe2f451e899ac4d0274914c89459ac981adb95d5a5a56a0c7"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-generate-double"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-generate-double"
+title = "The AI.GENERATE_DOUBLE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:56Z"
+page_sha256 = "033d75f1bc1b46259d7661bc9d166ac5c0e5133c89f7954bec3b8241fc8b4ce7"
+syntax_sha256 = "6836e1c016f57928fe96b2d61ad1798e1ca377962e7cb615ad4a7dd0a2faa948"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-generate-embedding"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-generate-embedding"
+title = "The AI.GENERATE_EMBEDDING function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:56Z"
+page_sha256 = "5de5905ca83c7fc8fe8c6d7f79453eea745ca6d9a0a25b418a5e1e4e3cd8a23f"
+syntax_sha256 = "ed87aa2927e78b4a9cbd3500ae8b424dcd05b9f3ceb0dcd9b6ad87f798ecac9d"
+syntax_blocks = 7
+status = "forms"
+decisions = [
+  "a block outside a syntax section reviewed as notation and read as one (hand.toml)",
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-generate-int"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-generate-int"
+title = "The AI.GENERATE_INT function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "cac7723412dfca9c36d5c2b59e83fbdb9ded7c54762c9bc70c2c2558269ca8e2"
+syntax_sha256 = "8e915f2310fb73a8e994968f0764ae54fd593077e84eb676068d4db0d15ca486"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-generate-text"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-generate-text"
+title = "The AI.GENERATE_TEXT function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "6494d6d27e5c2442e43c49c655fb3fed58656e20f72252337dae9418653a8fee"
+syntax_sha256 = "f602841c454d91d561c63efeead16952bf5c3df12479da3970e9dbadc9793ca7"
+syntax_blocks = 6
+status = "forms"
+decisions = [
+  "a block outside a syntax section reviewed as notation and read as one (hand.toml)",
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-if"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-if"
+title = "The AI.IF function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "ff27867f9487f9a2a24bc4687a74438714a730b4040c1b4d6042bacf300068f4"
+syntax_sha256 = "3552af67e06112d3f79f16a00a86222518a2e5cf99170444718acfda5b65a726"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-key-drivers"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-key-drivers"
+title = "The AI.KEY_DRIVERS function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "08e72dc7b0d4b28f24f8683a603a7605775b499aacab5c5923ece0922261a186"
+syntax_sha256 = "5b058c6d120e13cec2049a6d5ae3644079039d62135b03ed2e54ad2bc0560e2f"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-parse-document"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-parse-document"
+title = "The AI.PARSE_DOCUMENT function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "0979f548781c9af550cc615c970af6932acf6ec525f4483503eb496901278b70"
+syntax_sha256 = "cf39abb8e70f359ce516b10e14f0a6f617b3512aa04fa5ad083602b93ab35f5c"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-predict"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-predict"
+title = "The AI.PREDICT function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "d051ed39a1c1cd0b5e3663d1fda15b3c32a9179e29e3674628290843dac0490f"
+syntax_sha256 = "8d431b25f8e379862936e3302c37e8a1ba9a52f2cda7127ce6a8253bec0d240d"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-score"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-score"
+title = "The AI.SCORE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "b95cd94995772cdf09b0b4bd22bb4e534243762e7ba840c545b8ab1443718f68"
+syntax_sha256 = "3841b5c4fb7c7a921b6653aaba61facd4b050bcd153a512aa8770b136d491a93"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-search"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-search"
+title = "The AI.SEARCH function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "24f0312b0131be0829dd7861498cbe418ef178515581907e1de90006ebe1e81b"
+syntax_sha256 = "4696fd96c97394606b69684512643f74393995426e7a1406d14b1e7e29ecb27c"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-similarity"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-similarity"
+title = "The AI.SIMILARITY function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "096603c3d8bacc7a306dbc6be22533d77a96e71f00db0660eef1fcb52025baa1"
+syntax_sha256 = "b2f273db9057ac45f63fe855fa659f6f26c749556ecceca3804589efa0f5bca9"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "a block outside a syntax section reviewed as notation and read as one (hand.toml)",
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ai-translate"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ai-translate"
+title = "The AI.TRANSLATE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "51450f0e3c758a3f4e7df270b0ca8135fb46c91d3a0b1a07d548b4fe1f9f45b5"
+syntax_sha256 = "828fddd5e31cbe121f3d30063350f404a4d9fe118e0e9811cb4a2c6f86299b15"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-alter-model"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-alter-model"
+title = "The ALTER MODEL statement"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "e49a62ecec183b20d04543ef204ef6f9bad810435fdd9ab21b14409238c111ff"
+syntax_sha256 = "2af1380ae985c33f686ad1bef2c5aea2befd4035e1755ecfe1a9f4f720e20b78"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-annotate-image"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-annotate-image"
+title = "The ML.ANNOTATE_IMAGE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "1d9cd193568f87b99cd3f386042f554fdfd572c715ef8dc7d35f816580173921"
+syntax_sha256 = "7e9bab69d001af4a85dcc724a8226bc500d3f495e0382f401d0177ac2a493693"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-arima-coefficients"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-arima-coefficients"
+title = "The ML.ARIMA_COEFFICIENTS function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "2bc367db848b0c0a9e35e1f2795fd558e78f6c0d21fda4c86b074d438d6a7748"
+syntax_sha256 = "de71cb059119f8fc3615ba3599785220aebfecece7db2c1cc448f9658d54000b"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-arima-evaluate"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-arima-evaluate"
+title = "The ML.ARIMA_EVALUATE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "96a488426f1ec02a10934d0748497c6caa5d8b14c148292d89c2c8030554bb06"
+syntax_sha256 = "7d4b742d1b916caa2b92f076ba38b9b2ad12c4de4130bfebe4221a9fe9837efe"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-bag-of-words"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-bag-of-words"
+title = "The ML.BAG_OF_WORDS function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "f98ff4b6628580490ad80e5334803cee6f7280eb40631ca31bff3634c1be109a"
+syntax_sha256 = "6ab88ca25a05d6c6387288ee9cbb352cd131ec7b33aec753650cd64ab58ab403"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-bucketize"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-bucketize"
+title = "The ML.BUCKETIZE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "e3d24dc1263781fd1d1aeb449c2e78a0d2491c8eb85f70bf183a7831b58fc996"
+syntax_sha256 = "ca864a7d9b379d7ae181bfbc12d60b68359f971debb619e67e407d765b139841"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-causal-effect"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-causal-effect"
+title = "The AI.CAUSAL_EFFECT function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "694ae528ff268508994162362fee470790c030e366c974c2bbc7d28e33184ffb"
+syntax_sha256 = "29df800d50708252a44eacbd007a25769ad3a282df1a2861d8846ed88f3f7872"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-centroids"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-centroids"
+title = "The ML.CENTROIDS function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "13faeda7a425d2cd08bfb30a72280fbf8ba765005f702c8f4a052f60128252fd"
+syntax_sha256 = "779c1abc2e05cff2cf45dd7ffb82c1280e0c7fc5a8a7648fc57c156c80a97d28"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-confusion"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-confusion"
+title = "The ML.CONFUSION_MATRIX function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "edbf7da712827c5423aaa11e732fd11d5e9375037879c3089734a3910cfbee7c"
+syntax_sha256 = "a4f2b6dd507e2fe0e769d2cf1c4ab32ea00c06cdda5e43af42c0810610586fb6"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-convert-color-space"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-convert-color-space"
+title = "The ML.CONVERT_COLOR_SPACE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "5b99bcd5830dc8a4a006831a097c305bd94a642641a9d4b594e7992785f04a05"
+syntax_sha256 = "8b69fbb2f994f69a4fa0a52a28ca06c27b764a2e832d7b9a65a3d8a767f9f9bd"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-convert-image-type"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-convert-image-type"
+title = "The ML.CONVERT_IMAGE_TYPE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "0f907f4bc1cebc754677dc62135d1f7c515d4e1408f0c5e31f1cf126b98c827f"
+syntax_sha256 = "52bd726a57be95fdf3aa9661c8c94557299027d4c85e27425d574d4d988c5907"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-correlation"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-correlation"
+title = "The ML.CORRELATION function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "238a97385d529c8fe64eb3ed761566ae6da6b9b44e03f5b365f2c3083b5fe0be"
+syntax_sha256 = "14d70a88ff436bf1bd9c41613358e6f08368a7f491fda53088f3b83c6381eea3"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create"
+title = "The CREATE MODEL statement"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "d9f74fa0c65d975da0e07f2fdf3e6897d449534a7e7ac5cd224226e1fb69124d"
+syntax_sha256 = "4e3da28280809796e4c085f3d7ea9f3017c4372fe5daaf1e94dc40827386db5d"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-autoencoder"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-autoencoder"
+title = "The CREATE MODEL statement for autoencoder models"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "aa5155d685086d0171b4a77545d606fdf88f2e0df6aaf32de56ce3b9c1bdbd32"
+syntax_sha256 = "8e6a2ccf80e8a148042a226f38e8ac52e463440d20aea83f610fc9743f540b60"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-automl"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-automl"
+title = "The CREATE MODEL statement for AutoML models"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "1c5af72d2ac8b8100b45b3e81eccda78811da0a3b155111a732830ff7cd076f3"
+syntax_sha256 = "98e01b7577a89a08dc013e3333246cf371ae68c912c1a83fe8eb79c262707033"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-boosted-tree"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-boosted-tree"
+title = "The CREATE MODEL statement for boosted trees models using XGBoost"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "8b0c9a2421087958d51dac5b5721e18db0c00735285789308f8f7883a73ee494"
+syntax_sha256 = "f0753c12316ff5a45cfa587f8499fd970fb2b20f30b8e9716ba8fe98ae72d7dd"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-contribution-analysis"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-contribution-analysis"
+title = "The CREATE MODEL statement for contribution analysis models"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "f919a5b2149a9c2ba10c5810061a5df454710a8fcec1f9f12ae68290a9650355"
+syntax_sha256 = "8c0ce83e517700ec7c5022583c1b1fdb218fe908cf48066fb35b3cdd0c9cd9ac"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-dnn-models"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-dnn-models"
+title = "The CREATE MODEL statement for deep neural network (DNN) models"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:57Z"
+page_sha256 = "fb37d2dfc4645ecc405fec81d353d3fe7c94f7a390b6ea98f422af00663052c5"
+syntax_sha256 = "fe155cd47a8ed891d1d64e8bd9af133d2ab5e55dfdc411ddd87991101001cf91"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-glm"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-glm"
+title = "The CREATE MODEL statement for generalized linear models"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "6d00038a5c110c2d5e23d2ff6c9ec85fbc6f0c1575cd4f2842956ea70e3353c6"
+syntax_sha256 = "8a1dd4e3adf14f8ea92d1cc1c37832f438b522ade66b63fa6a9fd3524a20f705"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-kmeans"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-kmeans"
+title = "The CREATE MODEL statement for K-means models"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "3b49753e4c2b2107c59cdf534deb64be717543f5a620ad7ee4d3d28ba30e44ff"
+syntax_sha256 = "2415dc4ae2e32302869ec8693a19a1f21cc7759bb9e6c51bc24682c7c62787f2"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-matrix-factorization"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-matrix-factorization"
+title = "The CREATE MODEL statement for matrix factorization models"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "dc3a8f8199d58d07961f920703eb0e565f8d8bd8c4f30be2a6b90c33aa78a281"
+syntax_sha256 = "9a7583cb3ccb8556a1a690c04bc7b7859fc6d5d478b298748b13e174becb40a5"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-multivariate-time-series"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-multivariate-time-series"
+title = "The CREATE MODEL statement for ARIMA_PLUS_XREG models"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "756282bd0f3918c39997e9fbf141a2412d6cb01ac23f5201bea67e269d00afc3"
+syntax_sha256 = "75e3b905d488c198a78d17412705c756ad722f82143289e759c0038d36ed0093"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-onnx"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-onnx"
+title = "The CREATE MODEL statement for importing ONNX models"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "aed072a60510104590ba60a65d91dbf4eb27c3ba3b4cef9b1732ea25e3dd642d"
+syntax_sha256 = "f499652aa20bd26f8d95695cc55c1032a9a705f4070366a37e3f471f69bc7011"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-pca"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-pca"
+title = "The CREATE MODEL statement for PCA models"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "ae91793dcc8ce58c57a408f64708f377f30393e1ed4665cc7bc061e890016897"
+syntax_sha256 = "2520d4da2d1321180380796d5ffd54bff90ea55ef289cb85fcf596b6fcf92700"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-random-forest"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-random-forest"
+title = "The CREATE MODEL statement for random forest models"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "e4e6d2cfd7438f84b90ba03da0866a3f12125999f4bfba51c27282ffe4547258"
+syntax_sha256 = "2e0573555529f93faf95c7cd52c62b83eb65192dd31925138452e03ebccc19e5"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-remote-model"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-remote-model"
+title = "The CREATE MODEL statement for Gemini Enterprise Agent Platform LLMs as MaaS"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "fe96ca7b6c1c9fa132859e0f6798a535eab661862907864de2c21799938f7689"
+syntax_sha256 = "e8d46b2f47c79f450069ebcbfdf02a2d17d1d684c4ab7bc62ea4d402b4c372dc"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-remote-model-embedding-maas"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-remote-model-embedding-maas"
+title = "The CREATE MODEL statement for Gemini Enterprise Agent Platform embedding models as MaaS"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "913fde504565986ee8612dca0cb1fa7012fc29be1621153fb766e2bdd8872bfe"
+syntax_sha256 = "bb523217f3d65adea302f7b3314093f4b448d91a2c878b5dc359700c57858342"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-remote-model-https"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-remote-model-https"
+title = "The CREATE MODEL statement for remote models over custom models"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "7a434f4d3da06538d4c86a8ef20ce3459424141bf7a36fccf720b2bb019b1f74"
+syntax_sha256 = "6bf982003ac74c852382d84a6f19e8479b58e94466c78d73b725bbb7c9c1fdb2"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-remote-model-open"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-remote-model-open"
+title = "The CREATE MODEL statement for"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "ca06a5e35e522194db2b9ebf778f25ec718801dae82cba50b0f8804837e655ca"
+syntax_sha256 = "d33742fd994310f8d7f5b93e2e20e9c4d056055d6bd0a2841d496e40ac54b171"
+syntax_blocks = 3
+status = "forms"
+decisions = [
+  "a block outside a syntax section reviewed as notation and read as one (hand.toml)",
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-remote-model-service"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-remote-model-service"
+title = "The CREATE MODEL statement for remote models over Cloud AI services"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "1d8521a82809e3ffa149c78026cecc7a656e21c7ab16fd1e69a7466ea24e02b9"
+syntax_sha256 = "a141f69e3ec4d8ea4581e6ebfd3633e712332fdb56904019735dc97405001786"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-remote-model-tuned"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-remote-model-tuned"
+title = "The CREATE MODEL statement for fine-tuning Gemini Enterprise Agent Platform Gemini models"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "8f6aa6cff395a32bfe9d5625ca29e2a91809123443f7a918a84683b52f8c55a5"
+syntax_sha256 = "7d2a20528b1732e8ce9eb5159f8bef97fc21ec252bbc0c4d1ce0bac4d87d2b70"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-tensorflow"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-tensorflow"
+title = "The CREATE MODEL statement for importing TensorFlow models"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "2239514e40e0928b7d539511452c030c3016bd7cde6086df55645fe03a21c4a1"
+syntax_sha256 = "f367d6c3ebba0e774459288a012fd6bac67f729d45c63d6f42bec163d4e2a1ba"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-tflite"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-tflite"
+title = "The CREATE MODEL statement for importing TensorFlow Lite models"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "49a27116ca244e35d2a138594e86a97bf5e94a8d9134722796228e2e52848934"
+syntax_sha256 = "cee6e069a9c7d71c07de3a6dc4a5f76bc01ec9cc4dccfc61c943217e69b29869"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-time-series"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-time-series"
+title = "The CREATE MODEL statement for ARIMA_PLUS models"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "346796b4e52aba67451013c91c9a0058e6ff19cbebcc0e8286f23013e0cf9199"
+syntax_sha256 = "5f131887a47d6017ce8005eb9c3a548f0b6a91ac3287aa8a7cd261228b78117c"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-transform"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-transform"
+title = "The CREATE MODEL statement for transform-only models"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "197124848dfd6e7f7adb2f5ff25fdd5ad572a5ff0ee0ebef394b747e0d26f8f8"
+syntax_sha256 = "138129bdca22ddacc98c47f349c41aecf214cdc955a54822fbd965e7c5db824b"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-wnd-models"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-wnd-models"
+title = "The CREATE MODEL statement for Wide-and-Deep models"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "1a08662494f88acc92c99829e03d4fe2cf3ee46b0a126dc0a6b54584aae2b865"
+syntax_sha256 = "9c1aa5f3b6889942b43228899ea462e34563db41a7e825b547ed594e27ff6ed0"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-create-xgboost"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-create-xgboost"
+title = "The CREATE MODEL statement for importing XGBoost models"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "b3756aa147c68ab6267cd5ac27c9a26ca93a1da5c2ee9149df2513b40dc2472d"
+syntax_sha256 = "5ad9fddcf3e0caa76d93c0a0d0ed802b621df7dd3648b68d17d448319d1e91e2"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-decode-image"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-decode-image"
+title = "The ML.DECODE_IMAGE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "045ad97d063ec5ee9f1030c97a6057666d193941cd3d2145206d8c23e114b6be"
+syntax_sha256 = "0ef8daf03db1d914cc91d197a6cc8f22a8d670d9bf0defef194c3c8abd5b3ee2"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-describe-data"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-describe-data"
+title = "The ML.DESCRIBE_DATA function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "0259c49d1d01e59e774debec15fb236766e63a910055522074c83b80eca6ae28"
+syntax_sha256 = "2a9c463fdc0b572fbce56d2f1ba9057477347c251150f423588eed8ff78efffd"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-detect-anomalies"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-detect-anomalies"
+title = "The ML.DETECT_ANOMALIES function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "56354d8fbd7a3edf65f23973169a283bd24e7ffe0be81ac481f5b63638e8eff2"
+syntax_sha256 = "2a570d10eb53816a456a1099fa750e2cf7eb00153fd39318281be1eb2a7ce87f"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-detect-change-points"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-detect-change-points"
+title = "The ML.DETECT_CHANGE_POINTS function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "0f01be713933a6717294ed6838d8d1bb2c7a502e99101cc22cdabd821b9f4afd"
+syntax_sha256 = "79f9ea8f45f4ccf76e12a0d2b29bfb33862924a54995d0af9ed8c9b22a53958a"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-distance"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-distance"
+title = "The ML.DISTANCE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "a787c30cead4732d50a613dbb50745fa9646228b14c139fee57a366a87ec69b4"
+syntax_sha256 = "c1f4488438b344121ad63a94031ee24c2a4fd552584a2245abbd23a54cc888b2"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-drop-model"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-drop-model"
+title = "The DROP MODEL statement"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "c3f9fcb274079d38dc3ce0956dd5c9b81c11a49fa3ed1a4c40421ee6f7186653"
+syntax_sha256 = "d97f003be18097405deff93018d1faf51d05cf7d2dbb38bc1898ceca94cb9dda"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-entity-feature-time"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-entity-feature-time"
+title = "The ML.ENTITY_FEATURES_AT_TIME function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "2ef3d9b35bdf952bd94d01209feb88a6a751b10d265d9321fa92695dd136bc45"
+syntax_sha256 = "bf4b790b0d51660ad9991fc0129051edb6ba2e74ff702635f0c52f908f4577c1"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-evaluate"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-evaluate"
+title = "The ML.EVALUATE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "fbab232fe2fe283bb72a35382b30044be1adf676cd35cfaad1231d1908a0f55c"
+syntax_sha256 = "85622efc37eae110e767a97d40ef2f773f1a3e3b982d82e07c969cc71661a0c8"
+syntax_blocks = 7
+status = "forms"
+decisions = [
+  "a block outside a syntax section reviewed as notation and read as one (hand.toml)",
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-explain-forecast"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-explain-forecast"
+title = "The ML.EXPLAIN_FORECAST function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "8b24f2735c1e145c702340a4351d38f951b6e34fc0ecf3b4d17ef451876d6fb9"
+syntax_sha256 = "5d36647b42b7e4c2d4f4638e17a523f9b9fbded2bac1dd53bdb6724321810797"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-explain-predict"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-explain-predict"
+title = "The ML.EXPLAIN_PREDICT function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "c0422d0bccce89056bcb002ca9d6fb331255e126cd2a79294eb7e443ace114bd"
+syntax_sha256 = "241a11a25493c8038e527ea76bd604d6ede795ce979260a0a1984cbf817927d9"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-export-model"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-export-model"
+title = "The EXPORT MODEL statement"
+family = "utility"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "f7c8146a9e3c691cd6b476e6fef77a8ad3608b409264181a3c895a7ce3e8c783"
+syntax_sha256 = "bc50af171c2888809b014374bfb41da2d2d4785146de5481caf6bc58c7b308c3"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-feature"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-feature"
+title = "The ML.FEATURE_INFO function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "e9a8b4f10329eeac9925049d63d57e7359790799f6596a39696ed69e987642b4"
+syntax_sha256 = "225b588b6c843e8e9cf623b18a99dc894c7ea2d562e036a28afa620ed246d274"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-feature-cross"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-feature-cross"
+title = "The ML.FEATURE_CROSS function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "3e2b14e91d86126bf22d6e41a6f504f6a031e87f5343f42549cd0a5281e65d0c"
+syntax_sha256 = "838e5702232928268d8261a5e60b1501e15f03eca645d3ecf6e413f1111272a1"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-feature-time"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-feature-time"
+title = "The ML.FEATURES_AT_TIME function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "fdeee4c53e1be10eedf41fcab792561ebc97058d24bc944839325c604fc6bab9"
+syntax_sha256 = "6b1de59f79b4bf9e19f53f695be98c0999f258321d6f81fe2f54f5a9c6976cbb"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-forecast"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-forecast"
+title = "The ML.FORECAST function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "1f268a5314c24a1b6a37f921dee3845ff7d5589e8e88a506cbaccb36f638b944"
+syntax_sha256 = "fca1a55b079e126e43ccfd366f6e6b0a43fe8070cef1dcc48de78546ec4559ac"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-generate-embedding"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-generate-embedding"
+title = "The ML.GENERATE_EMBEDDING function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "92a1a728380076c4ee82808c53c5f32a1f15db7d07bc19bae1aa8fd4d55cb5d4"
+syntax_sha256 = "48759764cfcd05af4d738a4422cf0b1c854a8d4f95e28ed3769c2585f1269010"
+syntax_blocks = 7
+status = "forms"
+decisions = [
+  "a block outside a syntax section reviewed as notation and read as one (hand.toml)",
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-generate-table"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-generate-table"
+title = "The AI.GENERATE_TABLE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "d643a4ba5c04535888cd184931bb901208b241453acfb873412aac7594321deb"
+syntax_sha256 = "66abead90baea6e137dc10bac803650046910c9d6f43acd97a015c65b587e206"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-generate-text"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-generate-text"
+title = "The ML.GENERATE_TEXT function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "6968c717c5a151475c53d9fdf462752a62ac1557344e877cfda61ed992e16fcd"
+syntax_sha256 = "18e41edef59609dc43580b8a2480968651f435edcd34a57e94d8bfd0b4eedf44"
+syntax_blocks = 6
+status = "forms"
+decisions = [
+  "a block outside a syntax section reviewed as notation and read as one (hand.toml)",
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-get-insights"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-get-insights"
+title = "The ML.GET_INSIGHTS function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:58Z"
+page_sha256 = "e1d80f8ee753be6370c347f6f222f901e6eb10552f40e85cfbd55e257cd72670"
+syntax_sha256 = "781d641c4ac670c98bef79ea091533b286ab0240a54441c3c4b60ab1635227f2"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-global-explain"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-global-explain"
+title = "The ML.GLOBAL_EXPLAIN function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "874117fa372d86cd4da4b0395bdb2a2bbd31eba2dba4d6e588e6ef1aa6769cf7"
+syntax_sha256 = "1e36cdfa3f9b6f4bba1b345ef6dd2d12cc6ace328f36eb660ea3b1e94d6cea07"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-hash-bucketize"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-hash-bucketize"
+title = "The ML.HASH_BUCKETIZE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "22ffbfa6101e01ac09a72ff0753efd4b30926bdd5d7d61d46f7692d6a4078b72"
+syntax_sha256 = "493ab5b31e4c4d5199a220539d18cef51ea5a17253a34d6f86465a131c971a6d"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-holiday-info"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-holiday-info"
+title = "The ML.HOLIDAY_INFO function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "7b3c9e5f3f17d67ee6de7646e17b92a16caf0592498bc2bc1c4eb39de67c3fc5"
+syntax_sha256 = "24c5bdaa8c5f36c581b7474386c21b7f2c0279729530f56b13c2a93e56a8871f"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-importance"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-importance"
+title = "The ML.FEATURE_IMPORTANCE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "a53125681d76ce5069ff907dbf95e5885027f13b314850bc0a7f8c3f055afcc7"
+syntax_sha256 = "f770b43a962679e33182243b3da4e3d13885eb8fdfbcb0cef3d844452eeb76fb"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-imputer"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-imputer"
+title = "The ML.IMPUTER function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "455a99f386775ba94bf7216d7d37275acf99bd7f8ee47f07f55c29dfb4be72c7"
+syntax_sha256 = "5c048c8909dccb31e01f963e8064156e8a4b0f4ca57e5e8bb3167aea4dce634e"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-label-encoder"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-label-encoder"
+title = "The ML.LABEL_ENCODER function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "b7b959ec7b32a80f7395b4b463f0e890a3a472a406c698e6bc4daab36c754d2f"
+syntax_sha256 = "b2c3669809c39f0a50fbc947418700728b05dc4f373b75cd3d934afc4377caf4"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-lp-norm"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-lp-norm"
+title = "The ML.LP_NORM function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "f240fcb2c20fa321284405f2f45c96516cc27ce53986e85b1b0c46a68eb4479e"
+syntax_sha256 = "617ed61b3c811f9197d023c2fa682890ff02008c9f386e3b566ea717998e3ae3"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-max-abs-scaler"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-max-abs-scaler"
+title = "The ML.MAX_ABS_SCALER function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "94e9ef11b0ee4072e66a4756b541354800464de3e8274f1bd988ea80b73b0ee6"
+syntax_sha256 = "3244ac9377831bd9c01b2b1e8862f52703618d6ea3841a833526ed462fbefbfc"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-metrics"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-metrics"
+title = "The ML.METRICS function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "b27495e469d3e49ff25346e6a27ae0c0e7e571866c1b3e4f5583657a14fdb873"
+syntax_sha256 = "608029e9f8c9fc86ac6119ec18687024184dcf6e617328f763fcc1859f8ce6ee"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a function synopsis written inside SELECT or SELECT * FROM is read as the call itself",
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-min-max-scaler"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-min-max-scaler"
+title = "The ML.MIN_MAX_SCALER function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "81c4574eab065ab1dbc23b71248ff9d1a740378791aaad72cb111b4a25313789"
+syntax_sha256 = "a9b8d071857509c1c84bf5eb560954ce7dbf4576c603a3922ade6ed196b1ff01"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-multi-hot-encoder"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-multi-hot-encoder"
+title = "The ML.MULTI_HOT_ENCODER function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "c4b1be4f9dac54b79dfa1e251698fac5988e25e811f76888093a12b75f62636a"
+syntax_sha256 = "e7d117b4776acbeec8d6cf4c84ceb7c0f181e5f10923d7e512beda4a18c3ecbd"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-ngrams"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-ngrams"
+title = "The ML.NGRAMS function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "a0931a085c2d067959deb3cc0695755a683af4f16da88bcf4e6dc805d9f03898"
+syntax_sha256 = "db8eefc1f9a1f120260fc7474dd5e50580bb2e43054a8197a9891af713b9816e"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-normalizer"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-normalizer"
+title = "The ML.NORMALIZER function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "9f69e0669169f628f54adc89217f167fbb2d13db8c564cb9ca46d043667848ba"
+syntax_sha256 = "a3e5e1b3100af0642cddb73377d150c65b03d37e0fae8222fc3f13c4598e88db"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-one-hot-encoder"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-one-hot-encoder"
+title = "The ML.ONE_HOT_ENCODER function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "03e93b344ea75a4878c02251d2693f435845ba4744ffd08f0a7cd869f3a9d7aa"
+syntax_sha256 = "a919c9aff756a7ed138811d462726bdd3d03342d1500aecc9e011c631aa2cb36"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-polynomial-expand"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-polynomial-expand"
+title = "The ML.POLYNOMIAL_EXPAND function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "1c966b139b2c13936e0d2e97ad007f3e3f2ff31e5681d5caaa0bf6167f6240fd"
+syntax_sha256 = "01d1a3bb790dbfeadb7dcaafa080af819dbe59a1b1cb4814fdafeb3a24681386"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-predict"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-predict"
+title = "The ML.PREDICT function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "c209c41e91cbe9c436886a442dc8affa317f577d0a435c7bc1a686d78f04e676"
+syntax_sha256 = "28925161bd7fe84def25d7b9e75e1808e2b440ba59781ec5c3436e855d12ec90"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-principal-component-info"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-principal-component-info"
+title = "The ML.PRINCIPAL_COMPONENT_INFO function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "a81f7ed9f39fb528d5992ed0095300194f66cfb1be077c3e481d42ba570854ce"
+syntax_sha256 = "d64af2a690818601142fb60f3691c9850932a9259e9b11e45f9df0448e8255ee"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-principal-components"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-principal-components"
+title = "The ML.PRINCIPAL_COMPONENTS function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "9cc5f044aeb788c23e32433ac780d009eda08178cf402c8439fe9a95a87ad01e"
+syntax_sha256 = "8e255f7b8cab60fc48cf04d92d6a52bc19871a8725969fd0a7e4996db1a64f4c"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-process-document"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-process-document"
+title = "The ML.PROCESS_DOCUMENT function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "97d2ae6d8783d232bd5181e3a1eb4f6ac7c852e1568e20f1ade74fab63709c6b"
+syntax_sha256 = "bf0beed1282d66a48148ad445c822f29b130f3c5d0ffcba54d63e8f7efed82fc"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-quantile-bucketize"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-quantile-bucketize"
+title = "The ML.QUANTILE_BUCKETIZE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "ebba21a4c6b6d6baf626d79116104398455a57d319a0f0729e316c63c7beaa9a"
+syntax_sha256 = "8edc82089f683b59118c74fefba78138698bea4142238b83e1fb2360459141c1"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-recommend"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-recommend"
+title = "The ML.RECOMMEND function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "c6ba0b580d4f443eade69429945610ecd87719838f85f431edae94a25b3cdf5b"
+syntax_sha256 = "be56d2c91f71f83dbbef588f4afd486306d4f9f2053ccde6af682b0a6fb6ed40"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-reconstruction-loss"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-reconstruction-loss"
+title = "The ML.RECONSTRUCTION_LOSS function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "87a2056542ad6265c02251acf870655bc1945d0f0c6b4ecca7ac764d2f2d0954"
+syntax_sha256 = "3acae6e63d68386e25aa8637637b4eb933a0771e204b5bd5934181520b2c4095"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-resize-image"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-resize-image"
+title = "The ML.RESIZE_IMAGE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "62f155a019704e3d2dc5bbdf98dc783da225993db105c194d95c8f2d4635d066"
+syntax_sha256 = "123e2af09d4255e9c7911d87bdd5c1e0850fcf4e9fc44dc0cc44a5bc5d441cb0"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-robust-scaler"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-robust-scaler"
+title = "The ML.ROBUST_SCALER function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "3cb23a0ea19bd5af8b8e922f1f442d5b5f49ef098f167bea0a68ad9cbfdc7eff"
+syntax_sha256 = "4f32cf580be980d1631be90cef498495304eba06dcd778a53db3bc8880f03590"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-roc"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-roc"
+title = "The ML.ROC_CURVE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "19f701fc9d5d0d1844a884dc065e147b77617f7ea518515b1154ceebf3909045"
+syntax_sha256 = "02e41018b0896ec2dbcd2a7cc2f6f71843c1f7ff4266533182f56598bef90ab3"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-seasonality"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-seasonality"
+title = "The ML.SEASONALITY function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "8f96cb71bec4a017e1e1d56b7a0f8e71c4922a624367e740ed972de2e8d6281e"
+syntax_sha256 = "797082b2c91cb2084bb0a78ed0d0abd4954dfdb6fcad88f70c69f0c58c6cf9aa"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-standard-scaler"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-standard-scaler"
+title = "The ML.STANDARD_SCALER function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "32fa41091945552da3f020873f583710312f684090c6124e56536936f4508023"
+syntax_sha256 = "76539a1e36a9e5cee81a17017a00ebf8340cc35fcb9e3e4f9c2892072064c15d"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-tf-idf"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-tf-idf"
+title = "The ML.TF_IDF function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "535a7ecc30d35b0fcddff632eab28c50d7f99d41559f3180b93abe557a293b6f"
+syntax_sha256 = "0e8cfb97d1e1335c4065e69dff9d866aa4ed03a4fafdfd36a0077b1083a3a282"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-tfdv-describe"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-tfdv-describe"
+title = "The ML.TFDV_DESCRIBE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "339e9115c15637147093376817cc7c825fd380270a28287333364836e71de8a1"
+syntax_sha256 = "93aab3f1cdc13a1194bc6038d33f56757078d9e71098409690168d79d31a8b05"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-tfdv-validate"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-tfdv-validate"
+title = "The ML.TFDV_VALIDATE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "70a320b344f6f146c854e51bd792999f909242309e95607c0f8e0ff9a110ef34"
+syntax_sha256 = "962e94e241fd1cde51439e72b3467a9d738509626b8c26d5f6a69cb7a1f26a6d"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-train"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-train"
+title = "The ML.TRAINING_INFO function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "1d83606dcbe101ca3f1635dc03be670e96b3d4aa7c41432c6d6d639cd35926b4"
+syntax_sha256 = "f5dc3b0f41a53de08fa2926b55963a1fceb38c9377711f8b230cb8adce4a151a"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-transcribe"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-transcribe"
+title = "The ML.TRANSCRIBE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "27f13635526b24ff6cf357025c7e51e0424c26bb3f11311d7bd6836e10d2ef6b"
+syntax_sha256 = "725c1307e5fd1bb1026d2a31b7c96c989a0e54459aefd324d9e70cdad9b989af"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-transform"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-transform"
+title = "The ML.TRANSFORM function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "62779fa08b46d3629c60d749967e05586aeffab4de2f64805e8d7785f69a24ec"
+syntax_sha256 = "0cd6e6d9b39c6fa7610a02ba736c341bfdf85952e5dfb020a59dc39768afd6bf"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-translate"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-translate"
+title = "The ML.TRANSLATE function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "49a65dcf57ddf87189d823390a40a5ff5b3c5e97f13ce4c8ac3a338c4e8c1a25"
+syntax_sha256 = "15ea4c634c03d5f3eff1d18761b1944ad356a6ec9f79640783e5ea390aed729b"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-trend"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-trend"
+title = "The ML.TREND function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "aab811de80371307898719715dc6471fe6e04f26d85ed3b1ceff42ee1e234972"
+syntax_sha256 = "6b4bea6149b2cd33f59e4c28bb6aad3f9c05ee952fb2ff79dd2923099e3cf957"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-trial-info"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-trial-info"
+title = "The ML.TRIAL_INFO function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "be99fc06f9f3f84bf675450f9ba9b85db2a1dc2a05bd7b6bf10243109a8b5af4"
+syntax_sha256 = "a0be88d0665c27dbbf15d328e3b9b0f9ab54233321951416c55e2df839ccdc0e"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-understand-text"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-understand-text"
+title = "The ML.UNDERSTAND_TEXT function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "9f0c7f66a3f43b3250133a5962e7c27aba9290ab27bc764f538bc5685384c980"
+syntax_sha256 = "97a613db1bc77624b17c6199a7db8809488e49d2a89605d0c7452b3ab33066bd"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-validate-data-drift"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-validate-data-drift"
+title = "The ML.VALIDATE_DATA_DRIFT function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "c123f5947ca682056301bfcc5621ca07f4879da2adf0a824c729778f93fc4f6a"
+syntax_sha256 = "36e21d7b6aa3865a3f04ee3cfb739faf99940ea8cc491d55faabcf9d4ce4d65e"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-validate-data-skew"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-validate-data-skew"
+title = "The ML.VALIDATE_DATA_SKEW function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:39:59Z"
+page_sha256 = "483a16a544ca891e999ccf5eab4bfbfa41c7cfa7c4dd48ea8bfa1c5d79109c2a"
+syntax_sha256 = "20a5ca29075f386019e6d2fea598c43ac96e83494f1d3ee058cbbdfb38471868"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bigqueryml-syntax-weights"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bigqueryml-syntax-weights"
+title = "The ML.WEIGHTS function"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "4c22647b32264359e76af31de9c5cce6df1d57c1c82bb4d375a043d0899f4256"
+syntax_sha256 = "70c8d538c4336bca3297f040caa4b2ff548f13b480d7ef940742766d33cebb47"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.bit-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/bit_functions"
+title = "standard-sql/bit_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "507ef0d103f1a5f469160b93dd4ba2cbc9f7712daec2e412e6299829228c644a"
+syntax_sha256 = "1678d7e159e54fc27a441aa215a85cd1670eb81e5e2e4b08a20c1663dc51f0b1"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.collation-concepts"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/collation-concepts"
+title = "standard-sql/collation-concepts"
+family = "expressions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "c3733cb1af965eb45ad6abb4bb9ff2e5fb1b1ed0966fd51a71c34ca987f8f606"
+syntax_sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+syntax_blocks = 0
+status = "no_syntax_block"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+]
+
+[[source]]
+id = "doc.conditional-expressions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/conditional_expressions"
+title = "standard-sql/conditional_expressions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "81f4630a13d16852faa78f8cd202330c499a24e8c2925d1beabf3c8fb08b6b47"
+syntax_sha256 = "2ec86fa8a57ca9c939b9ae4ab1026bb25d10ec1a55943b9822e654bb75bd1447"
+syntax_blocks = 6
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.conversion-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/conversion_functions"
+title = "standard-sql/conversion_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "f26c9fd15454e8e8fe9d2f16d1bea44ebe8db00e09e76d867752ea2e3c593f66"
+syntax_sha256 = "d96b09f346fcad19f83c2bb7e2b362d0cd838a58d12d60f1ce99b45a87bb5c26"
+syntax_blocks = 19
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.conversion-rules"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/conversion_rules"
+title = "standard-sql/conversion_rules"
+family = "expressions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "6563b7e974054e6c83d19b7901e21e9e0724914ffe98e02b64d0b0b9d67bfffb"
+syntax_sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+syntax_blocks = 0
+status = "no_syntax_block"
+decisions = []
+
+[[source]]
+id = "doc.data-control-language"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-control-language"
+title = "Data control language (DCL) statements in GoogleSQL"
+family = "security_admin"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "6a2f2b7629dd11962de367ba37ed7b34241fd52e5114193a895d4b666ff89bf6"
+syntax_sha256 = "4843d507bdb10f49e4c88cd5ddc40f573b48c687641aafeea456d853e549ffaa"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.data-definition-language"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-definition-language"
+title = "Data definition language (DDL) statements in GoogleSQL"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "e137dae1c195d2643576c250f9fe8469e93b554f4add7bfcd27fa3fa0025e1df"
+syntax_sha256 = "229c535a0b220612873705765638f4630b573332010430c5850ced1bad3321ad"
+syntax_blocks = 119
+status = "forms"
+decisions = [
+  "a block outside a syntax section reviewed as notation and read as one (hand.toml)",
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "catalogued by hand from code_block",
+  "catalogued by hand from prose",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.data-types"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-types"
+title = "standard-sql/data-types"
+family = "expressions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "0c0aff6b8e6c373ffa58ec5ca4c1e69cf5300cc1d2d53a47affc849c7f1688a0"
+syntax_sha256 = "87c40ba38de4abcbd59f783352c926f1268b345d9b413bd32d3e0e4cbd3cdba4"
+syntax_blocks = 34
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "catalogued by hand from prose",
+  "catalogued by hand from table",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "data type summary table read as one form per type with its aliases",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.date-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/date_functions"
+title = "standard-sql/date_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "d3af6fe3c812e3fc296456c2a2244e0355fe363b8b7749903ae7ded67304c294"
+syntax_sha256 = "654d280120fb3948993ce4883b3d3b13e83e2c677a45bd221ea78a9ea32f386e"
+syntax_blocks = 19
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.datetime-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/datetime_functions"
+title = "standard-sql/datetime_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "10ef57534c3b8a2215de7ad33316da4cb2be4a3952447c10a27515218282aca1"
+syntax_sha256 = "14d9367f0849a74b82842520747461af4022a07bc5e3ec2807d7bdaaacddaf24"
+syntax_blocks = 14
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.debugging-statements"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/debugging-statements"
+title = "standard-sql/debugging-statements"
+family = "utility"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "e288b375d813a0d5464d95df9e5240b049f6b955ea236e35e15711406495da9a"
+syntax_sha256 = "cef65c3f4d85b9ad75cdd3a34099fb678cba06b6d3c4dcfbfbdeacdd36026dfb"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.debugging-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/debugging_functions"
+title = "standard-sql/debugging_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "2417a178530b1e528b7a9002eb315307a654233633e5b2fcf7a310a97aa60bb0"
+syntax_sha256 = "8e91ddd9d8a04842a8aa5e642b87246e5908e532d91afb57183b39891b3aeb02"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.dlp-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/dlp_functions"
+title = "standard-sql/dlp_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "dc3926228937714f72ff8b31ded4fde56a5cb902ff638bfccf5a47b0053b517f"
+syntax_sha256 = "1cab1ac9962ba310eb95ebaa6dfead21f65a230602bb0d8008c1cf3df3128a84"
+syntax_blocks = 5
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.dml-syntax"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/dml-syntax"
+title = "Data manipulation language (DML) statements in GoogleSQL"
+family = "dml"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "473f879252b79f9f60f98407ab8223a249f024ab4e1fa7618bb4f81162263530"
+syntax_sha256 = "d01e92a8acce21ff1026224724c578933f5aaacecb0f7242fa315840293fd487"
+syntax_blocks = 22
+status = "forms"
+decisions = [
+  "a block outside a syntax section reviewed as notation and read as one (hand.toml)",
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+]
+
+[[source]]
+id = "doc.export-statements"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/export-statements"
+title = "Export statements in GoogleSQL"
+family = "dml"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "8df6fd53217ce3e10873a7ae5500085b6b7ef6c650d1c7b90d8c1971abc1845f"
+syntax_sha256 = "92f00168d32bfc00983cbfe34386a9abb854d87a77bcadebdf6a9635a0f911b0"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.federated-query-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/federated_query_functions"
+title = "standard-sql/federated_query_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "8f1ebc7b565f8a2ba9a791a19d0f68556c299e6cb3313cbc7855eebb5d426fcc"
+syntax_sha256 = "adb4015aad3bf4ca18235c9826c8b60ba67171f752fea8243fab9af0d7a90c7f"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+]
+
+[[source]]
+id = "doc.format-elements"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/format-elements"
+title = "standard-sql/format-elements"
+family = "expressions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "31d464a66939c861ae414d2320e8611c915447878c2b49db33ae642eebe6c346"
+syntax_sha256 = "9bc3fbf95516b5c043283c14e93822fbd314b55eaaf43961f21b7f663d2f16b0"
+syntax_blocks = 23
+status = "forms"
+decisions = [
+  "a grammar repeated byte for byte from an earlier page is listed in its also_sources",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.functions-all"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/functions-all"
+title = "standard-sql/functions-all"
+family = "expressions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "a283640033a4df7adb2a4c47b51e8989f0e0827e801d03fb0c23cae847e94721"
+syntax_sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+syntax_blocks = 0
+status = "no_syntax_block"
+decisions = []
+
+[[source]]
+id = "doc.functions-reference"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/functions-reference"
+title = "standard-sql/functions-reference"
+family = "expressions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "ec2c0bf36b2b210b68a7bc17b007a9cdfbd6ff959b64e14fc2f79b57f5b8b232"
+syntax_sha256 = "14918558498f2b5ecd6282910c81fb446d86314c3ca67b5d379fb49e7a93f0fb"
+syntax_blocks = 5
+status = "forms"
+decisions = [
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "catalogued by hand from code_block",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.geography-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/geography_functions"
+title = "standard-sql/geography_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "bca86979dd399dbd9e63e167f82c01f51cad818fa6062476a34cc8965a1baa9e"
+syntax_sha256 = "004583d275027168a472bd56697bede45e2c5c77fe13e02d46c7e21e3fa2c9a3"
+syntax_blocks = 76
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.graph-conditional-expressions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/graph-conditional-expressions"
+title = "standard-sql/graph-conditional-expressions"
+family = "expressions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "bf2f7f59a20d5d2b8e1b7a94cbd0a56aa396e261c079019707c7f903aed41f98"
+syntax_sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+syntax_blocks = 0
+status = "no_syntax_block"
+decisions = []
+
+[[source]]
+id = "doc.graph-data-types"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/graph-data-types"
+title = "standard-sql/graph-data-types"
+family = "expressions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "0ea48960d75da46e40511908dbfb7a76737a281704bcfd0535df427ab6a1b56f"
+syntax_sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+syntax_blocks = 0
+status = "no_syntax_block"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+]
+
+[[source]]
+id = "doc.graph-gql-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/graph-gql-functions"
+title = "standard-sql/graph-gql-functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "db5d46c8c72488fb888e8f97d484564233698cbca79c1687b0a505f5aae049c8"
+syntax_sha256 = "279b81a1b7fc8c88975efe9bfd4d0db4f361017c3018a112b1d3151cb6c2821a"
+syntax_blocks = 12
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.graph-intro"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/graph-intro"
+title = "standard-sql/graph-intro"
+family = "expressions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "bc692ffa5dda98a56a6d924a4e5c7a29acfb5d77dfbe6a49cd08681c5c6e9061"
+syntax_sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+syntax_blocks = 0
+status = "no_syntax_block"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+]
+
+[[source]]
+id = "doc.graph-operators"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/graph-operators"
+title = "standard-sql/graph-operators"
+family = "expressions"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "7437d3f81f3fdacc2bac4af66282d3b617b7f1bc969f70886c8888890ac3dfd7"
+syntax_sha256 = "9fdaa1d2442d6839cb1ffcfc329894757c3376c18aa765d75ab0aa8b47a317c6"
+syntax_blocks = 4
+status = "forms"
+decisions = [
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.graph-patterns"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/graph-patterns"
+title = "standard-sql/graph-patterns"
+family = "query"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "14a1d0a005356e807a3e982879a59be087b9fd50e4d69da21c402a011d60a528"
+syntax_sha256 = "44e355a21e3103316ad014b055e1f39bbbe5cc51fe93fbc376f7d776d1824fcd"
+syntax_blocks = 29
+status = "forms"
+decisions = [
+  "a block of definitions only documents the construct its first definition names: that definition is also a form",
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.graph-query-statements"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/graph-query-statements"
+title = "standard-sql/graph-query-statements"
+family = "query"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "cdf2b9735671e440b6ee125d091a6f1edadf02ae7dcb1fa2d1e5ae98a0f91312"
+syntax_sha256 = "40cdecdfd6597a47abd046f1e8a56929c31b01213bdf6b1e0f8efd6a81c41d17"
+syntax_blocks = 28
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.graph-schema-statements"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/graph-schema-statements"
+title = "standard-sql/graph-schema-statements"
+family = "ddl"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "148acd55be60c375c5ca4a985aef45b9d46ade30b313b158f0fcc5d518fb665e"
+syntax_sha256 = "ebd494ee71dd2328a087b039ae1f34e017ab0df7da60e6f2b1d64dc7df5c11f2"
+syntax_blocks = 26
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.graph-sql-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/graph-sql-functions"
+title = "standard-sql/graph-sql-functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:02Z"
+page_sha256 = "9b7a2a6b0330199f6588e3bf85b5ae839c3e35fd0caf4ec6ce6b1c20a8f52088"
+syntax_sha256 = "279b81a1b7fc8c88975efe9bfd4d0db4f361017c3018a112b1d3151cb6c2821a"
+syntax_blocks = 12
+status = "forms"
+decisions = [
+  "a grammar repeated byte for byte from an earlier page is listed in its also_sources",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.graph-sql-queries"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/graph-sql-queries"
+title = "standard-sql/graph-sql-queries"
+family = "query"
+retrieved_utc = "2026-11-06T17:40:00Z"
+page_sha256 = "79f2790998786f45cb596a50b4d93b1f4644c5200a17b54667157a58128b8da9"
+syntax_sha256 = "fb40962fc0b4f7226861cc158c8994ffc68b525e64baed00c2f96c46d46d183d"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.graph-subqueries"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/graph-subqueries"
+title = "standard-sql/graph-subqueries"
+family = "expressions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "735aba08804e69112515c2c30e77334df78f2905f989174a8ddd430305631b4c"
+syntax_sha256 = "3c854a38dfa6756107f0ef88b649d38f0890c493326dee677faae5d71a6bdb3a"
+syntax_blocks = 6
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.hash-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/hash_functions"
+title = "standard-sql/hash_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "16fc3a4bed591b92fe19c22fdf3c890efb0f54f55072e557c4accb7b0341ee14"
+syntax_sha256 = "fa1f9122fc8a689509adaef330296d1ac124de455bc7654f51f2a7ae17139e40"
+syntax_blocks = 5
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.hll-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/hll_functions"
+title = "standard-sql/hll_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "e753328eb029a59f509c69619371738a122bdb47b1ac3f7d906f171fef7105b8"
+syntax_sha256 = "00bacba441382766aa9d142353a6339e2209514011abe111600d9f6e653c9d14"
+syntax_blocks = 4
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.interval-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/interval_functions"
+title = "standard-sql/interval_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "bed805f86fdb2a3a0f9fb8742bcf300a7f8b47b436e486fbd3debe0dfe58d4f8"
+syntax_sha256 = "9d5a8dffe4af17a7c1b86a38bd98d748c1906923ed4c9ccda57f29df12878c9f"
+syntax_blocks = 5
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.json-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/json_functions"
+title = "standard-sql/json_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "47dfe5e1a10d1918b9dd1dbe7179f8df80e7361872af77de4d1e75cbb7afed70"
+syntax_sha256 = "7f25dd9f27c8467e299abb8b9e1c5f8b3302637b8864c2a5819197f8e0635b4a"
+syntax_blocks = 41
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.kll-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/kll_functions"
+title = "standard-sql/kll_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "613538808c2c70d10f8c12399fc044b947d159201f70f0ae635fa78df5a3ac67"
+syntax_sha256 = "5c4fee84fd5d0875b7d6c6bea9430eb174f1f84d2307043e47e5d66bce970540"
+syntax_blocks = 11
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.lexical"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/lexical"
+title = "standard-sql/lexical"
+family = "expressions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "c9186adc6e32fe65b476583b7067c9d7e82022c538781fd7a0c8b176a1536606"
+syntax_sha256 = "c875c370df4e2683dd99e9dfc655a5ce1b62ad983db908d5c18befd1203a331c"
+syntax_blocks = 33
+status = "forms"
+decisions = [
+  "a block of definitions only documents the construct its first definition names: that definition is also a form",
+  "a block outside a syntax section reviewed as notation and read as one (hand.toml)",
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "catalogued by hand from code_block",
+  "catalogued by hand from prose",
+  "catalogued by hand from table",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.load-statements"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/load-statements"
+title = "Load statements in GoogleSQL"
+family = "dml"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "6160bf8e2542bb250ba5bd7b48cc9346ceb4b05ec1ddfc4bc1e25ec54630287f"
+syntax_sha256 = "5e691a4978dd10426c89c025b94c21c0ff6f2ae23e908df030db0183b5fa687b"
+syntax_blocks = 10
+status = "forms"
+decisions = [
+  "a block outside a syntax section reviewed as notation and read as one (hand.toml)",
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.mathematical-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/mathematical_functions"
+title = "standard-sql/mathematical_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "eeacae28a6f5eba9a1f0004f7d454fba7916ab72928b970f46fe3e13a3bea696"
+syntax_sha256 = "207b9c59b8f0c024a57891bdb37e7239b6fadbd4880d641e4352b42348951821"
+syntax_blocks = 50
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.migrating-from-legacy-sql"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/migrating-from-legacy-sql"
+title = "Migrating to GoogleSQL"
+family = ""
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "833cbb3730047b660cfbc09f06520562b90d6f7e4f4f38aefc58603a9a2df473"
+syntax_sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+syntax_blocks = 0
+status = "out_of_scope"
+decisions = []
+
+[[source]]
+id = "doc.navigation-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/navigation_functions"
+title = "standard-sql/navigation_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "1df760d8fbee57501f7f41a0fb307cce83931d9a2663ec36f5b325a9acee8dfb"
+syntax_sha256 = "2cb65e8e2dce8315475239dcdb2a5cd1818ddfc322f5c90e3eb7ed56fb66d228"
+syntax_blocks = 21
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.net-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/net_functions"
+title = "standard-sql/net_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "26ae73b2b2a37ed7a496e9806322350b9551b77ab10b123ebbeed349d5ad9119"
+syntax_sha256 = "9e393df4d20e46b8875bc70871d4651a2ea01b6f3b6291d8b4056bfbb25eb714"
+syntax_blocks = 10
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.numbering-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/numbering_functions"
+title = "standard-sql/numbering_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "a42f385bcb22699e848c5794048ff72877e7d0b826d6fc108d5e60c07f2de89c"
+syntax_sha256 = "decc88bfcd1f7e3c9329cccc9150a54efd96dacca61dfcbdc484d0db445cb1af"
+syntax_blocks = 18
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.objectref-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/objectref_functions"
+title = "standard-sql/objectref_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "31b454aaf8b3db2541cfebe78c456728cb314c6c12ec3cf619fa70fd3387c33e"
+syntax_sha256 = "74c2a6201268dab448695f35408cfcdddac96d75d74fd37548fb445efd5726e7"
+syntax_blocks = 8
+status = "forms"
+decisions = [
+  "a block outside a syntax section reviewed as notation and read as one (hand.toml)",
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.operators"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/operators"
+title = "standard-sql/operators"
+family = "expressions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "ede7cd38cf30645dfa37d077ba8edd5d138e88910462cfd269b68fdb0bb134e8"
+syntax_sha256 = "749df7f7d69d8fb8e40cf995cd0651dc5d8ca1c74aace7adfa76b95e7f553fa6"
+syntax_blocks = 67
+status = "forms"
+decisions = [
+  "a block outside a syntax section reviewed as notation and read as one (hand.toml)",
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "operator precedence table rows read as operator forms",
+  "operator tables' Syntax columns read as one form per code span, unless the precedence table already spells it; the precedence table's BETWEEN and IN rows take the operands their sections give",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.pipe-syntax"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/pipe-syntax"
+title = "standard-sql/pipe-syntax"
+family = "query"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "e28813b776405ba292706658b6b83f6da40d9b97e1e0ea9f2b91041b67578d19"
+syntax_sha256 = "2913e959edf88850834db9f334275cdd747ca566c9252901ecdc85de9f26cd71"
+syntax_blocks = 29
+status = "forms"
+decisions = [
+  "a grammar repeated byte for byte from an earlier page is listed in its also_sources",
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.procedural-language"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language"
+title = "standard-sql/procedural-language"
+family = "utility"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "a135d3a5883a2d9f4fafae0f4575240f56c16542e979fbd855e9c613ad0feab1"
+syntax_sha256 = "000cef7c1566a8cda871dfc3dcd1d80b46443f65c87e3e9a478c1d17672ded9a"
+syntax_blocks = 34
+status = "forms"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "catalogued by hand from heading",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.query-syntax"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax"
+title = "standard-sql/query-syntax"
+family = "query"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "4ec686ef1316e93c61a613d26565c54e94e82b63b37446006c7d7c9bcc904f6a"
+syntax_sha256 = "00ff83a86ee106f7358e42ad83eaa004964f8f497db136b9426206434d1be4ce"
+syntax_blocks = 74
+status = "forms"
+decisions = [
+  "a block outside a syntax section reviewed as notation and read as one (hand.toml)",
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "catalogued by hand from code_block",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.range-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/range-functions"
+title = "standard-sql/range-functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "ac56c37547954fc3d4e58fb4ca8099eea70497870d2cc2deacbc77bf8e0dbb44"
+syntax_sha256 = "090fbf1be8433b5d9966d3280e5c5c4e760f045d06dffd746b35b6702c1e2c2b"
+syntax_blocks = 11
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.search-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/search_functions"
+title = "standard-sql/search_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "90aab6083ae44926f54b4a25ed9111af4b72407a78a9f24b5bdbefe8a0bdd648"
+syntax_sha256 = "64931cda141d20243401b99a8f0d252ab7e2774b1164f03ca5043c3b8b08c424"
+syntax_blocks = 3
+status = "forms"
+decisions = [
+  "a block outside a syntax section reviewed as notation and read as one (hand.toml)",
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.security-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/security_functions"
+title = "standard-sql/security_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "cd037cbab4396ea61bb2e69b0a861094f961c640857251824e445d885bf549e6"
+syntax_sha256 = "efc3140d53fb43f712e1facb7b88ec817fbb4cd14977001a46cf330494e6b420"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.statistical-aggregate-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/statistical_aggregate_functions"
+title = "standard-sql/statistical_aggregate_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "cd2ba20581b7f2bf08aea761d3d71296ee935396234d0f16c26f810c95aa1296"
+syntax_sha256 = "ac1228e5591b058cc10d3f6c31025b63c17d8198fb8d4b6c8e8e94e18956cd8c"
+syntax_blocks = 27
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.string-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/string_functions"
+title = "standard-sql/string_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "b604f72b8286058ad14a3ec66800cdef19e456545c590064a5ec511a9f6b9392"
+syntax_sha256 = "060fcf865a150b78616aaf823a60dc4f0f0cc2cf99eda9a546d7682997cc2941"
+syntax_blocks = 55
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.subqueries"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/subqueries"
+title = "standard-sql/subqueries"
+family = "expressions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "8c89d90ceb0da9f6f939bd75b2db41b99f7ada6f60a0e30077d365623953c613"
+syntax_sha256 = "b6bb9d8dad30b567e0887f8accd51ebe7e64341893e595fdecc3ef80876b70dc"
+syntax_blocks = 7
+status = "forms"
+decisions = [
+  "a block outside a syntax section reviewed as notation and read as one (hand.toml)",
+  "a grammar repeated byte for byte from an earlier page is listed in its also_sources",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.table-functions-built-in"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/table-functions-built-in"
+title = "standard-sql/table-functions-built-in"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "e9308a967a148a503471bfdd55b989602c5e7bcf6fb1c5d5da404240a9a9fa96"
+syntax_sha256 = "07242336fe08ee3bf228a486ff2a89225edcab42794fd3afdc2c9eae45cd5c37"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.text-analysis"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/text-analysis"
+title = "standard-sql/text-analysis"
+family = "expressions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "71c08158c6342867bd01c16719e8c58d1683be7bb6a357c80bbc75d589e638f7"
+syntax_sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+syntax_blocks = 0
+status = "no_syntax_block"
+decisions = [
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+]
+
+[[source]]
+id = "doc.text-analysis-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/text-analysis-functions"
+title = "standard-sql/text-analysis-functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "e1484d2539a89ae7e1f7c4fc0be25c7277d542c4f0ac8bd145d86353265fe7d3"
+syntax_sha256 = "6aa75a8aa471bf6711fcafbdfdbda0610dca40aa17b9a591510c6c38301b1420"
+syntax_blocks = 5
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.time-series-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/time-series-functions"
+title = "standard-sql/time-series-functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:02Z"
+page_sha256 = "8e24387c131e4612fa892d3f146128184ec26f0f400b085c77ee8fff7e3c1cea"
+syntax_sha256 = "97163a0078d6869b96d583a55144117688da9ce9e624e1174545ffcdacd879a8"
+syntax_blocks = 10
+status = "forms"
+decisions = [
+  "a block outside a syntax section reviewed as notation and read as one (hand.toml)",
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "a reviewed block replaced by its corrected grammar (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.time-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/time_functions"
+title = "standard-sql/time_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "4c7a97b6dc88acbb348ad1b629de9d2ec1b4db84a51459a7b2eab814c74a76d7"
+syntax_sha256 = "e3d21da2f0c1f3118cff7ebac2c1b6f9d90cab318cbddd52203daa528c154c47"
+syntax_blocks = 12
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.timestamp-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/timestamp_functions"
+title = "standard-sql/timestamp_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "1b6adc1bf32bd7ee1663c5f0b8939ecf6a20069754788a2073a502243a8deed0"
+syntax_sha256 = "d0e7df8ab1b26d18d8f3b657a57cbf9a3575ce2921214bb4946a24460d31b9c3"
+syntax_blocks = 20
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.utility-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/utility-functions"
+title = "standard-sql/utility-functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "1a2541fa451e52f8c3a36fd0797af819f3099dc7a3cf7ce6029215c17b1eabd8"
+syntax_sha256 = "96420fd87b29e89bb441fb02defbc774b8e1724329e8871934625797de566208"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.vectorindex-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/vectorindex_functions"
+title = "standard-sql/vectorindex_functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "2dbec6cda2e3f7be5b0252c108b7b62d5c15569bff419f8938bd6e24f21ac7b2"
+syntax_sha256 = "b47f17abac34c60ffe6a866ce0236fd69b414e63e785283beea5ecce76b1cf80"
+syntax_blocks = 1
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "each function's signatures form one call form",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.window-function-calls"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/window-function-calls"
+title = "standard-sql/window-function-calls"
+family = "expressions"
+retrieved_utc = "2026-11-06T17:40:01Z"
+page_sha256 = "a6197e7342f20eac6a8e991f2435d7da540cb897ff1112d7cee7a87fab4a4211"
+syntax_sha256 = "91458a32d87608a22c865956c30652efcb92e26d8959fa4f82628677485d6bac"
+syntax_blocks = 24
+status = "forms"
+decisions = [
+  "a grammar repeated byte for byte from an earlier page is listed in its also_sources",
+  "a reviewed block in a syntax position yields no form (hand.toml)",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.window-functions"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/window-functions"
+title = "standard-sql/window-functions"
+family = "functions"
+retrieved_utc = "2026-11-06T17:40:02Z"
+page_sha256 = "90ae5c6949c79950ba39c686de663bae13cfc82de7b18199da7955122f6e6dfd"
+syntax_sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+syntax_blocks = 0
+status = "no_syntax_block"
+decisions = []
+
+[[source]]
+id = "doc.reference.system-procedures"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/system-procedures"
+title = "System procedures reference"
+family = "utility"
+retrieved_utc = "2026-11-06T17:40:02Z"
+page_sha256 = "1a556ed8c3c4085fc5a9f0d48668e860a6f2c8d14593702bd595fa7e22dee97b"
+syntax_sha256 = "fabea0b63afecff22b9edfae5d985de12e6268d00a02110ab1312755a43eccf9"
+syntax_blocks = 6
+status = "forms"
+decisions = [
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+  "syntax and synopsis blocks read as notation: lower-case words and one-letter operands are placeholders, and a comma before an optional part is read inside it",
+]
+
+[[source]]
+id = "doc.reference.system-variables"
+url = "https://docs.cloud.google.com/bigquery/docs/reference/system-variables"
+title = "System variables reference"
+family = "expressions"
+retrieved_utc = "2026-11-06T17:40:02Z"
+page_sha256 = "5029efe43ad170bbcd3dd9f08f1a0445c8185ddae18157524dca078d01d30a56"
+syntax_sha256 = "0fcbc28e8dd65b54fcde16d323d0696dff38c04d55c8ac07134b586da8bfa635"
+syntax_blocks = 2
+status = "forms"
+decisions = [
+  "catalogued by hand from code_block",
+  "code blocks after prose that use no notation are examples, as are blocks under examples",
+]

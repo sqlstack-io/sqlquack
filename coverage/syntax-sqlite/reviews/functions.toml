@@ -1,0 +1,453 @@
+# Approved reviews. Each listed form was read in full against its
+# SQLite 3.54.1 documentation, its obligations, its cases with their SQLite 3.54.1 receipts, and the
+# local parse trees. An approval holds while the form's definition hash and fingerprint are unchanged;
+# any change makes it stale until re-read.
+
+[[review]]
+id = "sl-functions-001"
+family = "functions"
+parser_tree = "1cc1e8670f6a0f2987045786698eb71c2ba3e5ba"
+reviewed_utc = "2026-11-08T08:10:17Z"
+verdict = "approved"
+forms = [
+  "sl.functions.aggregate.avg",
+  "sl.functions.aggregate.count",
+  "sl.functions.aggregate.group-concat",
+  "sl.functions.aggregate.max",
+  "sl.functions.aggregate.median",
+  "sl.functions.aggregate.min",
+  "sl.functions.aggregate.percentile",
+  "sl.functions.aggregate.percentile-cont",
+  "sl.functions.aggregate.percentile-disc",
+  "sl.functions.aggregate.string-agg",
+  "sl.functions.aggregate.sum",
+  "sl.functions.aggregate.total",
+  "sl.functions.datetime.date",
+  "sl.functions.datetime.datetime",
+  "sl.functions.datetime.julianday",
+  "sl.functions.datetime.modifiers",
+  "sl.functions.datetime.strftime",
+  "sl.functions.datetime.time",
+  "sl.functions.datetime.timediff",
+  "sl.functions.datetime.unixepoch",
+  "sl.functions.json.json",
+  "sl.functions.json.json-array",
+  "sl.functions.json.json-array-insert",
+  "sl.functions.json.json-array-length",
+  "sl.functions.json.json-each",
+  "sl.functions.json.json-error-position",
+  "sl.functions.json.json-extract",
+  "sl.functions.json.json-group-array",
+  "sl.functions.json.json-group-object",
+  "sl.functions.json.json-insert",
+  "sl.functions.json.json-object",
+  "sl.functions.json.json-patch",
+  "sl.functions.json.json-pretty",
+  "sl.functions.json.json-quote",
+  "sl.functions.json.json-remove",
+  "sl.functions.json.json-replace",
+  "sl.functions.json.json-set",
+  "sl.functions.json.json-tree",
+  "sl.functions.json.json-type",
+  "sl.functions.json.json-valid",
+  "sl.functions.json.jsonb",
+  "sl.functions.json.jsonb-array",
+  "sl.functions.json.jsonb-array-insert",
+  "sl.functions.json.jsonb-each",
+  "sl.functions.json.jsonb-extract",
+  "sl.functions.json.jsonb-group-array",
+  "sl.functions.json.jsonb-group-object",
+  "sl.functions.json.jsonb-insert",
+  "sl.functions.json.jsonb-object",
+  "sl.functions.json.jsonb-patch",
+  "sl.functions.json.jsonb-remove",
+  "sl.functions.json.jsonb-replace",
+  "sl.functions.json.jsonb-set",
+  "sl.functions.json.jsonb-tree",
+  "sl.functions.math.acos",
+  "sl.functions.math.acosh",
+  "sl.functions.math.asin",
+  "sl.functions.math.asinh",
+  "sl.functions.math.atan",
+  "sl.functions.math.atan2",
+  "sl.functions.math.atanh",
+  "sl.functions.math.ceil",
+  "sl.functions.math.ceiling",
+  "sl.functions.math.cos",
+  "sl.functions.math.cosh",
+  "sl.functions.math.degrees",
+  "sl.functions.math.exp",
+  "sl.functions.math.floor",
+  "sl.functions.math.ln",
+  "sl.functions.math.log",
+  "sl.functions.math.log10",
+  "sl.functions.math.log2",
+  "sl.functions.math.mod",
+  "sl.functions.math.pi",
+  "sl.functions.math.pow",
+  "sl.functions.math.power",
+  "sl.functions.math.radians",
+  "sl.functions.math.sin",
+  "sl.functions.math.sinh",
+  "sl.functions.math.sqrt",
+  "sl.functions.math.tan",
+  "sl.functions.math.tanh",
+  "sl.functions.math.trunc",
+  "sl.functions.scalar.abs",
+  "sl.functions.scalar.changes",
+  "sl.functions.scalar.char",
+  "sl.functions.scalar.coalesce",
+  "sl.functions.scalar.concat",
+  "sl.functions.scalar.concat-ws",
+  "sl.functions.scalar.format",
+  "sl.functions.scalar.glob",
+  "sl.functions.scalar.hex",
+  "sl.functions.scalar.if",
+  "sl.functions.scalar.ifnull",
+  "sl.functions.scalar.iif",
+  "sl.functions.scalar.instr",
+  "sl.functions.scalar.last-insert-rowid",
+  "sl.functions.scalar.length",
+  "sl.functions.scalar.like",
+  "sl.functions.scalar.likelihood",
+  "sl.functions.scalar.likely",
+  "sl.functions.scalar.load-extension",
+  "sl.functions.scalar.lower",
+  "sl.functions.scalar.ltrim",
+  "sl.functions.scalar.max",
+  "sl.functions.scalar.min",
+  "sl.functions.scalar.nullif",
+  "sl.functions.scalar.octet-length",
+  "sl.functions.scalar.printf",
+  "sl.functions.scalar.quote",
+  "sl.functions.scalar.random",
+  "sl.functions.scalar.randomblob",
+  "sl.functions.scalar.replace",
+  "sl.functions.scalar.round",
+  "sl.functions.scalar.rtrim",
+  "sl.functions.scalar.sign",
+  "sl.functions.scalar.soundex",
+  "sl.functions.scalar.sqlite-compileoption-get",
+  "sl.functions.scalar.sqlite-compileoption-used",
+  "sl.functions.scalar.sqlite-offset",
+  "sl.functions.scalar.sqlite-source-id",
+  "sl.functions.scalar.sqlite-version",
+  "sl.functions.scalar.substr",
+  "sl.functions.scalar.substring",
+  "sl.functions.scalar.total-changes",
+  "sl.functions.scalar.trim",
+  "sl.functions.scalar.typeof",
+  "sl.functions.scalar.unhex",
+  "sl.functions.scalar.unicode",
+  "sl.functions.scalar.unistr",
+  "sl.functions.scalar.unistr-quote",
+  "sl.functions.scalar.unlikely",
+  "sl.functions.scalar.upper",
+  "sl.functions.scalar.zeroblob",
+  "sl.functions.window.cume-dist",
+  "sl.functions.window.dense-rank",
+  "sl.functions.window.first-value",
+  "sl.functions.window.lag",
+  "sl.functions.window.last-value",
+  "sl.functions.window.lead",
+  "sl.functions.window.nth-value",
+  "sl.functions.window.ntile",
+  "sl.functions.window.percent-rank",
+  "sl.functions.window.rank",
+  "sl.functions.window.row-number",
+]
+note = "Read against the pinned SQLite 3.54.1 documentation and parse.y, the obligations, the cases with their receipts and repeat, and the parse trees of the strict parser; every case was re-run independently on the pinned engine and every scored case agrees with its receipt."
+
+[review.fingerprints]
+"sl.functions.aggregate.avg" = "a9fe807befb5d6e971c9311aafc8508638c0021ad7bf93fd0b74eeb41a6f6906"
+"sl.functions.aggregate.count" = "f75f84a9a03a1c63d2651d3e14da1223c054982dc257a03b6a8d763624208ebd"
+"sl.functions.aggregate.group-concat" = "b3c832e35935e6d987a10a4af2d8bd66ee8a4cb17839631a251515409649308c"
+"sl.functions.aggregate.max" = "be37b1bc81236298a937fefbd4c6766d85732baecf8b9f8ce3beed92dc6809c3"
+"sl.functions.aggregate.median" = "509c231021467497aab08da664fd05e1728c9bca070d44abecc0201f6284e76f"
+"sl.functions.aggregate.min" = "24a377338ac0c57259c76efaf1db96e23137f18081a1326629c401fed4676ca3"
+"sl.functions.aggregate.percentile" = "1458dfac54ad74af0f50cc6adfde99b9a18e842201153617de56a3fe86c08072"
+"sl.functions.aggregate.percentile-cont" = "6909f5ca5038f016e4d4c15f8c746ac4f22cb88f14e5b8da6b004ffe7f65c8f9"
+"sl.functions.aggregate.percentile-disc" = "ed1167ab5f5b5871ed4a75a2f8cf08026d8cf9e972834e4ef63dd17b18e770ca"
+"sl.functions.aggregate.string-agg" = "df88fb904a72ac8736cf844a4a56c44dd05ecbebd0504bf6075537c29f7931c9"
+"sl.functions.aggregate.sum" = "5a405690d1f9dfa7061e5abaa9ebc46b838ba221bc425a97ac6d481bb0462eac"
+"sl.functions.aggregate.total" = "e9607e3b2462e3c6054f9f4b1b35bb7adab67e965b34b410ab40ea0e7ac5e401"
+"sl.functions.datetime.date" = "c511ca9b100886c8fe0a57cdfa9f9e553bfe4e2e0dbd5b68e4b9ff7be0165bd4"
+"sl.functions.datetime.datetime" = "b1e5bb2f5de0362f9967811fceda58426ad449644709ccc25e25cdca62985f2a"
+"sl.functions.datetime.julianday" = "8189ac68892ab3e0fa9a3007e65ef36bab4d9b56213096286a478c6b37184c61"
+"sl.functions.datetime.modifiers" = "c695dfc59827c42a9324aa19371db70994f36f369fcfe1e8c0f5cd3f8baa4c67"
+"sl.functions.datetime.strftime" = "c692fd3a5296b2abed89fd8b52829da37606ab9435d029a34ef5ff41c8608ef8"
+"sl.functions.datetime.time" = "f043534880be11754992e65b1fd845d7670570645653a961bc64a93f2cb9bea7"
+"sl.functions.datetime.timediff" = "e94bd9d6f71b4c94ca8c788a027c2ff779c79b6f51ad7c326a319951a720e1ba"
+"sl.functions.datetime.unixepoch" = "88e77c4a06209170047219ca438dc31cb12ed913ff8508af40fb8c0a582b383e"
+"sl.functions.json.json" = "fd52dea8f9466d6f53eea4545d952b9a5f9feb83387e0bf0cccbe589a5d7183c"
+"sl.functions.json.json-array" = "79d2dad1df424444cbf3fddb8dff7472bd6983da149a54d9ffa2d3d8dc20fe50"
+"sl.functions.json.json-array-insert" = "44599f26a8391840d5aecb12b3a6e1d5942b3764f380648e8da734d1824250ba"
+"sl.functions.json.json-array-length" = "eec1d547b79914a7ba409072c202078b2ac605be0663da93cb47378394d86215"
+"sl.functions.json.json-each" = "d6acca8cb0dd8c741dcd9826eab9610b932810bd443da75d590586c321444a52"
+"sl.functions.json.json-error-position" = "b2271b7d8f1626b07a7bb9053bf8580f25d99cef80300f3decf4fad4cca43a22"
+"sl.functions.json.json-extract" = "60bc4398e9fd41409df3da98b115b03e584518646ccef15942683946ee9848ee"
+"sl.functions.json.json-group-array" = "947a88b46804a766dfec7e94bb92dc8cc4b8273e501e2df7823d4427764f1b63"
+"sl.functions.json.json-group-object" = "4e6c9662fe7049dda52e94b35eecba5da8b1756a5f861867a3eaa5b5d10c9ea1"
+"sl.functions.json.json-insert" = "45e6a36ad0ee8e32be59ea98c01856c1af31142b03bec686ee5173cf10a47fe3"
+"sl.functions.json.json-object" = "d148d20815749a20431e11b059938ca0073fd965c3b7c0c90df5813c3fa7d4e3"
+"sl.functions.json.json-patch" = "4c36798230a172d8084b93183287d46ba31e413859c14e69a8adc0ccb114332a"
+"sl.functions.json.json-pretty" = "9d3e56e8d7370c8e6394008109f1addbf89e1b31a8fb9aec70f0fecf417b1eff"
+"sl.functions.json.json-quote" = "c2a229b576ae9b701c9355fbd859f41fde2078d13e46e459a049c65ed2702eea"
+"sl.functions.json.json-remove" = "247dde1177b60949ea679d20ba96eba4eff93c4385e6ab12d014c1cd2eea281f"
+"sl.functions.json.json-replace" = "eb3c23c33b4b34a0e94eb69207ce62c0af95f7fe569515ac1b1afd9b711667b7"
+"sl.functions.json.json-set" = "841bf29712be5d48345043ac1f5db6be7b47a926fa4a58d6b9593bb45434cc07"
+"sl.functions.json.json-tree" = "2ab9502dfb9acf9fa08d7b46364e1236b2577dd343a04d5efd5faa0d95287e2c"
+"sl.functions.json.json-type" = "a4a9f6c5dee99bdc721ebb2b0f2030cbff2809509f08a413016185c8cc1deac3"
+"sl.functions.json.json-valid" = "1d2d19b8f4b59d6b199fc1f9a18247937970d35ecebd3f7da1670468be314d9c"
+"sl.functions.json.jsonb" = "a3ee3228ad481b8764eadec740b93e52a3e8219738aad061462f337231b1d35b"
+"sl.functions.json.jsonb-array" = "e85a8a21a6a4b856b4dbe0c71f25a3509e3338b58636c5c3d8ba99c85af112f3"
+"sl.functions.json.jsonb-array-insert" = "1479bd0ae156caa6f025e91fe3d4bada91517c8a579863fd40c7f510ddcb1d8d"
+"sl.functions.json.jsonb-each" = "2bf7f42fb1b37500c7f18de142964bb13075c526bdf3cc5cd2c6d42e9b252fae"
+"sl.functions.json.jsonb-extract" = "b5feb2ef4de9b40c8568d9ccfe4ad9803f5a91c3f93434543830728596dffa48"
+"sl.functions.json.jsonb-group-array" = "9e4660f80047e6b2905979d0a462969bc8e0804895de05fe40be5bd6120d617f"
+"sl.functions.json.jsonb-group-object" = "00eb56dae92002a5e153007ce35c59ea4ba4844de4f1b29cf21f681ea275c9f5"
+"sl.functions.json.jsonb-insert" = "7fa18210a1d974408ae3228ca470db6c6201cc04b15e17fa2480632c51f65c75"
+"sl.functions.json.jsonb-object" = "ec16298d375a8c686a42a820aa66069a56f77975e9f7826368d80eac9bdc249a"
+"sl.functions.json.jsonb-patch" = "7f2d6f5c3b7b5bb04eb2e8ee8a5e333d8e367551048f2a89a322dc2707756f87"
+"sl.functions.json.jsonb-remove" = "1f6ac3718a8dd0b5ddff046b25e886a142b6313785499be173f7aefe5773bbb9"
+"sl.functions.json.jsonb-replace" = "469766ae21c16f722340fb482b297f2ccc75e6914150baecc0b6851bf1d70905"
+"sl.functions.json.jsonb-set" = "d36b7f80316fc0a7834a23737d1edd27dcb73ec72523c5d2aff5770f1821e63d"
+"sl.functions.json.jsonb-tree" = "c0bba138d74a40569165282d8e6d4b0a9254e6ec3ca7912a471068d7819b8744"
+"sl.functions.math.acos" = "20dac19a3cd5c7299e1213709bbd598eb6188fac9d591b106a6f534bb6b3a899"
+"sl.functions.math.acosh" = "4e76bb78972e24c11fde7cd68ed2064cac9ab847b0f08caab4eed6fe02a36bbf"
+"sl.functions.math.asin" = "fdf889d4f3cee33ad201735d5f768614876f69b6eebe741f2ce478649148bf6e"
+"sl.functions.math.asinh" = "7c5b0d1aaa61d5490c415c81a962da1dd8ee6581a46bd7d147839cc1f3cf799b"
+"sl.functions.math.atan" = "0b348113bb73ebab7424f6feb10deeb38f5cfae19de40ad6cdf4aeffacf92049"
+"sl.functions.math.atan2" = "7b58a199fba6fdb26700da9ccc351477176d7112af06902825d1776d624859a3"
+"sl.functions.math.atanh" = "fc66b7f8ba54670b65b9cbb3a9757beee716f587ae94459281c06f94b4a3f480"
+"sl.functions.math.ceil" = "af0cdb66067deb317cba2c7a4260e5e8d27fcbe4429b4cbb26dc019a556012f1"
+"sl.functions.math.ceiling" = "0902828aad3d3af88b320f058a0beb7216240a04811d41cde0f1b2ce7e4c8cb8"
+"sl.functions.math.cos" = "9556c2b89a665865046ae6a8998001f64c7e278b7581344a06f012a4b78eef33"
+"sl.functions.math.cosh" = "a800c33e1168943fc29f37aea64f4a830dc14ed0c499f2d174411716700195cc"
+"sl.functions.math.degrees" = "3cfd92a6ac83cd471a4e9145550137a94b20a62be8f5b03073e0713c2599fddf"
+"sl.functions.math.exp" = "dbb0a0a1658bcf984c61e29608697d5c02a8d4cf411b56c372e79f4fd184a27e"
+"sl.functions.math.floor" = "0f7129307c9864df5d8759827ea0d8cf064058d7867732c72bcd4e1b3b629303"
+"sl.functions.math.ln" = "0821913547f53975219f23074e6a77417c3719897c019559477fc58fa25d5068"
+"sl.functions.math.log" = "011c77d90b7975f92aae13784a60ce824e5d84d352333c015125c2c89dcfd54b"
+"sl.functions.math.log10" = "229e3fd0179d5a6bd40c0f6997fbeacfef0db368b67d60b945a79fe5da29974f"
+"sl.functions.math.log2" = "073eba2effd7008c7bed97d7a8c33d31e85e03a81aa6232a29a3a42232ac1386"
+"sl.functions.math.mod" = "0c124d7def1da57bd1a91b4965f4952103405545c0ea07b47a4430a93a808c3c"
+"sl.functions.math.pi" = "0fc3b31690772a01da6b82bdd25f2688b0023660535a3823c5d045fd3a02e85b"
+"sl.functions.math.pow" = "35760896c11787f4a29971f6d9025077686bee900ce3590c0a6e64a8339cb6ab"
+"sl.functions.math.power" = "01d61ce73a5cde6549ee40200d0704c951857d67b6374828a055e446d60bf20d"
+"sl.functions.math.radians" = "1657fb384e90b128f8e57eca036115a416a84b1877c025b01731092efe743fd7"
+"sl.functions.math.sin" = "78b25b046b5a64d7d283fa74494fe9f1779a68cea80da600a2e2b2738ee462cd"
+"sl.functions.math.sinh" = "87619872da038cb8eb45dece486cd4dac26053f18176d5ad06717fb2a7342fb6"
+"sl.functions.math.sqrt" = "d45d1f066ab2c5dce7b0997287bd841b36b93593d6da81aeaf0f1f49b67b1bdc"
+"sl.functions.math.tan" = "87bc8dc4d0fc903b97e49156fa08a42fd12de2e883ab76bb835ab9e2eb07456f"
+"sl.functions.math.tanh" = "5454178c5e9136971809fb1f2f4233db3097b6213208619fd02f9a6e7a4b369e"
+"sl.functions.math.trunc" = "59af5a2ff85d3637bd6b965496535bb9fdec432412434b68f9bf0cab6612b391"
+"sl.functions.scalar.abs" = "8af08475c24d455d94ebfdf925e10950b0ce3ba77bd5e212df975b2a6e69b123"
+"sl.functions.scalar.changes" = "3feae1522598406b45533d618e462e34e4b9765546afab01f7a78f0479c5f345"
+"sl.functions.scalar.char" = "fec899193b700bb29c2adadd551c6e50731ba0c53dcaa1218ef56d1603dcca38"
+"sl.functions.scalar.coalesce" = "bdfbf1bec30ee80d2b526706fe9ad227c4577c502183b18c98108a8a4f5d26d5"
+"sl.functions.scalar.concat" = "63aa24e55662027f9229a1fdf6bca7be35aa8dd3deb0c274f65d59acadc76ed1"
+"sl.functions.scalar.concat-ws" = "c653ce825abded9ef10c502ebca03fe761ef7d6a3562548b585c2995ea46e607"
+"sl.functions.scalar.format" = "268fec8f8022b4148202d465e120516b741dd7b6c913f87614c0135b26468237"
+"sl.functions.scalar.glob" = "97983eaed111bd9a41126cd2019cd85337b6e145f1bfee0e82ba53f0bc207f58"
+"sl.functions.scalar.hex" = "2705629a64e3f54b7d5cd2a9a2398539160fa552948da85a834bab9d2e7e7149"
+"sl.functions.scalar.if" = "0501aa25a8cadf3d32821c7f479c6da443bccbebed935313383237c32dd57215"
+"sl.functions.scalar.ifnull" = "6ee7bbb06c869c1f36ca0db61e45decee602265b64e4c8e6368a31bdf8d5376c"
+"sl.functions.scalar.iif" = "6311bd3d1cdddab2f24b4a0d56386c19496698b3dc0c470dfc977fab94c3dafa"
+"sl.functions.scalar.instr" = "8722bf1750a3848dd82aa7e3ee3f9317c38adce35b9800ebb3286ab6d8e53fab"
+"sl.functions.scalar.last-insert-rowid" = "d0bf218811af4cd2d93806c4cfb7a53a89571c10f83544b7ffe0d35da25379fd"
+"sl.functions.scalar.length" = "0991e71e9738014d6e4564189c789ae7bbff7c13843a590f7c14edf52df5b2d5"
+"sl.functions.scalar.like" = "73dc4dd8cd47cb15a3f7c6d6a32774191b463523e93f244b7c2cd4f0e2b43df6"
+"sl.functions.scalar.likelihood" = "dcc7e99106c6f5e8755b47a0c13c7e9a9b82fdf8d6ba98e8a1010fe7f971a35a"
+"sl.functions.scalar.likely" = "7954da4c77aafb2a85ab199f70af024f1862ad23a67352d095e275eb66ce36cd"
+"sl.functions.scalar.load-extension" = "38da4263bb4b74fbbb0ec67205d6f6ed777894e15fe3cae477b350a5a2b66a17"
+"sl.functions.scalar.lower" = "c292ebc943c475663b1de4fef0123662238d1d44f9ee6ae5856884b23509e917"
+"sl.functions.scalar.ltrim" = "85af59e31782e707cae77b7f2478795af8e8e844e844a8e69c15c0ab44759134"
+"sl.functions.scalar.max" = "e766f43e5d214b3471ed07267d0100110080110251f56c981b9afe075cba3a37"
+"sl.functions.scalar.min" = "f5b765b25825065ae0558c7e56128597a5f6795bb544108262ebeb5ce6d662e9"
+"sl.functions.scalar.nullif" = "b83b4af12e7ccb9e51a7773342cbf5d53fe930bb42bf0615e4a543ee61dc4bd5"
+"sl.functions.scalar.octet-length" = "2e000629c4cab1084f3ac4d7016707e1344f12bd72191774c5769c4dfe4fae6c"
+"sl.functions.scalar.printf" = "a6197d17023743baa16fc9a26e9ad40a947a1e66d6c9a244b1a5f1bfed5eb683"
+"sl.functions.scalar.quote" = "66113d1232303df709044744e334fb1f7df5a876de54906fa8d1b8a97693efac"
+"sl.functions.scalar.random" = "d917538e39f930a622840b31a4623a16f97e0f60592525c27da6d80f8c7079e0"
+"sl.functions.scalar.randomblob" = "4d922e8d84d1fed26ccbe496a3f5ff163d110112d012ce117f16c69ea8583c5d"
+"sl.functions.scalar.replace" = "a4ae8bedc25457ae275366a8a33a9006f55e819019019e978214f97dd268ade2"
+"sl.functions.scalar.round" = "023b723073547540b3c0b2b0c7c53580c682fc5f90dfb711429a8b91438a5324"
+"sl.functions.scalar.rtrim" = "dd120cf74a3d4231a68c48d709ae71bbad2deee2d470bab62938567e877c9d27"
+"sl.functions.scalar.sign" = "9578d180834fc00f9d0217bf0ab70b53cbfc66b51916bd401bf655ecb57fb72e"
+"sl.functions.scalar.soundex" = "a1edd08f9afe79b1d12e6653bfd0f4925c43e65863d8e727910b717ff1801d39"
+"sl.functions.scalar.sqlite-compileoption-get" = "1787b711abcf3c5696e91fc842b7538e9cdd77845ce73fd61087701561ef9e78"
+"sl.functions.scalar.sqlite-compileoption-used" = "297b22ee739d3a3b54f8a345251444a0e8619823ae321971e208256ff4a8d587"
+"sl.functions.scalar.sqlite-offset" = "0afa5228298904ad8ac7169c735c68ac0a166acb2c7998d3f9d318740dbc2701"
+"sl.functions.scalar.sqlite-source-id" = "9161e67d36693f133432dba01a9aac0392c93c691e588f56d205360638e390d1"
+"sl.functions.scalar.sqlite-version" = "baa99a497d471ea3e12f65c56b73b4fe9585903636118d85a1a671e90a2ddcee"
+"sl.functions.scalar.substr" = "3a368a5333b547c1be93f34533dbd8dfb325e0dfcbbe2c6ae62d0e501eb69ae6"
+"sl.functions.scalar.substring" = "e21b970fae0c4731f5df76f81d318e1f4bd94b752b34ecb3e65591186c686daf"
+"sl.functions.scalar.total-changes" = "0313b0cb88786fb5dc7dc94136e899cf20729cff622d34f3ea36b44814c2e3c9"
+"sl.functions.scalar.trim" = "b5a5adca81b3f4b48a4909b47aae0159289a1bb0c294a9645cbbf4850b6bf1d7"
+"sl.functions.scalar.typeof" = "5c4a7f6bb09ad9b6220f529bc2949fd99e8774f272761755d6a678d84f69648d"
+"sl.functions.scalar.unhex" = "82d50d0727969d1b8eaaed57f77200c8bd27008bc8b56e77b62d3ca91b13576e"
+"sl.functions.scalar.unicode" = "932a3723a7d553e03b9462b793cd8592c40e904fb74dd4e5e0636fdf2a78ce3b"
+"sl.functions.scalar.unistr" = "ecd897cc4dc607f7e8abacac4ef3bc892a6494ebb327c96f1c6aa41b09815f32"
+"sl.functions.scalar.unistr-quote" = "a2d29b665b3924e20efe591313d6f7b2034af681fec8e2d6c9d0d46eb7b0cf20"
+"sl.functions.scalar.unlikely" = "ec16602e605ceb573254276170cb1e5c9b0acc0b082ed5073e2f9a4b72623033"
+"sl.functions.scalar.upper" = "d96b22f09971b37519af6604b8c5cf19e0452fa74169aa0f2de2a5cc447cc40e"
+"sl.functions.scalar.zeroblob" = "4363923ff6452fcda969d0afca4a0f94e1487b0c0f4dfd23fbf61c7172728339"
+"sl.functions.window.cume-dist" = "47444d4baa33f8f350fc1175250ebb2fb2fd3b9a5ea9154e281abecf604764c8"
+"sl.functions.window.dense-rank" = "8f3901f037a4504b4acac62195b0566a890b49d37bd0abd97c9af2858061b168"
+"sl.functions.window.first-value" = "6223edc9f9a384443d2fc36422e89e779631067f89edfe1f1b26fb535b2ca61f"
+"sl.functions.window.lag" = "be6777942915be4a43e8b14fc50712a04d3cedb08e3b3b1514b02b2dc9633701"
+"sl.functions.window.last-value" = "aa38cf6ff2568feec08a24ccda43d48a2ec6350e66475e47016d5eff13b39489"
+"sl.functions.window.lead" = "2be185d9665d72cf5d8b60584f79d28903a53087efd0578a2533c9c676a8f04e"
+"sl.functions.window.nth-value" = "b7140a0976b6e274cd7906f09b96c89d9b8c09462a3e109f183f5255853a6e20"
+"sl.functions.window.ntile" = "e2bb267bc9d5e04736df6b87d589f3b2f768a43f5457d7252bdbfafe95ee13fd"
+"sl.functions.window.percent-rank" = "cfdc33ac46d4f55ae3a6335fc155eb03778281a2a0fa6a77f10360f753e7b062"
+"sl.functions.window.rank" = "5e39f81efad0fc9466fc7903606d1bfc16cf45bb7a4aea2effefcb638a32082b"
+"sl.functions.window.row-number" = "e25c455d2b2b18608880a738f212d2652749908695ce89abd510b030a2d362d8"
+
+[review.definitions]
+"sl.functions.aggregate.avg" = "2ee13ebbf09df5c7f87af464918204dad34a5f86cef6ba0f345800b742131551"
+"sl.functions.aggregate.count" = "a897bc50215182ec357cb6c0a82e7d4dc7ef23fc919009df7f5f7258dcf18c7d"
+"sl.functions.aggregate.group-concat" = "cc6ff8c9ec1c567c53a691e8f9b25d35cdf82f1f24da6ed8d85039ba9649f61b"
+"sl.functions.aggregate.max" = "2d53ad6f6602abcfbd948e6b091772f3fa6baaec033b63141eaf80fab2503a22"
+"sl.functions.aggregate.median" = "f6cfc00af1d0ec7f920ff5c658dbe887dd09144db4e5bfaa52bdb1f0dcd6ce30"
+"sl.functions.aggregate.min" = "2993299df15e63d90b43b4d7ac66a2b4026026334500fab3a70d096d86cc75e9"
+"sl.functions.aggregate.percentile" = "7632e11abc0962eabd563d22686a8cb6dbc9c2896033e9a4ecd3390b386211cd"
+"sl.functions.aggregate.percentile-cont" = "f8282016e38d909f9650a7826c0c5bbb7557145baab961f8580d14db8216d36e"
+"sl.functions.aggregate.percentile-disc" = "670c0bfd3c0352c50b5069806eb1ce2cd153361c46c8df821d5937ca9d84abc7"
+"sl.functions.aggregate.string-agg" = "e6a9bffbbbe011f5cb94d4178bb8921d65ad80c9247b94e680ecb250999a6563"
+"sl.functions.aggregate.sum" = "ff15b61f4909940d1f146ccc0a60b19be0b8c3c8b9fdb04035407824b9b5819f"
+"sl.functions.aggregate.total" = "fe0147934ba3c7be615c1fb958205f549c7f1a01789d4bd9c9bc61ba1ff7a613"
+"sl.functions.datetime.date" = "06a6cdc09c7468ce7c17ebf31806c69dcea93677db50a7284c2fe3819eb65487"
+"sl.functions.datetime.datetime" = "6e0dc7d4e48b0ce69e20fa8eaef85520283328995242ea47ff44bbba33629659"
+"sl.functions.datetime.julianday" = "efeff629b67fcb20efd1fe322409449ff25b2194940eab07fe447bb0904f0c84"
+"sl.functions.datetime.modifiers" = "c7453fc16e95b3d0e956d42dbf910f6e5ec2051a2376ec8e4e8004e6353f2a53"
+"sl.functions.datetime.strftime" = "d49a2529e04367d1ca1ffaf4d42bc248f9845b3670c679e24233ad570cf18730"
+"sl.functions.datetime.time" = "dc394fef6aa13cb28f7896c92c6f2c3b549a73ddd4bd8723a42683acb6c51277"
+"sl.functions.datetime.timediff" = "5223e72110f7e814c9fcbadce6864f788bb2885f4e668f9f78b19028d0711a8c"
+"sl.functions.datetime.unixepoch" = "cc8d31cc16101c8a12bf0c753bc0d00dc699fc99cb6749c2e093300affcf6f6b"
+"sl.functions.json.json" = "12311c4e2ee3978b79b939e4c4da6e1018b9cd4e06d866e8ca76954ec20dc36a"
+"sl.functions.json.json-array" = "95345ca3715f8055ef22b11c9c22d61d4cf6e8d3675f52e6d5c35065644ea939"
+"sl.functions.json.json-array-insert" = "09565cb6bebe8ea62e8aedac9edbadd70df13ffe0944e82886e4751a1cd59ff9"
+"sl.functions.json.json-array-length" = "7cb6284613c92bb7b80cdce9b4e43a970a556c2ece0ff4540bba579d8d533842"
+"sl.functions.json.json-each" = "527fbc1595007a48a1036cea935fd707852817ad826847087bd124cd2e9680dd"
+"sl.functions.json.json-error-position" = "d0f2c27f1ca5582590d5d990c58bf1a83e96fb2472ba1c7e59c174e962439859"
+"sl.functions.json.json-extract" = "e0c2a4c5073a33ab18fbf22d2325648310718416586febdc4fc02b55b92c10d0"
+"sl.functions.json.json-group-array" = "1a214b3cd1dd34692ca5264d0e89d6ad843f978176aee11764526bb558a5538b"
+"sl.functions.json.json-group-object" = "456e84278d34edc9d4c4992a0fc85c9b42a4910b40bc5a161b05707c77b01e7c"
+"sl.functions.json.json-insert" = "9eb0e2a6e19908eeed29fc475069f106ba8d4a520ac38e2939bd588f271fa2bf"
+"sl.functions.json.json-object" = "849dfd29b83832332704bf947a330ede2ec541fd570cb54992a403edba379883"
+"sl.functions.json.json-patch" = "9f5cedae5e51d72cfc2f3d79d60c9ae305b50052e50794f635735e5b88cb55eb"
+"sl.functions.json.json-pretty" = "3a0a2104ee97ff1739aa2afed13a7200d187722027d6a9893b3d6e16d558e802"
+"sl.functions.json.json-quote" = "2779703991959455a689ef6256600b1a58d1064285c7d6e8ed8df9296d5e10a9"
+"sl.functions.json.json-remove" = "66063484c310bf12cab2636131a5b6d01fcb02f8e3abfa9753445fb886c5b9e2"
+"sl.functions.json.json-replace" = "06e81d4a36217b341021f625d7261e863ccc9bf6f7e83918e7f4b9d01c85832a"
+"sl.functions.json.json-set" = "1e249b60d9f8ab4f42a331352410362f54e8a5ba9fbb802b7b8114424371e23a"
+"sl.functions.json.json-tree" = "cddf5688870ecd98c1b9512b6f48203586786f172284935ef5b3e40eebcf7e79"
+"sl.functions.json.json-type" = "42bb9361370fc7edc67293bc198b05418682079c28ac5682055746e53c71734f"
+"sl.functions.json.json-valid" = "912e826e2a46154b35cef24b59acd42aec68b736157cdd8674d78cad80fed54d"
+"sl.functions.json.jsonb" = "7698ff1dc9efa18ae0bac4541f57e8490fc74bf1dbee68594e28c5bf71534602"
+"sl.functions.json.jsonb-array" = "77a8e7a4905603847e6587ab0964ad259863a8b27ccc604834b36bba04e958da"
+"sl.functions.json.jsonb-array-insert" = "baf30a73adeffb81a6e8f01a9e8521b5de15c22272abf7679f9eeb96fd64a0bc"
+"sl.functions.json.jsonb-each" = "fa10ecd866e2f0d0185417a16ac69275b5f66bdb10f1fdfffa1ee07faa6ced2c"
+"sl.functions.json.jsonb-extract" = "fb62bffab3c347392cb93fccfb5b6072a2556947d1133271a2615b87e40ccb1d"
+"sl.functions.json.jsonb-group-array" = "7014d768fd2f3081b5f3a4d2125f7932e9a8338c0ab7524c948b16bb72a14882"
+"sl.functions.json.jsonb-group-object" = "bd88f2f72a459153af6c54973242eabde748e206d820362031252da2bd83af7d"
+"sl.functions.json.jsonb-insert" = "9d87ffe5a4024a40b52290827c053bc96b753d5206b6acf2ced1639046433d73"
+"sl.functions.json.jsonb-object" = "9940777eff3f9fe5891f2af7e37bb20bc83d2fe19ce6d315c283744ddc817e72"
+"sl.functions.json.jsonb-patch" = "77f48129f6f270b22635aeda92d51c1244758de65d2ce6ea8cc0d8ece1c641fb"
+"sl.functions.json.jsonb-remove" = "8bf2caf251a51531351177e34841135ce548a4d41e789b69930318b8e84575b6"
+"sl.functions.json.jsonb-replace" = "b8be3c9e7aa619da160477838680dfa43eabf99211b628b25f9789c0c25a985b"
+"sl.functions.json.jsonb-set" = "90d77a2c3b613bac42f7bb1a6020c0a14666b4358c6d20496c04a109228952bc"
+"sl.functions.json.jsonb-tree" = "b72e5f6e917b89ebb9651132bfd7435c649a59b53a684dde992c9c134a8e5b9b"
+"sl.functions.math.acos" = "4586dc767c97481fe300cc4cb29d1344c163902599d41e65412af14764d4f870"
+"sl.functions.math.acosh" = "0b845d568b254643c711b6ef8969a37922fe6e6f583c367281980bf452554951"
+"sl.functions.math.asin" = "02d5367d91006f34aa766c896f0a94f9269cba62351a234e73bdca1fa333f5ef"
+"sl.functions.math.asinh" = "6e8957294a10336ff84980cf59fa04feb1040ff549a5b70c78b06e469febe07b"
+"sl.functions.math.atan" = "9c556e1a54cf3f220edc721e4fbd66f97d8f9dbbe8b3d0c5f1bec7e1bab7b96d"
+"sl.functions.math.atan2" = "86d1f28437d665735d4c00135859a762f006e7a9a019ee9299e95770d9afcf00"
+"sl.functions.math.atanh" = "e6c286e3b76f2438395d517d69eabf6c7a084ae38cde7f81a78b802a15cc0112"
+"sl.functions.math.ceil" = "1f9b644e26793aefd9544aa084dd2de071f5fdcc877fff1e5cc229f0361b5d57"
+"sl.functions.math.ceiling" = "81999000dd77059ae98f97655b8777fb26965b225787ed625f02d797717dc0d7"
+"sl.functions.math.cos" = "e0a4f9934d094ec5bc9c668650e9a6797c1c456587b59dbc8e1551e0cc07bd19"
+"sl.functions.math.cosh" = "d208593ab43745cb7b78f00def847182aad281be0f47427fb310b389a3e3f813"
+"sl.functions.math.degrees" = "3204f08fceee80da124ca6624994bb843cb1b36342ba3f9c72821006c7a36b8d"
+"sl.functions.math.exp" = "0c2175a6505b873b3600d8cbe0054ec5968e2491964998366fb0803c04a5d3aa"
+"sl.functions.math.floor" = "6223e5de0f51713b17b01ebbc11ac62dc41a3663ae0dcdc0e083a21b72e1b0bd"
+"sl.functions.math.ln" = "b04eba0f5109adeb8b793ab9b3290677cc384d2e9e8176e284b5f47cbd353612"
+"sl.functions.math.log" = "172e32a6e7c60b9e86bdd51b73bdc3d1494eed2f49604312b0019ebe609604ba"
+"sl.functions.math.log10" = "f808a0a0867d193809c2aa6d422f2861e986c4d4ea30071b53640710dbf35a29"
+"sl.functions.math.log2" = "7630198be55ab5d390814ba060347da3d4a85d2747dca75e70a34190e513bfcb"
+"sl.functions.math.mod" = "53d4a34f5d8a19de1582dd0ce4d4fe5b58df8a0f62a3d4628c87e642eae09ae0"
+"sl.functions.math.pi" = "a7fd45f174d723450f72247db4d9bd3925d019023334ed0897cf86d57feb0430"
+"sl.functions.math.pow" = "ac191b5883b2b4e295fe5dd6f5d1d92b202046ad01f3b44b7a7aa954596752b2"
+"sl.functions.math.power" = "61088c23bd1f2566f4fdd1ed6f663b3f6cb9aba32222626dbbc22c6bbc8c0701"
+"sl.functions.math.radians" = "1c0c9b3267e79f6e1e62a1c3fb283b611c5e6b86cb22f1d114aadbd2f35bd07b"
+"sl.functions.math.sin" = "9325e1ae6755e1bdf9606e3f1f3fe86ebec072bd2ae48f8761f4a7a4c4a2a07d"
+"sl.functions.math.sinh" = "2255e29876a6cd1dd27729f4d6befbc37d43ad8c1ce366557790fb956e37b5b7"
+"sl.functions.math.sqrt" = "64e008629c0970389f3981c82b529c65f5ebad25a35174e68d91e4655a553af1"
+"sl.functions.math.tan" = "2f5eb5026cec1f4a49385daf56b089e752813a5cbf0e2b4de4997493181069c0"
+"sl.functions.math.tanh" = "1fe8a936c0669c66a19201673097b4d2c2bf4c1c127646f8e4aa367d8d40bd91"
+"sl.functions.math.trunc" = "32c1c2d3471088036e8fb3101ccc49e6ead68dae898d061a70d3a14e6ebda517"
+"sl.functions.scalar.abs" = "56b63bb3e500a21ca0e237e5227dea5f3eb202f696388edcb4dc3626888f6790"
+"sl.functions.scalar.changes" = "294bfa4b607971ce70464e3526550d463ae229db12665e2acfd65b81a3d6f493"
+"sl.functions.scalar.char" = "304118432c39d0cea2f72a3b5658f33e43539b56813ff3faebe62ab0e689bbcd"
+"sl.functions.scalar.coalesce" = "ae903ff0bf9b5324dc39315975eeae5764d4af627bfe9b9733339609ab420e1c"
+"sl.functions.scalar.concat" = "400d0fd778bd6d01d695661d05fc20b0ab449eaa7d4530cacb9752ea2d490c34"
+"sl.functions.scalar.concat-ws" = "e9c51089a8b68041689bd65828510bfb8302efa71c1abfabe1e0ce1f45b71df4"
+"sl.functions.scalar.format" = "07ddf5b9309380cc65b4f244f7b1ab905afe1a865b4f6edb54cb612e21b9e17a"
+"sl.functions.scalar.glob" = "4b25d11e05715963c84ba6414d599b6c8967f8ac48e4e84d6fcf3d936a8c052b"
+"sl.functions.scalar.hex" = "0ef595500e4000acf35137666f5a2e2051110d65c5bd5b1cded852ba792e8c18"
+"sl.functions.scalar.if" = "98482393f638c1f3bae81fbd6231d70ddbb24ddf73d6a4eb86b9e74bdf374710"
+"sl.functions.scalar.ifnull" = "3a38ea645b77aa1ede169e741973e0de743a7aa606b9965b47e5a622f539b894"
+"sl.functions.scalar.iif" = "01667e5d8e29f2ee76852040792f4bd5c1e777830970cd78a5e1a01807982b2e"
+"sl.functions.scalar.instr" = "78e2129ea6c7cf542ab641e6f6f72253dabe412e75ba9c20d8001b796883921d"
+"sl.functions.scalar.last-insert-rowid" = "0efd75715313db8fb9afff1dc5e4d1d2dbf15a3ed7db1662ef0fee79c608bbb4"
+"sl.functions.scalar.length" = "0d3ab3c905d9410fd886b9d0f70a14295cb73c136c473a4609d407983e78123e"
+"sl.functions.scalar.like" = "6c9d0236ce332c2ffb29b12dc2e34f7fc63ab9783982ad96307323e31a87b2ef"
+"sl.functions.scalar.likelihood" = "723005a3e3692d3b6ea7a81469309de663355e9b136225199aac3b3ccfdd3fb3"
+"sl.functions.scalar.likely" = "256fae35531a0bc1629f7cbbbe20a8acb649d85133b9231833eb831c97e5d5f9"
+"sl.functions.scalar.load-extension" = "d59ed290ba28e898e2dbaf3a08db4c0030ecbdb5ed963cf98bcd1da186a19755"
+"sl.functions.scalar.lower" = "0d647c23560594215ccfc2c3fa995f7e5a5e474cac438587875ee06cf04769e5"
+"sl.functions.scalar.ltrim" = "f4e5f8a943b2335b385e54576286cb014fd86939f79e754e165393d55ed7716a"
+"sl.functions.scalar.max" = "e305caeb6eaf99a3db16c5e4a8322cdaa11864c00245a3a4c29d56b3c7a51f9f"
+"sl.functions.scalar.min" = "a40cd5f3f0e11cf367de3a94ca9c873662c13be50bd8a89431069a86a5416091"
+"sl.functions.scalar.nullif" = "1c1950972d98ed01cfca06b5ff0b393c3d692ab3a0034a33fb662ec0a0cc9790"
+"sl.functions.scalar.octet-length" = "1e1d1751d1e1ea84fa41617a144ce0e63dcbaaaef5d7478c4523e768735602ff"
+"sl.functions.scalar.printf" = "f65acaa09086bfee3e7a770ccec4c8cc031d2b176c15b8df4e266c7f0a95bdcf"
+"sl.functions.scalar.quote" = "ff7e1f480c69d3e8d78e51de1832f0836acb970ff30e5a26bd1a0c4187731237"
+"sl.functions.scalar.random" = "556be2acf095b4a0a14153109bb789269210bfb9cf8e45ff7b4b0f5603e0d4fe"
+"sl.functions.scalar.randomblob" = "0a0d06d7a8ecf4a34cb74484dbb84f47a737c778a569ed4ea3af263040a42f38"
+"sl.functions.scalar.replace" = "f2ed041984662c53744adb34385d2a8e1a43d79955a98d9115c8192e026363d8"
+"sl.functions.scalar.round" = "ce121651e3a5cce762316acbbc717943c302a8f8b715166f70f134650b0d779b"
+"sl.functions.scalar.rtrim" = "b5dae52db54f08567df91fdadc27c1ed9c4e03618b8e5d86f4bdccf13031892c"
+"sl.functions.scalar.sign" = "07efca5b95f1161716a1256ba0e36a71a9c3dced2d11b23dd81f6050f7ee1830"
+"sl.functions.scalar.soundex" = "98d03f66aef62915d19b36fce497e745c0334c7b0ffe573a7e356473c2847d06"
+"sl.functions.scalar.sqlite-compileoption-get" = "27db21046c77faddb8b56c2d5f61015c9734b490d49170d22a7ce7ede2e756bb"
+"sl.functions.scalar.sqlite-compileoption-used" = "208dbfe16686d9d6eee0858cecf88266e77eb7b787715a05dd584f7686b23ff1"
+"sl.functions.scalar.sqlite-offset" = "9dcf8c20d3a7eeb3c1f2cb3b97523175c09a1f0b0a9e4ce518d59319fff5f951"
+"sl.functions.scalar.sqlite-source-id" = "e60d5793c13071e42d9f82134fa826bd85c9df32adc75a838970a8ae50f8d8f6"
+"sl.functions.scalar.sqlite-version" = "cd49c0f69216742865eddb08ec8a7912d5892d123d6b02157a8bcac7c519cde6"
+"sl.functions.scalar.substr" = "1cb80c9b676f0237bf8daefd004a213e2332dcdf0091a6125ae4e5314a6895b3"
+"sl.functions.scalar.substring" = "11e986d679d6c7c936d1c01b7958fb48982f3a10053b312e90dce84820102442"
+"sl.functions.scalar.total-changes" = "0a7ce27aeee79e8f6e4c447999aa4a40da50c9c0339852cac60ddab7722ce6b5"
+"sl.functions.scalar.trim" = "e6dc38801e4fb883628e5efcb8486efe897c047c9153453e60d23322b76de92e"
+"sl.functions.scalar.typeof" = "bb811c600090e283473a0c263a3639a2e6cae630dce4456a2b37fdf9935fcf25"
+"sl.functions.scalar.unhex" = "607678682839e09dd6e306e1c07a9006fc2d9bc7984356dd14a21931f3add60f"
+"sl.functions.scalar.unicode" = "5d0284316083ec5c995a30b95de7196a1cbccd33b3b37db864f803bd545640ed"
+"sl.functions.scalar.unistr" = "b3a126e7482d9e931c34bb8b7525f53ce010350cfada82b9cef2b75825af80d5"
+"sl.functions.scalar.unistr-quote" = "fcf0effb86c27e23b3415c0d999a5e2aaa4aab67b7d0f25618b60d2388f2b581"
+"sl.functions.scalar.unlikely" = "0b77b5556ad2fd5dd5d9b81e4fbc4dc4ba210297f823d7ce335d577e20b1ec41"
+"sl.functions.scalar.upper" = "bac47d27b9b486c4688b2d58eaa58ae023d9022518f1504d162b25a6ba29a2c2"
+"sl.functions.scalar.zeroblob" = "4c662896b7e06d1b1df087d73711c14dacbdcaec65b84f2ef817f0e56ef7296e"
+"sl.functions.window.cume-dist" = "bd5a6c412c0ce092c75702fcf8d3fabc49a8af86e8ab3e0494018c62db564f8b"
+"sl.functions.window.dense-rank" = "6f4857f4d88f52b2a22c29b9345cfc22a270ba7f447ca7e755dc4427e333cbdd"
+"sl.functions.window.first-value" = "0a7930842b14de4e86e8498f1366390c840a2275b348de620028454df030b9f3"
+"sl.functions.window.lag" = "a36094c19a002d95f721072325a5a89cce41b9a4c595eb27dea310c4e992eb87"
+"sl.functions.window.last-value" = "cc8d1a932ef1ab79fdc508f5dd24cc7eaf02ed53534243b5cd4641645e0ac459"
+"sl.functions.window.lead" = "93878af7f60945c46611b69430cced8c34228d7c7f17bb96993c75f7c2910f7f"
+"sl.functions.window.nth-value" = "8e0142580b9356dbc8b6d039db3db6ee392aa5e87a5bbc2cbc948820ff2c5ca2"
+"sl.functions.window.ntile" = "50755c41befc502c5702186eed7d19effbb3d145c228003117677176be7acb6d"
+"sl.functions.window.percent-rank" = "bfaff27747aa9c20b24baff5eddf7c8a6f801a1c7e742c3b5b321803535be916"
+"sl.functions.window.rank" = "323a4dd406ddfe851549191cf164dd1df6b4f5842b0289e2f571abe2ae9ef7c5"
+"sl.functions.window.row-number" = "7a13a8805ef9c5828b91f7a4474a6da69dc819c7133de64b9944d8711ebb6a85"

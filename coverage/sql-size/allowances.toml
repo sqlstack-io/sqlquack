@@ -1,0 +1,20 @@
+# Ruled growth of generated SQL, which `make sql-sizes` honours against the base branch's baseline.
+#
+# [[case]] lets one case grow from exactly `from` bytes, its size in the base baseline, to at most
+# `to` bytes. [[total]] lets the cases both baselines hold grow by at most `bytes` beyond the growth
+# the [[case]] entries allow, when the base baseline's total is exactly `from`. Each needs the
+# `reason` for the longer SQL and the `ruling` that accepted it. Once the change lands, `from` no
+# longer matches the base, so the entry applies to nothing; remove it in the next change.
+#
+# [[case]]
+# case = "conversion/example.toml#some_case"
+# from = 1200
+# to = 1480
+# reason = "the fix guards a NULL operand the old SQL ignored"
+# ruling = "the review that accepted the growth"
+#
+# [[total]]
+# from = 46486521
+# bytes = 3000
+# reason = "..."
+# ruling = "the review that accepted the growth"

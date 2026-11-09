@@ -1,0 +1,33 @@
+[package]
+name = "sqlquack-syntax-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+sqlquack-diagnostics = { path = "../crates/sqlquack-diagnostics" }
+sqlquack-parse = { path = "../crates/sqlquack-parse" }
+sqlquack-syntax = { path = "../crates/sqlquack-syntax" }
+sqlquack-syntax-snowflake = { path = "../crates/sqlquack-syntax-snowflake" }
+
+# Kept out of the SQLQuack workspace; run with `cargo +nightly fuzz run tolerant` or `diagnose`.
+[workspace]
+members = ["."]
+
+[[bin]]
+name = "tolerant"
+path = "fuzz_targets/tolerant.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "diagnose"
+path = "fuzz_targets/diagnose.rs"
+test = false
+doc = false
+bench = false

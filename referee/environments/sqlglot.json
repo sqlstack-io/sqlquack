@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "name": "sqlglot",
+  "session_parameters": {
+    "QUOTED_IDENTIFIERS_IGNORE_CASE": false,
+    "TIMESTAMP_TYPE_MAPPING": "TIMESTAMP_NTZ",
+    "TIMEZONE": "UTC"
+  },
+  "setup_sql": []
+}

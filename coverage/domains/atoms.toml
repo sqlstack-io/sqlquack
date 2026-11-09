@@ -1,0 +1,128 @@
+# Declared domains of atoms: columns, literals, parentheses, comments, negation, subqueries, lambdas.
+# Format: see docs/coverage.md.
+version = 1
+
+[[rule]]
+id = "rule.column"
+
+[[rule.form]]
+construct = "node:column"
+arguments = []
+
+[[rule]]
+id = "rule.comment"
+
+[[rule.form]]
+construct = "node:annotated"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.constant_literal"
+
+[[rule.form]]
+construct = "node:literal"
+also = ["node:boolean", "node:null"]
+arguments = []
+
+[[rule]]
+id = "rule.number_literal"
+
+[[rule.form]]
+construct = "node:literal"
+arguments = []
+
+[[rule]]
+id = "rule.parentheses"
+
+[[rule.form]]
+construct = "node:paren"
+
+[[rule]]
+id = "rule.negate"
+
+[[rule.form]]
+construct = "node:neg"
+arguments = [
+  { families = ["integer", "decimal", "float"] },
+]
+template = "-{0}"
+category = "numeric"
+
+[[rule]]
+id = "rule.unary_plus"
+
+[[rule.form]]
+construct = "node:pos"
+arguments = [
+  { families = ["integer", "decimal", "float", "text"] },
+]
+template = "+{0}"
+category = "numeric"
+
+[[rule]]
+id = "rule.scalar_subquery"
+
+[[rule.form]]
+construct = "node:subquery"
+arguments = [
+  { families = ["query"] },
+]
+
+[[rule]]
+id = "rule.lambda"
+
+[[rule.form]]
+construct = "fn:FILTER"
+arguments = [
+  { families = ["variant"] },
+  { families = ["boolean"], grammar = true },
+]
+template = "FILTER({0}, e -> e IS NOT NULL)"
+category = "semi-structured-array"
+divergences = { "0.variant.json_null" = "json_fidelity", "0.variant.number_spellings" = "json_fidelity", "0.variant.large_numbers" = "json_fidelity", "0.variant.scalars" = "json_fidelity" }
+
+[[rule.form]]
+construct = "fn:TRANSFORM"
+arguments = [
+  { families = ["variant"] },
+  { families = ["variant"], grammar = true },
+]
+template = "TRANSFORM({0}, e -> e)"
+category = "semi-structured-array"
+divergences = { "0.variant.json_null" = "json_fidelity", "0.variant.number_spellings" = "json_fidelity", "0.variant.large_numbers" = "json_fidelity", "0.variant.scalars" = "json_fidelity" }
+
+[[rule.form]]
+construct = "fn:TRANSFORM"
+arguments = [
+  { families = ["variant"] },
+  { families = ["integer"], grammar = true },
+]
+template = "TRANSFORM({0}, e -> 1)"
+category = "semi-structured-array"
+divergences = { "0.variant.json_null" = "json_fidelity", "0.variant.number_spellings" = "json_fidelity", "0.variant.large_numbers" = "json_fidelity", "0.variant.scalars" = "json_fidelity" }
+
+[[rule.form]]
+construct = "fn:TRANSFORM"
+arguments = [
+  { families = ["variant"] },
+  { families = ["text"], grammar = true },
+]
+template = "TRANSFORM({0}, e -> 'a')"
+category = "semi-structured-array"
+divergences = { "0.variant.json_null" = "json_fidelity", "0.variant.number_spellings" = "json_fidelity", "0.variant.large_numbers" = "json_fidelity", "0.variant.scalars" = "json_fidelity" }
+
+[[rule.form]]
+construct = "fn:TRANSFORM"
+arguments = [
+  { families = ["variant"] },
+  { families = ["boolean"], grammar = true },
+]
+template = "TRANSFORM({0}, e -> TRUE)"
+category = "semi-structured-array"
+divergences = { "0.variant.json_null" = "json_fidelity", "0.variant.number_spellings" = "json_fidelity", "0.variant.large_numbers" = "json_fidelity", "0.variant.scalars" = "json_fidelity" }
+
+[[rule]]
+id = "rule.project_function_call"
+undeclarable = "project functions are named by the schema, so shapes name each function; their domain is each declared signature, which the schema, not this file, states"

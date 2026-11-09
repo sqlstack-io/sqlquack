@@ -1,0 +1,236 @@
+# Approved reviews. Each listed form was read in full against its documentation
+# page, its obligations, its cases with their Snowflake receipts, and the local parse trees. An approval holds
+# while the form's definition hash and fingerprint are unchanged; any change makes it stale until re-read.
+
+[[review]]
+id = "query-001"
+family = "query"
+parser_tree = "02250357e9eb979f37deb92221e8d382917f3701"
+reviewed_utc = "2026-11-04T20:20:00Z"
+verdict = "approved"
+forms = [
+  "sf.query.for-update",
+  "sf.query.group-by.all",
+  "sf.query.having",
+  "sf.query.operators-query.except",
+  "sf.query.operators-query.intersect",
+  "sf.query.operators-query.minus",
+  "sf.query.qualify.qualify",
+  "sf.query.qualify.select-from-qualify",
+  "sf.query.top-n",
+  "sf.query.where",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 9f38f55eb2d0; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.query.for-update" = "c8d45a5cbfa709eeaa9fa4ad2cd7532695c15ef69087812121ae4b12789cf205"
+"sf.query.group-by.all" = "ca38bdf9432f850e4349b19fd78d9cc7d5adf3955fbbe2fdd138c3335a2549ee"
+"sf.query.having" = "7c26c29e6104a34c4e1a0617af2673aded2e3ce55c3186b0ce135ba358fbd323"
+"sf.query.operators-query.except" = "76c51bfb96e03cb2df1df15c767ba6e46e01829f99b906e06450cb9d8fdb1a1e"
+"sf.query.operators-query.intersect" = "57b9e2b5c489969167d5fb4a4578cfe69c7ebf4cde96a888699a92b7c5dd1b0a"
+"sf.query.operators-query.minus" = "4aedb0efa8e07b2da97a8f2f6a38b7c18fad36b6712d7fd0fb06cb9ba54e21f6"
+"sf.query.qualify.qualify" = "57b949f67e77208f2ae33655fb32f38d248351bbdb86182277102f4bcfa1f62a"
+"sf.query.qualify.select-from-qualify" = "ce2903f8c3736f8925c52eb43e507a4b5fe8dc8633f169b7e2e9038fb6d91756"
+"sf.query.top-n" = "115f8eafbe430f813891c66025a355fc9e2492b0441cdd54c51fb46ca8b5024f"
+"sf.query.where" = "c737b84f33438ad2566817cadad2b187e725db5fca8c14620eac53e799f6f320"
+
+[review.definitions]
+"sf.query.for-update" = "173ce5be8472bbe504ac255d4378fc6c88f11c21169e075258572e29bf849fd6"
+"sf.query.group-by.all" = "f7b545fba27c0565e50ecd112adf3c2fc5ba65c44df37c7ac38fb99128f9eb90"
+"sf.query.having" = "811b9d8d794c1624f55971f72d0e55557e9e0601bd54015b3cd88f9e84fa98b3"
+"sf.query.operators-query.except" = "0d44cddedbbd67a8e38c734a83d4c7eb0a1eed0acab4b34a8306562b58b1ed00"
+"sf.query.operators-query.intersect" = "057eeaa11e2583aafa0e8e7244c77c9306b1101d0aa006b5c6c5e34bd7729cd9"
+"sf.query.operators-query.minus" = "21a89b3a8eead6da53d17c7055d5d15f958897ed6c484c30180320995f8366f5"
+"sf.query.qualify.qualify" = "2f6904b815ca6f85ee2e79c6a00e912d983f8cc3e200c720d9ec4b57192e4b28"
+"sf.query.qualify.select-from-qualify" = "ae1bca9b9026199c287bf8103c245a4b132533cfe9cf874479c7bb8e92e0624c"
+"sf.query.top-n" = "5a59a30a859096244a3bc4a2aefb4bf49e0ec91f3e910542fe72344ca1797e11"
+"sf.query.where" = "b59a19252cbf04450f6a5b61cd8f6f5cc57d988bfe7a7cafe7d14fa2b3409d7b"
+
+[[review]]
+id = "query-002"
+family = "query"
+parser_tree = "08415e197894427f047442a0d66d6fd21c478ad8"
+reviewed_utc = "2026-11-04T21:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.query.join-lateral",
+  "sf.query.limit.fetch",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 77c1a3a59f20; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.query.join-lateral" = "4a1de7f7ef8278a542f75248b6de58fe2c0e65e6d21c555e31edc5abc06eaaba"
+"sf.query.limit.fetch" = "02c5d2f09846ae3bf483ddded73de989bd36e1695cc6c055e087f6aaf6fc7379"
+
+[review.definitions]
+"sf.query.join-lateral" = "f1f6900d2d81a9c2311f6e6d58c6f815d0caafbe9013bb0383b1eb74062f81e6"
+"sf.query.limit.fetch" = "cacd7c05c66dd3a965547bf170810ee4da885d188ae4b03852163f354a90dc9f"
+
+[[review]]
+id = "query-003"
+family = "query"
+parser_tree = "08415e197894427f047442a0d66d6fd21c478ad8"
+reviewed_utc = "2026-11-04T22:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.query.order-by.all",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 77c1a3a59f20; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.query.order-by.all" = "38445a44e1e3ca44528f5d921d5614096e24c5e6f58772b92c73f3955b28da5a"
+
+[review.definitions]
+"sf.query.order-by.all" = "a249e036e24f237d15e71444ec4ed1e58372784301f0d59a6b28d1c45aa25445"
+
+[[review]]
+id = "query-004"
+family = "query"
+parser_tree = "4b9e8db3635aac38f12852384d0e0e4844c780b9"
+reviewed_utc = "2026-11-05T01:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.query.operators-query.union",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 2f0c38a72e97; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.query.operators-query.union" = "319ba83c80b194e2b92a0b47aee463c444f6374c3ec668553931d79ff4ed500a"
+
+[review.definitions]
+"sf.query.operators-query.union" = "2974dc68807c5b3c2320f20618ce742d516587eb660d768b989e621ebe40a9a6"
+
+[[review]]
+id = "query-005"
+family = "query"
+parser_tree = "8067a98cd6e46bf4aa559f564d592abcc74b18c5"
+reviewed_utc = "2026-11-05T03:20:00Z"
+verdict = "approved"
+forms = [
+  "sf.query.into",
+  "sf.query.join.join.syntax",
+  "sf.query.limit.limit",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main 174f4f1af7cf; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.query.into" = "d2200f50a26bf0b29bb5bfcaa7fd20fe1f181f6b8f85eb1c9b592157f73a0c0c"
+"sf.query.join.join.syntax" = "b6d143ebf8c610ff7bcc42bfcff70e8e48aea393aa4f5dd54b43e7a963fb71b3"
+"sf.query.limit.limit" = "b0e66abe3562545981cd9c4a8237384d75fd895abf3f5dac70fb86bd50cbae91"
+
+[review.definitions]
+"sf.query.into" = "f7d16c9570789f3574c472e9b6d88d70f56a85f03774387ed1dd344d8e88638d"
+"sf.query.join.join.syntax" = "c6a40a856b710cddbbacfa6b03511381969449b7ccf6174ae6d7cd5518450f4a"
+"sf.query.limit.limit" = "5b032f62299bd79b3e9b7e926080a649198d999a104df4b8c8673528a55afdf7"
+
+[[review]]
+id = "query-006"
+family = "query"
+parser_tree = "1a31cbb8716db274d8f16c7d2da3dbfabfff06a6"
+reviewed_utc = "2026-11-05T13:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.query.group-by-cube",
+  "sf.query.group-by-rollup",
+  "sf.query.group-by.groupitem",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main f28341e6c376; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.query.group-by-cube" = "3e5756cdb75d41cfab6ca0eaa5849b4096ac2f443d8467674024b06078c96b6d"
+"sf.query.group-by-rollup" = "b41865048ac66412e0d54fa84ae5a3aee75dffc899b6dd910cf4e2e63654ae67"
+"sf.query.group-by.groupitem" = "ff93e03f26c9bc6b83495e39a6edafd587e625ad82a664d63d65e46dc87e5e4a"
+
+[review.definitions]
+"sf.query.group-by-cube" = "03f8aa5febed635b8e87af5eb3dd10f488541f4a63738fc1bf3aa51e092d63cc"
+"sf.query.group-by-rollup" = "a950177a2d84361481c1f0233e529a78469d24ab0baf26c3c25b6be9f956d1c8"
+"sf.query.group-by.groupitem" = "0c6015a849f4eb2a3043e17aef38f64a84587994b47473e6dbd9f19071522e46"
+
+[[review]]
+id = "query-007"
+family = "query"
+parser_tree = "e792d6e8f27909ce93bc04d35d415b3fd2c288cb"
+reviewed_utc = "2026-11-05T16:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.query.unpivot",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main cbe394ec714e; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.query.unpivot" = "34a8d3c3b73df6b071b0c2272e9656965e820f043d68f572938b46b24533cfb1"
+
+[review.definitions]
+"sf.query.unpivot" = "6b7c186573a86ac77af82cd0c8790e271555e0192b21929af581027ac21a4b17"
+
+[[review]]
+id = "query-008"
+family = "query"
+parser_tree = "e1ca97fcc09a5cd594868745c3e0b4f612866974"
+reviewed_utc = "2026-11-05T15:33:19Z"
+verdict = "approved"
+forms = [
+  "sf.query.operators-query.intersect-minus-except-union",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main b196cbd257c1; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.query.operators-query.intersect-minus-except-union" = "69f4eeda9e08e6e7d49bb46f1c4c372052747adf24e0062dbbd31c8302063985"
+
+[review.definitions]
+"sf.query.operators-query.intersect-minus-except-union" = "41427019af45579be5b2139597562708c3529c2bbafd1ac40fa717c45248e223"
+
+[[review]]
+id = "query-009"
+family = "query"
+parser_tree = "2de58a44aca56391ee1dbe36a091556e469b7a9d"
+reviewed_utc = "2026-11-05T21:15:00Z"
+verdict = "approved"
+forms = [
+  "sf.query.order-by.orderitem",
+  "sf.query.select.select",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main e8577215435f; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.query.order-by.orderitem" = "753e11faa4c703cd59dfda09caeafdda305f198b7198f5b7e0e83b2cb6a70ea1"
+"sf.query.select.select" = "7f9c8bbc546e717b062e5d55c17a2a51a154ddc443773308f2b0b7d0826520e3"
+
+[review.definitions]
+"sf.query.order-by.orderitem" = "c45381c132e6bd348cf5213ef1e01e44e60d7ff4e7fa685ae1f3491beb29d2a2"
+"sf.query.select.select" = "ec813b31371d2e8eacf29ece7b667f21c11e6f9fb73492b2104eecf35eed7984"
+
+[[review]]
+id = "query-010"
+family = "query"
+parser_tree = "2de58a44aca56391ee1dbe36a091556e469b7a9d"
+reviewed_utc = "2026-11-05T23:30:00Z"
+verdict = "approved"
+forms = [
+  "sf.query.at-before",
+  "sf.query.changes",
+  "sf.query.constructs",
+  "sf.query.group-by-grouping-sets",
+  "sf.query.pivot",
+  "sf.query.with.select",
+  "sf.query.with.select.syntax",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at main e8577215435f; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.query.at-before" = "6e0550abcdc85cc561e39b13fe38748fb512a865916859b24385407134ff26da"
+"sf.query.changes" = "b88d513ffe52490ca7ac900ad006bb02a337a11f7061595198e20cbd70de99d6"
+"sf.query.constructs" = "03b074c2c61edda98a477008a8364fdb646ef590fdf82f163978541bf2d839ce"
+"sf.query.group-by-grouping-sets" = "6462163d32c0a310e26febea2e2ba29b0b9b90bfb1ee9ccf9199a50732f8fc3c"
+"sf.query.pivot" = "d3f0292a669eb1b6f74ea5a34486e9f655fb6407025d7cdd749c762c7365e79c"
+"sf.query.with.select" = "173392cd75e2d4facad96366222b652a2af43d9a39343773496c9d779465d8f2"
+"sf.query.with.select.syntax" = "5358ad9bed2dee0979d0ff0a753eb2684f7f295ef9a63ef4ae4aa77b01ae0c1e"
+
+[review.definitions]
+"sf.query.at-before" = "9a2443e21937a589fa7fe0bd046b6bc8702ece77f36dd86440046c7be352f59c"
+"sf.query.changes" = "1323e1b43b4acf06974513a970af0e6a507e17cb99ea9930820847f5bc075b0a"
+"sf.query.constructs" = "c8a8a6cd0ee6642ea5a89af0b125b637a5efea4df80f5d9eda34370ccd9932c4"
+"sf.query.group-by-grouping-sets" = "c76492fc096009e540ab2a28806bad47e582d4af8cfa7e3f5c854cf8b1f60128"
+"sf.query.pivot" = "0143158f5f51016a4e932fbde42fa1ab0786b9dbb4de7872980cb89c743174eb"
+"sf.query.with.select" = "19d0a58ffbccd906ccbd2e8249af5f8a8888210aaa8e4533a9eb663926af24d8"
+"sf.query.with.select.syntax" = "89bdc6f1c45a069f52f2d9b37fb295ba7a410535033e355d84472682cdb3583a"

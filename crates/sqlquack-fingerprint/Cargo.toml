@@ -1,0 +1,47 @@
+[package]
+name = "sqlquack-fingerprint"
+version.workspace = true
+description = "Whitespace-, comment- and keyword-case-insensitive SQL change fingerprints over SQLQuack's tokenizers."
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+publish.workspace = true
+rust-version.workspace = true
+
+# Each dialect's fingerprint profile; SQL in no named dialect reads DuckDB's tokens, so it needs
+# `duckdb`. A dialect left out fails to fingerprint as not built in.
+[features]
+default = []
+bigquery = ["sqlquack-parse/bigquery"]
+databricks = ["generic-keywords", "shared-tokenizer"]
+duckdb = ["generic-keywords", "shared-tokenizer"]
+postgres = ["keyword-lists", "sqlquack-parse/postgres"]
+snowflake = ["keyword-lists", "shared-tokenizer"]
+sqlite = ["generic-keywords", "shared-tokenizer"]
+sqlserver = ["sqlquack-parse/sqlserver"]
+# What several dialects' profiles share: reading keyword lists, the keywords every dialect
+# reserves, and the shared lossless tokenizer.
+keyword-lists = []
+generic-keywords = ["keyword-lists"]
+shared-tokenizer = []
+
+[dependencies]
+sha2.workspace = true
+sqlquack-parse.workspace = true
+sqlquack-syntax.workspace = true
+
+[dev-dependencies]
+# The tests fingerprint every dialect.
+sqlquack-fingerprint = { workspace = true, features = [
+  "bigquery",
+  "databricks",
+  "duckdb",
+  "postgres",
+  "snowflake",
+  "sqlite",
+  "sqlserver",
+] }
+
+[lints]
+workspace = true

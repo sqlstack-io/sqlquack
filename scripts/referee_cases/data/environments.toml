@@ -1,0 +1,101 @@
+# The empty synthetic tables the generated statements compile against, and the session
+# parameters every referee session sets. Structured and VECTOR types have their own environment
+# so that a type the warehouse does not support refuses only the statements using it.
+
+[session_parameters]
+QUOTED_IDENTIFIERS_IGNORE_CASE = false
+TIMESTAMP_TYPE_MAPPING = "TIMESTAMP_NTZ"
+TIMEZONE = "UTC"
+
+[[environment]]
+name = "generated"
+
+[[environment.table]]
+name = "all_types"
+columns = [
+  { name = "c_number", type = "NUMBER(38, 0)" },
+  { name = "c_decimal", type = "NUMBER(12, 2)" },
+  { name = "c_int", type = "INT" },
+  { name = "c_float", type = "FLOAT" },
+  { name = "c_varchar", type = "VARCHAR" },
+  { name = "c_varchar_10", type = "VARCHAR(10)" },
+  { name = "c_char", type = "CHAR(4)" },
+  { name = "c_binary", type = "BINARY" },
+  { name = "c_boolean", type = "BOOLEAN" },
+  { name = "c_date", type = "DATE" },
+  { name = "c_time", type = "TIME" },
+  { name = "c_ntz", type = "TIMESTAMP_NTZ" },
+  { name = "c_ntz_3", type = "TIMESTAMP_NTZ(3)" },
+  { name = "c_ltz", type = "TIMESTAMP_LTZ" },
+  { name = "c_tz", type = "TIMESTAMP_TZ" },
+  { name = "c_variant", type = "VARIANT" },
+  { name = "c_object", type = "OBJECT" },
+  { name = "c_array", type = "ARRAY" },
+  { name = "c_geography", type = "GEOGRAPHY" },
+  { name = "c_geometry", type = "GEOMETRY" },
+]
+
+[[environment.table]]
+name = "orders"
+columns = [
+  { name = "order_id", type = "NUMBER(38, 0)", nullable = false },
+  { name = "customer_id", type = "NUMBER(38, 0)" },
+  { name = "status", type = "VARCHAR" },
+  { name = "amount", type = "NUMBER(10, 2)" },
+  { name = "placed_at", type = "TIMESTAMP_NTZ" },
+  { name = "region", type = "VARCHAR" },
+  { name = "details", type = "VARIANT" },
+]
+
+[[environment.table]]
+name = "customers"
+columns = [
+  { name = "customer_id", type = "NUMBER(38, 0)", nullable = false },
+  { name = "name", type = "VARCHAR" },
+  { name = "region", type = "VARCHAR" },
+  { name = "signup_date", type = "DATE" },
+]
+
+[[environment.table]]
+name = "order_lines"
+columns = [
+  { name = "order_id", type = "NUMBER(38, 0)" },
+  { name = "line_no", type = "NUMBER(38, 0)" },
+  { name = "product_id", type = "NUMBER(38, 0)" },
+  { name = "quantity", type = "NUMBER(38, 0)" },
+  { name = "unit_price", type = "NUMBER(10, 2)" },
+]
+
+[[environment.table]]
+name = "products"
+columns = [
+  { name = "product_id", type = "NUMBER(38, 0)" },
+  { name = "name", type = "VARCHAR" },
+  { name = "category", type = "VARCHAR" },
+  { name = "tags", type = "ARRAY" },
+  { name = "attributes", type = "OBJECT" },
+]
+
+[[environment.table]]
+name = "\"MixedCase\""
+columns = [
+  { name = "\"Id\"", type = "NUMBER(38, 0)" },
+  { name = "\"id\"", type = "NUMBER(38, 0)" },
+  { name = "\"Label\"", type = "VARCHAR" },
+  { name = "plain_note", type = "VARCHAR" },
+]
+
+[[environment]]
+name = "generated_structured"
+
+[[environment.table]]
+name = "structured_types"
+columns = [
+  { name = "c_number", type = "NUMBER(38, 0)" },
+  { name = "c_numbers", type = "ARRAY(NUMBER(38, 0))" },
+  { name = "c_labels", type = "ARRAY(VARCHAR)" },
+  { name = "c_record", type = "OBJECT(id NUMBER(38, 0), label VARCHAR)" },
+  { name = "c_map", type = "MAP(VARCHAR, NUMBER(38, 0))" },
+  { name = "c_vector", type = "VECTOR(FLOAT, 3)" },
+  { name = "c_int_vector", type = "VECTOR(INT, 3)" },
+]

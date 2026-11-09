@@ -1,0 +1,57 @@
+# Rust
+/target/
+**/*.rs.bk
+*.pdb
+**/mutants.out*/
+
+# Python tooling
+__pycache__/
+*.py[cod]
+.venv/
+# The Python module `make python-module` builds into its package.
+/python/src/sqlquack/*.so
+.ruff_cache/
+.pytest_cache/
+
+# Fensu
+.fensu/cache/
+.fensu/memory/
+
+# Local data
+*.duckdb
+*.duckdb.wal
+.tmp*
+
+# Editors and OS files
+.DS_Store
+.idea/
+.vscode/
+
+# Agent instructions, agent tool folders and work notes stay out of the repository at any depth.
+# This is the first layer; make clutter-guard in check-ci also rejects them when force-added.
+AGENTS.md
+CLAUDE.md
+.agents/
+.amp/
+.claude/
+.codex/
+.cursor/
+.opencode/
+worklists/
+*worklist*.md
+[l]ane-reviews/
+runs.toml
+run-notes/
+*run-note*.md
+run-logs/
+*run-log*.md
+*hand-off*.md
+*handoff*.md
+
+# The evidence clone and pinned snapshots scripts/evidence.sh fetches
+/.evidence/
+
+# Derived evidence work files
+/evidence/pending/
+/evidence/audit/pending/
+/review/

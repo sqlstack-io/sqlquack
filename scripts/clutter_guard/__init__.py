@@ -1,0 +1,1 @@
+"""Agent clutter guard."""

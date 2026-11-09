@@ -1,0 +1,1340 @@
+{
+ "origin": "Every Snowflake data type spelling, in each cast form; written for the exact check",
+ "entries": [
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS NUMBER)",
+   "from": "type NUMBER"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS NUMBER)",
+   "from": "type NUMBER"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::NUMBER",
+   "from": "type NUMBER"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS NUMBER(10))",
+   "from": "type NUMBER(10)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS NUMBER(10))",
+   "from": "type NUMBER(10)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::NUMBER(10)",
+   "from": "type NUMBER(10)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS NUMBER(38,0))",
+   "from": "type NUMBER(38,0)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS NUMBER(38,0))",
+   "from": "type NUMBER(38,0)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::NUMBER(38,0)",
+   "from": "type NUMBER(38,0)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS NUMBER(10,2))",
+   "from": "type NUMBER(10,2)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS NUMBER(10,2))",
+   "from": "type NUMBER(10,2)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::NUMBER(10,2)",
+   "from": "type NUMBER(10,2)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS DECIMAL)",
+   "from": "type DECIMAL"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS DECIMAL)",
+   "from": "type DECIMAL"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::DECIMAL",
+   "from": "type DECIMAL"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS DECIMAL(10,2))",
+   "from": "type DECIMAL(10,2)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS DECIMAL(10,2))",
+   "from": "type DECIMAL(10,2)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::DECIMAL(10,2)",
+   "from": "type DECIMAL(10,2)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS NUMERIC)",
+   "from": "type NUMERIC"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS NUMERIC)",
+   "from": "type NUMERIC"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::NUMERIC",
+   "from": "type NUMERIC"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS NUMERIC(5,1))",
+   "from": "type NUMERIC(5,1)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS NUMERIC(5,1))",
+   "from": "type NUMERIC(5,1)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::NUMERIC(5,1)",
+   "from": "type NUMERIC(5,1)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS INT)",
+   "from": "type INT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS INT)",
+   "from": "type INT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::INT",
+   "from": "type INT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS INTEGER)",
+   "from": "type INTEGER"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS INTEGER)",
+   "from": "type INTEGER"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::INTEGER",
+   "from": "type INTEGER"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS BIGINT)",
+   "from": "type BIGINT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS BIGINT)",
+   "from": "type BIGINT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::BIGINT",
+   "from": "type BIGINT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS SMALLINT)",
+   "from": "type SMALLINT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS SMALLINT)",
+   "from": "type SMALLINT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::SMALLINT",
+   "from": "type SMALLINT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TINYINT)",
+   "from": "type TINYINT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TINYINT)",
+   "from": "type TINYINT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TINYINT",
+   "from": "type TINYINT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS BYTEINT)",
+   "from": "type BYTEINT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS BYTEINT)",
+   "from": "type BYTEINT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::BYTEINT",
+   "from": "type BYTEINT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS FLOAT)",
+   "from": "type FLOAT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS FLOAT)",
+   "from": "type FLOAT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::FLOAT",
+   "from": "type FLOAT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS FLOAT4)",
+   "from": "type FLOAT4"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS FLOAT4)",
+   "from": "type FLOAT4"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::FLOAT4",
+   "from": "type FLOAT4"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS FLOAT8)",
+   "from": "type FLOAT8"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS FLOAT8)",
+   "from": "type FLOAT8"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::FLOAT8",
+   "from": "type FLOAT8"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS DOUBLE)",
+   "from": "type DOUBLE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS DOUBLE)",
+   "from": "type DOUBLE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::DOUBLE",
+   "from": "type DOUBLE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS DOUBLE_PRECISION)",
+   "from": "type DOUBLE_PRECISION"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS DOUBLE_PRECISION)",
+   "from": "type DOUBLE_PRECISION"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::DOUBLE_PRECISION",
+   "from": "type DOUBLE_PRECISION"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS REAL)",
+   "from": "type REAL"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS REAL)",
+   "from": "type REAL"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::REAL",
+   "from": "type REAL"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS VARCHAR)",
+   "from": "type VARCHAR"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS VARCHAR)",
+   "from": "type VARCHAR"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::VARCHAR",
+   "from": "type VARCHAR"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS VARCHAR(10))",
+   "from": "type VARCHAR(10)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS VARCHAR(10))",
+   "from": "type VARCHAR(10)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::VARCHAR(10)",
+   "from": "type VARCHAR(10)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS CHAR)",
+   "from": "type CHAR"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS CHAR)",
+   "from": "type CHAR"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::CHAR",
+   "from": "type CHAR"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS CHAR(3))",
+   "from": "type CHAR(3)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS CHAR(3))",
+   "from": "type CHAR(3)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::CHAR(3)",
+   "from": "type CHAR(3)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS CHARACTER)",
+   "from": "type CHARACTER"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS CHARACTER)",
+   "from": "type CHARACTER"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::CHARACTER",
+   "from": "type CHARACTER"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS CHARACTER(2))",
+   "from": "type CHARACTER(2)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS CHARACTER(2))",
+   "from": "type CHARACTER(2)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::CHARACTER(2)",
+   "from": "type CHARACTER(2)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS NCHAR)",
+   "from": "type NCHAR"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS NCHAR)",
+   "from": "type NCHAR"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::NCHAR",
+   "from": "type NCHAR"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS NCHAR(4))",
+   "from": "type NCHAR(4)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS NCHAR(4))",
+   "from": "type NCHAR(4)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::NCHAR(4)",
+   "from": "type NCHAR(4)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS STRING)",
+   "from": "type STRING"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS STRING)",
+   "from": "type STRING"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::STRING",
+   "from": "type STRING"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TEXT)",
+   "from": "type TEXT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TEXT)",
+   "from": "type TEXT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TEXT",
+   "from": "type TEXT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS NVARCHAR)",
+   "from": "type NVARCHAR"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS NVARCHAR)",
+   "from": "type NVARCHAR"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::NVARCHAR",
+   "from": "type NVARCHAR"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS NVARCHAR(9))",
+   "from": "type NVARCHAR(9)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS NVARCHAR(9))",
+   "from": "type NVARCHAR(9)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::NVARCHAR(9)",
+   "from": "type NVARCHAR(9)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS NVARCHAR2)",
+   "from": "type NVARCHAR2"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS NVARCHAR2)",
+   "from": "type NVARCHAR2"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::NVARCHAR2",
+   "from": "type NVARCHAR2"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS NVARCHAR2(8))",
+   "from": "type NVARCHAR2(8)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS NVARCHAR2(8))",
+   "from": "type NVARCHAR2(8)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::NVARCHAR2(8)",
+   "from": "type NVARCHAR2(8)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS BINARY)",
+   "from": "type BINARY"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS BINARY)",
+   "from": "type BINARY"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::BINARY",
+   "from": "type BINARY"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS BINARY(16))",
+   "from": "type BINARY(16)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS BINARY(16))",
+   "from": "type BINARY(16)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::BINARY(16)",
+   "from": "type BINARY(16)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS VARBINARY)",
+   "from": "type VARBINARY"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS VARBINARY)",
+   "from": "type VARBINARY"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::VARBINARY",
+   "from": "type VARBINARY"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS VARBINARY(32))",
+   "from": "type VARBINARY(32)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS VARBINARY(32))",
+   "from": "type VARBINARY(32)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::VARBINARY(32)",
+   "from": "type VARBINARY(32)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS BOOLEAN)",
+   "from": "type BOOLEAN"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS BOOLEAN)",
+   "from": "type BOOLEAN"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::BOOLEAN",
+   "from": "type BOOLEAN"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS DATE)",
+   "from": "type DATE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS DATE)",
+   "from": "type DATE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::DATE",
+   "from": "type DATE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS DATETIME)",
+   "from": "type DATETIME"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS DATETIME)",
+   "from": "type DATETIME"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::DATETIME",
+   "from": "type DATETIME"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS DATETIME(3))",
+   "from": "type DATETIME(3)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS DATETIME(3))",
+   "from": "type DATETIME(3)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::DATETIME(3)",
+   "from": "type DATETIME(3)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TIME)",
+   "from": "type TIME"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TIME)",
+   "from": "type TIME"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TIME",
+   "from": "type TIME"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TIME(3))",
+   "from": "type TIME(3)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TIME(3))",
+   "from": "type TIME(3)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TIME(3)",
+   "from": "type TIME(3)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TIMESTAMP)",
+   "from": "type TIMESTAMP"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TIMESTAMP)",
+   "from": "type TIMESTAMP"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TIMESTAMP",
+   "from": "type TIMESTAMP"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TIMESTAMP(3))",
+   "from": "type TIMESTAMP(3)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TIMESTAMP(3))",
+   "from": "type TIMESTAMP(3)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TIMESTAMP(3)",
+   "from": "type TIMESTAMP(3)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TIMESTAMP(9))",
+   "from": "type TIMESTAMP(9)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TIMESTAMP(9))",
+   "from": "type TIMESTAMP(9)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TIMESTAMP(9)",
+   "from": "type TIMESTAMP(9)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TIMESTAMP_LTZ)",
+   "from": "type TIMESTAMP_LTZ"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TIMESTAMP_LTZ)",
+   "from": "type TIMESTAMP_LTZ"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TIMESTAMP_LTZ",
+   "from": "type TIMESTAMP_LTZ"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TIMESTAMP_LTZ(6))",
+   "from": "type TIMESTAMP_LTZ(6)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TIMESTAMP_LTZ(6))",
+   "from": "type TIMESTAMP_LTZ(6)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TIMESTAMP_LTZ(6)",
+   "from": "type TIMESTAMP_LTZ(6)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TIMESTAMP_NTZ)",
+   "from": "type TIMESTAMP_NTZ"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TIMESTAMP_NTZ)",
+   "from": "type TIMESTAMP_NTZ"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TIMESTAMP_NTZ",
+   "from": "type TIMESTAMP_NTZ"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TIMESTAMP_NTZ(9))",
+   "from": "type TIMESTAMP_NTZ(9)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TIMESTAMP_NTZ(9))",
+   "from": "type TIMESTAMP_NTZ(9)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TIMESTAMP_NTZ(9)",
+   "from": "type TIMESTAMP_NTZ(9)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TIMESTAMP_TZ)",
+   "from": "type TIMESTAMP_TZ"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TIMESTAMP_TZ)",
+   "from": "type TIMESTAMP_TZ"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TIMESTAMP_TZ",
+   "from": "type TIMESTAMP_TZ"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TIMESTAMP_TZ(0))",
+   "from": "type TIMESTAMP_TZ(0)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TIMESTAMP_TZ(0))",
+   "from": "type TIMESTAMP_TZ(0)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TIMESTAMP_TZ(0)",
+   "from": "type TIMESTAMP_TZ(0)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TIMESTAMPLTZ)",
+   "from": "type TIMESTAMPLTZ"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TIMESTAMPLTZ)",
+   "from": "type TIMESTAMPLTZ"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TIMESTAMPLTZ",
+   "from": "type TIMESTAMPLTZ"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TIMESTAMPNTZ)",
+   "from": "type TIMESTAMPNTZ"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TIMESTAMPNTZ)",
+   "from": "type TIMESTAMPNTZ"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TIMESTAMPNTZ",
+   "from": "type TIMESTAMPNTZ"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TIMESTAMPTZ)",
+   "from": "type TIMESTAMPTZ"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TIMESTAMPTZ)",
+   "from": "type TIMESTAMPTZ"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TIMESTAMPTZ",
+   "from": "type TIMESTAMPTZ"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TIMESTAMPNTZ(3))",
+   "from": "type TIMESTAMPNTZ(3)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TIMESTAMPNTZ(3))",
+   "from": "type TIMESTAMPNTZ(3)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TIMESTAMPNTZ(3)",
+   "from": "type TIMESTAMPNTZ(3)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS VARIANT)",
+   "from": "type VARIANT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS VARIANT)",
+   "from": "type VARIANT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::VARIANT",
+   "from": "type VARIANT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS OBJECT)",
+   "from": "type OBJECT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS OBJECT)",
+   "from": "type OBJECT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::OBJECT",
+   "from": "type OBJECT"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS ARRAY)",
+   "from": "type ARRAY"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS ARRAY)",
+   "from": "type ARRAY"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::ARRAY",
+   "from": "type ARRAY"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS GEOGRAPHY)",
+   "from": "type GEOGRAPHY"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS GEOGRAPHY)",
+   "from": "type GEOGRAPHY"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::GEOGRAPHY",
+   "from": "type GEOGRAPHY"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS GEOMETRY)",
+   "from": "type GEOMETRY"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS GEOMETRY)",
+   "from": "type GEOMETRY"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::GEOMETRY",
+   "from": "type GEOMETRY"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS UUID)",
+   "from": "type UUID"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS UUID)",
+   "from": "type UUID"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::UUID",
+   "from": "type UUID"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS FILE)",
+   "from": "type FILE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS FILE)",
+   "from": "type FILE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::FILE",
+   "from": "type FILE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS INTERVAL)",
+   "from": "type INTERVAL"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS INTERVAL)",
+   "from": "type INTERVAL"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::INTERVAL",
+   "from": "type INTERVAL"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS DOUBLE PRECISION)",
+   "from": "type DOUBLE PRECISION"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS DOUBLE PRECISION)",
+   "from": "type DOUBLE PRECISION"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::DOUBLE PRECISION",
+   "from": "type DOUBLE PRECISION"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS CHAR VARYING)",
+   "from": "type CHAR VARYING"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS CHAR VARYING)",
+   "from": "type CHAR VARYING"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::CHAR VARYING",
+   "from": "type CHAR VARYING"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS CHAR VARYING(5))",
+   "from": "type CHAR VARYING(5)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS CHAR VARYING(5))",
+   "from": "type CHAR VARYING(5)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::CHAR VARYING(5)",
+   "from": "type CHAR VARYING(5)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS NCHAR VARYING)",
+   "from": "type NCHAR VARYING"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS NCHAR VARYING)",
+   "from": "type NCHAR VARYING"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::NCHAR VARYING",
+   "from": "type NCHAR VARYING"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TIMESTAMP WITH TIME ZONE)",
+   "from": "type TIMESTAMP WITH TIME ZONE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TIMESTAMP WITH TIME ZONE)",
+   "from": "type TIMESTAMP WITH TIME ZONE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TIMESTAMP WITH TIME ZONE",
+   "from": "type TIMESTAMP WITH TIME ZONE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TIMESTAMP WITHOUT TIME ZONE)",
+   "from": "type TIMESTAMP WITHOUT TIME ZONE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TIMESTAMP WITHOUT TIME ZONE)",
+   "from": "type TIMESTAMP WITHOUT TIME ZONE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TIMESTAMP WITHOUT TIME ZONE",
+   "from": "type TIMESTAMP WITHOUT TIME ZONE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TIMESTAMP WITH LOCAL TIME ZONE)",
+   "from": "type TIMESTAMP WITH LOCAL TIME ZONE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TIMESTAMP WITH LOCAL TIME ZONE)",
+   "from": "type TIMESTAMP WITH LOCAL TIME ZONE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TIMESTAMP WITH LOCAL TIME ZONE",
+   "from": "type TIMESTAMP WITH LOCAL TIME ZONE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS TIME WITH TIME ZONE)",
+   "from": "type TIME WITH TIME ZONE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS TIME WITH TIME ZONE)",
+   "from": "type TIME WITH TIME ZONE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::TIME WITH TIME ZONE",
+   "from": "type TIME WITH TIME ZONE"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS ARRAY(INT))",
+   "from": "type ARRAY(INT)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS ARRAY(INT))",
+   "from": "type ARRAY(INT)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::ARRAY(INT)",
+   "from": "type ARRAY(INT)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS ARRAY(VARCHAR NOT NULL))",
+   "from": "type ARRAY(VARCHAR NOT NULL)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS ARRAY(VARCHAR NOT NULL))",
+   "from": "type ARRAY(VARCHAR NOT NULL)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::ARRAY(VARCHAR NOT NULL)",
+   "from": "type ARRAY(VARCHAR NOT NULL)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS OBJECT(a INT, b VARCHAR))",
+   "from": "type OBJECT(a INT, b VARCHAR)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS OBJECT(a INT, b VARCHAR))",
+   "from": "type OBJECT(a INT, b VARCHAR)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::OBJECT(a INT, b VARCHAR)",
+   "from": "type OBJECT(a INT, b VARCHAR)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS MAP(VARCHAR, INT))",
+   "from": "type MAP(VARCHAR, INT)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS MAP(VARCHAR, INT))",
+   "from": "type MAP(VARCHAR, INT)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::MAP(VARCHAR, INT)",
+   "from": "type MAP(VARCHAR, INT)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS VECTOR(INT, 3))",
+   "from": "type VECTOR(INT, 3)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS VECTOR(INT, 3))",
+   "from": "type VECTOR(INT, 3)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::VECTOR(INT, 3)",
+   "from": "type VECTOR(INT, 3)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS VECTOR(FLOAT, 256))",
+   "from": "type VECTOR(FLOAT, 256)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS VECTOR(FLOAT, 256))",
+   "from": "type VECTOR(FLOAT, 256)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::VECTOR(FLOAT, 256)",
+   "from": "type VECTOR(FLOAT, 256)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS DEC(10, 2))",
+   "from": "type DEC(10, 2)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS DEC(10, 2))",
+   "from": "type DEC(10, 2)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::DEC(10, 2)",
+   "from": "type DEC(10, 2)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS INT8)",
+   "from": "type INT8"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS INT8)",
+   "from": "type INT8"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::INT8",
+   "from": "type INT8"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS INT4)",
+   "from": "type INT4"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS INT4)",
+   "from": "type INT4"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::INT4",
+   "from": "type INT4"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS INT2)",
+   "from": "type INT2"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS INT2)",
+   "from": "type INT2"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::INT2",
+   "from": "type INT2"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS OBJECT(a VARCHAR NOT NULL, b NUMBER(10,2)))",
+   "from": "type OBJECT(a VARCHAR NOT NULL, b NUMBER(10,2))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS OBJECT(a VARCHAR NOT NULL, b NUMBER(10,2)))",
+   "from": "type OBJECT(a VARCHAR NOT NULL, b NUMBER(10,2))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::OBJECT(a VARCHAR NOT NULL, b NUMBER(10,2))",
+   "from": "type OBJECT(a VARCHAR NOT NULL, b NUMBER(10,2))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS ARRAY(OBJECT(k ARRAY(INT))))",
+   "from": "type ARRAY(OBJECT(k ARRAY(INT)))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS ARRAY(OBJECT(k ARRAY(INT))))",
+   "from": "type ARRAY(OBJECT(k ARRAY(INT)))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::ARRAY(OBJECT(k ARRAY(INT)))",
+   "from": "type ARRAY(OBJECT(k ARRAY(INT)))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS MAP(VARCHAR, OBJECT(z NUMBER(10,2) NOT NULL)))",
+   "from": "type MAP(VARCHAR, OBJECT(z NUMBER(10,2) NOT NULL))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS MAP(VARCHAR, OBJECT(z NUMBER(10,2) NOT NULL)))",
+   "from": "type MAP(VARCHAR, OBJECT(z NUMBER(10,2) NOT NULL))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::MAP(VARCHAR, OBJECT(z NUMBER(10,2) NOT NULL))",
+   "from": "type MAP(VARCHAR, OBJECT(z NUMBER(10,2) NOT NULL))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS MAP(VARCHAR, ARRAY(VARCHAR)))",
+   "from": "type MAP(VARCHAR, ARRAY(VARCHAR))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS MAP(VARCHAR, ARRAY(VARCHAR)))",
+   "from": "type MAP(VARCHAR, ARRAY(VARCHAR))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::MAP(VARCHAR, ARRAY(VARCHAR))",
+   "from": "type MAP(VARCHAR, ARRAY(VARCHAR))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS ARRAY(MAP(VARCHAR, INT)))",
+   "from": "type ARRAY(MAP(VARCHAR, INT))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS ARRAY(MAP(VARCHAR, INT)))",
+   "from": "type ARRAY(MAP(VARCHAR, INT))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::ARRAY(MAP(VARCHAR, INT))",
+   "from": "type ARRAY(MAP(VARCHAR, INT))"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT CAST(x AS object(a int, b varchar))",
+   "from": "type object(a int, b varchar)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT TRY_CAST(x AS object(a int, b varchar))",
+   "from": "type object(a int, b varchar)"
+  },
+  {
+   "dialect": "snowflake",
+   "sql": "SELECT x::object(a int, b varchar)",
+   "from": "type object(a int, b varchar)"
+  }
+ ]
+}

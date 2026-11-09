@@ -1,0 +1,450 @@
+# Declared domains of operators: comparison, arithmetic, logic.
+# Format: see docs/coverage.md.
+version = 1
+
+[[rule]]
+id = "rule.comparison"
+
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq", "node:lt", "node:lte", "node:gt", "node:gte"]
+arguments = [
+  { families = ["integer", "decimal", "float"] },
+  { families = ["integer", "decimal", "float"] },
+]
+template = "{0} = {1}"
+category = "comparison"
+variants = ["{0} <> {1}", "{0} < {1}", "{0} <= {1}", "{0} > {1}", "{0} >= {1}"]
+
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq", "node:lt", "node:lte", "node:gt", "node:gte"]
+arguments = [
+  { families = ["text"] },
+  { families = ["text"] },
+]
+template = "{0} = {1}"
+category = "comparison"
+variants = ["{0} <> {1}", "{0} < {1}", "{0} <= {1}", "{0} > {1}", "{0} >= {1}"]
+
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq", "node:lt", "node:lte", "node:gt", "node:gte"]
+arguments = [
+  { families = ["boolean"] },
+  { families = ["boolean"] },
+]
+template = "{0} = {1}"
+category = "comparison"
+variants = ["{0} <> {1}", "{0} < {1}", "{0} <= {1}", "{0} > {1}", "{0} >= {1}"]
+
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq", "node:lt", "node:lte", "node:gt", "node:gte"]
+arguments = [
+  { families = ["date"] },
+  { families = ["date"] },
+]
+template = "{0} = {1}"
+category = "comparison"
+variants = ["{0} <> {1}", "{0} < {1}", "{0} <= {1}", "{0} > {1}", "{0} >= {1}"]
+
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq", "node:lt", "node:lte", "node:gt", "node:gte"]
+arguments = [
+  { families = ["timestamp_ntz"] },
+  { families = ["timestamp_ntz"] },
+]
+template = "{0} = {1}"
+category = "comparison"
+variants = ["{0} <> {1}", "{0} < {1}", "{0} <= {1}", "{0} > {1}", "{0} >= {1}"]
+
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq", "node:lt", "node:lte", "node:gt", "node:gte"]
+arguments = [
+  { families = ["timestamp_tz", "timestamp_ltz"] },
+  { families = ["timestamp_tz", "timestamp_ltz"] },
+]
+template = "{0} = {1}"
+category = "comparison"
+variants = ["{0} <> {1}", "{0} < {1}", "{0} <= {1}", "{0} > {1}", "{0} >= {1}"]
+
+[[rule.form]]
+construct = "fn:DECODE"
+also = ["fn:EQUAL_NULL", "fn:GREATEST", "fn:LEAST", "fn:NULLIF", "node:between", "node:case", "node:in", "node:null_safe_eq", "node:null_safe_neq"]
+
+[[rule.probe]]
+construct = "node:eq"
+also = ["node:neq", "node:lt", "node:lte", "node:gt", "node:gte"]
+arguments = [
+  { families = ["time"] },
+  { families = ["time"] },
+]
+template = "{0} = {1}"
+category = "comparison"
+variants = ["{0} <> {1}", "{0} < {1}", "{0} <= {1}", "{0} > {1}", "{0} >= {1}"]
+extra_rows = [["'10:00:00'", "'10:00:00.000000001'"], ["'23:59:59.999999'", "'00:00:00'"], ["NULL", "'10:00:00'"]]
+
+[[rule]]
+id = "rule.date_literal_comparison"
+
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq", "node:lt", "node:lte", "node:gt", "node:gte"]
+arguments = [
+  { families = ["date"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+template = "{0} = {1}"
+category = "comparison"
+benign = { "1" = "'2024-01-15'" }
+variants = ["{0} <> {1}", "{0} < {1}", "{0} <= {1}", "{0} > {1}", "{0} >= {1}"]
+
+[[rule.form]]
+construct = "node:between"
+
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq", "node:lt", "node:lte", "node:gt", "node:gte"]
+arguments = [
+  { families = ["time"] },
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+template = "{0} = {1}"
+category = "comparison"
+benign = { "1" = "'10:30:00'" }
+variants = ["{0} <> {1}", "{0} < {1}", "{0} <= {1}", "{0} > {1}", "{0} >= {1}"]
+
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq", "node:lt", "node:lte", "node:gt", "node:gte"]
+arguments = [
+  { families = ["text"], kinds = ["literal"], grammar = true },
+  { families = ["time"] },
+]
+
+[[rule]]
+id = "rule.date_timestamp_comparison"
+
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq", "node:lt", "node:lte", "node:gt", "node:gte"]
+arguments = [
+  { families = ["date"] },
+  { families = ["timestamp_ntz"] },
+]
+template = "{0} = {1}"
+category = "comparison"
+variants = ["{0} <> {1}", "{0} < {1}", "{0} <= {1}", "{0} > {1}", "{0} >= {1}"]
+extra_rows = [["'2024-01-15'", "'2024-01-15 00:00:00'"], ["'2024-01-15'", "'2024-01-15 00:00:00.000000001'"], ["'2024-01-16'", "'2024-01-15 23:59:59.999999999'"], ["'9999-12-31'", "'2024-01-15 10:00:00'"], ["'0001-01-01'", "'2024-01-15 10:00:00'"]]
+
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq", "node:lt", "node:lte", "node:gt", "node:gte"]
+arguments = [
+  { families = ["timestamp_ntz"] },
+  { families = ["date"] },
+]
+template = "{0} = {1}"
+category = "comparison"
+variants = ["{0} <> {1}", "{0} < {1}", "{0} <= {1}", "{0} > {1}", "{0} >= {1}"]
+
+[[rule.form]]
+construct = "node:between"
+arguments = [
+  { families = ["timestamp_ntz"] },
+  { families = ["date"] },
+  { families = ["date"] },
+]
+template = "{0} BETWEEN {1} AND {2}"
+category = "comparison"
+
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq", "node:lt", "node:lte", "node:gt", "node:gte"]
+arguments = [
+  { families = ["date"] },
+  { families = ["timestamp_tz", "timestamp_ltz"] },
+]
+
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq", "node:lt", "node:lte", "node:gt", "node:gte"]
+arguments = [
+  { families = ["timestamp_tz", "timestamp_ltz"] },
+  { families = ["date"] },
+]
+
+[[rule]]
+id = "rule.decimal_arithmetic"
+
+[[rule.form]]
+construct = "node:add"
+also = ["node:sub", "node:mul"]
+arguments = [
+  { families = ["integer", "decimal"] },
+  { families = ["integer", "decimal"] },
+]
+template = "{0} + {1}"
+category = "numeric"
+variants = ["{0} - {1}", "{0} * {1}"]
+divergences = { "decimal.digits_38" = "numeric_range", "integer.digits_38" = "numeric_range" }
+
+[[rule]]
+id = "rule.decimal_division"
+
+[[rule.form]]
+construct = "node:div"
+arguments = [
+  { families = ["integer", "decimal"] },
+  { families = ["integer", "decimal"] },
+]
+template = "{0} / {1}"
+category = "numeric"
+divergences = { "1.decimal.digits_38" = "numeric_range", "1.integer.digits_38" = "numeric_range" }
+
+[[rule]]
+id = "rule.float_arithmetic"
+
+[[rule.form]]
+construct = "node:add"
+also = ["node:sub", "node:mul", "node:div"]
+arguments = [
+  { families = ["float"] },
+  { families = ["integer", "decimal", "float"] },
+]
+template = "{0} + {1}"
+category = "numeric"
+variants = ["{0} - {1}", "{0} * {1}", "{0} / {1}"]
+
+[[rule.form]]
+construct = "node:add"
+also = ["node:sub", "node:mul", "node:div"]
+arguments = [
+  { families = ["integer", "decimal"] },
+  { families = ["float"] },
+]
+template = "{0} + {1}"
+category = "numeric"
+variants = ["{0} - {1}", "{0} * {1}", "{0} / {1}"]
+
+[[rule]]
+id = "rule.decimal_modulo"
+
+[[rule.form]]
+construct = "fn:MOD"
+also = ["node:mod"]
+arguments = [
+  { families = ["integer", "decimal"] },
+  { families = ["integer", "decimal"] },
+]
+template = "MOD({0}, {1})"
+category = "numeric"
+variants = ["{0} % {1}"]
+
+[[rule.form]]
+construct = "fn:MOD"
+also = ["node:mod"]
+arguments = [
+  { families = ["float"] },
+  { families = ["integer"], kinds = ["literal"] },
+]
+
+[[rule]]
+id = "rule.float_modulo"
+
+[[rule.form]]
+construct = "fn:MOD"
+also = ["node:mod"]
+arguments = [
+  { families = ["float"] },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+]
+template = "MOD({0}, {1})"
+category = "numeric"
+variants = ["{0} % {1}"]
+
+[[rule]]
+id = "rule.logic"
+
+[[rule.form]]
+construct = "node:and"
+also = ["node:or"]
+arguments = [
+  { families = ["boolean"] },
+  { families = ["boolean"] },
+]
+template = "{0} AND {1}"
+category = "comparison"
+variants = ["{0} OR {1}"]
+
+[[rule.form]]
+construct = "node:not"
+arguments = [
+  { families = ["boolean"] },
+]
+template = "NOT {0}"
+category = "comparison"
+
+[[rule]]
+id = "rule.null_safe_comparison"
+
+[[rule.form]]
+construct = "fn:EQUAL_NULL"
+also = ["node:null_safe_eq", "node:null_safe_neq"]
+arguments = [
+  { families = ["integer", "decimal", "float"] },
+  { families = ["integer", "decimal", "float"] },
+]
+template = "EQUAL_NULL({0}, {1})"
+category = "comparison"
+variants = ["{0} IS NOT DISTINCT FROM {1}", "{0} IS DISTINCT FROM {1}"]
+
+[[rule.form]]
+construct = "fn:EQUAL_NULL"
+also = ["node:null_safe_eq", "node:null_safe_neq"]
+arguments = [
+  { families = ["text"] },
+  { families = ["text"] },
+]
+template = "EQUAL_NULL({0}, {1})"
+category = "comparison"
+variants = ["{0} IS NOT DISTINCT FROM {1}", "{0} IS DISTINCT FROM {1}"]
+
+[[rule.form]]
+construct = "fn:EQUAL_NULL"
+also = ["node:null_safe_eq", "node:null_safe_neq"]
+arguments = [
+  { families = ["boolean"] },
+  { families = ["boolean"] },
+]
+template = "EQUAL_NULL({0}, {1})"
+category = "comparison"
+variants = ["{0} IS NOT DISTINCT FROM {1}", "{0} IS DISTINCT FROM {1}"]
+
+[[rule.form]]
+construct = "fn:EQUAL_NULL"
+also = ["node:null_safe_eq", "node:null_safe_neq"]
+arguments = [
+  { families = ["date"] },
+  { families = ["date"] },
+]
+template = "EQUAL_NULL({0}, {1})"
+category = "comparison"
+variants = ["{0} IS NOT DISTINCT FROM {1}", "{0} IS DISTINCT FROM {1}"]
+
+[[rule.form]]
+construct = "fn:EQUAL_NULL"
+also = ["node:null_safe_eq", "node:null_safe_neq"]
+arguments = [
+  { families = ["timestamp_ntz"] },
+  { families = ["timestamp_ntz"] },
+]
+template = "EQUAL_NULL({0}, {1})"
+category = "comparison"
+variants = ["{0} IS NOT DISTINCT FROM {1}", "{0} IS DISTINCT FROM {1}"]
+
+[[rule.form]]
+construct = "fn:EQUAL_NULL"
+also = ["node:null_safe_eq", "node:null_safe_neq"]
+arguments = [
+  { families = ["timestamp_tz", "timestamp_ltz"] },
+  { families = ["timestamp_tz", "timestamp_ltz"] },
+]
+template = "EQUAL_NULL({0}, {1})"
+category = "comparison"
+variants = ["{0} IS NOT DISTINCT FROM {1}", "{0} IS DISTINCT FROM {1}"]
+
+[[rule]]
+id = "rule.variant_equality"
+
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq"]
+arguments = [
+  { families = ["variant"] },
+  { families = ["text", "integer", "variant"] },
+]
+template = "{0} = {1}"
+category = "semi-structured"
+variants = ["{0} <> {1}"]
+
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq"]
+arguments = [
+  { families = ["text", "integer"] },
+  { families = ["variant"] },
+]
+template = "{0} = {1}"
+category = "semi-structured"
+variants = ["{0} <> {1}"]
+
+[[rule.form]]
+construct = "node:in"
+arguments = [
+  { families = ["variant"] },
+  { families = ["text"] },
+]
+repeat = true
+template = "{0} IN ({1})"
+category = "semi-structured"
+
+[[rule]]
+id = "rule.variant_common_type"
+
+[[rule.form]]
+construct = "node:coalesce"
+also = ["node:nvl"]
+arguments = [
+  { families = ["variant"] },
+  { families = ["variant"] },
+]
+repeat = true
+template = "COALESCE({0}, {1})"
+category = "semi-structured"
+variants = ["NVL({0}, {1})"]
+
+[[rule.form]]
+construct = "node:if_func"
+arguments = [
+  { families = ["boolean"] },
+  { families = ["variant"] },
+  { families = ["variant"] },
+]
+template = "IFF({0}, {1}, {2})"
+category = "semi-structured"
+
+[[rule.form]]
+construct = "node:case"
+
+[[rule.form]]
+construct = "query"
+
+[[rule]]
+id = "rule.text_number_comparison"
+
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq", "node:lt", "node:lte", "node:gt", "node:gte"]
+arguments = [
+  { families = ["text"] },
+  { families = ["integer", "decimal"] },
+]
+template = "{0} = {1}"
+category = "comparison"
+variants = ["{0} <> {1}", "{0} < {1}", "{1} >= {0}"]
+benign = { "0" = "'7'" }
+divergences = { "0.text.number_text" = "text_number_scale" }
+
+# The NUMBER written first, recorded by the text and number comparison cases.
+[[rule.form]]
+construct = "node:eq"
+also = ["node:neq", "node:lt", "node:lte", "node:gt", "node:gte"]
+arguments = [
+  { families = ["integer", "decimal"] },
+  { families = ["text"] },
+]
+

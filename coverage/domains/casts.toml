@@ -1,0 +1,759 @@
+# Declared domains of casts and conversion functions.
+# Format: see docs/coverage.md.
+version = 1
+
+[[rule]]
+id = "rule.cast_numeric"
+
+[[rule.form]]
+construct = "node:cast"
+arguments = [
+  { families = ["integer", "decimal"] },
+]
+facets = { target = ["integer", "decimal", "float"] }
+template = "CAST({0} AS NUMBER(38,2))"
+category = "conversion"
+variants = ["CAST({0} AS NUMBER(38,0))", "CAST({0} AS FLOAT)"]
+
+[[rule.form]]
+construct = "node:cast"
+arguments = [
+  { families = ["float"] },
+]
+facets = { target = ["integer"], float_scale = ["0"] }
+template = "CAST({0} AS NUMBER(38,0))"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+arguments = [
+  { families = ["float"] },
+]
+facets = { target = ["decimal"], float_scale = ["2"] }
+template = "CAST({0} AS NUMBER(20,2))"
+category = "conversion"
+variants = ["CAST({0} AS NUMBER(38,2))"]
+
+[[rule.form]]
+construct = "node:cast"
+arguments = [
+  { families = ["float"] },
+]
+facets = { target = ["decimal"], float_scale = ["6"] }
+template = "CAST({0} AS NUMBER(20,6))"
+category = "conversion"
+variants = ["CAST({0} AS NUMBER(38,2))"]
+
+[[rule.form]]
+construct = "node:cast"
+arguments = [
+  { families = ["float"] },
+]
+facets = { target = ["decimal"], float_scale = ["8"] }
+template = "CAST({0} AS NUMBER(20,8))"
+category = "conversion"
+variants = ["CAST({0} AS NUMBER(38,2))"]
+# 1e15 and 1e21 overflow NUMBER(20,8), and Snowflake fails the whole query with 100046.
+divergences = { "float.notation_boundaries" = "" }
+
+[[rule.form]]
+construct = "node:cast"
+arguments = []
+facets = { target = ["integer", "decimal", "float"] }
+
+[[rule]]
+id = "rule.cast_to_text"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["integer"] },
+]
+facets = { target = ["text"] }
+template = "CAST({0} AS VARCHAR)"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["decimal"] },
+]
+facets = { target = ["text"] }
+template = "CAST({0} AS VARCHAR)"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["boolean"] },
+]
+facets = { target = ["text"] }
+template = "CAST({0} AS VARCHAR)"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["date"] },
+]
+facets = { target = ["text"] }
+template = "CAST({0} AS VARCHAR)"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["float"] },
+]
+facets = { target = ["text"] }
+template = "CAST({0} AS VARCHAR)"
+category = "conversion"
+# Subnormal FLOATs are written with ten significant digits, and negative zero as -0, as recorded.
+alone = ["0.float.subnormal", "0.float.negative_zero"]
+# Each edge of the digit bands, max(10, min(15, whole digits + 9)), and each exponent switch.
+extra_rows = [["9.999999999949"], ["9.99999999995"], ["10.00000000049"], ["99.9999999999949"], ["999.999999999949"], ["9999.99999999999"], ["99999.9999999999"], ["100000.000000001"], ["999999999999999"], ["999999999999999.4"], ["0.00009999999999"], ["0.0000999999999999"], ["-1234.5678901234567"], ["NULL"]]
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["timestamp_ntz"] },
+]
+facets = { target = ["text"] }
+template = "CAST({0} AS VARCHAR)"
+category = "conversion"
+divergences = { "timestamp_ntz.half_millisecond" = "timestamp_text_rounding" }
+
+[[rule.form]]
+construct = "fn:TO_VARCHAR"
+also = ["fn:TO_CHAR"]
+arguments = [
+  { families = ["integer", "decimal", "boolean", "date", "float", "timestamp_ntz"] },
+]
+template = "TO_VARCHAR({0})"
+category = "conversion"
+variants = ["TO_CHAR({0})"]
+divergences = { "timestamp_ntz.half_millisecond" = "timestamp_text_rounding" }
+# Subnormal FLOATs are written with ten significant digits, and negative zero as -0, as recorded.
+alone = ["0.float.subnormal", "0.float.negative_zero"]
+
+[[rule]]
+id = "rule.cast_boolean"
+
+[[rule.form]]
+construct = "node:cast"
+arguments = [
+  { families = ["boolean"] },
+]
+facets = { target = ["integer", "decimal"] }
+template = "CAST({0} AS NUMBER(38,0))"
+category = "conversion"
+variants = ["CAST({0} AS NUMBER(38,2))"]
+
+[[rule.form]]
+construct = "node:cast"
+arguments = [
+  { families = ["integer", "decimal"] },
+]
+facets = { target = ["boolean"] }
+template = "CAST({0} AS BOOLEAN)"
+category = "conversion"
+
+[[rule]]
+id = "rule.cast_parsed_text"
+
+[[rule.form]]
+construct = "node:cast"
+also = ["node:try_cast"]
+arguments = [
+  { families = ["text"] },
+]
+facets = { target = ["integer", "decimal", "float", "boolean", "date"] }
+template = "TRY_CAST({0} AS NUMBER(38,2))"
+category = "conversion"
+variants = ["CAST({0} AS NUMBER(38,0))", "CAST({0} AS NUMBER(38,2))", "CAST({0} AS FLOAT)", "CAST({0} AS BOOLEAN)", "CAST({0} AS DATE)", "TRY_CAST({0} AS NUMBER(38,0))", "TRY_CAST({0} AS FLOAT)", "TRY_CAST({0} AS BOOLEAN)", "TRY_CAST({0} AS DATE)"]
+
+[[rule.form]]
+construct = "fn:TO_NUMBER"
+also = ["fn:TRY_TO_NUMBER", "fn:TO_BOOLEAN", "fn:TRY_TO_BOOLEAN", "fn:TRY_TO_DOUBLE"]
+arguments = [
+  { families = ["text"] },
+]
+
+[[rule]]
+id = "rule.cast_text_literal"
+
+[[rule.form]]
+construct = "node:cast"
+also = ["node:try_cast"]
+arguments = [
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+facets = { target = ["date"] }
+template = "CAST({0} AS DATE)"
+category = "conversion"
+benign = { "0" = "'2024-01-15'" }
+variants = ["TRY_CAST({0} AS DATE)"]
+
+[[rule.form]]
+construct = "node:cast"
+also = ["node:try_cast"]
+arguments = [
+  { families = ["text"], kinds = ["literal"], grammar = true },
+]
+facets = { target = ["timestamp_ntz", "timestamp_tz", "timestamp_ltz"] }
+template = "CAST({0} AS TIMESTAMP_NTZ(9))"
+category = "conversion"
+benign = { "0" = "'2024-01-15 10:00:00'" }
+variants = ["CAST({0} AS TIMESTAMP_TZ(9))", "CAST({0} AS TIMESTAMP_LTZ(9))", "TRY_CAST({0} AS TIMESTAMP_NTZ(9))", "TRY_CAST({0} AS TIMESTAMP_TZ(9))", "TRY_CAST({0} AS TIMESTAMP_LTZ(9))"]
+
+[[rule]]
+id = "rule.cast_text_timestamp"
+
+[[rule.form]]
+construct = "node:cast"
+also = ["node:try_cast"]
+arguments = [
+  { families = ["text"], kinds = ["value"] },
+]
+facets = { target = ["timestamp_ntz"] }
+template = "CAST({0} AS TIMESTAMP_NTZ(9))"
+category = "conversion"
+variants = ["TRY_CAST({0} AS TIMESTAMP_NTZ(9))"]
+
+[[rule]]
+id = "rule.cast_text_time"
+
+[[rule.form]]
+construct = "node:cast"
+also = ["node:try_cast"]
+arguments = [
+  { families = ["text"] },
+]
+facets = { target = ["time"] }
+template = "TRY_CAST({0} AS TIME(9))"
+category = "conversion"
+variants = ["CAST({0} AS TIME(9))"]
+divergences = { "text.dots_brackets" = "date_text_spelling", "text.number_text" = "date_text_spelling" }
+
+[[rule]]
+id = "rule.cast_utc_zoned"
+
+[[rule.form]]
+construct = "node:cast"
+also = ["fn:TO_DATE"]
+arguments = [
+  { families = ["timestamp_tz"] },
+]
+facets = { target = ["timestamp_ntz", "date", "none"] }
+
+[[rule.form]]
+construct = "node:cast"
+arguments = [
+  { families = ["timestamp_ltz"] },
+]
+facets = { target = ["timestamp_ntz"] }
+template = "CAST({0} AS TIMESTAMP_NTZ(9))"
+category = "conversion"
+divergences = { "0.timestamp_ltz.extreme_years" = "timestamp_range" }
+
+[[rule]]
+id = "rule.cast_temporal"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["date"] },
+]
+facets = { target = ["timestamp_ntz"] }
+template = "CAST({0} AS TIMESTAMP_NTZ(9))"
+category = "conversion"
+divergences = { "date.extreme_years" = "timestamp_range" }
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["date"] },
+]
+facets = { target = ["timestamp_tz"] }
+template = "CAST({0} AS TIMESTAMP_TZ(9))"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["date"] },
+]
+facets = { target = ["timestamp_ltz"] }
+template = "CAST({0} AS TIMESTAMP_LTZ(9))"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["timestamp_ntz"] },
+]
+facets = { target = ["date"] }
+template = "CAST({0} AS DATE)"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["timestamp_ntz"] },
+]
+facets = { target = ["timestamp_ntz"] }
+template = "CAST({0} AS TIMESTAMP_NTZ(3))"
+category = "conversion"
+variants = ["CAST({0} AS TIMESTAMP_NTZ(9))"]
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["timestamp_ntz"] },
+]
+facets = { target = ["timestamp_tz"] }
+template = "CAST({0} AS TIMESTAMP_TZ(9))"
+category = "conversion"
+divergences = { "timestamp_ntz.sub_microsecond" = "timestamp_tz_submicro", "timestamp_ntz.half_millisecond" = "timestamp_tz_submicro" }
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["timestamp_ntz"] },
+]
+facets = { target = ["timestamp_ltz"] }
+template = "CAST({0} AS TIMESTAMP_LTZ(9))"
+category = "conversion"
+divergences = { "timestamp_ntz.sub_microsecond" = "timestamp_tz_submicro", "timestamp_ntz.half_millisecond" = "timestamp_tz_submicro" }
+
+[[rule.form]]
+construct = "fn:TO_DATE"
+arguments = [
+  { families = ["timestamp_ntz"] },
+]
+template = "TO_DATE({0})"
+category = "conversion"
+
+[[rule]]
+id = "rule.cast_same_type"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["integer"] },
+]
+facets = { target = ["integer"] }
+template = "CAST({0} AS NUMBER(38,0))"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["decimal"] },
+]
+facets = { target = ["decimal"] }
+template = "CAST({0} AS NUMBER(38,10))"
+category = "conversion"
+variants = ["CAST({0} AS NUMBER(38,2))"]
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["float"] },
+]
+facets = { target = ["float"] }
+template = "CAST({0} AS FLOAT)"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["text"] },
+]
+facets = { target = ["text"] }
+template = "CAST({0} AS VARCHAR)"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["boolean"] },
+]
+facets = { target = ["boolean"] }
+template = "CAST({0} AS BOOLEAN)"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["date"] },
+]
+facets = { target = ["date"] }
+template = "CAST({0} AS DATE)"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["timestamp_ntz"] },
+]
+facets = { target = ["timestamp_ntz"] }
+template = "CAST({0} AS TIMESTAMP_NTZ(9))"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["timestamp_tz"] },
+]
+facets = { target = ["timestamp_tz"] }
+template = "CAST({0} AS TIMESTAMP_TZ(9))"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["timestamp_ltz"] },
+]
+facets = { target = ["timestamp_ltz"] }
+template = "CAST({0} AS TIMESTAMP_LTZ(9))"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = ["node:try_cast"]
+arguments = [
+  { families = ["text"] },
+]
+facets = { target = ["text"] }
+template = "CAST({0} AS VARCHAR)"
+category = "conversion"
+variants = ["TRY_CAST({0} AS VARCHAR)"]
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["null"] },
+]
+facets = { target = ["integer"] }
+template = "CAST(NULL AS NUMBER(38,0))"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["null"] },
+]
+facets = { target = ["decimal"] }
+template = "CAST(NULL AS NUMBER(38,10))"
+category = "conversion"
+variants = ["CAST(NULL AS NUMBER(38,2))"]
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["null"] },
+]
+facets = { target = ["float"] }
+template = "CAST(NULL AS FLOAT)"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["null"] },
+]
+facets = { target = ["text"] }
+template = "CAST(NULL AS VARCHAR)"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["null"] },
+]
+facets = { target = ["boolean"] }
+template = "CAST(NULL AS BOOLEAN)"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["null"] },
+]
+facets = { target = ["date"] }
+template = "CAST(NULL AS DATE)"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["null"] },
+]
+facets = { target = ["time"] }
+template = "CAST(NULL AS TIME(9))"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["null"] },
+]
+facets = { target = ["timestamp_ntz"] }
+template = "CAST(NULL AS TIMESTAMP_NTZ(9))"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["null"] },
+]
+facets = { target = ["timestamp_ltz"] }
+template = "CAST(NULL AS TIMESTAMP_LTZ(9))"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["null"] },
+]
+facets = { target = ["timestamp_tz"] }
+template = "CAST(NULL AS TIMESTAMP_TZ(9))"
+category = "conversion"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["null"] },
+]
+facets = { target = ["variant"] }
+template = "CAST(NULL AS VARIANT)"
+category = "conversion"
+
+[[rule.form]]
+construct = "fn:TO_DATE"
+arguments = [
+  { families = ["date"] },
+]
+template = "TO_DATE({0})"
+category = "conversion"
+
+[[rule.form]]
+construct = "fn:TO_VARCHAR"
+also = ["fn:TO_CHAR"]
+arguments = [
+  { families = ["text"] },
+]
+template = "TO_VARCHAR({0})"
+category = "conversion"
+variants = ["TO_CHAR({0})"]
+
+[[rule]]
+id = "rule.time_cast"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["time"] },
+]
+facets = { target = ["time"] }
+template = "CAST({0} AS TIME(3))"
+category = "conversion"
+variants = ["CAST({0} AS TIME(9))"]
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["time"] },
+]
+facets = { target = ["text"] }
+template = "CAST({0} AS VARCHAR)"
+category = "conversion"
+
+[[rule.form]]
+construct = "fn:TO_VARCHAR"
+also = ["fn:TO_CHAR"]
+arguments = [
+  { families = ["time"] },
+]
+template = "TO_VARCHAR({0})"
+category = "conversion"
+variants = ["TO_CHAR({0})"]
+
+[[rule]]
+id = "rule.to_boolean"
+
+[[rule.form]]
+construct = "fn:TO_BOOLEAN"
+also = ["fn:TRY_TO_BOOLEAN"]
+arguments = [
+  { families = ["text"] },
+]
+template = "TRY_TO_BOOLEAN({0})"
+category = "conversion"
+
+[[rule]]
+id = "rule.to_variant"
+
+[[rule.form]]
+construct = "fn:TO_VARIANT"
+arguments = [
+  { families = ["text", "boolean", "integer", "float", "date", "timestamp_ntz", "timestamp_ltz"] },
+]
+template = "TO_VARIANT({0})"
+category = "semi-structured-typed"
+divergences = { "timestamp_ntz.sub_microsecond" = "variant_typed_values", "timestamp_ntz.half_millisecond" = "variant_typed_values", "0.timestamp_ltz.extreme_years" = "variant_typed_values", "float.nan_infinity" = "json_fidelity", "float.negative_zero" = "json_fidelity" }
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["text"] },
+]
+facets = { target = ["variant"] }
+template = "CAST({0} AS VARIANT)"
+category = "semi-structured-typed"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["float"] },
+]
+facets = { target = ["variant"] }
+template = "CAST({0} AS VARIANT)"
+category = "semi-structured-typed"
+divergences = { "float.nan_infinity" = "json_fidelity", "float.negative_zero" = "json_fidelity" }
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["boolean"] },
+]
+facets = { target = ["variant"] }
+template = "CAST({0} AS VARIANT)"
+category = "semi-structured-typed"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["integer"] },
+]
+facets = { target = ["variant"] }
+template = "CAST({0} AS VARIANT)"
+category = "semi-structured-typed"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["date"] },
+]
+facets = { target = ["variant"] }
+template = "CAST({0} AS VARIANT)"
+category = "semi-structured-typed"
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["timestamp_ntz"] },
+]
+facets = { target = ["variant"] }
+template = "CAST({0} AS VARIANT)"
+category = "semi-structured-typed"
+divergences = { "timestamp_ntz.sub_microsecond" = "variant_typed_values", "timestamp_ntz.half_millisecond" = "variant_typed_values" }
+
+[[rule.form]]
+construct = "node:cast"
+also = []
+arguments = [
+  { families = ["timestamp_ltz"] },
+]
+facets = { target = ["variant"] }
+template = "CAST({0} AS VARIANT)"
+category = "semi-structured-typed"
+divergences = { "0.timestamp_ltz.extreme_years" = "variant_typed_values" }
+
+[[rule]]
+id = "rule.variant_kind_cast"
+
+[[rule.form]]
+construct = "node:cast"
+arguments = [
+  { families = ["variant"] },
+]
+facets = { target = ["variant"] }
+template = "CAST({0} AS OBJECT)"
+category = "semi-structured-cast"
+variants = ["CAST({0} AS VARIANT)"]
+divergences = { "variant.large_numbers" = "", "0.variant.number_spellings" = "" }
+
+[[rule]]
+id = "rule.variant_to_varchar"
+
+[[rule.form]]
+construct = "fn:TO_VARCHAR"
+arguments = [
+  { families = ["variant"] },
+]
+template = "TO_VARCHAR({0})"
+category = "semi-structured-output"
+
+[[rule]]
+id = "rule.variant_cast"
+
+[[rule.form]]
+construct = "node:cast"
+arguments = [
+  { families = ["variant"] },
+]
+facets = { target = ["variant", "text", "integer", "decimal", "float", "boolean", "date", "timestamp_ntz", "timestamp_tz"] }
+template = "CAST({0} AS VARCHAR)"
+category = "semi-structured-cast"
+variants = ["CAST({0} AS VARIANT)", "CAST({0} AS NUMBER(38,0))", "CAST({0} AS NUMBER(38,2))", "CAST({0} AS FLOAT)", "CAST({0} AS BOOLEAN)", "CAST({0} AS DATE)", "CAST({0} AS TIMESTAMP_NTZ(9))", "CAST({0} AS TIMESTAMP_TZ(9))"]
+
+# TO_VARCHAR of a VARIANT, as ::VARCHAR; the VARIANT-held text cases record it.
+[[rule.form]]
+construct = "fn:TO_VARCHAR"
+arguments = [
+  { families = ["variant"] },
+]
+

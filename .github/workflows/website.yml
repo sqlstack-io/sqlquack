@@ -1,0 +1,120 @@
+name: Website
+
+# Builds the playground engine and the site, checks them, and deploys sqlquack.io to GitHub Pages
+# from main. While the repository is private, only pull requests and manual runs build, and nothing
+# deploys. The site goes live from the `public` event when the repository is made public, or from a
+# manual run on main once Pages is enabled.
+on:
+  public:
+  push:
+    branches: [main]
+    paths:
+      - website/**
+      - crates/sqlquack-diagnostics/**
+      - crates/sqlquack-parse/**
+      - crates/sqlquack-blocks/**
+      - crates/sqlquack-convert/**
+      - crates/sqlquack-derive/**
+      - crates/sqlquack-policy/**
+      - crates/sqlquack-semantics/**
+      - crates/sqlquack-syntax/**
+      - crates/sqlquack-syntax-snowflake/**
+      - .github/workflows/website.yml
+  pull_request:
+    paths:
+      - website/**
+      - crates/sqlquack-diagnostics/**
+      - crates/sqlquack-parse/**
+      - crates/sqlquack-blocks/**
+      - crates/sqlquack-convert/**
+      - crates/sqlquack-derive/**
+      - crates/sqlquack-policy/**
+      - crates/sqlquack-semantics/**
+      - crates/sqlquack-syntax/**
+      - crates/sqlquack-syntax-snowflake/**
+      - .github/workflows/website.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: website-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build the engine and the website
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || !github.event.repository.private
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: website
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+
+      - name: Install the pinned Rust toolchain with the wasm32 target
+        working-directory: .
+        run: |
+          rustup toolchain install
+          rustup target add wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: website/wasm
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: wasm-bindgen-cli@0.2.130
+
+      - name: Check the diagnostics reference matches the registry
+        run: python3 scripts/generate_diagnostics.py --check
+
+      - name: Lint the engine
+        working-directory: website/wasm
+        run: |
+          cargo fmt --check
+          cargo clippy --locked --target wasm32-unknown-unknown --release -- -D warnings
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the engine
+        run: ./scripts/build_engine.sh
+
+      - name: Test the engine and its spans
+        run: npm run -s test:engine
+
+      - name: Build
+        run: npm run build
+
+      - name: Check links
+        run: python3 scripts/check_links.py dist
+
+      - name: Upload site
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: website/dist
+
+  deploy:
+    name: Deploy to GitHub Pages
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && !github.event.repository.private
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

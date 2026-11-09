@@ -1,0 +1,126 @@
+[workspace]
+members = [
+    "crates/sqlquack-syntax",
+    "crates/sqlquack-syntax-snowflake",
+    "crates/sqlquack-derive",
+    "crates/sqlquack-diagnostics",
+    "crates/sqlquack-parse",
+    "crates/sqlquack-semantics",
+    "crates/sqlquack-convert",
+    "crates/sqlquack-blocks",
+    "crates/sqlquack-policy",
+    "crates/sqlquack-compare",
+    "crates/sqlquack-evidence",
+    "crates/sqlquack",
+    "tools/sqlquack-polyglot-check",
+    "tools/sqlquack-coverage-check",
+    "crates/sqlquack-syntax-postgres",
+    "crates/sqlquack-lint",
+    "crates/sqlquack-syntax-bigquery",
+    "crates/sqlquack-syntax-sqlite",
+    "crates/sqlquack-fingerprint",
+    "crates/sqlquack-format",
+    "tools/sqlquack-format-check",
+    "crates/sqlquack-syntax-duckdb",
+    "crates/sqlquack-syntax-databricks",
+    "crates/sqlquack-syntax-clickhouse",
+    "crates/sqlquack-syntax-sqlserver",
+    "crates/sqlquack-python",
+]
+exclude = ["fuzz"]
+resolver = "2"
+
+[workspace.package]
+version = "0.2.0"
+edition = "2024"
+license = "Apache-2.0"
+repository = "https://github.com/sqlstack-io/sqlquack"
+homepage = "https://github.com/sqlstack-io/sqlquack"
+readme = "README.md"
+publish = false
+rust-version = "1.88"
+
+[workspace.dependencies]
+anstream = "1.0"
+arrow = { version = "60", default-features = false, features = ["ipc"] }
+clap = { version = "4.5", features = ["derive"] }
+duckdb = "=1.20000.0"
+polyglot-sql = { git = "https://github.com/sqlstack-io/polyglot.git", rev = "7d5fe2ccce7b3cbd1413a2823560f8dfc63ecc2e", default-features = false, features = [
+    "dialect-snowflake",
+    "dialect-duckdb",
+    "dialect-bigquery",
+    "dialect-databricks",
+    "dialect-postgresql",
+    "dialect-sqlite",
+    "generate",
+    "semantic",
+    "stacker",
+] }
+proc-macro2 = "1"
+quote = "1"
+rayon = "1"
+regex = "1"
+rustc-hash = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# The Python module; abi3, so one build loads into every CPython from 3.12.
+saphyr-parser = "0.1"
+pyo3 = { version = "0.30.1", features = ["abi3-py312"] }
+sha2 = "0.10"
+sqlquack = { path = "crates/sqlquack" }
+sqlquack-compare = { path = "crates/sqlquack-compare" }
+sqlquack-convert = { path = "crates/sqlquack-convert" }
+sqlquack-diagnostics = { path = "crates/sqlquack-diagnostics" }
+sqlquack-blocks = { path = "crates/sqlquack-blocks", default-features = false }
+sqlquack-evidence = { path = "crates/sqlquack-evidence" }
+sqlquack-fingerprint = { path = "crates/sqlquack-fingerprint" }
+sqlquack-format = { path = "crates/sqlquack-format" }
+sqlquack-lint = { path = "crates/sqlquack-lint" }
+sqlquack-parse = { path = "crates/sqlquack-parse" }
+sqlquack-policy = { path = "crates/sqlquack-policy" }
+sqlquack-semantics = { path = "crates/sqlquack-semantics" }
+sqlquack-syntax = { path = "crates/sqlquack-syntax" }
+sqlquack-syntax-snowflake = { path = "crates/sqlquack-syntax-snowflake" }
+sqlquack-derive = { path = "crates/sqlquack-derive" }
+sqlquack-syntax-postgres = { path = "crates/sqlquack-syntax-postgres" }
+sqlquack-syntax-bigquery = { path = "crates/sqlquack-syntax-bigquery" }
+sqlquack-syntax-sqlite = { path = "crates/sqlquack-syntax-sqlite" }
+sqlquack-syntax-duckdb = { path = "crates/sqlquack-syntax-duckdb" }
+sqlquack-syntax-databricks = { path = "crates/sqlquack-syntax-databricks" }
+sqlquack-syntax-clickhouse = { path = "crates/sqlquack-syntax-clickhouse" }
+sqlquack-syntax-sqlserver = { path = "crates/sqlquack-syntax-sqlserver" }
+stacker = "0.1"
+syn = { version = "2", features = ["full"] }
+tempfile = "3"
+thiserror = "1.0"
+toml = { version = "0.9", default-features = false, features = ["parse", "serde"] }
+unicode-segmentation = "1.10"
+walkdir = "2"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+unreachable_pub = "deny"
+unused_must_use = "deny"
+
+[workspace.lints.clippy]
+await_holding_lock = "deny"
+
+[profile.dev]
+debug = "line-tables-only"
+
+[profile.dev.package."*"]
+opt-level = 1
+debug = false
+
+[profile.release]
+strip = "symbols"
+
+# The merge gate's one build: check-ci's Python module and command line and the Rust tests all use
+# it, so a gate compiles the workspace once. Debug assertions and overflow checks stay on; opt-level 1
+# runs the tests as fast as opt-level 3 and compiles in about half the time.
+[profile.gate]
+inherits = "release"
+opt-level = 1
+debug-assertions = true
+overflow-checks = true
+strip = "none"

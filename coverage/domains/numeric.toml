@@ -1,0 +1,61 @@
+# Declared domains of numeric functions.
+# Format: see docs/coverage.md.
+version = 1
+
+[[rule]]
+id = "rule.abs"
+
+[[rule.form]]
+construct = "fn:ABS"
+arguments = [
+  { families = ["integer", "decimal", "float"] },
+]
+template = "ABS({0})"
+category = "numeric"
+
+[[rule]]
+id = "rule.sign"
+
+[[rule.form]]
+construct = "fn:SIGN"
+arguments = [
+  { families = ["integer", "decimal", "float"] },
+]
+template = "SIGN({0})"
+category = "numeric"
+
+[[rule]]
+id = "rule.rounding"
+
+[[rule.form]]
+construct = "fn:ROUND"
+also = ["fn:CEIL", "fn:FLOOR", "fn:TRUNC", "fn:TRUNCATE"]
+arguments = [
+  { families = ["integer", "decimal", "float"] },
+]
+template = "ROUND({0})"
+category = "numeric"
+variants = ["CEIL({0})", "FLOOR({0})", "TRUNC({0})", "TRUNCATE({0})"]
+
+[[rule.form]]
+construct = "fn:ROUND"
+arguments = [
+  { families = ["integer", "decimal", "float"] },
+  { families = ["integer"], kinds = ["literal"], grammar = true },
+]
+template = "ROUND({0}, {1})"
+category = "numeric"
+
+[[rule]]
+id = "rule.bitwise"
+
+[[rule.form]]
+construct = "fn:BITAND"
+also = ["fn:BITOR", "fn:BITXOR"]
+arguments = [
+  { families = ["integer"] },
+  { families = ["integer"] },
+]
+template = "BITAND({0}, {1})"
+category = "numeric"
+variants = ["BITOR({0}, {1})", "BITXOR({0}, {1})"]
