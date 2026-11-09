@@ -10,7 +10,9 @@ use crate::parse::_helpers::statements::queries::set_with;
 use crate::parse::_helpers::statements::results::{has_browse, has_xml_or_json};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_name};
 use crate::parse::_helpers::tree::nodes::{column_from, delete, insert, table, update, var};
-use crate::parse::constants::BROWSE_WITH_WRITE;
+use crate::parse::constants::{
+    BROWSE_WITH_WRITE, DML_TARGET_REFUSED_HINTS, MERGE_TARGET_REFUSED_HINTS,
+};
 
 fn tuple(expressions: Vec<Expression>) -> Expression {
     Expression::Tuple(Box::new(Tuple { expressions }))
@@ -40,8 +42,8 @@ impl<'sql> Parser<'sql> {
         Ok(statement)
     }
 
-    /// The target of a DML statement: a table name, its hints refused as a gap.
-    fn dml_target(&mut self) -> Parsing<TableRef> {
+    /// The target of a DML statement: a table name and its hints, those in `refused` refused.
+    fn dml_target(&mut self, refused: &[(&str, &str)]) -> Parsing<TableRef> {
         if self.kw("TOP") {
             return Err(self.gap("dml_top", self.offset()));
         }
@@ -54,11 +56,11 @@ impl<'sql> Parser<'sql> {
         {
             return Err(self.gap("table_variable", self.offset()));
         }
-        let name: Vec<Identifier> = self.multipart(4)?;
+        let mut target: TableRef = table(self.multipart(4)?);
         if self.kw("WITH") && self.char_at(1, '(') {
-            return Err(self.gap("table_hint", self.offset()));
+            target.hints = vec![self.table_hints(refused)?];
         }
-        Ok(table(name))
+        Ok(target)
     }
 
     /// `OUTPUT ...`, when it comes next.
@@ -76,7 +78,7 @@ impl<'sql> Parser<'sql> {
             return Err(self.gap("insert_bulk", self.offset()));
         }
         self.eat_kw("INTO");
-        let mut node = insert(self.dml_target()?);
+        let mut node = insert(self.dml_target(&DML_TARGET_REFUSED_HINTS)?);
         if self.is_char('(') {
             node.columns = self.parenthesized(Parser::name)?;
         }
@@ -117,7 +119,7 @@ impl<'sql> Parser<'sql> {
             return Err(self.gap("update_statistics", self.offset()));
         }
         self.expect_kw("UPDATE")?;
-        let mut node = update(self.dml_target()?);
+        let mut node = update(self.dml_target(&DML_TARGET_REFUSED_HINTS)?);
         self.expect_kw("SET")?;
         node.set = self.comma_list(|parser| {
             if !parser.is(is_name) {
@@ -161,7 +163,7 @@ impl<'sql> Parser<'sql> {
     pub(crate) fn delete_statement(&mut self) -> Parsing<Expression> {
         self.expect_kw("DELETE")?;
         let no_from: bool = !self.eat_kw("FROM");
-        let mut node = delete(self.dml_target()?);
+        let mut node = delete(self.dml_target(&DML_TARGET_REFUSED_HINTS)?);
         node.no_from = no_from;
         node.output = self.output_clause()?;
         if self.eat_kw("FROM") {
@@ -198,7 +200,7 @@ impl<'sql> Parser<'sql> {
     pub(crate) fn merge_statement(&mut self) -> Parsing<Expression> {
         self.expect_kw("MERGE")?;
         self.eat_kw("INTO");
-        let mut target: TableRef = self.dml_target()?;
+        let mut target: TableRef = self.dml_target(&MERGE_TARGET_REFUSED_HINTS)?;
         let explicit: bool = self.kw("AS");
         if !self.kw("USING") {
             target.alias = self.table_alias()?;
