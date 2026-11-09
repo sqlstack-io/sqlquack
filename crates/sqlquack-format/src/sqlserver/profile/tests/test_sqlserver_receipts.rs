@@ -8,21 +8,6 @@ fn given_recorded_sqlserver_verdicts_when_formatting_the_refused_corpus_then_eac
  {
     let test_cases = [
         test_types::SqlServerReceiptTestCase {
-            description: "SELECT * FROM t TABLESAMPLE (10 PERCENT)",
-            expected_runs: &[None, None],
-            expected_refusal: OPAQUE_STATEMENT_FAILURE,
-        },
-        test_types::SqlServerReceiptTestCase {
-            description: "SELECT * FROM t TABLESAMPLE (20 ROWS)",
-            expected_runs: &[None, None],
-            expected_refusal: OPAQUE_STATEMENT_FAILURE,
-        },
-        test_types::SqlServerReceiptTestCase {
-            description: "SELECT * FROM t TABLESAMPLE (10 PERCENT) REPEATABLE (123)",
-            expected_runs: &[None, None],
-            expected_refusal: OPAQUE_STATEMENT_FAILURE,
-        },
-        test_types::SqlServerReceiptTestCase {
             description: "SELECT * FROM t WHERE NOT c",
             expected_runs: &[
                 Some((

@@ -6,8 +6,8 @@ use sqlquack_syntax::expressions::names::models::{
 };
 use sqlquack_syntax::expressions::operators::models::Alias;
 use sqlquack_syntax::expressions::queries::models::{
-    Fetch, From, GroupBy, Having, Join, JoinKind, Offset, OrderBy, Select, SelectInto, Top, Where,
-    With,
+    Fetch, From, GroupBy, Having, Join, JoinKind, Offset, OrderBy, Sample, SampleMethod, Select,
+    SelectInto, Top, Where, With,
 };
 use sqlquack_syntax::expressions::statements::models::Version;
 use sqlquack_syntax::expressions::tables::models::WithTableHint;
@@ -476,14 +476,14 @@ impl<'sql> Parser<'sql> {
         }
     }
 
-    /// A table source, then any `PIVOT` or `UNPIVOT`.
+    /// A table source, then any `PIVOT` or `UNPIVOT`; only a table name takes `TABLESAMPLE` (156).
     fn table_source(&mut self) -> Parsing<Expression> {
         let source: Expression = self.deeper(|parser| parser.table_primary())?;
         if self.kw_in(0, &["PIVOT", "UNPIVOT"]) {
             return Err(self.gap("pivot", self.offset()));
         }
         if self.kw("TABLESAMPLE") {
-            return Err(self.gap("tablesample", self.offset()));
+            return Err(self.error());
         }
         Ok(source)
     }
@@ -616,6 +616,9 @@ impl<'sql> Parser<'sql> {
         let explicit: bool = self.kw("AS");
         reference.alias = self.table_alias()?;
         reference.alias_explicit_as = explicit;
+        if self.kw("TABLESAMPLE") {
+            reference.table_sample = Some(Box::new(self.table_sample()?));
+        }
         let old_style_hint: Option<String> = self
             .word_at(1)
             .filter(|word| TABLE_HINTS.contains(&word.as_str()));
@@ -690,6 +693,47 @@ impl<'sql> Parser<'sql> {
             this: Box::new(Expression::Identifier(Identifier::new("SYSTEM_TIME"))),
             kind: kind.to_owned(),
             expression,
+        })
+    }
+
+    /// `TABLESAMPLE [SYSTEM] (size [PERCENT | ROWS]) [REPEATABLE (seed)]`, the cursor at `TABLESAMPLE`.
+    fn table_sample(&mut self) -> Parsing<Sample> {
+        self.at += 1;
+        let explicit_method: bool = self.eat_kw("SYSTEM");
+        self.expect_char('(')?;
+        let size: Expression = self.scalar()?;
+        let is_percent: bool = self.eat_kw("PERCENT");
+        let rows: bool = !is_percent && self.eat_kw("ROWS");
+        self.expect_char(')')?;
+        let seed: Option<Expression> = match self.eat_kw("REPEATABLE") {
+            true => {
+                self.expect_char('(')?;
+                let seed: Expression = self.scalar()?;
+                self.expect_char(')')?;
+                Some(seed)
+            }
+            false => None,
+        };
+        Ok(Sample {
+            method: match (explicit_method, rows) {
+                (true, _) => SampleMethod::System,
+                (false, true) => SampleMethod::Row,
+                (false, false) => SampleMethod::Percent,
+            },
+            size,
+            seed,
+            offset: None,
+            unit_after_size: is_percent || rows,
+            use_sample_keyword: false,
+            explicit_method,
+            method_before_size: explicit_method,
+            use_seed_keyword: false,
+            bucket_numerator: None,
+            bucket_denominator: None,
+            bucket_field: None,
+            is_using_sample: false,
+            is_percent,
+            suppress_method_output: false,
         })
     }
 

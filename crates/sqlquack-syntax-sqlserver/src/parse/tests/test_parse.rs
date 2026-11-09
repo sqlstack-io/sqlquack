@@ -653,6 +653,12 @@ fn given_for_clauses_when_parsing_then_the_tree_keeps_them() {
             expected_json: r#"{"expression":{"tuple":{"expressions":[{"literal":{"literal_type":"string","value":"2020"}},{"literal":{"literal_type":"number","value":"1"}}]}},"kind":"BETWEEN","this":{"identifier":{"name":"SYSTEM_TIME","quoted":false,"trailing_comments":[]}}}"#,
         },
         ValueTestCase {
+            description: "TABLESAMPLE keeps its size, its unit and its seed on the table",
+            sql: "SELECT a FROM t AS h TABLESAMPLE SYSTEM (5 ROWS) REPEATABLE (7)",
+            pointer: "/0/select/from/expressions/0/table/table_sample",
+            expected_json: r#"{"bucket_denominator":null,"bucket_field":null,"bucket_numerator":null,"explicit_method":true,"is_percent":false,"is_using_sample":false,"method":"System","method_before_size":true,"offset":null,"seed":{"literal":{"literal_type":"number","value":"7"}},"size":{"literal":{"literal_type":"number","value":"5"}},"suppress_method_output":false,"unit_after_size":true,"use_sample_keyword":false,"use_seed_keyword":false}"#,
+        },
+        ValueTestCase {
             description: "FOR BROWSE is kept as the select's browse-mode lock",
             sql: "SELECT a FROM t FOR BROWSE",
             pointer: "/0/select/locks",
