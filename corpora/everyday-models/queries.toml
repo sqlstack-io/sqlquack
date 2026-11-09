@@ -3227,8 +3227,8 @@ category = "dbt_pivot"
 sql = '''select *
 from (select order_id, payment_method, amount from stg_payments)
 pivot (sum(amount) for payment_method in ('credit_card', 'coupon', 'bank_transfer', 'gift_card'))'''
-expect = "refused SQ0003 node:pivot at 22..111"
-expect_repository = "refused SQ0003 node:pivot at 22..111"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "dbt_pivot"
@@ -3279,8 +3279,8 @@ category = "dbt_pivot"
 sql = '''select *
 from (select warehouse, product_id, on_hand from inventory_snapshots where snapshot_date = '2024-06-30')
 pivot (sum(on_hand) for warehouse in ('east', 'west'))'''
-expect = "refused SQ0003 node:pivot at 22..147"
-expect_repository = "refused SQ0003 node:pivot at 22..147"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "dbt_pivot"
@@ -3391,8 +3391,8 @@ category = "dbt_pivot"
 sql = '''select *
 from orders
 pivot (sum(total) for channel in ('web', 'store'))'''
-expect = "refused SQ0003 node:pivot at 14..50"
-expect_repository = "refused SQ0003 node:pivot at 14..50"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "dbt_marts"
