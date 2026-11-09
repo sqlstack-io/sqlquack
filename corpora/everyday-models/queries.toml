@@ -2115,8 +2115,8 @@ sql = '''select
     tag.value::varchar as tag
 from tickets t,
     table(flatten(input => t.tags)) tag'''
-expect = "refused SQ0002 fn:FLATTEN at 74..109"
-expect_repository = "refused SQ0002 fn:FLATTEN at 74..109"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "dbt_flatten"

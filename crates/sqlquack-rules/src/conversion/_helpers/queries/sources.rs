@@ -81,7 +81,11 @@ pub(crate) fn convert_from(
     let mut sql = String::from(" FROM ");
     for (position, source) in sources.iter().enumerate() {
         let before = events();
-        if let Some(lateral) = lateral_payload(source) {
+        let lateral = match position {
+            0 => source.get(LATERAL_KEY).cloned(),
+            _ => lateral_payload(source),
+        };
+        if let Some(lateral) = lateral {
             let flattened = match position {
                 0 => Err(missing(
                     node_construct(LATERAL_KEY),
