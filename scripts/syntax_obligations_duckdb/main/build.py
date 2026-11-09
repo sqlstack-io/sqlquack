@@ -9,8 +9,8 @@ import sys
 import tempfile
 from pathlib import Path
 
-from scripts.syntax_obligations.exceptions import ObligationError
-from scripts.syntax_obligations.models import ReceiptView
+from scripts.grammar_obligations.exceptions import ObligationError
+from scripts.grammar_obligations.models import ReceiptView
 from scripts.syntax_obligations_duckdb._helpers.adapt import install, issued_ids, retired_ids
 from scripts.syntax_obligations_duckdb._helpers.cases import (
     receipt_view,

@@ -1,7 +1,7 @@
 //! What a run takes and what it finds.
 
 use sqlquack_policy::policy::models::Policy;
-use sqlquack_semantics::types::models::Schema;
+use sqlquack_semantics::snowflake::types::models::Schema;
 
 /// A converted query and what it runs over.
 #[derive(Clone, Copy, Debug)]

@@ -2,9 +2,9 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
+use sqlquack_convert::snowflake::conversion::main::override_macro::override_macro;
+use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
 use sqlquack_policy::policy::constants::USER_OVERRIDE;
-use sqlquack_rules::conversion::main::override_macro::override_macro;
-use sqlquack_rules::conversion::models::ConversionOptions;
 
 /// The macro of each override whose `user_override:<NAME>` label `divergences` holds.
 pub fn override_macros(

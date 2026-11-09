@@ -9,15 +9,40 @@ homepage.workspace = true
 publish.workspace = true
 rust-version.workspace = true
 
+# Each dialect's lint profile; a dialect left out is refused as not built in.
+[features]
+default = []
+bigquery = ["native-predicates", "sqlquack-parse/bigquery"]
+databricks = ["native-predicates", "sqlquack-parse/databricks"]
+duckdb = ["shared-statements"]
+postgres = ["native-parsers", "shared-parser", "sqlquack-parse/postgres"]
+snowflake = ["shared-statements"]
+sqlite = ["shared-statements"]
+# What several dialects' profiles share: their own strict parsers, the predicates those read,
+# the shared tokenizer and expression parser, and the shared statement parser.
+native-parsers = []
+native-predicates = ["native-parsers"]
+shared-parser = []
+shared-statements = ["shared-parser"]
+
 [dependencies]
 rayon.workspace = true
 rustc-hash.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+sqlquack-parse.workspace = true
 sqlquack-syntax.workspace = true
-sqlquack-syntax-postgres.workspace = true
-sqlquack-syntax-bigquery.workspace = true
-sqlquack-syntax-databricks.workspace = true
+
+[dev-dependencies]
+# The tests lint every dialect.
+sqlquack-lint = { workspace = true, features = [
+  "bigquery",
+  "databricks",
+  "duckdb",
+  "postgres",
+  "snowflake",
+  "sqlite",
+] }
 
 [lints]
 workspace = true

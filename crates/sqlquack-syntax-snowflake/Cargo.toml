@@ -1,0 +1,27 @@
+[package]
+name = "sqlquack-syntax-snowflake"
+description = "SQLQuack's Snowflake parser into the shared sqlquack-syntax tree, with polyglot's strict and tolerant modes"
+version.workspace = true
+edition = "2021"
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme.workspace = true
+publish.workspace = true
+rust-version.workspace = true
+
+# Stack growth for deep statements is the only feature.
+[features]
+default = ["stacker"]
+stacker = ["dep:stacker", "sqlquack-syntax/stacker"]
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+sqlquack-syntax.workspace = true
+stacker = { workspace = true, optional = true }
+thiserror.workspace = true
+unicode-segmentation.workspace = true
+
+[lints]
+workspace = true

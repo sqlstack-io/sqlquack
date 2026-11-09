@@ -11,7 +11,7 @@ use crate::census::errors::CensusError;
 use crate::census::models::{CensusOptions, CensusProgress, CensusRun};
 use crate::planning::main::assumption_free_counts::assumption_free_counts;
 use crate::planning::main::plan_census::plan_census;
-use sqlquack_convert::analysis::main::assumption_id::assumption_id;
+use sqlquack_convert::snowflake::analysis::main::assumption_id::assumption_id;
 
 /// The census and each file's conversion time, counting files into `progress` as they finish.
 pub(crate) fn run_census_timed(

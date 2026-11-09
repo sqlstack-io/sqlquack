@@ -3,11 +3,12 @@
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Literal;
 
-use crate::lineage::_helpers::checks::families::Family;
 use crate::lineage::constants::{
     BIGQUERY_PROFILE, DATABRICKS_PROFILE, DECIMAL_BASE, DUCKDB_PROFILE, LAST_HOUR,
     LAST_MINUTE_OR_SECOND, POSTGRES_PROFILE, SQLITE_PROFILE,
 };
+use crate::lineage::main::string_literal::string_literal;
+use crate::lineage::models::Family;
 use crate::lineage::models::LineageContext;
 
 /// The length of an ISO date, `YYYY-MM-DD`, and where its dashes and parts are.
@@ -120,21 +121,6 @@ pub(crate) fn predicate(engine: Engine, family: Family) -> bool {
     matches!(family, Family::Unknown | Family::Boolean)
         || !family.fully_modelled()
         || engine.predicates().contains(&family)
-}
-
-/// Whether `expression` is a string literal, past aliases, parentheses and comments.
-pub(crate) fn string_literal(expression: &Expression) -> bool {
-    match expression {
-        Expression::Literal(literal) => matches!(literal.as_ref(), Literal::String(_)),
-        Expression::Alias(alias) => string_literal(&alias.this),
-        Expression::Paren(paren) => string_literal(&paren.this),
-        Expression::Annotated(annotated)
-            if annotated.type_assertion.is_none() && annotated.type_like.is_none() =>
-        {
-            string_literal(&annotated.this)
-        }
-        _ => false,
-    }
 }
 
 /// The text of a string literal, past aliases, parentheses and comments.

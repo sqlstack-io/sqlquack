@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import cast
 
-from scripts.syntax_catalogue._helpers.grammar import sha256
+from scripts.grammar_catalogue._helpers.grammar import sha256
 from scripts.syntax_catalogue_duckdb.constants import (
     ENGINE_EXTRACT,
     REVIEW_NAME,

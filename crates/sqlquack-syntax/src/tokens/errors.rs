@@ -1,11 +1,14 @@
 //! Errors of tokens.
 
+use std::fmt::{self, Display};
+
 use serde::Deserialize;
 use serde::Serialize;
 use thiserror::Error;
 
 use crate::tokens::models::ColumnResolutionReason;
 use crate::tokens::models::ColumnResolutionTarget;
+use crate::tokens::models::SourceLocation;
 use crate::tokens::models::Span;
 use crate::tokens::models::ValidationSeverity;
 
@@ -247,3 +250,27 @@ impl ValidationError {
         self
     }
 }
+
+/// SQL that could not be parsed, with the parser's message and position.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct ParseFailure {
+    /// The parser's message.
+    pub message: String,
+    /// Where the parser stopped, when it reported a position.
+    pub location: Option<SourceLocation>,
+}
+
+impl Display for ParseFailure {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.location {
+            Some(location) => write!(
+                formatter,
+                "line {}, column {}: {}",
+                location.line, location.column, self.message
+            ),
+            None => formatter.write_str(&self.message),
+        }
+    }
+}
+
+impl std::error::Error for ParseFailure {}

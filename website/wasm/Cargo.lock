@@ -213,7 +213,39 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f8fadd59c855ef2080decdef8ff161eb6661b86933c9d82e5ba29dc602a55aba"
 
 [[package]]
-name = "sqlquack-core"
+name = "sqlquack-blocks"
+version = "0.2.0"
+dependencies = [
+ "serde_json",
+ "sqlquack-diagnostics",
+ "sqlquack-semantics",
+]
+
+[[package]]
+name = "sqlquack-convert"
+version = "0.2.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sqlquack-blocks",
+ "sqlquack-diagnostics",
+ "sqlquack-parse",
+ "sqlquack-policy",
+ "sqlquack-semantics",
+ "sqlquack-syntax",
+]
+
+[[package]]
+name = "sqlquack-derive"
+version = "0.2.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.119",
+]
+
+[[package]]
+name = "sqlquack-diagnostics"
 version = "0.2.0"
 dependencies = [
  "serde",
@@ -222,12 +254,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "sqlquack-duckdb-blocks"
+name = "sqlquack-parse"
 version = "0.2.0"
 dependencies = [
- "serde_json",
- "sqlquack-core",
- "sqlquack-snowflake-types",
+ "sqlquack-syntax",
+ "sqlquack-syntax-snowflake",
 ]
 
 [[package]]
@@ -239,20 +270,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "sqlquack-rules"
-version = "0.2.0"
-dependencies = [
- "serde",
- "serde_json",
- "sqlquack-core",
- "sqlquack-duckdb-blocks",
- "sqlquack-policy",
- "sqlquack-semantics",
- "sqlquack-snowflake-types",
- "sqlquack-syntax",
-]
-
-[[package]]
 name = "sqlquack-semantics"
 version = "0.2.0"
 dependencies = [
@@ -260,18 +277,10 @@ dependencies = [
  "saphyr-parser",
  "serde",
  "serde_json",
- "sqlquack-core",
- "sqlquack-snowflake-types",
+ "sqlquack-diagnostics",
+ "sqlquack-parse",
  "sqlquack-syntax",
  "stacker",
-]
-
-[[package]]
-name = "sqlquack-snowflake-types"
-version = "0.2.0"
-dependencies = [
- "serde",
- "sqlquack-core",
 ]
 
 [[package]]
@@ -280,19 +289,22 @@ version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
- "sqlquack-syntax-derive",
+ "sqlquack-derive",
  "stacker",
  "thiserror 1.0.69",
  "unicode-segmentation",
 ]
 
 [[package]]
-name = "sqlquack-syntax-derive"
+name = "sqlquack-syntax-snowflake"
 version = "0.2.0"
 dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.119",
+ "serde",
+ "serde_json",
+ "sqlquack-syntax",
+ "stacker",
+ "thiserror 1.0.69",
+ "unicode-segmentation",
 ]
 
 [[package]]
@@ -301,12 +313,12 @@ version = "0.0.0"
 dependencies = [
  "serde",
  "serde_json",
- "sqlquack-core",
- "sqlquack-duckdb-blocks",
+ "sqlquack-blocks",
+ "sqlquack-convert",
+ "sqlquack-diagnostics",
+ "sqlquack-parse",
  "sqlquack-policy",
- "sqlquack-rules",
  "sqlquack-semantics",
- "sqlquack-snowflake-types",
  "sqlquack-syntax",
  "wasm-bindgen",
 ]

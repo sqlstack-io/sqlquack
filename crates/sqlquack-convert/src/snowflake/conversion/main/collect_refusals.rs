@@ -1,0 +1,99 @@
+//! `collect_refusals`: every refusal in one statement, not only the first.
+
+use serde_json::Value;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
+use sqlquack_syntax::Expression;
+use sqlquack_syntax::tokens::models::SourceLines;
+
+use crate::snowflake::conversion::_helpers::queries::query::convert_query;
+use crate::snowflake::conversion::_helpers::support::collecting::{Collector, collected};
+use crate::snowflake::conversion::_helpers::support::depth::within_depth;
+use crate::snowflake::conversion::_helpers::support::locations::Locator;
+use crate::snowflake::conversion::_helpers::support::scope::{Context, StatementTracks};
+use crate::snowflake::conversion::_helpers::support::tree::{session_tree, strip_positions};
+use crate::snowflake::conversion::_helpers::support::typed_leaves::ConvertedQuery;
+use crate::snowflake::conversion::main::convert_statement::convert_statement;
+use crate::snowflake::conversion::models::{CollectedRefusals, ConversionOptions};
+use sqlquack_semantics::snowflake::types::models::Schema;
+use sqlquack_semantics::snowflake::types::models::TypedLeaves;
+
+/// The statement's refusals, converting past each refused node; its conversion is discarded.
+pub fn collect_refusals(
+    statement: &Expression,
+    (schema, options, lines): (&Schema, &ConversionOptions, &SourceLines),
+) -> CollectedRefusals {
+    if let Err(refusal) = within_depth(statement) {
+        return CollectedRefusals {
+            refusals: vec![refusal],
+            ..CollectedRefusals::default()
+        };
+    }
+    let converted = serde_json::to_value(statement)
+        .map(|positioned| collected_conversion(&positioned, (schema, options, lines)));
+    let mut guessed = false;
+    let mut collected = match converted {
+        Ok((result, found, typed)) => {
+            guessed = found.events > 0;
+            let mut collected = CollectedRefusals {
+                refusals: found.refusals.into_iter().chain(typed).collect(),
+                possibly_incomplete: found.incomplete,
+                columns: None,
+            };
+            if let Ok((_, columns)) = &result {
+                collected.columns = Some(columns.clone());
+            }
+            if let Err(refusal) = result {
+                collected.possibly_incomplete = true;
+                if !guessed || refusal.category == RefusalCategory::MissingRule {
+                    collected.refusals.push(refusal);
+                }
+            }
+            collected
+        }
+        Err(_) => CollectedRefusals::default(),
+    };
+    if collected.refusals.is_empty()
+        && !guessed
+        && let Err(refusal) = convert_statement(
+            statement,
+            (schema, options, lines),
+            ProvenanceLog::default(),
+        )
+    {
+        collected.refusals.push(refusal);
+    }
+    collected
+}
+
+/// The statement's conversion while collecting, and its refusal for typed leaves compared by text.
+fn collected_conversion(
+    positioned: &Value,
+    (schema, options, lines): (&Schema, &ConversionOptions, &SourceLines),
+) -> (ConvertedQuery, Collector, Option<Refusal>) {
+    let tree = session_tree(positioned, options.quoted_identifiers_ignore_case)
+        .unwrap_or_else(|_| strip_positions(positioned));
+    let locator = Locator::new(&tree, positioned, lines);
+    let log = ProvenanceLog::default();
+    let typed = TypedLeaves::default();
+    let tracks = StatementTracks::default();
+    let context = Context {
+        log: &log,
+        schema,
+        options,
+        ctes: Vec::new(),
+        locator: &locator,
+        typed: &typed,
+        order: &tracks.order,
+        subqueries: &tracks.subqueries,
+        qualifiers: &tracks.qualifiers,
+        free_projections: false,
+        fixture_body: false,
+    };
+    let (result, found) = collected(|| convert_query(&tree, None, &context, true));
+    let refusal = typed
+        .refusal()
+        .map(|refusal| locator.placed(refusal, &tree));
+    let result = result.map(|(sql, columns)| (sql, typed.marked(columns)));
+    (result, found, refusal)
+}

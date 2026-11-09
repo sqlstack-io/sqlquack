@@ -517,7 +517,7 @@ Comparing runs:
 verdict of `crates/sqlquack-syntax-databricks`'s `parse_strict`:
 
 ```sh
-cargo build -p sqlquack-coverage --bin syntax-coverage
+cargo build -p sqlquack-coverage-check --bin syntax-coverage
 target/debug/syntax-coverage validate --root coverage/syntax-databricks
 target/debug/syntax-coverage summary --root coverage/syntax-databricks
 ```

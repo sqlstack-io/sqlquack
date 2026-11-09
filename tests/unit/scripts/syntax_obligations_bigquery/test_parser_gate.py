@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from scripts.syntax_obligations.exceptions import ObligationError
-from scripts.syntax_obligations.types import Row
+from scripts.grammar_obligations.exceptions import ObligationError
+from scripts.grammar_obligations.types import Row
 from scripts.syntax_obligations_bigquery._helpers.parser import (
     disagreements,
     engine_confirmed,

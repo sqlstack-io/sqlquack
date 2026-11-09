@@ -20,7 +20,7 @@ use crate::tokens::types::SpanField;
 use crate::tokens::types::TokenOutput;
 use crate::tokens::types::TokenizerCursor;
 
-/// A dialect SQLQuack parses.
+/// A dialect SQLQuack parses: one per parser crate.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Dialect {
     /// Snowflake SQL.
@@ -31,17 +31,14 @@ pub enum Dialect {
     PostgreSQL,
     /// SQLite.
     SQLite,
-}
-
-impl Dialect {
-    pub(crate) fn dialect_type(self) -> DialectType {
-        match self {
-            Dialect::Snowflake => DialectType::Snowflake,
-            Dialect::DuckDB => DialectType::DuckDB,
-            Dialect::PostgreSQL => DialectType::PostgreSQL,
-            Dialect::SQLite => DialectType::SQLite,
-        }
-    }
+    /// BigQuery's GoogleSQL.
+    BigQuery,
+    /// ClickHouse SQL.
+    ClickHouse,
+    /// Databricks SQL.
+    Databricks,
+    /// SQL Server's Transact-SQL.
+    SqlServer,
 }
 
 /// How the parser treats function calls.
@@ -73,18 +70,6 @@ pub enum DialectType {
     PostgreSQL,
     /// SQLite -- several identifier quotes, hex numbers, its own operator tiers.
     SQLite,
-}
-
-impl DialectType {
-    /// Whether projections may use string literals as aliases (DuckDB only with an explicit AS).
-    pub(crate) const fn supports_string_aliases(self, explicit_as: bool) -> bool {
-        (matches!(self, DialectType::DuckDB) && explicit_as)
-    }
-
-    /// Whether `ORDER BY ALL` (every projected column, in order) is accepted natively.
-    pub(crate) const fn supports_order_by_all(self) -> bool {
-        matches!(self, DialectType::DuckDB | DialectType::Snowflake)
-    }
 }
 
 impl std::fmt::Display for DialectType {
@@ -233,7 +218,7 @@ pub struct Span {
 
 impl Span {
     /// Cover two source ranges, retaining the ending range's cursor location.
-    pub(crate) fn through(self, end: Self) -> Self {
+    pub fn through(self, end: Self) -> Self {
         Self {
             start: self.start,
             ..end
@@ -343,7 +328,7 @@ impl Token {
 }
 
 #[derive(Debug, Clone)]
-pub(crate) enum ParserTokenText {
+pub enum ParserTokenText {
     Source {
         source: Arc<str>,
         start: usize,
@@ -382,20 +367,20 @@ impl PartialEq<&str> for ParserTokenText {
 }
 
 #[derive(Debug, Clone)]
-pub(crate) struct ParserToken {
+pub struct ParserToken {
     pub token_type: TokenType,
     pub span: Span,
     pub comments: Vec<String>,
     pub trailing_comments: Vec<String>,
-    pub(crate) text: ParserTokenText,
+    pub text: ParserTokenText,
 }
 
 impl ParserToken {
-    pub(crate) fn text(&self) -> &str {
+    pub fn text(&self) -> &str {
         &self.text
     }
 
-    pub(crate) fn text_owned(&self) -> String {
+    pub fn text_owned(&self) -> String {
         self.text.to_string()
     }
 }
@@ -1450,7 +1435,7 @@ impl Tokenizer {
         }
     }
 
-    pub(crate) fn from_shared_config(config: Arc<TokenizerConfig>) -> Self {
+    pub fn from_shared_config(config: Arc<TokenizerConfig>) -> Self {
         Self { config }
     }
 
@@ -1469,7 +1454,7 @@ impl Tokenizer {
         }
     }
 
-    pub(crate) fn tokenize_for_parser(
+    pub fn tokenize_for_parser(
         &self,
         sql: &Arc<str>,
     ) -> Result<(Vec<ParserToken>, TokenGuardStats)> {
@@ -1572,4 +1557,86 @@ pub(crate) struct TokenizerState<'a, C, T> {
     pub(crate) comments: Vec<String>,
     pub(crate) guard_stats: Option<TokenGuardStats>,
     pub(crate) config: &'a TokenizerConfig,
+}
+
+/// A position in source SQL, in Unicode characters.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize)]
+pub struct SourceLocation {
+    /// Character offset of the first character.
+    pub start: usize,
+    /// Character offset one past the last character.
+    pub end: usize,
+    /// One-based line.
+    pub line: usize,
+    /// One-based column.
+    pub column: usize,
+}
+
+/// Where each line of source SQL starts, to turn character ranges into locations.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct SourceLines {
+    line_starts: Vec<usize>,
+    length: usize,
+    shift: usize,
+    source: String,
+}
+
+impl SourceLines {
+    /// The lines of `source`.
+    pub fn new(source: &str) -> Self {
+        Self::shifted(source, 0)
+    }
+
+    /// The lines of `source`, for ranges in a parse of it behind a prefix of `shift` characters.
+    pub fn shifted(source: &str, shift: usize) -> Self {
+        let mut line_starts = vec![0];
+        let mut length = 0;
+        for (offset, character) in source.chars().enumerate() {
+            if character == '\n' {
+                line_starts.push(offset + 1);
+            }
+            length = offset + 1;
+        }
+        Self {
+            line_starts,
+            length,
+            shift,
+            source: source.to_owned(),
+        }
+    }
+
+    /// The source text at `location`, a location these lines gave.
+    pub fn text(&self, location: &SourceLocation) -> String {
+        self.source
+            .chars()
+            .skip(location.start)
+            .take(location.end.saturating_sub(location.start))
+            .collect()
+    }
+
+    /// The location of the characters `start..end` of the parsed text.
+    pub fn location(&self, start: usize, end: usize) -> SourceLocation {
+        let start = start.saturating_sub(self.shift).min(self.length);
+        let end = end.saturating_sub(self.shift).clamp(start, self.length);
+        let line_index = self
+            .line_starts
+            .partition_point(|line_start| *line_start <= start)
+            .saturating_sub(1);
+        SourceLocation {
+            start,
+            end,
+            line: line_index + 1,
+            column: start - self.line_starts[line_index] + 1,
+        }
+    }
+
+    /// The location of the characters `start..end` of the source itself, not of the parsed text.
+    pub fn source_location(&self, start: usize, end: usize) -> SourceLocation {
+        self.location(start + self.shift, end + self.shift)
+    }
+
+    /// The location of the whole source.
+    pub fn whole(&self) -> SourceLocation {
+        self.location(self.shift, self.shift + self.length)
+    }
 }

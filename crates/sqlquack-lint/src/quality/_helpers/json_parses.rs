@@ -1,5 +1,6 @@
 //! SQLCLEAN045: the same JSON payload column parsed more than once in one SELECT scope.
 
+use crate::dialects::main::profile::profile;
 use crate::lint::models::LintDialect;
 use std::borrow::Cow;
 use std::collections::HashMap;
@@ -54,12 +55,7 @@ pub(crate) fn diagnostics(request: &QualityRequest<'_>) -> Vec<LintDiagnostic> {
 
 /// JSON parse functions that take one string argument, by dialect, in upper case.
 fn parse_functions(dialect: LintDialect) -> &'static [&'static str] {
-    match dialect {
-        LintDialect::Snowflake | LintDialect::Databricks => &["PARSE_JSON", "TRY_PARSE_JSON"],
-        LintDialect::DuckDB => &["JSON"],
-        LintDialect::BigQuery => &["PARSE_JSON", "SAFE.PARSE_JSON"],
-        LintDialect::PostgreSQL | LintDialect::SQLite => &[],
-    }
+    profile(dialect).json_parse_functions
 }
 
 fn scope_diagnostics(
@@ -111,10 +107,10 @@ fn scope_diagnostics(
 
 /// Normalises a name the way the dialect resolves it (Snowflake folds unquoted names upward).
 fn identifier_key(identifier: &Identifier, dialect: LintDialect) -> IdentifierKey {
-    match dialect {
-        LintDialect::Snowflake if identifier.quoted => identifier.name.clone(),
-        LintDialect::Snowflake => identifier.name.to_uppercase(),
-        _ => lower(&identifier.name),
+    match profile(dialect).folds_upper {
+        true if identifier.quoted => identifier.name.clone(),
+        true => identifier.name.to_uppercase(),
+        false => lower(&identifier.name),
     }
 }
 
@@ -207,8 +203,5 @@ fn written(identifier: &Identifier, quote: char) -> String {
 }
 
 fn identifier_quote(dialect: LintDialect) -> char {
-    match dialect {
-        LintDialect::BigQuery | LintDialect::Databricks => '`',
-        _ => '"',
-    }
+    profile(dialect).identifier_quote
 }

@@ -1,48 +1,24 @@
 //! The significant tokens and comments of SQL, read from the lossless tokenizer.
 
+use sqlquack_parse::tokenize;
+use sqlquack_syntax::TokenKind;
 use sqlquack_syntax::tokens::models::TokenType;
-use sqlquack_syntax::{TokenKind, tokenize};
 
-use crate::format::_helpers::bigquery::lex_bigquery;
-use crate::format::_helpers::native::{native_keywords, native_kind};
-use crate::format::_helpers::sqlserver::lex_sqlserver;
-use crate::format::constants::{TOKENIZE_FAILURE, UNSUPPORTED_DIALECT_FAILURE};
-use crate::format::models::FormatDialect;
+use crate::dialects::main::comment::comment;
+use crate::dialects::main::is_unquoted_word::is_unquoted_word;
+use crate::dialects::models::{Comment, FormatProfile, Lexeme};
+use crate::format::constants::TOKENIZE_FAILURE;
 
-/// One significant token with its byte range and source text.
-#[derive(Debug, Clone)]
-pub(crate) struct Lexeme {
-    pub(crate) start: usize,
-    pub(crate) end: usize,
-    pub(crate) kind: TokenType,
-    pub(crate) raw: String,
-}
-
-/// A comment between significant tokens.
-#[derive(Debug, Clone)]
-pub(crate) struct Comment {
-    pub(crate) start: usize,
-    pub(crate) end: usize,
-    pub(crate) text: String,
-    /// A comment that runs to the end of its line.
-    pub(crate) line: bool,
-    /// Only whitespace precedes the comment on its line.
-    pub(crate) leading: bool,
-}
-
-/// The significant tokens and the comments of `sql`.
+/// The significant tokens and the comments of `sql`, as `profile`'s dialect reads them.
 pub(crate) fn lex(
     sql: &str,
-    dialect: FormatDialect,
+    profile: &FormatProfile,
 ) -> Result<(Vec<Lexeme>, Vec<Comment>), String> {
-    let Some(shared) = dialect.shared() else {
-        return match dialect {
-            FormatDialect::BigQuery => lex_bigquery(sql),
-            FormatDialect::SqlServer => lex_sqlserver(sql),
-            _ => Err(UNSUPPORTED_DIALECT_FAILURE.to_string()),
-        };
-    };
-    let tokens = tokenize(sql, shared).map_err(|error| format!("{TOKENIZE_FAILURE}: {error}"))?;
+    if let Some(lex_native) = profile.lex {
+        return lex_native(sql);
+    }
+    let tokens =
+        tokenize(sql, profile.dialect).map_err(|error| format!("{TOKENIZE_FAILURE}: {error}"))?;
     let mut lexemes: Vec<Lexeme> = Vec::with_capacity(tokens.len());
     let mut comments: Vec<Comment> = Vec::new();
     for token in &tokens {
@@ -63,44 +39,10 @@ pub(crate) fn lex(
             TokenKind::Whitespace => {}
         }
     }
-    if dialect == FormatDialect::PostgreSQL {
-        let keywords = native_keywords(sql, &lexemes)?;
-        for (lexeme, keyword) in lexemes.iter_mut().zip(keywords) {
-            lexeme.kind = native_kind(lexeme, keyword);
-        }
+    match profile.keywords {
+        Some(keywords) => Ok((keywords(sql, lexemes)?, comments)),
+        None => Ok((lexemes, comments)),
     }
-    Ok((lexemes, comments))
-}
-
-/// The comment of `sql` from `start` to `end`; `line` when it runs to the end of its line.
-pub(crate) fn comment(sql: &str, start: usize, end: usize, line: bool) -> Comment {
-    let line_start = sql[..start].rfind('\n').map_or(0, |at| at + 1);
-    Comment {
-        start,
-        end,
-        text: sql[start..end].trim_end_matches(['\r', '\n']).to_string(),
-        line,
-        leading: sql[line_start..start].trim().is_empty(),
-    }
-}
-
-/// Whether `text` is an unquoted ASCII word whose letter case carries no meaning.
-pub(crate) fn is_unquoted_word(text: &str) -> bool {
-    let mut characters = text.chars();
-    characters
-        .next()
-        .is_some_and(|first| first.is_ascii_alphabetic() || first == '_')
-        && characters
-            .all(|character| character.is_ascii_alphanumeric() || matches!(character, '_' | '$'))
-}
-
-/// Whether the tokenizer types this unquoted word as a keyword rather than a name.
-pub(crate) fn is_keyword(lexeme: &Lexeme) -> bool {
-    is_unquoted_word(&lexeme.raw)
-        && !matches!(
-            lexeme.kind,
-            TokenType::Var | TokenType::Identifier | TokenType::QuotedIdentifier
-        )
 }
 
 /// Whether the token can end an operand, so a `-` or `[` after it is binary or a subscript.

@@ -2,17 +2,17 @@
 
 use std::path::Path;
 
-use sqlquack_convert::analysis::main::caller_choices::caller_choices;
-use sqlquack_convert::analysis::models::ConversionChoices;
+use sqlquack_convert::snowflake::analysis::main::caller_choices::caller_choices;
+use sqlquack_convert::snowflake::analysis::models::ConversionChoices;
+use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
+use sqlquack_convert::snowflake::session::main::builtin_conversion_options::builtin_conversion_options;
+use sqlquack_convert::snowflake::session::main::confirm_utc_session::confirm_utc_session;
+use sqlquack_convert::snowflake::session::main::conversion_options::conversion_options;
 use sqlquack_evidence::cases::main::load_cases::load_cases;
 use sqlquack_evidence::cases::models::LoadedCase;
 use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_policy::policy::models::Policy;
-use sqlquack_rules::conversion::models::ConversionOptions;
-use sqlquack_rules::session::main::builtin_conversion_options::builtin_conversion_options;
-use sqlquack_rules::session::main::confirm_utc_session::confirm_utc_session;
-use sqlquack_rules::session::main::conversion_options::conversion_options;
 
 use crate::cli::models::{EvidencePaths, PolicyArguments};
 

@@ -5,10 +5,12 @@ use std::ops::Range;
 
 use sqlquack_syntax::tokens::models::TokenType;
 
+use crate::dialects::main::is_keyword::is_keyword;
+use crate::dialects::main::is_unquoted_word::is_unquoted_word;
+use crate::dialects::models::Comment;
+use crate::dialects::models::Lexeme;
 use crate::format::_helpers::guide::GuideLayout;
-use crate::format::_helpers::lexemes::{
-    Comment, Lexeme, is_keyword, is_string_literal, is_unquoted_word,
-};
+use crate::format::_helpers::lexemes::is_string_literal;
 use crate::format::constants::{
     ALIGNMENT_FAILURE, CLOSE_PARENTHESIS, COMMENT_ATTACHMENT_FAILURE, OPEN_PARENTHESIS,
     STRING_BREAK_FAILURE, TOKEN_PRESERVATION_FAILURE,

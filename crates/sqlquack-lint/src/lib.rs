@@ -2,9 +2,22 @@
 
 #![forbid(unsafe_code)]
 
+#[cfg(feature = "bigquery")]
+pub(crate) mod bigquery;
 pub mod constants;
+#[cfg(feature = "databricks")]
+pub(crate) mod databricks;
+pub(crate) mod dialects;
+#[cfg(feature = "duckdb")]
+pub(crate) mod duckdb;
 pub mod lint;
+#[cfg(feature = "postgres")]
+pub(crate) mod postgres;
 pub mod quality;
+#[cfg(feature = "snowflake")]
+pub(crate) mod snowflake;
+#[cfg(feature = "sqlite")]
+pub(crate) mod sqlite;
 pub(crate) mod tree;
 
 pub use crate::lint::main::batch_engine::lint_batch_json;

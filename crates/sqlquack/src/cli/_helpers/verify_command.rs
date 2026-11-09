@@ -6,8 +6,10 @@ use std::path::Path;
 use std::process::ExitCode;
 
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
+use sqlquack_blocks::macros::main::helper_statements::helper_statements;
 use sqlquack_compare::comparison::models::RowOrder;
-use sqlquack_duckdb_blocks::macros::main::helper_statements::helper_statements;
+use sqlquack_convert::snowflake::catalogue::constants::RULES;
+use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
 use sqlquack_evidence::cases::models::LoadedCase;
 use sqlquack_evidence::constants::{SESSION_DEFAULTS_FILE, SESSION_DEFAULTS_NAME};
 use sqlquack_evidence::coverage::constants::COVERAGE_GAPS_LISTED;
@@ -15,7 +17,7 @@ use sqlquack_evidence::coverage::main::check_coverage::check_coverage;
 use sqlquack_evidence::coverage::main::load_domains::load_domains;
 use sqlquack_evidence::coverage::main::load_hazards::load_hazards;
 use sqlquack_evidence::coverage::models::CoverageReport;
-use sqlquack_evidence::replay::main::replay_on_duckdb::replay_on_duckdb;
+use sqlquack_evidence::replay::main::replay_on_engine::replay_on_engine;
 use sqlquack_evidence::replay::models::ReplaySettings;
 use sqlquack_evidence::results::main::load_recording::load_recording;
 use sqlquack_evidence::results::main::load_session_defaults::load_session_defaults;
@@ -29,8 +31,6 @@ use sqlquack_evidence::verify::types::CaseConverter;
 use sqlquack_policy::policy::constants::{HASH_DIVERGENCE, PROJECT_UDF};
 use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_policy::policy::models::Policy;
-use sqlquack_rules::catalogue::constants::RULES;
-use sqlquack_rules::conversion::models::ConversionOptions;
 
 use crate::analysis::main::builtin_claims::builtin_claims;
 use crate::analysis::main::builtin_failure_modes::builtin_failure_modes;
@@ -42,8 +42,8 @@ use crate::cli::models::{
 };
 use crate::statements::main::write_sql_sizes::write_sql_sizes;
 use crate::statements::main::write_translation_statements::write_translation_statements;
-use sqlquack_convert::analysis::main::confirm_assumption::confirm_assumption;
-use sqlquack_rules::session::main::conversion_options::conversion_options;
+use sqlquack_convert::snowflake::analysis::main::confirm_assumption::confirm_assumption;
+use sqlquack_convert::snowflake::session::main::conversion_options::conversion_options;
 
 /// The search path over read-only inputs: their tables, then the helper macros kept in memory.
 const HELPERS_BESIDE_INPUTS: &str = "SET search_path = 'inputs.main,memory.sqlquack'";
@@ -589,7 +589,7 @@ fn judged(
             .chain([attach, HELPERS_BESIDE_INPUTS.to_owned()])
             .collect(),
     };
-    let replayed = match replay_on_duckdb((&setup, &sql), None, settings) {
+    let replayed = match replay_on_engine((&setup, &sql), None, settings) {
         Ok(replayed) => replayed,
         Err(error) => return ("duckdb_error", error),
     };

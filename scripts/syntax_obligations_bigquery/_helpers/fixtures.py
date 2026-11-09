@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from scripts.syntax_obligations.exceptions import ObligationError
+from scripts.grammar_obligations.exceptions import ObligationError
 from scripts.syntax_obligations_bigquery.constants import ABSENT_OBJECTS, FIXTURES, NAMED_OBJECT
 from scripts.syntax_obligations_bigquery.models import Fixture
 

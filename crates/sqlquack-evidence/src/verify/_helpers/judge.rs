@@ -5,14 +5,14 @@ use std::path::Path;
 
 use sqlquack_compare::comparison::main::compare_recordings::compare_recordings;
 use sqlquack_compare::comparison::main::compare_with_replay::compare_with_replay;
-use sqlquack_core::failures::constants::RAISE_ID_MARKER;
-use sqlquack_core::failures::main::raise_id::raise_id;
-use sqlquack_core::parsing::models::SourceLocation;
-use sqlquack_core::provenance::models::Provenance;
+use sqlquack_diagnostics::failures::constants::RAISE_ID_MARKER;
+use sqlquack_diagnostics::failures::main::raise_id::raise_id;
+use sqlquack_diagnostics::provenance::models::Provenance;
 use sqlquack_policy::policy::models::Policy;
+use sqlquack_syntax::tokens::models::SourceLocation;
 
 use crate::cases::models::{CaseRole, LoadedCase};
-use crate::replay::main::replay_on_duckdb::replay_on_duckdb;
+use crate::replay::main::replay_on_engine::replay_on_engine;
 use crate::replay::models::ReplaySettings;
 use crate::results::main::load_result::load_result;
 use crate::results::models::{RecordedOutcome, SessionDefaults, StoredResult};
@@ -129,7 +129,7 @@ fn judge_stored(
             .map_or_else(String::new, |profile| profile.duckdb_time_zone.clone()),
         null_order: policy.comparator.null_order.duckdb_setting().to_owned(),
     };
-    let replayed = replay_on_duckdb((&setup, &duckdb_sql), python.as_deref(), &settings);
+    let replayed = replay_on_engine((&setup, &duckdb_sql), python.as_deref(), &settings);
     let layout = layout_failure(
         &converter.laid_out(&duckdb_sql),
         (&setup, &duckdb_sql),

@@ -1,8 +1,8 @@
 //! `builtin_claims`: everything the built-in converter relies on that cases must verify.
 
+use sqlquack_convert::snowflake::catalogue::constants::RULES;
+use sqlquack_convert::snowflake::conversion::constants::SPELLING_PAIRS;
 use sqlquack_evidence::verify::models::Claim;
-use sqlquack_rules::catalogue::constants::RULES;
-use sqlquack_rules::conversion::constants::SPELLING_PAIRS;
 
 /// Every recorded spelling pair and every conversion rule.
 pub fn builtin_claims() -> Vec<Claim> {

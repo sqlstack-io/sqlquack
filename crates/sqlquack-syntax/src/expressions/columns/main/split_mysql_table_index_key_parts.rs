@@ -5,7 +5,7 @@ use crate::expressions::tables::models::IndexKeyPart;
 use crate::expressions::tree::models::Expression;
 
 /// Splits MySQL table index key parts into plain identifiers or expression-backed parts.
-pub(crate) fn split_mysql_table_index_key_parts(
+pub fn split_mysql_table_index_key_parts(
     key_parts: Vec<IndexKeyPart>,
 ) -> (Vec<Identifier>, Vec<IndexKeyPart>) {
     let can_use_legacy_columns = key_parts.iter().all(|part| {

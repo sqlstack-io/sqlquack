@@ -3,17 +3,19 @@
 use std::collections::BTreeSet;
 use std::path::Path;
 
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::parsing::models::SourceDialect;
-use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
-use sqlquack_core::refusals::types::ConstructPolicy;
+use crate::analysis::models::SourceDialect;
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
+use sqlquack_diagnostics::refusals::types::ConstructPolicy;
 
-use sqlquack_rules::conversion::models::ConversionOptions;
-use sqlquack_semantics::names::constants::{UNKNOWN_RELATION_PREFIX, UNKNOWN_RELATION_SUFFIX};
-use sqlquack_semantics::types::models::{ColumnSpec, Schema};
+use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
+use sqlquack_semantics::snowflake::names::constants::{
+    UNKNOWN_RELATION_PREFIX, UNKNOWN_RELATION_SUFFIX,
+};
+use sqlquack_semantics::snowflake::types::models::{ColumnSpec, Schema};
 
-use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
-use sqlquack_core::provenance::models::Provenance;
+use sqlquack_diagnostics::provenance::main::merge_provenance::merge_provenance;
+use sqlquack_diagnostics::provenance::models::Provenance;
 
 use crate::analysis::main::collect_all_refusals::collect_all_refusals;
 use crate::analysis::main::refused_construct::refused_construct;
@@ -21,7 +23,7 @@ use crate::census::_helpers::placeholders::{original_location, rewrite_with_refe
 use crate::census::constants::{CONVERTED_DIR_VARIABLE, GUARDS_DIR_VARIABLE};
 use crate::census::errors::CensusError;
 use crate::census::models::PlacedRefusal;
-use sqlquack_convert::analysis::main::analyze::analyze;
+use sqlquack_convert::snowflake::analysis::main::analyze::analyze;
 
 #[derive(Clone)]
 pub(crate) struct FileCensus {
@@ -105,7 +107,9 @@ pub(crate) fn inspect_file(
     })?;
     let original = String::from_utf8_lossy(&bytes);
     let rewritten = rewrite_with_references(&original, cursor_bound);
-    let analysis = analyze(&rewritten.sql, dialect, policy, (schema, options));
+    let analysis = match dialect {
+        SourceDialect::Snowflake => analyze(&rewritten.sql, policy, (schema, options)),
+    };
     let outputs = match (
         analysis.refusals.is_empty(),
         analysis.conversions.as_slice(),

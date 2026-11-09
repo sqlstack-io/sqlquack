@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from scripts.syntax_catalogue.models import Catalogue, FormGroup, HandForm
+from scripts.grammar_catalogue.models import Catalogue, FormGroup, HandForm
 from scripts.syntax_catalogue_duckdb.types import Node
 
 

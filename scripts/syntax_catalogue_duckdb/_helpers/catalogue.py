@@ -6,11 +6,11 @@ import json
 import re
 from pathlib import Path, PurePosixPath
 
-from scripts.syntax_catalogue._helpers.catalogue import absent_forms, load_existing
-from scripts.syntax_catalogue._helpers.forms import emit_forms
-from scripts.syntax_catalogue._helpers.grammar import sha256, slug
-from scripts.syntax_catalogue.constants import GRAMMAR_JOINER
-from scripts.syntax_catalogue.models import Catalogue, Existing, FormGroup, PageContext
+from scripts.grammar_catalogue._helpers.existing import absent_forms, load_existing
+from scripts.grammar_catalogue._helpers.forms import emit_forms
+from scripts.grammar_catalogue._helpers.grammar import sha256, slug
+from scripts.grammar_catalogue.constants import GRAMMAR_JOINER
+from scripts.grammar_catalogue.models import Catalogue, Existing, FormGroup, PageContext
 from scripts.syntax_catalogue_duckdb._helpers.groups import (
     diagram_groups,
     is_call,

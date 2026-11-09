@@ -5,11 +5,11 @@ use std::sync::atomic::Ordering;
 
 use rayon::ThreadPoolBuilder;
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
-use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
+use sqlquack_convert::snowflake::catalogue::main::builtin_catalogue::builtin_catalogue;
 use std::collections::BTreeSet;
 
-use sqlquack_semantics::names::constants::RELATION_KEY_SEPARATOR;
-use sqlquack_semantics::types::models::{ColumnSpec, Schema};
+use sqlquack_semantics::snowflake::names::constants::RELATION_KEY_SEPARATOR;
+use sqlquack_semantics::snowflake::types::models::{ColumnSpec, Schema};
 
 use crate::census::_helpers::completion::{Completed, complete_in_waves};
 use crate::census::_helpers::inspect::{FileCensus, complete_refusals, inspect_file};

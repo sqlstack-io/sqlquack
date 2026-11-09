@@ -1,6 +1,6 @@
 //! `with_helpers`: statements run before converted SQL, after the helper macros they need.
 
-use sqlquack_duckdb_blocks::macros::main::helper_statements::helper_statements;
+use sqlquack_blocks::macros::main::helper_statements::helper_statements;
 
 /// The helper macros that `sql` or `statements` call, then `statements`.
 pub fn with_helpers(statements: Vec<String>, sql: &str) -> Vec<String> {

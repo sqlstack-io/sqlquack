@@ -6,7 +6,7 @@ use crate::expressions::queries::models::Select;
 use crate::expressions::tree::models::Expression;
 
 /// Rewrites a VALUES set-operation branch as a SELECT from a derived table.
-pub(crate) fn wrap_values_set_operand(expr: Expression) -> Expression {
+pub fn wrap_values_set_operand(expr: Expression) -> Expression {
     match expr {
         Expression::Values(mut values) => {
             if values.alias.is_none() {

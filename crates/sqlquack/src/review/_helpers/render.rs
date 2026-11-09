@@ -4,12 +4,12 @@ use std::collections::BTreeMap;
 
 use sqlquack_compare::comparison::models::RowOrder;
 use sqlquack_compare::values::main::canonical_rows::canonical_rows;
-use sqlquack_core::parsing::models::SourceLocation;
-use sqlquack_core::provenance::models::Provenance;
+use sqlquack_diagnostics::provenance::models::Provenance;
 use sqlquack_evidence::cases::models::LoadedCase;
 use sqlquack_evidence::results::main::column_type::column_type;
 use sqlquack_evidence::results::models::{RecordedOutcome, StoredResult};
 use sqlquack_evidence::verify::models::{CaseVerdict, Conversion, Verdict};
+use sqlquack_syntax::tokens::models::SourceLocation;
 
 use crate::review::_helpers::values::render_value;
 

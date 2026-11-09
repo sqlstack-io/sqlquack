@@ -9,7 +9,7 @@ import re
 import zipfile
 from pathlib import Path
 
-from scripts.syntax_catalogue._helpers.grammar import slug
+from scripts.grammar_catalogue._helpers.grammar import slug
 from scripts.syntax_catalogue_sqlite._helpers.fetch import archive_path
 from scripts.syntax_catalogue_sqlite.constants import (
     ANNOTATION_STYLE,

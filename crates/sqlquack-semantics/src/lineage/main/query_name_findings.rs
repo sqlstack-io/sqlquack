@@ -1,6 +1,7 @@
 //! `query_name_findings`: the name findings of the one query in some SQL.
 
-use sqlquack_syntax::{CallMode, Dialect, ParseOptions, parse_statements_with};
+use sqlquack_parse::parse_statements_with;
+use sqlquack_syntax::{CallMode, Dialect, ParseOptions};
 
 use crate::lineage::_helpers::findings::statement::statement_findings;
 use crate::lineage::models::LineageContext;

@@ -1,4 +1,4 @@
-use sqlquack_core::refusals::models::RefusalCategory;
+use sqlquack_diagnostics::refusals::models::RefusalCategory;
 
 use crate::analysis::tests::helpers::{divergence_outcome, numeric_range, python_outcome};
 use crate::analysis::tests::test_types::{

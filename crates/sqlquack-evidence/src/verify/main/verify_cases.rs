@@ -2,7 +2,7 @@
 
 use std::collections::BTreeSet;
 
-use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
+use sqlquack_diagnostics::provenance::main::merge_provenance::merge_provenance;
 
 use crate::cases::models::CaseRole;
 use crate::errors::EvidenceError;

@@ -1,3 +1,3 @@
 //! Main.
 
-pub(crate) mod new_unary_func;
+pub mod new_unary_func;

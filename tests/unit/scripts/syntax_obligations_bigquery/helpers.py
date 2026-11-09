@@ -5,7 +5,7 @@ from __future__ import annotations
 import shutil
 from pathlib import Path
 
-from scripts.syntax_obligations.exceptions import ObligationError
+from scripts.grammar_obligations.exceptions import ObligationError
 from scripts.syntax_obligations_bigquery.constants import FAMILIES
 from scripts.syntax_obligations_bigquery.main.build import run_build
 

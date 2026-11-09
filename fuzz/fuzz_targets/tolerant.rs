@@ -3,7 +3,8 @@
 #![no_main]
 
 use libfuzzer_sys::fuzz_target;
-use sqlquack_syntax::{parse_tolerant, Dialect, ParseOptions};
+use sqlquack_syntax::{Dialect, ParseOptions};
+use sqlquack_syntax_snowflake::parse_tolerant;
 
 fuzz_target!(|data: &[u8]| {
     let Ok(sql) = std::str::from_utf8(data) else {

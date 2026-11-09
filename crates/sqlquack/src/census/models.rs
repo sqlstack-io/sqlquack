@@ -7,10 +7,10 @@ use std::time::Duration;
 
 use serde::Serialize;
 
-use sqlquack_core::parsing::models::SourceDialect;
-use sqlquack_core::provenance::models::Provenance;
-use sqlquack_rules::conversion::models::ConversionOptions;
-use sqlquack_semantics::types::models::Schema;
+use crate::analysis::models::SourceDialect;
+use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
+use sqlquack_diagnostics::provenance::models::Provenance;
+use sqlquack_semantics::snowflake::types::models::Schema;
 
 /// What a census reads and reports.
 #[derive(Clone, Debug, PartialEq, Eq)]

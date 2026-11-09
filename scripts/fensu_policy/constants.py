@@ -1,0 +1,147 @@
+"""The dialects, roles and front doors the layout rules check names against, and their options."""
+
+from __future__ import annotations
+
+import re
+
+from fensu import RuleOption
+
+CRATE_PREFIX: str = "sqlquack"
+CRATE_SEPARATOR: str = "-"
+SCRIPT_SEPARATOR: str = "_"
+PYTHON_SUFFIX: str = ".py"
+PRODUCT_ROOT: str = "crates"
+TOOLS_ROOT: str = "tools"
+TOOL_SUFFIX: str = "check"
+SHARED_SYNTAX_CRATE: str = "sqlquack-syntax"
+SYNTAX_ROLE: str = "syntax"
+DIALECT_ENUM: str = "Dialect"
+CATALOG_WORD: str = "catalog"
+RUNTIME_DEPENDENCY_KINDS: frozenset[str] = frozenset({"normal", "build"})
+VARIANT_SEPARATOR: str = "="
+MIN_CRATE_NAME_PARTS: int = 2
+MAX_NAMED_DIALECTS: int = 1
+NESTED_PATH_PARTS: int = 2
+ENUM_BODY: str = r"\benum\s+{name}\b[^{{]*\{{(?P<body>[^}}]*)\}}"
+VARIANT: re.Pattern[str] = re.compile(r"^\s*(?:#\[[^\]]*\]\s*)*([A-Z][A-Za-z0-9]*)\b", re.MULTILINE)
+LEXEME_START: re.Pattern[str] = re.compile(r"""//|/\*|b?r#*"|b?"|b?'""")
+BLOCK_COMMENT_MARK: re.Pattern[str] = re.compile(r"/\*|\*/")
+RAW_STRING_START: re.Pattern[str] = re.compile(r'b?r(#*)"')
+QUOTED_STRING: re.Pattern[str] = re.compile(r'b?"(?:\\.|[^"\\])*"', re.DOTALL)
+CHAR_LITERAL: re.Pattern[str] = re.compile(
+    r"b?'(?:\\(?:x[0-9a-fA-F]{2}|u\{[0-9a-fA-F]+\}|.)|[^\\'\n])'"
+)
+IDENTIFIER_CHARACTER: re.Pattern[str] = re.compile(r"\w")
+BLOCK_COMMENT_OPEN: str = "/*"
+LINE_COMMENT_OPEN: str = "//"
+SOURCE_ROOT: str = "src"
+RUST_SUFFIX: str = ".rs"
+RUST_NAME_SEPARATOR: str = "_"
+FEATURES_TABLE: str = "features"
+DEPENDENCIES_TABLE: str = "dependencies"
+OPTIONAL_KEY: str = "optional"
+DEFAULT_FEATURE: str = "default"
+DEPENDENCY_FEATURE_PREFIX: str = "dep:"
+FEATURE_SEPARATOR: str = "/"
+WEAK_FEATURE_MARK: str = "?"
+CFG_WORD: str = "cfg"
+CFG_FEATURE: re.Pattern[str] = re.compile(r'\bfeature\s*=\s*"([^"]+)"')
+ATTRIBUTE_LINE: re.Pattern[str] = re.compile(r"^\s*#!?\[.*\]\s*$")
+DIALECT_VARIANT_PATH: str = r"\b[A-Za-z]*{enum}::({variant})\b"
+DIALECT_MODULE_PATH: str = r"(::\s*{dialect}\b|\b{dialect}\s*::)"
+MODULE_DECLARATION: str = r"(?:^|\])\s*(?:pub(?:\([^)]*\))?\s+)?mod\s+{dialect}\s*;\s*$"
+
+DEFAULT_DIALECTS: tuple[str, ...] = (
+    "snowflake",
+    "duckdb",
+    "postgres",
+    "sqlite",
+    "bigquery",
+    "databricks",
+    "clickhouse",
+    "sqlserver",
+)
+
+DIALECTS: RuleOption[tuple[str, ...]] = RuleOption.string_list(
+    name="dialects",
+    default=DEFAULT_DIALECTS,
+    description="Every SQL dialect SQLQuack names, as it appears in crate and script names.",
+)
+
+DEFAULT_ROLES: tuple[str, ...] = (
+    "syntax",
+    "parse",
+    "semantics",
+    "types",
+    "blocks",
+    "rules",
+    "convert",
+    "format",
+    "lint",
+    "fingerprint",
+    "compare",
+    "diagnostics",
+    "evidence",
+    "policy",
+    "python",
+    "core",
+    "derive",
+)
+
+ROLES: RuleOption[tuple[str, ...]] = RuleOption.string_list(
+    name="roles",
+    default=DEFAULT_ROLES,
+    description="The roles a product crate name may start with, after sqlquack-.",
+)
+
+DEFAULT_FRONT_DOORS: tuple[str, ...] = ("sqlquack", "sqlquack-python", "sqlquack-parse")
+
+FRONT_DOORS: RuleOption[tuple[str, ...]] = RuleOption.string_list(
+    name="front_doors",
+    default=DEFAULT_FRONT_DOORS,
+    description=(
+        "Crates that dispatch over every dialect, so they may depend on dialect-named crates "
+        "without naming a dialect. Development checks under tools/ always may."
+    ),
+)
+
+DEFAULT_DIALECT_VARIANTS: tuple[str, ...] = (
+    "snowflake=Snowflake",
+    "duckdb=DuckDB",
+    "postgres=PostgreSQL",
+    "sqlite=SQLite",
+    "bigquery=BigQuery",
+    "databricks=Databricks",
+    "clickhouse=ClickHouse",
+    "sqlserver=SqlServer",
+)
+
+DIALECT_VARIANTS: RuleOption[tuple[str, ...]] = RuleOption.string_list(
+    name="dialect_variants",
+    default=DEFAULT_DIALECT_VARIANTS,
+    description="The Dialect enum variant that stands for each dialect, as dialect=Variant.",
+)
+
+NAMED_DIRECTORIES: RuleOption[tuple[str, ...]] = RuleOption.string_list(
+    name="named_directories",
+    default=("scripts", "tests/unit/scripts"),
+    description="Directories whose entries must name every dialect they are specific to.",
+)
+
+SHARED_SYNTAX_MODULES: RuleOption[tuple[str, ...]] = RuleOption.string_list(
+    name="shared_syntax_modules",
+    default=("lib", "expressions", "functions", "guard", "lossless", "tokens", "traversal"),
+    description=(
+        "The only top-level modules and test folders the shared sqlquack-syntax crate may hold: "
+        "the tree, tokens, spans and diagnostics every dialect parser builds on."
+    ),
+)
+
+DIALECT_REGISTRIES: RuleOption[tuple[str, ...]] = RuleOption.string_list(
+    name="dialect_registries",
+    default=("crates/sqlquack-semantics/src/dialects",),
+    description=(
+        "Folders that map each dialect to its folder's code. Their lines may name a dialect "
+        'when a #[cfg(feature = "<dialect>")] attribute gates the line or sits directly above it.'
+    ),
+)

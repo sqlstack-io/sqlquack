@@ -3,11 +3,11 @@
 use crate::expressions::operators::_helpers::boolean_chains::build_balanced_boolean_tree;
 use crate::expressions::operators::_helpers::boolean_chains::flatten_boolean_terms_owned;
 use crate::expressions::operators::_helpers::boolean_chains::should_rebalance_boolean_chain;
+use crate::expressions::operators::constants::BALANCED_CHAIN_MAX_TERMS;
 use crate::expressions::tree::models::Expression;
-use crate::parser::constants::BALANCED_CHAIN_MAX_TERMS;
 
 /// Rebalances comment-free AND/OR chains into a balanced tree, keeping depth logarithmic.
-pub(crate) fn maybe_rebalance_boolean_chain(expr: Expression, is_and: bool) -> Expression {
+pub fn maybe_rebalance_boolean_chain(expr: Expression, is_and: bool) -> Expression {
     if !should_rebalance_boolean_chain(&expr, is_and) {
         return expr;
     }

@@ -1,3 +1,3 @@
 //! Main.
 
-pub(crate) mod identifier_from_token;
+pub mod identifier_from_token;

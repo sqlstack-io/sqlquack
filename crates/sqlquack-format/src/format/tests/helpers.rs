@@ -1,45 +1,20 @@
 //! Helpers of the format tests.
 
 use serde_json::Value;
-use sqlquack_syntax::{TokenKind, tokenize};
+use sqlquack_parse::tokenize;
+use sqlquack_syntax::TokenKind;
 
-use crate::format::models::FormatDialect;
-
+use crate::dialects::main::profile::profile;
 use crate::format::_helpers::lexemes::lex;
 use crate::format::constants::{DEPTH_FAILURE, PARSE_FAILURE, TYPE_DEPTH_FAILURE};
 use crate::format::main::format_sql::format_sql;
-use crate::format::models::FormatOptions;
-use crate::format::tests::test_types::{CorpusOutcome, EntryOutcome, FormatCorpusTestCase};
+use crate::format::models::{FormatDialect, FormatOptions};
+use crate::format::tests::test_types::{CorpusOutcome, Departure, EntryOutcome};
 
-/// BigQuery's recorded dry-run verdicts, two runs of each statement.
-const BIGQUERY_RECEIPTS: &str = include_str!("fixtures/bigquery_receipts.jsonl");
-/// The reason BigQuery gives an invalid query.
-const INVALID_QUERY: &str = "invalidQuery";
-/// SQL Server's recorded verdicts on the corpus statements SQLQuack refuses.
-const SQLSERVER_RECEIPTS: &str = include_str!("fixtures/sqlserver_receipts.jsonl");
-/// PostgreSQL 18.6's recorded verdicts, two runs of each statement.
-const POSTGRES_RECEIPTS: &str = include_str!("fixtures/pg18.6_receipts.jsonl");
-/// The SQLSTATE PostgreSQL reports for a syntax error.
-const SYNTAX_ERROR: &str = "42601";
-
+/// The format corpus every dialect's corpus test reads its queries from.
+const FORMAT_CORPUS: &str = include_str!("fixtures/format_corpus.json");
 /// The line width the corpus is also wrapped at, as SQLClean's corpus test does.
 const CORPUS_LINE_WIDTH: usize = 40;
-/// The corpus dialect names SQLQuack tokenizes, with their dialects.
-const DIALECTS: [(&str, FormatDialect); 5] = [
-    ("snowflake", FormatDialect::Snowflake),
-    ("duckdb", FormatDialect::DuckDB),
-    ("postgres", FormatDialect::PostgreSQL),
-    ("bigquery", FormatDialect::BigQuery),
-    ("tsql", FormatDialect::SqlServer),
-];
-
-fn dialect(name: &str) -> FormatDialect {
-    DIALECTS
-        .iter()
-        .find(|(known, _)| *known == name)
-        .map_or(FormatDialect::Snowflake, |(_, dialect)| *dialect)
-}
-
 /// Format `sql`; `None` when the formatter refuses it.
 fn format_once(sql: &str, dialect: FormatDialect, line_width: Option<usize>) -> Option<String> {
     let options = FormatOptions {
@@ -51,14 +26,17 @@ fn format_once(sql: &str, dialect: FormatDialect, line_width: Option<usize>) -> 
         .map(|formatted| formatted.sql)
 }
 
-/// The significant token texts of `sql`.
+/// The significant token texts of `sql`: the dialect's own scanner's, or the shared tokenizer's.
 fn token_texts(sql: &str, dialect: FormatDialect) -> Vec<String> {
-    let Some(shared) = dialect.shared() else {
-        return lex(sql, dialect)
+    let Ok(profile) = profile(dialect) else {
+        return Vec::new();
+    };
+    let None = profile.lex else {
+        return lex(sql, &profile)
             .map(|(lexemes, _)| lexemes.into_iter().map(|lexeme| lexeme.raw).collect())
             .unwrap_or_default();
     };
-    tokenize(sql, shared)
+    tokenize(sql, profile.dialect)
         .unwrap_or_default()
         .iter()
         .filter(|token| matches!(token.kind, TokenKind::Significant(_)))
@@ -88,14 +66,14 @@ fn stays(stable: &str, dialect: FormatDialect, line_width: Option<usize>) -> boo
 }
 
 /// Format one corpus query and run every check SQLClean's corpus test runs on it.
-fn check_entry(entry: &Value, test_case: &FormatCorpusTestCase) -> EntryOutcome {
-    let name = test_case.dialect;
-    let dialect = dialect(name);
+fn check_entry(
+    entry: &Value,
+    name: &str,
+    departures: &[Departure],
+    dialect: FormatDialect,
+) -> EntryOutcome {
     let sql = entry["sql"].as_str().unwrap_or_default();
-    let departure = test_case
-        .departures
-        .iter()
-        .find(|departure| departure.sql == sql);
+    let departure = departures.iter().find(|departure| departure.sql == sql);
     let recorded = entry["formatted"].as_str();
     let expected: Option<String> = departure
         .map_or(recorded, |departure| departure.formatted)
@@ -159,24 +137,25 @@ fn in_corpus(corpus: &[Value], dialect: &str, sql: &str) -> bool {
         .any(|entry| entry["dialect"] == dialect && entry["sql"] == sql)
 }
 
-/// Format every corpus query of one dialect; return the formatted, refused and departing counts and failures.
-pub(super) fn check_dialect_corpus(
-    corpus: &[Value],
-    test_case: &FormatCorpusTestCase,
+/// The formatted, refused and departing counts of the corpus queries named `name`, laid out as `dialect`, and every check that failed.
+pub(crate) fn corpus_outcome(
+    dialect: FormatDialect,
+    name: &str,
+    departures: &[Departure],
 ) -> CorpusOutcome {
+    let corpus: Vec<Value> = serde_json::from_str(FORMAT_CORPUS).unwrap_or_default();
     let outcomes: Vec<EntryOutcome> = corpus
         .iter()
-        .filter(|entry| entry["dialect"] == test_case.dialect)
-        .map(|entry| check_entry(entry, test_case))
+        .filter(|entry| entry["dialect"] == name)
+        .map(|entry| check_entry(entry, name, departures, dialect))
         .collect();
     let formatted = outcomes.iter().filter(|outcome| outcome.formatted).count();
     CorpusOutcome {
         formatted,
         refused: outcomes.len() - formatted,
-        departed: test_case
-            .departures
+        departed: departures
             .iter()
-            .filter(|departure| in_corpus(corpus, test_case.dialect, departure.sql))
+            .filter(|departure| in_corpus(&corpus, name, departure.sql))
             .count(),
         failures: outcomes
             .into_iter()
@@ -185,100 +164,39 @@ pub(super) fn check_dialect_corpus(
     }
 }
 
-/// The syntax error a BigQuery receipt records, as its message and `line:column`; `None` when it was accepted.
-fn recorded_bigquery_rejection(receipt: &Value) -> Option<(String, String)> {
-    (receipt["engine_code"] == INVALID_QUERY).then(|| {
-        (
-            receipt["message"].as_str().unwrap_or_default().to_string(),
-            receipt["position"].as_str().unwrap_or_default().to_string(),
-        )
-    })
+/// `sql` laid out as `dialect` at `line_width`, or the reason it is refused.
+pub(crate) fn format_outcome(
+    sql: &str,
+    dialect: FormatDialect,
+    line_width: Option<usize>,
+) -> Result<String, String> {
+    let options = FormatOptions {
+        line_width,
+        ..FormatOptions::new(dialect)
+    };
+    format_sql(sql, &options)
+        .map(|formatted| formatted.sql)
+        .map_err(|refusal| refusal.reason)
 }
 
-/// What every recorded BigQuery run of `statement` reported: its syntax error, or `None`.
-pub(super) fn recorded_bigquery_rejections(statement: &str) -> Vec<Option<(String, String)>> {
-    BIGQUERY_RECEIPTS
-        .lines()
-        .filter_map(|line| serde_json::from_str::<Value>(line).ok())
-        .filter(|receipt| receipt["statement"] == statement)
-        .map(|receipt| recorded_bigquery_rejection(&receipt))
-        .collect()
-}
-
-/// Whether SQLQuack's BigQuery parser refuses `statement` with a syntax error.
-pub(super) fn native_bigquery_refusal(statement: &str) -> bool {
-    sqlquack_syntax_bigquery::parse_strict(statement)
-        .err()
-        .and_then(|failure| failure.parse_error().cloned())
-        .is_some_and(|error| error.syntax)
-}
-
-/// The failure constant `reason` starts with, or all of `reason` when it starts with none of them.
-pub(super) fn refusal_start(reason: &str) -> &str {
-    [PARSE_FAILURE, DEPTH_FAILURE, TYPE_DEPTH_FAILURE]
-        .into_iter()
-        .find(|failure| reason.starts_with(failure))
-        .unwrap_or(reason)
-}
-
-/// What every recorded SQL Server run of `statement` reported: its first error number and message, or `None`.
-pub(super) fn recorded_sqlserver_verdicts(statement: &str) -> Vec<Option<(u64, String)>> {
-    SQLSERVER_RECEIPTS
-        .lines()
-        .filter_map(|line| serde_json::from_str::<Value>(line).ok())
-        .filter(|receipt| receipt["statement"] == statement)
-        .map(|receipt| {
-            receipt["engine_code"].as_u64().map(|code| {
-                (
-                    code,
-                    receipt["message"].as_str().unwrap_or_default().to_string(),
-                )
-            })
-        })
-        .collect()
-}
-
-/// The start of the reason the formatter refuses `statement` with as SQL Server; `None` when it is laid out.
-pub(super) fn sqlserver_refusal(statement: &str) -> Option<String> {
-    format_sql(statement, &FormatOptions::new(FormatDialect::SqlServer))
+/// The start of the reason the formatter refuses `sql` with as `dialect`; `None` when it is laid out.
+pub(crate) fn refusal(sql: &str, dialect: FormatDialect) -> Option<String> {
+    format_sql(sql, &FormatOptions::new(dialect))
         .err()
         .map(|refusal| refusal_start(&refusal.reason).to_string())
 }
 
 /// How long formatting `sql` in `dialect` takes, laid out or refused.
-pub(super) fn format_time(sql: &str, dialect: FormatDialect) -> std::time::Duration {
+pub(crate) fn format_time(sql: &str, dialect: FormatDialect) -> std::time::Duration {
     let start = std::time::Instant::now();
     let _ = format_sql(sql, &FormatOptions::new(dialect));
     start.elapsed()
 }
 
-/// The syntax error a PostgreSQL receipt records, as its message and one-based position; `None` when it parsed.
-fn recorded_postgres_rejection(receipt: &Value) -> Option<(String, usize)> {
-    (receipt["engine_code"] == SYNTAX_ERROR).then(|| {
-        (
-            receipt["message"].as_str().unwrap_or_default().to_string(),
-            receipt["position"]
-                .as_str()
-                .and_then(|position| position.parse::<usize>().ok())
-                .unwrap_or_default(),
-        )
-    })
-}
-
-/// What every recorded PostgreSQL 18.6 run of `statement` reported: its syntax error, or `None`.
-pub(super) fn recorded_postgres_rejections(statement: &str) -> Vec<Option<(String, usize)>> {
-    POSTGRES_RECEIPTS
-        .lines()
-        .filter_map(|line| serde_json::from_str::<Value>(line).ok())
-        .filter(|receipt| receipt["statement"] == statement)
-        .map(|receipt| recorded_postgres_rejection(&receipt))
-        .collect()
-}
-
-/// The syntax error SQLQuack's PostgreSQL parser reports for `statement`, with a one-based position.
-pub(super) fn native_postgres_rejection(statement: &str) -> Option<(String, usize)> {
-    sqlquack_syntax_postgres::parse_strict(statement)
-        .err()
-        .and_then(|failure| failure.parse_error().cloned())
-        .map(|error| (error.message, error.position + 1))
+/// The failure constant `reason` starts with, or all of `reason` when it starts with none of them.
+fn refusal_start(reason: &str) -> &str {
+    [PARSE_FAILURE, DEPTH_FAILURE, TYPE_DEPTH_FAILURE]
+        .into_iter()
+        .find(|failure| reason.starts_with(failure))
+        .unwrap_or(reason)
 }

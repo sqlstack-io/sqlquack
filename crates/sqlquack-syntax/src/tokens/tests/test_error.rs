@@ -1,74 +1,7 @@
-use crate::tokens::errors::Error;
 use crate::tokens::errors::ValidationError;
 use crate::tokens::models::DialectType;
-use crate::tokens::models::Span;
-use crate::tokens::tests::helpers::error_position;
-use crate::tokens::tests::helpers::parse_error;
 use crate::tokens::tests::test_types::DialectNameTestCase;
-use crate::tokens::tests::test_types::ErrorPositionTestCase;
 use crate::tokens::tests::test_types::ValidationLocationTestCase;
-
-#[test]
-fn given_an_error_when_reading_its_position_then_line_column_and_offsets_are_kept() {
-    let test_cases = [
-        ErrorPositionTestCase {
-            description: "a parse error keeps its span and names it in the message",
-            error: Error::parse(
-                "test message",
-                Span {
-                    start: 20,
-                    end: 25,
-                    line: 5,
-                    column: 10,
-                },
-            ),
-            expected_position: (Some(5), Some(10), Some(20), Some(25)),
-            expected_message_parts: &["line 5", "column 10", "test message"],
-        },
-        ErrorPositionTestCase {
-            description: "a tokenize error keeps its span",
-            error: Error::tokenize(
-                "bad token",
-                Span {
-                    start: 15,
-                    end: 20,
-                    line: 3,
-                    column: 7,
-                },
-            ),
-            expected_position: (Some(3), Some(7), Some(15), Some(20)),
-            expected_message_parts: &["bad token"],
-        },
-        ErrorPositionTestCase {
-            description: "the parser reports an unexpected token at its position",
-            error: parse_error("SELECT 1 + 2)"),
-            expected_position: (Some(1), Some(14), Some(12), Some(13)),
-            expected_message_parts: &["line 1"],
-        },
-        ErrorPositionTestCase {
-            description: "an unterminated block comment fails at its opening, never parsing on",
-            error: parse_error("SELECT /* never closed"),
-            expected_position: (Some(1), Some(23), Some(7), Some(22)),
-            expected_message_parts: &["Unterminated block comment"],
-        },
-    ];
-
-    for test_case in test_cases {
-        let message = test_case.error.to_string();
-        assert_eq!(
-            (
-                error_position(&test_case.error),
-                test_case
-                    .expected_message_parts
-                    .iter()
-                    .all(|part| message.contains(part))
-            ),
-            (test_case.expected_position, true),
-            "{}",
-            test_case.description
-        );
-    }
-}
 
 #[test]
 fn given_a_validation_error_when_locating_it_then_line_column_and_span_are_kept() {

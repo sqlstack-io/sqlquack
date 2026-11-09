@@ -4,12 +4,12 @@ use std::path::Path;
 
 use duckdb::Connection;
 use serde_json::Value;
-use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_duckdb_blocks::blocks::main::quoted_identifier::quoted_identifier;
-use sqlquack_duckdb_blocks::checking::main::create_table::create_table;
-use sqlquack_duckdb_blocks::checking::main::quoted_relation::quoted_relation;
-use sqlquack_semantics::types::models::Schema;
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_blocks::checking::main::create_table::create_table;
+use sqlquack_blocks::checking::main::quoted_relation::quoted_relation;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
+use sqlquack_semantics::snowflake::types::models::Schema;
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::run::_helpers::session::{duckdb_error, literal};
 

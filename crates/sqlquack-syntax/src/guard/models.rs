@@ -51,7 +51,7 @@ pub struct ComplexityGuardOptions {
 }
 
 #[derive(Debug, Default)]
-pub(crate) struct TokenGuardStats {
+pub struct TokenGuardStats {
     pub token_count: usize,
     pub(crate) parenthesis_depth_spans: Vec<Span>,
     pub(crate) function_depth_spans: Vec<Span>,

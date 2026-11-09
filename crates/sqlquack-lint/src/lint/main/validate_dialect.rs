@@ -2,7 +2,7 @@
 
 /// `Ok` when `name` names a known SQL dialect, such as `duckdb` or `snowflake`, parsed or not.
 pub fn validate_dialect(name: &str) -> Result<(), String> {
-    match crate::lint::_helpers::parsing::dialect(name) {
+    match crate::dialects::main::lint_dialect::lint_dialect(name) {
         Ok(_) => Ok(()),
         Err(error) => Err(format!("unknown SQL dialect '{name}': {error}")),
     }

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from scripts.syntax_catalogue._helpers.grammar import sha256
+from scripts.grammar_catalogue._helpers.grammar import sha256
 from scripts.syntax_catalogue_bigquery._helpers.audit import documented_at
 from scripts.syntax_catalogue_bigquery.constants import (
     ABSENT_KINDS,

@@ -3,7 +3,7 @@
 use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
-use sqlquack_core::provenance::models::Shape;
+use sqlquack_diagnostics::provenance::models::Shape;
 
 use crate::cases::models::LoadedCase;
 

@@ -4,9 +4,9 @@ use std::path::Path;
 
 use serde_json::json;
 use sqlquack_policy::policy::models::ProjectPolicy;
-use sqlquack_semantics::types::errors::SchemaError;
-use sqlquack_semantics::types::main::parse_schema::parse_schema;
-use sqlquack_semantics::types::models::Schema;
+use sqlquack_semantics::snowflake::types::errors::SchemaError;
+use sqlquack_semantics::snowflake::types::main::parse_schema::parse_schema;
+use sqlquack_semantics::snowflake::types::models::Schema;
 
 use crate::project::_helpers::declarations::{
     declaration, no_clash, project_functions, source_tables,

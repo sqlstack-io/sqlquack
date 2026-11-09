@@ -1,3 +1,3 @@
 //! Main.
 
-pub(crate) mod make_unquoted_function;
+pub mod make_unquoted_function;

@@ -7,7 +7,7 @@ use crate::traversal::models::BfsIter;
 use crate::traversal::models::ChildPathSegment;
 use crate::traversal::models::DfsIter;
 
-pub(crate) trait AstNode {
+pub trait AstNode {
     /// Visits expression children and nested syntax types; expression descendants are the caller's.
     fn visit_syntax_untracked<'ast, F, T>(&'ast self, visitor: &mut F, type_visitor: &mut T)
     where

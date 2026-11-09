@@ -4,7 +4,7 @@ use pyo3::exceptions::PyValueError;
 use pyo3::{PyResult, pyfunction};
 use sqlquack::analysis::main::check_source::check_source;
 use sqlquack::cli::models::CheckReport;
-use sqlquack_core::diagnostics::main::render_diagnostics::render_diagnostics;
+use sqlquack_diagnostics::diagnostics::main::render_diagnostics::render_diagnostics;
 
 use crate::bindings::models::Rendered;
 

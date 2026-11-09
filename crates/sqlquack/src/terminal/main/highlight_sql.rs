@@ -1,9 +1,10 @@
 //! `highlight_sql`: DuckDB SQL styled for a terminal by the lossless tokenizer, every byte kept.
 
-use sqlquack_core::diagnostics::models::Palette;
+use sqlquack_diagnostics::diagnostics::models::Palette;
+use sqlquack_syntax::Dialect;
 use sqlquack_syntax::lossless::models::{LosslessToken, TokenKind};
 use sqlquack_syntax::tokens::models::TokenType;
-use sqlquack_syntax::{Dialect, tokenize};
+use sqlquack_syntax_snowflake::tokenize;
 
 /// `sql` with its keywords, strings, numbers, comments and identifiers styled; unreadable SQL as is.
 pub fn highlight_sql(sql: &str, style: &Palette) -> String {

@@ -7,7 +7,7 @@ use std::process::ExitCode;
 use clap::builder::styling::Styles;
 use clap::{Args, ColorChoice, Parser, Subcommand, ValueEnum};
 use serde::{Deserialize, Serialize};
-use sqlquack_core::diagnostics::models::Diagnostic;
+use sqlquack_diagnostics::diagnostics::models::Diagnostic;
 
 use sqlquack_evidence::constants::{
     AUDIT_PENDING_DIR, AUDIT_RESULTS_DIR, CASES_DIR, PENDING_DIR, RESULTS_DIR,
@@ -15,7 +15,7 @@ use sqlquack_evidence::constants::{
 use sqlquack_evidence::coverage::constants::{DOMAINS_DIR, HAZARDS_FILE};
 use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 use sqlquack_policy::policy::models::{DivergenceFailure, Policy};
-use sqlquack_semantics::types::models::Schema;
+use sqlquack_semantics::snowflake::types::models::Schema;
 
 use crate::analysis::models::PythonSignature;
 use crate::census::constants::DEFAULT_TEXT_LIMIT;

@@ -5,7 +5,7 @@ use std::collections::VecDeque;
 use crate::expressions::tree::models::Expression;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) enum ChildPathSegment {
+pub enum ChildPathSegment {
     Field(&'static str),
     Index(usize),
 }

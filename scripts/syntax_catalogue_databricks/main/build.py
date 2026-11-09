@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-from scripts.syntax_catalogue._helpers.toml_out import write_tables
+from scripts.grammar_catalogue._helpers.toml_out import write_tables
 from scripts.syntax_catalogue_databricks._helpers.catalogue import build_catalogue
 from scripts.syntax_catalogue_databricks._helpers.fetch import (
     index_linked_urls,

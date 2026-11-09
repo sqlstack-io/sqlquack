@@ -18,9 +18,9 @@ path = "src/bin/sqlquack.rs"
 
 [features]
 # DuckDB compiled in, as the sqlquack-cli wheel ships it.
-bundled = ["sqlquack-duckdb-blocks/bundled"]
+bundled = ["sqlquack-blocks/bundled"]
 # DuckDB's parquet and json extensions, as the sqlquack-cli wheel ships them for `sqlquack run`.
-extensions = ["bundled", "sqlquack-duckdb-blocks/extensions"]
+extensions = ["bundled", "sqlquack-blocks/extensions"]
 
 [dependencies]
 anstream.workspace = true
@@ -31,15 +31,15 @@ serde.workspace = true
 serde_json.workspace = true
 sha2.workspace = true
 sqlquack-compare.workspace = true
-sqlquack-convert.workspace = true
-sqlquack-core.workspace = true
-sqlquack-duckdb-blocks = { workspace = true, features = ["engine"] }
+sqlquack-convert = { workspace = true, features = ["engine", "snowflake"] }
+sqlquack-diagnostics = { workspace = true, features = ["snowflake"] }
+sqlquack-parse.workspace = true
+sqlquack-blocks = { workspace = true, features = ["engine"] }
 sqlquack-evidence.workspace = true
 sqlquack-policy.workspace = true
-sqlquack-rules = { workspace = true, features = ["engine"] }
-sqlquack-semantics.workspace = true
-sqlquack-snowflake-types.workspace = true
+sqlquack-semantics = { workspace = true, features = ["snowflake"] }
 sqlquack-syntax.workspace = true
+sqlquack-syntax-snowflake.workspace = true
 walkdir.workspace = true
 
 [dev-dependencies]

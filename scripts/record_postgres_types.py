@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from scripts.postgres_catalog.main.record_types import run_type_recording
+from scripts.postgres_catalogue.main.record_types import run_type_recording
 
 
 def main(argv: list[str] | None = None) -> int:

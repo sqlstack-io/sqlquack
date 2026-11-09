@@ -93,7 +93,7 @@ Every `Expression` can be rendered back to SQL via [`Expression::sql()`]
 (generic dialect) or [`Expression::sql_for()`] (specific dialect). The
 actual generation logic lives in the `generator` module.
 
-## `expressions.rs`: #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Ser
+## `expressions.rs`: #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Ser
 
 Represent any SQL expression or statement as a single, recursive AST node.
 
@@ -124,7 +124,7 @@ let expr = Expression::column("name");
 assert_eq!(expr.sql(), "name");
 ```
 
-## `expressions.rs`: #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Ser
+## `expressions.rs`: #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Ser
 
 Represent a SQL literal value.
 
@@ -136,7 +136,7 @@ Dialect-specific literal forms (triple-quoted strings, dollar-quoted
 strings, raw strings, etc.) each have a dedicated variant so that the
 generator can emit them with the correct syntax.
 
-## `expressions.rs`: #[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Ser
+## `expressions.rs`: #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Ser
 
 Oracle-specific data types whose semantics cannot be represented losslessly by the
 generic [`DataType`] variants.

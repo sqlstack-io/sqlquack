@@ -5,7 +5,7 @@ from __future__ import annotations
 import tomllib
 from pathlib import Path
 
-from scripts.syntax_catalogue.exceptions import CatalogueError
+from scripts.grammar_catalogue.exceptions import CatalogueError
 from scripts.syntax_catalogue_postgres.constants import (
     BLOCK_KEYS,
     BLOCK_KINDS,

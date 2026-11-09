@@ -8,42 +8,43 @@ use std::time::Duration;
 
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
-use sqlquack_core::classification::main::classify::classify;
-use sqlquack_core::diagnostics::constants::SESSION_PARAMETERS;
-use sqlquack_core::diagnostics::main::diagnose::diagnose;
-use sqlquack_core::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
-use sqlquack_core::failures::constants::{ERROR_TAG_PREFIX, TAG_END};
-use sqlquack_core::failures::main::duckdb_failure::duckdb_failure;
-use sqlquack_core::failures::main::raise_id::raise_id;
-use sqlquack_core::parsing::main::node_location::node_location;
-use sqlquack_core::parsing::main::parse_source::parse_source;
-use sqlquack_core::parsing::models::{SourceDialect, SourceLines};
-use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_core::refusals::main::refuse_constructs::refuse_constructs;
-use sqlquack_core::refusals::main::refuse_unparsed::refuse_unparsed;
-use sqlquack_core::refusals::main::snowflake_rejections::snowflake_rejections;
-use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
-use sqlquack_duckdb_blocks::blocks::main::column_type::column_type;
-use sqlquack_duckdb_blocks::blocks::main::quoted_identifier::quoted_identifier;
-use sqlquack_duckdb_blocks::checking::constants::SEMI_STRUCTURED_HOLDING_TYPE;
-use sqlquack_duckdb_blocks::layout::main::layout_sql::layout_sql;
-use sqlquack_duckdb_blocks::macros::main::helper_statements::helper_statements;
+use sqlquack_blocks::blocks::main::column_type::column_type;
+use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_blocks::checking::constants::SEMI_STRUCTURED_HOLDING_TYPE;
+use sqlquack_blocks::layout::main::layout_sql::layout_sql;
+use sqlquack_blocks::macros::main::helper_statements::helper_statements;
+use sqlquack_convert::snowflake::catalogue::main::builtin_catalogue::builtin_catalogue;
+use sqlquack_convert::snowflake::conversion::main::convert_statement::convert_statement;
+use sqlquack_convert::snowflake::conversion::main::quoted_exclusions::quoted_exclusions;
+use sqlquack_convert::snowflake::conversion::main::within_budget::within_budget;
+use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
+use sqlquack_convert::snowflake::session::main::parse_session::parse_session;
+use sqlquack_convert::snowflake::session::main::session_conversion_options::session_conversion_options;
+use sqlquack_diagnostics::classification::main::classify::classify;
+use sqlquack_diagnostics::diagnostics::constants::SESSION_PARAMETERS;
+use sqlquack_diagnostics::diagnostics::main::diagnose::diagnose;
+use sqlquack_diagnostics::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
+use sqlquack_diagnostics::failures::constants::{ERROR_TAG_PREFIX, TAG_END};
+use sqlquack_diagnostics::failures::main::engine_failure::engine_failure;
+use sqlquack_diagnostics::failures::main::raise_id::raise_id;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::refusals::main::refuse_constructs::refuse_constructs;
+use sqlquack_diagnostics::refusals::main::refuse_unparsed::refuse_unparsed;
+use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
+use sqlquack_diagnostics::snowflake::classification::main::cast_type_name::cast_type_name;
+use sqlquack_diagnostics::snowflake::refusals::main::snowflake_rejections::snowflake_rejections;
+use sqlquack_parse::parsing::main::parse_source::parse_source;
 use sqlquack_policy::policy::models::Policy;
-use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
-use sqlquack_rules::conversion::main::convert_statement::convert_statement;
-use sqlquack_rules::conversion::main::quoted_exclusions::quoted_exclusions;
-use sqlquack_rules::conversion::main::within_budget::within_budget;
-use sqlquack_rules::conversion::models::ConversionOptions;
-use sqlquack_rules::session::main::parse_session::parse_session;
-use sqlquack_rules::session::main::session_conversion_options::session_conversion_options;
 use sqlquack_semantics::dialects::constants::SNOWFLAKE;
 use sqlquack_semantics::lineage::main::query_name_findings::query_name_findings;
 use sqlquack_semantics::lineage::models::{LineageContext, Nullability, SchemaColumn};
 use sqlquack_semantics::lineage::types::LineageSchema;
-use sqlquack_semantics::types::errors::SchemaError;
-use sqlquack_semantics::types::main::parse_schema::parse_schema;
-use sqlquack_semantics::types::main::source_tables::source_tables;
-use sqlquack_semantics::types::models::Schema;
+use sqlquack_semantics::snowflake::types::errors::SchemaError;
+use sqlquack_semantics::snowflake::types::main::parse_schema::parse_schema;
+use sqlquack_semantics::snowflake::types::main::source_tables::source_tables;
+use sqlquack_semantics::snowflake::types::models::Schema;
+use sqlquack_syntax::tokens::main::node_location::node_location;
+use sqlquack_syntax::tokens::models::SourceLines;
 use sqlquack_syntax::{Dialect, Expression, ParseOptions};
 use wasm_bindgen::prelude::wasm_bindgen;
 
@@ -60,7 +61,7 @@ pub fn analyze(sql: &str, sources: &str, settings: Option<String>) -> String {
 /// raised, as JSON: `{"errno", "sqlstate", "raise_id", "message"}`, or `{}` when it is DuckDB's own.
 #[wasm_bindgen]
 pub fn run_failure(message: &str) -> String {
-    let Some(code) = duckdb_failure(message).and_then(|failure| failure.snowflake) else {
+    let Some(code) = engine_failure(message).and_then(|failure| failure.snowflake) else {
         return json!({}).to_string();
     };
     // The tagged text, `sqlquack:<errno>#<id>: <message>`, runs to the end of its line, or to the
@@ -104,7 +105,7 @@ pub fn fixture_tables(sources: &str) -> String {
                 .filter_map(|column| {
                     let held = match column_type(column.data_type, &log) {
                         Ok(held) => held,
-                        Err(_) if column.data_type == sqlquack_snowflake_types::typing::models::SnowflakeType::SemiStructured => {
+                        Err(_) if column.data_type == sqlquack_semantics::snowflake::typing::models::SnowflakeType::SemiStructured => {
                             SEMI_STRUCTURED_HOLDING_TYPE.to_owned()
                         }
                         Err(_) => return None,
@@ -282,7 +283,7 @@ fn stages(sql: &str, catalog: &Catalog, settings: &str) -> Value {
     let lines = SourceLines::new(sql);
 
     // 1. Parse as Snowflake.
-    let statements = match parse_source(sql, SourceDialect::Snowflake) {
+    let statements = match parse_source(sql, Dialect::Snowflake) {
         Ok(statements) if statements.is_empty() => {
             return json!({ "empty": true });
         }
@@ -355,7 +356,7 @@ fn stages(sql: &str, catalog: &Catalog, settings: &str) -> Value {
     let mut refusals = Vec::new();
     let mut converted = Vec::new();
     for statement in &statements {
-        let occurrences = classify(statement, &lines, SourceDialect::Snowflake);
+        let occurrences = classify(statement, &lines, cast_type_name);
         let declared: Vec<Refusal> = refuse_constructs(&occurrences, &policy)
             .into_iter()
             .filter(|refusal| refusal.category == RefusalCategory::NotExpressible)

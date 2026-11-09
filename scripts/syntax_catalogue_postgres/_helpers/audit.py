@@ -8,7 +8,7 @@ import tomllib
 from collections.abc import Iterator
 from pathlib import Path
 
-from scripts.syntax_catalogue._helpers.grammar import bare_words
+from scripts.grammar_catalogue._helpers.grammar import bare_words
 from scripts.syntax_catalogue_postgres._helpers.gram import keywords, rules, token_text
 from scripts.syntax_catalogue_postgres._helpers.groups import required_without_options
 from scripts.syntax_catalogue_postgres.constants import (

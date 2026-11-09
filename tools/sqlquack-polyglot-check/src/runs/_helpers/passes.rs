@@ -3,7 +3,8 @@
 use std::time::{Duration, Instant};
 
 use polyglot_sql::DialectType;
-use sqlquack_syntax::{Dialect, ParseOptions, parse_statements};
+use sqlquack_syntax::{Dialect, ParseOptions};
+use sqlquack_syntax_snowflake::parse_statements;
 
 use crate::corpora::models::CorpusEntry;
 
@@ -16,6 +17,10 @@ pub(crate) fn polyglot_pass(entries: &[CorpusEntry]) -> Duration {
             Dialect::DuckDB => DialectType::DuckDB,
             Dialect::PostgreSQL => DialectType::PostgreSQL,
             Dialect::SQLite => DialectType::SQLite,
+            Dialect::BigQuery => DialectType::BigQuery,
+            Dialect::ClickHouse => DialectType::ClickHouse,
+            Dialect::Databricks => DialectType::Databricks,
+            Dialect::SqlServer => DialectType::TSQL,
         };
         let _ = std::hint::black_box(polyglot_sql::parse(&entry.sql, dialect));
     }

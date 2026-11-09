@@ -738,7 +738,7 @@ use crate::expressions::types::models::Struct;
 use crate::expressions::types::models::Tuple;
 
 /// Any SQL expression or statement, as one recursive AST node.
-#[derive(sqlquack_syntax_derive::AstNode, sqlquack_syntax_derive::StackSafe, Deserialize)]
+#[derive(sqlquack_derive::AstNode, sqlquack_derive::StackSafe, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Expression {
     /// Structured Vertica syntax whose semantics are not shared by other dialects.
@@ -1764,4 +1764,21 @@ impl fmt::Display for Expression {
             _ => write!(f, "{:?}", self),
         }
     }
+}
+
+/// A construct a native parser's tree cannot hold: its statement became a `Command` holding its text.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Gap {
+    /// A stable name for the construct, such as `tablesample` or `merge`.
+    pub construct: &'static str,
+    /// Byte range in the input where it starts and where parsing it ended.
+    pub start: usize,
+    pub end: usize,
+}
+
+/// Every statement a native dialect parser read, in order, and the gaps behind any `Command`.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Parsed {
+    pub statements: Vec<Expression>,
+    pub gaps: Vec<Gap>,
 }

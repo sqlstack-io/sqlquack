@@ -1,9 +1,9 @@
 //! `python_signature`: a Python function as SQLQuack's runtime registers it in DuckDB.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_duckdb_blocks::blocks::main::column_type::column_type;
-use sqlquack_semantics::types::models::{FunctionReturns, FunctionSpec};
-use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_blocks::blocks::main::column_type::column_type;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
+use sqlquack_semantics::snowflake::types::models::{FunctionReturns, FunctionSpec};
+use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::analysis::constants::{SCALAR_ABI, VARIANT_ABI, VARIANT_TEXT_TYPE};
 use crate::analysis::models::PythonSignature;

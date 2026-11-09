@@ -2,7 +2,7 @@
 
 use std::path::Path;
 
-use sqlquack_rules::conversion::models::ConversionOptions;
+use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
 use walkdir::WalkDir;
 
 use crate::analysis::_helpers::override_definition::{load_override, verified_override};

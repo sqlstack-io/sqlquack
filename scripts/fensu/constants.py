@@ -42,18 +42,21 @@ OPENING_BRACKETS: frozenset[str] = frozenset({"(", "[", "{"})
 CLOSING_BRACKETS: frozenset[str] = frozenset({")", "]", "}"})
 
 CRATE_NAME: str = "sqlquack_syntax"
-CRATE_DOC: str = "SQLQuack's tokenizer, parser and syntax tree for Snowflake and DuckDB."
+CRATE_DOC: str = (
+    "SQLQuack's shared syntax tree, tokens, spans and diagnostics for every dialect parser."
+)
 FILE_DOCS: dict[str, str] = {}
 DIRECTORY_DOCS: dict[str, str] = {}
 REWRITTEN_ROOTS: tuple[tuple[str, str, bool], ...] = (
-    ("crates/sqlquack-syntax/tests", "sqlquack_syntax", True),
-    ("crates/sqlquack-core/src", "sqlquack_syntax", True),
-    ("crates/sqlquack-rules/src", "sqlquack_syntax", True),
-    ("crates/sqlquack-duckdb-blocks/src", "sqlquack_syntax", True),
+    ("crates/sqlquack-syntax-snowflake/src", "sqlquack_syntax", True),
+    ("crates/sqlquack-syntax-snowflake/tests", "sqlquack_syntax", True),
+    ("crates/sqlquack-diagnostics/src", "sqlquack_syntax", True),
+    ("crates/sqlquack-convert/src", "sqlquack_syntax", True),
+    ("crates/sqlquack-blocks/src", "sqlquack_syntax", True),
     ("tools/sqlquack-polyglot-check/src", "sqlquack_syntax", True),
     ("crates/sqlquack/src", "sqlquack_syntax", True),
     ("fuzz/fuzz_targets", "sqlquack_syntax", True),
-    ("crates/sqlquack-syntax-derive/src", "crate", False),
+    ("crates/sqlquack-derive/src", "crate", False),
 )
 TRIVIA_KINDS: frozenset[str] = frozenset({WHITESPACE, LINE_COMMENT, BLOCK_COMMENT, DOC_COMMENT})
 UNUSED_IMPORTS_LINT: str = "unused_imports"

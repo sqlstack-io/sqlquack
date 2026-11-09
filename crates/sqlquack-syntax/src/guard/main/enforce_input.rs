@@ -5,7 +5,7 @@ use crate::guard::models::ComplexityGuardOptions;
 use crate::tokens::types::Result;
 
 /// Enforce raw SQL input limits before tokenization.
-pub(crate) fn enforce_input(sql: &str, options: &ComplexityGuardOptions) -> Result<()> {
+pub fn enforce_input(sql: &str, options: &ComplexityGuardOptions) -> Result<()> {
     if let Some(max) = options.max_input_bytes {
         let input_bytes = sql.len();
         if input_bytes > max {

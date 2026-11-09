@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from scripts.syntax_catalogue._helpers.grammar import slug
+from scripts.grammar_catalogue._helpers.grammar import slug
 from scripts.syntax_catalogue_databricks.constants import (
     EXPRESSIONS,
     FAMILY_BY_PAGE,

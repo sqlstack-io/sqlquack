@@ -13,9 +13,7 @@ use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
 
 /// A scalar function call not recognized as a dedicated `Expression` variant.
-#[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize, Default,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Function {
     /// Qualified name components preserve quoting without changing the node kind.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -92,9 +90,7 @@ impl Function {
 }
 
 /// A named aggregate call with optional FILTER, ORDER BY, LIMIT and IGNORE/RESPECT NULLS.
-#[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Default, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
 pub struct AggregateFunction {
     /// Dialect whose call semantics must be retained through independent generation.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -138,7 +134,7 @@ pub struct AggregateFunction {
 }
 
 /// A window function call; `over` holds PARTITION BY, ORDER BY and the frame.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct WindowFunction {
     /// The function expression (e.g. ROW_NUMBER(), SUM(amount)).
     pub this: Expression,
@@ -158,7 +154,7 @@ pub struct WindowFunction {
 }
 
 /// Oracle KEEP (DENSE_RANK FIRST|LAST ORDER BY ...) clause of an aggregate.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Keep {
     /// true = FIRST, false = LAST
     pub first: bool,
@@ -167,7 +163,7 @@ pub struct Keep {
 }
 
 /// WITHIN GROUP clause (for ordered-set aggregate functions)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct WithinGroup {
     /// The aggregate function (LISTAGG, PERCENTILE_CONT, etc.)
     pub this: Expression,
@@ -176,7 +172,7 @@ pub struct WithinGroup {
 }
 
 /// DPipe
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DPipe {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -185,7 +181,7 @@ pub struct DPipe {
 }
 
 /// Operator
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Operator {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -197,14 +193,14 @@ pub struct Operator {
 }
 
 /// PivotAny
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PivotAny {
     #[serde(default)]
     pub this: Option<Box<Expression>>,
 }
 
 /// Aliases
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Aliases {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -212,14 +208,14 @@ pub struct Aliases {
 }
 
 /// AtIndex
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AtIndex {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// FromTimeZone
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct FromTimeZone {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -227,28 +223,28 @@ pub struct FromTimeZone {
 }
 
 /// Format override for a column in Teradata
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct FormatPhrase {
     pub this: Box<Expression>,
     pub format: String,
 }
 
 /// ForIn
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ForIn {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// Automatically converts unit arg into a var.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TimeUnit {
     #[serde(default)]
     pub unit: Option<String>,
 }
 
 /// IntervalOp
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct IntervalOp {
     #[serde(default)]
     pub unit: Option<String>,
@@ -256,7 +252,7 @@ pub struct IntervalOp {
 }
 
 /// HavingMax
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct HavingMax {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -265,56 +261,56 @@ pub struct HavingMax {
 }
 
 /// CosineDistance
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CosineDistance {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// DotProduct
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DotProduct {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// EuclideanDistance
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct EuclideanDistance {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// ManhattanDistance
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ManhattanDistance {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// JarowinklerSimilarity
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JarowinklerSimilarity {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// Booland
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Booland {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// Boolor
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Boolor {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// ParameterizedAgg
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ParameterizedAgg {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -324,7 +320,7 @@ pub struct ParameterizedAgg {
 }
 
 /// ArgMax
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ArgMax {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -333,7 +329,7 @@ pub struct ArgMax {
 }
 
 /// ArgMin
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ArgMin {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -342,7 +338,7 @@ pub struct ArgMin {
 }
 
 /// ApproxTopK
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ApproxTopK {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -352,7 +348,7 @@ pub struct ApproxTopK {
 }
 
 /// ApproxTopKAccumulate
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ApproxTopKAccumulate {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -360,7 +356,7 @@ pub struct ApproxTopKAccumulate {
 }
 
 /// ApproxTopKCombine
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ApproxTopKCombine {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -368,7 +364,7 @@ pub struct ApproxTopKCombine {
 }
 
 /// ApproxTopKEstimate
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ApproxTopKEstimate {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -376,7 +372,7 @@ pub struct ApproxTopKEstimate {
 }
 
 /// ApproxTopSum
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ApproxTopSum {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -385,7 +381,7 @@ pub struct ApproxTopSum {
 }
 
 /// ApproxQuantiles
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ApproxQuantiles {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -393,7 +389,7 @@ pub struct ApproxQuantiles {
 }
 
 /// Minhash
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Minhash {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -401,14 +397,14 @@ pub struct Minhash {
 }
 
 /// FarmFingerprint
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct FarmFingerprint {
     #[serde(default)]
     pub expressions: Vec<Expression>,
 }
 
 /// Float64
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Float64 {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -416,14 +412,14 @@ pub struct Float64 {
 }
 
 /// Transform
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Transform {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// Translate
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Translate {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -433,21 +429,21 @@ pub struct Translate {
 }
 
 /// Grouping
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Grouping {
     #[serde(default)]
     pub expressions: Vec<Expression>,
 }
 
 /// GroupingId
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GroupingId {
     #[serde(default)]
     pub expressions: Vec<Expression>,
 }
 
 /// Anonymous
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Anonymous {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -455,7 +451,7 @@ pub struct Anonymous {
 }
 
 /// AnonymousAggFunc
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AnonymousAggFunc {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -463,7 +459,7 @@ pub struct AnonymousAggFunc {
 }
 
 /// CombinedAggFunc
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CombinedAggFunc {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -471,7 +467,7 @@ pub struct CombinedAggFunc {
 }
 
 /// CombinedParameterizedAgg
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CombinedParameterizedAgg {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -481,7 +477,7 @@ pub struct CombinedParameterizedAgg {
 }
 
 /// HashAgg
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct HashAgg {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -489,7 +485,7 @@ pub struct HashAgg {
 }
 
 /// Hll
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Hll {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -497,14 +493,14 @@ pub struct Hll {
 }
 
 /// Apply
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Apply {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// ToBoolean
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ToBoolean {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -512,21 +508,21 @@ pub struct ToBoolean {
 }
 
 /// List
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct List {
     #[serde(default)]
     pub expressions: Vec<Expression>,
 }
 
 /// Materialize MAP constructor over a subquery or `key => value` entries.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ToMap {
     /// Either a Select subquery or a Struct containing PropertyEQ entries
     pub this: Box<Expression>,
 }
 
 /// Pad
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pad {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -537,7 +533,7 @@ pub struct Pad {
 }
 
 /// ToChar
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ToChar {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -549,7 +545,7 @@ pub struct ToChar {
 }
 
 /// StringFunc - String type conversion function (BigQuery STRING)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct StringFunc {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -557,7 +553,7 @@ pub struct StringFunc {
 }
 
 /// ToNumber
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ToNumber {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -575,7 +571,7 @@ pub struct ToNumber {
 }
 
 /// ToDouble
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ToDouble {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -585,7 +581,7 @@ pub struct ToDouble {
 }
 
 /// ToDecfloat
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ToDecfloat {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -593,7 +589,7 @@ pub struct ToDecfloat {
 }
 
 /// TryToDecfloat
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TryToDecfloat {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -601,7 +597,7 @@ pub struct TryToDecfloat {
 }
 
 /// ToFile
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ToFile {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -611,7 +607,7 @@ pub struct ToFile {
 }
 
 /// Columns
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Columns {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -619,7 +615,7 @@ pub struct Columns {
 }
 
 /// ConvertToCharset
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ConvertToCharset {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -629,7 +625,7 @@ pub struct ConvertToCharset {
 }
 
 /// ConvertTimezone
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ConvertTimezone {
     #[serde(default)]
     pub source_tz: Option<Box<Expression>>,
@@ -642,7 +638,7 @@ pub struct ConvertTimezone {
 }
 
 /// GenerateSeries
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GenerateSeries {
     #[serde(default)]
     pub start: Option<Box<Expression>>,
@@ -655,14 +651,14 @@ pub struct GenerateSeries {
 }
 
 /// AIAgg
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AIAgg {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// AIClassify
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AIClassify {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -672,28 +668,28 @@ pub struct AIClassify {
 }
 
 /// ArrayAll
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ArrayAll {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// ArrayAny
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ArrayAny {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// ArrayConstructCompact
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ArrayConstructCompact {
     #[serde(default)]
     pub expressions: Vec<Expression>,
 }
 
 /// StPoint
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct StPoint {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -702,7 +698,7 @@ pub struct StPoint {
 }
 
 /// StDistance
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct StDistance {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -711,7 +707,7 @@ pub struct StDistance {
 }
 
 /// StringToArray
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct StringToArray {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -721,7 +717,7 @@ pub struct StringToArray {
 }
 
 /// ArraySum
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ArraySum {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -729,14 +725,14 @@ pub struct ArraySum {
 }
 
 /// ObjectAgg
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ObjectAgg {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// CastToStrType
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CastToStrType {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -744,13 +740,13 @@ pub struct CastToStrType {
 }
 
 /// CheckJson
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CheckJson {
     pub this: Box<Expression>,
 }
 
 /// CheckXml
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CheckXml {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -758,7 +754,7 @@ pub struct CheckXml {
 }
 
 /// TranslateCharacters
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TranslateCharacters {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -767,78 +763,78 @@ pub struct TranslateCharacters {
 }
 
 /// CurrentSchemas
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CurrentSchemas {
     #[serde(default)]
     pub this: Option<Box<Expression>>,
 }
 
 /// CurrentDatetime
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CurrentDatetime {
     #[serde(default)]
     pub this: Option<Box<Expression>>,
 }
 
 /// Localtime
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Localtime {
     #[serde(default)]
     pub this: Option<Box<Expression>>,
 }
 
 /// Localtimestamp
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Localtimestamp {
     #[serde(default)]
     pub this: Option<Box<Expression>>,
 }
 
 /// Systimestamp
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Systimestamp {
     #[serde(default)]
     pub this: Option<Box<Expression>>,
 }
 
 /// CurrentSchema
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CurrentSchema {
     #[serde(default)]
     pub this: Option<Box<Expression>>,
 }
 
 /// CurrentUser
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CurrentUser {
     #[serde(default)]
     pub this: Option<Box<Expression>>,
 }
 
 /// SessionUser - MySQL/PostgreSQL SESSION_USER function
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SessionUser;
 
 /// JSONPathRoot - Represents $ in JSON path expressions
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONPathRoot;
 
 /// UtcTime
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct UtcTime {
     #[serde(default)]
     pub this: Option<Box<Expression>>,
 }
 
 /// UtcTimestamp
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct UtcTimestamp {
     #[serde(default)]
     pub this: Option<Box<Expression>>,
 }
 
 /// TimestampFunc - TIMESTAMP constructor function
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TimestampFunc {
     #[serde(default)]
     pub this: Option<Box<Expression>>,
@@ -851,7 +847,7 @@ pub struct TimestampFunc {
 }
 
 /// DateBin
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DateBin {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -864,7 +860,7 @@ pub struct DateBin {
 }
 
 /// Datetime
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Datetime {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -872,7 +868,7 @@ pub struct Datetime {
 }
 
 /// DatetimeAdd
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DatetimeAdd {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -881,7 +877,7 @@ pub struct DatetimeAdd {
 }
 
 /// DatetimeSub
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DatetimeSub {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -890,7 +886,7 @@ pub struct DatetimeSub {
 }
 
 /// DatetimeDiff
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DatetimeDiff {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -899,7 +895,7 @@ pub struct DatetimeDiff {
 }
 
 /// DatetimeTrunc
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DatetimeTrunc {
     pub this: Box<Expression>,
     pub unit: String,
@@ -908,7 +904,7 @@ pub struct DatetimeTrunc {
 }
 
 /// Dayname
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Dayname {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -916,7 +912,7 @@ pub struct Dayname {
 }
 
 /// MakeInterval
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct MakeInterval {
     #[serde(default)]
     pub year: Option<Box<Expression>>,
@@ -935,14 +931,14 @@ pub struct MakeInterval {
 }
 
 /// PreviousDay
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PreviousDay {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// Elt
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Elt {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -950,7 +946,7 @@ pub struct Elt {
 }
 
 /// TimestampAdd
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TimestampAdd {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -959,7 +955,7 @@ pub struct TimestampAdd {
 }
 
 /// TimestampSub
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TimestampSub {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -968,7 +964,7 @@ pub struct TimestampSub {
 }
 
 /// TimestampDiff
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TimestampDiff {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -977,7 +973,7 @@ pub struct TimestampDiff {
 }
 
 /// TimeSlice
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TimeSlice {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -987,7 +983,7 @@ pub struct TimeSlice {
 }
 
 /// TimeAdd
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TimeAdd {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -996,7 +992,7 @@ pub struct TimeAdd {
 }
 
 /// TimeSub
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TimeSub {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -1005,7 +1001,7 @@ pub struct TimeSub {
 }
 
 /// TimeDiff
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TimeDiff {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -1014,7 +1010,7 @@ pub struct TimeDiff {
 }
 
 /// TimeTrunc
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TimeTrunc {
     pub this: Box<Expression>,
     pub unit: String,
@@ -1023,7 +1019,7 @@ pub struct TimeTrunc {
 }
 
 /// DateFromParts
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DateFromParts {
     #[serde(default)]
     pub year: Option<Box<Expression>>,
@@ -1036,7 +1032,7 @@ pub struct DateFromParts {
 }
 
 /// TimeFromParts
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TimeFromParts {
     #[serde(default)]
     pub hour: Option<Box<Expression>>,
@@ -1053,14 +1049,14 @@ pub struct TimeFromParts {
 }
 
 /// DecodeCase
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DecodeCase {
     #[serde(default)]
     pub expressions: Vec<Expression>,
 }
 
 /// Decrypt
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Decrypt {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1074,7 +1070,7 @@ pub struct Decrypt {
 }
 
 /// DecryptRaw
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DecryptRaw {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1092,7 +1088,7 @@ pub struct DecryptRaw {
 }
 
 /// Encode
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Encode {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1100,7 +1096,7 @@ pub struct Encode {
 }
 
 /// Encrypt
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Encrypt {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1112,7 +1108,7 @@ pub struct Encrypt {
 }
 
 /// EncryptRaw
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct EncryptRaw {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1126,14 +1122,14 @@ pub struct EncryptRaw {
 }
 
 /// EqualNull
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct EqualNull {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// ToBinary
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ToBinary {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1143,7 +1139,7 @@ pub struct ToBinary {
 }
 
 /// Base64DecodeBinary
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Base64DecodeBinary {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1151,7 +1147,7 @@ pub struct Base64DecodeBinary {
 }
 
 /// Base64DecodeString
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Base64DecodeString {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1159,7 +1155,7 @@ pub struct Base64DecodeString {
 }
 
 /// Base64Encode
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Base64Encode {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1169,7 +1165,7 @@ pub struct Base64Encode {
 }
 
 /// TryBase64DecodeBinary
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TryBase64DecodeBinary {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1177,7 +1173,7 @@ pub struct TryBase64DecodeBinary {
 }
 
 /// TryBase64DecodeString
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TryBase64DecodeString {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1185,7 +1181,7 @@ pub struct TryBase64DecodeString {
 }
 
 /// GapFill
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GapFill {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1203,7 +1199,7 @@ pub struct GapFill {
 }
 
 /// GenerateDateArray
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GenerateDateArray {
     #[serde(default)]
     pub start: Option<Box<Expression>>,
@@ -1214,7 +1210,7 @@ pub struct GenerateDateArray {
 }
 
 /// GenerateTimestampArray
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GenerateTimestampArray {
     #[serde(default)]
     pub start: Option<Box<Expression>>,
@@ -1225,14 +1221,14 @@ pub struct GenerateTimestampArray {
 }
 
 /// GetExtract
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GetExtract {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// Getbit
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Getbit {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -1241,7 +1237,7 @@ pub struct Getbit {
 }
 
 /// OverflowTruncateBehavior
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct OverflowTruncateBehavior {
     #[serde(default)]
     pub this: Option<Box<Expression>>,
@@ -1250,7 +1246,7 @@ pub struct OverflowTruncateBehavior {
 }
 
 /// HexEncode
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct HexEncode {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1258,7 +1254,7 @@ pub struct HexEncode {
 }
 
 /// Compress
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Compress {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1266,21 +1262,21 @@ pub struct Compress {
 }
 
 /// DecompressBinary
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DecompressBinary {
     pub this: Box<Expression>,
     pub method: String,
 }
 
 /// DecompressString
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DecompressString {
     pub this: Box<Expression>,
     pub method: String,
 }
 
 /// Xor
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Xor {
     #[serde(default)]
     pub this: Option<Box<Expression>>,
@@ -1291,14 +1287,14 @@ pub struct Xor {
 }
 
 /// Nullif
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Nullif {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// JSON
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSON {
     #[serde(default)]
     pub this: Option<Box<Expression>>,
@@ -1309,7 +1305,7 @@ pub struct JSON {
 }
 
 /// JSONPath
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONPath {
     #[serde(default)]
     pub expressions: Vec<Expression>,
@@ -1318,32 +1314,32 @@ pub struct JSONPath {
 }
 
 /// JSONPathFilter
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONPathFilter {
     pub this: Box<Expression>,
 }
 
 /// JSONPathKey
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONPathKey {
     pub this: Box<Expression>,
 }
 
 /// JSONPathRecursive
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONPathRecursive {
     #[serde(default)]
     pub this: Option<Box<Expression>>,
 }
 
 /// JSONPathScript
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONPathScript {
     pub this: Box<Expression>,
 }
 
 /// JSONPathSlice
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONPathSlice {
     #[serde(default)]
     pub start: Option<Box<Expression>>,
@@ -1354,26 +1350,26 @@ pub struct JSONPathSlice {
 }
 
 /// JSONPathSelector
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONPathSelector {
     pub this: Box<Expression>,
 }
 
 /// JSONPathSubscript
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONPathSubscript {
     pub this: Box<Expression>,
 }
 
 /// JSONPathUnion
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONPathUnion {
     #[serde(default)]
     pub expressions: Vec<Expression>,
 }
 
 /// Format
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Format {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1381,7 +1377,7 @@ pub struct Format {
 }
 
 /// JSONKeys
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONKeys {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1391,14 +1387,14 @@ pub struct JSONKeys {
 }
 
 /// JSONKeyValue
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONKeyValue {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// JSONKeysAtDepth
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONKeysAtDepth {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1408,7 +1404,7 @@ pub struct JSONKeysAtDepth {
 }
 
 /// JSONObject
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONObject {
     #[serde(default)]
     pub expressions: Vec<Expression>,
@@ -1423,7 +1419,7 @@ pub struct JSONObject {
 }
 
 /// JSONObjectAgg
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONObjectAgg {
     #[serde(default)]
     pub expressions: Vec<Expression>,
@@ -1438,14 +1434,14 @@ pub struct JSONObjectAgg {
 }
 
 /// JSONBObjectAgg
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONBObjectAgg {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// JSONArray
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONArray {
     #[serde(default)]
     pub expressions: Vec<Expression>,
@@ -1458,7 +1454,7 @@ pub struct JSONArray {
 }
 
 /// JSONArrayAgg
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONArrayAgg {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1472,7 +1468,7 @@ pub struct JSONArrayAgg {
 }
 
 /// JSONExists
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONExists {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1486,7 +1482,7 @@ pub struct JSONExists {
 }
 
 /// JSONColumnDef
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONColumnDef {
     /// Typed column definition; legacy dialects may use the textual kind field.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1515,14 +1511,14 @@ pub struct JSONColumnDef {
 }
 
 /// JSONSchema
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONSchema {
     #[serde(default)]
     pub expressions: Vec<Expression>,
 }
 
 /// JSONSet
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONSet {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1530,7 +1526,7 @@ pub struct JSONSet {
 }
 
 /// JSONStripNulls
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONStripNulls {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1542,7 +1538,7 @@ pub struct JSONStripNulls {
 }
 
 /// JSONValue
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONValue {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
@@ -1561,7 +1557,7 @@ pub struct JSONValue {
 }
 
 /// JSONValueArray
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONValueArray {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1569,7 +1565,7 @@ pub struct JSONValueArray {
 }
 
 /// JSONRemove
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONRemove {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1577,7 +1573,7 @@ pub struct JSONRemove {
 }
 
 /// JSONTable
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONTable {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
@@ -1598,7 +1594,7 @@ pub struct JSONTable {
 }
 
 /// JSONType
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONType {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1606,7 +1602,7 @@ pub struct JSONType {
 }
 
 /// ObjectInsert
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ObjectInsert {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1618,7 +1614,7 @@ pub struct ObjectInsert {
 }
 
 /// OpenJSONColumnDef
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct OpenJSONColumnDef {
     pub this: Box<Expression>,
     pub kind: String,
@@ -1632,7 +1628,7 @@ pub struct OpenJSONColumnDef {
 }
 
 /// OpenJSON
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct OpenJSON {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1642,7 +1638,7 @@ pub struct OpenJSON {
 }
 
 /// JSONBExists
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONBExists {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1650,14 +1646,14 @@ pub struct JSONBExists {
 }
 
 /// JSONCast
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONCast {
     pub this: Box<Expression>,
     pub to: DataType,
 }
 
 /// JSONExtract
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONExtract {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -1680,7 +1676,7 @@ pub struct JSONExtract {
 }
 
 /// JSONExtractQuote
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONExtractQuote {
     #[serde(default)]
     pub option: Option<Box<Expression>>,
@@ -1689,7 +1685,7 @@ pub struct JSONExtractQuote {
 }
 
 /// JSONExtractArray
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONExtractArray {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1697,7 +1693,7 @@ pub struct JSONExtractArray {
 }
 
 /// JSONExtractScalar
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONExtractScalar {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -1712,7 +1708,7 @@ pub struct JSONExtractScalar {
 }
 
 /// JSONBExtractScalar
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONBExtractScalar {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -1721,7 +1717,7 @@ pub struct JSONBExtractScalar {
 }
 
 /// JSONFormat
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONFormat {
     #[serde(default)]
     pub this: Option<Box<Expression>>,
@@ -1734,7 +1730,7 @@ pub struct JSONFormat {
 }
 
 /// JSONArrayAppend
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONArrayAppend {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1742,7 +1738,7 @@ pub struct JSONArrayAppend {
 }
 
 /// JSONArrayContains
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONArrayContains {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -1751,7 +1747,7 @@ pub struct JSONArrayContains {
 }
 
 /// JSONArrayInsert
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JSONArrayInsert {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1759,7 +1755,7 @@ pub struct JSONArrayInsert {
 }
 
 /// ParseJSON
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ParseJSON {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1769,7 +1765,7 @@ pub struct ParseJSON {
 }
 
 /// ParseUrl
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ParseUrl {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1781,7 +1777,7 @@ pub struct ParseUrl {
 }
 
 /// ParseIp
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ParseIp {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1791,14 +1787,14 @@ pub struct ParseIp {
 }
 
 /// ParseTime
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ParseTime {
     pub this: Box<Expression>,
     pub format: String,
 }
 
 /// ParseDatetime
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ParseDatetime {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1808,7 +1804,7 @@ pub struct ParseDatetime {
 }
 
 /// XMLElement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct XMLElement {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1818,7 +1814,7 @@ pub struct XMLElement {
 }
 
 /// XMLGet
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct XMLGet {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
@@ -1827,7 +1823,7 @@ pub struct XMLGet {
 }
 
 /// XMLTable
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct XMLTable {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1841,7 +1837,7 @@ pub struct XMLTable {
 }
 
 /// XMLKeyValueOption
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct XMLKeyValueOption {
     pub this: Box<Expression>,
     #[serde(default)]

@@ -1,10 +1,10 @@
 //! How DuckDB's error compares with the recorded Snowflake error.
 
-use sqlquack_core::failures::constants::RAISE_ID_MARKER;
-use sqlquack_core::failures::main::duckdb_failure::duckdb_failure;
-use sqlquack_core::failures::main::snowflake_kind::snowflake_kind;
-use sqlquack_core::failures::models::{ErrorKind, FailureMode};
-use sqlquack_core::provenance::models::Provenance;
+use sqlquack_diagnostics::failures::constants::RAISE_ID_MARKER;
+use sqlquack_diagnostics::failures::main::engine_failure::engine_failure;
+use sqlquack_diagnostics::failures::models::{ErrorKind, FailureMode};
+use sqlquack_diagnostics::provenance::models::Provenance;
+use sqlquack_diagnostics::snowflake::failures::main::snowflake_kind::snowflake_kind;
 use sqlquack_policy::policy::models::Policy;
 
 use crate::results::models::RecordedFailure;
@@ -31,7 +31,7 @@ pub(crate) fn error_check(
             divergence: divergence.clone(),
         };
     }
-    let duckdb = duckdb_failure(error);
+    let duckdb = engine_failure(error);
     if let Some(tagged) = duckdb.and_then(|failure| failure.snowflake)
         && tagged.errno != errno
     {

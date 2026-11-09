@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 
-from scripts.syntax_catalogue._helpers.grammar import normalize
+from scripts.grammar_catalogue._helpers.grammar import normalize
 from scripts.syntax_catalogue_bigquery.constants import (
     ANGLE_LITERALS,
     BRACKET_CLOSERS,

@@ -7,7 +7,7 @@ use crate::expressions::statements::models::VerticaDataType;
 use crate::expressions::tree::models::Expression;
 
 /// Struct field with optional OPTIONS clause (BigQuery) and COMMENT (Spark/Databricks)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct StructField {
     /// Raw field name or delimited identifier; empty for an anonymous field.
     pub name: String,
@@ -56,7 +56,7 @@ impl StructField {
 }
 
 /// Oracle data types the generic [`DataType`] cannot hold losslessly, such as negative scales.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "oracle_data_type", rename_all = "snake_case")]
 pub enum OracleDataType {
     Number {
@@ -98,9 +98,7 @@ pub enum OracleDataType {
     RowId,
 }
 
-#[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum OracleCharacterKind {
     Char,
@@ -109,18 +107,14 @@ pub enum OracleCharacterKind {
     NVarChar,
 }
 
-#[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum OracleCharacterLengthSemantics {
     Byte,
     Char,
 }
 
-#[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum OracleTimestampTimeZone {
     None,
@@ -129,7 +123,7 @@ pub enum OracleTimestampTimeZone {
 }
 
 /// Every data type the parser recognizes, standard and dialect-specific.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "data_type", rename_all = "snake_case")]
 pub enum DataType {
     Vertica {
@@ -358,7 +352,7 @@ pub enum DataType {
 }
 
 /// Source-specific HANA type, retained until a target is selected.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct HanaDataType {
     pub name: String,
     pub parameters: Vec<u32>,
@@ -366,7 +360,7 @@ pub struct HanaDataType {
 
 impl DataType {
     /// The longest chain of types nested inside this one: 0 for `INT`, 2 for `INT[][]`.
-    pub(crate) fn nesting_depth(&self) -> usize {
+    pub fn nesting_depth(&self) -> usize {
         let mut deepest = 0;
         let mut pending: Vec<(&DataType, usize)> = vec![(self, 0)];
         while let Some((data_type, depth)) = pending.pop() {
@@ -487,7 +481,7 @@ impl DataType {
     }
 
     /// Canonical unsigned type names and their bit-width aliases.
-    pub(crate) fn from_unsigned_name(name: &str) -> Option<Self> {
+    pub fn from_unsigned_name(name: &str) -> Option<Self> {
         match name.to_ascii_uppercase().as_str() {
             "UTINYINT" | "UINT8" => Some(Self::UInt8),
             "USMALLINT" | "UINT16" => Some(Self::UInt16),
@@ -500,7 +494,7 @@ impl DataType {
 }
 
 /// Array expression
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Array {
     pub expressions: Vec<Expression>,
     /// Inferred array data type from type annotation
@@ -510,19 +504,19 @@ pub struct Array {
 }
 
 /// Struct expression
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Struct {
     pub fields: Vec<(Option<String>, Expression)>,
 }
 
 /// Tuple expression
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Tuple {
     pub expressions: Vec<Expression>,
 }
 
 /// Interval expression
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Interval {
     /// The value expression (e.g., '1', 5, column_ref)
     pub this: Option<Expression>,
@@ -531,7 +525,7 @@ pub struct Interval {
 }
 
 /// Specification for interval unit - can be a simple unit, a span (HOUR TO SECOND), or an expression
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum IntervalUnitSpec {
     /// Simple interval unit (YEAR, MONTH, DAY, etc.)
@@ -551,7 +545,7 @@ pub enum IntervalUnitSpec {
 }
 
 /// Snowflake interval qualifier: fields with their leading and fractional seconds precisions.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct IntervalQualifier {
     /// Leading field (e.g., DAY)
     pub this: IntervalUnit,
@@ -564,7 +558,7 @@ pub struct IntervalQualifier {
 }
 
 /// Interval span for ranges like HOUR TO SECOND
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct IntervalSpan {
     /// Start unit (e.g., HOUR)
     pub this: IntervalUnit,
@@ -573,7 +567,7 @@ pub struct IntervalSpan {
 }
 
 /// Oracle interval span whose units are expressions with optional precision.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct IntervalSpanExpr {
     /// Start unit expression (e.g., Var("DAY") or Anonymous("DAY", [9]))
     pub this: Box<Expression>,
@@ -581,9 +575,7 @@ pub struct IntervalSpanExpr {
     pub expression: Box<Expression>,
 }
 
-#[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum IntervalUnit {
     Year,
     Quarter,

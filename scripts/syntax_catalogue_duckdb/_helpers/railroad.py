@@ -6,7 +6,7 @@ import json
 import subprocess
 from pathlib import Path
 
-from scripts.syntax_catalogue._helpers.grammar import normalize
+from scripts.grammar_catalogue._helpers.grammar import normalize
 from scripts.syntax_catalogue_duckdb.constants import (
     EMPTY_PLACEHOLDER,
     NAME_KEYWORD,

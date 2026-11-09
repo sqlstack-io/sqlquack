@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-from scripts.syntax_catalogue._helpers.toml_out import write_tables
+from scripts.grammar_catalogue._helpers.toml_out import write_tables
 from scripts.syntax_catalogue_duckdb._helpers.catalogue import build_catalogue
 from scripts.syntax_catalogue_duckdb._helpers.fetch import pinned
 from scripts.syntax_catalogue_duckdb._helpers.indexes import index_rows

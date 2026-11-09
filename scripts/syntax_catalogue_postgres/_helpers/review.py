@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from scripts.syntax_catalogue._helpers.grammar import sha256
+from scripts.grammar_catalogue._helpers.grammar import sha256
 from scripts.syntax_catalogue_postgres.constants import GRAM_Y, KWLIST_H
 from scripts.syntax_catalogue_postgres.models import AuditResult
 

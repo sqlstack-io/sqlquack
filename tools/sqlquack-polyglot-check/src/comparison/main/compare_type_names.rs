@@ -1,10 +1,9 @@
 //! `compare_type_names`: SQLQuack's cast type names against polyglot's printed types.
 
 use polyglot_sql::DialectType;
-use sqlquack_core::classification::main::cast_type_name::cast_type_name;
-use sqlquack_syntax::{
-    DataType, Dialect, Expression, ExpressionWalk, ParseOptions, parse_statements,
-};
+use sqlquack_diagnostics::snowflake::classification::main::cast_type_name::cast_type_name;
+use sqlquack_syntax::{DataType, Dialect, Expression, ExpressionWalk, ParseOptions};
+use sqlquack_syntax_snowflake::parse_statements;
 
 use crate::comparison::_helpers::outcomes::polyglot_base_type_name;
 

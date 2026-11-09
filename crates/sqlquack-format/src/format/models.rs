@@ -2,11 +2,11 @@
 
 use std::collections::HashMap;
 
-use sqlquack_syntax::{Dialect, ParseOptions};
+use sqlquack_syntax::ParseOptions;
 
 use crate::format::constants::DEFAULT_INDENT;
 
-/// The SQL dialects the formatter reads; BigQuery and SQL Server through their own scanners and parsers.
+/// The SQL dialects the formatter knows; each is laid out only when the crate is built with its feature.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FormatDialect {
     Snowflake,
@@ -15,18 +15,6 @@ pub enum FormatDialect {
     BigQuery,
     Databricks,
     SqlServer,
-}
-
-impl FormatDialect {
-    /// The shared tokenizer's dialect, for the dialects it reads.
-    pub(crate) fn shared(self) -> Option<Dialect> {
-        match self {
-            Self::Snowflake => Some(Dialect::Snowflake),
-            Self::DuckDB => Some(Dialect::DuckDB),
-            Self::PostgreSQL => Some(Dialect::PostgreSQL),
-            Self::BigQuery | Self::Databricks | Self::SqlServer => None,
-        }
-    }
 }
 
 /// How SQL is laid out.

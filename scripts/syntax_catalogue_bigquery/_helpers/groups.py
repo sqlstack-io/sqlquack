@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import re
 
-from scripts.syntax_catalogue._helpers.grammar import normalize, slug
-from scripts.syntax_catalogue.constants import KIND_CALL, KIND_SPECIAL
-from scripts.syntax_catalogue.models import FormGroup
+from scripts.grammar_catalogue._helpers.grammar import normalize, slug
+from scripts.grammar_catalogue.constants import KIND_CALL, KIND_SPECIAL
+from scripts.grammar_catalogue.models import FormGroup
 from scripts.syntax_catalogue_bigquery._helpers.notation import convert, productions
 from scripts.syntax_catalogue_bigquery.constants import (
     ANGLE_LITERALS,

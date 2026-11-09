@@ -2,7 +2,8 @@
 
 use std::panic::{AssertUnwindSafe, catch_unwind};
 
-use sqlquack_syntax::{Dialect, TokenizeFailure, tokenize};
+use sqlquack_syntax::{Dialect, TokenizeFailure};
+use sqlquack_syntax_snowflake::tokenize;
 
 /// `ok:` and the serialised trees, `err:` and the error's debug form, or `panic`.
 pub(crate) fn rendered<T: serde::Serialize, E: std::fmt::Debug>(

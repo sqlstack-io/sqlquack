@@ -3,7 +3,8 @@ analyzer = "python"
 roots = ["recorder/src/sqlquack_record", "python/src/sqlquack"]
 tests = ["tests"]
 tooling = ["scripts"]
-select = ["FF"]
+rule_modules = ["scripts.fensu_policy.rules.script_names"]
+select = ["FF", "XSQ005", "XSQ006"]
 
 [targets.rust]
 analyzer = "rust"
@@ -11,7 +12,34 @@ roots = ["crates", "tools"]
 tests = []
 tooling = ["tools/sqlquack-polyglot-check"]
 rule_packs = ["rust"]
-select = ["FPRS"]
+rule_modules = [
+  "scripts.fensu_policy.rules.crate_layout",
+  "scripts.fensu_policy.rules.dialect_folders",
+]
+select = ["FPRS", "XSQ001", "XSQ002", "XSQ003", "XSQ004", "XSQ007"]
+
+# The playground engine, website/wasm, imports these two Snowflake conversion entries. fensu reads
+# only the root cargo workspace, and website/wasm keeps its own, so FPRSL105 cannot see that importer.
+# Drop both entries once the playground engine moves onto the Snowflake pipeline's `analyze`.
+[[targets.rust.rule_exceptions]]
+rule = "FPRSL105"
+path = "crates/sqlquack-convert/src/snowflake/conversion/main/convert_statement.rs"
+reason = "imported by the playground engine website/wasm, outside the root cargo workspace, until the playground engine moves onto `analyze`"
+
+[[targets.rust.rule_exceptions]]
+rule = "FPRSL105"
+path = "crates/sqlquack-convert/src/snowflake/conversion/main/within_budget.rs"
+reason = "imported by the playground engine website/wasm, outside the root cargo workspace, until the playground engine moves onto `analyze`"
+
+# Format, lint and fingerprint take a dialect at run time, so each keeps one registry that maps
+# a dialect value to its src/<dialect>/ profile, with every line behind that dialect's feature.
+[targets.rust.rule_options.XSQ007]
+dialect_registries = [
+    "crates/sqlquack-semantics/src/dialects",
+    "crates/sqlquack-format/src/dialects",
+    "crates/sqlquack-lint/src/dialects",
+    "crates/sqlquack-fingerprint/src/dialects",
+]
 
 # A crate that is also a Python distribution keeps its pyproject.toml and shipped notices beside Cargo.toml.
 [targets.rust.rule_options.FPRSR311]
@@ -28,7 +56,7 @@ allowed_entries = [
     "pyproject.toml",
 ]
 
-# Layer: only the command-line crates and the pipeline crate may depend on the conversion rules.
+# Layer: only the command-line crates may depend on the conversion rules and pipeline.
 [targets.rust_rules_layer]
 analyzer = "rust"
 roots = ["crates", "tools"]
@@ -43,9 +71,9 @@ rule_packs = ["rust"]
 select = ["FPRSL301"]
 
 [targets.rust_rules_layer.rule_options.FPRSL301]
-forbidden_packages = ["sqlquack-rules"]
+forbidden_packages = ["sqlquack-convert"]
 
-# Layer: syntax, core, Snowflake typing and semantics build without conversion, DuckDB or evidence.
+# Layer: syntax, the parsers, diagnostics and semantics build without conversion, DuckDB or evidence.
 [targets.rust_analysis_layer]
 analyzer = "rust"
 roots = ["crates", "tools"]
@@ -55,8 +83,7 @@ tooling = [
   "crates/sqlquack-convert",
   "tools/sqlquack-polyglot-check",
   "crates/sqlquack-python",
-  "crates/sqlquack-rules",
-  "crates/sqlquack-duckdb-blocks",
+  "crates/sqlquack-blocks",
   "crates/sqlquack-evidence",
   "tools/sqlquack-format-check",
   "crates/sqlquack-compare",
@@ -68,8 +95,8 @@ select = ["FPRSL301"]
 [targets.rust_analysis_layer.rule_options.FPRSL301]
 forbidden_packages = [
   "sqlquack",
-  "sqlquack-rules",
-  "sqlquack-duckdb-blocks",
+  "sqlquack-convert",
+  "sqlquack-blocks",
   "sqlquack-evidence",
   "sqlquack-compare",
   "sqlquack-policy",

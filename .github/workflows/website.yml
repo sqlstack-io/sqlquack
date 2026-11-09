@@ -10,22 +10,28 @@ on:
     branches: [main]
     paths:
       - website/**
-      - crates/sqlquack-core/**
-      - crates/sqlquack-duckdb-blocks/**
-      - crates/sqlquack-rules/**
+      - crates/sqlquack-diagnostics/**
+      - crates/sqlquack-parse/**
+      - crates/sqlquack-blocks/**
+      - crates/sqlquack-convert/**
+      - crates/sqlquack-derive/**
+      - crates/sqlquack-policy/**
       - crates/sqlquack-semantics/**
-      - crates/sqlquack-snowflake-types/**
       - crates/sqlquack-syntax/**
+      - crates/sqlquack-syntax-snowflake/**
       - .github/workflows/website.yml
   pull_request:
     paths:
       - website/**
-      - crates/sqlquack-core/**
-      - crates/sqlquack-duckdb-blocks/**
-      - crates/sqlquack-rules/**
+      - crates/sqlquack-diagnostics/**
+      - crates/sqlquack-parse/**
+      - crates/sqlquack-blocks/**
+      - crates/sqlquack-convert/**
+      - crates/sqlquack-derive/**
+      - crates/sqlquack-policy/**
       - crates/sqlquack-semantics/**
-      - crates/sqlquack-snowflake-types/**
       - crates/sqlquack-syntax/**
+      - crates/sqlquack-syntax-snowflake/**
       - .github/workflows/website.yml
   workflow_dispatch:
 

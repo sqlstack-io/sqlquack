@@ -11,7 +11,7 @@ import tomllib
 from pathlib import Path
 from typing import cast
 
-from scripts.syntax_obligations.types import Row
+from scripts.grammar_obligations.types import Row
 from scripts.syntax_obligations_databricks._helpers.cases import runtime_only_forms
 from scripts.syntax_obligations_databricks.constants import CASES_DIR, FAMILIES, OBLIGATIONS_DIR
 

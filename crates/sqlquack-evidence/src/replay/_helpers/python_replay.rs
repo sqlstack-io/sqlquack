@@ -10,7 +10,7 @@ use crate::replay::constants::{
     PYTHON_REPLAY_DATABASE, PYTHON_REPLAY_ERROR, PYTHON_REPLAY_REQUEST, PYTHON_REPLAY_RESULT,
     PYTHON_REPLAY_SCRIPT, PYTHON_RUNTIME_SOURCE,
 };
-use crate::replay::main::duckdb_version::duckdb_version;
+use crate::replay::main::engine_version::engine_version;
 use crate::replay::models::{PythonReplay, ReplaySettings};
 
 /// The statement's rows as the Python process stored them, or its DuckDB error.
@@ -32,7 +32,7 @@ pub(crate) fn python_replay(
         "null_order": settings.null_order,
         "setup": setup,
         "functions": python.functions,
-        "duckdb_version": duckdb_version().map_err(|error| error.to_string())?,
+        "duckdb_version": engine_version().map_err(|error| error.to_string())?,
         "sql": sql,
     });
     std::fs::write(&script, PYTHON_RUNTIME_SOURCE).map_err(failed)?;

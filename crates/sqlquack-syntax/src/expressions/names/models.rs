@@ -14,7 +14,7 @@ use crate::expressions::types::models::DataType;
 use crate::tokens::models::Span;
 
 /// A literal, keeping numbers as written so precision, trailing zeros and hex survive.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "literal_type", content = "value", rename_all = "snake_case")]
 pub enum Literal {
     /// Single-quoted string literal: `'hello'`
@@ -114,21 +114,21 @@ impl fmt::Display for Literal {
 }
 
 /// Boolean literal
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct BooleanLiteral {
     pub value: bool,
 }
 
 /// NULL literal
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Null;
 
 /// The DEFAULT keyword where a value is expected, such as a VALUES item: the column's default.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DefaultKeyword;
 
 /// An identifier (table, column, alias, ...); `quoted` records whether it was delimited.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Serialize, Deserialize)]
 pub struct Identifier {
     /// The raw text of the identifier, without any quoting characters.
     pub name: String,
@@ -182,7 +182,7 @@ impl Identifier {
     }
 
     /// The legacy string form of a named type field, quoted with SQL-standard delimiters.
-    pub(crate) fn to_type_field_name(&self) -> String {
+    pub fn to_type_field_name(&self) -> String {
         if self.quoted {
             format!("\"{}\"", self.name.replace('"', "\"\""))
         } else {
@@ -208,7 +208,7 @@ impl fmt::Display for Identifier {
 }
 
 /// A column reference, optionally qualified by a table: `name` or `table.name`.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Serialize, Deserialize)]
 pub struct Column {
     /// The column name.
     pub name: Identifier,
@@ -250,7 +250,7 @@ impl fmt::Display for Column {
 }
 
 /// A table reference with optional schema and catalog, alias, time travel and hints.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TableRef {
     /// The unqualified table name.
     pub name: Identifier,
@@ -403,7 +403,7 @@ impl TableRef {
 }
 
 /// A star (`*`, `table.*`) with optional ILIKE or EXCEPT/EXCLUDE, then REPLACE and RENAME modifiers.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Star {
     /// Optional table qualifier (e.g. `t` in `t.*`).
     pub table: Option<Identifier>,
@@ -428,7 +428,7 @@ pub struct Star {
 }
 
 /// A star's qualified `except` and `rename` names: each entry's parts, with their quoting.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct StarParts {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub except: Vec<Vec<Identifier>>,
@@ -437,7 +437,7 @@ pub struct StarParts {
 }
 
 /// ByteString
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ByteString {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -445,7 +445,7 @@ pub struct ByteString {
 }
 
 /// Hex string expression (not a literal); BigQuery FROM_HEX.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct HexStringExpr {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -453,7 +453,7 @@ pub struct HexStringExpr {
 }
 
 /// UnicodeString
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct UnicodeString {
     pub this: Box<Expression>,
     #[serde(default)]

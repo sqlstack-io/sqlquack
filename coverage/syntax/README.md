@@ -37,8 +37,8 @@ Families: `query`, `dml`, `ddl`, `transaction_session`, `security_admin`, `utili
 ## Regenerating
 
 ```sh
-python -m scripts.fetch_syntax_docs CACHE CACHE/idx/*      # private cache, never committed
-python -m scripts.build_syntax_catalogue --cache CACHE --out coverage/syntax
+python -m scripts.fetch_syntax_docs_snowflake CACHE CACHE/idx/*      # private cache, never committed
+python -m scripts.build_syntax_catalogue_snowflake --cache CACHE --out coverage/syntax
 ```
 
 Pages with no Markdown export (the per-category command hubs) are fetched as HTML and catalogue

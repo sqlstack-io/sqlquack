@@ -1,10 +1,10 @@
 //! The query's result as text, and how it differs from the expected rows.
 
 use duckdb::Connection;
-use sqlquack_core::parsing::main::parse_source::parse_source;
-use sqlquack_core::parsing::models::SourceDialect;
-use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_duckdb_blocks::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
+use sqlquack_parse::parsing::main::parse_source::parse_source;
+use sqlquack_syntax::Dialect;
 use sqlquack_syntax::Expression;
 
 use crate::run::_helpers::fixtures::insert_rows;
@@ -14,7 +14,7 @@ use crate::run::types::{Columns, Row};
 
 /// Whether the one query in `sql` orders its rows, or why `sql` is not one query.
 pub(crate) fn ordered_query(sql: &str) -> Result<bool, String> {
-    let Ok(statements) = parse_source(sql, SourceDialect::Snowflake) else {
+    let Ok(statements) = parse_source(sql, Dialect::Snowflake) else {
         return Ok(false);
     };
     match statements.as_slice() {

@@ -1,13 +1,15 @@
 //! The constructs a recorded statement uses, the case's own functions as one project key.
 
+use sqlquack_syntax::Dialect;
 use std::collections::BTreeSet;
 
-use sqlquack_core::classification::constants::PROJECT_FUNCTION_CONSTRUCT;
-use sqlquack_core::classification::main::classify::classify;
-use sqlquack_core::classification::models::{Construct, ConstructFamily};
-use sqlquack_core::parsing::main::parse_source::parse_source;
-use sqlquack_core::parsing::models::{SourceDialect, SourceLines};
+use sqlquack_diagnostics::classification::constants::PROJECT_FUNCTION_CONSTRUCT;
+use sqlquack_diagnostics::classification::main::classify::classify;
+use sqlquack_diagnostics::classification::models::{Construct, ConstructFamily};
+use sqlquack_diagnostics::snowflake::classification::main::cast_type_name::cast_type_name;
 use sqlquack_evidence::cases::models::LoadedCase;
+use sqlquack_parse::parsing::main::parse_source::parse_source;
+use sqlquack_syntax::tokens::models::SourceLines;
 
 use crate::statements::_helpers::spellings::{token_spellings, tree_spellings};
 
@@ -35,7 +37,7 @@ pub(crate) fn project_key(key: String, own: &BTreeSet<String>) -> String {
 pub(crate) fn constructs(case: &LoadedCase, own: &BTreeSet<String>) -> Result<Vec<String>, String> {
     let sql = &case.source_sql;
     let lines = SourceLines::new(sql);
-    let statements = match parse_source(sql, SourceDialect::Snowflake) {
+    let statements = match parse_source(sql, Dialect::Snowflake) {
         Ok(statements) => statements,
         Err(_) if case.compile_error => Vec::new(),
         Err(failure) => {
@@ -48,7 +50,7 @@ pub(crate) fn constructs(case: &LoadedCase, own: &BTreeSet<String>) -> Result<Ve
     let mut keys: BTreeSet<String> = token_spellings(sql);
     for statement in &statements {
         keys.extend(tree_spellings(statement));
-        for occurrence in classify(statement, &lines, SourceDialect::Snowflake) {
+        for occurrence in classify(statement, &lines, cast_type_name) {
             keys.insert(project_key(occurrence.construct.key(), own));
         }
     }

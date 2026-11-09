@@ -5,17 +5,17 @@ use std::path::Path;
 use std::process::ExitCode;
 
 use serde::Serialize;
-use sqlquack_core::diagnostics::main::render_diagnostics::render_diagnostics;
-use sqlquack_core::diagnostics::models::Diagnostic;
-use sqlquack_duckdb_blocks::macros::main::helper_statements::helper_statements;
-use sqlquack_rules::conversion::models::ConvertedFunction;
+use sqlquack_blocks::macros::main::helper_statements::helper_statements;
+use sqlquack_convert::snowflake::conversion::models::ConvertedFunction;
+use sqlquack_diagnostics::diagnostics::main::render_diagnostics::render_diagnostics;
+use sqlquack_diagnostics::diagnostics::models::Diagnostic;
 
 use crate::census::main::resolve_references::resolve_references;
 use crate::cli::_helpers::evidence::conversion_choices;
 use crate::cli::_helpers::project::project_choices;
 use crate::cli::models::{FunctionArguments, FunctionInputs};
-use sqlquack_convert::analysis::main::convert_function::convert_function;
-use sqlquack_rules::session::main::parse_session::parse_session;
+use sqlquack_convert::snowflake::analysis::main::convert_function::convert_function;
+use sqlquack_convert::snowflake::session::main::parse_session::parse_session;
 
 /// The path naming standard input.
 const STDIN_PATH: &str = "-";

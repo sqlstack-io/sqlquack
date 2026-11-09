@@ -7,7 +7,7 @@ use sqlquack_compare::values::models::ResultSet;
 use sqlquack_policy::policy::models::Policy;
 
 use crate::cases::models::LoadedCase;
-use crate::replay::main::replay_on_duckdb::replay_on_duckdb;
+use crate::replay::main::replay_on_engine::replay_on_engine;
 use crate::replay::models::ReplaySettings;
 use crate::verify::_helpers::judge::divergence_error;
 use crate::verify::_helpers::microsecond_evidence::differs_below_microseconds;
@@ -53,7 +53,7 @@ pub(crate) fn row_check(
             proven = false;
             continue;
         };
-        match replay_on_duckdb((&setup, &sql), python.as_deref(), settings) {
+        match replay_on_engine((&setup, &sql), python.as_deref(), settings) {
             Err(error) => proven &= divergence_error(&error, divergence, policy).is_some(),
             Ok(replayed) => {
                 let row = RecordedResult {

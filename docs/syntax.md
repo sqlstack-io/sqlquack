@@ -27,10 +27,10 @@ they then become ours. Snowflake and DuckDB are the first analysis dialects.
 | Crate | Contents | Depends on polyglot |
 |---|---|---|
 | `sqlquack-syntax` | the tokenizer (significant tokens and trivia), the parser (strict and tolerant), the tree, the Snowflake and DuckDB dialect settings | never |
-| `sqlquack-syntax-derive` | the proc macro that generates child traversal for tree nodes, copied from `polyglot-sql-ast-derive` | never |
+| `sqlquack-derive` | the proc macro that generates child traversal for tree nodes, copied from `polyglot-sql-ast-derive` | never |
 | `sqlquack-polyglot-check` | dev-only tool and tests: the exact comparison with polyglot, corpus runs and parse timings; `publish = false`, a fensu tooling crate | yes, through the workspace pin |
 | `sqlquack-core` | parsing entry points re-pointed at `sqlquack-syntax`, plus classification, refusals and provenance as today | removed in step 5 |
-| `sqlquack-duckdb-blocks` | building blocks, the DuckDB printer and DuckDB's own check of the printed SQL (step 4) | never |
+| `sqlquack-blocks` | building blocks, the DuckDB printer and DuckDB's own check of the printed SQL (step 4) | never |
 
 Inside `sqlquack-syntax` the copied files are split into fensu's domain layout, by
 `scripts/fensu_split_modules.py` following the placements in `scripts/fensu/constants.py`: `tokens`
@@ -186,7 +186,7 @@ entry's located parse, without `span` fields, must equal its faithful parse.
 SQLQuack also fixes valid Snowflake that polyglot rejects. Each fix is a `[[fix]]` entry in the
 same file: an id, a marker the statement contains (whitespace removed) and polyglot's errors on it.
 The check counts a statement as fixed, not different, only when SQLQuack parses it, polyglot's
-error is one listed, and the marker appears; `crates/sqlquack-syntax/tests/fixes.rs` pins the tree
+error is one listed, and the marker appears; `crates/sqlquack-syntax-snowflake/tests/parser/test_fixes.rs` pins the tree
 each fix produces. The first fix: `v[3]:a`, a key path on an array element.
 
 The opposite case, a statement SQLQuack rejects and polyglot parses, is a `[[rejection]]` entry:
@@ -225,7 +225,7 @@ NULLS options. The only entry: `ORDER BY ALL`.
 The faithful parse also keeps a quoted variant path key that holds `.`, `[`, `]`, `"` or `:` in
 brackets (`v:a."x.y"` is the path `a["x.y"]`), where polyglot joins it with dots (`a.x.y`), which
 reads as two keys. The check compares variant paths written flat, so this bracketing is the only
-difference it allows there; `crates/sqlquack-syntax/tests/faithful.rs` pins the paths.
+difference it allows there; `crates/sqlquack-syntax-snowflake/tests/parser/test_faithful.rs` pins the paths.
 
 ## Corpora
 
@@ -292,7 +292,7 @@ when the analysis API needs them.
 4. **DuckDB printer.** Rules build DuckDB output through the printer instead of polyglot. DuckDB
    checks every output with `json_serialize_sql` (parse) and `PREPARE`/`EXPLAIN` (bind),
    replacing the polyglot re-parse. Polyglot then leaves the runtime dependency tree.
-   - Done: the rules' building blocks are SQLQuack's DuckDB printer. `sqlquack-duckdb-blocks`'s
+   - Done: the rules' building blocks are SQLQuack's DuckDB printer. `sqlquack-blocks`'s
      `check_printed` has DuckDB parse and bind every converted statement (`prepare`) over empty
      tables for the relations it reads, created from the schema; semi-structured columns are held
      as `JSON` (decision 3). A lexical pass, skipping strings, quoted names and comments, requires
@@ -320,8 +320,8 @@ when the analysis API needs them.
      bounded number of times. DuckDB is unchanged. 144 spellings are listed, all spelling-only.
    - Done: the pipeline parses faithfully and the rules convert the parsed tree, not the
      canonical one. A call reaches a rule only through its spelling's entry in
-     `CALL_SPELLINGS` (`crates/sqlquack-rules/src/conversion/constants.rs`), and every entry is
-     a spelling recorded cases use. Spellings polyglot merged into a shared node without cases of
+     `CALL_SPELLINGS` (`crates/sqlquack-convert/src/snowflake/conversion/constants.rs`), and
+     every entry is a spelling recorded cases use. Spellings polyglot merged into a shared node without cases of
      their own (`LEN`, `CHAR_LENGTH`, `CHARACTER_LENGTH`, `UCASE`, `LCASE`, `IF`, `IIF`,
      `STARTS_WITH`, `ENDS_WITH`, `DATE_DIFF`, `TIMEDIFF`, `TIMESTAMPDIFF`, `YEAR`, `QUARTER`,
      `MONTH`, `DAY`, `HOUR`, `MINUTE`, `SECOND`) were refused until they had cases. Of these,
@@ -334,8 +334,8 @@ when the analysis API needs them.
    - Done: the fidelity check retired with `sqlquack-core`'s `printing`, `canonical`, `reparse`
      and `comparison` domains, and `sqlquack-core` no longer depends on polyglot. The six
      equivalences remain as recorded spelling pairs (`SPELLING_PAIRS` in
-     `crates/sqlquack-rules/src/conversion/constants.rs`): `sqlquack verify` still requires both
-     spellings of every pair to record one result, and a rule that converts both spellings of a
+     `crates/sqlquack-convert/src/snowflake/conversion/constants.rs`): `sqlquack verify` still
+     requires both spellings of every pair to record one result, and a rule that converts both spellings of a
      pair records it in its provenance (`RLIKE`, and `TEXT` and `STRING` cast targets). The census
      loses its print-back section; files the check refused are refused by other rules.
      `make polyglot-guard` allows the check crate only.

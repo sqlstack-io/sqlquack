@@ -8,10 +8,7 @@ use crate::guard::models::ComplexityGuardOptions;
 use crate::tokens::types::Result;
 
 /// Enforce AST size/depth limits and report parse-oriented errors.
-pub(crate) fn enforce_ast(
-    expressions: &[Expression],
-    options: &ComplexityGuardOptions,
-) -> Result<()> {
+pub fn enforce_ast(expressions: &[Expression], options: &ComplexityGuardOptions) -> Result<()> {
     let Some(max_nodes) = options.max_ast_nodes else {
         return enforce_ast_depth_only(expressions, options);
     };

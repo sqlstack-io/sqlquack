@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import re
 
-from scripts.syntax_catalogue._helpers.forms import skeleton_words
-from scripts.syntax_catalogue._helpers.grammar import normalize, slug, symbol_name
-from scripts.syntax_catalogue.constants import KIND_CALL, KIND_SPECIAL, KIND_STATEMENT
-from scripts.syntax_catalogue.models import FormGroup
+from scripts.grammar_catalogue._helpers.forms import skeleton_words
+from scripts.grammar_catalogue._helpers.grammar import normalize, slug, symbol_name
+from scripts.grammar_catalogue.constants import KIND_CALL, KIND_SPECIAL, KIND_STATEMENT
+from scripts.grammar_catalogue.models import FormGroup
 from scripts.syntax_catalogue_duckdb._helpers.railroad import is_empty, render
 from scripts.syntax_catalogue_duckdb.constants import (
     BARE_NAME,

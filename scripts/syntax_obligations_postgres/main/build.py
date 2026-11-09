@@ -7,8 +7,8 @@ import json
 import tomllib
 from pathlib import Path
 
-from scripts.syntax_obligations.exceptions import ObligationError
-from scripts.syntax_obligations.models import ReceiptView
+from scripts.grammar_obligations.exceptions import ObligationError
+from scripts.grammar_obligations.models import ReceiptView
 from scripts.syntax_obligations_postgres._helpers.adapt import install, retired_ids
 from scripts.syntax_obligations_postgres._helpers.cases import (
     focus_forms,

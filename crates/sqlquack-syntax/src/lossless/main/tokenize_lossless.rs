@@ -1,20 +1,18 @@
-//! `tokenize_lossless`: lossless tokens of `sql`, with the dialect's tokenizer deciding the significant tokens.
+//! `tokenize_lossless`: lossless tokens of `sql`, with a tokenizer configuration deciding the significant tokens.
 
-use crate::lossless::_helpers::trivia::tokenizer_config;
 use crate::lossless::_helpers::trivia::trivia;
 use crate::lossless::errors::TokenizeFailure;
 use crate::lossless::models::CharOffsets;
 use crate::lossless::models::LosslessToken;
 use crate::lossless::models::TokenKind;
-use crate::tokens::models::Dialect;
 use crate::tokens::models::Tokenizer;
+use crate::tokens::models::TokenizerConfig;
 
-/// Lossless tokens of `sql`, with the dialect's tokenizer deciding the significant tokens.
-pub(crate) fn tokenize_lossless(
+/// Lossless tokens of `sql`, with the tokenizer `config` builds deciding the significant tokens.
+pub fn tokenize_lossless(
     sql: &str,
-    dialect: Dialect,
+    config: TokenizerConfig,
 ) -> Result<Vec<LosslessToken>, TokenizeFailure> {
-    let config = tokenizer_config(dialect);
     let nested = config.nested_comments;
     let tokens = Tokenizer::new(config).tokenize(sql)?;
     let offsets = CharOffsets::new(sql);

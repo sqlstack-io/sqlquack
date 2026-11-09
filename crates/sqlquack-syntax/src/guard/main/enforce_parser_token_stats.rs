@@ -6,7 +6,7 @@ use crate::guard::models::TokenGuardStats;
 use crate::tokens::models::ParserToken;
 use crate::tokens::types::Result;
 
-pub(crate) fn enforce_parser_token_stats(
+pub fn enforce_parser_token_stats(
     tokens: &[ParserToken],
     stats: &TokenGuardStats,
     options: &ComplexityGuardOptions,

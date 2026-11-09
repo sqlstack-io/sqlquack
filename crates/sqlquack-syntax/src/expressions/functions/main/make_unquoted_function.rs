@@ -4,7 +4,7 @@ use crate::expressions::functions::models::Function;
 use crate::expressions::tree::models::Expression;
 use crate::tokens::models::SourceSpan;
 
-pub(crate) fn make_unquoted_function(name: &str, args: Vec<Expression>) -> Expression {
+pub fn make_unquoted_function(name: &str, args: Vec<Expression>) -> Expression {
     Expression::Function(Box::new(Function {
         on_error: None,
         qualified_name: Vec::new(),

@@ -1,7 +1,8 @@
 //! `compare_located`: a located parse against the faithful parse it must equal, spans aside.
 
 use serde_json::Value;
-use sqlquack_syntax::{CallMode, Dialect, ParseOptions, parse_statements_with};
+use sqlquack_syntax::{CallMode, Dialect, ParseOptions};
+use sqlquack_syntax_snowflake::parse_statements_with;
 
 use crate::comparison::constants::SPAN_FIELD;
 

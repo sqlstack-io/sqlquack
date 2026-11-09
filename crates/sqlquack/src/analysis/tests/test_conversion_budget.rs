@@ -1,5 +1,5 @@
-use sqlquack_core::refusals::models::RefusalCategory;
-use sqlquack_rules::conversion::models::ConversionBudget;
+use sqlquack_convert::snowflake::conversion::models::ConversionBudget;
+use sqlquack_diagnostics::refusals::models::RefusalCategory;
 
 use crate::analysis::tests::helpers::budget_refusal;
 use crate::analysis::tests::test_types::BudgetTestCase;

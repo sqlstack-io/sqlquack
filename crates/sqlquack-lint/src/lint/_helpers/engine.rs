@@ -12,12 +12,14 @@ use crate::lint::models::{
     LintResponse, LintRuleMetadata, ParsedSql, QueryFacts, SqlMacroOutput,
 };
 
+use crate::dialects::main::lint_dialect::lint_dialect;
+use crate::dialects::main::profile::profile;
 use crate::lint::_helpers::additional::collect_additional_facts;
 use crate::lint::_helpers::inline_relations::collect_inline_query_relation_spans;
 use crate::lint::_helpers::join_predicates::{
     condition_tokens, cross_join_diagnostics, trivial_on_condition,
 };
-use crate::lint::_helpers::parsing::{dialect as parse_dialect, parse};
+use crate::lint::_helpers::parsing::parse;
 use crate::lint::_helpers::terminal_shape::{
     collect_terminal_shape_facts, first_row_selection_clause, limits_to_no_rows,
     projects_only_constants,
@@ -368,7 +370,7 @@ pub(crate) fn lint(request: LintRequest) -> Result<LintResponse, String> {
         ));
     }
     let enabled = enabled_rules(request.enabled_rules, &request.ignored_rules)?;
-    let Some(dialect) = parse_dialect(&request.dialect)? else {
+    let Some(dialect) = lint_dialect(&request.dialect)? else {
         return Ok(LintResponse {
             version: LINT_API_VERSION,
             diagnostics: Vec::new(),
@@ -1790,15 +1792,7 @@ fn simple_boolean_case_fix(sql: &str, tokens: &[Token], span: Span) -> Option<Li
 }
 
 fn explicit_union_fix(dialect: LintDialect, span: Span) -> Option<LintEdit> {
-    matches!(
-        dialect,
-        LintDialect::PostgreSQL
-            | LintDialect::Snowflake
-            | LintDialect::DuckDB
-            | LintDialect::BigQuery
-            | LintDialect::Databricks
-    )
-    .then(|| LintEdit {
+    profile(dialect).union_distinct.then(|| LintEdit {
         start: span.start,
         end: span.end,
         replacement: "UNION DISTINCT".to_string(),

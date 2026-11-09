@@ -1,6 +1,7 @@
 use std::collections::BTreeSet;
 
-use sqlquack_syntax::{Dialect, ParseOptions, parse_statements};
+use sqlquack_syntax::{Dialect, ParseOptions};
+use sqlquack_syntax_snowflake::parse_statements;
 
 use crate::statements::_helpers::spellings::tree_spellings;
 use crate::statements::tests::test_types::SpellingsTestCase;

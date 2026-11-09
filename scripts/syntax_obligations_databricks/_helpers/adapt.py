@@ -9,12 +9,12 @@ import tomllib
 from collections.abc import Callable
 from pathlib import Path
 
-from scripts.syntax_obligations import constants as shared
-from scripts.syntax_obligations._helpers import derive, grammar, ids, obligations
-from scripts.syntax_obligations.classes import renderer
-from scripts.syntax_obligations.classes.renderer import Renderer
-from scripts.syntax_obligations.classes.walk import Walk
-from scripts.syntax_obligations.constants import (
+from scripts.grammar_obligations import constants as shared
+from scripts.grammar_obligations._helpers import derive, grammar, ids, obligations
+from scripts.grammar_obligations.classes import renderer
+from scripts.grammar_obligations.classes.renderer import Renderer
+from scripts.grammar_obligations.classes.walk import Walk
+from scripts.grammar_obligations.constants import (
     ACTION_HAND,
     ACTION_RESERVED_WORD,
     EXPECT_ACCEPT,
@@ -23,9 +23,9 @@ from scripts.syntax_obligations.constants import (
     PAIR_SIZE,
     RESERVED_WORD,
 )
-from scripts.syntax_obligations.exceptions import ObligationError
-from scripts.syntax_obligations.models import Draft, FormStyle, Node, Rendered, Spec
-from scripts.syntax_obligations.types import Key, Row
+from scripts.grammar_obligations.exceptions import ObligationError
+from scripts.grammar_obligations.models import Draft, FormStyle, Node, Rendered, Spec
+from scripts.grammar_obligations.types import Key, Row
 from scripts.syntax_obligations_databricks.constants import (
     ALIAS_RESERVED_NOTE,
     ALIAS_RESERVED_WORD,

@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use sqlquack_core::provenance::models::Shape;
+use sqlquack_diagnostics::provenance::models::Shape;
 
 use crate::coverage::models::Covering;
 

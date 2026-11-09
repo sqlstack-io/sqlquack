@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from scripts.syntax_catalogue._helpers.catalogue import absent_forms, load_existing
-from scripts.syntax_catalogue._helpers.forms import emit_forms, group_calls
-from scripts.syntax_catalogue.models import Existing, FormGroup, PageContext, Production
+from scripts.grammar_catalogue._helpers.existing import absent_forms, load_existing
+from scripts.grammar_catalogue._helpers.forms import emit_forms, group_calls
+from scripts.grammar_catalogue.models import Existing, FormGroup, PageContext, Production
 from scripts.syntax_catalogue_databricks._helpers.families import family_of, page_slug, source_id
 from scripts.syntax_catalogue_databricks._helpers.hand import load_hand
 from scripts.syntax_catalogue_databricks._helpers.notation import productions

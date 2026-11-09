@@ -4,12 +4,13 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 
 use crate::lineage::_helpers::checks::coercion::{
-    Engine, comparable, invalid_literal_for, literal_coerces, predicate, string_literal,
-    temporal_function_argument,
+    Engine, comparable, invalid_literal_for, literal_coerces, predicate, temporal_function_argument,
 };
-use crate::lineage::_helpers::checks::families::Family;
 use crate::lineage::_helpers::checks::issues::{issue, type_location};
 use crate::lineage::constants::TYPE_PHASE;
+use crate::lineage::main::call::call;
+use crate::lineage::main::string_literal::string_literal;
+use crate::lineage::models::Family;
 use crate::lineage::models::NameFinding;
 
 /// DuckDB's STRFTIME, which also takes its format first.
@@ -139,103 +140,10 @@ pub(crate) fn dispatch_name(name: &str) -> String {
     sqlquack_syntax::canonical_call_name(name)
 }
 
-/// The built-in call `node` makes: its name and arguments, when signatures know its form.
-pub(crate) fn call(node: &Expression) -> Option<(String, Vec<&Expression>)> {
-    let arguments: Vec<&Expression> = match node {
-        Expression::Function(function) => {
-            return Some((
-                dispatch_name(&function.name),
-                function.args.iter().collect(),
-            ));
-        }
-        Expression::AggregateFunction(function) => {
-            return Some((
-                dispatch_name(&function.name),
-                function.args.iter().collect(),
-            ));
-        }
-        Expression::Sum(function)
-        | Expression::Avg(function)
-        | Expression::Min(function)
-        | Expression::Max(function)
-        | Expression::Stddev(function)
-        | Expression::StddevPop(function)
-        | Expression::StddevSamp(function)
-        | Expression::Variance(function)
-        | Expression::VarPop(function)
-        | Expression::VarSamp(function) => vec![&function.this],
-        Expression::Lag(function) | Expression::Lead(function) => {
-            let mut arguments: Vec<&Expression> = vec![&function.this];
-            arguments.extend(function.offset.iter());
-            arguments.extend(function.default.iter());
-            arguments
-        }
-        Expression::NTile(function) => {
-            return named("ntile", function.num_buckets.iter().collect());
-        }
-        Expression::NullIf(function) => {
-            return named("nullif", vec![&function.this, &function.expression]);
-        }
-        Expression::IfNull(function) => {
-            return named("ifnull", vec![&function.this, &function.expression]);
-        }
-        Expression::FirstValue(function) | Expression::LastValue(function) => vec![&function.this],
-        Expression::Coalesce(function)
-        | Expression::Greatest(function)
-        | Expression::Least(function) => function.expressions.iter().collect(),
-        Expression::StringAgg(function) => {
-            let mut arguments: Vec<&Expression> = vec![&function.this];
-            arguments.extend(function.separator.iter());
-            arguments
-        }
-        Expression::ListAgg(function) => {
-            let mut arguments: Vec<&Expression> = vec![&function.this];
-            arguments.extend(function.separator.iter());
-            return named("listagg", arguments);
-        }
-        Expression::Upper(function)
-        | Expression::Lower(function)
-        | Expression::LTrim(function)
-        | Expression::RTrim(function)
-        | Expression::Abs(function)
-        | Expression::Sqrt(function)
-        | Expression::Length(function) => vec![&function.this],
-        Expression::Substring(function) => {
-            let mut arguments: Vec<&Expression> = vec![&function.this, &function.start];
-            arguments.extend(function.length.iter());
-            arguments
-        }
-        Expression::Replace(function) => vec![&function.this, &function.old, &function.new],
-        Expression::Left(function) | Expression::Right(function) => {
-            vec![&function.this, &function.length]
-        }
-        Expression::Round(function) => {
-            let mut arguments: Vec<&Expression> = vec![&function.this];
-            arguments.extend(function.decimals.iter());
-            arguments
-        }
-        Expression::Floor(function) => {
-            let mut arguments: Vec<&Expression> = vec![&function.this];
-            arguments.extend(function.scale.iter());
-            arguments
-        }
-        Expression::Ceil(function) => {
-            let mut arguments: Vec<&Expression> = vec![&function.this];
-            arguments.extend(function.decimals.iter());
-            arguments
-        }
-        Expression::Power(function) => vec![&function.this, &function.expression],
-        Expression::Trim(function) => {
-            let mut arguments: Vec<&Expression> = vec![&function.this];
-            arguments.extend(function.characters.iter());
-            arguments
-        }
-        _ => return None,
-    };
-    Some((node.variant_name().to_owned(), arguments))
-}
-
-fn named<'a>(name: &str, arguments: Vec<&'a Expression>) -> Option<(String, Vec<&'a Expression>)> {
+pub(crate) fn named<'a>(
+    name: &str,
+    arguments: Vec<&'a Expression>,
+) -> Option<(String, Vec<&'a Expression>)> {
     Some((name.to_owned(), arguments))
 }
 

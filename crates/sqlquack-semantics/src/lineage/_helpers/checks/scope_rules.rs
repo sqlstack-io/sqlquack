@@ -8,12 +8,12 @@ use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::{Column, Identifier, Literal};
 use sqlquack_syntax::expressions::queries::models::{OrderBy, Select};
 
+use crate::dialects::main::dialect_rules::dialect_rules;
 use crate::lineage::_helpers::checks::coercion::Engine;
 use crate::lineage::_helpers::checks::issues::{in_scope, issue, rule_location};
 use crate::lineage::_helpers::findings::checks::keyword_function;
 use crate::lineage::_helpers::tracing::expressions::is_aggregate;
 use crate::lineage::_helpers::tracing::resolution::key;
-use crate::lineage::_helpers::typing::postgres_typing::postgres_window_only;
 use crate::lineage::constants::{
     BIGQUERY_WINDOW_ONLY_FUNCTIONS, NAME_FIELD, POSTGRES_PROFILE, SCOPE_PHASE,
     SHAPE_COMMENT_SUFFIX, SHAPE_COSMETIC_FIELDS, SNOWFLAKE_PROFILE, SPAN_FIELD, SQLITE_PROFILE,
@@ -30,7 +30,10 @@ const MISPLACED_WINDOW: &str =
     "Window function is not allowed in this clause or inside another aggregate/window function";
 
 /// A finding for each window function without OVER that the all-engine placement rule misses (42809).
-fn unwindowed_calls(node: &Expression, window_only: fn(&Expression) -> bool) -> Vec<NameFinding> {
+fn unwindowed_calls(
+    node: &Expression,
+    window_only: &dyn Fn(&Expression) -> bool,
+) -> Vec<NameFinding> {
     let scoped: Vec<&Expression> = in_scope(node);
     let mut wrapped: Vec<&Expression> = Vec::new();
     for expression in &scoped {
@@ -343,9 +346,10 @@ fn structure_rules(
     }
     match engine {
         Engine::Postgres | Engine::Sqlite | Engine::Snowflake | Engine::DuckDB => {
-            findings.extend(unwindowed_calls(node, postgres_window_only));
+            let rules = dialect_rules(level.context.profile);
+            findings.extend(unwindowed_calls(node, &|call| rules.window_only(call)));
         }
-        Engine::BigQuery => findings.extend(unwindowed_calls(node, bigquery_window_only)),
+        Engine::BigQuery => findings.extend(unwindowed_calls(node, &bigquery_window_only)),
         Engine::Databricks => {}
     }
     if select.qualify.is_some() && !has_window {

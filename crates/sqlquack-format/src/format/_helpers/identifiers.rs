@@ -3,7 +3,7 @@
 use serde_json::Value;
 use sqlquack_syntax::Expression;
 
-use crate::format::_helpers::lexemes::Lexeme;
+use crate::dialects::models::Lexeme;
 use crate::format::constants::{ASSIGNMENT_OPERATOR, BINARY_OPERATOR_NODES};
 
 /// The fields of a serialised identifier node.

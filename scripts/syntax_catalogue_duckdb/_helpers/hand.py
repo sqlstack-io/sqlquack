@@ -6,7 +6,7 @@ import tomllib
 from pathlib import Path
 from typing import cast
 
-from scripts.syntax_catalogue.models import HandForm
+from scripts.grammar_catalogue.models import HandForm
 from scripts.syntax_catalogue_duckdb.models import HandInputs, HandPage
 
 

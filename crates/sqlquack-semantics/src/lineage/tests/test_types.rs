@@ -4,13 +4,6 @@ use sqlquack_syntax::Dialect;
 
 use crate::dialects::types::DialectProfile;
 use crate::lineage::models::{Nullability, NullabilityRule, SchemaColumn, TransformKind};
-use crate::types::models::Holding;
-
-pub(crate) struct StoredColumnsTestCase {
-    pub(crate) description: &'static str,
-    pub(crate) written: Holding,
-    pub(crate) expected_read: Holding,
-}
 
 pub(crate) struct QueryLineageTestCase {
     pub(crate) description: &'static str,
@@ -54,56 +47,6 @@ pub(crate) struct TypedShopSchema {
 
 /// An output's expected name, type and nullability.
 pub(crate) type ExpectedTypedOutput = (&'static str, Option<&'static str>, Nullability);
-
-pub(crate) struct OutputTypeTestCase {
-    pub(crate) description: &'static str,
-    pub(crate) sql: &'static str,
-    pub(crate) expected_outputs: &'static [ExpectedTypedOutput],
-}
-
-pub(crate) struct ProjectsStarTestCase {
-    pub(crate) description: &'static str,
-    pub(crate) sql: &'static str,
-    pub(crate) expected_projects_star: bool,
-}
-
-pub(crate) struct ResolvedReadTestCase {
-    pub(crate) description: &'static str,
-    pub(crate) sql: &'static str,
-    pub(crate) expected_sources: &'static [&'static str],
-    pub(crate) expected_resolved: bool,
-}
-
-pub(crate) struct ClickhouseJoinTestCase {
-    pub(crate) description: &'static str,
-    pub(crate) sql: &'static str,
-    pub(crate) expected_output: (Option<&'static str>, Nullability),
-    pub(crate) expected_codes: &'static [&'static str],
-}
-
-pub(crate) struct ClickhouseTypeTestCase {
-    pub(crate) description: &'static str,
-    pub(crate) sql: &'static str,
-    pub(crate) expected_output: ExpectedTypedOutput,
-}
-
-pub(crate) struct DuckdbTypeTestCase {
-    pub(crate) description: &'static str,
-    pub(crate) sql: &'static str,
-    pub(crate) expected_type: Option<&'static str>,
-}
-
-pub(crate) struct BigqueryTypeTestCase {
-    pub(crate) description: &'static str,
-    pub(crate) sql: &'static str,
-    pub(crate) expected_type: Option<&'static str>,
-}
-
-pub(crate) struct PostgresTypeTestCase {
-    pub(crate) description: &'static str,
-    pub(crate) sql: &'static str,
-    pub(crate) expected_type: Option<&'static str>,
-}
 
 /// Engine-recorded result types: the schema the cases read and each case's bound type.
 #[derive(serde::Deserialize)]
@@ -171,42 +114,8 @@ pub(crate) struct DialectTypeTestCase {
     pub(crate) expected_outputs: &'static [ExpectedTypedOutput],
 }
 
-pub(crate) struct DatabricksOutputsTestCase {
-    pub(crate) description: &'static str,
-    pub(crate) sql: &'static str,
-    pub(crate) expected_outputs: &'static [(&'static str, Option<&'static str>)],
-}
-
 pub(crate) struct QueryFindingsTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,
     pub(crate) expected_findings: &'static [(&'static str, &'static str, usize)],
-}
-
-/// SQL Server outputs: the query and each output's name and type.
-pub(crate) struct SqlServerOutputsTestCase {
-    pub(crate) description: &'static str,
-    pub(crate) sql: &'static str,
-    pub(crate) expected_outputs: &'static [(&'static str, Option<&'static str>)],
-}
-
-/// SQLite outputs: the query and each output's name, type and nullability.
-pub(crate) struct SqliteOutputsTestCase {
-    pub(crate) description: &'static str,
-    pub(crate) sql: &'static str,
-    pub(crate) expected_outputs: &'static [(&'static str, Option<&'static str>, Nullability)],
-}
-
-/// A deeply nested SQLite query: its tree depth, outputs and findings, or the parser's refusal.
-pub(crate) struct DeepSqliteTestCase {
-    pub(crate) description: &'static str,
-    pub(crate) sql: String,
-    pub(crate) expected_result: Result<(usize, usize, usize), &'static str>,
-}
-
-/// A nesting analysed at two depths, and how many times the shallow work the deep may take.
-pub(crate) struct NestingWorkTestCase {
-    pub(crate) description: &'static str,
-    pub(crate) shape: fn(usize) -> String,
-    pub(crate) expected_growth_at_most: usize,
 }

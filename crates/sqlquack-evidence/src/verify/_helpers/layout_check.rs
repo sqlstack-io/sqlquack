@@ -2,7 +2,7 @@
 
 use sqlquack_compare::values::models::ResultSet;
 
-use crate::replay::main::replay_on_duckdb::replay_on_duckdb;
+use crate::replay::main::replay_on_engine::replay_on_engine;
 use crate::replay::models::{PythonReplay, ReplaySettings};
 
 /// The divergence whose values read the clock, so two replays may differ by the time between them.
@@ -20,7 +20,7 @@ pub(crate) fn layout_failure(
         Ok(laid_out) => laid_out,
         Err(reason) => return Some(format!("the layout changed more than whitespace: {reason}")),
     };
-    let replayed = replay_on_duckdb((setup, laid_out), python, settings);
+    let replayed = replay_on_engine((setup, laid_out), python, settings);
     let same = match (single_line, &replayed) {
         (Ok(single_line), Ok(replayed)) => same_result(single_line, replayed, reads_clock),
         (Err(single_line), Err(replayed)) => first_line(single_line) == first_line(replayed),

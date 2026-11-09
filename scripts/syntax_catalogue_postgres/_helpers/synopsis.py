@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from collections.abc import Callable
 
-from scripts.syntax_catalogue._helpers.grammar import (
+from scripts.grammar_catalogue._helpers.grammar import (
     bare_words,
     bracket_depth_change,
     normalize,

@@ -1,28 +1,22 @@
 //! `is_aggregate`: whether a node is an aggregate call, as polyglot classified them.
 
+use crate::dialects::main::profile::profile;
+use crate::dialects::models::LintProfile;
 use crate::lint::models::LintDialect;
 use sqlquack_syntax::Expression;
 
-use crate::tree::constants::{
-    BIGQUERY_AGGREGATE_CALLS, BIGQUERY_FOREIGN_AGGREGATE_CALLS,
-    BIGQUERY_SINGLE_ARGUMENT_AGGREGATES, DATABRICKS_AGGREGATE_CALLS,
-    DATABRICKS_FOREIGN_AGGREGATE_CALLS, DATABRICKS_SINGLE_ARGUMENT_AGGREGATES,
-    JSON_AGGREGATE_KINDS, POSTGRES_AGGREGATE_CALLS, POSTGRES_FOREIGN_AGGREGATE_CALLS,
-    POSTGRES_SINGLE_ARGUMENT_AGGREGATES, WINDOW_ONLY_CALLS,
-};
+use crate::tree::constants::{JSON_AGGREGATE_KINDS, WINDOW_ONLY_CALLS};
 use crate::tree::main::call_name::call_name;
 
 /// Whether `expression` is an aggregate call; window-only calls and scalar helpers are not.
 pub(crate) fn is_aggregate(expression: &Expression, dialect: LintDialect) -> bool {
+    let profile: LintProfile = profile(dialect);
     match expression {
         Expression::Function(_) | Expression::AggregateFunction(_)
-            if matches!(
-                dialect,
-                LintDialect::PostgreSQL | LintDialect::BigQuery | LintDialect::Databricks
-            ) =>
+            if profile.plain_call_aggregates =>
         {
             call_name(expression)
-                .is_some_and(|name| is_named_aggregate(name, call_arguments(expression), dialect))
+                .is_some_and(|name| is_named_aggregate(name, call_arguments(expression), &profile))
         }
         Expression::KeywordCall(call) => JSON_AGGREGATE_KINDS
             .iter()
@@ -113,24 +107,12 @@ pub(crate) fn is_aggregate(expression: &Expression, dialect: LintDialect) -> boo
 }
 
 /// Whether a plain call of `name` is an aggregate: the dialect's own, or one polyglot classified there.
-fn is_named_aggregate(name: &str, arguments: usize, dialect: LintDialect) -> bool {
-    let (own, foreign, single): (&[&str], &[&str], &[&str]) = match dialect {
-        LintDialect::BigQuery => (
-            &BIGQUERY_AGGREGATE_CALLS,
-            &BIGQUERY_FOREIGN_AGGREGATE_CALLS,
-            &BIGQUERY_SINGLE_ARGUMENT_AGGREGATES,
-        ),
-        LintDialect::Databricks => (
-            &DATABRICKS_AGGREGATE_CALLS,
-            &DATABRICKS_FOREIGN_AGGREGATE_CALLS,
-            &DATABRICKS_SINGLE_ARGUMENT_AGGREGATES,
-        ),
-        _ => (
-            &POSTGRES_AGGREGATE_CALLS,
-            &POSTGRES_FOREIGN_AGGREGATE_CALLS,
-            &POSTGRES_SINGLE_ARGUMENT_AGGREGATES,
-        ),
-    };
+fn is_named_aggregate(name: &str, arguments: usize, profile: &LintProfile) -> bool {
+    let (own, foreign, single): (&[&str], &[&str], &[&str]) = (
+        profile.named_aggregates,
+        profile.foreign_aggregates,
+        profile.single_argument_aggregates,
+    );
     let named = |names: &[&str]| names.iter().any(|known| known.eq_ignore_ascii_case(name));
     (named(own) || named(foreign)) && (arguments <= 1 || !named(single))
 }

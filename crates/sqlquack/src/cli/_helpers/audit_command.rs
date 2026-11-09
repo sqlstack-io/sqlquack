@@ -9,7 +9,7 @@ use sqlquack_evidence::audit::main::sample_cases::sample_cases;
 use sqlquack_evidence::audit::models::{AuditEntry, AuditOutcome};
 use sqlquack_evidence::cases::models::LoadedCase;
 use sqlquack_evidence::pending::main::write_pending::write_pending;
-use sqlquack_evidence::replay::main::duckdb_version::duckdb_version;
+use sqlquack_evidence::replay::main::engine_version::engine_version;
 use sqlquack_evidence::results::main::load_result::load_result;
 use sqlquack_evidence::results::models::RecordedOutcome;
 
@@ -120,7 +120,7 @@ fn error_pending(arguments: &AuditArguments) -> Result<(usize, usize), String> {
             chosen.push(case.clone());
         }
     }
-    let version = duckdb_version().map_err(|error| error.to_string())?;
+    let version = engine_version().map_err(|error| error.to_string())?;
     let summary = write_pending(&chosen, &arguments.audit_results, &arguments.out, &version)
         .map_err(|error| error.to_string())?;
     Ok((chosen.len(), summary.written))
@@ -137,7 +137,7 @@ fn sample_pending(
             .into_iter()
             .cloned()
             .collect();
-    let version = duckdb_version().map_err(|error| error.to_string())?;
+    let version = engine_version().map_err(|error| error.to_string())?;
     let summary = write_pending(&chosen, &arguments.audit_results, &arguments.out, &version)
         .map_err(|error| error.to_string())?;
     Ok((chosen.len(), summary.written))

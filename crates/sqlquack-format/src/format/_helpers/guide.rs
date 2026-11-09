@@ -2,31 +2,25 @@
 
 use std::collections::HashMap;
 
-use crate::format::models::FormatDialect;
 use sqlquack_syntax::tokens::models::TokenType;
-use sqlquack_syntax_bigquery::keywords::main::is_reserved::is_reserved as is_bigquery_reserved;
-use sqlquack_syntax_sqlserver::is_reserved;
 
+use crate::dialects::models::LayoutRules;
+
+use crate::dialects::main::is_keyword::is_keyword;
+use crate::dialects::main::is_unquoted_word::is_unquoted_word;
+use crate::dialects::models::Lexeme;
 use crate::format::_helpers::identifiers::ParsedNames;
-use crate::format::_helpers::lexemes::{
-    Lexeme, bracket_partners, ends_operand, is_keyword, is_unquoted_word,
-};
-use crate::format::_helpers::sqlserver::StatementTokens;
+use crate::format::_helpers::lexemes::{bracket_partners, ends_operand};
+use crate::format::_helpers::statements::StatementTokens;
 use crate::format::constants::{
-    ALIAS_FOLLOWERS, BIGQUERY_INDEX_KEYWORD, BIGQUERY_INLINE_CALLS, BIGQUERY_REFERENCES_KEYWORD,
-    BIGQUERY_SET_OPERATOR_PREFIXES, BIGQUERY_VALUE_TABLE_KINDS, CALL_TARGET_KEYWORDS,
-    CASE_BRANCHES, CLAUSE_KEYWORDS, COLUMNS_CALL, CTE_BODY_PREFIXES, DUCKDB_INLINE_CALLS,
-    EXPRESSION_LEADERS, FROM_CONTINUED, GROUPING_CALLS, GUIDE_INDENT, GUIDE_WIDTH, INSERT_BODIES,
-    INSERT_KEYWORD, JOIN_PREFIXES, LAMBDA_KEYWORD, PARAMETERISED_TYPES, PLACEHOLDER_NAME_PREFIX,
-    PLACEHOLDER_WIDTH, POSTFIX_CAST_WIDTH, POSTGRES_CTE_CLAUSES, POSTGRES_INLINE_CALLS,
-    POSTGRES_INLINE_SOURCES, POSTGRES_INTO_CLAUSE, POSTGRES_PATTERN_OPERATORS,
-    POSTGRES_QUANTIFIERS, POSTGRES_SPACED_QUANTIFIER, SAMPLE_KEYWORDS, SAMPLE_ROW_KEYWORD,
+    ALIAS_FOLLOWERS, APPLY_KEYWORD, CALL_TARGET_KEYWORDS, CASE_BRANCHES, CLAUSE_KEYWORDS,
+    COLUMNS_CALL, CTE_BODY_PREFIXES, EXPRESSION_LEADERS, FROM_CONTINUED, GROUPING_CALLS,
+    GUIDE_INDENT, GUIDE_WIDTH, INDEX_KEYWORD, INSERT_BODIES, INSERT_KEYWORD, JOIN_PREFIXES,
+    LAMBDA_KEYWORD, PARAMETERISED_TYPES, PATTERN_OPERATORS, PLACEHOLDER_NAME_PREFIX,
+    PLACEHOLDER_WIDTH, POSTFIX_CAST_WIDTH, REFERENCES_KEYWORD, SAMPLE_KEYWORDS, SAMPLE_ROW_KEYWORD,
     SEMANTIC_VIEW_CALL, SEMANTIC_VIEW_CLAUSES, SET_OPERATOR_MODIFIERS, SET_OPERATORS,
-    SNOWFLAKE_INLINE_CALLS, SPACED_BEFORE_PARENTHESIS, SQLSERVER_APPLY_KEYWORD,
-    SQLSERVER_APPLY_PREFIXES, SQLSERVER_BEGIN_STATEMENTS, SQLSERVER_BLOCK_WORDS,
-    SQLSERVER_BRANCH_STATEMENTS, SQLSERVER_INLINE_CALLS, SQLSERVER_LIST_CLAUSES,
-    SQLSERVER_OBJECT_PRECEDERS, SQLSERVER_SPACED_BEFORE_PARENTHESIS, STRUCT_TYPE_WORDS,
-    TYPE_CONTINUATIONS, TYPED_LITERALS, VALUES_KEYWORD,
+    SPACED_BEFORE_PARENTHESIS, STRUCT_TYPE_WORDS, TYPE_CONTINUATIONS, TYPED_LITERALS,
+    VALUE_TABLE_KINDS, VALUES_KEYWORD,
 };
 
 /// The guide's text and its tokens, with byte ranges in that text.
@@ -46,9 +40,9 @@ pub(crate) fn layout_guide(
     lexemes: &[Lexeme],
     names: &ParsedNames,
     statement_ranges: &[StatementTokens],
-    dialect: FormatDialect,
+    rules: &LayoutRules,
 ) -> GuideLayout {
-    let mut guide = Guide::new(lexemes, names, dialect);
+    let mut guide = Guide::new(lexemes, names, rules);
     guide.statement_ranges = statement_ranges;
     guide.statements();
     guide.render()
@@ -69,7 +63,8 @@ struct Guide<'a> {
     verbatim: Vec<(usize, usize)>,
     /// The number of select lists laid out.
     selects: usize,
-    dialect: FormatDialect,
+    /// The layout rules only the SQL's dialect has.
+    rules: &'a LayoutRules,
     partners: Vec<Option<usize>>,
     /// The innermost bracket each token is inside.
     enclosing: Vec<Option<usize>>,
@@ -110,7 +105,7 @@ fn sentinel_width(sequence: usize) -> usize {
 }
 
 impl<'a> Guide<'a> {
-    fn new(lexemes: &'a [Lexeme], names: &'a ParsedNames, dialect: FormatDialect) -> Self {
+    fn new(lexemes: &'a [Lexeme], names: &'a ParsedNames, rules: &'a LayoutRules) -> Self {
         let count = lexemes.len();
         let mut enclosing: Vec<Option<usize>> = vec![None; count];
         let mut open: Vec<usize> = Vec::new();
@@ -136,7 +131,7 @@ impl<'a> Guide<'a> {
             unspanned: &names.unspanned,
             verbatim: Vec::new(),
             selects: 0,
-            dialect,
+            rules,
             partners: bracket_partners(lexemes),
             enclosing,
             in_run: vec![false; count],
@@ -210,10 +205,10 @@ impl<'a> Guide<'a> {
     }
 
     fn mark_runs(&mut self) {
-        if self.dialect == FormatDialect::BigQuery {
+        if self.rules.dashed_names {
             self.mark_dashed_names();
         }
-        if self.dialect != FormatDialect::Snowflake {
+        if !self.rules.stage_runs {
             return;
         }
         let mut index = 0;
@@ -360,7 +355,7 @@ impl<'a> Guide<'a> {
         }
         if next.kind == TokenType::LParen {
             return if self.spaced_before_parenthesis(index - 1)
-                || self.sqlserver_spaced_before_parenthesis(index - 1)
+                || self.keyword_spaced_before_parenthesis(index - 1)
                 || !self.calls(index - 1)
             {
                 " "
@@ -390,10 +385,8 @@ impl<'a> Guide<'a> {
             return false;
         }
         let upper = self.upper(index);
-        if self.dialect == FormatDialect::PostgreSQL
-            && POSTGRES_QUANTIFIERS.contains(&upper.as_str())
-        {
-            return upper == POSTGRES_SPACED_QUANTIFIER && self.after_pattern_operator(index);
+        if self.rules.quantifiers.contains(&upper.as_str()) {
+            return upper == self.rules.spaced_quantifier && self.after_pattern_operator(index);
         }
         let after_star = index > 0
             && matches!(
@@ -410,45 +403,45 @@ impl<'a> Guide<'a> {
             || (upper == SAMPLE_ROW_KEYWORD && after_sample)
     }
 
-    /// Lay out a SQL Server `TOP (SELECT ...)` count as a subquery; any other `TOP (...)` stays as written.
-    fn sqlserver_top_query(&mut self, opener: usize, closer: usize, indent: usize) {
-        if self.dialect == FormatDialect::SqlServer && self.starts_query(opener + 1) {
+    /// Lay out a `TOP (SELECT ...)` count as a subquery where the dialect allows one, as SQL Server does; any other `TOP (...)` stays as written.
+    fn top_query(&mut self, opener: usize, closer: usize, indent: usize) {
+        if self.rules.top_queries && self.starts_query(opener + 1) {
             self.subquery(opener, closer, indent);
         }
     }
 
-    /// Whether the word at `index` names a SQL Server object before `(`, whose name resolves under the database collation, which may be case-sensitive: an unreserved word after a keyword that names a table, view, routine or index target, or after a comma of a FROM list.
-    fn sqlserver_object_name(&self, index: usize) -> bool {
-        self.dialect == FormatDialect::SqlServer
+    /// Whether the word at `index` names an object before `(` whose name may be case-sensitive, as SQL Server's collation makes it: an unreserved word after a keyword that names a table, view, routine or index target, or after a comma of a FROM list.
+    fn object_name(&self, index: usize) -> bool {
+        self.rules.object_names
             && index > 0
             && self.kind(index + 1) == Some(TokenType::LParen)
-            && !is_reserved(&self.lexemes[index].raw)
-            && (self.is_any(index - 1, &SQLSERVER_OBJECT_PRECEDERS)
+            && !(self.rules.is_reserved)(&self.lexemes[index].raw)
+            && (self.is_any(index - 1, self.rules.object_name_preceders)
                 || self.from_list_commas[index - 1])
     }
 
-    /// Whether the word at `index` names a BigQuery table before `(`, whose name is case-sensitive and which the tree keeps without a span: the table of a REFERENCES or of an index's ON. Unqualified table functions are built-ins, which resolve in any case.
-    fn bigquery_table_name(&self, index: usize) -> bool {
+    /// Whether the word at `index` names a case-sensitive table before `(` that the tree keeps without a span, as in BigQuery: the table of a REFERENCES or of an index's ON. Unqualified table functions are built-ins, which resolve in any case.
+    fn referenced_table_name(&self, index: usize) -> bool {
         let after_references = index
             .checked_sub(1)
-            .is_some_and(|before| self.is(before, BIGQUERY_REFERENCES_KEYWORD));
-        let after_index_on = index.checked_sub(3).is_some_and(|keyword| {
-            self.is(keyword, BIGQUERY_INDEX_KEYWORD) && self.is(keyword + 2, "ON")
-        });
-        self.dialect == FormatDialect::BigQuery
+            .is_some_and(|before| self.is(before, REFERENCES_KEYWORD));
+        let after_index_on = index
+            .checked_sub(3)
+            .is_some_and(|keyword| self.is(keyword, INDEX_KEYWORD) && self.is(keyword + 2, "ON"));
+        self.rules.referenced_table_names
             && self.kind(index + 1) == Some(TokenType::LParen)
-            && !is_bigquery_reserved(&self.lexemes[index].raw)
+            && !(self.rules.is_reserved)(&self.lexemes[index].raw)
             && (after_references || after_index_on)
     }
 
-    /// Mark the SQL Server commas whose nearest list clause at their depth is FROM, in one pass that keeps each depth's last list clause.
+    /// Mark the commas whose nearest list clause at their depth is FROM, where the dialect needs them, as SQL Server does, in one pass that keeps each depth's last list clause.
     fn mark_from_list_commas(&mut self) {
-        if self.dialect != FormatDialect::SqlServer {
+        if !self.rules.from_list_commas {
             return;
         }
         let mut in_from: HashMap<Option<usize>, bool> = HashMap::new();
         for index in 0..self.len() {
-            if self.is_any(index, &SQLSERVER_LIST_CLAUSES) {
+            if self.is_any(index, self.rules.list_clauses) {
                 in_from.insert(self.enclosing[index], self.is(index, "FROM"));
             } else if self.lexemes[index].kind == TokenType::Comma {
                 self.from_list_commas[index] = in_from
@@ -459,24 +452,21 @@ impl<'a> Guide<'a> {
         }
     }
 
-    /// Whether token `index` is the APPLY of a SQL Server `CROSS APPLY` or `OUTER APPLY`.
-    fn sqlserver_apply(&self, index: usize) -> bool {
-        self.dialect == FormatDialect::SqlServer
-            && index > 0
-            && self.is(index, SQLSERVER_APPLY_KEYWORD)
-            && self.is_any(index - 1, &SQLSERVER_APPLY_PREFIXES)
+    /// Whether token `index` is the APPLY of an apply join, such as SQL Server's `CROSS APPLY` or `OUTER APPLY`.
+    fn apply_join(&self, index: usize) -> bool {
+        index > 0
+            && self.is(index, APPLY_KEYWORD)
+            && self.is_any(index - 1, self.rules.apply_prefixes)
     }
 
-    /// Whether a SQL Server `CROSS APPLY` or `OUTER APPLY`, which the guide lays out as a join, starts at token `index`.
-    fn sqlserver_starts_apply(&self, index: usize) -> bool {
-        self.is_any(index, &SQLSERVER_APPLY_PREFIXES) && self.sqlserver_apply(index + 1)
+    /// Whether an apply join, which the guide lays out as a join, starts at token `index`.
+    fn starts_apply(&self, index: usize) -> bool {
+        self.is_any(index, self.rules.apply_prefixes) && self.apply_join(index + 1)
     }
 
-    /// Whether token `index` is a SQL Server keyword the guide separates from a following `(`.
-    fn sqlserver_spaced_before_parenthesis(&self, index: usize) -> bool {
-        self.dialect == FormatDialect::SqlServer
-            && self.is_word(index)
-            && self.is_any(index, &SQLSERVER_SPACED_BEFORE_PARENTHESIS)
+    /// Whether token `index` is a keyword the dialect's guide separates from a following `(`.
+    fn keyword_spaced_before_parenthesis(&self, index: usize) -> bool {
+        self.is_word(index) && self.is_any(index, self.rules.spaced_before_parenthesis)
     }
 
     /// Whether a `:` at `index` binds tightly: a Snowflake path, a slice, or a DuckDB prefix alias.
@@ -484,7 +474,7 @@ impl<'a> Guide<'a> {
         let enclosing = self.enclosing[index].map(|opener| self.lexemes[opener].kind);
         self.path_colon(index)
             || self.in_subscript(index)
-            || (self.dialect == FormatDialect::DuckDB
+            || (self.rules.tight_colons
                 && enclosing != Some(TokenType::LBrace)
                 && !self.lambda_colon(index))
     }
@@ -526,25 +516,24 @@ impl<'a> Guide<'a> {
             ),
             None => false,
         };
-        self.dialect == FormatDialect::DuckDB && after_number && !operand_follows
+        self.rules.percent_suffix && after_number && !operand_follows
     }
 
     /// Whether token `index` follows LIKE or ILIKE, as the quantifier of `x LIKE ANY (...)` does.
     fn after_pattern_operator(&self, index: usize) -> bool {
-        index > 0 && self.is_any(index - 1, &POSTGRES_PATTERN_OPERATORS)
+        index > 0 && self.is_any(index - 1, &PATTERN_OPERATORS)
     }
 
-    /// Whether the PostgreSQL `(` at `opener` holds the operand of a quantified pattern match.
+    /// Whether the `(` at `opener` holds the operand of a quantified pattern match, such as PostgreSQL's `x LIKE ANY (...)`.
     fn quantified_pattern(&self, opener: usize) -> bool {
-        self.dialect == FormatDialect::PostgreSQL
-            && opener > 0
-            && self.is_any(opener - 1, &POSTGRES_QUANTIFIERS)
+        opener > 0
+            && self.is_any(opener - 1, self.rules.quantifiers)
             && self.after_pattern_operator(opener - 1)
     }
 
     /// Whether the `:` at `index` is a Snowflake path accessor such as `v:field`.
     fn path_colon(&self, index: usize) -> bool {
-        self.dialect == FormatDialect::Snowflake
+        self.rules.path_colons
             && index > 0
             && self.lexemes[index].kind == TokenType::Colon
             && !matches!(
@@ -696,7 +685,7 @@ impl<'a> Guide<'a> {
 
     /// Whether a DuckDB FROM-first query, such as `FROM t WHERE x`, starts at `index`.
     fn starts_from_first(&self, index: usize) -> bool {
-        self.dialect == FormatDialect::DuckDB && self.is(index, "FROM")
+        self.rules.from_first && self.is(index, "FROM")
     }
 
     fn statements(&mut self) {
@@ -738,7 +727,7 @@ impl<'a> Guide<'a> {
 
     /// Whether a block, `BEGIN ... END` or `BEGIN TRY`, starts at `index`, not a `BEGIN TRANSACTION`.
     fn starts_block(&self, index: usize) -> bool {
-        self.is(index, "BEGIN") && !self.is_any(index + 1, &SQLSERVER_BEGIN_STATEMENTS)
+        self.is(index, "BEGIN") && !self.is_any(index + 1, self.rules.begin_statements)
     }
 
     /// Lay out a statement the parser read, at `indent`: the statements inside a block, branch, loop or procedure each on their own line, a block's indented one step, and its other words around them.
@@ -756,7 +745,7 @@ impl<'a> Guide<'a> {
             return;
         };
         let block = self.starts_block(first);
-        let branches = self.is_any(first, &SQLSERVER_BRANCH_STATEMENTS);
+        let branches = self.is_any(first, self.rules.branch_statements);
         if branches {
             self.expr(first + 1, head_end, indent);
         }
@@ -802,7 +791,7 @@ impl<'a> Guide<'a> {
             return;
         }
         for index in first..=last {
-            if self.is_any(index, &SQLSERVER_BLOCK_WORDS) {
+            if self.is_any(index, self.rules.block_words) {
                 self.gaps[index] = newline(indent);
             } else if self.kind(index) == Some(TokenType::Semicolon) {
                 self.gaps[index] = String::new();
@@ -845,10 +834,7 @@ impl<'a> Guide<'a> {
         let mut operand = start;
         for operator in operators {
             let mut line = operator;
-            while self.dialect == FormatDialect::BigQuery
-                && line > operand
-                && self.is_any(line - 1, &BIGQUERY_SET_OPERATOR_PREFIXES)
-            {
+            while line > operand && self.is_any(line - 1, self.rules.set_operator_prefixes) {
                 line -= 1;
             }
             if line > operand {
@@ -951,7 +937,7 @@ impl<'a> Guide<'a> {
             let closer = self.partners[index].filter(|&closer| closer <= last)?;
             self.gaps[index] = " ".to_string();
             self.subquery(index, closer, indent);
-            let end = self.postgres_cte_clauses_end(closer, last, indent);
+            let end = self.cte_clauses_end(closer, last, indent);
             if end < last && self.kind(end + 1) == Some(TokenType::Comma) {
                 item = end + 2;
                 continue;
@@ -960,16 +946,15 @@ impl<'a> Guide<'a> {
         }
     }
 
-    /// The last token of the PostgreSQL SEARCH and CYCLE clauses after the CTE body ending at `closer`, each on its own line; `closer` when there are none.
-    fn postgres_cte_clauses_end(&mut self, closer: usize, last: usize, indent: usize) -> usize {
+    /// The last token of the dialect's clauses after the CTE body ending at `closer`, such as PostgreSQL's SEARCH and CYCLE, each on its own line; `closer` when there are none.
+    fn cte_clauses_end(&mut self, closer: usize, last: usize, indent: usize) -> usize {
         let mut end = closer;
-        while self.dialect == FormatDialect::PostgreSQL {
-            let Some(&(_, last_word)) = POSTGRES_CTE_CLAUSES
-                .iter()
-                .find(|(clause, _)| self.is(end + 1, clause))
-            else {
-                break;
-            };
+        while let Some(&(_, last_word)) = self
+            .rules
+            .cte_clauses
+            .iter()
+            .find(|(clause, _)| self.is(end + 1, clause))
+        {
             let Some(word) = (end + 2..=last).find(|&index| self.is(index, last_word)) else {
                 break;
             };
@@ -1000,7 +985,7 @@ impl<'a> Guide<'a> {
         (!aliased && !continues && self.is_any(index, &CLAUSE_KEYWORDS))
             || (self.is(index, "USING") && self.is(index + 1, "SAMPLE"))
             || ((self.is(index, "GROUP") || self.is(index, "ORDER")) && self.is(index + 1, "BY"))
-            || (self.dialect == FormatDialect::PostgreSQL && self.is(index, POSTGRES_INTO_CLAUSE))
+            || self.is_any(index, self.rules.clause_keywords)
     }
 
     fn select(&mut self, select: usize, last: usize, indent: usize) {
@@ -1025,7 +1010,7 @@ impl<'a> Guide<'a> {
                 }
                 continue;
             }
-            if self.is(item, "AS") && self.is_any(item + 1, &BIGQUERY_VALUE_TABLE_KINDS) {
+            if self.is(item, "AS") && self.is_any(item + 1, &VALUE_TABLE_KINDS) {
                 item += 2;
                 continue;
             }
@@ -1033,7 +1018,7 @@ impl<'a> Guide<'a> {
                 item += 1;
                 item = match self.partners.get(item).copied().flatten() {
                     Some(closer) if closer > item => {
-                        self.sqlserver_top_query(item, closer, indent);
+                        self.top_query(item, closer, indent);
                         closer + 1
                     }
                     _ => item + 1,
@@ -1045,7 +1030,7 @@ impl<'a> Guide<'a> {
         self.selects += 1;
         for (first, end) in self.split_commas(item, projection_end) {
             self.gaps[first] = newline(indent + 1);
-            if self.dialect == FormatDialect::Snowflake
+            if self.rules.keeps_unaliased_items
                 && !self.aliases[end]
                 && !self.plain_column(first, end)
             {
@@ -1150,8 +1135,7 @@ impl<'a> Guide<'a> {
                     segments.push((start, index - 1, joined));
                 }
                 (start, joined) = (index + 1, false);
-            } else if index > start
-                && (self.starts_join(index, first) || self.sqlserver_starts_apply(index))
+            } else if index > start && (self.starts_join(index, first) || self.starts_apply(index))
             {
                 segments.push((start, index - 1, joined));
                 self.gaps[index] = newline(indent);
@@ -1172,7 +1156,7 @@ impl<'a> Guide<'a> {
 
     fn join(&mut self, first: usize, last: usize, indent: usize) {
         let mut join = first;
-        while join < last && !self.is(join, "JOIN") && !self.sqlserver_apply(join) {
+        while join < last && !self.is(join, "JOIN") && !self.apply_join(join) {
             join += 1;
         }
         let condition = self
@@ -1206,8 +1190,7 @@ impl<'a> Guide<'a> {
             self.expr(closer + 1, last, indent);
             return;
         }
-        if self.dialect == FormatDialect::PostgreSQL
-            && self.is_any(opener, &POSTGRES_INLINE_SOURCES)
+        if self.is_any(opener, self.rules.inline_sources)
             && self.kind(opener + 1) == Some(TokenType::LParen)
         {
             self.inline_openers[opener + 1] = true;
@@ -1245,7 +1228,7 @@ impl<'a> Guide<'a> {
             } else if self.is(index, "AND") && between {
                 between = false;
             } else if (self.is(index, "AND") || self.is(index, "OR"))
-                && self.dialect == FormatDialect::Snowflake
+                && self.rules.breaks_conditions
                 && !(index > 0 && self.is(index - 1, "CREATE"))
             {
                 self.gaps[index] = newline(indent);
@@ -1364,13 +1347,7 @@ impl<'a> Guide<'a> {
     }
 
     fn inline_calls(&self) -> &'static [&'static str] {
-        match self.dialect {
-            FormatDialect::Snowflake => &SNOWFLAKE_INLINE_CALLS,
-            FormatDialect::DuckDB => &DUCKDB_INLINE_CALLS,
-            FormatDialect::PostgreSQL | FormatDialect::Databricks => &POSTGRES_INLINE_CALLS,
-            FormatDialect::BigQuery => &BIGQUERY_INLINE_CALLS,
-            FormatDialect::SqlServer => &SQLSERVER_INLINE_CALLS,
-        }
+        self.rules.inline_calls
     }
 
     fn items_width(&self, items: &[(usize, usize)]) -> usize {
@@ -1468,8 +1445,8 @@ impl<'a> Guide<'a> {
             || self.unspanned[index]
             || self.name_position(index)
             || self.field_name(index)
-            || self.sqlserver_object_name(index)
-            || self.bigquery_table_name(index)
+            || self.object_name(index)
+            || self.referenced_table_name(index)
             || !(is_keyword(lexeme) || self.called_name(index))
         {
             lexeme.raw.clone()

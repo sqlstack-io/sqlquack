@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from scripts.syntax_obligations.main.cases import run_cases
+from scripts.syntax_obligations_snowflake.main.cases import run_cases
 
 
 def main(argv: list[str] | None = None) -> int:

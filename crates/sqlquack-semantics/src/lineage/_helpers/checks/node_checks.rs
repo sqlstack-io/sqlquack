@@ -5,13 +5,13 @@ use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::queries::models::Select;
 use sqlquack_syntax::expressions::types::models::DataType;
 
+use crate::dialects::main::dialect_rules::dialect_rules;
 use crate::lineage::_helpers::checks::coercion::{
     Engine, arithmetic, comparable, invalid_literal_for, invalid_temporal_literal, literal_coerces,
-    literal_reads_as, predicate, runtime_comparison, runtime_equality, string_literal,
-    temporal_argument, temporal_function_argument, temporal_literal_arithmetic,
+    literal_reads_as, predicate, runtime_comparison, runtime_equality, temporal_argument,
+    temporal_function_argument, temporal_literal_arithmetic,
 };
-use crate::lineage::_helpers::checks::duckdb_functions::{duckdb_arities, duckdb_function};
-use crate::lineage::_helpers::checks::families::{Family, data_type_family, expression_family};
+use crate::lineage::_helpers::checks::families::{data_type_family, expression_family};
 use crate::lineage::_helpers::checks::issues::{issue, type_location};
 use crate::lineage::_helpers::checks::relational::{
     in_subquery_findings, range_frame_findings, recursive_findings, row_comparison_findings,
@@ -25,6 +25,8 @@ use crate::lineage::_helpers::tracing::expressions::expression_lineage;
 use crate::lineage::constants::{
     DUCKDB_KEYWORD_ONLY_FUNCTIONS, NAME_PHASE, RUNTIME_WARNING, SQLSERVER_PROFILE, TYPE_PHASE,
 };
+use crate::lineage::main::string_literal::string_literal;
+use crate::lineage::models::Family;
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding};
 
 /// COALESCE without arguments, which polyglot checks against the catalog under this name.
@@ -118,7 +120,7 @@ pub(crate) fn node_findings(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<
     if let Expression::Function(function) = node {
         let keyword_only: Vec<NameFinding> = keyword_only_call(function, level.engine(), node);
         if keyword_only.is_empty() {
-            findings.extend(unknown_duckdb_call(function, level.engine(), node));
+            findings.extend(unknown_duckdb_call(function, level, node));
         }
         findings.extend(keyword_only);
     }
@@ -128,15 +130,15 @@ pub(crate) fn node_findings(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<
 /// An unqualified DuckDB call to a name that is neither built in nor declared by the project.
 fn unknown_duckdb_call(
     function: &sqlquack_syntax::expressions::functions::models::Function,
-    engine: Engine,
+    level: NodeLevel<'_, '_>,
     node: &Expression,
 ) -> Vec<NameFinding> {
-    match engine == Engine::DuckDB
+    match level.engine() == Engine::DuckDB
         && !function.quoted
         && !function.no_parens
         && !function.use_bracket_syntax
         && !function.name.contains('.')
-        && !duckdb_function(&function.name)
+        && dialect_rules(level.context.profile).unknown_function(&function.name)
     {
         true => vec![issue(
             ("E202", NAME_PHASE),
@@ -156,7 +158,9 @@ fn catalog_arity(
 ) -> Vec<NameFinding> {
     let canonical: String = dispatch_name(name);
     let recorded: Option<Vec<(usize, Option<usize>)>> = match level.engine() {
-        Engine::DuckDB if !name.contains('.') => duckdb_arities(name),
+        Engine::DuckDB if !name.contains('.') => {
+            dialect_rules(level.context.profile).builtin_arities(name)
+        }
         _ => None,
     };
     let Some(arities) =

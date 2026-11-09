@@ -4,22 +4,22 @@ use std::io::{Read, Write};
 use std::path::Path;
 use std::process::ExitCode;
 
-use sqlquack_core::diagnostics::constants::SESSION_PARAMETERS;
-use sqlquack_core::diagnostics::main::diagnose::diagnose;
-use sqlquack_core::diagnostics::main::explain_code::explain_code;
-use sqlquack_core::diagnostics::main::render_styled_diagnostics::render_styled_diagnostics;
-use sqlquack_core::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
-use sqlquack_core::diagnostics::models::{Diagnostic, Palette};
-use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
-use sqlquack_core::refusals::models::Refusal;
-use sqlquack_duckdb_blocks::layout::main::layout_sql::layout_sql;
-use sqlquack_duckdb_blocks::macros::main::explain_helper::explain_helper;
+use sqlquack_blocks::layout::main::layout_sql::layout_sql;
+use sqlquack_blocks::macros::main::explain_helper::explain_helper;
+use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
+use sqlquack_diagnostics::diagnostics::constants::SESSION_PARAMETERS;
+use sqlquack_diagnostics::diagnostics::main::diagnose::diagnose;
+use sqlquack_diagnostics::diagnostics::main::explain_code::explain_code;
+use sqlquack_diagnostics::diagnostics::main::render_styled_diagnostics::render_styled_diagnostics;
+use sqlquack_diagnostics::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
+use sqlquack_diagnostics::diagnostics::models::{Diagnostic, Palette};
+use sqlquack_diagnostics::provenance::main::merge_provenance::merge_provenance;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_policy::policy::constants::{
     CURRENT_TIME, SESSION_TIME_ZONE, SESSION_TIMEZONE_UTC, TIMEZONE_PARAMETER,
 };
 use sqlquack_policy::policy::models::{DivergenceFailure, Policy};
-use sqlquack_rules::conversion::models::ConversionOptions;
-use sqlquack_semantics::types::models::Schema;
+use sqlquack_semantics::snowflake::types::models::Schema;
 use std::collections::{BTreeMap, BTreeSet};
 
 use crate::analysis::main::check_source::check_source;
@@ -38,12 +38,12 @@ use crate::cli::models::{
 use crate::run::main::run_query::run_query;
 use crate::run::models::RunInputs;
 use crate::terminal::main::highlight_sql::highlight_sql;
-use sqlquack_convert::analysis::main::assumption_id::assumption_id;
-use sqlquack_convert::analysis::main::caller_choices::caller_choices;
-use sqlquack_convert::analysis::models::Analysis;
+use sqlquack_convert::snowflake::analysis::main::assumption_id::assumption_id;
+use sqlquack_convert::snowflake::analysis::main::caller_choices::caller_choices;
+use sqlquack_convert::snowflake::analysis::models::Analysis;
 
 use crate::cli::main::convert_report::convert_report;
-use sqlquack_convert::analysis::main::with_divergence_help::with_divergence_help;
+use sqlquack_convert::snowflake::analysis::main::with_divergence_help::with_divergence_help;
 
 /// The path naming standard input.
 const STDIN_PATH: &str = "-";

@@ -1,7 +1,7 @@
 //! Conversion records and the index built from them.
 
 use serde::Serialize;
-use sqlquack_core::provenance::models::Provenance;
+use sqlquack_diagnostics::provenance::models::Provenance;
 
 /// Where a conversion record comes from.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize)]

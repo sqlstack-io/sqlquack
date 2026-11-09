@@ -3,7 +3,8 @@
 use std::time::Instant;
 
 use polyglot_sql::DialectType;
-use sqlquack_syntax::{CallMode, Dialect, ParseOptions, parse_statements_with};
+use sqlquack_syntax::{CallMode, Dialect, ParseOptions};
+use sqlquack_syntax_snowflake::parse_statements_with;
 
 use crate::comparison::_helpers::outcomes::{lossless_failure, rendered};
 use crate::comparison::models::{Comparison, Outcome};
@@ -15,6 +16,10 @@ pub fn compare_parse(sql: &str, dialect: Dialect) -> Comparison {
         Dialect::DuckDB => DialectType::DuckDB,
         Dialect::PostgreSQL => DialectType::PostgreSQL,
         Dialect::SQLite => DialectType::SQLite,
+        Dialect::BigQuery => DialectType::BigQuery,
+        Dialect::ClickHouse => DialectType::ClickHouse,
+        Dialect::Databricks => DialectType::Databricks,
+        Dialect::SqlServer => DialectType::TSQL,
     };
     let started = Instant::now();
     let theirs = rendered(|| polyglot_sql::parse(sql, polyglot_dialect));

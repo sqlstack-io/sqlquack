@@ -4,7 +4,7 @@ use crate::functions::typed::_helpers::lookups::TYPED_DISPATCH_GROUP_BY_NAME;
 use crate::functions::typed::models::TypedDispatchGroup;
 
 /// Returns specialized typed parser dispatch group for canonical uppercased name.
-pub(crate) fn typed_dispatch_group_by_name_upper(
+pub fn typed_dispatch_group_by_name_upper(
     canonical_upper_name: &str,
 ) -> Option<TypedDispatchGroup> {
     TYPED_DISPATCH_GROUP_BY_NAME

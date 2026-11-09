@@ -108,3 +108,9 @@ pub(crate) const SELECT_ITEM_END_TOKENS: [TokenType; 8] = [
     TokenType::Identifier,
     TokenType::QuotedIdentifier,
 ];
+#[cfg(feature = "native-predicates")]
+/// The prefix a predicate is parsed after, as the select list of a query.
+pub(crate) const SELECT_PREFIX: &str = "SELECT ";
+/// Why SQL in a dialect the crate was built without, through its feature, is not linted.
+pub const UNBUILT_DIALECT_FAILURE: &str =
+    "SQLQuack's lint was built without this dialect's feature";

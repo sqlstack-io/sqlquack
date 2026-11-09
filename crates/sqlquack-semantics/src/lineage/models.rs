@@ -8,7 +8,7 @@ use sqlquack_syntax::expressions::names::models::Column;
 use sqlquack_syntax::tokens::models::Span;
 
 use crate::dialects::types::DialectProfile;
-use crate::lineage::types::{LineageSchema, SharedColumns};
+use crate::lineage::types::{DialectRules, LineageSchema, SharedColumns};
 
 /// How an output column is derived from its source columns.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -234,4 +234,77 @@ pub struct NameFinding {
     pub phase: u8,
     /// The node the finding is about, as an address: findings of a phase follow tree order.
     pub(crate) node: usize,
+}
+
+/// The shared rules alone, for a profile whose dialect adds none.
+#[derive(Clone, Copy, Debug, Default)]
+pub(crate) struct SharedRules;
+
+impl DialectRules for SharedRules {}
+
+/// A type's family, the class the type checks compare.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum Family {
+    Unknown,
+    Boolean,
+    Integer,
+    Numeric,
+    String,
+    Binary,
+    Date,
+    Time,
+    Timestamp,
+    Interval,
+    Json,
+    Uuid,
+    Array,
+    Map,
+    Struct,
+}
+
+impl Family {
+    pub(crate) fn is_numeric(self) -> bool {
+        matches!(self, Self::Integer | Self::Numeric)
+    }
+
+    /// BigQuery's JSON, ARRAY and STRUCT, which no other type converts to or from implicitly.
+    pub(crate) fn converts_to_nothing(self) -> bool {
+        matches!(self, Self::Json | Self::Array | Self::Struct)
+    }
+
+    pub(crate) fn is_temporal(self) -> bool {
+        matches!(
+            self,
+            Self::Date | Self::Time | Self::Timestamp | Self::Interval
+        )
+    }
+
+    /// Whether the checks model the family's conversions fully.
+    pub(crate) fn fully_modelled(self) -> bool {
+        !matches!(
+            self,
+            Self::Unknown | Self::Json | Self::Uuid | Self::Array | Self::Map | Self::Struct
+        )
+    }
+
+    /// The family's name in a finding's words.
+    pub(crate) fn name(self) -> &'static str {
+        match self {
+            Self::Unknown => "unknown",
+            Self::Boolean => "boolean",
+            Self::Integer => "integer",
+            Self::Numeric => "numeric",
+            Self::String => "string",
+            Self::Binary => "binary",
+            Self::Date => "date",
+            Self::Time => "time",
+            Self::Timestamp => "timestamp",
+            Self::Interval => "interval",
+            Self::Json => "json",
+            Self::Uuid => "uuid",
+            Self::Array => "array",
+            Self::Map => "map",
+            Self::Struct => "struct",
+        }
+    }
 }
