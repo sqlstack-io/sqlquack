@@ -4,6 +4,7 @@ use crate::format::constants::{
     BATCH_SEPARATOR_FAILURE, BIGQUERY_OPAQUE_STATEMENT_FAILURE, DEPTH_FAILURE, JOIN_FAILURE,
     PARSE_FAILURE, SCANNER_MISMATCH_FAILURE, SEPARATION_FAILURE,
     SQLSERVER_OPAQUE_STATEMENT_FAILURE, TYPE_DEPTH_FAILURE, UNSUPPORTED_DIALECT_FAILURE,
+    UNSUPPORTED_SYNTAX_FAILURE,
 };
 use crate::format::main::format_sql::format_sql;
 use crate::format::models::FormatOptions;
@@ -160,6 +161,29 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             line_width: None,
             dialect: FormatDialect::Snowflake,
             expected_outcome: Err(SEPARATION_FAILURE),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a path after a qualified column spelled like a keyword is laid out, not taken for a bind variable",
+            sql: "select s.statement:gross::int as g, s.body:ts_ms::number(38, 0) as t from src as s",
+            line_width: None,
+            dialect: FormatDialect::Snowflake,
+            expected_outcome: Ok(
+                "SELECT\n  s.statement:gross::int AS g,\n  s.body:ts_ms::number(38, 0) AS t\nFROM src AS s",
+            ),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a positional bind variable is still left as written",
+            sql: "select x from t where id = :1",
+            line_width: None,
+            dialect: FormatDialect::Snowflake,
+            expected_outcome: Err(UNSUPPORTED_SYNTAX_FAILURE),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a named bind variable after a keyword is still left as written",
+            sql: "select x from t where id in (:ids) and body = :body",
+            line_width: None,
+            dialect: FormatDialect::Snowflake,
+            expected_outcome: Err(UNSUPPORTED_SYNTAX_FAILURE),
         },
         test_types::FormatSqlTestCase {
             description: "an operator beside a bind or session variable is refused",

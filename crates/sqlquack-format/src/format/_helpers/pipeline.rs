@@ -220,12 +220,20 @@ fn has_unsupported_syntax(lexemes: &[Lexeme]) -> bool {
 fn is_bind_variable(lexemes: &[Lexeme], index: usize) -> bool {
     let after_operand = index
         .checked_sub(1)
-        .is_some_and(|previous| ends_operand(&lexemes[previous]));
+        .is_some_and(|previous| ends_operand(&lexemes[previous]) || follows_dot(lexemes, previous));
     lexemes[index].kind == TokenType::Colon
         && !after_operand
         && lexemes
             .get(index + 1)
             .is_some_and(|next| next.kind == TokenType::Number || is_unquoted_word(&next.raw))
+}
+
+/// Whether the word at `index` follows `.`, so it is part of a name even when it spells a keyword, as `body` in `s.body:ts`.
+fn follows_dot(lexemes: &[Lexeme], index: usize) -> bool {
+    is_unquoted_word(&lexemes[index].raw)
+        && index
+            .checked_sub(1)
+            .is_some_and(|dot| lexemes[dot].kind == TokenType::Dot)
 }
 
 /// Whether a string stage reference such as `'@stage'` at `index` is followed by options.
