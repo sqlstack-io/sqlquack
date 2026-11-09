@@ -9,7 +9,7 @@ use std::sync::Arc;
 use std::sync::OnceLock;
 
 use crate::parser::_helpers::support::dialects::configs_for_dialect_type;
-use crate::parser::types::DialectImpl;
+use crate::parser::types::{DialectImpl, SignificantTokens};
 use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::queries::models::Hint;
 use sqlquack_syntax::expressions::queries::models::JoinKind;
@@ -100,18 +100,20 @@ impl Dialect {
         self.parse_with_config(sql, complexity_guard, mode, None)
     }
 
-    /// `parse_with_mode`, also giving each significant token's span and type, as the parser read them.
+    /// `parse_with_mode`, with each significant token's span and type as the parser read them.
     pub(crate) fn parse_reading_tokens(
         &self,
         sql: &str,
         options: &ParseOptions,
         mode: CallMode,
-        significant: &mut Vec<(Span, TokenType)>,
-    ) -> Result<Vec<Expression>> {
+    ) -> Result<(Vec<Expression>, SignificantTokens)> {
         let complexity_guard = options
             .complexity_guard
             .unwrap_or_else(|| self.default_complexity_guard());
-        self.parse_with_config(sql, complexity_guard, mode, Some(significant))
+        let mut significant: SignificantTokens = Vec::new();
+        let statements =
+            self.parse_with_config(sql, complexity_guard, mode, Some(&mut significant))?;
+        Ok((statements, significant))
     }
 
     #[cfg(test)]

@@ -184,54 +184,92 @@ fn given_sql_when_parsing_strictly_then_the_outcome_is_the_parse_then_a_separate
         StrictCoverageTestCase {
             description: "plain statements",
             sql: "SELECT a, b FROM t WHERE a = 1; SELECT 2",
+            expected_refused_in: &[],
         },
         StrictCoverageTestCase {
             description: "line and block comments around and between tokens",
             sql: "-- lead\nSELECT /* mid */ a -- tail\nFROM t /* end */",
+            expected_refused_in: &[],
         },
         StrictCoverageTestCase {
             description: "a block comment inside another",
             sql: "/* a /* b */ c */ SELECT 1",
+            expected_refused_in: &[Dialect::Snowflake, Dialect::SQLite],
         },
         StrictCoverageTestCase {
             description: "slash-slash and hash line comments",
             sql: "SELECT 1 // note\n, 2 # note\n",
+            expected_refused_in: &[
+                Dialect::Snowflake,
+                Dialect::DuckDB,
+                Dialect::PostgreSQL,
+                Dialect::SQLite,
+            ],
         },
         StrictCoverageTestCase {
             description: "an optimizer hint",
             sql: "SELECT /*+ INDEX(t) */ a FROM t",
+            expected_refused_in: &[],
         },
         StrictCoverageTestCase {
             description: "comment markers inside strings and quoted names",
             sql: "SELECT '-- no', \"/* no */\" FROM t",
+            expected_refused_in: &[],
         },
         StrictCoverageTestCase {
             description: "multi-byte text in a name, a string and a comment",
             sql: "SELECT \"café\", 'naïve' /* ü */ FROM t",
+            expected_refused_in: &[],
         },
         StrictCoverageTestCase {
             description: "dollar-quoted text",
             sql: "SELECT $$ -- not a comment $$",
+            expected_refused_in: &[],
         },
         StrictCoverageTestCase {
             description: "an unterminated block comment",
             sql: "SELECT 1 /* open",
+            expected_refused_in: &[
+                Dialect::Snowflake,
+                Dialect::DuckDB,
+                Dialect::PostgreSQL,
+                Dialect::SQLite,
+            ],
         },
         StrictCoverageTestCase {
             description: "a stray backslash",
             sql: "SELECT 1 \\",
+            expected_refused_in: &[
+                Dialect::Snowflake,
+                Dialect::DuckDB,
+                Dialect::PostgreSQL,
+                Dialect::SQLite,
+            ],
         },
         StrictCoverageTestCase {
             description: "a NUL byte between tokens",
             sql: "SELECT 1 \u{0} FROM t",
+            expected_refused_in: &[
+                Dialect::Snowflake,
+                Dialect::DuckDB,
+                Dialect::PostgreSQL,
+                Dialect::SQLite,
+            ],
         },
         StrictCoverageTestCase {
             description: "empty statements between semicolons",
             sql: "SELECT 1;; ;",
+            expected_refused_in: &[],
         },
         StrictCoverageTestCase {
             description: "a parse error before any coverage question",
             sql: "SELECT FROM WHERE /* open",
+            expected_refused_in: &[
+                Dialect::Snowflake,
+                Dialect::DuckDB,
+                Dialect::PostgreSQL,
+                Dialect::SQLite,
+            ],
         },
     ];
     for dialect in [
@@ -241,9 +279,13 @@ fn given_sql_when_parsing_strictly_then_the_outcome_is_the_parse_then_a_separate
         Dialect::SQLite,
     ] {
         for test_case in &test_cases {
+            let written: String = strict_written(test_case.sql, dialect);
             assert_eq!(
-                strict_written(test_case.sql, dialect),
-                parse_then_tokenize_written(test_case.sql, dialect),
+                (
+                    written.starts_with("Err"),
+                    written == parse_then_tokenize_written(test_case.sql, dialect)
+                ),
+                (test_case.expected_refused_in.contains(&dialect), true),
                 "{dialect:?}: {}",
                 test_case.description
             );
@@ -258,25 +300,25 @@ fn given_token_spans_when_checking_coverage_then_only_blanks_and_comments_may_li
             description: "blanks and a comment between and after the tokens",
             sql: "ab /* c */ é -- d",
             spans: &[(0, 2), (11, 12)],
-            expected: "Ok(7)",
+            expected_written: "Ok(7)",
         },
         CoverageTestCase {
             description: "text no token covers, in bytes from it to the gap's end, after a multi-byte character",
             sql: "é x ab",
             spans: &[(0, 1), (4, 6)],
-            expected: "Err(Uncovered { start: 3, end: 5 })",
+            expected_written: "Err(Uncovered { start: 3, end: 5 })",
         },
         CoverageTestCase {
             description: "a token starting before the previous one ends",
             sql: "abcd",
             spans: &[(0, 3), (2, 4)],
-            expected: "Err(Overlap { start: 2, end: 4 })",
+            expected_written: "Err(Overlap { start: 2, end: 4 })",
         },
     ];
     for test_case in test_cases {
         assert_eq!(
             coverage_written(test_case.sql, test_case.spans),
-            test_case.expected,
+            test_case.expected_written,
             "{}",
             test_case.description
         );
