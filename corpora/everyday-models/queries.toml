@@ -2648,8 +2648,8 @@ category = "dbt_date_spine"
 sql = '''select
     dateadd(hour, seq4(), '2024-01-01'::timestamp_ntz) as hour_start
 from table(generator(rowcount => 24 * 7))'''
-expect = "refused SQ0003 fn:GENERATOR at 81..117"
-expect_repository = "refused SQ0003 fn:GENERATOR at 81..117"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "dbt_date_spine"
@@ -4944,7 +4944,7 @@ validation_errors as (
 select
   *
 from validation_errors'''
-expect = "refused SQ0008 node:div at 34..115"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -5541,7 +5541,7 @@ category = "dbt_marts"
 sql = '''select order_id,
     ( amount ) / nullif( ( order_id ), 0)
  as ratio from fct_orders'''
-expect = "refused SQ0008 node:div at 21..58"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
