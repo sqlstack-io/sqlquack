@@ -6,7 +6,7 @@ use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::dialects::types::DialectProfile;
 use crate::lineage::main::rendered_type::rendered_type;
-use crate::lineage::models::Engine;
+use crate::lineage::models::{Engine, OutputReach};
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -49,6 +49,14 @@ pub(crate) struct SqlServerRules;
 impl DialectRules for SqlServerRules {
     fn coercion_engine(&self) -> Engine {
         Engine::Snowflake
+    }
+
+    fn checks_names_only(&self) -> bool {
+        false
+    }
+
+    fn output_reach(&self) -> OutputReach {
+        OutputReach::OrderedNamePlaces
     }
 
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {

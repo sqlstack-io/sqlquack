@@ -6,7 +6,7 @@ use std::rc::Rc;
 use sqlquack_syntax::{DataType, Expression};
 
 use crate::lineage::main::rendered_type::rendered_type;
-use crate::lineage::models::{Engine, Nullability};
+use crate::lineage::models::{Engine, Nullability, OutputReach};
 use crate::lineage::models::{
     Lineage, LineageContext, NullabilityRule, SchemaColumn, SourceColumn,
 };
@@ -60,6 +60,12 @@ pub(crate) type SharedColumns = Rc<BTreeSet<SourceColumn>>;
 pub(crate) trait DialectRules: Sync {
     /// The engine whose binder the coercion checks follow for this dialect.
     fn coercion_engine(&self) -> Engine;
+
+    /// Whether lineage keeps to the name rules, leaving out the scope, type and set-operation ones.
+    fn checks_names_only(&self) -> bool;
+
+    /// Which output names of a SELECT its own clauses may read.
+    fn output_reach(&self) -> OutputReach;
 
     /// A literal's type and nullability, given the shared rules' `generic` answer.
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {

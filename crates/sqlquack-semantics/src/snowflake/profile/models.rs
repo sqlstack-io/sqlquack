@@ -5,7 +5,7 @@ use std::rc::Rc;
 use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::dialects::types::DialectProfile;
-use crate::lineage::models::Engine;
+use crate::lineage::models::{Engine, OutputReach};
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -87,6 +87,14 @@ pub(crate) struct SnowflakeRules;
 impl DialectRules for SnowflakeRules {
     fn coercion_engine(&self) -> Engine {
         Engine::Snowflake
+    }
+
+    fn checks_names_only(&self) -> bool {
+        false
+    }
+
+    fn output_reach(&self) -> OutputReach {
+        OutputReach::Anywhere
     }
 
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {

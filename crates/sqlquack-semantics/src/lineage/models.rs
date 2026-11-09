@@ -244,6 +244,14 @@ impl DialectRules for SharedRules {
     fn coercion_engine(&self) -> Engine {
         Engine::Snowflake
     }
+
+    fn checks_names_only(&self) -> bool {
+        false
+    }
+
+    fn output_reach(&self) -> OutputReach {
+        OutputReach::Anywhere
+    }
 }
 
 /// The engine whose binder the checks follow.
@@ -260,6 +268,17 @@ pub(crate) enum Engine {
     BigQuery,
     /// Databricks SQL, coercions not recorded: no type findings, only scope and name rules.
     Databricks,
+}
+
+/// Which output names of a SELECT its own clauses may read.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum OutputReach {
+    /// Every clause, the select list included, may read the outputs named before it.
+    Anywhere,
+    /// Only the clauses that take output names; the select list reads none of its siblings.
+    OutputNamePlaces,
+    /// Only the places an ordering takes output names; the select list reads none of its siblings.
+    OrderedNamePlaces,
 }
 
 /// A type's family, the class the type checks compare.

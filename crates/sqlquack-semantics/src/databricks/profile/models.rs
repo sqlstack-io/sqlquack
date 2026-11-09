@@ -9,7 +9,7 @@ use crate::databricks::profile::_helpers::typing::{
     databricks_cast_spelling, databricks_literal_type, databricks_type,
 };
 use crate::dialects::types::DialectProfile;
-use crate::lineage::models::Engine;
+use crate::lineage::models::{Engine, OutputReach};
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -47,6 +47,14 @@ pub(crate) struct DatabricksRules;
 impl DialectRules for DatabricksRules {
     fn coercion_engine(&self) -> Engine {
         Engine::Databricks
+    }
+
+    fn checks_names_only(&self) -> bool {
+        false
+    }
+
+    fn output_reach(&self) -> OutputReach {
+        OutputReach::Anywhere
     }
 
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
