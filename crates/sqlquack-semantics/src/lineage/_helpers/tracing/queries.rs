@@ -1,6 +1,5 @@
 //! The outputs of a query, set operation or CTE, with their lineage.
 
-use std::borrow::Cow;
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -13,7 +12,9 @@ use crate::dialects::main::dialect_rules::dialect_rules;
 use crate::lineage::_helpers::tracing::expressions::{expression_lineage, is_aggregate};
 use crate::lineage::_helpers::tracing::lineages::{combined, set_merged, traced_if, unresolved};
 use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
-use crate::lineage::_helpers::tracing::reuse::{holds_aggregate, reused, worked};
+use crate::lineage::_helpers::tracing::reuse::{
+    Reach, holds_aggregate, keep_reach, kept_reach, reused, worked,
+};
 use crate::lineage::_helpers::tracing::sources::{
     from_sources, listed, pivot_sources, values_query,
 };
@@ -302,26 +303,50 @@ fn by_name(
     }
 }
 
-/// The CTEs in reach inside a query with `with`: the enclosing ones, then its own in order.
+/// The CTEs in reach inside a query with `with`: the enclosing ones, then its own in order; the
+/// list a visiting walk kept earlier in this analysis when there is no enclosing level.
 pub(crate) fn with_ctes<'a>(
     with: Option<&With>,
     ctes: &'a [NamedQuery],
     outer: Option<&LineageScope<'_>>,
     context: LineageContext<'_>,
-) -> Cow<'a, [NamedQuery]> {
-    with_ctes_visiting(with, (ctes, outer), context, &mut |_, _| false)
+) -> Reach<'a> {
+    let Some(with) = with else {
+        return Reach::Borrowed(ctes);
+    };
+    if outer.is_none()
+        && let Some(kept) = kept_reach(with, ctes)
+    {
+        return Reach::Kept(kept);
+    }
+    Reach::Owned(ctes_reach(with, (ctes, outer), context, &mut |_, _| false))
 }
 
-/// `with_ctes`, showing `visit` each CTE with what its body reads, a DuckDB recursive one itself.
+/// `with_ctes`, showing `visit` each CTE with what its body reads, a DuckDB recursive one itself;
+/// kept for the analysis when there is no enclosing level.
 pub(crate) fn with_ctes_visiting<'a>(
     with: Option<&With>,
     (ctes, outer): (&'a [NamedQuery], Option<&LineageScope<'_>>),
     context: LineageContext<'_>,
     visit: &mut dyn FnMut(&Cte, &[NamedQuery]) -> bool,
-) -> Cow<'a, [NamedQuery]> {
+) -> Reach<'a> {
     let Some(with) = with else {
-        return Cow::Borrowed(ctes);
+        return Reach::Borrowed(ctes);
     };
+    let reach: Vec<NamedQuery> = ctes_reach(with, (ctes, outer), context, visit);
+    match outer {
+        None => keep_reach(with, ctes, reach),
+        Some(_) => Reach::Owned(reach),
+    }
+}
+
+/// The enclosing CTEs, then each of `with`'s in order, each shown to `visit`.
+fn ctes_reach(
+    with: &With,
+    (ctes, outer): (&[NamedQuery], Option<&LineageScope<'_>>),
+    context: LineageContext<'_>,
+    visit: &mut dyn FnMut(&Cte, &[NamedQuery]) -> bool,
+) -> Vec<NamedQuery> {
     let mut reach: Vec<NamedQuery> = ctes.to_vec();
     for cte in &with.ctes {
         let name = key(&cte.alias, context);
@@ -352,7 +377,7 @@ pub(crate) fn with_ctes_visiting<'a>(
         reach.retain(|named| named.key != name);
         reach.push(NamedQuery { key: name, query });
     }
-    Cow::Owned(reach)
+    reach
 }
 
 /// Whether a CTE's body reads the CTE itself, as Snowflake allows without RECURSIVE.

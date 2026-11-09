@@ -1,13 +1,17 @@
-use crate::duckdb::profile::tests::test_types::ResolvedReadTestCase;
+use crate::duckdb::profile::tests::test_types::{ResolvedReadTestCase, SingleAnalysisTestCase};
 
 use crate::lineage::main::statement_lineage::statement_lineage;
 use crate::lineage::tests::helpers::typed_duckdb_shop_schema;
 use crate::lineage::tests::test_types::TypedShopSchema;
 
-use sqlquack_syntax::{Dialect, ParseOptions};
+use sqlquack_parse::parse_statements_with;
+use sqlquack_syntax::{CallMode, Dialect, ParseOptions};
 
 use crate::dialects::constants::DUCKDB;
+use crate::lineage::_helpers::tracing::reuse::work_done;
 use crate::lineage::main::query_lineage::query_lineage;
+use crate::lineage::main::statement_lineage_and_findings::statement_lineage_and_findings;
+use crate::lineage::main::statement_name_findings::statement_name_findings;
 use crate::lineage::models::{LineageContext, TransformKind};
 use crate::lineage::tests::helpers::shop_schema;
 use crate::lineage::tests::test_types::QueryLineageTestCase;
@@ -192,6 +196,53 @@ fn given_a_duckdb_value_keyword_beside_an_open_relation_when_tracing_lineage_the
             ),
             "{}",
             test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_ctes_when_analysing_lineage_and_findings_together_then_the_lineage_reuses_the_resolved_ctes()
+ {
+    let test_cases = [
+        SingleAnalysisTestCase {
+            description: "a chain of CTEs read through a join and a union",
+            sql: "WITH a AS (SELECT id, amount FROM orders), \
+                  b AS (SELECT a.id, a.amount + 1 AS amount FROM a JOIN customers AS c ON c.id = a.id), \
+                  u AS (SELECT id, amount FROM a UNION ALL SELECT id, amount FROM b) \
+                  SELECT id, SUM(amount) AS total FROM u GROUP BY id",
+        },
+        SingleAnalysisTestCase {
+            description: "a CTE naming an unknown column, so there are findings to keep",
+            sql: "WITH a AS (SELECT id, missing FROM orders) SELECT id, missing FROM a",
+        },
+    ];
+    let schema = shop_schema();
+    for test_case in test_cases {
+        let context = LineageContext {
+            profile: &DUCKDB,
+            schema: &schema,
+            sql: Some(test_case.sql),
+        };
+        let statements = parse_statements_with(
+            test_case.sql,
+            Dialect::DuckDB,
+            &ParseOptions::default(),
+            CallMode::FaithfulLocated,
+        )
+        .unwrap_or_else(|error| panic!("{}: {error}", test_case.description));
+        work_done();
+        let findings = statement_name_findings(&statements[0], context);
+        let findings_work: usize = work_done();
+        let lineage = statement_lineage(&statements[0], context);
+        let lineage_work: usize = work_done();
+        let together = statement_lineage_and_findings(&statements[0], context);
+        let together_work: usize = work_done();
+        assert_eq!(together, (lineage, findings), "{}", test_case.description);
+        assert!(
+            (together_work - findings_work) * 2 <= lineage_work,
+            "{}: lineage alone {lineage_work}, after the findings {}",
+            test_case.description,
+            together_work - findings_work
         );
     }
 }

@@ -1,10 +1,13 @@
 //! Work the walks would otherwise repeat at every level of a deep tree, done once per analysis.
 
 use std::cell::RefCell;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
+use std::ops::Deref;
+use std::rc::Rc;
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
+use sqlquack_syntax::expressions::queries::models::With;
 
 use crate::lineage::_helpers::tracing::expressions::is_aggregate;
 use crate::lineage::models::{NamedQuery, ResolvedQuery};
@@ -15,12 +18,21 @@ struct Frame {
     resolved: HashMap<usize, ResolvedQuery>,
 }
 
+/// A node's address, with the address and length of the CTE list it was read with.
+type Placed = (usize, (usize, usize));
+
 /// What one analysis of a tree keeps, by node address: valid while the analysed tree lives.
 #[derive(Default)]
 struct Kept {
     frames: Vec<Frame>,
     aggregates: HashMap<usize, bool>,
     unpivots: HashMap<usize, bool>,
+    /// Each WITH's CTE list over a settled list, by the WITH's address and that list.
+    reaches: HashMap<Placed, Rc<[NamedQuery]>>,
+    /// The lists this analysis owns until it ends, so no other list can take their addresses.
+    settled_lists: HashSet<(usize, usize)>,
+    /// Queries resolved with a settled list and no enclosing level, for the whole analysis.
+    settled: HashMap<Placed, ResolvedQuery>,
 }
 
 thread_local! {
@@ -140,7 +152,64 @@ pub(crate) fn reusing(ctes: &[NamedQuery]) -> Reuse {
     Reuse { pushed }
 }
 
-/// `query` resolved with `ctes` and no enclosing level: kept from earlier when a walk keeps `ctes`.
+/// Whether `ctes` is the empty list or one this analysis owns: its address names its contents.
+fn settled_list(kept: &Kept, ctes: (usize, usize)) -> bool {
+    ctes == (0, 0) || kept.settled_lists.contains(&ctes)
+}
+
+/// A WITH's CTE list: borrowed when there is no WITH, kept when the analysis owns it.
+pub(crate) enum Reach<'a> {
+    Borrowed(&'a [NamedQuery]),
+    Owned(Vec<NamedQuery>),
+    Kept(Rc<[NamedQuery]>),
+}
+
+impl Deref for Reach<'_> {
+    type Target = [NamedQuery];
+
+    fn deref(&self) -> &[NamedQuery] {
+        match self {
+            Reach::Borrowed(ctes) => ctes,
+            Reach::Owned(ctes) => ctes,
+            Reach::Kept(ctes) => ctes,
+        }
+    }
+}
+
+/// The list `with` gave over `ctes` earlier in this analysis, when `ctes` is settled.
+pub(crate) fn kept_reach(with: &With, ctes: &[NamedQuery]) -> Option<Rc<[NamedQuery]>> {
+    let key = (std::ptr::from_ref(with) as usize, identity(ctes));
+    with_kept(|kept| match settled_list(kept, key.1) {
+        true => kept.reaches.get(&key).cloned(),
+        false => None,
+    })
+    .flatten()
+}
+
+/// `reach`, the list `with` gives over `ctes`, kept for the analysis when `ctes` is settled; a list
+/// kept already has the same contents and stays, so no kept address is ever freed.
+pub(crate) fn keep_reach<'a>(
+    with: &With,
+    ctes: &[NamedQuery],
+    reach: Vec<NamedQuery>,
+) -> Reach<'a> {
+    let key = (std::ptr::from_ref(with) as usize, identity(ctes));
+    if !with_kept(|kept| settled_list(kept, key.1)).unwrap_or(false) {
+        return Reach::Owned(reach);
+    }
+    if let Some(kept) = kept_reach(with, ctes) {
+        return Reach::Kept(kept);
+    }
+    let shared: Rc<[NamedQuery]> = Rc::from(reach);
+    with_kept(|kept| {
+        kept.settled_lists.insert(identity(&shared));
+        kept.reaches.insert(key, Rc::clone(&shared));
+    });
+    Reach::Kept(shared)
+}
+
+/// `query` resolved with `ctes` and no enclosing level: kept from earlier when a walk keeps `ctes`,
+/// or for the whole analysis when `ctes` is settled.
 pub(crate) fn reused(
     query: &Expression,
     ctes: &[NamedQuery],
@@ -148,6 +217,21 @@ pub(crate) fn reused(
 ) -> ResolvedQuery {
     let node: usize = std::ptr::from_ref(query) as usize;
     let ctes: (usize, usize) = identity(ctes);
+    let settled: Option<ResolvedQuery> = with_kept(|kept| match settled_list(kept, ctes) {
+        true => Some(kept.settled.get(&(node, ctes)).cloned()),
+        false => None,
+    })
+    .flatten()
+    .flatten();
+    if let Some(found) = settled {
+        return found;
+    }
+    let settles: bool = with_kept(|kept| settled_list(kept, ctes)).unwrap_or(false);
+    if settles {
+        let resolved: ResolvedQuery = resolve();
+        with_kept(|kept| kept.settled.insert((node, ctes), resolved.clone()));
+        return resolved;
+    }
     let frame = |kept: &Kept| kept.frames.iter().rposition(|frame| frame.ctes == ctes);
     let found: Option<ResolvedQuery> = with_kept(|kept| {
         let index: usize = frame(kept)?;

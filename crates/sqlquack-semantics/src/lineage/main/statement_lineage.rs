@@ -9,6 +9,14 @@ use crate::lineage::models::{LineageContext, OutputLineage, QueryLineage};
 /// The lineage of each output column of the parsed query `statement`.
 pub fn statement_lineage(statement: &Expression, context: LineageContext<'_>) -> QueryLineage {
     let _analysis: Analysis = analysing();
+    analysed_lineage(statement, context)
+}
+
+/// The lineage of `statement` within the analysis already running.
+pub(crate) fn analysed_lineage(
+    statement: &Expression,
+    context: LineageContext<'_>,
+) -> QueryLineage {
     let resolved = resolved_query(statement, &[], None, context);
     QueryLineage {
         outputs: resolved
