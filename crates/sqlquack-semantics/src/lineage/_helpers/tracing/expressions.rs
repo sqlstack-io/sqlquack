@@ -122,6 +122,9 @@ fn expression_lineage_level(
             let target: Option<Rc<str>> =
                 target.map(|target| mapped_timestamp(Rc::from(target), context));
             let nullability: Nullability = match expression {
+                Expression::Cast(_) if variant_of_value(&cast.this, scope, context) => {
+                    Nullability::NonNull
+                }
                 Expression::Cast(_) => cast_nullability(&inner, target.as_deref(), context),
                 _ => Nullability::Unknown,
             };
@@ -300,6 +303,31 @@ fn query_reads(query: ResolvedQuery) -> RowReads {
         read.read(&column.lineage);
     }
     read
+}
+
+/// Whether `value` is Snowflake's TO_VARIANT of a non-null value no JSON null can hold.
+fn variant_of_value(
+    value: &Expression,
+    scope: &LineageScope<'_>,
+    context: LineageContext<'_>,
+) -> bool {
+    let Expression::Function(function) = value else {
+        return false;
+    };
+    let [argument] = function.args.as_slice() else {
+        return false;
+    };
+    if context.profile.name() != SNOWFLAKE_PROFILE
+        || function.quoted
+        || !function.name.eq_ignore_ascii_case(SNOWFLAKE_TO_VARIANT)
+    {
+        return false;
+    }
+    let argument: Lineage = expression_lineage(argument, scope, context);
+    argument.nullability == Nullability::NonNull
+        && argument.data_type.as_deref().is_some_and(|spelling| {
+            !SNOWFLAKE_JSON_HOLDERS.contains(&canonical_type(spelling).as_str())
+        })
 }
 
 /// A cast keeps its value's nullability, unless a Snowflake JSON null may become SQL NULL.

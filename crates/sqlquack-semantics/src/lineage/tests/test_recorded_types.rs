@@ -172,6 +172,18 @@ fn given_a_query_when_typing_outputs_then_nulls_and_numbers_follow_the_recorded_
             ],
         },
         DialectTypeTestCase {
+            description: "TO_VARIANT of a non-null value casts to non-null text, other VARIANTs may be NULL",
+            sql: "SELECT TO_VARIANT(c.name)::VARCHAR AS a, TO_VARIANT(e.payload)::VARCHAR AS b, \
+                  e.payload::VARCHAR AS c FROM customers c, events e",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[
+                ("a", Some("VARCHAR"), NonNull),
+                ("b", Some("VARCHAR"), Nullable),
+                ("c", Some("VARCHAR"), Nullable),
+            ],
+        },
+        DialectTypeTestCase {
             description: "DATEDIFF takes its unit's recorded NUMBER, and TIMEs their own",
             sql: "SELECT DATEDIFF(day, shipped_on, shipped_at) AS a, \
                   DATEDIFF('second', shipped_at, shipped_at) AS b, \
