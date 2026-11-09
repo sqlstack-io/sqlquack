@@ -25,7 +25,7 @@ fn given_recorded_sql_server_verdicts_when_parsing_each_statement_then_the_parse
             expected_disagreements: Vec::new(),
         },
         ReceiptsTestCase {
-            description: "table hints under SQL Server 2022 PARSEONLY, every pair of one-word hints among them",
+            description: "table hints under SQL Server 2022 PARSEONLY: every pair of one-word hints, and each one-word hint after an alias without WITH, where an unknown word is refused (321)",
             receipts: include_str!("fixtures/table_hint_receipts.jsonl"),
             expected_disagreements: Vec::new(),
         },
