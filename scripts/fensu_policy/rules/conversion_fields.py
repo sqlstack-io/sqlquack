@@ -22,8 +22,9 @@ from scripts.fensu_policy.models import SourceLine
     slug="conversion-fields-unread",
     message="shared code leaves the conversion's holding fields to the conversion",
     remediation=(
-        "Read a column's holding, typed_leaves, decimal_leaves, untainted, sourced, utc_offset, "
-        "declared_offsets, widened or suffixed only in the source dialect's src/<dialect>/ code. "
+        "Read or destructure a column's holding, typed_leaves, decimal_leaves, untainted, sourced, "
+        "utc_offset, declared_offsets, widened or suffixed only in the source dialect's "
+        "src/<dialect>/ code. "
         "Shared code asks the column's type through `DialectType` instead."
     ),
     analyzers=(AnalyzerId.RUST,),

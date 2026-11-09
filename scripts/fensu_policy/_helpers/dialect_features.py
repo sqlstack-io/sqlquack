@@ -14,6 +14,9 @@ from scripts.fensu_policy.constants import (
     ATTRIBUTE_LINE,
     CFG_FEATURE,
     CFG_WORD,
+    CLOSING_BRACKETS,
+    COLUMN_SPEC_BRACE,
+    CONVERSION_FIELD_BINDING,
     CONVERSION_FIELD_READ,
     DEFAULT_FEATURE,
     DEPENDENCIES_TABLE,
@@ -24,12 +27,17 @@ from scripts.fensu_policy.constants import (
     DIALECT_VARIANT_PATH,
     FEATURE_SEPARATOR,
     FEATURES_TABLE,
+    FIELD_SEPARATOR,
     MODULE_DECLARATION,
     NESTED_PATH_PARTS,
+    OPENING_BRACKETS,
     OPTIONAL_KEY,
+    PATTERN_FOLLOWER,
     PROFILE_NAME_CALLS,
+    REST_PATTERN_END,
     RUST_SUFFIX,
     SOURCE_ROOT,
+    TYPE_DECLARATION_WORDS,
     WEAK_FEATURE_MARK,
 )
 from scripts.fensu_policy.models import CrateFeatures, DialectVocabulary, SourceLine
@@ -203,15 +211,69 @@ def dialect_name_lines(*, source: str, dialects: tuple[str, ...]) -> tuple[Sourc
 
 
 def conversion_field_lines(*, source: str) -> tuple[SourceLine, ...]:
-    """Return each line where code reads a field recording how the conversion holds values."""
-    return _matched_lines(source=source, patterns=(CONVERSION_FIELD_READ,))
+    """Return each line where code reads a conversion holding field, by `.field` or a pattern."""
+    code: str = strip_comments_and_strings(source=source)
+    starts: set[int] = {match.start() for match in CONVERSION_FIELD_READ.finditer(code)}
+    starts.update(_pattern_binding_starts(code=code))
+    return _lines_at(source=source, code=code, starts=starts)
+
+
+def _pattern_binding_starts(*, code: str) -> set[int]:
+    """Return where a `ColumnSpec { .. }` pattern binds a conversion field at its top level."""
+    starts: set[int] = set()
+    for match in COLUMN_SPEC_BRACE.finditer(code):
+        preceding: list[str] = code[: match.start()].split()
+        if preceding and preceding[-1] in TYPE_DECLARATION_WORDS:
+            continue
+        close: int | None = _closing_brace(code=code, opening=match.end() - 1)
+        if close is None:
+            continue
+        body: str = code[match.end() : close]
+        if not (REST_PATTERN_END.search(body) or PATTERN_FOLLOWER.match(code, close + 1)):
+            continue
+        for offset, segment in _top_level_segments(text=body):
+            if CONVERSION_FIELD_BINDING.match(segment):
+                starts.add(match.end() + offset + len(segment) - len(segment.lstrip()))
+    return starts
+
+
+def _closing_brace(*, code: str, opening: int) -> int | None:
+    depth: int = 0
+    for index in range(opening, len(code)):
+        if code[index] in OPENING_BRACKETS:
+            depth += 1
+        elif code[index] in CLOSING_BRACKETS:
+            depth -= 1
+            if depth == 0:
+                return index
+    return None
+
+
+def _top_level_segments(*, text: str) -> list[tuple[int, str]]:
+    segments: list[tuple[int, str]] = []
+    depth: int = 0
+    start: int = 0
+    for index, character in enumerate(text):
+        if character in OPENING_BRACKETS:
+            depth += 1
+        elif character in CLOSING_BRACKETS:
+            depth -= 1
+        elif character == FIELD_SEPARATOR and depth == 0:
+            segments.append((start, text[start:index]))
+            start = index + 1
+    segments.append((start, text[start:]))
+    return segments
 
 
 def _matched_lines(*, source: str, patterns: tuple[re.Pattern[str], ...]) -> tuple[SourceLine, ...]:
-    raw_lines: list[str] = strip_comments(source=source).split("\n")
     code: str = strip_comments_and_strings(source=source)
     starts: set[int] = set()
     for pattern in patterns:
         starts.update(match.start() for match in pattern.finditer(code))
+    return _lines_at(source=source, code=code, starts=starts)
+
+
+def _lines_at(*, source: str, code: str, starts: set[int]) -> tuple[SourceLine, ...]:
+    raw_lines: list[str] = strip_comments(source=source).split("\n")
     numbers: list[int] = sorted({code.count("\n", 0, start) + 1 for start in starts})
     return tuple(SourceLine(line=number, text=raw_lines[number - 1].strip()) for number in numbers)

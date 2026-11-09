@@ -69,6 +69,18 @@ CONVERSION_FIELDS: tuple[str, ...] = (
 CONVERSION_FIELD_READ: re.Pattern[str] = re.compile(
     r"\.\s*(?:{fields})\b(?!\s*\()".format(fields="|".join(CONVERSION_FIELDS))
 )
+COLUMN_SPEC_BRACE: re.Pattern[str] = re.compile(r"\bColumnSpec\s*(?:::\s*<[^{}]*>\s*)?\{")
+TYPE_DECLARATION_WORDS: frozenset[str] = frozenset({"impl", "struct", "enum", "trait", "for"})
+REST_PATTERN_END: re.Pattern[str] = re.compile(r"(?:^|,)\s*\.\.\s*$")
+PATTERN_FOLLOWER: re.Pattern[str] = re.compile(r"\s*(?:=>|=(?!=)|:(?!:)|\||if\b)")
+CONVERSION_FIELD_BINDING: re.Pattern[str] = re.compile(
+    r"\s*(?:ref\s+)?(?:mut\s+)?(?:{fields})\s*(?::(?!:)|$)".format(
+        fields="|".join(CONVERSION_FIELDS)
+    )
+)
+OPENING_BRACKETS: str = "([{"
+CLOSING_BRACKETS: str = ")]}"
+FIELD_SEPARATOR: str = ","
 
 DEFAULT_DIALECTS: tuple[str, ...] = (
     "snowflake",
