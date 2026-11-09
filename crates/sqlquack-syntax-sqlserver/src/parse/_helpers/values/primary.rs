@@ -260,7 +260,7 @@ impl<'sql> Parser<'sql> {
             aggregate_call || (bare && matches!(upper.as_str(), "CHECKSUM" | "BINARY_CHECKSUM"));
         if star_call && self.is_char('*') && self.char_at(1, ')') {
             self.at += 1;
-            args.push(Expression::Star(Star {
+            args.push(Expression::Star(Box::new(Star {
                 table: None,
                 ilike: None,
                 except: None,
@@ -269,7 +269,7 @@ impl<'sql> Parser<'sql> {
                 trailing_comments: Vec::new(),
                 span: None,
                 qualified: None,
-            }));
+            })));
         } else if !self.is_char(')') {
             if aggregate_call {
                 distinct = self.eat_kw("DISTINCT");

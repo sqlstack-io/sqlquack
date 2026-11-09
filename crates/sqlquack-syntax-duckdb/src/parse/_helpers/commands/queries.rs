@@ -76,7 +76,7 @@ fn order_by(expressions: Vec<Ordered>) -> OrderBy {
 /// `SELECT * FROM (body)`, for a body that cannot take a clause itself.
 pub(crate) fn wrapped(body: Expression) -> Select {
     let mut select: Select = Select::new();
-    select.expressions = vec![Expression::Star(star(None, None))];
+    select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
     select.from = Some(From {
         expressions: vec![subquery(body, None, false)],
     });
@@ -379,7 +379,7 @@ impl Parser<'_> {
             Some("TABLE") => {
                 self.at += 1;
                 let mut select: Select = Select::new();
-                select.expressions = vec![Expression::Star(star(None, None))];
+                select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
                 select.from = Some(From {
                     expressions: vec![Expression::Table(Box::new(self.base_table_name()?))],
                 });
@@ -416,7 +416,7 @@ impl Parser<'_> {
             select = self.select_from_clause(select)?;
             match self.kw("SELECT") {
                 true => select = self.select_clause(select)?,
-                false => select.expressions = vec![Expression::Star(star(None, None))],
+                false => select.expressions = vec![Expression::Star(Box::new(star(None, None)))],
             }
         }
         if self.eat_kw("WHERE") {

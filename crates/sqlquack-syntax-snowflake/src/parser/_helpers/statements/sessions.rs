@@ -888,7 +888,7 @@ impl Parser {
                     table.span = result.as_ref().and_then(Self::reference_span);
                 }
                 let star = self.parse_star_modifiers(table_name)?;
-                result = Some(Expression::Star(star));
+                result = Some(Expression::Star(Box::new(star)));
                 break;
             }
             if self.is_identifier_or_keyword_token() || self.check(TokenType::QuotedIdentifier) {

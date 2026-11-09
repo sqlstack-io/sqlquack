@@ -193,7 +193,7 @@ impl Parser<'_> {
             TokenKind::Char('*') => {
                 self.at += 1;
                 let except: Option<Vec<Identifier>> = self.star_except()?;
-                Ok(Expression::Star(star(None, except)))
+                Ok(Expression::Star(Box::new(star(None, except))))
             }
             TokenKind::Char('?') => {
                 self.at += 1;
@@ -311,7 +311,7 @@ impl Parser<'_> {
             if self.char_at(1, '*') {
                 self.at += 2;
                 let except: Option<Vec<Identifier>> = self.star_except()?;
-                return Ok(Expression::Star(star(parts.pop(), except)));
+                return Ok(Expression::Star(Box::new(star(parts.pop(), except))));
             }
             if !self.is_at(1, is_identifier) {
                 break;

@@ -751,7 +751,7 @@ pub enum Expression {
     Identifier(Identifier),
     Column(Box<Column>),
     Table(Box<TableRef>),
-    Star(Star),
+    Star(Box<Star>),
     /// Snowflake braced wildcard syntax: {*}, {tbl.*}, {* EXCLUDE (...)}, {* ILIKE '...'}
     BracedWildcard(Box<Expression>),
 

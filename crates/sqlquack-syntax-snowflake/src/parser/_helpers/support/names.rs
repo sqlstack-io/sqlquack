@@ -1298,7 +1298,7 @@ impl Parser {
 
         let rename = self.parse_star_rename()?;
 
-        Ok(Some(Expression::Star(Star {
+        Ok(Some(Expression::Star(Box::new(Star {
             table: None,
             ilike: None,
             except,
@@ -1307,7 +1307,7 @@ impl Parser {
             trailing_comments: Vec::new(),
             span: None,
             qualified: None,
-        })))
+        }))))
     }
 
     /// try_parse_identifier - Try to parse an identifier, returning None if not found

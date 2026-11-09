@@ -389,7 +389,7 @@ impl<'sql> Parser<'sql> {
     /// One select item: `*`, `t.*`, `expr [[AS] alias]`, `alias = expr` or `@v = expr`.
     fn select_item(&mut self) -> Parsing<Expression> {
         if self.eat_char('*') {
-            return Ok(Expression::Star(empty_star(None)));
+            return Ok(Expression::Star(Box::new(empty_star(None))));
         }
         let mut offset: usize = 0;
         while self.is_at(offset, is_name) && self.char_at(offset + 1, '.') {
@@ -401,7 +401,7 @@ impl<'sql> Parser<'sql> {
                 .collect();
             self.at += offset + 1;
             let qualifier: Identifier = crate::parse::_helpers::tree::nodes::joined(parts);
-            return Ok(Expression::Star(empty_star(Some(qualifier))));
+            return Ok(Expression::Star(Box::new(empty_star(Some(qualifier)))));
         }
         if self
             .peek()

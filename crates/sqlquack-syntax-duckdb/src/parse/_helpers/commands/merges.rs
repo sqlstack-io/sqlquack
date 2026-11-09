@@ -203,7 +203,7 @@ impl Parser<'_> {
 
 /// `*`, every column.
 fn star_all() -> Expression {
-    Expression::Star(star(None, None))
+    Expression::Star(Box::new(star(None, None)))
 }
 
 /// Names as a tuple of columns.

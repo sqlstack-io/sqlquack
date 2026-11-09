@@ -1387,7 +1387,7 @@ pub enum VerticaExpression {
         columns: Vec<Identifier>,
         local: bool,
         sources: Vec<Expression>,
-        parser: Option<VerticaParserCall>,
+        parser: Option<Box<VerticaParserCall>>,
         options: Vec<VerticaParameter>,
     },
     ExportParquet {
