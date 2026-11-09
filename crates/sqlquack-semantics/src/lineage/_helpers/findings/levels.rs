@@ -12,8 +12,8 @@ use crate::lineage::_helpers::checks::node_checks::{NodeLevel, node_findings};
 use crate::lineage::_helpers::checks::scope_rules::{RuleLevel, select_rules, set_order};
 use crate::lineage::_helpers::checks::sets::{Branches, set_findings};
 use crate::lineage::_helpers::findings::checks::{
-    Level, alias_count_findings, column_finding, columns_pattern_finding, unpivot_findings,
-    using_findings,
+    Level, alias_count_findings, column_finding, columns_pattern_finding, level_outputs,
+    unpivot_findings, using_findings,
 };
 use crate::lineage::_helpers::tracing::expressions::date_part_argument;
 use crate::lineage::_helpers::tracing::queries::{
@@ -242,11 +242,11 @@ fn select_findings(
         own.extend(unpivot_findings(item, &ctes, context));
     }
     let own_outputs: Vec<String> = aliased_outputs(select, context);
-    let mut outputs: Vec<String> = aliases.to_vec();
-    outputs.extend(own_outputs.iter().cloned());
     let level = Level {
         scope: &scope,
-        outputs: &outputs,
+        enclosing: aliases,
+        own: &own_outputs,
+        hidden: None,
         connect: select.connect.is_some(),
         filtering_join: select.joins.iter().any(|join| {
             matches!(
@@ -260,39 +260,37 @@ fn select_findings(
             )
         }),
     };
-    let unnamed: [String; 0] = [];
+    let unnamed = Level {
+        enclosing: &[],
+        own: &[],
+        ..level
+    };
     for projection in &select.expressions {
-        let own_name: String = output_key(unannotated(projection), context);
-        let mut others: Vec<String> = aliases.to_vec();
-        others.extend(
-            own_outputs
-                .iter()
-                .filter(|alias| !context.profile.same_identifier(alias, &own_name))
-                .cloned(),
-        );
-        let (found, inner) = clause_findings(
-            projection,
-            &Level {
-                outputs: match anywhere {
-                    true => &others,
-                    false => &unnamed,
-                },
+        let own_name: Option<String> =
+            anywhere.then(|| output_key(unannotated(projection), context));
+        let projected = match &own_name {
+            Some(own_name) => Level {
+                hidden: Some(own_name),
                 ..level
             },
-            context,
-        );
+            None => unnamed,
+        };
+        let (found, inner) = clause_findings(projection, &projected, context);
         own.extend(found);
         nested.extend(inner);
     }
     for clause in clauses(select) {
         let named_place: bool = ordered_name_place(select, clause)
             || (rules.group_keys_read_outputs() && group_key_place(select, clause));
-        let outputs: &[String] = match (anywhere, named_place) {
-            (true, _) => level.outputs,
-            (false, true) => &own_outputs,
-            (false, false) => &unnamed,
+        let read = match (anywhere, named_place) {
+            (true, _) => level,
+            (false, true) => Level {
+                enclosing: &[],
+                ..level
+            },
+            (false, false) => unnamed,
         };
-        let (found, inner) = clause_findings(clause, &Level { outputs, ..level }, context);
+        let (found, inner) = clause_findings(clause, &read, context);
         own.extend(found);
         nested.extend(inner);
     }
@@ -388,11 +386,15 @@ fn clause_findings(
             Expression::Select(_)
             | Expression::Union(_)
             | Expression::Intersect(_)
-            | Expression::Except(_) => nested.extend(query_findings(
-                node,
-                (level.scope.ctes, Some(level.scope), level.outputs),
-                context,
-            )),
+            | Expression::Except(_) => {
+                let aliases: Vec<String> =
+                    level_outputs(*level, context).map(str::to_owned).collect();
+                nested.extend(query_findings(
+                    node,
+                    (level.scope.ctes, Some(level.scope), &aliases),
+                    context,
+                ));
+            }
             Expression::Dot(dot) => {
                 if !matches!(unannotated(&dot.this), Expression::Column(_)) {
                     pending.push(&dot.this);

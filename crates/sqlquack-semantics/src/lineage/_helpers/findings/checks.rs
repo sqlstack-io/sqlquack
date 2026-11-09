@@ -26,10 +26,28 @@ use crate::lineage::models::{LineageContext, LineageScope, NamedQuery, ScopeSour
 #[derive(Clone, Copy)]
 pub(crate) struct Level<'s, 'a> {
     pub(crate) scope: &'s LineageScope<'a>,
-    pub(crate) outputs: &'s [String],
+    /// The output aliases of enclosing levels the clause may read.
+    pub(crate) enclosing: &'s [String],
+    /// This level's output aliases the clause may read.
+    pub(crate) own: &'s [String],
+    /// The name of the projection being read, which hides own aliases spelled the same.
+    pub(crate) hidden: Option<&'s str>,
     pub(crate) connect: bool,
     /// Whether a SEMI or ANTI join filters the level, its right side hidden from the outputs.
     pub(crate) filtering_join: bool,
+}
+
+/// The output aliases a clause at `level` may read: enclosing levels', then its own unhidden ones.
+pub(crate) fn level_outputs<'s>(
+    level: Level<'s, '_>,
+    context: LineageContext<'_>,
+) -> impl Iterator<Item = &'s str> {
+    let own = level.own.iter().filter(move |alias| {
+        level
+            .hidden
+            .is_none_or(|hidden| !context.profile.same_identifier(alias, hidden))
+    });
+    level.enclosing.iter().chain(own).map(String::as_str)
 }
 
 /// What a column reference resolves to, as a finding when it resolves to nothing.
@@ -113,10 +131,7 @@ pub(crate) fn column_finding(
         }
         scope = current.outer;
     }
-    if level
-        .outputs
-        .iter()
-        .any(|output| context.profile.same_identifier(output, &wanted))
+    if level_outputs(*level, context).any(|output| context.profile.same_identifier(output, &wanted))
         || (level.scope.sources.is_empty() && level.scope.outer.is_none())
         || keyword_function(column, level.scope, context)
     {
@@ -254,7 +269,12 @@ fn clickhouse_no_relation(
     context: LineageContext<'_>,
 ) -> bool {
     let named = |name: &str| context.profile.same_identifier(name, alias);
-    if bound.iter().chain(level.outputs).any(|name| named(name)) {
+    if bound
+        .iter()
+        .map(String::as_str)
+        .chain(level_outputs(*level, context))
+        .any(named)
+    {
         return false;
     }
     let mut scope: Option<&LineageScope<'_>> = Some(level.scope);
