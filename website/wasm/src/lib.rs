@@ -18,12 +18,12 @@ use sqlquack_diagnostics::diagnostics::constants::SESSION_PARAMETERS;
 use sqlquack_diagnostics::diagnostics::main::diagnose::diagnose;
 use sqlquack_diagnostics::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
 use sqlquack_diagnostics::failures::constants::{ERROR_TAG_PREFIX, TAG_END};
-use sqlquack_diagnostics::failures::main::duckdb_failure::duckdb_failure;
+use sqlquack_diagnostics::failures::main::engine_failure::engine_failure;
 use sqlquack_diagnostics::failures::main::raise_id::raise_id;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_diagnostics::refusals::main::refuse_constructs::refuse_constructs;
 use sqlquack_diagnostics::refusals::main::refuse_unparsed::refuse_unparsed;
-use sqlquack_diagnostics::refusals::main::snowflake_rejections::snowflake_rejections;
+use sqlquack_diagnostics::snowflake::refusals::main::snowflake_rejections::snowflake_rejections;
 use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_parse::parsing::main::parse_source::parse_source;
 use sqlquack_policy::policy::models::Policy;
@@ -60,7 +60,7 @@ pub fn analyze(sql: &str, sources: &str, settings: Option<String>) -> String {
 /// raised, as JSON: `{"errno", "sqlstate", "raise_id", "message"}`, or `{}` when it is DuckDB's own.
 #[wasm_bindgen]
 pub fn run_failure(message: &str) -> String {
-    let Some(code) = duckdb_failure(message).and_then(|failure| failure.snowflake) else {
+    let Some(code) = engine_failure(message).and_then(|failure| failure.snowflake) else {
         return json!({}).to_string();
     };
     // The tagged text, `sqlquack:<errno>#<id>: <message>`, runs to the end of its line, or to the

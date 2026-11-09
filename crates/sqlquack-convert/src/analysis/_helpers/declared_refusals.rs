@@ -2,9 +2,9 @@
 
 use sqlquack_diagnostics::classification::models::Occurrence;
 use sqlquack_diagnostics::refusals::main::refuse_constructs::refuse_constructs;
-use sqlquack_diagnostics::refusals::main::snowflake_rejections::snowflake_rejections;
 use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_diagnostics::refusals::types::ConstructPolicy;
+use sqlquack_diagnostics::snowflake::refusals::main::snowflake_rejections::snowflake_rejections;
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::tokens::models::SourceLines;
 

@@ -5,7 +5,6 @@ use std::time::{Duration, Instant};
 
 use sqlquack_syntax::{Dialect, ParseOptions, parse_tolerant};
 
-use crate::classification::models::SourceDialect;
 use crate::diagnostics::constants::MAX_SHOWN_LINE;
 use crate::diagnostics::main::{diagnose::diagnose, render_diagnostics::render_diagnostics};
 use crate::refusals::main::refuse_unparsed::refuse_unparsed;

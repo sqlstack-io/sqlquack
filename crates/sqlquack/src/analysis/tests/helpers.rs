@@ -3,7 +3,7 @@ use std::collections::BTreeSet;
 use sha2::{Digest, Sha256};
 use sqlquack_diagnostics::classification::models::SourceDialect;
 use sqlquack_diagnostics::diagnostics::models::DiagnosticSpan;
-use sqlquack_diagnostics::failures::main::duckdb_failure::duckdb_failure;
+use sqlquack_diagnostics::failures::main::engine_failure::engine_failure;
 use sqlquack_diagnostics::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_evidence::cases::main::load_cases::load_cases;
@@ -1012,7 +1012,7 @@ fn fixture_result(fixture: &str, sql: &str) -> String {
     });
     rows.map_or_else(
         |error| {
-            duckdb_failure(&error.to_string())
+            engine_failure(&error.to_string())
                 .and_then(|failure| failure.snowflake)
                 .map_or_else(
                     || "raises a DuckDB error".to_owned(),

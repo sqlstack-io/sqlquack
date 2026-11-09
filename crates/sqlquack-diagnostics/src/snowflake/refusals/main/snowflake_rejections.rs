@@ -5,9 +5,9 @@ use std::cell::OnceCell;
 use sqlquack_syntax::{Expression, ExpressionWalk};
 
 use crate::classification::models::{Construct, ConstructFamily};
-use crate::refusals::_helpers::clause_location::clause_location;
-use crate::refusals::_helpers::rejections::rejection;
 use crate::refusals::models::{Refusal, RefusalCategory};
+use crate::snowflake::refusals::_helpers::clause_location::clause_location;
+use crate::snowflake::refusals::_helpers::rejections::rejection;
 use sqlquack_syntax::tokens::main::node_location::node_location;
 use sqlquack_syntax::tokens::models::SourceLines;
 

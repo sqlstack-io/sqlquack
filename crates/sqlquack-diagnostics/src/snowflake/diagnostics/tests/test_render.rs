@@ -1,7 +1,7 @@
 use crate::diagnostics::main::diagnose::diagnose;
-use crate::diagnostics::tests::helpers::{placed, rendered, unlocated, unparsed};
-use crate::diagnostics::tests::test_types::{GuardTestCase, RenderTestCase};
 use crate::refusals::models::RefusalCategory;
+use crate::snowflake::diagnostics::tests::helpers::{placed, rendered, unlocated, unparsed};
+use crate::snowflake::diagnostics::tests::test_types::{GuardTestCase, RenderTestCase};
 
 #[test]
 fn given_refusals_when_rendered_then_the_source_line_is_underlined_at_the_span() {

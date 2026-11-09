@@ -1,8 +1,8 @@
 use crate::refusals::models::RefusalCategory;
-use crate::refusals::tests::helpers::{
+use crate::snowflake::refusals::tests::helpers::{
     not_expressible_reasons, rejection_codes, rejection_names, unmatched_refusals, unparsed_refusal,
 };
-use crate::refusals::tests::test_types::{
+use crate::snowflake::refusals::tests::test_types::{
     ConstructRefusalTestCase, RejectionTestCase, UnparsedTestCase,
 };
 

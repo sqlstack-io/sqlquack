@@ -1,7 +1,7 @@
-use crate::classification::tests::helpers::{
+use crate::snowflake::classification::tests::helpers::{
     line_and_column, missing_keys, unclassified_nodes, unlocated_constructs,
 };
-use crate::classification::tests::test_types::{
+use crate::snowflake::classification::tests::test_types::{
     CompletenessTestCase, ConstructTestCase, LocationTestCase,
 };
 

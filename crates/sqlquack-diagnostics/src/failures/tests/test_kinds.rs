@@ -2,12 +2,11 @@ use crate::failures::constants::{
     DIVISION_BY_ZERO, JSON_NOT_PARSED, NUMBER_OUT_OF_RANGE, NUMBER_TEXT_OUT_OF_RANGE,
     STRING_TOO_LONG,
 };
-use crate::failures::main::duckdb_failure::duckdb_failure;
-use crate::failures::main::snowflake_kind::snowflake_kind;
+use crate::failures::main::engine_failure::engine_failure;
 use crate::failures::main::tagged_message::tagged_message;
 use crate::failures::models::{DuckdbFailure, ErrorKind};
 use crate::failures::tests::helpers::untagged;
-use crate::failures::tests::test_types::{DuckdbMessageTestCase, SnowflakeErrnoTestCase};
+use crate::failures::tests::test_types::DuckdbMessageTestCase;
 
 #[test]
 fn given_duckdb_message_when_classifying_then_tag_or_fragment_gives_kind() {
@@ -62,7 +61,7 @@ fn given_duckdb_message_when_classifying_then_tag_or_fragment_gives_kind() {
 
     for test_case in test_cases {
         assert_eq!(
-            duckdb_failure(&test_case.message),
+            engine_failure(&test_case.message),
             test_case.expected_failure,
             "{}",
             test_case.description
@@ -117,44 +116,11 @@ fn given_tagged_snowflake_error_when_classifying_then_reads_back() {
 
     for test_case in test_cases {
         assert_eq!(
-            duckdb_failure(&test_case.message),
+            engine_failure(&test_case.message),
             test_case.expected_failure,
             "{}: {}",
             test_case.description,
             test_case.message
-        );
-    }
-}
-
-#[test]
-fn given_snowflake_errno_when_classifying_then_errno_and_sqlstate_give_kind() {
-    let test_cases = [
-        SnowflakeErrnoTestCase {
-            description: "numeric overflow",
-            errno: NUMBER_OUT_OF_RANGE.errno,
-            sqlstate: NUMBER_OUT_OF_RANGE.sqlstate,
-            expected_kind: Some(ErrorKind::NumericOverflow),
-        },
-        SnowflakeErrnoTestCase {
-            description: "a known number with another SQLSTATE",
-            errno: NUMBER_OUT_OF_RANGE.errno,
-            sqlstate: "22000",
-            expected_kind: None,
-        },
-        SnowflakeErrnoTestCase {
-            description: "an unknown error",
-            errno: 1,
-            sqlstate: "00000",
-            expected_kind: None,
-        },
-    ];
-
-    for test_case in test_cases {
-        assert_eq!(
-            snowflake_kind(test_case.errno, test_case.sqlstate),
-            test_case.expected_kind,
-            "{}",
-            test_case.description
         );
     }
 }

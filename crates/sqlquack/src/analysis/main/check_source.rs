@@ -3,7 +3,7 @@
 use sqlquack_diagnostics::diagnostics::main::diagnose::diagnose;
 use sqlquack_diagnostics::diagnostics::models::Diagnostic;
 use sqlquack_diagnostics::refusals::main::refuse_unparsed::refuse_unparsed;
-use sqlquack_diagnostics::refusals::main::snowflake_rejections::snowflake_rejections;
+use sqlquack_diagnostics::snowflake::refusals::main::snowflake_rejections::snowflake_rejections;
 use sqlquack_parse::parsing::main::parse_source::parse_source;
 use sqlquack_syntax::Dialect;
 use sqlquack_syntax::tokens::models::SourceLines;

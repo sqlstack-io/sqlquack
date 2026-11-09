@@ -16,7 +16,7 @@ serde.workspace = true
 serde_json.workspace = true
 sha2.workspace = true
 sqlquack-compare.workspace = true
-sqlquack-diagnostics.workspace = true
+sqlquack-diagnostics = { workspace = true, features = ["snowflake"] }
 sqlquack-policy.workspace = true
 sqlquack-syntax.workspace = true
 tempfile.workspace = true
