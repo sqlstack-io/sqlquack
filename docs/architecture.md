@@ -607,8 +607,10 @@ setting reaches the repository. A pinned parameter whose account default differs
 
 ### Flow
 
-1. `sqlquack pending` writes `evidence/pending/<hash>.json` for every case without a result.
-2. The maintainer runs `sqlquack-record`. Before running anything it compiles every pending
+1. `make pending` (`sqlquack pending`) writes `evidence/pending/<hash>.json` for every case without
+   a result.
+2. The maintainer runs `make record` (`sqlquack-record`, with any options in `RECORD_ARGS`) from a
+   machine with a Snowflake connection; CI never records. Before running anything it compiles every pending
    case's SQL with `EXPLAIN`, which runs nothing and creates nothing, and when any fails with a
    SQLSTATE class 0A or 42 error it stops and lists them, so a mistake such as a reserved word used
    as an alias costs no recording. A case that records Snowflake refusing to compile its SQL
@@ -637,8 +639,10 @@ setting reaches the repository. A pinned parameter whose account default differs
    (the outermost `input` CTE and an `ORDER BY ordinal` that only keeps rows in input order) is
    converted with provenance muted, so its casts, literals and set operation count neither toward
    claims nor toward the error check's declared failures; a query's own CTEs follow the fixture's
-   in the same `WITH` and do count. The pre-push gate
-   (`make gate`) runs `verify --require-verified`, which fails while any claim is unverified.
+   in the same `WITH` and do count. `make verify-recorded` runs `verify --require-verified
+   --strict-errors`, which fails while any claim is unverified; CI and `make gate` both run it, so
+   both use those flags. `make check-merge` does not replay recorded cases. A new case's results
+   are committed with the case once `make verify-recorded` passes.
    Where Snowflake and DuckDB both raised, verify also checks the errors (see Error checks).
 4. `sqlquack review` writes every case as a sqllogictest-style record (`source snowflake`,
    `converted duckdb` or `refused`, then `query snowflake nosort|rowsort` with the column names and
@@ -711,5 +715,4 @@ For a passed case where both raised, verify reports `agrees` (same kind, and a r
 conversion used declares the recorded error), `divergence_raise` (DuckDB raised a known
 divergence's guard), or a finding: `errno_mismatch` (a block tagged another errno),
 `kind_mismatch`, `undeclared` or `unknown_snowflake_error`. Findings are reported and counted;
-`verify --strict-errors` fails on them. The gate does not pass that flag until the existing
-error cases are re-recorded with their messages.
+`verify --strict-errors` fails on them; `make verify-recorded`, and so CI and `make gate`, pass it.

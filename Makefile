@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug gate-build evidence-guard polyglot-guard engine-free generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-results sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
+.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug gate-build evidence-guard polyglot-guard engine-free generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-results pending record sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -167,7 +167,8 @@ test-rust: gate-build
 	RUST_TEST_JOBS=$(RUST_TEST_JOBS) RUST_TEST_FEATURES=$(GATE_FEATURES) \
 	  scripts/run_rust_tests.sh $(RUST_TEST_PROFILE)
 
-# What every merge to main must pass, on the exact head: the static gate and the Rust tests.
+# What every merge to main must pass, on the exact head: the static gate and the Rust tests. It does
+# not replay the recorded cases; `make verify-recorded` does, and CI runs it on every pull request.
 check-merge: check-ci test-rust
 
 test-python: python-api
@@ -191,9 +192,13 @@ python-api: python-module
 python-wheel: | .venv/bin/python
 	cd python && uvx --from "maturin[patchelf]>=1.9,<2" maturin build --release --locked
 
-# Replays every recorded case on DuckDB; every rule and equivalence needs a passed case.
+# Replays every recorded case on DuckDB; every rule and equivalence needs a passed case. CI and
+# `make gate` both run verify-recorded, so these are the one set of verify flags.
 # Backup pushes may drop --require-verified; failed cases and error findings still block.
 VERIFY_FLAGS ?= --require-verified --strict-errors
+# The cargo profile verify is built with: release locally, dev in CI, where the tests' debug build
+# is already cached.
+VERIFY_PROFILE ?= release
 # Verify reports evidence coverage (docs/coverage.md) and writes it to COVERAGE_REPORT as JSON.
 # REQUIRE_COVERAGE=1 fails on any gap; it stays 0 until the generated hazard cases are recorded.
 COVERAGE_REPORT ?= target/coverage-report.json
@@ -221,10 +226,24 @@ SQL_SIZE_ALLOWANCES := coverage/sql-size/allowances.toml
 
 verify-recorded:
 	mkdir -p $(dir $(COVERAGE_REPORT))
-	cargo run --release --locked -p sqlquack -- verify $(VERIFY_FLAGS) $(COVERAGE_FLAGS) --python $(VERIFY_PYTHON) \
+	cargo run --profile $(VERIFY_PROFILE) --locked -p sqlquack -- verify $(VERIFY_FLAGS) $(COVERAGE_FLAGS) --python $(VERIFY_PYTHON) \
 	  --translation-statements $(TRANSLATION_STATEMENTS) --sql-sizes $(SQL_SIZES)
 	$(MAKE) translation-results
 	$(MAKE) sql-sizes
+
+# Recording a new case on Snowflake: `make pending`, then `make record`, then `make verify-recorded`,
+# and commit the new evidence/results files with the case (docs/architecture.md, Flow).
+
+# Writes evidence/pending/<hash>.json for every case without a recorded result.
+pending:
+	cargo run --release --locked -p sqlquack -- pending
+
+# Records evidence/pending/ on Snowflake into evidence/results/, never overwriting a result. Needs
+# the recorder (RECORDER=1, the default) and a Snowflake connection; CI never runs it. Example:
+# make record RECORD_ARGS="--dry-run --connection sqlquack"
+record:
+	@if [ "$(RECORDER)" != 1 ]; then echo "record: the recorder is not installed when RECORDER=$(RECORDER)" >&2; exit 2; fi
+	uv run sqlquack-record $(RECORD_ARGS)
 
 # The generated-SQL size ratchet over the sizes verify wrote; see verify-recorded.
 sql-sizes:
@@ -334,10 +353,10 @@ fuzz-smoke:
 	done
 
 # Everything CI runs: the static gate, the tests, the recorded-case replay, the exact check and the
-# timed conversion on DuckShop, and the fuzz smoke. The pre-push verify hook runs this.
+# timed conversion on DuckShop, and the fuzz smoke.
 # After the static gate, the independent targets run in parallel, each target's output kept
-# together; any failure fails the gate. The verify hook builds what they need beforehand. The fuzz
-# smoke and then the SQL timing benchmark run alone afterwards, so each gets the machine to itself.
+# together; any failure fails the gate. The fuzz smoke and then the SQL timing benchmark run alone
+# afterwards, so each gets the machine to itself.
 gate: check-ci $(if $(filter command line,$(origin DUCKSHOP_COMPILED)),,duckshop-compiled)
 	$(MAKE) -j --output-sync=target gate-parallel
 	$(MAKE) fuzz-smoke
