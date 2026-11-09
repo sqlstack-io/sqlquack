@@ -1,0 +1,41 @@
+category = "translation"
+construct = "sf.functions.position.position"
+session_profile = "utc-v1"
+
+[[case]]
+id = "t001_empty_needle_start_pos"
+description = "An empty needle with a start position, inside, at and past the end of the haystack, with an empty haystack, and with zero and negative starts. Records what POSITION returns for each start."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }, { name = "p", type = "NUMBER(38,0)" }]
+rows = [
+  ["''", "'abc'", "1"],
+  ["''", "'abc'", "2"],
+  ["''", "'abc'", "3"],
+  ["''", "'abc'", "4"],
+  ["''", "'abc'", "5"],
+  ["''", "'abc'", "10"],
+  ["''", "''", "2"],
+  ["''", "'abc'", "0"],
+  ["''", "'abc'", "-1"],
+]
+query = "SELECT POSITION(a, b, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination", "boundary", "empty"]
+
+[[case]]
+id = "t002_charindex_empty_needle_start_pos"
+description = "The same rows through CHARINDEX(a, b, p)."
+columns = [{ name = "a", type = "VARCHAR" }, { name = "b", type = "VARCHAR" }, { name = "p", type = "NUMBER(38,0)" }]
+rows = [
+  ["''", "'abc'", "1"],
+  ["''", "'abc'", "2"],
+  ["''", "'abc'", "3"],
+  ["''", "'abc'", "4"],
+  ["''", "'abc'", "5"],
+  ["''", "'abc'", "10"],
+  ["''", "''", "2"],
+  ["''", "'abc'", "0"],
+  ["''", "'abc'", "-1"],
+]
+query = "SELECT CHARINDEX(a, b, p) AS r FROM input ORDER BY ordinal"
+order = "ordered"
+tags = ["type-combination", "boundary", "empty"]
