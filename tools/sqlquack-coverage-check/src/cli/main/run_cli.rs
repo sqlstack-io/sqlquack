@@ -32,12 +32,14 @@ pub fn run_cli() -> ExitCode {
         Command::Translation { arguments, common } => translation(&arguments, &common),
         Command::Results {
             statements,
+            cases,
+            files_only: _,
             write_baseline,
             report,
             against,
             common,
         } => results(
-            &statements,
+            (statements.as_deref(), &cases),
             (write_baseline, report.as_deref(), against.as_deref()),
             &common,
         ),

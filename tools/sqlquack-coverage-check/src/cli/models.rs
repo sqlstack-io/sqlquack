@@ -142,8 +142,15 @@ pub enum Command {
     },
     /// Recorded statements linked to forms, the result-matching measure; fails on any change.
     Results {
-        /// The file `sqlquack verify --translation-statements` writes.
-        statements: PathBuf,
+        /// The file `sqlquack verify --translation-statements` writes; not read with --files-only.
+        #[arg(required_unless_present = "files_only")]
+        statements: Option<PathBuf>,
+        /// The recorded translation cases' root; with `--evidence`, the only place cases are read.
+        #[arg(long, requires = "evidence")]
+        cases: PathBuf,
+        /// Check the translation files and the cases they cite, without the measure.
+        #[arg(long, conflicts_with_all = ["statements", "write_baseline", "report", "against"])]
+        files_only: bool,
         /// Record the measure as the new baseline instead of comparing with it.
         #[arg(long)]
         write_baseline: bool,

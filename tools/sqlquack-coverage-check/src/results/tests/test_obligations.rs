@@ -1,16 +1,20 @@
 use std::process::ExitCode;
 
+use clap::Parser;
+
 use crate::check::tests::helpers::write;
 use crate::cli::_helpers::results_command::results;
-use crate::cli::models::Common;
+use crate::cli::models::{Arguments, Common};
 use crate::results::constants::STATEMENTS_FORMAT;
 use crate::results::main::diff_results::diff_results;
 use crate::results::models::{ObligationState, ResultState, ResultsBaseline, StatementOutcome};
 use crate::results::tests::helpers::{
-    COUNT_IF_CASE, LINKS, citing, count_if_cases, measure_obligations, obligation, statement, tree,
+    COUNT_IF_CASE, LINKS, citing, copy_folder, count_if_cases, measure_obligations, obligation,
+    statement, tree,
 };
 use crate::results::tests::test_types::{
-    ObligationDiffTestCase, ObligationLoadTestCase, ObligationStateTestCase, ObligationsCliTestCase,
+    ObligationDiffTestCase, ObligationLoadTestCase, ObligationStateTestCase,
+    ObligationsCliTestCase, ResultsArgumentsTestCase, ResultsRootsTestCase,
 };
 
 /// The statement under COUNT_IF's form that matches Snowflake, cited by no obligation.
@@ -320,7 +324,10 @@ fn given_obligations_when_running_the_results_command_then_the_json_reports_each
         write(directory.path(), "statements.json", &statements.to_string());
         let report_path = directory.path().join("report.json");
         let exit = results(
-            &directory.path().join("statements.json"),
+            (
+                Some(&directory.path().join("statements.json")),
+                &directory.path().join("cases"),
+            ),
             (true, Some(&report_path), None),
             &Common {
                 root,
@@ -417,6 +424,113 @@ fn given_a_met_obligation_when_it_stops_being_met_then_the_diff_regresses() {
             .regressions
             .len(),
             test_case.expected_regressions,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_stale_local_cases_when_the_named_roots_lack_them_then_the_results_command_fails() {
+    let test_cases = [
+        ResultsRootsTestCase {
+            description: "the named roots hold every case, so the files check out",
+            evidence: "pinned/syntax",
+            cases: "pinned/convert/cases",
+            expected_exit: ExitCode::SUCCESS,
+        },
+        ResultsRootsTestCase {
+            description: "a missing translation cases root fails, though cases/ holds a copy",
+            evidence: "pinned/syntax",
+            cases: "pinned/convert/missing",
+            expected_exit: ExitCode::FAILURE,
+        },
+        ResultsRootsTestCase {
+            description: "a translation cases root without the cited case fails, though cases/ has it",
+            evidence: "pinned/syntax",
+            cases: "pinned/convert/empty",
+            expected_exit: ExitCode::FAILURE,
+        },
+        ResultsRootsTestCase {
+            description: "an evidence root without the syntax cases fails, though coverage/syntax/cases has them",
+            evidence: "pinned/empty",
+            cases: "pinned/convert/cases",
+            expected_exit: ExitCode::FAILURE,
+        },
+    ];
+    for test_case in test_cases {
+        let directory = tempfile::tempdir().expect("directory");
+        let pinned = directory.path().join("pinned");
+        // The stale local copies: coverage/syntax/{cases,receipts} and cases/translation.
+        let root = tree(&directory.path().join("coverage"));
+        count_if_cases(directory.path());
+        let translation = directory.path().join("coverage/translation");
+        write(&translation, "form-links.toml", LINKS);
+        write(
+            &translation,
+            "obligations/functions.toml",
+            &obligation(1, &citing(COUNT_IF_CASE)),
+        );
+        copy_folder("cases", &root, &pinned.join("syntax"));
+        copy_folder("receipts", &root, &pinned.join("syntax"));
+        count_if_cases(&pinned.join("convert"));
+        std::fs::create_dir_all(pinned.join("empty")).expect("empty root");
+        std::fs::create_dir_all(pinned.join("convert/empty")).expect("empty root");
+        let exit = results(
+            (None, &directory.path().join(test_case.cases)),
+            (false, None, None),
+            &Common {
+                root,
+                evidence: Some(directory.path().join(test_case.evidence)),
+                json: true,
+            },
+        )
+        .unwrap_or_else(|exit| exit);
+        assert_eq!(exit, test_case.expected_exit, "{}", test_case.description);
+    }
+}
+
+#[test]
+fn given_results_arguments_when_parsing_then_both_case_roots_are_required() {
+    let test_cases = [
+        ResultsArgumentsTestCase {
+            description: "statements with both roots parse",
+            arguments: &["s.json", "--evidence", "e", "--cases", "c"],
+            expected_parses: true,
+        },
+        ResultsArgumentsTestCase {
+            description: "--files-only with both roots parses",
+            arguments: &["--files-only", "--evidence", "e", "--cases", "c"],
+            expected_parses: true,
+        },
+        ResultsArgumentsTestCase {
+            description: "no --cases is refused, not read from the working directory",
+            arguments: &["s.json", "--evidence", "e"],
+            expected_parses: false,
+        },
+        ResultsArgumentsTestCase {
+            description: "no --evidence is refused, not read from the coverage root",
+            arguments: &["s.json", "--cases", "c"],
+            expected_parses: false,
+        },
+        ResultsArgumentsTestCase {
+            description: "no statements without --files-only is refused",
+            arguments: &["--evidence", "e", "--cases", "c"],
+            expected_parses: false,
+        },
+        ResultsArgumentsTestCase {
+            description: "statements with --files-only is refused",
+            arguments: &["s.json", "--files-only", "--evidence", "e", "--cases", "c"],
+            expected_parses: false,
+        },
+    ];
+    for test_case in test_cases {
+        let arguments = ["syntax-coverage", "results"]
+            .iter()
+            .chain(test_case.arguments);
+        assert_eq!(
+            Arguments::try_parse_from(arguments).is_ok(),
+            test_case.expected_parses,
             "{}",
             test_case.description
         );

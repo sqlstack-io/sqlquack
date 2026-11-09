@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug gate-build polyglot-guard engine-free dialect-builds generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
+.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug gate-build polyglot-guard engine-free dialect-builds generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -199,7 +199,7 @@ referee-pending:
 	uv run python -m scripts.write_referee_pending $(REFEREE_ARGS)
 
 # The static gate, the first step of `gate`, and the Python API's tests.
-check-ci: rust-lint python-check fensu syntax-coverage depth-probe evidence-pin-check clutter-guard polyglot-guard engine-free dialect-builds generated-cases syntax-cases dialect-cases referee-cases python-api distribution-notices ## The static gate CI runs.
+check-ci: rust-lint python-check fensu syntax-coverage depth-probe evidence-pin-check clutter-guard polyglot-guard engine-free dialect-builds generated-cases syntax-cases dialect-cases referee-cases translation-files python-api distribution-notices ## The static gate CI runs.
 
 # Each distribution ships the licence and third-party notices; its copies must match the root files.
 distribution-notices:
@@ -404,13 +404,22 @@ sql-benchmark:
 	  LD_LIBRARY_PATH="$$(dirname "$$library")" uv run python -m scripts.benchmark_sql --sqlquack "$$target/release/sqlquack" \
 	  --budget coverage/sql-size/benchmarks.json $(SQL_BENCHMARK_ARGS)
 
+# The two roots `syntax-coverage results` reads cases from, and the only ones: Snowflake's recorded
+# syntax cases and the recorded translation cases its obligations cite, both in the pinned evidence.
+RESULTS_ROOTS = --evidence $(call syntax_evidence_dir,snowflake) --cases $(call convert_dir,snowflake,cases)
+
+# The translation files and every case they cite, read from RESULTS_ROOTS as translation-results
+# reads them, without a replay; check-ci runs it so a gate without verify-recorded still reads them.
+translation-files: gate-build
+	$(GATE_DIR)/syntax-coverage results --files-only $(RESULTS_ROOTS)
+
 # The result-matching measure over the statements verify wrote; see verify-recorded.
 translation-results:
 	@if git show $(RESULTS_BASE):coverage/translation/results-baseline.json > $(RESULTS_BASE_FILE) 2>/dev/null; \
 	  then against="--against $(RESULTS_BASE_FILE)"; \
 	  else echo "translation-results: $(RESULTS_BASE) has no baseline; checking the committed one only"; against=; fi; \
 	  cargo run --locked -q -p sqlquack-coverage-check --bin syntax-coverage -- results \
-	    $(TRANSLATION_STATEMENTS) --report $(TRANSLATION_REPORT) $$against
+	    $(TRANSLATION_STATEMENTS) $(RESULTS_ROOTS) --report $(TRANSLATION_REPORT) $$against
 
 # Compiles DuckShop and DuckShop 10K at SQLBUILD_REF with sqlbuild SQLBUILD_VERSION, as CI does.
 # Skipped when DUCKSHOP_DIR already holds that revision.
