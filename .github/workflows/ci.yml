@@ -51,10 +51,11 @@ jobs:
         run: make check-ci
       - name: Run tests
         run: make test
-      # The same verify flags as `make gate`, with the measure and SQL size checks after it.
-      - name: Replay recorded cases on DuckDB and check their baselines
+      # `make verify-recorded`, with the same verify flags as `make gate`, then the measure and SQL
+      # size checks.
+      - name: Replay recorded translations on DuckDB and check their baselines
         run: >-
-          make verify-recorded VERIFY_PROFILE=dev RESULTS_BASE="$EVIDENCE_BASE"
+          make check-convert DIALECT=snowflake VERIFY_PROFILE=dev RESULTS_BASE="$EVIDENCE_BASE"
 
   polyglot-check:
     name: Exact parser check on DuckShop

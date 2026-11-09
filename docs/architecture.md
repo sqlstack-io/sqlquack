@@ -442,6 +442,22 @@ Recorded warehouse results are the only arbiter of correctness. Recording runs o
 the maintainer; results are append-only and named by the hash of their case, and everything that
 could be weakened to make a failing case pass lives in one reviewed policy file.
 
+### Running the suites
+
+Each suite has one pattern for every dialect, and `make help` lists the targets. The check- targets
+replay committed evidence offline; the record- targets need the dialect's engine or account and
+refuse when `RECORDER=0`. Every target needs `DIALECT`; no dialect is the default.
+
+| Target | What it does |
+|---|---|
+| `make pending DIALECT=<d>` | Lists what is not recorded yet: the syntax suite's unmet obligations (`syntax-coverage missing`) and, for Snowflake, writes the translation suite's pending cases. |
+| `make check-syntax DIALECT=<d>` | Reparses every recorded syntax case of `coverage/syntax-<d>` (`coverage/syntax` for Snowflake) and compares with its receipts: `syntax-coverage diff` against the baseline where there is one, `summary` otherwise. `make check-ci` runs it for Snowflake, SQLite and DuckDB. |
+| `make record-syntax DIALECT=<d>` | Runs the dialect's syntax referee, `scripts/run_<d>_receipts.py run`, with its arguments in `RECORD_ARGS`. Snowflake's capture tool and the Postgres referee are not in the repository yet, so it refuses those. |
+| `make check-convert DIALECT=snowflake [CASES=<folder>]` | Replays recorded translations on DuckDB (`make verify-recorded`, or only `CASES`). |
+| `make record-convert DIALECT=snowflake` | Writes the pending cases and records them on Snowflake (Flow, below). |
+
+Every conversion targets DuckDB, so only the source dialect is named; Snowflake is the only one today.
+
 ### Cases
 
 Case files live under `cases/<category>/<construct>.toml`. Each file names an edge-case category
@@ -607,10 +623,11 @@ setting reaches the repository. A pinned parameter whose account default differs
 
 ### Flow
 
-1. `make pending` (`sqlquack pending`) writes `evidence/pending/<hash>.json` for every case without
-   a result.
-2. The maintainer runs `make record` (`sqlquack-record`, with any options in `RECORD_ARGS`) from a
-   machine with a Snowflake connection; CI never records. Before running anything it compiles every pending
+1. `make pending DIALECT=snowflake` (`sqlquack pending`) writes `evidence/pending/<hash>.json` for
+   every case without a result.
+2. The maintainer runs `make record-convert DIALECT=snowflake` (`sqlquack pending`, then
+   `sqlquack-record` with any options in `RECORD_ARGS`) from a machine with a Snowflake connection;
+   CI never records, and the target refuses when `RECORDER=0`. Before running anything it compiles every pending
    case's SQL with `EXPLAIN`, which runs nothing and creates nothing, and when any fails with a
    SQLSTATE class 0A or 42 error it stops and lists them, so a mistake such as a reserved word used
    as an alias costs no recording. A case that records Snowflake refusing to compile its SQL
@@ -639,10 +656,12 @@ setting reaches the repository. A pinned parameter whose account default differs
    (the outermost `input` CTE and an `ORDER BY ordinal` that only keeps rows in input order) is
    converted with provenance muted, so its casts, literals and set operation count neither toward
    claims nor toward the error check's declared failures; a query's own CTEs follow the fixture's
-   in the same `WITH` and do count. `make verify-recorded` runs `verify --require-verified
-   --strict-errors`, which fails while any claim is unverified; CI and `make gate` both run it, so
-   both use those flags. `make check-merge` does not replay recorded cases. A new case's results
-   are committed with the case once `make verify-recorded` passes.
+   in the same `WITH` and do count. `make check-convert DIALECT=snowflake` runs `make
+   verify-recorded`, which runs `verify --require-verified --strict-errors` and fails while any
+   claim is unverified; CI and `make gate` both run it, so both use those flags. `CASES=<folder>`
+   replays only that folder, with `--strict-errors` alone. `make check-merge` does not replay
+   recorded cases. A new case's results are committed with the case once `make check-convert
+   DIALECT=snowflake` passes.
    Where Snowflake and DuckDB both raised, verify also checks the errors (see Error checks).
 4. `sqlquack review` writes every case as a sqllogictest-style record (`source snowflake`,
    `converted duckdb` or `refused`, then `query snowflake nosort|rowsort` with the column names and
