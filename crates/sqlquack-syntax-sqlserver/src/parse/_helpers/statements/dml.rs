@@ -8,7 +8,7 @@ use sqlquack_syntax::expressions::types::models::Tuple;
 
 use crate::parse::_helpers::statements::queries::set_with;
 use crate::parse::_helpers::statements::results::{has_browse, has_xml_or_json};
-use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_name};
+use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_name};
 use crate::parse::_helpers::tree::nodes::{column_from, delete, insert, table, update, var};
 use crate::parse::constants::{
     BROWSE_WITH_WRITE, DML_TARGET_REFUSED_HINTS, MERGE_TARGET_REFUSED_HINTS,
@@ -54,7 +54,7 @@ impl<'sql> Parser<'sql> {
             .peek()
             .is_some_and(|token| token.kind == crate::scan::models::TokenKind::Variable)
         {
-            return Err(self.gap("table_variable", self.offset()));
+            return Ok(table(vec![identifier(&self.advance()?)]));
         }
         let mut target: TableRef = table(self.multipart(4)?);
         if self.kw("WITH") && self.char_at(1, '(') {

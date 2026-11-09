@@ -8,8 +8,8 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
     let test_cases = [test_types::FormatCorpusTestCase {
         description: "SQL Server identity corpus",
         dialect: "tsql",
-        expected_formatted: 65,
-        expected_refused: 10,
+        expected_formatted: 68,
+        expected_refused: 7,
         departures: &[
             Departure {
                 sql: "SELECT val FROM (VALUES ((TRUE), (FALSE), (NULL))) AS t(val)",
@@ -39,22 +39,6 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 sql: "SELECT * FROM t WHERE NOT c",
                 formatted: None,
                 reason: "SQL Server rejects it: `An expression of non-boolean type specified in a context where a condition is expected, near 'c'.` (4145); SQLQuack's parser refuses it (`An expression of non-boolean type specified in a context where a condition is expected.`); SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT Employee_ID, Department_ID FROM @MyTableVar",
-                formatted: None,
-                reason: "SQL Server rejects it: `Must declare the table variable \"@MyTableVar\".` (1087); SQLQuack's parser keeps a table variable source opaque (gap `table_variable`); SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT x FROM @MyTableVar AS m JOIN Employee ON m.EmployeeID = Employee.EmployeeID",
-                formatted: None,
-                reason: "SQL Server rejects it: `Must declare the table variable \"@MyTableVar\".` (1087); SQLQuack's parser keeps a table variable source opaque (gap `table_variable`); SQLClean formatted it",
                 receipt: Some(
                     "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
@@ -103,14 +87,6 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 sql: "SELECT NEXT VALUE FOR db.schema.sequence_name OVER (ORDER BY foo), col",
                 formatted: None,
                 reason: "SQL Server rejects it: `Incorrect syntax near the keyword 'schema'.` (156); SQLQuack's parser refuses it (`Incorrect syntax near 'schema'.`); SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT * FROM @x",
-                formatted: None,
-                reason: "SQL Server rejects it: `Must declare the table variable \"@x\".` (1087); SQLQuack's parser keeps a table variable source opaque (gap `table_variable`); SQLClean formatted it",
                 receipt: Some(
                     "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),

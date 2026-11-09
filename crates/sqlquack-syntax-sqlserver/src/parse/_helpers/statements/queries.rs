@@ -569,7 +569,11 @@ impl<'sql> Parser<'sql> {
             .peek()
             .is_some_and(|token| token.kind == TokenKind::Variable)
         {
-            return Err(self.gap("table_variable", start));
+            let mut reference: TableRef = table(vec![identifier(&self.advance()?)]);
+            let explicit: bool = self.kw("AS");
+            reference.alias = self.table_alias()?;
+            reference.alias_explicit_as = explicit;
+            return Ok(Expression::Table(Box::new(reference)));
         }
         if self.kw("OPENJSON") && self.char_at(1, '(') {
             return self.open_json();

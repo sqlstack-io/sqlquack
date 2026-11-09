@@ -50,6 +50,11 @@ fn given_recorded_sql_server_verdicts_when_parsing_each_statement_then_the_parse
             receipts: include_str!("fixtures/table_hint_receipts.jsonl"),
             expected_disagreements: Vec::new(),
         },
+        ReceiptsTestCase {
+            description: "table variables under SQL Server 2022 PARSEONLY, each after its declaration, since an undeclared one fails binding (1087) rather than syntax",
+            receipts: include_str!("fixtures/table_variable_receipts.jsonl"),
+            expected_disagreements: Vec::new(),
+        },
     ];
     for test_case in test_cases {
         assert_eq!(
