@@ -73,7 +73,7 @@ select = ["FPRSL301"]
 [targets.rust_rules_layer.rule_options.FPRSL301]
 forbidden_packages = ["sqlquack-convert"]
 
-# Layer: syntax, core, Snowflake typing and semantics build without conversion, DuckDB or evidence.
+# Layer: syntax, the parsers, diagnostics and semantics build without conversion, DuckDB or evidence.
 [targets.rust_analysis_layer]
 analyzer = "rust"
 roots = ["crates", "tools"]
