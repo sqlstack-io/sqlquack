@@ -10,5 +10,6 @@ pub(crate) fn bigquery_profile() -> FingerprintProfile {
     FingerprintProfile {
         texts: bigquery_texts,
         is_reserved,
+        folds_in_context: |_, _| false,
     }
 }

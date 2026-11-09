@@ -2,6 +2,8 @@
 
 #[cfg(feature = "bigquery")]
 use crate::bigquery::profile::main::bigquery_profile::bigquery_profile;
+#[cfg(feature = "databricks")]
+use crate::databricks::profile::main::databricks_profile::databricks_profile;
 use crate::dialects::models::FingerprintProfile;
 #[cfg(feature = "duckdb")]
 use crate::duckdb::profile::main::duckdb_profile::duckdb_profile;
@@ -28,6 +30,10 @@ pub(crate) fn profile(dialect: FingerprintDialect) -> Option<FingerprintProfile>
         FingerprintDialect::BigQuery => Some(bigquery_profile()),
         #[cfg(not(feature = "bigquery"))]
         FingerprintDialect::BigQuery => None,
+        #[cfg(feature = "databricks")]
+        FingerprintDialect::Databricks => Some(databricks_profile()),
+        #[cfg(not(feature = "databricks"))]
+        FingerprintDialect::Databricks => None,
         #[cfg(feature = "duckdb")]
         FingerprintDialect::DuckDB => Some(duckdb_profile()),
         #[cfg(not(feature = "duckdb"))]

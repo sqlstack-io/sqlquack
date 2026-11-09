@@ -4,6 +4,8 @@
 
 #[cfg(feature = "bigquery")]
 pub(crate) mod bigquery;
+#[cfg(feature = "databricks")]
+pub(crate) mod databricks;
 pub(crate) mod dialects;
 #[cfg(feature = "duckdb")]
 pub(crate) mod duckdb;

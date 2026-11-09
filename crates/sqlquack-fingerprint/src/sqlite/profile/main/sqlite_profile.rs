@@ -11,5 +11,6 @@ pub(crate) fn sqlite_profile() -> FingerprintProfile {
     FingerprintProfile {
         texts: |sql| shared_texts(sql, Dialect::SQLite),
         is_reserved: is_generic_reserved,
+        folds_in_context: |_, _| false,
     }
 }

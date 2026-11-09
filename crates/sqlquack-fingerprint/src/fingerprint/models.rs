@@ -9,6 +9,8 @@ pub enum FingerprintDialect {
     Generic,
     /// BigQuery, through its native scanner.
     BigQuery,
+    /// Databricks: the generic profile's tokens and keywords, except the keywords it lets name columns and tables.
+    Databricks,
     /// DuckDB.
     DuckDB,
     /// PostgreSQL, through its native scanner.
@@ -22,11 +24,12 @@ pub enum FingerprintDialect {
 }
 
 impl FingerprintDialect {
-    /// The dialect named `name`: `generic`, `bigquery`, `duckdb`, `postgres`, `postgresql`, `snowflake`, `sqlite`, `sqlserver`, `tsql` or `mssql`.
+    /// The dialect named `name`: `generic`, `bigquery`, `databricks`, `duckdb`, `postgres`, `postgresql`, `snowflake`, `sqlite`, `sqlserver`, `tsql` or `mssql`.
     pub fn from_name(name: &str) -> Result<Self, FingerprintError> {
         match name {
             "generic" => Ok(Self::Generic),
             "bigquery" => Ok(Self::BigQuery),
+            "databricks" => Ok(Self::Databricks),
             "duckdb" => Ok(Self::DuckDB),
             "postgres" | "postgresql" => Ok(Self::PostgreSQL),
             "snowflake" => Ok(Self::Snowflake),
