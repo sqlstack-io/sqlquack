@@ -9,6 +9,7 @@ use sqlquack_syntax::{DataType, Expression};
 
 use crate::lineage::main::rendered_type::rendered_type;
 use crate::lineage::models::Lineage;
+use crate::snowflake::profile::_helpers::spelled_targets::spelled_target;
 use crate::snowflake::profile::constants::{
     SNOWFLAKE_COUNT_FUNCTIONS, SNOWFLAKE_DATE_ADD_FUNCTIONS, SNOWFLAKE_DATE_DIFF_FUNCTIONS,
     SNOWFLAKE_DATE_UNITS, SNOWFLAKE_MICROSECOND_UNIT, SNOWFLAKE_RANKING_FUNCTIONS,
@@ -18,7 +19,6 @@ use crate::snowflake::typing::constants::{
     DATEDIFF_PRECISIONS, TIME_DIFF_MICROSECONDS_TYPE, TIME_DIFF_TYPE, UNIT_ALIASES,
 };
 use crate::snowflake::typing::main::average::average;
-use crate::snowflake::typing::main::cast_target::cast_target;
 use crate::snowflake::typing::main::count::count;
 use crate::snowflake::typing::main::number_literal::number_literal;
 use crate::snowflake::typing::main::numeric_add_subtract::numeric_add_subtract;
@@ -241,10 +241,7 @@ pub(crate) fn snowflake_unified(operands: &[&Lineage]) -> Option<Rc<str>> {
 
 /// The type a value's spelling denotes, when the recorded cast targets know it.
 fn known(part: &Lineage) -> Option<SnowflakeType> {
-    match cast_target(part.data_type.as_deref()?, &ProvenanceLog::default()) {
-        Ok(target) => Some(target.data_type),
-        Err(_unknown) => None,
-    }
+    spelled_target(part.data_type.as_deref()?).map(|target| target.data_type)
 }
 
 /// A NUMBER or FLOAT operand; anything else leaves arithmetic to other rules.

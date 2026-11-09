@@ -1,5 +1,7 @@
 //! The values Snowflake's profile and lineage rules read.
 
+/// How many distinct type spellings a thread keeps read before it starts over.
+pub(crate) const SNOWFLAKE_KEPT_SPELLINGS: usize = 4096;
 /// The length of Snowflake text declared without one.
 pub(crate) const SNOWFLAKE_LONGEST_VARCHAR: u32 = 16_777_216;
 /// What Snowflake's TIMESTAMP is under the default TIMESTAMP_TYPE_MAPPING.
