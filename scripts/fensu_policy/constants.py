@@ -24,9 +24,16 @@ MAX_NAMED_DIALECTS: int = 1
 NESTED_PATH_PARTS: int = 2
 ENUM_BODY: str = r"\benum\s+{name}\b[^{{]*\{{(?P<body>[^}}]*)\}}"
 VARIANT: re.Pattern[str] = re.compile(r"^\s*(?:#\[[^\]]*\]\s*)*([A-Z][A-Za-z0-9]*)\b", re.MULTILINE)
-LINE_COMMENT: re.Pattern[str] = re.compile(r"//.*$", re.MULTILINE)
-BLOCK_COMMENT: re.Pattern[str] = re.compile(r"/\*.*?\*/", re.DOTALL)
-STRING_LITERAL: re.Pattern[str] = re.compile(r'"(?:\\.|[^"\\])*"')
+LEXEME_START: re.Pattern[str] = re.compile(r"""//|/\*|b?r#*"|b?"|b?'""")
+BLOCK_COMMENT_MARK: re.Pattern[str] = re.compile(r"/\*|\*/")
+RAW_STRING_START: re.Pattern[str] = re.compile(r'b?r(#*)"')
+QUOTED_STRING: re.Pattern[str] = re.compile(r'b?"(?:\\.|[^"\\])*"', re.DOTALL)
+CHAR_LITERAL: re.Pattern[str] = re.compile(
+    r"b?'(?:\\(?:x[0-9a-fA-F]{2}|u\{[0-9a-fA-F]+\}|.)|[^\\'\n])'"
+)
+IDENTIFIER_CHARACTER: re.Pattern[str] = re.compile(r"\w")
+BLOCK_COMMENT_OPEN: str = "/*"
+LINE_COMMENT_OPEN: str = "//"
 SOURCE_ROOT: str = "src"
 RUST_SUFFIX: str = ".rs"
 RUST_NAME_SEPARATOR: str = "_"

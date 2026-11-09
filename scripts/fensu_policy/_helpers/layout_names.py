@@ -5,19 +5,24 @@ from __future__ import annotations
 import re
 
 from scripts.fensu_policy.constants import (
-    BLOCK_COMMENT,
+    BLOCK_COMMENT_MARK,
+    BLOCK_COMMENT_OPEN,
     CATALOG_WORD,
+    CHAR_LITERAL,
     CRATE_PREFIX,
     CRATE_SEPARATOR,
     ENUM_BODY,
-    LINE_COMMENT,
+    IDENTIFIER_CHARACTER,
+    LEXEME_START,
+    LINE_COMMENT_OPEN,
     MAX_NAMED_DIALECTS,
     MIN_CRATE_NAME_PARTS,
     NESTED_PATH_PARTS,
     PRODUCT_ROOT,
     PYTHON_SUFFIX,
+    QUOTED_STRING,
+    RAW_STRING_START,
     SCRIPT_SEPARATOR,
-    STRING_LITERAL,
     SYNTAX_ROLE,
     TOOL_SUFFIX,
     TOOLS_ROOT,
@@ -121,18 +126,71 @@ def variant_map(*, entries: tuple[str, ...]) -> dict[str, str]:
     return mapping
 
 
-def _blank(match: re.Match[str]) -> str:
-    return re.sub(r"[^\n]", " ", match.group(0))
+def _blank(text: str) -> str:
+    return re.sub(r"[^\n]", " ", text)
+
+
+def _block_comment_end(*, source: str, start: int) -> int:
+    """Return where the block comment opening at `start` closes; Rust block comments nest."""
+    depth: int = 0
+    for mark in BLOCK_COMMENT_MARK.finditer(source, start):
+        depth += 1 if mark.group(0) == BLOCK_COMMENT_OPEN else -1
+        if depth == 0:
+            return mark.end()
+    return len(source)
+
+
+def _literal_end(*, source: str, start: int) -> int | None:
+    """Return where the string or char literal starting at `start` ends, or None if none does."""
+    if start > 0 and IDENTIFIER_CHARACTER.match(source, start - 1):
+        return None
+    raw: re.Match[str] | None = RAW_STRING_START.match(source, start)
+    if raw is not None:
+        close: int = source.find('"' + raw.group(1), raw.end())
+        return len(source) if close < 0 else close + 1 + len(raw.group(1))
+    literal: re.Match[str] | None = QUOTED_STRING.match(source, start) or CHAR_LITERAL.match(
+        source, start
+    )
+    return None if literal is None else literal.end()
+
+
+def _lexeme(*, source: str, start: int) -> tuple[int, bool] | None:
+    """Return the end of the comment or literal at `start` and whether it is a comment."""
+    if source.startswith(LINE_COMMENT_OPEN, start):
+        end: int = source.find("\n", start)
+        return (len(source) if end < 0 else end), True
+    if source.startswith(BLOCK_COMMENT_OPEN, start):
+        return _block_comment_end(source=source, start=start), True
+    literal: int | None = _literal_end(source=source, start=start)
+    return None if literal is None else (literal, False)
+
+
+def _blanked(*, source: str, strings: bool) -> str:
+    """Blank out comments, and string and char literals when `strings`, keeping line breaks."""
+    parts: list[str] = []
+    index: int = 0
+    while (found := LEXEME_START.search(source, index)) is not None:
+        lexeme: tuple[int, bool] | None = _lexeme(source=source, start=found.start())
+        if lexeme is None:
+            parts.append(source[index : found.start() + 1])
+            index = found.start() + 1
+            continue
+        end, comment = lexeme
+        text: str = source[found.start() : end]
+        parts.extend([source[index : found.start()], _blank(text) if comment or strings else text])
+        index = end
+    parts.append(source[index:])
+    return "".join(parts)
 
 
 def strip_comments(*, source: str) -> str:
     """Blank out comments, keeping line breaks so line numbers hold."""
-    return LINE_COMMENT.sub(_blank, BLOCK_COMMENT.sub(_blank, source))
+    return _blanked(source=source, strings=False)
 
 
 def strip_comments_and_strings(*, source: str) -> str:
-    """Blank out comments and string literals, keeping line breaks so line numbers hold."""
-    return STRING_LITERAL.sub(_blank, strip_comments(source=source))
+    """Blank out comments and string and char literals, keeping line breaks so line numbers hold."""
+    return _blanked(source=source, strings=True)
 
 
 def enum_variants(*, source: str, name: str) -> tuple[str, ...] | None:
