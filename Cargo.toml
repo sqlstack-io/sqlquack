@@ -1,19 +1,19 @@
 [workspace]
 members = [
     "crates/sqlquack-syntax",
-    "crates/sqlquack-syntax-derive",
+    "crates/sqlquack-derive",
     "crates/sqlquack-core",
     "crates/sqlquack-snowflake-types",
     "crates/sqlquack-semantics",
     "crates/sqlquack-rules",
     "crates/sqlquack-convert",
-    "crates/sqlquack-duckdb-blocks",
+    "crates/sqlquack-blocks",
     "crates/sqlquack-policy",
     "crates/sqlquack-compare",
     "crates/sqlquack-evidence",
     "crates/sqlquack",
     "tools/sqlquack-polyglot-check",
-    "tools/sqlquack-coverage",
+    "tools/sqlquack-coverage-check",
     "crates/sqlquack-syntax-postgres",
     "crates/sqlquack-lint",
     "crates/sqlquack-syntax-bigquery",
@@ -71,7 +71,7 @@ sqlquack = { path = "crates/sqlquack" }
 sqlquack-compare = { path = "crates/sqlquack-compare" }
 sqlquack-convert = { path = "crates/sqlquack-convert" }
 sqlquack-core = { path = "crates/sqlquack-core" }
-sqlquack-duckdb-blocks = { path = "crates/sqlquack-duckdb-blocks", default-features = false }
+sqlquack-blocks = { path = "crates/sqlquack-blocks", default-features = false }
 sqlquack-evidence = { path = "crates/sqlquack-evidence" }
 sqlquack-fingerprint = { path = "crates/sqlquack-fingerprint" }
 sqlquack-format = { path = "crates/sqlquack-format" }
@@ -81,7 +81,7 @@ sqlquack-rules = { path = "crates/sqlquack-rules", default-features = false }
 sqlquack-semantics = { path = "crates/sqlquack-semantics" }
 sqlquack-snowflake-types = { path = "crates/sqlquack-snowflake-types" }
 sqlquack-syntax = { path = "crates/sqlquack-syntax" }
-sqlquack-syntax-derive = { path = "crates/sqlquack-syntax-derive" }
+sqlquack-derive = { path = "crates/sqlquack-derive" }
 sqlquack-syntax-postgres = { path = "crates/sqlquack-syntax-postgres" }
 sqlquack-syntax-bigquery = { path = "crates/sqlquack-syntax-bigquery" }
 sqlquack-syntax-sqlite = { path = "crates/sqlquack-syntax-sqlite" }

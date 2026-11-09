@@ -7,27 +7,27 @@ use sqlquack_core::failures::main::tagged_message::tagged_message;
 use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
-use sqlquack_duckdb_blocks::blocks::main::full_case_lower::full_case_lower;
-use sqlquack_duckdb_blocks::blocks::main::full_case_upper::full_case_upper;
-use sqlquack_duckdb_blocks::blocks::main::null_propagating_concat::null_propagating_concat;
-use sqlquack_duckdb_blocks::blocks::main::string_literal::string_literal;
-use sqlquack_duckdb_blocks::floats::main::float_to_text::float_to_text;
-use sqlquack_duckdb_blocks::raises::main::raised::raised;
-use sqlquack_duckdb_blocks::semi_structured::constants::JSON_FIDELITY;
-use sqlquack_duckdb_blocks::semi_structured::main::json_text::json_text;
-use sqlquack_duckdb_blocks::text::constants::TEXT_SIMILARITY;
-use sqlquack_duckdb_blocks::text::constants::{
+use sqlquack_blocks::blocks::main::full_case_lower::full_case_lower;
+use sqlquack_blocks::blocks::main::full_case_upper::full_case_upper;
+use sqlquack_blocks::blocks::main::null_propagating_concat::null_propagating_concat;
+use sqlquack_blocks::blocks::main::string_literal::string_literal;
+use sqlquack_blocks::floats::main::float_to_text::float_to_text;
+use sqlquack_blocks::raises::main::raised::raised;
+use sqlquack_blocks::semi_structured::constants::JSON_FIDELITY;
+use sqlquack_blocks::semi_structured::main::json_text::json_text;
+use sqlquack_blocks::text::constants::TEXT_SIMILARITY;
+use sqlquack_blocks::text::constants::{
     HEX_LOWER_CASE, HEX_UPPER_CASE, INITCAP_DEFAULT_DELIMITERS, INITCAP_TEXT,
 };
-use sqlquack_duckdb_blocks::text::main::base64_bytes::base64_bytes;
-use sqlquack_duckdb_blocks::text::main::bytes_substring::bytes_substring;
-use sqlquack_duckdb_blocks::text::main::bytes_text::bytes_text;
-use sqlquack_duckdb_blocks::text::main::character_edit_distance::character_edit_distance;
-use sqlquack_duckdb_blocks::text::main::character_similarity::character_similarity;
-use sqlquack_duckdb_blocks::text::main::code_point_text::code_point_text;
-use sqlquack_duckdb_blocks::text::main::hex_decoded_text::hex_decoded_text;
-use sqlquack_duckdb_blocks::text::main::hex_text::hex_text;
-use sqlquack_duckdb_blocks::text::main::title_case::title_case;
+use sqlquack_blocks::text::main::base64_bytes::base64_bytes;
+use sqlquack_blocks::text::main::bytes_substring::bytes_substring;
+use sqlquack_blocks::text::main::bytes_text::bytes_text;
+use sqlquack_blocks::text::main::character_edit_distance::character_edit_distance;
+use sqlquack_blocks::text::main::character_similarity::character_similarity;
+use sqlquack_blocks::text::main::code_point_text::code_point_text;
+use sqlquack_blocks::text::main::hex_decoded_text::hex_decoded_text;
+use sqlquack_blocks::text::main::hex_text::hex_text;
+use sqlquack_blocks::text::main::title_case::title_case;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;

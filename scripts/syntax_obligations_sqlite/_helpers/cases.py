@@ -6,8 +6,8 @@ import tempfile
 import tomllib
 from pathlib import Path
 
-from scripts.syntax_catalogue._helpers.toml_out import write_tables
-from scripts.syntax_obligations._helpers.cases import (
+from scripts.grammar_catalogue._helpers.toml_out import write_tables
+from scripts.grammar_obligations._helpers.cases import (
     canonical,
     digest,
     jsonl_text,
@@ -15,12 +15,12 @@ from scripts.syntax_obligations._helpers.cases import (
     receipt_phases,
     receipt_settlements,
 )
-from scripts.syntax_obligations._helpers.obligations import family_obligations, obligation_rows
-from scripts.syntax_obligations._helpers.render import style_of, submissions
-from scripts.syntax_obligations.constants import KIND_EXTREME
-from scripts.syntax_obligations.exceptions import ObligationError
-from scripts.syntax_obligations.models import Draft, Node, ReceiptView, Rendered
-from scripts.syntax_obligations.types import Row
+from scripts.grammar_obligations._helpers.obligations import family_obligations, obligation_rows
+from scripts.grammar_obligations._helpers.render import style_of, submissions
+from scripts.grammar_obligations.constants import KIND_EXTREME
+from scripts.grammar_obligations.exceptions import ObligationError
+from scripts.grammar_obligations.models import Draft, Node, ReceiptView, Rendered
+from scripts.grammar_obligations.types import Row
 from scripts.syntax_obligations_sqlite.constants import (
     AUTOCOMMIT_WORDS,
     CAPTURE,

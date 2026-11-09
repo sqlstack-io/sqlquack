@@ -1,0 +1,31 @@
+[package]
+name = "sqlquack-coverage-check"
+version.workspace = true
+description = "Development check of each dialect's documented syntax coverage, the translation results and the nesting-depth probe; never a runtime dependency."
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+publish = false
+rust-version.workspace = true
+
+[dependencies]
+clap.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+sqlquack-semantics.workspace = true
+sqlquack-syntax.workspace = true
+sqlquack-syntax-bigquery.workspace = true
+sqlquack-syntax-duckdb.workspace = true
+sqlquack-syntax-databricks.workspace = true
+sqlquack-syntax-sqlserver.workspace = true
+sqlquack-syntax-postgres.workspace = true
+sqlquack-syntax-sqlite.workspace = true
+toml.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true

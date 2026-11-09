@@ -1386,10 +1386,10 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2",
+ "sqlquack-blocks",
  "sqlquack-compare",
  "sqlquack-convert",
  "sqlquack-core",
- "sqlquack-duckdb-blocks",
  "sqlquack-evidence",
  "sqlquack-policy",
  "sqlquack-rules",
@@ -1399,6 +1399,16 @@ dependencies = [
  "tempfile",
  "toml",
  "walkdir",
+]
+
+[[package]]
+name = "sqlquack-blocks"
+version = "0.2.0"
+dependencies = [
+ "duckdb",
+ "serde_json",
+ "sqlquack-core",
+ "sqlquack-snowflake-types",
 ]
 
 [[package]]
@@ -1415,8 +1425,8 @@ version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
+ "sqlquack-blocks",
  "sqlquack-core",
- "sqlquack-duckdb-blocks",
  "sqlquack-policy",
  "sqlquack-rules",
  "sqlquack-semantics",
@@ -1434,7 +1444,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "sqlquack-coverage"
+name = "sqlquack-coverage-check"
 version = "0.2.0"
 dependencies = [
  "clap",
@@ -1454,13 +1464,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "sqlquack-duckdb-blocks"
+name = "sqlquack-derive"
 version = "0.2.0"
 dependencies = [
- "duckdb",
- "serde_json",
- "sqlquack-core",
- "sqlquack-snowflake-types",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.119",
 ]
 
 [[package]]
@@ -1569,8 +1578,8 @@ version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
+ "sqlquack-blocks",
  "sqlquack-core",
- "sqlquack-duckdb-blocks",
  "sqlquack-policy",
  "sqlquack-semantics",
  "sqlquack-snowflake-types",
@@ -1612,7 +1621,7 @@ version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
- "sqlquack-syntax-derive",
+ "sqlquack-derive",
  "stacker",
  "thiserror 1.0.69",
  "unicode-segmentation",
@@ -1643,15 +1652,6 @@ dependencies = [
  "serde_json",
  "sqlquack-syntax",
  "stacker",
-]
-
-[[package]]
-name = "sqlquack-syntax-derive"
-version = "0.2.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.119",
 ]
 
 [[package]]

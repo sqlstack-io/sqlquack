@@ -7,7 +7,7 @@ use serde_json::Value;
 use sqlquack_core::failures::constants::{RAISE_ID_MARKER, TAG_END};
 use sqlquack_core::parsing::models::{SourceLines, SourceLocation};
 use sqlquack_core::refusals::models::Refusal;
-use sqlquack_duckdb_blocks::raises::main::identify_raises::identify_raises;
+use sqlquack_blocks::raises::main::identify_raises::identify_raises;
 use sqlquack_syntax::tokens::models::{Dialect, TokenType};
 use sqlquack_syntax::{TokenKind, tokenize};
 

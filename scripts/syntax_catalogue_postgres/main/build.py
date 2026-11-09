@@ -7,8 +7,8 @@ import json
 import sys
 from pathlib import Path
 
-from scripts.syntax_catalogue._helpers.grammar import sha256
-from scripts.syntax_catalogue._helpers.toml_out import write_tables
+from scripts.grammar_catalogue._helpers.grammar import sha256
+from scripts.grammar_catalogue._helpers.toml_out import write_tables
 from scripts.syntax_catalogue_postgres._helpers.catalogue import build_catalogue
 from scripts.syntax_catalogue_postgres._helpers.fetch import pinned
 from scripts.syntax_catalogue_postgres.constants import (

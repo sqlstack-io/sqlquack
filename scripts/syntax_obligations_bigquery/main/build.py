@@ -7,7 +7,7 @@ import itertools
 import json
 from pathlib import Path
 
-from scripts.syntax_obligations.types import Row
+from scripts.grammar_obligations.types import Row
 from scripts.syntax_obligations_bigquery._helpers.cases import receipt_view
 from scripts.syntax_obligations_bigquery._helpers.parser import (
     agreement,

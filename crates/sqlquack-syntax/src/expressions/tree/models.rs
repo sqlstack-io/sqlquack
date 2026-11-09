@@ -738,7 +738,7 @@ use crate::expressions::types::models::Struct;
 use crate::expressions::types::models::Tuple;
 
 /// Any SQL expression or statement, as one recursive AST node.
-#[derive(sqlquack_syntax_derive::AstNode, sqlquack_syntax_derive::StackSafe, Deserialize)]
+#[derive(sqlquack_derive::AstNode, sqlquack_derive::StackSafe, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Expression {
     /// Structured Vertica syntax whose semantics are not shared by other dialects.

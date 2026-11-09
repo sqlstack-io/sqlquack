@@ -4,11 +4,11 @@ use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
-use sqlquack_duckdb_blocks::blocks::main::cast::cast;
-use sqlquack_duckdb_blocks::floats::main::exponential::exponential;
-use sqlquack_duckdb_blocks::floats::main::natural_logarithm::natural_logarithm;
-use sqlquack_duckdb_blocks::floats::main::power_of_ten::power_of_ten;
-use sqlquack_duckdb_blocks::floats::main::square_root::square_root;
+use sqlquack_blocks::blocks::main::cast::cast;
+use sqlquack_blocks::floats::main::exponential::exponential;
+use sqlquack_blocks::floats::main::natural_logarithm::natural_logarithm;
+use sqlquack_blocks::floats::main::power_of_ten::power_of_ten;
+use sqlquack_blocks::floats::main::square_root::square_root;
 use sqlquack_snowflake_types::typing::constants::MAX_PRECISION;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 

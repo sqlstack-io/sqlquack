@@ -213,6 +213,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f8fadd59c855ef2080decdef8ff161eb6661b86933c9d82e5ba29dc602a55aba"
 
 [[package]]
+name = "sqlquack-blocks"
+version = "0.2.0"
+dependencies = [
+ "serde_json",
+ "sqlquack-core",
+ "sqlquack-snowflake-types",
+]
+
+[[package]]
 name = "sqlquack-core"
 version = "0.2.0"
 dependencies = [
@@ -222,12 +231,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "sqlquack-duckdb-blocks"
+name = "sqlquack-derive"
 version = "0.2.0"
 dependencies = [
- "serde_json",
- "sqlquack-core",
- "sqlquack-snowflake-types",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.119",
 ]
 
 [[package]]
@@ -244,8 +253,8 @@ version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
+ "sqlquack-blocks",
  "sqlquack-core",
- "sqlquack-duckdb-blocks",
  "sqlquack-policy",
  "sqlquack-semantics",
  "sqlquack-snowflake-types",
@@ -280,19 +289,10 @@ version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
- "sqlquack-syntax-derive",
+ "sqlquack-derive",
  "stacker",
  "thiserror 1.0.69",
  "unicode-segmentation",
-]
-
-[[package]]
-name = "sqlquack-syntax-derive"
-version = "0.2.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.119",
 ]
 
 [[package]]
@@ -301,8 +301,8 @@ version = "0.0.0"
 dependencies = [
  "serde",
  "serde_json",
+ "sqlquack-blocks",
  "sqlquack-core",
- "sqlquack-duckdb-blocks",
  "sqlquack-policy",
  "sqlquack-rules",
  "sqlquack-semantics",

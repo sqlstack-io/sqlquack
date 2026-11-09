@@ -5,7 +5,7 @@ use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
-use sqlquack_duckdb_blocks::checking::main::bound_outside_lambdas::bound_outside_lambdas;
+use sqlquack_blocks::checking::main::bound_outside_lambdas::bound_outside_lambdas;
 use sqlquack_semantics::types::models::Volatility;
 
 use crate::conversion::_helpers::expressions::atoms::{

@@ -71,7 +71,7 @@ depth-probe: gate-build
 
 # The same probe on a debug build, whose larger frames fail at shallower depths; not in check-ci.
 depth-probe-debug:
-	cargo build --locked -p sqlquack-coverage --bin syntax-coverage
+	cargo build --locked -p sqlquack-coverage-check --bin syntax-coverage
 	$(or $(CARGO_TARGET_DIR),target)/debug/syntax-coverage depth-probe --profile dev
 
 # Fails when a change modifies or deletes a recorded result, or adds an invalid one.
@@ -255,7 +255,7 @@ translation-results:
 	@if git show $(RESULTS_BASE):coverage/translation/results-baseline.json > $(RESULTS_BASE_FILE) 2>/dev/null; \
 	  then against="--against $(RESULTS_BASE_FILE)"; \
 	  else echo "translation-results: $(RESULTS_BASE) has no baseline; checking the committed one only"; against=; fi; \
-	  cargo run --locked -q -p sqlquack-coverage --bin syntax-coverage -- results \
+	  cargo run --locked -q -p sqlquack-coverage-check --bin syntax-coverage -- results \
 	    $(TRANSLATION_STATEMENTS) --report $(TRANSLATION_REPORT) $$against
 
 # Compiles DuckShop and DuckShop 10K at SQLBUILD_REF with sqlbuild SQLBUILD_VERSION, as CI does.

@@ -49,11 +49,11 @@ REWRITTEN_ROOTS: tuple[tuple[str, str, bool], ...] = (
     ("crates/sqlquack-syntax/tests", "sqlquack_syntax", True),
     ("crates/sqlquack-core/src", "sqlquack_syntax", True),
     ("crates/sqlquack-rules/src", "sqlquack_syntax", True),
-    ("crates/sqlquack-duckdb-blocks/src", "sqlquack_syntax", True),
+    ("crates/sqlquack-blocks/src", "sqlquack_syntax", True),
     ("tools/sqlquack-polyglot-check/src", "sqlquack_syntax", True),
     ("crates/sqlquack/src", "sqlquack_syntax", True),
     ("fuzz/fuzz_targets", "sqlquack_syntax", True),
-    ("crates/sqlquack-syntax-derive/src", "crate", False),
+    ("crates/sqlquack-derive/src", "crate", False),
 )
 TRIVIA_KINDS: frozenset[str] = frozenset({WHITESPACE, LINE_COMMENT, BLOCK_COMMENT, DOC_COMMENT})
 UNUSED_IMPORTS_LINT: str = "unused_imports"

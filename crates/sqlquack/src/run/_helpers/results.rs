@@ -4,7 +4,7 @@ use duckdb::Connection;
 use sqlquack_core::parsing::main::parse_source::parse_source;
 use sqlquack_core::parsing::models::SourceDialect;
 use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_duckdb_blocks::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_syntax::Expression;
 
 use crate::run::_helpers::fixtures::insert_rows;

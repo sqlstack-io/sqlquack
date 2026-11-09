@@ -17,7 +17,7 @@ use crate::expressions::types::models::DataType;
 use crate::expressions::types::models::StructField;
 
 /// View column definition with optional COMMENT and OPTIONS (BigQuery)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ViewColumn {
     pub name: Identifier,
     pub comment: Option<String>,
@@ -45,7 +45,7 @@ impl ViewColumn {
 }
 
 /// CREATE VIEW statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CreateView {
     pub name: TableRef,
     pub columns: Vec<ViewColumn>,
@@ -171,7 +171,7 @@ impl CreateView {
 }
 
 /// DROP VIEW statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DropView {
     pub name: TableRef,
     pub if_exists: bool,
@@ -189,7 +189,7 @@ impl DropView {
 }
 
 /// ALTER VIEW statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AlterView {
     pub name: TableRef,
     pub actions: Vec<AlterViewAction>,
@@ -211,7 +211,7 @@ pub struct AlterView {
 }
 
 /// Actions for ALTER VIEW
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum AlterViewAction {
     /// Rename the view
     Rename(Box<TableRef>),
@@ -250,7 +250,7 @@ impl AlterView {
 }
 
 /// ALTER INDEX statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AlterIndex {
     pub name: Identifier,
     pub table: Option<TableRef>,
@@ -258,7 +258,7 @@ pub struct AlterIndex {
 }
 
 /// Actions for ALTER INDEX
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum AlterIndexAction {
     /// Rename the index
     Rename(Identifier),
@@ -279,7 +279,7 @@ impl AlterIndex {
 }
 
 /// CREATE SCHEMA statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CreateSchema {
     /// Schema name parts, possibly dot-qualified (e.g. [mydb, hr] for "mydb.hr")
     pub name: Vec<Identifier>,
@@ -318,7 +318,7 @@ impl CreateSchema {
 }
 
 /// DROP SCHEMA statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DropSchema {
     pub name: Identifier,
     pub if_exists: bool,
@@ -340,7 +340,7 @@ impl DropSchema {
 }
 
 /// DROP NAMESPACE statement (Spark/Databricks - alias for DROP SCHEMA)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DropNamespace {
     pub name: Identifier,
     pub if_exists: bool,
@@ -358,7 +358,7 @@ impl DropNamespace {
 }
 
 /// CREATE DATABASE statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CreateDatabase {
     pub name: Identifier,
     /// OR REPLACE (Snowflake)
@@ -378,7 +378,7 @@ pub struct CreateDatabase {
 }
 
 /// Database option
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum DatabaseOption {
     CharacterSet(String),
     Collate(String),
@@ -403,7 +403,7 @@ impl CreateDatabase {
 }
 
 /// DROP DATABASE statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DropDatabase {
     pub name: Identifier,
     pub if_exists: bool,
@@ -431,7 +431,7 @@ impl DropDatabase {
 }
 
 /// CREATE FUNCTION statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CreateFunction {
     pub name: TableRef,
     pub parameters: Vec<FunctionParameter>,
@@ -504,14 +504,14 @@ pub struct CreateFunction {
 }
 
 /// A SET option in CREATE FUNCTION (PostgreSQL)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct FunctionSetOption {
     pub name: String,
     pub value: FunctionSetValue,
 }
 
 /// The value of a SET option
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum FunctionSetValue {
     /// SET key = value (use_to = false) or SET key TO value (use_to = true)
     Value { value: String, use_to: bool },
@@ -521,7 +521,7 @@ pub enum FunctionSetValue {
 
 /// SQL data access characteristics for functions
 #[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
 )]
 pub enum SqlDataAccess {
     /// NO SQL
@@ -536,7 +536,7 @@ pub enum SqlDataAccess {
 
 /// Types of properties in CREATE FUNCTION for tracking their original order
 #[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
 )]
 pub enum FunctionPropertyKind {
     /// SET option
@@ -570,14 +570,14 @@ pub enum FunctionPropertyKind {
 }
 
 /// Hive CREATE FUNCTION resource in a USING clause
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct FunctionUsingResource {
     pub kind: String,
     pub uri: String,
 }
 
 /// Function parameter
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct FunctionParameter {
     pub name: Option<Identifier>,
     pub data_type: DataType,
@@ -590,7 +590,7 @@ pub struct FunctionParameter {
 
 /// Parameter mode (IN, OUT, INOUT, VARIADIC)
 #[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
 )]
 pub enum ParameterMode {
     In,
@@ -600,7 +600,7 @@ pub enum ParameterMode {
 }
 
 /// Function body
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum FunctionBody {
     /// AS $$ ... $$ (dollar-quoted)
     Block(String),
@@ -625,7 +625,7 @@ pub enum FunctionBody {
 
 /// Function security (DEFINER, INVOKER, or NONE)
 #[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
 )]
 pub enum FunctionSecurity {
     Definer,
@@ -672,7 +672,7 @@ impl CreateFunction {
 }
 
 /// DROP FUNCTION statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DropFunction {
     pub name: TableRef,
     pub parameters: Option<Vec<DataType>>,
@@ -692,7 +692,7 @@ impl DropFunction {
 }
 
 /// CREATE PROCEDURE statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CreateProcedure {
     pub name: TableRef,
     pub parameters: Vec<FunctionParameter>,
@@ -746,7 +746,7 @@ impl CreateProcedure {
 }
 
 /// DROP PROCEDURE statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DropProcedure {
     pub name: TableRef,
     pub parameters: Option<Vec<DataType>>,
@@ -766,7 +766,7 @@ impl DropProcedure {
 }
 
 /// Sequence property tag for ordering
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum SeqPropKind {
     Start,
     Increment,
@@ -809,7 +809,7 @@ pub enum SeqPropKind {
 }
 
 /// CREATE SYNONYM statement (TSQL)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CreateSynonym {
     /// The synonym name (can be qualified: schema.synonym_name)
     pub name: TableRef,
@@ -818,7 +818,7 @@ pub struct CreateSynonym {
 }
 
 /// CREATE SEQUENCE statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CreateSequence {
     pub name: TableRef,
     pub if_not_exists: bool,
@@ -859,7 +859,7 @@ pub struct CreateSequence {
 }
 
 /// Sequence bound (value or NO MINVALUE/NO MAXVALUE)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum SequenceBound {
     Value(i64),
     None,
@@ -892,7 +892,7 @@ impl CreateSequence {
 }
 
 /// DROP SEQUENCE statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DropSequence {
     pub name: TableRef,
     pub if_exists: bool,
@@ -914,7 +914,7 @@ impl DropSequence {
 }
 
 /// ALTER SEQUENCE statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AlterSequence {
     pub name: TableRef,
     pub if_exists: bool,
@@ -946,7 +946,7 @@ impl AlterSequence {
 }
 
 /// CREATE TRIGGER statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CreateTrigger {
     pub name: Identifier,
     pub table: TableRef,
@@ -971,7 +971,7 @@ pub struct CreateTrigger {
 
 /// Trigger timing (BEFORE, AFTER, INSTEAD OF)
 #[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
 )]
 pub enum TriggerTiming {
     Before,
@@ -980,7 +980,7 @@ pub enum TriggerTiming {
 }
 
 /// Trigger event (INSERT, UPDATE, DELETE, TRUNCATE)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum TriggerEvent {
     Insert,
     Update(Option<Vec<Identifier>>),
@@ -990,7 +990,7 @@ pub enum TriggerEvent {
 
 /// Trigger FOR EACH clause
 #[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
 )]
 pub enum TriggerForEach {
     Row,
@@ -998,7 +998,7 @@ pub enum TriggerForEach {
 }
 
 /// Trigger body
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum TriggerBody {
     /// EXECUTE FUNCTION/PROCEDURE name(args)
     Execute {
@@ -1010,7 +1010,7 @@ pub enum TriggerBody {
 }
 
 /// Trigger REFERENCING clause
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TriggerReferencing {
     pub old_table: Option<Identifier>,
     pub new_table: Option<Identifier>,
@@ -1043,7 +1043,7 @@ impl CreateTrigger {
 }
 
 /// DROP TRIGGER statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DropTrigger {
     pub name: Identifier,
     pub table: Option<TableRef>,
@@ -1063,7 +1063,7 @@ impl DropTrigger {
 }
 
 /// CREATE TYPE statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CreateType {
     pub name: TableRef,
     pub definition: TypeDefinition,
@@ -1077,7 +1077,7 @@ pub struct CreateType {
 }
 
 /// Type definition
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum TypeDefinition {
     /// ENUM type: CREATE TYPE name AS ENUM ('val1', 'val2', ...)
     Enum(Vec<String>),
@@ -1109,7 +1109,7 @@ pub enum TypeDefinition {
 }
 
 /// Type attribute for composite types
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TypeAttribute {
     pub name: Identifier,
     pub data_type: DataType,
@@ -1117,7 +1117,7 @@ pub struct TypeAttribute {
 }
 
 /// Domain constraint
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DomainConstraint {
     pub name: Option<Identifier>,
     pub check: Expression,
@@ -1146,7 +1146,7 @@ impl CreateType {
 }
 
 /// DROP TYPE statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DropType {
     pub name: TableRef,
     pub if_exists: bool,
@@ -1164,7 +1164,7 @@ impl DropType {
 }
 
 /// Snowflake ALTER of an object kind with no statement of its own, e.g. `ALTER TASK t1 RESUME`.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AlterObject {
     /// The object kind, e.g. "TASK", "TASK GRAPH", "SNAPSHOT SET"
     pub kind: String,
@@ -1187,7 +1187,7 @@ pub struct AlterObject {
 }
 
 /// Snowflake CREATE of an object from another source, e.g. `CREATE DATABASE d1 FROM SHARE a1.s1`.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CreateObject {
     /// The object kind, e.g. "DATABASE", "SCHEMA", "TABLE", "DYNAMIC TABLE"
     pub kind: String,
@@ -1216,7 +1216,7 @@ pub struct CreateObject {
 }
 
 /// One property of a Snowflake ALTER action, e.g. `SCHEDULE = '1 MINUTE'` or `TAG t1 = 'v'`.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ObjectProperty {
     /// The property's keywords, e.g. "SCHEDULE", "CONTACT", "TAG", "EXECUTE AS USER"
     pub kind: String,
@@ -1229,7 +1229,7 @@ pub struct ObjectProperty {
 }
 
 /// Snowflake `EXECUTE ALERT | TASK [ GRAPH ] | DCM PROJECT <name>` with its action.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ExecuteObject {
     /// The object kind as written in upper case, such as `TASK GRAPH`.
     pub kind: String,
@@ -1252,7 +1252,7 @@ pub struct ExecuteObject {
 }
 
 /// A GRANT/REVOKE privilege with optional columns, such as `UPDATE(c1, c2)`.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Privilege {
     /// The privilege name (e.g., SELECT, INSERT, UPDATE, ALL)
     pub name: String,
@@ -1262,7 +1262,7 @@ pub struct Privilege {
 }
 
 /// Principal in GRANT/REVOKE (user, role, etc.)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GrantPrincipal {
     /// The name of the principal
     pub name: Identifier,
@@ -1280,7 +1280,7 @@ pub struct GrantPrincipal {
 }
 
 /// GRANT statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Grant {
     /// Privileges to grant (e.g., SELECT, INSERT, UPDATE(col1, col2))
     pub privileges: Vec<Privilege>,
@@ -1313,7 +1313,7 @@ pub struct Grant {
 }
 
 /// REVOKE statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Revoke {
     /// Privileges to revoke (e.g., SELECT, INSERT, UPDATE(col1, col2))
     pub privileges: Vec<Privilege>,
@@ -1345,7 +1345,7 @@ pub struct Revoke {
 }
 
 /// PostgreSQL ALTER DEFAULT PRIVILEGES: a GRANT or REVOKE on objects created later.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AlterDefaultPrivileges {
     /// The FOR ROLE and IN SCHEMA options in order, e.g. `(FOR ROLE, (r1, r2))`
     #[serde(default, skip_serializing_if = "Vec::is_empty")]

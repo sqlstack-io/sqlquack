@@ -8,9 +8,9 @@ import sys
 import tomllib
 from pathlib import Path
 
-from scripts.syntax_obligations.exceptions import ObligationError
-from scripts.syntax_obligations.models import ReceiptView
-from scripts.syntax_obligations.types import Row
+from scripts.grammar_obligations.exceptions import ObligationError
+from scripts.grammar_obligations.models import ReceiptView
+from scripts.grammar_obligations.types import Row
 from scripts.syntax_obligations_databricks._helpers.adapt import install, retired_ids
 from scripts.syntax_obligations_databricks._helpers.cases import (
     family_rows,

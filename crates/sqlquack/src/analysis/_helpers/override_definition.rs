@@ -13,8 +13,8 @@ use crate::analysis::constants::{
 };
 use crate::project::main::function_header::function_header;
 use crate::project::main::named_types::named_types;
-use sqlquack_duckdb_blocks::blocks::main::column_type::column_type;
-use sqlquack_duckdb_blocks::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_blocks::blocks::main::column_type::column_type;
+use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_evidence::replay::main::bind_macro::bind_macro;
 use sqlquack_evidence::replay::main::single_expression::single_expression;
 use sqlquack_rules::conversion::main::override_macro::override_macro;

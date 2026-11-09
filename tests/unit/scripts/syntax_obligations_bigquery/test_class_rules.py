@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from scripts.syntax_obligations._helpers import obligations
-from scripts.syntax_obligations.constants import KIND_OPERAND_CLASS
-from scripts.syntax_obligations.models import Draft
+from scripts.grammar_obligations._helpers import obligations
+from scripts.grammar_obligations.constants import KIND_OPERAND_CLASS
+from scripts.grammar_obligations.models import Draft
 from scripts.syntax_obligations_bigquery._helpers.adapt import install
 from tests.unit.scripts.syntax_obligations_bigquery._test_types import ClassTestCase
 from tests.unit.scripts.syntax_obligations_bigquery.helpers import ROOT

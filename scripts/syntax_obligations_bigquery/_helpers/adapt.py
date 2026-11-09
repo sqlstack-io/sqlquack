@@ -9,13 +9,13 @@ from collections import Counter
 from collections.abc import Callable
 from pathlib import Path
 
-from scripts.syntax_obligations import constants as shared
-from scripts.syntax_obligations._helpers import grammar as shared_grammar
-from scripts.syntax_obligations._helpers import ids, obligations
-from scripts.syntax_obligations.constants import ACTION_HAND, HAND_CASE_KEYS, PAIR_SIZE
-from scripts.syntax_obligations.exceptions import ObligationError
-from scripts.syntax_obligations.models import Draft, FormStyle, Node, Spec
-from scripts.syntax_obligations.types import Key, Row
+from scripts.grammar_obligations import constants as shared
+from scripts.grammar_obligations._helpers import grammar as shared_grammar
+from scripts.grammar_obligations._helpers import ids, obligations
+from scripts.grammar_obligations.constants import ACTION_HAND, HAND_CASE_KEYS, PAIR_SIZE
+from scripts.grammar_obligations.exceptions import ObligationError
+from scripts.grammar_obligations.models import Draft, FormStyle, Node, Spec
+from scripts.grammar_obligations.types import Key, Row
 from scripts.syntax_obligations_bigquery.classes.withdrawals import Withdrawals
 from scripts.syntax_obligations_bigquery.constants import (
     BQ_CLASS_RULES,

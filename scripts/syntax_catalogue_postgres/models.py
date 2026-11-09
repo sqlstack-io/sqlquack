@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from scripts.syntax_catalogue.models import Catalogue, FormGroup
+from scripts.grammar_catalogue.models import Catalogue, FormGroup
 
 
 @dataclass(frozen=True)

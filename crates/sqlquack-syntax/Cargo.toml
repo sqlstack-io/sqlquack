@@ -18,7 +18,7 @@ stacker = ["dep:stacker"]
 [dependencies]
 serde.workspace = true
 serde_json.workspace = true
-sqlquack-syntax-derive.workspace = true
+sqlquack-derive.workspace = true
 stacker = { workspace = true, optional = true }
 thiserror.workspace = true
 unicode-segmentation.workspace = true

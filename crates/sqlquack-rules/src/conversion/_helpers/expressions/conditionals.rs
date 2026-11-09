@@ -5,7 +5,7 @@ use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
-use sqlquack_duckdb_blocks::blocks::main::cast::cast;
+use sqlquack_blocks::blocks::main::cast::cast;
 use sqlquack_semantics::types::main::utc_kept::utc_kept;
 use sqlquack_snowflake_types::typing::main::text_reading::text_reading;
 use sqlquack_snowflake_types::typing::main::unify::unify;

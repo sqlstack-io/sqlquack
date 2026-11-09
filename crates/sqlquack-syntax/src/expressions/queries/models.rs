@@ -15,7 +15,7 @@ use crate::expressions::types::models::DataType;
 use crate::expressions::types::models::Tuple;
 
 /// A complete SELECT statement; absent optional parts are omitted from generated SQL.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Select {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub vertica: Option<Box<VerticaSelectExtensions>>,
@@ -233,7 +233,7 @@ impl Default for Select {
 }
 
 /// UNION [ALL] of two queries, with optional ORDER BY, LIMIT, OFFSET and BY NAME.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Union {
     /// The left-hand query operand.
     pub left: Expression,
@@ -303,7 +303,7 @@ impl Drop for Union {
 }
 
 /// INTERSECT [ALL] of two queries: rows in both, duplicates kept by multiplicity under ALL.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Intersect {
     /// The left-hand query operand.
     pub left: Expression,
@@ -372,7 +372,7 @@ impl Drop for Intersect {
 }
 
 /// EXCEPT (MINUS) [ALL]: left rows not in the right, subtracted by multiplicity under ALL.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Except {
     /// The left-hand query operand.
     pub left: Expression,
@@ -441,7 +441,7 @@ impl Drop for Except {
 }
 
 /// INTO clause for SELECT INTO statements
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SelectInto {
     /// Target table or variable (used when single target)
     pub this: Expression,
@@ -460,7 +460,7 @@ pub struct SelectInto {
 }
 
 /// A parenthesized subquery with optional alias, column aliases, ORDER BY, LIMIT and OFFSET.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Subquery {
     /// The inner query expression.
     pub this: Expression,
@@ -509,7 +509,7 @@ pub struct Subquery {
 }
 
 /// Pipe syntax step `query |> transform` (BigQuery, DataFusion).
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PipeOperator {
     /// The input query/expression (left side of |>)
     pub this: Expression,
@@ -518,7 +518,7 @@ pub struct PipeOperator {
 }
 
 /// VALUES table constructor: VALUES (1, 'a'), (2, 'b')
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Values {
     /// The rows of values
     pub expressions: Vec<Tuple>,
@@ -529,7 +529,7 @@ pub struct Values {
 }
 
 /// PIVOT/UNPIVOT, in the standard FROM-clause form or DuckDB's statement form.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pivot {
     /// Source table/expression
     pub this: Expression,
@@ -569,7 +569,7 @@ pub struct Pivot {
 }
 
 /// UNPIVOT operation
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Unpivot {
     pub this: Expression,
     pub value_column: Identifier,
@@ -591,20 +591,20 @@ pub struct Unpivot {
 }
 
 /// A pivot alias: an identifier or an expression (Oracle/BigQuery concatenated aliases).
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PivotAlias {
     pub this: Expression,
     pub alias: Expression,
 }
 
 /// PREWHERE clause (ClickHouse) - early filtering before WHERE
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PreWhere {
     pub this: Expression,
 }
 
 /// STREAM definition (Snowflake) - for change data capture
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Stream {
     pub this: Expression,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -614,13 +614,13 @@ pub struct Stream {
 }
 
 /// USING DATA clause for data import statements
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct UsingData {
     pub this: Expression,
 }
 
 /// XML Namespace declaration
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct XmlNamespace {
     pub this: Expression,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -628,7 +628,7 @@ pub struct XmlNamespace {
 }
 
 /// ROW FORMAT clause for Hive/Spark
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct RowFormat {
     pub delimited: bool,
     pub fields_terminated_by: Option<String>,
@@ -639,14 +639,14 @@ pub struct RowFormat {
 }
 
 /// A FROM clause; several sources are comma-separated implicit joins.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct From {
     /// The table source expressions.
     pub expressions: Vec<Expression>,
 }
 
 /// A JOIN between two sources, with an ON predicate or a USING list.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Join {
     /// The right-hand table expression being joined.
     pub this: Expression,
@@ -697,7 +697,7 @@ pub struct Join {
 
 /// Every join type, standard and dialect-specific (SEMI/ANTI, APPLY, ASOF, ARRAY, ...).
 #[derive(
-    sqlquack_syntax_derive::AstNode,
+    sqlquack_derive::AstNode,
     Debug,
     Clone,
     Copy,
@@ -746,7 +746,7 @@ pub enum JoinKind {
 }
 
 /// Parenthesized table expression with joins: `(t1 CROSS JOIN t2)`.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct JoinedTable {
     /// The left-hand side table expression
     pub left: Expression,
@@ -759,14 +759,14 @@ pub struct JoinedTable {
 }
 
 /// Represent a WHERE clause containing a boolean filter predicate.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Where {
     /// The filter predicate expression.
     pub this: Expression,
 }
 
 /// GROUP BY with optional ALL/DISTINCT and WITH TOTALS; items include ROLLUP, CUBE and `()`.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GroupBy {
     /// The grouping expressions.
     pub expressions: Vec<Expression>,
@@ -782,7 +782,7 @@ pub struct GroupBy {
 }
 
 /// Represent a HAVING clause containing a predicate over aggregate results.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Having {
     /// The filter predicate, typically involving aggregate functions.
     pub this: Expression,
@@ -792,7 +792,7 @@ pub struct Having {
 }
 
 /// Represent an ORDER BY clause containing one or more sort specifications.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct OrderBy {
     /// The sort specifications, each with direction and null ordering.
     pub expressions: Vec<Ordered>,
@@ -808,7 +808,7 @@ pub struct OrderBy {
 }
 
 /// The direction and null placement of `ORDER BY ALL`.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct OrderByAll {
     /// Whether the sort direction is descending.
     pub desc: bool,
@@ -820,7 +820,7 @@ pub struct OrderByAll {
 }
 
 /// A sort key: ascending unless `desc`; `nulls_first` is `None` when unspecified.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Ordered {
     /// Vertica lets the engine select null placement for aggregate/window ordering.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
@@ -864,25 +864,25 @@ impl Ordered {
 }
 
 /// DISTRIBUTE BY (Hive/Spark): how rows are distributed across reducers.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DistributeBy {
     pub expressions: Vec<Expression>,
 }
 
 /// CLUSTER BY (Hive/Spark): DISTRIBUTE BY and SORT BY on the same columns.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ClusterBy {
     pub expressions: Vec<Ordered>,
 }
 
 /// SORT BY (Hive/Spark): sorts within each reducer, not globally.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SortBy {
     pub expressions: Vec<Ordered>,
 }
 
 /// LATERAL VIEW (Hive/Spark): unnests arrays and maps with EXPLODE, POSEXPLODE and the like.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct LateralView {
     /// The table-generating function (EXPLODE, POSEXPLODE, etc.)
     pub this: Expression,
@@ -895,7 +895,7 @@ pub struct LateralView {
 }
 
 /// Query hint
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Hint {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
@@ -904,7 +904,7 @@ pub struct Hint {
 }
 
 /// Individual hint expression
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum HintExpression {
     /// A structured hint directive with optional execution scope modifiers.
     Directive {
@@ -923,7 +923,7 @@ pub enum HintExpression {
 
 /// Pseudocolumn type
 #[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
 )]
 pub enum PseudocolumnType {
     Rownum,
@@ -960,7 +960,7 @@ impl PseudocolumnType {
 }
 
 /// Pseudocolumn (Oracle ROWNUM, ROWID, LEVEL, ...), never quoted.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pseudocolumn {
     pub kind: PseudocolumnType,
 }
@@ -986,7 +986,7 @@ impl Pseudocolumn {
 }
 
 /// Oracle CONNECT BY clause for hierarchical queries
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Connect {
     /// START WITH condition (optional, can come before or after CONNECT BY)
     pub start: Option<Expression>,
@@ -997,19 +997,19 @@ pub struct Connect {
 }
 
 /// Oracle PRIOR expression - references parent row's value in CONNECT BY
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Prior {
     pub this: Expression,
 }
 
 /// Oracle CONNECT_BY_ROOT function - returns root row's column value
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ConnectByRoot {
     pub this: Expression,
 }
 
 /// Snowflake RESAMPLE clause on a table: generates rows for gaps in a time series.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Resample {
     /// The table being resampled, with its alias
     pub this: Box<Expression>,
@@ -1026,7 +1026,7 @@ pub struct Resample {
 }
 
 /// MATCH_RECOGNIZE clause for row pattern matching (Oracle/Snowflake/Presto/Trino)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct MatchRecognize {
     /// Source table/expression
     pub this: Option<Box<Expression>>,
@@ -1055,7 +1055,7 @@ pub struct MatchRecognize {
 }
 
 /// MEASURES expression with optional RUNNING/FINAL semantics
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct MatchRecognizeMeasure {
     /// The measure expression
     pub this: Expression,
@@ -1065,7 +1065,7 @@ pub struct MatchRecognizeMeasure {
 
 /// Semantics for MEASURES in MATCH_RECOGNIZE
 #[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
 )]
 pub enum MatchRecognizeSemantics {
     Running,
@@ -1073,7 +1073,7 @@ pub enum MatchRecognizeSemantics {
 }
 
 /// Row output semantics for MATCH_RECOGNIZE
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum MatchRecognizeRows {
     OneRowPerMatch,
     AllRowsPerMatch,
@@ -1083,7 +1083,7 @@ pub enum MatchRecognizeRows {
 }
 
 /// AFTER MATCH SKIP behavior
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum MatchRecognizeAfter {
     PastLastRow,
     ToNextRow,
@@ -1094,7 +1094,7 @@ pub enum MatchRecognizeAfter {
 }
 
 /// Represent a LIMIT clause that restricts the number of returned rows.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Limit {
     /// The limit count expression.
     pub this: Expression,
@@ -1119,7 +1119,7 @@ impl Limit {
 }
 
 /// OFFSET clause
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Offset {
     pub this: Expression,
     /// Whether ROW/ROWS keyword was used (SQL standard syntax)
@@ -1128,7 +1128,7 @@ pub struct Offset {
 }
 
 /// TOP clause (SQL Server)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Top {
     pub this: Expression,
     pub percent: bool,
@@ -1139,7 +1139,7 @@ pub struct Top {
 }
 
 /// FETCH FIRST/NEXT clause (SQL standard)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Fetch {
     /// FIRST or NEXT
     pub direction: String,
@@ -1154,14 +1154,14 @@ pub struct Fetch {
 }
 
 /// QUALIFY: a filter on window function results.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Qualify {
     /// The filter predicate over window function results.
     pub this: Expression,
 }
 
 /// SAMPLE / TABLESAMPLE clause
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Sample {
     pub method: SampleMethod,
     pub size: Expression,
@@ -1202,7 +1202,7 @@ pub struct Sample {
 
 /// Sample method
 #[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
 )]
 pub enum SampleMethod {
     Bernoulli,
@@ -1217,14 +1217,14 @@ pub enum SampleMethod {
 }
 
 /// Named window definition (WINDOW w AS (...))
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct NamedWindow {
     pub name: Identifier,
     pub spec: Over,
 }
 
 /// A WITH clause of one or more CTEs; `recursive` makes it WITH RECURSIVE.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct With {
     /// The list of CTE definitions, in order.
     pub ctes: Vec<Cte>,
@@ -1239,7 +1239,7 @@ pub struct With {
 }
 
 /// One CTE: name, optional column list, body, and optional [NOT] MATERIALIZED hint.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Cte {
     /// The CTE name.
     pub alias: Identifier,
@@ -1271,7 +1271,7 @@ pub struct Cte {
 }
 
 /// Window specification
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct WindowSpec {
     pub partition_by: Vec<Expression>,
     pub order_by: Vec<Ordered>,
@@ -1279,7 +1279,7 @@ pub struct WindowSpec {
 }
 
 /// OVER clause
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Over {
     /// Named window reference (e.g., OVER w or OVER (w ORDER BY x))
     pub window_name: Option<Identifier>,
@@ -1290,7 +1290,7 @@ pub struct Over {
 }
 
 /// Window frame
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct WindowFrame {
     pub kind: WindowFrameKind,
     pub start: WindowFrameBound,
@@ -1308,7 +1308,7 @@ pub struct WindowFrame {
 }
 
 #[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
 )]
 pub enum WindowFrameKind {
     Rows,
@@ -1318,7 +1318,7 @@ pub enum WindowFrameKind {
 
 /// EXCLUDE clause for window frames
 #[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
 )]
 pub enum WindowFrameExclude {
     CurrentRow,
@@ -1327,7 +1327,7 @@ pub enum WindowFrameExclude {
     NoOthers,
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum WindowFrameBound {
     CurrentRow,
     UnboundedPreceding,

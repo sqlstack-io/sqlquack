@@ -10,7 +10,7 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import cast
 
-from scripts.syntax_catalogue._helpers.grammar import bare_words
+from scripts.grammar_catalogue._helpers.grammar import bare_words
 from scripts.syntax_catalogue_sqlite._helpers.grammar import read_grammar, read_keywords
 from scripts.syntax_catalogue_sqlite._helpers.strict import line_automaton
 from scripts.syntax_catalogue_sqlite.classes.automaton import Automaton

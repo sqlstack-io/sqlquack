@@ -24,7 +24,7 @@ use crate::expressions::types::models::IntervalUnit;
 use crate::expressions::types::models::StructField;
 
 /// Directory insert for INSERT OVERWRITE DIRECTORY (Hive/Spark)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DirectoryInsert {
     pub local: bool,
     pub path: String,
@@ -35,7 +35,7 @@ pub struct DirectoryInsert {
 }
 
 /// INSERT statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Insert {
     pub table: TableRef,
     pub columns: Vec<Identifier>,
@@ -120,7 +120,7 @@ pub struct Insert {
 }
 
 /// OUTPUT clause (TSQL) - used in INSERT, UPDATE, DELETE
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct OutputClause {
     /// Columns/expressions to output
     pub columns: Vec<Expression>,
@@ -130,7 +130,7 @@ pub struct OutputClause {
 }
 
 /// UPDATE statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Update {
     pub table: TableRef,
     #[serde(default)]
@@ -180,7 +180,7 @@ pub struct Update {
 }
 
 /// DELETE statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Delete {
     pub table: TableRef,
     #[serde(default)]
@@ -247,7 +247,7 @@ pub struct Delete {
 }
 
 /// COPY statement (Snowflake, PostgreSQL, DuckDB, TSQL)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CopyStmt {
     /// Target table or query
     pub this: Expression,
@@ -273,7 +273,7 @@ pub struct CopyStmt {
 }
 
 /// COPY parameter (e.g., FILE_FORMAT = CSV or FORMAT PARQUET)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CopyParameter {
     pub name: String,
     pub value: Option<Expression>,
@@ -284,7 +284,7 @@ pub struct CopyParameter {
 }
 
 /// Credentials for external access (S3, Azure, etc.)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Credentials {
     pub credentials: Vec<(String, String)>,
     pub encryption: Option<String>,
@@ -292,7 +292,7 @@ pub struct Credentials {
 }
 
 /// PUT statement (Snowflake)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PutStmt {
     /// Source file path
     pub source: String,
@@ -307,7 +307,7 @@ pub struct PutStmt {
 }
 
 /// Stage reference (Snowflake) - @stage_name or @namespace.stage/path
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct StageReference {
     /// Stage name including @ prefix (e.g., "@mystage", "@namespace.mystage")
     pub name: String,
@@ -326,7 +326,7 @@ pub struct StageReference {
 }
 
 /// Historical data / Time travel (Snowflake) - BEFORE (STATEMENT => ...) or AT (TIMESTAMP => ...)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct HistoricalData {
     /// The time travel kind: "BEFORE", "AT", or "END" (as an Identifier expression)
     pub this: Box<Expression>,
@@ -337,14 +337,14 @@ pub struct HistoricalData {
 }
 
 /// SQL Command (COMMIT, ROLLBACK, BEGIN, etc.)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Command {
     /// The command text (e.g., "ROLLBACK", "COMMIT", "BEGIN")
     pub this: String,
 }
 
 /// PREPARE name [(type, ...)] AS statement.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PrepareStatement {
     /// The prepared statement name.
     pub name: Identifier,
@@ -356,7 +356,7 @@ pub struct PrepareStatement {
 }
 
 /// T-SQL TRY/CATCH block.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TryCatch {
     /// Statements inside BEGIN TRY ... END TRY.
     #[serde(default)]
@@ -367,7 +367,7 @@ pub struct TryCatch {
 }
 
 /// TSQL EXEC/EXECUTE [schema.]procedure [@param = value, ...].
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ExecuteStatement {
     /// The procedure name (can be qualified: schema.proc_name)
     pub this: Expression,
@@ -389,7 +389,7 @@ pub struct ExecuteStatement {
 }
 
 /// Snowflake `EXECUTE USING POLICY_CONTEXT ( <name> => <value> , ... ) AS <query>`.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ExecuteUsingPolicyContext {
     /// The named arguments of POLICY_CONTEXT.
     pub arguments: Vec<Expression>,
@@ -397,7 +397,7 @@ pub struct ExecuteUsingPolicyContext {
 }
 
 /// Named parameter in EXEC statement: @name=value
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ExecuteParameter {
     /// Parameter name (including @)
     pub name: String,
@@ -412,7 +412,7 @@ pub struct ExecuteParameter {
 }
 
 /// MySQL/MariaDB KILL [CONNECTION | QUERY] <id>.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Kill {
     /// The target (process ID or connection ID)
     pub this: Expression,
@@ -421,7 +421,7 @@ pub struct Kill {
 }
 
 /// Snowflake CREATE TASK statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CreateTask {
     pub or_replace: bool,
     pub if_not_exists: bool,
@@ -440,13 +440,13 @@ pub struct CreateTask {
 }
 
 /// Raw/unparsed SQL
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Raw {
     pub sql: String,
 }
 
 /// TRUNCATE TABLE statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Truncate {
     /// Target of TRUNCATE (TABLE vs DATABASE)
     #[serde(default)]
@@ -477,7 +477,7 @@ pub struct Truncate {
 }
 
 /// A table entry in a TRUNCATE statement, with optional ONLY modifier and * suffix
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TruncateTableEntry {
     pub table: TableRef,
     /// Whether the table has a * suffix (inherit children)
@@ -487,7 +487,7 @@ pub struct TruncateTableEntry {
 
 /// TRUNCATE target type
 #[derive(
-    sqlquack_syntax_derive::AstNode,
+    sqlquack_derive::AstNode,
     Debug,
     Clone,
     Copy,
@@ -505,7 +505,7 @@ pub enum TruncateTarget {
 
 /// TRUNCATE identity option
 #[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
 )]
 pub enum TruncateIdentity {
     Restart,
@@ -530,7 +530,7 @@ impl Truncate {
 }
 
 /// USE statement (USE database, USE ROLE, USE WAREHOUSE, USE CATALOG, USE SCHEMA)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Use {
     /// The kind of object (DATABASE, SCHEMA, ROLE, WAREHOUSE, CATALOG, or None for default)
     pub kind: Option<UseKind>,
@@ -546,7 +546,7 @@ pub struct Use {
 
 /// Kind of USE statement
 #[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
 )]
 pub enum UseKind {
     Database,
@@ -559,14 +559,14 @@ pub enum UseKind {
 }
 
 /// SET variable statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SetStatement {
     /// The items being set
     pub items: Vec<SetItem>,
 }
 
 /// Snowflake `UNSET name` or `UNSET ( name [ , ... ] )`: drops session variables.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct UnsetStatement {
     /// The variables, in order.
     pub names: Vec<Identifier>,
@@ -576,7 +576,7 @@ pub struct UnsetStatement {
 }
 
 /// `RESET`: returns session settings to their defaults, in any dialect that has it.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ResetStatement {
     /// The scope written before the target, such as `SESSION` or `GLOBAL`, upper-cased.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -590,7 +590,7 @@ pub struct ResetStatement {
 }
 
 /// A single SET item (variable assignment)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SetItem {
     /// The variable name
     pub name: Expression,
@@ -604,7 +604,7 @@ pub struct SetItem {
 }
 
 /// CACHE TABLE statement (Spark)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Cache {
     /// The table to cache
     pub table: Identifier,
@@ -617,7 +617,7 @@ pub struct Cache {
 }
 
 /// UNCACHE TABLE statement (Spark)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Uncache {
     /// The table to uncache
     pub table: Identifier,
@@ -626,7 +626,7 @@ pub struct Uncache {
 }
 
 /// LOAD DATA statement (Hive)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct LoadData {
     /// LOCAL keyword - load from local filesystem
     pub local: bool,
@@ -645,7 +645,7 @@ pub struct LoadData {
 }
 
 /// PRAGMA statement (SQLite)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Pragma {
     /// Optional schema prefix (e.g., "schema" in "schema.pragma_name")
     pub schema: Option<Identifier>,
@@ -661,7 +661,7 @@ pub struct Pragma {
 }
 
 /// A PostgreSQL utility or session statement with no statement of its own, e.g. `VACUUM (FULL) t` or `LISTEN c`.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct UtilityStatement {
     /// The statement's keywords, e.g. "VACUUM", "LISTEN", "DECLARE CURSOR", "SET CONSTRAINTS"
     pub kind: String,
@@ -674,7 +674,7 @@ pub struct UtilityStatement {
 }
 
 /// COMMENT ON statement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Comment {
     /// The object being commented on
     pub this: Expression,
@@ -689,7 +689,7 @@ pub struct Comment {
 }
 
 /// DESCRIBE statement - shows table structure or query plan
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Describe {
     /// The target to describe (table name or query)
     pub target: Expression,
@@ -738,7 +738,7 @@ impl Describe {
 }
 
 /// SHOW statement - displays database objects
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Show {
     /// The thing to show (DATABASES, TABLES, SCHEMAS, etc.)
     pub this: String,
@@ -803,7 +803,7 @@ impl Show {
 }
 
 /// Explicit parentheses, kept so `(a + b) * c` round-trips.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Paren {
     /// The inner expression wrapped by parentheses.
     pub this: Expression,
@@ -816,7 +816,7 @@ pub struct Paren {
 }
 
 /// Expression annotated with trailing comments (for round-trip preservation)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Annotated {
     pub this: Expression,
     pub trailing_comments: Vec<String>,
@@ -831,21 +831,21 @@ pub struct Annotated {
 }
 
 /// Refresh
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Refresh {
     pub this: Box<Expression>,
     pub kind: String,
 }
 
 /// LockingStatement
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct LockingStatement {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// SequenceProperties
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SequenceProperties {
     #[serde(default)]
     pub increment: Option<Box<Expression>>,
@@ -864,7 +864,7 @@ pub struct SequenceProperties {
 }
 
 /// TruncateTable
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TruncateTable {
     #[serde(default)]
     pub expressions: Vec<Expression>,
@@ -885,7 +885,7 @@ pub struct TruncateTable {
 }
 
 /// Clone
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Clone {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -895,7 +895,7 @@ pub struct Clone {
 }
 
 /// Attach
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Attach {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -905,7 +905,7 @@ pub struct Attach {
 }
 
 /// Detach
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Detach {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -913,7 +913,7 @@ pub struct Detach {
 }
 
 /// Install
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Install {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -923,7 +923,7 @@ pub struct Install {
 }
 
 /// Summarize
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Summarize {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -931,7 +931,7 @@ pub struct Summarize {
 }
 
 /// Declare
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Declare {
     #[serde(default)]
     pub expressions: Vec<Expression>,
@@ -940,7 +940,7 @@ pub struct Declare {
 }
 
 /// DeclareItem
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DeclareItem {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -955,7 +955,7 @@ pub struct DeclareItem {
 }
 
 /// Set
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Set {
     #[serde(default)]
     pub expressions: Vec<Expression>,
@@ -966,7 +966,7 @@ pub struct Set {
 }
 
 /// Heredoc
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Heredoc {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -974,7 +974,7 @@ pub struct Heredoc {
 }
 
 /// QueryBand
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct QueryBand {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -984,7 +984,7 @@ pub struct QueryBand {
 }
 
 /// UserDefinedFunction
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct UserDefinedFunction {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -994,7 +994,7 @@ pub struct UserDefinedFunction {
 }
 
 /// RecursiveWithSearch
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct RecursiveWithSearch {
     pub kind: String,
     pub this: Box<Expression>,
@@ -1004,14 +1004,14 @@ pub struct RecursiveWithSearch {
 }
 
 /// ProjectionDef
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ProjectionDef {
     pub this: Box<Expression>,
     pub expression: Box<Expression>,
 }
 
 /// TableAlias
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TableAlias {
     #[serde(default)]
     pub this: Option<Box<Expression>>,
@@ -1020,7 +1020,7 @@ pub struct TableAlias {
 }
 
 /// Get
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Get {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1030,7 +1030,7 @@ pub struct Get {
 }
 
 /// SetOperation
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SetOperation {
     #[serde(default)]
     pub with_: Option<Box<Expression>>,
@@ -1049,19 +1049,19 @@ pub struct SetOperation {
 }
 
 /// Var - Simple variable reference (for SQL variables, keywords as values)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Var {
     pub this: String,
 }
 
 /// Variadic - represents VARIADIC prefix on function arguments (PostgreSQL)
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Variadic {
     pub this: Box<Expression>,
 }
 
 /// Version
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Version {
     pub this: Box<Expression>,
     pub kind: String,
@@ -1070,7 +1070,7 @@ pub struct Version {
 }
 
 /// Schema
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Schema {
     #[serde(default)]
     pub this: Option<Box<Expression>>,
@@ -1079,7 +1079,7 @@ pub struct Schema {
 }
 
 /// Lock
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Lock {
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub ignore_locked: bool,
@@ -1094,7 +1094,7 @@ pub struct Lock {
 }
 
 /// TABLESAMPLE after a non-table source, such as a subquery or a function.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TableSample {
     /// The expression being sampled (subquery, function, etc.)
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1123,7 +1123,7 @@ pub struct TableSample {
 }
 
 /// Tags are used for generating arbitrary sql like SELECT <span>x</span>.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Tag {
     #[serde(default)]
     pub this: Option<Box<Expression>>,
@@ -1134,7 +1134,7 @@ pub struct Tag {
 }
 
 /// UnpivotColumns
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct UnpivotColumns {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1142,7 +1142,7 @@ pub struct UnpivotColumns {
 }
 
 /// SessionParameter
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SessionParameter {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1150,19 +1150,19 @@ pub struct SessionParameter {
 }
 
 /// PseudoType
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PseudoType {
     pub this: Box<Expression>,
 }
 
 /// ObjectIdentifier
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ObjectIdentifier {
     pub this: Box<Expression>,
 }
 
 /// Transaction
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Transaction {
     #[serde(default)]
     pub this: Option<Box<Expression>>,
@@ -1173,7 +1173,7 @@ pub struct Transaction {
 }
 
 /// Commit
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Commit {
     #[serde(default)]
     pub chain: Option<Box<Expression>>,
@@ -1184,7 +1184,7 @@ pub struct Commit {
 }
 
 /// Rollback
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Rollback {
     #[serde(default)]
     pub savepoint: Option<Box<Expression>>,
@@ -1193,7 +1193,7 @@ pub struct Rollback {
 }
 
 /// AlterSession
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AlterSession {
     #[serde(default)]
     pub expressions: Vec<Expression>,
@@ -1202,7 +1202,7 @@ pub struct AlterSession {
 }
 
 /// Analyze
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Analyze {
     #[serde(default)]
     pub kind: Option<String>,
@@ -1224,7 +1224,7 @@ pub struct Analyze {
 }
 
 /// AnalyzeStatistics
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AnalyzeStatistics {
     pub kind: String,
     #[serde(default)]
@@ -1236,7 +1236,7 @@ pub struct AnalyzeStatistics {
 }
 
 /// AnalyzeHistogram
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AnalyzeHistogram {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1248,7 +1248,7 @@ pub struct AnalyzeHistogram {
 }
 
 /// AnalyzeSample
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AnalyzeSample {
     pub kind: String,
     #[serde(default)]
@@ -1256,28 +1256,28 @@ pub struct AnalyzeSample {
 }
 
 /// AnalyzeListChainedRows
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AnalyzeListChainedRows {
     #[serde(default)]
     pub expression: Option<Box<Expression>>,
 }
 
 /// AnalyzeDelete
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AnalyzeDelete {
     #[serde(default)]
     pub kind: Option<String>,
 }
 
 /// AnalyzeWith
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AnalyzeWith {
     #[serde(default)]
     pub expressions: Vec<Expression>,
 }
 
 /// AnalyzeValidate
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AnalyzeValidate {
     pub kind: String,
     #[serde(default)]
@@ -1287,7 +1287,7 @@ pub struct AnalyzeValidate {
 }
 
 /// AddPartition
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AddPartition {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1297,7 +1297,7 @@ pub struct AddPartition {
 }
 
 /// AttachOption
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AttachOption {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1305,7 +1305,7 @@ pub struct AttachOption {
 }
 
 /// DropPartition
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DropPartition {
     #[serde(default)]
     pub expressions: Vec<Expression>,
@@ -1314,7 +1314,7 @@ pub struct DropPartition {
 }
 
 /// ReplacePartition
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ReplacePartition {
     pub expression: Box<Expression>,
     #[serde(default)]
@@ -1322,7 +1322,7 @@ pub struct ReplacePartition {
 }
 
 /// Merge
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Merge {
     pub this: Box<Expression>,
     pub using: Box<Expression>,
@@ -1342,7 +1342,7 @@ pub struct Merge {
 }
 
 /// When
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct When {
     #[serde(default)]
     pub matched: Option<Box<Expression>>,
@@ -1354,14 +1354,14 @@ pub struct When {
 }
 
 /// Wraps around one or more WHEN [NOT] MATCHED [...] clauses.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Whens {
     #[serde(default)]
     pub expressions: Vec<Expression>,
 }
 
 /// NextValueFor
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct NextValueFor {
     pub this: Box<Expression>,
     #[serde(default)]
@@ -1369,7 +1369,7 @@ pub struct NextValueFor {
 }
 
 /// Native Vertica syntax, retaining semantics through serialization and traversal.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum VerticaExpression {
     PhysicalTable {
@@ -1448,13 +1448,13 @@ pub enum VerticaExpression {
     PartitionBest,
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct VerticaParameter {
     pub name: Identifier,
     pub value: Expression,
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", content = "value", rename_all = "snake_case")]
 pub enum VerticaHistoricalPoint {
     Latest,
@@ -1462,7 +1462,7 @@ pub enum VerticaHistoricalPoint {
     Time(Expression),
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum VerticaDataType {
     Array {
@@ -1487,7 +1487,7 @@ pub enum VerticaDataType {
     },
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", content = "value", rename_all = "snake_case")]
 pub enum VerticaCollectionBound {
     Elements(u32),
@@ -1495,7 +1495,7 @@ pub enum VerticaCollectionBound {
 }
 
 #[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Default, PartialEq, Serialize, Deserialize,
+    sqlquack_derive::AstNode, Debug, Clone, Default, PartialEq, Serialize, Deserialize,
 )]
 pub struct VerticaSelectExtensions {
     pub timeseries: Option<VerticaTimeseries>,
@@ -1503,14 +1503,14 @@ pub struct VerticaSelectExtensions {
     pub limit_over: Option<Over>,
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct VerticaTimeseries {
     pub alias: Identifier,
     pub interval: Expression,
     pub over: Over,
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct VerticaMatch {
     pub partition_by: Vec<Expression>,
     pub order_by: Vec<Ordered>,
@@ -1521,7 +1521,7 @@ pub struct VerticaMatch {
     pub first_event: Option<bool>,
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", content = "value", rename_all = "snake_case")]
 pub enum VerticaPattern {
     Event(Identifier),
@@ -1535,7 +1535,7 @@ pub enum VerticaPattern {
 }
 
 #[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Default, PartialEq, Serialize, Deserialize,
+    sqlquack_derive::AstNode, Debug, Clone, Default, PartialEq, Serialize, Deserialize,
 )]
 pub struct VerticaPhysical {
     pub order_by: Vec<Ordered>,
@@ -1543,14 +1543,14 @@ pub struct VerticaPhysical {
     pub ksafe: Option<VerticaKsafe>,
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", content = "value", rename_all = "snake_case")]
 pub enum VerticaKsafe {
     Default,
     Level(u32),
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum VerticaSegmentation {
     Segmented {
@@ -1562,20 +1562,20 @@ pub enum VerticaSegmentation {
     },
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct VerticaProjectionColumn {
     pub name: Identifier,
     pub encoding: Option<Identifier>,
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct VerticaParserCall {
     pub name: TableRef,
     pub parameters: Vec<VerticaParameter>,
 }
 
 /// `[DECLARE ...] BEGIN ... [EXCEPTION ...] END [label]`, with every member in written order.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingBlock {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1587,7 +1587,7 @@ pub struct ScriptingBlock {
 }
 
 /// One DECLARE or LET member; LET-only and DECLARE-only forms are separated by the parser.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ScriptingDeclaration {
     Variable(ScriptingVariable),
@@ -1598,7 +1598,7 @@ pub enum ScriptingDeclaration {
 }
 
 /// `name [type] [{DEFAULT | :=} expression]`.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingVariable {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1609,14 +1609,14 @@ pub struct ScriptingVariable {
 }
 
 /// The written assignment spelling and its value.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingDefault {
     pub operator: ScriptingAssignmentOperator,
     pub value: Expression,
 }
 
 #[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
 )]
 #[serde(rename_all = "snake_case")]
 pub enum ScriptingAssignmentOperator {
@@ -1625,7 +1625,7 @@ pub enum ScriptingAssignmentOperator {
 }
 
 /// `name CURSOR FOR {query | resultset}`.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingCursor {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1634,7 +1634,7 @@ pub struct ScriptingCursor {
     pub source: ScriptingCursorSource,
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ScriptingCursorSource {
     Query(Expression),
@@ -1642,7 +1642,7 @@ pub enum ScriptingCursorSource {
 }
 
 /// `name RESULTSET [{DEFAULT | :=} [ASYNC] (statement)]`.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingResultset {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1652,7 +1652,7 @@ pub struct ScriptingResultset {
 }
 
 /// The statement is a child job only when ASYNC is written; it is never run here.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingResultsetDefault {
     pub operator: ScriptingAssignmentOperator,
     pub asynchronous: bool,
@@ -1660,7 +1660,7 @@ pub struct ScriptingResultsetDefault {
 }
 
 /// `name EXCEPTION [(number, 'message')]`; omitted values are not defaulted.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingException {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1671,7 +1671,7 @@ pub struct ScriptingException {
 }
 
 /// `name PROCEDURE ( [<arg> <type>, ...] ) RETURNS { <type> | TABLE ( ... ) } AS <block>`.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingProcedure {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1684,7 +1684,7 @@ pub struct ScriptingProcedure {
 }
 
 /// One body member, terminated by its own semicolon.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ScriptingStatement {
     Sql(ScriptingSql),
@@ -1710,7 +1710,7 @@ pub enum ScriptingStatement {
 }
 
 /// An ordinary SQL statement inside a block.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingSql {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1718,7 +1718,7 @@ pub struct ScriptingSql {
     pub statement: Expression,
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingLet {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1727,7 +1727,7 @@ pub struct ScriptingLet {
 }
 
 /// `name := expression`, without LET.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingAssignment {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1737,7 +1737,7 @@ pub struct ScriptingAssignment {
 }
 
 /// `IF (c) THEN ... [ELSEIF (c) THEN ...] [ELSE ...] END IF`.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingIf {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1747,7 +1747,7 @@ pub struct ScriptingIf {
 }
 
 /// A condition or WHEN value and the statements it guards.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingBranch {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1756,7 +1756,7 @@ pub struct ScriptingBranch {
     pub body: Vec<ScriptingStatement>,
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingElse {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1765,7 +1765,7 @@ pub struct ScriptingElse {
 }
 
 /// Simple (with operand) or searched CASE statement; `END CASE` versus bare `END` is kept.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingCase {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1777,7 +1777,7 @@ pub struct ScriptingCase {
 }
 
 /// `FOR name IN {source | [REVERSE] start TO end} {DO | LOOP} ... END {FOR | LOOP} [label]`.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingFor {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1789,7 +1789,7 @@ pub struct ScriptingFor {
     pub label: Option<Identifier>,
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ScriptingForIteration {
     /// A cursor or RESULTSET name; which one is not resolved here.
@@ -1797,7 +1797,7 @@ pub enum ScriptingForIteration {
     Range(Box<ScriptingRange>),
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingRange {
     pub reverse: bool,
     pub start: Expression,
@@ -1806,7 +1806,7 @@ pub struct ScriptingRange {
 
 /// The body keyword, which fixes the closing `END FOR`/`END WHILE` or `END LOOP`.
 #[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
 )]
 #[serde(rename_all = "snake_case")]
 pub enum ScriptingLoopKeyword {
@@ -1814,7 +1814,7 @@ pub enum ScriptingLoopKeyword {
     Loop,
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingWhile {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1826,7 +1826,7 @@ pub struct ScriptingWhile {
 }
 
 /// `REPEAT ... UNTIL (c) END REPEAT [label]`: the condition follows the body.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingRepeat {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1836,7 +1836,7 @@ pub struct ScriptingRepeat {
     pub label: Option<Identifier>,
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingLoop {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1846,7 +1846,7 @@ pub struct ScriptingLoop {
 }
 
 /// BREAK/EXIT or CONTINUE/ITERATE, keeping the synonym written.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingJump {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1856,7 +1856,7 @@ pub struct ScriptingJump {
 }
 
 #[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
 )]
 #[serde(rename_all = "snake_case")]
 pub enum ScriptingJumpKeyword {
@@ -1867,7 +1867,7 @@ pub enum ScriptingJumpKeyword {
 }
 
 /// `OPEN cursor [USING (bind, ...)]`.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingOpen {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1877,7 +1877,7 @@ pub struct ScriptingOpen {
 }
 
 /// `FETCH cursor INTO variable, ...`.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingFetch {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1887,7 +1887,7 @@ pub struct ScriptingFetch {
 }
 
 /// A statement whose only operand is a cursor or RESULTSET name: CLOSE and CANCEL.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingName {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1895,7 +1895,7 @@ pub struct ScriptingName {
     pub name: Identifier,
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingAwait {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1904,7 +1904,7 @@ pub struct ScriptingAwait {
 }
 
 /// Unquoted `ALL`; a quoted `"ALL"` names a RESULTSET.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ScriptingAwaitTarget {
     All,
@@ -1912,7 +1912,7 @@ pub enum ScriptingAwaitTarget {
 }
 
 /// The no-op `NULL;` statement, distinct from a NULL value.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingNull {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1920,7 +1920,7 @@ pub struct ScriptingNull {
 }
 
 /// `RAISE [exception]`; without a name it re-raises inside a handler.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingRaise {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1928,7 +1928,7 @@ pub struct ScriptingRaise {
     pub exception: Option<Identifier>,
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingReturn {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1938,7 +1938,7 @@ pub struct ScriptingReturn {
 }
 
 /// A scalar expression, or `TABLE(...)` returning the rows its argument names.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ScriptingReturnValue {
     Scalar(Expression),
@@ -1946,7 +1946,7 @@ pub enum ScriptingReturnValue {
 }
 
 /// `WHEN {name [OR name ...] | OTHER} [EXIT | CONTINUE] THEN ...`.
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingExceptionHandler {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -1957,7 +1957,7 @@ pub struct ScriptingExceptionHandler {
     pub body: Vec<ScriptingStatement>,
 }
 
-#[derive(sqlquack_syntax_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ScriptingHandledExceptions {
     Named(Vec<Identifier>),
@@ -1965,7 +1965,7 @@ pub enum ScriptingHandledExceptions {
 }
 
 #[derive(
-    sqlquack_syntax_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
+    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
 )]
 #[serde(rename_all = "snake_case")]
 pub enum ScriptingHandlerAction {

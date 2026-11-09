@@ -3,9 +3,9 @@
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
-use sqlquack_duckdb_blocks::blocks::main::exact_decimal_divide::exact_decimal_divide;
-use sqlquack_duckdb_blocks::floats::constants::FLOAT_SUM_ORDER;
-use sqlquack_duckdb_blocks::floats::main::exact_float_sum::exact_float_sum;
+use sqlquack_blocks::blocks::main::exact_decimal_divide::exact_decimal_divide;
+use sqlquack_blocks::floats::constants::FLOAT_SUM_ORDER;
+use sqlquack_blocks::floats::main::exact_float_sum::exact_float_sum;
 use sqlquack_policy::policy::constants::NUMERIC_RANGE;
 use sqlquack_snowflake_types::typing::constants::MAX_PRECISION;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;

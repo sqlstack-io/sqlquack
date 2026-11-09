@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from scripts.syntax_catalogue._helpers.grammar import sha256
+from scripts.grammar_catalogue._helpers.grammar import sha256
 from scripts.syntax_catalogue_postgres._helpers.sgml import (
     literals,
     plain,

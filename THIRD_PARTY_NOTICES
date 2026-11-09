@@ -58,7 +58,7 @@ polyglot
 --------
 
 Parts of SQLQuack's tokenizer and parser, in crates/sqlquack-syntax and
-crates/sqlquack-syntax-derive, are derived from polyglot (https://github.com/tobilg/polyglot),
+crates/sqlquack-derive, are derived from polyglot (https://github.com/tobilg/polyglot),
 as forked at https://github.com/sqlstack-io/polyglot. The exact-check corpus
 corpora/polyglot-check/polyglot_tests.json holds the SQL inputs of polyglot's tests.
 SQLQuack's DuckDB result-type rules, in crates/sqlquack-semantics/src/lineage/_helpers/duckdb_typing.rs

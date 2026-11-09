@@ -27,10 +27,10 @@ they then become ours. Snowflake and DuckDB are the first analysis dialects.
 | Crate | Contents | Depends on polyglot |
 |---|---|---|
 | `sqlquack-syntax` | the tokenizer (significant tokens and trivia), the parser (strict and tolerant), the tree, the Snowflake and DuckDB dialect settings | never |
-| `sqlquack-syntax-derive` | the proc macro that generates child traversal for tree nodes, copied from `polyglot-sql-ast-derive` | never |
+| `sqlquack-derive` | the proc macro that generates child traversal for tree nodes, copied from `polyglot-sql-ast-derive` | never |
 | `sqlquack-polyglot-check` | dev-only tool and tests: the exact comparison with polyglot, corpus runs and parse timings; `publish = false`, a fensu tooling crate | yes, through the workspace pin |
 | `sqlquack-core` | parsing entry points re-pointed at `sqlquack-syntax`, plus classification, refusals and provenance as today | removed in step 5 |
-| `sqlquack-duckdb-blocks` | building blocks, the DuckDB printer and DuckDB's own check of the printed SQL (step 4) | never |
+| `sqlquack-blocks` | building blocks, the DuckDB printer and DuckDB's own check of the printed SQL (step 4) | never |
 
 Inside `sqlquack-syntax` the copied files are split into fensu's domain layout, by
 `scripts/fensu_split_modules.py` following the placements in `scripts/fensu/constants.py`: `tokens`
@@ -292,7 +292,7 @@ when the analysis API needs them.
 4. **DuckDB printer.** Rules build DuckDB output through the printer instead of polyglot. DuckDB
    checks every output with `json_serialize_sql` (parse) and `PREPARE`/`EXPLAIN` (bind),
    replacing the polyglot re-parse. Polyglot then leaves the runtime dependency tree.
-   - Done: the rules' building blocks are SQLQuack's DuckDB printer. `sqlquack-duckdb-blocks`'s
+   - Done: the rules' building blocks are SQLQuack's DuckDB printer. `sqlquack-blocks`'s
      `check_printed` has DuckDB parse and bind every converted statement (`prepare`) over empty
      tables for the relations it reads, created from the schema; semi-structured columns are held
      as `JSON` (decision 3). A lexical pass, skipping strings, quoted names and comments, requires

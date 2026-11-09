@@ -8,7 +8,7 @@ import tomllib
 from collections.abc import Iterator
 from pathlib import Path
 
-from scripts.syntax_catalogue._helpers.grammar import bare_words
+from scripts.grammar_catalogue._helpers.grammar import bare_words
 from scripts.syntax_catalogue_bigquery._helpers.hand import strings
 from scripts.syntax_catalogue_bigquery._helpers.keywords import keyword_table
 from scripts.syntax_catalogue_bigquery._helpers.pages import load_pages

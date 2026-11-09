@@ -5,10 +5,10 @@ use sqlquack_core::parsing::models::SourceLines;
 use sqlquack_core::provenance::models::ProvenanceLog;
 use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::models::Refusal;
-use sqlquack_duckdb_blocks::blocks::main::quoted_identifier::quoted_identifier;
-use sqlquack_duckdb_blocks::checking::main::check_printed::check_printed;
-use sqlquack_duckdb_blocks::held::main::variant_written::variant_written;
-use sqlquack_duckdb_blocks::semi_structured::main::json_output::json_output;
+use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_blocks::checking::main::check_printed::check_printed;
+use sqlquack_blocks::held::main::variant_written::variant_written;
+use sqlquack_blocks::semi_structured::main::json_output::json_output;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 use sqlquack_syntax::Expression;
 

@@ -5,7 +5,7 @@ from __future__ import annotations
 import tomllib
 from pathlib import Path
 
-from scripts.syntax_catalogue.models import HandForm
+from scripts.grammar_catalogue.models import HandForm
 from scripts.syntax_catalogue_sqlite.models import HandInputs, HandPage, Override, Transcription
 from scripts.syntax_catalogue_sqlite.types import Row
 

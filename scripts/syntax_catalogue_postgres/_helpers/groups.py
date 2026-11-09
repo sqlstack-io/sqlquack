@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import re
 
-from scripts.syntax_catalogue._helpers.grammar import bare_words, required_skeleton, slug
-from scripts.syntax_catalogue.models import FormGroup
+from scripts.grammar_catalogue._helpers.grammar import bare_words, required_skeleton, slug
+from scripts.grammar_catalogue.models import FormGroup
 from scripts.syntax_catalogue_postgres.constants import (
     ACTION_PLACEHOLDER,
     BAR,

@@ -8,12 +8,12 @@ import tomllib
 from collections.abc import Callable
 from pathlib import Path
 
-from scripts.syntax_obligations import constants as shared
-from scripts.syntax_obligations._helpers import grammar, ids, obligations
-from scripts.syntax_obligations.constants import ACTION_HAND, HAND_CASE_KEYS, PAIR_SIZE
-from scripts.syntax_obligations.exceptions import ObligationError
-from scripts.syntax_obligations.models import Draft, FormStyle, Spec
-from scripts.syntax_obligations.types import Key, Row
+from scripts.grammar_obligations import constants as shared
+from scripts.grammar_obligations._helpers import grammar, ids, obligations
+from scripts.grammar_obligations.constants import ACTION_HAND, HAND_CASE_KEYS, PAIR_SIZE
+from scripts.grammar_obligations.exceptions import ObligationError
+from scripts.grammar_obligations.models import Draft, FormStyle, Spec
+from scripts.grammar_obligations.types import Key, Row
 from scripts.syntax_obligations_postgres.constants import (
     FAMILIES,
     FAMILY_CONTEXTS,

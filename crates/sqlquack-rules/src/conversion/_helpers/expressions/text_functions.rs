@@ -4,15 +4,15 @@ use serde_json::Value;
 use sqlquack_core::classification::models::Construct;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::models::Refusal;
-use sqlquack_duckdb_blocks::blocks::main::cast::cast;
-use sqlquack_duckdb_blocks::blocks::main::split_text_part::split_text_part;
-use sqlquack_duckdb_blocks::blocks::main::string_literal::string_literal;
-use sqlquack_duckdb_blocks::raises::main::raised::raised;
-use sqlquack_duckdb_blocks::text::constants::{
+use sqlquack_blocks::blocks::main::cast::cast;
+use sqlquack_blocks::blocks::main::split_text_part::split_text_part;
+use sqlquack_blocks::blocks::main::string_literal::string_literal;
+use sqlquack_blocks::raises::main::raised::raised;
+use sqlquack_blocks::text::constants::{
     CASE_FOLDING, LONG_S, REGEXP_PATTERN_SYNTAX, UNFOLDED_LETTERS,
 };
-use sqlquack_duckdb_blocks::text::main::folded_text::folded_text;
-use sqlquack_duckdb_blocks::text::main::guarded_pattern::guarded_pattern;
+use sqlquack_blocks::text::main::folded_text::folded_text;
+use sqlquack_blocks::text::main::guarded_pattern::guarded_pattern;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::result_types::result_type;

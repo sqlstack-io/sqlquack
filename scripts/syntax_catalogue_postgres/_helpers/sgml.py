@@ -5,7 +5,7 @@ from __future__ import annotations
 import bisect
 import re
 
-from scripts.syntax_catalogue._helpers.grammar import normalize
+from scripts.grammar_catalogue._helpers.grammar import normalize
 from scripts.syntax_catalogue_postgres.constants import (
     ANGLES,
     BAR,

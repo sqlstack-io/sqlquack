@@ -8,8 +8,8 @@ use sqlquack_core::refusals::main::missing::missing;
 use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_core::refusals::main::unresolved::unresolved;
 use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
-use sqlquack_duckdb_blocks::blocks::main::quoted_identifier::quoted_identifier;
-use sqlquack_duckdb_blocks::checking::main::quoted_relation::quoted_relation;
+use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_blocks::checking::main::quoted_relation::quoted_relation;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::project_functions::{exact_arguments, held_type};

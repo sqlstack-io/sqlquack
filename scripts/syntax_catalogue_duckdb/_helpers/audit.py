@@ -10,7 +10,7 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import cast
 
-from scripts.syntax_catalogue._helpers.grammar import bare_words
+from scripts.grammar_catalogue._helpers.grammar import bare_words
 from scripts.syntax_catalogue_duckdb._helpers.peg import read_rules
 from scripts.syntax_catalogue_duckdb.constants import (
     DEFINITION_HEAD,

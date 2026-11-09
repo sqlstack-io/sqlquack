@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from scripts.syntax_obligations._helpers import obligations
-from scripts.syntax_obligations.models import Draft
-from scripts.syntax_obligations.types import Row
+from scripts.grammar_obligations._helpers import obligations
+from scripts.grammar_obligations.models import Draft
+from scripts.grammar_obligations.types import Row
 
 _SHARED_SUPPRESSED: Callable[..., bool] = obligations._suppressed  # noqa: SLF001
 

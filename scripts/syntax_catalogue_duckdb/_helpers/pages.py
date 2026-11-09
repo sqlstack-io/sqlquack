@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from scripts.syntax_catalogue._helpers.grammar import sha256, slug
+from scripts.grammar_catalogue._helpers.grammar import sha256, slug
 from scripts.syntax_catalogue_duckdb.constants import (
     DIAGRAM_DIV,
     DOCS_ROOT,
