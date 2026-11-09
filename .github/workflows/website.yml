@@ -14,6 +14,8 @@ on:
       - crates/sqlquack-parse/**
       - crates/sqlquack-blocks/**
       - crates/sqlquack-convert/**
+      - crates/sqlquack-derive/**
+      - crates/sqlquack-policy/**
       - crates/sqlquack-semantics/**
       - crates/sqlquack-syntax/**
       - crates/sqlquack-syntax-snowflake/**
@@ -25,6 +27,8 @@ on:
       - crates/sqlquack-parse/**
       - crates/sqlquack-blocks/**
       - crates/sqlquack-convert/**
+      - crates/sqlquack-derive/**
+      - crates/sqlquack-policy/**
       - crates/sqlquack-semantics/**
       - crates/sqlquack-syntax/**
       - crates/sqlquack-syntax-snowflake/**
