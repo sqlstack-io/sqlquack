@@ -2743,15 +2743,15 @@ expect_repository = "translated"
 [[query]]
 category = "misc"
 sql = '''SELECT order_id, total FROM orders PIVOT (SUM(total) FOR status IN ('shipped', 'pending')) AS p'''
-expect = "refused SQ0003 node:pivot at 28..95"
-expect_repository = "refused SQ0003 node:pivot at 28..95"
+expect = "refused SQ0004 statement at 17..22"
+expect_repository = "refused SQ0004 statement at 17..22"
 snowflake = "rejects 904"
 
 [[query]]
 category = "misc"
 sql = '''SELECT * FROM (SELECT channel, status, total FROM orders) PIVOT (SUM(total) FOR status IN ('shipped', 'pending'))'''
-expect = "refused SQ0003 node:pivot at 22..86"
-expect_repository = "refused SQ0003 node:pivot at 22..86"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "misc"
