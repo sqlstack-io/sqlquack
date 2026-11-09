@@ -71,6 +71,9 @@ const TABLE_HINTS: [&str; 17] = [
     "READCOMMITTEDLOCK",
 ];
 
+/// The physical join hints that may stand between `INNER`, or a side and its `OUTER`, and `JOIN`; `REMOTE` only after `INNER` (1072).
+const JOIN_HINTS: [&str; 4] = ["LOOP", "HASH", "MERGE", "REMOTE"];
+
 fn empty_star(table: Option<Identifier>) -> Star {
     Star {
         table,
@@ -872,32 +875,50 @@ impl<'sql> Parser<'sql> {
     fn joins(&mut self) -> Parsing<Vec<Join>> {
         let mut joins: Vec<Join> = Vec::new();
         loop {
-            let (kind, words, keywords): (JoinKind, usize, (bool, bool)) =
+            let hint_at = |offset: usize| -> Option<String> {
+                self.word_at(offset).filter(|word| {
+                    JOIN_HINTS.contains(&word.as_str()) && self.kw_at(offset + 1, "JOIN")
+                })
+            };
+            let (kind, words, keywords, hint): (JoinKind, usize, (bool, bool), Option<String>) =
                 match (self.word_at(0).as_deref(), self.word_at(1).as_deref()) {
-                    (Some("CROSS"), Some("JOIN")) => (JoinKind::Cross, 2, (false, false)),
-                    (Some("CROSS"), Some("APPLY")) => (JoinKind::CrossApply, 2, (false, false)),
-                    (Some("OUTER"), Some("APPLY")) => (JoinKind::OuterApply, 2, (false, false)),
-                    (Some("JOIN"), _) => (JoinKind::Inner, 1, (false, false)),
-                    (Some("INNER"), Some("JOIN")) => (JoinKind::Inner, 2, (true, false)),
+                    (Some("CROSS"), Some("JOIN")) => (JoinKind::Cross, 2, (false, false), None),
+                    (Some("CROSS"), Some("APPLY")) => {
+                        (JoinKind::CrossApply, 2, (false, false), None)
+                    }
+                    (Some("OUTER"), Some("APPLY")) => {
+                        (JoinKind::OuterApply, 2, (false, false), None)
+                    }
+                    (Some("JOIN"), _) => (JoinKind::Inner, 1, (false, false), None),
+                    (Some("INNER"), Some("JOIN")) => (JoinKind::Inner, 2, (true, false), None),
+                    (Some("INNER"), Some(_)) => match hint_at(1) {
+                        Some(hint) => (JoinKind::Inner, 3, (true, false), Some(hint)),
+                        None => return Err(self.error_at(self.at + 1)),
+                    },
                     (Some(side @ ("LEFT" | "RIGHT" | "FULL")), Some(next)) => {
                         let kind: JoinKind = match side {
                             "LEFT" => JoinKind::Left,
                             "RIGHT" => JoinKind::Right,
                             _ => JoinKind::Full,
                         };
-                        match next {
-                            "JOIN" => (kind, 2, (false, false)),
-                            "OUTER" if self.kw_at(2, "JOIN") => (kind, 3, (false, true)),
-                            "OUTER" | "LOOP" | "HASH" | "MERGE" | "REMOTE" => {
-                                return Err(self.gap("join_hint", self.offset()));
+                        let outer: bool = next == "OUTER";
+                        let at: usize = 1 + usize::from(outer);
+                        match (self.kw_at(at, "JOIN"), hint_at(at)) {
+                            (true, _) => (kind, at + 1, (false, outer), None),
+                            (false, Some(hint)) if hint == "REMOTE" => {
+                                return Err(self.error_at(self.at + at));
                             }
-                            _ => return Ok(joins),
+                            (false, Some(hint)) => (kind, at + 2, (false, outer), Some(hint)),
+                            (false, None) if outer || JOIN_HINTS.contains(&next) => {
+                                return Err(self.error_at(self.at + at));
+                            }
+                            (false, None) => return Ok(joins),
                         }
                     }
-                    (Some("INNER" | "LOOP" | "HASH" | "MERGE" | "REMOTE"), Some(_))
+                    (Some("LOOP" | "HASH" | "MERGE" | "REMOTE"), Some(_))
                         if !self.kw_at(0, "MERGE") || self.kw_at(1, "JOIN") =>
                     {
-                        return Err(self.gap("join_hint", self.offset()));
+                        return Err(self.error());
                     }
                     _ => return Ok(joins),
                 };
@@ -916,7 +937,9 @@ impl<'sql> Parser<'sql> {
                     JoinConstraint::On(Box::new(self.condition()?))
                 }
             };
-            joins.push(join(right, kind, constraint, keywords));
+            let mut node: Join = join(right, kind, constraint, keywords);
+            node.join_hint = hint;
+            joins.push(node);
         }
     }
 }

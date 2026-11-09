@@ -54,3 +54,5 @@ pub(crate) const BATCH_SEPARATOR_FAILURE: &str = "formatter does not lay out a G
 pub(crate) const BATCH_SEPARATOR: &str = "GO";
 /// Words that after `FOR` start a clause listing a query's result options, as in `FOR XML PATH, TYPE`.
 pub(crate) const FOR_CLAUSES: [&str; 2] = ["XML", "JSON"];
+/// Physical join hints, which stand between a join prefix and `JOIN`, as in `LEFT OUTER HASH JOIN`.
+pub(crate) const JOIN_HINTS: [&str; 4] = ["LOOP", "HASH", "MERGE", "REMOTE"];

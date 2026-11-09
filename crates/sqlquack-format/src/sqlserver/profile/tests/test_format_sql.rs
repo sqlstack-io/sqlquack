@@ -361,6 +361,15 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             ),
         },
         test_types::FormatSqlTestCase {
+            description: "a join hint stays in its join keyword, as written, while a table aliased as a hint word keeps its alias",
+            sql: "select x from a hash left outer hash join b on b.id = hash.id",
+            line_width: None,
+            dialect: FormatDialect::SqlServer,
+            expected_outcome: Ok(
+                "SELECT x\nFROM a hash\nLEFT OUTER hash JOIN b\n  ON b.id = hash.id",
+            ),
+        },
+        test_types::FormatSqlTestCase {
             description: "a GO that is not alone on its line is a name and is laid out",
             sql: "SELECT go FROM t",
             line_width: None,

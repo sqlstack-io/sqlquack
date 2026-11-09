@@ -1115,7 +1115,11 @@ impl<'a> Guide<'a> {
     }
 
     fn is_join_word(&self, index: usize) -> bool {
-        self.is(index, "JOIN") || self.is_any(index, &JOIN_PREFIXES)
+        self.is(index, "JOIN")
+            || self.is_any(index, &JOIN_PREFIXES)
+            || (index > 0
+                && self.is_any(index, self.rules.join_hints)
+                && self.is_any(index - 1, &JOIN_PREFIXES))
     }
 
     fn starts_join(&self, index: usize, first: usize) -> bool {
