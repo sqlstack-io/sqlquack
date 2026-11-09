@@ -33,6 +33,7 @@ renumbered. See [Reading diagnostics](/docs/diagnostics/overview/) for the outpu
 | [`SQ0202`](#sq0202) | `lock_wait` | Snowflake does not support WAIT in FOR UPDATE |
 | [`SQ0203`](#sq0203) | `qualify_without_window` | QUALIFY needs a window function |
 | [`SQ0204`](#sq0204) | `star_filter_drops_named_column` | REPLACE or RENAME names a column the star's ILIKE pattern removed |
+| [`SQ0205`](#sq0205) | `window_without_over` | A window function needs an OVER clause |
 | [`SQ0211`](#sq0211) | `unsupported_type_literal` | Snowflake has no literal of this date-time type |
 
 ## Conversion
@@ -321,6 +322,20 @@ In `* ILIKE 'pattern' REPLACE (...)` or `RENAME (...)`, Snowflake applies the pa
 
 ```sh
 echo "SELECT * ILIKE '%_id' REPLACE (price * 2 AS price) FROM orders" | sqlquack check
+```
+
+### SQ0205
+
+**A window function needs an OVER clause** (`window_without_over`)
+
+CUME_DIST, PERCENT_RANK and NTH_VALUE are window functions only: Snowflake rejects a call to one without an OVER clause when compiling the query (Snowflake error 2064, missing window specification), so the statement never runs there. Add the OVER clause that says which rows the function ranks or reads.
+
+**Help:** add an OVER clause, such as `OVER (ORDER BY ...)`
+
+**Example:**
+
+```sh
+echo "SELECT CUME_DIST() AS d FROM orders" | sqlquack check
 ```
 
 ### SQ0211

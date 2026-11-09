@@ -21,3 +21,4 @@ SQ0202 lock_wait
 SQ0203 qualify_without_window
 SQ0204 star_filter_drops_named_column
 SQ0211 unsupported_type_literal
+SQ0205 window_without_over
