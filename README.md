@@ -8,13 +8,20 @@
   <sub>by <a href="https://sqlstack.io">SQLStack</a></sub>
 </p>
 
-### Run warehouse SQL locally.
+<h3 align="center">Run warehouse SQL locally.</h3>
 
-Translate warehouse SQL into DuckDB SQL for local testing and CI - without a running warehouse.
+<p align="center">
+  Translate warehouse SQL into DuckDB SQL for local testing and CI - without a running warehouse.
+  <br>
+  <a href="https://sqlquack.io/">Website</a> ·
+  <a href="https://sqlquack.io/docs/">Docs</a> ·
+  <a href="https://sqlquack.io/playground/">Playground</a> ·
+  <a href="https://sqlquack.io/docs/quickstart/">Quickstart</a>
+</p>
 
-[Website](https://sqlquack.io/) · [Docs](https://sqlquack.io/docs/) · [Playground](https://sqlquack.io/playground/) · [Quickstart](https://sqlquack.io/docs/quickstart/)
-
-![SQLQuack checks SQL and converts queries to DuckDB SQL](https://raw.githubusercontent.com/sqlstack-io/sqlquack/main/.github/demos/check-convert.gif)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/sqlstack-io/sqlquack/main/.github/demos/check-convert.gif" alt="SQLQuack checks SQL and converts queries to DuckDB SQL">
+</p>
 
 ## Why SQLQuack?
 
