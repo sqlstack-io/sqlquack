@@ -6233,7 +6233,7 @@ sql = '''with snapshot_query as (
     union all
     select * from updates'''
 expect = "refused SQ0008 fn:CONVERT_TIMEZONE at 445..489"
-expect_repository = "refused SQ0003 fn:TO_TIMESTAMP_NTZ at 428..490"
+expect_repository = "translated"
 
 [[query]]
 category = "dbt_snapshot"
@@ -6351,7 +6351,7 @@ sql = '''with snapshot_query as (
     union all
     select * from deletes'''
 expect = "refused SQ0008 fn:CONVERT_TIMEZONE at 445..489"
-expect_repository = "refused SQ0003 fn:TO_TIMESTAMP_NTZ at 428..490"
+expect_repository = "translated"
 
 [[query]]
 category = "dbt_snapshot"
@@ -6445,7 +6445,7 @@ sql = '''with snapshot_query as (
     union all
     select * from deletes'''
 expect = "refused SQ0008 node:cast at 654..682"
-expect_repository = "refused SQ0003 fn:TO_TIMESTAMP_NTZ at 2154..2216"
+expect_repository = "translated"
 
 [[query]]
 category = "ddl_dml"
