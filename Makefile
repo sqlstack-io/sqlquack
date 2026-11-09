@@ -93,16 +93,23 @@ engine-free:
 	    echo "sqlquack-convert reaches DuckDB's engine" >&2; exit 1; \
 	  fi
 
-# Fails when the semantics library does not build with one dialect feature alone. The other targets
-# build every feature together, so they cannot see library code that needs another dialect. Its tests
-# are not checked this way: they read every dialect, through the crate's dev-dependency on itself.
+# The crates whose features include dialects, as consumers build them one dialect at a time.
+DIALECT_CRATES ?= sqlquack-semantics sqlquack-parse sqlquack-fingerprint sqlquack-format sqlquack-lint \
+  sqlquack-convert sqlquack-diagnostics
+
+# Fails when a DIALECT_CRATES library does not build with one of its dialect features alone. The
+# other targets build every feature together, so they cannot see library code that needs another
+# dialect. The dialects are semantics' features, which name every dialect; a crate is checked for
+# those it declares. Tests are not checked this way: semantics' tests read every dialect, through
+# its dev-dependency on itself.
 dialect-builds:
-	@set -e; dialects="$$(cargo metadata --locked --no-deps --format-version 1 | uv run python -c \
-	  'import json, sys; print(*sorted(set(next(p for p in json.load(sys.stdin)["packages"] if p["name"] == "sqlquack-semantics")["features"]) - {"default"}))')"; \
-	  test -n "$$dialects"; \
-	  for dialect in $$dialects; do \
-	    echo "sqlquack-semantics --features $$dialect"; \
-	    cargo check --locked --quiet -p sqlquack-semantics --lib --no-default-features --features $$dialect; \
+	@set -e; builds="$$(cargo metadata --locked --no-deps --format-version 1 | uv run python -c \
+	  'import json, sys; features = {p["name"]: set(p["features"]) for p in json.load(sys.stdin)["packages"]}; dialects = features["sqlquack-semantics"] - {"default"}; print(*(f"{crate}:{dialect}" for crate in sys.argv[1:] for dialect in sorted(features[crate] & dialects)))' \
+	  $(DIALECT_CRATES))"; \
+	  test -n "$$builds"; \
+	  for build in $$builds; do \
+	    echo "$${build%%:*} --features $${build#*:}"; \
+	    cargo check --locked --quiet -p "$${build%%:*}" --lib --no-default-features --features "$${build#*:}"; \
 	  done
 
 # Rewrites cases/generated/ from the generators in scripts/case_generators/.
