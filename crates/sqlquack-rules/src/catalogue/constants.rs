@@ -1219,8 +1219,13 @@ pub const RULES: &[RuleSpec] = &[
     },
     RuleSpec {
         id: LEAST_GREATEST,
-        constructs: &["fn:LEAST", "fn:GREATEST"],
-        conditions: "Arguments that compare directly with each other, NUMBER beside FLOAT included as recorded; the result has their unified type and is NULL when any argument is NULL (DuckDB's own functions skip NULLs).",
+        constructs: &[
+            "fn:LEAST",
+            "fn:GREATEST",
+            "fn:LEAST_IGNORE_NULLS",
+            "fn:GREATEST_IGNORE_NULLS",
+        ],
+        conditions: "Arguments that compare directly with each other, NUMBER beside FLOAT included as recorded; the result has their unified type. LEAST and GREATEST are NULL when any argument is NULL; LEAST_IGNORE_NULLS and GREATEST_IGNORE_NULLS skip NULLs, as DuckDB's own functions do, and are NULL only when every argument is.",
         failures: &[],
     },
     RuleSpec {
