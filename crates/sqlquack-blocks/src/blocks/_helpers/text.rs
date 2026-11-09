@@ -1,11 +1,11 @@
 //! Text helpers the building blocks share.
 
-use sqlquack_core::failures::constants::{
+use sqlquack_diagnostics::failures::constants::{
     NUMBER_OUT_OF_RANGE, NUMBER_TEXT_OUT_OF_RANGE, VARIANT_NOT_CAST,
 };
-use sqlquack_core::failures::main::tagged_message::tagged_message;
-use sqlquack_core::failures::models::SnowflakeCode;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::main::tagged_message::tagged_message;
+use sqlquack_diagnostics::failures::models::SnowflakeCode;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::{
     CONVERSION_WHITESPACE, INLINE_ARGUMENT_LIMIT, NUMBER_RANGE_MESSAGE, VARIANT_CAST_MESSAGE,

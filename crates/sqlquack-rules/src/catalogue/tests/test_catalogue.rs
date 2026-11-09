@@ -1,6 +1,6 @@
-use sqlquack_core::classification::models::{Construct, ConstructFamily};
-use sqlquack_core::refusals::models::Disposition;
-use sqlquack_core::refusals::types::ConstructPolicy;
+use sqlquack_diagnostics::classification::models::{Construct, ConstructFamily};
+use sqlquack_diagnostics::refusals::models::Disposition;
+use sqlquack_diagnostics::refusals::types::ConstructPolicy;
 
 use crate::catalogue::main::builtin_catalogue::builtin_catalogue;
 use crate::catalogue::models::{NotExpressibleDeclaration, RuleCatalogue};

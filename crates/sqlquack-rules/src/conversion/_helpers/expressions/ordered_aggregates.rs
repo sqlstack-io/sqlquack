@@ -1,12 +1,12 @@
 //! WITHIN GROUP aggregates: LISTAGG, ARRAY_AGG, PERCENTILE_CONT and PERCENTILE_DISC.
 
 use serde_json::Value;
-use sqlquack_core::refusals::main::missing::missing;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::blocks::main::cast::cast;
 use sqlquack_blocks::blocks::main::string_literal::string_literal;
 use sqlquack_blocks::raises::main::raised::raised;
+use sqlquack_diagnostics::refusals::main::missing::missing;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::held::{builds_held, built, leaf};

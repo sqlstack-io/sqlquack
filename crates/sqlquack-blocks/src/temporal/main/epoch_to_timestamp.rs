@@ -1,6 +1,6 @@
 //! `epoch_to_timestamp`: an integer count since the epoch as a naive timestamp.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::{
     DUCKDB_FRACTIONAL_PRECISION, EPOCH_SECONDS_MAX, EPOCH_SECONDS_MIN, EPOCH_TO_TIMESTAMP,

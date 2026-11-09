@@ -1,6 +1,6 @@
 //! `value_at_extreme`: MAX_BY and MIN_BY over rows with a key, raising where tied rows differ.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::aggregates::constants::{EXTREME_KEY_TIES, VALUE_AT_EXTREME};
 use crate::raises::main::raised::raised;

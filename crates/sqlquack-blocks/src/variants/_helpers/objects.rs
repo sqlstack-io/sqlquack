@@ -1,7 +1,7 @@
 //! Object entries, key lists and raising expressions for building and checking VARIANTs.
 
-use sqlquack_core::failures::main::tagged_message::tagged_message;
-use sqlquack_core::failures::models::SnowflakeCode;
+use sqlquack_diagnostics::failures::main::tagged_message::tagged_message;
+use sqlquack_diagnostics::failures::models::SnowflakeCode;
 
 use crate::raises::main::raised::raised;
 use crate::semi_structured::constants::{JSON_FIDELITY, TYPED_TEXT_PATTERN};

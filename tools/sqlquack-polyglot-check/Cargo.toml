@@ -19,7 +19,7 @@ polyglot-sql.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 sqlquack.workspace = true
-sqlquack-core.workspace = true
+sqlquack-diagnostics.workspace = true
 sqlquack-evidence.workspace = true
 sqlquack-policy.workspace = true
 sqlquack-rules = { workspace = true, features = ["engine"] }

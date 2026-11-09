@@ -1,5 +1,5 @@
-use sqlquack_core::parsing::models::SourceDialect;
-use sqlquack_core::refusals::models::RefusalCategory;
+use sqlquack_diagnostics::classification::models::SourceDialect;
+use sqlquack_diagnostics::refusals::models::RefusalCategory;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::conversion::models::ConversionOptions;
 use sqlquack_semantics::types::models::{

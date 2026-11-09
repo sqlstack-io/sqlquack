@@ -1,6 +1,6 @@
 //! `date_trunc_value`: a DATE or naive timestamp truncated to a unit, keeping its type.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::blocks::constants::DATE_TRUNC;

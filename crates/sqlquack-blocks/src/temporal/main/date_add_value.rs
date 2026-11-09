@@ -1,6 +1,6 @@
 //! `date_add_value`: a DATE or naive timestamp moved by whole calendar or clock units.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::blocks::constants::{

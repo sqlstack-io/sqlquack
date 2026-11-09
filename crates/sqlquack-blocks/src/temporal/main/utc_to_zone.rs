@@ -1,6 +1,6 @@
 //! `utc_to_zone`: a naive UTC wall time as the wall time in another zone.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::blocks::constants::UTC_TO_ZONE;

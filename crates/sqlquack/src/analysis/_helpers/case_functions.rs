@@ -1,7 +1,7 @@
 //! The functions a case defines: their schema, DuckDB macros and provenance.
 
-use sqlquack_core::parsing::models::SourceDialect;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::classification::models::SourceDialect;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_evidence::cases::models::{CaseFunction, FunctionBodyLanguage, InputColumn};
 use sqlquack_evidence::replay::models::PythonFunction;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;

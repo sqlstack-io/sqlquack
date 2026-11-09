@@ -1,5 +1,5 @@
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::refusals::models::Disposition;
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::refusals::models::Disposition;
 
 use crate::catalogue::models::RuleCatalogue;
 

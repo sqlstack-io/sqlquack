@@ -1,8 +1,8 @@
 //! Pipeline results.
 
 use serde::Serialize;
-use sqlquack_core::classification::models::Occurrence;
-use sqlquack_core::refusals::models::Refusal;
+use sqlquack_diagnostics::classification::models::Occurrence;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_rules::conversion::models::Converted;
 
 /// What the pipeline found in one SQL input.

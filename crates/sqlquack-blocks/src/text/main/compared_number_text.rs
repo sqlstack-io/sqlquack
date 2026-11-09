@@ -1,6 +1,6 @@
 //! `compared_number_text`: text compared with a NUMBER, read as a NUMBER at that scale.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_snowflake_types::typing::constants::MAX_PRECISION;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 

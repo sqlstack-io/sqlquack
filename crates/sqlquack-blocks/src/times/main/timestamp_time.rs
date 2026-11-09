@@ -1,6 +1,6 @@
 //! `timestamp_time`: the time of day of a naive timestamp, as a TIME.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::times::_helpers::nanos::time_of_nanos;
 use crate::times::constants::{MICROS_PER_DAY, NANOS_PER_DAY, TIMESTAMP_TIME};

@@ -10,5 +10,6 @@ pub(crate) struct AnalyzeFunctionTestCase {
     pub(crate) body: &'static str,
     pub(crate) expected_parameters: &'static [&'static str],
     pub(crate) expected_body_has: Option<&'static str>,
-    pub(crate) expected_refusals: &'static [sqlquack_core::refusals::models::RefusalCategory],
+    pub(crate) expected_refusals:
+        &'static [sqlquack_diagnostics::refusals::models::RefusalCategory],
 }

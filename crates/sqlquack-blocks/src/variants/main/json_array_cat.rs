@@ -1,7 +1,7 @@
 //! `json_array_cat`: ARRAY_CAT, two arrays joined.
 
-use sqlquack_core::failures::constants::NOT_AN_ARRAY_ARGUMENT;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::NOT_AN_ARRAY_ARGUMENT;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::constants::{
     ARRAY_CAT_LEFT_MESSAGE, ARRAY_CAT_RIGHT_MESSAGE, JSON_ARRAY_CAT,

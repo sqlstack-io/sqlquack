@@ -1,6 +1,6 @@
 //! `string_literal`: a single-quoted string literal.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::STRING_LITERAL;
 

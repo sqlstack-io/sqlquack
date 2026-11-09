@@ -1,14 +1,14 @@
 //! Columns, literals, parentheses, negation and scalar subqueries.
 
 use serde_json::{Value, json};
-use sqlquack_core::classification::constants::{CURSOR_CONSTRUCT, CURSOR_PLACEHOLDER};
-use sqlquack_core::classification::models::{Construct, ConstructFamily};
-use sqlquack_core::refusals::main::missing::missing;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::blocks::main::cast::cast;
 use sqlquack_blocks::blocks::main::string_literal::string_literal;
 use sqlquack_blocks::semi_structured::constants::VARIANT_CHAIN_TYPE;
+use sqlquack_diagnostics::classification::constants::{CURSOR_CONSTRUCT, CURSOR_PLACEHOLDER};
+use sqlquack_diagnostics::classification::models::{Construct, ConstructFamily};
+use sqlquack_diagnostics::refusals::main::missing::missing;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_snowflake_types::typing::main::literal_digits::literal_digits;
 use sqlquack_snowflake_types::typing::main::number_literal::number_literal;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;

@@ -1,4 +1,4 @@
-use sqlquack_core::refusals::models::RefusalCategory;
+use sqlquack_diagnostics::refusals::models::RefusalCategory;
 
 use crate::analysis::tests::helpers::{
     relying_on_utc_session, session_outcome, shop_first_outcome,

@@ -1,6 +1,6 @@
 //! `json_to_array`: TO_ARRAY of a VARIANT, an array kept and another value wrapped.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::arrays::_helpers::elements::bound;
 use crate::arrays::constants::JSON_TO_ARRAY;

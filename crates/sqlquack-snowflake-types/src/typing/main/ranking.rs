@@ -1,6 +1,6 @@
 //! `ranking`: the type of the ranking window functions.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::typing::_helpers::numbers::number;
 use crate::typing::constants::{COUNT_PRECISION, RANKING};

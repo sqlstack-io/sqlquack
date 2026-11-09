@@ -4,11 +4,11 @@ use std::cell::{OnceCell, RefCell};
 use std::collections::{BTreeMap, HashMap};
 
 use serde_json::Value;
-use sqlquack_core::failures::constants::{RAISE_ID_MARKER, TAG_END};
-use sqlquack_core::parsing::models::{SourceLines, SourceLocation};
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::raises::main::identify_raises::identify_raises;
+use sqlquack_diagnostics::failures::constants::{RAISE_ID_MARKER, TAG_END};
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_syntax::tokens::models::{Dialect, TokenType};
+use sqlquack_syntax::tokens::models::{SourceLines, SourceLocation};
 use sqlquack_syntax::{TokenKind, tokenize};
 
 use crate::conversion::_helpers::support::tree::{

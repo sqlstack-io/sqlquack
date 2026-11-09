@@ -1,6 +1,6 @@
 //! `json_variant_extreme`: MIN or MAX of JSON-held VARIANTs in ARRAY_SORT's order of kinds.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::aggregates::constants::{EXTREME_KEY_TIES, JSON_VARIANT_EXTREME};
 use crate::arrays::constants::ARRAY_SORT_ORDER;

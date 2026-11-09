@@ -1,7 +1,7 @@
 //! `json_array_slice`: ARRAY_SLICE, the elements from one 0-based position up to another.
 
-use sqlquack_core::failures::constants::NOT_AN_ARRAY_ARGUMENT;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::NOT_AN_ARRAY_ARGUMENT;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::arrays::_helpers::elements::{bound, elements, json_array, json_error};
 use crate::arrays::constants::{JSON_ARRAY_SLICE, NOT_AN_ARRAY_MESSAGE};

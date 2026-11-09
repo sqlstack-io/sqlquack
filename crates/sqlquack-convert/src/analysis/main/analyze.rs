@@ -1,16 +1,17 @@
 //! `analyze`: parse, classify, convert or refuse.
 
-use sqlquack_core::classification::main::classify::classify;
-use sqlquack_core::parsing::main::parse_source::parse_source;
+use sqlquack_diagnostics::classification::main::classify::classify;
+use sqlquack_parse::parsing::main::parse_source::parse_source;
 use sqlquack_syntax::Expression;
 use std::time::Instant;
 
-use sqlquack_core::parsing::models::{SourceDialect, SourceLines};
-use sqlquack_core::refusals::main::refuse_unparsed::refuse_unparsed;
-use sqlquack_core::refusals::types::ConstructPolicy;
+use sqlquack_diagnostics::classification::models::SourceDialect;
+use sqlquack_diagnostics::refusals::main::refuse_unparsed::refuse_unparsed;
+use sqlquack_diagnostics::refusals::types::ConstructPolicy;
+use sqlquack_syntax::tokens::models::SourceLines;
 
-use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_core::refusals::models::Refusal;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_rules::conversion::main::convert_statement::convert_statement;
 use sqlquack_rules::conversion::main::quoted_exclusions::quoted_exclusions;
 use sqlquack_rules::conversion::main::within_budget::within_budget;
@@ -35,7 +36,7 @@ pub fn analyze(
         quoted_exclusions: quoted_exclusions(sql),
         ..options.clone()
     };
-    let statements = match parse_source(sql, dialect) {
+    let statements = match parse_source(sql, dialect.syntax()) {
         Ok(statements) => statements,
         Err(failure) => {
             let refusal = refuse_unparsed(&failure, &lines);

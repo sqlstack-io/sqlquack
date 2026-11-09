@@ -2,7 +2,7 @@
 
 use serde::Deserialize;
 use serde_json::{Map, Value, json};
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_snowflake_types::typing::main::cast_target::cast_target;
 
 use crate::types::_helpers::yaml_value::yaml_value;

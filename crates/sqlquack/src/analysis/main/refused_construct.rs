@@ -1,6 +1,6 @@
 //! `refused_construct`: the construct key a refusal names.
 
-use sqlquack_core::refusals::models::Refusal;
+use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::analysis::constants::STATEMENT_REFUSAL;
 

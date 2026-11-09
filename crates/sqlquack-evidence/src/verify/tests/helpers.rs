@@ -14,7 +14,7 @@ use crate::cases::main::load_cases::load_cases;
 use crate::cases::models::{CaseRole, LoadedCase};
 use crate::pending::main::write_pending::write_pending;
 use crate::pending::models::PendingCase;
-use crate::replay::main::replay_on_duckdb::replay_on_duckdb;
+use crate::replay::main::replay_on_engine::replay_on_engine;
 use crate::replay::models::ReplaySettings;
 use crate::results::_helpers::reading::sha256_hex;
 use crate::results::models::{
@@ -309,7 +309,7 @@ fn record_stand_in(pending: &PendingCase, results: &Path) {
         time_zone: "UTC".to_owned(),
         null_order: "nulls_last_on_asc_first_on_desc".to_owned(),
     };
-    let rows = replay_on_duckdb((&[], &pending.source_sql), None, &settings)
+    let rows = replay_on_engine((&[], &pending.source_sql), None, &settings)
         .expect("DuckDB runs the case");
     let keeps_values = pending.values != Some(false);
     let arrow_path = results.join(format!("{}.arrow", pending.case_hash));

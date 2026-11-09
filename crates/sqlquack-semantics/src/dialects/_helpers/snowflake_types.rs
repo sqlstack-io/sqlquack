@@ -1,6 +1,6 @@
 //! Snowflake type spellings compared by the type they denote.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_snowflake_types::typing::main::cast_target::cast_target;
 use sqlquack_snowflake_types::typing::models::{CastTarget, SnowflakeType};
 

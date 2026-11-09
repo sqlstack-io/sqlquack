@@ -1,6 +1,6 @@
 //! `json_array_except`: ARRAY_EXCEPT of two arrays of strings.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::constants::JSON_ARRAY_EXCEPT;
 use crate::variants::_helpers::objects::{bound, fidelity_error, string_elements};

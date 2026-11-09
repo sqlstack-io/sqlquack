@@ -1,6 +1,6 @@
 //! `highlight_sql`: DuckDB SQL styled for a terminal by the lossless tokenizer, every byte kept.
 
-use sqlquack_core::diagnostics::models::Palette;
+use sqlquack_diagnostics::diagnostics::models::Palette;
 use sqlquack_syntax::lossless::models::{LosslessToken, TokenKind};
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::{Dialect, tokenize};

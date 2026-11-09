@@ -1,8 +1,8 @@
 //! `code_point_text`: CHR, the character with a code point.
 
-use sqlquack_core::failures::constants::INVALID_CHARACTER_CODE;
-use sqlquack_core::failures::main::tagged_message::tagged_message;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::INVALID_CHARACTER_CODE;
+use sqlquack_diagnostics::failures::main::tagged_message::tagged_message;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::raises::main::raised::raised;
 use crate::text::constants::{

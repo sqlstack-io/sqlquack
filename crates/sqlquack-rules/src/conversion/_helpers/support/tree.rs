@@ -2,12 +2,12 @@
 
 use crate::conversion::_helpers::support::collecting::{collecting, events, record, skipped};
 use serde_json::{Map, Value};
-use sqlquack_core::classification::constants::{
+use sqlquack_diagnostics::classification::constants::{
     PROJECT_FUNCTION_CONSTRUCT, PROJECT_FUNCTION_PLACEHOLDER,
 };
-use sqlquack_core::classification::models::{Construct, ConstructFamily};
-use sqlquack_core::refusals::main::missing::missing;
-use sqlquack_core::refusals::models::Refusal;
+use sqlquack_diagnostics::classification::models::{Construct, ConstructFamily};
+use sqlquack_diagnostics::refusals::main::missing::missing;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::dialects::constants::SNOWFLAKE;
 use sqlquack_semantics::dialects::main::identifier_name::identifier_name as resolved_identifier;
 

@@ -47,7 +47,7 @@ FILE_DOCS: dict[str, str] = {}
 DIRECTORY_DOCS: dict[str, str] = {}
 REWRITTEN_ROOTS: tuple[tuple[str, str, bool], ...] = (
     ("crates/sqlquack-syntax/tests", "sqlquack_syntax", True),
-    ("crates/sqlquack-core/src", "sqlquack_syntax", True),
+    ("crates/sqlquack-diagnostics/src", "sqlquack_syntax", True),
     ("crates/sqlquack-rules/src", "sqlquack_syntax", True),
     ("crates/sqlquack-blocks/src", "sqlquack_syntax", True),
     ("tools/sqlquack-polyglot-check/src", "sqlquack_syntax", True),

@@ -1,7 +1,7 @@
 //! `json_object_pick`: OBJECT_PICK of literal keys or of an array of strings.
 
-use sqlquack_core::failures::constants::VARIANT_NOT_CAST;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::VARIANT_NOT_CAST;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::constants::{JSON_OBJECT_PICK, NOT_AN_OBJECT_MESSAGE};
 use crate::semi_structured::models::PickedKeys;

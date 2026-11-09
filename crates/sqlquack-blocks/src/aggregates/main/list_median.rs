@@ -1,6 +1,6 @@
 //! `list_median`: MEDIAN, the middle value or the average of the two middle values.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::aggregates::constants::{LIST_MEDIAN, PERCENTILE_INTERPOLATION};
 use crate::raises::main::raised::raised;

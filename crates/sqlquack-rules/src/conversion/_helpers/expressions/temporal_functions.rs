@@ -1,10 +1,6 @@
 //! DATE_PART, EXTRACT, DATE_TRUNC, DATEADD, DATEDIFF, CONVERT_TIMEZONE and TO_TIMESTAMP.
 
 use serde_json::Value;
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::blocks::constants::NANOSECOND_DIGITS;
 use sqlquack_blocks::blocks::main::cast::cast;
 use sqlquack_blocks::blocks::main::exact_decimal_divide::exact_decimal_divide;
@@ -37,6 +33,10 @@ use sqlquack_blocks::times::main::time_diff_value::time_diff_value;
 use sqlquack_blocks::times::main::timestamp_time::timestamp_time;
 use sqlquack_blocks::times::models::TimeFormat;
 use sqlquack_blocks::zones::main::utc_zoned::utc_zoned;
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_snowflake_types::typing::constants::{
     DATEDIFF_PRECISIONS, MAX_PRECISION, TIME_DIFF_MICROSECONDS_TYPE, TIME_DIFF_TYPE, UNIT_ALIASES,
 };

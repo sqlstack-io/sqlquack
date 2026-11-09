@@ -1,6 +1,6 @@
 //! `json_flatten_recursive`: FLATTEN's rows at every depth of a VARIANT, as a DuckDB subquery.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::_helpers::guards::fidelity_error;
 use crate::semi_structured::_helpers::paths::{joined_path, key_step};

@@ -1,6 +1,6 @@
 //! `numeric_multiply`: the type of `*`.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::typing::_helpers::numbers::{arithmetic_operands, capped};
 use crate::typing::constants::{NUMERIC_MULTIPLY, SCALE_CAP};

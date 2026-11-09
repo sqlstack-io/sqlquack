@@ -1,7 +1,7 @@
 //! `json_array_flatten`: ARRAY_FLATTEN, an array of arrays joined one level deep.
 
-use sqlquack_core::failures::constants::{FLATTEN_ELEMENT_NOT_ARRAY, NOT_AN_ARRAY_ARGUMENT};
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::{FLATTEN_ELEMENT_NOT_ARRAY, NOT_AN_ARRAY_ARGUMENT};
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::arrays::_helpers::elements::{bound, elements, json_array, json_error};
 use crate::arrays::constants::{FLATTEN_ELEMENT_MESSAGE, JSON_ARRAY_FLATTEN, NOT_AN_ARRAY_MESSAGE};

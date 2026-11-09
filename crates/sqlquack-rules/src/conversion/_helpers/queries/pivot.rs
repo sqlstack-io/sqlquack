@@ -3,8 +3,8 @@
 use std::collections::BTreeSet;
 
 use serde_json::{Map, Value, json};
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::models::Refusal;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::types::models::ColumnSpec;
 
 use crate::conversion::_helpers::support::tree::{

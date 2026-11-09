@@ -1,6 +1,6 @@
 use std::collections::{BTreeMap, BTreeSet};
 
-use sqlquack_core::provenance::models::{Provenance, Shape, ShapeArgument};
+use sqlquack_diagnostics::provenance::models::{Provenance, Shape, ShapeArgument};
 
 use sqlquack_compare::comparison::models::RowOrder;
 

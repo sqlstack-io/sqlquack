@@ -9,7 +9,7 @@ structure, styling and components with the SQLClean and SQLBuild websites.
 - `src/content/docs/docs/`: the documentation pages (MDX). `src/sidebar.json` holds the sidebar
   and `src/navigation.mjs` the redirects. `STYLE.md` is the style guide for these pages.
 - `src/content/docs/docs/diagnostics/reference.mdx` is generated from
-  `crates/sqlquack-core/src/diagnostics/constants.rs` by `scripts/generate_diagnostics.py`;
+  `crates/sqlquack-diagnostics/src/diagnostics/constants.rs` by `scripts/generate_diagnostics.py`;
   `--check` fails while the two differ.
 - `src/components/`: the page layout, header and page title, replacing Starlight's defaults.
 - `public/fonts/`: self-hosted fonts, each with its licence.

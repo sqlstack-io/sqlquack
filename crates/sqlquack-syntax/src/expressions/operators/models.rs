@@ -469,9 +469,7 @@ pub struct ViewParameter {
     pub value: Expression,
 }
 
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Default, PartialEq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct JsonOptions {
     pub wrapper: Option<String>,
     pub on_empty: Option<SqlBehavior>,
@@ -580,9 +578,7 @@ pub struct Parameter {
 }
 
 /// Parameter placeholder styles
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ParameterStyle {
     Question,
     Dollar,
@@ -611,9 +607,7 @@ pub struct NamedArgument {
 }
 
 /// Separator style for named arguments
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum NamedArgSeparator {
     /// `=>` (standard SQL, Snowflake, BigQuery)
     DArrow,

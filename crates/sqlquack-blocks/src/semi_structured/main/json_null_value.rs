@@ -1,6 +1,6 @@
 //! `json_null_value`: IS_NULL_VALUE of a VARIANT.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::constants::JSON_TYPE_NAME;
 

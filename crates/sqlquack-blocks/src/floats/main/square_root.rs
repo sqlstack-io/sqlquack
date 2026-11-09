@@ -1,8 +1,8 @@
 //! `square_root`: SQRT as a double, failing for a negative number as Snowflake does.
 
-use sqlquack_core::failures::constants::SQUARE_ROOT_OF_NEGATIVE;
-use sqlquack_core::failures::main::tagged_message::tagged_message;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::SQUARE_ROOT_OF_NEGATIVE;
+use sqlquack_diagnostics::failures::main::tagged_message::tagged_message;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::floats::constants::SQUARE_ROOT;
 use crate::raises::main::raised::raised;

@@ -1,8 +1,8 @@
 //! Catalogue entries.
 
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::refusals::models::Disposition;
-use sqlquack_core::refusals::types::ConstructPolicy;
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::refusals::models::Disposition;
+use sqlquack_diagnostics::refusals::types::ConstructPolicy;
 
 /// A construct DuckDB cannot express, and why.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

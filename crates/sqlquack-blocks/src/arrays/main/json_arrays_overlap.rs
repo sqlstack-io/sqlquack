@@ -1,7 +1,7 @@
 //! `json_arrays_overlap`: ARRAYS_OVERLAP, whether two arrays share an element.
 
-use sqlquack_core::failures::constants::NOT_AN_ARRAY_ARGUMENT;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::NOT_AN_ARRAY_ARGUMENT;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::arrays::_helpers::elements::{bound, element_key, elements, json_error};
 use crate::arrays::constants::{JSON_ARRAYS_OVERLAP, NOT_AN_ARRAY_MESSAGE};

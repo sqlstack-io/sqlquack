@@ -697,15 +697,7 @@ pub struct Join {
 
 /// Every join type, standard and dialect-specific (SEMI/ANTI, APPLY, ASOF, ARRAY, ...).
 #[derive(
-    sqlquack_derive::AstNode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Serialize,
-    Deserialize,
-    Default,
+    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default,
 )]
 pub enum JoinKind {
     #[default]
@@ -922,9 +914,7 @@ pub enum HintExpression {
 }
 
 /// Pseudocolumn type
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum PseudocolumnType {
     Rownum,
     Rowid,
@@ -1064,9 +1054,7 @@ pub struct MatchRecognizeMeasure {
 }
 
 /// Semantics for MEASURES in MATCH_RECOGNIZE
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum MatchRecognizeSemantics {
     Running,
     Final,
@@ -1201,9 +1189,7 @@ pub struct Sample {
 }
 
 /// Sample method
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum SampleMethod {
     Bernoulli,
     System,
@@ -1307,9 +1293,7 @@ pub struct WindowFrame {
     pub end_side_text: Option<String>,
 }
 
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum WindowFrameKind {
     Rows,
     Range,
@@ -1317,9 +1301,7 @@ pub enum WindowFrameKind {
 }
 
 /// EXCLUDE clause for window frames
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum WindowFrameExclude {
     CurrentRow,
     Group,

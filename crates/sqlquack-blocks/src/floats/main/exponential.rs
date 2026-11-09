@@ -1,6 +1,6 @@
 //! `exponential`: EXP as a double, raising where the result leaves the double range.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::floats::constants::EXPONENTIAL;
 use crate::raises::main::raised::raised;

@@ -1,8 +1,6 @@
 //! OBJECT_PICK, OBJECT_KEYS, ARRAY_ functions, SPLIT, TO_VARIANT and IS_OBJECT-style checks.
 
 use serde_json::Value;
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::arrays::main::json_array_written::json_array_written;
 use sqlquack_blocks::blocks::main::cast::cast;
 use sqlquack_blocks::semi_structured::constants::{JSON_FIDELITY, VARIANT_TYPED_VALUES};
@@ -22,6 +20,8 @@ use sqlquack_blocks::variants::main::json_is_typed::json_is_typed;
 use sqlquack_blocks::variants::main::json_object_keys::json_object_keys;
 use sqlquack_blocks::variants::main::json_object_pick::json_object_pick;
 use sqlquack_blocks::variants::main::json_split::json_split;
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::arrays::array_function;

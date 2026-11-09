@@ -1,7 +1,5 @@
 //! VARIANT values built from typed scalars, FLOAT among them, held as DuckDB `VARIANT`.
 
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::held::main::variant_built::variant_built;
 use sqlquack_blocks::held::main::variant_decimal_leaf::variant_decimal_leaf;
 use sqlquack_blocks::held::main::variant_double_leaf::variant_double_leaf;
@@ -9,6 +7,8 @@ use sqlquack_blocks::held::main::variant_integer_leaf::variant_integer_leaf;
 use sqlquack_blocks::held::main::variant_json::variant_json;
 use sqlquack_blocks::held::main::variant_json_leaf::variant_json_leaf;
 use sqlquack_blocks::semi_structured::constants::JSON_FIDELITY;
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::objects::as_json;

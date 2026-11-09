@@ -1,6 +1,6 @@
 //! `json_path`: the value at a path into a VARIANT, SQL NULL when the path is absent.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::main::string_literal::string_literal;
 use crate::semi_structured::constants::JSON_PATH;

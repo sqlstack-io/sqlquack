@@ -1,7 +1,7 @@
 //! The DuckDB type the policy pairs with each Snowflake type.
 
 use crate::blocks::constants::{DUCKDB_FRACTIONAL_PRECISION, NANOSECOND_DIGITS, TYPE_NAME};
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 /// The DuckDB type the policy pairs with `data_type`, or why there is none.

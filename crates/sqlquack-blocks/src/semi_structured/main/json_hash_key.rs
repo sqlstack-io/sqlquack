@@ -1,6 +1,6 @@
 //! `json_hash_key`: the text a VARIANT is hashed by, the same for every equal Snowflake value.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::_helpers::writing::{Root, sorted_text};
 use crate::semi_structured::constants::JSON_HASH_KEY;

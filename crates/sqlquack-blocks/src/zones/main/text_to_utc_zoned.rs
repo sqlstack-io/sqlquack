@@ -1,6 +1,6 @@
 //! `text_to_utc_zoned`: text in the recorded spellings read as an instant whose offset is +00:00.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::{TEXT_TO_UTC_ZONED, TIMESTAMP_TZ_OFFSET};
 use crate::blocks::models::TextFailure;

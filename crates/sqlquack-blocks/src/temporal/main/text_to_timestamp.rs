@@ -1,7 +1,7 @@
 //! `text_to_timestamp`: text in the recorded spellings as a nanosecond timestamp or a date.
 
-use sqlquack_core::failures::constants::{DATE_NOT_RECOGNIZED, TIMESTAMP_NOT_RECOGNIZED};
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::{DATE_NOT_RECOGNIZED, TIMESTAMP_NOT_RECOGNIZED};
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::{
     DATE_TEXT_SPELLING, DAY_MONTH_NAME_DATE_PATTERN, EPOCH_SCALE_LIMITS, EPOCH_TEXT_PATTERN,

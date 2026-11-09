@@ -2,7 +2,7 @@
 
 use serde_json::{Map, Value, json};
 
-use sqlquack_core::refusals::models::Refusal;
+use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::conversion::_helpers::support::tree::{
     Payload, function_construct, is_inert, node_construct, node_kind,

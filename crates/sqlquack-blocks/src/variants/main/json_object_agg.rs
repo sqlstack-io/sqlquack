@@ -1,7 +1,7 @@
 //! `json_object_agg`: OBJECT_AGG, an object of each row's key and VARIANT value.
 
-use sqlquack_core::failures::constants::OBJECT_KEY_EXISTS;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::OBJECT_KEY_EXISTS;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::constants::{JSON_OBJECT_AGG, KEY_EXISTS_MESSAGE};
 use crate::variants::_helpers::objects::{bound, fidelity_error, json_error, sorted_object};

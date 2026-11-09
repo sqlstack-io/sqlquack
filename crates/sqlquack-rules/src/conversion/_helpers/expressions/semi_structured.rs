@@ -1,10 +1,6 @@
 //! VARIANT values held as DuckDB `JSON`: parsing, paths, inspection and casts.
 
 use serde_json::Value;
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::blocks::main::varchar_length_check::varchar_length_check;
 use sqlquack_blocks::floats::constants::FLOAT_TEXT;
 use sqlquack_blocks::held::main::variant_double::variant_double;
@@ -13,9 +9,7 @@ use sqlquack_blocks::held::main::variant_text::variant_text;
 use sqlquack_blocks::held::main::variant_type_name::variant_type_name;
 use sqlquack_blocks::held::main::variant_written::variant_written;
 use sqlquack_blocks::semi_structured::constants::VARIANT_TYPED_VALUES;
-use sqlquack_blocks::semi_structured::constants::{
-    JSON_FIDELITY, JSON_NULL, PATH_READ_KEYS,
-};
+use sqlquack_blocks::semi_structured::constants::{JSON_FIDELITY, JSON_NULL, PATH_READ_KEYS};
 use sqlquack_blocks::semi_structured::main::json_get_computed::json_get_computed;
 use sqlquack_blocks::semi_structured::main::json_get_ignore_case::json_get_ignore_case;
 use sqlquack_blocks::semi_structured::main::json_guarded::json_guarded;
@@ -28,6 +22,10 @@ use sqlquack_blocks::semi_structured::main::json_zoned_wall::json_zoned_wall;
 use sqlquack_blocks::semi_structured::models::PathStep;
 use sqlquack_blocks::variants::main::json_kind_cast::json_kind_cast;
 use sqlquack_blocks::variants::main::json_type_name::json_type_name;
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_snowflake_types::typing::models::{CastTarget, SnowflakeType};
 
 use crate::conversion::_helpers::expressions::held::read_json;

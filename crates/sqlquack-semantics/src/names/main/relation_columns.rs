@@ -1,8 +1,8 @@
 //! `relation_columns`: the columns of the relation a name reads.
 
-use sqlquack_core::diagnostics::constants::CASE_ONLY_MATCH;
-use sqlquack_core::refusals::main::unresolved::unresolved;
-use sqlquack_core::refusals::models::Refusal;
+use sqlquack_diagnostics::diagnostics::constants::CASE_ONLY_MATCH;
+use sqlquack_diagnostics::refusals::main::unresolved::unresolved;
+use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::dialects::models::Profiles;
 use crate::names::constants::{UNKNOWN_RELATION_PREFIX, UNKNOWN_RELATION_SUFFIX};

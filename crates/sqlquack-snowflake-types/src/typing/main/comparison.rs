@@ -1,6 +1,6 @@
 //! `comparison`: whether two operands compare directly.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::typing::constants::COMPARISON;
 use crate::typing::models::SnowflakeType;

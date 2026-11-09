@@ -1,6 +1,6 @@
 use std::collections::{BTreeMap, BTreeSet};
 
-use sqlquack_core::provenance::models::Provenance;
+use sqlquack_diagnostics::provenance::models::Provenance;
 
 use crate::index::models::{ConversionRecord, RecordSource};
 

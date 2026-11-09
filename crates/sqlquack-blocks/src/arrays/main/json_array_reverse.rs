@@ -1,6 +1,6 @@
 //! `json_array_reverse`: ARRAY_REVERSE, another value read as a one-element array.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::arrays::_helpers::elements::{bound, elements, json_array};
 use crate::arrays::constants::JSON_ARRAY_REVERSE;

@@ -1,8 +1,8 @@
 //! Relying on a known divergence the policy allows, or refusing.
 
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::refusals::main::refused_divergence::refused_divergence;
-use sqlquack_core::refusals::models::Refusal;
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::refusals::main::refused_divergence::refused_divergence;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_snowflake_types::typing::constants::MAX_PRECISION;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 

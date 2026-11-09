@@ -1,7 +1,7 @@
 //! `json_array_compact`: ARRAY_COMPACT, an array without its null elements.
 
-use sqlquack_core::failures::constants::NOT_AN_ARRAY_ARGUMENT;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::NOT_AN_ARRAY_ARGUMENT;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::constants::{ARRAY_COMPACT_MESSAGE, JSON_ARRAY_COMPACT};
 use crate::variants::_helpers::objects::{bound, json_error};

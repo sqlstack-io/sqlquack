@@ -1,8 +1,8 @@
 //! `formatted_text_to_date`: TO_DATE and TRY_TO_DATE of text in one literal format, read exactly.
 
-use sqlquack_core::failures::constants::DATE_FORMAT_MISMATCH;
-use sqlquack_core::failures::main::tagged_message::tagged_message;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::DATE_FORMAT_MISMATCH;
+use sqlquack_diagnostics::failures::main::tagged_message::tagged_message;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::{
     DATE_TEXT_SPELLING, FORMATTED_TEXT_TO_DATE, TWO_DIGIT_CENTURY_START, UNPARSED_DATE_MESSAGE,

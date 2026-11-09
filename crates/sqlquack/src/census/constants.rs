@@ -1,6 +1,6 @@
 //! Census defaults and the placeholders that stand in for sqlbuild references.
 
-use sqlquack_core::refusals::models::RefusalCategory;
+use sqlquack_diagnostics::refusals::models::RefusalCategory;
 
 /// Rule counts at which the convertible share is reported.
 pub const COVERAGE_POINTS: &[usize] = &[10, 25, 50, 75, 100, 150, 200, 250];

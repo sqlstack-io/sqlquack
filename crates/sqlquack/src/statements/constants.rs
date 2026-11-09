@@ -1,6 +1,6 @@
 //! The statements file's format and how refusal reasons map to codes.
 
-use sqlquack_core::refusals::models::RefusalCategory;
+use sqlquack_diagnostics::refusals::models::RefusalCategory;
 
 /// The file's format name, read back by `syntax-coverage results`.
 pub const STATEMENTS_FORMAT: &str = "sqlquack-translation-statements/1";

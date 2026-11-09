@@ -1,6 +1,6 @@
 //! `json_array_extreme`: ARRAY_MAX and ARRAY_MIN, the last or first element in ARRAY_SORT's order.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::arrays::_helpers::elements::{bound, elements};
 use crate::arrays::constants::JSON_ARRAY_EXTREME;

@@ -1,6 +1,6 @@
 //! JSON text of VARIANT-held values as Snowflake writes it.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::held::_helpers::guards::bound;
 use crate::held::constants::{HELD_DOUBLE_FORMAT, HELD_DOUBLE_TOKEN_PATTERN, HELD_TOKEN_PATTERN};

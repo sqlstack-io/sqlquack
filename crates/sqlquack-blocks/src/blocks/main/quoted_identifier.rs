@@ -1,6 +1,6 @@
 //! `quoted_identifier`: a double-quoted identifier.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::QUOTED_IDENTIFIER;
 

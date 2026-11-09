@@ -1,8 +1,8 @@
 //! The bound on how deep a converted tree may nest, checked before conversion recurses into it.
 
 use serde_json::Value;
-use sqlquack_core::refusals::main::missing::missing;
-use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
+use sqlquack_diagnostics::refusals::main::missing::missing;
+use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_syntax::{Expression, ExpressionWalk};
 
 use crate::conversion::_helpers::support::tree::node_construct;

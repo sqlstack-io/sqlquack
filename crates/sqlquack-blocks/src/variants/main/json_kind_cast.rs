@@ -1,7 +1,7 @@
 //! `json_kind_cast`: a VARIANT cast to OBJECT or ARRAY.
 
-use sqlquack_core::failures::constants::VARIANT_NOT_CAST;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::VARIANT_NOT_CAST;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::constants::{ARRAY_KIND, JSON_KIND_CAST};
 use crate::variants::_helpers::objects::{bound, json_error};

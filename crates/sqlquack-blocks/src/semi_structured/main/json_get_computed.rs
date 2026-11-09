@@ -1,6 +1,6 @@
 //! `json_get_computed`: GET with an index or key computed per row.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::constants::{JSON_GET_COMPUTED, PATH_READ_KEYS};
 

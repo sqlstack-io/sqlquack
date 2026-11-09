@@ -1,9 +1,9 @@
 //! User overrides, which converted SQL must apply to every call of the function they replace.
 
 use serde_json::Value;
-use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_rules::conversion::main::override_macro_name::override_macro_name;
 use sqlquack_rules::conversion::models::{ConversionOptions, Converted};
 use sqlquack_syntax::Expression;

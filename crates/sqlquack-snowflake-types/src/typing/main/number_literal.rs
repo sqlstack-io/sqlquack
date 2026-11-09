@@ -1,6 +1,6 @@
 //! `number_literal`: the type of a numeric literal.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::typing::_helpers::numbers::number;
 use crate::typing::constants::{MAX_PRECISION, NUMBER_LITERAL};

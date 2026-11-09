@@ -1,7 +1,7 @@
 //! The Snowflake type a refused expression would have, where its node alone decides it.
 
 use serde_json::Value;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_snowflake_types::typing::main::cast_target::cast_target;
 use sqlquack_snowflake_types::typing::main::count::count;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;

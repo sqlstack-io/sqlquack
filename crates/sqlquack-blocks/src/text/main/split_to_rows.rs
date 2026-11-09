@@ -1,6 +1,6 @@
 //! `split_to_rows`: SPLIT_TO_TABLE's rows for a text, as a DuckDB subquery.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::text::constants::SPLIT_TO_ROWS;
 

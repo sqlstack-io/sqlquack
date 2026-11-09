@@ -7,8 +7,8 @@ use std::time::Duration;
 
 use serde::Serialize;
 
-use sqlquack_core::parsing::models::SourceDialect;
-use sqlquack_core::provenance::models::Provenance;
+use sqlquack_diagnostics::classification::models::SourceDialect;
+use sqlquack_diagnostics::provenance::models::Provenance;
 use sqlquack_rules::conversion::models::ConversionOptions;
 use sqlquack_semantics::types::models::Schema;
 

@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use sqlquack_core::diagnostics::constants::MISSING_RULE;
+use sqlquack_diagnostics::diagnostics::constants::MISSING_RULE;
 use sqlquack_evidence::cases::models::LoadedCase;
 
 use crate::statements::models::{Outcome, Statement};

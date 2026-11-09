@@ -2,9 +2,11 @@
 
 use std::collections::BTreeSet;
 
-use sqlquack_core::parsing::models::{SourceLines, SourceLocation};
+use sqlquack_syntax::tokens::models::{SourceLines, SourceLocation};
 
-use sqlquack_core::classification::constants::{CURSOR_PLACEHOLDER, PROJECT_FUNCTION_PLACEHOLDER};
+use sqlquack_diagnostics::classification::constants::{
+    CURSOR_PLACEHOLDER, PROJECT_FUNCTION_PLACEHOLDER,
+};
 
 use crate::census::constants::{
     CURSOR_CALLS, MODEL_CALLS, RELATION_CALLS, RELATION_PLACEHOLDER, TABLE_FUNCTION_PLACEHOLDER,

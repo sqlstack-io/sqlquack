@@ -1,6 +1,6 @@
 //! `json_guarded`: JSON text as a VARIANT, raising where DuckDB might read it differently.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::_helpers::guards::{
     bound, fidelity_error, keys_repeated, long_decimal_pattern, unreadable, zero_fractions_whole,

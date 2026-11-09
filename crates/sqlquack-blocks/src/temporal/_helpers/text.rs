@@ -1,8 +1,8 @@
 //! Text handling for timestamp parsing.
 
-use sqlquack_core::failures::constants::VARIANT_NOT_CAST;
-use sqlquack_core::failures::main::tagged_message::tagged_message;
-use sqlquack_core::failures::models::SnowflakeCode;
+use sqlquack_diagnostics::failures::constants::VARIANT_NOT_CAST;
+use sqlquack_diagnostics::failures::main::tagged_message::tagged_message;
+use sqlquack_diagnostics::failures::models::SnowflakeCode;
 
 use crate::blocks::constants::{
     CONVERSION_WHITESPACE, DIGITLESS_TEXT_PATTERN, VARIANT_CAST_MESSAGE,

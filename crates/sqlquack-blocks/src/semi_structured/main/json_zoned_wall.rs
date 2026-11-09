@@ -1,6 +1,6 @@
 //! `json_zoned_wall`: a VARIANT cast to TIMESTAMP_TZ, as the UTC wall time of its instant.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::models::TextFailure;
 use crate::semi_structured::_helpers::guards::{bound, fidelity_error};

@@ -1,6 +1,6 @@
 //! `hash_value`: a signed 64-bit hash of several values, consistent within one DuckDB run.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::hashing::constants::{HASH_OFFSET, HASH_VALUE};
 

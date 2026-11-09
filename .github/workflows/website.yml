@@ -10,7 +10,8 @@ on:
     branches: [main]
     paths:
       - website/**
-      - crates/sqlquack-core/**
+      - crates/sqlquack-diagnostics/**
+      - crates/sqlquack-parse/**
       - crates/sqlquack-blocks/**
       - crates/sqlquack-rules/**
       - crates/sqlquack-semantics/**
@@ -20,7 +21,8 @@ on:
   pull_request:
     paths:
       - website/**
-      - crates/sqlquack-core/**
+      - crates/sqlquack-diagnostics/**
+      - crates/sqlquack-parse/**
       - crates/sqlquack-blocks/**
       - crates/sqlquack-rules/**
       - crates/sqlquack-semantics/**

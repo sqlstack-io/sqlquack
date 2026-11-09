@@ -1,6 +1,6 @@
 //! `variant_type_name`: Snowflake's TYPEOF of a VARIANT-held value.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::held::_helpers::guards::bound;
 use crate::held::constants::VARIANT_TYPE_NAME;

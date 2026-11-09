@@ -1,12 +1,12 @@
 //! `declared_refusals`: what refuses a statement before conversion is tried.
 
-use sqlquack_core::classification::models::Occurrence;
-use sqlquack_core::parsing::models::SourceLines;
-use sqlquack_core::refusals::main::refuse_constructs::refuse_constructs;
-use sqlquack_core::refusals::main::snowflake_rejections::snowflake_rejections;
-use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
-use sqlquack_core::refusals::types::ConstructPolicy;
+use sqlquack_diagnostics::classification::models::Occurrence;
+use sqlquack_diagnostics::refusals::main::refuse_constructs::refuse_constructs;
+use sqlquack_diagnostics::refusals::main::snowflake_rejections::snowflake_rejections;
+use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
+use sqlquack_diagnostics::refusals::types::ConstructPolicy;
 use sqlquack_syntax::Expression;
+use sqlquack_syntax::tokens::models::SourceLines;
 
 /// The constructs the policy declares inexpressible, then the nodes of `source` Snowflake rejects.
 pub(crate) fn declared_refusals(

@@ -3,13 +3,13 @@
 use std::cell::RefCell;
 
 use serde_json::{Value, json};
-use sqlquack_core::classification::models::{Construct, ConstructFamily};
-use sqlquack_core::refusals::main::missing::missing;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::main::unresolved::unresolved;
-use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_blocks::checking::main::quoted_relation::quoted_relation;
+use sqlquack_diagnostics::classification::models::{Construct, ConstructFamily};
+use sqlquack_diagnostics::refusals::main::missing::missing;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::main::unresolved::unresolved;
+use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::project_functions::{exact_arguments, held_type};

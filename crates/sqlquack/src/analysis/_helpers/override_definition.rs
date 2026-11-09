@@ -1,7 +1,7 @@
 //! User overrides written in SQLBuild's FUNCTION() format, with `replaces` and `dialect duckdb`.
 
 use sha2::{Digest, Sha256};
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_rules::conversion::models::UserOverride;
 use sqlquack_semantics::types::models::ColumnSpec;
 use sqlquack_snowflake_types::typing::main::cast_target::cast_target;

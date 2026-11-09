@@ -1,4 +1,4 @@
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::main::json_guarded::json_guarded;
 use crate::semi_structured::main::json_serialized::json_serialized;

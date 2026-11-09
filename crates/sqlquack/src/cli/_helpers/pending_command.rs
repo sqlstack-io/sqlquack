@@ -5,7 +5,7 @@ use std::process::ExitCode;
 
 use sqlquack_evidence::pending::main::write_pending::write_pending;
 use sqlquack_evidence::pending::models::PendingSummary;
-use sqlquack_evidence::replay::main::duckdb_version::duckdb_version;
+use sqlquack_evidence::replay::main::engine_version::engine_version;
 
 use crate::cli::_helpers::evidence::load_evidence;
 use crate::cli::models::PendingArguments;
@@ -33,7 +33,7 @@ pub(crate) fn pending_command(arguments: &PendingArguments, stderr: &mut dyn Wri
 
 fn pending(arguments: &PendingArguments) -> Result<(usize, PendingSummary), String> {
     let evidence = load_evidence(&arguments.paths)?;
-    let version = duckdb_version().map_err(|error| error.to_string())?;
+    let version = engine_version().map_err(|error| error.to_string())?;
     let summary = write_pending(
         &evidence.cases,
         &arguments.paths.results,

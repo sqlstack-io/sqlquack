@@ -1,6 +1,6 @@
 //! `json_is_typed`: IS_DATE, IS_TIMESTAMP_* and IS_TIME of a VARIANT held as JSON.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::raises::main::raised::raised;
 use crate::semi_structured::constants::{JSON_IS_TYPED, VARIANT_TYPED_VALUES};

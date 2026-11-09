@@ -1,6 +1,6 @@
 //! `json_type_name`: Snowflake's TYPEOF of a VARIANT.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::raises::main::raised::raised;
 use crate::semi_structured::constants::{JSON_TYPE_NAME, VARIANT_TYPED_VALUES};

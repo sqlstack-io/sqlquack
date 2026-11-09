@@ -1,6 +1,6 @@
 //! `split_text_part`: SPLIT_PART of text, the text bound once.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::_helpers::text::once_bound;
 use crate::blocks::constants::SPLIT_TEXT_PART;

@@ -1,13 +1,13 @@
 //! WHERE-style conditions, GROUP BY, ORDER BY and LIMIT.
 
 use serde_json::Value;
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::refusals::main::missing::missing;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::main::unresolved::unresolved;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::blocks::constants::RAISE_MARKER;
 use sqlquack_blocks::blocks::main::explicit_null_order::explicit_null_order;
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::refusals::main::missing::missing;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::main::unresolved::unresolved;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::dialects::constants::SNOWFLAKE_TO_DUCKDB;
 use sqlquack_semantics::scopes::main::resolve_name::resolve_name;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;

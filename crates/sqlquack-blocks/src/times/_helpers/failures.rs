@@ -1,9 +1,9 @@
 //! What text that is not a time yields.
 
-use sqlquack_core::failures::constants::{
+use sqlquack_diagnostics::failures::constants::{
     TIME_FORMAT_MISMATCH, TIME_NOT_RECOGNIZED, VARIANT_NOT_CAST,
 };
-use sqlquack_core::failures::main::tagged_message::tagged_message;
+use sqlquack_diagnostics::failures::main::tagged_message::tagged_message;
 
 use crate::blocks::constants::VARIANT_CAST_MESSAGE;
 use crate::blocks::models::TextFailure;

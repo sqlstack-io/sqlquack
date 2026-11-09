@@ -1,6 +1,6 @@
 //! `convert_report`: what `sqlquack convert` reports for some SQL, for the command line and Python.
 
-use sqlquack_core::parsing::models::SourceDialect;
+use sqlquack_diagnostics::classification::models::SourceDialect;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 
 use crate::cli::_helpers::convert_command::{analysis_report, chosen_options, refused_session};

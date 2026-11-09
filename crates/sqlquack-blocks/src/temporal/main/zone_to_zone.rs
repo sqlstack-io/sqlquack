@@ -1,6 +1,6 @@
 //! `zone_to_zone`: a naive wall time in one zone as the wall time in another.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::blocks::constants::ZONE_TO_ZONE;

@@ -4,15 +4,15 @@ use std::io::{Read, Write};
 use std::path::Path;
 use std::process::ExitCode;
 
-use sqlquack_core::diagnostics::constants::SESSION_PARAMETERS;
-use sqlquack_core::diagnostics::main::diagnose::diagnose;
-use sqlquack_core::diagnostics::main::explain_code::explain_code;
-use sqlquack_core::diagnostics::main::render_styled_diagnostics::render_styled_diagnostics;
-use sqlquack_core::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
-use sqlquack_core::diagnostics::models::{Diagnostic, Palette};
-use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::layout::main::layout_sql::layout_sql;
+use sqlquack_diagnostics::diagnostics::constants::SESSION_PARAMETERS;
+use sqlquack_diagnostics::diagnostics::main::diagnose::diagnose;
+use sqlquack_diagnostics::diagnostics::main::explain_code::explain_code;
+use sqlquack_diagnostics::diagnostics::main::render_styled_diagnostics::render_styled_diagnostics;
+use sqlquack_diagnostics::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
+use sqlquack_diagnostics::diagnostics::models::{Diagnostic, Palette};
+use sqlquack_diagnostics::provenance::main::merge_provenance::merge_provenance;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_policy::policy::constants::{
     CURRENT_TIME, SESSION_TIME_ZONE, SESSION_TIMEZONE_UTC, TIMEZONE_PARAMETER,
 };

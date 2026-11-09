@@ -1,9 +1,9 @@
 //! `convert_function_body`: DuckDB macro bodies for a SQL project function, converted like models.
 
-use sqlquack_core::parsing::models::SourceLines;
-use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_core::refusals::models::Refusal;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_syntax::Expression;
+use sqlquack_syntax::tokens::models::SourceLines;
 
 use crate::conversion::_helpers::queries::function_body::{
     check_body, converted_body, held_types, parameters_joined, refused, require_declared_types,

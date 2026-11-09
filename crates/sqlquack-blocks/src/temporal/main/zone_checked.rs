@@ -1,6 +1,6 @@
 //! `zone_checked`: a zoned value that raises when a time zone name does not exist.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::ZONE_CHECKED;
 

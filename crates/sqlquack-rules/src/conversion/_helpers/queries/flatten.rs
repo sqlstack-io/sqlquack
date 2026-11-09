@@ -1,15 +1,15 @@
 //! LATERAL FLATTEN of a VARIANT: one row per array element or object key.
 
 use serde_json::Value;
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::refusals::main::missing::missing;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_blocks::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_blocks::semi_structured::main::json_flatten::json_flatten;
 use sqlquack_blocks::semi_structured::main::json_flatten_recursive::json_flatten_recursive;
 use sqlquack_blocks::semi_structured::models::FlattenMode;
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::refusals::main::missing::missing;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::held::read_json;

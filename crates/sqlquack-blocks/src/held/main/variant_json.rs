@@ -1,6 +1,6 @@
 //! `variant_json`: a VARIANT-held value read as JSON.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::held::constants::VARIANT_JSON;
 

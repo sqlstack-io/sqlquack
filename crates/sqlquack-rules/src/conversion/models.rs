@@ -6,13 +6,13 @@ use crate::conversion::constants::{
 use std::collections::BTreeMap;
 
 use serde::Serialize;
-use sqlquack_core::failures::main::raise_id::raise_id;
-use sqlquack_core::failures::models::FailureMode;
-use sqlquack_core::parsing::models::SourceLocation;
-use sqlquack_core::provenance::models::Provenance;
-use sqlquack_core::refusals::models::Refusal;
+use sqlquack_diagnostics::failures::main::raise_id::raise_id;
+use sqlquack_diagnostics::failures::models::FailureMode;
+use sqlquack_diagnostics::provenance::models::Provenance;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::types::models::ColumnSpec;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_syntax::tokens::models::SourceLocation;
 
 /// A known divergence the policy allows in the current mode.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]

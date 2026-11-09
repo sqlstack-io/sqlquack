@@ -250,9 +250,7 @@ impl CreateTable {
 }
 
 /// Sort order for PRIMARY KEY ASC/DESC
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub enum SortOrder {
     Asc,
     Desc,

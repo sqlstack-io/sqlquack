@@ -1,6 +1,6 @@
 //! `identify_raises`: gives each raise waiting for an ID the ID of the expression it is in.
 
-use sqlquack_core::failures::constants::RAISE_ID_MARKER;
+use sqlquack_diagnostics::failures::constants::RAISE_ID_MARKER;
 
 use crate::raises::_helpers::slots::{content_hash, content_id, raise_slots};
 

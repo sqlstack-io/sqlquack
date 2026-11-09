@@ -1,6 +1,6 @@
 //! `variant_decimal_leaf`: a NUMBER with a scale as a leaf of a VARIANT-held value.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::held::_helpers::guards::{bound, fidelity_error};
 use crate::held::constants::{HELD_INTEGER_MAX, HELD_INTEGER_MIN, VARIANT_DECIMAL_LEAF};

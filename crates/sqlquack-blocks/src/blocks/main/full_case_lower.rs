@@ -1,6 +1,6 @@
 //! `full_case_lower`: lOWER with full Unicode case mapping: multi-character mappings first, then DuckDB's lower.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::_helpers::text::expanded;
 use crate::blocks::constants::{FULL_CASE_MAPPING, LOWERCASE_EXPANSIONS};

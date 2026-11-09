@@ -1,7 +1,7 @@
 //! `text_to_number`: text to NUMBER, accepting only spellings Snowflake is recorded to read.
 
-use sqlquack_core::failures::constants::NUMBER_NOT_RECOGNIZED;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::NUMBER_NOT_RECOGNIZED;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::blocks::_helpers::text::{

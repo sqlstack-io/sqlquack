@@ -1,6 +1,6 @@
 //! `character_similarity`: Snowflake's JAROWINKLER_SIMILARITY, over characters and ignoring case.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::raises::main::raised::raised;
 use crate::text::constants::{CHARACTER_SIMILARITY, SIMILARITY_ALPHABET, TEXT_SIMILARITY};

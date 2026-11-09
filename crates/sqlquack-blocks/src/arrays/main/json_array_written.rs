@@ -1,8 +1,8 @@
 //! `json_array_written`: ARRAY_CONSTRUCT's elements written as text, undefined elements included.
 
-use sqlquack_core::failures::constants::VARIANT_NOT_CAST;
-use sqlquack_core::failures::main::tagged_message::tagged_message;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::VARIANT_NOT_CAST;
+use sqlquack_diagnostics::failures::main::tagged_message::tagged_message;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::arrays::_helpers::elements::bound;
 use crate::arrays::constants::{JSON_ARRAY_WRITTEN, UNDEFINED_TEXT};

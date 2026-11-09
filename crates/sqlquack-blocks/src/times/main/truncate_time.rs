@@ -1,6 +1,6 @@
 //! `truncate_time`: a TIME cut to fewer fractional digits.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::NANOSECOND_DIGITS;
 use crate::times::_helpers::nanos::{time_of_nanos, truncated_nanos};

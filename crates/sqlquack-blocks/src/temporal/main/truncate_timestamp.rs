@@ -1,6 +1,6 @@
 //! `truncate_timestamp`: a naive timestamp cut to fewer fractional digits, as Snowflake truncates.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::TRUNCATE_TIMESTAMP;
 use crate::temporal::_helpers::timestamps::{epoch_units, floor_units, from_units, stored_digits};

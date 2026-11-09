@@ -1,6 +1,6 @@
 //! `variant_text`: a VARIANT-held value cast to text.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::floats::constants::FLOAT_TEXT;
 use crate::floats::main::float_to_text::float_to_text;

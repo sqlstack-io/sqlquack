@@ -1,6 +1,6 @@
 //! `varchar_length_try`: NULL for text longer than `max_length` characters, as a TRY_CAST to VARCHAR(n) gives.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::VARCHAR_LENGTH_TRY;
 

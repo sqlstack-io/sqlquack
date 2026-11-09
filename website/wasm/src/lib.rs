@@ -8,25 +8,24 @@ use std::time::Duration;
 
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
-use sqlquack_core::classification::main::classify::classify;
-use sqlquack_core::diagnostics::constants::SESSION_PARAMETERS;
-use sqlquack_core::diagnostics::main::diagnose::diagnose;
-use sqlquack_core::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
-use sqlquack_core::failures::constants::{ERROR_TAG_PREFIX, TAG_END};
-use sqlquack_core::failures::main::duckdb_failure::duckdb_failure;
-use sqlquack_core::failures::main::raise_id::raise_id;
-use sqlquack_core::parsing::main::node_location::node_location;
-use sqlquack_core::parsing::main::parse_source::parse_source;
-use sqlquack_core::parsing::models::{SourceDialect, SourceLines};
-use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_core::refusals::main::refuse_constructs::refuse_constructs;
-use sqlquack_core::refusals::main::refuse_unparsed::refuse_unparsed;
-use sqlquack_core::refusals::main::snowflake_rejections::snowflake_rejections;
-use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_blocks::blocks::main::column_type::column_type;
 use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_blocks::checking::constants::SEMI_STRUCTURED_HOLDING_TYPE;
 use sqlquack_blocks::layout::main::layout_sql::layout_sql;
+use sqlquack_diagnostics::classification::main::classify::classify;
+use sqlquack_diagnostics::classification::models::SourceDialect;
+use sqlquack_diagnostics::diagnostics::constants::SESSION_PARAMETERS;
+use sqlquack_diagnostics::diagnostics::main::diagnose::diagnose;
+use sqlquack_diagnostics::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
+use sqlquack_diagnostics::failures::constants::{ERROR_TAG_PREFIX, TAG_END};
+use sqlquack_diagnostics::failures::main::duckdb_failure::duckdb_failure;
+use sqlquack_diagnostics::failures::main::raise_id::raise_id;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::refusals::main::refuse_constructs::refuse_constructs;
+use sqlquack_diagnostics::refusals::main::refuse_unparsed::refuse_unparsed;
+use sqlquack_diagnostics::refusals::main::snowflake_rejections::snowflake_rejections;
+use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
+use sqlquack_parse::parsing::main::parse_source::parse_source;
 use sqlquack_policy::policy::models::Policy;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::conversion::main::convert_statement::convert_statement;
@@ -43,6 +42,8 @@ use sqlquack_semantics::types::errors::SchemaError;
 use sqlquack_semantics::types::main::parse_schema::parse_schema;
 use sqlquack_semantics::types::main::source_tables::source_tables;
 use sqlquack_semantics::types::models::Schema;
+use sqlquack_syntax::tokens::main::node_location::node_location;
+use sqlquack_syntax::tokens::models::SourceLines;
 use sqlquack_syntax::{Dialect, Expression, ParseOptions};
 use wasm_bindgen::prelude::wasm_bindgen;
 
@@ -281,7 +282,7 @@ fn stages(sql: &str, catalog: &Catalog, settings: &str) -> Value {
     let lines = SourceLines::new(sql);
 
     // 1. Parse as Snowflake.
-    let statements = match parse_source(sql, SourceDialect::Snowflake) {
+    let statements = match parse_source(sql, Dialect::Snowflake) {
         Ok(statements) if statements.is_empty() => {
             return json!({ "empty": true });
         }

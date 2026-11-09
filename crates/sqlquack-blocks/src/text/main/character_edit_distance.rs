@@ -1,6 +1,6 @@
 //! `character_edit_distance`: the Levenshtein distance between two texts, counted in characters.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::text::constants::CHARACTER_EDIT_DISTANCE;
 

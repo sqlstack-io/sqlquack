@@ -1,6 +1,6 @@
 //! `json_filter`: FILTER, the elements of an array a predicate keeps.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::_helpers::lambdas::{elements, raising_non_arrays};
 use crate::semi_structured::constants::JSON_FILTER;

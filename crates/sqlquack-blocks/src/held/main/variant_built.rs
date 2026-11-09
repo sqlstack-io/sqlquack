@@ -1,6 +1,6 @@
 //! `variant_built`: JSON of typed leaves, held as a DuckDB VARIANT.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::held::constants::VARIANT_BUILT;
 

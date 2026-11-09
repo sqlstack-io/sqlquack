@@ -245,9 +245,7 @@ pub struct GeneratedAsIdentity {
 }
 
 /// Constraint modifiers (shared between table-level constraints)
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Default, PartialEq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct ConstraintModifiers {
     /// ENFORCED / NOT ENFORCED
     pub enforced: Option<bool>,
@@ -447,18 +445,14 @@ pub struct ExcludeElement {
 }
 
 /// Action for LIKE clause options
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum LikeOptionAction {
     Including,
     Excluding,
 }
 
 /// MATCH type for foreign keys
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum MatchType {
     Full,
     Partial,
@@ -493,9 +487,7 @@ pub struct ForeignKeyRef {
 }
 
 /// Referential action for foreign keys
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ReferentialAction {
     Cascade,
     SetNull,

@@ -5,10 +5,10 @@ use std::path::Path;
 
 use serde::Serialize;
 use sqlquack_compare::comparison::models::Mismatch;
-use sqlquack_core::failures::models::ErrorKind;
-use sqlquack_core::parsing::models::SourceLocation;
-use sqlquack_core::provenance::models::Provenance;
+use sqlquack_diagnostics::failures::models::ErrorKind;
+use sqlquack_diagnostics::provenance::models::Provenance;
 use sqlquack_policy::policy::models::Policy;
+use sqlquack_syntax::tokens::models::SourceLocation;
 
 use crate::cases::models::LoadedCase;
 use crate::replay::models::PythonReplay;

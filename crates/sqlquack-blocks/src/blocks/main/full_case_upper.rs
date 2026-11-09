@@ -1,6 +1,6 @@
 //! `full_case_upper`: uPPER with full Unicode case mapping: multi-character mappings first, then DuckDB's upper.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::_helpers::text::expanded;
 use crate::blocks::constants::{FULL_CASE_MAPPING, UPPERCASE_EXPANSIONS};

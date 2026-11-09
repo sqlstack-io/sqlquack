@@ -1,6 +1,6 @@
 //! `hex_decoded_text`: TRY_HEX_DECODE_STRING, the text whose UTF-8 bytes hexadecimal digits spell.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::text::constants::{HEX_DECODED_TEXT, HEX_PAIRS_PATTERN};
 

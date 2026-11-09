@@ -1,7 +1,7 @@
 //! `json_array_intersection`: ARRAY_INTERSECTION, elements of the first array the second also holds.
 
-use sqlquack_core::failures::constants::NOT_AN_ARRAY_ARGUMENT;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::NOT_AN_ARRAY_ARGUMENT;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::arrays::_helpers::elements::{bound, element_key, elements, json_array, json_error};
 use crate::arrays::constants::{JSON_ARRAY_INTERSECTION, NOT_AN_ARRAY_MESSAGE};

@@ -1,6 +1,6 @@
 //! `json_split`: SPLIT of text into a JSON array of strings.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::constants::JSON_SPLIT;
 

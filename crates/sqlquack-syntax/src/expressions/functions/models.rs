@@ -13,9 +13,7 @@ use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
 
 /// A scalar function call not recognized as a dedicated `Expression` variant.
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize, Default,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Function {
     /// Qualified name components preserve quoting without changing the node kind.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -92,9 +90,7 @@ impl Function {
 }
 
 /// A named aggregate call with optional FILTER, ORDER BY, LIMIT and IGNORE/RESPECT NULLS.
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, PartialEq, Default, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
 pub struct AggregateFunction {
     /// Dialect whose call semantics must be retained through independent generation.
     #[serde(default, skip_serializing_if = "Option::is_none")]

@@ -1,6 +1,6 @@
 //! `folded_text`: text for ILIKE, its long s folded and letters no recording shows raising.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::raises::main::raised::raised;
 use crate::text::constants::{CASE_FOLDING, FOLDED_TEXT, LONG_S, UNFOLDED_LETTERS};

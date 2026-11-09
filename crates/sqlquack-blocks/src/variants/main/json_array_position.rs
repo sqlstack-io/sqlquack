@@ -1,6 +1,6 @@
 //! `json_array_position`: ARRAY_POSITION, the first index of a value in an array.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::constants::{JSON_ARRAY_POSITION, JSON_FRACTION_PATTERN};
 use crate::variants::_helpers::objects::{bound, fidelity_error};

@@ -1,4 +1,4 @@
-use sqlquack_core::failures::main::raise_id::raise_id;
+use sqlquack_diagnostics::failures::main::raise_id::raise_id;
 
 use crate::raises::main::identify_raises::identify_raises;
 use crate::raises::main::raised::raised;

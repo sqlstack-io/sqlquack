@@ -1,8 +1,6 @@
 //! Sorting, flattening, set, slicing and range functions over VARIANT arrays held as JSON.
 
 use serde_json::Value;
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::arrays::constants::ARRAY_SORT_ORDER;
 use sqlquack_blocks::arrays::main::json_array_distinct::json_array_distinct;
 use sqlquack_blocks::arrays::main::json_array_extreme::json_array_extreme;
@@ -17,6 +15,8 @@ use sqlquack_blocks::arrays::main::json_arrays_overlap::json_arrays_overlap;
 use sqlquack_blocks::arrays::main::json_to_array::json_to_array;
 use sqlquack_blocks::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_blocks::variants::main::json_array_cat::json_array_cat;
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::objects::{

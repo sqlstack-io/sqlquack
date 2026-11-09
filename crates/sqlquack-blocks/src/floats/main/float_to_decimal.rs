@@ -1,10 +1,10 @@
 //! `float_to_decimal`: a FLOAT rounded exactly to a NUMBER with a fraction.
 
-use sqlquack_core::failures::constants::NUMBER_OUT_OF_RANGE;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::NUMBER_OUT_OF_RANGE;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
-use sqlquack_core::failures::main::tagged_message::tagged_message;
+use sqlquack_diagnostics::failures::main::tagged_message::tagged_message;
 
 use crate::blocks::constants::NUMBER_RANGE_MESSAGE;
 use crate::blocks::main::column_type::column_type;

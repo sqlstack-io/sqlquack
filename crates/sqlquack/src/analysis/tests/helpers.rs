@@ -1,11 +1,11 @@
 use std::collections::BTreeSet;
 
 use sha2::{Digest, Sha256};
-use sqlquack_core::diagnostics::models::DiagnosticSpan;
-use sqlquack_core::failures::main::duckdb_failure::duckdb_failure;
-use sqlquack_core::parsing::models::{SourceDialect, SourceLocation};
-use sqlquack_core::provenance::main::merge_provenance::merge_provenance;
-use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
+use sqlquack_diagnostics::classification::models::SourceDialect;
+use sqlquack_diagnostics::diagnostics::models::DiagnosticSpan;
+use sqlquack_diagnostics::failures::main::duckdb_failure::duckdb_failure;
+use sqlquack_diagnostics::provenance::main::merge_provenance::merge_provenance;
+use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_evidence::cases::main::load_cases::load_cases;
 use sqlquack_evidence::constants::CASES_DIR;
 use sqlquack_evidence::verify::models::Conversion;
@@ -21,6 +21,7 @@ use sqlquack_semantics::types::models::{
     ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits, Schema,
 };
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_syntax::tokens::models::SourceLocation;
 
 use crate::analysis::main::check_equivalence_cases::check_equivalence_cases;
 use crate::analysis::main::check_source::check_source;

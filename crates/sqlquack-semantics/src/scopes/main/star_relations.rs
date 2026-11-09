@@ -1,7 +1,7 @@
 //! `star_relations`: the relations a star expands to.
 
-use sqlquack_core::refusals::main::unresolved::unresolved;
-use sqlquack_core::refusals::models::Refusal;
+use sqlquack_diagnostics::refusals::main::unresolved::unresolved;
+use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::dialects::models::Profiles;
 use crate::scopes::models::{Scope, ScopeRelation};

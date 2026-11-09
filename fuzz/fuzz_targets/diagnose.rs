@@ -3,16 +3,19 @@
 #![no_main]
 
 use libfuzzer_sys::fuzz_target;
-use sqlquack_core::diagnostics::main::{diagnose::diagnose, render_diagnostics::render_diagnostics};
-use sqlquack_core::parsing::main::parse_source::parse_source;
-use sqlquack_core::parsing::models::{SourceDialect, SourceLines};
-use sqlquack_core::refusals::main::refuse_unparsed::refuse_unparsed;
+use sqlquack_diagnostics::diagnostics::main::{
+    diagnose::diagnose, render_diagnostics::render_diagnostics,
+};
+use sqlquack_diagnostics::refusals::main::refuse_unparsed::refuse_unparsed;
+use sqlquack_parse::parsing::main::parse_source::parse_source;
+use sqlquack_syntax::tokens::models::SourceLines;
+use sqlquack_syntax::Dialect;
 
 fuzz_target!(|data: &[u8]| {
     let Ok(sql) = std::str::from_utf8(data) else {
         return;
     };
-    let Err(failure) = parse_source(sql, SourceDialect::Snowflake) else {
+    let Err(failure) = parse_source(sql, Dialect::Snowflake) else {
         return;
     };
     let refusal = refuse_unparsed(&failure, &SourceLines::new(sql));

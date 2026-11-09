@@ -1,6 +1,6 @@
 //! `time_add_value`: a TIME moved by whole hours, minutes or milliseconds, wrapping at midnight.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::temporal::constants::NANOS_PER_MINUTE;
 use crate::times::_helpers::nanos::time_of_nanos;

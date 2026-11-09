@@ -1,6 +1,6 @@
 //! `cast_target`: the type a Snowflake type name denotes.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::typing::_helpers::targets::{fractional, number_target, parse_arguments, text_target};
 use crate::typing::constants::{

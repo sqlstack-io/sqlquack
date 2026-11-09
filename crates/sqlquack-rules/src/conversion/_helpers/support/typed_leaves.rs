@@ -1,7 +1,7 @@
 //! Typed VARIANT leaves: DATEs and timestamps Snowflake keeps typed, which DuckDB writes as text.
 
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::refusals::models::Refusal;
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::types::models::TypedLeaves;
 
 use sqlquack_blocks::semi_structured::constants::SOURCE_VARIANT_JSON;

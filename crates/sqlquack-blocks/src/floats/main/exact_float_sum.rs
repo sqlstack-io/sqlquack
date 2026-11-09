@@ -1,6 +1,6 @@
 //! `exact_float_sum`: SUM of FLOAT where every order of addition gives one value, else a raise.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::INLINE_ARGUMENT_LIMIT;
 use crate::floats::_helpers::sums::{aggregated_sum, listed_sum};

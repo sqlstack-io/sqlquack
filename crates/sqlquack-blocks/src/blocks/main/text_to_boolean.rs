@@ -1,7 +1,7 @@
 //! `text_to_boolean`: text to BOOLEAN, accepting only spellings Snowflake is recorded to read.
 
-use sqlquack_core::failures::constants::BOOLEAN_NOT_RECOGNIZED;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::BOOLEAN_NOT_RECOGNIZED;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::_helpers::text::{conversion_failure, once_bound, space_trimmed, word_list};
 use crate::blocks::constants::{FALSE_WORDS, TEXT_TO_BOOLEAN, TRUE_WORDS};

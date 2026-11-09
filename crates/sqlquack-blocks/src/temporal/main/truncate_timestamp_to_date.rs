@@ -1,6 +1,6 @@
 //! `truncate_timestamp_to_date`: a naive timestamp's DATE, truncating toward the past.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::{DUCKDB_FRACTIONAL_PRECISION, TRUNCATE_TIMESTAMP};
 use crate::temporal::main::truncate_timestamp::truncate_timestamp;

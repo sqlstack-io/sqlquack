@@ -4,8 +4,8 @@ use std::io::Write;
 
 use anstream::stream::{AsLockedWrite, RawStream};
 use clap::ColorChoice;
-use sqlquack_core::diagnostics::constants::{ANSI_PALETTE, PLAIN_PALETTE};
-use sqlquack_core::diagnostics::models::Palette;
+use sqlquack_diagnostics::diagnostics::constants::{ANSI_PALETTE, PLAIN_PALETTE};
+use sqlquack_diagnostics::diagnostics::models::Palette;
 
 use crate::terminal::_helpers::stream_color::stream_color;
 

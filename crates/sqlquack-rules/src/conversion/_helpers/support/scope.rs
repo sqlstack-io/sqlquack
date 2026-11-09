@@ -1,17 +1,17 @@
 //! Name resolution: relations in scope, CTEs, select-list aliases and outer queries.
 
-use sqlquack_core::parsing::models::SourceLocation;
-use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::blocks::main::cast::cast;
 use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::dialects::constants::SNOWFLAKE_TO_DUCKDB;
 use sqlquack_semantics::names::main::relation_columns::relation_columns;
 use sqlquack_semantics::scopes::main::resolve_name::resolve_name;
 use sqlquack_semantics::scopes::models::{Resolution, Scope as SemanticScope};
 use sqlquack_semantics::types::models::TypedLeaves;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_syntax::tokens::models::SourceLocation;
 
 use crate::conversion::_helpers::support::locations::Locator;
 use crate::conversion::_helpers::support::tree::node_construct;

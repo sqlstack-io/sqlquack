@@ -1,10 +1,6 @@
 //! Arithmetic, comparison and logical operators.
 
 use serde_json::Value;
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::blocks::main::cast::cast;
 use sqlquack_blocks::blocks::main::decimal_arithmetic::decimal_arithmetic;
 use sqlquack_blocks::blocks::main::double_arithmetic::double_arithmetic;
@@ -21,6 +17,10 @@ use sqlquack_blocks::text::constants::TEXT_NUMBER_SCALE;
 use sqlquack_blocks::text::main::compared_number_range::compared_number_range;
 use sqlquack_blocks::text::main::compared_number_text::compared_number_text;
 use sqlquack_blocks::times::main::date_timestamp_key::date_timestamp_key;
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_snowflake_types::typing::constants::MAX_PRECISION;
 use sqlquack_snowflake_types::typing::main::comparison::comparison;
 use sqlquack_snowflake_types::typing::main::numeric_add_subtract::numeric_add_subtract;

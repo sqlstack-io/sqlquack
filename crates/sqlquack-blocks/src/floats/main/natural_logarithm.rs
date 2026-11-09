@@ -1,8 +1,8 @@
 //! `natural_logarithm`: LN as a double, failing for zero or less as Snowflake does.
 
-use sqlquack_core::failures::constants::INVALID_FLOAT_OPERATION;
-use sqlquack_core::failures::main::tagged_message::tagged_message;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::INVALID_FLOAT_OPERATION;
+use sqlquack_diagnostics::failures::main::tagged_message::tagged_message;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::floats::constants::NATURAL_LOGARITHM;
 use crate::raises::main::raised::raised;

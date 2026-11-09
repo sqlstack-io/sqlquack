@@ -1,6 +1,6 @@
 //! `window_frame`: a window frame clause, spelled out.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::WINDOW_FRAME;
 

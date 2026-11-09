@@ -1,6 +1,6 @@
 //! `json_text`: a VARIANT cast to VARCHAR, as Snowflake writes it.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::_helpers::writing::{Root, sorted_text};
 use crate::semi_structured::constants::JSON_TEXT;

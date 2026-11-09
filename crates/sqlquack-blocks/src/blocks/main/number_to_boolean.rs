@@ -1,6 +1,6 @@
 //! `number_to_boolean`: nUMBER to BOOLEAN: zero is false.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::BOOLEAN_NUMBER;
 

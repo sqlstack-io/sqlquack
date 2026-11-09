@@ -1,11 +1,6 @@
 //! CAST, `::` and TRY_CAST.
 
 use serde_json::Value;
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::provenance::models::{ProvenanceLog, RuleScope};
-use sqlquack_core::refusals::main::missing::missing;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::blocks::main::boolean_to_number::boolean_to_number;
 use sqlquack_blocks::blocks::main::cast::cast;
 use sqlquack_blocks::blocks::main::number_to_boolean::number_to_boolean;
@@ -32,6 +27,11 @@ use sqlquack_blocks::times::main::truncate_time::truncate_time;
 use sqlquack_blocks::times::models::TimeFormat;
 use sqlquack_blocks::variants::main::json_kind_cast::json_kind_cast;
 use sqlquack_blocks::zones::main::text_to_utc_zoned::text_to_utc_zoned;
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::provenance::models::{ProvenanceLog, RuleScope};
+use sqlquack_diagnostics::refusals::main::missing::missing;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::types::main::zoned_in_utc::zoned_in_utc;
 use sqlquack_snowflake_types::typing::constants::CAST_TARGET;
 use sqlquack_snowflake_types::typing::constants::STRUCTURED_UNSUPPORTED;

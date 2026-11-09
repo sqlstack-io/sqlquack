@@ -2,7 +2,7 @@
 
 use std::collections::BTreeMap;
 
-use sqlquack_core::failures::models::FailureMode;
+use sqlquack_diagnostics::failures::models::FailureMode;
 
 use crate::cases::models::LoadedCase;
 use crate::verify::models::Conversion;

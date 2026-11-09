@@ -4,7 +4,7 @@ use std::cmp::Reverse;
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::PathBuf;
 
-use sqlquack_core::refusals::models::RefusalCategory;
+use sqlquack_diagnostics::refusals::models::RefusalCategory;
 use sqlquack_semantics::types::models::Schema;
 
 use crate::census::_helpers::combinations::combinations;

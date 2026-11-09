@@ -1,4 +1,4 @@
-use sqlquack_core::classification::models::{Construct, ConstructFamily};
+use sqlquack_diagnostics::classification::models::{Construct, ConstructFamily};
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::types::main::schema_columns::schema_columns;

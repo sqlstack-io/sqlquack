@@ -1,7 +1,7 @@
 //! `relation_key`: the schema relation a written, possibly qualified, relation name reads.
 
-use sqlquack_core::refusals::main::unresolved::unresolved;
-use sqlquack_core::refusals::models::Refusal;
+use sqlquack_diagnostics::refusals::main::unresolved::unresolved;
+use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::names::constants::{AMBIGUOUS_RELATION_SUFFIX, RELATION_KEY_SEPARATOR};
 use crate::types::models::Schema;

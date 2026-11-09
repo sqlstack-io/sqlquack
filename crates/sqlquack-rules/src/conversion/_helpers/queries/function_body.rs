@@ -1,13 +1,13 @@
 //! Pieces of a SQL function body's conversion: type checks, the parameters join and DuckDB's check.
 
 use crate::conversion::_helpers::support::typed_leaves::checked;
-use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_core::refusals::main::missing::missing;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_blocks::checking::main::check_printed::check_printed;
 use sqlquack_blocks::checking::models::{FunctionStub, StubReturns};
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::refusals::main::missing::missing;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::project_functions::held_type;

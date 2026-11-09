@@ -1,8 +1,8 @@
 //! `date_add_amount`: a DATEADD amount, raising at magnitudes Snowflake rejects.
 
-use sqlquack_core::failures::constants::NUMBER_OUT_OF_RANGE;
-use sqlquack_core::failures::main::tagged_message::tagged_message;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::NUMBER_OUT_OF_RANGE;
+use sqlquack_diagnostics::failures::main::tagged_message::tagged_message;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::{DATE_ADD_AMOUNT, DATE_ADD_AMOUNT_LIMIT, NUMBER_RANGE_MESSAGE};
 use crate::raises::main::raised::raised;

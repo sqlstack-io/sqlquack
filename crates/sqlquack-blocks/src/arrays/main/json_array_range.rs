@@ -1,7 +1,7 @@
 //! `json_array_range`: ARRAY_GENERATE_RANGE, whole numbers from a start up to before an end.
 
-use sqlquack_core::failures::constants::ZERO_RANGE_STEP;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::ZERO_RANGE_STEP;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::arrays::_helpers::elements::{bound, json_array, json_error};
 use crate::arrays::constants::{JSON_ARRAY_RANGE, ZERO_STEP_MESSAGE};

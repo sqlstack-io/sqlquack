@@ -1,6 +1,6 @@
 //! `explicit_null_order`: a sort key with NULL placement spelled out; Snowflake's default puts NULLs high.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::EXPLICIT_NULL_ORDER;
 

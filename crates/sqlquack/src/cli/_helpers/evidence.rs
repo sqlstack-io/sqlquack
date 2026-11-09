@@ -3,9 +3,9 @@
 use std::collections::BTreeMap;
 use std::path::Path;
 
-use sqlquack_core::diagnostics::models::Diagnostic;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::semi_structured::constants::JSON_FIDELITY;
+use sqlquack_diagnostics::diagnostics::models::Diagnostic;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_evidence::cases::main::load_cases::load_cases;
 use sqlquack_evidence::cases::models::LoadedCase;
 use sqlquack_policy::policy::constants::{POLICY_FILE_NAME, SESSION_TIME_ZONE, TIMEZONE_PARAMETER};

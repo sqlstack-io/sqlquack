@@ -1,6 +1,6 @@
 //! `variant_written`: a VARIANT-held value as Snowflake writes it as JSON.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::held::_helpers::writing::held_written;
 use crate::held::constants::VARIANT_WRITTEN;

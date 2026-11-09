@@ -1,6 +1,6 @@
 //! `null_propagating_concat`: `a || b || ...`, NULL when any operand is NULL.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::NULL_PROPAGATING_CONCAT;
 

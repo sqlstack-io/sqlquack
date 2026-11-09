@@ -1,6 +1,6 @@
 //! `date_from_parts`: a DATE from year, month and day numbers, normalising overflow.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::temporal::constants::DATE_FROM_PARTS;
 

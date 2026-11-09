@@ -1,6 +1,6 @@
 //! `float_to_text`: a FLOAT as the text Snowflake writes for it.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::floats::_helpers::values::bound;
 use crate::floats::constants::{

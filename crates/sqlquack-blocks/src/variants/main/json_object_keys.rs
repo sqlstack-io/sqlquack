@@ -1,7 +1,7 @@
 //! `json_object_keys`: OBJECT_KEYS of a VARIANT.
 
-use sqlquack_core::failures::constants::VARIANT_NOT_CAST;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::VARIANT_NOT_CAST;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::constants::{JSON_OBJECT_KEYS, NOT_AN_OBJECT_MESSAGE};
 use crate::variants::_helpers::objects::{bound, json_error};

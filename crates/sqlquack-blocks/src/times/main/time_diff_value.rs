@@ -1,6 +1,6 @@
 //! `time_diff_value`: clock unit boundaries crossed between two TIMEs.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::times::constants::{NANOS_PER_SECOND, TIME_DIFF};
 

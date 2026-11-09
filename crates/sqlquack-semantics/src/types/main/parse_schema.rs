@@ -2,7 +2,7 @@
 
 use std::collections::BTreeMap;
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::types::_helpers::schema_file::{RawSchema, typed_columns, typed_function};
 use crate::types::_helpers::schema_shape::shape_problem;

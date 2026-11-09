@@ -1,17 +1,18 @@
 //! `analyze_function`: a SQL project function's body as a DuckDB macro body, or its refusals.
 
-use sqlquack_core::classification::main::classify::classify;
-use sqlquack_core::parsing::main::parse_source::parse_source;
-use sqlquack_core::parsing::models::{SourceDialect, SourceLines};
-use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_core::refusals::main::refuse_unparsed::refuse_unparsed;
-use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
-use sqlquack_core::refusals::types::ConstructPolicy;
+use sqlquack_diagnostics::classification::main::classify::classify;
+use sqlquack_diagnostics::classification::models::SourceDialect;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::refusals::main::refuse_unparsed::refuse_unparsed;
+use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
+use sqlquack_diagnostics::refusals::types::ConstructPolicy;
+use sqlquack_parse::parsing::main::parse_source::parse_source;
 use sqlquack_rules::conversion::main::convert_function_body::convert_function_body;
 use sqlquack_rules::conversion::main::quoted_exclusions::quoted_exclusions;
 use sqlquack_rules::conversion::models::{ConversionOptions, ConvertedFunction};
 use sqlquack_semantics::types::models::{FunctionReturns, FunctionSpec, Schema};
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_syntax::tokens::models::SourceLines;
 
 use crate::analysis::_helpers::declared_refusals::declared_refusals;
 use crate::analysis::constants::SCALAR_RESULT_COLUMN;
@@ -41,8 +42,8 @@ pub fn analyze_function(
         ..options.clone()
     };
     let lines = SourceLines::shifted(body, prefix.chars().count());
-    let statements =
-        parse_source(&sql, dialect).map_err(|failure| vec![refuse_unparsed(&failure, &lines)])?;
+    let statements = parse_source(&sql, dialect.syntax())
+        .map_err(|failure| vec![refuse_unparsed(&failure, &lines)])?;
     let [statement] = statements.as_slice() else {
         return Err(vec![Refusal {
             construct: None,

@@ -1,7 +1,7 @@
 //! `double_arithmetic`: double `+ - * /`; division by zero raises an error as in Snowflake.
 
-use sqlquack_core::failures::constants::DIVISION_BY_ZERO;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::DIVISION_BY_ZERO;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::_helpers::text::tagged_error;
 use crate::blocks::constants::DOUBLE_ARITHMETIC;

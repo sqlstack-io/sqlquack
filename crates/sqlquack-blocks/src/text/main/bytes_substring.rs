@@ -1,6 +1,6 @@
 //! `bytes_substring`: SUBSTR of bytes held as hexadecimal digits, counted in bytes.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::text::constants::BYTES_SUBSTRING;
 

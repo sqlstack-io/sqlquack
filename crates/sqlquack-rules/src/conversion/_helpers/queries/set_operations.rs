@@ -1,14 +1,14 @@
 //! UNION, UNION ALL, EXCEPT, MINUS and INTERSECT.
 
 use serde_json::Value;
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::refusals::main::missing::missing;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::blocks::main::cast::cast;
 use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_blocks::held::main::variant_json_branch::variant_json_branch;
 use sqlquack_blocks::semi_structured::constants::JSON_FIDELITY;
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::refusals::main::missing::missing;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_snowflake_types::typing::main::text_reading::text_reading;
 use sqlquack_snowflake_types::typing::main::unify::unify;
 use sqlquack_snowflake_types::typing::models::{CastTarget, SnowflakeType};

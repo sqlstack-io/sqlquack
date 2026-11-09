@@ -1,6 +1,6 @@
 //! `json_array_contains`: ARRAY_CONTAINS of a VARIANT value in a VARIANT array.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::constants::{JSON_ARRAY_CONTAINS, JSON_FRACTION_PATTERN};
 use crate::variants::_helpers::objects::{bound, fidelity_error};

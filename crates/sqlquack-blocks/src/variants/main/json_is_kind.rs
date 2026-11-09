@@ -1,6 +1,6 @@
 //! `json_is_kind`: IS_OBJECT, IS_ARRAY and IS_BOOLEAN of a VARIANT.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::constants::JSON_IS_KIND;
 use crate::variants::_helpers::objects::bound;

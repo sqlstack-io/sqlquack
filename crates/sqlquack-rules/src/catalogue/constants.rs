@@ -1,7 +1,7 @@
 //! The rules every conversion may use, and declared refusals.
 
 use crate::catalogue::models::NotExpressibleDeclaration;
-use sqlquack_core::failures::constants::{
+use sqlquack_diagnostics::failures::constants::{
     BOOLEAN_NOT_RECOGNIZED, CHARACTER_CODE_FAILURES, DATE_FORMAT_MISMATCH, DATE_NOT_RECOGNIZED,
     DIVISION_BY_ZERO, DIVISION_FAILURES, FLATTEN_FAILURES, HEX_DECODE_FAILURES,
     INVALID_UTF8_FAILURES, JSON_NOT_PARSED, KEY_EXISTS_FAILURES, LOGARITHM_FAILURES,
@@ -10,7 +10,7 @@ use sqlquack_core::failures::constants::{
     TIME_TEXT_FAILURES, TIMESTAMP_FORMAT_MISMATCH, TIMESTAMP_NOT_RECOGNIZED, VARIANT_NOT_CAST,
     ZONE_FAILURES,
 };
-use sqlquack_core::failures::models::{ErrorKind, FailureMode};
+use sqlquack_diagnostics::failures::models::{ErrorKind, FailureMode};
 use sqlquack_snowflake_types::typing::constants::VARIANT_COMMON_TYPE;
 
 /// Constructs DuckDB cannot express. Each entry needs a reason and evidence before it is added.

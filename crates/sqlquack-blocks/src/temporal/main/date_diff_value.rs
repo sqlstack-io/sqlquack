@@ -1,6 +1,6 @@
 //! `date_diff_value`: the unit boundaries crossed from one DATE or naive timestamp to another.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::blocks::constants::DATE_DIFF;

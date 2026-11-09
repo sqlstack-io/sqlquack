@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use std::path::Path;
 
-use sqlquack_core::parsing::models::SourceDialect;
+use sqlquack_diagnostics::classification::models::SourceDialect;
 use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_rules::conversion::models::{AllowedDivergence, ConversionOptions};

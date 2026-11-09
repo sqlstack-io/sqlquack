@@ -1,7 +1,7 @@
 //! `text_to_float`: text to FLOAT, accepting only spellings Snowflake is recorded to read.
 
-use sqlquack_core::failures::constants::NUMBER_NOT_RECOGNIZED;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::NUMBER_NOT_RECOGNIZED;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::_helpers::text::{conversion_failure, once_bound, space_trimmed};
 use crate::blocks::constants::{DECIMAL_TEXT_PATTERN, NON_FINITE_FLOAT_WORDS, TEXT_TO_FLOAT};

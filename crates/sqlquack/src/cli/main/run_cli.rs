@@ -4,7 +4,7 @@ use std::io::Write;
 use std::process::ExitCode;
 
 use clap::Parser;
-use sqlquack_core::diagnostics::models::Palette;
+use sqlquack_diagnostics::diagnostics::models::Palette;
 
 use crate::cli::_helpers::audit_command::{
     audit_compare_command, audit_errors_command, audit_sample_command,

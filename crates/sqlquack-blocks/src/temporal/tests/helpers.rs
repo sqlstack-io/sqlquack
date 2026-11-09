@@ -1,4 +1,4 @@
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::temporal::main::formatted_text_to_timestamp::formatted_text_to_timestamp;
 use crate::temporal::main::timestamp_format::timestamp_format;

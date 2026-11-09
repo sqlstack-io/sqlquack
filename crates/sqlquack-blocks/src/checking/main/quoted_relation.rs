@@ -1,6 +1,6 @@
 //! `quoted_relation`: a relation name as the check creates it and converted SQL reads it.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::NAME_SEPARATOR;
 use crate::blocks::main::quoted_identifier::quoted_identifier;

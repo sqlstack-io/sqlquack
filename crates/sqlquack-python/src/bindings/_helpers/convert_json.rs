@@ -6,8 +6,8 @@ use sqlquack::cli::main::convert_report::convert_report;
 use sqlquack::cli::models::{
     ColorArguments, ConvertArguments, OutputArguments, OutputFormat, PolicyArguments,
 };
-use sqlquack_core::diagnostics::main::render_diagnostics::render_diagnostics;
-use sqlquack_core::diagnostics::models::Diagnostic;
+use sqlquack_diagnostics::diagnostics::main::render_diagnostics::render_diagnostics;
+use sqlquack_diagnostics::diagnostics::models::Diagnostic;
 use sqlquack_semantics::types::errors::SchemaError;
 use sqlquack_semantics::types::main::parse_schema::parse_schema;
 

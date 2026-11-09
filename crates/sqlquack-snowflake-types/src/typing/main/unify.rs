@@ -1,6 +1,6 @@
 //! `unify`: one type for several branches.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::typing::_helpers::numbers::unify_pair;
 use crate::typing::constants::{UNIFY, VARIANT_COMMON_TYPE};

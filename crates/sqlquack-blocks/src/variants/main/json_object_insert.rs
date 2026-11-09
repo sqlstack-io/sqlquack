@@ -1,7 +1,7 @@
 //! `json_object_insert`: OBJECT_INSERT of one literal key.
 
-use sqlquack_core::failures::constants::{OBJECT_KEY_EXISTS, VARIANT_NOT_CAST};
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::{OBJECT_KEY_EXISTS, VARIANT_NOT_CAST};
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::constants::{
     JSON_OBJECT_INSERT, KEY_EXISTS_MESSAGE, NOT_AN_OBJECT_MESSAGE,

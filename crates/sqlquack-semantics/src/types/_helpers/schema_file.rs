@@ -3,7 +3,7 @@
 use std::collections::BTreeMap;
 
 use serde::Deserialize;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_snowflake_types::typing::main::cast_target::cast_target;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 

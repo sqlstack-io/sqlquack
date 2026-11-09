@@ -1,6 +1,6 @@
 //! `json_array_construct_compact`: ARRAY_CONSTRUCT_COMPACT of JSON values.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::constants::JSON_ARRAY_CONSTRUCT_COMPACT;
 use crate::variants::_helpers::objects::{bound, fidelity_error, json_list};

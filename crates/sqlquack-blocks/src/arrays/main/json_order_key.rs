@@ -1,6 +1,6 @@
 //! `json_order_key`: a JSON-held VARIANT's sort key, in ARRAY_SORT's recorded order of kinds.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::arrays::constants::{
     ARRAY_SORT_ORDER, EXACT_DOUBLE_LIMIT, JSON_ORDER_KEY, SORT_KIND_ORDER,

@@ -2,7 +2,7 @@
 
 use std::time::Duration;
 
-use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
+use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 
 use crate::conversion::models::{ConversionOptions, Converted};
 

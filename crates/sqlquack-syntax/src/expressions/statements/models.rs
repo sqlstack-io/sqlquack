@@ -487,15 +487,7 @@ pub struct TruncateTableEntry {
 
 /// TRUNCATE target type
 #[derive(
-    sqlquack_derive::AstNode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Serialize,
-    Deserialize,
-    Default,
+    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default,
 )]
 pub enum TruncateTarget {
     #[default]
@@ -504,9 +496,7 @@ pub enum TruncateTarget {
 }
 
 /// TRUNCATE identity option
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum TruncateIdentity {
     Restart,
     Continue,
@@ -545,9 +535,7 @@ pub struct Use {
 }
 
 /// Kind of USE statement
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum UseKind {
     Database,
     Schema,
@@ -1494,9 +1482,7 @@ pub enum VerticaCollectionBound {
     Bytes(u32),
 }
 
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Default, PartialEq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct VerticaSelectExtensions {
     pub timeseries: Option<VerticaTimeseries>,
     pub match_clause: Option<VerticaMatch>,
@@ -1534,9 +1520,7 @@ pub enum VerticaPattern {
     },
 }
 
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Default, PartialEq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct VerticaPhysical {
     pub order_by: Vec<Ordered>,
     pub segmentation: Option<VerticaSegmentation>,
@@ -1615,9 +1599,7 @@ pub struct ScriptingDefault {
     pub value: Expression,
 }
 
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ScriptingAssignmentOperator {
     Default,
@@ -1805,9 +1787,7 @@ pub struct ScriptingRange {
 }
 
 /// The body keyword, which fixes the closing `END FOR`/`END WHILE` or `END LOOP`.
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ScriptingLoopKeyword {
     Do,
@@ -1855,9 +1835,7 @@ pub struct ScriptingJump {
     pub label: Option<Identifier>,
 }
 
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ScriptingJumpKeyword {
     Break,
@@ -1964,9 +1942,7 @@ pub enum ScriptingHandledExceptions {
     Other,
 }
 
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ScriptingHandlerAction {
     Exit,

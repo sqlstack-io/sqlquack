@@ -2,7 +2,7 @@
 
 use std::collections::BTreeMap;
 
-use sqlquack_core::provenance::models::Shape;
+use sqlquack_diagnostics::provenance::models::Shape;
 
 use crate::coverage::constants::{ANY_POSITION, LITERAL_KIND, NO_FACET, VALUE_KIND};
 use crate::coverage::models::{ArgumentDomain, Form};

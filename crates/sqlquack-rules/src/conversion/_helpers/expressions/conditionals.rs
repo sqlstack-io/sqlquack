@@ -1,11 +1,11 @@
 //! CASE, COALESCE, NVL, IFF, DECODE, ZEROIFNULL and the unification of their branches.
 
 use serde_json::{Value, json};
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::refusals::main::missing::missing;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::blocks::main::cast::cast;
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::refusals::main::missing::missing;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::types::main::utc_kept::utc_kept;
 use sqlquack_snowflake_types::typing::main::text_reading::text_reading;
 use sqlquack_snowflake_types::typing::main::unify::unify;

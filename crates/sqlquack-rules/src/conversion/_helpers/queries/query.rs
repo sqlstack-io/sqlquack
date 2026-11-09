@@ -1,17 +1,17 @@
 //! Queries: SELECT with its projection and clauses, and WITH.
 
 use serde_json::{Map, Value, json};
-use sqlquack_core::classification::models::{Construct, ConstructFamily};
-use sqlquack_core::diagnostics::constants::{
+use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_diagnostics::classification::models::{Construct, ConstructFamily};
+use sqlquack_diagnostics::diagnostics::constants::{
     REPEATED_RESULT_NAME, UNALIASED_OUTPUT_NAME_CONSTRUCT,
 };
-use sqlquack_core::provenance::constants::QUERY_CONSTRUCT;
-use sqlquack_core::provenance::models::ShapeArgument;
-use sqlquack_core::refusals::main::missing::missing;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::main::unresolved::unresolved;
-use sqlquack_core::refusals::models::Refusal;
-use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_diagnostics::provenance::constants::QUERY_CONSTRUCT;
+use sqlquack_diagnostics::provenance::models::ShapeArgument;
+use sqlquack_diagnostics::refusals::main::missing::missing;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::main::unresolved::unresolved;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::ordered_aggregates::order_checked;

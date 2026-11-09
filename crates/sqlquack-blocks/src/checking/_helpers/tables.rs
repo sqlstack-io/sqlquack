@@ -1,6 +1,6 @@
 //! `CREATE TABLE` statements for the relations a statement reads, and macros for its functions.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::blocks::main::column_type::column_type;

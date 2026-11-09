@@ -119,9 +119,7 @@ pub struct TrimFunc {
     pub inferred_type: Option<DataType>,
 }
 
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum TrimPosition {
     Both,
     Leading,
@@ -887,9 +885,7 @@ pub struct JsonObjectFunc {
 }
 
 /// JSON null handling options
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum JsonNullHandling {
     NullOnNull,
     AbsentOnNull,

@@ -1,6 +1,6 @@
 //! `date_timestamp_key`: an order key comparing a DATE with a naive timestamp, range safe.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::DUCKDB_FRACTIONAL_PRECISION;
 use crate::temporal::main::truncate_timestamp_to_date::truncate_timestamp_to_date;

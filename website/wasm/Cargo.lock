@@ -217,17 +217,8 @@ name = "sqlquack-blocks"
 version = "0.2.0"
 dependencies = [
  "serde_json",
- "sqlquack-core",
+ "sqlquack-diagnostics",
  "sqlquack-snowflake-types",
-]
-
-[[package]]
-name = "sqlquack-core"
-version = "0.2.0"
-dependencies = [
- "serde",
- "serde_json",
- "sqlquack-syntax",
 ]
 
 [[package]]
@@ -237,6 +228,22 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.119",
+]
+
+[[package]]
+name = "sqlquack-diagnostics"
+version = "0.2.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sqlquack-syntax",
+]
+
+[[package]]
+name = "sqlquack-parse"
+version = "0.2.0"
+dependencies = [
+ "sqlquack-syntax",
 ]
 
 [[package]]
@@ -254,7 +261,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sqlquack-blocks",
- "sqlquack-core",
+ "sqlquack-diagnostics",
  "sqlquack-policy",
  "sqlquack-semantics",
  "sqlquack-snowflake-types",
@@ -269,7 +276,7 @@ dependencies = [
  "saphyr-parser",
  "serde",
  "serde_json",
- "sqlquack-core",
+ "sqlquack-diagnostics",
  "sqlquack-snowflake-types",
  "sqlquack-syntax",
  "stacker",
@@ -280,7 +287,7 @@ name = "sqlquack-snowflake-types"
 version = "0.2.0"
 dependencies = [
  "serde",
- "sqlquack-core",
+ "sqlquack-diagnostics",
 ]
 
 [[package]]
@@ -302,7 +309,8 @@ dependencies = [
  "serde",
  "serde_json",
  "sqlquack-blocks",
- "sqlquack-core",
+ "sqlquack-diagnostics",
+ "sqlquack-parse",
  "sqlquack-policy",
  "sqlquack-rules",
  "sqlquack-semantics",

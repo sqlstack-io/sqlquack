@@ -1,6 +1,6 @@
 //! `sum`: the type of SUM.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::typing::_helpers::numbers::number;
 use crate::typing::constants::{MAX_PRECISION, SUM, SUM_EXTRA_DIGITS};

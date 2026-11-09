@@ -1,6 +1,6 @@
 //! `text_reading`: the type text takes beside other types in COALESCE, NVL, IFF and CASE.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::typing::_helpers::numbers::unify_pair;
 use crate::typing::constants::{TEXT_AS_NUMBER, TEXT_READING};

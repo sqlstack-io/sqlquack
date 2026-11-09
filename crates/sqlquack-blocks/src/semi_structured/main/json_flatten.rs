@@ -1,6 +1,6 @@
 //! `json_flatten`: FLATTEN's rows for a VARIANT, as a DuckDB subquery.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::_helpers::paths::{joined_path, key_step};
 use crate::semi_structured::constants::JSON_FLATTEN;

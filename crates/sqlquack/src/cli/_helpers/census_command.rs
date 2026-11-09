@@ -4,7 +4,7 @@ use std::io::Write;
 use std::process::ExitCode;
 use std::time::Instant;
 
-use sqlquack_core::parsing::models::SourceDialect;
+use sqlquack_diagnostics::classification::models::SourceDialect;
 
 use crate::analysis::main::with_overrides::with_overrides;
 use crate::census::constants::{COVERAGE_POINTS, RULE_ID_PREFIX, SLOWEST_FILES};

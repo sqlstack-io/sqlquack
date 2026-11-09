@@ -1,6 +1,6 @@
 //! `json_transform`: TRANSFORM, each element of an array mapped by a lambda.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::_helpers::lambdas::{elements, raising_non_arrays, undefined_element};
 use crate::semi_structured::constants::JSON_TRANSFORM;

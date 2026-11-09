@@ -1,6 +1,6 @@
 //! `raised`: an expression raising an error with a message, valid wherever a value is.
 
-use sqlquack_core::failures::constants::{RAISE_ID_MARKER, TAG_END, UNIDENTIFIED_RAISE};
+use sqlquack_diagnostics::failures::constants::{RAISE_ID_MARKER, TAG_END, UNIDENTIFIED_RAISE};
 
 use crate::blocks::constants::RAISE_MARKER;
 use crate::raises::_helpers::slots::tag_length;

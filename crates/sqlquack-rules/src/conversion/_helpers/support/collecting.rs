@@ -3,7 +3,7 @@
 use std::cell::RefCell;
 use std::collections::BTreeSet;
 
-use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
+use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::support::scope::{Emitted, Scope};

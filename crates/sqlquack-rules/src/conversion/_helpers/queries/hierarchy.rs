@@ -1,12 +1,12 @@
 //! START WITH ... CONNECT BY PRIOR over one relation, as a DuckDB recursive CTE.
 
 use serde_json::{Map, Value, json};
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::blocks::main::column_type::column_type;
 use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_blocks::blocks::main::string_literal::string_literal;
 use sqlquack_blocks::raises::main::raised::raised;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;

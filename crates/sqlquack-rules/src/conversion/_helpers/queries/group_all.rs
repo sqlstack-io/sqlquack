@@ -1,8 +1,8 @@
 //! GROUP BY ALL: the positions of the SELECT items that hold no aggregate.
 
 use serde_json::Value;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::models::Refusal;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::conversion::_helpers::expressions::named_aggregates::is_named_aggregate;
 use crate::conversion::_helpers::expressions::scalar::call_name;

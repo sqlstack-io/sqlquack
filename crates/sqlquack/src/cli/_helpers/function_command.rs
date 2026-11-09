@@ -5,12 +5,12 @@ use std::path::Path;
 use std::process::ExitCode;
 
 use serde::Serialize;
-use sqlquack_core::diagnostics::constants::SESSION_PARAMETERS;
-use sqlquack_core::diagnostics::main::diagnose::diagnose;
-use sqlquack_core::diagnostics::main::render_diagnostics::render_diagnostics;
-use sqlquack_core::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
-use sqlquack_core::diagnostics::models::Diagnostic;
-use sqlquack_core::parsing::models::SourceDialect;
+use sqlquack_diagnostics::classification::models::SourceDialect;
+use sqlquack_diagnostics::diagnostics::constants::SESSION_PARAMETERS;
+use sqlquack_diagnostics::diagnostics::main::diagnose::diagnose;
+use sqlquack_diagnostics::diagnostics::main::render_diagnostics::render_diagnostics;
+use sqlquack_diagnostics::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
+use sqlquack_diagnostics::diagnostics::models::Diagnostic;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::conversion::models::ConvertedFunction;
 

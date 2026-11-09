@@ -1,7 +1,7 @@
 //! The shape of a construct a rule accepted: its construct key and its arguments' families.
 
 use serde_json::Value;
-use sqlquack_core::provenance::models::ShapeArgument;
+use sqlquack_diagnostics::provenance::models::ShapeArgument;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::call_name;

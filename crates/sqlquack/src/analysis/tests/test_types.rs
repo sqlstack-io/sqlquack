@@ -1,4 +1,4 @@
-use sqlquack_core::refusals::models::RefusalCategory;
+use sqlquack_diagnostics::refusals::models::RefusalCategory;
 use sqlquack_rules::conversion::models::ConversionBudget;
 
 pub(crate) struct AnalyzeTestCase {

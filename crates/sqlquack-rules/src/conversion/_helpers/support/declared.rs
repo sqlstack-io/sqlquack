@@ -1,8 +1,8 @@
 //! TIMESTAMP_TZ source columns whose schema declares their offset, and the assumption they carry.
 
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::models::Refusal;
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::conversion::_helpers::support::scope::{Context, Emitted};
 use sqlquack_policy::policy::constants::DECLARED_OFFSET;

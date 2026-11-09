@@ -26,7 +26,7 @@ pyo3.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 sqlquack.workspace = true
-sqlquack-core.workspace = true
+sqlquack-diagnostics.workspace = true
 sqlquack-policy.workspace = true
 sqlquack-semantics.workspace = true
 

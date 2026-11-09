@@ -1,7 +1,7 @@
 //! `exact_decimal_divide`: exact decimal division at the result scale, rounded or truncated.
 
-use sqlquack_core::failures::constants::DIVISION_BY_ZERO;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::DIVISION_BY_ZERO;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::blocks::_helpers::text::tagged_error;

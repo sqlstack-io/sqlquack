@@ -1,6 +1,6 @@
 //! `variant_json_leaf`: a JSON-held value, such as parsed text, inside a VARIANT-held value.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::held::_helpers::guards::{bound, fidelity_error};
 use crate::held::constants::{HELD_RETYPED_NUMBER_PATTERN, VARIANT_JSON_LEAF};

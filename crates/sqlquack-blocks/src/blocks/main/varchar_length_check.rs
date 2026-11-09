@@ -1,7 +1,7 @@
 //! `varchar_length_check`: raises an error when text is longer than `max_length` characters, as a VARCHAR(n) cast does.
 
-use sqlquack_core::failures::constants::STRING_TOO_LONG;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::STRING_TOO_LONG;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::_helpers::text::tagged_error;
 use crate::blocks::constants::VARCHAR_LENGTH_CHECK;

@@ -1,6 +1,6 @@
 //! `submicro_check`: a nanosecond timestamp that raises when it has a sub-microsecond part.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::{SUBMICRO_CHECK, SUBMICRO_MESSAGE};
 use crate::raises::main::raised::raised;

@@ -1,6 +1,6 @@
 //! `numeric_divide`: the type of `/`.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::typing::_helpers::numbers::{arithmetic_operands, capped, division_scale};
 use crate::typing::constants::NUMERIC_DIVIDE;

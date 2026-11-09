@@ -7,7 +7,7 @@ use std::process::ExitCode;
 use clap::builder::styling::Styles;
 use clap::{Args, ColorChoice, Parser, Subcommand, ValueEnum};
 use serde::{Deserialize, Serialize};
-use sqlquack_core::diagnostics::models::Diagnostic;
+use sqlquack_diagnostics::diagnostics::models::Diagnostic;
 
 use sqlquack_evidence::constants::{
     AUDIT_PENDING_DIR, AUDIT_RESULTS_DIR, CASES_DIR, PENDING_DIR, RESULTS_DIR,

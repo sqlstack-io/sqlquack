@@ -1,6 +1,6 @@
 //! `json_reduce`: REDUCE, an array's elements folded left into a DOUBLE accumulator.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::raises::main::raised::raised;
 use crate::semi_structured::_helpers::lambdas::elements;

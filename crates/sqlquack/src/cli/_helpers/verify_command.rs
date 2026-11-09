@@ -14,7 +14,7 @@ use sqlquack_evidence::coverage::main::check_coverage::check_coverage;
 use sqlquack_evidence::coverage::main::load_domains::load_domains;
 use sqlquack_evidence::coverage::main::load_hazards::load_hazards;
 use sqlquack_evidence::coverage::models::CoverageReport;
-use sqlquack_evidence::replay::main::replay_on_duckdb::replay_on_duckdb;
+use sqlquack_evidence::replay::main::replay_on_engine::replay_on_engine;
 use sqlquack_evidence::replay::models::ReplaySettings;
 use sqlquack_evidence::results::main::load_recording::load_recording;
 use sqlquack_evidence::results::main::load_session_defaults::load_session_defaults;
@@ -579,7 +579,7 @@ fn judged(
     let setup = [format!(
         "ATTACH '{database}' AS inputs (READ_ONLY); USE inputs;"
     )];
-    let replayed = match replay_on_duckdb((&setup, &sql), None, settings) {
+    let replayed = match replay_on_engine((&setup, &sql), None, settings) {
         Ok(replayed) => replayed,
         Err(error) => return ("duckdb_error", error),
     };

@@ -1,6 +1,6 @@
 //! `text_to_time`: text read as a TIME, in Snowflake's recorded spellings.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::DATE_TEXT_SPELLING;
 use crate::blocks::main::string_literal::string_literal;

@@ -1,6 +1,6 @@
 //! `utc_zoned`: a naive wall time as the instant it names at +00:00.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::zones::constants::UTC_ZONED;
 

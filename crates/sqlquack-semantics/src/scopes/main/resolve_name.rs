@@ -1,8 +1,8 @@
 //! `resolve_name`: what a possibly qualified name means in a scope.
 
-use sqlquack_core::diagnostics::constants::CASE_ONLY_MATCH;
-use sqlquack_core::refusals::main::unresolved::unresolved;
-use sqlquack_core::refusals::models::Refusal;
+use sqlquack_diagnostics::diagnostics::constants::CASE_ONLY_MATCH;
+use sqlquack_diagnostics::refusals::main::unresolved::unresolved;
+use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::dialects::models::Profiles;
 use crate::scopes::models::{Resolution, Scope};

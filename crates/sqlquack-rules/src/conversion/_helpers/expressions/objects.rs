@@ -1,9 +1,6 @@
 //! OBJECT_CONSTRUCT, OBJECT_INSERT and OBJECT_DELETE over VARIANT values held as DuckDB `JSON`.
 
 use serde_json::Value;
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::blocks::main::string_literal::string_literal;
 use sqlquack_blocks::semi_structured::constants::{JSON_FIDELITY, VARIANT_TYPED_VALUES};
 use sqlquack_blocks::semi_structured::main::json_decimal::json_decimal;
@@ -13,6 +10,9 @@ use sqlquack_blocks::variants::main::json_object_construct::json_object_construc
 use sqlquack_blocks::variants::main::json_object_delete::json_object_delete;
 use sqlquack_blocks::variants::main::json_object_insert::json_object_insert;
 use sqlquack_blocks::variants::main::json_typed_text::json_typed_text;
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::held::{built, leaves};

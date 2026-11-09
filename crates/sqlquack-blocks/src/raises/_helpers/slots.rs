@@ -1,6 +1,6 @@
 //! The tags and ID markers of the raises in emitted SQL.
 
-use sqlquack_core::failures::constants::{
+use sqlquack_diagnostics::failures::constants::{
     ERROR_TAG_PREFIX, RAISE_ID_DIGITS, RAISE_ID_MARKER, TAG_END, UNIDENTIFIED_RAISE,
 };
 

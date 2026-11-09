@@ -1,6 +1,6 @@
 //! `json_output`: a VARIANT result column, as Snowflake returns it.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::_helpers::writing::{Root, sorted_text};
 use crate::semi_structured::constants::JSON_OUTPUT;

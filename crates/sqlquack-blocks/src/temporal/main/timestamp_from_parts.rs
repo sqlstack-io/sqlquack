@@ -1,6 +1,6 @@
 //! `timestamp_from_parts`: a nanosecond timestamp from a date and nanoseconds into it.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::TIMESTAMP_RANGE;
 use crate::raises::main::raised::raised;

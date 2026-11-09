@@ -1,4 +1,4 @@
-use sqlquack_core::refusals::models::RefusalCategory;
+use sqlquack_diagnostics::refusals::models::RefusalCategory;
 
 use crate::analysis::tests::helpers::{converted, refused, summarise};
 use crate::analysis::tests::test_types::{AnalysisSummary, AnalyzeTestCase};

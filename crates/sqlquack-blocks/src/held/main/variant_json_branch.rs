@@ -1,6 +1,6 @@
 //! `variant_json_branch`: a JSON-held set operation branch beside a FLOAT-built VARIANT.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::held::_helpers::guards::{bound, fidelity_error};
 use crate::held::constants::VARIANT_JSON_BRANCH;

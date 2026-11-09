@@ -1,6 +1,6 @@
 //! `average`: the type of AVG.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::typing::_helpers::numbers::{capped, division_scale};
 use crate::typing::constants::{AVERAGE, AVERAGE_EXTRA_DIGITS, DIVISION_EXTRA_SCALE, SCALE_CAP};

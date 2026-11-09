@@ -1,6 +1,6 @@
 //! `json_array_size`: ARRAY_SIZE of a VARIANT.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::constants::JSON_ARRAY_SIZE;
 use crate::variants::_helpers::objects::bound;

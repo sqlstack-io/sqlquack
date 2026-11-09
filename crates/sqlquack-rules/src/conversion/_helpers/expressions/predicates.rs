@@ -1,11 +1,11 @@
 //! IS NULL, IN, BETWEEN and EXISTS.
 
 use serde_json::Value;
-use sqlquack_core::refusals::main::missing::missing;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_blocks::semi_structured::main::json_text::json_text;
+use sqlquack_diagnostics::refusals::main::missing::missing;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::operators::{

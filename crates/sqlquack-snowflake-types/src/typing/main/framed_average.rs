@@ -1,6 +1,6 @@
 //! `framed_average`: the type of AVG over an explicit window frame.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::typing::_helpers::numbers::capped;
 use crate::typing::constants::{

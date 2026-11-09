@@ -2,11 +2,11 @@
 
 use std::collections::BTreeSet;
 
-use sqlquack_core::diagnostics::constants::{
+use sqlquack_diagnostics::diagnostics::constants::{
     CODES, CONVERSION_BUDGET, DIVERGENCE_REFUSED, MISSING_RULE, NOT_EXPRESSIBLE, PARSE_FIDELITY,
     TYPE_CONDITION, UNRESOLVED_NAME,
 };
-use sqlquack_core::refusals::models::RefusalCategory;
+use sqlquack_diagnostics::refusals::models::RefusalCategory;
 use sqlquack_evidence::cases::models::{CaseRole, LoadedCase};
 use sqlquack_evidence::verify::models::{CaseVerdict, Conversion, ErrorCheck, Verdict};
 use sqlquack_evidence::verify::types::CaseConverter;

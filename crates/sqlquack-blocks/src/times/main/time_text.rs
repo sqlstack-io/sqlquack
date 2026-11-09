@@ -1,6 +1,6 @@
 //! `time_text`: a TIME as Snowflake's default text, `HH24:MI:SS`.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::times::constants::TIME_TEXT;
 

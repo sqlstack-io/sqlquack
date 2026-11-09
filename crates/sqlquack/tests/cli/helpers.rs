@@ -2,7 +2,7 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
-use sqlquack_evidence::replay::main::replay_on_duckdb::replay_on_duckdb;
+use sqlquack_evidence::replay::main::replay_on_engine::replay_on_engine;
 use sqlquack_evidence::replay::models::{PythonFunction, PythonReplay, ReplaySettings};
 
 use walkdir::WalkDir;
@@ -853,7 +853,7 @@ pub(crate) fn python_outcome(
         time_zone: "UTC".to_owned(),
         null_order: "nulls_last".to_owned(),
     };
-    let rows = replay_on_duckdb(
+    let rows = replay_on_engine(
         (&[], report["sql"].as_str().unwrap_or_default()),
         Some(&replay),
         &settings,

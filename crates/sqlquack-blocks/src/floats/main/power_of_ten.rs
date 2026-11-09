@@ -1,6 +1,6 @@
 //! `power_of_ten`: POWER(10, n) of a whole exponent, rounded as the decimal 1en reads.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::floats::_helpers::values::bound;
 use crate::floats::constants::POWER_OF_TEN;

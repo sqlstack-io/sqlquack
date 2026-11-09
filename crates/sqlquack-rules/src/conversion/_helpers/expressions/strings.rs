@@ -1,12 +1,6 @@
 //! UPPER, LOWER, INITCAP, TRIM, CHR, HEX_ENCODE and concatenation.
 
 use serde_json::Value;
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::failures::constants::HEX_DECODE_FAILED;
-use sqlquack_core::failures::main::tagged_message::tagged_message;
-use sqlquack_core::refusals::main::missing::missing;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::blocks::main::full_case_lower::full_case_lower;
 use sqlquack_blocks::blocks::main::full_case_upper::full_case_upper;
 use sqlquack_blocks::blocks::main::null_propagating_concat::null_propagating_concat;
@@ -28,6 +22,12 @@ use sqlquack_blocks::text::main::code_point_text::code_point_text;
 use sqlquack_blocks::text::main::hex_decoded_text::hex_decoded_text;
 use sqlquack_blocks::text::main::hex_text::hex_text;
 use sqlquack_blocks::text::main::title_case::title_case;
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::failures::constants::HEX_DECODE_FAILED;
+use sqlquack_diagnostics::failures::main::tagged_message::tagged_message;
+use sqlquack_diagnostics::refusals::main::missing::missing;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;

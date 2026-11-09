@@ -1,10 +1,10 @@
 //! `collect_refusals`: every refusal in one statement, not only the first.
 
 use serde_json::Value;
-use sqlquack_core::parsing::models::SourceLines;
-use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_core::refusals::models::{Refusal, RefusalCategory};
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_syntax::Expression;
+use sqlquack_syntax::tokens::models::SourceLines;
 
 use crate::conversion::_helpers::queries::query::convert_query;
 use crate::conversion::_helpers::support::collecting::{Collector, collected};

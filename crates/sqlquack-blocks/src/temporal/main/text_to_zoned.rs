@@ -1,6 +1,6 @@
 //! `text_to_zoned`: text in the recorded spellings as the UTC wall time of the instant it names.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::{
     DATE_TEXT_SPELLING, ISO_TIMESTAMP_PATTERN, TEXT_TO_ZONED, ZONE_OFFSET_LIMITS,

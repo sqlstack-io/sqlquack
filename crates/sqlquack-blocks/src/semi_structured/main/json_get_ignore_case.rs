@@ -1,6 +1,6 @@
 //! `json_get_ignore_case`: GET_IGNORE_CASE of an object and a literal ASCII key.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::main::string_literal::string_literal;
 use crate::semi_structured::_helpers::guards::{bound, fidelity_error};

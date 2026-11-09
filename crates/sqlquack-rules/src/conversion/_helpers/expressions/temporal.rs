@@ -1,9 +1,5 @@
 //! Timestamp literals and casts between DATE and timestamps.
 
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::diagnostics::constants::ZONED_LOCAL_TIME;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::blocks::constants::SUBMICRO_MESSAGE;
 use sqlquack_blocks::blocks::main::cast::cast;
 use sqlquack_blocks::blocks::main::string_literal::string_literal;
@@ -12,6 +8,10 @@ use sqlquack_blocks::temporal::main::submicro_check::submicro_check;
 use sqlquack_blocks::temporal::main::truncate_timestamp::truncate_timestamp;
 use sqlquack_blocks::temporal::main::truncate_timestamp_to_date::truncate_timestamp_to_date;
 use sqlquack_blocks::times::constants::{MICROSECOND_PRECISION, TIME_SUBMICRO};
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::diagnostics::constants::ZONED_LOCAL_TIME;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::support::divergence::diverge;

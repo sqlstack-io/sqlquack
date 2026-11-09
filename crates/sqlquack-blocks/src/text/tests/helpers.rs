@@ -1,4 +1,4 @@
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::text::main::character_edit_distance::character_edit_distance;
 use crate::text::main::split_to_rows::split_to_rows;

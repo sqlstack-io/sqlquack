@@ -520,9 +520,7 @@ pub enum FunctionSetValue {
 }
 
 /// SQL data access characteristics for functions
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum SqlDataAccess {
     /// NO SQL
     NoSql,
@@ -535,9 +533,7 @@ pub enum SqlDataAccess {
 }
 
 /// Types of properties in CREATE FUNCTION for tracking their original order
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum FunctionPropertyKind {
     /// SET option
     Set,
@@ -589,9 +585,7 @@ pub struct FunctionParameter {
 }
 
 /// Parameter mode (IN, OUT, INOUT, VARIADIC)
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ParameterMode {
     In,
     Out,
@@ -624,9 +618,7 @@ pub enum FunctionBody {
 }
 
 /// Function security (DEFINER, INVOKER, or NONE)
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum FunctionSecurity {
     Definer,
     Invoker,
@@ -970,9 +962,7 @@ pub struct CreateTrigger {
 }
 
 /// Trigger timing (BEFORE, AFTER, INSTEAD OF)
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum TriggerTiming {
     Before,
     After,
@@ -989,9 +979,7 @@ pub enum TriggerEvent {
 }
 
 /// Trigger FOR EACH clause
-#[derive(
-    sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize,
-)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum TriggerForEach {
     Row,
     Statement,

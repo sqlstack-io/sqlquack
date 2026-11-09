@@ -1,6 +1,6 @@
 //! `guarded_pattern`: a REGEXP pattern from a column, raising outside the recorded syntax.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::raises::main::raised::raised;
 use crate::text::constants::{GUARDED_PATTERN, RECORDED_PATTERN_SYNTAX, REGEXP_PATTERN_SYNTAX};

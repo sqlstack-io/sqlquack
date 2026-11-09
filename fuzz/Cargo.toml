@@ -9,7 +9,8 @@ cargo-fuzz = true
 
 [dependencies]
 libfuzzer-sys = "0.4"
-sqlquack-core = { path = "../crates/sqlquack-core" }
+sqlquack-diagnostics = { path = "../crates/sqlquack-diagnostics" }
+sqlquack-parse = { path = "../crates/sqlquack-parse" }
 sqlquack-syntax = { path = "../crates/sqlquack-syntax" }
 
 # Kept out of the SQLQuack workspace; run with `cargo +nightly fuzz run tolerant` or `diagnose`.

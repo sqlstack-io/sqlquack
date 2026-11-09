@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use sqlquack_core::provenance::models::Provenance;
+use sqlquack_diagnostics::provenance::models::Provenance;
 
 use crate::cases::models::LoadedCase;
 use crate::results::models::SessionDefaults;

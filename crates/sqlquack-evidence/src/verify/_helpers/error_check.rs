@@ -1,10 +1,10 @@
 //! How DuckDB's error compares with the recorded Snowflake error.
 
-use sqlquack_core::failures::constants::RAISE_ID_MARKER;
-use sqlquack_core::failures::main::duckdb_failure::duckdb_failure;
-use sqlquack_core::failures::main::snowflake_kind::snowflake_kind;
-use sqlquack_core::failures::models::{ErrorKind, FailureMode};
-use sqlquack_core::provenance::models::Provenance;
+use sqlquack_diagnostics::failures::constants::RAISE_ID_MARKER;
+use sqlquack_diagnostics::failures::main::duckdb_failure::duckdb_failure;
+use sqlquack_diagnostics::failures::main::snowflake_kind::snowflake_kind;
+use sqlquack_diagnostics::failures::models::{ErrorKind, FailureMode};
+use sqlquack_diagnostics::provenance::models::Provenance;
 use sqlquack_policy::policy::models::Policy;
 
 use crate::results::models::RecordedFailure;

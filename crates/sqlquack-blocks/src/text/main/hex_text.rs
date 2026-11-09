@@ -1,6 +1,6 @@
 //! `hex_text`: HEX_ENCODE, the hexadecimal digits of a text's UTF-8 bytes.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::text::constants::HEX_TEXT;
 

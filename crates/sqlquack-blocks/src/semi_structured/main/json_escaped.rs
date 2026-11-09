@@ -1,6 +1,6 @@
 //! `json_escaped`: DuckDB's JSON text with Snowflake's escapes.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::_helpers::writing::escaped;
 use crate::semi_structured::constants::JSON_ESCAPED;

@@ -1,6 +1,6 @@
 //! `title_case`: INITCAP, each word's first character upper-cased and the rest lower-cased.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::UPPERCASE_EXPANSIONS;
 use crate::blocks::main::full_case_lower::full_case_lower;

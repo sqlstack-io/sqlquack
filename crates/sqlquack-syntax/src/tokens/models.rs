@@ -1573,3 +1573,85 @@ pub(crate) struct TokenizerState<'a, C, T> {
     pub(crate) guard_stats: Option<TokenGuardStats>,
     pub(crate) config: &'a TokenizerConfig,
 }
+
+/// A position in source SQL, in Unicode characters.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize)]
+pub struct SourceLocation {
+    /// Character offset of the first character.
+    pub start: usize,
+    /// Character offset one past the last character.
+    pub end: usize,
+    /// One-based line.
+    pub line: usize,
+    /// One-based column.
+    pub column: usize,
+}
+
+/// Where each line of source SQL starts, to turn character ranges into locations.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct SourceLines {
+    line_starts: Vec<usize>,
+    length: usize,
+    shift: usize,
+    source: String,
+}
+
+impl SourceLines {
+    /// The lines of `source`.
+    pub fn new(source: &str) -> Self {
+        Self::shifted(source, 0)
+    }
+
+    /// The lines of `source`, for ranges in a parse of it behind a prefix of `shift` characters.
+    pub fn shifted(source: &str, shift: usize) -> Self {
+        let mut line_starts = vec![0];
+        let mut length = 0;
+        for (offset, character) in source.chars().enumerate() {
+            if character == '\n' {
+                line_starts.push(offset + 1);
+            }
+            length = offset + 1;
+        }
+        Self {
+            line_starts,
+            length,
+            shift,
+            source: source.to_owned(),
+        }
+    }
+
+    /// The source text at `location`, a location these lines gave.
+    pub fn text(&self, location: &SourceLocation) -> String {
+        self.source
+            .chars()
+            .skip(location.start)
+            .take(location.end.saturating_sub(location.start))
+            .collect()
+    }
+
+    /// The location of the characters `start..end` of the parsed text.
+    pub fn location(&self, start: usize, end: usize) -> SourceLocation {
+        let start = start.saturating_sub(self.shift).min(self.length);
+        let end = end.saturating_sub(self.shift).clamp(start, self.length);
+        let line_index = self
+            .line_starts
+            .partition_point(|line_start| *line_start <= start)
+            .saturating_sub(1);
+        SourceLocation {
+            start,
+            end,
+            line: line_index + 1,
+            column: start - self.line_starts[line_index] + 1,
+        }
+    }
+
+    /// The location of the characters `start..end` of the source itself, not of the parsed text.
+    pub fn source_location(&self, start: usize, end: usize) -> SourceLocation {
+        self.location(start + self.shift, end + self.shift)
+    }
+
+    /// The location of the whole source.
+    pub fn whole(&self) -> SourceLocation {
+        self.location(self.shift, self.shift + self.length)
+    }
+}

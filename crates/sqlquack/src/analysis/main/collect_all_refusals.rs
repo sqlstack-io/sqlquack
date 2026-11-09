@@ -1,17 +1,18 @@
 //! `collect_all_refusals`: every refusal in some SQL, converting past each refused node.
 
-use sqlquack_core::classification::main::classify::classify;
-use sqlquack_core::parsing::main::parse_source::parse_source;
-use sqlquack_core::parsing::models::{SourceDialect, SourceLines};
-use sqlquack_core::refusals::main::refuse_constructs::refuse_constructs;
-use sqlquack_core::refusals::main::refuse_unparsed::refuse_unparsed;
-use sqlquack_core::refusals::main::snowflake_rejections::snowflake_rejections;
-use sqlquack_core::refusals::models::RefusalCategory;
-use sqlquack_core::refusals::types::ConstructPolicy;
+use sqlquack_diagnostics::classification::main::classify::classify;
+use sqlquack_diagnostics::classification::models::SourceDialect;
+use sqlquack_diagnostics::refusals::main::refuse_constructs::refuse_constructs;
+use sqlquack_diagnostics::refusals::main::refuse_unparsed::refuse_unparsed;
+use sqlquack_diagnostics::refusals::main::snowflake_rejections::snowflake_rejections;
+use sqlquack_diagnostics::refusals::models::RefusalCategory;
+use sqlquack_diagnostics::refusals::types::ConstructPolicy;
+use sqlquack_parse::parsing::main::parse_source::parse_source;
 use sqlquack_rules::conversion::main::collect_refusals::collect_refusals;
 use sqlquack_rules::conversion::main::quoted_exclusions::quoted_exclusions;
 use sqlquack_rules::conversion::models::{CollectedRefusals, ConversionOptions};
 use sqlquack_semantics::types::models::Schema;
+use sqlquack_syntax::tokens::models::SourceLines;
 
 use sqlquack_convert::analysis::main::placed::placed;
 
@@ -27,7 +28,7 @@ pub fn collect_all_refusals(
         quoted_exclusions: quoted_exclusions(sql),
         ..options.clone()
     };
-    let statements = match parse_source(sql, dialect) {
+    let statements = match parse_source(sql, dialect.syntax()) {
         Ok(statements) => statements,
         Err(failure) => {
             return CollectedRefusals {

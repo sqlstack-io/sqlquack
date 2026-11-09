@@ -1,8 +1,8 @@
-use sqlquack_core::parsing::main::parse_source::parse_source;
-use sqlquack_core::parsing::models::SourceDialect;
-use sqlquack_core::provenance::models::Provenance;
+use sqlquack_diagnostics::provenance::models::Provenance;
+use sqlquack_parse::parsing::main::parse_source::parse_source;
 use sqlquack_rules::conversion::models::{ConversionOptions, Converted, UserOverride};
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
+use sqlquack_syntax::Dialect;
 
 use crate::analysis::_helpers::override_calls::overrides_applied;
 use crate::analysis::tests::test_types::OverrideCallsTestCase;
@@ -40,7 +40,7 @@ fn given_an_override_when_converted_sql_skips_a_call_then_the_statement_is_refus
     options.overrides.insert("UPPER".to_owned(), replacement);
     for test_case in test_cases {
         let statements =
-            parse_source(test_case.sql, SourceDialect::Snowflake).expect("the statement parses");
+            parse_source(test_case.sql, Dialect::Snowflake).expect("the statement parses");
         let converted = Converted {
             sql: test_case.emitted.to_owned(),
             columns: Vec::new(),

@@ -1,11 +1,11 @@
 //! Binding, raising and element keys for array building blocks.
 
-use sqlquack_core::failures::main::tagged_message::tagged_message;
-use sqlquack_core::failures::models::SnowflakeCode;
+use sqlquack_diagnostics::failures::main::tagged_message::tagged_message;
+use sqlquack_diagnostics::failures::models::SnowflakeCode;
 
 use crate::raises::main::raised::raised;
 use crate::semi_structured::main::json_output::json_output;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 /// `body` over `value` evaluated once, as the lambda parameter `name`.
 pub(crate) fn bound(value: &str, name: &str, body: &str) -> String {

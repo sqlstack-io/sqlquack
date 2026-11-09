@@ -5,7 +5,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::mem::ManuallyDrop;
 
 use duckdb::Connection;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::main::quoted_identifier::quoted_identifier;
 use crate::checking::main::quoted_relation::quoted_relation;

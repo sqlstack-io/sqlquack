@@ -1,6 +1,6 @@
 //! `numeric_modulo`: the type of `%` and MOD.
 
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::typing::_helpers::numbers::{arithmetic_operands, capped};
 use crate::typing::constants::{MODULO_MIN_LEADING_DIGITS, NUMERIC_MODULO};

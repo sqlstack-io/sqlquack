@@ -1,7 +1,7 @@
 //! `json_object_construct`: OBJECT_CONSTRUCT and OBJECT_CONSTRUCT_KEEP_NULL.
 
-use sqlquack_core::failures::constants::OBJECT_KEY_EXISTS;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::OBJECT_KEY_EXISTS;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::semi_structured::constants::{JSON_OBJECT_CONSTRUCT, KEY_EXISTS_MESSAGE};
 use crate::variants::_helpers::objects::{bound, json_error, sorted_object};

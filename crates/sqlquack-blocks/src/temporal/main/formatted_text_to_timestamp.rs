@@ -1,8 +1,8 @@
 //! `formatted_text_to_timestamp`: TO_TIMESTAMP_NTZ and TRY_TO_TIMESTAMP_NTZ of text in one literal format.
 
-use sqlquack_core::failures::constants::TIMESTAMP_FORMAT_MISMATCH;
-use sqlquack_core::failures::main::tagged_message::tagged_message;
-use sqlquack_core::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::failures::constants::TIMESTAMP_FORMAT_MISMATCH;
+use sqlquack_diagnostics::failures::main::tagged_message::tagged_message;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::{
     DATE_TEXT_SPELLING, FORMATTED_TEXT_TO_TIMESTAMP, TIMESTAMP_RANGE, TWO_DIGIT_CENTURY_START,

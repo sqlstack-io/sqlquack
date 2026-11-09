@@ -1,17 +1,17 @@
 //! Calls to project functions, typed by the signatures the schema declares.
 
 use serde_json::Value;
-use sqlquack_core::classification::models::Construct;
-use sqlquack_core::provenance::models::ProvenanceLog;
-use sqlquack_core::refusals::constants::NEEDS_DIVERGENCE;
-use sqlquack_core::refusals::main::outside_conditions::outside_conditions;
-use sqlquack_core::refusals::main::refused_divergence::refused_divergence;
-use sqlquack_core::refusals::models::Refusal;
 use sqlquack_blocks::blocks::main::cast::cast;
 use sqlquack_blocks::blocks::main::column_type::column_type;
 use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_blocks::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_blocks::semi_structured::main::json_guarded::json_guarded;
+use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
+use sqlquack_diagnostics::refusals::constants::NEEDS_DIVERGENCE;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_diagnostics::refusals::main::refused_divergence::refused_divergence;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_snowflake_types::typing::models::SnowflakeType;
 
 use crate::conversion::_helpers::expressions::scalar::convert_expression;
