@@ -15,7 +15,7 @@ use sqlquack_evidence::constants::{
 use sqlquack_evidence::coverage::constants::{DOMAINS_DIR, HAZARDS_FILE};
 use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 use sqlquack_policy::policy::models::{DivergenceFailure, Policy};
-use sqlquack_semantics::snowflake::types::models::Schema;
+use sqlquack_semantics::snowflake::typing::types::Schema;
 
 use crate::analysis::models::PythonSignature;
 use crate::census::constants::DEFAULT_TEXT_LIMIT;

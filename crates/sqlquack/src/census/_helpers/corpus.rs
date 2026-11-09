@@ -8,8 +8,8 @@ use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use sqlquack_convert::snowflake::catalogue::main::builtin_catalogue::builtin_catalogue;
 use std::collections::BTreeSet;
 
-use sqlquack_semantics::snowflake::names::constants::RELATION_KEY_SEPARATOR;
-use sqlquack_semantics::snowflake::types::models::{ColumnSpec, Schema};
+use sqlquack_semantics::schemas::constants::RELATION_KEY_SEPARATOR;
+use sqlquack_semantics::snowflake::typing::types::{ColumnSpec, Schema};
 
 use crate::census::_helpers::completion::{Completed, complete_in_waves};
 use crate::census::_helpers::inspect::{FileCensus, complete_refusals, inspect_file};

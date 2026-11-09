@@ -6,7 +6,7 @@ use std::path::{Path, PathBuf};
 use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 use sqlquack_policy::policy::main::load_project_file::load_project_file;
 use sqlquack_policy::policy::models::{Policy, ProjectPolicy};
-use sqlquack_semantics::snowflake::types::models::Schema;
+use sqlquack_semantics::snowflake::typing::types::Schema;
 
 use crate::cli::_helpers::evidence::policy_file;
 use crate::cli::models::{PolicyArguments, ProjectChoices};

@@ -10,8 +10,8 @@ use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_diagnostics::refusals::types::ConstructPolicy;
 use sqlquack_diagnostics::snowflake::classification::main::cast_type_name::cast_type_name;
 use sqlquack_parse::parsing::main::parse_source::parse_source;
-use sqlquack_semantics::snowflake::types::models::{FunctionReturns, FunctionSpec, Schema};
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::types::{FunctionReturns, FunctionSpec, Schema};
 use sqlquack_syntax::Dialect;
 use sqlquack_syntax::tokens::models::SourceLines;
 

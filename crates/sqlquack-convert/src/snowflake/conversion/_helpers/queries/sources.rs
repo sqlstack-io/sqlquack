@@ -47,11 +47,11 @@ use crate::snowflake::conversion::constants::{
 
 /// How the parsed tree spells a NATURAL join's kind, lower-cased.
 const NATURAL_JOIN_PREFIX: &str = "natural";
-use sqlquack_semantics::snowflake::names::constants::RELATION_KEY_SEPARATOR;
-use sqlquack_semantics::snowflake::names::main::relation_key::relation_key;
-use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
+use sqlquack_semantics::schemas::constants::RELATION_KEY_SEPARATOR;
+use sqlquack_semantics::schemas::main::relation_key::relation_key;
 use sqlquack_semantics::snowflake::types::main::stored_columns::stored_columns;
-use sqlquack_semantics::snowflake::types::models::{ColumnSpec, FunctionReturns};
+use sqlquack_semantics::snowflake::typing::types::ScopeRelation;
+use sqlquack_semantics::snowflake::typing::types::{ColumnSpec, FunctionReturns};
 
 /// GENERATOR's named arguments.
 const ROWCOUNT_ARGUMENT: &str = "ROWCOUNT";

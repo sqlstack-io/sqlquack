@@ -1,7 +1,8 @@
 //! `schema_columns`: a schema relation's columns as a statement reads them, marks applied.
 
-use crate::snowflake::types::models::{ColumnSpec, TypedLeaves};
+use crate::snowflake::types::models::TypedLeaves;
 use crate::snowflake::typing::models::SnowflakeType;
+use crate::snowflake::typing::types::ColumnSpec;
 
 /// The columns, proven free unless marked, entering in `typed` the leaves marked ones may hold.
 pub(in crate::snowflake) fn schema_columns(

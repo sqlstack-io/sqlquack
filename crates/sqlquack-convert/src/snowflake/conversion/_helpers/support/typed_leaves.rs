@@ -9,8 +9,8 @@ use sqlquack_blocks::semi_structured::constants::SOURCE_VARIANT_JSON;
 use crate::snowflake::conversion::_helpers::support::divergence::diverge;
 use crate::snowflake::conversion::_helpers::support::scope::{Context, Emitted};
 
-use sqlquack_semantics::snowflake::types::models::ColumnSpec;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::types::ColumnSpec;
 
 /// A converted query's SQL and result columns, or its refusal.
 pub(crate) type ConvertedQuery = Result<(String, Vec<ColumnSpec>), Refusal>;

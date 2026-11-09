@@ -4,7 +4,8 @@ use crate::snowflake::conversion::models::Converted;
 use serde_json::Value;
 use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_policy::policy::constants::PROJECT_UDF;
-use sqlquack_semantics::snowflake::types::models::{Schema, Volatility};
+use sqlquack_semantics::schemas::models::Volatility;
+use sqlquack_semantics::snowflake::typing::types::Schema;
 use sqlquack_syntax::Expression;
 
 use crate::snowflake::analysis::constants::CALL_NODE_KINDS;

@@ -5,9 +5,10 @@ use sqlquack_diagnostics::refusals::main::unresolved::unresolved;
 use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::dialects::models::Profiles;
-use crate::snowflake::names::constants::{UNKNOWN_RELATION_PREFIX, UNKNOWN_RELATION_SUFFIX};
+use crate::schemas::constants::{UNKNOWN_RELATION_PREFIX, UNKNOWN_RELATION_SUFFIX};
 use crate::snowflake::types::main::_schema_columns::schema_columns;
-use crate::snowflake::types::models::{ColumnSpec, Schema, TypedLeaves};
+use crate::snowflake::types::models::TypedLeaves;
+use crate::snowflake::typing::types::{ColumnSpec, Schema};
 
 /// The innermost CTE so named, else the schema's relation; names the target cannot tell apart refuse.
 pub fn relation_columns(

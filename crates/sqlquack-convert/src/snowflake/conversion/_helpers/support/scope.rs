@@ -6,11 +6,11 @@ use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::dialects::constants::SNOWFLAKE_TO_DUCKDB;
+use sqlquack_semantics::scopes::main::resolve_name::resolve_name;
 use sqlquack_semantics::snowflake::names::main::relation_columns::relation_columns;
-use sqlquack_semantics::snowflake::scopes::main::resolve_name::resolve_name;
-use sqlquack_semantics::snowflake::scopes::models::{Resolution, Scope as SemanticScope};
 use sqlquack_semantics::snowflake::types::models::TypedLeaves;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::types::{Resolution, Scope as SemanticScope};
 use sqlquack_syntax::tokens::models::SourceLocation;
 
 use crate::snowflake::conversion::_helpers::support::locations::Locator;
@@ -18,7 +18,8 @@ use crate::snowflake::conversion::_helpers::support::tree::node_construct;
 use crate::snowflake::conversion::constants::SUBQUERY_PARAMETER_PREFIX;
 
 use crate::snowflake::conversion::models::ConversionOptions;
-use sqlquack_semantics::snowflake::types::models::{ColumnSpec, Holding, Schema};
+use sqlquack_semantics::schemas::models::Holding;
+use sqlquack_semantics::snowflake::typing::types::{ColumnSpec, Schema};
 
 /// A converted scalar: DuckDB SQL whose type is the DuckDB pairing of `data_type`.
 #[derive(Clone, Debug, PartialEq, Eq)]

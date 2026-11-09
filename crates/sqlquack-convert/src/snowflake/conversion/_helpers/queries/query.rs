@@ -44,9 +44,9 @@ use crate::snowflake::conversion::constants::{
     VALUES_COLUMN_PREFIX, VALUES_ROWS, VALUES_ROWS_LIMIT,
 };
 use sqlquack_semantics::dialects::constants::SNOWFLAKE_TO_DUCKDB;
-use sqlquack_semantics::snowflake::scopes::main::star_relations::star_relations;
-use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
-use sqlquack_semantics::snowflake::types::models::ColumnSpec;
+use sqlquack_semantics::scopes::main::star_relations::star_relations;
+use sqlquack_semantics::snowflake::typing::types::ColumnSpec;
+use sqlquack_semantics::snowflake::typing::types::ScopeRelation;
 
 /// The most characters Snowflake keeps of an unaliased item's text as its name, as recorded.
 const OUTPUT_NAME_MAX_CHARS: usize = 255;

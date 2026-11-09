@@ -3,7 +3,8 @@ use crate::snowflake::typing::models::SnowflakeType;
 use crate::dialects::constants::SNOWFLAKE_TO_DUCKDB;
 use crate::snowflake::names::main::relation_columns::relation_columns;
 use crate::snowflake::names::tests::test_types::RelationColumnsTestCase;
-use crate::snowflake::types::models::{ColumnSpec, Schema, TypedLeaves};
+use crate::snowflake::types::models::TypedLeaves;
+use crate::snowflake::typing::types::{ColumnSpec, Schema};
 
 #[test]
 fn given_ctes_and_a_schema_when_reading_relations_then_the_innermost_name_wins() {

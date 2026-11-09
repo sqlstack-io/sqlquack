@@ -3,8 +3,8 @@
 use sha2::{Digest, Sha256};
 use sqlquack_convert::snowflake::conversion::models::UserOverride;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
-use sqlquack_semantics::snowflake::types::models::ColumnSpec;
 use sqlquack_semantics::snowflake::typing::main::cast_target::cast_target;
+use sqlquack_semantics::snowflake::typing::types::ColumnSpec;
 
 use crate::analysis::constants::VARIANT_HOLDING_TYPE;
 use crate::analysis::constants::{

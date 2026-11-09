@@ -19,7 +19,7 @@ use sqlquack_evidence::verify::models::Conversion;
 use sqlquack_evidence::verify::types::CaseConverter;
 use sqlquack_policy::policy::constants::QUOTED_IDENTIFIERS_IGNORE_CASE;
 use sqlquack_policy::policy::models::SessionValue;
-use sqlquack_semantics::snowflake::types::models::Schema;
+use sqlquack_semantics::snowflake::typing::types::Schema;
 use sqlquack_syntax::{DataType, Dialect};
 
 use crate::analysis::_helpers::case_functions::case_functions;

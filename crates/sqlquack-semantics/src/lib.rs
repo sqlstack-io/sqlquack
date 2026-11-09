@@ -14,6 +14,8 @@ pub mod duckdb;
 pub mod lineage;
 #[cfg(feature = "postgres")]
 pub mod postgres;
+pub mod schemas;
+pub mod scopes;
 #[cfg(feature = "snowflake")]
 pub mod snowflake;
 #[cfg(feature = "sqlite")]

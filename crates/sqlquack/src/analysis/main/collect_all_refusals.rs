@@ -11,7 +11,7 @@ use sqlquack_diagnostics::refusals::models::RefusalCategory;
 use sqlquack_diagnostics::refusals::types::ConstructPolicy;
 use sqlquack_diagnostics::snowflake::refusals::main::snowflake_rejections::snowflake_rejections;
 use sqlquack_parse::parsing::main::parse_source::parse_source;
-use sqlquack_semantics::snowflake::types::models::Schema;
+use sqlquack_semantics::snowflake::typing::types::Schema;
 use sqlquack_syntax::tokens::models::SourceLines;
 
 use sqlquack_convert::analysis::main::placed::placed;

@@ -5,10 +5,11 @@ use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_evidence::cases::models::{CaseFunction, FunctionBodyLanguage, InputColumn};
 use sqlquack_evidence::replay::models::PythonFunction;
-use sqlquack_semantics::snowflake::types::models::{
-    ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits, Schema,
-};
+use sqlquack_semantics::schemas::models::{FunctionLanguage, FunctionTraits};
 use sqlquack_semantics::snowflake::typing::main::cast_target::cast_target;
+use sqlquack_semantics::snowflake::typing::types::{
+    ColumnSpec, FunctionReturns, FunctionSpec, Schema,
+};
 
 use crate::analysis::_helpers::python_signature::python_signature;
 use crate::analysis::models::CaseFunctions;

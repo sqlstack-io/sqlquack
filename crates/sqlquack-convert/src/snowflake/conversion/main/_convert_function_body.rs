@@ -14,10 +14,9 @@ use crate::snowflake::conversion::_helpers::support::locations::Locator;
 use crate::snowflake::conversion::_helpers::support::scope::{Context, StatementTracks};
 use crate::snowflake::conversion::_helpers::support::tree::session_tree;
 use crate::snowflake::conversion::models::{ConversionOptions, ConvertedFunction};
+use sqlquack_semantics::schemas::models::FunctionLanguage;
 use sqlquack_semantics::snowflake::types::models::TypedLeaves;
-use sqlquack_semantics::snowflake::types::models::{
-    FunctionLanguage, FunctionReturns, FunctionSpec, Schema,
-};
+use sqlquack_semantics::snowflake::typing::types::{FunctionReturns, FunctionSpec, Schema};
 
 /// The macro body of a SQL function; `query` is its body, a scalar's wrapped as one CAST column.
 pub(in crate::snowflake) fn convert_function_body(

@@ -24,9 +24,8 @@ use crate::snowflake::conversion::constants::{
 use crate::snowflake::conversion::main::override_macro_name::override_macro_name;
 use crate::snowflake::conversion::models::UserOverride;
 use sqlquack_policy::policy::constants::{PROJECT_UDF, PYTHON_VALUE_CROSSING, USER_OVERRIDE};
-use sqlquack_semantics::snowflake::types::models::{
-    FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits,
-};
+use sqlquack_semantics::schemas::models::{FunctionLanguage, FunctionTraits};
+use sqlquack_semantics::snowflake::typing::types::{FunctionReturns, FunctionSpec};
 
 /// A scalar project function call: arguments coerced to the parameters, the result to its type.
 pub(crate) fn project_call(

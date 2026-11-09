@@ -1,9 +1,9 @@
 use crate::snowflake::typing::models::SnowflakeType;
 
 use crate::dialects::constants::SNOWFLAKE_TO_DUCKDB;
-use crate::snowflake::scopes::main::resolve_name::resolve_name;
-use crate::snowflake::scopes::models::{Scope, ScopeRelation};
-use crate::snowflake::types::models::ColumnSpec;
+use crate::scopes::main::resolve_name::resolve_name;
+use crate::snowflake::typing::types::ColumnSpec;
+use crate::snowflake::typing::types::{Scope, ScopeRelation};
 
 /// A relation of VARCHAR columns.
 pub(crate) fn relation(alias: &str, columns: &[&str]) -> ScopeRelation {

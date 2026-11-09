@@ -33,9 +33,9 @@ use crate::snowflake::conversion::constants::{
     NUMBER_LITERAL, PARENTHESES, POSITIONAL_COLUMN, SCALAR_SUBQUERY, SEQUENCE_COLUMN,
     SEQUENCE_PEERS, TYPED_LITERAL_KINDS, TYPED_LITERAL_PAIR, UNARY_PLUS,
 };
-use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
-use sqlquack_semantics::snowflake::types::models::Holding;
+use sqlquack_semantics::schemas::models::Holding;
 use sqlquack_semantics::snowflake::typing::constants::MAX_PRECISION;
+use sqlquack_semantics::snowflake::typing::types::ScopeRelation;
 
 /// The integer digits a unary plus gives a NUMBER at least, within 38: + 1 is NUMBER(2,0).
 const PLUS_INTEGER_DIGITS: u8 = 2;

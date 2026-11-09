@@ -3,11 +3,15 @@
 use sqlquack_diagnostics::refusals::main::unresolved::unresolved;
 use sqlquack_diagnostics::refusals::models::Refusal;
 
-use crate::snowflake::names::constants::{AMBIGUOUS_RELATION_SUFFIX, RELATION_KEY_SEPARATOR};
-use crate::snowflake::types::models::Schema;
+use crate::schemas::constants::{AMBIGUOUS_RELATION_SUFFIX, RELATION_KEY_SEPARATOR};
+use crate::schemas::models::Schema;
+use crate::schemas::types::DialectType;
 
 /// The declared key agreeing with the most of `parts`, read from the name backwards; a tie refuses.
-pub fn relation_key(parts: &[String], schema: &Schema) -> Result<Option<String>, Refusal> {
+pub fn relation_key<T: DialectType>(
+    parts: &[String],
+    schema: &Schema<T>,
+) -> Result<Option<String>, Refusal> {
     let mut best: Vec<&String> = Vec::new();
     let mut best_score = (0, false);
     for key in schema.relations.keys() {
