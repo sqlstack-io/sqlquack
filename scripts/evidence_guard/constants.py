@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-RESULTS_DIRS: tuple[str, ...] = (
+RESULTS_PATHSPECS: tuple[str, ...] = (
     "evidence/results",
     "evidence/audit/results",
     "evidence/referee",
     "coverage/syntax/receipts",
+    ":(glob)coverage/syntax-*/receipts/**",
 )
 UNGUARDED_FILES: frozenset[str] = frozenset({"README.md"})
 RECORDER_PREFIX: str = "sqlquack-record "
@@ -74,6 +75,10 @@ REFEREE_CATALOGUE_KEYS: frozenset[str] = frozenset(
 ACCEPTED_OUTCOME: str = "accepted"
 REJECTED_OUTCOME: str = "rejected"
 REFEREE_DIRECTORY: str = "evidence/referee/"
-SYNTAX_RECEIPTS_DIRECTORY: str = "coverage/syntax/receipts/"
+SYNTAX_RECEIPTS_PATTERN: str = r"coverage/syntax(-[^/]+)?/receipts/"
 SYNTAX_RECEIPT_SUFFIX: str = ".jsonl"
 SYNTAX_REPORT_SUFFIX: str = ".report.json"
+SYNTAX_WITHDRAWN_KEY: str = "withdrawn"
+SYNTAX_WITHDRAWN_RECEIPT_KEY: str = "receipt_sha256"
+SYNTAX_WITHDRAWN_REASON_KEY: str = "reason"
+SHA256_PATTERN: str = r"[0-9a-f]{64}"
