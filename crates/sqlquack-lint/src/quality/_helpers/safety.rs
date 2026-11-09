@@ -1,5 +1,7 @@
 //! SQLCLEAN046 to SQLCLEAN053: report-only safety Rules for queries that cannot do what they appear to.
 
+use crate::dialects::main::profile::profile;
+use crate::dialects::models::LintProfile;
 use crate::lint::models::LintDialect;
 use std::borrow::Cow;
 use std::collections::HashSet;
@@ -226,14 +228,11 @@ fn with_clause(node: &Expression) -> Option<&With> {
 
 /// A CTE name as the dialect resolves it, so only names the engine treats as equal collide.
 fn cte_key(identifier: &Identifier, dialect: LintDialect) -> String {
-    let quoted_names_ignore_case = matches!(
-        dialect,
-        LintDialect::DuckDB | LintDialect::SQLite | LintDialect::BigQuery | LintDialect::Databricks
-    );
-    match dialect {
-        _ if identifier.quoted && !quoted_names_ignore_case => identifier.name.clone(),
-        LintDialect::Snowflake => identifier.name.to_uppercase(),
-        _ => identifier.name.to_lowercase(),
+    let profile: LintProfile = profile(dialect);
+    match profile.folds_upper {
+        _ if identifier.quoted && !profile.quoted_names_ignore_case => identifier.name.clone(),
+        true => identifier.name.to_uppercase(),
+        false => identifier.name.to_lowercase(),
     }
 }
 

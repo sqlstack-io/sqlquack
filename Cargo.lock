@@ -1532,11 +1532,9 @@ dependencies = [
  "rustc-hash",
  "serde",
  "serde_json",
+ "sqlquack-lint",
+ "sqlquack-parse",
  "sqlquack-syntax",
- "sqlquack-syntax-bigquery",
- "sqlquack-syntax-databricks",
- "sqlquack-syntax-postgres",
- "sqlquack-syntax-snowflake",
 ]
 
 [[package]]

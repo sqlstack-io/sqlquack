@@ -1,5 +1,6 @@
 //! Join predicates, and whether an explicit cross join can multiply rows.
 
+use crate::dialects::main::profile::profile;
 use crate::lint::_helpers::parsing::predicate_expressions;
 use crate::lint::models::LintDialect;
 use std::borrow::Cow;
@@ -93,7 +94,7 @@ pub(super) fn join_expression_spans(
                         ))
             })
             .unwrap_or(tokens.len());
-        let native: bool = matches!(dialect, LintDialect::BigQuery | LintDialect::Databricks);
+        let native: bool = profile(dialect).own_predicate_parser;
         let end: usize = match native {
             true => (index + 1..end)
                 .rev()
