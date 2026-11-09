@@ -46,6 +46,8 @@ pub(crate) struct LayoutRules {
     pub(crate) breaks_conditions: bool,
     /// A `:` between a value and a word is a path accessor such as `v:field`.
     pub(crate) path_colons: bool,
+    /// A `:` before `[` is a path accessor too, such as `v:['field']`.
+    pub(crate) bracket_paths: bool,
     /// A stage reference such as `@stage/path/file.csv` is printed touching as written.
     pub(crate) stage_runs: bool,
     /// A dashed name such as `my-project.ds.t` is printed touching as written.
@@ -68,6 +70,8 @@ pub(crate) struct LayoutRules {
     pub(crate) cte_clauses: &'static [(&'static str, &'static str)],
     /// Words that start a clause wherever they stand.
     pub(crate) clause_keywords: &'static [&'static str],
+    /// Words that with `BY` start a clause listing items as GROUP BY does, such as `CLUSTER BY`.
+    pub(crate) by_clauses: &'static [&'static str],
     /// Table sources whose call stays on one line wherever it stands.
     pub(crate) inline_sources: &'static [&'static str],
     /// A `TOP (SELECT ...)` count is laid out as a subquery.
@@ -104,6 +108,7 @@ impl Default for LayoutRules {
             keeps_unaliased_items: false,
             breaks_conditions: false,
             path_colons: false,
+            bracket_paths: false,
             stage_runs: false,
             dashed_names: false,
             referenced_table_names: false,
@@ -115,6 +120,7 @@ impl Default for LayoutRules {
             spaced_quantifier: "",
             cte_clauses: &[],
             clause_keywords: &[],
+            by_clauses: &[],
             inline_sources: &[],
             top_queries: false,
             object_names: false,

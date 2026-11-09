@@ -1,5 +1,6 @@
-//! Databricks SQL's format profile: why its SQL is refused.
+//! Databricks SQL's format profile: its tokenizer, parser and layout rules.
 
+pub(crate) mod _helpers;
 pub(crate) mod constants;
 pub(crate) mod main;
 

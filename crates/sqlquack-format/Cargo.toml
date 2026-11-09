@@ -13,8 +13,7 @@ rust-version.workspace = true
 [features]
 default = []
 bigquery = ["native-scanner", "sqlquack-parse/bigquery"]
-# Databricks SQL is known but refused until it has a format gate.
-databricks = []
+databricks = ["native-scanner", "sqlquack-parse/databricks"]
 duckdb = []
 postgres = ["sqlquack-parse/postgres"]
 snowflake = []
