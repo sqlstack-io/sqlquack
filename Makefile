@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug gate-build evidence-guard polyglot-guard engine-free generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
+.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug gate-build evidence-guard polyglot-guard engine-free dialect-builds generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -93,6 +93,18 @@ engine-free:
 	    echo "sqlquack-convert reaches DuckDB's engine" >&2; exit 1; \
 	  fi
 
+# Fails when the semantics library does not build with one dialect feature alone. The other targets
+# build every feature together, so they cannot see library code that needs another dialect. Its tests
+# are not checked this way: they read every dialect, through the crate's dev-dependency on itself.
+dialect-builds:
+	@set -e; dialects="$$(cargo metadata --locked --no-deps --format-version 1 | uv run python -c \
+	  'import json, sys; print(*sorted(set(next(p for p in json.load(sys.stdin)["packages"] if p["name"] == "sqlquack-semantics")["features"]) - {"default"}))')"; \
+	  test -n "$$dialects"; \
+	  for dialect in $$dialects; do \
+	    echo "sqlquack-semantics --features $$dialect"; \
+	    cargo check --locked --quiet -p sqlquack-semantics --lib --no-default-features --features $$dialect; \
+	  done
+
 # Rewrites cases/generated/ from the generators in scripts/case_generators/.
 generate-cases:
 	uv run python -m scripts.generate_cases
@@ -140,7 +152,7 @@ referee-pending:
 	uv run python -m scripts.write_referee_pending $(REFEREE_ARGS)
 
 # The static gate, the first step of `gate`, and the Python API's tests.
-check-ci: rust-lint python-check fensu syntax-coverage depth-probe evidence-guard polyglot-guard engine-free generated-cases syntax-cases dialect-cases referee-cases python-api distribution-notices ## The static gate CI runs.
+check-ci: rust-lint python-check fensu syntax-coverage depth-probe evidence-guard polyglot-guard engine-free dialect-builds generated-cases syntax-cases dialect-cases referee-cases python-api distribution-notices ## The static gate CI runs.
 
 # Each distribution ships the licence and third-party notices; its copies must match the root files.
 distribution-notices:
