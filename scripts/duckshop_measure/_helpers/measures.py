@@ -88,7 +88,7 @@ def unit_test_outcomes(
 
 
 def census_refusals(census: Path) -> dict[str, tuple[str, ...]]:
-    """Each model's own refusals in a `census --json --names` report, by model name."""
+    """Each model's own refusals in a `census --detailed --json` report, by model name."""
     report: dict[str, dict[str, list[dict[str, object]]]] = json.loads(census.read_text())
     return {str(item["model"]): refusal_names(item["own"]) for item in report["blockers"]["files"]}
 

@@ -14,14 +14,14 @@ use crate::test_types::{
 fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_streams() {
     let test_cases = [
         BinaryTestCase {
-            description: "JSON goes to stdout; the slowest files and the completion message to stderr",
-            arguments: &["census", "--detailed", "--json", "--builtin-policy"],
+            description: "--anonymous JSON goes to stdout and names nothing; the completion message to stderr",
+            arguments: &["census", "--anonymous", "--json", "--builtin-policy"],
             expected_outcome: BinaryOutcome {
                 exit_code: Some(1),
                 files: Some(2),
                 unresolved_name: Some(2),
                 completion_reported: true,
-                slowest_reported: true,
+                slowest_reported: false,
                 names_printed: false,
             },
         },
@@ -46,26 +46,38 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
             },
         },
         BinaryTestCase {
-            description: "text output names no file, model or relation",
-            arguments: &["census", "--detailed", "--builtin-policy"],
+            description: "--assume-supported without --detailed or --anonymous is a usage error",
+            arguments: &[
+                "census",
+                "--json",
+                "--assume-supported",
+                "fn:SOUNDEX",
+                "--builtin-policy",
+            ],
+            expected_outcome: BinaryOutcome {
+                exit_code: Some(2),
+                files: None,
+                unresolved_name: None,
+                completion_reported: false,
+                slowest_reported: false,
+                names_printed: false,
+            },
+        },
+        BinaryTestCase {
+            description: "--anonymous text names no file, model or relation",
+            arguments: &["census", "--anonymous", "--builtin-policy"],
             expected_outcome: BinaryOutcome {
                 exit_code: Some(1),
                 files: None,
                 unresolved_name: None,
                 completion_reported: true,
-                slowest_reported: true,
+                slowest_reported: false,
                 names_printed: false,
             },
         },
         BinaryTestCase {
-            description: "--names prints file, model and relation names",
-            arguments: &[
-                "census",
-                "--detailed",
-                "--json",
-                "--names",
-                "--builtin-policy",
-            ],
+            description: "--detailed prints file, model and relation names, and the slowest files",
+            arguments: &["census", "--detailed", "--json", "--builtin-policy"],
             expected_outcome: BinaryOutcome {
                 exit_code: Some(1),
                 files: Some(2),
@@ -76,14 +88,32 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
             },
         },
         BinaryTestCase {
-            description: "without a policy file census runs under the built-in policy",
-            arguments: &["census", "--detailed", "--json"],
+            description: "--anonymous wins over --detailed: the slowest files, but no names",
+            arguments: &[
+                "census",
+                "--detailed",
+                "--anonymous",
+                "--json",
+                "--builtin-policy",
+            ],
             expected_outcome: BinaryOutcome {
                 exit_code: Some(1),
                 files: Some(2),
                 unresolved_name: Some(2),
                 completion_reported: true,
                 slowest_reported: true,
+                names_printed: false,
+            },
+        },
+        BinaryTestCase {
+            description: "without a policy file census runs under the built-in policy",
+            arguments: &["census", "--anonymous", "--json"],
+            expected_outcome: BinaryOutcome {
+                exit_code: Some(1),
+                files: Some(2),
+                unresolved_name: Some(2),
+                completion_reported: true,
+                slowest_reported: false,
                 names_printed: false,
             },
         },
@@ -159,7 +189,7 @@ fn given_a_model_comparing_a_source_variant_when_running_census_then_source_vari
         SourceVariantTestCase {
             description: "a source VARIANT compared by text converts, relying on source_variant_json",
             payload: "      - name: payload\n        type: VARIANT\n",
-            flags: &[],
+            flags: &["--anonymous"],
             expected_outcome: SourceVariantOutcome {
                 exit_code: Some(0),
                 convertible: Some(1),
@@ -169,7 +199,7 @@ fn given_a_model_comparing_a_source_variant_when_running_census_then_source_vari
         SourceVariantTestCase {
             description: "strict mode refuses the comparison relying on source_variant_json",
             payload: "      - name: payload\n        type: VARIANT\n",
-            flags: &["--strict"],
+            flags: &["--anonymous", "--strict"],
             expected_outcome: SourceVariantOutcome {
                 exit_code: Some(1),
                 convertible: Some(0),
@@ -179,7 +209,7 @@ fn given_a_model_comparing_a_source_variant_when_running_census_then_source_vari
         SourceVariantTestCase {
             description: "a source column marked typed_leaves is unproven, so the comparison is refused",
             payload: "      - name: payload\n        type: VARIANT\n        typed_leaves: true\n",
-            flags: &[],
+            flags: &["--anonymous"],
             expected_outcome: SourceVariantOutcome {
                 exit_code: Some(1),
                 convertible: Some(0),
@@ -205,7 +235,7 @@ fn given_a_refused_upstream_model_when_running_census_binary_then_strict_and_uni
             description: "a source file types the refused model: its reader is unit-testable, \
                           labelled, and not strict",
             typed: true,
-            flags: &["--json", "--names"],
+            flags: &["--json"],
             expected_outcome: UpstreamOutcome {
                 exit_code: Some(1),
                 unit_testable: Some(1),
@@ -218,7 +248,7 @@ fn given_a_refused_upstream_model_when_running_census_binary_then_strict_and_uni
         UpstreamTestCase {
             description: "without names the label numbers the refused model",
             typed: true,
-            flags: &["--json"],
+            flags: &["--anonymous", "--json"],
             expected_outcome: UpstreamOutcome {
                 exit_code: Some(1),
                 unit_testable: Some(1),
@@ -231,7 +261,7 @@ fn given_a_refused_upstream_model_when_running_census_binary_then_strict_and_uni
         UpstreamTestCase {
             description: "no known columns for the refused model: its reader stays blocked",
             typed: false,
-            flags: &["--json", "--names"],
+            flags: &["--json"],
             expected_outcome: UpstreamOutcome {
                 exit_code: Some(1),
                 unit_testable: Some(0),
@@ -244,7 +274,7 @@ fn given_a_refused_upstream_model_when_running_census_binary_then_strict_and_uni
         UpstreamTestCase {
             description: "text output names both counts",
             typed: true,
-            flags: &[],
+            flags: &["--anonymous"],
             expected_outcome: UpstreamOutcome {
                 exit_code: Some(1),
                 unit_testable: None,
@@ -262,7 +292,7 @@ fn given_a_refused_upstream_model_when_running_census_binary_then_strict_and_uni
         UpstreamTestCase {
             description: "assuming the refused model's construct supported bounds both counts",
             typed: false,
-            flags: &["--json", "--assume-supported", "fn:SOUNDEX"],
+            flags: &["--anonymous", "--json", "--assume-supported", "fn:SOUNDEX"],
             expected_outcome: UpstreamOutcome {
                 exit_code: Some(1),
                 unit_testable: Some(0),
@@ -275,7 +305,12 @@ fn given_a_refused_upstream_model_when_running_census_binary_then_strict_and_uni
         UpstreamTestCase {
             description: "an unknown rule in --assume-supported is a usage error",
             typed: false,
-            flags: &["--json", "--assume-supported", "rule.unknown"],
+            flags: &[
+                "--anonymous",
+                "--json",
+                "--assume-supported",
+                "rule.unknown",
+            ],
             expected_outcome: UpstreamOutcome {
                 exit_code: Some(2),
                 unit_testable: None,
@@ -301,7 +336,7 @@ fn given_a_model_reading_a_date_as_zoned_when_running_census_then_it_relies_on_a
     let test_cases = [
         SessionTimeZoneTestCase {
             description: "a DATE read as TIMESTAMP_TZ converts, relying on session_timezone_utc",
-            flags: &[],
+            flags: &["--anonymous"],
             expected_outcome: SourceVariantOutcome {
                 exit_code: Some(0),
                 convertible: Some(1),
@@ -310,7 +345,7 @@ fn given_a_model_reading_a_date_as_zoned_when_running_census_then_it_relies_on_a
         },
         SessionTimeZoneTestCase {
             description: "strict mode refuses it",
-            flags: &["--strict"],
+            flags: &["--anonymous", "--strict"],
             expected_outcome: SourceVariantOutcome {
                 exit_code: Some(1),
                 convertible: Some(0),
@@ -319,7 +354,7 @@ fn given_a_model_reading_a_date_as_zoned_when_running_census_then_it_relies_on_a
         },
         SessionTimeZoneTestCase {
             description: "strict mode converts it once --utc-session confirms a UTC session",
-            flags: &["--strict", "--utc-session"],
+            flags: &["--anonymous", "--strict", "--utc-session"],
             expected_outcome: SourceVariantOutcome {
                 exit_code: Some(0),
                 convertible: Some(1),
@@ -342,7 +377,11 @@ fn given_assumed_keys_matching_nothing_when_running_census_then_each_is_warned_a
     let test_cases = [WarningsTestCase {
         description: "an empty key and a construct no refusal names each warn; a matching one \
                       does not",
-        flags: &["--assume-supported", "fn:SOUNDEX,,fn:EDITDISTANCE"],
+        flags: &[
+            "--anonymous",
+            "--assume-supported",
+            "fn:SOUNDEX,,fn:EDITDISTANCE",
+        ],
         expected_warnings: vec![
             "sqlquack census: warning: --assume-supported has an empty key, which is ignored"
                 .to_owned(),
@@ -366,12 +405,12 @@ fn given_cursor_intrinsics_when_running_census_then_only_a_known_cursor_type_typ
     let test_cases = [
         CursorTestCase {
             description: "without a cursor type the intrinsics stay unknown, so the model is refused",
-            flags: &[],
+            flags: &["--anonymous"],
             expected_convertible: Some(0),
         },
         CursorTestCase {
             description: "an integer cursor's bounds are integers, so the model converts",
-            flags: &["--cursor-type", "integer"],
+            flags: &["--anonymous", "--cursor-type", "integer"],
             expected_convertible: Some(1),
         },
     ];
@@ -389,9 +428,9 @@ fn given_cursor_intrinsics_when_running_census_then_only_a_known_cursor_type_typ
 fn given_a_declared_offset_when_running_census_then_names_appear_only_under_names() {
     let test_cases = [
         DeclaredTestCase {
-            description: "without --names the assumption is counted by its policy id alone",
+            description: "with --anonymous the assumption is counted by its policy id alone",
             declare_model: false,
-            flags: &[],
+            flags: &["--anonymous"],
             expected_outcome: DeclaredOutcome {
                 exit_code: Some(0),
                 assumptions: vec!["declared_offset".to_owned()],
@@ -400,9 +439,9 @@ fn given_a_declared_offset_when_running_census_then_names_appear_only_under_name
             },
         },
         DeclaredTestCase {
-            description: "with --names the declared column is named",
+            description: "with --detailed the declared column is named",
             declare_model: false,
-            flags: &["--names"],
+            flags: &[],
             expected_outcome: DeclaredOutcome {
                 exit_code: Some(0),
                 assumptions: vec!["declared_offset:ORDERS.PLACED_AT".to_owned()],
@@ -413,7 +452,7 @@ fn given_a_declared_offset_when_running_census_then_names_appear_only_under_name
         DeclaredTestCase {
             description: "an offset declared on a scanned model's output is refused",
             declare_model: true,
-            flags: &[],
+            flags: &["--anonymous"],
             expected_outcome: DeclaredOutcome {
                 exit_code: Some(2),
                 assumptions: Vec::new(),
@@ -465,12 +504,12 @@ fn given_compiled_dbt_models_with_qualified_names_when_running_census_then_they_
         CompiledDbtTestCase {
             description: "the staging model reads its declared source by database.schema.table; \
                           the mart's model relation is unknown without chaining",
-            flags: &["--no-chain-models"],
+            flags: &["--anonymous", "--no-chain-models"],
             expected_counts: (Some(1), Some(1)),
         },
         CompiledDbtTestCase {
             description: "chained by default, the mart reads the staging model by its qualified name",
-            flags: &[],
+            flags: &["--anonymous"],
             expected_counts: (Some(2), Some(2)),
         },
     ];

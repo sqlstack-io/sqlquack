@@ -60,7 +60,7 @@ def _measure_parser() -> argparse.ArgumentParser:
         "--compiled", type=Path, required=True, help="a project's target/compiled"
     )
     snowflake.add_argument(
-        "--census", type=Path, required=True, help="census --json --names output"
+        "--census", type=Path, required=True, help="census --detailed --json output"
     )
     snowflake.add_argument(
         "--converted", type=Path, required=True, help="SQLQUACK_CONVERTED_DIR of the strict census"

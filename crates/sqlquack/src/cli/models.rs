@@ -318,6 +318,7 @@ pub struct IndexArguments {
 
 /// Arguments of `sqlquack census`.
 #[derive(Clone, Debug, Args)]
+#[group(id = "report", multiple = true)]
 pub struct CensusArguments {
     /// SQL files, or directories searched for `.sql` files: one query or compiled model per file.
     #[arg(required = true)]
@@ -328,10 +329,13 @@ pub struct CensusArguments {
     /// How to print the report on standard output.
     #[command(flatten)]
     pub output: OutputArguments,
-    /// Print the coverage report instead: counts and construct keys, names only with --names.
-    #[arg(long)]
+    /// Print the coverage report instead, with file, model and relation names and the slowest files.
+    #[arg(long, group = "report")]
     pub detailed: bool,
-    /// Constructs listed in the detailed text report.
+    /// Print the coverage report instead with counts and construct keys only, never SQL or names.
+    #[arg(long, group = "report")]
+    pub anonymous: bool,
+    /// Constructs listed in the coverage report's text.
     #[arg(long, default_value_t = DEFAULT_TEXT_LIMIT)]
     pub limit: usize,
     /// Don't type converted files as the relations their file names reference.
@@ -346,9 +350,6 @@ pub struct CensusArguments {
     /// NAME=<sha256>: an override verified for the body with that hash, as `convert --json` reports.
     #[arg(long = "verified-override", value_name = "NAME=SHA256")]
     pub verified_overrides: Vec<String>,
-    /// Print file, model and relation names in the detailed report and the slowest files.
-    #[arg(long, requires = "detailed")]
-    pub names: bool,
     /// The project's cursor type: cursor intrinsics become a bound as SQLBuild renders one.
     #[arg(long, value_enum)]
     pub cursor_type: Option<CursorType>,
@@ -356,7 +357,7 @@ pub struct CensusArguments {
     #[arg(
         long,
         value_delimiter = ',',
-        requires = "detailed",
+        requires = "report",
         conflicts_with = "no_chain_models"
     )]
     pub assume_supported: Vec<String>,

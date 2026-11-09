@@ -97,15 +97,17 @@ Converts with a blocked upstream model: 1
 | `causes` | Each cause's `code`, `cause` and the `files` it blocks, most first. |
 | `upstream` | Each file that converts but reads a blocked model: its `path`, and the blocked models' files in `reads`. |
 
-## Detailed report
+## Coverage report
 
-`--detailed` prints a coverage report instead: construct counts, refusals by category and
-construct, and what blocks files through the model graph. It holds counts and construct names
-only, never SQL text or file names, so you can share it. `--names` adds file, model and relation
-names, and the slowest files.
+`--detailed` and `--anonymous` print a coverage report instead of diagnostics: construct counts,
+refusals by category and construct, and what blocks files through the model graph.
+
+- `--detailed` names files, models and relations, and lists the slowest files.
+- `--anonymous` holds counts and construct names only, never SQL text or file, model or relation
+  names, so you can share it. With both flags, the report stays anonymous.
 
 ```console
-$ sqlquack census models --builtin-policy --detailed
+$ sqlquack census models --builtin-policy --anonymous
 Census of 3 snowflake SQL files
   parsed 3 (3 statements), unparsed 0, empty 0
   distinct constructs 6 (2 fn, 4 node)
@@ -144,10 +146,10 @@ supporting a construct may uncover others.
 | `--dialect <dialect>` | The dialect the SQL is written in. Default `snowflake`. |
 | `--overrides`, `--verified-override` | As for [`convert`](/docs/cli/convert/#options). |
 | `--format text\|json`, `--json` | Print the result as text or JSON. |
-| `--detailed` | Print the coverage report instead of diagnostics. |
-| `--names` | With `--detailed`: print file, model and relation names, and the slowest files. |
-| `--assume-supported <keys>` | With `--detailed`: construct keys or `rule.<id>`s to treat as supported, comma-separated. Not with `--no-chain-models`. |
-| `--limit <n>` | With `--detailed`: constructs listed in the text report. Default 50. |
+| `--detailed` | Print the coverage report, with names and the slowest files, instead of diagnostics. |
+| `--anonymous` | Print the coverage report with counts and construct names only. Wins over `--detailed`. |
+| `--assume-supported <keys>` | With `--detailed` or `--anonymous`: construct keys or `rule.<id>`s to treat as supported, comma-separated. Not with `--no-chain-models`. |
+| `--limit <n>` | With `--detailed` or `--anonymous`: constructs listed in the text report. Default 50. |
 
 `census` also takes the [policy flags](/docs/policy/#flags). It takes no session parameters and
 converts under `utc-v1`.
@@ -160,4 +162,4 @@ converts under `utc-v1`.
 | `1` | At least one file is blocked. |
 | `2` | Census can't run: bad arguments, an unreadable path, no SQL files, or a project it can't load. |
 
-`--detailed` exits the same way.
+The coverage report exits the same way.

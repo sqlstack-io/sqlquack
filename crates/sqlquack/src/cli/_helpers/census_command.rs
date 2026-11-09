@@ -85,7 +85,7 @@ pub(crate) fn census_command(
         schema,
         chain_models: !arguments.no_chain_models,
         conversion,
-        names: arguments.names,
+        names: arguments.detailed && !arguments.anonymous,
         assume_supported: assumed
             .iter()
             .flat_map(|(_, constructs)| constructs.iter().cloned())
@@ -107,8 +107,8 @@ pub(crate) fn census_command(
         true => ExitCode::FAILURE,
         false => ExitCode::SUCCESS,
     };
-    let shown = match arguments.detailed {
-        true => detailed_report(&run, arguments, &assumed),
+    let shown = match arguments.detailed || arguments.anonymous {
+        true => coverage_report(&run, arguments, &assumed),
         false => default_report(&run, arguments, policy.as_ref()).map(|text| (text, String::new())),
     };
     let (text, notes) = match shown {
@@ -150,8 +150,8 @@ fn default_report(
     }
 }
 
-/// The coverage report, as text or JSON, and its notes for stderr: unmatched assumptions, slowest files.
-fn detailed_report(
+/// The coverage report, as text or JSON, and its stderr notes: unmatched assumptions, slowest files.
+fn coverage_report(
     run: &CensusRun,
     arguments: &CensusArguments,
     assumed: &[(String, Vec<String>)],
@@ -176,13 +176,15 @@ fn detailed_report(
             .map_err(|error| error.to_string())?,
         false => render_census_text(report, arguments.limit),
     };
-    let _ = writeln!(notes, "sqlquack census: slowest files:");
-    for (path, elapsed) in run.timings.iter().take(SLOWEST_FILES) {
-        let seconds = elapsed.as_secs_f64();
-        let _ = match arguments.names {
-            true => writeln!(notes, "  {seconds:>8.2} s  {}", path.display()),
-            false => writeln!(notes, "  {seconds:>8.2} s"),
-        };
+    if arguments.detailed {
+        let _ = writeln!(notes, "sqlquack census: slowest files:");
+        for (path, elapsed) in run.timings.iter().take(SLOWEST_FILES) {
+            let seconds = elapsed.as_secs_f64();
+            let _ = match arguments.anonymous {
+                false => writeln!(notes, "  {seconds:>8.2} s  {}", path.display()),
+                true => writeln!(notes, "  {seconds:>8.2} s"),
+            };
+        }
     }
     Ok((text, notes))
 }
