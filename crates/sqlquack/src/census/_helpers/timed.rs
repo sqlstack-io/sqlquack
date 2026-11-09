@@ -8,7 +8,7 @@ use crate::census::_helpers::blockers::blockers;
 use crate::census::_helpers::corpus::inspect_files;
 use crate::census::_helpers::files::collect_sql_files;
 use crate::census::errors::CensusError;
-use crate::census::models::{CensusOptions, CensusProgress, CensusRun};
+use crate::census::models::{CensusFile, CensusOptions, CensusProgress, CensusRun};
 use crate::planning::main::assumption_free_counts::assumption_free_counts;
 use crate::planning::main::plan_census::plan_census;
 use sqlquack_convert::snowflake::analysis::main::assumption_id::assumption_id;
@@ -27,7 +27,8 @@ pub(crate) fn run_census_timed(
         &options.coverage_points,
         options.names,
     );
-    let (blocked, plan_input) = blockers(&files, &censuses, &options.schema, options.names);
+    let (blocked, plan_input, refused_upstream) =
+        blockers(&files, &censuses, &options.schema, options.names);
     report.blockers = blocked;
     let assumed: BTreeSet<String> = options.assume_supported.iter().cloned().collect();
     report.plan = plan_census(&plan_input, &assumed);
@@ -71,10 +72,30 @@ pub(crate) fn run_census_timed(
             }
         }
     }
+    let outcomes: Vec<CensusFile> = files
+        .iter()
+        .zip(&censuses)
+        .zip(&refused_upstream)
+        .map(|((path, census), upstream)| CensusFile {
+            path: path.clone(),
+            blocked: !census.parsed || !census.refusal_categories.is_empty(),
+            refusals: census.refusals.clone(),
+            refused_upstream: paths_of(upstream, &files),
+        })
+        .collect();
     let mut timings: Vec<(PathBuf, std::time::Duration)> = files
         .into_iter()
         .zip(censuses.iter().map(|census| census.elapsed))
         .collect();
     timings.sort_by(|left, right| right.1.cmp(&left.1).then_with(|| left.0.cmp(&right.0)));
-    Ok(CensusRun { report, timings })
+    Ok(CensusRun {
+        report,
+        timings,
+        files: outcomes,
+    })
+}
+
+/// The files at `indices`.
+fn paths_of(indices: &BTreeSet<usize>, files: &[PathBuf]) -> Vec<PathBuf> {
+    indices.iter().map(|index| files[*index].clone()).collect()
 }

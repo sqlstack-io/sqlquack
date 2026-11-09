@@ -328,11 +328,17 @@ pub struct CensusArguments {
     /// How to print the report on standard output.
     #[command(flatten)]
     pub output: OutputArguments,
-    /// Constructs listed in the text report.
+    /// Print the coverage report instead: counts and construct keys, names only with --names.
+    #[arg(long)]
+    pub detailed: bool,
+    /// Constructs listed in the detailed text report.
     #[arg(long, default_value_t = DEFAULT_TEXT_LIMIT)]
     pub limit: usize,
-    /// Treat each converted file as the relation its file name references, and convert again.
+    /// Don't type converted files as the relations their file names reference.
     #[arg(long)]
+    pub no_chain_models: bool,
+    /// Accepted for compatibility: chaining models is the default.
+    #[arg(long, hide = true, conflicts_with = "no_chain_models")]
     pub chain_models: bool,
     /// User overrides: a FUNCTION() file, or a directory of them, each with `replaces` and `dialect duckdb`.
     #[arg(long)]
@@ -340,14 +346,19 @@ pub struct CensusArguments {
     /// NAME=<sha256>: an override verified for the body with that hash, as `convert --json` reports.
     #[arg(long = "verified-override", value_name = "NAME=SHA256")]
     pub verified_overrides: Vec<String>,
-    /// Print file, model and relation names in the slowest files and the blockers.
-    #[arg(long)]
+    /// Print file, model and relation names in the detailed report and the slowest files.
+    #[arg(long, requires = "detailed")]
     pub names: bool,
     /// The project's cursor type: cursor intrinsics become a bound as SQLBuild renders one.
     #[arg(long, value_enum)]
     pub cursor_type: Option<CursorType>,
-    /// Construct keys or `rule.<id>`s the what-if counts treat as supported, comma-separated.
-    #[arg(long, value_delimiter = ',')]
+    /// Construct keys or `rule.<id>`s the detailed what-if counts treat as supported, comma-separated.
+    #[arg(
+        long,
+        value_delimiter = ',',
+        requires = "detailed",
+        conflicts_with = "no_chain_models"
+    )]
     pub assume_supported: Vec<String>,
     /// The policy and what the caller confirms about its sessions.
     #[command(flatten)]

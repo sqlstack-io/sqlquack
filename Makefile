@@ -436,9 +436,10 @@ polyglot-duckshop:
 	  cargo run --locked --release -p sqlquack-polyglot-check -- directory "$$compiled" --dialect snowflake || exit 1; \
 	done
 
-# Converting each compiled DuckShop project, with chained models, must finish within
-# DUCKSHOP_CENSUS_SECONDS. DuckShop 10K takes about 25 s on a development machine; 300 s is about
-# twelve times that, room for slower CI runners, so only a pathological slowdown fails the gate.
+# Converting each compiled DuckShop project, with chained models and a diagnostic for each blocked
+# file, must finish within DUCKSHOP_CENSUS_SECONDS. DuckShop 10K takes about 25 s on a development
+# machine; 300 s is about twelve times that, room for slower CI runners, so only a pathological
+# slowdown fails the gate. Blocked files (exit 1) pass; census failing to run (2) or timing out fails.
 DUCKSHOP_CENSUS_SECONDS ?= 300
 
 census-duckshop:
@@ -446,8 +447,9 @@ census-duckshop:
 	  { echo "census-duckshop: $$compiled is missing; run make duckshop-compiled" >&2; exit 1; }; done
 	cargo build --locked --release -p sqlquack
 	for compiled in $(DUCKSHOP_COMPILED); do \
-	  timeout $(DUCKSHOP_CENSUS_SECONDS) cargo run --locked --release -q -p sqlquack -- \
-	    census --chain-models --json "$$compiled" > /dev/null \
+	  status=0; timeout $(DUCKSHOP_CENSUS_SECONDS) cargo run --locked --release -q -p sqlquack -- \
+	    census --json "$$compiled" > /dev/null || status=$$?; \
+	  [ $$status -le 1 ] \
 	    || { echo "census-duckshop: converting $$compiled failed or took over $(DUCKSHOP_CENSUS_SECONDS) s" >&2; exit 1; }; \
 	done
 
@@ -469,7 +471,8 @@ duckshop-measure: duckshop-compiled
 	  --recorded "$(DUCKSHOP_RESULTS)" --functions "$$compiled/functions" --out "$$out/project"; \
 	SQLQUACK_CONVERTED_DIR="$$out/converted" SQLQUACK_GUARDS_DIR="$$out/guards" \
 	  LD_LIBRARY_PATH="$$library" "$$target/release/sqlquack" census --policy sqlquack.toml --json \
-	  --names --project "$$out/project" "$$compiled/models" > "$$out/census.json"; \
+	  --detailed --names --no-chain-models --project "$$out/project" "$$compiled/models" \
+	  > "$$out/census.json" || [ $$? -eq 1 ]; \
 	uv run python -m scripts.measure_duckshop tests --compiled "$$compiled" \
 	  --sqlquack "$$target/release/sqlquack" --library "$$library" --out "$$out/tests.json"; \
 	uv run python -m scripts.measure_duckshop snowflake --results "$(DUCKSHOP_RESULTS)" \

@@ -42,7 +42,7 @@ sqlquack convert: done, converted under the built-in default
 | Parse and check | `sqlquack check` | What Snowflake would reject, as coded diagnostics. No schema needed. |
 | Convert | `sqlquack convert` | DuckDB SQL for each statement, or the refusals that stop it. |
 | Convert a function | `sqlquack function` | A SQL project function's body as a DuckDB macro. |
-| Measure a project | `sqlquack census` | How much of a body of SQL converts, and what blocks the rest. |
+| Measure a project | `sqlquack census` | Which files convert, and a diagnostic for each that doesn't. |
 | Trace rules | `sqlquack index` | Which rules and building blocks each file's conversion relies on. |
 
 Converted SQL is proven only where both sessions run in UTC: Snowflake's `TIMEZONE` and DuckDB's

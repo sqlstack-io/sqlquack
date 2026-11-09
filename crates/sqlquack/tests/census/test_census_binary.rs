@@ -1,13 +1,13 @@
 use crate::helpers::{
     census_warnings, compiled_dbt_counts, converted_files, cursor_model_convertible,
-    run_on_declared_orders, run_on_events, run_on_placed_orders, run_on_refused_upstream,
-    run_on_shop,
+    default_census, run_on_declared_orders, run_on_events, run_on_placed_orders,
+    run_on_refused_upstream, run_on_shop,
 };
 use crate::test_types::{
     BinaryOutcome, BinaryTestCase, CompiledDbtTestCase, ConvertedDirTestCase, ConvertedFile,
-    CursorTestCase, DeclaredOutcome, DeclaredTestCase, SessionTimeZoneTestCase,
-    SourceVariantOutcome, SourceVariantTestCase, UpstreamOutcome, UpstreamTestCase,
-    WarningsTestCase,
+    CursorTestCase, DeclaredOutcome, DeclaredTestCase, DefaultOutcome, DefaultOutputTestCase,
+    SessionTimeZoneTestCase, SourceVariantOutcome, SourceVariantTestCase, UpstreamOutcome,
+    UpstreamTestCase, WarningsTestCase,
 };
 
 #[test]
@@ -15,9 +15,9 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
     let test_cases = [
         BinaryTestCase {
             description: "JSON goes to stdout; the slowest files and the completion message to stderr",
-            arguments: &["census", "--json", "--builtin-policy"],
+            arguments: &["census", "--detailed", "--json", "--builtin-policy"],
             expected_outcome: BinaryOutcome {
-                exit_code: Some(0),
+                exit_code: Some(1),
                 files: Some(2),
                 unresolved_name: Some(2),
                 completion_reported: true,
@@ -26,10 +26,12 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
             },
         },
         BinaryTestCase {
-            description: "--assume-supported without --chain-models is a usage error",
+            description: "--assume-supported with --no-chain-models is a usage error",
             arguments: &[
                 "census",
+                "--detailed",
                 "--json",
+                "--no-chain-models",
                 "--assume-supported",
                 "fn:SOUNDEX",
                 "--builtin-policy",
@@ -45,9 +47,9 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
         },
         BinaryTestCase {
             description: "text output names no file, model or relation",
-            arguments: &["census", "--builtin-policy"],
+            arguments: &["census", "--detailed", "--builtin-policy"],
             expected_outcome: BinaryOutcome {
-                exit_code: Some(0),
+                exit_code: Some(1),
                 files: None,
                 unresolved_name: None,
                 completion_reported: true,
@@ -57,9 +59,15 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
         },
         BinaryTestCase {
             description: "--names prints file, model and relation names",
-            arguments: &["census", "--json", "--names", "--builtin-policy"],
+            arguments: &[
+                "census",
+                "--detailed",
+                "--json",
+                "--names",
+                "--builtin-policy",
+            ],
             expected_outcome: BinaryOutcome {
-                exit_code: Some(0),
+                exit_code: Some(1),
                 files: Some(2),
                 unresolved_name: Some(2),
                 completion_reported: true,
@@ -69,9 +77,9 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
         },
         BinaryTestCase {
             description: "without a policy file census runs under the built-in policy",
-            arguments: &["census", "--json"],
+            arguments: &["census", "--detailed", "--json"],
             expected_outcome: BinaryOutcome {
-                exit_code: Some(0),
+                exit_code: Some(1),
                 files: Some(2),
                 unresolved_name: Some(2),
                 completion_reported: true,
@@ -83,6 +91,7 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
             description: "a missing project folder is a usage error, as for convert",
             arguments: &[
                 "census",
+                "--detailed",
                 "--builtin-policy",
                 "--project",
                 "/nonexistent/project",
@@ -98,7 +107,12 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
         },
         BinaryTestCase {
             description: "an unreadable SQL path is a usage error, as for convert",
-            arguments: &["census", "--builtin-policy", "/nonexistent/models"],
+            arguments: &[
+                "census",
+                "--detailed",
+                "--builtin-policy",
+                "/nonexistent/models",
+            ],
             expected_outcome: BinaryOutcome {
                 exit_code: Some(2),
                 files: None,
@@ -110,7 +124,13 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
         },
         BinaryTestCase {
             description: "an unknown dialect is a usage error",
-            arguments: &["census", "--dialect", "unknown", "--builtin-policy"],
+            arguments: &[
+                "census",
+                "--detailed",
+                "--dialect",
+                "unknown",
+                "--builtin-policy",
+            ],
             expected_outcome: BinaryOutcome {
                 exit_code: Some(2),
                 files: None,
@@ -151,7 +171,7 @@ fn given_a_model_comparing_a_source_variant_when_running_census_then_source_vari
             payload: "      - name: payload\n        type: VARIANT\n",
             flags: &["--strict"],
             expected_outcome: SourceVariantOutcome {
-                exit_code: Some(0),
+                exit_code: Some(1),
                 convertible: Some(0),
                 labelled: None,
             },
@@ -161,7 +181,7 @@ fn given_a_model_comparing_a_source_variant_when_running_census_then_source_vari
             payload: "      - name: payload\n        type: VARIANT\n        typed_leaves: true\n",
             flags: &[],
             expected_outcome: SourceVariantOutcome {
-                exit_code: Some(0),
+                exit_code: Some(1),
                 convertible: Some(0),
                 labelled: None,
             },
@@ -187,7 +207,7 @@ fn given_a_refused_upstream_model_when_running_census_binary_then_strict_and_uni
             typed: true,
             flags: &["--json", "--names"],
             expected_outcome: UpstreamOutcome {
-                exit_code: Some(0),
+                exit_code: Some(1),
                 unit_testable: Some(1),
                 strict: Some(0),
                 labels: vec!["upstream_refused:fuzzy_names".to_owned()],
@@ -200,7 +220,7 @@ fn given_a_refused_upstream_model_when_running_census_binary_then_strict_and_uni
             typed: true,
             flags: &["--json"],
             expected_outcome: UpstreamOutcome {
-                exit_code: Some(0),
+                exit_code: Some(1),
                 unit_testable: Some(1),
                 strict: Some(0),
                 labels: vec!["upstream_refused:#1".to_owned()],
@@ -213,7 +233,7 @@ fn given_a_refused_upstream_model_when_running_census_binary_then_strict_and_uni
             typed: false,
             flags: &["--json", "--names"],
             expected_outcome: UpstreamOutcome {
-                exit_code: Some(0),
+                exit_code: Some(1),
                 unit_testable: Some(0),
                 strict: Some(0),
                 labels: Vec::new(),
@@ -226,7 +246,7 @@ fn given_a_refused_upstream_model_when_running_census_binary_then_strict_and_uni
             typed: true,
             flags: &[],
             expected_outcome: UpstreamOutcome {
-                exit_code: Some(0),
+                exit_code: Some(1),
                 unit_testable: None,
                 strict: None,
                 labels: Vec::new(),
@@ -244,7 +264,7 @@ fn given_a_refused_upstream_model_when_running_census_binary_then_strict_and_uni
             typed: false,
             flags: &["--json", "--assume-supported", "fn:SOUNDEX"],
             expected_outcome: UpstreamOutcome {
-                exit_code: Some(0),
+                exit_code: Some(1),
                 unit_testable: Some(0),
                 strict: Some(0),
                 labels: Vec::new(),
@@ -292,7 +312,7 @@ fn given_a_model_reading_a_date_as_zoned_when_running_census_then_it_relies_on_a
             description: "strict mode refuses it",
             flags: &["--strict"],
             expected_outcome: SourceVariantOutcome {
-                exit_code: Some(0),
+                exit_code: Some(1),
                 convertible: Some(0),
                 labelled: None,
             },
@@ -395,7 +415,7 @@ fn given_a_declared_offset_when_running_census_then_names_appear_only_under_name
             declare_model: true,
             flags: &[],
             expected_outcome: DeclaredOutcome {
-                exit_code: Some(1),
+                exit_code: Some(2),
                 assumptions: Vec::new(),
                 divergences: Vec::new(),
                 model_declaration_refused: true,
@@ -445,12 +465,12 @@ fn given_compiled_dbt_models_with_qualified_names_when_running_census_then_they_
         CompiledDbtTestCase {
             description: "the staging model reads its declared source by database.schema.table; \
                           the mart's model relation is unknown without chaining",
-            flags: &[],
+            flags: &["--no-chain-models"],
             expected_counts: (Some(1), Some(1)),
         },
         CompiledDbtTestCase {
-            description: "chained, the mart reads the staging model by its qualified name",
-            flags: &["--chain-models"],
+            description: "chained by default, the mart reads the staging model by its qualified name",
+            flags: &[],
             expected_counts: (Some(2), Some(2)),
         },
     ];
@@ -458,6 +478,75 @@ fn given_compiled_dbt_models_with_qualified_names_when_running_census_then_they_
         assert_eq!(
             compiled_dbt_counts(test_case.flags),
             test_case.expected_counts,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_models_when_running_census_by_default_then_each_blocked_file_gets_a_diagnostic() {
+    let lines =
+        |lines: &[&str]| -> Vec<String> { lines.iter().map(|line| (*line).to_owned()).collect() };
+    let test_cases = [
+        DefaultOutputTestCase {
+            description: "every file converts: one summary line and exit 0",
+            typed: false,
+            files: 1,
+            expected_outcome: DefaultOutcome {
+                exit_code: Some(0),
+                text_lines: lines(&["Converted 1 of 1 files (100%)"]),
+                json_ok: Some(true),
+                json_codes: Vec::new(),
+                json_upstream: Vec::new(),
+            },
+        },
+        DefaultOutputTestCase {
+            description: "the refused model's reader has no known columns for it: it is blocked \
+                          too, but only the model's own refusal counts as a cause",
+            typed: false,
+            files: 3,
+            expected_outcome: DefaultOutcome {
+                exit_code: Some(1),
+                text_lines: lines(&[
+                    "error[SQ0002]: no verified rule converts this construct: `fn:SOUNDEX`",
+                    " --> models/fuzzy_names.sql:1:21",
+                    "error[SQ0004]: a name does not resolve",
+                    " --> models/name_report.sql:1:48",
+                    "  = note: reads `fuzzy_names`, which doesn't convert",
+                    "Converted 1 of 3 files (33%)",
+                    "Blocked: 2 files, 1 cause (SQ0002 SOUNDEX)",
+                ]),
+                json_ok: Some(false),
+                json_codes: lines(&["SQ0002", "SQ0004"]),
+                json_upstream: Vec::new(),
+            },
+        },
+        DefaultOutputTestCase {
+            description: "the sources type the refused model: its reader converts with a warning",
+            typed: true,
+            files: 3,
+            expected_outcome: DefaultOutcome {
+                exit_code: Some(1),
+                text_lines: lines(&[
+                    "error[SQ0002]: no verified rule converts this construct: `fn:SOUNDEX`",
+                    " --> models/fuzzy_names.sql:1:21",
+                    "warning: models/name_report.sql converts, but reads fuzzy_names, which doesn't",
+                    " --> models/name_report.sql",
+                    "Converted 2 of 3 files (66%)",
+                    "Blocked: 1 file, 1 cause (SQ0002 SOUNDEX)",
+                    "Converts with a blocked upstream model: 1",
+                ]),
+                json_ok: Some(false),
+                json_codes: lines(&["SQ0002"]),
+                json_upstream: lines(&["models/name_report.sql"]),
+            },
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            default_census(test_case.typed, test_case.files),
+            test_case.expected_outcome,
             "{}",
             test_case.description
         );

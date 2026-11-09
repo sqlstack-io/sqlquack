@@ -211,19 +211,22 @@ sqlquack convert: relies on known divergence hash at fn:HASH
 							<div class="step-text">
 								<span class="num">05 · Measure a project</span>
 								<h3>See what a whole project needs</h3>
-								<p>Point it at a folder of compiled SQL, such as dbt's target/compiled. It counts the constructs, how many convert, and which refusals block the rest.</p>
+								<p>Point it at a folder of compiled SQL, such as dbt's target/compiled. It shows a diagnostic for each file that doesn't convert, and how many do. It exits 1 when any file is blocked, so CI can track it.</p>
 								<p class="more"><a href="/docs/cli/census/">Run a census →</a></p>
 							</div>
-<pre class="terminal"><span class="cmd">sqlquack census target/compiled/my_project/models --builtin-policy</span>
-Census of 25 snowflake SQL files
-  parsed 25 (25 statements), unparsed 0, empty 0
-  distinct constructs 21 (4 clause, 4 fn, 1 join, 12 node)
-  files refused: missing rule 0, outside type conditions 0, unresolved name 0,
-    not expressible 0, parse fidelity 0, conversion budget 0, divergence refused 2
-  convertible: strict 23 <span class="dim">…</span>, unit-testable 23 <span class="dim">…</span>
+<pre class="terminal"><span class="cmd">sqlquack census models --builtin-policy</span>
+<span class="bad">error[SQ0002]</span>: no verified rule converts this construct: `fn:SOUNDEX`
+ --&gt; models/marts/customer_sounds.sql:3:5
+  |
+3 |     SOUNDEX(name) AS name_sound
+  |     <span class="bad">^^^^^^^^^^^^^</span> no rule converts fn:SOUNDEX
 
-Refusals by category and construct (top 50)
-       2  a known divergence the policy refuses: fn:SUM</pre>
+<span class="bad">error[SQ0002]</span>: no verified rule converts this construct: `fn:WEEKISO`
+ --&gt; models/staging/stg_orders.sql:1:31
+  <span class="dim">…</span>
+
+Converted 1 of 3 files (33%)
+Blocked: 2 files, 2 causes (SQ0002 SOUNDEX, SQ0002 WEEKISO)</pre>
 						</div>
 
 						<div class="step">

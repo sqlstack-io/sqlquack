@@ -9,7 +9,9 @@ use serde::Serialize;
 
 use crate::analysis::models::SourceDialect;
 use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
+use sqlquack_diagnostics::diagnostics::models::Diagnostic;
 use sqlquack_diagnostics::provenance::models::Provenance;
+use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::types::Schema;
 
 /// What a census reads and reports.
@@ -345,6 +347,70 @@ pub struct CensusRun {
     pub report: CensusReport,
     /// Each file with the time spent converting it over every pass, slowest first.
     pub timings: Vec<(PathBuf, Duration)>,
+    /// Each file, in path order, with whether it converts and why not.
+    pub files: Vec<CensusFile>,
+}
+
+/// One file's outcome: whether it converts, its refusals, and the refused models it reads.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct CensusFile {
+    /// The file, as found under the given paths.
+    pub path: PathBuf,
+    /// Whether it does not convert.
+    pub blocked: bool,
+    /// Its refusals, located in the file as written.
+    pub refusals: Vec<Refusal>,
+    /// For a file that converts, the files of the refused models upstream of it.
+    pub refused_upstream: Vec<PathBuf>,
+}
+
+/// What a census tells the user: a diagnostic for each blocked file, and a summary.
+#[derive(Clone, Debug, PartialEq, Serialize)]
+pub struct CensusDiagnostics {
+    /// Whether every file converts.
+    pub ok: bool,
+    /// SQL files read.
+    pub files: usize,
+    /// Files that convert.
+    pub converted: usize,
+    /// Each blocked file with its diagnostics, in path order.
+    pub blocked: Vec<BlockedDiagnostics>,
+    /// What blocks files, other than a refused model they read, most files first.
+    pub causes: Vec<BlockingCause>,
+    /// Files that convert but read a model that doesn't, in path order.
+    pub upstream: Vec<UpstreamWarning>,
+}
+
+/// A blocked file and its diagnostics.
+#[derive(Clone, Debug, PartialEq, Serialize)]
+pub struct BlockedDiagnostics {
+    /// The file.
+    pub path: PathBuf,
+    /// Its diagnostics, in source order.
+    pub diagnostics: Vec<Diagnostic>,
+    /// The file's text, which the diagnostics point into.
+    #[serde(skip)]
+    pub source: String,
+}
+
+/// One cause of blocked files: a diagnostic code and the construct or divergence it names.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct BlockingCause {
+    /// The diagnostic code.
+    pub code: String,
+    /// The construct, divergence or `statement` it names.
+    pub cause: String,
+    /// Files it blocks.
+    pub files: usize,
+}
+
+/// A file that converts, but reads models that don't.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct UpstreamWarning {
+    /// The file.
+    pub path: PathBuf,
+    /// The files of the refused models it reads, directly or further upstream.
+    pub reads: Vec<PathBuf>,
 }
 
 /// Each file's model reads by file index: all of them, the untyped refused ones, and absent ones.

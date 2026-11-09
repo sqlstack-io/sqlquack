@@ -9,6 +9,7 @@ use sqlquack_semantics::snowflake::typing::types::Schema;
 
 use crate::census::_helpers::combinations::combinations;
 use crate::census::_helpers::corpus::{model_relation, referenced_model};
+use crate::census::_helpers::files::model_name;
 use crate::census::_helpers::inspect::FileCensus;
 use crate::census::constants::{
     CYCLE_ROOT, MODEL_ROOT_PREFIX, RELATION_ROOT_PREFIX, UNKNOWN_RELATION_ROOT,
@@ -20,13 +21,13 @@ use crate::census::models::{
 };
 use crate::planning::models::PlanInput;
 
-/// What the census's refused files are blocked by, through `files`' model graph, and that graph.
+/// What blocks the refused files, the model graph, and each converted file's refused upstream.
 pub(crate) fn blockers(
     files: &[PathBuf],
     censuses: &[FileCensus],
     schema: &Schema,
     names: bool,
-) -> (BlockerReport, PlanInput) {
+) -> (BlockerReport, PlanInput, Vec<BTreeSet<usize>>) {
     let graph = Graph::new(files, censuses, schema);
     let (mut own, mut roots) = graph.roots();
     let incomplete = graph.incomplete();
@@ -121,7 +122,7 @@ pub(crate) fn blockers(
         files: blocked,
         upstream_refused,
     };
-    (report, plan_input)
+    (report, plan_input, refused_upstream)
 }
 
 /// The model graph: each file's own root refusals, and the refused models it reads.
@@ -396,11 +397,6 @@ fn root_key(category: RefusalCategory, construct: String) -> RootKey {
         category: category.label().to_owned(),
         construct,
     }
-}
-
-fn model_name(path: &std::path::Path) -> String {
-    path.file_stem()
-        .map_or_else(String::new, |stem| stem.to_string_lossy().into_owned())
 }
 
 /// Each root with the files it refuses directly, downstream and alone, most files first.

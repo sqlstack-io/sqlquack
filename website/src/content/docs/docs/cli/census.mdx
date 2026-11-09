@@ -1,12 +1,13 @@
 ---
 title: "sqlquack census"
-description: "Count the constructs a body of SQL uses and how much of it converts."
+description: "Which files convert, and a diagnostic for each that doesn't."
 sidebar:
   label: "census"
 ---
 
-`sqlquack census` reads SQL files, counts the constructs they use, and reports how many files
-convert, what refuses the rest, and what to support next.
+`sqlquack census` reads a folder of SQL files, converts each one, and prints a diagnostic for every
+file that doesn't convert, then a short summary. Its exit status tells CI whether everything
+converts.
 
 ## Usage
 
@@ -16,7 +17,7 @@ sqlquack census [OPTIONS] <PATHS>...
 
 ```bash
 sqlquack census target/compiled/my_project/models --builtin-policy
-sqlquack census target/compiled --chain-models --json --builtin-policy
+sqlquack census target/compiled --json --builtin-policy
 ```
 
 Each `.sql` file is one query, or one model compiled by
@@ -27,22 +28,95 @@ recognised. A directory is searched for `.sql` files. The tables they read come 
 they resolve.
 
 ```console
-$ sqlquack census target/compiled/my_project/models --builtin-policy
-Census of 25 snowflake SQL files
-  parsed 25 (25 statements), unparsed 0, empty 0
-  distinct constructs 21 (4 clause, 4 fn, 1 join, 12 node)
-  files refused: missing rule 0, outside type conditions 0, unresolved name 0, not expressible 0, parse fidelity 0, conversion budget 0, divergence refused 2
-  convertible: strict 23 (every model upstream converts too), unit-testable 23 (the file's own SQL converts; 0 with an upstream model refused or not scanned)
-  with no named assumption: strict 23, unit-testable 23 (relying on one: none)
+$ sqlquack census models --builtin-policy
+error[SQ0002]: no verified rule converts this construct: `fn:SOUNDEX`
+ --> models/marts/customer_sounds.sql:3:5
+  |
+3 |     SOUNDEX(name) AS name_sound
+  |     ^^^^^^^^^^^^^ no rule converts fn:SOUNDEX
 
-Refusals by category and construct (top 50)
-       2  a known divergence the policy refuses: fn:SUM
+error[SQ0002]: no verified rule converts this construct: `fn:WEEKISO`
+ --> models/staging/stg_orders.sql:1:31
+  |
+1 | SELECT order_id, customer_id, WEEKISO(ordered_at) AS order_week FROM orders
+  |                               ^^^^^^^^^^^^^^^^^^^ no rule converts fn:WEEKISO
+
+Converted 1 of 3 files (33%)
+Blocked: 2 files, 2 causes (SQ0002 SOUNDEX, SQ0002 WEEKISO)
 ```
 
-The report holds counts and construct names only, never SQL text or file names. `--names` adds
-file, model and relation names to the slowest files and the blockers.
+Each diagnostic has the same code, message and help that [`convert`](/docs/cli/convert/) gives
+for that file; see the
+[diagnostic reference](/docs/diagnostics/reference/) for each code's fix. The summary names at most
+five causes, then counts the rest.
 
-## Reading the counts
+## Models that read other models
+
+Each converted file types the relation its file name references, read by any qualifier as dbt
+writes it, and the files reading it convert against those columns. A file reading a model that
+doesn't convert is blocked too. Its diagnostic carries a note naming that model, and it isn't
+counted as a separate cause:
+
+```text
+error[SQ0004]: a name does not resolve
+ --> models/marts/customer_report.sql:1:58
+  |
+1 | SELECT customer_id, UPPER(name_sound) AS name_sound FROM __ref("customer_sounds")
+  |                                                          ^^^^^^^^^^^^^^^^^^^^^^^^ relation `__SQLQUACK_RELATION__CUSTOMER_SOUNDS` has no known columns
+  |
+  = note: reads `customer_sounds`, which doesn't convert
+  = help: declare the relation and its columns in a source file of the project (`sources/*.yml`)
+...
+Converted 1 of 4 files (25%)
+Blocked: 3 files, 2 causes (SQ0002 SOUNDEX, SQ0002 WEEKISO)
+```
+
+When the project already types a model that doesn't convert, the files reading it convert, and
+census warns about each one:
+
+```text
+warning: models/marts/customer_report.sql converts, but reads customer_sounds, which doesn't
+ --> models/marts/customer_report.sql
+
+Converted 2 of 4 files (50%)
+Blocked: 2 files, 2 causes (SQ0002 SOUNDEX, SQ0002 WEEKISO)
+Converts with a blocked upstream model: 1
+```
+
+`--no-chain-models` converts each file on its own, without typing the models it reads.
+
+## JSON output
+
+`--json` prints the same result as one object:
+
+| Field | Meaning |
+|-------|---------|
+| `ok` | Whether every file converts. |
+| `files`, `converted` | Files read, and files that convert. |
+| `blocked` | Each blocked file's `path` and `diagnostics`, each diagnostic as in [JSON output](/docs/diagnostics/overview/#json-output). |
+| `causes` | Each cause's `code`, `cause` and the `files` it blocks, most first. |
+| `upstream` | Each file that converts but reads a blocked model: its `path`, and the blocked models' files in `reads`. |
+
+## Detailed report
+
+`--detailed` prints a coverage report instead: construct counts, refusals by category and
+construct, and what blocks files through the model graph. It holds counts and construct names
+only, never SQL text or file names, so you can share it. `--names` adds file, model and relation
+names, and the slowest files.
+
+```console
+$ sqlquack census models --builtin-policy --detailed
+Census of 3 snowflake SQL files
+  parsed 3 (3 statements), unparsed 0, empty 0
+  distinct constructs 6 (2 fn, 4 node)
+  files refused: missing rule 2, outside type conditions 0, unresolved name 0, not expressible 0, parse fidelity 0, conversion budget 0, divergence refused 0
+  convertible: strict 1 (every model upstream converts too), unit-testable 1 (the file's own SQL converts; 0 with an upstream model refused or not scanned)
+  with no named assumption: strict 1, unit-testable 1 (relying on one: none)
+
+Refusals by category and construct (top 50)
+       1  missing rule: fn:SOUNDEX
+       1  missing rule: fn:WEEKISO
+```
 
 | Count | Meaning |
 |-------|---------|
@@ -50,31 +124,40 @@ file, model and relation names to the slowest files and the blockers.
 | `strict` | It converts and so does every model upstream of it. |
 | `with no named assumption` | The same counts, leaving out files that rely on an assumption such as `session_timezone_utc`. |
 
-With `--chain-models`, each converted file types the relation its file name references, read
-by any qualifier as dbt writes it, and the files reading it convert again. A file reading a refused model is labelled
-`upstream_refused:<model>`, and one reading a model the scan holds no file for,
-`upstream_missing:<relation>`.
+A file reading a refused model is labelled `upstream_refused:<model>`, and one reading a model the
+scan holds no file for, `upstream_missing:<relation>`.
 
-## Planning support
+### Planning support
 
-`--assume-supported` (with `--chain-models`) takes construct keys or `rule.<id>`s and reports how
-many files would then convert, what blocks the rest next, and a plan of the constructs each step
-should support together. Every such figure is an upper bound: it counts only the refusals
-collected, and supporting a construct may uncover others.
+`--assume-supported` takes construct keys or `rule.<id>`s and reports how many files would then
+convert, what blocks the rest next, and a plan of the constructs each step should support
+together. Every such figure is an upper bound: it counts only the refusals collected, and
+supporting a construct may uncover others.
 
 ## Options
 
 | Option | Meaning |
 |--------|---------|
 | `--project <folder>` | The [project](/docs/project/) declaring the tables the files read. Default the current folder. |
-| `--chain-models` | Type each converted file as the relation its name references, and convert again. |
-| `--assume-supported <keys>` | Construct keys or `rule.<id>`s to treat as supported, comma-separated. |
+| `--no-chain-models` | Convert each file on its own, without typing the models it reads. |
 | `--cursor-type timestamp\|integer` | Replace SQLBuild's cursor intrinsics with a bound as SQLBuild renders one. |
-| `--names` | Print file, model and relation names in the slowest files and the blockers. |
-| `--limit <n>` | Constructs listed in the text report. Default 50. |
 | `--dialect <dialect>` | The dialect the SQL is written in. Default `snowflake`. |
 | `--overrides`, `--verified-override` | As for [`convert`](/docs/cli/convert/#options). |
-| `--format text\|json`, `--json` | Print the report as text or JSON. |
+| `--format text\|json`, `--json` | Print the result as text or JSON. |
+| `--detailed` | Print the coverage report instead of diagnostics. |
+| `--names` | With `--detailed`: print file, model and relation names, and the slowest files. |
+| `--assume-supported <keys>` | With `--detailed`: construct keys or `rule.<id>`s to treat as supported, comma-separated. Not with `--no-chain-models`. |
+| `--limit <n>` | With `--detailed`: constructs listed in the text report. Default 50. |
 
 `census` also takes the [policy flags](/docs/policy/#flags). It takes no session parameters and
 converts under `utc-v1`.
+
+## Exit status
+
+| Code | Meaning |
+|------|---------|
+| `0` | Every file converts. |
+| `1` | At least one file is blocked. |
+| `2` | Census can't run: bad arguments, an unreadable path, no SQL files, or a project it can't load. |
+
+`--detailed` exits the same way.

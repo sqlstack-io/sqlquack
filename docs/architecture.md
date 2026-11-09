@@ -345,17 +345,29 @@ identifier → rules → cases and files.
 
 ## Census
 
-`sqlquack census` runs the pipeline over every `.sql` file and reports, per construct, how many files
-use it, plus how many files would convert as the top N constructs get rules, in frequency order and
-in greedy order (each next rule is the one that completes the most files). SQLBuild reference calls
-(`__ref`, `__source`, `__seed`, `__udf`, `__table_fn`, cursor bounds) are replaced with neutral
-placeholders before parsing; each model, source or seed reference becomes a relation named after its
-arguments, so a project's source file can type it. The report holds counts and construct keys only. With
+`sqlquack census` runs the pipeline over every `.sql` file. SQLBuild reference calls (`__ref`,
+`__source`, `__seed`, `__udf`, `__table_fn`, cursor bounds) are replaced with neutral placeholders
+before parsing; each model, source or seed reference becomes a relation named after its arguments,
+so a project's source file can type it. Models are chained by default: each converted file types the
+relation its name references, and its readers convert again (`--no-chain-models` turns this off).
+
+By default census prints each blocked file's first-pass refusals as the diagnostics `convert` gives
+them, located in the file as written, then a warning for each converted file reading a refused
+model, then a summary of converted files and causes. A refusal naming an unresolved relation that is
+a refused model of the scan gets a note naming that model and is not counted as a cause. `--json`
+prints the same as one object. Census exits 0 when every file converts, 1 when any is blocked and 2
+when it cannot run, in every mode.
+
+`--detailed` prints the coverage report instead: per construct, how many files use it, plus how many
+files would convert as the top N constructs get rules, in frequency order and in greedy order (each
+next rule is the one that completes the most files). The detailed report holds counts and construct
+keys only. With
 `SQLQUACK_GUARDS_DIR` set, census also writes each converted file's known divergences there, and
 with `SQLQUACK_CONVERTED_DIR` set, each converted file's DuckDB SQL, named after its path.
 Progress goes to stderr every few seconds, and the conversion times of the slowest files, over every
-pass, are listed there at the end. `--names` adds file, model and relation names: the slowest
-files' paths, the blockers' model names and the relation in each `model:` and `relation:` root.
+pass, are listed there at the end of a detailed run. `--names`, with `--detailed`, adds file, model
+and relation names: the slowest files' paths, the blockers' model names and the relation in each
+`model:` and `relation:` root.
 
 The `blockers` section traces each refused file through the models it references. Conversion stops
 at a statement's first refusal, so for blockers the census converts each refused file again,
