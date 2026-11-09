@@ -638,13 +638,19 @@ fn given_sqlbuild_type_markers_when_parsing_then_well_formed_ones_are_annotation
 }
 
 #[test]
-fn given_result_clauses_when_parsing_then_the_select_keeps_them() {
+fn given_for_clauses_when_parsing_then_the_tree_keeps_them() {
     let test_cases = [
         ValueTestCase {
             description: "a FOR XML clause keeps its mode and each directive, with the name each takes",
             sql: "SELECT a FROM t FOR XML PATH('r'), TYPE",
             pointer: "/0/select/for_xml",
             expected_json: r#"[{"query_option":{"expression":{"literal":{"literal_type":"string","value":"r"}},"this":{"var":{"this":"PATH"}}}},{"query_option":{"expression":null,"this":{"var":{"this":"TYPE"}}}}]"#,
+        },
+        ValueTestCase {
+            description: "FOR SYSTEM_TIME is kept as the table's version, its two bounds a tuple",
+            sql: "SELECT a FROM t FOR SYSTEM_TIME BETWEEN '2020' AND 1 AS h",
+            pointer: "/0/select/from/expressions/0/table/version",
+            expected_json: r#"{"expression":{"tuple":{"expressions":[{"literal":{"literal_type":"string","value":"2020"}},{"literal":{"literal_type":"number","value":"1"}}]}},"kind":"BETWEEN","this":{"identifier":{"name":"SYSTEM_TIME","quoted":false,"trailing_comments":[]}}}"#,
         },
         ValueTestCase {
             description: "FOR BROWSE is kept as the select's browse-mode lock",

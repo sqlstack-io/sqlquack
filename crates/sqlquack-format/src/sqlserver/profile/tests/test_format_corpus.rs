@@ -8,8 +8,8 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
     let test_cases = [test_types::FormatCorpusTestCase {
         description: "SQL Server identity corpus",
         dialect: "tsql",
-        expected_formatted: 57,
-        expected_refused: 18,
+        expected_formatted: 60,
+        expected_refused: 15,
         departures: &[
             Departure {
                 sql: "SELECT val FROM (VALUES ((TRUE), (FALSE), (NULL))) AS t(val)",
@@ -108,25 +108,9 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 ),
             },
             Departure {
-                sql: "SELECT [x] FROM [a].[b] FOR SYSTEM_TIME AS OF 'foo'",
-                formatted: None,
-                reason: "SQL Server accepts it; SQLQuack's parser keeps a FOR SYSTEM_TIME clause opaque (gap `system_time`), so the formatter refuses rather than guess; SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT [x] FROM [a].[b] FOR SYSTEM_TIME AS OF 'foo' AS alias",
-                formatted: None,
-                reason: "SQL Server accepts it; SQLQuack's parser keeps a FOR SYSTEM_TIME clause opaque (gap `system_time`), so the formatter refuses rather than guess; SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
                 sql: "SELECT [x] FROM [a].[b] FOR SYSTEM_TIME FROM c TO d",
                 formatted: None,
-                reason: "SQL Server rejects it: `Incorrect syntax near 'c'.` (102); SQLQuack's parser keeps a FOR SYSTEM_TIME clause opaque (gap `system_time`); SQLClean formatted it",
+                reason: "SQL Server rejects it: `Incorrect syntax near 'c'.` (102); SQLQuack's parser refuses it (`Incorrect syntax near 'c'.`); SQLClean formatted it",
                 receipt: Some(
                     "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
@@ -134,7 +118,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
             Departure {
                 sql: "SELECT [x] FROM [a].[b] FOR SYSTEM_TIME BETWEEN c AND d",
                 formatted: None,
-                reason: "SQL Server rejects it: `Incorrect syntax near 'c'.` (102); SQLQuack's parser keeps a FOR SYSTEM_TIME clause opaque (gap `system_time`); SQLClean formatted it",
+                reason: "SQL Server rejects it: `Incorrect syntax near 'c'.` (102); SQLQuack's parser refuses it (`Incorrect syntax near 'c'.`); SQLClean formatted it",
                 receipt: Some(
                     "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
@@ -142,15 +126,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
             Departure {
                 sql: "SELECT [x] FROM [a].[b] FOR SYSTEM_TIME CONTAINED IN (c, d)",
                 formatted: None,
-                reason: "SQL Server rejects it: `Incorrect syntax near 'c'.` (102); SQLQuack's parser keeps a FOR SYSTEM_TIME clause opaque (gap `system_time`); SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT [x] FROM [a].[b] FOR SYSTEM_TIME ALL AS alias",
-                formatted: None,
-                reason: "SQL Server accepts it; SQLQuack's parser keeps a FOR SYSTEM_TIME clause opaque (gap `system_time`), so the formatter refuses rather than guess; SQLClean formatted it",
+                reason: "SQL Server rejects it: `Incorrect syntax near 'c'.` (102); SQLQuack's parser refuses it (`Incorrect syntax near 'c'.`); SQLClean formatted it",
                 receipt: Some(
                     "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),

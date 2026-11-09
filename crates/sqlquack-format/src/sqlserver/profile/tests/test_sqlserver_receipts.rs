@@ -74,22 +74,12 @@ fn given_recorded_sqlserver_verdicts_when_formatting_the_refused_corpus_then_eac
             expected_refusal: PARSE_FAILURE,
         },
         test_types::SqlServerReceiptTestCase {
-            description: "SELECT [x] FROM [a].[b] FOR SYSTEM_TIME AS OF 'foo'",
-            expected_runs: &[None, None],
-            expected_refusal: OPAQUE_STATEMENT_FAILURE,
-        },
-        test_types::SqlServerReceiptTestCase {
-            description: "SELECT [x] FROM [a].[b] FOR SYSTEM_TIME AS OF 'foo' AS alias",
-            expected_runs: &[None, None],
-            expected_refusal: OPAQUE_STATEMENT_FAILURE,
-        },
-        test_types::SqlServerReceiptTestCase {
             description: "SELECT [x] FROM [a].[b] FOR SYSTEM_TIME FROM c TO d",
             expected_runs: &[
                 Some((102, "Incorrect syntax near 'c'.")),
                 Some((102, "Incorrect syntax near 'c'.")),
             ],
-            expected_refusal: OPAQUE_STATEMENT_FAILURE,
+            expected_refusal: PARSE_FAILURE,
         },
         test_types::SqlServerReceiptTestCase {
             description: "SELECT [x] FROM [a].[b] FOR SYSTEM_TIME BETWEEN c AND d",
@@ -97,7 +87,7 @@ fn given_recorded_sqlserver_verdicts_when_formatting_the_refused_corpus_then_eac
                 Some((102, "Incorrect syntax near 'c'.")),
                 Some((102, "Incorrect syntax near 'c'.")),
             ],
-            expected_refusal: OPAQUE_STATEMENT_FAILURE,
+            expected_refusal: PARSE_FAILURE,
         },
         test_types::SqlServerReceiptTestCase {
             description: "SELECT [x] FROM [a].[b] FOR SYSTEM_TIME CONTAINED IN (c, d)",
@@ -105,12 +95,7 @@ fn given_recorded_sqlserver_verdicts_when_formatting_the_refused_corpus_then_eac
                 Some((102, "Incorrect syntax near 'c'.")),
                 Some((102, "Incorrect syntax near 'c'.")),
             ],
-            expected_refusal: OPAQUE_STATEMENT_FAILURE,
-        },
-        test_types::SqlServerReceiptTestCase {
-            description: "SELECT [x] FROM [a].[b] FOR SYSTEM_TIME ALL AS alias",
-            expected_runs: &[None, None],
-            expected_refusal: OPAQUE_STATEMENT_FAILURE,
+            expected_refusal: PARSE_FAILURE,
         },
         test_types::SqlServerReceiptTestCase {
             description: "SELECT x FROM a INNER LOOP JOIN b ON b.id = a.id",
