@@ -81,14 +81,19 @@ pub(crate) fn parse_json(
     Ok(semi_structured(json_guarded(
         &text,
         trying,
+        None,
         site.context.log,
     )))
 }
 
-/// A VARIANT column of a base table, guarded as PARSE_JSON's result is.
-pub(crate) fn guarded_column(sql: &str, context: &Context<'_>) -> Result<String, Refusal> {
+/// A VARIANT base column guarded as PARSE_JSON's result is; `reads` lists its literal paths read.
+pub(crate) fn guarded_column(
+    sql: &str,
+    reads: Option<&[Vec<PathStep>]>,
+    context: &Context<'_>,
+) -> Result<String, Refusal> {
     diverge(context, JSON_FIDELITY, &node_construct("column"))?;
-    Ok(json_guarded(sql, false, context.log))
+    Ok(json_guarded(sql, false, reads, context.log))
 }
 
 /// `v:a.b[0]`: a literal path into a VARIANT.
@@ -496,7 +501,7 @@ fn text_literal_value(
 }
 
 /// The steps of a Snowflake path: dotted keys, `[n]` indexes and `["key"]` keys.
-fn path_steps(text: &str) -> Option<Vec<PathStep>> {
+pub(crate) fn path_steps(text: &str) -> Option<Vec<PathStep>> {
     let mut steps: Vec<PathStep> = Vec::new();
     let mut rest = text;
     while !rest.is_empty() {

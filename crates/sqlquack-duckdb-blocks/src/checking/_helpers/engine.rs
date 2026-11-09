@@ -12,6 +12,7 @@ use crate::checking::main::quoted_relation::quoted_relation;
 
 use crate::checking::constants::{DISABLE_OPTIMIZER, MACRO_PREFIX};
 use crate::checking::errors::{CheckStage, PrintedSqlFailure};
+use crate::macros::main::all_helper_statements::all_helper_statements;
 
 /// A DuckDB connection and the definition of each table created in it.
 pub(crate) struct Engine {
@@ -106,7 +107,7 @@ pub(crate) fn with_engine<T>(
     result
 }
 
-/// An in-memory connection that parses and binds without optimising, which the check does not need.
+/// An in-memory connection that binds without optimising, holding every helper macro.
 fn binding_connection() -> Result<Connection, PrintedSqlFailure> {
     let engine_failure = |error: duckdb::Error| PrintedSqlFailure {
         stage: CheckStage::Engine,
@@ -116,5 +117,10 @@ fn binding_connection() -> Result<Connection, PrintedSqlFailure> {
     connection
         .execute_batch(DISABLE_OPTIMIZER)
         .map_err(engine_failure)?;
+    for statement in all_helper_statements() {
+        connection
+            .execute_batch(&statement)
+            .map_err(engine_failure)?;
+    }
     Ok(connection)
 }

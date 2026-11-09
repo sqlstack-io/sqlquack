@@ -65,14 +65,15 @@ fn given_a_guarded_expression_repeated_in_a_grouped_query_when_converted_then_it
 fn given_guarded_expressions_when_converted_then_each_raise_id_lists_its_locations() {
     let test_cases = [
         RaisePlacesTestCase {
-            description: "each raise of a division in two places has one ID with both locations",
+            description: "the zero-divisor raise of a division in two places has one ID with both \
+                          locations",
             sql: "SELECT amount / customer_id AS r FROM orders\nWHERE amount / customer_id > 1",
-            expected_places: Ok(vec![vec![[1, 8], [2, 7]]; 2]),
+            expected_places: Ok(vec![vec![[1, 8], [2, 7]]]),
         },
         RaisePlacesTestCase {
             description: "two different divisions have IDs of their own",
             sql: "SELECT amount / customer_id AS r,\n  customer_id / amount AS s FROM orders",
-            expected_places: Ok(vec![vec![[1, 8]], vec![[1, 8]], vec![[2, 3]]]),
+            expected_places: Ok(vec![vec![[1, 8]], vec![[2, 3]]]),
         },
     ];
 

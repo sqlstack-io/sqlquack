@@ -11,6 +11,7 @@ use sqlquack_core::diagnostics::main::render_diagnostics::render_diagnostics;
 use sqlquack_core::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
 use sqlquack_core::diagnostics::models::Diagnostic;
 use sqlquack_core::parsing::models::SourceDialect;
+use sqlquack_duckdb_blocks::macros::main::helper_statements::helper_statements;
 use sqlquack_rules::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_rules::conversion::models::ConvertedFunction;
 
@@ -39,6 +40,14 @@ enum Failure {
     },
 }
 
+/// What a converted `function` prints: the function and the helper macros its body calls.
+#[derive(Serialize)]
+struct FunctionOutput<'converted> {
+    #[serde(flatten)]
+    converted: &'converted ConvertedFunction,
+    macros: Vec<String>,
+}
+
 /// What `function` prints on standard output when the body is refused.
 #[derive(Serialize)]
 struct FunctionRefusal<'report> {
@@ -61,7 +70,11 @@ pub(crate) fn function_command(
             let _ = writeln!(
                 stdout,
                 "{}",
-                serde_json::to_string_pretty(&converted).unwrap_or_default()
+                serde_json::to_string_pretty(&FunctionOutput {
+                    converted: &converted,
+                    macros: helper_statements(&[&converted.body]),
+                })
+                .unwrap_or_default()
             );
             let _ = writeln!(
                 stderr,

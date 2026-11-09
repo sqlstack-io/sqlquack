@@ -1518,6 +1518,27 @@ footer a {
 	border-top-style: dashed;
 }
 
+.pg-helpers {
+	border-top: 1px solid var(--inner-line);
+}
+
+.pg-helpers summary {
+	padding: 10px 16px;
+	cursor: pointer;
+	color: var(--muted-foreground);
+	font-size: 13px;
+	font-weight: 500;
+}
+
+.pg-helpers .terminal {
+	max-height: 240px;
+	color: var(--muted-foreground);
+}
+
+.pg-helpers + .terminal {
+	border-top-style: dashed;
+}
+
 .pg-body button {
 	margin: 12px 16px;
 }

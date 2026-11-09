@@ -56,7 +56,7 @@ fn given_text_duckdb_cannot_read_when_trying_to_parse_json_then_only_unfinishabl
     ];
     for test_case in test_cases {
         let literal = format!("'{}'", test_case.text.replace('\'', "''"));
-        let sql = json_guarded(&literal, true, &ProvenanceLog::default());
+        let sql = json_guarded(&literal, true, None, &ProvenanceLog::default());
         let (value, error) = evaluated(&format!("CAST({sql} AS VARCHAR)"));
         let raised = error
             .as_deref()

@@ -63,7 +63,7 @@ SQL in rendered diagnostics. It returns a `CheckResult`:
 |-------|------|---------|
 | `converted` | `bool` | Whether every statement converted. |
 | `sql` | `str` | The DuckDB SQL. |
-| `macros` | `tuple[str, ...]` | DuckDB macros the SQL needs, to run first. |
+| `macros` | `tuple[str, ...]` | Statements creating the DuckDB macros the SQL needs, [helper macros](/docs/helper-macros/) first, to run in order first. |
 | `profile` | `str` | The session profile it converted under. |
 | `diagnostics` | `tuple[Diagnostic, ...]` | The refusals. |
 | `divergences` | `Mapping[str, tuple[str, ...]]` | Known divergences relied on, with their constructs. |

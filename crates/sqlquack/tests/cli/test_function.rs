@@ -29,6 +29,17 @@ fn given_a_project_declared_sql_function_when_converting_then_its_macro_runs_in_
             },
         },
         FunctionMacroTestCase {
+            description: "a body reading a VARIANT carries the helper macros it calls",
+            returns: "VARCHAR",
+            body: "PARSE_JSON('{\"kind\":\"bug\"}'):kind::VARCHAR",
+            call: "SELECT \"DOUBLED\"(1.25)",
+            flags: &[],
+            expected_outcome: FunctionMacroOutcome {
+                exit_code: Some(0),
+                values: vec!["bug".to_owned()],
+            },
+        },
+        FunctionMacroTestCase {
             description: "a NUMBER body of another precision than declared is refused",
             returns: "NUMBER(10,2)",
             body: "price * 2",

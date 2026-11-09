@@ -152,6 +152,20 @@ fn given_a_table_with_semi_structured_columns_when_converting_then_only_reading_
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
+            description: "PARSE_JSON and an array literal build VARIANTs that raise on odd JSON, so they convert",
+            sql: "SELECT PARSE_JSON(subject) AS j, [ticket_id, subject] AS a FROM tickets",
+            flags: &["--builtin-policy", "--project", TICKETS_PROJECT],
+            mention: "relies on known divergence json_fidelity at fn:PARSE_JSON, node:array_func",
+            expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "OBJECT_CONSTRUCT has unrecorded shapes and hazards, so it still refuses",
+            sql: "SELECT OBJECT_CONSTRUCT('id', ticket_id) AS o FROM tickets",
+            flags: &["--builtin-policy", "--project", TICKETS_PROJECT],
+            mention: "fn:OBJECT_CONSTRUCT needs known divergence `json_fidelity`",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
             description: "comparing an uncast VARIANT rests on an assumption, so it still refuses",
             sql: "SELECT ticket_id FROM tickets WHERE details:kind = 'bug'",
             flags: &["--builtin-policy", "--project", TICKETS_PROJECT],

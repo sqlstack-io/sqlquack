@@ -4,12 +4,14 @@ use crate::test_types::{CaseIndexOutcome, CaseIndexTestCase, CorpusIndexTestCase
 #[test]
 fn given_a_corpus_and_schema_when_indexing_then_building_blocks_map_to_the_files_using_them() {
     let test_cases = [CorpusIndexTestCase {
-        description: "each building block lists exactly the corpus files whose conversion used it",
+        description: "each building block lists exactly the corpus files whose conversion used it, \
+                          and a refusal its file; HASH still refuses under the built-in policy, \
+                          where PARSE_JSON now converts",
         expected_outcome: IndexOutcome {
             exit_code: Some(0),
             text_to_boolean_files: vec!["corpus/active.sql".to_owned()],
             text_to_number_files: vec!["corpus/credit.sql".to_owned()],
-            parse_json_refusals: vec!["corpus/notes.sql".to_owned()],
+            hash_refusals: vec!["corpus/notes.sql".to_owned()],
             converted: 3,
             refused: 1,
         },

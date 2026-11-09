@@ -27,6 +27,7 @@ use crate::analysis::main::check_source::check_source;
 use crate::analysis::main::collect_all_refusals::collect_all_refusals;
 use crate::analysis::main::confirm_assumption::confirm_assumption;
 use crate::analysis::main::refused_construct::refused_construct;
+use crate::analysis::main::with_helpers::with_helpers;
 use crate::analysis::models::PipelineConverter;
 use crate::analysis::tests::test_types::{
     AnalysisSummary, CollectedSummary, DivergenceModeOutcome, EverydayCorpus, EverydayQuery,
@@ -195,7 +196,7 @@ pub(crate) fn function_body_results(name: &str, body: &str, call: &str) -> Vec<S
     )
     .map_err(|refusals| format!("{refusals:?}"))
     .expect("the body converts");
-    let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    let connection = helped_connection(&converted.body);
     connection
         .execute_batch(&format!(
             "CREATE TABLE \"ORDERS\" (\"CUSTOMER_ID\" DECIMAL(38,0), \"AMOUNT\" DECIMAL(10,2)); \
@@ -211,6 +212,17 @@ pub(crate) fn function_body_results(name: &str, body: &str, call: &str) -> Vec<S
         .expect("the call runs")
         .map(|value| value.expect("a value").unwrap_or_else(|| "NULL".to_owned()))
         .collect()
+}
+
+/// An in-memory DuckDB holding the helper macros that `sql` calls, as `convert` prints them.
+fn helped_connection(sql: &str) -> duckdb::Connection {
+    let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    for statement in with_helpers(Vec::new(), sql) {
+        connection
+            .execute_batch(&statement)
+            .expect("the helper macro is created");
+    }
+    connection
 }
 
 /// Converts `sql` over the shop schema under the repository policy, and runs it on one event row.
@@ -238,7 +250,7 @@ pub(crate) fn event_results_allowing(sql: &str, payload: &str, allowed: &[&str])
     let [converted] = analysis.conversions.as_slice() else {
         panic!("the statement converts: {:?}", analysis.refusals);
     };
-    let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    let connection = helped_connection(&converted.sql);
     connection
         .execute_batch(&format!(
             "CREATE TABLE \"EVENTS\" (\"PAYLOAD\" JSON); \
@@ -542,7 +554,7 @@ pub(crate) fn shop_conversion(sql: &str) -> Result<Converted, Vec<String>> {
 /// How many rows `sql` returns when converted and run on the shop rows, or why it does not.
 pub(crate) fn shop_row_count(sql: &str) -> Result<usize, Vec<String>> {
     let converted = shop_conversion(sql)?;
-    let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    let connection = helped_connection(&converted.sql);
     connection
         .execute_batch(SHOP_ROWS)
         .expect("the shop tables are created");
@@ -569,7 +581,7 @@ pub(crate) fn raise_places(sql: &str) -> Result<Vec<Vec<[usize; 2]>>, Vec<String
 /// Where the error raised running the conversion of `sql` on the shop rows comes from.
 pub(crate) fn raised_places(sql: &str) -> Result<Vec<[usize; 2]>, Vec<String>> {
     let converted = shop_conversion(sql)?;
-    let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    let connection = helped_connection(&converted.sql);
     connection
         .execute_batch(SHOP_ROWS)
         .expect("the shop tables are created");
@@ -641,7 +653,7 @@ pub(crate) fn converted_sql(statements: &[&str]) -> Vec<Option<String>> {
 /// The first value `sql` returns as text when converted and run on the shop rows, or why not.
 pub(crate) fn shop_first_value(sql: &str) -> Result<String, Vec<String>> {
     let converted = shop_conversion(sql)?;
-    let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    let connection = helped_connection(&converted.sql);
     connection
         .execute_batch(SHOP_ROWS)
         .expect("the shop tables are created");
@@ -990,7 +1002,7 @@ fn with_span(outcome: String, span: Option<&DiagnosticSpan>) -> String {
 
 /// The fixture rows `sql` returns, sorted and hashed, or the Snowflake error it raises.
 fn fixture_result(fixture: &str, sql: &str) -> String {
-    let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    let connection = helped_connection(sql);
     connection
         .execute_batch(fixture)
         .expect("the fixture loads");
