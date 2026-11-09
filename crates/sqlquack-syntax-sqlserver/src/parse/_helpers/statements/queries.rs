@@ -90,17 +90,15 @@ impl<'sql> Parser<'sql> {
         if let Some(with) = with {
             set_with(&mut query, with);
         }
+        self.browse_clause(&mut query)?;
         self.query_tail()?;
         Ok(query)
     }
 
-    /// The gap for a statement-level `OPTION (...)` or `FOR XML | JSON | BROWSE` after a query.
+    /// The gap for a statement-level `OPTION (...)` after a query.
     pub(crate) fn query_tail(&mut self) -> Parsing<()> {
         if self.kw("OPTION") && self.char_at(1, '(') {
             return Err(self.gap("query_option", self.offset()));
-        }
-        if self.kw("FOR") && self.kw_in(1, &["XML", "JSON", "BROWSE"]) {
-            return Err(self.gap("for_xml_json", self.offset()));
         }
         Ok(())
     }
@@ -133,7 +131,7 @@ impl<'sql> Parser<'sql> {
         }))
     }
 
-    /// A query expression with its `ORDER BY` and `OFFSET`/`FETCH`.
+    /// A query expression with its `ORDER BY`, `OFFSET`/`FETCH` and `FOR XML` or `FOR JSON`.
     pub(crate) fn query_expression(&mut self) -> Parsing<Expression> {
         self.deeper(|parser| {
             let mut query: Expression = parser.union_expression()?;
@@ -170,9 +168,7 @@ impl<'sql> Parser<'sql> {
                     _ => return Err(parser.gap("set_operation_order", parser.offset())),
                 }
             }
-            if parser.kw("FOR") && parser.kw_in(1, &["XML", "JSON", "BROWSE"]) {
-                return Err(parser.gap("for_xml_json", parser.offset()));
-            }
+            parser.xml_or_json_clause(&mut query)?;
             Ok(query)
         })
     }

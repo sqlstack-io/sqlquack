@@ -7,8 +7,10 @@ use sqlquack_syntax::expressions::statements::models::{Merge, OutputClause, When
 use sqlquack_syntax::expressions::types::models::Tuple;
 
 use crate::parse::_helpers::statements::queries::set_with;
+use crate::parse::_helpers::statements::results::{has_browse, has_xml_or_json};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_name};
 use crate::parse::_helpers::tree::nodes::{column_from, delete, insert, table, update, var};
+use crate::parse::constants::BROWSE_WITH_WRITE;
 
 fn tuple(expressions: Vec<Expression>) -> Expression {
     Expression::Tuple(Box::new(Tuple { expressions }))
@@ -29,6 +31,7 @@ impl<'sql> Parser<'sql> {
             _ => {
                 let mut query: Expression = self.query_expression()?;
                 set_with(&mut query, with);
+                self.browse_clause(&mut query)?;
                 self.query_tail()?;
                 return Ok(query);
             }
@@ -94,7 +97,16 @@ impl<'sql> Parser<'sql> {
         } else if self.kw_in(0, &["EXEC", "EXECUTE"]) {
             return Err(self.gap("insert_exec", self.offset()));
         } else {
-            node.query = Some(self.query_statement()?);
+            let query: Expression = self.query_statement()?;
+            if has_browse(&query) {
+                return Err(self.error_with(BROWSE_WITH_WRITE));
+            }
+            if let Some(clause) = has_xml_or_json(&query) {
+                return Err(self.error_with(&format!(
+                    "The FOR {clause} clause is not allowed in a INSERT statement."
+                )));
+            }
+            node.query = Some(query);
         }
         Ok(Expression::Insert(Box::new(node)))
     }

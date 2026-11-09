@@ -988,6 +988,7 @@ impl<'a> Guide<'a> {
             || ((self.is(index, "GROUP") || self.is(index, "ORDER")) && self.is(index + 1, "BY"))
             || self.is_any(index, self.rules.clause_keywords)
             || (self.is_any(index, self.rules.by_clauses) && self.is(index + 1, "BY"))
+            || (self.is(index, "FOR") && self.is_any(index + 1, self.rules.for_clauses))
     }
 
     fn select(&mut self, select: usize, last: usize, indent: usize) {
@@ -1086,7 +1087,8 @@ impl<'a> Guide<'a> {
                 }
             }
             word if matches!(word, "GROUP" | "ORDER")
-                || self.is_any(clause, self.rules.by_clauses) =>
+                || self.is_any(clause, self.rules.by_clauses)
+                || (word == "FOR" && self.is_any(clause + 1, self.rules.for_clauses)) =>
             {
                 let body = clause + 2;
                 if body > end || (self.is(body, "ALL") && body == end) {

@@ -82,19 +82,24 @@ fn given_sql_when_parsing_then_the_verdict_is_sql_servers() {
             expected_verdict: ExpectedVerdict::Tree,
         },
         VerdictTestCase {
-            description: "a scalar subquery may end in FOR JSON, which is not read",
+            description: "a scalar subquery may end in FOR JSON",
             sql: "SELECT (SELECT TOP 5 a, b FROM t ORDER BY b DESC FOR JSON PATH) AS j FROM x",
-            expected_verdict: ExpectedVerdict::Gap("for_xml_json"),
+            expected_verdict: ExpectedVerdict::Tree,
         },
         VerdictTestCase {
-            description: "a derived table may end in FOR JSON, which is not read",
+            description: "a derived table may end in FOR JSON",
             sql: "SELECT j FROM (SELECT a AS j FROM t FOR JSON PATH) AS x(j)",
-            expected_verdict: ExpectedVerdict::Gap("for_xml_json"),
+            expected_verdict: ExpectedVerdict::Tree,
         },
         VerdictTestCase {
-            description: "an EXISTS query may end in FOR XML, which is not read",
+            description: "an EXISTS query may end in FOR XML",
             sql: "SELECT 1 WHERE EXISTS (SELECT 1 x FOR XML PATH)",
-            expected_verdict: ExpectedVerdict::Gap("for_xml_json"),
+            expected_verdict: ExpectedVerdict::Tree,
+        },
+        VerdictTestCase {
+            description: "a set operation's FOR XML is not read, as the tree keeps it only on a SELECT",
+            sql: "SELECT a FROM t UNION SELECT a FROM u FOR XML PATH",
+            expected_verdict: ExpectedVerdict::Gap("set_operation_for_xml_json"),
         },
         VerdictTestCase {
             description: "a subquery takes no OPTION clause (156)",
@@ -626,6 +631,36 @@ fn given_sqlbuild_type_markers_when_parsing_then_well_formed_ones_are_annotation
         assert_eq!(
             verdict(test_case.sql),
             test_case.expected_verdict,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_result_clauses_when_parsing_then_the_select_keeps_them() {
+    let test_cases = [
+        ValueTestCase {
+            description: "a FOR XML clause keeps its mode and each directive, with the name each takes",
+            sql: "SELECT a FROM t FOR XML PATH('r'), TYPE",
+            pointer: "/0/select/for_xml",
+            expected_json: r#"[{"query_option":{"expression":{"literal":{"literal_type":"string","value":"r"}},"this":{"var":{"this":"PATH"}}}},{"query_option":{"expression":null,"this":{"var":{"this":"TYPE"}}}}]"#,
+        },
+        ValueTestCase {
+            description: "FOR BROWSE is kept as the select's browse-mode lock",
+            sql: "SELECT a FROM t FOR BROWSE",
+            pointer: "/0/select/locks",
+            expected_json: r#"[{"expressions":[],"key":null,"update":{"var":{"this":"BROWSE"}},"wait":null}]"#,
+        },
+    ];
+    for test_case in test_cases {
+        let parsed = parse_strict(test_case.sql).expect(test_case.description);
+        let tree: Value = serde_json::to_value(&parsed.statements).expect(test_case.description);
+        assert_eq!(
+            tree.pointer(test_case.pointer)
+                .map(Value::to_string)
+                .as_deref(),
+            Some(test_case.expected_json),
             "{}",
             test_case.description
         );

@@ -58,36 +58,6 @@ fn given_recorded_sqlserver_verdicts_when_formatting_the_refused_corpus_then_eac
             expected_refusal: OPAQUE_STATEMENT_FAILURE,
         },
         test_types::SqlServerReceiptTestCase {
-            description: "SELECT * FROM t FOR XML PATH, BINARY BASE64, ELEMENTS XSINIL",
-            expected_runs: &[None, None],
-            expected_refusal: OPAQUE_STATEMENT_FAILURE,
-        },
-        test_types::SqlServerReceiptTestCase {
-            description: "SELECT (SELECT TOP 5 a, b FROM t ORDER BY b DESC FOR JSON PATH) AS j FROM x",
-            expected_runs: &[None, None],
-            expected_refusal: OPAQUE_STATEMENT_FAILURE,
-        },
-        test_types::SqlServerReceiptTestCase {
-            description: "SELECT j FROM (SELECT a AS j FROM t FOR JSON PATH) AS x",
-            expected_runs: &[
-                None,
-                None,
-                Some((207, "Invalid column name 'j'.")),
-                Some((207, "Invalid column name 'j'.")),
-            ],
-            expected_refusal: OPAQUE_STATEMENT_FAILURE,
-        },
-        test_types::SqlServerReceiptTestCase {
-            description: "SELECT * FROM t FOR JSON PATH, ROOT('Root'), INCLUDE_NULL_VALUES",
-            expected_runs: &[None, None],
-            expected_refusal: OPAQUE_STATEMENT_FAILURE,
-        },
-        test_types::SqlServerReceiptTestCase {
-            description: "SELECT * FROM t FOR BROWSE",
-            expected_runs: &[None, None],
-            expected_refusal: OPAQUE_STATEMENT_FAILURE,
-        },
-        test_types::SqlServerReceiptTestCase {
             description: "SELECT TOP 10 PERCENT",
             expected_runs: &[
                 Some((102, "Incorrect syntax near 'PERCENT'.")),
