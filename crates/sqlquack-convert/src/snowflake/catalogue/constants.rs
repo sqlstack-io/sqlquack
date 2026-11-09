@@ -1138,7 +1138,7 @@ pub const RULES: &[RuleSpec] = &[
     RuleSpec {
         id: TEXT_REPLACE,
         constructs: &["fn:REPLACE", "fn:SPLIT_PART"],
-        conditions: "VARCHAR operands. REPLACE without a replacement removes matches, and an empty search changes nothing. SPLIT_PART takes a literal or column delimiter; an empty delimiter gives the whole text for parts 0, 1 and -1 and empty text for other parts, and a NULL delimiter gives NULL; part 0 counts as 1, negative parts count from the end, and a part past the end is empty.",
+        conditions: "VARCHAR operands. REPLACE without a replacement removes matches, and an empty search changes nothing. SPLIT_PART takes a literal or column delimiter; an empty column delimiter gives the whole text for parts 0, 1 and -1 and empty text for other parts, an empty literal delimiter converts only with part 1, giving the whole text, and a NULL delimiter gives NULL; part 0 counts as 1, negative parts count from the end, and a part past the end is empty.",
         failures: &[],
     },
     RuleSpec {
