@@ -83,6 +83,8 @@ pub const TIMESTAMP_RANGE: &str = "timestamp_range";
 pub const UNTRIMMED_SPACE: &str = "[\\t\\n\\r\\x0b\\x0c]";
 /// The error a TRY_ conversion to DATE raises for a spelling no recording shows.
 pub const DATE_TEXT_SPELLING: &str = "date_text_spelling";
+/// The error a time zone name no recording shows Snowflake accepting raises.
+pub const TIME_ZONE_SPELLING: &str = "time_zone_spelling";
 /// ISO date-time text with an optional `T`, fraction and Z, ±HH:MM or ` ±HHMM` zone, captured.
 pub const ISO_TIMESTAMP_PATTERN: &str = "([0-9]{4}-[0-9]{2}-[0-9]{2})(?:[ T](([01][0-9]|2[0-3]):[0-5][0-9])(?:(:[0-5][0-9])(?:[.]([0-9]+))?)?)?(Z| ?[+-][0-9]{2}:[0-9]{2}| [+-][0-9]{4})?";
 /// Text without an ASCII digit, which TRY_ date and timestamp parsing were recorded reading as NULL.

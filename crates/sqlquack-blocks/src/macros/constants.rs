@@ -38,6 +38,8 @@ pub const TRY_ZONED_TEXT_V1: &str = "try_zoned_text_v1";
 pub const UTC_ZONED_TEXT_V1: &str = "utc_zoned_text_v1";
 /// Text read as an instant whose offset must be +00:00, NULL where Snowflake reads none.
 pub const TRY_UTC_ZONED_TEXT_V1: &str = "try_utc_zoned_text_v1";
+/// A time zone name Snowflake was recorded accepting, raising time_zone_spelling for others.
+pub const TIME_ZONE_V1: &str = "time_zone_v1";
 /// The full read check of JSON text.
 pub const JSON_READ_V1: &str = "json_read_v1";
 /// The fast read check of JSON text, falling back to the full one.
