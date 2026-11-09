@@ -676,11 +676,12 @@ fn regexp_substr_computed(
     Ok(Emitted::new(
         format!(
             "list_transform([struct_pack(t := {text}, p := {position}, o := {occurrence}, \
-             g := {group})], lambda r: CASE WHEN {empty_match} THEN CAST(NULL AS VARCHAR) \
+             g := {group})], lambda r: CASE WHEN CASE WHEN r['o'] = 1 AND r['g'] = 0 THEN FALSE \
+             ELSE {empty_match} END THEN CAST(NULL AS VARCHAR) \
              WHEN r['t'] IS NULL OR r['p'] IS NULL \
              OR r['o'] IS NULL OR r['g'] IS NULL THEN NULL \
              WHEN r['p'] < 1 THEN CAST({} AS VARCHAR) WHEN r['o'] < 1 THEN CAST({} AS VARCHAR) \
-             WHEN r['g'] < 0 THEN CAST({} AS VARCHAR) \
+             WHEN r['g'] < 0 THEN CAST({} AS VARCHAR) WHEN r['p'] > length(r['t']) + 1 THEN NULL \
              ELSE list_transform([substr(r['t'], CAST(least(r['p'], length(r['t']) + 1) AS BIGINT))], \
              lambda u: CASE CAST(least(r['g'], {}) AS BIGINT) {} ELSE NULL END)[1] END)[1]",
             raise("Position must be positive"),
