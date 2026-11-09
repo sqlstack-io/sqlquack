@@ -2,10 +2,10 @@
 
 use std::rc::Rc;
 
-use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::{Identifier, Star};
 use sqlquack_syntax::expressions::operators::models::Parameter;
+use sqlquack_syntax::{DataType, Expression};
 
 use crate::dialects::main::canonical_type::canonical_type;
 use crate::dialects::main::clickhouse_type::clickhouse_type;
@@ -122,7 +122,9 @@ fn expression_lineage_level(
             let target: Option<Rc<str>> =
                 target.map(|target| mapped_timestamp(Rc::from(target), context));
             let nullability: Nullability = match expression {
-                Expression::Cast(_) if variant_of_value(&cast.this, scope, context) => {
+                Expression::Cast(_)
+                    if is_text_type(&cast.to) && variant_of_value(&cast.this, scope, context) =>
+                {
                     Nullability::NonNull
                 }
                 Expression::Cast(_) => cast_nullability(&inner, target.as_deref(), context),
@@ -303,6 +305,18 @@ fn query_reads(query: ResolvedQuery) -> RowReads {
         read.read(&column.lineage);
     }
     read
+}
+
+/// Whether `data_type` is a text type, the cast of a TO_VARIANT that keeps its value's text.
+fn is_text_type(data_type: &DataType) -> bool {
+    matches!(
+        data_type,
+        DataType::Char { .. }
+            | DataType::VarChar { .. }
+            | DataType::String { .. }
+            | DataType::Text
+            | DataType::TextWithLength { .. }
+    )
 }
 
 /// Whether `value` is Snowflake's TO_VARIANT of a non-null value no JSON null can hold.
