@@ -233,7 +233,6 @@ dependencies = [
  "sqlquack-policy",
  "sqlquack-semantics",
  "sqlquack-syntax",
- "sqlquack-syntax-snowflake",
 ]
 
 [[package]]
@@ -279,8 +278,8 @@ dependencies = [
  "serde",
  "serde_json",
  "sqlquack-diagnostics",
+ "sqlquack-parse",
  "sqlquack-syntax",
- "sqlquack-syntax-snowflake",
  "stacker",
 ]
 
