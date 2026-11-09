@@ -10,7 +10,7 @@ use serde::Serialize;
 use crate::analysis::models::SourceDialect;
 use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
 use sqlquack_diagnostics::provenance::models::Provenance;
-use sqlquack_semantics::snowflake::types::models::Schema;
+use sqlquack_semantics::snowflake::typing::types::Schema;
 
 /// What a census reads and reports.
 #[derive(Clone, Debug, PartialEq, Eq)]

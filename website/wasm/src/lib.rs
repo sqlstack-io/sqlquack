@@ -42,7 +42,7 @@ use sqlquack_semantics::lineage::types::LineageSchema;
 use sqlquack_semantics::snowflake::types::errors::SchemaError;
 use sqlquack_semantics::snowflake::types::main::parse_schema::parse_schema;
 use sqlquack_semantics::snowflake::types::main::source_tables::source_tables;
-use sqlquack_semantics::snowflake::types::models::Schema;
+use sqlquack_semantics::snowflake::typing::types::Schema;
 use sqlquack_syntax::tokens::main::node_location::node_location;
 use sqlquack_syntax::tokens::models::SourceLines;
 use sqlquack_syntax::{Dialect, Expression, ParseOptions};

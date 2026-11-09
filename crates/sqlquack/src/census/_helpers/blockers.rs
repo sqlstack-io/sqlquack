@@ -5,7 +5,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::PathBuf;
 
 use sqlquack_diagnostics::refusals::models::RefusalCategory;
-use sqlquack_semantics::snowflake::types::models::Schema;
+use sqlquack_semantics::snowflake::typing::types::Schema;
 
 use crate::census::_helpers::combinations::combinations;
 use crate::census::_helpers::corpus::{model_relation, referenced_model};

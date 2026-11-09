@@ -8,14 +8,6 @@ pub(crate) const TABLE_FUNCTION_COLUMNS: [(&str, &[&str]); 3] = [
     ("SPLIT_TO_TABLE", &["SEQ", "INDEX", "VALUE"]),
     ("STRTOK_SPLIT_TO_TABLE", &["SEQ", "INDEX", "VALUE"]),
 ];
-/// DuckDB's built-in table functions of one column, named after the function.
-pub(crate) const DUCKDB_TABLE_FUNCTION_COLUMNS: [(&str, &[&str]); 3] = [
-    ("GENERATE_SERIES", &["generate_series"]),
-    ("RANGE", &["range"]),
-    ("UNNEST", &[DUCKDB_UNNEST_COLUMN]),
-];
-/// The one column DuckDB's UNNEST in FROM returns.
-pub(crate) const DUCKDB_UNNEST_COLUMN: &str = "unnest";
 /// Serialized expression fields that do not change what a group key means: spans and `::` spelling.
 pub(crate) const SHAPE_COSMETIC_FIELDS: [&str; 2] = ["span", "double_colon_syntax"];
 /// The suffix of serialized comment fields, which group-key shapes drop.
@@ -30,10 +22,6 @@ pub(crate) const STRUCT_FUNCTION: &str = "STRUCT";
 pub(crate) const TABLE_WRAPPER: &str = "TABLE";
 /// Snowflake's name for the n-th column of a VALUES list, numbered from 1.
 pub(crate) const SNOWFLAKE_VALUES_COLUMN: &str = "COLUMN";
-/// DuckDB's name for the n-th column of a VALUES list, numbered from 1.
-pub(crate) const DUCKDB_VALUES_COLUMN: &str = "col";
-/// The DuckDB profile's name, which numbers VALUES columns its own way.
-pub(crate) const DUCKDB_PROFILE: &str = "DuckDB";
 /// Window and group aggregate functions SQLQuack's faithful parse keeps as plain calls.
 pub(crate) const AGGREGATE_FUNCTIONS: &[&str] = &[
     "ANY_VALUE",
@@ -230,30 +218,10 @@ pub(crate) const CONDITIONAL_ARGUMENTS: usize = 3;
 pub(crate) const SQL_STAR: &str = "*";
 /// Functions NULL exactly when their first argument is, whatever the catalog's rules.
 pub(crate) const FIRST_ARGUMENT_NULLABILITY: [&str; 2] = ["UPPER", "LOWER"];
-/// The Snowflake profile's name.
-pub(crate) const SNOWFLAKE_PROFILE: &str = "Snowflake";
-/// The ClickHouse profile's name.
-pub(crate) const CLICKHOUSE_PROFILE: &str = "ClickHouse";
-/// The FROM items of a query with one join, whose shared names ClickHouse reads from the left.
-pub(crate) const CLICKHOUSE_SINGLE_JOIN_SOURCES: usize = 2;
-/// The BigQuery profile's name.
-pub(crate) const BIGQUERY_PROFILE: &str = "BigQuery";
-/// BigQuery's functions that take a date part, with the part's argument position.
-pub(crate) const BIGQUERY_DATE_PART_FUNCTIONS: [(&str, usize); 9] = [
-    ("DATE_TRUNC", 1),
-    ("DATETIME_TRUNC", 1),
-    ("TIMESTAMP_TRUNC", 1),
-    ("TIME_TRUNC", 1),
-    ("LAST_DAY", 1),
-    ("DATE_DIFF", 2),
-    ("DATETIME_DIFF", 2),
-    ("TIMESTAMP_DIFF", 2),
-    ("TIME_DIFF", 2),
-];
-/// The date parts BigQuery writes with a weekday argument, as `WEEK(MONDAY)`.
-pub(crate) const BIGQUERY_WEEKDAY_PARTS: [&str; 1] = ["WEEK"];
-/// BigQuery's analytic functions, which an OVER clause must follow.
-pub(crate) const BIGQUERY_WINDOW_ONLY_FUNCTIONS: [&str; 11] = [
+/// The FROM items of a query with one join.
+pub(crate) const SINGLE_JOIN_SOURCES: usize = 2;
+/// The window functions both <https://www.postgresql.org/docs/current/functions-window.html> and BigQuery's <https://cloud.google.com/bigquery/docs/reference/standard-sql/numbering_functions> and <https://cloud.google.com/bigquery/docs/reference/standard-sql/navigation_functions> list, which run only with OVER.
+pub(crate) const WINDOW_ONLY_FUNCTIONS: [&str; 11] = [
     "ROW_NUMBER",
     "RANK",
     "DENSE_RANK",
@@ -270,21 +238,6 @@ pub(crate) const BIGQUERY_WINDOW_ONLY_FUNCTIONS: [&str; 11] = [
 pub(crate) const SPAN_FIELD: &str = "span";
 /// The field a serialized node records its name in.
 pub(crate) const NAME_FIELD: &str = "name";
-/// The PostgreSQL profile's name.
-pub(crate) const POSTGRES_PROFILE: &str = "PostgreSQL";
-/// The SQLite profile's name.
-pub(crate) const SQLITE_PROFILE: &str = "SQLite";
-/// The SQL Server profile's name.
-pub(crate) const SQLSERVER_PROFILE: &str = "SQL Server";
-/// SQLite's name for the n-th column of a VALUES list, numbered from 1.
-pub(crate) const SQLITE_VALUES_COLUMN: &str = "column";
-/// The Databricks SQL profile's name.
-pub(crate) const DATABRICKS_PROFILE: &str = "Databricks";
-/// Databricks' name for the n-th column of a VALUES list, numbered from 1.
-pub(crate) const DATABRICKS_VALUES_COLUMN: &str = "col";
-/// PostgreSQL's system columns, which every stored table has and no star expands.
-pub(crate) const POSTGRES_SYSTEM_COLUMNS: [&str; 6] =
-    ["tableoid", "xmin", "cmin", "xmax", "cmax", "ctid"];
 /// Snowflake's VARIANT type.
 pub(crate) const SNOWFLAKE_VARIANT_TYPE: &str = "VARIANT";
 /// The aggregates of a PIVOT whose columns DuckDB names by value alone.
@@ -327,8 +280,6 @@ pub(crate) const POSITIONAL_PREFIX: char = '$';
 pub(crate) const COLUMNS_FUNCTION: &str = "columns";
 /// A DuckDB COLUMNS pattern that matches no column, worded as polyglot words it.
 pub(crate) const COLUMNS_NO_MATCH: &str = "COLUMNS pattern matches no input columns";
-/// DuckDB's row identifier pseudo-column.
-pub(crate) const DUCKDB_ROWID: &str = "rowid";
 /// Sequence pseudo-columns, read after the sequence's name.
 pub(crate) const SEQUENCE_COLUMNS: [&str; 2] = ["NEXTVAL", "CURRVAL"];
 /// The phase of scope-rule findings: grouping, aggregate and window placement, structure.
@@ -337,20 +288,6 @@ pub(crate) const SCOPE_PHASE: u8 = 0;
 pub(crate) const NAME_PHASE: u8 = 1;
 /// The phase of type findings: comparisons, arithmetic, casts, arguments and set operations.
 pub(crate) const TYPE_PHASE: u8 = 2;
-/// DuckDB keywords a bare name reads as their function when no column in scope has that name.
-pub(crate) const DUCKDB_VALUE_KEYWORDS: [&str; 11] = [
-    "current_catalog",
-    "current_date",
-    "current_role",
-    "current_schema",
-    "current_time",
-    "current_timestamp",
-    "current_user",
-    "localtime",
-    "localtimestamp",
-    "session_user",
-    "user",
-];
 /// DuckDB keywords that are not callable functions: only the bracket-free form is valid.
 pub(crate) const DUCKDB_KEYWORD_ONLY_FUNCTIONS: [&str; 4] = [
     "current_time",

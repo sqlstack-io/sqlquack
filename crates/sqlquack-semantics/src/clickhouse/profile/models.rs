@@ -2,7 +2,7 @@
 
 use std::rc::Rc;
 
-use sqlquack_syntax::{DataType, Expression};
+use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::clickhouse::profile::_helpers::type_names::clickhouse_type as canonical;
 use crate::clickhouse::profile::_helpers::typing::{
@@ -10,11 +10,14 @@ use crate::clickhouse::profile::_helpers::typing::{
 };
 use crate::clickhouse::profile::constants::CLICKHOUSE_TIMESTAMP_TYPE;
 use crate::dialects::types::DialectProfile;
+use crate::lineage::constants::{
+    DATE_PART_FUNCTIONS, SNOWFLAKE_VALUES_COLUMN, WINDOW_ONLY_FUNCTIONS,
+};
 use crate::lineage::main::rendered_type::rendered_type;
+use crate::lineage::models::Engine;
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
-use crate::postgres::profile::main::postgres_window_only::postgres_window_only;
 
 /// ClickHouse: names keep their case and compare exactly; types compare as ClickHouse names them.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -23,6 +26,10 @@ pub struct ClickHouse;
 impl DialectProfile for ClickHouse {
     fn name(&self) -> &'static str {
         "ClickHouse"
+    }
+
+    fn dialect(&self) -> Dialect {
+        Dialect::ClickHouse
     }
 
     fn resolved_identifier(&self, name: &str, _quoted: bool) -> String {
@@ -45,11 +52,155 @@ impl DialectProfile for ClickHouse {
     }
 }
 
-/// ClickHouse's lineage rules; window-only calls are those PostgreSQL's catalogue lists.
+/// ClickHouse's lineage rules; window-only calls are the standard window functions.
 #[derive(Clone, Copy, Debug, Default)]
 pub(crate) struct ClickHouseRules;
 
 impl DialectRules for ClickHouseRules {
+    fn coercion_engine(&self) -> Engine {
+        Engine::Snowflake
+    }
+
+    fn checks_names_only(&self) -> bool {
+        true
+    }
+
+    fn outputs_read_anywhere(&self) -> bool {
+        true
+    }
+
+    fn group_keys_read_outputs(&self) -> bool {
+        false
+    }
+
+    fn checks_call_signatures(&self) -> bool {
+        true
+    }
+
+    fn checks_set_widths_only(&self) -> bool {
+        false
+    }
+
+    fn refuses_cte_alias_count(&self, _aliases: usize, _outputs: usize) -> bool {
+        false
+    }
+
+    fn groups_match_caselessly(&self) -> bool {
+        false
+    }
+
+    fn refuses_distinct_order_by_unselected(&self) -> bool {
+        false
+    }
+
+    fn date_part_functions(&self) -> &'static [(&'static str, usize)] {
+        &DATE_PART_FUNCTIONS
+    }
+
+    fn weekday_date_parts(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn variants_hold_json_null(&self) -> bool {
+        false
+    }
+
+    fn full_alias_list_ends_values(&self) -> bool {
+        false
+    }
+
+    fn self_reading_ctes_see_themselves(&self) -> bool {
+        false
+    }
+
+    fn recursion_keeps_anchor_types(&self) -> bool {
+        false
+    }
+
+    fn star_keys_in_place(&self) -> bool {
+        false
+    }
+
+    fn has_lateral_views(&self) -> bool {
+        false
+    }
+
+    fn as_of_keeps_unmatched_left(&self) -> bool {
+        false
+    }
+
+    fn bare_unnest_column(&self) -> Option<&'static str> {
+        None
+    }
+
+    fn unnests_struct_fields(&self) -> bool {
+        false
+    }
+
+    fn names_file_scans_by_stem(&self) -> bool {
+        false
+    }
+
+    fn maps_stored_timestamps(&self) -> bool {
+        false
+    }
+
+    fn table_function_columns(&self) -> &'static [(&'static str, &'static [&'static str])] {
+        &[]
+    }
+
+    fn values_column_name(&self, position: usize) -> String {
+        format!("{SNOWFLAKE_VALUES_COLUMN}{}", position + 1)
+    }
+
+    fn pivots_name_bare(&self) -> bool {
+        false
+    }
+
+    fn findings_keep_written_case(&self) -> bool {
+        true
+    }
+
+    fn value_keywords(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn single_join_prefers_left(&self) -> bool {
+        true
+    }
+
+    fn messages_name_unstored_items_by_alias(&self) -> bool {
+        false
+    }
+
+    fn qualifiers_reach_every_name(&self) -> bool {
+        true
+    }
+
+    fn qualifiers_name_items_by_name(&self) -> bool {
+        false
+    }
+
+    fn window_only_functions(&self) -> &'static [&'static str] {
+        &WINDOW_ONLY_FUNCTIONS
+    }
+
+    fn pseudo_columns(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn has_connect_by_level(&self) -> bool {
+        false
+    }
+
+    fn checks_columns_patterns(&self) -> bool {
+        false
+    }
+
+    fn system_columns(&self) -> &'static [&'static str] {
+        &[]
+    }
+
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
         (clickhouse_literal_type(expression).map(Rc::from), generic.1)
     }
@@ -75,9 +226,5 @@ impl DialectRules for ClickHouseRules {
 
     fn cast_spelling(&self, data_type: &DataType) -> Option<String> {
         rendered_type(data_type).and_then(|written| canonical(&written))
-    }
-
-    fn window_only(&self, expression: &Expression) -> bool {
-        postgres_window_only(expression)
     }
 }

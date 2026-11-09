@@ -27,8 +27,9 @@ use crate::snowflake::conversion::_helpers::support::tree::{
 use crate::snowflake::conversion::constants::{
     FLATTEN_COLUMNS, FLATTEN_ORDERED_COLUMNS, FLATTEN_RULE,
 };
-use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
-use sqlquack_semantics::snowflake::types::models::{ColumnSpec, Holding};
+use sqlquack_semantics::schemas::models::Holding;
+use sqlquack_semantics::snowflake::typing::types::ColumnSpec;
+use sqlquack_semantics::snowflake::typing::types::ScopeRelation;
 
 /// The name of the table function LATERAL converts.
 pub(crate) const FLATTEN_NAME: &str = "FLATTEN";

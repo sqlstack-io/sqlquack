@@ -17,7 +17,7 @@ use crate::snowflake::conversion::main::within_budget::within_budget;
 use crate::snowflake::conversion::models::{ConversionOptions, Converted};
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_diagnostics::refusals::models::Refusal;
-use sqlquack_semantics::snowflake::types::models::Schema;
+use sqlquack_semantics::snowflake::typing::types::Schema;
 
 use crate::analysis::main::placed::placed;
 use crate::snowflake::analysis::_helpers::declared_refusals::declared_refusals;

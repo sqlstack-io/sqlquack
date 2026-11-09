@@ -37,8 +37,9 @@ use crate::snowflake::conversion::constants::{
     NULL_BRANCHES, SEMI_STRUCTURED_HOLDING, SET_OPERATION, TEXT_BRANCHES, UNION_BY_NAME,
     VARCHAR_NAME, VARIANT_NAME, VARIANT_TEXT_BRANCHES,
 };
-use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
-use sqlquack_semantics::snowflake::types::models::{ColumnSpec, Holding};
+use sqlquack_semantics::schemas::models::Holding;
+use sqlquack_semantics::snowflake::typing::types::ColumnSpec;
+use sqlquack_semantics::snowflake::typing::types::ScopeRelation;
 
 /// The relation name for the result of a set operation that is then ordered or limited.
 const SET_RESULT: &str = "_SET";

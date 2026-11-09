@@ -19,7 +19,7 @@ use sqlquack_policy::policy::constants::{
     CURRENT_TIME, SESSION_TIME_ZONE, SESSION_TIMEZONE_UTC, TIMEZONE_PARAMETER,
 };
 use sqlquack_policy::policy::models::{DivergenceFailure, Policy};
-use sqlquack_semantics::snowflake::types::models::Schema;
+use sqlquack_semantics::snowflake::typing::types::Schema;
 use std::collections::{BTreeMap, BTreeSet};
 
 use crate::analysis::main::check_source::check_source;

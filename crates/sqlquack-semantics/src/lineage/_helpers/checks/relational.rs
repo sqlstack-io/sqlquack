@@ -4,13 +4,14 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::queries::models::{Select, WindowFrameBound, WindowFrameKind};
 
 use crate::lineage::_helpers::checks::coercion::{
-    Engine, comparable, invalid_literal_for, projection_literal, runtime_comparison, setop,
+    comparable, invalid_literal_for, projection_literal, runtime_comparison, setop,
 };
 use crate::lineage::_helpers::checks::families::expression_family;
 use crate::lineage::_helpers::checks::issues::issue;
 use crate::lineage::_helpers::checks::sets::{Branches, families, width};
 use crate::lineage::constants::TYPE_PHASE;
 use crate::lineage::main::type_family::type_family;
+use crate::lineage::models::Engine;
 use crate::lineage::models::Family;
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding};
 

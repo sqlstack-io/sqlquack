@@ -6,3 +6,5 @@ pub(crate) const DATABRICKS_DECIMAL: &str = "DECIMAL";
 pub(crate) const DATABRICKS_DEFAULT_DECIMAL: (u32, u32) = (10, 0);
 /// The arguments of a two-argument function.
 pub(crate) const TWO_ARGUMENTS: usize = 2;
+/// Databricks' name for the n-th column of a VALUES list, numbered from 1.
+pub(crate) const DATABRICKS_VALUES_COLUMN: &str = "col";

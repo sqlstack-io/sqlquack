@@ -9,17 +9,17 @@ use sqlquack_syntax::expressions::names::models::{Column, Identifier, Literal};
 use sqlquack_syntax::expressions::queries::models::{OrderBy, Select};
 
 use crate::dialects::main::dialect_rules::dialect_rules;
-use crate::lineage::_helpers::checks::coercion::Engine;
 use crate::lineage::_helpers::checks::issues::{in_scope, issue, rule_location};
 use crate::lineage::_helpers::findings::checks::keyword_function;
 use crate::lineage::_helpers::tracing::expressions::is_aggregate;
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::constants::{
-    BIGQUERY_WINDOW_ONLY_FUNCTIONS, NAME_FIELD, POSTGRES_PROFILE, SCOPE_PHASE,
-    SHAPE_COMMENT_SUFFIX, SHAPE_COSMETIC_FIELDS, SNOWFLAKE_PROFILE, SPAN_FIELD, SQLITE_PROFILE,
-    SQLSERVER_PROFILE,
+    NAME_FIELD, SCOPE_PHASE, SHAPE_COMMENT_SUFFIX, SHAPE_COSMETIC_FIELDS, SPAN_FIELD,
+    WINDOW_ONLY_FUNCTIONS,
 };
+use crate::lineage::models::Engine;
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding, ScopeSource};
+use crate::lineage::types::DialectRules;
 
 const COLUMNS_FUNCTION: &str = "columns";
 const NOT_GROUPED: &str = "Column must be grouped or used in an aggregate function";
@@ -66,10 +66,10 @@ fn unwindowed_calls(
 /// Whether `expression` calls one of BigQuery's analytic functions, which take only an OVER clause.
 fn bigquery_window_only(expression: &Expression) -> bool {
     match expression {
-        Expression::Function(function) => BIGQUERY_WINDOW_ONLY_FUNCTIONS
+        Expression::Function(function) => WINDOW_ONLY_FUNCTIONS
             .iter()
             .any(|name| function.name.eq_ignore_ascii_case(name)),
-        Expression::AggregateFunction(function) => BIGQUERY_WINDOW_ONLY_FUNCTIONS
+        Expression::AggregateFunction(function) => WINDOW_ONLY_FUNCTIONS
             .iter()
             .any(|name| function.name.eq_ignore_ascii_case(name)),
         _ => false,
@@ -271,16 +271,12 @@ fn structure_rules(
     level: RuleLevel<'_, '_>,
 ) -> Vec<NameFinding> {
     let engine: Engine = Engine::of(level.context);
+    let rules: &dyn DialectRules = dialect_rules(level.context.profile);
     let mut findings: Vec<NameFinding> = Vec::new();
     if let Some(with) = &select.with {
         let mut names: HashSet<String> = HashSet::new();
         for cte in &with.ctes {
-            let profile: &str = level.context.profile.name();
-            let mismatched = |width: usize| match profile {
-                SNOWFLAKE_PROFILE | SQLITE_PROFILE => width != cte.columns.len(),
-                POSTGRES_PROFILE => width < cte.columns.len(),
-                _ => false,
-            };
+            let mismatched = |width: usize| rules.refuses_cte_alias_count(cte.columns.len(), width);
             if !cte.columns.is_empty() && output_width(&cte.this).is_some_and(mismatched) {
                 findings.push(rule(
                     "E223",
@@ -929,8 +925,7 @@ fn grouping(
     }
     let groups: Vec<&Expression> = group_keys(select, aliases, level);
     let unmarked_groups: Vec<&Expression> = groups.iter().map(|group| unmarked(group)).collect();
-    let caseless: bool = Engine::of(level.context) == Engine::DuckDB
-        || level.context.profile.name() == SQLSERVER_PROFILE;
+    let caseless: bool = dialect_rules(level.context.profile).groups_match_caselessly();
     let group_shapes: Vec<(&'static str, Value)> = match caseless {
         true => unmarked_groups
             .iter()
@@ -1059,7 +1054,7 @@ fn distinct_order(
         .filter(|order| !order_by_all(order, level));
     if !select.distinct
         || ordered.is_none()
-        || level.context.profile.name() != SNOWFLAKE_PROFILE
+        || !dialect_rules(level.context.profile).refuses_distinct_order_by_unselected()
         || !select
             .expressions
             .iter()

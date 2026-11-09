@@ -21,8 +21,8 @@ use crate::snowflake::conversion::constants::{
     HIERARCHY_COLUMN_PREFIX, HIERARCHY_DEPTH_TAG, HIERARCHY_LEVEL, HIERARCHY_MAX_DEPTH,
     HIERARCHY_NESTED_QUERIES, HIERARCHY_PRIOR, HIERARCHY_RULE, HIERARCHY_WALK,
 };
-use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
-use sqlquack_semantics::snowflake::types::models::ColumnSpec;
+use sqlquack_semantics::snowflake::typing::types::ColumnSpec;
+use sqlquack_semantics::snowflake::typing::types::ScopeRelation;
 
 /// A hierarchical query's FROM: its walk, the select rewritten to read the walk's columns.
 pub(crate) struct Walk {

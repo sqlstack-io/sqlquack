@@ -7,7 +7,7 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::queries::models::{JoinKind, Select, With};
 
-use crate::lineage::_helpers::checks::coercion::Engine;
+use crate::dialects::main::dialect_rules::dialect_rules;
 use crate::lineage::_helpers::checks::issues::in_scope;
 use crate::lineage::_helpers::checks::node_checks::{NodeLevel, node_findings};
 use crate::lineage::_helpers::checks::scope_rules::{RuleLevel, select_rules, set_order};
@@ -22,9 +22,11 @@ use crate::lineage::_helpers::tracing::queries::{
 };
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::tracing::reuse::{Reuse, reusing};
-use crate::lineage::constants::{CLICKHOUSE_PROFILE, COLUMNS_FUNCTION, SQLSERVER_PROFILE};
+use crate::lineage::constants::COLUMNS_FUNCTION;
+use crate::lineage::models::Engine;
 use crate::lineage::models::NameFinding;
 use crate::lineage::models::{LineageContext, LineageScope, NamedQuery};
+use crate::lineage::types::DialectRules;
 
 /// The findings of `query` and its inner queries; `aliases` are enclosing levels' output aliases.
 pub(crate) fn query_findings(
@@ -80,7 +82,7 @@ fn query_findings_level(
 
 /// Whether the profile takes the scope, type and set-operation rules; ClickHouse keeps names only.
 fn typed_rules(context: LineageContext<'_>) -> bool {
-    context.profile.name() != CLICKHOUSE_PROFILE
+    !dialect_rules(context.profile).checks_names_only()
 }
 
 /// The CTEs `with` adds to `ctes`, each read body's findings, and under PostgreSQL each one faulted.
@@ -220,7 +222,8 @@ fn select_findings(
     let mut own: Vec<NameFinding> = alias_count_findings(select, &scope, context);
     own.extend(using_findings(select, &scope, context));
     let postgres: bool = Engine::of(context) == Engine::Postgres;
-    let sqlserver: bool = context.profile.name() == SQLSERVER_PROFILE;
+    let rules: &dyn DialectRules = dialect_rules(context.profile);
+    let anywhere: bool = rules.outputs_read_anywhere();
     for item in from_items(select) {
         let reads: Option<&LineageScope<'_>> = lateral(item).then_some(&scope);
         let body: Vec<NameFinding> =
@@ -269,10 +272,9 @@ fn select_findings(
         let (found, inner) = clause_findings(
             projection,
             &Level {
-                outputs: if postgres || sqlserver {
-                    &unnamed
-                } else {
-                    &others
+                outputs: match anywhere {
+                    true => &others,
+                    false => &unnamed,
                 },
                 ..level
             },
@@ -283,11 +285,12 @@ fn select_findings(
     }
     let own_outputs: Vec<String> = aliased_outputs(select, context);
     for clause in clauses(select) {
-        let outputs: &[String] = match (postgres, sqlserver) {
-            (true, _) if output_name_place(select, clause) => &own_outputs,
-            (_, true) if ordered_name_place(select, clause) => &own_outputs,
-            (true, _) | (_, true) => &unnamed,
-            _ => level.outputs,
+        let named_place: bool = ordered_name_place(select, clause)
+            || (rules.group_keys_read_outputs() && group_key_place(select, clause));
+        let outputs: &[String] = match (anywhere, named_place) {
+            (true, _) => level.outputs,
+            (false, true) => &own_outputs,
+            (false, false) => &unnamed,
         };
         let (found, inner) = clause_findings(clause, &Level { outputs, ..level }, context);
         own.extend(found);
@@ -318,17 +321,16 @@ fn aliased_outputs(select: &Select, context: LineageContext<'_>) -> Vec<String> 
         .collect()
 }
 
-/// Where PostgreSQL reads output names: GROUP BY items and ORDER BY keys that are a bare name.
-fn output_name_place(select: &Select, clause: &Expression) -> bool {
+/// Whether `clause` is a GROUP BY item of `select`.
+fn group_key_place(select: &Select, clause: &Expression) -> bool {
     select
         .group_by
         .iter()
         .flat_map(|group| &group.expressions)
         .any(|candidate| std::ptr::eq(candidate, clause))
-        || ordered_name_place(select, clause)
 }
 
-/// Where SQL Server reads output names: ORDER BY keys that are a bare name.
+/// Whether `clause` is an ORDER BY key of `select` that is a bare name.
 fn ordered_name_place(select: &Select, clause: &Expression) -> bool {
     let mut bare: &Expression = unannotated(clause);
     while let Expression::Paren(paren) = bare {

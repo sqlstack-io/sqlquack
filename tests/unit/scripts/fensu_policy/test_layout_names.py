@@ -243,6 +243,11 @@ def test_given_enum_when_comparing_with_parsers_then_reports_mismatch(
             (4,),
         ),
         BranchTestCase(
+            "a form feed or a lone carriage return between items does not shift the line",
+            "fn f(d: Dialect) {}\x0c\nfn g() {}\r\nfn h(d: Dialect) { d == Dialect::Snowflake }\n",
+            (3,),
+        ),
+        BranchTestCase(
             "a generic dialect parameter is not a branch",
             "fn f(dialect: Dialect) -> Dialect { dialect }\n",
             (),

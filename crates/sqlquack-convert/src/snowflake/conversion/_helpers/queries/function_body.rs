@@ -19,8 +19,8 @@ use crate::snowflake::conversion::constants::{
 };
 use crate::snowflake::conversion::main::override_macro_name::override_macro_name;
 use crate::snowflake::conversion::models::ConversionOptions;
-use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
-use sqlquack_semantics::snowflake::types::models::{
+use sqlquack_semantics::snowflake::typing::types::ScopeRelation;
+use sqlquack_semantics::snowflake::typing::types::{
     ColumnSpec, FunctionReturns, FunctionSpec, Schema,
 };
 

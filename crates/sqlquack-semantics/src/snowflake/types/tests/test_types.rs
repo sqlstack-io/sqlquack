@@ -1,5 +1,6 @@
-use crate::snowflake::types::models::{ColumnSpec, Holding};
+use crate::schemas::models::Holding;
 use crate::snowflake::typing::models::SnowflakeType;
+use crate::snowflake::typing::types::ColumnSpec;
 
 pub(crate) struct SchemaColumnsTestCase {
     pub(crate) description: &'static str,

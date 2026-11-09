@@ -95,3 +95,40 @@ class ManifestFaultTestCase:
     description: str
     features: str
     expected_message: str
+
+
+@dataclass(frozen=True)
+class DialectNameLinesTestCase:
+    description: str
+    source: str
+    expected_lines: tuple[int, ...]
+
+
+@dataclass(frozen=True)
+class DialectNameRuleTestCase:
+    description: str
+    path: str
+    source: str
+    expected_fault_count: int
+
+
+@dataclass(frozen=True)
+class QuotedLineTestCase:
+    description: str
+    source: str
+    expected_quoted: tuple[tuple[int, str], ...]
+
+
+@dataclass(frozen=True)
+class ConversionFieldLinesTestCase:
+    description: str
+    source: str
+    expected_lines: tuple[int, ...]
+
+
+@dataclass(frozen=True)
+class ConversionFieldRuleTestCase:
+    description: str
+    path: str
+    source: str
+    expected_fault_count: int

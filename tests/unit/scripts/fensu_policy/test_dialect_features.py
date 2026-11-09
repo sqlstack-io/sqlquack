@@ -175,6 +175,12 @@ def test_given_folders_when_matching_features_then_lists_missing(
     "test_case",
     [
         SharedLinesTestCase(
+            "line separators inside a string keep raw and blanked lines aligned",
+            'let s = "a\x0cb\u2028c\rd";\nlet d = Dialect::Snowflake;\n',
+            False,
+            (2,),
+        ),
+        SharedLinesTestCase(
             "gated folder module declarations pass",
             '#[cfg(feature = "snowflake")]\npub(crate) mod snowflake;\n'
             '#[cfg(feature = "clickhouse")] mod clickhouse;\nmod names;\n',

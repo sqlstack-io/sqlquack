@@ -7,7 +7,7 @@ use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use crate::snowflake::types::_helpers::schema_file::{RawSchema, typed_columns, typed_function};
 use crate::snowflake::types::_helpers::schema_shape::shape_problem;
 use crate::snowflake::types::errors::SchemaError;
-use crate::snowflake::types::models::Schema;
+use crate::snowflake::typing::types::Schema;
 
 /// The schema `text` declares; a relation or function using a type SQLQuack does not know is left out.
 pub fn parse_schema(text: &str) -> Result<Schema, SchemaError> {

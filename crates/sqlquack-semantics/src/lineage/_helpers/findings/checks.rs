@@ -6,6 +6,7 @@ use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::{Column, Identifier, Literal};
 use sqlquack_syntax::expressions::queries::models::Select;
 
+use crate::dialects::main::dialect_rules::dialect_rules;
 use crate::lineage::_helpers::checks::scope_rules::output_width;
 use crate::lineage::_helpers::tracing::queries::empty_scope;
 use crate::lineage::_helpers::tracing::resolution::key;
@@ -16,9 +17,7 @@ use crate::lineage::constants::{
     UNKNOWN_COLUMN_CODE, UNKNOWN_QUALIFIER_CODE,
 };
 use crate::lineage::constants::{
-    CLICKHOUSE_PROFILE, CLICKHOUSE_SINGLE_JOIN_SOURCES, DUCKDB_PROFILE, DUCKDB_ROWID,
-    DUCKDB_VALUE_KEYWORDS, METADATA_PREFIX, POSITIONAL_PREFIX, POSTGRES_PROFILE,
-    POSTGRES_SYSTEM_COLUMNS, SEQUENCE_COLUMNS, SNOWFLAKE_PROFILE, SQL_STAR,
+    METADATA_PREFIX, POSITIONAL_PREFIX, SEQUENCE_COLUMNS, SINGLE_JOIN_SOURCES, SQL_STAR,
 };
 use crate::lineage::models::NameFinding;
 use crate::lineage::models::{LineageContext, LineageScope, NamedQuery, ScopeSource};
@@ -53,9 +52,9 @@ pub(crate) fn column_finding(
         phase: NAME_PHASE,
         ..NameFinding::default()
     };
-    let written: String = match context.profile.name() {
-        CLICKHOUSE_PROFILE => name.name.clone(),
-        _ => name.name.to_lowercase(),
+    let written: String = match dialect_rules(context.profile).findings_keep_written_case() {
+        true => name.name.clone(),
+        false => name.name.to_lowercase(),
     };
     if pseudo_column(name, column.table.is_some(), context) {
         return None;
@@ -138,15 +137,15 @@ pub(crate) fn keyword_function(
     column.table.is_none() && value_keyword(&column.name, scope, context)
 }
 
-/// Whether an unqualified DuckDB name is a value keyword, which no FROM item in reach offers.
+/// Whether an unqualified name is a dialect value keyword that no FROM item in reach offers.
 pub(crate) fn value_keyword(
     name: &Identifier,
     scope: &LineageScope<'_>,
     context: LineageContext<'_>,
 ) -> bool {
-    if context.profile.name() != DUCKDB_PROFILE
-        || name.quoted
-        || !DUCKDB_VALUE_KEYWORDS
+    if name.quoted
+        || !dialect_rules(context.profile)
+            .value_keywords()
             .iter()
             .any(|keyword| name.name.eq_ignore_ascii_case(keyword))
     {
@@ -168,10 +167,10 @@ pub(crate) fn value_keyword(
     true
 }
 
-/// Whether ClickHouse reads a name both sides of the one join offer from the left side.
+/// Whether the dialect reads a name both sides of the one join offer from the left side.
 fn single_join_prefers_left(scope: &LineageScope<'_>, context: LineageContext<'_>) -> bool {
-    context.profile.name() == CLICKHOUSE_PROFILE
-        && scope.sources.len() == CLICKHOUSE_SINGLE_JOIN_SOURCES
+    dialect_rules(context.profile).single_join_prefers_left()
+        && scope.sources.len() == SINGLE_JOIN_SOURCES
 }
 
 /// A qualified reference's finding: its qualifier names no FROM item, or a closed one lacks it.
@@ -188,9 +187,11 @@ fn qualified_finding(
     let mut scope: Option<&LineageScope<'_>> = Some(level.scope);
     while let Some(current) = scope {
         if let Some(source) = source_named(current, &alias, context) {
-            let table: String = match context.profile.name() {
-                DUCKDB_PROFILE if source.query.stored_relation.is_none() => qualifier.name.clone(),
-                _ => display_name(source, &alias),
+            let by_alias: bool =
+                dialect_rules(context.profile).messages_name_unstored_items_by_alias();
+            let table: String = match by_alias && source.query.stored_relation.is_none() {
+                true => qualifier.name.clone(),
+                false => display_name(source, &alias),
             };
             return (!unjudged(source)
                 && !source.query.faulted
@@ -205,9 +206,9 @@ fn qualified_finding(
         }
         scope = current.outer;
     }
-    let no_relation: bool = match context.profile.name() {
-        CLICKHOUSE_PROFILE => clickhouse_no_relation(&alias, (level, bound), context),
-        _ => definitely_no_relation(&alias, level, context),
+    let no_relation: bool = match dialect_rules(context.profile).qualifiers_reach_every_name() {
+        true => clickhouse_no_relation(&alias, (level, bound), context),
+        false => definitely_no_relation(&alias, level, context),
     };
     if !no_relation {
         return None;
@@ -222,9 +223,9 @@ fn qualified_finding(
     ))
 }
 
-/// Whether a qualifier names nothing: on Snowflake and DuckDB only item names and struct columns.
+/// Whether a qualifier names nothing: where it names items, only item names and struct columns.
 fn definitely_no_relation(alias: &str, level: &Level<'_, '_>, context: LineageContext<'_>) -> bool {
-    let by_name: bool = matches!(context.profile.name(), SNOWFLAKE_PROFILE | DUCKDB_PROFILE);
+    let by_name: bool = dialect_rules(context.profile).qualifiers_name_items_by_name();
     let mut scope: Option<&LineageScope<'_>> = Some(level.scope);
     while let Some(current) = scope {
         if current.sources.iter().any(|source| {
@@ -292,7 +293,7 @@ fn clickhouse_source_names(source: &ScopeSource, alias: &str, context: LineageCo
         })
 }
 
-/// A pseudo-column no relation lists: `METADATA$…`, `$n`, DuckDB's `rowid`, NEXTVAL or CURRVAL.
+/// A pseudo-column no relation lists: `METADATA$…`, `$n`, the dialect's own, NEXTVAL or CURRVAL.
 fn pseudo_column(name: &Identifier, qualified: bool, context: LineageContext<'_>) -> bool {
     let upper: String = name.name.to_uppercase();
     !name.quoted
@@ -303,20 +304,22 @@ fn pseudo_column(name: &Identifier, qualified: bool, context: LineageContext<'_>
                 .is_some_and(|digits| {
                     !digits.is_empty() && digits.chars().all(|c| c.is_ascii_digit())
                 })
-            || (context.profile.name() == DUCKDB_PROFILE
-                && name.name.eq_ignore_ascii_case(DUCKDB_ROWID))
+            || dialect_rules(context.profile)
+                .pseudo_columns()
+                .iter()
+                .any(|pseudo| name.name.eq_ignore_ascii_case(pseudo))
             || (qualified && SEQUENCE_COLUMNS.contains(&upper.as_str())))
 }
 
-/// Snowflake's CONNECT BY LEVEL, a pseudo-column of a hierarchical query.
+/// CONNECT BY LEVEL, a pseudo-column of a hierarchical query.
 fn connect_by_level(name: &Identifier, level: &Level<'_, '_>, context: LineageContext<'_>) -> bool {
     level.connect
-        && context.profile.name() == SNOWFLAKE_PROFILE
+        && dialect_rules(context.profile).has_connect_by_level()
         && !name.quoted
         && name.name.eq_ignore_ascii_case(CONNECT_BY_LEVEL)
 }
 
-/// A DuckDB COLUMNS pattern that matches no column of FROM items that list all of theirs.
+/// A COLUMNS pattern that matches no column of FROM items that list all of theirs.
 pub(crate) fn columns_pattern_finding(
     pattern: &Expression,
     level: &Level<'_, '_>,
@@ -325,8 +328,10 @@ pub(crate) fn columns_pattern_finding(
     let Expression::Literal(literal) = pattern else {
         return None;
     };
-    let (Literal::String(pattern), DUCKDB_PROFILE) = (literal.as_ref(), context.profile.name())
-    else {
+    let (Literal::String(pattern), true) = (
+        literal.as_ref(),
+        dialect_rules(context.profile).checks_columns_patterns(),
+    ) else {
         return None;
     };
     let pattern: Regex = match Regex::new(pattern) {
@@ -353,11 +358,13 @@ fn unknown_message(written: &str, scope: &LineageScope<'_>, context: LineageCont
     match scope.sources.as_slice() {
         [only] if only.key.is_some() || only.query.written_name.is_some() => {
             let alias: &str = only.key.as_deref().unwrap_or_default();
-            let table: String = match context.profile.name() {
-                DUCKDB_PROFILE if only.query.stored_relation.is_none() && !alias.is_empty() => {
-                    alias.to_owned()
-                }
-                _ => display_name(only, alias),
+            let by_alias: bool = dialect_rules(context.profile)
+                .messages_name_unstored_items_by_alias()
+                && only.query.stored_relation.is_none()
+                && !alias.is_empty();
+            let table: String = match by_alias {
+                true => alias.to_owned(),
+                false => display_name(only, alias),
             };
             format!("Unknown column '{written}' in table '{table}'")
         }
@@ -439,16 +446,17 @@ pub(crate) fn unpivot_findings(
     findings
 }
 
-/// Whether `source` offers a column named `wanted`; a PostgreSQL stored table its system columns.
+/// Whether `source` offers a column named `wanted`; a stored table also its system columns.
 fn offers(source: &ScopeSource, wanted: &str, context: LineageContext<'_>) -> bool {
     source
         .query
         .columns
         .iter()
         .any(|offered| context.profile.same_identifier(&offered.key, wanted))
-        || (context.profile.name() == POSTGRES_PROFILE
-            && source.query.stored_relation.is_some()
-            && POSTGRES_SYSTEM_COLUMNS.contains(&wanted))
+        || (source.query.stored_relation.is_some()
+            && dialect_rules(context.profile)
+                .system_columns()
+                .contains(&wanted))
 }
 
 /// How many FROM items offer `wanted`, two under one name counted once.

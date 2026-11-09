@@ -23,8 +23,9 @@ use crate::snowflake::conversion::_helpers::support::tree::{node_construct, sess
 use crate::snowflake::conversion::constants::{NULL_BRANCHES, OUTPUT_ALIAS};
 use crate::snowflake::conversion::models::{ConversionOptions, Converted};
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
+use sqlquack_semantics::schemas::models::Holding;
 use sqlquack_semantics::snowflake::types::models::TypedLeaves;
-use sqlquack_semantics::snowflake::types::models::{ColumnSpec, Holding, Schema};
+use sqlquack_semantics::snowflake::typing::types::{ColumnSpec, Schema};
 
 /// Converts a statement over the schema's relations, placing refusals in `lines`; DuckDB must bind it.
 pub fn convert_statement(

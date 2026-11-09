@@ -2,15 +2,15 @@
 
 use sqlquack_syntax::Expression;
 
-use crate::lineage::_helpers::checks::coercion::{
-    Engine, literal_coerces, projection_literal, setop,
-};
+use crate::dialects::main::dialect_rules::dialect_rules;
+use crate::lineage::_helpers::checks::coercion::{literal_coerces, projection_literal, setop};
 use crate::lineage::_helpers::checks::families::expression_family;
 use crate::lineage::_helpers::checks::issues::{issue, type_location};
 use crate::lineage::_helpers::tracing::expressions::expression_lineage;
 use crate::lineage::_helpers::tracing::queries::{empty_scope, level_scope, unannotated};
-use crate::lineage::constants::{SQLSERVER_PROFILE, TYPE_PHASE};
+use crate::lineage::constants::TYPE_PHASE;
 use crate::lineage::main::type_family::type_family;
+use crate::lineage::models::Engine;
 use crate::lineage::models::Family;
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding, NamedQuery};
 
@@ -166,7 +166,7 @@ pub(crate) fn set_findings(
     let Some((operator, left, right)) = operands(query) else {
         return Vec::new();
     };
-    let counts_only: bool = context.profile.name() == SQLSERVER_PROFILE;
+    let counts_only: bool = dialect_rules(context.profile).checks_set_widths_only();
     let findings: Vec<NameFinding> = match Engine::of(context) {
         Engine::Snowflake if !counts_only => snowflake_findings(query, branches, context),
         Engine::Sqlite | Engine::Snowflake => {

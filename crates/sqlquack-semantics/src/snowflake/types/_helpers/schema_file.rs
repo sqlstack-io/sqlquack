@@ -7,11 +7,9 @@ use crate::snowflake::typing::models::SnowflakeType;
 use serde::Deserialize;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
+use crate::schemas::models::{FunctionLanguage, FunctionTraits, NullInput, Volatility};
 use crate::snowflake::types::constants::DECLARABLE_OFFSETS;
-use crate::snowflake::types::models::{
-    ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits, NullInput,
-    Volatility,
-};
+use crate::snowflake::typing::types::{ColumnSpec, FunctionReturns, FunctionSpec};
 
 /// Columns and parameters as the schema file writes them.
 pub(crate) type RawColumns = Vec<RawColumn>;

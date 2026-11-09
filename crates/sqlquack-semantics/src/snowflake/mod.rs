@@ -2,6 +2,5 @@
 
 pub mod names;
 pub mod profile;
-pub mod scopes;
 pub mod types;
 pub mod typing;

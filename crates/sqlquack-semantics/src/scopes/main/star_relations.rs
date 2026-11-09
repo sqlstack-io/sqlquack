@@ -4,15 +4,16 @@ use sqlquack_diagnostics::refusals::main::unresolved::unresolved;
 use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::dialects::models::Profiles;
-use crate::snowflake::scopes::models::{Scope, ScopeRelation};
+use crate::schemas::types::DialectType;
+use crate::scopes::models::{Scope, ScopeRelation};
 
 /// The relation a qualified star names, or every relation in scope for a bare one.
-pub fn star_relations<'s, A>(
-    scope: &'s Scope<'_, A>,
+pub fn star_relations<'s, T: DialectType, A>(
+    scope: &'s Scope<'_, T, A>,
     qualifier: Option<&str>,
     profiles: Profiles,
-) -> Result<Vec<&'s ScopeRelation>, Refusal> {
-    let relations: Vec<&ScopeRelation> = scope
+) -> Result<Vec<&'s ScopeRelation<T>>, Refusal> {
+    let relations: Vec<&ScopeRelation<T>> = scope
         .relations
         .iter()
         .filter(|relation| {

@@ -6,25 +6,11 @@ use crate::bigquery::profile::main::bigquery_rules::bigquery_rules;
 use crate::clickhouse::profile::main::clickhouse_rules::clickhouse_rules;
 #[cfg(feature = "databricks")]
 use crate::databricks::profile::main::databricks_rules::databricks_rules;
+use sqlquack_syntax::Dialect;
+
 use crate::dialects::types::DialectProfile;
 #[cfg(feature = "duckdb")]
 use crate::duckdb::profile::main::duckdb_rules::duckdb_rules;
-#[cfg(feature = "bigquery")]
-use crate::lineage::constants::BIGQUERY_PROFILE;
-#[cfg(feature = "clickhouse")]
-use crate::lineage::constants::CLICKHOUSE_PROFILE;
-#[cfg(feature = "databricks")]
-use crate::lineage::constants::DATABRICKS_PROFILE;
-#[cfg(feature = "duckdb")]
-use crate::lineage::constants::DUCKDB_PROFILE;
-#[cfg(feature = "postgres")]
-use crate::lineage::constants::POSTGRES_PROFILE;
-#[cfg(feature = "snowflake")]
-use crate::lineage::constants::SNOWFLAKE_PROFILE;
-#[cfg(feature = "sqlite")]
-use crate::lineage::constants::SQLITE_PROFILE;
-#[cfg(feature = "sqlserver")]
-use crate::lineage::constants::SQLSERVER_PROFILE;
 use crate::lineage::models::SharedRules;
 use crate::lineage::types::DialectRules;
 #[cfg(feature = "postgres")]
@@ -36,25 +22,41 @@ use crate::sqlite::profile::main::sqlite_rules::sqlite_rules;
 #[cfg(feature = "sqlserver")]
 use crate::sqlserver::profile::main::sqlserver_rules::sqlserver_rules;
 
-/// How lineage types values in `profile`'s dialect; the shared rules alone for any other.
+/// How lineage types values in `profile`'s dialect; the shared rules alone for one not built in.
 pub(crate) fn dialect_rules(profile: &dyn DialectProfile) -> &'static dyn DialectRules {
-    match profile.name() {
+    let built: Option<&'static dyn DialectRules> = match profile.dialect() {
         #[cfg(feature = "snowflake")]
-        SNOWFLAKE_PROFILE => snowflake_rules(),
+        Dialect::Snowflake => Some(snowflake_rules()),
+        #[cfg(not(feature = "snowflake"))]
+        Dialect::Snowflake => None,
         #[cfg(feature = "duckdb")]
-        DUCKDB_PROFILE => duckdb_rules(),
+        Dialect::DuckDB => Some(duckdb_rules()),
+        #[cfg(not(feature = "duckdb"))]
+        Dialect::DuckDB => None,
         #[cfg(feature = "postgres")]
-        POSTGRES_PROFILE => postgres_rules(),
+        Dialect::PostgreSQL => Some(postgres_rules()),
+        #[cfg(not(feature = "postgres"))]
+        Dialect::PostgreSQL => None,
         #[cfg(feature = "sqlite")]
-        SQLITE_PROFILE => sqlite_rules(),
+        Dialect::SQLite => Some(sqlite_rules()),
+        #[cfg(not(feature = "sqlite"))]
+        Dialect::SQLite => None,
         #[cfg(feature = "bigquery")]
-        BIGQUERY_PROFILE => bigquery_rules(),
+        Dialect::BigQuery => Some(bigquery_rules()),
+        #[cfg(not(feature = "bigquery"))]
+        Dialect::BigQuery => None,
         #[cfg(feature = "databricks")]
-        DATABRICKS_PROFILE => databricks_rules(),
+        Dialect::Databricks => Some(databricks_rules()),
+        #[cfg(not(feature = "databricks"))]
+        Dialect::Databricks => None,
         #[cfg(feature = "clickhouse")]
-        CLICKHOUSE_PROFILE => clickhouse_rules(),
+        Dialect::ClickHouse => Some(clickhouse_rules()),
+        #[cfg(not(feature = "clickhouse"))]
+        Dialect::ClickHouse => None,
         #[cfg(feature = "sqlserver")]
-        SQLSERVER_PROFILE => sqlserver_rules(),
-        _ => &SharedRules,
-    }
+        Dialect::SqlServer => Some(sqlserver_rules()),
+        #[cfg(not(feature = "sqlserver"))]
+        Dialect::SqlServer => None,
+    };
+    built.unwrap_or(&SharedRules)
 }

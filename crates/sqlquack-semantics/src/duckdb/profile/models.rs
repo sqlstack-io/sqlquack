@@ -2,7 +2,8 @@
 
 use std::rc::Rc;
 
-use sqlquack_syntax::{DataType, Expression};
+use sqlquack_syntax::expressions::names::models::Literal;
+use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::dialects::types::DialectProfile;
 use crate::duckdb::profile::_helpers::duck_types::{
@@ -10,10 +11,15 @@ use crate::duckdb::profile::_helpers::duck_types::{
 };
 use crate::duckdb::profile::_helpers::functions::{duckdb_arities, duckdb_function};
 use crate::duckdb::profile::_helpers::typing::{duckdb_literal_type, duckdb_type};
+use crate::duckdb::profile::constants::{
+    DUCKDB_ROWID, DUCKDB_TABLE_FUNCTION_COLUMNS, DUCKDB_UNNEST_COLUMN, DUCKDB_VALUE_KEYWORDS,
+    DUCKDB_VALUES_COLUMN,
+};
+use crate::lineage::constants::{DATE_PART_FUNCTIONS, WINDOW_ONLY_FUNCTIONS};
+use crate::lineage::models::Engine;
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
-use crate::postgres::profile::main::postgres_window_only::postgres_window_only;
 
 /// DuckDB: identifiers keep their case as written, and names compare without regard to ASCII case.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -22,6 +28,10 @@ pub struct DuckDb;
 impl DialectProfile for DuckDb {
     fn name(&self) -> &'static str {
         "DuckDB"
+    }
+
+    fn dialect(&self) -> Dialect {
+        Dialect::DuckDB
     }
 
     fn resolved_identifier(&self, name: &str, _quoted: bool) -> String {
@@ -33,11 +43,155 @@ impl DialectProfile for DuckDb {
     }
 }
 
-/// DuckDB's lineage rules; window-only calls are those PostgreSQL's catalogue lists.
+/// DuckDB's lineage rules; window-only calls are the standard window functions.
 #[derive(Clone, Copy, Debug, Default)]
 pub(crate) struct DuckDbRules;
 
 impl DialectRules for DuckDbRules {
+    fn coercion_engine(&self) -> Engine {
+        Engine::DuckDB
+    }
+
+    fn checks_names_only(&self) -> bool {
+        false
+    }
+
+    fn outputs_read_anywhere(&self) -> bool {
+        true
+    }
+
+    fn group_keys_read_outputs(&self) -> bool {
+        false
+    }
+
+    fn checks_call_signatures(&self) -> bool {
+        true
+    }
+
+    fn checks_set_widths_only(&self) -> bool {
+        false
+    }
+
+    fn refuses_cte_alias_count(&self, _aliases: usize, _outputs: usize) -> bool {
+        false
+    }
+
+    fn groups_match_caselessly(&self) -> bool {
+        true
+    }
+
+    fn refuses_distinct_order_by_unselected(&self) -> bool {
+        false
+    }
+
+    fn date_part_functions(&self) -> &'static [(&'static str, usize)] {
+        &DATE_PART_FUNCTIONS
+    }
+
+    fn weekday_date_parts(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn variants_hold_json_null(&self) -> bool {
+        false
+    }
+
+    fn full_alias_list_ends_values(&self) -> bool {
+        true
+    }
+
+    fn self_reading_ctes_see_themselves(&self) -> bool {
+        true
+    }
+
+    fn recursion_keeps_anchor_types(&self) -> bool {
+        true
+    }
+
+    fn star_keys_in_place(&self) -> bool {
+        true
+    }
+
+    fn has_lateral_views(&self) -> bool {
+        false
+    }
+
+    fn as_of_keeps_unmatched_left(&self) -> bool {
+        false
+    }
+
+    fn bare_unnest_column(&self) -> Option<&'static str> {
+        Some(DUCKDB_UNNEST_COLUMN)
+    }
+
+    fn unnests_struct_fields(&self) -> bool {
+        false
+    }
+
+    fn names_file_scans_by_stem(&self) -> bool {
+        true
+    }
+
+    fn maps_stored_timestamps(&self) -> bool {
+        false
+    }
+
+    fn table_function_columns(&self) -> &'static [(&'static str, &'static [&'static str])] {
+        &DUCKDB_TABLE_FUNCTION_COLUMNS
+    }
+
+    fn values_column_name(&self, position: usize) -> String {
+        format!("{DUCKDB_VALUES_COLUMN}{position}")
+    }
+
+    fn pivots_name_bare(&self) -> bool {
+        true
+    }
+
+    fn findings_keep_written_case(&self) -> bool {
+        false
+    }
+
+    fn value_keywords(&self) -> &'static [&'static str] {
+        &DUCKDB_VALUE_KEYWORDS
+    }
+
+    fn single_join_prefers_left(&self) -> bool {
+        false
+    }
+
+    fn messages_name_unstored_items_by_alias(&self) -> bool {
+        true
+    }
+
+    fn qualifiers_reach_every_name(&self) -> bool {
+        false
+    }
+
+    fn qualifiers_name_items_by_name(&self) -> bool {
+        true
+    }
+
+    fn window_only_functions(&self) -> &'static [&'static str] {
+        &WINDOW_ONLY_FUNCTIONS
+    }
+
+    fn pseudo_columns(&self) -> &'static [&'static str] {
+        &[DUCKDB_ROWID]
+    }
+
+    fn has_connect_by_level(&self) -> bool {
+        false
+    }
+
+    fn checks_columns_patterns(&self) -> bool {
+        true
+    }
+
+    fn system_columns(&self) -> &'static [&'static str] {
+        &[]
+    }
+
     fn literal_type(&self, expression: &Expression, generic: ValueType) -> ValueType {
         match expression {
             Expression::Literal(literal) => (
@@ -79,8 +233,16 @@ impl DialectRules for DuckDbRules {
         cast_spelling(data_type)
     }
 
-    fn window_only(&self, expression: &Expression) -> bool {
-        postgres_window_only(expression)
+    /// A struct field's name, a number's text, and otherwise no name.
+    fn unaliased_name(&self, projection: &Expression) -> Option<String> {
+        Some(match projection {
+            Expression::Dot(dot) => dot.field.name.clone(),
+            Expression::Literal(literal) => match literal.as_ref() {
+                Literal::Number(text) => text.clone(),
+                _ => String::new(),
+            },
+            _ => String::new(),
+        })
     }
 
     fn builtin_arities(&self, name: &str) -> Option<Vec<(usize, Option<usize>)>> {

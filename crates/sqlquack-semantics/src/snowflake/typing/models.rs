@@ -4,6 +4,8 @@ use std::fmt::{self, Display};
 
 use serde::Serialize;
 
+use crate::schemas::types::DialectType;
+
 /// A Snowflake scalar type, as exact as the result metadata Snowflake reports.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize)]
 pub enum SnowflakeType {
@@ -46,6 +48,12 @@ pub enum SnowflakeType {
     SemiStructured,
     /// An untyped `NULL` literal, which takes the type of its context.
     Null,
+}
+
+impl DialectType for SnowflakeType {
+    fn is_semi_structured(&self) -> bool {
+        *self == Self::SemiStructured
+    }
 }
 
 impl SnowflakeType {

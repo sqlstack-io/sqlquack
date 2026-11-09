@@ -1,10 +1,11 @@
 use crate::snowflake::catalogue::main::builtin_catalogue::builtin_catalogue;
 use crate::snowflake::conversion::models::ConversionOptions;
 use sqlquack_diagnostics::refusals::models::RefusalCategory;
-use sqlquack_semantics::snowflake::types::models::{
-    ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits, Schema,
-};
+use sqlquack_semantics::schemas::models::{FunctionLanguage, FunctionTraits};
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::types::{
+    ColumnSpec, FunctionReturns, FunctionSpec, Schema,
+};
 
 use std::collections::BTreeMap;
 

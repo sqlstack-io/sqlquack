@@ -20,8 +20,8 @@ use crate::snowflake::conversion::_helpers::support::tree::{
 use crate::snowflake::conversion::constants::{
     CHR_NAME, SPLIT_TO_TABLE_COLUMNS, SPLIT_TO_TABLE_RULE,
 };
-use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
-use sqlquack_semantics::snowflake::types::models::ColumnSpec;
+use sqlquack_semantics::snowflake::typing::types::ColumnSpec;
+use sqlquack_semantics::snowflake::typing::types::ScopeRelation;
 
 /// The name of the table function this module converts.
 pub(crate) const SPLIT_TO_TABLE_NAME: &str = "SPLIT_TO_TABLE";

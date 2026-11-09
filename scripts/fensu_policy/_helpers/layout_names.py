@@ -235,7 +235,7 @@ def dialect_branches(
     )
     return tuple(
         SourceLine(line=number, text=line.strip())
-        for number, line in enumerate(code.splitlines(), start=1)
+        for number, line in enumerate(code.split("\n"), start=1)
         if variants and pattern.search(line)
     )
 

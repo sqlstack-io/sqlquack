@@ -8,6 +8,7 @@ use sqlquack_syntax::expressions::names::models::Column;
 use sqlquack_syntax::tokens::models::Span;
 
 use crate::dialects::types::DialectProfile;
+use crate::lineage::constants::{DATE_PART_FUNCTIONS, SNOWFLAKE_VALUES_COLUMN};
 use crate::lineage::types::{DialectRules, LineageSchema, SharedColumns};
 
 /// How an output column is derived from its source columns.
@@ -240,7 +241,167 @@ pub struct NameFinding {
 #[derive(Clone, Copy, Debug, Default)]
 pub(crate) struct SharedRules;
 
-impl DialectRules for SharedRules {}
+impl DialectRules for SharedRules {
+    fn coercion_engine(&self) -> Engine {
+        Engine::Snowflake
+    }
+
+    fn checks_names_only(&self) -> bool {
+        false
+    }
+
+    fn outputs_read_anywhere(&self) -> bool {
+        true
+    }
+
+    fn group_keys_read_outputs(&self) -> bool {
+        false
+    }
+
+    fn checks_call_signatures(&self) -> bool {
+        true
+    }
+
+    fn checks_set_widths_only(&self) -> bool {
+        false
+    }
+
+    fn refuses_cte_alias_count(&self, _aliases: usize, _outputs: usize) -> bool {
+        false
+    }
+
+    fn groups_match_caselessly(&self) -> bool {
+        false
+    }
+
+    fn refuses_distinct_order_by_unselected(&self) -> bool {
+        false
+    }
+
+    fn date_part_functions(&self) -> &'static [(&'static str, usize)] {
+        &DATE_PART_FUNCTIONS
+    }
+
+    fn weekday_date_parts(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn variants_hold_json_null(&self) -> bool {
+        false
+    }
+
+    fn full_alias_list_ends_values(&self) -> bool {
+        false
+    }
+
+    fn self_reading_ctes_see_themselves(&self) -> bool {
+        false
+    }
+
+    fn recursion_keeps_anchor_types(&self) -> bool {
+        false
+    }
+
+    fn star_keys_in_place(&self) -> bool {
+        false
+    }
+
+    fn has_lateral_views(&self) -> bool {
+        false
+    }
+
+    fn as_of_keeps_unmatched_left(&self) -> bool {
+        false
+    }
+
+    fn bare_unnest_column(&self) -> Option<&'static str> {
+        None
+    }
+
+    fn unnests_struct_fields(&self) -> bool {
+        false
+    }
+
+    fn names_file_scans_by_stem(&self) -> bool {
+        false
+    }
+
+    fn maps_stored_timestamps(&self) -> bool {
+        false
+    }
+
+    fn table_function_columns(&self) -> &'static [(&'static str, &'static [&'static str])] {
+        &[]
+    }
+
+    fn values_column_name(&self, position: usize) -> String {
+        format!("{SNOWFLAKE_VALUES_COLUMN}{}", position + 1)
+    }
+
+    fn pivots_name_bare(&self) -> bool {
+        false
+    }
+
+    fn findings_keep_written_case(&self) -> bool {
+        false
+    }
+
+    fn value_keywords(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn single_join_prefers_left(&self) -> bool {
+        false
+    }
+
+    fn messages_name_unstored_items_by_alias(&self) -> bool {
+        false
+    }
+
+    fn qualifiers_reach_every_name(&self) -> bool {
+        false
+    }
+
+    fn qualifiers_name_items_by_name(&self) -> bool {
+        false
+    }
+
+    fn window_only_functions(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn pseudo_columns(&self) -> &'static [&'static str] {
+        &[]
+    }
+
+    fn has_connect_by_level(&self) -> bool {
+        false
+    }
+
+    fn checks_columns_patterns(&self) -> bool {
+        false
+    }
+
+    fn system_columns(&self) -> &'static [&'static str] {
+        &[]
+    }
+}
+
+/// The engine whose binder the checks follow.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum Engine {
+    DuckDB,
+    /// Snowflake; implicit conversion on USING keys isn't checked, as polyglot leaves it.
+    Snowflake,
+    /// PostgreSQL: no implicit predicate, comparison or string set-operation coercions.
+    Postgres,
+    /// SQLite, whose dynamic typing is not recorded: no type findings, only scope and name rules.
+    Sqlite,
+    /// BigQuery (GoogleSQL): as PostgreSQL, and a string literal converts only to a date or time.
+    BigQuery,
+    /// Databricks SQL, coercions not recorded: no type findings, only scope and name rules.
+    Databricks,
+}
 
 /// A type's family, the class the type checks compare.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

@@ -10,7 +10,7 @@ use sqlquack_diagnostics::diagnostics::main::diagnose::diagnose;
 use sqlquack_diagnostics::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
 use sqlquack_diagnostics::diagnostics::models::Diagnostic;
 use sqlquack_policy::policy::models::Policy;
-use sqlquack_semantics::snowflake::types::models::{FunctionSpec, Schema};
+use sqlquack_semantics::snowflake::typing::types::{FunctionSpec, Schema};
 
 use crate::snowflake::analysis::main::analyze_function::analyze_function;
 use crate::snowflake::analysis::main::caller_choices::caller_choices;

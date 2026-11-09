@@ -1,6 +1,6 @@
-use crate::snowflake::scopes::models::Scope;
-use crate::snowflake::scopes::tests::helpers::{relation, resolved};
-use crate::snowflake::scopes::tests::test_types::ResolveNameTestCase;
+use crate::snowflake::names::tests::helpers::{relation, resolved};
+use crate::snowflake::names::tests::test_types::ResolveNameTestCase;
+use crate::snowflake::typing::types::Scope;
 
 #[test]
 fn given_a_scope_when_resolving_names_then_columns_aliases_and_outer_queries_resolve_in_order() {

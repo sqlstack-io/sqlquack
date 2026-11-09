@@ -14,17 +14,20 @@ from scripts.fensu_policy.constants import (
     ATTRIBUTE_LINE,
     CFG_FEATURE,
     CFG_WORD,
+    CONVERSION_FIELD_READ,
     DEFAULT_FEATURE,
     DEPENDENCIES_TABLE,
     DEPENDENCY_FEATURE_PREFIX,
     DIALECT_ENUM,
     DIALECT_MODULE_PATH,
+    DIALECT_PROFILE_CONSTANT,
     DIALECT_VARIANT_PATH,
     FEATURE_SEPARATOR,
     FEATURES_TABLE,
     MODULE_DECLARATION,
     NESTED_PATH_PARTS,
     OPTIONAL_KEY,
+    PROFILE_NAME_CALLS,
     RUST_SUFFIX,
     SOURCE_ROOT,
     WEAK_FEATURE_MARK,
@@ -156,8 +159,8 @@ def shared_dialect_lines(
     *, source: str, vocabulary: DialectVocabulary, registry: bool
 ) -> tuple[SourceLine, ...]:
     """Return shared lines naming a dialect, except gated folder modules and registry lines."""
-    raw_lines: list[str] = strip_comments(source=source).splitlines()
-    code_lines: list[str] = strip_comments_and_strings(source=source).splitlines()
+    raw_lines: list[str] = strip_comments(source=source).split("\n")
+    code_lines: list[str] = strip_comments_and_strings(source=source).split("\n")
     found: list[SourceLine] = []
     pending: SourceLine | None = None
     pending_gates: frozenset[str] = frozenset()
@@ -187,3 +190,28 @@ def shared_dialect_lines(
         pending, pending_gates = None, frozenset()
     found.extend([pending] if pending is not None and not registry else [])
     return tuple(sorted(set(found), key=lambda line: line.line))
+
+
+def dialect_name_lines(*, source: str, dialects: tuple[str, ...]) -> tuple[SourceLine, ...]:
+    """Return each line where a match starts across the whole code, so split chains are found."""
+    constant: re.Pattern[str] = re.compile(
+        DIALECT_PROFILE_CONSTANT.format(
+            dialects="|".join(re.escape(dialect.upper()) for dialect in dialects)
+        )
+    )
+    return _matched_lines(source=source, patterns=(*PROFILE_NAME_CALLS, constant))
+
+
+def conversion_field_lines(*, source: str) -> tuple[SourceLine, ...]:
+    """Return each line where code reads a field recording how the conversion holds values."""
+    return _matched_lines(source=source, patterns=(CONVERSION_FIELD_READ,))
+
+
+def _matched_lines(*, source: str, patterns: tuple[re.Pattern[str], ...]) -> tuple[SourceLine, ...]:
+    raw_lines: list[str] = strip_comments(source=source).split("\n")
+    code: str = strip_comments_and_strings(source=source)
+    starts: set[int] = set()
+    for pattern in patterns:
+        starts.update(match.start() for match in pattern.finditer(code))
+    numbers: list[int] = sorted({code.count("\n", 0, start) + 1 for start in starts})
+    return tuple(SourceLine(line=number, text=raw_lines[number - 1].strip()) for number in numbers)

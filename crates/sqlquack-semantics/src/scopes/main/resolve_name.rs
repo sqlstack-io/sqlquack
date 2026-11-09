@@ -5,14 +5,15 @@ use sqlquack_diagnostics::refusals::main::unresolved::unresolved;
 use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::dialects::models::Profiles;
-use crate::snowflake::scopes::models::{Resolution, Scope};
+use crate::schemas::types::DialectType;
+use crate::scopes::models::{Resolution, Scope};
 
 /// FROM columns, then select aliases, then outer queries; names the target cannot tell apart refuse.
-pub fn resolve_name<'s, A>(
-    scope: &'s Scope<'_, A>,
+pub fn resolve_name<'s, T: DialectType, A>(
+    scope: &'s Scope<'_, T, A>,
     (qualifier, name): (Option<&str>, &str),
     profiles: Profiles,
-) -> Result<Resolution<'s, A>, Refusal> {
+) -> Result<Resolution<'s, T, A>, Refusal> {
     let Profiles { source, target } = profiles;
     let alias = || {
         scope
@@ -28,7 +29,7 @@ pub fn resolve_name<'s, A>(
     {
         return Ok(resolution);
     }
-    let mut found: Vec<Resolution<'s, A>> = Vec::new();
+    let mut found: Vec<Resolution<'s, T, A>> = Vec::new();
     for relation in &scope.relations {
         if qualifier.is_some_and(|qualifier| !target.same_identifier(&relation.alias, qualifier)) {
             continue;

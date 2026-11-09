@@ -19,10 +19,11 @@ use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 use sqlquack_policy::policy::constants::PROJECT_UDF;
 use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_policy::policy::models::DivergenceMode;
-use sqlquack_semantics::snowflake::types::models::{
-    ColumnSpec, FunctionLanguage, FunctionReturns, FunctionSpec, FunctionTraits, Schema,
-};
+use sqlquack_semantics::schemas::models::{FunctionLanguage, FunctionTraits};
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
+use sqlquack_semantics::snowflake::typing::types::{
+    ColumnSpec, FunctionReturns, FunctionSpec, Schema,
+};
 use sqlquack_syntax::tokens::models::SourceLocation;
 
 use crate::analysis::main::check_equivalence_cases::check_equivalence_cases;

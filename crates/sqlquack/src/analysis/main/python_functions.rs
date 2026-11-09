@@ -3,7 +3,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use sqlquack_policy::policy::constants::PROJECT_UDF;
-use sqlquack_semantics::snowflake::types::models::Schema;
+use sqlquack_semantics::snowflake::typing::types::Schema;
 
 use crate::analysis::_helpers::python_signature::python_signature;
 use crate::analysis::models::PythonSignature;

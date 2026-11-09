@@ -1,6 +1,5 @@
-//! Relation names: which relation a name reads, among CTEs and the schema.
+//! Relation names: which relation a name reads, among CTEs and the schema, with its typed-leaf marks.
 
-pub mod constants;
 pub mod main;
 
 #[cfg(test)]
