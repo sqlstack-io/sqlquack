@@ -5,6 +5,7 @@ use crate::lineage::_helpers::findings::statement::statement_findings;
 use crate::lineage::models::LineageContext;
 use crate::lineage::tests::helpers::{
     duckdb_parser_findings, duckdb_shop_schema, found_findings, owned_findings, shop_schema,
+    typed_duckdb_shop_schema,
 };
 use crate::lineage::tests::test_types::QueryFindingsTestCase;
 
@@ -648,6 +649,51 @@ fn given_a_bare_duckdb_value_keyword_from_duckdbs_parser_when_resolving_names_th
     for test_case in test_cases {
         assert_eq!(
             duckdb_parser_findings(test_case.sql),
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_an_aggregate_filter_from_duckdbs_parser_when_checking_types_then_a_text_condition_is_found()
+ {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "a text FILTER condition on COUNT(*)",
+            sql: "SELECT COUNT(*) FILTER (WHERE status) AS n FROM orders",
+            expected_findings: &[("W215", "Expected boolean condition, found string", 30)],
+        },
+        QueryFindingsTestCase {
+            description: "a comparison FILTER condition",
+            sql: "SELECT COUNT(*) FILTER (WHERE status = 'open') AS n FROM orders",
+            expected_findings: &[],
+        },
+    ];
+    let schema = typed_duckdb_shop_schema();
+    for test_case in test_cases {
+        let statement = sqlquack_syntax_duckdb::parse_strict(test_case.sql)
+            .unwrap_or_else(|failure| panic!("{}: {failure:?}", test_case.description))
+            .statements
+            .remove(0);
+        let context = LineageContext {
+            profile: &DUCKDB,
+            schema: &schema,
+            sql: Some(test_case.sql),
+        };
+        let findings: Vec<(&'static str, String, usize)> = statement_findings(&statement, context)
+            .into_iter()
+            .map(|finding| {
+                (
+                    finding.code,
+                    finding.message,
+                    finding.span.map_or(0, |span| span.start),
+                )
+            })
+            .collect();
+        assert_eq!(
+            findings,
             owned_findings(test_case.expected_findings),
             "{}",
             test_case.description

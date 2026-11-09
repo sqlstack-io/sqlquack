@@ -397,6 +397,9 @@ fn expression_checks(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<NameFin
         Expression::Count(function) => {
             findings.extend(function.filter.iter().filter_map(condition));
         }
+        Expression::AggregateFunction(function) => {
+            findings.extend(function.filter.iter().filter_map(condition));
+        }
         Expression::Neg(unary) => {
             let found: Family = family(&unary.this);
             if found != Family::Unknown && !found.is_numeric() && found != Family::Interval {
