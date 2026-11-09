@@ -1,9 +1,9 @@
-use crate::snowflake::typing::models::SnowflakeType;
 use sqlquack_diagnostics::classification::models::{Construct, ConstructFamily};
 
-use crate::snowflake::types::main::schema_columns::schema_columns;
+use crate::snowflake::types::main::_schema_columns::schema_columns;
 use crate::snowflake::types::models::{ColumnSpec, TypedLeaves};
 use crate::snowflake::types::tests::test_types::SchemaColumnsTestCase;
+use crate::snowflake::typing::models::SnowflakeType;
 
 #[test]
 fn given_schema_columns_when_read_then_marks_follow_the_leaves_they_may_hold() {

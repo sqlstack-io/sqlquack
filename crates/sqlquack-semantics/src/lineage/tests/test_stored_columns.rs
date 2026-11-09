@@ -1,8 +1,7 @@
-use crate::snowflake::typing::models::SnowflakeType;
-
-use crate::lineage::main::stored_columns::stored_columns;
 use crate::lineage::tests::test_types::StoredColumnsTestCase;
+use crate::snowflake::types::main::stored_columns::stored_columns;
 use crate::snowflake::types::models::{ColumnSpec, Holding};
+use crate::snowflake::typing::models::SnowflakeType;
 
 #[test]
 fn given_stored_variants_when_read_back_then_typed_builds_come_back_as_json() {

@@ -6,7 +6,7 @@ use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::dialects::models::Profiles;
 use crate::snowflake::names::constants::{UNKNOWN_RELATION_PREFIX, UNKNOWN_RELATION_SUFFIX};
-use crate::snowflake::types::main::schema_columns::schema_columns;
+use crate::snowflake::types::main::_schema_columns::schema_columns;
 use crate::snowflake::types::models::{ColumnSpec, Schema, TypedLeaves};
 
 /// The innermost CTE so named, else the schema's relation; names the target cannot tell apart refuse.

@@ -9,9 +9,9 @@ use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal, Star};
 use sqlquack_syntax::expressions::queries::models::{Cte, OrderBy, Select, Union, With};
 
+use crate::dialects::main::dialect_rules::dialect_rules;
 use crate::lineage::_helpers::tracing::expressions::{expression_lineage, is_aggregate};
 use crate::lineage::_helpers::tracing::lineages::{combined, set_merged, traced_if, unresolved};
-use crate::lineage::_helpers::tracing::postgres_names::postgres_name;
 use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
 use crate::lineage::_helpers::tracing::reuse::{holds_aggregate, reused, worked};
 use crate::lineage::_helpers::tracing::sources::{
@@ -19,8 +19,8 @@ use crate::lineage::_helpers::tracing::sources::{
 };
 use crate::lineage::_helpers::typing::rules::filtered_non_null;
 use crate::lineage::constants::{
-    DATABRICKS_PROFILE, DUCKDB_PROFILE, ORDINAL_BASE, POSTGRES_PROFILE, RECURSION_LIMIT, SQL_STAR,
-    SQLITE_PROFILE, SUBTOTAL_GROUPINGS, UNNAMED_CHARACTERS,
+    DATABRICKS_PROFILE, DUCKDB_PROFILE, ORDINAL_BASE, RECURSION_LIMIT, SQL_STAR, SQLITE_PROFILE,
+    SUBTOTAL_GROUPINGS, UNNAMED_CHARACTERS,
 };
 use crate::lineage::models::{
     FromItems, Lineage, LineageContext, LineageScope, NamedQuery, Nullability, ResolvedQuery,
@@ -883,8 +883,10 @@ fn output_name(projection: &Expression, context: LineageContext<'_>) -> String {
         {
             String::new()
         }
-        _ if context.profile.name() == POSTGRES_PROFILE => postgres_name(projection),
-        _ => snowflake_name(projection, context).unwrap_or_default(),
+        _ => match dialect_rules(context.profile).unaliased_name(projection) {
+            Some(name) => name,
+            None => snowflake_name(projection, context).unwrap_or_default(),
+        },
     }
 }
 

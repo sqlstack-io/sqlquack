@@ -228,50 +228,6 @@ pub(crate) const INTEGER_TYPES: [&str; 6] = [
 pub(crate) const CONDITIONAL_ARGUMENTS: usize = 3;
 /// The star a projection may be spelled as a column name.
 pub(crate) const SQL_STAR: &str = "*";
-/// The widest DuckDB DECIMAL.
-pub(crate) const DUCKDB_DECIMAL_LIMIT: u32 = 38;
-/// The widest DECIMAL DuckDB keeps in 64 bits.
-pub(crate) const DUCKDB_SMALL_DECIMAL: u32 = 18;
-/// DuckDB's DECIMAL without a precision.
-pub(crate) const DUCKDB_DEFAULT_DECIMAL: (u32, u32) = (18, 3);
-/// DuckDB's spelling of each integer type: (bits, unsigned, spelling).
-pub(crate) const DUCKDB_INTEGER_SPELLINGS: [(u16, bool, &str); 10] = [
-    (8, false, "TINYINT"),
-    (16, false, "SMALLINT"),
-    (32, false, "INTEGER"),
-    (64, false, "BIGINT"),
-    (128, false, "HUGEINT"),
-    (8, true, "UTINYINT"),
-    (16, true, "USMALLINT"),
-    (32, true, "UINTEGER"),
-    (64, true, "UBIGINT"),
-    (128, true, "UHUGEINT"),
-];
-/// Every spelling of each DuckDB integer type.
-pub(crate) const DUCKDB_INTEGER_ALIASES: [(&[&str], (u16, bool)); 10] = [
-    (&["TINYINT", "INT1"], (8, false)),
-    (&["SMALLINT", "INT2", "SHORT"], (16, false)),
-    (&["INTEGER", "INT", "INT4", "SIGNED"], (32, false)),
-    (&["BIGINT", "INT8", "LONG"], (64, false)),
-    (&["HUGEINT", "INT128"], (128, false)),
-    (&["UTINYINT", "UINT8"], (8, true)),
-    (&["USMALLINT", "UINT16"], (16, true)),
-    (&["UINTEGER", "UINT32"], (32, true)),
-    (&["UBIGINT", "UINT64"], (64, true)),
-    (&["UHUGEINT", "UINT128"], (128, true)),
-];
-/// The widest DuckDB integers, HUGEINT and UHUGEINT.
-pub(crate) const DUCKDB_WIDEST_INTEGER: u16 = 128;
-/// The width of DuckDB's BIGINT.
-pub(crate) const DUCKDB_BIGINT_BITS: u16 = 64;
-/// The width of DuckDB's INTEGER.
-pub(crate) const DUCKDB_INTEGER_BITS: u16 = 32;
-/// The arguments of a one-argument function.
-pub(crate) const ONE_ARGUMENT: usize = 1;
-/// The arguments of a two-argument function.
-pub(crate) const TWO_ARGUMENTS: usize = 2;
-/// Semi-structured DuckDB types CONCAT does not read as text.
-pub(crate) const DUCKDB_JSON_TYPES: [&str; 2] = ["JSON", "JSONB"];
 /// Functions NULL exactly when their first argument is, whatever the catalog's rules.
 pub(crate) const FIRST_ARGUMENT_NULLABILITY: [&str; 2] = ["UPPER", "LOWER"];
 /// The Snowflake profile's name.
@@ -280,57 +236,6 @@ pub(crate) const SNOWFLAKE_PROFILE: &str = "Snowflake";
 pub(crate) const CLICKHOUSE_PROFILE: &str = "ClickHouse";
 /// The FROM items of a query with one join, whose shared names ClickHouse reads from the left.
 pub(crate) const CLICKHOUSE_SINGLE_JOIN_SOURCES: usize = 2;
-/// What ClickHouse's comparisons, logical operators and predicates return.
-pub(crate) const CLICKHOUSE_BOOLEAN_RESULT: &str = "UInt8";
-/// What ClickHouse's counts and ranking functions return.
-pub(crate) const CLICKHOUSE_COUNT_TYPE: &str = "UInt64";
-/// ClickHouse's text type.
-pub(crate) const CLICKHOUSE_STRING_TYPE: &str = "String";
-/// What ClickHouse's `now()` and one-argument `toDateTime` return.
-pub(crate) const CLICKHOUSE_DATETIME_TYPE: &str = "DateTime";
-/// How ClickHouse spells every Decimal type's name.
-pub(crate) const CLICKHOUSE_DECIMAL_PREFIX: &str = "Decimal(";
-/// How ClickHouse spells every FixedString type's name.
-pub(crate) const CLICKHOUSE_FIXED_STRING_PREFIX: &str = "FixedString(";
-/// The prefix of a hexadecimal number literal.
-pub(crate) const CLICKHOUSE_HEX_PREFIX: &str = "0x";
-/// The wrappers that do not change a value's type for arithmetic and functions.
-pub(crate) const CLICKHOUSE_NULLABLE_WRAPPERS: [&str; 2] = ["Nullable", "LowCardinality"];
-/// Built-ins whose ClickHouse 26.1 result type does not depend on their arguments' types.
-pub(crate) const CLICKHOUSE_FIXED_RESULTS: [(&str, &str); 32] = [
-    ("toDate", "Date"),
-    ("today", "Date"),
-    ("toString", "String"),
-    ("toInt8", "Int8"),
-    ("toInt16", "Int16"),
-    ("toInt32", "Int32"),
-    ("toInt64", "Int64"),
-    ("toUInt8", "UInt8"),
-    ("toUInt16", "UInt16"),
-    ("toUInt32", "UInt32"),
-    ("toUInt64", "UInt64"),
-    ("toFloat32", "Float32"),
-    ("toFloat64", "Float64"),
-    ("toYYYYMM", "UInt32"),
-    ("toYYYYMMDD", "UInt32"),
-    ("toYear", "UInt16"),
-    ("toMonth", "UInt8"),
-    ("toDayOfMonth", "UInt8"),
-    ("toHour", "UInt8"),
-    ("length", "UInt64"),
-    ("lengthUTF8", "UInt64"),
-    ("concat", "String"),
-    ("substring", "String"),
-    ("trim", "String"),
-    ("replaceAll", "String"),
-    ("formatDateTime", "String"),
-    ("toStartOfMonth", "Date"),
-    ("toStartOfQuarter", "Date"),
-    ("toStartOfYear", "Date"),
-    ("toStartOfWeek", "Date"),
-    ("toMonday", "Date"),
-    ("dateDiff", "Int64"),
-];
 /// The BigQuery profile's name.
 pub(crate) const BIGQUERY_PROFILE: &str = "BigQuery";
 /// BigQuery's functions that take a date part, with the part's argument position.
@@ -380,42 +285,10 @@ pub(crate) const DATABRICKS_VALUES_COLUMN: &str = "col";
 /// PostgreSQL's system columns, which every stored table has and no star expands.
 pub(crate) const POSTGRES_SYSTEM_COLUMNS: [&str; 6] =
     ["tableoid", "xmin", "cmin", "xmax", "cmax", "ctid"];
-/// Snowflake's semi-structured ARRAY type.
-pub(crate) const SNOWFLAKE_ARRAY_TYPE: &str = "ARRAY";
-/// The widest Snowflake NUMBER.
-pub(crate) const SNOWFLAKE_MAX_PRECISION: u32 = 38;
-/// The NUMBER Snowflake reads text as when a set operation combines it with a number.
-pub(crate) const SNOWFLAKE_TEXT_NUMBER: (u32, u32) = (18, 5);
 /// Snowflake's VARIANT type.
 pub(crate) const SNOWFLAKE_VARIANT_TYPE: &str = "VARIANT";
 /// The aggregates of a PIVOT whose columns DuckDB names by value alone.
 pub(crate) const ONE_AGGREGATE: usize = 1;
-/// Functions Snowflake types as COUNT.
-pub(crate) const SNOWFLAKE_COUNT_FUNCTIONS: [&str; 1] = ["COUNT"];
-/// DuckDB's date part counting seconds since the epoch, a DOUBLE.
-pub(crate) const DUCKDB_EPOCH_PART: &str = "epoch";
-/// DuckDB's Julian day date part, a DOUBLE.
-pub(crate) const DUCKDB_JULIAN_PART: &str = "julian";
-/// Snowflake's names for DATEADD, whose result keeps its value's type.
-pub(crate) const SNOWFLAKE_DATE_ADD_FUNCTIONS: [&str; 3] = ["DATEADD", "TIMEADD", "TIMESTAMPADD"];
-/// Snowflake's names for DATEDIFF, written as a call when its unit is not a keyword.
-pub(crate) const SNOWFLAKE_DATE_DIFF_FUNCTIONS: [&str; 3] =
-    ["DATEDIFF", "TIMEDIFF", "TIMESTAMPDIFF"];
-/// Date parts by which DATEADD moves a DATE and keeps it a DATE.
-pub(crate) const SNOWFLAKE_DATE_UNITS: [&str; 5] = ["YEAR", "QUARTER", "MONTH", "WEEK", "DAY"];
-/// Time parts by which DATEADD moves a TIME and keeps it a TIME.
-pub(crate) const SNOWFLAKE_TIME_UNITS: [&str; 6] = [
-    "HOUR",
-    "MINUTE",
-    "SECOND",
-    "MILLISECOND",
-    "MICROSECOND",
-    "NANOSECOND",
-];
-/// The DATEDIFF unit whose TIME difference needs the wider recorded type.
-pub(crate) const SNOWFLAKE_MICROSECOND_UNIT: &str = "MICROSECOND";
-/// The ranking window functions.
-pub(crate) const SNOWFLAKE_RANKING_FUNCTIONS: [&str; 3] = ["ROW_NUMBER", "RANK", "DENSE_RANK"];
 /// A timestamp written without its kind, which the profile's mapping decides.
 pub(crate) const UNMAPPED_TIMESTAMP: &str = "TIMESTAMP";
 /// Snowflake types whose value may be a JSON null.
@@ -483,18 +356,11 @@ pub(crate) const DUCKDB_KEYWORD_ONLY_FUNCTIONS: [&str; 4] = [
     "localtime",
     "localtimestamp",
 ];
-
 /// The base of the digits in a date or time literal.
 pub(crate) const DECIMAL_BASE: u32 = 10;
-
 /// The last hour of a day in a time literal.
 pub(crate) const LAST_HOUR: u32 = 23;
-
 /// The last minute of an hour, or second of a minute, in a time literal.
 pub(crate) const LAST_MINUTE_OR_SECOND: u32 = 59;
-
-/// The arguments of `DATE(year, month, day)`.
-pub(crate) const DATE_FROM_PARTS_ARGUMENTS: usize = 3;
-
 /// The warning for a value converted at run time or of a family no rule models.
 pub(crate) const RUNTIME_WARNING: &str = "W216";

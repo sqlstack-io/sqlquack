@@ -6,10 +6,12 @@ use sqlquack_syntax::expressions::queries::models::{Select, WindowFrameBound, Wi
 use crate::lineage::_helpers::checks::coercion::{
     Engine, comparable, invalid_literal_for, projection_literal, runtime_comparison, setop,
 };
-use crate::lineage::_helpers::checks::families::{Family, expression_family, type_family};
+use crate::lineage::_helpers::checks::families::expression_family;
 use crate::lineage::_helpers::checks::issues::issue;
 use crate::lineage::_helpers::checks::sets::{Branches, families, width};
 use crate::lineage::constants::TYPE_PHASE;
+use crate::lineage::main::type_family::type_family;
+use crate::lineage::models::Family;
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding};
 
 fn finding(code: &'static str, message: String, node: &Expression) -> NameFinding {

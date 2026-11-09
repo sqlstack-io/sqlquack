@@ -11,8 +11,17 @@ rust-version.workspace = true
 
 [features]
 default = []
-# Snowflake's scalar types and typing rules, and its typed names, scopes and schemas.
-snowflake = []
+# Each dialect's profile and lineage rules. Snowflake, DuckDB, SQLite, ClickHouse and SQL Server
+# find window-only calls in PostgreSQL's catalogue of window functions, so they turn it on.
+bigquery = []
+clickhouse = ["postgres"]
+databricks = []
+duckdb = ["postgres"]
+postgres = []
+# Also Snowflake's scalar types and typing rules, and its typed names, scopes and schemas.
+snowflake = ["postgres"]
+sqlite = ["postgres"]
+sqlserver = ["postgres"]
 
 [dependencies]
 regex.workspace = true
@@ -24,6 +33,17 @@ sqlquack-diagnostics.workspace = true
 stacker.workspace = true
 
 [dev-dependencies]
+# The tests read every dialect.
+sqlquack-semantics = { workspace = true, features = [
+  "bigquery",
+  "clickhouse",
+  "databricks",
+  "duckdb",
+  "postgres",
+  "snowflake",
+  "sqlite",
+  "sqlserver",
+] }
 sqlquack-syntax-bigquery.workspace = true
 sqlquack-syntax-duckdb.workspace = true
 sqlquack-syntax-postgres.workspace = true

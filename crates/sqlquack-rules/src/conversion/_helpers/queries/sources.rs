@@ -38,10 +38,10 @@ use crate::conversion::constants::{FULL_JOIN_KEYWORD, INNER_JOIN_KEYWORD};
 
 /// How the parsed tree spells a NATURAL join's kind, lower-cased.
 const NATURAL_JOIN_PREFIX: &str = "natural";
-use sqlquack_semantics::lineage::main::stored_columns::stored_columns;
 use sqlquack_semantics::snowflake::names::constants::RELATION_KEY_SEPARATOR;
 use sqlquack_semantics::snowflake::names::main::relation_key::relation_key;
 use sqlquack_semantics::snowflake::scopes::models::ScopeRelation;
+use sqlquack_semantics::snowflake::types::main::stored_columns::stored_columns;
 use sqlquack_semantics::snowflake::types::models::{ColumnSpec, FunctionReturns};
 
 /// The FROM clause with its joins, and the relations it brings into scope.

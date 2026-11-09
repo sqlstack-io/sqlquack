@@ -2,10 +2,24 @@
 
 #![forbid(unsafe_code)]
 
+#[cfg(feature = "bigquery")]
+pub mod bigquery;
+#[cfg(feature = "clickhouse")]
+pub mod clickhouse;
+#[cfg(feature = "databricks")]
+pub mod databricks;
 pub mod dialects;
+#[cfg(feature = "duckdb")]
+pub mod duckdb;
 pub mod lineage;
+#[cfg(feature = "postgres")]
+pub mod postgres;
 #[cfg(feature = "snowflake")]
 pub mod snowflake;
+#[cfg(feature = "sqlite")]
+pub mod sqlite;
+#[cfg(feature = "sqlserver")]
+pub mod sqlserver;
 
 pub use crate::lineage::main::query_lineage::query_lineage;
 pub use crate::lineage::main::query_lineage_and_findings::query_lineage_and_findings;

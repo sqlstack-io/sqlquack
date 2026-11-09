@@ -2,119 +2,26 @@
 
 use std::rc::Rc;
 
+use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::{Column, Identifier, Literal};
 use sqlquack_syntax::expressions::queries::models::Select;
-use sqlquack_syntax::{DataType, Expression};
 
 use crate::dialects::main::canonical_type::canonical_type;
+use crate::dialects::main::dialect_rules::dialect_rules;
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::tracing::reuse::holds_aggregate;
-use crate::lineage::_helpers::typing::bigquery_typing::{bigquery_literal_type, bigquery_type};
-use crate::lineage::_helpers::typing::clickhouse_typing::{
-    clickhouse_literal_type, clickhouse_type,
-};
-use crate::lineage::_helpers::typing::databricks_typing::{
-    databricks_literal_type, databricks_type,
-};
-use crate::lineage::_helpers::typing::duckdb_typing::{duckdb_literal_type, duckdb_type};
-use crate::lineage::_helpers::typing::postgres_typing::{postgres_literal_type, postgres_type};
-use crate::lineage::_helpers::typing::snowflake_typing::{
-    snowflake_literal_type, snowflake_type, snowflake_unified,
-};
-use crate::lineage::_helpers::typing::sqlite_typing::sqlite_literal_type;
-use crate::lineage::_helpers::typing::sqlserver_typing::{sqlserver_literal_type, sqlserver_type};
 use crate::lineage::constants::{
-    ARGUMENT_TYPED_FUNCTIONS, BIGQUERY_PROFILE, BOOLEAN_TYPE, CLICKHOUSE_PROFILE,
-    COALESCING_FUNCTIONS, CONDITIONAL_ARGUMENTS, COUNT_TYPE, COUNTING_FUNCTIONS,
-    DATABRICKS_PROFILE, DECIMAL_LITERAL_TYPE, DUCKDB_PROFILE, FIRST_ARGUMENT_NULLABILITY,
-    FLOAT_TYPES, FUNCTION_RESULT_TYPES, INTEGER_LITERAL_TYPE, INTEGER_TYPES,
-    OPERAND_TYPED_FUNCTIONS, POSTGRES_PROFILE, SNOWFLAKE_PROFILE, SQLITE_PROFILE,
-    SQLSERVER_PROFILE, TEXT_TYPE, UNMAPPED_TIMESTAMP,
+    ARGUMENT_TYPED_FUNCTIONS, BOOLEAN_TYPE, COALESCING_FUNCTIONS, CONDITIONAL_ARGUMENTS,
+    COUNT_TYPE, COUNTING_FUNCTIONS, DECIMAL_LITERAL_TYPE, FIRST_ARGUMENT_NULLABILITY, FLOAT_TYPES,
+    FUNCTION_RESULT_TYPES, INTEGER_LITERAL_TYPE, INTEGER_TYPES, OPERAND_TYPED_FUNCTIONS, TEXT_TYPE,
+    UNMAPPED_TIMESTAMP,
 };
 use crate::lineage::models::{Lineage, LineageContext, Nullability, NullabilityRule};
-
-/// A value's type and nullability.
-pub(crate) type ValueType = (Option<Rc<str>>, Nullability);
-
-/// A cast target's spelling, parameters without spaces, when lineage knows the type.
-pub(crate) fn rendered_type(data_type: &DataType) -> Option<String> {
-    let text: String = match data_type {
-        DataType::Boolean => BOOLEAN_TYPE.to_owned(),
-        DataType::Date => "DATE".to_owned(),
-        DataType::BigInt { .. } => "BIGINT".to_owned(),
-        DataType::Int { .. } => "INT".to_owned(),
-        DataType::Float { .. } => "FLOAT".to_owned(),
-        DataType::Double { .. } => "DOUBLE".to_owned(),
-        DataType::Decimal {
-            precision: None, ..
-        } => "DECIMAL".to_owned(),
-        DataType::Decimal {
-            precision: Some(precision),
-            scale: None,
-        } => format!("DECIMAL({precision})"),
-        DataType::Decimal {
-            precision: Some(precision),
-            scale: Some(scale),
-        } => format!("DECIMAL({precision},{scale})"),
-        DataType::String { .. } => "STRING".to_owned(),
-        DataType::Text => TEXT_TYPE.to_owned(),
-        DataType::VarChar { length: None, .. } => TEXT_TYPE.to_owned(),
-        DataType::VarChar {
-            length: Some(length),
-            ..
-        } => format!("VARCHAR({length})"),
-        DataType::Time { .. } => "TIME".to_owned(),
-        DataType::Timestamp {
-            timezone: false, ..
-        } => "TIMESTAMP".to_owned(),
-        DataType::Timestamp { timezone: true, .. } => "TIMESTAMPTZ".to_owned(),
-        DataType::Custom { name } => name.replace(", ", ","),
-        DataType::Array { element_type, .. } => format!("ARRAY({})", rendered_type(element_type)?),
-        _ => return None,
-    };
-    Some(text)
-}
+use crate::lineage::types::ValueType;
 
 /// A literal's type and nullability.
 pub(crate) fn literal_type(expression: &Expression, context: LineageContext<'_>) -> ValueType {
-    let (data_type, nullability): ValueType = generic_literal_type(expression);
-    if context.profile.name() == CLICKHOUSE_PROFILE {
-        return (
-            clickhouse_literal_type(expression).map(Rc::from),
-            nullability,
-        );
-    }
-    if context.profile.name() == BIGQUERY_PROFILE {
-        return (bigquery_literal_type(expression).map(Rc::from), nullability);
-    }
-    match expression {
-        Expression::Literal(literal) if context.profile.name() == DUCKDB_PROFILE => (
-            duckdb_literal_type(literal).map(|data_type| Rc::from(data_type.spelling())),
-            nullability,
-        ),
-        Expression::Literal(literal) if context.profile.name() == POSTGRES_PROFILE => (
-            postgres_literal_type(literal).map(Rc::from).or(data_type),
-            nullability,
-        ),
-        Expression::Literal(literal) if context.profile.name() == SQLITE_PROFILE => {
-            (sqlite_literal_type(literal).map(Rc::from), nullability)
-        }
-        _ if context.profile.name() == SQLITE_PROFILE => (None, nullability),
-        Expression::Literal(literal) if context.profile.name() == SQLSERVER_PROFILE => (
-            sqlserver_literal_type(literal).map(Rc::from).or(data_type),
-            nullability,
-        ),
-        Expression::Literal(literal) if context.profile.name() == DATABRICKS_PROFILE => {
-            (databricks_literal_type(literal).map(Rc::from), nullability)
-        }
-        Expression::Literal(literal) if context.profile.name() == SNOWFLAKE_PROFILE => {
-            match snowflake_literal_type(literal) {
-                Some(recorded) => (recorded, nullability),
-                None => (data_type, nullability),
-            }
-        }
-        _ => (data_type, nullability),
-    }
+    dialect_rules(context.profile).literal_type(expression, generic_literal_type(expression))
 }
 
 fn generic_literal_type(expression: &Expression) -> ValueType {
@@ -141,25 +48,12 @@ pub(crate) fn computed_type(
     parts: &[(&Expression, Lineage)],
     context: LineageContext<'_>,
 ) -> ValueType {
-    let (data_type, nullability): ValueType = generic_type(expression, parts, context);
-    let ruled: Option<Option<Rc<str>>> = match context.profile.name() {
-        CLICKHOUSE_PROFILE => Some(clickhouse_type(expression, parts, context)),
-        BIGQUERY_PROFILE => Some(bigquery_type(expression, parts, context)),
-        DUCKDB_PROFILE => duckdb_type(expression, parts),
-        SNOWFLAKE_PROFILE => snowflake_type(expression, parts),
-        POSTGRES_PROFILE => postgres_type(expression, parts),
-        SQLSERVER_PROFILE => sqlserver_type(expression, parts),
-        SQLITE_PROFILE => {
-            let nullability: Nullability = match nullability {
-                Nullability::Nullable => Nullability::Nullable,
-                _ => Nullability::Unknown,
-            };
-            return (None, nullability);
-        }
-        DATABRICKS_PROFILE => databricks_type(expression, parts, context),
-        _ => None,
-    };
-    let data_type: Option<Rc<str>> = ruled.unwrap_or(data_type);
+    let (data_type, nullability): ValueType = dialect_rules(context.profile).computed_type(
+        expression,
+        parts,
+        context,
+        generic_type(expression, parts, context),
+    );
     (
         data_type.map(|data_type| mapped_timestamp(data_type, context)),
         nullability,
@@ -418,10 +312,9 @@ fn common_type(
             None => found = Some(data_type),
         }
     }
-    match (differ, context.profile.name()) {
-        (false, _) => found,
-        (true, SNOWFLAKE_PROFILE) => snowflake_unified(&typed),
-        (true, _) => None,
+    match differ {
+        false => found,
+        true => dialect_rules(context.profile).unified_type(&typed),
     }
 }
 

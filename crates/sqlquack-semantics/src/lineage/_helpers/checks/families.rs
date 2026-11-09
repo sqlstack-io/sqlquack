@@ -7,130 +7,14 @@ use sqlquack_syntax::expressions::types::models::DataType;
 use crate::lineage::_helpers::checks::coercion::Engine;
 use crate::lineage::_helpers::checks::relational::query_families;
 use crate::lineage::_helpers::tracing::expressions::expression_lineage;
+use crate::lineage::main::type_family::type_family;
+use crate::lineage::models::Family;
 use crate::lineage::models::{LineageContext, LineageScope};
 
 /// The scale of a fixed-point type that holds only integers.
 const INTEGER_SCALE: &str = "0";
 
-/// A type's family, the class the type checks compare.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum Family {
-    Unknown,
-    Boolean,
-    Integer,
-    Numeric,
-    String,
-    Binary,
-    Date,
-    Time,
-    Timestamp,
-    Interval,
-    Json,
-    Uuid,
-    Array,
-    Map,
-    Struct,
-}
-
-impl Family {
-    pub(crate) fn is_numeric(self) -> bool {
-        matches!(self, Self::Integer | Self::Numeric)
-    }
-
-    /// BigQuery's JSON, ARRAY and STRUCT, which no other type converts to or from implicitly.
-    pub(crate) fn converts_to_nothing(self) -> bool {
-        matches!(self, Self::Json | Self::Array | Self::Struct)
-    }
-
-    pub(crate) fn is_temporal(self) -> bool {
-        matches!(
-            self,
-            Self::Date | Self::Time | Self::Timestamp | Self::Interval
-        )
-    }
-
-    /// Whether the checks model the family's conversions fully.
-    pub(crate) fn fully_modelled(self) -> bool {
-        !matches!(
-            self,
-            Self::Unknown | Self::Json | Self::Uuid | Self::Array | Self::Map | Self::Struct
-        )
-    }
-
-    /// The family's name in a finding's words.
-    pub(crate) fn name(self) -> &'static str {
-        match self {
-            Self::Unknown => "unknown",
-            Self::Boolean => "boolean",
-            Self::Integer => "integer",
-            Self::Numeric => "numeric",
-            Self::String => "string",
-            Self::Binary => "binary",
-            Self::Date => "date",
-            Self::Time => "time",
-            Self::Timestamp => "timestamp",
-            Self::Interval => "interval",
-            Self::Json => "json",
-            Self::Uuid => "uuid",
-            Self::Array => "array",
-            Self::Map => "map",
-            Self::Struct => "struct",
-        }
-    }
-}
-
-/// The family of a type as spelled, `NUMBER(38,0)` an integer and `VARCHAR(10)` a string.
-pub(crate) fn type_family(spelling: &str) -> Family {
-    let trimmed: &str = spelling
-        .trim()
-        .trim_matches(|character| matches!(character, '"' | '\'' | '`'));
-    let normalized: String = trimmed
-        .split_whitespace()
-        .collect::<Vec<&str>>()
-        .join(" ")
-        .to_lowercase();
-    if normalized.is_empty() {
-        return Family::Unknown;
-    }
-    if let Some((base, inner)) = type_arguments(&normalized) {
-        match base {
-            "nullable" | "lowcardinality" => return type_family(inner),
-            "array" | "list" => return Family::Array,
-            "map" => return Family::Map,
-            "struct" | "row" | "record" => return Family::Struct,
-            "number" | "numeric" | "decimal" | "dec"
-                if inner
-                    .split(',')
-                    .nth(1)
-                    .is_some_and(|scale| scale.trim() == INTEGER_SCALE) =>
-            {
-                return Family::Integer;
-            }
-            _ => {}
-        }
-    }
-    if ["array<", "list<"]
-        .iter()
-        .any(|prefix| normalized.starts_with(prefix))
-        || normalized.ends_with("[]")
-    {
-        return Family::Array;
-    }
-    if normalized.starts_with("map<") || normalized.starts_with("map(") {
-        return Family::Map;
-    }
-    if ["struct<", "struct(", "row<", "record<", "object<"]
-        .iter()
-        .any(|prefix| normalized.starts_with(prefix))
-    {
-        return Family::Struct;
-    }
-    let base: &str = normalized.split('(').next().unwrap_or_default().trim();
-    let base: &str = base.strip_prefix("unsigned ").unwrap_or(base);
-    base_family(base.strip_suffix(" unsigned").unwrap_or(base))
-}
-
-fn type_arguments(normalized: &str) -> Option<(&str, &str)> {
+pub(crate) fn type_arguments(normalized: &str) -> Option<(&str, &str)> {
     let open: usize = normalized.find('(')?;
     if !normalized.ends_with(')') || open + 1 >= normalized.len() {
         return None;
@@ -372,4 +256,60 @@ fn arithmetic_family(left: Family, right: Family) -> Family {
     } else {
         Family::Unknown
     }
+}
+
+/// A type spelling without quotes, its words single-spaced and in lower case.
+pub(crate) fn normalized_spelling(spelling: &str) -> String {
+    let trimmed: &str = spelling
+        .trim()
+        .trim_matches(|character| matches!(character, '"' | '\'' | '`'));
+    trimmed
+        .split_whitespace()
+        .collect::<Vec<&str>>()
+        .join(" ")
+        .to_lowercase()
+}
+
+/// The family of an array, map or struct spelling, or of a decimal that holds only integers.
+pub(crate) fn composite_family(normalized: &str) -> Option<Family> {
+    if let Some((base, inner)) = type_arguments(normalized) {
+        match base {
+            "array" | "list" => return Some(Family::Array),
+            "map" => return Some(Family::Map),
+            "struct" | "row" | "record" => return Some(Family::Struct),
+            "number" | "numeric" | "decimal" | "dec"
+                if inner
+                    .split(',')
+                    .nth(1)
+                    .is_some_and(|scale| scale.trim() == INTEGER_SCALE) =>
+            {
+                return Some(Family::Integer);
+            }
+            _ => {}
+        }
+    }
+    if ["array<", "list<"]
+        .iter()
+        .any(|prefix| normalized.starts_with(prefix))
+        || normalized.ends_with("[]")
+    {
+        return Some(Family::Array);
+    }
+    if normalized.starts_with("map<") || normalized.starts_with("map(") {
+        return Some(Family::Map);
+    }
+    if ["struct<", "struct(", "row<", "record<", "object<"]
+        .iter()
+        .any(|prefix| normalized.starts_with(prefix))
+    {
+        return Some(Family::Struct);
+    }
+    None
+}
+
+/// The family of a scalar spelling by its base name, its parameters and signedness dropped.
+pub(crate) fn scalar_family(normalized: &str) -> Family {
+    let base: &str = normalized.split('(').next().unwrap_or_default().trim();
+    let base: &str = base.strip_prefix("unsigned ").unwrap_or(base);
+    base_family(base.strip_suffix(" unsigned").unwrap_or(base))
 }

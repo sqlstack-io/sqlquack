@@ -1,7 +1,6 @@
 //! Checks helpers: type families, coercion rules, signatures, and node and set findings.
 
 pub(crate) mod coercion;
-pub(crate) mod duckdb_functions;
 pub(crate) mod families;
 pub(crate) mod issues;
 pub(crate) mod node_checks;

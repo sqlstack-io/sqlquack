@@ -8,29 +8,24 @@ use sqlquack_syntax::expressions::names::models::{Identifier, Star};
 use sqlquack_syntax::expressions::operators::models::Parameter;
 
 use crate::dialects::main::canonical_type::canonical_type;
-use crate::dialects::main::clickhouse_type::clickhouse_type;
+use crate::dialects::main::dialect_rules::dialect_rules;
 use crate::lineage::_helpers::tracing::lineages::{combined, constant, traced_if, unresolved};
 use crate::lineage::_helpers::tracing::queries::{empty_scope, expanded_star, resolved_query};
 use crate::lineage::_helpers::tracing::resolution::{column_lineage, key, positional_column};
 use crate::lineage::_helpers::tracing::reuse::worked;
-use crate::lineage::_helpers::typing::bigquery_typing::bigquery_cast_spelling;
-use crate::lineage::_helpers::typing::databricks_typing::databricks_cast_spelling;
-use crate::lineage::_helpers::typing::duckdb_types::cast_spelling;
-use crate::lineage::_helpers::typing::postgres_typing::postgres_cast_spelling;
 use crate::lineage::_helpers::typing::rules::{
-    ValueType, computed_type, literal_type, mapped_timestamp, rendered_type, required_non_null,
+    computed_type, literal_type, mapped_timestamp, required_non_null,
 };
-use crate::lineage::_helpers::typing::sqlite_typing::sqlite_cast_spelling;
-use crate::lineage::_helpers::typing::sqlserver_typing::sqlserver_cast_spelling;
 use crate::lineage::constants::{
     AGGREGATE_FUNCTIONS, BIGQUERY_DATE_PART_FUNCTIONS, BIGQUERY_PROFILE, BIGQUERY_WEEKDAY_PARTS,
-    BOOLEAN_TYPE, CLICKHOUSE_PROFILE, DATABRICKS_PROFILE, DATE_PART_FUNCTIONS, DUCKDB_PROFILE,
-    POSITIONAL_COLUMN_BASE, POSTGRES_PROFILE, SNOWFLAKE_JSON_HOLDERS, SNOWFLAKE_PROFILE,
-    SNOWFLAKE_VARIANT_TYPE, SQLITE_PROFILE, SQLSERVER_PROFILE,
+    BOOLEAN_TYPE, DATE_PART_FUNCTIONS, POSITIONAL_COLUMN_BASE, SNOWFLAKE_JSON_HOLDERS,
+    SNOWFLAKE_PROFILE, SNOWFLAKE_VARIANT_TYPE,
 };
+use crate::lineage::main::rendered_type::rendered_type;
 use crate::lineage::models::{
     Lineage, LineageContext, LineageScope, Nullability, ResolvedQuery, RowReads, TransformKind,
 };
+use crate::lineage::types::ValueType;
 
 /// The lineage of `expression` read in `scope`.
 pub(crate) fn expression_lineage(
@@ -103,20 +98,7 @@ fn expression_lineage_level(
         },
         Expression::Cast(cast) | Expression::TryCast(cast) | Expression::SafeCast(cast) => {
             let inner: Lineage = expression_lineage(&cast.this, scope, context);
-            let target: Option<String> = match context.profile.name() {
-                CLICKHOUSE_PROFILE => {
-                    rendered_type(&cast.to).and_then(|written| clickhouse_type(&written))
-                }
-                BIGQUERY_PROFILE => bigquery_cast_spelling(&cast.to),
-                DUCKDB_PROFILE => cast_spelling(&cast.to),
-                POSTGRES_PROFILE => postgres_cast_spelling(&cast.to),
-                SQLITE_PROFILE => sqlite_cast_spelling(&cast.to),
-                SQLSERVER_PROFILE => {
-                    sqlserver_cast_spelling(&cast.to).unwrap_or_else(|| rendered_type(&cast.to))
-                }
-                DATABRICKS_PROFILE => databricks_cast_spelling(&cast.to),
-                _ => rendered_type(&cast.to),
-            };
+            let target: Option<String> = dialect_rules(context.profile).cast_spelling(&cast.to);
             let target: Option<Rc<str>> =
                 target.map(|target| mapped_timestamp(Rc::from(target), context));
             let nullability: Nullability = match expression {
