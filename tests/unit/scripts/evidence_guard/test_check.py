@@ -11,6 +11,8 @@ from tests.unit.scripts.evidence_guard.helpers import (
     add_audit_valid,
     add_dialect_receipts,
     add_dialect_receipts_not_jsonl,
+    add_dialect_retraction,
+    add_dialect_retraction_without_reason,
     add_error_message,
     add_error_number_message,
     add_mismatched,
@@ -218,6 +220,18 @@ from tests.unit.scripts.evidence_guard.helpers import (
             change=edit_dialect_receipts,
             expected_return_code=1,
             expected_fragment="append-only (status M)",
+        ),
+        GuardTestCase(
+            description="a report withdrawing a committed dialect receipt with its reason passes",
+            change=add_dialect_retraction,
+            expected_return_code=0,
+            expected_fragment="passed, 1 added",
+        ),
+        GuardTestCase(
+            description="a withdrawal that gives no reason is rejected",
+            change=add_dialect_retraction_without_reason,
+            expected_return_code=1,
+            expected_fragment="retraction.report.json: withdrawal 1 gives no reason",
         ),
         GuardTestCase(
             description="a dialect's receipts outside JSON Lines are rejected",

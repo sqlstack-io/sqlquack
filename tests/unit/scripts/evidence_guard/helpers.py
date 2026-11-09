@@ -13,6 +13,8 @@ from tests.unit.scripts.evidence_guard._test_types import Change
 _RESULTS: str = "evidence/results"
 _AUDIT_RESULTS: str = "evidence/audit/results"
 _RECORDER: str = "sqlquack-record 0.1.0"
+_STORED_DIALECT_LINE: str = '{"case_id": "pg.query.stored"}'
+_STORED_DIALECT_RECEIPT: str = hashlib.sha256(_STORED_DIALECT_LINE.encode()).hexdigest()
 
 
 def _git(repository: Path, *arguments: str) -> None:
@@ -325,6 +327,20 @@ def edit_dialect_receipts(results: Path, _: str) -> None:
     (_dialect_receipts(results) / "stored.jsonl").write_text('{"case_id": "pg.query.other"}\n')
 
 
+def add_dialect_retraction(results: Path, _: str) -> None:
+    """Adds a report on its own that withdraws a committed dialect receipt, with the reason."""
+    (_dialect_receipts(results) / "retraction.report.json").write_text(
+        json.dumps({"withdrawn": [{"receipt_sha256": _STORED_DIALECT_RECEIPT, "reason": "stale"}]})
+    )
+
+
+def add_dialect_retraction_without_reason(results: Path, _: str) -> None:
+    """Adds a report that withdraws a committed dialect receipt without saying why."""
+    (_dialect_receipts(results) / "retraction.report.json").write_text(
+        json.dumps({"withdrawn": [{"receipt_sha256": _STORED_DIALECT_RECEIPT}]})
+    )
+
+
 def add_dialect_receipts_not_jsonl(results: Path, _: str) -> None:
     """Adds a dialect's receipts in a file that is not JSON Lines."""
     (_dialect_receipts(results) / "new.json").write_text('{"case_id": "pg.query.new"}\n')
@@ -343,7 +359,7 @@ def guard_after(*, repository: Path, change: Change) -> int:
     _write_result(results=audit, seed="audited", recorder=_RECORDER, arrow=b"rows", claimed=b"rows")
     _referee_outcome(results=results, seed=b"stored referee", replaced=())
     (_syntax_receipts(results) / "stored.jsonl").write_text('{"case_id": "query.stored"}\n')
-    (_dialect_receipts(results) / "stored.jsonl").write_text('{"case_id": "pg.query.stored"}\n')
+    (_dialect_receipts(results) / "stored.jsonl").write_text(f"{_STORED_DIALECT_LINE}\n")
     _git(repository, "add", "-A")
     _git(repository, "commit", "--quiet", "-m", "base")
     change(results, stored)
