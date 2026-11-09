@@ -172,3 +172,10 @@ pub const DUCKDB_CURRENT_DATE: &str = "current_date()";
 pub const DUCKDB_CURRENT_TIMESTAMP: &str = "get_current_timestamp()";
 /// The precision a DATE is read at, as its midnight, when DATEDIFF counts units shorter than a day.
 pub const MIDNIGHT_PRECISION: u8 = 0;
+
+/// The lambda parameter holding a timestamp text read's trimmed text.
+pub const TIMESTAMP_TRIMMED: &str = "timestamp_trimmed";
+/// The lambda parameter holding a timestamp text read's ISO pattern groups.
+pub const TIMESTAMP_GROUPS: &str = "timestamp_groups";
+/// The lambda parameter holding the ISO groups' rebuilt clock text.
+pub const TIMESTAMP_CLOCK: &str = "timestamp_clock";

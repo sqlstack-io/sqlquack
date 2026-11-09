@@ -19,6 +19,18 @@
       "seconds": 1.419,
       "reference_seconds": 0.038,
       "ratio": 37.4
+    },
+    "timestamp_text": {
+      "sql_bytes": 116,
+      "seconds": 0.556,
+      "reference_seconds": 0.028,
+      "ratio": 19.8
+    },
+    "zoned_text": {
+      "sql_bytes": 364,
+      "seconds": 0.968,
+      "reference_seconds": 0.073,
+      "ratio": 13.3
     }
   }
 }
