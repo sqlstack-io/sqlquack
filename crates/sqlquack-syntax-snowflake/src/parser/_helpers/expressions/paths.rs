@@ -827,6 +827,7 @@ impl Parser {
         self.maybe_parse_subscript(result)
     }
 
+    /// Parses `((...` past its first parenthesis, where a parenthesised set operation may start a longer one.
     fn parse_doubly_parenthesized(
         &mut self,
         lparen_comments: Vec<String>,
@@ -874,8 +875,15 @@ impl Parser {
                 || self.check(TokenType::Intersect)
                 || self.check(TokenType::Except))
         {
-            if let Expression::Subquery(subq) = &result {
-                let set_result = self.parse_set_operation(subq.this.clone())?;
+            let left = match &result {
+                Expression::Subquery(subq) => Some(subq.this.clone()),
+                Expression::Union(_) | Expression::Intersect(_) | Expression::Except(_) => {
+                    Some(result.clone())
+                }
+                _ => None,
+            };
+            if let Some(left) = left {
+                let set_result = self.parse_set_operation(left)?;
 
                 let order_by = if self.check(TokenType::Order) {
                     self.expect_token(TokenType::Order)?;

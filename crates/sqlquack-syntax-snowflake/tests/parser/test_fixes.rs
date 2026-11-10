@@ -1874,3 +1874,52 @@ fn given_a_time_travel_clause_when_parsing_snowflake_then_its_parentheses_close(
         );
     }
 }
+
+#[test]
+fn given_a_keyword_lambda_parameter_when_parsing_duckdb_then_it_names_the_parameter() {
+    let test_cases = [
+        StatementTestCase {
+            description: "LAMBDA top: names its parameter top",
+            sql: "SELECT list_transform([1], lambda top: top + 1)",
+            pointer: "/0/select/expressions/0/function/args/1/lambda/parameters/0/name",
+            expected_value: json!("top"),
+        },
+        StatementTestCase {
+            description: "LAMBDA top: has one parameter",
+            sql: "SELECT list_transform([1], lambda top: top + 1)",
+            pointer: "/0/select/expressions/0/function/args/1/lambda/parameters/1",
+            expected_value: json!(null),
+        },
+        StatementTestCase {
+            description: "LAMBDA row, j: names a keyword first parameter row",
+            sql: "SELECT list_reduce([1, 2], lambda row, j: row + j)",
+            pointer: "/0/select/expressions/0/function/args/1/lambda/parameters/0/name",
+            expected_value: json!("row"),
+        },
+        StatementTestCase {
+            description: "LAMBDA row, j: names its second parameter j",
+            sql: "SELECT list_reduce([1, 2], lambda row, j: row + j)",
+            pointer: "/0/select/expressions/0/function/args/1/lambda/parameters/1/name",
+            expected_value: json!("j"),
+        },
+        StatementTestCase {
+            description: "the body reads the keyword parameter as a column",
+            sql: "SELECT list_reduce([1, 2], lambda row, j: row + j)",
+            pointer:
+                "/0/select/expressions/0/function/args/1/lambda/body/add/left/column/name/name",
+            expected_value: json!("row"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            statements(test_case.sql, Dialect::DuckDB, CallMode::Faithful)
+                .pointer(test_case.pointer)
+                .cloned()
+                .unwrap_or_default(),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
