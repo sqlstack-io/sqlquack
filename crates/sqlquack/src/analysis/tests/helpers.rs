@@ -931,6 +931,7 @@ fn everyday_arguments(root: &std::path::Path, builtin_policy: bool) -> ConvertAr
         verified_overrides: Vec::new(),
         session: Vec::new(),
         compact: true,
+        verbose: false,
         output: OutputArguments {
             format: OutputFormat::Json,
             json: false,

@@ -5,6 +5,7 @@ use crate::diagnostics::_helpers::code_entry::code_entry;
 use crate::diagnostics::_helpers::coded::coded;
 use crate::diagnostics::_helpers::jinja::holds_jinja;
 use crate::diagnostics::_helpers::line_index::LineIndex;
+use crate::diagnostics::_helpers::plain_keys::plain_keys;
 use crate::diagnostics::constants::{
     CASE_ONLY_MATCH, CASE_ONLY_MATCH_HELP, CONVERSION_BUDGET, DIVERGENCE_REFUSED,
     FUNCTION_OPERAND_HELP, GUARD_PREFIX, JINJA_HELP, MISSING_RULE, NOT_EXPRESSIBLE, PARSE_FIDELITY,
@@ -66,8 +67,15 @@ pub fn diagnose(refusals: &[Refusal], source: &str) -> Vec<Diagnostic> {
             .filter(|_| refusal.category != RefusalCategory::SnowflakeRejects)
             .filter(|_| code == MISSING_RULE || refusal.category != RefusalCategory::MissingRule)
         {
-            diagnostic.message = format!("{}: `{construct}`", diagnostic.message);
+            let plain = construct.plain_name();
+            diagnostic.message = match code {
+                MISSING_RULE => format!("SQLQuack can't convert {plain} yet"),
+                TYPE_CONDITION => format!("SQLQuack can't convert {plain} for these types"),
+                NOT_EXPRESSIBLE => format!("DuckDB can't do what Snowflake does with {plain}"),
+                _ => format!("{}: {plain}", diagnostic.message),
+            };
         }
+        diagnostic.label = plain_keys(&diagnostic.label);
         diagnostics.push(diagnostic);
     }
     diagnostics

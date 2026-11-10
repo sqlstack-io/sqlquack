@@ -110,7 +110,7 @@ fn given_a_body_on_standard_input_when_converting_then_refusals_print_as_json_an
                 converted: Some(false),
                 first_code: Some("SQ0003".to_owned()),
                 stderr_lines: vec![
-                    "error[SQ0003]: the operand types fall outside every rule's proven conditions: `node:and`"
+                    "error[SQ0003]: SQLQuack can't convert AND for these types"
                         .to_owned(),
                     " --> <stdin>:1:1".to_owned(),
                 ],

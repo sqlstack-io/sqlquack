@@ -5,6 +5,8 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use serde::{Deserialize, Serialize};
 
+use sqlquack_syntax::tokens::models::SourceLocation;
+
 use crate::provenance::constants::QUERY_CONSTRUCT;
 
 /// Everything one conversion relied on, each set sorted for deterministic output.
@@ -52,6 +54,17 @@ pub struct ShapeArgument {
     pub source: Option<String>,
 }
 
+/// One reliance on a known divergence: its id, the construct relying on it, and where, once placed.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+pub struct DivergenceUse {
+    /// The divergence id, with any `:<name>` an assumption adds.
+    pub id: String,
+    /// The construct key relying on it, such as `fn:HASH`.
+    pub construct: String,
+    /// Where in the source, from the innermost converted expression around the use.
+    pub location: Option<SourceLocation>,
+}
+
 /// A construct being converted: the rules it opened, its converted arguments and its facets.
 #[derive(Debug, Default)]
 struct Frame {
@@ -69,6 +82,7 @@ pub struct ProvenanceLog {
     active_rules: RefCell<Vec<String>>,
     frames: RefCell<Vec<Frame>>,
     muted: Cell<usize>,
+    uses: RefCell<Vec<DivergenceUse>>,
 }
 
 /// Keeps rules, building blocks, typing functions and equivalences unrecorded until dropped.
@@ -139,6 +153,40 @@ impl ProvenanceLog {
             .entry(id.to_owned())
             .or_default()
             .insert(construct.to_owned());
+        self.uses.borrow_mut().push(DivergenceUse {
+            id: id.to_owned(),
+            construct: construct.to_owned(),
+            location: None,
+        });
+    }
+
+    /// How many divergence uses are recorded so far, to pass to `place_divergences` later.
+    pub fn divergence_mark(&self) -> usize {
+        self.uses.borrow().len()
+    }
+
+    /// Places the uses recorded since `mark` that no expression inside placed, at `location`.
+    pub fn place_divergences(&self, mark: usize, location: Option<SourceLocation>) {
+        for unplaced in self
+            .uses
+            .borrow_mut()
+            .iter_mut()
+            .skip(mark)
+            .filter(|recorded| recorded.location.is_none())
+        {
+            unplaced.location = location;
+        }
+    }
+
+    /// Every divergence use recorded, each once, in the order recorded.
+    pub fn divergence_uses(&self) -> Vec<DivergenceUse> {
+        let mut distinct: Vec<DivergenceUse> = Vec::new();
+        for recorded in self.uses.borrow().iter() {
+            if !distinct.contains(recorded) {
+                distinct.push(recorded.clone());
+            }
+        }
+        distinct
     }
 
     /// Records a DuckDB building block, used by the active rule.

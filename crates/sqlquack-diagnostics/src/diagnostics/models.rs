@@ -8,6 +8,8 @@ use serde::Serialize;
 pub enum Severity {
     /// The input is refused.
     Error,
+    /// The input converts, with something the reader should know.
+    Warning,
 }
 
 impl Severity {
@@ -15,6 +17,7 @@ impl Severity {
     pub fn label(self) -> &'static str {
         match self {
             Self::Error => "error",
+            Self::Warning => "warning",
         }
     }
 }
@@ -24,6 +27,8 @@ impl Severity {
 pub struct Palette {
     /// An error's label, code, underline and summary.
     pub error: &'static str,
+    /// A warning's label and underline.
+    pub warning: &'static str,
     /// The headline message.
     pub message: &'static str,
     /// The `-->` arrow, the gutter and its line numbers.
@@ -53,6 +58,7 @@ impl Palette {
     pub fn severity(&self, severity: Severity) -> &'static str {
         match severity {
             Severity::Error => self.error,
+            Severity::Warning => self.warning,
         }
     }
 }

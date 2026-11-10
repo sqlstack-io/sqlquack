@@ -45,6 +45,7 @@ pub const TAB_WIDTH: usize = 4;
 /// No styling: rendered diagnostics are plain text.
 pub const PLAIN_PALETTE: Palette = Palette {
     error: "",
+    warning: "",
     message: "",
     gutter: "",
     note: "",
@@ -60,6 +61,7 @@ pub const PLAIN_PALETTE: Palette = Palette {
 /// rustc's terminal colours for diagnostics, and SQL highlighting colours for converted output.
 pub const ANSI_PALETTE: Palette = Palette {
     error: "\x1b[1;31m",
+    warning: "\x1b[1;33m",
     message: "\x1b[1m",
     gutter: "\x1b[1;34m",
     note: "\x1b[1m",
@@ -116,28 +118,28 @@ pub const CODES: &[CodeEntry] = &[
         code: MISSING_RULE,
         name: "missing_rule",
         alias: None,
-        title: "no verified rule converts this construct",
+        title: "SQLQuack can't convert this yet",
         help: None,
-        explanation: "Every construct SQLQuack converts comes from a rule verified against \
-            recorded Snowflake results. No such rule covers the construct at the span yet, so \
-            the statement is refused rather than converted to SQL that might mean something \
-            else in DuckDB. Rewrite the statement without the construct, or wait for a rule; \
-            `sqlquack census` shows which constructs a body of SQL needs.",
+        explanation: "SQLQuack converts only what it has checked against results recorded in \
+            Snowflake. Nothing checked converts the construct at the span yet, so the statement \
+            is refused rather than turned into SQL that might mean something else in DuckDB. \
+            Rewrite the statement without it; `sqlquack census` shows which constructs a body of \
+            SQL needs.",
         example: r#"echo "SELECT WEEKISO(CURRENT_DATE()) AS w" | sqlquack convert --builtin-policy"#,
     },
     CodeEntry {
         code: TYPE_CONDITION,
         name: "type_condition",
         alias: None,
-        title: "the operand types fall outside every rule's proven conditions",
+        title: "SQLQuack can't convert this for these types",
         help: Some(
-            "declare the operands' Snowflake types in the project's sources, or cast them to a type the rule \
-             covers; for a function's operand, cast it to a type the label names",
+            "declare the columns' Snowflake types in the project's sources, or cast the values to \
+             a type it supports; for a function, cast them to a type the label names",
         ),
-        explanation: "A rule covers the construct, but only for operand types its recorded \
-            cases prove. The operands at the span have other types, or types SQLQuack could not \
-            determine. Declaring the relation's columns and types in the project's sources often \
-            lets the types resolve; an explicit cast to a covered type also works when it keeps the \
+        explanation: "SQLQuack converts the construct at the span only for the types checked \
+            against Snowflake, and the values here have other types, or types SQLQuack could not \
+            work out. Declaring the relation's columns and types in the project's sources often \
+            settles the types; an explicit cast to a supported type also works when it keeps the \
             statement's meaning.",
         example: r#"echo "SELECT FLOOR('abc') AS f" | sqlquack convert --builtin-policy"#,
     },
@@ -145,86 +147,86 @@ pub const CODES: &[CodeEntry] = &[
         code: UNRESOLVED_NAME,
         name: "unresolved_name",
         alias: None,
-        title: "a name does not resolve",
+        title: "SQLQuack doesn't know this name",
         help: Some(
             "declare the relation and its columns in a source file of the project (`sources/*.yml`)",
         ),
-        explanation: "Converting a statement needs to know what each relation and column \
-            name refers to and what type it has. The name at the span is unknown, or resolves to \
-            more than one column. Add the relation and its columns to a source file in the \
-            project's `sources/` folder, or qualify an ambiguous column with its relation.",
+        explanation: "Converting a statement needs to know what each relation and column name \
+            refers to and what type it has. The name at the span is unknown, or matches more \
+            than one column. Add the relation and its columns to a source file in the project's \
+            `sources/` folder, or qualify an ambiguous column with its relation.",
         example: r#"echo "SELECT a FROM orders" | sqlquack convert --builtin-policy"#,
     },
     CodeEntry {
         code: NOT_EXPRESSIBLE,
         name: "not_expressible",
         alias: None,
-        title: "DuckDB cannot express this construct's Snowflake meaning",
+        title: "DuckDB can't do what Snowflake does here",
         help: None,
-        explanation: "The construct at the span has a Snowflake meaning DuckDB has no way to \
-            reproduce, for the reason in the label. No future rule will convert it as written. \
-            Rewrite the statement so it does not depend on that behaviour.",
+        explanation: "The construct at the span does something in Snowflake that DuckDB has no \
+            way to reproduce, for the reason in the label, so no later version will convert it \
+            as written. Rewrite the statement so it does not depend on that behaviour.",
         example: "no construct is declared inexpressible yet; one would be refused with the reason as its label",
     },
     CodeEntry {
         code: CONVERSION_BUDGET,
         name: "conversion_budget",
         alias: None,
-        title: "conversion exceeded its budget",
+        title: "converting this took too long or produced too much SQL",
         help: Some("split the statement into smaller statements"),
         explanation: "Converting the statement took longer, or produced more DuckDB SQL, than \
-            the conversion budget allows. The budget keeps a pathological input from stalling a \
-            caller. Splitting the statement, for example into common table expressions or \
-            separate statements, usually brings it under the budget.",
+            SQLQuack allows for one statement, which keeps one unusual input from stalling a \
+            run. Splitting the statement, for example into common table expressions or separate \
+            statements, usually brings it under the limit.",
         example: "a statement whose conversion runs past the time budget or emits more DuckDB SQL than it allows",
     },
     CodeEntry {
         code: SESSION_PARAMETERS,
         name: "session_parameters",
         alias: None,
-        title: "the session parameters match no recorded session profile",
-        help: Some("pass only session parameters a recorded profile covers, or leave them unset"),
-        explanation: "Conversions are proven under recorded Snowflake session profiles. The \
-            session parameters given match none of them, so no conversion is proven for that \
-            session. The label names the parameters; unset parameters take Snowflake's \
-            documented defaults.",
+        title: "SQLQuack can't convert for these session settings",
+        help: Some(
+            "leave these session settings unset, or set them to values SQLQuack has checked",
+        ),
+        explanation: "Converted SQL is checked against Snowflake under particular session \
+            settings. The settings given differ from every checked set, so nothing is known to \
+            convert correctly for that session. The label names the settings; settings left \
+            unset take Snowflake's documented defaults.",
         example: r#"echo "SELECT 1 AS one" | sqlquack convert --builtin-policy --session WEEK_START=1"#,
     },
     CodeEntry {
         code: DIVERGENCE_REFUSED,
         name: "divergence_refused",
         alias: None,
-        title: "the conversion needs a known divergence the policy refuses",
+        title: "this needs a known difference that isn't allowed",
         help: Some(
-            "the help names the divergence and the fixes that work in the current mode: allow \
-             it in the policy file, drop --strict or --loud-divergences-only, or confirm its \
-             assumption; outside strict mode the built-in policy allows only the clock, \
-             arithmetic that raises past 38 digits or the timestamp range, and VARIANT reads \
-             whose JSON guards raise",
+            "the help gives the one fix that works here, such as allowing the known difference in \
+             sqlquack.toml; `sqlquack explain <name>` describes it",
         ),
-        explanation: "The construct at the span converts only by relying on the known \
-            divergence the label names, where DuckDB may raise or differ from Snowflake as the \
-            policy file describes. The policy refuses that divergence in the current mode, so \
-            the statement is refused. Allow it in the policy file, use a mode that allows it, \
-            or confirm the assumption it rests on; otherwise rewrite the statement without the \
-            construct.",
+        explanation: "The construct at the span converts only with a known difference between \
+            Snowflake and DuckDB, where DuckDB may raise an error or give a different value. The \
+            message names it, the label says what differs, and the note says when that is fine \
+            and when it is wrong. sqlquack.toml, or the defaults without one, does not allow it \
+            here, so the statement is refused. Allow it if your use is one where it is fine, or \
+            rewrite the statement without the construct; `sqlquack explain --differences` lists \
+            every known difference and whether it is allowed.",
         example: r#"echo "SELECT HASH(1) AS h" | sqlquack convert --builtin-policy"#,
     },
     CodeEntry {
         code: UNALIASED_OUTPUT_NAME,
         name: UNALIASED_OUTPUT_NAME_CONSTRUCT,
         alias: None,
-        title: "this column has no alias, and SQLQuack has not verified the name Snowflake gives it",
+        title: "this column needs an alias, because SQLQuack can't be sure of the name Snowflake gives it",
         help: Some("add an alias, such as `AS total`, which names the column in both engines"),
         explanation: "Snowflake names an unaliased select item after its written text, \
             upper-cased in full with spacing, comments and quotes kept and cut at 255 \
-            characters, and a converted query must return the same column names. SQLQuack emits \
-            that name as an alias for the shapes recorded results verify: literals in any \
-            spelling, columns, arithmetic, ||, comparisons, AND, OR, NOT, IS NULL, parentheses, \
-            casts, CASE, IFF, the clock functions and a recorded list of functions and \
-            aggregates, nested freely. Other items, such as paths, window functions, non-ASCII text, \
-            line comments or unlisted functions, are refused rather than converted under a name \
-            that might differ. The help suggests the exact alias; an alias fixes the name in \
+            characters, and a converted query must return the same column names. SQLQuack \
+            writes that name as an alias for the shapes checked against Snowflake: literals in \
+            any spelling, columns, arithmetic, ||, comparisons, AND, OR, NOT, IS NULL, \
+            parentheses, casts, CASE, IFF, the clock functions and a list of functions and \
+            aggregates, nested freely. Other items, such as paths, window functions, non-ASCII \
+            text, line comments or unlisted functions, are refused rather than converted under a \
+            name that might differ. The help suggests the exact alias; an alias fixes the name in \
             both engines.",
         example: r#"echo "SELECT 'café' || 'b'" | sqlquack convert --builtin-policy"#,
     },

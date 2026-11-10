@@ -14,14 +14,14 @@ renumbered. See [Reading diagnostics](/docs/diagnostics/overview/) for the outpu
 | Code | Name | Meaning |
 |------|------|---------|
 | [`SQ0001`](#sq0001) | `parse_fidelity` | the SQL does not parse |
-| [`SQ0002`](#sq0002) | `missing_rule` | no verified rule converts this construct |
-| [`SQ0003`](#sq0003) | `type_condition` | the operand types fall outside every rule's proven conditions |
-| [`SQ0004`](#sq0004) | `unresolved_name` | a name does not resolve |
-| [`SQ0005`](#sq0005) | `not_expressible` | DuckDB cannot express this construct's Snowflake meaning |
-| [`SQ0006`](#sq0006) | `conversion_budget` | conversion exceeded its budget |
-| [`SQ0007`](#sq0007) | `session_parameters` | the session parameters match no recorded session profile |
-| [`SQ0008`](#sq0008) | `divergence_refused` | the conversion needs a known divergence the policy refuses |
-| [`SQ0009`](#sq0009) | `unaliased_output_name` | this column has no alias, and SQLQuack has not verified the name Snowflake gives it |
+| [`SQ0002`](#sq0002) | `missing_rule` | SQLQuack can't convert this yet |
+| [`SQ0003`](#sq0003) | `type_condition` | SQLQuack can't convert this for these types |
+| [`SQ0004`](#sq0004) | `unresolved_name` | SQLQuack doesn't know this name |
+| [`SQ0005`](#sq0005) | `not_expressible` | DuckDB can't do what Snowflake does here |
+| [`SQ0006`](#sq0006) | `conversion_budget` | converting this took too long or produced too much SQL |
+| [`SQ0007`](#sq0007) | `session_parameters` | SQLQuack can't convert for these session settings |
+| [`SQ0008`](#sq0008) | `divergence_refused` | this needs a known difference that isn't allowed |
+| [`SQ0009`](#sq0009) | `unaliased_output_name` | this column needs an alias, because SQLQuack can't be sure of the name Snowflake gives it |
 | [`SQ0101`](#sq0101) | `input_too_large` | the input is larger than the parser accepts |
 | [`SQ0102`](#sq0102) | `token_budget_exceeded` | the input has more tokens than the parser accepts |
 | [`SQ0103`](#sq0103) | `nesting_depth_exceeded` | brackets nest deeper than the parser accepts |
@@ -54,9 +54,9 @@ echo "SELECT a, FROM orders WHERE (b = 1" | sqlquack check
 
 ### SQ0002
 
-**no verified rule converts this construct** (`missing_rule`)
+**SQLQuack can't convert this yet** (`missing_rule`)
 
-Every construct SQLQuack converts comes from a rule verified against recorded Snowflake results. No such rule covers the construct at the span yet, so the statement is refused rather than converted to SQL that might mean something else in DuckDB. Rewrite the statement without the construct, or wait for a rule; `sqlquack census` shows which constructs a body of SQL needs.
+SQLQuack converts only what it has checked against results recorded in Snowflake. Nothing checked converts the construct at the span yet, so the statement is refused rather than turned into SQL that might mean something else in DuckDB. Rewrite the statement without it; `sqlquack census` shows which constructs a body of SQL needs.
 
 **Example:**
 
@@ -66,11 +66,11 @@ echo "SELECT WEEKISO(CURRENT_DATE()) AS w" | sqlquack convert --builtin-policy
 
 ### SQ0003
 
-**the operand types fall outside every rule's proven conditions** (`type_condition`)
+**SQLQuack can't convert this for these types** (`type_condition`)
 
-A rule covers the construct, but only for operand types its recorded cases prove. The operands at the span have other types, or types SQLQuack could not determine. Declaring the relation's columns and types in the project's sources often lets the types resolve; an explicit cast to a covered type also works when it keeps the statement's meaning.
+SQLQuack converts the construct at the span only for the types checked against Snowflake, and the values here have other types, or types SQLQuack could not work out. Declaring the relation's columns and types in the project's sources often settles the types; an explicit cast to a supported type also works when it keeps the statement's meaning.
 
-**Help:** declare the operands' Snowflake types in the project's sources, or cast them to a type the rule covers; for a function's operand, cast it to a type the label names
+**Help:** declare the columns' Snowflake types in the project's sources, or cast the values to a type it supports; for a function, cast them to a type the label names
 
 **Example:**
 
@@ -80,9 +80,9 @@ echo "SELECT FLOOR('abc') AS f" | sqlquack convert --builtin-policy
 
 ### SQ0004
 
-**a name does not resolve** (`unresolved_name`)
+**SQLQuack doesn't know this name** (`unresolved_name`)
 
-Converting a statement needs to know what each relation and column name refers to and what type it has. The name at the span is unknown, or resolves to more than one column. Add the relation and its columns to a source file in the project's `sources/` folder, or qualify an ambiguous column with its relation.
+Converting a statement needs to know what each relation and column name refers to and what type it has. The name at the span is unknown, or matches more than one column. Add the relation and its columns to a source file in the project's `sources/` folder, or qualify an ambiguous column with its relation.
 
 **Help:** declare the relation and its columns in a source file of the project (`sources/*.yml`)
 
@@ -94,17 +94,17 @@ echo "SELECT a FROM orders" | sqlquack convert --builtin-policy
 
 ### SQ0005
 
-**DuckDB cannot express this construct's Snowflake meaning** (`not_expressible`)
+**DuckDB can't do what Snowflake does here** (`not_expressible`)
 
-The construct at the span has a Snowflake meaning DuckDB has no way to reproduce, for the reason in the label. No future rule will convert it as written. Rewrite the statement so it does not depend on that behaviour.
+The construct at the span does something in Snowflake that DuckDB has no way to reproduce, for the reason in the label, so no later version will convert it as written. Rewrite the statement so it does not depend on that behaviour.
 
 **Example:** no construct is declared inexpressible yet; one would be refused with the reason as its label
 
 ### SQ0006
 
-**conversion exceeded its budget** (`conversion_budget`)
+**converting this took too long or produced too much SQL** (`conversion_budget`)
 
-Converting the statement took longer, or produced more DuckDB SQL, than the conversion budget allows. The budget keeps a pathological input from stalling a caller. Splitting the statement, for example into common table expressions or separate statements, usually brings it under the budget.
+Converting the statement took longer, or produced more DuckDB SQL, than SQLQuack allows for one statement, which keeps one unusual input from stalling a run. Splitting the statement, for example into common table expressions or separate statements, usually brings it under the limit.
 
 **Help:** split the statement into smaller statements
 
@@ -112,11 +112,11 @@ Converting the statement took longer, or produced more DuckDB SQL, than the conv
 
 ### SQ0007
 
-**the session parameters match no recorded session profile** (`session_parameters`)
+**SQLQuack can't convert for these session settings** (`session_parameters`)
 
-Conversions are proven under recorded Snowflake session profiles. The session parameters given match none of them, so no conversion is proven for that session. The label names the parameters; unset parameters take Snowflake's documented defaults.
+Converted SQL is checked against Snowflake under particular session settings. The settings given differ from every checked set, so nothing is known to convert correctly for that session. The label names the settings; settings left unset take Snowflake's documented defaults.
 
-**Help:** pass only session parameters a recorded profile covers, or leave them unset
+**Help:** leave these session settings unset, or set them to values SQLQuack has checked
 
 **Example:**
 
@@ -126,11 +126,11 @@ echo "SELECT 1 AS one" | sqlquack convert --builtin-policy --session WEEK_START=
 
 ### SQ0008
 
-**the conversion needs a known divergence the policy refuses** (`divergence_refused`)
+**this needs a known difference that isn't allowed** (`divergence_refused`)
 
-The construct at the span converts only by relying on the known divergence the label names, where DuckDB may raise or differ from Snowflake as the policy file describes. The policy refuses that divergence in the current mode, so the statement is refused. Allow it in the policy file, use a mode that allows it, or confirm the assumption it rests on; otherwise rewrite the statement without the construct.
+The construct at the span converts only with a known difference between Snowflake and DuckDB, where DuckDB may raise an error or give a different value. The message names it, the label says what differs, and the note says when that is fine and when it is wrong. sqlquack.toml, or the defaults without one, does not allow it here, so the statement is refused. Allow it if your use is one where it is fine, or rewrite the statement without the construct; `sqlquack explain --differences` lists every known difference and whether it is allowed.
 
-**Help:** the help names the divergence and the fixes that work in the current mode: allow it in the policy file, drop --strict or --loud-divergences-only, or confirm its assumption; outside strict mode the built-in policy allows only the clock, arithmetic that raises past 38 digits or the timestamp range, and VARIANT reads whose JSON guards raise
+**Help:** the help gives the one fix that works here, such as allowing the known difference in sqlquack.toml; `sqlquack explain &lt;name>` describes it
 
 **Example:**
 
@@ -140,9 +140,9 @@ echo "SELECT HASH(1) AS h" | sqlquack convert --builtin-policy
 
 ### SQ0009
 
-**this column has no alias, and SQLQuack has not verified the name Snowflake gives it** (`unaliased_output_name`)
+**this column needs an alias, because SQLQuack can't be sure of the name Snowflake gives it** (`unaliased_output_name`)
 
-Snowflake names an unaliased select item after its written text, upper-cased in full with spacing, comments and quotes kept and cut at 255 characters, and a converted query must return the same column names. SQLQuack emits that name as an alias for the shapes recorded results verify: literals in any spelling, columns, arithmetic, ||, comparisons, AND, OR, NOT, IS NULL, parentheses, casts, CASE, IFF, the clock functions and a recorded list of functions and aggregates, nested freely. Other items, such as paths, window functions, non-ASCII text, line comments or unlisted functions, are refused rather than converted under a name that might differ. The help suggests the exact alias; an alias fixes the name in both engines.
+Snowflake names an unaliased select item after its written text, upper-cased in full with spacing, comments and quotes kept and cut at 255 characters, and a converted query must return the same column names. SQLQuack writes that name as an alias for the shapes checked against Snowflake: literals in any spelling, columns, arithmetic, ||, comparisons, AND, OR, NOT, IS NULL, parentheses, casts, CASE, IFF, the clock functions and a list of functions and aggregates, nested freely. Other items, such as paths, window functions, non-ASCII text, line comments or unlisted functions, are refused rather than converted under a name that might differ. The help suggests the exact alias; an alias fixes the name in both engines.
 
 **Help:** add an alias, such as `AS total`, which names the column in both engines
 
