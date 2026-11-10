@@ -11,9 +11,9 @@ structure, styling and components with the SQLClean and SQLBuild websites.
 - `src/content/docs/docs/diagnostics/reference.mdx` is generated from
   `crates/sqlquack-diagnostics/src/diagnostics/constants.rs` by `scripts/generate_diagnostics.py`;
   `--check` fails while the two differ.
-- The table of known differences at the end of `src/content/docs/docs/policy.mdx` is generated the
-  same way from `crates/sqlquack-policy/src/known_differences/constants.rs` by
-  `scripts/generate_known_differences.py`.
+- The catalogue on `src/content/docs/docs/known-differences.mdx` is generated the same way from
+  `crates/sqlquack-policy/src/known_differences/constants.rs` and the defaults in
+  `crates/sqlquack-policy/policy.toml` by `scripts/generate_known_differences.py`.
 - `src/components/`: the page layout, header and page title, replacing Starlight's defaults.
 - `public/fonts/`: self-hosted fonts, each with its licence.
 - `public/playground/`: the playground page. `wasm/` is its engine, a thin wasm-bindgen crate over

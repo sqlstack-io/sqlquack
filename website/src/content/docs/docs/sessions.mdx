@@ -33,7 +33,7 @@ Statements whose result depends on the session time zone rely on the `session_ti
 difference. It holds when both the Snowflake and the DuckDB session run in UTC, which is what a
 session without `TIMEZONE`, or with `TIMEZONE = "UTC"`, says. The defaults allow it then, and
 `--strict` counts it too, as a fact the session states. See
-[When something can't convert exactly](/docs/policy/#known-differences).
+[`session_timezone_utc`](/docs/known-differences/#session_timezone_utc).
 
 A `TIMEZONE` other than UTC refuses them, in every mode, and a note says so:
 

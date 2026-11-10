@@ -1,0 +1,24 @@
+---
+// Sends a link to an anchor this page no longer has, such as /docs/policy/#hash, on to the page
+// the section moved to, keeping the anchor.
+interface Props {
+	to: string;
+}
+const { to } = Astro.props;
+---
+
+<sqq-moved-anchors data-to={to}></sqq-moved-anchors>
+
+<script>
+	class SqqMovedAnchors extends HTMLElement {
+		connectedCallback() {
+			const follow = () => {
+				const id = decodeURIComponent(location.hash.slice(1));
+				if (id && !document.getElementById(id)) location.replace(`${this.dataset.to}#${encodeURIComponent(id)}`);
+			};
+			follow();
+			addEventListener('hashchange', follow);
+		}
+	}
+	customElements.define('sqq-moved-anchors', SqqMovedAnchors);
+</script>

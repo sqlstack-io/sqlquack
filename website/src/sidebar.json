@@ -1,17 +1,21 @@
 [
-	{ "label": "Getting Started", "items": ["docs", "docs/quickstart"] },
-	{ "label": "Concepts", "items": ["docs/project", "docs/policy", "docs/sessions", "docs/helper-macros", "docs/coverage"] },
+	{ "label": "Getting started", "items": ["docs", "docs/quickstart"] },
 	{
-		"label": "Diagnostics",
-		"items": [
-			{ "label": "Overview", "slug": "docs/diagnostics/overview" },
-			"docs/diagnostics/reference"
-		]
+		"label": "Guides",
+		"items": ["docs/project", "docs/policy", "docs/sessions", "docs/helper-macros", "docs/diagnostics/overview"]
 	},
-	{ "label": "Python", "items": ["docs/python"] },
 	{
-		"label": "CLI Reference",
-		"items": ["docs/cli/check", "docs/cli/convert", "docs/cli/run", "docs/cli/function", "docs/cli/census", "docs/cli/index-command"]
+		"label": "Reference",
+		"items": [
+			{
+				"label": "CLI commands",
+				"items": ["docs/cli/check", "docs/cli/convert", "docs/cli/run", "docs/cli/function", "docs/cli/census", "docs/cli/index-command"]
+			},
+			{ "label": "Python API", "slug": "docs/python" },
+			{ "label": "Diagnostic codes", "slug": "docs/diagnostics/reference" },
+			"docs/known-differences",
+			"docs/coverage"
+		]
 	},
 	{ "label": "About", "items": ["docs/credits"] }
 ]
