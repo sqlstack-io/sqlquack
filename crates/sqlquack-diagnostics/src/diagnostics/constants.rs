@@ -185,9 +185,7 @@ pub const CODES: &[CodeEntry] = &[
         name: "session_parameters",
         alias: None,
         title: "SQLQuack can't convert for these session settings",
-        help: Some(
-            "leave these session settings unset, or set them to values SQLQuack has checked",
-        ),
+        help: Some("run the SQL in a session whose settings SQLQuack has checked"),
         explanation: "Converted SQL is checked against Snowflake under particular session \
             settings. The settings given differ from every checked set, so nothing is known to \
             convert correctly for that session. The label names the settings; settings left \

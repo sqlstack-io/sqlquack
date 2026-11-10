@@ -95,7 +95,7 @@ fn divergence_help(
     if let (SESSION_TIMEZONE_UTC, Some(zone)) = (id, zone) {
         return format!(
             "this matches Snowflake only in a UTC session, and the session time zone is {zone}; \
-             set TIMEZONE to UTC, or leave it unset, to convert it"
+             run both the Snowflake and the DuckDB session in UTC, and convert for that session"
         );
     }
     if choices.loud_divergences_only && divergence.failure == DivergenceFailure::Value {
