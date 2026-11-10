@@ -90,45 +90,54 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
 }
 
 #[test]
-fn given_union_branches_of_differing_types_when_tracing_sqlite_lineage_then_no_cast_is_reported() {
+fn given_union_branches_when_tracing_sqlite_lineage_then_only_integers_a_real_column_takes_are_cast()
+ {
     let schema = TypedShopSchema {
         closed: HashMap::from([(
             "orders".to_owned(),
             vec![
                 typed_column("id", "INTEGER"),
                 typed_column("customer_id", "BIGINT"),
+                typed_column("amount", "REAL"),
             ],
         )]),
         ..TypedShopSchema::default()
     };
-    let context = LineageContext {
-        profile: &SQLITE,
-        schema: &schema,
-        sql: None,
-    };
-    let sql = "SELECT id FROM orders UNION ALL SELECT customer_id FROM orders";
-    let traced: Vec<(String, TransformKind, Vec<String>)> =
-        query_lineage(sql, Dialect::SQLite, &ParseOptions::default(), context)
-            .unwrap_or_else(|error| panic!("{sql}: {error}"))
-            .outputs
-            .iter()
-            .map(|output| {
-                let sources = output.sources.iter();
-                (
-                    output.name.clone(),
-                    output.kind,
-                    sources
-                        .map(|source| format!("{}.{}", source.relation, source.column))
-                        .collect(),
-                )
-            })
-            .collect();
-    assert_eq!(
-        traced,
-        vec![(
-            "id".to_owned(),
+    let test_cases: [(&str, &str, TransformKind, [&str; 2]); 2] = [
+        (
+            "integers of two declared types keep their values",
+            "SELECT id FROM orders UNION ALL SELECT customer_id FROM orders",
             TransformKind::Direct,
-            vec!["orders.customer_id".to_owned(), "orders.id".to_owned()],
-        )]
-    );
+            ["orders.customer_id", "orders.id"],
+        ),
+        (
+            "a compound read through a subquery turns integers into its REAL column's reals",
+            "SELECT x FROM (SELECT amount AS x FROM orders UNION ALL SELECT id FROM orders)",
+            TransformKind::Cast,
+            ["orders.amount", "orders.id"],
+        ),
+    ];
+    for (description, sql, kind, sources) in test_cases {
+        let context = LineageContext {
+            profile: &SQLITE,
+            schema: &schema,
+            sql: None,
+        };
+        let traced: Vec<(TransformKind, Vec<String>)> =
+            query_lineage(sql, Dialect::SQLite, &ParseOptions::default(), context)
+                .unwrap_or_else(|error| panic!("{sql}: {error}"))
+                .outputs
+                .iter()
+                .map(|output| {
+                    let read = output.sources.iter();
+                    (
+                        output.kind,
+                        read.map(|source| format!("{}.{}", source.relation, source.column))
+                            .collect(),
+                    )
+                })
+                .collect();
+        let expected = vec![(kind, sources.map(str::to_owned).to_vec())];
+        assert_eq!(traced, expected, "{description}");
+    }
 }

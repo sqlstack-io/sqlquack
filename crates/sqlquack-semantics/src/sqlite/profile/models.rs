@@ -10,7 +10,9 @@ use crate::lineage::models::Engine;
 use crate::lineage::models::{Lineage, LineageContext, Nullability};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
-use crate::sqlite::profile::_helpers::typing::{sqlite_cast_spelling, sqlite_literal_type};
+use crate::sqlite::profile::_helpers::typing::{
+    sqlite_cast_spelling, sqlite_literal_type, sqlite_merge_converts,
+};
 use crate::sqlite::profile::constants::SQLITE_VALUES_COLUMN;
 
 /// SQLite: identifiers keep their case as written, and names compare without regard to ASCII case.
@@ -206,9 +208,8 @@ impl DialectRules for SqliteRules {
         (None, nullability)
     }
 
-    /// Never: SQLite returns each merged value as it is stored, whatever the other branches hold.
-    fn merge_converts(&self, _from: &str, _to: &str, _profile: &dyn DialectProfile) -> bool {
-        false
+    fn merge_converts(&self, from: &str, to: &str, _profile: &dyn DialectProfile) -> bool {
+        sqlite_merge_converts(from, to)
     }
 
     fn cast_spelling(&self, data_type: &DataType) -> Option<String> {

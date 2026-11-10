@@ -178,3 +178,20 @@ fn given_union_branches_postgres_does_not_convert_when_tracing_lineage_then_no_c
         assert_eq!(traced, expected, "{}", test_case.description);
     }
 }
+
+#[test]
+fn given_a_union_of_untyped_columns_when_tracing_postgres_lineage_then_it_stays_an_expression() {
+    let traced = lineage_outputs(
+        "SELECT id FROM orders UNION ALL SELECT customer_id FROM orders",
+        (Dialect::PostgreSQL, &POSTGRES),
+        &duckdb_shop_schema(),
+    );
+    assert_eq!(
+        traced,
+        vec![(
+            "id".to_owned(),
+            TransformKind::Expression,
+            vec!["orders.customer_id".to_owned(), "orders.id".to_owned()],
+        )]
+    );
+}

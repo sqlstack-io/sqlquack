@@ -162,7 +162,8 @@ pub(crate) fn set_merged(parts: Vec<Lineage>, profile: &dyn DialectProfile) -> L
     coerced(lineage, &parts_typed, profile)
 }
 
-/// Alternative branches merged into one column, which takes the most significant branch's kind.
+/// Alternative branches merged into one column, which takes the most significant branch's kind
+/// when every branch's type is known, and otherwise is an expression unless it passes one column.
 pub(crate) fn merged(parts: Vec<Lineage>, profile: &dyn DialectProfile) -> Lineage {
     let resolved = parts.iter().all(|part| part.resolved);
     let lost: bool = parts.iter().any(|part| part.lost);
@@ -185,8 +186,20 @@ pub(crate) fn merged(parts: Vec<Lineage>, profile: &dyn DialectProfile) -> Linea
         (_, true) => Nullability::Nullable,
         _ => Nullability::Unknown,
     };
-    let kind: TransformKind = strongest_step(&parts).unwrap_or(TransformKind::Constant);
+    let strongest: Option<TransformKind> = strongest_step(&parts);
+    // Whether a branch is converted is unknown unless every branch's type is known.
+    let unknown: bool = parts
+        .iter()
+        .any(|part| !untyped_null(part) && part.data_type.is_none());
+    let all_direct: bool = parts.iter().all(|part| part.kind == TransformKind::Direct);
     let (sources, rows) = unions(parts);
+    let kind: TransformKind = match (strongest, unknown) {
+        (None, _) => TransformKind::Constant,
+        (Some(kind), true) if !(sources.len() == 1 && all_direct) => {
+            kind.max(TransformKind::Expression)
+        }
+        (Some(kind), _) => kind,
+    };
     Lineage {
         sources,
         kind,

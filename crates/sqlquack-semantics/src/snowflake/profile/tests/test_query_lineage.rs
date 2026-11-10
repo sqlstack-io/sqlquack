@@ -62,13 +62,13 @@ fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_tra
             expected_open_star: false,
         },
         QueryLineageTestCase {
-            description: "a union output reads every branch's column at its position, direct when each passes one through",
+            description: "a union output reads every branch's column at its position, an expression of several",
             sql: "SELECT id FROM orders UNION ALL SELECT sku FROM shop.products",
             dialect: Dialect::Snowflake,
             profile: &SNOWFLAKE,
             expected_outputs: &[(
                 "id",
-                TransformKind::Direct,
+                TransformKind::Expression,
                 &["ORDERS.ID", "SHOP.PRODUCTS.SKU"],
             )],
             expected_open_star: false,
@@ -110,10 +110,14 @@ fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_tra
             dialect: Dialect::Snowflake,
             profile: &SNOWFLAKE,
             expected_outputs: &[
-                ("id", TransformKind::Direct, &["CUSTOMERS.ID", "ORDERS.ID"]),
+                (
+                    "id",
+                    TransformKind::Expression,
+                    &["CUSTOMERS.ID", "ORDERS.ID"],
+                ),
                 (
                     "status",
-                    TransformKind::Direct,
+                    TransformKind::Expression,
                     &["CUSTOMERS.COUNTRY", "ORDERS.STATUS"],
                 ),
             ],
@@ -194,7 +198,7 @@ fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_tra
             profile: &SNOWFLAKE,
             expected_outputs: &[(
                 "id",
-                TransformKind::Direct,
+                TransformKind::Expression,
                 &["CUSTOMERS.ID", "ORDERS.ID", "SHOP.PRODUCTS.SKU"],
             )],
             expected_open_star: false,
@@ -256,7 +260,7 @@ fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_tra
                 ("field", TransformKind::Constant, &[]),
                 (
                     "reading",
-                    TransformKind::Direct,
+                    TransformKind::Expression,
                     &["CUSTOMERS.COUNTRY", "CUSTOMERS.NAME"],
                 ),
             ],
