@@ -215,14 +215,19 @@ jobs:
         if: runner.os == 'Windows'
         shell: bash
         run: echo "CARGO_TARGET_DIR=D:/t" >> "$GITHUB_ENV"
-      # The DuckDB sources checkout the workspace patches duckdb to, fetched once per lock.
-      - name: Cache Cargo's git checkouts
+      # The DuckDB sources checkout the workspace patches duckdb to. Each entry is several hundred MB,
+      # so it is saved like DuckDB's objects: from main, by the scheduled nightly build or when no
+      # entry was found (below), and otherwise only restored.
+      - name: Restore Cargo's git checkouts
+        id: cargo-git-cache
         if: inputs.prebuilt-run-id == ''
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: ~/.cargo/git/db
-          key: cargo-git-${{ matrix.platform.name }}-${{ hashFiles('Cargo.lock') }}
-          restore-keys: cargo-git-${{ matrix.platform.name }}-
+          key: cargo-git-${{ matrix.platform.name }}-${{ hashFiles('Cargo.lock') }}-${{ github.run_id }}
+          restore-keys: |
+            cargo-git-${{ matrix.platform.name }}-${{ hashFiles('Cargo.lock') }}-
+            cargo-git-${{ matrix.platform.name }}-
       # On Linux maturin builds in a manylinux container, whose cargo keeps its git checkouts under
       # /root/.cargo; mounting the cached folder there lets both builds read and fill it.
       - name: Share Cargo's git checkouts with the manylinux container
@@ -266,6 +271,14 @@ jobs:
         with:
           path: .sccache-cache
           key: ${{ env.DUCKDB_CACHE_KEY }}-${{ github.run_id }}
+      - name: Save Cargo's git checkouts from main
+        if: >-
+          inputs.prebuilt-run-id == '' && github.ref == 'refs/heads/main'
+          && (github.event_name == 'schedule' || steps.cargo-git-cache.outputs.cache-matched-key == '')
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.cargo/git/db
+          key: cargo-git-${{ matrix.platform.name }}-${{ hashFiles('Cargo.lock') }}-${{ github.run_id }}
       - name: Download prebuilt wheels
         if: inputs.prebuilt-run-id != ''
         uses: actions/download-artifact@v4
