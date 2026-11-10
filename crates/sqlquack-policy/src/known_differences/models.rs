@@ -29,4 +29,12 @@ impl KnownDifference {
             DivergenceFailure::Loud => "an error",
         }
     }
+
+    /// The first sentence of what differs, without its full stop, as a one-line label.
+    pub fn summary(&self) -> &'static str {
+        self.differs
+            .split_once(". ")
+            .map_or(self.differs, |(first, _)| first)
+            .trim_end_matches('.')
+    }
 }

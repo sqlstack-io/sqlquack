@@ -18,7 +18,7 @@ fn given_refusals_when_rendered_then_the_source_line_is_underlined_at_the_span()
             description: "a call is underlined in full, with the code, title and construct",
             source: call.to_owned(),
             refusal: placed(call, (7, 25), RefusalCategory::MissingRule),
-            expected_text: "error[SQ0002]: no verified rule converts this construct: `fn:EDITDISTANCE`\n \
+            expected_text: "error[SQ0002]: SQLQuack can't convert EDITDISTANCE yet\n \
                 --> query.sql:1:8\n  |\n1 | SELECT EDITDISTANCE(a, b) FROM orders\n  |        \
                 ^^^^^^^^^^^^^^^^^^ no rule converts this call\n"
                 .to_owned(),
@@ -27,7 +27,7 @@ fn given_refusals_when_rendered_then_the_source_line_is_underlined_at_the_span()
             description: "a tab before the span widens the line and the underline alike",
             source: tabbed.to_owned(),
             refusal: placed(tabbed, (7, 22), RefusalCategory::UnresolvedName),
-            expected_text: "error[SQ0004]: a name does not resolve: `fn:EDITDISTANCE`\n \
+            expected_text: "error[SQ0004]: SQLQuack doesn't know this name: EDITDISTANCE\n \
                 --> query.sql:1:8\n  |\n1 | SELECT    EDITDISTANCE(a) FROM orders\n  |           \
                 ^^^^^^^^^^^^^^^ no rule converts this call\n  |\n  = help: declare the relation and its \
                 columns in a source file of the project (`sources/*.yml`)\n"
@@ -38,7 +38,7 @@ fn given_refusals_when_rendered_then_the_source_line_is_underlined_at_the_span()
             source: long.clone(),
             refusal: placed(&long, (307, 322), RefusalCategory::MissingRule),
             expected_text: format!(
-                "error[SQ0002]: no verified rule converts this construct: `fn:EDITDISTANCE`\n \
+                "error[SQ0002]: SQLQuack can't convert EDITDISTANCE yet\n \
                  --> query.sql:1:308\n  |\n1 | …{}…\n  | {}{} no rule converts this call\n",
                 &long[247..367],
                 " ".repeat(61),
@@ -49,7 +49,7 @@ fn given_refusals_when_rendered_then_the_source_line_is_underlined_at_the_span()
             description: "a span over several lines is underlined to the end of its first line",
             source: multiline.to_owned(),
             refusal: placed(multiline, (9, 29), RefusalCategory::MissingRule),
-            expected_text: "error[SQ0002]: no verified rule converts this construct: `fn:EDITDISTANCE`\n \
+            expected_text: "error[SQ0002]: SQLQuack can't convert EDITDISTANCE yet\n \
                 --> query.sql:2:3\n  |\n2 |   EDITDISTANCE(a,\n  |   ^^^^^^^^^^^^^^^ no rule \
                 converts this call\n"
                 .to_owned(),
@@ -66,7 +66,7 @@ fn given_refusals_when_rendered_then_the_source_line_is_underlined_at_the_span()
             description: "a refusal without a place names the file and puts its reason in a note",
             source: call.to_owned(),
             refusal: unlocated(None),
-            expected_text: "error[SQ0006]: conversion exceeded its budget\n --> query.sql\n  |\n  \
+            expected_text: "error[SQ0006]: converting this took too long or produced too much SQL\n --> query.sql\n  |\n  \
                 = note: conversion took over 5 s\n  = help: split the statement into smaller statements\n"
                 .to_owned(),
         },

@@ -170,7 +170,7 @@ fn given_project_settings_when_flags_are_given_then_the_flags_win_for_the_run() 
             flags: &[],
             sql: "SELECT id AS n FROM raw__orders",
             expected_exit: Some(0),
-            expected_output: "TIMEZONE = America/New_York is not UTC",
+            expected_output: "the session time zone is America/New_York, not UTC",
         },
         ProjectTestCase {
             description: "a --session flag replaces the project's value of that parameter",
@@ -281,7 +281,7 @@ fn given_a_project_when_a_declaration_clashes_or_is_unconfirmed_then_the_error_s
             flags: &[],
             sql: "SELECT shout(status) AS s FROM raw__orders",
             expected_exit: Some(1),
-            expected_output: "add `python_runtime = true` under [project.confirm] in sqlquack.toml, or pass --python-runtime for one run",
+            expected_output: "confirm it with `python_runtime = true` under [project.confirm] in sqlquack.toml",
         },
         ProjectTestCase {
             description: "a source listing no columns is left out with a warning",

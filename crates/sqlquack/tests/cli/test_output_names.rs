@@ -4,7 +4,7 @@ use crate::helpers::{
 use crate::test_types::{ColumnNameTestCase, ConvertTestCase, PlacedNameTestCase};
 
 const UNALIASED_PROJECT: &str = "tests/cli/fixtures/unaliased_items";
-const UNVERIFIED_NAME: &str = "has not verified the name Snowflake gives it";
+const UNVERIFIED_NAME: &str = "can't be sure of the name Snowflake gives it";
 const INTEGER_ORDERS_PROJECT: &str = "tests/cli/fixtures/integer_orders";
 /// The 392-character sum's name: its first 255 characters, ending in "52 + ", as recorded.
 const LONG_NAME: &str = "X + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11 + 12 + 13 + 14 + 15 + 16 + 17 + 18 + 19 + 20 + 21 + 22 + 23 + 24 + 25 + 26 + 27 + 28 + 29 + 30 + 31 + 32 + 33 + 34 + 35 + 36 + 37 + 38 + 39 + 40 + 41 + 42 + 43 + 44 + 45 + 46 + 47 + 48 + 49 + 50 + 51 + 52 + ";
@@ -487,11 +487,11 @@ fn given_a_refused_result_name_when_converting_then_the_diagnostic_underlines_th
             description: "an unaliased string the parser keeps no range for is placed at the string",
             sql: "SELECT order_id, 'it''s' FROM orders",
             expected_text: concat!(
-                "error[SQ0009]: this column has no alias, and SQLQuack has not verified the name ",
+                "error[SQ0009]: this column needs an alias, because SQLQuack can't be sure of the name ",
                 "Snowflake gives it\n --> <stdin>:1:18\n  |\n1 | SELECT order_id, 'it''s' FROM orders\n",
                 "  |                  ^^^^^^^ Snowflake names this `literal` column after its text\n",
                 "  |\n  = help: add an alias, such as `AS \"'IT''S'\"`, which names the column in both engines\n",
-                "sqlquack convert: refused, 1 refusal under the built-in default\n",
+                "sqlquack convert: refused, 1 refusal\n",
             ),
             expected_span: ("SQ0009", 17, 24),
         },
@@ -499,12 +499,12 @@ fn given_a_refused_result_name_when_converting_then_the_diagnostic_underlines_th
             description: "a result name repeated in another case is placed at the repeating item",
             sql: "SELECT order_id, 1 AS \"order_id\" FROM orders",
             expected_text: concat!(
-                "error[SQ0004]: a name does not resolve\n --> <stdin>:1:18\n  |\n",
+                "error[SQ0004]: SQLQuack doesn't know this name\n --> <stdin>:1:18\n  |\n",
                 "1 | SELECT order_id, 1 AS \"order_id\" FROM orders\n",
                 "  |                  ^^^^^^^^^^^^^^^ the result column name `order_id` repeats an ",
                 "earlier result column's name in another case, which DuckDB treats as the same name\n",
                 "  |\n  = help: give each result column its own alias, such as `SELECT 1 AS first, 1 AS second`\n",
-                "sqlquack convert: refused, 1 refusal under the built-in default\n",
+                "sqlquack convert: refused, 1 refusal\n",
             ),
             expected_span: ("SQ0004", 17, 32),
         },
@@ -512,13 +512,13 @@ fn given_a_refused_result_name_when_converting_then_the_diagnostic_underlines_th
             description: "a name a clause could read twice is placed at the second column",
             sql: "SELECT order_id, order_id FROM orders ORDER BY 1",
             expected_text: concat!(
-                "error[SQ0004]: a name does not resolve\n --> <stdin>:1:18\n  |\n",
+                "error[SQ0004]: SQLQuack doesn't know this name\n --> <stdin>:1:18\n  |\n",
                 "1 | SELECT order_id, order_id FROM orders ORDER BY 1\n",
                 "  |                  ^^^^^^^^ the result column name `ORDER_ID` repeats an earlier ",
                 "result column's name where ORDER BY, GROUP BY, HAVING or QUALIFY could read either ",
                 "column, which no recording shows; Snowflake keeps both names, so alias one of them\n",
                 "  |\n  = help: give each result column its own alias, such as `SELECT 1 AS first, 1 AS second`\n",
-                "sqlquack convert: refused, 1 refusal under the built-in default\n",
+                "sqlquack convert: refused, 1 refusal\n",
             ),
             expected_span: ("SQ0004", 17, 25),
         },

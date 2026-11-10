@@ -21,7 +21,7 @@ const PLACED_DATE: &str = "SELECT TO_DATE(placed_at) AS placed_on FROM orders";
 const DECLARED_PROJECT: &str = "tests/cli/fixtures/declared_offsets";
 const QUALIFIED_PROJECT: &str = "tests/cli/fixtures/qualified_relations";
 const NAIVE_LOCAL_PROJECT: &str = "tests/cli/fixtures/naive_local_branches";
-const NAIVE_JOINS_LOCAL: &str = "relies on known divergence timestamp_tz_submicro at";
+const NAIVE_JOINS_LOCAL: &str = "timestamp_tz_submicro — sqlquack explain";
 const NAIVE_LOCAL_UTC: [&str; 3] = ["--utc-session", "--project", NAIVE_LOCAL_PROJECT];
 const NAIVE_TO_ZONED: &str =
     "SELECT '2024-03-10 22:30:00'::TIMESTAMP_NTZ(6)::TIMESTAMP_TZ AS placed_at";
@@ -119,8 +119,15 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             description: "a statement that converts prints DuckDB SQL and exits 0",
             sql: "SELECT 1 + 2 AS total",
             flags: &[],
-            mention: "sqlquack convert: done, converted under utc-v1",
+            mention: "sqlquack convert: done, converted\n",
             expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "a refusal names the function plainly, never by its construct key",
+            sql: "SELECT RANDOM() AS r",
+            flags: &[],
+            mention: "SQLQuack can't convert RANDOM yet\n --> <stdin>:1:8\n  |\n1 | SELECT RANDOM() AS r\n  |        ^^^^^^^^ no rule converts RANDOM\n",
+            expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
             description: "a subquery in a hierarchical query's projection is refused",
@@ -140,7 +147,7 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             description: "with quoted identifiers ignoring case it converts under utc-qiic-v1",
             sql: QUOTED_ALIAS,
             flags: &["--session", "QUOTED_IDENTIFIERS_IGNORE_CASE=TRUE"],
-            mention: "converted under utc-qiic-v1",
+            mention: "done, converted\n",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
@@ -154,28 +161,28 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             description: "session parameters matching no recorded profile are refused by name",
             sql: "SELECT 1 AS total",
             flags: &["--session", "WEEK_START=1"],
-            mention: "match no recorded session profile: WEEK_START = 1",
+            mention: "SQLQuack has not checked a session with these settings: WEEK_START = 1",
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
             description: "a session-dependent statement converts naming its assumption",
             sql: NAIVE_TO_ZONED,
             flags: &[],
-            mention: "relies on assumption session_timezone_utc at node:cast",
+            mention: "allowed: session_timezone_utc —",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "strict mode refuses it",
             sql: NAIVE_TO_ZONED,
             flags: &["--strict"],
-            mention: "session_timezone_utc",
+            mention: "error[SQ0008]: Results that depend on the session time zone need UTC",
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
             description: "strict mode converts it once --utc-session confirms UTC sessions",
             sql: NAIVE_TO_ZONED,
             flags: &["--strict", "--utc-session"],
-            mention: "relies on assumption session_timezone_utc",
+            mention: "session_timezone_utc —",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
@@ -187,14 +194,14 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
                 "--session",
                 "TIMEZONE=America/New_York",
             ],
-            mention: "TIMEZONE = America/New_York is not UTC",
+            mention: "the session time zone is America/New_York, not UTC",
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
             description: "a declared-UTC TIMESTAMP_TZ column's date converts naming its assumption",
             sql: PLACED_DATE,
             flags: &["--project", DECLARED_PROJECT],
-            mention: "relies on assumption declared_offset:ORDERS.PLACED_AT at fn:TO_DATE",
+            mention: "(1 known difference allowed: declared_offset —",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
@@ -208,14 +215,14 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             description: "the suggested rewrite through a zone column converts the local date",
             sql: "SELECT CONVERT_TIMEZONE(ship_zone, shipped_at)::TIMESTAMP_NTZ::DATE AS shipped_on FROM orders",
             flags: &["--project", DECLARED_PROJECT],
-            mention: "relies on known divergence time_zone_spelling at fn:CONVERT_TIMEZONE",
+            mention: "(2 known differences allowed: time_zone_spelling, timestamp_range —",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "the declared offset carries through a CTE and COALESCE to DATE_TRUNC",
             sql: "WITH latest AS (SELECT COALESCE(placed_at, CONVERT_TIMEZONE('UTC', shipped_at)) AS at FROM orders) SELECT DATE_TRUNC('day', at) AS day FROM latest",
             flags: &["--project", DECLARED_PROJECT],
-            mention: "relies on assumption declared_offset:ORDERS.PLACED_AT at fn:DATE_TRUNC",
+            mention: "(1 known difference allowed: declared_offset —",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
@@ -234,7 +241,7 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
                 "--strict",
                 "--confirm-declared-offsets",
             ],
-            mention: "relies on assumption declared_offset:ORDERS.PLACED_AT",
+            mention: "declared_offset —",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
@@ -248,7 +255,7 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             description: "LAST_VALUE keeps the origin of every declared column it reads",
             sql: "SELECT DATEDIFF('day', placed_at, LAST_VALUE(paid_at) OVER (ORDER BY order_id)) AS days FROM orders",
             flags: &["--project", DECLARED_PROJECT],
-            mention: "relies on assumption declared_offset:ORDERS.PAID_AT",
+            mention: "(1 known difference allowed: declared_offset —",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
@@ -272,28 +279,28 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             description: "a non-UTC TIMEZONE refuses a zone-dependent statement in default mode",
             sql: NAIVE_TO_ZONED,
             flags: &["--session", "TIMEZONE=America/New_York"],
-            mention: "session_timezone_utc",
+            mention: "help: this matches Snowflake only in a UTC session, and the session time zone is America/New_York",
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
             description: "a non-UTC TIMEZONE leaves a zone-independent statement converting",
             sql: "SELECT 1 + 2 AS total",
             flags: &["--session", "TIMEZONE=America/New_York"],
-            mention: "converted under utc-v1",
+            mention: "done, converted\n",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "an explicit UTC TIMEZONE converts as before",
             sql: NAIVE_TO_ZONED,
             flags: &["--session", "TIMEZONE=UTC"],
-            mention: "relies on assumption session_timezone_utc",
+            mention: "session_timezone_utc —",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "a misspelt parameter is refused by name, never falling back to utc-v1",
             sql: "SELECT 1 AS \"total\"",
             flags: &["--session", "QUOTED_IDENTIFIER_IGNORE_CASE=true"],
-            mention: "unknown session parameters, which no recorded profile covers: \
+            mention: "unknown session settings, which SQLQuack has not checked: \
                       QUOTED_IDENTIFIER_IGNORE_CASE",
             expected_outcome: convert_outcome(1, false),
         },
@@ -308,7 +315,7 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             description: "a parameter that cannot change results is accepted and ignored",
             sql: "SELECT 1 AS total",
             flags: &["--session", "QUERY_TAG=nightly orders"],
-            mention: "converted under utc-v1",
+            mention: "done, converted\n",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
@@ -340,14 +347,14 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
                 "--session",
                 "query_tag=nightly",
             ],
-            mention: "converted under the built-in default",
+            mention: "done, converted\n",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "the built-in default refuses a parameter that can change a result, by name",
             sql: "SELECT 1 AS total",
             flags: &["--builtin-policy", "--session", "WEEK_START=1"],
-            mention: "not WEEK_START; pass --policy",
+            mention: "not WEEK_START; add a sqlquack.toml",
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
@@ -373,10 +380,10 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             expected_outcome: convert_outcome(2, false),
         },
         ConvertTestCase {
-            description: "the built-in default allows no divergence, so it refuses a zone-dependent statement",
+            description: "the built-in default allows only some uses of the UTC session, so it refuses this one",
             sql: NAIVE_TO_ZONED,
             flags: &["--builtin-policy"],
-            mention: "under the built-in default",
+            mention: "error[SQ0008]: Results that depend on the session time zone need UTC",
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
@@ -1519,17 +1526,17 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
             flags: &[],
             expected_text: "error[SQ0001]: the SQL does not parse\n --> <stdin>:2:26\n  |\n2 |   FROM \
                 orders WHERE (b = 1\n  |                          ^ Expected RParen, got end of input \
-                ('') near [b = 1]\nsqlquack convert: refused, 1 refusal under the built-in default\n",
+                ('') near [b = 1]\nsqlquack convert: refused, 1 refusal\n",
             expected_json: ("SQ0001", "parse_fidelity", 2, 26),
         },
         ConvertDiagnosticTestCase {
             description: "an unknown relation is underlined with the fix as help",
             sql: "SELECT a FROM orders",
             flags: &[],
-            expected_text: "error[SQ0004]: a name does not resolve\n --> <stdin>:1:15\n  |\n1 | SELECT a \
+            expected_text: "error[SQ0004]: SQLQuack doesn't know this name\n --> <stdin>:1:15\n  |\n1 | SELECT a \
                 FROM orders\n  |               ^^^^^^ relation `ORDERS` has no known columns\n  |\n  \
                 = help: declare the relation and its columns in a source file of the project \
-                (`sources/*.yml`)\nsqlquack convert: refused, 1 refusal under the built-in default\n",
+                (`sources/*.yml`)\nsqlquack convert: refused, 1 refusal\n",
             expected_json: ("SQ0004", "unresolved_name", 1, 15),
         },
         ConvertDiagnosticTestCase {
@@ -1539,8 +1546,7 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
             expected_text: "error[SQ0203]: QUALIFY needs a window function\n --> <stdin>:1:10\n  |\n1 | \
                 SELECT 1 QUALIFY TRUE\n  |          ^^^^^^^ QUALIFY is used without a window \
                 function in the SELECT list or QUALIFY\n  |\n  = help: move the condition to WHERE or \
-                HAVING, or filter on a window function's result\nsqlquack convert: refused, 1 refusal \
-                under the built-in default\n",
+                HAVING, or filter on a window function's result\nsqlquack convert: refused, 1 refusal\n",
             expected_json: ("SQ0203", "qualify_without_window", 1, 10),
         },
         ConvertDiagnosticTestCase {
@@ -1548,33 +1554,34 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
             sql: "SELECT 'a' AS a, UPPER('é')",
             flags: &[],
             expected_text: concat!(
-                "error[SQ0009]: this column has no alias, and SQLQuack has not verified the name ",
+                "error[SQ0009]: this column needs an alias, because SQLQuack can't be sure of the name ",
                 "Snowflake gives it\n --> <stdin>:1:18\n  |\n1 | SELECT 'a' AS a, UPPER('é')\n",
                 "  |                  ^^^^^^^^^^ Snowflake names this `function` column after its text\n",
                 "  |\n  = help: add an alias, such as `AS total`, which names the column in both engines\n",
-                "sqlquack convert: refused, 1 refusal under the built-in default\n",
+                "sqlquack convert: refused, 1 refusal\n",
             ),
             expected_json: ("SQ0009", "unaliased_output_name", 1, 18),
         },
         ConvertDiagnosticTestCase {
-            description: "a divergence the policy refuses has its own code and help naming the policy",
+            description: "a known difference the defaults refuse is titled, explained and given one fix",
             sql: "SELECT HASH(1) AS h",
             flags: &[],
-            expected_text: "error[SQ0008]: the conversion needs a known divergence the policy refuses: \
-                `fn:HASH`\n --> <stdin>:1:8\n  |\n1 | SELECT HASH(1) AS h\n  |        ^^^^^^^ fn:HASH \
-                needs known divergence `hash`, which the policy refuses in this mode\n  |\n  = help: \
-                the built-in policy refuses every known divergence but the clock, \
-                arithmetic's 38-digit and timestamp range errors, VARIANT reads' JSON guards \
-                and the sub-microsecond error of a naive timestamp joined with a local one; \
-                pass --policy with a policy file that allows `hash`, such as the repository's sqlquack.toml\nsqlquack convert: refused, 1 refusal under the built-in default\n",
+            expected_text: "error[SQ0008]: HASH gives a different value in DuckDB\n --> <stdin>:1:8\n  \
+                |\n1 | SELECT HASH(1) AS h\n  |        ^^^^^^^ DuckDB computes its own hash, never \
+                Snowflake's\n  |\n  = note: fine when joins, grouping, removing duplicates and \
+                spotting changed rows by hash; wrong when storing, comparing or sorting by the hash \
+                value itself: it differs, with no error\n  = help: allow it in a sqlquack.toml with \
+                default = \"warn\" under [divergences.hash], starting from a copy of the SQLQuack \
+                repository's; `sqlquack explain hash` says when it is safe\nsqlquack convert: \
+                refused, 1 refusal\n",
             expected_json: ("SQ0008", "divergence_refused", 1, 8),
         },
         ConvertDiagnosticTestCase {
             description: "a TIMESTAMP_TZ local-time reading explains the dropped offset and suggests the rewrite",
             sql: "SELECT DATEDIFF('day', shipped_at, paid_at) AS days FROM orders",
             flags: &["--project", DECLARED_PROJECT],
-            expected_text: "error[SQ0003]: the operand types fall outside every rule's proven \
-                conditions: `fn:DATEDIFF`\n --> <stdin>:1:8\n  |\n1 | SELECT DATEDIFF('day', shipped_at, \
+            expected_text: "error[SQ0003]: SQLQuack can't convert DATEDIFF for these types\n \
+                --> <stdin>:1:8\n  |\n1 | SELECT DATEDIFF('day', shipped_at, \
                 paid_at) AS days FROM orders\n  |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ DATEDIFF in \
                 DAY of TIMESTAMP_TZ(9), which reads the local time of an offset DuckDB's TIMESTAMPTZ \
                 drops\n  |\n  = note: a Snowflake TIMESTAMP_TZ stores each value's own UTC offset, and \
@@ -1583,19 +1590,19 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
                 state to keep the offset\n  = help: convert the value to a wall time first: \
                 `CONVERT_TIMEZONE('UTC', col)::TIMESTAMP_NTZ` for UTC, or `CONVERT_TIMEZONE(<zone \
                 column>, col)::TIMESTAMP_NTZ` for local day boundaries in a known zone\nsqlquack \
-                convert: refused, 1 refusal under the built-in default\n",
+                convert: refused, 1 refusal\n",
             expected_json: ("SQ0003", "type_condition", 1, 8),
         },
         ConvertDiagnosticTestCase {
             description: "a schema key matching only ignoring case says unquoted names fold to upper case",
             sql: "SELECT order_id FROM orders",
             flags: &["--project", "tests/cli/fixtures/lowercase_relation"],
-            expected_text: "error[SQ0004]: a name does not resolve\n --> <stdin>:1:22\n  |\n1 | SELECT \
+            expected_text: "error[SQ0004]: SQLQuack doesn't know this name\n --> <stdin>:1:22\n  |\n1 | SELECT \
                 order_id FROM orders\n  |                      ^^^^^^ relation `ORDERS` matches `orders` \
                 only without regard to case\n  |\n  = help: Snowflake folds unquoted names to upper \
                 case, so declare the relation or column in a source file as the SQL resolves it (`ORDERS` \
                 for `FROM orders`), or quote the name in the SQL to keep its case\nsqlquack convert: \
-                refused, 1 refusal under the built-in default\n",
+                refused, 1 refusal\n",
             expected_json: ("SQ0004", "unresolved_name", 1, 22),
         },
     ];
@@ -1891,36 +1898,35 @@ fn given_a_refused_divergence_when_converting_then_its_help_names_it_and_only_fi
             description: "strict mode refusing what the default allows: --utc-session cannot help",
             sql: "SELECT CURRENT_TIMESTAMP AS t",
             flags: &["--strict", "--utc-session"],
-            expected_help: "to rely on `current_time`: drop --strict, or set strict = \"warn\" \
-                under [divergences.current_time] in <policy>",
+            expected_help: "allow it in strict mode with strict = \"warn\" under \
+                [divergences.current_time] in <policy>",
         },
         DivergenceHelpTestCase {
             description: "refused by default: only the policy file can allow it",
             sql: "SELECT HASH(1) AS h",
             flags: &[],
-            expected_help: "to rely on `hash`: set default = \"warn\" under [divergences.hash] in \
-                <policy>",
+            expected_help: "allow it with default = \"warn\" under [divergences.hash] in <policy>; \
+                `sqlquack explain hash` says when it is safe",
         },
         DivergenceHelpTestCase {
             description: "refused in both modes under --strict: dropping --strict is not enough",
             sql: "SELECT HASH(1) AS h",
             flags: &["--strict"],
-            expected_help: "to rely on `hash`: set default and strict = \"warn\" under \
-                [divergences.hash] in <policy>",
+            expected_help: "allow it in strict mode with default = \"warn\" and strict = \"warn\" \
+                under [divergences.hash] in <policy>",
         },
         DivergenceHelpTestCase {
             description: "a divergence a rule's type check needs is still SQ0008, with policy help",
             sql: "SELECT CAST(1 AS NUMBER(38,0)) - CAST(1 AS NUMBER(38,2)) AS d",
             flags: &["--strict"],
-            expected_help: "to rely on `numeric_range`: drop --strict, or set strict = \"warn\" \
-                under [divergences.numeric_range] in <policy>",
+            expected_help: "allow it in strict mode with strict = \"warn\" under \
+                [divergences.numeric_range] in <policy>",
         },
         DivergenceHelpTestCase {
             description: "a value divergence under --loud-divergences-only",
             sql: "SELECT CURRENT_TIMESTAMP AS t",
             flags: &["--loud-divergences-only"],
-            expected_help: "`current_time` can return a different value rather than raise, which \
-                --loud-divergences-only refuses; drop that flag",
+            expected_help: "this can give a different value, so errors-only mode refuses it",
         },
     ];
     for test_case in test_cases {
@@ -1975,7 +1981,7 @@ fn given_a_naive_timestamp_joined_with_a_local_one_when_converting_then_its_nano
             description: "strict mode refuses the join, which reads the naive value in the session's zone",
             sql: "SELECT COALESCE(n, l) AS r FROM t",
             flags: &["--strict", "--project", NAIVE_LOCAL_PROJECT],
-            mention: "needs known divergence",
+            mention: "error[SQ0008]: Results that depend on the session time zone need UTC",
             expected_outcome: convert_outcome(1, false),
         },
     ];

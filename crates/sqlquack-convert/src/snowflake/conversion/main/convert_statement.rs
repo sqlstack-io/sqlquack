@@ -77,6 +77,7 @@ pub fn convert_statement(
         raises,
         sql,
         columns,
+        divergence_uses: log.divergence_uses(),
         provenance: log.finish(),
     })
 }

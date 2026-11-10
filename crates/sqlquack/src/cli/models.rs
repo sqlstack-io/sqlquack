@@ -16,6 +16,7 @@ use sqlquack_evidence::coverage::constants::{DOMAINS_DIR, HAZARDS_FILE};
 use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
 use sqlquack_policy::policy::models::{DivergenceFailure, Policy};
 use sqlquack_semantics::snowflake::typing::types::Schema;
+use sqlquack_syntax::tokens::models::SourceLocation;
 
 use crate::analysis::models::PythonSignature;
 use crate::census::constants::DEFAULT_TEXT_LIMIT;
@@ -121,6 +122,9 @@ pub struct ConvertArguments {
     /// Print each converted statement on one line instead of one clause per line, in `--json` too.
     #[arg(long)]
     pub compact: bool,
+    /// Print a warning for each use of a known difference: where it is and what allows it.
+    #[arg(long)]
+    pub verbose: bool,
     /// How to print the report on standard output.
     #[command(flatten)]
     pub output: OutputArguments,
@@ -374,13 +378,13 @@ pub struct PolicyArguments {
     /// The policy file; by default the project's `sqlquack.toml`, or the built-in policy without one.
     #[arg(long)]
     pub policy: Option<PathBuf>,
-    /// Use the built-in policy even where a policy file exists: it warns on the clock and raising checks.
+    /// Use the defaults even where a policy file exists: they allow the clock and some differences that only raise.
     #[arg(long, conflicts_with = "policy")]
     pub builtin_policy: bool,
-    /// Refuse every known divergence the policy refuses in strict mode.
+    /// Refuse every known difference the policy refuses in strict mode.
     #[arg(long)]
     pub strict: bool,
-    /// Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`.
+    /// Confirm both sessions use UTC, so strict mode allows results that depend on the session time zone.
     #[arg(long)]
     pub utc_session: bool,
     /// Confirm the TIMESTAMP_TZ offsets the schema declares, so strict mode relies on them.
@@ -389,7 +393,7 @@ pub struct PolicyArguments {
     /// Confirm a Python runtime registers the project's Python functions with SQLQuack's runtime.
     #[arg(long)]
     pub python_runtime: bool,
-    /// Refuse every known divergence that can return a different value rather than raise.
+    /// Refuse every known difference that can return a different value rather than raise an error.
     #[arg(long)]
     pub loud_divergences_only: bool,
 }
@@ -447,8 +451,13 @@ pub struct ConvertReport {
     pub assumptions: Vec<String>,
     /// Each divergence relied on and its failure: `loud` raises, `value` can return another value.
     pub divergence_failures: BTreeMap<String, DivergenceFailure>,
-    /// What the session parameters changed about conversion.
+    /// Each use of a known difference: the same reliances as `divergences`, placed and described.
+    pub known_differences: Vec<KnownDifferenceUse>,
+    /// What the session parameters changed about conversion, then why the defaults allow each difference.
     pub notes: Vec<String>,
+    /// Of `notes`, those about the session, which the text output prints.
+    #[serde(skip)]
+    pub session_notes: Vec<String>,
     /// What the project leaves out, such as a source with an untyped column.
     pub warnings: Vec<String>,
     /// The Python functions the SQL calls, which the caller registers before running it.
@@ -457,6 +466,28 @@ pub struct ConvertReport {
     pub macros: Vec<String>,
     /// Every user override loaded: its name, the function it replaces and its body's hash.
     pub overrides: Vec<OverrideListing>,
+}
+
+/// One use of a known difference, as `convert --json` reports it.
+#[derive(Clone, Debug, Serialize)]
+pub struct KnownDifferenceUse {
+    /// The known difference, such as `hash`.
+    pub name: String,
+    /// Its title, such as "HASH gives a different value in DuckDB".
+    pub title: String,
+    /// How relying on it fails: "an error" or "a different value".
+    pub fails_with: String,
+    /// What allows it: the policy file, such as `sqlquack.toml`, or `default`.
+    pub allowed_by: String,
+    /// The construct key relying on it, such as `fn:HASH`.
+    pub construct: String,
+    /// The one-based line of the use, when placed.
+    pub line: Option<usize>,
+    /// The one-based column of the use, when placed.
+    pub column: Option<usize>,
+    /// Where the use is.
+    #[serde(skip)]
+    pub location: Option<SourceLocation>,
 }
 
 /// A user override loaded for conversion.
