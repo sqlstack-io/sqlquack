@@ -3,6 +3,7 @@
 use std::sync::Arc;
 
 use crate::guard::models::TokenGuardStats;
+use crate::tokens::constants::SOURCE_CHARS_PER_TOKEN;
 use crate::tokens::errors::Error;
 use crate::tokens::models::AsciiLookups;
 use crate::tokens::models::Span;
@@ -21,7 +22,7 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
             shared_source: None,
             cursor,
             size,
-            tokens: Vec::new(),
+            tokens: Vec::with_capacity(size / SOURCE_CHARS_PER_TOKEN),
             start: 0,
             current: 0,
             line: 1,
@@ -45,7 +46,7 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
             shared_source: Some(source),
             cursor,
             size,
-            tokens: Vec::new(),
+            tokens: Vec::with_capacity(size / SOURCE_CHARS_PER_TOKEN),
             start: 0,
             current: 0,
             line: 1,

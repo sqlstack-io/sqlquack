@@ -11,3 +11,6 @@ pub(crate) const TRIPLE_QUOTE_LEN: usize = 3;
 
 /// The fewest tokens before raw data: `INSERT`, `FORMAT` and the format name.
 pub(crate) const INSERT_FORMAT_MIN_TOKENS: usize = 3;
+
+/// Source characters per token at most in typical SQL, so a tokenize run reserves its token list once.
+pub(crate) const SOURCE_CHARS_PER_TOKEN: usize = 4;
