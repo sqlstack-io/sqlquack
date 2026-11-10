@@ -110,7 +110,7 @@ sql = '''select
     nullif(trim(email), '') as email,
     updated_at
 from raw_customers'''
-expect = "refused SQ0008 fn:INITCAP at 34..53"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -276,7 +276,7 @@ sql = '''select
     id as order_id,
     convert_timezone('UTC', 'America/New_York', updated_at) as updated_at_local
 from raw_orders'''
-expect = "refused SQ0008 fn:CONVERT_TIMEZONE at 31..86"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -288,7 +288,7 @@ sql = '''select
     raw:occurred_at::timestamp_ntz as occurred_at,
     _loaded_at
 from raw_events'''
-expect = "refused SQ0008 node:cast at 125..155"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -325,7 +325,7 @@ sql = '''select
     raw:id::varchar as event_id,
     try_to_timestamp(raw:occurred_at::varchar) as occurred_at
 from raw_events'''
-expect = "refused SQ0008 fn:TRY_TO_TIMESTAMP at 44..86"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1088,7 +1088,7 @@ aggregated as (
 select * from aggregated
 order by row_count desc
 '''
-expect = "refused SQ0008 fn:AVG at 209..222"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1130,7 +1130,7 @@ aggregated as (
 select * from aggregated
 order by row_count desc
 '''
-expect = "refused SQ0008 fn:AVG at 215..227"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1172,7 +1172,7 @@ aggregated as (
 select * from aggregated
 order by row_count desc
 '''
-expect = "refused SQ0008 fn:AVG at 208..223"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1388,7 +1388,7 @@ select
     median(hours_to_close) as median_hours_to_close
 from resolution
 group by priority'''
-expect = "refused SQ0008 fn:MEDIAN at 299..321"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1404,7 +1404,7 @@ first_touch as (
     group by customer_id
 )
 select * from first_touch'''
-expect = "refused SQ0008 fn:MIN_BY at 110..160"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -1493,7 +1493,7 @@ sql = '''select
 from stg_orders
 where updated_at > (select coalesce(max(updated_at), to_timestamp_ntz('1900-01-01')) from fct_orders)
 '''
-expect = "refused SQ0008 fn:TO_TIMESTAMP_NTZ at 162..192"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2036,7 +2036,7 @@ category = "dbt_dedup"
 sql = '''select id, any_value(user_id) as user_id, max(updated_at) as updated_at
 from raw_orders
 group by id'''
-expect = "refused SQ0008 fn:ANY_VALUE at 11..29"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2044,7 +2044,7 @@ category = "dbt_dedup"
 sql = '''select id, max_by(status, updated_at) as status, max(updated_at) as updated_at
 from raw_orders
 group by id'''
-expect = "refused SQ0008 fn:MAX_BY at 11..37"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2224,7 +2224,7 @@ sql = '''select
 from events e,
     lateral flatten(input => e.payload:items) f
 group by e.event_id'''
-expect = "refused SQ0008 fn:ARRAY_AGG at 37..89"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2234,7 +2234,7 @@ sql = '''select
     object_agg(e.event_type, e.payload) as last_payload_by_type
 from events e
 group by e.customer_id'''
-expect = "refused SQ0008 fn:OBJECT_AGG at 30..65"
+expect = "translated"
 expect_repository = "translated"
 snowflake = "compiles"
 
@@ -2327,7 +2327,7 @@ sql = '''select
     t.ticket_id,
     array_to_string(t.tags, ', ') as tag_list
 from tickets t'''
-expect = "refused SQ0008 fn:ARRAY_TO_STRING at 28..57"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -2479,7 +2479,7 @@ category = "dbt_date_spine"
 sql = '''select
     dateadd('day', seq4(), to_date('2023-01-01')) as date_day
 from table(generator(rowcount => 730))'''
-expect = "refused SQ0008 fn:TO_DATE at 34..55"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -3486,7 +3486,7 @@ from order_items i
 join orders o on o.order_id = i.order_id
 join products p on p.product_id = i.product_id
 group by 1, 2'''
-expect = "refused SQ0008 node:div at 152..205"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -3498,7 +3498,7 @@ sql = '''select
 from order_items i
 join products p on p.product_id = i.product_id
 group by 1'''
-expect = "refused SQ0008 node:div at 74..161"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -3601,7 +3601,7 @@ sql = '''select
     avg(s.page_views) as avg_page_views
 from web_sessions s
 group by 1'''
-expect = "refused SQ0008 fn:AVG at 88..105"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -3670,7 +3670,7 @@ sql = '''select
     percentile_cont(0.5) within group (order by total) as median_order
 from orders
 group by 1'''
-expect = "refused SQ0008 fn:PERCENTILE_CONT at 72..77"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -3730,7 +3730,7 @@ sql = '''select
     array_size(array_agg(distinct channel)) as channel_count
 from orders
 group by 1'''
-expect = "refused SQ0008 fn:ARRAY_AGG at 28..55"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -3748,7 +3748,7 @@ sql = '''select
     c.customer_id,
     to_json(object_construct('email', c.email)) as profile_json
 from customers c'''
-expect = "refused SQ0008 fn:TO_JSON at 30..73"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -3815,7 +3815,7 @@ sql = '''select
     customer_id,
     updated_at as dbt_updated_at
 from stg_customers'''
-expect = "refused SQ0008 node:cast at 77..104"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -4289,7 +4289,7 @@ expect_repository = "translated"
 category = "dates"
 sql = '''select order_id, convert_timezone('UTC', 'America/New_York', ordered_at) as ordered_at_et from orders
 '''
-expect = "refused SQ0008 fn:CONVERT_TIMEZONE at 17..72"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -4303,7 +4303,7 @@ expect_repository = "translated"
 category = "strings"
 sql = '''select customer_id, initcap(first_name) || ' ' || initcap(last_name) as full_name from customers
 '''
-expect = "refused SQ0008 fn:INITCAP at 20..39"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -4359,7 +4359,7 @@ expect_repository = "translated"
 category = "strings"
 sql = '''select customer_id from customers where email ilike '%@example.com'
 '''
-expect = "refused SQ0008 node:i_like at 40..67"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -4555,7 +4555,7 @@ category = "dbt_flatten"
 sql = '''select customer_id, object_construct('orders', count(*), 'revenue', sum(amount)) as summary
 from stg_orders
 group by customer_id'''
-expect = "refused SQ0008 fn:OBJECT_CONSTRUCT at 20..80"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -4750,7 +4750,7 @@ sql = '''select *,
     updated_at as dbt_valid_from,
     nullif(updated_at, updated_at) as dbt_valid_to
 from stg_orders'''
-expect = "refused SQ0008 node:cast at 77..104"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -4783,7 +4783,7 @@ expect_repository = "translated"
 category = "dates"
 sql = '''select order_id, convert_timezone('UTC', 'America/New_York', updated_at) as updated_at_ny
 from stg_orders'''
-expect = "refused SQ0008 fn:CONVERT_TIMEZONE at 17..72"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -4804,7 +4804,7 @@ expect_repository = "translated"
 category = "strings"
 sql = '''select customer_id, initcap(first_name) || ' ' || initcap(last_name) as full_name
 from stg_customers'''
-expect = "refused SQ0008 fn:INITCAP at 20..39"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -4972,7 +4972,7 @@ where most_recent < cast(
         )
  as timestamp)
    or most_recent is null'''
-expect = "refused SQ0008 fn:CONVERT_TIMEZONE at 170..214"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -5353,7 +5353,7 @@ sql = '''select * from stg_orders where order_date >= cast(
     ) as date)
         )
  as date)'''
-expect = "refused SQ0008 fn:CONVERT_TIMEZONE at 163..207"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -5402,7 +5402,7 @@ sql = '''select order_id, datediff(
         cast(convert_timezone('UTC', current_timestamp()) as timestamp)
     )
         ) as days_since from stg_orders'''
-expect = "refused SQ0008 fn:CONVERT_TIMEZONE at 129..173"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -5412,7 +5412,7 @@ sql = '''select order_id, convert_timezone(
         'America/New_York',
         cast(cast(order_date as timestamp) as timestamp)
     ) as order_ts_ny from stg_orders'''
-expect = "refused SQ0008 node:cast at 91..120"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -5728,13 +5728,13 @@ sql = '''select customer_id,
         ', '
         )
         within group (order by order_date) as statuses from stg_orders group by customer_id'''
-expect = "refused SQ0008 fn:LISTAGG at 41..113"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
 category = "dates"
 sql = '''select order_id, convert_timezone('UTC', current_timestamp()) as loaded_at from stg_orders'''
-expect = "refused SQ0008 fn:CONVERT_TIMEZONE at 17..61"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -5831,7 +5831,7 @@ sql = '''with snapshot_query as (
     select * from insertions
     union all
     select * from updates'''
-expect = "refused SQ0008 node:cast at 616..644"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -5847,7 +5847,7 @@ sql = '''select *,
 from (
         select order_id, customer_id, order_date, status, amount, updated_at from stg_orders
     ) sbq'''
-expect = "refused SQ0008 node:cast at 91..119"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -6067,7 +6067,7 @@ category = "dbt_incremental"
 sql = '''select order_id, status, updated_at, convert_timezone('UTC', current_timestamp()) as loaded_at
 from analytics.dbt_dev.fct_orders
 where updated_at > (select max(updated_at) from analytics.dbt_dev.inc_append)'''
-expect = "refused SQ0008 fn:CONVERT_TIMEZONE at 37..81"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -6090,7 +6090,7 @@ category = "dbt_incremental"
 sql = '''select * from analytics.dbt_dev.fct_orders
 where updated_at > (select max(updated_at) from analytics.dbt_dev.inc_event_time)
   and updated_at <= convert_timezone('UTC', current_timestamp())'''
-expect = "refused SQ0008 fn:CONVERT_TIMEZONE at 145..189"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -6232,7 +6232,7 @@ sql = '''with snapshot_query as (
     select * from insertions
     union all
     select * from updates'''
-expect = "refused SQ0008 fn:CONVERT_TIMEZONE at 445..489"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -6350,7 +6350,7 @@ sql = '''with snapshot_query as (
     select * from updates
     union all
     select * from deletes'''
-expect = "refused SQ0008 fn:CONVERT_TIMEZONE at 445..489"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
@@ -6444,7 +6444,7 @@ sql = '''with snapshot_query as (
     select * from updates
     union all
     select * from deletes'''
-expect = "refused SQ0008 node:cast at 654..682"
+expect = "translated"
 expect_repository = "translated"
 
 [[query]]
