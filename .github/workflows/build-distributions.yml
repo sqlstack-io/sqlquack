@@ -223,6 +223,13 @@ jobs:
           path: ~/.cargo/git/db
           key: cargo-git-${{ matrix.platform.name }}-${{ hashFiles('Cargo.lock') }}
           restore-keys: cargo-git-${{ matrix.platform.name }}-
+      # On Linux maturin builds in a manylinux container, whose cargo keeps its git checkouts under
+      # /root/.cargo; mounting the cached folder there lets both builds read and fill it.
+      - name: Share Cargo's git checkouts with the manylinux container
+        if: inputs.prebuilt-run-id == '' && runner.os == 'Linux'
+        run: |
+          mkdir -p "${HOME}/.cargo/git/db"
+          echo "MATURIN_DOCKER_OPTIONS=-v ${HOME}/.cargo/git/db:/root/.cargo/git/db" >> "${GITHUB_ENV}"
       - uses: PyO3/maturin-action@v1
         if: inputs.prebuilt-run-id == ''
         with:
@@ -231,6 +238,7 @@ jobs:
           working-directory: python
           target: ${{ matrix.platform.target }}
           manylinux: "2_28"
+          docker-options: ${{ env.MATURIN_DOCKER_OPTIONS }}
       - uses: PyO3/maturin-action@v1
         if: inputs.prebuilt-run-id == ''
         with:
@@ -239,6 +247,7 @@ jobs:
           working-directory: crates/sqlquack
           target: ${{ matrix.platform.target }}
           manylinux: "2_28"
+          docker-options: ${{ env.MATURIN_DOCKER_OPTIONS }}
       - name: Report sccache's hits
         if: inputs.prebuilt-run-id == '' && runner.os != 'Linux'
         shell: bash
