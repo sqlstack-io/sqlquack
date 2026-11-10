@@ -16,9 +16,15 @@ self.onmessage = async ({ data }) => {
 		ready.then(() => self.postMessage({ ready: true }));
 		return;
 	}
-	const { analyze, fixture_tables, run_failure } = await ready;
+	const { analyze, fixture_tables, known_differences, run_failure } = await ready;
 	const started = performance.now();
 	const result =
-		data.op === 'fixture' ? fixture_tables(data.sources) : data.op === 'failure' ? run_failure(data.message) : analyze(data.sql, data.sources, data.settings);
+		data.op === 'fixture'
+			? fixture_tables(data.sources)
+			: data.op === 'failure'
+				? run_failure(data.message)
+				: data.op === 'differences'
+					? known_differences()
+					: analyze(data.sql, data.sources, data.settings);
 	self.postMessage({ id: data.id, result, elapsed: performance.now() - started });
 };

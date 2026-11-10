@@ -93,4 +93,3 @@ writeFileSync(
 		`export const DUCKDB_EXTENSIONS = ${JSON.stringify(Object.keys(pinned.sha256))};\n`,
 );
 console.log(`duckdb-wasm ${version} vendored into ${out}, with ${Object.keys(pinned.sha256).join(', ')}`);
-copyFileSync('../sqlquack.toml', 'public/playground/sqlquack.toml');
