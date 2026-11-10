@@ -550,9 +550,9 @@ fn given_models_when_running_census_by_default_then_each_blocked_file_gets_a_dia
             expected_outcome: DefaultOutcome {
                 exit_code: Some(1),
                 text_lines: lines(&[
-                    "error[SQ0002]: no verified rule converts this construct: `fn:SOUNDEX`",
+                    "error[SQ0002]: SQLQuack can't convert SOUNDEX yet",
                     " --> models/fuzzy_names.sql:1:21",
-                    "error[SQ0004]: a name does not resolve",
+                    "error[SQ0004]: SQLQuack doesn't know this name",
                     " --> models/name_report.sql:1:48",
                     "  = note: reads `fuzzy_names`, which doesn't convert",
                     "Converted 1 of 3 files (33%)",
@@ -571,12 +571,12 @@ fn given_models_when_running_census_by_default_then_each_blocked_file_gets_a_dia
             expected_outcome: DefaultOutcome {
                 exit_code: Some(1),
                 text_lines: lines(&[
-                    "error[SQ0002]: no verified rule converts this construct: `fn:SOUNDEX`",
+                    "error[SQ0002]: SQLQuack can't convert SOUNDEX yet",
                     " --> models/fuzzy_names.sql:1:21",
-                    "error[SQ0004]: a name does not resolve",
+                    "error[SQ0004]: SQLQuack doesn't know this name",
                     " --> models/name_report.sql:1:48",
                     "  = note: reads `fuzzy_names`, which doesn't convert",
-                    "error[SQ0004]: a name does not resolve",
+                    "error[SQ0004]: SQLQuack doesn't know this name",
                     " --> models/order_report.sql:1:22",
                     "Converted 1 of 4 files (25%)",
                     "Blocked: 3 files, 2 causes (SQ0002 SOUNDEX, SQ0004 ORDERS_SUMMARY)",
@@ -595,7 +595,7 @@ fn given_models_when_running_census_by_default_then_each_blocked_file_gets_a_dia
             expected_outcome: DefaultOutcome {
                 exit_code: Some(1),
                 text_lines: lines(&[
-                    "error[SQ0002]: no verified rule converts this construct: `fn:SOUNDEX`",
+                    "error[SQ0002]: SQLQuack can't convert SOUNDEX yet",
                     " --> models/fuzzy_names.sql:1:21",
                     "warning: models/name_report.sql converts, but reads fuzzy_names, which doesn't",
                     " --> models/name_report.sql",
@@ -616,7 +616,7 @@ fn given_models_when_running_census_by_default_then_each_blocked_file_gets_a_dia
             expected_outcome: DefaultOutcome {
                 exit_code: Some(1),
                 text_lines: lines(&[
-                    "error[SQ0002]: no verified rule converts this construct: `fn:SOUNDEX`",
+                    "error[SQ0002]: SQLQuack can't convert SOUNDEX yet",
                     " --> models/fuzzy_names.sql:1:21",
                     "Converted 2 of 3 files (66%)",
                     "Blocked: 1 file, 1 cause (SQ0002 SOUNDEX)",

@@ -11,14 +11,14 @@ fn given_zone_free_snowflake_sql_when_converting_then_the_checking_engine_binds_
             description: "a constant converts once the checking engine binds it",
             sql: "SELECT 1 AS total",
             flags: &[],
-            mention: "sqlquack convert: done, converted under utc-v1",
+            mention: "sqlquack convert: done, converted\n",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "a VARIANT path converts with DuckDB's json functions",
             sql: "SELECT PARSE_JSON('{\"total\": 3}'):total AS total",
             flags: &[],
-            mention: "sqlquack convert: done, converted under utc-v1",
+            mention: "sqlquack convert: done, converted (1 known difference allowed: json_fidelity",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
