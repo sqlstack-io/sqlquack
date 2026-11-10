@@ -32,6 +32,8 @@ mod test_float_text;
 mod test_guarded_conditions;
 #[path = "tests/test_held_variants.rs"]
 mod test_held_variants;
+#[path = "tests/test_layout.rs"]
+mod test_layout;
 #[path = "tests/test_load_override.rs"]
 mod test_load_override;
 #[path = "tests/test_locations.rs"]

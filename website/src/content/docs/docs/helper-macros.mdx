@@ -14,7 +14,10 @@ CREATE SCHEMA IF NOT EXISTS sqlquack;
 CREATE OR REPLACE MACRO sqlquack.json_escaped_v1(quack_text) AS ...;
 CREATE OR REPLACE MACRO sqlquack.variant_text_v1(quack_site, quack_value) AS ...;
 SELECT
-    sqlquack.variant_text_v1('#0d01742fedea', json_extract("EVENTS"."PAYLOAD", '$."customer_id"')) AS "CUSTOMER_ID"
+    sqlquack.variant_text_v1(
+        '#0d01742fedea',
+        json_extract("EVENTS"."PAYLOAD", '$."customer_id"')
+    ) AS "CUSTOMER_ID"
 FROM ...
 ```
 
