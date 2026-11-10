@@ -14,3 +14,6 @@ pub(crate) const INSERT_FORMAT_MIN_TOKENS: usize = 3;
 
 /// Source characters per token at most in typical SQL, so a tokenize run reserves its token list once.
 pub(crate) const SOURCE_CHARS_PER_TOKEN: usize = 4;
+
+/// The most token slots a tokenize run reserves, for 64 KiB of typical SQL; more grow the list.
+pub(crate) const MAX_RESERVED_TOKENS: usize = 16_384;
