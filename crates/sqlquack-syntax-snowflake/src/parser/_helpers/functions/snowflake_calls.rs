@@ -1,5 +1,6 @@
 //! Snowflake call arguments the shared argument list does not read.
 
+use crate::parser::_helpers::statements::analyze::snowflake_reserved_word;
 use crate::parser::constants::VARIADIC_KEYWORD;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Column;
@@ -168,14 +169,12 @@ impl Parser {
                 TokenType::QuotedIdentifier => token.text.contains(char::is_whitespace),
                 _ => false,
             });
-        let text = self.peek_text();
-        let word = text
-            .strip_prefix('@')
-            .and_then(|rest| rest.split(['.', '/']).next())
-            .unwrap_or_default()
-            .to_ascii_uppercase();
         let reserved = self.check(TokenType::Var)
-            && crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS.contains(&word.as_str());
+            && self
+                .peek_text()
+                .strip_prefix('@')
+                .and_then(|rest| rest.split(['.', '/']).next())
+                .is_some_and(snowflake_reserved_word);
         match split || reserved {
             true => Err(self.parse_error("Expected a stage name after @")),
             false => Ok(()),
