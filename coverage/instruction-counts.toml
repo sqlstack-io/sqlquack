@@ -5,10 +5,13 @@
 # findings in one analysis over the same statements. Only the program's own code counts; shared
 # libraries, the C allocator and memcpy among them, are left out, because their counts change with
 # the C library. A count more than `tolerance_percent` over its baseline fails as a slowdown; one
-# more than that under fails too, so a gain is recorded and cannot be spent unnoticed. Record new
-# counts with `make instruction-baseline` in the change that moves them.
+# more than that under fails too, so a gain is recorded and cannot be spent unnoticed. The counts
+# hold for one architecture and one compiler: a run on another `arch`, or a build whose
+# `rustc --version` differs from `rustc`, fails without comparing. Record new counts with
+# `make instruction-baseline` in the change that moves them, a toolchain bump included.
 
 arch = "x86_64"
+rustc = "rustc 1.99.1 (58cf8f9c3 2026-10-13)"
 tolerance_percent = 2
 
 [counts]

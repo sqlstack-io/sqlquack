@@ -2,6 +2,7 @@
 pub(crate) struct CompareTestCase {
     pub(crate) description: &'static str,
     pub(crate) arch: &'static str,
+    pub(crate) rustc: &'static str,
     pub(crate) measured: Vec<(&'static str, u64)>,
     /// A fragment each expected problem holds, in order.
     pub(crate) expected_problems: Vec<&'static str>,
