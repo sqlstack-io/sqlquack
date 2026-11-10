@@ -1,5 +1,7 @@
 use crate::known_differences::main::known_difference::known_difference;
-use crate::known_differences::tests::helpers::{entries_unlike_policy, internal_names_in_text};
+use crate::known_differences::tests::helpers::{
+    entries_off_style, entries_unlike_policy, internal_names_in_text,
+};
 use crate::known_differences::tests::test_types::{EntryCheckTestCase, LookupTestCase};
 
 #[test]
@@ -39,6 +41,11 @@ fn given_the_repository_policy_when_checking_the_known_differences_then_each_mat
         EntryCheckTestCase {
             description: "no text names a construct key, session name, flag or internal word",
             findings: internal_names_in_text,
+            expected_findings: &[],
+        },
+        EntryCheckTestCase {
+            description: "texts are short and each failure ends its wrong_when the same way",
+            findings: entries_off_style,
             expected_findings: &[],
         },
     ];

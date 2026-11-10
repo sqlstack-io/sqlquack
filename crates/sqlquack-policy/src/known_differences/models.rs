@@ -9,11 +9,13 @@ pub struct KnownDifference {
     pub name: &'static str,
     /// A short title, such as "HASH gives a different value in DuckDB".
     pub title: &'static str,
-    /// What differs between Snowflake and the converted SQL.
+    /// What differs between Snowflake and the converted SQL, in at most two short sentences.
     pub differs: &'static str,
-    /// When relying on it gives the same result as Snowflake.
+    /// The full cases and lists behind `differs`, which only a detailed explanation prints.
+    pub details: Option<&'static str>,
+    /// When relying on it gives the same result as Snowflake, in one short sentence.
     pub fine_when: &'static str,
-    /// When relying on it does not give Snowflake's result, and what happens instead.
+    /// When relying on it does not give Snowflake's result, and what happens instead, in one sentence.
     pub wrong_when: &'static str,
     /// Whether relying on it can return a different value, or only raise an error.
     pub failure: DivergenceFailure,
