@@ -20,12 +20,20 @@ pub fn compare_counts(
     baseline: &InstructionBaseline,
     measured: &BTreeMap<String, u64>,
     arch: &str,
+    rustc: &str,
 ) -> Vec<String> {
     let mut problems: Vec<String> = Vec::new();
     if baseline.arch != arch {
         problems.push(format!(
             "the baseline was recorded on {}, and this is {arch}; counts are not comparable",
             baseline.arch
+        ));
+        return problems;
+    }
+    if baseline.rustc != rustc {
+        problems.push(format!(
+            "the baseline was recorded with {}, and this build uses {rustc}; a new compiler emits different instructions, so record its counts with `make instruction-baseline` in the toolchain change",
+            baseline.rustc
         ));
         return problems;
     }

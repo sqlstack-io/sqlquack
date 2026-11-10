@@ -5,6 +5,7 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 use crate::cli::_helpers::output::say;
+use crate::cli::_helpers::rustc_version::rustc_version;
 use crate::instructions::constants::BASELINE_HEADER;
 use crate::instructions::main::compare_counts::compare_counts;
 use crate::instructions::main::count_instructions::count_instructions;
@@ -28,9 +29,11 @@ fn write_baseline(
     path: &Path,
     baseline: InstructionBaseline,
     measured: BTreeMap<String, u64>,
+    rustc: String,
 ) -> Result<ExitCode, ExitCode> {
     let updated: InstructionBaseline = InstructionBaseline {
         arch: std::env::consts::ARCH.to_owned(),
+        rustc,
         counts: measured,
         ..baseline
     };
@@ -40,8 +43,8 @@ fn write_baseline(
         .map(|(name, count)| format!("{name} = {count}\n"))
         .collect();
     let body: String = format!(
-        "arch = \"{}\"\ntolerance_percent = {}\n\n[counts]\n{counts}",
-        updated.arch, updated.tolerance_percent
+        "arch = \"{}\"\nrustc = \"{}\"\ntolerance_percent = {}\n\n[counts]\n{counts}",
+        updated.arch, updated.rustc, updated.tolerance_percent
     );
     std::fs::write(path, format!("{BASELINE_HEADER}{body}"))
         .map_err(|error| failed(&format!("{}: {error}", path.display())))?;
@@ -51,6 +54,7 @@ fn write_baseline(
 
 pub(crate) fn instruction_counts(baseline_path: &Path, update: bool) -> Result<ExitCode, ExitCode> {
     let baseline: InstructionBaseline = read_baseline(baseline_path)?;
+    let rustc: String = rustc_version().map_err(|problem| failed(&problem))?;
     let binary: PathBuf = std::env::current_exe().map_err(|error| {
         failed(&format!(
             "cannot find this binary for the workload: {error}"
@@ -71,9 +75,10 @@ pub(crate) fn instruction_counts(baseline_path: &Path, update: bool) -> Result<E
         measured.insert(workload.name().to_owned(), count);
     }
     if update {
-        return write_baseline(baseline_path, baseline, measured);
+        return write_baseline(baseline_path, baseline, measured, rustc);
     }
-    let problems: Vec<String> = compare_counts(&baseline, &measured, std::env::consts::ARCH);
+    let problems: Vec<String> =
+        compare_counts(&baseline, &measured, std::env::consts::ARCH, &rustc);
     for problem in &problems {
         say(&format!("PROBLEM {problem}"));
     }

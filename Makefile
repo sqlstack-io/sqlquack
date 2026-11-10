@@ -79,7 +79,8 @@ depth-probe: gate-build
 instruction-counts: gate-build
 	$(GATE_DIR)/syntax-coverage instruction-counts
 
-# Records the counts instruction-counts checks; run it in the change that moves them.
+# Records the counts instruction-counts checks, with the arch and rustc they hold for. Run it in the
+# change that moves them; a rust-toolchain.toml bump always does.
 instruction-baseline: gate-build
 	$(GATE_DIR)/syntax-coverage instruction-counts --update
 
