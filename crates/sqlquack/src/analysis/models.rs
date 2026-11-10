@@ -17,6 +17,7 @@ use sqlquack_evidence::constants::{INPUT_RELATION, ORDINAL_COLUMN};
 use sqlquack_evidence::replay::models::{PythonFunction, PythonReplay};
 use sqlquack_evidence::verify::models::Conversion;
 use sqlquack_evidence::verify::types::CaseConverter;
+use sqlquack_format::FormatDialect;
 use sqlquack_policy::policy::constants::QUOTED_IDENTIFIERS_IGNORE_CASE;
 use sqlquack_policy::policy::models::SessionValue;
 use sqlquack_semantics::snowflake::typing::types::Schema;
@@ -154,7 +155,7 @@ impl CaseConverter for PipelineConverter {
     }
 
     fn laid_out(&self, sql: &str) -> Result<String, String> {
-        checked_layout(sql)
+        checked_layout(sql, FormatDialect::DuckDB)
     }
 }
 

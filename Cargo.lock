@@ -1370,6 +1370,7 @@ dependencies = [
  "sqlquack-convert",
  "sqlquack-diagnostics",
  "sqlquack-evidence",
+ "sqlquack-format",
  "sqlquack-parse",
  "sqlquack-policy",
  "sqlquack-semantics",
@@ -1387,6 +1388,7 @@ dependencies = [
  "duckdb",
  "serde_json",
  "sqlquack-diagnostics",
+ "sqlquack-format",
  "sqlquack-semantics",
 ]
 

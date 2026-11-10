@@ -14,7 +14,7 @@ sqlquack.check(sql="SELECT 1 QUALIFY TRUE").diagnostics[0].code  # "SQ0203"
 result = sqlquack.convert(
     sql="SELECT 1 AS total", options=sqlquack.ConvertOptions(no_config=True)
 )
-result.sql  # 'SELECT CAST(1 AS DECIMAL(1,0)) AS "TOTAL"'
+result.sql  # 'SELECT CAST(1 AS DECIMAL(1, 0)) AS "TOTAL"'
 ```
 
 ## Install

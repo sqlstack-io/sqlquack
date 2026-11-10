@@ -31,8 +31,10 @@ async function pageDuckDB() {
 	for (const extension of DUCKDB_EXTENSIONS) conn.query(`LOAD ${extension}`);
 	for (const table of JSON.parse(fixture_tables(PAGE_SOURCES)).tables) conn.query(table);
 	conn.query(ROWS);
-	// Every value as text, as the page reads them.
-	return (sql) => conn.query(`SELECT COLUMNS(*)::VARCHAR FROM (${sql}) AS result`).toArray().map((row) => Object.values(row.toJSON()));
+	// Every value as text, as the page reads them; `execute` runs a statement such as a helper macro's as it is.
+	const run = (sql) => conn.query(`SELECT COLUMNS(*)::VARCHAR FROM (${sql}) AS result`).toArray().map((row) => Object.values(row.toJSON()));
+	run.execute = (sql) => conn.query(sql);
+	return run;
 }
 
 const marked = (html) => [...html.matchAll(/<mark[^>]*>(.*?)<\/mark>/g)].map((match) => match[1]);
@@ -179,18 +181,31 @@ test('a run error from the in-browser DuckDB is told apart from an error about t
 	assert.ok(!previewLimit('Invalid Input Error: Attempting to fetch from an unsuccessful query result'));
 });
 
-test('translated SQL is laid out one clause per line unless the compact setting asks for one line', () => {
+test('translated SQL and its helper macros are laid out over lines unless the compact setting asks for one line', async () => {
 	const sql = "SELECT order_id, note, 'a longer literal' AS label FROM orders WHERE order_id > 1";
-	const translated = (settings) => JSON.parse(analyze(sql, SOURCES, JSON.stringify(settings))).translate.statements[0].sql;
-	const laidOut = translated({});
+	const translated = (sql, settings) => JSON.parse(analyze(sql, SOURCES, JSON.stringify(settings))).translate.statements[0];
+	const laidOut = translated(sql, {}).sql;
 	assert.equal(
 		laidOut,
 		'SELECT\n    "ORDERS"."ORDER_ID" AS "ORDER_ID",\n    "ORDERS"."NOTE" AS "NOTE",\n    ' +
-			'\'a longer literal\' AS "LABEL"\nFROM "ORDERS" AS "ORDERS"\nWHERE ("ORDERS"."ORDER_ID" > CAST(1 AS DECIMAL(1,0)))',
+			'\'a longer literal\' AS "LABEL"\nFROM "ORDERS" AS "ORDERS"\nWHERE ("ORDERS"."ORDER_ID" > CAST(1 AS DECIMAL(1, 0)))',
 	);
-	const compact = translated({ compact: true });
-	assert.equal(compact, laidOut.replace(/\n */g, ' '));
+	// Only whitespace differs from the compact SQL.
+	const compact = translated(sql, { compact: true }).sql;
 	assert.ok(!compact.includes('\n'));
+	assert.equal(compact.replace(/\s+/g, ''), laidOut.replace(/\s+/g, ''));
+	// A wide division calls a helper macro, laid out like the SQL, and the page's DuckDB creates and runs it.
+	const division = 'SELECT order_id, order_id / 7 AS q FROM orders ORDER BY order_id';
+	const [wide, wideCompact] = [translated(division, {}), translated(division, { compact: true })];
+	assert.ok(wide.setup.length > 1);
+	assert.ok(wide.setup.slice(1).every((statement) => statement.includes('\n    ')));
+	assert.ok(wideCompact.setup.every((statement) => !statement.includes('\n')));
+	const rows = async (statement) => {
+		const run = await pageDuckDB();
+		for (const helper of statement.setup) run.execute(helper);
+		return run(statement.sql);
+	};
+	assert.deepEqual(await rows(wide), await rows(wideCompact));
 });
 
 test('an undeclared relation is refused by name, and the stub the page adds stays refused until filled in', async () => {

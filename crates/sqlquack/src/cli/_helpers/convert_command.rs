@@ -16,6 +16,7 @@ use sqlquack_diagnostics::diagnostics::main::warning_at::warning_at;
 use sqlquack_diagnostics::diagnostics::models::{Diagnostic, Palette};
 use sqlquack_diagnostics::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_diagnostics::refusals::models::Refusal;
+use sqlquack_format::FormatDialect;
 use sqlquack_policy::config::constants::CONFIG_FILE_NAME;
 use sqlquack_policy::config::main::load_config::load_config;
 use sqlquack_policy::config::models::UserConfig;
@@ -575,7 +576,7 @@ pub(crate) fn chosen_options(
     )
 }
 
-/// The report of a finished analysis of `sql`, its SQL one clause per line unless `compact`.
+/// The report of a finished analysis of `sql`, its SQL and helper macros laid out over lines unless `compact`.
 pub(crate) fn analysis_report(
     analysis: &Analysis,
     (sql, compact): (&str, bool),
@@ -626,16 +627,22 @@ pub(crate) fn analysis_report(
             .iter()
             .map(|done| match compact {
                 true => done.sql.clone(),
-                false => layout_sql(&done.sql),
+                false => layout_sql(&done.sql, FormatDialect::DuckDB),
             })
             .collect::<Vec<String>>()
             .join(";\n"),
         false => String::new(),
     };
-    let macros = with_helpers(
+    let macros: Vec<String> = with_helpers(
         override_macros(&provenance.divergences, options),
         &converted_sql,
-    );
+    )
+    .into_iter()
+    .map(|statement| match compact {
+        true => statement,
+        false => layout_sql(&statement, FormatDialect::DuckDB),
+    })
+    .collect();
     Ok(ConvertReport {
         converted,
         profile,

@@ -1655,10 +1655,10 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
 fn given_layout_flags_when_converting_then_clauses_break_unless_compact_in_text_and_json() {
     let test_cases = [
         LayoutFlagsTestCase {
-            description: "each clause and select item on its own line, in text and in --json",
+            description: "a statement too long for one line breaks at its clauses and items, in text and in --json",
             flags: &[],
-            expected_sql: "SELECT\n    CAST(1 AS DECIMAL(1,0)) AS \"A\",\n    CAST(2 AS DECIMAL(1,0)) AS \"B\",\n    \
-                           'some longer text here' AS \"C\"\nWHERE (CAST(1 AS DECIMAL(1,0)) = CAST(1 AS DECIMAL(1,0)))",
+            expected_sql: "SELECT\n    CAST(1 AS DECIMAL(1, 0)) AS \"A\",\n    CAST(2 AS DECIMAL(1, 0)) AS \"B\",\n    \
+                           'some longer text here' AS \"C\"\nWHERE (CAST(1 AS DECIMAL(1, 0)) = CAST(1 AS DECIMAL(1, 0)))",
         },
         LayoutFlagsTestCase {
             description: "--compact prints the statement on one line, in text and in --json",

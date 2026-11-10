@@ -224,6 +224,7 @@ version = "0.5.1"
 dependencies = [
  "serde_json",
  "sqlquack-diagnostics",
+ "sqlquack-format",
  "sqlquack-semantics",
 ]
 
@@ -256,6 +257,15 @@ version = "0.5.1"
 dependencies = [
  "serde",
  "serde_json",
+ "sqlquack-syntax",
+]
+
+[[package]]
+name = "sqlquack-format"
+version = "0.4.1"
+dependencies = [
+ "serde_json",
+ "sqlquack-parse",
  "sqlquack-syntax",
 ]
 
@@ -323,6 +333,7 @@ dependencies = [
  "sqlquack-blocks",
  "sqlquack-convert",
  "sqlquack-diagnostics",
+ "sqlquack-format",
  "sqlquack-parse",
  "sqlquack-policy",
  "sqlquack-semantics",

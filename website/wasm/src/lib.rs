@@ -38,6 +38,7 @@ use sqlquack_diagnostics::refusals::main::refuse_unparsed::refuse_unparsed;
 use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_diagnostics::snowflake::classification::main::cast_type_name::cast_type_name;
 use sqlquack_diagnostics::snowflake::refusals::main::snowflake_rejections::snowflake_rejections;
+use sqlquack_format::FormatDialect;
 use sqlquack_parse::parsing::main::parse_source::parse_source;
 use sqlquack_policy::known_differences::constants::KNOWN_DIFFERENCES;
 use sqlquack_semantics::dialects::constants::SNOWFLAKE;
@@ -389,7 +390,7 @@ fn stages(sql: &str, catalog: &Catalog, settings: &str) -> Value {
             Ok(done) => converted.push(json!({
                 "sql": match settings.compact {
                     true => done.sql.clone(),
-                    false => layout_sql(&done.sql),
+                    false => layout_sql(&done.sql, FormatDialect::DuckDB),
                 },
                 "columns": done.columns.iter().map(|column| json!({
                     "name": column.name,
@@ -413,7 +414,13 @@ fn stages(sql: &str, catalog: &Catalog, settings: &str) -> Value {
                 // Where each raise ID in the SQL comes from, so a run's error points at the source.
                 "raises": done.raises,
                 // The helper macros the SQL calls, which the page creates before running it.
-                "setup": helper_statements(&[done.sql.as_str()]),
+                "setup": helper_statements(&[done.sql.as_str()])
+                    .into_iter()
+                    .map(|statement| match settings.compact {
+                        true => statement,
+                        false => layout_sql(&statement, FormatDialect::DuckDB),
+                    })
+                    .collect::<Vec<_>>(),
             })),
             Err(refusal) => refusals.push(placed(refusal, statement, &lines)),
         }
