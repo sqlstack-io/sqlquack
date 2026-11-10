@@ -124,29 +124,57 @@ fn given_postgres_set_operations_when_tracing_lineage_then_outputs_take_the_stro
 }
 
 #[test]
-fn given_union_branches_of_one_type_spelled_two_ways_when_tracing_postgres_lineage_then_no_cast_is_reported()
- {
+fn given_union_branches_postgres_does_not_convert_when_tracing_lineage_then_no_cast_is_reported() {
     let schema = TypedShopSchema {
         closed: HashMap::from([(
             "orders".to_owned(),
             vec![
                 typed_column("id", "int4"),
                 typed_column("customer_id", "integer"),
+                typed_column("status", "varchar(10)"),
             ],
         )]),
         ..TypedShopSchema::default()
     };
-    let traced = lineage_outputs(
-        "SELECT id FROM orders UNION ALL SELECT customer_id FROM orders",
-        (Dialect::PostgreSQL, &POSTGRES),
-        &schema,
-    );
-    assert_eq!(
-        traced,
-        vec![(
-            "id".to_owned(),
-            TransformKind::Direct,
-            vec!["orders.customer_id".to_owned(), "orders.id".to_owned()],
-        )]
-    );
+    let test_cases = [
+        QueryLineageTestCase {
+            description: "one type spelled two ways",
+            sql: "SELECT id FROM orders UNION ALL SELECT customer_id FROM orders",
+            dialect: Dialect::PostgreSQL,
+            profile: &POSTGRES,
+            expected_outputs: &[(
+                "id",
+                TransformKind::Direct,
+                &["orders.customer_id", "orders.id"],
+            )],
+            expected_open_star: false,
+        },
+        QueryLineageTestCase {
+            description: "a literal branch, which drops only the column's length",
+            sql: "SELECT status FROM orders UNION ALL SELECT 'x'",
+            dialect: Dialect::PostgreSQL,
+            profile: &POSTGRES,
+            expected_outputs: &[("status", TransformKind::Direct, &["orders.status"])],
+            expected_open_star: false,
+        },
+    ];
+    for test_case in test_cases {
+        let traced = lineage_outputs(
+            test_case.sql,
+            (test_case.dialect, test_case.profile),
+            &schema,
+        );
+        let expected: Vec<(String, TransformKind, Vec<String>)> = test_case
+            .expected_outputs
+            .iter()
+            .map(|(name, kind, sources)| {
+                (
+                    (*name).to_owned(),
+                    *kind,
+                    sources.iter().map(|source| (*source).to_owned()).collect(),
+                )
+            })
+            .collect();
+        assert_eq!(traced, expected, "{}", test_case.description);
+    }
 }
