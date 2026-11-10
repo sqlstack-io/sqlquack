@@ -102,8 +102,8 @@ GROUP BY "ORDERS"."CUSTOMER_ID"
 					</div>
 					<div class="problem">
 						<div class="card">
-							<h3>Snowflake rejects it at runtime</h3>
-							<p>Invalid Snowflake SQL only shows up when the query runs on the warehouse, often mid-pipeline.</p>
+							<h3>The warehouse rejects it at runtime</h3>
+							<p>Invalid SQL only shows up when the query runs on the warehouse, often mid-pipeline.</p>
 						</div>
 						<div class="card">
 							<h3>Tests pass for the wrong engine</h3>
@@ -132,8 +132,8 @@ GROUP BY "ORDERS"."CUSTOMER_ID"
 						<div class="step">
 							<div class="step-text">
 								<span class="num">01 · Check</span>
-								<h3>Catch what Snowflake would reject</h3>
-								<p>Parses Snowflake SQL and reports the syntax Snowflake would reject. No schema needed. Each error has a code and the exact span; rejections also come with a fix.</p>
+								<h3>Catch what the warehouse would reject</h3>
+								<p>Snowflake today: parses Snowflake SQL and reports the syntax Snowflake would reject. No schema needed. Each error has a code and the exact span; rejections also come with a fix.</p>
 								<p class="more"><a href="/docs/cli/check/">How checking works →</a></p>
 							</div>
 <pre class="terminal"><span class="cmd">sqlquack check</span>
