@@ -8,7 +8,7 @@ use std::collections::BTreeMap;
 use serde::Serialize;
 use sqlquack_diagnostics::failures::main::raise_id::raise_id;
 use sqlquack_diagnostics::failures::models::FailureMode;
-use sqlquack_diagnostics::provenance::models::Provenance;
+use sqlquack_diagnostics::provenance::models::{DivergenceUse, Provenance};
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 use sqlquack_semantics::snowflake::typing::types::ColumnSpec;
@@ -104,6 +104,9 @@ pub struct Converted {
     pub provenance: Provenance,
     /// Where each raise ID in the SQL comes from: every source location of its expression.
     pub raises: BTreeMap<String, Vec<SourceLocation>>,
+    /// Each reliance on a known divergence, placed in the source where the expression is known.
+    #[serde(skip)]
+    pub divergence_uses: Vec<DivergenceUse>,
 }
 
 impl Converted {

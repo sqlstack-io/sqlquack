@@ -36,10 +36,13 @@ fn render_one(
         ..
     } = *style;
     let severity = style.severity(diagnostic.severity);
+    let code = match diagnostic.code.is_empty() {
+        true => String::new(),
+        false => format!("[{}]", diagnostic.code),
+    };
     let mut text = format!(
-        "{severity}{}[{}]{reset}{message}: {}{reset}\n",
+        "{severity}{}{code}{reset}{message}: {}{reset}\n",
         diagnostic.severity.label(),
-        diagnostic.code,
         diagnostic.message
     );
     let gutter = " ".repeat(

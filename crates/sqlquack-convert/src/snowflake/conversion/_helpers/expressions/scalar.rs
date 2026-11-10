@@ -214,6 +214,7 @@ fn located(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
     let locator = site.context.locator;
     let log = site.context.log;
     log.enter(&shape_construct(node), false);
+    let mark = log.divergence_mark();
     let converted = convert_kind(node, site);
     let argument = match &converted {
         Ok(emitted) => Some(shape_argument(node, emitted)),
@@ -226,6 +227,7 @@ fn located(node: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
             locator.locate(node).map(|location| location.start),
         ),
     );
+    log.place_divergences(mark, locator.locate(node));
     let mut emitted = converted.map_err(|refusal| locator.placed(refusal, node))?;
     emitted.sql = locator.identified(&emitted.sql, node);
     if reads_subquery(node) {

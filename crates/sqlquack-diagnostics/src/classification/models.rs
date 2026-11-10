@@ -6,6 +6,8 @@ use serde::{Serialize, Serializer};
 
 use sqlquack_syntax::tokens::models::SourceLocation;
 
+use crate::classification::constants::{PLAIN_NODE_NAMES, PROJECT_FUNCTION_CONSTRUCT};
+
 /// The kind of thing a construct names.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -59,6 +61,24 @@ impl Construct {
     /// The `<family>:<name>` key used in reports.
     pub fn key(&self) -> String {
         self.to_string()
+    }
+
+    /// The construct as SQL readers name it, such as `HASH`, `ILIKE` or `a cast to VARCHAR`.
+    pub fn plain_name(&self) -> String {
+        let spaced = || self.name.replace('_', " ").to_ascii_uppercase();
+        match self.family {
+            ConstructFamily::Function if self.name == PROJECT_FUNCTION_CONSTRUCT => {
+                "a project function".to_owned()
+            }
+            ConstructFamily::Function => self.name.clone(),
+            ConstructFamily::Cast => format!("a cast to {}", self.name.to_ascii_uppercase()),
+            ConstructFamily::Join => format!("{} JOIN", spaced()),
+            ConstructFamily::Clause | ConstructFamily::Syntax => spaced(),
+            ConstructFamily::Node => PLAIN_NODE_NAMES
+                .iter()
+                .find(|(node, _)| *node == self.name)
+                .map_or_else(spaced, |(_, plain)| (*plain).to_owned()),
+        }
     }
 }
 

@@ -46,6 +46,7 @@ fn given_an_override_when_converted_sql_skips_a_call_then_the_statement_is_refus
             columns: Vec::new(),
             provenance: Provenance::default(),
             raises: Default::default(),
+            divergence_uses: Vec::new(),
         };
         let outcome = overrides_applied(converted, &statements[0], &options);
         assert_eq!(
