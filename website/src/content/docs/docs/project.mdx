@@ -111,7 +111,7 @@ Two more column keys tell SQLQuack what a column's values hold:
 ```
 
 `offset` says every value of a `TIMESTAMP_TZ` column has that offset, `+00:00` or `UTC`, so
-conversion can rely on it; strict mode needs `--confirm-declared-offsets` too. `typed_leaves` says
+conversion can rely on it, in strict mode too, as a fact the schema states. `typed_leaves` says
 a `VARIANT` column holds typed values, such as dates, beside JSON.
 
 ## Choosing the folders
@@ -162,11 +162,10 @@ def main(status):
 
 SQLQuack reads the decorator without running the file. Besides SQLBuild's keys, `@udf` takes
 `volatility`, `null_input` and `vectorized=True`. A Python function only runs where a Python
-runtime registers it, so the built-in policy refuses calls to it. With a policy that allows
-`project_udf`, such as the repository's `sqlquack.toml`, confirm the runtime once:
+runtime registers it, so the defaults refuse calls to it. Where one does, say so once:
 
 ```toml
-[project.confirm]
+[project]
 python_runtime = true
 ```
 
@@ -185,7 +184,4 @@ time:
 TIMEZONE = "UTC"
 ```
 
-A `--session` flag replaces the project's value for one run. `[project.confirm]` also takes
-`utc_session` and `declared_offsets`, which confirm what `--utc-session` and
-`--confirm-declared-offsets` do. The confirmations hold whichever policy a run uses, including one
-chosen with `--policy` or `--builtin-policy`.
+A `--session` flag replaces the project's value for one run.

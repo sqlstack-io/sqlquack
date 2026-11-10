@@ -91,7 +91,7 @@ sources:
 ```
 
 ```console
-$ sqlquack convert revenue.sql --builtin-policy
+$ sqlquack convert revenue.sql --no-config
 SELECT
     "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID",
     CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE"
@@ -106,10 +106,10 @@ The DuckDB SQL goes to standard output and the progress lines to standard error,
 
 Some Snowflake behaviour has no exact match in DuckDB, such as `HASH`. For each of these known
 differences you refuse it, allow it or replace it with your own SQL, in `sqlquack.toml` in the
-current directory or the file `--policy` names. Without one, or with `--builtin-policy`, `convert`
-uses the built-in default: it refuses every known difference except the clock and those that can
-only fail with an error, such as arithmetic past its range or JSON DuckDB might read differently,
-which convert with a warning. See [When something can't convert exactly](/docs/policy/).
+current directory or the file `--config` names. Without one, or with `--no-config`, `convert`
+uses the defaults: they allow every known difference, with a warning, except five whose values can
+differ from Snowflake's with no error, such as `HASH`. See
+[When something can't convert exactly](/docs/policy/).
 
 ## Next steps
 

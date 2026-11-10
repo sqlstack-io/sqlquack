@@ -12,7 +12,7 @@ conversion comes from a rule verified against results recorded on Snowflake. Any
 covers is refused with a code, the exact span and a reason.
 
 ```console
-$ sqlquack convert revenue.sql --builtin-policy
+$ sqlquack convert revenue.sql --no-config
 error[SQ0004]: SQLQuack doesn't know this name
  --> revenue.sql:2:6
   |
@@ -25,7 +25,7 @@ error[SQ0004]: SQLQuack doesn't know this name
 Once `sources/orders.yml` declares `ORDERS`, the same file converts:
 
 ```console
-$ sqlquack convert revenue.sql --builtin-policy
+$ sqlquack convert revenue.sql --no-config
 SELECT
     "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID",
     CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE"
