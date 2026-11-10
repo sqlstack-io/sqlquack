@@ -58,7 +58,7 @@
   ],
   "packages": {
     ".": {
-      "release-type": "rust",
+      "release-type": "simple",
       "package-name": "sqlquack",
       "include-v-in-tag": true,
       "include-component-in-tag": false,
@@ -69,6 +69,21 @@
           "type": "toml",
           "path": "Cargo.toml",
           "jsonpath": "$.workspace.package.version"
+        },
+        {
+          "type": "toml",
+          "path": "Cargo.lock",
+          "jsonpath": "$.package[?(!@.source)].version"
+        },
+        {
+          "type": "toml",
+          "path": "website/wasm/Cargo.toml",
+          "jsonpath": "$.package.version"
+        },
+        {
+          "type": "toml",
+          "path": "website/wasm/Cargo.lock",
+          "jsonpath": "$.package[?(!@.source)].version"
         },
         {
           "type": "generic",
