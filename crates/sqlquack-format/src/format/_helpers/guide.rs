@@ -489,13 +489,14 @@ impl<'a> Guide<'a> {
         })
     }
 
-    /// Whether the `:` at `index` ends the parameters of a DuckDB `LAMBDA x, y :`.
+    /// Whether the `:` at `index` ends the parameters of a DuckDB `LAMBDA x, y :`, which may be keywords.
     fn lambda_colon(&self, index: usize) -> bool {
         let parameters = (0..index).rev().find(|&at| {
-            !matches!(
+            !(matches!(
                 self.lexemes[at].kind,
                 TokenType::Var | TokenType::Identifier | TokenType::Comma
-            ) || self.is(at, LAMBDA_KEYWORD)
+            ) || self.is_word(at))
+                || self.is(at, LAMBDA_KEYWORD)
         });
         parameters.is_some_and(|at| self.is(at, LAMBDA_KEYWORD))
     }
@@ -1314,6 +1315,14 @@ impl<'a> Guide<'a> {
             self.call(previous, opener, closer, indent);
         } else if (self.is_word(previous) && !self.is_any(previous, &EXPRESSION_LEADERS))
             || self.in_run[previous]
+            || (self.lexemes[previous].kind == TokenType::Colon
+                && self.lambda_colon(previous)
+                && self.kind(closer + 1).is_some_and(|next| {
+                    !matches!(
+                        next,
+                        TokenType::Comma | TokenType::RParen | TokenType::RBracket
+                    )
+                }))
         {
             self.expr(opener + 1, closer - 1, indent);
         } else {
