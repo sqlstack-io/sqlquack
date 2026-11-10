@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.4.0](https://github.com/sqlstack-io/sqlquack/compare/v0.3.0...v0.4.0) (2026-11-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* **config:** split the user sqlquack.toml from the evidence policy
+
+### Features
+
+* **config:** split the user sqlquack.toml from the evidence policy ([017327d](https://github.com/sqlstack-io/sqlquack/commit/017327d3a465892c1dd03640adaf0492c767ac96))
+
+
+### Bug Fixes
+
+* **config:** keep refusing a fact under --strict when [allow] refuses it ([6fc9ba1](https://github.com/sqlstack-io/sqlquack/commit/6fc9ba19704f6180e93595af1f73d72fba8b769b))
+
+
+### Performance Improvements
+
+* **syntax:** cap the token list a tokenize run reserves up front ([f9f37b3](https://github.com/sqlstack-io/sqlquack/commit/f9f37b37acfd6e62f07b2643f214a850772f7389))
+
 ## [0.3.0](https://github.com/sqlstack-io/sqlquack/compare/v0.2.0...v0.3.0) (2026-11-10)
 
 
