@@ -23,7 +23,7 @@ echo "SELECT 1 AS total" | sqlquack convert --builtin-policy --json
 reads come from the [project](/docs/project/) in the current folder. The DuckDB SQL goes
 to standard output, laid out with each clause on its own line, select items one per line, and
 nested queries and long `CASE` expressions indented; short statements stay on one line. Progress,
-the known divergences and assumptions it relies on, and refusals go to standard error.
+the known differences and assumptions it relies on, and refusals go to standard error.
 
 ```console
 $ sqlquack convert revenue.sql --builtin-policy
@@ -33,7 +33,7 @@ SELECT
 FROM "ORDERS" AS "ORDERS"
 WHERE ("ORDERS"."STATUS" = 'shipped')
 GROUP BY "ORDERS"."CUSTOMER_ID"
-sqlquack convert: done, converted under the built-in default
+sqlquack convert: done, converted
 ```
 
 ## Refusals
@@ -43,14 +43,14 @@ Each refusal is one of these:
 
 | Code | Why |
 |------|-----|
-| [`SQ0002`](/docs/diagnostics/reference/#sq0002) | No verified rule converts the construct yet. |
-| [`SQ0003`](/docs/diagnostics/reference/#sq0003) | A rule exists, but not for these operand types. |
-| [`SQ0004`](/docs/diagnostics/reference/#sq0004) | A relation or column name is not declared in the project's sources. |
-| [`SQ0005`](/docs/diagnostics/reference/#sq0005) | DuckDB cannot express the construct's Snowflake meaning. |
-| [`SQ0006`](/docs/diagnostics/reference/#sq0006) | Conversion exceeded its time or size budget. |
-| [`SQ0007`](/docs/diagnostics/reference/#sq0007) | The session parameters match no recorded profile. |
-| [`SQ0008`](/docs/diagnostics/reference/#sq0008) | The conversion needs a known divergence the policy refuses. |
-| [`SQ0009`](/docs/diagnostics/reference/#sq0009) | A select item has no alias, and SQLQuack has not verified the column name Snowflake gives it. |
+| [`SQ0002`](/docs/diagnostics/reference/#sq0002) | SQLQuack can't convert this yet. |
+| [`SQ0003`](/docs/diagnostics/reference/#sq0003) | SQLQuack can't convert this for these types. |
+| [`SQ0004`](/docs/diagnostics/reference/#sq0004) | SQLQuack doesn't know this name: the project's sources don't declare it. |
+| [`SQ0005`](/docs/diagnostics/reference/#sq0005) | DuckDB can't do what Snowflake does here. |
+| [`SQ0006`](/docs/diagnostics/reference/#sq0006) | Converting this took too long or produced too much SQL. |
+| [`SQ0007`](/docs/diagnostics/reference/#sq0007) | SQLQuack can't convert for these session settings. |
+| [`SQ0008`](/docs/diagnostics/reference/#sq0008) | This needs a known difference that isn't allowed. |
+| [`SQ0009`](/docs/diagnostics/reference/#sq0009) | This column needs an alias, because SQLQuack can't be sure of the name Snowflake gives it. |
 
 SQL that does not parse, or that Snowflake rejects, is refused with the same codes as
 [`check`](/docs/cli/check/). A `VALUES` list of more than 1,000 rows is refused.
@@ -60,16 +60,18 @@ SQL that does not parse, or that Snowflake rejects, is refused with the same cod
 | Option | Meaning |
 |--------|---------|
 | `--project <folder>` | The [project](/docs/project/) declaring the tables and functions the SQL reads. Default the current folder. |
-| `--session NAME=VALUE` | A Snowflake session parameter of your session, replacing the project's. Repeatable. See [Sessions](/docs/policy/#sessions). |
-| `--overrides <path>` | User overrides: a `FUNCTION()` file, or a directory of them, each with `replaces` and `dialect duckdb`. Replaces the project's `overrides/` folder. |
+| `--session NAME=VALUE` | A Snowflake session parameter of your session, replacing the project's. Repeatable. See [Sessions](/docs/sessions/). |
+| `--overrides <path>` | [Replacements](/docs/policy/#replace): a `FUNCTION()` file, or a directory of them, each with `replaces` and `dialect duckdb`. Replaces the project's `overrides/` folder. |
 | `--verified-override NAME=SHA256` | An override verified for the body with that hash, as `convert --json` reports. |
 | `--compact` | Print each statement on one line instead, in the JSON report too. |
 | `--format text\|json`, `--json` | Print the report as text or JSON. |
 | `--color auto\|always\|never` | Highlight the SQL and colour diagnostics, as for [`check`](/docs/cli/check/#options). JSON is never coloured. |
 
+{/* config-split: --utc-session and --loud-divergences-only fold into the defaults and --strict. */}
+
 `convert` also takes the policy flags: `--policy`, `--builtin-policy`, `--strict`,
 `--utc-session`, `--confirm-declared-offsets`, `--python-runtime` and `--loud-divergences-only`.
-See [Policy and sessions](/docs/policy/#flags).
+See [When something can't convert exactly](/docs/policy/#flags).
 
 ## JSON report
 

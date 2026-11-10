@@ -76,6 +76,9 @@ jobs:
       - name: Check the diagnostics reference matches the registry
         run: python3 scripts/generate_diagnostics.py --check
 
+      - name: Check the known differences table matches the entries
+        run: python3 scripts/generate_known_differences.py --check
+
       - name: Lint the engine
         working-directory: website/wasm
         run: |
