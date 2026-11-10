@@ -6,10 +6,12 @@ description: "A warehouse SQL compiler in Rust: parse, check and translate to Du
 import Card from '../../../components/docs/Card.astro';
 import CardGroup from '../../../components/docs/CardGroup.astro';
 
-SQLQuack is a Snowflake SQL compiler. It parses Snowflake SQL with its own parser, reports what
-Snowflake would reject with rustc-style diagnostics, and converts the rest into DuckDB SQL. Every
-conversion comes from a rule verified against results recorded on Snowflake. Anything no rule
-covers is refused with a code, the exact span and a reason.
+SQLQuack is a warehouse SQL compiler, and Snowflake is the first dialect it fully supports. It
+parses Snowflake SQL with its own parser, reports what Snowflake would reject with rustc-style
+diagnostics, and converts the rest into DuckDB SQL. Every conversion comes from a rule verified
+against results recorded on Snowflake. Anything no rule covers is refused with a code, the exact
+span and a reason. Other dialects have parsers but don't convert yet; see
+[Dialects](/docs/coverage/#dialects).
 
 ```console
 $ sqlquack convert revenue.sql --no-config
@@ -53,7 +55,7 @@ Converted SQL is proven only where both sessions run in UTC: Snowflake's `TIMEZO
 		Build SQLQuack, check a file and convert it.
 	</Card>
 	<Card title="Playground" icon="terminal" href="/playground/">
-		Paste Snowflake SQL and see each stage in the browser.
+		Paste warehouse SQL (Snowflake today) and see each stage in the browser.
 	</Card>
 	<Card title="Diagnostics" icon="triangle-exclamation" href="/docs/diagnostics/reference/">
 		Every `SQ` code, what it means and how to fix it.

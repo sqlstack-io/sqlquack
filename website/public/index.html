@@ -59,7 +59,7 @@
 					<p class="eyebrow">Rust-powered · Free and open source · Apache-2.0</p>
 					<h1>Run warehouse SQL locally.</h1>
 					<p class="tagline">Verified results, or a clear no.</p>
-					<p class="dialects"><span class="dialects-label">Dialects today</span> <span class="dialect">Snowflake</span> parse · check · translate to DuckDB</p>
+					<p class="dialects"><span class="dialects-label">Dialects today</span> <span class="dialect">Snowflake</span> parse · check · translate to DuckDB <a href="/docs/coverage/#dialects">Other dialects →</a></p>
 					<p class="lede">
 						SQLQuack converts only where rules checked against recorded Snowflake results cover the types
 						involved. Everything else is refused, with the exact span and the reason.
@@ -124,8 +124,8 @@ GROUP BY "ORDERS"."CUSTOMER_ID"
 			<section id="how">
 				<div class="wrap">
 					<div class="section-head">
-						<h2>From Snowflake SQL to DuckDB SQL</h2>
-						<p>Check it, convert it, and know exactly what was refused and why.</p>
+						<h2>From warehouse SQL to DuckDB SQL</h2>
+						<p>Snowflake today. Check it, convert it, and know exactly what was refused and why.</p>
 					</div>
 
 					<div class="steps">
@@ -260,8 +260,8 @@ conversion.converted          <span class="cm"># True</span></pre>
 			<section>
 				<div class="wrap">
 					<div class="section-head">
-						<h2>Measured against real Snowflake</h2>
-						<p>Every number comes from SQL run on real Snowflake. <a href="/docs/coverage/">How we measure →</a></p>
+						<h2>Measured against the real engine</h2>
+						<p>Every number comes from SQL run on real Snowflake, the first dialect SQLQuack fully supports. <a href="/docs/coverage/">How we measure →</a></p>
 					</div>
 					<div class="grid">
 						<div class="item">
@@ -313,7 +313,7 @@ SELECT CAST(1 AS DECIMAL(1,0)) AS "TOTAL"
 			<section class="closing">
 				<div class="wrap">
 					<h2>Try it on your own SQL</h2>
-					<p>Paste Snowflake SQL into the playground, or read the docs for the command line, Python and every diagnostic.</p>
+					<p>Paste warehouse SQL (Snowflake today) into the playground, or read the docs for the command line, Python and every diagnostic.</p>
 					<div class="actions">
 						<a class="button primary" href="/playground/">Try the playground</a>
 						<a class="button" href="/docs/">Read the docs</a>

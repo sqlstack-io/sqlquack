@@ -5,8 +5,9 @@ description: "What SQLQuack's measured figures cover, and how they are measured.
 
 import { figures, shown } from '../../../figures.mjs';
 
-Today SQLQuack reads Snowflake SQL: `sqlquack check` checks it and `sqlquack convert` converts it
-into DuckDB SQL. It does not read other source dialects yet.
+SQLQuack compiles warehouse SQL, and Snowflake is the first dialect it fully supports:
+`sqlquack check` checks it and `sqlquack convert` converts it into DuckDB SQL. The figures on this
+page measure Snowflake. [Dialects](#dialects) lists the others.
 
 Syntax and translation are separate claims, measured separately. Each figure says what it counts.
 None of them means every input is proven: a figure says what was checked, under which conditions.
@@ -22,6 +23,13 @@ None of them means every input is proven: a figure says what was checked, under 
 		<tr><td>Documented Snowflake syntax forms verified</td><td>{figures.SYNTAX_PCT} of {figures.SYNTAX_FORMS}</td><td>{figures.SYNTAX_BASIS}</td></tr>
 	</tbody>
 </table>
+
+## Dialects
+
+| Dialect | Status |
+|---------|--------|
+| Snowflake | Parse, check and convert to DuckDB. |
+| PostgreSQL, BigQuery, Databricks, DuckDB, SQLite, ClickHouse, SQL Server | Parser built. Not yet in `check`, `convert` or `census`; conversion is planned. |
 
 ## Syntax
 
