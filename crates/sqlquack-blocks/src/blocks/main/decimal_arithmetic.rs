@@ -3,6 +3,7 @@
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
+use crate::blocks::_helpers::numbers::widened_literal;
 use crate::blocks::constants::DECIMAL_ARITHMETIC;
 use crate::blocks::main::cast::cast;
 
@@ -14,7 +15,10 @@ pub fn decimal_arithmetic(
     log: &ProvenanceLog,
 ) -> Result<String, String> {
     log.building_block(DECIMAL_ARITHMETIC);
-    let widened = |(sql, scale): (&str, u8)| format!("CAST({sql} AS DECIMAL(38,{scale}))");
+    let widened = |(sql, scale): (&str, u8)| {
+        let sql = widened_literal(sql, 38, scale).unwrap_or(sql);
+        format!("CAST({sql} AS DECIMAL(38,{scale}))")
+    };
     cast(
         &format!("({} {operator} {})", widened(left), widened(right)),
         result,
