@@ -189,8 +189,13 @@ pub(crate) fn obligation(number: u32, fields: &str) -> String {
     )
 }
 
-/// The COUNT_IF case file under `parent`'s `cases/`, and an IFF one the obligations may wrongly cite.
+/// COUNT_IF and IFF case files under `parent`'s `cases/`, and a COUNT_IF one outside it.
 pub(crate) fn count_if_cases(parent: &Path) {
+    write(
+        parent,
+        "outside/count-if.toml",
+        "construct = \"sf.functions.count-if\"\n",
+    );
     write(
         parent,
         "cases/translation/functions/count-if.toml",

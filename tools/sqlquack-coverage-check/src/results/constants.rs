@@ -48,6 +48,8 @@ pub const OBLIGATIONS_DIR: &str = "obligations";
 pub const OBLIGATION_CASES_PREFIX: &str = "cases/";
 /// The directory under the evidence cases holding translation cases.
 pub const TRANSLATION_CASES: &str = "translation/";
+/// Path parts a cited case may not have, besides an empty one: they could leave the cases root.
+pub const RELATIVE_PATH_PARTS: [&str; 2] = [".", ".."];
 /// The boundary kinds a boundary obligation may name.
 pub const BOUNDARY_SUBKINDS: [&str; 7] = [
     "overflow",

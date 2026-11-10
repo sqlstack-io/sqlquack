@@ -106,6 +106,27 @@ fn given_malformed_obligations_when_loading_then_each_is_a_load_error() {
             expected_problem: "needs a subkind",
         },
         ObligationLoadTestCase {
+            description: "a case whose .. parts leave the cases root, for a valid case file there",
+            obligations: obligation(
+                1,
+                &citing("translation/functions/../../../outside/count-if.toml#t001"),
+            ),
+            retired: "",
+            expected_problem: "whose path has an empty, . or .. part",
+        },
+        ObligationLoadTestCase {
+            description: "a case with an empty part, which an absolute path also leaves",
+            obligations: obligation(1, &citing("translation/functions//count-if.toml#t001")),
+            retired: "",
+            expected_problem: "whose path has an empty, . or .. part",
+        },
+        ObligationLoadTestCase {
+            description: "a case with a . part",
+            obligations: obligation(1, &citing("translation/functions/./count-if.toml#t001")),
+            retired: "",
+            expected_problem: "whose path has an empty, . or .. part",
+        },
+        ObligationLoadTestCase {
             description: "a case under another family",
             obligations: obligation(
                 1,
