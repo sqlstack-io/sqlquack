@@ -18,3 +18,11 @@ pub(crate) struct ResolvedReadTestCase {
     pub(crate) expected_sources: &'static [&'static str],
     pub(crate) expected_resolved: bool,
 }
+
+/// A query reading SELECT aliases, its outputs' sources and its findings as `code written`.
+pub(crate) struct AliasReadTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_sources: &'static [(&'static str, &'static [&'static str])],
+    pub(crate) expected_findings: &'static [&'static str],
+}

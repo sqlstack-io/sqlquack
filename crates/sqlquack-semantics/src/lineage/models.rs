@@ -168,6 +168,7 @@ pub(crate) struct LineageScope<'a> {
     pub(crate) sources: Vec<ScopeSource>,
     pub(crate) ctes: &'a [NamedQuery],
     pub(crate) outer: Option<&'a LineageScope<'a>>,
+    /// SELECT aliases in scope; each reader calls `reuse::alias_read` first, so `shared` skips it.
     pub(crate) aliases: Vec<ScopedColumn>,
     pub(crate) lambda_names: Vec<String>,
     /// The keys USING and NATURAL joins merged, read unqualified and once by a bare star.
