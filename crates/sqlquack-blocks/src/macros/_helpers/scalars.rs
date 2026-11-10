@@ -1,11 +1,15 @@
 //! The casting bodies: a VARIANT cast to NUMBER, FLOAT, BOOLEAN, DATE or TIMESTAMP_NTZ.
 
-use sqlquack_diagnostics::failures::constants::{NUMBER_OUT_OF_RANGE, VARIANT_NOT_CAST};
+use sqlquack_diagnostics::failures::constants::{
+    DIVISION_BY_ZERO, NUMBER_OUT_OF_RANGE, VARIANT_NOT_CAST,
+};
 use sqlquack_diagnostics::failures::main::tagged_message::tagged_message;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::blocks::constants::{NUMBER_RANGE_MESSAGE, VARIANT_CAST_MESSAGE};
+use crate::blocks::constants::{
+    NUMBER_RANGE_MESSAGE, QUOTIENT_RANGE_MESSAGE, VARIANT_CAST_MESSAGE,
+};
 use crate::blocks::main::cast::cast;
 use crate::blocks::main::text_to_boolean::text_to_boolean;
 use crate::blocks::main::text_to_float::text_to_float;
@@ -13,7 +17,8 @@ use crate::blocks::main::text_to_number::text_to_number;
 use crate::blocks::models::{NumberTarget, NumberText, TextFailure};
 use crate::macros::_helpers::guards::{bound, fidelity_error};
 use crate::macros::constants::{
-    NUMBER_LARGEST_PARAMETER, NUMBER_TYPE_PARAMETER, SITE_PARAMETER, VALUE_PARAMETER,
+    DIVIDEND_PARAMETER, DIVISOR_PARAMETER, LIMIT_PARAMETER, NUMBER_LARGEST_PARAMETER,
+    NUMBER_TYPE_PARAMETER, POWER_PARAMETER, ROUNDED_PARAMETER, SITE_PARAMETER, VALUE_PARAMETER,
     VARIANT_BOOLEAN_V1, VARIANT_DATE_V1, VARIANT_FLOAT_V1, VARIANT_TIMESTAMP_NTZ_V1,
 };
 use crate::raises::main::site_raised::site_raised;
@@ -148,4 +153,24 @@ pub(crate) fn scalar_case(target: SnowflakeType, log: &ProvenanceLog) -> Result<
         refused("an object or array")?
     );
     Ok(bound(VALUE_PARAMETER, "j", &body))
+}
+
+/// The exact quotient of the unscaled dividend, shifted by the power, and divisor, each read once.
+pub(crate) fn quotient_body() -> String {
+    let zero = site_raised(
+        &tagged_message(DIVISION_BY_ZERO, "Division by zero"),
+        SITE_PARAMETER,
+        None,
+    );
+    let wide = site_raised(QUOTIENT_RANGE_MESSAGE, SITE_PARAMETER, None);
+    let (n, d) = ("quack_pair[1]", "quack_pair[2]");
+    format!(
+        "list_transform([[{DIVIDEND_PARAMETER}, {DIVISOR_PARAMETER}]], lambda quack_pair: (CASE \
+         WHEN {n} IS NULL OR {d} IS NULL THEN NULL WHEN {d} = 0 THEN {zero} \
+         WHEN abs({d}) >= {LIMIT_PARAMETER} THEN {wide} \
+         ELSE list_transform([({n} % {d}) * {POWER_PARAMETER}], lambda quack_rest: \
+         ({n} // {d}) * {POWER_PARAMETER} + quack_rest // {d} + (CASE WHEN {ROUNDED_PARAMETER} \
+         AND abs(quack_rest % {d}) >= abs({d}) - abs(quack_rest % {d}) \
+         THEN sign(quack_rest) * sign({d}) ELSE 0 END))[1] END))[1]"
+    )
 }

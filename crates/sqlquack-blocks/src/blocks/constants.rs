@@ -114,6 +114,9 @@ pub const DECIMAL_ARITHMETIC: &str = "duckdb.decimal_arithmetic";
 pub const DOUBLE_ARITHMETIC: &str = "duckdb.double_arithmetic";
 /// Exact decimal division rounding half away from zero: `duckdb.exact_decimal_divide`.
 pub const EXACT_DECIMAL_DIVIDE: &str = "duckdb.exact_decimal_divide";
+/// The error the exact quotient raises where it needs more than DuckDB's 128-bit integers.
+pub const QUOTIENT_RANGE_MESSAGE: &str =
+    "numeric_range: the exact quotient needs more than 128 bits";
 /// Raising an error for text longer than a VARCHAR(n) target: `duckdb.varchar_length_check`.
 pub const VARCHAR_LENGTH_CHECK: &str = "duckdb.varchar_length_check";
 /// NULL for text longer than a TRY_CAST's VARCHAR(n) target: `duckdb.varchar_length_try`.

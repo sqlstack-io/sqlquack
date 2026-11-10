@@ -240,6 +240,11 @@ fn given_a_released_helper_when_defined_then_its_definition_is_unchanged() {
             name: "time_zone_v1",
             expected_md5: Some("a41a0270b8028db02b1b191d968a1d80"),
         },
+        PinnedDefinitionTestCase {
+            description: "decimal_quotient_v1's released definition is unchanged; a change takes a new version",
+            name: "decimal_quotient_v1",
+            expected_md5: Some("d063fab5b1be26806d77b2accdd21569"),
+        },
     ];
     for test_case in test_cases {
         let opening = format!("CREATE OR REPLACE MACRO sqlquack.{}(", test_case.name);

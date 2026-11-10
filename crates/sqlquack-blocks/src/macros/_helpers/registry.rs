@@ -5,14 +5,15 @@ use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 use crate::blocks::models::TextFailure;
 
 use crate::macros::_helpers::reading::{checked_body, read_body};
-use crate::macros::_helpers::scalars::{number_body, scalar_body};
+use crate::macros::_helpers::scalars::{number_body, quotient_body, scalar_body};
 use crate::macros::_helpers::temporal::{
     timestamp_body, utc_zoned_body, zone_name_body, zoned_body,
 };
 use crate::macros::_helpers::writing::{escaped_body, json_text_body, text_body};
 use crate::macros::constants::{
-    DATE_TEXT_V1, HELPER_CALL_PREFIX, JSON_CHECKED_V1, JSON_ESCAPED_V1, JSON_READ_V1,
-    NUMBER_LARGEST_PARAMETER, NUMBER_TYPE_PARAMETER, OBJECTS_PARAMETER, SITE_PARAMETER,
+    DATE_TEXT_V1, DECIMAL_QUOTIENT_V1, DIVIDEND_PARAMETER, DIVISOR_PARAMETER, HELPER_CALL_PREFIX,
+    JSON_CHECKED_V1, JSON_ESCAPED_V1, JSON_READ_V1, LIMIT_PARAMETER, NUMBER_LARGEST_PARAMETER,
+    NUMBER_TYPE_PARAMETER, OBJECTS_PARAMETER, POWER_PARAMETER, ROUNDED_PARAMETER, SITE_PARAMETER,
     TEXT_PARAMETER, TIME_ZONE_V1, TIMESTAMP_TEXT_V1, TRY_DATE_TEXT_V1, TRY_TIMESTAMP_TEXT_V1,
     TRY_UTC_ZONED_TEXT_V1, TRY_ZONED_TEXT_V1, TRYING_PARAMETER, UTC_ZONED_TEXT_V1, VALUE_PARAMETER,
     VALUES_PARAMETER, VARIANT_BOOLEAN_V1, VARIANT_DATE_V1, VARIANT_FLOAT_V1, VARIANT_JSON_TEXT_V1,
@@ -21,7 +22,7 @@ use crate::macros::constants::{
 use crate::macros::models::HelperMacro;
 
 /// The helper macros, dependencies first.
-pub(crate) fn helper_macros() -> [HelperMacro; 19] {
+pub(crate) fn helper_macros() -> [HelperMacro; 20] {
     [
         HelperMacro {
             name: TIME_ZONE_V1,
@@ -201,6 +202,24 @@ pub(crate) fn helper_macros() -> [HelperMacro; 19] {
                       text, an integer as seconds since 1970, JSON null as NULL. Raises \
                       Snowflake's error for text it does not read, and json_fidelity for a \
                       number with a fraction, a boolean, an object or an array.",
+        },
+        HelperMacro {
+            name: DECIMAL_QUOTIENT_V1,
+            parameters: &[
+                SITE_PARAMETER,
+                DIVIDEND_PARAMETER,
+                DIVISOR_PARAMETER,
+                POWER_PARAMETER,
+                LIMIT_PARAMETER,
+                ROUNDED_PARAMETER,
+            ],
+            body: quotient_body,
+            explain: "The exact quotient of two unscaled decimals, the dividend first shifted by \
+                      the power of ten in the fourth argument, rounded half away from zero when \
+                      the last argument is true and truncated otherwise; NULL when either is \
+                      NULL. Raises Snowflake's division by zero error for a zero divisor, and \
+                      numeric_range for a divisor at or beyond the fifth argument, where the \
+                      exact quotient needs more than DuckDB's 128 bits.",
         },
     ]
 }
