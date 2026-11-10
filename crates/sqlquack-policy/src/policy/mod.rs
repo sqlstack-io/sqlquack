@@ -1,4 +1,4 @@
-//! Loading and validating the evidence policy, `evidence.toml`.
+//! Loading and validating the evidence policy, `policy.toml`.
 
 pub(crate) mod _helpers;
 pub mod constants;

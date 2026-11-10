@@ -1,10 +1,10 @@
 //! Policy file identity.
 
 /// The evidence policy, compiled in as the built-in defaults.
-pub const EVIDENCE_TEXT: &str = include_str!("../../evidence.toml");
+pub const EVIDENCE_TEXT: &str = include_str!("../../policy.toml");
 
 /// The evidence policy file within this crate, as the repository's evidence commands read it.
-pub const EVIDENCE_FILE: &str = "crates/sqlquack-policy/evidence.toml";
+pub const EVIDENCE_FILE: &str = "crates/sqlquack-policy/policy.toml";
 
 /// The time zone every session profile runs in, Snowflake's `TIMEZONE` and DuckDB's `TimeZone`.
 pub const SESSION_TIME_ZONE: &str = "UTC";

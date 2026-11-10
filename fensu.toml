@@ -48,7 +48,7 @@ reason = "imported by the playground engine website/wasm, outside the root cargo
 [[targets.rust.rule_exceptions]]
 rule = "FPRSL106"
 path = "crates/sqlquack-policy/src/policy/constants.rs"
-reason = "compiles in crates/sqlquack-policy/evidence.toml, which sits at the crate root for `cargo package` and the evidence commands"
+reason = "compiles in crates/sqlquack-policy/policy.toml, which sits at the crate root for `cargo package` and the evidence commands"
 
 # Format, lint and fingerprint take a dialect at run time, so each keeps one registry that maps
 # a dialect value to its src/<dialect>/ profile, with every line behind that dialect's feature.
@@ -61,7 +61,7 @@ dialect_registries = [
 ]
 
 # A crate that is also a Python distribution keeps its pyproject.toml and shipped notices beside Cargo.toml,
-# and sqlquack-policy keeps the evidence.toml it compiles in, so `cargo package` includes it.
+# and sqlquack-policy keeps the policy.toml it compiles in, so `cargo package` includes it.
 [targets.rust.rule_options.FPRSR311]
 allowed_entries = [
     "Cargo.toml",
@@ -74,7 +74,7 @@ allowed_entries = [
     "LICENSE*",
     "THIRD_PARTY_NOTICES",
     "pyproject.toml",
-    "evidence.toml",
+    "policy.toml",
 ]
 
 # Layer: only the command-line crates may depend on the conversion rules and pipeline.

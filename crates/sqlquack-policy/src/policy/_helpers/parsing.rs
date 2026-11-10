@@ -48,7 +48,7 @@ fn incomplete_divergence(table: &toml::Table) -> Option<String> {
         }
         None => format!(
             "[divergences.{id}] is missing field{} {}: a policy file declares each divergence in \
-             full, so copy its entry from SQLQuack's evidence.toml, or check the id's \
+             full, so copy its entry from SQLQuack's policy.toml, or check the id's \
              spelling",
             if absent.len() == 1 { "" } else { "s" },
             absent
