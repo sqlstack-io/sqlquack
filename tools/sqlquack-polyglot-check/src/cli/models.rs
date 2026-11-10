@@ -3,6 +3,7 @@
 use std::path::PathBuf;
 
 use clap::{Parser, Subcommand, ValueEnum};
+use sqlquack_policy::policy::constants::EVIDENCE_FILE;
 
 /// `sqlquack-polyglot-check` arguments.
 #[derive(Debug, Parser)]
@@ -50,9 +51,9 @@ pub enum CorpusArgument {
         /// The case directory.
         #[arg(long, default_value = "cases")]
         cases: PathBuf,
-        /// The policy file.
-        #[arg(long, default_value = "sqlquack.toml")]
-        policy: PathBuf,
+        /// The evidence policy, which declares the cases' session profiles.
+        #[arg(long, default_value = EVIDENCE_FILE)]
+        evidence: PathBuf,
     },
 }
 

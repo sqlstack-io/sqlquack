@@ -1,0 +1,3 @@
+# Names a known difference that does not exist.
+[allow]
+hsah = true

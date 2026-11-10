@@ -16,7 +16,7 @@ pub struct TranslationInputs<'a> {
     /// Constructs with a current by-design sign-off.
     pub by_design: &'a BTreeSet<String>,
     pub binary: &'a Path,
-    pub policy: &'a Path,
+    pub config: &'a Path,
     /// A scratch directory for each case's project of census relations.
     pub work: &'a Path,
     pub family: Option<&'a str>,

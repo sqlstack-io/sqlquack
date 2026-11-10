@@ -21,7 +21,7 @@ def run_measure(*, argv: list[str] | None = None, converter: Converter | None = 
     """Write the JSON report to --out and print the text summary."""
     arguments: argparse.Namespace = _parser().parse_args(argv)
     convert: Converter = converter or binary_converter(
-        binary=arguments.sqlquack, policy=arguments.policy
+        binary=arguments.sqlquack, policy=arguments.config
     )
     probes: list[Probe] = read_probes(path=arguments.sources)
     print(f"guard measurement: measuring {len(probes)} probes…", file=sys.stderr)
@@ -67,7 +67,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--samples", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--sqlquack", type=Path, default=Path("sqlquack"))
-    parser.add_argument("--policy", type=Path, default=Path("sqlquack.toml"))
+    parser.add_argument("--config", type=Path, default=Path("sqlquack.toml"))
     parser.add_argument(
         "--examples",
         type=int,

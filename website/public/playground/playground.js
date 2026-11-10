@@ -150,13 +150,8 @@ function choicesSummary() {
 	return added.length ? `allows: ${added.map((difference) => difference.name).join(', ')}` : 'the defaults';
 }
 
-const settings = () =>
-	JSON.stringify({
-		session: sessionParameters()
-			.map(([name, value]) => `${name}=${value}`)
-			.join('\n'),
-		strict: strictBox.checked,
-	});
+// The engine reads the session from the config's [project.session], as `sqlquack convert` does.
+const settings = () => JSON.stringify({ config: configText(), strict: strictBox.checked });
 const verdict = $('#pg-verdict');
 const marks = $('#pg-marks');
 const tip = $('#pg-tip');
@@ -211,7 +206,7 @@ async function run() {
 	verdict.hidden = true;
 	if (report.sources_error || report.settings_error) {
 		underline(chars, []);
-		const what = report.sources_error ? 'The sources are not valid' : 'The policy or session is not valid';
+		const what = report.sources_error ? 'The sources are not valid' : 'The sqlquack.toml or session is not valid';
 		setStage('parse', 'skipped', terminal(`<span class="bad">${what}:</span> ${escape(report.sources_error ?? report.settings_error)}`));
 		for (const id of ['checks', 'translate', 'run']) setStage(id, 'skipped');
 		return;

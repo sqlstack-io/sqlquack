@@ -45,13 +45,10 @@ pub(crate) fn convert_json(sql: &str, request: &str, path: &str) -> PyResult<Str
         colors: ColorArguments::default(),
         conversion: PolicyArguments {
             project: request.project,
-            policy: request.policy,
-            builtin_policy: request.builtin_policy,
+            config: request.config,
+            no_config: request.no_config,
             strict: request.strict,
-            utc_session: request.utc_session,
-            confirm_declared_offsets: request.confirm_declared_offsets,
             python_runtime: request.python_runtime,
-            loud_divergences_only: request.loud_divergences_only,
         },
     };
     let report = convert_report(&arguments, sql).map_err(PyValueError::new_err)?;

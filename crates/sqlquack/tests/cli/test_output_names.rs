@@ -523,7 +523,7 @@ fn given_a_refused_result_name_when_converting_then_the_diagnostic_underlines_th
             expected_span: ("SQ0004", 17, 25),
         },
     ];
-    let flags = ["--builtin-policy", "--project", INTEGER_ORDERS_PROJECT];
+    let flags = ["--no-config", "--project", INTEGER_ORDERS_PROJECT];
     for test_case in test_cases {
         let (_, stderr) = convert_streams(test_case.sql, &flags);
         assert_eq!(

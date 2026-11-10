@@ -28,6 +28,7 @@ pub(crate) fn fake_sqlquack(directory: &Path, convert: &str) -> std::path::PathB
 
 /// The fake's lines refusing the SQL for one construct.
 pub(crate) fn refused(category: &str, construct: &str) -> String {
+    let category = category.replace('\'', "'\\''");
     format!(
         "echo '{{\"converted\":false,\"refusals\":[{{\"category\":\"{category}\",\"construct\":\"{construct}\"}}]}}'; exit 1"
     )
@@ -87,7 +88,7 @@ pub(crate) fn measure(
         root,
         by_design,
         binary,
-        policy: &policy,
+        config: &policy,
         work: work.path(),
         family: None,
         jobs: 2,

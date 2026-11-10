@@ -4,7 +4,7 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 use serde_json::{Map, Value};
-use sqlquack_policy::policy::models::ProjectPolicy;
+use sqlquack_policy::config::models::ProjectConfig;
 use walkdir::WalkDir;
 
 use crate::project::_helpers::function_files::{python_function, sql_function};
@@ -22,7 +22,7 @@ pub(crate) type Declared = (Map<String, Value>, Vec<Declaration>);
 /// The tables of the project's source files, and a warning for each source left out.
 pub(crate) fn source_tables(
     root: &Path,
-    project: &ProjectPolicy,
+    project: &ProjectConfig,
 ) -> Result<(Declared, Vec<String>), String> {
     let (mut tables, mut declarations, mut warnings) = (Map::new(), Vec::new(), Vec::new());
     let Some(folder) = project_folder(root, project.sources.as_deref(), SOURCES_FOLDER)? else {
@@ -40,7 +40,7 @@ pub(crate) fn source_tables(
 }
 
 /// The functions of the project's SQL and Python function files, named after their files.
-pub(crate) fn project_functions(root: &Path, project: &ProjectPolicy) -> Result<Declared, String> {
+pub(crate) fn project_functions(root: &Path, project: &ProjectConfig) -> Result<Declared, String> {
     let Some(folder) = project_folder(root, project.functions.as_deref(), FUNCTIONS_FOLDER)? else {
         return Ok((Map::new(), Vec::new()));
     };

@@ -64,7 +64,7 @@ pub(crate) fn run_on_refused_upstream(typed: bool, flags: &[&str]) -> UpstreamOu
         .args([
             "census",
             "--detailed",
-            "--builtin-policy",
+            "--no-config",
             "--chain-models",
             "--project",
         ])
@@ -120,7 +120,7 @@ pub(crate) fn run_on_events(payload: &str, flags: &[&str]) -> SourceVariantOutco
             "--project",
         ])
         .arg(directory.path())
-        .arg("--policy")
+        .arg("--config")
         .arg(&policy);
     let output = command
         .args(flags)
@@ -152,7 +152,7 @@ pub(crate) fn run_on_placed_orders(flags: &[&str]) -> SourceVariantOutcome {
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
         .args(["census", "--detailed", "--json", "--project"])
         .arg(directory.path())
-        .arg("--policy")
+        .arg("--config")
         .arg(&policy)
         .args(flags)
         .arg(&models)
@@ -179,7 +179,7 @@ pub(crate) fn census_warnings(flags: &[&str]) -> Vec<String> {
         .args([
             "census",
             "--detailed",
-            "--builtin-policy",
+            "--no-config",
             "--json",
             "--chain-models",
             "--project",
@@ -210,13 +210,7 @@ pub(crate) fn cursor_model_convertible(flags: &[&str]) -> Option<u64> {
         "sources:\n  - name: orders\n    columns:\n      - name: order_id\n        type: NUMBER(38,0)\n",
     );
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args([
-            "census",
-            "--detailed",
-            "--builtin-policy",
-            "--json",
-            "--project",
-        ])
+        .args(["census", "--detailed", "--no-config", "--json", "--project"])
         .arg(directory.path())
         .args(flags)
         .arg(&models)
@@ -249,7 +243,7 @@ pub(crate) fn run_on_declared_orders(declare_model: bool, flags: &[&str]) -> Dec
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
         .args(["census", "--detailed", "--json", "--project"])
         .arg(directory.path())
-        .arg("--policy")
+        .arg("--config")
         .arg(&policy)
         .args(flags)
         .arg(&models)
@@ -286,13 +280,7 @@ pub(crate) fn converted_files(set_variable: bool) -> Vec<ConvertedFile> {
     write_sources(directory.path(), &format!("sources:\n{CUSTOMERS_SOURCE}"));
     let mut command = Command::new(env!("CARGO_BIN_EXE_sqlquack"));
     command
-        .args([
-            "census",
-            "--detailed",
-            "--builtin-policy",
-            "--json",
-            "--project",
-        ])
+        .args(["census", "--detailed", "--no-config", "--json", "--project"])
         .arg(directory.path())
         .arg(&models)
         .env_remove("SQLQUACK_CONVERTED_DIR")
@@ -342,13 +330,7 @@ pub(crate) fn compiled_dbt_counts(flags: &[&str]) -> (Option<u64>, Option<u64>) 
         .expect("fixture written");
     write_sources(directory.path(), RAW_ORDERS_SOURCES);
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args([
-            "census",
-            "--detailed",
-            "--builtin-policy",
-            "--json",
-            "--project",
-        ])
+        .args(["census", "--detailed", "--no-config", "--json", "--project"])
         .arg(directory.path())
         .args(flags)
         .arg(directory.path().join("target/compiled"))
@@ -384,7 +366,7 @@ pub(crate) fn default_census(typed: bool, files: usize, flags: &[&str]) -> Defau
             .current_dir(directory.path())
             .args([
                 "census",
-                "--builtin-policy",
+                "--no-config",
                 "--project",
                 ".",
                 "--format",

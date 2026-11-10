@@ -436,14 +436,14 @@ head's binary, then `diff BASE HEAD`.
 
 ## Translation
 
-`syntax-coverage translation --sqlquack <binary> [--policy sqlquack.toml] [--family <family>]
+`syntax-coverage translation --sqlquack <binary> [--config sqlquack.toml] [--family <family>]
 [--jobs 4] [--json]` measures what conversion makes of the syntax Snowflake parsed. It never
 changes a coverage verdict. The `sqlquack` binary must find `libduckdb.so`, for example through
 `LD_LIBRARY_PATH`.
 
 A case counts when its current receipt phase is `accepted`, `semantic_error` or `runtime_error`
 and it does not expect a rejection. Each counted case runs in its own
-`sqlquack convert --loud-divergences-only --json --policy <policy> -` process, bounded to 120
+`sqlquack convert --json --config <config> -` process, bounded to 120
 seconds and 4 GiB. Its outcome is one of:
 
 - `translated`: convert converted it. For a query, that includes DuckDB parsing and binding the

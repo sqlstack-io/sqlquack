@@ -36,7 +36,7 @@ pub fn render_census_text(report: &CensusReport, limit: usize) -> String {
     let _ = writeln!(
         text,
         "  files refused: missing rule {}, outside type conditions {}, unresolved name {}, \
-         not expressible {}, parse fidelity {}, conversion budget {}, divergence refused {}",
+         not expressible {}, parse fidelity {}, conversion budget {}, known difference not allowed {}",
         refusals.missing_rule,
         refusals.type_condition,
         refusals.unresolved_name,

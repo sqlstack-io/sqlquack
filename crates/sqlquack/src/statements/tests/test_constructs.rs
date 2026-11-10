@@ -1,5 +1,5 @@
 use sqlquack_evidence::cases::main::load_cases::load_cases;
-use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
+use sqlquack_policy::policy::constants::EVIDENCE_FILE;
 use sqlquack_policy::policy::main::load_policy::load_policy;
 
 use crate::statements::_helpers::constructs::constructs;
@@ -21,7 +21,7 @@ fn given_a_statement_snowflake_cannot_parse_when_reading_constructs_then_only_a_
         },
     ];
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
-    let policy = load_policy(&root.join(POLICY_FILE_NAME)).expect("the repository policy loads");
+    let policy = load_policy(&root.join(EVIDENCE_FILE)).expect("the repository policy loads");
     for test_case in test_cases {
         let directory = tempfile::tempdir().expect("a temporary directory");
         let toml = format!(

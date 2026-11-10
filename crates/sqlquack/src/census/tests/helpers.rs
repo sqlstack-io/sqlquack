@@ -3,7 +3,7 @@ use std::path::Path;
 
 use crate::analysis::models::SourceDialect;
 use sqlquack_convert::snowflake::conversion::models::{AllowedDivergence, ConversionOptions};
-use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
+use sqlquack_policy::policy::constants::EVIDENCE_FILE;
 use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 use sqlquack_semantics::snowflake::typing::types::{ColumnSpec, Schema};
@@ -598,7 +598,7 @@ pub(crate) fn policy_allowed() -> ConversionOptions {
     let policy = load_policy(
         &Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("../..")
-            .join(POLICY_FILE_NAME),
+            .join(EVIDENCE_FILE),
     )
     .expect("the repository policy loads");
     conversion_options(&policy, false)
@@ -628,7 +628,7 @@ fn chained_report(files: &[ShopFile]) -> CensusReport {
     let policy = load_policy(
         &Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("../..")
-            .join(POLICY_FILE_NAME),
+            .join(EVIDENCE_FILE),
     )
     .expect("the repository policy loads");
     let directory = tempfile::tempdir().expect("temporary directory");

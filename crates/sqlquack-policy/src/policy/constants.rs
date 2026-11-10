@@ -1,10 +1,10 @@
 //! Policy file identity.
 
-/// The policy file at the repository root.
-pub const POLICY_FILE_NAME: &str = "sqlquack.toml";
+/// The evidence policy, compiled in as the built-in defaults.
+pub const EVIDENCE_TEXT: &str = include_str!("../../evidence.toml");
 
-/// The table of a project's settings in `sqlquack.toml`; a file holding only it uses the built-in policy.
-pub const PROJECT_TABLE: &str = "project";
+/// The evidence policy file within this crate, as the repository's evidence commands read it.
+pub const EVIDENCE_FILE: &str = "crates/sqlquack-policy/evidence.toml";
 
 /// The time zone every session profile runs in, Snowflake's `TIMEZONE` and DuckDB's `TimeZone`.
 pub const SESSION_TIME_ZONE: &str = "UTC";
@@ -50,10 +50,10 @@ pub const RESULT_NEUTRAL_SESSION_PARAMETERS: &[(&str, &str)] = &[
 pub const DEFAULT_SESSION_PROFILE: &str = "utc-v1";
 
 /// The only schema version this build understands.
-pub const SCHEMA_VERSION: u32 = 1;
+pub const SCHEMA_VERSION: u32 = 2;
 
 /// The fields every `[divergences.<id>]` entry must give.
-pub const DIVERGENCE_FIELDS: [&str; 5] = ["constructs", "default", "strict", "reason", "failure"];
+pub const DIVERGENCE_FIELDS: [&str; 5] = ["constructs", "replay", "default", "reason", "failure"];
 
 /// The most character edits between a misspelt divergence id and the one it suggests.
 pub const MAX_SPELLING_DISTANCE: usize = 2;

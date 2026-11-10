@@ -2,24 +2,16 @@
 
 use duckdb::Connection;
 use sqlquack_policy::policy::constants::SESSION_TIME_ZONE;
-use sqlquack_policy::policy::models::{NullOrder, Policy};
+use sqlquack_policy::policy::main::evidence_policy::evidence_policy;
 
 /// A fresh in-memory DuckDB in the profile's time zone and null order, with `macros` created.
-pub(crate) fn session(
-    policy: Option<&Policy>,
-    profile: &str,
-    macros: &[String],
-) -> Result<Connection, String> {
-    let (time_zone, null_order) = match policy {
-        Some(policy) => (
-            policy
-                .session_profiles
-                .get(profile)
-                .map_or(SESSION_TIME_ZONE, |profile| &profile.duckdb_time_zone),
-            policy.comparator.null_order,
-        ),
-        None => (SESSION_TIME_ZONE, NullOrder::NullsLastOnAscFirstOnDesc),
-    };
+pub(crate) fn session(profile: &str, macros: &[String]) -> Result<Connection, String> {
+    let evidence = evidence_policy();
+    let time_zone = evidence
+        .session_profiles
+        .get(profile)
+        .map_or(SESSION_TIME_ZONE, |profile| &profile.duckdb_time_zone);
+    let null_order = evidence.comparator.null_order;
     let connection = Connection::open_in_memory().map_err(duckdb_error)?;
     connection
         .execute_batch(&format!(

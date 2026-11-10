@@ -3,7 +3,7 @@ use crate::policy::main::matching_type_equality::matching_type_equality;
 use crate::policy::models::Policy;
 
 pub(crate) const VALID_POLICY: &str = r#"
-schema_version = 1
+schema_version = 2
 
 [comparator]
 column_names = "case_insensitive"
@@ -43,8 +43,8 @@ minimum_bytes = 4194304
 
 [divergences.hash]
 constructs = ["fn:HASH"]
-default = "warn"
-strict = "refuse"
+replay = "warn"
+default = "refuse"
 reason = "values differ, consistently"
 failure = "value"
 "#;

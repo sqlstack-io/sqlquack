@@ -10,7 +10,7 @@ use crate::run::models::{RunInputs, RunOutcome};
 /// The query's result over the fixtures, and how it differs from the expected rows, or the error.
 pub fn run_query(inputs: &RunInputs<'_>) -> Result<RunOutcome, String> {
     let ordered = ordered_query(inputs.source)?;
-    let connection = session(inputs.policy, inputs.profile, inputs.macros)?;
+    let connection = session(inputs.profile, inputs.macros)?;
     load_fixtures(&connection, inputs.schema, inputs.fixtures)?;
     let (columns, rows) = query_result(&connection, inputs.converted)?;
     let names: Vec<String> = columns.iter().map(|(name, _)| name.clone()).collect();

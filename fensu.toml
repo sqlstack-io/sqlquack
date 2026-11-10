@@ -33,6 +33,23 @@ rule = "FPRSL105"
 path = "crates/sqlquack-convert/src/snowflake/conversion/main/within_budget.rs"
 reason = "imported by the playground engine website/wasm, outside the root cargo workspace, until the playground engine moves onto `analyze`"
 
+[[targets.rust.rule_exceptions]]
+rule = "FPRSL105"
+path = "crates/sqlquack-convert/src/snowflake/session/main/builtin_conversion_options.rs"
+reason = "imported by the playground engine website/wasm, outside the root cargo workspace, which lists each known difference's default from it"
+
+[[targets.rust.rule_exceptions]]
+rule = "FPRSL105"
+path = "crates/sqlquack-convert/src/snowflake/session/main/configured_choices.rs"
+reason = "imported by the playground engine website/wasm, outside the root cargo workspace, which reads the user's sqlquack.toml text without a file"
+
+# The evidence policy sits at the crate root, where `cargo package` keeps it and the evidence commands
+# read it, so the constant that compiles it in reaches outside src/policy/.
+[[targets.rust.rule_exceptions]]
+rule = "FPRSL106"
+path = "crates/sqlquack-policy/src/policy/constants.rs"
+reason = "compiles in crates/sqlquack-policy/evidence.toml, which sits at the crate root for `cargo package` and the evidence commands"
+
 # Format, lint and fingerprint take a dialect at run time, so each keeps one registry that maps
 # a dialect value to its src/<dialect>/ profile, with every line behind that dialect's feature.
 [targets.rust.rule_options.XSQ007]
@@ -43,7 +60,8 @@ dialect_registries = [
     "crates/sqlquack-fingerprint/src/dialects",
 ]
 
-# A crate that is also a Python distribution keeps its pyproject.toml and shipped notices beside Cargo.toml.
+# A crate that is also a Python distribution keeps its pyproject.toml and shipped notices beside Cargo.toml,
+# and sqlquack-policy keeps the evidence.toml it compiles in, so `cargo package` includes it.
 [targets.rust.rule_options.FPRSR311]
 allowed_entries = [
     "Cargo.toml",
@@ -56,6 +74,7 @@ allowed_entries = [
     "LICENSE*",
     "THIRD_PARTY_NOTICES",
     "pyproject.toml",
+    "evidence.toml",
 ]
 
 # Layer: only the command-line crates may depend on the conversion rules and pipeline.

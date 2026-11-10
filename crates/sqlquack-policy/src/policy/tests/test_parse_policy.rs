@@ -12,14 +12,14 @@ fn given_policy_text_when_parsing_then_schema_and_rules_are_enforced() {
         },
         PolicyTestCase {
             description: "an unknown top-level key is rejected",
-            replace: "schema_version = 1",
-            with: "schema_version = 1\noverrides = true",
+            replace: "schema_version = 2",
+            with: "schema_version = 2\noverrides = true",
             expected_error: Some("unknown field `overrides`"),
         },
         PolicyTestCase {
             description: "a misspelt divergence id names the one it is near",
             replace: "failure = \"value\"\n",
-            with: "failure = \"value\"\n\n[divergences.hsah]\ndefault = \"warn\"\n",
+            with: "failure = \"value\"\n\n[divergences.hsah]\nreplay = \"warn\"\n",
             expected_error: Some(
                 "unknown divergence `hsah` in [divergences.hsah]; did you mean `hash`?",
             ),
@@ -27,9 +27,9 @@ fn given_policy_text_when_parsing_then_schema_and_rules_are_enforced() {
         PolicyTestCase {
             description: "a partial divergence entry names the fields it lacks",
             replace: "failure = \"value\"\n",
-            with: "failure = \"value\"\n\n[divergences.json_fidelity]\ndefault = \"warn\"\n",
+            with: "failure = \"value\"\n\n[divergences.json_fidelity]\nreplay = \"warn\"\n",
             expected_error: Some(
-                "[divergences.json_fidelity] is missing fields `constructs`, `strict`, `reason`, `failure`",
+                "[divergences.json_fidelity] is missing fields `constructs`, `default`, `reason`, `failure`",
             ),
         },
         PolicyTestCase {
@@ -52,10 +52,10 @@ fn given_policy_text_when_parsing_then_schema_and_rules_are_enforced() {
         },
         PolicyTestCase {
             description: "another schema version is rejected",
-            replace: "schema_version = 1",
-            with: "schema_version = 2",
+            replace: "schema_version = 2",
+            with: "schema_version = 3",
             expected_error: Some(
-                "the policy file is invalid: schema_version is 2, but this build reads version 1",
+                "the policy file is invalid: schema_version is 3, but this build reads version 2",
             ),
         },
         PolicyTestCase {
@@ -68,13 +68,10 @@ fn given_policy_text_when_parsing_then_schema_and_rules_are_enforced() {
             ),
         },
         PolicyTestCase {
-            description: "strict mode may not be more lenient than the default",
-            replace: "default = \"warn\"\nstrict = \"refuse\"",
-            with: "default = \"refuse\"\nstrict = \"warn\"",
-            expected_error: Some(
-                "the policy file is invalid: divergence `hash` is treated more leniently in strict \
-                 mode",
-            ),
+            description: "a built-in default allows or refuses, and is no replay mode",
+            replace: "default = \"refuse\"",
+            with: "default = \"warn\"",
+            expected_error: Some("unknown variant `warn`, expected `allow` or `refuse`"),
         },
         PolicyTestCase {
             description: "a divergence needs construct keys",

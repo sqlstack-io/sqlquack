@@ -84,7 +84,7 @@ def binary_converter(*, binary: Path, policy: Path) -> Converter:
                     PROBE_FUNCTION,
                     "--project",
                     str(project),
-                    "--policy",
+                    "--config",
                     str(policy),
                     str(body_path),
                 ],

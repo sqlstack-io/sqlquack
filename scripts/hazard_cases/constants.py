@@ -7,7 +7,7 @@ from pathlib import Path
 REPOSITORY: Path = Path(__file__).resolve().parents[2]
 COVERAGE_DOMAINS: str = "coverage/domains"
 COVERAGE_HAZARDS: str = "coverage/hazards.toml"
-POLICY_FILE: str = "sqlquack.toml"
+POLICY_FILE: str = "crates/sqlquack-policy/evidence.toml"
 HAZARDS: str = "hazards@1"
 HAZARD_ARGUMENT_PREFIX: str = "x"
 HAZARD_GROUP_COLUMN: str = "g"

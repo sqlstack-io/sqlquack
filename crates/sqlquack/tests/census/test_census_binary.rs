@@ -15,7 +15,7 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
     let test_cases = [
         BinaryTestCase {
             description: "--anonymous JSON goes to stdout and names nothing; the completion message to stderr",
-            arguments: &["census", "--anonymous", "--json", "--builtin-policy"],
+            arguments: &["census", "--anonymous", "--json", "--no-config"],
             expected_outcome: BinaryOutcome {
                 exit_code: Some(1),
                 files: Some(2),
@@ -33,7 +33,7 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
                 "--json",
                 "--assume-supported",
                 "fn:SOUNDEX",
-                "--builtin-policy",
+                "--no-config",
             ],
             expected_outcome: BinaryOutcome {
                 exit_code: Some(2),
@@ -52,7 +52,7 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
                 "--chain-models",
                 "--assume-supported",
                 "fn:SOUNDEX",
-                "--builtin-policy",
+                "--no-config",
             ],
             expected_outcome: BinaryOutcome {
                 exit_code: Some(2),
@@ -65,7 +65,7 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
         },
         BinaryTestCase {
             description: "--anonymous text names no file, model or relation",
-            arguments: &["census", "--anonymous", "--builtin-policy"],
+            arguments: &["census", "--anonymous", "--no-config"],
             expected_outcome: BinaryOutcome {
                 exit_code: Some(1),
                 files: None,
@@ -77,7 +77,7 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
         },
         BinaryTestCase {
             description: "--detailed prints file, model and relation names, and the slowest files",
-            arguments: &["census", "--detailed", "--json", "--builtin-policy"],
+            arguments: &["census", "--detailed", "--json", "--no-config"],
             expected_outcome: BinaryOutcome {
                 exit_code: Some(1),
                 files: Some(2),
@@ -94,7 +94,7 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
                 "--detailed",
                 "--anonymous",
                 "--json",
-                "--builtin-policy",
+                "--no-config",
             ],
             expected_outcome: BinaryOutcome {
                 exit_code: Some(1),
@@ -122,7 +122,7 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
             arguments: &[
                 "census",
                 "--detailed",
-                "--builtin-policy",
+                "--no-config",
                 "--project",
                 "/nonexistent/project",
             ],
@@ -137,12 +137,7 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
         },
         BinaryTestCase {
             description: "an unreadable SQL path is a usage error, as for convert",
-            arguments: &[
-                "census",
-                "--detailed",
-                "--builtin-policy",
-                "/nonexistent/models",
-            ],
+            arguments: &["census", "--detailed", "--no-config", "/nonexistent/models"],
             expected_outcome: BinaryOutcome {
                 exit_code: Some(2),
                 files: None,
@@ -159,7 +154,7 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
                 "--detailed",
                 "--dialect",
                 "unknown",
-                "--builtin-policy",
+                "--no-config",
             ],
             expected_outcome: BinaryOutcome {
                 exit_code: Some(2),
@@ -344,17 +339,8 @@ fn given_a_model_reading_a_date_as_zoned_when_running_census_then_it_relies_on_a
             },
         },
         SessionTimeZoneTestCase {
-            description: "strict mode refuses it",
+            description: "strict mode converts it in a UTC session, which strict mode counts as a fact",
             flags: &["--anonymous", "--strict"],
-            expected_outcome: SourceVariantOutcome {
-                exit_code: Some(1),
-                convertible: Some(0),
-                labelled: None,
-            },
-        },
-        SessionTimeZoneTestCase {
-            description: "strict mode converts it once --utc-session confirms a UTC session",
-            flags: &["--anonymous", "--strict", "--utc-session"],
             expected_outcome: SourceVariantOutcome {
                 exit_code: Some(0),
                 convertible: Some(1),

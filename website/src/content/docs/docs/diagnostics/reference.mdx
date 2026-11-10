@@ -61,7 +61,7 @@ SQLQuack converts only what it has checked against results recorded in Snowflake
 **Example:**
 
 ```sh
-echo "SELECT WEEKISO(CURRENT_DATE()) AS w" | sqlquack convert --builtin-policy
+echo "SELECT WEEKISO(CURRENT_DATE()) AS w" | sqlquack convert --no-config
 ```
 
 ### SQ0003
@@ -75,7 +75,7 @@ SQLQuack converts the construct at the span only for the types checked against S
 **Example:**
 
 ```sh
-echo "SELECT FLOOR('abc') AS f" | sqlquack convert --builtin-policy
+echo "SELECT FLOOR('abc') AS f" | sqlquack convert --no-config
 ```
 
 ### SQ0004
@@ -89,7 +89,7 @@ Converting a statement needs to know what each relation and column name refers t
 **Example:**
 
 ```sh
-echo "SELECT a FROM orders" | sqlquack convert --builtin-policy
+echo "SELECT a FROM orders" | sqlquack convert --no-config
 ```
 
 ### SQ0005
@@ -121,7 +121,7 @@ Converted SQL is checked against Snowflake under particular session settings. Th
 **Example:**
 
 ```sh
-echo "SELECT 1 AS one" | sqlquack convert --builtin-policy --session WEEK_START=1
+echo "SELECT 1 AS one" | sqlquack convert --no-config --session WEEK_START=1
 ```
 
 ### SQ0008
@@ -135,7 +135,7 @@ The construct at the span converts only with a known difference between Snowflak
 **Example:**
 
 ```sh
-echo "SELECT HASH(1) AS h" | sqlquack convert --builtin-policy
+echo "SELECT HASH(1) AS h" | sqlquack convert --no-config
 ```
 
 ### SQ0009
@@ -149,7 +149,7 @@ Snowflake names an unaliased select item after its written text, upper-cased in 
 **Example:**
 
 ```sh
-echo "SELECT 'café' || 'b'" | sqlquack convert --builtin-policy
+echo "SELECT 'café' || 'b'" | sqlquack convert --no-config
 ```
 
 ## Input limits

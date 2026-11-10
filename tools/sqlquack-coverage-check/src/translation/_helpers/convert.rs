@@ -18,10 +18,10 @@ fn exchange(mut input: ChildStdin, mut output: ChildStdout, sql: &str) -> std::i
     Ok(text)
 }
 
-/// How to run `sqlquack convert`: the binary, the policy, and the time each case may take.
+/// How to run `sqlquack convert`: the binary, the configuration, and the time each case may take.
 pub(crate) struct Converter<'a> {
     pub(crate) binary: &'a Path,
-    pub(crate) policy: &'a Path,
+    pub(crate) config: &'a Path,
     pub(crate) bound: Duration,
 }
 
@@ -39,8 +39,8 @@ impl Converter<'_> {
                 "ulimit -v {CONVERSION_MEMORY_KIB} && exec \"$0\" \"$@\""
             ))
             .arg(self.binary)
-            .args(["convert", "--loud-divergences-only", "--json", "--policy"])
-            .arg(self.policy);
+            .args(["convert", "--json", "--config"])
+            .arg(self.config);
         if let Some(project) = project {
             command.arg("--project").arg(project);
         }
