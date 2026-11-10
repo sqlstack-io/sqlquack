@@ -123,6 +123,11 @@ jobs:
       fail-fast: false
       matrix:
         platform: ${{ fromJSON(needs.source.outputs.platforms) }}
+    env:
+      # sccache's object cache for DuckDB's C and C++, inside the workspace so the manylinux
+      # container, which mounts the workspace at the same path, reads and writes it too.
+      SCCACHE_DIR: ${{ github.workspace }}/.sccache-cache
+      SCCACHE_CACHE_SIZE: 4G
     steps:
       - uses: actions/checkout@v4
         if: inputs.prebuilt-run-id == ''
@@ -139,6 +144,58 @@ jobs:
         with:
           python-version: "3.12"
           architecture: ${{ matrix.platform.python-arch }}
+      # Both maturin steps compile DuckDB's C and C++ through sccache, so the second step reads the
+      # first one's objects instead of compiling them again, and the cache restored below carries
+      # them across runs. Compiler launchers need a Makefile or Ninja generator, so Windows builds
+      # DuckDB with Ninja instead of the default Visual Studio generator.
+      - name: Install sccache for DuckDB's C and C++
+        if: inputs.prebuilt-run-id == ''
+        shell: bash
+        env:
+          VERSION: v0.19.0
+        run: |
+          case "${RUNNER_OS}-${RUNNER_ARCH}" in
+            Linux-X64) asset=x86_64-unknown-linux-musl sum=aa73c7270c997894038c0d8f0d297865f57569e1687883322bc431713d4bb9dd ;;
+            Linux-ARM64) asset=aarch64-unknown-linux-musl sum=3e47fc4a71b1ddd1b4294a0de9d34498922fdf41e3cd0bda5df3954e3d6deb9d ;;
+            macOS-ARM64) asset=aarch64-apple-darwin sum=a35a0b7d622618774bc1bb8102d72562dfb21e619f88b153b370d7f89bc286af ;;
+            Windows-X64) asset=x86_64-pc-windows-msvc sum=130e4f8eb672e76590e9993c2ab890c4763b88238577bb11d8062158c7698353 ;;
+            *) echo "No pinned sccache for ${RUNNER_OS}-${RUNNER_ARCH}" >&2; exit 1 ;;
+          esac
+          sha256() { if command -v sha256sum > /dev/null; then sha256sum "$@"; else shasum -a 256 "$@"; fi; }
+          name="sccache-${VERSION}-${asset}"
+          curl -fsSL -o "${RUNNER_TEMP}/${name}.tar.gz" \
+            "https://github.com/mozilla/sccache/releases/download/${VERSION}/${name}.tar.gz"
+          echo "${sum}  ${RUNNER_TEMP}/${name}.tar.gz" | sha256 -c -
+          tools="${GITHUB_WORKSPACE}/.sccache-bin"
+          mkdir -p "${tools}"
+          tar -xzf "${RUNNER_TEMP}/${name}.tar.gz" -C "${tools}" --strip-components 1
+          launcher="${tools}/sccache"
+          if [[ "${RUNNER_OS}" == "Windows" ]]; then
+            launcher="$(cygpath -m "${tools}/sccache.exe")"
+            python -m pip install --quiet "ninja==1.13.0"
+            echo "CMAKE_GENERATOR=Ninja" >> "${GITHUB_ENV}"
+          fi
+          "${launcher}" --version
+          echo "CMAKE_C_COMPILER_LAUNCHER=${launcher}" >> "${GITHUB_ENV}"
+          echo "CMAKE_CXX_COMPILER_LAUNCHER=${launcher}" >> "${GITHUB_ENV}"
+          # The cache key names DuckDB's sources, its version name, its features, the profile, the
+          # target and the CMake settings; sccache itself still checks every object's exact inputs.
+          duckdb="$(grep -m 1 -o 'duckdb-rs?rev=[0-9a-f]*' Cargo.lock)"
+          describe="$(grep -m 1 '^OVERRIDE_GIT_DESCRIBE' .cargo/config.toml)"
+          features="$(grep -E '^(bundled|extensions) =' crates/sqlquack-blocks/Cargo.toml)"
+          settings="${duckdb} ${describe} ${features} release ${{ matrix.platform.target }}"
+          settings="${settings} ${{ matrix.platform.macos-target }} ${RUNNER_OS} ${VERSION}"
+          key="$(sha256 <<< "${settings}" | cut -c 1-16)"
+          echo "DUCKDB_CACHE_KEY=duckdb-objects-v1-${{ matrix.platform.name }}-${key}" >> "${GITHUB_ENV}"
+      # Restored on every build, but saved only from main (below), so a release or publish build
+      # never reads objects another branch compiled.
+      - name: Restore DuckDB's compiled objects
+        if: inputs.prebuilt-run-id == ''
+        uses: actions/cache/restore@v4
+        with:
+          path: .sccache-cache
+          key: ${{ env.DUCKDB_CACHE_KEY }}-${{ github.run_id }}
+          restore-keys: ${{ env.DUCKDB_CACHE_KEY }}-
       # Both wheels compile DuckDB in (the `bundled` feature), so neither needs a system DuckDB.
       - name: Set the oldest macOS the wheels support
         if: matrix.platform.macos-target
@@ -174,6 +231,16 @@ jobs:
           working-directory: crates/sqlquack
           target: ${{ matrix.platform.target }}
           manylinux: "2_28"
+      - name: Report sccache's hits
+        if: inputs.prebuilt-run-id == '' && runner.os != 'Linux'
+        shell: bash
+        run: '"${CMAKE_C_COMPILER_LAUNCHER}" --stop-server'
+      - name: Save DuckDB's compiled objects from main
+        if: inputs.prebuilt-run-id == '' && github.ref == 'refs/heads/main'
+        uses: actions/cache/save@v4
+        with:
+          path: .sccache-cache
+          key: ${{ env.DUCKDB_CACHE_KEY }}-${{ github.run_id }}
       - name: Download prebuilt wheels
         if: inputs.prebuilt-run-id != ''
         uses: actions/download-artifact@v4
