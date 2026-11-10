@@ -16,19 +16,20 @@ When a statement needs a known difference, you choose what happens:
 
 | Choice | What happens | How |
 |--------|--------------|-----|
-| [Refuse](#refuse) | The statement isn't converted. [`SQ0008`](/docs/diagnostics/reference/#sq0008) points at the construct. | The default for most known differences. |
-| [Allow](#allow) | The statement converts. A warning names the known difference it relies on. | One table in `sqlquack.toml`. |
+| [Refuse](#refuse) | The statement isn't converted. [`SQ0008`](/docs/diagnostics/reference/#sq0008) points at the construct. | `name = false` under `[allow]` in `sqlquack.toml`. The default for five. |
+| [Allow](#allow) | The statement converts. A warning names the known difference it relies on. | `name = true` under `[allow]`. The default for the rest. |
 | [Replace](#replace) | Calls to a Snowflake function use your own DuckDB SQL. | One file under `overrides/`. |
 
-`--strict` refuses anything not verified: every allowed known difference, and every replacement
-that recorded cases haven't verified.
+`--strict` refuses every known difference, whatever `[allow]` says, and every replacement that
+recorded cases haven't verified. What the session and the schema state still counts: a session
+that runs in UTC, and the `TIMESTAMP_TZ` offsets the schema declares.
 
 ## Refuse
 
 A refused known difference stops the statement at the construct that needs it:
 
 ```console
-$ sqlquack convert due.sql --builtin-policy
+$ sqlquack convert due.sql --no-config
 error[SQ0008]: HASH gives a different value in DuckDB
  --> due.sql:2:8
   |
@@ -38,48 +39,45 @@ error[SQ0008]: HASH gives a different value in DuckDB
   = note: Equal inputs still get equal hashes within one run.
   = note: fine when: Joins, grouping, removing duplicates and spotting changed rows by hash.
   = note: wrong when: Storing, comparing or sorting by the hash value itself: it differs, with no error.
-  = help: allow it in a sqlquack.toml with default = "warn" under [divergences.hash], starting from a copy of the SQLQuack repository's; `sqlquack explain hash` says when it is safe
+  = help: allow it with hash = true under [allow] in a sqlquack.toml in the project folder; `sqlquack explain hash` says when it is safe
 sqlquack convert: refused, 1 refusal
 ```
 
 `convert`, `function`, `census` and `index` read your choices from the
-[project](/docs/project/)'s `sqlquack.toml`, or from the file `--policy` names. Without one, or
-when `sqlquack.toml` holds only `[project]`, they use the built-in default.
+[project](/docs/project/)'s `sqlquack.toml`, or from the file `--config` names, on top of the
+defaults. Without one, they use the defaults alone.
 
-{/* config-split: the built-in default becomes "allow what can only fail with an error, refuse what
-    can return a different value"; update this list from the entries then. */}
+The defaults allow every known difference except these five, which they refuse:
 
-The built-in default refuses every known difference except these:
+- `hash`, `sequences`, `source_variant_json` and `variant_chain_type`, whose values can differ
+  from Snowflake's with no error.
+- `project_udf`, until `python_runtime = true` under `[project]` says a Python runtime registers
+  the project's functions.
 
-- `current_time` is allowed by default.
-- `json_fidelity`, `numeric_range`, `timestamp_range`, `timestamp_tz_submicro` and
-  `session_timezone_utc` are allowed by default for some uses. For the time zone, see
-  [Sessions](/docs/sessions/).
+`sqlquack explain --differences` lists how the defaults and your `sqlquack.toml` treat each one.
 
-`sqlquack explain --differences` lists how the defaults treat each one.
-
-`--builtin-policy` uses the built-in default even where a `sqlquack.toml` exists.
+`--no-config` uses the defaults alone even where a `sqlquack.toml` exists.
 
 ## Allow
 
 Allowing a known difference is a decision about your data, so read its entry first: it says when
-the converted SQL gives Snowflake's result and when it doesn't. Allow it in `sqlquack.toml` by
-setting `default` to `"warn"` in its table:
-
-{/* config-split: this block becomes `[allow]` with one line per name, such as
-    `hash = "only used for bucketing"`; the copy-the-whole-file rule below goes. */}
+the converted SQL gives Snowflake's result and when it doesn't. List it under `[allow]` in
+`sqlquack.toml`, `true` to allow it and `false` to refuse it:
 
 ```toml
-[divergences.hash]
-constructs = ["fn:HASH"]
-default = "warn"
-strict = "refuse"
+[allow]
+hash = true
 ```
 
-A policy file is complete on its own, and a file holding only one such table is rejected. Start
-from a copy of the repository's
-[`sqlquack.toml`](https://github.com/sqlstack-io/sqlquack/blob/main/sqlquack.toml), which lists
-every known difference, in the directory you run `sqlquack` from.
+A name that isn't a known difference is an error that names the nearest one. Some known
+differences can return a different value with no error, and `sqlquack explain --differences` marks
+them `value`. To convert only what is exact or fails with an error, refuse each of those:
+
+```toml
+[allow]
+current_time = false
+session_timezone_utc = false
+```
 
 A conversion that relies on an allowed known difference names it in its last line on standard
 error, and `--verbose` adds a warning at each use:
@@ -99,9 +97,6 @@ Replace a Snowflake function with your own DuckDB SQL when you know what your da
 `FUNCTION()` file with `replaces` and `dialect duckdb` in the project's `overrides/` folder, or name
 one with `--overrides`:
 
-{/* config-split: a replacement is also listed under `[replace]`, such as
-    `hash = "overrides/hash.sql"`. */}
-
 ```sql
 FUNCTION (
   arguments (x NUMBER(38,0)),
@@ -114,31 +109,31 @@ x % 16
 
 Every call then uses your SQL, created as a macro ahead of the converted statement. Whether it
 gives Snowflake's result is your decision: a conversion relying on it names it on standard error.
-The repository's `sqlquack.toml` allows replacements, and the built-in default refuses them.
 
-{/* config-split: verification becomes automatic; --verified-override goes. */}
+`[replace]` in `sqlquack.toml` names another folder for them, and lists the replacements you
+have verified:
 
-`--strict` refuses a replacement until recorded cases verify its exact body. Pass
-`--verified-override NAME=SHA256` with the SHA-256 that `convert --json` reports under `overrides`;
-a changed body is unverified again.
+```toml
+[replace]
+folder = "duckdb_overrides"
+verified = { HASH = "<sha256>" }
+```
+
+`--strict` refuses a replacement until it is verified for its exact body: listed under
+`verified`, or passed as `--verified-override NAME=SHA256`, with the SHA-256 that `convert --json`
+reports under `overrides`. A changed body is unverified again.
 
 ## Flags
 
-{/* config-split: --loud-divergences-only and --utc-session fold into the defaults and
-    --strict. */}
-
 | Flag | Effect |
 |------|--------|
-| `--policy <file>` | The policy file. Default the project's `sqlquack.toml`, or the built-in default without one. |
-| `--builtin-policy` | Use the built-in default even where a `sqlquack.toml` exists. |
-| `--strict` | Refuse every known difference and replacement that isn't verified. |
-| `--utc-session` | Confirm both sessions run in UTC. See [Sessions](/docs/sessions/). |
-| `--confirm-declared-offsets` | Confirm the `TIMESTAMP_TZ` offsets the schema declares. |
+| `--config <file>` | The configuration file. Default the project's `sqlquack.toml`, or the defaults alone without one. |
+| `--no-config` | Use the defaults alone even where a `sqlquack.toml` exists. |
+| `--strict` | Refuse every known difference, whatever `[allow]` says, and every replacement that isn't verified. |
 | `--python-runtime` | Confirm a Python runtime registers the project's Python functions. |
-| `--loud-divergences-only` | Allow only known differences that fail with an error, never a different value. |
 
-A project can confirm the same three for every run under `[project.confirm]` in its
-`sqlquack.toml`; see [Projects](/docs/project/#session-settings).
+A project can confirm the Python runtime for every run with `python_runtime = true` under
+`[project]` in its `sqlquack.toml`; see [Projects](/docs/project/#session-settings).
 
 ## Known differences
 

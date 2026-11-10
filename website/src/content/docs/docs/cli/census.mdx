@@ -16,8 +16,8 @@ sqlquack census [OPTIONS] <PATHS>...
 ```
 
 ```bash
-sqlquack census target/compiled/my_project/models --builtin-policy
-sqlquack census target/compiled --json --builtin-policy
+sqlquack census target/compiled/my_project/models --no-config
+sqlquack census target/compiled --json --no-config
 ```
 
 Each `.sql` file is one query, or one model compiled by
@@ -28,7 +28,7 @@ recognised. A directory is searched for `.sql` files. The tables they read come 
 they resolve.
 
 ```console
-$ sqlquack census models --builtin-policy
+$ sqlquack census models --no-config
 error[SQ0004]: SQLQuack doesn't know this name
  --> models/marts/customer_sounds.sql:4:6
   |
@@ -110,7 +110,7 @@ refusals by category and construct, and what blocks files through the model grap
   names, so you can share it. With both flags, the report stays anonymous.
 
 ```console
-$ sqlquack census models --builtin-policy --anonymous
+$ sqlquack census models --no-config --anonymous
 Census of 3 snowflake SQL files
   parsed 3 (3 statements), unparsed 0, empty 0
   distinct constructs 6 (2 fn, 4 node)

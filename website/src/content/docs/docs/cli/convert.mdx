@@ -15,8 +15,8 @@ sqlquack convert [OPTIONS] [PATH]
 ```
 
 ```bash
-sqlquack convert query.sql --builtin-policy
-echo "SELECT 1 AS total" | sqlquack convert --builtin-policy --json
+sqlquack convert query.sql --no-config
+echo "SELECT 1 AS total" | sqlquack convert --no-config --json
 ```
 
 `PATH` is a SQL file. Without one, or with `-`, `convert` reads standard input. The tables the SQL
@@ -26,7 +26,7 @@ nested queries and long `CASE` expressions indented; short statements stay on on
 the known differences and assumptions it relies on, and refusals go to standard error.
 
 ```console
-$ sqlquack convert revenue.sql --builtin-policy
+$ sqlquack convert revenue.sql --no-config
 SELECT
     "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID",
     CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE"
@@ -67,11 +67,8 @@ SQL that does not parse, or that Snowflake rejects, is refused with the same cod
 | `--format text\|json`, `--json` | Print the report as text or JSON. |
 | `--color auto\|always\|never` | Highlight the SQL and colour diagnostics, as for [`check`](/docs/cli/check/#options). JSON is never coloured. |
 
-{/* config-split: --utc-session and --loud-divergences-only fold into the defaults and --strict. */}
-
-`convert` also takes the policy flags: `--policy`, `--builtin-policy`, `--strict`,
-`--utc-session`, `--confirm-declared-offsets`, `--python-runtime` and `--loud-divergences-only`.
-See [When something can't convert exactly](/docs/policy/#flags).
+`convert` also takes the configuration flags: `--config`, `--no-config`, `--strict` and
+`--python-runtime`. See [When something can't convert exactly](/docs/policy/#flags).
 
 ## JSON report
 
@@ -80,13 +77,15 @@ With `--json`, `convert` prints one object:
 ```json
 {
   "converted": true,
-  "profile": "the built-in default",
+  "profile": "utc-v1",
   "sql": "SELECT CAST(1 AS DECIMAL(1,0)) AS \"TOTAL\"",
   "refusals": [],
   "divergences": {},
   "assumptions": [],
   "divergence_failures": {},
+  "known_differences": [],
   "notes": [],
+  "warnings": [],
   "python_functions": [],
   "macros": [],
   "overrides": []
@@ -104,4 +103,4 @@ the SQL calls, then your override macros. The text output prints them ahead of t
 |------|---------|
 | `0` | Converted. |
 | `1` | Something was refused; the reasons are on standard error. |
-| `2` | It could not run: bad arguments, an unreadable file, a missing `--policy` file or an invalid policy file, or input without SQL. |
+| `2` | It could not run: bad arguments, an unreadable file, a missing `--config` file or an invalid `sqlquack.toml`, or input without SQL. |

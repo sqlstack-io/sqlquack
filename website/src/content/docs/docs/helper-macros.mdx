@@ -9,7 +9,7 @@ Converted SQL that reads a VARIANT or date and time text calls small DuckDB macr
 output runs as it is in any DuckDB session:
 
 ```console
-$ sqlquack convert staging.sql --builtin-policy
+$ sqlquack convert staging.sql --no-config
 CREATE SCHEMA IF NOT EXISTS sqlquack;
 CREATE OR REPLACE MACRO sqlquack.json_escaped_v1(quack_text) AS ...;
 CREATE OR REPLACE MACRO sqlquack.variant_text_v1(quack_site, quack_value) AS ...;
