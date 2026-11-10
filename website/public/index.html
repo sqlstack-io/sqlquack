@@ -156,7 +156,7 @@ GROUP BY "ORDERS"."CUSTOMER_ID"
 <pre class="terminal"><span class="cm">-- div.sql, with TOTAL as NUMBER(12,2) in sources/orders.yml</span>
 SELECT order_id, total / 3 AS third FROM orders
 
-<span class="cmd">sqlquack convert div.sql --builtin-policy</span>
+<span class="cmd">sqlquack convert div.sql --no-config</span>
 SELECT
     "ORDERS"."ORDER_ID" AS "ORDER_ID",
     (CASE
@@ -174,7 +174,7 @@ FROM "ORDERS" AS "ORDERS"
 								<p>No verified rule, no conversion. The refusal underlines the construct and says what to change.</p>
 								<p class="more"><a href="/docs/diagnostics/reference/">Every diagnostic code →</a></p>
 							</div>
-<pre class="terminal"><span class="cmd">sqlquack convert due.sql --builtin-policy</span>
+<pre class="terminal"><span class="cmd">sqlquack convert due.sql --no-config</span>
 <span class="bad">error[SQ0008]</span>: HASH gives a different value in DuckDB
  --&gt; due.sql:2:8
   |
@@ -199,9 +199,9 @@ sqlquack convert: refused, 1 refusal</pre>
 								<p>Some Snowflake behaviour has no exact match in DuckDB, like <code>HASH</code>. Each known difference says when it's fine and when it gives a wrong result. You refuse it, allow it or replace it with your own SQL.</p>
 								<p class="more"><a href="/docs/policy/">Refuse, allow or replace →</a></p>
 							</div>
-<pre class="terminal"><span class="cm"># sqlquack.toml (excerpt)</span>
-[divergences.hash]
-<span class="arg">default</span> = <span class="str">&quot;warn&quot;</span>
+<pre class="terminal"><span class="cm"># sqlquack.toml</span>
+[allow]
+<span class="arg">hash</span> = <span class="kw">true</span>
 
 <span class="cmd">sqlquack convert due.sql</span>
 SELECT
@@ -219,7 +219,7 @@ FROM "ORDERS" AS "ORDERS"
 								<p>Point it at a folder of compiled SQL, such as dbt's target/compiled. It shows a diagnostic for each file that doesn't convert, and how many do. It exits 1 when any file is blocked, so CI can track it.</p>
 								<p class="more"><a href="/docs/cli/census/">Run a census →</a></p>
 							</div>
-<pre class="terminal"><span class="cmd">sqlquack census models --builtin-policy --chain-models</span>
+<pre class="terminal"><span class="cmd">sqlquack census models --no-config --chain-models</span>
 <span class="bad">error[SQ0002]</span>: SQLQuack can't convert SOUNDEX yet
  --&gt; models/marts/customer_sounds.sql:3:5
   |
@@ -248,7 +248,7 @@ result.diagnostics[<span class="num">0</span>].code   <span class="cm"># "SQ0203
 
 conversion = sqlquack.convert(
     <span class="arg">sql</span>=<span class="str">&quot;SELECT 1 AS total&quot;</span>,
-    <span class="arg">options</span>=sqlquack.<span class="ty">ConvertOptions</span>(<span class="arg">builtin_policy</span>=<span class="kw">True</span>),
+    <span class="arg">options</span>=sqlquack.<span class="ty">ConvertOptions</span>(<span class="arg">no_config</span>=<span class="kw">True</span>),
 )
 conversion.converted          <span class="cm"># True</span></pre>
 						</div>
@@ -304,7 +304,7 @@ conversion.converted          <span class="cm"># True</span></pre>
 <span class="cmd">echo "SELECT 1 QUALIFY TRUE" | sqlquack check</span>
 <span class="bad">error[SQ0203]</span>: QUALIFY needs a window function
 <span class="dim">…</span>
-<span class="cmd">echo "SELECT 1 AS total" | sqlquack convert --builtin-policy</span>
+<span class="cmd">echo "SELECT 1 AS total" | sqlquack convert --no-config</span>
 SELECT CAST(1 AS DECIMAL(1,0)) AS "TOTAL"
 <span class="ok strong">sqlquack convert: done, converted</span></pre>
 				</div>
