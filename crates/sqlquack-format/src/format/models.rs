@@ -26,6 +26,8 @@ pub struct FormatOptions {
     pub line_width: Option<usize>,
     /// Spaces per indent step.
     pub indent: usize,
+    /// Whether every token keeps the case it is written in; otherwise keywords and called names are upper-cased.
+    pub keep_case: bool,
     /// Printed widths of tokens that stand in for longer text, keyed by upper-case token text.
     pub token_widths: HashMap<String, usize>,
     /// Complexity guards for the validating parse.
@@ -33,12 +35,13 @@ pub struct FormatOptions {
 }
 
 impl FormatOptions {
-    /// Default layout for `dialect`: no line width, two-space indent.
+    /// Default layout for `dialect`: no line width, two-space indent, keywords and called names upper-cased.
     pub fn new(dialect: FormatDialect) -> Self {
         Self {
             dialect,
             line_width: None,
             indent: DEFAULT_INDENT,
+            keep_case: false,
             token_widths: HashMap::new(),
             parse: ParseOptions::default(),
         }

@@ -102,7 +102,7 @@ fn print_layout(
     options: &FormatOptions,
     profile: &FormatProfile,
 ) -> Result<AuthoredPrint, String> {
-    let print = print_authored_tokens(authored, oracle)?;
+    let print = print_authored_tokens(authored, oracle, options.keep_case)?;
     let Some(mut sql) = PrintedSql::new(&print.sql, &print.tokens, &options.token_widths) else {
         return Ok(print);
     };
