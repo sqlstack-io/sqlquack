@@ -56,15 +56,22 @@ pub enum Command {
     Check(CheckArguments),
     /// Replay converted SQL over a DuckDB inputs database and compare with recorded results.
     Compare(CompareArguments),
-    /// Explain a diagnostic code, such as `SQ0203`, or a helper macro, such as `variant_text_v1`.
+    /// Explain a diagnostic code such as `SQ0203`, a known difference such as `hash`, or a helper macro.
     Explain(ExplainArguments),
 }
 
 /// Arguments of `sqlquack explain`.
 #[derive(Debug, Args)]
 pub struct ExplainArguments {
-    /// The code, its snake_case name, a guard's former `E_GUARD_*` name, or a helper macro.
-    pub code: String,
+    /// A code, its snake_case name or former `E_GUARD_*` name, a known difference, or a helper macro.
+    #[arg(required_unless_present_any = ["differences", "codes"])]
+    pub code: Option<String>,
+    /// List every known difference, marked as `./sqlquack.toml`, or the defaults without one, treat it.
+    #[arg(long, conflicts_with_all = ["code", "codes"])]
+    pub differences: bool,
+    /// List every diagnostic code with its name and title.
+    #[arg(long, conflicts_with = "code")]
+    pub codes: bool,
 }
 
 /// Arguments of `sqlquack compare`.

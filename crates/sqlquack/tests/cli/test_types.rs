@@ -241,7 +241,8 @@ pub(crate) struct OutputFormatTestCase {
 
 pub(crate) struct ExplainTestCase {
     pub(crate) description: &'static str,
-    pub(crate) code: &'static str,
+    pub(crate) arguments: &'static [&'static str],
+    pub(crate) policy_file: Option<&'static str>,
     pub(crate) expected_exit_code: Option<i32>,
     pub(crate) expected_stdout_mentions: &'static [&'static str],
     pub(crate) expected_stderr_mention: &'static str,
