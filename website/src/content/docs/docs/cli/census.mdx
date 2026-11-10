@@ -29,7 +29,7 @@ they resolve.
 
 ```console
 $ sqlquack census models --builtin-policy
-error[SQ0004]: a name does not resolve
+error[SQ0004]: SQLQuack doesn't know this name
  --> models/marts/customer_sounds.sql:4:6
   |
 4 | FROM __ref("stg_customers")
@@ -37,11 +37,11 @@ error[SQ0004]: a name does not resolve
   |
   = help: declare the relation and its columns in a source file of the project (`sources/*.yml`)
 
-error[SQ0002]: no verified rule converts this construct: `fn:WEEKISO`
+error[SQ0002]: SQLQuack can't convert WEEKISO yet
  --> models/staging/stg_orders.sql:1:31
   |
 1 | SELECT order_id, customer_id, WEEKISO(ordered_at) AS order_week FROM orders
-  |                               ^^^^^^^^^^^^^^^^^^^ no rule converts fn:WEEKISO
+  |                               ^^^^^^^^^^^^^^^^^^^ no rule converts WEEKISO
 
 Converted 1 of 3 files (33%)
 Blocked: 2 files, 2 causes (SQ0002 WEEKISO, SQ0004 STG_CUSTOMERS)
@@ -61,7 +61,7 @@ convert either, its diagnostic carries a note naming that model, and it isn't co
 cause:
 
 ```text
-error[SQ0004]: a name does not resolve
+error[SQ0004]: SQLQuack doesn't know this name
  --> models/marts/customer_report.sql:1:58
   |
 1 | SELECT customer_id, UPPER(name_sound) AS name_sound FROM __ref("customer_sounds")
