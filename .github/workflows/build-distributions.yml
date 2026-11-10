@@ -134,6 +134,20 @@ jobs:
         if: matrix.platform.macos-target
         shell: bash
         run: echo "MACOSX_DEPLOYMENT_TARGET=${{ matrix.platform.macos-target }}" >> "$GITHUB_ENV"
+      # DuckDB's CMake build nests object paths deep enough to pass Windows' path limit under the
+      # default target directory, and MSVC then fails with C1083; a short target directory avoids it.
+      - name: Shorten the build path on Windows
+        if: runner.os == 'Windows'
+        shell: bash
+        run: echo "CARGO_TARGET_DIR=D:/t" >> "$GITHUB_ENV"
+      # The DuckDB sources checkout the workspace patches duckdb to, fetched once per lock.
+      - name: Cache Cargo's git checkouts
+        if: inputs.prebuilt-run-id == ''
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/git/db
+          key: cargo-git-${{ matrix.platform.name }}-${{ hashFiles('Cargo.lock') }}
+          restore-keys: cargo-git-${{ matrix.platform.name }}-
       - uses: PyO3/maturin-action@v1
         if: inputs.prebuilt-run-id == ''
         with:
@@ -167,6 +181,7 @@ jobs:
           else
             bin="${RUNNER_TEMP}/wheel-smoke/bin"
           fi
+          ls -l dist | tee -a "${GITHUB_STEP_SUMMARY}"
           # Only the wheels just built: sqlquack-cli must resolve from dist, never from an index.
           "${bin}/python" -m pip install --no-index --find-links dist sqlquack
           cd "${RUNNER_TEMP}"
