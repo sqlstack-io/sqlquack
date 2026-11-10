@@ -4,11 +4,14 @@ import starlightLlmsTxt from 'starlight-llms-txt';
 import { sqlquackDark, sqlquackLight } from './src/code-themes.mjs';
 import { redirects, sidebar } from './src/navigation.mjs';
 import { figuresIntegration } from './src/figures.mjs';
+import { satteri } from '@astrojs/markdown-satteri';
+import { inlineCodeSpaces } from './src/inline-code.mjs';
 
 export default defineConfig({
 	// Placeholder: the public domain is not chosen yet.
 	site: 'https://sqlquack.io',
 	redirects,
+	markdown: { processor: satteri({ hastPlugins: [inlineCodeSpaces] }) },
 	integrations: [
 		figuresIntegration(),
 		starlight({

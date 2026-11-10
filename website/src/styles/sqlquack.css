@@ -271,6 +271,12 @@ starlight-toc a[aria-current='true']:hover {
 	padding: 0.1em 0.35em;
 	font-size: 0.86em;
 	color: var(--sqq-fg);
+	/* Never split inside a word such as --verbose; src/inline-code.mjs lets it wrap at spaces. */
+	white-space: nowrap;
+}
+
+.sl-markdown-content :not(pre) > code .sqq-space {
+	white-space: normal;
 }
 
 /* Tables */
