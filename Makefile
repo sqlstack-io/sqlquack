@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug instruction-counts instruction-baseline gate-build polyglot-guard engine-free bundled-extensions dialect-builds generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
+.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug instruction-counts instruction-baseline gate-build polyglot-guard engine-free bundled-extensions dialect-builds generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded verify-changed replay-scope test-crate evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -220,7 +220,7 @@ referee-pending:
 	uv run python -m scripts.write_referee_pending $(REFEREE_ARGS)
 
 # The static gate, the first step of `gate`, and the Python API's tests.
-check-ci: rust-lint python-check fensu syntax-coverage depth-probe instruction-counts evidence-pin-check clutter-guard polyglot-guard engine-free bundled-extensions dialect-builds generated-cases syntax-cases dialect-cases referee-cases translation-files python-api distribution-notices ## The static gate CI runs.
+check-ci: rust-lint python-check fensu syntax-coverage depth-probe instruction-counts evidence-pin-check clutter-guard polyglot-guard engine-free bundled-extensions dialect-builds generated-cases syntax-cases dialect-cases referee-cases translation-files python-api distribution-notices replay-scope ## The static gate CI runs.
 
 # Each distribution ships the licence and third-party notices; its copies must match the root files.
 distribution-notices:
@@ -251,6 +251,11 @@ test-rust: gate-build
 	$(TEST_EVIDENCE) RUST_TEST_JOBS=$(RUST_TEST_JOBS) RUST_TEST_FEATURES=$(GATE_FEATURES) \
 	  scripts/run_rust_tests.sh $(RUST_TEST_PROFILE)
 
+# One crate's tests in the gate profile, for the edit-test loop; it builds only that crate's graph.
+test-crate: ## One crate's tests: make test-crate CRATE=sqlquack-evidence.
+	@test -n "$(CRATE)" || { echo "test-crate: name the crate, as in make test-crate CRATE=sqlquack-evidence" >&2; exit 2; }
+	$(TEST_EVIDENCE) cargo test --locked --profile $(GATE_PROFILE) -p $(CRATE)
+
 # What every merge to main must pass, on the exact head: the static gate and the Rust tests. It does
 # not replay the recorded cases; `make verify-recorded` does, and CI runs it on every pull request.
 check-merge: check-ci test-rust ## The merge gate: check-ci and the Rust tests; it replays no recordings.
@@ -268,7 +273,7 @@ python-module: gate-build
 	  $(PYTHON_PACKAGE)/
 
 # The API tests compare the module's reports with the command line's, both built with GATE_PROFILE.
-python-api: python-module
+python-api: python-module ## Build the Python module and run its API tests.
 	SQLQUACK_BIN=$(abspath $(GATE_DIR)/sqlquack) \
 	  LD_LIBRARY_PATH=$(abspath $(PYTHON_PACKAGE)) uv run pytest $(PYTHON_API_TESTS) -n auto --dist loadfile
 
@@ -280,8 +285,8 @@ python-wheel: | .venv/bin/python
 # `make gate` both run verify-recorded, so these are the one set of verify flags.
 # Backup pushes may drop --require-verified; failed cases and error findings still block.
 VERIFY_FLAGS ?= --require-verified --strict-errors
-# The cargo profile verify is built with: release locally, dev in CI, where the tests' debug build
-# is already cached.
+# The cargo profile `pending` and a narrowed check-convert build with; verify-recorded runs the gate
+# build's binary.
 VERIFY_PROFILE ?= release
 # Verify reports evidence coverage (docs/coverage.md) and writes it to COVERAGE_REPORT as JSON.
 # REQUIRE_COVERAGE=1 fails on any gap; it stays 0 until the generated hazard cases are recorded.
@@ -308,13 +313,28 @@ SQL_SIZE_BASELINE := coverage/sql-size/baseline.json
 SQL_SIZE_BASE_FILE := target/sql-size-base.json
 SQL_SIZE_ALLOWANCES := coverage/sql-size/allowances.toml
 
-verify-recorded: ## Replay every recorded translation on DuckDB; check-convert DIALECT=snowflake runs it.
+# With REPLAY_CACHE set, verify reuses the judgements a run left there for every case whose
+# conversion and recording are unchanged, and replays the rest. The cache is scoped to a digest of
+# the full-replay paths in scripts/replay_scope, so a change under them replays every case.
+REPLAY_CACHE ?=
+REPLAY_FLAGS = $(if $(REPLAY_CACHE),--replay-cache $(REPLAY_CACHE) --replay-scope $(shell uv run --no-sync python -m scripts.select_replay digest))
+
+# verify runs the gate build's binary, with the DuckDB library python-module puts beside the module.
+verify-recorded: python-module ## Replay every recorded translation on DuckDB; check-convert DIALECT=snowflake runs it.
 	mkdir -p $(dir $(COVERAGE_REPORT))
-	cargo run --profile $(VERIFY_PROFILE) --locked -p sqlquack -- verify $(VERIFY_FLAGS) $(COVERAGE_FLAGS) --python $(VERIFY_PYTHON) \
+	LD_LIBRARY_PATH=$(abspath $(PYTHON_PACKAGE)) $(GATE_DIR)/sqlquack verify $(VERIFY_FLAGS) $(COVERAGE_FLAGS) \
+	  --python $(VERIFY_PYTHON) $(REPLAY_FLAGS) \
 	  $(call convert_paths,snowflake) --audit-results $(call convert_dir,snowflake,repeats) \
 	  --translation-statements $(TRANSLATION_STATEMENTS) --sql-sizes $(SQL_SIZES)
 	$(MAKE) translation-results
 	$(MAKE) sql-sizes
+
+verify-changed: ## Replay only the recorded cases whose conversion changed since the last verify-changed.
+	$(MAKE) verify-recorded REPLAY_CACHE=$(or $(REPLAY_CACHE),target/replay-cache.json)
+
+# Fails when a declared full-replay or replay-input path matches no tracked file.
+replay-scope:
+	uv run python -m scripts.select_replay check
 
 # The suites, one pattern for every dialect; README.md, "Running the suites", walks through them.
 # DIALECT is always named, so no dialect is the unnamed default. The check- targets replay committed
@@ -435,11 +455,11 @@ translation-files: gate-build
 	$(GATE_DIR)/syntax-coverage results --files-only $(RESULTS_ROOTS)
 
 # The result-matching measure over the statements verify wrote; see verify-recorded.
-translation-results:
+translation-results: gate-build
 	@if git show $(RESULTS_BASE):coverage/translation/results-baseline.json > $(RESULTS_BASE_FILE) 2>/dev/null; \
 	  then against="--against $(RESULTS_BASE_FILE)"; \
 	  else echo "translation-results: $(RESULTS_BASE) has no baseline; checking the committed one only"; against=; fi; \
-	  cargo run --locked -q -p sqlquack-coverage-check --bin syntax-coverage -- results \
+	  $(GATE_DIR)/syntax-coverage results \
 	    $(TRANSLATION_STATEMENTS) $(RESULTS_ROOTS) --report $(TRANSLATION_REPORT) $$against
 
 # Compiles DuckShop and DuckShop 10K at SQLBUILD_REF with sqlbuild SQLBUILD_VERSION, as CI does.

@@ -379,3 +379,20 @@ pub(crate) struct ParquetRunTestCase {
     pub(crate) expected_exit: Option<i32>,
     pub(crate) expected_stdout: &'static str,
 }
+
+/// Two `verify --replay-cache` runs: the first's reuses, the second's replays (2 is two or more).
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) struct ReplayCacheOutcome {
+    pub(crate) first_reused: usize,
+    pub(crate) second_replayed: usize,
+    pub(crate) second_reused_any: bool,
+    pub(crate) same_report: bool,
+}
+
+/// The second run's scope, and what changes in the evidence folder before it.
+pub(crate) struct ReplayCacheTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) second_scope: &'static str,
+    pub(crate) between_runs: fn(&std::path::Path),
+    pub(crate) expected_outcome: ReplayCacheOutcome,
+}

@@ -21,9 +21,12 @@ use crate::verify::_helpers::compile_errors::undeclared_compile_error;
 use crate::verify::_helpers::error_check::error_check;
 use crate::verify::_helpers::layout_check::{layout_failure, reads_clock};
 use crate::verify::_helpers::microsecond_evidence::differs_below_microseconds;
+use crate::verify::_helpers::replay_cache::judgement_key;
 use crate::verify::_helpers::row_checks::{RowCheck, row_check};
 use crate::verify::_helpers::session::{SessionCheck, session_check};
-use crate::verify::models::{Conversion, ErrorCheck, Verdict};
+use crate::verify::models::{
+    Conversion, ConvertedCase, ErrorCheck, Judgement, ReplayCache, Verdict,
+};
 use crate::verify::types::{CaseConverter, FailureModes};
 
 /// A case's verdict, what its conversion relied on, and how the two errors compare.
@@ -38,7 +41,7 @@ type Replayed = Result<sqlquack_compare::values::models::ResultSet, String>;
 pub(crate) fn judge(
     case: &LoadedCase,
     (results, defaults): (&Path, Option<&SessionDefaults>),
-    policy: &Policy,
+    (policy, cache): (&Policy, Option<(&ReplayCache, &str)>),
     checks: (&dyn CaseConverter, &FailureModes),
 ) -> JudgedCase {
     let stored = match load_result(results, &case.hash) {
@@ -53,15 +56,21 @@ pub(crate) fn judge(
     };
     match session_check(case, &stored.metadata, defaults) {
         SessionCheck::Mismatch(reason) => ((Verdict::Failed { reason }, None, None), false),
-        SessionCheck::Matches => (judge_stored(case, (stored, results), policy, checks), false),
-        SessionCheck::Unproven => (judge_stored(case, (stored, results), policy, checks), true),
+        SessionCheck::Matches => (
+            judge_stored(case, (stored, results), (policy, cache), checks),
+            false,
+        ),
+        SessionCheck::Unproven => (
+            judge_stored(case, (stored, results), (policy, cache), checks),
+            true,
+        ),
     }
 }
 
 fn judge_stored(
     case: &LoadedCase,
     (stored, results): (StoredResult, &Path),
-    policy: &Policy,
+    (policy, cache): (&Policy, Option<(&ReplayCache, &str)>),
     (converter, failure_modes): (&dyn CaseConverter, &FailureModes),
 ) -> Judged {
     if case.role == CaseRole::Typing {
@@ -122,6 +131,75 @@ fn judge_stored(
             );
         }
     };
+    let converted = ConvertedCase {
+        laid_out: converter.laid_out(&duckdb_sql),
+        sql: duckdb_sql,
+        setup,
+        provenance,
+        raises,
+        python,
+    };
+    let keyed = cache
+        .filter(|_| case.expected_divergence.is_none())
+        .map(|(cache, context)| {
+            let key = judgement_key(context, (case, &stored.metadata), &converted);
+            (cache, key)
+        });
+    if let Some((cache, key)) = &keyed
+        && let Some(known) = cache.known.get(key)
+    {
+        remember(cache, key.clone(), known.clone());
+        return (
+            known.verdict.clone(),
+            known.provenance.clone(),
+            known.error_check.clone(),
+        );
+    }
+    let judged = judge_converted(
+        case,
+        (&stored, policy),
+        (converter, failure_modes),
+        converted,
+    );
+    if let Some((cache, key)) = keyed.filter(|_| !matches!(judged.0, Verdict::Failed { .. })) {
+        let (verdict, provenance, error_check) = judged.clone();
+        remember(
+            cache,
+            key,
+            Judgement {
+                verdict,
+                provenance,
+                error_check,
+            },
+        );
+    }
+    judged
+}
+
+/// Records `judgement` under `key` for the next run's cache.
+fn remember(cache: &ReplayCache, key: String, judgement: Judgement) {
+    cache
+        .made
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+        .insert(key, judgement);
+}
+
+/// Replays a converted case on DuckDB and judges the replay against its recording.
+fn judge_converted(
+    case: &LoadedCase,
+    (stored, policy): (&StoredResult, &Policy),
+    (converter, failure_modes): (&dyn CaseConverter, &FailureModes),
+    converted: ConvertedCase,
+) -> Judged {
+    let ConvertedCase {
+        sql: duckdb_sql,
+        setup,
+        provenance,
+        raises,
+        python,
+        laid_out,
+    } = converted;
     let settings = ReplaySettings {
         time_zone: policy
             .session_profiles
@@ -131,7 +209,7 @@ fn judge_stored(
     };
     let replayed = replay_on_engine((&setup, &duckdb_sql), python.as_deref(), &settings);
     let layout = layout_failure(
-        &converter.laid_out(&duckdb_sql),
+        &laid_out,
         (&setup, &duckdb_sql),
         (&replayed, reads_clock(provenance.divergences.keys())),
         (python.as_deref(), &settings),
@@ -140,11 +218,11 @@ fn judge_stored(
     let verdict = match &case.expected_divergence {
         Some(divergence) => divergence_verdict(
             case,
-            (&stored, replayed),
+            (stored, replayed),
             policy,
             (divergence, &provenance, &raises),
         ),
-        None => replayed_verdict(case, (&stored, replayed), policy, &raises),
+        None => replayed_verdict(case, (stored, replayed), policy, &raises),
     };
     let verdict = match (verdict, &stored.rows) {
         (

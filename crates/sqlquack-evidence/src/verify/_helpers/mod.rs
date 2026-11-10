@@ -5,5 +5,6 @@ pub(crate) mod judge;
 pub(crate) mod layout_check;
 pub(crate) mod messages;
 pub(crate) mod microsecond_evidence;
+pub(crate) mod replay_cache;
 pub(crate) mod row_checks;
 pub(crate) mod session;

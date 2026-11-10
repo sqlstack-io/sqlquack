@@ -2,10 +2,10 @@
 
 use std::fmt::{self, Display};
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 /// What kind of failure an error is, the same for Snowflake and DuckDB.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ErrorKind {
     /// A number beyond its type's range.

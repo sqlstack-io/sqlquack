@@ -403,6 +403,7 @@ pub(crate) fn round_trip_with_defaults(
         failure_modes: &FailureModes::new(),
         audit_results: None,
         session_defaults: defaults.as_ref(),
+        replay_cache: None,
     })
     .expect("verify runs");
     RoundTrip {
