@@ -1,9 +1,4 @@
-//! A simple layout of DuckDB SQL over lines, changing only the whitespace between tokens.
+//! Converted SQL laid out over lines by the formatter, changing only whitespace.
 
-pub(crate) mod _helpers;
 pub mod constants;
 pub mod main;
-pub(crate) mod models;
-
-#[cfg(test)]
-mod tests;

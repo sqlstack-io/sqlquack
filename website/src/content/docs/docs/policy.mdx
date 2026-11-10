@@ -86,7 +86,10 @@ error, and `--verbose` adds a warning at each use:
 $ sqlquack convert due.sql
 SELECT
     "ORDERS"."ORDER_ID" AS "ORDER_ID",
-    CAST(CAST(hash(CAST("ORDERS"."CUSTOMER_ID" AS HUGEINT)) AS HUGEINT) - 9223372036854775808 AS DECIMAL(19,0)) AS "BUCKET"
+    CAST(
+        CAST(hash(CAST("ORDERS"."CUSTOMER_ID" AS HUGEINT)) AS HUGEINT)
+            - 9223372036854775808 AS DECIMAL(19, 0)
+    ) AS "BUCKET"
 FROM "ORDERS" AS "ORDERS"
 sqlquack convert: done, converted (1 known difference allowed: hash — sqlquack explain hash)
 ```

@@ -39,7 +39,8 @@ A `TIMEZONE` other than UTC refuses them, in every mode, and a note says so:
 
 ```console
 $ sqlquack convert orders.sql --session TIMEZONE=Europe/London
-SELECT "ORDERS"."ORDER_ID" AS "ORDER_ID" FROM "ORDERS" AS "ORDERS"
+SELECT "ORDERS"."ORDER_ID" AS "ORDER_ID"
+FROM "ORDERS" AS "ORDERS"
 sqlquack convert: note: the session time zone is Europe/London, not UTC, so statements that depend on it are refused
 sqlquack convert: done, converted
 ```

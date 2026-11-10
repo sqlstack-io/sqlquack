@@ -29,10 +29,11 @@ the known differences and assumptions it relies on, and refusals go to standard 
 $ sqlquack convert revenue.sql --no-config
 SELECT
     "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID",
-    CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE"
+    CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24, 2)) AS "REVENUE"
 FROM "ORDERS" AS "ORDERS"
 WHERE ("ORDERS"."STATUS" = 'shipped')
-GROUP BY "ORDERS"."CUSTOMER_ID"
+GROUP BY
+    "ORDERS"."CUSTOMER_ID"
 sqlquack convert: done, converted
 ```
 
