@@ -172,7 +172,7 @@ pub const CODES: &[CodeEntry] = &[
         code: CONVERSION_BUDGET,
         name: "conversion_budget",
         alias: None,
-        title: "converting this took too long or produced too much SQL",
+        title: "Converting this took too long or produced too much SQL",
         help: Some("split the statement into smaller statements"),
         explanation: "Converting the statement took longer, or produced more DuckDB SQL, than \
             SQLQuack allows for one statement, which keeps one unusual input from stalling a \
@@ -198,7 +198,7 @@ pub const CODES: &[CodeEntry] = &[
         code: DIVERGENCE_REFUSED,
         name: "divergence_refused",
         alias: None,
-        title: "this needs a known difference that isn't allowed",
+        title: "This needs a known difference that isn't allowed",
         help: Some(
             "the help gives the one fix that works here, such as allowing the known difference in \
              sqlquack.toml; `sqlquack explain <name>` describes it",
@@ -216,7 +216,7 @@ pub const CODES: &[CodeEntry] = &[
         code: UNALIASED_OUTPUT_NAME,
         name: UNALIASED_OUTPUT_NAME_CONSTRUCT,
         alias: None,
-        title: "this column needs an alias, because SQLQuack can't be sure of the name Snowflake gives it",
+        title: "This column needs an alias, because SQLQuack can't be sure of the name Snowflake gives it",
         help: Some("add an alias, such as `AS total`, which names the column in both engines"),
         explanation: "Snowflake names an unaliased select item after its written text, \
             upper-cased in full with spacing, comments and quotes kept and cut at 255 \

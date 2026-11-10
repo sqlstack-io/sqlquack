@@ -1,6 +1,6 @@
 use crate::known_differences::main::known_difference::known_difference;
 use crate::known_differences::tests::helpers::{
-    entries_off_style, entries_unlike_policy, internal_names_in_text,
+    entries_off_style, entries_unlike_policy, internal_names_in_text, notes_off_style,
 };
 use crate::known_differences::tests::test_types::{EntryCheckTestCase, LookupTestCase};
 
@@ -46,6 +46,11 @@ fn given_the_repository_policy_when_checking_the_known_differences_then_each_mat
         EntryCheckTestCase {
             description: "texts are short and each failure ends its wrong_when the same way",
             findings: entries_off_style,
+            expected_findings: &[],
+        },
+        EntryCheckTestCase {
+            description: "a diagnostic shows every entry's notes as whole, labelled sentences",
+            findings: notes_off_style,
             expected_findings: &[],
         },
     ];

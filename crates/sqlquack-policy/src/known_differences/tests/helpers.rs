@@ -120,6 +120,43 @@ pub(crate) fn entries_off_style() -> Vec<String> {
         .collect()
 }
 
+pub(crate) fn notes_off_style() -> Vec<String> {
+    KNOWN_DIFFERENCES
+        .iter()
+        .flat_map(|entry| {
+            let notes = entry.notes();
+            let shown = format!("{}\n{}", entry.summary(), notes.join("\n"));
+            let refers_back = [entry.fine_when, entry.wrong_when].iter().any(|text| {
+                text.split("such ")
+                    .skip(1)
+                    .any(|after| !after.starts_with("as "))
+            });
+            let unlabelled = notes.iter().filter(|note| {
+                let sentence = ["fine when: ", "wrong when: "]
+                    .iter()
+                    .find_map(|label| note.strip_prefix(label))
+                    .unwrap_or(note);
+                !(sentence.starts_with(char::is_uppercase) && sentence.ends_with('.'))
+            });
+            [
+                (!shown.contains(entry.fine_when)).then_some("fine_when is not shown whole"),
+                (!shown.contains(entry.wrong_when)).then_some("wrong_when is not shown whole"),
+                (shown.matches(". ").count() + shown.matches(".\n").count()
+                    < sentences(entry.differs) - 1)
+                    .then_some("part of differs is not shown"),
+                (refers_back && notes.len() < 3)
+                    .then_some("\"such\" refers to a sentence the diagnostic does not show"),
+            ]
+            .into_iter()
+            .flatten()
+            .map(str::to_owned)
+            .chain(unlabelled.map(|note| format!("not a whole sentence: {note}")))
+            .map(|problem| format!("{}: {problem}", entry.name))
+            .collect::<Vec<String>>()
+        })
+        .collect()
+}
+
 fn sentences(text: &str) -> usize {
     text.matches(". ").count() + usize::from(text.ends_with('.'))
 }
