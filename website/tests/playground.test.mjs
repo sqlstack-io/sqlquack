@@ -108,7 +108,7 @@ test('the conversion budget is timed in the browser and refuses with SQ0006 when
 });
 
 test('every example chip stops at the stage its label names, the Run stage included', async () => {
-	const { EXAMPLE_GROUPS, EXAMPLES, CAPTIONS, SOURCES: PAGE_SOURCES } = await import('../public/playground/examples.js');
+	const { EXAMPLE_GROUPS, EXAMPLES, SOURCES: PAGE_SOURCES } = await import('../public/playground/examples.js');
 	const chips = EXAMPLE_GROUPS.flatMap((group) => group.examples);
 	assert.deepEqual(chips.map((chip) => chip.key).sort(), Object.keys(EXAMPLES).sort());
 	assert.equal(new Set(chips.map((chip) => chip.slug)).size, chips.length);
@@ -126,10 +126,26 @@ test('every example chip stops at the stage its label names, the Run stage inclu
 		}
 	};
 	for (const chip of chips) assert.equal(await stops(EXAMPLES[chip.key]), chip.stops, chip.name);
-	// The one deliberate refusal is a known divergence, explained by its caption.
+	// The one deliberate refusal is a known difference, explained once by its SQ0008.
 	const refused = JSON.parse(analyze(EXAMPLES.refused, PAGE_SOURCES)).translate;
 	assert.deepEqual(refused.diagnostics.map((d) => d.code), ['SQ0008']);
-	assert.ok(CAPTIONS.refused);
+});
+
+test('a refused known difference is worded from its entry, with the one fix that works here, as the CLI words it', () => {
+	const policy = readFileSync(new URL('../../sqlquack.toml', import.meta.url), 'utf8');
+	const refused = (settings) => JSON.parse(analyze('SELECT HASH(order_id) AS h FROM orders', SOURCES, JSON.stringify(settings))).translate.diagnostics[0];
+	const builtin = refused({});
+	assert.equal(builtin.message, 'HASH gives a different value in DuckDB');
+	assert.equal(builtin.label, "DuckDB computes its own hash, never Snowflake's");
+	assert.deepEqual(builtin.notes, [
+		'Equal inputs still get equal hashes within one run.',
+		'fine when: Joins, grouping, removing duplicates and spotting changed rows by hash.',
+		'wrong when: Storing, comparing or sorting by the hash value itself: it differs, with no error.',
+	]);
+	assert.match(builtin.help, /^allow it in a sqlquack\.toml with default = "warn" under \[divergences\.hash\]/);
+	// A policy file that refuses it gets the edit to that file; strict mode the strict setting.
+	assert.match(refused({ policy }).help, /^allow it with default = "warn" under \[divergences\.hash\] in the policy file/);
+	assert.match(refused({ policy, strict: true }).help, /^allow it in strict mode with default = "warn" and strict = "warn"/);
 });
 
 test('date arithmetic against CURRENT_DATE runs in the in-browser DuckDB, on its first statement', async () => {

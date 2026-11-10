@@ -4,7 +4,7 @@
 
 import { DUCKDB_DIR, DUCKDB_EXTENSIONS, DUCKDB_WASM_BYTES } from './duckdb-version.js';
 import { ENGINE_DIR, ENGINE_WASM_BYTES } from './engine-version.js';
-import { CAPTIONS, EXAMPLE_GROUPS, EXAMPLES, ROWS, SOURCES, stopLabel } from './examples.js';
+import { EXAMPLE_GROUPS, EXAMPLES, ROWS, SOURCES, stopLabel } from './examples.js';
 import { escape, previewLimit, rendered, resultTable, underlined } from './spans.js';
 
 const here = (path) => new URL(path, import.meta.url).href;
@@ -100,7 +100,6 @@ const strictBox = $('#pg-strict');
 const utcBox = $('#pg-utc');
 const settings = () =>
 	JSON.stringify({ policy: policyBox.value, session: sessionBox.value, strict: strictBox.checked, utc_session: utcBox.checked });
-const caption = $('#pg-caption');
 const verdict = $('#pg-verdict');
 const marks = $('#pg-marks');
 const tip = $('#pg-tip');
@@ -123,11 +122,6 @@ function underline(chars, items) {
 	marks.innerHTML = html;
 	marks.items = kept;
 	marks.scrollTop = sqlBox.scrollTop;
-}
-
-function showCaption(example) {
-	caption.textContent = CAPTIONS[example] ?? '';
-	caption.hidden = !CAPTIONS[example];
 }
 
 let latest = null;
@@ -218,7 +212,7 @@ async function run() {
 	const policy = translate.profile ? `policy: ${translate.profile}` : '';
 	if (refused) {
 		const reason = translate.diagnostics?.[0]?.message ?? 'no supported conversion';
-		verdict.innerHTML = `<strong>Valid Snowflake SQL.</strong> Not translated to DuckDB: ${escape(reason)}`;
+		verdict.innerHTML = `<strong>Valid Snowflake SQL, not translated:</strong> ${escape(reason)}`;
 		verdict.hidden = false;
 		setStage('translate', 'refused', body, policy, 'not translated');
 	} else setStage('translate', translate.status, body, policy);
@@ -238,14 +232,14 @@ async function run() {
 }
 
 // What the translation relies on that a reader should know, as `sqlquack convert` prints it:
-// each known divergence the policy allows, and each assumption, which gives a wrong value
+// each known difference the policy allows, and each assumption, which gives a wrong value
 // silently where it does not hold.
 function conversionNotes(translate) {
 	const notes = [];
 	for (const statement of translate.statements ?? [])
 		for (const d of statement.divergences ?? []) {
 			const at = d.constructs.map((construct) => `<code>${escape(construct)}</code>`).join(', ');
-			const kind = d.assumption ? 'assumption' : 'known divergence';
+			const kind = d.assumption ? 'assumption' : 'known difference';
 			notes.push(`Relies on ${kind} <code>${escape(d.id)}</code> at ${at}${d.reason ? `: ${escape(d.reason)}` : ''}`);
 		}
 	return [...new Set(notes)].map((note) => `<p class="pg-conversion-note"><strong>Note.</strong> ${note}</p>`).join('');
@@ -471,7 +465,6 @@ document.addEventListener('click', (event) => {
 	if (event.target.dataset.addRelation) addRelation(event.target.dataset.addRelation);
 });
 sqlBox.addEventListener('input', () => {
-	showCaption(null);
 	// Edited SQL is no longer the example, so neither the chip nor the link names it any more.
 	if (activeExample) {
 		setActiveExample(null);
@@ -516,7 +509,6 @@ function setActiveExample(key) {
 
 function loadExample(key) {
 	sqlBox.value = EXAMPLES[key];
-	showCaption(key);
 	setActiveExample(key);
 }
 

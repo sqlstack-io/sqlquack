@@ -1328,18 +1328,6 @@ footer a {
 	font-size: 12px;
 }
 
-.pg-caption {
-	padding: 8px 10px;
-	border-left: 2px solid var(--primary);
-	background: var(--accent-soft);
-	color: var(--muted-foreground);
-	font-size: 13px;
-}
-
-.pg-caption[hidden] {
-	display: none;
-}
-
 .pg-note label {
 	margin-right: 16px;
 	cursor: pointer;

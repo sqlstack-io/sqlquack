@@ -144,9 +144,3 @@ export const STOP_LABELS = {
 	run: 'stops at Run',
 };
 export const stopLabel = (stops) => (stops ? STOP_LABELS[stops] : 'all four pass');
-
-// Shown under the editor while an example is loaded and unedited.
-export const CAPTIONS = {
-	refused:
-		'Valid Snowflake SQL that SQLQuack will not translate. DuckDB computes HASH differently, so translated SQL would run and return other values. SQLQuack refuses and says why rather than guess; a policy file can allow a known divergence explicitly.',
-};
