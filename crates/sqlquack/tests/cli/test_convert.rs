@@ -402,9 +402,8 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
     }
 }
 
-// The distributions workflow also runs this test with DuckDB compiled in (`--features bundled`), as
-// the wheels build it. It holds only zone-free statements: the compiled-in DuckDB lacks ICU until
-// the bundled build gains it, and then that job runs the full convert test above instead.
+// The distributions workflow also runs this test and the convert test above with DuckDB compiled in
+// (`--features bundled`), as the wheels build it.
 #[test]
 fn given_zone_free_snowflake_sql_when_converting_then_the_checking_engine_binds_it() {
     let test_cases = [

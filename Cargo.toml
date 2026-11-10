@@ -124,3 +124,10 @@ opt-level = 1
 debug-assertions = true
 overflow-checks = true
 strip = "none"
+
+# DuckDB from the duckdb-rs commit that crates.io's 1.20000.0 was published from, with its DuckDB
+# sources checkout: compiling ICU in (sqlquack-blocks' `bundled`) needs those sources, which the
+# crates.io package does not ship. Published manifests keep the crates.io versions.
+[patch.crates-io]
+duckdb = { git = "https://github.com/duckdb/duckdb-rs", rev = "1b8f7cca6e28c5ea8c4185aaa266424f25c3dfdc" }
+libduckdb-sys = { git = "https://github.com/duckdb/duckdb-rs", rev = "1b8f7cca6e28c5ea8c4185aaa266424f25c3dfdc" }

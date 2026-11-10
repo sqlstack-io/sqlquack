@@ -16,11 +16,14 @@ rust-version.workspace = true
 default = []
 engine = ["dep:duckdb"]
 # Compiles DuckDB into the binary, for distributions that must not need a system DuckDB. Its json
-# extension comes with it: the checking engine's helper macros call json functions, so without it
-# every conversion fails its check.
-bundled = ["engine", "duckdb/bundled", "duckdb/json"]
-# DuckDB's parquet extension compiled in as well, so `sqlquack run` reads Parquet fixtures without
-# downloading an extension.
+# and ICU extensions come with it: the checking engine's helper macros call json functions, and
+# zone-dependent statements bind only with ICU, so without them conversions fail their check.
+# Compiling ICU in builds DuckDB with CMake from the duckdb-rs sources checkout, which the crates.io
+# duckdb package does not ship: this workspace patches duckdb to that checkout, and a build of the
+# crates.io sqlquack-blocks needs the same patch and CMake for this feature.
+bundled = ["engine", "duckdb/bundled", "duckdb/json", "duckdb/icu"]
+# Also names DuckDB's parquet extension, so `sqlquack run` reads Parquet fixtures without downloading
+# an extension. The CMake build behind `bundled` compiles it in already.
 extensions = ["bundled", "duckdb/parquet"]
 
 [dependencies]
