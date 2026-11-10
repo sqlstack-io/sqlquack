@@ -35,6 +35,7 @@ sqlquack-convert = { workspace = true, features = ["engine", "snowflake"] }
 sqlquack-diagnostics = { workspace = true, features = ["snowflake"] }
 sqlquack-parse.workspace = true
 sqlquack-blocks = { workspace = true, features = ["engine"] }
+sqlquack-format = { workspace = true, features = ["duckdb"] }
 sqlquack-evidence.workspace = true
 sqlquack-policy.workspace = true
 sqlquack-semantics = { workspace = true, features = ["snowflake"] }

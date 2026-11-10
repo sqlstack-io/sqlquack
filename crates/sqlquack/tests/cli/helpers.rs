@@ -819,9 +819,11 @@ pub(crate) fn run_convert(sql: &str, flags: &[&str], mention: &str) -> ConvertOu
     ConvertOutcome {
         exit_code: output.status.code(),
         printed_sql: stdout
-            .lines()
-            .find(|line| !line.starts_with("CREATE "))
-            .is_some_and(|line| line.starts_with("SELECT") || line.starts_with("WITH")),
+            .split(";\n")
+            .find(|statement| !statement.starts_with("CREATE "))
+            .is_some_and(|statement| {
+                statement.starts_with("SELECT") || statement.starts_with("WITH")
+            }),
         json_converted: json["converted"].as_bool(),
         stderr_mentions: String::from_utf8_lossy(&output.stderr).contains(mention),
     }
