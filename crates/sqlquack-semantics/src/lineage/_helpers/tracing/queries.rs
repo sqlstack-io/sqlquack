@@ -13,7 +13,7 @@ use crate::lineage::_helpers::tracing::expressions::{expression_lineage, is_aggr
 use crate::lineage::_helpers::tracing::lineages::{combined, set_merged, traced_if, unresolved};
 use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
 use crate::lineage::_helpers::tracing::reuse::{
-    Reach, holds_aggregate, keep_reach, kept_reach, reused, worked,
+    Reach, Reuse, holds_aggregate, keep_reach, kept_reach, reused, reused_items, reusing, worked,
 };
 use crate::lineage::_helpers::tracing::sources::{
     from_sources, listed, pivot_sources, values_query,
@@ -349,6 +349,7 @@ fn ctes_reach(
 ) -> Vec<NamedQuery> {
     let mut reach: Vec<NamedQuery> = ctes.to_vec();
     for cte in &with.ctes {
+        let _reuse: Reuse = reusing(&reach);
         let name = key(&cte.alias, context);
         let reads_own: bool = reads_itself(cte, &name, context);
         let mut query: ResolvedQuery = match with.recursive || reads_own {
@@ -491,7 +492,12 @@ fn level_scope_and_rows<'a>(
         sources,
         merged,
         rows,
-    } = from_sources(select, ctes, outer, context);
+    } = match outer {
+        None => reused_items(std::ptr::from_ref(select) as usize, ctes, || {
+            from_sources(select, ctes, None, context)
+        }),
+        Some(_) => from_sources(select, ctes, outer, context),
+    };
     let mut scope = LineageScope {
         sources,
         merged,

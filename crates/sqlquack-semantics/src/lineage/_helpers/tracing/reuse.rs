@@ -11,16 +11,24 @@ use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::queries::models::With;
 
 use crate::lineage::_helpers::tracing::expressions::is_aggregate;
-use crate::lineage::models::{NamedQuery, ResolvedQuery};
+use crate::lineage::models::{FromItems, NamedQuery, ResolvedQuery};
 
 /// The queries resolved with one CTE list in reach and no enclosing level, by their nodes' addresses.
 struct Frame {
     ctes: (usize, usize),
     resolved: FxHashMap<usize, ResolvedQuery>,
+    /// The FROM items of each SELECT scoped with the list and no enclosing level.
+    items: FxHashMap<usize, FromItems>,
 }
 
 /// A node's address, with the address and length of the CTE list it was read with.
 type Placed = (usize, (usize, usize));
+
+/// Where a kind of kept value lives: for the analysis by placed node, and per frame by node.
+type KeptIn<T> = (
+    fn(&mut Kept) -> &mut FxHashMap<Placed, T>,
+    fn(&mut Frame) -> &mut FxHashMap<usize, T>,
+);
 
 /// What one analysis of a tree keeps, by node address: valid while the analysed tree lives.
 #[derive(Default)]
@@ -34,6 +42,8 @@ struct Kept {
     settled_lists: FxHashSet<(usize, usize)>,
     /// Queries resolved with a settled list and no enclosing level, for the whole analysis.
     settled: FxHashMap<Placed, ResolvedQuery>,
+    /// FROM items scoped with a settled list and no enclosing level, for the whole analysis.
+    settled_items: FxHashMap<Placed, FromItems>,
 }
 
 thread_local! {
@@ -145,6 +155,7 @@ pub(crate) fn reusing(ctes: &[NamedQuery]) -> Reuse {
             kept.frames.push(Frame {
                 ctes,
                 resolved: FxHashMap::default(),
+                items: FxHashMap::default(),
             });
         }
         !kept_already
@@ -215,36 +226,55 @@ pub(crate) fn reused(
     resolve: impl FnOnce() -> ResolvedQuery,
 ) -> ResolvedQuery {
     let node: usize = std::ptr::from_ref(query) as usize;
-    let ctes: (usize, usize) = identity(ctes);
-    let settled: Option<ResolvedQuery> = with_kept(|kept| match settled_list(kept, ctes) {
-        true => Some(kept.settled.get(&(node, ctes)).cloned()),
-        false => None,
-    })
-    .flatten()
-    .flatten();
-    if let Some(found) = settled {
-        return found;
-    }
-    let settles: bool = with_kept(|kept| settled_list(kept, ctes)).unwrap_or(false);
-    if settles {
-        let resolved: ResolvedQuery = resolve();
-        with_kept(|kept| kept.settled.insert((node, ctes), resolved.clone()));
-        return resolved;
+    kept_or(
+        (node, identity(ctes)),
+        (|kept| &mut kept.settled, |frame| &mut frame.resolved),
+        resolve,
+    )
+}
+
+/// The FROM items of the SELECT at `select` scoped with `ctes` and no enclosing level, kept alike.
+pub(crate) fn reused_items(
+    select: usize,
+    ctes: &[NamedQuery],
+    scope: impl FnOnce() -> FromItems,
+) -> FromItems {
+    kept_or(
+        (select, identity(ctes)),
+        (|kept| &mut kept.settled_items, |frame| &mut frame.items),
+        scope,
+    )
+}
+
+/// The value kept for `(node, ctes)` in the settled map or the innermost frame for `ctes`, else built.
+fn kept_or<T: Clone>(
+    (node, ctes): Placed,
+    (settled, framed): KeptIn<T>,
+    build: impl FnOnce() -> T,
+) -> T {
+    let settles: Option<bool> = with_kept(|kept| settled_list(kept, ctes));
+    if settles == Some(true) {
+        if let Some(found) = with_kept(|kept| settled(kept).get(&(node, ctes)).cloned()).flatten() {
+            return found;
+        }
+        let built: T = build();
+        with_kept(|kept| settled(kept).insert((node, ctes), built.clone()));
+        return built;
     }
     let frame = |kept: &Kept| kept.frames.iter().rposition(|frame| frame.ctes == ctes);
-    let found: Option<ResolvedQuery> = with_kept(|kept| {
+    let found: Option<T> = with_kept(|kept| {
         let index: usize = frame(kept)?;
-        kept.frames[index].resolved.get(&node).cloned()
+        framed(&mut kept.frames[index]).get(&node).cloned()
     })
     .flatten();
     if let Some(found) = found {
         return found;
     }
-    let resolved: ResolvedQuery = resolve();
+    let built: T = build();
     with_kept(|kept| {
         if let Some(index) = frame(kept) {
-            kept.frames[index].resolved.insert(node, resolved.clone());
+            framed(&mut kept.frames[index]).insert(node, built.clone());
         }
     });
-    resolved
+    built
 }
