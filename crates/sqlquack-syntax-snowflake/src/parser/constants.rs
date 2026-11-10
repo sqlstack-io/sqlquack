@@ -316,6 +316,9 @@ pub(crate) const SNOWFLAKE_PRIOR_ENDS: &[sqlquack_syntax::tokens::models::TokenT
 /// Reserved words Snowflake is recorded refusing as an unquoted later part of a dotted name.
 pub(crate) const SNOWFLAKE_REFUSED_NAME_PARTS: &[&str] = &["SELECT"];
 
+/// Longer than any Snowflake reserved keyword, so a longer word is none.
+pub(crate) const SNOWFLAKE_RESERVED_LONGEST: usize = 32;
+
 /// Snowflake's fully reserved keywords; its position-limited keywords are not listed.
 pub(crate) const SNOWFLAKE_RESERVED_KEYWORDS: &[&str] = &[
     "ALL",
