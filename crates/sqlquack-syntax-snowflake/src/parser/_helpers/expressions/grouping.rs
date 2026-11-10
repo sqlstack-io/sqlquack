@@ -499,14 +499,20 @@ impl Parser {
         }
     }
 
-    /// Parses a lambda: `x -> x + 1`, `(x, y) -> ...` or DuckDB `LAMBDA x : x + 1`.
+    /// Parses a lambda: `x -> x + 1`, `(x, y) -> ...` or DuckDB `LAMBDA row, x : x + 1`, whose parameter may be a keyword.
     pub(crate) fn parse_lambda(&mut self) -> Result<Option<Expression>> {
         let start_index = self.current;
 
         if self.match_token(TokenType::Lambda) {
             let mut params: Vec<Identifier> = Vec::new();
             loop {
-                if self.is_identifier_token() {
+                let word = self
+                    .peek()
+                    .text
+                    .starts_with(|first: char| first.is_ascii_alphabetic() || first == '_');
+                let keyword_name = word
+                    && (self.check_next(TokenType::Comma) || self.check_next(TokenType::Colon));
+                if self.is_identifier_token() || keyword_name {
                     let token = self.advance()?;
                     let quoted = token.token_type == TokenType::QuotedIdentifier;
                     params.push(identifier_from_token(token, quoted));
