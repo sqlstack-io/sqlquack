@@ -20,7 +20,12 @@ from scripts.duckshop_measure._helpers.report import (
 )
 from scripts.duckshop_measure._helpers.running import binary_converter, duckdb_rows
 from scripts.duckshop_measure._helpers.snowflake import policy_value_divergences, run_comparisons
-from scripts.duckshop_measure.constants import PROJECT_COMMAND, SNOWFLAKE_COMMAND, TESTS_COMMAND
+from scripts.duckshop_measure.constants import (
+    EVIDENCE_FILE,
+    PROJECT_COMMAND,
+    SNOWFLAKE_COMMAND,
+    TESTS_COMMAND,
+)
 from scripts.duckshop_measure.models import ModelResult, SnowflakeInputs, UnitTestOutcome
 from scripts.duckshop_measure.types import Comparer, Converter, FunctionConverter
 
@@ -50,7 +55,7 @@ def _measure_parser() -> argparse.ArgumentParser:
     tests.add_argument("--compiled", type=Path, required=True, help="a project's target/compiled")
     tests.add_argument("--sqlquack", type=Path, required=True)
     tests.add_argument("--library", type=Path, required=True, help="libduckdb.so's directory")
-    tests.add_argument("--policy", type=Path, default=Path("sqlquack.toml"))
+    tests.add_argument("--config", type=Path, default=Path("sqlquack.toml"))
     tests.add_argument("--out", type=Path, required=True)
     snowflake: argparse.ArgumentParser = commands.add_parser(
         SNOWFLAKE_COMMAND, help="converted models on DuckDB over recorded inputs, against Snowflake"
@@ -81,7 +86,8 @@ def _measure_parser() -> argparse.ArgumentParser:
     )
     snowflake.add_argument("--sqlquack", type=Path, required=True)
     snowflake.add_argument("--library", type=Path, required=True, help="libduckdb.so's directory")
-    snowflake.add_argument("--policy", type=Path, default=Path("sqlquack.toml"))
+    snowflake.add_argument("--config", type=Path, default=Path("sqlquack.toml"))
+    snowflake.add_argument("--evidence", type=Path, default=Path(EVIDENCE_FILE))
     snowflake.add_argument("--work", type=Path, required=True, help="inputs databases and manifest")
     snowflake.add_argument("--out", type=Path, required=True)
     return parser
@@ -101,7 +107,7 @@ def _measure_snowflake(
         return run_comparisons(
             binary=arguments.sqlquack,
             library=arguments.library,
-            policy=arguments.policy,
+            policy=arguments.evidence,
             manifest=manifest,
             comparisons=comparisons,
         )
@@ -117,7 +123,7 @@ def _measure_snowflake(
         converted=arguments.converted,
         lenient_converted=arguments.lenient_converted,
         guards=arguments.guards,
-        value_divergences=policy_value_divergences(arguments.policy),
+        value_divergences=policy_value_divergences(arguments.evidence),
         work=arguments.work,
         macros=macros,
         python_functions=python,
@@ -154,7 +160,7 @@ def run_measure(
         )
         return 0
     convert: Converter = converter or binary_converter(
-        binary=arguments.sqlquack, library=arguments.library, policy=arguments.policy
+        binary=arguments.sqlquack, library=arguments.library, policy=arguments.config
     )
     outcomes: list[UnitTestOutcome] = unit_test_outcomes(
         compiled=arguments.compiled, convert=convert, execute=duckdb_rows

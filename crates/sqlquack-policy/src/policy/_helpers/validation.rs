@@ -172,11 +172,6 @@ fn divergence_problems(name: &str, divergence: &Divergence) -> Vec<String> {
                 format!("divergence `{name}` has an invalid construct key `{construct}`")
             }),
     );
-    if divergence.strict < divergence.default {
-        found.push(format!(
-            "divergence `{name}` is treated more leniently in strict mode"
-        ));
-    }
     if divergence.reason.trim().is_empty() {
         found.push(format!("divergence `{name}` has no reason"));
     }

@@ -489,7 +489,7 @@ duckshop-measure: duckshop-compiled
 	uv run python -m scripts.measure_duckshop project --environment referee/environments/duckshop.json \
 	  --recorded "$(DUCKSHOP_RESULTS)" --functions "$$compiled/functions" --out "$$out/project"; \
 	SQLQUACK_CONVERTED_DIR="$$out/converted" SQLQUACK_GUARDS_DIR="$$out/guards" \
-	  LD_LIBRARY_PATH="$$library" "$$target/release/sqlquack" census --policy sqlquack.toml --json \
+	  LD_LIBRARY_PATH="$$library" "$$target/release/sqlquack" census --config sqlquack.toml --json \
 	  --detailed --project "$$out/project" "$$compiled/models" \
 	  > "$$out/census.json" || [ $$? -eq 1 ]; \
 	uv run python -m scripts.measure_duckshop tests --compiled "$$compiled" \

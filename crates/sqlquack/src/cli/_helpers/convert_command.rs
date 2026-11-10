@@ -6,7 +6,6 @@ use std::process::ExitCode;
 
 use sqlquack_blocks::layout::main::layout_sql::layout_sql;
 use sqlquack_blocks::macros::main::explain_helper::explain_helper;
-use sqlquack_blocks::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
 use sqlquack_diagnostics::diagnostics::constants::{CODES, SESSION_PARAMETERS};
 use sqlquack_diagnostics::diagnostics::main::diagnose::diagnose;
@@ -17,14 +16,14 @@ use sqlquack_diagnostics::diagnostics::main::warning_at::warning_at;
 use sqlquack_diagnostics::diagnostics::models::{Diagnostic, Palette};
 use sqlquack_diagnostics::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_diagnostics::refusals::models::Refusal;
+use sqlquack_policy::config::constants::CONFIG_FILE_NAME;
+use sqlquack_policy::config::main::load_config::load_config;
+use sqlquack_policy::config::models::UserConfig;
 use sqlquack_policy::known_differences::constants::KNOWN_DIFFERENCES;
 use sqlquack_policy::known_differences::main::known_difference::known_difference;
-use sqlquack_policy::policy::constants::{
-    CURRENT_TIME, NUMERIC_RANGE, POLICY_FILE_NAME, SESSION_TIME_ZONE, SESSION_TIMEZONE_UTC,
-    TIMESTAMP_RANGE, TIMESTAMP_TZ_SUBMICRO, TIMEZONE_PARAMETER,
-};
-use sqlquack_policy::policy::main::load_project_file::load_project_file;
-use sqlquack_policy::policy::models::{DivergenceFailure, Policy};
+use sqlquack_policy::policy::constants::{PROJECT_UDF, SESSION_TIME_ZONE, TIMEZONE_PARAMETER};
+use sqlquack_policy::policy::main::evidence_policy::evidence_policy;
+use sqlquack_policy::policy::models::DivergenceFailure;
 use sqlquack_semantics::snowflake::typing::types::Schema;
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -34,35 +33,30 @@ use crate::analysis::main::python_functions::python_functions;
 use crate::analysis::main::refused_construct::refused_construct;
 use crate::analysis::main::with_helpers::with_helpers;
 use crate::analysis::main::with_overrides::with_overrides;
-use crate::cli::_helpers::evidence::{conversion_choices, divergence_options};
 use crate::cli::_helpers::project::project_choices;
 use crate::cli::models::{
     CheckArguments, CheckReport, ColorArguments, ConvertArguments, ConvertRefusal, ConvertReport,
     ExplainArguments, KnownDifferenceUse, OutputArguments, OutputFormat, OverrideListing,
-    PolicyArguments, RunArguments, RunPrinted,
+    RunArguments, RunPrinted,
 };
 use crate::run::main::run_query::run_query;
 use crate::run::models::RunInputs;
 use crate::terminal::main::highlight_sql::highlight_sql;
 use sqlquack_convert::snowflake::analysis::main::assumption_id::assumption_id;
-use sqlquack_convert::snowflake::analysis::main::caller_choices::caller_choices;
-use sqlquack_convert::snowflake::analysis::models::Analysis;
+use sqlquack_convert::snowflake::analysis::models::{Analysis, ConversionChoices};
+use sqlquack_convert::snowflake::session::main::configured_options::configured_options;
 
 use crate::cli::main::convert_report::convert_report;
 use sqlquack_convert::snowflake::analysis::main::with_divergence_help::with_divergence_help;
 
-/// Known differences the built-in default allows only for some of the constructs that rely on them.
-const BUILTIN_PARTIAL: [&str; 5] = [
-    JSON_FIDELITY,
-    NUMERIC_RANGE,
-    TIMESTAMP_RANGE,
-    TIMESTAMP_TZ_SUBMICRO,
-    SESSION_TIMEZONE_UTC,
-];
-/// What allows a known difference that no policy file allows, in `convert --json`.
+/// What allows a known difference that the configuration does not allow, in `convert --json`.
 const ALLOWED_BY_DEFAULT: &str = "default";
-/// How `explain --differences` marks those without a policy file.
-const PARTLY_ALLOWED: &str = "allowed by default for some uses";
+/// What allows `project_udf` when a Python runtime registers the project's functions.
+const ALLOWED_BY_RUNTIME: &str = "python_runtime";
+/// How `explain --differences` marks a known difference that can return a different value.
+const VALUE_MARK: &str = "value";
+/// How `explain --differences` marks one that raises an error wherever the results could differ.
+const ERROR_MARK: &str = "error";
 /// The path naming standard input.
 const STDIN_PATH: &str = "-";
 /// How diagnostics name standard input.
@@ -193,13 +187,12 @@ fn run_printed(arguments: &RunArguments, palette: &Palette) -> RunPrinted {
         &arguments.conversion,
         (None, &arguments.session, arguments.overrides.as_deref()),
     )
-    .and_then(|(policy, project)| {
+    .and_then(|project| {
         run_query(&RunInputs {
             source: &sql,
             converted: &report.sql,
             macros: &report.macros,
             profile: &report.profile,
-            policy: policy.as_ref(),
             schema: &project.schema,
             fixtures: &arguments.fixtures,
             expect: arguments.expect.as_deref(),
@@ -355,7 +348,7 @@ pub(crate) fn explain_command(
     stderr: &mut dyn Write,
 ) -> ExitCode {
     let explained = match (arguments.differences, arguments.codes, &arguments.code) {
-        (true, _, _) => known_differences(Path::new(POLICY_FILE_NAME)),
+        (true, _, _) => known_differences(Path::new(CONFIG_FILE_NAME)),
         (false, true, _) => Ok(codes()),
         (false, false, Some(key)) => explain_key(key).ok_or_else(|| {
             format!(
@@ -399,53 +392,57 @@ fn explain_difference(name: &str) -> Option<String> {
     ))
 }
 
-/// Every known difference, marked allowed by `policy_path`, allowed by default without it, or refused.
-fn known_differences(policy_path: &Path) -> Result<String, String> {
-    let (policy, project) = match policy_path.is_file() {
-        true => load_project_file(policy_path).map_err(|error| error.to_string())?,
-        false => (None, Default::default()),
+/// Every known difference, marked allowed by the configuration at `config_path`, by default, or refused.
+fn known_differences(config_path: &Path) -> Result<String, String> {
+    let config_file = Some(config_path).filter(|path| path.is_file());
+    let config = match config_file {
+        Some(path) => load_config(path, evidence_policy()).map_err(|error| error.to_string())?,
+        None => UserConfig::default(),
     };
-    let choices = PolicyArguments {
-        project: None,
-        policy: None,
-        builtin_policy: false,
-        strict: false,
-        utc_session: project.confirm.utc_session,
-        confirm_declared_offsets: project.confirm.declared_offsets,
-        python_runtime: project.confirm.python_runtime,
-        loud_divergences_only: false,
+    let choices = ConversionChoices {
+        config_file: config_file.map(|path| path.display().to_string()),
+        allow: config.allow,
+        python_runtime: config.project.python_runtime,
+        ..ConversionChoices::default()
     };
-    let options = divergence_options(policy.as_ref(), &choices);
-    let allowed = match &policy {
-        Some(_) => format!("allowed by {POLICY_FILE_NAME}"),
-        None => "allowed by default".to_owned(),
+    let options = configured_options(&choices);
+    let rules = match config_file {
+        Some(_) => format!("as the defaults and ./{CONFIG_FILE_NAME} treat them"),
+        None => format!("as the defaults treat them, with no ./{CONFIG_FILE_NAME}"),
     };
-    let rules = match &policy {
-        Some(_) => format!("as ./{POLICY_FILE_NAME} treats them"),
-        None => format!("as the defaults treat them, with no ./{POLICY_FILE_NAME}"),
-    };
+    let statuses: Vec<String> = KNOWN_DIFFERENCES
+        .iter()
+        .map(|entry| {
+            match (
+                options.divergences.contains_key(entry.name),
+                allowed_by(&choices, entry.name),
+            ) {
+                (false, _) => "refused".to_owned(),
+                (true, by) if by != ALLOWED_BY_DEFAULT => format!("allowed by {by}"),
+                (true, _) => "allowed by default".to_owned(),
+            }
+        })
+        .collect();
     let name_width = KNOWN_DIFFERENCES
         .iter()
         .map(|entry| entry.name.len())
         .max()
         .unwrap_or(0);
-    let status_width = match policy {
-        Some(_) => allowed.len(),
-        None => PARTLY_ALLOWED.len(),
-    };
+    let status_width = statuses.iter().map(String::len).max().unwrap_or(0);
     let lines: String = KNOWN_DIFFERENCES
         .iter()
-        .map(|entry| {
-            let status = match (
-                options.divergences.contains_key(entry.name),
-                policy.is_none() && BUILTIN_PARTIAL.contains(&entry.name),
-            ) {
-                (true, true) => PARTLY_ALLOWED,
-                (true, false) => allowed.as_str(),
-                (false, _) => "refused",
+        .zip(&statuses)
+        .map(|(entry, status)| {
+            let mark = match evidence_policy()
+                .divergences
+                .get(entry.name)
+                .is_some_and(|divergence| divergence.failure == DivergenceFailure::Value)
+            {
+                true => VALUE_MARK,
+                false => ERROR_MARK,
             };
             format!(
-                "  {name:<name_width$}  {status:<status_width$}  {title}\n",
+                "  {name:<name_width$}  {status:<status_width$}  {mark:<5}  {title}\n",
                 name = entry.name,
                 title = entry.title,
             )
@@ -453,6 +450,8 @@ fn known_differences(policy_path: &Path) -> Result<String, String> {
         .collect();
     Ok(format!(
         "Known differences between Snowflake and the converted SQL, {rules}:\n\n{lines}\n\
+         `{VALUE_MARK}` marks a difference that can return a different value with no error, and \
+         `{ERROR_MARK}` one that raises an error instead.\n\
          `sqlquack explain <name>` describes one.\n"
     ))
 }
@@ -562,23 +561,11 @@ pub(crate) fn refused_session(reason: String) -> ConvertReport {
     }
 }
 
-/// The session's options with what the caller confirms and the user overrides applied.
+/// The session's options with the user overrides applied.
 pub(crate) fn chosen_options(
     arguments: &ConvertArguments,
-    policy: Option<&Policy>,
     options: ConversionOptions,
 ) -> Result<ConversionOptions, String> {
-    let options = match policy {
-        Some(policy) => caller_choices(options, policy, &conversion_choices(&arguments.conversion)),
-        None if arguments.conversion.loud_divergences_only => {
-            let mut options = options;
-            options
-                .divergences
-                .retain(|id, _| ![CURRENT_TIME, SESSION_TIMEZONE_UTC].contains(&id.as_str()));
-            options
-        }
-        None => options,
-    };
     with_overrides(
         options,
         (
@@ -592,27 +579,24 @@ pub(crate) fn chosen_options(
 pub(crate) fn analysis_report(
     analysis: &Analysis,
     (sql, compact): (&str, bool),
-    (schema, options, policy): (&Schema, &ConversionOptions, Option<&Policy>),
-    (arguments, parameters, profile): (&PolicyArguments, &BTreeMap<String, String>, String),
+    (schema, options): (&Schema, &ConversionOptions),
+    (choices, parameters, profile): (&ConversionChoices, &BTreeMap<String, String>, String),
 ) -> Result<ConvertReport, String> {
+    let evidence = evidence_policy();
     let converted = analysis.parsed && analysis.refusals.is_empty();
     let provenance = merge_provenance(analysis.conversions.iter().map(|done| &done.provenance));
     let assumptions: Vec<String> = provenance
         .divergences
         .keys()
-        .filter(|id| match policy {
-            Some(policy) => policy
+        .filter(|id| {
+            evidence
                 .divergences
                 .get(assumption_id(id))
-                .is_some_and(|divergence| divergence.assumption),
-            None => options
-                .divergences
-                .get(id.as_str())
-                .is_some_and(|divergence| divergence.assumption),
+                .is_some_and(|divergence| divergence.assumption)
         })
         .cloned()
         .collect();
-    let divergence_failures = divergence_failures(policy, &provenance.divergences);
+    let divergence_failures = divergence_failures(&provenance.divergences);
     let session_notes: Vec<String> = parameters
         .get(TIMEZONE_PARAMETER)
         .filter(|zone| *zone != SESSION_TIME_ZONE)
@@ -631,7 +615,7 @@ pub(crate) fn analysis_report(
             provenance
                 .divergences
                 .keys()
-                .filter(|_| policy.is_none())
+                .filter(|id| allowed_by(choices, assumption_id(id)) == ALLOWED_BY_DEFAULT)
                 .filter_map(|id| options.divergences.get(id.as_str()))
                 .map(|divergence| divergence.reason.clone()),
         )
@@ -652,14 +636,10 @@ pub(crate) fn analysis_report(
         override_macros(&provenance.divergences, options),
         &converted_sql,
     );
-    let allowed_by = match policy {
-        Some(_) => conversion_choices(arguments).policy_file,
-        None => ALLOWED_BY_DEFAULT.to_owned(),
-    };
     Ok(ConvertReport {
         converted,
         profile,
-        known_differences: known_difference_uses(analysis, (&allowed_by, policy)),
+        known_differences: known_difference_uses(analysis, choices),
         notes,
         session_notes,
         warnings: Vec::new(),
@@ -670,7 +650,7 @@ pub(crate) fn analysis_report(
             .zip(with_divergence_help(
                 &analysis.refusals,
                 diagnose(&analysis.refusals, sql),
-                (policy, &conversion_choices(arguments), parameters),
+                (choices, parameters),
             ))
             .map(convert_refusal)
             .collect(),
@@ -686,7 +666,7 @@ pub(crate) fn analysis_report(
 /// Every use of a known difference in the converted statements, each once, with who allowed it and why.
 fn known_difference_uses(
     analysis: &Analysis,
-    (allowed_by, policy): (&str, Option<&Policy>),
+    choices: &ConversionChoices,
 ) -> Vec<KnownDifferenceUse> {
     let mut uses: Vec<KnownDifferenceUse> = Vec::new();
     for used in analysis
@@ -696,14 +676,17 @@ fn known_difference_uses(
     {
         let name = assumption_id(&used.id);
         let entry = known_difference(name);
+        let allowed_by = allowed_by(choices, name);
         let listed = KnownDifferenceUse {
             name: name.to_owned(),
             title: entry.map_or_else(|| name.to_owned(), |entry| entry.title.to_owned()),
             fails_with: entry.map_or("", |entry| entry.fails_with()).to_owned(),
-            allowed_by: allowed_by.to_owned(),
-            reason: policy
-                .and_then(|policy| policy.divergences.get(name))
+            reason: evidence_policy()
+                .divergences
+                .get(name)
+                .filter(|_| allowed_by != ALLOWED_BY_DEFAULT)
                 .map(|divergence| divergence.reason.clone()),
+            allowed_by,
             construct: used.construct.clone(),
             line: used.location.map(|location| location.line),
             column: used.location.map(|location| location.column),
@@ -731,14 +714,20 @@ fn convert_refusal((refusal, diagnostic): (&Refusal, Diagnostic)) -> ConvertRefu
     }
 }
 
-/// Each relied-on divergence's failure, as the policy declares it.
+/// What allows the known difference `name`: the configuration file, the Python runtime, or the defaults.
+fn allowed_by(choices: &ConversionChoices, name: &str) -> String {
+    match (&choices.config_file, choices.allow.get(name)) {
+        (Some(file), Some(true)) => file.clone(),
+        _ if name == PROJECT_UDF && choices.python_runtime => ALLOWED_BY_RUNTIME.to_owned(),
+        _ => ALLOWED_BY_DEFAULT.to_owned(),
+    }
+}
+
+/// Each relied-on divergence's failure, as the evidence declares it.
 fn divergence_failures(
-    policy: Option<&Policy>,
     divergences: &BTreeMap<String, BTreeSet<String>>,
 ) -> BTreeMap<String, DivergenceFailure> {
-    let Some(policy) = policy else {
-        return BTreeMap::new();
-    };
+    let policy = evidence_policy();
     let mut failures: BTreeMap<String, DivergenceFailure> = BTreeMap::new();
     for id in divergences.keys() {
         if let Some(divergence) = policy.divergences.get(assumption_id(id)) {

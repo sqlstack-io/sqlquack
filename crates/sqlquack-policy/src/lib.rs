@@ -1,6 +1,7 @@
-//! The one policy file holding every setting that could be weakened to make a failing case pass.
+//! The evidence policy, which holds every setting a failing case could weaken, and the user configuration.
 
 #![forbid(unsafe_code)]
 
+pub mod config;
 pub mod known_differences;
 pub mod policy;

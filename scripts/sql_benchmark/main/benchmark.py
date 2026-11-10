@@ -16,7 +16,7 @@ def run_sql_benchmark(argv: list[str] | None = None) -> int:
     """Fail when a workload's time over its reference grew beyond the recorded ratio's headroom."""
     parser: argparse.ArgumentParser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sqlquack", type=Path, required=True, help="the sqlquack binary")
-    parser.add_argument("--policy", type=Path, default=Path("sqlquack.toml"))
+    parser.add_argument("--config", type=Path, default=Path("sqlquack.toml"))
     parser.add_argument("--budget", type=Path, required=True)
     parser.add_argument("--rows", type=int, default=1_000_000)
     parser.add_argument("--update", action="store_true", help="rewrite the budget")
@@ -25,7 +25,7 @@ def run_sql_benchmark(argv: list[str] | None = None) -> int:
         workload.name: timed(
             workload=workload,
             sqlquack=arguments.sqlquack,
-            policy=arguments.policy,
+            policy=arguments.config,
             rows=arguments.rows,
         )
         for workload in WORKLOADS

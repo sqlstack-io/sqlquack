@@ -1,6 +1,5 @@
 //! What a run takes and what it finds.
 
-use sqlquack_policy::policy::models::Policy;
 use sqlquack_semantics::snowflake::typing::types::Schema;
 
 /// A converted query and what it runs over.
@@ -14,8 +13,6 @@ pub struct RunInputs<'a> {
     pub macros: &'a [String],
     /// The session profile it converted under.
     pub profile: &'a str,
-    /// The policy, or None for the built-in one.
-    pub policy: Option<&'a Policy>,
     /// The project's tables, each created empty before the fixtures fill some.
     pub schema: &'a Schema,
     /// `TABLE=ROWS` fixtures: a JSON list of rows, or a path holding a `/`.

@@ -1,0 +1,3 @@
+# Allows HASH, which the defaults refuse.
+[allow]
+hash = true

@@ -14,11 +14,11 @@ use crate::census::main::census_with_progress::census_with_progress;
 use crate::census::main::render_census_diagnostics::render_census_diagnostics;
 use crate::census::main::render_census_text::render_census_text;
 use crate::census::models::{CensusOptions, CensusRun};
-use crate::cli::_helpers::evidence::{conversion_choices, divergence_options};
+use crate::cli::_helpers::evidence::divergence_options;
 use crate::cli::_helpers::project::project_choices;
 use crate::cli::models::CensusArguments;
+use sqlquack_convert::snowflake::analysis::models::ConversionChoices;
 use sqlquack_convert::snowflake::catalogue::constants::RULES;
-use sqlquack_policy::policy::models::Policy;
 
 pub(crate) fn census_command(
     arguments: &CensusArguments,
@@ -33,7 +33,7 @@ pub(crate) fn census_command(
         );
         return ExitCode::from(2);
     };
-    let (policy, project) = match project_choices(
+    let project = match project_choices(
         &arguments.conversion,
         (None, &[], arguments.overrides.as_deref()),
     ) {
@@ -48,8 +48,15 @@ pub(crate) fn census_command(
     }
     let schema = project.schema;
     let conversion = match with_overrides(
-        divergence_options(policy.as_ref(), &project.conversion),
-        (project.overrides.as_deref(), &arguments.verified_overrides),
+        divergence_options(&project.choices),
+        (
+            project.overrides.as_deref(),
+            &[
+                project.verified_overrides.clone(),
+                arguments.verified_overrides.clone(),
+            ]
+            .concat(),
+        ),
     ) {
         Ok(conversion) => conversion,
         Err(error) => {
@@ -117,7 +124,9 @@ pub(crate) fn census_command(
     };
     let shown = match arguments.detailed || arguments.anonymous {
         true => coverage_report(&run, arguments, &assumed),
-        false => default_report(&run, arguments, policy.as_ref()).map(|text| (text, String::new())),
+        false => {
+            default_report(&run, arguments, &project.choices).map(|text| (text, String::new()))
+        }
     };
     let (text, notes) = match shown {
         Ok(shown) => shown,
@@ -143,13 +152,9 @@ pub(crate) fn census_command(
 fn default_report(
     run: &CensusRun,
     arguments: &CensusArguments,
-    policy: Option<&Policy>,
+    choices: &ConversionChoices,
 ) -> Result<String, String> {
-    let census = census_diagnostics(
-        &run.files,
-        (policy, &conversion_choices(&arguments.conversion)),
-    )
-    .map_err(|error| error.to_string())?;
+    let census = census_diagnostics(&run.files, choices).map_err(|error| error.to_string())?;
     match arguments.output.json() {
         true => serde_json::to_string_pretty(&census)
             .map(|json| json + "\n")

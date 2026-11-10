@@ -21,7 +21,7 @@ from tests.unit.python.src.sqlquack.api.main.helpers import (
     source_project,
 )
 
-POLICY: str = str(Path(__file__).resolve().parents[7] / "sqlquack.toml")
+CONFIG: str = str(Path(__file__).resolve().parents[7] / "sqlquack.toml")
 HASHED: str = "SELECT HASH(order_id) AS h FROM orders"
 DATED: str = "SELECT CURRENT_DATE() AS d"
 
@@ -32,19 +32,19 @@ DATED: str = "SELECT CURRENT_DATE() AS d"
         CommandLineTestCase(
             description="a converted query",
             sql="SELECT order_id, price * 2 AS doubled FROM orders",
-            arguments=("--builtin-policy",),
-            options=ConvertOptions(builtin_policy=True, schema=SCHEMA),
+            arguments=("--no-config",),
+            options=ConvertOptions(no_config=True, schema=SCHEMA),
             expected_converted=True,
         ),
         CommandLineTestCase(
             description="a converted query on one line",
             sql="SELECT order_id, price * 2 AS doubled FROM orders",
-            arguments=("--builtin-policy", "--compact"),
-            options=ConvertOptions(builtin_policy=True, schema=SCHEMA, compact=True),
+            arguments=("--no-config", "--compact"),
+            options=ConvertOptions(no_config=True, schema=SCHEMA, compact=True),
             expected_converted=True,
         ),
         CommandLineTestCase(
-            description="no policy flag and no sqlquack.toml: the built-in policy",
+            description="no --config and no sqlquack.toml: the defaults",
             sql="SELECT order_id, price * 2 AS doubled FROM orders",
             arguments=(),
             options=ConvertOptions(schema=SCHEMA),
@@ -53,36 +53,36 @@ DATED: str = "SELECT CURRENT_DATE() AS d"
         CommandLineTestCase(
             description="a query refused for an undeclared relation",
             sql="SELECT a FROM customers",
-            arguments=("--builtin-policy",),
-            options=ConvertOptions(builtin_policy=True, schema=SCHEMA),
+            arguments=("--no-config",),
+            options=ConvertOptions(no_config=True, schema=SCHEMA),
             expected_converted=False,
         ),
         CommandLineTestCase(
             description="a query refused under a session no profile covers",
             sql="SELECT order_id FROM orders",
-            arguments=("--builtin-policy", "--session", "WEEK_START=3"),
-            options=ConvertOptions(builtin_policy=True, schema=SCHEMA, session={"WEEK_START": "3"}),
+            arguments=("--no-config", "--session", "WEEK_START=3"),
+            options=ConvertOptions(no_config=True, schema=SCHEMA, session={"WEEK_START": "3"}),
             expected_converted=False,
         ),
         CommandLineTestCase(
             description="HASH is refused by default, as its value is never Snowflake's",
             sql=HASHED,
-            arguments=("--policy", POLICY),
-            options=ConvertOptions(policy=POLICY, schema=SCHEMA),
+            arguments=("--config", CONFIG),
+            options=ConvertOptions(config=CONFIG, schema=SCHEMA),
             expected_converted=False,
         ),
         CommandLineTestCase(
-            description="CURRENT_DATE relies on value divergences the report names",
+            description="CURRENT_DATE relies on value differences the report names",
             sql=DATED,
-            arguments=("--policy", POLICY),
-            options=ConvertOptions(policy=POLICY, schema=SCHEMA),
+            arguments=("--config", CONFIG),
+            options=ConvertOptions(config=CONFIG, schema=SCHEMA),
             expected_converted=True,
         ),
         CommandLineTestCase(
-            description="CURRENT_DATE refused when relying only on loud divergences",
+            description="strict mode refuses CURRENT_DATE whatever the configuration allows",
             sql=DATED,
-            arguments=("--policy", POLICY, "--loud-divergences-only"),
-            options=ConvertOptions(policy=POLICY, schema=SCHEMA, loud_divergences_only=True),
+            arguments=("--config", CONFIG, "--strict"),
+            options=ConvertOptions(config=CONFIG, schema=SCHEMA, strict=True),
             expected_converted=False,
         ),
     ),
@@ -108,7 +108,7 @@ def test_given_the_same_options_when_converting_then_the_report_is_the_command_l
         TypedDiagnosticTestCase(
             description="an undeclared relation is SQ0004 at the relation's name",
             sql="SELECT a FROM orders",
-            options=ConvertOptions(builtin_policy=True),
+            options=ConvertOptions(no_config=True),
             expected_identity=("SQ0004", "unresolved_name", "error"),
             expected_span=sqlquack.Span(
                 start=14, end=20, line=1, column=15, end_line=1, end_column=21
@@ -132,21 +132,21 @@ def test_given_a_refusal_when_converting_then_the_diagnostic_is_typed(
     "test_case",
     (
         FailureTestCase(
-            description="a policy file that does not exist, as on the command line",
+            description="a configuration file that does not exist, as on the command line",
             sql="SELECT 1 AS one",
-            options=ConvertOptions(policy="missing.toml"),
-            expected_message="no policy file at missing.toml",
+            options=ConvertOptions(config="missing.toml"),
+            expected_message="no configuration file at missing.toml",
         ),
         FailureTestCase(
             description="input holding no statement",
             sql="-- nothing here",
-            options=ConvertOptions(builtin_policy=True),
+            options=ConvertOptions(no_config=True),
             expected_message="the input holds no SQL statement",
         ),
         FailureTestCase(
             description="a schema option that is not a schema",
             sql="SELECT 1",
-            options=ConvertOptions(builtin_policy=True, schema={"ORDERS": "order_id"}),
+            options=ConvertOptions(no_config=True, schema={"ORDERS": "order_id"}),
             expected_message="the schema option is not a schema",
         ),
     ),
@@ -188,7 +188,7 @@ def test_given_a_long_flat_chain_when_converting_then_the_interpreter_survives(
     test_case: DeepChainTestCase,
 ) -> None:
     conversion: Conversion = sqlquack.convert(
-        sql=test_case.sql, options=ConvertOptions(builtin_policy=True)
+        sql=test_case.sql, options=ConvertOptions(no_config=True)
     )
     assert conversion.converted is test_case.expected_converted
     assert tuple(found.code for found in conversion.diagnostics) == test_case.expected_codes
@@ -218,7 +218,7 @@ def test_given_a_project_folder_when_converting_then_its_sources_and_settings_ap
     project: Path = tmp_path / "project"
     (project / "sources").mkdir(parents=True)
     (project / "sqlquack.toml").write_text(
-        Path(POLICY).read_text() + '\n[project.session]\nTIMEZONE = "America/New_York"\n'
+        Path(CONFIG).read_text() + '\n[project.session]\nTIMEZONE = "America/New_York"\n'
     )
     (project / "sources" / "raw.yml").write_text(
         "sources:\n  - name: orders\n    columns:\n      - name: order_id\n"

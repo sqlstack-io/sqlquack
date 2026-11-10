@@ -4,7 +4,6 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 
 use sqlquack_convert::snowflake::analysis::models::ConversionChoices;
-use sqlquack_policy::policy::models::Policy;
 
 use crate::census::_helpers::corpus::model_relation;
 use crate::census::_helpers::inspect::diagnosed_file;
@@ -13,10 +12,10 @@ use crate::census::models::{
     BlockedDiagnostics, BlockingCause, CensusDiagnostics, CensusFile, UpstreamWarning,
 };
 
-/// The diagnostics of `files`' blocked files, read again from disk, with help for `policy`.
+/// The diagnostics of `files`' blocked files, read again from disk, with help for `choices`.
 pub fn census_diagnostics(
     files: &[CensusFile],
-    help: (Option<&Policy>, &ConversionChoices),
+    choices: &ConversionChoices,
 ) -> Result<CensusDiagnostics, CensusError> {
     let refused_models: BTreeMap<String, &Path> = files
         .iter()
@@ -26,7 +25,7 @@ pub fn census_diagnostics(
     let mut blocked: Vec<BlockedDiagnostics> = Vec::new();
     let mut causes: BTreeMap<(String, String), BTreeSet<PathBuf>> = BTreeMap::new();
     for file in files.iter().filter(|file| file.blocked) {
-        let (diagnosed, own) = diagnosed_file(file, &refused_models, help)?;
+        let (diagnosed, own) = diagnosed_file(file, &refused_models, choices)?;
         for key in own {
             causes.entry(key).or_default().insert(file.path.clone());
         }

@@ -22,7 +22,7 @@ const DECLARED_PROJECT: &str = "tests/cli/fixtures/declared_offsets";
 const QUALIFIED_PROJECT: &str = "tests/cli/fixtures/qualified_relations";
 const NAIVE_LOCAL_PROJECT: &str = "tests/cli/fixtures/naive_local_branches";
 const NAIVE_JOINS_LOCAL: &str = "timestamp_tz_submicro — sqlquack explain";
-const NAIVE_LOCAL_UTC: [&str; 3] = ["--utc-session", "--project", NAIVE_LOCAL_PROJECT];
+const NAIVE_LOCAL_UTC: [&str; 2] = ["--project", NAIVE_LOCAL_PROJECT];
 const NAIVE_TO_ZONED: &str =
     "SELECT '2024-03-10 22:30:00'::TIMESTAMP_NTZ(6)::TIMESTAMP_TZ AS placed_at";
 
@@ -172,28 +172,23 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
-            description: "strict mode refuses it",
+            description: "strict mode converts it in a UTC session, which it counts as a fact",
             sql: NAIVE_TO_ZONED,
             flags: &["--strict"],
-            mention: "error[SQ0008]: Results that depend on the session time zone need UTC",
-            expected_outcome: convert_outcome(1, false),
+            mention: "allowed: session_timezone_utc —",
+            expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
-            description: "strict mode converts it once --utc-session confirms UTC sessions",
+            description: "strict mode converts it in a UTC session, which strict mode counts as a fact",
             sql: NAIVE_TO_ZONED,
-            flags: &["--strict", "--utc-session"],
+            flags: &["--strict"],
             mention: "session_timezone_utc —",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
-            description: "a non-UTC TIMEZONE refuses a zone-dependent statement despite --utc-session",
+            description: "a non-UTC TIMEZONE refuses a zone-dependent statement even in strict mode",
             sql: NAIVE_TO_ZONED,
-            flags: &[
-                "--strict",
-                "--utc-session",
-                "--session",
-                "TIMEZONE=America/New_York",
-            ],
+            flags: &["--strict", "--session", "TIMEZONE=America/New_York"],
             mention: "the session time zone is America/New_York, not UTC",
             expected_outcome: convert_outcome(1, false),
         },
@@ -226,30 +221,18 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
-            description: "strict mode refuses relying on a declared offset",
+            description: "strict mode converts it, counting the declared offsets as facts",
             sql: PLACED_DATE,
             flags: &["--project", DECLARED_PROJECT, "--strict"],
-            mention: "assumption `declared_offset`, which the policy does not allow in this mode",
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
-            description: "strict mode converts it once --confirm-declared-offsets confirms them",
-            sql: PLACED_DATE,
-            flags: &[
-                "--project",
-                DECLARED_PROJECT,
-                "--strict",
-                "--confirm-declared-offsets",
-            ],
             mention: "declared_offset —",
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
-            description: "strict mode refuses a declared offset read through FIRST_VALUE",
+            description: "strict mode relies on a declared offset read through FIRST_VALUE too",
             sql: "SELECT FIRST_VALUE(placed_at) OVER (ORDER BY order_id)::DATE AS first_on FROM orders",
             flags: &["--project", DECLARED_PROJECT, "--strict"],
-            mention: "assumption `declared_offset`, which the policy does not allow in this mode",
-            expected_outcome: convert_outcome(1, false),
+            mention: "declared_offset —",
+            expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "LAST_VALUE keeps the origin of every declared column it reads",
@@ -341,7 +324,7 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             description: "the built-in default takes a UTC TIMEZONE and result-neutral parameters",
             sql: "SELECT 1 AS total",
             flags: &[
-                "--builtin-policy",
+                "--no-config",
                 "--session",
                 "TIMEZONE=UTC",
                 "--session",
@@ -351,10 +334,10 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
-            description: "the built-in default refuses a parameter that can change a result, by name",
+            description: "the defaults refuse a parameter no recorded session has, by name",
             sql: "SELECT 1 AS total",
-            flags: &["--builtin-policy", "--session", "WEEK_START=1"],
-            mention: "not WEEK_START; add a sqlquack.toml",
+            flags: &["--no-config", "--session", "WEEK_START=1"],
+            mention: "SQLQuack has not checked a session with these settings: WEEK_START = 1",
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
@@ -380,11 +363,11 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             expected_outcome: convert_outcome(2, false),
         },
         ConvertTestCase {
-            description: "the built-in default allows only some uses of the UTC session, so it refuses this one",
+            description: "the defaults allow every use of a UTC session",
             sql: NAIVE_TO_ZONED,
-            flags: &["--builtin-policy"],
-            mention: "error[SQ0008]: Results that depend on the session time zone need UTC",
-            expected_outcome: convert_outcome(1, false),
+            flags: &["--no-config"],
+            mention: "allowed: session_timezone_utc —",
+            expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
             description: "--json reports the outcome on standard output, still exiting 1 on refusal",
@@ -595,7 +578,7 @@ fn given_qualified_table_names_when_converting_then_they_read_the_declared_relat
         ),
     ];
     for (parameters, expected_relation) in sessions {
-        let mut flags = vec!["--builtin-policy", "--project", QUALIFIED_PROJECT];
+        let mut flags = vec!["--no-config", "--project", QUALIFIED_PROJECT];
         for parameter in parameters {
             flags.extend(["--session", parameter]);
         }
@@ -1571,10 +1554,9 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
                 Snowflake's\n  |\n  = note: Equal inputs still get equal hashes within one run.\n  \
                 = note: fine when: Joins, grouping, removing duplicates and spotting changed rows by \
                 hash.\n  = note: wrong when: Storing, comparing or sorting by the hash value itself: \
-                it differs, with no error.\n  = help: allow it in a sqlquack.toml with \
-                default = \"warn\" under [divergences.hash], starting from a copy of the SQLQuack \
-                repository's; `sqlquack explain hash` says when it is safe\nsqlquack convert: \
-                refused, 1 refusal\n",
+                it differs, with no error.\n  = help: allow it with hash = true under [allow] in a \
+                sqlquack.toml in the project folder; `sqlquack explain hash` says when it is safe\n\
+                sqlquack convert: refused, 1 refusal\n",
             expected_json: ("SQ0008", "divergence_refused", 1, 8),
         },
         ConvertDiagnosticTestCase {
@@ -1608,10 +1590,8 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
         },
     ];
     for test_case in test_cases {
-        let (stdout, stderr) = convert_streams(
-            test_case.sql,
-            &[&["--builtin-policy"], test_case.flags].concat(),
-        );
+        let (stdout, stderr) =
+            convert_streams(test_case.sql, &[&["--no-config"], test_case.flags].concat());
         assert_eq!(stdout, "", "{}", test_case.description);
         assert_eq!(
             stderr.trim_start_matches("sqlquack convert: converting…\n"),
@@ -1621,7 +1601,7 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
         );
         let (json, _) = convert_streams(
             test_case.sql,
-            &[&["--builtin-policy", "--json"], test_case.flags].concat(),
+            &[&["--no-config", "--json"], test_case.flags].concat(),
         );
         let report: serde_json::Value = serde_json::from_str(&json).expect("a JSON report");
         let refusal = &report["refusals"][0];
@@ -1662,11 +1642,9 @@ fn given_layout_flags_when_converting_then_clauses_break_unless_compact_in_text_
     ];
     let sql = "SELECT 1 AS a, 2 AS b, 'some longer text here' AS c WHERE 1 = 1";
     for test_case in test_cases {
-        let (text, _) = convert_streams(sql, &[&["--builtin-policy"], test_case.flags].concat());
-        let (json, _) = convert_streams(
-            sql,
-            &[&["--builtin-policy", "--json"], test_case.flags].concat(),
-        );
+        let (text, _) = convert_streams(sql, &[&["--no-config"], test_case.flags].concat());
+        let (json, _) =
+            convert_streams(sql, &[&["--no-config", "--json"], test_case.flags].concat());
         let report: serde_json::Value = serde_json::from_str(&json).expect("a JSON report");
         assert_eq!(
             (text.trim_end(), report["sql"].as_str()),
@@ -1682,25 +1660,25 @@ fn given_output_flags_when_running_then_format_json_and_json_agree_and_help_list
     let test_cases = [
         OutputFormatTestCase {
             description: "--format json prints the JSON report",
-            arguments: &["convert", "--builtin-policy", "--format", "json"],
+            arguments: &["convert", "--no-config", "--format", "json"],
             expected_exit_code: Some(0),
             expected_stdout_prefix: "{\n  \"converted\": true,",
         },
         OutputFormatTestCase {
             description: "--json is the short form and prints the same report",
-            arguments: &["convert", "--builtin-policy", "--json"],
+            arguments: &["convert", "--no-config", "--json"],
             expected_exit_code: Some(0),
             expected_stdout_prefix: "{\n  \"converted\": true,",
         },
         OutputFormatTestCase {
             description: "--format text prints the DuckDB SQL",
-            arguments: &["convert", "--builtin-policy", "--format", "text"],
+            arguments: &["convert", "--no-config", "--format", "text"],
             expected_exit_code: Some(0),
             expected_stdout_prefix: "SELECT",
         },
         OutputFormatTestCase {
             description: "asking for both is a usage error",
-            arguments: &["convert", "--builtin-policy", "--format", "text", "--json"],
+            arguments: &["convert", "--no-config", "--format", "text", "--json"],
             expected_exit_code: Some(2),
             expected_stdout_prefix: "",
         },
@@ -1740,8 +1718,7 @@ fn given_output_flags_when_running_then_format_json_and_json_agree_and_help_list
 }
 
 #[test]
-fn given_loud_divergences_only_when_converting_then_value_divergences_refuse_and_loud_ones_convert()
-{
+fn given_known_differences_when_converting_then_json_says_how_each_fails() {
     let test_cases = [
         FailureKindTestCase {
             description: "CURRENT_DATE relies on value divergences, and --json says so",
@@ -1751,13 +1728,6 @@ fn given_loud_divergences_only_when_converting_then_value_divergences_refuse_and
             expected_failures: &[("current_time", "value"), ("session_timezone_utc", "value")],
         },
         FailureKindTestCase {
-            description: "--loud-divergences-only refuses CURRENT_DATE",
-            sql: "SELECT CURRENT_DATE() AS d",
-            flags: &["--loud-divergences-only"],
-            expected_converted: false,
-            expected_failures: &[],
-        },
-        FailureKindTestCase {
             description: "HASH is refused by default, as its value is never Snowflake's",
             sql: "SELECT HASH(x) AS h FROM (SELECT 1 AS x) AS t",
             flags: &[],
@@ -1765,9 +1735,9 @@ fn given_loud_divergences_only_when_converting_then_value_divergences_refuse_and
             expected_failures: &[],
         },
         FailureKindTestCase {
-            description: "MODE relies only on loud divergences, so it still converts",
+            description: "MODE relies only on known differences that raise an error",
             sql: "SELECT MODE(x) AS m FROM (SELECT 1 AS x) AS t",
-            flags: &["--loud-divergences-only"],
+            flags: &[],
             expected_converted: true,
             expected_failures: &[("mode_of_no_rows", "loud"), ("mode_ties", "loud")],
         },
@@ -1875,7 +1845,7 @@ fn given_a_long_flat_chain_when_converting_then_it_converts_or_is_refused_within
         );
         let started = std::time::Instant::now();
 
-        let outcome = run_convert(&sql, &["--builtin-policy"], test_case.expected_mention);
+        let outcome = run_convert(&sql, &["--no-config"], test_case.expected_mention);
 
         assert_eq!(
             (outcome.exit_code, outcome.stderr_mentions),
@@ -1896,39 +1866,29 @@ fn given_a_long_flat_chain_when_converting_then_it_converts_or_is_refused_within
 fn given_a_refused_divergence_when_converting_then_its_help_names_it_and_only_fixes_that_work() {
     let test_cases = [
         DivergenceHelpTestCase {
-            description: "strict mode refusing what the default allows: --utc-session cannot help",
+            description: "strict mode refusing what the default allows",
             sql: "SELECT CURRENT_TIMESTAMP AS t",
-            flags: &["--strict", "--utc-session"],
-            expected_help: "allow it in strict mode with strict = \"warn\" under \
-                [divergences.current_time] in <policy>",
+            flags: &["--strict"],
+            expected_help: "strict mode refuses every known difference",
         },
         DivergenceHelpTestCase {
-            description: "refused by default: only the policy file can allow it",
+            description: "refused by default: only [allow] can allow it",
             sql: "SELECT HASH(1) AS h",
             flags: &[],
-            expected_help: "allow it with default = \"warn\" under [divergences.hash] in <policy>; \
+            expected_help: "allow it with hash = true under [allow] in <policy>; \
                 `sqlquack explain hash` says when it is safe",
         },
         DivergenceHelpTestCase {
-            description: "refused in both modes under --strict: dropping --strict is not enough",
+            description: "strict mode says so, rather than sending the user to [allow]",
             sql: "SELECT HASH(1) AS h",
             flags: &["--strict"],
-            expected_help: "allow it in strict mode with default = \"warn\" and strict = \"warn\" \
-                under [divergences.hash] in <policy>",
+            expected_help: "strict mode refuses every known difference",
         },
         DivergenceHelpTestCase {
-            description: "a divergence a rule's type check needs is still SQ0008, with policy help",
+            description: "a known difference a rule's type check needs is still SQ0008, with its help",
             sql: "SELECT CAST(1 AS NUMBER(38,0)) - CAST(1 AS NUMBER(38,2)) AS d",
             flags: &["--strict"],
-            expected_help: "allow it in strict mode with strict = \"warn\" under \
-                [divergences.numeric_range] in <policy>",
-        },
-        DivergenceHelpTestCase {
-            description: "a value divergence under --loud-divergences-only",
-            sql: "SELECT CURRENT_TIMESTAMP AS t",
-            flags: &["--loud-divergences-only"],
-            expected_help: "you asked to refuse every known difference that can return a \
-                different value rather than raise an error, and this one can",
+            expected_help: "strict mode refuses every known difference",
         },
     ];
     for test_case in test_cases {
@@ -1980,10 +1940,10 @@ fn given_a_naive_timestamp_joined_with_a_local_one_when_converting_then_its_nano
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
-            description: "strict mode refuses the join, which reads the naive value in the session's zone",
+            description: "strict mode refuses the join, whose nanoseconds can raise",
             sql: "SELECT COALESCE(n, l) AS r FROM t",
             flags: &["--strict", "--project", NAIVE_LOCAL_PROJECT],
-            mention: "error[SQ0008]: Results that depend on the session time zone need UTC",
+            mention: "error[SQ0008]: Zoned timestamps finer than a microsecond raise an error in DuckDB",
             expected_outcome: convert_outcome(1, false),
         },
     ];

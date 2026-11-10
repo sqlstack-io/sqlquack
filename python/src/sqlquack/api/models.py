@@ -67,14 +67,11 @@ class ConvertOptions:
 
     project: str | os.PathLike[str] | None = None
     schema: Mapping[str, Any] | None = None
-    policy: str | os.PathLike[str] | None = None
-    builtin_policy: bool = False
+    config: str | os.PathLike[str] | None = None
+    no_config: bool = False
     session: Mapping[str, str] = field(default_factory=dict)
     strict: bool = False
-    utc_session: bool = False
-    confirm_declared_offsets: bool = False
     python_runtime: bool = False
-    loud_divergences_only: bool = False
     overrides: str | os.PathLike[str] | None = None
     verified_overrides: Mapping[str, str] = field(default_factory=dict)
     compact: bool = False

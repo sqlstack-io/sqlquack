@@ -242,7 +242,7 @@ fn given_a_color_choice_when_checked_or_converted_then_only_a_colored_stream_is_
             sql: "SELECT 'a' AS s",
             environment: &[],
             expected_exit_code: Some(0),
-            expected_stdout: "{\n  \"converted\": true,\n  \"profile\": \"the built-in default\",\n  \
+            expected_stdout: "{\n  \"converted\": true,\n  \"profile\": \"utc-v1\",\n  \
                 \"sql\": \"SELECT 'a' AS \\\"S\\\"\",\n  \"refusals\": [],\n  \"divergences\": {},\n  \
                 \"assumptions\": [],\n  \"divergence_failures\": {},\n  \"known_differences\": [],\n  \
                 \"notes\": [],\n  \

@@ -21,6 +21,6 @@ pub const CONVERSION_MEMORY_KIB: u64 = 4 * 1024 * 1024;
 /// The refusal category of a name no relation in scope declares.
 pub const UNRESOLVED_NAME: &str = "unresolved name";
 /// The refusal category of a divergence the policy refuses, here only value divergences.
-pub const DIVERGENCE_REFUSED: &str = "a known divergence the policy refuses";
+pub const DIVERGENCE_REFUSED: &str = "a known difference that isn't allowed";
 /// What results-match reports until Snowflake rows are recorded for syntax cases.
 pub const NO_RECORDED_RESULT: &str = "not measured: no recorded result";

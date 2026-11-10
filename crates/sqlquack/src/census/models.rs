@@ -265,7 +265,7 @@ pub struct RefusalTotals {
     pub unresolved_name: usize,
     /// Files with a statement whose conversion took too long or emitted too much SQL.
     pub conversion_budget: usize,
-    /// Files with a construct needing a known divergence the policy refuses.
+    /// Files with a construct needing a known difference that isn't allowed.
     pub divergence_refused: usize,
     /// Refusals by category and construct, counting each file once per pair, most frequent first.
     pub by_construct: Vec<RefusalCount>,

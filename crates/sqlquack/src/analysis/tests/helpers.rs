@@ -15,8 +15,9 @@ use sqlquack_evidence::cases::main::load_cases::load_cases;
 use sqlquack_evidence::constants::CASES_DIR;
 use sqlquack_evidence::verify::models::Conversion;
 use sqlquack_evidence::verify::types::CaseConverter;
-use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
-use sqlquack_policy::policy::constants::PROJECT_UDF;
+use sqlquack_policy::config::constants::CONFIG_FILE_NAME;
+use sqlquack_policy::policy::constants::EVIDENCE_FILE;
+use sqlquack_policy::policy::constants::{PROJECT_UDF, SESSION_TIMEZONE_UTC};
 use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_policy::policy::models::DivergenceMode;
 use sqlquack_semantics::schemas::models::{FunctionLanguage, FunctionTraits};
@@ -42,7 +43,6 @@ use crate::cli::models::{
 use sqlquack_convert::snowflake::analysis::main::analyze::analyze;
 use sqlquack_convert::snowflake::analysis::main::analyze_function::analyze_function;
 use sqlquack_convert::snowflake::analysis::main::confirm_assumption::confirm_assumption;
-use sqlquack_convert::snowflake::session::main::confirm_utc_session::confirm_utc_session;
 use sqlquack_convert::snowflake::session::main::conversion_options::conversion_options;
 
 fn shop_schema() -> Schema {
@@ -243,13 +243,13 @@ pub(crate) fn event_results(sql: &str, payload: &str) -> Vec<String> {
 /// As `event_results`, with the policy's default for each of `allowed` set to warn, as a user opts in.
 pub(crate) fn event_results_allowing(sql: &str, payload: &str, allowed: &[&str]) -> Vec<String> {
     let mut policy =
-        load_policy(&repository_root().join(POLICY_FILE_NAME)).expect("repository policy loads");
+        load_policy(&repository_root().join(EVIDENCE_FILE)).expect("repository policy loads");
     for id in allowed {
         policy
             .divergences
             .get_mut(*id)
             .expect("the divergence is in the policy")
-            .default = DivergenceMode::Warn;
+            .replay = DivergenceMode::Warn;
     }
     let analysis = analyze(
         sql,
@@ -283,7 +283,7 @@ pub(crate) fn event_results_allowing(sql: &str, payload: &str, allowed: &[&str])
 /// The equivalence-case problems in the repository's own cases.
 pub(crate) fn equivalence_case_checks() -> Vec<String> {
     let root = repository_root();
-    let policy = load_policy(&root.join(POLICY_FILE_NAME)).expect("the repository policy loads");
+    let policy = load_policy(&root.join(EVIDENCE_FILE)).expect("the repository policy loads");
     let cases = load_cases(&repository_cases(), &policy).expect("the repository cases load");
     check_equivalence_cases(&cases)
 }
@@ -296,7 +296,7 @@ pub(crate) fn divergence_outcome(sql: &str, strict: bool) -> DivergenceModeOutco
 /// The outcome of `sql` in strict or default mode, with or without a confirmed Python runtime.
 pub(crate) fn python_outcome(sql: &str, (strict, runtime): (bool, bool)) -> DivergenceModeOutcome {
     let policy =
-        load_policy(&repository_root().join(POLICY_FILE_NAME)).expect("repository policy loads");
+        load_policy(&repository_root().join(EVIDENCE_FILE)).expect("repository policy loads");
     let options = std::iter::repeat_n(&policy, usize::from(runtime))
         .fold(conversion_options(&policy, strict), |options, policy| {
             confirm_assumption(options, policy, PROJECT_UDF)
@@ -310,9 +310,11 @@ pub(crate) fn session_outcome(
     (strict, utc_session): (bool, bool),
 ) -> DivergenceModeOutcome {
     let policy =
-        load_policy(&repository_root().join(POLICY_FILE_NAME)).expect("repository policy loads");
+        load_policy(&repository_root().join(EVIDENCE_FILE)).expect("repository policy loads");
     let options = std::iter::repeat_n(&policy, usize::from(utc_session))
-        .fold(conversion_options(&policy, strict), confirm_utc_session);
+        .fold(conversion_options(&policy, strict), |options, policy| {
+            confirm_assumption(options, policy, SESSION_TIMEZONE_UTC)
+        });
     outcome(sql, &options)
 }
 
@@ -349,7 +351,7 @@ pub(crate) fn numeric_range(construct: &str) -> Vec<(String, Vec<String>)> {
 /// The rules a repository case's conversion relies on, which exclude its input fixture's.
 pub(crate) fn case_rules(reference: &str) -> Vec<String> {
     let root = repository_root();
-    let policy = load_policy(&root.join(POLICY_FILE_NAME)).expect("the repository policy loads");
+    let policy = load_policy(&root.join(EVIDENCE_FILE)).expect("the repository policy loads");
     let cases = load_cases(&repository_cases(), &policy).expect("the repository cases load");
     let case = cases
         .iter()
@@ -368,7 +370,7 @@ pub(crate) fn case_rules(reference: &str) -> Vec<String> {
 /// Whether `sql`'s conversion evaluates its guarded conjuncts only behind the others.
 pub(crate) fn guards_gated(sql: &str) -> bool {
     let policy =
-        load_policy(&repository_root().join(POLICY_FILE_NAME)).expect("repository policy loads");
+        load_policy(&repository_root().join(EVIDENCE_FILE)).expect("repository policy loads");
     let analysis = analyze(
         sql,
         &builtin_catalogue(),
@@ -383,7 +385,7 @@ pub(crate) fn guards_gated(sql: &str) -> bool {
 /// The DuckDB SQL `sql` converts to against the shop schema, and how long conversion took.
 pub(crate) fn timed_conversion(sql: &str) -> (Option<String>, std::time::Duration) {
     let policy =
-        load_policy(&repository_root().join(POLICY_FILE_NAME)).expect("repository policy loads");
+        load_policy(&repository_root().join(EVIDENCE_FILE)).expect("repository policy loads");
     let started = std::time::Instant::now();
     let analysis = analyze(
         sql,
@@ -428,7 +430,7 @@ pub(crate) fn budget_refusal(
     budget: ConversionBudget,
 ) -> Option<(RefusalCategory, String)> {
     let policy =
-        load_policy(&repository_root().join(POLICY_FILE_NAME)).expect("repository policy loads");
+        load_policy(&repository_root().join(EVIDENCE_FILE)).expect("repository policy loads");
     let mut options = conversion_options(&policy, false);
     options.budget = budget;
     let analysis = analyze(sql, &builtin_catalogue(), (&shop_schema(), &options));
@@ -444,7 +446,7 @@ pub(crate) fn refusal_places<'s>(
     (declared, budget): (Option<&'static str>, Option<ConversionBudget>),
 ) -> Vec<(RefusalCategory, &'s str, [usize; 2])> {
     let policy =
-        load_policy(&repository_root().join(POLICY_FILE_NAME)).expect("repository policy loads");
+        load_policy(&repository_root().join(EVIDENCE_FILE)).expect("repository policy loads");
     let mut options = conversion_options(&policy, false);
     options.budget = budget.unwrap_or(options.budget);
     let catalogue = RuleCatalogue {
@@ -521,7 +523,7 @@ const SHOP_ROWS: &str = "CREATE TABLE \"CUSTOMERS\" (\"CUSTOMER_ID\" DECIMAL(38,
 /// `sql` converted over the shop schema under the repository policy, or its refusals' reasons.
 pub(crate) fn shop_conversion(sql: &str) -> Result<Converted, Vec<String>> {
     let policy =
-        load_policy(&repository_root().join(POLICY_FILE_NAME)).expect("repository policy loads");
+        load_policy(&repository_root().join(EVIDENCE_FILE)).expect("repository policy loads");
     let analysis = analyze(
         sql,
         &builtin_catalogue(),
@@ -922,8 +924,8 @@ fn rerecord(root: &std::path::Path, queries: &[EverydayQuery]) {
     std::fs::write(path, format!("{header}{blocks}")).expect("the corpus writes");
 }
 
-/// `convert`'s arguments: the built-in policy, or the repository's under a UTC session.
-fn everyday_arguments(root: &std::path::Path, builtin_policy: bool) -> ConvertArguments {
+/// `convert`'s arguments: the defaults alone, or with the repository's `sqlquack.toml`.
+fn everyday_arguments(root: &std::path::Path, no_config: bool) -> ConvertArguments {
     ConvertArguments {
         path: None,
         schema: None,
@@ -941,13 +943,10 @@ fn everyday_arguments(root: &std::path::Path, builtin_policy: bool) -> ConvertAr
         },
         conversion: PolicyArguments {
             project: Some(root.to_path_buf()),
-            policy: Some(repository_root().join(POLICY_FILE_NAME)),
-            builtin_policy,
+            config: Some(repository_root().join(CONFIG_FILE_NAME)),
+            no_config,
             strict: false,
-            utc_session: !builtin_policy,
-            confirm_declared_offsets: false,
             python_runtime: false,
-            loud_divergences_only: false,
         },
     }
 }

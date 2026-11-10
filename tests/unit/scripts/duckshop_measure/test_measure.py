@@ -501,7 +501,7 @@ def test_given_recorded_models_when_measuring_snowflake_then_the_policy_decides_
             "unused",
             "--library",
             "unused",
-            "--policy",
+            "--evidence",
             str(policy),
             "--work",
             str(tmp_path / "work"),

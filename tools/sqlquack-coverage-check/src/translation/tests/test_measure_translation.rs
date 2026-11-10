@@ -77,7 +77,7 @@ fn given_a_conversion_report_when_measuring_then_the_form_takes_its_state() {
         },
         TranslationTestCase {
             description: "refused only for a value divergence the policy refuses",
-            convert: refused("a known divergence the policy refuses", "divergence:x"),
+            convert: refused("a known difference that isn't allowed", "divergence:x"),
             census: "",
             by_design: no_by_design,
             expected_state: FormState::DeclaredValueDivergence,

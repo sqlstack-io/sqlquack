@@ -53,7 +53,7 @@ def binary_function_converter(
         """The macro of `function`, or its refusals; a crash or unreadable output names it."""
         completed: subprocess.CompletedProcess[str] = subprocess.run(
             (str(binary), "function", "-", "--name", function.name)
-            + ("--project", str(project), "--policy", str(policy)),
+            + ("--project", str(project), "--config", str(policy)),
             input=function.body,
             capture_output=True,
             text=True,
@@ -134,7 +134,7 @@ def project_macros(
     convert: FunctionConverter = function_converter or binary_function_converter(
         binary=arguments.sqlquack,
         library=arguments.library,
-        policy=arguments.policy,
+        policy=arguments.config,
         project=arguments.project,
     )
     macros, refused = converted_macros(functions=functions, convert=convert)

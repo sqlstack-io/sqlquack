@@ -1,24 +1,26 @@
-//! The project folder: its policy, schema, session, confirmations and overrides, under the caller's flags.
+//! The project folder: its configuration, schema, session and overrides, under the caller's flags.
 
 use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 
-use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
-use sqlquack_policy::policy::main::load_project_file::load_project_file;
-use sqlquack_policy::policy::models::{Policy, ProjectPolicy};
+use sqlquack_convert::snowflake::analysis::models::ConversionChoices;
+use sqlquack_policy::config::constants::CONFIG_FILE_NAME;
+use sqlquack_policy::config::main::load_config::load_config;
+use sqlquack_policy::config::models::UserConfig;
+use sqlquack_policy::policy::main::evidence_policy::evidence_policy;
 use sqlquack_semantics::snowflake::typing::types::Schema;
 
-use crate::cli::_helpers::evidence::policy_file;
+use crate::cli::_helpers::evidence::conversion_choices;
 use crate::cli::models::{PolicyArguments, ProjectChoices};
 use crate::project::constants::OVERRIDES_FOLDER;
 use crate::project::main::project_folder::project_folder;
 use crate::project::main::project_schema::project_schema;
 
-/// The policy and the project choices of `conversion.project`, under the caller's flags.
+/// The project choices of `conversion.project` and its configuration, under the caller's flags.
 pub(crate) fn project_choices(
     conversion: &PolicyArguments,
     (schema, session, overrides): (Option<&Schema>, &[String], Option<&Path>),
-) -> Result<(Option<Policy>, ProjectChoices), String> {
+) -> Result<ProjectChoices, String> {
     let root = conversion
         .project
         .clone()
@@ -29,22 +31,32 @@ pub(crate) fn project_choices(
             root.display()
         ));
     }
-    let (file_policy, project) = project_file(&root.join(POLICY_FILE_NAME))?;
-    let policy = match (conversion.builtin_policy, conversion.policy.as_deref()) {
+    let project_file = root.join(CONFIG_FILE_NAME);
+    let config_file = match (conversion.no_config, conversion.config.clone()) {
         (true, _) => None,
-        (false, Some(path)) => Some(policy_file(path)?),
-        (false, None) => file_policy,
+        (false, Some(path)) if !path.is_file() => {
+            return Err(format!(
+                "no configuration file at {}; pass --config with an existing file, or leave it \
+                 out to use the project's sqlquack.toml or, without one, the defaults",
+                path.display()
+            ));
+        }
+        (false, Some(path)) => Some(path),
+        (false, None) => Some(project_file).filter(|path| path.is_file()),
+    };
+    let config = match &config_file {
+        Some(path) => load_config(path, evidence_policy()).map_err(|error| error.to_string())?,
+        None => UserConfig::default(),
     };
     let mut conversion = conversion.clone();
-    conversion.python_runtime |= project.confirm.python_runtime;
-    conversion.utc_session |= project.confirm.utc_session;
-    conversion.confirm_declared_offsets |= project.confirm.declared_offsets;
+    conversion.python_runtime |= config.project.python_runtime;
     let given: BTreeSet<String> = session
         .iter()
         .filter_map(|setting| setting.split_once('='))
         .map(|(name, _)| name.trim().to_ascii_uppercase())
         .collect();
-    let session: Vec<String> = project
+    let session: Vec<String> = config
+        .project
         .session
         .iter()
         .filter(|(name, _)| !given.contains(&name.to_ascii_uppercase()))
@@ -53,25 +65,27 @@ pub(crate) fn project_choices(
         .collect();
     let overrides = match overrides {
         Some(path) => Some(path.to_path_buf()),
-        None => project_folder(&root, project.overrides.as_deref(), OVERRIDES_FOLDER)?,
+        None => project_folder(&root, config.replace.folder.as_deref(), OVERRIDES_FOLDER)?,
     };
-    let (schema, warnings) = project_schema(&root, &project, schema)?;
-    Ok((
-        policy,
-        ProjectChoices {
-            schema,
-            warnings,
-            session,
-            overrides,
-            conversion,
-        },
-    ))
-}
-
-/// The policy and `[project]` of the project's `sqlquack.toml`, or neither when it has none.
-fn project_file(path: &Path) -> Result<(Option<Policy>, ProjectPolicy), String> {
-    match path.is_file() {
-        true => load_project_file(path).map_err(|error| error.to_string()),
-        false => Ok((None, ProjectPolicy::default())),
-    }
+    let (schema, warnings) = project_schema(&root, &config.project, schema)?;
+    let shown = config_file.as_ref().map(|_| match &conversion.config {
+        Some(path) => path.clone(),
+        None => PathBuf::from(format!("the project's {CONFIG_FILE_NAME}")),
+    });
+    let choices: ConversionChoices = conversion_choices(&conversion, (&config, shown.as_deref()));
+    let verified_overrides: Vec<String> = config
+        .replace
+        .verified
+        .iter()
+        .map(|(name, hash)| format!("{name}={hash}"))
+        .collect();
+    Ok(ProjectChoices {
+        schema,
+        warnings,
+        session,
+        overrides,
+        verified_overrides,
+        conversion,
+        choices,
+    })
 }

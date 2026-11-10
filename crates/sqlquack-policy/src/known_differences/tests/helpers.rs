@@ -1,9 +1,6 @@
-use std::path::Path;
-
 use crate::known_differences::constants::KNOWN_DIFFERENCES;
-use crate::policy::constants::POLICY_FILE_NAME;
-use crate::policy::main::load_policy::load_policy;
-use crate::policy::models::{DivergenceFailure, Policy};
+use crate::policy::main::evidence_policy::evidence_policy;
+use crate::policy::models::{BuiltinDefault, DivergenceFailure, Policy};
 
 const ERROR_ENDING: &str = ", never a different value.";
 
@@ -12,6 +9,15 @@ const VALUE_ENDING: &str = ", with no error.";
 const ENDINGS: [(DivergenceFailure, &str); 2] = [
     (DivergenceFailure::Loud, ERROR_ENDING),
     (DivergenceFailure::Value, VALUE_ENDING),
+];
+
+/// The known differences the built-in defaults refuse (D806): every other one is allowed.
+const REFUSED_BY_DEFAULT: [&str; 5] = [
+    "hash",
+    "project_udf",
+    "sequences",
+    "source_variant_json",
+    "variant_chain_type",
 ];
 
 const INTERNAL_WORDS: [&str; 10] = [
@@ -28,10 +34,7 @@ const INTERNAL_WORDS: [&str; 10] = [
 ];
 
 pub(crate) fn repository_policy() -> Policy {
-    let path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../..")
-        .join(POLICY_FILE_NAME);
-    load_policy(&path).expect("the repository policy is valid")
+    evidence_policy().clone()
 }
 
 pub(crate) fn entries_unlike_policy() -> Vec<String> {
@@ -159,4 +162,16 @@ pub(crate) fn notes_off_style() -> Vec<String> {
 
 fn sentences(text: &str) -> usize {
     text.matches(". ").count() + usize::from(text.ends_with('.'))
+}
+
+pub(crate) fn defaults_unlike_the_rule() -> Vec<String> {
+    repository_policy()
+        .divergences
+        .iter()
+        .filter(|(name, divergence)| {
+            let refused = REFUSED_BY_DEFAULT.contains(&name.as_str());
+            (divergence.default == BuiltinDefault::Refuse) != refused
+        })
+        .map(|(name, divergence)| format!("{name} defaults to {:?}", divergence.default))
+        .collect()
 }

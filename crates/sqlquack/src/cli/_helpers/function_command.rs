@@ -11,7 +11,6 @@ use sqlquack_diagnostics::diagnostics::main::render_diagnostics::render_diagnost
 use sqlquack_diagnostics::diagnostics::models::Diagnostic;
 
 use crate::census::main::resolve_references::resolve_references;
-use crate::cli::_helpers::evidence::conversion_choices;
 use crate::cli::_helpers::project::project_choices;
 use crate::cli::models::{FunctionArguments, FunctionInputs};
 use sqlquack_convert::snowflake::analysis::main::convert_function::convert_function;
@@ -102,15 +101,13 @@ pub(crate) fn function_command(
     }
 }
 
-/// The policy, session parameters, schema and choices of the project and flags; an error is a usage error.
+/// The session parameters, schema and choices of the project and flags; an error is a usage error.
 fn function_inputs(arguments: &FunctionArguments) -> Result<FunctionInputs, String> {
-    let (policy, project) =
-        project_choices(&arguments.conversion, (None, &arguments.session, None))?;
+    let project = project_choices(&arguments.conversion, (None, &arguments.session, None))?;
     Ok(FunctionInputs {
-        policy,
+        choices: project.choices,
         parameters: parse_session(&project.session)?,
         schema: project.schema,
-        conversion: project.conversion,
     })
 }
 
@@ -140,10 +137,9 @@ fn read_body(path: &Path) -> Result<String, String> {
 fn convert(
     arguments: &FunctionArguments,
     FunctionInputs {
-        policy,
+        choices,
         parameters,
         schema,
-        conversion,
     }: &FunctionInputs,
 ) -> Result<ConvertedFunction, Failure> {
     let spec = schema.functions.get(&arguments.name).ok_or_else(|| {
@@ -153,11 +149,6 @@ fn convert(
         ))
     })?;
     let body = resolve_references(&read_body(&arguments.body).map_err(Failure::Usage)?);
-    convert_function(
-        (&body, spec),
-        policy.as_ref(),
-        (&conversion_choices(conversion), parameters),
-        schema,
-    )
-    .map_err(|diagnostics| Failure::Refused { diagnostics, body })
+    convert_function((&body, spec), (choices, parameters), schema)
+        .map_err(|diagnostics| Failure::Refused { diagnostics, body })
 }

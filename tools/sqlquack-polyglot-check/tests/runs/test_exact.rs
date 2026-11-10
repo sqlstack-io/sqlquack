@@ -276,7 +276,10 @@ fn given_committed_corpora_when_parsed_by_both_parsers_then_results_are_identica
         },
         CorpusTestCase {
             description: "SQLQuack's cases, source and converted",
-            entries: case_corpus(&repository_cases(), &root.join("sqlquack.toml")),
+            entries: case_corpus(
+                &repository_cases(),
+                &root.join(sqlquack_policy::policy::constants::EVIDENCE_FILE),
+            ),
             expected_outcome: ExactOutcome {
                 loaded: true,
                 rejected: BTreeMap::new(),

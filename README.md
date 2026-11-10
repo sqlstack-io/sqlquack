@@ -32,7 +32,7 @@ SQLQuack checks its conversion rules against real results from the source wareho
 - **Check early.** Catch invalid SQL before it reaches the warehouse.
 - **Test locally.** Convert queries to DuckDB SQL for tests against small fixtures.
 - **See what's blocking you.** Scan a SQL project to find what converts and what needs attention.
-- **Choose what to accept.** Control known differences through an explicit policy.
+- **Choose what to accept.** Allow or refuse each known difference in `sqlquack.toml`.
 
 ## Get started
 
@@ -40,7 +40,7 @@ SQLQuack checks its conversion rules against real results from the source wareho
 pip install sqlquack
 
 # Convert your first query
-echo "SELECT 1 AS total" | sqlquack convert --builtin-policy
+echo "SELECT 1 AS total" | sqlquack convert --no-config
 
 # Check a SQL file
 sqlquack check query.sql
@@ -60,7 +60,7 @@ import sqlquack
 
 result = sqlquack.convert(
     sql="SELECT 1 AS total",
-    options=sqlquack.ConvertOptions(builtin_policy=True),
+    options=sqlquack.ConvertOptions(no_config=True),
 )
 ```
 
