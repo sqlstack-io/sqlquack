@@ -39,6 +39,13 @@ on:
         required: false
         type: string
         default: ""
+      save-cache:
+        description: >-
+          Save DuckDB's compiled objects from main; otherwise main saves them only when it found none
+          for this DuckDB and its settings
+        required: false
+        type: boolean
+        default: false
     outputs:
       sha:
         description: "Commit the distributions were built from"
@@ -193,8 +200,11 @@ jobs:
           key="$(sha256 <<< "${settings}" | cut -c 1-16)"
           echo "DUCKDB_CACHE_KEY=duckdb-objects-v1-${{ matrix.platform.name }}-${key}" >> "${GITHUB_ENV}"
       # Restored on every build, but saved only from main (below), so a release or publish build
-      # never reads objects another branch compiled.
+      # never reads objects another branch compiled. Main saves once a night (`save-cache`), and on a
+      # push only when no saved objects match this DuckDB and its settings, such as after an upgrade,
+      # so the repository's cache space is not spent on a copy per push.
       - name: Restore DuckDB's compiled objects
+        id: duckdb-cache
         if: inputs.prebuilt-run-id == ''
         uses: actions/cache/restore@v4
         with:
@@ -242,10 +252,14 @@ jobs:
         run: '"${CMAKE_C_COMPILER_LAUNCHER}" --stop-server'
       # The manylinux container writes the cache as root, and sccache keeps its files private.
       - name: Give the runner the container's cache files
-        if: inputs.prebuilt-run-id == '' && runner.os == 'Linux'
+        if: >-
+          runner.os == 'Linux' && inputs.prebuilt-run-id == '' && github.ref == 'refs/heads/main'
+          && (inputs.save-cache || steps.duckdb-cache.outputs.cache-matched-key == '')
         run: sudo chown -R "$(id -u):$(id -g)" .sccache-cache
       - name: Save DuckDB's compiled objects from main
-        if: inputs.prebuilt-run-id == '' && github.ref == 'refs/heads/main'
+        if: >-
+          inputs.prebuilt-run-id == '' && github.ref == 'refs/heads/main'
+          && (inputs.save-cache || steps.duckdb-cache.outputs.cache-matched-key == '')
         uses: actions/cache/save@v4
         with:
           path: .sccache-cache

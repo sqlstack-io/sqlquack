@@ -20,6 +20,8 @@ jobs:
   distributions:
     name: Distributions
     uses: ./.github/workflows/build-distributions.yml
+    with:
+      save-cache: true
 
   report-failure:
     name: Report a failed nightly build
