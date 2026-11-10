@@ -1,9 +1,9 @@
 name: Distributions
 
-# Builds and smoke tests every wheel and sdist when a pull request changes what goes into them. On
-# every push to main it builds and smoke tests the linux-x86_64 wheels only, and runs the command
-# line's convert tests with DuckDB compiled in, so a distribution-only failure shows at the landing
-# rather than at the next release. Neither blocks a landing.
+# Builds and smoke tests every wheel and sdist when a pull request changes what goes into them, and
+# on every push to main the linux-x86_64 wheels only, so a distribution-only failure shows at the
+# landing rather than at the next release. Both also run the command line's convert tests with
+# DuckDB compiled in. Neither blocks a landing.
 on:
   push:
     branches: [main]

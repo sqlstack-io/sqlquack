@@ -175,6 +175,7 @@ jobs:
           else
             bin="${RUNNER_TEMP}/wheel-smoke/bin"
           fi
+          ls -l dist | tee -a "${GITHUB_STEP_SUMMARY}"
           # Only the wheels just built: sqlquack-cli must resolve from dist, never from an index.
           "${bin}/python" -m pip install --no-index --find-links dist sqlquack
           cd "${RUNNER_TEMP}"
@@ -192,9 +193,6 @@ jobs:
           converted="$(echo "SELECT 1 AS total" | "${bin}/sqlquack" convert --builtin-policy)"
           echo "${converted}"
           grep -qx 'SELECT CAST(1 AS DECIMAL(1,0)) AS "TOTAL"' <<< "${converted}"
-          # A zone-dependent statement binds only with DuckDB's ICU extension compiled in.
-          echo "SELECT '2024-03-10 22:30:00'::TIMESTAMP_NTZ(6)::TIMESTAMP_TZ AS placed_at" \
-            | "${bin}/sqlquack" convert --builtin-policy
           # A file converted in a project folder, with no sqlquack.toml in it: the built-in policy.
           mkdir readme-smoke && cd readme-smoke
           printf "SELECT customer_id, SUM(total) AS revenue\nFROM orders\nGROUP BY customer_id\n" > query.sql
