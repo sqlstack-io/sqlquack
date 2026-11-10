@@ -37,4 +37,17 @@ impl KnownDifference {
             .map_or(self.differs, |(first, _)| first)
             .trim_end_matches('.')
     }
+
+    /// The rest of what differs after `summary`, then when it is fine and when wrong, as notes.
+    pub fn notes(&self) -> Vec<String> {
+        self.differs
+            .split_once(". ")
+            .map(|(_, rest)| rest.to_owned())
+            .into_iter()
+            .chain([
+                format!("fine when: {}", self.fine_when),
+                format!("wrong when: {}", self.wrong_when),
+            ])
+            .collect()
+    }
 }

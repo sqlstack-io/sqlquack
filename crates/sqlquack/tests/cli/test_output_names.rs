@@ -487,7 +487,7 @@ fn given_a_refused_result_name_when_converting_then_the_diagnostic_underlines_th
             description: "an unaliased string the parser keeps no range for is placed at the string",
             sql: "SELECT order_id, 'it''s' FROM orders",
             expected_text: concat!(
-                "error[SQ0009]: this column needs an alias, because SQLQuack can't be sure of the name ",
+                "error[SQ0009]: This column needs an alias, because SQLQuack can't be sure of the name ",
                 "Snowflake gives it\n --> <stdin>:1:18\n  |\n1 | SELECT order_id, 'it''s' FROM orders\n",
                 "  |                  ^^^^^^^ Snowflake names this `literal` column after its text\n",
                 "  |\n  = help: add an alias, such as `AS \"'IT''S'\"`, which names the column in both engines\n",

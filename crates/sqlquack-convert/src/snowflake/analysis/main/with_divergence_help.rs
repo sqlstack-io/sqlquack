@@ -13,6 +13,7 @@ use sqlquack_policy::policy::constants::{
 };
 use sqlquack_policy::policy::models::{DivergenceFailure, DivergenceMode, Policy};
 
+use crate::snowflake::analysis::constants::ERRORS_ONLY;
 use crate::snowflake::analysis::main::assumption_id::assumption_id;
 use crate::snowflake::analysis::models::ConversionChoices;
 
@@ -35,11 +36,7 @@ pub fn with_divergence_help(
                 if let Some(entry) = known_difference(id) {
                     diagnostic.message = entry.title.to_owned();
                     diagnostic.label = entry.summary().to_owned();
-                    diagnostic.notes = vec![format!(
-                        "fine when {}; wrong when {}",
-                        sentence_part(entry.fine_when),
-                        sentence_part(entry.wrong_when)
-                    )];
+                    diagnostic.notes = entry.notes();
                 }
                 let key = refusal.construct.as_ref().map(Construct::key);
                 diagnostic.help = Some(divergence_help(
@@ -50,19 +47,6 @@ pub fn with_divergence_help(
             diagnostic
         })
         .collect()
-}
-
-/// `sentence` as the middle of another, without its full stop and with an ordinary word lower-cased.
-fn sentence_part(sentence: &str) -> String {
-    let sentence = sentence.trim_end_matches('.');
-    let mut characters = sentence.chars();
-    let (Some(first), Some(second)) = (characters.next(), characters.next()) else {
-        return sentence.to_owned();
-    };
-    match first.is_ascii_uppercase() && (second.is_ascii_lowercase() || second == ' ') {
-        true => first.to_ascii_lowercase().to_string() + &sentence[1..],
-        false => sentence.to_owned(),
-    }
 }
 
 /// The one fix for known difference `id` at construct `key` that works under the caller's choices.
@@ -87,11 +71,7 @@ fn divergence_help(
             choices.loud_divergences_only && clock,
         ) {
             (true, true, _) => "the defaults allow this outside strict mode".to_owned(),
-            (true, false, true) => {
-                "this can give a different value, so errors-only mode refuses it; the defaults \
-                 allow it otherwise"
-                    .to_owned()
-            }
+            (true, false, true) => format!("{ERRORS_ONLY}; the defaults allow it otherwise"),
             (false, true, _) => format!(
                 "allow it in strict mode in a sqlquack.toml with default = \"warn\" and strict = \
                  \"warn\" under [divergences.{id}], starting from a copy of the SQLQuack \
@@ -115,11 +95,11 @@ fn divergence_help(
     if let (SESSION_TIMEZONE_UTC, Some(zone)) = (id, zone) {
         return format!(
             "this matches Snowflake only in a UTC session, and the session time zone is {zone}; \
-             convert for a UTC session"
+             set TIMEZONE to UTC, or leave it unset, to convert it"
         );
     }
     if choices.loud_divergences_only && divergence.failure == DivergenceFailure::Value {
-        return "this can give a different value, so errors-only mode refuses it".to_owned();
+        return ERRORS_ONLY.to_owned();
     }
     let confirmation = match id {
         SESSION_TIMEZONE_UTC => Some(("utc_session", choices.utc_session)),

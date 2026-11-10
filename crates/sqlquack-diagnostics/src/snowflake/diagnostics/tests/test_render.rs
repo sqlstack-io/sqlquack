@@ -66,7 +66,7 @@ fn given_refusals_when_rendered_then_the_source_line_is_underlined_at_the_span()
             description: "a refusal without a place names the file and puts its reason in a note",
             source: call.to_owned(),
             refusal: unlocated(None),
-            expected_text: "error[SQ0006]: converting this took too long or produced too much SQL\n --> query.sql\n  |\n  \
+            expected_text: "error[SQ0006]: Converting this took too long or produced too much SQL\n --> query.sql\n  |\n  \
                 = note: conversion took over 5 s\n  = help: split the statement into smaller statements\n"
                 .to_owned(),
         },

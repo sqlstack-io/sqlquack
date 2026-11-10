@@ -1554,7 +1554,7 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
             sql: "SELECT 'a' AS a, UPPER('é')",
             flags: &[],
             expected_text: concat!(
-                "error[SQ0009]: this column needs an alias, because SQLQuack can't be sure of the name ",
+                "error[SQ0009]: This column needs an alias, because SQLQuack can't be sure of the name ",
                 "Snowflake gives it\n --> <stdin>:1:18\n  |\n1 | SELECT 'a' AS a, UPPER('é')\n",
                 "  |                  ^^^^^^^^^^ Snowflake names this `function` column after its text\n",
                 "  |\n  = help: add an alias, such as `AS total`, which names the column in both engines\n",
@@ -1568,9 +1568,10 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
             flags: &[],
             expected_text: "error[SQ0008]: HASH gives a different value in DuckDB\n --> <stdin>:1:8\n  \
                 |\n1 | SELECT HASH(1) AS h\n  |        ^^^^^^^ DuckDB computes its own hash, never \
-                Snowflake's\n  |\n  = note: fine when joins, grouping, removing duplicates and \
-                spotting changed rows by hash; wrong when storing, comparing or sorting by the hash \
-                value itself: it differs, with no error\n  = help: allow it in a sqlquack.toml with \
+                Snowflake's\n  |\n  = note: Equal inputs still get equal hashes within one run.\n  \
+                = note: fine when: Joins, grouping, removing duplicates and spotting changed rows by \
+                hash.\n  = note: wrong when: Storing, comparing or sorting by the hash value itself: \
+                it differs, with no error.\n  = help: allow it in a sqlquack.toml with \
                 default = \"warn\" under [divergences.hash], starting from a copy of the SQLQuack \
                 repository's; `sqlquack explain hash` says when it is safe\nsqlquack convert: \
                 refused, 1 refusal\n",
@@ -1926,7 +1927,8 @@ fn given_a_refused_divergence_when_converting_then_its_help_names_it_and_only_fi
             description: "a value divergence under --loud-divergences-only",
             sql: "SELECT CURRENT_TIMESTAMP AS t",
             flags: &["--loud-divergences-only"],
-            expected_help: "this can give a different value, so errors-only mode refuses it",
+            expected_help: "you asked to refuse every known difference that can return a \
+                different value rather than raise an error, and this one can",
         },
     ];
     for test_case in test_cases {
