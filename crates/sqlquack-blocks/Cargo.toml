@@ -15,11 +15,13 @@ rust-version.workspace = true
 [features]
 default = []
 engine = ["dep:duckdb"]
-# Compiles DuckDB into the binary, for distributions that must not need a system DuckDB.
-bundled = ["engine", "duckdb/bundled"]
-# DuckDB's parquet and json extensions compiled in, so `sqlquack run` reads Parquet fixtures and
-# JSON columns without downloading an extension.
-extensions = ["bundled", "duckdb/parquet", "duckdb/json"]
+# Compiles DuckDB into the binary, for distributions that must not need a system DuckDB. Its json
+# extension comes with it: the checking engine's helper macros call json functions, so without it
+# every conversion fails its check.
+bundled = ["engine", "duckdb/bundled", "duckdb/json"]
+# DuckDB's parquet extension compiled in as well, so `sqlquack run` reads Parquet fixtures without
+# downloading an extension.
+extensions = ["bundled", "duckdb/parquet"]
 
 [dependencies]
 duckdb = { workspace = true, optional = true }

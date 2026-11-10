@@ -1,7 +1,12 @@
 name: Distributions
 
-# Builds and smoke tests every wheel and sdist when a pull request changes what goes into them.
+# Builds and smoke tests every wheel and sdist when a pull request changes what goes into them. On
+# every push to main it builds and smoke tests the linux-x86_64 wheels only, and runs the command
+# line's convert tests with DuckDB compiled in, so a distribution-only failure shows at the landing
+# rather than at the next release. Neither blocks a landing.
 on:
+  push:
+    branches: [main]
   pull_request:
     paths:
       - "python/**"
@@ -25,3 +30,23 @@ jobs:
   distributions:
     name: Distributions
     uses: ./.github/workflows/build-distributions.yml
+    with:
+      platforms: ${{ github.event_name == 'push' && 'linux-x86_64' || '' }}
+      sdist: ${{ github.event_name != 'push' }}
+
+  # The command line built with `bundled` alone, as the sqlquack wheel compiles DuckDB in: no system
+  # DuckDB and none of the `extensions` feature's extra extensions. It runs only the zone-free convert
+  # test until the bundled build compiles in ICU; then it runs the full convert test.
+  bundled-convert:
+    name: Convert with DuckDB compiled in
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the pinned Rust toolchain
+        run: rustup toolchain install
+      - uses: Swatinem/rust-cache@v2
+      - name: Run the convert tests
+        run: >-
+          cargo test --locked -p sqlquack --features bundled --test cli
+          given_zone_free_snowflake_sql_when_converting_then_the_checking_engine_binds_it

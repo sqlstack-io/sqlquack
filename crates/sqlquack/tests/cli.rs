@@ -2,6 +2,8 @@
 mod helpers;
 #[path = "cli/test_builtin_policy.rs"]
 mod test_builtin_policy;
+#[path = "cli/test_bundled.rs"]
+mod test_bundled;
 #[path = "cli/test_check.rs"]
 mod test_check;
 #[path = "cli/test_compare.rs"]
