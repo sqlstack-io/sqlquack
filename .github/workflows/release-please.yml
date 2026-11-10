@@ -1,8 +1,8 @@
 name: Release Please
 
-# Opens the release pull request from Conventional Commits on main and, once it merges, tags the
-# release and dispatches Publish. Nothing runs until the repository variable SQLQUACK_RELEASES is
-# set to "enabled", so no release pull request, tag or upload can happen before launch.
+# On every push to main, opens or updates the release pull request from the Conventional Commits
+# since the last release and dispatches Release Distributions to build its distributions. Once the
+# release pull request merges, it tags the release and dispatches Publish for that tag.
 on:
   push:
     branches:
@@ -20,7 +20,6 @@ concurrency:
 
 jobs:
   release-please:
-    if: vars.SQLQUACK_RELEASES == 'enabled'
     runs-on: ubuntu-24.04
     steps:
       - uses: googleapis/release-please-action@v4
