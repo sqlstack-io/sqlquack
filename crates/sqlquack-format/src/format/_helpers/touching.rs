@@ -8,8 +8,8 @@ use crate::dialects::main::is_keyword::is_keyword;
 use crate::dialects::models::Lexeme;
 use crate::format::_helpers::token_layout::AuthoredSql;
 use crate::format::constants::{
-    GUARD_OPERATORS, JOIN_FAILURE, OPERATOR_BYTES, SEPARABLE_KEYWORDS, SEPARABLE_OPERATORS,
-    SEPARATION_FAILURE, UNSEPARABLE_NEIGHBOURS,
+    GUARD_OPERATORS, JOIN_FAILURE, MODULO_OPERATOR, OPERATOR_BYTES, SEPARABLE_KEYWORDS,
+    SEPARABLE_OPERATORS, SEPARATION_FAILURE, UNSEPARABLE_NEIGHBOURS,
 };
 
 /// Refuse output that separates touching tokens, or joins separated ones, where that could change their reading.
@@ -54,7 +54,7 @@ fn separable(previous: &Lexeme, next: &Lexeme) -> bool {
         || (!numeric && (clause(previous) || clause(next)))
 }
 
-/// Whether the parse tree's binary `operator` may be spaced from `neighbour`: the guard's own lexing of the source finds exactly it, and neither side is a path or name accessor.
+/// Whether the parse tree's binary `operator` may be spaced from `neighbour`: the guard's own lexing finds exactly it, no sign follows a `%` as in DuckDB's `%-`, and neither side is an accessor.
 fn separable_operator(
     sql: &str,
     operator: &Lexeme,
@@ -76,8 +76,10 @@ fn separable_operator(
         && matches!(&bytes[..start], [.., digit, b'e' | b'E'] if digit.is_ascii_digit() || *digit == b'.');
     let accessor = UNSEPARABLE_NEIGHBOURS.contains(&neighbour.raw.as_str())
         || (neighbour.raw.starts_with(['@', '$']) && !whole_variable(neighbour, rules));
+    let signed_modulo = operator.raw == MODULO_OPERATOR && end > operator.end;
     SEPARABLE_OPERATORS.contains(&operator.raw.as_str())
         && !exponent
+        && !signed_modulo
         && !accessor
         && !sql[start..end].contains(':')
         && operator_pieces(&sql[start..end], start).contains(&(operator.start, operator.end))
