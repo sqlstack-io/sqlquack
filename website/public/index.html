@@ -86,12 +86,12 @@
   <span class="dim">= help:</span> move the condition to WHERE or HAVING
 
 <span class="cmd">sqlquack convert revenue.sql</span>
-SELECT
-    "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID",
-    CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE"
-FROM "ORDERS" AS "ORDERS"
-WHERE ("ORDERS"."STATUS" = 'shipped')
-GROUP BY "ORDERS"."CUSTOMER_ID"
+<span class="kw">SELECT</span>
+    <span class="id">"ORDERS"</span>.<span class="id">"CUSTOMER_ID"</span> <span class="kw">AS</span> <span class="id">"CUSTOMER_ID"</span>,
+    <span class="kw">CAST</span>(<span class="id">sum</span>(<span class="id">"ORDERS"</span>.<span class="id">"TOTAL"</span>) <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">24</span>,<span class="num">2</span>)) <span class="kw">AS</span> <span class="id">"REVENUE"</span>
+<span class="kw">FROM</span> <span class="id">"ORDERS"</span> <span class="kw">AS</span> <span class="id">"ORDERS"</span>
+<span class="kw">WHERE</span> (<span class="id">"ORDERS"</span>.<span class="id">"STATUS"</span> = <span class="str">'shipped'</span>)
+<span class="kw">GROUP</span> <span class="kw">BY</span> <span class="id">"ORDERS"</span>.<span class="id">"CUSTOMER_ID"</span>
 <span class="ok">sqlquack convert: done, converted</span></pre>
 			</div>
 
@@ -157,13 +157,13 @@ GROUP BY "ORDERS"."CUSTOMER_ID"
 SELECT order_id, total / 3 AS third FROM orders
 
 <span class="cmd">sqlquack convert div.sql --no-config</span>
-SELECT
-    "ORDERS"."ORDER_ID" AS "ORDER_ID",
-    (CASE
+<span class="kw">SELECT</span>
+    <span class="id">"ORDERS"</span>.<span class="id">"ORDER_ID"</span> <span class="kw">AS</span> <span class="id">"ORDER_ID"</span>,
+    (<span class="kw">CASE</span>
         <span class="dim">…</span>
-        ELSE CAST(<span class="dim">…</span> AS DECIMAL(18,8))
-    END) AS "THIRD"
-FROM "ORDERS" AS "ORDERS"
+        <span class="kw">ELSE</span> <span class="kw">CAST</span>(<span class="dim">…</span> <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">18</span>,<span class="num">8</span>))
+    <span class="kw">END</span>) <span class="kw">AS</span> <span class="id">"THIRD"</span>
+<span class="kw">FROM</span> <span class="id">"ORDERS"</span> <span class="kw">AS</span> <span class="id">"ORDERS"</span>
 <span class="ok">sqlquack convert: done, converted</span></pre>
 						</div>
 

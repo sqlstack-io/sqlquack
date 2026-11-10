@@ -782,7 +782,8 @@ footer a {
 
 /* Syntax colours for the SQL and Python examples. */
 :root {
-	--syn-keyword: #1a56c4;
+	/* SQL colours follow the CLI's: magenta keywords, cyan identifiers, green strings, yellow numbers. */
+	--syn-keyword: #a626a4;
 	--syn-string: #0a7a3f;
 	--syn-number: #9a6700;
 	--syn-comment: #8a909c;
@@ -791,7 +792,7 @@ footer a {
 }
 
 :root[data-theme='dark'] {
-	--syn-keyword: #5aa9e6;
+	--syn-keyword: #d670d6;
 	--syn-string: #79c98a;
 	--syn-number: #e3b341;
 	--syn-comment: #5c606b;
@@ -819,7 +820,8 @@ footer a {
 	color: var(--syn-function);
 }
 
-.terminal .ty {
+.terminal .ty,
+.terminal .id {
 	color: var(--syn-type);
 }
 
