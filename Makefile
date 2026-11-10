@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug gate-build polyglot-guard engine-free dialect-builds generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
+.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug gate-build polyglot-guard workspace-locks engine-free dialect-builds generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -108,6 +108,11 @@ clutter-guard:
 # Fails when a crate other than the dev-only exact check reaches polyglot at runtime.
 polyglot-guard:
 	uv run python -m scripts.check_polyglot_guard
+
+# Fails when a cargo workspace, the root or the playground engine's website/wasm, cannot resolve
+# from its committed lockfile; CI and the Website workflow build both with --locked.
+workspace-locks:
+	uv run python -m scripts.check_workspace_locks
 
 # Fails when the conversion pipeline crate, which builds without DuckDB's engine, reaches it.
 engine-free:
@@ -199,7 +204,7 @@ referee-pending:
 	uv run python -m scripts.write_referee_pending $(REFEREE_ARGS)
 
 # The static gate, the first step of `gate`, and the Python API's tests.
-check-ci: rust-lint python-check fensu syntax-coverage depth-probe evidence-pin-check clutter-guard polyglot-guard engine-free dialect-builds generated-cases syntax-cases dialect-cases referee-cases translation-files python-api distribution-notices ## The static gate CI runs.
+check-ci: rust-lint python-check fensu syntax-coverage depth-probe evidence-pin-check clutter-guard polyglot-guard workspace-locks engine-free dialect-builds generated-cases syntax-cases dialect-cases referee-cases translation-files python-api distribution-notices ## The static gate CI runs.
 
 # Each distribution ships the licence and third-party notices; its copies must match the root files.
 distribution-notices:
