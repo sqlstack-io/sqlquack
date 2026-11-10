@@ -11,7 +11,7 @@ license = "Apache-2.0 AND MIT"
 license-files = ["LICENSE", "THIRD_PARTY_NOTICES"]
 dynamic = ["version"]
 # The `sqlquack` command, as a native executable built from the same sources.
-dependencies = ["sqlquack-cli==0.4.0"]  # x-release-please-version
+dependencies = ["sqlquack-cli==0.4.1"]  # x-release-please-version
 
 [tool.maturin]
 manifest-path = "../crates/sqlquack-python/Cargo.toml"
