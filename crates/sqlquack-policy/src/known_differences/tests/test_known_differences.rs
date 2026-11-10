@@ -50,7 +50,7 @@ fn given_the_repository_policy_when_checking_the_known_differences_then_each_mat
             expected_findings: &[],
         },
         EntryCheckTestCase {
-            description: "the evidence file refuses by default exactly the differences D806 refuses",
+            description: "the evidence file refuses by default exactly the differences the default rule refuses",
             findings: defaults_unlike_the_rule,
             expected_findings: &[],
         },

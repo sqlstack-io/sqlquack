@@ -11,7 +11,7 @@ const ENDINGS: [(DivergenceFailure, &str); 2] = [
     (DivergenceFailure::Value, VALUE_ENDING),
 ];
 
-/// The known differences the built-in defaults refuse (D806): every other one is allowed.
+/// The known differences the built-in defaults refuse: every other one is allowed.
 const REFUSED_BY_DEFAULT: [&str; 5] = [
     "hash",
     "project_udf",
