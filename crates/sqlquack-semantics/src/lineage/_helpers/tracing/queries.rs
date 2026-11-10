@@ -137,8 +137,7 @@ pub(crate) fn renamed(
     if aliases.is_empty() {
         return query;
     }
-    let columns: Vec<ScopedColumn> = query
-        .columns
+    let columns: Vec<ScopedColumn> = Rc::unwrap_or_clone(query.columns)
         .into_iter()
         .enumerate()
         .map(|(position, column)| match aliases.get(position) {
@@ -154,7 +153,7 @@ pub(crate) fn renamed(
         && !(dialect_rules(context.profile).full_alias_list_ends_values()
             && aliases.len() >= columns.len());
     ResolvedQuery {
-        columns,
+        columns: Rc::new(columns),
         stored_relation: None,
         from_values,
         ..query
@@ -180,7 +179,7 @@ fn set_operation(
     let mut rows: RowReads = left.rows.clone();
     rows.absorb(&right.rows);
     if matches!(sides, SetSides::Left | SetSides::Intersect) {
-        for column in &right.columns {
+        for column in right.columns.iter() {
             rows.read(&column.lineage);
         }
     }
@@ -198,7 +197,10 @@ fn left_typed_by_both(
     right: &ResolvedQuery,
     context: LineageContext<'_>,
 ) -> ResolvedQuery {
-    for (column, other) in left.columns.iter_mut().zip(&right.columns) {
+    for (column, other) in Rc::make_mut(&mut left.columns)
+        .iter_mut()
+        .zip(right.columns.iter())
+    {
         column.lineage.data_type = set_merged(
             vec![column.lineage.clone(), other.lineage.clone()],
             context.profile,
@@ -231,7 +233,7 @@ fn positional(queries: Vec<ResolvedQuery>, context: LineageContext<'_>) -> Resol
     let mut branches: Vec<std::vec::IntoIter<ScopedColumn>> = Vec::with_capacity(queries.len());
     for query in queries {
         rows.absorb(&query.rows);
-        branches.push(query.columns.into_iter());
+        branches.push(Rc::unwrap_or_clone(query.columns).into_iter());
     }
     let Some((first, others)) = branches.split_first_mut() else {
         return ResolvedQuery::default();
@@ -252,7 +254,7 @@ fn positional(queries: Vec<ResolvedQuery>, context: LineageContext<'_>) -> Resol
         });
     }
     ResolvedQuery {
-        columns,
+        columns: Rc::new(columns),
         open,
         rows,
         ..ResolvedQuery::default()
@@ -266,9 +268,9 @@ fn by_name(
     context: LineageContext<'_>,
 ) -> ResolvedQuery {
     let open = left.open || right.open;
-    let mut columns: Vec<ScopedColumn> = left.columns;
+    let mut columns: Vec<ScopedColumn> = Rc::unwrap_or_clone(left.columns);
     let mut matched: Vec<bool> = vec![false; columns.len()];
-    for mut other in right.columns {
+    for mut other in Rc::unwrap_or_clone(right.columns) {
         match columns
             .iter()
             .position(|column| context.profile.same_identifier(&column.key, &other.key))
@@ -297,7 +299,7 @@ fn by_name(
         }
     }
     ResolvedQuery {
-        columns,
+        columns: Rc::new(columns),
         open,
         ..ResolvedQuery::default()
     }
@@ -429,7 +431,10 @@ fn recursive_query(
         );
         let mut joined: ResolvedQuery = positional(vec![current.clone(), next], context);
         if dialect_rules(context.profile).recursion_keeps_anchor_types() {
-            for (column, data_type) in joined.columns.iter_mut().zip(&anchor_types) {
+            for (column, data_type) in Rc::make_mut(&mut joined.columns)
+                .iter_mut()
+                .zip(&anchor_types)
+            {
                 column.lineage.data_type.clone_from(data_type);
             }
         }
@@ -447,21 +452,23 @@ fn same_lineage(left: &ResolvedQuery, right: &ResolvedQuery) -> bool {
         && left
             .columns
             .iter()
-            .zip(&right.columns)
+            .zip(right.columns.iter())
             .all(|(left, right)| left.lineage == right.lineage)
 }
 
 /// `query` with every column marked untraced.
 fn untraced(query: ResolvedQuery) -> ResolvedQuery {
-    let columns: Vec<ScopedColumn> = query
-        .columns
+    let columns: Vec<ScopedColumn> = Rc::unwrap_or_clone(query.columns)
         .into_iter()
         .map(|column| ScopedColumn {
             lineage: traced_if(column.lineage, false),
             ..column
         })
         .collect();
-    ResolvedQuery { columns, ..query }
+    ResolvedQuery {
+        columns: Rc::new(columns),
+        ..query
+    }
 }
 
 /// The scope a SELECT's own clauses read: its FROM items, merged keys, windows and filters.
@@ -523,7 +530,7 @@ fn select_query(
             query.outer_nullable |= expanded.outer_nullable;
             ungrouped.extend(expanded.columns.iter().map(|column| column.lineage.clone()));
             aggregated.extend(expanded.columns.iter().map(|_| false));
-            query.columns.extend(expanded.columns);
+            Rc::make_mut(&mut query.columns).extend(Rc::unwrap_or_clone(expanded.columns));
             continue;
         }
         let column = ScopedColumn {
@@ -538,10 +545,10 @@ fn select_query(
         scope.aliases.push(column.clone());
         scope.traced.get_mut().clear();
         aggregated.push(is_aggregate(unwrapped_projection(projection)));
-        query.columns.push(column);
+        Rc::make_mut(&mut query.columns).push(column);
     }
     if subtotals(select) {
-        for (column, aggregate) in query.columns.iter_mut().zip(&aggregated) {
+        for (column, aggregate) in Rc::make_mut(&mut query.columns).iter_mut().zip(&aggregated) {
             if !aggregate {
                 column.lineage.nullability = Nullability::Nullable;
             }
@@ -793,7 +800,7 @@ pub(crate) fn expanded_star(
         _ => None,
     };
     ResolvedQuery {
-        columns,
+        columns: Rc::new(columns),
         open: !open.is_empty(),
         open_relation: only.and_then(|only| only.query.open_relation.clone()),
         stored_relation: None,

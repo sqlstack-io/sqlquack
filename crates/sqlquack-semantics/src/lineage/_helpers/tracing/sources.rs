@@ -133,7 +133,7 @@ fn outer_as_of(kind: JoinKind, context: LineageContext<'_>) -> bool {
 /// `source` on the side of an outer join that may be NULL-filled: every column it offers may be NULL.
 fn outer_nullable(mut source: ScopeSource) -> ScopeSource {
     source.query.outer_nullable = true;
-    for column in &mut source.query.columns {
+    for column in Rc::make_mut(&mut source.query.columns) {
         column.lineage.nullability = Nullability::Nullable;
     }
     source
@@ -540,16 +540,16 @@ fn relation_name(table: &TableRef, context: LineageContext<'_>) -> String {
 fn base_relation(relation: &str, context: LineageContext<'_>) -> ResolvedQuery {
     match context.schema.columns(relation) {
         Some(columns) => ResolvedQuery {
-            columns: stored_columns(relation, columns, context),
+            columns: Rc::new(stored_columns(relation, columns, context)),
             stored_relation: Some(relation.to_owned()),
             ..ResolvedQuery::default()
         },
         None => ResolvedQuery {
-            columns: stored_columns(
+            columns: Rc::new(stored_columns(
                 relation,
                 context.schema.open_columns(relation).unwrap_or_default(),
                 context,
-            ),
+            )),
             open: true,
             open_relation: Some(relation.to_owned()),
             ..ResolvedQuery::default()
@@ -616,14 +616,16 @@ fn table_function_source(
     ScopeSource {
         key: None,
         query: ResolvedQuery {
-            columns: columns
-                .iter()
-                .map(|column| ScopedColumn {
-                    name: (*column).to_owned(),
-                    key: plain_key(column, context),
-                    lineage: input.clone(),
-                })
-                .collect(),
+            columns: Rc::new(
+                columns
+                    .iter()
+                    .map(|column| ScopedColumn {
+                        name: (*column).to_owned(),
+                        key: plain_key(column, context),
+                        lineage: input.clone(),
+                    })
+                    .collect(),
+            ),
             rows: input_rows(Some(&input)),
             function_name: Some(plain_key(name, context)),
             ..ResolvedQuery::default()
@@ -685,7 +687,7 @@ pub(crate) fn values_query(
         })
         .collect();
     let query = ResolvedQuery {
-        columns,
+        columns: Rc::new(columns),
         from_values: true,
         ..ResolvedQuery::default()
     };
@@ -772,10 +774,10 @@ pub(crate) fn pivot_sources(
         lineage: aggregated.clone(),
     });
     let query = ResolvedQuery {
-        columns: match dynamic {
+        columns: Rc::new(match dynamic {
             true => passed,
             false => passed.into_iter().chain(pivoted).collect(),
-        },
+        }),
         open: dynamic || !grouped_known || input.sources.iter().any(|source| source.query.open),
         rows,
         ..ResolvedQuery::default()
@@ -870,7 +872,7 @@ fn unpivot_source(
         lineage,
     });
     let query = ResolvedQuery {
-        columns: passed.into_iter().chain(generated).collect(),
+        columns: Rc::new(passed.into_iter().chain(generated).collect()),
         open: input.sources.iter().any(|source| source.query.open),
         rows: absorbed(&input.sources),
         ..ResolvedQuery::default()

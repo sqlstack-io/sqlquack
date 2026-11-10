@@ -267,8 +267,7 @@ fn query_value(
         _ => None,
     };
     let value: Lineage = combined(
-        resolved
-            .columns
+        Rc::unwrap_or_clone(resolved.columns)
             .into_iter()
             .map(|column| column.lineage)
             .collect(),
@@ -284,7 +283,7 @@ fn query_value(
 /// Every column a query reads, values and row dependencies together.
 fn query_reads(query: ResolvedQuery) -> RowReads {
     let mut read: RowReads = query.rows;
-    for column in &query.columns {
+    for column in query.columns.iter() {
         read.read(&column.lineage);
     }
     read
@@ -399,8 +398,7 @@ fn star_lineage(star: &Star, scope: &LineageScope<'_>, context: LineageContext<'
     let expanded = expanded_star(star, scope, context);
     let open: bool = expanded.open;
     let read = combined(
-        expanded
-            .columns
+        Rc::unwrap_or_clone(expanded.columns)
             .into_iter()
             .map(|column| column.lineage)
             .collect(),

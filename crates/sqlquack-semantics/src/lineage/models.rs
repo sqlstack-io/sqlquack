@@ -183,7 +183,7 @@ pub(crate) struct LineageScope<'a> {
 /// A query's outputs while resolving; `open` when it also offers columns not known by name.
 #[derive(Clone, Debug, Default)]
 pub(crate) struct ResolvedQuery {
-    pub(crate) columns: Vec<ScopedColumn>,
+    pub(crate) columns: Rc<Vec<ScopedColumn>>,
     pub(crate) open: bool,
     /// The one relation unknown columns come from, when there is exactly one.
     pub(crate) open_relation: Option<String>,
