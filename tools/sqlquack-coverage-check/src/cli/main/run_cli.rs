@@ -9,6 +9,7 @@ use crate::cli::_helpers::commands::{
     translation, validate,
 };
 use crate::cli::_helpers::depth_command::depth_probe;
+use crate::cli::_helpers::instructions_command::{instruction_counts, instruction_workload};
 use crate::cli::_helpers::results_command::results;
 use crate::cli::models::{Arguments, Command};
 
@@ -55,6 +56,8 @@ pub fn run_cli() -> ExitCode {
             jobs,
             json,
         } => depth_probe(&profile, &allowlist, jobs, json),
+        Command::InstructionCounts { baseline, update } => instruction_counts(&baseline, update),
+        Command::InstructionWorkload { workload } => instruction_workload(workload),
     };
     result.unwrap_or_else(|code| code)
 }

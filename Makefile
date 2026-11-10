@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug gate-build polyglot-guard engine-free bundled-extensions dialect-builds generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
+.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug instruction-counts instruction-baseline gate-build polyglot-guard engine-free bundled-extensions dialect-builds generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -72,6 +72,16 @@ syntax-coverage: gate-build
 # coverage/deep-nesting.toml does not list it, or when a listed failure no longer happens.
 depth-probe: gate-build
 	$(GATE_DIR)/syntax-coverage depth-probe --profile $(GATE_PROFILE)
+
+# Fails when the instructions callgrind counts in strict Snowflake parsing or in lineage and findings
+# of a fixed workload move more than coverage/instruction-counts.toml's tolerance from its counts,
+# either way. Needs valgrind; CI installs it.
+instruction-counts: gate-build
+	$(GATE_DIR)/syntax-coverage instruction-counts
+
+# Records the counts instruction-counts checks; run it in the change that moves them.
+instruction-baseline: gate-build
+	$(GATE_DIR)/syntax-coverage instruction-counts --update
 
 # The same probe on a debug build, whose larger frames fail at shallower depths; not in check-ci.
 depth-probe-debug:
@@ -209,7 +219,7 @@ referee-pending:
 	uv run python -m scripts.write_referee_pending $(REFEREE_ARGS)
 
 # The static gate, the first step of `gate`, and the Python API's tests.
-check-ci: rust-lint python-check fensu syntax-coverage depth-probe evidence-pin-check clutter-guard polyglot-guard engine-free bundled-extensions dialect-builds generated-cases syntax-cases dialect-cases referee-cases translation-files python-api distribution-notices ## The static gate CI runs.
+check-ci: rust-lint python-check fensu syntax-coverage depth-probe instruction-counts evidence-pin-check clutter-guard polyglot-guard engine-free bundled-extensions dialect-builds generated-cases syntax-cases dialect-cases referee-cases translation-files python-api distribution-notices ## The static gate CI runs.
 
 # Each distribution ships the licence and third-party notices; its copies must match the root files.
 distribution-notices:
