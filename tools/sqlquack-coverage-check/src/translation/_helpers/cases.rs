@@ -107,7 +107,7 @@ pub(crate) fn convert_cases(
 ) -> Vec<CaseTranslation> {
     let converter = Converter {
         binary: inputs.binary,
-        policy: inputs.policy,
+        config: inputs.config,
         bound: CONVERSION_BOUND,
     };
     let next: AtomicUsize = AtomicUsize::new(0);

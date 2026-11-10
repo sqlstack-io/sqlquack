@@ -9,7 +9,7 @@ use crate::policy::_helpers::parsing::parse_policy;
 use crate::policy::errors::PolicyError;
 
 /// The whole policy file.
-#[derive(Clone, Debug, PartialEq, Deserialize)]
+#[derive(Clone, Debug, Default, PartialEq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Policy {
     /// The schema version; see `SCHEMA_VERSION`.
@@ -26,45 +26,6 @@ pub struct Policy {
     /// Limits on converting one statement; absent, the built-in defaults apply.
     #[serde(default)]
     pub conversion_budget: Option<ConversionBudgetPolicy>,
-    /// The project around the file: its folders, session and confirmations.
-    #[serde(default)]
-    pub project: ProjectPolicy,
-}
-
-/// `[project]`: folders that differ from the defaults, the caller's session and what it confirms.
-#[derive(Clone, Debug, Default, PartialEq, Eq, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct ProjectPolicy {
-    /// The folder of source YAML files, relative to the file; `sources` when absent.
-    #[serde(default)]
-    pub sources: Option<String>,
-    /// The folder of SQL and Python function files, relative to the file; `functions` when absent.
-    #[serde(default)]
-    pub functions: Option<String>,
-    /// The folder of override files, relative to the file; `overrides` when absent.
-    #[serde(default)]
-    pub overrides: Option<String>,
-    /// Snowflake session parameters of the caller's session, as `--session` gives them.
-    #[serde(default)]
-    pub session: BTreeMap<String, SessionValue>,
-    /// What the caller confirms, as the command-line confirmation flags do.
-    #[serde(default)]
-    pub confirm: ProjectConfirm,
-}
-
-/// `[project.confirm]`: assumptions the project confirms for every run.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct ProjectConfirm {
-    /// `--python-runtime`.
-    #[serde(default)]
-    pub python_runtime: bool,
-    /// `--utc-session`.
-    #[serde(default)]
-    pub utc_session: bool,
-    /// `--confirm-declared-offsets`.
-    #[serde(default)]
-    pub declared_offsets: bool,
 }
 
 /// How long converting one statement may take and how much SQL it may emit, before it is refused.
@@ -80,7 +41,7 @@ pub struct ConversionBudgetPolicy {
 }
 
 /// Comparator settings.
-#[derive(Clone, Debug, PartialEq, Deserialize)]
+#[derive(Clone, Debug, Default, PartialEq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ComparatorPolicy {
     /// How result column names are matched.
@@ -96,17 +57,18 @@ pub struct ComparatorPolicy {
 }
 
 /// How result column names are matched.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ColumnNameMatching {
     /// Names must be byte-identical.
+    #[default]
     Exact,
     /// Names must be equal after ASCII upper-casing; Snowflake upper-cases unquoted names.
     CaseInsensitive,
 }
 
 /// DuckDB's `default_null_order` values.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum NullOrder {
     /// NULLs first in both directions.
@@ -116,6 +78,7 @@ pub enum NullOrder {
     /// NULLs first ascending, last descending.
     NullsFirstOnAscLastOnDesc,
     /// NULLs last ascending, first descending.
+    #[default]
     NullsLastOnAscFirstOnDesc,
 }
 
@@ -132,17 +95,18 @@ impl NullOrder {
 }
 
 /// How zoned timestamps compare.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum TimestampTzComparison {
     /// The same instant.
     Instant,
     /// The same instant and the same zone label.
+    #[default]
     InstantAndZone,
 }
 
 /// Allowed float distance in units in the last place.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct FloatUlps {
     /// For 32-bit replayed floats.
@@ -217,10 +181,10 @@ pub struct EdgeCaseRequirement {
 pub struct Divergence {
     /// Construct keys such as `fn:HASH`.
     pub constructs: Vec<String>,
-    /// Treatment in the default mode.
-    pub default: DivergenceMode,
-    /// Treatment in strict mode.
-    pub strict: DivergenceMode,
+    /// How the recorded cases are replayed: converting with it, or refusing it.
+    pub replay: DivergenceMode,
+    /// What users get without a `sqlquack.toml` saying otherwise.
+    pub default: BuiltinDefault,
     /// Why values differ and what stays consistent.
     pub reason: String,
     /// Whether relying on it can return a different value, or only raise.
@@ -243,13 +207,23 @@ pub enum DivergenceFailure {
     Value,
 }
 
-/// How a mode treats a known divergence.
+/// How the recorded cases are replayed with a known divergence.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum DivergenceMode {
     /// Convert with a warning naming the location and the reason.
     Warn,
     /// Refuse.
+    Refuse,
+}
+
+/// The built-in default for a known divergence, which a user's `[allow]` can change.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum BuiltinDefault {
+    /// Converted with a warning unless the user refuses it.
+    Allow,
+    /// Refused unless the user allows it.
     Refuse,
 }
 

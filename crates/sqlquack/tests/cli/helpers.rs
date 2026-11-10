@@ -4,6 +4,7 @@ use std::process::{Command, Stdio};
 
 use sqlquack_evidence::replay::main::replay_on_engine::replay_on_engine;
 use sqlquack_evidence::replay::models::{PythonFunction, PythonReplay, ReplaySettings};
+use sqlquack_policy::policy::constants::EVIDENCE_FILE;
 
 use walkdir::WalkDir;
 
@@ -61,12 +62,7 @@ fn copy_files(from: &Path, to: &Path) {
 /// Runs a command in a copy of the repository's policy and cases, with no recorded results.
 pub(crate) fn run_on_repository_cases(arguments: &[&str], mention: &str) -> CommandOutcome {
     let directory = tempfile::tempdir().expect("temporary directory");
-    let root = repository_root();
-    std::fs::copy(
-        root.join("sqlquack.toml"),
-        directory.path().join("sqlquack.toml"),
-    )
-    .expect("policy copied");
+    copy_evidence(directory.path());
     copy_files(&cases_dir(), &directory.path().join("cases"));
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
         .args(arguments)
@@ -88,7 +84,7 @@ pub(crate) fn converted_column_names(sql: &str, flags: &[&str]) -> Vec<String> {
     std::fs::write(directory.path().join("query.sql"), sql).expect("query written");
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
         .arg("convert")
-        .arg("--policy")
+        .arg("--config")
         .arg(repository_root().join("sqlquack.toml"))
         .args(flags)
         .arg(directory.path().join("query.sql"))
@@ -110,7 +106,7 @@ pub(crate) fn converted_run_error(sql: &str) -> Option<String> {
     std::fs::write(directory.path().join("query.sql"), sql).expect("query written");
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
         .arg("convert")
-        .arg("--policy")
+        .arg("--config")
         .arg(repository_root().join("sqlquack.toml"))
         .arg(directory.path().join("query.sql"))
         .output()
@@ -138,7 +134,7 @@ pub(crate) fn converted_first_value(sql: &str) -> String {
     std::fs::write(directory.path().join("query.sql"), sql).expect("query written");
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
         .arg("convert")
-        .arg("--policy")
+        .arg("--config")
         .arg(repository_root().join("sqlquack.toml"))
         .arg(directory.path().join("query.sql"))
         .output()
@@ -177,7 +173,7 @@ pub(crate) fn converted_result_over(
     std::fs::write(directory.path().join("query.sql"), sql).expect("query written");
     write_project_file(directory.path(), "sources/tables.yml", sources);
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["convert", "--json", "--policy"])
+        .args(["convert", "--json", "--config"])
         .arg(repository_root().join("sqlquack.toml"))
         .arg("--project")
         .arg(directory.path())
@@ -207,7 +203,7 @@ pub(crate) fn override_failure(sql: &str, definition: &str) -> (Option<i32>, Str
     std::fs::write(overrides.join("reversed_text.sql"), definition).expect("override written");
     std::fs::write(directory.path().join("query.sql"), sql).expect("query written");
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["convert", "--policy"])
+        .args(["convert", "--config"])
         .arg(repository_root().join("sqlquack.toml"))
         .arg("--overrides")
         .arg(&overrides)
@@ -237,7 +233,7 @@ pub(crate) fn override_outcome(
         "sources:\n  - name: orders\n    columns:\n      - name: order_id\n        type: NUMBER(10,0)\n      - name: sku\n        type: VARCHAR\n",
     );
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["convert", "--json", "--policy"])
+        .args(["convert", "--json", "--config"])
         .arg(repository_root().join("sqlquack.toml"))
         .arg("--project")
         .arg(directory.path())
@@ -274,6 +270,13 @@ fn converted_value_with_macros(report: &serde_json::Value) -> String {
         .expect("the converted statement returns a text value")
 }
 
+/// Copies the repository's evidence policy into `directory`, where the evidence commands read it.
+pub(crate) fn copy_evidence(directory: &Path) {
+    let target = directory.join(EVIDENCE_FILE);
+    std::fs::create_dir_all(target.parent().expect("a parent folder")).expect("evidence folder");
+    std::fs::copy(repository_root().join(EVIDENCE_FILE), target).expect("evidence copied");
+}
+
 /// The exit code of `arguments` beside a copy of the repository's `policy_file`, over three SQL files.
 pub(crate) fn policy_free_exit_code(arguments: &[&str], policy_file: Option<&str>) -> Option<i32> {
     let directory = tempfile::tempdir().expect("temporary directory");
@@ -283,11 +286,8 @@ pub(crate) fn policy_free_exit_code(arguments: &[&str], policy_file: Option<&str
         "SELECT CURRENT_TIMESTAMP() AS t",
     )
     .expect("query written");
-    std::fs::write(
-        directory.path().join("json.sql"),
-        "SELECT OBJECT_CONSTRUCT('a', 1) AS j",
-    )
-    .expect("query written");
+    std::fs::write(directory.path().join("hash.sql"), "SELECT HASH(1) AS h")
+        .expect("query written");
     policy_file.iter().for_each(|path| {
         std::fs::copy(
             repository_root().join(path),
@@ -329,21 +329,22 @@ order = "ordered"
 tags = ["duplicates", "null", "empty-input"]
 "#;
 
-/// The numeric_range constructs and default mode as sqlquack.toml declares them.
+/// The numeric_range constructs and replay mode as the evidence policy declares them.
 const NUMERIC_RANGE_SECTION: &str = "[divergences.numeric_range]";
-const WARN_DEFAULT: &str = "default = \"warn\"";
+const WARN_REPLAY: &str = "replay = \"warn\"";
 
-/// Verifies the recorded SUM overflow case with a marker line and the divergence's default mode.
+/// Verifies the recorded SUM overflow case with a marker line and the divergence's replay mode.
 pub(crate) fn verify_overflow_case(case_marker: &str, policy_default: &str) -> DivergenceOutcome {
     let directory = tempfile::tempdir().expect("temporary directory");
     let root = repository_root();
-    let policy = std::fs::read_to_string(root.join("sqlquack.toml")).expect("policy read");
+    let policy = std::fs::read_to_string(root.join(EVIDENCE_FILE)).expect("policy read");
     let (before, section) = policy
         .split_once(NUMERIC_RANGE_SECTION)
         .expect("the policy declares numeric_range");
-    let section = section.replacen(WARN_DEFAULT, &format!("default = \"{policy_default}\""), 1);
+    let section = section.replacen(WARN_REPLAY, &format!("replay = \"{policy_default}\""), 1);
     let policy = format!("{before}{NUMERIC_RANGE_SECTION}{section}");
-    std::fs::write(directory.path().join("sqlquack.toml"), policy).expect("policy written");
+    copy_evidence(directory.path());
+    std::fs::write(directory.path().join(EVIDENCE_FILE), policy).expect("policy written");
     copy_files(
         &cases_dir().join("fidelity"),
         &directory.path().join("cases/fidelity"),
@@ -427,12 +428,7 @@ pub(crate) fn verify_error_check(
     arguments: &[&str],
 ) -> ErrorCheckOutcome {
     let directory = tempfile::tempdir().expect("temporary directory");
-    let root = repository_root();
-    std::fs::copy(
-        root.join("sqlquack.toml"),
-        directory.path().join("sqlquack.toml"),
-    )
-    .expect("policy copied");
+    copy_evidence(directory.path());
     copy_files(
         &cases_dir().join("fidelity"),
         &directory.path().join("cases/fidelity"),
@@ -530,12 +526,7 @@ pub(crate) fn review_project_functions(file: &str, expected_lines: &[&str]) -> R
 /// A temporary directory holding the policy and the equivalence files every review needs.
 fn review_directory() -> tempfile::TempDir {
     let directory = tempfile::tempdir().expect("temporary directory");
-    let root = repository_root();
-    std::fs::copy(
-        root.join("sqlquack.toml"),
-        directory.path().join("sqlquack.toml"),
-    )
-    .expect("policy copied");
+    copy_evidence(directory.path());
     for entry in WalkDir::new(cases_dir())
         .into_iter()
         .flatten()
@@ -589,7 +580,7 @@ pub(crate) fn run_function_macro(
     std::fs::write(directory.path().join("doubled.sql"), body).expect("body written");
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
         .args(["function", "doubled.sql", "--name", "DOUBLED"])
-        .arg("--policy")
+        .arg("--config")
         .arg(repository_root().join("sqlquack.toml"))
         .args(flags)
         .current_dir(directory.path())
@@ -662,12 +653,7 @@ cells = ["'zz'"]
 /// Verifies the recorded GET cases against a GET domain with `key_families`; reports its gaps.
 pub(crate) fn verify_coverage(key_families: &str, arguments: &[&str]) -> CoverageOutcome {
     let directory = tempfile::tempdir().expect("temporary directory");
-    let root = repository_root();
-    std::fs::copy(
-        root.join("sqlquack.toml"),
-        directory.path().join("sqlquack.toml"),
-    )
-    .expect("policy copied");
+    copy_evidence(directory.path());
     copy_files(
         &cases_dir().join("fidelity"),
         &directory.path().join("cases/fidelity"),
@@ -769,11 +755,7 @@ tags = ["error"]
 /// Each pending file's case reference, `compile_error` and `expected_error`.
 pub(crate) fn pending_flags() -> Vec<(String, Option<bool>, Option<bool>)> {
     let directory = tempfile::tempdir().expect("temporary directory");
-    std::fs::copy(
-        repository_root().join("sqlquack.toml"),
-        directory.path().join("sqlquack.toml"),
-    )
-    .expect("policy copied");
+    copy_evidence(directory.path());
     let cases = directory.path().join("cases/relational");
     std::fs::create_dir_all(&cases).expect("cases directory");
     std::fs::write(cases.join("aliases.toml"), COMPILE_ERROR_CASES).expect("cases written");
@@ -810,9 +792,9 @@ pub(crate) fn pending_flags() -> Vec<(String, Option<bool>, Option<bool>)> {
 pub(crate) fn run_convert(sql: &str, flags: &[&str], mention: &str) -> ConvertOutcome {
     use std::io::Write;
     let policy = repository_root().join("sqlquack.toml");
-    let builtin = flags.contains(&"--builtin-policy");
+    let builtin = flags.contains(&"--no-config");
     let policy_flags: Vec<&std::ffi::OsStr> =
-        [std::ffi::OsStr::new("--policy"), policy.as_os_str()]
+        [std::ffi::OsStr::new("--config"), policy.as_os_str()]
             .into_iter()
             .filter(|_| !builtin)
             .collect();
@@ -850,7 +832,7 @@ pub(crate) fn python_report(sql: &str, flags: &[&str]) -> serde_json::Value {
     let directory = tempfile::tempdir().expect("temporary directory");
     std::fs::write(directory.path().join("query.sql"), sql).expect("query written");
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["convert", "--json", "--policy"])
+        .args(["convert", "--json", "--config"])
         .arg(repository_root().join("sqlquack.toml"))
         .arg("--project")
         .arg(repository_root().join(PYTHON_PROJECT))
@@ -1036,7 +1018,7 @@ pub(crate) fn function_from_stdin(name: &str, body: &str) -> FunctionStdinOutcom
     );
     let (exit_code, stdout, stderr) = run_with_input(
         directory.path(),
-        &["function", "-", "--name", name, "--builtin-policy"],
+        &["function", "-", "--name", name, "--no-config"],
         body,
     );
     let report: serde_json::Value = serde_json::from_str(&stdout).unwrap_or_default();
@@ -1107,12 +1089,7 @@ pub(crate) fn compare_outcome(test_case: &CompareTestCase) -> String {
 /// Each statement `verify --translation-statements` writes for the batch-2 aggregates and fidelity.
 pub(crate) fn translation_statements() -> Vec<serde_json::Value> {
     let directory = tempfile::tempdir().expect("temporary directory");
-    let root = repository_root();
-    std::fs::copy(
-        root.join("sqlquack.toml"),
-        directory.path().join("sqlquack.toml"),
-    )
-    .expect("policy copied");
+    copy_evidence(directory.path());
     copy_files(
         &cases_dir().join("fidelity"),
         &directory.path().join("cases/fidelity"),
@@ -1146,7 +1123,7 @@ pub(crate) fn translation_statements() -> Vec<serde_json::Value> {
 pub(crate) fn first_refusal_help(sql: &str, flags: &[&str]) -> String {
     let policy = repository_root().join("sqlquack.toml");
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["convert", "--json", "--policy"])
+        .args(["convert", "--json", "--config"])
         .arg(&policy)
         .args(flags)
         .stdin(Stdio::piped())
@@ -1174,7 +1151,7 @@ pub(crate) fn source_failure(text: &str) -> (Option<i32>, String) {
     let directory = tempfile::tempdir().expect("temporary directory");
     write_project_file(directory.path(), "sources/orders.yml", text);
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["convert", "--builtin-policy", "--project"])
+        .args(["convert", "--no-config", "--project"])
         .arg(directory.path())
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())

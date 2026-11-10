@@ -628,7 +628,7 @@ pub(crate) fn translation(
         root: &common.root,
         by_design: &by_design,
         binary: sqlquack,
-        policy: &arguments.policy,
+        config: &arguments.config,
         work: &work,
         family,
         jobs: arguments.jobs,

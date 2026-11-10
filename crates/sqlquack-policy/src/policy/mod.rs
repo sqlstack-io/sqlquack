@@ -1,4 +1,4 @@
-//! Loading and validating `sqlquack.toml`.
+//! Loading and validating the evidence policy, `evidence.toml`.
 
 pub(crate) mod _helpers;
 pub mod constants;

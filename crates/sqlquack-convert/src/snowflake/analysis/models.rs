@@ -1,5 +1,7 @@
 //! Pipeline results.
 
+use std::collections::BTreeMap;
+
 use crate::snowflake::conversion::models::Converted;
 use serde::Serialize;
 use sqlquack_diagnostics::classification::models::Occurrence;
@@ -20,19 +22,15 @@ pub struct Analysis {
     pub conversions: Vec<Converted>,
 }
 
-/// What the caller confirms and refuses on top of the policy, and the policy file help names.
+/// What the caller allows, confirms and refuses on top of the built-in defaults.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct ConversionChoices {
-    /// The policy file, as help names it, such as `sqlquack.toml`.
-    pub policy_file: String,
-    /// Refuse every known divergence the policy refuses in strict mode.
+    /// The configuration file help names, such as `sqlquack.toml`; none without one.
+    pub config_file: Option<String>,
+    /// The configuration's `[allow]`: known differences it allows (`true`) or refuses (`false`).
+    pub allow: BTreeMap<String, bool>,
+    /// Refuse every known difference.
     pub strict: bool,
-    /// Both sessions run in UTC.
-    pub utc_session: bool,
-    /// The TIMESTAMP_TZ offsets the schema declares hold.
-    pub confirm_declared_offsets: bool,
     /// A Python runtime registers the project's Python functions.
     pub python_runtime: bool,
-    /// Refuse every known divergence that can return a different value rather than raise.
-    pub loud_divergences_only: bool,
 }

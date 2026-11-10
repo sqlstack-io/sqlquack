@@ -27,7 +27,7 @@ def binary_converter(*, binary: Path, library: Path, policy: Path) -> Converter:
     def convert(path: Path) -> Conversion:
         """The conversion of `path`; a crash or unreadable output is a refusal naming it."""
         completed: subprocess.CompletedProcess[str] = subprocess.run(
-            (str(binary), "convert", str(path), "--json", "--policy", str(policy)),
+            (str(binary), "convert", str(path), "--json", "--config", str(policy)),
             capture_output=True,
             text=True,
             check=False,

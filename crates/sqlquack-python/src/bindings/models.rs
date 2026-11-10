@@ -22,20 +22,14 @@ pub struct ConvertRequest {
     pub project: Option<PathBuf>,
     /// Relations and functions declared in memory, in addition to the project's.
     pub schema: Option<serde_json::Value>,
-    /// `--policy`; the command line's default when absent.
-    pub policy: Option<PathBuf>,
-    /// `--builtin-policy`.
-    pub builtin_policy: bool,
+    /// `--config`; the command line's default when absent.
+    pub config: Option<PathBuf>,
+    /// `--no-config`.
+    pub no_config: bool,
     /// `--strict`.
     pub strict: bool,
-    /// `--utc-session`.
-    pub utc_session: bool,
-    /// `--confirm-declared-offsets`.
-    pub confirm_declared_offsets: bool,
     /// `--python-runtime`.
     pub python_runtime: bool,
-    /// `--loud-divergences-only`.
-    pub loud_divergences_only: bool,
     /// `--overrides`.
     pub overrides: Option<PathBuf>,
     /// `--verified-override NAME=SHA256`, by name.

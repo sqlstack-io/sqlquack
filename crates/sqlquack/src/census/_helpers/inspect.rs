@@ -31,7 +31,6 @@ use sqlquack_convert::snowflake::analysis::main::assumption_id::assumption_id;
 use sqlquack_convert::snowflake::analysis::main::with_divergence_help::with_divergence_help;
 use sqlquack_convert::snowflake::analysis::models::ConversionChoices;
 use sqlquack_diagnostics::diagnostics::main::diagnose::diagnose;
-use sqlquack_policy::policy::models::Policy;
 
 #[derive(Clone)]
 pub(crate) struct FileCensus {
@@ -210,13 +209,13 @@ pub(crate) fn inspect_file(
 pub(crate) fn diagnosed_file(
     file: &CensusFile,
     refused_models: &BTreeMap<String, &Path>,
-    (policy, choices): (Option<&Policy>, &ConversionChoices),
+    choices: &ConversionChoices,
 ) -> Result<(BlockedDiagnostics, Vec<(String, String)>), CensusError> {
     let source = read_source(&file.path)?;
     let diagnostics = with_divergence_help(
         &file.refusals,
         diagnose(&file.refusals, &source),
-        (policy, choices, &BTreeMap::new()),
+        (choices, &BTreeMap::new()),
     );
     let mut own: Vec<(String, String)> = Vec::new();
     let mut shown = Vec::with_capacity(diagnostics.len());

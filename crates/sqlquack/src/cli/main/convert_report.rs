@@ -11,7 +11,7 @@ use sqlquack_convert::snowflake::session::main::session_conversion_options::sess
 
 /// The report `convert` prints for `sql` under `arguments`, or why it cannot be made (exit 2).
 pub fn convert_report(arguments: &ConvertArguments, sql: &str) -> Result<ConvertReport, String> {
-    let (policy, project) = project_choices(
+    let project = project_choices(
         &arguments.conversion,
         (
             arguments.schema.as_ref(),
@@ -19,21 +19,20 @@ pub fn convert_report(arguments: &ConvertArguments, sql: &str) -> Result<Convert
             arguments.overrides.as_deref(),
         ),
     )?;
-    let schema = project.schema;
-    let warnings = project.warnings;
+    let (schema, warnings, choices) = (project.schema, project.warnings, project.choices);
     let arguments = &ConvertArguments {
         session: project.session,
         overrides: project.overrides,
+        verified_overrides: project
+            .verified_overrides
+            .into_iter()
+            .chain(arguments.verified_overrides.iter().cloned())
+            .collect(),
         conversion: project.conversion,
         ..arguments.clone()
     };
     let parameters = parse_session(&arguments.session)?;
-    let session = (
-        arguments.conversion.strict,
-        arguments.conversion.utc_session,
-    );
-    let (options, profile) = match session_conversion_options(policy.as_ref(), session, &parameters)
-    {
+    let (options, profile) = match session_conversion_options(&choices, &parameters) {
         Ok(matched) => matched,
         Err(reason) => {
             return Ok(ConvertReport {
@@ -42,7 +41,7 @@ pub fn convert_report(arguments: &ConvertArguments, sql: &str) -> Result<Convert
             });
         }
     };
-    let options = chosen_options(arguments, policy.as_ref(), options)?;
+    let options = chosen_options(arguments, options)?;
     let catalogue = builtin_catalogue();
     let analysis = analyze(sql, &catalogue, (&schema, &options));
     if analysis.parsed && analysis.statements == 0 {
@@ -51,8 +50,8 @@ pub fn convert_report(arguments: &ConvertArguments, sql: &str) -> Result<Convert
     let report = analysis_report(
         &analysis,
         (sql, arguments.compact),
-        (&schema, &options, policy.as_ref()),
-        (&arguments.conversion, &parameters, profile),
+        (&schema, &options),
+        (&choices, &parameters, profile),
     )?;
     Ok(ConvertReport { warnings, ..report })
 }

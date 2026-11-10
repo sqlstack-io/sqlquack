@@ -75,36 +75,24 @@ test('each stage reports pass, fail or skipped', () => {
 	assert.deepEqual(stages('SELECT HASH(order_id) AS h FROM orders'), ['pass', 'pass', 'fail']);
 });
 
-test('the policy and session parameters choose the profile, or refuse, as on the command line', () => {
-	const policy = readFileSync(new URL('../../sqlquack.toml', import.meta.url), 'utf8');
+test('the configuration and session parameters choose the profile, or refuse, as on the command line', () => {
 	const translate = (settings) => {
 		const report = JSON.parse(analyze('SELECT order_id FROM orders', SOURCES, JSON.stringify(settings)));
 		return report.settings_error ? { error: report.settings_error } : report.translate;
 	};
-	assert.equal(translate({}).profile, 'the built-in default');
-	assert.equal(translate({ policy }).profile, 'utc-v1');
-	// Only utc-qiic-v1 records quoted identifiers resolving to upper case.
-	assert.equal(translate({ policy, session: 'quoted_identifiers_ignore_case = TRUE\n' }).profile, 'utc-qiic-v1');
+	assert.equal(translate({}).profile, 'utc-v1');
+	// Only utc-qiic-v1 records quoted identifiers resolving to upper case, from the flag or the file.
+	assert.equal(translate({ session: 'quoted_identifiers_ignore_case = TRUE\n' }).profile, 'utc-qiic-v1');
+	assert.equal(translate({ config: '[project.session]\nQUOTED_IDENTIFIERS_IGNORE_CASE = true\n' }).profile, 'utc-qiic-v1');
 	// No recorded profile starts the week on Monday: refused with SQ0007, before any conversion.
-	const monday = translate({ policy, session: 'WEEK_START=1' });
+	const monday = translate({ session: 'WEEK_START=1' });
 	assert.equal(monday.status, 'fail');
 	assert.deepEqual(monday.diagnostics.map((d) => d.code), ['SQ0007']);
 	assert.equal(monday.statements, undefined);
-	// The built-in default records no profiles: it takes TIMEZONE and result-neutral parameters only.
-	assert.equal(translate({ session: 'TIMEZONE=UTC' }).profile, 'the built-in default');
-	assert.deepEqual(translate({ session: 'WEEK_START=1' }).diagnostics.map((d) => d.code), ['SQ0007']);
-	assert.match(translate({ policy: 'schema_version = 1\nnot_a_key = 2' }).error, /^policy: /);
+	// A misspelt known difference names the one it is near, as the command line does.
+	assert.equal(translate({ config: '[allow]\nhsah = true\n' }).error, 'sqlquack.toml: [allow] names no known difference `hsah`; did you mean `hash`?');
+	assert.match(translate({ config: 'not_a_key = 2' }).error, /^sqlquack\.toml: /);
 	assert.match(translate({ session: 'TIMEZONE' }).error, /NAME=VALUE/);
-});
-
-test('the conversion budget is timed in the browser and refuses with SQ0006 when exceeded', () => {
-	const policy = readFileSync(new URL('../../sqlquack.toml', import.meta.url), 'utf8');
-	// A zero-millisecond budget: any measured conversion time exceeds it. `Instant` would panic here.
-	const tight = policy.replace(/\[conversion_budget\][^[]*/, '[conversion_budget]\nmilliseconds = 0\nsize_ratio = 2000\nminimum_bytes = 4194304\n\n');
-	const report = JSON.parse(analyze('SELECT order_id FROM orders', SOURCES, JSON.stringify({ policy: tight })));
-	assert.equal(report.translate.status, 'fail');
-	assert.equal(report.translate.diagnostics[0].code, 'SQ0006');
-	assert.match(report.translate.diagnostics[0].label, /beyond the budget of 0 ms/);
 });
 
 test('every example chip stops at the stage its label names, the Run stage included', async () => {
@@ -132,7 +120,6 @@ test('every example chip stops at the stage its label names, the Run stage inclu
 });
 
 test('a refused known difference is worded from its entry, with the one fix that works here, as the CLI words it', () => {
-	const policy = readFileSync(new URL('../../sqlquack.toml', import.meta.url), 'utf8');
 	const refused = (settings) => JSON.parse(analyze('SELECT HASH(order_id) AS h FROM orders', SOURCES, JSON.stringify(settings))).translate.diagnostics[0];
 	const builtin = refused({});
 	assert.equal(builtin.message, 'HASH gives a different value in DuckDB');
@@ -142,10 +129,12 @@ test('a refused known difference is worded from its entry, with the one fix that
 		'fine when: Joins, grouping, removing duplicates and spotting changed rows by hash.',
 		'wrong when: Storing, comparing or sorting by the hash value itself: it differs, with no error.',
 	]);
-	assert.match(builtin.help, /^allow it in a sqlquack\.toml with default = "warn" under \[divergences\.hash\]/);
-	// A policy file that refuses it gets the edit to that file; strict mode the strict setting.
-	assert.match(refused({ policy }).help, /^allow it with default = "warn" under \[divergences\.hash\] in the policy file/);
-	assert.match(refused({ policy, strict: true }).help, /^allow it in strict mode with default = "warn" and strict = "warn"/);
+	assert.equal(builtin.help, 'allow it with hash = true under [allow] in sqlquack.toml; `sqlquack explain hash` says when it is safe');
+	// Strict mode says so, rather than sending the reader to [allow], whatever [allow] says.
+	assert.equal(refused({ strict: true, config: '[allow]\nhash = true\n' }).help, 'strict mode refuses every known difference');
+	// Allowed in the sqlquack.toml, it converts.
+	const allowed = JSON.parse(analyze('SELECT HASH(order_id) AS h FROM orders', SOURCES, JSON.stringify({ config: '[allow]\nhash = true\n' }))).translate;
+	assert.equal(allowed.status, 'pass');
 	// The refusal names its known difference, which the page lists by name and title.
 	assert.equal(builtin.known_difference, 'hash');
 	const listed = JSON.parse(known_differences());
@@ -155,9 +144,8 @@ test('a refused known difference is worded from its entry, with the one fix that
 	const byName = Object.fromEntries(listed.map((entry) => [entry.name, entry.allowed_by_default]));
 	assert.deepEqual([byName.current_time, byName.hash], [true, false]);
 	// A refusal that needs no known difference names none.
-	const tight = policy.replace(/\[conversion_budget\][^[]*/, '[conversion_budget]\nmilliseconds = 0\nsize_ratio = 2000\nminimum_bytes = 4194304\n\n');
-	const budget = JSON.parse(analyze('SELECT order_id FROM orders', SOURCES, JSON.stringify({ policy: tight }))).translate.diagnostics[0];
-	assert.deepEqual([budget.code, budget.known_difference], ['SQ0006', undefined]);
+	const missing = JSON.parse(analyze("SELECT SOUNDEX('a') AS s", SOURCES)).translate.diagnostics[0];
+	assert.deepEqual([missing.code, missing.known_difference], ['SQ0002', undefined]);
 });
 
 test('date arithmetic against CURRENT_DATE runs in the in-browser DuckDB, on its first statement', async () => {
@@ -230,12 +218,9 @@ test('an undeclared relation is refused by name, and the stub the page adds stay
 	}
 });
 
-test('each known divergence a translation relies on is reported with its constructs and the policy reason', () => {
-	const repository = readFileSync(new URL('../../sqlquack.toml', import.meta.url), 'utf8');
-	const policy = repository.replace('constructs = ["fn:HASH"]\ndefault = "refuse"', 'constructs = ["fn:HASH"]\ndefault = "warn"');
-	assert.notEqual(policy, repository);
+test('each known difference a translation relies on is reported with its constructs and the evidence reason', () => {
 	const translate = (settings) => JSON.parse(analyze('SELECT HASH(order_id) AS h FROM orders', SOURCES, JSON.stringify(settings))).translate;
-	const [statement] = translate({ policy }).statements;
+	const [statement] = translate({ config: '[allow]\nhash = true\n' }).statements;
 	assert.deepEqual(
 		statement.divergences.map((d) => [d.id, d.constructs]),
 		[['hash', ['fn:HASH']]],
@@ -243,11 +228,11 @@ test('each known divergence a translation relies on is reported with its constru
 	assert.match(statement.divergences[0].reason, /never Snowflake's value/);
 	assert.equal(statement.divergences[0].assumption, false);
 	// An assumption gives a wrong value silently where it does not hold, so it is reported as one.
-	const today = JSON.parse(analyze('SELECT CURRENT_DATE AS d', SOURCES, JSON.stringify({ policy: repository, utc_session: true })));
+	const today = JSON.parse(analyze('SELECT CURRENT_DATE AS d', SOURCES));
 	const assumed = today.translate.statements[0].divergences.find((d) => d.id === 'session_timezone_utc');
 	assert.equal(assumed?.assumption, true);
 	assert.ok(assumed.reason);
-	// Without a divergence, none is reported.
+	// Without a known difference, none is reported.
 	assert.deepEqual(JSON.parse(analyze('SELECT order_id FROM orders', SOURCES)).translate.statements[0].divergences, []);
 });
 
@@ -267,9 +252,8 @@ test('a run error a building block raised reads back as the Snowflake error, at 
 
 test('a raised message holding a quote reads back whole, as DuckDB quotes it unescaped', () => {
 	const sql = "SELECT TO_DATE(note, 'YYYY-MM-DD') AS d FROM orders";
-	// The repository's policy allows the date-text divergence the built-in one refuses.
-	const policy = readFileSync(new URL('../../sqlquack.toml', import.meta.url), 'utf8');
-	const [statement] = JSON.parse(analyze(sql, SOURCES, JSON.stringify({ policy }))).translate.statements;
+	// The defaults allow the date-text known difference.
+	const [statement] = JSON.parse(analyze(sql, SOURCES)).translate.statements;
 	const [, id] = /sqlquack:100097#([0-9a-f]{12}): /.exec(statement.sql);
 	const text = "Can't parse the text as date with the format";
 	// As DuckDB 2.0.0 reports the failed cast of the raised text.

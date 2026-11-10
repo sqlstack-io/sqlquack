@@ -3,7 +3,7 @@
 use std::path::Path;
 
 use serde_json::json;
-use sqlquack_policy::policy::models::ProjectPolicy;
+use sqlquack_policy::config::models::ProjectConfig;
 use sqlquack_semantics::snowflake::types::errors::SchemaError;
 use sqlquack_semantics::snowflake::types::main::parse_schema::parse_schema;
 use sqlquack_semantics::snowflake::typing::types::Schema;
@@ -16,7 +16,7 @@ use crate::project::constants::{FUNCTION_KIND, GIVEN_SCHEMA, TABLE_KIND};
 /// The project's schema merged with `given`, a caller's in memory, and warnings; a name declared twice is an error.
 pub fn project_schema(
     root: &Path,
-    project: &ProjectPolicy,
+    project: &ProjectConfig,
     given: Option<&Schema>,
 ) -> Result<(Schema, Vec<String>), String> {
     let ((tables, mut declarations), warnings) = source_tables(root, project)?;

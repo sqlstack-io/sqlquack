@@ -530,7 +530,7 @@ pub(crate) fn compare_command(
 }
 
 fn compare(arguments: &CompareArguments) -> Result<Vec<serde_json::Value>, String> {
-    let policy = load_policy(&arguments.policy).map_err(|error| error.to_string())?;
+    let policy = load_policy(&arguments.evidence).map_err(|error| error.to_string())?;
     let profile = policy
         .session_profiles
         .get(&arguments.session_profile)

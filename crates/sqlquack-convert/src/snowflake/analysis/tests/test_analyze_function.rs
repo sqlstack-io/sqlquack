@@ -124,7 +124,6 @@ fn given_a_sql_function_body_when_converted_as_sqlquack_function_does_then_refus
             .collect();
         let outcome = convert_function(
             (test_case.body, &spec),
-            None,
             (&ConversionChoices::default(), &parameters),
             &Schema::default(),
         );

@@ -6,6 +6,8 @@ pub const CALL_NODE_KINDS: &[&str] = &["function", "aggregate_function"];
 /// The column a scalar SQL function body is converted as.
 pub const SCALAR_RESULT_COLUMN: &str = "RESULT";
 
-/// The help when the caller refuses every known difference that can return a different value.
-pub const ERRORS_ONLY: &str = "you asked to refuse every known difference that can return a different \
-                           value rather than raise an error, and this one can";
+/// The help when strict mode refuses a known difference.
+pub const STRICT_REFUSES: &str = "strict mode refuses every known difference";
+
+/// Where help tells a user without a configuration file to allow a known difference.
+pub const NEW_CONFIG_FILE: &str = "a sqlquack.toml in the project folder";

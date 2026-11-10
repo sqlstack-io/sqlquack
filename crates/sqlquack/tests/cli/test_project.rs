@@ -63,7 +63,7 @@ fn given_a_sqlbuild_project_when_converting_then_its_folders_declare_tables_and_
                 ProjectFile {
                     path: "sqlquack.toml",
                     repository: &["sqlquack.toml"],
-                    text: "[project.confirm]\npython_runtime = true\n",
+                    text: "[project]\npython_runtime = true\n",
                 },
                 SOURCES,
                 PYTHON_FUNCTION,
@@ -80,7 +80,7 @@ fn given_a_sqlbuild_project_when_converting_then_its_folders_declare_tables_and_
                 ProjectFile {
                     path: "sqlquack.toml",
                     repository: &["sqlquack.toml"],
-                    text: "[project.confirm]\npython_runtime = true\n",
+                    text: "[project]\npython_runtime = true\n",
                 },
                 SOURCES,
                 ProjectFile {
@@ -101,7 +101,7 @@ fn given_a_sqlbuild_project_when_converting_then_its_folders_declare_tables_and_
                 ProjectFile {
                     path: "sqlquack.toml",
                     repository: &["sqlquack.toml"],
-                    text: "[project.confirm]\npython_runtime = true\n",
+                    text: "[project]\npython_runtime = true\n",
                 },
                 SOURCES,
                 ProjectFile {
@@ -281,7 +281,7 @@ fn given_a_project_when_a_declaration_clashes_or_is_unconfirmed_then_the_error_s
             flags: &[],
             sql: "SELECT shout(status) AS s FROM raw__orders",
             expected_exit: Some(1),
-            expected_output: "confirm it with `python_runtime = true` under [project.confirm] in sqlquack.toml",
+            expected_output: "set python_runtime = true under [project] in the project's sqlquack.toml",
         },
         ProjectTestCase {
             description: "a source listing no columns is left out with a warning",
@@ -466,10 +466,10 @@ fn given_a_project_folder_when_converting_then_it_needs_no_policy_and_may_live_e
             expected_output: "\"converted\": false",
         },
         ProjectTestCase {
-            description: "--builtin-policy replaces the policy but keeps the project's sources",
+            description: "--no-config replaces the policy but keeps the project's sources",
             files: &[POLICY_FILE, SOURCES],
             folder: "",
-            flags: &["--builtin-policy"],
+            flags: &["--no-config"],
             sql: "SELECT id + 1 AS n FROM raw__orders",
             expected_exit: Some(0),
             expected_output: "\"converted\": true",

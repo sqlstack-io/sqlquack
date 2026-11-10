@@ -75,17 +75,17 @@ fn given_a_code_or_known_difference_when_explained_then_it_prints_or_the_command
             expected_stderr_mention: "",
         },
         ExplainTestCase {
-            description: "without a sqlquack.toml, only the built-in default's differences are allowed, some only in part",
+            description: "without a sqlquack.toml, the defaults allow all but five, and mark value differences",
             arguments: &["explain", "--differences"],
             policy_file: None,
             input: "",
             expected_exit_code: Some(0),
             expected_stdout_mentions: &[
                 "as the defaults treat them, with no ./sqlquack.toml:",
-                "  json_fidelity             allowed by default for some uses  JSON",
-                "  current_time              allowed by default                CURRENT_DATE",
-                "  hash                      refused                           HASH",
-                "  random                    refused                           RANDOM",
+                "  json_fidelity             allowed by default  error  JSON",
+                "  current_time              allowed by default  value  CURRENT_DATE",
+                "  hash                      refused             value  HASH",
+                "  random                    allowed by default  value  RANDOM",
             ],
             expected_stderr_mention: "",
         },
@@ -96,10 +96,10 @@ fn given_a_code_or_known_difference_when_explained_then_it_prints_or_the_command
             input: "",
             expected_exit_code: Some(0),
             expected_stdout_mentions: &[
-                "as ./sqlquack.toml treats them:",
-                "  random                    allowed by sqlquack.toml  RANDOM",
-                "  hash                      refused                   HASH",
-                "  project_udf               refused                   Your Python",
+                "as the defaults and ./sqlquack.toml treat them:",
+                "  random                    allowed by sqlquack.toml  value  RANDOM",
+                "  hash                      refused                   value  HASH",
+                "  project_udf               refused                   value  Your Python",
             ],
             expected_stderr_mention: "",
         },
@@ -167,7 +167,7 @@ fn given_allowed_known_differences_when_converting_then_verbose_and_json_show_ea
             input: "SELECT '2024-03-10 22:30:00'::TIMESTAMP_NTZ::TIMESTAMP_TZ AS t",
             expected_exit_code: Some(0),
             expected_stdout_mentions: &["SELECT"],
-            expected_stderr_mention: "= note: allowed by sqlquack.toml: Converted SQL is proven \
+            expected_stderr_mention: "= note: allowed by the project's sqlquack.toml: Converted SQL is proven \
                 only in sessions whose time zone is UTC",
         },
         ExplainTestCase {

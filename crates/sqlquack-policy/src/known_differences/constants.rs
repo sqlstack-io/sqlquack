@@ -3,7 +3,7 @@
 use crate::known_differences::models::KnownDifference;
 use crate::policy::models::DivergenceFailure;
 
-/// One entry per `[divergences.<name>]` of the repository's `sqlquack.toml`, in its order.
+/// One entry per `[divergences.<name>]` of the evidence policy, in its order.
 pub const KNOWN_DIFFERENCES: &[KnownDifference] = &[
     KnownDifference {
         name: "numeric_range",

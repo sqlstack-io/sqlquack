@@ -22,6 +22,7 @@ use sqlquack_convert::snowflake::conversion::main::quoted_exclusions::quoted_exc
 use sqlquack_convert::snowflake::conversion::main::within_budget::within_budget;
 use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
 use sqlquack_convert::snowflake::session::main::builtin_conversion_options::builtin_conversion_options;
+use sqlquack_convert::snowflake::session::main::configured_choices::configured_choices;
 use sqlquack_convert::snowflake::session::main::parse_session::parse_session;
 use sqlquack_convert::snowflake::session::main::session_conversion_options::session_conversion_options;
 use sqlquack_diagnostics::classification::main::classify::classify;
@@ -39,7 +40,6 @@ use sqlquack_diagnostics::snowflake::classification::main::cast_type_name::cast_
 use sqlquack_diagnostics::snowflake::refusals::main::snowflake_rejections::snowflake_rejections;
 use sqlquack_parse::parsing::main::parse_source::parse_source;
 use sqlquack_policy::known_differences::constants::KNOWN_DIFFERENCES;
-use sqlquack_policy::policy::models::Policy;
 use sqlquack_semantics::dialects::constants::SNOWFLAKE;
 use sqlquack_semantics::lineage::main::query_name_findings::query_name_findings;
 use sqlquack_semantics::lineage::models::{LineageContext, Nullability, SchemaColumn};
@@ -54,9 +54,9 @@ use sqlquack_syntax::{Dialect, Expression, ParseOptions};
 use wasm_bindgen::prelude::wasm_bindgen;
 
 /// Every stage's result for `sql` over the tables `sources` declares, as JSON. `settings` is
-/// JSON `{"policy": TOML, "session": "NAME=VALUE" lines, "strict": bool, "utc_session": bool,
-/// "compact": bool}`, `compact` printing each statement on one line as `convert --compact` does;
-/// an empty policy is the built-in default, as `sqlquack convert --builtin-policy`.
+/// JSON `{"config": TOML, "session": "NAME=VALUE" lines, "strict": bool, "compact": bool}`:
+/// `config` is the text of a user `sqlquack.toml`, empty for the defaults alone, and `compact`
+/// prints each statement on one line as `convert --compact` does.
 #[wasm_bindgen]
 pub fn analyze(sql: &str, sources: &str, settings: Option<String>) -> String {
     report(sql, sources, settings.as_deref().unwrap_or_default()).to_string()
@@ -66,7 +66,7 @@ pub fn analyze(sql: &str, sources: &str, settings: Option<String>) -> String {
 /// defaults allow it, for the page to list.
 #[wasm_bindgen]
 pub fn known_differences() -> String {
-    let defaults = builtin_conversion_options(false, false);
+    let defaults = builtin_conversion_options(false);
     let entries: Vec<Value> = KNOWN_DIFFERENCES
         .iter()
         .map(|entry| {
@@ -194,28 +194,20 @@ fn catalog(text: &str) -> Result<Catalog, String> {
     })
 }
 
-/// The playground's policy and session settings.
+/// The playground's configuration and session settings.
 #[derive(Default, Deserialize)]
-#[serde(default)]
+#[serde(default, deny_unknown_fields)]
 struct Settings {
-    policy: String,
+    config: String,
     session: String,
     strict: bool,
-    utc_session: bool,
     compact: bool,
 }
 
-/// The policy file and session parameters `settings` give, as `sqlquack convert` reads them.
+/// The choices and session parameters `settings` give, as `sqlquack convert` reads them.
 fn chosen_settings(
     settings: &Settings,
-) -> Result<(Option<Policy>, BTreeMap<String, String>), String> {
-    let policy = match settings.policy.trim() {
-        "" => None,
-        text => Some(
-            text.parse::<Policy>()
-                .map_err(|error| format!("policy: {error}"))?,
-        ),
-    };
+) -> Result<(ConversionChoices, BTreeMap<String, String>), String> {
     let lines: Vec<String> = settings
         .session
         .lines()
@@ -223,7 +215,8 @@ fn chosen_settings(
         .filter(|line| !line.is_empty())
         .map(str::to_owned)
         .collect();
-    Ok((policy, parse_session(&lines)?))
+    configured_choices(&settings.config, settings.strict, &parse_session(&lines)?)
+        .map_err(|error| format!("sqlquack.toml: {error}"))
 }
 
 /// A stage's verdict and what it found.
@@ -293,17 +286,13 @@ fn stages(sql: &str, catalog: &Catalog, settings: &str) -> Value {
             Err(error) => return json!({ "settings_error": error.to_string() }),
         },
     };
-    let (chosen_policy, parameters) = match chosen_settings(&settings) {
+    let (choices, parameters) = match chosen_settings(&settings) {
         Ok(chosen) => chosen,
         Err(error) => return json!({ "settings_error": error }),
     };
     // Conversion options and the matched profile; a session no recorded profile covers is a
     // refusal, as on the command line.
-    let session = session_conversion_options(
-        chosen_policy.as_ref(),
-        (settings.strict, settings.utc_session),
-        &parameters,
-    );
+    let session = session_conversion_options(&choices, &parameters);
     let lines = SourceLines::new(sql);
 
     // 1. Parse as Snowflake.
@@ -431,17 +420,7 @@ fn stages(sql: &str, catalog: &Catalog, settings: &str) -> Value {
     }
     // Each SQ0008 worded from its known difference, with the one fix that works here, as
     // `sqlquack convert` words it.
-    let choices = ConversionChoices {
-        policy_file: "the policy file".to_owned(),
-        strict: settings.strict,
-        utc_session: settings.utc_session,
-        ..ConversionChoices::default()
-    };
-    let worded = with_divergence_help(
-        &refusals,
-        diagnose(&refusals, sql),
-        (chosen_policy.as_ref(), &choices, &parameters),
-    );
+    let worded = with_divergence_help(&refusals, diagnose(&refusals, sql), (&choices, &parameters));
     // Each refusal of a known difference names it, so the page can offer to allow it.
     let worded = refusals
         .iter()

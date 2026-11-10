@@ -9,12 +9,13 @@ use clap::{Args, ColorChoice, Parser, Subcommand, ValueEnum};
 use serde::{Deserialize, Serialize};
 use sqlquack_diagnostics::diagnostics::models::Diagnostic;
 
+use sqlquack_convert::snowflake::analysis::models::ConversionChoices;
 use sqlquack_evidence::constants::{
     AUDIT_PENDING_DIR, AUDIT_RESULTS_DIR, CASES_DIR, PENDING_DIR, RESULTS_DIR,
 };
 use sqlquack_evidence::coverage::constants::{DOMAINS_DIR, HAZARDS_FILE};
-use sqlquack_policy::policy::constants::POLICY_FILE_NAME;
-use sqlquack_policy::policy::models::{DivergenceFailure, Policy};
+use sqlquack_policy::policy::constants::EVIDENCE_FILE;
+use sqlquack_policy::policy::models::DivergenceFailure;
 use sqlquack_semantics::snowflake::typing::types::Schema;
 use sqlquack_syntax::tokens::models::SourceLocation;
 
@@ -81,9 +82,9 @@ pub struct CompareArguments {
     /// A JSON list of comparisons; prints each one's outcome as JSON.
     #[arg(long)]
     pub manifest: PathBuf,
-    /// The policy file whose comparator and session profile the comparisons use.
-    #[arg(long, default_value = "sqlquack.toml")]
-    pub policy: PathBuf,
+    /// The evidence policy whose comparator and session profile the comparisons use.
+    #[arg(long, default_value = EVIDENCE_FILE)]
+    pub evidence: PathBuf,
     /// The session profile whose DuckDB time zone each replay runs in.
     #[arg(long, default_value = "utc-v1")]
     pub session_profile: String,
@@ -131,7 +132,7 @@ pub struct ConvertArguments {
     /// How standard output and standard error are coloured.
     #[command(flatten)]
     pub colors: ColorArguments,
-    /// The policy and what the caller confirms about its sessions.
+    /// The configuration conversion reads, and what the caller confirms.
     #[command(flatten)]
     pub conversion: PolicyArguments,
 }
@@ -156,7 +157,7 @@ pub struct RunArguments {
     /// A Snowflake session parameter of the caller's session, `NAME=VALUE`; repeatable.
     #[arg(long = "session", value_name = "NAME=VALUE")]
     pub session: Vec<String>,
-    /// The policy and what the caller confirms about its sessions.
+    /// The configuration conversion reads, and what the caller confirms.
     #[command(flatten)]
     pub conversion: PolicyArguments,
 }
@@ -185,7 +186,7 @@ pub struct FunctionArguments {
     /// A Snowflake session parameter of the caller's session, `NAME=VALUE`; repeatable.
     #[arg(long = "session", value_name = "NAME=VALUE")]
     pub session: Vec<String>,
-    /// The policy and what the caller confirms about its sessions.
+    /// The configuration conversion reads, and what the caller confirms.
     #[command(flatten)]
     pub conversion: PolicyArguments,
 }
@@ -204,9 +205,9 @@ pub struct ReviewArguments {
 /// Where evidence lives.
 #[derive(Debug, Args)]
 pub struct EvidencePaths {
-    /// The policy file.
-    #[arg(long, default_value = POLICY_FILE_NAME)]
-    pub policy: PathBuf,
+    /// The evidence policy: how cases replay and compare, and the known differences.
+    #[arg(long, default_value = EVIDENCE_FILE)]
+    pub evidence: PathBuf,
     /// The authored case files.
     #[arg(long, default_value = CASES_DIR)]
     pub cases: PathBuf,
@@ -322,7 +323,7 @@ pub struct IndexArguments {
     /// Treat each converted SQL file as the relation its file name references, and convert again.
     #[arg(long)]
     pub chain_models: bool,
-    /// The policy and what the caller confirms about its sessions.
+    /// The configuration conversion reads, and what the caller confirms.
     #[command(flatten)]
     pub conversion: PolicyArguments,
 }
@@ -364,38 +365,29 @@ pub struct CensusArguments {
     /// Construct keys or `rule.<id>`s the detailed what-if counts treat as supported, comma-separated.
     #[arg(long, value_delimiter = ',', requires = "report")]
     pub assume_supported: Vec<String>,
-    /// The policy and what the caller confirms about its sessions.
+    /// The configuration conversion reads, and what the caller confirms.
     #[command(flatten)]
     pub conversion: PolicyArguments,
 }
 
-/// The policy conversion relies on, and what the caller confirms about its sessions.
+/// The configuration conversion reads, and what the caller confirms.
 #[derive(Clone, Debug, Args)]
 pub struct PolicyArguments {
     /// The project folder: its `sqlquack.toml` and its sources, functions and overrides; default here.
     #[arg(long, value_name = "FOLDER")]
     pub project: Option<PathBuf>,
-    /// The policy file; by default the project's `sqlquack.toml`, or the built-in policy without one.
-    #[arg(long)]
-    pub policy: Option<PathBuf>,
-    /// Use the defaults even where a policy file exists: they allow the clock and some differences that only raise.
-    #[arg(long, conflicts_with = "policy")]
-    pub builtin_policy: bool,
-    /// Refuse every known difference the policy refuses in strict mode.
+    /// The configuration file; by default the project's `sqlquack.toml`, or the defaults without one.
+    #[arg(long, value_name = "FILE")]
+    pub config: Option<PathBuf>,
+    /// Use the defaults even where a configuration file exists.
+    #[arg(long, conflicts_with = "config")]
+    pub no_config: bool,
+    /// Refuse every known difference, whatever `[allow]` says; a UTC session and declared offsets still count.
     #[arg(long)]
     pub strict: bool,
-    /// Confirm both sessions use UTC, so strict mode allows results that depend on the session time zone.
-    #[arg(long)]
-    pub utc_session: bool,
-    /// Confirm the TIMESTAMP_TZ offsets the schema declares, so strict mode relies on them.
-    #[arg(long)]
-    pub confirm_declared_offsets: bool,
     /// Confirm a Python runtime registers the project's Python functions with SQLQuack's runtime.
     #[arg(long)]
     pub python_runtime: bool,
-    /// Refuse every known difference that can return a different value rather than raise an error.
-    #[arg(long)]
-    pub loud_divergences_only: bool,
 }
 
 /// How a report is printed.
@@ -555,8 +547,12 @@ pub struct ProjectChoices {
     pub session: Vec<String>,
     /// `--overrides`, or the project's overrides folder.
     pub overrides: Option<PathBuf>,
-    /// The caller's flags with `[project.confirm]` added: a flag confirms on top of the file.
+    /// `[replace]`'s checked replacements as `NAME=SHA256`, which `--verified-override` adds to.
+    pub verified_overrides: Vec<String>,
+    /// The caller's flags with `[project]`'s `python_runtime` added.
     pub conversion: PolicyArguments,
+    /// The flags and the configuration as conversion reads them.
+    pub choices: ConversionChoices,
     /// What the project leaves out, such as a source with an untyped column.
     pub warnings: Vec<String>,
 }
@@ -564,12 +560,10 @@ pub struct ProjectChoices {
 /// What `sqlquack function` converts under, from the project and the flags.
 #[derive(Debug)]
 pub(crate) struct FunctionInputs {
-    /// The policy, or None for the built-in one.
-    pub(crate) policy: Option<Policy>,
+    /// The flags and the configuration as conversion reads them.
+    pub(crate) choices: ConversionChoices,
     /// The caller's Snowflake session parameters, by name.
     pub(crate) parameters: BTreeMap<String, String>,
     /// The project's tables and functions.
     pub(crate) schema: Schema,
-    /// The caller's flags with the project's confirmations added.
-    pub(crate) conversion: PolicyArguments,
 }

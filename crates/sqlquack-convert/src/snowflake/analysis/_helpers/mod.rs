@@ -2,5 +2,4 @@
 
 pub(crate) mod declared_refusals;
 pub(crate) mod override_calls;
-pub(crate) mod refuse_value_divergences;
 pub(crate) mod volatile_calls;

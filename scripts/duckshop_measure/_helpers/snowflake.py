@@ -156,7 +156,7 @@ def run_comparisons(
     manifest.write_text(json.dumps(comparisons, indent=1) + "\n")
     environment: dict[str, str] = {**os.environ, "LD_LIBRARY_PATH": str(library)}
     completed: subprocess.CompletedProcess[str] = subprocess.run(
-        (str(binary), "compare", "--manifest", str(manifest), "--policy", str(policy)),
+        (str(binary), "compare", "--manifest", str(manifest), "--evidence", str(policy)),
         capture_output=True,
         text=True,
         check=True,

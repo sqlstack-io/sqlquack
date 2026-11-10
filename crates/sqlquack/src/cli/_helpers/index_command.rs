@@ -6,7 +6,7 @@ use std::process::ExitCode;
 
 use crate::analysis::models::SourceDialect;
 use sqlquack_evidence::cases::main::load_cases::load_cases;
-use sqlquack_policy::policy::models::Policy;
+use sqlquack_policy::policy::main::evidence_policy::evidence_policy;
 use walkdir::WalkDir;
 
 use crate::analysis::models::PipelineConverter;
@@ -30,14 +30,14 @@ pub(crate) fn index_command(
     stderr: &mut dyn Write,
 ) -> ExitCode {
     let _ = writeln!(stderr, "sqlquack index: converting cases and SQL files…");
-    let (policy, project) = match project_choices(&arguments.conversion, (None, &[], None)) {
+    let project = match project_choices(&arguments.conversion, (None, &[], None)) {
         Ok(chosen) => chosen,
         Err(error) => {
             let _ = writeln!(stderr, "sqlquack index: failed: {error}");
             return ExitCode::from(2);
         }
     };
-    let index = match index(arguments, policy.as_ref(), project) {
+    let index = match index(arguments, project) {
         Ok(index) => index,
         Err(error) => {
             let _ = writeln!(stderr, "sqlquack index: failed: {error}");
@@ -57,18 +57,14 @@ pub(crate) fn index_command(
     ExitCode::SUCCESS
 }
 
-fn index(
-    arguments: &IndexArguments,
-    policy: Option<&Policy>,
-    project: ProjectChoices,
-) -> Result<ProvenanceIndex, String> {
+fn index(arguments: &IndexArguments, project: ProjectChoices) -> Result<ProvenanceIndex, String> {
     let paths: Vec<PathBuf> = match arguments.paths.is_empty() {
         true => vec![PathBuf::from(DEFAULT_CASES)],
         false => arguments.paths.clone(),
     };
     let mut records: Vec<ConversionRecord> = Vec::new();
     let mut corpus: Vec<PathBuf> = Vec::new();
-    let conversion = divergence_options(policy, &project.conversion);
+    let conversion = divergence_options(&project.choices);
     let converter = PipelineConverter {
         options: conversion.clone(),
         python: None,
@@ -76,10 +72,7 @@ fn index(
     for path in &paths {
         let (cases, sql) = contents(path)?;
         if cases {
-            let policy = policy.ok_or(
-                "indexing cases needs a policy file, which declares their session profiles",
-            )?;
-            let loaded = load_cases(path, policy).map_err(|error| error.to_string())?;
+            let loaded = load_cases(path, evidence_policy()).map_err(|error| error.to_string())?;
             records.extend(case_records(&loaded, &converter));
         }
         if sql {

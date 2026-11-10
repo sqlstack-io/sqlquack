@@ -38,9 +38,9 @@ pub struct TranslationArguments {
     /// The `sqlquack` binary whose `convert` is measured.
     #[arg(long)]
     pub sqlquack: PathBuf,
-    /// The policy conversion relies on.
+    /// The `sqlquack.toml` conversion reads; refuse value differences there to measure only loud ones.
     #[arg(long, default_value = "sqlquack.toml")]
-    pub policy: PathBuf,
+    pub config: PathBuf,
     #[arg(long)]
     pub family: Option<String>,
     /// Conversions run at once.

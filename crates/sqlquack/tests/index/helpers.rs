@@ -52,7 +52,7 @@ pub(crate) fn index_shop_corpus() -> IndexOutcome {
         .expect("sources written");
     let output = sqlquack(
         directory.path(),
-        &["index", "--builtin-policy", "--json", "corpus"],
+        &["index", "--no-config", "--json", "corpus"],
     );
     let index: serde_json::Value =
         serde_json::from_slice(&output.stdout).unwrap_or(serde_json::Value::Null);
@@ -70,15 +70,9 @@ fn workspace_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
 }
 
-/// Indexes a copy of the repository policy and its conversion cases twice.
+/// Indexes a copy of the repository's conversion cases twice.
 pub(crate) fn index_repository_cases() -> CaseIndexOutcome {
     let directory = tempfile::tempdir().expect("temporary directory");
-    let root = workspace_root();
-    std::fs::copy(
-        root.join("sqlquack.toml"),
-        directory.path().join("sqlquack.toml"),
-    )
-    .expect("policy copied");
     let cases = directory.path().join("cases/conversion");
     std::fs::create_dir_all(&cases).expect("cases directory");
     for entry in std::fs::read_dir(conversion_cases()).expect("conversion cases") {

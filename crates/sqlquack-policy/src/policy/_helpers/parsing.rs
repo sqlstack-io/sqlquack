@@ -1,8 +1,9 @@
 //! Policy text to a validated policy.
 
 use crate::policy::_helpers::validation::problems;
-use crate::policy::constants::{DIVERGENCE_FIELDS, MAX_SPELLING_DISTANCE};
+use crate::policy::constants::DIVERGENCE_FIELDS;
 use crate::policy::errors::PolicyError;
+use crate::policy::main::nearest_name::nearest_name;
 use crate::policy::models::Policy;
 
 pub(crate) fn parse_policy(text: &str) -> Result<Policy, PolicyError> {
@@ -34,19 +35,20 @@ fn incomplete_divergence(table: &toml::Table) -> Option<String> {
         .iter()
         .map(|(id, entry)| (id, missing(entry)))
         .find(|(_, absent)| !absent.is_empty())?;
-    let nearest = divergences
-        .iter()
-        .filter(|(other, entry)| *other != id && missing(entry).is_empty())
-        .map(|(other, _)| (edit_distance(id, other), other))
-        .filter(|(distance, _)| *distance <= MAX_SPELLING_DISTANCE)
-        .min();
+    let nearest = nearest_name(
+        id,
+        divergences
+            .iter()
+            .filter(|(other, entry)| *other != id && missing(entry).is_empty())
+            .map(|(other, _)| other.as_str()),
+    );
     Some(match nearest {
-        Some((_, known)) => {
+        Some(known) => {
             format!("unknown divergence `{id}` in [divergences.{id}]; did you mean `{known}`?")
         }
         None => format!(
             "[divergences.{id}] is missing field{} {}: a policy file declares each divergence in \
-             full, so copy its entry from the repository's sqlquack.toml, or check the id's \
+             full, so copy its entry from SQLQuack's evidence.toml, or check the id's \
              spelling",
             if absent.len() == 1 { "" } else { "s" },
             absent
@@ -56,21 +58,4 @@ fn incomplete_divergence(table: &toml::Table) -> Option<String> {
                 .join(", ")
         ),
     })
-}
-
-/// The Levenshtein distance between `left` and `right`, by character.
-fn edit_distance(left: &str, right: &str) -> usize {
-    let right: Vec<char> = right.chars().collect();
-    let mut previous: Vec<usize> = (0..=right.len()).collect();
-    for (row, left_char) in left.chars().enumerate() {
-        let mut current = vec![row + 1; right.len() + 1];
-        for (column, right_char) in right.iter().enumerate() {
-            let substitution = previous[column] + usize::from(left_char != *right_char);
-            current[column + 1] = substitution
-                .min(previous[column + 1] + 1)
-                .min(current[column] + 1);
-        }
-        previous = current;
-    }
-    previous[right.len()]
 }

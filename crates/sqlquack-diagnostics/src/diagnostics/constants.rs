@@ -89,7 +89,7 @@ pub const NOT_EXPRESSIBLE: &str = "SQ0005";
 pub const CONVERSION_BUDGET: &str = "SQ0006";
 /// The session parameters match no recorded session profile.
 pub const SESSION_PARAMETERS: &str = "SQ0007";
-/// The conversion needs a known divergence the policy refuses in this mode.
+/// The conversion needs a known difference that isn't allowed in this mode.
 pub const DIVERGENCE_REFUSED: &str = "SQ0008";
 /// An unaliased select item's Snowflake-generated column name is not verified.
 pub const UNALIASED_OUTPUT_NAME: &str = "SQ0009";
@@ -125,7 +125,7 @@ pub const CODES: &[CodeEntry] = &[
             is refused rather than turned into SQL that might mean something else in DuckDB. \
             Rewrite the statement without it; `sqlquack census` shows which constructs a body of \
             SQL needs.",
-        example: r#"echo "SELECT WEEKISO(CURRENT_DATE()) AS w" | sqlquack convert --builtin-policy"#,
+        example: r#"echo "SELECT WEEKISO(CURRENT_DATE()) AS w" | sqlquack convert --no-config"#,
     },
     CodeEntry {
         code: TYPE_CONDITION,
@@ -141,7 +141,7 @@ pub const CODES: &[CodeEntry] = &[
             work out. Declaring the relation's columns and types in the project's sources often \
             settles the types; an explicit cast to a supported type also works when it keeps the \
             statement's meaning.",
-        example: r#"echo "SELECT FLOOR('abc') AS f" | sqlquack convert --builtin-policy"#,
+        example: r#"echo "SELECT FLOOR('abc') AS f" | sqlquack convert --no-config"#,
     },
     CodeEntry {
         code: UNRESOLVED_NAME,
@@ -155,7 +155,7 @@ pub const CODES: &[CodeEntry] = &[
             refers to and what type it has. The name at the span is unknown, or matches more \
             than one column. Add the relation and its columns to a source file in the project's \
             `sources/` folder, or qualify an ambiguous column with its relation.",
-        example: r#"echo "SELECT a FROM orders" | sqlquack convert --builtin-policy"#,
+        example: r#"echo "SELECT a FROM orders" | sqlquack convert --no-config"#,
     },
     CodeEntry {
         code: NOT_EXPRESSIBLE,
@@ -190,7 +190,7 @@ pub const CODES: &[CodeEntry] = &[
             settings. The settings given differ from every checked set, so nothing is known to \
             convert correctly for that session. The label names the settings; settings left \
             unset take Snowflake's documented defaults.",
-        example: r#"echo "SELECT 1 AS one" | sqlquack convert --builtin-policy --session WEEK_START=1"#,
+        example: r#"echo "SELECT 1 AS one" | sqlquack convert --no-config --session WEEK_START=1"#,
     },
     CodeEntry {
         code: DIVERGENCE_REFUSED,
@@ -208,7 +208,7 @@ pub const CODES: &[CodeEntry] = &[
             here, so the statement is refused. Allow it if your use is one where it is fine, or \
             rewrite the statement without the construct; `sqlquack explain --differences` lists \
             every known difference and whether it is allowed.",
-        example: r#"echo "SELECT HASH(1) AS h" | sqlquack convert --builtin-policy"#,
+        example: r#"echo "SELECT HASH(1) AS h" | sqlquack convert --no-config"#,
     },
     CodeEntry {
         code: UNALIASED_OUTPUT_NAME,
@@ -226,7 +226,7 @@ pub const CODES: &[CodeEntry] = &[
             text, line comments or unlisted functions, are refused rather than converted under a \
             name that might differ. The help suggests the exact alias; an alias fixes the name in \
             both engines.",
-        example: r#"echo "SELECT 'café' || 'b'" | sqlquack convert --builtin-policy"#,
+        example: r#"echo "SELECT 'café' || 'b'" | sqlquack convert --no-config"#,
     },
     CodeEntry {
         code: "SQ0101",

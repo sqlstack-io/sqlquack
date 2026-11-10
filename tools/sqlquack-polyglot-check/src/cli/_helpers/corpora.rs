@@ -27,8 +27,8 @@ pub(crate) fn named_corpora(argument: &CorpusArgument) -> Vec<NamedCorpus> {
             };
             vec![(path.display().to_string(), directory_corpus(path, dialect))]
         }
-        CorpusArgument::Cases { cases, policy } => {
-            vec![(cases.display().to_string(), case_corpus(cases, policy))]
+        CorpusArgument::Cases { cases, evidence } => {
+            vec![(cases.display().to_string(), case_corpus(cases, evidence))]
         }
     }
 }
