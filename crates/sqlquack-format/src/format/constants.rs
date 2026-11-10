@@ -175,7 +175,7 @@ pub(crate) const SEPARABLE_KEYWORDS: [&str; 14] = [
     "INTERSECT",
 ];
 /// Binary operator nodes of the parse tree, with the spellings of their operator token.
-pub(crate) const BINARY_OPERATOR_NODES: [(&str, &[&str]); 10] = [
+pub(crate) const BINARY_OPERATOR_NODES: [(&str, &[&str]); 13] = [
     ("eq", &["="]),
     ("neq", &["!=", "<>"]),
     ("lt", &["<"]),
@@ -185,6 +185,9 @@ pub(crate) const BINARY_OPERATOR_NODES: [(&str, &[&str]); 10] = [
     ("add", &["+"]),
     ("sub", &["-"]),
     ("mul", &["*"]),
+    ("div", &["/"]),
+    ("mod", &["%"]),
+    ("int_div", &["//"]),
     ("concat", &["||"]),
 ];
 /// The bytes the spacing guard reads as operator characters.
@@ -197,8 +200,8 @@ pub(crate) const GUARD_OPERATORS: [&str; 22] = [
 /// The operator of an assignment the tree keeps outside a binary operator node, such as `SET @v = 1`.
 pub(crate) const ASSIGNMENT_OPERATOR: &str = "=";
 /// Binary operators that whitespace may separate from a token they touch.
-pub(crate) const SEPARABLE_OPERATORS: [&str; 12] = [
-    "=", "<>", "!=", "<", ">", "<=", ">=", "+", "-", "*", "||", "->",
+pub(crate) const SEPARABLE_OPERATORS: [&str; 15] = [
+    "=", "<>", "!=", "<", ">", "<=", ">=", "+", "-", "*", "/", "//", "%", "||", "->",
 ];
 /// Tokens a binary operator is never spaced from: name and path accessors.
 pub(crate) const UNSEPARABLE_NEIGHBOURS: [&str; 3] = [".", ":", "::"];

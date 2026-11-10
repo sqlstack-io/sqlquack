@@ -88,6 +88,55 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
 }
 
 #[test]
+fn given_constructs_sqlquack_converts_to_when_formatting_then_they_are_laid_out() {
+    let test_cases = [
+        test_types::FormatSqlTestCase {
+            description: "integer division, modulo and division written touching are spaced as binary operators",
+            sql: "select a//b, a%b, x[1]/2 from t",
+            line_width: None,
+            dialect: FormatDialect::DuckDB,
+            expected_outcome: Ok("SELECT\n  a // b,\n  a % b,\n  x[1] / 2\nFROM t"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "lambda parameters spelled like keywords parse, and their colon stays spaced",
+            sql: "select list_transform([1, 2], lambda row, top: row + top)",
+            line_width: None,
+            dialect: FormatDialect::DuckDB,
+            expected_outcome: Ok("SELECT LIST_TRANSFORM([1, 2], LAMBDA row, top: row + top)"),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a parenthesised set operation starts a longer one",
+            sql: "select x in (((select 1) union all (select 2)) union all (select 3)) from t",
+            line_width: None,
+            dialect: FormatDialect::DuckDB,
+            expected_outcome: Ok(
+                "SELECT\n  x IN ((\n    (\n      SELECT 1\n    ) UNION ALL (\n      SELECT 2\n    )\n  ) UNION ALL (\n    SELECT 3\n  ))\nFROM t",
+            ),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a wrapped macro keeps CREATE OR REPLACE together and a lambda body that starts with a parenthesis inline",
+            sql: "create or replace macro m(a, b) as list_transform([a], lambda r: (a // b) * r + a // b)[1]",
+            line_width: Some(40),
+            dialect: FormatDialect::DuckDB,
+            expected_outcome: Ok(
+                "CREATE OR REPLACE macro m(\n  a,\n  b\n) AS list_transform(\n  [a],\n  LAMBDA r: (a // b) * r + a // b\n)[1]",
+            ),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            format_outcome(test_case.sql, test_case.dialect, test_case.line_width),
+            test_case
+                .expected_outcome
+                .map(str::to_string)
+                .map_err(str::to_string),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_deeply_nested_sql_when_formatting_then_it_is_refused_or_laid_out_without_exhausting_the_stack()
  {
     let test_cases = [

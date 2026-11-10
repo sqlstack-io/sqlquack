@@ -20,7 +20,7 @@ const SINGLE_ITEM_CLAUSES: [&str; 4] = ["SELECT", "WHERE", "QUALIFY", "HAVING"];
 const SELECT_MODIFIERS: [&str; 10] = [
     "DISTINCT", "ALL", "TOP", "PERCENT", "WITH", "TIES", "ON", "AS", "STRUCT", "VALUE",
 ];
-const LEADING_OPERATORS: [&str; 8] = ["+", "-", "*", "/", "%", "||", "AND", "OR"];
+const LEADING_OPERATORS: [&str; 9] = ["+", "-", "*", "/", "//", "%", "||", "AND", "OR"];
 const CHAIN_KEYWORDS: [&str; 2] = ["AND", "OR"];
 const BETWEEN_BOUNDARIES: [&str; 12] = [
     "AND", "OR", "WHEN", "THEN", "ELSE", "WHERE", "ON", "HAVING", "QUALIFY", "SELECT", ",", "NOT",
@@ -993,7 +993,7 @@ impl PrintedSql<'_> {
         }
     }
 
-    /// Break before every operator of `operators` at the line's outermost depth.
+    /// Break before every operator of `operators` at the line's outermost depth, indenting a group it leaves open.
     fn break_before(&mut self, line: &Line, operators: &[&str], extra_indent: usize) -> bool {
         let depth = self.line_depth(line);
         let mut between = false;
@@ -1015,6 +1015,7 @@ impl PrintedSql<'_> {
                 && operators.contains(&upper.as_str())
                 && self.gaps[index] == SINGLE_SPACE
                 && ends_operand(&self.tokens[index - 1])
+                && !self.is(index - 1, "CREATE")
             {
                 breaks.push(index);
             }
@@ -1022,6 +1023,21 @@ impl PrintedSql<'_> {
         let indentation = newline(line.indentation + extra_indent);
         for index in &breaks {
             self.gaps[*index] = indentation.clone();
+        }
+        if extra_indent > 0
+            && let Some(&first) = breaks.first()
+        {
+            let mut continued: Option<usize> = None;
+            for index in first..=line.last {
+                if let Some(closer) = self.partners[index]
+                    && closer > line.last
+                {
+                    continued = continued.max(Some(closer));
+                }
+            }
+            if let Some(closer) = continued {
+                self.indent_lines(line.last + 1, closer, extra_indent);
+            }
         }
         !breaks.is_empty()
     }
