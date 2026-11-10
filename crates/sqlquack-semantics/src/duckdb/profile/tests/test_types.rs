@@ -17,3 +17,10 @@ pub(crate) struct SingleAnalysisTestCase {
     pub(crate) expected_outputs: &'static [&'static str],
     pub(crate) expected_finding_count: usize,
 }
+
+pub(crate) struct AliasReadTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_sources: &'static [(&'static str, &'static [&'static str])],
+    pub(crate) expected_finding_count: usize,
+}
