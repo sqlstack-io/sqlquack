@@ -43,9 +43,9 @@ pub fn session_conversion_options(
                 ))
             }
             false => Err(format!(
-                "the built-in default records no session profiles, so it takes only TIMEZONE, \
-                 DATABASE, SCHEMA and the result-neutral parameters, not {}; pass --policy with a policy file whose \
-                 session profiles cover them, such as the repository's sqlquack.toml",
+                "the defaults cover only the TIMEZONE, DATABASE and SCHEMA settings and settings \
+                 that cannot change a result, not {}; add a sqlquack.toml whose sessions cover \
+                 them, such as a copy of the SQLQuack repository's",
                 unknown.join(", ")
             )),
         };

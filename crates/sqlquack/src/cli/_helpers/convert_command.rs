@@ -13,6 +13,7 @@ use sqlquack_diagnostics::diagnostics::main::diagnose::diagnose;
 use sqlquack_diagnostics::diagnostics::main::explain_code::explain_code;
 use sqlquack_diagnostics::diagnostics::main::render_styled_diagnostics::render_styled_diagnostics;
 use sqlquack_diagnostics::diagnostics::main::unplaced_diagnostic::unplaced_diagnostic;
+use sqlquack_diagnostics::diagnostics::main::warning_at::warning_at;
 use sqlquack_diagnostics::diagnostics::models::{Diagnostic, Palette};
 use sqlquack_diagnostics::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_diagnostics::refusals::models::Refusal;
@@ -37,8 +38,8 @@ use crate::cli::_helpers::evidence::{conversion_choices, divergence_options};
 use crate::cli::_helpers::project::project_choices;
 use crate::cli::models::{
     CheckArguments, CheckReport, ColorArguments, ConvertArguments, ConvertRefusal, ConvertReport,
-    ExplainArguments, OutputArguments, OutputFormat, OverrideListing, PolicyArguments,
-    RunArguments, RunPrinted,
+    ExplainArguments, KnownDifferenceUse, OutputArguments, OutputFormat, OverrideListing,
+    PolicyArguments, RunArguments, RunPrinted,
 };
 use crate::run::main::run_query::run_query;
 use crate::run::models::RunInputs;
@@ -58,6 +59,8 @@ const BUILTIN_PARTIAL: [&str; 5] = [
     TIMESTAMP_TZ_SUBMICRO,
     SESSION_TIMEZONE_UTC,
 ];
+/// What allows a known difference that no policy file allows, in `convert --json`.
+const ALLOWED_BY_DEFAULT: &str = "default";
 /// How `explain --differences` marks those without a policy file.
 const PARTLY_ALLOWED: &str = "allowed by default for some uses";
 /// The path naming standard input.
@@ -103,7 +106,7 @@ pub(crate) fn convert_command(
         return ExitCode::FAILURE;
     }
     let findings = conversion_findings(
-        "convert",
+        ("convert", arguments.verbose),
         &report,
         (&sql, arguments.path.as_deref()),
         palette,
@@ -113,8 +116,10 @@ pub(crate) fn convert_command(
         true => {
             let _ = writeln!(
                 stderr,
-                "sqlquack convert: {}done, converted{} under {}",
-                palette.success, palette.reset, report.profile
+                "sqlquack convert: {}done, converted{}{}",
+                palette.success,
+                palette.reset,
+                allowed_summary(&report)
             );
             ExitCode::SUCCESS
         }
@@ -152,6 +157,7 @@ fn run_printed(arguments: &RunArguments, palette: &Palette) -> RunPrinted {
         verified_overrides: arguments.verified_overrides.clone(),
         session: arguments.session.clone(),
         compact: true,
+        verbose: false,
         output: OutputArguments {
             format: OutputFormat::Text,
             json: false,
@@ -165,7 +171,12 @@ fn run_printed(arguments: &RunArguments, palette: &Palette) -> RunPrinted {
         Ok(converted) => converted,
         Err(error) => return failed(String::new(), error),
     };
-    let findings = conversion_findings("run", &report, (&sql, arguments.path.as_deref()), palette);
+    let findings = conversion_findings(
+        ("run", false),
+        &report,
+        (&sql, arguments.path.as_deref()),
+        palette,
+    );
     if !report.converted {
         return RunPrinted {
             exit: ExitCode::FAILURE,
@@ -202,11 +213,15 @@ fn run_printed(arguments: &RunArguments, palette: &Palette) -> RunPrinted {
         1 => "1 row".to_owned(),
         count => format!("{count} rows"),
     };
+    let allowed = allowed_summary(&report);
     let (exit, verdict) = match outcome.differences {
-        None => (ExitCode::SUCCESS, format!("sqlquack run: done, {count}\n")),
+        None => (
+            ExitCode::SUCCESS,
+            format!("sqlquack run: done, {count}{allowed}\n"),
+        ),
         Some(differences) if differences.is_empty() => (
             ExitCode::SUCCESS,
-            format!("sqlquack run: done, {count} as expected\n"),
+            format!("sqlquack run: done, {count} as expected{allowed}\n"),
         ),
         Some(differences) => (
             ExitCode::FAILURE,
@@ -224,9 +239,9 @@ fn run_printed(arguments: &RunArguments, palette: &Palette) -> RunPrinted {
     }
 }
 
-/// What `command` noticed converting `sql`, and its refusals when it was refused, as text.
+/// What `command` noticed converting `sql`, each known difference used when `verbose`, and refusals.
 fn conversion_findings(
-    command: &str,
+    (command, verbose): (&str, bool),
     report: &ConvertReport,
     (sql, path): (&str, Option<&Path>),
     palette: &Palette,
@@ -235,17 +250,20 @@ fn conversion_findings(
     for warning in &report.warnings {
         text.push_str(&format!("sqlquack {command}: warning: {warning}\n"));
     }
-    for note in &report.notes {
+    for note in &report.session_notes {
         text.push_str(&format!("sqlquack {command}: note: {note}\n"));
     }
-    for (divergence, constructs) in &report.divergences {
-        let kind = match report.assumptions.contains(divergence) {
-            true => "assumption",
-            false => "known divergence",
-        };
-        text.push_str(&format!(
-            "sqlquack {command}: relies on {kind} {divergence} at {}\n",
-            constructs.join(", ")
+    if verbose && !report.known_differences.is_empty() {
+        let warnings: Vec<Diagnostic> = report
+            .known_differences
+            .iter()
+            .map(|used| difference_warning(used, sql))
+            .collect();
+        text.push_str(&render_styled_diagnostics(
+            &warnings,
+            sql,
+            &source_name(path),
+            palette,
         ));
     }
     let diagnostics: Vec<Diagnostic> = report
@@ -262,22 +280,49 @@ fn conversion_findings(
         ));
     }
     if !report.converted {
-        let profile = match report.profile.is_empty() {
-            true => "no matching session profile".to_owned(),
-            false => report.profile.clone(),
-        };
         let noun = match report.refusals.len() {
             1 => "refusal",
             _ => "refusals",
         };
         text.push_str(&format!(
-            "sqlquack {command}: {}refused, {} {noun}{} under {profile}\n",
+            "sqlquack {command}: {}refused, {} {noun}{}\n",
             palette.error,
             report.refusals.len(),
             palette.reset
         ));
     }
     text
+}
+
+/// The warning `--verbose` prints for one use of a known difference.
+fn difference_warning(used: &KnownDifferenceUse, sql: &str) -> Diagnostic {
+    let label = known_difference(&used.name).map_or("", |entry| entry.summary());
+    let allowed = match used.allowed_by.as_str() {
+        ALLOWED_BY_DEFAULT => "allowed by default".to_owned(),
+        file => format!("allowed by {file}"),
+    };
+    warning_at(
+        sql,
+        used.location,
+        (used.title.clone(), label.to_owned(), vec![allowed]),
+    )
+}
+
+/// The known differences a converted report allows, as the end of its summary line.
+fn allowed_summary(report: &ConvertReport) -> String {
+    let names: BTreeSet<&str> = report
+        .known_differences
+        .iter()
+        .map(|used| used.name.as_str())
+        .collect();
+    let listed = names.iter().copied().collect::<Vec<&str>>().join(", ");
+    match names.len() {
+        0 => String::new(),
+        1 => format!(" (1 known difference allowed: {listed} — sqlquack explain {listed})"),
+        count => {
+            format!(" ({count} known differences allowed: {listed} — sqlquack explain <name>)")
+        }
+    }
 }
 
 /// The SQL from the file, or from standard input when there is none or it is `-`.
@@ -507,7 +552,9 @@ pub(crate) fn refused_session(reason: String) -> ConvertReport {
         divergences: BTreeMap::new(),
         assumptions: Vec::new(),
         divergence_failures: BTreeMap::new(),
+        known_differences: Vec::new(),
         notes: Vec::new(),
+        session_notes: Vec::new(),
         warnings: Vec::new(),
         python_functions: Vec::new(),
         macros: Vec::new(),
@@ -566,16 +613,20 @@ pub(crate) fn analysis_report(
         .cloned()
         .collect();
     let divergence_failures = divergence_failures(policy, &provenance.divergences);
-    let notes: Vec<String> = parameters
+    let session_notes: Vec<String> = parameters
         .get(TIMEZONE_PARAMETER)
         .filter(|zone| *zone != SESSION_TIME_ZONE)
         .map(|zone| {
             format!(
-                "TIMEZONE = {zone} is not UTC, so statements depending on the session time zone \
-                 are refused, --utc-session or not"
+                "the session time zone is {zone}, not UTC, so statements that depend on it are \
+                 refused"
             )
         })
         .into_iter()
+        .collect();
+    let notes: Vec<String> = session_notes
+        .iter()
+        .cloned()
         .chain(
             provenance
                 .divergences
@@ -601,10 +652,16 @@ pub(crate) fn analysis_report(
         override_macros(&provenance.divergences, options),
         &converted_sql,
     );
+    let allowed_by = match policy {
+        Some(_) => conversion_choices(arguments).policy_file,
+        None => ALLOWED_BY_DEFAULT.to_owned(),
+    };
     Ok(ConvertReport {
         converted,
         profile,
+        known_differences: known_difference_uses(analysis, &allowed_by),
         notes,
+        session_notes,
         warnings: Vec::new(),
         sql: converted_sql,
         refusals: analysis
@@ -624,6 +681,36 @@ pub(crate) fn analysis_report(
         assumptions,
         divergence_failures,
     })
+}
+
+/// Every use of a known difference in the converted statements, each once, allowed by `allowed_by`.
+fn known_difference_uses(analysis: &Analysis, allowed_by: &str) -> Vec<KnownDifferenceUse> {
+    let mut uses: Vec<KnownDifferenceUse> = Vec::new();
+    for used in analysis
+        .conversions
+        .iter()
+        .flat_map(|done| &done.divergence_uses)
+    {
+        let name = assumption_id(&used.id);
+        let entry = known_difference(name);
+        let listed = KnownDifferenceUse {
+            name: name.to_owned(),
+            title: entry.map_or_else(|| name.to_owned(), |entry| entry.title.to_owned()),
+            fails_with: entry.map_or("", |entry| entry.fails_with()).to_owned(),
+            allowed_by: allowed_by.to_owned(),
+            construct: used.construct.clone(),
+            line: used.location.map(|location| location.line),
+            column: used.location.map(|location| location.column),
+            location: used.location,
+        };
+        if !uses.iter().any(|seen| {
+            (&seen.name, &seen.construct, seen.location)
+                == (&listed.name, &listed.construct, listed.location)
+        }) {
+            uses.push(listed);
+        }
+    }
+    uses
 }
 
 /// A refusal as `convert` reports it, with its diagnostic.

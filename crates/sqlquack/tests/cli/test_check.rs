@@ -16,10 +16,10 @@ const STYLED_CHECK: &str = "sqlquack check: checking…\n\
     function's result\nsqlquack check: \x1b[1;31mfound 1 problem\x1b[0m\n";
 
 const PLAIN_CONVERTED: &str = "sqlquack convert: converting…\n\
-    sqlquack convert: done, converted under the built-in default\n";
+    sqlquack convert: done, converted\n";
 
 const STYLED_CONVERTED: &str = "sqlquack convert: converting…\n\
-    sqlquack convert: \x1b[1;32mdone, converted\x1b[0m under the built-in default\n";
+    sqlquack convert: \x1b[1;32mdone, converted\x1b[0m\n";
 
 #[test]
 fn given_snowflake_sql_when_checked_then_problems_are_coded_and_the_exit_status_says_so() {
@@ -244,7 +244,8 @@ fn given_a_color_choice_when_checked_or_converted_then_only_a_colored_stream_is_
             expected_exit_code: Some(0),
             expected_stdout: "{\n  \"converted\": true,\n  \"profile\": \"the built-in default\",\n  \
                 \"sql\": \"SELECT 'a' AS \\\"S\\\"\",\n  \"refusals\": [],\n  \"divergences\": {},\n  \
-                \"assumptions\": [],\n  \"divergence_failures\": {},\n  \"notes\": [],\n  \
+                \"assumptions\": [],\n  \"divergence_failures\": {},\n  \"known_differences\": [],\n  \
+                \"notes\": [],\n  \
                 \"warnings\": [],\n  \"python_functions\": [],\n  \"macros\": [],\n  \
                 \"overrides\": []\n}\n",
             expected_stderr: STYLED_CONVERTED,

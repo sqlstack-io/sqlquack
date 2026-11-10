@@ -39,7 +39,7 @@ pub(crate) fn matching_profile(
         .collect();
     if !unknown.is_empty() {
         return Err(format!(
-            "unknown session parameters, which no recorded profile covers: {}",
+            "unknown session settings, which SQLQuack has not checked: {}",
             unknown.join(", ")
         ));
     }
@@ -77,7 +77,7 @@ pub(crate) fn matching_profile(
         .map(|name| format!("{name} = {}", given.get(name).cloned().unwrap_or_default()))
         .collect();
     Err(format!(
-        "the session parameters match no recorded session profile: {}",
+        "SQLQuack has not checked a session with these settings: {}",
         described.join(", ")
     ))
 }

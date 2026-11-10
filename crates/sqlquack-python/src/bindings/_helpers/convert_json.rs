@@ -37,6 +37,7 @@ pub(crate) fn convert_json(sql: &str, request: &str, path: &str) -> PyResult<Str
         verified_overrides: pairs(request.verified_overrides),
         session: pairs(request.session),
         compact: request.compact,
+        verbose: false,
         output: OutputArguments {
             format: OutputFormat::Json,
             json: false,
