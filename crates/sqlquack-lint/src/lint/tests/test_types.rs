@@ -115,6 +115,12 @@ pub(crate) struct NestingRefusalTestCase {
     pub expected_code: &'static str,
 }
 
+pub(crate) struct TrailingFromTestCase {
+    pub description: &'static str,
+    pub dialect: &'static str,
+    pub expected_parse_error: bool,
+}
+
 pub(crate) struct CrossJoinTestCase {
     pub description: &'static str,
     pub sql: &'static str,

@@ -209,7 +209,7 @@ pub(super) fn collect_terminal_shape_facts(
     let terminal_is_plain = from_position.is_some_and(|position| {
         let projection = &tail[..position];
         let relation = tail.get(position + 1);
-        let remainder = &tail[position.saturating_add(2)..];
+        let remainder = tail.get(position + 2..).unwrap_or_default();
         !projection.is_empty()
             && plain_terminal_projection(tokens, projection)
             && relation.is_some_and(|&index| {

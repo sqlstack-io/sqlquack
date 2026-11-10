@@ -16,6 +16,8 @@ mod long_chains;
 mod sql_lint;
 #[path = "tests/test_types.rs"]
 mod test_types;
+#[path = "tests/test_trailing_from.rs"]
+mod trailing_from;
 #[path = "tests/test_unused_ctes.rs"]
 mod unused_ctes;
 #[path = "tests/test_unused_table_alias.rs"]
