@@ -31,7 +31,7 @@ SELECT
     CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24,2)) AS "REVENUE"
 FROM "ORDERS" AS "ORDERS"
 GROUP BY "ORDERS"."STATUS"
-sqlquack convert: done, converted under the built-in default
+sqlquack convert: done, converted
 ```
 
 `convert`, `run`, `census`, `index` and `function` all read the project in the current
@@ -85,7 +85,7 @@ with it:
 
 The session's `DATABASE` and `SCHEMA` complete a name written without them, as in Snowflake: with
 `--session SCHEMA=archive`, `orders` reads `ANALYTICS.ARCHIVE.ORDERS`. See
-[Sessions](/docs/policy/#sessions).
+[Sessions](/docs/sessions/).
 
 These are refused with [`SQ0004`](/docs/diagnostics/reference/#sq0004), naming the tables involved:
 

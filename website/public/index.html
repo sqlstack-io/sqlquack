@@ -92,7 +92,7 @@ SELECT
 FROM "ORDERS" AS "ORDERS"
 WHERE ("ORDERS"."STATUS" = 'shipped')
 GROUP BY "ORDERS"."CUSTOMER_ID"
-<span class="ok">sqlquack convert: done, converted under the built-in default</span></pre>
+<span class="ok">sqlquack convert: done, converted</span></pre>
 			</div>
 
 			<section>
@@ -164,7 +164,7 @@ SELECT
         ELSE CAST(<span class="dim">…</span> AS DECIMAL(18,8))
     END) AS "THIRD"
 FROM "ORDERS" AS "ORDERS"
-<span class="ok">sqlquack convert: done, converted under the built-in default</span></pre>
+<span class="ok">sqlquack convert: done, converted</span></pre>
 						</div>
 
 						<div class="step">
@@ -175,24 +175,29 @@ FROM "ORDERS" AS "ORDERS"
 								<p class="more"><a href="/docs/diagnostics/reference/">Every diagnostic code →</a></p>
 							</div>
 <pre class="terminal"><span class="cmd">sqlquack convert due.sql --builtin-policy</span>
-<span class="bad">error[SQ0008]</span>: the conversion needs a known divergence the policy refuses: `fn:HASH`
+<span class="bad">error[SQ0008]</span>: HASH gives a different value in DuckDB
  --&gt; due.sql:2:8
   |
 2 |        HASH(customer_id) AS bucket
-  |        <span class="bad">^^^^^^^^^^^^^^^^^</span> fn:HASH needs known divergence `hash`,
-  |          which the policy refuses in this mode
+  |        <span class="bad">^^^^^^^^^^^^^^^^^</span> DuckDB computes its own hash,
+  |          never Snowflake's
   |
-  <span class="dim">= help:</span> the built-in policy refuses every known divergence;
-          pass --policy with a policy file that allows `hash` <span class="dim">…</span>
-sqlquack convert: refused, 1 refusal under the built-in default</pre>
+  <span class="dim">= note:</span> Equal inputs still get equal hashes within one run.
+  <span class="dim">= note:</span> fine when: Joins, grouping, removing duplicates and
+          spotting changed rows by hash.
+  <span class="dim">= note:</span> wrong when: Storing, comparing or sorting by the hash
+          value itself: it differs, with no error.
+  <span class="dim">= help:</span> allow it in a sqlquack.toml <span class="dim">…</span>;
+          `sqlquack explain hash` says when it is safe
+sqlquack convert: refused, 1 refusal</pre>
 						</div>
 
 						<div class="step">
 							<div class="step-text">
 								<span class="num">04 · Decide what to accept</span>
-								<h3>Known divergences are opt-in</h3>
-								<p>Some conversions differ in one documented way, like <code>HASH</code>. The policy file lists each one and whether it's allowed; the built-in default refuses them all.</p>
-								<p class="more"><a href="/docs/policy/">Configure the policy →</a></p>
+								<h3>Known differences are your call</h3>
+								<p>Some Snowflake behaviour has no exact match in DuckDB, like <code>HASH</code>. Each known difference says when it's fine and when it gives a wrong result. You refuse it, allow it or replace it with your own SQL.</p>
+								<p class="more"><a href="/docs/policy/">Refuse, allow or replace →</a></p>
 							</div>
 <pre class="terminal"><span class="cm"># sqlquack.toml (excerpt)</span>
 [divergences.hash]
@@ -203,8 +208,8 @@ SELECT
     "ORDERS"."ORDER_ID" AS "ORDER_ID",
     <span class="dim">…</span> AS "BUCKET"
 FROM "ORDERS" AS "ORDERS"
-sqlquack convert: relies on known divergence hash at fn:HASH
-<span class="ok">sqlquack convert: done, converted under utc-v1</span></pre>
+<span class="ok">sqlquack convert: done, converted (1 known difference</span>
+<span class="ok">  allowed: hash — sqlquack explain hash)</span></pre>
 						</div>
 
 						<div class="step">
@@ -215,13 +220,13 @@ sqlquack convert: relies on known divergence hash at fn:HASH
 								<p class="more"><a href="/docs/cli/census/">Run a census →</a></p>
 							</div>
 <pre class="terminal"><span class="cmd">sqlquack census models --builtin-policy --chain-models</span>
-<span class="bad">error[SQ0002]</span>: no verified rule converts this construct: `fn:SOUNDEX`
+<span class="bad">error[SQ0002]</span>: SQLQuack can't convert SOUNDEX yet
  --&gt; models/marts/customer_sounds.sql:3:5
   |
 3 |     SOUNDEX(name) AS name_sound
-  |     <span class="bad">^^^^^^^^^^^^^</span> no rule converts fn:SOUNDEX
+  |     <span class="bad">^^^^^^^^^^^^^</span> no rule converts SOUNDEX
 
-<span class="bad">error[SQ0002]</span>: no verified rule converts this construct: `fn:WEEKISO`
+<span class="bad">error[SQ0002]</span>: SQLQuack can't convert WEEKISO yet
  --&gt; models/staging/stg_orders.sql:1:31
   <span class="dim">…</span>
 
@@ -301,7 +306,7 @@ conversion.converted          <span class="cm"># True</span></pre>
 <span class="dim">…</span>
 <span class="cmd">echo "SELECT 1 AS total" | sqlquack convert --builtin-policy</span>
 SELECT CAST(1 AS DECIMAL(1,0)) AS "TOTAL"
-<span class="ok strong">sqlquack convert: done, converted under the built-in default</span></pre>
+<span class="ok strong">sqlquack convert: done, converted</span></pre>
 				</div>
 			</section>
 
