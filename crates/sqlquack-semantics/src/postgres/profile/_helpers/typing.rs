@@ -224,6 +224,17 @@ fn catalogue_name(spelling: &str) -> String {
     name.to_owned()
 }
 
+/// Whether two SQLQuack spellings name the same catalogue type with the same modifiers.
+pub(crate) fn same_postgres_type(left: &str, right: &str) -> bool {
+    let modifiers = |spelling: &str| -> String {
+        spelling
+            .split_once('(')
+            .map(|(_, rest)| rest.chars().filter(|c| !c.is_whitespace()).collect())
+            .unwrap_or_default()
+    };
+    catalogue_name(left) == catalogue_name(right) && modifiers(left) == modifiers(right)
+}
+
 /// The category PostgreSQL files a value of `family` under; none when the family is unknown.
 fn family_category(family: Family) -> Option<char> {
     Some(match family {

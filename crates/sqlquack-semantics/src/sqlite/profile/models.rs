@@ -206,6 +206,11 @@ impl DialectRules for SqliteRules {
         (None, nullability)
     }
 
+    /// Never: SQLite returns each merged value as it is stored, whatever the other branches hold.
+    fn merge_converts(&self, _from: &str, _to: &str, _profile: &dyn DialectProfile) -> bool {
+        false
+    }
+
     fn cast_spelling(&self, data_type: &DataType) -> Option<String> {
         sqlite_cast_spelling(data_type)
     }

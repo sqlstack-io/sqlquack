@@ -1,10 +1,12 @@
+use std::collections::HashMap;
+
 use sqlquack_syntax::{Dialect, ParseOptions};
 
 use crate::dialects::constants::SQLITE;
 use crate::lineage::main::query_lineage::query_lineage;
 use crate::lineage::models::{LineageContext, TransformKind};
-use crate::lineage::tests::helpers::{shop_schema, written};
-use crate::lineage::tests::test_types::LineageDetailTestCase;
+use crate::lineage::tests::helpers::{shop_schema, typed_column, written};
+use crate::lineage::tests::test_types::{LineageDetailTestCase, TypedShopSchema};
 
 #[test]
 fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_reported() {
@@ -85,4 +87,48 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
             test_case.description
         );
     }
+}
+
+#[test]
+fn given_union_branches_of_differing_types_when_tracing_sqlite_lineage_then_no_cast_is_reported() {
+    let schema = TypedShopSchema {
+        closed: HashMap::from([(
+            "orders".to_owned(),
+            vec![
+                typed_column("id", "INTEGER"),
+                typed_column("customer_id", "BIGINT"),
+            ],
+        )]),
+        ..TypedShopSchema::default()
+    };
+    let context = LineageContext {
+        profile: &SQLITE,
+        schema: &schema,
+        sql: None,
+    };
+    let sql = "SELECT id FROM orders UNION ALL SELECT customer_id FROM orders";
+    let traced: Vec<(String, TransformKind, Vec<String>)> =
+        query_lineage(sql, Dialect::SQLite, &ParseOptions::default(), context)
+            .unwrap_or_else(|error| panic!("{sql}: {error}"))
+            .outputs
+            .iter()
+            .map(|output| {
+                let sources = output.sources.iter();
+                (
+                    output.name.clone(),
+                    output.kind,
+                    sources
+                        .map(|source| format!("{}.{}", source.relation, source.column))
+                        .collect(),
+                )
+            })
+            .collect();
+    assert_eq!(
+        traced,
+        vec![(
+            "id".to_owned(),
+            TransformKind::Direct,
+            vec!["orders.customer_id".to_owned(), "orders.id".to_owned()],
+        )]
+    );
 }

@@ -1,9 +1,12 @@
+use std::collections::HashMap;
+
 use sqlquack_syntax::Dialect;
 
 use crate::dialects::constants::POSTGRES;
 use crate::lineage::models::TransformKind;
-use crate::lineage::tests::helpers::{duckdb_shop_schema, typed_duckdb_shop_schema};
+use crate::lineage::tests::helpers::{duckdb_shop_schema, typed_column, typed_duckdb_shop_schema};
 use crate::lineage::tests::test_types::QueryLineageTestCase;
+use crate::lineage::tests::test_types::TypedShopSchema;
 use crate::postgres::profile::tests::helpers::lineage_outputs;
 
 #[test]
@@ -118,4 +121,32 @@ fn given_postgres_set_operations_when_tracing_lineage_then_outputs_take_the_stro
             .collect();
         assert_eq!(traced, expected, "{}", test_case.description);
     }
+}
+
+#[test]
+fn given_union_branches_of_one_type_spelled_two_ways_when_tracing_postgres_lineage_then_no_cast_is_reported()
+ {
+    let schema = TypedShopSchema {
+        closed: HashMap::from([(
+            "orders".to_owned(),
+            vec![
+                typed_column("id", "int4"),
+                typed_column("customer_id", "integer"),
+            ],
+        )]),
+        ..TypedShopSchema::default()
+    };
+    let traced = lineage_outputs(
+        "SELECT id FROM orders UNION ALL SELECT customer_id FROM orders",
+        (Dialect::PostgreSQL, &POSTGRES),
+        &schema,
+    );
+    assert_eq!(
+        traced,
+        vec![(
+            "id".to_owned(),
+            TransformKind::Direct,
+            vec!["orders.customer_id".to_owned(), "orders.id".to_owned()],
+        )]
+    );
 }

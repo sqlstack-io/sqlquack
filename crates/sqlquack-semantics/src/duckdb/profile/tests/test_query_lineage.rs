@@ -3,7 +3,9 @@ use crate::duckdb::profile::tests::test_types::{
 };
 
 use crate::lineage::main::statement_lineage::statement_lineage;
-use crate::lineage::tests::helpers::typed_duckdb_shop_schema;
+use std::collections::HashMap;
+
+use crate::lineage::tests::helpers::{typed_column, typed_duckdb_shop_schema};
 use crate::lineage::tests::test_types::TypedShopSchema;
 
 use sqlquack_parse::parse_statements_with;
@@ -360,4 +362,49 @@ fn given_select_aliases_read_at_several_levels_when_analysing_together_then_line
             together.1
         );
     }
+}
+
+#[test]
+fn given_union_branches_of_one_type_spelled_two_ways_when_tracing_duckdb_lineage_then_no_cast_is_reported()
+ {
+    let schema = TypedShopSchema {
+        closed: HashMap::from([(
+            "orders".to_owned(),
+            vec![
+                typed_column("id", "INT4"),
+                typed_column("customer_id", "INTEGER"),
+            ],
+        )]),
+        ..TypedShopSchema::default()
+    };
+    let context = LineageContext {
+        profile: &DUCKDB,
+        schema: &schema,
+        sql: None,
+    };
+    let sql = "SELECT id FROM orders UNION ALL SELECT customer_id FROM orders";
+    let traced: Vec<(String, TransformKind, Vec<String>)> =
+        query_lineage(sql, Dialect::DuckDB, &ParseOptions::default(), context)
+            .unwrap_or_else(|error| panic!("{sql}: {error}"))
+            .outputs
+            .iter()
+            .map(|output| {
+                let sources = output.sources.iter();
+                (
+                    output.name.clone(),
+                    output.kind,
+                    sources
+                        .map(|source| format!("{}.{}", source.relation, source.column))
+                        .collect(),
+                )
+            })
+            .collect();
+    assert_eq!(
+        traced,
+        vec![(
+            "id".to_owned(),
+            TransformKind::Direct,
+            vec!["orders.customer_id".to_owned(), "orders.id".to_owned()],
+        )]
+    );
 }

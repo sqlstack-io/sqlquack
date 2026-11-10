@@ -112,7 +112,10 @@ fn untyped_null(part: &Lineage) -> bool {
 /// Whether a branch that reads a column has a known type other than the merged one.
 fn implicitly_cast(branch: &Lineage, merged: &str, profile: &dyn DialectProfile) -> bool {
     match branch.data_type.as_deref() {
-        Some(own) => !branch.sources.is_empty() && !profile.same_type(own, merged),
+        Some(own) => {
+            !branch.sources.is_empty()
+                && dialect_rules(profile).merge_converts(own, merged, profile)
+        }
         None => false,
     }
 }
@@ -133,8 +136,10 @@ pub(crate) fn coerced(
                 .filter(|branch| !branch.sources.is_empty())
                 .filter_map(|branch| branch.data_type.as_deref())
                 .collect();
-            read.iter()
-                .any(|own| read.iter().any(|other| !profile.same_type(own, other)))
+            read.iter().any(|own| {
+                read.iter()
+                    .any(|other| dialect_rules(profile).merge_converts(own, other, profile))
+            })
         }
     };
     if cast {

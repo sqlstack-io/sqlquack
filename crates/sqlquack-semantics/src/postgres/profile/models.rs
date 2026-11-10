@@ -15,7 +15,7 @@ use crate::lineage::types::ValueType;
 use crate::postgres::profile::_helpers::names::postgres_name;
 use crate::postgres::profile::_helpers::typing::{
     called, postgres_cast_spelling, postgres_literal_type, postgres_set_type, postgres_type,
-    window_function,
+    same_postgres_type, window_function,
 };
 use crate::postgres::profile::constants::POSTGRES_SYSTEM_COLUMNS;
 
@@ -215,6 +215,11 @@ impl DialectRules for PostgresRules {
             postgres_type(expression, parts).unwrap_or(data_type),
             nullability,
         )
+    }
+
+    /// A conversion unless both spellings name the same catalogue type with the same modifiers.
+    fn merge_converts(&self, from: &str, to: &str, _profile: &dyn DialectProfile) -> bool {
+        !same_postgres_type(from, to)
     }
 
     fn set_type(
