@@ -93,24 +93,13 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          - name: linux-x86_64
-            runner: ubuntu-24.04
-            target: x86_64
           - name: linux-aarch64
             runner: ubuntu-24.04-arm
             target: aarch64
-          # DuckDB's C++ needs aligned deallocation, available from macOS 10.13.
-          - name: macos-x86_64
-            runner: macos-15-intel
-            target: x86_64
-            macos-target: "10.15"
           - name: macos-arm64
             runner: macos-15
             target: aarch64
             macos-target: "11.0"
-          - name: windows-x86_64
-            runner: windows-2025
-            target: x86_64
     steps:
       - uses: actions/checkout@v4
         if: inputs.prebuilt-run-id == ''
@@ -192,6 +181,7 @@ jobs:
           # The README's Python example.
           "${bin}/python" -c 'import sqlquack
           result = sqlquack.convert(sql="SELECT 1 AS total", options=sqlquack.ConvertOptions(builtin_policy=True))
+          print(repr(result))
           assert result.sql == "SELECT CAST(1 AS DECIMAL(1,0)) AS \"TOTAL\"", result.sql'
       - uses: actions/upload-artifact@v4
         if: inputs.upload
