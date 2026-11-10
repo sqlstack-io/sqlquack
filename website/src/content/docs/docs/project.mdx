@@ -126,8 +126,8 @@ sources = "warehouse/tables"
 Paths are relative to the project folder, and a folder you name must exist. `functions` and
 `overrides` work the same way.
 
-A `sqlquack.toml` holding only `[project]` keeps the built-in [policy](/docs/policy/). To use your
-own policy, keep the policy tables in the same file.
+A `sqlquack.toml` holding only `[project]` keeps [the defaults](/docs/policy/). To change them,
+add `[allow]` or `[replace]` to the same file.
 
 ## Functions
 

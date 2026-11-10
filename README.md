@@ -51,7 +51,7 @@ sqlquack convert query.sql
 
 Or **[try the playground](https://sqlquack.io/playground/)** - no installation needed.
 
-See the [supported dialects and coverage](https://sqlquack.io/docs/coverage/), [project guide](https://sqlquack.io/docs/project/) and [conversion policy](https://sqlquack.io/docs/policy/) for the details.
+See the [supported dialects and coverage](https://sqlquack.io/docs/coverage/), [project guide](https://sqlquack.io/docs/project/) and [defaults for known differences](https://sqlquack.io/docs/policy/) for the details.
 
 ## Use it from Python
 
