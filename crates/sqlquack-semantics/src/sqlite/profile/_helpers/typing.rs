@@ -29,7 +29,17 @@ pub(crate) fn sqlite_literal_type(literal: &Literal) -> Option<&'static str> {
 
 /// A cast's storage class by affinity; none for NUMERIC affinity, INTEGER or REAL by value.
 pub(crate) fn sqlite_cast_spelling(data_type: &DataType) -> Option<String> {
-    let written: String = rendered_type(data_type)?.to_ascii_uppercase();
+    affinity(&rendered_type(data_type)?).map(str::to_owned)
+}
+
+/// Whether a compound whose leftmost column is declared `to` changes a value declared `from`.
+pub(crate) fn sqlite_merge_converts(from: &str, to: &str) -> bool {
+    affinity(to) == Some(REAL) && !matches!(affinity(from), Some(REAL | TEXT))
+}
+
+/// The affinity a declared type spelling has, as its storage class; none for NUMERIC affinity.
+fn affinity(spelling: &str) -> Option<&'static str> {
+    let written: String = spelling.to_ascii_uppercase();
     let class: &str = if written.contains("INT") {
         INTEGER
     } else if ["CHAR", "CLOB", "TEXT"]
@@ -47,5 +57,5 @@ pub(crate) fn sqlite_cast_spelling(data_type: &DataType) -> Option<String> {
     } else {
         return None;
     };
-    Some(class.to_owned())
+    Some(class)
 }

@@ -224,6 +224,20 @@ fn catalogue_name(spelling: &str) -> String {
     name.to_owned()
 }
 
+/// Whether merging a value spelled `from` into a column spelled `to` converts the value.
+pub(crate) fn postgres_merge_converts(from: &str, to: &str) -> bool {
+    catalogue_name(from) != catalogue_name(to)
+        || (!type_modifiers(to).is_empty() && type_modifiers(from) != type_modifiers(to))
+}
+
+/// A type spelling's modifiers, everything after its opening parenthesis, without whitespace.
+fn type_modifiers(spelling: &str) -> String {
+    let Some((_, rest)) = spelling.split_once('(') else {
+        return String::new();
+    };
+    rest.chars().filter(|c| !c.is_whitespace()).collect()
+}
+
 /// The category PostgreSQL files a value of `family` under; none when the family is unknown.
 fn family_category(family: Family) -> Option<char> {
     Some(match family {
