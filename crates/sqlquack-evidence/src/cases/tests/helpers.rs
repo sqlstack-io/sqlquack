@@ -7,7 +7,7 @@ use crate::cases::main::load_cases::load_cases;
 use crate::cases::models::LoadedCase;
 
 pub(crate) const POLICY: &str = r#"
-schema_version = 1
+schema_version = 2
 
 [comparator]
 column_names = "case_insensitive"
