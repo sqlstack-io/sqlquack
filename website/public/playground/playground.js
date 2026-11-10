@@ -350,7 +350,7 @@ function unknownRelationHints(diagnostics) {
 			return declared.includes(name)
 				? `<p class="pg-hint"><span>SQLQuack needs each table's columns and Snowflake types. Fill in ${code}'s in the Sources box.</span></p>`
 				: `<p class="pg-hint"><span>SQLQuack needs each table's columns and Snowflake types. Add ${code} to the Sources box.</span>` +
-						`<button class="button" type="button" data-add-relation="${escape(name)}">Add ${escape(name)} to sources</button></p>`;
+						`<button class="pg-link" type="button" data-add-relation="${escape(name)}">Add ${escape(name)} to sources</button></p>`;
 		})
 		.join('');
 }

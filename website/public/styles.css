@@ -1565,11 +1565,23 @@ footer a {
 .pg-hint {
 	display: flex;
 	flex-wrap: wrap;
-	align-items: center;
-	gap: 8px 12px;
-	margin: 0 0 10px;
+	align-items: baseline;
+	gap: 4px 12px;
+	margin: 0;
+	/* The stage has no padding; its header and terminals inset 16px, and so does a hint. */
+	padding: 12px 16px;
 	color: var(--foreground);
 	font-size: 13px;
+	line-height: 1.5;
+}
+
+.pg-hint + .pg-hint {
+	padding-top: 0;
+}
+
+/* A hint's button is an inline link on the hint's line, not a block button with its own row. */
+.pg-body .pg-hint button {
+	margin: 0;
 }
 
 .terminal .warn {
