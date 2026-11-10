@@ -8,6 +8,7 @@ use crate::lineage::_helpers::findings::checks::value_keyword;
 use crate::lineage::_helpers::tracing::lineages::{
     combined, constant, direct, traced_if, unresolved,
 };
+use crate::lineage::_helpers::tracing::reuse::alias_read;
 use crate::lineage::constants::POSITIONAL_COLUMN_BASE;
 use crate::lineage::models::{
     Lineage, LineageContext, LineageScope, Nullability, SchemaColumn, ScopeSource, ScopedColumn,
@@ -130,6 +131,7 @@ fn unqualified(
         .iter()
         .filter(|source| source.query.open)
         .collect();
+    alias_read();
     let alias: Option<&ScopedColumn> = scope.aliases.iter().find(|alias| same(&alias.key));
     match (open.as_slice(), alias) {
         ([], Some(alias)) => Some(alias.lineage.clone()),

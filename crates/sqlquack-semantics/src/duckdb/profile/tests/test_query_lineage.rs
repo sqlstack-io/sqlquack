@@ -1,4 +1,6 @@
-use crate::duckdb::profile::tests::test_types::{ResolvedReadTestCase, SingleAnalysisTestCase};
+use crate::duckdb::profile::tests::test_types::{
+    AliasReadTestCase, ResolvedReadTestCase, SingleAnalysisTestCase,
+};
 
 use crate::lineage::main::statement_lineage::statement_lineage;
 use crate::lineage::tests::helpers::typed_duckdb_shop_schema;
@@ -266,6 +268,96 @@ fn given_ctes_when_analysing_lineage_and_findings_together_then_the_lineage_reus
             "{}: lineage alone {lineage_work}, after the findings {}",
             test_case.description,
             together_work - findings_work
+        );
+    }
+}
+
+#[test]
+fn given_select_aliases_read_at_several_levels_when_analysing_together_then_lineage_and_findings_match_separate_runs()
+ {
+    let test_cases = [
+        AliasReadTestCase {
+            description: "a later projection reads an earlier alias at the top level",
+            sql: "SELECT price * 2 AS doubled, doubled + 1 AS again FROM orders",
+            expected_sources: &[("doubled", &["orders.price"]), ("again", &["orders.price"])],
+            expected_finding_count: 0,
+        },
+        AliasReadTestCase {
+            description: "an alias spelled like a source column, which the source column shadows",
+            sql: "SELECT quantity + 1 AS id, id * 2 AS twice FROM orders",
+            expected_sources: &[("id", &["orders.quantity"]), ("twice", &["orders.id"])],
+            expected_finding_count: 0,
+        },
+        AliasReadTestCase {
+            description: "a text alias read in arithmetic inside a CTE body",
+            sql: "WITH c AS (SELECT status AS label, label + 1 AS bumped FROM orders) SELECT bumped FROM c",
+            expected_sources: &[("bumped", &["orders.status"])],
+            expected_finding_count: 0,
+        },
+        AliasReadTestCase {
+            description: "a scalar subquery reads the enclosing level's alias",
+            sql: "SELECT price AS cost, (SELECT cost + c.id FROM customers AS c LIMIT 1) AS nested FROM orders",
+            expected_sources: &[
+                ("cost", &["orders.price"]),
+                ("nested", &["customers.id", "orders.price"]),
+            ],
+            expected_finding_count: 0,
+        },
+        AliasReadTestCase {
+            description: "a derived table's alias read by its later projection and by the level above",
+            sql: "SELECT again FROM (SELECT price AS cost, cost * 2 AS again FROM orders) AS d WHERE again > 1",
+            expected_sources: &[("again", &["orders.price"])],
+            expected_finding_count: 0,
+        },
+    ];
+    let schema: TypedShopSchema = typed_duckdb_shop_schema();
+    for test_case in test_cases {
+        let statement = sqlquack_syntax_duckdb::parse_strict(test_case.sql)
+            .unwrap_or_else(|failure| panic!("{}: {failure:?}", test_case.description))
+            .statements
+            .remove(0);
+        let context = LineageContext {
+            profile: &DUCKDB,
+            schema: &schema,
+            sql: Some(test_case.sql),
+        };
+        let separate = (
+            statement_lineage(&statement, context),
+            statement_name_findings(&statement, context),
+        );
+        let together = statement_lineage_and_findings(&statement, context);
+        assert_eq!(together, separate, "{}", test_case.description);
+        let sources: Vec<(String, Vec<String>)> = together
+            .0
+            .outputs
+            .iter()
+            .map(|output| {
+                (
+                    output.name.clone(),
+                    output
+                        .sources
+                        .iter()
+                        .map(|source| format!("{}.{}", source.relation, source.column))
+                        .collect(),
+                )
+            })
+            .collect();
+        let expected_sources: Vec<(String, Vec<String>)> = test_case
+            .expected_sources
+            .iter()
+            .map(|(name, columns)| {
+                (
+                    (*name).to_owned(),
+                    columns.iter().map(|column| (*column).to_owned()).collect(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            (sources, together.1.len()),
+            (expected_sources, test_case.expected_finding_count),
+            "{}: findings {:?}",
+            test_case.description,
+            together.1
         );
     }
 }

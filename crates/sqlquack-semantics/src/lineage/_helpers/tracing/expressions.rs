@@ -1,6 +1,9 @@
 //! The lineage of a value expression in a query level.
 
+use std::cell::RefCell;
 use std::rc::Rc;
+
+use rustc_hash::FxHashMap;
 
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::{Identifier, Star};
@@ -12,7 +15,7 @@ use crate::dialects::main::dialect_rules::dialect_rules;
 use crate::lineage::_helpers::tracing::lineages::{combined, constant, traced_if, unresolved};
 use crate::lineage::_helpers::tracing::queries::{empty_scope, expanded_star, resolved_query};
 use crate::lineage::_helpers::tracing::resolution::{column_lineage, key, positional_column};
-use crate::lineage::_helpers::tracing::reuse::worked;
+use crate::lineage::_helpers::tracing::reuse::{alias_read, alias_reads, worked};
 use crate::lineage::_helpers::typing::rules::{
     computed_type, literal_type, mapped_timestamp, required_non_null,
 };
@@ -34,14 +37,34 @@ pub(crate) fn expression_lineage(
     context: LineageContext<'_>,
 ) -> Lineage {
     let node: usize = std::ptr::from_ref(expression) as usize;
-    if let Some(traced) = scope.traced.borrow().get(&node) {
+    if let Some((traced, by_alias)) = scope.traced.borrow().get(&node) {
+        if *by_alias {
+            alias_read();
+        }
         return traced.clone();
     }
+    let shared =
+        |traces: &Rc<RefCell<FxHashMap<usize, Lineage>>>| traces.borrow().get(&node).cloned();
+    if let Some(found) = scope.shared.as_ref().and_then(shared) {
+        scope
+            .traced
+            .borrow_mut()
+            .insert(node, (found.clone(), false));
+        return found;
+    }
     worked();
-    let lineage: Lineage = crate::lineage::_helpers::tracing::stack::deeper(|| {
-        expression_lineage_level(expression, scope, context)
+    let (lineage, by_alias): (Lineage, bool) = alias_reads(|| {
+        crate::lineage::_helpers::tracing::stack::deeper(|| {
+            expression_lineage_level(expression, scope, context)
+        })
     });
-    scope.traced.borrow_mut().insert(node, lineage.clone());
+    if let (Some(traces), false) = (&scope.shared, by_alias) {
+        traces.borrow_mut().insert(node, lineage.clone());
+    }
+    scope
+        .traced
+        .borrow_mut()
+        .insert(node, (lineage.clone(), by_alias));
     lineage
 }
 

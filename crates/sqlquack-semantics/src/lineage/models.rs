@@ -176,8 +176,10 @@ pub(crate) struct LineageScope<'a> {
     pub(crate) windows: Vec<(String, Lineage)>,
     /// Columns the level's WHERE requires to be NOT NULL, never NULL where the level reads them.
     pub(crate) non_null: Vec<&'a Column>,
-    /// Each expression's lineage in this level, by node address; any change to the level clears it.
-    pub(crate) traced: RefCell<FxHashMap<usize, Lineage>>,
+    /// Each expression's lineage in this level, by node address, and whether it read a SELECT alias.
+    pub(crate) traced: RefCell<FxHashMap<usize, (Lineage, bool)>>,
+    /// Lineages that read no SELECT alias, shared by every scope of this level analysed alike.
+    pub(crate) shared: Option<Rc<RefCell<FxHashMap<usize, Lineage>>>>,
 }
 
 /// A query's outputs while resolving; `open` when it also offers columns not known by name.

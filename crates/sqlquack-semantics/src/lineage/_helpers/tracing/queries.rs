@@ -13,7 +13,8 @@ use crate::lineage::_helpers::tracing::expressions::{expression_lineage, is_aggr
 use crate::lineage::_helpers::tracing::lineages::{combined, set_merged, traced_if, unresolved};
 use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
 use crate::lineage::_helpers::tracing::reuse::{
-    Reach, Reuse, holds_aggregate, keep_reach, kept_reach, reused, reused_items, reusing, worked,
+    Reach, Reuse, holds_aggregate, keep_reach, kept_reach, level_traces, reused, reused_items,
+    reusing, worked,
 };
 use crate::lineage::_helpers::tracing::sources::{
     from_sources, listed, pivot_sources, values_query,
@@ -125,6 +126,7 @@ pub(crate) fn empty_scope<'a>(
         windows: Vec::new(),
         non_null: Vec::new(),
         traced: RefCell::default(),
+        shared: None,
     }
 }
 
@@ -506,6 +508,9 @@ fn level_scope_and_rows<'a>(
     scope.windows = named_windows(select, &scope, context);
     scope.non_null = filtered_non_null(select);
     scope.traced.get_mut().clear();
+    if outer.is_none() {
+        scope.shared = Some(level_traces(std::ptr::from_ref(select) as usize, ctes));
+    }
     (scope, rows)
 }
 
