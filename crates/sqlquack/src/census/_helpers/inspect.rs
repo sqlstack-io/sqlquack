@@ -22,7 +22,7 @@ use crate::census::_helpers::corpus::referenced_model;
 use crate::census::_helpers::files::model_name;
 use crate::census::_helpers::placeholders::{original_location, rewrite_with_references};
 use crate::census::constants::{
-    CONVERTED_DIR_VARIABLE, GUARDS_DIR_VARIABLE, READS_REFUSED_MODEL_NOTE,
+    CONVERTED_DIR_VARIABLE, GUARDS_DIR_VARIABLE, READS_REFUSED_MODEL_NOTE, RELATION_PLACEHOLDER,
 };
 use crate::census::errors::CensusError;
 use crate::census::models::{BlockedDiagnostics, CensusFile, PlacedRefusal};
@@ -257,10 +257,16 @@ fn blamed_model(
     Some(READS_REFUSED_MODEL_NOTE.replace("{model}", &model_name(upstream)))
 }
 
-/// What a refusal blames: its divergence, its construct's name, or the statement.
+/// What a refusal blames: its divergence, its unknown relation, its construct, or the statement.
 fn cause(refusal: &Refusal) -> String {
     if let Some(id) = refusal.divergence() {
         return assumption_id(id).to_owned();
+    }
+    if let Some(relation) = unknown_relation(&refusal.reason) {
+        let placeholder = format!("{}__", RELATION_PLACEHOLDER.to_ascii_uppercase());
+        return relation
+            .strip_prefix(&placeholder)
+            .map_or_else(|| relation.clone(), str::to_owned);
     }
     refusal.construct.as_ref().map_or_else(
         || STATEMENT_REFUSAL.to_owned(),

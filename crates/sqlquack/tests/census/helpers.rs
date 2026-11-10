@@ -362,6 +362,7 @@ pub(crate) fn compiled_dbt_counts(flags: &[&str]) -> (Option<u64>, Option<u64>) 
 }
 
 const CUSTOMER_NAMES_SQL: &str = "SELECT customer_id, name FROM customers";
+const ORDER_REPORT_SQL: &str = "SELECT order_id FROM __ref(\"orders_summary\")";
 
 /// The default census with `flags`, text and `--json`, of `models` (its first `files`), paths relative.
 pub(crate) fn default_census(typed: bool, files: usize, flags: &[&str]) -> DefaultOutcome {
@@ -371,6 +372,7 @@ pub(crate) fn default_census(typed: bool, files: usize, flags: &[&str]) -> Defau
         ("customer_names.sql", CUSTOMER_NAMES_SQL),
         ("fuzzy_names.sql", FUZZY_NAMES_SQL),
         ("name_report.sql", NAME_REPORT_SQL),
+        ("order_report.sql", ORDER_REPORT_SQL),
     ];
     for (name, sql) in &models[..files] {
         std::fs::write(directory.path().join("models").join(name), sql).expect("fixture written");

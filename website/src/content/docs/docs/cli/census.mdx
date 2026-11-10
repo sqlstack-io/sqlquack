@@ -44,13 +44,14 @@ error[SQ0002]: no verified rule converts this construct: `fn:WEEKISO`
   |                               ^^^^^^^^^^^^^^^^^^^ no rule converts fn:WEEKISO
 
 Converted 1 of 3 files (33%)
-Blocked: 2 files, 2 causes (SQ0002 WEEKISO, SQ0004 statement)
+Blocked: 2 files, 2 causes (SQ0002 WEEKISO, SQ0004 STG_CUSTOMERS)
 ```
 
 Each diagnostic has the same code, message and help that [`convert`](/docs/cli/convert/) gives
 for that file; see the
 [diagnostic reference](/docs/diagnostics/reference/) for each code's fix. The summary names at most
-five causes, then counts the rest.
+five causes, then counts the rest. A cause names the construct, divergence or unknown relation
+behind it.
 
 ## Models that read other models
 
@@ -70,7 +71,7 @@ error[SQ0004]: a name does not resolve
   = help: declare the relation and its columns in a source file of the project (`sources/*.yml`)
 ...
 Converted 1 of 4 files (25%)
-Blocked: 3 files, 2 causes (SQ0002 WEEKISO, SQ0004 statement)
+Blocked: 3 files, 2 causes (SQ0002 WEEKISO, SQ0004 STG_CUSTOMERS)
 ```
 
 `--chain-models` converts in model order instead: each converted file types the relation its file

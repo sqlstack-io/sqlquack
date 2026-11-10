@@ -564,6 +564,29 @@ fn given_models_when_running_census_by_default_then_each_blocked_file_gets_a_dia
             },
         },
         DefaultOutputTestCase {
+            description: "a relation that is neither a model nor declared is a cause, named",
+            typed: false,
+            files: 4,
+            flags: &[],
+            expected_outcome: DefaultOutcome {
+                exit_code: Some(1),
+                text_lines: lines(&[
+                    "error[SQ0002]: no verified rule converts this construct: `fn:SOUNDEX`",
+                    " --> models/fuzzy_names.sql:1:21",
+                    "error[SQ0004]: a name does not resolve",
+                    " --> models/name_report.sql:1:48",
+                    "  = note: reads `fuzzy_names`, which doesn't convert",
+                    "error[SQ0004]: a name does not resolve",
+                    " --> models/order_report.sql:1:22",
+                    "Converted 1 of 4 files (25%)",
+                    "Blocked: 3 files, 2 causes (SQ0002 SOUNDEX, SQ0004 ORDERS_SUMMARY)",
+                ]),
+                json_ok: Some(false),
+                json_codes: lines(&["SQ0002", "SQ0004", "SQ0004"]),
+                json_upstream: Vec::new(),
+            },
+        },
+        DefaultOutputTestCase {
             description: "the sources type the refused model: chained, its reader converts with a \
                           warning",
             typed: true,
