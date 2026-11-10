@@ -1328,18 +1328,6 @@ footer a {
 	font-size: 12px;
 }
 
-.pg-caption {
-	padding: 8px 10px;
-	border-left: 2px solid var(--primary);
-	background: var(--accent-soft);
-	color: var(--muted-foreground);
-	font-size: 13px;
-}
-
-.pg-caption[hidden] {
-	display: none;
-}
-
 .pg-note label {
 	margin-right: 16px;
 	cursor: pointer;
@@ -1480,6 +1468,38 @@ footer a {
 
 .pg-conversion-note code {
 	display: inline;
+}
+
+.pg-difference {
+	margin: 10px 0 0;
+	padding: 10px 12px;
+	border: 1px solid rgba(226, 165, 74, 0.35);
+	border-left: 3px solid var(--warning);
+	border-radius: var(--radius);
+	font-size: 13px;
+}
+
+.pg-difference h3 {
+	margin: 0 0 8px;
+	color: var(--foreground);
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.pg-difference dl {
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	gap: 4px 12px;
+	margin: 0;
+}
+
+.pg-difference dt {
+	color: var(--faint);
+}
+
+.pg-difference dd {
+	margin: 0;
+	color: var(--muted-foreground);
 }
 
 .pg-hint {

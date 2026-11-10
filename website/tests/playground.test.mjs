@@ -108,7 +108,7 @@ test('the conversion budget is timed in the browser and refuses with SQ0006 when
 });
 
 test('every example chip stops at the stage its label names, the Run stage included', async () => {
-	const { EXAMPLE_GROUPS, EXAMPLES, CAPTIONS, SOURCES: PAGE_SOURCES } = await import('../public/playground/examples.js');
+	const { EXAMPLE_GROUPS, EXAMPLES, SOURCES: PAGE_SOURCES } = await import('../public/playground/examples.js');
 	const chips = EXAMPLE_GROUPS.flatMap((group) => group.examples);
 	assert.deepEqual(chips.map((chip) => chip.key).sort(), Object.keys(EXAMPLES).sort());
 	assert.equal(new Set(chips.map((chip) => chip.slug)).size, chips.length);
@@ -126,10 +126,25 @@ test('every example chip stops at the stage its label names, the Run stage inclu
 		}
 	};
 	for (const chip of chips) assert.equal(await stops(EXAMPLES[chip.key]), chip.stops, chip.name);
-	// The one deliberate refusal is a known divergence, explained by its caption.
+	// The one deliberate refusal is a known difference, explained by its entry.
 	const refused = JSON.parse(analyze(EXAMPLES.refused, PAGE_SOURCES)).translate;
 	assert.deepEqual(refused.diagnostics.map((d) => d.code), ['SQ0008']);
-	assert.ok(CAPTIONS.refused);
+	assert.deepEqual(
+		refused.differences.map((d) => [d.name, d.fails_with]),
+		[['hash', 'a different value']],
+	);
+	for (const field of ['title', 'differs', 'fine_when', 'wrong_when']) assert.ok(refused.differences[0][field], field);
+});
+
+test('a known difference refused in several statements is explained once, and other refusals not at all', () => {
+	const twice = JSON.parse(analyze('SELECT HASH(order_id) AS h FROM orders;\nSELECT HASH(customer_id) AS h FROM orders', SOURCES)).translate;
+	assert.deepEqual(twice.diagnostics.map((d) => d.code), ['SQ0008', 'SQ0008']);
+	assert.deepEqual(twice.differences.map((d) => d.name), ['hash']);
+	// A refusal that needs no known difference, such as an exceeded conversion budget, has no explanation.
+	const policy = readFileSync(new URL('../../sqlquack.toml', import.meta.url), 'utf8');
+	const tight = policy.replace(/\[conversion_budget\][^[]*/, '[conversion_budget]\nmilliseconds = 0\nsize_ratio = 2000\nminimum_bytes = 4194304\n\n');
+	const budget = JSON.parse(analyze('SELECT order_id FROM orders', SOURCES, JSON.stringify({ policy: tight }))).translate;
+	assert.deepEqual([budget.diagnostics[0].code, budget.differences], ['SQ0006', []]);
 });
 
 test('date arithmetic against CURRENT_DATE runs in the in-browser DuckDB, on its first statement', async () => {

@@ -34,6 +34,7 @@ use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_diagnostics::snowflake::classification::main::cast_type_name::cast_type_name;
 use sqlquack_diagnostics::snowflake::refusals::main::snowflake_rejections::snowflake_rejections;
 use sqlquack_parse::parsing::main::parse_source::parse_source;
+use sqlquack_policy::known_differences::main::known_difference::known_difference;
 use sqlquack_policy::policy::models::Policy;
 use sqlquack_semantics::dialects::constants::SNOWFLAKE;
 use sqlquack_semantics::lineage::main::query_name_findings::query_name_findings;
@@ -406,6 +407,28 @@ fn stages(sql: &str, catalog: &Catalog, settings: &str) -> Value {
         }
     }
     let mut translate = Stage::new(refusals.is_empty(), diagnostics(&refusals, sql));
+    // Each known difference the policy refuses, explained once however often it is refused.
+    let mut refused = Vec::new();
+    for name in refusals.iter().filter_map(Refusal::divergence) {
+        if !refused.contains(&name) {
+            refused.push(name);
+        }
+    }
+    let differences: Vec<Value> = refused
+        .into_iter()
+        .filter_map(known_difference)
+        .map(|entry| {
+            json!({
+                "name": entry.name,
+                "title": entry.title,
+                "differs": entry.differs,
+                "fine_when": entry.fine_when,
+                "wrong_when": entry.wrong_when,
+                "fails_with": entry.fails_with(),
+            })
+        })
+        .collect();
+    translate.extra.insert("differences", json!(differences));
     translate.extra.insert("statements", json!(converted));
     translate.extra.insert("profile", json!(profile));
     json!({ "parse": parse, "checks": checks, "translate": translate })
