@@ -61,6 +61,15 @@ def add_top_level_folder(repository: Path) -> None:
     _write(repository, "notes/plan.md", "Plans.\n")
 
 
+def add_release_changelog(repository: Path) -> None:
+    """Adds the changelog the release tooling writes at the top level."""
+    _write(
+        repository,
+        "CHANGELOG.md",
+        "# Changelog\n\n## 0.3.0 (2026-11-10)\n\n### Features\n\n* convert more\n",
+    )
+
+
 def add_unknown_suite(repository: Path) -> None:
     """Adds a suite folder outside the layout."""
     _write(repository, "suites/misc/cases.toml", "\n")
