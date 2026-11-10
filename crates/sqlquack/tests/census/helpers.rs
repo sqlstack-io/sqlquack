@@ -363,8 +363,8 @@ pub(crate) fn compiled_dbt_counts(flags: &[&str]) -> (Option<u64>, Option<u64>) 
 
 const CUSTOMER_NAMES_SQL: &str = "SELECT customer_id, name FROM customers";
 
-/// The default census, text and `--json`, of `models` (its first `files`), paths relative.
-pub(crate) fn default_census(typed: bool, files: usize) -> DefaultOutcome {
+/// The default census with `flags`, text and `--json`, of `models` (its first `files`), paths relative.
+pub(crate) fn default_census(typed: bool, files: usize, flags: &[&str]) -> DefaultOutcome {
     let directory = tempfile::tempdir().expect("temporary directory");
     std::fs::create_dir(directory.path().join("models")).expect("models directory created");
     let models = [
@@ -388,6 +388,7 @@ pub(crate) fn default_census(typed: bool, files: usize) -> DefaultOutcome {
                 "--format",
                 format,
             ])
+            .args(flags)
             .arg("models")
             .output()
             .expect("sqlquack runs")

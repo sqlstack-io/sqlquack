@@ -360,7 +360,7 @@ pub struct CensusFile {
     pub blocked: bool,
     /// Its refusals, located in the file as written.
     pub refusals: Vec<Refusal>,
-    /// For a file that converts, the files of the refused models upstream of it.
+    /// With chained models, for a file that converts, the files of the refused models upstream of it.
     pub refused_upstream: Vec<PathBuf>,
 }
 

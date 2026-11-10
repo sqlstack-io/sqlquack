@@ -448,7 +448,7 @@ census-duckshop:
 	cargo build --locked --release -p sqlquack
 	for compiled in $(DUCKSHOP_COMPILED); do \
 	  status=0; timeout $(DUCKSHOP_CENSUS_SECONDS) cargo run --locked --release -q -p sqlquack -- \
-	    census --json "$$compiled" > /dev/null || status=$$?; \
+	    census --chain-models --json "$$compiled" > /dev/null || status=$$?; \
 	  [ $$status -le 1 ] \
 	    || { echo "census-duckshop: converting $$compiled failed or took over $(DUCKSHOP_CENSUS_SECONDS) s" >&2; exit 1; }; \
 	done
@@ -471,7 +471,7 @@ duckshop-measure: duckshop-compiled
 	  --recorded "$(DUCKSHOP_RESULTS)" --functions "$$compiled/functions" --out "$$out/project"; \
 	SQLQUACK_CONVERTED_DIR="$$out/converted" SQLQUACK_GUARDS_DIR="$$out/guards" \
 	  LD_LIBRARY_PATH="$$library" "$$target/release/sqlquack" census --policy sqlquack.toml --json \
-	  --detailed --no-chain-models --project "$$out/project" "$$compiled/models" \
+	  --detailed --project "$$out/project" "$$compiled/models" \
 	  > "$$out/census.json" || [ $$? -eq 1 ]; \
 	uv run python -m scripts.measure_duckshop tests --compiled "$$compiled" \
 	  --sqlquack "$$target/release/sqlquack" --library "$$library" --out "$$out/tests.json"; \

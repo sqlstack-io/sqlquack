@@ -80,7 +80,10 @@ pub(crate) fn run_census_timed(
             path: path.clone(),
             blocked: !census.parsed || !census.refusal_categories.is_empty(),
             refusals: census.refusals.clone(),
-            refused_upstream: paths_of(upstream, &files),
+            refused_upstream: match options.chain_models {
+                true => paths_of(upstream, &files),
+                false => Vec::new(),
+            },
         })
         .collect();
     let mut timings: Vec<(PathBuf, std::time::Duration)> = files

@@ -338,11 +338,8 @@ pub struct CensusArguments {
     /// Constructs listed in the coverage report's text.
     #[arg(long, default_value_t = DEFAULT_TEXT_LIMIT)]
     pub limit: usize,
-    /// Don't type converted files as the relations their file names reference.
+    /// Treat each converted file as the relation its file name references, and convert again.
     #[arg(long)]
-    pub no_chain_models: bool,
-    /// Accepted for compatibility: chaining models is the default.
-    #[arg(long, hide = true, conflicts_with = "no_chain_models")]
     pub chain_models: bool,
     /// User overrides: a FUNCTION() file, or a directory of them, each with `replaces` and `dialect duckdb`.
     #[arg(long)]
@@ -354,12 +351,7 @@ pub struct CensusArguments {
     #[arg(long, value_enum)]
     pub cursor_type: Option<CursorType>,
     /// Construct keys or `rule.<id>`s the detailed what-if counts treat as supported, comma-separated.
-    #[arg(
-        long,
-        value_delimiter = ',',
-        requires = "report",
-        conflicts_with = "no_chain_models"
-    )]
+    #[arg(long, value_delimiter = ',', requires = "report")]
     pub assume_supported: Vec<String>,
     /// The policy and what the caller confirms about its sessions.
     #[command(flatten)]

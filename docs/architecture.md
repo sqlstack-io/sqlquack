@@ -348,12 +348,12 @@ identifier → rules → cases and files.
 `sqlquack census` runs the pipeline over every `.sql` file. SQLBuild reference calls (`__ref`,
 `__source`, `__seed`, `__udf`, `__table_fn`, cursor bounds) are replaced with neutral placeholders
 before parsing; each model, source or seed reference becomes a relation named after its arguments,
-so a project's source file can type it. Models are chained by default: each converted file types the
-relation its name references, and its readers convert again (`--no-chain-models` turns this off).
+so a project's source file can type it. With `--chain-models`, each converted file types the
+relation its name references, and its readers convert again.
 
 By default census prints each blocked file's first-pass refusals as the diagnostics `convert` gives
-them, located in the file as written, then a warning for each converted file reading a refused
-model, then a summary of converted files and causes. A refusal naming an unresolved relation that is
+them, located in the file as written, then, with `--chain-models`, a warning for each converted file
+reading a refused model, then a summary of converted files and causes. A refusal naming an unresolved relation that is
 a refused model of the scan gets a note naming that model and is not counted as a cause. `--json`
 prints the same as one object. Census exits 0 when every file converts, 1 when any is blocked and 2
 when it cannot run, in every mode.

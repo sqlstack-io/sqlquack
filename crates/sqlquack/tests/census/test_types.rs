@@ -104,6 +104,8 @@ pub(crate) struct DefaultOutputTestCase {
     pub(crate) typed: bool,
     /// How many of the converting file, the refused model and its reader the scan holds.
     pub(crate) files: usize,
+    /// Extra census flags, such as `--chain-models`.
+    pub(crate) flags: &'static [&'static str],
     pub(crate) expected_outcome: DefaultOutcome,
 }
 

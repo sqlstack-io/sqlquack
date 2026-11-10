@@ -26,12 +26,11 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
             },
         },
         BinaryTestCase {
-            description: "--assume-supported with --no-chain-models is a usage error",
+            description: "--assume-supported without --chain-models is a usage error",
             arguments: &[
                 "census",
                 "--detailed",
                 "--json",
-                "--no-chain-models",
                 "--assume-supported",
                 "fn:SOUNDEX",
                 "--builtin-policy",
@@ -50,6 +49,7 @@ fn given_sql_directory_when_running_census_binary_then_reports_on_the_right_stre
             arguments: &[
                 "census",
                 "--json",
+                "--chain-models",
                 "--assume-supported",
                 "fn:SOUNDEX",
                 "--builtin-policy",
@@ -504,12 +504,12 @@ fn given_compiled_dbt_models_with_qualified_names_when_running_census_then_they_
         CompiledDbtTestCase {
             description: "the staging model reads its declared source by database.schema.table; \
                           the mart's model relation is unknown without chaining",
-            flags: &["--anonymous", "--no-chain-models"],
+            flags: &["--anonymous"],
             expected_counts: (Some(1), Some(1)),
         },
         CompiledDbtTestCase {
-            description: "chained by default, the mart reads the staging model by its qualified name",
-            flags: &["--anonymous"],
+            description: "chained, the mart reads the staging model by its qualified name",
+            flags: &["--anonymous", "--chain-models"],
             expected_counts: (Some(2), Some(2)),
         },
     ];
@@ -532,6 +532,7 @@ fn given_models_when_running_census_by_default_then_each_blocked_file_gets_a_dia
             description: "every file converts: one summary line and exit 0",
             typed: false,
             files: 1,
+            flags: &[],
             expected_outcome: DefaultOutcome {
                 exit_code: Some(0),
                 text_lines: lines(&["Converted 1 of 1 files (100%)"]),
@@ -545,6 +546,7 @@ fn given_models_when_running_census_by_default_then_each_blocked_file_gets_a_dia
                           too, but only the model's own refusal counts as a cause",
             typed: false,
             files: 3,
+            flags: &[],
             expected_outcome: DefaultOutcome {
                 exit_code: Some(1),
                 text_lines: lines(&[
@@ -562,9 +564,11 @@ fn given_models_when_running_census_by_default_then_each_blocked_file_gets_a_dia
             },
         },
         DefaultOutputTestCase {
-            description: "the sources type the refused model: its reader converts with a warning",
+            description: "the sources type the refused model: chained, its reader converts with a \
+                          warning",
             typed: true,
             files: 3,
+            flags: &["--chain-models"],
             expected_outcome: DefaultOutcome {
                 exit_code: Some(1),
                 text_lines: lines(&[
@@ -581,10 +585,28 @@ fn given_models_when_running_census_by_default_then_each_blocked_file_gets_a_dia
                 json_upstream: lines(&["models/name_report.sql"]),
             },
         },
+        DefaultOutputTestCase {
+            description: "the sources type the refused model: without chaining, no upstream warning",
+            typed: true,
+            files: 3,
+            flags: &[],
+            expected_outcome: DefaultOutcome {
+                exit_code: Some(1),
+                text_lines: lines(&[
+                    "error[SQ0002]: no verified rule converts this construct: `fn:SOUNDEX`",
+                    " --> models/fuzzy_names.sql:1:21",
+                    "Converted 2 of 3 files (66%)",
+                    "Blocked: 1 file, 1 cause (SQ0002 SOUNDEX)",
+                ]),
+                json_ok: Some(false),
+                json_codes: lines(&["SQ0002"]),
+                json_upstream: Vec::new(),
+            },
+        },
     ];
     for test_case in test_cases {
         assert_eq!(
-            default_census(test_case.typed, test_case.files),
+            default_census(test_case.typed, test_case.files, test_case.flags),
             test_case.expected_outcome,
             "{}",
             test_case.description

@@ -57,6 +57,14 @@ pub(crate) fn census_command(
             return ExitCode::from(2);
         }
     };
+    if !arguments.assume_supported.is_empty() && !arguments.chain_models {
+        let _ = writeln!(
+            stderr,
+            "sqlquack census: --assume-supported needs --chain-models, since a reader of a \
+             refused model converts only once the model is typed"
+        );
+        return ExitCode::from(2);
+    }
     let named: Vec<String> = arguments
         .assume_supported
         .iter()
@@ -83,7 +91,7 @@ pub(crate) fn census_command(
         dialect,
         coverage_points: COVERAGE_POINTS.to_vec(),
         schema,
-        chain_models: !arguments.no_chain_models,
+        chain_models: arguments.chain_models,
         conversion,
         names: arguments.detailed && !arguments.anonymous,
         assume_supported: assumed
