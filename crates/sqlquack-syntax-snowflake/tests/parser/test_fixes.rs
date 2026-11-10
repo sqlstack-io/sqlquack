@@ -1874,3 +1874,30 @@ fn given_a_time_travel_clause_when_parsing_snowflake_then_its_parentheses_close(
         );
     }
 }
+
+#[test]
+fn given_a_parenthesised_set_operation_before_another_when_parsing_then_it_keeps_its_parentheses() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "((S1) UNION (S2)) INTERSECT (S3) intersects the parenthesised union",
+            sql: "SELECT (((SELECT 2) UNION (SELECT 3)) INTERSECT (SELECT 3))",
+            pointer: "/paren/this/subquery/this/intersect/left/subquery/this/union/left/subquery/this/select/expressions/0/literal/value",
+            expected_value: json!("2"),
+        },
+        ProjectionTestCase {
+            description: "((S1) EXCEPT (S2)) INTERSECT (S3) intersects the parenthesised difference",
+            sql: "SELECT (((SELECT 2) EXCEPT (SELECT 3)) INTERSECT (SELECT 3))",
+            pointer: "/paren/this/subquery/this/intersect/left/subquery/this/except/left/subquery/this/select/expressions/0/literal/value",
+            expected_value: json!("2"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            projection_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
