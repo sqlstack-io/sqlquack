@@ -1,9 +1,9 @@
 name: Distributions
 
-# Builds and smoke tests every wheel and sdist when a pull request changes what goes into them, and
-# on every push to main the linux-x86_64 wheels only, so a distribution-only failure shows at the
-# landing rather than at the next release. Both also run the command line's convert tests with
-# DuckDB compiled in. Neither blocks a landing.
+# Builds and smoke tests the linux-x86_64 wheels when a pull request changes what goes into them,
+# and on every push to main, so a distribution-only failure shows at the landing rather than at the
+# next release. Both also run the command line's convert tests with DuckDB compiled in. Every
+# platform and the sdists build nightly and for each release. Neither blocks a landing.
 on:
   push:
     branches: [main]
@@ -31,8 +31,8 @@ jobs:
     name: Distributions
     uses: ./.github/workflows/build-distributions.yml
     with:
-      platforms: ${{ github.event_name == 'push' && 'linux-x86_64' || '' }}
-      sdist: ${{ github.event_name != 'push' }}
+      platforms: ${{ github.event_name == 'workflow_dispatch' && '' || 'linux-x86_64' }}
+      sdist: ${{ github.event_name == 'workflow_dispatch' }}
 
   # The command line built with `bundled` alone, as the sqlquack wheel compiles DuckDB in: no system
   # DuckDB.
