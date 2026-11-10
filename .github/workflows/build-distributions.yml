@@ -144,10 +144,14 @@ jobs:
         with:
           python-version: "3.12"
           architecture: ${{ matrix.platform.python-arch }}
-      # Both maturin steps compile DuckDB's C and C++ through sccache, so the second step reads the
-      # first one's objects instead of compiling them again, and the cache restored below carries
-      # them across runs. Compiler launchers need a Makefile or Ninja generator, so Windows builds
-      # DuckDB with Ninja instead of the default Visual Studio generator.
+      # Both maturin steps compile DuckDB's C and C++ through sccache, and the cache restored below,
+      # written from main at these same paths, serves both. Cargo builds DuckDB once per step: pyo3
+      # turns on syn features in the Python module's build that serde_derive, a build dependency of
+      # libduckdb-sys, is compiled with, so the command line hashes libduckdb-sys differently. On a
+      # cold cache the second step still reads the first one's objects for the sources DuckDB
+      # compiles in place, but not for the unity files CMake writes into each build directory.
+      # Compiler launchers need a Makefile or Ninja generator, so Windows builds DuckDB with Ninja
+      # instead of the default Visual Studio generator.
       - name: Install sccache for DuckDB's C and C++
         if: inputs.prebuilt-run-id == ''
         shell: bash
@@ -235,6 +239,10 @@ jobs:
         if: inputs.prebuilt-run-id == '' && runner.os != 'Linux'
         shell: bash
         run: '"${CMAKE_C_COMPILER_LAUNCHER}" --stop-server'
+      # The manylinux container writes the cache as root, and sccache keeps its files private.
+      - name: Give the runner the container's cache files
+        if: inputs.prebuilt-run-id == '' && runner.os == 'Linux'
+        run: sudo chown -R "$(id -u):$(id -g)" .sccache-cache
       - name: Save DuckDB's compiled objects from main
         if: inputs.prebuilt-run-id == '' && github.ref == 'refs/heads/main'
         uses: actions/cache/save@v4
