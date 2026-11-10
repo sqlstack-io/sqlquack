@@ -10,7 +10,9 @@ use sqlquack_syntax::expressions::queries::models::{Cte, OrderBy, Select, Union,
 
 use crate::dialects::main::dialect_rules::dialect_rules;
 use crate::lineage::_helpers::tracing::expressions::{expression_lineage, is_aggregate};
-use crate::lineage::_helpers::tracing::lineages::{combined, set_merged, traced_if, unresolved};
+use crate::lineage::_helpers::tracing::lineages::{
+    coerced, combined, set_merged, traced_if, unresolved,
+};
 use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
 use crate::lineage::_helpers::tracing::reuse::{
     Reach, Reuse, holds_aggregate, keep_reach, kept_reach, level_traces, reused, reused_items,
@@ -203,11 +205,14 @@ fn left_typed_by_both(
         .iter_mut()
         .zip(right.columns.iter())
     {
-        column.lineage.data_type = set_merged(
+        let data_type: Option<Rc<str>> = set_merged(
             vec![column.lineage.clone(), other.lineage.clone()],
             context.profile,
         )
         .data_type;
+        let left_branch: Lineage = column.lineage.clone();
+        column.lineage.data_type = data_type;
+        column.lineage = coerced(column.lineage.clone(), &[left_branch], context.profile);
     }
     left
 }

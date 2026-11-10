@@ -13,7 +13,9 @@ use sqlquack_syntax::expressions::queries::models::{
 
 use crate::dialects::main::dialect_rules::dialect_rules;
 use crate::lineage::_helpers::tracing::expressions::expression_lineage;
-use crate::lineage::_helpers::tracing::lineages::{combined, constant, direct, merged, unresolved};
+use crate::lineage::_helpers::tracing::lineages::{
+    coerced, combined, constant, direct, merged, unresolved,
+};
 use crate::lineage::_helpers::tracing::queries::{empty_scope, renamed, resolved_query};
 use crate::lineage::_helpers::tracing::resolution::{key, plain_key};
 use crate::lineage::_helpers::typing::rules::mapped_timestamp;
@@ -852,12 +854,14 @@ fn unpivot_source(
             _ => None,
         })
         .collect();
-    let value = merged(
-        unpivot
-            .columns
-            .iter()
-            .map(|column| expression_lineage(column, &input, context))
-            .collect(),
+    let unpivoted_values: Vec<Lineage> = unpivot
+        .columns
+        .iter()
+        .map(|column| expression_lineage(column, &input, context))
+        .collect();
+    let value: Lineage = coerced(
+        merged(unpivoted_values.clone(), context.profile),
+        &unpivoted_values,
         context.profile,
     );
     let passed: Vec<ScopedColumn> = passed_columns(&input.sources, &unpivoted, context);
@@ -906,7 +910,11 @@ fn values_column(
             read.push(expression_lineage(value, scope, context));
         }
     }
-    merged(read, context.profile)
+    coerced(
+        merged(read.clone(), context.profile),
+        &read,
+        context.profile,
+    )
 }
 
 /// The columns of `sources` a PIVOT or UNPIVOT passes through: those it does not consume.
