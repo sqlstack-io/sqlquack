@@ -166,16 +166,17 @@ jobs:
             *) echo "No pinned sccache for ${RUNNER_OS}-${RUNNER_ARCH}" >&2; exit 1 ;;
           esac
           sha256() { if command -v sha256sum > /dev/null; then sha256sum "$@"; else shasum -a 256 "$@"; fi; }
-          name="sccache-${VERSION}-${asset}"
-          curl -fsSL -o "${RUNNER_TEMP}/${name}.tar.gz" \
-            "https://github.com/mozilla/sccache/releases/download/${VERSION}/${name}.tar.gz"
-          echo "${sum}  ${RUNNER_TEMP}/${name}.tar.gz" | sha256 -c -
-          tools="${GITHUB_WORKSPACE}/.sccache-bin"
-          mkdir -p "${tools}"
-          tar -xzf "${RUNNER_TEMP}/${name}.tar.gz" -C "${tools}" --strip-components 1
-          launcher="${tools}/sccache"
+          # Relative paths: Git Bash's tar reads a `D:\...` archive name as a remote host.
+          archive=".sccache-bin/sccache-${VERSION}-${asset}.tar.gz"
+          mkdir -p .sccache-bin
+          curl -fsSL -o "${archive}" \
+            "https://github.com/mozilla/sccache/releases/download/${VERSION}/${archive#.sccache-bin/}"
+          echo "${sum}  ${archive}" | sha256 -c -
+          tar -xzf "${archive}" -C .sccache-bin --strip-components 1
+          rm "${archive}"
+          launcher="${GITHUB_WORKSPACE}/.sccache-bin/sccache"
           if [[ "${RUNNER_OS}" == "Windows" ]]; then
-            launcher="$(cygpath -m "${tools}/sccache.exe")"
+            launcher="$(cygpath -m "${launcher}.exe")"
             python -m pip install --quiet "ninja==1.13.0"
             echo "CMAKE_GENERATOR=Ninja" >> "${GITHUB_ENV}"
           fi
