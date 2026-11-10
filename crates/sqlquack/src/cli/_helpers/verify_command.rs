@@ -464,7 +464,7 @@ fn render(report: &VerifyReport) -> String {
             .map(|(divergence, constructs)| {
                 let constructs: Vec<&str> = constructs.iter().map(String::as_str).collect();
                 format!(
-                    "; warning: known divergence {divergence} at {}",
+                    "; warning: known difference {divergence} at {}",
                     constructs.join(", ")
                 )
             })

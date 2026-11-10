@@ -33,7 +33,7 @@ pub(crate) fn policy_file(path: &Path) -> Result<Policy, String> {
         return Err(format!(
             "no policy file at {}; pass --policy with an existing file, or leave --policy out to \
              use the project's sqlquack.toml or, without one, the built-in policy, which refuses \
-             every known divergence but the clock and checks that only raise",
+             every known difference but the clock and checks that only raise",
             path.display()
         ));
     }
