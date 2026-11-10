@@ -1,6 +1,6 @@
 # SQLQuack's own project configuration: it allows every known difference its recorded cases
 # replay with, so converting here behaves as the evidence does. The evidence policy itself, with
-# the built-in defaults every user gets, is crates/sqlquack-policy/evidence.toml.
+# the built-in defaults every user gets, is crates/sqlquack-policy/policy.toml.
 
 [allow]
 numeric_range = true

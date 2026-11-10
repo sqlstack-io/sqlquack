@@ -80,4 +80,4 @@ ORDER_BY: tuple[str, str] = ("ORDER", "BY")
 FIXED_TYPE: str = "FIXED"
 TIMESTAMP_NTZ_TYPE: str = "TIMESTAMP_NTZ"
 
-EVIDENCE_FILE: str = "crates/sqlquack-policy/evidence.toml"
+EVIDENCE_FILE: str = "crates/sqlquack-policy/policy.toml"
