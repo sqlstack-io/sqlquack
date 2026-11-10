@@ -260,6 +260,8 @@ jobs:
           github-token: ${{ github.token }}
       - name: Smoke test the installed wheels as the site's quick start runs them
         shell: bash
+        env:
+          PYTHON_ARCH: ${{ matrix.platform.python-arch }}
         run: |
           python -m venv "${RUNNER_TEMP}/wheel-smoke"
           if [[ -x "${RUNNER_TEMP}/wheel-smoke/Scripts/python.exe" ]]; then
@@ -267,12 +269,23 @@ jobs:
           else
             bin="${RUNNER_TEMP}/wheel-smoke/bin"
           fi
+          python=("${bin}/python")
+          # setup-python's x64 CPython for macOS is universal2 and runs as arm64 on Apple silicon,
+          # where pip would refuse the Intel wheels; run it as x86_64 under Rosetta 2 instead.
+          if [[ "${PYTHON_ARCH}" == "x64" && "${RUNNER_OS}" == "macOS" ]]; then
+            python=(arch -x86_64 "${bin}/python")
+            machine="$("${python[@]}" -c "import platform; print(platform.machine())")"
+            if [[ "${machine}" != "x86_64" ]]; then
+              echo "The smoke test Python runs as ${machine}, not x86_64" >&2
+              exit 1
+            fi
+          fi
           ls -l dist | tee -a "${GITHUB_STEP_SUMMARY}"
           # Only the wheels just built: sqlquack-cli must resolve from dist, never from an index.
-          "${bin}/python" -m pip install --no-index --find-links dist sqlquack
+          "${python[@]}" -m pip install --no-index --find-links dist sqlquack
           cd "${RUNNER_TEMP}"
           "${bin}/sqlquack" --version
-          "${bin}/python" -c "import sqlquack.api"
+          "${python[@]}" -c "import sqlquack.api"
           set +e
           check="$(echo "SELECT 1 QUALIFY TRUE" | "${bin}/sqlquack" check 2>&1)"
           status=$?
@@ -301,7 +314,7 @@ jobs:
           echo "${ran}"
           grep -q '^2 *1.25$' <<< "${ran}"
           # The README's Python example.
-          "${bin}/python" -c 'import sqlquack
+          "${python[@]}" -c 'import sqlquack
           result = sqlquack.convert(sql="SELECT 1 AS total", options=sqlquack.ConvertOptions(no_config=True))
           assert result.sql == "SELECT CAST(1 AS DECIMAL(1,0)) AS \"TOTAL\"", result.sql'
       - uses: actions/upload-artifact@v4
