@@ -475,6 +475,8 @@ pub struct KnownDifferenceUse {
     pub fails_with: String,
     /// What allows it: the policy file, such as `sqlquack.toml`, or `default`.
     pub allowed_by: String,
+    /// Why the policy file allows it, from its `reason`; absent when allowed by default.
+    pub reason: Option<String>,
     /// The construct key relying on it, such as `fn:HASH`.
     pub construct: String,
     /// The one-based line of the use, when placed.
