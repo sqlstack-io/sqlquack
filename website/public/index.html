@@ -159,10 +159,10 @@ SELECT order_id, total / 3 AS third FROM orders
 <span class="cmd">sqlquack convert div.sql --no-config</span>
 <span class="kw">SELECT</span>
     <span class="id">"ORDERS"</span>.<span class="id">"ORDER_ID"</span> <span class="kw">AS</span> <span class="id">"ORDER_ID"</span>,
-    (<span class="kw">CASE</span>
-        <span class="dim">…</span>
-        <span class="kw">ELSE</span> <span class="kw">CAST</span>(<span class="dim">…</span> <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">18</span>,<span class="num">8</span>))
-    <span class="kw">END</span>) <span class="kw">AS</span> <span class="id">"THIRD"</span>
+    <span class="kw">CAST</span>(<span class="kw">CAST</span>((<span class="id">sign</span>(<span class="kw">CAST</span>(<span class="kw">CAST</span>(<span class="id">"ORDERS"</span>.<span class="id">"TOTAL"</span> <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">38</span>,<span class="num">2</span>))
+        * <span class="num">100000000</span> <span class="kw">AS</span> <span class="id">HUGEINT</span>)) * ((<span class="num">2</span> * <span class="id">abs</span>(<span class="dim">…</span>) + <span class="num">3</span>) // <span class="num">6</span>))
+        <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">38</span>,<span class="num">0</span>)) * <span class="kw">CAST</span>(<span class="str">'0.00000001'</span> <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">38</span>,<span class="num">8</span>))
+        <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">18</span>,<span class="num">8</span>)) <span class="kw">AS</span> <span class="id">"THIRD"</span>
 <span class="kw">FROM</span> <span class="id">"ORDERS"</span> <span class="kw">AS</span> <span class="id">"ORDERS"</span>
 <span class="ok">sqlquack convert: done, converted</span></pre>
 						</div>
