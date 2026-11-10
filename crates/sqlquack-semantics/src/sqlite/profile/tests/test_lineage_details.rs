@@ -1,10 +1,12 @@
+use std::collections::HashMap;
+
 use sqlquack_syntax::{Dialect, ParseOptions};
 
 use crate::dialects::constants::SQLITE;
 use crate::lineage::main::query_lineage::query_lineage;
 use crate::lineage::models::{LineageContext, TransformKind};
-use crate::lineage::tests::helpers::{shop_schema, written};
-use crate::lineage::tests::test_types::LineageDetailTestCase;
+use crate::lineage::tests::helpers::{shop_schema, typed_column, written};
+use crate::lineage::tests::test_types::{LineageDetailTestCase, TypedShopSchema};
 
 #[test]
 fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_reported() {
@@ -84,5 +86,58 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
             "{}",
             test_case.description
         );
+    }
+}
+
+#[test]
+fn given_union_branches_when_tracing_sqlite_lineage_then_only_integers_a_real_column_takes_are_cast()
+ {
+    let schema = TypedShopSchema {
+        closed: HashMap::from([(
+            "orders".to_owned(),
+            vec![
+                typed_column("id", "INTEGER"),
+                typed_column("customer_id", "BIGINT"),
+                typed_column("amount", "REAL"),
+            ],
+        )]),
+        ..TypedShopSchema::default()
+    };
+    let test_cases: [(&str, &str, TransformKind, [&str; 2]); 2] = [
+        (
+            "integers of two declared types keep their values",
+            "SELECT id FROM orders UNION ALL SELECT customer_id FROM orders",
+            TransformKind::Direct,
+            ["orders.customer_id", "orders.id"],
+        ),
+        (
+            "a compound read through a subquery turns integers into its REAL column's reals",
+            "SELECT x FROM (SELECT amount AS x FROM orders UNION ALL SELECT id FROM orders)",
+            TransformKind::Cast,
+            ["orders.amount", "orders.id"],
+        ),
+    ];
+    for (description, sql, kind, sources) in test_cases {
+        let context = LineageContext {
+            profile: &SQLITE,
+            schema: &schema,
+            sql: None,
+        };
+        let traced: Vec<(TransformKind, Vec<String>)> =
+            query_lineage(sql, Dialect::SQLite, &ParseOptions::default(), context)
+                .unwrap_or_else(|error| panic!("{sql}: {error}"))
+                .outputs
+                .iter()
+                .map(|output| {
+                    let read = output.sources.iter();
+                    (
+                        output.kind,
+                        read.map(|source| format!("{}.{}", source.relation, source.column))
+                            .collect(),
+                    )
+                })
+                .collect();
+        let expected = vec![(kind, sources.map(str::to_owned).to_vec())];
+        assert_eq!(traced, expected, "{description}");
     }
 }

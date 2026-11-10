@@ -18,7 +18,7 @@ use crate::lineage::types::{DialectRules, LineageSchema, SharedColumns};
 pub enum TransformKind {
     /// It reads no source column.
     Constant,
-    /// It is one source column unchanged.
+    /// It is a source column unchanged, or one of several that branches pass through unchanged.
     Direct,
     /// It is a cast of what it reads.
     Cast,
