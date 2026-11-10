@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/sqlstack-io/sqlquack/compare/v0.4.0...v0.4.1) (2026-11-10)
+
+
+### Performance Improvements
+
+* **convert:** divide wide decimals through one helper macro ([3d7ce28](https://github.com/sqlstack-io/sqlquack/commit/3d7ce28f80f9374b550d2f9fcfcd10d7bb8392ad))
+
 ## [0.4.0](https://github.com/sqlstack-io/sqlquack/compare/v0.3.0...v0.4.0) (2026-11-10)
 
 
