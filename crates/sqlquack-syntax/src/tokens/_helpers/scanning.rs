@@ -4,6 +4,7 @@ use std::sync::Arc;
 
 use crate::guard::models::TokenGuardStats;
 use crate::tokens::errors::Error;
+use crate::tokens::models::AsciiLookups;
 use crate::tokens::models::Span;
 use crate::tokens::models::TokenType;
 use crate::tokens::models::TokenizerConfig;
@@ -28,6 +29,7 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
             comments: Vec::new(),
             guard_stats: None,
             config,
+            ascii: AsciiLookups::new(config),
         }
     }
 
@@ -51,6 +53,23 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
             comments: Vec::new(),
             guard_stats: Some(TokenGuardStats::default()),
             config,
+            ascii: AsciiLookups::new(config),
+        }
+    }
+
+    /// The single-character token `c` is, as the config's map has it.
+    fn single_token(&self, c: char) -> Option<TokenType> {
+        match self.ascii.single_tokens.get(c as usize) {
+            Some(token_type) => *token_type,
+            None => self.config.single_tokens.get(&c).copied(),
+        }
+    }
+
+    /// The closing quote of an identifier opened by `c`, as the config's map has it.
+    fn identifier_end(&self, c: char) -> Option<char> {
+        match self.ascii.identifiers.get(c as usize) {
+            Some(end) => *end,
+            None => self.config.identifiers.get(&c).copied(),
         }
     }
 
@@ -556,14 +575,11 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
             return self.scan_triple_quoted_string('"');
         }
 
-        if c == '"'
-            && self.config.quotes.contains_key("\"")
-            && !self.config.identifiers.contains_key(&'"')
-        {
+        if c == '"' && self.config.quotes.contains_key("\"") && self.identifier_end('"').is_none() {
             return self.scan_double_quoted_string();
         }
 
-        if let Some(&end_quote) = self.config.identifiers.get(&c) {
+        if let Some(end_quote) = self.identifier_end(c) {
             return self.scan_quoted_identifier(end_quote);
         }
 
@@ -634,7 +650,7 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
             return self.scan_tsql_identifier();
         }
 
-        if let Some(&token_type) = self.config.single_tokens.get(&c) {
+        if let Some(token_type) = self.single_token(c) {
             self.advance();
             self.add_token(token_type);
             return Ok(());
@@ -866,5 +882,26 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
         }
 
         token_type
+    }
+}
+
+impl AsciiLookups {
+    /// The ASCII entries of `config`'s single-token and identifier-quote maps.
+    pub(crate) fn new(config: &TokenizerConfig) -> Self {
+        let mut lookups = Self {
+            single_tokens: [None; 128],
+            identifiers: [None; 128],
+        };
+        for (&c, &token_type) in &config.single_tokens {
+            if let Some(slot) = lookups.single_tokens.get_mut(c as usize) {
+                *slot = Some(token_type);
+            }
+        }
+        for (&c, &end) in &config.identifiers {
+            if let Some(slot) = lookups.identifiers.get_mut(c as usize) {
+                *slot = Some(end);
+            }
+        }
+        lookups
     }
 }
