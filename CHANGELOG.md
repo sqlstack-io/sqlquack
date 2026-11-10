@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.0](https://github.com/sqlstack-io/sqlquack/compare/v0.4.1...v0.5.0) (2026-11-10)
+
+
+### Features
+
+* **verify:** reuse the judgements of unchanged cases and judge cases in parallel ([3a0068f](https://github.com/sqlstack-io/sqlquack/commit/3a0068f5ea0b90174c7fb6d08b006de3a4057a26))
+
+
+### Bug Fixes
+
+* **lineage:** give a merged column its strongest branch's transform kind ([0a86a2d](https://github.com/sqlstack-io/sqlquack/commit/0a86a2d4765ecfbf76783ba50110dc807068b467))
+
 ## [0.4.1](https://github.com/sqlstack-io/sqlquack/compare/v0.4.0...v0.4.1) (2026-11-10)
 
 
