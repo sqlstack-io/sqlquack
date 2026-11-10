@@ -1,5 +1,7 @@
 //! The column lineage of one parsed statement, within an analysis already running.
 
+use std::rc::Rc;
+
 use sqlquack_syntax::Expression;
 
 use crate::lineage::_helpers::tracing::queries::{projects_star, resolved_query};
@@ -12,8 +14,7 @@ pub(crate) fn analysed_lineage(
 ) -> QueryLineage {
     let resolved = resolved_query(statement, &[], None, context);
     QueryLineage {
-        outputs: resolved
-            .columns
+        outputs: Rc::unwrap_or_clone(resolved.columns)
             .into_iter()
             .map(|column| OutputLineage {
                 name: column.name,
