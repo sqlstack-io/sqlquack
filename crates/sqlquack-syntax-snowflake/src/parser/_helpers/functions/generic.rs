@@ -81,7 +81,7 @@ impl Parser {
             } else {
                 self.skip();
                 let star = self.parse_star_modifiers(None)?;
-                let mut args = vec![Expression::Star(star)];
+                let mut args = vec![Expression::Star(Box::new(star))];
                 if self.match_token(TokenType::Comma) {
                     let rest = self.parse_function_arguments_for(Some(name))?;
                     args.extend(rest);
@@ -1180,7 +1180,7 @@ impl Parser {
             }
             if table_name.is_some() {
                 let star = self.parse_star_modifiers(table_name)?;
-                expr = Expression::Star(star);
+                expr = Expression::Star(Box::new(star));
             } else {
                 expr = Expression::Dot(Box::new(DotAccess {
                     this: expr,

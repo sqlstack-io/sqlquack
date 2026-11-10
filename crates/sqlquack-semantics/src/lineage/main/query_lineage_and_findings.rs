@@ -3,8 +3,7 @@
 use sqlquack_parse::parse_statements_with;
 use sqlquack_syntax::{CallMode, Dialect, ParseOptions};
 
-use crate::lineage::_helpers::findings::statement::statement_findings;
-use crate::lineage::main::statement_lineage::statement_lineage;
+use crate::lineage::main::statement_lineage_and_findings::statement_lineage_and_findings;
 use crate::lineage::models::NameFinding;
 use crate::lineage::models::{LineageContext, QueryLineage};
 
@@ -22,10 +21,7 @@ pub fn query_lineage_and_findings(
         ..context
     };
     match statements.as_slice() {
-        [statement] => Ok((
-            statement_lineage(statement, context),
-            statement_findings(statement, context),
-        )),
+        [statement] => Ok(statement_lineage_and_findings(statement, context)),
         _ => Err(format!(
             "expected one statement, found {}",
             statements.len()

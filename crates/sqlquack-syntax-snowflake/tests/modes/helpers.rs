@@ -1,8 +1,12 @@
 use std::sync::mpsc;
 use std::time::Duration;
 
+use sqlquack_syntax::lossless::main::lossless_tokens::lossless_tokens;
+use sqlquack_syntax::tokens::models::{Span, TokenType};
 use sqlquack_syntax::{Dialect, ParseOptions};
-use sqlquack_syntax_snowflake::{parse_strict, parse_tolerant, StrictFailure};
+use sqlquack_syntax_snowflake::{
+    parse_statements, parse_strict, parse_tolerant, tokenize, StrictFailure,
+};
 
 pub(crate) fn strict_outcome(sql: &str) -> Result<usize, bool> {
     parse_strict(sql, Dialect::Snowflake, &ParseOptions::default())
@@ -49,4 +53,43 @@ pub(crate) fn tolerant_finishes_within(sql: &'static str, seconds: u64) -> bool 
         sender.send(()).ok();
     });
     receiver.recv_timeout(Duration::from_secs(seconds)).is_ok()
+}
+
+/// `parse_strict`'s outcome, written out.
+pub(crate) fn strict_written(sql: &str, dialect: Dialect) -> String {
+    format!("{:?}", parse_strict(sql, dialect, &ParseOptions::default()))
+}
+
+/// The parse, then a separate lossless tokenize of `sql`, as strict parsing first did, written out.
+pub(crate) fn parse_then_tokenize_written(sql: &str, dialect: Dialect) -> String {
+    let outcome: Result<_, StrictFailure> =
+        parse_statements(sql, dialect, &ParseOptions::default())
+            .map_err(StrictFailure::from)
+            .and_then(|statements| {
+                tokenize(sql, dialect)
+                    .map(|_| statements)
+                    .map_err(StrictFailure::from)
+            });
+    format!("{outcome:?}")
+}
+
+/// `lossless_tokens` over `spans` of `sql`, character offsets of variable tokens, written out.
+pub(crate) fn coverage_written(sql: &str, spans: &[(usize, usize)]) -> String {
+    let significant: Vec<(Span, TokenType)> = spans
+        .iter()
+        .map(|(start, end)| {
+            (
+                Span {
+                    start: *start,
+                    end: *end,
+                    ..Span::default()
+                },
+                TokenType::Var,
+            )
+        })
+        .collect();
+    format!(
+        "{:?}",
+        lossless_tokens(sql, &significant, false).map(|tokens| tokens.len())
+    )
 }

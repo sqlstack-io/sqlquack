@@ -4,6 +4,7 @@ pub mod query_lineage_and_findings;
 pub mod query_name_findings;
 pub(crate) mod rendered_type;
 pub mod statement_lineage;
+pub mod statement_lineage_and_findings;
 pub mod statement_name_findings;
 pub(crate) mod string_literal;
 pub(crate) mod type_family;

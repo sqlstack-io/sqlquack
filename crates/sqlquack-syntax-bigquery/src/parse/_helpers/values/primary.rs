@@ -140,7 +140,7 @@ impl Parser<'_> {
                 let except: Option<Vec<Identifier>> = self.star_except()?;
                 let mut node = star(None, except);
                 node.replace = self.star_replace()?;
-                Ok(Expression::Star(node))
+                Ok(Expression::Star(Box::new(node)))
             }
             TokenKind::Char('?') => {
                 self.at += 1;
@@ -372,7 +372,7 @@ impl Parser<'_> {
                 let except: Option<Vec<Identifier>> = self.star_except()?;
                 let mut node = star(parts.pop(), except);
                 node.replace = self.star_replace()?;
-                return Ok(Expression::Star(node));
+                return Ok(Expression::Star(Box::new(node)));
             }
             if !self.is_at(1, is_path_word) {
                 break;

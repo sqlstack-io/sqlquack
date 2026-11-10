@@ -1,7 +1,7 @@
 //! `parse_strict`: the statements of `sql`, refusing on any parse error or any byte no token covers.
 
 use crate::modes::errors::StrictFailure;
-use crate::parser::main::tokenize::tokenize;
+use crate::parser::main::strict_statements::strict_statements;
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::guard::models::ParseOptions;
 use sqlquack_syntax::tokens::models::Dialect;
@@ -12,8 +12,5 @@ pub fn parse_strict(
     dialect: Dialect,
     options: &ParseOptions,
 ) -> Result<Vec<Expression>, StrictFailure> {
-    let statements =
-        crate::parser::main::parse_statements::parse_statements(sql, dialect, options)?;
-    tokenize(sql, dialect)?;
-    Ok(statements)
+    strict_statements(sql, dialect, options)
 }

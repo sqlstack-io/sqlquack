@@ -2,15 +2,13 @@
 
 use std::rc::Rc;
 
-use sqlquack_diagnostics::provenance::models::ProvenanceLog;
-
 use crate::dialects::main::canonical_type::canonical_type;
 use crate::lineage::constants::SNOWFLAKE_VARIANT_TYPE;
 use crate::lineage::models::Lineage;
+use crate::snowflake::profile::_helpers::spelled_targets::spelled_target;
 use crate::snowflake::profile::constants::{
     SNOWFLAKE_ARRAY_TYPE, SNOWFLAKE_MAX_PRECISION, SNOWFLAKE_TEXT_NUMBER,
 };
-use crate::snowflake::typing::main::cast_target::cast_target;
 use crate::snowflake::typing::models::{CastTarget, SnowflakeType};
 
 /// The kinds the probes distinguish.
@@ -66,10 +64,7 @@ pub(crate) fn snowflake_set_type(branches: &[&Lineage]) -> Option<Rc<str>> {
 }
 
 fn set_type(spelling: &str) -> Option<SetType> {
-    let target: CastTarget = match cast_target(spelling, &ProvenanceLog::default()) {
-        Ok(target) => target,
-        Err(_unknown) => return None,
-    };
+    let target: CastTarget = spelled_target(spelling)?;
     let explicit: bool = spelling.contains('(');
     let (kind, numeric, precision): (Kind, Option<Numeric>, u32) = match target.data_type {
         SnowflakeType::Boolean => (Kind::Boolean, None, 0),

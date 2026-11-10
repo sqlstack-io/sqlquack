@@ -1,6 +1,7 @@
 //! Traversal: walk.
 
 use crate::expressions::tree::models::Expression;
+use crate::traversal::main::_for_each_child_untracked::for_each_child_untracked;
 use crate::traversal::models::BfsIter;
 use crate::traversal::models::DfsIter;
 use crate::traversal::types::ExpressionWalk;
@@ -44,7 +45,7 @@ impl ExpressionWalk for Expression {
 
     fn children(&self) -> Vec<&Expression> {
         let mut result: Vec<&Expression> = Vec::new();
-        crate::traversal::main::for_each_child::for_each_child(self, |_, child| result.push(child));
+        for_each_child_untracked(self, |child| result.push(child));
         result
     }
 
@@ -53,9 +54,7 @@ impl ExpressionWalk for Expression {
         let mut stack = vec![(self, 0usize)];
         while let Some((node, depth)) = stack.pop() {
             max_depth = max_depth.max(depth);
-            crate::traversal::main::for_each_child::for_each_child(node, |_, child| {
-                stack.push((child, depth + 1));
-            });
+            for_each_child_untracked(node, |child| stack.push((child, depth + 1)));
         }
         max_depth
     }

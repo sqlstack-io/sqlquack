@@ -324,7 +324,10 @@ impl Parser<'_> {
                 self.at += 1;
                 self.expect_kw("SET")?;
                 if stage == MergeStage::Matched && self.eat_char('*') {
-                    tuple(vec![var("UPDATE"), Expression::Star(star(None, None))])
+                    tuple(vec![
+                        var("UPDATE"),
+                        Expression::Star(Box::new(star(None, None))),
+                    ])
                 } else {
                     tuple(vec![var("UPDATE"), tuple(self.assignments()?)])
                 }
@@ -332,7 +335,10 @@ impl Parser<'_> {
             (MergeStage::NotMatched, Some("INSERT")) => {
                 self.at += 1;
                 if self.eat_char('*') {
-                    tuple(vec![var("INSERT"), Expression::Star(star(None, None))])
+                    tuple(vec![
+                        var("INSERT"),
+                        Expression::Star(Box::new(star(None, None))),
+                    ])
                 } else {
                     let columns: Vec<Expression> = self
                         .parenthesized(|parser| Ok(column_from(parser.multipart_identifier()?)))?;

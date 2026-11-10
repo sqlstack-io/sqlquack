@@ -141,7 +141,7 @@ impl Parser<'_> {
             );
         }
         self.refuse_overlaps(&excludes, &replaces, &renames, start);
-        Ok(Expression::Star(node))
+        Ok(Expression::Star(Box::new(node)))
     }
 
     /// `Duplicate entry` of a later exclude naming an earlier one's column.

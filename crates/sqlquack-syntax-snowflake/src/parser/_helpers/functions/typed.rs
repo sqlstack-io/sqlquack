@@ -130,7 +130,7 @@ impl Parser {
             sqlquack_syntax::functions::dispatch::models::ParserDispatchBehavior::HllAggregate => {
                 let distinct = self.match_token(TokenType::Distinct);
                 let args = if self.match_token(TokenType::Star) {
-                    vec![Expression::Star(Star {
+                    vec![Expression::Star(Box::new(Star {
                         table: None,
                         ilike: None,
                         except: None,
@@ -139,7 +139,7 @@ impl Parser {
                         trailing_comments: Vec::new(),
                         span: None,
                         qualified: None,
-                    })]
+                    }))]
                 } else if self.check(TokenType::RParen) {
                     Vec::new()
                 } else {
