@@ -33,6 +33,8 @@ impl Workload {
 pub struct InstructionBaseline {
     /// The architecture the counts were recorded on; another counts different instructions.
     pub arch: String,
+    /// The `rustc --version` of the recording; another compiler emits other instructions.
+    pub rustc: String,
     /// How far, in percent of the baseline, a count may move either way.
     pub tolerance_percent: u64,
     /// Each workload's count in the program's own code, shared libraries excluded.

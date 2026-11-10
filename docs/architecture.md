@@ -50,7 +50,7 @@ Development tools live under `tools/`. No shipped crate depends on them:
 | Crate | Role |
 |---|---|
 | `sqlquack-polyglot-check` | Proves `sqlquack-syntax` parses exactly as polyglot does, on every corpus. |
-| `sqlquack-coverage-check` | The syntax catalogues of every dialect root under `coverage/` checked against the parsers (binary `syntax-coverage`), the translation-results measure and the nesting-depth probe. See [syntax-coverage.md](syntax-coverage.md). |
+| `sqlquack-coverage-check` | The syntax catalogues of every dialect root under `coverage/` checked against the parsers (binary `syntax-coverage`), the translation-results measure, the nesting-depth probe and the instruction-count guard. See [syntax-coverage.md](syntax-coverage.md). |
 | `sqlquack-format-check` | Proves that formatting DuckDB SQL leaves the output columns DuckDB binds it to unchanged, on the format corpus. |
 
 Fensu layer targets keep the rules out of every crate but the command line ones and

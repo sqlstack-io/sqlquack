@@ -477,3 +477,21 @@ them: an unquoted name is upper-cased, and a quoted one keeps its case. An unkno
 fails the command. `by-design.toml` holds `[[by_design]]` entries with `construct` (a construct
 key such as `fn:SYSTEM$WAIT`), `reason` and `duckdb_note`. The review file holds `[[signoff]]`
 entries with `construct`, `reason_sha256` and `reviewed_utc`. Both files are optional.
+
+## Instruction counts
+
+`syntax-coverage instruction-counts [--baseline coverage/instruction-counts.toml] [--update]` guards
+the speed of strict Snowflake parsing and of analysis. It runs two fixed workloads of wide,
+CTE-layered models under valgrind's callgrind and counts the instructions the program's own code
+runs inside the measured function: `parse` counts strict parsing, and `analysis` counts lineage and
+findings in one analysis. Shared libraries, such as the C allocator, are left out because their
+counts change with the C library. Instruction counts are deterministic where wall time is not: on one
+compiler and architecture, repeated runs agree to about 0.03%.
+
+`make instruction-counts`, part of `make check-ci`, fails when a count moves more than the baseline's
+`tolerance_percent` either way. A gain fails too, so that it is recorded and a later change cannot
+spend it unnoticed. The baseline also records the `arch` and the `rustc --version` it was measured
+with; a run on another architecture or with another compiler fails without comparing, because the
+compiler decides which instructions run. After a `rust-toolchain.toml` bump, or in a change that
+moves a count on purpose, rerecord the baseline with `make instruction-baseline` and commit it with
+that change. Both targets need valgrind.
