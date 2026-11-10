@@ -5,6 +5,15 @@ use crate::policy::constants::POLICY_FILE_NAME;
 use crate::policy::main::load_policy::load_policy;
 use crate::policy::models::{DivergenceFailure, Policy};
 
+const ERROR_ENDING: &str = ", never a different value.";
+
+const VALUE_ENDING: &str = ", with no error.";
+
+const ENDINGS: [(DivergenceFailure, &str); 2] = [
+    (DivergenceFailure::Loud, ERROR_ENDING),
+    (DivergenceFailure::Value, VALUE_ENDING),
+];
+
 const INTERNAL_WORDS: [&str; 10] = [
     "fn:",
     "node:",
@@ -82,4 +91,35 @@ pub(crate) fn internal_names_in_text() -> Vec<String> {
             .map(|found| format!("{}: {found}", entry.name))
         })
         .collect()
+}
+
+pub(crate) fn entries_off_style() -> Vec<String> {
+    KNOWN_DIFFERENCES
+        .iter()
+        .flat_map(|entry| {
+            let ending = ENDINGS
+                .iter()
+                .find(|(failure, _)| *failure == entry.failure)
+                .map_or("", |(_, ending)| *ending);
+            [
+                (sentences(entry.differs) > 2).then_some("differs has more than two sentences"),
+                (sentences(entry.fine_when) != 1).then_some("fine_when is not one sentence"),
+                (sentences(entry.wrong_when) != 1).then_some("wrong_when is not one sentence"),
+                (!entry.wrong_when.ends_with(ending))
+                    .then_some("wrong_when does not end as its failure says"),
+                (entry.failure == DivergenceFailure::Loud
+                    && !entry
+                        .wrong_when
+                        .contains("DuckDB raises an error where Snowflake"))
+                .then_some("wrong_when does not say DuckDB raises an error where Snowflake"),
+            ]
+            .into_iter()
+            .flatten()
+            .map(|problem| format!("{}: {problem}", entry.name))
+        })
+        .collect()
+}
+
+fn sentences(text: &str) -> usize {
+    text.matches(". ").count() + usize::from(text.ends_with('.'))
 }
