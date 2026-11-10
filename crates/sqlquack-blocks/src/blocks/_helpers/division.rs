@@ -7,7 +7,9 @@ use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 use crate::blocks::_helpers::text::{once_bound, tagged_error};
 use crate::blocks::constants::{INTEGER_LITERAL_DIGITS, MAX_DECIMAL_PRECISION, SHORT_FORM_DIGITS};
 use crate::blocks::main::cast::cast;
-use crate::raises::main::raised::raised;
+use crate::macros::constants::DECIMAL_QUOTIENT_V1;
+use crate::macros::main::helper_call::helper_call;
+use crate::raises::constants::UNIDENTIFIED_SITE;
 
 /// A decimal operand: its SQL, precision and scale.
 type Operand<'a> = (&'a str, u8, u8);
@@ -29,15 +31,17 @@ pub(crate) fn scaled(
     (result, result_scale): (SnowflakeType, u8),
     log: &ProvenanceLog,
 ) -> Result<String, String> {
-    let unit = match result_scale {
-        0 => "1".to_owned(),
-        scale => format!("0.{}1", "0".repeat(usize::from(scale) - 1)),
-    };
-    cast(
-        &format!("CAST({rounded} AS DECIMAL(38,0)) * CAST('{unit}' AS DECIMAL(38,{result_scale}))"),
-        result,
-        log,
-    )
+    match result_scale {
+        0 => cast(rounded, result, log),
+        scale => cast(
+            &format!(
+                "CAST({rounded} AS DECIMAL(38,0)) * 0.{}1",
+                "0".repeat(usize::from(scale) - 1)
+            ),
+            result,
+            log,
+        ),
+    }
 }
 
 /// The quotient in units of the result scale when the scaled dividend fits 128 bits; else `None`.
@@ -72,12 +76,12 @@ pub(crate) fn short_quotient(
     })
 }
 
-/// The quotient over HUGEINT pieces, and the CASE arm raising where it needs more than 128 bits.
+/// The quotient macro's call over HUGEINT operands, and whether it may raise numeric_range.
 pub(crate) fn long_quotient(
     (left, right): (Operand<'_>, Operand<'_>),
     (result_scale, truncated): (u8, bool),
     constant: Option<u128>,
-) -> Result<(String, Option<String>), String> {
+) -> Result<(String, bool), String> {
     let (left_sql, _, left_scale) = left;
     let (right_sql, right_precision, right_scale) = right;
     let shift = result_scale + right_scale - left_scale.min(result_scale + right_scale);
@@ -86,32 +90,30 @@ pub(crate) fn long_quotient(
             "a scale shift of {shift} leaves no room in DuckDB's 128-bit integers"
         ));
     }
-    let dividend = long_unscaled(left_sql, left_scale);
     let divisor = match constant {
         Some(divisor) => integer(divisor),
-        None => long_unscaled(right_sql, right_scale),
+        None => wide_unscaled(right_sql, right_scale),
     };
-    let power = format!("CAST('1{}' AS HUGEINT)", "0".repeat(usize::from(shift)));
-    let remainder = format!("(({dividend} % {divisor}) * {power})");
-    let rounding = match truncated {
-        true => "0".to_owned(),
-        false => format!(
-            "(CASE WHEN abs({remainder} % {divisor}) >= abs({divisor}) - abs({remainder} % {divisor}) \
-             THEN sign({remainder}) * sign({divisor}) ELSE 0 END)"
+    let guarded = u32::from(right_precision) + u32::from(shift) > u32::from(MAX_DECIMAL_PRECISION);
+    let limit = match guarded {
+        true => format!(
+            "CAST('1{}' AS HUGEINT)",
+            "0".repeat(usize::from(MAX_DECIMAL_PRECISION - shift))
         ),
+        false => "NULL".to_owned(),
     };
-    let guard = (u32::from(right_precision) + u32::from(shift) > u32::from(MAX_DECIMAL_PRECISION))
-        .then(|| {
-            format!(
-                " WHEN abs({divisor}) >= CAST('1{}' AS HUGEINT) THEN {}",
-                "0".repeat(usize::from(MAX_DECIMAL_PRECISION - shift)),
-                raised("numeric_range: the exact quotient needs more than 128 bits")
-            )
-        });
-    Ok((
-        format!("(({dividend} // {divisor}) * {power} + ({remainder} // {divisor}) + {rounding})"),
-        guard,
-    ))
+    let call = helper_call(
+        DECIMAL_QUOTIENT_V1,
+        &[
+            UNIDENTIFIED_SITE,
+            &wide_unscaled(left_sql, left_scale),
+            &divisor,
+            &power(shift),
+            &limit,
+            if truncated { "false" } else { "true" },
+        ],
+    );
+    Ok((call, guarded))
 }
 
 /// The integer a plain number literal, such as `2.50`, is at `scale` places, if short enough.
@@ -161,17 +163,21 @@ fn column_quotient(n: &str, d: &str, (truncated, doubles): (bool, bool)) -> Stri
     }
 }
 
-/// The decimal `sql` of `scale` places as an unscaled HUGEINT, from its digits past 19 places.
-fn long_unscaled(sql: &str, scale: u8) -> String {
+/// The decimal `sql` of `scale` places as an unscaled HUGEINT, however wide it is.
+fn wide_unscaled(sql: &str, scale: u8) -> String {
+    if scale == 0 {
+        return format!("CAST({sql} AS HUGEINT)");
+    }
     let decimal = format!("CAST({sql} AS DECIMAL(38,{scale}))");
     if 2 * usize::from(scale) > usize::from(MAX_DECIMAL_PRECISION) {
         return format!("CAST(replace(CAST({decimal} AS VARCHAR), '.', '') AS HUGEINT)");
     }
-    let power = "0".repeat(usize::from(scale));
-    format!(
-        "(CAST(trunc({decimal}) AS HUGEINT) * CAST('1{power}' AS HUGEINT) + \
-         CAST(({decimal} - trunc({decimal})) * CAST('1{power}' AS DECIMAL(38,0)) AS HUGEINT))"
-    )
+    once_bound(&decimal, "quotient_operand", |x| {
+        format!(
+            "(CAST(trunc({x}) AS HUGEINT) * {power} + CAST(({x} - trunc({x})) * {power} AS HUGEINT))",
+            power = power(scale)
+        )
+    })
 }
 
 /// Whether a NUMBER(precision, scale) times 10 to its scale fits DuckDB's DECIMAL(38, scale).
