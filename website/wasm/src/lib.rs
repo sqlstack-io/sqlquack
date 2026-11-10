@@ -13,6 +13,8 @@ use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_blocks::checking::constants::SEMI_STRUCTURED_HOLDING_TYPE;
 use sqlquack_blocks::layout::main::layout_sql::layout_sql;
 use sqlquack_blocks::macros::main::helper_statements::helper_statements;
+use sqlquack_convert::snowflake::analysis::main::with_divergence_help::with_divergence_help;
+use sqlquack_convert::snowflake::analysis::models::ConversionChoices;
 use sqlquack_convert::snowflake::catalogue::main::builtin_catalogue::builtin_catalogue;
 use sqlquack_convert::snowflake::conversion::main::convert_statement::convert_statement;
 use sqlquack_convert::snowflake::conversion::main::quoted_exclusions::quoted_exclusions;
@@ -182,11 +184,10 @@ struct Settings {
     compact: bool,
 }
 
-/// Conversion options for `settings` as `sqlquack convert` chooses them, and the matched profile;
-/// a session no recorded profile covers is a refusal, as on the command line.
-fn chosen_options(
+/// The policy file and session parameters `settings` give, as `sqlquack convert` reads them.
+fn chosen_settings(
     settings: &Settings,
-) -> Result<Result<(ConversionOptions, String), String>, String> {
+) -> Result<(Option<Policy>, BTreeMap<String, String>), String> {
     let policy = match settings.policy.trim() {
         "" => None,
         text => Some(
@@ -201,12 +202,7 @@ fn chosen_options(
         .filter(|line| !line.is_empty())
         .map(str::to_owned)
         .collect();
-    let parameters = parse_session(&lines)?;
-    Ok(session_conversion_options(
-        policy.as_ref(),
-        (settings.strict, settings.utc_session),
-        &parameters,
-    ))
+    Ok((policy, parse_session(&lines)?))
 }
 
 /// A stage's verdict and what it found.
@@ -276,10 +272,17 @@ fn stages(sql: &str, catalog: &Catalog, settings: &str) -> Value {
             Err(error) => return json!({ "settings_error": error.to_string() }),
         },
     };
-    let session = match chosen_options(&settings) {
-        Ok(session) => session,
+    let (chosen_policy, parameters) = match chosen_settings(&settings) {
+        Ok(chosen) => chosen,
         Err(error) => return json!({ "settings_error": error }),
     };
+    // Conversion options and the matched profile; a session no recorded profile covers is a
+    // refusal, as on the command line.
+    let session = session_conversion_options(
+        chosen_policy.as_ref(),
+        (settings.strict, settings.utc_session),
+        &parameters,
+    );
     let lines = SourceLines::new(sql);
 
     // 1. Parse as Snowflake.
@@ -405,7 +408,24 @@ fn stages(sql: &str, catalog: &Catalog, settings: &str) -> Value {
             Err(refusal) => refusals.push(placed(refusal, statement, &lines)),
         }
     }
-    let mut translate = Stage::new(refusals.is_empty(), diagnostics(&refusals, sql));
+    // Each SQ0008 worded from its known difference, with the one fix that works here, as
+    // `sqlquack convert` words it.
+    let choices = ConversionChoices {
+        policy_file: "the policy file".to_owned(),
+        strict: settings.strict,
+        utc_session: settings.utc_session,
+        ..ConversionChoices::default()
+    };
+    let worded = with_divergence_help(
+        &refusals,
+        diagnose(&refusals, sql),
+        (chosen_policy.as_ref(), &choices, &parameters),
+    );
+    let worded = worded
+        .iter()
+        .filter_map(|diagnostic| serde_json::to_value(diagnostic).ok())
+        .collect();
+    let mut translate = Stage::new(refusals.is_empty(), worded);
     translate.extra.insert("statements", json!(converted));
     translate.extra.insert("profile", json!(profile));
     json!({ "parse": parse, "checks": checks, "translate": translate })

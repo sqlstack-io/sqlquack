@@ -75,7 +75,6 @@
 						<textarea id="pg-sql" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
 					</div>
 					<p class="pg-note">Hover an underline for its diagnostic.</p>
-					<p class="pg-note pg-caption" id="pg-caption" hidden></p>
 					<details open>
 						<summary>Sources: the tables your SQL reads</summary>
 						<textarea class="pg-small" id="pg-sources" spellcheck="false" aria-label="Source file (YAML)"></textarea>
@@ -88,7 +87,7 @@
 					</details>
 					<details>
 						<summary>Policy and session</summary>
-						<textarea class="pg-small" id="pg-policy" spellcheck="false" aria-label="Policy file (TOML)" placeholder="Empty: the built-in default, which refuses every known divergence but the clock and checks that only raise"></textarea>
+						<textarea class="pg-small" id="pg-policy" spellcheck="false" aria-label="Policy file (TOML)" placeholder="Empty: the built-in default, which refuses every known difference but the clock and checks that only raise"></textarea>
 						<p class="pg-note">A policy file, as for <code>--policy</code>. <button class="pg-link" type="button" id="pg-load-policy">Load the repository's sqlquack.toml</button></p>
 						<textarea class="pg-small pg-short" id="pg-session" spellcheck="false" aria-label="Session parameters" placeholder="TIMEZONE=UTC"></textarea>
 						<p class="pg-note">Snowflake session parameters, one <code>NAME=VALUE</code> per line, as for <code>--session</code>.</p>
