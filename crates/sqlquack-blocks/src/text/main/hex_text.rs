@@ -8,7 +8,7 @@ use crate::text::constants::HEX_TEXT;
 pub fn hex_text(value: &str, lower: bool, log: &ProvenanceLog) -> String {
     log.building_block(HEX_TEXT);
     match lower {
-        true => format!("lower(hex({value}))"),
+        true => format!("lower(HEX({value}))"),
         false => format!("hex({value})"),
     }
 }
