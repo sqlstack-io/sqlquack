@@ -97,6 +97,8 @@ jobs:
         with:
           shared-key: gate
           save-if: ${{ github.event_name != 'pull_request' }}
+      - name: Download the DuckDB library again if the restored cache lacks it
+        run: scripts/refetch_duckdb_library.sh
       # The evidence snapshot evidence.toml pins; scripts/evidence.sh verifies it after a restore.
       - uses: actions/cache@v4
         with:
@@ -183,6 +185,8 @@ jobs:
         with:
           shared-key: duckshop
           save-if: ${{ github.event_name != 'pull_request' }}
+      - name: Download the DuckDB library again if the restored cache lacks it
+        run: scripts/refetch_duckdb_library.sh
       - name: Compile DuckShop and DuckShop 10K
         run: make duckshop-compiled
       - name: Convert them
