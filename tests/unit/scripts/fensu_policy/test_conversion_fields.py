@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -15,18 +14,19 @@ from scripts.fensu_policy.models import SourceLine
 from tests.unit.scripts.fensu_policy._test_types import (
     ConversionFieldLinesTestCase,
     ConversionFieldRuleTestCase,
+    MixedCheckTestCase,
 )
+from tests.unit.scripts.fensu_policy.helpers import run_fensu_check, write_semantics_crate
 
-REPOSITORY: Path = Path(__file__).resolve().parents[4]
-WORKSPACE_MANIFEST: str = '[workspace]\nmembers = ["crates/sqlquack-semantics"]\nresolver = "2"\n'
-CRATE_MANIFEST: str = (
-    '[package]\nname = "sqlquack-semantics"\nversion = "0.1.0"\nedition = "2021"\n\n'
-    "[features]\ndefault = []\nsnowflake = []\n"
-)
-LIB: str = '#[cfg(feature = "snowflake")]\nmod snowflake;\nmod schemas;\n'
 FIELD_RULE_CONFIG: str = (
     '[targets.rust]\nanalyzer = "rust"\nroots = ["crates"]\ntests = []\n'
     'rule_modules = ["scripts.fensu_policy.rules.conversion_fields"]\nselect = ["XSQ009"]\n'
+)
+# A Python target with a custom rule beside the Rust one, as the repository's own fensu.toml has.
+MIXED_CONFIG: str = (
+    '[targets.python]\nanalyzer = "python"\nroots = ["tooling"]\ntests = []\n'
+    'rule_modules = ["scripts.fensu_policy.rules.script_names"]\nselect = ["XSQ005"]\n\n'
+    + FIELD_RULE_CONFIG
 )
 
 
@@ -125,31 +125,46 @@ def test_given_source_when_checking_then_lists_conversion_field_reads(
 def test_given_crate_when_running_fensu_then_reports_shared_conversion_field_reads(
     test_case: ConversionFieldRuleTestCase, tmp_path: Path
 ) -> None:
-    crate: Path = tmp_path / "crates" / "sqlquack-semantics"
-    for folder in ("snowflake", "schemas"):
-        (crate / "src" / folder).mkdir(parents=True)
-        (crate / "src" / folder / "mod.rs").write_text("pub fn column() {}\n")
-    (tmp_path / "Cargo.toml").write_text(WORKSPACE_MANIFEST)
-    (crate / "Cargo.toml").write_text(CRATE_MANIFEST)
-    (crate / "src" / "lib.rs").write_text(LIB)
-    (crate / test_case.path).write_text(test_case.source)
-    (tmp_path / "fensu.toml").write_text(FIELD_RULE_CONFIG)
-    shutil.copytree(
-        REPOSITORY / "scripts" / "fensu_policy",
-        tmp_path / "scripts" / "fensu_policy",
-        ignore=shutil.ignore_patterns("__pycache__"),
-    )
-    (tmp_path / "scripts" / "__init__.py").write_text("")
+    write_semantics_crate(tmp_path, FIELD_RULE_CONFIG)
+    (tmp_path / "crates" / "sqlquack-semantics" / test_case.path).write_text(test_case.source)
 
-    completed: subprocess.CompletedProcess[str] = subprocess.run(
-        [str(Path(sys.executable).with_name("fensu")), "check", "--no-cache"],
-        cwd=tmp_path,
-        env={**os.environ, "PYTHONPATH": str(tmp_path)},
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    completed: subprocess.CompletedProcess[str] = run_fensu_check(tmp_path, os.environ["PATH"])
 
     output: str = completed.stdout + completed.stderr
     assert completed.returncode == min(test_case.expected_fault_count, 1), output
     assert output.count("XSQ009") == test_case.expected_fault_count, output
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    [
+        MixedCheckTestCase(
+            "with cargo, the check is complete",
+            os.environ["PATH"],
+            0,
+            "Found 0 faults",
+            "Check incomplete",
+        ),
+        MixedCheckTestCase(
+            "without cargo, the check says it is incomplete",
+            str(Path(sys.executable).parent),
+            2,
+            "Check incomplete",
+            "Found ",
+        ),
+    ],
+    ids=lambda case: case.description,
+)
+def test_given_python_and_rust_targets_when_running_fensu_then_summary_says_whether_all_ran(
+    test_case: MixedCheckTestCase, tmp_path: Path
+) -> None:
+    write_semantics_crate(tmp_path, MIXED_CONFIG)
+    (tmp_path / "tooling").mkdir()
+    (tmp_path / "tooling" / "__init__.py").write_text("")
+
+    completed: subprocess.CompletedProcess[str] = run_fensu_check(tmp_path, test_case.path)
+
+    output: str = completed.stdout + completed.stderr
+    assert completed.returncode == test_case.expected_returncode, output
+    assert test_case.expected_summary in output, output
+    assert test_case.absent_summary not in output, output

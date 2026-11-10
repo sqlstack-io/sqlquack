@@ -132,3 +132,12 @@ class ConversionFieldRuleTestCase:
     path: str
     source: str
     expected_fault_count: int
+
+
+@dataclass(frozen=True)
+class MixedCheckTestCase:
+    description: str
+    path: str
+    expected_returncode: int
+    expected_summary: str
+    absent_summary: str
