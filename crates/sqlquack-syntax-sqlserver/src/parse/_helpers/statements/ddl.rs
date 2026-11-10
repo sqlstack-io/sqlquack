@@ -19,8 +19,10 @@ use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::keywords::main::is_reserved::is_reserved;
 use crate::parse::_helpers::statements::queries::set_with;
+use crate::parse::_helpers::statements::results::has_browse;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier};
 use crate::parse::_helpers::tree::nodes::{column_from, table, var};
+use crate::parse::constants::BROWSE_NESTED;
 use crate::scan::models::{Token, TokenKind};
 
 impl<'sql> Parser<'sql> {
@@ -335,6 +337,9 @@ impl<'sql> Parser<'sql> {
         }
         self.expect_kw("AS")?;
         let query: Expression = self.query_statement()?;
+        if has_browse(&query) {
+            return Err(self.error_with(BROWSE_NESTED));
+        }
         if self.kw("WITH") && self.kw_at(1, "CHECK") {
             return Err(self.gap("view_check_option", self.offset()));
         }
@@ -410,9 +415,7 @@ impl<'sql> Parser<'sql> {
             if let Some(with) = with {
                 set_with(&mut query, with);
             }
-            if self.kw("FOR") && self.kw_in(1, &["XML", "JSON", "BROWSE"]) {
-                return Err(self.gap("for_xml_json", self.offset()));
-            }
+            self.refuse_nested_browse()?;
             if wrapped {
                 self.expect_char(')')?;
             }

@@ -988,6 +988,7 @@ impl<'a> Guide<'a> {
             || ((self.is(index, "GROUP") || self.is(index, "ORDER")) && self.is(index + 1, "BY"))
             || self.is_any(index, self.rules.clause_keywords)
             || (self.is_any(index, self.rules.by_clauses) && self.is(index + 1, "BY"))
+            || (self.is(index, "FOR") && self.is_any(index + 1, self.rules.for_clauses))
     }
 
     fn select(&mut self, select: usize, last: usize, indent: usize) {
@@ -1086,7 +1087,8 @@ impl<'a> Guide<'a> {
                 }
             }
             word if matches!(word, "GROUP" | "ORDER")
-                || self.is_any(clause, self.rules.by_clauses) =>
+                || self.is_any(clause, self.rules.by_clauses)
+                || (self.is(clause, "FOR") && self.is_any(clause + 1, self.rules.for_clauses)) =>
             {
                 let body = clause + 2;
                 if body > end || (self.is(body, "ALL") && body == end) {
@@ -1113,7 +1115,11 @@ impl<'a> Guide<'a> {
     }
 
     fn is_join_word(&self, index: usize) -> bool {
-        self.is(index, "JOIN") || self.is_any(index, &JOIN_PREFIXES)
+        self.is(index, "JOIN")
+            || self.is_any(index, &JOIN_PREFIXES)
+            || (index > 0
+                && self.is_any(index, self.rules.join_hints)
+                && self.is_any(index - 1, &JOIN_PREFIXES))
     }
 
     fn starts_join(&self, index: usize, first: usize) -> bool {

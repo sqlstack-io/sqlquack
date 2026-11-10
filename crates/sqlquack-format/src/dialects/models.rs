@@ -72,6 +72,10 @@ pub(crate) struct LayoutRules {
     pub(crate) clause_keywords: &'static [&'static str],
     /// Words that with `BY` start a clause listing items as GROUP BY does, such as `CLUSTER BY`.
     pub(crate) by_clauses: &'static [&'static str],
+    /// Words that after `FOR` start a clause listing items as GROUP BY does, such as SQL Server's `FOR XML`.
+    pub(crate) for_clauses: &'static [&'static str],
+    /// Words that, after a join prefix such as `INNER`, stay in the join keyword, such as SQL Server's `INNER LOOP JOIN`.
+    pub(crate) join_hints: &'static [&'static str],
     /// Table sources whose call stays on one line wherever it stands.
     pub(crate) inline_sources: &'static [&'static str],
     /// A `TOP (SELECT ...)` count is laid out as a subquery.
@@ -121,6 +125,8 @@ impl Default for LayoutRules {
             cte_clauses: &[],
             clause_keywords: &[],
             by_clauses: &[],
+            for_clauses: &[],
+            join_hints: &[],
             inline_sources: &[],
             top_queries: false,
             object_names: false,

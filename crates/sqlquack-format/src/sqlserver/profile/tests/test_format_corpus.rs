@@ -8,8 +8,8 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
     let test_cases = [test_types::FormatCorpusTestCase {
         description: "SQL Server identity corpus",
         dialect: "tsql",
-        expected_formatted: 52,
-        expected_refused: 23,
+        expected_formatted: 68,
+        expected_refused: 7,
         departures: &[
             Departure {
                 sql: "SELECT val FROM (VALUES ((TRUE), (FALSE), (NULL))) AS t(val)",
@@ -36,97 +36,9 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 receipt: None,
             },
             Departure {
-                sql: "SELECT * FROM t TABLESAMPLE (10 PERCENT)",
-                formatted: None,
-                reason: "SQL Server accepts it; SQLQuack's parser keeps a TABLESAMPLE clause opaque (gap `tablesample`), so the formatter refuses rather than guess; SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT * FROM t TABLESAMPLE (20 ROWS)",
-                formatted: None,
-                reason: "SQL Server accepts it; SQLQuack's parser keeps a TABLESAMPLE clause opaque (gap `tablesample`), so the formatter refuses rather than guess; SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT * FROM t TABLESAMPLE (10 PERCENT) REPEATABLE (123)",
-                formatted: None,
-                reason: "SQL Server accepts it; SQLQuack's parser keeps a TABLESAMPLE clause opaque (gap `tablesample`), so the formatter refuses rather than guess; SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
                 sql: "SELECT * FROM t WHERE NOT c",
                 formatted: None,
                 reason: "SQL Server rejects it: `An expression of non-boolean type specified in a context where a condition is expected, near 'c'.` (4145); SQLQuack's parser refuses it (`An expression of non-boolean type specified in a context where a condition is expected.`); SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT * FROM t WITH (TABLOCK, INDEX(myindex))",
-                formatted: None,
-                reason: "SQL Server accepts it; SQLQuack's parser keeps a table hint list opaque (gap `table_hint`), so the formatter refuses rather than guess; SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT Employee_ID, Department_ID FROM @MyTableVar",
-                formatted: None,
-                reason: "SQL Server rejects it: `Must declare the table variable \"@MyTableVar\".` (1087); SQLQuack's parser keeps a table variable source opaque (gap `table_variable`); SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT x FROM @MyTableVar AS m JOIN Employee ON m.EmployeeID = Employee.EmployeeID",
-                formatted: None,
-                reason: "SQL Server rejects it: `Must declare the table variable \"@MyTableVar\".` (1087); SQLQuack's parser keeps a table variable source opaque (gap `table_variable`); SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT * FROM t FOR XML PATH, BINARY BASE64, ELEMENTS XSINIL",
-                formatted: None,
-                reason: "SQL Server accepts it; SQLQuack's parser keeps a FOR XML, FOR JSON or FOR BROWSE clause opaque (gap `for_xml_json`), so the formatter refuses rather than guess; SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT (SELECT TOP 5 a, b FROM t ORDER BY b DESC FOR JSON PATH) AS j FROM x",
-                formatted: None,
-                reason: "SQL Server accepts it; SQLQuack's parser keeps a FOR XML, FOR JSON or FOR BROWSE clause opaque (gap `for_xml_json`) on FOR JSON in a scalar subquery, a parser false reject; SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT j FROM (SELECT a AS j FROM t FOR JSON PATH) AS x",
-                formatted: None,
-                reason: "SQL Server rejects it at binding: `Invalid column name 'j'.` (207, then 8155), as a FOR JSON derived table needs a column list; SQLQuack's parser keeps a FOR XML, FOR JSON or FOR BROWSE clause opaque (gap `for_xml_json`), even with one; SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT * FROM t FOR JSON PATH, ROOT('Root'), INCLUDE_NULL_VALUES",
-                formatted: None,
-                reason: "SQL Server accepts it; SQLQuack's parser keeps a FOR XML, FOR JSON or FOR BROWSE clause opaque (gap `for_xml_json`), so the formatter refuses rather than guess; SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT * FROM t FOR BROWSE",
-                formatted: None,
-                reason: "SQL Server accepts it; SQLQuack's parser keeps a FOR XML, FOR JSON or FOR BROWSE clause opaque (gap `for_xml_json`), so the formatter refuses rather than guess; SQLClean formatted it",
                 receipt: Some(
                     "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
@@ -148,25 +60,9 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 ),
             },
             Departure {
-                sql: "SELECT [x] FROM [a].[b] FOR SYSTEM_TIME AS OF 'foo'",
-                formatted: None,
-                reason: "SQL Server accepts it; SQLQuack's parser keeps a FOR SYSTEM_TIME clause opaque (gap `system_time`), so the formatter refuses rather than guess; SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT [x] FROM [a].[b] FOR SYSTEM_TIME AS OF 'foo' AS alias",
-                formatted: None,
-                reason: "SQL Server accepts it; SQLQuack's parser keeps a FOR SYSTEM_TIME clause opaque (gap `system_time`), so the formatter refuses rather than guess; SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
                 sql: "SELECT [x] FROM [a].[b] FOR SYSTEM_TIME FROM c TO d",
                 formatted: None,
-                reason: "SQL Server rejects it: `Incorrect syntax near 'c'.` (102); SQLQuack's parser keeps a FOR SYSTEM_TIME clause opaque (gap `system_time`); SQLClean formatted it",
+                reason: "SQL Server rejects it: `Incorrect syntax near 'c'.` (102); SQLQuack's parser refuses it (`Incorrect syntax near 'c'.`); SQLClean formatted it",
                 receipt: Some(
                     "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
@@ -174,7 +70,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
             Departure {
                 sql: "SELECT [x] FROM [a].[b] FOR SYSTEM_TIME BETWEEN c AND d",
                 formatted: None,
-                reason: "SQL Server rejects it: `Incorrect syntax near 'c'.` (102); SQLQuack's parser keeps a FOR SYSTEM_TIME clause opaque (gap `system_time`); SQLClean formatted it",
+                reason: "SQL Server rejects it: `Incorrect syntax near 'c'.` (102); SQLQuack's parser refuses it (`Incorrect syntax near 'c'.`); SQLClean formatted it",
                 receipt: Some(
                     "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
@@ -182,23 +78,7 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
             Departure {
                 sql: "SELECT [x] FROM [a].[b] FOR SYSTEM_TIME CONTAINED IN (c, d)",
                 formatted: None,
-                reason: "SQL Server rejects it: `Incorrect syntax near 'c'.` (102); SQLQuack's parser keeps a FOR SYSTEM_TIME clause opaque (gap `system_time`); SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT [x] FROM [a].[b] FOR SYSTEM_TIME ALL AS alias",
-                formatted: None,
-                reason: "SQL Server accepts it; SQLQuack's parser keeps a FOR SYSTEM_TIME clause opaque (gap `system_time`), so the formatter refuses rather than guess; SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT x FROM a INNER LOOP JOIN b ON b.id = a.id",
-                formatted: None,
-                reason: "SQL Server accepts it; SQLQuack's parser keeps a join hint opaque (gap `join_hint`), so the formatter refuses rather than guess; SQLClean formatted it",
+                reason: "SQL Server rejects it: `Incorrect syntax near 'c'.` (102); SQLQuack's parser refuses it (`Incorrect syntax near 'c'.`); SQLClean formatted it",
                 receipt: Some(
                     "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),
@@ -207,14 +87,6 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
                 sql: "SELECT NEXT VALUE FOR db.schema.sequence_name OVER (ORDER BY foo), col",
                 formatted: None,
                 reason: "SQL Server rejects it: `Incorrect syntax near the keyword 'schema'.` (156); SQLQuack's parser refuses it (`Incorrect syntax near 'schema'.`); SQLClean formatted it",
-                receipt: Some(
-                    "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
-                ),
-            },
-            Departure {
-                sql: "SELECT * FROM @x",
-                formatted: None,
-                reason: "SQL Server rejects it: `Must declare the table variable \"@x\".` (1087); SQLQuack's parser keeps a table variable source opaque (gap `table_variable`); SQLClean formatted it",
                 receipt: Some(
                     "crates/sqlquack-format/src/sqlserver/profile/tests/fixtures/sqlserver_receipts.jsonl",
                 ),

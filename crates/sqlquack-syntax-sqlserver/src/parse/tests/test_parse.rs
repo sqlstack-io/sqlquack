@@ -82,19 +82,24 @@ fn given_sql_when_parsing_then_the_verdict_is_sql_servers() {
             expected_verdict: ExpectedVerdict::Tree,
         },
         VerdictTestCase {
-            description: "a scalar subquery may end in FOR JSON, which is not read",
+            description: "a scalar subquery may end in FOR JSON",
             sql: "SELECT (SELECT TOP 5 a, b FROM t ORDER BY b DESC FOR JSON PATH) AS j FROM x",
-            expected_verdict: ExpectedVerdict::Gap("for_xml_json"),
+            expected_verdict: ExpectedVerdict::Tree,
         },
         VerdictTestCase {
-            description: "a derived table may end in FOR JSON, which is not read",
+            description: "a derived table may end in FOR JSON",
             sql: "SELECT j FROM (SELECT a AS j FROM t FOR JSON PATH) AS x(j)",
-            expected_verdict: ExpectedVerdict::Gap("for_xml_json"),
+            expected_verdict: ExpectedVerdict::Tree,
         },
         VerdictTestCase {
-            description: "an EXISTS query may end in FOR XML, which is not read",
+            description: "an EXISTS query may end in FOR XML",
             sql: "SELECT 1 WHERE EXISTS (SELECT 1 x FOR XML PATH)",
-            expected_verdict: ExpectedVerdict::Gap("for_xml_json"),
+            expected_verdict: ExpectedVerdict::Tree,
+        },
+        VerdictTestCase {
+            description: "a set operation's FOR XML is not read, as the tree keeps it only on a SELECT",
+            sql: "SELECT a FROM t UNION SELECT a FROM u FOR XML PATH",
+            expected_verdict: ExpectedVerdict::Gap("set_operation_for_xml_json"),
         },
         VerdictTestCase {
             description: "a subquery takes no OPTION clause (156)",
@@ -626,6 +631,60 @@ fn given_sqlbuild_type_markers_when_parsing_then_well_formed_ones_are_annotation
         assert_eq!(
             verdict(test_case.sql),
             test_case.expected_verdict,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_for_clauses_when_parsing_then_the_tree_keeps_them() {
+    let test_cases = [
+        ValueTestCase {
+            description: "a FOR XML clause keeps its mode and each directive, with the name each takes",
+            sql: "SELECT a FROM t FOR XML PATH('r'), TYPE",
+            pointer: "/0/select/for_xml",
+            expected_json: r#"[{"query_option":{"expression":{"literal":{"literal_type":"string","value":"r"}},"this":{"var":{"this":"PATH"}}}},{"query_option":{"expression":null,"this":{"var":{"this":"TYPE"}}}}]"#,
+        },
+        ValueTestCase {
+            description: "FOR SYSTEM_TIME is kept as the table's version, its two bounds a tuple",
+            sql: "SELECT a FROM t FOR SYSTEM_TIME BETWEEN '2020' AND 1 AS h",
+            pointer: "/0/select/from/expressions/0/table/version",
+            expected_json: r#"{"expression":{"tuple":{"expressions":[{"literal":{"literal_type":"string","value":"2020"}},{"literal":{"literal_type":"number","value":"1"}}]}},"kind":"BETWEEN","this":{"identifier":{"name":"SYSTEM_TIME","quoted":false,"trailing_comments":[]}}}"#,
+        },
+        ValueTestCase {
+            description: "TABLESAMPLE keeps its size, its unit and its seed on the table",
+            sql: "SELECT a FROM t AS h TABLESAMPLE SYSTEM (5 ROWS) REPEATABLE (7)",
+            pointer: "/0/select/from/expressions/0/table/table_sample",
+            expected_json: r#"{"bucket_denominator":null,"bucket_field":null,"bucket_numerator":null,"explicit_method":true,"is_percent":false,"is_using_sample":false,"method":"System","method_before_size":true,"offset":null,"seed":{"literal":{"literal_type":"number","value":"7"}},"size":{"literal":{"literal_type":"number","value":"5"}},"suppress_method_output":false,"unit_after_size":true,"use_sample_keyword":false,"use_seed_keyword":false}"#,
+        },
+        ValueTestCase {
+            description: "a join hint is kept on its join, upper-cased",
+            sql: "SELECT a FROM t LEFT OUTER hash JOIN u ON 1 = 1",
+            pointer: "/0/select/joins/0/join_hint",
+            expected_json: r#""HASH""#,
+        },
+        ValueTestCase {
+            description: "a parameterized FORCESEEK keeps its index and its columns",
+            sql: "SELECT a FROM t WITH (NOLOCK, FORCESEEK(i (a, b)))",
+            pointer: "/0/select/from/expressions/0/table/hints/0/with_table_hint/expressions/1",
+            expected_json: r#"{"index_table_hint":{"expressions":[{"identifier":{"name":"i","quoted":false,"span":{"column":42,"end":41,"line":1,"start":40},"trailing_comments":[]}}],"target":{"tuple":{"expressions":[{"identifier":{"name":"a","quoted":false,"span":{"column":45,"end":44,"line":1,"start":43},"trailing_comments":[]}},{"identifier":{"name":"b","quoted":false,"span":{"column":48,"end":47,"line":1,"start":46},"trailing_comments":[]}}]}},"this":{"var":{"this":"FORCESEEK"}}}}"#,
+        },
+        ValueTestCase {
+            description: "FOR BROWSE is kept as the select's browse-mode lock",
+            sql: "SELECT a FROM t FOR BROWSE",
+            pointer: "/0/select/locks",
+            expected_json: r#"[{"expressions":[],"key":null,"update":{"var":{"this":"BROWSE"}},"wait":null}]"#,
+        },
+    ];
+    for test_case in test_cases {
+        let parsed = parse_strict(test_case.sql).expect(test_case.description);
+        let tree: Value = serde_json::to_value(&parsed.statements).expect(test_case.description);
+        assert_eq!(
+            tree.pointer(test_case.pointer)
+                .map(Value::to_string)
+                .as_deref(),
+            Some(test_case.expected_json),
             "{}",
             test_case.description
         );

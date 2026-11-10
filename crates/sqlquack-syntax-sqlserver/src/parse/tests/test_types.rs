@@ -61,3 +61,11 @@ pub(crate) struct RangeTestCase {
     pub(crate) sql: &'static str,
     pub(crate) expected_statements: &'static [(&'static str, usize)],
 }
+
+/// Recorded SQL Server verdicts, each of which the parser's verdict on the same statement must agree with.
+pub(crate) struct ReceiptsTestCase {
+    pub(crate) description: &'static str,
+    /// Receipts as JSON lines, each with a `statement` and SQL Server's `outcome` under PARSEONLY.
+    pub(crate) receipts: &'static str,
+    pub(crate) expected_disagreements: Vec<String>,
+}

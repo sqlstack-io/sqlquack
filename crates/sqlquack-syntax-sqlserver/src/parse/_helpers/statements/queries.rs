@@ -6,21 +6,26 @@ use sqlquack_syntax::expressions::names::models::{
 };
 use sqlquack_syntax::expressions::operators::models::Alias;
 use sqlquack_syntax::expressions::queries::models::{
-    Fetch, From, GroupBy, Having, Join, JoinKind, Offset, OrderBy, Select, SelectInto, Top, Where,
-    With,
+    Fetch, From, GroupBy, Having, Join, JoinKind, Offset, OrderBy, Sample, SampleMethod, Select,
+    SelectInto, Top, Where, With,
 };
-use sqlquack_syntax::expressions::tables::models::WithTableHint;
+use sqlquack_syntax::expressions::statements::models::Version;
+use sqlquack_syntax::expressions::tables::models::{IndexTableHint, WithTableHint};
+use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::{SourceSpan, Span};
 use sqlquack_syntax::{DataType, Expression};
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_any_name, is_name};
 use crate::parse::_helpers::tree::nodes::{
-    JoinConstraint, TableAlias, alias, cte, function, join, joined_table, literal, paren,
+    JoinConstraint, TableAlias, alias, cte, function, join, joined_table, literal, null, paren,
     set_operation, subquery, table, values, var,
 };
 use crate::parse::_helpers::values::primary::variable;
-use crate::parse::constants::{COMPOUND_ASSIGNMENTS, UNION_OPERATOR};
-use crate::scan::models::{Token, TokenKind};
+use crate::parse::constants::{
+    COMPOUND_ASSIGNMENTS, CONFLICTING_LOCKS, ISOLATION_LEVELS, LOCK_GRANULARITIES,
+    PARAMETERIZED_FORCESEEK, SPATIAL_WINDOW_MAX_CELLS, TABLE_HINTS, UNION_OPERATOR,
+};
+use crate::scan::models::{NumberKind, Token, TokenKind};
 
 /// Words that end a select item or a table source rather than naming its alias.
 const NOT_ALIASES: [&str; 22] = [
@@ -48,26 +53,8 @@ const NOT_ALIASES: [&str; 22] = [
     "OFFSET",
 ];
 
-/// Table hints that are one word.
-const TABLE_HINTS: [&str; 17] = [
-    "NOLOCK",
-    "READUNCOMMITTED",
-    "UPDLOCK",
-    "REPEATABLEREAD",
-    "SERIALIZABLE",
-    "READCOMMITTED",
-    "TABLOCK",
-    "TABLOCKX",
-    "PAGLOCK",
-    "ROWLOCK",
-    "NOWAIT",
-    "READPAST",
-    "XLOCK",
-    "SNAPSHOT",
-    "NOEXPAND",
-    "HOLDLOCK",
-    "READCOMMITTEDLOCK",
-];
+/// The physical join hints that may stand between `INNER`, or a side and its `OUTER`, and `JOIN`; `REMOTE` only after `INNER` (1072).
+const JOIN_HINTS: [&str; 4] = ["LOOP", "HASH", "MERGE", "REMOTE"];
 
 fn empty_star(table: Option<Identifier>) -> Star {
     Star {
@@ -90,17 +77,15 @@ impl<'sql> Parser<'sql> {
         if let Some(with) = with {
             set_with(&mut query, with);
         }
+        let query: Expression = self.browse_clause(query)?;
         self.query_tail()?;
         Ok(query)
     }
 
-    /// The gap for a statement-level `OPTION (...)` or `FOR XML | JSON | BROWSE` after a query.
+    /// The gap for a statement-level `OPTION (...)` after a query.
     pub(crate) fn query_tail(&mut self) -> Parsing<()> {
         if self.kw("OPTION") && self.char_at(1, '(') {
             return Err(self.gap("query_option", self.offset()));
-        }
-        if self.kw("FOR") && self.kw_in(1, &["XML", "JSON", "BROWSE"]) {
-            return Err(self.gap("for_xml_json", self.offset()));
         }
         Ok(())
     }
@@ -133,7 +118,7 @@ impl<'sql> Parser<'sql> {
         }))
     }
 
-    /// A query expression with its `ORDER BY` and `OFFSET`/`FETCH`.
+    /// A query expression with its `ORDER BY`, `OFFSET`/`FETCH` and `FOR XML` or `FOR JSON`.
     pub(crate) fn query_expression(&mut self) -> Parsing<Expression> {
         self.deeper(|parser| {
             let mut query: Expression = parser.union_expression()?;
@@ -170,10 +155,7 @@ impl<'sql> Parser<'sql> {
                     _ => return Err(parser.gap("set_operation_order", parser.offset())),
                 }
             }
-            if parser.kw("FOR") && parser.kw_in(1, &["XML", "JSON", "BROWSE"]) {
-                return Err(parser.gap("for_xml_json", parser.offset()));
-            }
-            Ok(query)
+            parser.xml_or_json_clause(query)
         })
     }
 
@@ -478,14 +460,14 @@ impl<'sql> Parser<'sql> {
         }
     }
 
-    /// A table source, then any `PIVOT` or `UNPIVOT`.
+    /// A table source, then any `PIVOT` or `UNPIVOT`; only a table name takes `TABLESAMPLE` (156).
     fn table_source(&mut self) -> Parsing<Expression> {
         let source: Expression = self.deeper(|parser| parser.table_primary())?;
         if self.kw_in(0, &["PIVOT", "UNPIVOT"]) {
             return Err(self.gap("pivot", self.offset()));
         }
         if self.kw("TABLESAMPLE") {
-            return Err(self.gap("tablesample", self.offset()));
+            return Err(self.error());
         }
         Ok(source)
     }
@@ -586,7 +568,11 @@ impl<'sql> Parser<'sql> {
             .peek()
             .is_some_and(|token| token.kind == TokenKind::Variable)
         {
-            return Err(self.gap("table_variable", start));
+            let mut reference: TableRef = table(vec![identifier(&self.advance()?)]);
+            let explicit: bool = self.kw("AS");
+            reference.alias = self.table_alias()?;
+            reference.alias_explicit_as = explicit;
+            return Ok(Expression::Table(Box::new(reference)));
         }
         if self.kw("OPENJSON") && self.char_at(1, '(') {
             return self.open_json();
@@ -613,11 +599,14 @@ impl<'sql> Parser<'sql> {
         }
         let mut reference: TableRef = table(name);
         if self.kw("FOR") && self.kw_at(1, "SYSTEM_TIME") {
-            return Err(self.gap("system_time", start));
+            reference.version = Some(Box::new(self.system_time()?));
         }
         let explicit: bool = self.kw("AS");
         reference.alias = self.table_alias()?;
         reference.alias_explicit_as = explicit;
+        if self.kw("TABLESAMPLE") {
+            reference.table_sample = Some(Box::new(self.table_sample()?));
+        }
         let old_style_hint: Option<String> = self
             .word_at(1)
             .filter(|word| TABLE_HINTS.contains(&word.as_str()));
@@ -631,27 +620,193 @@ impl<'sql> Parser<'sql> {
                 expressions: vec![var(&word)],
             }))];
         } else if self.kw("WITH") && self.char_at(1, '(') {
-            self.at += 2;
-            let mut hints: Vec<Expression> = Vec::new();
-            loop {
-                match self.word_at(0) {
-                    Some(word) if TABLE_HINTS.contains(&word.as_str()) => {
-                        self.at += 1;
-                        hints.push(var(&word));
-                    }
-                    Some(_) => return Err(self.gap("table_hint", self.offset())),
-                    None => return Err(self.error()),
-                }
-                if !self.eat_char(',') && self.is_char(')') {
-                    break;
-                }
-            }
-            self.expect_char(')')?;
-            reference.hints = vec![Expression::WithTableHint(Box::new(WithTableHint {
-                expressions: hints,
-            }))];
+            reference.hints = vec![self.table_hints(&[])?];
         }
         Ok(Expression::Table(Box::new(reference)))
+    }
+
+    /// `FOR SYSTEM_TIME { AS OF b | FROM b TO b | BETWEEN b AND b | CONTAINED IN (b, b) | ALL }`, the cursor at `FOR`.
+    fn system_time(&mut self) -> Parsing<Version> {
+        self.at += 2;
+        let (kind, bounds): (&str, Vec<Expression>) = if self.eat_kw("ALL") {
+            ("ALL", Vec::new())
+        } else if self.kw("AS") && self.kw_at(1, "OF") {
+            self.at += 2;
+            ("AS OF", vec![self.system_time_bound()?])
+        } else if self.eat_kw("FROM") {
+            let from: Expression = self.system_time_bound()?;
+            self.expect_kw("TO")?;
+            ("FROM", vec![from, self.system_time_bound()?])
+        } else if self.eat_kw("BETWEEN") {
+            let from: Expression = self.system_time_bound()?;
+            self.expect_kw("AND")?;
+            ("BETWEEN", vec![from, self.system_time_bound()?])
+        } else if self.kw("CONTAINED") && self.kw_at(1, "IN") {
+            self.at += 2;
+            self.expect_char('(')?;
+            let from: Expression = self.system_time_bound()?;
+            self.expect_char(',')?;
+            let to: Expression = self.system_time_bound()?;
+            self.expect_char(')')?;
+            ("CONTAINED IN", vec![from, to])
+        } else {
+            return Err(self.error());
+        };
+        let expression: Option<Box<Expression>> = match bounds.len() {
+            0 => None,
+            1 => bounds.into_iter().next().map(Box::new),
+            _ => Some(Box::new(Expression::Tuple(Box::new(Tuple {
+                expressions: bounds,
+            })))),
+        };
+        Ok(Version {
+            this: Box::new(Expression::Identifier(Identifier::new("SYSTEM_TIME"))),
+            kind: kind.to_owned(),
+            expression,
+        })
+    }
+
+    /// `WITH ( hint [[,] hint ...] )`, the cursor at `WITH`, checked as SQL Server checks the hints of one table; `refused` holds those not allowed where the table stands.
+    pub(crate) fn table_hints(&mut self, refused: &[(&str, &str)]) -> Parsing<Expression> {
+        self.at += 2;
+        let (mut hints, mut names): (Vec<Expression>, Vec<String>) = (Vec::new(), Vec::new());
+        loop {
+            let Some(word) = self.word_at(0) else {
+                return Err(self.error());
+            };
+            let (hint, name): (Expression, &str) = match word.as_str() {
+                "INDEX" => {
+                    self.at += 1;
+                    let values: Vec<Expression> = match self.eat_char('=') {
+                        true => vec![self.index_value()?],
+                        false => self.parenthesized(Parser::index_value)?,
+                    };
+                    (index_hint("INDEX", values, None), "INDEX")
+                }
+                "FORCESEEK" if self.char_at(1, '(') => {
+                    self.at += 2;
+                    let index: Expression = self.index_value()?;
+                    let columns: Vec<Expression> =
+                        self.parenthesized(|parser| Ok(Expression::Identifier(parser.name()?)))?;
+                    self.expect_char(')')?;
+                    let columns = Expression::Tuple(Box::new(Tuple {
+                        expressions: columns,
+                    }));
+                    (
+                        index_hint("FORCESEEK", vec![index], Some(columns)),
+                        "FORCESEEK()",
+                    )
+                }
+                SPATIAL_WINDOW_MAX_CELLS => {
+                    let first: usize = self.at;
+                    self.at += 1;
+                    self.expect_char('=')?;
+                    let cells: Expression = self.integer()?;
+                    let hint: Expression =
+                        self.binary(first, Expression::PropertyEQ, var(&word), cells);
+                    (hint, SPATIAL_WINDOW_MAX_CELLS)
+                }
+                hint if TABLE_HINTS.contains(&hint) => {
+                    self.at += 1;
+                    (var(hint), hint)
+                }
+                _ => {
+                    let raw: String = self.tokens[self.at].value.clone();
+                    return Err(self.error_with(&format!(
+                        "\"{raw}\" is not a recognized table hints option."
+                    )));
+                }
+            };
+            if let Some((_, message)) = refused.iter().find(|(hint, _)| *hint == name) {
+                return Err(self.error_with(message));
+            }
+            hints.push(hint);
+            names.push(name.to_owned());
+            if !self.eat_char(',') && self.is_char(')') {
+                break;
+            }
+        }
+        self.expect_char(')')?;
+        if let Some(message) = hint_conflict(&names) {
+            return Err(self.error_with(message));
+        }
+        Ok(Expression::WithTableHint(Box::new(WithTableHint {
+            expressions: hints,
+        })))
+    }
+
+    /// An index in a table hint: its name, or its id as an integer.
+    fn index_value(&mut self) -> Parsing<Expression> {
+        match self.peek().map(|token| token.kind) {
+            Some(TokenKind::Number(_)) => self.integer(),
+            _ => Ok(Expression::Identifier(self.name()?)),
+        }
+    }
+
+    /// An unsigned integer literal.
+    fn integer(&mut self) -> Parsing<Expression> {
+        match self.peek().map(|token| token.kind) {
+            Some(TokenKind::Number(NumberKind::Integer)) => self.primary_value(),
+            _ => Err(self.error()),
+        }
+    }
+
+    /// `TABLESAMPLE [SYSTEM] (size [PERCENT | ROWS]) [REPEATABLE (seed)]`, the cursor at `TABLESAMPLE`.
+    fn table_sample(&mut self) -> Parsing<Sample> {
+        self.at += 1;
+        let explicit_method: bool = self.eat_kw("SYSTEM");
+        self.expect_char('(')?;
+        let size: Expression = self.scalar()?;
+        let is_percent: bool = self.eat_kw("PERCENT");
+        let rows: bool = !is_percent && self.eat_kw("ROWS");
+        self.expect_char(')')?;
+        let seed: Option<Expression> = match self.eat_kw("REPEATABLE") {
+            true => {
+                self.expect_char('(')?;
+                let seed: Expression = self.scalar()?;
+                self.expect_char(')')?;
+                Some(seed)
+            }
+            false => None,
+        };
+        Ok(Sample {
+            method: match (explicit_method, rows) {
+                (true, _) => SampleMethod::System,
+                (false, true) => SampleMethod::Row,
+                (false, false) => SampleMethod::Percent,
+            },
+            size,
+            seed,
+            offset: None,
+            unit_after_size: is_percent || rows,
+            use_sample_keyword: false,
+            explicit_method,
+            method_before_size: explicit_method,
+            use_seed_keyword: false,
+            bucket_numerator: None,
+            bucket_denominator: None,
+            bucket_field: None,
+            is_using_sample: false,
+            is_percent,
+            suppress_method_output: false,
+        })
+    }
+
+    /// A `FOR SYSTEM_TIME` bound: a constant, `NULL` or a variable; SQL Server refuses an expression there (102).
+    fn system_time_bound(&mut self) -> Parsing<Expression> {
+        match self.peek().map(|token| token.kind) {
+            Some(
+                TokenKind::String { .. }
+                | TokenKind::Number(_)
+                | TokenKind::Variable
+                | TokenKind::Char('{'),
+            ) => self.primary_value(),
+            _ if self.kw("NULL") => {
+                self.at += 1;
+                Ok(null())
+            }
+            _ => Err(self.error()),
+        }
     }
 
     /// `name ( [value | DEFAULT, ...] ) [[AS] alias [(columns)]]`, a table-valued function, the cursor at the `(`.
@@ -772,6 +927,11 @@ impl<'sql> Parser<'sql> {
     fn joins(&mut self) -> Parsing<Vec<Join>> {
         let mut joins: Vec<Join> = Vec::new();
         loop {
+            let hint_at = |offset: usize| -> bool {
+                self.word_at(offset)
+                    .is_some_and(|word| JOIN_HINTS.contains(&word.as_str()))
+                    && self.kw_at(offset + 1, "JOIN")
+            };
             let (kind, words, keywords): (JoinKind, usize, (bool, bool)) =
                 match (self.word_at(0).as_deref(), self.word_at(1).as_deref()) {
                     (Some("CROSS"), Some("JOIN")) => (JoinKind::Cross, 2, (false, false)),
@@ -779,28 +939,41 @@ impl<'sql> Parser<'sql> {
                     (Some("OUTER"), Some("APPLY")) => (JoinKind::OuterApply, 2, (false, false)),
                     (Some("JOIN"), _) => (JoinKind::Inner, 1, (false, false)),
                     (Some("INNER"), Some("JOIN")) => (JoinKind::Inner, 2, (true, false)),
+                    (Some("INNER"), Some(_)) => match hint_at(1) {
+                        true => (JoinKind::Inner, 3, (true, false)),
+                        false => return Err(self.error_at(self.at + 1)),
+                    },
                     (Some(side @ ("LEFT" | "RIGHT" | "FULL")), Some(next)) => {
                         let kind: JoinKind = match side {
                             "LEFT" => JoinKind::Left,
                             "RIGHT" => JoinKind::Right,
                             _ => JoinKind::Full,
                         };
-                        match next {
-                            "JOIN" => (kind, 2, (false, false)),
-                            "OUTER" if self.kw_at(2, "JOIN") => (kind, 3, (false, true)),
-                            "OUTER" | "LOOP" | "HASH" | "MERGE" | "REMOTE" => {
-                                return Err(self.gap("join_hint", self.offset()));
+                        let outer: bool = self.kw_at(1, "OUTER");
+                        let at: usize = 1 + usize::from(outer);
+                        match (self.kw_at(at, "JOIN"), hint_at(at)) {
+                            (true, _) => (kind, at + 1, (false, outer)),
+                            (false, true) if self.kw_at(at, "REMOTE") => {
+                                return Err(self.error_at(self.at + at));
                             }
-                            _ => return Ok(joins),
+                            (false, true) => (kind, at + 2, (false, outer)),
+                            (false, false) if outer || JOIN_HINTS.contains(&next) => {
+                                return Err(self.error_at(self.at + at));
+                            }
+                            (false, false) => return Ok(joins),
                         }
                     }
-                    (Some("INNER" | "LOOP" | "HASH" | "MERGE" | "REMOTE"), Some(_))
+                    (Some("LOOP" | "HASH" | "MERGE" | "REMOTE"), Some(_))
                         if !self.kw_at(0, "MERGE") || self.kw_at(1, "JOIN") =>
                     {
-                        return Err(self.gap("join_hint", self.offset()));
+                        return Err(self.error());
                     }
                     _ => return Ok(joins),
                 };
+            let hint: Option<String> = words
+                .checked_sub(2)
+                .and_then(|at| self.word_at(at))
+                .filter(|word| JOIN_HINTS.contains(&word.as_str()));
             self.at += words;
             let right: Expression = self.table_source()?;
             let constraint: JoinConstraint = match kind {
@@ -816,9 +989,68 @@ impl<'sql> Parser<'sql> {
                     JoinConstraint::On(Box::new(self.condition()?))
                 }
             };
-            joins.push(join(right, kind, constraint, keywords));
+            let mut node: Join = join(right, kind, constraint, keywords);
+            node.join_hint = hint;
+            joins.push(node);
         }
     }
+}
+
+/// An `INDEX` or parameterized `FORCESEEK` table hint.
+fn index_hint(name: &str, values: Vec<Expression>, columns: Option<Expression>) -> Expression {
+    Expression::IndexTableHint(Box::new(IndexTableHint {
+        this: Box::new(var(name)),
+        expressions: values,
+        target: columns.map(Box::new),
+    }))
+}
+
+/// Whether `names` holds any of `hints`.
+fn names_any(names: &[String], hints: &[&str]) -> bool {
+    names.iter().any(|name| hints.contains(&name.as_str()))
+}
+
+/// SQL Server's error for one table's hints that cannot stand together, by the name of each hint.
+fn hint_conflict(names: &[String]) -> Option<&'static str> {
+    let has = |hint: &str| names.iter().any(|name| name == hint);
+    let levels: usize = ISOLATION_LEVELS
+        .iter()
+        .filter(|level| names_any(names, level))
+        .count();
+    let granularities: usize = LOCK_GRANULARITIES.iter().filter(|hint| has(hint)).count();
+    let dirty: bool = names_any(names, ISOLATION_LEVELS[0]);
+    let locks: bool = (granularities > 0 || has("UPDLOCK") || has("XLOCK")) && dirty;
+    let seeks: usize = names
+        .iter()
+        .filter(|name| *name == PARAMETERIZED_FORCESEEK)
+        .count();
+    if levels > 1 || granularities > 1 || (has("UPDLOCK") && has("XLOCK")) || locks {
+        return Some(CONFLICTING_LOCKS);
+    }
+    if has("FORCESCAN") && (has("FORCESEEK") || seeks > 0) {
+        return Some(
+            "The FORCESCAN hint is specified simultaneously with the FORCESEEK hint. Remove one of the hints and resubmit the query.",
+        );
+    }
+    if seeks > 1 {
+        return Some(
+            "There are multiple FORCESEEK hints specified on the same table or view. Remove the extra FORCESEEK hints and resubmit the query.",
+        );
+    }
+    if seeks > 0 && (has("INDEX") || has("FORCESEEK")) {
+        return Some(
+            "The parameterized FORCESEEK hint cannot be simultaneously used with INDEX hints or a non-parameterized FORCESEEK hint on the same object.",
+        );
+    }
+    if names
+        .iter()
+        .filter(|name| *name == SPATIAL_WINDOW_MAX_CELLS)
+        .count()
+        > 1
+    {
+        return Some("The SPATIAL_WINDOW_MAX_CELLS hint cannot be specified more than once.");
+    }
+    None
 }
 
 /// Puts a `WITH` on the query it heads.

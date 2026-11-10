@@ -426,3 +426,95 @@ pub(crate) const MAX_DEPTH: usize = 512;
 /// The engine's error 10704 for a THROW without arguments outside a CATCH block.
 pub(crate) const THROW_OUTSIDE_CATCH: &str =
     "To rethrow an error, a THROW statement must be used inside a CATCH block.";
+
+/// The modes a `FOR XML` clause may name.
+pub(crate) const XML_MODES: [&str; 4] = ["RAW", "AUTO", "EXPLICIT", "PATH"];
+/// The `FOR XML` modes that take an element name, as in `PATH('row')`.
+pub(crate) const NAMED_XML_MODES: [&str; 2] = ["RAW", "PATH"];
+/// The modes a `FOR JSON` clause may name.
+pub(crate) const JSON_MODES: [&str; 2] = ["AUTO", "PATH"];
+/// The `FOR JSON` option that names a root element.
+pub(crate) const JSON_ROOT: &str = "ROOT";
+/// The `FOR JSON` option that leaves out the array brackets, which a root element cannot go with.
+pub(crate) const JSON_WITHOUT_ARRAY_WRAPPER: &str = "WITHOUT_ARRAY_WRAPPER";
+/// SQL Server's error 13620, for a `FOR JSON` clause with both ROOT and WITHOUT_ARRAY_WRAPPER.
+pub(crate) const JSON_ROOT_WITHOUT_WRAPPER: &str = "ROOT option and WITHOUT_ARRAY_WRAPPER option cannot be used together in FOR JSON. Remove one of these options.";
+/// SQL Server's error 198, for `FOR BROWSE` after a set operation.
+pub(crate) const BROWSE_IN_SET_OPERATION: &str =
+    "Browse mode is invalid for statements containing a UNION, INTERSECT or EXCEPT operator.";
+/// SQL Server's error 176, for `FOR BROWSE` anywhere but after a statement's own query.
+pub(crate) const BROWSE_NESTED: &str = "The FOR BROWSE clause is no longer supported in views.";
+/// SQL Server's error 171, for `FOR BROWSE` after the query of an INSERT or a SELECT INTO.
+pub(crate) const BROWSE_WITH_WRITE: &str =
+    "Browse mode cannot be used with INSERT, SELECT INTO, or UPDATE statements.";
+
+/// The table hints that are one word, besides `FORCESEEK` with its index and columns.
+pub(crate) const TABLE_HINTS: [&str; 23] = [
+    "NOLOCK",
+    "READUNCOMMITTED",
+    "UPDLOCK",
+    "REPEATABLEREAD",
+    "SERIALIZABLE",
+    "READCOMMITTED",
+    "TABLOCK",
+    "TABLOCKX",
+    "PAGLOCK",
+    "ROWLOCK",
+    "NOWAIT",
+    "READPAST",
+    "XLOCK",
+    "SNAPSHOT",
+    "NOEXPAND",
+    "HOLDLOCK",
+    "READCOMMITTEDLOCK",
+    "FORCESEEK",
+    "FORCESCAN",
+    "KEEPIDENTITY",
+    "KEEPDEFAULTS",
+    "IGNORE_CONSTRAINTS",
+    "IGNORE_TRIGGERS",
+];
+/// The isolation levels table hints name, the read-uncommitted one first; a table's hints name at most one (1047).
+pub(crate) const ISOLATION_LEVELS: [&[&str]; 6] = [
+    &["NOLOCK", "READUNCOMMITTED"],
+    &["READCOMMITTED"],
+    &["READCOMMITTEDLOCK"],
+    &["REPEATABLEREAD"],
+    &["SERIALIZABLE", "HOLDLOCK"],
+    &["SNAPSHOT"],
+];
+/// The lock granularities table hints name; a table's hints name at most one, and none with read-uncommitted (1047).
+pub(crate) const LOCK_GRANULARITIES: [&str; 4] = ["ROWLOCK", "PAGLOCK", "TABLOCK", "TABLOCKX"];
+/// How the table-hint checks name a `FORCESEEK` that names its index and columns.
+pub(crate) const PARAMETERIZED_FORCESEEK: &str = "FORCESEEK()";
+/// The table hint that caps the cells a spatial index search reads, given once at most (1017).
+pub(crate) const SPATIAL_WINDOW_MAX_CELLS: &str = "SPATIAL_WINDOW_MAX_CELLS";
+/// SQL Server's error 1047, for one table's locking hints that cannot stand together.
+pub(crate) const CONFLICTING_LOCKS: &str = "Conflicting locking hints specified.";
+/// The hints SQL Server refuses on the target of an INSERT, UPDATE or DELETE, each with its error (1069, 10724, 10745, 1065).
+pub(crate) const DML_TARGET_REFUSED_HINTS: [(&str, &str); 6] = [
+    ("INDEX", INDEX_HINT_IN_TARGET),
+    (
+        "FORCESEEK",
+        "The FORCESEEK hint is not allowed for target tables of INSERT, UPDATE, or DELETE statements.",
+    ),
+    (
+        PARAMETERIZED_FORCESEEK,
+        "The FORCESEEK hint is not allowed for target tables of INSERT, UPDATE, or DELETE statements.",
+    ),
+    (
+        "FORCESCAN",
+        "The FORCESCAN hint is not allowed for target tables of INSERT, UPDATE, or DELETE statements.",
+    ),
+    ("NOLOCK", DIRTY_READ_IN_TARGET),
+    ("READUNCOMMITTED", DIRTY_READ_IN_TARGET),
+];
+/// The hints SQL Server refuses on the target of a MERGE (1065).
+pub(crate) const MERGE_TARGET_REFUSED_HINTS: [(&str, &str); 2] = [
+    ("NOLOCK", DIRTY_READ_IN_TARGET),
+    ("READUNCOMMITTED", DIRTY_READ_IN_TARGET),
+];
+/// SQL Server's error 1069, for an index hint on the target of an INSERT, UPDATE or DELETE.
+const INDEX_HINT_IN_TARGET: &str = "Index hints are only allowed in a FROM or OPTION clause.";
+/// SQL Server's error 1065, for a read-uncommitted hint on the target of a write.
+const DIRTY_READ_IN_TARGET: &str = "The NOLOCK and READUNCOMMITTED lock hints are not allowed for target tables of INSERT, UPDATE, DELETE or MERGE statements.";

@@ -52,3 +52,7 @@ pub(crate) const OPAQUE_STATEMENT_FAILURE: &str =
 pub(crate) const BATCH_SEPARATOR_FAILURE: &str = "formatter does not lay out a GO batch separator, which a client reads and SQL Server never sees";
 /// The word a SQL Server client reads, alone on its line, as the end of a batch.
 pub(crate) const BATCH_SEPARATOR: &str = "GO";
+/// Words that after `FOR` start a clause listing a query's result options, as in `FOR XML PATH, TYPE`.
+pub(crate) const FOR_CLAUSES: [&str; 2] = ["XML", "JSON"];
+/// Physical join hints, which stand between a join prefix and `JOIN`, as in `LEFT OUTER HASH JOIN`.
+pub(crate) const JOIN_HINTS: [&str; 4] = ["LOOP", "HASH", "MERGE", "REMOTE"];
