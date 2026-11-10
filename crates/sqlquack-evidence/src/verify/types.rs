@@ -8,7 +8,7 @@ use crate::cases::models::LoadedCase;
 use crate::verify::models::Conversion;
 
 /// Turns a case's source SQL into DuckDB SQL, or refuses.
-pub trait CaseConverter: std::fmt::Debug {
+pub trait CaseConverter: std::fmt::Debug + Sync {
     /// The conversion of `case`.
     fn convert(&self, case: &LoadedCase) -> Conversion;
 

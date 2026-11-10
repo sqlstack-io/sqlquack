@@ -254,6 +254,12 @@ pub struct VerifyArguments {
     /// Write the bytes of DuckDB SQL each converted case emits as JSON, for the size ratchet.
     #[arg(long)]
     pub sql_sizes: Option<PathBuf>,
+    /// Reuse this file's judgements of unchanged cases, replay the rest, and rewrite the file.
+    #[arg(long)]
+    pub replay_cache: Option<PathBuf>,
+    /// What else judgements depend on; a cache written under another scope is not reused.
+    #[arg(long, default_value = "", requires = "replay_cache")]
+    pub replay_scope: String,
     /// Where coverage is checked against.
     #[command(flatten)]
     pub coverage: CoverageArguments,

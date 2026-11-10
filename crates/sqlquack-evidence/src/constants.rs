@@ -121,3 +121,6 @@ pub const COMPILE_ERROR_SQLSTATE_CLASSES: &[&str] = &["0A", "42"];
 
 /// The sidecar outcome of a recording that holds rows.
 pub(crate) const ROWS_OUTCOME: &str = "rows";
+
+/// The version of the replay cache file; a file of another version is ignored.
+pub const REPLAY_CACHE_FORMAT: &str = "sqlquack-replay-cache/1";

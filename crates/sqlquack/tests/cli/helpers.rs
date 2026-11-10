@@ -11,7 +11,7 @@ use walkdir::WalkDir;
 use crate::test_types::{
     CommandOutcome, CompareTestCase, ConvertOutcome, CoverageOutcome, DivergenceOutcome,
     ErrorCheckOutcome, FunctionMacroOutcome, FunctionStdinOutcome, ProjectFile, ProjectOutcome,
-    ProjectTestCase, ReviewOutcome, ReviewedRepository,
+    ProjectTestCase, ReplayCacheOutcome, ReviewOutcome, ReviewedRepository,
 };
 
 fn repository_root() -> PathBuf {
@@ -1094,6 +1094,86 @@ pub(crate) fn compare_outcome(test_case: &CompareTestCase) -> String {
 
 /// Each statement `verify --translation-statements` writes for the batch-2 aggregates and fidelity.
 pub(crate) fn translation_statements() -> Vec<serde_json::Value> {
+    translation_statements_in(aggregate_evidence().path())
+}
+
+/// The statements `verify --translation-statements` writes for the evidence folder `directory`.
+fn translation_statements_in(directory: &Path) -> Vec<serde_json::Value> {
+    let status = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+        .args(["verify", "--translation-statements", "statements.json"])
+        .current_dir(directory)
+        .status()
+        .expect("sqlquack runs");
+    assert!(status.success(), "verify fails: {status}");
+    let written: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(directory.join("statements.json")).expect("written"),
+    )
+    .expect("statements parse");
+    assert_eq!(written["format"], "sqlquack-translation-statements/1");
+    written["statements"]
+        .as_array()
+        .cloned()
+        .unwrap_or_default()
+}
+
+/// Two `verify --json --replay-cache` runs over the aggregate cases, `between` run between them.
+pub(crate) fn replay_cache_runs(second_scope: &str, between: fn(&Path)) -> ReplayCacheOutcome {
+    let directory = aggregate_evidence();
+    let verify = |scope: &str| {
+        let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+            .args(["verify", "--json", "--replay-cache", "cache.json"])
+            .args(["--replay-scope", scope])
+            .current_dir(directory.path())
+            .output()
+            .expect("sqlquack runs");
+        assert!(output.status.success(), "verify fails: {output:?}");
+        let stderr = String::from_utf8_lossy(&output.stderr).into_owned();
+        (output.stdout, reuse_counts(&stderr))
+    };
+    let (first_report, (first_reused, _)) = verify("");
+    between(directory.path());
+    let (second_report, (second_reused, second_made)) = verify(second_scope);
+    ReplayCacheOutcome {
+        first_reused,
+        second_replayed: (second_made - second_reused).min(2),
+        second_reused_any: second_reused > 0,
+        same_report: first_report == second_report,
+    }
+}
+
+/// Leaves the evidence folder as it is.
+pub(crate) fn unchanged_evidence(_: &Path) {}
+
+/// Truncates the replay cache the first run wrote in the folder `directory`.
+pub(crate) fn truncate_cache(directory: &Path) {
+    std::fs::write(
+        directory.join("cache.json"),
+        "{\"format\": \"sqlquack-replay",
+    )
+    .expect("cut");
+}
+
+/// Re-dates the recording of the aggregate case `any_value_all_null` in the folder `directory`.
+pub(crate) fn redate_one_recording(directory: &Path) {
+    let statements = translation_statements_in(directory);
+    let hash = statements
+        .iter()
+        .find(|statement| {
+            statement["reference"] == "aggregate/aggregates_batch2.toml#any_value_all_null"
+        })
+        .and_then(|statement| statement["hash"].as_str())
+        .expect("the case's hash")
+        .to_owned();
+    let path = directory.join(format!("evidence/results/{hash}.json"));
+    let mut metadata: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&path).expect("metadata read"))
+            .expect("metadata parses");
+    metadata["recorded_at"] = "2001-02-03T04:05:06Z".into();
+    std::fs::write(&path, metadata.to_string()).expect("metadata written");
+}
+
+/// A folder holding the evidence pin, the fidelity cases, one aggregate case file and every result.
+fn aggregate_evidence() -> tempfile::TempDir {
     let directory = tempfile::tempdir().expect("temporary directory");
     copy_evidence(directory.path());
     copy_files(
@@ -1108,21 +1188,27 @@ pub(crate) fn translation_statements() -> Vec<serde_json::Value> {
     )
     .expect("case copied");
     copy_files(&results_dir(), &directory.path().join("evidence/results"));
-    let status = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["verify", "--translation-statements", "statements.json"])
-        .current_dir(directory.path())
-        .status()
-        .expect("sqlquack runs");
-    assert!(status.success(), "verify fails: {status}");
-    let written: serde_json::Value = serde_json::from_str(
-        &std::fs::read_to_string(directory.path().join("statements.json")).expect("written"),
-    )
-    .expect("statements parse");
-    assert_eq!(written["format"], "sqlquack-translation-statements/1");
-    written["statements"]
-        .as_array()
-        .cloned()
-        .unwrap_or_default()
+    directory
+}
+
+/// The reused and total judgements `verify`'s replay cache line reports.
+fn reuse_counts(stderr: &str) -> (usize, usize) {
+    let line = stderr
+        .lines()
+        .find_map(|line| line.strip_prefix("sqlquack verify: reused "))
+        .expect("the replay cache line");
+    let mut numbers = line
+        .split(' ')
+        .filter_map(|word| word.parse::<usize>().ok());
+    let counts = (
+        numbers.next().expect("reused"),
+        numbers.next().expect("made"),
+    );
+    assert!(
+        counts.1 > 2,
+        "too few judgements to tell one from many: {line}"
+    );
+    counts
 }
 
 /// The first refusal's help converting `sql` under the repository policy, its path as `<policy>`.

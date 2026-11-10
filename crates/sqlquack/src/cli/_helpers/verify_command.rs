@@ -22,10 +22,12 @@ use sqlquack_evidence::replay::models::ReplaySettings;
 use sqlquack_evidence::results::main::load_recording::load_recording;
 use sqlquack_evidence::results::main::load_session_defaults::load_session_defaults;
 use sqlquack_evidence::verify::main::judge_recording::judge_recording;
+use sqlquack_evidence::verify::main::load_replay_cache::load_replay_cache;
+use sqlquack_evidence::verify::main::save_replay_cache::save_replay_cache;
 use sqlquack_evidence::verify::main::verify_cases::verify_cases;
 use sqlquack_evidence::verify::models::RecordingMatch;
 use sqlquack_evidence::verify::models::{
-    CaseVerdict, Conversion, ErrorCheck, Verdict, VerifyInputs, VerifyReport,
+    CaseVerdict, Conversion, ErrorCheck, ReplayCache, Verdict, VerifyInputs, VerifyReport,
 };
 use sqlquack_evidence::verify::types::CaseConverter;
 use sqlquack_policy::policy::constants::{HASH_DIVERGENCE, PROJECT_UDF};
@@ -58,7 +60,12 @@ pub(crate) fn verify_command(
         "sqlquack verify: loading cases and replaying recorded ones on DuckDB…"
     );
     let (evidence, report) = match verify(arguments) {
-        Ok(verified) => verified,
+        Ok((evidence, report, reuse)) => {
+            if let Some(reuse) = reuse {
+                let _ = writeln!(stderr, "sqlquack verify: {reuse}");
+            }
+            (evidence, report)
+        }
         Err(error) => {
             let _ = writeln!(stderr, "sqlquack verify: failed: {error}");
             return ExitCode::FAILURE;
@@ -196,12 +203,36 @@ pub(crate) fn verify_command(
     }
 }
 
-fn verify(arguments: &VerifyArguments) -> Result<(Evidence, VerifyReport), String> {
-    run_verification(
+/// The evidence and report, and when a replay cache was used, how many judgements it reused.
+fn verify(arguments: &VerifyArguments) -> Result<(Evidence, VerifyReport, Option<String>), String> {
+    let Some(path) = &arguments.replay_cache else {
+        let (evidence, report) = run_verification(
+            &arguments.paths,
+            (Some(&arguments.audit_results), None),
+            arguments.python.as_deref(),
+        )?;
+        return Ok((evidence, report, None));
+    };
+    let cache =
+        load_replay_cache(path, &arguments.replay_scope).map_err(|error| error.to_string())?;
+    let (evidence, report) = run_verification(
         &arguments.paths,
-        Some(&arguments.audit_results),
+        (Some(&arguments.audit_results), Some(&cache)),
         arguments.python.as_deref(),
-    )
+    )?;
+    let made = save_replay_cache(path, &cache).map_err(|error| error.to_string())?;
+    let reused = cache
+        .made
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+        .keys()
+        .filter(|key| cache.known.contains_key(*key))
+        .count();
+    let reuse = format!(
+        "reused {reused} of {made} judgements from {}, replaying the rest",
+        path.display()
+    );
+    Ok((evidence, report, Some(reuse)))
 }
 
 /// The coverage report, or why it could not be made.
@@ -351,7 +382,7 @@ fn render_coverage(coverage: &CoverageReport) -> String {
 /// Loads the evidence and verifies every case with the production converter.
 pub(crate) fn run_verification(
     paths: &EvidencePaths,
-    audit_results: Option<&Path>,
+    (audit_results, replay_cache): (Option<&Path>, Option<&ReplayCache>),
     python: Option<&Path>,
 ) -> Result<(Evidence, VerifyReport), String> {
     let evidence = load_evidence(paths)?;
@@ -376,6 +407,7 @@ pub(crate) fn run_verification(
         failure_modes: &failure_modes,
         audit_results,
         session_defaults: session_defaults.as_ref(),
+        replay_cache,
     })
     .map_err(|error| error.to_string())?;
     Ok((evidence, report))

@@ -1491,6 +1491,7 @@ version = "0.4.1"
 dependencies = [
  "arrow",
  "duckdb",
+ "rayon",
  "serde",
  "serde_json",
  "sha2",

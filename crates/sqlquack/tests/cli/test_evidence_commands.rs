@@ -1,6 +1,10 @@
-use crate::helpers::{pending_flags, run_on_repository_cases, translation_statements};
+use crate::helpers::{
+    pending_flags, redate_one_recording, replay_cache_runs, run_on_repository_cases,
+    translation_statements, truncate_cache, unchanged_evidence,
+};
 use crate::test_types::{
-    CommandOutcome, CommandTestCase, PendingFlagsTestCase, TranslationStatementTestCase,
+    CommandOutcome, CommandTestCase, PendingFlagsTestCase, ReplayCacheOutcome, ReplayCacheTestCase,
+    TranslationStatementTestCase,
 };
 
 #[test]
@@ -191,4 +195,62 @@ fn given_recorded_cases_when_verify_writes_translation_statements_then_each_outc
         })
         .count();
     assert_eq!(aggregates, 50);
+}
+
+#[test]
+fn given_a_replay_cache_when_verifying_again_then_only_cases_whose_inputs_changed_replay() {
+    let test_cases = [
+        ReplayCacheTestCase {
+            description: "an unchanged rerun reuses every judgement and prints the same report",
+            second_scope: "",
+            between_runs: unchanged_evidence,
+            expected_outcome: ReplayCacheOutcome {
+                first_reused: 0,
+                second_replayed: 0,
+                second_reused_any: true,
+                same_report: true,
+            },
+        },
+        ReplayCacheTestCase {
+            description: "a cache written under another scope is not reused",
+            second_scope: "another engine",
+            between_runs: unchanged_evidence,
+            expected_outcome: ReplayCacheOutcome {
+                first_reused: 0,
+                second_replayed: 2,
+                second_reused_any: false,
+                same_report: true,
+            },
+        },
+        ReplayCacheTestCase {
+            description: "a truncated cache replays every case instead of failing",
+            second_scope: "",
+            between_runs: truncate_cache,
+            expected_outcome: ReplayCacheOutcome {
+                first_reused: 0,
+                second_replayed: 2,
+                second_reused_any: false,
+                same_report: true,
+            },
+        },
+        ReplayCacheTestCase {
+            description: "a re-recorded case replays alone",
+            second_scope: "",
+            between_runs: redate_one_recording,
+            expected_outcome: ReplayCacheOutcome {
+                first_reused: 0,
+                second_replayed: 1,
+                second_reused_any: true,
+                same_report: true,
+            },
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            replay_cache_runs(test_case.second_scope, test_case.between_runs),
+            test_case.expected_outcome,
+            "{}",
+            test_case.description
+        );
+    }
 }

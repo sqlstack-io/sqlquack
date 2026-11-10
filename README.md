@@ -84,6 +84,12 @@ make check-convert DIALECT=snowflake   # replay recorded translations on DuckDB
 | `make record-syntax DIALECT=duckdb` | Record evidence for new syntax cases |
 | `make check-convert DIALECT=snowflake [CASES=temporal]` | Replay recorded translations on DuckDB (offline) |
 | `make record-convert DIALECT=snowflake` | Record new translation cases on Snowflake |
+| `make verify-changed` | Replay only the cases whose conversion or recording changed since its last run |
+| `make check-merge` | The static checks and the Rust tests every change must pass |
+| `make test-crate CRATE=sqlquack-evidence` | One crate's tests |
+| `make python-api` | Build the Python module and run its API tests |
+
+A pull request runs what its changed files need. Documentation and website changes build and check the site. Other changes run `make check-merge`, the Python tests and the replay. The replay reuses main's judgement for every case whose conversion and recording are unchanged, and replays only the rest. A change under one of the full-replay paths in `scripts/replay_scope/constants.py` replays every case: the DuckDB pin, the lock files, the replay, comparison and policy crates, the error kinds, CI's toolchain and the evidence pin. A change outside every crate the `sqlquack` binary is built from replays nothing.
 
 Recording needs the dialect's engine: DuckDB and SQLite record locally, while Snowflake, BigQuery and Databricks need a connection. Recording Snowflake syntax evidence isn't public yet. `make help` lists every target.
 

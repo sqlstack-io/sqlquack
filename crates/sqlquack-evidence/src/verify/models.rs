@@ -2,8 +2,9 @@
 
 use std::collections::BTreeMap;
 use std::path::Path;
+use std::sync::Mutex;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use sqlquack_compare::comparison::models::Mismatch;
 use sqlquack_diagnostics::failures::models::ErrorKind;
 use sqlquack_diagnostics::provenance::models::Provenance;
@@ -41,7 +42,7 @@ pub enum Conversion {
 }
 
 /// The verdict for one case.
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "verdict", rename_all = "snake_case")]
 pub enum Verdict {
     /// No result is recorded yet.
@@ -53,7 +54,7 @@ pub enum Verdict {
         /// The refused construct keys, sorted.
         constructs: Vec<String>,
         /// Whether the recording shows Snowflake refusing to compile the case, as it declares.
-        #[serde(skip_serializing_if = "std::ops::Not::not")]
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
         snowflake_rejected: bool,
     },
     /// The replay matched the recorded result, or an equivalence's spellings recorded one result.
@@ -105,7 +106,7 @@ pub struct CaseVerdict {
 }
 
 /// How DuckDB's error compares with the recorded Snowflake error, when both raised.
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "outcome", rename_all = "snake_case")]
 pub enum ErrorCheck {
     /// The same kind, and a rule the conversion used declares the Snowflake error.
@@ -188,6 +189,47 @@ pub struct VerifyInputs<'a> {
     pub audit_results: Option<&'a Path>,
     /// The account's recorded session defaults, vouching for results recorded before pinning.
     pub session_defaults: Option<&'a SessionDefaults>,
+    /// Earlier judgements to reuse, and where this run's are collected; `None` replays every case.
+    pub replay_cache: Option<&'a ReplayCache>,
+}
+
+/// A converted case's DuckDB SQL, with everything replaying and judging it needs.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ConvertedCase {
+    /// The DuckDB SQL.
+    pub sql: String,
+    /// Statements run first, such as the macros of the case's project functions.
+    pub setup: Vec<String>,
+    /// The equivalences, rules, building blocks and typing functions used.
+    pub provenance: Provenance,
+    /// Where each raise ID in the SQL comes from in the case's source SQL.
+    pub raises: BTreeMap<String, Vec<SourceLocation>>,
+    /// The Python functions the SQL calls, registered before it runs.
+    pub python: Option<Box<PythonReplay>>,
+    /// The SQL as users see it, or why laying it out changed more than whitespace.
+    pub laid_out: Result<String, String>,
+}
+
+/// A converted case's judgement: its verdict, what its conversion relied on, how the errors compare.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Judgement {
+    /// The verdict.
+    pub verdict: Verdict,
+    /// What the conversion relied on.
+    pub provenance: Option<Provenance>,
+    /// How DuckDB's error compares with Snowflake's.
+    pub error_check: Option<ErrorCheck>,
+}
+
+/// Judgements keyed by a digest of the case, recording, policy and conversion they came from.
+#[derive(Debug, Default)]
+pub struct ReplayCache {
+    /// What else the judgements depend on, such as a digest of the replay engine's source.
+    pub scope: String,
+    /// Judgements read from an earlier run.
+    pub known: BTreeMap<String, Judgement>,
+    /// Judgements this run made or reused, failures apart, for the next run.
+    pub made: Mutex<BTreeMap<String, Judgement>>,
 }
 
 /// Verification of every case.
