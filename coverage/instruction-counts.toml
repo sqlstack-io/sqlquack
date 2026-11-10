@@ -1,0 +1,16 @@
+# Instructions callgrind counts in two fixed Snowflake workloads, in the gate profile.
+#
+# `make instruction-counts` (in check-ci) runs each workload under callgrind, counting only while its
+# function runs: `parse` strict-parses 48 wide, CTE-layered models; `analysis` runs lineage and
+# findings in one analysis over the same statements. Only the program's own code counts; shared
+# libraries, the C allocator and memcpy among them, are left out, because their counts change with
+# the C library. A count more than `tolerance_percent` over its baseline fails as a slowdown; one
+# more than that under fails too, so a gain is recorded and cannot be spent unnoticed. Record new
+# counts with `make instruction-baseline` in the change that moves them.
+
+arch = "x86_64"
+tolerance_percent = 2
+
+[counts]
+analysis = 234750624
+parse = 253056259

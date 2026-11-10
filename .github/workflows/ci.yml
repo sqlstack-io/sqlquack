@@ -47,6 +47,9 @@ jobs:
         run: uv python install 3.12
       - name: Install development tools without the recorder
         run: uv sync --locked --no-group recorder
+      # The instruction-count guard in check-ci runs its workloads under callgrind.
+      - name: Install valgrind
+        run: sudo apt-get update -q && sudo apt-get install -y -q --no-install-recommends valgrind
       - name: Run static checks
         run: make check-ci
       - name: Run tests

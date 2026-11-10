@@ -7,6 +7,8 @@ use clap::{Args, Parser, Subcommand};
 use crate::depth::constants::ALLOWLIST_FILE;
 use crate::formats::constants::COVERAGE_ROOT;
 use crate::formats::models::LocalParser;
+use crate::instructions::constants::BASELINE_FILE;
+use crate::instructions::models::Workload;
 
 #[derive(Debug, Parser)]
 #[command(
@@ -132,6 +134,21 @@ pub enum Command {
         /// Print JSON on stdout alone.
         #[arg(long)]
         json: bool,
+    },
+    /// Callgrind's instruction counts of the parse and analysis workloads against the baseline.
+    InstructionCounts {
+        /// The committed counts and tolerance.
+        #[arg(long, default_value = BASELINE_FILE)]
+        baseline: PathBuf,
+        /// Record the measured counts in the baseline instead of checking them.
+        #[arg(long)]
+        update: bool,
+    },
+    /// Internal: one instruction-count workload, run under callgrind.
+    #[command(hide = true)]
+    InstructionWorkload {
+        #[arg(long, value_enum)]
+        workload: Workload,
     },
     /// What conversion makes of every case Snowflake parsed, by form and family.
     Translation {
