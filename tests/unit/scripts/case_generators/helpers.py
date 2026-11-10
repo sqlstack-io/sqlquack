@@ -8,7 +8,12 @@ from typing import Any
 
 from scripts.case_generators.constants import GENERATED_DIRECTORY
 from scripts.case_generators.models import Case
-from scripts.hazard_cases.constants import COVERAGE_DOMAINS, COVERAGE_HAZARDS, REPOSITORY
+from scripts.hazard_cases.constants import (
+    COVERAGE_DOMAINS,
+    COVERAGE_HAZARDS,
+    POLICY_FILE,
+    REPOSITORY,
+)
 from scripts.hazard_cases.main.hazard_files import hazard_files
 
 
@@ -167,7 +172,8 @@ def hazard_cases(repository: Path) -> dict[str, Case]:
     (repository / "coverage/domains").mkdir(parents=True)
     (repository / "coverage/domains/get.toml").write_text(HAZARD_DOMAIN)
     (repository / "coverage/hazards.toml").write_text(HAZARD_CATALOGUE)
-    (repository / "sqlquack.toml").write_text(HAZARD_POLICY)
+    (repository / POLICY_FILE).parent.mkdir(parents=True)
+    (repository / POLICY_FILE).write_text(HAZARD_POLICY)
     cases: dict[str, Case] = {}
     for case_file in hazard_files(repository):
         for case in case_file.cases:
