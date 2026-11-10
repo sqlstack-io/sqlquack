@@ -1,5 +1,7 @@
 use crate::duckdb::profile::tests::test_types;
-use crate::format::constants::{DEPTH_FAILURE, JOIN_FAILURE, PARSE_FAILURE, TYPE_DEPTH_FAILURE};
+use crate::format::constants::{
+    DEPTH_FAILURE, JOIN_FAILURE, PARSE_FAILURE, SEPARATION_FAILURE, TYPE_DEPTH_FAILURE,
+};
 use crate::format::models::FormatDialect;
 use crate::format::tests::helpers::{format_outcome, refusal};
 
@@ -37,6 +39,13 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             expected_outcome: Ok(
                 "CREATE macro first_rows(n) AS table SELECT\n  *\nFROM t\nLIMIT n",
             ),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a sign written touching a modulo stays touching, since DuckDB reads `%-` as one operator",
+            sql: "select 7%-2",
+            line_width: None,
+            dialect: FormatDialect::DuckDB,
+            expected_outcome: Err(SEPARATION_FAILURE),
         },
         test_types::FormatSqlTestCase {
             description: "a minus is not joined to a DuckDB `@`, which would read as the operator `-@`",
