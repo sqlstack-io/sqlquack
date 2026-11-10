@@ -215,10 +215,13 @@ jobs:
         if: runner.os == 'Windows'
         shell: bash
         run: echo "CARGO_TARGET_DIR=D:/t" >> "$GITHUB_ENV"
-      # The DuckDB sources checkout the workspace patches duckdb to, fetched once per lock.
-      - name: Cache Cargo's git checkouts
+      # The DuckDB sources checkout the workspace patches duckdb to, which changes only with the lock.
+      # Each entry is several hundred MB, so only main saves one, once per lock (below); every other
+      # build only restores.
+      - name: Restore Cargo's git checkouts
+        id: cargo-git-cache
         if: inputs.prebuilt-run-id == ''
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: ~/.cargo/git/db
           key: cargo-git-${{ matrix.platform.name }}-${{ hashFiles('Cargo.lock') }}
@@ -266,6 +269,14 @@ jobs:
         with:
           path: .sccache-cache
           key: ${{ env.DUCKDB_CACHE_KEY }}-${{ github.run_id }}
+      - name: Save Cargo's git checkouts from main
+        if: >-
+          inputs.prebuilt-run-id == '' && github.ref == 'refs/heads/main'
+          && steps.cargo-git-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.cargo/git/db
+          key: cargo-git-${{ matrix.platform.name }}-${{ hashFiles('Cargo.lock') }}
       - name: Download prebuilt wheels
         if: inputs.prebuilt-run-id != ''
         uses: actions/download-artifact@v4
