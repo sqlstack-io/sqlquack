@@ -94,12 +94,69 @@ const $ = (selector) => document.querySelector(selector);
 const sqlBox = $('#pg-sql');
 const sourcesBox = $('#pg-sources');
 const rowsBox = $('#pg-rows');
-const policyBox = $('#pg-policy');
 const sessionBox = $('#pg-session');
 const strictBox = $('#pg-strict');
-const utcBox = $('#pg-utc');
+const zoneBox = $('#pg-zone');
+const allowList = $('#pg-allow-list');
+const tomlBox = $('#pg-toml');
+
+// Every known difference, with whether the defaults allow it, from the engine; `allowed` holds each
+// one the reader has ticked or unticked.
+let differences = [];
+const allowed = new Map();
+const isAllowed = (difference) => allowed.get(difference.name) ?? difference.allowed_by_default;
+// The choices that differ from the defaults, each a line under [allow].
+const allowChanges = () => differences.filter((difference) => isAllowed(difference) !== difference.allowed_by_default);
+
+// The session as [project.session] holds it: TIMEZONE when it is not UTC, then the other parameters.
+const PARAMETER = /^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*?)\s*$/;
+function sessionParameters() {
+	const zone = zoneBox.value.trim();
+	const others = sessionBox.value
+		.split('\n')
+		.map((line) => line.match(PARAMETER))
+		.filter(Boolean)
+		.map(([, name, value]) => [name.toUpperCase(), value]);
+	return zone && zone.toUpperCase() !== 'UTC' ? [['TIMEZONE', zone], ...others] : others;
+}
+const tomlValue = (value) =>
+	/^(true|false)$/i.test(value) ? value.toLowerCase() : /^-?\d+$/.test(value) ? value : JSON.stringify(value);
+
+// The sqlquack.toml these choices make: only what differs from the defaults.
+function configText() {
+	const parts = [];
+	const session = sessionParameters();
+	if (session.length) parts.push(`[project.session]\n${session.map(([name, value]) => `${name} = ${tomlValue(value)}`).join('\n')}`);
+	const changes = allowChanges();
+	if (changes.length) parts.push(`[allow]\n${changes.map((difference) => `${difference.name} = ${isAllowed(difference)}`).join('\n')}`);
+	return parts.join('\n\n');
+}
+
+function renderChoices() {
+	allowList.innerHTML = differences
+		.map(
+			(difference) =>
+				`<label><input type="checkbox" data-difference="${difference.name}"${isAllowed(difference) ? ' checked' : ''}${strictBox.checked ? ' disabled' : ''} /> ` +
+				`<code>${difference.name}</code> <span>${escape(difference.title)}</span></label>`,
+		)
+		.join('');
+	tomlBox.textContent = configText() || '# Empty: the defaults, with the session in UTC.';
+}
+
+// The Translate stage's subtitle: what the choices allow beyond the defaults.
+function choicesSummary() {
+	if (strictBox.checked) return 'strict: no known differences allowed';
+	const added = allowChanges().filter(isAllowed);
+	return added.length ? `allows: ${added.map((difference) => difference.name).join(', ')}` : 'the defaults';
+}
+
 const settings = () =>
-	JSON.stringify({ policy: policyBox.value, session: sessionBox.value, strict: strictBox.checked, utc_session: utcBox.checked });
+	JSON.stringify({
+		session: sessionParameters()
+			.map(([name, value]) => `${name}=${value}`)
+			.join('\n'),
+		strict: strictBox.checked,
+	});
 const verdict = $('#pg-verdict');
 const marks = $('#pg-marks');
 const tip = $('#pg-tip');
@@ -208,8 +265,9 @@ async function run() {
 			.join('');
 		body = unknownRelationHints(translate.diagnostics) + body + conversionNotes(translate);
 		body += (translate.diagnostics ?? []).map((d) => terminal(tone(rendered(d, chars)))).join('');
+		body += allowButtons(translate.diagnostics);
 	}
-	const policy = translate.profile ? `policy: ${translate.profile}` : '';
+	const policy = translate.status === 'skipped' ? '' : choicesSummary();
 	if (refused) {
 		const reason = translate.diagnostics?.[0]?.message ?? 'no supported conversion';
 		verdict.innerHTML = `<strong>Valid Snowflake SQL, not translated:</strong> ${escape(reason)}`;
@@ -229,6 +287,26 @@ async function run() {
 	} else if (translate.status === 'pass') {
 		setStage('run', 'skipped', terminal('<span class="dim">Runs one statement at a time.</span>'));
 	} else setStage('run', 'skipped', '', refused ? 'nothing was translated' : '');
+}
+
+// A button to allow each refused known difference, once each; strict mode refuses them whatever
+// [allow] says, so it offers none.
+function allowButtons(diagnostics) {
+	if (strictBox.checked) return '';
+	const names = [...new Set((diagnostics ?? []).map((d) => d.known_difference).filter(Boolean))];
+	return names
+		.map((name) => `<p class="pg-hint"><button class="pg-link" type="button" data-allow="${escape(name)}">Allow ${escape(name)}</button></p>`)
+		.join('');
+}
+
+function allowDifference(name) {
+	allowed.set(name, true);
+	renderChoices();
+	$('#pg-allow-panel').open = true;
+	// The list scrolls on its own; bring the newly ticked row into it without moving the page.
+	const row = allowList.querySelector(`[data-difference="${name}"]`)?.parentElement;
+	if (row) allowList.scrollTop = row.offsetTop - allowList.offsetTop - allowList.clientHeight / 2;
+	schedule();
 }
 
 // What the translation relies on that a reader should know, as `sqlquack convert` prints it:
@@ -463,6 +541,7 @@ const schedule = () => {
 document.addEventListener('click', (event) => {
 	if (event.target.id === 'pg-run') execute();
 	if (event.target.dataset.addRelation) addRelation(event.target.dataset.addRelation);
+	if (event.target.dataset.allow) allowDifference(event.target.dataset.allow);
 });
 sqlBox.addEventListener('input', () => {
 	// Edited SQL is no longer the example, so neither the chip nor the link names it any more.
@@ -475,9 +554,16 @@ sqlBox.addEventListener('input', () => {
 	schedule();
 });
 sourcesBox.addEventListener('input', schedule);
-for (const box of [policyBox, sessionBox, strictBox, utcBox]) box.addEventListener('input', schedule);
-$('#pg-load-policy').addEventListener('click', async () => {
-	policyBox.value = await (await fetch(new URL('./sqlquack.toml', import.meta.url))).text();
+for (const box of [sessionBox, zoneBox, strictBox])
+	box.addEventListener('input', () => {
+		renderChoices();
+		schedule();
+	});
+allowList.addEventListener('change', (event) => {
+	const name = event.target.dataset.difference;
+	if (!name) return;
+	allowed.set(name, event.target.checked);
+	renderChoices();
 	schedule();
 });
 rowsBox.addEventListener('input', () => latest && duckdb && schedule());
@@ -552,6 +638,8 @@ sourcesBox.value = SOURCES;
 rowsBox.value = ROWS;
 setStage('parse', 'loading', '', 'loading the engine…', 'loading');
 await engineReady;
+differences = JSON.parse((await engine('differences', {})).result);
+renderChoices();
 await run();
 // DuckDB starts once the page has settled; `run` above already shows its progress.
 (self.requestIdleCallback ?? ((callback) => setTimeout(callback, 200)))(() => startDuckDB().catch(() => {}), { timeout: 2000 });

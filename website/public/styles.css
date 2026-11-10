@@ -1333,6 +1333,98 @@ footer a {
 	cursor: pointer;
 }
 
+.pg-toggle input {
+	appearance: none;
+	position: relative;
+	width: 28px;
+	height: 16px;
+	margin: 0 6px 0 0;
+	border-radius: 8px;
+	background: var(--inner-line);
+	vertical-align: -3px;
+	cursor: pointer;
+	transition: background 0.15s;
+}
+
+.pg-toggle input::before {
+	content: '';
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	background: var(--background, #fff);
+	transition: transform 0.15s;
+}
+
+.pg-toggle input:checked {
+	background: var(--primary);
+}
+
+.pg-toggle input:checked::before {
+	transform: translateX(12px);
+}
+
+.pg-toggle input:focus-visible {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
+}
+
+.pg-toggle {
+	color: var(--foreground);
+}
+
+.pg-zone {
+	margin: 8px 0 0;
+	font-size: 13px;
+}
+
+.pg-advanced {
+	margin-top: 8px;
+}
+
+.pg-zone input {
+	margin-left: 8px;
+	padding: 4px 8px;
+	border: 1px solid var(--inner-line);
+	border-radius: var(--radius);
+	background: transparent;
+	color: var(--foreground);
+	font: inherit;
+}
+
+.pg-allow-list {
+	display: grid;
+	gap: 4px;
+	max-height: 240px;
+	margin-top: 8px;
+	padding: 8px 10px;
+	border: 1px solid var(--inner-line);
+	border-radius: var(--radius);
+	overflow-y: auto;
+	font-size: 12px;
+	color: var(--muted-foreground);
+}
+
+.pg-allow-list label {
+	cursor: pointer;
+}
+
+.pg-allow-list code {
+	display: inline;
+	color: var(--foreground);
+}
+
+.pg-allow-list input:disabled + code {
+	opacity: 0.5;
+}
+
+.pg-toml {
+	margin: 0;
+	white-space: pre;
+}
+
 .pg-small.pg-short {
 	min-height: 56px;
 	margin-top: 12px;

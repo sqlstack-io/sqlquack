@@ -13,6 +13,7 @@ use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_blocks::checking::constants::SEMI_STRUCTURED_HOLDING_TYPE;
 use sqlquack_blocks::layout::main::layout_sql::layout_sql;
 use sqlquack_blocks::macros::main::helper_statements::helper_statements;
+use sqlquack_convert::snowflake::analysis::main::assumption_id::assumption_id;
 use sqlquack_convert::snowflake::analysis::main::with_divergence_help::with_divergence_help;
 use sqlquack_convert::snowflake::analysis::models::ConversionChoices;
 use sqlquack_convert::snowflake::catalogue::main::builtin_catalogue::builtin_catalogue;
@@ -20,6 +21,7 @@ use sqlquack_convert::snowflake::conversion::main::convert_statement::convert_st
 use sqlquack_convert::snowflake::conversion::main::quoted_exclusions::quoted_exclusions;
 use sqlquack_convert::snowflake::conversion::main::within_budget::within_budget;
 use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
+use sqlquack_convert::snowflake::session::main::builtin_conversion_options::builtin_conversion_options;
 use sqlquack_convert::snowflake::session::main::parse_session::parse_session;
 use sqlquack_convert::snowflake::session::main::session_conversion_options::session_conversion_options;
 use sqlquack_diagnostics::classification::main::classify::classify;
@@ -36,6 +38,7 @@ use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_diagnostics::snowflake::classification::main::cast_type_name::cast_type_name;
 use sqlquack_diagnostics::snowflake::refusals::main::snowflake_rejections::snowflake_rejections;
 use sqlquack_parse::parsing::main::parse_source::parse_source;
+use sqlquack_policy::known_differences::constants::KNOWN_DIFFERENCES;
 use sqlquack_policy::policy::models::Policy;
 use sqlquack_semantics::dialects::constants::SNOWFLAKE;
 use sqlquack_semantics::lineage::main::query_name_findings::query_name_findings;
@@ -57,6 +60,24 @@ use wasm_bindgen::prelude::wasm_bindgen;
 #[wasm_bindgen]
 pub fn analyze(sql: &str, sources: &str, settings: Option<String>) -> String {
     report(sql, sources, settings.as_deref().unwrap_or_default()).to_string()
+}
+
+/// Every known difference by name and title, in the policy's order, and whether the built-in
+/// defaults allow it, for the page to list.
+#[wasm_bindgen]
+pub fn known_differences() -> String {
+    let defaults = builtin_conversion_options(false, false);
+    let entries: Vec<Value> = KNOWN_DIFFERENCES
+        .iter()
+        .map(|entry| {
+            json!({
+                "name": entry.name,
+                "title": entry.title,
+                "allowed_by_default": defaults.divergences.contains_key(entry.name),
+            })
+        })
+        .collect();
+    json!(entries).to_string()
 }
 
 /// A DuckDB error from running converted SQL, read back as the Snowflake error a building block
@@ -421,9 +442,17 @@ fn stages(sql: &str, catalog: &Catalog, settings: &str) -> Value {
         diagnose(&refusals, sql),
         (chosen_policy.as_ref(), &choices, &parameters),
     );
-    let worded = worded
+    // Each refusal of a known difference names it, so the page can offer to allow it.
+    let worded = refusals
         .iter()
-        .filter_map(|diagnostic| serde_json::to_value(diagnostic).ok())
+        .zip(&worded)
+        .filter_map(|(refusal, diagnostic)| {
+            let mut value = serde_json::to_value(diagnostic).ok()?;
+            if let (Some(id), Value::Object(fields)) = (refusal.divergence(), &mut value) {
+                fields.insert("known_difference".into(), json!(assumption_id(id)));
+            }
+            Some(value)
+        })
         .collect();
     let mut translate = Stage::new(refusals.is_empty(), worded);
     translate.extra.insert("statements", json!(converted));
