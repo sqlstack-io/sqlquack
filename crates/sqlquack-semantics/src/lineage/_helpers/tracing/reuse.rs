@@ -1,6 +1,6 @@
 //! Work the walks would otherwise repeat at every level of a deep tree, done once per analysis.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::ops::Deref;
 use std::rc::Rc;
 
@@ -11,7 +11,7 @@ use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::queries::models::With;
 
 use crate::lineage::_helpers::tracing::expressions::is_aggregate;
-use crate::lineage::models::{FromItems, NamedQuery, ResolvedQuery};
+use crate::lineage::models::{FromItems, Lineage, NamedQuery, ResolvedQuery};
 
 /// The queries resolved with one CTE list in reach and no enclosing level, by their nodes' addresses.
 struct Frame {
@@ -19,7 +19,12 @@ struct Frame {
     resolved: FxHashMap<usize, ResolvedQuery>,
     /// The FROM items of each SELECT scoped with the list and no enclosing level.
     items: FxHashMap<usize, FromItems>,
+    /// The alias-free lineages traced in each such SELECT.
+    traces: FxHashMap<usize, Traces>,
 }
+
+/// Lineages traced in one level that read no SELECT alias, by node address.
+type Traces = Rc<RefCell<FxHashMap<usize, Lineage>>>;
 
 /// A node's address, with the address and length of the CTE list it was read with.
 type Placed = (usize, (usize, usize));
@@ -44,11 +49,28 @@ struct Kept {
     settled: FxHashMap<Placed, ResolvedQuery>,
     /// FROM items scoped with a settled list and no enclosing level, for the whole analysis.
     settled_items: FxHashMap<Placed, FromItems>,
+    /// Alias-free lineages traced in such levels, for the whole analysis.
+    settled_traces: FxHashMap<Placed, Traces>,
 }
 
 thread_local! {
     /// The analyses running on this thread, innermost last; each keeps only its own tree's work.
     static ANALYSES: RefCell<Vec<Kept>> = const { RefCell::new(Vec::new()) };
+    /// Whether the lineage being traced reached a lookup of SELECT aliases, at any level.
+    static ALIAS_READ: Cell<bool> = const { Cell::new(false) };
+}
+
+/// Marks the lineage being traced as one that looked up SELECT aliases.
+pub(crate) fn alias_read() {
+    ALIAS_READ.with(|read| read.set(true));
+}
+
+/// What `trace` returns, and whether it looked up SELECT aliases; an enclosing trace learns it too.
+pub(crate) fn alias_reads<R>(trace: impl FnOnce() -> R) -> (R, bool) {
+    let outside: bool = ALIAS_READ.with(|read| read.replace(false));
+    let traced: R = trace();
+    let inside: bool = ALIAS_READ.with(|read| read.replace(outside || read.get()));
+    (traced, inside)
 }
 
 #[cfg(test)]
@@ -156,6 +178,7 @@ pub(crate) fn reusing(ctes: &[NamedQuery]) -> Reuse {
                 ctes,
                 resolved: FxHashMap::default(),
                 items: FxHashMap::default(),
+                traces: FxHashMap::default(),
             });
         }
         !kept_already
@@ -243,6 +266,15 @@ pub(crate) fn reused_items(
         (select, identity(ctes)),
         (|kept| &mut kept.settled_items, |frame| &mut frame.items),
         scope,
+    )
+}
+
+/// The alias-free lineages of the SELECT at `select` scoped with `ctes` and no enclosing level.
+pub(crate) fn level_traces(select: usize, ctes: &[NamedQuery]) -> Traces {
+    kept_or(
+        (select, identity(ctes)),
+        (|kept| &mut kept.settled_traces, |frame| &mut frame.traces),
+        Traces::default,
     )
 }
 
