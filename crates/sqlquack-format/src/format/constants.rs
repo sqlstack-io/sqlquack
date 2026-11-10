@@ -203,6 +203,8 @@ pub(crate) const ASSIGNMENT_OPERATOR: &str = "=";
 pub(crate) const SEPARABLE_OPERATORS: [&str; 15] = [
     "=", "<>", "!=", "<", ">", "<=", ">=", "+", "-", "*", "/", "//", "%", "||", "->",
 ];
+/// The modulo operator, which DuckDB lexes together with a sign written touching it, as `%-`.
+pub(crate) const MODULO_OPERATOR: &str = "%";
 /// Tokens a binary operator is never spaced from: name and path accessors.
 pub(crate) const UNSEPARABLE_NEIGHBOURS: [&str; 3] = [".", ":", "::"];
 /// Keywords after which a clause word is a table alias instead.
