@@ -994,12 +994,19 @@ pub(crate) fn run_with_environment(
         .stderr(std::process::Stdio::piped())
         .spawn()
         .expect("sqlquack runs");
-    child
+    let written = child
         .stdin
         .take()
         .expect("standard input")
-        .write_all(input.as_bytes())
-        .expect("input written");
+        .write_all(input.as_bytes());
+    // A command such as --help may exit before reading its input.
+    if let Err(error) = written {
+        assert_eq!(
+            error.kind(),
+            std::io::ErrorKind::BrokenPipe,
+            "input written"
+        );
+    }
     let output = child.wait_with_output().expect("sqlquack finishes");
     (
         output.status.code(),

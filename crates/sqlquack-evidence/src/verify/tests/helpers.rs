@@ -7,6 +7,7 @@ use arrow::array::{Array, ArrayRef, Decimal128Array, RecordBatch, TimestampNanos
 use arrow::datatypes::{DataType, Field, Schema};
 use arrow::ipc::writer::FileWriter;
 use sqlquack_compare::values::models::ResultSet;
+use sqlquack_policy::policy::main::evidence_policy::evidence_policy;
 use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_policy::policy::models::Policy;
 
@@ -59,7 +60,7 @@ tags = ["null"]
 "#;
 
 const POLICY: &str = r#"
-schema_version = 1
+schema_version = 2
 
 [comparator]
 column_names = "case_insensitive"
@@ -92,8 +93,8 @@ DATE_OUTPUT_FORMAT = "YYYY-MM-DD"
 
 [divergences.timestamp_range]
 constructs = ["node:cast"]
-default = "warn"
-strict = "refuse"
+replay = "warn"
+default = "allow"
 reason = "DuckDB nanosecond timestamps span a shorter range."
 failure = "loud"
 native_errors = ["Conversion Error: Could not convert string '*' to INT64*"]
@@ -431,8 +432,7 @@ pub(crate) fn test_policy() -> Policy {
 
 /// The repository's own policy.
 pub(crate) fn repository_policy() -> Policy {
-    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../sqlquack.toml");
-    load_policy(&path).expect("the repository policy is valid")
+    evidence_policy().clone()
 }
 
 /// One nullable column `T` of `data_type` holding `array`.
