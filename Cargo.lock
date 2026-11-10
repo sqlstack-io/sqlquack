@@ -421,6 +421,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1c133bc6a41be0d194c306b5506d15e6feeea7b1d6604bd3f8310dfb2ca96486"
 
 [[package]]
+name = "cmake"
+version = "0.1.58"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c0f78a02292a74a88ac736019ab962ece0bc380e3f977bf72e376c5d78ff0678"
+dependencies = [
+ "cc",
+]
+
+[[package]]
 name = "colorchoice"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -534,8 +543,7 @@ dependencies = [
 [[package]]
 name = "duckdb"
 version = "1.20000.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "54411716279c39d685e0f3f10346ff503def53fd9b8aa8fbf4ea1db4499c312a"
+source = "git+https://github.com/duckdb/duckdb-rs?rev=1b8f7cca6e28c5ea8c4185aaa266424f25c3dfdc#1b8f7cca6e28c5ea8c4185aaa266424f25c3dfdc"
 dependencies = [
  "arrow",
  "cast",
@@ -873,10 +881,10 @@ checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
 [[package]]
 name = "libduckdb-sys"
 version = "1.20000.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ac1dcdcfde48e11bbd46112ed3b0423acd8c644413b3891e7be8104edce7fdda"
+source = "git+https://github.com/duckdb/duckdb-rs?rev=1b8f7cca6e28c5ea8c4185aaa266424f25c3dfdc#1b8f7cca6e28c5ea8c4185aaa266424f25c3dfdc"
 dependencies = [
  "cc",
+ "cmake",
  "flate2",
  "pkg-config",
  "serde",
@@ -884,6 +892,7 @@ dependencies = [
  "tar",
  "ureq",
  "vcpkg",
+ "which",
 ]
 
 [[package]]
@@ -2039,6 +2048,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f5f280bbb2b287bc8e7de7e3852945a0ff50d1bbcb5ed42b6c7a568c546df171"
 dependencies = [
  "rustls-pki-types",
+]
+
+[[package]]
+name = "which"
+version = "8.0.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bae2f2b2b816647a1cab1acc91f5bd20812d53cb344382635ec2181940c8034f"
+dependencies = [
+ "libc",
 ]
 
 [[package]]

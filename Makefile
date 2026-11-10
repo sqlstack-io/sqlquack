@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug gate-build polyglot-guard engine-free bundled-json dialect-builds generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
+.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug gate-build polyglot-guard engine-free bundled-extensions dialect-builds generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -118,11 +118,13 @@ engine-free:
 
 # Fails when DuckDB compiled into a distribution lacks its json extension, which the checking
 # engine's helper macros need: the sqlquack wheel and the sqlquack-cli wheel both bundle DuckDB.
-bundled-json:
+bundled-extensions:
 	@features="$$(cargo tree --locked -p sqlquack-blocks --features bundled -e features -i duckdb --prefix none)" || exit 1; \
-	  grep -q '^duckdb feature "json"' <<<"$$features" || { \
-	    echo "sqlquack-blocks' bundled feature compiles DuckDB without its json extension" >&2; exit 1; \
-	  }
+	  for extension in json icu; do \
+	    grep -q "^duckdb feature \"$$extension\"" <<<"$$features" || { \
+	      echo "sqlquack-blocks' bundled feature compiles DuckDB without its $$extension extension" >&2; exit 1; \
+	    }; \
+	  done
 
 # The crates whose features include dialects, as consumers build them one dialect at a time.
 DIALECT_CRATES ?= sqlquack-semantics sqlquack-parse sqlquack-fingerprint sqlquack-format sqlquack-lint \
@@ -207,7 +209,7 @@ referee-pending:
 	uv run python -m scripts.write_referee_pending $(REFEREE_ARGS)
 
 # The static gate, the first step of `gate`, and the Python API's tests.
-check-ci: rust-lint python-check fensu syntax-coverage depth-probe evidence-pin-check clutter-guard polyglot-guard engine-free bundled-json dialect-builds generated-cases syntax-cases dialect-cases referee-cases translation-files python-api distribution-notices ## The static gate CI runs.
+check-ci: rust-lint python-check fensu syntax-coverage depth-probe evidence-pin-check clutter-guard polyglot-guard engine-free bundled-extensions dialect-builds generated-cases syntax-cases dialect-cases referee-cases translation-files python-api distribution-notices ## The static gate CI runs.
 
 # Each distribution ships the licence and third-party notices; its copies must match the root files.
 distribution-notices:

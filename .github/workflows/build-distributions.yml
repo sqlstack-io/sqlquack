@@ -134,6 +134,14 @@ jobs:
         if: matrix.platform.macos-target
         shell: bash
         run: echo "MACOSX_DEPLOYMENT_TARGET=${{ matrix.platform.macos-target }}" >> "$GITHUB_ENV"
+      # The DuckDB sources checkout the workspace patches duckdb to, fetched once per lock.
+      - name: Cache Cargo's git checkouts
+        if: inputs.prebuilt-run-id == ''
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/git/db
+          key: cargo-git-${{ matrix.platform.name }}-${{ hashFiles('Cargo.lock') }}
+          restore-keys: cargo-git-${{ matrix.platform.name }}-
       - uses: PyO3/maturin-action@v1
         if: inputs.prebuilt-run-id == ''
         with:
@@ -184,6 +192,9 @@ jobs:
           converted="$(echo "SELECT 1 AS total" | "${bin}/sqlquack" convert --builtin-policy)"
           echo "${converted}"
           grep -qx 'SELECT CAST(1 AS DECIMAL(1,0)) AS "TOTAL"' <<< "${converted}"
+          # A zone-dependent statement binds only with DuckDB's ICU extension compiled in.
+          echo "SELECT '2024-03-10 22:30:00'::TIMESTAMP_NTZ(6)::TIMESTAMP_TZ AS placed_at" \
+            | "${bin}/sqlquack" convert --builtin-policy
           # A file converted in a project folder, with no sqlquack.toml in it: the built-in policy.
           mkdir readme-smoke && cd readme-smoke
           printf "SELECT customer_id, SUM(total) AS revenue\nFROM orders\nGROUP BY customer_id\n" > query.sql

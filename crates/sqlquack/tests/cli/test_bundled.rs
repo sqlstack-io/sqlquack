@@ -1,9 +1,8 @@
 use crate::helpers::{convert_outcome, run_convert};
 use crate::test_types::ConvertTestCase;
 
-// The distributions workflow also runs this test with DuckDB compiled in (`--features bundled`), as
-// the wheels build it. It holds only zone-free statements: the compiled-in DuckDB lacks ICU until
-// the bundled build gains it, and then that job also runs the full convert test in test_convert.rs.
+// The distributions workflow also runs this test and the full convert test in test_convert.rs with
+// DuckDB compiled in (`--features bundled`), as the wheels build it.
 #[test]
 fn given_zone_free_snowflake_sql_when_converting_then_the_checking_engine_binds_it() {
     let test_cases = [
