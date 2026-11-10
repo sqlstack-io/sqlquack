@@ -40,6 +40,8 @@ pub const UTC_ZONED_TEXT_V1: &str = "utc_zoned_text_v1";
 pub const TRY_UTC_ZONED_TEXT_V1: &str = "try_utc_zoned_text_v1";
 /// A time zone name Snowflake was recorded accepting, raising time_zone_spelling for others.
 pub const TIME_ZONE_V1: &str = "time_zone_v1";
+/// Exact decimal division of unscaled integers, rounded half away from zero or truncated.
+pub const DECIMAL_QUOTIENT_V1: &str = "decimal_quotient_v1";
 /// The full read check of JSON text.
 pub const JSON_READ_V1: &str = "json_read_v1";
 /// The fast read check of JSON text, falling back to the full one.
@@ -60,3 +62,13 @@ pub const TRYING_PARAMETER: &str = "quack_trying";
 pub const OBJECTS_PARAMETER: &str = "quack_objects";
 /// The parameter listing the paths of values the fast read check checks at every depth.
 pub const VALUES_PARAMETER: &str = "quack_values";
+/// The parameter holding the unscaled dividend of the quotient macro.
+pub const DIVIDEND_PARAMETER: &str = "quack_dividend";
+/// The parameter holding the unscaled divisor of the quotient macro.
+pub const DIVISOR_PARAMETER: &str = "quack_divisor";
+/// The parameter holding 10 to the places the quotient macro shifts the dividend.
+pub const POWER_PARAMETER: &str = "quack_power";
+/// The parameter holding the divisor magnitude from which the quotient needs more than 128 bits.
+pub const LIMIT_PARAMETER: &str = "quack_limit";
+/// The parameter holding whether the quotient macro rounds, half away from zero, or truncates.
+pub const ROUNDED_PARAMETER: &str = "quack_rounded";

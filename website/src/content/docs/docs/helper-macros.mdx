@@ -3,7 +3,7 @@ title: "Helper macros"
 description: "The versioned DuckDB macros converted SQL calls, and how to create them before running it."
 ---
 
-Converted SQL that reads a VARIANT or date and time text calls small DuckDB macros in a `sqlquack` schema, such as
+Converted SQL that reads a VARIANT or date and time text, or divides wide decimals, calls small DuckDB macros in a `sqlquack` schema, such as
 `sqlquack.variant_text_v1`, instead of repeating the same long expression at every use.
 `convert` prints the statements creating the macros a query calls ahead of the query, so its
 output runs as it is in any DuckDB session:
@@ -68,6 +68,7 @@ sqlquack explain variant_text_v1
 | `utc_zoned_text_v1` | Text read as `zoned_text_v1` reads it, raising `timestamp_tz_offset` for an offset other than +00:00. |
 | `try_utc_zoned_text_v1` | The same read as TRY_ forms do it. |
 | `time_zone_v1` | A time zone name passed through when NULL or a name Snowflake was recorded accepting, case included; raises `time_zone_spelling` for any other name. |
+| `decimal_quotient_v1` | The exact quotient of two unscaled decimals at the result scale, rounded half away from zero or truncated; raises Snowflake's division by zero error and `numeric_range` where the quotient needs more than 128 bits. |
 
 A raising macro takes the raise site first, such as `'#0d01742fedea'`, so its error names the
 place in your SQL it came from, as an inline raise does.

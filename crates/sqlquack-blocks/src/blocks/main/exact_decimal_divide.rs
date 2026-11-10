@@ -40,13 +40,6 @@ pub fn exact_decimal_divide(
             false,
         ));
     }
-    let (quotient, guard) = long_quotient((left, right), rounding, constant)?;
-    let value = scaled(&quotient, (result, result_scale), log)?;
-    Ok((
-        format!(
-            "(CASE {checks}{} ELSE {value} END)",
-            guard.as_deref().unwrap_or_default()
-        ),
-        guard.is_some(),
-    ))
+    let (quotient, guarded) = long_quotient((left, right), rounding, constant)?;
+    Ok((scaled(&quotient, (result, result_scale), log)?, guarded))
 }
