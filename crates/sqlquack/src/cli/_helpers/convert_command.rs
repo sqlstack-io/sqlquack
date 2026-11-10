@@ -297,9 +297,9 @@ fn conversion_findings(
 /// The warning `--verbose` prints for one use of a known difference.
 fn difference_warning(used: &KnownDifferenceUse, sql: &str) -> Diagnostic {
     let label = known_difference(&used.name).map_or("", |entry| entry.summary());
-    let allowed = match used.allowed_by.as_str() {
-        ALLOWED_BY_DEFAULT => "allowed by default".to_owned(),
-        file => format!("allowed by {file}"),
+    let allowed = match (used.allowed_by.as_str(), &used.reason) {
+        (ALLOWED_BY_DEFAULT, _) | (_, None) => format!("allowed by {}", used.allowed_by),
+        (file, Some(reason)) => format!("allowed by {file}: {reason}"),
     };
     warning_at(
         sql,
@@ -659,7 +659,7 @@ pub(crate) fn analysis_report(
     Ok(ConvertReport {
         converted,
         profile,
-        known_differences: known_difference_uses(analysis, &allowed_by),
+        known_differences: known_difference_uses(analysis, (&allowed_by, policy)),
         notes,
         session_notes,
         warnings: Vec::new(),
@@ -683,8 +683,11 @@ pub(crate) fn analysis_report(
     })
 }
 
-/// Every use of a known difference in the converted statements, each once, allowed by `allowed_by`.
-fn known_difference_uses(analysis: &Analysis, allowed_by: &str) -> Vec<KnownDifferenceUse> {
+/// Every use of a known difference in the converted statements, each once, with who allowed it and why.
+fn known_difference_uses(
+    analysis: &Analysis,
+    (allowed_by, policy): (&str, Option<&Policy>),
+) -> Vec<KnownDifferenceUse> {
     let mut uses: Vec<KnownDifferenceUse> = Vec::new();
     for used in analysis
         .conversions
@@ -698,6 +701,9 @@ fn known_difference_uses(analysis: &Analysis, allowed_by: &str) -> Vec<KnownDiff
             title: entry.map_or_else(|| name.to_owned(), |entry| entry.title.to_owned()),
             fails_with: entry.map_or("", |entry| entry.fails_with()).to_owned(),
             allowed_by: allowed_by.to_owned(),
+            reason: policy
+                .and_then(|policy| policy.divergences.get(name))
+                .map(|divergence| divergence.reason.clone()),
             construct: used.construct.clone(),
             line: used.location.map(|location| location.line),
             column: used.location.map(|location| location.column),
