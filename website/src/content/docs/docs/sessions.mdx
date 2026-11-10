@@ -1,0 +1,56 @@
+---
+title: "Sessions"
+description: "The Snowflake session settings conversion assumes, and how to pass yours."
+---
+
+Some results depend on session settings, such as the time zone a timestamp is read in. Converted
+SQL gives Snowflake's result only where both sessions run in UTC: Snowflake's `TIMEZONE` and
+DuckDB's `TimeZone` must be `'UTC'`.
+
+## Passing your session
+
+Pass your Snowflake session parameters with `--session NAME=VALUE`, one flag each, or set them for
+every run under `[project.session]` in the project's `sqlquack.toml` (see
+[Projects](/docs/project/#session-settings)). A `--session` flag replaces the project's value for
+one run.
+
+| Parameter | Effect |
+|-----------|--------|
+| `TIMEZONE` | `UTC`, or no `TIMEZONE`, converts statements whose result depends on the time zone. Any other value refuses them. |
+| `DATABASE`, `SCHEMA` | Complete relation names written without them. See [Projects](/docs/project/#naming-tables). |
+| `QUOTED_IDENTIFIERS_IGNORE_CASE` | `true` reads quoted names case-insensitively, as Snowflake does. |
+
+`QUERY_TAG`, `USE_CACHED_RESULT`, `STATEMENT_TIMEOUT_IN_SECONDS`,
+`STATEMENT_QUEUED_TIMEOUT_IN_SECONDS`, `ABORT_DETACHED_QUERY` and `CLIENT_SESSION_KEEP_ALIVE` are
+accepted and ignored, because they can't change a result. A parameter left unset takes Snowflake's documented default. Any other parameter, or a value
+conversion has no recording for, is refused by name with
+[`SQ0007`](/docs/diagnostics/reference/#sq0007), so a misspelt name never falls back to the
+defaults.
+
+## Time zone
+
+Statements whose result depends on the session time zone rely on the `session_timezone_utc` known
+difference, which the built-in default allows. See
+[When something can't convert exactly](/docs/policy/#known-differences).
+
+{/* config-split: --utc-session folds into the defaults and --strict. */}
+
+`--strict` refuses them unless you confirm both sessions run in UTC with `--utc-session`, or with
+`utc_session = true` under `[project.confirm]`. A `TIMEZONE` other than UTC refuses them even then,
+and a note says so:
+
+```console
+$ sqlquack convert orders.sql --session TIMEZONE=Europe/London
+SELECT "ORDERS"."ORDER_ID" AS "ORDER_ID" FROM "ORDERS" AS "ORDERS"
+sqlquack convert: note: TIMEZONE = Europe/London is not UTC, so statements depending on the session time zone are refused, --utc-session or not
+sqlquack convert: done, converted under utc-v1
+```
+
+## Details
+
+{/* config-split: the profile names leave normal output. */}
+
+- The progress line names the recorded session conversion ran under, such as
+  `converted under utc-v1`, or `utc-qiic-v1` with `QUOTED_IDENTIFIERS_IGNORE_CASE = true`. Without
+  a policy file it reads `converted under the built-in default`.
+- `census` and `index` take no session parameters.

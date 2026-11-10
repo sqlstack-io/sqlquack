@@ -104,11 +104,12 @@ sqlquack convert: done, converted under the built-in default
 The DuckDB SQL goes to standard output and the progress lines to standard error, so
 `sqlquack convert revenue.sql … > revenue.duckdb.sql` keeps only the SQL.
 
-`convert` reads `sqlquack.toml` from the current directory, or the file `--policy` names. Without
-one, or with `--builtin-policy`, it uses the built-in policy. It refuses every known divergence
-except the clock and checks that only ever raise an error, such as arithmetic past its range or
-JSON DuckDB might read differently, which convert with a warning.
-See [Policy and sessions](/docs/policy/).
+Some Snowflake behaviour has no exact match in DuckDB, such as `HASH`. For each of these known
+differences you refuse it, allow it or replace it with your own SQL, in `sqlquack.toml` in the
+current directory or the file `--policy` names. Without one, or with `--builtin-policy`, `convert`
+uses the built-in default: it refuses every known difference except the clock and those that can
+only fail with an error, such as arithmetic past its range or JSON DuckDB might read differently,
+which convert with a warning. See [When something can't convert exactly](/docs/policy/).
 
 ## Next steps
 

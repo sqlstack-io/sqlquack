@@ -174,6 +174,7 @@ FROM "ORDERS" AS "ORDERS"
 								<p>No verified rule, no conversion. The refusal underlines the construct and says what to change.</p>
 								<p class="more"><a href="/docs/diagnostics/reference/">Every diagnostic code →</a></p>
 							</div>
+<!-- config-split: real SQ0008 output; it becomes the plain message built from the known difference. -->
 <pre class="terminal"><span class="cmd">sqlquack convert due.sql --builtin-policy</span>
 <span class="bad">error[SQ0008]</span>: the conversion needs a known divergence the policy refuses: `fn:HASH`
  --&gt; due.sql:2:8
@@ -190,10 +191,11 @@ sqlquack convert: refused, 1 refusal under the built-in default</pre>
 						<div class="step">
 							<div class="step-text">
 								<span class="num">04 · Decide what to accept</span>
-								<h3>Known divergences are opt-in</h3>
-								<p>Some conversions differ in one documented way, like <code>HASH</code>. The policy file lists each one and whether it's allowed; the built-in default refuses them all.</p>
-								<p class="more"><a href="/docs/policy/">Configure the policy →</a></p>
+								<h3>Known differences are your call</h3>
+								<p>Some Snowflake behaviour has no exact match in DuckDB, like <code>HASH</code>. Each known difference says when it's fine and when it gives a wrong result. You refuse it, allow it or replace it with your own SQL.</p>
+								<p class="more"><a href="/docs/policy/">Refuse, allow or replace →</a></p>
 							</div>
+<!-- config-split: the excerpt becomes [allow] hash = "…", and the output lines become the plain warning. -->
 <pre class="terminal"><span class="cm"># sqlquack.toml (excerpt)</span>
 [divergences.hash]
 <span class="arg">default</span> = <span class="str">&quot;warn&quot;</span>

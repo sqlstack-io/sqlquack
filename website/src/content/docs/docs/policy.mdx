@@ -1,16 +1,36 @@
 ---
-title: "Policy and sessions"
-description: "Choose which known divergences conversion may rely on, and under which Snowflake session."
+title: "When something can't convert exactly"
+description: "Refuse, allow or replace each known difference between Snowflake and DuckDB."
+sidebar:
+  label: "Refuse, allow or replace"
+tableOfContents:
+  maxHeadingLevel: 2
 ---
 
-Some conversions match Snowflake except for a documented difference, called a known divergence.
-`HASH` is one: DuckDB computes its own 64-bit hash, consistent within one run but never
-Snowflake's value. A policy file lists every known divergence and whether conversion may rely on
-it. Anything relying on a refused divergence is refused with
-[`SQ0008`](/docs/diagnostics/reference/#sq0008).
+Some Snowflake behaviour has no exact match in DuckDB. `HASH` is one: DuckDB computes its own
+hash, consistent within one run but never Snowflake's value. SQLQuack knows each such case, called
+a known difference, and says what differs, when relying on it is fine and when it gives a wrong
+result. The [table below](#known-differences) lists every one.
+
+When a statement needs a known difference, you choose what happens:
+
+| Choice | What happens | How |
+|--------|--------------|-----|
+| [Refuse](#refuse) | The statement isn't converted. [`SQ0008`](/docs/diagnostics/reference/#sq0008) points at the construct. | The default for most known differences. |
+| [Allow](#allow) | The statement converts. A warning names the known difference it relies on. | One table in `sqlquack.toml`. |
+| [Replace](#replace) | Calls to a Snowflake function use your own DuckDB SQL. | One file under `overrides/`. |
+
+`--strict` refuses anything not verified: every allowed known difference, and every replacement
+that recorded cases haven't verified.
+
+## Refuse
+
+A refused known difference stops the statement at the construct that needs it:
+
+{/* config-split: the SQ0008 wording below becomes the plain message built from the entry. */}
 
 ```console
-$ sqlquack convert due.sql
+$ sqlquack convert due.sql --builtin-policy
 error[SQ0008]: the conversion needs a known divergence the policy refuses: `fn:HASH`
  --> due.sql:2:8
   |
@@ -18,30 +38,30 @@ error[SQ0008]: the conversion needs a known divergence the policy refuses: `fn:H
   |        ^^^^^^^^^^^^^^^^^ fn:HASH needs known divergence `hash`, which the policy refuses in this mode
 ```
 
-## Choosing a policy
+`convert`, `function`, `census` and `index` read your choices from the
+[project](/docs/project/)'s `sqlquack.toml`, or from the file `--policy` names. Without one, or
+when `sqlquack.toml` holds only `[project]`, they use the built-in default.
 
-`convert`, `function`, `census` and `index` read the policy from the [project](/docs/project/)'s
-`sqlquack.toml`, or from the file `--policy` names. Without one, or when `sqlquack.toml` holds only
-`[project]`, they use the built-in policy, which refuses every known
-divergence except these, which convert with a warning:
+{/* config-split: the built-in default becomes "allow what can only fail with an error, refuse what
+    can return a different value"; update this list from the entries then. */}
 
-| Divergence | Where | Warning | Refused by |
-| --- | --- | --- | --- |
-| `current_time`, `session_timezone_utc` | `CURRENT_DATE()`, `CURRENT_TIMESTAMP()`, and `DATEADD`, `DATEDIFF`, `TIMESTAMPDIFF`, `TIMEDIFF`, `COALESCE` and comparisons of a `TIMESTAMP_LTZ`, or of a `TIMESTAMP_TZ` with text that has no offset, such as `DATEADD(day, -30, CURRENT_TIMESTAMP())` or `DATEDIFF('day', ordered_at, CURRENT_TIMESTAMP())` | Both engines take the value when the query runs, in the session's time zone, which must be UTC in both for the values to agree. | `--strict`, `--loud-divergences-only`, a `TIMEZONE` other than UTC |
-| `numeric_range` | `+`, `-`, `*`, `SUM` | If a result needs more than 38 digits, DuckDB raises an Overflow error; it never returns a different number. | `--strict` |
-| `json_fidelity` | Reading a VARIANT, OBJECT or ARRAY column: a path such as `payload:page`, `GET`, `FLATTEN`, a `::` or `CAST` of what they return or to `VARIANT`, text a function or `||` reads from them, and a VARIANT in `UNION ALL`; building one with `PARSE_JSON`, `TRY_PARSE_JSON`, `TO_VARIANT`, `ARRAY_CONSTRUCT`, `ARRAY_CONSTRUCT_COMPACT`, an array literal such as `[1, 2]`, `FILTER` or `TRANSFORM` | If the JSON holds something DuckDB might read differently from Snowflake, such as an exponent, `-0.0`, a decimal longer than a double keeps, a key repeated in an object the query reads, or text that is not strict JSON, or an array would hold a SQL NULL, the converted SQL raises an error; it never returns a different value. Comparing or grouping an uncast VARIANT, `TO_VARCHAR` of a VARIANT, `OBJECT_CONSTRUCT`, an object literal and `REDUCE` are still refused; use the `::` spelling instead of `TO_VARCHAR`. | `--strict` |
-| `timestamp_range` | `DATEADD`, `TIMEADD`, `TIMESTAMPADD`, adding or subtracting an interval, comparing timestamps at nanosecond precision | If a timestamp lands outside 1677-09-21 00:12:43.145224192 to 2262-04-11 23:47:16.854775807 UTC, the converted SQL raises an error; it never returns a different value. | `--strict` |
-| `timestamp_tz_submicro` | `COALESCE`, `IFNULL` or `NVL` of a `TIMESTAMP_NTZ` with a `TIMESTAMP_LTZ`, such as `COALESCE(shipped_at, CURRENT_TIMESTAMP())` | A naive value with digits below the microsecond raises an error rather than being rounded; it never returns a different value. | `--strict` |
+The built-in default refuses every known difference except these, which convert with a warning:
 
-`--builtin-policy` chooses the built-in policy even where a `sqlquack.toml` exists. A `--policy` file
-that does not exist, or a policy file that is not valid, is an error.
+- `json_fidelity`, `numeric_range`, `timestamp_range` and `timestamp_tz_submicro`, which can only
+  fail with an error, never a different value.
+- `current_time` and `session_timezone_utc`, which give Snowflake's value when both sessions run in
+  UTC. See [Sessions](/docs/sessions/).
 
-A policy file is complete on its own: the comparator, session profiles and edge-case tables are
-required, and a divergence the file leaves out is refused. A file holding only one
-`[divergences.<id>]` table is rejected. Start from a copy of the repository's
-[`sqlquack.toml`](https://github.com/sqlstack-io/sqlquack/blob/main/sqlquack.toml) in the directory
-you run `sqlquack` from. To allow a divergence, change `default` in its existing table from
-`"refuse"` to `"warn"`:
+`--builtin-policy` uses the built-in default even where a `sqlquack.toml` exists.
+
+## Allow
+
+Allowing a known difference is a decision about your data, so read its entry first: it says when
+the converted SQL gives Snowflake's result and when it doesn't. Allow it in `sqlquack.toml` by
+setting `default` to `"warn"` in its table:
+
+{/* config-split: this block becomes `[allow]` with one line per name, such as
+    `hash = "only used for bucketing"`; the copy-the-whole-file rule below goes. */}
 
 ```toml
 [divergences.hash]
@@ -50,47 +70,418 @@ default = "warn"
 strict = "refuse"
 ```
 
-A conversion that relies on an allowed divergence names it on standard error:
+A policy file is complete on its own, and a file holding only one such table is rejected. Start
+from a copy of the repository's
+[`sqlquack.toml`](https://github.com/sqlstack-io/sqlquack/blob/main/sqlquack.toml), which lists
+every known difference, in the directory you run `sqlquack` from.
+
+A conversion that relies on an allowed known difference names it on standard error:
+
+{/* config-split: these lines become the plain warning built from the entry. */}
 
 ```console
 sqlquack convert: relies on known divergence hash at fn:HASH
 sqlquack convert: done, converted under utc-v1
 ```
 
+## Replace
+
+Replace a Snowflake function with your own DuckDB SQL when you know what your data needs. Put a
+`FUNCTION()` file with `replaces` and `dialect duckdb` in the project's `overrides/` folder, or name
+one with `--overrides`:
+
+{/* config-split: a replacement is also listed under `[replace]`, such as
+    `hash = "overrides/hash.sql"`. */}
+
+```sql
+FUNCTION (
+  arguments (x NUMBER(38,0)),
+  returns NUMBER(38,0),
+  replaces HASH,
+  dialect duckdb
+);
+x % 16
+```
+
+Every call then uses your SQL, created as a macro ahead of the converted statement. Whether it
+gives Snowflake's result is your decision: a conversion relying on it names it on standard error.
+The repository's `sqlquack.toml` allows replacements, and the built-in default refuses them.
+
+{/* config-split: verification becomes automatic; --verified-override goes. */}
+
+`--strict` refuses a replacement until recorded cases verify its exact body. Pass
+`--verified-override NAME=SHA256` with the SHA-256 that `convert --json` reports under `overrides`;
+a changed body is unverified again.
+
 ## Flags
+
+{/* config-split: --loud-divergences-only and --utc-session fold into the defaults and
+    --strict. */}
 
 | Flag | Effect |
 |------|--------|
-| `--policy <file>` | The policy file. Default the project's `sqlquack.toml`, or the built-in policy without one. |
-| `--builtin-policy` | Use the built-in policy even where a `sqlquack.toml` exists: every known divergence is refused but the clock and the checks that only raise, listed above. |
-| `--strict` | Refuse every divergence the policy refuses in strict mode. |
-| `--utc-session` | Confirm both sessions run in UTC, so strict mode relies on `session_timezone_utc`. |
+| `--policy <file>` | The policy file. Default the project's `sqlquack.toml`, or the built-in default without one. |
+| `--builtin-policy` | Use the built-in default even where a `sqlquack.toml` exists. |
+| `--strict` | Refuse every known difference and replacement that isn't verified. |
+| `--utc-session` | Confirm both sessions run in UTC. See [Sessions](/docs/sessions/). |
 | `--confirm-declared-offsets` | Confirm the `TIMESTAMP_TZ` offsets the schema declares. |
 | `--python-runtime` | Confirm a Python runtime registers the project's Python functions. |
-| `--loud-divergences-only` | Rely only on divergences whose converted SQL raises rather than returns another value. |
+| `--loud-divergences-only` | Allow only known differences that fail with an error, never a different value. |
 
 A project can confirm the same three for every run under `[project.confirm]` in its
 `sqlquack.toml`; see [Projects](/docs/project/#session-settings).
 
-## Sessions
+## Known differences
 
-Converted SQL is proven only where both sessions run in UTC: Snowflake's `TIMEZONE` and DuckDB's
-`TimeZone` must be `'UTC'`. Statements whose result depends on the session time zone carry the
-`session_timezone_utc` assumption, and strict mode refuses them unless you pass `--utc-session`.
+Each entry says what differs, when relying on it gives Snowflake's result and when it doesn't. One
+that fails with an error never returns a different value: the converted SQL raises instead.
 
-`--session NAME=VALUE` passes your Snowflake session parameters, one flag each, or
-`[project.session]` in the project's `sqlquack.toml` for every run (see
-[Projects](/docs/project/#session-settings)):
+{/* Generated by website/scripts/generate_known_differences.py from
+    crates/sqlquack-policy/src/known_differences/constants.rs. Edit the entries, then rerun it. */}
 
-- Conversion runs under the recorded session profile they match: `utc-v1`, or `utc-qiic-v1` for
-  `QUOTED_IDENTIFIERS_IGNORE_CASE = true`. A parameter left unset takes Snowflake's documented
-  default.
-- Parameters that match no profile are refused by name with
-  [`SQ0007`](/docs/diagnostics/reference/#sq0007), so a misspelt name never falls back to defaults.
-- These are accepted and ignored, because they cannot change a result: `QUERY_TAG`,
-  `USE_CACHED_RESULT`, `STATEMENT_TIMEOUT_IN_SECONDS`, `STATEMENT_QUEUED_TIMEOUT_IN_SECONDS`,
-  `ABORT_DETACHED_QUERY` and `CLIENT_SESSION_KEEP_ALIVE`.
-- `DATABASE` and `SCHEMA` set the current database and schema, which complete relation names
-  written without them. See [Projects](/docs/project/#naming-tables).
-- `TIMEZONE = UTC`, or no `TIMEZONE`, leaves time-zone-dependent statements to the
-  `session_timezone_utc` assumption. Any other `TIMEZONE` refuses them, even with `--utc-session`.
+| Known difference | Name | Fails with |
+|------------------|------|------------|
+| [Numbers beyond 38 digits raise an error in DuckDB](#numeric_range) | `numeric_range` | an error |
+| [JAROWINKLER_SIMILARITY raises an error for some text](#text_similarity) | `text_similarity` | an error |
+| [Sorting mixed VARIANT values can raise an error](#array_sort_order) | `array_sort_order` | an error |
+| [ILIKE raises an error for some letters outside ASCII](#case_folding) | `case_folding` | an error |
+| [JSON that DuckDB might read differently raises an error](#json_fidelity) | `json_fidelity` | an error |
+| [A FLOAT in a VARIANT column can lose its type between models](#variant_chain_type) | `variant_chain_type` | a different value |
+| [VARIANT columns of source tables are trusted to hold plain JSON](#source_variant_json) | `source_variant_json` | a different value |
+| [Your Python functions are trusted to run locally as in Snowflake](#project_udf) | `project_udf` | a different value |
+| [Your replacement for a Snowflake function is trusted to match it](#user_override) | `user_override` | a different value |
+| [Some Python values raise an error when crossing to or from SQL](#python_value_crossing) | `python_value_crossing` | an error |
+| [TIMESTAMP_TZ source columns are trusted to hold their declared offset](#declared_offset) | `declared_offset` | a different value |
+| [Results that depend on the session time zone need UTC](#session_timezone_utc) | `session_timezone_utc` | a different value |
+| [PERCENTILE_CONT and MEDIAN can raise an error instead of interpolating](#percentile_interpolation) | `percentile_interpolation` | an error |
+| [Time zone names given per row must be spelled as Snowflake accepts them](#time_zone_spelling) | `time_zone_spelling` | an error |
+| [MODE over no rows raises an error](#mode_of_no_rows) | `mode_of_no_rows` | an error |
+| [Zoned timestamp text with a non-UTC offset raises an error](#timestamp_tz_offset) | `timestamp_tz_offset` | an error |
+| [Dates and times in unusual spellings raise an error](#date_text_spelling) | `date_text_spelling` | an error |
+| [Dates and times inside a VARIANT are stored as Snowflake's text](#variant_typed_values) | `variant_typed_values` | an error |
+| [Timestamps outside 1677 to 2262 raise an error in DuckDB](#timestamp_range) | `timestamp_range` | an error |
+| [Zoned timestamps finer than a microsecond raise an error in DuckDB](#timestamp_tz_submicro) | `timestamp_tz_submicro` | an error |
+| [A FLOAT at the top of a VARIANT written as text raises an error](#float_text) | `float_text` | an error |
+| [Regular expressions from a column can raise an error](#regexp_pattern_syntax) | `regexp_pattern_syntax` | an error |
+| [Sums of FLOAT values raise an error unless every order gives the same total](#float_sum_order) | `float_sum_order` | an error |
+| [MAX_BY and MIN_BY raise an error when tied rows differ](#extreme_key_ties) | `extreme_key_ties` | an error |
+| [MODE raises an error when several values tie](#mode_ties) | `mode_ties` | an error |
+| [ARRAY_AGG raises an error where an undefined order could show](#array_agg_order) | `array_agg_order` | an error |
+| [LISTAGG raises an error when tied rows differ](#listagg_order) | `listagg_order` | an error |
+| [Text compared with a NUMBER must fit the NUMBER's scale](#text_number_scale) | `text_number_scale` | an error |
+| [HASH gives a different value in DuckDB](#hash) | `hash` | a different value |
+| [RANDOM gives different values in DuckDB](#random) | `random` | a different value |
+| [UUID_STRING gives different identifiers in DuckDB](#uuid) | `uuid` | a different value |
+| [SEQ1, SEQ2, SEQ4 and SEQ8 give different values in DuckDB](#sequences) | `sequences` | a different value |
+| [INITCAP raises an error for text with unusual characters](#initcap_text) | `initcap_text` | an error |
+| [CURRENT_DATE and CURRENT_TIMESTAMP read DuckDB's clock](#current_time) | `current_time` | a different value |
+| [TIME values finer than a microsecond raise an error](#time_submicro) | `time_submicro` | an error |
+| [ANY_VALUE raises an error when a group's values differ](#any_value_choice) | `any_value_choice` | an error |
+| [Rounding a FLOAT to a NUMBER works only for some scales and sizes](#float_decimal_digits) | `float_decimal_digits` | an error |
+| [Nanosecond timestamps written as text can raise an error](#timestamp_text_rounding) | `timestamp_text_rounding` | an error |
+
+### `numeric_range`
+
+**Numbers beyond 38 digits raise an error in DuckDB.** It fails with an error.
+
+- **What differs:** Inside a calculation Snowflake can hold numbers wider than 38 digits, but DuckDB cannot.
+- **Fine when:** Totals and working values stay within 38 digits.
+- **Wrong when:** A value goes beyond 38 digits: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `text_similarity`
+
+**JAROWINKLER_SIMILARITY raises an error for some text.** It fails with an error.
+
+- **What differs:** Snowflake's JAROWINKLER_SIMILARITY ignores case and counts characters. How it folds letters outside ASCII has not been checked against Snowflake.
+- **Fine when:** Text whose cased letters are all ASCII.
+- **Wrong when:** Text holding a cased letter outside ASCII, such as É: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `array_sort_order`
+
+**Sorting mixed VARIANT values can raise an error.** It fails with an error.
+
+- **What differs:** Snowflake sorts VARIANT values by type, then by value. How it orders two different objects, two different arrays, or numbers such as 1 and 1.0 has not been checked against Snowflake.
+- **Fine when:** Arrays without such pairs, and MAX of VARIANT numbers or strings.
+- **Wrong when:** An array holding such a pair, or MAX of another mix of VARIANT values: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `case_folding`
+
+**ILIKE raises an error for some letters outside ASCII.** It fails with an error.
+
+- **What differs:** Snowflake's ILIKE matches letters by their lower case, with a few exceptions such as the Kelvin sign. Letters whose case folding differs from their lower case have not been checked against Snowflake.
+- **Fine when:** Text without such letters.
+- **Wrong when:** Text holding such a letter: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `json_fidelity`
+
+**JSON that DuckDB might read differently raises an error.** It fails with an error.
+
+- **What differs:** DuckDB reads JSON numbers, spellings and repeated keys differently from Snowflake. The converted SQL checks every document and writes objects as Snowflake does.
+- **Fine when:** Both engines read the JSON the same way.
+- **Wrong when:** A document DuckDB might read differently: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `variant_chain_type`
+
+**A FLOAT in a VARIANT column can lose its type between models.** It fails with a different value.
+
+- **What differs:** A VARIANT column built from a FLOAT is written as JSON text, so a model reading it back loses the FLOAT's type. A check meant to catch this has no test showing it works.
+- **Fine when:** The column is stored as a DuckDB VARIANT, which keeps the type.
+- **Wrong when:** A model reads a FLOAT back from such a column stored as JSON text: it can get a different value, with no error.
+
+### `source_variant_json`
+
+**VARIANT columns of source tables are trusted to hold plain JSON.** It fails with a different value.
+
+- **What differs:** Snowflake keeps a date, time, timestamp or binary value inside a VARIANT as its own type, but DuckDB's JSON holds only its text. Comparisons of VARIANT values from a source table rely on them holding plain JSON.
+- **Fine when:** The source column holds values loaded from JSON.
+- **Wrong when:** Something outside the project wrote typed values into the column: they compare equal to their text, with no error.
+
+### `project_udf`
+
+**Your Python functions are trusted to run locally as in Snowflake.** It fails with a different value.
+
+- **What differs:** A project Python function runs its handler in a local Python process. SQLQuack cannot tell whether it returns what it returns in Snowflake.
+- **Fine when:** The handler gives the same result for the same input, whatever the Python version, packages or environment.
+- **Wrong when:** The handler's result depends on its Python version, packages or environment: it returns a different value, with no error.
+
+### `user_override`
+
+**Your replacement for a Snowflake function is trusted to match it.** It fails with a different value.
+
+- **What differs:** A replacement swaps a Snowflake function for your own DuckDB SQL. SQLQuack cannot tell whether it gives what the function it replaces gives.
+- **Fine when:** Your SQL gives the same result as the Snowflake function for every input.
+- **Wrong when:** Your SQL differs for some input: those calls return a different value, with no error.
+
+### `python_value_crossing`
+
+**Some Python values raise an error when crossing to or from SQL.** It fails with an error.
+
+- **What differs:** Values cross between SQL and a Python handler only in the shapes checked against Snowflake. SQLQuack's runtime raises an error for any other shape.
+- **Fine when:** Handlers take and return values in their declared types and checked shapes.
+- **Wrong when:** A value in another shape: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `declared_offset`
+
+**TIMESTAMP_TZ source columns are trusted to hold their declared offset.** It fails with a different value.
+
+- **What differs:** DuckDB does not keep a TIMESTAMP_TZ value's own offset. Where the schema declares a column's offset as +00:00, its wall time, date and parts are worked out for that offset.
+- **Fine when:** Every value in the column has the +00:00 offset.
+- **Wrong when:** A value has another offset: its wall time, date or parts come out different, with no error.
+
+### `session_timezone_utc`
+
+**Results that depend on the session time zone need UTC.** It fails with a different value.
+
+- **What differs:** Converted SQL matches Snowflake only when both sessions use UTC. Some results depend on the session time zone.
+- **Fine when:** Both the Snowflake and the DuckDB session use UTC.
+- **Wrong when:** Either session uses another time zone: such results come out different, with no error.
+
+### `percentile_interpolation`
+
+**PERCENTILE_CONT and MEDIAN can raise an error instead of interpolating.** It fails with an error.
+
+- **What differs:** Snowflake's PERCENTILE_CONT rounds its last digits in a way no formula reproduces, and its MEDIAN of NUMBER loses digits for wide values.
+- **Fine when:** The percentile lands on a row or between equal values.
+- **Wrong when:** PERCENTILE_CONT would interpolate between different values, or MEDIAN's middle values are too wide: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `time_zone_spelling`
+
+**Time zone names given per row must be spelled as Snowflake accepts them.** It fails with an error.
+
+- **What differs:** Snowflake reads a time zone name exactly, case included, and rejects spellings such as 'utc' that DuckDB accepts.
+- **Fine when:** Each row's zone name is one Snowflake has been checked to accept.
+- **Wrong when:** A row's zone name is spelled another way: DuckDB raises an error where Snowflake may return a value, never a different value.
+
+### `mode_of_no_rows`
+
+**MODE over no rows raises an error.** It fails with an error.
+
+- **What differs:** MODE without GROUP BY over no rows returns zero in some Snowflake plans and NULL in others.
+- **Fine when:** The input has at least one row, or the query uses GROUP BY.
+- **Wrong when:** MODE without GROUP BY over no rows: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `timestamp_tz_offset`
+
+**Zoned timestamp text with a non-UTC offset raises an error.** It fails with an error.
+
+- **What differs:** Text read as a TIMESTAMP_TZ carries its offset, which DuckDB does not keep. Its wall time, date and parts would come out as UTC's.
+- **Fine when:** The text's offset is +00:00, Z or absent.
+- **Wrong when:** Any other offset: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `date_text_spelling`
+
+**Dates and times in unusual spellings raise an error.** It fails with an error.
+
+- **What differs:** Snowflake reads more date and time spellings than have been checked against Snowflake. Text in an unchecked spelling raises an error rather than guess.
+- **Fine when:** Text in a spelling checked against Snowflake.
+- **Wrong when:** Any other spelling: DuckDB raises an error where Snowflake may return a value, never a different value.
+
+### `variant_typed_values`
+
+**Dates and times inside a VARIANT are stored as Snowflake's text.** It fails with an error.
+
+- **What differs:** In Snowflake a date, timestamp or time inside a VARIANT keeps its type, which DuckDB's JSON cannot. The converted SQL stores the text Snowflake writes for it instead.
+- **Fine when:** The text keeps every digit and offset of the value.
+- **Wrong when:** The text would drop digits or an offset: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `timestamp_range`
+
+**Timestamps outside 1677 to 2262 raise an error in DuckDB.** It fails with an error.
+
+- **What differs:** DuckDB's nanosecond timestamps span 1677-09-21 to 2262-04-11, but Snowflake's go beyond.
+- **Fine when:** Timestamps stay within 1677-09-21 to 2262-04-11.
+- **Wrong when:** A value outside that range: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `timestamp_tz_submicro`
+
+**Zoned timestamps finer than a microsecond raise an error in DuckDB.** It fails with an error.
+
+- **What differs:** DuckDB's zoned timestamps hold microseconds, where Snowflake's hold nanoseconds.
+- **Fine when:** Values have no part below a microsecond.
+- **Wrong when:** A value has a part below a microsecond: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `float_text`
+
+**A FLOAT at the top of a VARIANT written as text raises an error.** It fails with an error.
+
+- **What differs:** Snowflake writes such a FLOAT as Java does when it works out a constant ahead of time, and as C's %g does otherwise. The conversion cannot tell which.
+- **Fine when:** A FLOAT written as text directly, not from the top level of a VARIANT.
+- **Wrong when:** A FLOAT at the top level of a VARIANT cast to text: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `regexp_pattern_syntax`
+
+**Regular expressions from a column can raise an error.** It fails with an error.
+
+- **What differs:** A pattern from a column cannot be checked before the query runs. Only common regular expression syntax has been checked to behave the same in Snowflake and DuckDB.
+- **Fine when:** Column patterns use only the checked syntax.
+- **Wrong when:** A column pattern uses other syntax, such as escapes or counted repetition: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `float_sum_order`
+
+**Sums of FLOAT values raise an error unless every order gives the same total.** It fails with an error.
+
+- **What differs:** Snowflake adds FLOAT values in an order DuckDB does not share, so totals can differ in the last digits.
+- **Fine when:** Every order of addition gives the exact total.
+- **Wrong when:** Any other FLOAT values: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `extreme_key_ties`
+
+**MAX_BY and MIN_BY raise an error when tied rows differ.** It fails with an error.
+
+- **What differs:** MAX_BY and MIN_BY pick one row among rows tied on the key, and which one Snowflake picks has not been checked.
+- **Fine when:** Every row tied on the key holds the same value.
+- **Wrong when:** Tied rows hold different values: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `mode_ties`
+
+**MODE raises an error when several values tie.** It fails with an error.
+
+- **What differs:** MODE returns one of the values tied for most frequent, and DuckDB may choose another than Snowflake.
+- **Fine when:** Exactly one value is the most frequent.
+- **Wrong when:** Several values tie: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `array_agg_order`
+
+**ARRAY_AGG raises an error where an undefined order could show.** It fails with an error.
+
+- **What differs:** ARRAY_AGG without WITHIN GROUP, or with ties on its keys, returns values in an order neither engine defines.
+- **Fine when:** The order of the values cannot show in the result.
+- **Wrong when:** The order of different values could show: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `listagg_order`
+
+**LISTAGG raises an error when tied rows differ.** It fails with an error.
+
+- **What differs:** LISTAGG WITHIN GROUP joins rows tied on every ORDER BY key in an order neither engine defines.
+- **Fine when:** Tied rows hold equal values, or the value itself is the only ORDER BY key.
+- **Wrong when:** Tied rows hold different values: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `text_number_scale`
+
+**Text compared with a NUMBER must fit the NUMBER's scale.** It fails with an error.
+
+- **What differs:** Snowflake reads text compared with a NUMBER as a number. How it rounds text with more fraction digits or an exponent has not been checked against Snowflake.
+- **Fine when:** The text holds a number exact at the NUMBER's scale.
+- **Wrong when:** Other numeric text: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `hash`
+
+**HASH gives a different value in DuckDB.** It fails with a different value.
+
+- **What differs:** DuckDB computes its own hash, never Snowflake's. Equal inputs still get equal hashes within one run.
+- **Fine when:** Joins, grouping, removing duplicates and spotting changed rows by hash.
+- **Wrong when:** Storing, comparing or sorting by the hash value itself: it differs, with no error.
+
+### `random`
+
+**RANDOM gives different values in DuckDB.** It fails with a different value.
+
+- **What differs:** Random values differ from Snowflake's by nature.
+- **Fine when:** Anything that needs only random values.
+- **Wrong when:** Anything expecting Snowflake's random values: they differ, with no error.
+
+### `uuid`
+
+**UUID_STRING gives different identifiers in DuckDB.** It fails with a different value.
+
+- **What differs:** Generated identifiers differ from Snowflake's, but each stays unique within one run.
+- **Fine when:** Anything that needs only unique identifiers.
+- **Wrong when:** Anything expecting the identifiers Snowflake generated: they differ, with no error.
+
+### `sequences`
+
+**SEQ1, SEQ2, SEQ4 and SEQ8 give different values in DuckDB.** It fails with a different value.
+
+- **What differs:** Sequence values and gaps differ from Snowflake's, but values stay unique within one run.
+- **Fine when:** Anything that needs only unique values.
+- **Wrong when:** Anything expecting Snowflake's sequence values or gaps: they differ, with no error.
+
+### `initcap_text`
+
+**INITCAP raises an error for text with unusual characters.** It fails with an error.
+
+- **What differs:** Snowflake's INITCAP capitalises after whitespace and many punctuation characters. Only letters, digits, spaces, underscores, hyphens and apostrophes have been checked against Snowflake.
+- **Fine when:** Text holds only letters, digits, spaces, underscores, hyphens and apostrophes.
+- **Wrong when:** Text with any other character: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `current_time`
+
+**CURRENT_DATE and CURRENT_TIMESTAMP read DuckDB's clock.** It fails with a different value.
+
+- **What differs:** CURRENT_DATE and CURRENT_TIMESTAMP read the clock, so they differ between Snowflake and DuckDB and between runs.
+- **Fine when:** The result does not depend on the moment, such as a comparison with a fixed past date.
+- **Wrong when:** The result depends on the moment it runs: it differs, with no error.
+
+### `time_submicro`
+
+**TIME values finer than a microsecond raise an error.** It fails with an error.
+
+- **What differs:** Snowflake keeps a TIME to nanoseconds, but only TIME values to microseconds have been checked against Snowflake.
+- **Fine when:** TIME values have no part below a microsecond.
+- **Wrong when:** Text read as a TIME has a part below a microsecond: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `any_value_choice`
+
+**ANY_VALUE raises an error when a group's values differ.** It fails with an error.
+
+- **What differs:** ANY_VALUE returns some value of the group, and Snowflake and DuckDB may choose different ones.
+- **Fine when:** Every row of the group holds the same value.
+- **Wrong when:** A group holds different values, or NULL beside a value: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `float_decimal_digits`
+
+**Rounding a FLOAT to a NUMBER works only for some scales and sizes.** It fails with an error.
+
+- **What differs:** Snowflake rounds a FLOAT's exact double value half away from zero when it becomes a NUMBER. This has been checked only for scales 2, 6 and 8, with up to ten digits once scaled.
+- **Fine when:** A NUMBER of scale 2, 6 or 8, with up to ten digits once scaled.
+- **Wrong when:** A value with more significant digits: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+### `timestamp_text_rounding`
+
+**Nanosecond timestamps written as text can raise an error.** It fails with an error.
+
+- **What differs:** A TIMESTAMP_NTZ(9) is written as text with three fraction digits, and whether Snowflake truncates or rounds the dropped digits has not been checked.
+- **Fine when:** The dropped part is below half a millisecond, where truncating and rounding agree.
+- **Wrong when:** The dropped part is half a millisecond or more: DuckDB raises an error where Snowflake returns a value, never a different value.
+
+{/* End of the generated known differences. */}
