@@ -143,10 +143,11 @@ fn keyed_authored(lexemes: &[Lexeme], statement_starts: &[usize]) -> Vec<Keyed> 
         .collect()
 }
 
-/// Print every authored token in order, taking only whitespace and keyword case from `oracle`.
+/// Print every authored token in order, taking only whitespace from `oracle`, and keyword case too unless `keep_case`.
 pub(crate) fn print_authored_tokens(
     source: &AuthoredSql<'_>,
     oracle: &Oracle,
+    keep_case: bool,
 ) -> Result<AuthoredPrint, String> {
     let AuthoredSql {
         sql,
@@ -194,7 +195,7 @@ pub(crate) fn print_authored_tokens(
         }
         let guide = alignment[index].map(|at| &generated[at]);
         let start = output.len();
-        match guide.filter(|guide| confirms_keyword(lexeme, guide)) {
+        match guide.filter(|guide| !keep_case && confirms_keyword(lexeme, guide)) {
             Some(guide) => {
                 recases.insert(index, guide.raw.clone());
                 output.push_str(&guide.raw);

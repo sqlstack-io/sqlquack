@@ -16,6 +16,9 @@ const PROJECTION_FIELD: &str = "expressions";
 const SPAN_FIELD: &str = "span";
 const LEFT_FIELD: &str = "left";
 const RIGHT_FIELD: &str = "right";
+/// The operand fields of a binary node read as a function, such as DuckDB's `//`.
+const FUNCTION_LEFT_FIELD: &str = "this";
+const FUNCTION_RIGHT_FIELD: &str = "expression";
 const COLUMN_ALIASES_FIELD: &str = "column_aliases";
 /// The field of a serialised UPDATE that holds its `column = value` pairs.
 const SET_FIELD: &str = "set";
@@ -316,8 +319,12 @@ fn binary(value: &Value) -> Option<Binary> {
         span: node
             .get(SPAN_FIELD)
             .and_then(|span| Some((span_offset(span, "start")?, span_offset(span, "end")?))),
-        left_end: operand_span(LEFT_FIELD).and_then(|span| span_offset(span, "end")),
-        right_start: operand_span(RIGHT_FIELD).and_then(|span| span_offset(span, "start")),
+        left_end: operand_span(LEFT_FIELD)
+            .or_else(|| operand_span(FUNCTION_LEFT_FIELD))
+            .and_then(|span| span_offset(span, "end")),
+        right_start: operand_span(RIGHT_FIELD)
+            .or_else(|| operand_span(FUNCTION_RIGHT_FIELD))
+            .and_then(|span| span_offset(span, "start")),
         before_last: false,
     })
 }
