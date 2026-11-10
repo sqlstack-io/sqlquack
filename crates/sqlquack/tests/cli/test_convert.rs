@@ -19,6 +19,7 @@ const QUOTED_ALIAS: &str =
     "WITH totals AS (SELECT 1 AS \"orderTotal\") SELECT ordertotal FROM totals";
 const PLACED_DATE: &str = "SELECT TO_DATE(placed_at) AS placed_on FROM orders";
 const DECLARED_PROJECT: &str = "tests/cli/fixtures/declared_offsets";
+const REFUSE_FACTS: &str = "tests/cli/fixtures/refuse_facts.toml";
 const QUALIFIED_PROJECT: &str = "tests/cli/fixtures/qualified_relations";
 const NAIVE_LOCAL_PROJECT: &str = "tests/cli/fixtures/naive_local_branches";
 const NAIVE_JOINS_LOCAL: &str = "timestamp_tz_submicro — sqlquack explain";
@@ -233,6 +234,32 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             flags: &["--project", DECLARED_PROJECT, "--strict"],
             mention: "declared_offset —",
             expected_outcome: convert_outcome(0, true),
+        },
+        ConvertTestCase {
+            description: "strict mode keeps refusing a declared offset its [allow] refuses",
+            sql: PLACED_DATE,
+            flags: &[
+                "--project",
+                DECLARED_PROJECT,
+                "--strict",
+                "--config",
+                REFUSE_FACTS,
+            ],
+            mention: "assumption `declared_offset`, which the policy does not allow in this mode",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "strict mode keeps refusing a UTC session its [allow] refuses",
+            sql: "SELECT DATE_PART('hour', '2024-03-10 22:30:00'::TIMESTAMP_LTZ) AS h",
+            flags: &[
+                "--project",
+                DECLARED_PROJECT,
+                "--strict",
+                "--config",
+                REFUSE_FACTS,
+            ],
+            mention: "help: session_timezone_utc = false under [allow] in tests/cli/fixtures/refuse_facts.toml refuses it",
+            expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
             description: "LAST_VALUE keeps the origin of every declared column it reads",

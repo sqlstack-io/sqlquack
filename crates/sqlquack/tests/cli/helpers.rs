@@ -792,7 +792,7 @@ pub(crate) fn pending_flags() -> Vec<(String, Option<bool>, Option<bool>)> {
 pub(crate) fn run_convert(sql: &str, flags: &[&str], mention: &str) -> ConvertOutcome {
     use std::io::Write;
     let policy = repository_root().join("sqlquack.toml");
-    let builtin = flags.contains(&"--no-config");
+    let builtin = flags.contains(&"--no-config") || flags.contains(&"--config");
     let policy_flags: Vec<&std::ffi::OsStr> =
         [std::ffi::OsStr::new("--config"), policy.as_os_str()]
             .into_iter()

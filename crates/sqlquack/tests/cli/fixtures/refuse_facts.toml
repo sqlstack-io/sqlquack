@@ -1,0 +1,4 @@
+# Refuses the two facts strict mode otherwise counts as given.
+[allow]
+declared_offset = false
+session_timezone_utc = false

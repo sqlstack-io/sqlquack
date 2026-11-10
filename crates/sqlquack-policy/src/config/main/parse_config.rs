@@ -8,7 +8,15 @@ use crate::policy::models::Policy;
 
 /// The configuration `text` holds, whose `[allow]` may name only `evidence`'s known differences.
 pub fn parse_config(text: &str, evidence: &Policy) -> Result<UserConfig, String> {
-    let config: UserConfig = toml::from_str(text).map_err(|error| error.to_string())?;
+    let config: UserConfig =
+        toml::from_str(text).map_err(|error| match text.contains("[divergences.") {
+            true => format!(
+                "{error}\nthis is a sqlquack.toml from before 0.4: list each known difference as \
+             `name = true` or `false` under [{ALLOW_TABLE}]; `sqlquack explain --differences` \
+             lists them"
+            ),
+            false => error.to_string(),
+        })?;
     let runtime = config.allow.contains_key(PROJECT_UDF).then(|| {
         format!(
             "[{ALLOW_TABLE}] cannot allow `{PROJECT_UDF}`: set python_runtime = true under \

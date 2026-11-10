@@ -36,6 +36,14 @@ fn given_config_text_when_parsing_then_only_the_user_schema_and_known_names_pass
             expected_error: Some("unknown field `divergences`"),
         },
         ConfigTestCase {
+            description: "a file from before 0.4 points to [allow] and the list of names",
+            text: "[divergences.hash]\ndefault = \"warn\"\n",
+            expected_error: Some(
+                "list each known difference as `name = true` or `false` under [allow]; \
+                 `sqlquack explain --differences` lists them",
+            ),
+        },
+        ConfigTestCase {
             description: "an allowance is true or false, not a mode",
             text: "[allow]\nhash = \"warn\"\n",
             expected_error: Some("invalid type: string \"warn\", expected a boolean"),

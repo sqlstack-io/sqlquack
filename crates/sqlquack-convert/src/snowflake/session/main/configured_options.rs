@@ -7,7 +7,7 @@ use crate::snowflake::session::main::builtin_conversion_options::builtin_convers
 use sqlquack_policy::policy::constants::PROJECT_UDF;
 use sqlquack_policy::policy::main::evidence_policy::evidence_policy;
 
-/// The defaults, with the user's `[allow]` and Python runtime outside strict mode.
+/// The defaults with the user's `[allow]` and Python runtime; under strict, only its refusals.
 pub fn configured_options(choices: &ConversionChoices) -> ConversionOptions {
     let evidence = evidence_policy();
     let mut options = builtin_conversion_options(choices.strict);
@@ -19,6 +19,13 @@ pub fn configured_options(choices: &ConversionChoices) -> ConversionOptions {
         };
     }
     if choices.strict {
+        choices
+            .allow
+            .iter()
+            .filter(|(_, allowed)| !**allowed)
+            .for_each(|(id, _)| {
+                options.divergences.remove(id);
+            });
         return options;
     }
     for (id, allowed) in &choices.allow {

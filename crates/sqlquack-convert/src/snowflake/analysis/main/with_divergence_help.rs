@@ -51,10 +51,13 @@ fn divergence_help(
              run both the Snowflake and the DuckDB session in UTC, and convert for that session"
         );
     }
+    let file = choices.config_file.as_deref().unwrap_or(NEW_CONFIG_FILE);
+    if choices.allow.get(id) == Some(&false) {
+        return format!("{id} = false under [allow] in {file} refuses it");
+    }
     if choices.strict {
         return STRICT_REFUSES.to_owned();
     }
-    let file = choices.config_file.as_deref().unwrap_or(NEW_CONFIG_FILE);
     match id {
         PROJECT_UDF => format!(
             "set python_runtime = true under [project] in {file} if a Python runtime registers \
