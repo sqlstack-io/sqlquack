@@ -1,11 +1,15 @@
-use sqlquack_syntax::{Dialect, ParseOptions};
+use sqlquack_parse::parse_statements_with;
+use sqlquack_syntax::{CallMode, Dialect, ParseOptions};
 
 use crate::dialects::constants::SNOWFLAKE;
 use crate::lineage::main::query_lineage::query_lineage;
+use crate::lineage::main::statement_lineage::statement_lineage;
+use crate::lineage::main::statement_lineage_and_findings::statement_lineage_and_findings;
+use crate::lineage::main::statement_name_findings::statement_name_findings;
 use crate::lineage::models::{LineageContext, TransformKind};
-use crate::lineage::tests::helpers::shop_schema;
-use crate::lineage::tests::test_types::QueryLineageTestCase;
-use crate::snowflake::profile::tests::test_types::ResolvedReadTestCase;
+use crate::lineage::tests::helpers::{shop_schema, typed_shop_schema};
+use crate::lineage::tests::test_types::{QueryLineageTestCase, TypedShopSchema};
+use crate::snowflake::profile::tests::test_types::{AliasReadTestCase, ResolvedReadTestCase};
 
 #[test]
 fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_transform() {
@@ -439,6 +443,153 @@ fn given_a_column_its_relation_lacks_when_tracing_lineage_then_one_stored_relati
                     .map(|source| (*source).to_owned())
                     .collect::<Vec<String>>(),
                 test_case.expected_resolved
+            ),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_select_aliases_read_in_later_clauses_and_nested_levels_when_analysing_together_then_lineage_and_findings_match_separate_runs()
+ {
+    let test_cases = [
+        AliasReadTestCase {
+            description: "WHERE reads a projection's alias",
+            sql: "SELECT amount * 2 AS doubled FROM orders WHERE doubled > 10",
+            expected_sources: &[("doubled", &["ORDERS.AMOUNT"])],
+            expected_findings: &[],
+        },
+        AliasReadTestCase {
+            description: "GROUP BY and HAVING read aliases",
+            sql: "SELECT status AS s, COUNT(*) AS n FROM orders GROUP BY s HAVING n > 1",
+            expected_sources: &[("s", &["ORDERS.STATUS"]), ("n", &[])],
+            expected_findings: &[],
+        },
+        AliasReadTestCase {
+            description: "QUALIFY reads a window's alias",
+            sql: "SELECT id, ROW_NUMBER() OVER (ORDER BY amount) AS rn FROM orders QUALIFY rn = 1",
+            expected_sources: &[("id", &["ORDERS.ID"]), ("rn", &["ORDERS.AMOUNT"])],
+            expected_findings: &[],
+        },
+        AliasReadTestCase {
+            description: "an unknown column beside an alias read in one expression",
+            sql: "SELECT amount AS total, total + missing_col AS bad FROM orders",
+            expected_sources: &[
+                ("total", &["ORDERS.AMOUNT"]),
+                ("bad", &["ORDERS.AMOUNT", "ORDERS.missing_col"]),
+            ],
+            expected_findings: &["E201 missing_col"],
+        },
+        AliasReadTestCase {
+            description: "aliases read twice in one expression and again in the next",
+            sql: "SELECT amount AS a, a + a AS b, b * a AS c FROM orders",
+            expected_sources: &[
+                ("a", &["ORDERS.AMOUNT"]),
+                ("b", &["ORDERS.AMOUNT"]),
+                ("c", &["ORDERS.AMOUNT"]),
+            ],
+            expected_findings: &[],
+        },
+        AliasReadTestCase {
+            description: "an alias spelled like a column of a nested level, read in WHERE; the nested level reads its own column",
+            sql: "SELECT status AS name, name || '!' AS shout, (SELECT name FROM customers LIMIT 1) AS customer_name FROM orders WHERE shout <> name",
+            expected_sources: &[
+                ("name", &["ORDERS.STATUS"]),
+                ("shout", &["ORDERS.STATUS"]),
+                ("customer_name", &["CUSTOMERS.NAME"]),
+            ],
+            expected_findings: &[],
+        },
+        AliasReadTestCase {
+            description: "a CASE whose scalar subquery reads the enclosing alias, beside an unknown column",
+            sql: "SELECT amount AS v, CASE WHEN v > 1 THEN (SELECT v + c.id FROM customers AS c LIMIT 1) ELSE nope END AS w FROM orders",
+            expected_sources: &[
+                ("v", &["ORDERS.AMOUNT"]),
+                ("w", &["CUSTOMERS.ID", "ORDERS.AMOUNT", "ORDERS.nope"]),
+            ],
+            expected_findings: &["E201 nope"],
+        },
+        AliasReadTestCase {
+            description: "an alias a source column shadows at its own level and two levels down",
+            sql: "SELECT name AS id, (SELECT (SELECT id + 1 FROM orders WHERE customer_id = c.id LIMIT 1)) AS nested_id, id AS outer_id FROM customers AS c",
+            expected_sources: &[
+                ("id", &["CUSTOMERS.NAME"]),
+                ("nested_id", &["ORDERS.ID"]),
+                ("outer_id", &["CUSTOMERS.ID"]),
+            ],
+            expected_findings: &[],
+        },
+        AliasReadTestCase {
+            description: "an alias a source column shadows inside a CTE, read again from a scalar subquery",
+            sql: "WITH t AS (SELECT amount AS customer_id, customer_id + 1 AS bumped FROM orders WHERE customer_id > 0) SELECT bumped, (SELECT bumped + id FROM customers LIMIT 1) AS mixed FROM t",
+            expected_sources: &[
+                ("bumped", &["ORDERS.CUSTOMER_ID"]),
+                ("mixed", &["CUSTOMERS.ID", "ORDERS.CUSTOMER_ID"]),
+            ],
+            expected_findings: &[],
+        },
+    ];
+    let schema: TypedShopSchema = typed_shop_schema();
+    for test_case in test_cases {
+        let statement = parse_statements_with(
+            test_case.sql,
+            Dialect::Snowflake,
+            &ParseOptions::default(),
+            CallMode::FaithfulLocated,
+        )
+        .unwrap_or_else(|error| panic!("{}: {error}", test_case.description))
+        .remove(0);
+        let context = LineageContext {
+            profile: &SNOWFLAKE,
+            schema: &schema,
+            sql: Some(test_case.sql),
+        };
+        let separate = (
+            statement_lineage(&statement, context),
+            statement_name_findings(&statement, context),
+        );
+        let together = statement_lineage_and_findings(&statement, context);
+        assert_eq!(together, separate, "{}", test_case.description);
+        let sources: Vec<(String, Vec<String>)> = together
+            .0
+            .outputs
+            .iter()
+            .map(|output| {
+                (
+                    output.name.clone(),
+                    output
+                        .sources
+                        .iter()
+                        .map(|source| format!("{}.{}", source.relation, source.column))
+                        .collect(),
+                )
+            })
+            .collect();
+        let expected_sources: Vec<(String, Vec<String>)> = test_case
+            .expected_sources
+            .iter()
+            .map(|(name, columns)| {
+                (
+                    (*name).to_owned(),
+                    columns.iter().map(|column| (*column).to_owned()).collect(),
+                )
+            })
+            .collect();
+        let findings: Vec<String> = together
+            .1
+            .iter()
+            .map(|finding| format!("{} {}", finding.code, finding.written))
+            .collect();
+        assert_eq!(
+            (sources, findings),
+            (
+                expected_sources,
+                test_case
+                    .expected_findings
+                    .iter()
+                    .map(|finding| (*finding).to_owned())
+                    .collect()
             ),
             "{}",
             test_case.description
