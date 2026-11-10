@@ -23,6 +23,7 @@ from tests.unit.scripts.clutter_guard.helpers import (
     add_lower_case_decision_names,
     add_placeholder_paths,
     add_product_named_source,
+    add_release_changelog,
     add_review_record,
     add_reviewer_word,
     add_run_record,
@@ -55,6 +56,12 @@ _REVIEWER_CLASS: str = "audit" + "or-reference"
         GuardTestCase(
             description="a source file named after a product concept passes",
             change=add_product_named_source,
+            expected_return_code=0,
+            expected_fragment="passed, 0 findings in 5 tracked files",
+        ),
+        GuardTestCase(
+            description="the release changelog at the top level passes",
+            change=add_release_changelog,
             expected_return_code=0,
             expected_fragment="passed, 0 findings in 5 tracked files",
         ),

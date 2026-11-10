@@ -27,6 +27,7 @@ TOP_LEVEL_ENTRIES: frozenset[str] = frozenset(
         ".github",
         ".gitignore",
         ".release-please-manifest.json",
+        "CHANGELOG.md",
         "Cargo.lock",
         "Cargo.toml",
         "LICENSE",
