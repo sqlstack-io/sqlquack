@@ -878,7 +878,24 @@ impl Parser {
             let left = match &result {
                 Expression::Subquery(subq) => Some(subq.this.clone()),
                 Expression::Union(_) | Expression::Intersect(_) | Expression::Except(_) => {
-                    Some(result.clone())
+                    Some(Expression::Subquery(Box::new(Subquery {
+                        this: result.clone(),
+                        alias: None,
+                        column_aliases: Vec::new(),
+                        alias_explicit_as: false,
+                        alias_keyword: None,
+                        order_by: None,
+                        limit: None,
+                        offset: None,
+                        distribute_by: None,
+                        sort_by: None,
+                        cluster_by: None,
+                        lateral: false,
+                        modifiers_inside: false,
+                        trailing_comments: Vec::new(),
+                        inferred_type: None,
+                        span: SourceSpan::default(),
+                    })))
                 }
                 _ => None,
             };
