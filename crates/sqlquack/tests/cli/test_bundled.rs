@@ -1,5 +1,5 @@
 use crate::helpers::{convert_outcome, run_convert};
-use crate::test_types::ConvertTestCase;
+use crate::test_types::{ConvertTestCase, ValueTestCase};
 
 // The distributions workflow also runs this test and the full convert test in test_convert.rs with
 // DuckDB compiled in (`--features bundled`), as the wheels build it.
@@ -43,9 +43,27 @@ fn given_zone_free_snowflake_sql_when_converting_then_the_checking_engine_binds_
 // it. The distributions workflow runs this with DuckDB compiled in as well.
 #[test]
 fn given_the_linked_duckdb_when_asked_its_version_then_it_names_the_pinned_release() {
+    let test_cases = [
+        ValueTestCase {
+            description: "version() names the release, not a dev build",
+            sql: "SELECT version()",
+            expected_value: "v2.0.0",
+        },
+        ValueTestCase {
+            description: "pragma_version's library version names the same release",
+            sql: "SELECT library_version FROM pragma_version()",
+            expected_value: "v2.0.0",
+        },
+    ];
     let connection = duckdb::Connection::open_in_memory().expect("in-memory DuckDB opens");
-    let version: String = connection
-        .query_row("SELECT version()", [], |row| row.get(0))
-        .expect("DuckDB reports its version");
-    assert_eq!(version, "v2.0.0", "the DuckDB release SQLQuack pins");
+    for test_case in test_cases {
+        let version: String = connection
+            .query_row(test_case.sql, [], |row| row.get(0))
+            .expect(test_case.description);
+        assert_eq!(
+            version, test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
 }
