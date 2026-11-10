@@ -66,12 +66,11 @@ pub(crate) fn parse_percent(sample: &str) -> Result<f64, String> {
     }
 }
 
-/// The caller's flags as the engine-free conversion pipeline reads them, with the policy file its help names.
+/// The caller's flags as conversion reads them; help names `--policy` as given, else `sqlquack.toml`.
 pub(crate) fn conversion_choices(arguments: &PolicyArguments) -> ConversionChoices {
-    let policy_file = match (&arguments.policy, &arguments.project) {
-        (Some(policy), _) => policy.clone(),
-        (None, Some(project)) => project.join(POLICY_FILE_NAME),
-        (None, None) => POLICY_FILE_NAME.into(),
+    let policy_file = match &arguments.policy {
+        Some(policy) => policy.clone(),
+        None => POLICY_FILE_NAME.into(),
     };
     ConversionChoices {
         policy_file: policy_file.display().to_string(),
