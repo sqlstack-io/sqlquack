@@ -224,6 +224,19 @@ fn catalogue_name(spelling: &str) -> String {
     name.to_owned()
 }
 
+/// Whether merging a value spelled `from` into a column spelled `to` converts it: another
+/// catalogue type, or modifiers `to` keeps that `from` lacks. Dropping modifiers changes no value.
+pub(crate) fn postgres_merge_converts(from: &str, to: &str) -> bool {
+    let modifiers = |spelling: &str| -> String {
+        spelling
+            .split_once('(')
+            .map(|(_, rest)| rest.chars().filter(|c| !c.is_whitespace()).collect())
+            .unwrap_or_default()
+    };
+    catalogue_name(from) != catalogue_name(to)
+        || (!modifiers(to).is_empty() && modifiers(from) != modifiers(to))
+}
+
 /// The category PostgreSQL files a value of `family` under; none when the family is unknown.
 fn family_category(family: Family) -> Option<char> {
     Some(match family {

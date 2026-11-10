@@ -229,6 +229,14 @@ impl DialectRules for DuckDbRules {
         combined.map(|combined| Rc::from(combined.spelling()))
     }
 
+    /// A conversion unless both spellings name the same DuckDB type, such as INT4 and INTEGER.
+    fn merge_converts(&self, from: &str, to: &str, profile: &dyn DialectProfile) -> bool {
+        match (parsed_type(from), parsed_type(to)) {
+            (Some(from), Some(to)) => from != to,
+            _ => !profile.same_type(from, to),
+        }
+    }
+
     fn cast_spelling(&self, data_type: &DataType) -> Option<String> {
         cast_spelling(data_type)
     }

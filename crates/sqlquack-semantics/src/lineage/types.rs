@@ -5,6 +5,7 @@ use std::rc::Rc;
 
 use sqlquack_syntax::{DataType, Expression};
 
+use crate::dialects::types::DialectProfile;
 use crate::lineage::_helpers::checks::window_only::named_window_only;
 use crate::lineage::main::rendered_type::rendered_type;
 use crate::lineage::models::{Engine, Nullability};
@@ -195,6 +196,11 @@ pub(crate) trait DialectRules: Sync {
     fn merged_type(&self, typed: &[&Lineage]) -> Option<Rc<str>> {
         let _ = typed;
         None
+    }
+
+    /// Whether merging a value of type `from` into a column of type `to` converts the value.
+    fn merge_converts(&self, from: &str, to: &str, profile: &dyn DialectProfile) -> bool {
+        !profile.same_type(from, to)
     }
 
     /// A set operation's type, from its `merged` type, its typed `branches` and all its `parts`.
