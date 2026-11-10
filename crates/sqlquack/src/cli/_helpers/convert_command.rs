@@ -6,6 +6,7 @@ use std::process::ExitCode;
 
 use sqlquack_blocks::layout::main::layout_sql::layout_sql;
 use sqlquack_blocks::macros::main::explain_helper::explain_helper;
+use sqlquack_blocks::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
 use sqlquack_diagnostics::diagnostics::constants::{CODES, SESSION_PARAMETERS};
 use sqlquack_diagnostics::diagnostics::main::diagnose::diagnose;
@@ -18,7 +19,8 @@ use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_policy::known_differences::constants::KNOWN_DIFFERENCES;
 use sqlquack_policy::known_differences::main::known_difference::known_difference;
 use sqlquack_policy::policy::constants::{
-    CURRENT_TIME, POLICY_FILE_NAME, SESSION_TIME_ZONE, SESSION_TIMEZONE_UTC, TIMEZONE_PARAMETER,
+    CURRENT_TIME, NUMERIC_RANGE, POLICY_FILE_NAME, SESSION_TIME_ZONE, SESSION_TIMEZONE_UTC,
+    TIMESTAMP_RANGE, TIMESTAMP_TZ_SUBMICRO, TIMEZONE_PARAMETER,
 };
 use sqlquack_policy::policy::main::load_project_file::load_project_file;
 use sqlquack_policy::policy::models::{DivergenceFailure, Policy};
@@ -48,6 +50,16 @@ use sqlquack_convert::snowflake::analysis::models::Analysis;
 use crate::cli::main::convert_report::convert_report;
 use sqlquack_convert::snowflake::analysis::main::with_divergence_help::with_divergence_help;
 
+/// Known differences the built-in default allows only for some of the constructs that rely on them.
+const BUILTIN_PARTIAL: [&str; 5] = [
+    JSON_FIDELITY,
+    NUMERIC_RANGE,
+    TIMESTAMP_RANGE,
+    TIMESTAMP_TZ_SUBMICRO,
+    SESSION_TIMEZONE_UTC,
+];
+/// How `explain --differences` marks those without a policy file.
+const PARTLY_ALLOWED: &str = "allowed by default for some uses";
 /// The path naming standard input.
 const STDIN_PATH: &str = "-";
 /// How diagnostics name standard input.
@@ -359,11 +371,11 @@ fn known_differences(policy_path: &Path) -> Result<String, String> {
         loud_divergences_only: false,
     };
     let options = divergence_options(policy.as_ref(), &choices);
-    let allowed = match policy {
+    let allowed = match &policy {
         Some(_) => format!("allowed by {POLICY_FILE_NAME}"),
         None => "allowed by default".to_owned(),
     };
-    let rules = match policy {
+    let rules = match &policy {
         Some(_) => format!("as ./{POLICY_FILE_NAME} treats them"),
         None => format!("as the defaults treat them, with no ./{POLICY_FILE_NAME}"),
     };
@@ -372,13 +384,20 @@ fn known_differences(policy_path: &Path) -> Result<String, String> {
         .map(|entry| entry.name.len())
         .max()
         .unwrap_or(0);
-    let status_width = allowed.len().max("refused".len());
+    let status_width = match policy {
+        Some(_) => allowed.len(),
+        None => PARTLY_ALLOWED.len(),
+    };
     let lines: String = KNOWN_DIFFERENCES
         .iter()
         .map(|entry| {
-            let status = match options.divergences.contains_key(entry.name) {
-                true => allowed.as_str(),
-                false => "refused",
+            let status = match (
+                options.divergences.contains_key(entry.name),
+                policy.is_none() && BUILTIN_PARTIAL.contains(&entry.name),
+            ) {
+                (true, true) => PARTLY_ALLOWED,
+                (true, false) => allowed.as_str(),
+                (false, _) => "refused",
             };
             format!(
                 "  {name:<name_width$}  {status:<status_width$}  {title}\n",
