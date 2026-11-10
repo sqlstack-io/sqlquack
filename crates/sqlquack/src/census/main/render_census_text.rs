@@ -71,7 +71,7 @@ pub fn render_census_text(report: &CensusReport, limit: usize) -> String {
     for (divergence, files) in &report.provenance.divergences {
         let _ = writeln!(
             text,
-            "  converted with a known divergence: {divergence} in {files} files"
+            "  converted with a known difference: {divergence} in {files} files"
         );
     }
     render_refusals(&mut text, &refusals.by_construct, limit);

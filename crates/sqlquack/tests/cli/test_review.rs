@@ -32,7 +32,7 @@ fn given_recorded_cases_when_exporting_for_review_then_each_case_shows_sql_and_e
             file: "aggregate/grouped.slt",
             expected_lines: &[
                 "# verdict: diverged as expected (numeric_range)",
-                "# warning: known divergence numeric_range at fn:SUM",
+                "# warning: known difference numeric_range at fn:SUM",
                 "100000000000000000000000000000000000000",
             ],
         },
@@ -41,7 +41,7 @@ fn given_recorded_cases_when_exporting_for_review_then_each_case_shows_sql_and_e
             file: "comparison/predicates_batch2.slt",
             expected_lines: &[
                 "# case comparison/predicates_batch2.toml#eq_variant_text",
-                "# warning: known divergence source_variant_json at node:eq",
+                "# warning: known difference source_variant_json at node:eq",
             ],
         },
     ];
