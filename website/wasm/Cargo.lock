@@ -220,7 +220,7 @@ checksum = "f8fadd59c855ef2080decdef8ff161eb6661b86933c9d82e5ba29dc602a55aba"
 
 [[package]]
 name = "sqlquack-blocks"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "serde_json",
  "sqlquack-diagnostics",
@@ -229,7 +229,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-convert"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -243,7 +243,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-derive"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -252,7 +252,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-diagnostics"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -261,7 +261,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-parse"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "sqlquack-syntax",
  "sqlquack-syntax-snowflake",
@@ -269,7 +269,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-policy"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "serde",
  "toml",
@@ -277,7 +277,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-semantics"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "regex",
  "rustc-hash",
@@ -292,7 +292,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-syntax"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -304,7 +304,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-syntax-snowflake"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -316,7 +316,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-wasm"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "serde",
  "serde_json",
