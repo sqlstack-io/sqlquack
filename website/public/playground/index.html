@@ -85,13 +85,25 @@
 						<textarea class="pg-small" id="pg-rows" spellcheck="false" aria-label="Fixture rows as DuckDB SQL"></textarea>
 						<p class="pg-note">DuckDB SQL run after the sources' tables are created, before the translated query.</p>
 					</details>
+					<details id="pg-allow-panel">
+						<summary>Known differences and strict mode</summary>
+						<p class="pg-note">Where DuckDB can differ from Snowflake. Tick one to allow it; each change from the default becomes a line under <code>[allow]</code>.</p>
+						<div class="pg-allow-list" id="pg-allow-list" role="group" aria-label="Known differences to allow"></div>
+						<p class="pg-note"><label class="pg-toggle"><input type="checkbox" role="switch" id="pg-strict" /> Strict mode</label> Refuses every known difference, whatever <code>[allow]</code> says, as <code>--strict</code> does.</p>
+					</details>
 					<details>
-						<summary>Policy and session</summary>
-						<textarea class="pg-small" id="pg-policy" spellcheck="false" aria-label="Policy file (TOML)" placeholder="Empty: the built-in default, which refuses every known difference but the clock and checks that only raise"></textarea>
-						<p class="pg-note">A policy file, as for <code>--policy</code>. <button class="pg-link" type="button" id="pg-load-policy">Load the repository's sqlquack.toml</button></p>
-						<textarea class="pg-small pg-short" id="pg-session" spellcheck="false" aria-label="Session parameters" placeholder="TIMEZONE=UTC"></textarea>
-						<p class="pg-note">Snowflake session parameters, one <code>NAME=VALUE</code> per line, as for <code>--session</code>.</p>
-						<p class="pg-note"><label><input type="checkbox" id="pg-strict" /> <code>--strict</code></label> <label><input type="checkbox" id="pg-utc" /> <code>--utc-session</code></label></p>
+						<summary>Session</summary>
+						<p class="pg-zone"><label for="pg-zone">Session time zone</label> <input id="pg-zone" spellcheck="false" autocomplete="off" value="UTC" /></p>
+						<details class="pg-advanced">
+							<summary>Other session parameters</summary>
+							<textarea class="pg-small pg-short" id="pg-session" spellcheck="false" aria-label="Other session parameters" placeholder="QUOTED_IDENTIFIERS_IGNORE_CASE=TRUE"></textarea>
+							<p class="pg-note">Snowflake session parameters, one <code>NAME=VALUE</code> per line, as for <code>--session</code>.</p>
+						</details>
+					</details>
+					<details>
+						<summary>sqlquack.toml</summary>
+						<pre class="terminal pg-toml" id="pg-toml" aria-label="sqlquack.toml for these settings"></pre>
+						<p class="pg-note">The <a href="/docs/policy/">sqlquack.toml</a> these choices make. Read-only: change the choices above.</p>
 					</details>
 				</div>
 				<div class="pg-stages" aria-live="polite">
