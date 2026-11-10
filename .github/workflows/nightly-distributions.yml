@@ -1,0 +1,46 @@
+name: Nightly Distributions
+
+# Builds and smoke tests every wheel and sdist from main once a night, so a platform that stops
+# building shows before the next release needs it, and saves DuckDB's compiled objects from main,
+# which release builds restore. It is not a required check. A failure opens an issue, or comments
+# on the one still open.
+on:
+  schedule:
+    - cron: "37 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly-distributions
+  cancel-in-progress: false
+
+jobs:
+  distributions:
+    name: Distributions
+    uses: ./.github/workflows/build-distributions.yml
+
+  report-failure:
+    name: Report a failed nightly build
+    needs: distributions
+    if: ${{ always() && needs.distributions.result == 'failure' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      issues: write
+    steps:
+      - name: Open or update the nightly build issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TITLE: Nightly distributions build failed
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          body="The nightly distributions build of ${GITHUB_SHA} failed: ${RUN_URL}"
+          issue="$(gh issue list --state open --search "in:title \"${TITLE}\"" --json number,title \
+            --jq "[.[] | select(.title == \"${TITLE}\")][0].number // empty")"
+          if [[ -n "${issue}" ]]; then
+            gh issue comment "${issue}" --body "${body}"
+          else
+            gh issue create --title "${TITLE}" --body "${body}"
+          fi
