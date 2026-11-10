@@ -37,3 +37,15 @@ fn given_zone_free_snowflake_sql_when_converting_then_the_checking_engine_binds_
         );
     }
 }
+
+// DuckDB built from its sources reports a dev version unless the build names the release, and the
+// Python replay (`PINNED_DUCKDB_VERSION` in sqlquack_runtime.py) and extension downloads then refuse
+// it. The distributions workflow runs this with DuckDB compiled in as well.
+#[test]
+fn given_the_linked_duckdb_when_asked_its_version_then_it_names_the_pinned_release() {
+    let connection = duckdb::Connection::open_in_memory().expect("in-memory DuckDB opens");
+    let version: String = connection
+        .query_row("SELECT version()", [], |row| row.get(0))
+        .expect("DuckDB reports its version");
+    assert_eq!(version, "v2.0.0", "the DuckDB release SQLQuack pins");
+}

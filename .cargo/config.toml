@@ -2,3 +2,7 @@
 # system one; `uv sync` creates it.
 [env]
 PYO3_PYTHON = { value = ".venv/bin/python", relative = true }
+# DuckDB compiled from its sources with CMake (sqlquack-blocks' `bundled`) names its version after
+# this release; otherwise it reports a dev version, which the Python duckdb package and DuckDB's
+# extension downloads do not match. Keep it equal to the DuckDB release the duckdb crate builds.
+OVERRIDE_GIT_DESCRIBE = "v2.0.0"
