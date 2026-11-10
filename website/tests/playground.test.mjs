@@ -7,7 +7,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 
-import { initSync, analyze, fixture_tables, run_failure } from '../wasm/pkg/sqlquack_wasm.js';
+import { initSync, analyze, fixture_tables, known_differences, run_failure } from '../wasm/pkg/sqlquack_wasm.js';
 import { previewLimit, rendered, resultTable, underlined } from '../public/playground/spans.js';
 
 initSync({ module: readFileSync(new URL('../wasm/pkg/sqlquack_wasm_bg.wasm', import.meta.url)) });
@@ -146,6 +146,18 @@ test('a refused known difference is worded from its entry, with the one fix that
 	// A policy file that refuses it gets the edit to that file; strict mode the strict setting.
 	assert.match(refused({ policy }).help, /^allow it with default = "warn" under \[divergences\.hash\] in the policy file/);
 	assert.match(refused({ policy, strict: true }).help, /^allow it in strict mode with default = "warn" and strict = "warn"/);
+	// The refusal names its known difference, which the page lists by name and title.
+	assert.equal(builtin.known_difference, 'hash');
+	const listed = JSON.parse(known_differences());
+	assert.equal(listed.find((entry) => entry.name === 'hash')?.title, builtin.message);
+	assert.equal(new Set(listed.map((entry) => entry.name)).size, listed.length);
+	// Each says whether the built-in defaults allow it: the clock, but never HASH.
+	const byName = Object.fromEntries(listed.map((entry) => [entry.name, entry.allowed_by_default]));
+	assert.deepEqual([byName.current_time, byName.hash], [true, false]);
+	// A refusal that needs no known difference names none.
+	const tight = policy.replace(/\[conversion_budget\][^[]*/, '[conversion_budget]\nmilliseconds = 0\nsize_ratio = 2000\nminimum_bytes = 4194304\n\n');
+	const budget = JSON.parse(analyze('SELECT order_id FROM orders', SOURCES, JSON.stringify({ policy: tight }))).translate.diagnostics[0];
+	assert.deepEqual([budget.code, budget.known_difference], ['SQ0006', undefined]);
 });
 
 test('date arithmetic against CURRENT_DATE runs in the in-browser DuckDB, on its first statement', async () => {
