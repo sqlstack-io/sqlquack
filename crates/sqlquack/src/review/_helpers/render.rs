@@ -113,7 +113,7 @@ fn provenance_comments(provenance: &Provenance) -> String {
     for (divergence, constructs) in &provenance.divergences {
         let constructs: Vec<&str> = constructs.iter().map(String::as_str).collect();
         text.push_str(&format!(
-            "# warning: known divergence {divergence} at {}\n",
+            "# warning: known difference {divergence} at {}\n",
             constructs.join(", ")
         ));
     }
