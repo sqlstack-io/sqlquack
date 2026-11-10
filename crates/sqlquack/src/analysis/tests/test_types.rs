@@ -235,3 +235,23 @@ pub(crate) struct EverydayQuery {
     #[serde(default)]
     pub(crate) uncertain: bool,
 }
+
+/// Single-line converted SQL and its expected layout.
+pub(crate) struct LayoutTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_layout: &'static str,
+}
+
+/// SQL the formatter refuses, and the reason its check gives.
+pub(crate) struct LayoutFallbackTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_reason: &'static str,
+}
+
+/// Helper macros laid out and created in DuckDB, and the failures expected.
+pub(crate) struct LayoutCreationTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) expected_failures: Vec<String>,
+}

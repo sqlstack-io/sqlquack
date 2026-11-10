@@ -1078,3 +1078,17 @@ const TRANSLATED: &str = "translated";
 
 /// The diagnostic code of SQL that does not parse.
 const PARSE_FAILURE_CODE: &str = "SQ0001";
+
+/// Why DuckDB did not create `statement` laid out as convert prints it, if it did not.
+pub(crate) fn laid_out_creation_failure(
+    connection: &duckdb::Connection,
+    statement: &str,
+) -> Result<(), String> {
+    let laid_out = sqlquack_blocks::layout::main::checked_layout::checked_layout(
+        statement,
+        sqlquack_format::FormatDialect::DuckDB,
+    )?;
+    connection
+        .execute_batch(&laid_out)
+        .map_err(|error| format!("{laid_out}: {error}"))
+}
