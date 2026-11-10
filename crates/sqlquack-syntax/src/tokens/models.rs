@@ -1567,6 +1567,14 @@ pub(crate) struct TokenizerState<'a, C, T> {
     pub(crate) comments: Vec<String>,
     pub(crate) guard_stats: Option<TokenGuardStats>,
     pub(crate) config: &'a TokenizerConfig,
+    pub(crate) ascii: AsciiLookups,
+}
+
+/// The config's single-character tokens and identifier quotes for ASCII characters, read without hashing.
+#[derive(Debug)]
+pub(crate) struct AsciiLookups {
+    pub(crate) single_tokens: [Option<TokenType>; 128],
+    pub(crate) identifiers: [Option<char>; 128],
 }
 
 /// A position in source SQL, in Unicode characters.
