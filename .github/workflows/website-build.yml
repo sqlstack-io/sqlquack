@@ -1,0 +1,78 @@
+name: Website Build
+
+# Builds the playground engine and the site and checks them: the generated references, the engine's
+# lint and tests, the build and its links. Website deploys what it uploads; CI runs it on pull
+# requests that touch the site or the crates the engine is built from.
+on:
+  workflow_call:
+    inputs:
+      upload:
+        description: Upload the built site for GitHub Pages
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build the engine and the website
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: website
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+
+      - name: Install the pinned Rust toolchain with the wasm32 target
+        working-directory: .
+        run: |
+          rustup toolchain install
+          rustup target add wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: website/wasm
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: wasm-bindgen-cli@0.2.130
+
+      - name: Check the diagnostics reference matches the registry
+        run: python3 scripts/generate_diagnostics.py --check
+
+      - name: Check the known differences table matches the entries
+        run: python3 scripts/generate_known_differences.py --check
+
+      - name: Lint the engine
+        working-directory: website/wasm
+        run: |
+          cargo fmt --check
+          cargo clippy --locked --target wasm32-unknown-unknown --release -- -D warnings
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the engine
+        run: ./scripts/build_engine.sh
+
+      - name: Test the engine and its spans
+        run: npm run -s test:engine
+
+      - name: Build
+        run: npm run build
+
+      - name: Check links
+        run: python3 scripts/check_links.py dist
+
+      - name: Upload site
+        if: inputs.upload
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: website/dist

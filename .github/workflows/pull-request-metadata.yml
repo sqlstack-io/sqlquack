@@ -1,0 +1,57 @@
+name: Pull Request Metadata
+run-name: >-
+  ${{ inputs.request_id && format('{0} [{1}]', github.workflow, inputs.request_id)
+  || github.event.pull_request.title || github.event.head_commit.message
+  || github.event.merge_group.head_commit.message || github.workflow }}
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+  merge_group:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Pull request number to validate
+        required: true
+        type: number
+      request_id:
+        description: "Release Please attempt that dispatched this run; leave empty for manual runs"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  validate:
+    name: Pull Request Metadata
+    runs-on: ubuntu-24.04
+    steps:
+      # The queue only admits pull requests whose metadata check already passed, so a merge group
+      # reports success instead of skipping: a required check must report for the queue to merge.
+      - name: Accept metadata validated on the pull request
+        if: github.event_name == 'merge_group'
+        run: echo "Pull request metadata was validated on the pull request before it was queued."
+
+      - uses: actions/checkout@v4
+        if: github.event_name != 'merge_group'
+      - name: Resolve pull request metadata
+        if: github.event_name != 'merge_group'
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ inputs.pr_number }}
+        run: |
+          if [[ "${EVENT_NAME}" == "pull_request" ]]; then
+            cp "${GITHUB_EVENT_PATH}" "${RUNNER_TEMP}/pull-request.json"
+          else
+            gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" \
+              > "${RUNNER_TEMP}/pull-request.json"
+          fi
+
+      - name: Validate branch, title, and description
+        if: github.event_name != 'merge_group'
+        env:
+          PR_METADATA_PATH: ${{ runner.temp }}/pull-request.json
+        run: python -m scripts.validate_pr_metadata --metadata-file "${PR_METADATA_PATH}"

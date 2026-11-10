@@ -1,8 +1,8 @@
 name: Release Please
 
 # On every push to main, opens or updates the release pull request from the Conventional Commits
-# since the last release and dispatches Release Distributions to build its distributions. Once the
-# release pull request merges, it tags the release and dispatches Publish for that tag.
+# since the last release, and dispatches its required checks and Release Distributions on its
+# branch. Once the release pull request merges, it tags the release and dispatches Publish for it.
 on:
   push:
     branches:
@@ -37,16 +37,23 @@ jobs:
           gh workflow run publish.yml --repo "${GITHUB_REPOSITORY}" --ref main \
             -f "tag=${RELEASE_TAG}"
 
-      - name: Build the release pull request's distributions
+      # A pull request this workflow opens starts no pull_request runs, so the release pull
+      # request's required checks are dispatched on its branch: CI replays every recorded case
+      # before the release, alongside the distribution build.
+      - name: Check the release pull request and build its distributions
         if: steps.release.outputs.prs_created == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_PRS: ${{ steps.release.outputs.prs }}
         run: |
           release_branch="$(jq -r '.[0].headBranchName // empty' <<< "${RELEASE_PRS}")"
-          if [[ -z "${release_branch}" ]]; then
-            echo "Release Please reported a created pull request without a head branch" >&2
+          release_pr="$(jq -r '.[0].number // empty' <<< "${RELEASE_PRS}")"
+          if [[ -z "${release_branch}" || -z "${release_pr}" ]]; then
+            echo "Release Please reported a created pull request without a head branch or number" >&2
             exit 1
           fi
-          gh workflow run release-distributions.yml --repo "${GITHUB_REPOSITORY}" \
-            --ref "${release_branch}"
+          run() { gh workflow run "$1" --repo "${GITHUB_REPOSITORY}" --ref "${release_branch}" "${@:2}"; }
+          run release-distributions.yml
+          run ci.yml
+          run version-guard.yml
+          run pull-request-metadata.yml -f "pr_number=${release_pr}"

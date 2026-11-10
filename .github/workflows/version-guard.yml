@@ -1,0 +1,59 @@
+name: Version Guard
+run-name: >-
+  ${{ inputs.request_id && format('{0} [{1}]', github.workflow, inputs.request_id)
+  || github.event.pull_request.title || github.event.head_commit.message
+  || github.event.merge_group.head_commit.message || github.workflow }}
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  # Checks out the merge group's head, so the version that would land on main is the one checked.
+  merge_group:
+  workflow_dispatch:
+    inputs:
+      request_id:
+        description: "Release Please attempt that dispatched this run; leave empty for manual runs"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  block-1-0:
+    name: Block automatic 1.0 releases
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Reject versions at or above 1.0.0
+        run: |
+          python - <<'PY'
+          import sys
+          import tomllib
+
+          # Release Please bumps the workspace version; the Python package takes it from Cargo.
+          with open("Cargo.toml", "rb") as manifest:
+              version = tomllib.load(manifest)["workspace"]["package"]["version"]
+
+          parts = version.split(".")
+          try:
+              major = int(parts[0])
+          except (IndexError, ValueError):
+              print(f"Invalid project version: {version}", file=sys.stderr)
+              sys.exit(1)
+
+          if major >= 1:
+              print(
+                  f"Refusing automatic release version {version}. "
+                  "Crossing to 1.0.0 requires an explicit manual decision.",
+                  file=sys.stderr,
+              )
+              sys.exit(1)
+
+          print(f"Project version {version} is below 1.0.0.")
+          PY

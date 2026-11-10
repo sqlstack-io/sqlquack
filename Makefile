@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug instruction-counts instruction-baseline gate-build polyglot-guard engine-free bundled-extensions dialect-builds generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded verify-changed replay-scope test-crate evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
+.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug instruction-counts instruction-baseline gate-build polyglot-guard engine-free bundled-extensions dialect-builds generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded verify-changed replay-scope test-crate check-pr-metadata evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -331,6 +331,12 @@ verify-recorded: python-module ## Replay every recorded translation on DuckDB; c
 
 verify-changed: ## Replay only the recorded cases whose conversion changed since the last verify-changed.
 	$(MAKE) verify-recorded REPLAY_CACHE=$(or $(REPLAY_CACHE),target/replay-cache.json)
+
+# Validates a pull request's branch, title and description as the Pull Request Metadata check does.
+check-pr-metadata: ## Check PR metadata: make check-pr-metadata PR_TITLE='fix: …' PR_BODY_FILE=body.md.
+	@test -n "$(PR_TITLE)" || { echo "PR_TITLE is required" >&2; exit 2; }
+	@test -n "$(PR_BODY_FILE)" || { echo "PR_BODY_FILE is required" >&2; exit 2; }
+	uv run python -m scripts.validate_pr_metadata --title "$(PR_TITLE)" --body-file "$(PR_BODY_FILE)"
 
 # Fails when a declared full-replay or replay-input path matches no tracked file.
 replay-scope:

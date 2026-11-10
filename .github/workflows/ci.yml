@@ -1,33 +1,83 @@
 name: CI
 
+# The required check is the Verify job, which passes only when every job the change needs passed.
+# A pull request runs what its changed files need (scripts/replay_scope decides):
+# - documentation and website changes build and check the site only;
+# - code changes run check-ci, the Rust and Python tests, and the replay of the recorded cases,
+#   which reuses main's judgements for every case whose conversion and recording are unchanged;
+# - a change under a full-replay path replays every case.
+# The nightly run on main replays every case, refreshes the replay cache pull requests reuse,
+# converts DuckShop within its time budget and fuzzes. Release Please dispatches a full run on
+# each release pull request's branch, so every release replays every case first.
 on:
   pull_request:
-  push:
-    branches: [main]
+  schedule:
+    - cron: "17 3 * * *"
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: "0"
+
 jobs:
-  verify:
-    name: Verify
+  changes:
+    name: Classify the change
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    outputs:
+      replay: ${{ steps.scope.outputs.replay }}
+      code: ${{ steps.scope.outputs.code }}
+      site: ${{ steps.scope.outputs.site }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # The repository's scripts need Python 3.12.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # Every pull request, documentation only or not, keeps agent files and private paths out.
+      - name: Run the clutter guard
+        run: python3 -m scripts.check_clutter_guard
+      - name: Select the checks the change needs
+        id: scope
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [[ "${EVENT_NAME}" == "pull_request" ]]; then
+            python3 -m scripts.select_replay scope --base "${BASE_SHA}" >> "${GITHUB_OUTPUT}"
+          else
+            printf 'replay=full\ncode=true\nsite=true\n' >> "${GITHUB_OUTPUT}"
+          fi
+
+  site:
+    name: Website
+    needs: changes
+    if: needs.changes.outputs.site == 'true'
+    uses: ./.github/workflows/website-build.yml
+
+  checks:
+    name: Checks, tests and replay
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-24.04
+    # A cold build of the workspace takes most of this; the cached dependency builds cut it.
+    timeout-minutes: 120
     env:
-      CARGO_TERM_COLOR: always
-      CARGO_INCREMENTAL: "0"
       # The Snowflake recorder is never built or run in CI.
       RECORDER: "0"
       # `uv run` would otherwise sync the default groups, recorder included.
       UV_NO_SYNC: "1"
-      # The evidence pin check and the result baselines compare with the pull request base or the
-      # previous main commit.
-      EVIDENCE_BASE: ${{ github.event.pull_request.base.sha || github.event.before || 'origin/main' }}
+      # The evidence pin check and the result baselines compare with the pull request's base.
+      EVIDENCE_BASE: ${{ github.event.pull_request.base.sha || 'origin/main' }}
+      REPLAY: ${{ needs.changes.outputs.replay }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -39,10 +89,19 @@ jobs:
           cache-dependency-glob: uv.lock
       - name: Install the pinned Rust toolchain
         run: rustup toolchain install
-      # Caches the dependency builds, polyglot above all, keyed by Cargo.lock and the toolchain.
+      # The gate build and its tests outgrow the runner's free disk with the preinstalled SDKs.
+      - name: Free disk space
+        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+      # The dependency builds, keyed by Cargo.lock and the toolchain; pull requests only read them.
       - uses: Swatinem/rust-cache@v2
         with:
-          shared-key: verify
+          shared-key: gate
+          save-if: ${{ github.event_name != 'pull_request' }}
+      # The evidence snapshot evidence.toml pins; scripts/evidence.sh verifies it after a restore.
+      - uses: actions/cache@v4
+        with:
+          path: .evidence/pinned
+          key: evidence-${{ hashFiles('evidence.toml') }}
       - name: Install Python
         run: uv python install 3.12
       - name: Install development tools without the recorder
@@ -50,34 +109,71 @@ jobs:
       # The instruction-count guard in check-ci runs its workloads under callgrind.
       - name: Install valgrind
         run: sudo apt-get update -q && sudo apt-get install -y -q --no-install-recommends valgrind
-      - name: Run static checks
-        run: make check-ci
-      - name: Run tests
-        run: make test
-      # `make verify-recorded`, with the same verify flags as `make gate`, then the measure and SQL
-      # size checks.
+      # One gate build serves every step: check-ci, the Rust tests, the Python tests and the replay.
+      - name: Run static checks and tests
+        run: make check-merge test-python
+      - name: Find the replay cache's scope
+        id: replay
+        if: env.REPLAY != 'none'
+        run: echo "scope=$(uv run python -m scripts.select_replay digest)" >> "${GITHUB_OUTPUT}"
+      # Judgements made under the same full-replay paths, most recently by main's nightly run.
+      - name: Restore the replay cache
+        if: env.REPLAY == 'changed'
+        uses: actions/cache/restore@v4
+        with:
+          path: target/replay-cache.json
+          key: replay-${{ steps.replay.outputs.scope }}-${{ github.run_id }}
+          restore-keys: replay-${{ steps.replay.outputs.scope }}-
       - name: Replay recorded translations on DuckDB and check their baselines
-        run: >-
-          make check-convert DIALECT=snowflake VERIFY_PROFILE=dev RESULTS_BASE="$EVIDENCE_BASE"
+        if: env.REPLAY != 'none'
+        run: make verify-recorded RESULTS_BASE="${EVIDENCE_BASE}" REPLAY_CACHE=target/replay-cache.json
+      - name: Report the replay
+        if: env.REPLAY == 'none'
+        run: echo "No changed file is in a crate the sqlquack binary is built from, so nothing replays."
+      # Pull requests restore the cache saved on their base branch, main's from the nightly run.
+      - name: Save the replay cache
+        if: env.REPLAY != 'none' && github.event_name != 'pull_request'
+        uses: actions/cache/save@v4
+        with:
+          path: target/replay-cache.json
+          key: replay-${{ steps.replay.outputs.scope }}-${{ github.run_id }}
 
-  polyglot-check:
-    name: Exact parser check on DuckShop
+  verify:
+    name: Verify
+    if: always()
+    needs: [changes, site, checks]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Confirm every job the change needs passed
+        env:
+          CHANGES: ${{ needs.changes.result }}
+          SITE: ${{ needs.site.result }}
+          SITE_NEEDED: ${{ needs.changes.outputs.site }}
+          CHECKS: ${{ needs.checks.result }}
+          CHECKS_NEEDED: ${{ needs.changes.outputs.code }}
+        run: |
+          failed=0
+          expect() {
+            local name=$1 result=$2 needed=$3
+            if [[ "${result}" == "success" || ( "${needed}" != "true" && "${result}" == "skipped" ) ]]; then
+              echo "${name}: ${result}"
+            else
+              echo "${name}: ${result}, but the change needs it" >&2
+              failed=1
+            fi
+          }
+          expect "Classify the change" "${CHANGES}" true
+          expect "Website" "${SITE}" "${SITE_NEEDED}"
+          expect "Checks, tests and replay" "${CHECKS}" "${CHECKS_NEEDED}"
+          exit "${failed}"
+
+  duckshop:
+    name: Convert DuckShop within the time budget
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    env:
-      CARGO_TERM_COLOR: always
-      CARGO_INCREMENTAL: "0"
-      # The DuckShop benchmarks and the SQLBuild release that compiles them, pinned together.
-      SQLBUILD_REF: a7bc60e0abee5bb19d67e5bdc948e048a1df82e0
-      SQLBUILD_VERSION: 0.187.2
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
-        with:
-          repository: sqlstack-io/sqlbuild
-          ref: ${{ env.SQLBUILD_REF }}
-          path: sqlbuild
-          sparse-checkout: benchmarks
       - uses: astral-sh/setup-uv@v5
         with:
           version: "0.12.3"
@@ -85,31 +181,19 @@ jobs:
         run: rustup toolchain install
       - uses: Swatinem/rust-cache@v2
         with:
-          shared-key: verify
-          save-if: false
+          shared-key: duckshop
+          save-if: ${{ github.event_name != 'pull_request' }}
       - name: Compile DuckShop and DuckShop 10K
-        run: |
-          uv venv -p 3.12 "$RUNNER_TEMP/sqlbuild"
-          VIRTUAL_ENV="$RUNNER_TEMP/sqlbuild" uv pip install "sqlbuild==$SQLBUILD_VERSION"
-          python3 sqlbuild/benchmarks/duckshop-10k/generate.py --out "$RUNNER_TEMP/duckshop-10k"
-          (cd sqlbuild/benchmarks/duckshop/project && "$RUNNER_TEMP/sqlbuild/bin/sqb" compile)
-          (cd "$RUNNER_TEMP/duckshop-10k" && "$RUNNER_TEMP/sqlbuild/bin/sqb" compile)
-      - name: Compare with polyglot
-        run: |
-          cargo run --locked --release -p sqlquack-polyglot-check -- \
-            directory sqlbuild/benchmarks/duckshop/project/target/compiled --dialect snowflake
-          cargo run --locked --release -p sqlquack-polyglot-check -- \
-            directory "$RUNNER_TEMP/duckshop-10k/target/compiled" --dialect snowflake
-      - name: Convert DuckShop within the time budget
-        run: |
-          make census-duckshop DUCKSHOP_COMPILED="sqlbuild/benchmarks/duckshop/project/target/compiled $RUNNER_TEMP/duckshop-10k/target/compiled"
+        run: make duckshop-compiled
+      - name: Convert them
+        run: make census-duckshop
 
   fuzz:
     name: Fuzz tolerant parsing
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
-      CARGO_TERM_COLOR: always
       # Seconds of fuzzing after the build.
       FUZZ_SECONDS: "90"
     steps:
