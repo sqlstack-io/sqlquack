@@ -2,7 +2,8 @@ use std::path::Path;
 use std::process::Command;
 
 use crate::test_types::{
-    BinaryOutcome, ConvertedFile, DeclaredOutcome, SourceVariantOutcome, UpstreamOutcome,
+    BinaryOutcome, ConvertedFile, DeclaredOutcome, DefaultOutcome, SourceVariantOutcome,
+    UpstreamOutcome,
 };
 
 const ORDERS_SQL: &str = "SELECT customer_id, COUNT(*) AS orders FROM __ref(\"orders\") \
@@ -60,7 +61,13 @@ pub(crate) fn run_on_refused_upstream(typed: bool, flags: &[&str]) -> UpstreamOu
     let sources = [CUSTOMERS_SOURCE, FUZZY_NAMES_SOURCE][..1 + usize::from(typed)].concat();
     write_sources(directory.path(), &format!("sources:\n{sources}"));
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["census", "--builtin-policy", "--chain-models", "--project"])
+        .args([
+            "census",
+            "--detailed",
+            "--builtin-policy",
+            "--chain-models",
+            "--project",
+        ])
         .arg(directory.path())
         .args(flags)
         .arg(&models)
@@ -105,7 +112,13 @@ pub(crate) fn run_on_events(payload: &str, flags: &[&str]) -> SourceVariantOutco
     let policy = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../sqlquack.toml");
     let mut command = Command::new(env!("CARGO_BIN_EXE_sqlquack"));
     command
-        .args(["census", "--json", "--chain-models", "--project"])
+        .args([
+            "census",
+            "--detailed",
+            "--json",
+            "--chain-models",
+            "--project",
+        ])
         .arg(directory.path())
         .arg("--policy")
         .arg(&policy);
@@ -137,7 +150,7 @@ pub(crate) fn run_on_placed_orders(flags: &[&str]) -> SourceVariantOutcome {
     );
     let policy = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../sqlquack.toml");
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["census", "--json", "--project"])
+        .args(["census", "--detailed", "--json", "--project"])
         .arg(directory.path())
         .arg("--policy")
         .arg(&policy)
@@ -165,6 +178,7 @@ pub(crate) fn census_warnings(flags: &[&str]) -> Vec<String> {
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
         .args([
             "census",
+            "--detailed",
             "--builtin-policy",
             "--json",
             "--chain-models",
@@ -196,7 +210,13 @@ pub(crate) fn cursor_model_convertible(flags: &[&str]) -> Option<u64> {
         "sources:\n  - name: orders\n    columns:\n      - name: order_id\n        type: NUMBER(38,0)\n",
     );
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["census", "--builtin-policy", "--json", "--project"])
+        .args([
+            "census",
+            "--detailed",
+            "--builtin-policy",
+            "--json",
+            "--project",
+        ])
         .arg(directory.path())
         .args(flags)
         .arg(&models)
@@ -227,7 +247,7 @@ pub(crate) fn run_on_declared_orders(declare_model: bool, flags: &[&str]) -> Dec
     );
     let policy = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../sqlquack.toml");
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["census", "--json", "--project"])
+        .args(["census", "--detailed", "--json", "--project"])
         .arg(directory.path())
         .arg("--policy")
         .arg(&policy)
@@ -266,7 +286,13 @@ pub(crate) fn converted_files(set_variable: bool) -> Vec<ConvertedFile> {
     write_sources(directory.path(), &format!("sources:\n{CUSTOMERS_SOURCE}"));
     let mut command = Command::new(env!("CARGO_BIN_EXE_sqlquack"));
     command
-        .args(["census", "--builtin-policy", "--json", "--project"])
+        .args([
+            "census",
+            "--detailed",
+            "--builtin-policy",
+            "--json",
+            "--project",
+        ])
         .arg(directory.path())
         .arg(&models)
         .env_remove("SQLQUACK_CONVERTED_DIR")
@@ -316,7 +342,13 @@ pub(crate) fn compiled_dbt_counts(flags: &[&str]) -> (Option<u64>, Option<u64>) 
         .expect("fixture written");
     write_sources(directory.path(), RAW_ORDERS_SOURCES);
     let output = Command::new(env!("CARGO_BIN_EXE_sqlquack"))
-        .args(["census", "--builtin-policy", "--json", "--project"])
+        .args([
+            "census",
+            "--detailed",
+            "--builtin-policy",
+            "--json",
+            "--project",
+        ])
         .arg(directory.path())
         .args(flags)
         .arg(directory.path().join("target/compiled"))
@@ -327,4 +359,76 @@ pub(crate) fn compiled_dbt_counts(flags: &[&str]) -> (Option<u64>, Option<u64>) 
         report["refusals"]["convertible"].as_u64(),
         report["refusals"]["convertible_strict"].as_u64(),
     )
+}
+
+const CUSTOMER_NAMES_SQL: &str = "SELECT customer_id, name FROM customers";
+const ORDER_REPORT_SQL: &str = "SELECT order_id FROM __ref(\"orders_summary\")";
+
+/// The default census with `flags`, text and `--json`, of `models` (its first `files`), paths relative.
+pub(crate) fn default_census(typed: bool, files: usize, flags: &[&str]) -> DefaultOutcome {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    std::fs::create_dir(directory.path().join("models")).expect("models directory created");
+    let models = [
+        ("customer_names.sql", CUSTOMER_NAMES_SQL),
+        ("fuzzy_names.sql", FUZZY_NAMES_SQL),
+        ("name_report.sql", NAME_REPORT_SQL),
+        ("order_report.sql", ORDER_REPORT_SQL),
+    ];
+    for (name, sql) in &models[..files] {
+        std::fs::write(directory.path().join("models").join(name), sql).expect("fixture written");
+    }
+    let sources = [CUSTOMERS_SOURCE, FUZZY_NAMES_SOURCE][..1 + usize::from(typed)].concat();
+    write_sources(directory.path(), &format!("sources:\n{sources}"));
+    let run = |format: &str| {
+        Command::new(env!("CARGO_BIN_EXE_sqlquack"))
+            .current_dir(directory.path())
+            .args([
+                "census",
+                "--builtin-policy",
+                "--project",
+                ".",
+                "--format",
+                format,
+            ])
+            .args(flags)
+            .arg("models")
+            .output()
+            .expect("sqlquack runs")
+    };
+    let text = run("text");
+    let report: serde_json::Value = serde_json::from_slice(&run("json").stdout).unwrap_or_default();
+    DefaultOutcome {
+        exit_code: text.status.code(),
+        text_lines: String::from_utf8_lossy(&text.stdout)
+            .lines()
+            .filter(|line| {
+                [
+                    "error[",
+                    "warning:",
+                    " --> ",
+                    "Converted",
+                    "Blocked",
+                    "Converts",
+                ]
+                .iter()
+                .any(|start| line.starts_with(start))
+                    || line.contains("= note:")
+            })
+            .map(str::to_owned)
+            .collect(),
+        json_ok: report["ok"].as_bool(),
+        json_codes: report["blocked"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .flat_map(|file| file["diagnostics"].as_array().cloned().unwrap_or_default())
+            .filter_map(|diagnostic| diagnostic["code"].as_str().map(str::to_owned))
+            .collect(),
+        json_upstream: report["upstream"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter_map(|warning| warning["path"].as_str().map(str::to_owned))
+            .collect(),
+    }
 }

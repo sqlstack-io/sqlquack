@@ -1722,8 +1722,8 @@ fn given_output_flags_when_running_then_format_json_and_json_agree_and_help_list
         assert!(
             test_case.arguments != ["--help"]
                 || stdout.contains(
-                    "census and index exit 0 when they finish, refused files included, and 2 \
-                     when they cannot run.",
+                    "census exits 0 when every file converts, 1 when any is blocked, and 2 when \
+                     it cannot run.",
                 ),
             "{}",
             test_case.description

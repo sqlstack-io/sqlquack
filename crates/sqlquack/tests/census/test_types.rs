@@ -97,3 +97,25 @@ pub(crate) struct CompiledDbtTestCase {
     pub(crate) flags: &'static [&'static str],
     pub(crate) expected_counts: (Option<u64>, Option<u64>),
 }
+
+pub(crate) struct DefaultOutputTestCase {
+    pub(crate) description: &'static str,
+    /// Whether the project's sources type the refused model, so its reader converts.
+    pub(crate) typed: bool,
+    /// How many of: a converting file, a refused model, its reader, an unknown relation's reader.
+    pub(crate) files: usize,
+    /// Extra census flags, such as `--chain-models`.
+    pub(crate) flags: &'static [&'static str],
+    pub(crate) expected_outcome: DefaultOutcome,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) struct DefaultOutcome {
+    pub(crate) exit_code: Option<i32>,
+    /// Text lines that start with `error[`, `warning:`, ` --> `, `Converted`, `Blocked` or `Converts`.
+    pub(crate) text_lines: Vec<String>,
+    /// From `--json`: ok, the codes of each blocked file's diagnostics, and the upstream readers.
+    pub(crate) json_ok: Option<bool>,
+    pub(crate) json_codes: Vec<String>,
+    pub(crate) json_upstream: Vec<String>,
+}

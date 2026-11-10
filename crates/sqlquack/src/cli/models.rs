@@ -318,6 +318,7 @@ pub struct IndexArguments {
 
 /// Arguments of `sqlquack census`.
 #[derive(Clone, Debug, Args)]
+#[group(id = "report", multiple = true)]
 pub struct CensusArguments {
     /// SQL files, or directories searched for `.sql` files: one query or compiled model per file.
     #[arg(required = true)]
@@ -328,7 +329,13 @@ pub struct CensusArguments {
     /// How to print the report on standard output.
     #[command(flatten)]
     pub output: OutputArguments,
-    /// Constructs listed in the text report.
+    /// Print the coverage report instead, with file, model and relation names and the slowest files.
+    #[arg(long, group = "report")]
+    pub detailed: bool,
+    /// Print the coverage report instead with counts and construct keys only, never SQL or names.
+    #[arg(long, group = "report")]
+    pub anonymous: bool,
+    /// Constructs listed in the coverage report's text.
     #[arg(long, default_value_t = DEFAULT_TEXT_LIMIT)]
     pub limit: usize,
     /// Treat each converted file as the relation its file name references, and convert again.
@@ -340,14 +347,11 @@ pub struct CensusArguments {
     /// NAME=<sha256>: an override verified for the body with that hash, as `convert --json` reports.
     #[arg(long = "verified-override", value_name = "NAME=SHA256")]
     pub verified_overrides: Vec<String>,
-    /// Print file, model and relation names in the slowest files and the blockers.
-    #[arg(long)]
-    pub names: bool,
     /// The project's cursor type: cursor intrinsics become a bound as SQLBuild renders one.
     #[arg(long, value_enum)]
     pub cursor_type: Option<CursorType>,
-    /// Construct keys or `rule.<id>`s the what-if counts treat as supported, comma-separated.
-    #[arg(long, value_delimiter = ',')]
+    /// Construct keys or `rule.<id>`s the detailed what-if counts treat as supported, comma-separated.
+    #[arg(long, value_delimiter = ',', requires = "report")]
     pub assume_supported: Vec<String>,
     /// The policy and what the caller confirms about its sessions.
     #[command(flatten)]

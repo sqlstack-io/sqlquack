@@ -39,6 +39,12 @@ pub(crate) fn collect_sql_files(paths: &[PathBuf]) -> Result<Vec<PathBuf>, Censu
     Ok(files)
 }
 
+/// The model a file defines: its file name without extension.
+pub(crate) fn model_name(path: &Path) -> String {
+    path.file_stem()
+        .map_or_else(String::new, |stem| stem.to_string_lossy().into_owned())
+}
+
 fn is_sql(path: &Path) -> bool {
     path.extension()
         .and_then(|extension| extension.to_str())

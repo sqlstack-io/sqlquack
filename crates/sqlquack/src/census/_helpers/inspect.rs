@@ -1,6 +1,6 @@
-//! One file's census: its constructs and refusal categories.
+//! One file's census: its constructs and refusal categories, and its diagnostics when blocked.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
 use crate::analysis::models::SourceDialect;
@@ -15,13 +15,23 @@ use sqlquack_semantics::snowflake::typing::types::{ColumnSpec, Schema};
 use sqlquack_diagnostics::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_diagnostics::provenance::models::Provenance;
 
+use crate::analysis::constants::STATEMENT_REFUSAL;
 use crate::analysis::main::collect_all_refusals::collect_all_refusals;
 use crate::analysis::main::refused_construct::refused_construct;
+use crate::census::_helpers::corpus::referenced_model;
+use crate::census::_helpers::files::model_name;
 use crate::census::_helpers::placeholders::{original_location, rewrite_with_references};
-use crate::census::constants::{CONVERTED_DIR_VARIABLE, GUARDS_DIR_VARIABLE};
+use crate::census::constants::{
+    CONVERTED_DIR_VARIABLE, GUARDS_DIR_VARIABLE, READS_REFUSED_MODEL_NOTE, RELATION_PLACEHOLDER,
+};
 use crate::census::errors::CensusError;
-use crate::census::models::PlacedRefusal;
+use crate::census::models::{BlockedDiagnostics, CensusFile, PlacedRefusal};
 use sqlquack_convert::snowflake::analysis::main::analyze::analyze;
+use sqlquack_convert::snowflake::analysis::main::assumption_id::assumption_id;
+use sqlquack_convert::snowflake::analysis::main::with_divergence_help::with_divergence_help;
+use sqlquack_convert::snowflake::analysis::models::ConversionChoices;
+use sqlquack_diagnostics::diagnostics::main::diagnose::diagnose;
+use sqlquack_policy::policy::models::Policy;
 
 #[derive(Clone)]
 pub(crate) struct FileCensus {
@@ -43,6 +53,8 @@ pub(crate) struct FileCensus {
     pub(crate) unknown_relations: BTreeSet<String>,
     /// Every refusal with its position, in source order.
     pub(crate) placed: Vec<PlacedRefusal>,
+    /// The first conversion's refusals, located in the original file.
+    pub(crate) refusals: Vec<Refusal>,
     /// Whether the file may hold refusals that converting past the others did not reach.
     pub(crate) possibly_incomplete: bool,
 }
@@ -72,14 +84,16 @@ pub(crate) fn complete_refusals(
     Ok((census, collected.columns))
 }
 
+/// The relation a refusal's `reason` found without known columns.
+pub(crate) fn unknown_relation(reason: &str) -> Option<String> {
+    reason
+        .strip_prefix(UNKNOWN_RELATION_PREFIX)?
+        .strip_suffix(UNKNOWN_RELATION_SUFFIX)
+        .map(str::to_owned)
+}
+
 /// The relations refusals found without known columns, and the other refusals' constructs.
 fn traced(refusals: &[Refusal]) -> (BTreeSet<String>, BTreeSet<(RefusalCategory, String)>) {
-    let unknown_relation = |reason: &str| {
-        reason
-            .strip_prefix(UNKNOWN_RELATION_PREFIX)?
-            .strip_suffix(UNKNOWN_RELATION_SUFFIX)
-            .map(str::to_owned)
-    };
     let unknown_relations: BTreeSet<String> = refusals
         .iter()
         .filter_map(|refusal| unknown_relation(&refusal.reason))
@@ -144,6 +158,7 @@ pub(crate) fn inspect_file(
     }
     let (unknown_relations, root_constructs) = traced(&analysis.refusals);
     let mut placed: Vec<PlacedRefusal> = Vec::new();
+    let mut refusals: Vec<Refusal> = Vec::with_capacity(analysis.refusals.len());
     for refusal in &analysis.refusals {
         let location = refusal
             .location
@@ -154,10 +169,15 @@ pub(crate) fn inspect_file(
             category: refusal.category.label().to_owned(),
             construct: refused_construct(refusal),
         });
+        refusals.push(Refusal {
+            location,
+            ..refusal.clone()
+        });
     }
     placed.sort();
     Ok(FileCensus {
         placed,
+        refusals,
         possibly_incomplete: false,
         elapsed: started.elapsed(),
         references: rewritten.references,
@@ -184,4 +204,72 @@ pub(crate) fn inspect_file(
             .map(|refusal| (refusal.category, refused_construct(refusal)))
             .collect(),
     })
+}
+
+/// A blocked file's diagnostics, and the causes of those not blamed on a refused model it reads.
+pub(crate) fn diagnosed_file(
+    file: &CensusFile,
+    refused_models: &BTreeMap<String, &Path>,
+    (policy, choices): (Option<&Policy>, &ConversionChoices),
+) -> Result<(BlockedDiagnostics, Vec<(String, String)>), CensusError> {
+    let source = read_source(&file.path)?;
+    let diagnostics = with_divergence_help(
+        &file.refusals,
+        diagnose(&file.refusals, &source),
+        (policy, choices, &BTreeMap::new()),
+    );
+    let mut own: Vec<(String, String)> = Vec::new();
+    let mut shown = Vec::with_capacity(diagnostics.len());
+    for (refusal, mut diagnostic) in file.refusals.iter().zip(diagnostics) {
+        match blamed_model(refusal, refused_models, &file.path) {
+            Some(note) => diagnostic.notes.push(note),
+            None => own.push((diagnostic.code.to_owned(), cause(refusal))),
+        }
+        shown.push(diagnostic);
+    }
+    let diagnosed = BlockedDiagnostics {
+        path: file.path.clone(),
+        diagnostics: shown,
+        source,
+    };
+    Ok((diagnosed, own))
+}
+
+/// The text of the file at `path`.
+fn read_source(path: &Path) -> Result<String, CensusError> {
+    let bytes = std::fs::read(path).map_err(|error| CensusError::Read {
+        path: path.to_path_buf(),
+        message: error.to_string(),
+    })?;
+    Ok(String::from_utf8_lossy(&bytes).into_owned())
+}
+
+/// The note blaming a refusal on another refused model the file reads, if it is one.
+fn blamed_model(
+    refusal: &Refusal,
+    refused_models: &BTreeMap<String, &Path>,
+    path: &Path,
+) -> Option<String> {
+    let relation = unknown_relation(&refusal.reason)?;
+    let upstream = refused_models
+        .get(&referenced_model(&relation))
+        .filter(|upstream| **upstream != path)?;
+    Some(READS_REFUSED_MODEL_NOTE.replace("{model}", &model_name(upstream)))
+}
+
+/// What a refusal blames: its divergence, its unknown relation, its construct, or the statement.
+fn cause(refusal: &Refusal) -> String {
+    if let Some(id) = refusal.divergence() {
+        return assumption_id(id).to_owned();
+    }
+    if let Some(relation) = unknown_relation(&refusal.reason) {
+        let placeholder = format!("{}__", RELATION_PLACEHOLDER.to_ascii_uppercase());
+        return relation
+            .strip_prefix(&placeholder)
+            .map_or_else(|| relation.clone(), str::to_owned);
+    }
+    refusal.construct.as_ref().map_or_else(
+        || STATEMENT_REFUSAL.to_owned(),
+        |construct| construct.name.clone(),
+    )
 }

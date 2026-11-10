@@ -1,5 +1,6 @@
 //! `sqlquack census`.
 
+use std::fmt::Write as _;
 use std::io::Write;
 use std::process::ExitCode;
 use std::time::Instant;
@@ -8,14 +9,16 @@ use crate::analysis::models::SourceDialect;
 
 use crate::analysis::main::with_overrides::with_overrides;
 use crate::census::constants::{COVERAGE_POINTS, RULE_ID_PREFIX, SLOWEST_FILES};
-use crate::census::errors::CensusError;
+use crate::census::main::census_diagnostics::census_diagnostics;
 use crate::census::main::census_with_progress::census_with_progress;
+use crate::census::main::render_census_diagnostics::render_census_diagnostics;
 use crate::census::main::render_census_text::render_census_text;
-use crate::census::models::CensusOptions;
-use crate::cli::_helpers::evidence::divergence_options;
+use crate::census::models::{CensusOptions, CensusRun};
+use crate::cli::_helpers::evidence::{conversion_choices, divergence_options};
 use crate::cli::_helpers::project::project_choices;
 use crate::cli::models::CensusArguments;
 use sqlquack_convert::snowflake::catalogue::constants::RULES;
+use sqlquack_policy::policy::models::Policy;
 
 pub(crate) fn census_command(
     arguments: &CensusArguments,
@@ -90,7 +93,7 @@ pub(crate) fn census_command(
         schema,
         chain_models: arguments.chain_models,
         conversion,
-        names: arguments.names,
+        names: arguments.detailed && !arguments.anonymous,
         assume_supported: assumed
             .iter()
             .flat_map(|(_, constructs)| constructs.iter().cloned())
@@ -105,56 +108,93 @@ pub(crate) fn census_command(
         Ok(run) => run,
         Err(error) => {
             let _ = writeln!(stderr, "sqlquack census: failed: {error}");
-            return match error {
-                CensusError::DeclaredModelOffset(_) => ExitCode::FAILURE,
-                CensusError::NoInputs | CensusError::Read { .. } | CensusError::Workers(_) => {
-                    ExitCode::from(2)
-                }
-            };
+            return ExitCode::from(2);
         }
     };
-    let report = run.report;
-    for (name, constructs) in &assumed {
+    let outcome = match run.files.iter().any(|file| file.blocked) {
+        true => ExitCode::FAILURE,
+        false => ExitCode::SUCCESS,
+    };
+    let shown = match arguments.detailed || arguments.anonymous {
+        true => coverage_report(&run, arguments, &assumed),
+        false => default_report(&run, arguments, policy.as_ref()).map(|text| (text, String::new())),
+    };
+    let (text, notes) = match shown {
+        Ok(shown) => shown,
+        Err(error) => {
+            let _ = writeln!(stderr, "sqlquack census: failed: {error}");
+            return ExitCode::from(2);
+        }
+    };
+    if stdout.write_all(text.as_bytes()).is_err() {
+        return ExitCode::from(2);
+    }
+    let _ = write!(stderr, "{notes}");
+    let _ = writeln!(
+        stderr,
+        "sqlquack census: done, {} files in {:.1} s",
+        run.files.len(),
+        started.elapsed().as_secs_f64()
+    );
+    outcome
+}
+
+/// Each blocked file's diagnostics and the summary, as text or JSON.
+fn default_report(
+    run: &CensusRun,
+    arguments: &CensusArguments,
+    policy: Option<&Policy>,
+) -> Result<String, String> {
+    let census = census_diagnostics(
+        &run.files,
+        (policy, &conversion_choices(&arguments.conversion)),
+    )
+    .map_err(|error| error.to_string())?;
+    match arguments.output.json() {
+        true => serde_json::to_string_pretty(&census)
+            .map(|json| json + "\n")
+            .map_err(|error| error.to_string()),
+        false => Ok(render_census_diagnostics(&census)),
+    }
+}
+
+/// The coverage report, as text or JSON, and its stderr notes: unmatched assumptions, slowest files.
+fn coverage_report(
+    run: &CensusRun,
+    arguments: &CensusArguments,
+    assumed: &[(String, Vec<String>)],
+) -> Result<(String, String), String> {
+    let report = &run.report;
+    let mut notes = String::new();
+    for (name, constructs) in assumed {
         if constructs
             .iter()
             .all(|construct| report.plan.unmatched.contains(construct))
         {
             let _ = writeln!(
-                stderr,
+                notes,
                 "sqlquack census: warning: --assume-supported '{name}' matches no collected \
                  refusal, so it changes no bound"
             );
         }
     }
-    let rendered = if arguments.output.json() {
-        match serde_json::to_string_pretty(&report) {
-            Ok(json) => json + "\n",
-            Err(error) => {
-                let _ = writeln!(stderr, "sqlquack census: failed: {error}");
-                return ExitCode::FAILURE;
-            }
-        }
-    } else {
-        render_census_text(&report, arguments.limit)
+    let text = match arguments.output.json() {
+        true => serde_json::to_string_pretty(report)
+            .map(|json| json + "\n")
+            .map_err(|error| error.to_string())?,
+        false => render_census_text(report, arguments.limit),
     };
-    if stdout.write_all(rendered.as_bytes()).is_err() {
-        return ExitCode::FAILURE;
+    if arguments.detailed {
+        let _ = writeln!(notes, "sqlquack census: slowest files:");
+        for (path, elapsed) in run.timings.iter().take(SLOWEST_FILES) {
+            let seconds = elapsed.as_secs_f64();
+            let _ = match arguments.anonymous {
+                false => writeln!(notes, "  {seconds:>8.2} s  {}", path.display()),
+                true => writeln!(notes, "  {seconds:>8.2} s"),
+            };
+        }
     }
-    let _ = writeln!(stderr, "sqlquack census: slowest files:");
-    for (path, elapsed) in run.timings.iter().take(SLOWEST_FILES) {
-        let seconds = elapsed.as_secs_f64();
-        let _ = match arguments.names {
-            true => writeln!(stderr, "  {seconds:>8.2} s  {}", path.display()),
-            false => writeln!(stderr, "  {seconds:>8.2} s"),
-        };
-    }
-    let _ = writeln!(
-        stderr,
-        "sqlquack census: done, {} files in {:.1} s",
-        report.totals.files,
-        started.elapsed().as_secs_f64()
-    );
-    ExitCode::SUCCESS
+    Ok((text, notes))
 }
 
 /// Each name with the constructs it stands for: a rule's for `rule.<id>`, else the construct key.

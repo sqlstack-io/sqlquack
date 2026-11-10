@@ -107,3 +107,9 @@ pub const PLANNABLE_CATEGORIES: &[RefusalCategory] = &[
 
 /// How `--assume-supported` names a rule rather than a construct.
 pub const RULE_ID_PREFIX: &str = "rule.";
+
+/// Causes the default summary names before counting the rest.
+pub const SUMMARY_CAUSES: usize = 5;
+
+/// The note on a blocked file's diagnostic for a model it reads that doesn't convert itself.
+pub const READS_REFUSED_MODEL_NOTE: &str = "reads `{model}`, which doesn't convert";
