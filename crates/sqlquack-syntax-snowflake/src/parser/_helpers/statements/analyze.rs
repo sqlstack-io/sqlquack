@@ -2,11 +2,14 @@
 
 use crate::parser::_helpers::support::dialects::supports_string_aliases;
 use sqlquack_syntax::tokens::models::SourceSpan;
+use std::collections::HashSet;
 #[cfg(test)]
 use std::sync::Arc;
+use std::sync::LazyLock;
 
 use crate::parser::constants::BUFFER_USAGE_LIMIT;
 use crate::parser::constants::PERCENT_SIGN;
+use crate::parser::constants::{SNOWFLAKE_RESERVED_KEYWORDS, SNOWFLAKE_RESERVED_LONGEST};
 use crate::parser::models::Parser;
 #[cfg(test)]
 use crate::parser::models::ParserConfig;
@@ -310,9 +313,7 @@ impl Parser {
             Some(sqlquack_syntax::tokens::models::DialectType::Snowflake)
         ) && !self.is_at_end()
             && self.peek().token_type != TokenType::QuotedIdentifier
-            && crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS
-                .iter()
-                .any(|keyword| self.peek().text.eq_ignore_ascii_case(keyword))
+            && snowflake_reserved_word(&self.peek().text)
     }
 
     /// Whether a keyword may be a table alias; LEFT, RIGHT, OUTER and FULL may.
@@ -1843,4 +1844,19 @@ impl Parser {
             },
         ))))
     }
+}
+
+/// Snowflake's reserved keywords, looked up rather than scanned.
+static SNOWFLAKE_RESERVED: LazyLock<HashSet<&'static str>> =
+    LazyLock::new(|| SNOWFLAKE_RESERVED_KEYWORDS.iter().copied().collect());
+
+/// Whether `word`, in any case, is a Snowflake reserved keyword; each is upper-case ASCII.
+pub(crate) fn snowflake_reserved_word(word: &str) -> bool {
+    let mut upper: [u8; SNOWFLAKE_RESERVED_LONGEST] = [0; SNOWFLAKE_RESERVED_LONGEST];
+    let Some(buffer) = upper.get_mut(..word.len()) else {
+        return false;
+    };
+    buffer.copy_from_slice(word.as_bytes());
+    buffer.make_ascii_uppercase();
+    std::str::from_utf8(buffer).is_ok_and(|upper| SNOWFLAKE_RESERVED.contains(upper))
 }
