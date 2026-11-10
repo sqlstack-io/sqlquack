@@ -7,7 +7,7 @@ use std::process::ExitCode;
 use sqlquack_blocks::layout::main::layout_sql::layout_sql;
 use sqlquack_blocks::macros::main::explain_helper::explain_helper;
 use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
-use sqlquack_diagnostics::diagnostics::constants::SESSION_PARAMETERS;
+use sqlquack_diagnostics::diagnostics::constants::{CODES, SESSION_PARAMETERS};
 use sqlquack_diagnostics::diagnostics::main::diagnose::diagnose;
 use sqlquack_diagnostics::diagnostics::main::explain_code::explain_code;
 use sqlquack_diagnostics::diagnostics::main::render_styled_diagnostics::render_styled_diagnostics;
@@ -15,9 +15,12 @@ use sqlquack_diagnostics::diagnostics::main::unplaced_diagnostic::unplaced_diagn
 use sqlquack_diagnostics::diagnostics::models::{Diagnostic, Palette};
 use sqlquack_diagnostics::provenance::main::merge_provenance::merge_provenance;
 use sqlquack_diagnostics::refusals::models::Refusal;
+use sqlquack_policy::known_differences::constants::KNOWN_DIFFERENCES;
+use sqlquack_policy::known_differences::main::known_difference::known_difference;
 use sqlquack_policy::policy::constants::{
-    CURRENT_TIME, SESSION_TIME_ZONE, SESSION_TIMEZONE_UTC, TIMEZONE_PARAMETER,
+    CURRENT_TIME, POLICY_FILE_NAME, SESSION_TIME_ZONE, SESSION_TIMEZONE_UTC, TIMEZONE_PARAMETER,
 };
+use sqlquack_policy::policy::main::load_project_file::load_project_file;
 use sqlquack_policy::policy::models::{DivergenceFailure, Policy};
 use sqlquack_semantics::snowflake::typing::types::Schema;
 use std::collections::{BTreeMap, BTreeSet};
@@ -28,7 +31,7 @@ use crate::analysis::main::python_functions::python_functions;
 use crate::analysis::main::refused_construct::refused_construct;
 use crate::analysis::main::with_helpers::with_helpers;
 use crate::analysis::main::with_overrides::with_overrides;
-use crate::cli::_helpers::evidence::conversion_choices;
+use crate::cli::_helpers::evidence::{conversion_choices, divergence_options};
 use crate::cli::_helpers::project::project_choices;
 use crate::cli::models::{
     CheckArguments, CheckReport, ColorArguments, ConvertArguments, ConvertRefusal, ConvertReport,
@@ -294,20 +297,121 @@ pub(crate) fn explain_command(
     stdout: &mut dyn Write,
     stderr: &mut dyn Write,
 ) -> ExitCode {
-    match explain_code(&arguments.code).or_else(|| explain_helper(&arguments.code)) {
-        Some(text) => {
+    let explained = match (arguments.differences, arguments.codes, &arguments.code) {
+        (true, _, _) => known_differences(Path::new(POLICY_FILE_NAME)),
+        (false, true, _) => Ok(codes()),
+        (false, false, Some(key)) => explain_key(key).ok_or_else(|| {
+            format!(
+                "no diagnostic code, name, former name, known difference or helper macro is `{key}`"
+            )
+        }),
+        (false, false, None) => Err("name a code, a known difference or a helper macro".into()),
+    };
+    match explained {
+        Ok(text) => {
             let _ = write!(stdout, "{text}");
             ExitCode::SUCCESS
         }
-        None => {
-            let _ = writeln!(
-                stderr,
-                "sqlquack explain: no diagnostic code, name, former name or helper macro is `{}`",
-                arguments.code
-            );
+        Err(error) => {
+            let _ = writeln!(stderr, "sqlquack explain: {error}");
             ExitCode::from(2)
         }
     }
+}
+
+fn explain_key(key: &str) -> Option<String> {
+    explain_code(key)
+        .or_else(|| explain_difference(key))
+        .or_else(|| explain_helper(key))
+}
+
+/// A known difference's title, what differs, its details, when it is fine or wrong, and how it fails.
+fn explain_difference(name: &str) -> Option<String> {
+    let entry = known_difference(name)?;
+    let details = entry
+        .details
+        .map_or(String::new(), |details| format!("{details}\n\n"));
+    Some(format!(
+        "{name}: {title}\n\n{differs}\n\n{details}fine when: {fine}\nwrong when: {wrong}\nfails with: {fails}\n",
+        name = entry.name,
+        title = entry.title,
+        differs = entry.differs,
+        fine = entry.fine_when,
+        wrong = entry.wrong_when,
+        fails = entry.fails_with(),
+    ))
+}
+
+/// Every known difference, marked allowed by `policy_path`, allowed by default without it, or refused.
+fn known_differences(policy_path: &Path) -> Result<String, String> {
+    let (policy, project) = match policy_path.is_file() {
+        true => load_project_file(policy_path).map_err(|error| error.to_string())?,
+        false => (None, Default::default()),
+    };
+    let choices = PolicyArguments {
+        project: None,
+        policy: None,
+        builtin_policy: false,
+        strict: false,
+        utc_session: project.confirm.utc_session,
+        confirm_declared_offsets: project.confirm.declared_offsets,
+        python_runtime: project.confirm.python_runtime,
+        loud_divergences_only: false,
+    };
+    let options = divergence_options(policy.as_ref(), &choices);
+    let allowed = match policy {
+        Some(_) => format!("allowed by {POLICY_FILE_NAME}"),
+        None => "allowed by default".to_owned(),
+    };
+    let rules = match policy {
+        Some(_) => format!("as ./{POLICY_FILE_NAME} treats them"),
+        None => format!("as the defaults treat them, with no ./{POLICY_FILE_NAME}"),
+    };
+    let name_width = KNOWN_DIFFERENCES
+        .iter()
+        .map(|entry| entry.name.len())
+        .max()
+        .unwrap_or(0);
+    let status_width = allowed.len().max("refused".len());
+    let lines: String = KNOWN_DIFFERENCES
+        .iter()
+        .map(|entry| {
+            let status = match options.divergences.contains_key(entry.name) {
+                true => allowed.as_str(),
+                false => "refused",
+            };
+            format!(
+                "  {name:<name_width$}  {status:<status_width$}  {title}\n",
+                name = entry.name,
+                title = entry.title,
+            )
+        })
+        .collect();
+    Ok(format!(
+        "Known differences between Snowflake and the converted SQL, {rules}:\n\n{lines}\n\
+         `sqlquack explain <name>` describes one.\n"
+    ))
+}
+
+/// Every diagnostic code with its name and title.
+fn codes() -> String {
+    let name_width = CODES
+        .iter()
+        .map(|entry| entry.name.len())
+        .max()
+        .unwrap_or(0);
+    let lines: String = CODES
+        .iter()
+        .map(|entry| {
+            format!(
+                "  {code}  {name:<name_width$}  {title}\n",
+                code = entry.code,
+                name = entry.name,
+                title = entry.title,
+            )
+        })
+        .collect();
+    format!("Diagnostic codes:\n\n{lines}\n`sqlquack explain <code>` describes one.\n")
 }
 
 pub(crate) fn check_command(

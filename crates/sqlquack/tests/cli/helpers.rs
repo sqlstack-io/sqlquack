@@ -975,6 +975,22 @@ pub(crate) fn run_with_input(
     run_with_environment(directory, arguments, input, &[])
 }
 
+/// Runs `sqlquack` in an empty folder, with a copy of the repository's `policy_file` as its sqlquack.toml.
+pub(crate) fn run_beside_policy(
+    arguments: &[&str],
+    policy_file: Option<&str>,
+) -> (Option<i32>, String, String) {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    policy_file.iter().for_each(|path| {
+        std::fs::copy(
+            repository_root().join(path),
+            directory.path().join("sqlquack.toml"),
+        )
+        .expect("policy copied");
+    });
+    run_with_input(directory.path(), arguments, "")
+}
+
 /// Runs `sqlquack` like `run_with_input`, with the colour variables cleared and then `environment` set.
 pub(crate) fn run_with_environment(
     directory: &std::path::Path,
