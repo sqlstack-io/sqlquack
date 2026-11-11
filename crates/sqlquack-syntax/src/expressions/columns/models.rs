@@ -832,9 +832,16 @@ pub enum AlterColumnAction {
         /// COLLATE clause (TSQL: ALTER COLUMN col TYPE COLLATE collation_name)
         #[serde(default, skip_serializing_if = "Option::is_none")]
         collate: Option<String>,
+        /// Snowflake iceberg `RENAME FIELDS`, or a bare `RENAME`, after the type, as written.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        rename: Option<String>,
     },
     SetDefault(Expression),
     DropDefault,
+    /// Snowflake iceberg: [SET] WRITE DEFAULT <expr>
+    SetWriteDefault(Expression),
+    /// Snowflake iceberg: DROP WRITE DEFAULT
+    DropWriteDefault,
     SetNotNull,
     DropNotNull,
     /// Set column comment
