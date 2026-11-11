@@ -3,7 +3,7 @@
 `format_corpus.json` contains SELECT and WITH queries taken from the SQLGlot dialect identity test
 fixtures for BigQuery, Databricks, DuckDB, PostgreSQL, Snowflake and T-SQL, as extracted by the
 Polyglot project. One literal was reworded. The expected `formatted` and `previously_formatted`
-values are SQLBuild formatter output.
+values are output of this formatter and of the SQLBuild formatter it was ported from.
 
 The queries are used under the following license:
 

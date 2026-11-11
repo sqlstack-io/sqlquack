@@ -20,7 +20,7 @@ use crate::format::constants::{
     PLACEHOLDER_WIDTH, POSTFIX_CAST_WIDTH, REFERENCES_KEYWORD, SAMPLE_KEYWORDS, SAMPLE_ROW_KEYWORD,
     SEMANTIC_VIEW_CALL, SEMANTIC_VIEW_CLAUSES, SET_OPERATOR_MODIFIERS, SET_OPERATORS,
     SPACED_BEFORE_PARENTHESIS, STRUCT_TYPE_WORDS, TYPE_CONTINUATIONS, TYPED_LITERALS,
-    VALUE_TABLE_KINDS, VALUES_KEYWORD,
+    VALUE_TABLE_KINDS, VALUES_KEYWORD, WINDOW_CLAUSE_STARTS, WINDOW_KEYWORD,
 };
 
 /// The guide's text and its tokens, with byte ranges in that text.
@@ -1302,6 +1302,8 @@ impl<'a> Guide<'a> {
             self.expr(opener + 1, closer - 1, indent);
         } else if self.quantified_pattern(opener) {
             self.list(closer, &[(opener + 1, closer - 1)], true, indent);
+        } else if self.is(previous, WINDOW_KEYWORD) {
+            self.window(opener, closer, indent);
         } else if self.is(previous, "PIVOT")
             || self.is(previous, "UNPIVOT")
             || self.enclosing[opener]
@@ -1328,6 +1330,37 @@ impl<'a> Guide<'a> {
         } else {
             self.tuple(opener, closer, indent);
         }
+    }
+
+    /// Lay out a window specification: past the guide width, each of its clauses on its own line.
+    fn window(&mut self, opener: usize, closer: usize, indent: usize) {
+        if opener + 1 >= closer || self.compact(opener + 1, closer - 1) <= GUIDE_WIDTH {
+            self.expr(opener + 1, closer - 1, indent);
+            return;
+        }
+        let mut starts: Vec<usize> = vec![opener + 1];
+        starts.extend(
+            self.tops(opener + 2, closer - 1)
+                .into_iter()
+                .filter(|&index| {
+                    self.is_any(index, &WINDOW_CLAUSE_STARTS)
+                        && (self.is(index + 1, "BY")
+                            || !(self.is(index, "PARTITION") || self.is(index, "ORDER")))
+                }),
+        );
+        let items: Vec<(usize, usize)> = starts
+            .iter()
+            .enumerate()
+            .map(|(position, &start)| {
+                (
+                    start,
+                    starts
+                        .get(position + 1)
+                        .map_or(closer - 1, |&next| next - 1),
+                )
+            })
+            .collect();
+        self.list(closer, &items, true, indent);
     }
 
     /// Lay out a tuple, split past the guide width, or a parenthesised expression, always split.

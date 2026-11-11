@@ -77,7 +77,8 @@
  {
   "dialect": "bigquery",
   "sql": "SELECT x, 1 AS y GROUP BY 1 ORDER BY 1",
-  "formatted": "SELECT\n  x,\n  1 AS y\nGROUP BY\n  1\nORDER BY\n  1"
+  "formatted": "SELECT\n  x,\n  1 AS y\nGROUP BY 1\nORDER BY 1",
+  "previously_formatted": "SELECT\n  x,\n  1 AS y\nGROUP BY\n  1\nORDER BY\n  1"
  },
  {
   "dialect": "bigquery",
@@ -262,7 +263,8 @@
  {
   "dialect": "bigquery",
   "sql": "SELECT y + 1 FROM x GROUP BY y + 1 ORDER BY 1",
-  "formatted": "SELECT y + 1\nFROM x\nGROUP BY\n  y + 1\nORDER BY\n  1"
+  "formatted": "SELECT y + 1\nFROM x\nGROUP BY y + 1\nORDER BY 1",
+  "previously_formatted": "SELECT y + 1\nFROM x\nGROUP BY\n  y + 1\nORDER BY\n  1"
  },
  {
   "dialect": "bigquery",
@@ -434,13 +436,13 @@
  {
   "dialect": "bigquery",
   "sql": "SELECT y + 1 z FROM x GROUP BY y + 1 ORDER BY z",
-  "formatted": "SELECT y + 1 z\nFROM x\nGROUP BY\n  y + 1\nORDER BY\n  z",
+  "formatted": "SELECT y + 1 z\nFROM x\nGROUP BY y + 1\nORDER BY z",
   "previously_formatted": "SELECT\n  y + 1 AS z\nFROM x\nGROUP BY\n  y + 1\nORDER BY\n  z"
  },
  {
   "dialect": "bigquery",
   "sql": "SELECT y + 1 z FROM x GROUP BY y + 1",
-  "formatted": "SELECT y + 1 z\nFROM x\nGROUP BY\n  y + 1",
+  "formatted": "SELECT y + 1 z\nFROM x\nGROUP BY y + 1",
   "previously_formatted": "SELECT\n  y + 1 AS z\nFROM x\nGROUP BY\n  y + 1"
  },
  {
@@ -498,7 +500,8 @@
  {
   "dialect": "bigquery",
   "sql": "SELECT * FROM GAP_FILL(TABLE device_data, ts_column => 'time', bucket_width => INTERVAL '1' MINUTE, value_columns => [('signal', 'locf')]) ORDER BY time",
-  "formatted": "SELECT *\nFROM GAP_FILL(\n  TABLE device_data,\n  ts_column => 'time',\n  bucket_width => INTERVAL '1' MINUTE,\n  value_columns => [('signal', 'locf')]\n)\nORDER BY\n  time"
+  "formatted": "SELECT *\nFROM GAP_FILL(\n  TABLE device_data,\n  ts_column => 'time',\n  bucket_width => INTERVAL '1' MINUTE,\n  value_columns => [('signal', 'locf')]\n)\nORDER BY time",
+  "previously_formatted": "SELECT *\nFROM GAP_FILL(\n  TABLE device_data,\n  ts_column => 'time',\n  bucket_width => INTERVAL '1' MINUTE,\n  value_columns => [('signal', 'locf')]\n)\nORDER BY\n  time"
  },
  {
   "dialect": "bigquery",
@@ -508,22 +511,26 @@
  {
   "dialect": "bigquery",
   "sql": "SELECT * FROM GAP_FILL(TABLE device_data, ts_column => 'time', bucket_width => INTERVAL '1' MINUTE, value_columns => [('signal', 'linear')], ignore_null_values => FALSE) ORDER BY time",
-  "formatted": "SELECT *\nFROM GAP_FILL(\n  TABLE device_data,\n  ts_column => 'time',\n  bucket_width => INTERVAL '1' MINUTE,\n  value_columns => [('signal', 'linear')],\n  ignore_null_values => FALSE\n)\nORDER BY\n  time"
+  "formatted": "SELECT *\nFROM GAP_FILL(\n  TABLE device_data,\n  ts_column => 'time',\n  bucket_width => INTERVAL '1' MINUTE,\n  value_columns => [('signal', 'linear')],\n  ignore_null_values => FALSE\n)\nORDER BY time",
+  "previously_formatted": "SELECT *\nFROM GAP_FILL(\n  TABLE device_data,\n  ts_column => 'time',\n  bucket_width => INTERVAL '1' MINUTE,\n  value_columns => [('signal', 'linear')],\n  ignore_null_values => FALSE\n)\nORDER BY\n  time"
  },
  {
   "dialect": "bigquery",
   "sql": "SELECT * FROM GAP_FILL(TABLE device_data, ts_column => 'time', bucket_width => INTERVAL '1' MINUTE) ORDER BY time",
-  "formatted": "SELECT *\nFROM GAP_FILL(\n  TABLE device_data,\n  ts_column => 'time',\n  bucket_width => INTERVAL '1' MINUTE\n)\nORDER BY\n  time"
+  "formatted": "SELECT *\nFROM GAP_FILL(\n  TABLE device_data,\n  ts_column => 'time',\n  bucket_width => INTERVAL '1' MINUTE\n)\nORDER BY time",
+  "previously_formatted": "SELECT *\nFROM GAP_FILL(\n  TABLE device_data,\n  ts_column => 'time',\n  bucket_width => INTERVAL '1' MINUTE\n)\nORDER BY\n  time"
  },
  {
   "dialect": "bigquery",
   "sql": "SELECT * FROM GAP_FILL(TABLE device_data, ts_column => 'time', bucket_width => INTERVAL '1' MINUTE, value_columns => [('signal', 'null')], origin => CAST('2023-11-01 09:30:01' AS DATETIME)) ORDER BY time",
-  "formatted": "SELECT *\nFROM GAP_FILL(\n  TABLE device_data,\n  ts_column => 'time',\n  bucket_width => INTERVAL '1' MINUTE,\n  value_columns => [('signal', 'null')],\n  origin => CAST('2023-11-01 09:30:01' AS DATETIME)\n)\nORDER BY\n  time"
+  "formatted": "SELECT *\nFROM GAP_FILL(\n  TABLE device_data,\n  ts_column => 'time',\n  bucket_width => INTERVAL '1' MINUTE,\n  value_columns => [('signal', 'null')],\n  origin => CAST('2023-11-01 09:30:01' AS DATETIME)\n)\nORDER BY time",
+  "previously_formatted": "SELECT *\nFROM GAP_FILL(\n  TABLE device_data,\n  ts_column => 'time',\n  bucket_width => INTERVAL '1' MINUTE,\n  value_columns => [('signal', 'null')],\n  origin => CAST('2023-11-01 09:30:01' AS DATETIME)\n)\nORDER BY\n  time"
  },
  {
   "dialect": "bigquery",
   "sql": "SELECT * FROM GAP_FILL(TABLE device_data, ts_column => 'time', bucket_width => INTERVAL '1' MINUTE, value_columns => [('signal', 'locf')]) ORDER BY time",
-  "formatted": "SELECT *\nFROM GAP_FILL(\n  TABLE device_data,\n  ts_column => 'time',\n  bucket_width => INTERVAL '1' MINUTE,\n  value_columns => [('signal', 'locf')]\n)\nORDER BY\n  time"
+  "formatted": "SELECT *\nFROM GAP_FILL(\n  TABLE device_data,\n  ts_column => 'time',\n  bucket_width => INTERVAL '1' MINUTE,\n  value_columns => [('signal', 'locf')]\n)\nORDER BY time",
+  "previously_formatted": "SELECT *\nFROM GAP_FILL(\n  TABLE device_data,\n  ts_column => 'time',\n  bucket_width => INTERVAL '1' MINUTE,\n  value_columns => [('signal', 'locf')]\n)\nORDER BY\n  time"
  },
  {
   "dialect": "bigquery",
@@ -758,7 +765,8 @@
  {
   "dialect": "bigquery",
   "sql": "SELECT a, GROUP_CONCAT(b) FROM table GROUP BY a",
-  "formatted": "SELECT\n  a,\n  GROUP_CONCAT(b)\nFROM table\nGROUP BY\n  a"
+  "formatted": "SELECT\n  a,\n  GROUP_CONCAT(b)\nFROM table\nGROUP BY a",
+  "previously_formatted": "SELECT\n  a,\n  GROUP_CONCAT(b)\nFROM table\nGROUP BY\n  a"
  },
  {
   "dialect": "bigquery",
@@ -913,7 +921,8 @@
  {
   "dialect": "databricks",
   "sql": "SELECT col1 FROM t CLUSTER BY col1",
-  "formatted": "SELECT col1\nFROM t\nCLUSTER BY\n  col1"
+  "formatted": "SELECT col1\nFROM t\nCLUSTER BY col1",
+  "previously_formatted": "SELECT col1\nFROM t\nCLUSTER BY\n  col1"
  },
  {
   "dialect": "databricks",
@@ -1023,7 +1032,8 @@
  {
   "dialect": "databricks",
   "sql": "SELECT test, LISTAGG(email, '') AS Email FROM organizations GROUP BY test",
-  "formatted": "SELECT\n  test,\n  LISTAGG(email, '') AS Email\nFROM organizations\nGROUP BY\n  test"
+  "formatted": "SELECT\n  test,\n  LISTAGG(email, '') AS Email\nFROM organizations\nGROUP BY test",
+  "previously_formatted": "SELECT\n  test,\n  LISTAGG(email, '') AS Email\nFROM organizations\nGROUP BY\n  test"
  },
  {
   "dialect": "databricks",
@@ -1268,7 +1278,8 @@
  {
   "dialect": "duckdb",
   "sql": "SELECT * FROM t1 AS a AT (VERSION => 3) JOIN t2 AS b AT (TIMESTAMP => NOW() - INTERVAL '1' WEEK) ON a.id = b.id",
-  "formatted": "SELECT *\nFROM t1 AS a AT (VERSION => 3)\nJOIN t2 AS b AT (TIMESTAMP => NOW() - INTERVAL '1' WEEK)\n  ON a.id = b.id"
+  "formatted": "SELECT *\nFROM t1 AS a AT (VERSION => 3)\nJOIN t2 AS b AT (TIMESTAMP => NOW() - INTERVAL '1' WEEK) ON a.id = b.id",
+  "previously_formatted": "SELECT *\nFROM t1 AS a AT (VERSION => 3)\nJOIN t2 AS b AT (TIMESTAMP => NOW() - INTERVAL '1' WEEK)\n  ON a.id = b.id"
  },
  {
   "dialect": "duckdb",
@@ -1343,7 +1354,8 @@
  {
   "dialect": "duckdb",
   "sql": "SELECT * FROM foo ASOF LEFT JOIN bar ON a = b",
-  "formatted": "SELECT *\nFROM foo\nASOF LEFT JOIN bar\n  ON a = b"
+  "formatted": "SELECT *\nFROM foo\nASOF LEFT JOIN bar ON a = b",
+  "previously_formatted": "SELECT *\nFROM foo\nASOF LEFT JOIN bar\n  ON a = b"
  },
  {
   "dialect": "duckdb",
@@ -1438,7 +1450,8 @@
  {
   "dialect": "duckdb",
   "sql": "SELECT a, LOGICAL_OR(b) FROM foo GROUP BY a",
-  "formatted": "SELECT\n  a,\n  LOGICAL_OR(b)\nFROM foo\nGROUP BY\n  a"
+  "formatted": "SELECT\n  a,\n  LOGICAL_OR(b)\nFROM foo\nGROUP BY a",
+  "previously_formatted": "SELECT\n  a,\n  LOGICAL_OR(b)\nFROM foo\nGROUP BY\n  a"
  },
  {
   "dialect": "duckdb",
@@ -1653,12 +1666,14 @@
  {
   "dialect": "duckdb",
   "sql": "SELECT i FROM RANGE(5) AS _(i) ORDER BY i ASC",
-  "formatted": "SELECT i\nFROM RANGE(5) AS _(i)\nORDER BY\n  i ASC"
+  "formatted": "SELECT i\nFROM RANGE(5) AS _(i)\nORDER BY i ASC",
+  "previously_formatted": "SELECT i\nFROM RANGE(5) AS _(i)\nORDER BY\n  i ASC"
  },
  {
   "dialect": "duckdb",
   "sql": "SELECT i FROM GENERATE_SERIES(12) AS _(i) ORDER BY i ASC",
-  "formatted": "SELECT i\nFROM GENERATE_SERIES(12) AS _(i)\nORDER BY\n  i ASC"
+  "formatted": "SELECT i\nFROM GENERATE_SERIES(12) AS _(i)\nORDER BY i ASC",
+  "previously_formatted": "SELECT i\nFROM GENERATE_SERIES(12) AS _(i)\nORDER BY\n  i ASC"
  },
  {
   "dialect": "duckdb",
@@ -2307,7 +2322,8 @@
  {
   "dialect": "postgres",
   "sql": "SELECT SUM(x) OVER (PARTITION BY y ORDER BY interval ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) - SUM(x) OVER (PARTITION BY y ORDER BY interval ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS total",
-  "formatted": "SELECT SUM(x) OVER (PARTITION BY y ORDER BY interval ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) - SUM(x) OVER (PARTITION BY y ORDER BY interval ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS total"
+  "formatted": "SELECT\n  SUM(x) OVER (\n    PARTITION BY y\n    ORDER BY interval\n    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW\n  )\n  - SUM(x) OVER (\n    PARTITION BY y\n    ORDER BY interval\n    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW\n  ) AS total",
+  "previously_formatted": "SELECT SUM(x) OVER (PARTITION BY y ORDER BY interval ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) - SUM(x) OVER (PARTITION BY y ORDER BY interval ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS total"
  },
  {
   "dialect": "postgres",
@@ -2402,7 +2418,8 @@
  {
   "dialect": "postgres",
   "sql": "SELECT c.oid, n.nspname, c.relname FROM pg_catalog.pg_class AS c LEFT JOIN pg_catalog.pg_namespace AS n ON n.oid = c.relnamespace WHERE c.relname OPERATOR(pg_catalog.~) '^(courses)$' COLLATE pg_catalog.default AND pg_catalog.PG_TABLE_IS_VISIBLE(c.oid) ORDER BY 2, 3",
-  "formatted": "SELECT\n  c.oid,\n  n.nspname,\n  c.relname\nFROM pg_catalog.pg_class AS c\nLEFT JOIN pg_catalog.pg_namespace AS n\n  ON n.oid = c.relnamespace\nWHERE\n  c.relname OPERATOR(pg_catalog.~) '^(courses)$' COLLATE pg_catalog.default AND pg_catalog.PG_TABLE_IS_VISIBLE(c.oid)\nORDER BY\n  2,\n  3"
+  "formatted": "SELECT\n  c.oid,\n  n.nspname,\n  c.relname\nFROM pg_catalog.pg_class AS c\nLEFT JOIN pg_catalog.pg_namespace AS n ON n.oid = c.relnamespace\nWHERE\n  c.relname OPERATOR(pg_catalog.~) '^(courses)$' COLLATE pg_catalog.default AND pg_catalog.PG_TABLE_IS_VISIBLE(c.oid)\nORDER BY\n  2,\n  3",
+  "previously_formatted": "SELECT\n  c.oid,\n  n.nspname,\n  c.relname\nFROM pg_catalog.pg_class AS c\nLEFT JOIN pg_catalog.pg_namespace AS n\n  ON n.oid = c.relnamespace\nWHERE\n  c.relname OPERATOR(pg_catalog.~) '^(courses)$' COLLATE pg_catalog.default AND pg_catalog.PG_TABLE_IS_VISIBLE(c.oid)\nORDER BY\n  2,\n  3"
  },
  {
   "dialect": "postgres",
@@ -2507,7 +2524,7 @@
  {
   "dialect": "postgres",
   "sql": "SELECT m.name FROM manufacturers AS m LEFT JOIN LATERAL GET_PRODUCT_NAMES(m.id) pname ON TRUE WHERE pname IS NULL",
-  "formatted": "SELECT m.name\nFROM manufacturers AS m\nLEFT JOIN LATERAL GET_PRODUCT_NAMES(m.id) pname\n  ON TRUE\nWHERE pname IS NULL",
+  "formatted": "SELECT m.name\nFROM manufacturers AS m\nLEFT JOIN LATERAL GET_PRODUCT_NAMES(m.id) pname ON TRUE\nWHERE pname IS NULL",
   "previously_formatted": "SELECT\n  m.name\nFROM manufacturers AS m\nLEFT JOIN LATERAL GET_PRODUCT_NAMES(m.id) AS pname\n  ON TRUE\nWHERE\n  pname IS NULL"
  },
  {
@@ -2569,7 +2586,8 @@
  {
   "dialect": "postgres",
   "sql": "SELECT 1 FROM ((VALUES (1)) AS vals(id) LEFT OUTER JOIN tbl ON vals.id = tbl.id)",
-  "formatted": "SELECT 1\nFROM ((VALUES (1)) AS vals(id)\nLEFT OUTER JOIN tbl\n  ON vals.id = tbl.id)"
+  "formatted": "SELECT 1\nFROM ((VALUES (1)) AS vals(id)\nLEFT OUTER JOIN tbl ON vals.id = tbl.id)",
+  "previously_formatted": "SELECT 1\nFROM ((VALUES (1)) AS vals(id)\nLEFT OUTER JOIN tbl\n  ON vals.id = tbl.id)"
  },
  {
   "dialect": "postgres",
@@ -3962,27 +3980,32 @@
  {
   "dialect": "snowflake",
   "sql": "SELECT * FROM quarterly_sales PIVOT(SUM(amount) FOR quarter IN ('2023_Q1', '2023_Q2', '2023_Q3', '2023_Q4', '2024_Q1') DEFAULT ON NULL (0)) ORDER BY empid",
-  "formatted": "SELECT *\nFROM quarterly_sales PIVOT(SUM(amount) FOR quarter IN ('2023_Q1', '2023_Q2', '2023_Q3', '2023_Q4', '2024_Q1') DEFAULT ON NULL (0))\nORDER BY\n  empid"
+  "formatted": "SELECT *\nFROM quarterly_sales PIVOT(SUM(amount) FOR quarter IN ('2023_Q1', '2023_Q2', '2023_Q3', '2023_Q4', '2024_Q1') DEFAULT ON NULL (0))\nORDER BY empid",
+  "previously_formatted": "SELECT *\nFROM quarterly_sales PIVOT(SUM(amount) FOR quarter IN ('2023_Q1', '2023_Q2', '2023_Q3', '2023_Q4', '2024_Q1') DEFAULT ON NULL (0))\nORDER BY\n  empid"
  },
  {
   "dialect": "snowflake",
   "sql": "SELECT * FROM quarterly_sales PIVOT(SUM(amount) FOR quarter IN (SELECT DISTINCT quarter FROM ad_campaign_types_by_quarter WHERE television = TRUE ORDER BY quarter)) ORDER BY empid",
-  "formatted": "SELECT *\nFROM quarterly_sales PIVOT(SUM(amount) FOR quarter IN (SELECT DISTINCT\n  quarter\nFROM ad_campaign_types_by_quarter\nWHERE television = TRUE\nORDER BY\n  quarter))\nORDER BY\n  empid"
+  "formatted": "SELECT *\nFROM quarterly_sales PIVOT(SUM(amount) FOR quarter IN (SELECT DISTINCT\n  quarter\nFROM ad_campaign_types_by_quarter\nWHERE television = TRUE\nORDER BY quarter))\nORDER BY empid",
+  "previously_formatted": "SELECT *\nFROM quarterly_sales PIVOT(SUM(amount) FOR quarter IN (SELECT DISTINCT\n  quarter\nFROM ad_campaign_types_by_quarter\nWHERE television = TRUE\nORDER BY\n  quarter))\nORDER BY\n  empid"
  },
  {
   "dialect": "snowflake",
   "sql": "SELECT * FROM quarterly_sales PIVOT(SUM(amount) FOR quarter IN (ANY ORDER BY quarter)) ORDER BY empid",
-  "formatted": "SELECT *\nFROM quarterly_sales PIVOT(SUM(amount) FOR quarter IN (ANY ORDER BY quarter))\nORDER BY\n  empid"
+  "formatted": "SELECT *\nFROM quarterly_sales PIVOT(SUM(amount) FOR quarter IN (ANY ORDER BY quarter))\nORDER BY empid",
+  "previously_formatted": "SELECT *\nFROM quarterly_sales PIVOT(SUM(amount) FOR quarter IN (ANY ORDER BY quarter))\nORDER BY\n  empid"
  },
  {
   "dialect": "snowflake",
   "sql": "SELECT * FROM quarterly_sales PIVOT(SUM(amount) FOR quarter IN (ANY)) ORDER BY empid",
-  "formatted": "SELECT *\nFROM quarterly_sales PIVOT(SUM(amount) FOR quarter IN (ANY))\nORDER BY\n  empid"
+  "formatted": "SELECT *\nFROM quarterly_sales PIVOT(SUM(amount) FOR quarter IN (ANY))\nORDER BY empid",
+  "previously_formatted": "SELECT *\nFROM quarterly_sales PIVOT(SUM(amount) FOR quarter IN (ANY))\nORDER BY\n  empid"
  },
  {
   "dialect": "snowflake",
   "sql": "SELECT * FROM DATA AS DATA_L ASOF JOIN DATA AS DATA_R MATCH_CONDITION (DATA_L.VAL > DATA_R.VAL) ON DATA_L.ID = DATA_R.ID",
-  "formatted": "SELECT *\nFROM DATA AS DATA_L\nASOF JOIN DATA AS DATA_R MATCH_CONDITION (DATA_L.VAL > DATA_R.VAL)\n  ON DATA_L.ID = DATA_R.ID"
+  "formatted": "SELECT *\nFROM DATA AS DATA_L\nASOF JOIN DATA AS DATA_R MATCH_CONDITION (DATA_L.VAL > DATA_R.VAL) ON DATA_L.ID = DATA_R.ID",
+  "previously_formatted": "SELECT *\nFROM DATA AS DATA_L\nASOF JOIN DATA AS DATA_R MATCH_CONDITION (DATA_L.VAL > DATA_R.VAL)\n  ON DATA_L.ID = DATA_R.ID"
  },
  {
   "dialect": "snowflake",
@@ -4025,7 +4048,8 @@
  {
   "dialect": "snowflake",
   "sql": "SELECT * FROM t1 INNER JOIN t2 USING (t1.col)",
-  "formatted": "SELECT *\nFROM t1\nINNER JOIN t2\n  USING (t1.col)"
+  "formatted": "SELECT *\nFROM t1\nINNER JOIN t2 USING (t1.col)",
+  "previously_formatted": "SELECT *\nFROM t1\nINNER JOIN t2\n  USING (t1.col)"
  },
  {
   "dialect": "snowflake",
@@ -4537,7 +4561,8 @@
  {
   "dialect": "snowflake",
   "sql": "SELECT * FROM (SELECT * FROM t1 JOIN t2 ON t1.a = t2.c) TABLESAMPLE BERNOULLI (1)",
-  "formatted": "SELECT *\nFROM (\n  SELECT *\n  FROM t1\n  JOIN t2\n    ON t1.a = t2.c\n) TABLESAMPLE BERNOULLI (1)"
+  "formatted": "SELECT *\nFROM (\n  SELECT *\n  FROM t1\n  JOIN t2 ON t1.a = t2.c\n) TABLESAMPLE BERNOULLI (1)",
+  "previously_formatted": "SELECT *\nFROM (\n  SELECT *\n  FROM t1\n  JOIN t2\n    ON t1.a = t2.c\n) TABLESAMPLE BERNOULLI (1)"
  },
  {
   "dialect": "snowflake",
@@ -4658,7 +4683,7 @@
  {
   "dialect": "snowflake",
   "sql": "\n            SELECT oldt.* , newt.*\n            FROM my_table BEFORE(STATEMENT => '8e5d0ca9-005e-44e6-b858-a8f5b37c5726') AS oldt\n            FULL OUTER JOIN my_table AT(STATEMENT => '8e5d0ca9-005e-44e6-b858-a8f5b37c5726') AS newt\n            ON oldt.id = newt.id\n            WHERE oldt.id IS NULL OR newt.id IS NULL;\n            ",
-  "formatted": "SELECT\n  oldt.*,\n  newt.*\nFROM my_table BEFORE (STATEMENT => '8e5d0ca9-005e-44e6-b858-a8f5b37c5726') AS oldt\nFULL OUTER JOIN my_table AT (STATEMENT => '8e5d0ca9-005e-44e6-b858-a8f5b37c5726') AS newt\n  ON oldt.id = newt.id\nWHERE\n  oldt.id IS NULL\n  OR newt.id IS NULL;",
+  "formatted": "SELECT\n  oldt.*,\n  newt.*\nFROM my_table BEFORE (STATEMENT => '8e5d0ca9-005e-44e6-b858-a8f5b37c5726') AS oldt\nFULL OUTER JOIN my_table AT (STATEMENT => '8e5d0ca9-005e-44e6-b858-a8f5b37c5726') AS newt ON oldt.id = newt.id\nWHERE\n  oldt.id IS NULL\n  OR newt.id IS NULL;",
   "previously_formatted": "SELECT\n  oldt.*,\n  newt.*\nFROM my_table BEFORE (STATEMENT => '8e5d0ca9-005e-44e6-b858-a8f5b37c5726') AS oldt\nFULL OUTER JOIN my_table AT (STATEMENT => '8e5d0ca9-005e-44e6-b858-a8f5b37c5726') AS newt\n  ON oldt.id = newt.id\nWHERE\n  oldt.id IS NULL\n  OR newt.id IS NULL"
  },
  {
@@ -4919,17 +4944,20 @@
  {
   "dialect": "snowflake",
   "sql": "SELECT * FROM a CROSS DIRECTED JOIN b USING (id)",
-  "formatted": "SELECT *\nFROM a\nCROSS DIRECTED JOIN b\n  USING (id)"
+  "formatted": "SELECT *\nFROM a\nCROSS DIRECTED JOIN b USING (id)",
+  "previously_formatted": "SELECT *\nFROM a\nCROSS DIRECTED JOIN b\n  USING (id)"
  },
  {
   "dialect": "snowflake",
   "sql": "SELECT * FROM a INNER DIRECTED JOIN b USING (id)",
-  "formatted": "SELECT *\nFROM a\nINNER DIRECTED JOIN b\n  USING (id)"
+  "formatted": "SELECT *\nFROM a\nINNER DIRECTED JOIN b USING (id)",
+  "previously_formatted": "SELECT *\nFROM a\nINNER DIRECTED JOIN b\n  USING (id)"
  },
  {
   "dialect": "snowflake",
   "sql": "SELECT * FROM a NATURAL INNER DIRECTED JOIN b USING (id)",
-  "formatted": "SELECT *\nFROM a\nNATURAL INNER DIRECTED JOIN b\n  USING (id)"
+  "formatted": "SELECT *\nFROM a\nNATURAL INNER DIRECTED JOIN b USING (id)",
+  "previously_formatted": "SELECT *\nFROM a\nNATURAL INNER DIRECTED JOIN b\n  USING (id)"
  },
  {
   "dialect": "snowflake",
@@ -5109,7 +5137,8 @@
  {
   "dialect": "tsql",
   "sql": "SELECT * FROM taxi ORDER BY 1 OFFSET 0 ROWS FETCH NEXT 3 ROWS ONLY",
-  "formatted": "SELECT *\nFROM taxi\nORDER BY\n  1\nOFFSET 0 ROWS\nFETCH NEXT 3 ROWS ONLY"
+  "formatted": "SELECT *\nFROM taxi\nORDER BY 1\nOFFSET 0 ROWS\nFETCH NEXT 3 ROWS ONLY",
+  "previously_formatted": "SELECT *\nFROM taxi\nORDER BY\n  1\nOFFSET 0 ROWS\nFETCH NEXT 3 ROWS ONLY"
  },
  {
   "dialect": "tsql",
@@ -5139,7 +5168,8 @@
  {
   "dialect": "tsql",
   "sql": "SELECT x FROM @MyTableVar AS m JOIN Employee ON m.EmployeeID = Employee.EmployeeID",
-  "formatted": "SELECT x\nFROM @MyTableVar AS m\nJOIN Employee\n  ON m.EmployeeID = Employee.EmployeeID"
+  "formatted": "SELECT x\nFROM @MyTableVar AS m\nJOIN Employee ON m.EmployeeID = Employee.EmployeeID",
+  "previously_formatted": "SELECT x\nFROM @MyTableVar AS m\nJOIN Employee\n  ON m.EmployeeID = Employee.EmployeeID"
  },
  {
   "dialect": "tsql",
@@ -5164,7 +5194,8 @@
  {
   "dialect": "tsql",
   "sql": "SELECT (SELECT TOP 5 a, b FROM t ORDER BY b DESC FOR JSON PATH) AS j FROM x",
-  "formatted": "SELECT\n  (\n    SELECT TOP 5\n      a,\n      b\n    FROM t\n    ORDER BY\n      b DESC\n    FOR JSON\n      PATH\n  ) AS j\nFROM x"
+  "formatted": "SELECT\n  (\n    SELECT TOP 5\n      a,\n      b\n    FROM t\n    ORDER BY b DESC\n    FOR JSON\n      PATH\n  ) AS j\nFROM x",
+  "previously_formatted": "SELECT\n  (\n    SELECT TOP 5\n      a,\n      b\n    FROM t\n    ORDER BY\n      b DESC\n    FOR JSON\n      PATH\n  ) AS j\nFROM x"
  },
  {
   "dialect": "tsql",
@@ -5274,7 +5305,8 @@
  {
   "dialect": "tsql",
   "sql": "SELECT x FROM a INNER LOOP JOIN b ON b.id = a.id",
-  "formatted": "SELECT x\nFROM a\nINNER LOOP JOIN b\n  ON b.id = a.id"
+  "formatted": "SELECT x\nFROM a\nINNER LOOP JOIN b ON b.id = a.id",
+  "previously_formatted": "SELECT x\nFROM a\nINNER LOOP JOIN b\n  ON b.id = a.id"
  },
  {
   "dialect": "tsql",

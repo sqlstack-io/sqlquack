@@ -52,6 +52,12 @@ pub(crate) const INDEX_KEYWORD: &str = "INDEX";
 /// The SQL Server keyword that, after CROSS or OUTER, applies a table-valued expression like a join.
 pub(crate) const APPLY_KEYWORD: &str = "APPLY";
 
+/// The keyword before the parentheses of a window specification, as in `SUM(x) OVER (...)`.
+pub(crate) const WINDOW_KEYWORD: &str = "OVER";
+/// Words that start a clause of a window specification; PARTITION and ORDER only before BY.
+pub(crate) const WINDOW_CLAUSE_STARTS: [&str; 5] =
+    ["PARTITION", "ORDER", "ROWS", "RANGE", "GROUPS"];
+
 /// The line width past which the layout guide splits a call's arguments or a CASE.
 pub(crate) const GUIDE_WIDTH: usize = 80;
 /// Spaces per indent step of the layout guide; printing rescales it to the requested indent.
