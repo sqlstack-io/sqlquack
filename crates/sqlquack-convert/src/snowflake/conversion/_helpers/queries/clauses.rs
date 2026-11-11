@@ -29,6 +29,9 @@ use crate::snowflake::conversion::constants::{
     TYPE_SUFFIX_UNREMOVED, VARIANT_HELD_UNREAD,
 };
 
+/// The clauses that keep a query's first rows, by field.
+const ROW_LIMIT_CLAUSES: [&str; 3] = ["limit", "top", "fetch"];
+
 /// A clause's condition node, such as WHERE's.
 pub(crate) fn clause_condition<'a>(select: &'a Payload, clause: &str) -> Option<&'a Value> {
     select
@@ -264,19 +267,57 @@ pub(crate) fn order_and_limit(
         }
         sql.push_str(&format!(" ORDER BY {}", items.join(", ")));
     }
-    for (clause, keyword) in [("limit", "LIMIT"), ("offset", "OFFSET")] {
-        if let Some(value) = query.get(clause).filter(|value| !value.is_null()) {
-            let _rule = site.context.log.rule(LIMIT);
-            let count = value.get("this").and_then(integer_literal).ok_or_else(|| {
-                outside_conditions(
-                    node_construct(clause),
-                    format!("{keyword} must be an integer literal"),
-                )
-            })?;
-            sql.push_str(&format!(" {keyword} {count}"));
-        }
+    if let Some(count) = row_limit(query, site)? {
+        sql.push_str(&format!(" LIMIT {count}"));
+    }
+    if let Some(value) = query.get("offset").filter(|value| !value.is_null()) {
+        let _rule = site.context.log.rule(LIMIT);
+        let count = value.get("this").and_then(integer_literal).ok_or_else(|| {
+            outside_conditions(
+                node_construct("offset"),
+                "OFFSET must be an integer literal".to_owned(),
+            )
+        })?;
+        sql.push_str(&format!(" OFFSET {count}"));
     }
     Ok(sql)
+}
+
+/// The count of rows a query keeps from LIMIT, TOP or FETCH, which Snowflake reads alike, as recorded; None without one.
+fn row_limit(query: &Payload, site: Site<'_>) -> Result<Option<u64>, Refusal> {
+    let mut written = ROW_LIMIT_CLAUSES
+        .into_iter()
+        .filter(|clause| query.get(*clause).is_some_and(|value| !value.is_null()));
+    let Some(clause) = written.next() else {
+        return Ok(None);
+    };
+    let construct = node_construct(clause);
+    if written.next().is_some() {
+        return Err(outside_conditions(
+            construct,
+            "more than one of LIMIT, TOP and FETCH, which no recording shows".to_owned(),
+        ));
+    }
+    let _rule = site.context.log.rule(LIMIT);
+    let keyword = clause.to_ascii_uppercase();
+    let object = payload_object(&query[clause], &construct)?;
+    if flag(object, "percent") || flag(object, "with_ties") {
+        return Err(outside_conditions(
+            construct,
+            format!("{keyword} with PERCENT or WITH TIES, which LIMIT does not express"),
+        ));
+    }
+    let count_field = match clause {
+        "fetch" => "count",
+        _ => "this",
+    };
+    let count = object
+        .get(count_field)
+        .and_then(integer_literal)
+        .ok_or_else(|| {
+            outside_conditions(construct, format!("{keyword} must be an integer literal"))
+        })?;
+    Ok(Some(count))
 }
 
 /// Whether an ORDER BY only keeps the input fixture's rows in order, by its ordering column.

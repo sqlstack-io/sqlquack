@@ -75,6 +75,8 @@ const SELECT_FIELDS: &[&str] = &[
     "qualify",
     "order_by",
     "limit",
+    "top",
+    "fetch",
     "offset",
     "distinct",
     "with",

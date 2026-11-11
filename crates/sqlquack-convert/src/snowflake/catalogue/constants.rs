@@ -178,8 +178,8 @@ pub const RULES: &[RuleSpec] = &[
     },
     RuleSpec {
         id: LIMIT,
-        constructs: &["clause:limit"],
-        conditions: "Integer literals.",
+        constructs: &["clause:limit", "clause:top", "clause:fetch"],
+        conditions: "Integer literals. TOP <n> and FETCH { FIRST | NEXT } <n> { ROW | ROWS } [ ONLY ] keep the first n rows as LIMIT <n> does, after ORDER BY and DISTINCT, as recorded; with PERCENT or WITH TIES, or with more than one of LIMIT, TOP and FETCH, they are refused.",
         failures: &[],
     },
     RuleSpec {

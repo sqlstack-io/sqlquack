@@ -318,8 +318,8 @@ snowflake = "rejects 1003"
 [[query]]
 category = "select_star"
 sql = '''SELECT TOP 5 * FROM orders'''
-expect = "refused SQ0002 node:select at 0..26"
-expect_repository = "refused SQ0002 node:select at 0..26"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "select_star"
@@ -553,8 +553,8 @@ expect_repository = "translated"
 [[query]]
 category = "columns"
 sql = '''SELECT order_id FROM orders FETCH FIRST 10 ROWS ONLY'''
-expect = "refused SQ0002 node:select at 0..52"
-expect_repository = "refused SQ0002 node:select at 0..52"
+expect = "translated"
+expect_repository = "translated"
 snowflake = "compiles"
 
 [[query]]

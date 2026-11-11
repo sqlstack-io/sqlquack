@@ -32,6 +32,8 @@ mod test_project;
 mod test_read_check;
 #[path = "cli/test_review.rs"]
 mod test_review;
+#[path = "cli/test_row_limits.rs"]
+mod test_row_limits;
 #[path = "cli/test_run.rs"]
 mod test_run;
 #[path = "cli/test_types.rs"]
