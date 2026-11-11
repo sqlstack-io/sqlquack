@@ -210,6 +210,11 @@ fn given_sql_and_a_schema_when_analyzing_then_it_converts_or_refuses_with_a_cate
             },
         },
         AnalyzeTestCase {
+            description: "== is refused before conversion, as Snowflake rejects it",
+            sql: "SELECT amount FROM orders WHERE amount == 1",
+            expected_summary: refused(RefusalCategory::SnowflakeRejects),
+        },
+        AnalyzeTestCase {
             description: "a relation the schema does not type is an unresolved name",
             sql: "SELECT region FROM stores",
             expected_summary: AnalysisSummary {
@@ -240,14 +245,14 @@ fn given_sql_and_a_schema_when_analyzing_then_it_converts_or_refuses_with_a_cate
             },
         },
         AnalyzeTestCase {
-            description: "TOP, which no rule converts, is refused as a missing rule",
-            sql: "SELECT TOP 5 order_id FROM orders",
-            expected_summary: AnalysisSummary {
-                parsed: true,
-                statements: 1,
-                categories: vec![RefusalCategory::MissingRule],
-                converted: false,
-            },
+            description: "TOP converts as LIMIT",
+            sql: "SELECT TOP 5 amount FROM orders ORDER BY amount",
+            expected_summary: converted(),
+        },
+        AnalyzeTestCase {
+            description: "TOP with PERCENT, which LIMIT does not express, is refused",
+            sql: "SELECT TOP 10 PERCENT amount FROM orders",
+            expected_summary: refused(RefusalCategory::TypeCondition),
         },
         AnalyzeTestCase {
             description: "unparseable SQL is one parse-fidelity refusal",
