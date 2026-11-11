@@ -24,6 +24,8 @@ mod test_evidence_commands;
 mod test_explain;
 #[path = "cli/test_function.rs"]
 mod test_function;
+#[path = "cli/test_joins.rs"]
+mod test_joins;
 #[path = "cli/test_output_names.rs"]
 mod test_output_names;
 #[path = "cli/test_project.rs"]
