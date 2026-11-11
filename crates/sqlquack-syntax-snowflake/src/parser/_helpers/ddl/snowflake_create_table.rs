@@ -8,7 +8,8 @@ use crate::parser::constants::{
 };
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::columns::models::{
-    ColumnConstraint, ColumnDef, ComputedColumn, ForeignKeyRef, MaskingPolicyColumnConstraint,
+    ColumnConstraint, ColumnDef, ComputedColumn, ConstraintModifiers, ForeignKeyRef,
+    MaskingPolicyColumnConstraint, TableConstraint,
 };
 use sqlquack_syntax::expressions::functions::models::Function;
 use sqlquack_syntax::expressions::names::models::Identifier;
@@ -455,6 +456,29 @@ impl Parser {
             return Err(self.parse_error("Expected a number"));
         }
         self.parse_primary()
+    }
+
+    /// A hybrid table's `INDEX <name> ( <col> [ , ... ] ) [ INCLUDE ( <col> [ , ... ] ) ]`.
+    pub(super) fn parse_snowflake_table_index(&mut self) -> Result<TableConstraint> {
+        self.expect_token(TokenType::Index)?;
+        let name = self.parse_external_name()?;
+        let columns = tuple_names(Some(self.parse_iceberg_name_list(false)?));
+        let include_columns = match self.match_identifier("INCLUDE") {
+            true => tuple_names(Some(self.parse_iceberg_name_list(false)?)),
+            false => Vec::new(),
+        };
+        Ok(TableConstraint::Index {
+            name: Some(name),
+            columns,
+            key_parts: Vec::new(),
+            kind: None,
+            modifiers: ConstraintModifiers::default(),
+            use_key_keyword: false,
+            expression: None,
+            index_type: None,
+            granularity: None,
+            include_columns,
+        })
     }
 
     /// `[CONSTRAINT <name>]` and a constraint with its properties; `inline` takes no column list.

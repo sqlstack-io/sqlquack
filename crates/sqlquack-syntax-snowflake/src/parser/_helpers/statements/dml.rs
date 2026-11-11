@@ -409,7 +409,8 @@ impl Parser {
                 }
                 let parsed =
                     self.parse_create_table(or_replace, temporary, leading_comments, modifier);
-                let checkable = !define && !secure && matches!(modifier, None | Some("TRANSIENT"));
+                let checkable =
+                    !define && !secure && matches!(modifier, None | Some("TRANSIENT" | "HYBRID"));
                 self.keep_snowflake_create_table(
                     parsed,
                     (create_pos, table_start),

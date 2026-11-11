@@ -533,3 +533,42 @@ fn given_snowflake_iceberg_partition_evolution_when_parsing_then_recorded_verdic
         );
     }
 }
+
+#[test]
+fn given_snowflake_hybrid_table_indexes_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "an index with included columns (recorded OK)",
+            sql: "CREATE HYBRID TABLE v1 ( v1 INT , INDEX v1 ( v1 ) INCLUDE ( v1 , v1 ) ) ;",
+            expected_kind: Some("create_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an index needs a name (recorded errno 1003)",
+            sql: "CREATE HYBRID TABLE v1 ( v1 INT , INDEX ( v1 ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "INCLUDE needs a column (recorded errno 1003)",
+            sql: "CREATE HYBRID TABLE v1 ( v1 INT , INDEX v1 ( v1 ) INCLUDE ( ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a comment given as a name (recorded OK)",
+            sql: "CREATE HYBRID TABLE v1 ( v1 INT ) COMMENT = m1 ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a comment with no value (recorded errno 1003)",
+            sql: "CREATE HYBRID TABLE v1 ( v1 INT ) COMMENT = ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
