@@ -1,8 +1,11 @@
 use std::collections::HashMap;
 
+use crate::dialects::constants::DUCKDB;
 use crate::duckdb::profile::tests::helpers::duckdb_output_type;
 use crate::duckdb::profile::tests::helpers::replayed_engine_types;
 use crate::duckdb::profile::tests::test_types::DuckdbTypeTestCase;
+use crate::lineage::main::statement_lineage::statement_lineage;
+use crate::lineage::models::LineageContext;
 use crate::lineage::tests::helpers::typed_column;
 use crate::lineage::tests::test_types::{EngineTypeReplayTestCase, TypedShopSchema};
 
@@ -16,8 +19,8 @@ fn given_engine_recorded_duckdb_types_when_typing_outputs_then_none_is_wrong() {
         fixture: ENGINE_TYPES,
         replayed: replayed_engine_types,
         expected_wrong: &[],
-        expected_minimum_typed: 2556,
-        expected_maximum_untyped: 2,
+        expected_minimum_typed: 2568,
+        expected_maximum_untyped: 1,
     }];
     for test_case in test_cases {
         let replay = (test_case.replayed)(test_case.fixture);
@@ -170,6 +173,109 @@ fn given_duckdb_functions_when_typing_outputs_then_each_has_the_engine_type() {
         assert_eq!(
             duckdb_output_type(&schema, test_case.sql).as_deref(),
             test_case.expected_type,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_json_and_time_zone_expressions_when_typing_outputs_then_both_parsers_give_the_engine_type()
+{
+    // Each type is DuckDB 2.0.0's typeof over the same columns.
+    let test_cases = [
+        DuckdbTypeTestCase {
+            description: "a cast to JSON is JSON",
+            sql: "SELECT CAST(name AS JSON) AS v FROM t",
+            expected_type: Some("JSON"),
+        },
+        DuckdbTypeTestCase {
+            description: "a :: cast to JSON is JSON",
+            sql: "SELECT name::JSON AS v FROM t",
+            expected_type: Some("JSON"),
+        },
+        DuckdbTypeTestCase {
+            description: "a cast to a JSON list is JSON[]",
+            sql: "SELECT CAST(name AS JSON[]) AS v FROM t",
+            expected_type: Some("JSON[]"),
+        },
+        DuckdbTypeTestCase {
+            description: "to_json gives JSON",
+            sql: "SELECT to_json(quantity) AS v FROM t",
+            expected_type: Some("JSON"),
+        },
+        DuckdbTypeTestCase {
+            description: "a JSON cast over to_json of a JSON COALESCE is JSON",
+            sql: "SELECT CAST(to_json(COALESCE(name::JSON, '[]'::JSON)) AS JSON) AS v FROM t",
+            expected_type: Some("JSON"),
+        },
+        DuckdbTypeTestCase {
+            description: "TO_TIMESTAMP of a number is TIMESTAMPTZ",
+            sql: "SELECT TO_TIMESTAMP(quantity / POWER(10, 3)) AS v FROM t",
+            expected_type: Some("TIMESTAMPTZ"),
+        },
+        DuckdbTypeTestCase {
+            description: "AT TIME ZONE gives a TIMESTAMP its zone",
+            sql: "SELECT created_at AT TIME ZONE 'UTC' AS v FROM t",
+            expected_type: Some("TIMESTAMPTZ"),
+        },
+        DuckdbTypeTestCase {
+            description: "AT TIME ZONE takes a TIMESTAMPTZ's zone away",
+            sql: "SELECT seen_at AT TIME ZONE 'UTC' AS v FROM t",
+            expected_type: Some("TIMESTAMP"),
+        },
+        DuckdbTypeTestCase {
+            description: "timezone() is AT TIME ZONE",
+            sql: "SELECT timezone('UTC', seen_at) AS v FROM t",
+            expected_type: Some("TIMESTAMP"),
+        },
+        DuckdbTypeTestCase {
+            description: "a COALESCE of a TO_TIMESTAMP at a zone and a TIMESTAMP is TIMESTAMP",
+            sql: "SELECT MIN(COALESCE(TO_TIMESTAMP(quantity / POWER(10, 3)) AT TIME ZONE 'UTC', created_at)) AS v FROM t",
+            expected_type: Some("TIMESTAMP"),
+        },
+        DuckdbTypeTestCase {
+            description: "AT TIME ZONE over a DATE stays untyped",
+            sql: "SELECT CAST(created_at AS DATE) AT TIME ZONE 'UTC' AS v FROM t",
+            expected_type: None,
+        },
+    ];
+    let schema: TypedShopSchema = TypedShopSchema {
+        closed: HashMap::from([(
+            "t".to_owned(),
+            vec![
+                typed_column("quantity", "INTEGER"),
+                typed_column("name", "VARCHAR"),
+                typed_column("created_at", "TIMESTAMP"),
+                typed_column("seen_at", "TIMESTAMPTZ"),
+            ],
+        )]),
+        open: HashMap::new(),
+        functions: HashMap::new(),
+        rules: HashMap::new(),
+        declared: Vec::new(),
+        arities: HashMap::new(),
+    };
+    for test_case in test_cases {
+        let statement = sqlquack_syntax_duckdb::parse_strict(test_case.sql)
+            .unwrap_or_else(|failure| panic!("{}: {failure:?}", test_case.description))
+            .statements
+            .remove(0);
+        let context = LineageContext {
+            profile: &DUCKDB,
+            schema: &schema,
+            sql: Some(test_case.sql),
+        };
+        let native: Option<String> = statement_lineage(&statement, context).outputs[0]
+            .data_type
+            .as_deref()
+            .map(str::to_owned);
+        assert_eq!(
+            (
+                duckdb_output_type(&schema, test_case.sql).as_deref(),
+                native.as_deref()
+            ),
+            (test_case.expected_type, test_case.expected_type),
             "{}",
             test_case.description
         );

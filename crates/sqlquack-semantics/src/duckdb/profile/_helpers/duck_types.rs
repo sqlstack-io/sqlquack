@@ -4,7 +4,7 @@ use sqlquack_syntax::DataType;
 
 use crate::duckdb::profile::constants::{
     DUCKDB_DECIMAL_LIMIT, DUCKDB_DEFAULT_DECIMAL, DUCKDB_INTEGER_ALIASES, DUCKDB_INTEGER_SPELLINGS,
-    DUCKDB_WIDEST_INTEGER,
+    DUCKDB_JSON_TYPE, DUCKDB_WIDEST_INTEGER,
 };
 
 /// What a DuckDB type is, as far as the type rules distinguish it.
@@ -222,6 +222,7 @@ pub(crate) fn cast_spelling(data_type: &DataType) -> Option<String> {
         DataType::Array { element_type, .. } | DataType::List { element_type } => {
             Some(format!("{}[]", cast_spelling(element_type)?))
         }
+        DataType::Json => Some(DUCKDB_JSON_TYPE.to_owned()),
         _ => cast_type(data_type).map(|target| target.spelling()),
     }
 }
