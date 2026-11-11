@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug instruction-counts instruction-baseline gate-build engine-free bundled-extensions dialect-builds generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord corpus-verdicts corpus-verdicts-baseline generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded verify-changed replay-scope test-crate check-pr-metadata evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
+.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug instruction-counts instruction-baseline gate-build engine-free bundled-extensions dialect-builds generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord corpus-verdicts corpus-verdicts-baseline generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-build python-module python-api python-wheel verify-recorded verify-changed replay-scope test-crate check-pr-metadata evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -269,9 +269,21 @@ test-python: python-api
 	$(TEST_EVIDENCE) uv run pytest $(filter-out $(PYTHON_API_TESTS),$(PYTHON_TESTS)) --ignore=$(PYTHON_API_TESTS) \
 	  -n auto --dist loadfile
 
+# The build python-module copies from. `python-build`, the default, compiles only the module's
+# library and the `sqlquack` binary; CI sets `gate-build`, so its one gate build serves every step.
+PYTHON_MODULE_BUILD ?= python-build
+
+# The Python module's library and the `sqlquack` binary, in the gate profile with the gate features.
+# Cargo unifies features over only these two, so the crates whose features the rest of the workspace
+# widens compile apart from gate-build's.
+python-build: | .venv/bin/python
+	mkdir -p $(dir $(PYTHON_BUILD_JSON))
+	cargo build --locked --profile $(GATE_PROFILE) -p sqlquack-python --lib -p sqlquack --bin sqlquack \
+	  --features $(GATE_FEATURES) --message-format=json-render-diagnostics > $(PYTHON_BUILD_JSON)
+
 # The `sqlquack` Python module, built from the workspace into its package, where the tests import it.
 # The DuckDB library it links goes next to it, where its rpath looks.
-python-module: gate-build
+python-module: $(PYTHON_MODULE_BUILD)
 	cp $(GATE_DIR)/lib_native.so $(PYTHON_MODULE)
 	cp "$$(jq -r 'select(.reason == "build-script-executed" and (.package_id | contains("libduckdb-sys"))) \
 	  | .linked_paths[] | sub("^[a-z]*="; "")' $(PYTHON_BUILD_JSON) | head -1)/libduckdb.so" \
@@ -324,7 +336,7 @@ SQL_SIZE_ALLOWANCES := coverage/sql-size/allowances.toml
 REPLAY_CACHE ?=
 REPLAY_FLAGS = $(if $(REPLAY_CACHE),--replay-cache $(REPLAY_CACHE) --replay-scope $(shell uv run --no-sync python -m scripts.select_replay digest))
 
-# verify runs the gate build's binary, with the DuckDB library python-module puts beside the module.
+# verify runs the binary python-module builds, with the DuckDB library it puts beside the module.
 verify-recorded: python-module ## Replay every recorded translation on DuckDB; check-convert DIALECT=snowflake runs it.
 	mkdir -p $(dir $(COVERAGE_REPORT))
 	LD_LIBRARY_PATH=$(abspath $(PYTHON_PACKAGE)) $(GATE_DIR)/sqlquack verify $(VERIFY_FLAGS) $(COVERAGE_FLAGS) \

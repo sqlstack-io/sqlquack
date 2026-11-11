@@ -80,6 +80,8 @@ jobs:
       # The evidence pin check and the result baselines compare with the pull request's base.
       EVIDENCE_BASE: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || 'origin/main' }}
       REPLAY: ${{ needs.changes.outputs.replay }}
+      # The Python tests and the replay take the module and binary from check-merge's gate build.
+      PYTHON_MODULE_BUILD: gate-build
     steps:
       - uses: actions/checkout@v4
         with:
