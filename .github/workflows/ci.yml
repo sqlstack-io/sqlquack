@@ -113,8 +113,21 @@ jobs:
       - name: Install development tools without the recorder
         run: uv sync --locked --no-group recorder
       # The instruction-count guard in check-ci runs its workloads under callgrind.
+      # The runner's Azure Ubuntu mirror sometimes stops resolving, so apt uses archive.ubuntu.com
+      # directly. apt still checks the archive's signatures.
       - name: Install valgrind
-        run: sudo apt-get update -q && sudo apt-get install -y -q --no-install-recommends valgrind
+        run: |
+          { sudo grep -rlE 'mirror\+file:|azure\.archive\.ubuntu\.com' /etc/apt || true; } | xargs -r sudo sed -i -E \
+            -e 's#mirror\+file:/etc/apt/apt-mirrors\.txt#http://archive.ubuntu.com/ubuntu/#g' \
+            -e 's#https?://azure\.archive\.ubuntu\.com/ubuntu/?#http://archive.ubuntu.com/ubuntu/#g'
+          for attempt in 1 2 3; do
+            if sudo apt-get update -q -o Acquire::Retries=3 &&
+              sudo apt-get install -y -q --no-install-recommends -o Acquire::Retries=3 valgrind; then
+              exit 0
+            fi
+            sleep $((attempt * 15))
+          done
+          exit 1
       # One gate build serves every step: check-ci, the Rust tests, the Python tests and the replay.
       - name: Run static checks and tests
         run: make check-merge test-python
