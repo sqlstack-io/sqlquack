@@ -362,15 +362,25 @@ impl Parser {
             column.constraint_order.push(ConstraintType::AutoIncrement);
             return self.parse_checked_identity_options(column);
         }
-        if self.match_token(TokenType::As) {
-            let expression = self.parse_expression()?;
+        let generated = self.match_text_seq(&["GENERATED", "ALWAYS", "AS"]);
+        if generated || self.match_token(TokenType::As) {
+            let expression = match generated {
+                true => {
+                    self.expect_token(TokenType::LParen)?;
+                    let expression = self.parse_expression()?;
+                    self.expect_token(TokenType::RParen)?;
+                    expression
+                }
+                false => self.parse_expression()?,
+            };
+            let virtual_kind = generated && self.match_text_seq(&["VIRTUAL"]);
             column
                 .constraints
                 .push(ColumnConstraint::ComputedColumn(ComputedColumn {
                     expression: Box::new(expression),
                     persisted: false,
                     not_null: false,
-                    persistence_kind: None,
+                    persistence_kind: virtual_kind.then(|| "VIRTUAL".to_owned()),
                     data_type: None,
                 }));
             column.constraint_order.push(ConstraintType::ComputedColumn);
@@ -525,6 +535,9 @@ impl Parser {
                 || self.match_text_seq(&["INITIALLY", "IMMEDIATE"])
             {
                 true
+            } else if self.match_token(TokenType::Comment) {
+                self.expect_token(TokenType::String)?;
+                true
             } else if references && self.match_token(TokenType::Match) {
                 if !self.match_text_seq(&["FULL"])
                     && !self.match_text_seq(&["SIMPLE"])
@@ -554,7 +567,10 @@ impl Parser {
             }
             let phrase: Vec<String> = self.tokens[start..self.current]
                 .iter()
-                .map(|token| token.text.to_ascii_uppercase())
+                .map(|token| match token.token_type {
+                    TokenType::String => format!("'{}'", token.text.replace('\'', "''")),
+                    _ => token.text.to_ascii_uppercase(),
+                })
                 .collect();
             words.push(phrase.join(" "));
         }

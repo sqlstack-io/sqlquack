@@ -270,6 +270,9 @@ pub(crate) const SNOWFLAKE_FROM_CALLS: &[&str] = &[
     "TABLE",
 ];
 
+/// The text "VOLATILE", as comparisons test it.
+pub(crate) const VOLATILE: &str = "VOLATILE";
+
 /// The properties a column-form Snowflake external table needs; the first is its stage location.
 pub(crate) const SNOWFLAKE_EXTERNAL_TABLE_REQUIRED: &[&str] = &["LOCATION", "FILE_FORMAT"];
 
