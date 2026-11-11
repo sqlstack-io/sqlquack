@@ -51,12 +51,12 @@ impl SnowflakeTableKind {
 }
 
 /// One constraint: its keywords, its name, the columns it covers or its CHECK condition, what it references, and its property words.
-struct Constraint {
-    kind: &'static str,
-    name: Option<Identifier>,
-    operand: Option<Expression>,
-    references: Option<(Expression, Option<Expression>)>,
-    properties: Vec<String>,
+pub(super) struct Constraint {
+    pub(super) kind: &'static str,
+    pub(super) name: Option<Identifier>,
+    pub(super) operand: Option<Expression>,
+    pub(super) references: Option<(Expression, Option<Expression>)>,
+    pub(super) properties: Vec<String>,
 }
 
 impl Parser {
@@ -458,7 +458,7 @@ impl Parser {
     }
 
     /// `[CONSTRAINT <name>]` and a constraint with its properties; `inline` takes no column list.
-    fn parse_checked_constraint(&mut self, inline: bool) -> Result<Constraint> {
+    pub(super) fn parse_checked_constraint(&mut self, inline: bool) -> Result<Constraint> {
         let name = match self.match_token(TokenType::Constraint) {
             true => Some(self.parse_external_name()?),
             false => None,
@@ -857,17 +857,7 @@ fn add_inline_constraint(column: &mut ColumnDef, constraint: Constraint) {
             let Expression::Table(table) = table else {
                 unreachable!("a reference names a table");
             };
-            let columns = match columns {
-                Some(Expression::Tuple(tuple)) => tuple
-                    .expressions
-                    .into_iter()
-                    .filter_map(|column| match column {
-                        Expression::Table(table) => Some(table.name),
-                        _ => None,
-                    })
-                    .collect(),
-                _ => Vec::new(),
-            };
+            let columns = tuple_names(columns);
             column
                 .constraints
                 .push(ColumnConstraint::References(Box::new(ForeignKeyRef {
@@ -890,4 +880,19 @@ fn add_inline_constraint(column: &mut ColumnDef, constraint: Constraint) {
     column
         .constraint_properties
         .extend(constraint.properties.into_iter().map(|word| (index, word)));
+}
+
+/// The names in a parsed `( <name> [ , ... ] )`, or none.
+pub(super) fn tuple_names(names: Option<Expression>) -> Vec<Identifier> {
+    match names {
+        Some(Expression::Tuple(tuple)) => tuple
+            .expressions
+            .into_iter()
+            .filter_map(|name| match name {
+                Expression::Table(table) => Some(table.name),
+                _ => None,
+            })
+            .collect(),
+        _ => Vec::new(),
+    }
 }

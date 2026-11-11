@@ -1874,7 +1874,7 @@ impl Parser {
                 self.match_token(TokenType::Column);
                 let if_not_exists =
                     self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
-                let col_def = self.parse_column_def()?;
+                let col_def = self.parse_added_column_def()?;
                 let position = if self.match_token(TokenType::First) {
                     Some(ColumnPosition::First)
                 } else if self.match_token(TokenType::After) {
