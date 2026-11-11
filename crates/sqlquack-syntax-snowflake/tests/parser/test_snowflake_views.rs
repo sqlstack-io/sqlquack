@@ -49,6 +49,16 @@ fn given_snowflake_streams_when_parsing_then_their_grammar_is_checked() {
             sql: "CREATE STREAM v1 ON TABLE v1 INSERT_ONLY = TRUE ;",
             expected_kind: None,
         },
+        SnowflakeVerdictTestCase {
+            description: "a stream missing its STREAM keyword (recorded errno 1003)",
+            sql: "CREATE v1 ON TABLE v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "CREATE OR ALTER missing its STREAM keyword (recorded errno 1003)",
+            sql: "CREATE OR ALTER v1 ON TABLE v1 ;",
+            expected_kind: None,
+        },
     ];
     for test_case in test_cases {
         assert_eq!(
@@ -111,6 +121,75 @@ fn given_snowflake_views_when_parsing_then_their_grammar_is_checked() {
         SnowflakeVerdictTestCase {
             description: "a materialized view is never temporary",
             sql: "CREATE TEMPORARY MATERIALIZED VIEW v1 AS SELECT 1 ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_snowflake_view_alters_when_parsing_then_their_grammar_is_checked() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "SET SECURE (recorded OK)",
+            sql: "ALTER VIEW v1 SET SECURE ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "SET of a comment on a view that may not exist (recorded OK)",
+            sql: "ALTER VIEW IF EXISTS v1 SET COMMENT = 'm' ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "SET of a property with a bare value (recorded OK)",
+            sql: "ALTER VIEW v1 SET COMMENT = m1 ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "SET of a data metric schedule with the name omitted (recorded OK)",
+            sql: "ALTER VIEW SET DATA_METRIC_SCHEDULE = '1 MINUTE' ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "UNSET of a property on a quoted name (recorded OK)",
+            sql: "ALTER VIEW \"v1 Q\" UNSET SECURE ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "UNSET of a bare word (recorded OK)",
+            sql: "ALTER VIEW v1 UNSET STEWARD ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a materialized view's RECLUSTER (recorded OK)",
+            sql: "ALTER MATERIALIZED VIEW v1 RECLUSTER ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a materialized view's data metric schedule with the name omitted (recorded OK)",
+            sql: "ALTER MATERIALIZED VIEW SET DATA_METRIC_SCHEDULE = '1 MINUTE' ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "no action (recorded errno 1003)",
+            sql: "ALTER VIEW v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "UNSET with the name omitted (recorded errno 1003)",
+            sql: "ALTER VIEW UNSET SECURE ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "contact pairs mixed with other properties (recorded errno 1003)",
+            sql: "ALTER VIEW IF EXISTS v1 SET SECURE CHANGE_TRACKING = TRUE CONTACT STEWARD = v1 , STEWARD = v1 COMMENT = 'm' ;",
             expected_kind: None,
         },
     ];
