@@ -4,7 +4,8 @@ use serde_json::{Map, Value, json};
 use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_diagnostics::classification::models::{Construct, ConstructFamily};
 use sqlquack_diagnostics::diagnostics::constants::{
-    REPEATED_RESULT_NAME, UNALIASED_OUTPUT_NAME_CONSTRUCT,
+    REPEATED_RESULT_NAME, UNALIASED_OUTPUT_NAME_CONSTRUCT, UNALIASED_QUOTED_NAME,
+    UNALIASED_TEXT_NAME,
 };
 use sqlquack_diagnostics::provenance::constants::QUERY_CONSTRUCT;
 use sqlquack_diagnostics::provenance::models::ShapeArgument;
@@ -34,6 +35,7 @@ use crate::snowflake::conversion::_helpers::support::tree::{
     function_construct, identifier_name, list, node_construct, node_kind, payload_object,
     require_understood,
 };
+use crate::snowflake::conversion::constants::UNALIASED_QUOTED_KINDS;
 use crate::snowflake::conversion::constants::WINDOW_MARKER;
 use crate::snowflake::conversion::constants::{
     ALIAS, COMMENT, COMMON_TABLE, DISTINCT, GENERATOR_SEQUENCE_COLUMN, GROUP_BY, HAVING,
@@ -694,7 +696,10 @@ fn convert_projection(
                     location: site.context.locator.locate_written(item),
                     ..missing(
                         Construct::new(ConstructFamily::Syntax, UNALIASED_OUTPUT_NAME_CONSTRUCT),
-                        format!("Snowflake names this `{kind}` column after its text"),
+                        match UNALIASED_QUOTED_KINDS.contains(&kind) {
+                            true => UNALIASED_QUOTED_NAME.to_owned(),
+                            false => UNALIASED_TEXT_NAME.to_owned(),
+                        },
                     )
                 }),
             }

@@ -1566,7 +1566,7 @@ fn given_refused_sql_when_converting_then_text_and_json_carry_the_same_coded_dia
             expected_text: concat!(
                 "error[SQ0009]: This column needs an alias, because SQLQuack can't be sure of the name ",
                 "Snowflake gives it\n --> <stdin>:1:18\n  |\n1 | SELECT 'a' AS a, UPPER('é')\n",
-                "  |                  ^^^^^^^^^^ Snowflake names this `function` column after its text\n",
+                "  |                  ^^^^^^^^^^ Snowflake names this column after its text\n",
                 "  |\n  = help: add an alias, such as `AS total`, which names the column in both engines\n",
                 "sqlquack convert: refused, 1 refusal\n",
             ),
