@@ -168,16 +168,21 @@ that edits or removes a committed one.
 - `outcome`, `errno` and `sqlstate`.
 - `phase`: one of `accepted`, `syntax_error`, `semantic_error`, `runtime_error` or
   `unsupported_feature`.
-- `phase_basis`: why the importer chose the phase.
-  An error number of 100000 or more is an execution-time code, unless its SQLSTATE is in class
-  42; errno 1003 under the `SQL compilation error` prefix is a syntax error, and any other errno
-  under that prefix is a compilation error after parsing. Any other error is refused unless its
-  errno is one the importer lists as reviewed: Snowflake's message for it shows that it parsed the
-  statement and refused it on a rule about what it says, such as a duplicate secret name
-  (509008), a missing object to undrop (90025), access control (3001), a required property
-  (3172), an account restriction (93171) or an application-only operation (98620). Internal
-  errors (603), statement timeouts (630) and errors that may come from the parser itself stay
-  refused.
+- `phase_basis`: why the importer chose the phase. The importer applies these rules in order:
+  1. An uncaught exception raised while a block ran is a `runtime_error`, unless its errno is
+     1003, which is refused.
+  2. Errno 2 `Unsupported feature` is an `unsupported_feature`.
+  3. An errno of 100000 or more is a `runtime_error`, unless its SQLSTATE is in class 42. Then it
+     is refused unless the errno is a reviewed one, which is a `semantic_error`.
+  4. Errno 1003 under the `SQL compilation error` prefix is a `syntax_error`. Any other errno
+     under that prefix is a `semantic_error`, a compilation error after parsing.
+  5. Any other error is refused unless its errno is a reviewed one, which is a `semantic_error`.
+
+  A reviewed errno is one whose message shows that Snowflake parsed the statement and then
+  refused it. Examples are a duplicate secret name (509008), a missing object to undrop (90025),
+  access control (3001), a required property (3172), an account restriction (93171) and an
+  application-only operation (98620). Internal errors (603), statement timeouts (630) and errors
+  that may come from the parser itself stay refused.
 - `raw_record_sha256`, `run_audit_sha256` and `packet_sha256`: the hashes of the private raw
   record, the private run audit and the submitted packet.
 - Optional provenance: `case_hash`, `input_sha256`, `statement_index`, `statements_in_input`,
