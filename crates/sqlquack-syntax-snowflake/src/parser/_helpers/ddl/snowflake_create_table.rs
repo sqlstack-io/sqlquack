@@ -84,16 +84,17 @@ impl Parser {
         Ok(self.finish_snowflake_table(table, (create_start, table_start)))
     }
 
-    /// A Snowflake CREATE ICEBERG TABLE or DYNAMIC TABLE (CREATE and TABLE at the given positions), checked against its grammar; None for any other modifier and outside the faithful Snowflake modes.
+    /// A Snowflake CREATE ICEBERG TABLE or DYNAMIC TABLE, or a DEFINE of a table (CREATE or DEFINE and TABLE at the given positions), checked against its grammar; None for any other modifier and outside the faithful Snowflake modes.
     pub(crate) fn parse_snowflake_modified_table(
         &mut self,
         (create_start, table_start): (usize, usize),
         or_replace: bool,
-        modifier: Option<&str>,
+        (modifier, define): (Option<&str>, bool),
     ) -> Option<Result<Expression>> {
         let kind = match modifier {
             Some("ICEBERG") => SnowflakeTableKind::Iceberg,
             Some("DYNAMIC") => SnowflakeTableKind::Dynamic,
+            None | Some("TRANSIENT") if define => SnowflakeTableKind::Table,
             _ => return None,
         };
         if !self.applies_snowflake_context_rules()
@@ -128,7 +129,8 @@ impl Parser {
             .iter()
             .map(|token| token.text.to_ascii_uppercase())
             .collect();
-        table.or_alter = words.windows(2).any(|pair| pair == ["OR", "ALTER"]);
+        let define = self.tokens[create_start].token_type == TokenType::Define;
+        table.or_alter = define || words.windows(2).any(|pair| pair == ["OR", "ALTER"]);
         let modifier: Vec<&str> = words
             .iter()
             .map(String::as_str)
