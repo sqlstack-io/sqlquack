@@ -231,7 +231,9 @@ impl Parser {
                         true
                     };
 
-                    if looks_like_key_constraint {
+                    if self.is_snowflake() && self.check(TokenType::Index) {
+                        constraints.push(self.parse_snowflake_table_index()?);
+                    } else if looks_like_key_constraint {
                         constraints.push(self.parse_index_table_constraint()?);
                     } else {
                         columns.push(self.parse_column_def()?);

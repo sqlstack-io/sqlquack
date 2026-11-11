@@ -945,6 +945,7 @@ impl Parser {
             expression: None,
             index_type: None,
             granularity: None,
+            include_columns: Vec::new(),
         }))
     }
 
