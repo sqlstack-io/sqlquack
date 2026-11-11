@@ -831,7 +831,10 @@ fn grouped_columns(
             _ => None,
         };
         match found {
-            Some(column) => columns.push(column.clone()),
+            Some(column) => columns.push(ScopedColumn {
+                expression: None,
+                ..column.clone()
+            }),
             None => known = false,
         }
     }
@@ -951,7 +954,10 @@ fn passed_columns(
         .flat_map(|source| source.query.columns.iter())
     {
         if !listed(consumed, &column.key, context) {
-            passed.push(column.clone());
+            passed.push(ScopedColumn {
+                expression: None,
+                ..column.clone()
+            });
         }
     }
     passed
