@@ -64,8 +64,7 @@ The struct is `Send + Sync` safe so it can be shared across threads.
 SQL Expression AST (Abstract Syntax Tree).
 
 This module defines all the AST node types used to represent parsed SQL
-statements and expressions. The design follows Python sqlglot's expression
-hierarchy, ported to a Rust enum-based AST.
+statements and expressions, as a Rust enum-based AST.
 
 # Architecture
 
@@ -231,7 +230,7 @@ parses a SQL string in one call.
 # Static configuration maps
 
 This module also exports several `LazyLock<HashSet<TokenType>>` constants
-(ported from Python sqlglot's `parser.py`) that classify token types:
+that classify token types:
 
 - [`TYPE_TOKENS`] -- all tokens that represent SQL data types
 - [`NESTED_TYPE_TOKENS`] -- parametric types like `ARRAY`, `MAP`, `STRUCT`
@@ -317,8 +316,6 @@ bottom-up, using the generated child visitor and an explicit stack.
 [`transform_recursive`](crate::dialects::transform_recursive) for compatibility.
 The [`ExpressionWalk::transform_owned`] method provides the same capability as
 an owned method on `Expression`.
-
-Based on traversal patterns from `sqlglot/expressions.py`.
 
 ## `traversal.rs`: #[derive(Debug, Default)]
 
