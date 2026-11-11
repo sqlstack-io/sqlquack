@@ -91,11 +91,15 @@ impl Parser {
                 properties.push(part("COPY", self.parse_view_copy_list()?));
             }
         }
-        let columns = match self.check(TokenType::LParen) {
+        let mut columns = match self.check(TokenType::LParen) {
             true => self.parse_snowflake_view_columns()?,
             false => Vec::new(),
         };
         while !self.is_at_end() && !self.check(TokenType::As) && !self.check(TokenType::Semicolon) {
+            if kind == ViewKind::View && columns.is_empty() && self.check(TokenType::LParen) {
+                columns = self.parse_snowflake_view_columns()?;
+                continue;
+            }
             match self.parse_snowflake_view_clause(kind)? {
                 Some(clause) => properties.push(clause),
                 None => copy_grants = true,
