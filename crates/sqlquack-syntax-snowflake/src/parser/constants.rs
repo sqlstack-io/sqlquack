@@ -200,6 +200,12 @@ pub(crate) const SET_TAG: &str = "SET TAG";
 /// The text "UNSET COMMENT", as comparisons test it.
 pub(crate) const UNSET_COMMENT: &str = "UNSET COMMENT";
 
+/// The text "EVENT TABLE", as comparisons test it.
+pub(crate) const EVENT_TABLE: &str = "EVENT TABLE";
+
+/// The keyword TABLE, as comparisons test it.
+pub(crate) const TABLE_KEYWORD: &str = "TABLE";
+
 /// The argument count of a two-argument call.
 pub(crate) const BINARY_ARITY: usize = 2;
 
