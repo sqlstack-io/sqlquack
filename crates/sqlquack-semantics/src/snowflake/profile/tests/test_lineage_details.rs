@@ -1,10 +1,11 @@
 use sqlquack_syntax::{Dialect, ParseOptions};
 
+use crate::dialects::constants::DUCKDB;
 use crate::dialects::constants::SNOWFLAKE;
 use crate::lineage::main::query_lineage::query_lineage;
 use crate::lineage::models::{LineageContext, TransformKind};
-use crate::lineage::tests::helpers::{shop_schema, written};
-use crate::lineage::tests::test_types::LineageDetailTestCase;
+use crate::lineage::tests::helpers::{duckdb_shop_schema, shop_schema, written};
+use crate::lineage::tests::test_types::{LineageDetailTestCase, OutputRangeTestCase};
 
 const ALL_ORDER_COLUMNS: [&str; 5] = [
     "ORDERS.AMOUNT",
@@ -562,6 +563,107 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
         );
         assert_eq!(
             lineage.rows_resolved, test_case.expected_rows_resolved,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_query_when_tracing_lineage_then_each_output_points_at_the_bytes_that_define_it() {
+    let test_cases = [
+        OutputRangeTestCase {
+            description: "aliased and bare items after multi-byte text cover their own bytes",
+            sql: "SELECT 'é—ü' AS label,\n  o.amount * 2 AS doubled, o.id FROM orders o",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            schema: shop_schema,
+            expected_ranges: &[
+                ("label", Some("'é—ü' AS label")),
+                ("doubled", Some("o.amount * 2 AS doubled")),
+                ("id", Some("o.id")),
+            ],
+        },
+        OutputRangeTestCase {
+            description: "columns a star brings from a table or a CTE point at the star",
+            sql: "WITH c AS (SELECT amount * 2 AS twice, id FROM orders) \
+                  SELECT 'ü' AS mark, c.* FROM c",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            schema: shop_schema,
+            expected_ranges: &[
+                ("mark", Some("'ü' AS mark")),
+                ("twice", Some("c.*")),
+                ("id", Some("c.*")),
+            ],
+        },
+        OutputRangeTestCase {
+            description: "a renamed star column points at the star, a replaced one at its value",
+            sql: "SELECT * EXCLUDE (items, status, customer_id) RENAME (id AS order_id) \
+                  FROM orders",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            schema: shop_schema,
+            expected_ranges: &[
+                (
+                    "order_id",
+                    Some("* EXCLUDE (items, status, customer_id) RENAME (id AS order_id)"),
+                ),
+                (
+                    "AMOUNT",
+                    Some("* EXCLUDE (items, status, customer_id) RENAME (id AS order_id)"),
+                ),
+            ],
+        },
+        OutputRangeTestCase {
+            description: "a DuckDB REPLACE value is the replaced column's range",
+            sql: "SELECT * REPLACE (amount * 2 AS amount) FROM (SELECT id, amount FROM orders)",
+            dialect: Dialect::DuckDB,
+            profile: &DUCKDB,
+            schema: duckdb_shop_schema,
+            expected_ranges: &[
+                ("id", Some("* REPLACE (amount * 2 AS amount)")),
+                ("amount", Some("amount * 2")),
+            ],
+        },
+        OutputRangeTestCase {
+            description: "columns merged by a set operation have no single range",
+            sql: "SELECT id, 'é' AS kind FROM orders UNION ALL SELECT id, 'c' FROM customers",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            schema: shop_schema,
+            expected_ranges: &[("id", None), ("kind", None)],
+        },
+    ];
+    for test_case in test_cases {
+        let schema = (test_case.schema)();
+        let context = LineageContext {
+            profile: test_case.profile,
+            schema: &schema,
+            sql: Some(test_case.sql),
+        };
+        let lineage = query_lineage(
+            test_case.sql,
+            test_case.dialect,
+            &ParseOptions::default(),
+            context,
+        )
+        .unwrap_or_else(|error| panic!("{}: {error}", test_case.description));
+        let ranges: Vec<(&str, Option<&str>)> = lineage
+            .outputs
+            .iter()
+            .map(|output| {
+                (
+                    output.name.as_str(),
+                    output
+                        .expression_range
+                        .clone()
+                        .map(|range| &test_case.sql[range]),
+                )
+            })
+            .collect();
+        assert_eq!(
+            ranges, test_case.expected_ranges,
             "{}",
             test_case.description
         );

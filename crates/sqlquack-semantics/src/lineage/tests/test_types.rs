@@ -28,6 +28,16 @@ pub(crate) struct LineageDetailTestCase {
     pub(crate) expected_rows_resolved: bool,
 }
 
+/// A query and, per output, the SQL text its expression range covers, or none.
+pub(crate) struct OutputRangeTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) dialect: Dialect,
+    pub(crate) profile: &'static dyn DialectProfile,
+    pub(crate) schema: fn() -> ShopSchema,
+    pub(crate) expected_ranges: &'static [(&'static str, Option<&'static str>)],
+}
+
 /// A synthetic shop schema: relation name to its columns.
 #[derive(Debug)]
 pub(crate) struct ShopSchema(pub(crate) HashMap<String, Vec<SchemaColumn>>);

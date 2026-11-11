@@ -150,6 +150,7 @@ pub(crate) fn renamed(
                 name: alias.name.clone(),
                 key: key(alias, context),
                 lineage: column.lineage,
+                expression: column.expression,
             },
             None => column,
         })
@@ -258,6 +259,7 @@ fn positional(queries: Vec<ResolvedQuery>, context: LineageContext<'_>) -> Resol
         }
         columns.push(ScopedColumn {
             lineage: traced_if(set_merged(parts, context.profile), complete),
+            expression: None,
             ..column
         });
     }
@@ -287,6 +289,7 @@ fn by_name(
                 let column: &mut ScopedColumn = &mut columns[position];
                 column.lineage =
                     set_merged(vec![column.lineage.clone(), other.lineage], context.profile);
+                column.expression = None;
                 matched[position] = true;
             }
             None => {
@@ -543,19 +546,28 @@ fn select_query(
         let projection = unannotated(projection);
         if let Expression::Star(star) = projection {
             let expanded = expanded_star(star, &scope, context);
+            let star_range = projection.source_span();
             query.open |= expanded.open;
             query.open_relation = query.open_relation.or(expanded.open_relation);
             query.open_reads = query.open_reads.or(expanded.open_reads);
             query.outer_nullable |= expanded.outer_nullable;
             ungrouped.extend(expanded.columns.iter().map(|column| column.lineage.clone()));
             aggregated.extend(expanded.columns.iter().map(|_| false));
-            Rc::make_mut(&mut query.columns).extend(Rc::unwrap_or_clone(expanded.columns));
+            Rc::make_mut(&mut query.columns).extend(
+                Rc::unwrap_or_clone(expanded.columns)
+                    .into_iter()
+                    .map(|column| ScopedColumn {
+                        expression: column.expression.or(star_range),
+                        ..column
+                    }),
+            );
             continue;
         }
         let column = ScopedColumn {
             name: output_name(projection, context),
             key: output_key(projection, context),
             lineage: expression_lineage(projection, &scope, context),
+            expression: projection.source_span(),
         };
         query.rows.rows_of(&column.lineage);
         if !holds_aggregate(projection) {
@@ -860,6 +872,7 @@ fn keys_in_place(
                     name: column.name.clone(),
                     key: column.key.clone(),
                     lineage: merged.lineage.clone(),
+                    expression: None,
                 });
             }
             None => columns.push(column.clone()),
@@ -899,6 +912,7 @@ fn star_column(
     {
         return ScopedColumn {
             lineage: expression_lineage(&replacement.this, scope, context),
+            expression: replacement.this.source_span(),
             ..column.clone()
         };
     }
@@ -907,8 +921,12 @@ fn star_column(
             name: new.name.clone(),
             key: key(new, context),
             lineage: column.lineage.clone(),
+            expression: None,
         },
-        None => column.clone(),
+        None => ScopedColumn {
+            expression: None,
+            ..column.clone()
+        },
     }
 }
 

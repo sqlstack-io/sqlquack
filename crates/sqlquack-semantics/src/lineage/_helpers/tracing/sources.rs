@@ -216,6 +216,7 @@ fn joined(
             name: name.clone(),
             key: name,
             lineage,
+            expression: None,
         };
         match merged_keys
             .iter_mut()
@@ -588,6 +589,7 @@ fn stored_columns(
             key: context
                 .profile
                 .resolved_identifier(&column.name, column.quoted),
+            expression: None,
             lineage: Lineage {
                 data_type: stored_type(column, context),
                 nullability: column.nullability,
@@ -641,6 +643,7 @@ fn table_function_source(
                         name: (*column).to_owned(),
                         key: plain_key(column, context),
                         lineage: input.clone(),
+                        expression: None,
                     })
                     .collect(),
             ),
@@ -701,6 +704,7 @@ pub(crate) fn values_query(
                 key: plain_key(&name, context),
                 name,
                 lineage: values_column(values, position, scope, context),
+                expression: None,
             }
         })
         .collect();
@@ -790,6 +794,7 @@ pub(crate) fn pivot_sources(
         key: context.profile.resolved_identifier(&name, true),
         name,
         lineage: aggregated.clone(),
+        expression: None,
     });
     let query = ResolvedQuery {
         columns: Rc::new(match dynamic {
@@ -890,6 +895,7 @@ fn unpivot_source(
         name: name.name.clone(),
         key: key(name, context),
         lineage,
+        expression: None,
     });
     let query = ResolvedQuery {
         columns: Rc::new(passed.into_iter().chain(generated).collect()),

@@ -2,6 +2,7 @@
 
 use std::cell::RefCell;
 use std::collections::BTreeSet;
+use std::ops::Range;
 use std::rc::Rc;
 
 use rustc_hash::FxHashMap;
@@ -92,6 +93,8 @@ pub struct OutputLineage {
     pub data_type: Option<String>,
     /// Whether it may be NULL.
     pub nullability: Nullability,
+    /// The UTF-8 byte range in the analysed SQL of the projection item or star defining it.
+    pub expression_range: Option<Range<usize>>,
 }
 
 /// The lineage of every output column of one query.
@@ -146,6 +149,8 @@ pub(crate) struct ScopedColumn {
     pub(crate) name: String,
     pub(crate) key: String,
     pub(crate) lineage: Lineage,
+    /// The source range of the projection item that defines it, when it has one.
+    pub(crate) expression: Option<Span>,
 }
 
 /// A FROM item: its key, its known columns, and whether it offers others of unknown name.
