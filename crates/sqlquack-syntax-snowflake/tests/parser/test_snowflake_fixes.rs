@@ -1679,17 +1679,17 @@ fn given_a_snowflake_create_external_table_when_parsing_then_recorded_verdicts_h
         SnowflakeVerdictTestCase {
             description: "a virtual column with a stage and a named file format (recorded OK)",
             sql: "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a bare @ before PARTITION_TYPE (recorded OK)",
             sql: "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @ PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a template variable (recorded OK)",
             sql: "CREATE EXTERNAL TABLE v1 USING TEMPLATE $v1 ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a quoted template variable (recorded errno 1003)",

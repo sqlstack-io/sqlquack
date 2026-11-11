@@ -1,5 +1,9 @@
+use serde_json::json;
+
 use crate::helpers::snowflake_kind;
-use crate::test_types::SnowflakeVerdictTestCase;
+use crate::helpers::statements;
+use crate::test_types::{ProjectionTestCase, SnowflakeVerdictTestCase};
+use sqlquack_syntax::{CallMode, Dialect};
 
 #[test]
 fn given_snowflake_table_policies_and_properties_when_parsing_then_recorded_verdicts_hold() {
@@ -195,12 +199,12 @@ fn given_snowflake_external_tables_procedures_and_unloads_when_parsing_then_reco
         SnowflakeVerdictTestCase {
             description: "an external column with no type or expression (recorded errno 2003, after parsing)",
             sql: "CREATE EXTERNAL TABLE v1 ( v1 ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a bare external REFERENCES constraint (recorded errno 2003, after parsing)",
             sql: "CREATE EXTERNAL TABLE v1 ( REFERENCES v1 ( \"v1 Q\" ) ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a bare external REFERENCES with an empty column list (recorded errno 1003)",
@@ -215,7 +219,7 @@ fn given_snowflake_external_tables_procedures_and_unloads_when_parsing_then_reco
         SnowflakeVerdictTestCase {
             description: "an external stage named SELECT (recorded OK)",
             sql: "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @SELECT.s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "VALIDATE on a constraint without ENABLE (recorded errno 1003)",
@@ -298,6 +302,89 @@ fn given_a_snowflake_sample_clause_when_parsing_then_recorded_verdicts_hold() {
         assert_eq!(
             snowflake_kind(test_case.sql),
             test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_external_table_when_parsing_then_its_columns_and_properties_are_structured() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "the statement is an external table",
+            sql: "CREATE OR REPLACE EXTERNAL TABLE v1 ( v1 INT AS ( VALUE : c1 :: INT ) UNIQUE ) PARTITION BY ( v1 ) LOCATION = @s1/p1 FILE_FORMAT = ( TYPE = PARQUET ) TAG ( t1 = 'm' ) ;",
+            pointer: "/0/create_object/kind",
+            expected_value: json!("EXTERNAL TABLE"),
+        },
+        ProjectionTestCase {
+            description: "OR REPLACE is kept",
+            sql: "CREATE OR REPLACE EXTERNAL TABLE v1 ( v1 INT AS ( VALUE : c1 :: INT ) UNIQUE ) PARTITION BY ( v1 ) LOCATION = @s1/p1 FILE_FORMAT = ( TYPE = PARQUET ) TAG ( t1 = 'm' ) ;",
+            pointer: "/0/create_object/or_replace",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "the column keeps its name",
+            sql: "CREATE OR REPLACE EXTERNAL TABLE v1 ( v1 INT AS ( VALUE : c1 :: INT ) UNIQUE ) PARTITION BY ( v1 ) LOCATION = @s1/p1 FILE_FORMAT = ( TYPE = PARQUET ) TAG ( t1 = 'm' ) ;",
+            pointer: "/0/create_object/operands/0/tuple/expressions/0/column_def/name/name",
+            expected_value: json!("v1"),
+        },
+        ProjectionTestCase {
+            description: "the column keeps its UNIQUE constraint",
+            sql: "CREATE OR REPLACE EXTERNAL TABLE v1 ( v1 INT AS ( VALUE : c1 :: INT ) UNIQUE ) PARTITION BY ( v1 ) LOCATION = @s1/p1 FILE_FORMAT = ( TYPE = PARQUET ) TAG ( t1 = 'm' ) ;",
+            pointer: "/0/create_object/operands/0/tuple/expressions/0/column_def/unique",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "the column keeps its expression as a computed column",
+            sql: "CREATE OR REPLACE EXTERNAL TABLE v1 ( v1 INT AS ( VALUE : c1 :: INT ) UNIQUE ) PARTITION BY ( v1 ) LOCATION = @s1/p1 FILE_FORMAT = ( TYPE = PARQUET ) TAG ( t1 = 'm' ) ;",
+            pointer: "/0/create_object/operands/0/tuple/expressions/0/column_def/constraints/0/ComputedColumn/persisted",
+            expected_value: json!(false),
+        },
+        ProjectionTestCase {
+            description: "PARTITION BY is the first property",
+            sql: "CREATE OR REPLACE EXTERNAL TABLE v1 ( v1 INT AS ( VALUE : c1 :: INT ) UNIQUE ) PARTITION BY ( v1 ) LOCATION = @s1/p1 FILE_FORMAT = ( TYPE = PARQUET ) TAG ( t1 = 'm' ) ;",
+            pointer: "/0/create_object/properties/0/kind",
+            expected_value: json!("PARTITION BY"),
+        },
+        ProjectionTestCase {
+            description: "LOCATION is the second property",
+            sql: "CREATE OR REPLACE EXTERNAL TABLE v1 ( v1 INT AS ( VALUE : c1 :: INT ) UNIQUE ) PARTITION BY ( v1 ) LOCATION = @s1/p1 FILE_FORMAT = ( TYPE = PARQUET ) TAG ( t1 = 'm' ) ;",
+            pointer: "/0/create_object/properties/1/kind",
+            expected_value: json!("LOCATION"),
+        },
+        ProjectionTestCase {
+            description: "FILE_FORMAT is the third property",
+            sql: "CREATE OR REPLACE EXTERNAL TABLE v1 ( v1 INT AS ( VALUE : c1 :: INT ) UNIQUE ) PARTITION BY ( v1 ) LOCATION = @s1/p1 FILE_FORMAT = ( TYPE = PARQUET ) TAG ( t1 = 'm' ) ;",
+            pointer: "/0/create_object/properties/2/kind",
+            expected_value: json!("FILE_FORMAT"),
+        },
+        ProjectionTestCase {
+            description: "TAG is the fourth property",
+            sql: "CREATE OR REPLACE EXTERNAL TABLE v1 ( v1 INT AS ( VALUE : c1 :: INT ) UNIQUE ) PARTITION BY ( v1 ) LOCATION = @s1/p1 FILE_FORMAT = ( TYPE = PARQUET ) TAG ( t1 = 'm' ) ;",
+            pointer: "/0/create_object/properties/3/kind",
+            expected_value: json!("TAG"),
+        },
+        ProjectionTestCase {
+            description: "there are only four properties",
+            sql: "CREATE OR REPLACE EXTERNAL TABLE v1 ( v1 INT AS ( VALUE : c1 :: INT ) UNIQUE ) PARTITION BY ( v1 ) LOCATION = @s1/p1 FILE_FORMAT = ( TYPE = PARQUET ) TAG ( t1 = 'm' ) ;",
+            pointer: "/0/create_object/properties/4",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "LOCATION keeps its stage",
+            sql: "CREATE OR REPLACE EXTERNAL TABLE v1 ( v1 INT AS ( VALUE : c1 :: INT ) UNIQUE ) PARTITION BY ( v1 ) LOCATION = @s1/p1 FILE_FORMAT = ( TYPE = PARQUET ) TAG ( t1 = 'm' ) ;",
+            pointer: "/0/create_object/properties/1/value/literal/value",
+            expected_value: json!("@s1/p1"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statements(test_case.sql, Dialect::Snowflake, CallMode::Faithful)
+                .pointer(test_case.pointer)
+                .cloned()
+                .unwrap_or_default(),
+            test_case.expected_value,
             "{}",
             test_case.description
         );
