@@ -6,6 +6,7 @@ use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::columns::models::{
     ColumnConstraint, ColumnDef, ComputedColumn, ForeignKeyRef,
 };
+use sqlquack_syntax::expressions::names::main::identifier_from_token::identifier_from_token;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal, TableRef};
 use sqlquack_syntax::expressions::operators::models::BinaryOp;
 use sqlquack_syntax::expressions::schema_objects::models::{CreateObject, ObjectProperty};
@@ -253,12 +254,11 @@ impl Parser {
         if self.is_at_end() || !name_like || self.is_snowflake_reserved_keyword() {
             return Err(self.parse_error("Expected a name"));
         }
-        let text = self.peek().text.to_string();
-        self.skip();
-        Ok(match token_type == TokenType::QuotedIdentifier {
-            true => Identifier::quoted(text),
-            false => Identifier::new(text),
-        })
+        let token = self.advance()?;
+        Ok(identifier_from_token(
+            token,
+            token_type == TokenType::QuotedIdentifier,
+        ))
     }
 
     /// The properties after the columns or template; the column form needs LOCATION and FILE_FORMAT.
