@@ -251,6 +251,34 @@ impl Parser {
         }))
     }
 
+    /// Snowflake's `<property> = <value> [ ... ]` after a table's SET, separated by spaces or commas; None (position unchanged) when no `<name> =` follows SET or a stage option list does.
+    pub(crate) fn parse_snowflake_table_set(&mut self) -> Result<Option<AlterTableAction>> {
+        if !self.is_snowflake() {
+            return Ok(None);
+        }
+        if self.check(TokenType::Eq) {
+            return Err(self.parse_error("Expected a property name"));
+        }
+        let mut properties: Vec<(String, Expression)> = Vec::new();
+        while self.check_next(TokenType::Eq)
+            && !self.check_identifier("STAGE_FILE_FORMAT")
+            && !self.check_identifier("STAGE_COPY_OPTIONS")
+        {
+            let key = self.expect_identifier_or_keyword()?;
+            self.expect_token(TokenType::Eq)?;
+            properties.push((key, self.parse_expression()?));
+            if self.check(TokenType::Comma)
+                && self
+                    .tokens
+                    .get(self.current + 2)
+                    .is_some_and(|token| token.token_type == TokenType::Eq)
+            {
+                self.skip();
+            }
+        }
+        Ok((!properties.is_empty()).then_some(AlterTableAction::SetProperty { properties }))
+    }
+
     /// Snowflake's `CONSTRAINT <name> TO <name>` after RENAME; None (position unchanged) for any other rename.
     pub(crate) fn parse_snowflake_rename_constraint(&mut self) -> Result<Option<AlterTableAction>> {
         let start = self.current;

@@ -441,6 +441,9 @@ impl Parser {
     }
 
     fn parse_alter_set_action(&mut self) -> Result<AlterTableAction> {
+        if let Some(action) = self.parse_snowflake_table_set()? {
+            return Ok(action);
+        }
         if self.check(TokenType::LParen) {
             self.parse_alter_set_options()
         } else if self.match_keyword("TAG") {

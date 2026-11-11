@@ -226,3 +226,27 @@ fn given_snowflake_reclustering_and_iceberg_refresh_when_parsing_then_recorded_v
         );
     }
 }
+
+#[test]
+fn given_several_snowflake_table_properties_after_set_when_parsing_then_each_is_kept() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "properties separated by spaces (recorded OK)",
+            sql: "ALTER TABLE IF EXISTS v1 SET DATA_RETENTION_TIME_IN_DAYS = 1 MAX_DATA_EXTENSION_TIME_IN_DAYS = 1 CHANGE_TRACKING = TRUE COMMENT = 'm' ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "SET with no property name (recorded errno 1003)",
+            sql: "ALTER TABLE v1 SET = '1 MINUTE' ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
