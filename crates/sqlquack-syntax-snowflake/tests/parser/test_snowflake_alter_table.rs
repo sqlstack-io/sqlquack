@@ -213,3 +213,29 @@ fn given_several_snowflake_table_properties_after_set_when_parsing_then_each_is_
         },
     ]);
 }
+
+#[test]
+fn given_misplaced_snowflake_table_actions_when_parsing_then_they_are_refused() {
+    assert_recorded_verdicts(&[
+        SnowflakeVerdictTestCase {
+            description: "partition evolution dropped on a plain table (recorded errno 1003)",
+            sql: "ALTER TABLE v1 DROP PARTITION BY ( v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an iceberg rename without COLUMN or TO (recorded errno 1003)",
+            sql: "ALTER ICEBERG TABLE v1 RENAME v1 TO v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a data metric function missing METRIC (recorded errno 1003)",
+            sql: "ALTER TABLE v1 MODIFY DATA FUNCTION v1 ON ( v1 ) SUSPEND ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a data metric function missing FUNCTION (recorded errno 1003)",
+            sql: "ALTER TABLE v1 MODIFY DATA METRIC v1 ON ( v1 ) SUSPEND ;",
+            expected_kind: None,
+        },
+    ]);
+}
