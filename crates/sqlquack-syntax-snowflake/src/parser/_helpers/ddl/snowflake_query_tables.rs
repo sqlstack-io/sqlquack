@@ -1,17 +1,25 @@
-//! Parser ddl: Snowflake CREATE DYNAMIC ICEBERG TABLE and CREATE INTERACTIVE TABLE, checked against their grammar and kept as written.
+//! Parser ddl: Snowflake CREATE DYNAMIC ICEBERG TABLE and CREATE INTERACTIVE TABLE, checked against their grammar.
 
+use crate::parser::_helpers::ddl::snowflake_alter::property;
+use crate::parser::_helpers::ddl::snowflake_create_table::tag_properties;
+use crate::parser::_helpers::ddl::snowflake_external_table::policy_property;
 use crate::parser::constants::SNOWFLAKE_DYNAMIC_TABLE_REQUIRED;
 use crate::parser::models::Parser;
+use sqlquack_syntax::expressions::columns::models::{
+    ColumnConstraint, ColumnDef, MaskingPolicyColumnConstraint,
+};
 use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::operators::models::BinaryOp;
-use sqlquack_syntax::expressions::statements::models::Raw;
+use sqlquack_syntax::expressions::schema_objects::models::{CreateObject, ObjectProperty};
+use sqlquack_syntax::expressions::statements::models::Var;
+use sqlquack_syntax::expressions::tables::models::{ConstraintType, Tags};
 use sqlquack_syntax::expressions::tree::models::Expression;
-use sqlquack_syntax::expressions::types::models::Tuple;
+use sqlquack_syntax::expressions::types::models::{DataType, Tuple};
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
 
 impl Parser {
-    /// A Snowflake CREATE DYNAMIC ICEBERG TABLE or CREATE INTERACTIVE TABLE other than a clone, checked and kept as written; None for any other CREATE.
+    /// A Snowflake CREATE DYNAMIC ICEBERG TABLE or CREATE INTERACTIVE TABLE other than a clone; None for any other CREATE.
     pub(crate) fn parse_snowflake_create_query_table(
         &mut self,
         or_replace: bool,
@@ -41,7 +49,8 @@ impl Parser {
                 return Err(self.parse_error("Expected TABLE after DYNAMIC ICEBERG"));
             }
         }
-        if self.check(TokenType::If) {
+        let if_not_exists = self.check(TokenType::If);
+        if if_not_exists {
             if !self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]) {
                 return Err(self.parse_error("Expected IF NOT EXISTS"));
             }
@@ -49,50 +58,63 @@ impl Parser {
                 return Err(self.parse_error("OR REPLACE and IF NOT EXISTS cannot be combined"));
             }
         }
-        self.check_iceberg_object_name()?;
+        let name = self.parse_iceberg_object_name()?;
         if self.check_identifier("CLONE") {
             self.current = start;
             return Ok(None);
         }
+        let mut operands: Vec<Expression> = Vec::new();
         if self.check(TokenType::LParen) {
-            self.check_iceberg_columns()?;
+            operands.push(Expression::Tuple(Box::new(Tuple {
+                expressions: self.parse_iceberg_columns()?,
+            })));
         }
+        let mut properties: Vec<ObjectProperty> = Vec::new();
         if interactive {
             if !self.match_keywords(&[TokenType::Cluster, TokenType::By]) {
                 return Err(self.parse_error("Expected CLUSTER BY"));
             }
             self.expect_token(TokenType::LParen)?;
-            self.parse_expression_list()?;
+            let expressions = self.parse_expression_list()?;
             self.expect_token(TokenType::RParen)?;
+            let value = Expression::Tuple(Box::new(Tuple { expressions }));
+            properties.push(property("CLUSTER BY", None, Some(value)));
         }
-        self.check_iceberg_properties(interactive)?;
-        if !interactive && self.match_text_seq(&["REFRESH", "USING"]) {
+        properties.extend(self.parse_iceberg_properties(interactive)?);
+        let source = if !interactive && self.match_text_seq(&["REFRESH", "USING"]) {
             self.expect_token(TokenType::LParen)?;
             if !self.check(TokenType::Insert) {
                 return Err(self.parse_error("Expected INSERT in REFRESH USING ( )"));
             }
-            self.parse_statement()?;
+            operands.push(self.parse_statement()?);
             self.expect_token(TokenType::RParen)?;
+            "REFRESH USING"
         } else {
             self.expect_token(TokenType::As)?;
             if !self.check(TokenType::Select) && !self.check(TokenType::With) {
                 return Err(self.parse_error("Expected a query after AS"));
             }
-            self.parse_statement()?;
-        }
+            operands.push(self.parse_statement()?);
+            "AS"
+        };
         if !self.is_at_end() && !self.check(TokenType::Semicolon) {
             return Err(self.parse_error("Expected the end of the statement"));
         }
-        let mut sql = String::from("CREATE");
-        if or_replace {
-            sql.push_str(" OR REPLACE");
-        }
-        if or_alter {
-            sql.push_str(" OR ALTER");
-        }
-        sql.push(' ');
-        sql.push_str(&self.tokens_to_sql(start, self.current));
-        Ok(Some(Expression::Raw(Raw { sql })))
+        Ok(Some(Expression::CreateObject(Box::new(CreateObject {
+            kind: match interactive {
+                true => "INTERACTIVE TABLE",
+                false => "DYNAMIC ICEBERG TABLE",
+            }
+            .to_owned(),
+            modifier: None,
+            or_replace,
+            or_alter,
+            if_not_exists,
+            name,
+            source: source.to_owned(),
+            operands,
+            properties,
+        }))))
     }
 
     /// Checks an object name: a quoted identifier, or a word Snowflake does not reserve, optionally qualified.
@@ -110,43 +132,65 @@ impl Parser {
         self.parse_object_name()
     }
 
-    /// Checks `( <name> [<type>] [<column option> ...] [ , ... ] )`.
-    fn check_iceberg_columns(&mut self) -> Result<()> {
+    /// `( <name> [<type>] [<column option> ...] [ , ... ] )` as column definitions.
+    fn parse_iceberg_columns(&mut self) -> Result<Vec<Expression>> {
         self.expect_token(TokenType::LParen)?;
+        let mut columns: Vec<Expression> = Vec::new();
         loop {
-            self.check_iceberg_object_name()?;
+            let name = self.parse_iceberg_object_name()?;
+            let mut column = ColumnDef::new("", DataType::Unknown);
+            column.name = name.name;
+            column.no_type = true;
             if !self.check(TokenType::Comma) && !self.check(TokenType::RParen) {
                 if self.check(TokenType::String) {
                     return Err(self.parse_error("Expected a data type"));
                 }
-                self.parse_data_type()?;
+                column.data_type = self.parse_data_type()?;
+                column.no_type = false;
             }
             while !self.check(TokenType::Comma) && !self.check(TokenType::RParen) {
-                self.check_iceberg_column_option()?;
+                column = self.parse_iceberg_column_option(column)?;
             }
+            columns.push(Expression::ColumnDef(Box::new(column)));
             if !self.match_token(TokenType::Comma) {
                 break;
             }
         }
         self.expect_token(TokenType::RParen)?;
-        Ok(())
+        Ok(columns)
     }
 
-    /// Checks `COMMENT '<text>'`, `[WITH] MASKING POLICY <name> [USING ( <names> )]` or `[WITH] TAG ( ... )`.
-    fn check_iceberg_column_option(&mut self) -> Result<()> {
+    /// `COMMENT '<text>'`, `[WITH] MASKING POLICY <name> [USING ( <names> )]` or `[WITH] TAG ( ... )` on `column`.
+    fn parse_iceberg_column_option(&mut self, mut column: ColumnDef) -> Result<ColumnDef> {
         if self.match_token(TokenType::Comment) {
-            return self.expect_token(TokenType::String).map(|_| ());
+            column.comment = Some(self.expect_token(TokenType::String)?.text.to_string());
+            column.constraint_order.push(ConstraintType::Comment);
+            return Ok(column);
         }
         self.match_token(TokenType::With);
         if self.match_text_seq(&["MASKING", "POLICY"]) {
-            self.check_iceberg_object_name()?;
+            let policy = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
+            let mut expressions: Vec<Expression> = Vec::new();
             if self.match_text_seq(&["USING"]) {
-                self.check_iceberg_name_list(false)?;
+                expressions.push(self.parse_iceberg_name_list(false)?);
             }
-            return Ok(());
+            column
+                .options
+                .push(Expression::MaskingPolicyColumnConstraint(Box::new(
+                    MaskingPolicyColumnConstraint {
+                        this: Box::new(policy),
+                        expressions,
+                    },
+                )));
+            return Ok(column);
         }
         if self.match_text_seq(&["TAG"]) {
-            return self.check_iceberg_tags();
+            let expressions = self.parse_iceberg_tags()?;
+            column
+                .constraints
+                .push(ColumnConstraint::Tags(Tags { expressions }));
+            column.constraint_order.push(ConstraintType::Tags);
+            return Ok(column);
         }
         Err(self.parse_error("Expected a column option"))
     }
@@ -175,11 +219,6 @@ impl Parser {
         Ok(Expression::Tuple(Box::new(Tuple { expressions })))
     }
 
-    /// Checks `( <tag> = <value> [ , ... ] )`.
-    pub(super) fn check_iceberg_tags(&mut self) -> Result<()> {
-        self.parse_iceberg_tags().map(|_| ())
-    }
-
     /// `( <tag> = <value> [ , ... ] )`, each tag as `<tag> = <value>`.
     pub(super) fn parse_iceberg_tags(&mut self) -> Result<Vec<Expression>> {
         self.expect_token(TokenType::LParen)?;
@@ -197,21 +236,21 @@ impl Parser {
         Ok(tags)
     }
 
-    /// Checks the properties before AS or REFRESH USING; a dynamic table needs TARGET_LAG and WAREHOUSE.
-    fn check_iceberg_properties(&mut self, interactive: bool) -> Result<()> {
+    /// The properties before AS or REFRESH USING; a dynamic table needs TARGET_LAG and WAREHOUSE.
+    fn parse_iceberg_properties(&mut self, interactive: bool) -> Result<Vec<ObjectProperty>> {
+        let mut properties: Vec<ObjectProperty> = Vec::new();
         let mut keys: Vec<String> = Vec::new();
         while !self.is_at_end()
             && !self.check(TokenType::Semicolon)
             && !self.check(TokenType::As)
             && !self.check_text_seq(&["REFRESH", "USING"])
         {
-            let property = match interactive {
-                true => self.check_interactive_property()?,
-                false => self.check_iceberg_property()?,
+            let (key, found) = match interactive {
+                true => self.parse_interactive_property()?,
+                false => self.parse_iceberg_property()?,
             };
-            if let Some(key) = property {
-                keys.push(key);
-            }
+            keys.extend(key);
+            properties.extend(found);
         }
         let missing = SNOWFLAKE_DYNAMIC_TABLE_REQUIRED
             .iter()
@@ -219,82 +258,103 @@ impl Parser {
         if !interactive && missing {
             return Err(self.parse_error("Expected TARGET_LAG and WAREHOUSE"));
         }
-        Ok(())
+        Ok(properties)
     }
 
-    /// Checks one property, returning the key of a `<key> = <value>` one.
-    fn check_iceberg_property(&mut self) -> Result<Option<String>> {
+    /// One property, with the key of a `<key> = <value>` one.
+    fn parse_iceberg_property(&mut self) -> Result<(Option<String>, Vec<ObjectProperty>)> {
         if self.check(TokenType::Copy) && !self.check_next(TokenType::Eq) {
             self.skip();
-            if self.match_text_seq(&["GRANTS"]) || self.match_text_seq(&["TAGS"]) {
-                return Ok(None);
+            if self.match_text_seq(&["GRANTS"]) {
+                return Ok((None, vec![property("COPY GRANTS", None, None)]));
+            }
+            if self.match_text_seq(&["TAGS"]) {
+                return Ok((None, vec![property("COPY TAGS", None, None)]));
             }
             return Err(self.parse_error("Expected GRANTS or TAGS after COPY"));
         }
         if self.match_text_seq(&["REQUIRE", "USER"]) {
-            return Ok(None);
+            return Ok((None, vec![property("REQUIRE USER", None, None)]));
         }
         if self.match_text_seq(&["EXECUTE", "AS", "USER"]) {
-            self.check_iceberg_object_name()?;
-            if self.match_text_seq(&["USE", "SECONDARY", "ROLES"])
-                && !self.match_token(TokenType::All)
-            {
-                self.check_iceberg_object_name()?;
+            let mut expressions = vec![Expression::Table(Box::new(
+                self.parse_iceberg_object_name()?,
+            ))];
+            if self.match_text_seq(&["USE", "SECONDARY", "ROLES"]) {
+                expressions.push(match self.match_token(TokenType::All) {
+                    true => Expression::Var(Box::new(Var {
+                        this: "ALL".to_owned(),
+                    })),
+                    false => Expression::Table(Box::new(self.parse_iceberg_object_name()?)),
+                });
             }
-            return Ok(None);
+            let value = Expression::Tuple(Box::new(Tuple { expressions }));
+            return Ok((None, vec![property("EXECUTE AS USER", None, Some(value))]));
         }
         if self.match_keywords(&[TokenType::Cluster, TokenType::By]) {
             self.expect_token(TokenType::LParen)?;
-            self.parse_expression_list()?;
+            let expressions = self.parse_expression_list()?;
             self.expect_token(TokenType::RParen)?;
-            return Ok(None);
+            let value = Expression::Tuple(Box::new(Tuple { expressions }));
+            return Ok((None, vec![property("CLUSTER BY", None, Some(value))]));
         }
         if self.match_text_seq(&["FROZEN", "WHERE"]) {
             self.expect_token(TokenType::LParen)?;
-            self.parse_expression()?;
+            let condition = self.parse_expression()?;
             self.expect_token(TokenType::RParen)?;
-            return Ok(None);
+            return Ok((None, vec![property("FROZEN WHERE", None, Some(condition))]));
         }
         let saved = self.current;
         self.match_token(TokenType::With);
         if self.match_text_seq(&["ROW", "ACCESS", "POLICY"]) {
-            self.check_iceberg_object_name()?;
+            let policy = self.parse_iceberg_object_name()?;
             self.expect_token(TokenType::On)?;
-            self.check_iceberg_name_list(true)?;
-            return Ok(None);
+            let Expression::Tuple(columns) = self.parse_iceberg_name_list(true)? else {
+                return Err(sqlquack_syntax::tokens::errors::Error::internal(
+                    "the parser reached a state its checks rule out",
+                ));
+            };
+            return Ok((None, vec![policy_property(policy, columns.expressions)]));
         }
         self.current = saved;
-        self.check_interactive_property()
+        self.parse_interactive_property()
     }
 
-    /// Checks one property an interactive table allows, returning the key of a `<key> = <value>` one.
-    fn check_interactive_property(&mut self) -> Result<Option<String>> {
+    /// One property an interactive table allows, with the key of a `<key> = <value>` one.
+    fn parse_interactive_property(&mut self) -> Result<(Option<String>, Vec<ObjectProperty>)> {
         self.match_token(TokenType::With);
         if self.match_text_seq(&["TAG"]) {
-            self.check_iceberg_tags()?;
-            return Ok(None);
+            return Ok((None, tag_properties(self.parse_iceberg_tags()?)));
         }
         if self.match_text_seq(&["STORAGE", "LIFECYCLE", "POLICY"]) {
-            self.check_iceberg_object_name()?;
+            let policy = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
             self.expect_token(TokenType::On)?;
-            self.check_iceberg_name_list(false)?;
-            return Ok(None);
+            let columns = self.parse_iceberg_name_list(false)?;
+            let value = Expression::Tuple(Box::new(Tuple {
+                expressions: vec![policy, columns],
+            }));
+            return Ok((
+                None,
+                vec![property("STORAGE LIFECYCLE POLICY", None, Some(value))],
+            ));
         }
         let key = self.peek().text.to_ascii_uppercase();
         self.expect_external_name()?;
         self.expect_token(TokenType::Eq)?;
-        if self.match_token(TokenType::LParen) {
+        let value = if self.match_token(TokenType::LParen) {
+            let mut expressions: Vec<Expression> = Vec::new();
             while !self.check(TokenType::RParen) {
-                self.expect_external_name()?;
+                expressions.push(Expression::Identifier(self.parse_external_name()?));
                 if !self.match_token(TokenType::Comma) {
                     break;
                 }
             }
             self.expect_token(TokenType::RParen)?;
+            Expression::Tuple(Box::new(Tuple { expressions }))
         } else {
-            self.check_iceberg_value()?;
-        }
-        Ok(Some(key))
+            self.parse_iceberg_value()?
+        };
+        Ok((Some(key.clone()), vec![property(&key, None, Some(value))]))
     }
 
     /// Checks a value: a literal, a quoted identifier, or a word that is not the key of the next property.
