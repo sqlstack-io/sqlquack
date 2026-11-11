@@ -40,6 +40,14 @@ class RefusedRunTestCase:
 
 
 @dataclass(frozen=True)
+class CaptureDriverTestCase:
+    description: str
+    start: Row
+    expected_status: str
+    expected_capture_methods: list[str]
+
+
+@dataclass(frozen=True)
 class OverwriteTestCase:
     description: str
     rows: list[dict[str, object]]

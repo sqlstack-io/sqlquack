@@ -12,8 +12,10 @@ from scripts.syntax_receipts._helpers.hashing import canonical_json, digest
 from scripts.syntax_receipts._helpers.packet_run import import_packet_run
 from scripts.syntax_receipts._helpers.receipts import refusal
 from scripts.syntax_receipts.constants import (
+    CAPTURE_EXECUTE,
     EXPLAIN_METHOD,
     MANIFEST_KEY,
+    PACKET_KEY,
     PROPOSAL_KEY,
     RECONCILED_STATUS,
     RUN_DATABASE_KEY,
@@ -58,7 +60,11 @@ def _import_run(*, run: CaptureRun, index: dict[str, Path]) -> Imported:
     start: Row = run.events[0]
     if RUN_DATABASE_KEY in start:
         return import_ddl_run(run=run, index=index)
-    if start.get("submission") == SCRIPTING_SUBMISSION or start.get("method") == EXPLAIN_METHOD:
+    if (
+        start.get("submission") == SCRIPTING_SUBMISSION
+        or start.get("method") == EXPLAIN_METHOD
+        or (start.get("capture") == CAPTURE_EXECUTE and PACKET_KEY in start)
+    ):
         return import_packet_run(run=run, index=index)
     if PROPOSAL_KEY in start:
         return import_diagnostic_run(run=run)

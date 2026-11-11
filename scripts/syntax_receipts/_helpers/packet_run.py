@@ -1,4 +1,4 @@
-"""Anonymous-block and compile-only EXPLAIN runs: one raw line per packet row or statement."""
+"""Anonymous-block, execute and EXPLAIN runs: a raw line per packet row or statement."""
 
 from __future__ import annotations
 
