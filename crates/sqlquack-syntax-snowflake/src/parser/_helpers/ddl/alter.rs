@@ -203,6 +203,9 @@ impl Parser {
     }
 
     fn parse_alter_rename_action(&mut self) -> Result<AlterTableAction> {
+        if let Some(action) = self.parse_snowflake_rename_constraint()? {
+            return Ok(action);
+        }
         if self.match_token(TokenType::Index) || self.match_token(TokenType::Key) {
             let old_name = self.expect_identifier_or_keyword_with_quoted()?;
             self.expect_token(TokenType::To)?;
@@ -631,6 +634,9 @@ impl Parser {
     }
 
     fn parse_alter_drop_action(&mut self) -> Result<AlterTableAction> {
+        if let Some(action) = self.parse_snowflake_drop_key()? {
+            return Ok(action);
+        }
         if self.check_identifier("CLUSTERING")
             && self.peek_nth(1).map(|t| t.text.eq_ignore_ascii_case("KEY")) == Some(true)
         {
