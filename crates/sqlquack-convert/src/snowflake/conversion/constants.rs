@@ -1384,3 +1384,6 @@ pub(crate) const CORRELATED_DERIVED: &str =
 pub(crate) const AMBIGUOUS_SUFFIX: &str = "is ambiguous";
 /// A JSON-held VARIANT as a sort key, in ARRAY_SORT's recorded order of kinds.
 pub const VARIANT_ORDER_KEY: &str = "rule.variant_order_key";
+
+/// The select item kinds whose Snowflake name keeps quotes or a path: literals and paths into semi-structured values.
+pub(crate) const UNALIASED_QUOTED_KINDS: &[&str] = &["j_s_o_n_extract", "literal", "subscript"];

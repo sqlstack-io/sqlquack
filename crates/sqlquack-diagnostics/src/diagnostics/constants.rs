@@ -12,6 +12,13 @@ pub const CASE_ONLY_MATCH_HELP: &str = "Snowflake folds unquoted names to upper 
     quote the name in the SQL to keep its case";
 /// The words of an unresolved name's reason when two result columns share a name.
 pub const REPEATED_RESULT_NAME: &str = "repeats an earlier result column's name";
+/// The label of an unaliased item Snowflake names after its text.
+pub const UNALIASED_TEXT_NAME: &str = "Snowflake names this column after its text";
+/// The label of an unaliased literal or path, whose Snowflake name keeps its quotes or path, so no alias is suggested.
+pub const UNALIASED_QUOTED_NAME: &str =
+    "Snowflake names this column after its full text, quotes and path included";
+/// The help for an unaliased literal or path.
+pub const UNALIASED_QUOTED_NAME_HELP: &str = "add an alias, which names the column in both engines";
 /// The help for such a name, replacing SQ0004's own.
 pub const REPEATED_RESULT_NAME_HELP: &str =
     "give each result column its own alias, such as `SELECT 1 AS first, 1 AS second`";

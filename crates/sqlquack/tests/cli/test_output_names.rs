@@ -489,8 +489,8 @@ fn given_a_refused_result_name_when_converting_then_the_diagnostic_underlines_th
             expected_text: concat!(
                 "error[SQ0009]: This column needs an alias, because SQLQuack can't be sure of the name ",
                 "Snowflake gives it\n --> <stdin>:1:18\n  |\n1 | SELECT order_id, 'it''s' FROM orders\n",
-                "  |                  ^^^^^^^ Snowflake names this `literal` column after its text\n",
-                "  |\n  = help: add an alias, such as `AS \"'IT''S'\"`, which names the column in both engines\n",
+                "  |                  ^^^^^^^ Snowflake names this column after its full text, quotes and ",
+                "path included\n  |\n  = help: add an alias, which names the column in both engines\n",
                 "sqlquack convert: refused, 1 refusal\n",
             ),
             expected_span: ("SQ0009", 17, 24),

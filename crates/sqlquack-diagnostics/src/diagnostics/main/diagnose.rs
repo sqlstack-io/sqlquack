@@ -10,8 +10,8 @@ use crate::diagnostics::constants::{
     CASE_ONLY_MATCH, CASE_ONLY_MATCH_HELP, CONVERSION_BUDGET, DIVERGENCE_REFUSED,
     FUNCTION_OPERAND_HELP, GUARD_PREFIX, JINJA_HELP, MISSING_RULE, NOT_EXPRESSIBLE, PARSE_FIDELITY,
     REPEATED_RESULT_NAME, REPEATED_RESULT_NAME_HELP, SUGGESTED_NAME_MAX_CHARS, TYPE_CONDITION,
-    UNALIASED_OUTPUT_NAME, UNPARSED_PREFIX, UNRESOLVED_NAME, ZONED_LOCAL_TIME,
-    ZONED_LOCAL_TIME_HELP, ZONED_LOCAL_TIME_NOTE,
+    UNALIASED_OUTPUT_NAME, UNALIASED_QUOTED_NAME, UNALIASED_QUOTED_NAME_HELP, UNPARSED_PREFIX,
+    UNRESOLVED_NAME, ZONED_LOCAL_TIME, ZONED_LOCAL_TIME_HELP, ZONED_LOCAL_TIME_NOTE,
 };
 use crate::diagnostics::models::Diagnostic;
 use crate::refusals::models::{Refusal, RefusalCategory};
@@ -52,7 +52,9 @@ pub fn diagnose(refusals: &[Refusal], source: &str) -> Vec<Diagnostic> {
         {
             diagnostic.help = Some(FUNCTION_OPERAND_HELP.to_owned());
         }
-        if code == UNALIASED_OUTPUT_NAME
+        if code == UNALIASED_OUTPUT_NAME && refusal.reason.contains(UNALIASED_QUOTED_NAME) {
+            diagnostic.help = Some(UNALIASED_QUOTED_NAME_HELP.to_owned());
+        } else if code == UNALIASED_OUTPUT_NAME
             && let Some(name) = diagnostic
                 .span
                 .and_then(|span| suggested_name(source, span.start, span.end))
