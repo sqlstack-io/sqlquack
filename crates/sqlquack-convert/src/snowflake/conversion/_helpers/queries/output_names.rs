@@ -2,10 +2,12 @@
 
 use serde_json::Value;
 
+use crate::snowflake::conversion::_helpers::support::locations::Locator;
 use crate::snowflake::conversion::_helpers::support::tree::{
     LITERAL_DATE, LITERAL_NUMBER, LITERAL_STRING, LITERAL_TIMESTAMP, is_inert, list, node_kind,
     unexpected_fields,
 };
+use crate::snowflake::conversion::constants::DOLLAR_PARAMETER;
 
 /// The field holding a cast's target type, which is named by its written text, not walked.
 const CAST_TARGET_FIELD: &str = "to";
@@ -13,20 +15,26 @@ const CAST_TARGET_FIELD: &str = "to";
 const NAMED_CALLS: &[&str] = &[
     "ABS",
     "AVG",
+    "CEIL",
     "COALESCE",
     "CONCAT",
     "COUNT",
     "DATEADD",
     "DATEDIFF",
     "DATE_TRUNC",
+    "FLOOR",
     "IFF",
     "LENGTH",
     "LOWER",
     "MAX",
     "MIN",
+    "MONTH",
+    "NULLIF",
     "NVL",
     "ROUND",
+    "SUBSTR",
     "SUM",
+    "TO_DATE",
     "TO_VARCHAR",
     "TRIM",
     "UPPER",
@@ -104,6 +112,10 @@ fn named(node: &Value, text_of: &dyn Fn(&Value) -> Option<String>, depth: usize)
         "column" => plain_column(node),
         "literal" => recorded_literal(node),
         "boolean" | "null" => true,
+        "parameter" => {
+            payload.get("style").and_then(Value::as_str) == Some(DOLLAR_PARAMETER)
+                && payload.get("index").is_some_and(Value::is_u64)
+        }
         "var" => payload
             .get("this")
             .and_then(Value::as_str)
@@ -170,6 +182,42 @@ fn plain_column(node: &Value) -> bool {
             .is_none_or(upper_or_unquoted)
 }
 
+/// The written text of an unaliased `v:key`, an unquoted column and one plain key, as recorded.
+pub(crate) fn variant_key_text(item: &Value, locator: &Locator<'_>) -> Option<String> {
+    let ("j_s_o_n_extract", payload) = node_kind(item)? else {
+        return None;
+    };
+    let fields = payload.as_object()?;
+    if !unexpected_fields(fields, &["this", "expression", "variant_extract"]).is_empty() {
+        return None;
+    }
+    let base = payload.get("this")?;
+    let ("column", column) = node_kind(base)? else {
+        return None;
+    };
+    let unquoted = column
+        .get("name")
+        .is_some_and(|name| name.get("quoted").and_then(Value::as_bool) != Some(true));
+    if !plain_column(base) || !unquoted || column.get("table").is_some_and(|t| !t.is_null()) {
+        return None;
+    }
+    let key = payload
+        .get("expression")?
+        .get("literal")?
+        .get("value")?
+        .as_str()?;
+    let mut characters = key.chars();
+    let plain_key = characters
+        .next()
+        .is_some_and(|first| first.is_ascii_alphabetic() || first == '_')
+        && characters.all(|rest| rest.is_ascii_alphanumeric() || rest == '_');
+    let path = format!(":{key}");
+    if !plain_key || locator.following(base, path.chars().count())? != path {
+        return None;
+    }
+    Some(format!("{}{path}", locator.source_text(base)?))
+}
+
 /// A number in any spelling, which receipts show named as written, or printable ASCII text.
 fn recorded_literal(node: &Value) -> bool {
     let Some(("literal", payload)) = node_kind(node) else {
@@ -179,10 +227,9 @@ fn recorded_literal(node: &Value) -> bool {
     match payload.get("literal_type").and_then(Value::as_str) {
         Some(LITERAL_NUMBER) => value.is_some_and(|value| !value.is_empty()),
         Some(LITERAL_STRING) => value.is_some_and(|value| {
-            !value.is_empty()
-                && value
-                    .bytes()
-                    .all(|byte| (b' '..=b'~').contains(&byte) && byte != b'\\')
+            value
+                .bytes()
+                .all(|byte| (b' '..=b'~').contains(&byte) && byte != b'\\')
         }),
         Some(LITERAL_DATE | LITERAL_TIMESTAMP) => value.is_some_and(|value| {
             !value.is_empty()
