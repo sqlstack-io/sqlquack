@@ -21,16 +21,22 @@ fn given_converted_sql_when_laid_out_then_long_lines_break_and_tokens_keep_their
             sql: r#"SELECT "ORDERS"."ORDER_ID" AS "ORDER_ID", CAST(CAST((sign(CAST(CAST("ORDERS"."TOTAL" AS DECIMAL(38,2)) * 100000000 AS HUGEINT)) * ((2 * abs(CAST(CAST("ORDERS"."TOTAL" AS DECIMAL(38,2)) * 100000000 AS HUGEINT)) + 3) // 6)) AS DECIMAL(38,0)) * 0.00000001 AS DECIMAL(18,8)) AS "THIRD" FROM "ORDERS" AS "ORDERS""#,
             expected_layout: r#"SELECT
     "ORDERS"."ORDER_ID" AS "ORDER_ID",
-    CAST(CAST((
-        sign(CAST(CAST("ORDERS"."TOTAL" AS DECIMAL(38, 2)) * 100000000 AS HUGEINT))
-        * (
+    CAST(
+        CAST(
             (
-                2 * abs(CAST(CAST("ORDERS"."TOTAL" AS DECIMAL(38, 2)) * 100000000 AS HUGEINT)) + 3
-            )
-            // 6
+                sign(CAST(CAST("ORDERS"."TOTAL" AS DECIMAL(38, 2)) * 100000000 AS HUGEINT))
+                * (
+                    (
+                        2
+                        * abs(CAST(CAST("ORDERS"."TOTAL" AS DECIMAL(38, 2)) * 100000000 AS HUGEINT))
+                        + 3
+                    )
+                    // 6
+                )
+            ) AS DECIMAL(38, 0)
         )
-    ) AS DECIMAL(38, 0))
-    * 0.00000001 AS DECIMAL(18, 8)) AS "THIRD"
+        * 0.00000001 AS DECIMAL(18, 8)
+    ) AS "THIRD"
 FROM "ORDERS" AS "ORDERS""#,
         },
         LayoutTestCase {

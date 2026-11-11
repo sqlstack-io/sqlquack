@@ -289,12 +289,14 @@
  {
   "dialect": "bigquery",
   "sql": "SELECT ARRAY((SELECT AS STRUCT 1 AS a, 2 AS b))",
-  "formatted": "SELECT\n  ARRAY((\n    SELECT AS STRUCT\n      1 AS a,\n      2 AS b\n  ))"
+  "formatted": "SELECT\n  ARRAY(\n    (\n      SELECT AS STRUCT\n        1 AS a,\n        2 AS b\n    )\n  )",
+  "previously_formatted": "SELECT\n  ARRAY((\n    SELECT AS STRUCT\n      1 AS a,\n      2 AS b\n  ))"
  },
  {
   "dialect": "bigquery",
   "sql": "SELECT ARRAY((SELECT AS STRUCT 1 AS a, 2 AS b) LIMIT 10)",
-  "formatted": "SELECT\n  ARRAY((\n    SELECT AS STRUCT\n      1 AS a,\n      2 AS b\n  ) LIMIT 10)"
+  "formatted": "SELECT\n  ARRAY(\n    (\n      SELECT AS STRUCT\n        1 AS a,\n        2 AS b\n    ) LIMIT 10\n  )",
+  "previously_formatted": "SELECT\n  ARRAY((\n    SELECT AS STRUCT\n      1 AS a,\n      2 AS b\n  ) LIMIT 10)"
  },
  {
   "dialect": "bigquery",
@@ -535,7 +537,8 @@
  {
   "dialect": "bigquery",
   "sql": "SELECT * FROM ML.PREDICT(MODEL mydataset.mymodel, (SELECT label, column1, column2 FROM mydataset.mytable))",
-  "formatted": "SELECT *\nFROM ML.PREDICT(MODEL mydataset.mymodel, (\n  SELECT\n    label,\n    column1,\n    column2\n  FROM mydataset.mytable\n))"
+  "formatted": "SELECT *\nFROM ML.PREDICT(\n  MODEL mydataset.mymodel,\n  (\n    SELECT\n      label,\n      column1,\n      column2\n    FROM mydataset.mytable\n  )\n)",
+  "previously_formatted": "SELECT *\nFROM ML.PREDICT(MODEL mydataset.mymodel, (\n  SELECT\n    label,\n    column1,\n    column2\n  FROM mydataset.mytable\n))"
  },
  {
   "dialect": "bigquery",
@@ -555,7 +558,8 @@
  {
   "dialect": "bigquery",
   "sql": "SELECT * FROM ML.PREDICT(MODEL `my_project`.my_dataset.my_model, (SELECT * FROM input_data))",
-  "formatted": "SELECT *\nFROM ML.PREDICT(MODEL `my_project`.my_dataset.my_model, (\n  SELECT *\n  FROM input_data\n))"
+  "formatted": "SELECT *\nFROM ML.PREDICT(\n  MODEL `my_project`.my_dataset.my_model,\n  (\n    SELECT *\n    FROM input_data\n  )\n)",
+  "previously_formatted": "SELECT *\nFROM ML.PREDICT(MODEL `my_project`.my_dataset.my_model, (\n  SELECT *\n  FROM input_data\n))"
  },
  {
   "dialect": "bigquery",
@@ -570,7 +574,8 @@
  {
   "dialect": "bigquery",
   "sql": "SELECT * FROM ML.FEATURES_AT_TIME((SELECT 1), num_rows => 1)",
-  "formatted": "SELECT *\nFROM ML.FEATURES_AT_TIME((\n  SELECT 1\n), num_rows => 1)"
+  "formatted": "SELECT *\nFROM ML.FEATURES_AT_TIME(\n  (\n    SELECT 1\n  ),\n  num_rows => 1\n)",
+  "previously_formatted": "SELECT *\nFROM ML.FEATURES_AT_TIME((\n  SELECT 1\n), num_rows => 1)"
  },
  {
   "dialect": "bigquery",
@@ -615,7 +620,8 @@
  {
   "dialect": "bigquery",
   "sql": "SELECT * FROM ML.FORECAST(MODEL `mydataset.mymodel`, (SELECT * FROM mydataset.query_table), STRUCT())",
-  "formatted": "SELECT *\nFROM ML.FORECAST(MODEL `mydataset.mymodel`, (\n  SELECT *\n  FROM mydataset.query_table\n), STRUCT())"
+  "formatted": "SELECT *\nFROM ML.FORECAST(\n  MODEL `mydataset.mymodel`,\n  (\n    SELECT *\n    FROM mydataset.query_table\n  ),\n  STRUCT()\n)",
+  "previously_formatted": "SELECT *\nFROM ML.FORECAST(MODEL `mydataset.mymodel`, (\n  SELECT *\n  FROM mydataset.query_table\n), STRUCT())"
  },
  {
   "dialect": "bigquery",
@@ -695,7 +701,8 @@
  {
   "dialect": "bigquery",
   "sql": "SELECT JSON_OBJECT(['a', 'b'], [STRUCT(10 AS id, 'Red' AS color), STRUCT(20 AS id, 'Blue' AS color)]) AS json_data",
-  "formatted": "SELECT\n  JSON_OBJECT(['a', 'b'], [\n    STRUCT(10 AS id, 'Red' AS color),\n    STRUCT(20 AS id, 'Blue' AS color)\n  ]) AS json_data"
+  "formatted": "SELECT\n  JSON_OBJECT(\n    ['a', 'b'],\n    [\n      STRUCT(10 AS id, 'Red' AS color),\n      STRUCT(20 AS id, 'Blue' AS color)\n    ]\n  ) AS json_data",
+  "previously_formatted": "SELECT\n  JSON_OBJECT(['a', 'b'], [\n    STRUCT(10 AS id, 'Red' AS color),\n    STRUCT(20 AS id, 'Blue' AS color)\n  ]) AS json_data"
  },
  {
   "dialect": "bigquery",
@@ -705,7 +712,8 @@
  {
   "dialect": "bigquery",
   "sql": "SELECT MOD((SELECT 1), 2)",
-  "formatted": "SELECT\n  MOD((\n    SELECT 1\n  ), 2)"
+  "formatted": "SELECT\n  MOD(\n    (\n      SELECT 1\n    ),\n    2\n  )",
+  "previously_formatted": "SELECT\n  MOD((\n    SELECT 1\n  ), 2)"
  },
  {
   "dialect": "bigquery",
@@ -2042,7 +2050,8 @@
  {
   "dialect": "duckdb",
   "sql": "\n            SELECT\n                l_returnflag,\n                l_linestatus,\n                sum_qty:        sum(l_quantity),\n                sum_base_price: sum(l_extendedprice),\n                sum_disc_price: sum(l_extendedprice * (1-l_discount)),\n                sum_charge:     sum(l_extendedprice * (1-l_discount) * (1+l_tax)),\n                avg_qty:        avg(l_quantity),\n                avg_price:      avg(l_extendedprice),\n                avg_disc:       avg(l_discount),\n                count_order:    count(*)\n            ",
-  "formatted": "SELECT\n  l_returnflag,\n  l_linestatus,\n  sum_qty:sum(l_quantity),\n  sum_base_price:sum(l_extendedprice),\n  sum_disc_price:sum(l_extendedprice\n  * (\n    1 - l_discount\n  )),\n  sum_charge:sum(l_extendedprice\n  * (\n    1 - l_discount\n  )\n  * (\n    1 + l_tax\n  )),\n  avg_qty:avg(l_quantity),\n  avg_price:avg(l_extendedprice),\n  avg_disc:avg(l_discount),\n  count_order:count(*)"
+  "formatted": "SELECT\n  l_returnflag,\n  l_linestatus,\n  sum_qty:sum(l_quantity),\n  sum_base_price:sum(l_extendedprice),\n  sum_disc_price:sum(\n    l_extendedprice\n    * (\n      1 - l_discount\n    )\n  ),\n  sum_charge:sum(\n    l_extendedprice\n    * (\n      1 - l_discount\n    )\n    * (\n      1 + l_tax\n    )\n  ),\n  avg_qty:avg(l_quantity),\n  avg_price:avg(l_extendedprice),\n  avg_disc:avg(l_discount),\n  count_order:count(*)",
+  "previously_formatted": "SELECT\n  l_returnflag,\n  l_linestatus,\n  sum_qty:sum(l_quantity),\n  sum_base_price:sum(l_extendedprice),\n  sum_disc_price:sum(l_extendedprice\n  * (\n    1 - l_discount\n  )),\n  sum_charge:sum(l_extendedprice\n  * (\n    1 - l_discount\n  )\n  * (\n    1 + l_tax\n  )),\n  avg_qty:avg(l_quantity),\n  avg_price:avg(l_extendedprice),\n  avg_disc:avg(l_discount),\n  count_order:count(*)"
  },
  {
   "dialect": "duckdb",
@@ -2586,8 +2595,8 @@
  {
   "dialect": "postgres",
   "sql": "SELECT 1 FROM ((VALUES (1)) AS vals(id) LEFT OUTER JOIN tbl ON vals.id = tbl.id)",
-  "formatted": "SELECT 1\nFROM ((VALUES (1)) AS vals(id)\nLEFT OUTER JOIN tbl ON vals.id = tbl.id)",
-  "previously_formatted": "SELECT 1\nFROM ((VALUES (1)) AS vals(id)\nLEFT OUTER JOIN tbl\n  ON vals.id = tbl.id)"
+  "formatted": "SELECT 1\nFROM (\n  (VALUES (1)) AS vals(id)\n  LEFT OUTER JOIN tbl ON vals.id = tbl.id\n)",
+  "previously_formatted": "SELECT 1\nFROM ((VALUES (1)) AS vals(id)\nLEFT OUTER JOIN tbl ON vals.id = tbl.id)"
  },
  {
   "dialect": "postgres",
@@ -2688,7 +2697,8 @@
  {
   "dialect": "postgres",
   "sql": "SELECT TRIM(ARRAY_TO_STRING(ARRAY(SELECT val FROM UNNEST(ARRAY['a', 'b']) WITH ORDINALITY AS u(val, rn)), ' '))",
-  "formatted": "SELECT\n  TRIM(ARRAY_TO_STRING(\n    ARRAY(\n      SELECT val\n      FROM UNNEST(ARRAY['a', 'b']) WITH ORDINALITY AS u(val, rn)\n    ),\n    ' '\n  ))"
+  "formatted": "SELECT\n  TRIM(\n    ARRAY_TO_STRING(\n      ARRAY(\n        SELECT val\n        FROM UNNEST(ARRAY['a', 'b']) WITH ORDINALITY AS u(val, rn)\n      ),\n      ' '\n    )\n  )",
+  "previously_formatted": "SELECT\n  TRIM(ARRAY_TO_STRING(\n    ARRAY(\n      SELECT val\n      FROM UNNEST(ARRAY['a', 'b']) WITH ORDINALITY AS u(val, rn)\n    ),\n    ' '\n  ))"
  },
  {
   "dialect": "postgres",
@@ -3986,8 +3996,8 @@
  {
   "dialect": "snowflake",
   "sql": "SELECT * FROM quarterly_sales PIVOT(SUM(amount) FOR quarter IN (SELECT DISTINCT quarter FROM ad_campaign_types_by_quarter WHERE television = TRUE ORDER BY quarter)) ORDER BY empid",
-  "formatted": "SELECT *\nFROM quarterly_sales PIVOT(SUM(amount) FOR quarter IN (SELECT DISTINCT\n  quarter\nFROM ad_campaign_types_by_quarter\nWHERE television = TRUE\nORDER BY quarter))\nORDER BY empid",
-  "previously_formatted": "SELECT *\nFROM quarterly_sales PIVOT(SUM(amount) FOR quarter IN (SELECT DISTINCT\n  quarter\nFROM ad_campaign_types_by_quarter\nWHERE television = TRUE\nORDER BY\n  quarter))\nORDER BY\n  empid"
+  "formatted": "SELECT *\nFROM quarterly_sales PIVOT(\n  SUM(amount) FOR quarter IN (\n    SELECT DISTINCT\n      quarter\n    FROM ad_campaign_types_by_quarter\n    WHERE television = TRUE\n    ORDER BY quarter\n  )\n)\nORDER BY empid",
+  "previously_formatted": "SELECT *\nFROM quarterly_sales PIVOT(SUM(amount) FOR quarter IN (SELECT DISTINCT\n  quarter\nFROM ad_campaign_types_by_quarter\nWHERE television = TRUE\nORDER BY quarter))\nORDER BY empid"
  },
  {
   "dialect": "snowflake",
@@ -4719,7 +4729,8 @@
  {
   "dialect": "snowflake",
   "sql": "SELECT * FROM (TABLE('t1') CROSS JOIN TABLE('t2'))",
-  "formatted": "SELECT *\nFROM (TABLE('t1')\nCROSS JOIN TABLE('t2'))"
+  "formatted": "SELECT *\nFROM (\n  TABLE('t1')\n  CROSS JOIN TABLE('t2')\n)",
+  "previously_formatted": "SELECT *\nFROM (TABLE('t1')\nCROSS JOIN TABLE('t2'))"
  },
  {
   "dialect": "snowflake",
@@ -4749,7 +4760,8 @@
  {
   "dialect": "snowflake",
   "sql": "SELECT value FROM TABLE(FLATTEN(input => SELECT PARSE_JSON('[1, 2]')))",
-  "formatted": "SELECT value\nFROM TABLE(FLATTEN(input => SELECT\n  PARSE_JSON('[1, 2]')))"
+  "formatted": "SELECT value\nFROM TABLE(\n  FLATTEN(\n    input => SELECT\n      PARSE_JSON('[1, 2]')\n  )\n)",
+  "previously_formatted": "SELECT value\nFROM TABLE(FLATTEN(input => SELECT\n  PARSE_JSON('[1, 2]')))"
  },
  {
   "dialect": "snowflake",
@@ -4914,7 +4926,8 @@
  {
   "dialect": "snowflake",
   "sql": "SELECT * FROM TABLE(model_trained_with_labeled_data!DETECT_ANOMALIES(INPUT_DATA => TABLE(view_with_data_to_analyze), TIMESTAMP_COLNAME => 'date', TARGET_COLNAME => 'sales', CONFIG_OBJECT => OBJECT_CONSTRUCT('prediction_interval', 0.99)))",
-  "formatted": "SELECT *\nFROM TABLE(model_trained_with_labeled_data!DETECT_ANOMALIES(\n  INPUT_DATA => TABLE(view_with_data_to_analyze),\n  TIMESTAMP_COLNAME => 'date',\n  TARGET_COLNAME => 'sales',\n  CONFIG_OBJECT => OBJECT_CONSTRUCT('prediction_interval', 0.99)\n))"
+  "formatted": "SELECT *\nFROM TABLE(\n  model_trained_with_labeled_data!DETECT_ANOMALIES(\n    INPUT_DATA => TABLE(view_with_data_to_analyze),\n    TIMESTAMP_COLNAME => 'date',\n    TARGET_COLNAME => 'sales',\n    CONFIG_OBJECT => OBJECT_CONSTRUCT('prediction_interval', 0.99)\n  )\n)",
+  "previously_formatted": "SELECT *\nFROM TABLE(model_trained_with_labeled_data!DETECT_ANOMALIES(\n  INPUT_DATA => TABLE(view_with_data_to_analyze),\n  TIMESTAMP_COLNAME => 'date',\n  TARGET_COLNAME => 'sales',\n  CONFIG_OBJECT => OBJECT_CONSTRUCT('prediction_interval', 0.99)\n))"
  },
  {
   "dialect": "snowflake",
