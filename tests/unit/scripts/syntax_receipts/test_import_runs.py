@@ -163,6 +163,20 @@ _TIMED_OUT_ROW: dict[str, object] = replaced(
             ),
         ),
         ClassifyTestCase(
+            description="an internal error is not established",
+            errno=603,
+            sqlstate="XX000",
+            message="SQL execution internal error:\nProcessing aborted due to error 300010:1",
+            expected_classification=None,
+        ),
+        ClassifyTestCase(
+            description="a statement timeout is not established",
+            errno=630,
+            sqlstate="57014",
+            message="Statement reached its statement or warehouse timeout of 30 second(s).",
+            expected_classification=None,
+        ),
+        ClassifyTestCase(
             description="an unreviewed errno without the compilation prefix is not established",
             errno=926,
             sqlstate="42601",
