@@ -468,3 +468,69 @@ fn given_a_snowflake_table_with_policies_when_parsing_then_its_columns_and_prope
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_dynamic_iceberg_table_when_parsing_then_its_query_and_properties_are_structured(
+) {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "the statement is a dynamic iceberg table",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT COMMENT 'm' ) TARGET_LAG = '1 minute' WAREHOUSE = w1 EXECUTE AS USER u1 AS SELECT 1 AS v1 ;",
+            pointer: "/0/create_object/kind",
+            expected_value: json!("DYNAMIC ICEBERG TABLE"),
+        },
+        ProjectionTestCase {
+            description: "its source is a query",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT COMMENT 'm' ) TARGET_LAG = '1 minute' WAREHOUSE = w1 EXECUTE AS USER u1 AS SELECT 1 AS v1 ;",
+            pointer: "/0/create_object/source",
+            expected_value: json!("AS"),
+        },
+        ProjectionTestCase {
+            description: "the column keeps its comment",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT COMMENT 'm' ) TARGET_LAG = '1 minute' WAREHOUSE = w1 EXECUTE AS USER u1 AS SELECT 1 AS v1 ;",
+            pointer: "/0/create_object/operands/0/tuple/expressions/0/column_def/comment",
+            expected_value: json!("m"),
+        },
+        ProjectionTestCase {
+            description: "the query keeps its select list",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT COMMENT 'm' ) TARGET_LAG = '1 minute' WAREHOUSE = w1 EXECUTE AS USER u1 AS SELECT 1 AS v1 ;",
+            pointer: "/0/create_object/operands/1/select/expressions/0/alias/alias/name",
+            expected_value: json!("v1"),
+        },
+        ProjectionTestCase {
+            description: "TARGET_LAG is the first property",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT COMMENT 'm' ) TARGET_LAG = '1 minute' WAREHOUSE = w1 EXECUTE AS USER u1 AS SELECT 1 AS v1 ;",
+            pointer: "/0/create_object/properties/0/kind",
+            expected_value: json!("TARGET_LAG"),
+        },
+        ProjectionTestCase {
+            description: "WAREHOUSE is the second property",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT COMMENT 'm' ) TARGET_LAG = '1 minute' WAREHOUSE = w1 EXECUTE AS USER u1 AS SELECT 1 AS v1 ;",
+            pointer: "/0/create_object/properties/1/kind",
+            expected_value: json!("WAREHOUSE"),
+        },
+        ProjectionTestCase {
+            description: "EXECUTE AS USER is the third property",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT COMMENT 'm' ) TARGET_LAG = '1 minute' WAREHOUSE = w1 EXECUTE AS USER u1 AS SELECT 1 AS v1 ;",
+            pointer: "/0/create_object/properties/2/kind",
+            expected_value: json!("EXECUTE AS USER"),
+        },
+        ProjectionTestCase {
+            description: "there are only three properties",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT COMMENT 'm' ) TARGET_LAG = '1 minute' WAREHOUSE = w1 EXECUTE AS USER u1 AS SELECT 1 AS v1 ;",
+            pointer: "/0/create_object/properties/3",
+            expected_value: json!(null),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statements(test_case.sql, Dialect::Snowflake, CallMode::Faithful)
+                .pointer(test_case.pointer)
+                .cloned()
+                .unwrap_or_default(),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
