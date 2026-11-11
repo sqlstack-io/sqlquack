@@ -22,7 +22,9 @@ use crate::snowflake::conversion::_helpers::queries::clauses::{
 };
 use crate::snowflake::conversion::_helpers::queries::group_all::group_all_positions;
 use crate::snowflake::conversion::_helpers::queries::hierarchy::hierarchy;
-use crate::snowflake::conversion::_helpers::queries::output_names::recorded_name_shape;
+use crate::snowflake::conversion::_helpers::queries::output_names::{
+    recorded_name_shape, variant_key_text,
+};
 use crate::snowflake::conversion::_helpers::queries::set_operations::convert_set_operation;
 use crate::snowflake::conversion::_helpers::queries::sources::convert_from;
 use crate::snowflake::conversion::_helpers::support::locations::Locator;
@@ -676,16 +678,16 @@ fn convert_projection(
             if !named {
                 return Ok(vec![(None, emitted)]);
             }
-            let written = site
-                .context
-                .locator
-                .source_text(item)
-                .or_else(|| literal_text(item, site.context.locator));
-            let text_of = |node: &Value| site.context.locator.source_text(node);
-            match written
-                .filter(|_| recorded_name_shape(item, &text_of))
-                .and_then(output_name)
-            {
+            let locator = site.context.locator;
+            let text_of = |node: &Value| locator.source_text(node);
+            let written = match kind {
+                "j_s_o_n_extract" => variant_key_text(item, locator),
+                _ => locator
+                    .source_text(item)
+                    .or_else(|| literal_text(item, locator))
+                    .filter(|_| recorded_name_shape(item, &text_of)),
+            };
+            match written.and_then(output_name) {
                 Some(name) => {
                     let _rule = site.context.log.rule(ALIAS);
                     Ok(vec![(Some(name), emitted)])

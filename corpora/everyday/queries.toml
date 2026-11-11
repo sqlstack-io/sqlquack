@@ -2138,8 +2138,8 @@ expect_repository = "refused SQ0002 fn:WIDTH_BUCKET at 7..39"
 [[query]]
 category = "semi_structured"
 sql = '''SELECT payload:page FROM events'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 7..14"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..14"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "semi_structured"
@@ -2713,8 +2713,8 @@ expect_repository = "refused SQ0002 fn:CURRENT_WAREHOUSE at 7..26"
 [[query]]
 category = "misc"
 sql = '''SELECT $1 FROM orders'''
-expect = "refused SQ0009 syntax:unaliased_output_name at 7..9"
-expect_repository = "refused SQ0009 syntax:unaliased_output_name at 7..9"
+expect = "translated"
+expect_repository = "translated"
 
 [[query]]
 category = "misc"
@@ -2957,8 +2957,8 @@ expect_repository = "parse SQ0001 at 17..18"
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders o JOIN customers c'''
-expect = "refused SQ0002 join:inner at 30..46"
-expect_repository = "refused SQ0002 join:inner at 30..46"
+expect = "translated"
+expect_repository = "translated"
 snowflake = "compiles"
 
 [[query]]

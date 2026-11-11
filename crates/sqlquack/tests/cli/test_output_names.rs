@@ -200,6 +200,28 @@ fn given_unaliased_expressions_from_the_receipts_when_run_on_duckdb_then_they_ta
             expected_names: names(&["DATE '2024-01-01'", "TIMESTAMP '2024-01-01 10:00:00'"]),
         },
         ColumnNameTestCase {
+            description: "SUBSTR, FLOOR, CEIL, NULLIF, TO_DATE and MONTH in any case, as recorded",
+            sql: "SELECT SUBSTR(status, 1, 3), fLoor(tOTaL), CEIL(total), NUlLIf(staTus, 'shipped'), \
+                  tO_dATe(OrDERED_AT), MONTH(ordered_at) FROM (SELECT 'shipped' AS status, \
+                  10.50 AS total, '2024-03-15 10:30:00'::TIMESTAMP_NTZ AS ordered_at) AS input",
+            flags: &[],
+            expected_names: names(&[
+                "SUBSTR(STATUS, 1, 3)",
+                "FLOOR(TOTAL)",
+                "CEIL(TOTAL)",
+                "NULLIF(STATUS, 'SHIPPED')",
+                "TO_DATE(ORDERED_AT)",
+                "MONTH(ORDERED_AT)",
+            ]),
+        },
+        ColumnNameTestCase {
+            description: "empty text, a $n position and a one-key VARIANT path, as recorded",
+            sql: "SELECT '', $2, payload:page FROM (SELECT 'shipped' AS status, 10.50 AS total, \
+                  PARSE_JSON('{\"page\": \"home\"}') AS payload) AS input",
+            flags: &[],
+            expected_names: names(&["''", "$2", "PAYLOAD:PAGE"]),
+        },
+        ColumnNameTestCase {
             description: "a name repeated in the outermost query is kept twice, as Snowflake keeps it",
             sql: "SELECT x, x FROM (SELECT 1 AS x) AS input UNION ALL SELECT 2, 3",
             flags: &[],
@@ -239,8 +261,15 @@ fn given_avg_distinct_of_a_number_when_converting_then_it_refuses() {
 fn given_unaliased_items_no_receipt_names_when_converting_then_each_refuses_with_sq0009() {
     let test_cases = [
         ConvertTestCase {
-            description: "a semi-structured path, which Snowflake names after the whole path refuses with SQ0009",
-            sql: "SELECT v:a FROM input",
+            description: "a path written with a space before its key refuses with SQ0009",
+            sql: "SELECT v : a FROM input",
+            flags: &["--project", UNALIASED_PROJECT],
+            mention: UNVERIFIED_NAME,
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
+            description: "a call of a path, which no receipt names, refuses with SQ0009",
+            sql: "SELECT UPPER(v:a) FROM input",
             flags: &["--project", UNALIASED_PROJECT],
             mention: UNVERIFIED_NAME,
             expected_outcome: convert_outcome(1, false),
@@ -379,13 +408,6 @@ fn given_unaliased_items_no_receipt_names_when_converting_then_each_refuses_with
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
-            description: "empty text refuses with SQ0009",
-            sql: "SELECT '' FROM input",
-            flags: &["--project", UNALIASED_PROJECT],
-            mention: UNVERIFIED_NAME,
-            expected_outcome: convert_outcome(1, false),
-        },
-        ConvertTestCase {
             description: "a quoted identifier that is not upper case refuses with SQ0009",
             sql: "SELECT \"lc\" + 1 FROM input",
             flags: &["--project", UNALIASED_PROJECT],
@@ -436,9 +458,9 @@ fn given_unaliased_items_no_receipt_names_when_converting_then_each_refuses_with
         },
         ConvertTestCase {
             description: "a function no receipt names refuses with SQ0009 and suggests the exact alias",
-            sql: "SELECT FLOOR(n) FROM input",
+            sql: "SELECT SIGN(n) FROM input",
             flags: &["--project", UNALIASED_PROJECT],
-            mention: "add an alias, such as `AS \"FLOOR(N)\"`",
+            mention: "add an alias, such as `AS \"SIGN(N)\"`",
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {

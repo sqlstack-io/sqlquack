@@ -223,7 +223,7 @@ fn convert_join(
         ("Left", Some(_)) => "LEFT JOIN",
         ("Right", Some(_)) => "RIGHT JOIN",
         ("Full", Some(_)) => "FULL JOIN",
-        ("Cross", None) => "CROSS JOIN",
+        ("Cross" | "Inner", None) => "CROSS JOIN",
         ("Implicit", None) => ",",
         _ => {
             return Err(missing(

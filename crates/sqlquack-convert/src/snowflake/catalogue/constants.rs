@@ -142,8 +142,8 @@ pub const RULES: &[RuleSpec] = &[
     },
     RuleSpec {
         id: JOIN_CROSS,
-        constructs: &["join:cross", "join:implicit"],
-        conditions: "No condition.",
+        constructs: &["join:cross", "join:implicit", "join:inner"],
+        conditions: "No condition: CROSS JOIN, a comma, or JOIN and INNER JOIN without ON, which Snowflake runs as a cross join, as recorded.",
         failures: &[],
     },
     RuleSpec {

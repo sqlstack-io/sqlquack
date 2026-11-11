@@ -128,6 +128,12 @@ impl<'a> Locator<'a> {
         self.locate(node).map(|location| self.lines.text(&location))
     }
 
+    /// The `count` characters written right after `node`; `None` for a node built during conversion.
+    pub(crate) fn following(&self, node: &Value, count: usize) -> Option<String> {
+        let end = self.locate(node)?.end;
+        Some(self.lines.text(&self.lines.source_location(end, end + count)))
+    }
+
     /// Where `node` is, or for a literal the parser keeps no range for, the one place it is written.
     pub(crate) fn locate_written(&self, node: &Value) -> Option<SourceLocation> {
         self.locate(node).or_else(|| {
