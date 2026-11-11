@@ -3,14 +3,22 @@ title: "Credits"
 description: "The open-source projects SQLQuack builds on."
 ---
 
-SQLQuack's tokenizer and parser started from code derived from
-[Polyglot](https://github.com/tobilg/polyglot), by Tobias
-([@tobilg](https://github.com/tobilg)). Its DuckDB result-type rules are ported from Polyglot's
-engine type rules. Thank you, Tobias.
+SQLQuack wouldn't exist without two projects:
 
-Thanks also to [SQLGlot](https://github.com/tobymao/sqlglot), by Toby Mao. Polyglot is inspired by
-SQLGlot, and SQLQuack uses the Snowflake SQL of SQLGlot's test suite as case inputs, with the
-expected answers recorded from Snowflake itself.
+- **[Polyglot](https://github.com/tobilg/polyglot)** by Tobias
+  ([@tobilg](https://github.com/tobilg)). SQLQuack's tokenizer, parser and syntax tree are a
+  modified fork of Polyglot's, and much of that code is still his. Its DuckDB result-type rules
+  and its semantic checks are also ported from Polyglot.
+- **[SQLGlot](https://github.com/tobymao/sqlglot)** by Toby Mao and contributors. Polyglot is a
+  Rust port of SQLGlot and is based on its design, and so is SQLQuack's parser. SQLQuack also uses
+  the Snowflake SQL of SQLGlot's test suite as case inputs, with the expected answers recorded from
+  Snowflake itself.
 
-Both are MIT-licensed. Their licences and the exact files concerned are in
-[`THIRD_PARTY_NOTICES`](https://github.com/sqlstack-io/sqlquack/blob/main/THIRD_PARTY_NOTICES).
+The translation to DuckDB and the recorded evidence behind it are SQLQuack's own.
+SQLQuack goes a different way from both projects on translation. It doesn't rewrite the tree and
+print it out. It checks each rule against recorded warehouse results and refuses what it can't
+prove.
+
+Both are MIT licensed. Their licence texts and the exact files concerned are in
+[`THIRD_PARTY_NOTICES`](https://github.com/sqlstack-io/sqlquack/blob/main/THIRD_PARTY_NOTICES),
+which ships with every release.
