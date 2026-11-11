@@ -74,7 +74,7 @@ impl Parser {
         } else if self.match_token(TokenType::Sequence) {
             self.parse_alter_kind_extension("SEQUENCE", &[&["RENAME", "TO"], &["UNSET"]])
         } else if self.match_token(TokenType::View) {
-            self.parse_alter_kind_extension("VIEW", &[&["RENAME", "TO"]])
+            self.parse_alter_view_extension()
         } else if self.match_identifier("SHARE") {
             return self.parse_alter_share().map(Some);
         } else {
@@ -309,6 +309,41 @@ impl Parser {
         Ok(Some(AlterTableAction::Raw {
             sql: format!("RENAME {}", self.tokens_to_sql(start, self.current)),
         }))
+    }
+
+    /// Parse the head and a RENAME TO, property SET or property UNSET of an ALTER VIEW, or None for another action.
+    fn parse_alter_view_extension(&mut self) -> Result<Option<Expression>> {
+        let head = self.parse_alter_head_or_omitted("VIEW")?;
+        if self.is_statement_end_at(0) {
+            return Err(self.parse_error("Expected an ALTER VIEW action"));
+        }
+        let sets_property = self.check(TokenType::Set)
+            && (self.check_next_identifier("SECURE")
+                || self
+                    .tokens
+                    .get(self.current + 2)
+                    .is_some_and(|token| token.token_type == TokenType::Eq));
+        let unsets_property =
+            self.check_text_seq(&["UNSET"]) && !self.check_next_identifier("TBLPROPERTIES");
+        let action = if self.match_text_seq(&["RENAME", "TO"]) {
+            return Ok(Some(alter_object(
+                "VIEW",
+                head,
+                "RENAME TO".to_owned(),
+                (vec![self.parse_tag_operand()?], vec![]),
+            )));
+        } else if sets_property || unsets_property {
+            self.skip();
+            if sets_property {
+                "SET"
+            } else {
+                "UNSET"
+            }
+        } else {
+            return Ok(None);
+        };
+        let (action, parts) = self.parse_resource_action("VIEW", action.to_owned())?;
+        Ok(Some(alter_object("VIEW", head, action, parts)))
     }
 
     /// Parse the head and one of `actions` of an ALTER `kind`, or None for another action.
