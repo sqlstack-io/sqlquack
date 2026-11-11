@@ -18,6 +18,8 @@ const ICEBERG_ACTIONS: &[&[&str]] = &[
     &["ALTER", "VERSION_TAG"],
     &["DROP", "VERSION_TAG"],
     &["REPLACE", "PARTITION", "BY"],
+    &["ADD", "PARTITION", "BY"],
+    &["DROP", "PARTITION", "BY"],
     &["UPGRADE", "TO", "ICEBERG", "VERSION"],
     &["OPTIMIZE"],
     &["CONVERT", "TO", "MANAGED"],
@@ -134,6 +136,9 @@ impl Parser {
                 self.expect_token(TokenType::With)?;
                 (vec![old, self.parse_partition_expression()?], vec![])
             }
+            "ADD PARTITION BY" | "DROP PARTITION BY" => {
+                (vec![self.parse_partition_expression()?], vec![])
+            }
             "UPGRADE TO ICEBERG VERSION" => (vec![self.parse_number_operand()?], vec![]),
             "OPTIMIZE" => {
                 self.expect_token(TokenType::LParen)?;
@@ -210,10 +215,10 @@ impl Parser {
         self.parse_primary()
     }
 
-    /// Parse `( <expr> )`, one partition expression.
+    /// Parse `( <expr> )`, one partition expression; a transform may take no arguments.
     fn parse_partition_expression(&mut self) -> Result<Expression> {
         self.expect_token(TokenType::LParen)?;
-        let expression = self.parse_expression()?;
+        let expression = self.parse_partition_item()?;
         self.expect_token(TokenType::RParen)?;
         Ok(expression)
     }
