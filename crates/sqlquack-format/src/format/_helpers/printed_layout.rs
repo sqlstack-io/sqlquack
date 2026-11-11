@@ -16,7 +16,23 @@ const BETWEEN_SEPARATOR: &str = "AND";
 const VALUES_KEYWORD: &str = "VALUES";
 const DECODE_FUNCTION: &str = "DECODE";
 const CASE_KEYWORD: &str = "CASE";
+const JOIN_KEYWORD: &str = "JOIN";
 const SINGLE_ITEM_CLAUSES: [&str; 4] = ["SELECT", "WHERE", "QUALIFY", "HAVING"];
+/// Words whose clause header is `<word> BY`, such as GROUP BY.
+const BY_CLAUSE_WORDS: [&str; 6] = [
+    "GROUP",
+    "ORDER",
+    "PARTITION",
+    "CLUSTER",
+    "DISTRIBUTE",
+    "SORT",
+];
+/// Keywords that start a join's condition, which joins its line when both fit.
+const JOIN_CONDITIONS: [&str; 2] = ["ON", "USING"];
+/// Tokens at a condition's depth that show, before any JOIN, that it is not a join's condition.
+const NOT_JOIN_CONDITION: [&str; 9] = [
+    "FROM", "WHERE", "SELECT", "ON", "USING", "INTO", "INDEX", "TABLE", ",",
+];
 const SELECT_MODIFIERS: [&str; 10] = [
     "DISTINCT", "ALL", "TOP", "PERCENT", "WITH", "TIES", "ON", "AS", "STRUCT", "VALUE",
 ];
@@ -422,8 +438,16 @@ impl PrintedSql<'_> {
             }
         }
         for index in 0..self.len() {
-            if SINGLE_ITEM_CLAUSES.contains(&self.upper(index).as_str()) {
+            let word = self.upper(index);
+            if SINGLE_ITEM_CLAUSES.contains(&word.as_str())
+                || (BY_CLAUSE_WORDS.contains(&word.as_str()) && self.is(index + 1, "BY"))
+            {
                 self.join_single_line_body(index, line_width);
+            }
+        }
+        for index in 1..self.len() {
+            if JOIN_CONDITIONS.contains(&self.upper(index).as_str()) {
+                self.join_condition_line(index, line_width);
             }
         }
     }
@@ -595,6 +619,11 @@ impl PrintedSql<'_> {
         let (first, last) = self.line_of(clause);
         let body = last + 1;
         let is_select = self.is(clause, "SELECT");
+        let header_last = if self.is(clause + 1, "BY") {
+            clause + 1
+        } else {
+            clause
+        };
         let modifiers_only = (clause + 1..=last).all(|index| {
             SELECT_MODIFIERS.contains(&self.upper(index).as_str())
                 || self.kinds[index] == TokenType::Number
@@ -603,7 +632,7 @@ impl PrintedSql<'_> {
         });
         if body >= self.len()
             || clause != first
-            || (!is_select && clause != last)
+            || (!is_select && header_last != last)
             || (is_select && !modifiers_only)
             || !self.gaps[body].contains('\n')
             || !self.gaps[body].trim().is_empty()
@@ -643,6 +672,54 @@ impl PrintedSql<'_> {
         if width <= line_width {
             self.gaps[body] = SINGLE_SPACE.to_string();
         }
+    }
+
+    /// Move a join's one-line ON or USING condition onto the line before it when both fit.
+    fn join_condition_line(&mut self, condition: usize, line_width: usize) {
+        let (first, last) = self.line_of(condition);
+        if condition != first
+            || !self.gaps[condition].contains('\n')
+            || !self.gaps[condition].trim().is_empty()
+            || !self.conditions_join(condition)
+        {
+            return;
+        }
+        let indentation = self.indentation(condition);
+        if last + 1 < self.len() && self.indentation(last + 1) >= indentation {
+            return;
+        }
+        let (previous, _) = self.line_of(condition - 1);
+        let previous_indentation = self.indentation(previous);
+        if previous_indentation >= indentation || self.has_top_level_chain(condition + 1, last) {
+            return;
+        }
+        if self
+            .joined_width(previous, last, previous_indentation)
+            .is_some_and(|width| width <= line_width)
+        {
+            self.gaps[condition] = SINGLE_SPACE.to_string();
+        }
+    }
+
+    /// Whether the ON or USING at `condition` belongs to a JOIN rather than another statement.
+    fn conditions_join(&self, condition: usize) -> bool {
+        let depth = self.depths[condition];
+        for index in (0..condition).rev() {
+            if self.depths[index] < depth {
+                return false;
+            }
+            if self.depths[index] > depth {
+                continue;
+            }
+            let word = self.upper(index);
+            if word == JOIN_KEYWORD {
+                return true;
+            }
+            if NOT_JOIN_CONDITION.contains(&word.as_str()) {
+                return false;
+            }
+        }
+        false
     }
 
     fn has_top_level_chain(&self, first: usize, last: usize) -> bool {

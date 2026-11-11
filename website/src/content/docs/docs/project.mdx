@@ -30,8 +30,7 @@ SELECT
     "ORDERS"."STATUS" AS "STATUS",
     CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24, 2)) AS "REVENUE"
 FROM "ORDERS" AS "ORDERS"
-GROUP BY
-    "ORDERS"."STATUS"
+GROUP BY "ORDERS"."STATUS"
 sqlquack convert: done, converted
 ```
 

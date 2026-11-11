@@ -22,17 +22,9 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
             Departure {
                 sql: "WITH t1 AS (SELECT 1 AS a), t2 AS (SELECT 1 AS a) SELECT COUNT(*) FROM (SELECT TOP 10 a FROM t1 UNION ALL SELECT TOP 10 a FROM t2 ORDER BY a DESC) AS t",
                 formatted: Some(
-                    "WITH t1 AS (\n  SELECT 1 AS a\n),\n\nt2 AS (\n  SELECT 1 AS a\n)\n\nSELECT COUNT(*)\nFROM (\n  SELECT TOP 10 a\n  FROM t1\n  UNION ALL\n  SELECT TOP 10 a\n  FROM t2\n  ORDER BY\n    a DESC\n) AS t",
+                    "WITH t1 AS (\n  SELECT 1 AS a\n),\n\nt2 AS (\n  SELECT 1 AS a\n)\n\nSELECT COUNT(*)\nFROM (\n  SELECT TOP 10 a\n  FROM t1\n  UNION ALL\n  SELECT TOP 10 a\n  FROM t2\n  ORDER BY a DESC\n) AS t",
                 ),
-                reason: "A set operation's ORDER BY sits at the depth of its set operation with its items on the next line; SQLClean outdented it to the enclosing parenthesis and kept the items on its line",
-                receipt: None,
-            },
-            Departure {
-                sql: "WITH t1 AS (SELECT 1 AS a), t2 AS (SELECT 1 AS a) SELECT TOP 10 a FROM t1 UNION ALL SELECT TOP 10 a FROM t2 ORDER BY a DESC",
-                formatted: Some(
-                    "WITH t1 AS (\n  SELECT 1 AS a\n),\n\nt2 AS (\n  SELECT 1 AS a\n)\n\nSELECT TOP 10 a\nFROM t1\nUNION ALL\nSELECT TOP 10 a\nFROM t2\nORDER BY\n  a DESC",
-                ),
-                reason: "A set operation's ORDER BY puts its items on the next line, as in every other dialect and SQL Server's own `ORDER BY\\n  1`; SQLClean kept them on the ORDER BY line",
+                reason: "A set operation's ORDER BY sits at the depth of its set operation; SQLClean outdented it to the enclosing parenthesis",
                 receipt: None,
             },
             Departure {

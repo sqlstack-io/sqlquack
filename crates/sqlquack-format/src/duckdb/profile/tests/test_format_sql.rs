@@ -123,6 +123,24 @@ fn given_constructs_sqlquack_converts_to_when_formatting_then_they_are_laid_out(
             ),
         },
         test_types::FormatSqlTestCase {
+            description: "a wide window puts each of its clauses on its own line, a narrow one stays inline",
+            sql: "select sum(amount) over (partition by customer_id, region order by ordered_at rows between unbounded preceding and current row) as running, sum(x) over (order by y) as s from orders",
+            line_width: Some(100),
+            dialect: FormatDialect::DuckDB,
+            expected_outcome: Ok(
+                "SELECT\n  SUM(amount) OVER (\n    PARTITION BY customer_id, region\n    ORDER BY ordered_at\n    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW\n  ) AS running,\n  SUM(x) OVER (ORDER BY y) AS s\nFROM orders",
+            ),
+        },
+        test_types::FormatSqlTestCase {
+            description: "a single-item GROUP BY or ORDER BY and a join's condition without AND or OR stay on their header line",
+            sql: "select a from t left join u on (t.id = u.id) join v on v.id = t.id and v.k = 1 group by a order by a desc",
+            line_width: Some(100),
+            dialect: FormatDialect::DuckDB,
+            expected_outcome: Ok(
+                "SELECT a\nFROM t\nLEFT JOIN u ON (t.id = u.id)\nJOIN v\n  ON v.id = t.id AND v.k = 1\nGROUP BY a\nORDER BY a DESC",
+            ),
+        },
+        test_types::FormatSqlTestCase {
             description: "a wrapped macro keeps CREATE OR REPLACE together and a lambda body that starts with a parenthesis inline",
             sql: "create or replace macro m(a, b) as list_transform([a], lambda r: (a // b) * r + a // b)[1]",
             line_width: Some(40),
