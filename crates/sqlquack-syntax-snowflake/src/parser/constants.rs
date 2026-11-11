@@ -191,6 +191,9 @@ pub(crate) const SET: &str = "SET";
 /// The text "SET MASKING POLICY", as comparisons test it.
 pub(crate) const SET_MASKING_POLICY: &str = "SET MASKING POLICY";
 
+/// The clauses whose operand is a condition, as an error names what is missing after one.
+pub(crate) const CONDITION_CLAUSES: &[&str] = &["HAVING", "ON", "QUALIFY", "WHERE"];
+
 /// The text "SET TAG", as comparisons test it.
 pub(crate) const SET_TAG: &str = "SET TAG";
 

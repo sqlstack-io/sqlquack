@@ -1,6 +1,7 @@
 //! Parser expressions: primary.
 
 use crate::parser::constants::ARRAY;
+use crate::parser::constants::CONDITION_CLAUSES;
 use crate::parser::constants::MAP;
 use crate::parser::constants::ODBC_DATE_ESCAPE;
 use crate::parser::constants::ODBC_TIMESTAMP_ESCAPE;
@@ -441,6 +442,14 @@ impl Parser {
             return self.maybe_parse_subscript(col);
         }
 
+        if self.is_at_end() || self.check(TokenType::Semicolon) {
+            let previous = self.previous().text.to_ascii_uppercase();
+            let expected = match CONDITION_CLAUSES.contains(&previous.as_str()) {
+                true => "a condition",
+                false => "an expression",
+            };
+            return Err(self.parse_error(format!("Expected {expected} after {previous}")));
+        }
         Err(self.parse_error(format!("Unexpected token: {:?}", self.peek().token_type)))
     }
 
