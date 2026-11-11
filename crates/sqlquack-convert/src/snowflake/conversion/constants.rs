@@ -553,7 +553,7 @@ pub const HAVING: &str = "rule.having";
 pub const QUALIFY: &str = "rule.qualify";
 /// ORDER BY with Snowflake's NULL placement.
 pub const ORDER_BY: &str = "rule.order_by";
-/// LIMIT and OFFSET.
+/// LIMIT, TOP, FETCH and OFFSET.
 pub const LIMIT: &str = "rule.limit";
 /// `*` and `t.*`.
 pub const STAR: &str = "rule.star";
