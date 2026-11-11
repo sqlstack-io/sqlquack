@@ -377,11 +377,11 @@ impl Parser {
                     table_modifier.as_deref()
                 };
                 let table_start = self.current;
-                if self.is_snowflake() && !define && !secure && !materialized {
+                if self.is_snowflake() && !secure && !materialized {
                     if let Some(table) = self.parse_snowflake_modified_table(
                         (create_pos, table_start),
                         or_replace,
-                        modifier,
+                        (modifier, define),
                     ) {
                         return table;
                     }
