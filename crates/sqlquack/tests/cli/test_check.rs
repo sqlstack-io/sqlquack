@@ -89,6 +89,14 @@ fn given_snowflake_sql_when_checked_then_problems_are_coded_and_the_exit_status_
             expected_stderr_mention: "error[SQ0211]",
         },
         CheckCommandTestCase {
+            description: "== is SQ0206, named as Snowflake does, and exits 1",
+            arguments: &["check"],
+            sql: "SELECT order_id FROM orders WHERE status == 'shipped'",
+            expected_exit_code: Some(1),
+            expected_stdout_prefix: "",
+            expected_stderr_mention: "error[SQ0206]: Unknown function ==",
+        },
+        CheckCommandTestCase {
             description: "a window function without OVER is SQ0205 and exits 1",
             arguments: &["check"],
             sql: "SELECT PERCENT_RANK() AS p FROM orders",

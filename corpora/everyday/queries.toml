@@ -2970,8 +2970,8 @@ expect_repository = "parse SQ0001 at 47..49"
 [[query]]
 category = "invalid_syntax"
 sql = '''SELECT order_id FROM orders WHERE status == 'shipped''''
-expect = "translated"
-expect_repository = "translated"
+expect = "check SQ0206 at 41..43"
+expect_repository = "check SQ0206 at 41..43"
 snowflake = "rejects 2139"
 
 [[query]]
