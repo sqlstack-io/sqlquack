@@ -317,7 +317,7 @@ impl Parser {
         loop {
             let tag = self.parse_object_name()?;
             self.expect_token(TokenType::Eq)?;
-            let value = match self.check(TokenType::String) {
+            let value = match self.check(TokenType::String) || self.check(TokenType::Number) {
                 true => self.parse_primary()?,
                 false => self.parse_external_word()?,
             };
