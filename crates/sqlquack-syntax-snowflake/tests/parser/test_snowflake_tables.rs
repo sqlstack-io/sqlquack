@@ -1,5 +1,7 @@
 use crate::helpers::snowflake_kind;
+use crate::helpers::statements;
 use crate::test_types::SnowflakeVerdictTestCase;
+use sqlquack_syntax::{CallMode, Dialect};
 
 #[test]
 fn given_snowflake_table_policies_and_properties_when_parsing_then_recorded_verdicts_hold() {
@@ -195,12 +197,12 @@ fn given_snowflake_external_tables_procedures_and_unloads_when_parsing_then_reco
         SnowflakeVerdictTestCase {
             description: "an external column with no type or expression (recorded errno 2003, after parsing)",
             sql: "CREATE EXTERNAL TABLE v1 ( v1 ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a bare external REFERENCES constraint (recorded errno 2003, after parsing)",
             sql: "CREATE EXTERNAL TABLE v1 ( REFERENCES v1 ( \"v1 Q\" ) ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a bare external REFERENCES with an empty column list (recorded errno 1003)",
@@ -215,7 +217,7 @@ fn given_snowflake_external_tables_procedures_and_unloads_when_parsing_then_reco
         SnowflakeVerdictTestCase {
             description: "an external stage named SELECT (recorded OK)",
             sql: "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @SELECT.s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "VALIDATE on a constraint without ENABLE (recorded errno 1003)",
@@ -302,4 +304,31 @@ fn given_a_snowflake_sample_clause_when_parsing_then_recorded_verdicts_hold() {
             test_case.description
         );
     }
+}
+
+#[test]
+fn given_a_snowflake_external_table_when_parsing_then_its_columns_and_properties_are_structured() {
+    let tree = statements(
+        "CREATE OR REPLACE EXTERNAL TABLE v1 ( v1 INT AS ( VALUE : c1 :: INT ) UNIQUE ) PARTITION BY ( v1 ) LOCATION = @s1/p1 FILE_FORMAT = ( TYPE = PARQUET ) TAG ( t1 = 'm' ) ;",
+        Dialect::Snowflake,
+        CallMode::Faithful,
+    );
+    let table = &tree[0]["create_object"];
+    assert_eq!(table["kind"], "EXTERNAL TABLE");
+    assert_eq!(table["or_replace"], true);
+    let column = &table["operands"][0]["tuple"]["expressions"][0]["column_def"];
+    assert_eq!(column["name"]["name"], "v1");
+    assert_eq!(column["unique"], true);
+    assert!(column["constraints"][0]["ComputedColumn"].is_object());
+    let kinds: Vec<&str> = table["properties"]
+        .as_array()
+        .expect("properties")
+        .iter()
+        .map(|property| property["kind"].as_str().unwrap_or_default())
+        .collect();
+    assert_eq!(kinds, ["PARTITION BY", "LOCATION", "FILE_FORMAT", "TAG"]);
+    assert_eq!(
+        table["properties"][1]["value"]["literal"]["value"],
+        "@s1/p1"
+    );
 }
