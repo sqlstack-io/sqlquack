@@ -361,3 +361,28 @@ fn given_a_snowflake_table_with_policies_when_parsing_then_its_columns_and_prope
     assert_eq!(kinds, ["PRIMARY KEY", "ROW ACCESS POLICY"]);
     assert_eq!(table["properties"][0]["name"]["name"], "k1");
 }
+
+#[test]
+fn given_a_snowflake_dynamic_iceberg_table_when_parsing_then_its_query_and_properties_are_structured(
+) {
+    let tree = statements(
+        "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT COMMENT 'm' ) TARGET_LAG = '1 minute' WAREHOUSE = w1 EXECUTE AS USER u1 AS SELECT 1 AS v1 ;",
+        Dialect::Snowflake,
+        CallMode::Faithful,
+    );
+    let table = &tree[0]["create_object"];
+    assert_eq!(table["kind"], "DYNAMIC ICEBERG TABLE");
+    assert_eq!(table["source"], "AS");
+    assert_eq!(
+        table["operands"][0]["tuple"]["expressions"][0]["column_def"]["comment"],
+        "m"
+    );
+    assert!(table["operands"][1]["select"].is_object());
+    let kinds: Vec<&str> = table["properties"]
+        .as_array()
+        .expect("properties")
+        .iter()
+        .map(|property| property["kind"].as_str().unwrap_or_default())
+        .collect();
+    assert_eq!(kinds, ["TARGET_LAG", "WAREHOUSE", "EXECUTE AS USER"]);
+}
