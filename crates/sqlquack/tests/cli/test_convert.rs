@@ -117,6 +117,13 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             expected_outcome: convert_outcome(0, true),
         },
         ConvertTestCase {
+            description: "== is refused before conversion, as Snowflake rejects it",
+            sql: "WITH t AS (SELECT 1 AS order_id) SELECT order_id FROM t WHERE order_id == 1",
+            flags: &[],
+            mention: "error[SQ0206]: Unknown function ==",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
             description: "a statement that converts prints DuckDB SQL and exits 0",
             sql: "SELECT 1 + 2 AS total",
             flags: &[],

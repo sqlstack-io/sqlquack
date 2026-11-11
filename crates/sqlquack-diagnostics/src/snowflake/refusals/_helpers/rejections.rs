@@ -6,10 +6,52 @@ use sqlquack_syntax::expressions::types::constants::{
     SNOWFLAKE_UNPARAMETERIZED_LITERAL_TYPES, SNOWFLAKE_UNTYPED_LITERAL_TYPES,
 };
 use sqlquack_syntax::expressions::types::models::DataType;
+use sqlquack_syntax::tokens::main::node_location::node_location;
+use sqlquack_syntax::tokens::models::SourceLines;
 use sqlquack_syntax::{Expression, ExpressionWalk};
 
 /// Window functions Snowflake refuses without OVER (error 2064, missing window specification).
 const WINDOW_ONLY_CALLS: [&str; 3] = ["CUME_DIST", "PERCENT_RANK", "NTH_VALUE"];
+
+/// The equality operator of other dialects, which Snowflake reads as a call to an unknown function.
+pub(crate) const DOUBLE_EQUALS: &str = "==";
+
+/// The range of `==` in an equality (Snowflake error 2139), skipping unranged literals' quotes.
+pub(crate) fn double_equals(
+    node: &Expression,
+    text: &[char],
+    lines: &SourceLines,
+) -> Option<(usize, usize)> {
+    let Expression::Eq(operation) = node else {
+        return None;
+    };
+    let whole = node_location(node, lines)?;
+    let from = node_location(&operation.left, lines).map_or(whole.start, |left| left.end);
+    let to = node_location(&operation.right, lines)
+        .map_or(whole.end, |right| right.start)
+        .min(text.len());
+    let mut offset = from;
+    while offset < to {
+        let next = text.get(offset + 1).copied();
+        offset = match (text[offset], next) {
+            ('=', Some('=')) => return Some((offset, offset + 2)),
+            ('=', _) => return None,
+            ('/', Some('*')) => after(text, offset + 2, &['*', '/']),
+            ('-', Some('-')) => after(text, offset + 2, &['\n']),
+            ('$', Some('$')) => after(text, offset + 2, &['$', '$']),
+            (quote @ ('\'' | '"'), _) => after(text, offset + 1, &[quote]),
+            _ => offset + 1,
+        };
+    }
+    None
+}
+
+/// The offset just past the first `close` at or after `from`, or the end of `text`.
+fn after(text: &[char], from: usize, close: &[char]) -> usize {
+    (from..text.len())
+        .find(|&offset| text[offset..].starts_with(close))
+        .map_or(text.len(), |offset| offset + close.len())
+}
 
 /// The rejection a node causes, if any, given the calls an OVER clause applies to (`windowed`).
 pub(crate) fn rejection(

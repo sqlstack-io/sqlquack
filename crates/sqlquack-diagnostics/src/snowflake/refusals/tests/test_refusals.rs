@@ -136,6 +136,29 @@ fn given_sql_snowflake_parses_then_rejects_when_refusing_then_each_rejection_is_
             expected_codes: vec!["SQ0205"],
         },
         RejectionTestCase {
+            description: "== is rejected wherever it compares, after a comment or around parentheses",
+            sql: "SELECT order_id FROM orders WHERE status == 'shipped'; \
+                  SELECT 1 == 1 AS same; \
+                  SELECT 'a=b' == status AS same FROM orders; \
+                  SELECT (price) /* note */ == (2) AS two FROM orders",
+            expected_rejections: vec![
+                "double_equals",
+                "double_equals",
+                "double_equals",
+                "double_equals",
+            ],
+            expected_codes: vec!["SQ0206", "SQ0206", "SQ0206", "SQ0206"],
+        },
+        RejectionTestCase {
+            description: "a single =, == inside a string or a comment, and >= or != are left to conversion",
+            sql: "SELECT order_id FROM orders WHERE status = 'a == b'; \
+                  SELECT price /* == */ = 2 AS two FROM orders; \
+                  SELECT 'x==' = status AS same FROM orders; \
+                  SELECT order_id FROM orders WHERE price >= 2 AND price != 3",
+            expected_rejections: vec![],
+            expected_codes: vec![],
+        },
+        RejectionTestCase {
             description: "a star without ILIKE, or ILIKE without REPLACE or RENAME, is left to conversion",
             sql: "SELECT * REPLACE (price * 2 AS price) FROM orders; \
                   SELECT * ILIKE '%_id' FROM orders",

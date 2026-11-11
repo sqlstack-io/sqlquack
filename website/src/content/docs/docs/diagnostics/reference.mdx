@@ -34,6 +34,7 @@ renumbered. See [Reading diagnostics](/docs/diagnostics/overview/) for the outpu
 | [`SQ0203`](#sq0203) | `qualify_without_window` | QUALIFY needs a window function |
 | [`SQ0204`](#sq0204) | `star_filter_drops_named_column` | REPLACE or RENAME names a column the star's ILIKE pattern removed |
 | [`SQ0205`](#sq0205) | `window_without_over` | A window function needs an OVER clause |
+| [`SQ0206`](#sq0206) | `double_equals` | Unknown function == |
 | [`SQ0211`](#sq0211) | `unsupported_type_literal` | Snowflake has no literal of this date-time type |
 
 ## Conversion
@@ -336,6 +337,20 @@ CUME_DIST, PERCENT_RANK and NTH_VALUE are window functions only: Snowflake rejec
 
 ```sh
 echo "SELECT CUME_DIST() AS d FROM orders" | sqlquack check
+```
+
+### SQ0206
+
+**Unknown function ==** (`double_equals`)
+
+Snowflake has no `==` operator. The statement parses, but Snowflake reads `==` as a call to a function of that name and rejects the query when compiling it (Snowflake error 2139, unknown function), so the statement never runs there. Other dialects read `==` as `=`; SQLQuack does not, because that would convert SQL Snowflake rejects. Write `=` instead.
+
+**Help:** compare with `=`
+
+**Example:**
+
+```sh
+echo "SELECT order_id FROM orders WHERE status == 'shipped'" | sqlquack check
 ```
 
 ### SQ0211

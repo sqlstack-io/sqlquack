@@ -376,6 +376,19 @@ pub const CODES: &[CodeEntry] = &[
         example: r#"echo "SELECT CUME_DIST() AS d FROM orders" | sqlquack check"#,
     },
     CodeEntry {
+        code: "SQ0206",
+        name: "double_equals",
+        alias: None,
+        title: "Unknown function ==",
+        help: Some("compare with `=`"),
+        explanation: "Snowflake has no `==` operator. The statement parses, but Snowflake reads \
+            `==` as a call to a function of that name and rejects the query when compiling it \
+            (Snowflake error 2139, unknown function), so the statement never runs there. Other \
+            dialects read `==` as `=`; SQLQuack does not, because that would convert SQL \
+            Snowflake rejects. Write `=` instead.",
+        example: r#"echo "SELECT order_id FROM orders WHERE status == 'shipped'" | sqlquack check"#,
+    },
+    CodeEntry {
         code: "SQ0211",
         name: "unsupported_type_literal",
         alias: None,
