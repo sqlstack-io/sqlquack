@@ -32,6 +32,12 @@ const LIFECYCLE_ACTIONS: &[&[&str]] = &[
     &["DROP", "STORAGE", "LIFECYCLE", "POLICY"],
 ];
 
+/// The search optimization actions of an ALTER [ ICEBERG ] TABLE.
+const SEARCH_ACTIONS: &[&[&str]] = &[
+    &["ADD", "SEARCH", "OPTIMIZATION"],
+    &["DROP", "SEARCH", "OPTIMIZATION"],
+];
+
 /// The retention units of a version tag's RETAIN.
 const RETAIN_UNITS: &[&[&str]] = &[&["DAYS"], &["HOURS"], &["MINUTES"]];
 
@@ -73,7 +79,7 @@ impl Parser {
         Ok(found)
     }
 
-    /// Parse the head and an ICEBERG or lifecycle action of an ALTER [ ICEBERG ] TABLE, or None.
+    /// Parse the head and an ICEBERG, lifecycle or search optimization action of an ALTER [ ICEBERG ] TABLE, or None.
     fn parse_alter_table_extension(&mut self, iceberg: bool) -> Result<Option<Expression>> {
         let head = self.parse_alter_object_head()?;
         if !iceberg
@@ -100,7 +106,11 @@ impl Parser {
         } else {
             LIFECYCLE_ACTIONS
         };
-        let Some(words) = choices.iter().find(|words| self.match_text_seq(words)) else {
+        let Some(words) = SEARCH_ACTIONS
+            .iter()
+            .chain(choices)
+            .find(|words| self.match_text_seq(words))
+        else {
             return Ok(None);
         };
         let kind = if iceberg { "ICEBERG TABLE" } else { "TABLE" };
@@ -143,6 +153,9 @@ impl Parser {
             }
             "ADD PARTITION BY" | "DROP PARTITION BY" => {
                 (vec![self.parse_partition_expression()?], vec![])
+            }
+            "ADD SEARCH OPTIMIZATION" | "DROP SEARCH OPTIMIZATION" => {
+                (self.parse_search_targets(&action)?, vec![])
             }
             "UPGRADE TO ICEBERG VERSION" => (vec![self.parse_number_operand()?], vec![]),
             "OPTIMIZE" => {
