@@ -59,3 +59,67 @@ fn given_snowflake_streams_when_parsing_then_their_grammar_is_checked() {
         );
     }
 }
+
+#[test]
+fn given_snowflake_views_when_parsing_then_their_grammar_is_checked() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a join policy with its allowed join keys (recorded OK)",
+            sql: "CREATE VIEW v1 JOIN POLICY v1 ALLOWED JOIN KEYS ( v1 ) AS SELECT 1 ;",
+            expected_kind: Some("create_view"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a row access policy on no columns (recorded OK)",
+            sql: "CREATE VIEW v1 ROW ACCESS POLICY v1 ON ( ) AS SELECT 1 ;",
+            expected_kind: Some("create_view"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a recursive view (recorded OK)",
+            sql: "CREATE RECURSIVE VIEW v1 AS SELECT 1 ;",
+            expected_kind: Some("create_view"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a secure materialized view (recorded OK)",
+            sql: "CREATE SECURE MATERIALIZED VIEW v1 ( v1 ) AS SELECT 1 ;",
+            expected_kind: Some("create_view"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty copy list before a materialized view's columns (recorded OK)",
+            sql: "CREATE MATERIALIZED VIEW v1 COPY = ( ) ( v1 ) AS SELECT 1 ;",
+            expected_kind: Some("create_view"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "CREATE OR ALTER VIEW with change tracking (recorded OK)",
+            sql: "CREATE OR ALTER VIEW v1 CHANGE_TRACKING = TRUE AS SELECT 1 ;",
+            expected_kind: Some("create_view"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a column policy after the column list (recorded errno 1003)",
+            sql: "CREATE VIEW v1 v1 MASKING POLICY v1 USING ( v1 , v1 ) PROJECTION POLICY v1 TAG ( v1 = 'm' ) AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty column list (recorded errno 1003)",
+            sql: "CREATE MATERIALIZED VIEW v1 ( ) AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string as a column name (recorded errno 1003)",
+            sql: "CREATE MATERIALIZED VIEW v1 ( 'v1' ) AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a materialized view is never temporary",
+            sql: "CREATE TEMPORARY MATERIALIZED VIEW v1 AS SELECT 1 ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
