@@ -120,3 +120,44 @@ fn given_snowflake_table_search_optimization_when_parsing_then_its_targets_are_c
         },
     ]);
 }
+
+#[test]
+fn given_snowflake_iceberg_column_actions_when_parsing_then_recorded_verdicts_hold() {
+    assert_recorded_verdicts(&[
+        SnowflakeVerdictTestCase {
+            description: "a type change that renames fields (recorded OK)",
+            sql: "ALTER ICEBERG TABLE v1 ALTER COLUMN v1 SET DATA TYPE INT RENAME FIELDS ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "SET DATA without TYPE (recorded errno 1003)",
+            sql: "ALTER ICEBERG TABLE v1 ALTER COLUMN v1 SET DATA INT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "write defaults on two columns (recorded OK)",
+            sql: "ALTER ICEBERG TABLE v1 ALTER v1 SET WRITE DEFAULT 1 , v1 SET WRITE DEFAULT 1 ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a write default without SET (recorded OK)",
+            sql: "ALTER ICEBERG TABLE v1 ALTER v1 WRITE DEFAULT 1 ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a write default with no value (recorded errno 1003)",
+            sql: "ALTER ICEBERG TABLE v1 ALTER v1 SET WRITE DEFAULT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a dropped write default (recorded OK)",
+            sql: "ALTER ICEBERG TABLE v1 ALTER v1 DROP WRITE DEFAULT ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a dropped column named VERSION_TAG (recorded OK)",
+            sql: "ALTER ICEBERG TABLE v1 DROP VERSION_TAG ;",
+            expected_kind: Some("alter_table"),
+        },
+    ]);
+}

@@ -626,6 +626,7 @@ impl<'sql> Parser<'sql> {
                         data_type,
                         using: None,
                         collate: None,
+                        rename: None,
                     },
                     use_modify_keyword: false,
                 }];
