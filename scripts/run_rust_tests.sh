@@ -15,7 +15,7 @@ if [ -n "${RUST_TEST_FEATURES:-}" ]; then features=(--features "$RUST_TEST_FEATU
 # The fewest test binaries the workspace builds; fewer means tests went missing, not that they pass.
 minimum=${RUST_TEST_MIN_BINARIES:-21}
 # Started first, so the longest binaries overlap the rest.
-slowest="cli runs index"
+slowest="cli index"
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
 
