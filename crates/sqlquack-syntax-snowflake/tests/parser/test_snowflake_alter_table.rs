@@ -39,3 +39,58 @@ fn given_snowflake_alter_table_add_when_parsing_then_the_table_grammar_judges_it
         );
     }
 }
+
+#[test]
+fn given_snowflake_alter_table_drop_and_rename_of_constraints_when_parsing_then_recorded_verdicts_hold(
+) {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "the clustering key dropped as KEY (recorded OK)",
+            sql: "ALTER TABLE v1 DROP KEY ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "KEY takes no column list (recorded errno 1003)",
+            sql: "ALTER TABLE v1 DROP KEY ( v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unnamed unique constraint dropped by its columns (recorded OK)",
+            sql: "ALTER TABLE v1 DROP UNIQUE ( v1 ) ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unnamed foreign key dropped by its columns (recorded OK)",
+            sql: "ALTER TABLE v1 DROP FOREIGN KEY ( v1 ) ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a primary key takes no column list (recorded errno 1003)",
+            sql: "ALTER TABLE v1 DROP PRIMARY KEY ( v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a renamed constraint (recorded OK)",
+            sql: "ALTER TABLE v1 RENAME CONSTRAINT v1 TO \"v1 Q\" ;",
+            expected_kind: Some("alter_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a constraint renamed to a reserved word (recorded errno 1003)",
+            sql: "ALTER TABLE v1 RENAME CONSTRAINT v1 TO SELECT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a constraint renamed to a string (recorded errno 1003)",
+            sql: "ALTER TABLE v1 RENAME CONSTRAINT v1 TO 'v1' ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
