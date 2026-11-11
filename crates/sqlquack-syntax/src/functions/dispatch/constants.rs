@@ -11,7 +11,7 @@ pub(crate) const PARSER_DISPATCH_SPECS: &[ParserDispatchSpec] = &[
     },
     ParserDispatchSpec {
         name: "TRY_TO_TIMESTAMP",
-        behavior: ParserDispatchBehavior::ExprListFunction,
+        behavior: ParserDispatchBehavior::OptionalExprListFunction,
     },
     ParserDispatchSpec {
         name: "TRY_TO_TIME",
@@ -67,7 +67,7 @@ pub(crate) const PARSER_DISPATCH_SPECS: &[ParserDispatchSpec] = &[
     },
     ParserDispatchSpec {
         name: "TO_TIMESTAMP",
-        behavior: ParserDispatchBehavior::ExprListFunction,
+        behavior: ParserDispatchBehavior::OptionalExprListFunction,
     },
     ParserDispatchSpec {
         name: "TO_TIMESTAMP_NTZ",
