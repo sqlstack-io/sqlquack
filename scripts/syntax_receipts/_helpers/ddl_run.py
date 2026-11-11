@@ -71,7 +71,10 @@ def import_ddl_run(*, run: CaptureRun, index: dict[str, Path]) -> Imported:
         if failure is not None:
             found.refusals.append(refusal(run_id=run.path.name, row_id=row_id, reason=failure))
             continue
-        setup: list[str] = _setup(start=start, raw=raw, position=position) + case.get("setup", [])
+        run_setup: list[str] = _setup(start=start, raw=raw, position=position)
+        setup: list[str] = run_setup + _fixtures(
+            packet_setup=case.get("setup", []), run_setup=run_setup
+        )
         exact: Row = input_row(sql=case["sql"], setup=setup)
         found.inputs.setdefault(exact["sql_sha256"] + exact["setup_sha256"], exact)
         errno, sqlstate, message = error_fields(raw=raw)
@@ -217,6 +220,13 @@ def _unrecorded(
 
 def _text(value: object) -> bool:
     return isinstance(value, str) and bool(value)
+
+
+def _fixtures(*, packet_setup: list[str], run_setup: list[str]) -> list[str]:
+    """The packet setup after the run setup, which a packet may repeat ahead of its fixtures."""
+    if packet_setup[: len(run_setup)] == run_setup:
+        return packet_setup[len(run_setup) :]
+    return packet_setup
 
 
 def _setup(*, start: Row, raw: Row, position: int) -> list[str]:

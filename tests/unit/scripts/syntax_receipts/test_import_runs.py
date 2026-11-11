@@ -56,6 +56,13 @@ _RECONCILED_PACKET: list[dict[str, object]] = [
     packet_case(case_id="c3", sql=_BROKEN),
 ]
 _FIXTURE: list[str] = ['CREATE TABLE "ORDERS" ("ID" INTEGER)']
+_DDL_TEMPLATE: list[str] = [
+    "CREATE DATABASE <run_database> COMMENT = 'sqlquack ddl sweep <run_nonce>'",
+    "CREATE SCHEMA <run_database>.CASES",
+    "USE SCHEMA <run_database>.CASES",
+    "CREATE SCHEMA <run_database>.<case_schema>",
+    "USE SCHEMA <run_database>.<case_schema>",
+]
 _SYNTAX_ROW: dict[str, object] = error_row(
     case_id="c1", sql=_GOOD, errno=1003, message="SQL compilation error:\nsyntax error"
 )
@@ -372,12 +379,29 @@ def test_given_receipt_published_before_a_field_was_added_when_imported_again_th
                 "measure": "missing_object_with_setup",
             },
             expected_receipts=[("c1", "accepted", "compile_only_explain")],
-            expected_setup_tail=[
+            expected_setup=[
+                "CREATE DATABASE <run_database>",
                 "CREATE SCHEMA <run_database>.<case_schema>",
                 "USE SCHEMA <run_database>.<case_schema>",
                 *_FIXTURE,
             ],
             expected_refusals=["c2"],
+        ),
+        SetupRunTestCase(
+            description="a packet that repeats the run's template is not counted twice",
+            rows=[{**_SYNTAX_ROW, "case_schema": "C0000"}],
+            packet=[{**packet_case(case_id="c1", sql=_GOOD), "setup": [*_DDL_TEMPLATE, *_FIXTURE]}],
+            start={
+                "run_database": "SQLQUACK_DDL_ABC123",
+                "setup": [
+                    "CREATE DATABASE SQLQUACK_DDL_ABC123 COMMENT = 'sqlquack ddl sweep ABC123'",
+                    "CREATE SCHEMA SQLQUACK_DDL_ABC123.CASES",
+                    "USE SCHEMA SQLQUACK_DDL_ABC123.CASES",
+                ],
+            },
+            expected_receipts=[("c1", "syntax_error", "execute_ddl_in_run_database")],
+            expected_setup=[*_DDL_TEMPLATE, *_FIXTURE],
+            expected_refusals=[],
         ),
     ),
     ids=lambda case: case.description,
@@ -401,9 +425,9 @@ def test_given_fixture_setup_per_item_when_imported_then_receipts_name_that_setu
         test_case.expected_receipts
     )
     receipt_input: tuple[str, str] = (receipts[0]["sql_sha256"], receipts[0]["setup_sha256"])
-    assert setups[receipt_input][-3:] == test_case.expected_setup_tail
+    assert setups[receipt_input] == test_case.expected_setup
     assert [r["row_id"] for r in report["refusals"]] == test_case.expected_refusals
-    assert receipts[0]["measure"] == test_case.start["measure"]
+    assert receipts[0].get("measure") == test_case.start.get("measure")
 
 
 @pytest.mark.parametrize(
