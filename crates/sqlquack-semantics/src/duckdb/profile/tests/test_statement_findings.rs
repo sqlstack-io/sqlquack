@@ -524,6 +524,84 @@ fn given_from_items_that_read_each_other_when_resolving_names_then_each_reads_on
 }
 
 #[test]
+fn given_a_lambda_in_a_grouped_select_when_checking_grouping_then_only_outer_columns_must_be_grouped()
+ {
+    // Each verdict is DuckDB 2.0.0's.
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "a lambda parameter, which is no column",
+            sql: "SELECT o.customer_id, len(list_filter(ARRAY_AGG(o.status), lambda e: e <> \
+                  'null')) AS c FROM orders AS o GROUP BY o.customer_id",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a lambda parameter cast over a JSON list of an aggregate",
+            sql: "SELECT o.customer_id, len(list_filter(CAST(to_json(ARRAY_AGG(o.status)) AS \
+                  JSON[]), lambda e: CAST(e AS VARCHAR) <> 'null')) AS c FROM orders AS o GROUP BY \
+                  o.customer_id",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a grouped outer column inside the lambda body",
+            sql: "SELECT o.customer_id, len(list_filter(ARRAY_AGG(o.status), lambda e: e <> \
+                  CAST(o.customer_id AS VARCHAR))) AS c FROM orders AS o GROUP BY o.customer_id",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an ungrouped outer column inside the lambda body",
+            sql: "SELECT o.customer_id, len(list_filter(ARRAY_AGG(o.status), lambda e: e <> \
+                  o.status)) AS c FROM orders AS o GROUP BY o.customer_id",
+            expected_findings: &[(
+                "E230",
+                "Column must be grouped or used in an aggregate function",
+                76,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a parameter's name read outside its lambda is a column",
+            sql: "SELECT o.customer_id, concat(list_filter(ARRAY_AGG(o.status), lambda status: \
+                  status <> 'x')[1], status) AS c FROM orders AS o GROUP BY o.customer_id",
+            expected_findings: &[(
+                "E230",
+                "Column must be grouped or used in an aggregate function",
+                96,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a lambda field the FROM item of that name also has is that item's column",
+            sql: "SELECT list_transform([{'amount': 99}], lambda o: o.amount) AS v FROM orders AS o GROUP BY o.status",
+            expected_findings: &[(
+                "E230",
+                "Column must be grouped or used in an aggregate function",
+                52,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a lambda field only the parameter has",
+            sql: "SELECT list_transform([{'m': 99}], lambda o: o.m) AS v FROM orders AS o GROUP BY o.status",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a JSON arrow is no lambda, so its column must be grouped",
+            sql: "SELECT o.items -> o.status AS v FROM orders AS o GROUP BY o.status",
+            expected_findings: &[(
+                "E230",
+                "Column must be grouped or used in an aggregate function",
+                9,
+            )],
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            duckdb_parser_findings(test_case.sql),
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_duckdbs_parser_reads_window_calls_when_checking_arity_then_every_count_duckdb_binds_is_known()
  {
     // Each verdict is DuckDB 2.0.0's: LAG and LEAD bind one to three arguments, not four.

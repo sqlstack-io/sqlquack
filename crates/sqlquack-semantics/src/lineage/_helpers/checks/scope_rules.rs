@@ -1008,9 +1008,10 @@ fn grouping(
     }
     let mut findings: Vec<NameFinding> = Vec::new();
     for (expression, named) in read {
-        let mut pending: Vec<&Expression> = vec![unalias(expression)];
+        let mut lambdas: Vec<(usize, Vec<String>)> = vec![(0, Vec::new())];
+        let mut pending: Vec<(&Expression, usize)> = vec![(unalias(expression), 0)];
         let mut expanded: HashSet<String> = HashSet::new();
-        while let Some(current) = pending.pop() {
+        while let Some((current, frame)) = pending.pop() {
             if query_start(current)
                 || is_aggregate(current)
                 || matches!(current, Expression::WithinGroup(group) if is_aggregate(&group.this))
@@ -1021,8 +1022,21 @@ fn grouping(
             {
                 continue;
             }
+            if let Expression::Lambda(lambda) = current
+                && (lambda.colon || Engine::of(level.context) != Engine::DuckDB)
+            {
+                let names: Vec<String> = lambda
+                    .parameters
+                    .iter()
+                    .map(|name| level.key(name))
+                    .collect();
+                lambdas.push((frame, names));
+                pending.push((&lambda.body, lambdas.len() - 1));
+                continue;
+            }
             if let Expression::Column(column) = current {
-                if grouped(&column_key(column, level))
+                if lambda_parameter(column, (&lambdas, frame), level)
+                    || grouped(&column_key(column, level))
                     || keyword_function(column, level.scope, level.context)
                 {
                     continue;
@@ -1031,7 +1045,7 @@ fn grouping(
                     let name: String = level.key(&column.name);
                     if let Some(alias) = aliases.get(&name) {
                         if expanded.insert(name) {
-                            pending.push(alias);
+                            pending.push((alias, frame));
                         }
                         continue;
                     }
@@ -1040,21 +1054,60 @@ fn grouping(
                 break;
             }
             if let Expression::WindowFunction(window) = current {
-                pending.extend(window.this.children());
+                pending.extend(
+                    window
+                        .this
+                        .children()
+                        .into_iter()
+                        .map(|child| (child, frame)),
+                );
                 pending.extend(
                     current
                         .children()
                         .into_iter()
-                        .filter(|child| !std::ptr::eq(*child, &window.this)),
+                        .filter(|child| !std::ptr::eq(*child, &window.this))
+                        .map(|child| (child, frame)),
                 );
             } else {
                 let mut children: Vec<&Expression> = current.children();
                 children.reverse();
-                pending.extend(children);
+                pending.extend(children.into_iter().map(|child| (child, frame)));
             }
         }
     }
     findings
+}
+
+/// Whether `column` or its qualifier names an enclosing lambda's parameter no FROM item shadows.
+fn lambda_parameter(
+    column: &Column,
+    (lambdas, mut frame): (&[(usize, Vec<String>)], usize),
+    level: RuleLevel<'_, '_>,
+) -> bool {
+    let name: String = level.key(column.table.as_ref().unwrap_or(&column.name));
+    let field: String = level.key(&column.name);
+    if column.table.is_some()
+        && level.scope.sources.iter().any(|source| {
+            source
+                .key
+                .as_ref()
+                .is_some_and(|key| level.context.profile.same_identifier(key, &name))
+                && offers(source, &field, level)
+        })
+    {
+        return false;
+    }
+    while frame != 0 {
+        let (parent, names) = &lambdas[frame];
+        if names
+            .iter()
+            .any(|parameter| level.context.profile.same_identifier(parameter, &name))
+        {
+            return true;
+        }
+        frame = *parent;
+    }
+    false
 }
 
 /// Snowflake's DISTINCT with ORDER BY a column it does not select.
