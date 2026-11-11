@@ -730,6 +730,11 @@ impl Parser {
                     })),
                     false => Expression::Table(Box::new(self.parse_iceberg_object_name()?)),
                 });
+                while self.match_token(TokenType::Comma) {
+                    expressions.push(Expression::Table(Box::new(
+                        self.parse_iceberg_object_name()?,
+                    )));
+                }
             }
             let value = Expression::Tuple(Box::new(Tuple { expressions }));
             return Ok(Some(vec![property("EXECUTE AS USER", None, Some(value))]));
