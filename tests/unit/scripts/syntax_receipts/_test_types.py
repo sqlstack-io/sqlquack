@@ -63,7 +63,7 @@ class SetupRunTestCase:
     packet: list[dict[str, object]]
     start: dict[str, object]
     expected_receipts: list[tuple[str, str, str]]
-    expected_setup_tail: list[str]
+    expected_setup: list[str]
     expected_refusals: list[str]
 
 
