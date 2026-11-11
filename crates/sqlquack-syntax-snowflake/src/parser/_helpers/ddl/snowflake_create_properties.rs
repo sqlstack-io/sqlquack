@@ -28,6 +28,9 @@ impl Parser {
         if let Some(table) = self.parse_snowflake_create_event_table(or_replace, or_alter)? {
             return Ok(Some(table));
         }
+        if let Some(stream) = self.parse_snowflake_create_stream(or_replace, or_alter)? {
+            return Ok(Some(stream));
+        }
         if self.check_text_seq(&["SEMANTIC", "VIEW"]) {
             self.check_snowflake_semantic_view()?;
         }

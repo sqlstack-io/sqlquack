@@ -28,12 +28,17 @@ pub(crate) enum CloneOptions {
 impl Parser {
     /// A clone's `{ AT | BEFORE } ( { TIMESTAMP | OFFSET | STATEMENT } => <expr> )`, if present.
     pub(crate) fn parse_clone_time_travel(&mut self) -> Result<Option<Expression>> {
+        self.parse_time_travel(&[&["TIMESTAMP"], &["OFFSET"], &["STATEMENT"]])
+    }
+
+    /// `{ AT | BEFORE } ( <kind> => <expr> )` for one of `kinds`, if present.
+    pub(crate) fn parse_time_travel(&mut self, kinds: &[&[&str]]) -> Result<Option<Expression>> {
         if !self.check_identifier("AT") && !self.check(TokenType::Before) {
             return Ok(None);
         }
         let this = self.advance_text()?.to_ascii_uppercase();
         self.expect_token(TokenType::LParen)?;
-        let kind = self.expect_alter_words(&[&["TIMESTAMP"], &["OFFSET"], &["STATEMENT"]])?;
+        let kind = self.expect_alter_words(kinds)?;
         self.expect_token(TokenType::FArrow)?;
         let expression = self.parse_expression()?;
         self.expect_token(TokenType::RParen)?;
