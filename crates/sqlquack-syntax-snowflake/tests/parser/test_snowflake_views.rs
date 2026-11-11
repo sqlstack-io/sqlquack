@@ -45,8 +45,38 @@ fn given_snowflake_streams_when_parsing_then_their_grammar_is_checked() {
             expected_kind: None,
         },
         SnowflakeVerdictTestCase {
-            description: "INSERT_ONLY belongs to external tables only",
-            sql: "CREATE STREAM v1 ON TABLE v1 INSERT_ONLY = TRUE ;",
+            description: "an option on a source that cannot use it parses (recorded errno 2002)",
+            sql: "CREATE STREAM changes ON STAGE order_files APPEND_ONLY = TRUE",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a quoted option name parses (recorded errno 1420)",
+            sql: "CREATE STREAM changes ON TABLE orders \"APPEND_ONLY\" = TRUE",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a stage stream reading from an offset (recorded errno 91145)",
+            sql: "CREATE STREAM changes ON STAGE files AT (OFFSET => -17)",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a version as the time travel point (recorded errno 2003)",
+            sql: "CREATE STREAM changes ON TABLE orders AT (VERSION => 17)",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a number as a tag value (recorded errno 1008)",
+            sql: "CREATE STREAM changes TAG (area = 17) ON TABLE orders",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "CREATE OR ALTER STREAM with tags (recorded errno 2003)",
+            sql: "CREATE OR ALTER STREAM changes TAG (area = 'west') ON TABLE orders",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "CREATE OR ALTER STREAM never copies grants (recorded errno 1003)",
+            sql: "CREATE OR ALTER STREAM changes COPY GRANTS ON TABLE orders",
             expected_kind: None,
         },
         SnowflakeVerdictTestCase {
