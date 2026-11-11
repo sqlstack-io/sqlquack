@@ -19,7 +19,7 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             sql: "SELECT * FROM #t JOIN ##g ON #t.id = ##g.id",
             line_width: None,
             dialect: FormatDialect::SqlServer,
-            expected_outcome: Ok("SELECT *\nFROM #t\nJOIN ##g\n  ON #t.id = ##g.id"),
+            expected_outcome: Ok("SELECT *\nFROM #t\nJOIN ##g ON #t.id = ##g.id"),
         },
         test_types::FormatSqlTestCase {
             description: "a SQL Server N prefix stays on its string, and a spaced N stays a column with an alias",
@@ -234,7 +234,7 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             line_width: None,
             dialect: FormatDialect::SqlServer,
             expected_outcome: Ok(
-                "SELECT UPPER(a)\nFROM f(1) AS x, g(2) AS y\nJOIN h(3) AS z\n  ON 1 = 1",
+                "SELECT UPPER(a)\nFROM f(1) AS x, g(2) AS y\nJOIN h(3) AS z ON 1 = 1",
             ),
         },
         test_types::FormatSqlTestCase {
@@ -365,9 +365,7 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             sql: "select x from a hash left outer hash join b on b.id = hash.id",
             line_width: None,
             dialect: FormatDialect::SqlServer,
-            expected_outcome: Ok(
-                "SELECT x\nFROM a hash\nLEFT OUTER hash JOIN b\n  ON b.id = hash.id",
-            ),
+            expected_outcome: Ok("SELECT x\nFROM a hash\nLEFT OUTER hash JOIN b ON b.id = hash.id"),
         },
         test_types::FormatSqlTestCase {
             description: "table hints stay with their table, an index or a FORCESEEK's columns in their own parentheses",
@@ -375,7 +373,7 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             line_width: None,
             dialect: FormatDialect::SqlServer,
             expected_outcome: Ok(
-                "SELECT a\nFROM t WITH (nolock, FORCESEEK(ix_t(a, b)))\nJOIN u WITH (INDEX = 2, spatial_window_max_cells = 512)\n  ON 1 = 1",
+                "SELECT a\nFROM t WITH (nolock, FORCESEEK(ix_t(a, b)))\nJOIN u WITH (INDEX = 2, spatial_window_max_cells = 512) ON 1 = 1",
             ),
         },
         test_types::FormatSqlTestCase {

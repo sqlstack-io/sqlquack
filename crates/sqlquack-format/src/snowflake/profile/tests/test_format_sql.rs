@@ -58,7 +58,7 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             sql: "select a from t join u on t.id=u.id",
             line_width: None,
             dialect: FormatDialect::Snowflake,
-            expected_outcome: Ok("SELECT a\nFROM t\nJOIN u\n  ON t.id = u.id"),
+            expected_outcome: Ok("SELECT a\nFROM t\nJOIN u ON t.id = u.id"),
         },
         test_types::FormatSqlTestCase {
             description: "two-character comparisons stay whole",
@@ -183,9 +183,7 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             sql: "SELECT * FROM t PIVOT (SUM(v) FOR k IN (1+1, 2-1)) ORDER BY 1",
             line_width: None,
             dialect: FormatDialect::Snowflake,
-            expected_outcome: Ok(
-                "SELECT *\nFROM t PIVOT(SUM(v) FOR k IN (1+1, 2-1))\nORDER BY\n  1",
-            ),
+            expected_outcome: Ok("SELECT *\nFROM t PIVOT(SUM(v) FOR k IN (1+1, 2-1))\nORDER BY 1"),
         },
         test_types::FormatSqlTestCase {
             description: "PIVOT IN concatenations keep their spacing",
@@ -193,7 +191,7 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             line_width: None,
             dialect: FormatDialect::Snowflake,
             expected_outcome: Ok(
-                "SELECT *\nFROM t PIVOT(SUM(v) FOR k IN ('a'||'b', 'c'))\nORDER BY\n  1",
+                "SELECT *\nFROM t PIVOT(SUM(v) FOR k IN ('a'||'b', 'c'))\nORDER BY 1",
             ),
         },
         test_types::FormatSqlTestCase {
@@ -201,7 +199,7 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             sql: "SELECT * FROM t PIVOT (SUM(v) FOR k IN (- 1, 2)) ORDER BY 1",
             line_width: None,
             dialect: FormatDialect::Snowflake,
-            expected_outcome: Ok("SELECT *\nFROM t PIVOT(SUM(v) FOR k IN (- 1, 2))\nORDER BY\n  1"),
+            expected_outcome: Ok("SELECT *\nFROM t PIVOT(SUM(v) FOR k IN (- 1, 2))\nORDER BY 1"),
         },
         test_types::FormatSqlTestCase {
             description: "select items without an alias keep their text, which names their column",
