@@ -36,6 +36,8 @@ pub(crate) const DUCKDB_INTEGER_SPELLINGS: [(u16, bool, &str); 10] = [
     (64, true, "UBIGINT"),
     (128, true, "UHUGEINT"),
 ];
+/// The type of a JSON value: a cast to JSON or what to_json returns.
+pub(crate) const DUCKDB_JSON_TYPE: &str = "JSON";
 /// Semi-structured DuckDB types CONCAT does not read as text.
 pub(crate) const DUCKDB_JSON_TYPES: [&str; 2] = ["JSON", "JSONB"];
 /// DuckDB's Julian day date part, a DOUBLE.

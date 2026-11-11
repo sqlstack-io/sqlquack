@@ -11,8 +11,8 @@ use crate::duckdb::profile::_helpers::duck_types::{
 };
 use crate::duckdb::profile::constants::{
     DUCKDB_BIGINT_BITS, DUCKDB_DECIMAL_LIMIT, DUCKDB_EPOCH_PART, DUCKDB_INTEGER_BITS,
-    DUCKDB_JSON_TYPES, DUCKDB_JULIAN_PART, DUCKDB_SMALL_DECIMAL, DUCKDB_WIDEST_INTEGER,
-    ONE_ARGUMENT, TWO_ARGUMENTS,
+    DUCKDB_JSON_TYPE, DUCKDB_JSON_TYPES, DUCKDB_JULIAN_PART, DUCKDB_SMALL_DECIMAL,
+    DUCKDB_WIDEST_INTEGER, ONE_ARGUMENT, TWO_ARGUMENTS,
 };
 use crate::lineage::models::Lineage;
 
@@ -112,6 +112,16 @@ pub(crate) fn duckdb_type(
     let operands = Operands { parts };
     if let Some(same) = passed_through(expression, &operands) {
         return Some(same);
+    }
+    let to_json: bool = match expression {
+        Expression::ToJson(_) => true,
+        Expression::Function(function) => {
+            !function.quoted && function.name.eq_ignore_ascii_case("to_json")
+        }
+        _ => false,
+    };
+    if to_json {
+        return Some(Some(Rc::from(DUCKDB_JSON_TYPE)));
     }
     let owned: Owned = operator_type(expression, &operands)
         .or_else(|| aggregate_type(expression, &operands))
@@ -290,6 +300,15 @@ fn scalar_type(expression: &Expression, operands: &Operands<'_, '_>) -> Owned {
         Expression::Uuid(_) => Some(Some(DuckType::Uuid)),
         Expression::Extract(function) => Some(extracted_type(&function.field)),
         Expression::Interval(_) => Some(Some(DuckType::Interval)),
+        Expression::AtTimeZone(function) => Some(zoned_type(operands.typed(&function.this))),
+        _ => None,
+    }
+}
+
+/// AT TIME ZONE's type: a TIMESTAMP gains the zone, a TIMESTAMPTZ loses it; others unknown.
+fn zoned_type(value: Option<DuckType>) -> Option<DuckType> {
+    match value? {
+        DuckType::Timestamp(zone) => Some(DuckType::Timestamp(!zone)),
         _ => None,
     }
 }
@@ -356,6 +375,11 @@ fn named_type(name: &str, arguments: &[Expression], operands: &Operands<'_, '_>)
         "CURRENT_TIME" => Some(Some(DuckType::Time(true))),
         "LOCALTIME" => Some(Some(DuckType::Time(false))),
         "LOCALTIMESTAMP" => Some(Some(DuckType::Timestamp(false))),
+        "TO_TIMESTAMP" if arguments.len() == ONE_ARGUMENT => Some(Some(DuckType::Timestamp(true))),
+        "TO_TIMESTAMP" => Some(None),
+        "TIMEZONE" if arguments.len() == TWO_ARGUMENTS => {
+            Some(zoned_type(operands.typed(&arguments[1])))
+        }
         "CURRENT_DATE" | "TODAY" => Some(Some(DuckType::Date)),
         "USER" | "CURRENT_USER" | "SESSION_USER" | "CURRENT_ROLE" | "CURRENT_SCHEMA"
         | "CURRENT_CATALOG" | "CURRENT_DATABASE"
