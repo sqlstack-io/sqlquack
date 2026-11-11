@@ -8,6 +8,8 @@ mod test_fixes;
 mod test_located;
 #[path = "parser/test_lossless.rs"]
 mod test_lossless;
+#[path = "parser/test_parse_errors.rs"]
+mod test_parse_errors;
 #[path = "parser/test_scripting.rs"]
 mod test_scripting;
 #[path = "parser/test_snowflake_alter.rs"]
