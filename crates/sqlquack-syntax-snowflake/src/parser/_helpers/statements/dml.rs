@@ -344,6 +344,9 @@ impl Parser {
             )? {
                 return Ok(create);
             }
+            if let Some(view) = self.parse_snowflake_create_view(or_replace, or_alter)? {
+                return Ok(view);
+            }
         }
 
         let hana_modifier: Option<String> = None;
