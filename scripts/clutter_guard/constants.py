@@ -24,6 +24,7 @@ CLUTTER_CLASSES: tuple[str, ...] = (
 TOP_LEVEL_ENTRIES: frozenset[str] = frozenset(
     {
         ".cargo",
+        ".gitattributes",
         ".github",
         ".gitignore",
         ".release-please-manifest.json",
