@@ -29,7 +29,7 @@ SQL that runs on two engines doesn't always return the same answer. NULLs, decim
 
 SQLQuack checks its conversion rules against real results from the source warehouse. It handles those differences deliberately and gives you precise diagnostics when it can't convert a query - not plausible-looking SQL and crossed fingers.
 
-SQLQuack's parser started as a fork of [Polyglot](https://github.com/tobilg/polyglot), which is itself a Rust port of [SQLGlot](https://github.com/tobymao/sqlglot). The translation to DuckDB, the typing and the recorded evidence behind them are SQLQuack's own.
+SQLQuack's parser started as a fork of [Polyglot](https://github.com/tobilg/polyglot), a Rust SQL transpiler inspired by [SQLGlot](https://github.com/tobymao/sqlglot). The translation to DuckDB, the typing and the recorded evidence behind them are SQLQuack's own.
 
 - **Check early.** Catch invalid SQL before it reaches the warehouse.
 - **Test locally.** Convert queries to DuckDB SQL for tests against small fixtures.
@@ -100,7 +100,7 @@ Recording needs the dialect's engine: DuckDB and SQLite record locally, while Sn
 SQLQuack wouldn't exist without two projects:
 
 - **[Polyglot](https://github.com/tobilg/polyglot)** by Tobias ([@tobilg](https://github.com/tobilg)). SQLQuack's tokenizer, parser and syntax tree are a modified fork of Polyglot's, and much of that code is still his. Tobias also fixed many issues I reported while building SQLBuild on Polyglot.
-- **[SQLGlot](https://github.com/tobymao/sqlglot)** by Toby Mao and contributors. Polyglot is based on SQLGlot's design, and so is SQLQuack's parser.
+- **[SQLGlot](https://github.com/tobymao/sqlglot)** by Toby Mao and contributors, for years of work on SQL transpilation that this space builds on.
 
 Both are MIT licensed. Their licence texts are in [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES) and ship with every release.
 

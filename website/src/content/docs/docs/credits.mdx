@@ -9,10 +9,9 @@ SQLQuack wouldn't exist without two projects:
   ([@tobilg](https://github.com/tobilg)). SQLQuack's tokenizer, parser and syntax tree are a
   modified fork of Polyglot's, and much of that code is still his. Its semantic checks and its
   rule for widening mixed signed and unsigned integers are also ported from Polyglot.
-- **[SQLGlot](https://github.com/tobymao/sqlglot)** by Toby Mao and contributors. Polyglot is a
-  Rust port of SQLGlot and is based on its design, and so is SQLQuack's parser. SQLQuack also uses
-  the Snowflake SQL of SQLGlot's test suite as case inputs, with the expected answers recorded from
-  Snowflake itself.
+- **[SQLGlot](https://github.com/tobymao/sqlglot)** by Toby Mao and contributors, for years of
+  work on SQL transpilation that this space builds on. SQLQuack also uses the Snowflake SQL of
+  SQLGlot's test suite as case inputs, with the expected answers recorded from Snowflake itself.
 
 The translation to DuckDB, the typing and the recorded evidence behind them are SQLQuack's own.
 SQLQuack goes a different way from both projects on translation. It doesn't rewrite the tree and
