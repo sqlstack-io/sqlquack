@@ -103,6 +103,24 @@ impl Parser {
             self.parse_object_name()?;
             return Ok(None);
         }
+        if !iceberg && self.check_text_seq(&["DROP", "PARTITION", "BY"]) {
+            return Err(self.parse_error("DROP PARTITION BY is an action of ALTER ICEBERG TABLE"));
+        }
+        let renames_unnamed = self.check(TokenType::Rename)
+            && !matches!(
+                self.peek_nth(1).map(|token| token.token_type),
+                Some(TokenType::Column | TokenType::Constraint | TokenType::To)
+            );
+        if iceberg && renames_unnamed {
+            return Err(self.parse_error("Expected COLUMN or TO after RENAME"));
+        }
+        let modifies_function = self.check_text_seq(&["MODIFY", "DATA", "FUNCTION"])
+            || self.check_text_seq(&["MODIFY", "DATA", "METRIC"])
+                && !self.check_text_seq(&["MODIFY", "DATA", "METRIC", "FUNCTION"])
+            || self.check_text_seq(&["MODIFY", "METRIC", "FUNCTION"]);
+        if modifies_function {
+            return Err(self.parse_error("Expected MODIFY DATA METRIC FUNCTION"));
+        }
         if !iceberg && self.check_identifier("OPTIMIZE") {
             return Err(self.parse_error("OPTIMIZE is an action of ALTER ICEBERG TABLE"));
         }
