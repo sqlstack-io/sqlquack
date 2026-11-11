@@ -47,6 +47,15 @@ fn byte_ranges(sql: Option<&str>, spans: Vec<Option<Span>>) -> Vec<Option<Range<
     let Some(sql) = sql else {
         return vec![None; spans.len()];
     };
+    if sql.is_ascii() {
+        return spans
+            .into_iter()
+            .map(|span| {
+                let span = span?;
+                (span.start < span.end && span.end <= sql.len()).then_some(span.start..span.end)
+            })
+            .collect();
+    }
     let mut offsets: Vec<usize> = spans
         .iter()
         .flatten()
