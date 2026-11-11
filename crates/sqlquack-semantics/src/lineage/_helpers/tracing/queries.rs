@@ -194,7 +194,24 @@ fn set_operation(
         SetSides::ByName => by_name(left, right, context),
         SetSides::Intersect => positional(vec![left, right], context),
     };
-    ResolvedQuery { rows, ..query }
+    ResolvedQuery {
+        rows,
+        columns: without_expressions(query.columns),
+        ..query
+    }
+}
+
+/// `columns` without the projection items that defined them, as a set operation's outputs.
+fn without_expressions(columns: Rc<Vec<ScopedColumn>>) -> Rc<Vec<ScopedColumn>> {
+    Rc::new(
+        Rc::unwrap_or_clone(columns)
+            .into_iter()
+            .map(|column| ScopedColumn {
+                expression: None,
+                ..column
+            })
+            .collect(),
+    )
 }
 
 /// EXCEPT's columns: values and rows from the left, each typed as both branches combine.
@@ -289,7 +306,6 @@ fn by_name(
                 let column: &mut ScopedColumn = &mut columns[position];
                 column.lineage =
                     set_merged(vec![column.lineage.clone(), other.lineage], context.profile);
-                column.expression = None;
                 matched[position] = true;
             }
             None => {

@@ -634,6 +634,22 @@ fn given_a_query_when_tracing_lineage_then_each_output_points_at_the_bytes_that_
             schema: shop_schema,
             expected_ranges: &[("id", None), ("kind", None)],
         },
+        OutputRangeTestCase {
+            description: "EXCEPT outputs have no single range, though their values come from the left",
+            sql: "SELECT amount AS a FROM orders EXCEPT SELECT amount FROM orders",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            schema: shop_schema,
+            expected_ranges: &[("a", None)],
+        },
+        OutputRangeTestCase {
+            description: "BY NAME outputs have no range, including columns only one branch has",
+            sql: "SELECT id, status FROM orders UNION ALL BY NAME SELECT id, amount FROM orders",
+            dialect: Dialect::DuckDB,
+            profile: &DUCKDB,
+            schema: duckdb_shop_schema,
+            expected_ranges: &[("id", None), ("status", None), ("amount", None)],
+        },
     ];
     for test_case in test_cases {
         let schema = (test_case.schema)();
