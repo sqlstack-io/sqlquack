@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.5.1](https://github.com/sqlstack-io/sqlquack/compare/v0.5.0...v0.5.1) (2026-11-11)
+
+
+### Bug Fixes
+
+* **lint:** stop panicking on a query that ends in FROM ([4ae2e6a](https://github.com/sqlstack-io/sqlquack/commit/4ae2e6a2b8c21059251be6802f53f7f3cb489b29))
+* **semantics:** accept LAG and LEAD with one or two arguments in DuckDB ([6ba17ca](https://github.com/sqlstack-io/sqlquack/commit/6ba17cab252488aa3543e1a9c334d961b5db7624))
+* **semantics:** leave a DuckDB TIMESTAMP(p) cast untyped unless p is 6 ([4f7b865](https://github.com/sqlstack-io/sqlquack/commit/4f7b865ef3211ce2e620a06d191f8c844ae34ac2))
+* **semantics:** let a derived table inside a LATERAL subquery read enclosing items ([f9bcb57](https://github.com/sqlstack-io/sqlquack/commit/f9bcb5750fa6541344820b52d0dd0ecbdca8ac74))
+* **semantics:** let a FROM item read only the items before it ([aad9f8f](https://github.com/sqlstack-io/sqlquack/commit/aad9f8fb5ea6b15b30059f381786fda04f634465))
+* **semantics:** stop reading a lambda parameter as an ungrouped column ([226a3a8](https://github.com/sqlstack-io/sqlquack/commit/226a3a839637b68a3080dd6edf4f756e5a742d5d))
+* **semantics:** type DuckDB JSON casts, to_json, AT TIME ZONE and TO_TIMESTAMP ([e509581](https://github.com/sqlstack-io/sqlquack/commit/e509581f562c88a8d6c53830979dce9301fd45fe))
+
 ## [0.5.0](https://github.com/sqlstack-io/sqlquack/compare/v0.4.1...v0.5.0) (2026-11-10)
 
 
