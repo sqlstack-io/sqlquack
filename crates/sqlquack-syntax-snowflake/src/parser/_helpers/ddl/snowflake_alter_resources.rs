@@ -184,6 +184,7 @@ fn resource_actions(kind: &str) -> &'static [&'static [&'static str]] {
             &["DROP", "CLUSTERING", "KEY"],
             &["SUSPEND", "RECLUSTER"],
             &["RESUME", "RECLUSTER"],
+            &["RECLUSTER"],
             &["SUSPEND"],
             &["RESUME"],
             &["RENAME", "TO"],
@@ -290,7 +291,7 @@ impl Parser {
     }
 
     /// Parse the operands and properties of `action` on `kind`, extending `action` with its later keywords.
-    fn parse_resource_action(
+    pub(super) fn parse_resource_action(
         &mut self,
         kind: &str,
         action: String,
@@ -301,6 +302,15 @@ impl Parser {
                 self.skip();
                 let mut properties = vec![property("SECURE", None, None)];
                 properties.extend(self.parse_resource_properties()?);
+                (vec![], properties)
+            }
+            ("VIEW", "SET") if self.check_identifier("SECURE") => {
+                self.skip();
+                let mut properties = vec![property("SECURE", None, None)];
+                properties.extend(self.parse_resource_properties()?);
+                if properties.iter().any(|item| item.name.is_some()) {
+                    return Err(self.parse_error("A SET of TAG or CONTACT pairs sets nothing else"));
+                }
                 (vec![], properties)
             }
             ("DATASET", "DROP VERSION") | (_, "REMOVE STORAGE_LOCATION") => {
