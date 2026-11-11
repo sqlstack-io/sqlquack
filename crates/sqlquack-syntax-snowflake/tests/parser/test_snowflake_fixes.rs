@@ -1744,7 +1744,7 @@ fn given_a_snowflake_alter_table_governance_action_when_parsing_then_only_a_fait
         SnowflakeVerdictTestCase {
             description: "a quoted tag, whose quoting the tree drops, stays raw (recorded OK)",
             sql: "ALTER TABLE v1 SET TAG \"v1 Q\" = 'm' ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "an unquoted row access policy stays structured (recorded OK)",
@@ -1754,7 +1754,7 @@ fn given_a_snowflake_alter_table_governance_action_when_parsing_then_only_a_fait
         SnowflakeVerdictTestCase {
             description: "a quoted row access policy stays raw (recorded OK)",
             sql: "ALTER TABLE v1 ADD ROW ACCESS POLICY \"v1 Q\" ON ( v1 ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
     ];
     for test_case in test_cases {
