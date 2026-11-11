@@ -53,13 +53,14 @@ impl Parser {
             self.parse_alter_modify_action()
         } else if self.match_identifier("CHANGE") {
             self.parse_alter_change_action()
-        } else if self.match_token(TokenType::Constraint) {
+        } else if !self.is_snowflake() && self.match_token(TokenType::Constraint) {
             let name = Some(self.expect_identifier_with_quoted()?);
             let constraint = self.parse_constraint_definition(name)?;
             Ok(AlterTableAction::AddConstraint(constraint))
-        } else if self.check(TokenType::PrimaryKey)
-            || self.check(TokenType::ForeignKey)
-            || self.check(TokenType::Unique)
+        } else if !self.is_snowflake()
+            && (self.check(TokenType::PrimaryKey)
+                || self.check(TokenType::ForeignKey)
+                || self.check(TokenType::Unique))
         {
             let constraint = self.parse_table_constraint()?;
             Ok(AlterTableAction::AddConstraint(constraint))
@@ -854,7 +855,9 @@ impl Parser {
                 sql: self.join_command_tokens(tokens),
             });
         }
-        if self.match_token(TokenType::Constraint) {
+        if let Some(action) = self.parse_snowflake_added_constraint()? {
+            Ok(action)
+        } else if self.match_token(TokenType::Constraint) {
             let name = Some(self.expect_identifier_with_quoted()?);
             let constraint = self.parse_constraint_definition(name)?;
             Ok(AlterTableAction::AddConstraint(constraint))
@@ -966,7 +969,7 @@ impl Parser {
                 location,
             })
         } else {
-            let col_def = self.parse_column_def()?;
+            let col_def = self.parse_added_column_def()?;
             Ok(AlterTableAction::AddColumn {
                 column: col_def,
                 if_not_exists: true,
@@ -1015,7 +1018,7 @@ impl Parser {
     fn parse_alter_add_column(&mut self) -> Result<AlterTableAction> {
         let has_column_keyword = self.match_token(TokenType::Column);
 
-        if !has_column_keyword && self.check(TokenType::LParen) {
+        if !has_column_keyword && !self.is_snowflake() && self.check(TokenType::LParen) {
             self.skip();
             let mut columns: Vec<ColumnDef> = Vec::new();
             loop {
@@ -1033,7 +1036,7 @@ impl Parser {
         } else {
             let if_not_exists =
                 self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
-            let col_def = self.parse_column_def()?;
+            let col_def = self.parse_added_column_def()?;
             let position = if self.match_token(TokenType::First) {
                 Some(ColumnPosition::First)
             } else if self.match_token(TokenType::After) {

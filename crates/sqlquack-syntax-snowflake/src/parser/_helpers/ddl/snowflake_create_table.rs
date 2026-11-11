@@ -1,12 +1,12 @@
 //! Parser ddl: a Snowflake CREATE TABLE the table model cannot hold, such as one with column or table policies, checked against its grammar.
 
 use crate::parser::_helpers::ddl::snowflake_alter::property;
-use crate::parser::_helpers::ddl::snowflake_external_table::policy_property;
+use crate::parser::_helpers::ddl::snowflake_external_table::{lacks_property, policy_property};
 use crate::parser::constants::{
-    SNOWFLAKE_DYNAMIC_TABLE_KEYS, SNOWFLAKE_DYNAMIC_TABLE_REQUIRED, SNOWFLAKE_ICEBERG_TABLE_KEYS,
-    SNOWFLAKE_TABLE_PROPERTY_KEYS,
+    COMMENT, PARTITION_BY, SNOWFLAKE_DYNAMIC_TABLE_KEYS, SNOWFLAKE_DYNAMIC_TABLE_REQUIRED,
+    SNOWFLAKE_ICEBERG_TABLE_KEYS, SNOWFLAKE_TABLE_PROPERTY_KEYS,
 };
-use crate::parser::models::Parser;
+use crate::parser::models::{Constraint, Parser};
 use sqlquack_syntax::expressions::columns::models::{
     ColumnConstraint, ColumnDef, ComputedColumn, ForeignKeyRef, MaskingPolicyColumnConstraint,
 };
@@ -48,15 +48,6 @@ impl SnowflakeTableKind {
         };
         SNOWFLAKE_TABLE_PROPERTY_KEYS.contains(&key) || own.contains(&key)
     }
-}
-
-/// One constraint: its keywords, its name, the columns it covers or its CHECK condition, what it references, and its property words.
-struct Constraint {
-    kind: &'static str,
-    name: Option<Identifier>,
-    operand: Option<Expression>,
-    references: Option<(Expression, Option<Expression>)>,
-    properties: Vec<String>,
 }
 
 impl Parser {
@@ -187,15 +178,8 @@ impl Parser {
         {
             properties.extend(self.parse_checked_table_property(kind)?);
         }
-        if dynamic {
-            let missing = SNOWFLAKE_DYNAMIC_TABLE_REQUIRED.iter().any(|required| {
-                !properties
-                    .iter()
-                    .any(|property| property.name.is_none() && property.kind == *required)
-            });
-            if missing {
-                return Err(self.parse_error("Expected TARGET_LAG and WAREHOUSE"));
-            }
+        if dynamic && lacks_property(&properties, SNOWFLAKE_DYNAMIC_TABLE_REQUIRED) {
+            return Err(self.parse_error("Expected TARGET_LAG and WAREHOUSE"));
         }
         let refresh = dynamic && self.match_text_seq(&["REFRESH", "USING"]);
         if refresh {
@@ -219,7 +203,7 @@ impl Parser {
         let iceberg = kind == SnowflakeTableKind::Iceberg;
         let partitioned = properties
             .iter()
-            .any(|property| property.kind == "PARTITION BY");
+            .any(|property| property.kind == PARTITION_BY);
         if iceberg && partitioned && !columns {
             return Err(self.parse_error("PARTITION BY needs the table's columns"));
         }
@@ -305,22 +289,22 @@ impl Parser {
             && !self.check(TokenType::Semicolon)
             && !self.is_at_end()
         {
-            self.parse_checked_column_option(&mut column)?;
+            column = self.parse_checked_column_option(column)?;
         }
         Ok(column)
     }
 
     /// One column option on `column`, including an inline constraint.
-    fn parse_checked_column_option(&mut self, column: &mut ColumnDef) -> Result<()> {
+    fn parse_checked_column_option(&mut self, mut column: ColumnDef) -> Result<ColumnDef> {
         if self.match_keywords(&[TokenType::Not, TokenType::Null]) {
             column.nullable = Some(false);
             column.constraint_order.push(ConstraintType::NotNull);
-            return Ok(());
+            return Ok(column);
         }
         if self.match_token(TokenType::Null) {
             column.nullable = Some(true);
             column.constraint_order.push(ConstraintType::Null);
-            return Ok(());
+            return Ok(column);
         }
         let constraint = self.check(TokenType::Constraint)
             || self.check(TokenType::Unique)
@@ -330,8 +314,7 @@ impl Parser {
             || self.check(TokenType::Check);
         if constraint {
             let constraint = self.parse_checked_constraint(true)?;
-            add_inline_constraint(column, constraint);
-            return Ok(());
+            return add_inline_constraint(column, constraint);
         }
         if self.match_token(TokenType::Collate) {
             let collation = self.expect_token(TokenType::String)?.text.to_string();
@@ -339,17 +322,17 @@ impl Parser {
                 .constraints
                 .push(ColumnConstraint::Collate(Identifier::new(collation)));
             column.constraint_order.push(ConstraintType::Collate);
-            return Ok(());
+            return Ok(column);
         }
         if self.match_token(TokenType::Comment) {
             column.comment = Some(self.expect_token(TokenType::String)?.text.to_string());
             column.constraint_order.push(ConstraintType::Comment);
-            return Ok(());
+            return Ok(column);
         }
         if self.match_token(TokenType::Default) {
             column.default = Some(self.parse_unary()?);
             column.constraint_order.push(ConstraintType::Default);
-            return Ok(());
+            return Ok(column);
         }
         if self.match_token(TokenType::AutoIncrement) || self.match_text_seq(&["IDENTITY"]) {
             column.auto_increment = true;
@@ -378,7 +361,7 @@ impl Parser {
                     data_type: None,
                 }));
             column.constraint_order.push(ConstraintType::ComputedColumn);
-            return Ok(());
+            return Ok(column);
         }
         self.match_token(TokenType::With);
         if self.match_text_seq(&["MASKING", "POLICY"]) {
@@ -395,7 +378,7 @@ impl Parser {
                         expressions,
                     },
                 )));
-            return Ok(());
+            return Ok(column);
         }
         if self.match_text_seq(&["PROJECTION", "POLICY"]) {
             let policy = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
@@ -407,7 +390,7 @@ impl Parser {
                     })),
                     policy,
                 ))));
-            return Ok(());
+            return Ok(column);
         }
         if self.match_text_seq(&["TAG"]) {
             let expressions = self.parse_iceberg_tags()?;
@@ -415,13 +398,13 @@ impl Parser {
                 .constraints
                 .push(ColumnConstraint::Tags(Tags { expressions }));
             column.constraint_order.push(ConstraintType::Tags);
-            return Ok(());
+            return Ok(column);
         }
         Err(self.parse_error("Expected a column option"))
     }
 
     /// `[ ( <start> , <step> ) | START <start> INCREMENT <step> ] [ ORDER | NOORDER ]` on `column`.
-    fn parse_checked_identity_options(&mut self, column: &mut ColumnDef) -> Result<()> {
+    fn parse_checked_identity_options(&mut self, mut column: ColumnDef) -> Result<ColumnDef> {
         if self.match_token(TokenType::LParen) {
             column.auto_increment_start = Some(Box::new(self.parse_checked_identity_number()?));
             self.expect_token(TokenType::Comma)?;
@@ -439,7 +422,7 @@ impl Parser {
         } else if self.match_text_seq(&["NOORDER"]) {
             column.auto_increment_order = Some(false);
         }
-        Ok(())
+        Ok(column)
     }
 
     /// A number, possibly negative.
@@ -458,7 +441,7 @@ impl Parser {
     }
 
     /// `[CONSTRAINT <name>]` and a constraint with its properties; `inline` takes no column list.
-    fn parse_checked_constraint(&mut self, inline: bool) -> Result<Constraint> {
+    pub(super) fn parse_checked_constraint(&mut self, inline: bool) -> Result<Constraint> {
         let name = match self.match_token(TokenType::Constraint) {
             true => Some(self.parse_external_name()?),
             false => None,
@@ -625,7 +608,7 @@ impl Parser {
         }
         let with = self.match_token(TokenType::With);
         let key = self.peek().text.to_ascii_uppercase();
-        if with && self.check_next(TokenType::Eq) && key == "COMMENT" {
+        if with && self.check_next(TokenType::Eq) && key == COMMENT {
             self.skip();
             self.skip();
             let value = self.parse_iceberg_value()?;
@@ -831,7 +814,7 @@ fn constraint_property(constraint: Constraint) -> ObjectProperty {
 }
 
 /// An inline constraint on `column`, with its property words recorded against it.
-fn add_inline_constraint(column: &mut ColumnDef, constraint: Constraint) {
+fn add_inline_constraint(mut column: ColumnDef, constraint: Constraint) -> Result<ColumnDef> {
     let name = constraint.name.map(|name| name.name);
     let kind = match constraint.kind {
         "UNIQUE" => {
@@ -846,30 +829,26 @@ fn add_inline_constraint(column: &mut ColumnDef, constraint: Constraint) {
         }
         "CHECK" => {
             column.check_constraint_name = name;
-            let condition = constraint
-                .operand
-                .expect("a CHECK constraint has a condition");
+            let condition = constraint.operand.ok_or_else(|| {
+                sqlquack_syntax::tokens::errors::Error::internal(
+                    "the parser reached a state its checks rule out",
+                )
+            })?;
             column.constraints.push(ColumnConstraint::Check(condition));
             ConstraintType::Check
         }
         _ => {
-            let (table, columns) = constraint
-                .references
-                .expect("a foreign key references a table");
+            let (table, columns) = constraint.references.ok_or_else(|| {
+                sqlquack_syntax::tokens::errors::Error::internal(
+                    "the parser reached a state its checks rule out",
+                )
+            })?;
             let Expression::Table(table) = table else {
-                unreachable!("a reference names a table");
+                return Err(sqlquack_syntax::tokens::errors::Error::internal(
+                    "the parser reached a state its checks rule out",
+                ));
             };
-            let columns = match columns {
-                Some(Expression::Tuple(tuple)) => tuple
-                    .expressions
-                    .into_iter()
-                    .filter_map(|column| match column {
-                        Expression::Table(table) => Some(table.name),
-                        _ => None,
-                    })
-                    .collect(),
-                _ => Vec::new(),
-            };
+            let columns = tuple_names(columns);
             column
                 .constraints
                 .push(ColumnConstraint::References(Box::new(ForeignKeyRef {
@@ -892,4 +871,20 @@ fn add_inline_constraint(column: &mut ColumnDef, constraint: Constraint) {
     column
         .constraint_properties
         .extend(constraint.properties.into_iter().map(|word| (index, word)));
+    Ok(column)
+}
+
+/// The names in a parsed `( <name> [ , ... ] )`, or none.
+pub(super) fn tuple_names(names: Option<Expression>) -> Vec<Identifier> {
+    match names {
+        Some(Expression::Tuple(tuple)) => tuple
+            .expressions
+            .into_iter()
+            .filter_map(|name| match name {
+                Expression::Table(table) => Some(table.name),
+                _ => None,
+            })
+            .collect(),
+        _ => Vec::new(),
+    }
 }

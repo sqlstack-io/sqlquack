@@ -19,9 +19,9 @@ fn given_snowflake_alter_governance_actions_when_parsing_then_recorded_verdicts_
             expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
-            description: "an added column with a masking policy (recorded OK)",
+            description: "an added column with a masking policy is an added column (recorded OK)",
             sql: "ALTER ICEBERG TABLE v1 ADD v1 INT WITH MASKING POLICY v1 ;",
-            expected_kind: Some("alter_object"),
+            expected_kind: Some("alter_table"),
         },
         SnowflakeVerdictTestCase {
             description: "an aggregation policy with an entity key on a view (recorded OK)",
