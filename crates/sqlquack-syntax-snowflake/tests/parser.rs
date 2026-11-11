@@ -36,5 +36,7 @@ mod test_snowflake_grant;
 mod test_snowflake_recorded;
 #[path = "parser/test_snowflake_tables.rs"]
 mod test_snowflake_tables;
+#[path = "parser/test_snowflake_views.rs"]
+mod test_snowflake_views;
 #[path = "parser/test_types.rs"]
 mod test_types;
