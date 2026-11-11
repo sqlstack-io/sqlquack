@@ -48,6 +48,8 @@ def classify(
         return "syntax_error", "errno 1003 SQL compilation syntax error"
     if errno is not None and compiled:
         return "semantic_error", f"errno {errno} compilation error after parsing"
+    if errno in REVIEWED_SEMANTIC_ERRNOS:
+        return "semantic_error", f"errno {errno} SQLSTATE {sqlstate}, reviewed as semantic"
     return None
 
 

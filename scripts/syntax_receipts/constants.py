@@ -13,7 +13,25 @@ UNCAUGHT_PREFIX: str = "Uncaught exception of type"
 UNSUPPORTED_PREFIX: str = "Unsupported feature"
 RUNTIME_ERRNO_FLOOR: int = 100000
 SYNTAX_OR_ACCESS_SQLSTATE_CLASS: str = "42"
-REVIEWED_SEMANTIC_ERRNOS: frozenset[int] = frozenset({391858, 392002, 506005, 506034, 506035})
+REVIEWED_SEMANTIC_ERRNOS: frozenset[int] = frozenset(
+    {
+        3001,
+        3172,
+        90025,
+        93171,
+        98620,
+        391858,
+        392002,
+        393941,
+        506005,
+        506034,
+        506035,
+        509000,
+        509001,
+        509008,
+        509013,
+    }
+)
 SCRIPTING_SUBMISSION: str = "anonymous block, as-is"
 EXPLAIN_METHOD: str = "EXPLAIN USING TEXT, once"
 CAPTURE_EXECUTE: str = "execute"

@@ -153,6 +153,23 @@ _TIMED_OUT_ROW: dict[str, object] = replaced(
             ),
         ),
         ClassifyTestCase(
+            description="a reviewed errno without the compilation prefix is semantic",
+            errno=90025,
+            sqlstate="02000",
+            message="Dynamic_table V1 did not exist or was purged.",
+            expected_classification=(
+                "semantic_error",
+                "errno 90025 SQLSTATE 02000, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="an unreviewed errno without the compilation prefix is not established",
+            errno=926,
+            sqlstate="42601",
+            message="External table identifier cannot be empty",
+            expected_classification=None,
+        ),
+        ClassifyTestCase(
             description="a syntax error without the compilation prefix is not established",
             errno=1003,
             message="syntax error without the compilation prefix",
