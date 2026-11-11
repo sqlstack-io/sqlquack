@@ -129,6 +129,7 @@ pub(crate) fn empty_scope<'a>(
         non_null: Vec::new(),
         traced: RefCell::default(),
         shared: None,
+        starts: Vec::new(),
     }
 }
 
@@ -499,6 +500,7 @@ fn level_scope_and_rows<'a>(
         sources,
         merged,
         rows,
+        starts,
     } = match outer {
         None => reused_items(std::ptr::from_ref(select) as usize, ctes, || {
             from_sources(select, ctes, None, context)
@@ -508,6 +510,7 @@ fn level_scope_and_rows<'a>(
     let mut scope = LineageScope {
         sources,
         merged,
+        starts,
         ..empty_scope(ctes, outer)
     };
     scope.windows = named_windows(select, &scope, context);

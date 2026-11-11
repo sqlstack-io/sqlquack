@@ -24,6 +24,14 @@ use crate::lineage::tests::test_types::QueryLineageTestCase;
 fn given_a_query_when_tracing_lineage_then_each_output_names_its_sources_and_transform() {
     let test_cases = [
         QueryLineageTestCase {
+            description: "a derived table without LATERAL reads the item before it, as DuckDB runs it",
+            sql: "SELECT k.n FROM orders AS p, (SELECT p.status AS n) AS k",
+            dialect: Dialect::DuckDB,
+            profile: &DUCKDB,
+            expected_outputs: &[("n", TransformKind::Direct, &["orders.status"])],
+            expected_open_star: false,
+        },
+        QueryLineageTestCase {
             description: "DuckDB names a pivoted column by its value's text, without quotes",
             sql: "SELECT * FROM (SELECT customer_id, status, amount FROM orders) PIVOT (SUM(amount) FOR status IN ('open', 'shipped'))",
             dialect: Dialect::DuckDB,

@@ -117,6 +117,10 @@ impl DialectRules for PostgresRules {
         false
     }
 
+    fn derived_tables_read_left_items(&self) -> bool {
+        false
+    }
+
     fn as_of_keeps_unmatched_left(&self) -> bool {
         false
     }
