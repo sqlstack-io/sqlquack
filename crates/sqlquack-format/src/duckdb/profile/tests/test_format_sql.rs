@@ -119,7 +119,7 @@ fn given_constructs_sqlquack_converts_to_when_formatting_then_they_are_laid_out(
             line_width: None,
             dialect: FormatDialect::DuckDB,
             expected_outcome: Ok(
-                "SELECT\n  x IN ((\n    (\n      SELECT 1\n    ) UNION ALL (\n      SELECT 2\n    )\n  ) UNION ALL (\n    SELECT 3\n  ))\nFROM t",
+                "SELECT\n  x IN (\n    (\n      (\n        SELECT 1\n      ) UNION ALL (\n        SELECT 2\n      )\n    ) UNION ALL (\n      SELECT 3\n    )\n  )\nFROM t",
             ),
         },
         test_types::FormatSqlTestCase {
@@ -129,6 +129,15 @@ fn given_constructs_sqlquack_converts_to_when_formatting_then_they_are_laid_out(
             dialect: FormatDialect::DuckDB,
             expected_outcome: Ok(
                 "SELECT\n  SUM(amount) OVER (\n    PARTITION BY customer_id, region\n    ORDER BY ordered_at\n    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW\n  ) AS running,\n  SUM(x) OVER (ORDER BY y) AS s\nFROM orders",
+            ),
+        },
+        test_types::FormatSqlTestCase {
+            description: "nested casts that span lines each open and close on their own lines, and a long operand breaks at `+` before `*`",
+            sql: "select cast(cast((total_amount * 100000000 + adjustment * 100000000) // 6 as decimal(38,0)) * 0.00000001 as decimal(18,8)) as third from t",
+            line_width: Some(50),
+            dialect: FormatDialect::DuckDB,
+            expected_outcome: Ok(
+                "SELECT\n  CAST(\n    CAST(\n      (\n        total_amount * 100000000\n        + adjustment * 100000000\n      )\n      // 6 AS decimal(38, 0)\n    )\n    * 0.00000001 AS decimal(18, 8)\n  ) AS third\nFROM t",
             ),
         },
         test_types::FormatSqlTestCase {
