@@ -122,7 +122,7 @@ impl Parser {
         false
     }
 
-    /// Whether a keyword may be an identifier: structural ones (FROM, WHERE, ...) may not.
+    /// Whether a keyword may be an identifier: structural ones (FROM, WHERE, ...) may not, nor GROUP or ORDER before BY, which start a clause.
     pub(crate) fn is_safe_keyword_as_identifier(&self) -> bool {
         if self.is_at_end() {
             return false;
@@ -156,8 +156,10 @@ impl Parser {
                 | TokenType::Lateral
                 | TokenType::Natural
         );
+        let starts_clause = matches!(token_type, TokenType::Group | TokenType::Order)
+            && self.check_next(TokenType::By);
 
-        self.peek().token_type.is_keyword() && !is_structural
+        self.peek().token_type.is_keyword() && !is_structural && !starts_clause
     }
 
     /// Whether the token here ends the expression, so IS or KEEP is an alias, not an operator.

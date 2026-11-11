@@ -67,6 +67,12 @@ pub(crate) struct ScriptingVerdictTestCase {
     pub(crate) expected_error: Option<&'static str>,
 }
 
+pub(crate) struct ParseErrorTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_error_at: Option<&'static str>,
+}
+
 pub(crate) struct ScriptingDialectTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,
