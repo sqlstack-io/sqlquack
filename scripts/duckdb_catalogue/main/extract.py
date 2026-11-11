@@ -10,8 +10,13 @@ from typing import Any
 
 import duckdb
 
-from scripts.duckdb_catalogue._helpers.engine import load_extensions, special_forms, syntax_forms
-from scripts.duckdb_catalogue.constants import BUILT_IN_FUNCTIONS_QUERY, DATA_DIR
+from scripts.duckdb_catalogue._helpers.engine import (
+    catalogue_rows,
+    load_extensions,
+    special_forms,
+    syntax_forms,
+)
+from scripts.duckdb_catalogue.constants import BUILT_IN_FUNCTIONS_QUERY, DATA_DIR, PROBE_TABLE
 
 
 def run_catalog_extract(argv: list[str] | None = None) -> int:
@@ -23,9 +28,10 @@ def run_catalog_extract(argv: list[str] | None = None) -> int:
         config={"extension_directory": str(options.extension_directory)}
     )
     loaded, unloadable = load_extensions(connection)
-    rows: list[tuple[str, str, int | None, bool]] = connection.execute(
-        BUILT_IN_FUNCTIONS_QUERY
-    ).fetchall()
+    connection.execute(PROBE_TABLE)
+    rows: list[tuple[str, str, int | None, bool]] = catalogue_rows(
+        connection=connection, listed=connection.execute(BUILT_IN_FUNCTIONS_QUERY).fetchall()
+    )
     known: set[str] = {row[0] for row in rows}
     special: list[str] = special_forms(connection=connection, known=known)
     syntax: list[str] = syntax_forms(connection)

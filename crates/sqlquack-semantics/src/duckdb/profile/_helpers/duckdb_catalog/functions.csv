@@ -829,6 +829,8 @@ julian,scalar,1,false
 kahan_sum,aggregate,1,false
 kurtosis,aggregate,1,false
 kurtosis_pop,aggregate,1,false
+lag,window,1,false
+lag,window,2,false
 lag,window,3,false
 lance_fts,table,,false
 lance_hybrid_search,table,,false
@@ -838,6 +840,8 @@ last_day,scalar,1,false
 last_value,window,1,false
 lcase,scalar,1,false
 lcm,scalar,2,false
+lead,window,1,false
+lead,window,2,false
 lead,window,3,false
 least,scalar,1,true
 least_common_multiple,scalar,2,false
