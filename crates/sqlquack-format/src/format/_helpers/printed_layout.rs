@@ -457,14 +457,15 @@ impl PrintedSql<'_> {
 
     /// Start the inside of each parenthesised group that spans lines on its own line and close it on its own line, so a group never opens or closes on the line of another; true when a gap changed.
     pub(crate) fn separate_multiline_groups(&mut self) -> bool {
-        let rows: Vec<usize> = (0..self.len())
-            .filter(|&index| self.is(index, VALUES_KEYWORD))
-            .flat_map(|values| self.values_rows(values))
-            .map(|(opener, _)| opener)
-            .collect();
+        let mut row_opener = vec![false; self.len()];
+        for values in (0..self.len()).filter(|&index| self.is(index, VALUES_KEYWORD)) {
+            for (opener, _) in self.values_rows(values) {
+                row_opener[opener] = true;
+            }
+        }
         let mut changed = false;
-        for opener in 0..self.len() {
-            if self.tokens[opener] != OPEN_PARENTHESIS || rows.contains(&opener) {
+        for (opener, &row) in row_opener.iter().enumerate() {
+            if self.tokens[opener] != OPEN_PARENTHESIS || row {
                 continue;
             }
             let Some(closer) = self.partners[opener] else {
@@ -949,25 +950,26 @@ impl PrintedSql<'_> {
         parameters.then_some(closer)
     }
 
-    /// Apply the outermost applicable break: chains, VALUES rows, bracket groups, then commas.
+    /// Apply the outermost applicable break: chains, VALUES rows, bracket groups, then commas; an operator in a group's only operand takes the group's indentation unless the line starts with another tier's operator, so `+ c` then `* d` cannot read as `(… + c) * d`.
     fn break_line(&mut self, line: &Line) -> bool {
         let values_row = self.tokens[line.first] == OPEN_PARENTHESIS && self.locked[line.first + 1];
-        let operator_indent = if self.sole_operand_of_group(line) {
-            0
-        } else {
-            self.indent
-        };
+        let sole_operand = self.sole_operand_of_group(line);
+        let leading_tier = OPERATOR_TIERS
+            .iter()
+            .position(|operators| operators.contains(&self.upper(line.first).as_str()));
+        let indent = self.indent;
         !values_row
             && (self.break_before(line, &CHAIN_KEYWORDS, 0)
-                || OPERATOR_TIERS
-                    .iter()
-                    .any(|operators| self.break_before(line, operators, operator_indent))
+                || OPERATOR_TIERS.iter().enumerate().any(|(tier, operators)| {
+                    let at_group = sole_operand && leading_tier.is_none_or(|lead| lead == tier);
+                    self.break_before(line, operators, if at_group { 0 } else { indent })
+                })
                 || self.break_values_rows(line)
                 || self.explode_group(line)
                 || self.break_after_commas(line))
     }
 
-    /// Whether `line` starts or continues with an operator the one operand of a parenthesised group whose inside starts on its own line, so an operator broken onto a new line cannot read as the start of another item.
+    /// Whether `line` starts or continues with an operator the one operand of a parenthesised group whose inside starts on its own line, so an operator broken onto a new line cannot read as the start of another item. A subquery's clauses and a window's PARTITION BY are never one operand.
     fn sole_operand_of_group(&self, line: &Line) -> bool {
         let Some(opener) = (0..line.first).rev().find(|&index| {
             self.tokens[index] == OPEN_PARENTHESIS
@@ -978,6 +980,11 @@ impl PrintedSql<'_> {
         let Some(closer) = self.partners[opener] else {
             return false;
         };
+        if self.kinds[opener + 1] == TokenType::Select
+            || (opener > 0 && self.is(opener - 1, WINDOW_KEYWORD))
+        {
+            return false;
+        }
         let inner = self.depths[opener + 1];
         let continues_operand = line.first == opener + 1
             || OPERATOR_TIERS
