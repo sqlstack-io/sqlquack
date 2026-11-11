@@ -281,14 +281,8 @@ impl Parser {
         Ok((columns, constraints, untyped))
     }
 
-    /// Checks `<name> [<type>] [<column option> ...]`, returning whether the type is missing.
-    pub(super) fn check_table_column(&mut self) -> Result<bool> {
-        self.parse_checked_table_column()
-            .map(|column| column.no_type)
-    }
-
     /// `<name> [<type>] [<column option> ...]`; `no_type` marks a missing type.
-    fn parse_checked_table_column(&mut self) -> Result<ColumnDef> {
+    pub(super) fn parse_checked_table_column(&mut self) -> Result<ColumnDef> {
         let name = self.parse_external_name()?;
         let untyped = self.check(TokenType::Comma)
             || self.check(TokenType::RParen)

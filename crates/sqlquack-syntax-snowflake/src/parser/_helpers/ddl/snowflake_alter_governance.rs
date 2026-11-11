@@ -1,10 +1,18 @@
-//! Parser ddl: the tag, contact and policy actions of a Snowflake ALTER TABLE, ICEBERG TABLE, VIEW or MATERIALIZED VIEW, checked against their grammar and kept as written.
+//! Parser ddl: the tag, contact and policy actions of a Snowflake ALTER TABLE, ICEBERG TABLE, VIEW or MATERIALIZED VIEW, checked against their grammar.
 
+use crate::parser::_helpers::ddl::snowflake_alter::{alter_object, property};
+use crate::parser::_helpers::ddl::snowflake_external_table::policy_property;
 use crate::parser::models::Parser;
-use sqlquack_syntax::expressions::statements::models::Raw;
+use sqlquack_syntax::expressions::operators::models::BinaryOp;
+use sqlquack_syntax::expressions::schema_objects::models::ObjectProperty;
+use sqlquack_syntax::expressions::statements::models::Var;
 use sqlquack_syntax::expressions::tree::models::Expression;
+use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
+
+/// One governance action: its keywords, operands and properties.
+type GovernanceAction = (String, Vec<Expression>, Vec<ObjectProperty>);
 
 /// The leading words of the table-level governance actions other than CONTACT and ADD of a column.
 const GOVERNANCE_STARTS: &[&[&str]] = &[
@@ -40,13 +48,12 @@ const COLUMN_GOVERNANCE_STARTS: &[&[&str]] = &[
 const COLUMN_POLICY_WORDS: &[&str] = &["MASKING", "PROJECTION", "TAG"];
 
 impl Parser {
-    /// A Snowflake ALTER whose action sets or unsets a tag, contact or policy, kept as written when its grammar holds; None (position unchanged) for any other ALTER.
+    /// A Snowflake ALTER whose action sets or unsets a tag, contact or policy, when its grammar holds; None (position unchanged) for any other ALTER.
     pub(crate) fn parse_snowflake_alter_governance(
         &mut self,
         iceberg: bool,
     ) -> Result<Option<Expression>> {
         let start = self.current;
-        let alter_start = start - 1 - usize::from(iceberg);
         let materialized = !iceberg && self.match_text_seq(&["MATERIALIZED", "VIEW"]);
         let table = !materialized && self.match_token(TokenType::Table);
         let view = !materialized && !table && !iceberg && self.match_token(TokenType::View);
@@ -54,18 +61,32 @@ impl Parser {
             self.current = start;
             return Ok(None);
         }
+        let head = self.current;
         if self.check_governance_head().is_err()
             || !self.starts_governance_action(table, materialized)
         {
             self.current = start;
             return Ok(None);
         }
-        self.check_governance_action(table, materialized)?;
+        self.current = head;
+        let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
+        let name = self.parse_iceberg_object_name()?;
+        let (action, operands, properties) = self.parse_governance_action(table, materialized)?;
         if !self.is_at_end() && !self.check(TokenType::Semicolon) {
             return Err(self.parse_error("Expected the end of the statement"));
         }
-        let sql = self.tokens_to_sql(alter_start, self.current);
-        Ok(Some(Expression::Raw(Raw { sql })))
+        let kind = match (iceberg, materialized, table) {
+            (true, ..) => "ICEBERG TABLE",
+            (_, true, _) => "MATERIALIZED VIEW",
+            (_, _, true) => "TABLE",
+            _ => "VIEW",
+        };
+        Ok(Some(alter_object(
+            kind,
+            (name, if_exists),
+            action,
+            (operands, properties),
+        )))
     }
 
     /// Checks `[ IF EXISTS ] <name>`.
@@ -125,171 +146,228 @@ impl Parser {
             })
     }
 
-    /// Checks one governance action.
-    fn check_governance_action(&mut self, table: bool, materialized: bool) -> Result<()> {
+    /// One governance action.
+    fn parse_governance_action(
+        &mut self,
+        table: bool,
+        materialized: bool,
+    ) -> Result<GovernanceAction> {
         if materialized {
             return Err(self.parse_error("A materialized view has no contact purposes"));
         }
         if self.match_token(TokenType::Set) {
-            return self.check_governance_set();
+            return Ok(("SET".to_owned(), Vec::new(), self.parse_governance_set()?));
         }
         if self.match_text_seq(&["UNSET"]) {
-            return self.check_governance_unset();
+            return Ok((
+                "UNSET".to_owned(),
+                Vec::new(),
+                self.parse_governance_unset()?,
+            ));
         }
         if self.match_text_seq(&["ADD", "ROW", "ACCESS", "POLICY"]) {
-            return self.check_row_access_addition();
+            let added = self.parse_row_access_addition()?;
+            return Ok(("ADD".to_owned(), Vec::new(), vec![added]));
         }
         if self.match_text_seq(&["DROP", "ALL", "ROW", "ACCESS", "POLICIES"]) {
-            return Ok(());
+            return Ok((
+                "DROP ALL ROW ACCESS POLICIES".to_owned(),
+                Vec::new(),
+                Vec::new(),
+            ));
         }
         if self.match_text_seq(&["DROP", "ROW", "ACCESS", "POLICY"]) {
-            self.check_iceberg_object_name()?;
+            let dropped = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
+            let mut properties: Vec<ObjectProperty> = Vec::new();
             if self.match_token(TokenType::Comma) {
                 if !self.match_text_seq(&["ADD", "ROW", "ACCESS", "POLICY"]) {
                     return Err(self.parse_error("Expected ADD ROW ACCESS POLICY"));
                 }
-                return self.check_row_access_addition();
+                properties.push(self.parse_row_access_addition()?);
             }
-            return Ok(());
+            return Ok((
+                "DROP ROW ACCESS POLICY".to_owned(),
+                vec![dropped],
+                properties,
+            ));
         }
         if table && self.match_text_seq(&["ADD"]) {
-            return self.check_added_columns();
+            return Ok((
+                "ADD COLUMN".to_owned(),
+                self.parse_added_columns()?,
+                Vec::new(),
+            ));
         }
-        if self.match_text_seq(&["ALTER"]) || self.match_text_seq(&["MODIFY"]) {
-            return self.check_column_governance();
+        let modify = self.match_text_seq(&["MODIFY"]);
+        if modify || self.match_text_seq(&["ALTER"]) {
+            let action = match modify {
+                true => "MODIFY COLUMN",
+                false => "ALTER COLUMN",
+            };
+            return Ok((
+                action.to_owned(),
+                Vec::new(),
+                self.parse_column_governance()?,
+            ));
         }
         Err(self.parse_error("Expected a tag, contact or policy action"))
     }
 
-    /// Checks `<name> ON ( [ <column> [ , ... ] ] )`.
-    fn check_row_access_addition(&mut self) -> Result<()> {
-        self.check_iceberg_object_name()?;
+    /// `<name> ON ( [ <column> [ , ... ] ] )` after ADD ROW ACCESS POLICY.
+    fn parse_row_access_addition(&mut self) -> Result<ObjectProperty> {
+        let policy = self.parse_iceberg_object_name()?;
         self.expect_token(TokenType::On)?;
-        self.check_iceberg_name_list(true)
+        let Expression::Tuple(columns) = self.parse_iceberg_name_list(true)? else {
+            unreachable!("a name list is a tuple");
+        };
+        Ok(policy_property(policy, columns.expressions))
     }
 
-    /// Checks what follows SET: tags, a contact, or an aggregation or join policy.
-    fn check_governance_set(&mut self) -> Result<()> {
+    /// What follows SET: tags, a contact, or an aggregation or join policy.
+    fn parse_governance_set(&mut self) -> Result<Vec<ObjectProperty>> {
         if self.match_text_seq(&["TAG"]) {
             if self.match_token(TokenType::Eq) {
-                return self.check_iceberg_value();
+                return Ok(vec![property(
+                    "TAG",
+                    None,
+                    Some(self.parse_iceberg_value()?),
+                )]);
             }
-            return self.check_tag_pairs();
+            return Ok(tag_pairs(self.parse_tag_pairs()?));
         }
         if self.match_text_seq(&["CONTACT"]) {
             if self.match_token(TokenType::Eq) {
-                return self.check_iceberg_value();
+                let value = self.parse_iceberg_value()?;
+                return Ok(vec![property("CONTACT", None, Some(value))]);
             }
+            let mut contacts: Vec<ObjectProperty> = Vec::new();
             loop {
-                self.expect_external_name()?;
+                let purpose = self.parse_external_name()?;
                 self.expect_token(TokenType::Eq)?;
-                self.check_iceberg_object_name()?;
+                let contact = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
+                contacts.push(property("CONTACT", Some(purpose), Some(contact)));
                 if !self.match_token(TokenType::Comma) {
-                    return Ok(());
+                    return Ok(contacts);
                 }
             }
         }
         if self.match_text_seq(&["AGGREGATION", "POLICY"]) {
-            self.check_iceberg_object_name()?;
+            let mut expressions = vec![Expression::Table(Box::new(
+                self.parse_iceberg_object_name()?,
+            ))];
             if self.match_text_seq(&["ENTITY", "KEY"]) {
-                self.check_iceberg_name_list(false)?;
+                expressions.push(self.parse_iceberg_name_list(false)?);
             }
-            self.match_text_seq(&["FORCE"]);
-            return Ok(());
+            return Ok(self.forced_policy("AGGREGATION POLICY", expressions));
         }
         if self.match_token(TokenType::Join) && self.match_text_seq(&["POLICY"]) {
-            self.check_iceberg_object_name()?;
-            self.match_text_seq(&["FORCE"]);
-            return Ok(());
+            let policy = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
+            return Ok(self.forced_policy("JOIN POLICY", vec![policy]));
         }
         Err(self.parse_error("Expected TAG, CONTACT, AGGREGATION POLICY or JOIN POLICY"))
     }
 
-    /// Checks `<tag> = <value> [ , <tag> = <value> ... ]`, stopping before a comma that starts another column.
-    fn check_tag_pairs(&mut self) -> Result<()> {
+    /// The policy property of `kind` with its operands, then FORCE when written.
+    fn forced_policy(&mut self, kind: &str, expressions: Vec<Expression>) -> Vec<ObjectProperty> {
+        let value = Expression::Tuple(Box::new(Tuple { expressions }));
+        let mut properties = vec![property(kind, None, Some(value))];
+        if self.match_text_seq(&["FORCE"]) {
+            properties.push(property("FORCE", None, None));
+        }
+        properties
+    }
+
+    /// `<tag> = <value> [ , <tag> = <value> ... ]`, stopping before a comma that starts another column.
+    fn parse_tag_pairs(&mut self) -> Result<Vec<Expression>> {
+        let mut pairs: Vec<Expression> = Vec::new();
         loop {
-            self.check_tag_name()?;
+            let tag = Expression::Table(Box::new(self.parse_tag_name()?));
             self.expect_token(TokenType::Eq)?;
-            self.check_iceberg_value()?;
+            let value = self.parse_iceberg_value()?;
+            pairs.push(Expression::PropertyEQ(Box::new(BinaryOp::new(tag, value))));
             let pair_follows = self.check(TokenType::Comma)
                 && self
                     .tokens
                     .get(self.current + 2)
                     .is_some_and(|token| token.token_type == TokenType::Eq);
             if !pair_follows {
-                return Ok(());
+                return Ok(pairs);
             }
             self.skip();
         }
     }
 
-    /// Checks a tag name: a quoted identifier or an unreserved word, never a string.
-    fn check_tag_name(&mut self) -> Result<()> {
+    /// A tag name: a quoted identifier or an unreserved word, never a string.
+    fn parse_tag_name(&mut self) -> Result<sqlquack_syntax::expressions::names::models::TableRef> {
         if self.check(TokenType::Eq) {
             return Err(self.parse_error("Expected a tag name"));
         }
-        self.check_iceberg_object_name()
+        self.parse_iceberg_object_name()
     }
 
-    /// Checks what follows a table-level UNSET: properties, tags, a contact, or an aggregation or join policy.
-    fn check_governance_unset(&mut self) -> Result<()> {
+    /// What follows a table-level UNSET: properties, tags, a contact, or an aggregation or join policy, each without a value.
+    fn parse_governance_unset(&mut self) -> Result<Vec<ObjectProperty>> {
+        let mut properties: Vec<ObjectProperty> = Vec::new();
         loop {
-            let policy = self.match_text_seq(&["AGGREGATION", "POLICY"])
-                || self.match_token(TokenType::Join) && {
-                    self.match_text_seq(&["POLICY"]);
-                    true
-                };
-            if policy {
-                if !self.match_token(TokenType::Comma) {
-                    return Ok(());
-                }
-                continue;
-            }
-            if self.match_text_seq(&["CONTACT"]) {
-                if !self.is_at_end()
+            if self.match_text_seq(&["AGGREGATION", "POLICY"]) {
+                properties.push(property("AGGREGATION POLICY", None, None));
+            } else if self.match_token(TokenType::Join) {
+                self.match_text_seq(&["POLICY"]);
+                properties.push(property("JOIN POLICY", None, None));
+            } else if self.match_text_seq(&["CONTACT"]) {
+                let purpose = match !self.is_at_end()
                     && !self.check(TokenType::Semicolon)
                     && !self.check(TokenType::Comma)
                 {
-                    self.expect_external_name()?;
-                }
+                    true => Some(self.parse_external_name()?),
+                    false => None,
+                };
+                properties.push(property("CONTACT", purpose, None));
             } else if self.match_text_seq(&["TAG"]) {
                 let names = !self.is_at_end()
                     && !self.check(TokenType::Semicolon)
                     && !self.check(TokenType::Comma);
                 if names {
-                    return self.check_unset_tag_names();
+                    let tags = self.parse_unset_tag_names()?;
+                    properties.push(property("TAG", None, Some(tuple(tags))));
+                    return Ok(properties);
                 }
+                properties.push(property("TAG", None, None));
             } else {
-                self.expect_external_name()?;
+                let name = self.parse_external_name()?;
+                properties.push(property(&name.name.to_ascii_uppercase(), None, None));
             }
             if !self.match_token(TokenType::Comma) {
-                return Ok(());
+                return Ok(properties);
             }
         }
     }
 
-    /// Checks `<tag> [ , <tag> ... ]`, stopping before a comma that starts another column.
-    fn check_unset_tag_names(&mut self) -> Result<()> {
+    /// `<tag> [ , <tag> ... ]`, stopping before a comma that starts another column.
+    fn parse_unset_tag_names(&mut self) -> Result<Vec<Expression>> {
+        let mut tags: Vec<Expression> = Vec::new();
         loop {
-            self.check_tag_name()?;
+            tags.push(Expression::Table(Box::new(self.parse_tag_name()?)));
             let next_column = self.tokens.get(self.current + 2).is_some_and(|token| {
                 matches!(token.text.to_ascii_uppercase().as_str(), "SET" | "UNSET")
                     && token.token_type != TokenType::QuotedIdentifier
             }) || self.check_next(TokenType::Column);
             if !self.check(TokenType::Comma) || next_column {
-                return Ok(());
+                return Ok(tags);
             }
             self.skip();
         }
     }
 
-    /// Checks `[ COLUMN ] [ IF NOT EXISTS ] <column> <type> [ <option> ... ] [ , ... ]`, refusing (errno 1003) a column with two policies or tag lists.
-    fn check_added_columns(&mut self) -> Result<()> {
+    /// `[ COLUMN ] [ IF NOT EXISTS ] <column> <type> [ <option> ... ] [ , ... ]` as column definitions, refusing (errno 1003) a column with two policies or tag lists.
+    fn parse_added_columns(&mut self) -> Result<Vec<Expression>> {
         self.match_token(TokenType::Column);
         self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
+        let mut columns: Vec<Expression> = Vec::new();
         loop {
             let column_start = self.current;
-            if self.check_table_column()? {
+            let column = self.parse_checked_table_column()?;
+            if column.no_type {
                 return Err(self.parse_error("Expected a data type"));
             }
             let governed = self.tokens[column_start..self.current]
@@ -303,48 +381,57 @@ impl Parser {
             if governed > 1 {
                 return Err(self.parse_error("Expected one policy or tag list on an added column"));
             }
+            columns.push(Expression::ColumnDef(Box::new(column)));
             if !self.match_token(TokenType::Comma) {
-                return Ok(());
+                return Ok(columns);
             }
             self.match_token(TokenType::Column);
         }
     }
 
-    /// Checks `[ COLUMN ] <column> { SET | UNSET } <policy or tags> [ , ... ]` after ALTER or MODIFY; UNSET TAG or MASKING POLICY needs COLUMN (errno 1003).
-    fn check_column_governance(&mut self) -> Result<()> {
+    /// `[ COLUMN ] <column> { SET | UNSET } <policy or tags> [ , ... ]` after ALTER or MODIFY, one property per column named for it; UNSET TAG or MASKING POLICY needs COLUMN (errno 1003).
+    fn parse_column_governance(&mut self) -> Result<Vec<ObjectProperty>> {
+        let mut properties: Vec<ObjectProperty> = Vec::new();
         loop {
             let column = self.match_token(TokenType::Column);
-            if self.check(TokenType::QuotedIdentifier) {
-                self.skip();
-            } else {
-                self.expect_external_name()?;
-            }
+            let name = Some(self.parse_external_name()?);
             if self.match_token(TokenType::Set) {
-                if self.match_text_seq(&["MASKING", "POLICY"]) {
-                    self.check_iceberg_object_name()?;
+                let (kind, mut expressions) = if self.match_text_seq(&["MASKING", "POLICY"]) {
+                    let mut expressions = vec![Expression::Table(Box::new(
+                        self.parse_iceberg_object_name()?,
+                    ))];
                     if self.match_text_seq(&["USING"]) {
-                        self.check_iceberg_name_list(false)?;
+                        expressions.push(self.parse_iceberg_name_list(false)?);
                     }
-                    self.match_text_seq(&["FORCE"]);
+                    ("SET MASKING POLICY", expressions)
                 } else if self.match_text_seq(&["PROJECTION", "POLICY"]) {
-                    self.check_iceberg_object_name()?;
-                    self.match_text_seq(&["FORCE"]);
+                    let policy = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
+                    ("SET PROJECTION POLICY", vec![policy])
                 } else if self.match_text_seq(&["TAG"]) {
-                    self.check_tag_pairs()?;
+                    ("SET TAG", self.parse_tag_pairs()?)
                 } else {
                     return Err(
                         self.parse_error("Expected MASKING POLICY, PROJECTION POLICY or TAG")
                     );
+                };
+                if kind != "SET TAG" && self.match_text_seq(&["FORCE"]) {
+                    expressions.push(Expression::Var(Box::new(Var {
+                        this: "FORCE".to_owned(),
+                    })));
                 }
+                properties.push(property(kind, name, Some(tuple(expressions))));
             } else if self.match_text_seq(&["UNSET"]) {
                 if !column && (self.check_text_seq(&["TAG"]) || self.check_text_seq(&["MASKING"])) {
                     return Err(self.parse_error("Expected COLUMN before the column name"));
                 }
                 if self.match_text_seq(&["TAG"]) {
-                    self.check_unset_tag_names()?;
-                } else if !self.match_text_seq(&["MASKING", "POLICY"])
-                    && !self.match_text_seq(&["PROJECTION", "POLICY"])
-                {
+                    let tags = self.parse_unset_tag_names()?;
+                    properties.push(property("UNSET TAG", name, Some(tuple(tags))));
+                } else if self.match_text_seq(&["MASKING", "POLICY"]) {
+                    properties.push(property("UNSET MASKING POLICY", name, None));
+                } else if self.match_text_seq(&["PROJECTION", "POLICY"]) {
+                    properties.push(property("UNSET PROJECTION POLICY", name, None));
+                } else {
                     return Err(
                         self.parse_error("Expected MASKING POLICY, PROJECTION POLICY or TAG")
                     );
@@ -353,8 +440,21 @@ impl Parser {
                 return Err(self.parse_error("Expected SET or UNSET"));
             }
             if !self.match_token(TokenType::Comma) {
-                return Ok(());
+                return Ok(properties);
             }
         }
     }
+}
+
+/// A tuple of the expressions.
+fn tuple(expressions: Vec<Expression>) -> Expression {
+    Expression::Tuple(Box::new(Tuple { expressions }))
+}
+
+/// One TAG property per `<tag> = <value>` pair.
+fn tag_pairs(pairs: Vec<Expression>) -> Vec<ObjectProperty> {
+    pairs
+        .into_iter()
+        .map(|pair| property("TAG", None, Some(pair)))
+        .collect()
 }

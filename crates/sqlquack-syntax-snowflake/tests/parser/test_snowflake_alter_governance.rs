@@ -1,5 +1,7 @@
 use crate::helpers::snowflake_kind;
+use crate::helpers::statements;
 use crate::test_types::SnowflakeVerdictTestCase;
+use sqlquack_syntax::{CallMode, Dialect};
 
 #[test]
 fn given_snowflake_alter_governance_actions_when_parsing_then_recorded_verdicts_hold() {
@@ -7,22 +9,22 @@ fn given_snowflake_alter_governance_actions_when_parsing_then_recorded_verdicts_
         SnowflakeVerdictTestCase {
             description: "a column masking policy with FORCE (recorded OK)",
             sql: "ALTER TABLE v1 ALTER COLUMN v1 SET MASKING POLICY v1 USING ( v1 , v1 ) FORCE ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "tags on two columns of a view (recorded OK)",
             sql: "ALTER VIEW v1 ALTER v1 SET TAG v1 = 'm' , v1 SET TAG v1 = 'm' , v1 = 'm' ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "an added column with a masking policy (recorded OK)",
             sql: "ALTER ICEBERG TABLE v1 ADD v1 INT WITH MASKING POLICY v1 ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "an aggregation policy with an entity key on a view (recorded OK)",
             sql: "ALTER VIEW v1 SET AGGREGATION POLICY v1 ENTITY KEY ( v1 , v1 ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a row access policy swap onto no columns (recorded OK)",
@@ -32,7 +34,7 @@ fn given_snowflake_alter_governance_actions_when_parsing_then_recorded_verdicts_
         SnowflakeVerdictTestCase {
             description: "a contact purpose on a view (recorded OK)",
             sql: "ALTER VIEW v1 SET CONTACT STEWARD = v1 , STEWARD = v1 ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a bare JOIN property after UNSET (recorded OK)",
@@ -77,7 +79,7 @@ fn given_snowflake_alter_governance_actions_when_parsing_then_recorded_verdicts_
         SnowflakeVerdictTestCase {
             description: "a column UNSET TAG named with COLUMN (recorded OK)",
             sql: "ALTER TABLE v1 ALTER COLUMN v1 UNSET TAG v1 , v1 , COLUMN v1 UNSET TAG v1 , v1 ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a column UNSET TAG without COLUMN (recorded errno 1003)",
@@ -92,7 +94,7 @@ fn given_snowflake_alter_governance_actions_when_parsing_then_recorded_verdicts_
         SnowflakeVerdictTestCase {
             description: "a column UNSET PROJECTION POLICY without COLUMN (recorded OK)",
             sql: "ALTER TABLE v1 ALTER v1 UNSET PROJECTION POLICY ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "an added column with a masking policy, a projection policy and tags (recorded errno 1003)",
@@ -152,4 +154,27 @@ fn given_a_parenthesized_snowflake_alter_column_list_when_parsing_then_recorded_
             test_case.description
         );
     }
+}
+
+#[test]
+fn given_a_snowflake_column_governance_action_when_parsing_then_each_column_is_a_property() {
+    let tree = statements(
+        "ALTER TABLE v1 ALTER v1 SET MASKING POLICY p1 USING ( v1 , v2 ) FORCE , COLUMN v2 UNSET TAG t1 , t2 ;",
+        Dialect::Snowflake,
+        CallMode::Faithful,
+    );
+    let alter = &tree[0]["alter_object"];
+    assert_eq!(alter["kind"], "TABLE");
+    assert_eq!(alter["action"], "ALTER COLUMN");
+    let properties = alter["properties"].as_array().expect("properties");
+    assert_eq!(properties.len(), 2);
+    assert_eq!(properties[0]["kind"], "SET MASKING POLICY");
+    assert_eq!(properties[0]["name"]["name"], "v1");
+    assert_eq!(properties[1]["kind"], "UNSET TAG");
+    assert_eq!(
+        properties[1]["value"]["tuple"]["expressions"]
+            .as_array()
+            .map(Vec::len),
+        Some(2)
+    );
 }
