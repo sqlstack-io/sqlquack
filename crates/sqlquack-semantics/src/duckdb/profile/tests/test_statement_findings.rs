@@ -421,6 +421,49 @@ fn given_duckdb_syntax_its_parser_emits_as_calls_when_checking_then_the_forms_du
 }
 
 #[test]
+fn given_a_derived_table_inside_a_lateral_subquery_when_resolving_names_then_it_reads_the_enclosing_items()
+ {
+    // Each verdict is DuckDB 2.0.0's: the derived tables reading p run, the one reading q does not.
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "a comma-joined LATERAL whose nested derived table reads the item before it",
+            sql: "SELECT k.n FROM orders AS p, \
+                  LATERAL (SELECT f.u AS n FROM (SELECT UNNEST(p.items) AS u) AS f) AS k",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "the same body under CROSS JOIN LATERAL",
+            sql: "SELECT k.n FROM orders AS p \
+                  CROSS JOIN LATERAL (SELECT f.u AS n FROM (SELECT UNNEST(p.items) AS u) AS f) AS k",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a scalar subquery whose derived table reads the outer query",
+            sql: "SELECT (SELECT f.u FROM (SELECT p.items AS u) AS f) AS n FROM orders AS p",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a nested derived table still reports an alias no enclosing query has",
+            sql: "SELECT k.n FROM orders AS p, \
+                  LATERAL (SELECT f.u AS n FROM (SELECT q.items AS u) AS f) AS k",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'q' referenced by column 'items'",
+                67,
+            )],
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            duckdb_parser_findings(test_case.sql),
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_duckdbs_parser_reads_window_calls_when_checking_arity_then_every_count_duckdb_binds_is_known()
  {
     // Each verdict is DuckDB 2.0.0's: LAG and LEAD bind one to three arguments, not four.
