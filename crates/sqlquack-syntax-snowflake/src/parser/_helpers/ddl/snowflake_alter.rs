@@ -30,6 +30,8 @@ const OMITTED_NAME_ACTIONS: &[(&str, &[&str])] = &[
     ("CATALOG INTEGRATION", &["SET"]),
     ("EXTERNAL ACCESS INTEGRATION", &["SET", "UNSET"]),
     ("SECURITY INTEGRATION", &["SET"]),
+    ("VIEW", &["SET"]),
+    ("MATERIALIZED VIEW", &["SET"]),
 ];
 
 impl Parser {
