@@ -115,6 +115,11 @@ fn print_layout(
     if let Some(line_width) = options.line_width {
         wrap_lines(&mut sql, line_width);
     }
+    while sql.separate_multiline_groups() {
+        if let Some(line_width) = options.line_width {
+            wrap_lines(&mut sql, line_width);
+        }
+    }
     sql.lead_operators_of_multiline_operands();
     Ok(AuthoredPrint {
         sql: keep_verbatim(authored, sql.render(), &oracle.verbatim, profile)?,

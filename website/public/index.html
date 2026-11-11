@@ -88,7 +88,7 @@
 <span class="cmd">sqlquack convert revenue.sql</span>
 <span class="kw">SELECT</span>
     <span class="id">"ORDERS"</span>.<span class="id">"CUSTOMER_ID"</span> <span class="kw">AS</span> <span class="id">"CUSTOMER_ID"</span>,
-    <span class="kw">CAST</span>(<span class="id">sum</span>(<span class="id">"ORDERS"</span>.<span class="id">"TOTAL"</span>) <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">24</span>, <span class="num">2</span>)) <span class="kw">AS</span> <span class="id">"REVENUE"</span>
+    <span class="kw">CAST</span>(<span class="id">SUM</span>(<span class="id">"ORDERS"</span>.<span class="id">"TOTAL"</span>) <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">24</span>, <span class="num">2</span>)) <span class="kw">AS</span> <span class="id">"REVENUE"</span>
 <span class="kw">FROM</span> <span class="id">"ORDERS"</span> <span class="kw">AS</span> <span class="id">"ORDERS"</span>
 <span class="kw">WHERE</span> (<span class="id">"ORDERS"</span>.<span class="id">"STATUS"</span> = <span class="str">'shipped'</span>)
 <span class="kw">GROUP</span> <span class="kw">BY</span> <span class="id">"ORDERS"</span>.<span class="id">"CUSTOMER_ID"</span>
@@ -159,16 +159,22 @@ SELECT order_id, total / 3 AS third FROM orders
 <span class="cmd">sqlquack convert div.sql --no-config</span>
 <span class="kw">SELECT</span>
     <span class="id">"ORDERS"</span>.<span class="id">"ORDER_ID"</span> <span class="kw">AS</span> <span class="id">"ORDER_ID"</span>,
-    <span class="kw">CAST</span>(<span class="kw">CAST</span>((
-        <span class="id">sign</span>(<span class="kw">CAST</span>(<span class="kw">CAST</span>(<span class="id">"ORDERS"</span>.<span class="id">"TOTAL"</span> <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">38</span>, <span class="num">2</span>)) * <span class="num">100000000</span> <span class="kw">AS</span> <span class="id">HUGEINT</span>))
-        * (
+    <span class="kw">CAST</span>(
+        <span class="kw">CAST</span>(
             (
-                <span class="num">2</span> * <span class="id">abs</span>(<span class="kw">CAST</span>(<span class="kw">CAST</span>(<span class="id">"ORDERS"</span>.<span class="id">"TOTAL"</span> <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">38</span>, <span class="num">2</span>)) * <span class="num">100000000</span> <span class="kw">AS</span> <span class="id">HUGEINT</span>)) + <span class="num">3</span>
-            )
-            // <span class="num">6</span>
+                <span class="id">SIGN</span>(<span class="kw">CAST</span>(<span class="kw">CAST</span>(<span class="id">"ORDERS"</span>.<span class="id">"TOTAL"</span> <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">38</span>, <span class="num">2</span>)) * <span class="num">100000000</span> <span class="kw">AS</span> <span class="id">HUGEINT</span>))
+                * (
+                    (
+                        <span class="num">2</span>
+                        * <span class="id">ABS</span>(<span class="kw">CAST</span>(<span class="kw">CAST</span>(<span class="id">"ORDERS"</span>.<span class="id">"TOTAL"</span> <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">38</span>, <span class="num">2</span>)) * <span class="num">100000000</span> <span class="kw">AS</span> <span class="id">HUGEINT</span>))
+                        + <span class="num">3</span>
+                    )
+                    // <span class="num">6</span>
+                )
+            ) <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">38</span>, <span class="num">0</span>)
         )
-    ) <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">38</span>, <span class="num">0</span>))
-    * <span class="num">0.00000001</span> <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">18</span>, <span class="num">8</span>)) <span class="kw">AS</span> <span class="id">"THIRD"</span>
+        * <span class="num">0.00000001</span> <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">18</span>, <span class="num">8</span>)
+    ) <span class="kw">AS</span> <span class="id">"THIRD"</span>
 <span class="kw">FROM</span> <span class="id">"ORDERS"</span> <span class="kw">AS</span> <span class="id">"ORDERS"</span>
 <span class="ok">sqlquack convert: done, converted</span></pre>
 						</div>

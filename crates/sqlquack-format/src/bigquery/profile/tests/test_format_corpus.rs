@@ -69,7 +69,9 @@ fn given_dialect_corpus_when_formatting_then_output_layout_and_refusals_are_stab
             },
             Departure {
                 sql: "SELECT STRUCT<STRING>((SELECT 'foo')).*",
-                formatted: Some("SELECT\n  STRUCT<STRING> ((\n    SELECT 'foo'\n  )).*"),
+                formatted: Some(
+                    "SELECT\n  STRUCT<STRING> (\n    (\n      SELECT 'foo'\n    )\n  ).*",
+                ),
                 reason: "SQLClean's Polyglot printer put a space before `.*`; SQLQuack keeps the field access touching its operand",
                 receipt: None,
             },

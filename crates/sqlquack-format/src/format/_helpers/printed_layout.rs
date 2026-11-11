@@ -16,6 +16,8 @@ const BETWEEN_SEPARATOR: &str = "AND";
 const VALUES_KEYWORD: &str = "VALUES";
 const DECODE_FUNCTION: &str = "DECODE";
 const CASE_KEYWORD: &str = "CASE";
+const END_KEYWORD: &str = "END";
+const WINDOW_KEYWORD: &str = "OVER";
 const JOIN_KEYWORD: &str = "JOIN";
 const SINGLE_ITEM_CLAUSES: [&str; 4] = ["SELECT", "WHERE", "QUALIFY", "HAVING"];
 /// Words whose clause header is `<word> BY`, such as GROUP BY.
@@ -41,7 +43,8 @@ const CHAIN_KEYWORDS: [&str; 2] = ["AND", "OR"];
 const BETWEEN_BOUNDARIES: [&str; 12] = [
     "AND", "OR", "WHEN", "THEN", "ELSE", "WHERE", "ON", "HAVING", "QUALIFY", "SELECT", ",", "NOT",
 ];
-const ARITHMETIC_OPERATORS: [&str; 5] = ["+", "-", "||", "/", "%"];
+/// Binary operators a long line breaks before, loosest-binding first: a line breaks at the first tier it holds.
+const OPERATOR_TIERS: [&[&str]; 3] = [&["||"], &["+", "-"], &["*", "/", "//", "%"]];
 const WINDOW_CLAUSE_KEYWORDS: [&str; 4] = ["ORDER", "ROWS", "RANGE", "GROUPS"];
 const CASE_BRANCH_KEYWORDS: [&str; 3] = ["WHEN", "THEN", "ELSE"];
 const TYPE_PARAMETER_WORDS: [&str; 1] = ["MAX"];
@@ -450,6 +453,61 @@ impl PrintedSql<'_> {
                 self.join_condition_line(index, line_width);
             }
         }
+    }
+
+    /// Start the inside of each parenthesised group that spans lines on its own line and close it on its own line, so a group never opens or closes on the line of another; true when a gap changed.
+    pub(crate) fn separate_multiline_groups(&mut self) -> bool {
+        let rows: Vec<usize> = (0..self.len())
+            .filter(|&index| self.is(index, VALUES_KEYWORD))
+            .flat_map(|values| self.values_rows(values))
+            .map(|(opener, _)| opener)
+            .collect();
+        let mut changed = false;
+        for opener in 0..self.len() {
+            if self.tokens[opener] != OPEN_PARENTHESIS || rows.contains(&opener) {
+                continue;
+            }
+            let Some(closer) = self.partners[opener] else {
+                continue;
+            };
+            if closer <= opener + 1
+                || self.locked[opener + 1]
+                || !self.spans_lines(opener, closer)
+                || !self.gaps[opener + 1].trim().is_empty()
+                || !self.gaps[closer].trim().is_empty()
+            {
+                continue;
+            }
+            let opens = !self.gaps[opener + 1].contains('\n');
+            let closes = !self.gaps[closer].contains('\n');
+            if !opens && !closes {
+                continue;
+            }
+            let (first, _) = self.line_of(opener);
+            let indentation = self.indentation(first);
+            if opens {
+                self.indent_lines(opener + 2, closer - 1, self.indent);
+                let inner = newline(indentation + self.indent);
+                self.gaps[opener + 1] = inner.clone();
+                let separates_arguments = opener > 0
+                    && !self.is(opener - 1, DECODE_FUNCTION)
+                    && !self.is(opener - 1, WINDOW_KEYWORD);
+                for index in opener + 2..closer {
+                    if separates_arguments
+                        && self.depths[index] == self.depths[opener + 1]
+                        && self.tokens[index - 1] == COMMA
+                        && !self.gaps[index].contains('\n')
+                    {
+                        self.set_break(index, &inner);
+                    }
+                }
+            }
+            if closes {
+                self.gaps[closer] = newline(indentation);
+            }
+            changed = true;
+        }
+        changed
     }
 
     /// Start the next line with any binary operator whose operand spans several lines.
@@ -894,12 +952,42 @@ impl PrintedSql<'_> {
     /// Apply the outermost applicable break: chains, VALUES rows, bracket groups, then commas.
     fn break_line(&mut self, line: &Line) -> bool {
         let values_row = self.tokens[line.first] == OPEN_PARENTHESIS && self.locked[line.first + 1];
+        let operator_indent = if self.sole_operand_of_group(line) {
+            0
+        } else {
+            self.indent
+        };
         !values_row
             && (self.break_before(line, &CHAIN_KEYWORDS, 0)
-                || self.break_before(line, &ARITHMETIC_OPERATORS, self.indent)
+                || OPERATOR_TIERS
+                    .iter()
+                    .any(|operators| self.break_before(line, operators, operator_indent))
                 || self.break_values_rows(line)
                 || self.explode_group(line)
                 || self.break_after_commas(line))
+    }
+
+    /// Whether `line` starts or continues with an operator the one operand of a parenthesised group whose inside starts on its own line, so an operator broken onto a new line cannot read as the start of another item.
+    fn sole_operand_of_group(&self, line: &Line) -> bool {
+        let Some(opener) = (0..line.first).rev().find(|&index| {
+            self.tokens[index] == OPEN_PARENTHESIS
+                && self.partners[index].is_some_and(|closer| closer > line.last)
+        }) else {
+            return false;
+        };
+        let Some(closer) = self.partners[opener] else {
+            return false;
+        };
+        let inner = self.depths[opener + 1];
+        let continues_operand = line.first == opener + 1
+            || OPERATOR_TIERS
+                .iter()
+                .any(|operators| operators.contains(&self.upper(line.first).as_str()));
+        continues_operand
+            && self.gaps[opener + 1].contains('\n')
+            && self.line_depth(line) == inner
+            && (opener + 1..closer)
+                .all(|index| self.depths[index] != inner || self.tokens[index] != COMMA)
     }
 
     /// Put each row of a VALUES list that starts this line on its own line.
@@ -1074,12 +1162,24 @@ impl PrintedSql<'_> {
     fn break_before(&mut self, line: &Line, operators: &[&str], extra_indent: usize) -> bool {
         let depth = self.line_depth(line);
         let mut between = false;
+        let mut open_cases = 0_usize;
         let mut breaks: Vec<usize> = Vec::new();
         for index in line.first..=line.last {
             if self.depths[index] != depth || self.locked[index] {
                 continue;
             }
             let upper = self.upper(index);
+            if upper == CASE_KEYWORD {
+                open_cases += 1;
+                continue;
+            }
+            if upper == END_KEYWORD {
+                open_cases = open_cases.saturating_sub(1);
+                continue;
+            }
+            if open_cases > 0 {
+                continue;
+            }
             if upper == BETWEEN_KEYWORD {
                 between = true;
                 continue;

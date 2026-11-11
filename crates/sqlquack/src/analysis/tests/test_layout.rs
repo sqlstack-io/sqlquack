@@ -9,7 +9,7 @@ use crate::analysis::tests::test_types::{
 };
 
 #[test]
-fn given_converted_sql_when_laid_out_then_long_lines_break_and_tokens_keep_their_case() {
+fn given_converted_sql_when_laid_out_then_long_lines_break_and_only_whitespace_and_case_change() {
     let test_cases = [
         LayoutTestCase {
             description: "a short query stays on one line",
@@ -21,26 +21,32 @@ fn given_converted_sql_when_laid_out_then_long_lines_break_and_tokens_keep_their
             sql: r#"SELECT "ORDERS"."ORDER_ID" AS "ORDER_ID", CAST(CAST((sign(CAST(CAST("ORDERS"."TOTAL" AS DECIMAL(38,2)) * 100000000 AS HUGEINT)) * ((2 * abs(CAST(CAST("ORDERS"."TOTAL" AS DECIMAL(38,2)) * 100000000 AS HUGEINT)) + 3) // 6)) AS DECIMAL(38,0)) * 0.00000001 AS DECIMAL(18,8)) AS "THIRD" FROM "ORDERS" AS "ORDERS""#,
             expected_layout: r#"SELECT
     "ORDERS"."ORDER_ID" AS "ORDER_ID",
-    CAST(CAST((
-        sign(CAST(CAST("ORDERS"."TOTAL" AS DECIMAL(38, 2)) * 100000000 AS HUGEINT))
-        * (
+    CAST(
+        CAST(
             (
-                2 * abs(CAST(CAST("ORDERS"."TOTAL" AS DECIMAL(38, 2)) * 100000000 AS HUGEINT)) + 3
-            )
-            // 6
+                SIGN(CAST(CAST("ORDERS"."TOTAL" AS DECIMAL(38, 2)) * 100000000 AS HUGEINT))
+                * (
+                    (
+                        2
+                        * ABS(CAST(CAST("ORDERS"."TOTAL" AS DECIMAL(38, 2)) * 100000000 AS HUGEINT))
+                        + 3
+                    )
+                    // 6
+                )
+            ) AS DECIMAL(38, 0)
         )
-    ) AS DECIMAL(38, 0))
-    * 0.00000001 AS DECIMAL(18, 8)) AS "THIRD"
+        * 0.00000001 AS DECIMAL(18, 8)
+    ) AS "THIRD"
 FROM "ORDERS" AS "ORDERS""#,
         },
         LayoutTestCase {
             description: "a long CASE in a lambda breaks at its branches",
             sql: r#"SELECT list_transform([1], lambda x: CASE WHEN abs(x) > 9007199254740992 THEN CAST('a long raise message' AS INTEGER) ELSE x END)[1] AS "E" FROM "T" AS "T""#,
             expected_layout: r#"SELECT
-    list_transform(
+    LIST_TRANSFORM(
         [1],
-        lambda x: CASE
-            WHEN abs(x) > 9007199254740992
+        LAMBDA x: CASE
+            WHEN ABS(x) > 9007199254740992
             THEN CAST('a long raise message' AS INTEGER)
             ELSE x
         END
@@ -56,7 +62,7 @@ FROM "T" AS "T""#,
     quack_power
 ) AS list_transform(
     [quack_dividend % quack_divisor],
-    lambda quack_rest: (quack_dividend // quack_divisor) * quack_power + quack_rest // quack_divisor
+    LAMBDA quack_rest: (quack_dividend // quack_divisor) * quack_power + quack_rest // quack_divisor
 )[1]"#,
         },
         LayoutTestCase {
