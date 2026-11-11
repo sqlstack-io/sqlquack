@@ -229,13 +229,13 @@ impl Parser {
         if language != Some("SQL") {
             return Ok(FunctionBody::StringLiteral(body));
         }
-        let mode = if self.config.faithful_calls {
-            CallMode::Faithful
-        } else {
-            CallMode::Lowered
-        };
         let statements = Dialect::get(DialectType::Snowflake)
-            .parse_with_config(&body, self.config.complexity_guard, mode, None)
+            .parse_with_config(
+                &body,
+                self.config.complexity_guard,
+                CallMode::Faithful,
+                None,
+            )
             .map_err(|error| self.parse_error(format!("In the procedure body: {error}")))?;
         if statements.is_empty() {
             return Err(self.parse_error("Expected a procedure body"));

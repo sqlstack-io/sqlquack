@@ -1,13 +1,9 @@
-use serde_json::json;
-
 use crate::parser::tests::helpers::first_token_text;
 use crate::parser::tests::helpers::kind_at;
 use crate::parser::tests::helpers::parse_error;
-use crate::parser::tests::helpers::value_at;
 use crate::parser::tests::test_types::DialectTokenTestCase;
 use crate::parser::tests::test_types::ParseErrorTestCase;
 use crate::parser::tests::test_types::ParseKindTestCase;
-use crate::parser::tests::test_types::ParseValueTestCase;
 use sqlquack_syntax::tokens::models::DialectType;
 use sqlquack_syntax::tokens::models::TokenType;
 
@@ -392,49 +388,6 @@ fn given_connector_generated_snowflake_sql_when_parsing_then_each_is_one_stateme
         assert_eq!(
             kind_at(test_case.dialect, test_case.sql, test_case.pointer),
             test_case.expected_kind.map(str::to_owned),
-            "{}",
-            test_case.description
-        );
-    }
-}
-
-#[test]
-fn given_try_to_number_with_numbers_when_parsing_snowflake_then_they_are_precision_and_scale() {
-    let test_cases = [
-        ParseValueTestCase {
-            description: "TRY_TO_NUMBER has no format",
-            dialect: Some(DialectType::Snowflake),
-            sql: "SELECT TRY_TO_NUMBER('12.34', 9, 2)",
-            pointer: "/0/select/expressions/0/to_number/format",
-            expected_value: Ok(json!(null)),
-        },
-        ParseValueTestCase {
-            description: "TRY_TO_NUMBER reads its second argument as the precision",
-            dialect: Some(DialectType::Snowflake),
-            sql: "SELECT TRY_TO_NUMBER('12.34', 9, 2)",
-            pointer: "/0/select/expressions/0/to_number/precision/literal/value",
-            expected_value: Ok(json!("9")),
-        },
-        ParseValueTestCase {
-            description: "TRY_TO_NUMBER reads its third argument as the scale",
-            dialect: Some(DialectType::Snowflake),
-            sql: "SELECT TRY_TO_NUMBER('12.34', 9, 2)",
-            pointer: "/0/select/expressions/0/to_number/scale/literal/value",
-            expected_value: Ok(json!("2")),
-        },
-        ParseValueTestCase {
-            description: "TRY_TO_NUMBER is the safe conversion",
-            dialect: Some(DialectType::Snowflake),
-            sql: "SELECT TRY_TO_NUMBER('12.34', 9, 2)",
-            pointer: "/0/select/expressions/0/to_number/safe/boolean/value",
-            expected_value: Ok(json!(true)),
-        },
-    ];
-
-    for test_case in test_cases {
-        assert_eq!(
-            value_at(test_case.dialect, test_case.sql, test_case.pointer),
-            test_case.expected_value,
             "{}",
             test_case.description
         );

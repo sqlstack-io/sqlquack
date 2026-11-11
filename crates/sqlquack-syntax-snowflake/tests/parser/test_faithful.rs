@@ -1,51 +1,51 @@
 use serde_json::json;
-use sqlquack_syntax::Dialect;
+use sqlquack_syntax::{CallMode, Dialect};
 
-use crate::helpers::{faithful_call, projection_at, same_in_both_modes};
-use crate::test_types::{FaithfulCallTestCase, ModeAgreementTestCase, ProjectionTestCase};
+use crate::helpers::{faithful_call, kind, projection_at, statements};
+use crate::test_types::{FaithfulCallTestCase, ProjectionKindTestCase, ProjectionTestCase};
 
 #[test]
 fn given_lowered_spellings_when_parsing_faithfully_then_calls_stay_as_written() {
     let test_cases = [
         FaithfulCallTestCase {
-            description: "LEN stays a call with 1 arguments and lowers to length",
+            description: "LEN stays a call with 1 arguments",
             sql: "SELECT LEN(s)",
-            expected_call: (json!("LEN"), Some(1), "length".to_owned()),
+            expected_call: (json!("LEN"), Some(1)),
         },
         FaithfulCallTestCase {
-            description: "IFNULL stays a call with 2 arguments and lowers to coalesce",
+            description: "IFNULL stays a call with 2 arguments",
             sql: "SELECT IFNULL(a, b)",
-            expected_call: (json!("IFNULL"), Some(2), "coalesce".to_owned()),
+            expected_call: (json!("IFNULL"), Some(2)),
         },
         FaithfulCallTestCase {
-            description: "IFF stays a call with 3 arguments and lowers to if_func",
+            description: "IFF stays a call with 3 arguments",
             sql: "SELECT IFF(c, 1, 2)",
-            expected_call: (json!("IFF"), Some(3), "if_func".to_owned()),
+            expected_call: (json!("IFF"), Some(3)),
         },
         FaithfulCallTestCase {
-            description: "TRY_TO_NUMBER stays a call with 1 arguments and lowers to to_number",
+            description: "TRY_TO_NUMBER stays a call with 1 arguments",
             sql: "SELECT TRY_TO_NUMBER(s)",
-            expected_call: (json!("TRY_TO_NUMBER"), Some(1), "to_number".to_owned()),
+            expected_call: (json!("TRY_TO_NUMBER"), Some(1)),
         },
         FaithfulCallTestCase {
-            description: "MOD stays a call with 2 arguments and lowers to mod_func",
+            description: "MOD stays a call with 2 arguments",
             sql: "SELECT MOD(a, b)",
-            expected_call: (json!("MOD"), Some(2), "mod_func".to_owned()),
+            expected_call: (json!("MOD"), Some(2)),
         },
         FaithfulCallTestCase {
-            description: "SUM stays a call with 1 arguments and lowers to sum",
+            description: "SUM stays a call with 1 arguments",
             sql: "SELECT SUM(x)",
-            expected_call: (json!("SUM"), Some(1), "sum".to_owned()),
+            expected_call: (json!("SUM"), Some(1)),
         },
         FaithfulCallTestCase {
-            description: "COUNT stays a call with 1 arguments and lowers to count",
+            description: "COUNT stays a call with 1 arguments",
             sql: "SELECT COUNT(*)",
-            expected_call: (json!("COUNT"), Some(1), "count".to_owned()),
+            expected_call: (json!("COUNT"), Some(1)),
         },
         FaithfulCallTestCase {
-            description: "ROW_NUMBER stays a call with 0 arguments and lowers to row_number",
+            description: "ROW_NUMBER stays a call with 0 arguments",
             sql: "SELECT ROW_NUMBER()",
-            expected_call: (json!("ROW_NUMBER"), Some(0), "row_number".to_owned()),
+            expected_call: (json!("ROW_NUMBER"), Some(0)),
         },
     ];
 
@@ -60,56 +60,67 @@ fn given_lowered_spellings_when_parsing_faithfully_then_calls_stay_as_written() 
 }
 
 #[test]
-fn given_keyword_syntax_and_kept_calls_when_parsing_faithfully_then_both_modes_agree() {
+fn given_keyword_syntax_and_kept_calls_when_parsing_faithfully_then_they_keep_their_typed_node() {
     let test_cases = [
-        ModeAgreementTestCase {
-            description: "SELECT EXTRACT(year FROM d) parses the same in both modes",
+        ProjectionKindTestCase {
+            description: "SELECT EXTRACT(year FROM d): keyword syntax stays a typed node",
             sql: "SELECT EXTRACT(year FROM d)",
             dialect: Dialect::Snowflake,
-            expected_same: true,
+            expected_kind: "extract",
         },
-        ModeAgreementTestCase {
-            description: "SELECT POSITION('a' IN s) parses the same in both modes",
+        ProjectionKindTestCase {
+            description: "SELECT POSITION('a' IN s): keyword syntax stays a typed node",
             sql: "SELECT POSITION('a' IN s)",
             dialect: Dialect::Snowflake,
-            expected_same: true,
+            expected_kind: "str_position",
         },
-        ModeAgreementTestCase {
-            description: "SELECT TRIM(BOTH ' ' FROM s) parses the same in both modes",
+        ProjectionKindTestCase {
+            description: "SELECT TRIM(BOTH ' ' FROM s): keyword syntax stays a typed node",
             sql: "SELECT TRIM(BOTH ' ' FROM s)",
             dialect: Dialect::Snowflake,
-            expected_same: true,
+            expected_kind: "trim",
         },
-        ModeAgreementTestCase {
-            description: "SELECT DATEADD(day, 1, d) parses the same in both modes",
+        ProjectionKindTestCase {
+            description:
+                "SELECT DATEADD(day, 1, d): a call the typed parse keeps under its own name",
             sql: "SELECT DATEADD(day, 1, d)",
             dialect: Dialect::Snowflake,
-            expected_same: true,
+            expected_kind: "function",
         },
-        ModeAgreementTestCase {
-            description: "SELECT DATE_PART(hour, t) parses the same in both modes",
+        ProjectionKindTestCase {
+            description:
+                "SELECT DATE_PART(hour, t): a call the typed parse keeps under its own name",
             sql: "SELECT DATE_PART(hour, t)",
             dialect: Dialect::Snowflake,
-            expected_same: true,
+            expected_kind: "function",
         },
-        ModeAgreementTestCase {
-            description: "SELECT CONCAT(a, b) parses the same in both modes",
+        ProjectionKindTestCase {
+            description: "SELECT CONCAT(a, b): a call the typed parse keeps under its own name",
             sql: "SELECT CONCAT(a, b)",
             dialect: Dialect::Snowflake,
-            expected_same: true,
+            expected_kind: "function",
         },
-        ModeAgreementTestCase {
-            description: "DuckDB calls are not changed",
-            sql: "SELECT length(s), coalesce(a, b)",
+        ProjectionKindTestCase {
+            description: "SELECT length(s): DuckDB keeps its typed nodes",
+            sql: "SELECT length(s)",
             dialect: Dialect::DuckDB,
-            expected_same: true,
+            expected_kind: "length",
+        },
+        ProjectionKindTestCase {
+            description: "SELECT coalesce(a, b): DuckDB keeps its typed nodes",
+            sql: "SELECT coalesce(a, b)",
+            dialect: Dialect::DuckDB,
+            expected_kind: "coalesce",
         },
     ];
 
     for test_case in test_cases {
         assert_eq!(
-            same_in_both_modes(test_case.sql, test_case.dialect),
-            test_case.expected_same,
+            kind(
+                &statements(test_case.sql, test_case.dialect, CallMode::Faithful)[0]["select"]
+                    ["expressions"][0]
+            ),
+            test_case.expected_kind,
             "{}",
             test_case.description
         );

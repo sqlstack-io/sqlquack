@@ -8,11 +8,7 @@ use crate::test_types::{
     ScriptingVerdictTestCase, ScriptingWalkTestCase,
 };
 
-const MODES: [CallMode; 3] = [
-    CallMode::Faithful,
-    CallMode::FaithfulLocated,
-    CallMode::Lowered,
-];
+const MODES: [CallMode; 2] = [CallMode::Faithful, CallMode::FaithfulLocated];
 
 #[test]
 fn given_scripting_blocks_when_parsing_then_members_keep_written_order_and_operands() {
