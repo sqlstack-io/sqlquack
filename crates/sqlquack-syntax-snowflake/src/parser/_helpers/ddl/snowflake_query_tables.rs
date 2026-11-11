@@ -195,11 +195,6 @@ impl Parser {
         Err(self.parse_error("Expected a column option"))
     }
 
-    /// Checks `( <name> [ , ... ] )`, which may be empty only when `empty` is set.
-    pub(super) fn check_iceberg_name_list(&mut self, empty: bool) -> Result<()> {
-        self.parse_iceberg_name_list(empty).map(|_| ())
-    }
-
     /// `( <name> [ , ... ] )` as a tuple of names, which may be empty only when `empty` is set.
     pub(super) fn parse_iceberg_name_list(&mut self, empty: bool) -> Result<Expression> {
         self.expect_token(TokenType::LParen)?;
@@ -357,11 +352,6 @@ impl Parser {
             self.parse_iceberg_value()?
         };
         Ok((Some(key.clone()), vec![property(&key, None, Some(value))]))
-    }
-
-    /// Checks a value: a literal, a quoted identifier, or a word that is not the key of the next property.
-    pub(super) fn check_iceberg_value(&mut self) -> Result<()> {
-        self.parse_iceberg_value().map(|_| ())
     }
 
     /// A value: a literal, a quoted identifier, or a word that is not the key of the next property.
