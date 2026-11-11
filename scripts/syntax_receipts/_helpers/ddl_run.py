@@ -72,9 +72,19 @@ def import_ddl_run(*, run: CaptureRun, index: dict[str, Path]) -> Imported:
             found.refusals.append(refusal(run_id=run.path.name, row_id=row_id, reason=failure))
             continue
         run_setup: list[str] = _setup(start=start, raw=raw, position=position)
-        setup: list[str] = run_setup + _fixtures(
+        fixtures: list[str] | None = _fixtures(
             packet_setup=case.get("setup", []), run_setup=run_setup
         )
+        if fixtures is None:
+            found.refusals.append(
+                refusal(
+                    run_id=run.path.name,
+                    row_id=row_id,
+                    reason="run template in the packet setup differs from the setup the run made",
+                )
+            )
+            continue
+        setup: list[str] = run_setup + fixtures
         exact: Row = input_row(sql=case["sql"], setup=setup)
         found.inputs.setdefault(exact["sql_sha256"] + exact["setup_sha256"], exact)
         errno, sqlstate, message = error_fields(raw=raw)
@@ -222,10 +232,12 @@ def _text(value: object) -> bool:
     return isinstance(value, str) and bool(value)
 
 
-def _fixtures(*, packet_setup: list[str], run_setup: list[str]) -> list[str]:
-    """The packet setup after the run setup, which a packet may repeat ahead of its fixtures."""
+def _fixtures(*, packet_setup: list[str], run_setup: list[str]) -> list[str] | None:
+    """The packet setup after the run setup it may repeat; None for another run's template."""
     if packet_setup[: len(run_setup)] == run_setup:
         return packet_setup[len(run_setup) :]
+    if packet_setup and packet_setup[0].startswith(f"CREATE DATABASE {RUN_DATABASE}"):
+        return None
     return packet_setup
 
 

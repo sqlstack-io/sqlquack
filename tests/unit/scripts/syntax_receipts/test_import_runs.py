@@ -63,6 +63,16 @@ _DDL_TEMPLATE: list[str] = [
     "CREATE SCHEMA <run_database>.<case_schema>",
     "USE SCHEMA <run_database>.<case_schema>",
 ]
+# Fixtures after the template that repeat each other and a template line, all kept.
+_FIXTURES_AFTER: list[str] = [*_FIXTURE, *_FIXTURE, "USE SCHEMA <run_database>.CASES"]
+_DDL_START: dict[str, object] = {
+    "run_database": "SQLQUACK_DDL_ABC123",
+    "setup": [
+        "CREATE DATABASE SQLQUACK_DDL_ABC123 COMMENT = 'sqlquack ddl sweep ABC123'",
+        "CREATE SCHEMA SQLQUACK_DDL_ABC123.CASES",
+        "USE SCHEMA SQLQUACK_DDL_ABC123.CASES",
+    ],
+}
 _SYNTAX_ROW: dict[str, object] = error_row(
     case_id="c1", sql=_GOOD, errno=1003, message="SQL compilation error:\nsyntax error"
 )
@@ -390,17 +400,15 @@ def test_given_receipt_published_before_a_field_was_added_when_imported_again_th
         SetupRunTestCase(
             description="a packet that repeats the run's template is not counted twice",
             rows=[{**_SYNTAX_ROW, "case_schema": "C0000"}],
-            packet=[{**packet_case(case_id="c1", sql=_GOOD), "setup": [*_DDL_TEMPLATE, *_FIXTURE]}],
-            start={
-                "run_database": "SQLQUACK_DDL_ABC123",
-                "setup": [
-                    "CREATE DATABASE SQLQUACK_DDL_ABC123 COMMENT = 'sqlquack ddl sweep ABC123'",
-                    "CREATE SCHEMA SQLQUACK_DDL_ABC123.CASES",
-                    "USE SCHEMA SQLQUACK_DDL_ABC123.CASES",
-                ],
-            },
+            packet=[
+                {
+                    **packet_case(case_id="c1", sql=_GOOD),
+                    "setup": [*_DDL_TEMPLATE, *_FIXTURES_AFTER],
+                }
+            ],
+            start=_DDL_START,
             expected_receipts=[("c1", "syntax_error", "execute_ddl_in_run_database")],
-            expected_setup=[*_DDL_TEMPLATE, *_FIXTURE],
+            expected_setup=[*_DDL_TEMPLATE, *_FIXTURES_AFTER],
             expected_refusals=[],
         ),
     ),
@@ -447,20 +455,43 @@ def test_given_fixture_setup_per_item_when_imported_then_receipts_name_that_setu
                 json.dumps({**_SYNTAX_ROW, "case_schema": "C0000"}).encode()
             ),
         ),
+        BindingTestCase(
+            description="a packet carrying another run template is refused, not doubled",
+            rows=[
+                {**_SYNTAX_ROW, "case_schema": "C0000"},
+                {
+                    **error_row(case_id="c2", sql=_OTHER, errno=1003, message="x"),
+                    "case_schema": "C0001",
+                },
+            ],
+            packet=[
+                {**packet_case(case_id="c1", sql=_GOOD), "setup": _DDL_TEMPLATE},
+                {
+                    **packet_case(case_id="c2", sql=_OTHER),
+                    "setup": [
+                        _DDL_TEMPLATE[0].replace("ddl sweep", "admin sweep"),
+                        *_DDL_TEMPLATE[1:],
+                    ],
+                },
+            ],
+            expected_receipts=[("c1", "syntax_error")],
+            expected_refusals=[("c2", "run")],
+            expected_sql_sha256=sha(_GOOD.encode()),
+            expected_raw_record_sha256=sha(
+                json.dumps({**_SYNTAX_ROW, "case_schema": "C0000"}).encode()
+            ),
+        ),
     ),
     ids=lambda case: case.description,
 )
-def test_given_a_client_timeout_in_a_run_database_when_imported_then_it_is_refused(
+def test_given_run_database_rows_that_cannot_be_bound_when_imported_then_they_are_refused(
     test_case: BindingTestCase, tmp_path: Path
 ) -> None:
     write_run(
         root=tmp_path,
         rows=test_case.rows,
         packet=test_case.packet,
-        start={
-            "run_database": "SQLQUACK_DDL_ABC123",
-            "setup": ["CREATE DATABASE SQLQUACK_DDL_ABC123"],
-        },
+        start=_DDL_START,
     )
 
     imported: Imported = import_runs(runs=tmp_path / "runs", input_dirs=[tmp_path / "inputs"])
