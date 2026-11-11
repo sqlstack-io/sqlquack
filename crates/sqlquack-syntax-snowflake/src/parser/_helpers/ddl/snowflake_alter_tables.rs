@@ -101,6 +101,13 @@ impl Parser {
         if !iceberg && self.check(TokenType::Set) && self.check_next(TokenType::Semicolon) {
             return Err(self.parse_error("SET names at least one property"));
         }
+        let drops_version_tag_column = self.check_text_seq(&["DROP", "VERSION_TAG"])
+            && self.tokens.get(self.current + 2).is_none_or(|token| {
+                matches!(token.token_type, TokenType::Semicolon | TokenType::Comma)
+            });
+        if drops_version_tag_column {
+            return Ok(None);
+        }
         let choices = if iceberg {
             ICEBERG_ACTIONS
         } else {

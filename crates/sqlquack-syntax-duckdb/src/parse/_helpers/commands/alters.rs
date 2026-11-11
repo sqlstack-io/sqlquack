@@ -343,6 +343,7 @@ impl Parser<'_> {
             data_type: data_type.unwrap_or(DataType::Unknown),
             using,
             collate,
+            rename: None,
         })
     }
 

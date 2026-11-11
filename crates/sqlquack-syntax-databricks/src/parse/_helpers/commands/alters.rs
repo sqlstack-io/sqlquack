@@ -579,6 +579,7 @@ impl Parser<'_> {
                 data_type,
                 using: None,
                 collate: None,
+                rename: None,
             }));
         }
         if self.eat_kw("COMMENT") {

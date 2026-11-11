@@ -1246,6 +1246,14 @@ impl Parser {
                 self.current += 2;
                 return Ok(AlterColumnAction::SetDefault(self.parse_expression()?));
             }
+            if self.match_text_seq(&["SET", "WRITE", "DEFAULT"])
+                || self.match_text_seq(&["WRITE", "DEFAULT"])
+            {
+                return Ok(AlterColumnAction::SetWriteDefault(self.parse_expression()?));
+            }
+            if self.match_text_seq(&["DROP", "WRITE", "DEFAULT"]) {
+                return Ok(AlterColumnAction::DropWriteDefault);
+            }
             if self.check_identifier("UNSET") {
                 return Err(self.parse_error("Expected COMMENT, a policy or TAG after UNSET"));
             }
@@ -1260,7 +1268,10 @@ impl Parser {
                 let expr = self.parse_primary()?;
                 Ok(AlterColumnAction::SetDefault(expr))
             } else if self.match_identifier("DATA") {
-                let _ = self.match_token(TokenType::Type) || self.match_identifier("TYPE");
+                let typed = self.match_token(TokenType::Type) || self.match_identifier("TYPE");
+                if !typed && self.is_snowflake() {
+                    return Err(self.parse_error("Expected TYPE after SET DATA"));
+                }
                 let data_type = self.parse_data_type()?;
                 let collate = if self.match_token(TokenType::Collate) {
                     if self.check(TokenType::String) {
@@ -1277,10 +1288,16 @@ impl Parser {
                 } else {
                     None
                 };
+                let rename = match self.is_snowflake() && self.match_text_seq(&["RENAME"]) {
+                    true if self.match_text_seq(&["FIELDS"]) => Some("RENAME FIELDS".to_string()),
+                    true => Some("RENAME".to_string()),
+                    false => None,
+                };
                 Ok(AlterColumnAction::SetDataType {
                     data_type,
                     using,
                     collate,
+                    rename,
                 })
             } else if self.match_identifier("VISIBLE") {
                 Ok(AlterColumnAction::SetVisible)
@@ -1324,6 +1341,7 @@ impl Parser {
                 data_type,
                 using,
                 collate,
+                rename: None,
             })
         } else {
             Err(self.parse_error("Expected SET, DROP, or TYPE in ALTER COLUMN"))
