@@ -94,3 +94,42 @@ fn given_snowflake_alter_table_drop_and_rename_of_constraints_when_parsing_then_
         );
     }
 }
+
+#[test]
+fn given_snowflake_table_search_optimization_when_parsing_then_its_targets_are_checked() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "two methods added (recorded OK)",
+            sql: "ALTER TABLE IF EXISTS v1 ADD SEARCH OPTIMIZATION ON EQUALITY ( v1 ) , EQUALITY ( v1 ) ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "two columns dropped from an iceberg table (recorded OK)",
+            sql: "ALTER ICEBERG TABLE IF EXISTS v1 DROP SEARCH OPTIMIZATION ON v1 , v1 ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "two expression IDs dropped (recorded OK)",
+            sql: "ALTER TABLE IF EXISTS v1 DROP SEARCH OPTIMIZATION ON 1 , 1 ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "ON with no target (recorded errno 1003)",
+            sql: "ALTER TABLE v1 ADD SEARCH OPTIMIZATION ON ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved word as the target (recorded errno 1003)",
+            sql: "ALTER TABLE v1 DROP SEARCH OPTIMIZATION ON SELECT ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
