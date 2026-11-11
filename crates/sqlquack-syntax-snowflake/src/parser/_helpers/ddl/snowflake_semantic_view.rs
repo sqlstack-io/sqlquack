@@ -15,7 +15,7 @@ use sqlquack_syntax::tokens::types::Result;
 type SemanticItem = fn(&mut Parser) -> Result<Expression>;
 
 /// `<key> = <value>`: one named part of a semantic view entry.
-fn part(key: &str, value: Expression) -> Expression {
+pub(super) fn part(key: &str, value: Expression) -> Expression {
     Expression::PropertyEQ(Box::new(BinaryOp::new(
         Expression::Identifier(Identifier::new(key)),
         value,
@@ -23,7 +23,7 @@ fn part(key: &str, value: Expression) -> Expression {
 }
 
 /// The parts of one entry, in the order they are written.
-fn tuple(expressions: Vec<Expression>) -> Expression {
+pub(super) fn tuple(expressions: Vec<Expression>) -> Expression {
     Expression::Tuple(Box::new(Tuple { expressions }))
 }
 

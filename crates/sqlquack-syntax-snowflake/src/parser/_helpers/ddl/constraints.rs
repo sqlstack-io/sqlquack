@@ -1075,7 +1075,11 @@ impl Parser {
         }
     }
 
-    fn parse_create_view_query(&mut self, query_parenthesized: bool) -> Result<Expression> {
+    /// The view's query after AS, in parentheses when `query_parenthesized`.
+    pub(crate) fn parse_create_view_query(
+        &mut self,
+        query_parenthesized: bool,
+    ) -> Result<Expression> {
         Ok(if self.check(TokenType::With) {
             self.parse_statement()?
         } else if query_parenthesized {
