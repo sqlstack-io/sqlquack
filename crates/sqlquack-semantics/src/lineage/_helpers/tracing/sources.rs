@@ -35,15 +35,18 @@ pub(crate) fn from_sources(
     outer: Option<&LineageScope<'_>>,
     context: LineageContext<'_>,
 ) -> FromItems {
-    let mut items: Vec<(&Expression, Option<&Join>)> = Vec::new();
+    let mut items: Vec<(&Expression, Option<&Join>, bool)> = Vec::new();
     for item in select.from.iter().flat_map(|from| from.expressions.iter()) {
-        items.extend(flattened(item, None));
+        items.extend(starting(flattened(item, None)));
     }
     for join in &select.joins {
-        items.extend(flattened(&join.this, Some(join)));
+        items.extend(starting(flattened(&join.this, Some(join))));
     }
     let mut from = FromItems::default();
-    for (item, join) in items {
+    for (item, join, starts) in items {
+        if starts {
+            from.starts.push(from.sources.len());
+        }
         if join.is_some_and(|join| OUTER_RIGHT_JOINS.contains(&join.kind)) {
             for key in &mut from.merged {
                 key.lineage.nullability = Nullability::Nullable;
@@ -91,6 +94,16 @@ pub(crate) fn from_sources(
         }
     }
     from
+}
+
+/// One FROM item's flattened parts, the first marked as where the item starts.
+fn starting<'a>(
+    parts: Vec<(&'a Expression, Option<&'a Join>)>,
+) -> impl Iterator<Item = (&'a Expression, Option<&'a Join>, bool)> {
+    parts
+        .into_iter()
+        .enumerate()
+        .map(|(index, (item, join))| (item, join, index == 0))
 }
 
 /// A LATERAL VIEW's columns under its alias, untyped; open when it names no columns.
@@ -278,7 +291,10 @@ fn item_sources_level(
     match item {
         Expression::Table(table) => vec![table_source(table, scope, context)],
         Expression::Subquery(subquery) => {
-            let outer = if subquery.lateral {
+            let outer = if subquery.lateral
+                || (!scope.sources.is_empty()
+                    && dialect_rules(context.profile).derived_tables_read_left_items())
+            {
                 Some(scope)
             } else {
                 scope.outer

@@ -111,6 +111,9 @@ pub(crate) trait DialectRules: Sync {
     /// Whether a SELECT may add rows through LATERAL VIEW clauses.
     fn has_lateral_views(&self) -> bool;
 
+    /// Whether a derived table without LATERAL still reads the FROM items before it, as DuckDB's does.
+    fn derived_tables_read_left_items(&self) -> bool;
+
     /// Whether an ASOF JOIN keeps unmatched left rows, NULL-filling the right.
     fn as_of_keeps_unmatched_left(&self) -> bool;
 

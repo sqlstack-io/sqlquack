@@ -1,6 +1,8 @@
 use sqlquack_syntax::Dialect;
 
 use crate::dialects::constants::POSTGRES;
+use crate::lineage::_helpers::findings::statement::statement_findings;
+use crate::lineage::models::LineageContext;
 use crate::lineage::tests::helpers::{duckdb_shop_schema, found_findings, owned_findings};
 use crate::lineage::tests::test_types::QueryFindingsTestCase;
 
@@ -76,10 +78,9 @@ fn given_a_postgres_relation_with_a_finding_when_resolving_names_then_only_its_f
 }
 
 #[test]
-fn given_a_derived_table_inside_a_lateral_subquery_when_resolving_names_then_it_reads_the_enclosing_items()
+fn given_from_items_that_read_each_other_when_resolving_names_then_each_reads_only_the_items_before_it()
  {
-    // Each verdict is PostgreSQL 18.6's: a nested derived table may read the item before the
-    // LATERAL subquery, but a derived table that is not LATERAL may not read its siblings.
+    // Each verdict is PostgreSQL 18.6's: only a LATERAL item reads the items before it.
     let test_cases = [
         QueryFindingsTestCase {
             description: "a comma-joined LATERAL whose nested derived table reads the item before it",
@@ -94,7 +95,26 @@ fn given_a_derived_table_inside_a_lateral_subquery_when_resolving_names_then_it_
             expected_findings: &[],
         },
         QueryFindingsTestCase {
-            description: "a derived table that is not LATERAL still cannot read its sibling",
+            description: "a LATERAL body reading the item after it",
+            sql: "SELECT k.n FROM orders AS p, LATERAL (SELECT q.id AS n) AS k, orders AS q",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'q' referenced by column 'id'",
+                45,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a derived table nested in a LATERAL reading the item after it",
+            sql: "SELECT k.n FROM orders AS p, \
+                  LATERAL (SELECT f.u AS n FROM (SELECT q.id AS u) AS f) AS k, orders AS q",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'q' referenced by column 'id'",
+                67,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a derived table without LATERAL reading the item before it",
             sql: "SELECT k.n FROM orders AS p, (SELECT p.items AS n) AS k",
             expected_findings: &[(
                 "E222",
@@ -102,13 +122,47 @@ fn given_a_derived_table_inside_a_lateral_subquery_when_resolving_names_then_it_
                 37,
             )],
         },
+        QueryFindingsTestCase {
+            description: "a derived table nested in one without LATERAL reading the item before it",
+            sql: "SELECT k.n FROM orders AS p CROSS JOIN (SELECT f.u AS n FROM (SELECT p.id AS u) AS f) AS k",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'p' referenced by column 'id'",
+                69,
+            )],
+        },
     ];
     let schema = duckdb_shop_schema();
     for test_case in test_cases {
+        let statement = sqlquack_syntax_postgres::parse_strict(test_case.sql)
+            .unwrap_or_else(|failure| panic!("{}: {failure:?}", test_case.description))
+            .statements
+            .remove(0);
+        let context = LineageContext {
+            profile: &POSTGRES,
+            schema: &schema,
+            sql: Some(test_case.sql),
+        };
+        let native: Vec<(&'static str, String, usize)> = statement_findings(&statement, context)
+            .into_iter()
+            .map(|finding| {
+                (
+                    finding.code,
+                    finding.message,
+                    finding.span.map_or(0, |span| span.start),
+                )
+            })
+            .collect();
         assert_eq!(
             found_findings(test_case.sql, (Dialect::PostgreSQL, &POSTGRES, &schema)),
             owned_findings(test_case.expected_findings),
             "{}",
+            test_case.description
+        );
+        assert_eq!(
+            native,
+            owned_findings(test_case.expected_findings),
+            "{}, PostgreSQL's parser",
             test_case.description
         );
     }

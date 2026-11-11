@@ -181,6 +181,8 @@ pub(crate) struct LineageScope<'a> {
     pub(crate) traced: RefCell<FxHashMap<usize, (Lineage, bool)>>,
     /// Lineages that read no SELECT alias, shared by every scope of this level analysed alike.
     pub(crate) shared: Option<Rc<RefCell<FxHashMap<usize, Lineage>>>>,
+    /// How many of `sources` the items before each FROM item give, in FROM order.
+    pub(crate) starts: Vec<usize>,
 }
 
 /// A query's outputs while resolving; `open` when it also offers columns not known by name.
@@ -216,6 +218,8 @@ pub(crate) struct FromItems {
     pub(crate) sources: Vec<ScopeSource>,
     pub(crate) merged: Vec<ScopedColumn>,
     pub(crate) rows: RowReads,
+    /// How many sources the items before each FROM item give, in FROM order.
+    pub(crate) starts: Vec<usize>,
 }
 
 /// The columns that decide a query's rows, and whether any such column could not be traced.
@@ -312,6 +316,10 @@ impl DialectRules for SharedRules {
     }
 
     fn has_lateral_views(&self) -> bool {
+        false
+    }
+
+    fn derived_tables_read_left_items(&self) -> bool {
         false
     }
 

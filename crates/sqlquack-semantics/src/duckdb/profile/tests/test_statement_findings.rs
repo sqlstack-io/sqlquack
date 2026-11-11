@@ -421,9 +421,9 @@ fn given_duckdb_syntax_its_parser_emits_as_calls_when_checking_then_the_forms_du
 }
 
 #[test]
-fn given_a_derived_table_inside_a_lateral_subquery_when_resolving_names_then_it_reads_the_enclosing_items()
+fn given_from_items_that_read_each_other_when_resolving_names_then_each_reads_only_the_items_before_it()
  {
-    // Each verdict is DuckDB 2.0.0's: the derived tables reading p run, the one reading q does not.
+    // Each verdict is DuckDB 2.0.0's, which also runs a derived table without LATERAL as lateral.
     let test_cases = [
         QueryFindingsTestCase {
             description: "a comma-joined LATERAL whose nested derived table reads the item before it",
@@ -443,13 +443,73 @@ fn given_a_derived_table_inside_a_lateral_subquery_when_resolving_names_then_it_
             expected_findings: &[],
         },
         QueryFindingsTestCase {
-            description: "a nested derived table still reports an alias no enclosing query has",
-            sql: "SELECT k.n FROM orders AS p, \
-                  LATERAL (SELECT f.u AS n FROM (SELECT q.items AS u) AS f) AS k",
+            description: "a LATERAL body reading the item after it",
+            sql: "SELECT k.n FROM orders AS p, LATERAL (SELECT q.id AS n) AS k, orders AS q",
             expected_findings: &[(
                 "E222",
-                "Unknown table or alias 'q' referenced by column 'items'",
+                "Unknown table or alias 'q' referenced by column 'id'",
+                45,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a derived table nested in a LATERAL reading the item after it",
+            sql: "SELECT k.n FROM orders AS p, \
+                  LATERAL (SELECT f.u AS n FROM (SELECT q.id AS u) AS f) AS k, orders AS q",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'q' referenced by column 'id'",
                 67,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a LATERAL body reading itself",
+            sql: "SELECT k.n FROM orders AS p, LATERAL (SELECT k.n AS n) AS k",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'k' referenced by column 'n'",
+                45,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a derived table without LATERAL reading the item before it",
+            sql: "SELECT k.n FROM orders AS p, (SELECT p.items AS n) AS k",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a derived table nested in one without LATERAL reading the item before it",
+            sql: "SELECT k.n FROM orders AS p CROSS JOIN (SELECT f.u AS n FROM (SELECT p.id AS u) AS f) AS k",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a derived table without LATERAL reading the item after it",
+            sql: "SELECT k.n FROM orders AS p, (SELECT q.id AS n) AS k, orders AS q",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'q' referenced by column 'id'",
+                37,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a derived table without LATERAL after LEFT JOIN reading the item before it",
+            sql: "SELECT k.n FROM orders AS p LEFT JOIN (SELECT p.id AS n) AS k ON TRUE",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a derived table without LATERAL after RIGHT JOIN, which DuckDB never runs as lateral",
+            sql: "SELECT k.n FROM orders AS p RIGHT JOIN (SELECT p.id AS n) AS k ON TRUE",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'p' referenced by column 'id'",
+                47,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a derived table without LATERAL after FULL JOIN, which DuckDB never runs as lateral",
+            sql: "SELECT k.n FROM orders AS p FULL JOIN (SELECT p.id AS n) AS k ON TRUE",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'p' referenced by column 'id'",
+                46,
             )],
         },
     ];

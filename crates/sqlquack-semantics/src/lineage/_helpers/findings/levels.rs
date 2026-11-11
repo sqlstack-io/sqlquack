@@ -17,11 +17,11 @@ use crate::lineage::_helpers::findings::checks::{
 };
 use crate::lineage::_helpers::tracing::expressions::date_part_argument;
 use crate::lineage::_helpers::tracing::queries::{
-    level_scope, output_key, unannotated, with_ctes_visiting,
+    empty_scope, level_scope, output_key, unannotated, with_ctes_visiting,
 };
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::tracing::reuse::{Reach, Reuse, reusing};
-use crate::lineage::constants::COLUMNS_FUNCTION;
+use crate::lineage::constants::{COLUMNS_FUNCTION, OUTER_RIGHT_JOINS};
 use crate::lineage::models::Engine;
 use crate::lineage::models::NameFinding;
 use crate::lineage::models::{LineageContext, LineageScope, NamedQuery};
@@ -160,6 +160,23 @@ fn unread_ctes(owner: &Expression, with: &With, context: LineageContext<'_>) -> 
         .collect()
 }
 
+/// The items before the `index`th FROM item, then `outer`; none when no item comes before it.
+fn left_scope<'a>(
+    scope: &LineageScope<'_>,
+    index: usize,
+    (ctes, outer): (&'a [NamedQuery], Option<&'a LineageScope<'a>>),
+) -> Option<LineageScope<'a>> {
+    let start: usize = scope
+        .starts
+        .get(index)
+        .map_or(scope.sources.len(), |start| *start);
+    (start > 0).then(|| LineageScope {
+        sources: scope.sources[..start].to_vec(),
+        merged: scope.merged.clone(),
+        ..empty_scope(ctes, outer)
+    })
+}
+
 /// The key of a derived table in FROM, by its alias; none when `item` is not a derived table.
 fn derived_key(item: &Expression, context: LineageContext<'_>) -> Option<Option<String>> {
     match item {
@@ -223,11 +240,22 @@ fn select_findings(
     let postgres: bool = Engine::of(context) == Engine::Postgres;
     let rules: &dyn DialectRules = dialect_rules(context.profile);
     let anywhere: bool = rules.outputs_read_anywhere();
-    for item in from_items(select) {
-        let reads: Option<&LineageScope<'_>> = match lateral(item) {
-            true => Some(&scope),
-            false => outer,
-        };
+    let left_reading: bool = rules.derived_tables_read_left_items();
+    let listed: usize = select
+        .from
+        .as_ref()
+        .map_or(0, |from| from.expressions.len());
+    for (index, item) in from_items(select).into_iter().enumerate() {
+        let implicit: bool = left_reading
+            && derived_key(unannotated(item), context).is_some()
+            && index
+                .checked_sub(listed)
+                .and_then(|join| select.joins.get(join))
+                .is_none_or(|join| !OUTER_RIGHT_JOINS.contains(&join.kind));
+        let left: Option<LineageScope<'_>> = (lateral(item) || implicit)
+            .then(|| left_scope(&scope, index, (&ctes, outer)))
+            .flatten();
+        let reads: Option<&LineageScope<'_>> = left.as_ref().or(outer);
         let body: Vec<NameFinding> =
             query_findings(unannotated(item), (&ctes, reads, aliases), context);
         if let Some(derived) = derived_key(unannotated(item), context)
