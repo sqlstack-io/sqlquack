@@ -116,22 +116,7 @@ impl Parser {
             "ADD SEARCH OPTIMIZATION"
             | "DROP SEARCH OPTIMIZATION"
             | "SUSPEND SEARCH OPTIMIZATION"
-            | "RESUME SEARCH OPTIMIZATION" => {
-                let mut targets: Vec<Expression> = Vec::new();
-                if self.match_token(TokenType::On) {
-                    loop {
-                        if action.starts_with("DROP") && self.check(TokenType::String) {
-                            targets.push(self.parse_primary()?);
-                        } else {
-                            targets.push(self.search_target(action.starts_with("ADD"))?);
-                        }
-                        if !self.match_token(TokenType::Comma) {
-                            break;
-                        }
-                    }
-                }
-                (targets, vec![])
-            }
+            | "RESUME SEARCH OPTIMIZATION" => (self.parse_search_targets(&action)?, vec![]),
             "ADD STORAGE LIFECYCLE POLICY" => {
                 let policy = self.policy_operand()?;
                 self.expect_token(TokenType::On)?;
@@ -197,6 +182,24 @@ impl Parser {
         }
         self.expect_token(TokenType::RParen)?;
         Ok(tuple(columns))
+    }
+
+    /// Parse `[ ON <target> [ , ... ] ]` after the words of a search optimization `action`; a DROP also takes a string.
+    pub(super) fn parse_search_targets(&mut self, action: &str) -> Result<Vec<Expression>> {
+        let mut targets: Vec<Expression> = Vec::new();
+        if self.match_token(TokenType::On) {
+            loop {
+                if action.starts_with("DROP") && self.check(TokenType::String) {
+                    targets.push(self.parse_primary()?);
+                } else {
+                    targets.push(self.search_target(action.starts_with("ADD"))?);
+                }
+                if !self.match_token(TokenType::Comma) {
+                    break;
+                }
+            }
+        }
+        Ok(targets)
     }
 
     /// Parse one search optimization target: `<method> ( <target> )`, or, unless `add`, a column name or an expression ID.
