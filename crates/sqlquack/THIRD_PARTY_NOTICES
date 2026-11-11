@@ -11,7 +11,7 @@ answer from Snowflake itself. sqlglot's expected DuckDB output is kept in the `s
 field as reference side data only: it is never asserted, does not count toward verification and
 is not part of the case hash.
 
-The exact-check corpus corpora/polyglot-check/sqlglot.json holds the SQL of sqlglot's test
+The corpus corpora/polyglot-check/sqlglot.json holds the SQL of sqlglot's test
 fixtures at v30.14.0 (tests/fixtures/identity.sql, tests/test_parser.py and tests/dialects/),
 as extracted by polyglot's fixture tooling. polyglot, below, is itself inspired by sqlglot and
 ships sqlglot's licence. corpora/polyglot-check/sqlglot_postgres.json holds the SQL of
@@ -60,7 +60,7 @@ polyglot
 SQLQuack's tokenizer, parser and syntax tree are a modified fork of polyglot
 (https://github.com/tobilg/polyglot), as forked at https://github.com/sqlstack-io/polyglot.
 The derived code is in crates/sqlquack-syntax-snowflake, which now holds most of it,
-crates/sqlquack-syntax and crates/sqlquack-derive. The exact-check corpus
+crates/sqlquack-syntax and crates/sqlquack-derive. The corpus
 corpora/polyglot-check/polyglot_tests.json holds the SQL inputs of polyglot's tests.
 SQLQuack's DuckDB result-type rules, in crates/sqlquack-semantics/src/duckdb/profile/_helpers/typing.rs,
 are ported from polyglot's engine type rules, and the fixture

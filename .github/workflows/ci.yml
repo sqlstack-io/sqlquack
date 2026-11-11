@@ -211,7 +211,7 @@ jobs:
         with:
           workspaces: fuzz
           shared-key: fuzz
-      - name: Seed the corpus with the exact check's statements
+      - name: Seed the corpus with the corpora's statements
         run: python3 -m scripts.seed_fuzz_corpus --out fuzz/corpus/tolerant
       - name: Fuzz
         working-directory: fuzz

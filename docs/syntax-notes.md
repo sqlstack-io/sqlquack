@@ -195,9 +195,8 @@ expression.
 
 SQLQuack's tokenizer, parser and syntax tree, for Snowflake and DuckDB.
 
-The modules below the crate root are derived from polyglot (see `THIRD_PARTY_NOTICES`) and kept
-close to it, so a dev-only check can prove that parse results are identical. Only Snowflake and
-DuckDB are reachable through this API.
+The modules below the crate root are derived from polyglot (see `THIRD_PARTY_NOTICES`). Only
+Snowflake and DuckDB are reachable through this API.
 
 Every module is linted as the rest of the workspace.
 

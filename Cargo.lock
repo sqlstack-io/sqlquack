@@ -1007,36 +1007,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f6b464fbc74e149a392436b17d523f769e057cb6877f6a5c4618bc6f11800548"
 
 [[package]]
-name = "polyglot-sql"
-version = "0.13.9"
-source = "git+https://github.com/sqlstack-io/polyglot.git?rev=7d5fe2ccce7b3cbd1413a2823560f8dfc63ecc2e#7d5fe2ccce7b3cbd1413a2823560f8dfc63ecc2e"
-dependencies = [
- "polyglot-sql-ast-derive",
- "polyglot-sql-function-catalogs",
- "regex",
- "serde",
- "serde_json",
- "stacker",
- "thiserror 1.0.69",
- "unicode-segmentation",
-]
-
-[[package]]
-name = "polyglot-sql-ast-derive"
-version = "0.13.9"
-source = "git+https://github.com/sqlstack-io/polyglot.git?rev=7d5fe2ccce7b3cbd1413a2823560f8dfc63ecc2e#7d5fe2ccce7b3cbd1413a2823560f8dfc63ecc2e"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.119",
-]
-
-[[package]]
-name = "polyglot-sql-function-catalogs"
-version = "0.13.9"
-source = "git+https://github.com/sqlstack-io/polyglot.git?rev=7d5fe2ccce7b3cbd1413a2823560f8dfc63ecc2e#7d5fe2ccce7b3cbd1413a2823560f8dfc63ecc2e"
-
-[[package]]
 name = "portable-atomic"
 version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1568,25 +1538,6 @@ version = "0.5.1"
 dependencies = [
  "serde",
  "toml",
-]
-
-[[package]]
-name = "sqlquack-polyglot-check"
-version = "0.5.1"
-dependencies = [
- "clap",
- "polyglot-sql",
- "serde",
- "serde_json",
- "sqlquack",
- "sqlquack-convert",
- "sqlquack-diagnostics",
- "sqlquack-evidence",
- "sqlquack-policy",
- "sqlquack-syntax",
- "sqlquack-syntax-snowflake",
- "toml",
- "walkdir",
 ]
 
 [[package]]

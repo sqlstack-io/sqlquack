@@ -5,4 +5,5 @@ pub(crate) mod local;
 pub(crate) mod output;
 pub(crate) mod results_command;
 pub(crate) mod rustc_version;
+pub(crate) mod verdicts_command;
 pub(crate) mod worker;

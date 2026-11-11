@@ -6,7 +6,7 @@ from scripts.fuzz_corpus.main.seed import run_seed
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Seed the fuzz corpus with the exact check's statements."""
+    """Seed the fuzz corpus with the corpora's statements."""
     return run_seed(argv)
 
 

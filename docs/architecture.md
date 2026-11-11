@@ -1,7 +1,7 @@
 # Architecture
 
-The tokenizer, parser and syntax tree, and how they move from polyglot into SQLQuack, are
-designed in [syntax.md](syntax.md).
+The tokenizer, parser and syntax tree, and how they came from polyglot into SQLQuack, are
+described in [syntax.md](syntax.md).
 
 ## Principle
 
@@ -28,7 +28,7 @@ a parameter of every entry point; Snowflake is the only one implemented.
 | Crate | Role |
 |---|---|
 | `sqlquack-syntax` | The shared syntax tree, lossless tokens, spans, complexity guards and parse diagnostics that every dialect parser builds on. It names no dialect. Derived from polyglot; see [syntax.md](syntax.md). |
-| `sqlquack-syntax-snowflake` | The Snowflake parser, with strict and tolerant modes, building the shared tree. It also reads DuckDB, PostgreSQL and SQLite as polyglot does. |
+| `sqlquack-syntax-snowflake` | The Snowflake parser, with strict and tolerant modes, building the shared tree. It also reads DuckDB, PostgreSQL and SQLite. |
 | `sqlquack-derive` | The derive that generates the tree's child traversal. |
 | `sqlquack-syntax-bigquery`, `-clickhouse`, `-databricks`, `-duckdb`, `-postgres`, `-sqlite`, `-sqlserver` | Native parsers, one per dialect, each following its engine's own grammar and building the shared `sqlquack-syntax` tree. Each README lists what it covers and its gaps. |
 | `sqlquack-parse` | The one way the other crates reach a parser. The Snowflake parser's entry points are always there; each native parser is a module behind the feature of its dialect's name. |
@@ -49,8 +49,7 @@ Development tools live under `tools/`. No shipped crate depends on them:
 
 | Crate | Role |
 |---|---|
-| `sqlquack-polyglot-check` | Proves `sqlquack-syntax` parses exactly as polyglot does, on every corpus. |
-| `sqlquack-coverage-check` | The syntax catalogues of every dialect root under `coverage/` checked against the parsers (binary `syntax-coverage`), the translation-results measure, the nesting-depth probe and the instruction-count guard. See [syntax-coverage.md](syntax-coverage.md). |
+| `sqlquack-coverage-check` | The syntax catalogues of every dialect root under `coverage/` checked against the parsers (binary `syntax-coverage`), the translation-results measure, the nesting-depth probe, the instruction-count guard and the corpora's parse verdicts (`corpus-verdicts`). See [syntax-coverage.md](syntax-coverage.md). |
 | `sqlquack-format-check` | Proves that formatting DuckDB SQL leaves the output columns DuckDB binds it to unchanged, on the format corpus. |
 
 Fensu layer targets keep the rules out of every crate but the command line ones and
@@ -70,8 +69,8 @@ matching prebuilt `libduckdb`, so binaries are run with `cargo run`, which sets 
 The recorder, `sqlquack-record`, is a separate Python package under `recorder/`. Rust and Python
 share files only.
 
-Polyglot is pinned to one revision with `default-features = false`. Its `transpile` feature stays
-off: none of its own conversions are used.
+No crate depends on polyglot. Real Snowflake results, not polyglot's behaviour, are the bar for the
+Snowflake parser.
 
 ## Constructs
 
@@ -81,18 +80,18 @@ A construct is a key `<family>:<name>`:
 - `fn:<NAME>`: a call, by its upper-case name as written; the tree keeps every Snowflake call as
   written (see `docs/syntax.md`, step 5), so `fn:IFNULL` and `fn:COALESCE` are distinct; calls to
   project functions are one construct, `fn:<udf>`;
-- `cast:<TYPE>`: the base target type of a cast, as polyglot prints it in the source dialect;
+- `cast:<TYPE>`: the base target type of a cast, by its name in the source dialect (`cast_type_name`);
 - `join:<kind>`: a join kind;
 - `clause:<name>`: a query clause or set-operation form, such as `clause:qualify` or
   `clause:union_all`;
 - `syntax:<name>`: a spelling recorded separately, such as `syntax:double_colon_cast`.
 
-Clause classification destructures polyglot's query structs field by field, so a polyglot upgrade
-that adds a clause fails to compile until the clause is classified.
+Clause classification destructures the tree's query structs field by field, so a change that adds a
+clause fails to compile until the clause is classified.
 
 Each construct carries a source position. Source SQL is parsed located (`CallMode::FaithfulLocated`,
 see `docs/syntax.md`), so operators, casts, calls, predicates, aliases, subqueries, queries, joins,
-CTEs and statements carry their own source range besides the names polyglot positions; any other
+CTEs and statements carry their own source range besides the names the parser positions; any other
 node takes the first position inside it, or else its parent's.
 
 ## Refusals

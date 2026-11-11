@@ -10,7 +10,7 @@ select = ["FF", "XSQ005", "XSQ006"]
 analyzer = "rust"
 roots = ["crates", "tools"]
 tests = []
-tooling = ["tools/sqlquack-polyglot-check"]
+tooling = []
 rule_packs = ["rust"]
 rule_modules = [
   "scripts.fensu_policy.rules.crate_layout",
@@ -85,7 +85,6 @@ tests = []
 tooling = [
   "crates/sqlquack",
   "crates/sqlquack-convert",
-  "tools/sqlquack-polyglot-check",
   "crates/sqlquack-python",
 ]
 rule_packs = ["rust"]
@@ -102,7 +101,6 @@ tests = []
 tooling = [
   "crates/sqlquack",
   "crates/sqlquack-convert",
-  "tools/sqlquack-polyglot-check",
   "crates/sqlquack-python",
   "crates/sqlquack-blocks",
   "crates/sqlquack-evidence",
@@ -124,5 +122,4 @@ forbidden_packages = [
   "duckdb",
   "libduckdb-sys",
   "arrow",
-  "polyglot-sql",
 ]

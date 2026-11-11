@@ -1,1 +1,1 @@
-"""Seeding the fuzz corpus with the exact check's statements."""
+"""Seeding the fuzz corpus with the corpora's statements."""

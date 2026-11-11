@@ -1,1 +1,0 @@
-"""Polyglot guard tests."""

@@ -12,7 +12,6 @@ members = [
     "crates/sqlquack-compare",
     "crates/sqlquack-evidence",
     "crates/sqlquack",
-    "tools/sqlquack-polyglot-check",
     "tools/sqlquack-coverage-check",
     "crates/sqlquack-syntax-postgres",
     "crates/sqlquack-lint",
@@ -45,17 +44,6 @@ anstream = "1.0"
 arrow = { version = "60", default-features = false, features = ["ipc"] }
 clap = { version = "4.5", features = ["derive"] }
 duckdb = "=1.20000.0"
-polyglot-sql = { git = "https://github.com/sqlstack-io/polyglot.git", rev = "7d5fe2ccce7b3cbd1413a2823560f8dfc63ecc2e", default-features = false, features = [
-    "dialect-snowflake",
-    "dialect-duckdb",
-    "dialect-bigquery",
-    "dialect-databricks",
-    "dialect-postgresql",
-    "dialect-sqlite",
-    "generate",
-    "semantic",
-    "stacker",
-] }
 proc-macro2 = "1"
 quote = "1"
 rayon = "1"

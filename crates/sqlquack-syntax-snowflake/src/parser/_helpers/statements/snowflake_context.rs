@@ -1,4 +1,4 @@
-//! Snowflake's statement-context rules, which the exact check's polyglot-matching modes skip.
+//! Snowflake's statement-context rules, which the lowered mode skips.
 
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::tree::models::Expression;
@@ -9,7 +9,6 @@ impl Parser {
     pub(crate) fn applies_snowflake_context_rules(&self) -> bool {
         self.config.dialect == Some(sqlquack_syntax::tokens::models::DialectType::Snowflake)
             && self.config.faithful_calls
-            && !self.config.record_call_spans
     }
 
     /// Refuses a backtick-quoted identifier, which Snowflake does not tokenize, in its faithful modes.

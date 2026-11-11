@@ -8,9 +8,8 @@ use crate::test_types::{
     ScriptingVerdictTestCase, ScriptingWalkTestCase,
 };
 
-const MODES: [CallMode; 4] = [
+const MODES: [CallMode; 3] = [
     CallMode::Faithful,
-    CallMode::FaithfulWithSpans,
     CallMode::FaithfulLocated,
     CallMode::Lowered,
 ];

@@ -53,7 +53,6 @@ REWRITTEN_ROOTS: tuple[tuple[str, str, bool], ...] = (
     ("crates/sqlquack-diagnostics/src", "sqlquack_syntax", True),
     ("crates/sqlquack-convert/src", "sqlquack_syntax", True),
     ("crates/sqlquack-blocks/src", "sqlquack_syntax", True),
-    ("tools/sqlquack-polyglot-check/src", "sqlquack_syntax", True),
     ("crates/sqlquack/src", "sqlquack_syntax", True),
     ("fuzz/fuzz_targets", "sqlquack_syntax", True),
     ("crates/sqlquack-derive/src", "crate", False),
