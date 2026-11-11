@@ -264,6 +264,39 @@ pub(crate) const SNOWFLAKE_FROM_CALLS: &[&str] = &[
 /// The properties a column-form Snowflake external table needs; the first is its stage location.
 pub(crate) const SNOWFLAKE_EXTERNAL_TABLE_REQUIRED: &[&str] = &["LOCATION", "FILE_FORMAT"];
 
+/// The `<key> = <value>` properties an iceberg table takes besides a table's.
+pub(crate) const SNOWFLAKE_ICEBERG_TABLE_KEYS: &[&str] = &[
+    "ALLOW_V3_EXPRESSION_DEFAULTS",
+    "AUTO_REFRESH",
+    "BASE_LOCATION",
+    "CATALOG",
+    "CATALOG_NAMESPACE",
+    "CATALOG_SYNC",
+    "CATALOG_TABLE_NAME",
+    "ENABLE_DATA_COMPACTION",
+    "ENABLE_ICEBERG_MERGE_ON_READ",
+    "ENABLE_SCHEMA_INFERENCE",
+    "EXTERNAL_VOLUME",
+    "ICEBERG_MERGE_ON_READ_BEHAVIOR",
+    "ICEBERG_VERSION",
+    "MATCH_BY_COLUMN_NAME",
+    "METADATA_FILE_PATH",
+    "PATH_LAYOUT",
+    "PATTERN",
+    "REFRESH_ON_CREATE",
+    "REPLACE_INVALID_CHARACTERS",
+    "STORAGE_SERIALIZATION_POLICY",
+    "TARGET_FILE_SIZE",
+];
+
+/// The `<key> = <value>` properties a dynamic table takes besides a table's.
+pub(crate) const SNOWFLAKE_DYNAMIC_TABLE_KEYS: &[&str] = &[
+    "INITIALIZATION_WAREHOUSE",
+    "INITIALIZE",
+    "REFRESH_MODE",
+    "SCHEDULER",
+];
+
 /// The properties every dynamic table needs.
 pub(crate) const SNOWFLAKE_DYNAMIC_TABLE_REQUIRED: &[&str] = &["TARGET_LAG", "WAREHOUSE"];
 

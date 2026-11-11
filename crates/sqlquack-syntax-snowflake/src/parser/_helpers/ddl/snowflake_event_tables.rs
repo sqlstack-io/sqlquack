@@ -1,6 +1,7 @@
 //! Parser ddl: Snowflake CREATE EVENT TABLE, CREATE EVENT ROUTING TABLE and CREATE ONLINE FEATURE TABLE, checked against their grammar.
 
 use crate::parser::_helpers::ddl::snowflake_alter::property;
+use crate::parser::_helpers::ddl::snowflake_create_table::SnowflakeTableKind;
 use crate::parser::constants::SNOWFLAKE_DYNAMIC_TABLE_REQUIRED;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
@@ -117,7 +118,7 @@ impl Parser {
     fn parse_event_table_properties(&mut self) -> Result<Vec<ObjectProperty>> {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
-            properties.extend(self.parse_checked_table_property()?);
+            properties.extend(self.parse_checked_table_property(SnowflakeTableKind::Table)?);
         }
         Ok(properties)
     }

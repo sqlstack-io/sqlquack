@@ -430,3 +430,57 @@ fn given_snowflake_event_routing_and_feature_tables_when_parsing_then_their_gram
         );
     }
 }
+
+#[test]
+fn given_snowflake_iceberg_and_dynamic_tables_when_parsing_then_their_grammar_is_checked() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a catalog-linked iceberg table with no columns (recorded OK)",
+            sql: "CREATE OR REPLACE ICEBERG TABLE IF NOT EXISTS v1 EXTERNAL_VOLUME = 'm' CATALOG = 'm' CATALOG_TABLE_NAME = 'm' ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a catalog table name with no value (recorded errno 1003)",
+            sql: "CREATE ICEBERG TABLE v1 CATALOG_TABLE_NAME = ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a partition transform with no arguments over columns (recorded OK)",
+            sql: "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( YEAR ( ) ) ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "partitioning with no columns (recorded errno 1003)",
+            sql: "CREATE ICEBERG TABLE v1 PARTITION BY ( v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a transient iceberg table (recorded OK)",
+            sql: "CREATE TRANSIENT ICEBERG TABLE v1 ( v1 INT ) ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a dynamic table started at an offset (recorded OK)",
+            sql: "CREATE DYNAMIC TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 START AT ( OFFSET => - 60 ) AS SELECT 1 ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a dynamic table with no query (recorded errno 1003)",
+            sql: "CREATE DYNAMIC TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "OR ALTER on an iceberg table (recorded errno 1003)",
+            sql: "CREATE OR ALTER ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 AS SELECT 1 ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
