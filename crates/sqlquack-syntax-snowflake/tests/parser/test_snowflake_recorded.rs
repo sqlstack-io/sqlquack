@@ -2,8 +2,8 @@ use serde_json::json;
 
 use sqlquack_syntax::Dialect;
 
-use crate::helpers::{accepted, statement_at};
-use crate::test_types::{AcceptanceTestCase, ProjectionTestCase};
+use crate::helpers::{accepted, snowflake_kind, statement_at};
+use crate::test_types::{AcceptanceTestCase, ProjectionTestCase, SnowflakeVerdictTestCase};
 
 #[test]
 fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake() {
@@ -1229,6 +1229,36 @@ fn given_expression_gap_receipts_when_parsing_then_acceptance_matches_snowflake(
         assert_eq!(
             accepted(test_case.sql, test_case.dialect),
             test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_snowflake_timestamp_conversions_without_arguments_when_parsing_then_they_parse() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description:
+                "TO_TIMESTAMP with no arguments parses; its arity is checked later (recorded OK)",
+            sql: "SELECT TO_TIMESTAMP ( ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "TRY_TO_TIMESTAMP with no arguments parses (recorded OK)",
+            sql: "SELECT TRY_TO_TIMESTAMP ( ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a trailing comma (recorded errno 1003)",
+            sql: "SELECT TO_TIMESTAMP ( 1 , ) ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
             "{}",
             test_case.description
         );
