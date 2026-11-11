@@ -154,7 +154,7 @@ fn given_a_postgres_query_when_checking_types_and_names_then_findings_follow_pos
         QueryFindingsTestCase {
             description: "two CTEs of one name (18.6: 42712)",
             sql: "WITH c AS (SELECT 1), c AS (SELECT 2) SELECT * FROM c",
-            expected_findings: &[("E233", "Duplicate CTE name 'c'", 0)],
+            expected_findings: &[("E233", "Duplicate CTE name 'c'", 45)],
         },
         QueryFindingsTestCase {
             description: "an output name inside an ORDER BY expression (18.6: 42703)",

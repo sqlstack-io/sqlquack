@@ -87,7 +87,7 @@ fn given_a_query_when_resolving_its_names_then_unknown_ambiguous_and_unqualifiab
                 (
                     "E201",
                     "JOIN USING column 'status' must exist on both sides",
-                    0,
+                    7,
                 ),
                 ("E201", "Unknown UNPIVOT input column 'missing'", 103),
             ],

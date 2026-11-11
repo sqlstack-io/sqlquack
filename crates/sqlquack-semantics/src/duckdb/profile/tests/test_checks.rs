@@ -145,7 +145,7 @@ fn given_a_duckdb_select_when_checking_its_scope_rules_then_broken_rules_are_fou
             expected_findings: &[(
                 "E201",
                 "Star modifier references unknown column 'quantity'",
-                0,
+                60,
             )],
         },
         QueryFindingsTestCase {

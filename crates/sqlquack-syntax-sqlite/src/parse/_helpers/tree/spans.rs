@@ -10,7 +10,7 @@ fn span_field(expression: &mut Expression) -> Option<&mut Option<Span>> {
     match expression {
         Expression::Column(node) => Some(&mut node.span),
         Expression::Identifier(node) => Some(&mut node.span),
-        Expression::Star(node) => Some(&mut node.span),
+        Expression::Star(node) => Some(&mut node.span.0),
         Expression::Count(node) => Some(&mut node.span),
         Expression::Function(node) => Some(&mut node.span.0),
         Expression::AggregateFunction(node) => Some(&mut node.span.0),

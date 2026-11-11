@@ -40,7 +40,7 @@ fn own_location(node: &Expression) -> Option<Span> {
     match node {
         Expression::Column(column) => column.span.or(column.name.span),
         Expression::Identifier(identifier) => identifier.span,
-        Expression::Star(star) => star.span,
+        Expression::Star(star) => star.span.0,
         Expression::Count(count) => count.span,
         Expression::Function(function) => function.span.0,
         _ => None,

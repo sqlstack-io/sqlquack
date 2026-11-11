@@ -11,6 +11,7 @@ use crate::expressions::statements::models::HistoricalData;
 use crate::expressions::statements::models::Version;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
+use crate::tokens::models::SourceSpan;
 use crate::tokens::models::Span;
 
 /// A literal, keeping numbers as written so precision, trailing zeros and hex survive.
@@ -419,9 +420,10 @@ pub struct Star {
     /// Trailing comments that appeared after the star
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub trailing_comments: Vec<String>,
-    /// Source position span
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub span: Option<Span>,
+    /// The star's source range, recorded only by a located parse.
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
     /// The name parts of qualified `except` and `rename` entries, with their quoting.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub qualified: Option<Box<StarParts>>,
