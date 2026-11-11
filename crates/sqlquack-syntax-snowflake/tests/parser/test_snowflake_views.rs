@@ -134,6 +134,16 @@ fn given_snowflake_views_when_parsing_then_their_grammar_is_checked() {
             expected_kind: Some("create_view"),
         },
         SnowflakeVerdictTestCase {
+            description: "a column list after a view property (recorded errno 91905)",
+            sql: "CREATE VIEW my_view CHANGE_TRACKING=TRUE (id) AS SELECT 1 AS id",
+            expected_kind: Some("create_view"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a view COMMENT without = (recorded errno 1003)",
+            sql: "CREATE VIEW v COMMENT 'c' AS SELECT 1 AS a",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
             description: "a column policy after the column list (recorded errno 1003)",
             sql: "CREATE VIEW v1 v1 MASKING POLICY v1 USING ( v1 , v1 ) PROJECTION POLICY v1 TAG ( v1 = 'm' ) AS SELECT 1 ;",
             expected_kind: None,
