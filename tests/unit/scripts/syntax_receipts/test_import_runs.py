@@ -463,6 +463,8 @@ def test_given_fixture_setup_per_item_when_imported_then_receipts_name_that_setu
                     **error_row(case_id="c2", sql=_OTHER, errno=1003, message="x"),
                     "case_schema": "C0001",
                 },
+                # No case schema: the run setup ends with the shared-schema note, not the template.
+                error_row(case_id="c3", sql=_BROKEN, errno=1003, message="x"),
             ],
             packet=[
                 {**packet_case(case_id="c1", sql=_GOOD), "setup": _DDL_TEMPLATE},
@@ -473,9 +475,10 @@ def test_given_fixture_setup_per_item_when_imported_then_receipts_name_that_setu
                         *_DDL_TEMPLATE[1:],
                     ],
                 },
+                {**packet_case(case_id="c3", sql=_BROKEN), "setup": _DDL_TEMPLATE},
             ],
             expected_receipts=[("c1", "syntax_error")],
-            expected_refusals=[("c2", "run")],
+            expected_refusals=[("c2", "run"), ("c3", "run")],
             expected_sql_sha256=sha(_GOOD.encode()),
             expected_raw_record_sha256=sha(
                 json.dumps({**_SYNTAX_ROW, "case_schema": "C0000"}).encode()
