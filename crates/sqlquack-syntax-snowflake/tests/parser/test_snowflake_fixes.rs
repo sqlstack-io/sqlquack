@@ -1650,12 +1650,17 @@ fn given_a_snowflake_create_semantic_view_when_parsing_then_recorded_verdicts_ho
         SnowflakeVerdictTestCase {
             description: "a metric window PARTITION BY EXCLUDING (recorded OK)",
             sql: "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 ) METRICS ( v1 . v1 AS SUM ( v1 ) OVER ( PARTITION BY EXCLUDING v1 ) ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a dimension with a Cortex Search service (recorded OK)",
             sql: "CREATE SEMANTIC VIEW v1 TABLES ( v1 ) DIMENSIONS ( v1 . v1 AS 1 WITH CORTEX SEARCH SERVICE v1 USING v1 ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a DCM semantic view definition (recorded OK)",
+            sql: "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( d1.s1.v1 ) RELATIONSHIPS ( v1 ( v1 ) REFERENCES v1 ( BETWEEN v1 AND v1 EXCLUSIVE ) ) ;",
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "PARTITION BY EXCLUDING outside a semantic view stays refused",
