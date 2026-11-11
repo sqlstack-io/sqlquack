@@ -389,6 +389,9 @@ pub enum TableConstraint {
         /// ClickHouse: GRANULARITY n
         #[serde(default, skip_serializing_if = "Option::is_none")]
         granularity: Option<Box<Expression>>,
+        /// Snowflake hybrid table: INCLUDE (columns) stored with the index
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        include_columns: Vec<Identifier>,
     },
     /// ClickHouse PROJECTION definition
     Projection {

@@ -199,6 +199,7 @@ impl Parser {
                     expression: None,
                     index_type: None,
                     granularity: None,
+                    include_columns: Vec::new(),
                 })
             } else {
                 let has_constraint_keyword = name.is_some();
@@ -491,6 +492,7 @@ impl Parser {
             expression: None,
             index_type: None,
             granularity: None,
+            include_columns: Vec::new(),
         })
     }
 
