@@ -12,6 +12,7 @@ use crate::expressions::queries::models::Select;
 use crate::expressions::tree::main::_type_assertion_result::type_assertion_result;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
+use crate::tokens::models::SourceSpan;
 
 impl Expression {
     /// Source semantics still needing dialect-aware lowering; kept through serialization.
@@ -693,7 +694,7 @@ impl Expression {
             replace: None,
             rename: None,
             trailing_comments: Vec::new(),
-            span: None,
+            span: SourceSpan::default(),
             qualified: None,
         }))
     }

@@ -1096,7 +1096,7 @@ impl Parser {
             replace,
             rename,
             trailing_comments: star_trailing_comments,
-            span: None,
+            span: SourceSpan::default(),
             qualified: None,
         })
     }

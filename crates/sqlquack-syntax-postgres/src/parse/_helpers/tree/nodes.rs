@@ -39,7 +39,7 @@ pub(crate) fn star(table: Option<Identifier>) -> Expression {
         replace: None,
         rename: None,
         trailing_comments: Vec::new(),
-        span: None,
+        span: SourceSpan::default(),
         qualified: None,
     }))
 }

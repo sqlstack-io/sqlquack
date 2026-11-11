@@ -507,7 +507,7 @@ impl Parser {
                             replace: None,
                             rename: None,
                             trailing_comments: Vec::new(),
-                            span: None,
+                            span: SourceSpan::default(),
                             qualified: None,
                         },
                     ))
@@ -628,7 +628,7 @@ impl Parser {
                             replace: None,
                             rename: None,
                             trailing_comments: Vec::new(),
-                            span: None,
+                            span: SourceSpan::default(),
                             qualified: None,
                         })),
                         right: pattern,
@@ -1147,7 +1147,7 @@ impl Parser {
                     replace: None,
                     rename: None,
                     trailing_comments: Vec::new(),
-                    span: None,
+                    span: SourceSpan::default(),
                     qualified: None,
                 }))
             } else if let Some(lambda) = self.parse_function_lambda()? {

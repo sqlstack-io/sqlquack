@@ -64,7 +64,7 @@ fn empty_star(table: Option<Identifier>) -> Star {
         replace: None,
         rename: None,
         trailing_comments: Vec::new(),
-        span: None,
+        span: SourceSpan::default(),
         qualified: None,
     }
 }

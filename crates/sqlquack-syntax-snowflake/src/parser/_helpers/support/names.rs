@@ -1305,7 +1305,7 @@ impl Parser {
             replace,
             rename,
             trailing_comments: Vec::new(),
-            span: None,
+            span: SourceSpan::default(),
             qualified: None,
         }))))
     }

@@ -344,7 +344,7 @@ impl Parser {
                     replace: None,
                     rename: None,
                     trailing_comments: Vec::new(),
-                    span: None,
+                    span: SourceSpan::default(),
                     qualified: None,
                 },
             ))]
