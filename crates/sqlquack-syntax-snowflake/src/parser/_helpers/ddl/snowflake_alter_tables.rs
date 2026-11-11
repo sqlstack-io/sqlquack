@@ -3,6 +3,7 @@
 use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::models::Parser;
+use sqlquack_syntax::expressions::columns::models::AlterTableAction;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::schema_objects::models::ObjectProperty;
 use sqlquack_syntax::expressions::tree::models::Expression;
@@ -75,7 +76,11 @@ impl Parser {
     /// Parse the head and an ICEBERG or lifecycle action of an ALTER [ ICEBERG ] TABLE, or None.
     fn parse_alter_table_extension(&mut self, iceberg: bool) -> Result<Option<Expression>> {
         let head = self.parse_alter_object_head()?;
-        if !iceberg && self.match_text_seq(&["RENAME"]) && !self.check(TokenType::Column) {
+        if !iceberg
+            && self.match_text_seq(&["RENAME"])
+            && !self.check(TokenType::Column)
+            && !self.check(TokenType::Constraint)
+        {
             self.expect_token(TokenType::To)?;
             self.parse_object_name()?;
             return Ok(None);
@@ -167,6 +172,49 @@ impl Parser {
             _ => (vec![], vec![]),
         };
         Ok((action, parts))
+    }
+
+    /// Snowflake's `KEY`, `UNIQUE [ ( <col> , ... ) ]` or `FOREIGN KEY [ ( <col> , ... ) ]` after DROP, with an optional CASCADE or RESTRICT; None (position unchanged) for any other drop.
+    pub(crate) fn parse_snowflake_drop_key(&mut self) -> Result<Option<AlterTableAction>> {
+        if !self.is_snowflake() {
+            return Ok(None);
+        }
+        let start = self.current;
+        let listed = if self.match_token(TokenType::Unique)
+            || self.match_keywords(&[TokenType::ForeignKey, TokenType::Key])
+        {
+            true
+        } else if self.check(TokenType::Key)
+            && self.peek_nth(1).is_none_or(|token| {
+                matches!(token.token_type, TokenType::Semicolon | TokenType::Comma)
+            })
+        {
+            self.skip();
+            false
+        } else {
+            return Ok(None);
+        };
+        if listed && self.check(TokenType::LParen) {
+            self.parse_column_names()?;
+        }
+        let _ = self.match_token(TokenType::Cascade) || self.match_token(TokenType::Restrict);
+        Ok(Some(AlterTableAction::Raw {
+            sql: format!("DROP {}", self.tokens_to_sql(start, self.current)),
+        }))
+    }
+
+    /// Snowflake's `CONSTRAINT <name> TO <name>` after RENAME; None (position unchanged) for any other rename.
+    pub(crate) fn parse_snowflake_rename_constraint(&mut self) -> Result<Option<AlterTableAction>> {
+        let start = self.current;
+        if !self.is_snowflake() || !self.match_token(TokenType::Constraint) {
+            return Ok(None);
+        }
+        self.parse_external_name()?;
+        self.expect_token(TokenType::To)?;
+        self.parse_external_name()?;
+        Ok(Some(AlterTableAction::Raw {
+            sql: format!("RENAME {}", self.tokens_to_sql(start, self.current)),
+        }))
     }
 
     /// Parse the head and one of `actions` of an ALTER `kind`, or None for another action.
