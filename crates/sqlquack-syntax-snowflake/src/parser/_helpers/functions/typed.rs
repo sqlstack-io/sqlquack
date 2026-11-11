@@ -49,7 +49,6 @@ use sqlquack_syntax::expressions::typed_functions::models::ValueFunc;
 use sqlquack_syntax::expressions::types::models::DataType;
 use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::SourceSpan;
-use sqlquack_syntax::tokens::models::Span;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
 
@@ -268,7 +267,7 @@ impl Parser {
         }
         let comments = self.call_comments(saved);
         let typed = self.parse_typed_function_lowered(name, upper_name, quoted)?;
-        let mut expr = match Self::call_name(&typed) {
+        let expr = match Self::call_name(&typed) {
             Some(kept) if kept.eq_ignore_ascii_case(name) => typed,
             _ if sqlquack_syntax::functions::names::main::faithful_keyword_syntax_name::faithful_keyword_syntax_name(upper_name)
                 && self.tokens_use_keyword_syntax(saved) =>
@@ -290,9 +289,6 @@ impl Parser {
                 }
             }
         };
-        if self.config.record_call_spans {
-            self.record_call_span(&mut expr, saved);
-        }
         self.faithful_calls
             .insert(saved, (expr.clone(), self.current));
         Ok(expr)
@@ -348,30 +344,6 @@ impl Parser {
             Expression::Function(function) => Some(&function.name),
             Expression::AggregateFunction(function) => Some(&function.name),
             _ => None,
-        }
-    }
-
-    /// SQLQuack: records, on a call node, the source span from its name to its last token.
-    pub(crate) fn record_call_span(&self, expr: &mut Expression, arguments_start: usize) {
-        let Some(name_token) = arguments_start
-            .checked_sub(2)
-            .and_then(|index| self.tokens.get(index))
-        else {
-            return;
-        };
-        if self.tokens[arguments_start - 1].token_type != TokenType::LParen {
-            return;
-        }
-        let span = Span {
-            start: name_token.span.start,
-            end: self.tokens[self.current - 1].span.end,
-            line: 0,
-            column: 0,
-        };
-        match expr {
-            Expression::Function(function) => function.span = SourceSpan(Some(span)),
-            Expression::AggregateFunction(function) => function.span = SourceSpan(Some(span)),
-            _ => {}
         }
     }
 

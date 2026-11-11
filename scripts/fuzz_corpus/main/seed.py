@@ -12,7 +12,7 @@ from scripts.fuzz_corpus.constants import CORPUS_GLOB, CORPUS_SOURCES, ENTRIES_K
 
 
 def run_seed(argv: list[str] | None = None) -> int:
-    """Write each exact-check statement to the corpus directory, named by its SHA-1."""
+    """Write each corpus statement to the corpus directory, named by its SHA-1."""
     parser: argparse.ArgumentParser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repository", type=Path, default=Path.cwd())
     parser.add_argument("--out", type=Path, required=True)

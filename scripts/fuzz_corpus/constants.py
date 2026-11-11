@@ -1,4 +1,4 @@
-"""Where the exact check's statements are read from."""
+"""Where the corpora's statements are read from."""
 
 from __future__ import annotations
 

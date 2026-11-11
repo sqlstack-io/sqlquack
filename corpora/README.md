@@ -22,6 +22,6 @@ Inputs of checks that never ship. Their outcomes are not recorded here.
 
 | Directory | Read by |
 |---|---|
-| `polyglot-check/` | `tools/sqlquack-polyglot-check`, which proves that `sqlquack-syntax` parses exactly as polyglot does, and the fuzz corpus seed (`scripts/fuzz_corpus`). `expected_differences.toml` lists the reviewed differences. The `*.NOTICE` files and `THIRD_PARTY_NOTICES` give the sources' licences. |
+| `polyglot-check/` | `syntax-coverage corpus-verdicts` (`make corpus-verdicts`), against SQLQuack's verdicts recorded in `coverage/syntax/corpus-verdicts.json`, and the fuzz corpus seed (`scripts/fuzz_corpus`). The `*.NOTICE` files and `THIRD_PARTY_NOTICES` give the sources' licences. |
 | `duckdb-core/` | The DuckDB parser's corpus tests in `crates/sqlquack-syntax-duckdb`; see its README. |
 | `databricks-core/` | The acceptance corpus for the Databricks parser, each statement tagged with the catalogue forms it uses; no test reads it yet. See its README. |

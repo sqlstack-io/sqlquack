@@ -11,6 +11,7 @@ use crate::cli::_helpers::commands::{
 use crate::cli::_helpers::depth_command::depth_probe;
 use crate::cli::_helpers::instructions_command::{instruction_counts, instruction_workload};
 use crate::cli::_helpers::results_command::results;
+use crate::cli::_helpers::verdicts_command::corpus_verdicts;
 use crate::cli::models::{Arguments, Command};
 
 /// Runs one subcommand; progress and problems go to stderr, results to stdout.
@@ -58,6 +59,11 @@ pub fn run_cli() -> ExitCode {
         } => depth_probe(&profile, &allowlist, jobs, json),
         Command::InstructionCounts { baseline, update } => instruction_counts(&baseline, update),
         Command::InstructionWorkload { workload } => instruction_workload(workload),
+        Command::CorpusVerdicts {
+            corpora,
+            verdicts,
+            update,
+        } => corpus_verdicts(&corpora, &verdicts, update),
     };
     result.unwrap_or_else(|code| code)
 }

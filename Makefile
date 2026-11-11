@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug instruction-counts instruction-baseline gate-build polyglot-guard engine-free bundled-extensions dialect-builds generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded verify-changed replay-scope test-crate check-pr-metadata evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard polyglot-duckshop census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
+.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug instruction-counts instruction-baseline gate-build engine-free bundled-extensions dialect-builds generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord corpus-verdicts corpus-verdicts-baseline generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-module python-api python-wheel verify-recorded verify-changed replay-scope test-crate check-pr-metadata evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -116,10 +116,6 @@ evidence-pin-check:
 clutter-guard:
 	uv run python -m scripts.check_clutter_guard
 
-# Fails when a crate other than the dev-only exact check reaches polyglot at runtime.
-polyglot-guard:
-	uv run python -m scripts.check_polyglot_guard
-
 # Fails when the conversion pipeline crate, which builds without DuckDB's engine, reaches it.
 engine-free:
 	@tree="$$(cargo tree --locked -p sqlquack-convert -e normal --prefix none)" || exit 1; \
@@ -169,6 +165,15 @@ generate-cases:
 # converter. Run it in the PR whose change moves an outcome, and commit the corpora with it.
 corpus-rerecord:
 	SQLQUACK_RERECORD=1 cargo test --locked -p sqlquack --lib everyday_corpus
+
+# Checks SQLQuack's parse verdict on every statement of the corpora under corpora/polyglot-check
+# against coverage/syntax/corpus-verdicts.json, and fails on any change.
+corpus-verdicts: gate-build
+	$(GATE_DIR)/syntax-coverage corpus-verdicts
+
+# Records the verdicts corpus-verdicts checks. Run it in the change that moves one, and commit it.
+corpus-verdicts-baseline: gate-build
+	$(GATE_DIR)/syntax-coverage corpus-verdicts --update
 
 # Fails when a generated case file differs from what its generator writes.
 generated-cases:
@@ -220,7 +225,7 @@ referee-pending:
 	uv run python -m scripts.write_referee_pending $(REFEREE_ARGS)
 
 # The static gate, the first step of `gate`, and the Python API's tests.
-check-ci: rust-lint python-check fensu syntax-coverage depth-probe instruction-counts evidence-pin-check clutter-guard polyglot-guard engine-free bundled-extensions dialect-builds generated-cases syntax-cases dialect-cases referee-cases translation-files python-api distribution-notices replay-scope ## The static gate CI runs.
+check-ci: rust-lint python-check fensu syntax-coverage depth-probe instruction-counts corpus-verdicts evidence-pin-check clutter-guard engine-free bundled-extensions dialect-builds generated-cases syntax-cases dialect-cases referee-cases translation-files python-api distribution-notices replay-scope ## The static gate CI runs.
 
 # Each distribution ships the licence and third-party notices; its copies must match the root files.
 distribution-notices:
@@ -484,14 +489,6 @@ duckshop-compiled:
 	(cd $(DUCKSHOP_DIR)/duckshop-10k && $(abspath $(DUCKSHOP_DIR)/venv/bin/sqb) compile); \
 	echo "$(SQLBUILD_REF) $(SQLBUILD_VERSION)" > $(DUCKSHOP_DIR)/.ref
 
-# The exact parser check over each compiled DuckShop project in DUCKSHOP_COMPILED.
-polyglot-duckshop:
-	@for compiled in $(DUCKSHOP_COMPILED); do test -d "$$compiled" || \
-	  { echo "polyglot-duckshop: $$compiled is missing; run make duckshop-compiled" >&2; exit 1; }; done
-	for compiled in $(DUCKSHOP_COMPILED); do \
-	  cargo run --locked --release -p sqlquack-polyglot-check -- directory "$$compiled" --dialect snowflake || exit 1; \
-	done
-
 # Converting each compiled DuckShop project, with chained models and a diagnostic for each blocked
 # file, must finish within DUCKSHOP_CENSUS_SECONDS. DuckShop 10K takes about 25 s on a development
 # machine; 300 s is about twelve times that, room for slower CI runners, so only a pathological
@@ -537,7 +534,7 @@ duckshop-measure: duckshop-compiled
 	  --sqlquack "$$target/release/sqlquack" --library "$$library" \
 	  --work "$$out/work" --out "$$out/snowflake.json"
 
-# Fuzzes each of FUZZ_TARGETS from the exact check's statements for FUZZ_SECONDS: tolerant parsing,
+# Fuzzes each of FUZZ_TARGETS from the corpora's statements for FUZZ_SECONDS: tolerant parsing,
 # and strict parsing through to rendered diagnostics.
 fuzz-smoke:
 	uv run python -m scripts.seed_fuzz_corpus --out $(FUZZ_CORPUS)
@@ -546,8 +543,8 @@ fuzz-smoke:
 	    -max_total_time=$(FUZZ_SECONDS) -max_len=4096 -timeout=10 -rss_limit_mb=2048) || exit 1; \
 	done
 
-# Everything CI runs: the static gate, the tests, the recorded-case replay, the exact check and the
-# timed conversion on DuckShop, and the fuzz smoke.
+# Everything CI runs: the static gate, the tests, the recorded-case replay, the timed conversion on
+# DuckShop, and the fuzz smoke.
 # After the static gate, the independent targets run in parallel, each target's output kept
 # together; any failure fails the gate. The fuzz smoke and then the SQL timing benchmark run alone
 # afterwards, so each gets the machine to itself.
@@ -556,7 +553,7 @@ gate: check-ci $(if $(filter command line,$(origin DUCKSHOP_COMPILED)),,duckshop
 	$(MAKE) fuzz-smoke
 	$(MAKE) sql-benchmark
 
-gate-parallel: test-rust test-python verify-recorded polyglot-duckshop census-duckshop
+gate-parallel: test-rust test-python verify-recorded census-duckshop
 
 # Example: make census CENSUS_ARGS="path/to/sql --json"
 census:

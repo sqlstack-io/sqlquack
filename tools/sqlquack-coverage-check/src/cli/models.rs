@@ -9,6 +9,7 @@ use crate::formats::constants::COVERAGE_ROOT;
 use crate::formats::models::LocalParser;
 use crate::instructions::constants::BASELINE_FILE;
 use crate::instructions::models::Workload;
+use crate::verdicts::constants::{CORPORA_DIR, VERDICTS_FILE};
 
 #[derive(Debug, Parser)]
 #[command(
@@ -149,6 +150,18 @@ pub enum Command {
     InstructionWorkload {
         #[arg(long, value_enum)]
         workload: Workload,
+    },
+    /// SQLQuack's parse verdict on every corpus statement against the recorded ones; fails on any change.
+    CorpusVerdicts {
+        /// The directory of vendored corpus files.
+        #[arg(long, default_value = CORPORA_DIR)]
+        corpora: PathBuf,
+        /// The recorded verdicts.
+        #[arg(long, default_value = VERDICTS_FILE)]
+        verdicts: PathBuf,
+        /// Record the current verdicts instead of comparing with them.
+        #[arg(long)]
+        update: bool,
     },
     /// What conversion makes of every case Snowflake parsed, by form and family.
     Translation {

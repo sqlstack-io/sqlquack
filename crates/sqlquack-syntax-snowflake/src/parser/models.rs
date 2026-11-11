@@ -142,7 +142,6 @@ impl Dialect {
             dialect: Some(self.dialect_type),
             complexity_guard,
             faithful_calls: mode != CallMode::Lowered,
-            record_call_spans: mode == CallMode::FaithfulWithSpans,
             record_node_spans: mode == CallMode::FaithfulLocated,
             ..Default::default()
         };
@@ -440,8 +439,6 @@ pub(crate) struct ParserConfig {
     pub complexity_guard: ComplexityGuardOptions,
     /// SQLQuack: in Snowflake, keep calls as written; only keyword-syntax calls become typed nodes.
     pub faithful_calls: bool,
-    /// SQLQuack: record the source span of every call parsed faithfully (for the exact check).
-    pub record_call_spans: bool,
     /// SQLQuack: record each expression and statement node's source range (for locations).
     pub record_node_spans: bool,
     /// Whether a Snowflake CREATE SEMANTIC VIEW is being checked, where a window may PARTITION BY EXCLUDING.
