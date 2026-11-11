@@ -195,9 +195,7 @@ impl Parser {
         upper_name: &str,
         quoted: bool,
     ) -> Result<Expression> {
-        if self.config.faithful_calls
-            && self.config.dialect == Some(sqlquack_syntax::tokens::models::DialectType::Snowflake)
-        {
+        if self.config.dialect == Some(sqlquack_syntax::tokens::models::DialectType::Snowflake) {
             return self.parse_faithful_call(name, upper_name, quoted);
         }
         self.parse_typed_function_lowered(name, upper_name, quoted)
@@ -249,7 +247,7 @@ impl Parser {
 
     /// SQLQuack: whether a faithful parse keeps a path key in brackets, so the path stays unambiguous.
     pub(crate) fn faithful_path_key_needs_brackets(&self, key: &str) -> bool {
-        self.config.faithful_calls && key.contains(['.', '[', ']', '"', ':'])
+        key.contains(['.', '[', ']', '"', ':'])
     }
 
     /// SQLQuack: a call as written, unless polyglot keeps it or the typed parse is the call itself.

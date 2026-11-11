@@ -4,14 +4,14 @@ use sqlquack_syntax::Dialect;
 pub(crate) struct FaithfulCallTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,
-    pub(crate) expected_call: (Value, Option<usize>, String),
+    pub(crate) expected_call: (Value, Option<usize>),
 }
 
-pub(crate) struct ModeAgreementTestCase {
+pub(crate) struct ProjectionKindTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,
     pub(crate) dialect: Dialect,
-    pub(crate) expected_same: bool,
+    pub(crate) expected_kind: &'static str,
 }
 
 pub(crate) struct ProjectionTestCase {

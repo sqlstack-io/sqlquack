@@ -24,7 +24,7 @@ pub(crate) fn kind(value: &Value) -> String {
         .unwrap_or_default()
 }
 
-pub(crate) fn faithful_call(sql: &str) -> (Value, Option<usize>, String) {
+pub(crate) fn faithful_call(sql: &str) -> (Value, Option<usize>) {
     let faithful = first_projection(sql, CallMode::Faithful);
     let payload = faithful
         .get("function")
@@ -34,12 +34,7 @@ pub(crate) fn faithful_call(sql: &str) -> (Value, Option<usize>, String) {
     (
         payload["name"].clone(),
         payload["args"].as_array().map(Vec::len),
-        kind(&first_projection(sql, CallMode::Lowered)),
     )
-}
-
-pub(crate) fn same_in_both_modes(sql: &str, dialect: Dialect) -> bool {
-    statements(sql, dialect, CallMode::Faithful) == statements(sql, dialect, CallMode::Lowered)
 }
 
 pub(crate) fn projection_at(sql: &str, pointer: &str) -> Value {
