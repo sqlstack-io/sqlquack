@@ -16,6 +16,7 @@ from scripts.syntax_receipts.models import Imported
 from scripts.syntax_receipts.types import Row
 from tests.unit.scripts.syntax_receipts._test_types import (
     BindingTestCase,
+    CaptureDriverTestCase,
     ClassifyTestCase,
     OverwriteTestCase,
     QueryHistoryReceiptTestCase,
@@ -331,6 +332,43 @@ def test_given_raw_changed_after_audit_when_imported_then_the_whole_run_is_refus
     assert imported.receipts == [], test_case.description
     assert imported.runs[0]["status"] == test_case.expected_status, test_case.description
     assert test_case.expected_reason_fragment in imported.runs[0]["reason"], test_case.description
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        CaptureDriverTestCase(
+            description="an execute run, one fresh session per case and no run database",
+            start={
+                "capture": "execute",
+                "submission": "as-is, once, a fresh session per case, ROLLBACK and close after",
+            },
+            expected_status="imported",
+            expected_capture_methods=["execute"],
+        ),
+        CaptureDriverTestCase(
+            description="a start event naming no driver",
+            start={"submission": "as-is, once"},
+            expected_status="refused",
+            expected_capture_methods=[],
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_start_event_when_imported_then_its_driver_reads_the_run(
+    test_case: CaptureDriverTestCase, tmp_path: Path
+) -> None:
+    write_run(
+        root=tmp_path,
+        rows=[_SYNTAX_ROW],
+        packet=[packet_case(case_id="c1", sql=_GOOD)],
+        start=test_case.start,
+    )
+
+    imported: Imported = import_runs(runs=tmp_path / "runs", input_dirs=[tmp_path / "inputs"])
+
+    assert imported.runs[0]["status"] == test_case.expected_status
+    assert [r["capture_method"] for r in imported.receipts] == test_case.expected_capture_methods
 
 
 @pytest.mark.parametrize(

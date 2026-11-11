@@ -59,6 +59,7 @@ SQL_KEY: str = "sql"
 RUN_DATABASE_KEY: str = "run_database"
 PROPOSAL_KEY: str = "proposal_sha256"
 MANIFEST_KEY: str = "manifest_sha256"
+PACKET_KEY: str = "packet_sha256"
 PACKET_ACCEPTED_OUTCOMES: tuple[str, ...] = ("accepted_executed", "compiled")
 DIAGNOSTIC_ACCEPTED_OUTCOME: str = "rows"
 CANONICAL_ACCEPTED_OUTCOMES: tuple[str, ...] = ("rows", "types")
