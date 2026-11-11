@@ -14,37 +14,37 @@ fn given_snowflake_table_policies_and_properties_when_parsing_then_recorded_verd
         SnowflakeVerdictTestCase {
             description: "a column masking policy keeps the statement as written (recorded OK)",
             sql: "CREATE TABLE v1 ( v1 INT MASKING POLICY v1 USING ( v1 , v1 ) ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "untyped columns with policies before AS (recorded OK)",
             sql: "CREATE TABLE v1 ( v1 MASKING POLICY v1 ) ROW ACCESS POLICY v1 ON ( v1 ) AS SELECT 1 ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a constant clustering key (recorded OK)",
             sql: "CREATE OR ALTER TABLE v1 ( v1 INT ) CLUSTER BY ( 1 , 1 ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "copy options after LIKE (recorded OK)",
             sql: "CREATE OR REPLACE TABLE v1 LIKE v1 CLUSTER BY ( 1 , 1 ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "join, aggregation and storage lifecycle policies (recorded OK)",
             sql: "CREATE TABLE v1 ( v1 INT ) JOIN POLICY v1 ALLOWED JOIN KEYS ( v1 , v1 ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a word comment and a word tag value (recorded OK)",
             sql: "CREATE TABLE v1 ( v1 INT ) TAG ( v1 = m1 ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "constraint properties (recorded OK)",
             sql: "CREATE TABLE v1 ( v1 INT UNIQUE , v1 INT REFERENCES v1 INITIALLY DEFERRED ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "an untyped column without AS (recorded errno 1003)",
@@ -152,7 +152,7 @@ fn given_snowflake_table_templates_and_conversions_when_parsing_then_recorded_ve
         SnowflakeVerdictTestCase {
             description: "a template from a session variable (recorded OK)",
             sql: "CREATE TABLE v1 USING TEMPLATE $v1 ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a template from a string after $ (recorded errno 1003)",
@@ -162,7 +162,7 @@ fn given_snowflake_table_templates_and_conversions_when_parsing_then_recorded_ve
         SnowflakeVerdictTestCase {
             description: "a target lag and warehouse before AS (recorded OK)",
             sql: "CREATE TABLE v1 CLUSTER BY ( 1 ) TARGET_LAG = '1 minute' WAREHOUSE = v1 AS SELECT 1 ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a conversion to a managed Iceberg table (recorded OK)",
@@ -331,4 +331,33 @@ fn given_a_snowflake_external_table_when_parsing_then_its_columns_and_properties
         table["properties"][1]["value"]["literal"]["value"],
         "@s1/p1"
     );
+}
+
+#[test]
+fn given_a_snowflake_table_with_policies_when_parsing_then_its_columns_and_properties_are_structured(
+) {
+    let tree = statements(
+        "CREATE TRANSIENT TABLE v1 ( v1 INT NOT NULL MASKING POLICY p1 USING ( v1 , v2 ) , v2 INT , CONSTRAINT k1 PRIMARY KEY ( v1 ) RELY ) ROW ACCESS POLICY p2 ON ( v1 ) ;",
+        Dialect::Snowflake,
+        CallMode::Faithful,
+    );
+    let table = &tree[0]["create_object"];
+    assert_eq!(table["kind"], "TABLE");
+    assert_eq!(table["modifier"], "TRANSIENT");
+    let columns = table["operands"][0]["tuple"]["expressions"]
+        .as_array()
+        .expect("columns");
+    assert_eq!(columns.len(), 2);
+    let first = &columns[0]["column_def"];
+    assert_eq!(first["nullable"], false);
+    let policy = &first["options"][0]["masking_policy_column_constraint"];
+    assert_eq!(policy["this"]["table"]["name"]["name"], "p1");
+    let kinds: Vec<&str> = table["properties"]
+        .as_array()
+        .expect("properties")
+        .iter()
+        .map(|property| property["kind"].as_str().unwrap_or_default())
+        .collect();
+    assert_eq!(kinds, ["PRIMARY KEY", "ROW ACCESS POLICY"]);
+    assert_eq!(table["properties"][0]["name"]["name"], "k1");
 }

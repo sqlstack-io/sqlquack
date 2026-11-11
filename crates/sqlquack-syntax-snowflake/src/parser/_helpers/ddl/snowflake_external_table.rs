@@ -68,13 +68,8 @@ impl Parser {
         }))))
     }
 
-    /// Checks `( <query> )`, `$<variable>` or a string after USING TEMPLATE.
-    pub(super) fn check_external_template(&mut self) -> Result<()> {
-        self.parse_external_template().map(|_| ())
-    }
-
     /// `( <query> )`, `$<variable>` or a string after USING TEMPLATE.
-    fn parse_external_template(&mut self) -> Result<Expression> {
+    pub(super) fn parse_external_template(&mut self) -> Result<Expression> {
         if self.check(TokenType::String) {
             return self.parse_primary();
         }
