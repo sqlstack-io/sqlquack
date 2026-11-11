@@ -440,7 +440,7 @@ impl Parser {
     }
 
     /// One property after the columns, the LIKE source or the name; a TAG or CONTACT list gives one per entry.
-    fn parse_checked_table_property(&mut self) -> Result<Vec<ObjectProperty>> {
+    pub(super) fn parse_checked_table_property(&mut self) -> Result<Vec<ObjectProperty>> {
         if self.match_keywords(&[TokenType::Cluster, TokenType::By]) {
             self.expect_token(TokenType::LParen)?;
             let expressions = self.parse_expression_list()?;
@@ -487,6 +487,13 @@ impl Parser {
             return Ok(vec![property(&key, None, Some(value))]);
         }
         let with = self.match_token(TokenType::With);
+        let key = self.peek().text.to_ascii_uppercase();
+        if with && self.check_next(TokenType::Eq) && key == "COMMENT" {
+            self.skip();
+            self.skip();
+            let value = self.parse_iceberg_value()?;
+            return Ok(vec![property(&key, None, Some(value))]);
+        }
         if with && self.match_text_seq(&["CONTACT"]) {
             return self.parse_checked_table_contacts();
         }

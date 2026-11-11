@@ -319,7 +319,9 @@ impl Parser {
     }
 
     /// One property an interactive table allows, with the key of a `<key> = <value>` one.
-    fn parse_interactive_property(&mut self) -> Result<(Option<String>, Vec<ObjectProperty>)> {
+    pub(super) fn parse_interactive_property(
+        &mut self,
+    ) -> Result<(Option<String>, Vec<ObjectProperty>)> {
         self.match_token(TokenType::With);
         if self.match_text_seq(&["TAG"]) {
             return Ok((None, tag_properties(self.parse_iceberg_tags()?)));
