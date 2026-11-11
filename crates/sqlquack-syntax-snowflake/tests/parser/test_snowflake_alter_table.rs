@@ -161,3 +161,39 @@ fn given_snowflake_iceberg_column_actions_when_parsing_then_recorded_verdicts_ho
         },
     ]);
 }
+
+#[test]
+fn given_snowflake_reclustering_and_iceberg_refresh_when_parsing_then_recorded_verdicts_hold() {
+    assert_recorded_verdicts(&[
+        SnowflakeVerdictTestCase {
+            description: "a manual recluster with a size and a filter (recorded OK)",
+            sql: "ALTER TABLE IF EXISTS v1 RECLUSTER MAX_SIZE = 1000000 WHERE TRUE ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "MAX_SIZE with no value (recorded errno 1003)",
+            sql: "ALTER TABLE v1 RECLUSTER MAX_SIZE = ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "automatic reclustering suspended on an iceberg table (recorded OK)",
+            sql: "ALTER ICEBERG TABLE v1 SUSPEND RECLUSTER ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an iceberg refresh from a metadata path (recorded OK)",
+            sql: "ALTER ICEBERG TABLE IF EXISTS v1 REFRESH 'm' ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an iceberg refresh from a name (recorded errno 1003)",
+            sql: "ALTER ICEBERG TABLE v1 REFRESH m1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "REFRESH on a plain table (recorded errno 1003)",
+            sql: "ALTER TABLE v1 REFRESH ;",
+            expected_kind: None,
+        },
+    ]);
+}

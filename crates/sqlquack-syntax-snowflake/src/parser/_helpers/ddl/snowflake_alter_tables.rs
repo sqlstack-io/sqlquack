@@ -24,6 +24,7 @@ const ICEBERG_ACTIONS: &[&[&str]] = &[
     &["UPGRADE", "TO", "ICEBERG", "VERSION"],
     &["OPTIMIZE"],
     &["CONVERT", "TO", "MANAGED"],
+    &["REFRESH"],
 ];
 
 /// The storage lifecycle policy actions of an ALTER TABLE.
@@ -36,6 +37,13 @@ const LIFECYCLE_ACTIONS: &[&[&str]] = &[
 const SEARCH_ACTIONS: &[&[&str]] = &[
     &["ADD", "SEARCH", "OPTIMIZATION"],
     &["DROP", "SEARCH", "OPTIMIZATION"],
+];
+
+/// The reclustering actions of an ALTER [ ICEBERG ] TABLE.
+const RECLUSTER_ACTIONS: &[&[&str]] = &[
+    &["RECLUSTER"],
+    &["SUSPEND", "RECLUSTER"],
+    &["RESUME", "RECLUSTER"],
 ];
 
 /// The retention units of a version tag's RETAIN.
@@ -79,7 +87,7 @@ impl Parser {
         Ok(found)
     }
 
-    /// Parse the head and an ICEBERG, lifecycle or search optimization action of an ALTER [ ICEBERG ] TABLE, or None.
+    /// Parse the head and an ICEBERG, lifecycle, search optimization or reclustering action of an ALTER [ ICEBERG ] TABLE, or None.
     fn parse_alter_table_extension(&mut self, iceberg: bool) -> Result<Option<Expression>> {
         let head = self.parse_alter_object_head()?;
         if !iceberg
@@ -115,6 +123,7 @@ impl Parser {
         };
         let Some(words) = SEARCH_ACTIONS
             .iter()
+            .chain(RECLUSTER_ACTIONS)
             .chain(choices)
             .find(|words| self.match_text_seq(words))
         else {
@@ -164,6 +173,25 @@ impl Parser {
             "ADD SEARCH OPTIMIZATION" | "DROP SEARCH OPTIMIZATION" => {
                 (self.parse_search_targets(&action)?, vec![])
             }
+            "RECLUSTER" => {
+                let mut properties: Vec<ObjectProperty> = Vec::new();
+                if self.match_identifier("MAX_SIZE") {
+                    self.expect_token(TokenType::Eq)?;
+                    properties.push(property(
+                        "MAX_SIZE",
+                        None,
+                        Some(self.parse_number_operand()?),
+                    ));
+                }
+                if self.match_token(TokenType::Where) {
+                    properties.push(property("WHERE", None, Some(self.parse_expression()?)));
+                }
+                (vec![], properties)
+            }
+            "REFRESH" => match self.check(TokenType::String) {
+                true => (vec![self.parse_primary()?], vec![]),
+                false => (vec![], vec![]),
+            },
             "UPGRADE TO ICEBERG VERSION" => (vec![self.parse_number_operand()?], vec![]),
             "OPTIMIZE" => {
                 self.expect_token(TokenType::LParen)?;
