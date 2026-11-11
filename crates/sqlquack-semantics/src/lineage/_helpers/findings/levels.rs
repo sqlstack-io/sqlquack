@@ -224,7 +224,10 @@ fn select_findings(
     let rules: &dyn DialectRules = dialect_rules(context.profile);
     let anywhere: bool = rules.outputs_read_anywhere();
     for item in from_items(select) {
-        let reads: Option<&LineageScope<'_>> = lateral(item).then_some(&scope);
+        let reads: Option<&LineageScope<'_>> = match lateral(item) {
+            true => Some(&scope),
+            false => outer,
+        };
         let body: Vec<NameFinding> =
             query_findings(unannotated(item), (&ctes, reads, aliases), context);
         if let Some(derived) = derived_key(unannotated(item), context)
