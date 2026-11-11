@@ -1,0 +1,10 @@
+# GitHub's language statistics count the code SQLQuack ships. Test suites, development scripts
+# and development-only tools are marked as documentation so the statistics leave them out.
+/tests/** linguist-documentation
+/scripts/** linguist-documentation
+/crates/**/tests/** linguist-documentation
+/crates/**/tests.rs linguist-documentation
+/tools/** linguist-documentation
+/fuzz/** linguist-documentation
+/recorder/** linguist-documentation
+/website/scripts/** linguist-documentation
