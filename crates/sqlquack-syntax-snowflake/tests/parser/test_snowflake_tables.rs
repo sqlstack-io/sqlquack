@@ -720,3 +720,27 @@ fn given_snowflake_hybrid_table_indexes_when_parsing_then_recorded_verdicts_hold
         );
     }
 }
+
+#[test]
+fn given_snowflake_dynamic_table_secondary_roles_when_parsing_then_the_list_is_read() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "two secondary roles before another property (recorded OK)",
+            sql: "CREATE DYNAMIC TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES v1 , v1 ROW_TIMESTAMP = TRUE AS SELECT 1 ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "ALL secondary roles (recorded OK)",
+            sql: "CREATE DYNAMIC TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER v1 USE SECONDARY ROLES ALL ROW_TIMESTAMP = TRUE AS SELECT 1 ;",
+            expected_kind: Some("create_object"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
