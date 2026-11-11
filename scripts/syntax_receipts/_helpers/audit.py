@@ -170,6 +170,15 @@ def error_fields(*, raw: Row) -> tuple[int | None, str | None, str]:
     return fields.get("errno"), fields.get("sqlstate"), fields.get("raw_msg") or ""
 
 
+def client_failure(*, raw: Row) -> str | None:
+    """Why a raw record holds no answer from Snowflake: the connector failed before one arrived."""
+    fields: Row = raw.get("connector_fields") or {}
+    if fields.get("case_result") is not False:
+        return None
+    error: str = f"{fields.get('exception_class')}, errno {fields.get('errno')}"
+    return f"client-side connector failure ({error}); Snowflake's answer was not observed"
+
+
 def connector_query_id(*, raw: Row) -> str | None:
     """The query id the connector reported for a raw record."""
     return (raw.get("connector_fields") or {}).get("query_id")

@@ -7,6 +7,7 @@ from datetime import datetime
 from pathlib import Path
 
 from scripts.syntax_receipts._helpers.audit import (
+    client_failure,
     connector_query_id,
     error_fields,
     packet_rows,
@@ -65,6 +66,10 @@ def import_ddl_run(*, run: CaptureRun, index: dict[str, Path]) -> Imported:
                     reason="fixture setup failed; the statement was not submitted",
                 )
             )
+            continue
+        failure: str | None = client_failure(raw=raw)
+        if failure is not None:
+            found.refusals.append(refusal(run_id=run.path.name, row_id=row_id, reason=failure))
             continue
         setup: list[str] = _setup(start=start, raw=raw, position=position) + case.get("setup", [])
         exact: Row = input_row(sql=case["sql"], setup=setup)
