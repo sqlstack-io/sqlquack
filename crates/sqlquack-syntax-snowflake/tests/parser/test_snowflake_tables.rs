@@ -618,6 +618,21 @@ fn given_snowflake_iceberg_and_dynamic_tables_when_parsing_then_their_grammar_is
             expected_kind: None,
         },
         SnowflakeVerdictTestCase {
+            description: "a DCM definition of a temporary table (recorded OK)",
+            sql: "DEFINE LOCAL TEMP TABLE d1.s1.v1 ( v1 INT CONSTRAINT v1 UNIQUE RELY NOT NULL COLLATE 'm' DEFAULT 1 COMMENT 'm' ) CLUSTER BY ( 1 , 1 ) ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a DCM definition with an untyped column (recorded errno 1003)",
+            sql: "DEFINE TABLE d1.s1.v1 ( v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a DCM definition of a dynamic table (recorded OK)",
+            sql: "DEFINE DYNAMIC TABLE d1.s1.v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 CLUSTER BY ( 1 ) AS SELECT 1 ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
             description: "OR ALTER on an iceberg table (recorded errno 1003)",
             sql: "CREATE OR ALTER ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 AS SELECT 1 ;",
             expected_kind: None,

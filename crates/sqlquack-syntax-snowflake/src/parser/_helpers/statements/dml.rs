@@ -3,6 +3,8 @@
 use crate::parser::constants::ALGORITHM;
 use crate::parser::constants::DEFINER;
 use crate::parser::constants::SQL;
+use crate::parser::constants::TABLE_KEYWORD;
+use crate::parser::constants::VOLATILE;
 use crate::parser::models::Parser;
 use crate::parser::models::ViewModifiers;
 use sqlquack_syntax::expressions::names::models::BooleanLiteral;
@@ -285,6 +287,33 @@ impl Parser {
         Ok((using, joins))
     }
 
+    /// Skips LOCAL or GLOBAL before TEMP, TEMPORARY or VOLATILE, then VOLATILE before TABLE; whether it skipped VOLATILE, which makes the table temporary.
+    fn match_snowflake_temporary_scope(&mut self) -> bool {
+        let scoped = matches!(
+            self.snowflake_word_at(0).as_deref(),
+            Some("LOCAL" | "GLOBAL")
+        ) && matches!(
+            self.snowflake_word_at(1).as_deref(),
+            Some("TEMP" | "TEMPORARY" | "VOLATILE")
+        );
+        if scoped {
+            self.skip();
+        }
+        let volatile = self.snowflake_word_at(0).as_deref() == Some(VOLATILE)
+            && self.snowflake_word_at(1).as_deref() == Some(TABLE_KEYWORD);
+        if volatile {
+            self.skip();
+        }
+        volatile
+    }
+
+    /// The uppercase text of the token `offset` tokens ahead, if there is one.
+    fn snowflake_word_at(&self, offset: usize) -> Option<String> {
+        self.tokens
+            .get(self.current + offset)
+            .map(|token| token.text.to_ascii_uppercase())
+    }
+
     /// Parse a CREATE statement
     pub(crate) fn parse_create(&mut self) -> Result<Expression> {
         let create_pos = self.current;
@@ -318,9 +347,11 @@ impl Parser {
         }
 
         let hana_modifier: Option<String> = None;
-        let temporary = hana_modifier
-            .as_ref()
-            .is_some_and(|m| m.contains("TEMPORARY"))
+        let volatile = self.is_snowflake() && self.match_snowflake_temporary_scope();
+        let temporary = volatile
+            || hana_modifier
+                .as_ref()
+                .is_some_and(|m| m.contains("TEMPORARY"))
             || self.match_token(TokenType::Temporary);
 
         let materialized = self.match_token(TokenType::Materialized);
