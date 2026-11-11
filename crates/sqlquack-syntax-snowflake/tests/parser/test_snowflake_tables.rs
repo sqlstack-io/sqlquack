@@ -16,37 +16,37 @@ fn given_snowflake_table_policies_and_properties_when_parsing_then_recorded_verd
         SnowflakeVerdictTestCase {
             description: "a column masking policy keeps the statement as written (recorded OK)",
             sql: "CREATE TABLE v1 ( v1 INT MASKING POLICY v1 USING ( v1 , v1 ) ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "untyped columns with policies before AS (recorded OK)",
             sql: "CREATE TABLE v1 ( v1 MASKING POLICY v1 ) ROW ACCESS POLICY v1 ON ( v1 ) AS SELECT 1 ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a constant clustering key (recorded OK)",
             sql: "CREATE OR ALTER TABLE v1 ( v1 INT ) CLUSTER BY ( 1 , 1 ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "copy options after LIKE (recorded OK)",
             sql: "CREATE OR REPLACE TABLE v1 LIKE v1 CLUSTER BY ( 1 , 1 ) COPY GRANTS COPY TAGS COPY = ( COMMENTS , TAGS ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "join, aggregation and storage lifecycle policies (recorded OK)",
             sql: "CREATE TABLE v1 ( v1 INT ) JOIN POLICY v1 ALLOWED JOIN KEYS ( v1 , v1 ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a word comment and a word tag value (recorded OK)",
             sql: "CREATE TABLE v1 ( v1 INT ) TAG ( v1 = m1 ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "constraint properties (recorded OK)",
             sql: "CREATE TABLE v1 ( v1 INT UNIQUE , v1 INT REFERENCES v1 INITIALLY DEFERRED ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "an untyped column without AS (recorded errno 1003)",
@@ -154,7 +154,7 @@ fn given_snowflake_table_templates_and_conversions_when_parsing_then_recorded_ve
         SnowflakeVerdictTestCase {
             description: "a template from a session variable (recorded OK)",
             sql: "CREATE TABLE v1 USING TEMPLATE $v1 ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a template from a string after $ (recorded errno 1003)",
@@ -164,7 +164,7 @@ fn given_snowflake_table_templates_and_conversions_when_parsing_then_recorded_ve
         SnowflakeVerdictTestCase {
             description: "a target lag and warehouse before AS (recorded OK)",
             sql: "CREATE TABLE v1 CLUSTER BY ( 1 ) TARGET_LAG = '1 minute' WAREHOUSE = v1 AS SELECT 1 ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a conversion to a managed Iceberg table (recorded OK)",
@@ -376,6 +376,84 @@ fn given_a_snowflake_external_table_when_parsing_then_its_columns_and_properties
             sql: "CREATE OR REPLACE EXTERNAL TABLE v1 ( v1 INT AS ( VALUE : c1 :: INT ) UNIQUE ) PARTITION BY ( v1 ) LOCATION = @s1/p1 FILE_FORMAT = ( TYPE = PARQUET ) TAG ( t1 = 'm' ) ;",
             pointer: "/0/create_object/properties/1/value/literal/value",
             expected_value: json!("@s1/p1"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statements(test_case.sql, Dialect::Snowflake, CallMode::Faithful)
+                .pointer(test_case.pointer)
+                .cloned()
+                .unwrap_or_default(),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_table_with_policies_when_parsing_then_its_columns_and_properties_are_structured(
+) {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "the statement is a table",
+            sql: "CREATE TRANSIENT TABLE v1 ( v1 INT NOT NULL MASKING POLICY p1 USING ( v1 , v2 ) , v2 INT , CONSTRAINT k1 PRIMARY KEY ( v1 ) RELY ) ROW ACCESS POLICY p2 ON ( v1 ) ;",
+            pointer: "/0/create_object/kind",
+            expected_value: json!("TABLE"),
+        },
+        ProjectionTestCase {
+            description: "TRANSIENT is its modifier",
+            sql: "CREATE TRANSIENT TABLE v1 ( v1 INT NOT NULL MASKING POLICY p1 USING ( v1 , v2 ) , v2 INT , CONSTRAINT k1 PRIMARY KEY ( v1 ) RELY ) ROW ACCESS POLICY p2 ON ( v1 ) ;",
+            pointer: "/0/create_object/modifier",
+            expected_value: json!("TRANSIENT"),
+        },
+        ProjectionTestCase {
+            description: "the second column keeps its name",
+            sql: "CREATE TRANSIENT TABLE v1 ( v1 INT NOT NULL MASKING POLICY p1 USING ( v1 , v2 ) , v2 INT , CONSTRAINT k1 PRIMARY KEY ( v1 ) RELY ) ROW ACCESS POLICY p2 ON ( v1 ) ;",
+            pointer: "/0/create_object/operands/0/tuple/expressions/1/column_def/name/name",
+            expected_value: json!("v2"),
+        },
+        ProjectionTestCase {
+            description: "the constraint is not a column",
+            sql: "CREATE TRANSIENT TABLE v1 ( v1 INT NOT NULL MASKING POLICY p1 USING ( v1 , v2 ) , v2 INT , CONSTRAINT k1 PRIMARY KEY ( v1 ) RELY ) ROW ACCESS POLICY p2 ON ( v1 ) ;",
+            pointer: "/0/create_object/operands/0/tuple/expressions/2",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "the first column is NOT NULL",
+            sql: "CREATE TRANSIENT TABLE v1 ( v1 INT NOT NULL MASKING POLICY p1 USING ( v1 , v2 ) , v2 INT , CONSTRAINT k1 PRIMARY KEY ( v1 ) RELY ) ROW ACCESS POLICY p2 ON ( v1 ) ;",
+            pointer: "/0/create_object/operands/0/tuple/expressions/0/column_def/nullable",
+            expected_value: json!(false),
+        },
+        ProjectionTestCase {
+            description: "the first column keeps its masking policy",
+            sql: "CREATE TRANSIENT TABLE v1 ( v1 INT NOT NULL MASKING POLICY p1 USING ( v1 , v2 ) , v2 INT , CONSTRAINT k1 PRIMARY KEY ( v1 ) RELY ) ROW ACCESS POLICY p2 ON ( v1 ) ;",
+            pointer: "/0/create_object/operands/0/tuple/expressions/0/column_def/options/0/masking_policy_column_constraint/this/table/name/name",
+            expected_value: json!("p1"),
+        },
+        ProjectionTestCase {
+            description: "the primary key is the first property",
+            sql: "CREATE TRANSIENT TABLE v1 ( v1 INT NOT NULL MASKING POLICY p1 USING ( v1 , v2 ) , v2 INT , CONSTRAINT k1 PRIMARY KEY ( v1 ) RELY ) ROW ACCESS POLICY p2 ON ( v1 ) ;",
+            pointer: "/0/create_object/properties/0/kind",
+            expected_value: json!("PRIMARY KEY"),
+        },
+        ProjectionTestCase {
+            description: "the row access policy is the second property",
+            sql: "CREATE TRANSIENT TABLE v1 ( v1 INT NOT NULL MASKING POLICY p1 USING ( v1 , v2 ) , v2 INT , CONSTRAINT k1 PRIMARY KEY ( v1 ) RELY ) ROW ACCESS POLICY p2 ON ( v1 ) ;",
+            pointer: "/0/create_object/properties/1/kind",
+            expected_value: json!("ROW ACCESS POLICY"),
+        },
+        ProjectionTestCase {
+            description: "there are only two properties",
+            sql: "CREATE TRANSIENT TABLE v1 ( v1 INT NOT NULL MASKING POLICY p1 USING ( v1 , v2 ) , v2 INT , CONSTRAINT k1 PRIMARY KEY ( v1 ) RELY ) ROW ACCESS POLICY p2 ON ( v1 ) ;",
+            pointer: "/0/create_object/properties/2",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "the primary key keeps its name",
+            sql: "CREATE TRANSIENT TABLE v1 ( v1 INT NOT NULL MASKING POLICY p1 USING ( v1 , v2 ) , v2 INT , CONSTRAINT k1 PRIMARY KEY ( v1 ) RELY ) ROW ACCESS POLICY p2 ON ( v1 ) ;",
+            pointer: "/0/create_object/properties/0/name/name",
+            expected_value: json!("k1"),
         },
     ];
     for test_case in test_cases {

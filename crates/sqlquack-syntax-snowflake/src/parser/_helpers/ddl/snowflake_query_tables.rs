@@ -2,8 +2,11 @@
 
 use crate::parser::constants::SNOWFLAKE_DYNAMIC_TABLE_REQUIRED;
 use crate::parser::models::Parser;
+use sqlquack_syntax::expressions::names::models::TableRef;
+use sqlquack_syntax::expressions::operators::models::BinaryOp;
 use sqlquack_syntax::expressions::statements::models::Raw;
 use sqlquack_syntax::expressions::tree::models::Expression;
+use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
 
@@ -94,13 +97,17 @@ impl Parser {
 
     /// Checks an object name: a quoted identifier, or a word Snowflake does not reserve, optionally qualified.
     pub(super) fn check_iceberg_object_name(&mut self) -> Result<()> {
+        self.parse_iceberg_object_name().map(|_| ())
+    }
+
+    /// An object name: a quoted identifier, or a word Snowflake does not reserve, optionally qualified.
+    pub(super) fn parse_iceberg_object_name(&mut self) -> Result<TableRef> {
         if !self.check(TokenType::QuotedIdentifier) {
             let saved = self.current;
             self.expect_external_name()?;
             self.current = saved;
         }
-        self.parse_object_name()?;
-        Ok(())
+        self.parse_object_name()
     }
 
     /// Checks `( <name> [<type>] [<column option> ...] [ , ... ] )`.
@@ -146,33 +153,48 @@ impl Parser {
 
     /// Checks `( <name> [ , ... ] )`, which may be empty only when `empty` is set.
     pub(super) fn check_iceberg_name_list(&mut self, empty: bool) -> Result<()> {
+        self.parse_iceberg_name_list(empty).map(|_| ())
+    }
+
+    /// `( <name> [ , ... ] )` as a tuple of names, which may be empty only when `empty` is set.
+    pub(super) fn parse_iceberg_name_list(&mut self, empty: bool) -> Result<Expression> {
         self.expect_token(TokenType::LParen)?;
+        let mut expressions: Vec<Expression> = Vec::new();
         if empty && self.match_token(TokenType::RParen) {
-            return Ok(());
+            return Ok(Expression::Tuple(Box::new(Tuple { expressions })));
         }
         loop {
-            self.check_iceberg_object_name()?;
+            expressions.push(Expression::Table(Box::new(
+                self.parse_iceberg_object_name()?,
+            )));
             if !self.match_token(TokenType::Comma) {
                 break;
             }
         }
         self.expect_token(TokenType::RParen)?;
-        Ok(())
+        Ok(Expression::Tuple(Box::new(Tuple { expressions })))
     }
 
     /// Checks `( <tag> = <value> [ , ... ] )`.
     pub(super) fn check_iceberg_tags(&mut self) -> Result<()> {
+        self.parse_iceberg_tags().map(|_| ())
+    }
+
+    /// `( <tag> = <value> [ , ... ] )`, each tag as `<tag> = <value>`.
+    pub(super) fn parse_iceberg_tags(&mut self) -> Result<Vec<Expression>> {
         self.expect_token(TokenType::LParen)?;
+        let mut tags: Vec<Expression> = Vec::new();
         loop {
-            self.check_iceberg_object_name()?;
+            let tag = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
             self.expect_token(TokenType::Eq)?;
-            self.check_iceberg_value()?;
+            let value = self.parse_iceberg_value()?;
+            tags.push(Expression::PropertyEQ(Box::new(BinaryOp::new(tag, value))));
             if !self.match_token(TokenType::Comma) {
                 break;
             }
         }
         self.expect_token(TokenType::RParen)?;
-        Ok(())
+        Ok(tags)
     }
 
     /// Checks the properties before AS or REFRESH USING; a dynamic table needs TARGET_LAG and WAREHOUSE.
@@ -277,21 +299,24 @@ impl Parser {
 
     /// Checks a value: a literal, a quoted identifier, or a word that is not the key of the next property.
     pub(super) fn check_iceberg_value(&mut self) -> Result<()> {
+        self.parse_iceberg_value().map(|_| ())
+    }
+
+    /// A value: a literal, a quoted identifier, or a word that is not the key of the next property.
+    pub(super) fn parse_iceberg_value(&mut self) -> Result<Expression> {
         let literal = matches!(
             self.peek().token_type,
-            TokenType::String
-                | TokenType::Number
-                | TokenType::True
-                | TokenType::False
-                | TokenType::QuotedIdentifier
+            TokenType::String | TokenType::Number | TokenType::True | TokenType::False
         );
         if literal && !self.is_at_end() {
-            self.skip();
-            return Ok(());
+            return self.parse_primary();
+        }
+        if self.check(TokenType::QuotedIdentifier) {
+            return Ok(Expression::Identifier(self.parse_external_name()?));
         }
         if self.check_next(TokenType::Eq) {
             return Err(self.parse_error("Expected a value"));
         }
-        self.expect_external_name()
+        Ok(Expression::Identifier(self.parse_external_name()?))
     }
 }
