@@ -9,8 +9,10 @@ name: CI
 # The nightly run on main replays every case, refreshes the replay cache pull requests reuse,
 # converts DuckShop within its time budget and fuzzes. Release Please dispatches a full run on
 # each release pull request's branch, so every release replays every case first.
+# A merge queue group runs the same checks as a pull request, scoped against the group's base.
 on:
   pull_request:
+  merge_group:
   schedule:
     - cron: "17 3 * * *"
   workflow_dispatch:
@@ -49,9 +51,9 @@ jobs:
         id: scope
         env:
           EVENT_NAME: ${{ github.event_name }}
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha }}
         run: |
-          if [[ "${EVENT_NAME}" == "pull_request" ]]; then
+          if [[ "${EVENT_NAME}" == "pull_request" || "${EVENT_NAME}" == "merge_group" ]]; then
             python3 -m scripts.select_replay scope --base "${BASE_SHA}" >> "${GITHUB_OUTPUT}"
           else
             printf 'replay=full\ncode=true\nsite=true\n' >> "${GITHUB_OUTPUT}"
@@ -76,7 +78,7 @@ jobs:
       # `uv run` would otherwise sync the default groups, recorder included.
       UV_NO_SYNC: "1"
       # The evidence pin check and the result baselines compare with the pull request's base.
-      EVIDENCE_BASE: ${{ github.event.pull_request.base.sha || 'origin/main' }}
+      EVIDENCE_BASE: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || 'origin/main' }}
       REPLAY: ${{ needs.changes.outputs.replay }}
     steps:
       - uses: actions/checkout@v4
@@ -96,7 +98,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           shared-key: gate
-          save-if: ${{ github.event_name != 'pull_request' }}
+          save-if: ${{ github.event_name != 'pull_request' && github.event_name != 'merge_group' }}
       - name: Download the DuckDB library again if the restored cache lacks it
         run: scripts/refetch_duckdb_library.sh
       # The evidence snapshot evidence.toml pins; scripts/evidence.sh verifies it after a restore.
@@ -134,7 +136,7 @@ jobs:
         run: echo "No changed file is in a crate the sqlquack binary is built from, so nothing replays."
       # Pull requests restore the cache saved on their base branch, main's from the nightly run.
       - name: Save the replay cache
-        if: env.REPLAY != 'none' && github.event_name != 'pull_request'
+        if: env.REPLAY != 'none' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
         uses: actions/cache/save@v4
         with:
           path: target/replay-cache.json
@@ -171,7 +173,7 @@ jobs:
 
   duckshop:
     name: Convert DuckShop within the time budget
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.event_name != 'merge_group'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -184,7 +186,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           shared-key: duckshop
-          save-if: ${{ github.event_name != 'pull_request' }}
+          save-if: ${{ github.event_name != 'pull_request' && github.event_name != 'merge_group' }}
       - name: Download the DuckDB library again if the restored cache lacks it
         run: scripts/refetch_duckdb_library.sh
       - name: Compile DuckShop and DuckShop 10K
@@ -194,7 +196,7 @@ jobs:
 
   fuzz:
     name: Fuzz tolerant parsing
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.event_name != 'merge_group'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
