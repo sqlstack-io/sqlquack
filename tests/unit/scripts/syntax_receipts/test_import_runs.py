@@ -203,14 +203,25 @@ def test_given_non_syntax_errors_when_categorized_then_snowflake_reason_is_named
                 {"id": "c2", "sql_sha256": sha(b"something else"), "outcome": "accepted_executed"},
                 accepted_row(case_id="c9", sql=_GOOD),
                 error_row(case_id="c3", sql=_OTHER, errno=1003, message="no prefix"),
+                replaced(
+                    error_row(case_id="c4", sql=_OTHER, errno=250003, message="Read timed out."),
+                    ("connector_fields", "case_result"),
+                    False,
+                ),
             ],
             packet=[
                 packet_case(case_id="c1", sql=_GOOD),
                 packet_case(case_id="c2", sql=_OTHER),
                 packet_case(case_id="c3", sql=_OTHER),
+                packet_case(case_id="c4", sql=_OTHER),
             ],
             expected_receipts=[("c1", "syntax_error")],
-            expected_refusals=[("c2", "raw"), ("c3", "error"), ("c9", "row")],
+            expected_refusals=[
+                ("c2", "raw"),
+                ("c3", "error"),
+                ("c4", "client-side"),
+                ("c9", "row"),
+            ],
             expected_sql_sha256=sha(_GOOD.encode()),
             expected_raw_record_sha256=sha(json.dumps(_SYNTAX_ROW).encode()),
         ),
@@ -376,6 +387,32 @@ def test_given_fixture_setup_per_item_when_imported_then_receipts_name_that_setu
     assert setups[receipt_input][-3:] == test_case.expected_setup_tail
     assert [r["row_id"] for r in report["refusals"]] == test_case.expected_refusals
     assert receipts[0]["measure"] == test_case.start["measure"]
+
+
+def test_given_a_client_timeout_in_a_run_database_when_imported_then_it_is_refused(
+    tmp_path: Path,
+) -> None:
+    timed_out: Row = replaced(
+        error_row(case_id="c2", sql=_OTHER, errno=250003, message="Read timed out."),
+        ("connector_fields", "case_result"),
+        False,
+    )
+    write_run(
+        root=tmp_path,
+        rows=[{**_SYNTAX_ROW, "case_schema": "C0000"}, {**timed_out, "case_schema": "C0001"}],
+        packet=[packet_case(case_id="c1", sql=_GOOD), packet_case(case_id="c2", sql=_OTHER)],
+        start={
+            "run_database": "SQLQUACK_DDL_ABC123",
+            "setup": ["CREATE DATABASE SQLQUACK_DDL_ABC123"],
+        },
+    )
+
+    imported: Imported = import_runs(runs=tmp_path / "runs", input_dirs=[tmp_path / "inputs"])
+
+    assert [r["case_id"] for r in imported.receipts] == ["c1"]
+    assert [(r["row_id"], r["reason"].split(" (")[0]) for r in imported.refusals] == [
+        ("c2", "client-side connector failure")
+    ]
 
 
 @pytest.mark.parametrize(
