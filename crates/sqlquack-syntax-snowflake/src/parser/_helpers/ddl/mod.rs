@@ -33,5 +33,6 @@ pub(crate) mod snowflake_routines;
 pub(crate) mod snowflake_semantic_view;
 pub(crate) mod snowflake_show;
 pub(crate) mod snowflake_statements;
+pub(crate) mod snowflake_streams;
 pub(crate) mod table_options;
 pub(crate) mod transactions;

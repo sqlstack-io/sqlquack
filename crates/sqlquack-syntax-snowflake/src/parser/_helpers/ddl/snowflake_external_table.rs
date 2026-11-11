@@ -311,7 +311,7 @@ impl Parser {
     }
 
     /// `( <tag> = <value> [ , ... ] )`, one TAG property per tag.
-    fn parse_external_tags(&mut self) -> Result<Vec<ObjectProperty>> {
+    pub(super) fn parse_external_tags(&mut self) -> Result<Vec<ObjectProperty>> {
         self.expect_token(TokenType::LParen)?;
         let mut tags: Vec<ObjectProperty> = Vec::new();
         loop {
@@ -390,7 +390,8 @@ impl Parser {
         Ok(Expression::Tuple(Box::new(Tuple { expressions })))
     }
 
-    fn parse_external_scalar(&mut self) -> Result<Expression> {
+    /// A string, number or boolean literal, or a bare word.
+    pub(super) fn parse_external_scalar(&mut self) -> Result<Expression> {
         let literal = matches!(
             self.peek().token_type,
             TokenType::String | TokenType::Number | TokenType::True | TokenType::False
