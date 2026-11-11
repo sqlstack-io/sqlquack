@@ -1309,10 +1309,20 @@ impl Parser {
         if self.match_token(TokenType::Set) {
             let mut expressions: Vec<Expression> = Vec::new();
             loop {
+                let valueless = self.is_at_end()
+                    || self.check(TokenType::Semicolon)
+                    || self.check_next(TokenType::Eq)
+                        && self.tokens.get(self.current + 2).is_none_or(|token| {
+                            matches!(token.token_type, TokenType::Semicolon | TokenType::Comma)
+                        });
+                if self.is_snowflake() && valueless {
+                    return Err(self.parse_error("Expected a session parameter and its value"));
+                }
                 if let Some(item) = self.parse_set_item_assignment()? {
                     expressions.push(item);
                 }
-                if !self.match_token(TokenType::Comma) {
+                let spaced = self.is_snowflake() && self.check_next(TokenType::Eq);
+                if !self.match_token(TokenType::Comma) && !spaced {
                     break;
                 }
             }

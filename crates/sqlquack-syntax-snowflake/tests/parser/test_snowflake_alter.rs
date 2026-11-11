@@ -2,8 +2,8 @@ use serde_json::json;
 
 use sqlquack_syntax::{CallMode, Dialect};
 
-use crate::helpers::{accepted, statements};
-use crate::test_types::{AcceptanceTestCase, ProjectionTestCase};
+use crate::helpers::{accepted, snowflake_kind, statements};
+use crate::test_types::{AcceptanceTestCase, ProjectionTestCase, SnowflakeVerdictTestCase};
 
 #[test]
 fn given_a_snowflake_alter_of_an_object_kind_when_parsing_then_recorded_rejections_are_refused() {
@@ -509,6 +509,35 @@ fn given_a_snowflake_alter_of_an_object_kind_when_parsing_then_the_tree_names_ki
                 .cloned()
                 .unwrap_or_default(),
             test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_snowflake_session_settings_when_parsing_then_each_needs_a_value() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "settings separated by spaces (recorded OK)",
+            sql: "ALTER SESSION SET QUERY_TAG = 'q1' TIMEZONE = 'UTC' WEEK_START = 1 ;",
+            expected_kind: Some("alter_session"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a setting with no value (recorded errno 1003)",
+            sql: "ALTER SESSION SET JSON_INDENT = ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "SET with no setting (recorded errno 1003)",
+            sql: "ALTER SESSION SET ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
             "{}",
             test_case.description
         );
