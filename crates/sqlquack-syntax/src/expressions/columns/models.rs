@@ -290,6 +290,9 @@ pub struct ConstraintModifiers {
     /// TSQL ON filegroup (e.g., ON [INDEX], ON [PRIMARY])
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub on_filegroup: Option<Identifier>,
+    /// Snowflake's constraint property words in order, such as `NOT ENFORCED` or `ENABLE VALIDATE`.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub properties: Vec<String>,
 }
 
 /// Table-level constraint

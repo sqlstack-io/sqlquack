@@ -309,6 +309,12 @@ pub(crate) const SNOWFLAKE_DYNAMIC_TABLE_KEYS: &[&str] = &[
     "SCHEDULER",
 ];
 
+/// The text "COMMENT", as comparisons test it.
+pub(crate) const COMMENT: &str = "COMMENT";
+
+/// The text "PARTITION BY", as comparisons test it.
+pub(crate) const PARTITION_BY: &str = "PARTITION BY";
+
 /// The properties every dynamic table needs.
 pub(crate) const SNOWFLAKE_DYNAMIC_TABLE_REQUIRED: &[&str] = &["TARGET_LAG", "WAREHOUSE"];
 

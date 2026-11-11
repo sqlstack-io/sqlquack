@@ -10,6 +10,7 @@ use std::sync::OnceLock;
 
 use crate::parser::_helpers::support::dialects::configs_for_dialect_type;
 use crate::parser::types::{DialectImpl, SignificantTokens};
+use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::queries::models::Hint;
 use sqlquack_syntax::expressions::queries::models::JoinKind;
@@ -340,6 +341,16 @@ pub(crate) struct CreateTableCloneKind {
 pub(crate) struct CreateTableLeadingOptions {
     pub(crate) copy_grants: bool,
     pub(crate) with_properties: Vec<(String, String)>,
+}
+
+/// One Snowflake table constraint: its keywords, its name, the columns it covers or its CHECK condition, what it references, and its property words.
+#[derive(Debug)]
+pub(crate) struct Constraint {
+    pub(crate) kind: &'static str,
+    pub(crate) name: Option<Identifier>,
+    pub(crate) operand: Option<Expression>,
+    pub(crate) references: Option<(Expression, Option<Expression>)>,
+    pub(crate) properties: Vec<String>,
 }
 
 /// A join kind and how it was written: which keywords appeared, and its hint.
