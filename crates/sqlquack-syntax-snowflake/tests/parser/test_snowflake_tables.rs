@@ -647,3 +647,37 @@ fn given_snowflake_iceberg_and_dynamic_tables_when_parsing_then_their_grammar_is
         );
     }
 }
+
+#[test]
+fn given_snowflake_iceberg_partition_evolution_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "adding a partition transform (recorded OK)",
+            sql: "ALTER ICEBERG TABLE v1 ADD PARTITION BY ( BUCKET ( 1 , v1 ) ) ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "dropping a transform with no arguments (recorded OK)",
+            sql: "ALTER ICEBERG TABLE v1 DROP PARTITION BY ( HOUR ( ) ) ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a transform missing its second argument (recorded errno 1003)",
+            sql: "ALTER ICEBERG TABLE v1 ADD PARTITION BY ( TRUNCATE ( 10 , ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "partition evolution on a plain table (recorded errno 1003)",
+            sql: "ALTER TABLE v1 ADD PARTITION BY ( v1 ) ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

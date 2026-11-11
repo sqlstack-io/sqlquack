@@ -735,33 +735,37 @@ impl Parser {
         self.expect_token(TokenType::LParen)?;
         let mut expressions: Vec<Expression> = Vec::new();
         loop {
-            let transform = matches!(
-                self.peek().token_type,
-                TokenType::Var | TokenType::Identifier
-            ) || self.peek().token_type.is_keyword();
-            let empty_call = transform
-                && self.check_next(TokenType::LParen)
-                && self
-                    .tokens
-                    .get(self.current + 2)
-                    .is_some_and(|token| token.token_type == TokenType::RParen);
-            if empty_call {
-                let name = self.advance_text()?.to_ascii_uppercase();
-                self.skip();
-                self.skip();
-                expressions.push(Expression::Function(Box::new(Function::new(
-                    name,
-                    Vec::new(),
-                ))));
-            } else {
-                expressions.push(self.parse_expression()?);
-            }
+            expressions.push(self.parse_partition_item()?);
             if !self.match_token(TokenType::Comma) {
                 break;
             }
         }
         self.expect_token(TokenType::RParen)?;
         Ok(Expression::Tuple(Box::new(Tuple { expressions })))
+    }
+
+    /// One partition expression: a transform with no arguments, such as `YEAR ( )`, or any expression.
+    pub(super) fn parse_partition_item(&mut self) -> Result<Expression> {
+        let transform = matches!(
+            self.peek().token_type,
+            TokenType::Var | TokenType::Identifier
+        ) || self.peek().token_type.is_keyword();
+        let empty_call = transform
+            && self.check_next(TokenType::LParen)
+            && self
+                .tokens
+                .get(self.current + 2)
+                .is_some_and(|token| token.token_type == TokenType::RParen);
+        if !empty_call {
+            return self.parse_expression();
+        }
+        let name = self.advance_text()?.to_ascii_uppercase();
+        self.skip();
+        self.skip();
+        Ok(Expression::Function(Box::new(Function::new(
+            name,
+            Vec::new(),
+        ))))
     }
 
     /// `<policy> [ <keys words> ( <names> ) ]` after an aggregation or join policy's keywords.
