@@ -568,7 +568,7 @@ impl Parser {
         {
             if self.is_snowflake()
                 && self.tokens.get(self.current + 1).is_some_and(|t| {
-                    ["CLONE", "FROM", "AS", "USING", "LIKE", "("]
+                    ["CLONE", "FROM", "AS", "USING", "LIKE", "ON", "("]
                         .iter()
                         .any(|word| t.text.eq_ignore_ascii_case(word))
                 })
