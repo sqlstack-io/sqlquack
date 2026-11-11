@@ -13,7 +13,6 @@ use crate::parser::_helpers::support::dialects::dialect_type;
 pub fn parse_expressions(tokens: Vec<Token>, dialect: Dialect) -> Result<Vec<Expression>> {
     let config = ParserConfig {
         dialect: Some(dialect_type(dialect)?),
-        faithful_calls: true,
         ..Default::default()
     };
     Parser::with_config(tokens, config).parse_expression_list()

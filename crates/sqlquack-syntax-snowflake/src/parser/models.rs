@@ -87,7 +87,7 @@ impl Dialect {
         )
     }
 
-    /// SQLQuack: parses with polyglot's call lowering (`faithful_calls` false) or without it.
+    /// SQLQuack: parses in `mode`, recording node ranges when it is located.
     pub(crate) fn parse_with_mode(
         &self,
         sql: &str,
@@ -122,7 +122,7 @@ impl Dialect {
         sql: &str,
         complexity_guard: ComplexityGuardOptions,
     ) -> Result<Vec<Expression>> {
-        self.parse_with_config(sql, complexity_guard, CallMode::Lowered, None)
+        self.parse_with_config(sql, complexity_guard, CallMode::Faithful, None)
     }
 
     pub(crate) fn parse_with_config(
@@ -141,7 +141,6 @@ impl Dialect {
         let config = crate::parser::models::ParserConfig {
             dialect: Some(self.dialect_type),
             complexity_guard,
-            faithful_calls: mode != CallMode::Lowered,
             record_node_spans: mode == CallMode::FaithfulLocated,
             ..Default::default()
         };
@@ -437,8 +436,6 @@ pub(crate) struct ParserConfig {
     pub dialect: Option<sqlquack_syntax::tokens::models::DialectType>,
     /// Complexity guards for recursion-heavy parse paths.
     pub complexity_guard: ComplexityGuardOptions,
-    /// SQLQuack: in Snowflake, keep calls as written; only keyword-syntax calls become typed nodes.
-    pub faithful_calls: bool,
     /// SQLQuack: record each expression and statement node's source range (for locations).
     pub record_node_spans: bool,
     /// Whether a Snowflake CREATE SEMANTIC VIEW is being checked, where a window may PARTITION BY EXCLUDING.

@@ -334,7 +334,7 @@ impl Parser {
 
     fn parse_json_path_dot_key(&mut self, mut path_string: String) -> Result<String> {
         path_string.push('.');
-        if self.config.faithful_calls && self.check(TokenType::QuotedIdentifier) {
+        if self.check(TokenType::QuotedIdentifier) {
             let part = self.advance_text()?;
             if self.faithful_path_key_needs_brackets(&part) || part.contains(' ') {
                 path_string.pop();
