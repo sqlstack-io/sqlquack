@@ -204,9 +204,15 @@ def test_given_non_syntax_errors_when_categorized_then_snowflake_reason_is_named
                 accepted_row(case_id="c9", sql=_GOOD),
                 error_row(case_id="c3", sql=_OTHER, errno=1003, message="no prefix"),
                 replaced(
-                    error_row(case_id="c4", sql=_OTHER, errno=250003, message="Read timed out."),
-                    ("connector_fields", "case_result"),
-                    False,
+                    replaced(
+                        error_row(
+                            case_id="c4", sql=_OTHER, errno=250003, message="Read timed out."
+                        ),
+                        ("connector_fields", "case_result"),
+                        False,
+                    ),
+                    ("connector_fields", "sqlstate"),
+                    "n/a",
                 ),
             ],
             packet=[
@@ -392,10 +398,16 @@ def test_given_fixture_setup_per_item_when_imported_then_receipts_name_that_setu
 def test_given_a_client_timeout_in_a_run_database_when_imported_then_it_is_refused(
     tmp_path: Path,
 ) -> None:
+    # The connector's own fields for a read timeout: no SQLSTATE class, so the parent code read errno 250003 as
+    # an execution-time code and imported a runtime_error receipt.
     timed_out: Row = replaced(
-        error_row(case_id="c2", sql=_OTHER, errno=250003, message="Read timed out."),
-        ("connector_fields", "case_result"),
-        False,
+        replaced(
+            error_row(case_id="c2", sql=_OTHER, errno=250003, message="Read timed out."),
+            ("connector_fields", "case_result"),
+            False,
+        ),
+        ("connector_fields", "sqlstate"),
+        "n/a",
     )
     write_run(
         root=tmp_path,
