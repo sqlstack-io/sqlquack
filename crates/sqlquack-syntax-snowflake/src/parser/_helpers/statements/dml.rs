@@ -318,9 +318,30 @@ impl Parser {
         }
 
         let hana_modifier: Option<String> = None;
-        let temporary = hana_modifier
-            .as_ref()
-            .is_some_and(|m| m.contains("TEMPORARY"))
+        let words: Vec<String> = (0..3)
+            .map(|offset| {
+                self.tokens
+                    .get(self.current + offset)
+                    .map(|token| token.text.to_ascii_uppercase())
+                    .unwrap_or_default()
+            })
+            .collect();
+        let scoped_temporary = self.is_snowflake()
+            && matches!(words[0].as_str(), "LOCAL" | "GLOBAL")
+            && matches!(words[1].as_str(), "TEMP" | "TEMPORARY" | "VOLATILE");
+        if scoped_temporary {
+            self.skip();
+        }
+        let next = usize::from(scoped_temporary);
+        let volatile =
+            self.is_snowflake() && words[next] == "VOLATILE" && words[next + 1] == "TABLE";
+        if volatile {
+            self.skip();
+        }
+        let temporary = volatile
+            || hana_modifier
+                .as_ref()
+                .is_some_and(|m| m.contains("TEMPORARY"))
             || self.match_token(TokenType::Temporary);
 
         let materialized = self.match_token(TokenType::Materialized);
