@@ -419,3 +419,51 @@ fn given_duckdb_syntax_its_parser_emits_as_calls_when_checking_then_the_forms_du
         );
     }
 }
+
+#[test]
+fn given_duckdbs_parser_reads_window_calls_when_checking_arity_then_every_count_duckdb_binds_is_known()
+ {
+    // Each verdict is DuckDB 2.0.0's: LAG and LEAD bind one to three arguments, not four.
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "LAG and LEAD with one, two and three arguments",
+            sql: "SELECT LAG(amount) OVER (ORDER BY id) AS a, LAG(amount, 2) OVER (ORDER BY id) AS b, \
+                  LAG(amount, 1, 0) OVER (ORDER BY id) AS c, LEAD(amount) OVER (ORDER BY id) AS d, \
+                  LEAD(amount, 1) OVER (ORDER BY id) AS e FROM orders",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a short LEAD inside QUALIFY, COALESCE and CASE",
+            sql: "SELECT COALESCE(LEAD(amount) OVER (ORDER BY id), 0) AS a, \
+                  CASE WHEN LAG(status) OVER (ORDER BY id) IS NULL THEN 1 END AS b \
+                  FROM orders QUALIFY LAG(amount) OVER (ORDER BY id) > 1",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "the other window functions at the counts DuckDB binds",
+            sql: "SELECT NTH_VALUE(amount, 2) OVER (ORDER BY id) AS a, NTILE(4) OVER (ORDER BY id) AS b, \
+                  FIRST_VALUE(amount) OVER (ORDER BY id) AS c, LAST_VALUE(amount) OVER (ORDER BY id) AS d, \
+                  PERCENT_RANK() OVER (ORDER BY id) AS e, CUME_DIST() OVER (ORDER BY id) AS f, \
+                  ROW_NUMBER() OVER () AS g, RANK() OVER (ORDER BY id) AS h, \
+                  DENSE_RANK() OVER (ORDER BY id) AS i FROM orders",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "LAG with four arguments is still refused",
+            sql: "SELECT LAG(amount, 1, 0, 2) OVER (ORDER BY id) AS a FROM orders",
+            expected_findings: &[(
+                "E203",
+                "Invalid arity for function 'LAG': got 4, expected 1, 2, 3",
+                11,
+            )],
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            duckdb_parser_findings(test_case.sql),
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}

@@ -23,6 +23,8 @@ SYNTAX_FORM_PROBES: dict[str, str] = {
     "rollup": "SELECT a FROM probe GROUP BY ROLLUP (a)",
 }
 PROBE_TABLE: str = "CREATE TABLE probe (a INTEGER, b VARCHAR)"
+WINDOW_KIND: str = "window"
+WINDOW_PROBE: str = "SELECT {name}({arguments}) OVER (ORDER BY a) FROM probe"
 PROBE_ARGUMENTS: tuple[str, ...] = ("a", "a, 1", "b, b, 1")
 UNKNOWN_FUNCTION_MARKERS: tuple[str, ...] = ("does not exist", "not in the catalog")
 SYNTAX_MARKER: str = "Parser Error: syntax error"
