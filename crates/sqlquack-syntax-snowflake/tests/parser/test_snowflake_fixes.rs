@@ -1998,3 +1998,32 @@ fn given_snowflake_session_settings_when_parsing_then_each_needs_a_value() {
         );
     }
 }
+
+#[test]
+fn given_snowflake_timestamp_conversions_without_arguments_when_parsing_then_they_parse() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "TO_TIMESTAMP with no arguments parses; its arity is checked later (recorded OK)",
+            sql: "SELECT TO_TIMESTAMP ( ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "TRY_TO_TIMESTAMP with no arguments parses (recorded OK)",
+            sql: "SELECT TRY_TO_TIMESTAMP ( ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a trailing comma (recorded errno 1003)",
+            sql: "SELECT TO_TIMESTAMP ( 1 , ) ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
