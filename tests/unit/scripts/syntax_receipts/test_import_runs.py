@@ -59,6 +59,17 @@ _FIXTURE: list[str] = ['CREATE TABLE "ORDERS" ("ID" INTEGER)']
 _SYNTAX_ROW: dict[str, object] = error_row(
     case_id="c1", sql=_GOOD, errno=1003, message="SQL compilation error:\nsyntax error"
 )
+# The connector's own fields for a read timeout: no SQLSTATE class, so the parent code read errno 250003 as an
+# execution-time code and imported a runtime_error receipt.
+_TIMED_OUT_ROW: dict[str, object] = replaced(
+    replaced(
+        error_row(case_id="c2", sql=_OTHER, errno=250003, message="Read timed out."),
+        ("connector_fields", "case_result"),
+        False,
+    ),
+    ("connector_fields", "sqlstate"),
+    "n/a",
+)
 
 
 @pytest.mark.parametrize(
@@ -395,24 +406,33 @@ def test_given_fixture_setup_per_item_when_imported_then_receipts_name_that_setu
     assert receipts[0]["measure"] == test_case.start["measure"]
 
 
-def test_given_a_client_timeout_in_a_run_database_when_imported_then_it_is_refused(
-    tmp_path: Path,
-) -> None:
-    # The connector's own fields for a read timeout: no SQLSTATE class, so the parent code read errno 250003 as
-    # an execution-time code and imported a runtime_error receipt.
-    timed_out: Row = replaced(
-        replaced(
-            error_row(case_id="c2", sql=_OTHER, errno=250003, message="Read timed out."),
-            ("connector_fields", "case_result"),
-            False,
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        BindingTestCase(
+            description="a client timeout in a run database is refused, not a runtime error",
+            rows=[
+                {**_SYNTAX_ROW, "case_schema": "C0000"},
+                {**_TIMED_OUT_ROW, "case_schema": "C0001"},
+            ],
+            packet=[packet_case(case_id="c1", sql=_GOOD), packet_case(case_id="c2", sql=_OTHER)],
+            expected_receipts=[("c1", "syntax_error")],
+            expected_refusals=[("c2", "client-side")],
+            expected_sql_sha256=sha(_GOOD.encode()),
+            expected_raw_record_sha256=sha(
+                json.dumps({**_SYNTAX_ROW, "case_schema": "C0000"}).encode()
+            ),
         ),
-        ("connector_fields", "sqlstate"),
-        "n/a",
-    )
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_client_timeout_in_a_run_database_when_imported_then_it_is_refused(
+    test_case: BindingTestCase, tmp_path: Path
+) -> None:
     write_run(
         root=tmp_path,
-        rows=[{**_SYNTAX_ROW, "case_schema": "C0000"}, {**timed_out, "case_schema": "C0001"}],
-        packet=[packet_case(case_id="c1", sql=_GOOD), packet_case(case_id="c2", sql=_OTHER)],
+        rows=test_case.rows,
+        packet=test_case.packet,
         start={
             "run_database": "SQLQUACK_DDL_ABC123",
             "setup": ["CREATE DATABASE SQLQUACK_DDL_ABC123"],
@@ -421,10 +441,13 @@ def test_given_a_client_timeout_in_a_run_database_when_imported_then_it_is_refus
 
     imported: Imported = import_runs(runs=tmp_path / "runs", input_dirs=[tmp_path / "inputs"])
 
-    assert [r["case_id"] for r in imported.receipts] == ["c1"]
-    assert [(r["row_id"], r["reason"].split(" (")[0]) for r in imported.refusals] == [
-        ("c2", "client-side connector failure")
-    ]
+    assert [(r["case_id"], r["phase"]) for r in imported.receipts] == test_case.expected_receipts
+    assert (
+        sorted((r["row_id"], r["reason"].split()[0]) for r in imported.refusals)
+        == test_case.expected_refusals
+    )
+    assert imported.receipts[0]["sql_sha256"] == test_case.expected_sql_sha256
+    assert imported.receipts[0]["raw_record_sha256"] == test_case.expected_raw_record_sha256
 
 
 @pytest.mark.parametrize(
