@@ -235,6 +235,21 @@ fn given_json_and_time_zone_expressions_when_typing_outputs_then_both_parsers_gi
             expected_type: Some("TIMESTAMP"),
         },
         DuckdbTypeTestCase {
+            description: "a cast to TIMESTAMP(3), DuckDB's TIMESTAMP_MS, stays untyped",
+            sql: "SELECT CAST(name AS TIMESTAMP(3)) AS v FROM t",
+            expected_type: None,
+        },
+        DuckdbTypeTestCase {
+            description: "AT TIME ZONE over a TIMESTAMP(3) cast, DuckDB's TIMESTAMPTZ_NS, stays untyped",
+            sql: "SELECT CAST(name AS TIMESTAMP(3)) AT TIME ZONE 'UTC' AS v FROM t",
+            expected_type: None,
+        },
+        DuckdbTypeTestCase {
+            description: "AT TIME ZONE over a TIMESTAMP(6) cast is TIMESTAMPTZ",
+            sql: "SELECT CAST(name AS TIMESTAMP(6)) AT TIME ZONE 'UTC' AS v FROM t",
+            expected_type: Some("TIMESTAMPTZ"),
+        },
+        DuckdbTypeTestCase {
             description: "AT TIME ZONE over a DATE stays untyped",
             sql: "SELECT CAST(created_at AS DATE) AT TIME ZONE 'UTC' AS v FROM t",
             expected_type: None,

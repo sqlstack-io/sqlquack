@@ -4,7 +4,7 @@ use sqlquack_syntax::DataType;
 
 use crate::duckdb::profile::constants::{
     DUCKDB_DECIMAL_LIMIT, DUCKDB_DEFAULT_DECIMAL, DUCKDB_INTEGER_ALIASES, DUCKDB_INTEGER_SPELLINGS,
-    DUCKDB_JSON_TYPE, DUCKDB_WIDEST_INTEGER,
+    DUCKDB_JSON_TYPE, DUCKDB_TIMESTAMP_PRECISION, DUCKDB_WIDEST_INTEGER,
 };
 
 /// What a DuckDB type is, as far as the type rules distinguish it.
@@ -181,6 +181,10 @@ pub(crate) fn cast_type(data_type: &DataType) -> Option<DuckType> {
         DataType::Binary { .. } | DataType::VarBinary { .. } | DataType::Blob => DuckType::Binary,
         DataType::Date => DuckType::Date,
         DataType::Time { timezone, .. } => DuckType::Time(*timezone),
+        DataType::Timestamp {
+            precision: Some(precision),
+            ..
+        } if *precision != DUCKDB_TIMESTAMP_PRECISION => return None,
         DataType::Timestamp { timezone, .. } => DuckType::Timestamp(*timezone),
         DataType::Interval { .. } => DuckType::Interval,
         DataType::Uuid => DuckType::Uuid,
