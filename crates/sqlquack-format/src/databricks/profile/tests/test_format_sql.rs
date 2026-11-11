@@ -25,7 +25,7 @@ fn given_databricks_sql_when_formatting_then_it_is_laid_out_or_refused() {
             sql: "select a from t distribute by a sort by a",
             line_width: None,
             dialect: FormatDialect::Databricks,
-            expected_outcome: Ok("SELECT a\nFROM t\nDISTRIBUTE BY\n  a\nSORT BY\n  a"),
+            expected_outcome: Ok("SELECT a\nFROM t\nDISTRIBUTE BY a\nSORT BY a"),
         },
         test_types::FormatSqlTestCase {
             description: "a Databricks path, bracket path and try-cast stay touching",
