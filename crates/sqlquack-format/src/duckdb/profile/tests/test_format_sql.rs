@@ -141,6 +141,15 @@ fn given_constructs_sqlquack_converts_to_when_formatting_then_they_are_laid_out(
             ),
         },
         test_types::FormatSqlTestCase {
+            description: "inside a group, a tighter operator broken under a looser one keeps the extra indent that shows it binds first",
+            sql: "select (first_long_operand_name + second_long_operand_name + third_long_operand_name * fourth_long_operand_name) as v from t",
+            line_width: Some(40),
+            dialect: FormatDialect::DuckDB,
+            expected_outcome: Ok(
+                "SELECT\n  (\n    first_long_operand_name\n    + second_long_operand_name\n    + third_long_operand_name\n      * fourth_long_operand_name\n  ) AS v\nFROM t",
+            ),
+        },
+        test_types::FormatSqlTestCase {
             description: "a single-item GROUP BY or ORDER BY and a join's condition without AND or OR stay on their header line",
             sql: "select a from t left join u on (t.id = u.id) join v on v.id = t.id and v.k = 1 group by a order by a desc",
             line_width: Some(100),
