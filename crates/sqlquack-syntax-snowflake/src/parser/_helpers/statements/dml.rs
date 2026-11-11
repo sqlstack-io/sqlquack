@@ -354,6 +354,14 @@ impl Parser {
                 return Ok(create);
             }
         }
+        let transient_kind = self.is_snowflake()
+            && table_modifier.as_deref() == Some("TRANSIENT")
+            && (self.check_identifier("ICEBERG") || self.check_identifier("DYNAMIC"))
+            && self.check_next(TokenType::Table);
+        let table_modifier = match transient_kind {
+            true => Some(self.advance_text()?.to_ascii_uppercase()),
+            false => table_modifier,
+        };
 
         match self.peek().token_type {
             TokenType::Table => {
@@ -369,6 +377,15 @@ impl Parser {
                     table_modifier.as_deref()
                 };
                 let table_start = self.current;
+                if self.is_snowflake() && !define && !secure && !materialized {
+                    if let Some(table) = self.parse_snowflake_modified_table(
+                        (create_pos, table_start),
+                        or_replace,
+                        modifier,
+                    ) {
+                        return table;
+                    }
+                }
                 let parsed =
                     self.parse_create_table(or_replace, temporary, leading_comments, modifier);
                 let checkable = !define && !secure && matches!(modifier, None | Some("TRANSIENT"));
