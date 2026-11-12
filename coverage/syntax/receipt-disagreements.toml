@@ -2299,12 +2299,9 @@ other_receipts_contradicted = [
 ]
 "sf.ddl.create-model.internalstage" = [
   "k118c56d121f3",
-  "k89f9105f15ba",
   "k968befeeed72",
-  "ka7cd6e5074b5",
   "kbfdd16a6754e",
   "kdecdca528b66",
-  "ke73c5b998055",
 ]
 "sf.ddl.create-notebook" = [
   "k244bebdf7dae",
@@ -2846,7 +2843,6 @@ other_receipts_contradicted = [
   "k52f4b25a2004",
   "kdfe11763c33e",
 ]
-"sf.query.from" = ["kbd5234cefead"]
 "sf.security_admin.alter-account.set-maintenance-policy-for" = ["kd79fe523c612"]
 "sf.security_admin.alter-role.rename-to" = [
   "k01e92a574b6c",
@@ -3112,8 +3108,6 @@ other_receipts_contradicted = [
   "k18372c75ec13",
   "k21f6cd921934",
   "k45ef82b9bd00",
-  "k5b10bdd44337",
-  "k5cf33c603af2",
   "k78796a33bcf1",
   "k795ed8aa638a",
   "kb470f7b8b69e",
@@ -3123,7 +3117,6 @@ other_receipts_contradicted = [
   "kd06bbf769d46",
   "ke3db3c0b0b5d",
   "ked3b2561e78b",
-  "kf80841edd58a",
 ]
 "sf.utility.execute-immediate.immediate" = [
   "k0eaaaa01b89b",
@@ -3143,6 +3136,10 @@ other_receipts_contradicted = [
   "k530cabaf0366",
   "k885f7952cc09",
   "kbd4d30ef365a",
+]
+"sf.utility.execute-inference-job-service" = [
+  "kd484841cc87f",
+  "kfa70a352f258",
 ]
 "sf.utility.execute-task-graph.graph" = ["k4c95c7ca1c5a"]
 
