@@ -301,8 +301,8 @@ An optional file per family in which the catalogue records how it settled a case
 per line with `case_id`, `sql_sha256`, `obligations` and `mark`. `mark` is `documented` for a
 case that follows its documentation against Snowflake's syntax error, or `settled accept` or
 `settled reject`. Each mark must name a case with that `sql_sha256` and those `obligations`,
-and a case is marked at most once; any other value is refused. The checker uses the documented
-marks in `diff` only.
+and a case is marked at most once; any other value is refused. A mark only sorts the cases `diff`
+lists; no mark excuses a case its receipt contradicts (see Receipt disagreements).
 
 ## Reviews (`reviews/*.toml`)
 
@@ -426,9 +426,9 @@ whatever the case expects: Snowflake parsed a case when every receipt has a non-
 errno other than 1003, and refused it when every receipt is a syntax error with errno 1003 or 921;
 a positionless 1003 or receipts that disagree count as neither. The first line catches a case that
 moves from an opaque acceptance, which satisfies no obligation, to a rejection; a pull request that
-has one explains each case. A case marked `documented` that the current parser now accepts
-is listed on its own line for review and does not fail the diff. A
-snapshot taken before these case lists existed has none, so it reports no such case. The second is a catalogue change: a changed sources, aliases or
+has one explains each case; a case marked `documented` is listed on its own line, and fails all the
+same. A snapshot taken before these case lists existed has none, so it reports no such case. The
+second is a catalogue change: a changed sources, aliases or
 catalogue file, or a form added or removed. Catalogue changes are reported separately from
 coverage changes. Gains pass. After a reviewed gain or catalogue change, re-record the baseline
 with `snapshot` and commit it with the change. A review without fingerprints binds the parser
@@ -445,10 +445,21 @@ contradicts. Statements are grouped by SQL, setup and session hashes and judged 
 rejects a statement Snowflake parsed, or accepts one Snowflake refused as syntax. The SQL comes from
 the case that names the hash or from the `inputs` of the run reports beside the receipts, each
 checked against its hash. A receipt neither gives is listed in `unjudged_receipts` and judged by
-nothing. `diff` fails on a receipt the head contradicts and the base did not. A receipt of a case
-marked `documented` is listed on its own line instead. Receipts both sides
-contradict, and every head contradiction when the base snapshot predates these fields, are listed in
-the JSON without failing.
+nothing. `diff` fails on a receipt the head contradicts and the base did not; a receipt of a case
+marked `documented` is listed on its own line. Receipts both sides contradict, and every head
+contradiction when the base snapshot predates these fields, are listed in the JSON.
+
+## Receipt disagreements
+
+The engine's receipt decides, never the documentation or a mark: `diff` fails on every receipt the
+current parser contradicts, old or new, unless the root's `receipt-disagreements.toml` lists it.
+`syntax_errors_accepted` and `parsed_cases_refused` list cited cases as case keys under their form
+(`"sf.ddl.alter-view.set" = ["k07d1f8d8af26"]` is case `sf.ddl.alter-view.set.k07d1f8d8af26`);
+`other_receipts_contradicted` lists any other receipt by its id. The file only shrinks. `diff` fails
+on an entry the parser now agrees with, or whose receipt is gone, until the change deletes it, and,
+given `--disagreements-against` with the target branch's copy, on any entry that copy does not
+have; `make check-syntax` passes the copy at `EVIDENCE_BASE`. A dialect without the file lists
+nothing.
 
 The tracked baseline and receipts are a subset of the evidence, so a merge gate takes both snapshots
 on the full catalogue and evidence: `snapshot` with the target branch's binary, `snapshot` with the

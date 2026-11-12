@@ -10,7 +10,7 @@ use crate::formats::main::load_coverage::load_coverage;
 use crate::report::main::snapshot::snapshot;
 
 use crate::formats::constants::SNAPSHOT_FORMAT;
-use crate::report::models::Snapshot;
+use crate::report::models::{ReceiptDisagreements, Snapshot};
 
 pub(crate) fn ids(list: &[&str]) -> Vec<String> {
     list.iter().map(|id| (*id).to_owned()).collect()
@@ -36,6 +36,47 @@ pub(crate) fn base() -> Snapshot {
         documented_cases: BTreeSet::new(),
         receipt_contradictions: Some(BTreeSet::new()),
         unjudged_receipts: Some(BTreeSet::new()),
+    }
+}
+
+/// What `base()` contradicts today: its one Snowflake-parsed case the parser refuses.
+pub(crate) fn listed_today() -> ReceiptDisagreements {
+    ReceiptDisagreements {
+        parsed_cases_refused: BTreeMap::from([(
+            "sf.query.with".to_owned(),
+            BTreeSet::from(["k2".to_owned()]),
+        )]),
+        ..ReceiptDisagreements::default()
+    }
+}
+
+/// `base()` with `sf.query.select.k4`, a documented case, accepted against its syntax error.
+pub(crate) fn documented_false_accept(mut snapshot: Snapshot) -> Snapshot {
+    snapshot
+        .syntax_error_cases_accepted
+        .insert("sf.query.select.k4".to_owned());
+    snapshot
+        .documented_cases
+        .insert("sf.query.select.k4".to_owned());
+    snapshot
+}
+
+/// `listed_today()` with `sf.query.select.k4` listed as an accepted syntax error.
+pub(crate) fn listing_k4() -> ReceiptDisagreements {
+    ReceiptDisagreements {
+        syntax_errors_accepted: BTreeMap::from([(
+            "sf.query.select".to_owned(),
+            BTreeSet::from(["k4".to_owned()]),
+        )]),
+        ..listed_today()
+    }
+}
+
+/// `listed_today()` with `retired-1`, a receipt no obligation judges, listed.
+pub(crate) fn listing_retired() -> ReceiptDisagreements {
+    ReceiptDisagreements {
+        other_receipts_contradicted: BTreeSet::from(["retired-1".to_owned()]),
+        ..listed_today()
     }
 }
 

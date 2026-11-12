@@ -1,0 +1,841 @@
+# SQLite receipts the parser contradicts today, which the syntax gate tolerates until fixed.
+#
+# `make check-syntax` fails on any receipted case the parser contradicts that this file does
+# not list, whatever the case's mark or expectation: a syntax error the parser accepts, or a
+# statement the engine parsed that the parser rejects. It also fails on an entry the parser
+# now agrees with, and on an entry the target branch's copy does not have, so the file only
+# shrinks: each grammar fix deletes its own entries. Case keys are listed under their form;
+# other_receipts_contradicted lists receipts no obligation judges by their full id.
+
+other_receipts_contradicted = [
+]
+
+[syntax_errors_accepted]
+"sl.ddl.alter-table-stmt.add-check" = [
+  "k14b6e2cf45f6",
+  "k20c9b31f2adb",
+  "k41911f90c651",
+  "k57e3e745963a",
+  "k71de385fb646",
+  "k7f19ed97b0bf",
+  "k8e6bb01ba5f8",
+  "k9ab86b522521",
+  "kac9e5b189d28",
+  "kbc276073d457",
+  "kbd3033ff77bf",
+  "kc76f990b9db9",
+]
+"sl.ddl.alter-table-stmt.add-column" = [
+  "k0c2af22fefb7",
+  "k51c39e576599",
+  "k6259414114d4",
+  "k651a8714b5be",
+  "k7117f9fba44d",
+  "kb20de077fe8c",
+  "kb35e40e34563",
+]
+"sl.ddl.alter-table-stmt.drop-column" = [
+  "k02661180ec7a",
+  "k13dd437482d5",
+  "k1d90e7d984e3",
+  "k2c30a4f5054e",
+  "k3d2c6dd00b15",
+  "ka530c53dd251",
+  "kb747e2c1dfb1",
+  "kd69835f8fb46",
+]
+"sl.ddl.alter-table-stmt.drop-constraint" = [
+  "k15a4736a07d7",
+  "k52f2f097fe68",
+  "k548254a66830",
+  "k76559f74502a",
+  "ka3b38d63d702",
+  "kd5a8491828f4",
+  "kd7dde0d5d821",
+  "kfd885056e3d9",
+]
+"sl.ddl.alter-table-stmt.drop-not-null" = [
+  "k146e08e5dfa9",
+  "k1770b7dfdec9",
+  "k2a481c615d74",
+  "k2c97e9c3e1f9",
+  "k3b5db1ded5f7",
+  "k574b269d1501",
+  "k6b253bc03acb",
+  "k8a478792d015",
+  "k8ef3dc229a03",
+  "kb089ab0b8075",
+  "kca53e64439b8",
+]
+"sl.ddl.alter-table-stmt.rename-column" = [
+  "k026da27079de",
+  "k086c05e58efa",
+  "k1e7d114ff06f",
+  "k4f1e7826e6e8",
+  "k54a68b02ed2b",
+  "k6791a762027f",
+  "k78e6df04c67c",
+  "k91a74fb93e68",
+  "kbd2e27751128",
+  "kcfc69797dd87",
+  "ked72ad0ddd04",
+]
+"sl.ddl.alter-table-stmt.rename-table" = [
+  "k3f01502750be",
+  "k545aa86f443c",
+  "k669913a87a8a",
+  "k66d4bc264190",
+  "k8d2cb89d1dbf",
+  "kba38ec47b27f",
+  "kbadef3697d5a",
+  "kd55810b33449",
+  "kfaac31f637cc",
+]
+"sl.ddl.alter-table-stmt.set-not-null" = [
+  "k02c0c86d986d",
+  "k49c8f0e9be4e",
+  "k637f01dbdc61",
+  "k8ddae39d3b43",
+  "kb41378d1fe63",
+  "kc14af7528958",
+  "kc4f121c1c006",
+  "kd15f7f3ce35d",
+  "kd7572e80dedd",
+  "kf96f975c116c",
+]
+"sl.ddl.column-constraint.check" = [
+  "k007a0f50f6ec",
+  "k46a95454a6d8",
+  "k4c284a8689b4",
+  "k4c506693a0ab",
+  "k628fc31703d8",
+  "kb604ad271e28",
+  "kd9d41eed6150",
+  "ke4cad0e54a8f",
+]
+"sl.ddl.column-constraint.collate" = [
+  "k38260df516ff",
+  "k51e4b4cb6ad9",
+  "k568596ed9e1b",
+  "kde789c71de80",
+]
+"sl.ddl.column-constraint.default" = [
+  "k16e6daa35d8a",
+  "k3bb2fc3adc21",
+  "k4d916ab83efc",
+  "k51b385a5db7b",
+  "k6ec0492793e1",
+  "k9b2fe2714e7d",
+]
+"sl.ddl.column-constraint.foreign-key" = [
+  "k431df3ea1f8a",
+  "kdec63c6356de",
+]
+"sl.ddl.column-constraint.generated" = [
+  "k13a949de0831",
+  "k55c84584c9fc",
+  "k5a88213d2610",
+  "k946e987d1f68",
+  "k9a0a5e6135fb",
+  "ka5c65916683f",
+  "kb2f3f68cb717",
+  "kb2f61038355c",
+  "ke2941f1a6ea6",
+  "keaf5a5a6dd91",
+]
+"sl.ddl.column-constraint.not-null" = [
+  "k4d2d05015b95",
+  "k79b521ba5f7b",
+  "kebf20cf11db9",
+]
+"sl.ddl.column-constraint.primary-key" = [
+  "k337aa94b919d",
+  "k5e6b0e905412",
+  "k9be7817a56fb",
+  "ka3623558858e",
+  "kc3cded77d690",
+  "kd341c4ca712b",
+]
+"sl.ddl.column-constraint.unique" = [
+  "k07c352f147b3",
+  "k41d6e65712bf",
+  "k92222a399def",
+]
+"sl.ddl.column-def" = [
+  "k55a8e84daf71",
+  "k96767473c2aa",
+]
+"sl.ddl.column-name-list" = [
+  "k01023264923b",
+  "k219e7a101d5e",
+  "k2b94bc772813",
+  "kb52b3d964662",
+]
+"sl.ddl.conflict-clause" = [
+  "k0390590685d5",
+  "k1b3d4c03cd9b",
+]
+"sl.ddl.create-index-stmt" = [
+  "k01fe96ce628f",
+  "k14cf7c840618",
+  "k14f486ca16f8",
+  "k17631ba86bdf",
+  "k3d5ee292b9ff",
+  "k55dc98db76fd",
+  "k65d1be0603de",
+  "ka6bd2617ceff",
+  "kac666033f75c",
+  "kb7c4c7bfcc05",
+  "kc3d5d1efff28",
+  "kc4ca5e3f61e2",
+  "kcb251bdc0aee",
+  "ke3daefe658cb",
+]
+"sl.ddl.create-table-stmt.as-select" = [
+  "k1bc2eaf8c63d",
+  "k1f946dea411f",
+  "k38602fb96619",
+  "k3daac776fdc1",
+  "k67f3ecabd6d7",
+  "k8edc2cbf7047",
+  "k954e42eece92",
+  "k98fc3c1612dd",
+  "kc131897ac5e8",
+  "kd232aebfad1c",
+  "kf79f4e095aba",
+]
+"sl.ddl.create-table-stmt.columns" = [
+  "k124043465723",
+  "k3543ed4bcaf5",
+  "k48c2dbaa9fc9",
+  "k5764a0d5c273",
+  "k7466beb83eb1",
+  "k7eb319c93c3d",
+  "k881e9939743c",
+  "k90a84273b49b",
+  "k9843373d26a4",
+  "ka4ca709d3014",
+  "ke16e9f4c0474",
+  "kf58086b18af8",
+  "kfd86647a9c53",
+]
+"sl.ddl.create-trigger-stmt" = [
+  "k122a13f5e51f",
+  "k1231eae1212b",
+  "k16fd9981fc1d",
+  "k1d90a4ed01e0",
+  "k20672aaf1051",
+  "k2460c4019a60",
+  "k2bf6ee2b1aef",
+  "k586ddee797ef",
+  "k5a6d5bdba3a4",
+  "k5c1abba314b6",
+  "k5f9abed98457",
+  "k62fc41f6f878",
+  "k7fc8fd853219",
+  "k82429930c3f8",
+  "k84a64763ba7e",
+  "k8e975347704a",
+  "k8eaa6338167f",
+  "ka041df365b9b",
+  "ka809df9d3a04",
+  "kb0243caac2a6",
+  "kb191490abc9b",
+  "kb54359809717",
+  "kc82eb31169f2",
+  "kcecba98ab079",
+  "kd2b5e47055b0",
+  "kdbaf16b6c1fc",
+  "kdd2980df65e3",
+  "kf1e13e6f65b4",
+  "kf502500022d9",
+]
+"sl.ddl.create-view-stmt" = [
+  "k088cc9b16bed",
+  "k2bbd48c61998",
+  "k555aa844e42f",
+  "k88ef1a6f385e",
+  "k8eb5c8f2447c",
+  "k96df0f683b94",
+  "ka1b76b60414e",
+  "ka2b81b6da309",
+  "ka92c2b6eb753",
+  "kcbf7a200322a",
+  "kcf697949d6de",
+  "kdbbf832c831a",
+  "ke1e32fb7f996",
+  "ke7f0674cdd3f",
+]
+"sl.ddl.create-virtual-table-stmt" = [
+  "k11153fdf1ced",
+  "k43f925c66d3c",
+  "k495b2cb7217d",
+  "k5e5baf6ea40e",
+  "k6b868c9397b1",
+  "k6fb50031716b",
+  "k9615f7fddbb2",
+  "k9be1a6647de1",
+  "ka51eeb31d741",
+  "kb185e14f9cf2",
+  "kcaf3e36ef50d",
+  "ked80c7b4b431",
+]
+"sl.ddl.createtrigger.temp-on-qualified-table" = [
+  "k088b35371267",
+  "k262a79cc7e4a",
+  "k3e926ed195a4",
+  "k4fe9edab4a98",
+  "k6a52d00f99e6",
+  "k8dadf4dcbe9f",
+  "k8e030bd36e03",
+  "k9667733ca09f",
+  "ka7ff7ace534e",
+  "kb340c40092fb",
+  "kba3908018379",
+  "kc45f83b02f0f",
+  "kc473e4b64caa",
+  "kcaefb1de490b",
+  "kd2956607540e",
+  "kdd3a4513c781",
+  "kdd94fe883dc6",
+  "keae1c2379d53",
+  "kf0ac5d5d7e94",
+  "kf45bb461d348",
+  "kf738b094194e",
+  "kfbc58883b5c9",
+]
+"sl.ddl.drop-index-stmt" = [
+  "k67a55dbc8c32",
+  "k6c6c16a4e806",
+  "k8c6b57585624",
+  "k8e0070b55293",
+  "kaa23f8ada216",
+  "kb994a5c3ee5d",
+]
+"sl.ddl.drop-table-stmt" = [
+  "k515e7280b63c",
+  "k59db4b46f165",
+  "k6283169e002f",
+  "ka2a7b5222e44",
+  "kc77c37a24553",
+  "ke4ec51937f58",
+]
+"sl.ddl.drop-trigger-stmt" = [
+  "k75ed5996390a",
+  "k76ca3de69686",
+  "k86a7348a9618",
+  "kbd10064d3fd2",
+  "kd4017406a585",
+  "kd8588cccc506",
+]
+"sl.ddl.drop-view-stmt" = [
+  "k1645c037c654",
+  "k2da523abc44f",
+  "k3fc6e5072144",
+  "k8fb6de26dc4f",
+  "k9421d94c1e6b",
+  "k9fc35e28358d",
+]
+"sl.ddl.foreign-key-clause" = [
+  "k09e27a33c5a2",
+  "ka3c68274c2fd",
+  "kae99f88d2157",
+  "kb2b4bce55e28",
+  "kb2b6bf7c09d4",
+  "kc97df38ed488",
+  "kd83f33aa9a8a",
+  "ke10a99e3e683",
+]
+"sl.ddl.indexed-column" = [
+  "k47081a2c84a6",
+  "k856ee3c94192",
+  "k9bf177183587",
+]
+"sl.ddl.stricttables.strict-column-types" = [
+  "k05d52e102c4b",
+  "k32d6aa9c3168",
+  "k474719c8c8fc",
+  "k4fc1f9126071",
+  "k6bb337b7e726",
+  "k9a351e27b51a",
+  "k9c0fd17eb919",
+  "ka433576dc5a3",
+]
+"sl.ddl.table-constraint.check" = [
+  "k2db7ec4c28af",
+  "k4f3f2285c085",
+  "k57eb8f6c8a72",
+  "k6edcd7e5764e",
+  "k8b75db84a909",
+  "k9647b15ea664",
+  "ka5590a613fab",
+]
+"sl.ddl.table-constraint.foreign-key" = [
+  "k030af03cb81f",
+  "k0a68720b624a",
+  "k227e4ba14bba",
+  "k30f64ad306c4",
+  "k431c4b13849e",
+  "k797006a463fb",
+  "ka2bd62abf717",
+  "ka9826d5ea197",
+  "kad9d6b53976e",
+  "kb57648e4621c",
+  "kb5a3eb114090",
+]
+"sl.ddl.table-constraint.primary-key-autoincrement" = [
+  "k1ab3d8e16885",
+  "k243da0509ffe",
+  "k2c2a223538da",
+  "k4ad288258c77",
+  "k547857da0529",
+  "k80e90ff987a2",
+  "k9d9da430fc64",
+  "ka3502d41a29b",
+]
+"sl.ddl.table-constraint.primary-key-or-unique" = [
+  "k0ae1fa369f4e",
+  "k0d89a5d5e0ae",
+  "k5410cc9d7718",
+  "k586bb80bb1de",
+  "k648619824506",
+  "k6b7b789e93a9",
+  "kb137ba90873a",
+  "kbfce8ed7797a",
+  "kc63146562c4f",
+  "kf62777f9f693",
+]
+"sl.ddl.table-options" = [
+  "k2386429f2af3",
+  "k78dff5915928",
+  "k83c211a65fce",
+  "ka7b86a11e645",
+]
+"sl.dml.delete-stmt" = [
+  "k9ed8bb9692af",
+  "kc628fd25ab43",
+  "kd0d4492964db",
+  "ke364d98c2276",
+]
+"sl.dml.insert-stmt.default-values" = [
+  "k0f2a23321ebe",
+  "k231f64d3e916",
+  "k2606f5d0ba65",
+  "k53a9279d144c",
+  "k596fa88d08a5",
+  "k6acc7054f988",
+  "k711b9514f8bf",
+  "k77ae10f93cc8",
+  "k78ad2b06fcdb",
+  "ka3231089a570",
+  "kb8c58c6cbc05",
+  "ke4fcba85284c",
+  "kf5b2ce484b9e",
+]
+"sl.dml.insert-stmt.select" = [
+  "k2143eb4fe0d0",
+  "k2fb7e8e4df71",
+  "k32f88d38a310",
+  "k3af38c8c4982",
+  "k526d37518bfe",
+  "k55ca5d263ccd",
+  "k65ace5338b82",
+  "k767aa0ff19fe",
+  "kaea2d15e32e6",
+  "kbd0741d1d673",
+  "kbe486f61f2a3",
+  "kc6efd6250481",
+  "keae607fe8a6e",
+]
+"sl.dml.insert-stmt.values" = [
+  "k0dabe74ed72a",
+  "k114f76a206b1",
+  "k161338d9ffdf",
+  "k1839f06a9992",
+  "k24bd24d36dbf",
+  "k2c308774a920",
+  "k35eed5603279",
+  "k729d4080eb23",
+  "k879dba055a5e",
+  "k9be7a940dedf",
+  "ka27df2194ee0",
+  "kbdfc29ff4056",
+  "kc01716140302",
+  "kcb005daa0dcb",
+  "kdc80d54292ae",
+]
+"sl.dml.qualified-table-name" = [
+  "k216f2f2423a2",
+  "k4647ee99b1fd",
+  "k4f069dff203b",
+  "k8196563146e3",
+  "k92b771beb830",
+  "k98a556740331",
+  "k9e94a61b5436",
+  "kaec44e8fdf97",
+  "kc53d565a6dff",
+  "kfc87857712a7",
+]
+"sl.dml.returning-clause" = [
+  "k184b5f734d87",
+  "kce9bea9ee425",
+]
+"sl.dml.update-stmt" = [
+  "k0220cf191051",
+  "k148e849fe9bd",
+  "k268788611851",
+  "k54a7e7d10939",
+  "k7fecf8b07438",
+  "k882bd0865b5f",
+  "k940a33d1181b",
+  "kab6e1e540b85",
+  "kcfc05519fdca",
+  "kdac6d10052a5",
+]
+"sl.dml.upsert-clause" = [
+  "k232acd014bd0",
+  "k29a1575705cf",
+  "k2d3aecb4d610",
+  "k3d1ca583edab",
+  "k542aab30b503",
+  "k8050b5c1845d",
+  "k9324f723d49b",
+  "k9e3ad386139b",
+  "kadf873f6d998",
+  "kbb176a501714",
+  "kc60392c8a2eb",
+  "kd985275be32e",
+  "kdb02f558a641",
+  "ke176aa3ac49f",
+  "kf82faac2646b",
+]
+"sl.expressions.expr.raise" = ["k19b368e52b7c"]
+"sl.expressions.keywords.quoted-names" = ["k1b8bf0a58667"]
+"sl.expressions.raise-function" = [
+  "k7f266e44e9db",
+  "kb4bac7993179",
+  "kba09f7200d28",
+  "kbf0f9edb7f4a",
+]
+"sl.transaction_session.release-stmt" = [
+  "kcdb88be95868",
+  "kf3630456707b",
+]
+"sl.transaction_session.rollback-stmt" = [
+  "k69012053d2be",
+  "k8f49420d4636",
+]
+"sl.transaction_session.savepoint-stmt" = [
+  "k7e4dde5bf4d7",
+  "kaca066a71fbf",
+]
+"sl.utility.analyze-stmt" = [
+  "k51275ee26e36",
+  "k6761090b4158",
+  "kb276a96558f6",
+  "kfa3f39b4e0e3",
+]
+"sl.utility.attach-stmt" = [
+  "k8cf8b016248a",
+  "k9b51d50b8376",
+  "ka639f8724c97",
+  "ka833a3f7ad46",
+]
+"sl.utility.detach-stmt" = [
+  "k02035e813785",
+  "k1181f2f8602d",
+]
+"sl.utility.pragma-stmt" = [
+  "k33c53105f21a",
+  "k363b9aed0b74",
+  "k3c997de2bdf4",
+  "k72f8c6bcfed5",
+  "kad575d142511",
+  "kd21f4787bc61",
+  "kf62dc6f26a94",
+]
+"sl.utility.pragma-value" = ["k3384ba81a797"]
+"sl.utility.pragma.analysis-limit" = [
+  "k9b8ff05b68a5",
+  "kefbcd905714e",
+]
+"sl.utility.pragma.application-id" = [
+  "k33adeff80aaf",
+  "k46fe309601c0",
+  "k569855fd4d1e",
+  "k99a305e8c580",
+]
+"sl.utility.pragma.auto-vacuum" = [
+  "k4d2cef430e81",
+  "k566584376228",
+  "k5f17d2ea9459",
+  "k667dc6d51ff7",
+  "kb2fd0c8054c6",
+]
+"sl.utility.pragma.automatic-index" = ["k8336afa80bad"]
+"sl.utility.pragma.busy-timeout" = [
+  "k35d0a6082174",
+  "kecae495097aa",
+]
+"sl.utility.pragma.cache-size" = [
+  "k2e118dd6e02e",
+  "k2ece469e7348",
+  "k30f8ca610747",
+  "k75bd9046ec80",
+  "k9052f7577308",
+  "k945af734b219",
+  "kcc73c55ca37d",
+]
+"sl.utility.pragma.cache-spill" = [
+  "k1c23e5003d81",
+  "k4b18a9540d30",
+  "k9c6f45717ef9",
+]
+"sl.utility.pragma.case-sensitive-like" = ["k7bdcef3dbb7d"]
+"sl.utility.pragma.cell-size-check" = ["k6e290d50e091"]
+"sl.utility.pragma.checkpoint-fullfsync" = ["k8b39526c2f4a"]
+"sl.utility.pragma.count-changes" = ["k6221dc450529"]
+"sl.utility.pragma.data-version" = [
+  "k4434d6a585c6",
+  "k522b0b19fd1b",
+]
+"sl.utility.pragma.default-cache-size" = [
+  "k3aab5130b2b6",
+  "k62cb41a310d7",
+  "k70ada23d8ad3",
+  "kda3cd097d82a",
+]
+"sl.utility.pragma.defer-foreign-keys" = ["ka4225a4ec91f"]
+"sl.utility.pragma.empty-result-callbacks" = ["k42934b2c5358"]
+"sl.utility.pragma.encoding" = [
+  "k4567989b09cd",
+  "k7fbf684668ce",
+  "kecbe47b9a745",
+  "kfc06492a5628",
+]
+"sl.utility.pragma.foreign-key-check" = [
+  "k491c5145ecb0",
+  "k4e3a649a7823",
+  "k812a0a927df8",
+  "k93a7edb7b4b6",
+  "kb621e1da7018",
+  "ke7c044829fbf",
+  "kf0d86c7b73d2",
+  "kfc731d709ac8",
+]
+"sl.utility.pragma.foreign-key-list" = [
+  "k3a592749043b",
+  "k678761efa4b0",
+  "k7a592ef0931f",
+  "k8bee7f20b918",
+]
+"sl.utility.pragma.foreign-keys" = ["k90f9e1709794"]
+"sl.utility.pragma.freelist-count" = [
+  "k4cc0072d87a0",
+  "kc7a027e567d5",
+]
+"sl.utility.pragma.full-column-names" = ["k6c66c0006ca0"]
+"sl.utility.pragma.fullfsync" = ["k1e436d5ab053"]
+"sl.utility.pragma.hard-heap-limit" = ["k0ff852faeba9"]
+"sl.utility.pragma.ignore-check-constraints" = ["kb73055d9c755"]
+"sl.utility.pragma.incremental-vacuum" = [
+  "k14f43024c10a",
+  "k2dc74626a475",
+  "k74d4ad7e6d09",
+  "k96630b105284",
+  "ka215bd7fc14a",
+  "ka5351a3d0777",
+  "kac5fa51ed171",
+]
+"sl.utility.pragma.index-info" = [
+  "k048ab5d13632",
+  "k333960c9179a",
+  "k50c2cb3dda30",
+  "k6519065d7e88",
+  "k6ca40e18302f",
+  "ka042726532d3",
+  "kca545401ed68",
+]
+"sl.utility.pragma.index-list" = [
+  "k44aaaf1032b5",
+  "k465f8a8d144a",
+  "k54d43c8e2aa3",
+  "k5e49f668b2b8",
+  "kab528da6ee79",
+  "kce596c3f7fea",
+]
+"sl.utility.pragma.index-xinfo" = [
+  "k2adc8b238bae",
+  "k3f31425950cc",
+  "k6d8f05e2819f",
+  "keab817178301",
+  "kee29410985d1",
+  "kee75632cfbd8",
+]
+"sl.utility.pragma.integrity-check" = [
+  "k5415b46bd101",
+  "k6c147a06a65d",
+  "k7538f424449e",
+  "k7d4fc64a2cb6",
+  "k822109e2a35e",
+  "k990509862d32",
+  "kba96fb0c069e",
+  "kf42622ca5738",
+]
+"sl.utility.pragma.journal-mode" = [
+  "k36e906b7174f",
+  "k9ec99c5d1885",
+  "kb32624d2dcfa",
+  "kde9e2034c804",
+  "kfa07e581ec57",
+]
+"sl.utility.pragma.journal-size-limit" = [
+  "k0543a5119e75",
+  "k351033a4e382",
+  "k602ea541cde8",
+  "k891b9bd4fe0b",
+]
+"sl.utility.pragma.legacy-alter-table" = ["kfe8998a05570"]
+"sl.utility.pragma.locking-mode" = [
+  "k24b9ae20545f",
+  "k2c33ff8bda3f",
+  "k6b9be9fd9548",
+  "kebb9e6418f78",
+  "kfe28ab89786a",
+]
+"sl.utility.pragma.max-page-count" = [
+  "k4342879e6b55",
+  "k439c521c9859",
+  "kb275dd83b090",
+  "kbb7a699f7fa3",
+]
+"sl.utility.pragma.mmap-size" = [
+  "k1d777c1c825c",
+  "k4f74d2f36c8e",
+  "k58b061ca0f80",
+  "ka1e457370365",
+]
+"sl.utility.pragma.optimize" = [
+  "k4002bd23a6e9",
+  "k488a1f8adf18",
+  "k59af072c261c",
+  "k704b5cfe01b9",
+  "k8daae37a239a",
+  "k96d7f0547f29",
+]
+"sl.utility.pragma.page-count" = [
+  "k9bc0e474298e",
+  "kb8d1e748048f",
+]
+"sl.utility.pragma.page-size" = [
+  "k2dc33fb4cc3a",
+  "k4c9940cea852",
+  "k53d78bef4539",
+  "k8cabde463786",
+  "kaf0876b9a4eb",
+]
+"sl.utility.pragma.query-only" = ["k74dd0fd733d5"]
+"sl.utility.pragma.quick-check" = [
+  "k50b44be12847",
+  "k612751eabebb",
+  "k76d7c3c3595c",
+  "k9c68b084bdfc",
+  "kd837a976fb2a",
+  "ke3ceab0831ee",
+  "kf0152095c825",
+  "kf487746c4838",
+]
+"sl.utility.pragma.read-uncommitted" = ["kd5954b6a17f5"]
+"sl.utility.pragma.recursive-triggers" = ["k511cec1059bd"]
+"sl.utility.pragma.reverse-unordered-selects" = ["k113e60968cf6"]
+"sl.utility.pragma.schema-version" = [
+  "k5cf7c5a1323b",
+  "k87b267d50508",
+  "k8dd5aa4642ea",
+  "k9b28bf8ac8bb",
+]
+"sl.utility.pragma.secure-delete" = [
+  "k4ca9dbc160d8",
+  "k55a42a7e1178",
+  "k8bfa0d89f093",
+  "kc530f6da24e5",
+]
+"sl.utility.pragma.short-column-names" = ["k57d083b3f978"]
+"sl.utility.pragma.soft-heap-limit" = ["k55d48f4639bb"]
+"sl.utility.pragma.synchronous" = [
+  "k1a294dc5da9c",
+  "ka963fbd5474e",
+  "kaff883dc851a",
+  "kcbdf0f323307",
+]
+"sl.utility.pragma.table-info" = [
+  "k08ddc6b86b44",
+  "k764000a6754e",
+  "k8d68d28e2160",
+  "k8f8b42537b46",
+  "keaa5115799b3",
+  "kfab888d3128e",
+]
+"sl.utility.pragma.table-list" = [
+  "k0bb670debb36",
+  "k79b9c171a539",
+  "k9bc2216887bc",
+  "kc12cd06ecffc",
+  "kfa2319360314",
+  "kfffddfc6c8a2",
+]
+"sl.utility.pragma.table-xinfo" = [
+  "k04404a9d3e77",
+  "k611044434ada",
+  "k87a664b83350",
+  "kb7f8e615fdb7",
+  "ke5953e478564",
+  "keb4504b44a1e",
+]
+"sl.utility.pragma.temp-store" = ["k4795fa9c5140"]
+"sl.utility.pragma.temp-store-directory" = [
+  "k98f23980b3c4",
+  "k9b03eee45342",
+]
+"sl.utility.pragma.threads" = ["k369db5c65935"]
+"sl.utility.pragma.trusted-schema" = ["k3cb7ff329f78"]
+"sl.utility.pragma.user-version" = [
+  "k22ca938fbf62",
+  "k333df247c5b8",
+  "k82a0ff7c6310",
+  "kbd584738e838",
+]
+"sl.utility.pragma.wal-autocheckpoint" = ["kfbd9407ef75b"]
+"sl.utility.pragma.wal-checkpoint" = [
+  "k2fabed59d18b",
+  "k55cc633cab67",
+  "k6b3ea2d33dce",
+  "k809b97dc4075",
+  "k90a0fd3138b1",
+  "k9a806646e854",
+  "k9ca1d60967b0",
+  "ka0fd7222d8cc",
+  "ka4840f43837e",
+  "ka79b3a676e51",
+  "kca550e8c5d4d",
+  "kd1c136dc569c",
+  "kf0765a3e4f4e",
+  "kf24df4ebfc0b",
+  "kfedf18036815",
+]
+"sl.utility.pragma.writable-schema" = [
+  "k0868d898400b",
+  "k1758b79a53d1",
+]
+"sl.utility.reindex-stmt" = [
+  "k0174163e1ee9",
+  "k39d0485a8a1a",
+  "k86bb73e27d84",
+]
+"sl.utility.sql-stmt" = ["kf5d6c42a2615"]
+"sl.utility.vacuum-stmt" = [
+  "k00d49f472e79",
+  "k977646f4fd88",
+]
+
+[parsed_cases_refused]

@@ -193,11 +193,14 @@ pub enum Command {
         #[command(flatten)]
         common: Common,
     },
-    /// A snapshot against a later one or the current tree; fails on any regression.
+    /// A snapshot against a later one or the current tree; fails on any regression or unlisted disagreement.
     Diff {
         base: PathBuf,
         /// A later snapshot; the current tree when omitted.
         head: Option<PathBuf>,
+        /// The target branch's disagreements file: fail on any entry it does not have.
+        #[arg(long)]
+        disagreements_against: Option<PathBuf>,
         #[command(flatten)]
         common: Common,
     },

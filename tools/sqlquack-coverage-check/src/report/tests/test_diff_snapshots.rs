@@ -2,9 +2,11 @@ use std::collections::BTreeSet;
 
 use crate::check::models::FormState;
 use crate::report::main::diff_snapshots::diff_snapshots;
-use crate::report::models::{Snapshot, SnapshotDiff};
-use crate::report::tests::helpers::{base, ids};
-use crate::report::tests::test_types::{BaseDiffTestCase, DiffTestCase};
+use crate::report::models::{ReceiptDisagreements, Snapshot, SnapshotDiff};
+use crate::report::tests::helpers::{
+    base, documented_false_accept, ids, listed_today, listing_k4, listing_retired,
+};
+use crate::report::tests::test_types::{BaseDiffTestCase, DiffTestCase, DisagreementTestCase};
 
 #[test]
 fn given_a_later_snapshot_when_diffing_then_regressions_and_catalogue_changes_are_named() {
@@ -94,18 +96,22 @@ fn given_a_later_snapshot_when_diffing_then_regressions_and_catalogue_changes_ar
             },
             expected_diff: SnapshotDiff {
                 parsed_cases_refused: ids(&["sf.query.select.k1"]),
+                unlisted_parsed_cases_refused: ids(&["sf.query.select.k1"]),
                 ..SnapshotDiff::default()
             },
         },
         DiffTestCase {
-            description: "a refused case now parsing, or one leaving the receipts, is no regression",
+            description: "a refused case now parsing, or one leaving the receipts, is no regression but resolves its entry",
             head: |mut head| {
                 head.refused_cases.remove("sf.query.with.k2");
                 head.parsed_cases.insert("sf.query.with.k2".to_owned());
                 head.parsed_cases.remove("sf.query.select.k1");
                 head
             },
-            expected_diff: SnapshotDiff::default(),
+            expected_diff: SnapshotDiff {
+                disagreements_resolved: ids(&["sf.query.with.k2"]),
+                ..SnapshotDiff::default()
+            },
         },
         DiffTestCase {
             description: "a receipt the head newly contradicts, cited by a form or not, is a regression",
@@ -115,6 +121,7 @@ fn given_a_later_snapshot_when_diffing_then_regressions_and_catalogue_changes_ar
             },
             expected_diff: SnapshotDiff {
                 receipts_contradicted: ids(&["retired-1"]),
+                unlisted_receipts_contradicted: ids(&["retired-1"]),
                 ..SnapshotDiff::default()
             },
         },
@@ -129,6 +136,7 @@ fn given_a_later_snapshot_when_diffing_then_regressions_and_catalogue_changes_ar
             },
             expected_diff: SnapshotDiff {
                 documented_receipts_contradicted: ids(&["sf.query.select.k3"]),
+                unlisted_receipts_contradicted: ids(&["sf.query.select.k3"]),
                 ..SnapshotDiff::default()
             },
         },
@@ -157,7 +165,12 @@ fn given_a_later_snapshot_when_diffing_then_regressions_and_catalogue_changes_ar
         },
     ];
     for test_case in test_cases {
-        let diff: SnapshotDiff = diff_snapshots(&base(), &(test_case.head)(base()));
+        let diff: SnapshotDiff = diff_snapshots(
+            &base(),
+            &(test_case.head)(base()),
+            &listed_today(),
+            Some(&listed_today()),
+        );
         assert_eq!(diff, test_case.expected_diff, "{}", test_case.description);
     }
 }
@@ -177,6 +190,7 @@ fn given_a_base_without_receipt_verdicts_when_diffing_then_no_contradiction_is_n
             },
             expected_diff: SnapshotDiff {
                 receipts_still_contradicted: ids(&["retired-1"]),
+                unlisted_receipts_contradicted: ids(&["retired-1"]),
                 ..SnapshotDiff::default()
             },
         },
@@ -192,8 +206,120 @@ fn given_a_base_without_receipt_verdicts_when_diffing_then_no_contradiction_is_n
         },
     ];
     for test_case in test_cases {
-        let diff: SnapshotDiff =
-            diff_snapshots(&(test_case.base)(base()), &(test_case.head)(base()));
+        let diff: SnapshotDiff = diff_snapshots(
+            &(test_case.base)(base()),
+            &(test_case.head)(base()),
+            &listed_today(),
+            Some(&listed_today()),
+        );
+        assert_eq!(diff, test_case.expected_diff, "{}", test_case.description);
+    }
+}
+
+#[test]
+fn given_receipts_the_parser_contradicts_when_diffing_then_only_listed_ones_pass_and_the_list_only_shrinks()
+ {
+    let test_cases = [
+        DisagreementTestCase {
+            description: "a documented case accepted against its syntax error, before and now, unlisted",
+            both: documented_false_accept,
+            listed: listed_today,
+            target: listed_today,
+            expected_diff: SnapshotDiff {
+                unlisted_syntax_errors_accepted: ids(&["sf.query.select.k4"]),
+                ..SnapshotDiff::default()
+            },
+        },
+        DisagreementTestCase {
+            description: "the same case listed, here and on the target branch",
+            both: documented_false_accept,
+            listed: listing_k4,
+            target: listing_k4,
+            expected_diff: SnapshotDiff::default(),
+        },
+        DisagreementTestCase {
+            description: "the same case listed here but not on the target branch",
+            both: documented_false_accept,
+            listed: listing_k4,
+            target: listed_today,
+            expected_diff: SnapshotDiff {
+                disagreements_added: ids(&["sf.query.select.k4"]),
+                ..SnapshotDiff::default()
+            },
+        },
+        DisagreementTestCase {
+            description: "a refused case no obligation judges any more, listed as another receipt",
+            both: |mut snapshot| {
+                snapshot.refused_cases.clear();
+                snapshot.receipt_contradictions =
+                    Some(BTreeSet::from(["sf.query.with.k2".to_owned()]));
+                snapshot
+            },
+            listed: || ReceiptDisagreements {
+                other_receipts_contradicted: BTreeSet::from(["sf.query.with.k2".to_owned()]),
+                ..ReceiptDisagreements::default()
+            },
+            target: listed_today,
+            expected_diff: SnapshotDiff {
+                receipts_still_contradicted: ids(&["sf.query.with.k2"]),
+                ..SnapshotDiff::default()
+            },
+        },
+        DisagreementTestCase {
+            description: "a listed case the parser now rejects, as Snowflake did",
+            both: |snapshot| snapshot,
+            listed: listing_k4,
+            target: listing_k4,
+            expected_diff: SnapshotDiff {
+                disagreements_resolved: ids(&["sf.query.select.k4"]),
+                ..SnapshotDiff::default()
+            },
+        },
+        DisagreementTestCase {
+            description: "a case Snowflake parsed, refused before and now, unlisted",
+            both: |snapshot| snapshot,
+            listed: ReceiptDisagreements::default,
+            target: listed_today,
+            expected_diff: SnapshotDiff {
+                unlisted_parsed_cases_refused: ids(&["sf.query.with.k2"]),
+                ..SnapshotDiff::default()
+            },
+        },
+        DisagreementTestCase {
+            description: "a receipt no obligation judges, contradicted before and now, unlisted",
+            both: |snapshot| Snapshot {
+                receipt_contradictions: Some(BTreeSet::from(["retired-1".to_owned()])),
+                ..snapshot
+            },
+            listed: listed_today,
+            target: listed_today,
+            expected_diff: SnapshotDiff {
+                unlisted_receipts_contradicted: ids(&["retired-1"]),
+                receipts_still_contradicted: ids(&["retired-1"]),
+                ..SnapshotDiff::default()
+            },
+        },
+        DisagreementTestCase {
+            description: "the same receipt listed",
+            both: |snapshot| Snapshot {
+                receipt_contradictions: Some(BTreeSet::from(["retired-1".to_owned()])),
+                ..snapshot
+            },
+            listed: listing_retired,
+            target: listing_retired,
+            expected_diff: SnapshotDiff {
+                receipts_still_contradicted: ids(&["retired-1"]),
+                ..SnapshotDiff::default()
+            },
+        },
+    ];
+    for test_case in test_cases {
+        let diff: SnapshotDiff = diff_snapshots(
+            &(test_case.both)(base()),
+            &(test_case.both)(base()),
+            &(test_case.listed)(),
+            Some(&(test_case.target)()),
+        );
         assert_eq!(diff, test_case.expected_diff, "{}", test_case.description);
     }
 }

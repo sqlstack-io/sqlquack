@@ -413,13 +413,26 @@ pending: ## What DIALECT has not recorded yet, in both suites.
 	$(if $(wildcard $(SYNTAX_ROOT)),$(GATE_DIR)/syntax-coverage missing --root $(SYNTAX_ROOT) $(SYNTAX_EVIDENCE),@echo "pending: $(DIALECT) has no syntax suite yet")
 	$(if $(filter snowflake,$(DIALECT)),cargo run --profile $(VERIFY_PROFILE) --locked -p sqlquack -- pending $(call convert_paths,$(DIALECT)),@echo "pending: $(DIALECT) has no translation suite; Snowflake is the only source dialect today")
 
+# Every receipted case the parser contradicts must be in the root's receipt-disagreements.toml,
+# which only shrinks: an entry the target branch (EVIDENCE_BASE) does not have fails, as does one
+# the parser now agrees with.
+DISAGREEMENTS := receipt-disagreements.toml
+DISAGREEMENTS_BASE_FILE = target/receipt-disagreements-base-$(DIALECT).toml
 check-syntax: ## Rerun DIALECT's parser against its recorded syntax evidence, offline.
 	$(suite_dialect)
 	@test -d $(SYNTAX_ROOT) || { echo "check-syntax: $(DIALECT) has no recorded syntax evidence yet" >&2; exit 2; }
 	@test "$(REQUIRE_BASELINE)" != 1 || test -f $(SYNTAX_ROOT)/baseline.json || { \
 	  echo "check-syntax: $(SYNTAX_ROOT)/baseline.json is missing, so nothing would catch a lost form or obligation" >&2; exit 2; }
 	$(MAKE) --no-print-directory gate-build
-	$(GATE_DIR)/syntax-coverage $(if $(wildcard $(SYNTAX_ROOT)/baseline.json),diff --root $(SYNTAX_ROOT) $(SYNTAX_ROOT)/baseline.json,summary --root $(SYNTAX_ROOT)) $(SYNTAX_EVIDENCE)
+	@if test ! -f $(SYNTAX_ROOT)/baseline.json; then \
+	  $(GATE_DIR)/syntax-coverage summary --root $(SYNTAX_ROOT) $(SYNTAX_EVIDENCE); \
+	elif ! git rev-parse --verify --quiet '$(EVIDENCE_BASE)^{commit}' > /dev/null; then \
+	  echo "check-syntax: EVIDENCE_BASE $(EVIDENCE_BASE) is not a commit here" >&2; exit 2; \
+	elif mkdir -p target && git show $(EVIDENCE_BASE):$(SYNTAX_ROOT)/$(DISAGREEMENTS) > $(DISAGREEMENTS_BASE_FILE) 2>/dev/null; then \
+	  $(GATE_DIR)/syntax-coverage diff --root $(SYNTAX_ROOT) $(SYNTAX_ROOT)/baseline.json \
+	    --disagreements-against $(DISAGREEMENTS_BASE_FILE) $(SYNTAX_EVIDENCE); \
+	else echo "check-syntax: $(EVIDENCE_BASE) has no $(SYNTAX_ROOT)/$(DISAGREEMENTS); checking the committed one only"; \
+	  $(GATE_DIR)/syntax-coverage diff --root $(SYNTAX_ROOT) $(SYNTAX_ROOT)/baseline.json $(SYNTAX_EVIDENCE); fi
 
 record-syntax: ## Record DIALECT's syntax receipts on its engine; options in RECORD_ARGS.
 	$(suite_dialect)
