@@ -149,7 +149,7 @@ pub const RULES: &[RuleSpec] = &[
             "join:left",
             "join:full",
         ],
-        conditions: "No condition: CROSS JOIN, a comma, or JOIN, INNER JOIN, LEFT JOIN or FULL JOIN without ON, which Snowflake runs as a cross join, with no rows when either side is empty, as recorded; a later RIGHT or FULL JOIN with ON applies to the whole join before it, as recorded; one before a FULL JOIN with USING refuses, as that is unrecorded.",
+        conditions: "No condition: CROSS JOIN, a comma, or JOIN, INNER JOIN, LEFT JOIN or FULL JOIN without ON, which Snowflake runs as a cross join, with no rows when either side is empty, as recorded; a later RIGHT or FULL JOIN with ON, or FULL JOIN with USING, applies to the whole join before it, as recorded.",
         failures: &[],
     },
     RuleSpec {
