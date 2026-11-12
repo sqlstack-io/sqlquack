@@ -176,6 +176,7 @@ that edits or removes a committed one.
      is refused unless the errno is a reviewed one, which is a `semantic_error`.
   4. Errno 1003 under the `SQL compilation error` prefix is a `syntax_error`. Any other errno
      under that prefix is a `semantic_error`, a compilation error after parsing.
+     Errno 1002 is a `syntax_error` only when its message itself starts with `syntax error`.
   5. Any other error is refused unless its errno is a reviewed one, which is a `semantic_error`.
 
   A reviewed errno is one whose message shows that Snowflake parsed the statement and then
