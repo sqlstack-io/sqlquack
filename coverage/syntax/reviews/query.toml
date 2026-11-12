@@ -297,3 +297,20 @@ note = "Read in full against the documentation page, the obligations, the cases 
 
 [review.definitions]
 "sf.query.join.join" = "20ab01abd8faed881505d69e9f88c21692e6fd9a316d54149aca51af293a5d5a"
+
+[[review]]
+id = "query-014"
+family = "query"
+parser_tree = "81b399ecb25a48845ecb5e900fae8aadbe7a4586"
+reviewed_utc = "2026-11-12T21:04:37Z"
+verdict = "approved"
+forms = [
+  "sf.query.semantic-view",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees: the tree records DIMENSIONS written before METRICS or FACTS, and every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.query.semantic-view" = "e2ab3dcbddedea90edf28c01588725c609aec368dd1fada83b16fc4995cdf649"
+
+[review.definitions]
+"sf.query.semantic-view" = "51e38825d66dc6d03fa84a9abdbef01a8ea7cfd310178f078f25ef5bd2a42c14"
