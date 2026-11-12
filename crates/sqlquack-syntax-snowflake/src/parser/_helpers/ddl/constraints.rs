@@ -27,7 +27,6 @@ use sqlquack_syntax::expressions::schema_objects::models::FunctionSecurity;
 use sqlquack_syntax::expressions::schema_objects::models::ViewColumn;
 use sqlquack_syntax::expressions::statements::main::table_option_to_raw::table_option_to_raw;
 use sqlquack_syntax::expressions::statements::models::Command;
-use sqlquack_syntax::expressions::statements::models::Raw;
 use sqlquack_syntax::expressions::statements::models::Schema;
 use sqlquack_syntax::expressions::tables::main::split_mysql_create_index_key_parts::split_mysql_create_index_key_parts;
 use sqlquack_syntax::expressions::tables::models::CreateIndex;
@@ -1793,14 +1792,7 @@ impl Parser {
         if self.check(TokenType::View) {
             self.parse_alter_view_with_modifiers(view_algorithm, view_definer, view_sql_security)
         } else {
-            let start = self.current;
-            while !self.is_at_end() && !self.check(TokenType::Semicolon) {
-                self.skip();
-            }
-            let sql = self.tokens_to_sql(start, self.current);
-            Ok(Expression::Raw(Raw {
-                sql: format!("ALTER {}", sql),
-            }))
+            self.parse_opaque_alter()
         }
     }
 
