@@ -6649,6 +6649,8 @@
     "relational/cross_join_then_outer_join.toml#cross_join_then_full_join_on_first_table": "matching",
     "relational/cross_join_then_outer_join.toml#cross_join_then_right_join_on": "matching",
     "relational/cross_join_then_outer_join.toml#join_without_on_then_full_join_on": "matching",
+    "relational/cross_join_then_outer_join.toml#join_without_on_then_full_join_using": "matching",
+    "relational/cross_join_then_outer_join.toml#join_without_on_then_right_join_using": "refused",
     "relational/fixture_shapes.toml#not_in_subquery_filtered_not_null_in_case": "matching_rejection",
     "relational/fixture_shapes.toml#not_in_subquery_in_case": "matching_rejection",
     "relational/fixture_shapes.toml#not_in_subquery_of_literal_rows_in_case": "matching",

@@ -123,12 +123,10 @@ pub(crate) fn convert_from(
         sql.push_str(&source_sql);
         relations.push(relation);
     }
-    let joins = list(select, "joins");
-    for (index, join) in joins.iter().enumerate() {
+    for join in list(select, "joins") {
         let before = events();
         let merging = RefCell::new(None);
-        let using_follows = joins[index + 1..].iter().any(full_join_using);
-        let joined = convert_join(join, &relations, (outer, &merging, using_follows), context)
+        let joined = convert_join(join, &relations, (outer, &merging), context)
             .map_err(|refusal| context.locator.placed(refusal, join));
         let source = join.get("this").unwrap_or(&Value::Null);
         let (join_sql, relation) = recovered(joined, source, (before, relations.len()))?;
@@ -170,19 +168,10 @@ struct Merging {
     relation: Option<ScopeRelation>,
 }
 
-/// Whether `join` is a FULL JOIN with USING, whose binding after a join without ON is unrecorded.
-fn full_join_using(join: &Value) -> bool {
-    join.get("kind").and_then(Value::as_str) == Some("Full")
-        && join
-            .get("using")
-            .and_then(Value::as_array)
-            .is_some_and(|using| !using.is_empty())
-}
-
 fn convert_join(
     join: &Value,
     earlier: &[ScopeRelation],
-    (outer, merging, using_follows): (Option<&Scope<'_>>, &RefCell<Option<Merging>>, bool),
+    (outer, merging): (Option<&Scope<'_>>, &RefCell<Option<Merging>>),
     context: &Context<'_>,
 ) -> Result<(String, ScopeRelation), Refusal> {
     let join_construct = node_construct("join");
@@ -234,14 +223,6 @@ fn convert_join(
         ("Left", Some(_)) => "LEFT JOIN",
         ("Right", Some(_)) => "RIGHT JOIN",
         ("Full", Some(_)) => "FULL JOIN",
-        ("Inner" | "Left" | "Full", None) if using_follows => {
-            return Err(missing(
-                Construct::new(ConstructFamily::Join, kind.to_ascii_lowercase()),
-                format!(
-                    "a {kind} join without ON before a FULL JOIN with USING, which no receipt records"
-                ),
-            ));
-        }
         ("Cross" | "Inner" | "Left" | "Full", None) => "CROSS JOIN",
         ("Implicit", None) => ",",
         _ => {
