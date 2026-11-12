@@ -591,18 +591,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.security_admin.create-organization-listing.as.o004"
-form = "sf.security_admin.create-organization-listing.as"
-construct = "omit <name>: CREATE ORGANIZATION LISTING AS 'm' ;"
-reason = "not submitted: held by capture guard f0fdce1 in chunk sa-23: billable or out-of-account: account"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.security_admin.create-organization-listing.as.kb976e9bf8303", sql_sha256 = "b976e9bf83039ba5d53d46a94aab529f42b175dcd06ed5a1f522582ae981de99" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.security_admin.create-organization-listing.as.o005"
 form = "sf.security_admin.create-organization-listing.as"
 construct = "a valid identifier: CREATE ORGANIZATION LISTING v1 AS 'm' ;"
@@ -735,18 +723,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.security_admin.create-organization-listing.as.o027"
-form = "sf.security_admin.create-organization-listing.as"
-construct = "the form without its required EXISTS in [ IF NOT EXISTS ]: CREATE ORGANIZATION LISTING IF NOT v1 AS 'm' ;"
-reason = "not submitted: held by capture guard f0fdce1 in chunk sa-23: billable or out-of-account: account"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.security_admin.create-organization-listing.as.k7d2b80574a5f", sql_sha256 = "7d2b80574a5ffe55dbc467ce41673ea7c93f4b101a3bbd5f10ad7107876633dc" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.security_admin.create-organization-listing.as.o030"
 form = "sf.security_admin.create-organization-listing.as"
 construct = "the form without its required { TRUE | FALSE } in [ PUBLISH = { TRUE | FALSE } ]: CREATE ORGANIZATION LISTING v1 AS 'm' PUBLISH = ;"
@@ -785,12 +761,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.security_admin.create-organization-listing.as.o033"
 form = "sf.security_admin.create-organization-listing.as"
-construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): CREATE ORGANIZATION LISTING \"SELECT\" AS 'm' ;"
+construct = "reserved: CREATE ORGANIZATION LISTING \"SELECT\" AS 'm' ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-23: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
   { case_id = "sf.security_admin.create-organization-listing.as.k539b01fbbefd", sql_sha256 = "539b01fbbefdf74010ced62291d083ce9d4e20812435b1bf7a5fcd1e542a22c3" },
-  { case_id = "sf.security_admin.create-organization-listing.as.k7c68ff61b6a7", sql_sha256 = "7c68ff61b6a7d9334226b5a8141fad35beb14f407d95e4ee812c07317d54c4ad" },
 ]
 runs = []
 probes = []
@@ -803,18 +778,6 @@ reason = "not submitted: held by capture guard f0fdce1 in chunk sa-23: billable 
 cause = "not_submitted"
 cases = [
   { case_id = "sf.security_admin.create-organization-listing.from.k7c96660b2bec", sql_sha256 = "7c96660b2bec2aa352b8953811aafb64a1e59986747db6ba971ec59c8d659ff7" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.security_admin.create-organization-listing.from.o004"
-form = "sf.security_admin.create-organization-listing.from"
-construct = "omit <name>: CREATE ORGANIZATION LISTING FROM 'm' ;"
-reason = "not submitted: held by capture guard f0fdce1 in chunk sa-23: billable or out-of-account: account"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.security_admin.create-organization-listing.from.k2f383a76c17c", sql_sha256 = "2f383a76c17c6612ccb2a95ed4437e2c819c9ac46284071920bbf420437f5d13" },
 ]
 runs = []
 probes = []
@@ -880,18 +843,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.security_admin.create-organization-listing.from.o027"
-form = "sf.security_admin.create-organization-listing.from"
-construct = "the form without its required EXISTS in [ IF NOT EXISTS ]: CREATE ORGANIZATION LISTING IF NOT v1 FROM 'm' ;"
-reason = "not submitted: held by capture guard f0fdce1 in chunk sa-23: billable or out-of-account: account"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.security_admin.create-organization-listing.from.k072c3bab233d", sql_sha256 = "072c3bab233d0a9fdf9eabea468604a90d600737fab7360cbbfaabcb6f9ee203" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.security_admin.create-organization-listing.from.o030"
 form = "sf.security_admin.create-organization-listing.from"
 construct = "the form without its required { TRUE | FALSE } in [ PUBLISH = { TRUE | FALSE } ]: CREATE ORGANIZATION LISTING v1 FROM 'm' PUBLISH = ;"
@@ -911,19 +862,6 @@ reason = "not submitted: held by capture guard f0fdce1 in chunk sa-23: billable 
 cause = "not_submitted"
 cases = [
   { case_id = "sf.security_admin.create-organization-listing.from.k7c96660b2bec", sql_sha256 = "7c96660b2bec2aa352b8953811aafb64a1e59986747db6ba971ec59c8d659ff7" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.security_admin.create-organization-listing.from.o033"
-form = "sf.security_admin.create-organization-listing.from"
-construct = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance): CREATE ORGANIZATION LISTING \"SELECT\" FROM 'm' ;"
-reason = "not submitted: held by capture guard f0fdce1 in chunk sa-23: billable or out-of-account: account"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.security_admin.create-organization-listing.from.k3290586e3f8f", sql_sha256 = "3290586e3f8f33370c5d517ff5dc98f222ff56f4338e27d203908b9ca8bd1af7" },
-  { case_id = "sf.security_admin.create-organization-listing.from.k4ac3c357176c", sql_sha256 = "4ac3c357176caf30a6943e305fa51cf1a2275455f69672a69a3332117d47683b" },
 ]
 runs = []
 probes = []
