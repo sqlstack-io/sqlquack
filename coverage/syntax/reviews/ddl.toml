@@ -1698,3 +1698,20 @@ note = "Read in full against the documentation page, the obligations, the cases 
 
 [review.definitions]
 "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval" = "ca8be0bcaceb82392bb0932369a9d9c902f272d168fbcec4fe0d432883a7a5c8"
+
+[[review]]
+id = "ddl-026"
+family = "ddl"
+parser_tree = "81b399ecb25a48845ecb5e900fae8aadbe7a4586"
+reviewed_utc = "2026-11-12T21:03:38Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.create-model-monitor.version-function-source-warehouse",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees: each *_COLUMNS value is a string array, each option has its own case, the all-options case writes seven distinct array columns, and every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.create-model-monitor.version-function-source-warehouse" = "728709e9d438497d9e80811e94db886c234a6da573777ddae79c9087af13d501"
+
+[review.definitions]
+"sf.ddl.create-model-monitor.version-function-source-warehouse" = "a938b44c8bef2928a7d20609cc36a9899926f277db78a878ae86051c68820231"

@@ -767,7 +767,7 @@
     "sf.ddl.create-materialized-view": "unverified",
     "sf.ddl.create-mcp-server": "unverified",
     "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval": "verified",
-    "sf.ddl.create-model-monitor.version-function-source-warehouse": "unverified",
+    "sf.ddl.create-model-monitor.version-function-source-warehouse": "verified",
     "sf.ddl.create-model.internalstage": "unverified",
     "sf.ddl.create-model.model": "verified",
     "sf.ddl.create-notebook": "unverified",
