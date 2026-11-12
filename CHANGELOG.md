@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.11.0](https://github.com/sqlstack-io/sqlquack/compare/v0.10.0...v0.11.0) (2026-11-12)
+
+
+### Features
+
+* **syntax:** give nine Snowflake property-list CREATE kinds structured trees ([351d2c2](https://github.com/sqlstack-io/sqlquack/commit/351d2c2dee619fb333cb45852bb2f887123725d4))
+
+
+### Bug Fixes
+
+* **syntax:** accept a COPY FILES stage written as a string literal ([1e89bad](https://github.com/sqlstack-io/sqlquack/commit/1e89bad985c0baa6d59af9a428a0af9771e67936))
+* **syntax:** end compute pool and artifact repository CREATEs at their tag list, and name RSS ([dee1656](https://github.com/sqlstack-io/sqlquack/commit/dee1656a64822c8ef38c91153e00d2b601a2e832))
+* **syntax:** keep a parenthesized property list flat ([a8db36d](https://github.com/sqlstack-io/sqlquack/commit/a8db36d0297e1a52cbb77cb54816d879e5b61a32))
+* **syntax:** keep FOR APPLICATION to compute pools, read CREATE MODEL monitor as a model, and refuse a job service option given on both sides of FROM ([b2a8bc5](https://github.com/sqlstack-io/sqlquack/commit/b2a8bc5eb289f8eecbb0456b925cc18cede0da5e))
+* **syntax:** read a bare FIRST or LAST as a join alias, refuse FIRST ( x ) after an aliased table, and take job service options before FROM ([925f2f7](https://github.com/sqlstack-io/sqlquack/commit/925f2f77185694782d470f05a2d94a03c77d9598))
+* **syntax:** record AS on a table alias only when the SQL writes it ([6c2692b](https://github.com/sqlstack-io/sqlquack/commit/6c2692b000423d74ecf61d13895f460da7373593))
+
 ## [0.10.0](https://github.com/sqlstack-io/sqlquack/compare/v0.9.0...v0.10.0) (2026-11-12)
 
 
