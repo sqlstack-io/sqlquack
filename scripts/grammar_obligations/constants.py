@@ -675,6 +675,9 @@ RECEIPT_UNPACKED_FORMS: tuple[str, ...] = (
     "sf.ddl.create-event-table.table",
     "sf.ddl.create-event-table.table-clone",
     "sf.ddl.create-external-agent",
+    "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format",
+    "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type",
+    "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.syntax",
     "sf.ddl.create-hybrid-table.table",
     "sf.ddl.create-iceberg-table-rest.table-as-select",
     "sf.ddl.create-iceberg-table-rest.table-masking-policy-as",
@@ -1767,6 +1770,12 @@ FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {
     "utility": {
         "sf.utility.": FormStyle(
             prefix="", suffix="", fills=UTILITY_FILLS, literal_fills=UTILITY_LITERAL_FILLS
+        ),
+        "sf.utility.execute-dcm-project": FormStyle(
+            prefix="",
+            suffix="",
+            fills={**UTILITY_FILLS, "bind_variable": "?"},
+            literal_fills=UTILITY_LITERAL_FILLS,
         ),
         "sf.utility.call-with.table-language-sql-as": FormStyle(
             prefix="",
