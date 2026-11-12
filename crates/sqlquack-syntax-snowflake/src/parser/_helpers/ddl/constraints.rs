@@ -1460,7 +1460,7 @@ impl Parser {
                     {
                         let shorter = &kind[..kind.len() - 1];
                         let kind_word_named = kind.len() > 1
-                            && self.is_statement_end_at(0)
+                            && (self.is_statement_end_at(0) || self.check(TokenType::Dot))
                             && SNOWFLAKE_DROP_KINDS.contains(&shorter);
                         if kind_word_named {
                             self.current -= 1;
