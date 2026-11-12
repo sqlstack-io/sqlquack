@@ -531,6 +531,79 @@ pub(crate) const TASK_ACTIONS: &[&str] = &[
     "ADD", "MODIFY", "REMOVE", "RESUME", "SET", "SUSPEND", "UNSET",
 ];
 
+/// Snowflake CREATE and ALTER kinds an opaque statement may name that DROP does not, each before any kind it prefixes; the opaque check tries them before the DROP kinds.
+pub(crate) const SNOWFLAKE_OPAQUE_KINDS: &[&[&str]] = &[
+    &["AI", "FUNCTION"],
+    &["CODE", "BUNDLE"],
+    &["EXTERNAL", "LISTING"],
+    &["OPENFLOW", "DATA", "PLANE", "INTEGRATION"],
+    &["ORGANIZATION", "ACCOUNT"],
+    &["ORGANIZATION", "LISTING"],
+    &["VERSIONED", "SCHEMA"],
+];
+
+/// The word after `RESUME IF` in `ALTER WAREHOUSE <name> RESUME IF SUSPENDED`.
+pub(crate) const SUSPENDED: &str = "SUSPENDED";
+
+/// The words that start an action of an ALTER kept as opaque text, so `ALTER WAREHOUSE IF SUSPEND` alters the warehouse named IF.
+pub(crate) const SNOWFLAKE_OPAQUE_ALTER_ACTIONS: &[&str] = &[
+    "ABORT",
+    "ADD",
+    "COMMIT",
+    "DROP",
+    "DISABLE",
+    "ENABLE",
+    "MODIFY",
+    "PULL",
+    "PUSH",
+    "REMOVE",
+    "RENAME",
+    "RESET",
+    "RESTART",
+    "RESUME",
+    "ROTATE",
+    "SET",
+    "START",
+    "STOP",
+    "SUSPEND",
+    "TERMINATE",
+    "UNSET",
+    "UPGRADE",
+];
+
+/// The words that take an operand after them in an opaque CREATE or ALTER, so none may end it.
+pub(crate) const SNOWFLAKE_OPAQUE_OPERAND_WORDS: &[&str] = &[
+    "ALLOWED_VALUES",
+    "AS",
+    "BY",
+    "CHANNEL",
+    "DATABASE",
+    "FOR",
+    "FROM",
+    "IN",
+    "INSTANCE",
+    "LISTING",
+    "ON",
+    "PACKAGE",
+    "POLICY",
+    "SCHEMA",
+    "SPECIFICATION",
+    "TABLE",
+    "TEMPLATE",
+    "THEN",
+    "TO",
+    "TOKEN",
+    "USING",
+    "VERSION",
+    "WITH",
+];
+
+/// The opaque ALTER kinds whose RENAME may leave out TO.
+pub(crate) const SNOWFLAKE_OPAQUE_RENAME_WITHOUT_TO: &[&[&str]] = &[&["POSTGRES", "INSTANCE"]];
+
+/// The opaque ALTER kind whose name may be left out for the current object.
+pub(crate) const SNOWFLAKE_OPAQUE_UNNAMED_KIND: &[&str] = &["WAREHOUSE"];
+
 /// Snowflake DROP object kinds, each listed before any kind it prefixes.
 pub(crate) const SNOWFLAKE_DROP_KINDS: &[&[&str]] = &[
     &["AGENT"],
