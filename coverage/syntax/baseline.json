@@ -2725,7 +2725,7 @@
     "sf.query.into": "verified",
     "sf.query.join": "absent",
     "sf.query.join-lateral": "verified",
-    "sf.query.join.join": "unverified",
+    "sf.query.join.join": "verified",
     "sf.query.join.join-2": "verified",
     "sf.query.join.join.syntax": "verified",
     "sf.query.limit.fetch": "verified",

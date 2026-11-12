@@ -280,3 +280,20 @@ note = "Read in full against the documentation page, the obligations, the cases 
 [review.definitions]
 "sf.query.join.join-2" = "4bc06fc3d076a458af27807d8093a505210af7d6d27133f3105be3e026df82ca"
 "sf.query.join.join.syntax" = "abf625c6216905b38bfa74d505624954f92108406a0eeefe2672de7e36567e19"
+
+[[review]]
+id = "query-013"
+family = "query"
+parser_tree = "582bdba8f75e43db2dfbf7d7ba7b39411f31a8fb"
+reviewed_utc = "2026-11-12T19:17:19Z"
+verdict = "approved"
+forms = [
+  "sf.query.join.join",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees: every read-order case after ON is parsed (errno 1868) or a syntax error (1003) as Snowflake reports, and every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.query.join.join" = "f408da6c1caacee63e105a28b6a23adc58b69e7a110f5e31ea02ec1dd46ff782"
+
+[review.definitions]
+"sf.query.join.join" = "20ab01abd8faed881505d69e9f88c21692e6fd9a316d54149aca51af293a5d5a"
