@@ -92,3 +92,20 @@ note = "Read in full against the documentation page, the obligations, the cases 
 [review.definitions]
 "sf.dml.insert-multi-table.all-intoclause" = "ae75822dff04ebf57b8c2cc0bf22d0f4a2aa340b9862c5f9f019fa054516db5d"
 "sf.dml.insert-multi-table.first-all-when-then" = "a079e76802663f30c07c025634cc3c8ed9d82342c2055289117dcddf33ecc865"
+
+[[review]]
+id = "dml-006"
+family = "dml"
+parser_tree = "582bdba8f75e43db2dfbf7d7ba7b39411f31a8fb"
+reviewed_utc = "2026-11-12T17:34:27Z"
+verdict = "approved"
+forms = [
+  "sf.dml.merge",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of parser tree 582bdba8f75e; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.dml.merge" = "c80e7f587fd42f4d85ec6c2b1037ffb985ce8c889d00cfb53f71ec5a7828a1e9"
+
+[review.definitions]
+"sf.dml.merge" = "7199cb1b8a75bbd9be1b5b6185d63a4e1c3e2ac6d98dec6995cb9c56df84e900"

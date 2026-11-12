@@ -1638,3 +1638,26 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.ddl.alter-dbt-project.unset" = "1cdb883af08dede5f86f44b6d3ab808f79c67cf4031d802d1f8f5e8076fce310"
 "sf.ddl.alter-function-spcs.unset-context-headers-max-batch-rows-max-batch-retries" = "57a5a74e49d33824c097fd06fbe9974367b41b295fe734d318ec3cf853e0dfca"
 "sf.ddl.alter-function.unset-comment-headers-context-headers" = "1045d2e7589b59e609f8967347baf831e3743c22ca3313e3ee1f6da37cc4bcbe"
+
+[[review]]
+id = "ddl-023"
+family = "ddl"
+parser_tree = "582bdba8f75e43db2dfbf7d7ba7b39411f31a8fb"
+reviewed_utc = "2026-11-12T17:34:27Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.create-contact",
+  "sf.ddl.create-git-repository",
+  "sf.ddl.create-image-repository",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of parser tree 582bdba8f75e; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.create-contact" = "0d61fb19948c177b31ff6d06643cbb43b6630d764d677aff253334139d88005f"
+"sf.ddl.create-git-repository" = "196c147563b1798efc591d564e62152d9b10d2a30156bab53ea4840e34e173e8"
+"sf.ddl.create-image-repository" = "ce83e9f0942409ef368a7c27045935a3051669699f4c355cac6380c2e9151f2d"
+
+[review.definitions]
+"sf.ddl.create-contact" = "4904656d4fa2d41b0002a0afe96b7d2f2c554ec0b5985e8f459118c2898760aa"
+"sf.ddl.create-git-repository" = "cafca2ce2d0e340ee9e9440566fa1db4d436c9980b03b15afc799552e48d3360"
+"sf.ddl.create-image-repository" = "242d5d4d0449489931508b88a124cbd142781842f18c171d1665cb925def4bbf"
