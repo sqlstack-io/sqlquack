@@ -23,6 +23,7 @@ pub(crate) mod snowflake_copy;
 pub(crate) mod snowflake_create_clone;
 pub(crate) mod snowflake_create_from;
 pub(crate) mod snowflake_create_properties;
+pub(crate) mod snowflake_create_sets;
 pub(crate) mod snowflake_create_table;
 pub(crate) mod snowflake_data_metric;
 pub(crate) mod snowflake_event_tables;
