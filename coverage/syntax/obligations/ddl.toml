@@ -181604,12 +181604,6 @@ target = "<ground_truth_table> in [ GROUND_TRUTH = <ground_truth_table> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o025"
-kind = "option_present"
-required = true
-target = "[ ID_COLUMNS = <id_column_name_array> ]"
-
-[[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o026"
 kind = "option_absent"
 required = true
@@ -181623,24 +181617,11 @@ target = "<id_column_name_array> in [ ID_COLUMNS = <id_column_name_array> ]"
 note = "omit <id_column_name_array>"
 
 [[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o028"
-kind = "operand_type_class"
-required = true
-target = "<id_column_name_array> in [ ID_COLUMNS = <id_column_name_array> ]"
-note = "a valid identifier"
-
-[[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o029"
 kind = "negative_neighbour"
 required = true
 target = "<id_column_name_array> in [ ID_COLUMNS = <id_column_name_array> ]"
 note = "a string literal in place of <id_column_name_array>"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o030"
-kind = "option_present"
-required = true
-target = "[ PREDICTION_CLASS_COLUMNS = <prediction_class_column_name_array> ]"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o031"
@@ -181656,24 +181637,11 @@ target = "<prediction_class_column_name_array> in [ PREDICTION_CLASS_COLUMNS = <
 note = "omit <prediction_class_column_name_array>"
 
 [[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o033"
-kind = "operand_type_class"
-required = true
-target = "<prediction_class_column_name_array> in [ PREDICTION_CLASS_COLUMNS = <prediction_class_column_name_array> ]"
-note = "a valid identifier"
-
-[[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o034"
 kind = "negative_neighbour"
 required = true
 target = "<prediction_class_column_name_array> in [ PREDICTION_CLASS_COLUMNS = <prediction_class_column_name_array> ]"
 note = "a string literal in place of <prediction_class_column_name_array>"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o035"
-kind = "option_present"
-required = true
-target = "[ PREDICTION_SCORE_COLUMNS = <prediction_score_column_name_array> ]"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o036"
@@ -181689,24 +181657,11 @@ target = "<prediction_score_column_name_array> in [ PREDICTION_SCORE_COLUMNS = <
 note = "omit <prediction_score_column_name_array>"
 
 [[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o038"
-kind = "operand_type_class"
-required = true
-target = "<prediction_score_column_name_array> in [ PREDICTION_SCORE_COLUMNS = <prediction_score_column_name_array> ]"
-note = "a valid identifier"
-
-[[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o039"
 kind = "negative_neighbour"
 required = true
 target = "<prediction_score_column_name_array> in [ PREDICTION_SCORE_COLUMNS = <prediction_score_column_name_array> ]"
 note = "a string literal in place of <prediction_score_column_name_array>"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o040"
-kind = "option_present"
-required = true
-target = "[ ACTUAL_CLASS_COLUMNS = <actual_class_column_name_array> ]"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o041"
@@ -181722,24 +181677,11 @@ target = "<actual_class_column_name_array> in [ ACTUAL_CLASS_COLUMNS = <actual_c
 note = "omit <actual_class_column_name_array>"
 
 [[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o043"
-kind = "operand_type_class"
-required = true
-target = "<actual_class_column_name_array> in [ ACTUAL_CLASS_COLUMNS = <actual_class_column_name_array> ]"
-note = "a valid identifier"
-
-[[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o044"
 kind = "negative_neighbour"
 required = true
 target = "<actual_class_column_name_array> in [ ACTUAL_CLASS_COLUMNS = <actual_class_column_name_array> ]"
 note = "a string literal in place of <actual_class_column_name_array>"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o045"
-kind = "option_present"
-required = true
-target = "[ ACTUAL_SCORE_COLUMNS = <actual_score_column_name_array> ]"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o046"
@@ -181753,13 +181695,6 @@ kind = "required_operand_missing"
 required = true
 target = "<actual_score_column_name_array> in [ ACTUAL_SCORE_COLUMNS = <actual_score_column_name_array> ]"
 note = "omit <actual_score_column_name_array>"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o048"
-kind = "operand_type_class"
-required = true
-target = "<actual_score_column_name_array> in [ ACTUAL_SCORE_COLUMNS = <actual_score_column_name_array> ]"
-note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o049"
@@ -181938,91 +181873,91 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o075"
-kind = "identifier_class"
-required = true
-target = "<id_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o076"
-kind = "identifier_class"
-required = true
-target = "<id_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o077"
-kind = "identifier_class"
-required = true
-target = "<prediction_class_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o078"
-kind = "identifier_class"
-required = true
-target = "<prediction_class_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o079"
-kind = "identifier_class"
-required = true
-target = "<prediction_score_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o080"
-kind = "identifier_class"
-required = true
-target = "<prediction_score_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o081"
-kind = "identifier_class"
-required = true
-target = "<actual_class_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o082"
-kind = "identifier_class"
-required = true
-target = "<actual_class_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o083"
-kind = "identifier_class"
-required = true
-target = "<actual_score_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o084"
-kind = "identifier_class"
-required = true
-target = "<actual_score_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o085"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
 note = "the form without its required WITH, observed"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o087"
+kind = "option_present"
+required = true
+target = "[ ID_COLUMNS = <id_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+note = "ID_COLUMNS as a one-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o088"
+kind = "operand_type_class"
+required = true
+target = "<id_column_name_array> in [ ID_COLUMNS = <id_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+note = "ID_COLUMNS as a two-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o089"
+kind = "option_present"
+required = true
+target = "[ PREDICTION_CLASS_COLUMNS = <prediction_class_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+note = "PREDICTION_CLASS_COLUMNS as a one-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o090"
+kind = "operand_type_class"
+required = true
+target = "<prediction_class_column_name_array> in [ PREDICTION_CLASS_COLUMNS = <prediction_class_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+note = "PREDICTION_CLASS_COLUMNS as a two-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o091"
+kind = "option_present"
+required = true
+target = "[ PREDICTION_SCORE_COLUMNS = <prediction_score_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+note = "PREDICTION_SCORE_COLUMNS as a one-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o092"
+kind = "operand_type_class"
+required = true
+target = "<prediction_score_column_name_array> in [ PREDICTION_SCORE_COLUMNS = <prediction_score_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+note = "PREDICTION_SCORE_COLUMNS as a two-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o093"
+kind = "option_present"
+required = true
+target = "[ ACTUAL_CLASS_COLUMNS = <actual_class_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+note = "ACTUAL_CLASS_COLUMNS as a one-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o094"
+kind = "operand_type_class"
+required = true
+target = "<actual_class_column_name_array> in [ ACTUAL_CLASS_COLUMNS = <actual_class_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+note = "ACTUAL_CLASS_COLUMNS as a two-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o095"
+kind = "option_present"
+required = true
+target = "[ ACTUAL_SCORE_COLUMNS = <actual_score_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+note = "ACTUAL_SCORE_COLUMNS as a one-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o096"
+kind = "operand_type_class"
+required = true
+target = "<actual_score_column_name_array> in [ ACTUAL_SCORE_COLUMNS = <actual_score_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+note = "ACTUAL_SCORE_COLUMNS as a two-element array of column-name strings"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o001"
@@ -182235,12 +182170,6 @@ target = "<baseline_name> in [ BASELINE = <baseline_name> ]"
 note = "a string literal in place of <baseline_name>"
 
 [[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o032"
-kind = "option_present"
-required = true
-target = "[ ID_COLUMNS = <id_column_name_array> ]"
-
-[[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o033"
 kind = "option_absent"
 required = true
@@ -182254,24 +182183,11 @@ target = "<id_column_name_array> in [ ID_COLUMNS = <id_column_name_array> ]"
 note = "omit <id_column_name_array>"
 
 [[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o035"
-kind = "operand_type_class"
-required = true
-target = "<id_column_name_array> in [ ID_COLUMNS = <id_column_name_array> ]"
-note = "a valid identifier"
-
-[[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o036"
 kind = "negative_neighbour"
 required = true
 target = "<id_column_name_array> in [ ID_COLUMNS = <id_column_name_array> ]"
 note = "a string literal in place of <id_column_name_array>"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o037"
-kind = "option_present"
-required = true
-target = "[ PREDICTION_CLASS_COLUMNS = <prediction_class_column_name_array> ]"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o038"
@@ -182287,24 +182203,11 @@ target = "<prediction_class_column_name_array> in [ PREDICTION_CLASS_COLUMNS = <
 note = "omit <prediction_class_column_name_array>"
 
 [[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o040"
-kind = "operand_type_class"
-required = true
-target = "<prediction_class_column_name_array> in [ PREDICTION_CLASS_COLUMNS = <prediction_class_column_name_array> ]"
-note = "a valid identifier"
-
-[[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o041"
 kind = "negative_neighbour"
 required = true
 target = "<prediction_class_column_name_array> in [ PREDICTION_CLASS_COLUMNS = <prediction_class_column_name_array> ]"
 note = "a string literal in place of <prediction_class_column_name_array>"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o042"
-kind = "option_present"
-required = true
-target = "[ PREDICTION_SCORE_COLUMNS = <prediction_column-name_array> ]"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o043"
@@ -182320,24 +182223,11 @@ target = "<prediction_column-name_array> in [ PREDICTION_SCORE_COLUMNS = <predic
 note = "omit <prediction_column-name_array>"
 
 [[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o045"
-kind = "operand_type_class"
-required = true
-target = "<prediction_column-name_array> in [ PREDICTION_SCORE_COLUMNS = <prediction_column-name_array> ]"
-note = "a valid identifier"
-
-[[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o046"
 kind = "negative_neighbour"
 required = true
 target = "<prediction_column-name_array> in [ PREDICTION_SCORE_COLUMNS = <prediction_column-name_array> ]"
 note = "a string literal in place of <prediction_column-name_array>"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o047"
-kind = "option_present"
-required = true
-target = "[ ACTUAL_CLASS_COLUMNS = <actual_class_column_name_array> ]"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o048"
@@ -182353,24 +182243,11 @@ target = "<actual_class_column_name_array> in [ ACTUAL_CLASS_COLUMNS = <actual_c
 note = "omit <actual_class_column_name_array>"
 
 [[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o050"
-kind = "operand_type_class"
-required = true
-target = "<actual_class_column_name_array> in [ ACTUAL_CLASS_COLUMNS = <actual_class_column_name_array> ]"
-note = "a valid identifier"
-
-[[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o051"
 kind = "negative_neighbour"
 required = true
 target = "<actual_class_column_name_array> in [ ACTUAL_CLASS_COLUMNS = <actual_class_column_name_array> ]"
 note = "a string literal in place of <actual_class_column_name_array>"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o052"
-kind = "option_present"
-required = true
-target = "[ ACTUAL_SCORE_COLUMNS = <actual_column_name_array> ]"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o053"
@@ -182386,24 +182263,11 @@ target = "<actual_column_name_array> in [ ACTUAL_SCORE_COLUMNS = <actual_column_
 note = "omit <actual_column_name_array>"
 
 [[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o055"
-kind = "operand_type_class"
-required = true
-target = "<actual_column_name_array> in [ ACTUAL_SCORE_COLUMNS = <actual_column_name_array> ]"
-note = "a valid identifier"
-
-[[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o056"
 kind = "negative_neighbour"
 required = true
 target = "<actual_column_name_array> in [ ACTUAL_SCORE_COLUMNS = <actual_column_name_array> ]"
 note = "a string literal in place of <actual_column_name_array>"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o057"
-kind = "option_present"
-required = true
-target = "[ SEGMENT_COLUMNS = <segment_column_name_array> ]"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o058"
@@ -182419,24 +182283,11 @@ target = "<segment_column_name_array> in [ SEGMENT_COLUMNS = <segment_column_nam
 note = "omit <segment_column_name_array>"
 
 [[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o060"
-kind = "operand_type_class"
-required = true
-target = "<segment_column_name_array> in [ SEGMENT_COLUMNS = <segment_column_name_array> ]"
-note = "a valid identifier"
-
-[[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o061"
 kind = "negative_neighbour"
 required = true
 target = "<segment_column_name_array> in [ SEGMENT_COLUMNS = <segment_column_name_array> ]"
 note = "a string literal in place of <segment_column_name_array>"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o062"
-kind = "option_present"
-required = true
-target = "[ CUSTOM_METRIC_COLUMNS = <custom_metric_column_name_array> ]"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o063"
@@ -182450,13 +182301,6 @@ kind = "required_operand_missing"
 required = true
 target = "<custom_metric_column_name_array> in [ CUSTOM_METRIC_COLUMNS = <custom_metric_column_name_array> ]"
 note = "omit <custom_metric_column_name_array>"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o065"
-kind = "operand_type_class"
-required = true
-target = "<custom_metric_column_name_array> in [ CUSTOM_METRIC_COLUMNS = <custom_metric_column_name_array> ]"
-note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o066"
@@ -182679,123 +182523,123 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o098"
-kind = "identifier_class"
-required = true
-target = "<id_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o099"
-kind = "identifier_class"
-required = true
-target = "<id_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o100"
-kind = "identifier_class"
-required = true
-target = "<prediction_class_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o101"
-kind = "identifier_class"
-required = true
-target = "<prediction_class_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o102"
-kind = "identifier_class"
-required = true
-target = "<prediction_column-name_array>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o103"
-kind = "identifier_class"
-required = true
-target = "<prediction_column-name_array>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o104"
-kind = "identifier_class"
-required = true
-target = "<actual_class_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o105"
-kind = "identifier_class"
-required = true
-target = "<actual_class_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o106"
-kind = "identifier_class"
-required = true
-target = "<actual_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o107"
-kind = "identifier_class"
-required = true
-target = "<actual_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o108"
-kind = "identifier_class"
-required = true
-target = "<segment_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o109"
-kind = "identifier_class"
-required = true
-target = "<segment_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o110"
-kind = "identifier_class"
-required = true
-target = "<custom_metric_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o111"
-kind = "identifier_class"
-required = true
-target = "<custom_metric_column_name_array>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o112"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
 note = "the form without its required WITH, observed"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o114"
+kind = "option_present"
+required = true
+target = "[ ID_COLUMNS = <id_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "ID_COLUMNS as a one-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o115"
+kind = "operand_type_class"
+required = true
+target = "<id_column_name_array> in [ ID_COLUMNS = <id_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "ID_COLUMNS as a two-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o116"
+kind = "option_present"
+required = true
+target = "[ PREDICTION_CLASS_COLUMNS = <prediction_class_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "PREDICTION_CLASS_COLUMNS as a one-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o117"
+kind = "operand_type_class"
+required = true
+target = "<prediction_class_column_name_array> in [ PREDICTION_CLASS_COLUMNS = <prediction_class_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "PREDICTION_CLASS_COLUMNS as a two-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o118"
+kind = "option_present"
+required = true
+target = "[ PREDICTION_SCORE_COLUMNS = <prediction_column-name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "PREDICTION_SCORE_COLUMNS as a one-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o119"
+kind = "operand_type_class"
+required = true
+target = "<prediction_column-name_array> in [ PREDICTION_SCORE_COLUMNS = <prediction_column-name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "PREDICTION_SCORE_COLUMNS as a two-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o120"
+kind = "option_present"
+required = true
+target = "[ ACTUAL_CLASS_COLUMNS = <actual_class_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "ACTUAL_CLASS_COLUMNS as a one-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o121"
+kind = "operand_type_class"
+required = true
+target = "<actual_class_column_name_array> in [ ACTUAL_CLASS_COLUMNS = <actual_class_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "ACTUAL_CLASS_COLUMNS as a two-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o122"
+kind = "option_present"
+required = true
+target = "[ ACTUAL_SCORE_COLUMNS = <actual_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "ACTUAL_SCORE_COLUMNS as a one-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o123"
+kind = "operand_type_class"
+required = true
+target = "<actual_column_name_array> in [ ACTUAL_SCORE_COLUMNS = <actual_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "ACTUAL_SCORE_COLUMNS as a two-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o124"
+kind = "option_present"
+required = true
+target = "[ SEGMENT_COLUMNS = <segment_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "SEGMENT_COLUMNS as a one-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o125"
+kind = "operand_type_class"
+required = true
+target = "<segment_column_name_array> in [ SEGMENT_COLUMNS = <segment_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "SEGMENT_COLUMNS as a two-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o126"
+kind = "option_present"
+required = true
+target = "[ CUSTOM_METRIC_COLUMNS = <custom_metric_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "CUSTOM_METRIC_COLUMNS as a one-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o127"
+kind = "operand_type_class"
+required = true
+target = "<custom_metric_column_name_array> in [ CUSTOM_METRIC_COLUMNS = <custom_metric_column_name_array> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "CUSTOM_METRIC_COLUMNS as a two-element array of column-name strings"
 
 [[obligation]]
 id = "sf.ddl.create-model.internalstage.o001"
@@ -184718,6 +184562,49 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.create-online-feature-table / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.ddl.create-online-feature-table.o074"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-online-feature-table / Examples"
+note = "the page's example, whose clause order differs from the syntax block"
+
+[[obligation]]
+id = "sf.ddl.create-online-feature-table.o075"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-online-feature-table / Syntax"
+note = "an optional clause before TARGET_LAG"
+
+[[obligation]]
+id = "sf.ddl.create-online-feature-table.o076"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-online-feature-table / Syntax"
+note = "the form without its required TARGET_LAG clause"
+
+[[obligation]]
+id = "sf.ddl.create-online-feature-table.o077"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-online-feature-table / Syntax"
+note = "the form without its required WAREHOUSE clause"
+
+[[obligation]]
+id = "sf.ddl.create-online-feature-table.o078"
+kind = "required_operand_missing"
+required = true
+target = "<num> { seconds | minutes | hours | days }"
+anchor = "doc.sql.create-online-feature-table / Syntax"
+note = "omit the TARGET_LAG value"
+
+[[obligation]]
+id = "sf.ddl.create-online-feature-table.o079"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-online-feature-table / Usage notes"
+note = "IF NOT EXISTS, named by the usage note but absent from the syntax block"
 
 [[obligation]]
 id = "sf.ddl.create-openflow-connector.from.o001"
@@ -267156,34 +267043,16 @@ required = true
 target = "{ STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 | MEMORY_64X |… → MEMORY_1X"
 
 [[obligation]]
-id = "sf.ddl.create-warehouse.create-or-alter-warehouse.o035"
-kind = "alternative"
-required = true
-target = "{ STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 |… → MEMORY_1X_x86"
-
-[[obligation]]
 id = "sf.ddl.create-warehouse.create-or-alter-warehouse.o036"
 kind = "alternative"
 required = true
 target = "{ STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 | MEMORY_64X |… → MEMORY_16X"
 
 [[obligation]]
-id = "sf.ddl.create-warehouse.create-or-alter-warehouse.o037"
-kind = "alternative"
-required = true
-target = "{ STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 |… → MEMORY_16X_x86"
-
-[[obligation]]
 id = "sf.ddl.create-warehouse.create-or-alter-warehouse.o038"
 kind = "alternative"
 required = true
 target = "{ STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 | MEMORY_64X |… → MEMORY_64X"
-
-[[obligation]]
-id = "sf.ddl.create-warehouse.create-or-alter-warehouse.o039"
-kind = "alternative"
-required = true
-target = "{ STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 |… → MEMORY_64X_x86"
 
 [[obligation]]
 id = "sf.ddl.create-warehouse.create-or-alter-warehouse.o040"
@@ -267725,6 +267594,30 @@ required = true
 target = "<monitor_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.create-warehouse.create-or-alter-warehouse.o124"
+kind = "alternative"
+required = true
+target = "{ STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 |… → MEMORY_1X_x86"
+anchor = "doc.sql.create-warehouse / Parameters"
+note = "RESOURCE_CONSTRAINT = MEMORY_1X_x86"
+
+[[obligation]]
+id = "sf.ddl.create-warehouse.create-or-alter-warehouse.o125"
+kind = "alternative"
+required = true
+target = "{ STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 |… → MEMORY_16X_x86"
+anchor = "doc.sql.create-warehouse / Parameters"
+note = "RESOURCE_CONSTRAINT = MEMORY_16X_x86"
+
+[[obligation]]
+id = "sf.ddl.create-warehouse.create-or-alter-warehouse.o126"
+kind = "alternative"
+required = true
+target = "{ STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 |… → MEMORY_64X_x86"
+anchor = "doc.sql.create-warehouse / Parameters"
+note = "RESOURCE_CONSTRAINT = MEMORY_64X_x86"
 
 [[obligation]]
 id = "sf.ddl.create-warehouse.create-warehouse.o001"
