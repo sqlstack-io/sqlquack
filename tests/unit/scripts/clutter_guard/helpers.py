@@ -18,6 +18,7 @@ _REVIEWER: str = "audit" + "or"
 _HOME: str = "/" + "home/alice/"
 _SECRET_NAME: str = "SERVICE_" + "TOKEN"
 _GITHUB_SECRET_NAME: str = "GITHUB_" + "TOKEN"
+_DELIVERY_SECRET_NAME: str = "CHIO_DELIVERY_" + "PRIVATE_KEY"
 _REPOSITORY_GITIGNORE: Path = Path(__file__).resolve().parents[4] / ".gitignore"
 _IGNORED_CLUTTER: tuple[str, ...] = (
     "AGENTS.md",
@@ -226,6 +227,48 @@ def add_github_token(repository: Path) -> None:
         repository,
         ".github/workflows/ci.yml",
         f"env:\n  {_GITHUB_SECRET_NAME}: ${{{{ secrets.{_GITHUB_SECRET_NAME} }}}}\n",
+    )
+
+
+def _delivery_workflow(triggers: str) -> str:
+    """A workflow with `triggers` that reads the delivery App key, mentioning pull_request runs."""
+    return (
+        f"on:\n{triggers}\n"
+        "# A pull request it opens starts no pull_request runs.\n"
+        "jobs:\n  release:\n    steps:\n      - with:\n"
+        f"          private-key: ${{{{ secrets.{_DELIVERY_SECRET_NAME} }}}}\n"
+    )
+
+
+def add_release_workflow_delivery_key(repository: Path) -> None:
+    """Adds the delivery App key to the release workflow, on push and dispatch only."""
+    _write(
+        repository,
+        ".github/workflows/release-please.yml",
+        _delivery_workflow("  push:\n  workflow_dispatch:"),
+    )
+
+
+def add_delivery_key_in_another_workflow(repository: Path) -> None:
+    """Adds the delivery App key to a workflow other than the release workflow."""
+    _write(repository, ".github/workflows/ci.yml", _delivery_workflow("  push:"))
+
+
+def add_delivery_key_with_pull_request_trigger(repository: Path) -> None:
+    """Adds the delivery App key to the release workflow, which also runs on pull requests."""
+    _write(
+        repository,
+        ".github/workflows/release-please.yml",
+        _delivery_workflow("  push:\n  pull_request:"),
+    )
+
+
+def add_delivery_key_with_pull_request_target_trigger(repository: Path) -> None:
+    """Adds the delivery App key to the release workflow, which also runs on pull_request_target."""
+    _write(
+        repository,
+        ".github/workflows/release-please.yml",
+        _delivery_workflow("  push:\n  pull_request_target:\n    types: [opened]"),
     )
 
 
