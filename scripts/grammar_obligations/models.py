@@ -73,6 +73,8 @@ class Rendered:
     expect: str
     stage: str = ""
     documented: bool = False
+    intent: str = ""
+    """The expect an observed rendering replaced, which says whether the case is a positive."""
 
 
 @dataclass(frozen=True)
