@@ -4821,6 +4821,13 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.query.join.join.o035"
+kind = "positive"
+required = true
+anchor = "doc.constructs.join / Syntax"
+note = "two joins in a row, each with ON, observed"
+
+[[obligation]]
 id = "sf.query.join.join-2.o001"
 kind = "positive"
 required = true
@@ -4961,6 +4968,13 @@ id = "sf.query.join.join-2.o023"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FROM"
+
+[[obligation]]
+id = "sf.query.join.join-2.o024"
+kind = "positive"
+required = true
+anchor = "doc.constructs.join / Syntax"
+note = "a NATURAL join followed by a CROSS join, observed"
 
 [[obligation]]
 id = "sf.query.join.join.syntax.o001"
@@ -5108,37 +5122,11 @@ required = true
 target = "[ { FIRST | LAST } ( <alias> ) ]"
 
 [[obligation]]
-id = "sf.query.join.join.syntax.o024"
-kind = "alternative"
-required = true
-target = "{ FIRST | LAST } → FIRST"
-
-[[obligation]]
-id = "sf.query.join.join.syntax.o025"
-kind = "alternative"
-required = true
-target = "{ FIRST | LAST } → LAST"
-
-[[obligation]]
-id = "sf.query.join.join.syntax.o026"
-kind = "required_operand_missing"
-required = true
-target = "<alias> in [ { FIRST | LAST } ( <alias> ) ]"
-note = "omit <alias>"
-
-[[obligation]]
 id = "sf.query.join.join.syntax.o027"
 kind = "operand_type_class"
 required = true
 target = "<alias> in [ { FIRST | LAST } ( <alias> ) ]"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.query.join.join.syntax.o028"
-kind = "negative_neighbour"
-required = true
-target = "<alias> in [ { FIRST | LAST } ( <alias> ) ]"
-note = "a string literal in place of <alias>"
 
 [[obligation]]
 id = "sf.query.join.join.syntax.o029"
@@ -5157,18 +5145,6 @@ id = "sf.query.join.join.syntax.o032"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ USING ( <column_list> ) ]"
-
-[[obligation]]
-id = "sf.query.join.join.syntax.o033"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ( in [ { FIRST | LAST } ( <alias> ) ]"
-
-[[obligation]]
-id = "sf.query.join.join.syntax.o034"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ) in [ { FIRST | LAST } ( <alias> ) ]"
 
 [[obligation]]
 id = "sf.query.join.join.syntax.o035"
@@ -5193,20 +5169,94 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.query.join.join.syntax.o038"
-kind = "identifier_class"
+id = "sf.query.join.join.syntax.o040"
+kind = "alternative"
 required = true
-target = "<alias>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+target = "{ FIRST | LAST } → FIRST"
+anchor = "doc.constructs.join / Usage notes"
+note = "FIRST after USING, a read-order clause"
 
 [[obligation]]
-id = "sf.query.join.join.syntax.o039"
+id = "sf.query.join.join.syntax.o041"
+kind = "alternative"
+required = true
+target = "{ FIRST | LAST } → LAST"
+anchor = "doc.constructs.join / Usage notes"
+note = "LAST after USING, a read-order clause"
+
+[[obligation]]
+id = "sf.query.join.join.syntax.o042"
+kind = "required_operand_missing"
+required = true
+target = "<alias> in [ { FIRST | LAST } ( <alias> ) ]"
+anchor = "doc.constructs.join / Syntax"
+note = "omit <alias> in a read-order clause after USING"
+
+[[obligation]]
+id = "sf.query.join.join.syntax.o043"
+kind = "negative_neighbour"
+required = true
+target = "<alias> in [ { FIRST | LAST } ( <alias> ) ]"
+anchor = "doc.constructs.join / Syntax"
+note = "a string literal in place of <alias> in a read-order clause after USING"
+
+[[obligation]]
+id = "sf.query.join.join.syntax.o044"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.join / Syntax"
+note = "a read-order clause after USING without its ("
+
+[[obligation]]
+id = "sf.query.join.join.syntax.o045"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.join / Syntax"
+note = "a read-order clause after USING without its )"
+
+[[obligation]]
+id = "sf.query.join.join.syntax.o046"
 kind = "identifier_class"
 required = true
 target = "<alias>"
 anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+note = "quoted <alias> in a read-order clause after USING"
+
+[[obligation]]
+id = "sf.query.join.join.syntax.o047"
+kind = "identifier_class"
+required = true
+target = "<alias>"
+anchor = "doc.identifiers-syntax"
+note = "reserved <alias> in a read-order clause after USING, unquoted and double-quoted"
+
+[[obligation]]
+id = "sf.query.join.join.syntax.o048"
+kind = "positive"
+required = true
+anchor = "doc.constructs.join / Usage notes"
+note = "FIRST ( v1 ) on a directed join without ON or USING, read as a table alias"
+
+[[obligation]]
+id = "sf.query.join.join.syntax.o049"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.join / Usage notes"
+note = "FIRST ( v1 ) after a table that already has an alias, without ON or USING"
+
+[[obligation]]
+id = "sf.query.join.join.syntax.o050"
+kind = "positive"
+required = true
+anchor = "doc.constructs.join / Usage notes"
+note = "a read-order clause on a join that is not directed (expected errno 1867)"
+
+[[obligation]]
+id = "sf.query.join.join.syntax.o051"
+kind = "positive"
+required = true
+anchor = "doc.constructs.join / Usage notes"
+note = "a bare FIRST as a table alias; FIRST is not reserved"
 
 [[obligation]]
 id = "sf.query.limit.fetch.o001"
@@ -9819,6 +9869,13 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.constructs.semantic_view / Syntax"
 note = "FACTS together with METRICS, which the page forbids"
+
+[[obligation]]
+id = "sf.query.semantic-view.o075"
+kind = "positive"
+required = true
+anchor = "doc.constructs.semantic_view / Syntax"
+note = "DIMENSIONS before METRICS, observed"
 
 [[obligation]]
 id = "sf.query.top-n.o001"
