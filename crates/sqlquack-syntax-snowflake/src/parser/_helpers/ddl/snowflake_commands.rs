@@ -216,7 +216,7 @@ impl Parser {
                 let table = Expression::Table(Box::new(self.parse_object_name()?));
                 node.properties.push(property("PREVIEW", None, Some(table)));
                 self.expect_alter_words(&[&["USING", "CONFIGURATION"]])?;
-                let config = Expression::Table(Box::new(self.parse_object_name()?));
+                let config = Expression::Identifier(self.parse_simple_name()?);
                 node.properties
                     .push(property("USING CONFIGURATION", None, Some(config)));
                 node.properties.extend(self.parse_dcm_environment()?);
@@ -238,13 +238,13 @@ impl Parser {
             _ => {}
         }
         if self.match_text_seq(&["FROM", "DEPLOYMENT"]) {
-            let deployment = Expression::Table(Box::new(self.parse_object_name()?));
+            let deployment = Expression::Identifier(self.parse_simple_name()?);
             node.properties
                 .push(property("FROM DEPLOYMENT", None, Some(deployment)));
         } else {
             if self.match_token(TokenType::Using) {
                 self.expect_alter_words(&[&["CONFIGURATION"]])?;
-                let config = Expression::Table(Box::new(self.parse_object_name()?));
+                let config = Expression::Identifier(self.parse_simple_name()?);
                 node.properties
                     .push(property("USING CONFIGURATION", None, Some(config)));
             }

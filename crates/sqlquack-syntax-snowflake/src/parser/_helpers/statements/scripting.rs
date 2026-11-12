@@ -207,6 +207,7 @@ impl Parser {
         if !is_let && self.match_text_seq(&["PROCEDURE"]) {
             let parameters = self.parse_anonymous_procedure_parameters()?;
             let (return_type, returns_table) = self.parse_procedure_returns()?;
+            self.match_snowflake_return_nullability();
             self.expect_token(TokenType::As)?;
             let body = self.with_parser_depth(Self::parse_scripting_block_members)?;
             return Ok(ScriptingDeclaration::Procedure(Box::new(

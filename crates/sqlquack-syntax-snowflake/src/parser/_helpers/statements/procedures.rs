@@ -36,6 +36,7 @@ impl Parser {
         self.expect_token(TokenType::Procedure)?;
         let parameters = self.parse_anonymous_procedure_parameters()?;
         let (return_type, returns_table) = self.parse_procedure_returns()?;
+        let return_nullability = self.match_snowflake_return_nullability();
         if !self.match_token(TokenType::Language) {
             return Err(self.parse_error("Expected LANGUAGE after the procedure return type"));
         }
@@ -50,6 +51,7 @@ impl Parser {
         procedure.return_type = return_type;
         procedure.returns_table = returns_table;
         procedure.language = Some(language);
+        procedure.with_options.extend(return_nullability);
         let procedure = self.parse_anonymous_procedure_options(procedure)?;
         Ok(Expression::CreateProcedure(Box::new(procedure)))
     }
@@ -66,7 +68,7 @@ impl Parser {
         self.parse_statement()
     }
 
-    /// `RETURNS { <type> [[NOT] NULL] | TABLE ( ... ) }` after the parameters.
+    /// `RETURNS { <type> | TABLE ( ... ) }` after the parameters; the caller reads a `[ NOT ] NULL` after the type.
     pub(crate) fn parse_procedure_returns(
         &mut self,
     ) -> Result<(Option<DataType>, Option<Vec<StructField>>)> {
@@ -76,11 +78,7 @@ impl Parser {
         if self.match_token(TokenType::Table) {
             return Ok((None, Some(self.parse_procedure_table_columns()?)));
         }
-        let data_type = self.parse_data_type()?;
-        if !self.match_keywords(&[TokenType::Not, TokenType::Null]) {
-            self.match_token(TokenType::Null);
-        }
-        Ok((Some(data_type), None))
+        Ok((Some(self.parse_data_type()?), None))
     }
 
     /// `( [<name> [<type> [DEFAULT <expr>]]] [, ...] )` with no empty or trailing entries.
