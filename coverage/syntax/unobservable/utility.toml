@@ -1,15 +1,3 @@
 # Never-submitted obligations (cause = "not_submitted"): every case citing the obligation was held
 # offline by the capture guard, so nothing ran. Each stays in the denominator, never counts as
 # satisfied, and is reported as "unverifiable: not submitted". The reason names the guard rule.
-
-[[unobservable]]
-obligation = "sf.utility.execute-task-graph.graph-retry-graph-run.o015"
-form = "sf.utility.execute-task-graph.graph-retry-graph-run"
-construct = "the form without its required GRAPH #2: EXECUTE TASK GRAPH v1 RETRY RUN GROUP 'm' ;"
-reason = "not submitted: held by the capture guard in packet b5: a literal or body is not inert"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.utility.execute-task-graph.graph-retry-graph-run.k883728c26ef5", sql_sha256 = "883728c26ef5b633e4645f20334b8b0b805e1a43857bd40096dcf80649c84d52" },
-]
-runs = []
-probes = []
