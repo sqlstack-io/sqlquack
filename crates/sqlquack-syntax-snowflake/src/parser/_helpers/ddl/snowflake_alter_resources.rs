@@ -196,12 +196,22 @@ fn resource_actions(kind: &str) -> &'static [&'static [&'static str]] {
 }
 
 impl Parser {
+    /// Whether `MODEL MONITOR` here starts `ALTER MODEL <name>` with a name or schema called monitor: a dot or an ALTER MODEL action follows.
+    fn alters_model_named_monitor(&self) -> bool {
+        if !(self.check_identifier("MODEL") && self.check_next_identifier("MONITOR")) {
+            return false;
+        }
+        match self.text_at(2).as_deref() {
+            Some("." | "SET" | "UNSET" | "RENAME" | "MODIFY" | "VERSION") => true,
+            Some("ADD" | "DROP") => self.text_at(3).as_deref() == Some("VERSION"),
+            _ => false,
+        }
+    }
+
     /// Parse a Snowflake ALTER of a kind in RESOURCE_KINDS, or None when the next words name another kind.
     pub(super) fn parse_alter_snowflake_resource(&mut self) -> Result<Option<Expression>> {
-        let model_named_monitor = self.check_identifier("MODEL")
-            && self.check_next_identifier("MONITOR")
-            && matches!(self.text_at(2).as_deref(), Some("SET" | "UNSET"));
-        let words: &[&str] = if model_named_monitor && self.match_identifier("MODEL") {
+        let words: &[&str] = if self.alters_model_named_monitor() && self.match_identifier("MODEL")
+        {
             &["MODEL"]
         } else if let Some(words) = RESOURCE_KINDS
             .iter()
