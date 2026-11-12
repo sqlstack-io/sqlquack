@@ -34,7 +34,7 @@ def classify(
 ) -> tuple[str, str] | None:
     """The phase of a Snowflake error, or None when the recorded fields do not establish one."""
     if message.startswith(UNCAUGHT_PREFIX):
-        if errno == SYNTAX_ERRNO:
+        if errno in (SYNTAX_ERRNO, PARSER_SYNTAX_ERRNO):
             return None
         return "runtime_error", "uncaught exception raised while the block ran"
     if errno == UNSUPPORTED_ERRNO and message.startswith(UNSUPPORTED_PREFIX):
@@ -48,8 +48,10 @@ def classify(
     compiled: bool = message.lower().startswith(COMPILATION_PREFIX.lower())
     if errno == SYNTAX_ERRNO and compiled:
         return "syntax_error", "errno 1003 SQL compilation syntax error"
-    if errno == PARSER_SYNTAX_ERRNO and message.lower().startswith(SYNTAX_MESSAGE_PREFIX):
-        return "syntax_error", "errno 1002 parser syntax error"
+    if errno == PARSER_SYNTAX_ERRNO:
+        if message.lower().startswith(SYNTAX_MESSAGE_PREFIX):
+            return "syntax_error", "errno 1002 parser syntax error"
+        return None
     if errno is not None and compiled:
         return "semantic_error", f"errno {errno} compilation error after parsing"
     if errno in REVIEWED_SEMANTIC_ERRNOS:

@@ -205,6 +205,20 @@ _TIMED_OUT_ROW: dict[str, object] = replaced(
             expected_classification=("syntax_error", "errno 1002 parser syntax error"),
         ),
         ClassifyTestCase(
+            description="errno 1002 under the compilation prefix is not established",
+            errno=1002,
+            sqlstate="42601",
+            message="SQL compilation error:\nsyntax error line 1 at position 4",
+            expected_classification=None,
+        ),
+        ClassifyTestCase(
+            description="errno 1002 raised while a block runs is not established",
+            errno=1002,
+            sqlstate="42601",
+            message="Uncaught exception of type 'STATEMENT_ERROR' : syntax error line 1",
+            expected_classification=None,
+        ),
+        ClassifyTestCase(
             description="errno 1002 with any other message is not established",
             errno=1002,
             sqlstate="42601",
