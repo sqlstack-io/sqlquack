@@ -87,3 +87,32 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.utility.execute-code-bundle" = "c16d88e8ce02a60b39760b47133af578be1993fe286d20de7791dee02a2c45bc"
 "sf.utility.execute-notebook" = "efda46598201cea03a4d64af6e20a5865ef4cd68049ba5b3ae44b1047bf76126"
 "sf.utility.execute-task-graph.graph-retry-last" = "5d3899caa702d4ec1b99cca9d3b4bd764b601fa2c7b151d18262de5d6fa7a99c"
+
+[[review]]
+id = "utility-005"
+family = "utility"
+parser_tree = "582bdba8f75e43db2dfbf7d7ba7b39411f31a8fb"
+reviewed_utc = "2026-11-12T13:29:00Z"
+verdict = "approved"
+forms = [
+  "sf.utility.call",
+  "sf.utility.call-with.table-language-sql-as",
+  "sf.utility.execute-dcm-project.preview-using-configuration-from",
+  "sf.utility.execute-notebook-project",
+  "sf.utility.execute-task-graph.graph-retry-graph-run",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at feat/syntax-class-commands 5da5226c7299; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.call" = "065909479dafe1e14b5b1760161da5ccd4d3dceb848fbe7ed024aa9ed3aff98d"
+"sf.utility.call-with.table-language-sql-as" = "1ddaed420d422a18de09d1746f34a6c3f97b6e4889008b092b4296cba70976d8"
+"sf.utility.execute-dcm-project.preview-using-configuration-from" = "1779a55d8ede51d159ace5a838e56bbf1c5628102437e67a9d2ef47e179d5768"
+"sf.utility.execute-notebook-project" = "ea838e3e718089c566e3dc566c38f42f4376c49b353af122a883111e5caf6330"
+"sf.utility.execute-task-graph.graph-retry-graph-run" = "3e19b2d5a6a4254ef085c90c8786747fc577b2c32ca39e29740a1e965e58b1d3"
+
+[review.definitions]
+"sf.utility.call" = "1258ecf9f03552c802c61265466aea01f9bbc8b9cfa7bf98490ecc0b1d385968"
+"sf.utility.call-with.table-language-sql-as" = "4adcc148271445fb21450fd8c6b593879b9511bc23fa3d9eb863f84b48af3aa8"
+"sf.utility.execute-dcm-project.preview-using-configuration-from" = "2fa9e31deafc49e3d0f3c19d67c57c0be982fc22946d1b0cc66e282020557a2a"
+"sf.utility.execute-notebook-project" = "73f0ce13afa2c2f0fb0483c4f54ef235f7753056de9acab7ddd05627fc03fb06"
+"sf.utility.execute-task-graph.graph-retry-graph-run" = "e6fc055460eac539f7a5e0529c1bc4ba57fe688cfa28be2a7b2c2b6d4b432413"

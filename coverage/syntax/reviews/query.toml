@@ -234,3 +234,29 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.query.pivot" = "0143158f5f51016a4e932fbde42fa1ab0786b9dbb4de7872980cb89c743174eb"
 "sf.query.with.select" = "19d0a58ffbccd906ccbd2e8249af5f8a8888210aaa8e4533a9eb663926af24d8"
 "sf.query.with.select.syntax" = "89bdc6f1c45a069f52f2d9b37fb295ba7a410535033e355d84472682cdb3583a"
+
+[[review]]
+id = "query-011"
+family = "query"
+parser_tree = "582bdba8f75e43db2dfbf7d7ba7b39411f31a8fb"
+reviewed_utc = "2026-11-12T13:29:00Z"
+verdict = "approved"
+forms = [
+  "sf.query.asof-join",
+  "sf.query.resample",
+  "sf.query.sample",
+  "sf.query.values",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at feat/syntax-class-commands 5da5226c7299; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.query.asof-join" = "3da7f3dc4a87984c7cc70529c02f741926fb825d915d1bcb49f6c64a8b59cf90"
+"sf.query.resample" = "dd197f421969ad0be8e11648cf273a8e1ad6acf351ea0ba71feca37e1b2b1795"
+"sf.query.sample" = "93239785bb2ea18c4548bc9ca2a9666a014688d8b808bae1d3dfd9e105042779"
+"sf.query.values" = "c1e86fe0cd90ebffa092948ec6fae8c9a227274158de08ce48ab4ab9ff1bd8dc"
+
+[review.definitions]
+"sf.query.asof-join" = "b5c6df5815fbb31ebcf5f0c70639505c6e04119465cde56273f2011ee7dfdb33"
+"sf.query.resample" = "df67c94a39e7e80bb01ec0b97d6ba7de7fe46aed271a5d877e04bcf3a05126e3"
+"sf.query.sample" = "f6803dda7d63c241c930b0734b519a0a6155ff989d3f59c55348b21a7999871b"
+"sf.query.values" = "5b43f2350f2ae8f0e5a95418a1dc9d86929cc1e37862a18e6d8170fd7c377ebe"

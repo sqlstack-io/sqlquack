@@ -4440,3 +4440,44 @@ note = "Read in full against the documentation page, the obligations, the cases 
 
 [review.definitions]
 "sf.functions.trunc2" = "68b34fd700dad6b111c5dca54696c7c6142a83229072bcbe20e47ac55511b3f7"
+
+[[review]]
+id = "functions-021"
+family = "functions"
+parser_tree = "582bdba8f75e43db2dfbf7d7ba7b39411f31a8fb"
+reviewed_utc = "2026-11-12T13:29:00Z"
+verdict = "approved"
+forms = [
+  "sf.functions.finetune-snowflake-cortex",
+  "sf.functions.object-construct",
+  "sf.functions.system-generate-saml-csr",
+  "sf.functions.system-pipe-force-resume",
+  "sf.functions.system-schedule-async-replication-group-refresh",
+  "sf.functions.system-wait",
+  "sf.functions.system-wait-for-services",
+  "sf.functions.to-timestamp",
+  "sf.functions.try-to-timestamp",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at feat/syntax-class-commands 5da5226c7299; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.functions.finetune-snowflake-cortex" = "72df257452d6771ea32069bd7942a4a21f4a178a75c7b7f3457326f1bc11e0cc"
+"sf.functions.object-construct" = "bf295a4705f08a73ca6bbb71737c984be5a7bf766086b35a119661427f7c197b"
+"sf.functions.system-generate-saml-csr" = "ed6bf933405bd9cece4086e71b0dbd0d1100a146b49c6651c78e8d75d69f807b"
+"sf.functions.system-pipe-force-resume" = "d0e298b3a7d4caac0a1b5ee61b8f1f79742108a34f59dc63cafa3e733143f4aa"
+"sf.functions.system-schedule-async-replication-group-refresh" = "a54ed0802d7df59fdc92eddfc93d3b6bdf7f81919fc20eeff3274111f58e4736"
+"sf.functions.system-wait" = "7b6eec1df842944f3c322366f6e9bcea1a1f3b4ae4a6a22ef734c4b6a3b2cf28"
+"sf.functions.system-wait-for-services" = "4ccddf998b86e38b2cfae04fd7f7135bed3afda08554b9b688e80412bf83750a"
+"sf.functions.to-timestamp" = "aa81cc568acfc94f6cf8fcf5502017b1d070d81b121f367bbaa8d2f304de42b8"
+"sf.functions.try-to-timestamp" = "c08a4c1905427b4d762609116ea940093714f1564e857b9570794e45035465d2"
+
+[review.definitions]
+"sf.functions.finetune-snowflake-cortex" = "8c288a7f4d64c3b9b020f0b67fc36fc4f4c4cbbf1dee9f8cd41556c855d6a753"
+"sf.functions.object-construct" = "139e8fdbb1cceb34cddc53897021710490b29fd456dee903d29e40767129d511"
+"sf.functions.system-generate-saml-csr" = "9aafbe6f40607c87032362cb51adb16afed35623d804255eadc24a6e220422b5"
+"sf.functions.system-pipe-force-resume" = "1725d303019042ead2fa157135b0a8a33bffef59deb5921e3340a65d3ed45ed4"
+"sf.functions.system-schedule-async-replication-group-refresh" = "f9e03050a1d81b56f67dd2a785186dd46cba52a4eb1569c6772c11a87a32ba32"
+"sf.functions.system-wait" = "6a9bb964557a0667cbb44491cff2ff6049872fa7db557f8484191ae5fb117cb7"
+"sf.functions.system-wait-for-services" = "958c9c6d758321c89e94508adbb8d17c255df86440518d0d3e2ba4f1e3213ebe"
+"sf.functions.to-timestamp" = "0dde869a76996ffb7971a6d3acf2b7ea6f00423dd4fd73f118c2af3ff6245604"
+"sf.functions.try-to-timestamp" = "48da47f57371860d581749d54cfb1f17e2a9be8889d7ea7015561898f568cd86"
