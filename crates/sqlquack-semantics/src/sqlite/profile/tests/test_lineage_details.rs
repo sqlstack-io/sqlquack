@@ -5,7 +5,10 @@ use sqlquack_syntax::{Dialect, ParseOptions};
 use crate::dialects::constants::SQLITE;
 use crate::lineage::main::query_lineage::query_lineage;
 use crate::lineage::models::{LineageContext, TransformKind};
+use crate::lineage::tests::helpers::duckdb_shop_schema;
+use crate::lineage::tests::helpers::output_ranges;
 use crate::lineage::tests::helpers::{shop_schema, typed_column, written};
+use crate::lineage::tests::test_types::StrictRangeTestCase;
 use crate::lineage::tests::test_types::{
     LineageDetailTestCase, QueryLineageTestCase, TypedShopSchema,
 };
@@ -169,6 +172,32 @@ fn given_union_branches_when_tracing_sqlite_lineage_then_only_integers_a_real_co
                 .expected_outputs
                 .iter()
                 .map(|(name, kind, sources)| (*name, *kind, sources.to_vec()))
+                .collect::<Vec<_>>(),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_strict_parse_when_tracing_lineage_then_each_output_has_its_items_byte_range() {
+    let test_cases = [StrictRangeTestCase {
+        description: "a literal aliased after a two-byte character, a qualified column, a labelled call and a bare column",
+        sql: "SELECT 'é' AS e, w.status, UPPER(w.status) loud, id FROM orders AS w",
+        expected_ranges: &[7..16, 18..26, 28..48, 50..52],
+    }];
+    for test_case in test_cases {
+        let statement = sqlquack_syntax_sqlite::parse_strict(test_case.sql)
+            .unwrap_or_else(|failure| panic!("{}: {failure:?}", test_case.description))
+            .statements
+            .remove(0);
+        assert_eq!(
+            output_ranges(&statement, &SQLITE, &duckdb_shop_schema(), test_case.sql),
+            test_case
+                .expected_ranges
+                .iter()
+                .cloned()
+                .map(Some)
                 .collect::<Vec<_>>(),
             "{}",
             test_case.description

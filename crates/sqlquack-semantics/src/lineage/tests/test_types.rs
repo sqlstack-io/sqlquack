@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::ops::Range;
 
 use sqlquack_syntax::Dialect;
 
@@ -26,6 +27,13 @@ pub(crate) struct LineageDetailTestCase {
     pub(crate) expected_outputs: &'static [ExpectedOutput],
     pub(crate) expected_row_sources: &'static [&'static str],
     pub(crate) expected_rows_resolved: bool,
+}
+
+/// A query and each output's expected byte range, read by one dialect's strict parser.
+pub(crate) struct StrictRangeTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_ranges: &'static [Range<usize>],
 }
 
 /// A query and, per output, the SQL text its expression range covers, or none.

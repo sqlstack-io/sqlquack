@@ -13,6 +13,7 @@ use sqlquack_syntax::expressions::statements::models::Version;
 use sqlquack_syntax::expressions::tables::models::{IndexTableHint, WithTableHint};
 use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::{SourceSpan, Span};
+use sqlquack_syntax::traversal::types::AstNode;
 use sqlquack_syntax::{DataType, Expression};
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_any_name, is_name};
@@ -368,8 +369,18 @@ impl<'sql> Parser<'sql> {
         })
     }
 
-    /// One select item: `*`, `t.*`, `expr [[AS] alias]`, `alias = expr` or `@v = expr`.
+    /// One select item, with its range: lineage reports it as its output's range.
     fn select_item(&mut self) -> Parsing<Expression> {
+        let first: usize = self.at;
+        let mut item: Expression = self.unranged_select_item()?;
+        if let SourceSpan(Some(range)) = self.range_from(first) {
+            item.fill_span(range);
+        }
+        Ok(item)
+    }
+
+    /// One select item: `*`, `t.*`, `expr [[AS] alias]`, `alias = expr` or `@v = expr`.
+    fn unranged_select_item(&mut self) -> Parsing<Expression> {
         if self.eat_char('*') {
             return Ok(Expression::Star(Box::new(empty_star(None))));
         }

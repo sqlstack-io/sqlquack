@@ -63,7 +63,7 @@ impl Parser {
                     Expression::Star(Box::new(star))
                 };
 
-                expressions.push(self.spanned(item_start, star_expr));
+                expressions.push(self.item_spanned(item_start, star_expr));
             } else {
                 let leading_comments = self.current_leading_comments().to_vec();
                 let expr = self.parse_expression()?;
@@ -121,7 +121,7 @@ impl Parser {
                     expr
                 };
 
-                expressions.push(self.spanned(item_start, expr));
+                expressions.push(self.item_spanned(item_start, expr));
             }
 
             if !self.match_token(TokenType::Comma) {

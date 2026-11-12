@@ -11,7 +11,10 @@ use crate::lineage::_helpers::findings::statement::statement_findings;
 use crate::lineage::main::statement_lineage::statement_lineage;
 use crate::lineage::models::LineageContext;
 use crate::lineage::models::Nullability::{NonNull, Nullable, Unknown};
+use crate::lineage::tests::helpers::duckdb_shop_schema;
+use crate::lineage::tests::helpers::output_ranges;
 use crate::lineage::tests::helpers::owned_findings;
+use crate::lineage::tests::test_types::StrictRangeTestCase;
 use crate::lineage::tests::test_types::{EngineTypeReplayTestCase, QueryFindingsTestCase};
 
 /// Result types ClickHouse 26.1 reported for built-in calls and expressions, under SQLBuild's settings.
@@ -393,6 +396,47 @@ fn given_a_name_joined_relations_share_when_resolving_then_clickhouse_reads_the_
                 codes.as_slice()
             ),
             (test_case.expected_output, test_case.expected_codes),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_strict_parse_when_tracing_lineage_then_each_output_has_its_items_byte_range() {
+    let test_cases = [StrictRangeTestCase {
+        description: "a literal aliased after a two-byte character, a qualified column, a labelled call, a bare column and a qualified star",
+        sql: "SELECT 'é' AS e, w.status, UPPER(w.status) loud, id, w.* FROM orders AS w",
+        expected_ranges: &[
+            7..16,
+            18..26,
+            28..48,
+            50..52,
+            54..57,
+            54..57,
+            54..57,
+            54..57,
+            54..57,
+        ],
+    }];
+    for test_case in test_cases {
+        let statement = sqlquack_syntax_clickhouse::parse_strict(test_case.sql)
+            .unwrap_or_else(|failure| panic!("{}: {failure:?}", test_case.description))
+            .statements
+            .remove(0);
+        assert_eq!(
+            output_ranges(
+                &statement,
+                &CLICKHOUSE,
+                &duckdb_shop_schema(),
+                test_case.sql
+            ),
+            test_case
+                .expected_ranges
+                .iter()
+                .cloned()
+                .map(Some)
+                .collect::<Vec<_>>(),
             "{}",
             test_case.description
         );

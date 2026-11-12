@@ -136,6 +136,7 @@ impl Dialect {
         enforce_input(sql, &complexity_guard)?;
         let source: Arc<str> = Arc::from(sql);
         let (tokens, token_guard_stats) = self.tokenizer.tokenize_for_parser(&source)?;
+        let strict: bool = significant.is_some();
         if let Some(significant) = significant {
             significant.extend(tokens.iter().map(|token| (token.span, token.token_type)));
         }
@@ -143,6 +144,7 @@ impl Dialect {
             dialect: Some(self.dialect_type),
             complexity_guard,
             record_node_spans: mode == CallMode::FaithfulLocated,
+            record_item_spans: mode == CallMode::FaithfulLocated || strict,
             ..Default::default()
         };
         let mut parser = Parser::with_parser_tokens(tokens, token_guard_stats, config, source);
@@ -449,6 +451,8 @@ pub(crate) struct ParserConfig {
     pub complexity_guard: ComplexityGuardOptions,
     /// SQLQuack: record each expression and statement node's source range (for locations).
     pub record_node_spans: bool,
+    /// SQLQuack: record each select item's source range, which lineage reports; a located or strict parse does.
+    pub record_item_spans: bool,
     /// Whether a Snowflake CREATE SEMANTIC VIEW is being checked, where a window may PARTITION BY EXCLUDING.
     pub(crate) in_semantic_view: bool,
 }

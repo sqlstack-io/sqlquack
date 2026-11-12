@@ -1,10 +1,12 @@
 use std::collections::HashMap;
+use std::ops::Range;
 
 use sqlquack_parse::parse_statements_with;
-use sqlquack_syntax::{CallMode, Dialect, ParseOptions};
+use sqlquack_syntax::{CallMode, Dialect, Expression, ParseOptions};
 
 use crate::dialects::types::DialectProfile;
 use crate::lineage::_helpers::findings::statement::statement_findings;
+use crate::lineage::main::statement_lineage::statement_lineage;
 use crate::lineage::models::LineageContext;
 use crate::lineage::models::NullabilityRule;
 use crate::lineage::models::{Nullability, SchemaColumn, SourceColumn};
@@ -17,6 +19,25 @@ impl LineageSchema for ShopSchema {
     fn columns(&self, relation: &str) -> Option<&[SchemaColumn]> {
         self.0.get(relation).map(Vec::as_slice)
     }
+}
+
+/// Each output's byte range in `sql` when lineage traces `statement` under `profile`.
+pub(crate) fn output_ranges(
+    statement: &Expression,
+    profile: &dyn DialectProfile,
+    schema: &ShopSchema,
+    sql: &str,
+) -> Vec<Option<Range<usize>>> {
+    let context = LineageContext {
+        profile,
+        schema,
+        sql: Some(sql),
+    };
+    statement_lineage(statement, context)
+        .outputs
+        .into_iter()
+        .map(|output| output.expression_range)
+        .collect()
 }
 
 /// Orders, customers and products, as a Snowflake catalog spells unquoted names.
