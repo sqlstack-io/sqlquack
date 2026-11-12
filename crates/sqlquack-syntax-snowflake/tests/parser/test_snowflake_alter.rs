@@ -186,6 +186,42 @@ fn given_a_snowflake_alter_of_an_object_kind_when_parsing_then_recorded_rejectio
             expected_accepted: true,
         },
         AcceptanceTestCase {
+            description: "a model named monitor is renamed",
+            sql: "ALTER MODEL monitor RENAME TO m3 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a model named monitor adds a version",
+            sql: "ALTER MODEL monitor ADD VERSION v2 FROM MODEL m2 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a model in a schema named monitor sets its comment",
+            sql: "ALTER MODEL monitor.m1 SET COMMENT = 'x' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a model monitor still adds segment columns",
+            sql: "ALTER MODEL MONITOR mm ADD SEGMENT_COLUMN = 'c1' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a model in a schema named monitor is dropped",
+            sql: "DROP MODEL monitor.m1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a model monitor is still dropped by name",
+            sql: "DROP MODEL MONITOR mm ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
             description: "TAG pairs are a SET of their own (every recorded mix is errno 1003)",
             sql: "ALTER COMPUTE POOL v1 SET MIN_NODES = 1 TAG v1 = 'm' ;",
             dialect: Dialect::Snowflake,
