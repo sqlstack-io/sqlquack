@@ -72,6 +72,12 @@
 {"case_id":"sf.query.group-by.groupitem.k46c6aef98bda","mark":"settled accept","obligations":["sf.query.group-by.groupitem.o038"],"sql_sha256":"46c6aef98bda6721af2a408e463e3c3be02f4bfae0259efcae8b1d65317e94dc"}
 {"case_id":"sf.query.group-by.groupitem.k55c471a5a685","mark":"settled accept","obligations":["sf.query.group-by.groupitem.o039"],"sql_sha256":"55c471a5a685ab88b8620098ba736d23df6ee94e299e46508ada3894683fb264"}
 {"case_id":"sf.query.group-by.groupitem.kdc64a2152f24","mark":"settled accept","obligations":["sf.query.group-by.groupitem.o040"],"sql_sha256":"dc64a2152f249baa95554740947712cda8a7e1992d6273f04c30f75bff755460"}
+{"case_id":"sf.query.join.join-2.k9f2b3b608fa1","mark":"settled accept","obligations":["sf.query.join.join-2.o024"],"sql_sha256":"9f2b3b608fa1ad7c3079dc9dc1de1431fb65297e5486f312e64e52803b76e968"}
+{"case_id":"sf.query.join.join.k8b1a72dc88a7","mark":"settled accept","obligations":["sf.query.join.join.o035"],"sql_sha256":"8b1a72dc88a7a9bed7a67b9a6ce56e9987655df171049179ee37e4f434e5a28d"}
+{"case_id":"sf.query.join.join.syntax.k688bab5ba02c","mark":"settled accept","obligations":["sf.query.join.join.syntax.o051"],"sql_sha256":"688bab5ba02c35a8964c251225b604e0becd79bc0677fbb0cc2a970ded910011"}
+{"case_id":"sf.query.join.join.syntax.k90bad46f888f","mark":"settled reject","obligations":["sf.query.join.join.syntax.o049"],"sql_sha256":"90bad46f888f5c420a68b599a6a6232d087c253a22e9bba2e6505836a608e1d7"}
+{"case_id":"sf.query.join.join.syntax.kd4dcf1d4745f","mark":"settled accept","obligations":["sf.query.join.join.syntax.o048"],"sql_sha256":"d4dcf1d4745f26cc79ef281cc2818f98ba16ad974c773d17451a9e2efe065dcc"}
+{"case_id":"sf.query.join.join.syntax.kf0a651fb33d6","mark":"settled accept","obligations":["sf.query.join.join.syntax.o050"],"sql_sha256":"f0a651fb33d62481935751d6ffb65c43ee45aae2195a94081c6bd37208f26da2"}
 {"case_id":"sf.query.match-recognize.match-recognize-pattern-define-as.k8a7c1367e4f3","mark":"settled accept","obligations":["sf.query.match-recognize.match-recognize-pattern-define-as.o102"],"sql_sha256":"8a7c1367e4f30819dfa68c83302bdd653bd86b47c0b90fb69383c4b3df0b01e3"}
 {"case_id":"sf.query.order-by.orderitem.k4c08160a42e2","mark":"settled accept","obligations":["sf.query.order-by.orderitem.o033"],"sql_sha256":"4c08160a42e2e3f2d7c0a5e73c4c3cd4fbdcad88d405a2a5d2e4162ffa743578"}
 {"case_id":"sf.query.order-by.orderitem.kbada27a706e3","mark":"settled accept","obligations":["sf.query.order-by.orderitem.o034"],"sql_sha256":"bada27a706e3468b8eba7dcc0adb9171ab7a0f2f61db5713c1225627c9ae635b"}

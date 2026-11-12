@@ -215,6 +215,7 @@
 {"case_id":"sf.dml.list.repositoryclone.k6adf62681177","mark":"settled accept","obligations":["sf.dml.list.repositoryclone.o008"],"sql_sha256":"6adf6268117709d78271ad887227ee9cd0e7c94bdc8621ae0c226fe0511e6bca"}
 {"case_id":"sf.dml.list.repositoryclone.k9fc5e77087ee","mark":"settled reject","obligations":["sf.dml.list.repositoryclone.o027"],"sql_sha256":"9fc5e77087ee03a58ceee0f20f8a9419465e279c38b90745a7aa304d613c68a6"}
 {"case_id":"sf.dml.list.repositoryclone.ke83bee11a048","mark":"settled accept","obligations":["sf.dml.list.repositoryclone.o026"],"sql_sha256":"e83bee11a048855fe30ced2b0904d328ba0088318d70fecd356615f7e7ed0f89"}
+{"case_id":"sf.dml.merge.k0f0c34d58853","mark":"settled accept","obligations":["sf.dml.merge.o106"],"sql_sha256":"0f0c34d588531d7397a288918fbf150522c2fa6df2620c0b2f25041009e63180"}
 {"case_id":"sf.dml.merge.k68bcb187ad7d","mark":"settled accept","obligations":["sf.dml.merge.o083"],"sql_sha256":"68bcb187ad7de60005c39d2942647d0cab1dde55059a2dc070bfdbbeac59468d"}
 {"case_id":"sf.dml.merge.kaf67ed892c3f","mark":"settled accept","obligations":["sf.dml.merge.o088"],"sql_sha256":"af67ed892c3fb637b3926e8e8bccd5e78c9b9b3e923f68724f5ed7f86da6c3a1"}
 {"case_id":"sf.dml.merge.kc1ef09ba7248","mark":"settled accept","obligations":["sf.dml.merge.o089"],"sql_sha256":"c1ef09ba724833c4d875bc0f1e5d8564943cf0307fcb0bd8946c1bee50b39348"}
