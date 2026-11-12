@@ -1681,3 +1681,20 @@ note = "Re-approved after stage paths became stage references: of the 104 cases 
 [review.definitions]
 "sf.ddl.alter-dbt-project.deploy-from" = "73cbec01605ca4f568c243c6a796e3c25420276f0f3ec53d37b0291f60fadf30"
 "sf.ddl.alter-listing.listing-add-version-from" = "d2b6b9d6850402fbf3cb027e387305cef8a9e1f08f883561b58bdf7cbca3d380"
+
+[[review]]
+id = "ddl-025"
+family = "ddl"
+parser_tree = "582bdba8f75e43db2dfbf7d7ba7b39411f31a8fb"
+reviewed_utc = "2026-11-12T20:05:43Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees: each gateway option has its own case, the all-options case writes every column parameter as an array, and every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval" = "053e6f9e67ea0f33afe8bbbe0a0152f43f4b83c7ace622dd420c46f829e8d9be"
+
+[review.definitions]
+"sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval" = "ca8be0bcaceb82392bb0932369a9d9c902f272d168fbcec4fe0d432883a7a5c8"
