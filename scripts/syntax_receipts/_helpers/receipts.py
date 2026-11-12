@@ -11,11 +11,13 @@ from scripts.syntax_receipts.constants import (
     MISSING_OBJECT,
     MISSING_OBJECT_MESSAGE,
     OTHER_REASON,
+    PARSER_SYNTAX_ERRNO,
     REASON_BY_ERRNO,
     RECEIPT_FORMAT,
     REVIEWED_SEMANTIC_ERRNOS,
     RUNTIME_ERRNO_FLOOR,
     SYNTAX_ERRNO,
+    SYNTAX_MESSAGE_PREFIX,
     SYNTAX_OR_ACCESS_SQLSTATE_CLASS,
     UNCATEGORIZED_PHASES,
     UNCAUGHT_PREFIX,
@@ -46,6 +48,8 @@ def classify(
     compiled: bool = message.lower().startswith(COMPILATION_PREFIX.lower())
     if errno == SYNTAX_ERRNO and compiled:
         return "syntax_error", "errno 1003 SQL compilation syntax error"
+    if errno == PARSER_SYNTAX_ERRNO and message.lower().startswith(SYNTAX_MESSAGE_PREFIX):
+        return "syntax_error", "errno 1002 parser syntax error"
     if errno is not None and compiled:
         return "semantic_error", f"errno {errno} compilation error after parsing"
     if errno in REVIEWED_SEMANTIC_ERRNOS:

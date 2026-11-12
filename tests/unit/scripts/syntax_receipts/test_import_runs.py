@@ -195,6 +195,23 @@ _TIMED_OUT_ROW: dict[str, object] = replaced(
             expected_classification=None,
         ),
         ClassifyTestCase(
+            description="errno 1002 whose message says syntax error is a syntax error",
+            errno=1002,
+            sqlstate="42601",
+            message=(
+                "syntax error line At least one table name is required for ADD TABLES operations"
+                " at position {1} unexpected '{2}'."
+            ),
+            expected_classification=("syntax_error", "errno 1002 parser syntax error"),
+        ),
+        ClassifyTestCase(
+            description="errno 1002 with any other message is not established",
+            errno=1002,
+            sqlstate="42601",
+            message="Invalid argument for the operation.",
+            expected_classification=None,
+        ),
+        ClassifyTestCase(
             description="a syntax error without the compilation prefix is not established",
             errno=1003,
             message="syntax error without the compilation prefix",
