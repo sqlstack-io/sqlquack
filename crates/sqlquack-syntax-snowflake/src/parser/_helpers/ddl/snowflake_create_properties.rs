@@ -3,6 +3,7 @@
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::constants::{
     SNOWFLAKE_BODY_POLICY_KINDS, SNOWFLAKE_KIND_WORDS_ALONE, SNOWFLAKE_PROPERTY_KINDS,
+    SNOWFLAKE_TAGS_LAST_KINDS,
 };
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
@@ -79,8 +80,16 @@ impl Parser {
                 }
                 continue;
             }
+            let tags = self.check_identifier("TAG") && self.check_next(TokenType::LParen);
             properties.extend(self.parse_create_property_item()?);
             self.match_token(TokenType::Comma);
+            if tags
+                && SNOWFLAKE_TAGS_LAST_KINDS.contains(&parts.join(" ").as_str())
+                && !self.is_at_end()
+                && !self.check(TokenType::Semicolon)
+            {
+                return Err(self.parse_error("Expected the statement end after the tag list"));
+            }
         }
         Ok(Some(Expression::CreateObject(Box::new(CreateObject {
             kind: parts.join(" "),
