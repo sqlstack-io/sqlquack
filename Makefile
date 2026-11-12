@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug instruction-counts instruction-baseline gate-build engine-free bundled-extensions dialect-builds generate-cases generated-cases generate-syntax-cases syntax-cases dialect-cases corpus-rerecord corpus-verdicts corpus-verdicts-baseline generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-build python-module python-api python-wheel verify-recorded verify-changed replay-scope test-crate check-pr-metadata evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
+.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage depth-probe depth-probe-debug instruction-counts instruction-baseline gate-build engine-free bundled-extensions dialect-builds generate-cases generated-cases generate-syntax-cases syntax-obligations syntax-cases dialect-cases corpus-rerecord corpus-verdicts corpus-verdicts-baseline generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-build python-module python-api python-wheel verify-recorded verify-changed replay-scope test-crate check-pr-metadata evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -183,16 +183,23 @@ generated-cases:
 # dialect's suite folder until then.
 syntax_evidence_dir = $(if $(EVIDENCE_PINNED),$(EVIDENCE_ROOT)/syntax/$(1),$(call suite_dir,syntax,$(1)))
 
-# The syntax-coverage families whose cases and marks scripts/build_syntax_cases.py writes.
+# The Snowflake syntax-coverage families, whose obligations, cases and marks the builders write.
+SYNTAX_FAMILIES = classes ddl dml expressions functions query scripting security_admin transaction_session utility
 SYNTAX_CASE_ARGS = --evidence $(call syntax_evidence_dir,snowflake) \
   --receipts $(call syntax_evidence_dir,snowflake)/receipts --held coverage/syntax/held.jsonl \
-  classes ddl dml expressions functions query scripting security_admin transaction_session utility
+  $(SYNTAX_FAMILIES)
 
 # Rewrites the Snowflake syntax cases, marks and arity from the obligations and the recorded receipts.
 # Once the evidence is pinned the cases go to the clone's working tree, to commit there.
 generate-syntax-cases: EVIDENCE = working
 generate-syntax-cases:
 	uv run python -m scripts.build_syntax_cases $(SYNTAX_CASE_ARGS)
+
+# Fails when a Snowflake obligations, withdrawn or elisions file differs from what the builder writes.
+# Only the families whose inputs changed since EVIDENCE_BASE are rebuilt (every family when the
+# builder changed); with none changed the target prints that it skipped them all and passes.
+syntax-obligations:
+	uv run python -m scripts.build_syntax_obligations_snowflake --check --since $(EVIDENCE_BASE) $(SYNTAX_FAMILIES)
 
 # Fails when a syntax case, mark or arity file differs from what the committed receipts regenerate.
 syntax-cases:
@@ -225,7 +232,7 @@ referee-pending:
 	uv run python -m scripts.write_referee_pending $(REFEREE_ARGS)
 
 # The static gate, the first step of `gate`, and the Python API's tests.
-check-ci: rust-lint python-check fensu syntax-coverage depth-probe instruction-counts corpus-verdicts evidence-pin-check clutter-guard engine-free bundled-extensions dialect-builds generated-cases syntax-cases dialect-cases referee-cases translation-files python-api distribution-notices replay-scope ## The static gate CI runs.
+check-ci: rust-lint python-check fensu syntax-coverage depth-probe instruction-counts corpus-verdicts evidence-pin-check clutter-guard engine-free bundled-extensions dialect-builds generated-cases syntax-obligations syntax-cases dialect-cases referee-cases translation-files python-api distribution-notices replay-scope ## The static gate CI runs.
 
 # Each distribution ships the licence and third-party notices; its copies must match the root files.
 distribution-notices:
