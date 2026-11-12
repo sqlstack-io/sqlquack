@@ -67,12 +67,14 @@ class FormStyle:
 
 @dataclass(frozen=True)
 class Rendered:
-    """A submission: accept (no syntax error) or reject (a syntax error), and an expected stage."""
+    """A submission: accept (no syntax error), reject (a syntax error) or observe, and a stage."""
 
     sql: str
     expect: str
     stage: str = ""
     documented: bool = False
+    intent: str = ""
+    """The expect an observed rendering replaced, which says whether the case is a positive."""
 
 
 @dataclass(frozen=True)

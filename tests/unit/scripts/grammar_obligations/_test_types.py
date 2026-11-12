@@ -18,3 +18,11 @@ class SetupBindingTestCase:
     receipt_sql_sha256: str
     report_input_sql_sha256: str
     expected_setup: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class DisputedFormMarkTestCase:
+    description: str
+    sql: str
+    expected_mark: str
+    expected_expect: str

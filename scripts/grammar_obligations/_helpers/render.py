@@ -36,7 +36,7 @@ def submissions(
     if spec.action == ACTION_HAND:
         return rendered
     return [
-        Rendered(r.sql, EXPECT_OBSERVE, r.stage)
+        Rendered(r.sql, EXPECT_OBSERVE, r.stage, intent=r.expect)
         if (
             style.observe_empty_properties
             and (
