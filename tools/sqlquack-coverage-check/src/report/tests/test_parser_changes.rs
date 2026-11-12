@@ -3,12 +3,13 @@ use crate::check::tests::helpers::{
     verified_tree, with_fields,
 };
 use crate::formats::constants::MARK_DOCUMENTED;
+use crate::report::main::diff_fails::diff_fails;
 use crate::report::main::diff_snapshots::diff_snapshots;
-use crate::report::models::SnapshotDiff;
+use crate::report::models::{ReceiptDisagreements, SnapshotDiff};
 use crate::report::tests::helpers::{
     ids, mark_select_from, observed_select_17, observed_select_from, snapshot_with,
 };
-use crate::report::tests::test_types::ParserChangeTestCase;
+use crate::report::tests::test_types::{GateTestCase, ParserChangeTestCase};
 
 /// The shapes of the four regressions #55 brought on observe rows (audit 38bed222), and controls.
 #[test]
@@ -129,6 +130,8 @@ fn given_receipted_cases_of_any_expectation_when_the_parser_changes_then_the_dif
         let diff: SnapshotDiff = diff_snapshots(
             &snapshot_with(directory.path(), test_case.base),
             &snapshot_with(directory.path(), test_case.head),
+            &ReceiptDisagreements::default(),
+            None,
         );
         assert_eq!(
             (
@@ -140,6 +143,49 @@ fn given_receipted_cases_of_any_expectation_when_the_parser_changes_then_the_dif
                 ids(&test_case.expected_parsed_cases_refused),
                 ids(&test_case.expected_syntax_error_cases_accepted),
                 ids(&test_case.expected_documented_cases_accepted),
+            ),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+/// The gap that let three view cases through: a documented case accepted against a syntax error.
+#[test]
+fn given_a_documented_case_snowflake_refused_as_syntax_when_the_parser_accepts_it_then_the_diff_fails()
+ {
+    let test_cases = [
+        GateTestCase {
+            description: "the parser accepts it, so the diff fails",
+            head: opaque,
+            expected_unlisted_syntax_errors_accepted: vec!["select-from"],
+            expected_fails: true,
+        },
+        GateTestCase {
+            description: "the parser rejects it, as Snowflake did",
+            head: structural,
+            expected_unlisted_syntax_errors_accepted: Vec::new(),
+            expected_fails: false,
+        },
+    ];
+    for test_case in test_cases {
+        let directory = tempfile::tempdir().expect("temporary directory");
+        verified_tree(directory.path());
+        observed_select_from(directory.path(), 1003);
+        mark_select_from(directory.path(), MARK_DOCUMENTED);
+        let head = snapshot_with(directory.path(), test_case.head);
+        let diff: SnapshotDiff =
+            diff_snapshots(&head, &head, &ReceiptDisagreements::default(), None);
+        assert_eq!(
+            (
+                diff_fails(&diff),
+                diff.unlisted_syntax_errors_accepted,
+                diff.unlisted_receipts_contradicted
+            ),
+            (
+                test_case.expected_fails,
+                ids(&test_case.expected_unlisted_syntax_errors_accepted),
+                Vec::new()
             ),
             "{}",
             test_case.description

@@ -26,6 +26,8 @@ pub const MARKS_DIR: &str = "marks";
 pub const MARK_DOCUMENTED: &str = "documented";
 /// Every mark a case can carry.
 pub const MARKS: [&str; 3] = [MARK_DOCUMENTED, "settled accept", "settled reject"];
+/// Receipted cases the parser contradicts today, by form; optional while there are none.
+pub const DISAGREEMENTS_FILE: &str = "receipt-disagreements.toml";
 /// Hand-added limits, suppressions and grammar readings; the checker loads the readings.
 pub const LIMITS_FILE: &str = "limits.toml";
 /// Every family, each with a catalogue, an obligation and a case file.

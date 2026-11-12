@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use crate::check::models::LocalVerdict;
-use crate::report::models::{Snapshot, SnapshotDiff};
+use crate::report::models::{ReceiptDisagreements, Snapshot, SnapshotDiff};
 
 /// A change from the base snapshot, and the diff it must produce.
 pub(crate) struct DiffTestCase {
@@ -27,4 +27,21 @@ pub(crate) struct ParserChangeTestCase {
     pub(crate) expected_parsed_cases_refused: Vec<&'static str>,
     pub(crate) expected_syntax_error_cases_accepted: Vec<&'static str>,
     pub(crate) expected_documented_cases_accepted: Vec<&'static str>,
+}
+
+/// Claims set on both snapshots, the disagreements listed now and on the target branch, and the diff.
+pub(crate) struct DisagreementTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) both: fn(Snapshot) -> Snapshot,
+    pub(crate) listed: fn() -> ReceiptDisagreements,
+    pub(crate) target: fn() -> ReceiptDisagreements,
+    pub(crate) expected_diff: SnapshotDiff,
+}
+
+/// A head parser on a documented syntax-error case, and whether the gate must fail.
+pub(crate) struct GateTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) head: fn(&str) -> LocalVerdict,
+    pub(crate) expected_unlisted_syntax_errors_accepted: Vec<&'static str>,
+    pub(crate) expected_fails: bool,
 }

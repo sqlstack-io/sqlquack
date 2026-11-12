@@ -45,7 +45,16 @@ pub fn run_cli() -> ExitCode {
             (write_baseline, report.as_deref(), against.as_deref()),
             &common,
         ),
-        Command::Diff { base, head, common } => diff(&base, head.as_deref(), &common),
+        Command::Diff {
+            base,
+            head,
+            disagreements_against,
+            common,
+        } => diff(
+            (&base, head.as_deref()),
+            disagreements_against.as_deref(),
+            &common,
+        ),
         Command::ParseWorker {
             parser,
             thread_stack,
