@@ -1430,21 +1430,31 @@ pub(crate) const SNOWFLAKE_GRANT_KINDS: &[&str] = &[
     "WORKSPACE",
 ];
 
+/// Words of a multi-word property kind that Snowflake also parses as a kind on their own, so CREATE <word> <name> is not a partial kind.
+pub(crate) const SNOWFLAKE_KIND_WORDS_ALONE: &[&str] = &["MODEL", "VOLUME"];
+
 /// The Snowflake kinds a CREATE defines only by `<property> = <value>` lists.
 pub(crate) const SNOWFLAKE_PROPERTY_KINDS: &[&str] = &[
     "ACCOUNT",
     "API INTEGRATION",
     "APPLICATION ROLE",
+    "ARTIFACT REPOSITORY",
     "AUTHENTICATION POLICY",
     "BACKUP POLICY",
     "CATALOG INTEGRATION",
+    "COMPUTE POOL",
+    "CONTACT",
     "DATA MOVEMENT POLICY",
     "EXTERNAL ACCESS INTEGRATION",
+    "EXTERNAL VOLUME",
     "FAILOVER GROUP",
     "FEATURE POLICY",
+    "GIT REPOSITORY",
+    "IMAGE REPOSITORY",
     "INGRESS POLICY",
     "MAINTENANCE POLICY",
     "MANAGED ACCOUNT",
+    "MODEL MONITOR",
     "MULTI PARTY APPROVAL POLICY",
     "NETWORK POLICY",
     "NETWORK RULE",
@@ -1455,6 +1465,7 @@ pub(crate) const SNOWFLAKE_PROPERTY_KINDS: &[&str] = &[
     "PASSWORD POLICY",
     "REPLICATION GROUP",
     "RESOURCE MONITOR",
+    "RESTRICTED SESSION SCOPE",
     "ROLE",
     "SECRET",
     "SECURITY INTEGRATION",
@@ -1463,6 +1474,7 @@ pub(crate) const SNOWFLAKE_PROPERTY_KINDS: &[&str] = &[
     "SNAPSHOT POLICY",
     "STORAGE INTEGRATION",
     "USER",
+    "WAREHOUSE",
 ];
 
 /// The Snowflake policy kinds a CREATE defines by a signature, a return type and a body.
