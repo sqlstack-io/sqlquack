@@ -812,6 +812,15 @@ valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalst
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format"
+kind = "option_absent"
+target = "[ , <purpose> = <contact_name> ... ]"
+note = "option absent [ , <purpose> = <contact_name> ... ], observed"
+sql = "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) WITH CONTACT ( STEWARD = v1 ) ;"
+valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format option_present [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type"
 kind = "negative_neighbour"
 target = ""
@@ -830,6 +839,15 @@ valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalst
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type"
+kind = "option_absent"
+target = "[ , <purpose> = <contact_name> ... ]"
+note = "option absent [ , <purpose> = <contact_name> ... ], observed"
+sql = "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) WITH CONTACT ( STEWARD = v1 ) ;"
+valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type option_present [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.syntax"
 kind = "negative_neighbour"
 target = ""
@@ -845,6 +863,15 @@ target = ""
 note = "the form without its required { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } in [ , { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } ]"
 sql = "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;"
 valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.syntax"
+kind = "option_absent"
+target = "[ , <purpose> = <contact_name> ... ]"
+note = "option absent [ , <purpose> = <contact_name> ... ], observed"
+sql = "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) WITH CONTACT ( STEWARD = v1 ) ;"
+valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type option_present [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
