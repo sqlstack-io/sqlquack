@@ -151,6 +151,12 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_the_tree_keeps_
             expected_value: json!("STORAGE_ALLOWED_LOCATIONS"),
         },
         ProjectionTestCase {
+            description: "a parenthesized list holds its values side by side, not a list inside a list",
+            sql: "CREATE CONTACT v1 USERS = ( 'u1' , 'u2' )",
+            pointer: "/0/create_object/properties/0/value/tuple/expressions/1/literal/value",
+            expected_value: json!("u2"),
+        },
+        ProjectionTestCase {
             description: "a property keeps its name",
             sql: "CREATE USER u1 DEFAULT_ROLE = r1",
             pointer: "/0/create_object/properties/0/kind",
