@@ -84260,3 +84260,126 @@ sql = "CREATE OR REPLACE MODEL MONITOR IF NOT EXISTS v1 WITH MODEL = v1 GATEWAY 
 context = "raw"
 expect = "accept"
 stage = "semantic"
+
+# The version model monitor's shared all-options case gives its *_COLUMNS bare names too, so the same split
+# applies: each obligation it served gets its own case, and the all-options row writes seven distinct array columns.
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ OR REPLACE ]"
+reason = "the shared all-options case gives *_COLUMNS bare names; the row below has its own case"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ OR REPLACE ]"
+note = "OR REPLACE on its own"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE OR REPLACE MODEL MONITOR v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ IF NOT EXISTS ]"
+reason = "the shared all-options case gives *_COLUMNS bare names; the row below has its own case"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ IF NOT EXISTS ]"
+note = "IF NOT EXISTS on its own"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE MODEL MONITOR IF NOT EXISTS v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ BASELINE = <baseline_name> ]"
+reason = "the shared all-options case gives *_COLUMNS bare names; the row below has its own case"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ BASELINE = <baseline_name> ]"
+note = "BASELINE on its own"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 BASELINE = v1 ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "operand_type_class"
+target = "<baseline_name> in [ BASELINE = <baseline_name> ]"
+note = "a valid identifier"
+reason = "the shared all-options case gives *_COLUMNS bare names; the row below has its own case"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "operand_type_class"
+target = "<baseline_name> in [ BASELINE = <baseline_name> ]"
+note = "a table name as BASELINE"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 BASELINE = t2 ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ COMMENT = '<string_literal>' ]"
+reason = "the shared all-options case gives *_COLUMNS bare names; the row below has its own case"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ COMMENT = '<string_literal>' ]"
+note = "COMMENT on its own"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 COMMENT = 'm' ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "operand_type_class"
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "a valid string_literal"
+reason = "the shared all-options case gives *_COLUMNS bare names; the row below has its own case"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "operand_type_class"
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "a string as COMMENT"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 COMMENT = 'c' ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "the shared all-options case gives *_COLUMNS bare names; the row below has its own case"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "interaction_all_options"
+note = "every option together, each *_COLUMNS value an array with its own column"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE OR REPLACE MODEL MONITOR IF NOT EXISTS v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 BASELINE = v1 ID_COLUMNS = ( 'c1' ) PREDICTION_CLASS_COLUMNS = ( 'c2' ) PREDICTION_SCORE_COLUMNS = ( 'c3' ) ACTUAL_CLASS_COLUMNS = ( 'c4' ) ACTUAL_SCORE_COLUMNS = ( 'c5' ) SEGMENT_COLUMNS = ( 'c6' ) CUSTOM_METRIC_COLUMNS = ( 'c7' ) COMMENT = 'm' ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
