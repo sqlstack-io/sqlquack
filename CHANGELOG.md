@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.10.0](https://github.com/sqlstack-io/sqlquack/compare/v0.9.0...v0.10.0) (2026-11-12)
+
+
+### Features
+
+* **syntax:** check the head and option lists of Snowflake statements kept as text ([48f2895](https://github.com/sqlstack-io/sqlquack/commit/48f28959f3557753a065be8dd189eeb730dbd47e))
+
+
+### Bug Fixes
+
+* **syntax:** name DELETE USING subqueries, semantic views and FIRST/LAST join aliases as what they are ([506cc2e](https://github.com/sqlstack-io/sqlquack/commit/506cc2e7c54c828c2658743fe4e08bd3376b8f41))
+
 ## [0.9.0](https://github.com/sqlstack-io/sqlquack/compare/v0.8.0...v0.9.0) (2026-11-12)
 
 
