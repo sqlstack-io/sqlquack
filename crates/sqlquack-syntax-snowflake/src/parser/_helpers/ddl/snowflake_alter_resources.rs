@@ -4,9 +4,9 @@ use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::_helpers::ddl::snowflake_alter::property_kind;
 use crate::parser::models::Parser;
-use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::schema_objects::models::ObjectProperty;
+use sqlquack_syntax::expressions::statements::models::StageReference;
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::TokenType;
@@ -624,7 +624,17 @@ impl Parser {
             end = self.peek().span.end;
             self.skip();
         }
-        Ok(Expression::Literal(Box::new(Literal::String(path))))
+        let (name, path) = match path.find('/') {
+            Some(at) => (path[..at].to_owned(), Some(path[at..].to_owned())),
+            None => (path, None),
+        };
+        Ok(Expression::StageReference(Box::new(StageReference {
+            name,
+            path,
+            file_format: None,
+            pattern: None,
+            quoted: false,
+        })))
     }
 
     /// Parse a service's source after FROM: SPECIFICATION or SPECIFICATION_TEMPLATE with a value, `<name> = <value>` and USING ( ... ).
