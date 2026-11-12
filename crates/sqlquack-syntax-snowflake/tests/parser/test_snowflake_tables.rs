@@ -559,6 +559,16 @@ fn given_snowflake_event_routing_and_feature_tables_when_parsing_then_their_gram
             expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
+            description: "an online feature table without TARGET_LAG (recorded errno 2029, after parsing)",
+            sql: "CREATE ONLINE FEATURE TABLE v1 PRIMARY KEY ( v1 ) WAREHOUSE = v1 FROM t2 ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an online feature table with IF NOT EXISTS (recorded errno 2003, after parsing)",
+            sql: "CREATE ONLINE FEATURE TABLE IF NOT EXISTS v1 PRIMARY KEY ( v1 ) TARGET_LAG = '1 minute' WAREHOUSE = v1 FROM t2 ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
             description: "an online feature table with a reserved warehouse name (recorded errno 1003)",
             sql: "CREATE ONLINE FEATURE TABLE v1 PRIMARY KEY ( v1 ) TARGET_LAG = '1 minute' WAREHOUSE = SELECT FROM t2 ;",
             expected_kind: None,
