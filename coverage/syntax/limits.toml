@@ -83066,3 +83066,233 @@ anchor = "doc.data-types-datetime / Date and time constants"
 sql = "SELECT TIME WITH TIME ZONE '03:04:05' ;"
 expect = "observe"
 context = "raw"
+
+# The JOIN usage note: a read-order clause follows ON or USING; without one, FIRST or LAST is read as an alias for
+# the second table. The derived read-order cases have neither, so these rows carry USING, and four rows observe the
+# alias reading itself.
+
+[[suppress]]
+form = "sf.query.join.join.syntax"
+kind = "alternative"
+target = "{ FIRST | LAST } → FIRST"
+reason = "without USING the generated case reads FIRST ( v1 ) as a table alias (errno 2003, not 1868); the row below carries USING so the read-order clause is parsed"
+
+[[limit]]
+form = "sf.query.join.join.syntax"
+kind = "alternative"
+target = "{ FIRST | LAST } → FIRST"
+note = "FIRST after USING, a read-order clause"
+anchor = "doc.constructs.join / Usage notes"
+sql = "SELECT * FROM t1 INNER DIRECTED JOIN t2 USING ( v1 ) FIRST ( v1 ) ;"
+context = "raw"
+expect = "accept"
+
+[[suppress]]
+form = "sf.query.join.join.syntax"
+kind = "alternative"
+target = "{ FIRST | LAST } → LAST"
+reason = "without USING the generated case reads LAST ( v1 ) as a table alias; the row below carries USING"
+
+[[limit]]
+form = "sf.query.join.join.syntax"
+kind = "alternative"
+target = "{ FIRST | LAST } → LAST"
+note = "LAST after USING, a read-order clause"
+anchor = "doc.constructs.join / Usage notes"
+sql = "SELECT * FROM t1 INNER DIRECTED JOIN t2 USING ( v1 ) LAST ( v1 ) ;"
+context = "raw"
+expect = "accept"
+
+[[suppress]]
+form = "sf.query.join.join.syntax"
+kind = "required_operand_missing"
+target = "<alias> in [ { FIRST | LAST } ( <alias> ) ]"
+reason = "without USING the generated case is an empty column-alias list; the row below carries USING"
+
+[[limit]]
+form = "sf.query.join.join.syntax"
+kind = "required_operand_missing"
+target = "<alias> in [ { FIRST | LAST } ( <alias> ) ]"
+note = "omit <alias> in a read-order clause after USING"
+anchor = "doc.constructs.join / Syntax"
+sql = "SELECT * FROM t1 INNER DIRECTED JOIN t2 USING ( v1 ) FIRST ( ) ;"
+context = "raw"
+expect = "reject"
+
+[[suppress]]
+form = "sf.query.join.join.syntax"
+kind = "negative_neighbour"
+target = "<alias> in [ { FIRST | LAST } ( <alias> ) ]"
+note = "a string literal in place of <alias>"
+reason = "without USING the generated case is a literal in a column-alias list; the row below carries USING"
+
+[[limit]]
+form = "sf.query.join.join.syntax"
+kind = "negative_neighbour"
+target = "<alias> in [ { FIRST | LAST } ( <alias> ) ]"
+note = "a string literal in place of <alias> in a read-order clause after USING"
+anchor = "doc.constructs.join / Syntax"
+sql = "SELECT * FROM t1 INNER DIRECTED JOIN t2 USING ( v1 ) FIRST ( 'v1' ) ;"
+context = "raw"
+expect = "reject"
+
+[[suppress]]
+form = "sf.query.join.join.syntax"
+kind = "negative_neighbour"
+note = "the form without its required ( in [ { FIRST | LAST } ( <alias> ) ]"
+reason = "without USING the generated case does not reach a read-order clause; the row below carries USING"
+
+[[limit]]
+form = "sf.query.join.join.syntax"
+kind = "negative_neighbour"
+note = "a read-order clause after USING without its ("
+anchor = "doc.constructs.join / Syntax"
+sql = "SELECT * FROM t1 INNER DIRECTED JOIN t2 USING ( v1 ) FIRST v1 ) ;"
+context = "raw"
+expect = "reject"
+
+[[suppress]]
+form = "sf.query.join.join.syntax"
+kind = "negative_neighbour"
+note = "the form without its required ) in [ { FIRST | LAST } ( <alias> ) ]"
+reason = "without USING the generated case is an unclosed column-alias list; the row below carries USING"
+
+[[limit]]
+form = "sf.query.join.join.syntax"
+kind = "negative_neighbour"
+note = "a read-order clause after USING without its )"
+anchor = "doc.constructs.join / Syntax"
+sql = "SELECT * FROM t1 INNER DIRECTED JOIN t2 USING ( v1 ) FIRST ( v1 ;"
+context = "raw"
+expect = "reject"
+
+[[suppress]]
+form = "sf.query.join.join.syntax"
+kind = "identifier_class"
+target = "<alias>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "without USING the generated case is a quoted column alias; the row below carries USING"
+
+[[limit]]
+form = "sf.query.join.join.syntax"
+kind = "identifier_class"
+target = "<alias>"
+note = "quoted <alias> in a read-order clause after USING"
+anchor = "doc.identifiers-syntax"
+sql = "SELECT * FROM t1 INNER DIRECTED JOIN t2 USING ( v1 ) FIRST ( \"v1 Q\" ) ;"
+context = "raw"
+expect = "accept"
+
+[[suppress]]
+form = "sf.query.join.join.syntax"
+kind = "identifier_class"
+target = "<alias>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "without USING the generated cases are column aliases; the row below carries USING"
+
+[[limit]]
+form = "sf.query.join.join.syntax"
+kind = "identifier_class"
+target = "<alias>"
+note = "reserved <alias> in a read-order clause after USING, unquoted and double-quoted"
+anchor = "doc.identifiers-syntax"
+sql = "SELECT * FROM t1 INNER DIRECTED JOIN t2 USING ( v1 ) FIRST ( SELECT ) ;"
+context = "raw"
+expect = "reject"
+also_sql = "SELECT * FROM t1 INNER DIRECTED JOIN t2 USING ( v1 ) FIRST ( \"SELECT\" ) ;"
+also_expect = "accept"
+
+# Alias-reading pins from the usage note; observed, not read-order obligations.
+[[limit]]
+form = "sf.query.join.join.syntax"
+kind = "positive"
+note = "FIRST ( v1 ) on a directed join without ON or USING, read as a table alias"
+anchor = "doc.constructs.join / Usage notes"
+sql = "SELECT * FROM t1 INNER DIRECTED JOIN t2 FIRST ( v1 ) ;"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "sf.query.join.join.syntax"
+kind = "negative_neighbour"
+note = "FIRST ( v1 ) after a table that already has an alias, without ON or USING"
+anchor = "doc.constructs.join / Usage notes"
+sql = "SELECT * FROM t1 INNER DIRECTED JOIN t2 AS x FIRST ( v1 ) ;"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "sf.query.join.join.syntax"
+kind = "positive"
+note = "a read-order clause on a join that is not directed (expected errno 1867)"
+anchor = "doc.constructs.join / Usage notes"
+sql = "SELECT * FROM t1 JOIN t2 USING ( v1 ) FIRST ( v1 ) ;"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "sf.query.join.join.syntax"
+kind = "positive"
+note = "a bare FIRST as a table alias; FIRST is not reserved"
+anchor = "doc.constructs.join / Usage notes"
+sql = "SELECT * FROM t1 JOIN t2 FIRST ;"
+context = "raw"
+expect = "observe"
+
+# Shapes the grammar review asked Snowflake about: options before FROM, a subquery source, a positional
+# argument, chained joins and DIMENSIONS before METRICS. The pages do not say whether each is syntax, so
+# each is observed.
+
+[[limit]]
+form = "sf.utility.execute-job-service"
+kind = "positive"
+note = "NAME and ASYNC before the specification, observed"
+anchor = "doc.sql.execute-job-service / Syntax"
+sql = "EXECUTE JOB SERVICE IN COMPUTE POOL v1 NAME = v1 ASYNC = TRUE FROM @s1 SPECIFICATION_FILE = 'm' ;"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "sf.dml.merge"
+kind = "positive"
+note = "a subquery as the source, with an alias, observed"
+anchor = "doc.sql.merge / Syntax"
+sql = "MERGE INTO v1 USING ( SELECT c1 FROM t2 ) AS s1 ON v1.c1 = s1.c1 WHEN MATCHED THEN DELETE ;"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "sf.utility.call-with.language-javascript-as-call"
+kind = "positive"
+note = "a positional argument in the CALL, observed"
+anchor = "doc.sql.call-with / Syntax / JavaScript"
+sql = "WITH v1 AS PROCEDURE ( v1 INT ) RETURNS INT LANGUAGE JAVASCRIPT AS 'm' CALL v1 ( 1 ) ;"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "sf.query.join.join"
+kind = "positive"
+note = "two joins in a row, each with ON, observed"
+anchor = "doc.constructs.join / Syntax"
+sql = "SELECT 1 FROM t1 JOIN t2 ON t1.c1 = t2.c1 JOIN t3 ON t2.c1 = t3.c1 ;"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "sf.query.join.join-2"
+kind = "positive"
+note = "a NATURAL join followed by a CROSS join, observed"
+anchor = "doc.constructs.join / Syntax"
+sql = "SELECT 1 FROM t1 NATURAL JOIN t2 CROSS JOIN t3 ;"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "sf.query.semantic-view"
+kind = "positive"
+note = "DIMENSIONS before METRICS, observed"
+anchor = "doc.constructs.semantic_view / Syntax"
+sql = "SELECT * FROM SEMANTIC_VIEW ( v1 DIMENSIONS 1 METRICS 1 ) ;"
+context = "raw"
+expect = "observe"
