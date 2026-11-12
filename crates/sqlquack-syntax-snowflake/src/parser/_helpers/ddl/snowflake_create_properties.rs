@@ -59,6 +59,9 @@ impl Parser {
             }
             return Ok(None);
         };
+        if parts == ["MODEL", "MONITOR"] && self.model_name_ends_at(self.current + 2) {
+            return Ok(None);
+        }
         self.match_text_seq(&parts);
         let if_not_exists = self.check(TokenType::If);
         if if_not_exists
@@ -72,6 +75,14 @@ impl Parser {
             return Ok(None);
         }
         let mut properties: Vec<ObjectProperty> = Vec::new();
+        if parts == ["COMPUTE", "POOL"] && self.match_text_seq(&["FOR", "APPLICATION"]) {
+            let application = self.parse_simple_name()?;
+            properties.push(property(
+                "FOR APPLICATION",
+                None,
+                Some(Expression::Identifier(application)),
+            ));
+        }
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
             if self.check(TokenType::With) && !self.check_next(TokenType::Eq) {
                 self.skip();
@@ -226,7 +237,7 @@ impl Parser {
         })
     }
 
-    /// One item: TAG ( <name> = <value> , ... ), TRIGGERS ON <n> PERCENT DO <action> ..., AS <body>, IGNORE EDITION CHECK, FOR APPLICATION <name>, or <property> = <value>.
+    /// One item: TAG ( <name> = <value> , ... ), TRIGGERS ON <n> PERCENT DO <action> ..., AS <body>, IGNORE EDITION CHECK, or <property> = <value>.
     pub(super) fn parse_create_property_item(&mut self) -> Result<Vec<ObjectProperty>> {
         if self.check_identifier("TAG") && self.check_next(TokenType::LParen) {
             self.skip();
@@ -284,14 +295,6 @@ impl Parser {
         }
         if self.match_text_seq(&["IGNORE", "EDITION", "CHECK"]) {
             return Ok(vec![property("IGNORE EDITION CHECK", None, None)]);
-        }
-        if self.match_text_seq(&["FOR", "APPLICATION"]) {
-            let application = self.parse_simple_name()?;
-            return Ok(vec![property(
-                "FOR APPLICATION",
-                None,
-                Some(Expression::Identifier(application)),
-            )]);
         }
         let name = self.parse_simple_name()?;
         self.expect_token(TokenType::Eq)?;

@@ -39,12 +39,31 @@ impl Parser {
         }))
     }
 
+    /// Whether the token at `at` continues or ends the name in `CREATE MODEL <name>`: a dot, FROM, WITH VERSION, or the statement end.
+    pub(crate) fn model_name_ends_at(&self, at: usize) -> bool {
+        let Some(token) = self.tokens.get(at) else {
+            return true;
+        };
+        matches!(
+            token.token_type,
+            TokenType::Dot | TokenType::From | TokenType::Semicolon
+        ) || (token.token_type == TokenType::With
+            && self
+                .tokens
+                .get(at + 1)
+                .is_some_and(|next| next.text.eq_ignore_ascii_case("VERSION")))
+    }
+
     /// The kind, `IF [ NOT ] EXISTS` and name of a kind the opaque check knows, then an ALTER's action; nothing for another kind. Returns the kind.
     fn check_opaque_head(&mut self, create: bool) -> Result<Option<&'static [&'static str]>> {
         let kind = SNOWFLAKE_OPAQUE_KINDS
             .iter()
             .chain(SNOWFLAKE_DROP_KINDS)
-            .find(|words| self.check_text_seq(words));
+            .find(|words| {
+                self.check_text_seq(words)
+                    && !(**words == ["MODEL", "MONITOR"]
+                        && self.model_name_ends_at(self.current + 2))
+            });
         let Some(&kind) = kind else {
             return self.check_opaque_unknown_kind().map(|()| None);
         };
