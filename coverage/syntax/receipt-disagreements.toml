@@ -20,7 +20,6 @@ other_receipts_contradicted = [
   "6e5b7f7cabc8-0",
   "82053c7ac916-0",
   "886fc553ceae-0",
-  "88ff06489861-0",
   "942510f8a408-0",
   "958e99b77674-0",
   "964d24092390-0",
@@ -699,14 +698,6 @@ other_receipts_contradicted = [
   "kd9ba44c9e100",
   "kfafc0fdc83cc",
 ]
-"sf.ddl.create-artifact-repository" = [
-  "k4e8953f5d7de",
-  "k5c50b69a6dde",
-  "kacd49b933d8b",
-  "kd65668882d51",
-  "ke9c420895b74",
-  "kecca15d5f47a",
-]
 "sf.ddl.create-backup-set.backup-set-for-database" = [
   "k16c154a094a1",
   "k1d3dfe130646",
@@ -768,17 +759,6 @@ other_receipts_contradicted = [
 "sf.ddl.create-code-bundle.create-code-bundle-from.syntax" = [
   "k1ba8b686d81b",
   "k60b30999315b",
-]
-"sf.ddl.create-compute-pool" = [
-  "k0b400c59c854",
-  "k2fa3f86627e0",
-  "k5395e10ca5b8",
-  "k61b7038ae0f4",
-  "kaf3eec866af1",
-  "kc8889ffddec1",
-  "kd3c93c4fc213",
-  "kd5af14d1ad6b",
-  "kf486f44b2c53",
 ]
 "sf.ddl.create-cortex-search.on-attributes-warehouse-target-lag" = [
   "k3a4dd317c773",
@@ -908,14 +888,6 @@ other_receipts_contradicted = [
   "ke5461079151e",
 ]
 "sf.ddl.create-external-consumer" = ["kb6e056b75838"]
-"sf.ddl.create-external-volume" = [
-  "k034ef60966ea",
-  "k327f94a159ff",
-  "k6521c188fdd1",
-  "k7a13f7cf7cb3",
-  "k9c9b13be8829",
-  "kdf454fa0d99a",
-]
 "sf.ddl.create-file-format.create-file-format" = ["k157043357740"]
 "sf.ddl.create-file-format.create-or-alter-file" = ["k63c67a765cde"]
 "sf.ddl.create-file-format.define-file-format" = [
@@ -927,12 +899,6 @@ other_receipts_contradicted = [
   "kd410e9d1ce59",
   "keb7c459323d2",
   "kf5bc37436718",
-]
-"sf.ddl.create-git-repository" = [
-  "k55bcf4428ae5",
-  "k78772968d89e",
-  "k9717e81181c6",
-  "kd5b32f0c10af",
 ]
 "sf.ddl.create-hybrid-table.table" = ["k5069c51ae2f1"]
 "sf.ddl.create-iceberg-table-rest.table-as-select" = [
@@ -946,12 +912,6 @@ other_receipts_contradicted = [
 "sf.ddl.create-iceberg-table.table" = ["k85d5253abb15"]
 "sf.ddl.create-iceberg-table.table-base-location.parquet-files" = ["k656d4111d435"]
 "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database" = ["ke76e03514474"]
-"sf.ddl.create-image-repository" = [
-  "k508014d64ea2",
-  "k718db50674d5",
-  "k81276ced07f1",
-  "k899e71792121",
-]
 "sf.ddl.create-index" = ["k51438fa25dc3"]
 "sf.ddl.create-listing.as" = [
   "k0843ac0196eb",
@@ -1058,8 +1018,6 @@ other_receipts_contradicted = [
   "k4985fe754001",
   "k736b65b051be",
 ]
-"sf.ddl.create-restricted-session-scope.or-alter-restricted-session" = ["k1db74d86a2f5"]
-"sf.ddl.create-restricted-session-scope.restricted-session-scope-rss" = ["kab6caa49a436"]
 "sf.ddl.create-semantic-view.create-or-alter-semantic" = ["kde5a57ccc35a"]
 "sf.ddl.create-semantic-view.create-semantic-view-tables" = ["kf0a8b4db490a"]
 "sf.ddl.create-service" = [
@@ -1155,7 +1113,6 @@ other_receipts_contradicted = [
   "ke67978ccde94",
   "kec07de1bbc4f",
 ]
-"sf.ddl.create-warehouse.create-warehouse" = ["kcf1822eef70d"]
 "sf.ddl.desc-external-table" = ["kcc6e9e00e915"]
 "sf.ddl.desc-function-dmf" = [
   "k358fb74c2360",
@@ -1723,33 +1680,6 @@ other_receipts_contradicted = [
 "sf.ddl.create-task-graph.define-task-graph" = [
   "k5cd0dde827c9",
   "k8e6162f9a5c1",
-]
-"sf.ddl.create-warehouse.define-warehouse" = [
-  "k16bd66eefeb1",
-  "k216bccb92158",
-  "k39c862a33c15",
-  "k40b827c6ad42",
-  "k4dd1e9399ee7",
-  "k6254d142b482",
-  "k6512addd9a1c",
-  "k652867eef216",
-  "k7c92254f4171",
-  "k7e774044ba04",
-  "k9caff9f50b16",
-  "ka123c7742a2a",
-  "kaa51275ca81a",
-  "kab4d15cd7d1a",
-  "kad89041f5ebf",
-  "kc27267b4220e",
-  "kc6b3e247ac5e",
-  "kcbb45b287d32",
-  "kcdf57598e39a",
-  "kd1ec22ed325c",
-  "kda9662bb86b7",
-  "ke2f2338a7176",
-  "ke6d6a283a084",
-  "kf5c5f978a308",
-  "kfea7b5ab4c63",
 ]
 "sf.ddl.desc-artifact-repository" = ["k9335d9e88b41"]
 "sf.ddl.desc-external-table" = ["kc7239ad11afd"]
