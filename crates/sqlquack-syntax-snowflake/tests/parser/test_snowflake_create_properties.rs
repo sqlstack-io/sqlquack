@@ -2,8 +2,8 @@ use serde_json::json;
 
 use sqlquack_syntax::{CallMode, Dialect};
 
-use crate::helpers::{accepted, statements};
-use crate::test_types::{AcceptanceTestCase, ProjectionTestCase};
+use crate::helpers::{accepted, snowflake_kind, statements};
+use crate::test_types::{AcceptanceTestCase, ProjectionTestCase, SnowflakeVerdictTestCase};
 
 #[test]
 fn given_a_snowflake_property_or_policy_create_when_parsing_then_only_what_snowflake_parses_is_accepted(
@@ -178,6 +178,100 @@ fn given_a_snowflake_create_without_a_complete_kind_when_parsing_then_it_is_refu
         assert_eq!(
             accepted(test_case.sql, test_case.dialect),
             test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_snowflake_class_instance_commands_when_parsing_then_their_grammar_is_checked() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a forecast with named arguments, tags and a comment (recorded OK)",
+            sql: "CREATE OR REPLACE SNOWFLAKE . ML . FORECAST IF NOT EXISTS v1 ( INPUT_DATA => SYSTEM$REFERENCE ( 'VIEW' , 'v1' ) , TIMESTAMP_COLNAME => 'm' , TARGET_COLNAME => 'm' ) WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a forecast with positional arguments (recorded OK)",
+            sql: "CREATE SNOWFLAKE . ML . FORECAST v1 ( 'm' , 'm' , 'm' , 'm' ) ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a budget in the default schema with no arguments and a bare comment (recorded OK)",
+            sql: "CREATE SNOWFLAKE . . BUDGET v1 ( ) WITH COMMENT = m1 ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a class that is not a class (recorded errno 1003)",
+            sql: "CREATE SNOWFLAKE . ML . v1 ( 'm' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a class with no SNOWFLAKE database (recorded errno 1003)",
+            sql: "CREATE . ML . FORECAST v1 ( 'm' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a named argument with no value (recorded errno 1003)",
+            sql: "CREATE SNOWFLAKE . ML . CLASSIFICATION v1 ( INPUT_DATA => , TARGET_COLNAME => 'm' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty positional argument (recorded errno 1003)",
+            sql: "CREATE SNOWFLAKE . ML . FORECAST v1 ( 'm' , 'm' , 'm' , ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "IF EXISTS on CREATE (recorded errno 1003)",
+            sql: "CREATE SNOWFLAKE . CORE . BUDGET IF EXISTS v1 ( ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a tag list without TAG (recorded errno 1003)",
+            sql: "CREATE SNOWFLAKE . CORE . BUDGET v1 ( ) ( v1 = 'm' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a property set without TAG (recorded OK)",
+            sql: "ALTER SNOWFLAKE . CORE . BUDGET IF EXISTS v1 SET v1 = 'm' ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "UNSET TAG with no tag names unsets a property named TAG (recorded OK)",
+            sql: "ALTER SNOWFLAKE . ML . CLASSIFICATION v1 UNSET TAG ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a rename to a quoted reserved word (recorded OK)",
+            sql: "ALTER SNOWFLAKE . CORE . BUDGET v1 RENAME TO \"SELECT\" ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an ALTER missing the instance's name (recorded errno 1003)",
+            sql: "ALTER SNOWFLAKE . CORE . BUDGET SET COMMENT = 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "SET with no property (recorded errno 1003)",
+            sql: "ALTER SNOWFLAKE . CORE . BUDGET v1 SET = 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a drop in the default schema (recorded OK)",
+            sql: "DROP SNOWFLAKE . . BUDGET IF EXISTS v1 ;",
+            expected_kind: Some("drop_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a drop missing the instance's name (recorded errno 1003)",
+            sql: "DROP SNOWFLAKE . ML . FORECAST ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
             "{}",
             test_case.description
         );
