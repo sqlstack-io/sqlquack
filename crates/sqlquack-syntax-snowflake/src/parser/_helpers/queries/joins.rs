@@ -36,6 +36,36 @@ impl Parser {
         Ok((Some(side.to_owned()), Some(alias)))
     }
 
+    /// The read-order clause after a join; with no ON, USING or MATCH_CONDITION (`conditionless`), Snowflake reads `FIRST ( x )` or `LAST ( x )` as the joined table's alias and column alias instead.
+    fn parse_snowflake_join_read_order(
+        &mut self,
+        table: Expression,
+        conditionless: bool,
+    ) -> Result<(Expression, Option<String>, Option<Identifier>)> {
+        let first_last_at = self.current;
+        let (first_last, first_last_alias) = self.parse_snowflake_join_first_last()?;
+        if !conditionless || first_last.is_none() {
+            return Ok((table, first_last, first_last_alias));
+        }
+        let keyword = &self.tokens[first_last_at];
+        let mut alias = Identifier::new(keyword.text.to_string());
+        alias.span = Some(keyword.span);
+        let columns: Vec<Identifier> = first_last_alias.iter().cloned().collect();
+        Ok(match table {
+            Expression::Table(mut reference) if reference.alias.is_none() => {
+                reference.alias = Some(alias);
+                reference.column_aliases = columns;
+                (Expression::Table(reference), None, None)
+            }
+            Expression::Subquery(mut derived) if derived.alias.is_none() => {
+                derived.alias = Some(alias);
+                derived.column_aliases = columns;
+                (Expression::Subquery(derived), None, None)
+            }
+            other => (other, first_last, first_last_alias),
+        })
+    }
+
     /// Parses joins; chained ON/USING clauses bind right to left, as `a JOIN b JOIN c ON x ON y`.
     pub(crate) fn parse_joins(&mut self) -> Result<Vec<Join>> {
         let mut joins = Vec::with_capacity(2);
@@ -127,7 +157,9 @@ impl Parser {
                 } else {
                     (None, Vec::new())
                 };
-                let (first_last, first_last_alias) = self.parse_snowflake_join_first_last()?;
+                let conditionless = on.is_none() && using.is_empty() && match_condition.is_none();
+                let (table, first_last, first_last_alias) =
+                    self.parse_snowflake_join_read_order(table, conditionless)?;
 
                 joins.push(Join {
                     using_alias: None,

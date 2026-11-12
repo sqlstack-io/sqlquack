@@ -14,6 +14,7 @@ use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::operators::models::ConditionalInsert;
 use sqlquack_syntax::expressions::operators::models::MultitableInserts;
 use sqlquack_syntax::expressions::queries::models::Join;
+use sqlquack_syntax::expressions::queries::models::Subquery;
 use sqlquack_syntax::expressions::queries::models::Where;
 use sqlquack_syntax::expressions::schema_objects::models::FunctionSecurity;
 use sqlquack_syntax::expressions::statements::models::Delete;
@@ -110,8 +111,8 @@ impl Parser {
 
         let mut joins = self.parse_joins()?;
 
-        let using;
-        (using, joins) = self.parse_delete_using(joins)?;
+        let (using, using_items);
+        (using, using_items, joins) = self.parse_delete_using(joins)?;
 
         let output = if early_output.is_some() {
             early_output
@@ -148,7 +149,7 @@ impl Parser {
         };
 
         Ok(Expression::Delete(Box::new(Delete {
-            using_items: Vec::new(),
+            using_items,
             using_joins: Vec::new(),
             table,
             hint,
@@ -208,8 +209,31 @@ impl Parser {
         )
     }
 
-    fn parse_delete_using(&mut self, mut joins: Vec<Join>) -> Result<(Vec<TableRef>, Vec<Join>)> {
-        let mut using: Vec<TableRef> = Vec::new();
+    /// The tables after DELETE's USING, or, when any is a derived table, every item instead; then the joins after them.
+    fn parse_delete_using(
+        &mut self,
+        joins: Vec<Join>,
+    ) -> Result<(Vec<TableRef>, Vec<Expression>, Vec<Join>)> {
+        let (items, joins) = self.parse_delete_using_items(joins)?;
+        let tables: Option<Vec<TableRef>> = items
+            .iter()
+            .map(|item| match item {
+                Expression::Table(table) => Some((**table).clone()),
+                _ => None,
+            })
+            .collect();
+        Ok(match tables {
+            Some(tables) => (tables, Vec::new(), joins),
+            None => (Vec::new(), items, joins),
+        })
+    }
+
+    /// The items after DELETE's USING, each a table or a derived table, and the joins after them.
+    fn parse_delete_using_items(
+        &mut self,
+        mut joins: Vec<Join>,
+    ) -> Result<(Vec<Expression>, Vec<Join>)> {
+        let mut using: Vec<Expression> = Vec::new();
         if self.match_token(TokenType::Using) {
             loop {
                 if self.check(TokenType::LParen) {
@@ -237,6 +261,11 @@ impl Parser {
                         self.parse_primary()?
                     };
                     let using_alias = if self.match_token(TokenType::As) {
+                        let token = self.previous();
+                        let keyword = match self.source.is_some() {
+                            true => self.source_text_range(token.span.start, token.span.end),
+                            false => token.text.to_string(),
+                        };
                         let alias_name = self.expect_identifier_with_quoted()?;
                         let col_aliases = if self.match_token(TokenType::LParen) {
                             let aliases = self.parse_identifier_list()?;
@@ -245,24 +274,45 @@ impl Parser {
                         } else {
                             Vec::new()
                         };
-                        Some((alias_name, col_aliases))
+                        Some((keyword, alias_name, col_aliases))
                     } else {
                         None
                     };
-                    let mut tref = TableRef::new("");
-                    if let Some((alias_name, col_aliases)) = using_alias {
-                        tref.alias = Some(alias_name);
-                        tref.alias_explicit_as = true;
-                        tref.column_aliases = col_aliases;
+                    let mut derived = match subquery {
+                        Expression::Subquery(derived) => *derived,
+                        Expression::Paren(values) => Subquery {
+                            this: values.this,
+                            alias: None,
+                            column_aliases: Vec::new(),
+                            alias_explicit_as: false,
+                            alias_keyword: None,
+                            order_by: None,
+                            limit: None,
+                            offset: None,
+                            distribute_by: None,
+                            sort_by: None,
+                            cluster_by: None,
+                            lateral: false,
+                            modifiers_inside: false,
+                            trailing_comments: values.trailing_comments,
+                            inferred_type: None,
+                            span: values.span,
+                        },
+                        _ => return Err(self.parse_error("Expected a query in DELETE USING ( )")),
+                    };
+                    if let Some((keyword, alias_name, col_aliases)) = using_alias {
+                        derived.alias = Some(alias_name);
+                        derived.alias_explicit_as = true;
+                        derived.alias_keyword = Some(keyword);
+                        derived.column_aliases = col_aliases;
                     }
-                    tref.hints = vec![subquery];
-                    using.push(tref);
+                    using.push(Expression::Subquery(Box::new(derived)));
                 } else {
                     let using_table = self.expect_identifier_with_quoted()?;
                     let mut using_ref = TableRef::from_identifier(using_table);
 
                     if self.check_join_keyword() {
-                        using.push(using_ref);
+                        using.push(Expression::Table(Box::new(using_ref)));
                         let mut using_joins = self.parse_joins()?;
                         joins.append(&mut using_joins);
                         break;
@@ -277,7 +327,7 @@ impl Parser {
                     {
                         using_ref.alias = Some(self.expect_identifier_with_quoted()?);
                     }
-                    using.push(using_ref);
+                    using.push(Expression::Table(Box::new(using_ref)));
                 }
                 if !self.match_token(TokenType::Comma) {
                     break;
