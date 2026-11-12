@@ -1661,3 +1661,23 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.ddl.create-contact" = "4904656d4fa2d41b0002a0afe96b7d2f2c554ec0b5985e8f459118c2898760aa"
 "sf.ddl.create-git-repository" = "cafca2ce2d0e340ee9e9440566fa1db4d436c9980b03b15afc799552e48d3360"
 "sf.ddl.create-image-repository" = "242d5d4d0449489931508b88a124cbd142781842f18c171d1665cb925def4bbf"
+
+[[review]]
+id = "ddl-024"
+family = "ddl"
+parser_tree = "582bdba8f75e43db2dfbf7d7ba7b39411f31a8fb"
+reviewed_utc = "2026-11-12T19:10:18Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.alter-dbt-project.deploy-from",
+  "sf.ddl.alter-listing.listing-add-version-from",
+]
+note = "Re-approved after stage paths became stage references: of the 104 cases of these forms, 65 trees are unchanged and 39 differ only by a stage path recorded as a stage reference with its name and path instead of a string. Every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.alter-dbt-project.deploy-from" = "41039b633615b26c7f55cf18417fb2ca1f69afa5d38826e032fff7fd00738d4c"
+"sf.ddl.alter-listing.listing-add-version-from" = "e53df48860d89c9ad2c17012e223142f1aef85f1d94daf3d99e679cb5733c522"
+
+[review.definitions]
+"sf.ddl.alter-dbt-project.deploy-from" = "73cbec01605ca4f568c243c6a796e3c25420276f0f3ec53d37b0291f60fadf30"
+"sf.ddl.alter-listing.listing-add-version-from" = "d2b6b9d6850402fbf3cb027e387305cef8a9e1f08f883561b58bdf7cbca3d380"
