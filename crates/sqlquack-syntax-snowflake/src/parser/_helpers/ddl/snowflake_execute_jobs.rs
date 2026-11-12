@@ -140,6 +140,7 @@ impl Parser {
     /// The pool, the specification source, its USING arguments and the options of EXECUTE JOB SERVICE.
     fn parse_execute_job_service(&mut self) -> Result<Vec<ObjectProperty>> {
         let mut properties = vec![self.parse_execute_compute_pool()?];
+        properties.extend(self.parse_execute_options(JOB_SERVICE_OPTIONS)?);
         self.expect_token(TokenType::From)?;
         let template = if self.is_stage_path() {
             let stage = self.parse_stage_path()?;
