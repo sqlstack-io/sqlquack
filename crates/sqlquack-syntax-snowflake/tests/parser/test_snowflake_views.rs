@@ -159,6 +159,21 @@ fn given_snowflake_views_when_parsing_then_their_grammar_is_checked() {
             expected_kind: None,
         },
         SnowflakeVerdictTestCase {
+            description: "RECURSIVE after a temporary scope (recorded errno 1003)",
+            sql: "CREATE OR ALTER SECURE LOCAL TEMP RECURSIVE VIEW v1 ( v1 ) CHANGE_TRACKING = TRUE COMMENT = 'm' AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a DCM definition with RECURSIVE after a temporary scope (recorded errno 1003)",
+            sql: "DEFINE SECURE LOCAL TEMP RECURSIVE VIEW d1.s1.v1 ( v1 ) CHANGE_TRACKING = TRUE COMMENT = 'm' AS SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a temporary view (recorded errno 1647, after parsing)",
+            sql: "DEFINE LOCAL TEMP VIEW d1.s1.v1 AS SELECT 1 ;",
+            expected_kind: Some("create_view"),
+        },
+        SnowflakeVerdictTestCase {
             description: "a materialized view is never temporary",
             sql: "CREATE TEMPORARY MATERIALIZED VIEW v1 AS SELECT 1 ;",
             expected_kind: None,
@@ -225,6 +240,21 @@ fn given_snowflake_view_alters_when_parsing_then_their_grammar_is_checked() {
         SnowflakeVerdictTestCase {
             description: "UNSET with the name omitted (recorded errno 1003)",
             sql: "ALTER VIEW UNSET SECURE ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "SET SECURE with other properties (recorded errno 1003)",
+            sql: "ALTER VIEW IF EXISTS v1 SET SECURE CHANGE_TRACKING = TRUE COMMENT = 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "UNSET SECURE with another property (recorded errno 1003)",
+            sql: "ALTER VIEW IF EXISTS v1 UNSET SECURE COMMENT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "UNSET SECURE in a list (recorded errno 1003)",
+            sql: "ALTER VIEW v1 UNSET SECURE , SECURE ;",
             expected_kind: None,
         },
         SnowflakeVerdictTestCase {
