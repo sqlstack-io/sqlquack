@@ -1850,9 +1850,11 @@ impl Parser {
         let mut dimensions = None;
         let mut facts = None;
         let mut where_clause = None;
+        let mut dimensions_first = false;
 
         while !self.check(TokenType::RParen) && !self.is_at_end() {
             if self.match_identifier("METRICS") {
+                dimensions_first |= dimensions.is_some();
                 let exprs = self.parse_semantic_view_list()?;
                 metrics = Some(Box::new(Expression::Tuple(Box::new(Tuple {
                     expressions: exprs,
@@ -1863,6 +1865,7 @@ impl Parser {
                     expressions: exprs,
                 }))));
             } else if self.match_identifier("FACTS") {
+                dimensions_first |= dimensions.is_some();
                 let exprs = self.parse_semantic_view_list()?;
                 facts = Some(Box::new(Expression::Tuple(Box::new(Tuple {
                     expressions: exprs,
@@ -1884,6 +1887,7 @@ impl Parser {
             dimensions,
             facts,
             where_: where_clause,
+            dimensions_first,
         })))
     }
 

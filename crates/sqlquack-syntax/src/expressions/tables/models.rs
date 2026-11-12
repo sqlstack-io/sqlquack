@@ -1151,6 +1151,9 @@ pub struct SemanticView {
     pub facts: Option<Box<Expression>>,
     #[serde(default)]
     pub where_: Option<Box<Expression>>,
+    /// DIMENSIONS was written before METRICS or FACTS, so its columns come first in the result
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub dimensions_first: bool,
 }
 
 /// SerdeProperties
