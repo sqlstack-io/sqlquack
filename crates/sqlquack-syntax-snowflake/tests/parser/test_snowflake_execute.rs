@@ -51,10 +51,28 @@ fn given_a_snowflake_execute_of_a_job_service_when_parsing_then_the_tree_keeps_i
             expected_value: json!("IN COMPUTE POOL"),
         },
         ProjectionTestCase {
-            description: "the stage path is kept whole",
+            description: "the stage is a stage, not a string",
             sql: SQL,
-            pointer: "/0/execute_object/properties/1/value/literal/value",
-            expected_value: json!("@s1/a"),
+            pointer: "/0/execute_object/properties/1/value/stage_reference/name",
+            expected_value: json!("@s1"),
+        },
+        ProjectionTestCase {
+            description: "a quoted value that starts with @ stays a string",
+            sql: "ALTER MODEL m1 SET COMMENT = '@ml-team owns this' ;",
+            pointer: "/0/alter_object/properties/0/value/literal/value",
+            expected_value: json!("@ml-team owns this"),
+        },
+        ProjectionTestCase {
+            description: "a dollar-quoted value that starts with @ stays a string",
+            sql: "ALTER MODEL m1 SET COMMENT = $$@ml-team owns this$$ ;",
+            pointer: "/0/alter_object/properties/0/value/literal/value",
+            expected_value: json!("@ml-team owns this"),
+        },
+        ProjectionTestCase {
+            description: "the path within the stage is kept",
+            sql: SQL,
+            pointer: "/0/execute_object/properties/1/value/stage_reference/path",
+            expected_value: json!("/a"),
         },
         ProjectionTestCase {
             description: "the template file follows the stage",
