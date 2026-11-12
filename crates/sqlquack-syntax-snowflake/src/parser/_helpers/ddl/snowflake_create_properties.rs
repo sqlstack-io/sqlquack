@@ -295,7 +295,7 @@ impl Parser {
         }
         let name = self.parse_simple_name()?;
         self.expect_token(TokenType::Eq)?;
-        let value = self.parse_create_property_value()?;
+        let value = self.parse_create_property_value(false)?;
         Ok(vec![property(
             &name.name.to_ascii_uppercase(),
             None,
@@ -303,8 +303,8 @@ impl Parser {
         )])
     }
 
-    /// A property value: a literal or name, a parenthesized list of values or of `<name> = <value>` pairs, or an unparenthesized name list.
-    fn parse_create_property_value(&mut self) -> Result<Expression> {
+    /// A value, a parenthesized list of values or `<name> = <value>` pairs, or a bare name list; a list item ends at its comma.
+    fn parse_create_property_value(&mut self, in_list: bool) -> Result<Expression> {
         if self.match_token(TokenType::LParen) {
             let mut expressions: Vec<Expression> = Vec::new();
             while !self.check(TokenType::RParen) {
@@ -315,13 +315,13 @@ impl Parser {
                         Expression::Identifier(self.parse_simple_name()?)
                     };
                     self.expect_token(TokenType::Eq)?;
-                    let value = self.parse_create_property_value()?;
+                    let value = self.parse_create_property_value(false)?;
                     expressions.push(Expression::PropertyEQ(Box::new(BinaryOp::new(key, value))));
                     if !self.match_token(TokenType::Comma) {
                         continue;
                     }
                 } else {
-                    expressions.push(self.parse_create_property_value()?);
+                    expressions.push(self.parse_create_property_value(true)?);
                     if !self.match_token(TokenType::Comma) {
                         break;
                     }
@@ -347,7 +347,7 @@ impl Parser {
                 table.name.name = format!("{} {}", table.name.name, word);
             }
         }
-        if !self.continues_name_list() {
+        if in_list || !self.continues_name_list() {
             return Ok(first);
         }
         let mut expressions = vec![first];
