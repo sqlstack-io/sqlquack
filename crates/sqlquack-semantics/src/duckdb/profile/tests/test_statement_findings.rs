@@ -554,7 +554,7 @@ fn given_a_lambda_in_a_grouped_select_when_checking_grouping_then_only_outer_col
             expected_findings: &[(
                 "E230",
                 "Column must be grouped or used in an aggregate function",
-                76,
+                74,
             )],
         },
         QueryFindingsTestCase {
@@ -573,7 +573,7 @@ fn given_a_lambda_in_a_grouped_select_when_checking_grouping_then_only_outer_col
             expected_findings: &[(
                 "E230",
                 "Column must be grouped or used in an aggregate function",
-                52,
+                50,
             )],
         },
         QueryFindingsTestCase {
@@ -587,7 +587,7 @@ fn given_a_lambda_in_a_grouped_select_when_checking_grouping_then_only_outer_col
             expected_findings: &[(
                 "E230",
                 "Column must be grouped or used in an aggregate function",
-                9,
+                7,
             )],
         },
     ];

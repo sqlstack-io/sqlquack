@@ -74,10 +74,12 @@ impl Parser<'_> {
 
     /// `ParserExpressionWithOptionalAlias`: an alias may also be a bare name that is no keyword.
     pub(crate) fn aliased(&mut self) -> Parsing<Expression> {
+        let first: usize = self.at;
         let this: Expression = self.expression()?;
         let bare: bool = !matches!(&this, Expression::Column(column)
             if column.table.is_none() && !column.name.quoted && column.name.name.eq_ignore_ascii_case("FROM"));
-        self.optional_alias(this, bare)
+        let node: Expression = self.optional_alias(this, bare)?;
+        Ok(self.spanned(first, node))
     }
 
     /// `ParserAlias` after `this`, when one follows.

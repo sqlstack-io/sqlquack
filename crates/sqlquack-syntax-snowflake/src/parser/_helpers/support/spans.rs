@@ -7,8 +7,16 @@ use sqlquack_syntax::traversal::types::AstNode;
 
 impl Parser {
     /// SQLQuack: `expr` with the range from token `start` to the last consumed token, when located.
-    pub(crate) fn spanned(&self, start: usize, mut expr: Expression) -> Expression {
-        if !self.config.record_node_spans || self.current <= start {
+    pub(crate) fn spanned(&self, start: usize, expr: Expression) -> Expression {
+        if !self.config.record_node_spans {
+            return expr;
+        }
+        self.item_spanned(start, expr)
+    }
+
+    /// SQLQuack: a select item with its range in every mode, which lineage reports as its output's range.
+    pub(crate) fn item_spanned(&self, start: usize, mut expr: Expression) -> Expression {
+        if self.current <= start {
             return expr;
         }
         if let (Some(first), Some(last)) =

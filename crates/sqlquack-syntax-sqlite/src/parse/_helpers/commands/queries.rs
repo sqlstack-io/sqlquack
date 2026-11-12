@@ -221,15 +221,16 @@ impl Parser<'_> {
 
     /// `selcollist`'s item: `*`, `nm.*`, or an expression and its alias.
     fn result_column(&mut self) -> Parsing<Expression> {
+        let first: usize = self.at;
         if self.eat_op("STAR") {
-            return Ok(Expression::Star(Box::new(star(None, None))));
+            return Ok(self.spanned(first, Expression::Star(Box::new(star(None, None)))));
         }
         if self.is(is_nm) && self.op_at(1, "DOT") && self.op_at(2, "STAR") {
             let table: Identifier = self.name(is_nm)?;
             self.at += 2;
-            return Ok(Expression::Star(Box::new(star(Some(table), None))));
+            let node = Expression::Star(Box::new(star(Some(table), None)));
+            return Ok(self.spanned(first, node));
         }
-        let first: usize = self.at;
         let this: Expression = self.expression()?;
         let explicit: bool = self.eat_kw("AS");
         let name: Option<Identifier> = match explicit {

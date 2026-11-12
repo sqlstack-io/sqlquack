@@ -19,8 +19,12 @@ use sqlquack_syntax::tokens::models::{SourceSpan, Span};
 
 use crate::parse::_helpers::tree::cursor::Parser;
 
+/// A column reference, its range running from any qualifier through its name.
 pub(crate) fn column(table: Option<Identifier>, name: Identifier) -> Expression {
-    let span = name.span;
+    let span = match (table.as_ref().and_then(|table| table.span), name.span) {
+        (Some(table), Some(name)) => Some(table.through(name)),
+        (_, name) => name,
+    };
     Expression::Column(Box::new(Column {
         name,
         table,
