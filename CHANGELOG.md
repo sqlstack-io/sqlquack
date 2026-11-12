@@ -1,5 +1,66 @@
 # Changelog
 
+## [0.6.0](https://github.com/sqlstack-io/sqlquack/compare/v0.5.1...v0.6.0) (2026-11-12)
+
+
+### Features
+
+* **convert:** convert TOP and FETCH FIRST to LIMIT ([b593f7e](https://github.com/sqlstack-io/sqlquack/commit/b593f7e12da474961e85cbf24941d6832ca11eaa))
+* **convert:** lay out DuckDB output and helper macros with the formatter ([be7425b](https://github.com/sqlstack-io/sqlquack/commit/be7425bf45ea9a23c6b4e51bcf9a6999fe0e1be2))
+* **convert:** run JOIN without ON as a cross join and name more unaliased columns ([8f02569](https://github.com/sqlstack-io/sqlquack/commit/8f025691b82e42d83ec395c0c6cfe25c18b5335f))
+* **format:** break wide window specifications and keep one-line clauses on their header ([61e7a4e](https://github.com/sqlstack-io/sqlquack/commit/61e7a4e49e9f44f2381579b72adf2a3df4e1f233))
+* **format:** give parenthesised groups that span lines their own lines ([c8e14ba](https://github.com/sqlstack-io/sqlquack/commit/c8e14ba9dfc40d6848d3f7fa4566d66b058607ff))
+* **format:** keep token case on request and lay out converted DuckDB SQL ([4637fde](https://github.com/sqlstack-io/sqlquack/commit/4637fdeec6f8fb77d8f8323643f816f929a6eecf))
+* **semantics:** give each output column its expression's byte range ([f09d2e9](https://github.com/sqlstack-io/sqlquack/commit/f09d2e9027c161771bf744f3f1aee8a5ace4a1cc))
+* **syntax:** accept Snowflake's scoped and volatile temporary tables ([8d5ba02](https://github.com/sqlstack-io/sqlquack/commit/8d5ba02a0b57911af27bb41e74eddb9d0e432beb))
+* **syntax:** build Snowflake dynamic iceberg and interactive tables as nodes ([ad40a47](https://github.com/sqlstack-io/sqlquack/commit/ad40a47873dda561493ab5f3a0d8c087deea3257))
+* **syntax:** build Snowflake table and view governance actions as nodes ([b98b9a0](https://github.com/sqlstack-io/sqlquack/commit/b98b9a0c98617c1b691356aedaea987a88c76e9d))
+* **syntax:** build Snowflake tables with policies as structured nodes ([168431e](https://github.com/sqlstack-io/sqlquack/commit/168431e272e673a6397140b6be1d7d4502d65538))
+* **syntax:** check Snowflake DCM table definitions against the table grammar ([d88fa2f](https://github.com/sqlstack-io/sqlquack/commit/d88fa2f55e9fdd7efd056b6552225b9b23697dca))
+* **syntax:** check Snowflake event, event routing and online feature tables ([2e21de6](https://github.com/sqlstack-io/sqlquack/commit/2e21de6171ce763638cbcda8292061258da4cb89))
+* **syntax:** check Snowflake hybrid table indexes ([38ae49e](https://github.com/sqlstack-io/sqlquack/commit/38ae49e3532c5dad7a6e391a524998b4a3be990c))
+* **syntax:** check Snowflake iceberg and dynamic tables against their grammar ([498be3a](https://github.com/sqlstack-io/sqlquack/commit/498be3acd47f2fd1361567b88a05176bfa9e9c15))
+* **syntax:** check Snowflake table search optimization targets ([5ac49ea](https://github.com/sqlstack-io/sqlquack/commit/5ac49eafc5b99d9882839a3d0911bcadc7756345))
+* **syntax:** parse Snowflake external tables into structured nodes ([39207dd](https://github.com/sqlstack-io/sqlquack/commit/39207dd93c0483f0889d27d2d3e44ace200d8797))
+* **syntax:** parse Snowflake iceberg column type and write default actions ([b2725c8](https://github.com/sqlstack-io/sqlquack/commit/b2725c8b2e96f6c71ddb078740dd20eabade6edb))
+* **syntax:** parse Snowflake iceberg partition evolution ([1872de0](https://github.com/sqlstack-io/sqlquack/commit/1872de03bd426a3881b8f9fe3ca12ff89f306f64))
+* **syntax:** parse Snowflake table reclustering and iceberg refresh ([7d42d8b](https://github.com/sqlstack-io/sqlquack/commit/7d42d8b0e88f4406b910db37fae20d0a3346926b))
+* **syntax:** parse Snowflake's key and unnamed constraint drops and constraint renames ([066cf8d](https://github.com/sqlstack-io/sqlquack/commit/066cf8d85ee6be57f75c623ed904d82c807895e2))
+* **syntax:** read several Snowflake table properties after one SET ([d3523c7](https://github.com/sqlstack-io/sqlquack/commit/d3523c7343bd74429d88f817eb551e30959f3a9d))
+* **syntax:** read Snowflake ALTER TABLE ADD with the table grammar ([5939f22](https://github.com/sqlstack-io/sqlquack/commit/5939f22862a04d69a12bfdaa60757b95a39647f1))
+
+
+### Bug Fixes
+
+* **check:** refuse == as Snowflake does, with a new SQ0206 ([86e200b](https://github.com/sqlstack-io/sqlquack/commit/86e200b05f8769ae352a4c77e970f97c762705f2))
+* **diagnostics:** keep node names and guessed aliases out of the unaliased column message ([cd64a37](https://github.com/sqlstack-io/sqlquack/commit/cd64a37109271ac06a842cc426ea190a8b89cced))
+* **format:** keep a sign touching a modulo, which DuckDB reads as one operator ([50734ca](https://github.com/sqlstack-io/sqlquack/commit/50734ca952e0864bc16b81492372438312b32557))
+* **format:** keep the extra indent of a tighter operator under a looser one ([bab166c](https://github.com/sqlstack-io/sqlquack/commit/bab166c50a5b714bb485f051b500f9a96cec752b))
+* **semantics:** leave every set operation's outputs without a range ([23c1099](https://github.com/sqlstack-io/sqlquack/commit/23c10991e3994b0f612f5828664f58b0ddf06580))
+* **syntax-receipts:** count a run-database packet's repeated template once ([ee638f5](https://github.com/sqlstack-io/sqlquack/commit/ee638f5a8f02ada8f4634293ffe13879447f764d))
+* **syntax-receipts:** document the phase rules in order and keep timeouts refused ([c3a5599](https://github.com/sqlstack-io/sqlquack/commit/c3a5599d6aeb63a0b5dafba320cccb8eca81c9cd))
+* **syntax-receipts:** import execute runs that have no run database ([01ace82](https://github.com/sqlstack-io/sqlquack/commit/01ace826bc50e5d04b5ab967cac3d74a106fa59b))
+* **syntax-receipts:** place replication not enabled for the account as semantic ([e55255a](https://github.com/sqlstack-io/sqlquack/commit/e55255a01ce4c0b1c700244d33dec7a343cdd6ce))
+* **syntax-receipts:** place reviewed errors whose message shows Snowflake parsed the statement ([bcc7178](https://github.com/sqlstack-io/sqlquack/commit/bcc71789d71f4c6a964efe674879ffe3d2b7daec))
+* **syntax-receipts:** refuse a record whose connector failed before Snowflake answered ([9b67a8b](https://github.com/sqlstack-io/sqlquack/commit/9b67a8b2b7baf92896fb32fb2b039c5fe4596b19))
+* **syntax-receipts:** refuse a run-database packet carrying another run's template ([722d8b8](https://github.com/sqlstack-io/sqlquack/commit/722d8b88862d75b5e43b9c46863b6acdb2479482))
+* **syntax:** keep the parentheses of a set operation that starts a longer one ([20078f8](https://github.com/sqlstack-io/sqlquack/commit/20078f89f22f7e9dacb31ecff31b86501b5780b2))
+* **syntax:** keep the parse in parse_strict so the instruction guard counts it ([4f5cdfa](https://github.com/sqlstack-io/sqlquack/commit/4f5cdfa75f77b224316daaf88009ce9dbce6b25f))
+* **syntax:** keep the source range of Snowflake table column names ([451032f](https://github.com/sqlstack-io/sqlquack/commit/451032f051834263da892d1234b2b625ad47537d))
+* **syntax:** name what is missing when a statement ends where an expression belongs ([b802ca9](https://github.com/sqlstack-io/sqlquack/commit/b802ca9c327ce3aebe6ba8d39c54e3d1b0a38009))
+* **syntax:** parse keyword lambda parameters and nested parenthesised set operations ([9e2b9b6](https://github.com/sqlstack-io/sqlquack/commit/9e2b9b6ee95541ce7f0da29c31cf7c5ca1b9c996))
+* **syntax:** parse Snowflake timestamp conversions with no arguments ([369de78](https://github.com/sqlstack-io/sqlquack/commit/369de78e41bf5757c5b04ecc5f43112f4242583c))
+* **syntax:** point a dangling operator before GROUP BY or ORDER BY at the clause ([9d34f79](https://github.com/sqlstack-io/sqlquack/commit/9d34f7988293bfa224463f7cce4e64a666e26188))
+* **syntax:** read every secondary role of a Snowflake dynamic table ([b18355d](https://github.com/sqlstack-io/sqlquack/commit/b18355d94d6fb460de7d9424b7ce896726783d08))
+* **syntax:** record a star's source range in a located parse ([d91f489](https://github.com/sqlstack-io/sqlquack/commit/d91f4892347fe0eca8e953c913c79a3788308406))
+* **syntax:** refuse misplaced Snowflake table actions ([fb4e866](https://github.com/sqlstack-io/sqlquack/commit/fb4e8668aefcf201ab7e836d04cc03c1ff423d9a))
+* **syntax:** require a value for every Snowflake session setting ([32ddec1](https://github.com/sqlstack-io/sqlquack/commit/32ddec120cd45fe0b7d8dee9cf9bf2500e2004de))
+
+
+### Performance Improvements
+
+* **semantics:** map output ranges in ASCII SQL without scanning it ([8a2ea92](https://github.com/sqlstack-io/sqlquack/commit/8a2ea92ee9976d262ea52ee9f815ef3ee9c59e34))
+
 ## [0.5.1](https://github.com/sqlstack-io/sqlquack/compare/v0.5.0...v0.5.1) (2026-11-11)
 
 
