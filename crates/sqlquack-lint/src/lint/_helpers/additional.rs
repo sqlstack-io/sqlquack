@@ -1260,7 +1260,7 @@ fn simple_projection(tokens: &[Token], item: &[usize]) -> bool {
     let wildcard = trimmed.first().is_some_and(|&index| {
         tokens[index].token_type == TokenType::Star
             || (trimmed.len() >= QUALIFIED_REFERENCE_LENGTH
-                && is_identifier(&tokens[index])
+                && is_relation_name(&tokens[index])
                 && tokens[trimmed[1]].token_type == TokenType::Dot
                 && tokens[trimmed[2]].token_type == TokenType::Star)
     });
@@ -1269,7 +1269,7 @@ fn simple_projection(tokens: &[Token], item: &[usize]) -> bool {
             && (is_bare_column_token(&tokens[trimmed[0]])
                 || tokens[trimmed[0]].token_type == TokenType::Star)
         || trimmed.len() == QUALIFIED_REFERENCE_LENGTH
-            && is_identifier(&tokens[trimmed[0]])
+            && is_relation_name(&tokens[trimmed[0]])
             && tokens[trimmed[1]].token_type == TokenType::Dot
             && (is_bare_column_token(&tokens[trimmed[2]])
                 || tokens[trimmed[2]].token_type == TokenType::Star)
@@ -1497,7 +1497,7 @@ fn relation_alias_after_join(
     relation[..relation_end]
         .iter()
         .rev()
-        .find(|&&index| is_identifier(&tokens[index]))
+        .find(|&&index| is_relation_name(&tokens[index]))
         .map(|&index| tokens[index].text.to_ascii_lowercase())
 }
 
@@ -1883,4 +1883,9 @@ fn is_identifier(token: &Token) -> bool {
         token.token_type,
         TokenType::Identifier | TokenType::QuotedIdentifier | TokenType::Var
     )
+}
+
+/// Whether the token can name a relation as its alias or qualifier: an identifier, or FIRST or LAST, which Snowflake reads as a join alias.
+fn is_relation_name(token: &Token) -> bool {
+    is_identifier(token) || matches!(token.token_type, TokenType::First | TokenType::Last)
 }

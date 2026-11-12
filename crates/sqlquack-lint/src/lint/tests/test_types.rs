@@ -171,3 +171,10 @@ pub(crate) struct UnusedCteTestCase {
     pub sql: &'static str,
     pub expected_unused: &'static [&'static str],
 }
+
+pub(crate) struct KeywordAliasTestCase {
+    pub description: &'static str,
+    pub sql: &'static str,
+    pub rule: &'static str,
+    pub expected_anchor: Option<&'static str>,
+}
