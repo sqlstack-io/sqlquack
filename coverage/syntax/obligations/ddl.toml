@@ -181977,22 +181977,10 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o002"
-kind = "option_present"
-required = true
-target = "[ OR REPLACE ]"
-
-[[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o003"
 kind = "option_absent"
 required = true
 target = "[ OR REPLACE ]"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o004"
-kind = "option_present"
-required = true
-target = "[ IF NOT EXISTS ]"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o005"
@@ -182148,12 +182136,6 @@ target = "<timestamp_name>"
 note = "a string literal in place of <timestamp_name>"
 
 [[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o027"
-kind = "option_present"
-required = true
-target = "[ BASELINE = <baseline_name> ]"
-
-[[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o028"
 kind = "option_absent"
 required = true
@@ -182165,13 +182147,6 @@ kind = "required_operand_missing"
 required = true
 target = "<baseline_name> in [ BASELINE = <baseline_name> ]"
 note = "omit <baseline_name>"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o030"
-kind = "operand_type_class"
-required = true
-target = "<baseline_name> in [ BASELINE = <baseline_name> ]"
-note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o031"
@@ -182321,12 +182296,6 @@ target = "<custom_metric_column_name_array> in [ CUSTOM_METRIC_COLUMNS = <custom
 note = "a string literal in place of <custom_metric_column_name_array>"
 
 [[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o067"
-kind = "option_present"
-required = true
-target = "[ COMMENT = '<string_literal>' ]"
-
-[[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o068"
 kind = "option_absent"
 required = true
@@ -182338,13 +182307,6 @@ kind = "required_operand_missing"
 required = true
 target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
 note = "omit '<string_literal>'"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o070"
-kind = "operand_type_class"
-required = true
-target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
-note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o071"
@@ -182430,12 +182392,6 @@ id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o084"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TIMESTAMP_COLUMN"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o085"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o086"
@@ -182651,6 +182607,61 @@ required = true
 target = "<custom_metric_column_name_array> in [ CUSTOM_METRIC_COLUMNS = <custom_metric_column_name_array> ]"
 anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
 note = "CUSTOM_METRIC_COLUMNS as a two-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o128"
+kind = "option_present"
+required = true
+target = "[ OR REPLACE ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "OR REPLACE on its own"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o129"
+kind = "option_present"
+required = true
+target = "[ IF NOT EXISTS ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "IF NOT EXISTS on its own"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o130"
+kind = "option_present"
+required = true
+target = "[ BASELINE = <baseline_name> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "BASELINE on its own"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o131"
+kind = "operand_type_class"
+required = true
+target = "<baseline_name> in [ BASELINE = <baseline_name> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "a table name as BASELINE"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o132"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "COMMENT on its own"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o133"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "a string as COMMENT"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o134"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+note = "every option together, each *_COLUMNS value an array with its own column"
 
 [[obligation]]
 id = "sf.ddl.create-model.internalstage.o001"
