@@ -2,7 +2,7 @@
 
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::_helpers::ddl::snowflake_create_table::SnowflakeTableKind;
-use crate::parser::constants::{EVENT_TABLE, SNOWFLAKE_DYNAMIC_TABLE_REQUIRED, TABLE_KEYWORD};
+use crate::parser::constants::{EVENT_TABLE, TABLE_KEYWORD};
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::operators::models::BinaryOp;
@@ -38,7 +38,8 @@ impl Parser {
         } else {
             return Ok(None);
         };
-        let if_not_exists = kind == EVENT_TABLE && self.check(TokenType::If);
+        let if_not_exists =
+            (kind == EVENT_TABLE || kind == "ONLINE FEATURE TABLE") && self.check(TokenType::If);
         if if_not_exists {
             if !self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]) {
                 return Err(self.parse_error("Expected IF NOT EXISTS"));
@@ -194,7 +195,7 @@ impl Parser {
         })))
     }
 
-    /// `PRIMARY KEY ( <columns> ) <property> ... FROM <source>`: the key, the properties with TARGET_LAG and WAREHOUSE required, and the source.
+    /// `PRIMARY KEY ( <columns> ) <property> ... FROM <source>`: the key, the properties with WAREHOUSE required, and the source.
     fn parse_online_feature_table(
         &mut self,
     ) -> Result<(Expression, Vec<ObjectProperty>, Expression)> {
@@ -212,11 +213,8 @@ impl Parser {
             keys.extend(found_key);
             properties.extend(found);
         }
-        let missing = SNOWFLAKE_DYNAMIC_TABLE_REQUIRED
-            .iter()
-            .any(|required| !keys.contains(&required.to_string()));
-        if missing {
-            return Err(self.parse_error("Expected TARGET_LAG and WAREHOUSE"));
+        if !keys.iter().any(|key| key == "WAREHOUSE") {
+            return Err(self.parse_error("Expected WAREHOUSE"));
         }
         self.expect_token(TokenType::From)?;
         let source = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
