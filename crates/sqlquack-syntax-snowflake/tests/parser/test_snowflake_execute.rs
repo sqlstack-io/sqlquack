@@ -10,6 +10,7 @@ fn given_a_snowflake_execute_of_a_job_notebook_dbt_or_code_bundle_when_parsing_t
 ) {
     let test_cases = [
         AcceptanceTestCase { description: "a job service runs a staged template with USING", sql: "EXECUTE JOB SERVICE IN COMPUTE POOL p1 FROM @s1 SPECIFICATION_TEMPLATE_FILE = m1 USING ( v1 => 1 ) NAME = 'v1' REPLICAS = 'x'", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "a job service takes its options before FROM (recorded errno 2003, after parsing)", sql: "EXECUTE JOB SERVICE IN COMPUTE POOL v1 NAME = v1 ASYNC = TRUE FROM @s1 SPECIFICATION_FILE = 'm' ;", dialect: Dialect::Snowflake, expected_accepted: true },
         AcceptanceTestCase { description: "a job service template needs USING arguments", sql: "EXECUTE JOB SERVICE IN COMPUTE POOL p1 FROM @s1 SPECIFICATION_TEMPLATE_FILE = 'm' USING ( )", dialect: Dialect::Snowflake, expected_accepted: false },
         AcceptanceTestCase { description: "a job service name has no empty part", sql: "EXECUTE JOB SERVICE IN COMPUTE POOL p1 FROM @s1 SPECIFICATION_FILE = 'm' NAME = v1 . . v1", dialect: Dialect::Snowflake, expected_accepted: false },
         AcceptanceTestCase { description: "a job service takes inline specification text", sql: "EXECUTE JOB SERVICE IN COMPUTE POOL p1 FROM SPECIFICATION $$ m $$", dialect: Dialect::Snowflake, expected_accepted: true },

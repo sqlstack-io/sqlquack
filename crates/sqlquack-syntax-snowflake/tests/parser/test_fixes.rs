@@ -1238,6 +1238,18 @@ fn given_statements_from_the_parser_only_disagreements_when_parsing_snowflake_th
             expected_accepted: true,
         },
         AcceptanceTestCase {
+            description: "a bare FIRST is the joined table's alias (recorded errno 2003, after parsing)",
+            sql: "SELECT * FROM t1 JOIN t2 FIRST ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "FIRST ( alias ) after an aliased table with no ON or USING (recorded errno 1003)",
+            sql: "SELECT * FROM t1 INNER DIRECTED JOIN t2 AS x FIRST ( v1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
             description: "FIRST ( alias ) refuses a reserved keyword (recorded errno 1003)",
             sql: "SELECT * FROM t1 JOIN t2 FIRST ( SELECT ) ;",
             dialect: Dialect::Snowflake,

@@ -257,6 +257,10 @@ impl Parser {
                     | TokenType::Match
                     | TokenType::Final
             ),
+            Some(sqlquack_syntax::tokens::models::DialectType::Snowflake) => {
+                matches!(self.peek().token_type, TokenType::First | TokenType::Last)
+                    && !self.check_next(TokenType::LParen)
+            }
 
             _ => false,
         };
