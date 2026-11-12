@@ -344,13 +344,26 @@ jobs:
           "${python[@]}" -c 'import sqlquack
           result = sqlquack.convert(sql="SELECT 1 AS total", options=sqlquack.ConvertOptions(no_config=True))
           assert result.sql == "SELECT CAST(1 AS DECIMAL(1, 0)) AS \"TOTAL\"", result.sql'
-      - uses: actions/upload-artifact@v4
+      # A transient network error in the upload would otherwise cost the whole build, so it retries
+      # once, replacing any artifact the failed attempt left behind.
+      - id: upload-wheel
+        uses: actions/upload-artifact@v4
         if: inputs.upload
+        continue-on-error: true
         with:
           name: dist-wheel-${{ matrix.platform.name }}
           path: dist
           if-no-files-found: error
           retention-days: ${{ inputs.retention-days }}
+      - name: Retry the wheel upload
+        uses: actions/upload-artifact@v4
+        if: inputs.upload && steps.upload-wheel.outcome == 'failure'
+        with:
+          name: dist-wheel-${{ matrix.platform.name }}
+          path: dist
+          if-no-files-found: error
+          retention-days: ${{ inputs.retention-days }}
+          overwrite: true
 
   sdist:
     name: Build sdists
@@ -391,13 +404,26 @@ jobs:
               exit 1
             fi
           done
-      - uses: actions/upload-artifact@v4
+      # A transient network error in the upload would otherwise cost the whole build, so it retries
+      # once, replacing any artifact the failed attempt left behind.
+      - id: upload-sdist
+        uses: actions/upload-artifact@v4
         if: inputs.upload
+        continue-on-error: true
         with:
           name: dist-sdist
           path: dist
           if-no-files-found: error
           retention-days: ${{ inputs.retention-days }}
+      - name: Retry the sdist upload
+        uses: actions/upload-artifact@v4
+        if: inputs.upload && steps.upload-sdist.outcome == 'failure'
+        with:
+          name: dist-sdist
+          path: dist
+          if-no-files-found: error
+          retention-days: ${{ inputs.retention-days }}
+          overwrite: true
 
   manifest:
     name: Record distribution source
@@ -416,9 +442,22 @@ jobs:
             '{sha: $sha, tree: $tree, run_id: $run_id}' \
             > "${RUNNER_TEMP}/release-manifest.json"
           cat "${RUNNER_TEMP}/release-manifest.json"
-      - uses: actions/upload-artifact@v4
+      # A transient network error in the upload would otherwise cost the whole build, so it retries
+      # once, replacing any artifact the failed attempt left behind.
+      - id: upload-manifest
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
           name: release-manifest
           path: ${{ runner.temp }}/release-manifest.json
           if-no-files-found: error
           retention-days: ${{ inputs.retention-days }}
+      - name: Retry the manifest upload
+        uses: actions/upload-artifact@v4
+        if: steps.upload-manifest.outcome == 'failure'
+        with:
+          name: release-manifest
+          path: ${{ runner.temp }}/release-manifest.json
+          if-no-files-found: error
+          retention-days: ${{ inputs.retention-days }}
+          overwrite: true
