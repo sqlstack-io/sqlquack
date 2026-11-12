@@ -1,7 +1,9 @@
 //! Snowflake CREATE for kinds defined only by `<property> = <value>` lists: users, policies, integrations and groups.
 
 use crate::parser::_helpers::ddl::snowflake_alter::property;
-use crate::parser::constants::{SNOWFLAKE_BODY_POLICY_KINDS, SNOWFLAKE_PROPERTY_KINDS};
+use crate::parser::constants::{
+    SNOWFLAKE_BODY_POLICY_KINDS, SNOWFLAKE_KIND_WORDS_ALONE, SNOWFLAKE_PROPERTY_KINDS,
+};
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::operators::models::BinaryOp;
@@ -178,6 +180,9 @@ impl Parser {
             .iter()
             .chain(SNOWFLAKE_BODY_POLICY_KINDS)
             .filter(|kind| kind.contains(' ') && !kind.starts_with("APPLICATION "));
+        if SNOWFLAKE_KIND_WORDS_ALONE.contains(&self.peek().text.to_ascii_uppercase().as_str()) {
+            return false;
+        }
         let mut words = 0;
         while self.tokens.get(self.current + words).is_some_and(|token| {
             matches!(token.token_type, TokenType::Var | TokenType::Identifier)
@@ -212,7 +217,7 @@ impl Parser {
         })
     }
 
-    /// One item: TAG ( <name> = <value> , ... ), TRIGGERS ON <n> PERCENT DO <action> ..., AS <body>, IGNORE EDITION CHECK, or <property> = <value>.
+    /// One item: TAG ( <name> = <value> , ... ), TRIGGERS ON <n> PERCENT DO <action> ..., AS <body>, IGNORE EDITION CHECK, FOR APPLICATION <name>, or <property> = <value>.
     pub(super) fn parse_create_property_item(&mut self) -> Result<Vec<ObjectProperty>> {
         if self.check_identifier("TAG") && self.check_next(TokenType::LParen) {
             self.skip();
@@ -270,6 +275,14 @@ impl Parser {
         }
         if self.match_text_seq(&["IGNORE", "EDITION", "CHECK"]) {
             return Ok(vec![property("IGNORE EDITION CHECK", None, None)]);
+        }
+        if self.match_text_seq(&["FOR", "APPLICATION"]) {
+            let application = self.parse_simple_name()?;
+            return Ok(vec![property(
+                "FOR APPLICATION",
+                None,
+                Some(Expression::Identifier(application)),
+            )]);
         }
         let name = self.parse_simple_name()?;
         self.expect_token(TokenType::Eq)?;
