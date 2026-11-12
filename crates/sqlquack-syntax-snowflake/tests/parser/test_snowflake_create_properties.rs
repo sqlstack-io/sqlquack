@@ -426,7 +426,7 @@ fn given_a_snowflake_create_or_alter_kept_as_text_when_parsing_then_its_head_and
         },
         SnowflakeVerdictTestCase {
             description: "an unreserved operand word as the last part of a name",
-            sql: "CREATE SNAPSHOT SET v1 FOR TABLE s1.policy ;",
+            sql: "CREATE DATASET s1.policy ;",
             expected_kind: Some("raw"),
         },
         SnowflakeVerdictTestCase {

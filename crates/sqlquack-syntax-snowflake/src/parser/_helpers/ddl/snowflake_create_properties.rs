@@ -40,6 +40,9 @@ impl Parser {
         if let Some(view) = self.parse_snowflake_create_semantic_view(or_replace, or_alter)? {
             return Ok(Some(view));
         }
+        if let Some(set) = self.parse_snowflake_create_set(or_replace, or_alter)? {
+            return Ok(Some(set));
+        }
         if self.check(TokenType::Alter) || self.check(TokenType::String) {
             return Err(self.parse_error("Expected an object kind after CREATE"));
         }
