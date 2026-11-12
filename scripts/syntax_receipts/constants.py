@@ -7,6 +7,8 @@ PHASES: frozenset[str] = frozenset(
     {"accepted", "syntax_error", "semantic_error", "runtime_error", "unsupported_feature"}
 )
 SYNTAX_ERRNO: int = 1003
+PARSER_SYNTAX_ERRNO: int = 1002
+SYNTAX_MESSAGE_PREFIX: str = "syntax error"
 UNSUPPORTED_ERRNO: int = 2
 COMPILATION_PREFIX: str = "SQL compilation error"
 UNCAUGHT_PREFIX: str = "Uncaught exception of type"
