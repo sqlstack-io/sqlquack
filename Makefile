@@ -196,10 +196,14 @@ generate-syntax-cases:
 	uv run python -m scripts.build_syntax_cases $(SYNTAX_CASE_ARGS)
 
 # Fails when a Snowflake obligations, withdrawn or elisions file differs from what the builder writes.
-# Only the families whose inputs changed since EVIDENCE_BASE are rebuilt (every family when the
-# builder changed); with none changed the target prints that it skipped them all and passes.
+# Only the families whose inputs changed since SYNTAX_OBLIGATIONS_SINCE are rebuilt (every family
+# when the builder changed); with none changed the target prints that it skipped them all and
+# passes. An empty SYNTAX_OBLIGATIONS_SINCE checks every family, as CI's nightly run does.
+SYNTAX_OBLIGATIONS_SINCE ?= $(EVIDENCE_BASE)
+
 syntax-obligations:
-	uv run python -m scripts.build_syntax_obligations_snowflake --check --since $(EVIDENCE_BASE) $(SYNTAX_FAMILIES)
+	uv run python -m scripts.build_syntax_obligations_snowflake --check \
+	  $(if $(SYNTAX_OBLIGATIONS_SINCE),--since $(SYNTAX_OBLIGATIONS_SINCE)) $(SYNTAX_FAMILIES)
 
 # Fails when a syntax case, mark or arity file differs from what the committed receipts regenerate.
 syntax-cases:
