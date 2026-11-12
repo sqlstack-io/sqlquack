@@ -123,6 +123,3 @@ pub const DCM_POSITION: &str = " at position ";
 
 /// Snowflake's errno for a syntax error; with a parse position it is a refusal by the parser.
 pub const SYNTAX_ERRNO: i64 = 1003;
-
-/// Snowflake's errno 921, SQLSTATE 42601, reviewed as a syntax refusal.
-pub const SYNTAX_ERRNO_42601: i64 = 921;

@@ -84,7 +84,7 @@ pub enum Reason {
 pub enum SnowflakeSyntax {
     /// Every receipt stopped after parsing or succeeded, with an errno other than 1003.
     Parsed,
-    /// Every receipt is a syntax error: errno 1003 with a parse position, or errno 921.
+    /// Every receipt's recorded phase is a syntax error, whatever its errno.
     Refused,
 }
 
