@@ -36,7 +36,7 @@ impl Parser {
         Ok((Some(side.to_owned()), Some(alias)))
     }
 
-    /// The read-order clause after a join; with no ON, USING or MATCH_CONDITION (`conditionless`), Snowflake reads `FIRST ( x )` or `LAST ( x )` as the joined table's alias and column alias instead.
+    /// The read-order clause after a join; with no ON, USING or MATCH_CONDITION (`conditionless`), Snowflake reads `FIRST ( x )` or `LAST ( x )` as the joined table's alias and column alias instead, and refuses it after a table that already has an alias.
     fn parse_snowflake_join_read_order(
         &mut self,
         table: Expression,
@@ -61,6 +61,12 @@ impl Parser {
                 derived.alias = Some(alias);
                 derived.column_aliases = columns;
                 (Expression::Subquery(derived), None, None)
+            }
+            Expression::Table(_) | Expression::Subquery(_) => {
+                self.current = first_last_at;
+                return Err(self.parse_error(
+                    "Expected ON or USING before a read-order clause on an aliased table",
+                ));
             }
             other => (other, first_last, first_last_alias),
         })
