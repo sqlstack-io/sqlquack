@@ -66,11 +66,12 @@ def family_cases(
     setups: dict[tuple[str, str], list[str]],
     held: frozenset[str],
 ) -> tuple[list[Row], dict[str, set[str]], list[Row], set[str], set[str], set[str]]:
-    """Cases, outcomes, arity cases, extremes, documented observed SQL, and disputed forms."""
+    """Cases, outcomes, arity cases, extremes, documented SQL, disputed positive obligations."""
     numbered, trees, _, _, arity = family_obligations(root=root, family=family)
     by_sql: dict[str, tuple[str, Rendered, list[str]]] = {}
     expected: dict[str, set[str]] = {}
     documented: set[str] = set()
+    positives: set[tuple[str, str, str]] = set()
     disputed: set[str] = set()
     undisputed: set[str] = set()
     conflicts: list[str] = []
@@ -84,6 +85,8 @@ def family_cases(
                 (disputed if rendered.documented else undisputed).add(draft.form)
             if rendered.documented:
                 documented.add(rendered.sql)
+            if rendered.documented or rendered.intent == EXPECT_ACCEPT:
+                positives.add((draft.form, identifier, rendered.sql))
             form, earlier, cited = by_sql.setdefault(rendered.sql, (draft.form, rendered, []))
             if (earlier.expect, earlier.stage) != (rendered.expect, rendered.stage):
                 conflicts.append(
@@ -114,13 +117,17 @@ def family_cases(
             case[STAGE_KEY] = rendered.stage
         cases.append(case)
     scored: set[str] = {str(case["sql"]) for case in cases}
+    refused: set[str] = disputed - undisputed
+    refused_positives: set[tuple[str, str]] = {
+        (identifier, sql) for form, identifier, sql in positives if form in refused
+    }
     return (
         sorted(cases, key=lambda case: case["case_id"]),
         expected,
         _arity_cases(rows=arity, scored=scored, family=family, setups=setups, held=held),
         {identifier for identifier, draft in numbered if draft.kind == KIND_EXTREME},
-        documented,
-        disputed - undisputed,
+        documented | {sql for _, sql in refused_positives},
+        {identifier for identifier, _ in refused_positives},
     )
 
 
@@ -450,7 +457,7 @@ def settled_cases(  # noqa: PLR0913
     held: frozenset[str],
 ) -> tuple[list[Row], list[Row], list[Row]]:
     """The merged cases with their receipts' stages, unscored arity cases, case marks."""
-    generated, expected, arity, extremes, documented, disputed = family_cases(
+    generated, expected, arity, extremes, documented, disputed_positives = family_cases(
         root=root, evidence=evidence, family=family, setups=setups, held=held
     )
     cases, problems = merge_mapped(
@@ -458,12 +465,13 @@ def settled_cases(  # noqa: PLR0913
     )
     for problem in problems:
         print(f"mapped case left out: {problem}")
+    rendered: set[str] = {str(case["sql"]) for case in generated}
     settled: list[Row] = []
     marked: list[Row] = []
     for case in cases:
         extreme: bool = bool(extremes & set(case["obligations"]))
-        is_documented: bool = case["sql"] in documented or _cites_disputed_form(
-            obligations=case["obligations"], disputed=disputed
+        is_documented: bool = case["sql"] in documented or (
+            case["sql"] not in rendered and bool(disputed_positives & set(case["obligations"]))
         )
         by_receipts: bool = case["expect"] == EXPECT_OBSERVE and not extreme and not is_documented
         settled.append(
@@ -497,12 +505,6 @@ def settled_cases(  # noqa: PLR0913
                 }
             )
     return settled, arity, marked
-
-
-def _cites_disputed_form(*, obligations: list[str], disputed: set[str]) -> bool:
-    """Whether a case cites a form all of whose documented positives Snowflake refuses."""
-    forms: set[str] = {obligation.rsplit(".o", 1)[0] for obligation in obligations}
-    return bool(forms & disputed)
 
 
 def jsonl_text(rows: list[Row]) -> str:
