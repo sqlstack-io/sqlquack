@@ -14,6 +14,7 @@ from scripts.clutter_guard.constants import (
     CLASSES_NOT_COUNTED_IN_RECORD_DATA,
     CONTENT_PATTERNS,
     ENVIRONMENT_VARIABLE_PROSE_PATTERN,
+    PULL_REQUEST_TRIGGER_PATTERN,
     RECORD_DATA_FIELD_PATTERN,
     SECRET_PART_PAIRS,
     SECRET_PART_SEARCH_PATTERN,
@@ -23,6 +24,7 @@ from scripts.clutter_guard.constants import (
     SNIPPET_LIMIT,
     VARIABLE_NAME_CHARACTERS,
     VARIABLE_NAME_PATTERN,
+    WORKFLOW_SECRET_NAMES,
 )
 from scripts.clutter_guard.models import Finding
 
@@ -43,7 +45,11 @@ def text_findings(*, path: str, text: str) -> list[Finding]:
     spans: list[tuple[str, int, int]] = []
     for clutter_class, pattern in CONTENT_PATTERNS:
         spans.extend(_pattern_spans(text=text, clutter_class=clutter_class, pattern=pattern))
-    spans.extend((SECRET_VARIABLE_NAME, *span) for span in _secret_variables(text))
+    spans.extend(
+        (SECRET_VARIABLE_NAME, *span)
+        for span in _secret_variables(text)
+        if not _workflow_secret(path=path, name=text[span[0] : span[1]], text=text)
+    )
     found: dict[tuple[int, str], Finding] = {}
     line: int = 1
     counted_to: int = 0
@@ -122,6 +128,14 @@ def _is_secret_variable(*, text: str, start: int, end: int) -> bool:
             and re.match(AFTER_ASSIGNMENT_PATTERN, after) is not None
         )
         or re.search(ENVIRONMENT_VARIABLE_PROSE_PATTERN, text[line_start:line_end]) is not None
+    )
+
+
+def _workflow_secret(*, path: str, name: str, text: str) -> bool:
+    """Whether `name` is a secret only `path` may read, and `path` has no pull request trigger."""
+    return (
+        WORKFLOW_SECRET_NAMES.get(name) == path
+        and re.search(PULL_REQUEST_TRIGGER_PATTERN, text) is None
     )
 
 

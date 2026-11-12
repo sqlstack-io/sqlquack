@@ -134,6 +134,13 @@ BEFORE_LINE_START_ASSIGNMENT_PATTERN: str = r"^\s*(?:export\s+)?$"
 AFTER_ASSIGNMENT_PATTERN: str = r"^(?:=|\s*[?:+]=|:\s*[\"']?\$)"
 ENVIRONMENT_VARIABLE_PROSE_PATTERN: str = r"(?i)\benv(?:ironment)?[ _-]?var(?:iable)?s?\b"
 ALLOWED_SECRET_NAMES: frozenset[str] = frozenset({"GITHUB_TOKEN", "GH_TOKEN"})
+WORKFLOW_SECRET_NAMES: dict[str, str] = {
+    "CHIO_DELIVERY_PRIVATE_KEY": ".github/workflows/release-please.yml",
+}
+PULL_REQUEST_TRIGGER_PATTERN: str = (
+    r"(?m)^(?:on:\s*(?:\[[^\]\n]*\bpull_request|pull_request)"
+    r"|\s+(?:-\s+)?pull_request(?:_target)?\s*(?::|$))"
+)
 
 BINARY_PROBE_BYTES: int = 8192
 SNIPPET_CONTEXT: int = 30
