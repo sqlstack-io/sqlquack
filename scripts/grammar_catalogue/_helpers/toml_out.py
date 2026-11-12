@@ -28,8 +28,13 @@ def row_lines(*, table: str, row: Row) -> list[str]:
 
 def write_tables(*, path: Path, header: str, tables: list[tuple[str, list[Row]]]) -> None:
     """Write a header comment and the given arrays of tables."""
+    path.write_text(tables_text(header=header, tables=tables))
+
+
+def tables_text(*, header: str, tables: list[tuple[str, list[Row]]]) -> str:
+    """A header comment and the given arrays of tables, as write_tables writes them."""
     lines: list[str] = [header.rstrip(), ""]
     for table, rows in tables:
         for row in rows:
             lines += row_lines(table=table, row=row)
-    path.write_text("\n".join(lines))
+    return "\n".join(lines)

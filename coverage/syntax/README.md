@@ -39,7 +39,13 @@ Families: `query`, `dml`, `ddl`, `transaction_session`, `security_admin`, `utili
 ```sh
 python -m scripts.fetch_syntax_docs_snowflake CACHE CACHE/idx/*      # private cache, never committed
 python -m scripts.build_syntax_catalogue_snowflake --cache CACHE --out coverage/syntax
+python -m scripts.build_syntax_obligations_snowflake ddl query  # obligations, withdrawn, elisions
 ```
+
+Rebuild a family's obligations whenever its catalogue, its rows in `limits.toml` or the builder
+changes. `make syntax-obligations`, part of `make check-ci`, fails when a committed obligations,
+withdrawn or elisions file differs from what the builder writes; it rebuilds only the families
+whose inputs or generated files changed since `EVIDENCE_BASE`, and passes when none did.
 
 Pages with no Markdown export (the per-category command hubs) are fetched as HTML and catalogue
 no form. A rebuild keeps every existing id whose (page, grammar) is unchanged. A form whose
