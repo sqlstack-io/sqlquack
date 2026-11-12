@@ -1196,6 +1196,7 @@ impl Parser {
         or_replace: bool,
         temporary: bool,
     ) -> Result<Expression> {
+        self.check_opaque_statement(true)?;
         self.skip();
         let start = self.current;
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
@@ -1219,6 +1220,7 @@ impl Parser {
 
     /// Parse CREATE TAG statement (Snowflake)
     pub(crate) fn parse_create_tag(&mut self, or_replace: bool) -> Result<Expression> {
+        self.check_opaque_statement(true)?;
         self.skip();
         let start = self.current;
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
@@ -1237,6 +1239,7 @@ impl Parser {
 
     /// Parse CREATE STREAM statement (Snowflake)
     pub(crate) fn parse_create_stream(&mut self, _or_replace: bool) -> Result<Expression> {
+        self.check_opaque_statement(true)?;
         self.skip();
         let start = self.current;
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
@@ -1351,6 +1354,7 @@ impl Parser {
         or_replace: bool,
         temporary: bool,
     ) -> Result<Expression> {
+        self.check_opaque_statement(true)?;
         self.skip();
         self.skip();
         let start = self.current;

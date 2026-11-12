@@ -277,3 +277,143 @@ fn given_snowflake_class_instance_commands_when_parsing_then_their_grammar_is_ch
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_create_or_alter_kept_as_text_when_parsing_then_its_head_and_option_lists_are_checked(
+) {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a warehouse named IF before its action (recorded OK)",
+            sql: "ALTER WAREHOUSE IF SUSPEND ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "RESUME IF SUSPENDED after IF EXISTS (recorded OK)",
+            sql: "ALTER WAREHOUSE IF EXISTS v1 RESUME IF SUSPENDED ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "the current warehouse with no name (recorded OK)",
+            sql: "ALTER WAREHOUSE ABORT ALL QUERIES ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "START, a reserved keyword, as the action (recorded OK)",
+            sql: "ALTER OPENFLOW CONNECTOR v1 START ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved keyword written against a stage path (recorded OK)",
+            sql: "CREATE MODEL v1 FROM @%SELECT ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a Postgres instance renamed without TO (recorded OK)",
+            sql: "ALTER POSTGRES INSTANCE v1 RENAME v1 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a property before the body (recorded OK)",
+            sql: "CREATE PIPE v1 INTEGRATION = m1 AS COPY INTO t1 FROM @s1 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a property with no value (recorded errno 1003)",
+            sql: "CREATE WAREHOUSE v1 COMMENT = ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a property with no value on CREATE TAG (recorded errno 1003)",
+            sql: "CREATE TAG v1 COMMENT = ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unclosed tag list (recorded errno 1003)",
+            sql: "CREATE COMPUTE POOL v1 MIN_NODES = 1 MAX_NODES = 1 INSTANCE_FAMILY = v1 TAG ( v1 = 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string as a tag name (recorded errno 1003)",
+            sql: "CREATE ALERT v1 FROM TEMPLATE v1 TAG ( 'v1' = 'm' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "IF without EXISTS before a name (recorded errno 1003)",
+            sql: "ALTER OPENFLOW RUNTIME IF v1 RESUME ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "IF EXISTS on CREATE (recorded errno 1003)",
+            sql: "CREATE COMPUTE POOL IF EXISTS v1 MIN_NODES = 1 MAX_NODES = 1 INSTANCE_FAMILY = v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an action word taken as the name, with no action after it (recorded errno 1003)",
+            sql: "ALTER POSTGRES INSTANCE SUSPEND ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a word that is not an action after the name (recorded errno 1003)",
+            sql: "ALTER WAREHOUSE v1 TAG v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "RENAME without TO (recorded errno 1003)",
+            sql: "ALTER WAREHOUSE v1 RENAME v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "AS with no body (recorded errno 1003)",
+            sql: "CREATE OR ALTER PIPE v1 AS ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a body where a value belongs (recorded errno 1003)",
+            sql: "CREATE ALERT v1 COMMENT = IF ( EXISTS ( SELECT 1 ) ) THEN SELECT 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved keyword as a value (recorded errno 1003)",
+            sql: "CREATE OR ALTER WAREHOUSE v1 RESOURCE_MONITOR = SELECT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved keyword as a list item (recorded errno 1003)",
+            sql: "ALTER WAREHOUSE v1 ADD TABLES ( SELECT ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved keyword as the last name (recorded errno 1003)",
+            sql: "CREATE SNAPSHOT SET v1 FOR SCHEMA SELECT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a reserved keyword as a property name (recorded errno 1003)",
+            sql: "ALTER OPENFLOW DATA PLANE INTEGRATION v1 SET = 'd1.s1.t1' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a value assigned a value (recorded errno 1003)",
+            sql: "CREATE EXTERNAL VOLUME v1 STORAGE_LOCATIONS = ( ( NAME = 'm' = 'GCS' STORAGE_BASE_URL = 'gcs://b1/p1/' ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a kind missing its second word (recorded errno 1003)",
+            sql: "ALTER OPENFLOW v1 SUSPEND ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a kind word with no operand at the end (recorded errno 1003)",
+            sql: "CREATE BACKUP SET v1 FOR TABLE ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

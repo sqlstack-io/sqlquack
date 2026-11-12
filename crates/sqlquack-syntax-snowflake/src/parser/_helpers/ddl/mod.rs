@@ -29,6 +29,7 @@ pub(crate) mod snowflake_event_tables;
 pub(crate) mod snowflake_execute_jobs;
 pub(crate) mod snowflake_external_table;
 pub(crate) mod snowflake_grant;
+pub(crate) mod snowflake_opaque;
 pub(crate) mod snowflake_query_tables;
 pub(crate) mod snowflake_routines;
 pub(crate) mod snowflake_semantic_view;

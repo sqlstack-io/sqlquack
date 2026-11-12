@@ -1793,6 +1793,7 @@ impl Parser {
         if self.check(TokenType::View) {
             self.parse_alter_view_with_modifiers(view_algorithm, view_definer, view_sql_security)
         } else {
+            self.check_opaque_statement(false)?;
             let start = self.current;
             while !self.is_at_end() && !self.check(TokenType::Semicolon) {
                 self.skip();
