@@ -1,0 +1,22 @@
+# DuckDB receipts the parser contradicts today, which the syntax gate tolerates until fixed.
+#
+# `make check-syntax` fails on any receipted case the parser contradicts that this file does
+# not list, whatever the case's mark or expectation: a syntax error the parser accepts, or a
+# statement the engine parsed that the parser rejects. It also fails on an entry the parser
+# now agrees with, and on an entry the target branch's copy does not have, so the file only
+# shrinks: each grammar fix deletes its own entries. Case keys are listed under their form;
+# other_receipts_contradicted lists receipts no obligation judges by their full id.
+
+other_receipts_contradicted = [
+]
+
+[syntax_errors_accepted]
+
+[parsed_cases_refused]
+"dd.ddl.alter-table.drop-constraint" = ["k3ee2a4180944"]
+"dd.ddl.comment-on.schema-or-database" = [
+  "k4dc462f3c100",
+  "k5a53cf247d5d",
+]
+"dd.transaction_session.set.reset" = ["k57b1dfd6657a"]
+"dd.transaction_session.set.set-to" = ["k773cc02e3ae7"]

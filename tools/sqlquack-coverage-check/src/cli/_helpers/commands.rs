@@ -19,7 +19,7 @@ use crate::cli::_helpers::output::{print, say};
 use crate::cli::_helpers::worker::Worker;
 use crate::cli::models::{Common, TranslationArguments};
 use crate::depth::main::analysis_verdict::analysis_verdict;
-use crate::formats::constants::{SNAPSHOT_FORMAT, SNOWFLAKE_DIALECT};
+use crate::formats::constants::{DISAGREEMENTS_FILE, SNAPSHOT_FORMAT, SNOWFLAKE_DIALECT};
 use crate::formats::main::current_dialect::current_dialect;
 use crate::formats::main::load_coverage::load_coverage;
 use crate::formats::main::load_focus::load_focus;
@@ -27,12 +27,15 @@ use crate::formats::main::obligation_form::obligation_form;
 use crate::formats::models::{
     FocusFile, LocalParser, Obligation, ObligationKind, Review, SyntaxCoverage,
 };
+use crate::report::main::diff_fails::diff_fails;
 use crate::report::main::diff_snapshots::diff_snapshots;
 use crate::report::main::focus_report::focus_report;
 use crate::report::main::snapshot::snapshot;
 use crate::report::main::summarize::summarize;
 use crate::report::main::tally_by::tally_by;
-use crate::report::models::{FocusReport, FocusedSummary, Snapshot, SnapshotDiff, Summary};
+use crate::report::models::{
+    FocusReport, FocusedSummary, ReceiptDisagreements, Snapshot, SnapshotDiff, Summary,
+};
 use crate::translation::constants::TRANSLATION_DIR;
 use crate::translation::main::load_translation_files::load_translation_files;
 use crate::translation::main::measure_translation::measure_translation;
@@ -430,9 +433,45 @@ fn read_snapshot(path: &Path) -> Result<Snapshot, ExitCode> {
     Ok(parsed)
 }
 
+/// The disagreements file at `path`; none listed when it does not exist.
+fn read_disagreements(path: &Path) -> Result<ReceiptDisagreements, ExitCode> {
+    match std::fs::read_to_string(path) {
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+            Ok(ReceiptDisagreements::default())
+        }
+        read => read
+            .map_err(|error| error.to_string())
+            .and_then(|text| toml::from_str(&text).map_err(|error| error.to_string()))
+            .map_err(|problem| {
+                say(&format!("FAILED, {}: {problem}", path.display()));
+                ExitCode::FAILURE
+            }),
+    }
+}
+
 /// Lines naming each non-empty list of the diff.
 fn diff_lines(diff: &SnapshotDiff) -> Vec<String> {
-    let lists: [(&str, &Vec<String>); 12] = [
+    let lists: [(&str, &Vec<String>); 17] = [
+        (
+            "REGRESSION Snowflake syntax errors the parser accepts, documented or not, that receipt-disagreements.toml does not list",
+            &diff.unlisted_syntax_errors_accepted,
+        ),
+        (
+            "REGRESSION Snowflake-parsed cases the parser rejects that receipt-disagreements.toml does not list",
+            &diff.unlisted_parsed_cases_refused,
+        ),
+        (
+            "REGRESSION other receipts the parser contradicts that receipt-disagreements.toml does not list",
+            &diff.unlisted_receipts_contradicted,
+        ),
+        (
+            "RESOLVED disagreements the parser now agrees with; delete their entries from receipt-disagreements.toml",
+            &diff.disagreements_resolved,
+        ),
+        (
+            "ADDED disagreements the target branch did not list; receipt-disagreements.toml only shrinks",
+            &diff.disagreements_added,
+        ),
         ("REGRESSION forms lost", &diff.forms_lost),
         (
             "REGRESSION receipts the parser now contradicts, cited by a form or not",
@@ -468,7 +507,7 @@ fn diff_lines(diff: &SnapshotDiff) -> Vec<String> {
         .collect();
     let counted: [(&str, usize); 2] = [
         (
-            "receipts the parser already contradicted, not failing",
+            "receipts the parser already contradicted, each listed or failing above",
             diff.receipts_still_contradicted.len(),
         ),
         (
@@ -487,11 +526,15 @@ fn diff_lines(diff: &SnapshotDiff) -> Vec<String> {
 
 /// BASE against HEAD, or against the current tree; fails on a regression or catalogue change.
 pub(crate) fn diff(
-    base: &Path,
-    head: Option<&Path>,
+    (base, head): (&Path, Option<&Path>),
+    target_disagreements: Option<&Path>,
     common: &Common,
 ) -> Result<ExitCode, ExitCode> {
     let base: Snapshot = read_snapshot(base)?;
+    let disagreements: ReceiptDisagreements =
+        read_disagreements(&common.root.join(DISAGREEMENTS_FILE))?;
+    let target_disagreements: Option<ReceiptDisagreements> =
+        target_disagreements.map(read_disagreements).transpose()?;
     let head: Snapshot = match head {
         Some(path) => read_snapshot(path)?,
         None => {
@@ -503,19 +546,9 @@ pub(crate) fn diff(
             snapshot(&check, &coverage, &base.catalogue_commit)
         }
     };
-    let diff: SnapshotDiff = diff_snapshots(&base, &head);
-    let failing: bool = [
-        &diff.forms_lost,
-        &diff.obligations_lost,
-        &diff.receipts_contradicted,
-        &diff.parsed_cases_refused,
-        &diff.syntax_error_cases_accepted,
-        &diff.catalogue_files_changed,
-        &diff.forms_added,
-        &diff.forms_removed,
-    ]
-    .iter()
-    .any(|ids| !ids.is_empty());
+    let diff: SnapshotDiff =
+        diff_snapshots(&base, &head, &disagreements, target_disagreements.as_ref());
+    let failing: bool = diff_fails(&diff);
     let mut text: Vec<String> = diff_lines(&diff);
     if text.is_empty() {
         text.push(format!(
