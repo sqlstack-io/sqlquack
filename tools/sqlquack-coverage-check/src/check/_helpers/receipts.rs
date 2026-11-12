@@ -3,7 +3,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use crate::check::models::{CaseResult, LocalVerdict, Reason, SnowflakeSyntax};
-use crate::formats::constants::{SYNTAX_ERRNO, SYNTAX_ERRNO_42601};
+use crate::formats::constants::SYNTAX_ERRNO;
 use crate::formats::main::current_dialect::current_dialect;
 use crate::formats::models::{AccountSetting, Case, Expect, Phase, Receipt};
 
@@ -64,19 +64,14 @@ fn agreement(phase: Phase, local: &LocalVerdict, terminates: bool) -> Result<boo
     }
 }
 
-/// What Snowflake's parser did by the syntax receipts of the case's statement; none unless all agree.
+/// What Snowflake's parser did by the phases the importer recorded for the case's statement; none unless all agree.
 pub(crate) fn snowflake_syntax(statement_receipts: &[&Receipt]) -> Option<SnowflakeSyntax> {
     let verdicts: BTreeSet<Option<SnowflakeSyntax>> = statement_receipts
         .iter()
         .filter(|receipt| receipt.measure.is_none())
         .map(|receipt| match (receipt.phase, receipt.errno) {
             _ if receipt.is_engine() => engine_syntax(receipt),
-            (Phase::SyntaxError, Some(errno))
-                if errno == SYNTAX_ERRNO || errno == SYNTAX_ERRNO_42601 =>
-            {
-                Some(SnowflakeSyntax::Refused)
-            }
-            (Phase::SyntaxError, _) => None,
+            (Phase::SyntaxError, _) => Some(SnowflakeSyntax::Refused),
             (_, Some(errno)) if errno == SYNTAX_ERRNO => None,
             _ => Some(SnowflakeSyntax::Parsed),
         })

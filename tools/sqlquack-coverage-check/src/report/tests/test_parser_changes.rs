@@ -62,6 +62,15 @@ fn given_receipted_cases_of_any_expectation_when_the_parser_changes_then_the_dif
             expected_documented_cases_accepted: Vec::new(),
         },
         ParserChangeTestCase {
+            description: "an observe case the importer placed as a syntax error with 1002, now accepted",
+            mutate: |root| observed_select_from(root, 1002),
+            base: structural,
+            head: opaque,
+            expected_parsed_cases_refused: Vec::new(),
+            expected_syntax_error_cases_accepted: vec!["select-from"],
+            expected_documented_cases_accepted: Vec::new(),
+        },
+        ParserChangeTestCase {
             description: "a case marked documented, refused with 1003 and now accepted, is listed apart",
             mutate: |root| {
                 observed_select_from(root, 1003);

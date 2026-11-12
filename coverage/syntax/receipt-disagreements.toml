@@ -1186,6 +1186,7 @@ other_receipts_contradicted = [
   "k03a3c4082fff",
   "k0add3b7ab01d",
   "k0d8380a5561d",
+  "k22a4a06e0b15",
   "k42168bc94c03",
   "k4fbb9449c1ee",
   "k82c79cc80548",
@@ -1196,6 +1197,7 @@ other_receipts_contradicted = [
 ]
 "sf.ddl.alter-warehouse.drop-tables" = [
   "k0467ae54bde3",
+  "k18cd7b807795",
   "k6b1cdba72b9f",
   "k75b39332a334",
   "k83d39159180e",

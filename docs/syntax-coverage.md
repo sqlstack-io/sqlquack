@@ -423,8 +423,9 @@ obligation that no longer is, or a receipted case Snowflake parsed that the base
 and the current one rejects, or a case Snowflake refused as syntax that the base parser rejected
 and the current one accepts. Both join each case to its receipts by SQL, setup and session hashes,
 whatever the case expects: Snowflake parsed a case when every receipt has a non-syntax phase and an
-errno other than 1003, and refused it when every receipt is a syntax error with errno 1003 or 921;
-a positionless 1003 or receipts that disagree count as neither. The first line catches a case that
+errno other than 1003, and refused it when the importer recorded every receipt's phase as a
+syntax error, whatever its errno; a 1003 at another phase or receipts that disagree count as
+neither. The first line catches a case that
 moves from an opaque acceptance, which satisfies no obligation, to a rejection; a pull request that
 has one explains each case; a case marked `documented` is listed on its own line, and fails all the
 same. A snapshot taken before these case lists existed has none, so it reports no such case. The
