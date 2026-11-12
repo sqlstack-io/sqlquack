@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.8.0](https://github.com/sqlstack-io/sqlquack/compare/v0.7.0...v0.8.0) (2026-11-12)
+
+
+### Features
+
+* **syntax:** build Snowflake semantic views as nodes ([45d2ebb](https://github.com/sqlstack-io/sqlquack/commit/45d2ebb54a69f9333dbf03fa49ed7c42a44d5937))
+* **syntax:** check Snowflake ALTER VIEW properties against their grammar ([ad4c296](https://github.com/sqlstack-io/sqlquack/commit/ad4c296887137827db360364535f4f3823bdaa72))
+* **syntax:** check Snowflake streams against their grammar ([2837449](https://github.com/sqlstack-io/sqlquack/commit/2837449b3f2979604a54a20b11ce6d5216cdcade))
+* **syntax:** check Snowflake views and materialized views against their grammar ([bd58df1](https://github.com/sqlstack-io/sqlquack/commit/bd58df1d34aabc04fbac7c306479f67a0302ef1a))
+
+
+### Bug Fixes
+
+* **semantics:** give every select item its range through each dialect's strict parser ([8e7bfdc](https://github.com/sqlstack-io/sqlquack/commit/8e7bfdc157a119feab49b15437e0415710aa966a))
+* **syntax:** read a Snowflake view's column list after its properties ([344755e](https://github.com/sqlstack-io/sqlquack/commit/344755e758f52cc5ad8cd3af4a6aa95a0d62b498))
+* **syntax:** read every Snowflake stream option on every source ([4bd716c](https://github.com/sqlstack-io/sqlquack/commit/4bd716c195599cad928fe559b0f73754c90e20b4))
+* **syntax:** refuse Snowflake view shapes its receipts reject ([6b23d65](https://github.com/sqlstack-io/sqlquack/commit/6b23d6570ff7c8ce273ce3296a15dab83f050096))
+
 ## [0.7.0](https://github.com/sqlstack-io/sqlquack/compare/v0.6.0...v0.7.0) (2026-11-12)
 
 
