@@ -28,6 +28,30 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_only_what_snowf
             expected_accepted: false,
         },
         AcceptanceTestCase {
+            description: "a DCM warehouse definition takes its properties (recorded success)",
+            sql: "DEFINE WAREHOUSE v1 GENERATION = '1' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a property value is a value, not a list of pairs (recorded errno 1003)",
+            sql: "CREATE ARTIFACT REPOSITORY v1 TYPE = APPLICATION ( v1 = 'm' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "MODEL alone is a kind, not part of MODEL MONITOR (recorded errno 1021, after parsing)",
+            sql: "CREATE MODEL v1 WITH VERSION v1 FROM @s1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "VOLUME alone is a kind, not part of EXTERNAL VOLUME (recorded errno 1422, after parsing)",
+            sql: "CREATE VOLUME v1 STORAGE_LOCATIONS = ( ( NAME = 'm' STORAGE_PROVIDER = 'S3' STORAGE_AWS_ROLE_ARN = 'm' STORAGE_BASE_URL = 's3://b1/p1/' ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
             description: "a backup policy takes WITH RETENTION LOCK (recorded success)",
             sql: "CREATE OR ALTER BACKUP POLICY v1 WITH RETENTION LOCK EXPIRE_AFTER_DAYS = 1 COMMENT = 'm' ;",
             dialect: Dialect::Snowflake,
@@ -125,6 +149,24 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_the_tree_keeps_
             sql: "CREATE FAILOVER GROUP g1 OBJECT_TYPES = INTEGRATIONS ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS ALLOWED_ACCOUNTS = o1.a1",
             pointer: "/0/create_object/properties/1/value/table/name/name",
             expected_value: json!("SECURITY INTEGRATIONS"),
+        },
+        ProjectionTestCase {
+            description: "a warehouse keeps OR ALTER",
+            sql: "CREATE OR ALTER WAREHOUSE v1 WAREHOUSE_SIZE = MEDIUM",
+            pointer: "/0/create_object/or_alter",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a compute pool's application is a property",
+            sql: "CREATE COMPUTE POOL v1 FOR APPLICATION \"v1 Q\" MIN_NODES = 1 MAX_NODES = 1 INSTANCE_FAMILY = v1",
+            pointer: "/0/create_object/properties/0/value/identifier/name",
+            expected_value: json!("v1 Q"),
+        },
+        ProjectionTestCase {
+            description: "an external volume's locations are pairs inside a list",
+            sql: "CREATE EXTERNAL VOLUME v1 STORAGE_LOCATIONS = ( ( NAME = 'm' STORAGE_PROVIDER = 'S3' ) )",
+            pointer: "/0/create_object/properties/0/value/tuple/expressions/0/tuple/expressions/1/property_e_q/left/identifier/name",
+            expected_value: json!("STORAGE_PROVIDER"),
         },
         ProjectionTestCase {
             description: "a body policy keeps its body",
