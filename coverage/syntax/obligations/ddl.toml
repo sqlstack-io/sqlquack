@@ -181449,22 +181449,10 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o002"
-kind = "option_present"
-required = true
-target = "[ OR REPLACE ]"
-
-[[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o003"
 kind = "option_absent"
 required = true
 target = "[ OR REPLACE ]"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o004"
-kind = "option_present"
-required = true
-target = "[ IF NOT EXISTS ]"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o005"
@@ -181578,12 +181566,6 @@ target = "<warehouse_name>"
 note = "a string literal in place of <warehouse_name>"
 
 [[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o021"
-kind = "option_present"
-required = true
-target = "[ GROUND_TRUTH = <ground_truth_table> ]"
-
-[[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o022"
 kind = "option_absent"
 required = true
@@ -181595,13 +181577,6 @@ kind = "required_operand_missing"
 required = true
 target = "<ground_truth_table> in [ GROUND_TRUTH = <ground_truth_table> ]"
 note = "omit <ground_truth_table>"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o024"
-kind = "operand_type_class"
-required = true
-target = "<ground_truth_table> in [ GROUND_TRUTH = <ground_truth_table> ]"
-note = "a valid operand"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o026"
@@ -181704,12 +181679,6 @@ target = "<actual_score_column_name_array> in [ ACTUAL_SCORE_COLUMNS = <actual_s
 note = "a string literal in place of <actual_score_column_name_array>"
 
 [[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o050"
-kind = "option_present"
-required = true
-target = "[ COMMENT = '<string_literal>' ]"
-
-[[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o051"
 kind = "option_absent"
 required = true
@@ -181721,13 +181690,6 @@ kind = "required_operand_missing"
 required = true
 target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
 note = "omit '<string_literal>'"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o053"
-kind = "operand_type_class"
-required = true
-target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
-note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o054"
@@ -181801,12 +181763,6 @@ id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o0
 kind = "negative_neighbour"
 required = true
 note = "the form without its required AGGREGATION_WINDOW"
-
-[[obligation]]
-id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o066"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o067"
@@ -181958,6 +181914,61 @@ required = true
 target = "<actual_score_column_name_array> in [ ACTUAL_SCORE_COLUMNS = <actual_score_column_name_array> ]"
 anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
 note = "ACTUAL_SCORE_COLUMNS as a two-element array of column-name strings"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o097"
+kind = "option_present"
+required = true
+target = "[ OR REPLACE ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+note = "OR REPLACE on its own"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o098"
+kind = "option_present"
+required = true
+target = "[ IF NOT EXISTS ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+note = "IF NOT EXISTS on its own"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o099"
+kind = "option_present"
+required = true
+target = "[ GROUND_TRUTH = <ground_truth_table> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+note = "GROUND_TRUTH on its own"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o100"
+kind = "operand_type_class"
+required = true
+target = "<ground_truth_table> in [ GROUND_TRUTH = <ground_truth_table> ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+note = "a table name as GROUND_TRUTH"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o101"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+note = "COMMENT on its own"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o102"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+note = "a string as COMMENT"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o103"
+kind = "interaction_all_options"
+required = true
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+note = "every option together, each *_COLUMNS value an array with its own column"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o001"

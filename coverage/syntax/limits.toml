@@ -84136,3 +84136,127 @@ anchor = "doc.sql.create-online-feature-table / Usage notes"
 sql = "CREATE ONLINE FEATURE TABLE IF NOT EXISTS v1 PRIMARY KEY ( v1 ) TARGET_LAG = '1 minute' WAREHOUSE = v1 FROM t2 ;"
 context = "raw"
 expect = "observe"
+
+# The gateway model monitor's shared all-options case gave its *_COLUMNS bare names instead of the documented
+# arrays, so the obligations it served each get their own case, and the all-options row writes arrays with
+# distinct columns, as the page allows each column once. Snowflake raises its errno 1004 after parsing.
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "option_present"
+target = "[ OR REPLACE ]"
+reason = "the shared all-options case gives *_COLUMNS bare names; the row below has its own case"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "option_present"
+target = "[ OR REPLACE ]"
+note = "OR REPLACE on its own"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+sql = "CREATE OR REPLACE MODEL MONITOR v1 WITH MODEL = v1 GATEWAY = v1 FUNCTION = 'm' WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "option_present"
+target = "[ IF NOT EXISTS ]"
+reason = "the shared all-options case gives *_COLUMNS bare names; the row below has its own case"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "option_present"
+target = "[ IF NOT EXISTS ]"
+note = "IF NOT EXISTS on its own"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+sql = "CREATE MODEL MONITOR IF NOT EXISTS v1 WITH MODEL = v1 GATEWAY = v1 FUNCTION = 'm' WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "option_present"
+target = "[ GROUND_TRUTH = <ground_truth_table> ]"
+reason = "the shared all-options case gives *_COLUMNS bare names; the row below has its own case"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "option_present"
+target = "[ GROUND_TRUTH = <ground_truth_table> ]"
+note = "GROUND_TRUTH on its own"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 GATEWAY = v1 FUNCTION = 'm' WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' GROUND_TRUTH = v1 ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "operand_type_class"
+target = "<ground_truth_table> in [ GROUND_TRUTH = <ground_truth_table> ]"
+note = "a valid operand"
+reason = "the shared all-options case gives *_COLUMNS bare names; the row below has its own case"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "operand_type_class"
+target = "<ground_truth_table> in [ GROUND_TRUTH = <ground_truth_table> ]"
+note = "a table name as GROUND_TRUTH"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 GATEWAY = v1 FUNCTION = 'm' WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' GROUND_TRUTH = t2 ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "option_present"
+target = "[ COMMENT = '<string_literal>' ]"
+reason = "the shared all-options case gives *_COLUMNS bare names; the row below has its own case"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "option_present"
+target = "[ COMMENT = '<string_literal>' ]"
+note = "COMMENT on its own"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 GATEWAY = v1 FUNCTION = 'm' WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' COMMENT = 'm' ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "operand_type_class"
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "a valid string_literal"
+reason = "the shared all-options case gives *_COLUMNS bare names; the row below has its own case"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "operand_type_class"
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "a string as COMMENT"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 GATEWAY = v1 FUNCTION = 'm' WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' COMMENT = 'c' ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "interaction_all_options"
+note = "every independent option of one production together"
+reason = "the shared all-options case gives *_COLUMNS bare names; the row below has its own case"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "interaction_all_options"
+note = "every option together, each *_COLUMNS value an array with its own column"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+sql = "CREATE OR REPLACE MODEL MONITOR IF NOT EXISTS v1 WITH MODEL = v1 GATEWAY = v1 FUNCTION = 'm' WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' GROUND_TRUTH = v1 ID_COLUMNS = ( 'c1' ) PREDICTION_CLASS_COLUMNS = ( 'c2' ) PREDICTION_SCORE_COLUMNS = ( 'c3' ) ACTUAL_CLASS_COLUMNS = ( 'c4' ) ACTUAL_SCORE_COLUMNS = ( 'c5' ) COMMENT = 'm' ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
