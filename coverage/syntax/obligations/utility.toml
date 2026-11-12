@@ -686,6 +686,13 @@ anchor = "doc.sql.call-with / Syntax / JavaScript"
 note = "a bare literal in place of <query>, observed"
 
 [[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o109"
+kind = "positive"
+required = true
+anchor = "doc.sql.call-with / Syntax / JavaScript"
+note = "a positional argument in the CALL, observed"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o001"
 kind = "positive"
 required = true
@@ -10529,6 +10536,13 @@ required = true
 target = "<stage> #2"
 anchor = "doc.sql.execute-job-service / Syntax"
 note = "omit <stage>, observed"
+
+[[obligation]]
+id = "sf.utility.execute-job-service.o129"
+kind = "positive"
+required = true
+anchor = "doc.sql.execute-job-service / Syntax"
+note = "NAME and ASYNC before the specification, observed"
 
 [[obligation]]
 id = "sf.utility.execute-notebook.o001"
