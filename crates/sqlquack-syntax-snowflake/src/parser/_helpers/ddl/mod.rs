@@ -16,6 +16,7 @@ pub(crate) mod snowflake_alter_objects;
 pub(crate) mod snowflake_alter_resources;
 pub(crate) mod snowflake_alter_tables;
 pub(crate) mod snowflake_alter_user;
+pub(crate) mod snowflake_classes;
 pub(crate) mod snowflake_commands;
 pub(crate) mod snowflake_containers;
 pub(crate) mod snowflake_copy;
