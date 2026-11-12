@@ -1348,6 +1348,16 @@ fn given_a_snowflake_copy_when_parsing_then_it_follows_the_recorded_grammar() {
             expected_kind: Some("command"),
         },
         SnowflakeVerdictTestCase {
+            description: "COPY FILES into a stage written as a string parses (recorded errno 2003)",
+            sql: "COPY FILES INTO '@\"v1 Q\".s1' FROM ( SELECT v1 FROM v1 ) ;",
+            expected_kind: Some("command"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "COPY FILES from a stage written as a string parses (recorded errno 2003)",
+            sql: "COPY FILES INTO '@\"s1 Q\"' FROM '@\"s1 Q\"' ;",
+            expected_kind: Some("copy"),
+        },
+        SnowflakeVerdictTestCase {
             description: "COPY FILES into the bare stage @ parses (recorded errno 1012)",
             sql: "COPY FILES INTO @ FROM @s1 ;",
             expected_kind: Some("command"),
