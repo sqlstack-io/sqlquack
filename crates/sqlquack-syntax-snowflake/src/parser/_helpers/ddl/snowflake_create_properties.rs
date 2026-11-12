@@ -19,6 +19,9 @@ impl Parser {
         or_alter: bool,
     ) -> Result<Option<Expression>> {
         let start = self.current;
+        if let Some(class) = self.parse_snowflake_create_class(or_replace, or_alter)? {
+            return Ok(Some(class));
+        }
         if let Some(table) = self.parse_snowflake_create_external_table(or_replace, or_alter)? {
             return Ok(Some(table));
         }

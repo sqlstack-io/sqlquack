@@ -1400,8 +1400,8 @@ impl Parser {
             self.config.dialect,
             Some(sqlquack_syntax::tokens::models::DialectType::Snowflake)
         );
-        if snowflake && self.match_text_seq(&["DATABASE", "ROLE"]) {
-            return self.parse_drop_snowflake_object("DATABASE ROLE".to_owned());
+        if let Some(kind) = self.parse_snowflake_drop_kind(snowflake)? {
+            return self.parse_drop_snowflake_object(kind);
         }
         match self.peek().token_type {
             TokenType::Table => self.parse_drop_table_with_iceberg(leading_comments, false),
