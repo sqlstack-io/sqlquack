@@ -81,6 +81,21 @@ pub struct Snapshot {
     pub unjudged_receipts: Option<BTreeSet<String>>,
 }
 
+/// `receipt-disagreements.toml`: receipted cases the parser contradicts today, case keys by form.
+#[derive(Clone, Debug, Default, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct ReceiptDisagreements {
+    /// Cases Snowflake refused as syntax that the parser accepts, documented or not.
+    #[serde(default)]
+    pub syntax_errors_accepted: BTreeMap<String, BTreeSet<String>>,
+    /// Cases Snowflake parsed that the parser rejects.
+    #[serde(default)]
+    pub parsed_cases_refused: BTreeMap<String, BTreeSet<String>>,
+    /// Other receipt case ids the parser contradicts: retired cases, run reports, unjudged cases.
+    #[serde(default)]
+    pub other_receipts_contradicted: BTreeSet<String>,
+}
+
 /// One snapshot against a later one; coverage and catalogue changes kept apart.
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize)]
 pub struct SnapshotDiff {
@@ -109,6 +124,16 @@ pub struct SnapshotDiff {
     pub receipts_still_contradicted: Vec<String>,
     /// Receipts the head cannot judge because no case or run report gives their SQL.
     pub unjudged_receipts: Vec<String>,
+    /// Syntax-error cases the head accepts, documented or not, that the file does not list.
+    pub unlisted_syntax_errors_accepted: Vec<String>,
+    /// Cases Snowflake parsed that the head rejects and the file does not list.
+    pub unlisted_parsed_cases_refused: Vec<String>,
+    /// Other receipts the head contradicts that the file does not list.
+    pub unlisted_receipts_contradicted: Vec<String>,
+    /// Listed cases the head no longer contradicts, or that have no such receipt: delete their entries.
+    pub disagreements_resolved: Vec<String>,
+    /// Listed cases the target branch's disagreements file did not list: the list only shrinks.
+    pub disagreements_added: Vec<String>,
 }
 
 /// One focus form: its uses and how far it is.

@@ -1,5 +1,6 @@
 //! Entry points.
 
+pub mod diff_fails;
 pub mod diff_snapshots;
 pub mod focus_report;
 pub mod snapshot;

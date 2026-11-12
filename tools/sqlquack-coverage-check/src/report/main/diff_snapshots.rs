@@ -1,17 +1,48 @@
 //! `diff_snapshots`: what changed between two snapshots, regressions apart from gains.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 use crate::check::models::FormState;
 use crate::report::_helpers::obligation_order::sorted_obligations;
-use crate::report::models::{Snapshot, SnapshotDiff};
+use crate::report::models::{ReceiptDisagreements, Snapshot, SnapshotDiff};
 
 /// A state the checker claims: verified, or excluded by a current review.
 fn claimed(state: Option<&FormState>) -> bool {
     matches!(state, Some(FormState::Verified | FormState::Excluded))
 }
 
-pub fn diff_snapshots(base: &Snapshot, head: &Snapshot) -> SnapshotDiff {
+/// Every case id one side of `disagreements` lists: each form's keys under the form.
+fn listed(by_form: &BTreeMap<String, BTreeSet<String>>) -> BTreeSet<String> {
+    let mut ids: BTreeSet<String> = BTreeSet::new();
+    for (form, keys) in by_form {
+        for key in keys {
+            ids.insert(format!("{form}.{key}"));
+        }
+    }
+    ids
+}
+
+/// `head` against `base`, and its receipt disagreements against those listed now and on the target.
+pub fn diff_snapshots(
+    base: &Snapshot,
+    head: &Snapshot,
+    disagreements: &ReceiptDisagreements,
+    target_disagreements: Option<&ReceiptDisagreements>,
+) -> SnapshotDiff {
+    let accepted: BTreeSet<String> = listed(&disagreements.syntax_errors_accepted);
+    let refused: BTreeSet<String> = listed(&disagreements.parsed_cases_refused);
+    let other: &BTreeSet<String> = &disagreements.other_receipts_contradicted;
+    let added: Vec<String> = match target_disagreements {
+        Some(target) => {
+            let mut target_ids: BTreeSet<String> = listed(&target.syntax_errors_accepted);
+            target_ids.extend(listed(&target.parsed_cases_refused));
+            target_ids.extend(target.other_receipts_contradicted.iter().cloned());
+            let mut ids: BTreeSet<String> = accepted.union(&refused).cloned().collect();
+            ids.extend(other.iter().cloned());
+            ids.difference(&target_ids).cloned().collect()
+        }
+        None => Vec::new(),
+    };
     let paths: BTreeSet<&String> = base
         .catalogue_files
         .keys()
@@ -28,6 +59,17 @@ pub fn diff_snapshots(base: &Snapshot, head: &Snapshot) -> SnapshotDiff {
     let empty: BTreeSet<String> = BTreeSet::new();
     let head_contradicted: &BTreeSet<String> =
         head.receipt_contradictions.as_ref().unwrap_or(&empty);
+    let judged_other: &BTreeSet<String> = match head.receipt_contradictions {
+        Some(_) => other,
+        None => &empty,
+    };
+    let head_other: BTreeSet<String> = head_contradicted
+        .iter()
+        .filter(|id| {
+            !head.syntax_error_cases_accepted.contains(*id) && !head.refused_cases.contains(*id)
+        })
+        .cloned()
+        .collect();
     let new_contradictions: Vec<String> = match &base.receipt_contradictions {
         Some(base_contradicted) => head_contradicted
             .difference(base_contradicted)
@@ -99,5 +141,19 @@ pub fn diff_snapshots(base: &Snapshot, head: &Snapshot) -> SnapshotDiff {
             .into_iter()
             .filter(|id| head.documented_cases.contains(id))
             .collect(),
+        unlisted_syntax_errors_accepted: head
+            .syntax_error_cases_accepted
+            .difference(&accepted)
+            .cloned()
+            .collect(),
+        unlisted_parsed_cases_refused: head.refused_cases.difference(&refused).cloned().collect(),
+        unlisted_receipts_contradicted: head_other.difference(other).cloned().collect(),
+        disagreements_resolved: accepted
+            .difference(&head.syntax_error_cases_accepted)
+            .chain(refused.difference(&head.refused_cases))
+            .chain(judged_other.difference(&head_other))
+            .cloned()
+            .collect(),
+        disagreements_added: added,
     }
 }
