@@ -47,6 +47,8 @@ impl Parser {
         let unload = self.copy_is_stage(at) || self.copy_type(at) == Some(TokenType::String);
         at = if self.copy_is_stage(at) {
             self.copy_skip_stage(at, end)?
+        } else if files && self.copy_is_quoted_stage(at) {
+            at + 1
         } else if files {
             return Err(self.parse_error("Expected a stage after COPY FILES INTO"));
         } else if unload {
@@ -69,6 +71,8 @@ impl Parser {
             self.copy_skip_name(at)?
         } else if self.copy_is_stage(at) {
             self.copy_skip_stage(at, end)?
+        } else if files && self.copy_is_quoted_stage(at) {
+            at + 1
         } else if !files
             && matches!(
                 self.copy_type(at),
@@ -152,6 +156,13 @@ impl Parser {
         self.tokens.get(at).is_some_and(|token| {
             token.token_type == TokenType::DAt
                 || token.token_type == TokenType::Var && token.text.starts_with('@')
+        })
+    }
+
+    /// Whether the token at `at` is a stage written as a string literal, such as `'@"s1 Q"/p1'`.
+    fn copy_is_quoted_stage(&self, at: usize) -> bool {
+        self.tokens.get(at).is_some_and(|token| {
+            token.token_type == TokenType::String && token.text.starts_with('@')
         })
     }
 
