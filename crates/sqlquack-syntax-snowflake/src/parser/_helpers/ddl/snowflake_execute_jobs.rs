@@ -92,7 +92,7 @@ impl Parser {
                     node.action = Some("FROM WORKSPACE".to_owned());
                 }
                 node.name = self.parse_object_name()?;
-                self.parse_execute_options(DBT_OPTIONS)?
+                self.parse_execute_options(DBT_OPTIONS, &[])?
             }
             "CODE BUNDLE" => {
                 node.name = self.parse_object_name()?;
@@ -106,7 +106,8 @@ impl Parser {
             _ => {
                 node.name = self.parse_object_name()?;
                 let mut properties = self.parse_execute_required(NOTEBOOK_REQUIRED)?;
-                properties.extend(self.parse_execute_options(NOTEBOOK_OPTIONS)?);
+                let options = self.parse_execute_options(NOTEBOOK_OPTIONS, &properties)?;
+                properties.extend(options);
                 properties
             }
         };
@@ -140,7 +141,8 @@ impl Parser {
     /// The pool, the specification source, its USING arguments and the options of EXECUTE JOB SERVICE.
     fn parse_execute_job_service(&mut self) -> Result<Vec<ObjectProperty>> {
         let mut properties = vec![self.parse_execute_compute_pool()?];
-        properties.extend(self.parse_execute_options(JOB_SERVICE_OPTIONS)?);
+        let options = self.parse_execute_options(JOB_SERVICE_OPTIONS, &properties)?;
+        properties.extend(options);
         self.expect_token(TokenType::From)?;
         let template = if self.is_stage_path() {
             let stage = self.parse_stage_path()?;
@@ -174,7 +176,8 @@ impl Parser {
             let arguments = self.parse_execute_using()?;
             properties.push(property("USING", None, Some(arguments)));
         }
-        properties.extend(self.parse_execute_options(JOB_SERVICE_OPTIONS)?);
+        let options = self.parse_execute_options(JOB_SERVICE_OPTIONS, &properties)?;
+        properties.extend(options);
         Ok(properties)
     }
 
@@ -205,7 +208,7 @@ impl Parser {
         self.expect_token(TokenType::Eq)?;
         let model = Expression::Table(Box::new(self.parse_object_name()?));
         properties.push(property("MODEL", None, Some(model)));
-        while let Some(key) = self.next_execute_option(INFERENCE_OPTIONS, &properties) {
+        while let Some(key) = self.next_execute_option(INFERENCE_OPTIONS, &[], &properties) {
             let value = match key {
                 "FUNCTION" => self.parse_string_value()?,
                 "ASYNC" => self.parse_execute_boolean()?,
@@ -236,11 +239,12 @@ impl Parser {
     fn next_execute_option(
         &mut self,
         keys: &[&'static str],
+        given: &[ObjectProperty],
         properties: &[ObjectProperty],
     ) -> Option<&'static str> {
         let text = self.peek_text().to_ascii_uppercase();
         let key = keys.iter().find(|key| **key == text)?;
-        let seen = properties.iter().any(|seen| seen.kind == *key);
+        let seen = given.iter().chain(properties).any(|seen| seen.kind == *key);
         if seen || !self.check_next(TokenType::Eq) {
             return None;
         }
@@ -249,10 +253,14 @@ impl Parser {
         Some(key)
     }
 
-    /// Options among `keys` in any order, each at most once.
-    fn parse_execute_options(&mut self, keys: &[&'static str]) -> Result<Vec<ObjectProperty>> {
+    /// Options among `keys` in any order, each at most once, counting those already in `given`.
+    fn parse_execute_options(
+        &mut self,
+        keys: &[&'static str],
+        given: &[ObjectProperty],
+    ) -> Result<Vec<ObjectProperty>> {
         let mut properties: Vec<ObjectProperty> = Vec::new();
-        while let Some(key) = self.next_execute_option(keys, &properties) {
+        while let Some(key) = self.next_execute_option(keys, given, &properties) {
             let value = match key {
                 "ENV_VARS" => self.parse_execute_list(Self::parse_execute_pair)?,
                 "IMPORTS" => self.parse_execute_list(Self::parse_execute_import)?,

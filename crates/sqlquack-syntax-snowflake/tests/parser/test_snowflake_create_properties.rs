@@ -22,6 +22,42 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_only_what_snowf
             expected_accepted: false,
         },
         AcceptanceTestCase {
+            description: "only a compute pool names an application",
+            sql: "CREATE USER u1 FOR APPLICATION a1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a compute pool names its application right after its name",
+            sql: "CREATE COMPUTE POOL p1 MIN_NODES = 1 MAX_NODES = 1 INSTANCE_FAMILY = v1 FOR APPLICATION a1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a model may be called monitor",
+            sql: "CREATE MODEL monitor FROM MODEL m2 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a model called monitor takes a version",
+            sql: "CREATE OR REPLACE MODEL monitor WITH VERSION v1 FROM MODEL m2 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a model may sit in a schema called monitor",
+            sql: "CREATE OR REPLACE MODEL monitor.m1 WITH VERSION v1 FROM MODEL monitor.m2 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a model monitor still needs its name",
+            sql: "CREATE MODEL MONITOR WITH MODEL = v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
             description: "WITH needs a property (recorded errno 1003)",
             sql: "CREATE RESOURCE MONITOR v1 WITH ;",
             dialect: Dialect::Snowflake,
