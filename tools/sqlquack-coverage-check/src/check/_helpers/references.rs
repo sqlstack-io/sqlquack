@@ -3,7 +3,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use crate::formats::main::obligation_form::obligation_form;
-use crate::formats::models::{Case, Form, FormStatus, SyntaxCoverage};
+use crate::formats::models::{Case, Form, FormStatus, SyntaxCoverage, UnobservableCause};
 
 /// Every unresolved reference between the catalogue, obligations, cases, aliases and reviews.
 pub(crate) fn reference_problems(
@@ -58,7 +58,23 @@ pub(crate) fn reference_problems(
         .flatten()
         .map(|case| (case.case_id.as_str(), case))
         .collect();
+    let receipted: BTreeSet<(&str, &str)> = coverage
+        .receipts
+        .iter()
+        .filter(|receipt| receipt.measure.is_none())
+        .map(|receipt| (receipt.case_id.as_str(), receipt.sql_sha256.as_str()))
+        .collect();
     for entry in &coverage.unobservable {
+        if entry.cause == Some(UnobservableCause::NotSubmitted) {
+            for listed in entry.cases.iter().filter(|listed| {
+                receipted.contains(&(listed.case_id.as_str(), listed.sql_sha256.as_str()))
+            }) {
+                problems.push(format!(
+                    "unobservable {}: not_submitted, but case {} has a receipt; remove the entry",
+                    entry.obligation, listed.case_id
+                ));
+            }
+        }
         if !obligations.contains(entry.obligation.as_str()) {
             problems.push(format!(
                 "unobservable {}: obligation is not declared",

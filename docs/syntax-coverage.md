@@ -284,7 +284,10 @@ An entry may set `cause = "not_submitted"` when its cases were never sent to Sno
 side-effecting calls a capture guard holds. Such an entry has empty `runs` and `probes`, a
 `reason` naming the rule that holds the cases, and at least one case, checked as above. The
 obligation stays in the denominator, never counts as satisfied, and is reported as
-`unverifiable_not_submitted`. An absent `cause` means a 603 internal error; any other value is
+`unverifiable_not_submitted`. Once a listed case has a current receipt with its `sql_sha256`, one
+not superseded, withdrawn or taken for a measure, the entry is stale and the check fails until it
+is removed, so the receipt decides the obligation. An absent
+`cause` means a 603 internal error; any other value is
 refused. A `[[diagnostic]]` in the same file has the same fields,
 with `captured` in place of `cases`: a 603 record on a construct no obligation requires any more,
 whose retired cases are not resolved against the cases file. Diagnostics are format-checked and
