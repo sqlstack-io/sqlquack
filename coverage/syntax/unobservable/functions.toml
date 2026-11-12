@@ -304,30 +304,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.functions.system-wait.o011"
-form = "sf.functions.system-wait"
-construct = "option_present: SELECT SYSTEM$WAIT ( v1 , 'm' ) ;"
-reason = "not submitted: held by the capture guard in packet d118b2"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.functions.system-wait.kc4fdc2d9e4e6", sql_sha256 = "c4fdc2d9e4e67b345fa3104494cc011b12c8d83238fdb4a70206893d4434601d" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.functions.system-wait.o014"
-form = "sf.functions.system-wait"
-construct = "a valid string_literal: SELECT SYSTEM$WAIT ( v1 , 'm' ) ;"
-reason = "not submitted: held by the capture guard in packet d118b2"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.functions.system-wait.kc4fdc2d9e4e6", sql_sha256 = "c4fdc2d9e4e67b345fa3104494cc011b12c8d83238fdb4a70206893d4434601d" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.functions.system-send-email.o016"
 form = "sf.functions.system-send-email"
 construct = "the form without its required ): SELECT SYSTEM$SEND_EMAIL ( 'm' , 'a@example.com' , 'm' , 'm' ;"
@@ -371,78 +347,6 @@ reason = "not submitted: held by the capture guard in packet 2c: billable or out
 cause = "not_submitted"
 cases = [
   { case_id = "sf.functions.system-send-snowflake-notification.k8f2c3177865d", sql_sha256 = "8f2c3177865d664c0625f013639ea53101150f376bb32e2d0381680cc8cc54b5" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.functions.system-wait-for-services.o001"
-form = "sf.functions.system-wait-for-services"
-construct = "the documented form with every required part and no optional part: SELECT SYSTEM$WAIT_FOR_SERVICES ( v1 , 'svc1' ) ;"
-reason = "not submitted: held by the capture guard in packet 2c: held system function (acts on services)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.functions.system-wait-for-services.ke8eb27fa6a9f", sql_sha256 = "e8eb27fa6a9f77d3bb7cd572c2591a03bd51d73c8198bd4ccc5e04be6383d540" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.functions.system-wait-for-services.o003"
-form = "sf.functions.system-wait-for-services"
-construct = "a valid operand: SELECT SYSTEM$WAIT_FOR_SERVICES ( v1 , 'svc1' ) ;"
-reason = "not submitted: held by the capture guard in packet 2c: held system function (acts on services)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.functions.system-wait-for-services.ke8eb27fa6a9f", sql_sha256 = "e8eb27fa6a9f77d3bb7cd572c2591a03bd51d73c8198bd4ccc5e04be6383d540" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.functions.system-wait-for-services.o005"
-form = "sf.functions.system-wait-for-services"
-construct = "a valid string_literal: SELECT SYSTEM$WAIT_FOR_SERVICES ( v1 , 'svc1' ) ;"
-reason = "not submitted: held by the capture guard in packet 2c: held system function (acts on services)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.functions.system-wait-for-services.ke8eb27fa6a9f", sql_sha256 = "e8eb27fa6a9f77d3bb7cd572c2591a03bd51d73c8198bd4ccc5e04be6383d540" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.functions.system-wait-for-services.o007"
-form = "sf.functions.system-wait-for-services"
-construct = "the list continued at least once: SELECT SYSTEM$WAIT_FOR_SERVICES ( v1 , 'svc1' , 'svc1' ) ;"
-reason = "not submitted: held by the capture guard in packet 2c: held system function (acts on services)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.functions.system-wait-for-services.k688a83b9b927", sql_sha256 = "688a83b9b9270d1a475e0ab1d450a07d50e7cc969a7acd79938060dca071d448" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.functions.system-wait-for-services.o008"
-form = "sf.functions.system-wait-for-services"
-construct = "option_absent: SELECT SYSTEM$WAIT_FOR_SERVICES ( v1 , 'svc1' ) ;"
-reason = "not submitted: held by the capture guard in packet 2c: held system function (acts on services)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.functions.system-wait-for-services.ke8eb27fa6a9f", sql_sha256 = "e8eb27fa6a9f77d3bb7cd572c2591a03bd51d73c8198bd4ccc5e04be6383d540" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.functions.infer-schema.o044"
-form = "sf.functions.infer-schema"
-construct = "an unquoted stage reference in place of the quoted location (observed: the slot takes an expression): SELECT * FROM TABLE ( INFER_SCHEMA ( LOCATION => @s1 , FILE_FORMAT => 'm' , FILES => ( 'm' ) , IGNORE_CASE => TRUE , MAX_FILE_COUNT => 1 , MAX_RECORDS_PER_FILE => 1 , KIND => 'm' ) ) ;"
-reason = "not submitted: held by the capture guard in packet 2e-b9a8750a (functions_catalogue): forbidden statement (stage reference @s1)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.functions.infer-schema.k600b2541e9bd", sql_sha256 = "600b2541e9bd9ef72b5c33a5e2d4db32f8a9dcac85c153368587f20d30fc479a" },
 ]
 runs = []
 probes = []

@@ -1,4 +1,6 @@
 {"case_id":"sf.query.asof-join.k5b8b30b913ee","mark":"settled accept","obligations":["sf.query.asof-join.o039"],"sql_sha256":"5b8b30b913ee57a2988db44527512c89c80e29040e2bc5854096449d31fc5012"}
+{"case_id":"sf.query.at-before.iceberg-version.k7b5a4bb05e5f","mark":"settled accept","obligations":["sf.query.at-before.iceberg-version.o007"],"sql_sha256":"7b5a4bb05e5f4f30f681a8c694f835f5f145d3ae913b30cf4225e4c3608c1cf8"}
+{"case_id":"sf.query.at-before.iceberg-version.k85af61357785","mark":"settled accept","obligations":["sf.query.at-before.iceberg-version.o010"],"sql_sha256":"85af61357785515a96882e9fad9572954d5141e588d71005e88b8a7984c91712"}
 {"case_id":"sf.query.connect-by.k3796bb791731","mark":"settled reject","obligations":["sf.query.connect-by.o096"],"sql_sha256":"3796bb7917318fe289bed90ccc80da897420070a936fc6485ee92c6e875c5505"}
 {"case_id":"sf.query.connect-by.k3f7547accc6e","mark":"documented","obligations":["sf.query.connect-by.o092"],"sql_sha256":"3f7547accc6e590d2f7c185267282724a1396ac426e81e1c5e66ee81a783222f"}
 {"case_id":"sf.query.connect-by.k47c8f6f061d7","mark":"documented","obligations":["sf.query.connect-by.o093"],"sql_sha256":"47c8f6f061d737e1654313b4298a202cf6be9a293481b5f038720a710e6c56d0"}
