@@ -524,7 +524,20 @@ fn given_a_changed_tree_when_checking_then_the_form_fails_closed_with_its_reason
             expected_problem: None,
         },
         CheckTestCase {
-            description: "a never-submitted obligation whose case otherwise agrees",
+            description: "a never-submitted obligation whose case has no receipt",
+            mutate: |root| {
+                not_submitted(root, "sf.query.select.o001", "select-17", "SELECT 17", "");
+                drop_lines(root, "receipts/run-1.jsonl", "\"select-17\"");
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::UnverifiableNotSubmitted),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a never-submitted entry whose case now has a receipt is stale",
             mutate: |root| {
                 not_submitted(root, "sf.query.select.o001", "select-17", "SELECT 17", "")
             },
@@ -533,7 +546,9 @@ fn given_a_changed_tree_when_checking_then_the_form_fails_closed_with_its_reason
             form: "sf.query.select",
             expected_state: FormState::Unverified,
             expected_reason: Some(Reason::UnverifiableNotSubmitted),
-            expected_problem: None,
+            expected_problem: Some(
+                "unobservable sf.query.select.o001: not_submitted, but case select-17 has a receipt",
+            ),
         },
         CheckTestCase {
             description: "a never-submitted entry whose case hash is stale",

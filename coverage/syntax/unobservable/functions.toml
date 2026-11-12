@@ -3,54 +3,6 @@
 # satisfied, and is reported as "unverifiable: not submitted". The reason names the guard rule.
 
 [[unobservable]]
-obligation = "sf.functions.finetune-snowflake-cortex.o009"
-form = "sf.functions.finetune-snowflake-cortex"
-construct = "option_present: SELECT FINETUNE ( 'CREATE' , v1 , v1 ) ;"
-reason = "not submitted: held by the capture guard in packet d118b2"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.functions.finetune-snowflake-cortex.kba1aecf4fe6a", sql_sha256 = "ba1aecf4fe6a6d4f9932aaf65a050b091b07bf9f70f912910fbf5425a85f8710" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.functions.finetune-snowflake-cortex.o012"
-form = "sf.functions.finetune-snowflake-cortex"
-construct = "a valid operand: SELECT FINETUNE ( 'CREATE' , v1 , v1 ) ;"
-reason = "not submitted: held by the capture guard in packet d118b2"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.functions.finetune-snowflake-cortex.kba1aecf4fe6a", sql_sha256 = "ba1aecf4fe6a6d4f9932aaf65a050b091b07bf9f70f912910fbf5425a85f8710" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.functions.finetune-snowflake-cortex.o013"
-form = "sf.functions.finetune-snowflake-cortex"
-construct = "the list continued at least once: SELECT FINETUNE ( 'CREATE' , v1 , v1 ) ;"
-reason = "not submitted: held by the capture guard in packet d118b2"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.functions.finetune-snowflake-cortex.kba1aecf4fe6a", sql_sha256 = "ba1aecf4fe6a6d4f9932aaf65a050b091b07bf9f70f912910fbf5425a85f8710" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.functions.finetune-snowflake-cortex.o014"
-form = "sf.functions.finetune-snowflake-cortex"
-construct = "option_absent: SELECT FINETUNE ( 'CREATE' , v1 ) ;"
-reason = "not submitted: held by the capture guard in packet d118b2"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.functions.finetune-snowflake-cortex.k5b4d8c50fc63", sql_sha256 = "5b4d8c50fc632bdc8c9eff54dd52cffed4830778bb41f5d1ba342c232aa9ca3f" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.functions.system-generate-saml-csr.o001"
 form = "sf.functions.system-generate-saml-csr"
 construct = "the documented form with every required part and no optional part: SELECT SYSTEM$GENERATE_SAML_CSR ( 'm' ) ;"
