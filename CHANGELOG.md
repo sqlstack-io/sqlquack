@@ -37,6 +37,7 @@
 * **format:** keep a sign touching a modulo, which DuckDB reads as one operator ([50734ca](https://github.com/sqlstack-io/sqlquack/commit/50734ca952e0864bc16b81492372438312b32557))
 * **format:** keep the extra indent of a tighter operator under a looser one ([bab166c](https://github.com/sqlstack-io/sqlquack/commit/bab166c50a5b714bb485f051b500f9a96cec752b))
 * **semantics:** leave every set operation's outputs without a range ([23c1099](https://github.com/sqlstack-io/sqlquack/commit/23c10991e3994b0f612f5828664f58b0ddf06580))
+* **syntax-coverage:** fail on a not-submitted entry whose case has a receipt ([cde63cd](https://github.com/sqlstack-io/sqlquack/commit/cde63cdf46fbcdaace287b6be8f208649e7c01f5))
 * **syntax-receipts:** count a run-database packet's repeated template once ([ee638f5](https://github.com/sqlstack-io/sqlquack/commit/ee638f5a8f02ada8f4634293ffe13879447f764d))
 * **syntax-receipts:** document the phase rules in order and keep timeouts refused ([c3a5599](https://github.com/sqlstack-io/sqlquack/commit/c3a5599d6aeb63a0b5dafba320cccb8eca81c9cd))
 * **syntax-receipts:** import execute runs that have no run database ([01ace82](https://github.com/sqlstack-io/sqlquack/commit/01ace826bc50e5d04b5ab967cac3d74a106fa59b))
