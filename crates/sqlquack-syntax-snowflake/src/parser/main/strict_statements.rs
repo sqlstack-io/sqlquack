@@ -8,7 +8,8 @@ use sqlquack_syntax::tokens::models::{CallMode, Dialect};
 use crate::modes::errors::StrictFailure;
 use crate::parser::_helpers::support::dialects::dialect_type;
 
-/// The statements of `sql`, with coverage checked over the tokens the parse itself read.
+/// The statements of `sql`, coverage checked over the tokens read; inlined so `parse_strict` holds it.
+#[inline(always)]
 pub(crate) fn strict_statements(
     sql: &str,
     dialect: Dialect,
