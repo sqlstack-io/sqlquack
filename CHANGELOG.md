@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.9.0](https://github.com/sqlstack-io/sqlquack/compare/v0.8.0...v0.9.0) (2026-11-12)
+
+
+### Features
+
+* **syntax:** check Snowflake class instance commands against their grammar ([8ace8c0](https://github.com/sqlstack-io/sqlquack/commit/8ace8c06dbe307d3d912608319f5ba346a92c7c5))
+* **syntax:** parse EXECUTE DCM PROJECT plan, deploy and preview ([23aae47](https://github.com/sqlstack-io/sqlquack/commit/23aae474a136ebdb6925c93a89691f4e8e10a201))
+
+
+### Bug Fixes
+
+* **syntax:** keep DCM names and anonymous procedure return nullability in the tree ([24c23aa](https://github.com/sqlstack-io/sqlquack/commit/24c23aa4a0d13794fa8c924b3f997084ba0886ab))
+* **syntax:** refuse a null-input clause on a Snowflake handler-language anonymous procedure ([4e6a694](https://github.com/sqlstack-io/sqlquack/commit/4e6a69440317be5fd501b8af84d593440dff850b))
+
 ## [0.8.0](https://github.com/sqlstack-io/sqlquack/compare/v0.7.0...v0.8.0) (2026-11-12)
 
 
