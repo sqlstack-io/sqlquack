@@ -45,7 +45,8 @@ python -m scripts.build_syntax_obligations_snowflake ddl query  # obligations, w
 Rebuild a family's obligations whenever its catalogue, its rows in `limits.toml` or the builder
 changes. `make syntax-obligations`, part of `make check-ci`, fails when a committed obligations,
 withdrawn or elisions file differs from what the builder writes; it rebuilds only the families
-whose inputs or generated files changed since `EVIDENCE_BASE`, and passes when none did.
+whose inputs or generated files changed since `EVIDENCE_BASE`, and passes when none did. With
+`SYNTAX_OBLIGATIONS_SINCE=` (empty) it checks every family, as CI's nightly run does.
 
 Pages with no Markdown export (the per-category command hubs) are fetched as HTML and catalogue
 no form. A rebuild keeps every existing id whose (page, grammar) is unchanged. A form whose

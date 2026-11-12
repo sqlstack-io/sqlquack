@@ -6,8 +6,9 @@ name: CI
 # - code changes run check-ci, the Rust and Python tests, and the replay of the recorded cases,
 #   which reuses main's judgements for every case whose conversion and recording are unchanged;
 # - a change under a full-replay path replays every case.
-# The nightly run on main replays every case, refreshes the replay cache pull requests reuse,
-# converts DuckShop within its time budget and fuzzes. Release Please dispatches a full run on
+# The nightly run on main replays every case, checks every family's syntax obligations, refreshes
+# the replay cache pull requests reuse, converts DuckShop within its time budget and fuzzes; when
+# it fails it opens an issue labelled nightly-ci-failure, or comments on the one already open. Release Please dispatches a full run on
 # each release pull request's branch, so every release replays every case first.
 # A merge queue group runs the same checks as a pull request, scoped against the group's base.
 on:
@@ -79,6 +80,9 @@ jobs:
       UV_NO_SYNC: "1"
       # The evidence pin check and the result baselines compare with the pull request's base.
       EVIDENCE_BASE: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || 'origin/main' }}
+      # Pull requests and queue groups check the families their change touches; other runs, which
+      # have no base to compare with, check every family's syntax obligations.
+      SYNTAX_OBLIGATIONS_SINCE: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || '' }}
       REPLAY: ${{ needs.changes.outputs.replay }}
       # The Python tests and the replay take the module and binary from check-merge's gate build.
       PYTHON_MODULE_BUILD: gate-build
@@ -243,3 +247,27 @@ jobs:
           name: fuzz-artifacts
           path: fuzz/artifacts
           if-no-files-found: ignore
+
+  nightly-report:
+    name: Report a failed nightly run
+    if: failure() && github.event_name == 'schedule'
+    needs: [changes, site, checks, verify, duckshop, fuzz]
+    runs-on: ubuntu-24.04
+    permissions:
+      issues: write
+    steps:
+      - name: Open an issue, or comment on the one already open
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          LABEL: nightly-ci-failure
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          body="The nightly CI run on ${GITHUB_SHA} failed: ${RUN_URL}"
+          open=$(gh issue list --label "${LABEL}" --state open --json number --jq '.[0].number // empty')
+          if [[ -n "${open}" ]]; then
+            gh issue comment "${open}" --body "${body}"
+          else
+            gh label create "${LABEL}" --color B60205 --description "The nightly CI run failed" --force
+            gh issue create --title "Nightly CI failed" --label "${LABEL}" --body "${body}"
+          fi
