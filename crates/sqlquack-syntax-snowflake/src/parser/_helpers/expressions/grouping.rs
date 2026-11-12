@@ -590,6 +590,32 @@ impl Parser {
         }
     }
 
+    /// A MERGE target or source table with its optional alias, which `stop` ends when there is none.
+    fn parse_merge_table_alias(
+        &mut self,
+        table: Expression,
+        stop: TokenType,
+    ) -> Result<Expression> {
+        let explicit_as = self.match_token(TokenType::As);
+        if !explicit_as && self.check(stop) {
+            return Ok(table);
+        }
+        let Some(Expression::Identifier(alias)) = self.parse_id_var()? else {
+            return Ok(table);
+        };
+        Ok(Expression::Alias(Box::new(Alias {
+            this: table,
+            alias,
+            column_aliases: Vec::new(),
+            alias_explicit_as: explicit_as,
+            alias_keyword: None,
+            pre_alias_comments: Vec::new(),
+            trailing_comments: Vec::new(),
+            inferred_type: None,
+            span: SourceSpan::default(),
+        })))
+    }
+
     /// Parses a MERGE statement.
     pub(crate) fn parse_merge(&mut self) -> Result<Option<Expression>> {
         if !self.match_token(TokenType::Into) && self.applies_snowflake_context_rules() {
@@ -613,27 +639,13 @@ impl Parser {
             }
         }
 
-        if self.match_token(TokenType::As) || !self.check(TokenType::Using) {
-            if let Some(Expression::Identifier(ident)) = self.parse_id_var()? {
-                target = Expression::Alias(Box::new(Alias {
-                    this: target,
-                    alias: ident,
-                    column_aliases: Vec::new(),
-                    alias_explicit_as: false,
-                    alias_keyword: None,
-                    pre_alias_comments: Vec::new(),
-                    trailing_comments: Vec::new(),
-                    inferred_type: None,
-                    span: SourceSpan::default(),
-                }));
-            }
-        }
+        let target = self.parse_merge_table_alias(target, TokenType::Using)?;
 
         if !self.match_token(TokenType::Using) {
             return Err(self.parse_error("Expected USING in MERGE statement"));
         }
 
-        let mut using = if self.match_token(TokenType::LParen) {
+        let using = if self.match_token(TokenType::LParen) {
             let query = self.parse_statement()?;
             self.expect_token(TokenType::RParen)?;
             let trailing = self.previous_trailing_comments().to_vec();
@@ -655,13 +667,12 @@ impl Parser {
                 inferred_type: None,
                 span: SourceSpan::default(),
             };
-            if self.match_token(TokenType::As)
-                || self.is_identifier_token()
-                || self.is_safe_keyword_as_identifier()
-            {
+            let explicit_as = self.match_token(TokenType::As);
+            if explicit_as || self.is_identifier_token() || self.is_safe_keyword_as_identifier() {
                 let alias_name =
                     self.parse_unquoted_identifier(Self::expect_identifier_or_keyword)?;
                 subq.alias = Some(alias_name);
+                subq.alias_explicit_as = explicit_as;
                 if self.match_token(TokenType::LParen) {
                     let mut cols: Vec<Identifier> = Vec::new();
                     loop {
@@ -678,26 +689,9 @@ impl Parser {
             }
             Expression::Subquery(Box::new(subq))
         } else {
-            Expression::Table(Box::new(self.parse_table_ref()?))
+            let table = Expression::Table(Box::new(self.parse_table_ref()?));
+            self.parse_merge_table_alias(table, TokenType::On)?
         };
-
-        if matches!(&using, Expression::Table(_))
-            && (self.match_token(TokenType::As) || !self.check(TokenType::On))
-        {
-            if let Some(Expression::Identifier(ident)) = self.parse_id_var()? {
-                using = Expression::Alias(Box::new(Alias {
-                    this: using,
-                    alias: ident,
-                    column_aliases: Vec::new(),
-                    alias_explicit_as: false,
-                    alias_keyword: None,
-                    pre_alias_comments: Vec::new(),
-                    trailing_comments: Vec::new(),
-                    inferred_type: None,
-                    span: SourceSpan::default(),
-                }));
-            }
-        }
 
         let on = if self.match_token(TokenType::On) {
             Some(Box::new(self.parse_expression()?))

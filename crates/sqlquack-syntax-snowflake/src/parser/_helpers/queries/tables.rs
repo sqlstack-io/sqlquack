@@ -825,7 +825,6 @@ impl Parser {
     }
 
     fn parse_table_implicit_alias(&mut self, mut expr: Expression) -> Result<Expression> {
-        let is_keyword_alias = self.peek().token_type.is_keyword();
         let is_quoted_alias = self.peek().token_type == TokenType::QuotedIdentifier;
         let alias_span = self.peek().span;
         let alias = self.advance_text()?;
@@ -856,7 +855,7 @@ impl Parser {
         expr = match expr {
             Expression::Table(mut t) => {
                 t.alias = Some(make_alias_ident(alias));
-                t.alias_explicit_as = is_keyword_alias;
+                t.alias_explicit_as = false;
                 t.column_aliases = column_aliases;
                 Expression::Table(t)
             }
