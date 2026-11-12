@@ -7,6 +7,7 @@ use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::schema_objects::models::ObjectProperty;
+use sqlquack_syntax::expressions::statements::models::StageReference;
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::TokenType;
@@ -610,8 +611,13 @@ impl Parser {
         !self.is_at_end() && self.peek_text().starts_with('@')
     }
 
-    /// Parse a stage path, which like Snowflake's ends at the first whitespace: `@"s 1"` is not one path.
+    /// Parse a stage path, which like Snowflake's ends at the first whitespace; a quoted string that starts with @ stays a string.
     pub(super) fn parse_stage_path(&mut self) -> Result<Expression> {
+        if self.check(TokenType::String) || self.check(TokenType::DollarString) {
+            let text = self.peek_text().to_owned();
+            self.skip();
+            return Ok(Expression::Literal(Box::new(Literal::String(text))));
+        }
         let mut path = self.peek_text().to_owned();
         let mut end = self.peek().span.end;
         self.skip();
@@ -629,7 +635,17 @@ impl Parser {
             end = self.peek().span.end;
             self.skip();
         }
-        Ok(Expression::Literal(Box::new(Literal::String(path))))
+        let (name, path) = match path.find('/') {
+            Some(at) => (path[..at].to_owned(), Some(path[at..].to_owned())),
+            None => (path, None),
+        };
+        Ok(Expression::StageReference(Box::new(StageReference {
+            name,
+            path,
+            file_format: None,
+            pattern: None,
+            quoted: false,
+        })))
     }
 
     /// Parse a service's source after FROM: SPECIFICATION or SPECIFICATION_TEMPLATE with a value, `<name> = <value>` and USING ( ... ).
