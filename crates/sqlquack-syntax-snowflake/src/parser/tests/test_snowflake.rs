@@ -572,6 +572,18 @@ fn given_unsupported_snowflake_sql_when_parsing_then_parsing_fails() {
             expected_error: "Parse error",
         },
         ParseErrorTestCase {
+            description: "a handler-language anonymous procedure takes no null-input clause",
+            dialect: Some(DialectType::Snowflake),
+            sql: "WITH p1 AS PROCEDURE () RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.11' PACKAGES = ('snowflake-snowpark-python') HANDLER = 'run' CALLED ON NULL INPUT AS 'm' CALL p1()",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
+            description: "a Java anonymous procedure is not STRICT",
+            dialect: Some(DialectType::Snowflake),
+            sql: "WITH p1 AS PROCEDURE () RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = '11' PACKAGES = ('com.snowflake:snowpark:1.14.0') HANDLER = 'm' STRICT CALL p1()",
+            expected_error: "Parse error",
+        },
+        ParseErrorTestCase {
             description: "an anonymous procedure is followed by CALL",
             dialect: Some(DialectType::Snowflake),
             sql: "WITH p1 AS PROCEDURE () RETURNS INT LANGUAGE JAVASCRIPT AS 'm' SELECT 1",
