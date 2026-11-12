@@ -59,6 +59,9 @@ impl Parser {
         if materialized && (scope.is_some() || recursive || or_alter) {
             return Err(self.parse_error("Expected VIEW; a materialized view is not temporary, recursive or altered in place"));
         }
+        if recursive && scope.is_some() {
+            return Err(self.parse_error("Expected VIEW; Snowflake refuses RECURSIVE after a temporary scope"));
+        }
         if interactive && !materialized {
             return Err(self.parse_error("Expected MATERIALIZED VIEW after INTERACTIVE"));
         }

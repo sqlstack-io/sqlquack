@@ -304,14 +304,13 @@ impl Parser {
                 properties.extend(self.parse_resource_properties()?);
                 (vec![], properties)
             }
-            ("VIEW", "SET") if self.check_identifier("SECURE") => {
+            // Snowflake refuses SECURE together with any other property in one SET or UNSET.
+            ("VIEW", "SET" | "UNSET") if self.check_identifier("SECURE") => {
                 self.skip();
-                let mut properties = vec![property("SECURE", None, None)];
-                properties.extend(self.parse_resource_properties()?);
-                if properties.iter().any(|item| item.name.is_some()) {
-                    return Err(self.parse_error("A SET of TAG or CONTACT pairs sets nothing else"));
+                if !self.is_statement_end_at(0) {
+                    return Err(self.parse_error("A view's SECURE is set or unset on its own"));
                 }
-                (vec![], properties)
+                (vec![], vec![property("SECURE", None, None)])
             }
             ("DATASET", "DROP VERSION") | (_, "REMOVE STORAGE_LOCATION") => {
                 (vec![self.parse_string_value()?], vec![])
