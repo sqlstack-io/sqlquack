@@ -2759,7 +2759,7 @@
     "sf.query.select.select-ilike-replace-rename": "absent",
     "sf.query.select.select-replace-rename": "absent",
     "sf.query.select.select.selecting-specific-columns": "unverified",
-    "sf.query.semantic-view": "unverified",
+    "sf.query.semantic-view": "verified",
     "sf.query.top-n": "verified",
     "sf.query.unpivot": "verified",
     "sf.query.values": "verified",
