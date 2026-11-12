@@ -86,6 +86,7 @@
 {"case_id":"sf.query.sample.k7b57243ee17b","mark":"settled accept","obligations":["sf.query.sample.o050"],"sql_sha256":"7b57243ee17bef25457594b5742691e5c2186a6a48cf231df7ae5745ebb4da1b"}
 {"case_id":"sf.query.select.select.k90fda657c545","mark":"settled reject","obligations":["sf.query.select.select.o098"],"sql_sha256":"90fda657c5451a18c6a5d0c8fbc8bf360f612358d0e7ea4c7aae409b98cea9fa"}
 {"case_id":"sf.query.select.select.selecting-specific-columns.k182d9ed5aea5","mark":"documented","obligations":["sf.query.select.select.selecting-specific-columns.o061"],"sql_sha256":"182d9ed5aea573db7b15e92e99d78fe045220e691be4605307d7c8db54bfaae1"}
+{"case_id":"sf.query.semantic-view.k346000861414","mark":"settled accept","obligations":["sf.query.semantic-view.o075"],"sql_sha256":"346000861414ed3cb879d8a502a00988a10af48ad40937acc8a5395b8973bed6"}
 {"case_id":"sf.query.semantic-view.k4c966fd037f2","mark":"settled accept","obligations":["sf.query.semantic-view.o071"],"sql_sha256":"4c966fd037f2d0481d215872629620577c6d499e40da562c0da7c565a4bf166c"}
 {"case_id":"sf.query.values.ke10d44990b49","mark":"settled accept","obligations":["sf.query.values.o035"],"sql_sha256":"e10d44990b4909e7199ff9e71f0d7c88d7cef307b3d0883cb2156cf3cd37bc5b"}
 {"case_id":"sf.query.with.select.syntax.k0ec655314565","mark":"settled accept","obligations":["sf.query.with.select.syntax.o136","sf.query.with.select.syntax.o137"],"sql_sha256":"0ec6553145653a525e249f312eb890a4e07047422958b34457adc0f9d4c468ee"}
