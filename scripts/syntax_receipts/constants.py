@@ -16,6 +16,7 @@ SYNTAX_OR_ACCESS_SQLSTATE_CLASS: str = "42"
 REVIEWED_SEMANTIC_ERRNOS: frozenset[int] = frozenset(
     {
         3001,
+        3078,
         3172,
         90025,
         93171,

@@ -180,9 +180,10 @@ that edits or removes a committed one.
 
   A reviewed errno is one whose message shows that Snowflake parsed the statement and then
   refused it. Examples are a duplicate secret name (509008), a missing object to undrop (90025),
-  access control (3001), a required property (3172), an account restriction (93171) and an
-  application-only operation (98620). Internal errors (603), statement timeouts (630) and errors
-  that may come from the parser itself stay refused.
+  access control (3001), a required property (3172), an account restriction (93171), replication
+  that is not enabled for the account (3078) and an application-only operation (98620). Internal
+  errors (603), statement timeouts (630) and errors that may come from the parser itself stay
+  refused.
 - `raw_record_sha256`, `run_audit_sha256` and `packet_sha256`: the hashes of the private raw
   record, the private run audit and the submitted packet.
 - Optional provenance: `case_hash`, `input_sha256`, `statement_index`, `statements_in_input`,

@@ -178,6 +178,16 @@ _TIMED_OUT_ROW: dict[str, object] = replaced(
             expected_classification=None,
         ),
         ClassifyTestCase(
+            description="replication not enabled for the account is semantic",
+            errno=3078,
+            sqlstate="55000",
+            message="Replication is not enabled for your account.",
+            expected_classification=(
+                "semantic_error",
+                "errno 3078 SQLSTATE 55000, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
             description="an unreviewed errno without the compilation prefix is not established",
             errno=926,
             sqlstate="42601",
