@@ -7,6 +7,7 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal, Star};
 use sqlquack_syntax::expressions::queries::models::{Cte, OrderBy, Select, Union, With};
+use sqlquack_syntax::tokens::models::Span;
 
 use crate::dialects::main::dialect_rules::dialect_rules;
 use crate::lineage::_helpers::tracing::expressions::{expression_lineage, is_aggregate};
@@ -583,7 +584,7 @@ fn select_query(
             name: output_name(projection, context),
             key: output_key(projection, context),
             lineage: expression_lineage(projection, &scope, context),
-            expression: projection.source_span(),
+            expression: item_range(projection),
         };
         query.rows.rows_of(&column.lineage);
         if !holds_aggregate(projection) {
@@ -1016,5 +1017,17 @@ fn is_star(projection: &Expression) -> bool {
         Expression::Annotated(annotated) => is_star(&annotated.this),
         Expression::Paren(paren) => is_star(&paren.this),
         _ => false,
+    }
+}
+
+/// A select item's source range; a column's runs from its qualifier, which some parsers' column span omits.
+fn item_range(projection: &Expression) -> Option<Span> {
+    let qualifier = match projection {
+        Expression::Column(column) => column.table.as_ref().and_then(|table| table.span),
+        _ => None,
+    };
+    match (qualifier, projection.source_span()) {
+        (Some(qualifier), Some(name)) => Some(qualifier.through(name)),
+        (_, range) => range,
     }
 }
