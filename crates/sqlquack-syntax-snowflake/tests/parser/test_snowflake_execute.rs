@@ -161,3 +161,42 @@ fn given_a_snowflake_dcm_project_plan_deploy_or_preview_when_parsing_then_its_gr
         );
     }
 }
+
+#[test]
+fn given_a_dcm_project_run_or_an_anonymous_procedure_when_parsing_then_names_and_nullability_keep_their_kind(
+) {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "a DCM configuration is a name, not a table",
+            sql: "EXECUTE DCM PROJECT v1 PREVIEW t1 USING CONFIGURATION c1 FROM 'm' ;",
+            pointer: "/0/execute_object/properties/1/value/identifier/name",
+            expected_value: json!("c1"),
+        },
+        ProjectionTestCase {
+            description: "a DCM deployment is a name, not a table",
+            sql: "EXECUTE DCM PROJECT v1 PLAN FROM DEPLOYMENT \"d1\" ;",
+            pointer: "/0/execute_object/properties/0/value/identifier/name",
+            expected_value: json!("d1"),
+        },
+        ProjectionTestCase {
+            description: "an anonymous procedure keeps NOT NULL on its return type, before its options",
+            sql: "WITH v1 AS PROCEDURE ( ) RETURNS INT NOT NULL LANGUAGE JAVASCRIPT CALLED ON NULL INPUT AS 'm' CALL v1 ( ) ;",
+            pointer: "/0/call/with/ctes/0/this/create_procedure/with_options",
+            expected_value: json!(["NOT NULL", "CALLED ON NULL INPUT"]),
+        },
+        ProjectionTestCase {
+            description: "an anonymous procedure keeps NULL on its return type",
+            sql: "WITH v1 AS PROCEDURE ( ) RETURNS INT NULL LANGUAGE SQL AS 'BEGIN RETURN 1 ; END' CALL v1 ( ) ;",
+            pointer: "/0/call/with/ctes/0/this/create_procedure/with_options",
+            expected_value: json!(["NULL"]),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
