@@ -22,9 +22,25 @@ jobs:
   release-please:
     runs-on: ubuntu-24.04
     steps:
+      # The organization's delivery App opens and updates the release pull request, so GitHub
+      # emits its pull request events and the organization auto-merge workflow treats it as its own.
+      - name: Create delivery token
+        id: delivery-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.CHIO_DELIVERY_APP_ID }}
+          private-key: ${{ secrets.CHIO_DELIVERY_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-actions: write
+          permission-contents: write
+          permission-issues: write
+          permission-pull-requests: write
+
       - uses: googleapis/release-please-action@v4
         id: release
         with:
+          token: ${{ steps.delivery-token.outputs.token }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
@@ -37,9 +53,8 @@ jobs:
           gh workflow run publish.yml --repo "${GITHUB_REPOSITORY}" --ref main \
             -f "tag=${RELEASE_TAG}"
 
-      # A pull request this workflow opens starts no pull_request runs, so the release pull
-      # request's required checks are dispatched on its branch: CI replays every recorded case
-      # before the release, alongside the distribution build.
+      # The release pull request's required checks are dispatched on its branch: CI replays every
+      # recorded case before the release, alongside the distribution build.
       - name: Check the release pull request and build its distributions
         if: steps.release.outputs.prs_created == 'true'
         env:
