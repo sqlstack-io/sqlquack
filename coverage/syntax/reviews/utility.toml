@@ -136,3 +136,20 @@ note = "Read in full against the documentation page, the obligations, the cases 
 [review.definitions]
 "sf.utility.call-with.language-javascript-as-call" = "db87dc3c49bdc6f86eade43bc6f93d20d98cf0969eb7485be03bcae219c7f772"
 "sf.utility.execute-job-service" = "f0d2489a4725394b38014d90c6c4832d295b389f79a5b19581c111ddc4237c64"
+
+[[review]]
+id = "utility-007"
+family = "utility"
+parser_tree = "582bdba8f75e43db2dfbf7d7ba7b39411f31a8fb"
+reviewed_utc = "2026-11-12T19:10:18Z"
+verdict = "approved"
+forms = [
+  "sf.utility.execute-job-service",
+]
+note = "Re-approved after stage paths became stage references: of the 104 cases of these forms, 65 trees are unchanged and 39 differ only by a stage path recorded as a stage reference with its name and path instead of a string. Every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.execute-job-service" = "60dab65b25cb7ffdaa03ab29e60d825d2fc710dbd9ce7f2fc1d0f4734163eda5"
+
+[review.definitions]
+"sf.utility.execute-job-service" = "f0d2489a4725394b38014d90c6c4832d295b389f79a5b19581c111ddc4237c64"
