@@ -48287,7 +48287,7 @@ form = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment"
 kind = "interaction_all_options"
 note = "every independent option of one production together, observed"
 anchor = "doc.sql.execute-dcm-project / Syntax"
-sql = "EXECUTE DCM PROJECT v1 PLAN DELTA USING CONFIGURATION v1 ( 1 , 1 ) ENVIRONMENT ( v1 ) FROM 'm' OUTPUT_PATH 'm' ;"
+sql = "EXECUTE DCM PROJECT v1 PLAN DELTA USING CONFIGURATION v1 ( 1 , 1 ) ENVIRONMENT ( ? ) FROM 'm' OUTPUT_PATH 'm' ;"
 expect = "observe"
 documented = true
 context = "raw"
@@ -48296,16 +48296,15 @@ context = "raw"
 form = "sf.utility.execute-dcm-project.preview-using-configuration-from"
 kind = "interaction_all_options"
 note = "every independent option of one production together"
-reason = "[documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-21); observed, not flipped to reject"
+reason = "the hand row fills ENVIRONMENT with a bind variable, as the page documents; Snowflake parses it and fails on the placeholder source (errno 1011); observed, settled by its receipt"
 
 [[limit]]
 form = "sf.utility.execute-dcm-project.preview-using-configuration-from"
 kind = "interaction_all_options"
 note = "every independent option of one production together, observed"
 anchor = "doc.sql.execute-dcm-project / Syntax"
-sql = "EXECUTE DCM PROJECT v1 PREVIEW v1 USING CONFIGURATION v1 ENVIRONMENT ( v1 ) FROM 'm' LIMIT 1 ;"
+sql = "EXECUTE DCM PROJECT v1 PREVIEW v1 USING CONFIGURATION v1 ENVIRONMENT ( ? ) FROM 'm' LIMIT 1 ;"
 expect = "observe"
-documented = true
 context = "raw"
 
 [[suppress]]
@@ -51042,7 +51041,7 @@ context = "raw"
 form = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment"
 kind = "option_present"
 target = "[ ENVIRONMENT ( <bind_variable> ) ]"
-reason = "[documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-51); observed, not flipped to reject"
+reason = "the hand row fills ENVIRONMENT with a bind variable, as the page documents; Snowflake parses it and fails on the placeholder source (errno 1011); observed, settled by its receipt"
 
 [[limit]]
 form = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment"
@@ -51050,9 +51049,8 @@ kind = "option_present"
 target = "[ ENVIRONMENT ( <bind_variable> ) ]"
 note = "option present [ ENVIRONMENT ( <bind_variable> ) ], observed"
 anchor = "doc.sql.execute-dcm-project / Syntax"
-sql = "EXECUTE DCM PROJECT v1 DEPLOY ENVIRONMENT ( v1 ) FROM 'm' ;"
+sql = "EXECUTE DCM PROJECT v1 DEPLOY ENVIRONMENT ( ? ) FROM 'm' ;"
 expect = "observe"
-documented = true
 context = "raw"
 
 [[suppress]]
@@ -51060,7 +51058,7 @@ form = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment"
 kind = "operand_type_class"
 target = "<bind_variable> in [ ENVIRONMENT ( <bind_variable> ) ]"
 note = "a valid operand"
-reason = "[documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-51); observed, not flipped to reject"
+reason = "the hand row fills ENVIRONMENT with a bind variable, as the page documents; Snowflake parses it and fails on the placeholder source (errno 1011); observed, settled by its receipt"
 
 [[limit]]
 form = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment"
@@ -51068,9 +51066,8 @@ kind = "operand_type_class"
 target = "<bind_variable> in [ ENVIRONMENT ( <bind_variable> ) ]"
 note = "a valid operand, observed"
 anchor = "doc.sql.execute-dcm-project / Syntax"
-sql = "EXECUTE DCM PROJECT v1 DEPLOY ENVIRONMENT ( v1 ) FROM 'm' ;"
+sql = "EXECUTE DCM PROJECT v1 DEPLOY ENVIRONMENT ( ? ) FROM 'm' ;"
 expect = "observe"
-documented = true
 context = "raw"
 
 [[suppress]]
@@ -51113,7 +51110,7 @@ context = "raw"
 form = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment"
 kind = "option_present"
 target = "[ ENVIRONMENT ( <bind_variable> ) ]"
-reason = "[documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-51); observed, not flipped to reject"
+reason = "the hand row fills ENVIRONMENT with a bind variable, as the page documents; Snowflake parses it and fails on the placeholder source (errno 1011); observed, settled by its receipt"
 
 [[limit]]
 form = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment"
@@ -51121,9 +51118,8 @@ kind = "option_present"
 target = "[ ENVIRONMENT ( <bind_variable> ) ]"
 note = "option present [ ENVIRONMENT ( <bind_variable> ) ], observed"
 anchor = "doc.sql.execute-dcm-project / Syntax"
-sql = "EXECUTE DCM PROJECT v1 PLAN ENVIRONMENT ( v1 ) FROM 'm' ;"
+sql = "EXECUTE DCM PROJECT v1 PLAN ENVIRONMENT ( ? ) FROM 'm' ;"
 expect = "observe"
-documented = true
 context = "raw"
 
 [[suppress]]
@@ -51131,7 +51127,7 @@ form = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment"
 kind = "operand_type_class"
 target = "<bind_variable> in [ ENVIRONMENT ( <bind_variable> ) ]"
 note = "a valid operand"
-reason = "[documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-51); observed, not flipped to reject"
+reason = "the hand row fills ENVIRONMENT with a bind variable, as the page documents; Snowflake parses it and fails on the placeholder source (errno 1011); observed, settled by its receipt"
 
 [[limit]]
 form = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment"
@@ -51139,9 +51135,8 @@ kind = "operand_type_class"
 target = "<bind_variable> in [ ENVIRONMENT ( <bind_variable> ) ]"
 note = "a valid operand, observed"
 anchor = "doc.sql.execute-dcm-project / Syntax"
-sql = "EXECUTE DCM PROJECT v1 PLAN ENVIRONMENT ( v1 ) FROM 'm' ;"
+sql = "EXECUTE DCM PROJECT v1 PLAN ENVIRONMENT ( ? ) FROM 'm' ;"
 expect = "observe"
-documented = true
 context = "raw"
 
 [[suppress]]
@@ -51184,7 +51179,7 @@ context = "raw"
 form = "sf.utility.execute-dcm-project.preview-using-configuration-from"
 kind = "option_present"
 target = "[ ENVIRONMENT ( <bind_variable> ) ]"
-reason = "[documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-51); observed, not flipped to reject"
+reason = "the hand row fills ENVIRONMENT with a bind variable, as the page documents; Snowflake parses it and fails on the placeholder source (errno 1011); observed, settled by its receipt"
 
 [[limit]]
 form = "sf.utility.execute-dcm-project.preview-using-configuration-from"
@@ -51192,9 +51187,8 @@ kind = "option_present"
 target = "[ ENVIRONMENT ( <bind_variable> ) ]"
 note = "option present [ ENVIRONMENT ( <bind_variable> ) ], observed"
 anchor = "doc.sql.execute-dcm-project / Syntax"
-sql = "EXECUTE DCM PROJECT v1 PREVIEW v1 USING CONFIGURATION v1 ENVIRONMENT ( v1 ) FROM 'm' ;"
+sql = "EXECUTE DCM PROJECT v1 PREVIEW v1 USING CONFIGURATION v1 ENVIRONMENT ( ? ) FROM 'm' ;"
 expect = "observe"
-documented = true
 context = "raw"
 
 [[suppress]]
@@ -51202,7 +51196,7 @@ form = "sf.utility.execute-dcm-project.preview-using-configuration-from"
 kind = "operand_type_class"
 target = "<bind_variable> in [ ENVIRONMENT ( <bind_variable> ) ]"
 note = "a valid operand"
-reason = "[documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-51); observed, not flipped to reject"
+reason = "the hand row fills ENVIRONMENT with a bind variable, as the page documents; Snowflake parses it and fails on the placeholder source (errno 1011); observed, settled by its receipt"
 
 [[limit]]
 form = "sf.utility.execute-dcm-project.preview-using-configuration-from"
@@ -51210,9 +51204,8 @@ kind = "operand_type_class"
 target = "<bind_variable> in [ ENVIRONMENT ( <bind_variable> ) ]"
 note = "a valid operand, observed"
 anchor = "doc.sql.execute-dcm-project / Syntax"
-sql = "EXECUTE DCM PROJECT v1 PREVIEW v1 USING CONFIGURATION v1 ENVIRONMENT ( v1 ) FROM 'm' ;"
+sql = "EXECUTE DCM PROJECT v1 PREVIEW v1 USING CONFIGURATION v1 ENVIRONMENT ( ? ) FROM 'm' ;"
 expect = "observe"
-documented = true
 context = "raw"
 
 # query receipt triage: remaining contradictions observed, each reason names its category and receipt.
@@ -58285,7 +58278,7 @@ form = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment"
 kind = "interaction_all_options"
 note = "every independent option of one production together, observed"
 anchor = "doc.sql.execute-dcm-project / Syntax"
-sql = "EXECUTE DCM PROJECT v1 DEPLOY AS \"d1\" USING CONFIGURATION v1 ( 1 , 1 ) ENVIRONMENT ( v1 ) FROM 'm' ;"
+sql = "EXECUTE DCM PROJECT v1 DEPLOY AS \"d1\" USING CONFIGURATION v1 ( 1 , 1 ) ENVIRONMENT ( ? ) FROM 'm' ;"
 expect = "observe"
 documented = true
 context = "raw"
