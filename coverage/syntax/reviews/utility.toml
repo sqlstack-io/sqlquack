@@ -116,3 +116,23 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.utility.execute-dcm-project.preview-using-configuration-from" = "2fa9e31deafc49e3d0f3c19d67c57c0be982fc22946d1b0cc66e282020557a2a"
 "sf.utility.execute-notebook-project" = "73f0ce13afa2c2f0fb0483c4f54ef235f7753056de9acab7ddd05627fc03fb06"
 "sf.utility.execute-task-graph.graph-retry-graph-run" = "e6fc055460eac539f7a5e0529c1bc4ba57fe688cfa28be2a7b2c2b6d4b432413"
+
+[[review]]
+id = "utility-006"
+family = "utility"
+parser_tree = "582bdba8f75e43db2dfbf7d7ba7b39411f31a8fb"
+reviewed_utc = "2026-11-12T17:34:27Z"
+verdict = "approved"
+forms = [
+  "sf.utility.call-with.language-javascript-as-call",
+  "sf.utility.execute-job-service",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of parser tree 582bdba8f75e; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.call-with.language-javascript-as-call" = "4bcc7229c09c36675fce5dc72b71284c045d6a67191b86e954df97438e41d51c"
+"sf.utility.execute-job-service" = "e450912dc092b0752425b122b133f99b6f4c70829afc74549dd649ce85561b7b"
+
+[review.definitions]
+"sf.utility.call-with.language-javascript-as-call" = "db87dc3c49bdc6f86eade43bc6f93d20d98cf0969eb7485be03bcae219c7f772"
+"sf.utility.execute-job-service" = "f0d2489a4725394b38014d90c6c4832d295b389f79a5b19581c111ddc4237c64"

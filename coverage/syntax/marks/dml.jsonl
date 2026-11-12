@@ -223,6 +223,7 @@
 {"case_id":"sf.dml.put.k1138f842a68a","mark":"settled accept","obligations":["sf.dml.put.o108"],"sql_sha256":"1138f842a68a3d1fa02a6de0a5a6ece7bbbd992ca30a1dbecc2550ab0fb80ef2"}
 {"case_id":"sf.dml.put.k2272e578198e","mark":"settled accept","obligations":["sf.dml.put.o109"],"sql_sha256":"2272e578198e9e9d464cba203ae46e5ee5025dd26779c106ea3823a431acf382"}
 {"case_id":"sf.dml.put.k228b841c19bc","mark":"settled accept","obligations":["sf.dml.put.o110"],"sql_sha256":"228b841c19bce091646266823723e0478c47d100b8d166c8558a6eaae3ea1329"}
+{"case_id":"sf.dml.put.k3e09455c9bfe","mark":"settled accept","obligations":["sf.dml.put.o091"],"sql_sha256":"3e09455c9bfe2a0d58e9a43b7230fc412951eb52b97732a727fadd430022bff4"}
 {"case_id":"sf.dml.put.k48afca7c214a","mark":"settled reject","obligations":["sf.dml.put.o115"],"sql_sha256":"48afca7c214a689073bae07036881dd7f32c2e0024d1c0045159f4c4f667dcbb"}
 {"case_id":"sf.dml.put.k645ecc8f5b83","mark":"settled accept","obligations":["sf.dml.put.o100"],"sql_sha256":"645ecc8f5b83e6843fc288f84ec72edeb0a3aedbd4aa75ab83124c60d64538d2"}
 {"case_id":"sf.dml.put.k70bbb70a0c4c","mark":"settled reject","obligations":["sf.dml.put.o116"],"sql_sha256":"70bbb70a0c4c365d48bf4ae32fd1d3f852449cf5d614d63e1dc998fdec0cdf24"}

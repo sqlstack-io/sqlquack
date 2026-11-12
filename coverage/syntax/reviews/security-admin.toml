@@ -1059,3 +1059,71 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.security_admin.show-data-movement-policies" = "2de8dece32aa7710174398af6a394657d5a9d675e905e503e2db713fadfeaca9"
 "sf.security_admin.show-network-rules" = "8297db5cda1f2464c7904d8aefad74630f80e1b68c5e3a3c8e06eae0e1ae2166"
 "sf.security_admin.show-storage-lifecycle-policies" = "42be8abc286dc7fcca8cc254c9d949b788f55e08ea10156c13ba7d1ecf64bedc"
+
+[[review]]
+id = "security-admin-014"
+family = "security_admin"
+parser_tree = "582bdba8f75e43db2dfbf7d7ba7b39411f31a8fb"
+reviewed_utc = "2026-11-12T17:34:27Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true",
+  "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-enabled-true",
+  "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true",
+  "sf.security_admin.create-authentication-policy.create-authentication-policy",
+  "sf.security_admin.create-authentication-policy.create-or-alter-authentication",
+  "sf.security_admin.create-catalog-integration-open-catalog.catalog-api-type-private-catalog-name-rest-authentication",
+  "sf.security_admin.create-catalog-integration-open-catalog.catalog-name-rest-authentication-type-oauth",
+  "sf.security_admin.create-external-access-integration",
+  "sf.security_admin.create-feature-policy",
+  "sf.security_admin.create-network-policy.create-network-policy",
+  "sf.security_admin.create-network-policy.create-or-alter-network",
+  "sf.security_admin.create-network-rule.create-or-alter-network",
+  "sf.security_admin.create-notification-integration-email",
+  "sf.security_admin.create-security-integration-api-auth.false",
+  "sf.security_admin.create-security-integration-oauth-external",
+  "sf.security_admin.create-security-integration-oauth-snowflake.custom-oauth-client-type-oauth-redirect-uri",
+  "sf.security_admin.create-security-integration-oidc.oidc-allowed-msft-tenants",
+  "sf.security_admin.create-session-policy",
+]
+note = "Re-approved after the parenthesized-list fix changed only these fingerprints: across all 850 cases of these forms, 767 trees are unchanged, 82 differ only by a two-item list no longer nested in a second list, and 2 refusals changed their message and are still refusals. Every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true" = "5e4b2ca50b2905470f6bf019859e186aed4de8dfaa0712c9ddf6d5b08197fde5"
+"sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-enabled-true" = "fe354f48c56ad3ccce18c7578e4e02db7d705b345cf8fcefbbac01c3873363be"
+"sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true" = "2476b8504590935268ce73226cb746f78405feb9c3890dc74c9d570a68199673"
+"sf.security_admin.create-authentication-policy.create-authentication-policy" = "baf7c2bbe415112bda2accd7fa29bcbf6907d6d13190a5da9391bd2aa3e0c9c2"
+"sf.security_admin.create-authentication-policy.create-or-alter-authentication" = "09f7c7d757855aea402641dfaf64393f307f705be24fef9fff3d88f63bf096c7"
+"sf.security_admin.create-catalog-integration-open-catalog.catalog-api-type-private-catalog-name-rest-authentication" = "2ac37b97aa7b68003dbf77848dae2e07d0e77a9dbeda39088521e62bd42efed2"
+"sf.security_admin.create-catalog-integration-open-catalog.catalog-name-rest-authentication-type-oauth" = "773ec7568de76269cc341e0869fba670d9122a63ec9ef2ef979d42287250b8c4"
+"sf.security_admin.create-external-access-integration" = "6569fffd56d75699f4850bd3fec1d537807faff23896bb0ab7f7daf73f497a28"
+"sf.security_admin.create-feature-policy" = "e616e884713e6e6cd409100daf4c3e0d6d2c3afb60a2a16930f6603ee4480466"
+"sf.security_admin.create-network-policy.create-network-policy" = "e07a51ca8d738f4b464bc73cdea908d4feb816710c5b23a1a7d890c397f1a20d"
+"sf.security_admin.create-network-policy.create-or-alter-network" = "e2c0a9ab88274b0b45b8df5bbeaecb4dda73761989477a3d2855350365a18401"
+"sf.security_admin.create-network-rule.create-or-alter-network" = "de4cab252925f34b78d03d9cf3b5f25a4aede134991036f7d945fb65e9647e70"
+"sf.security_admin.create-notification-integration-email" = "6b57a77469d43bed00fb8fd558055b4991278a87032f5c5e41a8c98ab717f8c2"
+"sf.security_admin.create-security-integration-api-auth.false" = "964538475d79a96be01d7304433ddb25cf3ec3a0246074a60668bc1c85ff3f48"
+"sf.security_admin.create-security-integration-oauth-external" = "6a40988cfc6db173465472a142953da8eb8c3a572a8c970337f4458c9fb5990a"
+"sf.security_admin.create-security-integration-oauth-snowflake.custom-oauth-client-type-oauth-redirect-uri" = "e19dad5ee3550a5d16ea464b7680a897e67d9347c9cf8a63ac38c4e3c4cc7bb2"
+"sf.security_admin.create-security-integration-oidc.oidc-allowed-msft-tenants" = "9ae6ad231c221dc19c9032eeaa401b5d1417475c73533298f642e730bce3b1ba"
+"sf.security_admin.create-session-policy" = "fecd8667677d97deca0338a6aaa5f91089330668abe78664f54dc6509fd1824c"
+
+[review.definitions]
+"sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true" = "1f7709574f0394f8cbe864508c2ebdef5bbabb60056b2632ad72ca1f2b93e30e"
+"sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-enabled-true" = "308cabb56c21e112bedfe2867c8dcf1a5ab0706278f02b037865911786bf0229"
+"sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true" = "896ced79318d9b162613fc89a1b74e024fdeb9af00ccd2902b9629e76d89457f"
+"sf.security_admin.create-authentication-policy.create-authentication-policy" = "51a0729f323b7f1c20a0ef6f7b5661d5738c52720f32338cd35bd852aff48cfa"
+"sf.security_admin.create-authentication-policy.create-or-alter-authentication" = "92bff9f890ebf7b3f05d8792a74f3199d6fc0f3f8c8fd99ecc7b3e530aa7c676"
+"sf.security_admin.create-catalog-integration-open-catalog.catalog-api-type-private-catalog-name-rest-authentication" = "0623e2a8fc818b53e52edc761690563a1b8653d8fc4857448729821f79513fbd"
+"sf.security_admin.create-catalog-integration-open-catalog.catalog-name-rest-authentication-type-oauth" = "5ea51062dd627230cccf07d1b099065c77ee7f8fe0a3da20514cf89fb98e6e76"
+"sf.security_admin.create-external-access-integration" = "11084e757ea5ce85d61e2dc283778a5377ae28ef47d4c27b4d36747e0d476e54"
+"sf.security_admin.create-feature-policy" = "fa7f156cdc9453973f15a1df93a4f020e1dd149de6313441aeb3eb5d35fbe7af"
+"sf.security_admin.create-network-policy.create-network-policy" = "cee9dcf89036396c288ac6d7db544a40fbd5b8a343afbc5ccbe9949800d7ceb6"
+"sf.security_admin.create-network-policy.create-or-alter-network" = "8d23dbd4dda98be372ef3780446d094f7bef517345c56c71e4dea2780750b0ca"
+"sf.security_admin.create-network-rule.create-or-alter-network" = "1c84ae4e1fb1850990e9915902a1cae22cea793efc86c30dbbf7d3422d145141"
+"sf.security_admin.create-notification-integration-email" = "b64764a7431703506fbb0c69914b646729aa3da0c3ffb7e0526cc8f435e9c6b1"
+"sf.security_admin.create-security-integration-api-auth.false" = "58bba52f3618a994508fc5ff79a59deb801bc7a9bf7daf586bb7f66d8c6b0c6e"
+"sf.security_admin.create-security-integration-oauth-external" = "1872588215420f42497f03341b9e7fc62289db9072ddbc1649389642991e79b4"
+"sf.security_admin.create-security-integration-oauth-snowflake.custom-oauth-client-type-oauth-redirect-uri" = "e313e9c5116e7d3150dcd86e4b0fffc3d9c5ed346c67b92c4f0e0fe8d74f306a"
+"sf.security_admin.create-security-integration-oidc.oidc-allowed-msft-tenants" = "f3e17170e68165fe44572c34d06ec0243a0a1cf5782bae59e695a3c917aa15e9"
+"sf.security_admin.create-session-policy" = "c6e0d5e5ae9e9a8561b4a4f7d9213e39f69fa43fe1d0165a791d6284cf9036c8"

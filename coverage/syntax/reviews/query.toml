@@ -260,3 +260,23 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.query.resample" = "df67c94a39e7e80bb01ec0b97d6ba7de7fe46aed271a5d877e04bcf3a05126e3"
 "sf.query.sample" = "f6803dda7d63c241c930b0734b519a0a6155ff989d3f59c55348b21a7999871b"
 "sf.query.values" = "5b43f2350f2ae8f0e5a95418a1dc9d86929cc1e37862a18e6d8170fd7c377ebe"
+
+[[review]]
+id = "query-012"
+family = "query"
+parser_tree = "582bdba8f75e43db2dfbf7d7ba7b39411f31a8fb"
+reviewed_utc = "2026-11-12T17:34:27Z"
+verdict = "approved"
+forms = [
+  "sf.query.join.join-2",
+  "sf.query.join.join.syntax",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of parser tree 582bdba8f75e; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.query.join.join-2" = "2dfa400ceaa743123c911c6465ea90becfe1a188e040c8423fb1fc16fec84399"
+"sf.query.join.join.syntax" = "7452b273e4521c9eff9369d514348d33de7b54c8ad0a4926a606baff13ec1100"
+
+[review.definitions]
+"sf.query.join.join-2" = "4bc06fc3d076a458af27807d8093a505210af7d6d27133f3105be3e026df82ca"
+"sf.query.join.join.syntax" = "abf625c6216905b38bfa74d505624954f92108406a0eeefe2672de7e36567e19"
