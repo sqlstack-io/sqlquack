@@ -21,6 +21,9 @@ use sqlquack_syntax::tokens::types::Result;
 /// Handler languages Snowflake accepts for an anonymous procedure.
 const LANGUAGES: [&str; 5] = ["SQL", "JAVASCRIPT", "PYTHON", "JAVA", "SCALA"];
 
+/// Languages whose anonymous procedure takes a null-input clause; Snowflake refuses it for a handler language.
+const NULL_INPUT_LANGUAGES: [&str; 2] = ["SQL", "JAVASCRIPT"];
+
 impl Parser {
     /// Whether the CTE body after `AS` is a Snowflake anonymous procedure.
     pub(crate) fn at_anonymous_procedure(&self) -> bool {
@@ -162,11 +165,15 @@ impl Parser {
         Ok(name)
     }
 
-    /// Handler options and the `AS` body, in any order, each at most once.
+    /// Handler options and the `AS` body, in any order, each at most once; a null-input clause only for SQL and JavaScript.
     fn parse_anonymous_procedure_options(
         &mut self,
         mut procedure: CreateProcedure,
     ) -> Result<CreateProcedure> {
+        let null_input = procedure
+            .language
+            .as_deref()
+            .is_some_and(|language| NULL_INPUT_LANGUAGES.contains(&language));
         loop {
             let option = if self.match_identifier("RUNTIME_VERSION")
                 || self.match_identifier("HANDLER")
@@ -181,11 +188,12 @@ impl Parser {
                     "{key} = ({})",
                     self.parse_procedure_string_list()?.join(", ")
                 )
-            } else if self.match_text_seq(&["CALLED", "ON", "NULL", "INPUT"]) {
+            } else if null_input && self.match_text_seq(&["CALLED", "ON", "NULL", "INPUT"]) {
                 "CALLED ON NULL INPUT".to_string()
-            } else if self.match_text_seq(&["RETURNS", "NULL", "ON", "NULL", "INPUT"]) {
+            } else if null_input && self.match_text_seq(&["RETURNS", "NULL", "ON", "NULL", "INPUT"])
+            {
                 "RETURNS NULL ON NULL INPUT".to_string()
-            } else if self.match_identifier("STRICT") {
+            } else if null_input && self.match_identifier("STRICT") {
                 "STRICT".to_string()
             } else if procedure.body.is_none() && self.match_token(TokenType::As) {
                 let body = self.parse_anonymous_procedure_body(procedure.language.as_deref())?;
