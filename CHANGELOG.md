@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.0](https://github.com/sqlstack-io/sqlquack/compare/v0.6.0...v0.7.0) (2026-11-12)
+
+
+### Features
+
+* **convert:** run FULL JOIN USING after a JOIN without ON left to right ([1cbc3bd](https://github.com/sqlstack-io/sqlquack/commit/1cbc3bde743bc1bcb7f9f9daafc5b6e44678d293))
+
+
+### Bug Fixes
+
+* **syntax-cases:** render external table options and DCM environments as documented ([dc5dd46](https://github.com/sqlstack-io/sqlquack/commit/dc5dd46df2b85854a89c16c27e5a9d1c32188d5a))
+
 ## [0.6.0](https://github.com/sqlstack-io/sqlquack/compare/v0.5.1...v0.6.0) (2026-11-12)
 
 
