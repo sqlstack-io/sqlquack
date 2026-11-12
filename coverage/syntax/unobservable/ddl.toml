@@ -172,18 +172,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.alter-warehouse.add-tables.o004"
-form = "sf.ddl.alter-warehouse.add-tables"
-construct = "omit <name>: ALTER WAREHOUSE ADD TABLES ( v1 ) ;"
-reason = "not submitted: held by the capture guard in chunk ux-03: warehouse change"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-warehouse.add-tables.k22a4a06e0b15", sql_sha256 = "22a4a06e0b15cb1bfd4fb1a04796eaa4a1d6306813776f49adcc9300c3e5c268" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.alter-warehouse.add-tables.o010"
 form = "sf.ddl.alter-warehouse.add-tables"
 construct = "the list continued at least once: ALTER WAREHOUSE IF EXISTS v1 ADD TABLES ( v1 , v1 ) ;"
@@ -215,18 +203,6 @@ reason = "not submitted: held by the capture guard in chunk ux-03: warehouse cha
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.alter-warehouse.drop-tables.k963c2aab3d6c", sql_sha256 = "963c2aab3d6c4a35c8c654b810d12087151b4c1884a0eebb6172c28074461f31" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.alter-warehouse.drop-tables.o004"
-form = "sf.ddl.alter-warehouse.drop-tables"
-construct = "omit <name>: ALTER WAREHOUSE DROP TABLES ( v1 ) ;"
-reason = "not submitted: held by the capture guard in chunk ux-03: warehouse change"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.alter-warehouse.drop-tables.k18cd7b807795", sql_sha256 = "18cd7b807795ee3def8ece5df4f0e3b033b505b06990de00964af2c353bd5b4a" },
 ]
 runs = []
 probes = []
