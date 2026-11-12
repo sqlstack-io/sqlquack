@@ -176061,158 +176061,6 @@ anchor = "doc.sql.create-iceberg-table / Syntax"
 note = "a string literal in place of <col_name> (DAY ( 'v1' )), observed"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o299"
-kind = "option_present"
-required = true
-target = "[ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (…"
-anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST in a catalog-linked database"
-note = "option present [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col…, observed"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o300"
-kind = "operand_type_class"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )…"
-anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST in a catalog-linked database"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o301"
-kind = "alternative"
-required = true
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → <col_name>"
-anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST in a catalog-linked database"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_nam… → <col_name>, observed"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o302"
-kind = "option_absent"
-required = true
-target = "[ , { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) |…"
-anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST in a catalog-linked database"
-note = "option absent [ , { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) | MO…, observed"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o303"
-kind = "operand_type_class"
-required = true
-target = "<width> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) |…"
-anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST in a catalog-linked database"
-note = "a valid operand, observed"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o304"
-kind = "operand_type_class"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #3"
-anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST in a catalog-linked database"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o305"
-kind = "alternative"
-required = true
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,… → TRUNCATE ( <width> , <col_name> )"
-anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST in a catalog-linked database"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_na… → TRUNCATE ( <width> , <col_name> ), observed"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o306"
-kind = "operand_type_class"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #6"
-anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST in a catalog-linked database"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o307"
-kind = "alternative"
-required = true
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → DAY ( <col_name> )"
-anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST in a catalog-linked database"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( … → DAY ( <col_name> ), observed"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o308"
-kind = "operand_type_class"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #5"
-anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST in a catalog-linked database"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o309"
-kind = "alternative"
-required = true
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR… → MONTH ( <col_name> )"
-anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST in a catalog-linked database"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR … → MONTH ( <col_name> ), observed"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o310"
-kind = "operand_type_class"
-required = true
-target = "<num_buckets> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,…"
-anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST in a catalog-linked database"
-note = "a valid integer_literal, observed"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o311"
-kind = "operand_type_class"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #2"
-anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST in a catalog-linked database"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o312"
-kind = "alternative"
-required = true
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,… → BUCKET ( <num_buckets> , <col_name> )"
-anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST in a catalog-linked database"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <co… → BUCKET ( <num_buckets> , <col_name> ), observed"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o313"
-kind = "operand_type_class"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #7"
-anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST in a catalog-linked database"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o314"
-kind = "alternative"
-required = true
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → HOUR ( <col_name> )"
-anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST in a catalog-linked database"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → HOUR ( <col_name> ), observed"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o315"
-kind = "operand_type_class"
-required = true
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #4"
-anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST in a catalog-linked database"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o316"
-kind = "alternative"
-required = true
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → YEAR ( <col_name> )"
-anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST in a catalog-linked database"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → YEAR ( <col_name> ), observed"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o317"
-kind = "option_present"
-required = true
-target = "[ , { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) |…"
-anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST in a catalog-linked database"
-note = "the list continued at least once, observed"
-
-[[obligation]]
 id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o318"
 kind = "option_present"
 required = true
@@ -207728,14 +207576,6 @@ anchor = "doc.sql.create-semantic-view / Variant syntax / CREATE OR ALTER SEMANT
 note = "a valid operand, observed"
 
 [[obligation]]
-id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o505"
-kind = "option_present"
-required = true
-target = "[ , ... ] #7"
-anchor = "doc.sql.create-semantic-view / Variant syntax / CREATE OR ALTER SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
 id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o506"
 kind = "option_present"
 required = true
@@ -210934,14 +210774,6 @@ required = true
 target = "[ <constraint_name> ]"
 anchor = "doc.sql.create-semantic-view / Syntax"
 note = "option absent [ <constraint_name> ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o526"
-kind = "option_present"
-required = true
-target = "[ , ... ] #7"
-anchor = "doc.sql.create-semantic-view / Syntax"
-note = "the list continued at least once, observed"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o527"
