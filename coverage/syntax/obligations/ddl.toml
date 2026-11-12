@@ -135639,14 +135639,6 @@ anchor = "doc.sql.create-external-table / Syntax"
 note = "omit <ext_stage_name>, observed"
 
 [[obligation]]
-id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o482"
-kind = "option_absent"
-required = true
-target = "[ , <purpose> = <contact_name> ... ]"
-anchor = "doc.sql.create-external-table / Syntax"
-note = "option absent [ , <purpose> = <contact_name> ... ], observed"
-
-[[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o483"
 kind = "required_operand_missing"
 required = true
@@ -138322,14 +138314,6 @@ anchor = "doc.sql.create-external-table / Syntax"
 note = "omit <ext_stage_name>, observed"
 
 [[obligation]]
-id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.o470"
-kind = "option_absent"
-required = true
-target = "[ , <purpose> = <contact_name> ... ]"
-anchor = "doc.sql.create-external-table / Syntax"
-note = "option absent [ , <purpose> = <contact_name> ... ], observed"
-
-[[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.o471"
 kind = "negative_neighbour"
 required = true
@@ -140934,14 +140918,6 @@ required = true
 target = "<ext_stage_name>"
 anchor = "doc.sql.create-external-table / Syntax"
 note = "omit <ext_stage_name>, observed"
-
-[[obligation]]
-id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.syntax.o472"
-kind = "option_absent"
-required = true
-target = "[ , <purpose> = <contact_name> ... ]"
-anchor = "doc.sql.create-external-table / Syntax"
-note = "option absent [ , <purpose> = <contact_name> ... ], observed"
 
 [[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.syntax.o473"
