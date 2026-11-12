@@ -1,14 +1,17 @@
 //! Snowflake's rules on COMMENT ON names and values, stage commands, task properties, DEFINE and class instance method calls.
 
+use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::constants::EXECUTE_DCM_PROJECT;
 use crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::operators::models::Call;
 use sqlquack_syntax::expressions::schema_objects::models::ExecuteObject;
+use sqlquack_syntax::expressions::schema_objects::models::ObjectProperty;
 use sqlquack_syntax::expressions::statements::models::CreateTask;
 use sqlquack_syntax::expressions::statements::models::ExecuteUsingPolicyContext;
 use sqlquack_syntax::expressions::tree::models::Expression;
+use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
 use sqlquack_syntax::traversal::types::ExpressionWalk;
@@ -182,11 +185,104 @@ impl Parser {
             } else if self.match_text_seq(&["TEST", "ALL"]) {
                 node.action = Some("TEST ALL".to_owned());
             } else {
-                self.current = start;
-                return Ok(None);
+                return match self.parse_dcm_project_run(node)? {
+                    Some(run) => Ok(Some(Expression::ExecuteObject(Box::new(run)))),
+                    None => {
+                        self.current = start;
+                        Ok(None)
+                    }
+                };
             }
         }
         Ok(Some(Expression::ExecuteObject(Box::new(node))))
+    }
+
+    /// The PLAN [ DELTA ], DEPLOY or PREVIEW of `EXECUTE DCM PROJECT <name>` with its source and options; false for any other action. Snowflake refuses the page's parenthesised USING values, so USING takes a configuration only.
+    fn parse_dcm_project_run(&mut self, mut node: ExecuteObject) -> Result<Option<ExecuteObject>> {
+        let action = if self.match_text_seq(&["PLAN", "DELTA"]) {
+            "PLAN DELTA"
+        } else if self.match_text_seq(&["PLAN"]) {
+            "PLAN"
+        } else if self.match_text_seq(&["DEPLOY"]) {
+            "DEPLOY"
+        } else if self.match_text_seq(&["PREVIEW"]) {
+            "PREVIEW"
+        } else {
+            return Ok(None);
+        };
+        node.action = Some(action.to_owned());
+        match action {
+            "PREVIEW" => {
+                let table = Expression::Table(Box::new(self.parse_object_name()?));
+                node.properties.push(property("PREVIEW", None, Some(table)));
+                self.expect_alter_words(&[&["USING", "CONFIGURATION"]])?;
+                let config = Expression::Table(Box::new(self.parse_object_name()?));
+                node.properties
+                    .push(property("USING CONFIGURATION", None, Some(config)));
+                node.properties.extend(self.parse_dcm_environment()?);
+                self.expect_token(TokenType::From)?;
+                node.properties
+                    .push(property("FROM", None, Some(self.parse_string_value()?)));
+                if self.match_token(TokenType::Limit) {
+                    if !self.check(TokenType::Number) {
+                        return Err(self.parse_error("Expected a number of rows after LIMIT"));
+                    }
+                    node.properties
+                        .push(property("LIMIT", None, Some(self.parse_primary()?)));
+                }
+                return Ok(Some(node));
+            }
+            "DEPLOY" => {
+                if self.match_token(TokenType::As) {
+                    node.alias = Some(self.parse_simple_name()?);
+                }
+            }
+            _ => {}
+        }
+        if self.match_text_seq(&["FROM", "DEPLOYMENT"]) {
+            let deployment = Expression::Table(Box::new(self.parse_object_name()?));
+            node.properties
+                .push(property("FROM DEPLOYMENT", None, Some(deployment)));
+        } else {
+            if self.match_token(TokenType::Using) {
+                self.expect_alter_words(&[&["CONFIGURATION"]])?;
+                let config = Expression::Table(Box::new(self.parse_object_name()?));
+                node.properties
+                    .push(property("USING CONFIGURATION", None, Some(config)));
+            }
+            node.properties.extend(self.parse_dcm_environment()?);
+            self.expect_token(TokenType::From)?;
+            node.properties
+                .push(property("FROM", None, Some(self.parse_string_value()?)));
+        }
+        if action.starts_with("PLAN") && self.match_text_seq(&["OUTPUT_PATH"]) {
+            node.properties.push(property(
+                "OUTPUT_PATH",
+                None,
+                Some(self.parse_string_value()?),
+            ));
+        }
+        Ok(Some(node))
+    }
+
+    /// `[ ENVIRONMENT ( <bind_variable> ) ]` of a DCM project run.
+    fn parse_dcm_environment(&mut self) -> Result<Option<ObjectProperty>> {
+        if !self.match_text_seq(&["ENVIRONMENT"]) {
+            return Ok(None);
+        }
+        let values = self.parse_dcm_values()?;
+        Ok(Some(property("ENVIRONMENT", None, Some(values))))
+    }
+
+    /// `( <expr> [ , ... ] )`, with at least one expression.
+    fn parse_dcm_values(&mut self) -> Result<Expression> {
+        self.expect_token(TokenType::LParen)?;
+        let mut expressions = vec![self.parse_expression()?];
+        while self.match_token(TokenType::Comma) {
+            expressions.push(self.parse_expression()?);
+        }
+        self.expect_token(TokenType::RParen)?;
+        Ok(Expression::Tuple(Box::new(Tuple { expressions })))
     }
 }
 
