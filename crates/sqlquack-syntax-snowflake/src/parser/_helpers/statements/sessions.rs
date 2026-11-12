@@ -1841,7 +1841,10 @@ impl Parser {
         if self.is_snowflake() && self.check(TokenType::String) {
             return Err(self.parse_error("Expected a semantic view name"));
         }
-        let this = self.parse_primary()?;
+        let this = match self.is_snowflake() {
+            true => Expression::Table(Box::new(self.parse_object_name()?)),
+            false => self.parse_primary()?,
+        };
 
         let mut metrics = None;
         let mut dimensions = None;
@@ -1916,7 +1919,15 @@ impl Parser {
                 || !crate::parser::constants::SNOWFLAKE_SEMANTIC_VIEW_CLAUSES
                     .iter()
                     .any(|word| self.peek_text().eq_ignore_ascii_case(word)));
-        if bare_alias || self.match_token(TokenType::As) {
+        let explicit_as = !bare_alias && self.match_token(TokenType::As);
+        if bare_alias || explicit_as {
+            let alias_keyword = explicit_as.then(|| {
+                let token = self.previous();
+                match self.source.is_some() {
+                    true => self.source_text_range(token.span.start, token.span.end),
+                    false => token.text.to_string(),
+                }
+            });
             let alias = self.expect_identifier_or_keyword_with_quoted()?;
             Ok(Expression::Alias(Box::new(
                 sqlquack_syntax::expressions::operators::models::Alias {
@@ -1924,8 +1935,8 @@ impl Parser {
                     this: expr,
                     alias,
                     column_aliases: Vec::new(),
-                    alias_explicit_as: false,
-                    alias_keyword: None,
+                    alias_explicit_as: explicit_as,
+                    alias_keyword,
                     pre_alias_comments: Vec::new(),
                     trailing_comments: Vec::new(),
                     inferred_type: None,

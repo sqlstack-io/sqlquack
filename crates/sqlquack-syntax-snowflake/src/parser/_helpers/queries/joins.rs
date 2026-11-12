@@ -79,7 +79,7 @@ impl Parser {
 
                 let table = self.parse_join_table(&kind)?;
 
-                let table = self.parse_join_table_suffix(&kind, table)?;
+                let mut table = self.parse_join_table_suffix(&kind, table)?;
 
                 let has_match_condition = self.check_identifier("MATCH_CONDITION");
                 if has_match_condition
@@ -127,7 +127,31 @@ impl Parser {
                 } else {
                     (None, Vec::new())
                 };
-                let (first_last, first_last_alias) = self.parse_snowflake_join_first_last()?;
+                let first_last_at = self.current;
+                let (mut first_last, mut first_last_alias) =
+                    self.parse_snowflake_join_first_last()?;
+                let conditionless = on.is_none() && using.is_empty() && match_condition.is_none();
+                if conditionless && first_last.is_some() {
+                    let alias = Identifier::new(self.tokens[first_last_at].text.to_string());
+                    let columns: Vec<Identifier> = first_last_alias.iter().cloned().collect();
+                    let aliased = match &mut table {
+                        Expression::Table(reference) if reference.alias.is_none() => {
+                            reference.alias = Some(alias);
+                            reference.column_aliases = columns;
+                            true
+                        }
+                        Expression::Subquery(derived) if derived.alias.is_none() => {
+                            derived.alias = Some(alias);
+                            derived.column_aliases = columns;
+                            true
+                        }
+                        _ => false,
+                    };
+                    if aliased {
+                        first_last = None;
+                        first_last_alias = None;
+                    }
+                }
 
                 joins.push(Join {
                     using_alias: None,
