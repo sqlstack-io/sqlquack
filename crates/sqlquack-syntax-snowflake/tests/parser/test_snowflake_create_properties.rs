@@ -40,6 +40,18 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_only_what_snowf
             expected_accepted: false,
         },
         AcceptanceTestCase {
+            description: "a compute pool's tag list ends the statement (recorded errno 1003)",
+            sql: "CREATE COMPUTE POOL IF NOT EXISTS v1 FOR APPLICATION v1 MIN_NODES = 1 MAX_NODES = 1 INSTANCE_FAMILY = v1 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE AUTO_SUSPEND_SECS = 1 WITH TAG ( v1 = 'm' , v1 = 'm' ) COMMENT = 'm' PLACEMENT_GROUP = 'm' BACKUP_INSTANCE_FAMILIES = ( 'm' , 'm' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an alert takes properties after its tag list (recorded errno 1004, after parsing)",
+            sql: "CREATE OR REPLACE ALERT IF NOT EXISTS v1 FROM TEMPLATE v1 WITH TAG ( v1 = 'm' , v1 = 'm' ) WAREHOUSE = v1 SCHEDULE = '1 MINUTE' COMMENT = 'm' RUNBOOK = 'm' SUSPEND_ALERT_AFTER_NUM_FAILURES = 1 TEMPLATE_PARAMS = 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
             description: "MODEL alone is a kind, not part of MODEL MONITOR (recorded errno 1021, after parsing)",
             sql: "CREATE MODEL v1 WITH VERSION v1 FROM @s1 ;",
             dialect: Dialect::Snowflake,
@@ -167,6 +179,12 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_the_tree_keeps_
             sql: "CREATE EXTERNAL VOLUME v1 STORAGE_LOCATIONS = ( ( NAME = 'm' STORAGE_PROVIDER = 'S3' ) )",
             pointer: "/0/create_object/properties/0/value/tuple/expressions/0/tuple/expressions/1/property_e_q/left/identifier/name",
             expected_value: json!("STORAGE_PROVIDER"),
+        },
+        ProjectionTestCase {
+            description: "RSS is the restricted session scope kind",
+            sql: "CREATE RSS v1 AS $$v1 $$",
+            pointer: "/0/create_object/kind",
+            expected_value: json!("RSS"),
         },
         ProjectionTestCase {
             description: "a body policy keeps its body",
