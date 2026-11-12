@@ -1433,6 +1433,9 @@ pub(crate) const SNOWFLAKE_GRANT_KINDS: &[&str] = &[
 /// Words of a multi-word property kind that Snowflake also parses as a kind on their own, so CREATE <word> <name> is not a partial kind.
 pub(crate) const SNOWFLAKE_KIND_WORDS_ALONE: &[&str] = &["MODEL", "VOLUME"];
 
+/// Property-list kinds whose tag list must end the statement: Snowflake refuses any property after it.
+pub(crate) const SNOWFLAKE_TAGS_LAST_KINDS: &[&str] = &["ARTIFACT REPOSITORY", "COMPUTE POOL"];
+
 /// The Snowflake kinds a CREATE defines only by `<property> = <value>` lists.
 pub(crate) const SNOWFLAKE_PROPERTY_KINDS: &[&str] = &[
     "ACCOUNT",
@@ -1467,6 +1470,7 @@ pub(crate) const SNOWFLAKE_PROPERTY_KINDS: &[&str] = &[
     "RESOURCE MONITOR",
     "RESTRICTED SESSION SCOPE",
     "ROLE",
+    "RSS",
     "SECRET",
     "SECURITY INTEGRATION",
     "SESSION POLICY",
